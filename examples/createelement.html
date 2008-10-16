@@ -1,0 +1,57 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <!-- example for the linking of new elements: -->
+   <script type="text/javascript" src="../src/Square.js"></script>
+</head>
+<body>
+  <h2>Create Element Examples</h2>
+  <div id="box" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    
+        // Das Objekt geonext ist global und wird in Geonext.js initialisiert
+        // board links oben initialisieren
+        board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 50, unitY: 50});
+        bx = board.createElement('axis', [[0,1], [0,0]], {});
+        by = board.createElement('axis', [[1,0], [0,0]], {});
+
+		p1 = board.createElement('point', [1, 1], {strokeColor: '#ff0000'});
+		p2 = board.createElement('point', [2, 0], {fixed: true});
+		p3 = board.createElement('point', [1, 2]);
+		
+		l1 = board.createElement('line', [p1, p2]);
+		
+		c1 = board.createElement('circle', [p1, 3.0]);
+		
+		curve = board.createElement('curve', [
+            function(t){ return t; },
+            function(t){ return (Math.sin(t)); },
+            "t", -Math.PI*2, Math.PI*2]);
+        
+        a1 = board.createElement('arc', [p1, p2, p3], {'firstArrow':true,'lastArrow':true});
+        a2 = board.createElement('arrow', ['Ursprung', p3]);
+        
+        p4 = board.createElement('point', [-4, 2.2]);
+        p5 = board.createElement('point', [-3, 2]);
+        p6 = board.createElement('point', [-1, -1]);
+        p7 = board.createElement('point', [-3, -2]);
+        p8 = board.createElement('point', [-3.5, 0.5]);
+        
+        p9 = board.createElement('point', [5, 3]);
+        p10 = board.createElement('point', [7, 2.9]);
+        sq = board.createElement('square', [p9, p10]);
+        
+        pol = board.createElement('polygon', [p4, p5, p6, p7, p8]);
+
+//		sec = board.createElement('sector', [p4, p5, p6]);
+        
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

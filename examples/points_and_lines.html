@@ -1,0 +1,72 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Points and lines</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+  <p style="float:right">
+    <input type="button" value="Constraint points" onClick="doCASPoints()"><br><br>
+    <input type="button" value="Lines" onClick="doLines()"><br><br>
+    <input type="button" value="Glider" onClick="doGlider()"><br><br>
+    <input type="button" value="Random points" onClick="doRandomPoints()">
+  </p>
+</div>
+<div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var p1, p2, l1, l2, l3;
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 20});
+
+        // Test of all point styles
+        var p = [];
+        for (var i = 0; i<13; i++) {
+            p[i] = board.createElement('point', [i, 0], {style:i,name:"P_{"+i+"}"}); // Angabe fester Koordinaten
+        }
+        // Change a property:
+        p[0].setProperty("fixed:true");
+
+        function doCASPoints() {
+            // Point defined by anonymous functions
+            p1 = board.createElement('point', [0,function() { return p[1].Y()-3; }], {style:3, name:"Q_1"});
+            // Point defined by GEONExT syntax
+            p2 = board.createElement('point', ["X(P_{4})","Y(P_{3})-4"], {style:3, name:"Q_2"});
+        }
+
+        function doLines() {
+            // Geraden
+            l1 = board.createElement('line', ['P_{0}', 'Q_1'], {straightLast:false} );
+            l2 = board.createElement('line', ['P_{0}', p2]);
+            l1.setProperty("strokecolor:#ff0000");
+        }
+
+        // Glider
+        function doGlider() {
+            //board.createElement('point', [7,0], {name:"S^1", style:6, slideObject:l2, id:"g1s1" });
+            board.createElement('glider', [7,0,l2], {name:"S^1", style:6, id:"g1s1" });
+            l3 = board.createElement('line', ["g1s1", p[5]], {strokewidth:0.6, dash:2});
+        }
+
+        function doRandomPoints() {
+            board.suspendUpdate();
+            // random coordinates
+            for (i = 0; i<10; i++) {
+                board.createElement('point', [10*Math.random(), 10*Math.random()], {style:10, strokecolor:"#0000ff", name:" "}); 
+            }
+        
+            // random coordinates after each update
+            for (i=0; i<30;i++) {
+                board.createElement('point', [function() { return 10*Math.random(); }, function() { return -10*Math.random();}], { style:4, strokecolor:"#0000a0", name:" "}); // trace:true
+            }
+            board.unsuspendUpdate();
+        }
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

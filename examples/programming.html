@@ -1,0 +1,83 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Funktionsplotter-Beispiel mit Eingabefenster</h2>
+<div style="width:960px">
+<div id="jxgbox" class="jxgbox" style="width:600px; height:400px; float:left; "></div>
+<p style="float:right">
+<textarea id="eingabe" rows=15 cols=35 wrap="off" >
+function f(x) {
+   return Math.sin(x)*Math.cos(x)*p.X();
+}
+c = plot(f);
+g = board.algebra.D(f);
+plot(g,{strokecolor:'black', dash:1});
+h = board.algebra.D(g);
+plot(h, {strokecolor:'red', dash:2});
+
+var interval = [0, 2.5];
+i_m = board.algebra.I(interval, f);
+
+board.createElement('integral', [interval, c]);
+</textarea> <br>
+<input type="button" value="run" onClick="doIt()" style='margin:1em'> 
+<input type="button" value="clear all" onClick="board=clearAll(board)"> 
+</p>
+</div>
+<br clear=all>
+<div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 20});
+		// Axes
+        b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
+        b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+
+        // Macro Function plotter
+        function funktionsPlotter(board, func, atts) {
+            var f = board.createElement('curve', ['x', func, 'x'], atts);
+            return f;
+        }
+        
+        // Simplified plotting function
+        function plot(func, atts) {
+            if (atts==null) {
+                return funktionsPlotter(board, func, {strokewidth:2, curveType:'graph'});
+            } else {
+                return funktionsPlotter(board, func, atts);
+            }    
+        }
+
+        // Free point
+        var p = board.createElement('point', [3,-4], {style:6, name:'drag me'}); 
+
+        // Usage of the macro
+        function doIt() {
+            var s = $('eingabe').value;
+            eval(s); // Attention: eval considered harmful
+        }
+
+        function clearAll(board) {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 20});
+            b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
+            b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            return board;
+        }
+/*
+    board.algebra.integration_type = JXG.INT_SIMPSON;
+    i_s = board.algebra.I(interval, f);
+    board.algebra.integration_type = JXG.INT_TRAPEZ;
+    i_t = board.algebra.I(interval, f);
+    board.algebra.integration_type = JXG.INT_MILNE;
+*/        
+  /* ]]> */
+  </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Data plot and analysis</h2>
+<div style='width:950px'>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:400px; float:left"></div>
+  <p style="float:right">
+    <input type="button" value="Generate data" onClick="generateData()"> <br>
+    <textarea id="eingabe" rows=11 cols=20>
+    </textarea> <br>
+    <input type="button" value="Plot it" onClick="doIt()"> 
+  </p>
+  <p id='output' style="float:right; height:200px; width:10em;">Output:<br>
+  </p>
+</div>
+  <br clear=all>
+  <div id="debug" style="display:none;"></div>
+    <script type="text/javascript">
+    /* <![CDATA[ */
+
+        brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 300, unitX: 32, unitY: 50});
+		// Achsen erzeugen
+        b1axisx = brd.createElement('axis', [[1,0], [0,0]], {});
+        b1axisy = brd.createElement('axis', [[0,1], [0,0]], {});
+
+        var graph1,graph2,graph3,graph4,graph5;
+
+        function generateData() {
+            if (graph1) { brd.removeObject(graph1); }
+            if (graph2) { brd.removeObject(graph2); }
+            if (graph3) { brd.removeObject(graph3); }
+            if (graph4) { brd.removeObject(graph4); }
+            if (graph5) { brd.removeObject(graph5); }
+            var t = '';
+            for (var i=1;i<=20;i++) {
+                t += i+' '+brd.round(((Math.random()*4-2)+3),2)+'\n';
+            }
+            $('eingabe').value = t;
+        }
+
+        function doIt() {
+            var s = $('eingabe').value.strip();
+            var a = s.split('\n');
+            var x = [];
+            var y = [];
+            for (var i=0;i<a.length;i++) {
+                var b = a[i].split(/\s+/);
+                b[0]=b[0]*1.0;
+                b[1]=b[1]*1.0;
+                if (!isNaN(b[0]) && !isNaN(b[1])) { 
+                    x[i] = b[0];
+                    y[i] = b[1];
+                }
+            }
+            graph1 = brd.createElement('curve', [x,y]); 
+
+            // Mean value
+            var m = brd.mathStatistics.mean(y);
+            graph2 = graph = brd.createElement('curve', [[x[0],x[x.length-1]],[m,m]], {strokecolor:'red'}); 
+            // Std deviation
+            var sd = brd.mathStatistics.sd(y);
+            graph3 = brd.createElement('curve', [[x[0],x[x.length-1]],[m+sd,m+sd]], {strokecolor:'red',dash:2}); 
+            graph4 = brd.createElement('curve', [[x[0],x[x.length-1]],[m-sd,m-sd]], {strokecolor:'red',dash:2}); 
+            var med = brd.mathStatistics.median(y);
+            graph5 = brd.createElement('curve', [[x[0],x[x.length-1]],[med,med]], {strokecolor:'red',dash:1}); 
+
+            $('output').innerHTML = 'Output:<br>'+ 'Mean value=' + brd.round(m,2)+ '<br>Median=' + brd.round(med,2)+'<br>Sd='+brd.round(sd,2);
+
+/*
+            // xTerm als array, yTerm als Funktion
+            var c =brd.createElement('curve', [[-1,0.5,1,3,20,50],function(t){ return board.log(t); }], {strokecolor:'green'}); 
+            // also possible:
+            c.setProperty({'strokeColor':'yellow', strokeWidth:5});
+*/            
+        }
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

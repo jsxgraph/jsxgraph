@@ -1,0 +1,116 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Chart examples</h2>
+  <div id="jxgbox" class="jxgbox" style="width:900px; height:600px; float:left"></div>
+  <p style="float:right">
+    <input type="button" value="Line chart" onClick="lineChart()" style='margin:1em'><br>
+    <input type="button" value="Bar chart" onClick="barChart()" style='margin:1em'><br>
+    <input type="button" value="Multiple styles" onClick="multiStyleChart()" style='margin:1em'><br>
+    <input type="button" value="Two bar charts" onClick="twoBarCharts()" style='margin:1em'><br>
+    <input type="button" value="Horizontal bars" onClick="horizontalBarChart()" style='margin:1em'><br>
+    <input type="button" value="Dynamic bars" onClick="dynamicBarChart()" style='margin:1em'><br>
+    <input type="button" value="Pie chart" onClick="pieChart()" style='margin:1em'><br>
+  </p>
+  <br clear=all>
+  <div id="debug" style="display:none;"></div>
+  <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 350, originY: 400, unitX: 50, unitY: 50});
+
+        var dataArr = [4,1,3,2,5,7,1.5,2];
+        
+        // Line chart
+        function lineChart() {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
+            board.suspendUpdate();
+            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
+            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            var a = board.createElement('chart', dataArr, {chartStyle:'line',strokeWidth:4,strokeColor:'#0000ff'});
+            board.unsuspendUpdate();
+        };
+
+        // Bar chart
+        function barChart() {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
+            board.suspendUpdate();
+            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
+            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            var a = board.createElement('chart', dataArr, {chartStyle:'bar',width:0.6,labels:dataArr});
+            board.unsuspendUpdate();
+        };
+        //var s = board.createElement('chart', [4,1], {chartStyle:'bar',strokeWidth:8,width:0.4,strokeColor:'#ff0000'});   // strokeWidth in Polygon???
+        
+        // Single chart with multiple styles
+        function multiStyleChart() {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
+            board.suspendUpdate();
+            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
+            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            var a = board.createElement('chart', dataArr, {chartStyle:'bar,line,point',width:0.8,style:9,labels:dataArr});
+            board.unsuspendUpdate();
+        };
+        
+        // Two bar charts
+        function twoBarCharts() {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
+            board.suspendUpdate();
+            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
+            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            var a = board.createElement('chart', [[1,3,5,7],[4,-1,3,2]], {chartStyle:'bar',width:0.8});
+            var b = board.createElement('chart', [[2,4,6,8],[3,1,2,5]], {chartStyle:'bar',fillColor:'#C3D9FF',width:0.8});
+            board.unsuspendUpdate();
+        };
+
+        // Bar chart with horizontal bars
+        function horizontalBarChart() {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
+            board.suspendUpdate();
+            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
+            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            var a = board.createElement('chart', dataArr, {chartStyle:'bar',labels:dataArr,width:0.8,dir:'horizontal'});
+            board.unsuspendUpdate();
+        };
+
+        // Single chart with dynamic entries
+        function dynamicBarChart() {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 450, unitX: 50, unitY: 50});
+            board.suspendUpdate();
+            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
+            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+
+            var s = board.createElement('slider', [5,-1,3,1,2,1], {name:'S'});
+            var f = [function(){return this.board.round(s.X()*4,2);},
+                     function(){return this.board.round(s.X()*(-1),2);},
+                     function(){return this.board.round(s.X()*3,2);},
+                     function(){return this.board.round(s.X()*2,2);}];
+            var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
+            board.unsuspendUpdate();
+        };
+        
+        // Single pie chart
+        function pieChart() {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 450, unitX: 50, unitY: 50});
+            board.suspendUpdate();
+            var a = board.createElement('chart', dataArr, 
+                {chartStyle:'pie', colorArray:['#B02B2C','#3F4C6B','#C79810','#D15600'],fillOpacity:0.9,strokeColor:'none',center:[5,2]}
+            );
+            board.unsuspendUpdate();
+        }
+  /* ]]> */
+  </script>
+</body>
+</html>
