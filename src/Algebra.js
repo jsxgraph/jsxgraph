@@ -1241,7 +1241,7 @@ JXG.Algebra.prototype.I = function(interval, f) {
     var integral_value = 0.0;
 
     var step_size = (interval[1] - interval[0]) / this.number_of_nodes;
-    switch(this.integration) {
+    switch(this.integration_type) {
         case JXG.INT_TRAPEZ:
             integral_value = (f(interval[0]) + f(interval[1])) * 0.5;
     
