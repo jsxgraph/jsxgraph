@@ -2282,8 +2282,10 @@ JXG.Board.prototype.update = function(drag) {
  * Creates a new geometric element of type elementType.
  * @param {string} elementType Type of the element to be constructed given as a string e.g. 'point' or 'circle'.
  * @param {Array} parents Array of parent elements needed to construct the element e.g. coordinates for a point or two
- * points to construct a line. This highly depends on the elementType that is constructed.
- * @param {Object} attributes An object containing the attributes to be set. This also depends on the elementType. Common attributes are name, visible, strokeColor. @see GeometryElement#setProperty
+ * points to construct a line. This highly depends on the elementType that is constructed. See the corresponding JXG.create*
+ * methods for a list of possible parameters.
+ * @param {Object} attributes An object containing the attributes to be set. This also depends on the elementType.
+ * Common attributes are name, visible, strokeColor. @see GeometryElement#setProperty
  * @type Object
  * @return Reference to the created element.
  */

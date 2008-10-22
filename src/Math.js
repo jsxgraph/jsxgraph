@@ -31,6 +31,9 @@
  
 JXG.Math = new Object();
 
+/* Math constants */
+JXG.Math.eps = 0.000001;
+
 /**
  * Represents a vector.
  * @constructor

@@ -29,11 +29,6 @@
  * @author graphjs
  */
  
- /* Global constants */
- JXG.INT_TRAPEZ  = 0x00001;
- JXG.INT_SIMPSON = 0x00002;
- JXG.INT_MILNE   = 0x00003;
- 
 /**
  * Creates a new instance of Algebra.
  * @class In this class all algebraic computation is done.
@@ -1220,91 +1215,12 @@ JXG.Algebra.prototype.sinh = function(x) {
 };
 
 /**
- * Number of nodes for evaluation, used for integration
- * @type int
- */
-JXG.Algebra.prototype.number_of_nodes = 28;
-
-/**
- * Type of integration algorithm, possible values are: <ul><li>JXG.INT_TRAPEZ</li><li>JXG.INT_SIMPSON</li><li>JXG.INT_MILNE</li></ul>
- * @type int
- */
-JXG.Algebra.prototype.integration_type = JXG.INT_MILNE;
-
-/**
- * Integral of function f over interval
+ * Integral of function f over interval. Warning: Just for backward compatibility, may be removed in futures releases.
  * @param {Array} interval e.g. [a, b] 
  * @param {function} f 
- * @param {variable}  derivative for this value
  */
 JXG.Algebra.prototype.I = function(interval, f) {
-    var integral_value = 0.0;
-
-    var step_size = (interval[1] - interval[0]) / this.number_of_nodes;
-    switch(this.integration_type) {
-        case JXG.INT_TRAPEZ:
-            integral_value = (f(interval[0]) + f(interval[1])) * 0.5;
-    
-            var evaluation_point = interval[0];
-            for (i = 0; i < this.number_of_nodes - 1; i++)
-            {
-                evaluation_point += step_size;
-                integral_value   += f(evaluation_point);
-            }
-            integral_value *= step_size;
-
-            break;
-        case JXG.INT_SIMPSON:
-            if (this.number_of_nodes%2 > 0) {
-                throw "Error: INT_SIMPSONS requires Algebra.number_of_nodes dividable by 2.";
-            }
-            var number_of_intervals = this.number_of_nodes / 2.0;
-    
-            integral_value = f(interval[0]) + f(interval[1]);
-    
-            evaluation_point = interval[0];
-            for (i = 0; i < number_of_intervals - 1; i++)
-            {
-                evaluation_point += 2.0 * step_size;
-                integral_value   += 2.0 * f(evaluation_point);
-            }
-            evaluation_point = interval[0] - step_size;
-            for (i = 0; i < number_of_intervals; i++)
-            {
-                evaluation_point += 2.0 * step_size;
-                integral_value   += 4.0 * f(evaluation_point);
-            }
-            integral_value *= step_size / 3.0;
-            break;
-        default:
-            if (this.number_of_nodes%4 > 0) {
-                throw "Error in INT_MILNE: Algebra.number_of_nodes must be a multiple of 4";
-            }
-            number_of_intervals = this.number_of_nodes * 0.25;
-    
-            integral_value = 7.0 * (f(interval[0]) + f(interval[1]));
-    
-            evaluation_point = interval[0];
-            for (i = 0; i < number_of_intervals - 1; i++)
-            {
-                evaluation_point += 4.0 * step_size;
-                integral_value   += 14.0 * f(evaluation_point);
-            }
-            evaluation_point = interval[0] - 3.0 * step_size;
-            for (i = 0; i < number_of_intervals; i++)
-            {
-                evaluation_point += 4.0 * step_size;
-                integral_value   += 32.0 * (f(evaluation_point) + f(evaluation_point + 2 * step_size));
-            }
-            evaluation_point = interval[0] - 2.0 * step_size;
-            for (i = 0; i < number_of_intervals; i++)
-            {
-                evaluation_point += 4.0 * step_size;
-                integral_value   += 12.0 * f(evaluation_point);
-            }
-            integral_value *= 2.0 * step_size / 45.0;
-    }
-    return integral_value;
+    return JXG.Math.Numerics.NewtonCotes(interval, f);
 };
 
 /**
