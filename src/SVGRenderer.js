@@ -126,6 +126,12 @@ JXG.SVGRenderer.prototype.updateAxisTicks = function(el, oldTicksCount) {
     }
 }
 
+JXG.SVGRenderer.prototype.removeAxisTicks = function(el) {
+    for(var i=0; i<el.ticks.length; i++) {
+        this.remove($(el.id+'tick'+i));
+    }
+}
+
 JXG.SVGRenderer.prototype.updateAxisTicksInnerLoop = function(el,start) {
     for (var i=start; i<el.ticks.length; i++) {
         var c = el.ticks[i];

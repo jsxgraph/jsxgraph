@@ -119,6 +119,13 @@ JXG.VMLRenderer.prototype.updateAxisTicks = function(el, oldTicksCount) {
     }
 }
 
+JXG.VMLRenderer.prototype.removeAxisTicks = function(el) {
+    for(var i=0; i<el.ticks.length; i++) {
+        var tick = $(el.id+'tick'+i);
+        this.remove(tick);
+    }
+}
+
 JXG.VMLRenderer.prototype.updateAxis = function(el) {
     // not yet
     var node = $(el.id);

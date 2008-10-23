@@ -59,6 +59,10 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type int
      */
     this.type = JXG.OBJECT_TYPE_LINE;
+    
+    /**
+     * Class of element, value is OBJECT_CLASS_LINE;
+     */
     this.elementClass = JXG.OBJECT_CLASS_LINE;
 
     /**
@@ -109,6 +113,25 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type bool
      */
     this.visProp['visible'] = true;
+    
+    /**
+     * Array of Coords storing the coordinates of all ticks.
+     * @type Array
+     * @see Coords
+     */
+    this.ticks = [];
+    
+    /**
+     * Has this line ticks?
+     * @type bool
+     */
+    this.withTicks = false;
+    
+    /**
+     * The distance between two ticks.
+     * @type float
+     */
+    this.ticksDelta = 1;
     
     /**
     * If the line is the border of a polygon, the polygone object is stored, otherwise null.
@@ -210,6 +233,102 @@ JXG.Line.prototype = new JXG.GeometryElement;
     return has;
 };
 
+
+JXG.Line.prototype.update = function() {    
+    if (this.needsUpdate) {
+        if (!this.board.geonextCompatibilityMode) {
+            this.updateStdform();
+        }
+        if(this.withTicks)
+            this.updateTickCoordinates();
+    }
+};
+
+JXG.Line.prototype.updateStdform = function() {    
+    var nx = -(this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]);
+    var ny =  this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1];
+    var c = -(nx*this.point1.coords.usrCoords[1]+ny*this.point1.coords.usrCoords[2]);
+
+    this.stdform[0] = c;
+    this.stdform[1] = nx;
+    this.stdform[2] = ny;
+    this.stdform[3] = 0;
+
+    this.normalize();
+};
+
+/**
+ * Updates the coordinates of the lines ticks. Calls the renderer to delete old ticks
+ * or create more ticks if required.
+ * @param {bool} first Optional parameter, only used in constructor.
+ */
+JXG.Line.prototype.updateTickCoordinates = function (first) {
+    if(typeof first == 'undefined') {
+        first = false;
+    }
+    
+    if(!this.withTicks)
+        return;
+    
+    /* TODO */
+    var v = this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1];
+    var w = this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2];
+    
+    var left, right, left_straight, right_straight;
+    
+    /* Determine left/right point */
+    if(this.point1.coords.usrCoords[1] < this.point2.coords.usrCoords[1]) {
+        var left = this.point1;
+        var right = this.point2;
+        
+        var left_straight = this.visProp['straightFirst'];
+        var right_straight = this.visProp['straightLast'];
+    } else {
+        var left = this.point2;
+        var right = this.point1;
+        
+        var left_straight = this.visProp['straightLast'];
+        var right_straight = this.visProp['straightFirst'];        
+    }
+    
+    var bottomRightCoords, topLeftCoords;
+    
+    if(right_straight)                                                                    /* . this is not correct, it has to be the point where the line and the canvas collides */
+        bottomRightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.board.canvasWidth, this.board.canvasHeight], this.board);
+    else
+        bottomRightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [right.coords.scrCoords[1], right.coords.scrCoords[2]], this.board); 
+
+    if(left_straight)                                         /* . this is not correct, it has to be the point where the line and the canvas collides */
+        topLeftCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], this.board);
+    else
+        topLeftCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [left.coords.scrCoords[1], left.coords.scrCoords[2]], this.board);
+
+    var minX = topLeftCoords.usrCoords[1];
+    var maxX = bottomRightCoords.usrCoords[1];
+    var maxY = topLeftCoords.usrCoords[2];
+    var minY = bottomRightCoords.usrCoords[2];
+    
+    var x,y;
+    var oldTicksCount = this.ticks.length;
+
+    for (var i=0;;i++) {
+        if (v!=0) {
+            x = minX+i*this.ticksDelta;
+            y = 0;
+            if (x>=maxX*0.95) break;
+        } else {
+            x = 0;
+            y = minY+i*this.ticksDelta;
+            if (y>=maxY*0.95) break;
+        }
+        this.ticks[i] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+    }
+
+    if(!first) {
+        this.board.renderer.updateAxisTicks(this, oldTicksCount);
+    }
+};
+
 /**
  * Uses the boards renderer to update the arrow.
  */
@@ -233,6 +352,25 @@ JXG.Line.prototype = new JXG.GeometryElement;
         //this.board.renderer.updateLine(this);
         this.needsUpdate = false;
     }
+};
+
+JXG.Line.prototype.enableTicks = function() {
+    if(this.withTicks)
+        return;
+        
+    this.withTicks = true;
+    
+    this.updateTickCoordinates();
+};
+
+JXG.Line.prototype.disableTicks = function() {
+    if(!this.withTicks)
+        return;
+        
+    this.withTicks = false;
+    this.ticks = [];
+        
+    this.board.renderer.removeAxisTicks(this);
 };
 
 /**
@@ -368,24 +506,3 @@ JXG.createLine = function(board, parentArr, atts) {
 };
 
 JXG.JSXGraph.registerElement('line', JXG.createLine);
-
-JXG.Line.prototype.update = function() {    
-    if (this.needsUpdate) {
-        if (!this.board.geonextCompatibilityMode) {
-            this.updateStdform();
-        }
-    }
-};
-
-JXG.Line.prototype.updateStdform = function() {    
-    var nx = -(this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]);
-    var ny =  this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1];
-    var c = -(nx*this.point1.coords.usrCoords[1]+ny*this.point1.coords.usrCoords[2]);
-
-    this.stdform[0] = c;
-    this.stdform[1] = nx;
-    this.stdform[2] = ny;
-    this.stdform[3] = 0;
-
-    this.normalize();
-};

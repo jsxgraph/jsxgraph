@@ -69,7 +69,7 @@ JXG.Math.Numerics.backwardSolve = function(R, b) {
    }
    
    return x;
-}
+};
 
 /**
  * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
@@ -126,7 +126,7 @@ JXG.Math.Numerics.Gauss = function(A, b) {
    }
    
    return x;
-}
+};
 
 /**
  * Decomposites the matrix A in an orthogonal matrix Q and a right triangular matrix R. 
@@ -137,7 +137,7 @@ JXG.Math.Numerics.Gauss = function(A, b) {
  */
 JXG.Math.Numerics.QR = function(A, b) {
     
-}
+};
 
 /**
  * Calculates the integral of function f over interval using Newton-Cotes-algorithm.
@@ -212,4 +212,4 @@ JXG.Math.Numerics.NewtonCotes = function(interval, f) {
             integral_value *= 2.0 * step_size / 45.0;
     }
     return integral_value;
-}
+};

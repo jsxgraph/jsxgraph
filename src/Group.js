@@ -113,6 +113,15 @@ JXG.Group.prototype.addPoint = function(object) {
 };
 
 /**
+ * Adds an multiple points to this group.
+ * @param {Array} objects An array of points to add to the group.
+ */
+JXG.Group.prototype.addPoints = function(objects) {
+    for(var p in objects)
+        this.objects[p.id] = p;
+};
+
+/**
  * Adds an Pint to this group.
  * @param {Point} object The object added to the group.
  */
