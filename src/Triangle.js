@@ -63,9 +63,9 @@ JXG.createTriangle = function(board, parents, attributes) {
         var g = new JXG.Group(board);
         g.addPoints([p1, p2, p3]);
                 
-        return {A: p1, B: p2, C: p3, a: p4, b: l1, c: l2, G: g};
+        return {A: p1, B: p2, C: p3, a: p4, b: l1, c: l2, G: g, multipleElements: true};
     } else {
-        throw ("Can't create square with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
+        throw ("Can't create triangle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");    
     }
 };
 

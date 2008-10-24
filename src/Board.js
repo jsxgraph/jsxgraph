@@ -2314,10 +2314,23 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         //throw "JXG.createElement: failure creating "+elementType;
         return;
     };
-    
-    if(!JXG.IsArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
-        el.setProperty(attributes);
+  
+    if(JXG.IsArray(attributes))
+        attributes = attributes[0];
+        
+    if(el.multipleElements) {
+        for(var s in el) {
+            if(typeof el[s].setProperty != 'undefined')
+                el[s].setProperty(attributes);
+        }  
+    } else {
+        if(typeof el.setProperty != 'undefined')
+            el.setProperty(attributes);
     }
+    
+//    if(!JXG.IsArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
+//        el.setProperty(attributes);
+//    }
 /* AW: Doch erstmal wieder auskommentiert
     else {                  // Setting attributes of multiple objects simultaneously.  Here, only strings are possible
         for (var s in attributes) {
