@@ -269,14 +269,13 @@ JXG.Line.prototype.updateTickCoordinates = function (first) {
     
     if(!this.withTicks)
         return;
-    
-    /* TODO */
-    var v = this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1];
-    var w = this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2];
+
+    var dx = this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1]; // delta x
+    var dy = this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]; // delta y
     
     var left, right, left_straight, right_straight;
     
-    /* Determine left/right point */
+    /* Determine left/right point. maybe this can be omitted. */
     if(this.point1.coords.usrCoords[1] < this.point2.coords.usrCoords[1]) {
         var left = this.point1;
         var right = this.point2;
@@ -293,25 +292,53 @@ JXG.Line.prototype.updateTickCoordinates = function (first) {
     
     var bottomRightCoords, topLeftCoords;
     
-    if(right_straight)                                                                    /* . this is not correct, it has to be the point where the line and the canvas collides */
+    if(right_straight)                                                                    /* this is not correct, it has to be the point where the line and the canvas collides */
         bottomRightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.board.canvasWidth, this.board.canvasHeight], this.board);
     else
         bottomRightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [right.coords.scrCoords[1], right.coords.scrCoords[2]], this.board); 
 
-    if(left_straight)                                         /* . this is not correct, it has to be the point where the line and the canvas collides */
+    if(left_straight)                                           /* this is not correct, it has to be the point where the line and the canvas collides */
         topLeftCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], this.board);
     else
         topLeftCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [left.coords.scrCoords[1], left.coords.scrCoords[2]], this.board);
 
     var minX = topLeftCoords.usrCoords[1];
     var maxX = bottomRightCoords.usrCoords[1];
-    var maxY = topLeftCoords.usrCoords[2];
-    var minY = bottomRightCoords.usrCoords[2];
+    var minY = topLeftCoords.usrCoords[2];
+    var maxY = bottomRightCoords.usrCoords[2];
     
     var x,y;
     var oldTicksCount = this.ticks.length;
 
-    for (var i=0;;i++) {
+    var total_length = Math.sqrt(dx*dx + dy*dy);
+    var deltaX = (this.ticksDelta * dx) / (total_length);
+    var deltaY = (this.ticksDelta * dy) / (total_length);
+
+    for(var i=0;;i++) {
+        x = minX + i*deltaX;
+        y = minY + i*deltaY;
+        
+        if(minX < maxX) {
+            if (x >= maxX)
+                break;
+        } else if (minX > maxX) {
+            if (x <= minX)
+                break;
+        }
+        if(minY < maxY) {
+            if (y >= maxY)
+                break;
+        } else if (minY > maxY) {
+            if (y <= minY)
+                break;
+        }
+            
+//        if ((x >= maxX) || (y >= maxY)) break;
+
+        this.ticks[i] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+    }
+
+/*    for (var i=0;;i++) {
         if (v!=0) {
             x = minX+i*this.ticksDelta;
             y = 0;
@@ -322,11 +349,13 @@ JXG.Line.prototype.updateTickCoordinates = function (first) {
             if (y>=maxY*0.95) break;
         }
         this.ticks[i] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-    }
+    }*/
 
     if(!first) {
         this.board.renderer.updateAxisTicks(this, oldTicksCount);
     }
+    
+    this.board.renderer.updateAxisTicksInnerLoop(this, 0);
 };
 
 /**
