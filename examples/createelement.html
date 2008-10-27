@@ -5,7 +5,7 @@
    <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
     <!-- example for the linking of new elements: -->
-   <script type="text/javascript" src="../src/Square.js"></script>
+   <script type="text/javascript" src="../src/Triangle.js"></script>
 </head>
 <body>
   <h2>Create Element Examples</h2>
@@ -44,7 +44,7 @@
         
         p9 = board.createElement('point', [5, 3]);
         p10 = board.createElement('point', [7, 2.9]);
-        sq = board.createElement('square', [p9, p10]);
+        tr = board.createElement('triangle', [p7, p9, p10]);
         
         pol = board.createElement('polygon', [p4, p5, p6, p7, p8]);
 
