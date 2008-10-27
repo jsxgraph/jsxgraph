@@ -71,6 +71,12 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
     this.visProp = {};
     this.visProp['visible'] = true;
     this.show = true; // noch noetig? BV
+	
+    /**
+     * True when the intersection points have real coordinates, false otherwise.
+     * @type bool
+     */	
+	this.real = true;
     
     /** 
      * Stores all Intersection Objects which in this moment are not real and
@@ -97,7 +103,6 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
      * @private
      */
     this.type = JXG.OBJECT_TYPE_INTERSECTION;     
-   // this.type = 'none';
 
     /*
      * Only intersect existing geometry elements.
@@ -107,7 +112,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
     }
 
     /*
-     * Do not intersect elements which aren't of type line, arrow circle or arc.
+     * Do not intersect elements which aren't of type line, arrow, circle or arc.
      */
     if( ((this.intersect1.type == this.intersect2.type) && (this.intersect1.type == JXG.OBJECT_TYPE_LINE || this.intersect1.type == JXG.OBJECT_TYPE_ARROW)) 
          || ((this.intersect1.type == JXG.OBJECT_TYPE_LINE) && (this.intersect2.type == JXG.OBJECT_TYPE_ARROW))
@@ -121,6 +126,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         /* A point constructed by an intersection can't be moved, so it is fixed */
         this.p.fixed = true;
         this.addChild(this.p);
+		this.real = true;
 
         /* 
          * Because the update function depends on the types of the intersected elements
@@ -158,9 +164,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
          * and so this element isn't real anymore. The not existing parent is stored in the notExistingParents
          * array.
          */
-        this.hideChild = function(id) {
-            //this.notExistingParents[id] = this;
-            //this.p.hideChild(id);            
+        this.hideChild = function(id) {    
             this.notExistingParents[id] = this.board.objects[id];
 
             for(var el in this.descendants) {    
@@ -178,7 +182,6 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
          * notExistingParents array.
          */
         this.showChild = function(id) {        
-            //this.p.showChild(id);
             for(el in this.board.objects) {        
                 delete(this.board.objects[el].notExistingParents[id]);
                 if(this.board.objects[el].visProp['visible'] && Object.keys(this.board.objects[el].notExistingParents).length == 0) {
@@ -210,26 +213,32 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
             this.p2.coords = coordinates[2];
             this.p2.showElement();
             this.p2.updateRenderer();
+			
+			this.real = true;
         }
+		else {
+		    this.real = false;
+		}
 
         this.update = function () {    
             if (!this.needsUpdate) { return; }
             var coordinates = this.board.algebra.intersectCircleCircle(this.intersect1, this.intersect2);
             var p1show = this.p1.visProp['visible'];
             var p2show = this.p2.visProp['visible'];         
-            if(coordinates[0] == 0) {            
-                this.hideChild(this.id);
-                //this.p1.hideChild(this.id); // wird dann rekursiv weiter aufgerufen
-                this.p1.visProp['visible'] = p1show;
-                //this.p2.hideChild(this.id); // wird dann rekursiv weiter aufgerufen
-                this.p2.visProp['visible'] = p2show;
+            if(coordinates[0] == 0) {  
+				if(this.real) {
+					this.hideChild(this.id);
+					this.p1.visProp['visible'] = p1show;
+					this.p2.visProp['visible'] = p2show;
+					this.real = false;
+				}
             } else {
-                this.p1.coords = coordinates[1];
-                //this.p1.showChild(this.id); // wird dann rekursiv weiter aufgerufen             
-
+                this.p1.coords = coordinates[1];     
                 this.p2.coords = coordinates[2];
-                this.showChild(this.id);                
-                //this.p2.showChild(this.id); // wird dann rekursiv weiter aufgerufen
+				if(!this.real) {
+					this.showChild(this.id); 
+					this.real = true;
+				}
             }
             this.needsUpdate = false;
         }
@@ -247,9 +256,6 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         }
 
         this.hideChild = function(id) {
-            /*this.notExistingParents[id] = this;        
-            this.p1.hideChild(id);
-            this.p2.hideChild(id);*/
             this.notExistingParents[id] = this.board.objects[id];
 
             for(var el in this.descendants) {    
@@ -262,8 +268,6 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         }
 
         this.showChild = function(id) {            
-            //this.p1.showChild(id);
-            //this.p2.showChild(id);
             for(el in this.board.objects) {        
                 delete(this.board.objects[el].notExistingParents[id]);
                 if(this.board.objects[el].visProp['visible'] && Object.keys(this.board.objects[el].notExistingParents).length == 0) {
@@ -291,11 +295,12 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         }
         
         var coordinates = this.board.algebra.intersectCircleLine(this.intersect1, this.intersect2);
-        if(coordinates[0] == 1) {
+        if(coordinates[0] == 1) { // not really implemented
             this.p1.coords = coordinates[1];
             this.p1.showElement();
             this.p1.update();    
-        } else if(coordinates[0] == 2) {
+        } 
+		else if(coordinates[0] == 2) {
             this.p1.coords = coordinates[1];
             this.p1.showElement();        
 
@@ -305,8 +310,13 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
             //this.p1.update();
             this.p1.updateRenderer();
             //this.p2.update(); 
-            this.p2.updateRenderer();            
+            this.p2.updateRenderer();    
+			
+			this.real = true;
         }
+		else {
+		    this.real = false;
+		}
 
         this.update = function () {
             if (!this.needsUpdate) { return; }
@@ -315,18 +325,19 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
             var show2 = this.p2.visProp['visible'];
             
             if(coordinates[0] == 0) {
-                this.hideChild(this.id);
-                this.p1.visProp['visible'] = show1; 
-//                this.p1.hideChild(this.id); // wird dann rekursiv weiter aufgerufen
-//                          this.p2.hideChild(this.id); // wird dann rekursiv weiter aufgerufen
-                this.p2.visProp['visible'] = show2;
+			    if(this.real) {
+                    this.hideChild(this.id);
+                    this.p1.visProp['visible'] = show1; 
+                    this.p2.visProp['visible'] = show2;
+					this.real = false;
+				}
             } else if(coordinates[0] == 2) {
-                this.p1.coords = coordinates[1];
-                //this.p1.showChild(this.id); // wird dann rekursiv weiter aufgerufen
-                
+                this.p1.coords = coordinates[1];   
                 this.p2.coords = coordinates[2];
-                this.showChild(this.id);                
-                //this.p2.showChild(this.id); // wird dann rekursiv weiter aufgerufen       
+				if(!this.real) {
+                    this.showChild(this.id);  
+                    this.real = true;
+			    }
             }
             this.needsUpdate = false;
         }
@@ -344,9 +355,6 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         }
 
         this.hideChild = function(id) {
-            /*this.notExistingParents[id] = this;    
-            this.p1.hideChild(id);
-            this.p2.hideChild(id);*/
             this.notExistingParents[id] = this.board.objects[id];
 
             for(var el in this.descendants) {    
@@ -359,8 +367,6 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         }
 
         this.showChild = function(id) {
-            //this.p1.showChild(id);
-            //this.p2.showChild(id);
             for(el in this.board.objects) {            
                 delete(this.board.objects[el].notExistingParents[id]);
                 if(this.board.objects[el].visProp['visible'] && Object.keys(this.board.objects[el].notExistingParents).length == 0) {
