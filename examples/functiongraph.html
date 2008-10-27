@@ -1,0 +1,53 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Funktionsgraph mit veränderbarem Funktionsterm</h2>
+<div style="width:960px">
+<div id="jxgbox" class="jxgbox" style="width:600px; height:400px; float:left; "></div>
+<p style="float:right">
+<input type="text" id="eingabe" value="Math.sin(x)*Math.cos(x)">
+
+<input type="button" value="set" onClick="doIt()" style='margin:1em'> 
+</p>
+</div>
+<br clear=all>
+<div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 20});
+		// Axes
+        b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
+        b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+		
+		eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
+		graph = board.createElement('curve', [function(x){ return x; }, function(x){ return f(x); }, "x", -10, 10]);						
+		//graph = eval("board.createElement('curve', [function(x){ return x; }, function(x){ return "+document.getElementById("eingabe").value+";}, 'x', -10, 10])");
+		//graph.curveType = "graph";
+        p2 = board.createElement('glider', [graph], {style:6, name:'P'});
+        g = board.algebra.D(f);
+        p3 = board.createElement('point', [function() { return p2.X()+1;}, function() {return p2.Y()+board.algebra.D(graph.Y)(p2.X());}], {style:1, name:''});
+        l1 = board.createElement('line', [p2,p3],{});
+        p4 = board.createElement('point', [function() { return p3.X();}, function() {return p2.Y();}],{style:1, name:''});
+        pol = board.createElement('polygon', [p2,p3,p4], {});
+        t = board.createElement('text', [function(){return p2.X()+1.1;},function(){return p2.Y()+(p3.Y()-p4.Y())/2;},function(){ return "m="+(board.round(p3.Y()-p4.Y(),2));}]); 
+            
+        
+        function doIt(){
+        	eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
+        	graph.yterm = function(x){ return f(x); };  // usually: e.g. "x^2"
+			//graph.yterm = eval("function(x){ return "+document.getElementById("eingabe").value+"; };");
+    		graph.Y = graph.yterm;
+    		graph.updateCurve();
+    		board.update();
+        } 
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

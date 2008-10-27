@@ -1,0 +1,68 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Hypotrochoid</h2>
+  <div id="box" class="jxgbox" style="width:500px; height:500px;"></div>
+  <div id="debug" style="display:none;"></div>
+<h2 id="parameter">0
+</h2>
+Bogenl&auml;nge =<input type="text" id="D" size="2" maxlength="7" 
+    style="border:none; text-align:right; font-size:1.2em; "
+    onKeyUp="g4.coords.setCoordinates(JXG.COORDS_BY_USER, [this.value,g4.Y()], board); board.update();"
+>*7*&pi;
+
+   <script type="text/javascript">
+    /* <![CDATA[ */
+        board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 50, unitY: 50});
+
+
+        g1 = board.createElement('point', [1, -1], {style:6,});
+        g2 = board.createElement('point', [2.5, -2], {style:6});
+        g3 = board.createElement('point', [1, -3], {style:5});
+        g4 = board.createElement('point', [2.5, -4], {style:5});
+        g5 = board.createElement('point', [-4, 1], {style:5,name:''});
+
+        c1 = board.createElement('curve', [
+            function(t){ return (g1.X()-g2.X())*Math.cos(t)+g3.X()*Math.cos(t*(g1.X()-g2.X())/g2.X()); },
+            function(t){ return (g1.X()-g2.X())*Math.sin(t)+g3.X()*Math.sin(t*(g1.X()-g2.X())/g2.X()); },
+            "t",0,function(){ return Math.PI*7*Math.abs(g4.X());}],{
+                    curveType:'parameter',
+                    strokeWidth:function(){return g5.Y()*3;},
+                    fillColor:'#356AA0',
+                    fillOpacity:function(){return g5.Y()*0.25;},
+                    strokeOpacity:function(){return g5.Y()*0.6;}
+                });
+
+        t = board.createElement('text', [function() { return g5.X()+0.2; },function() { return g5.Y()+0.25; },'X(B)=<value>X(B)</value>, Y(B)=<value>Y(B)</value>'], { 
+            digits:3, 
+            fontSize:function(){return g5.Y()*10;}
+        });
+
+        board.addHook(function(board) {
+                var d = 3;
+                var a = board.algebra.round(g1.X()-g2.X(),d);
+                var b = board.algebra.round(g3.X(),d);
+                var c = board.algebra.round((g1.X()-g2.X())/g2.X(),d);
+                $('parameter').innerHTML = "["+a+"cos(t) + "+b+"cos("+c+"*t)  , " +a+"sin(t) + "+b+"sin("+c+"*t)]";
+            });
+        board.addHook(function(board) {
+                $('D').value = g4.X();
+            });
+
+        /* This is possible, too: */
+        /*
+        board.addHook(function(board) {
+                $('debug').innerHTML = c1.X.toString() + '<br>'+ c1.Y.toString() ;
+            });
+        */
+
+
+  /* ]]> */
+  </script>
+</body>
+</html>

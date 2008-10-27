@@ -1,0 +1,77 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+
+<h1>Optimizing a fenced area</h1>
+      
+      <!-- Die beiden Zeichenflaechen, schoen nebeneinander angeordnet in einer Tabelle -->
+      <table border="0">
+        <tr><td>
+            <div id="box" class="jxgbox" style="width:500px; height:500px;"></div>
+        </td><td>
+            <div id="box2" class="jxgbox" style="width:500px; height:500px;"></div>
+        </td></tr>
+      </table>
+      
+      <!-- Die Tabelle mit den Werten -->
+      
+      <table style="border: 0px solid black; text-align: center" width="500px">
+ 	    <tr><th style="border: 1px solid black" width="100px">Length of fence</th><th style="border: 1px solid black" width="100px">Length of side a</th><th style="border: 1px solid black" width="100px">Length of side b</th><th style="border: 1px solid black" width="100px">Area of rectangle</th></tr>
+ 	    <tr><td id="print_fencelength">1</td><td id="print_sidelength1">2,5</td><td id="print_sidelength2">2</td><td id="print_area">3</td></tr>
+      </table>
+
+      <script type="text/javascript">
+        /* <![CDATA[ */
+
+        // Das Objekt geonext ist global und wird in Geonext.js initialisiert
+        // board links oben initialisieren
+		//board1 = JXG.JSXGraph.loadBoardFromString('box', 'eNrtXOtv48YR/2z9FQv4S1MkFEm9UZbAXWwHQfNCcg2SokhBSStpa4oU+LClC/K/d2ZfXMpLyXIvZ59MG/DtzD6585vHDnkbfHX9/XfXv7wLO8HP1z/+9PX334WeM/KCrqI6wTSNsnnYuQiSaE3Df1E2W9FkEf+7dF3ahzLpBV1eBU1YskizdVSwNAmDrklBZVQWqzQDviwAa5au1zQpgKdKwFykSZGz9zT0BkFXEzj6PIS5GF+M5F0E62jL1kDMw0UU5zToVgys3oau4wbdLSd2gthx4p7Ni1U4GI2RJQhkryhbroqwP5wgX1IwYVfMSAhMmc7LPPQ91x9CE0Hxh0mzOUuiggJJLiRDLUsQnL/MmGbzMufmSbRRXF7G1aQZWzLcPf4ovls9DD6NpMXzdFVbHOx9mq5VL6/WxzN6iFbYvkxYodoP6pMMzDlEO+xR0EzPYLTWLUU9toyjKY1V063RdqcbyybYel3GBWseGPZpld5v9UZxQvN3Jl+OLQcUAkkKlpQplxefQDbXs0hadjXbEzmFuVOHe1etsS+gUs9aZKXZTZCyl2iHPbZpulM9lr98Q02hLH/ltOwjWmKfO0bvN2kmV1ikm7CP0sMC58R0UYRfcB4vcuY0LQoAArDHftCVFK/JOPpHTn8YdDOpCTBfNQu5kMiucB9UkAbE8jUTgVa+Xi6HLM1zrRickPKJwS5cfuni780NDo0MXjeP8pXcKV7kzE3KwDwYilMxUGXVSoJpNLtdZmmZCKMg57mRP3oeqFqwmEo8ZTMAHf6VMqirRaUVypS4NUOiLYlbsyOwKjVFwNbRkoaO44BR40WwLoSABIzVEs4CIM4Z2tFccboGCxn4lDSmaENzpaBbKV/YhDSe/0yzHJoL886NKN/VIuIloRxogX/7/bff361YToCRw4bPcBJyHwEjoyDkOblnxYpwx7F9R3A8548/hLIIC46jrTeweeuNprac3Ep6G37Rc8ZqN3E7AXxeX20oCDbKhF+QBb7Yrl5tEMGq7qjEgyREBawxBL/B/5WPCGhxFWo4J4sA+hIxghD7BP5Kui3BuGM5m8ZqGkUJ1cqiGVVjCEKgpsjSWypQAIA3yc6Fhp7RNLx04efmxnVVa6mpCBiWLLEeQYr1msdbAI7i8PLt5Ort6GrY57iSZlaY00vs5HI9MkyweN7LL8f4i92MDeiaqwPrxXfCsKjVzlQDojA5hCtZclKqhjm1hmzlExVD1OdhUsYx8KWl/G++AHngX/nAynRiSTwNuDwAPOy0LAkQlEUqaTmTwZHeSSjH/6Ulv6YlAZyRrEwSkAqJEgIj0IzciUFIulBq8mE0pN9qSKshH1dD0Ndwp8qdijwEvFERP5GKs+zRgVAXUukLUUD2nMlQxQECyp7j6WhAo5Ych+3kZcC2dxC2FW4reBm43QeuxJ8JXIVcUd3zDeRq6LruQ+g+K3ZxiNqJp2JobMoaDU4R9ujwR+zdDkTh4ZbtZJzU1QC0ovGtBY3DRjT2ncG4BkbX8VootlB8ChRjllATiZEFiaMGJC5YlhfScIqyrIgjwR/iIyn2CcD8JFx7Bcyxi79HgClOaU8EJo8LXggwYbPUQVBjQCORg6DCgOQLEPCRat0DCpFBVElIkxJ9+3jG/RNwFSfK9SbNZWhRIdgC4HEDgIvdhmISzPMwwYCErGDJpiwU9Hn5zCFcwawRwhqHdgir6k8AwmlZcJFeaMx8q/O/Bmhmrj4+NUvb4kot8m4U+EOJHxJ5o8yPOtSa1I9Zrsf41EO267BXPSj6muyPCL8m/X3x78n/og6+I97V6l5t/tXmYDGNrQHG3wqYVsrmc6cWk+W5T3W6HLevwe0KbLVu9yO73Txmc5qZ+L2y4ddrPky7jt/r9dyxP4S/7qjvjXr1s7XrjCaj8WTQ9wf+sO8O/Ik+3uiskdQRlTqSdUrTXGfgj92+64OYBn5v5Pcx7q0FC2d8TpoM/9xz0kvSiz/rnARdM6pFwssCEQl0K7TzF5SeXdOiGl+DqCpelpLaUGji89cqoqwkGGXybYsoKna6ES89c/UWDHYrRSbsRapZc5bRmZl6qxhi38y1B2mySePdsmpdMcS7P63npwXbmBY7HG33mqJtbjSqcNuscdtA/DUE4jNLIO75p0Tig5cUifuPjsTtwcxjopkTIvE90b+ISLwW16jARr0A0HGNDGwEX8c1+4GNEdnIZdZDG6vpPxatz1g2i2vx+u1/bFkyfPdrtXtrNhcpN2nhNC3rs2jOylyH7pI81c71XmPw/onYOUtEXaEKMQZooFmufPVh9zo4djAU9tJ6NkSMthnZM3tVwEMpzwypZFRcfftSD44NfqdCjuGFr21eeMDafNgHyYe9RC/84fJhpyCvIX1W4TEwXD1H5I0dmd7zIlM2blO1Zw9NhUeEQd1ln3hIHj/9kCwMsf2YLI5K7UH57A/Kc5shHLcH5fag/HwH5UdbP999svUbtBnC1234qMXw+W5r+FrD92yG74Tsje8fzd6MG7M3AuZt/uYc8zfuh8zffGWzkX6bv2nzNx83f2M/Jeu3zJWl/MH6RsVveqNyR7OCbmU4KIkHVfiqpbGOn6GbaoWqNNXuTXnu31cdCDRvbt7A73l8RzIFXaGZaUQXNiPa/6ENNF9XoPnwG7uGj+wOhJq2z+zskaYBQwskl3ZIei0kW0g+EyRXdkj6LSRbSD4TJJkdkr0Wki0kPwIk8UNzfcDB8474b+jVYeedazvrTBrOOurGhW9osixWeB/DgiYzSmLydxLcRXFJwyuWF3958/nbzwBfnGHc00DURQ2n9cdLHYi+1eFA36EzHJjdttV3/p7j1z7r7znu+OF3/PVP+M/3NCX048BpatjH38bTlKg+lLZ/QSmtQ5dAkAe3QJC9ayCILWNB7DdBkL2rICRYjJsgSHUVRIM+ehZ97LlH9PENYA81Ar+wj5JlTEn0QKOuPvsrL119/u1B3Xz6WHU9PTiO74yGjZrq1S8U8J3BsFXVVlWfU1XB71aXgaGD5Xc48ovEQCqwen4TXJGm8TTC/6ZCRCL9nz9d/6hz6URer0GTsnhPwUMvWMIweUf+IXKZt/z6sZiCZukXi9BrTvNZxjZ8F6LboqQx6NL0kaOYnTvikjq9yiCHh5oVdG5yEWgWdqcTTEugEn5tIyZDDbITiIDD/RvemshDj+A+Ve+/sNQRlkZsVVddkvk/CpkHvA==', 'Geonext');
+
+        board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 100, unitY: 100});
+        b1p1 = board.createElement('point', [-2,0],{name: 'A'});
+		b1p2 = board.createElement('point', [1,0],{visible: false});
+		b1l1 = board.createElement('line', [b1p1, b1p2], {straightFirst: false, straightLast: true, visible: false}); //Tr�gerhalbgerade
+		b1p3 = board.createElement('point', [2, 0], {slideObject: b1l1, name: 'B'}); //variabler Umfang
+		b1p4 = board.createElement('midpoint', [b1p1,b1p3], {name: 'M'}); //halber Umfang
+		b1l2 = board.createElement('line', [b1p1, b1p4], {straightFirst: false, straightLast: false});  //Strecke halber Umfang
+		b1p5 = board.createElement('point', [-1, 0], {slideObject: b1l2, labelcolor:['#aaaaaa',null]}); //ver�nderbare Seite
+		b1l3 = board.createElement('perpendicular', [b1l1,b1p5],{strokeColor:['#ff0000',null]})[0]; //Senkrechte durch variablen Eckpunkt
+		b1l3.setProperty();
+		b1c1 = board.createElement('circle', [b1p5,b1p4],{}); //Kreis zum Abtragen der zweiten Seitenl�nge
+		b1p6 = board.createElement('point',[board.intersectionFunc(b1c1,b1l3,1)], {style:8});  // Schnittpunkt des Kreises mit der Sekrechten
+		b1l4 = board.createElement('perpendicular', [b1l3,b1p6],{strokeColor:['#ff0000',null]})[0]; //Senkrechte durch variablen Eckpunkt
+		b1l5 = board.createElement('perpendicular', [b1l1,b1p1],{strokeColor:['#ff0000',null]})[0]; //Senkrechte durch festen Eckpunkt
+		
+
+		b1p7 = board.createElement('point',[board.intersectionFunc(b1l4,b1l5,0)], {style:8}); 
+		b1pol1 = board.createElement('polygon',[b1p1,b1p5,b1p6,b1p7], {}); 
+		//b1l4 = board.createElement('perpendicular', [b1l1,b1p1],{strokeColor:['#ff0000',null]});		
+		
+		 
+        board2 = JXG.JSXGraph.initBoard('box2', {originX: 100, originY: 300, unitX: 100, unitY: 100});
+        // Tracing the area
+        //b2p1 = board2.createElement('point', [function(){ return JXG.GetReferenceFromParameter(board1, 'A').Dist(JXG.GetReferenceFromParameter(board1, 'D')); }, function() { return JXG.GetReferenceFromParameter(board1, 'A').Dist(JXG.GetReferenceFromParameter(board1, 'D'))*JXG.GetReferenceFromParameter(board1, 'D').Dist(JXG.GetReferenceFromParameter(board1, 'M')); }], {fixed: true, trace: true, strokeColor: '#ff0000', name: 'S'});
+		b2p1 = board2.createElement('point', [function(){ return b1p1.Dist(b1p5); }, function() { return b1p1.Dist(b1p5)*b1p5.Dist(b1p4); }], {fixed: true, trace: true, strokeColor: '#ff0000', name: 'S'});
+		b2axisx = board2.createElement('axis', [[1,0], [0,0]], {});
+        b2axisy = board2.createElement('axis', [[0,1], [0,0]], {});
+        
+		//defining the hook
+		function print_table(board) {
+			$('print_fencelength').innerHTML = board.algebra.round(b1p1.Dist(b1p3),2);
+        	$('print_sidelength1').innerHTML = board.algebra.round(b1p1.Dist(b1p5),2);
+        	$('print_sidelength2').innerHTML = board.algebra.round(b1p4.Dist(b1p5),2);
+        	$('print_area').innerHTML = board.algebra.round(b1p1.Dist(b1p5) * b1p4.Dist(b1p5),2);
+			
+			
+        }
+		//registering the hook
+        print_table_id = board.addHook(print_table);
+
+    </script>
+</body>
+</html>
