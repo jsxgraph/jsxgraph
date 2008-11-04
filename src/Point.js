@@ -176,7 +176,7 @@ JXG.Point.prototype.hasPoint = function (x,y) {
 };
 
 /**
- * Calls the renderer to update the drawing.
+ * Updates the position of the point
  */
 JXG.Point.prototype.update = function (fromParent) {
     if (!this.needsUpdate) { return; }
@@ -331,7 +331,7 @@ JXG.Point.prototype.updateRenderer = function () {
 };
 
 /**
- * Getter method for x, this is required for CAS-points.
+ * Getter method for x, this is used by for CAS-points to access point coordinates.
  * @see #coords
  * @see Coords#x
  * @return {float} User coordinate of point in x direction.
@@ -341,7 +341,7 @@ JXG.Point.prototype.X = function () {
 };
 
 /**
- * Getter method for y, this is required for CAS-points.
+ * Getter method for y, this is used by CAS-points to access point coordinates.
  * @see #coords
  * @see Coords#y
  * @return {float} User coordinate of point in y direction.
@@ -349,6 +349,29 @@ JXG.Point.prototype.X = function () {
 JXG.Point.prototype.Y = function () {
     return this.coords.usrCoords[2];
 };
+
+/**
+ * New evaluation of the function term. 
+ * This is required for CAS-points: Their XTerm() method is overwritten in @see #addConstraint
+ * @see #coords
+ * @see Coords#x
+ * @return {float} User coordinate of point in x direction.
+ */
+JXG.Point.prototype.XEval = function () {
+    return this.coords.usrCoords[1];
+};
+
+/**
+ * New evaluation of the function term. 
+ * This is required for CAS-points: Their YTerm() method is overwritten in @see #addConstraint
+ * @see #coords
+ * @see Coords#y
+ * @return {float} User coordinate of point in y direction.
+ */
+JXG.Point.prototype.YEval = function () {
+    return this.coords.usrCoords[2];
+};
+
 
 /**
  * Getter method for the distance to a second point, this is required for CAS-elements.
@@ -443,7 +466,7 @@ JXG.Point.prototype.addConstraint = function (xterm, yterm) {
     // Only xterm is given
     if (yterm==null) {  // Intersection
         this.updateConstraint = function() { this.coords = xterm(); };
-        this.update();
+        if (!this.board.isSuspendedUpdate) { this.update(); }
         return;
     }
 
@@ -452,22 +475,22 @@ JXG.Point.prototype.addConstraint = function (xterm, yterm) {
     if (typeof xterm=='string') {
         // Convert GEONExT syntax into  JavaScript syntax
         var newxterm = this.board.algebra.geonext2JS(xterm);
-        this.X = new Function('','return ' + newxterm + ';');
+        this.XEval = new Function('','return ' + newxterm + ';');
     } else if (typeof xterm=='function') {
-        this.X = xterm;
+        this.XEval = xterm;
     } else if (typeof xterm=='number') {
-        this.X = function() { return xterm; };
+        this.XEval = function() { return xterm; };
     }
     if (typeof yterm=='string') {
         // Convert GEONExT syntax into  JavaScript syntax
         var newyterm = this.board.algebra.geonext2JS(yterm);
-        this.Y = new Function('','return ' + newyterm + ';');
+        this.YEval = new Function('','return ' + newyterm + ';');
     } else if (typeof yterm=='function') {
-        this.Y = yterm;
+        this.YEval = yterm;
     } else if (typeof yterm=='number') {
-        this.Y = function() { return yterm; };
+        this.YEval = function() { return yterm; };
     }
-    var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.X(),this.Y()]);';
+    var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.XEval(),this.YEval()]);';
     this.updateConstraint = new Function('',fs);
     
     // Find parent elements
@@ -483,7 +506,9 @@ JXG.Point.prototype.addConstraint = function (xterm, yterm) {
         }
     }
     */
-    this.update();
+    if (!this.board.isSuspendedUpdate) { this.update(); }
+    return;
+    
 };
 
 JXG.Point.prototype.updateTransform = function () {
@@ -696,7 +721,7 @@ JXG.createPoint = function(board, parentArr, atts) {
         el.addTransform(parentArr[0],parentArr[1]);
     }
     else // Ansonsten eine fette Exception um die Ohren hauen
-        throw ("Can't create point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
+        throw ("JSXGraph error: Can't create point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
     return el;
 };
 
