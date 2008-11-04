@@ -565,6 +565,21 @@ JXG.AbstractRenderer.prototype.updateAxis = function(axis) { };
 JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) { };
 
 /**
+ * Removes all ticks from an axis
+ * @param {JXG.Axis} axis Reference of an axis object, thats ticks have to be removed.
+ * @see JXG.Axis
+ * @see #drawAxis
+ * @see #updateAxis
+ * @see #upateAxisTicks
+ */
+JXG.AbstractRenderer.prototype.removeAxisTicks = function(axis) {
+    for(var i=0; i<axis.ticks.length; i++) {
+        var tick = $(axis.id+'tick'+i);
+        this.remove(tick);
+    }
+}
+
+/**
  * Draws an arc on the canvas.
  * @param {JXG.Arc} arc Reference to an arc object, that has to be drawn.
  * @see JXG.Arc

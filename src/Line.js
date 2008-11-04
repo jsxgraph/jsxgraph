@@ -375,9 +375,8 @@ JXG.Line.prototype.disableTicks = function() {
         return;
         
     this.withTicks = false;
-    this.ticks = [];
-        
     this.board.renderer.removeAxisTicks(this);
+    this.ticks = new Array();
 };
 
 /**
