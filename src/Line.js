@@ -132,7 +132,7 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type float
      */
     this.ticksDelta = 1;
-    
+        
     /**
     * If the line is the border of a polygon, the polygone object is stored, otherwise null.
     * @type Polygon
@@ -269,87 +269,65 @@ JXG.Line.prototype.updateTickCoordinates = function (first) {
     
     if(!this.withTicks)
         return;
-
-    var dx = this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1]; // delta x
-    var dy = this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]; // delta y
-    
-    var left, right, left_straight, right_straight;
-    
-    /* Determine left/right point. maybe this can be omitted. */
-    if(this.point1.coords.usrCoords[1] < this.point2.coords.usrCoords[1]) {
-        var left = this.point1;
-        var right = this.point2;
         
-        var left_straight = this.visProp['straightFirst'];
-        var right_straight = this.visProp['straightLast'];
-    } else {
-        var left = this.point2;
-        var right = this.point1;
-        
-        var left_straight = this.visProp['straightLast'];
-        var right_straight = this.visProp['straightFirst'];        
-    }
-    
-    var bottomRightCoords, topLeftCoords;
-    
-    if(right_straight)                                                                    /* this is not correct, it has to be the point where the line and the canvas collides */
-        bottomRightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.board.canvasWidth, this.board.canvasHeight], this.board);
-    else
-        bottomRightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [right.coords.scrCoords[1], right.coords.scrCoords[2]], this.board); 
+    // calculate start (c1) and end (c2) points
+    var c1 = new JXG.Coords(JXG.COORDS_BY_USER, [this.point1.coords.usrCoords[1], this.point1.coords.usrCoords[2]], this.board);
+    var c2 = new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.coords.usrCoords[1], this.point2.coords.usrCoords[2]], this.board);
+    this.board.renderer.calcStraight(this, c1, c2);
+    var p1 = this.point1.coords;
 
-    if(left_straight)                                           /* this is not correct, it has to be the point where the line and the canvas collides */
-        topLeftCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], this.board);
-    else
-        topLeftCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [left.coords.scrCoords[1], left.coords.scrCoords[2]], this.board);
-
-    var minX = topLeftCoords.usrCoords[1];
-    var maxX = bottomRightCoords.usrCoords[1];
-    var minY = topLeftCoords.usrCoords[2];
-    var maxY = bottomRightCoords.usrCoords[2];
-    
-    var x,y;
     var oldTicksCount = this.ticks.length;
+    this.ticks = new Array();
 
+    // calculate ticks
+    // between start point (c1) and this.point1
+
+    // distance between start and end points
+    var dx = p1.usrCoords[1]-c1.usrCoords[1]; // delta x
+    var dy = p1.usrCoords[2]-c1.usrCoords[2]; // delta y
+    
     var total_length = Math.sqrt(dx*dx + dy*dy);
     var deltaX = (this.ticksDelta * dx) / (total_length);
     var deltaY = (this.ticksDelta * dy) / (total_length);
+    
+    var x = p1.usrCoords[1];
+    var y = p1.usrCoords[2];
+    
+    // add tick at p1 
+    this.ticks[0] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
 
-    for(var i=0;;i++) {
-        x = minX + i*deltaX;
-        y = minY + i*deltaY;
-        
-        if(minX < maxX) {
-            if (x >= maxX)
-                break;
-        } else if (minX > maxX) {
-            if (x <= minX)
-                break;
-        }
-        if(minY < maxY) {
-            if (y >= maxY)
-                break;
-        } else if (minY > maxY) {
-            if (y <= minY)
-                break;
-        }
-            
-//        if ((x >= maxX) || (y >= maxY)) break;
+    var countTicks = Math.floor(total_length/this.ticksDelta);
 
-        this.ticks[i] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+    for(var i=0; i<countTicks; i++) {
+        x = x - deltaX;
+        y = y - deltaY;
+
+        this.ticks[i+1] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
     }
+    var offset = countTicks;
 
-/*    for (var i=0;;i++) {
-        if (v!=0) {
-            x = minX+i*this.ticksDelta;
-            y = 0;
-            if (x>=maxX*0.95) break;
-        } else {
-            x = 0;
-            y = minY+i*this.ticksDelta;
-            if (y>=maxY*0.95) break;
-        }
-        this.ticks[i] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-    }*/
+    // between end point (ce) and this.point1
+
+    // distance between start and end points
+    dx = p1.usrCoords[1]-c2.usrCoords[1]; // delta x
+    dy = p1.usrCoords[2]-c2.usrCoords[2]; // delta y
+    
+    total_length = Math.sqrt(dx*dx + dy*dy);
+    deltaX = (this.ticksDelta * dx) / (total_length);
+    deltaY = (this.ticksDelta * dy) / (total_length);
+    
+    // reset start coordinates
+    x = p1.usrCoords[1];
+    y = p1.usrCoords[2];
+    
+    var countTicks = Math.floor(total_length/this.ticksDelta);
+
+    for(var i=0; i<countTicks; i++) {
+        x = x - deltaX;
+        y = y - deltaY;
+
+        this.ticks[offset+i+1] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+    }
 
     if(!first) {
         this.board.renderer.updateAxisTicks(this, oldTicksCount);

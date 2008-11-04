@@ -265,6 +265,7 @@ JXG.Axis.prototype.updateTickCoordinates = function (first) {
     
     var x,y;
     var oldTicksCount = this.ticks.length;
+    this.ticks = new Array();
 
     for (var i=0;;i++) {
         if (v!=0) {
