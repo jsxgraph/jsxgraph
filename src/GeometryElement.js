@@ -441,7 +441,25 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     this.visProp['straightLast'] = true;
                 }            
                 this.setStraight(this.visProp['straightFirst'], this.visProp['straightLast']);
-                break;                    
+                break;    
+            case 'firstarrow':
+                if(pair[1] == 'false' || pair[1] == false) {
+                    this.visProp['firstArrow'] = false;
+                }
+                else if(pair[1] == 'true' || pair[1] == true) {
+                    this.visProp['firstArrow'] = true;
+                }    
+                this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
+                break;    
+            case 'lastarrow':
+                if(pair[1] == 'false' || pair[1] == false) {
+                    this.visProp['lastArrow'] = false;
+                }
+                else if(pair[1] == 'true' || pair[1] == true) {
+                    this.visProp['lastArrow'] = true;
+                }            
+                this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
+                break;                   
             case 'curvetype':
                 this.curveType = pair[1];
                 break;

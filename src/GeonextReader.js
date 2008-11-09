@@ -1007,11 +1007,13 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
                 gxtEl.first = JXG.GeonextReader.changeOriginIds(board,gxtEl.first);
                 gxtEl.last = JXG.GeonextReader.changeOriginIds(board,gxtEl.last);
-                var a = new JXG.Arrow(board, gxtEl.first, gxtEl.last, gxtEl.id, gxtEl.name);
+                var a = new JXG.Line(board, gxtEl.first, gxtEl.last, gxtEl.id, gxtEl.name);
                 a.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.colorFill,
                               'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash, 'draft:'+gxtEl.draft);
+				a.setStraight(false,false);							  
+				a.setArrow(false,true);
                 a.traced = (gxtEl.trace=='false') ? false : true;                         
                 JXG.GeonextReader.printDebugMessage('debug',a,Data.nodeName,'OK');
                 break;

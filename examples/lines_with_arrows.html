@@ -1,0 +1,39 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Lines with ticks</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var p1, p2, l1;
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 50, unitY: 50});
+
+        p1 = board.createElement('point', [1, 0], {style:5,name:"A",fillColor:'blue'}); 
+        p2 = board.createElement('point', [5, 0], {style:5,name:"B",fillColor:'blue'}); 
+        p3 = board.createElement('point', [1, 2], {style:5,name:"C",fillColor:'blue'}); 
+        p4 = board.createElement('point', [5, 2], {style:5,name:"D",fillColor:'blue'}); 
+		p5 = board.createElement('point', [1, 4], {style:5,name:"E",fillColor:'blue'}); 
+        p6 = board.createElement('point', [5, 4], {style:5,name:"F",fillColor:'blue'}); 
+        
+        l1 = board.createElement('line', [p1, p2], {straightFirst: false, straightLast:false, strokeWidth:'2px',strokeColor:'green',firstArrow:true,lastArrow:true});
+		l2 = board.createElement('line', [p3, p4], {straightFirst: true, straightLast:false, strokeWidth:'2px',strokeColor:'red',lastArrow:true});
+		l3 = board.createElement('line', [p5, p6], {straightFirst: false, straightLast:true, strokeWidth:'2px',firstArrow:true});
+
+		/* explicit usage of the 'arrow'-wrapper */
+		p7 = board.createElement('point', [1, -2], {style:5,name:"G",fillColor:'blue'}); 
+        p8 = board.createElement('point', [5, -2], {style:5,name:"H",fillColor:'blue'}); 		
+		l4 = board.createElement('arrow', [p7,p8], {strokeColor:'#00FFFF', strokeWidth:'2px'}); 
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

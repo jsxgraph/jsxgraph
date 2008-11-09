@@ -1204,7 +1204,9 @@ JXG.Board.prototype.addArrowParallel = function(a, p, arrowId, pointId, arrowNam
    point.addChild(point2); // notwendig, um auch den Punkt upzudaten
    arrow.addChild(point2);
    
-   var parallelArrow = new JXG.Arrow(this, point.id, point2.id, arrowId, arrowName);
+   var parallelArrow = new JXG.Line(this, point.id, point2.id, arrowId, arrowName);
+   parallelArrow.setStraight(false,false);
+   parallelArrow.setArrow(false,true);
   
    //line.addChild(point2); // notwendig, um auch den Punkt upzudaten
    

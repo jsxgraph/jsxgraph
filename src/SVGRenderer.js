@@ -203,14 +203,14 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     var node3;
     if(el.visProp['firstArrow']) {
         var node2 = this.createArrowHead(el,'Start');
-        this.setFillProp(node2,el.visProp);
+        //this.setFillProp(node2,el.visProp);
         this.defs.appendChild(node2);
         el.rendNodeTriangleStart = node2;
         node.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'TriangleStart)');
     }
     if(el.visProp['lastArrow']) {
         var node2 = this.createArrowHead(el,'End');
-        this.setFillProp(node2,el.visProp);
+        //this.setFillProp(node2,el.visProp);
         this.defs.appendChild(node2);
         el.rendNodeTriangleEnd = node2;
         node.setAttributeNS(null, 'marker-start', 'url(#'+el.id+'TriangleEnd)');
@@ -237,6 +237,7 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     this.setFillProp(node4,el.visProp);
     node4.setAttributeNS(null, 'stroke', 'none');
 
+	
     this.arcs.appendChild(node);
     el.rendNode = node;
     this.arcs.appendChild(node4);
@@ -290,10 +291,10 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     pathString += projectedP3.scrCoords[1] + ' ' + projectedP3.scrCoords[2]; // Endpunkt    
 
     this.updatePathPrimitive(node2,pathString);
-    this.setPropertyPrimitive(node2,'fill','none');
-    this.setStrokeProp(node2,el.visProp);
+    //this.setPropertyPrimitive(node2,'fill','none');
+    //this.setStrokeProp(node2,el.visProp);
 
-    this.setPropertyPrimitive(node,'stroke', 'none');    
+    //this.setPropertyPrimitive(node,'stroke', 'none');    
 
     this.appendChildPrimitive(node,'angles');
     el.rendNode1 = node;
@@ -426,7 +427,21 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
                 el.rendNodeTriangleEnd.setAttributeNS(null, 'fill', c);
                 el.rendNodeTriangleEnd.setAttributeNS(null, 'fill-opacity', o);    
             }                
-        }        
+        } 	
+        else if(el.type == JXG.OBJECT_TYPE_LINE) {
+            if(!el.visProp['straightFirst'] && el.visProp['firstArrow']) {
+                el.rendNodeTriangleStart.setAttributeNS(null, 'stroke', c);
+                el.rendNodeTriangleStart.setAttributeNS(null, 'stroke-opacity', o);                
+                el.rendNodeTriangleStart.setAttributeNS(null, 'fill', c);
+                el.rendNodeTriangleStart.setAttributeNS(null, 'fill-opacity', o);                    
+            }
+            if(!el.visProp['straightLast'] && el.visProp['lastArrow']) {
+                el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke', c);
+                el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke-opacity', o);                
+                el.rendNodeTriangleEnd.setAttributeNS(null, 'fill', c);
+                el.rendNodeTriangleEnd.setAttributeNS(null, 'fill-opacity', o);    
+            }                
+        } 		
     }
     else {
         if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
@@ -634,8 +649,9 @@ JXG.SVGRenderer.prototype.createArrowHead = function(el,idAppendix) {
     node2.setAttributeNS(null, 'markerWidth', '6');
     node2.setAttributeNS(null, 'orient', 'auto');
     node2.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);
-    node2.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);      
-    this.setFillProp(node2,el.visProp);
+	node2.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);			
+    node2.setAttributeNS(null, 'fill', el.visProp['strokeColor']);
+	node2.setAttributeNS(null, 'fill-opacity', el.visProp['strokeOpacity']);	
     var node3 = this.container.ownerDocument.createElementNS(this.svgNamespace,'path');
     if (idAppendix=='End') {
         node2.setAttributeNS(null, 'refX', '0');
@@ -653,6 +669,43 @@ JXG.SVGRenderer.prototype.makeArrow = function(node,el,idAppendix) {
     this.defs.appendChild(node2);
     node.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'Triangle)');
     el.rendNodeTriangle = node2;
+};
+
+JXG.SVGRenderer.prototype.makeArrows = function(el) {
+	if(!el.visProp['straightFirst']) {
+		if(el.visProp['firstArrow']) {
+			var node2 = el.rendNodeTriangleStart;
+			if(node2 == null) {
+				node2 = this.createArrowHead(el,'End');
+				this.defs.appendChild(node2);			
+				el.rendNodeTriangleStart = node2;
+				el.rendNode.setAttributeNS(null, 'marker-start', 'url(#'+el.id+'TriangleEnd)');	
+			}	
+		}
+		else {
+			var node2 = el.rendNodeTriangleStart;
+			if(node2 != null) {
+				this.remove(node2);
+			}
+		}
+	}
+	if(!el.visProp['straightLast']) {
+		if(el.visProp['lastArrow']) {
+			var node2 = el.rendNodeTriangleEnd;
+			if(node2 == null) {
+				node2 = this.createArrowHead(el,'Start');
+				this.defs.appendChild(node2);			
+				el.rendNodeTriangleEnd = node2;
+				el.rendNode.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'TriangleStart)'); 
+			}	
+		}
+		else {
+			var node2 = el.rendNodeTriangleEnd;
+			if(node2 != null) {
+				this.remove(node2);
+			}		
+		}		
+	}
 };
 
 JXG.SVGRenderer.prototype.updateLinePrimitive = function(node,p1x,p1y,p2x,p2y) {

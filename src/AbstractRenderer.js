@@ -173,9 +173,9 @@ JXG.AbstractRenderer.prototype.drawLine = function(el) {
     var node = this.createPrimitive('line',el.id);
     this.appendChildPrimitive(node,'lines');
     el.rendNode = node;
-    this.setStrokeProp(el.rendNode,el.visProp);
-    this.setDashStyle(el.rendNode,el.visProp);
-    this.setDraft(el);
+    //this.setStrokeProp(el.rendNode,el.visProp);
+    //this.setDashStyle(el.rendNode,el.visProp);
+    //this.setDraft(el);
     this.updateLine(el);
 };
    
@@ -187,15 +187,6 @@ JXG.AbstractRenderer.prototype.drawLine = function(el) {
  * @see #calcStraight
  */
 JXG.AbstractRenderer.prototype.updateLine = function(el) {
-    if (this.enhancedRendering) {
-        if (!el.visProp['draft']) {
-            this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-            this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
-        } else {
-            this.setDraft(el);
-        }
-    }
-
     var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]], el.board);
     var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords[1], el.point2.coords.usrCoords[2]], el.board);
     if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
@@ -226,6 +217,16 @@ JXG.AbstractRenderer.prototype.updateLine = function(el) {
                 ];
         el.imageTransformMatrix = m;
     }
+	this.makeArrows(el);
+	
+    if (this.enhancedRendering) {
+        if (!el.visProp['draft']) {
+            this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
+            this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
+        } else {
+            this.setDraft(el);
+        }
+    }	
 }
 
 /**

@@ -113,6 +113,19 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type bool
      */
     this.visProp['visible'] = true;
+	
+    /**
+     * Determines if a line has an arrow at its firstpoint.
+     * @type bool
+     * @see #lastArrow
+     */    
+	this.visProp['firstArrow'] = false;
+    /**
+     * Determines if a line has an arrow at its firstpoint.
+     * @type bool
+     * @see #firstArrow
+     */    	
+	this.visProp['lastArrow'] = false;
     
     /**
      * Array of Coords storing the coordinates of all ticks.
@@ -356,7 +369,7 @@ JXG.Line.prototype.updateTickCoordinates = function (first) {
             }
         }
         
-        //this.board.renderer.updateLine(this);
+        this.board.renderer.updateLine(this);
         this.needsUpdate = false;
     }
 };
@@ -420,6 +433,19 @@ JXG.Line.prototype.getSlope = function () {
     this.visProp['straightLast'] = straightLast;
      
     this.board.renderer.updateLine(this);
+};
+
+/**
+ * Determines whether the line has arrows at start or end of the line.
+ * @param {bool} firstArrow True if there is an arrow at the start of the line, false otherwise.
+ * @param {bool} lastArrow True if there is an arrow at the end of the line, false otherwise.
+ * Is stored at visProp['firstArrow'] and visProp['lastArrow']
+ */
+JXG.Line.prototype.setArrow = function (firstArrow, lastArrow) {
+     this.visProp['firstArrow'] = firstArrow;
+     this.visProp['lastArrow'] = lastArrow;
+     
+     this.board.renderer.updateLine(this);
 };
 
 /**
