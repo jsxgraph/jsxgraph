@@ -110,19 +110,19 @@ JXG.Coords.prototype.screen2usr = function() {
  * @param {Coords} coordinates The Coords object to which the distance is calculated.
  */
 JXG.Coords.prototype.distance = function(method, coordinates) {
-    var eps = 0.000001;
+//    var eps = 0.000001;
     var sum = 0;
     if(method == JXG.COORDS_BY_USER) {
-        if (Math.abs(this.usrCoords[0]+coordinates.usrCoords[0])>eps) {
-            return Infinity;
-        }
+//        if (Math.abs(this.usrCoords[0]+coordinates.usrCoords[0])>eps) {
+//            return Infinity;
+//        }
         for(var i=1; i<this.board.dimension+1; i++) {
             sum += (this.usrCoords[i] - coordinates.usrCoords[i])*(this.usrCoords[i] - coordinates.usrCoords[i]);
         }
     } else {
-        if (Math.abs(this.scrCoords[0]+coordinates.scrCoords[0])>eps) {
-            return Infinity;
-        }
+//        if (Math.abs(this.scrCoords[0]+coordinates.scrCoords[0])>eps) {
+//            return Infinity;
+//        }
         for(var i=1; i<this.board.dimension+1; i++) {
             sum += (this.scrCoords[i] - coordinates.scrCoords[i])*(this.scrCoords[i] - coordinates.scrCoords[i]);
         }

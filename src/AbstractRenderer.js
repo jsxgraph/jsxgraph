@@ -443,7 +443,7 @@ JXG.AbstractRenderer.prototype.calcStraightv2 = function(el, screenCoords1, scre
     // Normalize the intersections 
     for (var i=0;i<4;i++) {
         if (Math.abs(s[i][0])>eps) {
-            for (var j=0;j<3) {
+            for (var j=0;j<3;j++) {
                 s[i][j] /= s[i][0];
             }
         }

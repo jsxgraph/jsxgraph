@@ -1091,10 +1091,10 @@ JXG.Algebra.prototype.affineDistance = function(array1, array2) {
         return; 
     }
     var d = this.distance(array1, array2);
-    if (d>eps && (Math.abs(array1[0])<eps || Math.abs(array2[0])<eps) {
+    if (d>eps && (Math.abs(array1[0])<eps) || Math.abs(array2[0])<eps) {
         return Infinity;
     } else {
-        d;
+        return d;
     }
 };
 
