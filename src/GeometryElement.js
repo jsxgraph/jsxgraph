@@ -140,8 +140,28 @@ JXG.GeometryElement = function() {
     this.descendants = {};
     this.ancestors = {};
 
-    // [c,b0,b1,a,k,r,q0,q1]
-    // Should be put into Coords, when all elements possess Coords
+/**
+  * [c,b0,b1,a,k,r,q0,q1]
+  *
+  * See 
+  * A.E. Middleditch, T.W. Stacey, and S.B. Tor:
+  * "Intersection Algorithms for Lines and Circles"
+  * ACM Transactions on Graphics, Vol. 8, 1, 1989, pp 25-40.
+  *
+  * The meaning of the parameters is:
+  * Circle: points p=[p0,p1] on the circle fulfill
+  *  a<p,p> + <b,p> + c = 0
+  * For convenience we also store
+  *  r: radius
+  *  k: discriminant = sqrt(<b,b>-4ac)
+  *  q=[q0,q1] center
+  *  
+  * Points have radius  = 0
+  * Lines have radius = infinity
+  * b: normalized vector, representing the direction of the line
+  *  
+  * Should be put into Coords, when all elements possess Coords
+  */
     this.stdform = [1,0,0,0,1, 1,0,0];
     
     this.afterFirstUpdate = false;
