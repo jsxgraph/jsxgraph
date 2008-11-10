@@ -1060,11 +1060,11 @@ JXG.Algebra.prototype.findDependencies = function(me,term) {
 };
 
 /**
- * Calculates euclidean norm for two given arrays of the same length.
+ * Calculates euclidean distance for two given arrays of the same length.
  * @param {Array} array1 Array of float or integer.
  * @param {Array} array2 Array of float or integer.
  * @type float
- * @return Euclidean norm of the given vectors.
+ * @return Euclidean distance of the given vectors.
  */
 JXG.Algebra.prototype.distance = function(array1, array2) {
     var sum = 0;
@@ -1073,6 +1073,29 @@ JXG.Algebra.prototype.distance = function(array1, array2) {
         sum += (array1[i] - array2[i])*(array1[i] - array2[i]);
     }
     return Math.sqrt(sum);
+};
+
+/**
+ * Calculates euclidean distance for two given arrays of the same length.
+ * If one of the arrays contains a zero in coordinate 0, and the euclidean distance
+ * is different from zero it is
+ * a point at infinity and we return Infinity.
+ * @param {Array} array1 Array of float or integer.
+ * @param {Array} array2 Array of float or integer.
+ * @type float
+ * @return Euclidean (affine) distance of the given vectors.
+ */
+JXG.Algebra.prototype.affineDistance = function(array1, array2) {
+    var eps = 0.000001;
+    if(array1.length != array2.length) { 
+        return; 
+    }
+    var d = this.distance(array1, array2);
+    if (d>eps && (Math.abs(array1[0])<eps || Math.abs(array2[0])<eps) {
+        return Infinity;
+    } else {
+        d;
+    }
 };
 
 /**
@@ -1390,7 +1413,7 @@ JXG.Algebra.prototype.meetCircleCircle = function(circ1,circ2) {
     return this.meetLineCircle(radicalAxis,circ1);
 };
 
-// [c,b0,b1,a,k]
+// [c,b0,b1,a,k,r,q0,q1]
 JXG.Algebra.prototype.normalize = function(stdform) {
     var a2 = 2*stdform[3];
     var r = stdform[4]/(a2);  // k/(2a)
