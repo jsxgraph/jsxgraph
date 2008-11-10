@@ -1254,6 +1254,24 @@ JXG.Algebra.prototype.root = function(f,x) {
     return this.newton(f,x);
 };
 
+/**
+  * Calculates the crossproducts of two vectors
+  * of length three.
+  * In case of homogeneous coordinates this is either
+  * - the intersection of two lines
+  * - the line through two points.
+  * @param homogeneous coordinates of line (point) 1
+  * @param homogeneous coordinates of line (point) 2
+  * @return vector of length 3:  homogeneous coordinates
+  *   of the resulting line / point.
+  */
+JXG.Algebra.prototype.crossProduct = function(c1,c2) {
+    var z = c1[1]*c2[2]-c1[2]*c2[1];
+    var x = c1[2]*c2[0]-c1[0]*c2[2];
+    var y = c1[0]*c2[1]-c1[1]*c2[0];
+    return [z,x,y];
+};
+
 JXG.Algebra.prototype.meet = function(el1,el2) {
     var eps = 0.000001;
     if (Math.abs(el1[3])<eps && Math.abs(el2[3])<eps) { // line line
@@ -1267,14 +1285,27 @@ JXG.Algebra.prototype.meet = function(el1,el2) {
     }
 };
 
+/**
+  * Intersection of two lines.
+  * To be consistent we always return two intersection points.
+  * @return Array containing two Coords objects
+  */
 JXG.Algebra.prototype.meetLineLine = function(l1,l2) {
+    var s = this.crossProduct(l1,l2);
+    if (Math.abs(s[0])>0.000001) {
+        s[1] /= s[0];
+        s[2] /= s[0];
+    }
+    /*
     var s1 = l1;
     var s2 = l2;
     var z = s1[1]*s2[2]-s1[2]*s2[1];
     var x = (s1[2]*s2[0]-s1[0]*s2[2])/z;
     var y = (s1[0]*s2[1]-s1[1]*s2[0])/z;
-    return [new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board),
-        new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this.board)];
+    */
+    return [new JXG.Coords(JXG.COORDS_BY_USER, s.slice(1), this.board),
+        new JXG.Coords(JXG.COORDS_BY_USER, s.slice(1), this.board)];
+
 };
 
 JXG.Algebra.prototype.meetLineCircle = function(lin,circ) {    

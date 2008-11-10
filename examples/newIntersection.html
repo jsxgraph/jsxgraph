@@ -23,7 +23,7 @@
         l2 = board.createElement('line', [p3,p4]);
         c1 = board.createElement('circle', [p1,p2]);
         board.unsuspendUpdate();
-        //board.createElement('point',[board.intersectionFunc(l1,l2,0)], {style:8,name:''});
+        board.createElement('point',[board.intersectionFunc(l1,l2,0)], {style:8,name:'S'});
 /*
         alert(
             board.intersectionFunc(l2,c1,0)().scrCoords.toString()+' X '+board.intersectionFunc(l2,c1,1)().scrCoords.toString() + ' = ' +

@@ -418,6 +418,131 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, screenCoords1, screen
 };
 
 /**
+ * Calculates start and end point for a line.
+ * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
+ * @param {JXG.Coords} screenCoords1 Coordinates of the point where line drawing begins.
+ * @param {JXG.Coords} screenCoords2 Coordinates of the point where line drawing ends.
+ * @see JXG.Line
+ * @see #drawLine
+ * @see #updateLine
+ */
+JXG.AbstractRenderer.prototype.calcStraightv2 = function(el, screenCoords1, screenCoords2) {
+    var c = new JXG.Coords(JXG.COORDS_BY_SCREEN, el.stdform.slice(1,3), el.board);
+    var s = [];
+    s[0] = el.board.algebra.crossProduct(c,[0,0,1]);  // top
+    s[1] = el.board.algebra.crossProduct(c,[0,1,0]);  // left
+    s[2] = el.board.algebra.crossProduct(c,[-el.board.canvasHeight,0,1]);  // bottom
+    s[3] = el.board.algebra.crossProduct(c,[-el.board.canvasWidth,1,0]);  // right
+
+    /*
+    // Schnittpunkte mit dem Begrenzungsrahmen
+    var coordsTop = new JXG.Coords(JXG.COORDS_BY_SCREEN, [Math.round(-rise/slope), 0], el.board);
+    var coordsLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, rise], el.board);
+    var coordsBottom = new JXG.Coords(JXG.COORDS_BY_SCREEN, [Math.round((el.board.canvasHeight-rise)/slope), el.board.canvasHeight], el.board);
+    var coordsRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [el.board.canvasWidth, slope*el.board.canvasWidth + rise], el.board);
+
+    if(coordsLeft.scrCoords[2] < 0) { 
+        // Punkt am oberen Rand verwenden
+        var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
+        var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
+        if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
+            screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
+        } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
+            screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
+        }
+  
+        if(coordsRight.scrCoords[2] > el.board.canvasHeight) { 
+            // Punkt am unteren Rand verwenden
+            var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
+            var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
+            if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
+                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
+            } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
+                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
+            }
+     
+        } else {
+            // Punkt am rechten Rand verwenden
+            var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
+            var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
+            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
+                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
+            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
+                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
+            }
+        }
+    } else if(coordsLeft.scrCoords[2] > el.board.canvasHeight) { 
+        // Punkt am unteren Rand verwenden
+        var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
+        var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);   
+        if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
+            screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
+        } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
+            screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
+        }
+ 
+        if(coordsRight.scrCoords[2] < 0) { 
+            // Punkt am oberen Rand verwenden
+            var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
+            var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
+            if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
+                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
+            } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
+                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
+            }
+        } else {
+            // Punkt am rechten Rand verwenden
+            var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
+            var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
+            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
+                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
+            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
+                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
+            }
+        }          
+    } else {
+        // Punkt am linken Rand verwenden
+        var distP1Left = coordsLeft.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
+        var distP2Left = coordsLeft.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
+        if((distP1Left < distP2Left) && el.visProp['straightFirst']) {
+            screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsLeft.scrCoords.slice(1));
+        } else if((distP1Left > distP2Left) && el.visProp['straightLast']) {
+            screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsLeft.scrCoords.slice(1));
+        }
+
+        if(coordsRight.scrCoords[2] < 0) {
+            // Punkt am oberen Rand verwenden
+            var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
+            var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
+            if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
+                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
+            } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
+                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
+            }
+        } else if(coordsRight.scrCoords[2] > el.board.canvasHeight) {
+            // Punkt am unteren Rand verwenden
+            var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
+            var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
+            if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
+                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
+            } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
+                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
+            }
+        } else {
+            // Punkt am rechten Rand verwenden
+            var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
+            var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);     
+            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
+                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
+            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
+                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
+            }
+        }
+    }
+    */
+};
+
+/**
  * Draws a circle on the canvas.
  * @param {JXG.Circle} el Reference to a circle object, that has to be drawn.
  * @see JXG.Circle
