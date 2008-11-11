@@ -119,13 +119,14 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type bool
      * @see #lastArrow
      */    
-	this.visProp['firstArrow'] = false;
+    this.visProp['firstArrow'] = false;
+    
     /**
      * Determines if a line has an arrow at its firstpoint.
      * @type bool
      * @see #firstArrow
      */    	
-	this.visProp['lastArrow'] = false;
+    this.visProp['lastArrow'] = false;
     
     /**
      * Array of Coords storing the coordinates of all ticks.
@@ -333,7 +334,7 @@ JXG.Line.prototype.updateTickCoordinates = function (first) {
     x = p1.usrCoords[1];
     y = p1.usrCoords[2];
     
-    var countTicks = Math.floor(total_length/this.ticksDelta);
+    countTicks = Math.floor(total_length/this.ticksDelta);
 
     for(var i=0; i<countTicks; i++) {
         x = x - deltaX;

@@ -739,22 +739,13 @@ JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) 
         dy = -dx/slope;
     }
     
-    $('debug').innerHTML = "dx: " + dx + "<br />dy: " + dy + "<br />slope: " + slope;
-        
     for (var i=start; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
         var tick = $(axis.id+'tick'+i);
         var tickLabel = $(axis.id+'tick'+i+'text');
 
         this.updateLinePrimitive(tick, c.scrCoords[1], c.scrCoords[2], c.scrCoords[1]-dx, c.scrCoords[2]+dy);
-/*
-        if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {  // vertical axis
-            this.updateLinePrimitive(tick,c.scrCoords[1],c.scrCoords[2],c.scrCoords[1]-el.r,c.scrCoords[2]);
-        } else {                                                             // horizontal axis
-            this.updateLinePrimitive(tick,c.scrCoords[1],c.scrCoords[2],c.scrCoords[1],c.scrCoords[2]+el.r);
-        }
-        */
-        this.setStrokeProp(tick,axis.visProp);
+        this.setStrokeProp(tick, axis.visProp);
     }    
 }
 

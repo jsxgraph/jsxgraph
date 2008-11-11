@@ -15,13 +15,15 @@
     /* <![CDATA[ */
 
         var p1, p2, l1;
-        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 20});
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 40});
 
-        p1 = board.createElement('point', [5, 4], {style:1,name:"P_{1}"}); // Angabe fester Koordinaten
-        p2 = board.createElement('point', [5, 0], {style:2,name:"P_{2}"}); // Angabe fester Koordinaten
+        p1 = board.createElement('point', [3, 0], {style:1,name:"P_{1}"}); // Angabe fester Koordinaten
+        p2 = board.createElement('point', [8, 0], {style:2,name:"P_{2}"}); // Angabe fester Koordinaten
         
-        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast:false});
+        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast: true});
         l1.enableTicks();
+
+        c = board.createElement('circle', [p1, 2]);
         
   /* ]]> */
   </script>
