@@ -16,7 +16,8 @@
 
         var p1, p2, l1;
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 50, unitY: 50});
-
+        board.snapToGrid = true;
+        
         p1 = board.createElement('point', [1, 0], {style:5,name:"A",fillColor:'blue'}); 
         p2 = board.createElement('point', [5, 0], {style:5,name:"B",fillColor:'blue'}); 
         p3 = board.createElement('point', [1, 2], {style:5,name:"C",fillColor:'blue'}); 

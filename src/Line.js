@@ -250,7 +250,7 @@ JXG.Line.prototype = new JXG.GeometryElement;
 
 JXG.Line.prototype.update = function() {    
     if (this.needsUpdate) {
-        if (!this.board.geonextCompatibilityMode) {
+        if (true ||!this.board.geonextCompatibilityMode) {
             this.updateStdform();
         }
         if(this.withTicks)
