@@ -693,9 +693,70 @@ JXG.AbstractRenderer.prototype.updateAxis = function(axis) { };
  * @param {int} oldTicksCount Number of ticks that already exists.
  * @see JXG.Axis
  * @see #drawAxis
+ * @see #updateAxisTicksInnerLoop
+ */
+JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) {
+    var i;
+    if(oldTicksCount == axis.ticks.length) {
+        return;
+    } else if(oldTicksCount < axis.ticks.length) {
+        for (i = oldTicksCount; i<axis.ticks.length; i++) {
+            var tick = this.createPrimitive('line',axis.id+'tick'+i);
+            this.appendChildPrimitive(tick, 'lines');
+            this.setStrokeProp(tick, axis.visProp);
+        }   
+        this.updateAxisTicksInnerLoop(axis, oldTicksCount);
+    } else if(oldTicksCount > axis.ticks.length) {
+        for (i = axis.ticks.length; i<oldTicksCount; i++) {
+            this.remove($(axis.id+'tick'+i));
+        }
+    }
+}
+
+/**
+ * Update the tick's line objects.
+ * @param {JXG.Axis} axis Reference of an axis object, that's ticks have to be updated.
+ * @param {int} start Number of tick where update process should start
+ * @see JXG.Axis
+ * @see #drawAxis
  * @see #updateAxisTicks
  */
-JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) { };
+JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) {
+    var eps = 0.000001;
+    var slope = -axis.getSlope();
+    var dist = 3*axis.r;
+    
+    var dx, dy;
+    
+    if(Math.abs(slope) < eps) {
+        dx = 0;
+        dy = dist;
+    } else if((Math.abs(slope) > 1/eps) || (isNaN(slope))) {
+        dx = dist;
+        dy = 0;
+    } else {
+        dx = dist/Math.sqrt(1/(slope*slope) + 1);
+        dy = -dx/slope;
+    }
+    
+    $('debug').innerHTML = "dx: " + dx + "<br />dy: " + dy + "<br />slope: " + slope;
+        
+    for (var i=start; i<axis.ticks.length; i++) {
+        var c = axis.ticks[i];
+        var tick = $(axis.id+'tick'+i);
+        var tickLabel = $(axis.id+'tick'+i+'text');
+
+        this.updateLinePrimitive(tick, c.scrCoords[1], c.scrCoords[2], c.scrCoords[1]-dx, c.scrCoords[2]+dy);
+/*
+        if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {  // vertical axis
+            this.updateLinePrimitive(tick,c.scrCoords[1],c.scrCoords[2],c.scrCoords[1]-el.r,c.scrCoords[2]);
+        } else {                                                             // horizontal axis
+            this.updateLinePrimitive(tick,c.scrCoords[1],c.scrCoords[2],c.scrCoords[1],c.scrCoords[2]+el.r);
+        }
+        */
+        this.setStrokeProp(tick,axis.visProp);
+    }    
+}
 
 /**
  * Removes all ticks from an axis
@@ -703,7 +764,7 @@ JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) {
  * @see JXG.Axis
  * @see #drawAxis
  * @see #updateAxis
- * @see #upateAxisTicks
+ * @see #upateAxisTicksInnerLoop
  */
 JXG.AbstractRenderer.prototype.removeAxisTicks = function(axis) {
     for(var i=0; i<axis.ticks.length; i++) {

@@ -89,46 +89,6 @@ JXG.VMLRenderer.prototype.drawAxis = function(el) {
     this.container.appendChild(node);
 }
 
-JXG.VMLRenderer.prototype.updateAxisTicks = function(el, oldTicksCount) {
-    if(oldTicksCount == el.ticks.length) {
-        return;
-    } else if(oldTicksCount < el.ticks.length) {
-        for (var i=oldTicksCount;i<el.ticks.length;i++) {
-            var c = el.ticks[i];
-
-            var tick = this.createPrimitive('line',el.id+'tick'+i);
-            this.appendChildPrimitive(tick,'lines');
-            this.setStrokeProp(tick, el.visProp);
-
-            tick.style.zIndex = "4"; 
-        
-            this.container.appendChild(tick);
-        }
-        this.updateAxisTicksInnerLoop(el, oldTicksCount);
-    } else if(oldTicksCount > el.ticks.length) {
-        for(var i=el.ticks.length; i<oldTicksCount; i++) {
-            var tick = $(el.id+'tick'+i);
-            this.remove(tick);
-        }
-    }
-}
-
-JXG.VMLRenderer.prototype.updateAxisTicksInnerLoop = function(el,start) {
-    for (var i=start; i<el.ticks.length; i++) {
-        var c = el.ticks[i];
-        var tick = $(el.id+'tick'+i);
-        var tickLabel = $(el.id+'tick'+i+'text');
-
-        if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
-            this.updateLinePrimitive(tick,c.scrCoords[1],c.scrCoords[2],c.scrCoords[1]-el.r,c.scrCoords[2]);
-        } else {
-            this.updateLinePrimitive(tick,c.scrCoords[1],c.scrCoords[2],c.scrCoords[1],c.scrCoords[2]+el.r);
-        }
-        this.setStrokeProp(tick,el.visProp);
-    }    
-}
-
-
 JXG.VMLRenderer.prototype.updateAxis = function(el) {
     // not yet
     var node = $(el.id);

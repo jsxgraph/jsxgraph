@@ -102,57 +102,6 @@ JXG.SVGRenderer.prototype.drawAxis = function(el) {
     this.updateAxis(el);
 }
 
-JXG.SVGRenderer.prototype.updateAxisTicks = function(el, oldTicksCount) {
-    if(oldTicksCount == el.ticks.length) {
-        return;
-    } else if(oldTicksCount < el.ticks.length) {
-        for (var i=oldTicksCount; i<el.ticks.length; i++) {
-            var tick = this.createPrimitive('line',el.id+'tick'+i);
-            this.lines.appendChild(tick);
-            
-            // Tick label
-            // var n = this.createPrimitive('text',el.id+'tick'+i+'text');
-            // n.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:10; opacity:0.8;");
-            // this.appendChildPrimitive(n,'grid');
-        }   
-        this.updateAxisTicksInnerLoop(el,oldTicksCount);
-    } else if(oldTicksCount > el.ticks.length) {
-        for(var i=el.ticks.length; i<oldTicksCount; i++) {
-            this.remove($(el.id+'tick'+i));
-
-            // Tick label
-            //this.remove($(el.id+'tick'+i+'text'));        
-        }
-    }
-}
-
-JXG.SVGRenderer.prototype.updateAxisTicksInnerLoop = function(el,start) {
-    for (var i=start; i<el.ticks.length; i++) {
-        var c = el.ticks[i];
-        var tick = $(el.id+'tick'+i);
-        var tickLabel = $(el.id+'tick'+i+'text');
-
-        if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {  // vertical axis
-            this.updateLinePrimitive(tick,c.scrCoords[1],c.scrCoords[2],c.scrCoords[1]-el.r,c.scrCoords[2]);
-
-            // Tick label
-/*             tickLabel.setAttributeNS(null,'x',c.scrCoords[1]-el.r-12);
-            tickLabel.setAttributeNS(null,'y',c.scrCoords[2]+5);
-            var t = document.createTextNode(Math.round(c.usrCoords[2]));
-            tickLabel.appendChild(t);
- */        } else {                                                             // horizontal axis
-            this.updateLinePrimitive(tick,c.scrCoords[1],c.scrCoords[2],c.scrCoords[1],c.scrCoords[2]+el.r);
-
-            // Tick label
-/*             tickLabel.setAttributeNS(null,'x',c.scrCoords[1]-5);
-            tickLabel.setAttributeNS(null,'y',c.scrCoords[2]+el.r+12);
-            var t = document.createTextNode(Math.round(c.usrCoords[1]));
-            tickLabel.appendChild(t);
- */        }
-        this.setStrokeProp(tick,el.visProp);
-    }    
-}
-
 JXG.SVGRenderer.prototype.updateAxis = function(el) {
     var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]], el.board);
     var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords[1], el.point2.coords.usrCoords[2]], el.board);

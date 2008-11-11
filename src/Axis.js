@@ -89,7 +89,7 @@ JXG.Axis = function (board, p1coords, p2coords, id, name) {
      * This is just for the hasPoint() method. Precision for highlighting.
      * @type int
      */
-    this.r = 10;
+    this.r = 3;
     
     /**
      * The distance between two ticks.
