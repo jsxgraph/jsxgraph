@@ -621,38 +621,34 @@ JXG.SVGRenderer.prototype.makeArrow = function(node,el,idAppendix) {
 };
 
 JXG.SVGRenderer.prototype.makeArrows = function(el) {
-	if(!el.visProp['straightFirst']) {
-		if(el.visProp['firstArrow']) {
-			var node2 = el.rendNodeTriangleStart;
-			if(node2 == null) {
-				node2 = this.createArrowHead(el,'End');
-				this.defs.appendChild(node2);			
-				el.rendNodeTriangleStart = node2;
-				el.rendNode.setAttributeNS(null, 'marker-start', 'url(#'+el.id+'TriangleEnd)');	
-			}	
-		}
-		else {
-			var node2 = el.rendNodeTriangleStart;
-			if(node2 != null) {
-				this.remove(node2);
-			}
+	if(el.visProp['firstArrow']) {
+		var node2 = el.rendNodeTriangleStart;
+		if(node2 == null) {
+			node2 = this.createArrowHead(el,'End');
+			this.defs.appendChild(node2);			
+			el.rendNodeTriangleStart = node2;
+			el.rendNode.setAttributeNS(null, 'marker-start', 'url(#'+el.id+'TriangleEnd)');	
+		}	
+	}
+	else {
+		var node2 = el.rendNodeTriangleStart;
+		if(node2 != null) {
+			this.remove(node2);
 		}
 	}
-	if(!el.visProp['straightLast']) {
-		if(el.visProp['lastArrow']) {
-			var node2 = el.rendNodeTriangleEnd;
-			if(node2 == null) {
-				node2 = this.createArrowHead(el,'Start');
-				this.defs.appendChild(node2);			
-				el.rendNodeTriangleEnd = node2;
-				el.rendNode.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'TriangleStart)'); 
-			}	
-		}
-		else {
-			var node2 = el.rendNodeTriangleEnd;
-			if(node2 != null) {
-				this.remove(node2);
-			}		
+	if(el.visProp['lastArrow']) {
+		var node2 = el.rendNodeTriangleEnd;
+		if(node2 == null) {
+			node2 = this.createArrowHead(el,'Start');
+			this.defs.appendChild(node2);			
+			el.rendNodeTriangleEnd = node2;
+			el.rendNode.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'TriangleStart)'); 
+		}	
+	}
+	else {
+		var node2 = el.rendNodeTriangleEnd;
+		if(node2 != null) {
+			this.remove(node2);
 		}		
 	}
 };
