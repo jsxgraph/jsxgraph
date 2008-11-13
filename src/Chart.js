@@ -127,6 +127,7 @@ JXG.Chart.prototype.drawPie = function(board,parentArr,atts) {  // Only 1 array 
     
     var i;
     var p = [];
+    var line = [];
     var arc = [];
     var s = board.mathStatistics.sum(y);
     var colorArray = atts['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
@@ -136,8 +137,10 @@ JXG.Chart.prototype.drawPie = function(board,parentArr,atts) {  // Only 1 array 
     myAtts['id'] = atts['id'];
     myAtts['strokeWidth'] = atts['strokeWidth'] || 1;
     myAtts['strokeColor'] = atts['strokeColor'] || 'none';
+    myAtts['straightFirst'] = false;
+    myAtts['straightLast'] = false;
     myAtts['fillColor'] = atts['fillColor'] || '#FFFF88';
-    myAtts['fillOpacity'] = atts['fillOpacity'] || 0.4;
+    myAtts['fillOpacity'] = atts['fillOpacity'] || 0.6;
     myAtts['highlightFillColor'] = atts['highlightFillColor'] || '#FF7400';
     myAtts['highlightStrokeColor'] = atts['highlightStrokeColor'] || '#FF7400';
     var cent = atts['center'] || [0,0];
@@ -152,6 +155,8 @@ JXG.Chart.prototype.drawPie = function(board,parentArr,atts) {  // Only 1 array 
         var xcoord = radius*Math.cos(rad)+xc;
         var ycoord = radius*Math.sin(rad)+yc;
         p[i+1] = board.createElement('point',[xcoord,ycoord], {name:'',fixed:true,visible:false});
+        line[i] = board.createElement('line',[center,p[i]], 
+	    {strokeColor:'#ffffff', straightFirst:false, straightLast:false, strokeWidth:6, strokeOpacity:1.0});
         myAtts['fillColor'] = colorArray[i%colorArray.length];
         arc[i] = board.createElement('arc',[center,p[i],p[i+1]], myAtts);
     }

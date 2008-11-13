@@ -189,7 +189,7 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
 	
     this.arcs.appendChild(node);
     el.rendNode = node;
-    this.arcs.appendChild(node4);
+    this.sectors.appendChild(node4);
     el.rendNodeFill = node4;
     this.setDraft(el);
     if(!el.visProp['visible']) {
