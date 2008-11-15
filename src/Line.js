@@ -526,6 +526,14 @@ JXG.Line.prototype.setPosition = function (method, x, y) {
     //}
 };
 
+/**
+ * Creates a new line.
+ * @param {JXG.Board} board The board the line is put on.
+ * @param {Array} parents Array of two points defining the line.
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @type JXG.Line
+ * @return Reference to the created line object.
+ */
 JXG.createLine = function(board, parentArr, atts) {
     var el;
     
@@ -539,3 +547,28 @@ JXG.createLine = function(board, parentArr, atts) {
 };
 
 JXG.JSXGraph.registerElement('line', JXG.createLine);
+
+
+/**
+ * Creates a new arrow.
+ * @param {JXG.Board} board The board the arrow is put on.
+ * @param {Array} parents Array of two points defining the arrow.
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @type JXG.Line
+ * @return Reference to the created line object.
+ */
+JXG.createArrow = function(board, parents, attributes) {
+    var el;
+    
+    if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) {
+        el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name']);
+		el.setStraight(false,false);
+		el.setArrow(false,true);
+    } // Ansonsten eine fette Exception um die Ohren hauen
+    else
+        throw ("Can't create arrow with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+
+    return el;
+};
+
+JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
