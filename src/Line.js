@@ -256,6 +256,9 @@ JXG.Line.prototype.update = function() {
         if(this.withTicks)
             this.updateTickCoordinates();
     }
+    if(this.traced) {
+        this.cloneToBackground(true);
+    }	
 };
 
 JXG.Line.prototype.updateStdform = function() {    
@@ -482,6 +485,7 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.getSlope = function() { return s; };
     copy.getRise = function() { return r; };
     
+	this.board.renderer.enhancedRendering = true;
     this.board.renderer.drawLine(copy);
     this.traces[copy.id] = $(copy.id);
 
