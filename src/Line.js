@@ -159,6 +159,7 @@ JXG.Line = function (board, p1, p2, id, name) {
     /* Add arrow as child to defining points */
     this.point1.addChild(this);
     this.point2.addChild(this);
+    this.update();
 };
 
 JXG.Line.prototype = new JXG.GeometryElement;
@@ -262,6 +263,7 @@ JXG.Line.prototype.update = function() {
 };
 
 JXG.Line.prototype.updateStdform = function() {    
+   /*
     var nx = -(this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]);
     var ny =  this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1];
     var c = -(nx*this.point1.coords.usrCoords[1]+ny*this.point1.coords.usrCoords[2]);
@@ -269,6 +271,15 @@ JXG.Line.prototype.updateStdform = function() {
     this.stdform[0] = c;
     this.stdform[1] = nx;
     this.stdform[2] = ny;
+    */
+    var v = [];
+    v = this.board.algebra.crossProduct(this.point1.coords.usrCoords,this.point2.coords.usrCoords);
+    this.stdform[0] = v[0];
+    this.stdform[1] = v[1];
+    this.stdform[2] = v[2];
+    //if (this.point1.name=="B") 
+    //    $('debug').innerHTML += '('+v.toString()+') ';
+    
     this.stdform[3] = 0;
 
     this.normalize();

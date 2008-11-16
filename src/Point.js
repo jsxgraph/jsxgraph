@@ -697,9 +697,20 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
     delete copy;
 };
 
+
+/**
+ * There are several methods to construct a point.
+ * The input parameter "parentArr" determines the point:
+ * - 2 numbers: affine (Euclidean) coordinates of a free point
+ * - 2 numbers and atts['slideObject'] : Glider with initial Euclidean coordinates
+ * - 2 Strings or (1 String and 1 Number): constrained point
+ * - 1 function: intersection of objects, this is just a constrained point too
+ * - 1 transformation object: clone of a base point transformed by the given Transformation
+ * - 3 numbers: homogeneous coordinates of a free point
+ */
 JXG.createPoint = function(board, parentArr, atts) {
     var el;
-    // Sind beides Zahlen?
+    // parentArr[0] and parentArr[1] are numbers
     if ( (JXG.IsNumber(parentArr[0])) && (JXG.IsNumber(parentArr[1])) ) {
         el = new JXG.Point(board, parentArr, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
         if ( atts["slideObject"] != null ) {
@@ -707,11 +718,11 @@ JXG.createPoint = function(board, parentArr, atts) {
         } else {
             el.baseElement = el; // Free point
         }
-    } // Beides Zahlen erledigt, jetzt schauen, ob beides String oder ein String und eine Zahl:
+    } // (One string and one number) or two strings
     else if ( (JXG.IsString(parentArr[0]) || JXG.IsNumber(parentArr[0]) || JXG.IsFunction(parentArr[0])) && (JXG.IsString(parentArr[1]) || JXG.IsNumber(parentArr[1])) || JXG.IsFunction(parentArr[1]) ) {
         el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
         el.addConstraint(parentArr[0],parentArr[1]);
-    } // Intersection
+    } // Intersection: one function
     else if ( (typeof parentArr[0]=='function') && parentArr[1]==null ) { 
         el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));   
         el.addConstraint(parentArr[0]);
@@ -720,8 +731,10 @@ JXG.createPoint = function(board, parentArr, atts) {
         el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));   
         el.addTransform(parentArr[0],parentArr[1]);
     }
-    else // Ansonsten eine fette Exception um die Ohren hauen
+    else {// Failure
         throw ("JSXGraph error: Can't create point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
+    }
+        
     return el;
 };
 

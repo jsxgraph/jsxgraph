@@ -187,8 +187,10 @@ JXG.AbstractRenderer.prototype.drawLine = function(el) {
  * @see #calcStraight
  */
 JXG.AbstractRenderer.prototype.updateLine = function(el) {
-    var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]], el.board);
-    var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords[1], el.point2.coords.usrCoords[2]], el.board);
+    //var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]], el.board);
+    //var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords[1], el.point2.coords.usrCoords[2]], el.board);
+    var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
+    var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
     if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
        this.calcStraight(el,screenCoords1,screenCoords2); 
     } 
@@ -274,7 +276,7 @@ JXG.AbstractRenderer.prototype.updateCurve = function(el) {
  * @see #drawLine
  * @see #updateLine
  */
-JXG.AbstractRenderer.prototype.calcStraight = function(el, screenCoords1, screenCoords2) {
+JXG.AbstractRenderer.prototype.calcStraightv1 = function(el, screenCoords1, screenCoords2) {
     var slope = el.getSlope();
     var rise = el.getRise();
     
@@ -426,7 +428,7 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, screenCoords1, screen
  * @see #drawLine
  * @see #updateLine
  */
-JXG.AbstractRenderer.prototype.calcStraightv2 = function(el, point1, point2) {
+JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
     var b = el.board.algebra;
     var eps = 0.0001;
     

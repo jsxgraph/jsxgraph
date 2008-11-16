@@ -62,27 +62,33 @@ JXG.Coords = function (method, coordinates, board) {
     this.scrCoords = [1,0,0];
     
     if(method == JXG.COORDS_BY_USER) {
-        // this.scrCoords = [1];
-        // this.usrCoords = [1];
-/*         for(var i=0; i<coordinates.length; i++) {
-            this.usrCoords.push(coordinates[i]);
-            this.scrCoords.push(0);
+        if (coordinates.length<=2) {
+            this.usrCoords[1] = coordinates[0];
+            this.usrCoords[2] = coordinates[1];
+        } else {  // homogeneous coordinates
+            this.usrCoords[0] = coordinates[0];
+            this.usrCoords[1] = coordinates[1];
+            this.usrCoords[2] = coordinates[2];
+            this.normalizeUsrCoords();
         }
- */
-        this.usrCoords[1] = coordinates[0];
-        this.usrCoords[2] = coordinates[1];
         this.usr2screen();
     } else {
-        // this.scrCoords = [1];
-        // this.usrCoords = [1];
-/*         for(var i=0; i<coordinates.length; i++) {
-            this.scrCoords.push(coordinates[i]);
-            this.usrCoords.push(0);
-        }
- */        
         this.scrCoords[1] = coordinates[0];
         this.scrCoords[2] = coordinates[1];
         this.screen2usr();
+    }
+};
+
+/**
+    * Normalize homogeneous coordinates
+    * @private
+    */
+JXG.Coords.prototype.normalizeUsrCoords = function() {
+    var eps = 0.000001;
+    if (Math.abs(this.usrCoords[0])>eps) {
+        this.usrCoords[1] /= this.usrCoords[0];
+        this.usrCoords[2] /= this.usrCoords[0];
+        this.usrCoords[0] = 1.0;
     }
 };
 
@@ -91,8 +97,9 @@ JXG.Coords = function (method, coordinates, board) {
  * @private
  */
 JXG.Coords.prototype.usr2screen = function() {
-    this.scrCoords[1] = Math.round(this.board.origin.scrCoords[1] + this.usrCoords[1]*this.board.unitX*this.board.zoomX);
-    this.scrCoords[2] = Math.round(this.board.origin.scrCoords[2] - this.usrCoords[2]*this.board.unitY*this.board.zoomY);
+    this.scrCoords[0] = Math.round(this.usrCoords[0]);
+    this.scrCoords[1] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[1] + this.usrCoords[1]*this.board.unitX*this.board.zoomX);
+    this.scrCoords[2] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[2] - this.usrCoords[2]*this.board.unitY*this.board.zoomY);
 };
 
 /**
@@ -100,6 +107,7 @@ JXG.Coords.prototype.usr2screen = function() {
  * @private
  */
 JXG.Coords.prototype.screen2usr = function() {
+    this.usrCoords[0] =  1.0;
     this.usrCoords[1] = (this.scrCoords[1] - this.board.origin.scrCoords[1])/(this.board.unitX*this.board.zoomX);
     this.usrCoords[2] = (this.board.origin.scrCoords[2] - this.scrCoords[2])/(this.board.unitY*this.board.zoomY);
 };
