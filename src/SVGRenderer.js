@@ -185,7 +185,6 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     this.updatePathPrimitive(node4,pathString2);
     this.setFillProp(node4,el.visProp);
     node4.setAttributeNS(null, 'stroke', 'none');
-
 	
     this.arcs.appendChild(node);
     el.rendNode = node;
@@ -224,7 +223,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     pathString += ' L ' + el.point2.coords.scrCoords[1] + " " + el.point2.coords.scrCoords[2]    + ' z'; // Endpunkt
     this.updatePathPrimitive(node,pathString);
     this.setFillProp(node,el.visProp);
-    
+   
     var node2 = this.createPrimitive('path',el.id+'_2');
     var pathString = 'M '+  projectedP1.scrCoords[1] +' '+  projectedP1.scrCoords[2] +' A '; // Startpunkt
     pathString += Math.round(el.radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(el.radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien

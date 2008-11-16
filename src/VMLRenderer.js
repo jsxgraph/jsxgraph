@@ -418,9 +418,11 @@ JXG.VMLRenderer.prototype.setObjectDash = function(el) {
                 node.setAttribute('dashstyle', this.dashArray[tmp]);            
         }
         else {
-            var node = el.rendNode; //$(el.id+'stroke');
-            var tmp = el.visProp['dash'];
-            node.setAttribute('dashstyle', this.dashArray[tmp]);
+            var node = $(el.id+'stroke');
+            if (node) {
+                var tmp = el.visProp['dash'];
+                node.setAttribute('dashstyle', this.dashArray[tmp]);
+            }
         }
     }
 }
