@@ -479,6 +479,8 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     this.numTraces++;
     copy.point1 = this.point1;
     copy.point2 = this.point2;
+	
+	copy.stdform = this.stdform;
     
     copy.board = {};
     copy.board.unitX = this.board.unitX;
@@ -488,7 +490,8 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.board.origin = this.board.origin;
     copy.board.canvasHeight = this.board.canvasHeight;
     copy.board.canvasWidth = this.board.canvasWidth;
-    copy.board.dimension = this.board.dimension;    
+    copy.board.dimension = this.board.dimension;   
+	copy.board.algebra = this.board.algebra; 	
     
     copy.visProp = this.visProp;
     var s = this.getSlope();

@@ -295,6 +295,8 @@ JXG.GeometryElement.prototype.showElement = function() {
  *<li>draft</li>
  *<li>straightFirst <i>(Line)</i></li>
  *<li>straightLast <i>(Line)</i></li>
+ *<li>firstArrow <i>(Line,Arc)</li>
+ *<li>lastArrow <i>(Line,Arc)</li>
  *</ul>
  */
 JXG.GeometryElement.prototype.setProperty = function () {
@@ -372,9 +374,11 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 break;
             case 'fillopacity':
                 this.visProp['fillOpacity'] = pair[1];
+                this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);				
                 break;
             case 'strokeopacity':
                 this.visProp['strokeOpacity'] = pair[1];
+                this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']); 				
                 break;        
             case 'highlightfillopacity':
                 this.visProp['highlightFillOpacity'] = pair[1];
