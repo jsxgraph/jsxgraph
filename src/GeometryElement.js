@@ -297,6 +297,7 @@ JXG.GeometryElement.prototype.showElement = function() {
  *<li>straightLast <i>(Line)</i></li>
  *<li>firstArrow <i>(Line,Arc)</li>
  *<li>lastArrow <i>(Line,Arc)</li>
+ *<li>withTicks <i>(Line)</li>
  *</ul>
  */
 JXG.GeometryElement.prototype.setProperty = function () {
@@ -483,6 +484,16 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     this.visProp['lastArrow'] = true;
                 }            
                 this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
+                break;                   
+            case 'withTicks':
+                if(pair[1] == 'false' || pair[1] == false) {
+                    this.visProp['withTicks'] = false;
+                    this.disableTicks();
+                }
+                else if(pair[1] == 'true' || pair[1] == true) {
+                    this.visProp['withTicks'] = true;
+                    this.enableTicks();
+                }            
                 break;                   
             case 'curvetype':
                 this.curveType = pair[1];

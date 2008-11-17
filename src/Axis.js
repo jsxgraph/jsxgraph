@@ -285,15 +285,3 @@ JXG.Axis.prototype.updateTickCoordinates = function (first) {
     }
 };
 
-JXG.createAxis = function(board, parentArr, atts) {
-    // Arrays oder Punkte, mehr brauchen wir nicht.
-    if ( (JXG.IsArray(parentArr[0]) || JXG.IsPoint(parentArr[0]) ) && (JXG.IsArray(parentArr[1]) || JXG.IsPoint(parentArr[1])) ) {
-        el = new JXG.Axis(board, parentArr[0], parentArr[1],atts["id"],atts["name"]);
-    } // Ansonsten eine fette Exception um die Ohren hauen
-    else
-        throw ("Can't create point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
-
-    return el;
-};
-
-JXG.JSXGraph.registerElement('axis', JXG.createAxis);

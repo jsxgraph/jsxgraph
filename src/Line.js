@@ -139,7 +139,7 @@ JXG.Line = function (board, p1, p2, id, name) {
      * Has this line ticks?
      * @type bool
      */
-    this.withTicks = false;
+    this.visProp['withTicks'] = false;
     
     /**
      * The distance between two ticks.
@@ -254,7 +254,7 @@ JXG.Line.prototype.update = function() {
         if (true ||!this.board.geonextCompatibilityMode) {
             this.updateStdform();
         }
-        if(this.withTicks)
+        if(this.visProp['withTicks'])
             this.updateTickCoordinates();
     }
     if(this.traced) {
@@ -295,7 +295,7 @@ JXG.Line.prototype.updateTickCoordinates = function (first) {
         first = false;
     }
     
-    if(!this.withTicks)
+    if(!this.visProp['withTicks'])
         return;
         
     // calculate start (c1) and end (c2) points
@@ -390,19 +390,19 @@ JXG.Line.prototype.updateTickCoordinates = function (first) {
 };
 
 JXG.Line.prototype.enableTicks = function() {
-    if(this.withTicks)
+    if(this.visProp['withTicks'])
         return;
         
-    this.withTicks = true;
+    this.visProp['withTicks'] = true;
     
     this.updateTickCoordinates();
 };
 
 JXG.Line.prototype.disableTicks = function() {
-    if(!this.withTicks)
+    if(!this.visProp['withTicks'])
         return;
         
-    this.withTicks = false;
+    this.visProp['withTicks'] = false;
     this.board.renderer.removeAxisTicks(this);
     this.ticks = new Array();
 };
@@ -590,3 +590,42 @@ JXG.createArrow = function(board, parents, attributes) {
 };
 
 JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
+
+
+/**
+ * Creates a new axis.
+ * @param {JXG.Board} board The board the arrow is put on.
+ * @param {Array} parents Array of two points defining the arrow.
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @type JXG.Line
+ * @return Reference to the created axis object.
+ */
+JXG.createAxis = function(board, parents, attributes) {
+    // Arrays oder Punkte, mehr brauchen wir nicht.
+    if ( (JXG.IsArray(parents[0]) || JXG.IsPoint(parents[0]) ) && (JXG.IsArray(parents[1]) || JXG.IsPoint(parents[1])) ) {
+        var point1;
+        if( JXG.IsPoint(parents[0].type) )
+            point1 = parents[0];
+        else
+            point1 = new JXG.Point(board, parents[0],'','',false);
+
+        var point2;
+        if( JXG.IsPoint(parents[1]) )
+            point2 = parents[1];
+        else
+            point2 = new JXG.Point(board,parents[1],'','',false);
+    
+        /* Make the points fixed */
+        point1.fixed = true;
+        point2.fixed = true;
+
+        var el = board.createElement('line', [point1, point2], {id: attributes["id"], name: attributes["name"], lastArrow:true, straightFirst: true, straightLast: true, strokeWidth:2, withTicks:true});
+        el.enableTicks();
+    } // Ansonsten eine fette Exception um die Ohren hauen
+    else
+        throw ("Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+
+    return el;
+};
+
+JXG.JSXGraph.registerElement('axis', JXG.createAxis);

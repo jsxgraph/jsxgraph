@@ -13,8 +13,8 @@
 board1 = JXG.JSXGraph.initBoard('jxgbox1', {originX: 300, originY: 150, unitX: 50, unitY: 50});
 board1.suspendUpdate();
 // Axes and Properties
-board1.createElement('axis', [[1,0], [0,0]], {});
-board1.createElement('axis', [[0,1], [0,0]], {});
+board1.createElement('axis', [[0,0], [1,0]], {});
+board1.createElement('axis', [[0,0], [0,1]], {});
 board1.snapToGrid = true;
 //
 board1.createElement('curve', [function(t){ return t; }, function(t){ return Math.sin(t); }, "t", -10, 10],{strokeColor: "#cccccc"});
@@ -45,8 +45,8 @@ board1.unsuspendUpdate();
 board2 = JXG.JSXGraph.initBoard('jxgbox2', {originX: 300, originY: 150, unitX: 25, unitY: 25});
 board2.suspendUpdate();
 // Axes and Properties
-board2.createElement('axis', [[1,0], [0,0]], {});
-board2.createElement('axis', [[0,1], [0,0]], {});
+board2.createElement('axis', [[0,0], [1,0]], {});
+board2.createElement('axis', [[0,0], [0,1]], {});
 board2.snapToGrid = true;
 //
 board2.createElement('curve', [function(t){ return t; }, function(t){ return Math.cos(t); }, "t", -10, 10],{strokeColor: "#cccccc"});

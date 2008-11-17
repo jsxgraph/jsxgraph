@@ -16,8 +16,8 @@
         var p0,p1;
         
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 300, unitX: 50, unitY: 50});
-        b1axisx = board.createElement('axis', [[0,1], [0,0]], {});
-        b1axisy = board.createElement('axis', [[1,0], [0,0]], {});
+        b1axisx = board.createElement('axis', [[0,0], [0,1]], {});
+        b1axisy = board.createElement('axis', [[0,0], [1,0]], {});
 
         p0 = board.createElement('point', [0,3], {style:5, name:'A',strokecolor:'blue', fillcolor:'red'}); 
         p1 = board.createElement('point', [3,3], {style:5, name:'B',strokecolor:'blue', fillcolor:'red'}); 

@@ -246,10 +246,19 @@ this.readGeonext = function(tree,board) {
     var grid = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('grid')[0].firstChild.data == "true") ? board.renderer.drawGrid(board) : null;
     
     if(boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('coord')[0].firstChild.data == "true") {
-        var p1coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board);
-        var p2coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
-        var axisX = new JXG.Axis(board, [p1coords.usrCoords[1], 0], [p2coords.usrCoords[1], 0], false, false);
-        var axisY = new JXG.Axis(board, [0, p2coords.usrCoords[2]], [0, p1coords.usrCoords[2]], false, false);
+//        var p1coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board);
+//        var p2coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
+
+//        var axisX = board.createElement('axis', [[p1coords.usrCoords[1], 0], [p2coords.usrCoords[1], 0]]);
+        var axisX = board.createElement('axis', [[0, 0], [1, 0]]);
+        axisX.setProperty('strokeColor:'+axisX.visProp['strokeColor'],'strokeWidth:'+axisX.visProp['strokeWidth'],
+                          'fillColor:none','highlightStrokeColor:'+axisX.visProp['highlightStrokeColor'], 
+                          'highlightFillColor:none', 'visible:true');
+//        var axisY = board.createElement('axis', [[0, p2coords.usrCoords[2]], [0, p1coords.usrCoords[2]]]);
+        var axisY = board.createElement('axis', [[0, 0], [0, 1]]);
+        axisY.setProperty('strokeColor:'+axisY.visProp['strokeColor'],'strokeWidth:'+axisY.visProp['strokeWidth'],
+                          'fillColor:none','highlightStrokeColor:'+axisY.visProp['highlightStrokeColor'], 
+                          'highlightFillColor:none', 'visible:true');
     }
     var bgcolor = boardData.getElementsByTagName('background')[0].getElementsByTagName('color')[0].firstChild.data;
     var opacity = 1;

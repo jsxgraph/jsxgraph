@@ -15,8 +15,8 @@
     /* <![CDATA[ */
 
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40});
-        b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
-        b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+        b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+        b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 
         var p = board.createElement('point', [1,-2], {style:6,name:'p'}); 
         var eps = board.createElement('point', [0,-3], {style:6,name:'eps'}); 

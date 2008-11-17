@@ -36,8 +36,8 @@ board.createElement('integral', [interval, c]);
 
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 20});
 		// Axes
-        b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
-        b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+        b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+        b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 
         // Macro Function plotter
         function funktionsPlotter(board, func, atts) {
@@ -66,8 +66,8 @@ board.createElement('integral', [interval, c]);
         function clearAll(board) {
             JXG.JSXGraph.freeBoard(board);
             board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 20});
-            b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
-            b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+            b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
             return board;
         }
 /*

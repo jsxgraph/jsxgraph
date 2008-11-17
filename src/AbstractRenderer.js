@@ -733,19 +733,33 @@ JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) {
  * @see #updateAxisTicks
  */
 JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) {
-    var eps = 0.000001;
+    var eps = 0.00001;
     var slope = -axis.getSlope();
     var dist = 3*axis.r;
     
     var dx, dy;
     
     if(Math.abs(slope) < eps) {
+        // if the slope of the line is (almost) 0, we can set dx and dy directly
         dx = 0;
         dy = dist;
     } else if((Math.abs(slope) > 1/eps) || (isNaN(slope))) {
+        // if the slope of the line is (theoretically) infinite, we can set dx and dy directly
         dx = dist;
         dy = 0;
     } else {
+        // here we have to calculate dx and dy depending on the slope and the length of the tick (dist)
+        // if slope is the line's slope, the tick's slope is given by
+        // 
+        //            1          dy
+        //     -   -------  =   ----                 (I)
+        //          slope        dx
+        //
+        // when dist is the length of the tick, using the pythagorean theorem we get
+        // 
+        //     dx*dx + dy*dy = dist*dist             (II)
+        //
+        // dissolving (I) by dy and applying that to equation (II) we get the following formulas for dx and dy
         dx = dist/Math.sqrt(1/(slope*slope) + 1);
         dy = -dx/slope;
     }

@@ -31,8 +31,8 @@
             JXG.JSXGraph.freeBoard(board);
             board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
             board.suspendUpdate();
-            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
-            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            var b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+            var b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
             var a = board.createElement('chart', dataArr, {chartStyle:'line',strokeWidth:4,strokeColor:'#0000ff'});
             board.unsuspendUpdate();
         };
@@ -42,8 +42,8 @@
             JXG.JSXGraph.freeBoard(board);
             board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
             board.suspendUpdate();
-            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
-            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            var b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+            var b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
             var a = board.createElement('chart', dataArr, {chartStyle:'bar',width:0.6,labels:dataArr});
             board.unsuspendUpdate();
         };
@@ -54,8 +54,8 @@
             JXG.JSXGraph.freeBoard(board);
             board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
             board.suspendUpdate();
-            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
-            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            var b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+            var b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
             var a = board.createElement('chart', dataArr, {chartStyle:'bar,line,point',width:0.8,style:9,labels:dataArr});
             board.unsuspendUpdate();
         };
@@ -65,8 +65,8 @@
             JXG.JSXGraph.freeBoard(board);
             board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
             board.suspendUpdate();
-            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
-            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            var b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+            var b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
             var a = board.createElement('chart', [[1,3,5,7],[4,-1,3,2]], {chartStyle:'bar',width:0.8});
             var b = board.createElement('chart', [[2,4,6,8],[3,1,2,5]], {chartStyle:'bar',fillColor:'#C3D9FF',width:0.8});
             board.unsuspendUpdate();
@@ -77,8 +77,8 @@
             JXG.JSXGraph.freeBoard(board);
             board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
             board.suspendUpdate();
-            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
-            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            var b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+            var b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
             var a = board.createElement('chart', dataArr, {chartStyle:'bar',labels:dataArr,width:0.8,dir:'horizontal'});
             board.unsuspendUpdate();
         };
@@ -88,8 +88,8 @@
             JXG.JSXGraph.freeBoard(board);
             board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 450, unitX: 50, unitY: 50});
             board.suspendUpdate();
-            var b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
-            var b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+            var b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+            var b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 
             var s = board.createElement('slider', [5,-1,3,1,2,1], {name:'S'});
             var f = [function(){return this.board.round(s.X()*4,2);},
