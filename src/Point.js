@@ -197,7 +197,6 @@ JXG.Point.prototype.update = function (fromParent) {
      */
     if(this.type == JXG.OBJECT_TYPE_GLIDER) {
         if(this.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
-
             if (fromParent) {
                 this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.X()+Math.cos(this.position),this.slideObject.midpoint.Y()+Math.sin(this.position)]);
                 this.coords  = this.board.algebra.projectPointToCircle(this, this.slideObject);
@@ -389,7 +388,7 @@ JXG.Point.prototype.Dist = function(point2) {
  * @param {int} y y coordinate in screen units
  * @see #update
  */
-JXG.Point.prototype.setPositionOld = function (method, x, y) {
+JXG.Point.prototype.setPositionDirectly = function (method, x, y) {
     var oldCoords = this.coords;
     this.coords = new JXG.Coords(method, [x,y], this.board);
     
@@ -402,41 +401,29 @@ JXG.Point.prototype.setPositionOld = function (method, x, y) {
     }
 };
 
-JXG.Point.prototype.setPosition = function (method, x, y) {
+JXG.Point.prototype.setPositionByTransform = function (method, x, y) {
     var oldCoords = this.coords;
-    
-    if(this.group.length != 0) {
-        this.coords = new JXG.Coords(method, [x,y], this.board);
-        this.group[this.group.length-1].dX = this.coords.scrCoords[1] - oldCoords.scrCoords[1];
-        this.group[this.group.length-1].dY = this.coords.scrCoords[2] - oldCoords.scrCoords[2];
-        this.group[this.group.length-1].update(this);
+    var t = this.board.createElement('transform',[x,y],{type:'translate'});
+    if (this.transformations.length>0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
+        this.transformations[this.transformations.length-1].melt(t);
     } else {
-        // var newCoords = new JXG.Coords(method, [x,y], this.board);
-        // var dx = newCoords.usrCoords[1] - oldCoords.usrCoords[1];
-        // var dy = newCoords.usrCoords[2] - oldCoords.usrCoords[2];
-        
-        if (this.board.geonextCompatibilityMode || this.baseElement!==this) { // Geonext or Glider
-            var dx = x+oldCoords.usrCoords[1];
-            var dy = y+oldCoords.usrCoords[2];
-            this.setPositionOld(method,dx,dy);  // Glider (Hack)
-            // Even more hackier: In GeonextReader we use "new Point()", that means 
-            // we don't set this.baseElement to "this". Therefore Geonext points are treated
-            // like Gliders and they use setPositionOld.
-        } else {
-            var t = this.board.createElement('transform',[x,y],{type:'translate'});
-            if (this.transformations.length>0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
-                this.transformations[this.transformations.length-1].melt(t);
-            } else {
-                //if (this.baseElement===this) {  // Free point
-                    this.addTransform(this,t);
-                //}
-            }
-            //else {
-            //    alert('setPos: this should not happen!');
-            //}
-        }
+        this.addTransform(this,t);
+    }
+
+    if (this.group.length != 0) {
+/*
+        var dCoords = new JXG.Coords(method, [x,y], this.board);
+        this.group[this.group.length-1].dX = dCoords.scrCoords[1]-this.board.origin.scrCoords[1]; 
+        this.group[this.group.length-1].dY = dCoords.scrCoords[2]-this.board.origin.scrCoords[2]; 
+        this.group[this.group.length-1].update(this);
+*/
+    } else {
         this.update();
     }
+};
+
+JXG.Point.prototype.setPosition = function (method, x, y) { 
+    this.setPositionByTransform(method, x, y);
 };
 
 /**

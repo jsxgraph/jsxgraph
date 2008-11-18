@@ -7,10 +7,12 @@
 </head>
 <body>
 	<h2>Power Series for Sine</h2>
-	<!-- --> <div id="jxgbox1" class="jxgbox" style="width:600px; height:300px;"></div>
+	<div id="jxgbox1" class="jxgbox" style="width:600px; height:300px;"></div>
+<br clear=all>
+<div id="debug" style="display:none;"></div>
 <script language="JavaScript">
 // Board
-board1 = JXG.JSXGraph.initBoard('jxgbox1', {originX: 300, originY: 150, unitX: 50, unitY: 50});
+board1 = JXG.JSXGraph.initBoard('jxgbox1', {originX: 200, originY: 150, unitX: 25, unitY: 25});
 board1.suspendUpdate();
 // Axes and Properties
 board1.createElement('axis', [[0,0], [1,0]], {});
@@ -35,8 +37,6 @@ board1.createElement('curve', [
 	},
 "t", -10, 10], {strokeColor: "#bb0000"});
 board1.unsuspendUpdate();
-/*
-*/						
 </script> 
 <h2>Power Series for Cosine</h2>
 <div id="jxgbox2" class="jxgbox" style="width:600px; height:300px;"></div>
@@ -65,7 +65,7 @@ board2.createElement('curve', [
 		}
 		return val;
 	},
-"t", -10, 10],{strokeColor: "#009900"});						
+"t", -10, 10],{strokeColor: "#009900"});
 board2.unsuspendUpdate();
 </script>
 </body>

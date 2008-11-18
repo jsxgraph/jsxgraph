@@ -616,6 +616,9 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     // this.drag_dx = dx - this.dragObjCoords[1];
     // this.drag_dy = dy - this.dragObjCoords[2];
     
+    /**
+      * New mouse position in screen coordinates.
+      */
     this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx,dy], this);
     //this.drag_dx = dx;// - this.dragObjCoords[1];
     //this.drag_dy = dy;// - this.dragObjCoords[2];
@@ -631,7 +634,7 @@ JXG.Board.prototype.mouseMoveListener = function (Evt) {
     var el;
     var cPos = this.getRelativeMouseCoordinates(Evt);
 
-    // Position des Mauszeigers relativ zum Container
+    // position of mouse cursor relative to containers position of container
     var x = Event.pointerX(Evt) - cPos[0];
     var y = Event.pointerY(Evt) - cPos[1];
 
@@ -645,22 +648,29 @@ JXG.Board.prototype.mouseMoveListener = function (Evt) {
         this.moveOrigin();
     }
     else if(this.mode == this.BOARD_MODE_DRAG) {
+        var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
+
         if(this.drag_obj.type == JXG.OBJECT_TYPE_POINT 
             || this.drag_obj.type == JXG.OBJECT_TYPE_LINE 
             || this.drag_obj.type == JXG.OBJECT_TYPE_CIRCLE
             || this.drag_obj.type == JXG.OBJECT_TYPE_CURVE) {
 
-            var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
-            this.drag_obj.setPosition(JXG.COORDS_BY_USER, 
-                newPos.usrCoords[1]-this.dragObjCoords.usrCoords[1], 
-                newPos.usrCoords[2]-this.dragObjCoords.usrCoords[2]);
+            if ((this.geonextCompatibilityMode && this.drag_obj.type==JXG.OBJECT_TYPE_POINT) || this.drag_obj.group.length != 0) {
+                // This is for performance reasons with GEONExT files and for groups (transformations do not work yet with groups)
+                this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
+            } else {
+                this.drag_obj.setPositionByTransform(JXG.COORDS_BY_USER, 
+                    newPos.usrCoords[1]-this.dragObjCoords.usrCoords[1], 
+                    newPos.usrCoords[2]-this.dragObjCoords.usrCoords[2]);
+                // Save new mouse position in screen coordinates.
+                this.dragObjCoords = newPos; 
+            }
             this.update();
-            this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
         } else if(this.drag_obj.type == JXG.OBJECT_TYPE_GLIDER) {
             var oldCoords = this.drag_obj.coords;
-            var newPos = this.getScrCoordsOfMouse(x-this.drag_dx,y-this.drag_dy);
-            this.drag_obj.setPosition(JXG.COORDS_BY_SCREEN, newPos[0], newPos[1]);
-
+            // First the new position of the glider is set to the new mouse position
+            this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
+            // Then, from this position we comute the projection to the object the glider on which the glider lives.
             if(this.drag_obj.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
                 this.drag_obj.coords = this.algebra.projectPointToCircle(this.drag_obj, this.drag_obj.slideObject);
             } else if (this.drag_obj.slideObject.type == JXG.OBJECT_TYPE_LINE) {
