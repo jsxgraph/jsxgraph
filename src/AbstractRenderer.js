@@ -735,7 +735,7 @@ JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) {
 JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) {
     var eps = 0.00001;
     var slope = -axis.getSlope();
-    var dist = 3*axis.r;
+    var dist = 3*axis.r / 2;
     
     var dx, dy;
     
@@ -769,7 +769,7 @@ JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) 
         var tick = $(axis.id+'tick'+i);
         var tickLabel = $(axis.id+'tick'+i+'text');
 
-        this.updateLinePrimitive(tick, c.scrCoords[1], c.scrCoords[2], c.scrCoords[1]-dx, c.scrCoords[2]+dy);
+        this.updateLinePrimitive(tick, c.scrCoords[1]+dx, c.scrCoords[2]-dy, c.scrCoords[1]-dx, c.scrCoords[2]+dy);
         this.setStrokeProp(tick, axis.visProp);
     }    
 }
