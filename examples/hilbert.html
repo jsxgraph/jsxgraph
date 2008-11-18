@@ -7,21 +7,19 @@
 </head>
 <body>
 <h2>The Hilbert curve</h2>
-<div style="width:700px">
-<div id="jxgbox" class="jxgbox" style="width:500px; height:500px; float:left; "></div>
-<p style="float:right">
+<div style="width:800px">
+<div id="jxgbox" class="jxgbox" style="width:600px; height:600px; float:left; "></div>
+  <form>
   <select id='maxlev'>
         <option value="1">1
         <option value="2">2
         <option value="3">3
         <option value="4">4
         <option value="5">5
+        <option value="6">6
   </select>
-  <input type="button" value="set" onClick="doIt()" style='margin:1em'> <br />
-  <input type='button' value='Zoom In' onclick='b.zoomIn()' style='margin:1em'><br />
-  <input type='button' value='Zoom Out' onclick='b.zoomOut()' style='margin:1em'><br />
-  <input type='button' value='Zoom 100%' onclick='b.zoom100()' style='margin:1em'> 
-</p>
+  <input type="button" value=" set " onClick="doIt()" style='margin:1em'>
+  </form>
 </div>
 <br clear=all>
 <div id="debug" style="display:none;"></div>
@@ -137,7 +135,7 @@
             b = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 20, unitX: 5, unitY: 5});         
             b.suspendUpdate();
             maxlev = $('maxlev').value;
-            step = 10/maxlev;
+            step = 80/(maxlev*maxlev);
             hilbert(maxlev,LEFT);
             b.unsuspendUpdate();
         } 
