@@ -684,9 +684,11 @@ this.readGeonext = function(tree,board) {
                     gxtEl.fixed = Data.getElementsByTagName('output')[1].getElementsByTagName('fix')[0].firstChild.data;
                     board.objects[pointId].setProperty('strokeColor:'+defElColStr[1],
                                                        'strokeWidth:'+defElSW[1],
-                                                       'fillColor:'+defElColF[1],
+                                                       //'fillColor:'+defElColF[1],
+													   'fillColor:'+defElColStr[1],
                                                        'highlightStrokeColor:'+defElHColStr[1],
-                                                       'highlightFillColor:'+defElColF[1],
+                                                       //'highlightFillColor:'+defElColF[1],
+													   'highlightFillColor:'+defElHColStr[1],
                                                        'visible:'+defElV[1],
                                                        'fixed:'+gxtEl.fixed,
                                                        'labelColor:'+defElColL[1],
@@ -765,9 +767,11 @@ this.readGeonext = function(tree,board) {
                     var pid = defEl[0];
                     board.objects[pid].setProperty('strokeColor:'+defElColStr[0],
                                                                           'strokeWidth:'+defElSW[0],
-                                                                          'fillColor:'+defElColF[0],
+                                                                          //'fillColor:'+defElColF[0],
+																		  'fillColor:'+defElColStr[0],
                                                                           'highlightStrokeColor:'+defElHColStr[0],
-                                                                          'highlightFillColor:'+defElColF[0],
+                                                                          //'highlightFillColor:'+defElColF[0],
+																		  'highlightFillColor:'+defElHColStr[0],
                                                                           'visible:'+defElV[0],
                                                                           'fixed:'+gxtEl.outputFixed,
                                                                           'labelColor:'+defElColL[0],
@@ -833,9 +837,11 @@ this.readGeonext = function(tree,board) {
                     var pid = defEl[1];
                     board.objects[pid].setProperty('strokeColor:'+defElColStr[1],
                                                                           'strokeWidth:'+defElSW[1],
-                                                                          'fillColor:'+defElColF[1],
+                                                                          //'fillColor:'+defElColF[1],
+																		  'fillColor:'+defElColStr[1],
                                                                           'highlightStrokeColor:'+defElHColStr[1],
-                                                                          'highlightFillColor:'+defElColF[1],
+                                                                          //'highlightFillColor:'+defElColF[1],
+																		  'highlightFillColor:'+defElHColStr[1],
                                                                           'visible:'+defElV[1],
                                                                           'fixed:'+gxtEl.outputFixed,
                                                                           'labelColor:'+defElColL[1],
@@ -853,14 +859,16 @@ this.readGeonext = function(tree,board) {
                 /* noch die Eigenschaften der uebrigen Elemente setzen */
                 if(gxtEl.typeName == "MIDPOINT" || gxtEl.typeName == "MIRROR_LINE" ||
                    gxtEl.typeName == "CIRCUMCIRCLE_CENTER" || gxtEl.typeName == "PERPENDICULAR_POINT" ||
-                   gxtEl.typeName == "MIRROR_POINT") { // hier wird jeweils ein Punkt angelegt
+                   gxtEl.typeName == "MIRROR_POINT" || gxtEl.typeName == "PARALLELOGRAM_POINT") { // hier wird jeweils ein Punkt angelegt
                     gxtEl.outputFixed = Data.getElementsByTagName('output')[0].getElementsByTagName('fix')[0].firstChild.data;
                     gxtEl.outputStyle = Data.getElementsByTagName('output')[0].getElementsByTagName('style')[0].firstChild.data;                
                     board.objects[gxtEl.outputId].setProperty('strokeColor:'+gxtEl.outputColorStroke,
                                                                        'strokeWidth:'+gxtEl.outputStrokewidth,
-                                                                       'fillColor:'+gxtEl.outputColorFill,
+                                                                       //'fillColor:'+gxtEl.outputColorFill,
+																	   'fillColor:'+gxtEl.outputColorStroke,
                                                                        'highlightStrokeColor:'+gxtEl.outputHighlightStrokeColor,
-                                                                       'highlightFillColor:'+gxtEl.outputColorFill,
+                                                                       //'highlightFillColor:'+gxtEl.outputColorFill,
+																	   'highlightFillColor:'+gxtEl.outputHighlightStrokeColor,
                                                                        'visible:'+gxtEl.outputVisible,
                                                                        'fixed:'+gxtEl.outputFixed,
                                                                        'labelColor:'+gxtEl.outputColorLabel,
@@ -919,9 +927,11 @@ this.readGeonext = function(tree,board) {
                     var pid = defEl[0];
                     board.objects[pid].setProperty('strokeColor:'+defElColStr[0],
                                                                           'strokeWidth:'+defElSW[0],
-                                                                          'fillColor:'+defElColF[0],
+                                                                          //'fillColor:'+defElColF[0],
+																		  'fillColor:'+defElColStr[0],
                                                                           'highlightStrokeColor:'+defElHColStr[0],
-                                                                          'highlightFillColor:'+defElColF[0],
+                                                                          //'highlightFillColor:'+defElColF[0],
+																		  'highlightFillColor:'+defElHColStr[0],
                                                                           'visible:'+defElV[0],
                                                                           'fixed:'+gxtEl.outputFixed,
                                                                           'labelColor:'+defElColL[0],

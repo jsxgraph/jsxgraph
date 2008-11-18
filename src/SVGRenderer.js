@@ -221,8 +221,12 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     pathString += '0 ';
     pathString += projectedP3.scrCoords[1] + ' ' + projectedP3.scrCoords[2];
     pathString += ' L ' + el.point2.coords.scrCoords[1] + " " + el.point2.coords.scrCoords[2]    + ' z'; // Endpunkt
-    this.updatePathPrimitive(node,pathString);
-    this.setFillProp(node,el.visProp);
+    //this.updatePathPrimitive(node,pathString);
+    node.setAttributeNS(null, 'd', pathString);	
+	
+    node.setAttributeNS(null, 'fill', el.visProp['fillColor']);
+    node.setAttributeNS(null, 'fill-opacity', el.visProp['fillOpacity']);    
+    node.setAttributeNS(null, 'stroke', 'none');	
    
     var node2 = this.createPrimitive('path',el.id+'_2');
     var pathString = 'M '+  projectedP1.scrCoords[1] +' '+  projectedP1.scrCoords[2] +' A '; // Startpunkt
@@ -238,11 +242,13 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     pathString += '0 ';
     pathString += projectedP3.scrCoords[1] + ' ' + projectedP3.scrCoords[2]; // Endpunkt    
 
-    this.updatePathPrimitive(node2,pathString);
-    //this.setPropertyPrimitive(node2,'fill','none');
-    //this.setStrokeProp(node2,el.visProp);
+    //this.updatePathPrimitive(node2,pathString);
+    node2.setAttributeNS(null, 'd', pathString);
+    node2.setAttributeNS(null, 'id', el.id+'_2');
+	node2.setAttributeNS(null, 'fill', 'none');    
+    node2.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);	
+	node2.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);
 
-    //this.setPropertyPrimitive(node,'stroke', 'none');    
 
     this.appendChildPrimitive(node,'angles');
     el.rendNode1 = node;

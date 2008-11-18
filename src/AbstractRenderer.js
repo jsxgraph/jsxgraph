@@ -174,7 +174,7 @@ JXG.AbstractRenderer.prototype.drawLine = function(el) {
     this.appendChildPrimitive(node,'lines');
     el.rendNode = node;
     //this.setStrokeProp(el.rendNode,el.visProp);
-    //this.setDashStyle(el.rendNode,el.visProp);
+    this.setDashStyle(el.rendNode,el.visProp);
     //this.setDraft(el);
     this.updateLine(el);
 };

@@ -267,7 +267,9 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
     node2.style.height = (Math.round(el.radius * el.board.unitY * el.board.zoomY)*2) + 'px'; 
     node2.setAttribute('startangle', angle1);
     node2.setAttribute('endangle', angle2);   
-    this.setStrokeProp(node2,el.visProp);
+    node2.setAttribute('stroked', 'true');
+    node2.setAttribute('strokecolor', el.visProp['strokeColor']);
+    node2.setAttribute('strokeweight', el.visProp['strokeWidth']);
     node2.setAttribute('filled', 'false');
     node2.style.zIndex = "4"; 
     node2.setAttribute('id', el.id+"_2");    
@@ -288,7 +290,7 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
 JXG.VMLRenderer.prototype.updateAngle = function(el) {
     // erstmal nur der brutale Weg... 
     this.remove(el.rendNode1);
-    this.remove(el.rendNode2);    
+    this.remove(el.rendNode2);  
     this.drawAngle(el);
     return;
 }
