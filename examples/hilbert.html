@@ -1,0 +1,148 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>The Hilbert curve</h2>
+<div style="width:700px">
+<div id="jxgbox" class="jxgbox" style="width:500px; height:500px; float:left; "></div>
+<p style="float:right">
+  <select id='maxlev'>
+        <option value="1">1
+        <option value="2">2
+        <option value="3">3
+        <option value="4">4
+        <option value="5">5
+  </select>
+  <input type="button" value="set" onClick="doIt()" style='margin:1em'> <br />
+  <input type='button' value='Zoom In' onclick='b.zoomIn()' style='margin:1em'><br />
+  <input type='button' value='Zoom Out' onclick='b.zoomOut()' style='margin:1em'><br />
+  <input type='button' value='Zoom 100%' onclick='b.zoom100()' style='margin:1em'> 
+</p>
+</div>
+<br clear=all>
+<div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var b = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 20, unitX: 5, unitY: 5});
+        var UP = 0;
+        var LEFT = 1;
+        var DOWN = 2;
+        var RIGHT = 3;
+        var pos = [0,0];
+        var newpos = [0,0];
+        var last = null;
+        var nextP = null;
+        var step = 1;
+
+        move = function(dir)  {
+                var newpos = [pos[0],pos[1]];
+                switch (dir) {
+                    case LEFT:
+                        newpos[0] -= step;
+                        break;
+                    case RIGHT:
+                        newpos[0] += step;
+                        break;
+                    case UP:
+                        newpos[1] += step;
+                        break;
+                    case DOWN:
+                        newpos[1] -= step;
+                        break;
+                } 
+                if (last==null) {
+                    last = b.createElement('point',pos,{name:' ', fixed:true,visible:true});
+                }
+                nextP = b.createElement('point',newpos,{name:' ',fixed:true,visible:false});
+                var l = b.createElement('line',[last,nextP], {straightFirst:false, straightLast:false});
+                last = nextP;
+                pos = newpos;
+        };
+
+        hilbert = function(level,dir) {
+            if (level==1) {
+                switch (dir) {
+                    case LEFT:
+                        move(RIGHT);     
+                        move(DOWN);      
+                        move(LEFT);
+                        break;
+                    case RIGHT:
+                        move(LEFT);
+                        move(UP);
+                        move(RIGHT);
+                        break;
+                    case UP:
+                        move(DOWN);
+                        move(RIGHT);
+                        move(UP);
+                        break;
+                    case DOWN:
+                        move(UP);
+                        move(LEFT);
+                        move(DOWN);
+                        break;
+                } 
+            } else {
+                switch (dir) {
+                    case LEFT:
+                        hilbert(level-1,UP);
+                        move(RIGHT);
+                        hilbert(level-1,LEFT);
+                        move(DOWN);
+                        hilbert(level-1,LEFT);
+                        move(LEFT);
+                        hilbert(level-1,DOWN);
+                        break;
+                    case RIGHT:
+                        hilbert(level-1,DOWN);
+                        move(LEFT);
+                        hilbert(level-1,RIGHT);
+                        move(UP);
+                        hilbert(level-1,RIGHT);
+                        move(RIGHT);
+                        hilbert(level-1,UP);
+                        break;
+                    case UP:
+                        hilbert(level-1,LEFT);
+                        move(DOWN);
+                        hilbert(level-1,UP);
+                        move(RIGHT);
+                        hilbert(level-1,UP);
+                        move(UP);
+                        hilbert(level-1,RIGHT);
+                        break;
+                    case DOWN:
+                        hilbert(level-1,RIGHT);
+                        move(UP);
+                        hilbert(level-1,DOWN);
+                        move(LEFT);
+                        hilbert(level-1,DOWN);
+                        move(DOWN);
+                        hilbert(level-1,LEFT);
+                        break;
+                } /* switch */
+            }
+        };
+
+        function doIt(){
+            JXG.JSXGraph.freeBoard(b);      
+            last = null;
+            pos = [0,0];
+            b = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 20, unitX: 5, unitY: 5});         
+            b.suspendUpdate();
+            maxlev = $('maxlev').value;
+            step = 10/maxlev;
+            hilbert(maxlev,LEFT);
+            b.unsuspendUpdate();
+        } 
+        
+  /* ]]> */
+  </script>
+</body>
+</html>
