@@ -82,13 +82,13 @@ JXG.Math.Numerics.backwardSolve = function(R, b) {
  */
 JXG.Math.Numerics.Gauss = function(A, b) {
    var eps = 1.e-12;
-	
+    
    /* vector to keep track of permutations caused by pivotion */
    var P = new JXG.Math.Vector();
    for (var i = 0; i < A.n(); i++) {
       P.push(i);
    }
-	
+    
    /* Gauss-Jordan-elimination */
    for (var j = 0; j < A.n(); j++)
    {

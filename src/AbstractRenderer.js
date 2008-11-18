@@ -219,8 +219,8 @@ JXG.AbstractRenderer.prototype.updateLine = function(el) {
                 ];
         el.imageTransformMatrix = m;
     }
-	this.makeArrows(el);
-	
+    this.makeArrows(el);
+
     if (this.enhancedRendering) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
@@ -228,7 +228,7 @@ JXG.AbstractRenderer.prototype.updateLine = function(el) {
         } else {
             this.setDraft(el);
         }
-    }	
+    }    
 }
 
 /**

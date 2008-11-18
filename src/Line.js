@@ -113,7 +113,7 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type bool
      */
     this.visProp['visible'] = true;
-	
+    
     /**
      * Determines if a line has an arrow at its firstpoint.
      * @type bool
@@ -125,7 +125,7 @@ JXG.Line = function (board, p1, p2, id, name) {
      * Determines if a line has an arrow at its firstpoint.
      * @type bool
      * @see #firstArrow
-     */    	
+     */        
     this.visProp['lastArrow'] = false;
     
     /**
@@ -259,7 +259,7 @@ JXG.Line.prototype.update = function() {
     }
     if(this.traced) {
         this.cloneToBackground(true);
-    }	
+    }    
 };
 
 JXG.Line.prototype.updateStdform = function() {    
@@ -479,8 +479,8 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     this.numTraces++;
     copy.point1 = this.point1;
     copy.point2 = this.point2;
-	
-	copy.stdform = this.stdform;
+    
+    copy.stdform = this.stdform;
     
     copy.board = {};
     copy.board.unitX = this.board.unitX;
@@ -491,7 +491,7 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.board.canvasHeight = this.board.canvasHeight;
     copy.board.canvasWidth = this.board.canvasWidth;
     copy.board.dimension = this.board.dimension;   
-	copy.board.algebra = this.board.algebra; 	
+    copy.board.algebra = this.board.algebra;     
     
     copy.visProp = this.visProp;
     var s = this.getSlope();
@@ -499,9 +499,9 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.getSlope = function() { return s; };
     copy.getRise = function() { return r; };
     
-	this.board.renderer.enhancedRendering = true;
+    this.board.renderer.enhancedRendering = true;
     this.board.renderer.drawLine(copy);
-	this.board.renderer.enhancedRendering = false;
+    this.board.renderer.enhancedRendering = false;
     this.traces[copy.id] = $(copy.id);
 
     delete copy;
@@ -581,8 +581,8 @@ JXG.createArrow = function(board, parents, attributes) {
     
     if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) {
         el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name']);
-		el.setStraight(false,false);
-		el.setArrow(false,true);
+        el.setStraight(false,false);
+        el.setArrow(false,true);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
         throw ("Can't create arrow with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");

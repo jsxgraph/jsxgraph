@@ -71,12 +71,12 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
     this.visProp = {};
     this.visProp['visible'] = true;
     this.show = true; // noch noetig? BV
-	
+    
     /**
      * True when the intersection points have real coordinates, false otherwise.
      * @type bool
-     */	
-	this.real = true;
+     */    
+    this.real = true;
     
     /** 
      * Stores all Intersection Objects which in this moment are not real and
@@ -126,7 +126,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         /* A point constructed by an intersection can't be moved, so it is fixed */
         this.p.fixed = true;
         this.addChild(this.p);
-		this.real = true;
+        this.real = true;
 
         /* 
          * Because the update function depends on the types of the intersected elements
@@ -213,12 +213,12 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
             this.p2.coords = coordinates[2];
             this.p2.showElement();
             this.p2.updateRenderer();
-			
-			this.real = true;
+            
+            this.real = true;
         }
-		else {
-		    this.real = false;
-		}
+        else {
+            this.real = false;
+        }
 
         this.update = function () {    
             if (!this.needsUpdate) { return; }
@@ -226,19 +226,19 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
             var p1show = this.p1.visProp['visible'];
             var p2show = this.p2.visProp['visible'];         
             if(coordinates[0] == 0) {  
-				if(this.real) {
-					this.hideChild(this.id);
-					this.p1.visProp['visible'] = p1show;
-					this.p2.visProp['visible'] = p2show;
-					this.real = false;
-				}
+                if(this.real) {
+                    this.hideChild(this.id);
+                    this.p1.visProp['visible'] = p1show;
+                    this.p2.visProp['visible'] = p2show;
+                    this.real = false;
+                }
             } else {
                 this.p1.coords = coordinates[1];     
                 this.p2.coords = coordinates[2];
-				if(!this.real) {
-					this.showChild(this.id); 
-					this.real = true;
-				}
+                if(!this.real) {
+                    this.showChild(this.id); 
+                    this.real = true;
+                }
             }
             this.needsUpdate = false;
         }
@@ -300,7 +300,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
             this.p1.showElement();
             this.p1.update();    
         } 
-		else if(coordinates[0] == 2) {
+        else if(coordinates[0] == 2) {
             this.p1.coords = coordinates[1];
             this.p1.showElement();        
 
@@ -311,12 +311,12 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
             this.p1.updateRenderer();
             //this.p2.update(); 
             this.p2.updateRenderer();    
-			
-			this.real = true;
+            
+            this.real = true;
         }
-		else {
-		    this.real = false;
-		}
+        else {
+            this.real = false;
+        }
 
         this.update = function () {
             if (!this.needsUpdate) { return; }
@@ -325,19 +325,19 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
             var show2 = this.p2.visProp['visible'];
             
             if(coordinates[0] == 0) {
-			    if(this.real) {
+                if(this.real) {
                     this.hideChild(this.id);
                     this.p1.visProp['visible'] = show1; 
                     this.p2.visProp['visible'] = show2;
-					this.real = false;
-				}
+                    this.real = false;
+                }
             } else if(coordinates[0] == 2) {
                 this.p1.coords = coordinates[1];   
                 this.p2.coords = coordinates[2];
-				if(!this.real) {
+                if(!this.real) {
                     this.showChild(this.id);  
                     this.real = true;
-			    }
+                }
             }
             this.needsUpdate = false;
         }

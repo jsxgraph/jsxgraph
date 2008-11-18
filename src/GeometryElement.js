@@ -375,11 +375,11 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 break;
             case 'fillopacity':
                 this.visProp['fillOpacity'] = pair[1];
-                this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);				
+                this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);                
                 break;
             case 'strokeopacity':
                 this.visProp['strokeOpacity'] = pair[1];
-                this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']); 				
+                this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);                 
                 break;        
             case 'highlightfillopacity':
                 this.visProp['highlightFillOpacity'] = pair[1];
