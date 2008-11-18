@@ -746,7 +746,12 @@ JXG.createPoint = function(board, parentArr, atts) {
  * parentArr consists of three elements: [number, number, object]
  */
 JXG.createGlider = function(board, parentArr, atts) {
-    var el = new JXG.Point(board, parentArr, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+    var el;
+    if (parentArr.length==1) {
+      el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+    } else {
+      el = new JXG.Point(board, parentArr.slice(0,-1), atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+    }
     el.makeGlider(parentArr[parentArr.length-1]);
     return el;
 };

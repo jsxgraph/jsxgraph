@@ -71,9 +71,9 @@ JXG.Curve = function (board, definingArr, id, name) {
      * @see updateCurve
      * Possible values are:
      * 'none'
-     * 'plot'
+     * 'plot': Data plot
      * 'parameter': we can not distinguish function graphs and parameter curves
-     * 'graph'
+     * 'graph': function graph
      * 'polar'
      * 'implicit' (not yet)
      *
@@ -178,7 +178,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
          return false;
     } else {
     //$('debug').innerHTML += this.Y.toString()+' ';
-        // Brute fore search for a point on the curve close to the mouse pointer
+        // Brute force search for a point on the curve close to the mouse pointer
         var steps = 300;
         var d = (this.maxX()-this.minX())/steps;
         for (i=0,t=this.minX(); i<steps; i++) {

@@ -646,7 +646,7 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [r*Math.cos(t)+offs[0],r*Math.sin(t)+offs[1]], this.board);
     } else {
         t = point.X();
-        x = t; //graph.X(t);
+        x = t; //curve.X(t);
         y = curve.Y(t);
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board); 
     }

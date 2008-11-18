@@ -28,7 +28,7 @@
         b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 		
 		eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
-		graph = board.createElement('curve', [function(x){ return x; }, function(x){ return f(x); }, "x", -10, 10]);
+		graph = board.createElement('curve', [function(x){ return x; }, function(x){ return f(x); }, "x", -10, 10], {curveType:'graph'});
         
         p2 = board.createElement('glider', [graph], {style:6, name:'P'});
         g = board.algebra.D(f);
