@@ -620,8 +620,17 @@ JXG.createAxis = function(board, parents, attributes) {
         point1.fixed = true;
         point2.fixed = true;
 
-        var el = board.createElement('line', [point1, point2], {id: attributes["id"], name: attributes["name"], lastArrow:true, straightFirst: true, straightLast: true, strokeWidth:2, withTicks:true});
-        el.enableTicks();
+        if(attributes == null)
+            attributes = new Object();
+        
+        attributes.lastArrow = true;
+        attributes.straightFirst = true;
+        attributes.straightLast = true;
+        attributes.withTicks = true;
+        if(attributes.strokeWidth == null)
+            attributes.strokeWidth = 2;
+
+        var el = board.createElement('line', [point1, point2], attributes);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
         throw ("Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");

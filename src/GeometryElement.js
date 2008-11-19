@@ -485,13 +485,11 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 }            
                 this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
                 break;                   
-            case 'withTicks':
+            case 'withticks':
                 if(pair[1] == 'false' || pair[1] == false) {
-                    this.visProp['withTicks'] = false;
                     this.disableTicks();
                 }
                 else if(pair[1] == 'true' || pair[1] == true) {
-                    this.visProp['withTicks'] = true;
                     this.enableTicks();
                 }            
                 break;                   
