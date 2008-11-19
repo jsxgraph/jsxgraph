@@ -11,12 +11,15 @@
 <div id="jxgbox" class="jxgbox" style="width:600px; height:600px; float:left; "></div>
   <form>
   <select id='maxlev'>
-        <option value="1">1
-        <option value="2">2
-        <option value="3">3
-        <option value="4">4
-        <option value="5">5
-        <option value="6">6
+        <option value="1"> 1
+        <option value="2"> 2
+        <option value="3"> 3
+        <option value="4"> 4
+        <option value="5"> 5
+        <option value="6"> 6
+        <option value="7"> 7
+        <option value="8"> 8
+        <option value="9"> 9
   </select>
   <input type="button" value=" set " onClick="doIt()" style='margin:1em'>
   </form>
@@ -32,12 +35,12 @@
         var DOWN = 2;
         var RIGHT = 3;
         var pos = [0,0];
-        var newpos = [0,0];
-        var last = null;
-        var nextP = null;
         var step = 1;
 
-        move = function(dir)  {
+        var pointsX = [];
+        var pointsY = [];
+
+        moveold = function(dir)  {
                 var newpos = [pos[0],pos[1]];
                 switch (dir) {
                     case LEFT:
@@ -60,6 +63,24 @@
                 var l = b.createElement('line',[last,nextP], {straightFirst:false, straightLast:false});
                 last = nextP;
                 pos = newpos;
+        };
+        move = function(dir)  {
+                switch (dir) {
+                    case LEFT:
+                        pos[0] -= step;
+                        break;
+                    case RIGHT:
+                        pos[0] += step;
+                        break;
+                    case UP:
+                        pos[1] += step;
+                        break;
+                    case DOWN:
+                        pos[1] -= step;
+                        break;
+                } 
+                pointsX[pointsX.length] = pos[0];
+                pointsY[pointsY.length] = pos[1];
         };
 
         hilbert = function(level,dir) {
@@ -124,19 +145,21 @@
                         move(DOWN);
                         hilbert(level-1,LEFT);
                         break;
-                } /* switch */
+                } 
             }
         };
 
         function doIt(){
             JXG.JSXGraph.freeBoard(b);      
-            last = null;
             pos = [0,0];
+            pointsX = [0];
+            pointsY = [0];
             b = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 20, unitX: 5, unitY: 5});         
             b.suspendUpdate();
             maxlev = $('maxlev').value;
-            step = 80/(maxlev*maxlev);
+            step = 50/(Math.pow(2,maxlev-1));
             hilbert(maxlev,LEFT);
+            b.createElement('curve',[pointsX,pointsY],{curveType:'plot'});
             b.unsuspendUpdate();
         } 
         

@@ -52,11 +52,6 @@ JXG.Curve = function (board, definingArr, id, name) {
     
     this.init(board, id, name);
 
-    this.numberPoints = this.board.canvasWidth*1.0;
-    for (var i=0;i<this.numberPoints;i++) {
-        this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
-    }
-
     this.visProp['strokeColor'] = '#0000ff';
     this.visProp['strokeWidth'] = '1px';
     this.visProp['fillColor'] = 'none';
@@ -91,6 +86,11 @@ JXG.Curve = function (board, definingArr, id, name) {
     this.xterm = definingArr[0];  // usually: "x"
     this.yterm = definingArr[1];  // usually: e.g. "x^2"
     this.generateTerm(this.xterm,this.yterm,this.varname,definingArr[3],definingArr[4]);  // Converts GEONExT syntax into JavaScript syntax
+
+    // At this point this.numberPoints has been set in this.generateTerm
+    for (var i=0;i<this.numberPoints;i++) {
+        this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
+    }
     this.updateCurve();                        // First evaluation of the graph
     this.id = this.board.addCurve(this);
     
@@ -246,6 +246,7 @@ JXG.Curve.prototype.updateCurve = function () {
     var ma = this.maxX();
     var x, y;
     var stepSize = (ma-mi)/len;
+
     for(var i=0;i<len;i++) {
         if (this.dataX!=null) { // x-coordinates are in an array
             x = i;
@@ -324,6 +325,7 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
  */
 JXG.Curve.prototype.generateTerm = function (xterm, yterm, varname, mi, ma) {
     // Generate the methods X() and Y()
+    this.numberPoints = this.board.canvasWidth*1.0;
     if (typeof xterm=='string') {
         // Convert GEONExT syntax into  JavaScript syntax
         var newxterm = this.board.algebra.geonext2JS(xterm);
@@ -339,6 +341,7 @@ JXG.Curve.prototype.generateTerm = function (xterm, yterm, varname, mi, ma) {
         this.curveType = 'plot';
         this.dataX = xterm;
         this.X = function(i) { return this.dataX[i]; };
+        this.numberPoints = this.dataX.length;
     }
 
     if (typeof yterm=='string') {
