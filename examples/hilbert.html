@@ -7,9 +7,11 @@
 </head>
 <body>
 <h2>The Hilbert curve</h2>
+The famous space filling curve drawn with JavaScript.
 <div style="width:800px">
 <div id="jxgbox" class="jxgbox" style="width:600px; height:600px; float:left; "></div>
   <form>
+  <p> Max. iteration level:
   <select id='maxlev' style='margin:1em'>
         <option value="1"> 1
         <option value="2"> 2
@@ -22,6 +24,7 @@
         <option value="9"> 9
   </select>
   <input type="button" value=" set " onClick="doIt()" style='margin:1em'>
+</p>
   </form>
 </div>
 <br clear=all>
@@ -126,6 +129,7 @@
 
         var curve = b.createElement('curve',[pointsX,pointsY],{curveType:'plot'});
         //var s = b.createElement('slider', [0.75,-100,50,1,11,1], {name:'S'});
+        //var p = b.createElement('glider',[0,0,curve],{style:6});
 
         function doIt(){
             pos = [0,0];
@@ -134,10 +138,9 @@
             maxlev = $('maxlev').value;
             step = 50/(Math.pow(2,maxlev-1));
             hilbert(maxlev,LEFT);
-            b.suspendUpdate()
             curve.dataX = pointsX;
             curve.dataY = pointsY;
-            b.unsuspendUpdate()
+            b.update()
         } 
         
   /* ]]> */
