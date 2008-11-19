@@ -36,34 +36,9 @@
         var RIGHT = 3;
         var pos = [0,0];
         var step = 1;
-
         var pointsX = [];
         var pointsY = [];
 
-        moveold = function(dir)  {
-                var newpos = [pos[0],pos[1]];
-                switch (dir) {
-                    case LEFT:
-                        newpos[0] -= step;
-                        break;
-                    case RIGHT:
-                        newpos[0] += step;
-                        break;
-                    case UP:
-                        newpos[1] += step;
-                        break;
-                    case DOWN:
-                        newpos[1] -= step;
-                        break;
-                } 
-                if (last==null) {
-                    last = b.createElement('point',pos,{name:' ', fixed:true,visible:true});
-                }
-                nextP = b.createElement('point',newpos,{name:' ',fixed:true,visible:false});
-                var l = b.createElement('line',[last,nextP], {straightFirst:false, straightLast:false});
-                last = nextP;
-                pos = newpos;
-        };
         move = function(dir)  {
                 switch (dir) {
                     case LEFT:
@@ -149,17 +124,20 @@
             }
         };
 
+        var curve = b.createElement('curve',[pointsX,pointsY],{curveType:'plot'});
+        //var s = b.createElement('slider', [0.75,-100,50,1,11,1], {name:'S'});
+
         function doIt(){
-            JXG.JSXGraph.freeBoard(b);      
             pos = [0,0];
             pointsX = [0];
             pointsY = [0];
-            b = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 20, unitX: 5, unitY: 5});         
             b.suspendUpdate();
             maxlev = $('maxlev').value;
             step = 50/(Math.pow(2,maxlev-1));
             hilbert(maxlev,LEFT);
-            b.createElement('curve',[pointsX,pointsY],{curveType:'plot'});
+            curve.dataX = pointsX;
+            curve.dataY = pointsY;
+            curve.update();
             b.unsuspendUpdate();
         } 
         

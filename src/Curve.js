@@ -47,6 +47,8 @@ JXG.Curve = function (board, definingArr, id, name) {
     this.constructor();
  
     this.points = [];
+    this.numberPoints = 0;
+
     this.type = JXG.OBJECT_TYPE_CURVE;
     this.elementClass = JXG.OBJECT_CLASS_CURVE;                
     
@@ -86,11 +88,6 @@ JXG.Curve = function (board, definingArr, id, name) {
     this.xterm = definingArr[0];  // usually: "x"
     this.yterm = definingArr[1];  // usually: e.g. "x^2"
     this.generateTerm(this.xterm,this.yterm,this.varname,definingArr[3],definingArr[4]);  // Converts GEONExT syntax into JavaScript syntax
-
-    // At this point this.numberPoints has been set in this.generateTerm
-    for (var i=0;i<this.numberPoints;i++) {
-        this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
-    }
     this.updateCurve();                        // First evaluation of the graph
     this.id = this.board.addCurve(this);
     
@@ -202,6 +199,18 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
 };
 
 /**
+  * Allocate points in the Coords array this.points
+  */
+JXG.Curve.prototype.allocatePoints = function () {
+    // At this point this.numberPoints has been set in this.generateTerm
+    if (this.points.length<this.numberPoints) {
+        for (var i=this.points.length;i<this.numberPoints;i++) {
+            this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
+        }
+    }
+};
+
+/**
  * Computes for equidistant points on the x-axis the values
  * of the function. @see #updateCurve
  * Then, the update function of the renderer
@@ -240,6 +249,7 @@ JXG.Curve.prototype.updateCurve = function () {
             this.numberPoints = this.board.canvasWidth*0.25;
         }
     }
+    this.allocatePoints();  // It is possible, that the array length has increased.
     var len = this.numberPoints;
 
     var mi = this.minX();
