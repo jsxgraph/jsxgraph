@@ -255,6 +255,8 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     this.appendChildPrimitive(node2,'angles');
     el.rendNode2 = node2;
     //   this.setDraft(el);
+    
+    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
 }
 
 JXG.SVGRenderer.prototype.updateAngle = function(el) {
