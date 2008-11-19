@@ -8,6 +8,8 @@
 <body>
 <h2>The Hilbert curve</h2>
 The famous space filling curve drawn with JavaScript.
+If it is set to level=9 the curve is defined by 
+262 144 points.
 <div style="width:800px">
 <div id="jxgbox" class="jxgbox" style="width:600px; height:600px; float:left; "></div>
   <form>
@@ -127,9 +129,8 @@ The famous space filling curve drawn with JavaScript.
             }
         };
 
-        var curve = b.createElement('curve',[pointsX,pointsY],{curveType:'plot'});
-        //var s = b.createElement('slider', [0.75,-100,50,1,11,1], {name:'S'});
-        //var p = b.createElement('glider',[0,0,curve],{style:6});
+        var curve = b.createElement('curve',[pointsX,pointsY],{curveType:'plot'/*,fillColor:'#ff4400'*/});
+        var s = b.createElement('slider', [0.75,-110,50,1,7,1], {name:'S'});
 
         function doIt(){
             pos = [0,0];
@@ -140,8 +141,24 @@ The famous space filling curve drawn with JavaScript.
             hilbert(maxlev,LEFT);
             curve.dataX = pointsX;
             curve.dataY = pointsY;
-            b.update()
+            b.update();
         } 
+
+        var oldlev = -1;
+        curve.updateDataArray = function() {
+            maxlev = Math.round(s.X());
+            if (oldlev==maxlev) {
+                return;
+            }
+            pos = [0,0];
+            pointsX = [0];
+            pointsY = [0];
+            step = 50/(Math.pow(2,maxlev-1));
+            hilbert(maxlev,LEFT);
+            this.dataX = pointsX;
+            this.dataY = pointsY;
+            oldlev=maxlev;
+        };
         
   /* ]]> */
   </script>

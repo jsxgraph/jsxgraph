@@ -234,12 +234,23 @@ JXG.Curve.prototype.updateRenderer = function () {
 };
 
 /**
+  * For dynamic dataplots updateCurve
+  * can be used to compute new entries
+  * for the arrays this.dataX and
+  * this.dataY. It is used in @see updateCurve.
+  * Default is an empty method, can be overwritten
+  * by the user.
+  */
+JXG.Curve.prototype.updateDataArray = function () {};
+
+/**
  * Computes for equidistant points on the x-axis the values
  * of the function. @see #update
  * If the mousemove event triggers this update, we use only few
  * points. Otherwise, e.g. on mouseup, many points are used.
  */
 JXG.Curve.prototype.updateCurve = function () {
+    this.updateDataArray();
     if (this.curveType=='plot' && this.dataX!=null) {
         this.numberPoints = this.dataX.length;
     } else {
