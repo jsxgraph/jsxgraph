@@ -4,9 +4,10 @@
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/Triangle.js"></script>
 </head>
 <body>
-<h2>Lines with ticks</h2>
+<h2>Playground to test things temporarily. May change very often.</h2>
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
 </div>
@@ -17,12 +18,20 @@
         var p1, p2, l1;
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 40});
 
-        p1 = board.createElement('point', [3, 8], {style:1,name:"P_{1}"}); // Angabe fester Koordinaten
+        p1 = board.createElement('point', [3, 3], {style:1,name:"P_{1}"}); // Angabe fester Koordinaten
         p2 = board.createElement('point', [8, 3], {style:2,name:"P_{2}"}); // Angabe fester Koordinaten
+        p3 = board.createElement('point', [4, 5], {style:3,name:"P_{3}"});
         
-        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast: true});
-        l1.ticksDelta = 5;
-        l1.enableTicks();
+        t = board.createElement('triangle', [p1, p2, p3]);
+
+x = new JXG.Math.Vector([0.0,0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]);
+
+f = new JXG.Math.Vector([1.0, 0.989, 0.959, 0.9002, 0.8101, 0.691, 0.5491, 0.395, 0.243, 0.1098, 0.0]);
+
+F = JXG.Math.Numerics.splineDef(x,f);
+
+     var y = JXG.Math.Numerics.splineEval(0.2145, x, f, F);
+alert(y);
         
   /* ]]> */
   </script>

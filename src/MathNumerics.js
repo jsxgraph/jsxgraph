@@ -142,7 +142,9 @@ JXG.Math.Numerics.QR = function(A, b) {
 /**
  * Calculates the integral of function f over interval using Newton-Cotes-algorithm.
  * @param {Array} interval e.g. [a, b] 
- * @param {function} f 
+ * @param {function} f
+ * @type float
+ * @return Integral value of f over interval interval
  */
 JXG.Math.Numerics.NewtonCotes = function(interval, f) {
     var integral_value = 0.0;
@@ -153,7 +155,7 @@ JXG.Math.Numerics.NewtonCotes = function(interval, f) {
             integral_value = (f(interval[0]) + f(interval[1])) * 0.5;
     
             var evaluation_point = interval[0];
-            for (i = 0; i < this.number_of_nodes - 1; i++)
+            for (var i = 0; i < this.number_of_nodes - 1; i++)
             {
                 evaluation_point += step_size;
                 integral_value   += f(evaluation_point);
@@ -209,7 +211,120 @@ JXG.Math.Numerics.NewtonCotes = function(interval, f) {
                 evaluation_point += 4.0 * step_size;
                 integral_value   += 12.0 * f(evaluation_point);
             }
-            integral_value *= 2.0 * step_size / 45.0;
+            integral_value *= 2.0 * step_size / 45.0; /* todo */
     }
     return integral_value;
 };
+
+/**
+ * Calculates second derivatives at the knots.
+ * @param {JXG.Math.Vector} x x values of knots
+ * @param {JXG.Math.Vector} y y values of knots
+ * @type JXG.Math.Vector
+ * @return Second derivatives of interpolated function at the knots.
+ */
+JXG.Math.Numerics.splineDef = function(x, y) {
+    if( x.length != y.length)
+        throw "Error in JXG.Math.Numerics.splineDef: Input vector dimensions do not match.";
+    
+    var n = x.length;
+    
+    var dx = new Array();
+    var delta = new Array();
+    for(var i=0; i<n-1; i++) {
+        dx.push(x[i+1] - x[i]);
+    }
+    for(var i=0; i<n-2; i++) {
+        delta.push(6 * (y[i+2] - y[i+1])/(dx[i+1]) - 6 * (y[i+1] - y[i])/(dx[i]));
+    }
+
+    // ForwardSolve
+    var diag = new Array();
+    var z = new Array();
+    var l;
+
+    diag.push(2*(dx[0] + dx[1]));
+    z.push(delta[0]);
+
+    for(var i=0; i<n-3; i++) {
+        l = dx[i+1]/diag[i];
+        diag.push(2 * (dx[i+1] + dx[i+2]) - l*dx[i+1]);
+        z.push(delta[i+1] - l*z[i]);
+    }
+
+    // BackwardSolve
+    var F = new Array();
+    F[n-3] = z[n-3]/diag[n-3];
+    for(var i=n-4; i>=0; i--) {
+        F[i] = (z[i] - (dx[i+1]*F[i+1]))/diag[i];
+    }
+    
+    // Generate f''-Vector
+    for(var i=n-3; i>=0; i--)
+        F[i+1] = F[i];
+    
+    // natural cubic spline
+    F[0] = 0;
+    F[n-1] = 0;
+
+    return new JXG.Math.Vector(F);
+}
+
+/**
+ * Evaluate points on spline.
+ * @param {float/Array} x0 A single float value or an array of values to evaluate
+ * @param {JXG.Math.Vector} x x values of knots
+ * @param {JXG.Math.Vector} y y values of knots
+ * @param {JXG.Math.Vector} F Second derivatives at knots, calculated by #splineDef
+ * @see splineDef
+ * @type float/Array
+ * @return A single value
+ */
+JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
+    if(x.length != y.length)
+        throw "Error in JXG.Math.Numerics.splineEval: Defining vector dimensions do not match.";
+    
+    var n = x.length;
+
+    // number of points to be evaluated
+    var l = 1;
+    var asArray = false;
+    if(JXG.IsArray(x0)) {
+        l = x0.length;
+        asArray = true;
+    } else
+        x0 = [x0];
+    
+    var y0 = new Array();
+    
+    for(var i=0; i<l; i++) {
+        // is x0 in defining interval?
+        if( (x0[i] < x[0]) || (x[i] > x[n-1]))
+            throw "Error in JXG.Math.Numerics.splineEval: Evaluation point outside spline interval.";
+        
+        // determine part of spline in which x0 lies
+        var j;
+        for(j=1; j<n; j++) {
+            if(x0[i] <= x[j])
+                break;
+        }
+        j--;
+        
+        // we're now in the j-th partial interval, i.e. x[j] < x0[i] <= x[j+1];
+        // determine the coefficients of the polynomial in this interval
+        var a = y[j];
+        var b = (y[j+1]-y[j])/(x[j+1]-x[j]) - (x[j+1]-x[j])/6 * (F[j+1]+2*F[j]);
+        var c = F[j]/2;
+        var d = (F[j+1]-F[j])/(6*(x[j+1]-x[j]));
+        
+        // evaluate x0[i]
+        var x_ = x0[i]-x[j];
+        y0.push(a + b*x_ + c*x_*x_ + d*x_*x_*x_);
+    }
+    
+    if(asArray)
+        return y0;
+    else
+        return y0[0];
+    
+}
