@@ -31,24 +31,42 @@
  
 JXG.Chart = function(){};
 
-JXG.Chart.prototype.drawLine = function(board,parentArr,atts) {
-    var c = board.createElement('curve',parentArr,atts);
+JXG.Chart.prototype.drawLine = function(board, parents, attributes) {
+    var c = board.createElement('curve', parents, attributes);
     return c;
 };
 
-JXG.Chart.prototype.drawBar = function(board,parentArr,atts) {
+JXG.Chart.prototype.drawSpline = function(board, parents, attributes) {
+    var x = parents[0];
+    var y = parents[1];
+    
+    var F = JXG.Math.Numerics.splineDef(x, y);
+    var px = new Array();
+    var i = 0;
+    var delta = (x[x.length-1]-x[0])/board.canvasWidth*1.0;
+    while(x[0] + i*delta < x[x.length-1]) {
+        px[i] = x[0] + i*delta;
+        i++;
+    }
+    var py = JXG.Math.Numerics.splineEval(px, x, y, F);
+
+    var c = board.createElement('curve', [px, py], attributes);
+    return c;
+}
+
+JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
     var i;
     var pols = [];
-    if (atts['fillOpacity'] == undefined) {
-        atts['fillOpacity'] = 0.6;
+    if (attributes['fillOpacity'] == undefined) {
+        attributes['fillOpacity'] = 0.6;
     }
-    var x = parentArr[0];
-    var y = parentArr[1];
+    var x = parents[0];
+    var y = parents[1];
     
     // Determine the width of the bars
     var w;
-    if (atts && atts['width']) {  // width given
-        w = atts['width'];
+    if (attributes && attributes['width']) {  // width given
+        w = attributes['width'];
     } else {
         if (x.length<=1) {
             w = 1;
@@ -82,45 +100,45 @@ JXG.Chart.prototype.drawBar = function(board,parentArr,atts) {
         yp = y[i];
         
         var p = [];
-        if (atts['dir']=='horizontal') {  // horizontal bars
+        if (attributes['dir']=='horizontal') {  // horizontal bars
             p[0] = board.createElement('point',[0,xp0], {name:'',fixed:true,visible:false});
             p[1] = board.createElement('point',[yp,xp0], {name:'',fixed:true,visible:false});
             p[2] = board.createElement('point',[yp,xp2], {name:'',fixed:true,visible:false});
             p[3] = board.createElement('point',[0,xp2], {name:'',fixed:true,visible:false});
-            if (atts['labels'] && atts['labels'][i]) {
-                board.createElement('text',[yp,xp2,atts['labels'][i]],atts);
+            if (attributes['labels'] && attributes['labels'][i]) {
+                board.createElement('text',[yp,xp2,attributes['labels'][i]],attributes);
             }
         } else { // vertical bars
             p[0] = board.createElement('point',[xp0,0], {name:'',fixed:true,visible:false});
             p[1] = board.createElement('point',[xp0,yp], {name:'',fixed:true,visible:false});
             p[2] = board.createElement('point',[xp2,yp], {name:'',fixed:true,visible:false});
             p[3] = board.createElement('point',[xp2,0], {name:'',fixed:true,visible:false});
-            if (atts['labels'] && atts['labels'][i]) {
-                board.createElement('text',[xp2,yp,atts['labels'][i]],atts);
+            if (attributes['labels'] && attributes['labels'][i]) {
+                board.createElement('text',[xp2,yp,attributes['labels'][i]],attributes);
             }
         }
-        atts['withLines'] = false;
-        pols[i] = board.createElement('polygon',p,atts);
+        attributes['withLines'] = false;
+        pols[i] = board.createElement('polygon',p,attributes);
     }
     return pols; //[0];  // Not enough! We need pols, but this gives an error in board.setProperty.
 };
 
-JXG.Chart.prototype.drawPoints = function(board,parentArr,atts) {
+JXG.Chart.prototype.drawPoints = function(board, parents, attributes) {
     var i;
     var points = [];
-    atts['fixed'] = true;
-    atts['name'] = '';
-    var x = parentArr[0];
-    var y = parentArr[1];
+    attributes['fixed'] = true;
+    attributes['name'] = '';
+    var x = parents[0];
+    var y = parents[1];
     
     for (i=0;i<x.length;i++) {
-        points[i] = board.createElement('point',[x[i],y[i]], atts);
+        points[i] = board.createElement('point',[x[i],y[i]], attributes);
     }
     return points; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
 };
 
-JXG.Chart.prototype.drawPie = function(board,parentArr,atts) {  // Only 1 array possible as argument 
-    var y = parentArr[0];
+JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 array possible as argument 
+    var y = parents[0];
     if (y.length<=0) { return; }
     if (typeof y[0] == 'function') { return; } // functions not yet possible
 
@@ -130,20 +148,20 @@ JXG.Chart.prototype.drawPie = function(board,parentArr,atts) {  // Only 1 array 
     var line = [];
     var arc = [];
     var s = board.mathStatistics.sum(y);
-    var colorArray = atts['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
-    var radius = atts['radius'] || 4;
+    var colorArray = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
+    var radius = attributes['radius'] || 4;
     var myAtts = {};
-    myAtts['name'] = atts['name'];
-    myAtts['id'] = atts['id'];
-    myAtts['strokeWidth'] = atts['strokeWidth'] || 1;
-    myAtts['strokeColor'] = atts['strokeColor'] || 'none';
+    myAtts['name'] = attributes['name'];
+    myAtts['id'] = attributes['id'];
+    myAtts['strokeWidth'] = attributes['strokeWidth'] || 1;
+    myAtts['strokeColor'] = attributes['strokeColor'] || 'none';
     myAtts['straightFirst'] = false;
     myAtts['straightLast'] = false;
-    myAtts['fillColor'] = atts['fillColor'] || '#FFFF88';
-    myAtts['fillOpacity'] = atts['fillOpacity'] || 0.6;
-    myAtts['highlightFillColor'] = atts['highlightFillColor'] || '#FF7400';
-    myAtts['highlightStrokeColor'] = atts['highlightStrokeColor'] || '#FF7400';
-    var cent = atts['center'] || [0,0];
+    myAtts['fillColor'] = attributes['fillColor'] || '#FFFF88';
+    myAtts['fillOpacity'] = attributes['fillOpacity'] || 0.6;
+    myAtts['highlightFillColor'] = attributes['highlightFillColor'] || '#FF7400';
+    myAtts['highlightStrokeColor'] = attributes['highlightStrokeColor'] || '#FF7400';
+    var cent = attributes['center'] || [0,0];
     var xc = cent[0];
     var yc = cent[1];
 
@@ -163,22 +181,22 @@ JXG.Chart.prototype.drawPie = function(board,parentArr,atts) {  // Only 1 array 
     return arc; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
 };
 
-JXG.createChart = function(board, parentArr, atts) {
-    if (parentArr.length==0) { return; }  // No input data in parentArr
+JXG.createChart = function(board, parents, attributes) {
+    if (parents.length==0) { return; }  // No input data in parentArr
     var x;
     var y;
     var i;
-    if (parentArr.length>0 && (typeof parentArr[0]=='number')) { // parentArrInput looks like [a,b,c,..]
+    if (parents.length>0 && (typeof parents[0]=='number')) { // parentArrInput looks like [a,b,c,..]
                                                                 // x has to be filled
-        y = parentArr;
+        y = parents;
         x = [];
         for (i=0;i<y.length;i++) {
             x[i] = i+1;
         }
     } else {
-        if (parentArr.length==1) { // parentArrInput looks like [[a,b,c,..]]
+        if (parents.length==1) { // parentArrInput looks like [[a,b,c,..]]
                                 // x has to be filled
-            y = parentArr[0];
+            y = parents[0];
             x = [];
             var len;
             if (typeof y=='function') {
@@ -190,30 +208,33 @@ JXG.createChart = function(board, parentArr, atts) {
                 x[i] = i+1;
             }
         }
-        if (parentArr.length==2) { // parentArrInput looks like [[x0,x1,x2,...],[y1,y2,y3,...]]
-            y = parentArr[1];
-            x = parentArr[0];
+        if (parents.length==2) { // parentArrInput looks like [[x0,x1,x2,...],[y1,y2,y3,...]]
+            y = parents[1];
+            x = parents[0];
         }
     }
     var chart = new JXG.Chart();
-    if (atts==undefined) atts = {};
-    var style = atts['chartStyle'] || 'line';
+    if (attributes==undefined) attributes = {};
+    var style = attributes['chartStyle'] || 'line';
     style = style.replace(/ /g,'');
     style = style.split(',');
     var c;
     for (i=0;i<style.length;i++) {
         switch (style[i]) {
             case 'bar':
-                c = chart.drawBar(board,[x,y],atts);
+                c = chart.drawBar(board,[x,y],attributes);
                 break;
             case 'line':
-                c = chart.drawLine(board,[x,y],atts);
+                    c = chart.drawLine(board, [x, y], attributes);
+                break;
+            case 'spline':
+                    c = chart.drawSpline(board, [x, y], attributes);
                 break;
             case 'pie':
-                c = chart.drawPie(board,[y],atts);
+                c = chart.drawPie(board,[y],attributes);
                 break;
             case 'point':
-                c = chart.drawPoints(board,[x,y],atts);
+                c = chart.drawPoints(board,[x,y],attributes);
                 break;
         }
     }

@@ -136,7 +136,7 @@ JXG.Math.Numerics.Gauss = function(A, b) {
  * @return The matrices Q and R.
  */
 JXG.Math.Numerics.QR = function(A, b) {
-    
+    // TODO needs implementation
 };
 
 /**
@@ -268,7 +268,7 @@ JXG.Math.Numerics.splineDef = function(x, y) {
     F[n-1] = 0;
 
     return new JXG.Math.Vector(F);
-}
+};
 
 /**
  * Evaluate points on spline.
@@ -327,4 +327,4 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
     else
         return y0[0];
     
-}
+};

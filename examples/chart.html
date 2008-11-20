@@ -10,6 +10,7 @@
   <div id="jxgbox" class="jxgbox" style="width:900px; height:600px; float:left;"></div>
   <p style="float:right">
     <input type="button" value="Line chart" onClick="lineChart()" style='margin:1em'><br>
+    <input type="button" value="Spline chart" onClick="splineChart()" style='margin:1em'><br>
     <input type="button" value="Bar chart" onClick="barChart()" style='margin:1em'><br>
     <input type="button" value="Multiple styles" onClick="multiStyleChart()" style='margin:1em'><br>
     <input type="button" value="Two bar charts" onClick="twoBarCharts()" style='margin:1em'><br>
@@ -34,6 +35,16 @@
             var b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
             var b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
             var a = board.createElement('chart', dataArr, {chartStyle:'line',strokeWidth:4,strokeColor:'#0000ff'});
+            board.unsuspendUpdate();
+        };
+
+        function splineChart() {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
+            board.suspendUpdate();
+            var b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+            var b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
+            var a = board.createElement('chart', dataArr, {chartStyle:'spline',strokeWidth:4,strokeColor:'#0000ff'});
             board.unsuspendUpdate();
         };
 
