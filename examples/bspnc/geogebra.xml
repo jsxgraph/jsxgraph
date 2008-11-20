@@ -14,14 +14,8 @@
 	<angleUnit val="degree"/>
 </kernel>
 <construction title="funktion1" author="" date="">
-<<<<<<< .mine
-	
-
-<expression label ="f" exp="f(x) = x² / 6 - 2 x + 8"/>
-=======
 <!-- expression label ="f" exp="f(x) = x² / 6 - 2 x + 8"/ -->
 <expression label ="f" exp="f(x) = x*x / 6 - 2*x + 8"/>
->>>>>>> .r332
 <element type="function" label="f">
 	<show object="true" label="true"/>
 	<objColor r="0" g="0" b="0" alpha="0.0"/>
