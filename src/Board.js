@@ -1002,7 +1002,7 @@ JXG.Board.prototype.addAngle = function (obj) {
 };
 
 /**
- * Registers a graph at the board and adds it to the renderer.
+ * Registers a curve at the board and adds it to the renderer.
  * @param {JXG.Curve} obj The curve to add.
  * @type String
  * @return Element id of the object.
@@ -1023,6 +1023,32 @@ JXG.Board.prototype.addCurve = function (obj) {
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
     this.renderer.drawCurve(obj);
+    
+    return elementId;
+};
+
+/**
+ * Registers a chart at the board and adds it to the renderer.
+ * @param {JXG.Chart} obj The chart to add.
+ * @type String
+ * @return Element id of the object.
+ */
+JXG.Board.prototype.addChart = function (obj) {
+    var number = this.numObjects;
+    this.numObjects++;
+    
+    // Falls Id nicht vergeben, eine Neue generieren:
+    var elementId = obj.id;
+    if((elementId == '') || (elementId == null)) {
+        elementId = this.id + 'Chart' + number;
+    }
+    
+    // Objekt in das assoziative Array einfuegen    
+    this.objects[elementId] = obj;
+
+    // Objekt an den Renderer zum Zeichnen uebergeben
+    obj.id = elementId;
+    //this.renderer.drawCurve(obj);
     
     return elementId;
 };
@@ -2329,7 +2355,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
   
     if(JXG.IsArray(attributes))
         attributes = attributes[0];
-        
+    try {
     if(el.multipleElements) {
         for(var s in el) {
             if(typeof el[s].setProperty != 'undefined')
@@ -2339,6 +2365,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         if(typeof el.setProperty != 'undefined')
             el.setProperty(attributes);
     }
+    } catch (e) {};
     
 //    if(!JXG.IsArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
 //        el.setProperty(attributes);

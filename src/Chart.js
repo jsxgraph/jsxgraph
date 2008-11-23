@@ -29,7 +29,74 @@
  * 
  **/
  
-JXG.Chart = function(){};
+JXG.Chart = function(board, parents, attributes) {
+    this.constructor();
+    if (parents.length==0) { return; }  // No input data in parentArr
+    
+    /**
+            * Contains lpointers to the various displays.
+            */
+    this.elements = [];
+    
+    var id = attributes['id'];
+    var name = attributes['name'];
+    this.init(board, id, name);
+    this.id = this.board.addChart(this);
+    var x,y,i;
+    if (parents.length>0 && (typeof parents[0]=='number')) { // parents looks like [a,b,c,..]
+                                                                // x has to be filled
+        y = parents;
+        x = [];
+        for (i=0;i<y.length;i++) {
+            x[i] = i+1;
+        }
+    } else {
+        if (parents.length==1) { // parents looks like [[a,b,c,..]]
+                                // x has to be filled
+            y = parents[0];
+            x = [];
+            var len;
+            if (typeof y=='function') {
+                len = y().length;
+            } else {
+                len = y.length;
+            }
+            for (i=0;i<len;i++) {
+                x[i] = i+1;
+            }
+        }
+        if (parents.length==2) { // parents looks like [[x0,x1,x2,...],[y1,y2,y3,...]]
+            y = parents[1];
+            x = parents[0];
+        }
+    }
+    if (attributes==undefined) attributes = {};
+    var style = attributes['chartStyle'] || 'line';
+    style = style.replace(/ /g,'');
+    style = style.split(',');
+    var c;
+    for (i=0;i<style.length;i++) {
+        switch (style[i]) {
+            case 'bar':
+                c = this.drawBar(board,[x,y],attributes);
+                break;
+            case 'line':
+                c = this.drawLine(board, [x, y], attributes);
+                break;
+            case 'spline':
+                c = this.drawSpline(board, [x, y], attributes);
+                break;
+            case 'pie':
+                c = this.drawPie(board,[y],attributes);
+                break;
+            case 'point':
+                c = this.drawPoints(board,[x,y],attributes);
+                break;
+        };
+        this.elements.push(c);
+    };
+};
+JXG.Chart.prototype = new JXG.GeometryElement;
 
 JXG.Chart.prototype.drawLine = function(board, parents, attributes) {
     var c = board.createElement('curve', parents, attributes);
@@ -181,64 +248,35 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
     return arc; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
 };
 
+/**
+ * Then, the update function of the renderer
+ * is called.  Since a chart is only an abstract element,
+ * containing other elements, this function is empty.
+ */
+JXG.Chart.prototype.updateRenderer = function () {};
+
+/**
+ * Update of the defining points
+ */
+JXG.Chart.prototype.update = function () {
+    if (this.needsUpdate) {
+        this.updateDataArray();
+    }
+};
+
+/**
+  * For dynamic charts update
+  * can be used to compute new entries
+  * for the arrays this.dataX and
+  * this.dataY. It is used in @see update.
+  * Default is an empty method, can be overwritten
+  * by the user.
+  */
+JXG.Chart.prototype.updateDataArray = function () {};
+
+
 JXG.createChart = function(board, parents, attributes) {
-    if (parents.length==0) { return; }  // No input data in parentArr
-    var x;
-    var y;
-    var i;
-    if (parents.length>0 && (typeof parents[0]=='number')) { // parentArrInput looks like [a,b,c,..]
-                                                                // x has to be filled
-        y = parents;
-        x = [];
-        for (i=0;i<y.length;i++) {
-            x[i] = i+1;
-        }
-    } else {
-        if (parents.length==1) { // parentArrInput looks like [[a,b,c,..]]
-                                // x has to be filled
-            y = parents[0];
-            x = [];
-            var len;
-            if (typeof y=='function') {
-                len = y().length;
-            } else {
-                len = y.length;
-            }
-            for (i=0;i<len;i++) {
-                x[i] = i+1;
-            }
-        }
-        if (parents.length==2) { // parentArrInput looks like [[x0,x1,x2,...],[y1,y2,y3,...]]
-            y = parents[1];
-            x = parents[0];
-        }
-    }
-    var chart = new JXG.Chart();
-    if (attributes==undefined) attributes = {};
-    var style = attributes['chartStyle'] || 'line';
-    style = style.replace(/ /g,'');
-    style = style.split(',');
-    var c;
-    for (i=0;i<style.length;i++) {
-        switch (style[i]) {
-            case 'bar':
-                c = chart.drawBar(board,[x,y],attributes);
-                break;
-            case 'line':
-                    c = chart.drawLine(board, [x, y], attributes);
-                break;
-            case 'spline':
-                    c = chart.drawSpline(board, [x, y], attributes);
-                break;
-            case 'pie':
-                c = chart.drawPie(board,[y],attributes);
-                break;
-            case 'point':
-                c = chart.drawPoints(board,[x,y],attributes);
-                break;
-        }
-    }
-    return c;       
+    return new JXG.Chart(board, parents, attributes);
 };    
 
 JXG.JSXGraph.registerElement('chart', JXG.createChart);
