@@ -118,22 +118,16 @@ JXG.Point = function (board, coordinates, id, name, show) {
      * @type int
      * @see #setStyle
      */
-    this.visProp['style'] = 1;
+    this.visProp['style'] = this.board.options.point.style;
 
     /**
      * Size of the point. This is just for the renderer and the hasPoint() method
      * to draw the point as a circle.
      * @type int
      */
-    this.r = 5;
-
-    this.visProp['strokeWidth'] = 1;
-    this.visProp['strokeColor'] = '#0000ff';
-    this.visProp['strokeOpacity'] = 1;
-
-    this.visProp['fillColor'] = '#ff0000';
-    this.visProp['opacity'] = 1;
-    this.visProp['highlightFillColor'] = '#EEEEEE';
+    this.r = this.board.options.precision.hasPoint;
+    this.visProp['fillColor'] = this.board.options.point.fillColor;
+    this.visProp['highlightFillColor'] = this.board.options.point.highlightFillColor;   
 
     /**
      * True when this object is visible, false otherwise.

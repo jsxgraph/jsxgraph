@@ -88,25 +88,20 @@ JXG.Line = function (board, p1, p2, id, name) {
      * This is just for the hasPoint() method.
      * @type int
      */
-    this.r = 3;
-
-    this.visProp['fillColor'] = 'none';
-    this.visProp['highlightFillColor'] = 'none';
-    this.visProp['strokeColor'] = '#0000ff';
-    this.visProp['strokeWidth'] = 1;
+    this.r = this.board.options.precision.hasPoint;
     
     /**
      * Determines if a line is drawn on over the firstpoint.
      * @type bool
      * @see #straightLast
      */ 
-    this.visProp['straightFirst'] = true;
+    this.visProp['straightFirst'] = this.board.options.line.straightFirst;
     /**
      * Determines if a line is drawn on over the lastpoint.
      * @type bool
      * @see #straightFirst
      */     
-    this.visProp['straightLast'] = true;
+    this.visProp['straightLast'] = this.board.options.line.straightLast;
 
     /**
      * True when the object is visible, false otherwise.
@@ -119,14 +114,14 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type bool
      * @see #lastArrow
      */    
-    this.visProp['firstArrow'] = false;
+    this.visProp['firstArrow'] = this.board.options.line.firstArrow;
     
     /**
      * Determines if a line has an arrow at its firstpoint.
      * @type bool
      * @see #firstArrow
      */        
-    this.visProp['lastArrow'] = false;
+    this.visProp['lastArrow'] = this.board.options.line.lastArrow;
     
     /**
      * Array of Coords storing the coordinates of all ticks.
@@ -139,13 +134,13 @@ JXG.Line = function (board, p1, p2, id, name) {
      * Has this line ticks?
      * @type bool
      */
-    this.visProp['withTicks'] = false;
+    this.visProp['withTicks'] = this.board.options.line.withTicks;
     
     /**
      * The distance between two ticks.
      * @type float
      */
-    this.ticksDelta = 1;
+    this.ticksDelta = this.board.options.line.ticksDelta;
         
     /**
     * If the line is the border of a polygon, the polygone object is stored, otherwise null.

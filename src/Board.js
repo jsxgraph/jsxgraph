@@ -161,6 +161,12 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.renderer = renderer;
     
     /**
+    * Some standard options
+    * @type Options
+    */
+    this.options = new JXG.Options();
+    
+    /**
      * Dimension of the board.
      * @type int
      */
@@ -216,7 +222,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * Default font size for labels and texts.
      * @type int
      */
-    this.fontSize = 12;
+    this.fontSize = this.options.fontSize;
         
     /**
      * A reference to an object of class Algebra.
@@ -295,49 +301,49 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * The way objects can be dragged. If true, objects can only moved on a predefined grid, if false objects can be moved smoothly almost everywhere.
     * @type bool
     */
-   this.snapToGrid = false;
+   this.snapToGrid = this.options.grid.snapToGrid;
    
    /**
     * The amount of grid points plus one that fit in one unit of user coordinates in x direction.
     * @type int
     */
-   this.gridX = 2;
+   this.gridX = this.options.grid.gridX;
    
    /**
     * The amount of grid points plus one that fit in one unit of user coordinates in y direction.
     * @type int
     */
-   this.gridY = 2;
+   this.gridY = this.options.grid.gridY;
     
    /**
     * Color of the grid.
     * @type string
     */        
-   this.gridColor = '#C0C0C0';
+   this.gridColor = this.options.grid.gridColor;
    
    /**
     * Opacity of the grid color, between 0 and 1.
     * @type float
     */        
-   this.gridOpacity = '1';
+   this.gridOpacity = this.options.grid.gridOpacity;
    
    /**
     * Determines whether the grid is dashed or not.
     * @type boolean
     */    
-   this.gridDash = true;
+   this.gridDash = this.options.grid.gridDash;
    
    /**
     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in x direction.
     * @type int
     */
-   this.snapSizeX = 2;
+   this.snapSizeX = this.options.grid.snapSizeX;
    
    /**
     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in y direction.
     * @type int
     */
-   this.snapSizeY = 2;    
+   this.snapSizeY = this.options.grid.snapSizeY;    
    
    this.calculateSnapSizes();
    
@@ -345,7 +351,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * Visibility of the boards grid.
     * @type bool
     */
-   this.hasGrid = false;
+   this.hasGrid = this.options.grid.hasGrid;
     
    /**
     * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
@@ -379,7 +385,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    /*
     * Display the licence text, @see JSXGraph
     */
-   this.renderer.displayCopyright(JXG.JSXGraph.licenseText,12);
+   this.renderer.displayCopyright(JXG.JSXGraph.licenseText,this.options.fontSize);
     
     
    /**
@@ -2024,8 +2030,8 @@ JXG.Board.prototype.applyZoom = function() {
  * Zooms into the board.
  */
 JXG.Board.prototype.zoomIn = function() {
-    this.zoomX *= 1.25;
-    this.zoomY *= 1.25;    
+    this.zoomX *= this.options.zoom.factor;
+    this.zoomY *= this.options.zoom.factor;    
     this.applyZoom();
 };
 
@@ -2033,8 +2039,8 @@ JXG.Board.prototype.zoomIn = function() {
  * Zooms out of the board.
  */
 JXG.Board.prototype.zoomOut = function() {
-    this.zoomX /= 1.25;
-    this.zoomY /= 1.25;
+    this.zoomX /= this.options.zoom.factor;
+    this.zoomY /= this.options.zoom.factor;
     this.applyZoom();
 };
 

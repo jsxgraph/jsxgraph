@@ -54,10 +54,8 @@ JXG.Curve = function (board, definingArr, id, name) {
     
     this.init(board, id, name);
 
-    this.visProp['strokeColor'] = '#0000ff';
-    this.visProp['strokeWidth'] = '1px';
-    this.visProp['fillColor'] = 'none';
-    this.visProp['highlightFillColor'] = 'none';
+    this.visProp['strokeWidth'] = this.board.options.curve.strokeWidth;
+
     this.visProp['visible'] = true;
     this.dataX = null;
     this.dataY = null;

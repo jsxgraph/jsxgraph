@@ -88,11 +88,9 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
      * This is just for the hasPoint() method. Precision for highlighting.
      * @type int
      */    
-    this.r = 5;
-
-    this.visProp['fillColor'] = '#00FF00';
-    this.visProp['highlightFillColor'] = '#00FF00';
-    this.visProp['visible']
+    this.r = this.board.options.precision.hasPoint;
+  
+    this.visProp['visible'] = true;
 
     var circle = {}; // um projectToCircle benutzen zu koennen
     circle.midpoint = this.point1;
@@ -134,7 +132,11 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
     l2.setStraight(false,false);
    
     var a = new JXG.Arc(board, p1, p2, p3, ids[0], names[0]);
- 
+    a.visProp['fillColor'] = this.board.options.sector.fillColor;
+    a.visProp['highlightFillColor'] = this.board.options.sector.highlightFillColor;
+    a.visProp['fillOpacity'] = this.board.options.sector.fillOpacity;
+    a.visProp['highlightFillOpacity'] = this.board.options.sector.highlightFillOpacity;
+    
     /**
      * Endpoint of the derived arc.
      * @type Point

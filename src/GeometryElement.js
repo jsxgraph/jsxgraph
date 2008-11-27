@@ -62,16 +62,7 @@ JXG.GeometryElement = function() {
      * @type Object
      */
     this.visProp = {};
-    this.visProp['strokeColor'] = '#36393D';
-    this.visProp['highlightStrokeColor'] = '#C3D9FF';
-    this.visProp['strokeWidth'] = '2px';
-    
-    this.visProp['strokeOpacity'] = 1;
-    this.visProp['highlightStrokeOpacity'] = 1;
-    this.visProp['fillOpacity'] = 1;    
-    this.visProp['highlightFillOpacity'] = 1;
-    
-    this.visProp['draft'] = false;
+
     this.isReal = true;
 
     /** 
@@ -197,6 +188,20 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
     }
     this.board.elementsByName[name] = this;
     this.name = name;
+    
+    this.visProp['strokeColor'] = this.board.options.elements.color.strokeColor //'#36393D';
+    this.visProp['highlightStrokeColor'] = this.board.options.elements.color.highlightStrokeColor;
+    this.visProp['fillColor'] = this.board.options.elements.color.fillColor;
+    this.visProp['highlightFillColor'] = this.board.options.elements.color.highlightFillColor;
+    
+    this.visProp['strokeWidth'] = this.board.options.elements.strokeWidth;
+    
+    this.visProp['strokeOpacity'] = this.board.options.elements.color.strokeOpacity;
+    this.visProp['highlightStrokeOpacity'] = this.board.options.elements.color.highlightStrokeOpacity;
+    this.visProp['fillOpacity'] = this.board.options.elements.color.fillOpacity;    
+    this.visProp['highlightFillOpacity'] = this.board.options.elements.color.highlightFillOpacity;   
+    
+    this.visProp['draft'] = this.board.options.elements.draft;    
 };
 
 /**

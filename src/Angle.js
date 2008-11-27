@@ -86,10 +86,16 @@ JXG.Angle = function (board, p1, p2, p3, radius, text, id, name) {
     * Radius of the Angle
     * @type Float
     */
-    this.radius = 1.0;
+    this.radius = this.board.options.angle.radius;
     if(radius != undefined && radius != null) {
         this.radius = radius;
     }
+
+    this.visProp['fillColor'] = this.board.options.angle.fillColor;
+    this.visProp['highlightFillColor'] = this.board.options.angle.highlightFillColor;
+    this.visProp['fillOpacity'] = this.board.options.angle.fillOpacity;
+    this.visProp['highlightFillOpacity'] = this.board.options.angle.highlightFillOpacity;
+    this.visProp['strokeColor'] = this.board.options.angle.strokeColor;    
     
     /** 
     * Text (ie name) of the Angle

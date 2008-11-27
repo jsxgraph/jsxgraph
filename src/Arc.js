@@ -87,15 +87,12 @@ JXG.Arc = function (board, p1, p2, p3, id, name) {
      * This is just for the hasPoint() method. Precision for highlighting.
      * @type int
      */
-    this.r = 5;
+    this.r = this.board.options.precision.hasPoint;
 
-    this.visProp['fillColor'] = 'none';
-    this.visProp['fillOpacity'] = 0;
-    this.visProp['highlightFillColor'] = 'none';
     this.visProp['visible'] = true;
     
-    this.visProp['firstArrow'] = false;
-    this.visProp['lastArrow'] = false;
+    this.visProp['firstArrow'] = this.board.options.arc.firstArrow;
+    this.visProp['lastArrow'] = this.board.options.arc.lastArrow;
     
     /* Register arc at board. */
     this.id = this.board.addArc(this);

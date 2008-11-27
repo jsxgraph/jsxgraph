@@ -51,9 +51,8 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
     this.plaintextStr = '';
 
     // stroke Color = text Color
-    this.visProp['strokeColor'] = '#000000';
-    this.visProp['fillColor'] = 'none';
-    this.visProp['highlightFillColor'] = 'none';
+    this.visProp['strokeColor'] = this.board.options.text.strokeColor;
+
     this.visProp['visible'] = true;
     //this.show = true; // noch noetig? BV
 
