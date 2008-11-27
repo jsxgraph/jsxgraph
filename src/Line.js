@@ -134,13 +134,13 @@ JXG.Line = function (board, p1, p2, id, name) {
      * Has this line ticks?
      * @type bool
      */
-    this.visProp['withTicks'] = this.board.options.line.withTicks;
+    this.visProp['withTicks'] = this.board.options.line.ticks.withTicks;
     
     /**
      * The distance between two ticks.
      * @type float
      */
-    this.ticksDelta = this.board.options.line.ticksDelta;
+    this.ticksDelta = this.board.options.line.ticks.ticksDelta;
         
     /**
     * If the line is the border of a polygon, the polygone object is stored, otherwise null.
