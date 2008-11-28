@@ -32,8 +32,8 @@
 
 				board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 50, unitY: 50});
 				// Axes
-				b1axisx = board.createElement('axis', [[1,0], [0,0]], {});
-				b1axisy = board.createElement('axis', [[0,1], [0,0]], {});
+				b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+				b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 
 				curve = board.createElement('curve', [function(t){ return t; }, function(t){ return JXG.GetReferenceFromParameter(board2, 'A').X()*t*t+JXG.GetReferenceFromParameter(board2, 'B').X()*t+JXG.GetReferenceFromParameter(board2, 'C').X(); }, "t", -10, 10]);						
 			

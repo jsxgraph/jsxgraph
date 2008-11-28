@@ -1,0 +1,47 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Example for Gauss-Jordan linear equation system solver</h2>
+<div style="width:960px">
+<!--div id="jxgbox" class="jxgbox" style="width:600px; height:400px; float:left; "></div-->
+<p>
+<textarea id="eingabe" rows="20" cols="100" wrap="off" >
+var A = new JXG.Math.Matrix( [ [ 1,  1,  1],
+                               [ 0, -2, -3],
+                               [ 0, -6, -8] ] );
+                             
+var b = new JXG.Math.Vector([0, 1, 3]);
+var x = JXG.Math.Numerics.Gauss(A, b);
+
+for(var i=0; i<x.length; i++) {
+  var s = "Result: (  ";
+  
+  for(var i=0; i<x.n(); i++)
+    s = s + x[i] + "  ";
+    
+  s = s + ")";
+  alert(s);
+}
+</textarea> <br>
+<input type="button" value="run" onClick="doIt()" style='margin:1em'> 
+</p>
+</div>
+<br clear=all>
+<div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        function doIt() {
+            var s = $('eingabe').value;
+            eval(s); // Attention: eval considered harmful
+        }
+
+  /* ]]> */
+  </script>
+</body>
+</html>

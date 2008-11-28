@@ -11,7 +11,7 @@
 <div id="jxgbox" class="jxgbox" style="width:600px; height:400px; float:left; "></div>
 </div>
 <br clear=all>
-<div id="debug" style="display:block;"></div>
+<div id="debug" style="display:none;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
 
@@ -36,7 +36,7 @@
                         p[3].Y()*(x-p[0].X())*(x-p[1].X())*(x-p[2].X())/
                         ((p[3].X()-p[0].X())*(p[3].X()-p[1].X())*(p[3].X()-p[2].X()));
                         
-                var s = '('+p[0].Y()+')(x-'+p[1].X()+')(x-'+p[2].X()+')(x-'+p[3].X()+')/'+
+                /*var s = '('+p[0].Y()+')(x-'+p[1].X()+')(x-'+p[2].X()+')(x-'+p[3].X()+')/'+
                         '('+(p[0].X()-p[1].X())*(p[0].X()-p[2].X())*(p[0].X()-p[3].X())+')+<br>'+
                         '('+p[1].Y()+')(x-'+p[0].X()+')(x-'+p[2].X()+')(x-'+p[3].X()+')/'+
                         '('+(p[1].X()-p[0].X())*(p[1].X()-p[2].X())*(p[1].X()-p[3].X())+')+<br>'+
@@ -45,6 +45,7 @@
                         '('+p[3].Y()+')(x-'+p[0].X()+')(x-'+p[1].X()+')(x-'+p[2].X()+')/'+
                         '('+(p[3].X()-p[0].X())*(p[3].X()-p[1].X())*(p[3].X()-p[1].X())+')';
                 $('debug').innerHTML = s;
+                */
                 return y;
             };
 		graph = board.createElement('curve', ['x', pol, 'x', -10, 10], {curveType:'graph'});
