@@ -197,3 +197,4 @@ JXG.SingularMatrixException.prototype.what = function() {
       return default_msg + ".";
 };
 
+
