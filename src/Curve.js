@@ -47,20 +47,15 @@ JXG.Curve = function (board, definingArr, id, name) {
     this.constructor();
  
     this.points = [];
+    this.numberPoints = 0;
+
     this.type = JXG.OBJECT_TYPE_CURVE;
     this.elementClass = JXG.OBJECT_CLASS_CURVE;                
     
     this.init(board, id, name);
 
-    this.numberPoints = this.board.canvasWidth*1.0;
-    for (var i=0;i<this.numberPoints;i++) {
-        this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
-    }
+    this.visProp['strokeWidth'] = this.board.options.curve.strokeWidth;
 
-    this.visProp['strokeColor'] = '#0000ff';
-    this.visProp['strokeWidth'] = '1px';
-    this.visProp['fillColor'] = 'none';
-    this.visProp['highlightFillColor'] = 'none';
     this.visProp['visible'] = true;
     this.dataX = null;
     this.dataY = null;
@@ -71,9 +66,9 @@ JXG.Curve = function (board, definingArr, id, name) {
      * @see updateCurve
      * Possible values are:
      * 'none'
-     * 'plot'
+     * 'plot': Data plot
      * 'parameter': we can not distinguish function graphs and parameter curves
-     * 'graph'
+     * 'graph': function graph
      * 'polar'
      * 'implicit' (not yet)
      *
@@ -178,7 +173,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
          return false;
     } else {
     //$('debug').innerHTML += this.Y.toString()+' ';
-        // Brute fore search for a point on the curve close to the mouse pointer
+        // Brute force search for a point on the curve close to the mouse pointer
         var steps = 300;
         var d = (this.maxX()-this.minX())/steps;
         for (i=0,t=this.minX(); i<steps; i++) {
@@ -199,6 +194,18 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
     }
     return (dist<prec);
 
+};
+
+/**
+  * Allocate points in the Coords array this.points
+  */
+JXG.Curve.prototype.allocatePoints = function () {
+    // At this point this.numberPoints has been set in this.generateTerm
+    if (this.points.length<this.numberPoints) {
+        for (var i=this.points.length;i<this.numberPoints;i++) {
+            this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
+        }
+    }
 };
 
 /**
@@ -225,12 +232,23 @@ JXG.Curve.prototype.updateRenderer = function () {
 };
 
 /**
+  * For dynamic dataplots updateCurve
+  * can be used to compute new entries
+  * for the arrays this.dataX and
+  * this.dataY. It is used in @see updateCurve.
+  * Default is an empty method, can be overwritten
+  * by the user.
+  */
+JXG.Curve.prototype.updateDataArray = function () {};
+
+/**
  * Computes for equidistant points on the x-axis the values
  * of the function. @see #update
  * If the mousemove event triggers this update, we use only few
  * points. Otherwise, e.g. on mouseup, many points are used.
  */
 JXG.Curve.prototype.updateCurve = function () {
+    this.updateDataArray();
     if (this.curveType=='plot' && this.dataX!=null) {
         this.numberPoints = this.dataX.length;
     } else {
@@ -240,12 +258,14 @@ JXG.Curve.prototype.updateCurve = function () {
             this.numberPoints = this.board.canvasWidth*0.25;
         }
     }
+    this.allocatePoints();  // It is possible, that the array length has increased.
     var len = this.numberPoints;
 
     var mi = this.minX();
     var ma = this.maxX();
     var x, y;
     var stepSize = (ma-mi)/len;
+
     for(var i=0;i<len;i++) {
         if (this.dataX!=null) { // x-coordinates are in an array
             x = i;
@@ -324,6 +344,7 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
  */
 JXG.Curve.prototype.generateTerm = function (xterm, yterm, varname, mi, ma) {
     // Generate the methods X() and Y()
+    this.numberPoints = this.board.canvasWidth*1.0;
     if (typeof xterm=='string') {
         // Convert GEONExT syntax into  JavaScript syntax
         var newxterm = this.board.algebra.geonext2JS(xterm);
@@ -339,6 +360,7 @@ JXG.Curve.prototype.generateTerm = function (xterm, yterm, varname, mi, ma) {
         this.curveType = 'plot';
         this.dataX = xterm;
         this.X = function(i) { return this.dataX[i]; };
+        this.numberPoints = this.dataX.length;
     }
 
     if (typeof yterm=='string') {

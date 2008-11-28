@@ -29,11 +29,6 @@
  * @author graphjs
  */
  
- /* Global constants */
- JXG.INT_TRAPEZ  = 0x00001;
- JXG.INT_SIMPSON = 0x00002;
- JXG.INT_MILNE   = 0x00003;
- 
 /**
  * Creates a new instance of Algebra.
  * @class In this class all algebraic computation is done.
@@ -651,7 +646,7 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [r*Math.cos(t)+offs[0],r*Math.sin(t)+offs[1]], this.board);
     } else {
         t = point.X();
-        x = t; //graph.X(t);
+        x = t; //curve.X(t);
         y = curve.Y(t);
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board); 
     }
@@ -1065,11 +1060,11 @@ JXG.Algebra.prototype.findDependencies = function(me,term) {
 };
 
 /**
- * Calculates euclidean norm for two given arrays of the same length.
+ * Calculates euclidean distance for two given arrays of the same length.
  * @param {Array} array1 Array of float or integer.
  * @param {Array} array2 Array of float or integer.
  * @type float
- * @return Euclidean norm of the given vectors.
+ * @return Euclidean distance of the given vectors.
  */
 JXG.Algebra.prototype.distance = function(array1, array2) {
     var sum = 0;
@@ -1078,6 +1073,29 @@ JXG.Algebra.prototype.distance = function(array1, array2) {
         sum += (array1[i] - array2[i])*(array1[i] - array2[i]);
     }
     return Math.sqrt(sum);
+};
+
+/**
+ * Calculates euclidean distance for two given arrays of the same length.
+ * If one of the arrays contains a zero in coordinate 0, and the euclidean distance
+ * is different from zero it is
+ * a point at infinity and we return Infinity.
+ * @param {Array} array1 Array of float or integer.
+ * @param {Array} array2 Array of float or integer.
+ * @type float
+ * @return Euclidean (affine) distance of the given vectors.
+ */
+JXG.Algebra.prototype.affineDistance = function(array1, array2) {
+    var eps = 0.000001;
+    if(array1.length != array2.length) { 
+        return; 
+    }
+    var d = this.distance(array1, array2);
+    if (d>eps && (Math.abs(array1[0])<eps || Math.abs(array2[0])<eps)) {
+        return Infinity;
+    } else {
+        return d;
+    }
 };
 
 /**
@@ -1220,91 +1238,12 @@ JXG.Algebra.prototype.sinh = function(x) {
 };
 
 /**
- * Number of nodes for evaluation, used for integration
- * @type int
- */
-JXG.Algebra.prototype.number_of_nodes = 28;
-
-/**
- * Type of integration algorithm, possible values are: <ul><li>JXG.INT_TRAPEZ</li><li>JXG.INT_SIMPSON</li><li>JXG.INT_MILNE</li></ul>
- * @type int
- */
-JXG.Algebra.prototype.integration_type = JXG.INT_MILNE;
-
-/**
- * Integral of function f over interval
+ * Integral of function f over interval. Warning: Just for backward compatibility, may be removed in futures releases.
  * @param {Array} interval e.g. [a, b] 
  * @param {function} f 
- * @param {variable}  derivative for this value
  */
 JXG.Algebra.prototype.I = function(interval, f) {
-    var integral_value = 0.0;
-
-    var step_size = (interval[1] - interval[0]) / this.number_of_nodes;
-    switch(this.integration_type) {
-        case JXG.INT_TRAPEZ:
-            integral_value = (f(interval[0]) + f(interval[1])) * 0.5;
-    
-            var evaluation_point = interval[0];
-            for (i = 0; i < this.number_of_nodes - 1; i++)
-            {
-                evaluation_point += step_size;
-                integral_value   += f(evaluation_point);
-            }
-            integral_value *= step_size;
-
-            break;
-        case JXG.INT_SIMPSON:
-            if (this.number_of_nodes%2 > 0) {
-                throw "Error: INT_SIMPSONS requires Algebra.number_of_nodes dividable by 2.";
-            }
-            var number_of_intervals = this.number_of_nodes / 2.0;
-    
-            integral_value = f(interval[0]) + f(interval[1]);
-    
-            evaluation_point = interval[0];
-            for (i = 0; i < number_of_intervals - 1; i++)
-            {
-                evaluation_point += 2.0 * step_size;
-                integral_value   += 2.0 * f(evaluation_point);
-            }
-            evaluation_point = interval[0] - step_size;
-            for (i = 0; i < number_of_intervals; i++)
-            {
-                evaluation_point += 2.0 * step_size;
-                integral_value   += 4.0 * f(evaluation_point);
-            }
-            integral_value *= step_size / 3.0;
-            break;
-        default:
-            if (this.number_of_nodes%4 > 0) {
-                throw "Error in INT_MILNE: Algebra.number_of_nodes must be a multiple of 4";
-            }
-            number_of_intervals = this.number_of_nodes * 0.25;
-    
-            integral_value = 7.0 * (f(interval[0]) + f(interval[1]));
-    
-            evaluation_point = interval[0];
-            for (i = 0; i < number_of_intervals - 1; i++)
-            {
-                evaluation_point += 4.0 * step_size;
-                integral_value   += 14.0 * f(evaluation_point);
-            }
-            evaluation_point = interval[0] - 3.0 * step_size;
-            for (i = 0; i < number_of_intervals; i++)
-            {
-                evaluation_point += 4.0 * step_size;
-                integral_value   += 32.0 * (f(evaluation_point) + f(evaluation_point + 2 * step_size));
-            }
-            evaluation_point = interval[0] - 2.0 * step_size;
-            for (i = 0; i < number_of_intervals; i++)
-            {
-                evaluation_point += 4.0 * step_size;
-                integral_value   += 12.0 * f(evaluation_point);
-            }
-            integral_value *= 2.0 * step_size / 45.0;
-    }
-    return integral_value;
+    return JXG.Math.Numerics.NewtonCotes(interval, f);
 };
 
 /**
@@ -1338,6 +1277,24 @@ JXG.Algebra.prototype.root = function(f,x) {
     return this.newton(f,x);
 };
 
+/**
+  * Calculates the crossproducts of two vectors
+  * of length three.
+  * In case of homogeneous coordinates this is either
+  * - the intersection of two lines
+  * - the line through two points.
+  * @param homogeneous coordinates of line (point) 1
+  * @param homogeneous coordinates of line (point) 2
+  * @return vector of length 3:  homogeneous coordinates
+  *   of the resulting line / point.
+  */
+JXG.Algebra.prototype.crossProduct = function(c1,c2) {
+    var x = c1[1]*c2[2]-c1[2]*c2[1];
+    var y = c1[2]*c2[0]-c1[0]*c2[2];
+    var z = c1[0]*c2[1]-c1[1]*c2[0];
+    return [x,y,z];
+};
+
 JXG.Algebra.prototype.meet = function(el1,el2) {
     var eps = 0.000001;
     if (Math.abs(el1[3])<eps && Math.abs(el2[3])<eps) { // line line
@@ -1351,14 +1308,27 @@ JXG.Algebra.prototype.meet = function(el1,el2) {
     }
 };
 
+/**
+  * Intersection of two lines.
+  * To be consistent we always return two intersection points.
+  * @return Array containing two Coords objects
+  */
 JXG.Algebra.prototype.meetLineLine = function(l1,l2) {
+    var s = this.crossProduct(l1,l2);
+    if (Math.abs(s[0])>0.000001) {
+        s[1] /= s[0];
+        s[2] /= s[0];
+    }
+    /*
     var s1 = l1;
     var s2 = l2;
     var z = s1[1]*s2[2]-s1[2]*s2[1];
     var x = (s1[2]*s2[0]-s1[0]*s2[2])/z;
     var y = (s1[0]*s2[1]-s1[1]*s2[0])/z;
-    return [new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board),
-        new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this.board)];
+    */
+    return [new JXG.Coords(JXG.COORDS_BY_USER, s.slice(1), this.board),
+        new JXG.Coords(JXG.COORDS_BY_USER, s.slice(1), this.board)];
+
 };
 
 JXG.Algebra.prototype.meetLineCircle = function(lin,circ) {    
@@ -1443,7 +1413,7 @@ JXG.Algebra.prototype.meetCircleCircle = function(circ1,circ2) {
     return this.meetLineCircle(radicalAxis,circ1);
 };
 
-// [c,b0,b1,a,k]
+// [c,b0,b1,a,k,r,q0,q1]
 JXG.Algebra.prototype.normalize = function(stdform) {
     var a2 = 2*stdform[3];
     var r = stdform[4]/(a2);  // k/(2a)

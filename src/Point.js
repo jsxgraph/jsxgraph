@@ -118,22 +118,16 @@ JXG.Point = function (board, coordinates, id, name, show) {
      * @type int
      * @see #setStyle
      */
-    this.visProp['style'] = 1;
+    this.visProp['style'] = this.board.options.point.style;
 
     /**
      * Size of the point. This is just for the renderer and the hasPoint() method
      * to draw the point as a circle.
      * @type int
      */
-    this.r = 5;
-
-    this.visProp['strokeWidth'] = 1;
-    this.visProp['strokeColor'] = '#0000ff';
-    this.visProp['strokeOpacity'] = 1;
-
-    this.visProp['fillColor'] = '#ff0000';
-    this.visProp['opacity'] = 1;
-    this.visProp['highlightFillColor'] = '#EEEEEE';
+    this.r = this.board.options.precision.hasPoint;
+    this.visProp['fillColor'] = this.board.options.point.fillColor;
+    this.visProp['highlightFillColor'] = this.board.options.point.highlightFillColor;   
 
     /**
      * True when this object is visible, false otherwise.
@@ -176,7 +170,7 @@ JXG.Point.prototype.hasPoint = function (x,y) {
 };
 
 /**
- * Calls the renderer to update the drawing.
+ * Updates the position of the point
  */
 JXG.Point.prototype.update = function (fromParent) {
     if (!this.needsUpdate) { return; }
@@ -197,7 +191,6 @@ JXG.Point.prototype.update = function (fromParent) {
      */
     if(this.type == JXG.OBJECT_TYPE_GLIDER) {
         if(this.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
-
             if (fromParent) {
                 this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.X()+Math.cos(this.position),this.slideObject.midpoint.Y()+Math.sin(this.position)]);
                 this.coords  = this.board.algebra.projectPointToCircle(this, this.slideObject);
@@ -331,7 +324,7 @@ JXG.Point.prototype.updateRenderer = function () {
 };
 
 /**
- * Getter method for x, this is required for CAS-points.
+ * Getter method for x, this is used by for CAS-points to access point coordinates.
  * @see #coords
  * @see Coords#x
  * @return {float} User coordinate of point in x direction.
@@ -341,7 +334,7 @@ JXG.Point.prototype.X = function () {
 };
 
 /**
- * Getter method for y, this is required for CAS-points.
+ * Getter method for y, this is used by CAS-points to access point coordinates.
  * @see #coords
  * @see Coords#y
  * @return {float} User coordinate of point in y direction.
@@ -349,6 +342,29 @@ JXG.Point.prototype.X = function () {
 JXG.Point.prototype.Y = function () {
     return this.coords.usrCoords[2];
 };
+
+/**
+ * New evaluation of the function term. 
+ * This is required for CAS-points: Their XTerm() method is overwritten in @see #addConstraint
+ * @see #coords
+ * @see Coords#x
+ * @return {float} User coordinate of point in x direction.
+ */
+JXG.Point.prototype.XEval = function () {
+    return this.coords.usrCoords[1];
+};
+
+/**
+ * New evaluation of the function term. 
+ * This is required for CAS-points: Their YTerm() method is overwritten in @see #addConstraint
+ * @see #coords
+ * @see Coords#y
+ * @return {float} User coordinate of point in y direction.
+ */
+JXG.Point.prototype.YEval = function () {
+    return this.coords.usrCoords[2];
+};
+
 
 /**
  * Getter method for the distance to a second point, this is required for CAS-elements.
@@ -366,7 +382,7 @@ JXG.Point.prototype.Dist = function(point2) {
  * @param {int} y y coordinate in screen units
  * @see #update
  */
-JXG.Point.prototype.setPositionOld = function (method, x, y) {
+JXG.Point.prototype.setPositionDirectly = function (method, x, y) {
     var oldCoords = this.coords;
     this.coords = new JXG.Coords(method, [x,y], this.board);
     
@@ -379,41 +395,29 @@ JXG.Point.prototype.setPositionOld = function (method, x, y) {
     }
 };
 
-JXG.Point.prototype.setPosition = function (method, x, y) {
+JXG.Point.prototype.setPositionByTransform = function (method, x, y) {
     var oldCoords = this.coords;
-    
-    if(this.group.length != 0) {
-        this.coords = new JXG.Coords(method, [x,y], this.board);
-        this.group[this.group.length-1].dX = this.coords.scrCoords[1] - oldCoords.scrCoords[1];
-        this.group[this.group.length-1].dY = this.coords.scrCoords[2] - oldCoords.scrCoords[2];
-        this.group[this.group.length-1].update(this);
+    var t = this.board.createElement('transform',[x,y],{type:'translate'});
+    if (this.transformations.length>0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
+        this.transformations[this.transformations.length-1].melt(t);
     } else {
-        // var newCoords = new JXG.Coords(method, [x,y], this.board);
-        // var dx = newCoords.usrCoords[1] - oldCoords.usrCoords[1];
-        // var dy = newCoords.usrCoords[2] - oldCoords.usrCoords[2];
-        
-        if (this.board.geonextCompatibilityMode || this.baseElement!==this) { // Geonext or Glider
-            var dx = x+oldCoords.usrCoords[1];
-            var dy = y+oldCoords.usrCoords[2];
-            this.setPositionOld(method,dx,dy);  // Glider (Hack)
-            // Even more hackier: In GeonextReader we use "new Point()", that means 
-            // we don't set this.baseElement to "this". Therefore Geonext points are treated
-            // like Gliders and they use setPositionOld.
-        } else {
-            var t = this.board.createElement('transform',[x,y],{type:'translate'});
-            if (this.transformations.length>0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
-                this.transformations[this.transformations.length-1].melt(t);
-            } else {
-                //if (this.baseElement===this) {  // Free point
-                    this.addTransform(this,t);
-                //}
-            }
-            //else {
-            //    alert('setPos: this should not happen!');
-            //}
-        }
+        this.addTransform(this,t);
+    }
+
+    if (this.group.length != 0) {
+/*
+        var dCoords = new JXG.Coords(method, [x,y], this.board);
+        this.group[this.group.length-1].dX = dCoords.scrCoords[1]-this.board.origin.scrCoords[1]; 
+        this.group[this.group.length-1].dY = dCoords.scrCoords[2]-this.board.origin.scrCoords[2]; 
+        this.group[this.group.length-1].update(this);
+*/
+    } else {
         this.update();
     }
+};
+
+JXG.Point.prototype.setPosition = function (method, x, y) { 
+    this.setPositionByTransform(method, x, y);
 };
 
 /**
@@ -443,7 +447,7 @@ JXG.Point.prototype.addConstraint = function (xterm, yterm) {
     // Only xterm is given
     if (yterm==null) {  // Intersection
         this.updateConstraint = function() { this.coords = xterm(); };
-        this.update();
+        if (!this.board.isSuspendedUpdate) { this.update(); }
         return;
     }
 
@@ -452,22 +456,22 @@ JXG.Point.prototype.addConstraint = function (xterm, yterm) {
     if (typeof xterm=='string') {
         // Convert GEONExT syntax into  JavaScript syntax
         var newxterm = this.board.algebra.geonext2JS(xterm);
-        this.X = new Function('','return ' + newxterm + ';');
+        this.XEval = new Function('','return ' + newxterm + ';');
     } else if (typeof xterm=='function') {
-        this.X = xterm;
+        this.XEval = xterm;
     } else if (typeof xterm=='number') {
-        this.X = function() { return xterm; };
+        this.XEval = function() { return xterm; };
     }
     if (typeof yterm=='string') {
         // Convert GEONExT syntax into  JavaScript syntax
         var newyterm = this.board.algebra.geonext2JS(yterm);
-        this.Y = new Function('','return ' + newyterm + ';');
+        this.YEval = new Function('','return ' + newyterm + ';');
     } else if (typeof yterm=='function') {
-        this.Y = yterm;
+        this.YEval = yterm;
     } else if (typeof yterm=='number') {
-        this.Y = function() { return yterm; };
+        this.YEval = function() { return yterm; };
     }
-    var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.X(),this.Y()]);';
+    var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.XEval(),this.YEval()]);';
     this.updateConstraint = new Function('',fs);
     
     // Find parent elements
@@ -483,7 +487,9 @@ JXG.Point.prototype.addConstraint = function (xterm, yterm) {
         }
     }
     */
-    this.update();
+    if (!this.board.isSuspendedUpdate) { this.update(); }
+    return;
+    
 };
 
 JXG.Point.prototype.updateTransform = function () {
@@ -672,9 +678,20 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
     delete copy;
 };
 
+
+/**
+ * There are several methods to construct a point.
+ * The input parameter "parentArr" determines the point:
+ * - 2 numbers: affine (Euclidean) coordinates of a free point
+ * - 2 numbers and atts['slideObject'] : Glider with initial Euclidean coordinates
+ * - 2 Strings or (1 String and 1 Number): constrained point
+ * - 1 function: intersection of objects, this is just a constrained point too
+ * - 1 transformation object: clone of a base point transformed by the given Transformation
+ * - 3 numbers: homogeneous coordinates of a free point
+ */
 JXG.createPoint = function(board, parentArr, atts) {
     var el;
-    // Sind beides Zahlen?
+    // parentArr[0] and parentArr[1] are numbers
     if ( (JXG.IsNumber(parentArr[0])) && (JXG.IsNumber(parentArr[1])) ) {
         el = new JXG.Point(board, parentArr, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
         if ( atts["slideObject"] != null ) {
@@ -682,11 +699,11 @@ JXG.createPoint = function(board, parentArr, atts) {
         } else {
             el.baseElement = el; // Free point
         }
-    } // Beides Zahlen erledigt, jetzt schauen, ob beides String oder ein String und eine Zahl:
+    } // (One string and one number) or two strings
     else if ( (JXG.IsString(parentArr[0]) || JXG.IsNumber(parentArr[0]) || JXG.IsFunction(parentArr[0])) && (JXG.IsString(parentArr[1]) || JXG.IsNumber(parentArr[1])) || JXG.IsFunction(parentArr[1]) ) {
         el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
         el.addConstraint(parentArr[0],parentArr[1]);
-    } // Intersection
+    } // Intersection: one function
     else if ( (typeof parentArr[0]=='function') && parentArr[1]==null ) { 
         el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));   
         el.addConstraint(parentArr[0]);
@@ -695,8 +712,10 @@ JXG.createPoint = function(board, parentArr, atts) {
         el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));   
         el.addTransform(parentArr[0],parentArr[1]);
     }
-    else // Ansonsten eine fette Exception um die Ohren hauen
-        throw ("Can't create point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
+    else {// Failure
+        throw ("JSXGraph error: Can't create point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
+    }
+        
     return el;
 };
 
@@ -708,7 +727,12 @@ JXG.createPoint = function(board, parentArr, atts) {
  * parentArr consists of three elements: [number, number, object]
  */
 JXG.createGlider = function(board, parentArr, atts) {
-    var el = new JXG.Point(board, parentArr, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+    var el;
+    if (parentArr.length==1) {
+      el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+    } else {
+      el = new JXG.Point(board, parentArr.slice(0,-1), atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+    }
     el.makeGlider(parentArr[parentArr.length-1]);
     return el;
 };

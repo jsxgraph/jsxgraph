@@ -87,9 +87,10 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines) {
         borders.push({});
     }
     
-    this.visProp['fillColor'] = '#00FF00';
-    this.visProp['highlightFillColor'] = '#00FF00';
-    this.visProp['visible'] = true;
+    this.visProp['fillColor'] = this.board.options.polygon.fillColor;
+    this.visProp['highlightFillColor'] = this.board.options.polygon.highlightFillColor;
+    this.visProp['fillOpacity'] = this.board.options.polygon.fillOpacity;
+    this.visProp['highlightFillOpacity'] = this.board.options.polygon.highlightFillOpacity;
     
     var l;
  
@@ -104,8 +105,6 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines) {
             /* create the borderlines */
             l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name);
             l.setStraight(false,false); // Strecke
-            //l.setProperty('strokeColor:' + this.visProp['strokeColor']);
-            //l.setProperty('highlightStrokeColor:' + this.visProp['highlightStrokeColor']);
             this.borders[i] = l;
             l.parentPolygon = this;
         }

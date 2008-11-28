@@ -246,10 +246,19 @@ this.readGeonext = function(tree,board) {
     var grid = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('grid')[0].firstChild.data == "true") ? board.renderer.drawGrid(board) : null;
     
     if(boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('coord')[0].firstChild.data == "true") {
-        var p1coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board);
-        var p2coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
-        var axisX = new JXG.Axis(board, [p1coords.usrCoords[1], 0], [p2coords.usrCoords[1], 0], false, false);
-        var axisY = new JXG.Axis(board, [0, p2coords.usrCoords[2]], [0, p1coords.usrCoords[2]], false, false);
+//        var p1coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board);
+//        var p2coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
+
+//        var axisX = board.createElement('axis', [[p1coords.usrCoords[1], 0], [p2coords.usrCoords[1], 0]]);
+        var axisX = board.createElement('axis', [[0, 0], [1, 0]]);
+        axisX.setProperty('strokeColor:'+axisX.visProp['strokeColor'],'strokeWidth:'+axisX.visProp['strokeWidth'],
+                          'fillColor:none','highlightStrokeColor:'+axisX.visProp['highlightStrokeColor'], 
+                          'highlightFillColor:none', 'visible:true');
+//        var axisY = board.createElement('axis', [[0, p2coords.usrCoords[2]], [0, p1coords.usrCoords[2]]]);
+        var axisY = board.createElement('axis', [[0, 0], [0, 1]]);
+        axisY.setProperty('strokeColor:'+axisY.visProp['strokeColor'],'strokeWidth:'+axisY.visProp['strokeWidth'],
+                          'fillColor:none','highlightStrokeColor:'+axisY.visProp['highlightStrokeColor'], 
+                          'highlightFillColor:none', 'visible:true');
     }
     var bgcolor = boardData.getElementsByTagName('background')[0].getElementsByTagName('color')[0].firstChild.data;
     var opacity = 1;
@@ -440,9 +449,11 @@ this.readGeonext = function(tree,board) {
                     }   
                     inter.p.setProperty('strokeColor:'+gxtEl.outputFirstColorStroke,
                                         'strokeWidth:'+gxtEl.outputFirstStrokewidth,
-                                        'fillColor:'+gxtEl.outputFirstColorFill,
+                                        //'fillColor:'+gxtEl.outputFirstColorFill,
+                                        'fillColor:'+gxtEl.outputFirstColorStroke,
                                         'highlightStrokeColor:'+gxtEl.outputFirstHighlightStrokeColor,
-                                        'highlightFillColor:'+gxtEl.outputFirstColorFill,
+                                        'highlightFillColor:'+gxtEl.outputFirstHighlightStrokeColor,
+                                        //'highlightFillColor:'+gxtEl.outputFirstColorFill,
                                         'visible:'+gxtEl.outputFirstVisible,
                                         'labelColor:'+gxtEl.outputFirstColorLabel,
                                         'draft:'+gxtEl.draft); 
@@ -470,9 +481,11 @@ this.readGeonext = function(tree,board) {
                                             gxtEl.outputFirstName, gxtEl.outputLastName);    
                     inter.p1.setProperty('strokeColor:'+gxtEl.outputFirstColorStroke,
                                         'strokeWidth:'+gxtEl.outputFirstStrokewidth,
-                                        'fillColor:'+gxtEl.outputFirstColorFill,
+                                        //'fillColor:'+gxtEl.outputFirstColorFill,
+                                        'fillColor:'+gxtEl.outputFirstColorStroke,
                                         'highlightStrokeColor:'+gxtEl.outputFirstHighlightStrokeColor,
-                                        'highlightFillColor:'+gxtEl.outputFirstColorFill,
+                                        //'highlightFillColor:'+gxtEl.outputFirstColorFill,
+                                        'highlightFillColor:'+gxtEl.outputFirstHighlightStrokeColor,
                                         'visible:'+gxtEl.outputFirstVisible,
                                         'labelColor:'+gxtEl.outputFirstColorLabel,
                                         'draft:'+gxtEl.draft); 
@@ -480,9 +493,11 @@ this.readGeonext = function(tree,board) {
                     inter.p1.traced = (gxtEl.outputFirstTrace=='false') ? false : true;  
                     inter.p2.setProperty('strokeColor:'+gxtEl.outputLastColorStroke,
                                         'strokeWidth:'+gxtEl.outputLastStrokewidth,
-                                        'fillColor:'+gxtEl.outputLastColorFill,
+                                        //'fillColor:'+gxtEl.outputLastColorFill,
+                                        'fillColor:'+gxtEl.outputLastColorStroke,
                                         'highlightStrokeColor:'+gxtEl.outputLastHighlightStrokeColor,
-                                        'highlightFillColor:'+gxtEl.outputLastColorFill,
+                                        //'highlightFillColor:'+gxtEl.outputLastColorFill,
+                                        'highlightFillColor:'+gxtEl.outputLastHighlightStrokeColor,
                                         'visible:'+gxtEl.outputLastVisible,
                                         'labelColor:'+gxtEl.outputLastColorLabel,
                                         'draft:'+gxtEl.draft); 
@@ -669,9 +684,11 @@ this.readGeonext = function(tree,board) {
                     gxtEl.fixed = Data.getElementsByTagName('output')[1].getElementsByTagName('fix')[0].firstChild.data;
                     board.objects[pointId].setProperty('strokeColor:'+defElColStr[1],
                                                        'strokeWidth:'+defElSW[1],
-                                                       'fillColor:'+defElColF[1],
+                                                       //'fillColor:'+defElColF[1],
+                                                       'fillColor:'+defElColStr[1],
                                                        'highlightStrokeColor:'+defElHColStr[1],
-                                                       'highlightFillColor:'+defElColF[1],
+                                                       //'highlightFillColor:'+defElColF[1],
+                                                       'highlightFillColor:'+defElHColStr[1],
                                                        'visible:'+defElV[1],
                                                        'fixed:'+gxtEl.fixed,
                                                        'labelColor:'+defElColL[1],
@@ -750,9 +767,11 @@ this.readGeonext = function(tree,board) {
                     var pid = defEl[0];
                     board.objects[pid].setProperty('strokeColor:'+defElColStr[0],
                                                                           'strokeWidth:'+defElSW[0],
-                                                                          'fillColor:'+defElColF[0],
+                                                                          //'fillColor:'+defElColF[0],
+                                                                          'fillColor:'+defElColStr[0],
                                                                           'highlightStrokeColor:'+defElHColStr[0],
-                                                                          'highlightFillColor:'+defElColF[0],
+                                                                          //'highlightFillColor:'+defElColF[0],
+                                                                          'highlightFillColor:'+defElHColStr[0],
                                                                           'visible:'+defElV[0],
                                                                           'fixed:'+gxtEl.outputFixed,
                                                                           'labelColor:'+defElColL[0],
@@ -818,9 +837,11 @@ this.readGeonext = function(tree,board) {
                     var pid = defEl[1];
                     board.objects[pid].setProperty('strokeColor:'+defElColStr[1],
                                                                           'strokeWidth:'+defElSW[1],
-                                                                          'fillColor:'+defElColF[1],
+                                                                          //'fillColor:'+defElColF[1],
+                                                                          'fillColor:'+defElColStr[1],
                                                                           'highlightStrokeColor:'+defElHColStr[1],
-                                                                          'highlightFillColor:'+defElColF[1],
+                                                                          //'highlightFillColor:'+defElColF[1],
+                                                                          'highlightFillColor:'+defElHColStr[1],
                                                                           'visible:'+defElV[1],
                                                                           'fixed:'+gxtEl.outputFixed,
                                                                           'labelColor:'+defElColL[1],
@@ -838,14 +859,16 @@ this.readGeonext = function(tree,board) {
                 /* noch die Eigenschaften der uebrigen Elemente setzen */
                 if(gxtEl.typeName == "MIDPOINT" || gxtEl.typeName == "MIRROR_LINE" ||
                    gxtEl.typeName == "CIRCUMCIRCLE_CENTER" || gxtEl.typeName == "PERPENDICULAR_POINT" ||
-                   gxtEl.typeName == "MIRROR_POINT") { // hier wird jeweils ein Punkt angelegt
+                   gxtEl.typeName == "MIRROR_POINT" || gxtEl.typeName == "PARALLELOGRAM_POINT") { // hier wird jeweils ein Punkt angelegt
                     gxtEl.outputFixed = Data.getElementsByTagName('output')[0].getElementsByTagName('fix')[0].firstChild.data;
                     gxtEl.outputStyle = Data.getElementsByTagName('output')[0].getElementsByTagName('style')[0].firstChild.data;                
                     board.objects[gxtEl.outputId].setProperty('strokeColor:'+gxtEl.outputColorStroke,
                                                                        'strokeWidth:'+gxtEl.outputStrokewidth,
-                                                                       'fillColor:'+gxtEl.outputColorFill,
+                                                                       //'fillColor:'+gxtEl.outputColorFill,
+                                                                       'fillColor:'+gxtEl.outputColorStroke,
                                                                        'highlightStrokeColor:'+gxtEl.outputHighlightStrokeColor,
-                                                                       'highlightFillColor:'+gxtEl.outputColorFill,
+                                                                       //'highlightFillColor:'+gxtEl.outputColorFill,
+                                                                       'highlightFillColor:'+gxtEl.outputHighlightStrokeColor,
                                                                        'visible:'+gxtEl.outputVisible,
                                                                        'fixed:'+gxtEl.outputFixed,
                                                                        'labelColor:'+gxtEl.outputColorLabel,
@@ -904,9 +927,11 @@ this.readGeonext = function(tree,board) {
                     var pid = defEl[0];
                     board.objects[pid].setProperty('strokeColor:'+defElColStr[0],
                                                                           'strokeWidth:'+defElSW[0],
-                                                                          'fillColor:'+defElColF[0],
+                                                                          //'fillColor:'+defElColF[0],
+                                                                          'fillColor:'+defElColStr[0],
                                                                           'highlightStrokeColor:'+defElHColStr[0],
-                                                                          'highlightFillColor:'+defElColF[0],
+                                                                          //'highlightFillColor:'+defElColF[0],
+                                                                          'highlightFillColor:'+defElHColStr[0],
                                                                           'visible:'+defElV[0],
                                                                           'fixed:'+gxtEl.outputFixed,
                                                                           'labelColor:'+defElColL[0],
@@ -1007,11 +1032,13 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
                 gxtEl.first = JXG.GeonextReader.changeOriginIds(board,gxtEl.first);
                 gxtEl.last = JXG.GeonextReader.changeOriginIds(board,gxtEl.last);
-                var a = new JXG.Arrow(board, gxtEl.first, gxtEl.last, gxtEl.id, gxtEl.name);
+                var a = new JXG.Line(board, gxtEl.first, gxtEl.last, gxtEl.id, gxtEl.name);
                 a.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.colorFill,
                               'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash, 'draft:'+gxtEl.draft);
+                a.setStraight(false,false);                              
+                a.setArrow(false,true);
                 a.traced = (gxtEl.trace=='false') ? false : true;                         
                 JXG.GeonextReader.printDebugMessage('debug',a,Data.nodeName,'OK');
                 break;

@@ -102,57 +102,6 @@ JXG.SVGRenderer.prototype.drawAxis = function(el) {
     this.updateAxis(el);
 }
 
-JXG.SVGRenderer.prototype.updateAxisTicks = function(el, oldTicksCount) {
-    if(oldTicksCount == el.ticks.length) {
-        return;
-    } else if(oldTicksCount < el.ticks.length) {
-        for (var i=oldTicksCount; i<el.ticks.length; i++) {
-            var tick = this.createPrimitive('line',el.id+'tick'+i);
-            this.lines.appendChild(tick);
-            
-            // Tick label
-            // var n = this.createPrimitive('text',el.id+'tick'+i+'text');
-            // n.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:10; opacity:0.8;");
-            // this.appendChildPrimitive(n,'grid');
-        }   
-        this.updateAxisTicksInnerLoop(el,oldTicksCount);
-    } else if(oldTicksCount > el.ticks.length) {
-        for(var i=el.ticks.length; i<oldTicksCount; i++) {
-            this.remove($(el.id+'tick'+i));
-
-            // Tick label
-            //this.remove($(el.id+'tick'+i+'text'));        
-        }
-    }
-}
-
-JXG.SVGRenderer.prototype.updateAxisTicksInnerLoop = function(el,start) {
-    for (var i=start; i<el.ticks.length; i++) {
-        var c = el.ticks[i];
-        var tick = $(el.id+'tick'+i);
-        var tickLabel = $(el.id+'tick'+i+'text');
-
-        if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {  // vertical axis
-            this.updateLinePrimitive(tick,c.scrCoords[1],c.scrCoords[2],c.scrCoords[1]-el.r,c.scrCoords[2]);
-
-            // Tick label
-/*             tickLabel.setAttributeNS(null,'x',c.scrCoords[1]-el.r-12);
-            tickLabel.setAttributeNS(null,'y',c.scrCoords[2]+5);
-            var t = document.createTextNode(Math.round(c.usrCoords[2]));
-            tickLabel.appendChild(t);
- */        } else {                                                             // horizontal axis
-            this.updateLinePrimitive(tick,c.scrCoords[1],c.scrCoords[2],c.scrCoords[1],c.scrCoords[2]+el.r);
-
-            // Tick label
-/*             tickLabel.setAttributeNS(null,'x',c.scrCoords[1]-5);
-            tickLabel.setAttributeNS(null,'y',c.scrCoords[2]+el.r+12);
-            var t = document.createTextNode(Math.round(c.usrCoords[1]));
-            tickLabel.appendChild(t);
- */        }
-        this.setStrokeProp(tick,el.visProp);
-    }    
-}
-
 JXG.SVGRenderer.prototype.updateAxis = function(el) {
     var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]], el.board);
     var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords[1], el.point2.coords.usrCoords[2]], el.board);
@@ -203,14 +152,14 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     var node3;
     if(el.visProp['firstArrow']) {
         var node2 = this.createArrowHead(el,'Start');
-        this.setFillProp(node2,el.visProp);
+        //this.setFillProp(node2,el.visProp);
         this.defs.appendChild(node2);
         el.rendNodeTriangleStart = node2;
         node.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'TriangleStart)');
     }
     if(el.visProp['lastArrow']) {
         var node2 = this.createArrowHead(el,'End');
-        this.setFillProp(node2,el.visProp);
+        //this.setFillProp(node2,el.visProp);
         this.defs.appendChild(node2);
         el.rendNodeTriangleEnd = node2;
         node.setAttributeNS(null, 'marker-start', 'url(#'+el.id+'TriangleEnd)');
@@ -236,10 +185,10 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     this.updatePathPrimitive(node4,pathString2);
     this.setFillProp(node4,el.visProp);
     node4.setAttributeNS(null, 'stroke', 'none');
-
+    
     this.arcs.appendChild(node);
     el.rendNode = node;
-    this.arcs.appendChild(node4);
+    this.sectors.appendChild(node4);
     el.rendNodeFill = node4;
     this.setDraft(el);
     if(!el.visProp['visible']) {
@@ -272,9 +221,13 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     pathString += '0 ';
     pathString += projectedP3.scrCoords[1] + ' ' + projectedP3.scrCoords[2];
     pathString += ' L ' + el.point2.coords.scrCoords[1] + " " + el.point2.coords.scrCoords[2]    + ' z'; // Endpunkt
-    this.updatePathPrimitive(node,pathString);
-    this.setFillProp(node,el.visProp);
+    //this.updatePathPrimitive(node,pathString);
+    node.setAttributeNS(null, 'd', pathString);    
     
+    node.setAttributeNS(null, 'fill', el.visProp['fillColor']);
+    node.setAttributeNS(null, 'fill-opacity', el.visProp['fillOpacity']);    
+    node.setAttributeNS(null, 'stroke', 'none');    
+   
     var node2 = this.createPrimitive('path',el.id+'_2');
     var pathString = 'M '+  projectedP1.scrCoords[1] +' '+  projectedP1.scrCoords[2] +' A '; // Startpunkt
     pathString += Math.round(el.radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(el.radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien
@@ -289,17 +242,21 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     pathString += '0 ';
     pathString += projectedP3.scrCoords[1] + ' ' + projectedP3.scrCoords[2]; // Endpunkt    
 
-    this.updatePathPrimitive(node2,pathString);
-    this.setPropertyPrimitive(node2,'fill','none');
-    this.setStrokeProp(node2,el.visProp);
+    //this.updatePathPrimitive(node2,pathString);
+    node2.setAttributeNS(null, 'd', pathString);
+    node2.setAttributeNS(null, 'id', el.id+'_2');
+    node2.setAttributeNS(null, 'fill', 'none');    
+    node2.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);    
+    node2.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);
 
-    this.setPropertyPrimitive(node,'stroke', 'none');    
 
     this.appendChildPrimitive(node,'angles');
     el.rendNode1 = node;
     this.appendChildPrimitive(node2,'angles');
     el.rendNode2 = node2;
     //   this.setDraft(el);
+    
+    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
 }
 
 JXG.SVGRenderer.prototype.updateAngle = function(el) {
@@ -426,7 +383,21 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
                 el.rendNodeTriangleEnd.setAttributeNS(null, 'fill', c);
                 el.rendNodeTriangleEnd.setAttributeNS(null, 'fill-opacity', o);    
             }                
-        }        
+        }     
+        else if(el.type == JXG.OBJECT_TYPE_LINE) {
+            if(!el.visProp['straightFirst'] && el.visProp['firstArrow']) {
+                el.rendNodeTriangleStart.setAttributeNS(null, 'stroke', c);
+                el.rendNodeTriangleStart.setAttributeNS(null, 'stroke-opacity', o);                
+                el.rendNodeTriangleStart.setAttributeNS(null, 'fill', c);
+                el.rendNodeTriangleStart.setAttributeNS(null, 'fill-opacity', o);                    
+            }
+            if(!el.visProp['straightLast'] && el.visProp['lastArrow']) {
+                el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke', c);
+                el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke-opacity', o);                
+                el.rendNodeTriangleEnd.setAttributeNS(null, 'fill', c);
+                el.rendNodeTriangleEnd.setAttributeNS(null, 'fill-opacity', o);    
+            }                
+        }         
     }
     else {
         if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
@@ -634,8 +605,9 @@ JXG.SVGRenderer.prototype.createArrowHead = function(el,idAppendix) {
     node2.setAttributeNS(null, 'markerWidth', '6');
     node2.setAttributeNS(null, 'orient', 'auto');
     node2.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);
-    node2.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);      
-    this.setFillProp(node2,el.visProp);
+    node2.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);            
+    node2.setAttributeNS(null, 'fill', el.visProp['strokeColor']);
+    node2.setAttributeNS(null, 'fill-opacity', el.visProp['strokeOpacity']);    
     var node3 = this.container.ownerDocument.createElementNS(this.svgNamespace,'path');
     if (idAppendix=='End') {
         node2.setAttributeNS(null, 'refX', '0');
@@ -653,6 +625,39 @@ JXG.SVGRenderer.prototype.makeArrow = function(node,el,idAppendix) {
     this.defs.appendChild(node2);
     node.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'Triangle)');
     el.rendNodeTriangle = node2;
+};
+
+JXG.SVGRenderer.prototype.makeArrows = function(el) {
+    if(el.visProp['firstArrow']) {
+        var node2 = el.rendNodeTriangleStart;
+        if(node2 == null) {
+            node2 = this.createArrowHead(el,'End');
+            this.defs.appendChild(node2);            
+            el.rendNodeTriangleStart = node2;
+            el.rendNode.setAttributeNS(null, 'marker-start', 'url(#'+el.id+'TriangleEnd)');    
+        }    
+    }
+    else {
+        var node2 = el.rendNodeTriangleStart;
+        if(node2 != null) {
+            this.remove(node2);
+        }
+    }
+    if(el.visProp['lastArrow']) {
+        var node2 = el.rendNodeTriangleEnd;
+        if(node2 == null) {
+            node2 = this.createArrowHead(el,'Start');
+            this.defs.appendChild(node2);            
+            el.rendNodeTriangleEnd = node2;
+            el.rendNode.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'TriangleStart)'); 
+        }    
+    }
+    else {
+        var node2 = el.rendNodeTriangleEnd;
+        if(node2 != null) {
+            this.remove(node2);
+        }        
+    }
 };
 
 JXG.SVGRenderer.prototype.updateLinePrimitive = function(node,p1x,p1y,p2x,p2y) {
@@ -684,6 +689,8 @@ JXG.SVGRenderer.prototype.updateRectPrimitive = function(node,x,y,w,h) {
 
 JXG.SVGRenderer.prototype.updatePathPrimitive = function(node,pointString) {
     node.setAttributeNS(null, 'd', pointString);
+    node.setAttributeNS(null, 'stroke-linecap', 'round');
+    node.setAttributeNS(null, 'stroke-linejoin', 'round');
 };
 
 JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {

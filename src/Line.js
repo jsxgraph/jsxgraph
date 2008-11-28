@@ -59,6 +59,10 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type int
      */
     this.type = JXG.OBJECT_TYPE_LINE;
+    
+    /**
+     * Class of element, value is OBJECT_CLASS_LINE;
+     */
     this.elementClass = JXG.OBJECT_CLASS_LINE;
 
     /**
@@ -84,25 +88,20 @@ JXG.Line = function (board, p1, p2, id, name) {
      * This is just for the hasPoint() method.
      * @type int
      */
-    this.r = 3;
-
-    this.visProp['fillColor'] = 'none';
-    this.visProp['highlightFillColor'] = 'none';
-    this.visProp['strokeColor'] = '#0000ff';
-    this.visProp['strokeWidth'] = 1;
+    this.r = this.board.options.precision.hasPoint;
     
     /**
      * Determines if a line is drawn on over the firstpoint.
      * @type bool
      * @see #straightLast
      */ 
-    this.visProp['straightFirst'] = true;
+    this.visProp['straightFirst'] = this.board.options.line.straightFirst;
     /**
      * Determines if a line is drawn on over the lastpoint.
      * @type bool
      * @see #straightFirst
      */     
-    this.visProp['straightLast'] = true;
+    this.visProp['straightLast'] = this.board.options.line.straightLast;
 
     /**
      * True when the object is visible, false otherwise.
@@ -110,6 +109,39 @@ JXG.Line = function (board, p1, p2, id, name) {
      */
     this.visProp['visible'] = true;
     
+    /**
+     * Determines if a line has an arrow at its firstpoint.
+     * @type bool
+     * @see #lastArrow
+     */    
+    this.visProp['firstArrow'] = this.board.options.line.firstArrow;
+    
+    /**
+     * Determines if a line has an arrow at its firstpoint.
+     * @type bool
+     * @see #firstArrow
+     */        
+    this.visProp['lastArrow'] = this.board.options.line.lastArrow;
+    
+    /**
+     * Array of Coords storing the coordinates of all ticks.
+     * @type Array
+     * @see Coords
+     */
+    this.ticks = [];
+    
+    /**
+     * Has this line ticks?
+     * @type bool
+     */
+    this.visProp['withTicks'] = this.board.options.line.ticks.withTicks;
+    
+    /**
+     * The distance between two ticks.
+     * @type float
+     */
+    this.ticksDelta = this.board.options.line.ticks.ticksDelta;
+        
     /**
     * If the line is the border of a polygon, the polygone object is stored, otherwise null.
     * @type Polygon
@@ -122,6 +154,7 @@ JXG.Line = function (board, p1, p2, id, name) {
     /* Add arrow as child to defining points */
     this.point1.addChild(this);
     this.point2.addChild(this);
+    this.update();
 };
 
 JXG.Line.prototype = new JXG.GeometryElement;
@@ -210,6 +243,122 @@ JXG.Line.prototype = new JXG.GeometryElement;
     return has;
 };
 
+
+JXG.Line.prototype.update = function() {    
+    if (this.needsUpdate) {
+        if (true ||!this.board.geonextCompatibilityMode) {
+            this.updateStdform();
+        }
+        if(this.visProp['withTicks'])
+            this.updateTickCoordinates();
+    }
+    if(this.traced) {
+        this.cloneToBackground(true);
+    }    
+};
+
+JXG.Line.prototype.updateStdform = function() {    
+   /*
+    var nx = -(this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]);
+    var ny =  this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1];
+    var c = -(nx*this.point1.coords.usrCoords[1]+ny*this.point1.coords.usrCoords[2]);
+
+    this.stdform[0] = c;
+    this.stdform[1] = nx;
+    this.stdform[2] = ny;
+    */
+    var v = [];
+    v = this.board.algebra.crossProduct(this.point1.coords.usrCoords,this.point2.coords.usrCoords);
+    this.stdform[0] = v[0];
+    this.stdform[1] = v[1];
+    this.stdform[2] = v[2];
+    //if (this.point1.name=="B") 
+    //    $('debug').innerHTML += '('+v.toString()+') ';
+    
+    this.stdform[3] = 0;
+
+    this.normalize();
+};
+
+/**
+ * Updates the coordinates of the lines ticks. Calls the renderer to delete old ticks
+ * or create more ticks if required.
+ * @param {bool} first Optional parameter, only used in constructor.
+ */
+JXG.Line.prototype.updateTickCoordinates = function (first) {
+    if(typeof first == 'undefined') {
+        first = false;
+    }
+    
+    if(!this.visProp['withTicks'])
+        return;
+        
+    // calculate start (c1) and end (c2) points
+    var c1 = new JXG.Coords(JXG.COORDS_BY_USER, [this.point1.coords.usrCoords[1], this.point1.coords.usrCoords[2]], this.board);
+    var c2 = new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.coords.usrCoords[1], this.point2.coords.usrCoords[2]], this.board);
+    this.board.renderer.calcStraight(this, c1, c2);
+    var p1 = this.point1.coords;
+
+    var oldTicksCount = this.ticks.length;
+    this.ticks = new Array();
+
+    // calculate ticks
+    // between start point (c1) and this.point1
+
+    // distance between start and end points
+    var dx = p1.usrCoords[1]-c1.usrCoords[1]; // delta x
+    var dy = p1.usrCoords[2]-c1.usrCoords[2]; // delta y
+    
+    var total_length = Math.sqrt(dx*dx + dy*dy);
+    var deltaX = (this.ticksDelta * dx) / (total_length);
+    var deltaY = (this.ticksDelta * dy) / (total_length);
+    
+    var x = p1.usrCoords[1];
+    var y = p1.usrCoords[2];
+    
+    // add tick at p1 
+    this.ticks[0] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+
+    var countTicks = Math.floor(total_length/this.ticksDelta);
+
+    for(var i=0; i<countTicks; i++) {
+        x = x - deltaX;
+        y = y - deltaY;
+
+        this.ticks[i+1] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+    }
+    var offset = countTicks;
+
+    // between end point (ce) and this.point1
+
+    // distance between start and end points
+    dx = p1.usrCoords[1]-c2.usrCoords[1]; // delta x
+    dy = p1.usrCoords[2]-c2.usrCoords[2]; // delta y
+    
+    total_length = Math.sqrt(dx*dx + dy*dy);
+    deltaX = (this.ticksDelta * dx) / (total_length);
+    deltaY = (this.ticksDelta * dy) / (total_length);
+    
+    // reset start coordinates
+    x = p1.usrCoords[1];
+    y = p1.usrCoords[2];
+    
+    countTicks = Math.floor(total_length/this.ticksDelta);
+
+    for(var i=0; i<countTicks; i++) {
+        x = x - deltaX;
+        y = y - deltaY;
+
+        this.ticks[offset+i+1] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+    }
+
+    if(!first) {
+        this.board.renderer.updateAxisTicks(this, oldTicksCount);
+    }
+    
+    this.board.renderer.updateAxisTicksInnerLoop(this, 0);
+};
+
 /**
  * Uses the boards renderer to update the arrow.
  */
@@ -230,9 +379,27 @@ JXG.Line.prototype = new JXG.GeometryElement;
             }
         }
         
-        //this.board.renderer.updateLine(this);
+        this.board.renderer.updateLine(this);
         this.needsUpdate = false;
     }
+};
+
+JXG.Line.prototype.enableTicks = function() {
+    if(this.visProp['withTicks'])
+        return;
+        
+    this.visProp['withTicks'] = true;
+    
+    this.updateTickCoordinates();
+};
+
+JXG.Line.prototype.disableTicks = function() {
+    if(!this.visProp['withTicks'])
+        return;
+        
+    this.visProp['withTicks'] = false;
+    this.board.renderer.removeAxisTicks(this);
+    this.ticks = new Array();
 };
 
 /**
@@ -279,6 +446,19 @@ JXG.Line.prototype.getSlope = function () {
 };
 
 /**
+ * Determines whether the line has arrows at start or end of the line.
+ * @param {bool} firstArrow True if there is an arrow at the start of the line, false otherwise.
+ * @param {bool} lastArrow True if there is an arrow at the end of the line, false otherwise.
+ * Is stored at visProp['firstArrow'] and visProp['lastArrow']
+ */
+JXG.Line.prototype.setArrow = function (firstArrow, lastArrow) {
+     this.visProp['firstArrow'] = firstArrow;
+     this.visProp['lastArrow'] = lastArrow;
+     
+     this.board.renderer.updateLine(this);
+};
+
+/**
  * return TextAnchor
  */
 JXG.Line.prototype.getTextAnchor = function() {
@@ -295,6 +475,8 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.point1 = this.point1;
     copy.point2 = this.point2;
     
+    copy.stdform = this.stdform;
+    
     copy.board = {};
     copy.board.unitX = this.board.unitX;
     copy.board.unitY = this.board.unitY;
@@ -303,7 +485,8 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.board.origin = this.board.origin;
     copy.board.canvasHeight = this.board.canvasHeight;
     copy.board.canvasWidth = this.board.canvasWidth;
-    copy.board.dimension = this.board.dimension;    
+    copy.board.dimension = this.board.dimension;   
+    copy.board.algebra = this.board.algebra;     
     
     copy.visProp = this.visProp;
     var s = this.getSlope();
@@ -311,7 +494,9 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.getSlope = function() { return s; };
     copy.getRise = function() { return r; };
     
+    this.board.renderer.enhancedRendering = true;
     this.board.renderer.drawLine(copy);
+    this.board.renderer.enhancedRendering = false;
     this.traces[copy.id] = $(copy.id);
 
     delete copy;
@@ -355,6 +540,14 @@ JXG.Line.prototype.setPosition = function (method, x, y) {
     //}
 };
 
+/**
+ * Creates a new line.
+ * @param {JXG.Board} board The board the line is put on.
+ * @param {Array} parents Array of two points defining the line.
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @type JXG.Line
+ * @return Reference to the created line object.
+ */
 JXG.createLine = function(board, parentArr, atts) {
     var el;
     
@@ -369,23 +562,75 @@ JXG.createLine = function(board, parentArr, atts) {
 
 JXG.JSXGraph.registerElement('line', JXG.createLine);
 
-JXG.Line.prototype.update = function() {    
-    if (this.needsUpdate) {
-        if (!this.board.geonextCompatibilityMode) {
-            this.updateStdform();
-        }
-    }
+
+/**
+ * Creates a new arrow.
+ * @param {JXG.Board} board The board the arrow is put on.
+ * @param {Array} parents Array of two points defining the arrow.
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @type JXG.Line
+ * @return Reference to the created line object.
+ */
+JXG.createArrow = function(board, parents, attributes) {
+    var el;
+    
+    if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) {
+        el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name']);
+        el.setStraight(false,false);
+        el.setArrow(false,true);
+    } // Ansonsten eine fette Exception um die Ohren hauen
+    else
+        throw ("Can't create arrow with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+
+    return el;
 };
 
-JXG.Line.prototype.updateStdform = function() {    
-    var nx = -(this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]);
-    var ny =  this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1];
-    var c = -(nx*this.point1.coords.usrCoords[1]+ny*this.point1.coords.usrCoords[2]);
+JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
 
-    this.stdform[0] = c;
-    this.stdform[1] = nx;
-    this.stdform[2] = ny;
-    this.stdform[3] = 0;
 
-    this.normalize();
+/**
+ * Creates a new axis.
+ * @param {JXG.Board} board The board the arrow is put on.
+ * @param {Array} parents Array of two points defining the arrow.
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @type JXG.Line
+ * @return Reference to the created axis object.
+ */
+JXG.createAxis = function(board, parents, attributes) {
+    // Arrays oder Punkte, mehr brauchen wir nicht.
+    if ( (JXG.IsArray(parents[0]) || JXG.IsPoint(parents[0]) ) && (JXG.IsArray(parents[1]) || JXG.IsPoint(parents[1])) ) {
+        var point1;
+        if( JXG.IsPoint(parents[0].type) )
+            point1 = parents[0];
+        else
+            point1 = new JXG.Point(board, parents[0],'','',false);
+
+        var point2;
+        if( JXG.IsPoint(parents[1]) )
+            point2 = parents[1];
+        else
+            point2 = new JXG.Point(board,parents[1],'','',false);
+    
+        /* Make the points fixed */
+        point1.fixed = true;
+        point2.fixed = true;
+
+        if(attributes == null)
+            attributes = new Object();
+        
+        attributes.lastArrow = true;
+        attributes.straightFirst = true;
+        attributes.straightLast = true;
+        attributes.withTicks = true;
+        if(attributes.strokeWidth == null)
+            attributes.strokeWidth = 2;
+
+        var el = board.createElement('line', [point1, point2], attributes);
+    } // Ansonsten eine fette Exception um die Ohren hauen
+    else
+        throw ("Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+
+    return el;
 };
+
+JXG.JSXGraph.registerElement('axis', JXG.createAxis);

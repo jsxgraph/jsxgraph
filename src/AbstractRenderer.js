@@ -47,9 +47,9 @@ JXG.AbstractRenderer = function() {
 };
 
 /**
- * Draw a point on the canvas
- * @param {Point} point Reference to a point object, that has to be drawn.
- * @see Point
+ * Draws a point on the canvas.
+ * @param {JXG.Point} el Reference to a point object, that has to be drawn.
+ * @see JXG.Point
  * @see #updatePoint
  */
 JXG.AbstractRenderer.prototype.drawPoint = function(el) { 
@@ -96,9 +96,9 @@ JXG.AbstractRenderer.prototype.drawPoint = function(el) {
 };
    
 /**
- * Update color, position etc. of a point that already exists on the canvas
- * @param {Point} point Reference to a point object, that has to be updated
- * @see Point
+ * Updates color, position etc. of a point that already exists on the canvas.
+ * @param {JXG.Point} el Reference to a point object, that has to be updated.
+ * @see JXG.Point
  * @see #drawPoint
  */
 JXG.AbstractRenderer.prototype.updatePoint = function(el) {
@@ -139,33 +139,33 @@ JXG.AbstractRenderer.prototype.updatePoint = function(el) {
 };
 
 /**
- * Change style of a point that already exists on the canvas
- * @param {Point} point Reference to a point object, that has to be updated
- * @see Point
+ * Changes the style of a point that already exists on the canvas.
+ * @param {JXG.Point} el Reference to a point object, that has to be updated.
+ * @see JXG.Point
  * @see #drawPoint
  */
-JXG.AbstractRenderer.prototype.changePointStyle = function(point) {
-    var node = $(point.id);
+JXG.AbstractRenderer.prototype.changePointStyle = function(el) {
+    var node = $(el.id);
     if(node != null) {
         this.remove(node);
     }
     else {
-        this.remove($(point.id+'_x1'));
-        this.remove($(point.id+'_x2'));
+        this.remove($(el.id+'_x1'));
+        this.remove($(el.id+'_x2'));
     }
-    this.drawPoint(point);
-    if(!point.visProp['visible']) {
-        this.hide(point);
+    this.drawPoint(el);
+    if(!el.visProp['visible']) {
+        this.hide(el);
     }
-    if(point.visProp['draft']) {
-        this.setDraft(point);
+    if(el.visProp['draft']) {
+        this.setDraft(el);
     }
 };
 
 /**
- * Draw a line on the canvas
- * @param {Line} line Reference to a line object, that has to be drawn.
- * @see Line
+ * Draws a line on the canvas.
+ * @param {JXG.Line} el Reference to a line object, that has to be drawn.
+ * @see JXG.Line
  * @see #updateLine
  * @see #calcStraight
  */
@@ -173,31 +173,24 @@ JXG.AbstractRenderer.prototype.drawLine = function(el) {
     var node = this.createPrimitive('line',el.id);
     this.appendChildPrimitive(node,'lines');
     el.rendNode = node;
-    this.setStrokeProp(el.rendNode,el.visProp);
+    //this.setStrokeProp(el.rendNode,el.visProp);
     this.setDashStyle(el.rendNode,el.visProp);
-    this.setDraft(el);
+    //this.setDraft(el);
     this.updateLine(el);
 };
    
 /**
- * Update color, position etc. of a line that already exists on the canvas
- * @param {Line} line Reference to a line object, that has to be updated
- * @see Line
+ * Updates color, position etc. of a line that already exists on the canvas.
+ * @param {JXG.Line} el Reference to a line object, that has to be updated.
+ * @see JXG.Line
  * @see #drawLine
  * @see #calcStraight
  */
 JXG.AbstractRenderer.prototype.updateLine = function(el) {
-    if (this.enhancedRendering) {
-        if (!el.visProp['draft']) {
-            this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-            this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
-        } else {
-            this.setDraft(el);
-        }
-    }
-
-    var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]], el.board);
-    var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords[1], el.point2.coords.usrCoords[2]], el.board);
+    //var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]], el.board);
+    //var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords[1], el.point2.coords.usrCoords[2]], el.board);
+    var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
+    var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
     if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
        this.calcStraight(el,screenCoords1,screenCoords2); 
     } 
@@ -226,12 +219,22 @@ JXG.AbstractRenderer.prototype.updateLine = function(el) {
                 ];
         el.imageTransformMatrix = m;
     }
+    this.makeArrows(el);
+
+    if (this.enhancedRendering) {
+        if (!el.visProp['draft']) {
+            this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
+            this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
+        } else {
+            this.setDraft(el);
+        }
+    }    
 }
 
 /**
- * Draw a graph on the canvas
- * @param {Curve} graph Reference to a graph object, that has to be plotted
- * @see Curve
+ * Draws a graph on the canvas.
+ * @param {JXG.Curve} el Reference to a graph object, that has to be plotted.
+ * @see JXG.Curve
  * @see #updateCurve
  */
 JXG.AbstractRenderer.prototype.drawCurve = function(el) { 
@@ -246,9 +249,9 @@ JXG.AbstractRenderer.prototype.drawCurve = function(el) {
 };
 
 /**
- * Update properties of a graph that already exists on the canvas
- * @param {Curve} graph Reference to a graph object, that has to be updated
- * @see Curve
+ * Updates properties of a graph that already exists on the canvas.
+ * @param {JXG.Curve} el Reference to a graph object, that has to be updated.
+ * @see JXG.Curve
  * @see #drawCurve
  */
 JXG.AbstractRenderer.prototype.updateCurve = function(el) {
@@ -265,17 +268,17 @@ JXG.AbstractRenderer.prototype.updateCurve = function(el) {
 };
 
 /**
- * Calculate start and end point for a line
- * @param {Line} line Reference to a line object, that needs calculation of start and end point
- * @param {Coords} screenCoords1 Coordinates of the point where line drawing begins
- * @param {Coords} screenCoords2 Coordinates of the point where line drawing ends
- * @see Line
+ * Calculates start and end point for a line.
+ * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
+ * @param {JXG.Coords} screenCoords1 Coordinates of the point where line drawing begins.
+ * @param {JXG.Coords} screenCoords2 Coordinates of the point where line drawing ends.
+ * @see JXG.Line
  * @see #drawLine
  * @see #updateLine
  */
-JXG.AbstractRenderer.prototype.calcStraight = function(line, screenCoords1, screenCoords2) {
-    var slope = line.getSlope();
-    var rise = line.getRise();
+JXG.AbstractRenderer.prototype.calcStraightv1 = function(el, screenCoords1, screenCoords2) {
+    var slope = el.getSlope();
+    var rise = el.getRise();
     
     if(slope== "INF") { // senkrechte Gerade
         // Schnittpunkte mit dem Begrenzungsrahmen
@@ -285,20 +288,20 @@ JXG.AbstractRenderer.prototype.calcStraight = function(line, screenCoords1, scre
         var x2 = screenCoords2.scrCoords[1];
         var y2 = screenCoords2.scrCoords[2];
         if(screenCoords1.scrCoords[2] < screenCoords2.scrCoords[2]) {
-            if(line.visProp['straightFirst']) {
+            if(el.visProp['straightFirst']) {
                 //x1 = screenCoords1.scrCoords[1];
                 y1 = 0;
             }               
-            if(line.visProp['straightLast']) {
+            if(el.visProp['straightLast']) {
                 //x2 = screenCoords1.scrCoords[1];
-                y2 = line.board.canvasHeight;
+                y2 = el.board.canvasHeight;
             }
         } else {
-            if(line.visProp['straightFirst']) {
+            if(el.visProp['straightFirst']) {
                 //x2 = screenCoords1.scrCoords[1];
-                y1 = line.board.canvasHeight;
+                y1 = el.board.canvasHeight;
             } 
-            if(line.visProp['straightLast']) {
+            if(el.visProp['straightLast']) {
                 //x1 = screenCoords1.scrCoords[1];
                 y2 = 0;
             }
@@ -311,28 +314,28 @@ JXG.AbstractRenderer.prototype.calcStraight = function(line, screenCoords1, scre
     } // sonst:
    
     // Schnittpunkte mit dem Begrenzungsrahmen
-    var coordsLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, rise], line.board);
-    var coordsRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [line.board.canvasWidth, slope*line.board.canvasWidth + rise], line.board);
-    var coordsTop = new JXG.Coords(JXG.COORDS_BY_SCREEN, [Math.round(-rise/slope), 0], line.board);
-    var coordsBottom = new JXG.Coords(JXG.COORDS_BY_SCREEN, [Math.round((line.board.canvasHeight-rise)/slope), line.board.canvasHeight], line.board);
+    var coordsLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, rise], el.board);
+    var coordsRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [el.board.canvasWidth, slope*el.board.canvasWidth + rise], el.board);
+    var coordsTop = new JXG.Coords(JXG.COORDS_BY_SCREEN, [Math.round(-rise/slope), 0], el.board);
+    var coordsBottom = new JXG.Coords(JXG.COORDS_BY_SCREEN, [Math.round((el.board.canvasHeight-rise)/slope), el.board.canvasHeight], el.board);
 
     if(coordsLeft.scrCoords[2] < 0) { 
         // Punkt am oberen Rand verwenden
         var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
         var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-        if((distP1Top < distP2Top) && line.visProp['straightFirst']) {
+        if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
             screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-        } else if((distP1Top > distP2Top) && line.visProp['straightLast']) {
+        } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
             screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
         }
   
-        if(coordsRight.scrCoords[2] > line.board.canvasHeight) { 
+        if(coordsRight.scrCoords[2] > el.board.canvasHeight) { 
             // Punkt am unteren Rand verwenden
             var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
             var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
-            if((distP1Bottom < distP2Bottom) && line.visProp['straightFirst']) {
+            if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
                 screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-            } else if((distP1Bottom > distP2Bottom) && line.visProp['straightLast']) {
+            } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
                 screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
             }
      
@@ -340,19 +343,19 @@ JXG.AbstractRenderer.prototype.calcStraight = function(line, screenCoords1, scre
             // Punkt am rechten Rand verwenden
             var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
             var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
-            if((distP1Right < distP2Right) && line.visProp['straightFirst']) {
+            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
                 screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            } else if((distP1Right > distP2Right) && line.visProp['straightLast']) {
+            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
                 screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
             }
         }
-    } else if(coordsLeft.scrCoords[2] > line.board.canvasHeight) { 
+    } else if(coordsLeft.scrCoords[2] > el.board.canvasHeight) { 
         // Punkt am unteren Rand verwenden
         var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
         var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);   
-        if((distP1Bottom < distP2Bottom) && line.visProp['straightFirst']) {
+        if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
             screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-        } else if((distP1Bottom > distP2Bottom) && line.visProp['straightLast']) {
+        } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
             screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
         }
  
@@ -360,18 +363,18 @@ JXG.AbstractRenderer.prototype.calcStraight = function(line, screenCoords1, scre
             // Punkt am oberen Rand verwenden
             var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
             var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-            if((distP1Top < distP2Top) && line.visProp['straightFirst']) {
+            if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
                 screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-            } else if((distP1Top > distP2Top) && line.visProp['straightLast']) {
+            } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
                 screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
             }
         } else {
             // Punkt am rechten Rand verwenden
             var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
             var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
-            if((distP1Right < distP2Right) && line.visProp['straightFirst']) {
+            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
                 screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            } else if((distP1Right > distP2Right) && line.visProp['straightLast']) {
+            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
                 screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
             }
         }          
@@ -379,9 +382,9 @@ JXG.AbstractRenderer.prototype.calcStraight = function(line, screenCoords1, scre
         // Punkt am linken Rand verwenden
         var distP1Left = coordsLeft.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
         var distP2Left = coordsLeft.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-        if((distP1Left < distP2Left) && line.visProp['straightFirst']) {
+        if((distP1Left < distP2Left) && el.visProp['straightFirst']) {
             screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsLeft.scrCoords.slice(1));
-        } else if((distP1Left > distP2Left) && line.visProp['straightLast']) {
+        } else if((distP1Left > distP2Left) && el.visProp['straightLast']) {
             screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsLeft.scrCoords.slice(1));
         }
 
@@ -389,27 +392,27 @@ JXG.AbstractRenderer.prototype.calcStraight = function(line, screenCoords1, scre
             // Punkt am oberen Rand verwenden
             var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
             var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-            if((distP1Top < distP2Top) && line.visProp['straightFirst']) {
+            if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
                 screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-            } else if((distP1Top > distP2Top) && line.visProp['straightLast']) {
+            } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
                 screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
             }
-        } else if(coordsRight.scrCoords[2] > line.board.canvasHeight) {
+        } else if(coordsRight.scrCoords[2] > el.board.canvasHeight) {
             // Punkt am unteren Rand verwenden
             var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
             var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-            if((distP1Bottom < distP2Bottom) && line.visProp['straightFirst']) {
+            if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
                 screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-            } else if((distP1Bottom > distP2Bottom) && line.visProp['straightLast']) {
+            } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
                 screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
             }
         } else {
             // Punkt am rechten Rand verwenden
             var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
             var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);     
-            if((distP1Right < distP2Right) && line.visProp['straightFirst']) {
+            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
                 screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            } else if((distP1Right > distP2Right) && line.visProp['straightLast']) {
+            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
                 screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
             }
         }
@@ -417,9 +420,150 @@ JXG.AbstractRenderer.prototype.calcStraight = function(line, screenCoords1, scre
 };
 
 /**
- * Draw a circle on the canvas
- * @param {Circle} circle Reference to a circle object, that has to be drawn
- * @see Circle
+ * Calculates start and end point for a line.
+ * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
+ * @param {JXG.Coords} point1 Coordinates of the point where line drawing begins.
+ * @param {JXG.Coords} point2 Coordinates of the point where line drawing ends.
+ * @see JXG.Line
+ * @see #drawLine
+ * @see #updateLine
+ */
+JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
+    var b = el.board.algebra;
+    var eps = 0.0001;
+    
+    // Compute the stdform of the line in screen coordinates.
+    var c = [];
+    c[0] = el.stdform[0] - 
+           el.stdform[1]*el.board.origin.scrCoords[1]/(el.board.unitX*el.board.zoomX)+
+           el.stdform[2]*el.board.origin.scrCoords[2]/(el.board.unitY*el.board.zoomY);
+    c[1] = el.stdform[1]/(el.board.unitX*el.board.zoomX);
+    c[2] = el.stdform[2]/(-el.board.unitY*el.board.zoomY);
+
+    /**
+      * Intersect the line with the four borders 
+      * of the board.
+      */
+    var s = [];
+    s[0] = b.crossProduct(c,[0,0,1]);  // top
+    s[1] = b.crossProduct(c,[0,1,0]);  // left
+    s[2] = b.crossProduct(c,[-el.board.canvasHeight,0,1]);  // bottom
+    s[3] = b.crossProduct(c,[-el.board.canvasWidth,1,0]);   // right
+
+    // Normalize the intersections 
+    for (var i=0;i<4;i++) {
+        if (Math.abs(s[i][0])>eps) {
+            for (var j=2;j>=0;j--) {
+                s[i][j] /= s[i][0];
+            }
+        }
+    }
+    
+    var d1, d2;
+    if(s[1][2]<0 || Math.abs(s[1][0])<eps) { // left intersection out of board (above)
+        // Punkt am oberen Rand verwenden (Top)
+        d1 = b.affineDistance(s[0], point1.scrCoords);
+        d2 = b.affineDistance(s[0], point2.scrCoords);
+        if((d1 < d2) && el.visProp['straightFirst']) {
+            point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+        } else if((d1 > d2) && el.visProp['straightLast']) {
+            point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+        }
+  
+        if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<eps) {  // right intersection out of board
+            // Punkt am unteren Rand verwenden (Bottom)
+            d1 = b.affineDistance(s[2], point1.scrCoords);
+            d2 = b.affineDistance(s[2], point2.scrCoords);             
+            if((d1 < d2) && el.visProp['straightFirst']) {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+            } else if((d1 > d2) && el.visProp['straightLast']) {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+            }
+     
+        } else {
+            // Punkt am rechten Rand verwenden (Right)
+            d1 = b.affineDistance(s[3], point1.scrCoords);
+            d2 = b.affineDistance(s[3], point2.scrCoords);             
+            if((d1 < d2) && el.visProp['straightFirst']) {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            } else if((d1 > d2) && el.visProp['straightLast']) {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            }
+        }
+    } else if(s[1][2] > el.board.canvasHeight) { // left intersection out of board (below)
+        // Punkt am unteren Rand verwenden (Bottom)
+        d1 = b.affineDistance(s[2], point1.scrCoords);
+        d2 = b.affineDistance(s[2], point2.scrCoords);   
+        if((d1 < d2) && el.visProp['straightFirst']) {
+            point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+        } else if((d1 > d2) && el.visProp['straightLast']) {
+            point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+        }
+ 
+        if(s[3][2]<0 || Math.abs(s[3][0])<eps) { 
+            // Punkt am oberen Rand verwenden (Top)
+            d1 = b.affineDistance(s[0], point1.scrCoords);
+            d2 = b.affineDistance(s[0], point2.scrCoords);
+            if((d1 < d2) && el.visProp['straightFirst']) {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+            } else if((d1 > d2) && el.visProp['straightLast']) {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+            }
+        } else {
+            // Punkt am rechten Rand verwenden (Right)
+            d1 = b.affineDistance(s[3], point1.scrCoords);
+            d2 = b.affineDistance(s[3], point2.scrCoords);             
+            if((d1 < d2) && el.visProp['straightFirst']) {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            } else if((d1 > d2) && el.visProp['straightLast']) {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            }
+        }          
+    } else {
+        // Punkt am linken Rand verwenden (Left)
+        d1 = b.affineDistance(s[1], point1.scrCoords);
+        d2 = b.affineDistance(s[1], point2.scrCoords);
+        if((d1 < d2) && el.visProp['straightFirst']) {
+            point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
+        } else if((d1 > d2) && el.visProp['straightLast']) {
+            point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
+        }
+        
+        if(s[3][2] < 0 || Math.abs(s[3][0])<eps) {
+            // Punkt am oberen Rand verwenden (Top)
+            d1 = b.affineDistance(s[0], point1.scrCoords);
+            d2 = b.affineDistance(s[0], point2.scrCoords);
+            if((d1 < d2) && el.visProp['straightFirst']) {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+            } else if((d1 > d2) && el.visProp['straightLast']) {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+            }
+        } else if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<eps) {
+            // Punkt am unteren Rand verwenden (Bottom)
+            d1 = b.affineDistance(s[2], point1.scrCoords);
+            d2 = b.affineDistance(s[2], point2.scrCoords);
+            if((d1 < d2) && el.visProp['straightFirst']) {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+            } else if((d1 > d2) && el.visProp['straightLast']) {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+            }
+        } else {
+            // Punkt am rechten Rand verwenden (Right)
+            d1 = b.affineDistance(s[3], point1.scrCoords);
+            d2 = b.affineDistance(s[3], point2.scrCoords);     
+            if((d1 < d2) && el.visProp['straightFirst']) {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            } else if((d1 > d2) && el.visProp['straightLast']) {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            }
+        }
+    }
+};
+
+/**
+ * Draws a circle on the canvas.
+ * @param {JXG.Circle} el Reference to a circle object, that has to be drawn.
+ * @see JXG.Circle
  * @see #updateCircle
  */
 JXG.AbstractRenderer.prototype.drawCircle = function(el) { 
@@ -435,9 +579,9 @@ JXG.AbstractRenderer.prototype.drawCircle = function(el) {
 };
    
 /**
- * Update properties of a circle that already exists on the canvas
- * @param {Circle} circle Reference to a circle object, that has to be updated
- * @see Circle
+ * Updates properties of a circle that already exists on the canvas.
+ * @param {JXG.Circle} el Reference to a circle object, that has to be updated.
+ * @see JXG.Circle
  * @see #drawCircle
  */
 JXG.AbstractRenderer.prototype.updateCircle = function(el) {
@@ -457,9 +601,9 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
 }
     
 /**
- * Draw a polygon on the canvas
- * @param {Polygon} polygon Reference to a Polygon object, that has to be drawn
- * @see Polygon
+ * Draws a polygon on the canvas.
+ * @param {JXG.Polygon} el Reference to a Polygon object, that has to be drawn.
+ * @see JXG.Polygon
  * @see #updatePolygon
  */
 JXG.AbstractRenderer.prototype.drawPolygon = function(el) { 
@@ -475,9 +619,9 @@ JXG.AbstractRenderer.prototype.drawPolygon = function(el) {
 };
     
 /**
- * Update properties of a polygon that already exists on the canvas
- * @param {Polygon} polygon Reference to a polygon object, that has to be updated
- * @see Polygon
+ * Updates properties of a polygon.
+ * @param {JXG.Polygon} el Reference to a polygon object, that has to be updated.
+ * @see JXG.Polygon
  * @see #drawPolygon
  */
 JXG.AbstractRenderer.prototype.updatePolygon = function(el) { 
@@ -500,9 +644,9 @@ JXG.AbstractRenderer.prototype.updatePolygon = function(el) {
 };
 
 /**
- * Draw an arrow on the canvas
- * @param {Arrow} arrow Reference to an arrow object, that has to be drawn
- * @see Arrow
+ * Draws an arrow on the board.
+ * @param {JXG.Arrow} el Reference to an arrow object, that has to be drawn.
+ * @see JXG.Arrow
  * @see #updateArrow
  */
 JXG.AbstractRenderer.prototype.drawArrow = function(el) {
@@ -517,9 +661,9 @@ JXG.AbstractRenderer.prototype.drawArrow = function(el) {
 };
 
 /**
- * Update properties of an arrow that already exists on the canvas
- * @param {Arrow} arrow Reference to an arrow object, that has to be updated
- * @see Arrow
+ * Updates properties of an arrow that already exists on the canvas.
+ * @param {JXG.Arrow} el Reference to an arrow object, that has to be updated.
+ * @see JXG.Arrow
  * @see #drawArrow
  */
 JXG.AbstractRenderer.prototype.updateArrow = function(el) {
@@ -537,18 +681,18 @@ JXG.AbstractRenderer.prototype.updateArrow = function(el) {
 }
 
 /**
- * Draw an axis on the canvas
- * @param {Axis} axis Reference to an axis object, that has to be drawn
- * @see Axis
+ * Draws an axis on the canvas.
+ * @param {JXG.Axis} axis Reference to an axis object, that has to be drawn.
+ * @see JXG.Axis
  * @see #updateAxis
  * @see #updateAxisTicks
  */
 JXG.AbstractRenderer.prototype.drawAxis = function(axis) { };
 
 /**
- * Update properties of an axis that already exists on the canvas
- * @param {Axis} axis Reference to an axis object, that has to be updated
- * @see Axis
+ * Update properties of an axis that already exists on the canvas.
+ * @param {JXG.Axis} axis Reference to an axis object, that has to be updated.
+ * @see JXG.Axis
  * @see #drawAxis
  * @see #updateAxisTicks
  */
@@ -556,26 +700,107 @@ JXG.AbstractRenderer.prototype.updateAxis = function(axis) { };
 
 /**
  * Update ticks of an axis that.
- * @param {Axis} axis Reference to an axis object, that has to be updated.
- * @param {int} oldTicksCount Number of ticks that already exists on the canvas.
- * @see Axis
+ * @param {JXG.Axis} axis Reference of an axis object, that has to be updated.
+ * @param {int} oldTicksCount Number of ticks that already exists.
+ * @see JXG.Axis
+ * @see #drawAxis
+ * @see #updateAxisTicksInnerLoop
+ */
+JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) {
+    var i;
+    if(oldTicksCount == axis.ticks.length) {
+        return;
+    } else if(oldTicksCount < axis.ticks.length) {
+        for (i = oldTicksCount; i<axis.ticks.length; i++) {
+            var tick = this.createPrimitive('line',axis.id+'tick'+i);
+            this.appendChildPrimitive(tick, 'lines');
+            this.setStrokeProp(tick, axis.visProp);
+        }   
+        this.updateAxisTicksInnerLoop(axis, oldTicksCount);
+    } else if(oldTicksCount > axis.ticks.length) {
+        for (i = axis.ticks.length; i<oldTicksCount; i++) {
+            this.remove($(axis.id+'tick'+i));
+        }
+    }
+}
+
+/**
+ * Update the tick's line objects.
+ * @param {JXG.Axis} axis Reference of an axis object, that's ticks have to be updated.
+ * @param {int} start Number of tick where update process should start
+ * @see JXG.Axis
  * @see #drawAxis
  * @see #updateAxisTicks
  */
-JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) { };
+JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) {
+    var eps = 0.00001;
+    var slope = -axis.getSlope();
+    var dist = 3*axis.r / 2;
+    
+    var dx, dy;
+    
+    if(Math.abs(slope) < eps) {
+        // if the slope of the line is (almost) 0, we can set dx and dy directly
+        dx = 0;
+        dy = dist;
+    } else if((Math.abs(slope) > 1/eps) || (isNaN(slope))) {
+        // if the slope of the line is (theoretically) infinite, we can set dx and dy directly
+        dx = dist;
+        dy = 0;
+    } else {
+        // here we have to calculate dx and dy depending on the slope and the length of the tick (dist)
+        // if slope is the line's slope, the tick's slope is given by
+        // 
+        //            1          dy
+        //     -   -------  =   ----                 (I)
+        //          slope        dx
+        //
+        // when dist is the length of the tick, using the pythagorean theorem we get
+        // 
+        //     dx*dx + dy*dy = dist*dist             (II)
+        //
+        // dissolving (I) by dy and applying that to equation (II) we get the following formulas for dx and dy
+        dx = dist/Math.sqrt(1/(slope*slope) + 1);
+        dy = -dx/slope;
+    }
+    
+    for (var i=start; i<axis.ticks.length; i++) {
+        var c = axis.ticks[i];
+        var tick = $(axis.id+'tick'+i);
+        var tickLabel = $(axis.id+'tick'+i+'text');
+
+        this.updateLinePrimitive(tick, c.scrCoords[1]+dx, c.scrCoords[2]-dy, c.scrCoords[1]-dx, c.scrCoords[2]+dy);
+        this.setStrokeProp(tick, axis.visProp);
+    }    
+}
 
 /**
- * Draw an arc on the canvas
- * @param {Arc} arc Reference to an arc object, that has to be drawn
- * @see Arc
+ * Removes all ticks from an axis
+ * @param {JXG.Axis} axis Reference of an axis object, thats ticks have to be removed.
+ * @see JXG.Axis
+ * @see #drawAxis
+ * @see #updateAxis
+ * @see #upateAxisTicksInnerLoop
+ */
+JXG.AbstractRenderer.prototype.removeAxisTicks = function(axis) {
+    for(var i=0; i<axis.ticks.length; i++) {
+        var tick = $(axis.id+'tick'+i);
+        this.remove(tick);
+    }
+}
+
+/**
+ * Draws an arc on the canvas.
+ * @param {JXG.Arc} arc Reference to an arc object, that has to be drawn.
+ * @see JXG.Arc
  * @see #updateArc
  */
 JXG.AbstractRenderer.prototype.drawArc = function(arc) { };
 
 /**
- * Update properties of an arc that already exists on the canvas
- * @param {Arc} arc Reference to an arc object, that has to be updated
- * @see Arc
+ * Updates properties of an arc that already exists.
+ * @param {JXG.Arc} arc Reference to an arc object, that has to be updated.
+ * @see JXG.Arc
  * @see #drawArc
  */
 JXG.AbstractRenderer.prototype.updateArc = function(el) { 
@@ -626,9 +851,9 @@ JXG.AbstractRenderer.prototype.updateArc = function(el) {
 };
 
 /**
- * Draw a label on the canvas
- * @param {Label} label Reference to a label object, that has to be drawn
- * @see Label
+ * Draws a label on the canvas.
+ * @param {JXG.Label} el Reference to a label object, that has to be drawn.
+ * @see JXG.Label
  * @see #updateLabel
  */
 JXG.AbstractRenderer.prototype.drawLabel = function(el) { 
@@ -645,9 +870,9 @@ JXG.AbstractRenderer.prototype.drawLabel = function(el) {
 };
     
 /**
- * Update properties of a label that already exists on the canvas
- * @param {Label} label Reference to a label object, that has to be updated
- * @see Label
+ * Updates properties of a label that already exists on the canvas.
+ * @param {JXG.Label} el Reference to a label object, that has to be updated.
+ * @see JXG.Label
  * @see #drawLabel
  */
 JXG.AbstractRenderer.prototype.updateLabel = function(el) { 
@@ -657,7 +882,7 @@ JXG.AbstractRenderer.prototype.updateLabel = function(el) {
 };
     
 /**
- * Draw text on the canvas
+ * Draws text on the canvas
  * @param {Text}  text Reference to an text object, that has to be drawn
  * @see Text
  * @see #updateText
@@ -676,9 +901,9 @@ JXG.AbstractRenderer.prototype.drawText = function(el) {
 };
 
 /**
- * Update properties of an text that already exists on the canvas
- * @param {Text} el Reference to an text object, that has to be updated
- * @see Text
+ * Updates properties of an text that already exists on the canvas.
+ * @param {JXG.Text} el Reference to an text object, that has to be updated.
+ * @see JXG.Text
  * @see #drawText
  */
 JXG.AbstractRenderer.prototype.updateText = function(el) { 
@@ -689,9 +914,9 @@ JXG.AbstractRenderer.prototype.updateText = function(el) {
 };
 
 /**
- * Update CSS properties of an text that already exists on the canvas
- * @param {Text} el Reference to an text object, that has to be updated
- * @see Text
+ * Updates CSS properties of an text that already exists on the canvas.
+ * @param {JXG.Text} el Reference to the text object, that has to be updated.
+ * @see JXG.Text
  * @see #drawText
  */
 JXG.AbstractRenderer.prototype.updateTextStyle = function(el) { 
@@ -706,33 +931,33 @@ JXG.AbstractRenderer.prototype.updateTextStyle = function(el) {
 };
 
 /**
- * Draw angle on the canvas
- * @param {Angle}  angle Reference to an angle object, that has to be drawn
- * @see Angle
+ * Draws angle on the canvas.
+ * @param {JXG.Angle}  angle Reference to an angle object, that has to be drawn.
+ * @see JXG.Angle
  * @see #updateAngle
  */
 JXG.AbstractRenderer.prototype.drawAngle = function(angle) { };
 
 /**
- * Update properties of an angle that already exists on the canvas
- * @param {Angle} angle Reference to an angle object, that has to be updated
- * @see Angle
+ * Update properties of an angle that already exists on the canvas.
+ * @param {JXG.Angle} angle Reference to an angle object, that has to be updated.
+ * @see JXG.Angle
  * @see #drawAngle
  */
 JXG.AbstractRenderer.prototype.updateAngle = function(angle) { };
 
 /**
- * Draw an image on the canvas
- * @param {Image}  image Reference to an image object, that has to be drawn
- * @see Image
+ * Draws an image on the canvas.
+ * @param {JXG.Image} image Reference to an image object, that has to be drawn.
+ * @see JXG.Image
  * @see #updateImage
  */
 JXG.AbstractRenderer.prototype.drawImage = function(image) { };
 
 /**
- * Update properties of an Image that already exists on the canvas
- * @param {Image} image Reference to an image object, that has to be updated
- * @see Image
+ * Updates the properties of an Image element.
+ * @param {JXG.Image} el Reference to an image object, that has to be updated.
+ * @see JXG.Image
  * @see #drawImage
  */
 JXG.AbstractRenderer.prototype.updateImage = function(el) { 
@@ -748,9 +973,9 @@ JXG.AbstractRenderer.prototype.updateImage = function(el) {
 };
 
 /**
- * Draw the grid
+ * Draws the grid.
  * @see #removeGrid
- * @param {Board} board Board on which is drawn
+ * @param {Board} board Board on which the grid is drawn.
  */
 JXG.AbstractRenderer.prototype.drawGrid = function(board) { 
     board.hasGrid = true;
@@ -846,26 +1071,31 @@ JXG.AbstractRenderer.prototype.drawGrid = function(board) {
 };
 
 /**
- * Remove the grid
+ * Removes the grid.
  * @see #drawGrid
-  * @param {Board} board Board on which is drawn
+ * @param {Board} board Board on which the grid is drawn.
  */
 JXG.AbstractRenderer.prototype.removeGrid = function(board) { };
 
 /**
- * Hide an element on the canvas
- * @param {Object} obj Reference to the object that has to disappear
+ * Hides an element on the canvas.
+ * @param {Object} obj Reference to the object that has to disappear.
  * @see #show
  */
 JXG.AbstractRenderer.prototype.hide = function(obj) { };
 
 /**
- * Show an element on the canvas
- * @param {Object} obj Reference to the object that has to appear
+ * Shows an element on the canvas.
+ * @param {Object} obj Reference to the object that has to appear.
  * @see #hide
  */
 JXG.AbstractRenderer.prototype.show = function(obj) { };
 
+/**
+ * Sets an elements stroke width.
+ * @param {Object} el Reference to the geometry element.
+ * @param {int} width The new stroke width to be assigned to the element.
+ */
 JXG.AbstractRenderer.prototype.setObjectStrokeWidth = function(el, width) {
     var w;
     if (typeof width=='function') {
@@ -912,33 +1142,34 @@ JXG.AbstractRenderer.prototype.setObjectStrokeWidth = function(el, width) {
 };
 
 /**
- * Change an objects stroke color
- * @param {Object} obj Reference of the object that wants a new stroke color
- * @param {String} color Color in a HTML/CSS compatible format
-  * @param {Double} opacity Opacity of the fill color. Must be between 0 and 1.
+ * Changes an objects stroke color
+ * @param {Object} obj Reference of the object that wants a new stroke color.
+ * @param {String} color Color in a HTML/CSS compatible format.
+ * @param {float} opacity Opacity of the fill color. Must be between 0 and 1.
  * @see #setObjectFillColor
  */
 JXG.AbstractRenderer.prototype.setObjectStrokeColor = function(obj, color, opacity) { };
 
 /**
- * Change an objects dash style
+ * Changes an objects dash style.
  * @param {Object} obj Reference of the object that wants a new dash style
  */
 JXG.AbstractRenderer.prototype.setObjectDash = function(obj) { };
    
 /**
- * Change an objects fill color
- * @param {Object} obj Reference of the object that wants a new fill color
+ * Changes an objects fill color.
+ * @param {Object} obj Reference of the object that wants a new fill color.
  * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color
  * at all, choose 'none'.
- * @param {Double} opacity Opacity of the fill color. Must be between 0 and 1.
+ * @param {float} opacity Opacity of the fill color. Must be between 0 and 1.
  * @see #setObjectStrokeColor
  */
 JXG.AbstractRenderer.prototype.setObjectFillColor = function(obj, color, opacity) { };
 
+/*
 /**
- * Changes all properties of an object
- * @param {Object} obj Reference of the object that wants new properties
+ * Changes all properties of an object.
+ * @param {Object} obj Reference of the object that wants new properties.
  */
 /*
 UNUSED?????
@@ -958,8 +1189,8 @@ JXG.AbstractRenderer.prototype.setProperty = function (obj) {
 */
 
 /**
- * Sets an object in draft-mode
- * @param {Object} obj Reference of the object that shall be in draft-mode
+ * Puts an object into draft mode.
+ * @param {Object} obj Reference of the object that shall be in draft mode.
  */
 JXG.AbstractRenderer.prototype.setDraft = function (obj) {
     if (!obj.visProp['draft']) {
@@ -984,8 +1215,8 @@ JXG.AbstractRenderer.prototype.setDraft = function (obj) {
 };
 
 /**
- * Sets an object from draft mode to normal mode
- * @param {Object} obj Reference of the object that shall no longer be in draft-mode
+ * Puts an object from draft mode back into normal mode.
+ * @param {Object} obj Reference of the object that shall no longer be in draft mode.
  */
 JXG.AbstractRenderer.prototype.removeDraft = function (obj) {
     if(obj.type == JXG.OBJECT_TYPE_POLYGON) {
@@ -1002,8 +1233,8 @@ JXG.AbstractRenderer.prototype.removeDraft = function (obj) {
 
 /**
  * Highlights an object
- * i.e. uses the respective highlight colors of an object
- * @param {Object} obj Reference of the object that will be highlighted
+ * i.e. uses the respective highlight colors of an object.
+ * @param {Object} obj Reference of the object that will be highlighted.
  */
 JXG.AbstractRenderer.prototype.highlight = function(obj) {
     if(obj.visProp['draft'] == false) {
@@ -1026,8 +1257,8 @@ JXG.AbstractRenderer.prototype.highlight = function(obj) {
 
 /**
  * Uses the "normal" colors of an object
- * i.e. the contrasting function to @see highlight
- * @param {Object} obj Reference of the object that will get its normal colors
+ * i.e. the contrasting function to @see highlight.
+ * @param {Object} obj Reference of the object that will get its normal colors.
  */
 JXG.AbstractRenderer.prototype.noHighlight = function(obj) {
     if(obj.visProp['draft'] == false) {
@@ -1048,31 +1279,37 @@ JXG.AbstractRenderer.prototype.noHighlight = function(obj) {
     }
 };
 
+/**
+ * Changes the color of the element's label to the color of the element.
+ * @param {Object} el Reference of the element.
+ */
 JXG.AbstractRenderer.prototype.setLabelColor = function(el) {
     el.rendNode.style.color = el.color;
 };
 
 /**
- * Stop updating
+ * Stop redraw.
  * @see #suspendRedraw
  */
 JXG.AbstractRenderer.prototype.suspendRedraw = function() { };
 
 /**
- * Restart updating
+ * Restart redraw.
  * @see #unsuspendRedraw
  */
 JXG.AbstractRenderer.prototype.unsuspendRedraw = function() { };
 
 /**
- * Removes an HTML-Element from Canvas
- * @param {HTMLElement} shape the HTMLElement that shall be removed
+ * Removes an HTML-Element from Canvas.
+ * @param {HTMLElement} shape the HTMLElement that shall be removed.
  */
 JXG.AbstractRenderer.prototype.remove = function(shape) { };
 
 /**
- * Determines the size-parameter of a point depending on its style
- * @param {number} style
+ * Determines the size-parameter of a point depending on its style.
+ * @param {number} style A point style constant.
+ * @type int
+ * @return Size of a point style.
  */
 JXG.AbstractRenderer.prototype.getPointSize = function(style) {
     var size = 0;

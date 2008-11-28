@@ -17,8 +17,8 @@
         // Das Objekt geonext ist global und wird in Geonext.js initialisiert
         // board links oben initialisieren
         board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 50, unitY: 50});
-        bx = board.createElement('axis', [[0,1], [0,0]], {});
-        by = board.createElement('axis', [[1,0], [0,0]], {});
+        bx = board.createElement('axis', [[0,0], [0,1]], {});
+        by = board.createElement('axis', [[0,0], [1,0]], {});
 
 		p1 = board.createElement('point', [1, 1], {strokeColor: '#ff0000'});
 		p2 = board.createElement('point', [2, 0], {fixed: true});

@@ -38,9 +38,9 @@
  * mouse over, drag & drop of geometric objects etc.
  * @constructor
  * @param {String/Object} container The id or reference of the html-element the board is drawn in.
- * @param {AbstractRenderer} renderer The reference of a geonext renderer.
+ * @param {JXG.AbstractRenderer} renderer The reference of a geonext renderer.
  * @param {String} id Unique identifier for the board, may be an empty string or null or even undefined.
- * @param {Coords} origin The coordinates where the origin is placed, in user coordinates.
+ * @param {JXG.Coords} origin The coordinates where the origin is placed, in user coordinates.
  * @param {float} zoomX Zoom factor in x-axis direction
  * @param {float} zoomY Zoom factor in y-axis direction
  * @param {int} unitX Units in x-axis direction
@@ -56,6 +56,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @final
      */
     this.BOARD_MODE_NONE = 0x0000;
+    
     /**
      * Board is in drag mode, objects aren't highlighted on mouse over and the object referenced in
      * drag_obj is updated on mouse movement.
@@ -64,6 +65,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @final
      */
     this.BOARD_MODE_DRAG = 0x0001;
+    
     /**
      * Board is in construction mode, objects are highlighted on mouse over and the behaviour of the board
      * is determined by the construction type stored in the field constructionType.
@@ -79,6 +81,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @final
      */
     this.BOARD_MODE_MOVE_ORIGIN = 0x0002;
+    
     /**
      * Updating is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
      * @type int
@@ -86,6 +89,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @final
      */
     this.BOARD_QUALITY_LOW = 0x1;
+    
     /**
      * Updating is made with high quality, e.g. graphs are evaluated at much more points.
      * @type int
@@ -157,6 +161,12 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.renderer = renderer;
     
     /**
+    * Some standard options
+    * @type Options
+    */
+    this.options = new JXG.Options();
+    
+    /**
      * Dimension of the board.
      * @type int
      */
@@ -212,7 +222,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * Default font size for labels and texts.
      * @type int
      */
-    this.fontSize = 12;
+    this.fontSize = this.options.fontSize;
         
     /**
      * A reference to an object of class Algebra.
@@ -239,21 +249,25 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type Object
      */
     this.objects = {};
+    
     /**
      * An associative array containing all highlighted geometric objects belonging to the board.
      * @type Object
      */
     this.highlightedObjects = {};
+    
     /**
      * Number of objects ever created on this board. This includes every object, even invisible and deleted ones.
      * @type int
      */
     this.numObjects = 0;
+    
     /**
      * An associative array to store the objects of the board by name. the name of the object is the key and value is a reference to the object.
      * @type Object
      */
     this.elementsByName = {};
+    
     /**
      * The board mode the board is currently in. Possible values are
      * <ul>
@@ -264,6 +278,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type int
      */
     this.mode = this.BOARD_MODE_NONE;
+    
     /**
      * The update quality of the board. In most cases this is set to Board.BOARD_QUALITY_HIGH when mode is not Board.BOARD_MODE_DRAG
      * and Board.QUALITY_HIGH otherwise. Possible values are
@@ -276,131 +291,148 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      */
     this.updateQuality = this.BOARD_QUALITY_HIGH;
     
- /**
+   /**
     * If true updates are skipped
+    * @type bool
     */   
-    this.isSuspendedRedraw = false;
+   this.isSuspendedRedraw = false;
     
-    /**
-     * The way objects can be dragged. If true, objects can only moved on a predefined grid, if false objects can be moved smoothly almost everywhere.
-     * @type Boolean
-     */
-    this.snapToGrid = false;
-    /**
-     * The amount of grid points plus one that fit in one unit of user coordinates in x direction.
-     * @type int
-     */
-    this.gridX = 2;
-    /**
-     * The amount of grid points plus one that fit in one unit of user coordinates in y direction.
-     * @type int
-     */
-    this.gridY = 2;
+   /**
+    * The way objects can be dragged. If true, objects can only moved on a predefined grid, if false objects can be moved smoothly almost everywhere.
+    * @type bool
+    */
+   this.snapToGrid = this.options.grid.snapToGrid;
+   
+   /**
+    * The amount of grid points plus one that fit in one unit of user coordinates in x direction.
+    * @type int
+    */
+   this.gridX = this.options.grid.gridX;
+   
+   /**
+    * The amount of grid points plus one that fit in one unit of user coordinates in y direction.
+    * @type int
+    */
+   this.gridY = this.options.grid.gridY;
     
-    /**
-     * Color of the grid.
-     * @type string
-     */        
-    this.gridColor = '#C0C0C0';
-    /**
-     * Opacity of the grid color, between 0 and 1.
-     * @type float
-     */        
-    this.gridOpacity = '1';
-    /**
-     * Determines whether the grid is dashed or not.
-     * @type boolean
-     */    
-    this.gridDash = true;
-    /**
-     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in x direction.
-     * @type int
-     */
-    this.snapSizeX = 2;
-    /**
-     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in y direction.
-     * @type int
-     */
-    this.snapSizeY = 2;    
-    this.calculateSnapSizes();
-    /**
-     * Visibility of the boards grid.
-     * @type Boolean
-     */
-    this.hasGrid = false;
+   /**
+    * Color of the grid.
+    * @type string
+    */        
+   this.gridColor = this.options.grid.gridColor;
+   
+   /**
+    * Opacity of the grid color, between 0 and 1.
+    * @type float
+    */        
+   this.gridOpacity = this.options.grid.gridOpacity;
+   
+   /**
+    * Determines whether the grid is dashed or not.
+    * @type boolean
+    */    
+   this.gridDash = this.options.grid.gridDash;
+   
+   /**
+    * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in x direction.
+    * @type int
+    */
+   this.snapSizeX = this.options.grid.snapSizeX;
+   
+   /**
+    * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in y direction.
+    * @type int
+    */
+   this.snapSizeY = this.options.grid.snapSizeY;    
+   
+   this.calculateSnapSizes();
+   
+   /**
+    * Visibility of the boards grid.
+    * @type bool
+    */
+   this.hasGrid = this.options.grid.hasGrid;
     
-    /**
-     * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
-     * @type int
-     * @see drag_dy
-     * @see #drag_obj
-     */
-    this.drag_dx = 0;
-    /**
-     * The distance from the mouse to the dragged object in y direction when the user clicked the mouse button.
-     * @type int
-     * @see drag_dx
-     * @see #drag_obj
-     */
-    this.drag_dy = 0;
-    /**
-     * A reference to the object that is dragged on the board.
-     * @type Object
-     */
-    this.drag_obj = null;
+   /**
+    * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
+    * @type int
+    * @see drag_dy
+    * @see #drag_obj
+    */
+   this.drag_dx = 0;
+   
+   /**
+    * The distance from the mouse to the dragged object in y direction when the user clicked the mouse button.
+    * @type int
+    * @see drag_dx
+    * @see #drag_obj
+    */
+   this.drag_dy = 0;
+   
+   /**
+    * A reference to the object that is dragged on the board.
+    * @type Object
+    */
+   this.drag_obj = null;
 
-    /**
-        * string containing the XML text of the construction.
-        * it is set in @see FileReader.parseString
-        */
-    this.xmlString = '';
+   /**
+    * string containing the XML text of the construction.
+    * it is set in @see FileReader.parseString
+    * @type string
+    */
+   this.xmlString = '';
     
-    /**
-           * Display the licence text, @see JSXGraph
-           */
-    this.renderer.displayCopyright(JXG.JSXGraph.licenseText,12);
+   /*
+    * Display the licence text, @see JSXGraph
+    */
+   this.renderer.displayCopyright(JXG.JSXGraph.licenseText,this.options.fontSize);
     
     
-    /**
-           * Full updates are needed after zoom and axis translates.
-           * This saves some time during update
-           */
-    this.fullUpdate = false;
+   /**
+    * Full updates are needed after zoom and axis translates.
+    * This saves some time during update
+    * @type bool
+    */
+   this.fullUpdate = false;
     
-    /**
-            * if {reducedUpdate} is set to true, then only the dragged element and few (i.e. 2) following
-            * elements are updated during mouse move. On muose up the whole construction is
-            * updated. This enables JSXGraph even on very slow devices.
-            */
-    this.reducedUpdate = false;
+   /**
+    * if {reducedUpdate} is set to true, then only the dragged element and few (i.e. 2) following
+    * elements are updated during mouse move. On muose up the whole construction is
+    * updated. This enables JSXGraph even on very slow devices.
+    * @type bool
+    */
+   this.reducedUpdate = false;
 
-    /** 
-      * If GEONExT constructions are displayed,
-      * then this property should be set to true.
-      * Then no stdform updates and no dragging
-      * of lines, circles and curves is possible.
-      */
-    this.geonextCompatibilityMode = false;
+   /** 
+    * If GEONExT constructions are displayed,
+    * then this property should be set to true.
+    * Then no stdform updates and no dragging
+    * of lines, circles and curves is possible.
+    * @type bool
+    */
+   this.geonextCompatibilityMode = false;
 
-    /**
-     * Event listener for the onMouseDown event.
-     * @private
-     */
-    this.onMouseDownListener = this.mouseDownListener.bindAsEventListener(this);
-    /**
-     * Event listener for the onMouseUp event.
-     * @private
-     */
-    this.onMouseUpListener = this.mouseUpListener.bindAsEventListener(this);
-    /**
-     * Event listener for the onMouseMove event.
-     * @private
-     */
-    this.onMouseMoveListener = this.mouseMoveListener.bindAsEventListener(this);
+   /**
+    * Event listener for the onMouseDown event.
+    * @private
+    */
+   this.onMouseDownListener = this.mouseDownListener.bindAsEventListener(this);
+   
+   /**
+    * Event listener for the onMouseUp event.
+    * @private
+    */
+   this.onMouseUpListener = this.mouseUpListener.bindAsEventListener(this);
+   
+   /**
+    * Event listener for the onMouseMove event.
+    * @private
+    */
+   this.onMouseMoveListener = this.mouseMoveListener.bindAsEventListener(this);
 
-    /* Event needs to know which methods to call when mouse is moved or clicked */
-    Event.observe(this.container, 'mousedown', this.onMouseDownListener);
-    Event.observe(this.container, 'mousemove', this.onMouseMoveListener);
+   /* Event needs to know which methods to call when mouse is moved or clicked */
+   Event.observe(this.container, 'mousedown', this.onMouseDownListener);
+   Event.observe(this.container, 'mousemove', this.onMouseMoveListener);
 };
 
 /**
@@ -413,13 +445,16 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
 JXG.Board.prototype.generateName = function(object) {
     var possibleNames;
     if(object.elementClass == JXG.OBJECT_CLASS_POINT) {
+        // points have capital letters 
         possibleNames = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                                   'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
     } else {
+        // all other elements get lowercase labels
         possibleNames = ['', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
                                   'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];    
     }
     
+    // how long the name can be at most
     var maxNameLength = 3;
     var nameBase = '';
     
@@ -479,6 +514,7 @@ JXG.Board.prototype.generateName = function(object) {
 JXG.Board.prototype.generateId = function () {
     var r = 1;
 
+    // as long as we don't have an unique id generate a new one
     while(JXG.JSXGraph.boards['gxtBoard' + r] != null) {
         r = Math.round(Math.random()*33);
     }
@@ -495,11 +531,11 @@ JXG.Board.prototype.generateId = function () {
 JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
     var cPos = Element.cumulativeOffset($(this.container));
 
-    // Die Liniendicke des Rahmens hinzuaddieren
+    // add border width
     cPos[0] += parseInt($(this.container).getStyle('borderLeftWidth'));
     cPos[1] += parseInt($(this.container).getStyle('borderTopWidth'));
 
-    // Die Paddingbreite zum Offset hinzuaddieren
+    // add padding
     cPos[0] += parseInt($(this.container).getStyle('paddingLeft'));
     cPos[1] += parseInt($(this.container).getStyle('paddingTop'));
 
@@ -508,12 +544,16 @@ JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
 
 /**
  * This method is called by the browser when the left mouse button is released.
- * @param {Event} Evt The browsers event object.
+ * @param {Evt} Event The browsers event object.
  */
 JXG.Board.prototype.mouseUpListener = function (Evt) {
+    // redraw with high precision
     this.updateQuality = this.BOARD_QUALITY_HIGH;
+    
+    // release mouseup listener
     Event.stopObserving(this.container, 'mouseup', this.onMouseUpListener);
     
+    // if origin was moved update everything
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
         this.fullUpdate = true;
         this.moveOrigin();
@@ -525,6 +565,8 @@ JXG.Board.prototype.mouseUpListener = function (Evt) {
     this.update();
     this.reducedUpdate = save;
     this.fullUpdate = false;
+    
+    // release dragged object
     this.drag_obj = null;
 };
 
@@ -535,7 +577,8 @@ JXG.Board.prototype.mouseUpListener = function (Evt) {
 JXG.Board.prototype.mouseDownListener = function (Evt) {
     var el;
     var cPos = this.getRelativeMouseCoordinates(Evt);
-    // Position des Mauszeigers relativ zum Container
+    
+    // position of mouse cursor relative to containers position of container
     var dx = Event.pointerX(Evt) - cPos[0];
     var dy = Event.pointerY(Evt) - cPos[1];
     
@@ -569,7 +612,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         }
     }
 
-    // Wenn kein Objekt gefunden wurde, das gezogen werden kann, dann springe gleich zurueck
+    // if no draggable object can be found, get outta here immediately
     if(this.drag_obj == null) {
         this.mode = this.BOARD_MODE_NONE;
         return;
@@ -579,6 +622,9 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     // this.drag_dx = dx - this.dragObjCoords[1];
     // this.drag_dy = dy - this.dragObjCoords[2];
     
+    /**
+      * New mouse position in screen coordinates.
+      */
     this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx,dy], this);
     //this.drag_dx = dx;// - this.dragObjCoords[1];
     //this.drag_dy = dy;// - this.dragObjCoords[2];
@@ -594,7 +640,7 @@ JXG.Board.prototype.mouseMoveListener = function (Evt) {
     var el;
     var cPos = this.getRelativeMouseCoordinates(Evt);
 
-    // Position des Mauszeigers relativ zum Container
+    // position of mouse cursor relative to containers position of container
     var x = Event.pointerX(Evt) - cPos[0];
     var y = Event.pointerY(Evt) - cPos[1];
 
@@ -608,22 +654,29 @@ JXG.Board.prototype.mouseMoveListener = function (Evt) {
         this.moveOrigin();
     }
     else if(this.mode == this.BOARD_MODE_DRAG) {
+        var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
+
         if(this.drag_obj.type == JXG.OBJECT_TYPE_POINT 
             || this.drag_obj.type == JXG.OBJECT_TYPE_LINE 
             || this.drag_obj.type == JXG.OBJECT_TYPE_CIRCLE
             || this.drag_obj.type == JXG.OBJECT_TYPE_CURVE) {
 
-            var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
-            this.drag_obj.setPosition(JXG.COORDS_BY_USER, 
-                newPos.usrCoords[1]-this.dragObjCoords.usrCoords[1], 
-                newPos.usrCoords[2]-this.dragObjCoords.usrCoords[2]);
+            if ((this.geonextCompatibilityMode && this.drag_obj.type==JXG.OBJECT_TYPE_POINT) || this.drag_obj.group.length != 0) {
+                // This is for performance reasons with GEONExT files and for groups (transformations do not work yet with groups)
+                this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
+            } else {
+                this.drag_obj.setPositionByTransform(JXG.COORDS_BY_USER, 
+                    newPos.usrCoords[1]-this.dragObjCoords.usrCoords[1], 
+                    newPos.usrCoords[2]-this.dragObjCoords.usrCoords[2]);
+                // Save new mouse position in screen coordinates.
+                this.dragObjCoords = newPos; 
+            }
             this.update();
-            this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
         } else if(this.drag_obj.type == JXG.OBJECT_TYPE_GLIDER) {
             var oldCoords = this.drag_obj.coords;
-            var newPos = this.getScrCoordsOfMouse(x-this.drag_dx,y-this.drag_dy);
-            this.drag_obj.setPosition(JXG.COORDS_BY_SCREEN, newPos[0], newPos[1]);
-
+            // First the new position of the glider is set to the new mouse position
+            this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
+            // Then, from this position we comute the projection to the object the glider on which the glider lives.
             if(this.drag_obj.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
                 this.drag_obj.coords = this.algebra.projectPointToCircle(this.drag_obj, this.drag_obj.slideObject);
             } else if (this.drag_obj.slideObject.type == JXG.OBJECT_TYPE_LINE) {
@@ -661,6 +714,11 @@ JXG.Board.prototype.dehighlightAll = function() {
     this.highlightedObjects = {};
 };
 
+/**
+ * In case of snapToGrid activated this method caclulates the screen coords of mouse "snapped to grid".
+ * @param {int} x X coordinate in screen coordinates
+ * @param {int} y Y coordinate in screen coordinates
+ */
 JXG.Board.prototype.getScrCoordsOfMouse = function (x,y) {
     if(this.snapToGrid) {
         var newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
@@ -673,6 +731,10 @@ JXG.Board.prototype.getScrCoordsOfMouse = function (x,y) {
     }
 }
 
+/**
+ * In case of snapToGrid activated this method caclulates the user coords of mouse "snapped to grid".
+ * @param {Event} Evt Event object containing the mouse coordinates.
+ */
 JXG.Board.prototype.getUsrCoordsOfMouse = function (Evt) {    
     var cPos = this.getRelativeMouseCoordinates(Evt);
     var x = Event.pointerX(Evt) - cPos[0];
@@ -687,6 +749,12 @@ JXG.Board.prototype.getUsrCoordsOfMouse = function (Evt) {
     return [newCoords.usrCoords[1], newCoords.usrCoords[2]];
 }
 
+/**
+ * Collects all elements under current mouse position plus current user coordinates of mouse cursor.
+ * @param {Event} Evt Event object containing the mouse coordinates.
+ * @type Array
+ * @return Array of elements at the current mouse position plus current user coordinates of mouse.
+ */
 JXG.Board.prototype.getAllUnderMouse = function (Evt) {
     var elList = this.getAllObjectsUnderMouse(Evt);
     elList.push(this.getUsrCoordsOfMouse(Evt));
@@ -694,9 +762,16 @@ JXG.Board.prototype.getAllUnderMouse = function (Evt) {
     //return {"elList":elList, "coords":this.getUsrCoordsOfMouse(Evt)};
 };
 
+/**
+ * Collects all elements under current mouse position.
+ * @param {Event} Evt Event object containing the mouse coordinates.
+ * @type Array
+ * @return Array of elements at the current mouse position.
+ */
 JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
     var cPos = this.getRelativeMouseCoordinates(Evt);
-    // Position des Mauszeigers relativ zum Container
+    
+    // mouse position relative to container
     var dx = Event.pointerX(Evt) - cPos[0];
     var dy = Event.pointerY(Evt) - cPos[1];
     var elList = [];
@@ -708,10 +783,18 @@ JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
     return elList;
 };
 
+/**
+ * Sets the board mode.
+ * @param {int} mode The board mode the board should be set to. Possible values are
+ * <li><ul>BOARD_MODE_NONE</ul><ul>BOARD_MODE_DRAG</ul><ul>BOARD_MODE_CONSTRUCT</ul><ul>BOARD_MODE_MOVE_ORIGIN</ul></li>
+ */
 JXG.Board.prototype.setBoardMode = function (mode) {
     this.mode = mode;
 };
 
+/**
+ * Moves the origin and initializes an update of all elements.
+ */
 JXG.Board.prototype.moveOrigin = function () {
     for(var Element in this.objects) {
         if( (this.objects[Element].elementClass == JXG.OBJECT_CLASS_POINT) ||
@@ -732,7 +815,7 @@ JXG.Board.prototype.moveOrigin = function () {
 
 /**
  * Registers a point at the board and adds it to the renderer.
- * @param {Point} obj The point to add.
+ * @param {JXG.Point} obj The point to add.
  * @type String
  * @return Element id of the object.
  */
@@ -769,7 +852,7 @@ JXG.Board.prototype.addPoint = function (obj) {
 
 /**
  * Registers a line at the board and adds it to the renderer.
- * @param {Line} obj The line to add.
+ * @param {JXG.Line} obj The line to add.
  * @type String
  * @return Element id of the object.
  */
@@ -795,7 +878,7 @@ JXG.Board.prototype.addLine = function (obj) {
 
 /**
  * Registers a circle at the board and adds it to the renderer.
- * @param {Circle} obj The circle to add.
+ * @param {JXG.Circle} obj The circle to add.
  * @type String
  * @return Element id of the object.
  */
@@ -821,7 +904,7 @@ JXG.Board.prototype.addCircle = function(obj) {
 
 /**
  * Registers a polygon at the board and adds it to the renderer.
- * @param {Polygon} obj The polygon to add.
+ * @param {JXG.Polygon} obj The polygon to add.
  * @type String
  * @return Element id of the object.
  */
@@ -847,7 +930,7 @@ JXG.Board.prototype.addPolygon = function(obj) {
 
 /**
  * Registers a arc at the board and adds it to the renderer.
- * @param {Arc} obj The arc to add.
+ * @param {JXG.Arc} obj The arc to add.
  * @type String
  * @return Element id of the object.
  */
@@ -873,7 +956,7 @@ JXG.Board.prototype.addArc = function(obj) {
 
 /**
  * Registers a sector at the board and adds it to the renderer.
- * @param {Sector} obj The sector to add.
+ * @param {JXG.Sector} obj The sector to add.
  * @type String
  * @return Element id of the object.
  */
@@ -899,7 +982,7 @@ JXG.Board.prototype.addSector = function(obj) {
 
 /**
  * Registers an angle at the board and adds it to the renderer.
- * @param {Angle} obj The angle to add.
+ * @param {JXG.Angle} obj The angle to add.
  * @type String
  * @return Element id of the object.
  */
@@ -925,8 +1008,8 @@ JXG.Board.prototype.addAngle = function (obj) {
 };
 
 /**
- * Registers a graph at the board and adds it to the renderer.
- * @param {Curve} obj The curve to add.
+ * Registers a curve at the board and adds it to the renderer.
+ * @param {JXG.Curve} obj The curve to add.
  * @type String
  * @return Element id of the object.
  */
@@ -951,9 +1034,35 @@ JXG.Board.prototype.addCurve = function (obj) {
 };
 
 /**
+ * Registers a chart at the board and adds it to the renderer.
+ * @param {JXG.Chart} obj The chart to add.
+ * @type String
+ * @return Element id of the object.
+ */
+JXG.Board.prototype.addChart = function (obj) {
+    var number = this.numObjects;
+    this.numObjects++;
+    
+    // Falls Id nicht vergeben, eine Neue generieren:
+    var elementId = obj.id;
+    if((elementId == '') || (elementId == null)) {
+        elementId = this.id + 'Chart' + number;
+    }
+    
+    // Objekt in das assoziative Array einfuegen    
+    this.objects[elementId] = obj;
+
+    // Objekt an den Renderer zum Zeichnen uebergeben
+    obj.id = elementId;
+    //this.renderer.drawCurve(obj);
+    
+    return elementId;
+};
+
+/**
  * Adds the midpoint between two points to the board and the renderer.
- * @param {Point} p1 First point.
- * @param {Point} p2 Second point.
+ * @param {JXG.Point} p1 First point.
+ * @param {JXG.Point} p2 Second point.
  * @param {String} id Unique identifier for this object.  If null or an empty string is given,
  * an unique id will be generated by Board
  * @param {String} name Not necessarily unique name, displayed on the board.  If null or an
@@ -987,8 +1096,8 @@ JXG.Board.prototype.addMidpoint = function(p1, p2, id, name) {
 
 /**
  * Adds the reflection of a point off a line to the board and the renderer.
- * @param {Line} line Mirror line.
- * @param {Point} point Point to reflect.
+ * @param {JXG.Line} line Mirror line.
+ * @param {JXG.Point} point Point to reflect.
  * @param {String} id Unique identifier for this object.  If null or an empty string is given,
  * an unique id will be generated by Board
  * @param {String} name Not necessarily unique name, displayed on the board.  If null or an
@@ -1022,8 +1131,8 @@ JXG.Board.prototype.addReflection = function(line, point, id, name) {
 
 /**
  * Adds a copy of point to the board and the renderer that is rotated by angle phi around rotpoint.
- * @param {Point} rotpoint The resulting point will be rotated around this point.
- * @param {Point} point This point will be copied.
+ * @param {JXG.Point} rotpoint The resulting point will be rotated around this point.
+ * @param {JXG.Point} point This point will be copied.
  * @param {float} phi The point will be rotated by this angle.
  * @param {String} id Unique identifier for this object.  If null or an empty string is given,
  * an unique id will be generated by Board
@@ -1059,8 +1168,8 @@ JXG.Board.prototype.addRotation = function(rotpoint, point, phi, id, name) {
 
 /**
  * Adds a parallel to the line through the point to the board and the renderer.
- * @param {Line} l The resulting line will be parallel to this one.
- * @param {Point} p The parallel will contain this point.
+ * @param {JXG.Line} l The resulting line will be parallel to this one.
+ * @param {JXG.Point} p The parallel will contain this point.
  * @param {String} id Unique identifier for this object.  If null or an empty string is given,
  * an unique id will be generated by Board
  * @param {String} name Not necessarily unique name, displayed on the board.  If null or an
@@ -1103,9 +1212,9 @@ JXG.Board.prototype.addParallel = function(l, p, id, name) {
 
 /**
  * Adds an arrow parallel to the given arrow with the given point as startpoint to the board and the renderer.
- * @param {Arrow} a The resulting arrow will be parallel to this one.
- * @param {Point} p The arrow will start at this point.
-* @param {String} arrowId Unique identifier for the resulting arrow object.  If null or an empty string is given,
+ * @param {JXG.Arrow} a The resulting arrow will be parallel to this one.
+ * @param {JXG.Point} p The arrow will start at this point.
+ * @param {String} arrowId Unique identifier for the resulting arrow object.  If null or an empty string is given,
  * an unique id will be generated by Board
  * @param {String} pointId Unique identifier for the resulting point object.  If null or an empty string is given,
  * an unique id will be generated by Board 
@@ -1137,7 +1246,9 @@ JXG.Board.prototype.addArrowParallel = function(a, p, arrowId, pointId, arrowNam
    point.addChild(point2); // notwendig, um auch den Punkt upzudaten
    arrow.addChild(point2);
    
-   var parallelArrow = new JXG.Arrow(this, point.id, point2.id, arrowId, arrowName);
+   var parallelArrow = new JXG.Line(this, point.id, point2.id, arrowId, arrowName);
+   parallelArrow.setStraight(false,false);
+   parallelArrow.setArrow(false,true);
   
    //line.addChild(point2); // notwendig, um auch den Punkt upzudaten
    
@@ -1168,9 +1279,9 @@ JXG.Board.prototype.addArrowParallel = function(a, p, arrowId, pointId, arrowNam
 /**
  * Adds a point to the board and the renderer that has the same distance to the given point as the defining
  * points of the line and defines a parallel to the line together with the point.
- * @param {Point} p A Point.
- * @param {Point} p A Point.
- * @param {Point} p A Point.
+ * @param {JXG.Point} p A Point.
+ * @param {JXG.Point} p A Point.
+ * @param {JXG.Point} p A Point.
  * @param {String} id Unique identifier for this object.  If null or an empty string is given,
  * an unique id will be generated by Board
  * @param {String} name Not necessarily unique name, displayed on the board.  If null or an
@@ -1213,7 +1324,7 @@ JXG.Board.prototype.addParallelPoint = function(p1, p2, p3, id, name) {
 
 /**
  * Registers a arrow at the board and adds it to the renderer.
- * @param {Arrow} obj The arrow to add.
+ * @param {JXG.Arrow} obj The arrow to add.
  * @type String
  * @return Element id of the object.
  */
@@ -1239,7 +1350,7 @@ JXG.Board.prototype.addArrow = function(obj) {
 
 /**
  * Registers a axis at the board and adds it to the renderer.
- * @param {Axis} obj The axis to add.
+ * @param {JXG.Axis} obj The axis to add.
  * @type String
  * @return Element id of the object.
  */
@@ -1265,8 +1376,8 @@ JXG.Board.prototype.addAxis = function(obj) {
 
 /**
  * Adds a line to the board and renderer which is orthogonal to the given line and contains point.
- * @param {Line} l A line.
- * @param {Point} p A Point.
+ * @param {JXG.Line} l A line.
+ * @param {JXG.Point} p A Point.
  * @param {String} id Unique identifier for this object.  If null or an empty string is given,
  * an unique id will be generated by Board
  * @param {String} name Not necessarily unique name, displayed on the board.  If null or an
@@ -1324,8 +1435,8 @@ JXG.Board.prototype.addNormal = function(l, p, id, name) {
 /**
  * Adds a line to the board and renderer which is orthogonal to the given line and contains point
  * and adds a point to the board contained by the line and the perpendicular.
- * @param {Line} l A line.
- * @param {Point} p A Point.
+ * @param {JXG.Line} l A line.
+ * @param {JXG.Point} p A Point.
  * @param {String} idL Unique identifier for this object.  If null or an empty string is given,
  * an unique id will be generated by Board
  * @param {String} nameL Not necessarily unique name, displayed on the board.  If null or an
@@ -1391,8 +1502,8 @@ JXG.Board.prototype.addPerpendicular = function(l, p, idL, nameL, idP, nameP) {
 
 /**
  * Adds a point to the board contained by the line and the perpendicular through the point.
- * @param {Line} l A line.
- * @param {Point} p A Point.
+ * @param {JXG.Line} l A line.
+ * @param {JXG.Point} p A Point.
  * @param {String} idP Unique identifier for this object.  If null or an empty string is given,
  * an unique id will be generated by Board
  * @param {String} nameP Not necessarily unique name, displayed on the board.  If null or an
@@ -1433,9 +1544,9 @@ JXG.Board.prototype.addPerpendicularPoint = function(l, p, idP, nameP) {
 
 /**
  * Adds a circumcenter and its midpoint defined by the given points.
- * @param {Point} point1 A Point.
- * @param {Point} point2 A Point.
- * @param {Point} point3 A Point.
+ * @param {JXG.Point} point1 A Point.
+ * @param {JXG.Point} point2 A Point.
+ * @param {JXG.Point} point3 A Point.
  * @param {String} midpointId Unique identifier for this object.  If null or an empty string is given,
  * an unique id will be generated by Board
  * @param {String} midpointName Not necessarily unique name, displayed on the board.  If null or an
@@ -1491,9 +1602,9 @@ JXG.Board.prototype.addCircumcenter = function(point1, point2, point3, midpointI
 
 /**
  * Adds the midpoint of a circumcenter defined by the given points to board and renderer.
- * @param {Point} point1 A Point.
- * @param {Point} point2 A Point.
- * @param {Point} point3 A Point.
+ * @param {JXG.Point} point1 A Point.
+ * @param {JXG.Point} point2 A Point.
+ * @param {JXG.Point} point3 A Point.
  * @param {String} midpointId Unique identifier for this object.  If null or an empty string is given,
  * an unique id will be generated by Board
  * @param {String} midpointName Not necessarily unique name, displayed on the board.  If null or an
@@ -1531,7 +1642,7 @@ JXG.Board.prototype.addCircumcenterMidpoint = function(point1, point2, point3, m
 
 /**
  * Registers an intersection at the board and adds it to the renderer.
- * @param {Intersection} obj The intersection to add.
+ * @param {JXG.Intersection} obj The intersection to add.
  * @type String
  * @return Element id of the object.
  */
@@ -1558,9 +1669,9 @@ JXG.Board.prototype.addIntersection = function (obj) {
 
 /**
  * Adds the bisection of the given points to board and renderer.
- * @param {Point} point1 A Point.
- * @param {Point} point2 A Point.
- * @param {Point} point3 A Point.
+ * @param {JXG.Point} point1 A Point.
+ * @param {JXG.Point} point2 A Point.
+ * @param {JXG.Point} point3 A Point.
  * @param {String} id Unique identifier for this object.  If null or an empty string is given,
  * an unique id will be generated by Board
  * @param {String} name Not necessarily unique name, displayed on the board.  If null or an
@@ -1609,7 +1720,7 @@ JXG.Board.prototype.addAngleBisector = function(p1, p2, p3, id, name) {
 
 /**
  * Registers a text at the board and adds it to the renderer.
- * @param {Text} obj The text to add.
+ * @param {JXG.Text} obj The text to add.
  * @type String
  * @return Element id of the object.
  */
@@ -1635,7 +1746,7 @@ JXG.Board.prototype.addText = function (obj) {
 
 /**
   * Add conditional updates to the elements.
-  * @param {str} String String containing coniditional update in geonext syntax
+  * @param {string} str String containing coniditional update in geonext syntax
   */
 JXG.Board.prototype.addConditions = function (str) {
     var res = null;
@@ -1720,7 +1831,7 @@ JXG.Board.prototype.updateConditions = function() { return false; };
 
 /**
  * Registers an image at the board and adds it to the renderer.
- * @param {Image} obj The image to add.
+ * @param {JXG.Image} obj The image to add.
  * @type String
  * @return Element id of the object.
  */
@@ -1752,8 +1863,8 @@ JXG.Board.prototype.addImage = function (obj) {
 /**
  * Draws an integral on the board.
  * @param {Array} interval Integration limits
- * @param {Curve} curve Integrated curve, must be of type 'plot'.
- * @type Polygon
+ * @param {JXG.Curve} curve Integrated curve, must be of type 'plot'.
+ * @type JXG.Polygon
  * @return Reference to the created polygon object.
  */
 JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
@@ -1916,11 +2027,11 @@ JXG.Board.prototype.applyZoom = function() {
 };
  
 /**
- * Zooms into board.
+ * Zooms into the board.
  */
 JXG.Board.prototype.zoomIn = function() {
-    this.zoomX *= 1.25;
-    this.zoomY *= 1.25;    
+    this.zoomX *= this.options.zoom.factor;
+    this.zoomY *= this.options.zoom.factor;    
     this.applyZoom();
 };
 
@@ -1928,8 +2039,8 @@ JXG.Board.prototype.zoomIn = function() {
  * Zooms out of the board.
  */
 JXG.Board.prototype.zoomOut = function() {
-    this.zoomX /= 1.25;
-    this.zoomY /= 1.25;
+    this.zoomX /= this.options.zoom.factor;
+    this.zoomY /= this.options.zoom.factor;
     this.applyZoom();
 };
 
@@ -2038,6 +2149,11 @@ JXG.Board.prototype.initGeonextBoard = function() {
     l2.hideElement();    
 };
 
+/**
+ * Change the height and width of the board's container.
+ * @param {int} canvasWidth New width of the container.
+ * @param {int} canvasHeight New height of the container.
+ */
 JXG.Board.prototype.resizeContainer = function(canvasWidth, canvasHeight) {
     this.canvasWidth = 1*canvasWidth;
     this.canvasHeight = 1*canvasHeight;
@@ -2082,20 +2198,22 @@ JXG.Board.prototype.showXML = function() {
 }
 
 /** 
- * Sets for all objects the needsUpdate flag
- * to "true".
+ * Sets for all objects the needsUpdate flag to "true".
+ * @param {Object/String} drag Element that caused the update.
  */
-JXG.Board.prototype.prepareUpdate = function(rootObj) {
+JXG.Board.prototype.prepareUpdate = function(drag) {
     for(var el in this.objects) {
        this.objects[el].needsUpdate = true;
     }
 };
 
 /**
-  * Runs through all elements and calls their
-  * update() method.
+  * Runs through all elements and calls their update() method.
+  * @param {Object/String} drag Element that caused the update.
   */
 JXG.Board.prototype.updateElements = function(drag) {
+    drag = JXG.GetReferenceFromParameter(this, drag);
+    
     var count = -1;
     if (!this.reducedUpdate) count = 1;
     for(var el in this.objects) {
@@ -2112,8 +2230,8 @@ JXG.Board.prototype.updateElements = function(drag) {
 };
 
 /**
-  * Runs through all elements and calls their
-  * update() method.
+  * Runs through all elements and calls their update() method.
+  * @param {Object/String} drag Element that caused the update.
   */
 JXG.Board.prototype.updateRenderer = function(drag) {
 /*  
@@ -2125,6 +2243,8 @@ JXG.Board.prototype.updateRenderer = function(drag) {
         pEl.afterFirstUpdate = true;
     }
 */    
+    drag = JXG.GetReferenceFromParameter(this, drag);
+    
     var count = -1;
     if (!this.reducedUpdate) count = 1;
     for(var el in this.objects) {
@@ -2176,6 +2296,7 @@ JXG.Board.prototype.updateHooks = function() {
 /**
   * Runs through all elements and calls their
   * update() method and update thte conditions.
+  * @param {Object/String} drag Element that caused the update.
   */
 JXG.Board.prototype.update = function(drag) {
     if (this.isSuspendedUpdate) { return; }
@@ -2201,53 +2322,78 @@ JXG.Board.prototype.update = function(drag) {
     }
 };
 
-JXG.Board.prototype.createElement = function(elType,parentArr,atts) {
+/**
+ * Creates a new geometric element of type elementType.
+ * @param {string} elementType Type of the element to be constructed given as a string e.g. 'point' or 'circle'.
+ * @param {Array} parents Array of parent elements needed to construct the element e.g. coordinates for a point or two
+ * points to construct a line. This highly depends on the elementType that is constructed. See the corresponding JXG.create*
+ * methods for a list of possible parameters.
+ * @param {Object} attributes An object containing the attributes to be set. This also depends on the elementType.
+ * Common attributes are name, visible, strokeColor. @see GeometryElement#setProperty
+ * @type Object
+ * @return Reference to the created element.
+ */
+JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     // CM: 
-    if (parentArr == null || parentArr.length == 0) {
+    if (parents == null || parents.length == 0) {
         return null;
     }
     var el;
-    elType = elType.toLowerCase();
+    elementType = elementType.toLowerCase();
     
-    if (atts==null) {
-        atts = {};
+    if (attributes==null) {
+        attributes = {};
     }
-    for (var i=0; i<parentArr.length; i++) {
-        parentArr[i] = JXG.GetReferenceFromParameter(this, parentArr[i]);
+    for (var i=0; i<parents.length; i++) {
+        parents[i] = JXG.GetReferenceFromParameter(this, parents[i]);
     }
     
-    if(JXG.JSXGraph.elements[elType] != null) {
-        el = JXG.JSXGraph.elements[elType](this, parentArr, atts);
+    if(JXG.JSXGraph.elements[elementType] != null) {
+        el = JXG.JSXGraph.elements[elementType](this, parents, attributes);
     } else {
-        throw "JXG.createElement: Unknown element type given: "+elType;
+        throw "JXG.createElement: Unknown element type given: "+elementType;
     }
 
     if (el==undefined) { 
-        //throw "JXG.createElement: failure creating "+elType;
+        //throw "JXG.createElement: failure creating "+elementType;
         return;
     };
-    
-    if(!JXG.IsArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
-        el.setProperty(atts);
+  
+    if(JXG.IsArray(attributes))
+        attributes = attributes[0];
+    try {
+    if(el.multipleElements) {
+        for(var s in el) {
+            if(typeof el[s].setProperty != 'undefined')
+                el[s].setProperty(attributes);
+        }  
+    } else {
+        if(typeof el.setProperty != 'undefined')
+            el.setProperty(attributes);
     }
+    } catch (e) {};
+    
+//    if(!JXG.IsArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
+//        el.setProperty(attributes);
+//    }
 /* AW: Doch erstmal wieder auskommentiert
     else {                  // Setting attributes of multiple objects simultaneously.  Here, only strings are possible
-        for (var s in atts) {
+        for (var s in attributes) {
             for(var i=0; i<el.length; i++) {
-                if(atts[s][i] != null) {el[i].setProperty(s+':'+atts[s][i]);}
+                if(attributes[s][i] != null) {el[i].setProperty(s+':'+attributes[s][i]);}
             }
         }
     }
 */
 /*
-    for (var s in atts) {
+    for (var s in attributes) {
         if(!JXG.IsArray(el)) {
-            el.setProperty(s+':'+atts[s]);
+            el.setProperty(s+':'+attributes[s]);
         }
         else {
             for(var i=0; i<el.length; i++) {
-                if(atts[s][i] != null) {
-                    el[i].setProperty(s+':'+atts[s][i]);
+                if(attributes[s][i] != null) {
+                    el[i].setProperty(s+':'+attributes[s][i]);
                 }
             }
         }
@@ -2257,6 +2403,9 @@ JXG.Board.prototype.createElement = function(elType,parentArr,atts) {
     return el;
 };
 
+/**
+ * Delete the elements drawn as part of a trace of an element.
+ */
 JXG.Board.prototype.clearTraces = function() {
     for(var el in this.objects) {
         if (this.objects[el].traced)
@@ -2264,6 +2413,9 @@ JXG.Board.prototype.clearTraces = function() {
     }
 };
 
+/**
+ * Method called before a board is initialized or load from a file. Currently unused.
+ */
 JXG.Board.prototype.beforeLoad = function() {
 /*    if(document.getElementsByTagName("body").length > 0) {
         var divNode = document.createElement("div");
@@ -2282,6 +2434,9 @@ JXG.Board.prototype.beforeLoad = function() {
     }*/
 };
 
+/**
+ * Method called after a board got initialized or load from a file. Currently unused.
+ */
 JXG.Board.prototype.afterLoad = function() {
   /*  if(document.getElementsByTagName("body").length > 0) {
         document.getElementsByTagName("body")[0].removeChild($("JXGPreLoadAnimation"));
@@ -2289,14 +2444,14 @@ JXG.Board.prototype.afterLoad = function() {
 };
 
 /**
- * Stop updates of the board
+ * Stop updates of the board.
  */
 JXG.Board.prototype.suspendUpdate = function() {
     this.isSuspendedUpdate = true;
 }
 
 /**
- * Enable updates of the board again
+ * Enable updates of the board again.
  */
 JXG.Board.prototype.unsuspendUpdate = function() {
     this.isSuspendedUpdate = false;

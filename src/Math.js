@@ -31,6 +31,9 @@
  
 JXG.Math = new Object();
 
+/* Math constants */
+JXG.Math.eps = 0.000001;
+
 /**
  * Represents a vector.
  * @constructor
@@ -45,7 +48,7 @@ JXG.Math.Vector = function(elements) {
           this.push(elements[i]);
       }
    }
-}
+};
 
 /*
  * The base class for Vector is just an array.
@@ -58,7 +61,7 @@ JXG.Math.Vector.prototype = new Array();
  */
 JXG.Math.Vector.prototype.n = function() {
    return this.length;
-}
+};
 
 /**
  * Exchanges two elements of the vector.
@@ -70,7 +73,7 @@ JXG.Math.Vector.prototype.exchange = function(i, j) {
     
    this[i] = this[j];
    this[j] = temp; 
-}
+};
 
 /**
  * Represents a matrix.
@@ -104,7 +107,7 @@ JXG.Math.Matrix = function(elements) {
           testLength = true;
       }
    }
-}
+};
 
 /*
  * The base class for Matrix is also just an array.
@@ -117,7 +120,7 @@ JXG.Math.Matrix.prototype = new Array();
  */
 JXG.Math.Matrix.prototype.m = function() {
     return this.length;
-}
+};
 
 /**
  * Returns the amount of columns of the matrix.
@@ -128,7 +131,7 @@ JXG.Math.Matrix.prototype.n = function() {
         return this[0].length;
     else
         return 0;
-}
+};
 
 /**
  * Exchanges two rows of the matrix.
@@ -140,7 +143,7 @@ JXG.Math.Matrix.prototype.exchangeRows = function(i, j) {
     
    this[i] = this[j];
    this[j] = temp; 
-}
+};
 
 /**
  * Exception signaling inconsistent dimension conditions.
@@ -152,7 +155,7 @@ JXG.DimensionMismatchException = function(message) {
       this.message = message;
    else
       this.message = null;
-}
+};
 
 /**
  * Returns a string explaining, what exactly went wrong.
@@ -166,7 +169,7 @@ JXG.DimensionMismatchException.prototype.what = function() {
       return default_msg + ": " + this.message + ".";
    else
       return default_msg + ".";
-}
+};
 
 /**
  * Exception signaling an singular matrix.
@@ -178,7 +181,7 @@ JXG.SingularMatrixException = function(message) {
       this.message = message;
    else
       this.message = null;
-}
+};
 
 /**
  * Returns a string explaining, what exactly went wrong.
@@ -192,4 +195,6 @@ JXG.SingularMatrixException.prototype.what = function() {
       return default_msg + ": " + this.message + ".";
    else
       return default_msg + ".";
-}
+};
+
+

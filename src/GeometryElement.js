@@ -62,16 +62,7 @@ JXG.GeometryElement = function() {
      * @type Object
      */
     this.visProp = {};
-    this.visProp['strokeColor'] = '#36393D';
-    this.visProp['highlightStrokeColor'] = '#C3D9FF';
-    this.visProp['strokeWidth'] = '2px';
-    
-    this.visProp['strokeOpacity'] = 1;
-    this.visProp['highlightStrokeOpacity'] = 1;
-    this.visProp['fillOpacity'] = 1;    
-    this.visProp['highlightFillOpacity'] = 1;
-    
-    this.visProp['draft'] = false;
+
     this.isReal = true;
 
     /** 
@@ -140,8 +131,28 @@ JXG.GeometryElement = function() {
     this.descendants = {};
     this.ancestors = {};
 
-    // [c,b0,b1,a,k,r,q0,q1]
-    // Should be put into Coords, when all elements possess Coords
+/**
+  * [c,b0,b1,a,k,r,q0,q1]
+  *
+  * See 
+  * A.E. Middleditch, T.W. Stacey, and S.B. Tor:
+  * "Intersection Algorithms for Lines and Circles"
+  * ACM Transactions on Graphics, Vol. 8, 1, 1989, pp 25-40.
+  *
+  * The meaning of the parameters is:
+  * Circle: points p=[p0,p1] on the circle fulfill
+  *  a<p,p> + <b,p> + c = 0
+  * For convenience we also store
+  *  r: radius
+  *  k: discriminant = sqrt(<b,b>-4ac)
+  *  q=[q0,q1] center
+  *  
+  * Points have radius  = 0
+  * Lines have radius = infinity
+  * b: normalized vector, representing the direction of the line
+  *  
+  * Should be put into Coords, when all elements possess Coords
+  */
     this.stdform = [1,0,0,0,1, 1,0,0];
     
     this.afterFirstUpdate = false;
@@ -177,6 +188,20 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
     }
     this.board.elementsByName[name] = this;
     this.name = name;
+    
+    this.visProp['strokeColor'] = this.board.options.elements.color.strokeColor //'#36393D';
+    this.visProp['highlightStrokeColor'] = this.board.options.elements.color.highlightStrokeColor;
+    this.visProp['fillColor'] = this.board.options.elements.color.fillColor;
+    this.visProp['highlightFillColor'] = this.board.options.elements.color.highlightFillColor;
+    
+    this.visProp['strokeWidth'] = this.board.options.elements.strokeWidth;
+    
+    this.visProp['strokeOpacity'] = this.board.options.elements.color.strokeOpacity;
+    this.visProp['highlightStrokeOpacity'] = this.board.options.elements.color.highlightStrokeOpacity;
+    this.visProp['fillOpacity'] = this.board.options.elements.color.fillOpacity;    
+    this.visProp['highlightFillOpacity'] = this.board.options.elements.color.highlightFillOpacity;   
+    
+    this.visProp['draft'] = this.board.options.elements.draft;    
 };
 
 /**
@@ -275,6 +300,9 @@ JXG.GeometryElement.prototype.showElement = function() {
  *<li>draft</li>
  *<li>straightFirst <i>(Line)</i></li>
  *<li>straightLast <i>(Line)</i></li>
+ *<li>firstArrow <i>(Line,Arc)</li>
+ *<li>lastArrow <i>(Line,Arc)</li>
+ *<li>withTicks <i>(Line)</li>
  *</ul>
  */
 JXG.GeometryElement.prototype.setProperty = function () {
@@ -352,9 +380,11 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 break;
             case 'fillopacity':
                 this.visProp['fillOpacity'] = pair[1];
+                this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);                
                 break;
             case 'strokeopacity':
                 this.visProp['strokeOpacity'] = pair[1];
+                this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);                 
                 break;        
             case 'highlightfillopacity':
                 this.visProp['highlightFillOpacity'] = pair[1];
@@ -441,7 +471,33 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     this.visProp['straightLast'] = true;
                 }            
                 this.setStraight(this.visProp['straightFirst'], this.visProp['straightLast']);
-                break;                    
+                break;    
+            case 'firstarrow':
+                if(pair[1] == 'false' || pair[1] == false) {
+                    this.visProp['firstArrow'] = false;
+                }
+                else if(pair[1] == 'true' || pair[1] == true) {
+                    this.visProp['firstArrow'] = true;
+                }    
+                this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
+                break;    
+            case 'lastarrow':
+                if(pair[1] == 'false' || pair[1] == false) {
+                    this.visProp['lastArrow'] = false;
+                }
+                else if(pair[1] == 'true' || pair[1] == true) {
+                    this.visProp['lastArrow'] = true;
+                }            
+                this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
+                break;                   
+            case 'withticks':
+                if(pair[1] == 'false' || pair[1] == false) {
+                    this.disableTicks();
+                }
+                else if(pair[1] == 'true' || pair[1] == true) {
+                    this.enableTicks();
+                }            
+                break;                   
             case 'curvetype':
                 this.curveType = pair[1];
                 break;

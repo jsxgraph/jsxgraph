@@ -1,0 +1,31 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Lines with ticks</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var p1, p2, l1;
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 40});
+
+        p1 = board.createElement('point', [3, 0], {style:1,name:"P_{1}"}); // Angabe fester Koordinaten
+        p2 = board.createElement('point', [8, 0], {style:2,name:"P_{2}"}); // Angabe fester Koordinaten
+        
+        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast: true});
+        l1.enableTicks();
+
+        c = board.createElement('circle', [p1, 2]);
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

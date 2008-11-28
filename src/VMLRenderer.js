@@ -89,36 +89,6 @@ JXG.VMLRenderer.prototype.drawAxis = function(el) {
     this.container.appendChild(node);
 }
 
-JXG.VMLRenderer.prototype.updateAxisTicks = function(el, oldTicksCount) {
-    if(oldTicksCount == el.ticks.length) {
-        return;
-    } else if(oldTicksCount < el.ticks.length) {
-        for (var i=oldTicksCount;i<el.ticks.length;i++) {
-            var c = el.ticks[i];
-            var tick = this.container.ownerDocument.createElement('v:line');
-            tick.style.position = 'absolute';
-            tick.setAttribute('id', el.id+'tick'+i);
-            tick.style.zIndex = "4"; 
-            tick.setAttribute('from', c.scrCoords[1] + 'px,' + c.scrCoords[2] + 'px');
-            if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
-                tick.setAttribute('to', (c.scrCoords[1] - el.r) + 'px,' + (c.scrCoords[2]) + 'px');   
-            } else {
-                tick.setAttribute('to', (c.scrCoords[1]) + 'px,' + (c.scrCoords[2] + el.r) + 'px');   
-            }
-        
-            tick.setAttribute('stroked', 'true');
-            tick.setAttribute('strokecolor', el.visProp['strokeColor']);
-            tick.setAttribute('strokeweight', el.visProp['strokeWidth']);   
-            this.container.appendChild(tick);
-        }
-    } else if(oldTicksCount > el.ticks.length) {
-        for(var i=el.ticks.length; i<oldTicksCount; i++) {
-            var tick = $(el.id+'tick'+i);
-            this.remove(tick);
-        }
-    }
-}
-
 JXG.VMLRenderer.prototype.updateAxis = function(el) {
     // not yet
     var node = $(el.id);
@@ -297,7 +267,9 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
     node2.style.height = (Math.round(el.radius * el.board.unitY * el.board.zoomY)*2) + 'px'; 
     node2.setAttribute('startangle', angle1);
     node2.setAttribute('endangle', angle2);   
-    this.setStrokeProp(node2,el.visProp);
+    node2.setAttribute('stroked', 'true');
+    node2.setAttribute('strokecolor', el.visProp['strokeColor']);
+    node2.setAttribute('strokeweight', el.visProp['strokeWidth']);
     node2.setAttribute('filled', 'false');
     node2.style.zIndex = "4"; 
     node2.setAttribute('id', el.id+"_2");    
@@ -318,7 +290,7 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
 JXG.VMLRenderer.prototype.updateAngle = function(el) {
     // erstmal nur der brutale Weg... 
     this.remove(el.rendNode1);
-    this.remove(el.rendNode2);    
+    this.remove(el.rendNode2);  
     this.drawAngle(el);
     return;
 }
@@ -449,8 +421,10 @@ JXG.VMLRenderer.prototype.setObjectDash = function(el) {
         }
         else {
             var node = $(el.id+'stroke');
-            var tmp = el.visProp['dash'];
-            node.setAttribute('dashstyle', this.dashArray[tmp]);
+            if (node) {
+                var tmp = el.visProp['dash'];
+                node.setAttribute('dashstyle', this.dashArray[tmp]);
+            }
         }
     }
 }
@@ -668,6 +642,43 @@ JXG.VMLRenderer.prototype.makeArrow = function(node,el,idAppendix) {
     nodeStroke.setAttribute('endarrow', 'block');
     nodeStroke.setAttribute('endarrowlength', 'long');
     node.appendChild(nodeStroke);
+};
+
+JXG.VMLRenderer.prototype.makeArrows = function(el) {
+    if(el.visProp['firstArrow']) {
+        var nodeStroke = el.rendNodeStroke;
+        if(nodeStroke == null) {
+            nodeStroke = this.container.ownerDocument.createElement('v:stroke');
+            nodeStroke.setAttribute('id', el.id+"stroke");
+            nodeStroke.setAttribute('startarrow', 'block');
+            nodeStroke.setAttribute('startarrowlength', 'long');
+            el.rendNode.appendChild(nodeStroke);
+            el.rendNodeStroke = nodeStroke;
+        }            
+    }
+    else {
+        var nodeStroke = el.rendNodeStroke;
+        if(nodeStroke != null) {
+            nodeStroke.setAttribute('startarrow', 'none');
+        }            
+    }
+    if(el.visProp['lastArrow']) {
+        var nodeStroke = el.rendNodeStroke;
+        if(nodeStroke == null) {
+            nodeStroke = this.container.ownerDocument.createElement('v:stroke');
+            el.rendNode.appendChild(nodeStroke);
+            el.rendNodeStroke = nodeStroke;                    
+        }
+        nodeStroke.setAttribute('id', el.id+"stroke");
+        nodeStroke.setAttribute('endarrow', 'block');
+        nodeStroke.setAttribute('endarrowlength', 'long');            
+    }
+    else {
+        var nodeStroke = el.rendNodeStroke;
+        if(nodeStroke != null) {
+            nodeStroke.setAttribute('endarrow', 'none');
+        }        
+    }    
 };
 
 JXG.VMLRenderer.prototype.updateLinePrimitive = function(node,p1x,p1y,p2x,p2y) {

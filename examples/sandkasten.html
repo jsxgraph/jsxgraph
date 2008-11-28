@@ -1,0 +1,37 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/Triangle.js"></script>
+</head>
+<body>
+<h2>Playground to test things temporarily. May change very often.</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var p1, p2, l1;
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25});
+        xax = board.createElement('axis', [[0,0],[1,0]]);
+        yax = board.createElement('axis', [[0,0],[0,1]]);
+
+        p1 = board.createElement('point', [9, 5], {style:1,name:"P_{1}"}); // Angabe fester Koordinaten
+        p2 = board.createElement('point', [12, 5], {style:2,name:"P_{2}"}); // Angabe fester Koordinaten
+        p3 = board.createElement('point', [11, 8], {style:3,name:"P_{3}"});
+        
+        t = board.createElement('triangle', [p1, p2, p3]);
+
+        x = new JXG.Math.Vector([0.0, 1.1, 3.2, 4.3, 4.4, 5.5, 8.6, 9.0, 9.8]);
+        f = new JXG.Math.Vector([4.0, 3.989, 1.959, 5.9002, 3.8101, 4.691, 0.5491, 2.395, 0.243]);
+
+        var ch = board.createElement('chart', [x, f], {chartStyle: 'spline'});
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

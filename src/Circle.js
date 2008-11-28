@@ -95,8 +95,6 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
     this.midpoint = JXG.GetReferenceFromParameter(this.board, par1); 
     this.midpoint.addChild(this);
     
-    this.visProp['fillColor'] = 'none';
-    this.visProp['highlightFillColor'] = 'none';
     this.visProp['visible'] = true;
     
     /** Point on the circle
@@ -163,7 +161,8 @@ JXG.Circle.prototype = new JXG.GeometryElement;
  * @return {bool} True if (x,y) is near the circle, False otherwise.
  */
 JXG.Circle.prototype.hasPoint = function (x, y) {
-    var genauigkeit = 5/(this.board.unitX*this.board.zoomX); // uebergangsweise = 5px
+    var genauigkeit = this.board.options.precision.hasPoint;
+    genauigkeit = genauigkeit/(this.board.unitX*this.board.zoomX); 
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     var r = this.getRadius();

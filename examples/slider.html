@@ -12,10 +12,22 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 20});
-        var s = board.createElement('slider', [8,-5,5,1,10,1], {name:'S'});
-        board.createElement('text', [0,-1,function(){ return 'S='+board.round(s.X(),3); }]);
-        var p1 = board.createElement('point', [function(){return s.X();},function(){return 1/s.X()}], {trace:true, strokecolor:'red'}); 
+        var p = 0.1;
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 600, unitY: 200});
+        b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+        b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
+
+        var f = function(r) {
+            var n = 1/r;
+            return  Math.sqrt(2/Math.PI/(n+1))*Math.pow(2,n)*Math.pow(p*(1-p),n/2);
+        }
+        var s = board.createElement('slider', [0,-.2,0.5,0.0,0.5,0.5], {name:'S'});
+        board.createElement('text', [0.2,-0.5,function(){ return 'n='+Math.round((1/s.X())); }]);
+        var p1 = board.createElement('point', 
+            [
+             function(){return s.X();},
+             function(){return f(s.X());}
+            ], {trace:true, strokecolor:'red'}); 
         
 /*
 for (var el in board.objects) {

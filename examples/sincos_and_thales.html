@@ -41,8 +41,8 @@
         b1p1 = board.createElement('point', [2, 0], {slideObject: b1c1});
 
 		// Achsen erzeugen
-        b1axisx = board.createElement('axis', [[0,1], [0,0]], {});
-        b1axisy = board.createElement('axis', [[1,0], [0,0]], {});
+        b1axisx = board.createElement('axis', [[0,0], [0,1]], {});
+        b1axisy = board.createElement('axis', [[0,0], [1,0]], {});
 		
 		// Sekrechten vom Gleiter auf die Achsen zeichnen
 		perp = board.createElement('perpendicular', ['X-Achse',b1p1],{strokeColor:['#ff0000',null],visible:[true,false]});
@@ -58,8 +58,8 @@
         b2p2 = board2.createElement('point', [function(){ return board.algebra.rad(JXG.GetReferenceFromParameter(board, 'Punkt_1_0'), JXG.GetReferenceFromParameter(board, 'Ursprung'), b1p1); }, function() { return b1p1.X() }], {fixed: true, trace: true, strokeColor: '#0000ff', name: 'C'});
         
 		// Achsen erzeugen
-        b1axisx = board2.createElement('axis', [[1,0], [0,0]]);
-        b1axisy = board2.createElement('axis', [[0,1], [0,0]]);
+        b1axisx = board2.createElement('axis', [[0,0], [1,0]]);
+        b1axisy = board2.createElement('axis', [[0,0], [0,1]]);
 
 		// Die Abhaengigkeiten speichern. Mittlerweile nur noch wichtig, falls b1p1 geloescht werden sollte.
         b1p1.addChild(b2p1);
@@ -123,8 +123,8 @@
         b3l2 = board3.createElement('line', [b3p2, b3s1], {straightFirst: false, straightLast: false});
 
 		// Achsen erzeugen
-        b3axisx = board3.createElement('axis', [[0,1], [0,0]], {});
-        b3axisy = board3.createElement('axis', [[1,0], [0,0]], {});
+        b3axisx = board3.createElement('axis', [[0,0], [0,1]], {});
+        b3axisy = board3.createElement('axis', [[0,0], [1,0]], {});
                 
    		// Hook anlegen fuer die Ausgabe des Winkels
    		function test(board) {
