@@ -1,6 +1,7 @@
 /*
 */
 .jxgbox {
+    position:relative; /* for IE 7*/
     overflow:hidden;
     background-color:#ffffff;
     border-style:solid;

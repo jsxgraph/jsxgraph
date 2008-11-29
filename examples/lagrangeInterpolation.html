@@ -16,16 +16,16 @@
     /* <![CDATA[ */
 
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 50, unitY: 25});
-		// Axes
+        // Axes
         b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
         b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 
         var p = [];
-		p[0] = board.createElement('point', [-1,2], {style:6});
-		p[1] = board.createElement('point', [0,-3], {style:6});
-		p[2] = board.createElement('point', [1,4], {style:6});
-		p[3] = board.createElement('point', [2,1], {style:6});
-		
+        p[0] = board.createElement('point', [-1,2], {style:6});
+        p[1] = board.createElement('point', [0,-3], {style:6});
+        p[2] = board.createElement('point', [1,4], {style:6});
+        p[3] = board.createElement('point', [2,1], {style:6});
+        
         var pol = function(x) {
                 var y = p[0].Y()*(x-p[1].X())*(x-p[2].X())*(x-p[3].X())/
                         ((p[0].X()-p[1].X())*(p[0].X()-p[2].X())*(p[0].X()-p[3].X()))+
@@ -48,7 +48,7 @@
                 */
                 return y;
             };
-		graph = board.createElement('curve', ['x', pol, 'x', -10, 10], {curveType:'graph'});
+        graph = board.createElement('curve', ['x', pol, 'x', -10, 10], {curveType:'graph'});
       
   /* ]]> */
   </script>

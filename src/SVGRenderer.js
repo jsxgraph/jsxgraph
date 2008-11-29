@@ -78,7 +78,7 @@ JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
     var node = this.createPrimitive('text','licenseText');
     node.setAttributeNS(null,'x','20');
     node.setAttributeNS(null,'y',2+fontsize);
-    node.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:"+fontsize+"; fill:#356AA0;  opacity:0.3;");
+    node.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:"+fontsize+"px; fill:#356AA0;  opacity:0.3;");
     var t = document.createTextNode(str);
     node.appendChild(t);
     this.appendChildPrimitive(node,'images');
