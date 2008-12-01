@@ -623,7 +623,7 @@ JXG.createAxis = function(board, parents, attributes) {
         attributes.straightLast = true;
         attributes.withTicks = true;
         if(attributes.strokeWidth == null)
-            attributes.strokeWidth = 2;
+            attributes.strokeWidth = 1;
 
         var el = board.createElement('line', [point1, point2], attributes);
     } // Ansonsten eine fette Exception um die Ohren hauen

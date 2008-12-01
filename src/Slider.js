@@ -39,11 +39,8 @@ JXG.createSlider = function(board, parentArr, atts) {
     var p2 = board.createElement('point', [sx + sw, sy],{visible:false,fixed:true,name:''}); 
     var l1 = board.createElement('line', [p1,p2], {straightFirst:false,straightLast:false,strokewidth:1,name:''});
     var ticks  = 10;
-    for(i = 0; i < ticks+1; i++) {
-        var t1 = board.createElement('point', [sx + i*sw/ticks, sy - 0.25 + i%2*0.1], {visible:false, fixed:true,name:''}); 
-        var t2 = board.createElement('point', [sx + i*sw/ticks, sy + 0.25 - i%2*0.1], {visible:false, fixed:true,name:''}); 
-        var tt = board.createElement('line', [t1,t2], {straightFirst:false,straightLast:false,strokewidth:2-i%2,name:''});
-    } 
+    l1.ticksDelta = sw/ticks;
+    l1.enableTicks();
     var p3 = board.createElement('point', [sx + start, sy], {slideObject:l1,style:6,strokeColor:'#0080c0',fillColor:'#0080c0',name:''});
     var p4 = board.createElement('point', [function() {return ((p3.X() - sx)/sw * (smax - smin)+smin);}, function() {return (sy  + 1);}], {visible:false,name:''});
     var l2 = board.createElement('line', [p1,p3], {straightFirst:false,straightLast:false,strokewidth:3,strokeColor:'#0080c0',name:''}); 
