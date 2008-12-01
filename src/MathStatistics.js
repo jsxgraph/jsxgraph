@@ -56,7 +56,7 @@ JXG.MathStatistics.prototype.mean = function(arr) {
 JXG.MathStatistics.prototype.median = function(arr) {
     if (arr.length>0) {
         var tmp = arr.clone();
-        tmp.sort();
+        tmp.sort(function(a,b){return a-b;});
         var len = tmp.length ;
         if (len%2==1) {
             return tmp[parseInt(len*0.5)];

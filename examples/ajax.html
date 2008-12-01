@@ -32,9 +32,8 @@ JSXGraph displays the data and prints some statistics.
         brd.update();
         brd.fullUpdate = false;
         
-
         var graph1,graph2,graph3,graph4,graph5;
-        var peridocal;
+        var periodical;
 
         function doIt() {
             new Ajax.Request('ajaxserv.php', {
@@ -49,8 +48,8 @@ JSXGraph displays the data and prints some statistics.
                             b[0]=b[0]*1.0;
                             b[1]=b[1]*1.0;
                             if (!isNaN(b[0]) && !isNaN(b[1])) { 
-                                x[i] = b[0];
-                                y[i] = b[1];
+                                x[i] = b[0]*1.0;
+                                y[i] = b[1]*1.0;
                             }
                         }
                         var m = brd.mathStatistics.mean(y);
@@ -78,10 +77,7 @@ JSXGraph displays the data and prints some statistics.
         }
         
         function Start() {
-            if (typeof periodical=='undefined' || !periodical) {
-                periodical = setInterval(doIt,1000);
-            }
-            
+            periodical = setInterval(doIt,1000);
         }
         function Stop() {
             if (periodical) {

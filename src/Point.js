@@ -378,8 +378,8 @@ JXG.Point.prototype.Dist = function(point2) {
 
 /**
  * Sets x and y coordinate and calls update() method.
- * @param {int} x x coordinate in screen units
- * @param {int} y y coordinate in screen units
+ * @param {int} x x coordinate in screen/user units
+ * @param {int} y y coordinate in screen/user units
  * @see #update
  */
 JXG.Point.prototype.setPositionDirectly = function (method, x, y) {

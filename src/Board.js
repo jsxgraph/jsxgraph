@@ -1778,13 +1778,14 @@ JXG.Board.prototype.addConditions = function (str) {
         switch (property) {
             case 'x': 
                 plaintext += 'y=el.coords.usrCoords[2];\n';  // y stays
-                plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,['+(right) +',y],this);\n';
+                //plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,['+(right) +',y],this);\n';
+                plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,'+(right) +',y);\n';
                 plaintext += 'el.update();\n';
                 break;
             case 'y': 
                 plaintext += 'x=el.coords.usrCoords[1];\n';  // x stays
                 plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
-                plaintext += 'el.update();\n';
+                //plaintext += 'el.update();\n';
                 break;
             case 'visible': 
                 plaintext += 'c='+(right)+';\n'; 
