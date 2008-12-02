@@ -4,6 +4,7 @@
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <!--<script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>-->
 </head>
 <body>
 <h2>Live data plot and analysis</h2>
@@ -43,20 +44,16 @@ JSXGraph displays the data and prints some statistics.
                         var a = t.split(';');
                         var x = [];
                         var y = [];
-                        for (var i=0;i<a.length;i++) {
+                        for (var i=0;i<a.length-1;i++) { // The last array entry is empty
                             var b = a[i].split(',');
-                            b[0]=b[0]*1.0;
-                            b[1]=b[1]*1.0;
-                            if (!isNaN(b[0]) && !isNaN(b[1])) { 
-                                x[i] = b[0]*1.0;
-                                y[i] = b[1]*1.0;
-                            }
+                            x[i]=b[0]*1.0;  
+                            y[i]=b[1]*1.0;
                         }
                         var m = brd.mathStatistics.mean(y);
                         var sd = brd.mathStatistics.sd(y);
                         var med = brd.mathStatistics.median(y);
                         if (!graph1) { 
-                            graph1 = brd.createElement('curve', [x,y]); 
+                            graph1 = brd.createElement('curve', [x,y],{strokeWidth:3}); 
                             graph2 = brd.createElement('curve', [[x[0],x[x.length-1]],[m,m]], {strokecolor:'red'}); 
                             graph3 = brd.createElement('curve', [[x[0],x[x.length-1]],[m+sd,m+sd]], {strokecolor:'red',dash:2}); 
                             graph4 = brd.createElement('curve', [[x[0],x[x.length-1]],[m-sd,m-sd]], {strokecolor:'red',dash:2}); 

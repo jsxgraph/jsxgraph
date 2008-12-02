@@ -30,6 +30,7 @@ import os
 import jsmin
 import re
 import tempfile
+import sys
 
 '''
     Search for line
@@ -82,11 +83,20 @@ if __name__ == '__main__':
     fout.close()
 
     # Minify 
-    fin = open(tmpfilename,'r')
-    fout = open(coreFilename,'a')
-    jsm = jsmin.JavascriptMinify()
-    jsm.minify(fin, fout)
+    if False:
+        # Minify from Douglas Crockford
+        fin = open(tmpfilename,'r')
+        fout = open(coreFilename,'a')
+        jsm = jsmin.JavascriptMinify()
+        jsm.minify(fin, fout)
+    else:
+        # YUI compressor from Yahoo
+        s = 'java -jar ./yuicompressor-2.4.1/build/yuicompressor-2.4.1.jar --type js ' + tmpfilename + ' >>' + coreFilename
+        print s
+        os.system(s)
+     
     os.remove(tmpfilename)
+
 
     #
     # The following part is only necessary if we distribute 3 files:
