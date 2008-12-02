@@ -722,7 +722,7 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
         {
             scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
         }
-        while (--n); // n must be greater than 0 here
+        while ((--n)>0); // n must be greater than 0 here
     }
     n = parseInt(el.numberPoints/8);
     if (n>0) { do 
@@ -736,7 +736,7 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
         scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
         scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
     }
-    while (--n);}
+    while ((--n)>0);}
     return pStr;
 };
 

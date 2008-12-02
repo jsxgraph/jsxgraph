@@ -32,6 +32,8 @@ import re
 import tempfile
 import sys
 
+compressor = 'yuicompressor-2.4.2'
+
 '''
     Search for line
     baseFile = 'AbstractRenderer,...,gunzip';
@@ -91,7 +93,7 @@ if __name__ == '__main__':
         jsm.minify(fin, fout)
     else:
         # YUI compressor from Yahoo
-        s = 'java -jar ./yuicompressor-2.4.1/build/yuicompressor-2.4.1.jar --type js ' + tmpfilename + ' >>' + coreFilename
+        s = 'java -jar ./' + compressor + '/build/' + compressor + '.jar --type js ' + tmpfilename + ' >>' + coreFilename
         print s
         os.system(s)
      
