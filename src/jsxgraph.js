@@ -95,12 +95,12 @@ JXG.JSXGraph = new function (forceRenderer) {
         if(typeof atts == 'undefined')
             atts = {};
             
-        originX = ( (typeof atts["originX"]) == 'undefined' ? 150 : atts["originX"]);
-        originY = ( (typeof atts["originY"]) == 'undefined' ? 150 : atts["originY"]);
-        zoomX = ( (typeof atts["zoomX"]) == 'undefined' ? 1.0 : atts["zoomX"]);
-        zoomY = ( (typeof atts["zoomY"]) == 'undefined' ? 1.0 : atts["zoomY"]);
-        unitX = ( (typeof atts["unitX"]) == 'undefined' ? 50 : atts["unitX"]);
-        unitY = ( (typeof atts["unitY"]) == 'undefined' ? 50 : atts["unitY"]);
+        var originX = ( (typeof atts["originX"]) == 'undefined' ? 150 : atts["originX"]);
+        var originY = ( (typeof atts["originY"]) == 'undefined' ? 150 : atts["originY"]);
+        var zoomX = ( (typeof atts["zoomX"]) == 'undefined' ? 1.0 : atts["zoomX"]);
+        var zoomY = ( (typeof atts["zoomY"]) == 'undefined' ? 1.0 : atts["zoomY"]);
+        var unitX = ( (typeof atts["unitX"]) == 'undefined' ? 50 : atts["unitX"]);
+        var unitY = ( (typeof atts["unitY"]) == 'undefined' ? 50 : atts["unitY"]);
     
         if(this.rendererType == 'svg') {
             renderer = new JXG.SVGRenderer($(box));

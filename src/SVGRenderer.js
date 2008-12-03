@@ -316,6 +316,7 @@ JXG.SVGRenderer.prototype.removeGrid = function(board) {
 
 JXG.SVGRenderer.prototype.setObjectDash = function(el) {
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) { // Punkte haben keine dash-Eigenschaft
+        var node;
         if(el.type == JXG.OBJECT_TYPE_ANGLE) {
             node = el.rendNode2;
         }

@@ -401,7 +401,7 @@ JXG.Algebra.prototype.intersectCircleLine = function(circle, line) {
     var eB = line.point2;
     var fM = circle.midpoint;
 
-    s = eA.Dist(eB);
+    var s = eA.Dist(eB);
     if (s > 0) {
         var d0 = fM.Dist(eA);
         var d1 = fM.Dist(eB);
@@ -440,7 +440,7 @@ JXG.Algebra.prototype.intersectCircleLineOrg = function(circle, line) {
     var eB = line.point2;
     var fM = circle.midpoint;
 
-    s = eA.Dist(eB);
+    var s = eA.Dist(eB);
     if (s > 0) {
         var d0 = fM.Dist(eA);
         var d1 = fM.Dist(eB);
@@ -543,7 +543,7 @@ JXG.Algebra.prototype.intersectCircleCircle = function(circle1, circle2) {
         return [0]; // Kreise schneiden sich nicht, liegen ineinander
     } 
     else {
-        s = midpointDist;
+        var s = midpointDist;
         if (s != 0) {
             intersection[0] = 1; // es gibt einen Schnitt        
             var dx = circle2.midpoint.coords.usrCoords[1] - circle1.midpoint.coords.usrCoords[1];
@@ -982,7 +982,7 @@ JXG.Algebra.prototype.replaceNameById = function(term) {
  * Replace element ids in terms by element this.board.objects['id']
  **/
 JXG.Algebra.prototype.replaceIdByObj = function(term) {
-    expr = /(X|Y|L)\(([\w_]+)\)/g;  // Suche "X(gi23)" oder "Y(gi23A)" und wandle in objects['gi23'].X() um.
+    var expr = /(X|Y|L)\(([\w_]+)\)/g;  // Suche "X(gi23)" oder "Y(gi23A)" und wandle in objects['gi23'].X() um.
     term = term.replace(expr,"this.board.objects[\"$2\"].$1()");
 
     expr = /(Dist)\(([\w_]+),([\w_]+)\)/g;  // 

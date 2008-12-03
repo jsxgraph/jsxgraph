@@ -214,14 +214,14 @@ JXG.GeometryElement.prototype.addChild = function (obj) {
     this.addDescendants(obj);
     
     obj.ancestors[this.id] = this;
-    for(el in this.descendants) {
+    for(var el in this.descendants) {
         this.descendants[el].ancestors[this.id] = this;
-        for(el2 in this.ancestors) {
+        for(var el2 in this.ancestors) {
             this.descendants[el].ancestors[this.ancestors[el2].id] = this.ancestors[el2];
         }
     }
-    for(el in this.ancestors) {
-        for(el2 in this.descendants) {
+    for(var el in this.ancestors) {
+        for(var el2 in this.descendants) {
             this.ancestors[el].descendants[this.descendants[el2].id] = this.descendants[el2];
         }
     }

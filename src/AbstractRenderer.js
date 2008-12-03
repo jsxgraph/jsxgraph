@@ -1244,7 +1244,7 @@ JXG.AbstractRenderer.prototype.highlight = function(obj) {
         }
         else if(obj.type == JXG.OBJECT_TYPE_POLYGON) {
             this.setObjectFillColor(obj, obj.visProp['highlightFillColor'], obj.visProp['highlightFillOpacity']);
-            for(i=0; i<obj.borders.length; i++) {
+            for(var i=0; i<obj.borders.length; i++) {
                 this.setObjectStrokeColor(obj.borders[i], obj.borders[i].visProp['highlightStrokeColor'], obj.visProp['highlightStrokeOpacity']);
             }
         }    

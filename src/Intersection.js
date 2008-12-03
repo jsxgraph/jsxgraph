@@ -182,7 +182,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
          * notExistingParents array.
          */
         this.showChild = function(id) {        
-            for(el in this.board.objects) {        
+            for(var el in this.board.objects) {        
                 delete(this.board.objects[el].notExistingParents[id]);
                 if(this.board.objects[el].visProp['visible'] && Object.keys(this.board.objects[el].notExistingParents).length == 0) {
                     if(this.board.objects[el].type != JXG.OBJECT_TYPE_INTERSECTION) {

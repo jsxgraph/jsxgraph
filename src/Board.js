@@ -775,7 +775,7 @@ JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
     var dx = Event.pointerX(Evt) - cPos[0];
     var dy = Event.pointerY(Evt) - cPos[1];
     var elList = [];
-    for (el in this.objects) {
+    for (var el in this.objects) {
         if (this.objects[el].hasPoint(dx, dy)) {
             elList.push(this.objects[el]);
         }
@@ -2170,13 +2170,13 @@ JXG.Board.prototype.showDependencies = function() {
     var t = '<p>\n';
     for (el in this.objects) {
         var i = 0;
-        for (c in this.objects[el].childElements) {
+        for (var c in this.objects[el].childElements) {
             i++;
         }
         if (i>=0) {
             t += '<b>' + this.objects[el].id + ':</b> ';
         }
-        for (c in this.objects[el].childElements) {
+        for (var c in this.objects[el].childElements) {
             t += this.objects[el].childElements[c].id+'('+this.objects[el].childElements[c].name+')'+', ';
         }
         t += '<p>\n';

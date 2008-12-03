@@ -297,7 +297,7 @@ JXG.Gunzip = function (barray){
                     return X.b1;    /* If leaf node, return data */
                 }
                 X = X.jump;
-                for (i=0;i<currentTree.length;i++){
+                for (var i=0;i<currentTree.length;i++){
                     if (currentTree[i]===X){
                         xtreepos=i;
                         break;
@@ -464,7 +464,7 @@ JXG.Gunzip = function (barray){
                 return 1;
             }
             //document.write("<br>distanceTree");
-            for(a=0;a<distanceTree.length;a++){
+            for(var a=0;a<distanceTree.length;a++){
                 //document.write("<br>"+distanceTree[a].b0+" "+distanceTree[a].b1+" "+distanceTree[a].jump+" "+distanceTree[a].jumppos);
                 /*if (distanceTree[a].jumppos!=-1)
                     document.write(" "+distanceTree[a].jump.b0+" "+distanceTree[a].jump.b1);
@@ -475,7 +475,7 @@ JXG.Gunzip = function (barray){
             //read in literal and distance code lengths
             n = literalCodes + distCodes;
             i = 0;
-            z=-1;
+            var z=-1;
             //document.write("<br>n="+n+" bits: "+bits+"<br>");
             while(i < n) {
                 z++;
@@ -524,7 +524,7 @@ JXG.Gunzip = function (barray){
             }
             for (i=0; i<distanceTree.length; i++)
                 distanceTree[i]=new HufNode();
-            ll2 = new Array();
+            var ll2 = new Array();
             for (i=literalCodes; i <ll.length; i++){
                 ll2[i-literalCodes]=ll[i];
             }    

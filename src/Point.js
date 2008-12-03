@@ -512,6 +512,7 @@ JXG.Point.prototype.addTransform = function (el, transform) {
     if (this.transformations.length==0) { // There is only one baseElement possible
         this.baseElement = el;
     }
+    var list;
     if (JXG.IsArray(transform)) {
         list = transform;
     } else {
