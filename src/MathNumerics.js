@@ -228,6 +228,18 @@ JXG.Math.Numerics.splineDef = function(x, y) {
         throw "Error in JXG.Math.Numerics.splineDef: Input vector dimensions do not match.";
     
     var n = x.length;
+
+    var data = new Array();
+    var pair;
+    for(var i=0; i<n; i++) {
+        pair = {X: x[i], Y: y[i]};
+        data.push(pair);
+    }
+    data.sort(function (a,b) { return a.X - b.X; });
+    for(var i=0; i<n; i++) {
+        x[i] = data[i].X;
+        y[i] = data[i].Y;
+    }
     
     var dx = new Array();
     var delta = new Array();
