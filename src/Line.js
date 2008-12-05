@@ -89,6 +89,11 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type int
      */
     this.r = this.board.options.precision.hasPoint;
+
+    this.visProp['fillColor'] = this.board.options.line.fillColor;
+    this.visProp['highlightFillColor'] = this.board.options.line.highlightFillColor;
+    this.visProp['strokeColor'] = this.board.options.line.strokeColor;
+    this.visProp['highlightStrokeColor'] = this.board.options.line.highlightStrokeColor;    
     
     /**
      * Determines if a line is drawn on over the firstpoint.

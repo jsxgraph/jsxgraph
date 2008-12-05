@@ -53,8 +53,13 @@
         var c4 = board.createElement('circle',['O','P'], {draft:true});
 
         var i41 = board.createElement('point',[board.intersectionFunc(c3,c4,0)], {style:8,name:"Q"});       
-        var i42 = board.createElement('point',[board.intersectionFunc(c3,c4,1)], {style:8,name:"R"});       
-        
+        var i42 = board.createElement('point',[board.intersectionFunc(c3,c4,1)], {style:8,name:"R"}); 
+
+        board.options.grid.hasGrid = true;
+        board.options.point.fillColor = 'yellow';
+        board.options.line.strokeColor = "green";
+        board.options.point.strokeColor = "red"; 
+        board.options.useStandardOptions(board);
   /* ]]> */
   </script>
 </body>

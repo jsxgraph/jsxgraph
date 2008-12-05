@@ -94,6 +94,11 @@ JXG.Arc = function (board, p1, p2, p3, id, name) {
     this.visProp['firstArrow'] = this.board.options.arc.firstArrow;
     this.visProp['lastArrow'] = this.board.options.arc.lastArrow;
     
+    this.visProp['fillColor'] = this.board.options.arc.fillColor;
+    this.visProp['highlightFillColor'] = this.board.options.arc.highlightFillColor;
+    this.visProp['strokeColor'] = this.board.options.arc.strokeColor;
+    this.visProp['highlightStrokeColor'] = this.board.options.arc.highlightStrokeColor;     
+    
     /* Register arc at board. */
     this.id = this.board.addArc(this);
     

@@ -97,6 +97,11 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
     
     this.visProp['visible'] = true;
     
+    this.visProp['fillColor'] = this.board.options.circle.fillColor;
+    this.visProp['highlightFillColor'] = this.board.options.circle.highlightFillColor;
+    this.visProp['strokeColor'] = this.board.options.circle.strokeColor;
+    this.visProp['highlightStrokeColor'] = this.board.options.circle.highlightStrokeColor;       
+    
     /** Point on the circle
      * only set if method is 'twoPoints'
      * @type Point

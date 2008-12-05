@@ -1197,8 +1197,8 @@ JXG.AbstractRenderer.prototype.setDraft = function (obj) {
         return;
     }
 
-    var draftColor = '#565656'; //'#D3D3D3';
-    var draftOpacity = 0.8;
+    var draftColor = obj.board.options.elements.draft.color;
+    var draftOpacity = obj.board.options.elements.draft.opacity;
     if(obj.type == JXG.OBJECTT_TYPE_POLYGON) {
         this.setObjectFillColor(obj, draftColor, draftOpacity);
     }     
@@ -1210,7 +1210,7 @@ JXG.AbstractRenderer.prototype.setDraft = function (obj) {
             this.setObjectFillColor(obj, 'none', 0); 
         }
         this.setObjectStrokeColor(obj, draftColor, draftOpacity);    
-        this.setObjectStrokeWidth(obj, '1px');
+        this.setObjectStrokeWidth(obj, obj.board.options.elements.draft.strokeWidth);
     }      
 };
 

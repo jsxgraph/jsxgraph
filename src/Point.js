@@ -127,7 +127,9 @@ JXG.Point = function (board, coordinates, id, name, show) {
      */
     this.r = this.board.options.precision.hasPoint;
     this.visProp['fillColor'] = this.board.options.point.fillColor;
-    this.visProp['highlightFillColor'] = this.board.options.point.highlightFillColor;   
+    this.visProp['highlightFillColor'] = this.board.options.point.highlightFillColor;  
+    this.visProp['strokeColor'] = this.board.options.point.strokeColor;
+    this.visProp['highlightStrokeColor'] = this.board.options.point.highlightStrokeColor;        
 
     /**
      * True when this object is visible, false otherwise.

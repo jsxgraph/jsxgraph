@@ -201,7 +201,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
     this.visProp['fillOpacity'] = this.board.options.elements.color.fillOpacity;    
     this.visProp['highlightFillOpacity'] = this.board.options.elements.color.highlightFillOpacity;   
     
-    this.visProp['draft'] = this.board.options.elements.draft;    
+    this.visProp['draft'] = this.board.options.elements.draft.draft;    
 };
 
 /**

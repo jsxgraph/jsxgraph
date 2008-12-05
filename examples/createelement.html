@@ -48,8 +48,11 @@
         
         pol = board.createElement('polygon', [p4, p5, p6, p7, p8]);
 
-//		sec = board.createElement('sector', [p4, p5, p6]);
-        
+		sec = board.createElement('sector', [p4, p5, p6]);
+
+        board.options.grid.hasGrid = true;
+        board.options.sector.fillColor = 'yellow';
+        board.options.useStandardOptions(board);        
         
   /* ]]> */
   </script>
