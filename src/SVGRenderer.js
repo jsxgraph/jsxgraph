@@ -386,13 +386,13 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
             }                
         }     
         else if(el.type == JXG.OBJECT_TYPE_LINE) {
-            if(!el.visProp['straightFirst'] && el.visProp['firstArrow']) {
+            if(el.visProp['firstArrow']) {
                 el.rendNodeTriangleStart.setAttributeNS(null, 'stroke', c);
                 el.rendNodeTriangleStart.setAttributeNS(null, 'stroke-opacity', o);                
                 el.rendNodeTriangleStart.setAttributeNS(null, 'fill', c);
                 el.rendNodeTriangleStart.setAttributeNS(null, 'fill-opacity', o);                    
             }
-            if(!el.visProp['straightLast'] && el.visProp['lastArrow']) {
+            if(el.visProp['lastArrow']) {
                 el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke', c);
                 el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke-opacity', o);                
                 el.rendNodeTriangleEnd.setAttributeNS(null, 'fill', c);

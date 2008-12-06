@@ -217,9 +217,7 @@ JXG.Options.prototype.useBlackWhiteOptions = function(board) {
     this.polygon.fillColor = this.changeColorToBlackWhite(this.polygon.fillColor);
     this.polygon.highlightFillColor  = this.changeColorToBlackWhite(this.polygon.highlightFillColor);
     
-    alert(this.sector.fillColor);
     this.sector.fillColor = this.changeColorToBlackWhite(this.sector.fillColor);
-    alert(this.sector.fillColor);
     this.sector.highlightFillColor  = this.changeColorToBlackWhite(this.sector.highlightFillColor); 
 
     this.curve.strokeColor = this.changeColorToBlackWhite(this.curve.strokeColor);    
