@@ -51,10 +51,13 @@
 		sec = board.createElement('sector', [p4, p5, p6]);
 
         board.options.grid.hasGrid = true;
-        board.options.sector.fillColor = 'yellow';
-        board.options.useStandardOptions(board);        
-        
+        board.options.grid.gridColor = '#FF0000';
+        board.options.sector.fillColor = 'red';
+        board.options.useStandardOptions(board);  
   /* ]]> */
   </script>
+   <form>
+      <input type='button' value='SW-Modus' onclick="board.options.useBlackWhiteOptions(board);" />  
+   </form>
 </body>
 </html>

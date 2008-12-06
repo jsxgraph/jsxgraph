@@ -113,11 +113,12 @@ JXG.Options = function() {
 
     /* special text options */
     this.text = new Object();
-    this.text.strokeColor = '#000000';
+    this.text.strokeColor = '#000000';    
     
     /* special curve options */
     this.curve = new Object();
-    this.curve.strokeWidth = '1px';    
+    this.curve.strokeWidth = '1px';   
+    this.curve.strokeColor = this.elements.color.strokeColor;
     
     /* precision options */
     this.precision = new Object();
@@ -173,6 +174,9 @@ JXG.Options.prototype.useStandardOptions = function(board) {
             board.objects[el].visProp['fillOpacity'] = this.polygon.fillOpacity;
             board.objects[el].visProp['highlightFillOpacity'] = this.polygon.highlightFillOpacity;
         }
+        else if(board.objects[el].type == JXG.OBJECT_TYPE_CURVE) {
+            board.objects[el].visProp['strokeColor'] = this.curve.strokeColor;
+        }
     }
     for(var el in board.objects) {
         if(board.objects[el].type == JXG.OBJECT_TYPE_SECTOR) {
@@ -187,4 +191,80 @@ JXG.Options.prototype.useStandardOptions = function(board) {
         board.renderer.removeGrid(board);
         board.renderer.drawGrid(board);
     }    
+}
+
+JXG.Options.prototype.useBlackWhiteOptions = function(board) {
+    this.point.fillColor = this.changeColorToBlackWhite(this.point.fillColor);
+    this.point.highlightFillColor = this.changeColorToBlackWhite(this.point.highlightFillColor);
+    this.point.strokeColor = this.changeColorToBlackWhite(this.point.strokeColor);
+    this.point.highlightStrokeColor = this.changeColorToBlackWhite(this.point.highlightStrokeColor);
+
+    this.line.fillColor = this.changeColorToBlackWhite(this.line.fillColor);
+    this.line.highlightFillColor = this.changeColorToBlackWhite(this.line.highlightFillColor);
+    this.line.strokeColor = this.changeColorToBlackWhite(this.line.strokeColor);
+    this.line.highlightStrokeColor = this.changeColorToBlackWhite(this.line.highlightStrokeColor);
+    
+    this.circle.fillColor = this.changeColorToBlackWhite(this.circle.fillColor);
+    this.circle.highlightFillColor = this.changeColorToBlackWhite(this.circle.highlightFillColor);
+    this.circle.strokeColor = this.changeColorToBlackWhite(this.circle.strokeColor);
+    this.circle.highlightStrokeColor = this.changeColorToBlackWhite(this.circle.highlightStrokeColor);    
+
+    this.arc.fillColor = this.changeColorToBlackWhite(this.arc.fillColor);
+    this.arc.highlightFillColor = this.changeColorToBlackWhite(this.arc.highlightFillColor);
+    this.arc.strokeColor = this.changeColorToBlackWhite(this.arc.strokeColor);
+    this.arc.highlightStrokeColor = this.changeColorToBlackWhite(this.arc.highlightStrokeColor);
+    
+    this.polygon.fillColor = this.changeColorToBlackWhite(this.polygon.fillColor);
+    this.polygon.highlightFillColor  = this.changeColorToBlackWhite(this.polygon.highlightFillColor);
+    
+    alert(this.sector.fillColor);
+    this.sector.fillColor = this.changeColorToBlackWhite(this.sector.fillColor);
+    alert(this.sector.fillColor);
+    this.sector.highlightFillColor  = this.changeColorToBlackWhite(this.sector.highlightFillColor); 
+
+    this.curve.strokeColor = this.changeColorToBlackWhite(this.curve.strokeColor);    
+
+    this.grid.gridColor = this.changeColorToBlackWhite(this.grid.gridColor);
+
+    this.useStandardOptions(board);
+}
+
+JXG.Options.prototype.changeColorToBlackWhite = function(color) {
+    if(color == 'blue') {
+        color = '#0000FF';
+    }
+    else if(color == 'red') {
+        color = '#FF0000';
+    }
+    else if(color == 'lime') {
+        color = '#00FF00';
+    }
+    else if(color == 'black') {
+        color = '#000000';
+    }  
+    else if(color == 'white') {
+        color = '#FFFFFF';
+    }
+    else if(color == 'fuchsia') {
+        color = '#FF00FF';
+    }
+    else if(color == 'aqua') {
+        color = '#00FFFF';
+    }
+    else if(color == 'green') {
+        color = '#003300';
+    }
+    else if(color == 'yellow') {
+        color = '#FF0000';
+    }
+    if(color[0] == '#') {
+        var r = parseInt((color.substr(1,2)).toUpperCase(),16);
+        var g = parseInt((color.substr(3,2)).toUpperCase(),16);
+        var b = parseInt((color.substr(5,2)).toUpperCase(),16);      
+        var x = 0.3*r + 0.59*g + 0.11*b;
+        var HexChars="0123456789ABCDEF";              
+        var tmp = HexChars.charAt((x>>4)&0xf)+HexChars.charAt(x&0xf);
+        color = "#" + tmp + "" + tmp + "" + tmp;       
+    }
+    return color;
 }
