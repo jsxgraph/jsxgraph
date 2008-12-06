@@ -25,17 +25,14 @@
         p3 = board.createElement('point', [11, 8], {style:3,name:"P_{3}"});
         p4 = board.createElement('point', [13, 7], {style:3, name:"P_{4}"});
 
-        dataArr = [[p1.X(),
-                    p2.X(),
-                    p3.X(),
-                    p4.X()],
-                   [p1.Y(),
-                    p2.Y(),
-                    p3.Y(),
-                    p4.Y()]];
+//        dataArr = [[p1.X(), p2.X(), p3.X(), p4.X()],
+//                   [p1.Y(), p2.Y(), p3.Y(), p4.Y()]];
+        var dataArr = [p1, p2, p3, p4];
+        a = board.createElement('spline', dataArr);
         
-        a = board.createElement('chart', dataArr, {chartStyle:'spline',strokeWidth:4,strokeColor:'#0000ff'});
+//        a = board.createElement('chart', dataArr, {chartStyle:'spline',strokeWidth:4,strokeColor:'#0000ff'});
 
+/*
         m1 = board.createElement('midpoint', [p1, p2]);
         l1 = board.createElement('line', [m1, p3]);
         m2 = board.createElement('midpoint', [p1, p3]);
@@ -46,6 +43,7 @@
         t = board.createElement('triangle', [p1, p2, p3]);
 
         c = board.createElement('centroid', [p1, p2, p3], {name:'C_{1}'});
+*/
 
        
   /* ]]> */

@@ -428,8 +428,45 @@ JXG.Curve.prototype.notifyParents = function (contentStr) {
     this.board.algebra.findDependencies(this,contentStr);
 };
 
-JXG.createCurve = function(board, parentArr, atts) {
-    return new JXG.Curve(board, parentArr, atts['id'], atts['name']);
+JXG.createCurve = function(board, parents, attributes) {
+    return new JXG.Curve(board, parents, attributes['id'], attributes['name']);
 };
 
 JXG.JSXGraph.registerElement('curve', JXG.createCurve);
+
+/**
+ * Create a dynamic spline interpolated curve given by sample points p_1 to p_n.
+ * @param {JXG.Board} board Reference to the board the spline is drawn on.
+ * @param {Array} parents Array of points the spline interpolates
+ * @param {Object} attributes Define color, width, ... of the spline
+ * @type JXG.Curve
+ * @return Returns reference to an object of type JXG.Curve.
+ */
+JXG.createSpline = function(board, parents, attributes) {
+    // This is far away from being effective
+    var F = function (t) {
+        var x = new Array();
+        var y = new Array();
+        
+        for(var i=0; i<parents.length; i++) {
+            if(!JXG.IsPoint(parents[i]))
+                throw "JXG.createSpline: Parents has to be an array of JXG.Point."
+            
+            x.push(parents[i].X());
+            y.push(parents[i].Y());
+        }
+        
+        // The array D has only to be calculated when the position of one or more sample point
+        // changes. otherwise D is always the same for all points on the spline.
+        var D = JXG.Math.Numerics.splineDef(x, y);
+        return JXG.Math.Numerics.splineEval(t, x, y, D);
+    }
+    
+    return new JXG.Curve(board, ["x", F], attributes);
+}
+
+/**
+ * Register the element type spline at JSXGraph
+ * @private
+ */
+JXG.JSXGraph.registerElement('spline', JXG.createSpline);

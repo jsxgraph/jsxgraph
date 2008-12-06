@@ -312,7 +312,8 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
     for(var i=0; i<l; i++) {
         // is x0 in defining interval?
         if( (x0[i] < x[0]) || (x[i] > x[n-1]))
-            throw "Error in JXG.Math.Numerics.splineEval: Evaluation point outside spline interval.";
+            return 'NaN';
+//            throw "Error in JXG.Math.Numerics.splineEval: Evaluation point outside spline interval.";
         
         // determine part of spline in which x0 lies
         var j;
