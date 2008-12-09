@@ -715,8 +715,8 @@ JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString) {
 
 JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
     // Loop unrolling
-    var h = 10*el.board.canvasHeight;
-    var w = 10*el.board.canvasWidth;
+    var h = 2*el.board.canvasHeight;
+    var w = 2*el.board.canvasWidth;
     var pStr = '';
     var scr;
     var i = 0;
