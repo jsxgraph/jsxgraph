@@ -255,7 +255,7 @@ JXG.Curve.prototype.updateCurve = function () {
         if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
             this.numberPoints = this.board.canvasWidth*1.0;
         } else {
-            this.numberPoints = this.board.canvasWidth*0.25;
+            this.numberPoints = this.board.canvasWidth*0.50;
         }
     }
     this.allocatePoints();  // It is possible, that the array length has increased.

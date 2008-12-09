@@ -627,7 +627,9 @@ JXG.VMLRenderer.prototype.createPrimitive = function(type,id) {
     var node;
     if (type=='circle' || type=='ellipse' ) {
         node = this.container.ownerDocument.createElement('v:oval');
-    } else if (type=='polygon' || type=='path' ) {
+    } else if (type=='polygon') {
+        node = this.container.ownerDocument.createElement('v:polyline');
+    } else if (type=='path') {
         node = this.container.ownerDocument.createElement('v:polyline');
     } else {
         node = this.container.ownerDocument.createElement('v:'+type);
@@ -713,6 +715,8 @@ JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString) {
 
 JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
     // Loop unrolling
+    var h = 10*el.board.canvasHeight;
+    var w = 10*el.board.canvasWidth;
     var pStr = '';
     var scr;
     var i = 0;
@@ -720,21 +724,21 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
     if (n>0) {
         do 
         {
-            scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
+            scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
         }
         while ((--n)>0); // n must be greater than 0 here
     }
     n = parseInt(el.numberPoints/8);
     if (n>0) { do 
     {
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
+        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
+        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
+        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
+        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
+        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
+        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
+        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
+        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
     }
     while ((--n)>0);}
     return pStr;

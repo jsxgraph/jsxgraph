@@ -696,19 +696,17 @@ JXG.SVGRenderer.prototype.updatePathPrimitive = function(node,pointString) {
 
 JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     if (el.numberPoints<=0) { return ''; }
-    var j = 0;
-    var screenCoords = el.points[j].scrCoords;
-    while ((isNaN(screenCoords[1]) || isNaN(screenCoords[2])) && (j<el.numberPoints-1)) {
-        j++;
-        screenCoords = el.points[j].scrCoords;
-    }
-    if (j>=el.numberPoints) { return ''; }
-    var pStr = 'M ' + screenCoords[1] + ' ' + screenCoords[2];
-
-    for (var i=j+1; i<el.numberPoints; i++) {
-        var screenCoords = el.points[i].scrCoords;
-        if (!isNaN(screenCoords[1]) && !isNaN(screenCoords[2])) {
-            pStr += ' L '+ screenCoords[1] + ' ' + screenCoords[2];
+    var nextSymb = ' M ';
+    var pStr = '';
+    var h = 10*el.board.canvasHeight;
+    var w = 10*el.board.canvasWidth;
+    for (var i=0; i<el.numberPoints; i++) {
+        var scr = el.points[i].scrCoords;
+        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || Math.abs(scr[2])>h) {
+            nextSymb = ' M ';
+        } else {
+            pStr += nextSymb + scr[1] + ' ' + scr[2];
+            nextSymb = ' L ';
         }
     }
 //$('debug').innerHTML = pStr;

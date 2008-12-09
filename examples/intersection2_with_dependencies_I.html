@@ -51,6 +51,7 @@
         var c4 = board.createElement('circle',['O','P'], {draft:true});
 
         var i4 = new JXG.Intersection(board,'int4',c3,c4,'','','Q','R');    
+        i4.p1.setProperty({style:8});
 
         board.options.grid.hasGrid = true;
         board.options.point.fillColor = 'yellow';
