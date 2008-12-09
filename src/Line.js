@@ -505,6 +505,12 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     this.traces[copy.id] = $(copy.id);
 
     delete copy;
+    
+/*
+    var id = this.id + 'T' + this.numTraces;
+    this.traces[id] = this.board.renderer.cloneSubTree(this,id,'lines');
+    this.numTraces++;
+*/    
 };
 
 JXG.Line.prototype.addTransform = function (transform) {

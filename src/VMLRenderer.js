@@ -800,3 +800,11 @@ JXG.VMLRenderer.prototype.setPropertyPrimitive = function(node,key,val) {
         }
     }
 };
+
+/*
+JXG.VMLRenderer.prototype.cloneSubTree = function(el,id,type) {
+    var node = el.rendNode.cloneNode(true);
+    node.setAttribute('id', id);
+    this.appendChildPrimitive(node,type);
+};
+*/

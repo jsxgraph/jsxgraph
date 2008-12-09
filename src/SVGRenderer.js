@@ -739,3 +739,11 @@ JXG.SVGRenderer.prototype.setPropertyPrimitive = function(node,key,val) {
     node.setAttributeNS(null, key, val);
 };
 
+/*
+JXG.SVGRenderer.prototype.cloneSubTree = function(el,id,type) {
+    var n = el.rendNode.cloneNode(true);
+    n.setAttribute('id', id);
+    this.appendChildPrimitive(n,type);
+    return n;
+};
+*/

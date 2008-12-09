@@ -1357,3 +1357,7 @@ JXG.AbstractRenderer.prototype.getPointSize = function(style) {
     }   
     return size;
 };
+
+/*
+JXG.AbstractRenderer.prototype.cloneSubTree = function(){};
+*/

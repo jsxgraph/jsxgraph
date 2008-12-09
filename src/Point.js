@@ -679,6 +679,9 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
     }
 
     delete copy;
+/*   
+    this.board.renderer.cloneSubTree(this);
+*/    
 };
 
 
