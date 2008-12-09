@@ -698,8 +698,8 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     if (el.numberPoints<=0) { return ''; }
     var nextSymb = ' M ';
     var pStr = '';
-    var h = 10*el.board.canvasHeight;
-    var w = 10*el.board.canvasWidth;
+    var h = 2*el.board.canvasHeight;
+    var w = 2*el.board.canvasWidth;
     for (var i=0; i<el.numberPoints; i++) {
         var scr = el.points[i].scrCoords;
         if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || Math.abs(scr[2])>h) {
