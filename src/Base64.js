@@ -136,12 +136,11 @@ var Base64 = {
     _utf8_decode : function (utftext) {
         var string = "";
         var i = 0;
-        var c = c1 = c2 = 0;
+        var c, c2, c3;
+        c = c2 = c3 = 0;
 
         while ( i < utftext.length ) {
-
             c = utftext.charCodeAt(i);
-
             if (c < 128) {
                 string += String.fromCharCode(c);
                 i++;
@@ -157,9 +156,7 @@ var Base64 = {
                 string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
                 i += 3;
             }
-
         }
-
         return string;
     },
     
