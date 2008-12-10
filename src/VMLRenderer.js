@@ -563,11 +563,11 @@ JXG.VMLRenderer.prototype.remove = function(node) {
 }
 
 JXG.VMLRenderer.prototype.suspendRedraw = function() {
-    //this.container.style.display='none';
+    this.container.style.display='none';
 };
 
 JXG.VMLRenderer.prototype.unsuspendRedraw = function() {
-    //this.container.style.display='';
+    this.container.style.display='';
 };
 
 JXG.VMLRenderer.prototype.setStrokeProp = function(node,visProp) {

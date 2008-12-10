@@ -529,15 +529,16 @@ JXG.Board.prototype.generateId = function () {
  * @return Array of coordinates relative the boards container top left corner.
  */
 JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
-    var cPos = Element.cumulativeOffset($(this.container));
+    var pCont = $(this.container);
+    var cPos = Element.cumulativeOffset(pCont);
 
     // add border width
-    cPos[0] += parseInt($(this.container).getStyle('borderLeftWidth'));
-    cPos[1] += parseInt($(this.container).getStyle('borderTopWidth'));
+    cPos[0] += parseInt(pCont.getStyle('borderLeftWidth'));
+    cPos[1] += parseInt(pCont.getStyle('borderTopWidth'));
 
     // add padding
-    cPos[0] += parseInt($(this.container).getStyle('paddingLeft'));
-    cPos[1] += parseInt($(this.container).getStyle('paddingTop'));
+    cPos[0] += parseInt(pCont.getStyle('paddingLeft'));
+    cPos[1] += parseInt(pCont.getStyle('paddingTop'));
 
     return cPos;
 };

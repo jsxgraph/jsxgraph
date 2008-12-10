@@ -637,6 +637,7 @@ JXG.createAxis = function(board, parents, attributes) {
             attributes.strokeWidth = 1;
 
         var el = board.createElement('line', [point1, point2], attributes);
+        el.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
         throw ("Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
