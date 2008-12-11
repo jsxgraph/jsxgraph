@@ -635,7 +635,7 @@ JXG.VMLRenderer.prototype.createPrimitive = function(type,id) {
     } else if (type=='polygon') {
         node = this.container.ownerDocument.createElement('v:shape');
     } else if (type=='path') {
-        node = this.container.ownerDocument.createElement('v:polyline');
+        node = this.container.ownerDocument.createElement('v:shape');
     } else {
         node = this.container.ownerDocument.createElement('v:'+type);
     }
@@ -714,11 +714,40 @@ JXG.VMLRenderer.prototype.updateEllipsePrimitive = function(node,x,y,rx,ry) {
     node.style.height = (ry*2)+'px';
 };
 
-JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString) {
-    node.points.value = pointString;
+JXG.VMLRenderer.prototype.updatePathPrimitive = function(el,pointString) {
+    var node = el.rendNode;
+    var x = el.board.canvasWidth;
+    var y = el.board.canvasHeight;
+    node.style.width = x;
+    node.style.height = y;
+    node.setAttribute('coordsize', x+','+y);
+    
+    node.setAttribute('path',pointString.join(""));
+    //node.points.value = pointString;
 };
 
 JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
+    if (el.numberPoints<=0) { return ''; }
+    var nextSymb = ' m ';
+    var pStr = [];
+    var h = 2*el.board.canvasHeight;
+    var w = 2*el.board.canvasWidth;
+    
+    for (var i=0; i<el.numberPoints; i++) {
+        var scr = el.points[i].scrCoords;
+        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || Math.abs(scr[2])>h) {
+            nextSymb = ' m ';
+        } else {
+            pStr.push(nextSymb + scr[1] + ', ' + scr[2]);
+            nextSymb = ' l ';
+        }
+    }
+    pStr.push(' e');
+//$('debug').innerHTML = pStr;
+    return pStr;
+};
+
+JXG.VMLRenderer.prototype.updatePathStringPrimitiveOld = function(el) {
     // Loop unrolling
     var h = 2*el.board.canvasHeight;
     var w = 2*el.board.canvasWidth;
@@ -791,20 +820,21 @@ JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,el) {
     node.style.height = y;
     node.setAttribute('coordsize', x+','+y);
      
-    var pStr = "m ";
+    var pStr = [];
+    pStr.push("m ");
     var screenCoords = el.vertices[0].coords.scrCoords;
-    pStr = pStr + screenCoords[1] + "," + screenCoords[2];    
-    pStr = pStr + " l ";
+    pStr.push(screenCoords[1] + "," + screenCoords[2]);    
+    pStr.push(" l ");
     for(var i=1; i<el.vertices.length-1; i++) {
         var screenCoords = el.vertices[i].coords.scrCoords;
-        pStr = pStr + screenCoords[1] + "," + screenCoords[2];
+        pStr.push(screenCoords[1] + "," + screenCoords[2]);
         if(i<el.vertices.length-2) {
-            pStr += ", ";
+            pStr.push(", ");
         }
     }
-    pStr += " x e";
+    pStr.push(" x e");
 
-    node.setAttribute('path',pStr);
+    node.setAttribute('path',pStr.join(""));
 };
 
 JXG.VMLRenderer.prototype.appendChildPrimitive = function(node,level) {

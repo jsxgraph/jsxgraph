@@ -264,7 +264,7 @@ JXG.AbstractRenderer.prototype.updateCurve = function(el) {
             this.setDraft(el);
         }
     }
-    this.updatePathPrimitive(el.rendNode,this.updatePathStringPrimitive(el));
+    this.updatePathPrimitive(el,this.updatePathStringPrimitive(el));
 };
 
 /**

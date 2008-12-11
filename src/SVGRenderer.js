@@ -688,7 +688,8 @@ JXG.SVGRenderer.prototype.updateRectPrimitive = function(node,x,y,w,h) {
     node.setAttributeNS(null, 'height', (h));
 };
 
-JXG.SVGRenderer.prototype.updatePathPrimitive = function(node,pointString) {
+JXG.SVGRenderer.prototype.updatePathPrimitive = function(el ,pointString) {
+    var node = el.rendNode;
     node.setAttributeNS(null, 'd', pointString);
     node.setAttributeNS(null, 'stroke-linecap', 'round');
     node.setAttributeNS(null, 'stroke-linejoin', 'round');
