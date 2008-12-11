@@ -20,15 +20,15 @@
         bx = board.createElement('axis', [[0,0], [0,1]], {});
         by = board.createElement('axis', [[0,0], [1,0]], {});
 
-		p1 = board.createElement('point', [1, 1], {strokeColor: '#ff0000'});
-		p2 = board.createElement('point', [2, 0], {fixed: true});
-		p3 = board.createElement('point', [1, 2]);
-		
-		l1 = board.createElement('line', [p1, p2]);
-		
-		c1 = board.createElement('circle', [p1, 3.0]);
-		
-		curve = board.createElement('curve', [
+        p1 = board.createElement('point', [1, 1], {strokeColor: '#ff0000'});
+        p2 = board.createElement('point', [2, 0], {fixed: true});
+        p3 = board.createElement('point', [1, 2]);
+        
+        l1 = board.createElement('line', [p1, p2]);
+        
+        c1 = board.createElement('circle', [p1, 3.0]);
+        
+        curve = board.createElement('curve', [
             function(t){ return t; },
             function(t){ return (Math.sin(t)); },
             "t", -Math.PI*2, Math.PI*2]);
@@ -47,12 +47,17 @@
         tr = board.createElement('triangle', [p7, p9, p10]);
         
         pol = board.createElement('polygon', [p4, p5, p6, p7, p8]);
+        pol.borders[0].hideElement();
+        pol.borders[1].hideElement();
+        pol.borders[2].hideElement();
+        pol.borders[3].hideElement();
 
-		sec = board.createElement('sector', [p4, p5, p6]);
+        sec = board.createElement('sector', [p4, p5, p6]);
 
         board.options.grid.hasGrid = true;
         board.options.grid.gridColor = '#FF0000';
         board.options.sector.fillColor = 'red';
+        board.options.polygon.fillColor = 'blue';
         board.options.useStandardOptions(board);  
   /* ]]> */
   </script>

@@ -161,9 +161,14 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     nodeStroke.setAttribute('dashstyle', this.dashArray[tmp]);    
     node.appendChild(nodeStroke);    
    
-    var node2 = this.createPrimitive('shape',el.id+'_fill');    
-    node2.setAttribute('filled', 'true');
-    node2.setAttribute('fillcolor', el.visProp['fillColor']); 
+    var node2 = this.createPrimitive('shape',el.id+'_fill');
+    if(el.visProp['fillColor'] == 'none') {
+        node2.setAttribute('filled', 'false');
+    }
+    else {
+        node2.setAttribute('filled', 'true');
+        node2.setAttribute('fillcolor', el.visProp['fillColor']); 
+    }
     node2.setAttribute('stroked', 'false');
 
     var x = Math.round(radius * el.board.unitX * el.board.zoomX); // Breite des umgebenden Rechtecks?
@@ -628,7 +633,7 @@ JXG.VMLRenderer.prototype.createPrimitive = function(type,id) {
     if (type=='circle' || type=='ellipse' ) {
         node = this.container.ownerDocument.createElement('v:oval');
     } else if (type=='polygon') {
-        node = this.container.ownerDocument.createElement('v:polyline');
+        node = this.container.ownerDocument.createElement('v:shape');
     } else if (type=='path') {
         node = this.container.ownerDocument.createElement('v:polyline');
     } else {
@@ -756,8 +761,48 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitiveOld = function(el) {
     //return el.points.slice(0,el.numberPoints).map(function(p){return p.scrCoords[1]+','+p.scrCoords[2];}).join(' ');
 };
 
-JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,pointString) {
-    node.points.value = pointString;
+JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,el) {
+    node.setAttribute('stroked', 'false');
+    var minX = el.vertices[0].coords.scrCoords[1];
+    var maxX = el.vertices[0].coords.scrCoords[1];
+    var minY = el.vertices[0].coords.scrCoords[2];
+    var maxY = el.vertices[0].coords.scrCoords[2];
+    for(var i=1; i<el.vertices.length-1; i++) {
+        var screenCoords = el.vertices[i].coords.scrCoords;
+        if(screenCoords[1] < minX) {
+            minX = screenCoords[1];
+        }
+        if(screenCoords[1] > maxX) {
+            maxX = screenCoords[1];
+        }
+        if(screenCoords[2] < minY) {
+            minY = screenCoords[2];
+        }
+        if(screenCoords[2] > maxY) {
+            maxY = screenCoords[2];
+        }
+    }
+
+    var x = Math.round(maxX-minX); // Breite des umgebenden Rechtecks?
+    var y = Math.round(maxY-minY); // Hoehe des umgebenden Rechtecks?
+    node.style.width = x;
+    node.style.height = y;
+    node.setAttribute('coordsize', x+','+y);
+     
+    var pStr = "m ";
+    var screenCoords = el.vertices[0].coords.scrCoords;
+    pStr = pStr + screenCoords[1] + "," + screenCoords[2];    
+    pStr = pStr + " l ";
+    for(var i=1; i<el.vertices.length-1; i++) {
+        var screenCoords = el.vertices[i].coords.scrCoords;
+        pStr = pStr + screenCoords[1] + "," + screenCoords[2];
+        if(i<el.vertices.length-2) {
+            pStr += ", ";
+        }
+    }
+    pStr += " x e";
+
+    node.setAttribute('path',pStr);
 };
 
 JXG.VMLRenderer.prototype.appendChildPrimitive = function(node,level) {

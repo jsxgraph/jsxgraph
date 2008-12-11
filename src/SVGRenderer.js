@@ -713,8 +713,15 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     return pStr;
 };
 
-JXG.SVGRenderer.prototype.updatePolygonePrimitive = function(node,pointString) {
-    node.setAttributeNS(null, 'points', pointString);
+JXG.SVGRenderer.prototype.updatePolygonePrimitive = function(node, el) {
+    node.setAttributeNS(null, 'stroke', 'none');
+    var pStr = "";
+    for(var i=0; i<el.vertices.length-1; i++) {
+        var screenCoords = el.vertices[i].coords.scrCoords;
+        pStr = pStr + screenCoords[1] + "," + screenCoords[2];
+        if(i<el.vertices.length-2) { pStr += " "; }
+    }
+    node.setAttributeNS(null, 'points', pStr);
 };
 
 JXG.SVGRenderer.prototype.appendChildPrimitive = function(node,level) {

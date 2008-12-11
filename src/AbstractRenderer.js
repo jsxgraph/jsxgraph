@@ -609,9 +609,9 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
 JXG.AbstractRenderer.prototype.drawPolygon = function(el) { 
     var node = this.createPrimitive('polygon',el.id);
     el.visProp['fillOpacity'] = 0.3;
-    el.visProp['strokeColor'] = 'none';
+    //el.visProp['strokeColor'] = 'none';
     this.setFillProp(node,el.visProp);
-    this.setStrokeProp(node,el.visProp);
+    //this.setStrokeProp(node,el.visProp);
     this.appendChildPrimitive(node,'polygone');
     el.rendNode = node;
     this.setDraft(el);
@@ -628,19 +628,13 @@ JXG.AbstractRenderer.prototype.updatePolygon = function(el) {
     if (this.enhancedRendering) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-            this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
             this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
         } else {
             this.setDraft(el);
         }
     }
-    var pStr = "";
-    for(var i=0; i<el.vertices.length-1; i++) {
-        var screenCoords = el.vertices[i].coords.scrCoords;
-        pStr = pStr + screenCoords[1] + "," + screenCoords[2];
-        if(i<el.vertices.length-2) { pStr += " "; }
-    }
-    this.updatePolygonePrimitive(el.rendNode,pStr);
+
+    this.updatePolygonePrimitive(el.rendNode,el);
 };
 
 /**
