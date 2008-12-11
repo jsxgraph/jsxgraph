@@ -278,8 +278,8 @@ JXG.Math.Numerics.splineDef = function(x, y) {
     // natural cubic spline
     F[0] = 0;
     F[n-1] = 0;
-
-    return new JXG.Math.Vector(F);
+    return F;
+    //return new JXG.Math.Vector(F);
 };
 
 /**
@@ -329,12 +329,12 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
         var b = (y[j+1]-y[j])/(x[j+1]-x[j]) - (x[j+1]-x[j])/6 * (F[j+1]+2*F[j]);
         var c = F[j]/2;
         var d = (F[j+1]-F[j])/(6*(x[j+1]-x[j]));
-        
         // evaluate x0[i]
         var x_ = x0[i]-x[j];
-        y0.push(a + b*x_ + c*x_*x_ + d*x_*x_*x_);
+        //y0.push(a + b*x_ + c*x_*x_ + d*x_*x_*x_);
+        y0.push(a + (b + (c+ d*x_)*x_)*x_);
     }
-    
+
     if(asArray)
         return y0;
     else

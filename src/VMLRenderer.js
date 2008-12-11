@@ -750,14 +750,16 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
 };
 
 JXG.VMLRenderer.prototype.updatePathStringPrimitiveOld = function(el) {
-    var pointString = '';
+    var pStr = '';
+    var t = '';
     for (var i=0; i<el.numberPoints; i++) {
         var scr = el.points[i].scrCoords;
+            t += scr[1] + ',' + scr[2] + ' ';
         if (!isNaN(scr[1]) && !isNaN(scr[2])) {
-            pointString += scr[1] + ',' + scr[2] + ' ';
+            pStr += scr[1] + ',' + scr[2] + ' ';
         }
     }
-    return pointString;
+    return pStr;
     //return el.points.slice(0,el.numberPoints).map(function(p){return p.scrCoords[1]+','+p.scrCoords[2];}).join(' ');
 };
 

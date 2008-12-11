@@ -41,10 +41,13 @@ JXG.createSlider = function(board, parentArr, atts) {
     var ticks  = 10;
     l1.ticksDelta = sw/ticks;
     l1.enableTicks();
+    p1.needRegularUpdate = false;
+    p2.needRegularUpdate = false;
+    l1.needRegularUpdate = false;
     var p3 = board.createElement('point', [sx + start, sy], {slideObject:l1,style:6,strokeColor:'#0080c0',fillColor:'#0080c0',name:''});
     var p4 = board.createElement('point', [function() {return ((p3.X() - sx)/sw * (smax - smin)+smin);}, function() {return (sy  + 1);}], {visible:false,name:''});
     var l2 = board.createElement('line', [p1,p3], {straightFirst:false,straightLast:false,strokewidth:3,strokeColor:'#0080c0',name:''}); 
-    var t = board.createElement('text', [sx+sw+0.25, sy, function(){return board.round(p4.X(),2);}],{name:''}); 
+    var t = board.createElement('text', [(sx+sw)*1.05, sy, function(){return board.round(p4.X(),2);}],{name:''}); 
     return p4;
 };    
 
