@@ -44,8 +44,8 @@ If it is set to level=9 the curve is defined by
         var RIGHT = 3;
         var pos = [0,0];
         var step = 1;
-        var pointsX = [];
-        var pointsY = [];
+        var pointsX = [0];
+        var pointsY = [0];
 
         move = function(dir)  {
                 switch (dir) {
@@ -132,7 +132,7 @@ If it is set to level=9 the curve is defined by
             }
         };
 
-        var curve = b.createElement('curve',[pointsX,pointsY],{curveType:'plot'/*,fillColor:'#ff4400'*/});
+        var curve = b.createElement('curve',[pointsX,pointsY],{curveType:'plot'});
         var s = b.createElement('slider', [0.75,-110,50,1.5,7,1], {name:'S'});
 
         function doIt(){

@@ -778,7 +778,7 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitiveOld = function(el) {
     return pStr;
 };
 
-JXG.VMLRenderer.prototype.updatePathStringPrimitiveOld = function(el) {
+JXG.VMLRenderer.prototype.updatePathStringPrimitiveOld2 = function(el) {
     var pStr = '';
     var t = '';
     for (var i=0; i<el.numberPoints; i++) {
