@@ -43,6 +43,7 @@
 
 
 JXG.Gunzip = function (barray){
+    var outputArr = [];
     var output = "";
     
     var bitReverse = [
@@ -163,7 +164,8 @@ JXG.Gunzip = function (barray){
         SIZE++;
         //CRC=updcrc(a,crc);
         buf32k[bIdx++] = a;
-        output+=String.fromCharCode(a);
+        outputArr.push(String.fromCharCode(a));
+        //output+=String.fromCharCode(a);
         if(bIdx==0x8000){
             //document.write('ADDBUFFER:'+buf32k);
             bIdx=0;
@@ -464,12 +466,12 @@ JXG.Gunzip = function (barray){
                 return 1;
             }
             //document.write("<br>distanceTree");
-            for(var a=0;a<distanceTree.length;a++){
+            //AW: for(var a=0;a<distanceTree.length;a++){
                 //document.write("<br>"+distanceTree[a].b0+" "+distanceTree[a].b1+" "+distanceTree[a].jump+" "+distanceTree[a].jumppos);
                 /*if (distanceTree[a].jumppos!=-1)
                     document.write(" "+distanceTree[a].jump.b0+" "+distanceTree[a].jump.b1);
                 */
-            }
+            //}
             //document.write('<BR>tree created');
     
             //read in literal and distance code lengths
@@ -580,7 +582,7 @@ JXG.Gunzip = function (barray){
         }*/
         readByte(2); /*throw away the first two bytes*/
         DeflateLoop();
-        return(output);
+        return(outputArr.join(''));
 
     };
 };
