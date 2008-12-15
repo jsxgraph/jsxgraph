@@ -856,6 +856,7 @@ JXG.AbstractRenderer.prototype.drawLabel = function(el) {
     node.style.fontSize = el.board.fontSize + 'px';
     node.style.color = el.color;
     node.className = 'JXGText';
+    node.style.zIndex = '10';   
     node.setAttribute('id', el.id);
     node.innerHTML = el.nameHTML;
     this.container.appendChild(node);
