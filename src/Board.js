@@ -630,7 +630,8 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     //this.drag_dx = dx;// - this.dragObjCoords[1];
     //this.drag_dy = dy;// - this.dragObjCoords[2];
     
-    Event.observe(this.container, 'mouseup', this.onMouseUpListener);
+//    Event.observe(this.container, 'mouseup', this.onMouseUpListener);
+    Event.observe(document, 'mouseup', this.onMouseUpListener);
 };
 
 /**
