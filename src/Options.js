@@ -230,42 +230,17 @@ JXG.Options.prototype.useBlackWhiteOptions = function(board) {
     this.useStandardOptions(board);
 }
 
-JXG.Options.prototype.changeColorToBlackWhite = function(color,x) {
-    if(color == 'blue') {
-        color = '#0000FF';
+JXG.Options.prototype.changeColorToBlackWhite = function(color) {
+    if(color == 'none') {
+        return color;
     }
-    else if(color == 'red') {
-        color = '#FF0000';
-    }
-    else if(color == 'lime') {
-        color = '#00FF00';
-    }
-    else if(color == 'black') {
-        color = '#000000';
-    }  
-    else if(color == 'white') {
-        color = '#FFFFFF';
-    }
-    else if(color == 'fuchsia') {
-        color = '#FF00FF';
-    }
-    else if(color == 'aqua') {
-        color = '#00FFFF';
-    }
-    else if(color == 'green') {
-        color = '#003300';
-    }
-    else if(color == 'yellow') {
-        color = '#FF0000';
-    }   
-    if(color.charAt(0) == '#') {
-        var r = parseInt((color.substr(1,2)).toUpperCase(),16);
-        var g = parseInt((color.substr(3,2)).toUpperCase(),16);
-        var b = parseInt((color.substr(5,2)).toUpperCase(),16);      
-        var x = 0.3*r + 0.59*g + 0.11*b;
-        var HexChars="0123456789ABCDEF";              
-        var tmp = HexChars.charAt((x>>4)&0xf)+HexChars.charAt(x&0xf);
-        color = "#" + tmp + "" + tmp + "" + tmp;        
-    }
+    var col = new JXG.RGBColor(color);
+    var r = col.r;
+    var g = col.g;
+    var b = col.b;
+    var x = 0.3*r + 0.59*g + 0.11*b;
+    var HexChars="0123456789ABCDEF";              
+    var tmp = HexChars.charAt((x>>4)&0xf)+HexChars.charAt(x&0xf);
+    color = "#" + tmp + "" + tmp + "" + tmp;        
     return color;
 }
