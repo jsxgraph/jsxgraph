@@ -73,6 +73,12 @@ JXG.JSXGraph = new function (forceRenderer) {
             //    this.rendererType = 'silverlight';
             //else
                 this.rendererType = 'vml';
+                function MouseMove(e) {
+                  document.body.scrollLeft;
+                  document.body.scrollTop;
+                }
+
+                document.onmousemove = MouseMove;
         }
     } else {
         /* the user has chosen a specific renderer */
