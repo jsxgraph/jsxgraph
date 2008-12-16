@@ -20,13 +20,13 @@
         xax = board.createElement('axis', [[0,0],[1,0]]);
         yax = board.createElement('axis', [[0,0],[0,1]]);
 
-        pO = board.createElement('point', [6,9]);
-        pR = board.createElement('point', [10,12]);
-        circ = board.createElement('circle', [pO, pR]);
+//        pO = board.createElement('point', [6,9]);
+//        pR = board.createElement('point', [10,12]);
+//        circ = board.createElement('circle', [pO, pR]);
 
         p1 = board.createElement('point', [1, 1], {style:1,name:"A"}); // Angabe fester Koordinaten
         p2 = board.createElement('point', [15, 1], {style:2,name:"B"}); // Angabe fester Koordinaten
-        p3 = board.createElement('glider', [8, 10, circ], {style:3,name:"C"});
+        p3 = board.createElement('point', [8, 8], {style:3,name:"C"});
 //        p4 = board.createElement('point', [13, 7], {style:3, name:"P_{4}"});
 
 //        var dataArr = [p1, p2, p3, p4];
@@ -36,14 +36,14 @@
 
 //        m1 = board.createElement('midpoint', [p1, p2]);
 //        l1 = board.createElement('line', [m1, p3]);
-        m2 = board.createElement('midpoint', [p1, p3]);
-        l2 = board.createElement('line', [m2, p2]);
-        m3 = board.createElement('midpoint', [p3, p2]);
-        l3 = board.createElement('line', [m3, p1]);
+//        m2 = board.createElement('midpoint', [p1, p3]);
+//        l2 = board.createElement('line', [m2, p2]);
+//        m3 = board.createElement('midpoint', [p3, p2]);
+//        l3 = board.createElement('line', [m3, p1]);
 
         t = board.createElement('triangle', [p1, p2, p3]);
 
-        c = board.createElement('centroid', [p1, p2, p3], {name:'C_{1}', trace:true});
+//        c = board.createElement('centroid', [p1, p2, p3], {name:'C_{1}', trace:true});
 
        
   /* ]]> */

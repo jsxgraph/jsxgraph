@@ -130,3 +130,19 @@ JXG.Group.prototype.addGroup = function(group) {
         this.addPoint(group.objects[el]);
     }
 };
+
+/**
+ * Groups points.
+ * @param {JXG.Board} board The board the points are on.
+ * @param {Array} parents Array of points to group.
+ * @param {Object} attributes Visual properties.
+ * @type JXG.Group
+ * @return An object of type JXG.Group.
+ */
+JXG.createGroup = function(board, parents, attributes) {
+    var g = new JXG.Group(board, attributes["id"], attributes["name"], parents);
+                
+    return g;
+};
+
+JXG.JSXGraph.registerElement('group', JXG.createGroup);
