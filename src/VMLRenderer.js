@@ -714,7 +714,7 @@ JXG.VMLRenderer.prototype.updateEllipsePrimitive = function(node,x,y,rx,ry) {
     node.style.height = (ry*2)+'px';
 };
 
-JXG.VMLRenderer.prototype.updatePathPrimitive = function(el,pointString) {
+JXG.VMLRenderer.prototype.updatePathPrimitive2 = function(el,pointString) {
     var node = el.rendNode;
     var x = el.board.canvasWidth;
     var y = el.board.canvasHeight;

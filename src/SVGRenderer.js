@@ -120,7 +120,8 @@ JXG.SVGRenderer.prototype.updateAxis = function(el) {
 
 JXG.SVGRenderer.prototype.drawArc = function(el) {  
     var node = this.createPrimitive('path',el.id);
-
+    el.rendNode = node;
+    
     var radius = el.getRadius();  
     var angle = el.board.algebra.trueAngle(el.point2, el.midpoint, el.point3);
     var circle = {}; // um projectToCircle benutzen zu koennen...
@@ -187,7 +188,7 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     node4.setAttributeNS(null, 'stroke', 'none');
     
     this.arcs.appendChild(node);
-    el.rendNode = node;
+
     this.sectors.appendChild(node4);
     el.rendNodeFill = node4;
     this.setDraft(el);
@@ -688,7 +689,13 @@ JXG.SVGRenderer.prototype.updateRectPrimitive = function(node,x,y,w,h) {
     node.setAttributeNS(null, 'height', (h));
 };
 
-JXG.SVGRenderer.prototype.updatePathPrimitive = function(el ,pointString) {
+JXG.SVGRenderer.prototype.updatePathPrimitive = function(node, pointString) {
+    node.setAttributeNS(null, 'd', pointString);
+    node.setAttributeNS(null, 'stroke-linecap', 'round');
+    node.setAttributeNS(null, 'stroke-linejoin', 'round');
+};
+
+JXG.SVGRenderer.prototype.updatePathPrimitive2 = function(el, pointString) {
     var node = el.rendNode;
     node.setAttributeNS(null, 'd', pointString);
     node.setAttributeNS(null, 'stroke-linecap', 'round');

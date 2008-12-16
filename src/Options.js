@@ -185,8 +185,11 @@ JXG.Options.prototype.useStandardOptions = function(board) {
             board.objects[el].arc.visProp['fillOpacity'] = this.sector.fillOpacity;
             board.objects[el].arc.visProp['highlightFillOpacity'] = this.sector.highlightFillOpacity;
         }
-    }    
+    }   
+    
+    board.fullUpdate = true;
     board.update();
+    board.fullUpdate = false;
     if(board.hasGrid) {
         board.renderer.removeGrid(board);
         board.renderer.drawGrid(board);
@@ -227,7 +230,7 @@ JXG.Options.prototype.useBlackWhiteOptions = function(board) {
     this.useStandardOptions(board);
 }
 
-JXG.Options.prototype.changeColorToBlackWhite = function(color) {
+JXG.Options.prototype.changeColorToBlackWhite = function(color,x) {
     if(color == 'blue') {
         color = '#0000FF';
     }
@@ -254,15 +257,15 @@ JXG.Options.prototype.changeColorToBlackWhite = function(color) {
     }
     else if(color == 'yellow') {
         color = '#FF0000';
-    }
-    if(color[0] == '#') {
+    }   
+    if(color.charAt(0) == '#') {
         var r = parseInt((color.substr(1,2)).toUpperCase(),16);
         var g = parseInt((color.substr(3,2)).toUpperCase(),16);
         var b = parseInt((color.substr(5,2)).toUpperCase(),16);      
         var x = 0.3*r + 0.59*g + 0.11*b;
         var HexChars="0123456789ABCDEF";              
         var tmp = HexChars.charAt((x>>4)&0xf)+HexChars.charAt(x&0xf);
-        color = "#" + tmp + "" + tmp + "" + tmp;       
+        color = "#" + tmp + "" + tmp + "" + tmp;        
     }
     return color;
 }
