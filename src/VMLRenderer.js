@@ -732,8 +732,9 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
     var pStr = [];
     var h = 2*el.board.canvasHeight;
     var w = 2*el.board.canvasWidth;
+    var m = Math.min(el.numberPoints,8192); // otherwise IE 7 crashes in hilbert.html
     
-    for (var i=0; i<el.numberPoints; i++) {
+    for (var i=0; i<m; i++) {
         var scr = el.points[i].scrCoords;
         if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || Math.abs(scr[2])>h) {
             nextSymb = ' m ';
