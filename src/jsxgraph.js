@@ -56,7 +56,7 @@ JXG.JSXGraph = new function (forceRenderer) {
      * @type Object
      */
     this.elements = {};
-    
+
     var ie;
     var opera;
     if( (forceRenderer == 'undefined') || (forceRenderer == null) || (forceRenderer == '') ) {
@@ -84,7 +84,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         /* the user has chosen a specific renderer */
         this.rendererType = forceRenderer;
     }
-
+        
     /* Load the source files for the renderer */
     JXG.rendererFiles[this.rendererType].split(',').each( function(include) { JXG.require(JXG.requirePath+include+'.js'); } );
     
