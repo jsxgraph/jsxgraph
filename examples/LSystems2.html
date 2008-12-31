@@ -17,7 +17,7 @@ var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, unitX: 1, u
 var t = new JSXTurtleObj(brd);
 
 /* Sierpinski curve */
-if (false) {
+if (true) {
 var level = 6;
 var axiom = 'A';
 var rules = {
@@ -34,7 +34,7 @@ var symbols = { 'A':'F',
                 ']':']'
               } ;
 var angle = 60;
-var len = 500/Math.pow(2,level);
+var len = 300/Math.pow(2,level);
 var shrink = 1;
 }
 /* quadratic Koch island */
@@ -148,7 +148,7 @@ var shrink = 1;
 }
 
 /* hexagonal gosper curve */
-if (true) {
+if (false) {
 var level = 5;
 var axiom = 'XF';
 var rules = {
@@ -279,8 +279,8 @@ var shrink = 1;
 
 
 /* Penrose tilings */
-if (true) {
-var level = 4;
+if (false) {
+var level = 2;
 var axiom = '[7]++[7]++[7]++[7]++[7]';
 var rules = {
     '6' : '81++91----71[-81----61]++',
@@ -307,38 +307,37 @@ var symbols = {
 var angle = 36.0;
 var len = 100/(level);
 }
-  
-function expander(level) {
-    this.source = (level>1) ? new expander(level-1) : (new function() {
+
+function expander(level,axiom,rules) {
+    this.axiom = axiom;
+    this.rules = rules;
+    this.source = (level>1) ? new expander(level-1,axiom,rules) : (new function() {
         // Axiom:
         this.code = axiom;
         this.pos = 0;
         this.next = function() {
             if (this.pos>=this.code.length) return null;
-            return this.code[this.pos++];
+            return this.code.charAt(this.pos++);
         }
     });
     
     this.code = '';
     this.pos = 0;
     this.next = function() {
-        //$('debug').innerHTML += level+' '+this.code.length+'<br>';
         while (this.pos>=this.code.length) { // produce new symbols from source
             this.pos = 0;
             var pattern = this.source.next();
             if (!pattern) return null // Finished
-            this.code = rules[pattern];
+            this.code = this.rules[pattern];
         }
-        return this.code[this.pos++];
+        return this.code.charAt(this.pos++);
     }
 }
 
 
-var generator = new expander(level);
+var generator = new expander(level,axiom,rules);
 function step() {
-    //result = 'M' + x.toFixed(2) + ',' + y.toFixed(2)
     for (var c; c=generator.next(); c) {
-        //$('debug').innerHTML += c+' ';
         switch(symbols[c]) {
             case 'F':
                 t.fd(len);
@@ -372,10 +371,10 @@ brd.suspendUpdate();
 t.cs();
 t.hideTurtle();
 t.setPos(-250,-250);
-t.setPos(0,0);
-//t.rt(90);
+//t.setPos(0,0);
+t.rt(90);
 
-t.setProperty({strokeColor:'#0000ff',fillColor:'yellow'});
+//t.setProperty({strokeColor:'#0000ff',fillColor:'yellow'});
 step();
 
 brd.unsuspendUpdate();
