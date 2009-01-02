@@ -18,7 +18,8 @@
     board1.suspendUpdate();
     board1.createElement('axis', [[0,0], [1,0]], {});
     board1.createElement('axis', [[0,0], [0,1]], {});
-    var s = board1.createElement('slider', [0.75,-2.5,5,0,10,0], {name:'S'});
+    //var s = board1.createElement('slider', [0.75,-2.5,5,0,10,0], {name:'S'});
+    var s = board1.createElement('slider', [[0.75,-2.5],[5.75,-2.5],[0,0,10]], {name:'S'});
     board1.createElement('curve', [
         't', 
         function(t) {
