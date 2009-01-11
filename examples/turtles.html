@@ -1,0 +1,39 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/prototype.js"></script>
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+   <script type="text/javascript" src="../src/jsxturtle.js"></script>
+   <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxturtle.js"></script>-->
+</head>
+<body>
+<h1>Multiple turtles</h1>
+<div id="box" class="jxgbox" style="width:600px; height:600px; overflow:hidden; "></div>
+<div id="debug" style="display:block;"></div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, unitX: 1, unitY: 1});
+var t1 = new JSXTurtleObj(brd);
+var t2 = new JSXTurtleObj(brd);
+
+//t1.cs();
+//t2.cs();
+t1.setPos(200,0);
+t2.setPos(0,0);
+var n = 64;
+var delta = 360.0/n;
+function run() {
+    t1.fd(20);
+    t1.lt(delta);
+    t2.lookTo(t1.pos);
+    t2.fd(20);
+    setTimeout(run,100);
+}
+run();
+
+/* ]]> */
+</script>
+</body>
+</html>
