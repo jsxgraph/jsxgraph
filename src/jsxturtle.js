@@ -51,11 +51,12 @@ JSXTurtleObj.prototype.init = function() {
             {fixed:true,name:' ',visible:false});
     this.arrow = this.board.createElement('line',[this.turtle,this.turtle2],
             {lastArrow:true,strokeColor:'#ff0000',straightFirst:false,straightLast:false});
+    this.board.update();
 }
 
 JSXTurtleObj.prototype.forward = function(len) {
     if (len==0) { return; }
-    var dx = -len*Math.cos(this.dir*Math.PI/180.0);
+    var dx = len*Math.cos(this.dir*Math.PI/180.0);
     var dy = len*Math.sin(this.dir*Math.PI/180.0);
     if (!this.turtleIsHidden) {
         var t = this.board.createElement('transform', [dx,dy], {type:'translate'});
@@ -72,6 +73,7 @@ JSXTurtleObj.prototype.forward = function(len) {
         this.curve.dataX.push(this.pos[0]);
         this.curve.dataY.push(this.pos[1]);
     }
+    this.board.update();
     return this;
 };
      
@@ -80,11 +82,13 @@ JSXTurtleObj.prototype.back = function(len) {
 };
      
 JSXTurtleObj.prototype.right = function(angle) {
-    this.dir += angle;
+    this.dir -= angle;
+    this.dir %= 360.0;
     if (!this.turtleIsHidden) {
         var t = this.board.createElement('transform', [-angle*Math.PI/180.0,this.turtle], {type:'rotate'});
         t.applyOnce(this.turtle2);
     }
+    this.board.update();
     return this;
 };
      
@@ -100,7 +104,7 @@ JSXTurtleObj.prototype.penUp = function() {
 JSXTurtleObj.prototype.penDown = function() {
     this.isPenDown = true;
     this.curve = this.board.createElement('curve',
-    [[this.pos[0]],[this.pos[1]]],this.attributes);
+            [[this.pos[0]],[this.pos[1]]],this.attributes);
     return this;
 };
 
@@ -110,6 +114,7 @@ JSXTurtleObj.prototype.clean = function() {
             this.board.removeObject(el);
         }
     }
+    this.board.update();
     return this;
 };
 
@@ -132,6 +137,7 @@ JSXTurtleObj.prototype.setPos = function(x,y) {
     }
     this.curve = this.board.createElement('curve',
             [[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.board.update();
     return this;
 }
 
@@ -175,6 +181,7 @@ JSXTurtleObj.prototype.showTurtle = function() {
     this.turtleIsHidden = false; 
     this.arrow.setProperty('visible:true');
     this.setPos(this.pos[0],this.pos[1]);
+    this.board.update();
     return this;
 };
 
@@ -182,6 +189,7 @@ JSXTurtleObj.prototype.hideTurtle = function() {
     this.turtleIsHidden = true;
     this.arrow.setProperty('visible:false');
     this.setPos(this.pos[0],this.pos[1]);
+    this.board.update();
     return this;
 };
 
@@ -204,6 +212,25 @@ JSXTurtleObj.prototype.popTurtle= function() {
     this.setPos(this.pos[0],this.pos[1]);
     return this;
 };
+
+JSXTurtleObj.prototype.lookTo= function(target) { 
+    var ax = this.pos[0];
+    var ay = this.pos[1];
+    var bx = target[0];
+    var by = target[1];
+    var beta; 
+    // Rotate by the slope of the line [this.pos, target]
+    var sgn = (bx-ax>0)?1:-1;
+    if (Math.abs(bx-ax)>0.0000001) {
+        beta = Math.atan((by-ay)/(bx-ax))+((sgn<0)?Math.PI:0);  
+    } else {
+        beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
+    }
+    //$('debug').innerHTML += this.dir+' '+(beta*180/Math.PI).toFixed(2)+' '+(-this.dir +(beta*180/Math.PI)).toFixed(2)+'<br>';
+    this.right(this.dir-(beta*180/Math.PI));
+    //$('debug').innerHTML += this.dir+'<br>';
+    return this;
+}
 
 /**
   * Shortcuts
