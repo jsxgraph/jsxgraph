@@ -3,12 +3,14 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/prototype.js"></script>
-   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
    <script type="text/javascript" src="../src/jsxturtle.js"></script>
    <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxturtle.js"></script>-->
 </head>
 <body>
 <h1>Multiple turtles</h1>
+<input type="button" value="run" onClick="run()">
+<input type="button" value="clear" onClick="clearturtle()">
 <div id="box" class="jxgbox" style="width:600px; height:600px; overflow:hidden; "></div>
 <div id="debug" style="display:block;"></div>
 
@@ -18,8 +20,8 @@ var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, unitX: 1, u
 var t1 = new JSXTurtleObj(brd);
 var t2 = new JSXTurtleObj(brd);
 
-//t1.cs();
-//t2.cs();
+t1.cs();
+t2.cs();
 t1.setPos(200,0);
 t2.setPos(0,0);
 var n = 64;
@@ -29,10 +31,15 @@ function run() {
     t1.lt(delta);
     t2.lookTo(t1.pos);
     t2.fd(20);
-    setTimeout(run,100);
+    active = setTimeout(run,100);
 }
-run();
-
+function clearturtle() {
+ clearTimeout(active);
+ t1.cs();
+ t2.cs();
+ t1.setPos(200,0);
+ t2.setPos(0,0);
+}
 /* ]]> */
 </script>
 </body>

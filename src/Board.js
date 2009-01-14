@@ -2125,11 +2125,11 @@ JXG.Board.prototype.removeObject = function(object) {
                 delete(this.objects[el].childElements[object.id]);
         }
         
-        /* Das Objekt selbst aus board.objects und board.elementsByName l�schen */
+        /* Das Objekt selbst aus board.objects und board.elementsByName loeschen */
         delete(this.objects[object.id]);
         delete(this.elementsByName[object.name]);
         
-        /* Alles weitere erledigt das Objekt selbst f�r uns. Ist sinnvoller, weil man sonst wieder unterscheiden m�sste, was das f�r ein Objekt ist. */
+        /* Alles weitere erledigt das Objekt selbst fuer uns. Ist sinnvoller, weil man sonst wieder unterscheiden muesste, was das fuer ein Objekt ist. */
         if(object.remove != undefined) object.remove();
     } catch(e) {
 //        alert(object.id + ': Could not be removed, JS says:\n\n' + e);

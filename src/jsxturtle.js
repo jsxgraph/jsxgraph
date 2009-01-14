@@ -42,15 +42,22 @@ JSXTurtleObj.prototype.init = function() {
     this.isPenDown = true;
     this.dir = 90;
     this.stack = [];
+    this.objects = [];
     this.attributes.curveType = 'plot';
-    this.curve = this.board.createElement('curve',
-            [[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.objects.push(this.curve);
 
     this.turtle = this.board.createElement('point',this.pos,{fixed:true,name:' ',visible:false});
+    this.objects.push(this.turtle);
+    
     this.turtle2 = this.board.createElement('point',[this.pos[0],this.pos[1]+20],
             {fixed:true,name:' ',visible:false});
+    this.objects.push(this.turtle2);
+    
     this.arrow = this.board.createElement('line',[this.turtle,this.turtle2],
             {lastArrow:true,strokeColor:'#ff0000',straightFirst:false,straightLast:false});
+    this.objects.push(this.arrow);
+    
     this.board.update();
 }
 
@@ -66,6 +73,7 @@ JSXTurtleObj.prototype.forward = function(len) {
     if (this.isPenDown) if (this.curve.dataX.length>=8192) { // IE workaround
         this.curve = this.board.createElement('curve',
                [[this.pos[0]],[this.pos[1]]],this.attributes);
+        this.objects.push(this.curve);
     }
     this.pos[0] += dx;
     this.pos[1] += dy;
@@ -103,24 +111,31 @@ JSXTurtleObj.prototype.penUp = function() {
 
 JSXTurtleObj.prototype.penDown = function() {
     this.isPenDown = true;
-    this.curve = this.board.createElement('curve',
-            [[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.objects.push(this.curve);
+            
     return this;
 };
 
 JSXTurtleObj.prototype.clean = function() {
-    for(var el in this.board.objects) {
-        if (this.board.objects[el].type==JXG.OBJECT_TYPE_CURVE) {
-            this.board.removeObject(el);
+    for(var i=0;i<this.objects.length;i++) {
+        var el = this.objects[i];
+        if (el.type==JXG.OBJECT_TYPE_CURVE) {
+            this.board.removeObject(el.id);
+            this.objects.splice(i,1);
         }
     }
+    this.curve = this.board.createElement('curve',
+              [[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.objects.push(this.curve);
     this.board.update();
     return this;
 };
 
 JSXTurtleObj.prototype.clearScreen = function() {
-    for(var el in this.board.objects) {
-        this.board.removeObject(el);
+    for(var i=0;i<this.objects.length;i++) {
+        var el = this.objects[i];
+        this.board.removeObject(el.id);
     }
     this.init();
     return this;
@@ -135,8 +150,8 @@ JSXTurtleObj.prototype.setPos = function(x,y) {
                 [-(this.dir-90)*Math.PI/180.0,this.turtle], {type:'rotate'});
         t.applyOnce(this.turtle2);
     }
-    this.curve = this.board.createElement('curve',
-            [[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.objects.push(this.curve);
     this.board.update();
     return this;
 }
@@ -144,12 +159,14 @@ JSXTurtleObj.prototype.setPos = function(x,y) {
 JSXTurtleObj.prototype.setPenSize = function(size) { 
     this.attributes.strokeWidth = size; 
     this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.objects.push(this.curve);
     return this;
 };
 
 JSXTurtleObj.prototype.setPenColor = function(colStr) { 
     this.attributes.strokeColor = colStr; 
     this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.objects.push(this.curve);
     return this;
 };
 
@@ -162,8 +179,10 @@ JSXTurtleObj.prototype.setProperty = function() {
         pairRaw = arguments[i];
         if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
             pair = pairRaw.split(':');
-        } else if (!Object.isArray(pairRaw)) {    // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
-            for (i=0; i<Object.keys(pairRaw).length;i++) {  // Here, the prototype lib is used (Object.keys, Object.isArray)
+        } else if (!Object.isArray(pairRaw)) {    
+            // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
+            for (i=0; i<Object.keys(pairRaw).length;i++) {  
+                // Here, the prototype lib is used (Object.keys, Object.isArray)
                 key = Object.keys(pairRaw)[i];
                 this.setProperty([key,pairRaw[key]]);
             }
@@ -174,6 +193,7 @@ JSXTurtleObj.prototype.setProperty = function() {
         this.attributes[pair[0]] = pair[1];
     }
     this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.objects.push(this.curve);
     return this;
 };
 
@@ -226,9 +246,7 @@ JSXTurtleObj.prototype.lookTo= function(target) {
     } else {
         beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
     }
-    //$('debug').innerHTML += this.dir+' '+(beta*180/Math.PI).toFixed(2)+' '+(-this.dir +(beta*180/Math.PI)).toFixed(2)+'<br>';
     this.right(this.dir-(beta*180/Math.PI));
-    //$('debug').innerHTML += this.dir+'<br>';
     return this;
 }
 
