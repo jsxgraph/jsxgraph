@@ -1086,12 +1086,11 @@ JXG.Algebra.prototype.distance = function(array1, array2) {
  * @return Euclidean (affine) distance of the given vectors.
  */
 JXG.Algebra.prototype.affineDistance = function(array1, array2) {
-    var eps = 0.000001;
     if(array1.length != array2.length) { 
         return; 
     }
     var d = this.distance(array1, array2);
-    if (d>eps && (Math.abs(array1[0])<eps || Math.abs(array2[0])<eps)) {
+    if (d>this.eps && (Math.abs(array1[0])<this.eps || Math.abs(array2[0])<this.eps)) {
         return Infinity;
     } else {
         return d;
@@ -1315,9 +1314,10 @@ JXG.Algebra.prototype.meet = function(el1,el2) {
   */
 JXG.Algebra.prototype.meetLineLine = function(l1,l2) {
     var s = this.crossProduct(l1,l2);
-    if (Math.abs(s[0])>0.000001) {
+    if (Math.abs(s[0])>this.eps) {
         s[1] /= s[0];
         s[2] /= s[0];
+        s[0] = 1.0;
     }
     /*
     var s1 = l1;
@@ -1326,14 +1326,15 @@ JXG.Algebra.prototype.meetLineLine = function(l1,l2) {
     var x = (s1[2]*s2[0]-s1[0]*s2[2])/z;
     var y = (s1[0]*s2[1]-s1[1]*s2[0])/z;
     */
-    return [new JXG.Coords(JXG.COORDS_BY_USER, s.slice(1), this.board),
-        new JXG.Coords(JXG.COORDS_BY_USER, s.slice(1), this.board)];
+    //return [new JXG.Coords(JXG.COORDS_BY_USER, s.slice(1), this.board),
+    //    new JXG.Coords(JXG.COORDS_BY_USER, s.slice(1), this.board)];
+    return [new JXG.Coords(JXG.COORDS_BY_USER, s, this.board),
+            new JXG.Coords(JXG.COORDS_BY_USER, s, this.board)];
 
 };
 
 JXG.Algebra.prototype.meetLineCircle = function(lin,circ) {    
-    var eps = 0.000001;
-    if (circ[4]<eps) { // Radius is zero, return center of circle
+    if (circ[4]<this.eps) { // Radius is zero, return center of circle
         return [
             new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(1,3), this.board),
             new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(1,3), this.board)
@@ -1375,11 +1376,11 @@ JXG.Algebra.prototype.meetLineCircle = function(lin,circ) {
             new JXG.Coords(JXG.COORDS_BY_USER, [NaN,NaN], this.board)
             ];
     }
+    // Returns do not work with homogeneous coordnates, yet
 };
 
 JXG.Algebra.prototype.meetCircleCircle = function(circ1,circ2) {
-    var eps = 0.000001;
-    if (circ1[4]<eps) { // Radius are zero, return center of circle, if on other circle
+    if (circ1[4]<this.eps) { // Radius are zero, return center of circle, if on other circle
         if (this.distance(circ1.slice(1,3),circ2.slice(1,3))==circ2[4]) {
             return [
                 new JXG.Coords(JXG.COORDS_BY_USER, circ1.slice(1,3), this.board),
@@ -1392,7 +1393,7 @@ JXG.Algebra.prototype.meetCircleCircle = function(circ1,circ2) {
                 ];
         }
     }
-    if (circ2[4]<eps) { // Radius are zero, return center of circle, if on other circle
+    if (circ2[4]<this.eps) { // Radius are zero, return center of circle, if on other circle
         if (this.distance(circ2.slice(1,3),circ1.slice(1,3))==circ1[4]) {
             return [
                 new JXG.Coords(JXG.COORDS_BY_USER, circ2.slice(1,3), this.board),
@@ -1411,6 +1412,7 @@ JXG.Algebra.prototype.meetCircleCircle = function(circ1,circ2) {
         0,1,Infinity, Infinity, Infinity];
     radicalAxis = this.normalize(radicalAxis);
     return this.meetLineCircle(radicalAxis,circ1);
+    // Returns do not work with homogeneous coordnates, yet
 };
 
 // [c,b0,b1,a,k,r,q0,q1]

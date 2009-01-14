@@ -303,7 +303,7 @@ JXG.Point.prototype.updateRenderer = function () {
     if(this.visProp['visible']) {
         var wasReal = this.isReal;
         this.isReal = (isNaN(this.coords.usrCoords[1]+this.coords.usrCoords[2]))?false:true;
-//$('debug').innerHTML +=  this.name+':'+this.isReal+'<br>';
+        this.isReal = (Math.abs(this.coords.usrCoords[0])>this.board.algebra.eps)?this.isReal:false;  //Homogeneous coords: ideal point
         if (this.isReal) {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.show(this); 
@@ -366,7 +366,6 @@ JXG.Point.prototype.XEval = function () {
 JXG.Point.prototype.YEval = function () {
     return this.coords.usrCoords[2];
 };
-
 
 /**
  * Getter method for the distance to a second point, this is required for CAS-elements.

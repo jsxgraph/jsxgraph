@@ -84,7 +84,6 @@ JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
     this.appendChildPrimitive(node,'images');
 };
 
-
 JXG.SVGRenderer.prototype.drawAxis = function(el) {  
     var node = this.createPrimitive('line',el.id);
     node.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);
@@ -580,14 +579,12 @@ JXG.SVGRenderer.prototype.setFillProp = function(node,visProp) {
     //node.setAttributeNS(null, 'opacity', '0.3');    
 }
 
-
 JXG.SVGRenderer.prototype.setDashStyle = function(node,visProp) {
     if(visProp['dash'] > 0) {
         var dashStyle = visProp['dash'];
         node.setAttributeNS(null, 'stroke-dasharray', this.dashArray[dashStyle-1]);
     }
 }
-
 
 JXG.SVGRenderer.prototype.createPrimitive = function(type,id) {
     var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);

@@ -430,7 +430,9 @@ JXG.AbstractRenderer.prototype.calcStraightv1 = function(el, screenCoords1, scre
  */
 JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
     var b = el.board.algebra;
-    var eps = 0.0001;
+    // If one of the point is an ideal point in homogeneous coordinates
+    // drawing of line segments or rays are not possible. 
+    var hasIdealPoint = (Math.abs(point1.scrCoords[0])<b.eps||Math.abs(point2.scrCoords[0])<b.eps)?true:false;
     
     // Compute the stdform of the line in screen coordinates.
     var c = [];
@@ -452,109 +454,147 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
 
     // Normalize the intersections 
     for (var i=0;i<4;i++) {
-        if (Math.abs(s[i][0])>eps) {
-            for (var j=2;j>=0;j--) {
+        if (Math.abs(s[i][0])>b.eps) {
+            for (var j=2;j>0;j--) {
                 s[i][j] /= s[i][0];
             }
+            s[i][0] = 1.0;
         }
     }
-    
     var d1, d2;
-    if(s[1][2]<0 || Math.abs(s[1][0])<eps) { // left intersection out of board (above)
+    if(s[1][2]<0 || Math.abs(s[1][0])<b.eps) { // left intersection out of board (above)
         // Punkt am oberen Rand verwenden (Top)
-        d1 = b.affineDistance(s[0], point1.scrCoords);
-        d2 = b.affineDistance(s[0], point2.scrCoords);
-        if((d1 < d2) && el.visProp['straightFirst']) {
+        if (hasIdealPoint) { // homogeneous case
             point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-        } else if((d1 > d2) && el.visProp['straightLast']) {
-            point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-        }
-  
-        if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<eps) {  // right intersection out of board
-            // Punkt am unteren Rand verwenden (Bottom)
-            d1 = b.affineDistance(s[2], point1.scrCoords);
-            d2 = b.affineDistance(s[2], point2.scrCoords);             
+        } else {
+            d1 = b.affineDistance(s[0], point1.scrCoords);
+            d2 = b.affineDistance(s[0], point2.scrCoords);
             if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
             } else if((d1 > d2) && el.visProp['straightLast']) {
-                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
             }
-     
+        }
+        if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<b.eps) {  // right intersection out of board
+            // Punkt am unteren Rand verwenden (Bottom)
+            if (hasIdealPoint) { // homogeneous case
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+            } else {
+                d1 = b.affineDistance(s[2], point1.scrCoords);
+                d2 = b.affineDistance(s[2], point2.scrCoords);             
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                }
+            }
         } else {
             // Punkt am rechten Rand verwenden (Right)
-            d1 = b.affineDistance(s[3], point1.scrCoords);
-            d2 = b.affineDistance(s[3], point2.scrCoords);             
-            if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
-            } else if((d1 > d2) && el.visProp['straightLast']) {
+            if (hasIdealPoint) { // homogeneous case
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            } else {
+                d1 = b.affineDistance(s[3], point1.scrCoords);
+                d2 = b.affineDistance(s[3], point2.scrCoords);             
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                }
             }
         }
     } else if(s[1][2] > el.board.canvasHeight) { // left intersection out of board (below)
         // Punkt am unteren Rand verwenden (Bottom)
-        d1 = b.affineDistance(s[2], point1.scrCoords);
-        d2 = b.affineDistance(s[2], point2.scrCoords);   
-        if((d1 < d2) && el.visProp['straightFirst']) {
+        if (hasIdealPoint) { // homogeneous case
             point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
-        } else if((d1 > d2) && el.visProp['straightLast']) {
-            point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
-        }
- 
-        if(s[3][2]<0 || Math.abs(s[3][0])<eps) { 
-            // Punkt am oberen Rand verwenden (Top)
-            d1 = b.affineDistance(s[0], point1.scrCoords);
-            d2 = b.affineDistance(s[0], point2.scrCoords);
-            if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-            } else if((d1 > d2) && el.visProp['straightLast']) {
-                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-            }
         } else {
-            // Punkt am rechten Rand verwenden (Right)
-            d1 = b.affineDistance(s[3], point1.scrCoords);
-            d2 = b.affineDistance(s[3], point2.scrCoords);             
-            if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
-            } else if((d1 > d2) && el.visProp['straightLast']) {
-                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
-            }
-        }          
-    } else {
-        // Punkt am linken Rand verwenden (Left)
-        d1 = b.affineDistance(s[1], point1.scrCoords);
-        d2 = b.affineDistance(s[1], point2.scrCoords);
-        if((d1 < d2) && el.visProp['straightFirst']) {
-            point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
-        } else if((d1 > d2) && el.visProp['straightLast']) {
-            point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
-        }
-        
-        if(s[3][2] < 0 || Math.abs(s[3][0])<eps) {
-            // Punkt am oberen Rand verwenden (Top)
-            d1 = b.affineDistance(s[0], point1.scrCoords);
-            d2 = b.affineDistance(s[0], point2.scrCoords);
-            if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-            } else if((d1 > d2) && el.visProp['straightLast']) {
-                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-            }
-        } else if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<eps) {
-            // Punkt am unteren Rand verwenden (Bottom)
             d1 = b.affineDistance(s[2], point1.scrCoords);
-            d2 = b.affineDistance(s[2], point2.scrCoords);
+            d2 = b.affineDistance(s[2], point2.scrCoords);   
             if((d1 < d2) && el.visProp['straightFirst']) {
                 point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
             } else if((d1 > d2) && el.visProp['straightLast']) {
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
             }
+        }
+ 
+        if(s[3][2]<0 || Math.abs(s[3][0])<b.eps) { 
+            // Punkt am oberen Rand verwenden (Top)
+            if (hasIdealPoint) { // homogeneous case
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+            } else {
+                d1 = b.affineDistance(s[0], point1.scrCoords);
+                d2 = b.affineDistance(s[0], point2.scrCoords);
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                }
+            }
         } else {
             // Punkt am rechten Rand verwenden (Right)
-            d1 = b.affineDistance(s[3], point1.scrCoords);
-            d2 = b.affineDistance(s[3], point2.scrCoords);     
-            if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
-            } else if((d1 > d2) && el.visProp['straightLast']) {
+            if (hasIdealPoint) { // homogeneous case
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            } else {
+                d1 = b.affineDistance(s[3], point1.scrCoords);
+                d2 = b.affineDistance(s[3], point2.scrCoords);             
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                }
+            }
+        }          
+    } else {
+        // Punkt am linken Rand verwenden (Left)
+        if (hasIdealPoint) { // homogeneous case
+            point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
+        } else {
+            d1 = b.affineDistance(s[1], point1.scrCoords);
+            d2 = b.affineDistance(s[1], point2.scrCoords);
+            if((d1 < d2) && el.visProp['straightFirst']) {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
+            } else if((d1 > d2) && el.visProp['straightLast']) {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
+            }
+        }
+        
+        if(s[3][2] < 0 || Math.abs(s[3][0])<b.eps) {
+            // Punkt am oberen Rand verwenden (Top)
+            if (hasIdealPoint) { // homogeneous case
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+            } else {
+                d1 = b.affineDistance(s[0], point1.scrCoords);
+                d2 = b.affineDistance(s[0], point2.scrCoords);
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                }
+            }
+        } else if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<b.eps) {
+            // Punkt am unteren Rand verwenden (Bottom)
+            if (hasIdealPoint) { // homogeneous case
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+            } else {
+                d1 = b.affineDistance(s[2], point1.scrCoords);
+                d2 = b.affineDistance(s[2], point2.scrCoords);
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                }
+            }
+        } else {
+            // Punkt am rechten Rand verwenden (Right)
+            if (hasIdealPoint) { // homogeneous case
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            } else {
+                d1 = b.affineDistance(s[3], point1.scrCoords);
+                d2 = b.affineDistance(s[3], point2.scrCoords);    
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                }
             }
         }
     }

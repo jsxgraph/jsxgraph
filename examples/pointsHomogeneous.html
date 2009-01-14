@@ -21,15 +21,18 @@
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 25, unitY: 25});
         var p = [];
         p[0] = board.createElement('point', [1.0,-2.4,4.0], {style:6,name:"A"}); 
-        p[1] = board.createElement('point', [1.0,2.28,4.04], {style:6,name:"B"}); 
+        p[1] = board.createElement('point', [1.0,2.28,3], {style:6,name:"B"}); 
         p[2] = board.createElement('point', [1.0,0.32,1.96], {style:6,name:"C"}); 
         p[3] = board.createElement('point', [12.648,29.22368,5.90784], {style:6,name:"D"}); 
         p[4] = board.createElement('point', [9.255999,-21.828159,-8.16608], {style:6,name:"E"}); 
-        p[5] = board.createElement('point', [7.105427357601002E-15,3357.5491937894385,28.697001656320015], {style:6,name:"F"}); 
-        p[6] = board.createElement('point', [7.105427357601002E-15,1,2], {style:6,name:"G"}); 
+        p[5] = board.createElement('point', [0,3357.549,28.6970], {style:6,name:"F"}); 
+        p[6] = board.createElement('point', [0,1,2], {style:6,name:"G"}); 
 
         //board.createElement('line', [p[1],p[2]], {}); 
-        board.createElement('line', [p[1],p[5]], {}); 
+        board.createElement('line', [p[1],p[5]], {name:"x"}); 
+        board.createElement('line', [p[4],p[5]]); 
+
+        board.createElement('line', [p[0],p[6]]); 
         
   /* ]]> */
   </script>
