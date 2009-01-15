@@ -23,6 +23,7 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 var JSXTurtleObj = function(board,attributes) {
+    this.arrowLen = 20.0;
     this.turtleIsHidden = false;
     this.board = board;
     if (attributes==null) {
@@ -38,6 +39,8 @@ var JSXTurtleObj = function(board,attributes) {
 };
 
 JSXTurtleObj.prototype.init = function() {
+    this.arrowLen = 20.0/Math.sqrt(this.board.unitX*this.board.unitX+this.board.unitY*this.board.unitY);
+
     this.pos = [0,0];
     this.isPenDown = true;
     this.dir = 90;
@@ -50,7 +53,7 @@ JSXTurtleObj.prototype.init = function() {
     this.turtle = this.board.createElement('point',this.pos,{fixed:true,name:' ',visible:false});
     this.objects.push(this.turtle);
     
-    this.turtle2 = this.board.createElement('point',[this.pos[0],this.pos[1]+20],
+    this.turtle2 = this.board.createElement('point',[this.pos[0],this.pos[1]+this.arrowLen],
             {fixed:true,name:' ',visible:false});
     this.objects.push(this.turtle2);
     
@@ -142,10 +145,14 @@ JSXTurtleObj.prototype.clearScreen = function() {
 };
 
 JSXTurtleObj.prototype.setPos = function(x,y) {
-    this.pos = [x,y];
+    if (JXG.IsArray(x)) {
+        this.pos = x;
+    } else {
+        this.pos = [x,y];
+    }
     if (!this.turtleIsHidden) {
         this.turtle.setPositionDirectly(JXG.COORDS_BY_USER,x,y);
-        this.turtle2.setPositionDirectly(JXG.COORDS_BY_USER,x,y+20);
+        this.turtle2.setPositionDirectly(JXG.COORDS_BY_USER,x,y+this.arrowLen);
         var t = this.board.createElement('transform', 
                 [-(this.dir-90)*Math.PI/180.0,this.turtle], {type:'rotate'});
         t.applyOnce(this.turtle2);
@@ -234,19 +241,23 @@ JSXTurtleObj.prototype.popTurtle= function() {
 };
 
 JSXTurtleObj.prototype.lookTo= function(target) { 
-    var ax = this.pos[0];
-    var ay = this.pos[1];
-    var bx = target[0];
-    var by = target[1];
-    var beta; 
-    // Rotate by the slope of the line [this.pos, target]
-    var sgn = (bx-ax>0)?1:-1;
-    if (Math.abs(bx-ax)>0.0000001) {
-        beta = Math.atan((by-ay)/(bx-ax))+((sgn<0)?Math.PI:0);  
-    } else {
-        beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
+    if (JXG.IsArray(target)) {
+        var ax = this.pos[0];
+        var ay = this.pos[1];
+        var bx = target[0];
+        var by = target[1];
+        var beta; 
+        // Rotate by the slope of the line [this.pos, target]
+        var sgn = (bx-ax>0)?1:-1;
+        if (Math.abs(bx-ax)>0.0000001) {
+            beta = Math.atan((by-ay)/(bx-ax))+((sgn<0)?Math.PI:0);  
+        } else {
+            beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
+        }
+        this.right(this.dir-(beta*180/Math.PI));
+    } else if (JXG.IsNumber(target)) {
+        this.right(this.dir-(target));
     }
-    this.right(this.dir-(beta*180/Math.PI));
     return this;
 }
 
