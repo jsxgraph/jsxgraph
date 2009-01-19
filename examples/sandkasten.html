@@ -16,9 +16,9 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25});
-        xax = board.createElement('axis', [[0,0],[1,0]]);
-        yax = board.createElement('axis', [[0,0],[0,1]]);
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25, createAxis: true});
+//        xax = board.createElement('axis', [[0,0],[1,0]], {dash:true, strokeColor: '#ff0000', strokeWidth: 4});
+//        yax = board.createElement('axis', [[0,0],[0,1]]);
 
         p3 = board.createElement('point', [8, 4], {style:1,name:"P_{3}",fixed:true}); // Angabe fester Koordinaten
         p4 = board.createElement('point', [8, 8], {style:2,name:"P_{4}",fixed:true}); // Angabe fester Koordinaten

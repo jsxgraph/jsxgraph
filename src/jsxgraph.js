@@ -94,19 +94,19 @@ JXG.JSXGraph = new function (forceRenderer) {
      * @param {String} box Html-ID to the Html-element in which the board is painted.
      * @return {Board} Reference to the created board.
      */
-    this.initBoard = function (box, atts) {
+    this.initBoard = function (box, attributes) {
         // Create a new renderer
         var renderer;
         
-        if(typeof atts == 'undefined')
-            atts = {};
+        if(typeof attributes == 'undefined')
+            attributes = {};
             
-        var originX = ( (typeof atts["originX"]) == 'undefined' ? 150 : atts["originX"]);
-        var originY = ( (typeof atts["originY"]) == 'undefined' ? 150 : atts["originY"]);
-        var zoomX = ( (typeof atts["zoomX"]) == 'undefined' ? 1.0 : atts["zoomX"]);
-        var zoomY = ( (typeof atts["zoomY"]) == 'undefined' ? 1.0 : atts["zoomY"]);
-        var unitX = ( (typeof atts["unitX"]) == 'undefined' ? 50 : atts["unitX"]);
-        var unitY = ( (typeof atts["unitY"]) == 'undefined' ? 50 : atts["unitY"]);
+        var originX = ( (typeof attributes["originX"]) == 'undefined' ? 150 : attributes["originX"]);
+        var originY = ( (typeof attributes["originY"]) == 'undefined' ? 150 : attributes["originY"]);
+        var zoomX = ( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
+        var zoomY = ( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
+        var unitX = ( (typeof attributes["unitX"]) == 'undefined' ? 50 : attributes["unitX"]);
+        var unitY = ( (typeof attributes["unitY"]) == 'undefined' ? 50 : attributes["unitY"]);
     
         if(this.rendererType == 'svg') {
             renderer = new JXG.SVGRenderer($(box));
@@ -120,6 +120,11 @@ JXG.JSXGraph = new function (forceRenderer) {
         var board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height);
         this.boards[board.id] = board;
         board.initGeonextBoard();
+        
+        if((typeof attributes["createAxis"] != 'undefined') && attributes["createAxis"]) {
+            board.createElement('axis', [[0,0], [1,0]], {});
+            board.createElement('axis', [[0,0], [0,1]], {});
+        }
     
         return board;
     }
