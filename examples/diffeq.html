@@ -6,10 +6,10 @@
         <script type="text/javascript" src="../src/jsxturtle.js"></script>
    </head>
      <body>
-        <h1>Epidemien - SIR model</h1>
+        <h1>Epidemien - SIR model without vital dynamics</h1>
         <span style="color:Blue">Blue: Susceptible population rate</span><br>
         <span style="color:red">Red: Infected population rate</span><br>
-        <span style="color:green">Green: Recovered population rate</span><br>
+        <span style="color:green">Green: Recovered population rate (which means: immune, isolated or dead)</span><br>
         <form><input type="button" value="clear and run" onClick="clearturtle();run()"></form>
         <div id="jsxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
         <script type="text/javascript">
@@ -29,12 +29,11 @@
             var gamma = brd.createElement('slider', [[0,-0.7], [10,-0.7],[0,0.3,1]], {name:'&gamma;'});
             brd.createElement('text', [12,-0.7, "&gamma;: recovery rate"]);
 
-            brd.createElement('text', [12,-0.8, function() {return "I="+brd.round(I.pos[1],3);}]);
-
+            brd.createElement('text', [12,-0.4, function() {return "I(t)="+brd.round(I.pos[1],3);}]);
+            
             S.hideTurtle();
             I.hideTurtle();
             R.hideTurtle();
-            
             S.setPenColor('blue'); S.setPenSize(3);
             I.setPenColor('red'); I.setPenSize(3);
             R.setPenColor('green'); R.setPenSize(3);
@@ -43,6 +42,9 @@
                 S.cs();
                 I.cs();
                 R.cs();
+                S.hideTurtle();
+                I.hideTurtle();
+                R.hideTurtle();
             }
             
             function run() {

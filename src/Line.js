@@ -171,6 +171,84 @@ JXG.Line.prototype = new JXG.GeometryElement;
  * @return {bool} True if (x,y) is near the line, False otherwise.
  */
  JXG.Line.prototype.hasPoint = function (x, y) {
+    var coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+
+    var has = false;
+    var i;
+
+    var slope = this.getSlope();
+    var rise = this.getRise();
+    
+    if(this.visProp['straightFirst'] && this.visProp['straightLast']) {
+        var c = [];
+        // Compute the stdform of the line in screen coordinates.
+        c[0] = this.stdform[0] - 
+            this.stdform[1]*this.board.origin.scrCoords[1]/(this.board.unitX*this.board.zoomX)+
+            this.stdform[2]*this.board.origin.scrCoords[2]/(this.board.unitY*this.board.zoomY);
+        c[1] = this.stdform[1]/(this.board.unitX*this.board.zoomX);
+        c[2] = this.stdform[2]/(-this.board.unitY*this.board.zoomY);
+        var s = this.board.algebra.innerProduct(c,coords.scrCoords,3);
+        return (Math.abs(s)<0.5)?true:false; // this.r
+    }
+    else { 
+        var p1Scr = this.point1.coords.scrCoords;
+        var p2Scr = this.point2.coords.scrCoords;
+        if(slope != "INF") {
+            for(i = -this.r; i < this.r; i++) {
+                   has = has | (Math.abs(y - (slope*(x+i) + rise)) < this.r); 
+               }
+               if(has) {
+                   var distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
+                   var distP2P = coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
+                   var distP1P2 = this.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
+                   if((distP1P > distP1P2) || (distP2P > distP1P2)) { // P(x|y) liegt nicht zwischen P1 und P2
+                       if(distP1P < distP2P) { // P liegt auf der Seite von P1
+                           if(!this.visProp['straightFirst']) {
+                               has = false;
+                           }
+                       }
+                       else { // P liegt auf der Seite von P2
+                           if(!this.visProp['straightLast']) {
+                               has = false;
+                           }                          
+                       }
+                   }
+               }
+        }
+        else { // senkrechte Gerade
+            has = (Math.abs(x-p1Scr[1]) < this.r);
+            if(has) { // sonst muss nicht weiter geprueft werden
+                if(!this.visProp['straightFirst']) {
+                    if(p1Scr[2] < p2Scr[2]) {
+                        if(y < p1Scr[2]) {
+                           has = false;
+                        }
+                    }
+                    else if(p1Scr[2] > p2Scr[2]) {
+                        if(y > p1Scr[2]) {
+                           has = false;
+                        }
+                    }
+                }
+                if(!this.visProp['straightLast']) {
+                    if(p1Scr[2] < p2Scr[2]) {
+                        if(y > p2Scr[2]) {
+                           has = false;
+                        }
+                    }
+                    else if(p1Scr[2] > p2Scr[2]) {
+                        if(y < p2Scr[2]) {
+                           has = false;
+                        }
+                    }
+                }                
+            }
+        }    
+    }
+
+    return has;
+};
+JXG.Line.prototype.hasPointOld = function (x, y) {
     var p1Scr = this.point1.coords.scrCoords;
     var p2Scr = this.point2.coords.scrCoords;
     var coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);

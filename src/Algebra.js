@@ -1294,6 +1294,19 @@ JXG.Algebra.prototype.crossProduct = function(c1,c2) {
     return [x,y,z];
 };
 
+/** 
+  * Inner product of two vectors a, b.
+  * The length of the vectors is n.
+  **/ 
+JXG.Algebra.prototype.innerProduct = function(a,b,n) {    
+    var i;
+    var s = 0;
+    for (i=0;i<n;i++) {
+        s += a[i]*b[i];
+    }
+    return s;
+}
+
 JXG.Algebra.prototype.meet = function(el1,el2) {
     var eps = 0.000001;
     if (Math.abs(el1[3])<eps && Math.abs(el2[3])<eps) { // line line
