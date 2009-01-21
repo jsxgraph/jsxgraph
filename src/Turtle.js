@@ -22,7 +22,16 @@
     You should have received a copy of the GNU Lesser General Public License
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
-JXG.Turtle = function (board, attributes) {
+/**
+ * Turtle graphics.
+ * Possible input parentArr is the start position and the start direction:
+ * [x,y,dir]
+ * [[x,y],dir]
+ * [x,y]
+ * [[x,y]]
+ * parentArr may be empty or null.
+ **/
+JXG.Turtle = function (board, parentArr, attributes) {
     this.arrowLen = 20.0;
     this.turtleIsHidden = false;
     this.board = board;
@@ -34,6 +43,24 @@ JXG.Turtle = function (board, attributes) {
     this.attributes.straightFirst = false;
     this.attributes.straightLast = false;
     this.init();
+    
+    if (parentArr.length!=0) {
+        if (parentArr.length==3) {   // [x,y,dir]
+            // Only numbers are accepted at the moment
+            this.setPos(parentArr[0],parentArr[1]);
+            this.right(90-parentArr[2]);
+        } else if (parentArr.length==2) {
+            if (JXG.IsArray(parentArr[0])) {  // [[x,y],dir]
+                this.setPos(parentArr[0][0],parentArr[0][1]);
+                this.right(90-parentArr[1]);
+            } else {  // [x,y]
+                this.setPos(parentArr[0],parentArr[1]);
+            }
+        } else { // [[x,y]]
+           this.setPos(parentArr[0][0],parentArr[0][1]);
+        }
+    }
+    
     return this;
 } 
 JXG.Turtle.prototype = new JXG.GeometryElement;
@@ -277,7 +304,10 @@ JXG.Turtle.prototype.push = function() { return this.pushTurtle(); };
 JXG.Turtle.prototype.pop = function() { return this.popTurtle(); };
 
 JXG.createTurtle = function(board, parentArr, atts) {
-    return new JXG.Turtle(board,atts);
+    if (parentArr==null) {
+        var parentArr = [];
+    }
+    return new JXG.Turtle(board,parentArr,atts);
 }
 
 JXG.JSXGraph.registerElement('turtle', JXG.createTurtle);
