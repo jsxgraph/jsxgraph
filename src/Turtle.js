@@ -22,23 +22,23 @@
     You should have received a copy of the GNU Lesser General Public License
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
-var JSXTurtleObj = function(board,attributes) {
+JXG.Turtle = function (board, attributes) {
     this.arrowLen = 20.0;
     this.turtleIsHidden = false;
     this.board = board;
     if (attributes==null) {
-        this.attributes = {
-            strokeColor:'#000000'
-        };
+        this.attributes = {};
     } else {
         this.attributes = attributes;
     }
     this.attributes.straightFirst = false;
     this.attributes.straightLast = false;
     this.init();
-};
+    return this;
+} 
+JXG.Turtle.prototype = new JXG.GeometryElement;
 
-JSXTurtleObj.prototype.init = function() {
+JXG.Turtle.prototype.init = function() {
     this.arrowLen = 20.0/Math.sqrt(this.board.unitX*this.board.unitX+this.board.unitY*this.board.unitY);
 
     this.pos = [0,0];
@@ -64,7 +64,7 @@ JSXTurtleObj.prototype.init = function() {
     this.board.update();
 }
 
-JSXTurtleObj.prototype.forward = function(len) {
+JXG.Turtle.prototype.forward = function(len) {
     if (len==0) { return; }
     var dx = len*Math.cos(this.dir*Math.PI/180.0);
     var dy = len*Math.sin(this.dir*Math.PI/180.0);
@@ -88,11 +88,11 @@ JSXTurtleObj.prototype.forward = function(len) {
     return this;
 };
      
-JSXTurtleObj.prototype.back = function(len) {
+JXG.Turtle.prototype.back = function(len) {
     return this.forward(-len);
 };
      
-JSXTurtleObj.prototype.right = function(angle) {
+JXG.Turtle.prototype.right = function(angle) {
     this.dir -= angle;
     this.dir %= 360.0;
     if (!this.turtleIsHidden) {
@@ -103,16 +103,16 @@ JSXTurtleObj.prototype.right = function(angle) {
     return this;
 };
      
-JSXTurtleObj.prototype.left = function(angle) {
+JXG.Turtle.prototype.left = function(angle) {
     return this.right(-angle);
 };
 
-JSXTurtleObj.prototype.penUp = function() {
+JXG.Turtle.prototype.penUp = function() {
     this.isPenDown = false;
     return this;
 };
 
-JSXTurtleObj.prototype.penDown = function() {
+JXG.Turtle.prototype.penDown = function() {
     this.isPenDown = true;
     this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
     this.objects.push(this.curve);
@@ -120,7 +120,7 @@ JSXTurtleObj.prototype.penDown = function() {
     return this;
 };
 
-JSXTurtleObj.prototype.clean = function() {
+JXG.Turtle.prototype.clean = function() {
     for(var i=0;i<this.objects.length;i++) {
         var el = this.objects[i];
         if (el.type==JXG.OBJECT_TYPE_CURVE) {
@@ -135,7 +135,7 @@ JSXTurtleObj.prototype.clean = function() {
     return this;
 };
 
-JSXTurtleObj.prototype.clearScreen = function() {
+JXG.Turtle.prototype.clearScreen = function() {
     for(var i=0;i<this.objects.length;i++) {
         var el = this.objects[i];
         this.board.removeObject(el.id);
@@ -144,7 +144,7 @@ JSXTurtleObj.prototype.clearScreen = function() {
     return this;
 };
 
-JSXTurtleObj.prototype.setPos = function(x,y) {
+JXG.Turtle.prototype.setPos = function(x,y) {
     if (JXG.IsArray(x)) {
         this.pos = x;
     } else {
@@ -163,21 +163,21 @@ JSXTurtleObj.prototype.setPos = function(x,y) {
     return this;
 }
 
-JSXTurtleObj.prototype.setPenSize = function(size) { 
+JXG.Turtle.prototype.setPenSize = function(size) { 
     this.attributes.strokeWidth = size; 
     this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
     this.objects.push(this.curve);
     return this;
 };
 
-JSXTurtleObj.prototype.setPenColor = function(colStr) { 
+JXG.Turtle.prototype.setPenColor = function(colStr) { 
     this.attributes.strokeColor = colStr; 
     this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
     this.objects.push(this.curve);
     return this;
 };
 
-JSXTurtleObj.prototype.setProperty = function() {
+JXG.Turtle.prototype.setProperty = function() {
     var pair;
     var pairRaw;
     var i;
@@ -204,7 +204,7 @@ JSXTurtleObj.prototype.setProperty = function() {
     return this;
 };
 
-JSXTurtleObj.prototype.showTurtle = function() { 
+JXG.Turtle.prototype.showTurtle = function() { 
     this.turtleIsHidden = false; 
     this.arrow.setProperty('visible:true');
     this.setPos(this.pos[0],this.pos[1]);
@@ -212,7 +212,7 @@ JSXTurtleObj.prototype.showTurtle = function() {
     return this;
 };
 
-JSXTurtleObj.prototype.hideTurtle = function() { 
+JXG.Turtle.prototype.hideTurtle = function() { 
     this.turtleIsHidden = true;
     this.arrow.setProperty('visible:false');
     this.setPos(this.pos[0],this.pos[1]);
@@ -220,18 +220,18 @@ JSXTurtleObj.prototype.hideTurtle = function() {
     return this;
 };
 
-JSXTurtleObj.prototype.home= function() { 
+JXG.Turtle.prototype.home= function() { 
     this.pos = [0,0];
     this.setPos(this.pos[0],this.pos[1]);
     return this;
 };
 
-JSXTurtleObj.prototype.pushTurtle= function() { 
+JXG.Turtle.prototype.pushTurtle= function() { 
     this.stack.push([this.pos[0],this.pos[1],this.dir]);
     return this;
 };
 
-JSXTurtleObj.prototype.popTurtle= function() { 
+JXG.Turtle.prototype.popTurtle= function() { 
     var status = this.stack.pop();
     this.pos[0] = status[0];
     this.pos[1] = status[1];
@@ -240,7 +240,7 @@ JSXTurtleObj.prototype.popTurtle= function() {
     return this;
 };
 
-JSXTurtleObj.prototype.lookTo= function(target) { 
+JXG.Turtle.prototype.lookTo= function(target) { 
     if (JXG.IsArray(target)) {
         var ax = this.pos[0];
         var ay = this.pos[1];
@@ -264,15 +264,20 @@ JSXTurtleObj.prototype.lookTo= function(target) {
 /**
   * Shortcuts
   */
-JSXTurtleObj.prototype.fd = function(len) { return this.forward(len); };
-JSXTurtleObj.prototype.bk = function(len) { return this.back(len); };
-JSXTurtleObj.prototype.lt = function(angle) { return this.left(angle); };
-JSXTurtleObj.prototype.rt = function(angle) { return this.right(angle); };
-JSXTurtleObj.prototype.pu = function() { return this.penUp(); };
-JSXTurtleObj.prototype.pd = function() { return this.penDown(); };
-JSXTurtleObj.prototype.ht = function() { return this.hideTurtle(); };
-JSXTurtleObj.prototype.st = function() { return this.showTurtle(); };
-JSXTurtleObj.prototype.cs = function() { return this.clearScreen(); };
-JSXTurtleObj.prototype.push = function() { return this.pushTurtle(); };
-JSXTurtleObj.prototype.pop = function() { return this.popTurtle(); };
+JXG.Turtle.prototype.fd = function(len) { return this.forward(len); };
+JXG.Turtle.prototype.bk = function(len) { return this.back(len); };
+JXG.Turtle.prototype.lt = function(angle) { return this.left(angle); };
+JXG.Turtle.prototype.rt = function(angle) { return this.right(angle); };
+JXG.Turtle.prototype.pu = function() { return this.penUp(); };
+JXG.Turtle.prototype.pd = function() { return this.penDown(); };
+JXG.Turtle.prototype.ht = function() { return this.hideTurtle(); };
+JXG.Turtle.prototype.st = function() { return this.showTurtle(); };
+JXG.Turtle.prototype.cs = function() { return this.clearScreen(); };
+JXG.Turtle.prototype.push = function() { return this.pushTurtle(); };
+JXG.Turtle.prototype.pop = function() { return this.popTurtle(); };
 
+JXG.createTurtle = function(board, parentArr, atts) {
+    return new JXG.Turtle(board,atts);
+}
+
+JXG.JSXGraph.registerElement('turtle', JXG.createTurtle);

@@ -33,6 +33,7 @@
  * Initally, the slider is at position [x0,y0] + ([x1,y1]-[x0,y0])*start/(max-min)
  * The return value is an invisible point, whos X() or Y() value
  * returns the position between max and min,
+ * Further, there is a method Value() returning the same value.
  **/
 JXG.createSlider = function(board, parentArr, atts) {
     var pos0 = parentArr[0];
@@ -58,6 +59,7 @@ JXG.createSlider = function(board, parentArr, atts) {
             function() {return p3.Dist(p1)/p2.Dist(p1)*(smax - smin)+smin;}, 
             ], 
             {visible:false,name:''});
+    p4.Value = p4.X;
     var t = board.createElement('text', [(pos1[0]-pos0[0])*.05+pos1[0], (pos1[1]-pos0[1])*.05+pos1[1], function(){return board.round(p4.X(),2);}],{name:''}); 
     /*
     var p3 = board.createElement('point', [sx + start, sy], {slideObject:l1,style:6,strokeColor:'#0080c0',fillColor:'#0080c0',name:''});

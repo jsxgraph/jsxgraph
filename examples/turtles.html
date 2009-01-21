@@ -1,11 +1,9 @@
 <html>
 <head>
    <title>JSXGraph example</title>
-   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
-   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/prototype.js"></script>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-   <script type="text/javascript" src="../src/jsxturtle.js"></script>
-   <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxturtle.js"></script>-->
 </head>
 <body>
 <h1>Multiple turtles</h1>
@@ -17,8 +15,8 @@
 <script type="text/javascript">
 /* <![CDATA[ */
 var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, unitX: 1, unitY: 1});
-var t1 = new JSXTurtleObj(brd);
-var t2 = new JSXTurtleObj(brd);
+var t1 = brd.createElement('turtle');
+var t2 = brd.createElement('turtle',[],{strokeColor:'#000000'});
 
 t1.cs();
 t2.cs();
@@ -40,6 +38,14 @@ function clearturtle() {
  t1.setPos(200,0);
  t2.setPos(0,0);
 }
+/*
+function run() {
+    t1.forward(20);
+}
+function clearturtle() {
+ t1.cs();
+}
+*/
 /* ]]> */
 </script>
 </body>

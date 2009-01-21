@@ -1,9 +1,8 @@
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+        <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
         <script type="text/javascript" src="../distrib/prototype.js"></script>
         <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-        <script type="text/javascript" src="../src/jsxturtle.js"></script>
    </head>
      <body>
         <h1>Epidemien - SIR model without vital dynamics</h1>
@@ -15,9 +14,9 @@
         <script type="text/javascript">
             var brd = JXG.JSXGraph.initBoard('jsxgbox', {originX: 20, originY: 300, unitX: 20, unitY: 250});
             
-            var S = new JSXTurtleObj(brd);
-            var I = new JSXTurtleObj(brd);
-            var R = new JSXTurtleObj(brd);
+            var S = brd.createElement('turtle',[],{strokeColor:'blue',strokeWidth:3});
+            var I = brd.createElement('turtle',[],{strokeColor:'red',strokeWidth:3});
+            var R = brd.createElement('turtle',[],{strokeColor:'green',strokeWidth:3});
             
             var xaxis = brd.createElement('axis', [[0,0], [1,0]], {});
             var yaxis = brd.createElement('axis', [[0,0], [0,1]], {});
@@ -34,9 +33,6 @@
             S.hideTurtle();
             I.hideTurtle();
             R.hideTurtle();
-            S.setPenColor('blue'); S.setPenSize(3);
-            I.setPenColor('red'); I.setPenSize(3);
-            R.setPenColor('green'); R.setPenSize(3);
             
             function clearturtle() {
                 S.cs();
@@ -48,7 +44,7 @@
             }
             
             function run() {
-                S.setPos(0,1.0-s.X());
+                S.setPos(0,1.0-s.Value());
                 R.setPos(0,0);
                 I.setPos(0,s.X());
                 
@@ -63,8 +59,8 @@
              }
              
              function loop() {
-                var dS = -beta.X()*S.pos[1]*I.pos[1];
-                var dR = gamma.X()*I.pos[1];
+                var dS = -beta.Value()*S.pos[1]*I.pos[1];
+                var dR = gamma.Value()*I.pos[1];
                 var dI = -(dS+dR);
                 turtleMove(S,delta,dS);
                 turtleMove(R,delta,dR);

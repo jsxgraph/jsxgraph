@@ -2337,10 +2337,12 @@ JXG.Board.prototype.update = function(drag) {
  * @return Reference to the created element.
  */
 JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
-    // CM: 
-    if (parents == null || parents.length == 0) {
+    // CM: AW: 
+    if (elementType!='turtle' && (parents == null || parents.length == 0)) {
         return null;
-    }
+    } 
+    if (parents == null) { parents = []; }
+    
     var el;
     elementType = elementType.toLowerCase();
     
@@ -2350,7 +2352,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     for (var i=0; i<parents.length; i++) {
         parents[i] = JXG.GetReferenceFromParameter(this, parents[i]);
     }
-    
+
     if(JXG.JSXGraph.elements[elementType] != null) {
         el = JXG.JSXGraph.elements[elementType](this, parents, attributes);
     } else {
