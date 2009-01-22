@@ -3,10 +3,10 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../distrib/prototype.js"></script>
-   <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h1>Use the minified version</h1>
+<h1>Playground</h1>
 <!-- Drawing area -->
 <div id="box" class="jxgbox" style="width:800px; height:500px; overflow:hidden; "></div>
 <!-- Drawing area -->
@@ -18,13 +18,16 @@
     function testmakro(board,el1, el2) {
     	var l = board.createElement('line', [el1,el2], { strokeWidth:3 });
     }
-
     var board = JXG.JSXGraph.initBoard('box');
 
-    // Free points
-    var p1 = board.createElement('point',[0.4,0],{ visible:true, name:'B'});
-    var p2 = board.createElement('point', [3,-1] );
 
+    // Free points
+    var p2 = board.createElement('point', [2,1] );
+    var c = board.createElement('curve', ['t',function(t){ return p2.Y()*t*Math.sin(t);},'t'] );
+    //var c = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);},'t'] );
+    var p = board.createElement('glider', [1,1,c] );
+    var t = board.createElement('tangent', [c,p] );
+/*
     // Fixed points
     for (var i=0; i<5; i++) {
         for (var j=0; j<3; j++) {
@@ -77,7 +80,7 @@
     var s2 = board.createElement('point',[0, 0], {slideObject: c.id}); // On circle
    
     testmakro(board,s1,s2); 
-
+*/
      
 /* ]]> */
 </script>

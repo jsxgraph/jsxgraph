@@ -31,7 +31,7 @@
  * [[x,y]]
  * parentArr may be empty or null.
  **/
-JXG.Turtle = function (board, parentArr, attributes) {
+JXG.Turtle = function (board, parents, attributes) {
     this.arrowLen = 20.0;
     this.turtleIsHidden = false;
     this.board = board;
@@ -44,20 +44,20 @@ JXG.Turtle = function (board, parentArr, attributes) {
     this.attributes.straightLast = false;
     this.init();
     
-    if (parentArr.length!=0) {
-        if (parentArr.length==3) {   // [x,y,dir]
+    if (parents.length!=0) {
+        if (parents.length==3) {   // [x,y,dir]
             // Only numbers are accepted at the moment
-            this.setPos(parentArr[0],parentArr[1]);
-            this.right(90-parentArr[2]);
-        } else if (parentArr.length==2) {
-            if (JXG.IsArray(parentArr[0])) {  // [[x,y],dir]
-                this.setPos(parentArr[0][0],parentArr[0][1]);
-                this.right(90-parentArr[1]);
+            this.setPos(parents[0],parents[1]);
+            this.right(90-parents[2]);
+        } else if (parents.length==2) {
+            if (JXG.IsArray(parents[0])) {  // [[x,y],dir]
+                this.setPos(parents[0][0],parents[0][1]);
+                this.right(90-parents[1]);
             } else {  // [x,y]
-                this.setPos(parentArr[0],parentArr[1]);
+                this.setPos(parents[0],parents[1]);
             }
         } else { // [[x,y]]
-           this.setPos(parentArr[0][0],parentArr[0][1]);
+           this.setPos(parents[0][0],parents[0][1]);
         }
     }
     
@@ -303,11 +303,11 @@ JXG.Turtle.prototype.cs = function() { return this.clearScreen(); };
 JXG.Turtle.prototype.push = function() { return this.pushTurtle(); };
 JXG.Turtle.prototype.pop = function() { return this.popTurtle(); };
 
-JXG.createTurtle = function(board, parentArr, atts) {
-    if (parentArr==null) {
-        var parentArr = [];
+JXG.createTurtle = function(board, parents, attributes) {
+    if (parents==null) {
+        var parents = [];
     }
-    return new JXG.Turtle(board,parentArr,atts);
+    return new JXG.Turtle(board,parents,attributes);
 }
 
 JXG.JSXGraph.registerElement('turtle', JXG.createTurtle);
