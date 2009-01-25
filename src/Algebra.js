@@ -1022,7 +1022,7 @@ JXG.Algebra.prototype.geonext2JS = function(term) {
     
     
     var from = ['Abs','ACos','ASin','ATan','Ceil','Cos','Exp','Floor','Log','Max','Min','Pow','Random','Round','Sin','Sqrt','Tan','Trunc'];
-    var to = ['Math.abs','Math.acos','Math.asin','Math.atan','Math.ceil','Math.cos','Math.exp','Math.floor','Math.log','Math.max','Math.min','Math.pow','Math.random','this.board.algebra.round','Math.sin','Math.sqrt','Math.tan', 'Math.ceil'];
+    var to = ['Math.abs','Math.acos','Math.asin','Math.atan','Math.ceil','Math.cos','Math.exp','Math.floor','Math.log','Math.max','Math.min','Math.pow','Math.random','this.board.round','Math.sin','Math.sqrt','Math.tan', 'Math.ceil'];
     for (var i=0; i<from.length; i++) {
         expr = new RegExp(from[i],"g");
         newterm = newterm.replace(expr,to[i]);
@@ -1189,25 +1189,6 @@ JXG.Algebra.prototype.pow = function(a,b) {
             return null;
         }
     }
-};
-
-/**
- * Round a number
- * @param {number} number to round
- * @param {number} number of digits after point
- * Output is a string 
- */
-JXG.Algebra.prototype.round = function(a,n) {
-        if (typeof a == 'string') return a;
-        if (n==0 || n==null) {
-            return Math.round(a).toString();
-        }
-        if (n < 1 || n > 14) { return false; }
-        var e = Math.pow(10, n);
-        var k = (Math.round(a * e) / e).toString();
-        if (k.indexOf('.') == -1) { k += '.'; }
-        k += e.toString().substring(1);
-        return k.substring(0, k.indexOf('.') + n+1);
 };
 
 /**

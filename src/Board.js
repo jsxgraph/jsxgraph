@@ -1938,7 +1938,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     pb_on_curve.addChild(pb_on_axis);
     
     var Int = this.algebra.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
-    var t = board.createElement('text', [function () { return pb_on_curve.X() + 0.2; }, function () { return pb_on_curve.Y() - 1.0; },'&int; = ' + this.algebra.round(Int, 4)]);
+    var t = board.createElement('text', [function () { return pb_on_curve.X() + 0.2; }, function () { return pb_on_curve.Y() - 1.0; },'&int; = ' + (Int).toFixed(4)]);
 
     var attribs = {};
     if( (typeof atts != 'undefined') && (atts != null))
@@ -1969,7 +1969,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
         ps.push(pa_on_axis);
 
         var Int = this.board.algebra.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
-        t.plaintextStr = '&int; = ' + this.board.algebra.round(Int, 4);
+        t.plaintextStr = '&int; = ' + (Int).toFixed(4);
             
         this.vertices = ps;
     }
@@ -2246,7 +2246,7 @@ JXG.Board.prototype.updateRenderer = function(drag) {
         pEl.afterFirstUpdate = true;
     }
 */    
-    drag = JXG.GetReferenceFromParameter(this, drag);
+    var drag = JXG.GetReferenceFromParameter(this, drag);
     
     var count = -1;
     if (!this.reducedUpdate) count = 1;

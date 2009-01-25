@@ -39,9 +39,9 @@
 			
 				function print_table(board) {
 					if (hook){
-						$('print_a').value = board.algebra.round(JXG.GetReferenceFromParameter(board, 'A').X(),2);
-						$('print_b').value = board.algebra.round(JXG.GetReferenceFromParameter(board, 'B').X(),2);
-						$('print_c').value = board.algebra.round(JXG.GetReferenceFromParameter(board, 'C').X(),2);
+						$('print_a').value = board.round(JXG.GetReferenceFromParameter(board, 'A').X(),2);
+						$('print_b').value = board.round(JXG.GetReferenceFromParameter(board, 'B').X(),2);
+						$('print_c').value = board.round(JXG.GetReferenceFromParameter(board, 'C').X(),2);
 					}
 				};
 				

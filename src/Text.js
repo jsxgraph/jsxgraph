@@ -102,7 +102,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
     } else {
         var plaintext;
         if (typeof this.contentStr=='number') {
-            plaintext = this.board.round(this.contentStr,this.digits);  
+            plaintext = (this.contentStr).toFixed(this.digits);  
         } else {
             plaintext = this.generateTerm(this.contentStr);   // Converts GEONExT syntax into JavaScript string
         }
@@ -187,8 +187,8 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
             var res = this.board.algebra.geonext2JS(term); 
             res = res.replace(/\\"/g,'"');
             res = res.replace(/\\'/g,"'");
-            if (res.indexOf('this.board.algebra.round')<0) {  // GEONExT-Hack: apply rounding once only.  
-                plaintext += '+(this.board.algebra.round('+ res + ','+(this.digits)+'))';
+            if (res.indexOf('toFixed')<0) {  // GEONExT-Hack: apply rounding once only.  
+                plaintext += '+('+ res + ').toFixed('+(this.digits)+')';
             } else {
                 plaintext += '+('+ res + ')';
             }

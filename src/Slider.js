@@ -60,13 +60,7 @@ JXG.createSlider = function(board, parentArr, atts) {
             ], 
             {visible:false,name:''});
     p4.Value = p4.X;
-    var t = board.createElement('text', [(pos1[0]-pos0[0])*.05+pos1[0], (pos1[1]-pos0[1])*.05+pos1[1], function(){return board.round(p4.X(),2);}],{name:''}); 
-    /*
-    var p3 = board.createElement('point', [sx + start, sy], {slideObject:l1,style:6,strokeColor:'#0080c0',fillColor:'#0080c0',name:''});
-    var p4 = board.createElement('point', [function() {return ((p3.X() - sx)/sw * (smax - smin)+smin);}, function() {return (sy  + 1);}], {visible:false,name:''});
-    var l2 = board.createElement('line', [p1,p3], {straightFirst:false,straightLast:false,strokewidth:3,strokeColor:'#0080c0',name:''}); 
-    var t = board.createElement('text', [(sx+sw)*1.05, sy, function(){return board.round(p4.X(),2);}],{name:''}); 
-        */
+    var t = board.createElement('text', [(pos1[0]-pos0[0])*.05+pos1[0], (pos1[1]-pos0[1])*.05+pos1[1], function(){return (p4.X()).toFixed(2);}],{name:''}); 
     return p4;
 };    
 

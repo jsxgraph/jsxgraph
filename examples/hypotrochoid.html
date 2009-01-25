@@ -43,9 +43,9 @@ Bogenl&auml;nge =<input type="text" id="D" size="2" maxlength="7"
 
         board.addHook(function(board) {
                 var d = 3;
-                var a = board.algebra.round(g1.X()-g2.X(),d);
-                var b = board.algebra.round(g3.X(),d);
-                var c = board.algebra.round((g1.X()-g2.X())/g2.X(),d);
+                var a = board.round(g1.X()-g2.X(),d);
+                var b = board.round(g3.X(),d);
+                var c = board.round((g1.X()-g2.X())/g2.X(),d);
                 $('parameter').innerHTML = "["+a+"cos(t) + "+b+"cos("+c+"*t)  , " +a+"sin(t) + "+b+"sin("+c+"*t)]";
             });
         board.addHook(function(board) {
