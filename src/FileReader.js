@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009
+    Copyright 2008, 
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -118,7 +118,7 @@ this.readElements = function(tree, board, format) {
         }
     }
     else if(tree.getElementsByTagName('geogebra').length != 0) {
-        //JXG.GeogebraReader.readGeogebra(tree, board);
+        JXG.GeogebraReader.readGeogebra(tree, board);
     }
     else if(format.toLowerCase()=='intergeo') {
          JXG.IntergeoReader.readIntergeo(tree, board);

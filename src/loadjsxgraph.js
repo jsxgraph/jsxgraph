@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009
+    Copyright 2008, 
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -39,7 +39,7 @@ JXG.require = function(libraryName) {
 JXG.baseFiles;
 
 if (!JXG.useMinify) {
-    JXG.baseFiles ='AbstractRenderer,FileReader,GeonextReader,IntergeoReader,jsxgraph,GeometryElement,Board,Coords,Point,Line,Group,Circle,Polygon,Curve,Arc,Sector,Angle,Label,Algebra,Intersection,Composition,Text,Image,Slider,Math,MathNumerics,MathStatistics,Chart,Base64,Gunzip,Transformation,Wrappers,Options,RGBColor,Turtle';
+    JXG.baseFiles ='AbstractRenderer,FileReader,GeonextReader,GeogebraReader,IntergeoReader,jsxgraph,GeometryElement,Board,Options,Coords,Point,Line,Group,Circle,Polygon,Curve,Arrow,Arc,Sector,Angle,Label,Algebra,Intersection,Composition,Text,Image,Axis,Slider,MathStatistics,Chart,Base64,Gunzip,Transformation,Wrappers';
 } else {
     JXG.baseFiles = 'jxg';
 }
