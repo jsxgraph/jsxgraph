@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.6">
+<gui>
+	<show algebraView="false" auxiliaryObjects="false" algebraInput="true" cmdList="false"/>
+	<splitDivider loc="210" locVertical="400" horizontal="true"/>
+	<font  size="14"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="256.0" yZero="206.0" scale="30.0" yscale="30.0"/>
+	<evSettings axes="false" grid="false" pointCapturing="false" pointStyle="0"/>
+	<bgColor r="255" g="255" b="255"/>
+	<axesColor r="64" g="64" b="64"/>
+	<gridColor r="192" g="192" b="192"/>
+	<lineStyle axes="1" grid="10"/>
+	<axis id="0" label="" unitLabel="" showNumbers="true"/>
+	<axis id="1" label="" unitLabel="" showNumbers="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Dynagraph" author="Markus Hohenwarter" date="">
+	<worksheetText above="Du siehst hier zwei Zahlengeraden für eine Stelle x und den zugehörigen Funktionswert f(x)." below="Ziehe die Stelle x mit der Maus und beobachte dabei die Veränderung des Funktionswerts f(x). Du kannst auch die Funktion f(x) verändern, indem du in das Eingabefeld den neuen Funktionsterm eingibst und auf die Schaltfläche &quot;aktualisieren&quot; klickst.
+Einige Beispiele: x^3, 1/x, sin(x), exp(x), log(x), sqrt(x), abs(x), sgn(x)"/>
+<element type="point" label="C">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="-1" y="16"/>
+	<fixed val="true"/>
+	<auxiliary val="true"/>
+	<breakpoint val="false"/>
+	<coords x="0.0" y="2.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<element type="point" label="B">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<fixed val="true"/>
+	<auxiliary val="true"/>
+	<breakpoint val="false"/>
+	<coords x="1.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<element type="point" label="A">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<fixed val="true"/>
+	<auxiliary val="true"/>
+	<breakpoint val="false"/>
+	<coords x="0.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<command name="Line">
+	<input a0="A" a1="B"/>
+	<output a0="g"/>
+</command>
+<element type="line" label="g">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<auxiliary val="true"/>
+	<breakpoint val="false"/>
+	<coords x="0.0" y="1.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="g"/>
+	<output a0="D"/>
+</command>
+<element type="point" label="D">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<auxiliary val="true"/>
+	<breakpoint val="false"/>
+	<coords x="2.0" y="-0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<expression label="a" exp="x(D)" />
+<element type="numeric" label="a">
+	<value val="2.0"/>
+</element>
+<expression label ="f" exp="f(x) = x²"/>
+<element type="function" label="f">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<breakpoint val="false"/>
+	<lineStyle thickness="2" type="0"/>
+</element><expression label="b" exp="f(a)" />
+<element type="numeric" label="b">
+	<value val="4.0"/>
+</element>
+<command name="Line">
+	<input a0="C" a1="g"/>
+	<output a0="h"/>
+</command>
+<element type="line" label="h">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<auxiliary val="true"/>
+	<breakpoint val="false"/>
+	<coords x="0.0" y="1.0" z="-2.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="T2" exp="&quot;1&quot;"/>
+<element type="text" label="T2">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="B"/>
+	<labelOffset x="-3" y="17"/>
+</element>
+<expression label="T1" exp="&quot;0&quot;"/>
+<element type="text" label="T1">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="A"/>
+	<labelOffset x="-4" y="17"/>
+</element>
+<expression label="T3" exp="&quot;x_0 \, = \, &quot; + a" />
+<element type="text" label="T3">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<fixed val="true"/>
+	<isLaTeX val="true"/>
+	<startPoint exp="D"/>
+	<labelOffset x="-19" y="-31"/>
+</element>
+<expression label="E" exp="C + (b, 0)" type="point" />
+<element type="point" label="E">
+	<show object="true" label="false"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<trace val="true"/>
+	<auxiliary val="true"/>
+	<breakpoint val="false"/>
+	<coords x="4.0" y="2.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<expression label="T4" exp="&quot;f(&quot; + a + &quot;) \,=\, &quot; + b" />
+<element type="text" label="T4">
+	<show object="true" label="true"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<isLaTeX val="true"/>
+	<startPoint exp="E"/>
+	<labelOffset x="-26" y="-33"/>
+</element>
+<expression label="T5" exp="&quot;f(x) \, = \, &quot; + f" />
+<element type="text" label="T5">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<isLaTeX val="true"/>
+	<absoluteScreenLocation  x="26" y="18"/>
+</element>
+<expression label="F" exp="E + (0, 0)" type="point" />
+<element type="point" label="F">
+	<show object="false" label="true"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<trace val="true"/>
+	<breakpoint val="false"/>
+	<coords x="4.0" y="2.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<expression label="T6" exp="&quot;0&quot;"/>
+<element type="text" label="T6">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="C"/>
+	<labelOffset x="-4" y="18"/>
+</element>
+<expression label="G" exp="C + (1, 0)" type="point" />
+<element type="point" label="G">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="12" y="16"/>
+	<breakpoint val="false"/>
+	<coords x="1.0" y="2.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<expression label="T7" exp="&quot;1&quot;"/>
+<element type="text" label="T7">
+	<show object="true" label="true"/>
+	<objColor r="51" g="51" b="51" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="G"/>
+	<labelOffset x="-3" y="18"/>
+</element>
+<expression label="T8" exp="&quot;x&quot;"/>
+<element type="text" label="T8">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<absoluteScreenLocation  x="8" y="225"/>
+</element>
+<expression label="T9" exp="&quot;f(x)&quot;"/>
+<element type="text" label="T9">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<absoluteScreenLocation  x="7" y="168"/>
+</element>
+<expression label="T10" exp="&quot;f(&quot; + a + &quot;) \, =\, &quot; + (f(a))" />
+<element type="text" label="T10">
+	<show object="true" label="true"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<isLaTeX val="true"/>
+	<absoluteScreenLocation  x="25" y="70"/>
+</element>
+</construction>
+</geogebra>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.3">
+<gui>
+	<show algebraView="true"/>
+	<splitDivider loc="241"/>
+	<font  size="14"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="233.0" yZero="220.0" scale="30.0"/>
+	<evSettings axes="true" grid="false" pointCapturing="false"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="" author="" date="">
+<element type="conic" label="k">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-17" y="10"/>
+	<labelMode val="1"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<lineStyle thickness="4" type="0"/>
+	<eigenvectors  x0="1.0" y0="0.0" z0="1.0" x1="-0.0" y1="1.0" z1="1.0"/>
+	<matrix A0="1.0" A1="1.0" A2="-25.0" A3="0.0" A4="0.0" A5="0.0"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="Radius">
+	<input a0="k"/>
+	<output a0="r"/>
+</command>
+<element type="numeric" label="r">
+	<value val="5.0"/>
+</element>
+<command name="Midpoint">
+	<input a0="k"/>
+	<output a0="M"/>
+</command>
+<element type="point" label="M">
+	<show object="true" label="true"/>
+	<objColor r="51" g="153" b="0" alpha="0.0"/>
+	<labelOffset x="3" y="-3"/>
+	<labelMode val="1"/>
+	<fixed val="false"/>
+	<coords x="0.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+</construction>
+</geogebra>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.3">
+<gui>
+	<show algebraView="true"/>
+	<splitDivider loc="168"/>
+	<font  size="13"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="24.415999999999997" yZero="137.36" scale="52.32"/>
+	<evSettings axes="true" grid="false" pointCapturing="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Eigenschaften der Trigonometrischen Funktionen sin(x+a)" author="Spt" date="">
+<expression label ="a" exp="a(x) = sin(x)"/>
+<element type="function" label="a">
+	<show object="true" label="false"/>
+	<objColor r="51" g="51" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<lineStyle thickness="3" type="0"/>
+</element><expression label ="b" exp="b(x) = sin(x + 2)"/>
+<element type="function" label="b">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<lineStyle thickness="2" type="0"/>
+</element><expression label ="c" exp="c(x) = sin(x - 0.5)"/>
+<element type="function" label="c">
+	<show object="true" label="false"/>
+	<objColor r="255" g="0" b="51" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<lineStyle thickness="3" type="0"/>
+</element></construction>
+</geogebra>

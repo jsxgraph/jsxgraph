@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.4">
+<gui>
+	<show algebraView="false" auxiliaryObjects="true"/>
+	<splitDivider loc="250" locVertical="400" horizontal="true"/>
+	<font  size="12"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="228.0" yZero="197.0" scale="30.0"/>
+	<evSettings axes="true" grid="true" pointCapturing="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Gegenvektor" author="Markus Hohenwarter" date="">
+<element type="vector" label="v">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<labelOffset x="13" y="13"/>
+	<labelMode val="1"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="3.0" y="2.0" z="0.0"/>
+	<lineStyle thickness="4" type="0"/>
+	<coordStyle style="cartesian"/>
+	<startPoint  x="0.0" y="0.0" z="1.0"/>
+</element>
+</construction>
+</geogebra>

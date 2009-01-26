@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.7">
+<gui>
+	<show algebraView="false" auxiliaryObjects="true" algebraInput="false" cmdList="true"/>
+	<splitDivider loc="211" locVertical="400" horizontal="true"/>
+	<font  size="12"/>
+	<consProtColumns  col0="true" col1="true" col2="true" col3="false" col4="true" col5="false"/>
+	<consProtocol useColors="true" showOnlyBreakpoints="false"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="320.1303908895044" yZero="284.14827536677956" scale="97.95801785164664" yscale="97.95801785164664"/>
+	<evSettings axes="true" grid="false" pointCapturing="0" pointStyle="0"/>
+	<bgColor r="255" g="255" b="255"/>
+	<axesColor r="64" g="64" b="64"/>
+	<gridColor r="192" g="192" b="192"/>
+	<lineStyle axes="1" grid="10"/>
+	<axis id="0" label="" unitLabel="" showNumbers="false"/>
+	<axis id="1" label="" unitLabel="" showNumbers="false"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+	<coordStyle val="0"/>
+</kernel>
+<construction title="Mühle" author="" date="">
+<command name="Intersect">
+	<input a0="xAxis" a1="yAxis"/>
+	<output a0="O"/>
+</command>
+<element type="point" label="O">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="-0.0" y="-0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Point">
+	<input a0="xAxis"/>
+	<output a0="A"/>
+</command>
+<element type="point" label="A">
+	<show object="false" label="true"/>
+	<objColor r="125" g="125" b="255" alpha="0.0"/>
+	<labelOffset x="-23" y="0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<breakpoint val="false"/>
+	<coords x="-3.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Midpoint">
+	<input a0="A" a1="O"/>
+	<output a0="M"/>
+</command>
+<element type="point" label="M">
+	<show object="true" label="false"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<labelOffset x="2" y="-2"/>
+	<breakpoint val="false"/>
+	<coords x="-1.5" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<command name="Segment">
+	<input a0="M" a1="O"/>
+	<output a0="radius"/>
+</command>
+<element type="segment" label="radius">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<labelOffset x="-18" y="35"/>
+	<labelMode val="1"/>
+	<breakpoint val="false"/>
+	<coords x="0.0" y="1.5" z="0.0"/>
+	<lineStyle thickness="3" type="10"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="M" a1="xAxis"/>
+	<output a0="ga"/>
+</command>
+<element type="line" label="ga">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="-1.0" y="0.0" z="-1.5"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="ga"/>
+	<output a0="D"/>
+</command>
+<element type="point" label="D">
+	<show object="false" label="true"/>
+	<objColor r="125" g="125" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<breakpoint val="false"/>
+	<coords x="-1.5" y="2.5" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Polygon">
+	<input a0="A" a1="O" a2="D"/>
+	<output a0="P" a1="d" a2="a" a3="b"/>
+</command>
+<element type="polygon" label="P">
+	<show object="true" label="false"/>
+	<objColor r="153" g="51" b="0" alpha="0.1"/>
+	<breakpoint val="false"/>
+</element>
+<element type="segment" label="d">
+	<show object="true" label="false"/>
+	<objColor r="153" g="51" b="0" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="0.0" y="3.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<element type="segment" label="a">
+	<show object="true" label="false"/>
+	<objColor r="153" g="51" b="0" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="-2.5" y="-1.5" z="-0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<element type="segment" label="b">
+	<show object="true" label="false"/>
+	<objColor r="153" g="51" b="0" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="2.5" y="-1.5" z="7.5"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<command name="Point">
+	<input a0="radius"/>
+	<output a0="Q"/>
+</command>
+<element type="point" label="Q">
+	<show object="true" label="false"/>
+	<objColor r="255" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-7" y="35"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<breakpoint val="false"/>
+	<coords x="-0.27695936978422975" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="4"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="Q" a1="xAxis"/>
+	<output a0="c"/>
+</command>
+<element type="line" label="c">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="-1.0" y="0.0" z="-0.27695936978422975"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="c" a1="a"/>
+	<output a0="F"/>
+</command>
+<element type="point" label="F">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="-0.4154390546763446" y="0.6923984244605743" z="1.5"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="F" a1="c"/>
+	<output a0="e"/>
+</command>
+<element type="line" label="e">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="0.0" y="-1.5" z="0.6923984244605743"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="b" a1="e"/>
+	<output a0="G"/>
+</command>
+<element type="point" label="G">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<labelOffset x="-19" y="-4"/>
+	<breakpoint val="false"/>
+	<coords x="-10.211402363309139" y="1.7309960611514357" z="3.75"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Mirror">
+	<input a0="Q" a1="M"/>
+	<output a0="H"/>
+</command>
+<element type="point" label="H">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="-2.7230406302157704" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Polygon">
+	<input a0="H" a1="G" a2="F" a3="Q"/>
+	<output a0="ZylQ" a1="k" a2="g" a3="h" a4="e_1"/>
+</command>
+<element type="polygon" label="ZylQ">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="204" alpha="0.1"/>
+	<breakpoint val="false"/>
+</element>
+<element type="segment" label="k">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="-0.46159894964038284" y="0.0" z="-1.2569526947356857"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<element type="segment" label="g">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<labelOffset x="14" y="-2"/>
+	<breakpoint val="false"/>
+	<coords x="-5.551115123125783E-17" y="2.4460812604315407" z="-1.129108540550223"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<element type="segment" label="h">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<labelOffset x="-33" y="1"/>
+	<labelMode val="1"/>
+	<breakpoint val="false"/>
+	<coords x="0.4615989496403829" y="0.0" z="0.12784415418546285"/>
+	<lineStyle thickness="5" type="0"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<element type="segment" label="e_1">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="0.0" y="-2.4460812604315407" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<command name="Segment">
+	<input a0="M" a1="Q"/>
+	<output a0="r"/>
+</command>
+<element type="segment" label="r">
+	<show object="true" label="true"/>
+	<objColor r="255" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-22" y="14"/>
+	<labelMode val="1"/>
+	<breakpoint val="false"/>
+	<coords x="0.0" y="1.2230406302157704" z="0.0"/>
+	<lineStyle thickness="5" type="0"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<expression label="R" exp="(r, 0)" type="point" />
+<element type="point" label="R">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="1.2230406302157704" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<expression label="V" exp="π r² h" />
+<element type="numeric" label="V">
+	<value val="2.1691843089962997"/>
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<labelMode val="1"/>
+	<breakpoint val="false"/>
+</element>
+<expression label="Vol" exp="(r, V)" type="point" />
+<element type="point" label="Vol">
+	<show object="true" label="false"/>
+	<objColor r="0" g="153" b="0" alpha="0.0"/>
+	<labelOffset x="-60" y="-13"/>
+	<labelMode val="1"/>
+	<trace val="true"/>
+	<breakpoint val="false"/>
+	<coords x="1.2230406302157704" y="2.1691843089962997" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="Vol" a1="R"/>
+	<output a0="i"/>
+</command>
+<element type="segment" label="i">
+	<show object="true" label="false"/>
+	<objColor r="0" g="153" b="0" alpha="0.0"/>
+	<labelMode val="1"/>
+	<breakpoint val="false"/>
+	<coords x="2.1691843089962997" y="0.0" z="-2.653000544328995"/>
+	<lineStyle thickness="2" type="10"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<command name="Segment">
+	<input a0="D" a1="M"/>
+	<output a0="Höhe"/>
+</command>
+<element type="segment" label="Höhe">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-19" y="-38"/>
+	<breakpoint val="false"/>
+	<coords x="2.5" y="0.0" z="3.75"/>
+	<lineStyle thickness="3" type="15"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<command name="Segment">
+	<input a0="O" a1="R"/>
+	<output a0="x_2"/>
+</command>
+<element type="segment" label="x_2">
+	<show object="true" label="false"/>
+	<objColor r="255" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="0" y="10"/>
+	<breakpoint val="false"/>
+	<coords x="-0.0" y="1.2230406302157704" z="0.0"/>
+	<lineStyle thickness="5" type="0"/>
+	<eqnStyle style="implicit"/>
+	<outlyingIntersections val="true"/>
+	<keepTypeOnTransform val="false"/>
+</element>
+<expression label="T1" exp="&quot;Dach der&#10;Mühle&quot;"/>
+<element type="text" label="T1">
+	<show object="true" label="false"/>
+	<objColor r="153" g="51" b="0" alpha="0.1"/>
+	<breakpoint val="false"/>
+	<absoluteScreenLocation  x="64" y="54"/>
+</element>
+<expression label="T2" exp="&quot;Wasserbehälter&quot;"/>
+<element type="text" label="T2">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="204" alpha="0.1"/>
+	<breakpoint val="false"/>
+	<startPoint exp="G"/>
+	<labelOffset x="8" y="21"/>
+</element>
+<expression label="T3" exp="&quot;r = &quot; + r" />
+<element type="text" label="T3">
+	<show object="true" label="true"/>
+	<objColor r="255" g="0" b="0" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<startPoint exp="R"/>
+	<labelOffset x="-46" y="29"/>
+</element>
+<expression label="T4" exp="&quot;V = &quot; + V" />
+<element type="text" label="T4">
+	<show object="true" label="false"/>
+	<objColor r="0" g="153" b="0" alpha="0.0"/>
+	<labelMode val="1"/>
+	<breakpoint val="false"/>
+	<startPoint exp="B"/>
+	<labelOffset x="12" y="0"/>
+</element>
+<expression label="T5" exp="&quot;Volumen&quot;"/>
+<element type="text" label="T5">
+	<show object="true" label="false"/>
+	<objColor r="0" g="153" b="0" alpha="0.0"/>
+	<labelMode val="1"/>
+	<breakpoint val="false"/>
+	<absoluteScreenLocation  x="326" y="25"/>
+</element>
+<command name="Midpoint">
+	<input a0="Vol" a1="R"/>
+	<output a0="B"/>
+</command>
+<element type="point" label="B">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<breakpoint val="false"/>
+	<coords x="1.2230406302157704" y="1.0845921544981498" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+</construction>
+</geogebra>

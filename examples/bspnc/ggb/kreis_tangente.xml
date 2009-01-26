@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.3">
+<gui>
+	<show algebraView="true"/>
+	<splitDivider loc="215"/>
+	<font  size="13"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="105.29166666666674" yZero="280.66666666666674" scale="31.25"/>
+	<evSettings axes="true" grid="false" pointCapturing="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Tangenten und Polare eines Kreises" author="" date="">
+<element type="point" label="M">
+	<show object="true" label="true"/>
+	<objColor r="204" g="0" b="0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="3.0" y="2.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="numeric" label="r">
+	<value val="5.0"/>
+</element>
+<command name="Circle">
+	<input a0="M" a1="r"/>
+	<output a0="k"/>
+</command>
+<element type="conic" label="k">
+	<show object="true" label="true"/>
+	<objColor r="0" g="51" b="204"/>
+	<lineStyle thickness="4" type="0"/>
+	<eigenvectors  x0="1.0" y0="0.0" z0="1.0" x1="-0.0" y1="1.0" z1="1.0"/>
+	<matrix A0="1.0" A1="1.0" A2="-12.0" A3="0.0" A4="-3.0" A5="-2.0"/>
+	<eqnStyle style="specific"/>
+</element>
+<element type="point" label="A">
+	<show object="true" label="true"/>
+	<objColor r="0" g="102" b="0"/>
+	<labelOffset x="-8" y="-3"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="11.0" y="4.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Tangent">
+	<input a0="A" a1="k"/>
+	<output a0="a" a1="b"/>
+</command>
+<element type="line" label="a">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0"/>
+	<coords x="-2.5926108966482353" y="-6.023152724162059" z="52.611330759778824"/>
+	<lineStyle thickness="4" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="line" label="b">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0"/>
+	<coords x="5.1220226613541175" y="-4.09449433466147" z="-39.96427193624942"/>
+	<lineStyle thickness="4" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Polar">
+	<input a0="A" a1="k"/>
+	<output a0="p"/>
+</command>
+<element type="line" label="p">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="0"/>
+	<coords x="8.0" y="2.0" z="-53.0"/>
+	<lineStyle thickness="2" type="10"/>
+	<eqnStyle style="implicit"/>
+</element>
+</construction>
+</geogebra>

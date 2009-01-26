@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.4">
+<gui>
+	<show algebraView="false"/>
+	<splitDivider loc="184"/>
+	<font  size="14"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="316.48484615924576" yZero="175.84107380456567" scale="55.5297409859847"/>
+	<evSettings axes="true" grid="false" pointCapturing="false"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="" author="" date="">
+<element type="point" label="A">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="-5.0" y="-1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="B">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="5.0" y="-1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="A" a1="B"/>
+	<output a0="a"/>
+</command>
+<element type="segment" label="a">
+	<show object="true" label="false"/>
+	<objColor r="153" g="153" b="255" alpha="0.0"/>
+	<coords x="0.0" y="10.0" z="10.0"/>
+	<lineStyle thickness="2" type="10"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="a"/>
+	<output a0="C"/>
+</command>
+<element type="point" label="C">
+	<show object="true" label="false"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<animation step="0.1"/>
+	<coords x="1.3418962976895805" y="-1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<expression label="μ&apos;" exp="x(C)" />
+<element type="numeric" label="μ&apos;">
+	<value val="1.3418962976895805"/>
+</element>
+<expression label="T1" exp="&quot;Mittelwert μ = &quot; + μ&apos;" />
+<element type="text" label="T1">
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<startPoint  x="2.602482044301787" y="-1.3714979548465078" z="1.0"/>
+</element>
+<element type="point" label="D">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="0.0" y="-2.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="E">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="5.0" y="-2.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="D" a1="E"/>
+	<output a0="b"/>
+</command>
+<element type="segment" label="b">
+	<show object="true" label="false"/>
+	<objColor r="153" g="153" b="255" alpha="0.0"/>
+	<coords x="0.0" y="5.0" z="10.0"/>
+	<lineStyle thickness="2" type="10"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="b"/>
+	<output a0="F"/>
+</command>
+<element type="point" label="F">
+	<show object="true" label="false"/>
+	<objColor r="0" g="153" b="51" alpha="0.0"/>
+	<animation step="0.1"/>
+	<coords x="0.29741096478232343" y="-2.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Distance">
+	<input a0="D" a1="F"/>
+	<output a0="σ&apos;"/>
+</command>
+<element type="numeric" label="σ&apos;">
+	<value val="0.29741096478232343"/>
+</element>
+<expression label="T2" exp="&quot;Standardabweichung σ = &quot; + σ&apos;" />
+<element type="text" label="T2">
+	<objColor r="0" g="153" b="51" alpha="0.0"/>
+	<startPoint  x="1.2338460908371052" y="-1.7856904144476617" z="1.0"/>
+</element>
+<expression label="f" exp="f(x) = exp(-((x - μ&apos;) / σ&apos;)² / 2) / (σ&apos; 2.51)" />
+<element type="function" label="f">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<lineStyle thickness="3" type="0"/>
+</element><expression label="μ" exp="(μ&apos;, 0)" type="point" />
+<element type="point" label="μ">
+	<show object="true" label="true"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-7" y="30"/>
+	<coords x="1.3418962976895805" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<expression label="H" exp="(μ&apos;, f(μ&apos;))" type="point" />
+<element type="point" label="H">
+	<show object="true" label="false"/>
+	<objColor r="153" g="153" b="153" alpha="0.0"/>
+	<coords x="1.3418962976895805" y="1.3395819982413484" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<expression label="l" exp="μ&apos; - σ&apos;" />
+<element type="numeric" label="l">
+	<value val="1.0444853329072572"/>
+</element>
+<expression label="r" exp="μ&apos; + σ&apos;" />
+<element type="numeric" label="r">
+	<value val="1.6393072624719038"/>
+</element>
+<expression label="L" exp="(l, f(l))" type="point" />
+<element type="point" label="L">
+	<show object="true" label="false"/>
+	<objColor r="153" g="153" b="153" alpha="0.0"/>
+	<coords x="1.0444853329072572" y="0.8124975531324931" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<expression label="R" exp="(r, f(r))" type="point" />
+<element type="point" label="R">
+	<show object="true" label="false"/>
+	<objColor r="153" g="153" b="153" alpha="0.0"/>
+	<coords x="1.6393072624719038" y="0.8124975531324931" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<command name="Segment">
+	<input a0="L" a1="R"/>
+	<output a0="σ"/>
+</command>
+<element type="segment" label="σ">
+	<show object="true" label="true"/>
+	<objColor r="0" g="153" b="51" alpha="0.0"/>
+	<labelOffset x="5" y="-1"/>
+	<coords x="0.0" y="0.5948219295646466" z="-0.4832913623208235"/>
+	<lineStyle thickness="4" type="20"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="μ" a1="H"/>
+	<output a0="d"/>
+</command>
+<element type="segment" label="d">
+	<show object="true" label="false"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<coords x="-1.3395819982413484" y="0.0" z="1.7975801238916755"/>
+	<lineStyle thickness="3" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="T3" exp="&quot;x&quot;"/>
+<element type="text" label="T3">
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint  x="6.906481950592039" y="0.12319657327939465" z="1.0"/>
+</element>
+<expression label="T4" exp="&quot;y&quot;"/>
+<element type="text" label="T4">
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint  x="0.1713523901211027" y="2.8244517445912667" z="1.0"/>
+</element>
+<expression label="T6" exp="&quot;y = \frac{1}{&quot; + σ&apos; + &quot;\sqrt{2\pi}} \cdot e^{-\frac{1}{2}\left(\frac{x-&quot; + μ&apos; + &quot;}{&quot; + σ&apos; + &quot;}\right)^2}&quot;" />
+<element type="text" label="T6">
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<fixed val="true"/>
+	<isLaTeX val="true"/>
+	<startPoint  x="2.92663266485921" y="3.022543790487471" z="1.0"/>
+</element>
+<expression label="T5" exp="&quot;y = \frac{1}{\sigma\sqrt{2\pi}} \cdot e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}&quot;"/>
+<element type="text" label="T5">
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<fixed val="true"/>
+	<isLaTeX val="true"/>
+	<startPoint  x="-4.943024067562709" y="3.004535422678725" z="1.0"/>
+</element>
+</construction>
+</geogebra>

@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.4">
+<gui>
+	<show algebraView="false" auxiliaryObjects="true"/>
+	<font  size="13"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="45.310606431999304" yZero="302.746107559184" scale="6.35539356956696"/>
+	<evSettings axes="false" grid="false" pointCapturing="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="1"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Das Bevölkerungsgesetz von Thomas R. Malthus" author="" date="">
+<element type="point" label="N_0">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-28" y="6"/>
+	<fixed val="true"/>
+	<coords x="0.0" y="3.9" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<command name="Intersect">
+	<input a0="xAxis" a1="yAxis"/>
+	<output a0="A"/>
+</command>
+<element type="point" label="A">
+	<show object="false" label="false"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<coords x="-0.0" y="-0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Point">
+	<input a0="xAxis"/>
+	<output a0="C"/>
+</command>
+<element type="point" label="C">
+	<show object="false" label="true"/>
+	<objColor r="125" g="125" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<coords x="83.84837032276987" y="-0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Vector">
+	<input a0="A" a1="C"/>
+	<output a0="v"/>
+</command>
+<element type="vector" label="v">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="83.84837032276987" y="0.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="A"/>
+</element>
+<command name="Point">
+	<input a0="v"/>
+	<output a0="K"/>
+</command>
+<element type="point" label="K">
+	<show object="false" label="true"/>
+	<objColor r="125" g="125" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<coords x="80.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="A" a1="K"/>
+	<output a0="d"/>
+</command>
+<element type="segment" label="d">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="-0.0" y="80.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="yAxis"/>
+	<output a0="B"/>
+</command>
+<element type="point" label="B">
+	<show object="false" label="true"/>
+	<objColor r="125" g="125" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<coords x="-0.0" y="45.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Vector">
+	<input a0="A" a1="B"/>
+	<output a0="u"/>
+</command>
+<element type="vector" label="u">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="0.0" y="45.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="A"/>
+</element>
+<expression label="T1" exp="&quot;1850&quot;"/>
+<element type="text" label="T1">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="E"/>
+	<labelOffset x="-15" y="18"/>
+</element>
+<expression label="T2" exp="&quot;1800&quot;"/>
+<element type="text" label="T2">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="D"/>
+	<labelOffset x="-15" y="18"/>
+</element>
+<expression label="T3" exp="&quot;Mio.&quot;"/>
+<element type="text" label="T3">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint  x="-4.265763581002986" y="43.60801648639174" z="1.0"/>
+</element>
+<expression label="T4" exp="&quot;Zeit&quot;"/>
+<element type="text" label="T4">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint  x="82.5895969812874" y="-2.33721047771839" z="1.0"/>
+</element>
+<element type="point" label="E">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<coords x="60.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<element type="point" label="D">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<coords x="10.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<element type="point" label="F">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<coords x="0.0" y="10.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<element type="point" label="G">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<coords x="0.0" y="20.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<element type="point" label="H">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<coords x="0.0" y="30.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<element type="point" label="I">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<coords x="0.0" y="40.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<expression label="T5" exp="&quot;10&quot;"/>
+<element type="text" label="T5">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="F"/>
+	<labelOffset x="-21" y="4"/>
+</element>
+<expression label="T6" exp="&quot;20&quot;"/>
+<element type="text" label="T6">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="G"/>
+	<labelOffset x="-21" y="4"/>
+</element>
+<expression label="T7" exp="&quot;30&quot;"/>
+<element type="text" label="T7">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="H"/>
+	<labelOffset x="-21" y="5"/>
+</element>
+<expression label="T8" exp="&quot;40&quot;"/>
+<element type="text" label="T8">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="I"/>
+	<labelOffset x="-21" y="4"/>
+</element>
+<command name="Point">
+	<input a0="d"/>
+	<output a0="J"/>
+</command>
+<element type="point" label="J">
+	<show object="true" label="false"/>
+	<objColor r="125" g="125" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<coords x="44.700519402665066" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<expression label="a" exp="x(J)" />
+<element type="numeric" label="a">
+	<value val="44.700519402665066"/>
+</element>
+<command name="Function">
+	<input a0="3.9 * 1.0302^x" a1="0" a2="90"/>
+	<output a0="f"/>
+</command>
+<element type="function" label="f">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<lineStyle thickness="3" type="0"/>
+</element><expression label="S" exp="(a, f(a))" type="point" />
+<element type="point" label="S">
+	<show object="true" label="false"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<coords x="44.700519402665066" y="14.745666399260902" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<expression label="T" exp="(0, y(S))" type="point" />
+<element type="point" label="T">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<coords x="0.0" y="14.745666399260902" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="T" a1="S"/>
+	<output a0="b"/>
+</command>
+<element type="segment" label="b">
+	<show object="true" label="false"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<coords x="0.0" y="44.700519402665066" z="-659.1389469853882"/>
+	<lineStyle thickness="2" type="20"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="S" a1="J"/>
+	<output a0="c"/>
+</command>
+<element type="segment" label="c">
+	<show object="true" label="false"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<coords x="14.745666399260902" y="0.0" z="-659.1389469853882"/>
+	<lineStyle thickness="2" type="20"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="T9" exp="&quot;&quot; + (floor(1790 + a))" />
+<element type="text" label="T9">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="J"/>
+	<labelOffset x="7" y="-6"/>
+</element>
+<expression label="T10" exp="&quot;&quot; + (y(S))" />
+<element type="text" label="T10">
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="S"/>
+	<labelOffset x="-18" y="-11"/>
+</element>
+</construction>
+</geogebra>
