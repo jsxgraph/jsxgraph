@@ -103,8 +103,9 @@ JXG.JSXGraph = new function (forceRenderer) {
             
         var originX = ( (typeof attributes["originX"]) == 'undefined' ? 150 : attributes["originX"]);
         var originY = ( (typeof attributes["originY"]) == 'undefined' ? 150 : attributes["originY"]);
-        var zoomX = ( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
-        var zoomY = ( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
+        var zoomfactor = ( (typeof attributes["zoom"]) == 'undefined' ? 1.0 : attributes["zoom"]);
+        var zoomX = zoomfactor*( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
+        var zoomY = zoomfactor*( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
         var unitX = ( (typeof attributes["unitX"]) == 'undefined' ? 50 : attributes["unitX"]);
         var unitY = ( (typeof attributes["unitY"]) == 'undefined' ? 50 : attributes["unitY"]);
     
@@ -121,11 +122,15 @@ JXG.JSXGraph = new function (forceRenderer) {
         this.boards[board.id] = board;
         board.initGeonextBoard();
         
-        if((typeof attributes["createAxis"] != 'undefined') && attributes["createAxis"]) {
+        if((typeof attributes["axis"] != 'undefined') && attributes["axis"]) {
             board.createElement('axis', [[0,0], [1,0]], {});
             board.createElement('axis', [[0,0], [0,1]], {});
         }
     
+        if((typeof attributes["grid"] != 'undefined') && attributes["grid"]) {
+            board.renderer.drawGrid(board);
+        }
+
         return board;
     }
 
