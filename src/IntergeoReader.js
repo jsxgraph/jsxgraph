@@ -199,7 +199,7 @@ JXG.IntergeoReader = new function() {
 
     this.addPointIntersectionOfTwoLines = function(node) {
         var param = JXG.IntergeoReader.readParams(node); 
-        this.objects[param[0]].addConstraint(this.board.intersectionFunc(this.objects[param[1]],this.objects[param[2]],0));
+        this.objects[param[0]].addConstraint([this.board.intersectionFunc(this.objects[param[1]],this.objects[param[2]],0)]);
     }
 
     this.addFreeLine = function(node) {
@@ -207,22 +207,22 @@ JXG.IntergeoReader = new function() {
         var a = this.objects[param[0]].coords[0];
         var b = this.objects[param[0]].coords[1];
         var c = this.objects[param[0]].coords[2];
-        var p1 = this.board.createElement('point',[(c-b)/(b-a),(a-c)/(b-a)],{visible:false});
-        var p2 = this.board.createElement('point',[(c-b)/(b-a)-b,(a-c)/(b-a)+a],{visible:false});
-        var comp = this.board.createElement('line',[p1,p2],{name:param[0],id:param[0]});
+        var el = this.board.createElement('line',[c,a,b],{name:param[0],id:param[0]});
+        this.objects[param[0]] = el;
     };
 
     this.addPointOnLine = function(node) {
         var param = JXG.IntergeoReader.readParams(node); 
-        var p = JXG.GetReferenceFromParameter(this.board,param[0]);
-        p.makeGlider(this.objects[param[1]]);
+        var el = JXG.GetReferenceFromParameter(this.board,param[0]);
+        el.makeGlider(this.objects[param[1]]);
+        this.objects[param[0]] = el;
     };
 
     this.addAngularBisectorOfThreePoints = function(node) {
         var param = JXG.IntergeoReader.readParams(node); 
-        var comp =this.board.createElement('bisector',[param[1],param[2],param[3]],{name:param[0],id:param[0]});
-        comp.setProperty("straightFirst:false","straightLast:true");
-        this.objects[param[0]] = comp;
+        var el =this.board.createElement('bisector',[param[1],param[2],param[3]],{name:param[0],id:param[0]});
+        el.setProperty("straightFirst:false","straightLast:true");
+        this.objects[param[0]] = el;
     };
 
 };

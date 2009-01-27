@@ -632,20 +632,43 @@ JXG.Line.prototype.setPosition = function (method, x, y) {
 /**
  * Creates a new line.
  * @param {JXG.Board} board The board the line is put on.
- * @param {Array} parents Array of two points defining the line.
+ * @param {Array} parents Array of two points defining the line or three coordinates for a free line
  * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
  * @type JXG.Line
  * @return Reference to the created line object.
  */
-JXG.createLine = function(board, parentArr, atts) {
+JXG.createLine = function(board, parents, atts) {
     var el;
     
-    if((parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
-        var p1 =  JXG.GetReferenceFromParameter(board,parentArr[0]);
-        var p2 =  JXG.GetReferenceFromParameter(board,parentArr[1]);
+    if((parents[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parents[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
+        // line through two points
+        var p1 =  JXG.GetReferenceFromParameter(board,parents[0]);
+        var p2 =  JXG.GetReferenceFromParameter(board,parents[1]);
         el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name']);
-    } else
-        throw ("Can't create line with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
+    } else if (parents.length==3) {
+        // free line
+        var c = [];
+        for (var i=0;i<3;i++) {
+            if (typeof parents[i]=='number') {
+                c[i] = function(z){ return function() { return z; }; }(parents[i]);
+            } else if (typeof parents[i]=='function') {
+                c[i] = parents[i];
+            } else {
+                throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2])+ "'.");
+                return;
+            }
+        }
+        var p1 = board.createElement('point',[
+                function() { return c[2]()-c[1]();},
+                function() { return c[0]()-c[2]();},
+                function() { return c[1]()-c[0]();}],{visible:false});
+        var p2 = board.createElement('point',[
+                function() { return c[2]()-c[1]();},
+                function() { return c[0]();},
+                function() { return -c[0]();}],{visible:false});
+        el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name']);
+    } else 
+        throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     return el;
 };
 

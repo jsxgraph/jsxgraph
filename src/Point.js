@@ -346,6 +346,16 @@ JXG.Point.prototype.Y = function () {
 };
 
 /**
+ * Getter method for z, this is used by CAS-points to access point coordinates.
+ * @see #coords
+ * @see Coords#z
+ * @return {float} User coordinate of point in z direction.
+ */
+JXG.Point.prototype.Z = function () {
+    return this.coords.usrCoords[0];
+};
+
+/**
  * New evaluation of the function term. 
  * This is required for CAS-points: Their XTerm() method is overwritten in @see #addConstraint
  * @see #coords
@@ -365,6 +375,17 @@ JXG.Point.prototype.XEval = function () {
  */
 JXG.Point.prototype.YEval = function () {
     return this.coords.usrCoords[2];
+};
+
+/**
+ * New evaluation of the function term. 
+ * This is required for CAS-points: Their ZTerm() method is overwritten in @see #addConstraint
+ * @see #coords
+ * @see Coords#xz
+ * @return {float} User coordinate of point in z direction.
+ */
+JXG.Point.prototype.ZEval = function () {
+    return this.coords.usrCoords[0];
 };
 
 /**
@@ -441,7 +462,46 @@ JXG.Point.prototype.makeGlider = function (slideObject) {
  * @param {String} yterm Calculation term for y coordinate in geonext syntax
  * @see Algebra#geonext2JS
  */
-JXG.Point.prototype.addConstraint = function (xterm, yterm) {
+JXG.Point.prototype.addConstraint = function (terms) {
+    this.type = JXG.OBJECT_TYPE_CAS;
+    var elements = this.board.elementsByName;
+    var newfuncs = [];
+    var fs;
+    
+    for (var i=0;i<terms.length;i++) {
+        var v = terms[i];
+        if (typeof v=='string') {
+            // Convert GEONExT syntax into  JavaScript syntax
+            var t  = this.board.algebra.geonext2JS(v);
+            newfuncs[i] = new Function('','return ' + t + ';');
+        } else if (typeof v=='function') {
+            newfuncs[i] = v;
+        } else if (typeof v=='number') {
+            newfuncs[i] = function(z){ return function() { return z; }; }(v);
+        }
+    }
+    if (terms.length==1) { // Intersection function
+        this.updateConstraint = function() { this.coords = newfuncs[0](); };
+        if (!this.board.isSuspendedUpdate) { this.update(); }
+        return;
+    } else if (terms.length==2) { // Euclidean coordinates
+        this.XEval = newfuncs[0];
+        this.YEval = newfuncs[1];
+        fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.XEval(),this.YEval()]);';
+        this.updateConstraint = new Function('',fs);
+    } else { // Homogeneous coordinates
+        this.ZEval = newfuncs[0];
+        this.XEval = newfuncs[1];
+        this.YEval = newfuncs[2];
+        fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.ZEval(),this.XEval(),this.YEval()]);';
+        this.updateConstraint = new Function('',fs);
+    }
+    
+    if (!this.board.isSuspendedUpdate) { this.update(); }
+    return;
+    
+};
+JXG.Point.prototype.addConstraintOld = function (xterm, yterm) {
     this.type = JXG.OBJECT_TYPE_CAS;
     var elements = this.board.elementsByName;
 
@@ -694,34 +754,64 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
  * - 1 transformation object: clone of a base point transformed by the given Transformation
  * - 3 numbers: homogeneous coordinates of a free point
  */
-JXG.createPoint = function(board, parentArr, atts) {
+JXG.createPoint = function(board, parents, atts) {
     var el;
-    // parentArr[0] and parentArr[1] are numbers
-    if ( (JXG.IsNumber(parentArr[0])) && (JXG.IsNumber(parentArr[1])) ) {
-        el = new JXG.Point(board, parentArr, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+    var isConstrained = false;
+    for (var i=0;i<parents.length;i++) {
+        if (typeof parents[i]=='function' || typeof parents[i]=='string') {
+            isConstrained = true;
+        }
+    }
+    if (!isConstrained) {
+        if ( (JXG.IsNumber(parents[0])) && (JXG.IsNumber(parents[1])) ) {
+            el = new JXG.Point(board, parents, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+            if ( atts["slideObject"] != null ) {
+                el.makeGlider(atts["slideObject"]);
+            } else {
+                el.baseElement = el; // Free point
+            }
+        } else if ( (typeof parents[0]=='object') && (typeof parents[1]=='object') ) { // Transformation
+            el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));   
+            el.addTransform(parents[0],parents[1]);
+        }
+        else {// Failure
+            throw ("JSXGraph error: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+        }
+    } else {
+        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+        el.addConstraint(parents);
+    }
+    return el;
+
+    /*
+    // parents[0] and parents[1] are numbers
+    if ( (JXG.IsNumber(parents[0])) && (JXG.IsNumber(parents[1])) ) {
+        el = new JXG.Point(board, parents, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
         if ( atts["slideObject"] != null ) {
             el.makeGlider(atts["slideObject"]);
         } else {
             el.baseElement = el; // Free point
         }
     } // (One string and one number) or two strings
-    else if ( (JXG.IsString(parentArr[0]) || JXG.IsNumber(parentArr[0]) || JXG.IsFunction(parentArr[0])) && (JXG.IsString(parentArr[1]) || JXG.IsNumber(parentArr[1])) || JXG.IsFunction(parentArr[1]) ) {
+    else if ( (JXG.IsString(parents[0]) || JXG.IsNumber(parents[0]) || JXG.IsFunction(parents[0])) && (JXG.IsString(parents[1]) || JXG.IsNumber(parents[1])) || JXG.IsFunction(parents[1]) ) {
         el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
-        el.addConstraint(parentArr[0],parentArr[1]);
+        el.addConstraint(parents);
+        //el.addConstraint(parents[0],parents[1]);
     } // Intersection: one function
-    else if ( (typeof parentArr[0]=='function') && parentArr[1]==null ) { 
+    else if ( (typeof parents[0]=='function') && parents[1]==null ) { 
         el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));   
-        el.addConstraint(parentArr[0]);
+        el.addConstraint(parents[0]);
     } // Transformation
-    else if ( (typeof parentArr[0]=='object') && (typeof parentArr[1]=='object') ) { // Transformation
+    else if ( (typeof parents[0]=='object') && (typeof parents[1]=='object') ) { // Transformation
         el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));   
-        el.addTransform(parentArr[0],parentArr[1]);
+        el.addTransform(parents[0],parents[1]);
     }
     else {// Failure
-        throw ("JSXGraph error: Can't create point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
+        throw ("JSXGraph error: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     }
-        
     return el;
+    */
+        
 };
 
 
@@ -731,14 +821,14 @@ JXG.createPoint = function(board, parentArr, atts) {
  * be the last object in parentArr.#
  * parentArr consists of three elements: [number, number, object]
  */
-JXG.createGlider = function(board, parentArr, atts) {
+JXG.createGlider = function(board, parents, atts) {
     var el;
-    if (parentArr.length==1) {
+    if (parents.length==1) {
       el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
     } else {
-      el = new JXG.Point(board, parentArr.slice(0,-1), atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+      el = new JXG.Point(board, parents.slice(0,-1), atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
     }
-    el.makeGlider(parentArr[parentArr.length-1]);
+    el.makeGlider(parents[parents.length-1]);
     return el;
 };
 

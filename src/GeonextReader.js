@@ -429,7 +429,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
                 JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'points');
                 var p = new JXG.Point(board, [1*gxtEl.xval, 1*gxtEl.yval], gxtEl.id, gxtEl.name, true);
-                p.addConstraint(gxtEl.x,gxtEl.y);  
+                p.addConstraint([gxtEl.x,gxtEl.y]);  
                 p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorStroke,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.highlightStrokeColor,'visible:'+gxtEl.visible,

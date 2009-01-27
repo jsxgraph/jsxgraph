@@ -21,12 +21,20 @@
     var board = JXG.JSXGraph.initBoard('box');
 
 
-    // Free points
     var p2 = board.createElement('point', [2,1] );
-    var c = board.createElement('curve', ['t',function(t){ return p2.Y()*t*Math.sin(t);},'t'] );
+    // var t = board.createElement('line', [1,1,function(){ return p2.X();}] ); // Free line
+    // Free points
+    var f = function(t){return p2.Y()*t*Math.sin(t);};
+    var g = function(t){return t;};
+    
+    var c = board.createElement('curve', [g,f,'t'] );
     //var c = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);},'t'] );
-    var p = board.createElement('glider', [1,1,c] );
-    var t = board.createElement('tangent', [c,p] );
+    var p = board.createElement('glider', [0,1,c] );
+    var t = board.createElement('line', [
+                    function(){ return -p.X()*board.D(f)(p.X())+p.Y()*board.D(g)(p.X());},
+                    function(){ return board.D(f)(p.X());},
+                    function(){ return -board.D(g)(p.X());}
+                    ] );
 /*
     // Fixed points
     for (var i=0; i<5; i++) {

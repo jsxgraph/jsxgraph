@@ -148,8 +148,14 @@ JXG.Coords.prototype.setCoordinates = function(method, coordinates) {
 /*        for(var i=1; i<this.board.dimension+1; i++) {
             this.usrCoords[i] = coordinates[i-1];
         }*/
-        this.usrCoords[1] = coordinates[0];
-        this.usrCoords[2] = coordinates[1];
+        if (coordinates.length==2) { // Euclidean coordinates
+            this.usrCoords[1] = coordinates[0];
+            this.usrCoords[2] = coordinates[1];
+        } else { // Homogeneous coordinates (normalized)
+            this.usrCoords[2] = coordinates[2]/coordinates[0];
+            this.usrCoords[1] = coordinates[1]/coordinates[0];
+            this.usrCoords[0] = coordinates[0]/coordinates[0];
+        }
         this.usr2screen();
     } else {
 /*        for(var i=1; i<this.board.dimension+1; i++) {
