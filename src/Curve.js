@@ -471,23 +471,3 @@ JXG.createSpline = function(board, parents, attributes) {
  */
 JXG.JSXGraph.registerElement('spline', JXG.createSpline);
 
-/**
- * Create a tangent to a curve c through a point p
- * @param {JXG.Board} board Reference to the board the spline is drawn on.
- * @param {Array} parents Array containing a curve object p and a point object c
- * @param {Object} attributes Define color, width, ... of the tangent
- * @type JXG.Curve
- * @return Returns reference to an object of type JXG.Curve.
- */
-JXG.createTangent = function(board, parents, attributes) {
-    var c = parents[0];
-    var p = parents[1];
-    //alert(p.X.toString());
-    return board.createElement('curve',[function(x){return p.X()+(board.D(c.X))(p.X())*(x);},function(x){return p.Y(x)+(board.D(c.Y))(p.X())*(x);},'x'],attributes);
-}
-
-/**
- * Register the element type spline at JSXGraph
- * @private
- */
-JXG.JSXGraph.registerElement('tangent', JXG.createTangent);

@@ -661,11 +661,11 @@ JXG.createLine = function(board, parents, atts) {
         var p1 = board.createElement('point',[
                 function() { return c[2]()-c[1]();},
                 function() { return c[0]()-c[2]();},
-                function() { return c[1]()-c[0]();}],{visible:false});
+                function() { return c[1]()-c[0]();}],{visible:false,name:' '});
         var p2 = board.createElement('point',[
-                function() { return c[2]()-c[1]();},
-                function() { return c[0]();},
-                function() { return -c[0]();}],{visible:false});
+                function() { return c[2]()+c[1]();},
+                function() { return -c[0]();},
+                function() { return -c[0]();}],{visible:false,name:' '});
         el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name']);
     } else 
         throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
@@ -673,7 +673,6 @@ JXG.createLine = function(board, parents, atts) {
 };
 
 JXG.JSXGraph.registerElement('line', JXG.createLine);
-
 
 /**
  * Creates a new arrow.
@@ -698,7 +697,6 @@ JXG.createArrow = function(board, parents, attributes) {
 };
 
 JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
-
 
 /**
  * Creates a new axis.
@@ -747,3 +745,41 @@ JXG.createAxis = function(board, parents, attributes) {
 };
 
 JXG.JSXGraph.registerElement('axis', JXG.createAxis);
+
+/**
+ * Create a tangent to a curve c through a point p
+ * @param {JXG.Board} board Reference to the board the spline is drawn on.
+ * @param {Array} parents Array containing a glider object p
+ * @param {Object} attributes Define color, width, ... of the tangent
+ * @type JXG.Curve
+ * @return Returns reference to an object of type JXG.Curve.
+ */
+JXG.createTangent = function(board, parents, attributes) {
+    var p = parents[0];
+    var c = p.slideObject;
+    if (c.type == JXG.OBJECT_TYPE_LINE) {
+        return board.createElement('line', [c.point1,c.point2], attributes);
+    } else if (c.type == JXG.OBJECT_TYPE_CURVE) {
+        var g = c.X;
+        var f = c.Y;
+        return board.createElement('line', [
+                    function(){ return -p.X()*board.D(f)(p.position)+p.Y()*board.D(g)(p.position);},
+                    function(){ return board.D(f)(p.position);},
+                    function(){ return -board.D(g)(p.position);}
+                    ], attributes );
+    } else if (c.type == JXG.OBJECT_TYPE_CIRCLE) {
+        var Dg = function(t){ return -c.getRadius()*Math.sin(t); };
+        var Df = function(t){ return c.getRadius()*Math.cos(t); };;
+        return board.createElement('line', [
+                    function(){ return -p.X()*Df(p.position)+p.Y()*Dg(p.position);},
+                    function(){ return Df(p.position);},
+                    function(){ return -Dg(p.position);}
+                    ], attributes );
+    }
+}
+
+/**
+ * Register the element type tangent at JSXGraph
+ * @private
+ */
+JXG.JSXGraph.registerElement('tangent', JXG.createTangent);

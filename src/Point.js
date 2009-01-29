@@ -91,7 +91,7 @@ JXG.Point = function (board, coordinates, id, name, show) {
      * Relative position on a line if point is a glider on a line.
      * @type float
      */
-    this.position;
+    this.position = null;
 
     /**
      * Determines whether the point slides on a polygon if point is a glider

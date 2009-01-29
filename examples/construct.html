@@ -20,49 +20,19 @@
     }
     var board = JXG.JSXGraph.initBoard('box');
 
-
-    var p2 = board.createElement('point', [2,1] );
-    // var t = board.createElement('line', [1,1,function(){ return p2.X();}] ); // Free line
-    // Free points
-    var f = function(t){return p2.Y()*t*Math.sin(t);};
-    var g = function(t){return t;};
+    var p1 = board.createElement('point', [0,1,1] );
+    var p2 = board.createElement('point', [1,1,1] );
+    //var t = board.createElement('circle', [p1,p2] );
+    var t = board.createElement('line', [1,1,1] );
     
-    var c = board.createElement('curve', [g,f,'t'] );
+    //var f = function(t){return p2.Y()*t*Math.sin(t);};
+    //var g = function(t){return t;};
+    
+    //var c = board.createElement('curve', [g,f,'t'] );
     //var c = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);},'t'] );
-    var p = board.createElement('glider', [0,1,c] );
-    var t = board.createElement('line', [
-                    function(){ return -p.X()*board.D(f)(p.X())+p.Y()*board.D(g)(p.X());},
-                    function(){ return board.D(f)(p.X());},
-                    function(){ return -board.D(g)(p.X());}
-                    ] );
+    //var p = board.createElement('glider', [0,1,c] );
+    //var t = board.createElement('tangent',[p], {dash:3,strokeColor:'red'});
 /*
-    // Fixed points
-    for (var i=0; i<5; i++) {
-        for (var j=0; j<3; j++) {
-           var p = board.createElement('point',[i,j-6],{ style:6, fixed:true });
-	   p.label.hideElement();
-        }
-    }
-    
-    // Line and circles
-    var l = board.createElement('line', ['A','B'], { strokeWidth:3 });
-    board.createElement('circle', ['A','B']);
-    var c = board.createElement('circle', ['A', function() { return 3; } ], { fillColor:'#ffcc0066'});
-    board.createElement('circle', ['B',c], { fillColor:'#abcdefA2'});
-
-    // Curves
-    board.createElement('curve', ["2*Cos(t)+Cos(2*t)+X(A)","2*Sin(t)-Sin(2*t)+Y(A)","t","0","4*Pi"], { fillColor:'#abcdefA2', strokeWidth:6, strokeColor:'#ffff0077' });
-    board.createElement('curve', 
-        [
-            function(t){return t;},
-            function(x){return p2.Y()*Math.sin(p2.X()*x);},
-            'x', 
-            function(){return p1.X();}, 
-            function(){return p2.X();}
-        ], 
-        { strokeWidth:3, strokeColor:'#0000ffD7' }
-    );
-    
     // Ellipse
     board.createElement('curve', 
         [
