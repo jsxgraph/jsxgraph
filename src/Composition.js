@@ -72,11 +72,26 @@ JXG.createParallel = function(board, parentArr, atts) {
 };
 
 JXG.createNormal = function(board, parentArr, atts) {
-    if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
+    if(JXG.IsPoint(parentArr[0]) && parentArr[1] && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
         return board.addNormal(parentArr[1], parentArr[0], atts['id'], atts['name']);
     }
-    else if(JXG.IsPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
+    else if(parentArr[1] && JXG.IsPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
         return board.addNormal(parentArr[0], parentArr[1], atts['id'], atts['name']);    
+    } else if (parentArr[0].slideObject && parentArr[0].slideObject.type == JXG.OBJECT_TYPE_CURVE) {
+        var p = parentArr[0];
+        var c = p.slideObject;
+        var g = c.X;
+        var f = c.Y;
+        return board.createElement('line', [
+        /*
+                    function(){ return -p.X()*board.D(f)(p.position)+p.Y()*board.D(g)(p.position);},
+                    function(){ return board.D(f)(p.position);},
+                    function(){ return -board.D(g)(p.position);}
+*/
+                    function(){ return -p.X()*board.D(g)(p.position)-p.Y()*board.D(f)(p.position);},
+                    function(){ return board.D(g)(p.position);},
+                    function(){ return board.D(f)(p.position);}
+                    ], atts );
     }
     else {
         throw ("Can't create normal with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    

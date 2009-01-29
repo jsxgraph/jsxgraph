@@ -18,20 +18,21 @@
     function testmakro(board,el1, el2) {
     	var l = board.createElement('line', [el1,el2], { strokeWidth:3 });
     }
-    var board = JXG.JSXGraph.initBoard('box');
+    var board = JXG.JSXGraph.initBoard('box',{axis:true});
 
-    var p1 = board.createElement('point', [0,1,1] );
+    var p1 = board.createElement('point', [1,0,0.5] );
     var p2 = board.createElement('point', [1,1,1] );
     //var t = board.createElement('circle', [p1,p2] );
-    var t = board.createElement('line', [1,1,1] );
+    //var t = board.createElement('line', [1,-1,1],{name:'x'} );
     
-    //var f = function(t){return p2.Y()*t*Math.sin(t);};
-    //var g = function(t){return t;};
+    var f = function(t){return p2.Y()*t*Math.sin(t);};
+    var g = function(t){return t;};
     
     //var c = board.createElement('curve', [g,f,'t'] );
-    //var c = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);},'t'] );
-    //var p = board.createElement('glider', [0,1,c] );
-    //var t = board.createElement('tangent',[p], {dash:3,strokeColor:'red'});
+    var c = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);},'t'] );
+    var p = board.createElement('glider', [0.1,2,c],{name:'S'} );
+    var t = board.createElement('tangent',[p], {dash:3,strokeColor:'red'});
+    var t = board.createElement('normal',[p], {dash:3,strokeColor:'black'});
 /*
     // Ellipse
     board.createElement('curve', 

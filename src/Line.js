@@ -658,14 +658,16 @@ JXG.createLine = function(board, parents, atts) {
                 return;
             }
         }
+        // point 1: (0,c,-b)
         var p1 = board.createElement('point',[
-                function() { return c[2]()-c[1]();},
-                function() { return c[0]()-c[2]();},
-                function() { return c[1]()-c[0]();}],{visible:false,name:' '});
+                function() { return 0.0;},
+                function() { return c[2]();},
+                function() { return -c[1]();}],{visible:false,name:' '});
+        // point 2: (b^2+c^2,-ba+c,-ca-b)
         var p2 = board.createElement('point',[
-                function() { return c[2]()+c[1]();},
-                function() { return -c[0]();},
-                function() { return -c[0]();}],{visible:false,name:' '});
+                function() { return c[2]()*c[2]()+c[1]()*c[1]();},
+                function() { return -c[1]()*c[0]()+c[2]();},
+                function() { return -c[2]()*c[0]()-c[1]();}],{visible:false,name:' '});
         el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name']);
     } else 
         throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
@@ -747,12 +749,12 @@ JXG.createAxis = function(board, parents, attributes) {
 JXG.JSXGraph.registerElement('axis', JXG.createAxis);
 
 /**
- * Create a tangent to a curve c through a point p
- * @param {JXG.Board} board Reference to the board the spline is drawn on.
+ * Create a tangent to a curve, line or circle c through a point p
+ * @param {JXG.Board} board Reference to the board the tangent is drawn on.
  * @param {Array} parents Array containing a glider object p
  * @param {Object} attributes Define color, width, ... of the tangent
  * @type JXG.Curve
- * @return Returns reference to an object of type JXG.Curve.
+ * @return Returns reference to an object of type JXG.Line.
  */
 JXG.createTangent = function(board, parents, attributes) {
     var p = parents[0];

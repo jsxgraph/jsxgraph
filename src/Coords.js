@@ -149,12 +149,14 @@ JXG.Coords.prototype.setCoordinates = function(method, coordinates) {
             this.usrCoords[i] = coordinates[i-1];
         }*/
         if (coordinates.length==2) { // Euclidean coordinates
+            this.usrCoords[0] = 1.0;
             this.usrCoords[1] = coordinates[0];
             this.usrCoords[2] = coordinates[1];
         } else { // Homogeneous coordinates (normalized)
-            this.usrCoords[2] = coordinates[2]/coordinates[0];
-            this.usrCoords[1] = coordinates[1]/coordinates[0];
-            this.usrCoords[0] = coordinates[0]/coordinates[0];
+            this.usrCoords[0] = coordinates[0];
+            this.usrCoords[1] = coordinates[1];
+            this.usrCoords[2] = coordinates[2];
+            this.normalizeUsrCoords();
         }
         this.usr2screen();
     } else {
