@@ -33,6 +33,7 @@ JXG.Board.prototype.sinh = function(x){ return this.algebra.sinh(x); };
 JXG.Board.prototype.D = function(f){ return this.algebra.D(f); };
 JXG.Board.prototype.I = function(interval,f){ return this.algebra.I(interval,f); };
 JXG.Board.prototype.root = function(f,x){ return this.algebra.root(f,x); };
+JXG.Board.prototype.lagrangePolynomial = function(p){ return this.algebra.lagrangePolynomial(p); };
 
 JXG.Board.prototype.abs = Math.abs;
 JXG.Board.prototype.acos = Math.acos;

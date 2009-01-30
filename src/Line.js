@@ -751,7 +751,7 @@ JXG.JSXGraph.registerElement('axis', JXG.createAxis);
 /**
  * Create a tangent to a curve, line or circle c through a point p
  * @param {JXG.Board} board Reference to the board the tangent is drawn on.
- * @param {Array} parents Array containing a glider object p
+ * @param {Array} parents Array containing a glider object p.
  * @param {Object} attributes Define color, width, ... of the tangent
  * @type JXG.Curve
  * @return Returns reference to an object of type JXG.Line.

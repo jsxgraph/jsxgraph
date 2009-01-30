@@ -25,7 +25,8 @@
         p[1] = board.createElement('point', [0,-3], {style:6});
         p[2] = board.createElement('point', [1,4], {style:6});
         p[3] = board.createElement('point', [2,1], {style:6});
-        
+
+/*
         var pol = function(x) {
                 var y = p[0].Y()*(x-p[1].X())*(x-p[2].X())*(x-p[3].X())/
                         ((p[0].X()-p[1].X())*(p[0].X()-p[2].X())*(p[0].X()-p[3].X()))+
@@ -36,19 +37,11 @@
                         p[3].Y()*(x-p[0].X())*(x-p[1].X())*(x-p[2].X())/
                         ((p[3].X()-p[0].X())*(p[3].X()-p[1].X())*(p[3].X()-p[2].X()));
                         
-                /*var s = '('+p[0].Y()+')(x-'+p[1].X()+')(x-'+p[2].X()+')(x-'+p[3].X()+')/'+
-                        '('+(p[0].X()-p[1].X())*(p[0].X()-p[2].X())*(p[0].X()-p[3].X())+')+<br>'+
-                        '('+p[1].Y()+')(x-'+p[0].X()+')(x-'+p[2].X()+')(x-'+p[3].X()+')/'+
-                        '('+(p[1].X()-p[0].X())*(p[1].X()-p[2].X())*(p[1].X()-p[3].X())+')+<br>'+
-                        '('+p[2].Y()+')(x-'+p[0].X()+')(x-'+p[1].X()+')(x-'+p[3].X()+')/'+
-                        '('+(p[2].X()-p[0].X())*(p[2].X()-p[1].X())*(p[2].X()-p[3].X())+')+<br>'+
-                        '('+p[3].Y()+')(x-'+p[0].X()+')(x-'+p[1].X()+')(x-'+p[2].X()+')/'+
-                        '('+(p[3].X()-p[0].X())*(p[3].X()-p[1].X())*(p[3].X()-p[1].X())+')';
-                $('debug').innerHTML = s;
-                */
                 return y;
             };
-        graph = board.createElement('curve', ['x', pol, 'x', -10, 10], {curveType:'graph'});
+*/
+    var pol = board.lagrangePolynomial(p);
+    graph = board.createElement('curve', ['x', pol, 'x', -10, 10], {curveType:'graph'});
       
   /* ]]> */
   </script>

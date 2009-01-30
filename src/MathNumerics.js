@@ -341,3 +341,4 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
         return y0[0];
     
 };
+

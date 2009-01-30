@@ -83,11 +83,6 @@ JXG.createNormal = function(board, parentArr, atts) {
         var g = c.X;
         var f = c.Y;
         return board.createElement('line', [
-        /*
-                    function(){ return -p.X()*board.D(f)(p.position)+p.Y()*board.D(g)(p.position);},
-                    function(){ return board.D(f)(p.position);},
-                    function(){ return -board.D(g)(p.position);}
-*/
                     function(){ return -p.X()*board.D(g)(p.position)-p.Y()*board.D(f)(p.position);},
                     function(){ return board.D(g)(p.position);},
                     function(){ return board.D(f)(p.position);}

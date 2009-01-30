@@ -627,7 +627,6 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
         t = this.root(this.D(function(t){ return (x-curve.X(t))*(x-curve.X(t))+(y-curve.Y(t))*(y-curve.Y(t));}), t);
         if (t<curve.minX()) { t = curve.minX(); }
         if (t>curve.maxX()) { t = curve.maxX(); }
-        point.position = t;
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t),curve.Y(t)], this.board);
     } else if (curve.curveType=='polar') {
         x = point.X();
@@ -641,7 +640,6 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
         t);         
         //if (t<curve.minX()) { t = curve.minX(); }
         //if (t>curve.maxX()) { t = curve.maxX(); }
-        point.position = t;
         var r = curve.X(t);
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [r*Math.cos(t)+offs[0],r*Math.sin(t)+offs[1]], this.board);
     } else {
@@ -650,6 +648,7 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
         y = curve.Y(t);
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board); 
     }
+    point.position = t;
     return curve.updateTransform(newCoords);
 };
 
@@ -1440,3 +1439,26 @@ JXG.Algebra.prototype.normalize = function(stdform) {
     return stdform;
 };
 
+/**
+ * Computes the Lagrange polynomial.
+ * @param {Array} of points of type JXG.Point
+ * @return a function f(x) whose graph runs throough the given points.
+ */
+JXG.Algebra.prototype.lagrangePolynomial = function(p) {  
+    return function(x) {
+        var i,k;
+        var y = 0.0;
+        var xc = [];
+        for (i=0;i<p.length;i++) {
+            xc[i] = p[i].X();
+        }
+        for (i=0;i<p.length;i++) {
+            var t = p[i].Y();
+            for (k=0;k<p.length;k++) if (k!=i) {
+                t *= (x-xc[k])/(xc[i]-xc[k]);
+            }
+            y += t;
+        }
+        return y;
+    };
+}
