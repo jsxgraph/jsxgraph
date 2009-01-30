@@ -110,14 +110,14 @@ JXG.JSXGraph = new function (forceRenderer) {
         var unitY = ( (typeof attributes["unitY"]) == 'undefined' ? 50 : attributes["unitY"]);
     
         if(this.rendererType == 'svg') {
-            renderer = new JXG.SVGRenderer($(box));
+            renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else if(this.rendererType == 'vml') {
-            renderer = new JXG.VMLRenderer($(box));
+            renderer = new JXG.VMLRenderer(document.getElementById(box));
         } else {
-            renderer = new JXG.SilverlightRenderer($(box));
+            renderer = new JXG.SilverlightRenderer(document.getElementById(box));
         }
     
-        var dimensions = $(box).getDimensions();
+        var dimensions = document.getElementById(box).getDimensions();
         var board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height);
         this.boards[board.id] = board;
         board.initGeonextBoard();
@@ -144,11 +144,11 @@ JXG.JSXGraph = new function (forceRenderer) {
     this.loadBoardFromFile = function (box, file, format) {
         var renderer;
         if(this.rendererType == 'svg') {
-            renderer = new JXG.SVGRenderer($(box));
+            renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else {
-            renderer = new JXG.VMLRenderer($(box));
+            renderer = new JXG.VMLRenderer(document.getElementById(box));
         }
-        var dimensions = $(box).getDimensions();
+        var dimensions = document.getElementById(box).getDimensions();
     
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
         var board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
@@ -164,11 +164,11 @@ JXG.JSXGraph = new function (forceRenderer) {
     this.loadBoardFromString = function(box, string, format) {
         var renderer;
         if(this.rendererType == 'svg') {
-            renderer = new JXG.SVGRenderer($(box));
+            renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else {
-            renderer = new JXG.VMLRenderer($(box));
+            renderer = new JXG.VMLRenderer(document.getElementById(box));
         }
-        var dimensions = $(box).getDimensions();
+        var dimensions = document.getElementById(box).getDimensions();
     
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
         var board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
@@ -201,7 +201,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         }
         
         // Remove all the other things, left on the board
-        $(board.container).innerHTML = '';
+        board.containerObj.innerHTML = '';
         
         // Tell the browser the objects aren't needed anymore
         for(var el in board.objects) {

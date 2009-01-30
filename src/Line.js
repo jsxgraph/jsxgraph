@@ -580,7 +580,7 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     this.board.renderer.enhancedRendering = true;
     this.board.renderer.drawLine(copy);
     this.board.renderer.enhancedRendering = false;
-    this.traces[copy.id] = $(copy.id);
+    this.traces[copy.id] = document.getElementById(copy.id);
 
     delete copy;
     

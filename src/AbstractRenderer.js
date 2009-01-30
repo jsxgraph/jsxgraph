@@ -145,13 +145,13 @@ JXG.AbstractRenderer.prototype.updatePoint = function(el) {
  * @see #drawPoint
  */
 JXG.AbstractRenderer.prototype.changePointStyle = function(el) {
-    var node = $(el.id);
+    var node = document.getElementById(el.id);
     if(node != null) {
         this.remove(node);
     }
     else {
-        this.remove($(el.id+'_x1'));
-        this.remove($(el.id+'_x2'));
+        this.remove(document.getElementById(el.id+'_x1'));
+        this.remove(document.getElementById(el.id+'_x2'));
     }
     this.drawPoint(el);
     if(!el.visProp['visible']) {
@@ -753,7 +753,7 @@ JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) {
         this.updateAxisTicksInnerLoop(axis, oldTicksCount);
     } else if(oldTicksCount > axis.ticks.length) {
         for (i = axis.ticks.length; i<oldTicksCount; i++) {
-            this.remove($(axis.id+'tick'+i));
+            this.remove(document.getElementById(axis.id+'tick'+i));
         }
     }
 }
@@ -800,8 +800,8 @@ JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) 
     
     for (var i=start; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
-        var tick = $(axis.id+'tick'+i);
-        var tickLabel = $(axis.id+'tick'+i+'text');
+        var tick = document.getElementById(axis.id+'tick'+i);
+        var tickLabel = document.getElementById(axis.id+'tick'+i+'text');
 
         this.updateLinePrimitive(tick, c.scrCoords[1]+dx, c.scrCoords[2]-dy, c.scrCoords[1]-dx, c.scrCoords[2]+dy);
         this.setStrokeProp(tick, axis.visProp);
@@ -818,7 +818,7 @@ JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) 
  */
 JXG.AbstractRenderer.prototype.removeAxisTicks = function(axis) {
     for(var i=0; i<axis.ticks.length; i++) {
-        var tick = $(axis.id+'tick'+i);
+        var tick = document.getElementById(axis.id+'tick'+i);
         this.remove(tick);
     }
 }

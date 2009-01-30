@@ -304,7 +304,7 @@ JXG.Circle.prototype.cloneToBackground = function(addToTrace) {
     copy.visProp = this.visProp;
     
     this.board.renderer.drawCircle(copy);
-    this.traces[copy.id] = $(copy.id);
+    this.traces[copy.id] = document.getElementById(copy.id);
 
     delete copy;
 };

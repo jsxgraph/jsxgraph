@@ -91,7 +91,7 @@ JXG.VMLRenderer.prototype.drawAxis = function(el) {
 
 JXG.VMLRenderer.prototype.updateAxis = function(el) {
     // not yet
-    var node = $(el.id);
+    var node = document.getElementById(el.id);
     
     if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
         node.setAttribute('from', (el.board.origin.scrCoords[1]) + 'px,' + (el.board.canvasHeight) + 'px');
@@ -105,7 +105,7 @@ JXG.VMLRenderer.prototype.updateAxis = function(el) {
  
     for (var i=0;i<el.ticks.length;i++) {
         var c = el.ticks[i];
-        var tick = $(el.id+'tick'+i);
+        var tick = document.getElementById(el.id+'tick'+i);
         tick.setAttribute('from', c.scrCoords[1] + 'px,' + c.scrCoords[2] + 'px');
         if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
             tick.setAttribute('to', (c.scrCoords[1] - el.r) + 'px,' + (c.scrCoords[2]) + 'px');   
@@ -340,14 +340,14 @@ JXG.VMLRenderer.prototype.transformImageParent = function(el,m) {};
 JXG.VMLRenderer.prototype.removeGrid = function(board) { 
     board.hasGrid = false;
     for(var i=0; i<=this.gridXsize; i++) {
-        var c = $('gridx'+i);
+        var c = document.getElementById('gridx'+i);
         while (c.childNodes.length>0) {
             c.removeChild(c.firstChild);
         }
         c.remove();
     }
     for(var i=0; i<=this.gridYsize; i++) {
-        var c = $('gridy'+i);
+        var c = document.getElementById('gridy'+i);
         while (c.childNodes.length>0) {
             c.removeChild(c.firstChild);
         }
@@ -425,7 +425,7 @@ JXG.VMLRenderer.prototype.setObjectDash = function(el) {
                 node.setAttribute('dashstyle', this.dashArray[tmp]);            
         }
         else {
-            var node = $(el.id+'stroke');
+            var node = document.getElementById(el.id+'stroke');
             if (node) {
                 var tmp = el.visProp['dash'];
                 node.setAttribute('dashstyle', this.dashArray[tmp]);
@@ -558,7 +558,7 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         }
     }
     if(el.type == JXG.OBJECT_TYPE_POLYGON || el.type == JXG.OBJECT_TYPE_CIRCLE || el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE || el.type == JXG.OBJECT_TYPE_CURVE) {
-        var nodeFill = $(el.id+'_fillnode');
+        var nodeFill = document.getElementById(el.id+'_fillnode');
         if (o!=undefined) nodeFill.setAttribute('opacity', (o*100)+'%');     
     }
 }

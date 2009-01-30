@@ -107,7 +107,7 @@ JXG.SVGRenderer.prototype.updateAxis = function(el) {
     if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
        this.calcStraight(el,screenCoords1,screenCoords2); 
     } 
-    var node = $(el.id);
+    var node = document.getElementById(el.id);
     if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
         this.updateLinePrimitive(node,el.board.origin.scrCoords[1],el.board.canvasHeight,el.board.origin.scrCoords[1],0);
     } else {

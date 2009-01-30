@@ -699,13 +699,13 @@ JXG.Point.prototype.setStyle = function(i) {
  * Remove the point from the drawing.
  */
 JXG.Point.prototype.remove = function() {    
-    this.board.renderer.remove($(this.label.id));
+    this.board.renderer.remove(document.getElementById(this.label.id));
     if(this.visProp['style']  >= 3 && this.visProp['style'] <= 9) {
-        this.board.renderer.remove($(this.id));
+        this.board.renderer.remove(document.getElementById(this.id));
     }
     else {
-        this.board.renderer.remove($(this.id+'_x1'));
-        this.board.renderer.remove($(this.id+'_x2'))        
+        this.board.renderer.remove(document.getElementById(this.id+'_x1'));
+        this.board.renderer.remove(document.getElementById(this.id+'_x2'))        
     }
 };
 
@@ -730,11 +730,11 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
     this.board.renderer.drawPoint(copy);
 
     if( (this.visProp['style']  >= 3) && (this.visProp['style'] <= 9) ) {
-        this.traces[copy.id] = $(copy.id);
+        this.traces[copy.id] = document.getElementById(copy.id);
     }
     else {
-        this.traces[copy.id + '_x1'] = $(copy.id+'_x1');
-        this.traces[copy.id + '_x2'] = $(copy.id+'_x2');
+        this.traces[copy.id + '_x1'] = document.getElementById(copy.id+'_x1');
+        this.traces[copy.id + '_x2'] = document.getElementById(copy.id+'_x2');
     }
 
     delete copy;

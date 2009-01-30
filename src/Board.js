@@ -152,7 +152,13 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type String
      */
     this.container = container;
-    $(this.container).undoPositioned;
+
+    /**
+     * Pointer to the html element containing the board.
+     * @type Object
+     */
+    this.containerObj = document.getElementById(this.container);
+    this.containerObj.undoPositioned;
 
     /**
      * A reference to this boards renderer.
@@ -233,7 +239,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.mathStatistics = new JXG.MathStatistics();
 
     /* If the given id is not valid, generate an unique id */
-    if((id != '') && (id != null) && (typeof $(id) != 'undefined'))
+    if((id != '') && (id != null) && (typeof document.getElementById(id) != 'undefined'))
         this.id = id;
     else
         this.id = this.generateId();
@@ -529,7 +535,7 @@ JXG.Board.prototype.generateId = function () {
  * @return Array of coordinates relative the boards container top left corner.
  */
 JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
-    var pCont = $(this.container);
+    var pCont = this.containerObj;
     var cPos = Element.cumulativeOffset(pCont);
 
     // add border width
@@ -2160,8 +2166,8 @@ JXG.Board.prototype.initGeonextBoard = function() {
 JXG.Board.prototype.resizeContainer = function(canvasWidth, canvasHeight) {
     this.canvasWidth = 1*canvasWidth;
     this.canvasHeight = 1*canvasHeight;
-    $(this.container).style.width = (this.canvasWidth) + 'px';
-    $(this.container).style.height = (this.canvasHeight) + 'px';
+    this.containerObj.style.width = (this.canvasWidth) + 'px';
+    this.containerObj.style.height = (this.canvasHeight) + 'px';
 };
 
 /**
@@ -2431,8 +2437,8 @@ JXG.Board.prototype.beforeLoad = function() {
         divNode.setStyle({
                     zIndex: 999,
                     position: 'absolute',
-                    left: parseInt($(this.container).getStyle("left")) + (this.canvasWidth - 100)/2,
-                    top: parseInt($(this.container).getStyle("top")) + (this.canvasHeight - 100)/2
+                    left: parseInt(this.containerObj.getStyle("left")) + (this.canvasWidth - 100)/2,
+                    top: parseInt(this.containerObj.getStyle("top")) + (this.canvasHeight - 100)/2
                 });
     
         document.getElementsByTagName("body")[0].appendChild(divNode);
@@ -2444,7 +2450,7 @@ JXG.Board.prototype.beforeLoad = function() {
  */
 JXG.Board.prototype.afterLoad = function() {
   /*  if(document.getElementsByTagName("body").length > 0) {
-        document.getElementsByTagName("body")[0].removeChild($("JXGPreLoadAnimation"));
+        document.getElementsByTagName("body")[0].removeChild(document.getElementById("JXGPreLoadAnimation"));
     }*/
 };
 
