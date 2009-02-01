@@ -97,7 +97,8 @@ JXG.SVGRenderer.prototype.drawAxis = function(el) {
     this.lines.appendChild(node);
     el.rendNode = node;
     el.rendNodeTriangle = node2;
-    this.updateAxisTicks(el, 0);
+    
+//    this.updateAxisTicks(el, 0);
     this.updateAxis(el);
 }
 

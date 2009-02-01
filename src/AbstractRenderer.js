@@ -740,23 +740,7 @@ JXG.AbstractRenderer.prototype.updateAxis = function(axis) { };
  * @see #drawAxis
  * @see #updateAxisTicksInnerLoop
  */
-JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) {
-    var i;
-    if(oldTicksCount == axis.ticks.length) {
-        return;
-    } else if(oldTicksCount < axis.ticks.length) {
-        for (i = oldTicksCount; i<axis.ticks.length; i++) {
-            var tick = this.createPrimitive('line',axis.id+'tick'+i);
-            this.appendChildPrimitive(tick, 'lines');
-            this.setStrokeProp(tick, axis.visProp);
-        }   
-        this.updateAxisTicksInnerLoop(axis, oldTicksCount);
-    } else if(oldTicksCount > axis.ticks.length) {
-        for (i = axis.ticks.length; i<oldTicksCount; i++) {
-            this.remove(document.getElementById(axis.id+'tick'+i));
-        }
-    }
-}
+JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) { };
 
 /**
  * Update the tick's line objects.
@@ -798,14 +782,22 @@ JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) 
         dy = -dx/slope;
     }
     
+
+    var tickStr = "";
     for (var i=start; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
-        var tick = document.getElementById(axis.id+'tick'+i);
-        var tickLabel = document.getElementById(axis.id+'tick'+i+'text');
+//        var tick = document.getElementById(axis.id+'tick'+i);
+//        var tickLabel = document.getElementById(axis.id+'tick'+i+'text');
 
-        this.updateLinePrimitive(tick, c.scrCoords[1]+dx, c.scrCoords[2]-dy, c.scrCoords[1]-dx, c.scrCoords[2]+dy);
-        this.setStrokeProp(tick, axis.visProp);
-    }    
+        tickStr = tickStr + "M" + (c.scrCoords[1]+dx) + " " + (c.scrCoords[2]-dy) + " L" + (c.scrCoords[1]-dx) + " " + (c.scrCoords[2]+dy) + " ";
+//        this.updateLinePrimitive(tick, c.scrCoords[1]+dx, c.scrCoords[2]-dy, c.scrCoords[1]-dx, c.scrCoords[2]+dy);
+//        this.setStrokeProp(tick, axis.visProp);
+    }
+
+    var ticks = $(axis.id + '_ticks');
+    if(ticks == null)
+        ticks = this.createPrimitive('path', axis.id+'_ticks');
+    this.updatePathPrimitive(ticks, tickStr);
 }
 
 /**
