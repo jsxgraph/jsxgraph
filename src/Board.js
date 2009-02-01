@@ -418,27 +418,9 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     */
    this.geonextCompatibilityMode = false;
 
-   /**
-    * Event listener for the onMouseDown event.
-    * @private
-    */
-   this.onMouseDownListener = this.mouseDownListener.bindAsEventListener(this);
-   
-   /**
-    * Event listener for the onMouseUp event.
-    * @private
-    */
-   this.onMouseUpListener = this.mouseUpListener.bindAsEventListener(this);
-   
-   /**
-    * Event listener for the onMouseMove event.
-    * @private
-    */
-   this.onMouseMoveListener = this.mouseMoveListener.bindAsEventListener(this);
-
    /* Event needs to know which methods to call when mouse is moved or clicked */
-   Event.observe(this.container, 'mousedown', this.onMouseDownListener);
-   Event.observe(this.container, 'mousemove', this.onMouseMoveListener);
+   Event.observe(this.container, 'mousedown', this.mouseDownListener.bind(this));
+   Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
 };
 
 /**
@@ -593,7 +575,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         this.drag_dx = dx - this.origin.scrCoords[1];
         this.drag_dy = dy - this.origin.scrCoords[2];
         this.mode = this.BOARD_MODE_MOVE_ORIGIN;
-        Event.observe(this.container, 'mouseup', this.onMouseUpListener);
+        Event.observe(this.container, 'mouseup', this.mouseUpListener.bind(this));
         return;
     }
     if (this.mode==this.BOARD_MODE_CONSTRUCT) return;
@@ -636,8 +618,9 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     //this.drag_dx = dx;// - this.dragObjCoords[1];
     //this.drag_dy = dy;// - this.dragObjCoords[2];
     
-//    Event.observe(this.container, 'mouseup', this.onMouseUpListener);
-    Event.observe(document, 'mouseup', this.onMouseUpListener);
+    //    Event.observe(this.container, 'mouseup', this.onMouseUpListener);
+    //    Event.observe(document, 'mouseup', this.onMouseUpListener);
+    Event.observe(document, 'mouseup', this.mouseUpListener.bind(this));
 };
 
 /**

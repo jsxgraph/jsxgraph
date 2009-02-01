@@ -172,7 +172,6 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
          */
          return false;
     } else {
-    //$('debug').innerHTML += this.Y.toString()+' ';
         // Brute force search for a point on the curve close to the mouse pointer
         var steps = 300;
         var d = (this.maxX()-this.minX())/steps;
@@ -253,7 +252,7 @@ JXG.Curve.prototype.updateCurve = function () {
         this.numberPoints = this.dataX.length;
     } else {
         if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
-            this.numberPoints = this.board.canvasWidth*1.0;
+            this.numberPoints = this.board.canvasWidth*1.3;
         } else {
             this.numberPoints = this.board.canvasWidth*0.25;
         }

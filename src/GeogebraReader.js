@@ -32,12 +32,12 @@ this.colorProperties = function(gxtEl, Data) {
 
 this.firstLevelProperties = function(gxtEl, Data) {
     var arr = Data.childNodes;
-    $R(0,arr.length-1).each(function(n) {
+    for(var n=0;n<arr.length;n++) {
         if (arr[n].firstChild!=null && arr[n].nodeName!='data' && arr[n].nodeName!='straight') {
             var key = arr[n].nodeName;
             gxtEl[key] = arr[n].firstChild.data;
         }
-    });
+    }
     return gxtEl;
 }; 
 
@@ -95,7 +95,7 @@ this.readNodes = function(gxtEl, Data, nodeType, prefix) {
 
     var key;
     var arr = Data.getElementsByTagName(nodeType)[0].childNodes;
-    $R(0,arr.length-1).each(function(n) {
+    for (var n=0;n<arr.length;n++) {
         if (arr[n].firstChild!=null) {
             if (prefix!=null) {
                 key = prefix+arr[n].nodeName.capitalize();
@@ -104,7 +104,7 @@ this.readNodes = function(gxtEl, Data, nodeType, prefix) {
             }
             gxtEl[key] = arr[n].firstChild.data;
         }
-    });
+    }
     return gxtEl;
 };
 
@@ -436,14 +436,20 @@ if(!typeName) {
  * @param {Object} board board object
  */
 this.readGeogebra = function(tree, board) {
-  JXG.GeogebraReader.writeBoard(tree, board);
-    $R(0,tree.getElementsByTagName("construction").length-1).each(function(t) {
-      var els = [];
-        $R(0,tree.getElementsByTagName("construction")[t].getElementsByTagName("command").length-1).each(function(s) {
-            var Data = tree.getElementsByTagName("construction")[t].getElementsByTagName("command")[s];
+    var el;
+    var Data;
+    var i;
+    
+    JXG.GeogebraReader.writeBoard(tree, board);
+    var constructions = tree.getElementsByTagName("construction");
+    for (var t=0;t<constructions.length;t++) {
+        var els = [];
+        var cmds = constructions[t].getElementsByTagName("command");
+        for (var s=0;s<cmds.length;s++) {
+            Data = cmds[s];
             var input = [], inputName = [];
-            for(var i=0; i<Data.getElementsByTagName("input")[0].attributes.length; i++) {
-                var el = Data.getElementsByTagName("input")[0].attributes[i].value;
+            for (i=0; i<Data.getElementsByTagName("input")[0].attributes.length; i++) {
+                el = Data.getElementsByTagName("input")[0].attributes[i].value;
                 input[i] = JXG.GeogebraReader.getElement(tree, el);
                 inputName[i] = el;
                 // $('debug').innerHTML += "input["+ i +"]: "+ input[i] +"<br/>";
@@ -451,22 +457,23 @@ this.readGeogebra = function(tree, board) {
             }
 
             var output = [];
-            for(var i=0; i<Data.getElementsByTagName("output")[0].attributes.length; i++) {
-                var el = Data.getElementsByTagName("output")[0].attributes[i].value;
+            for (i=0; i<Data.getElementsByTagName("output")[0].attributes.length; i++) {
+                el = Data.getElementsByTagName("output")[0].attributes[i].value;
                 output[i] = JXG.GeogebraReader.getElement(tree, el);
                 // $('debug').innerHTML += "output: "+ output[i] +"<br/>";
                 els[el] = (!els[el]) ? JXG.GeogebraReader.writeElement(tree, board, output[i], inputName, Data.attributes["name"].value) : els[el];
             }
-        });
-        $R(0,tree.getElementsByTagName("construction")[t].getElementsByTagName("expression").length-1).each(function(s) {
-            var Data = tree.getElementsByTagName("construction")[t].getElementsByTagName("expression")[s];
-            var el = Data.attributes["label"].value;
+        }
+        var expr = constructions[t].getElementsByTagName("expression");
+        for (s=0;s<expr.length;s++) {
+            Data = expr[s];
+            el = Data.attributes["label"].value;
             var text = Data.attributes["exp"].value;
             var input = JXG.GeogebraReader.getElement(tree, el);
-            $('debug').innerHTML += "expression: "+ el +", "+ text +"<br/>";
+            //$('debug').innerHTML += "expression: "+ el +", "+ text +"<br/>";
             els[el] = (!els[el]) ? JXG.GeogebraReader.writeElement(tree, board, input, false, false, text) : els[el];
-        });
-    });
+        }
+    }
 };
 
 }; // end: GeogebraReader()

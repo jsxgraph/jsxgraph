@@ -86,7 +86,9 @@ JXG.JSXGraph = new function (forceRenderer) {
     }
         
     /* Load the source files for the renderer */
-    JXG.rendererFiles[this.rendererType].split(',').each( function(include) { JXG.require(JXG.requirePath+include+'.js'); } );
+    //JXG.rendererFiles[this.rendererType].split(',').each( function(include) { JXG.require(JXG.requirePath+include+'.js'); } );
+    var arr = JXG.rendererFiles[this.rendererType].split(',');
+    for (var i=0;i<arr.length;i++) ( function(include) { JXG.require(JXG.requirePath+include+'.js'); } )(arr[i]);
     
 
     /**
@@ -117,7 +119,8 @@ JXG.JSXGraph = new function (forceRenderer) {
             renderer = new JXG.SilverlightRenderer(document.getElementById(box));
         }
     
-        var dimensions = document.getElementById(box).getDimensions();
+        //var dimensions = document.getElementById(box).getDimensions();
+        var dimensions = JXG.getDimensions(box);
         var board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height);
         this.boards[board.id] = board;
         board.initGeonextBoard();
@@ -148,7 +151,9 @@ JXG.JSXGraph = new function (forceRenderer) {
         } else {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
         }
-        var dimensions = document.getElementById(box).getDimensions();
+        //var dimensions = document.getElementById(box).getDimensions();
+        var dimensions = JXG.getDimensions(box);
+
     
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
         var board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
@@ -168,8 +173,9 @@ JXG.JSXGraph = new function (forceRenderer) {
         } else {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
         }
-        var dimensions = document.getElementById(box).getDimensions();
-    
+        //var dimensions = document.getElementById(box).getDimensions();
+        var dimensions = JXG.getDimensions(box);
+
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
         var board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
 
@@ -245,65 +251,21 @@ JXG.GetReferenceFromParameter = function(board, object) {
     return object;
 };
 
-JXG.IsString = function(s) {
-    return Object.isString(s); // From the prototype lib
-/*
-    if(typeof s == 'string')
-        return true;
-        
-    if(typeof s == 'object') {
-        var regex = s.constructor.toString().match(/string/i);
-        return (regex != null);
-    }
-
-    return false;        
-*/
+JXG.IsString = function(obj) {
+    return typeof obj == "string";
 };
 
-JXG.IsNumber = function(n) {
-    if(typeof n == 'number')
-        return true;
-/*        
-    if(typeof n == 'object') {
-        var regex = n.constructor.toString().match(/number/i);
-        return (regex != null);
-    }
-*/
-    return false;        
+JXG.IsNumber = function(obj) {
+    return typeof obj == "number";
 };
 
-JXG.IsFunction = function(f) {
-    return Object.isFunction(f); // From the prototype lib
-/*    
-    if(typeof f == 'function')
-        return true;
-        
-    if(typeof f == 'object') {
-        var regex = f.constructor.toString().match(/function/i);
- 
-        return (regex != null);
-    }
-    return false;        
- */
+JXG.IsFunction = function(obj) {
+    return typeof obj == "function"; 
 };
 
-JXG.IsArray = function(a) {
-    return Object.isArray(a); // From the prototype lib
-/*    
-    if(typeof a == 'object') {
-        var regex = a.constructor.toString().match(/array/i);
-        
-        var ie = navigator.appVersion.match(/MSIE (\d\.\d)/);
-        if(!ie) {
-            return (regex != null);
-        }
-        else {
-            return a && (a instanceof Array || typeof a == "array"); 
-        }
-    }
-
-    return false;        
- */
+JXG.IsArray = function(obj) {
+    // Borrowed from prototype.js
+    return obj != null && typeof obj == "object" && 'splice' in obj && 'join' in obj;
 };
 
 JXG.IsPoint = function(p) {
@@ -335,4 +297,28 @@ JXG.createEvalFunction = function(board,param,n) {
         }
         return 0;
     }
-}
+};
+
+JXG.getDimensions = function(elementId) {
+    // Borrowed from prototype.js
+    var element = document.getElementById(elementId);
+    var display = element.style['display'];
+    if (display != 'none' && display != null) // Safari bug
+      return {width: element.offsetWidth, height: element.offsetHeight};
+
+    // All *Width and *Height properties give 0 on elements with display none,
+    // so enable the element temporarily
+    var els = element.style;
+    var originalVisibility = els.visibility;
+    var originalPosition = els.position;
+    var originalDisplay = els.display;
+    els.visibility = 'hidden';
+    els.position = 'absolute';
+    els.display = 'block';
+    var originalWidth = element.clientWidth;
+    var originalHeight = element.clientHeight;
+    els.display = originalDisplay;
+    els.position = originalPosition;
+    els.visibility = originalVisibility;
+    return {width: originalWidth, height: originalHeight};
+};

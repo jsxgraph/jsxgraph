@@ -355,11 +355,7 @@ JXG.Line.prototype.updateStdform = function() {
     this.stdform[0] = v[0];
     this.stdform[1] = v[1];
     this.stdform[2] = v[2];
-    //if (this.point1.name=="B") 
-    //    $('debug').innerHTML += '('+(-v[1]/v[0]).toFixed(2)+','+(-v[2]/v[0]).toFixed(2)+') ';
-    
     this.stdform[3] = 0;
-
     this.normalize();
 };
 

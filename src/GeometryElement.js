@@ -561,7 +561,7 @@ JXG.GeometryElement.prototype.prepareUpdate = function() {
  * Remove the element from the drawing.
  */
 JXG.GeometryElement.prototype.remove = function() {    
-    this.board.renderer.remove($(this.id));
+    this.board.renderer.remove(document.getElementById(this.id));
 };
 
 /**

@@ -107,11 +107,12 @@ this.parseString = function(fileStr, board, format) {
 
 this.readElements = function(tree, board, format) {
     /**
-     * Reading the elements of a geonext or geogebra file
-     @param {} tree expects the content of the parsed geonext file returned by function parseFromString
-     @param {Object} board board object
-    */
-
+           *  Reading the elements of a geonext or geogebra file
+           * @param {} tree expects the content of the parsed geonext file returned by function parseFromString
+           * @param {Object} board board object
+           */
+    
+    board.suspendUpdate();
     if (format.toLowerCase()=='geonext') { 
         if(tree.getElementsByTagName('GEONEXT').length != 0) {
             JXG.GeonextReader.readGeonext(tree, board);
@@ -123,6 +124,7 @@ this.readElements = function(tree, board, format) {
     else if(format.toLowerCase()=='intergeo') {
          JXG.IntergeoReader.readIntergeo(tree, board);
     }
+    board.unsuspendUpdate();
     board.afterLoad();    
 }; // end: this.readElements()
 

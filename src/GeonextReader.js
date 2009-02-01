@@ -50,12 +50,12 @@ this.colorProperties = function(gxtEl, Data) {
 
 this.firstLevelProperties = function(gxtEl, Data) {
     var arr = Data.childNodes;
-    $R(0,arr.length-1).each(function(n) {
+    for (var n=0;n<arr.length;n++) {
         if (arr[n].firstChild!=null && arr[n].nodeName!='data' && arr[n].nodeName!='straight') {
             var key = arr[n].nodeName;
             gxtEl[key] = arr[n].firstChild.data;
         }
-    });
+    };
     return gxtEl;
 }; 
 
@@ -101,7 +101,7 @@ this.visualProperties = function(gxtEl, Data) {
 this.readNodes = function(gxtEl, Data, nodeType, prefix) {
     var key;
     var arr = Data.getElementsByTagName(nodeType)[0].childNodes;
-    $R(0,arr.length-1).each(function(n) {
+    for (var n=0;n<arr.length;n++) {
         if (arr[n].firstChild!=null) {
             if (prefix!=null) {
                 key = prefix+arr[n].nodeName.capitalize();
@@ -110,7 +110,7 @@ this.readNodes = function(gxtEl, Data, nodeType, prefix) {
             }
             gxtEl[key] = arr[n].firstChild.data;
         }
-    });
+    };
     return gxtEl;
 };
 
@@ -244,7 +244,6 @@ this.readGeonext = function(tree,board) {
     // Update of properties during update() is not necessary in GEONExT files
     board.renderer.enhancedRendering = false;
 
-
     JXG.GeonextReader.parseImage(board,boardData.getElementsByTagName('file')[0],'images'); // Background image
 
     // Eigenschaften der Zeichenflaeche setzen
@@ -290,10 +289,11 @@ this.readGeonext = function(tree,board) {
         opacity = bgcolor.substr(7,2);
         bgcolor = bgcolor.substr(0,7);
     }    
-    $(board.container).style.backgroundColor = bgcolor;
+    board.containerObj.style.backgroundColor = bgcolor;
     
-    $R(0,tree.getElementsByTagName("elements")[0].childNodes.length-1).each(function(s) {
-        var Data = tree.getElementsByTagName("elements")[0].childNodes[s];
+    var elementsChildNodes = tree.getElementsByTagName("elements")[0].childNodes;
+    for (var s=0;s<elementsChildNodes.length;s++) (function(s) {
+        var Data = elementsChildNodes[s];
         var gxtEl = {};
         gxtEl = JXG.GeonextReader.defProperties(gxtEl, Data);
         if (gxtEl==null) return; // Text nodes are skipped.
@@ -404,16 +404,16 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'animate', 'animate');
                 JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'points');
                 try {
-                    var s = new JXG.Point(board, [1*gxtEl.x, 1*gxtEl.y], gxtEl.id, gxtEl.name, true);
+                    var p = new JXG.Point(board, [1*gxtEl.x, 1*gxtEl.y], gxtEl.id, gxtEl.name, true);
                     gxtEl.parent = JXG.GeonextReader.changeOriginIds(board,gxtEl.parent);
-                    s.makeGlider(gxtEl.parent); 
-                    s.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
+                    p.makeGlider(gxtEl.parent); 
+                    p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                                   'fillColor:'+gxtEl.colorStroke,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                                   'highlightFillColor:'+gxtEl.highlightStrokeColor,'visible:'+gxtEl.visible,
                                   'fixed:'+gxtEl.fixed,'labelColor:'+gxtEl.colorLabel,'draft:'+gxtEl.draft);
-                    s.onPolygon = board.algebra.str2Bool(gxtEl.onpolygon);
-                    s.traced = (gxtEl.trace=='false') ? false : true;      
-                    s.setStyle(1*gxtEl.style);                    
+                    p.onPolygon = board.algebra.str2Bool(gxtEl.onpolygon);
+                    p.traced = (gxtEl.trace=='false') ? false : true;      
+                    p.setStyle(1*gxtEl.style);                    
                     JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 } catch(e) {
                     //$('debug').innerHTML += "* <b>Err:</b>  Slider " + gxtEl.name + " " + gxtEl.id + ': '+ gxtEl.parent +"<br>\n";
@@ -677,14 +677,14 @@ this.readGeonext = function(tree,board) {
                         defElColF[i] = tmp.getElementsByTagName('fill')[0].firstChild.data;
                         defElColL[i] = tmp.getElementsByTagName('label')[0].firstChild.data;
                     }                          
-                    var s = new JXG.Sector(board, gxtEl.defEl[0], 
+                    var el = new JXG.Sector(board, gxtEl.defEl[0], 
                                            gxtEl.defEl[1], gxtEl.defEl[2], 
                                            [defEl[0], defEl[1], defEl[2], defEl[3]],
                                            [defElN[0].firstChild.data, defElN[1].firstChild.data, defElN[2].firstChild.data, 
                                                defElN[3].firstChild.data], 
                                            gxtEl.id);   
                     // Sector hat keine eigenen Eigenschaften
-                    //s.setProperty('fillColor:'+defElColF[0],'highlightFillColor:'+defElColF[0], 'strokeColor:none');
+                    //el.setProperty('fillColor:'+defElColF[0],'highlightFillColor:'+defElColF[0], 'strokeColor:none');
                     /* Eigenschaften des Kreisbogens */
                     var arcId = defEl[0];
                     board.objects[arcId].setProperty('strokeColor:'+defElColStr[0],
@@ -1167,7 +1167,7 @@ this.readGeonext = function(tree,board) {
                 }
         }
         delete(gxtEl);
-    });
+    })(s);
     board.addConditions(boardTmp.conditions);
 };
 

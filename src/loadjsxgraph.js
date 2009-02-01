@@ -57,11 +57,22 @@ JXG.rendererFiles = [];
     //JXG.rendererFiles['silverlight'] = 'Silverlight,createSilverlight,SilverlightRenderer';
 JXG.requirePath = '';
 
+/*
 $A(document.getElementsByTagName("script")).findAll( function(s) {
     return (s.src && s.src.match(/loadjsxgraph\.js(\?.*)?$/))
 }).each( function(s) {
     JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/,'');
     JXG.baseFiles.split(',').each( function(include) { JXG.require(JXG.requirePath+include+'.js') } );
 });
+*/
+for (var i=0;i<document.getElementsByTagName("script").length;i++) {
+    var s = document.getElementsByTagName("script")[i];
+    if (s.src && s.src.match(/loadjsxgraph\.js(\?.*)?$/)) {
+        JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/,'');
+        var arr = JXG.baseFiles.split(',');
+        for (var n=0;n<arr.length;n++) 
+            (function(include) { JXG.require(JXG.requirePath+include+'.js')})(arr[n]);
+    }
+}
 
 JXG.baseFiles = null;

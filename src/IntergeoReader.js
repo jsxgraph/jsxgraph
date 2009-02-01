@@ -41,7 +41,7 @@ JXG.IntergeoReader = new function() {
 
     this.readElements = function(tree) {
         //$('debug').innerHTML = '';
-        $R(0,tree[0].childNodes.length-1).each(function(s) {
+        for (var s=0;s<tree[0].childNodes.length;s++) (function(s) {
             var node = tree[0].childNodes[s];
             if (node.nodeType>1) { return; } // not an element node
             if (node.nodeName=='point') {
@@ -53,7 +53,7 @@ JXG.IntergeoReader = new function() {
             else {
                 //$('debug').innerHTML += node.nodeName + ' ' + node.getAttribute('id') + '<br>';
             }
-        });
+        })(s);
     };
 
     /**
@@ -133,7 +133,7 @@ JXG.IntergeoReader = new function() {
     };
 
     this.readConstraints = function(tree) {
-        $R(0,tree[0].childNodes.length-1).each(function(s) {
+        for (var s=0;s<tree[0].childNodes.length;s++) (function(s) {
             var node = tree[0].childNodes[s];
             if (node.nodeType>1) { return; } // not an element node
             if (node.nodeName=='line_through_two_points') {
@@ -163,7 +163,7 @@ JXG.IntergeoReader = new function() {
             else {
                 //$('debug').innerHTML += 'NOT: ' + node.nodeName + '<br>';
             }
-        });
+        })(s);
 
     };
 
