@@ -795,8 +795,12 @@ JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) 
     }
 
     var ticks = $(axis.id + '_ticks');
-    if(ticks == null)
+    if(ticks == null) {
         ticks = this.createPrimitive('path', axis.id+'_ticks');
+        this.lines.appendChild(ticks);
+    }
+    ticks.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);    
+    ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
     this.updatePathPrimitive(ticks, tickStr);
 }
 
