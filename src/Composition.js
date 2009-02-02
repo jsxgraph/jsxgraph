@@ -71,25 +71,57 @@ JXG.createParallel = function(board, parentArr, atts) {
     }
 };
 
-JXG.createNormal = function(board, parentArr, atts) {
-    if(JXG.IsPoint(parentArr[0]) && parentArr[1] && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
-        return board.addNormal(parentArr[1], parentArr[0], atts['id'], atts['name']);
+JXG.createNormal = function(board, parents, attributes) {
+    var p;
+    var c;
+    if (parents.length==1) { // One arguments: glider on line, circle or curve
+        p = parents[0];
+        c = p.slideObject;
+    } else if (parents.length==2) { // Two arguments: (point,line), (point,circle), (line,point) or (circle,point)
+        if (JXG.IsPoint(parents[0])) { 
+            p = parents[0];
+            c = parents[1];
+        } else if (JXG.IsPoint(parents[1])) { 
+            c = parents[0];
+            p = parents[1];
+        } else {
+            throw ("Can't create normal with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");    
+        }
+    } else {
+        throw ("Can't create normal with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");    
     }
-    else if(parentArr[1] && JXG.IsPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
-        return board.addNormal(parentArr[0], parentArr[1], atts['id'], atts['name']);    
-    } else if (parentArr[0].slideObject && parentArr[0].slideObject.type == JXG.OBJECT_TYPE_CURVE) {
-        var p = parentArr[0];
-        var c = p.slideObject;
+
+    if(c.elementClass==JXG.OBJECT_CLASS_LINE) {
+        // return board.addNormal(c,p, attributes['id'], attributes['name']); // GEONExT-Style: problems with ideal point
+        // If not needed, then board.addNormal and maybe board.algebra.perpendicular can be removed.
+        
+        // Homogeneous version:
+        // orthogonal(l,p) = (F^\delta\cdot l)\times p
+        return board.createElement('line', [
+                    function(){ return c.stdform[1]*p.Y()-c.stdform[2]*p.X();},
+                    function(){ return c.stdform[2]*p.Z();},
+                    function(){ return -c.stdform[1]*p.Z();}
+                    ], attributes );
+    }
+    else if(c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {    
+        var Dg = function(t){ return -c.getRadius()*Math.sin(t); };
+        var Df = function(t){ return c.getRadius()*Math.cos(t); };;
+        return board.createElement('line', [
+                    function(){ return -p.X()*Dg(p.position)-p.Y()*Df(p.position);},
+                    function(){ return Dg(p.position);},
+                    function(){ return Df(p.position);}
+                    ], attributes );
+    } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
         var g = c.X;
         var f = c.Y;
         return board.createElement('line', [
                     function(){ return -p.X()*board.D(g)(p.position)-p.Y()*board.D(f)(p.position);},
                     function(){ return board.D(g)(p.position);},
                     function(){ return board.D(f)(p.position);}
-                    ], atts );
+                    ], attributes );
     }
     else {
-        throw ("Can't create normal with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
+        throw ("Can't create normal with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");    
     }
 };
 

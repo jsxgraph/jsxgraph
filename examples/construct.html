@@ -23,7 +23,7 @@
 
     var p1 = board.createElement('point', [1,0,0.5] );
     var p2 = board.createElement('point', [1,1,1] );
-    //var t = board.createElement('circle', [p1,p2] );
+    var circ = board.createElement('circle', [p1,p2] );
     //var t = board.createElement('line', [1,-1,1],{name:'x'} );
     
     var f = function(t){return p2.Y()*t*Math.sin(t);};
@@ -32,9 +32,9 @@
     var c = board.createElement('curve', ['t',f,'t'], {type:'graph'} );
 
     //var c = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);},'t'] );
-    var p = board.createElement('glider', [0.1,2,c],{name:'S'} );
+    var p = board.createElement('glider', [0.1,2,circ],{name:'S'} );
     var t = board.createElement('tangent',[p], {dash:3,strokeColor:'red'});
-    var t = board.createElement('normal',[p], {dash:3,strokeColor:'black'});
+    var t = board.createElement('normal',[p,t], {dash:3,strokeColor:'black'});
 
     var p3 = board.createElement('glider', [3,f(3),c],{fixed:true} );
     var t = board.createElement('tangent',[p3], {dash:3,strokeColor:'red'});

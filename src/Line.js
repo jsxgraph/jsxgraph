@@ -755,9 +755,9 @@ JXG.JSXGraph.registerElement('axis', JXG.createAxis);
 JXG.createTangent = function(board, parents, attributes) {
     var p = parents[0];
     var c = p.slideObject;
-    if (c.type == JXG.OBJECT_TYPE_LINE) {
+    if (c.elementClass == JXG.OBJECT_CLASS_LINE) {
         return board.createElement('line', [c.point1,c.point2], attributes);
-    } else if (c.type == JXG.OBJECT_TYPE_CURVE) {
+    } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
         var g = c.X;
         var f = c.Y;
         return board.createElement('line', [
@@ -765,7 +765,7 @@ JXG.createTangent = function(board, parents, attributes) {
                     function(){ return board.D(f)(p.position);},
                     function(){ return -board.D(g)(p.position);}
                     ], attributes );
-    } else if (c.type == JXG.OBJECT_TYPE_CIRCLE) {
+    } else if (c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         var Dg = function(t){ return -c.getRadius()*Math.sin(t); };
         var Df = function(t){ return c.getRadius()*Math.cos(t); };;
         return board.createElement('line', [
