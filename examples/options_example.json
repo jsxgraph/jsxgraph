@@ -1,7 +1,7 @@
 {
 	"fontSize"	:	12,
 	"grid"		:	{
-		"hasGrid"		:	false,
+		"hasGrid"		:	true,
 		"gridX"			:	2,
 		"gridY"			:	2,
 		"gridColor"		:	"#C0C0C0",

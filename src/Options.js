@@ -298,18 +298,23 @@ JXG.Options.prototype.parseString = function(text, apply, board) {
    else
       return;
 
-   var i = 0;
-   var kstr;
-   for(var key in newOptions) {
-      i = 0;
-      kstr = '';
-      for(var ikey in newOptions[key]) {
-         kstr = kstr + ',' + ikey;
-         i++;
+   var maxDepth = 10;
+   var applyOption = function (base, option, depth) {
+      if(depth==10)
+         return;
+      depth++;
+      
+      for(var key in option) {
+         if((JXG.IsNumber(option[key])) || (JXG.IsArray(option[key])) || (JXG.IsString(option[key])) || (option[key]==true) || (option[key]==false)) {
+            base[key] = option[key];
+         }
+         else {
+            applyOption(base[key], option[key], depth);
+         }
       }
-// debug MG      alert(i + ', ' + key + ', ' + kstr);
-      this[key] = newOptions[key];
    }
+   
+   applyOption(this, newOptions, 0);
    
    if(apply && typeof board != 'undefined') {
        this.useStandardOptions(board);
