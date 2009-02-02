@@ -419,8 +419,10 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    this.geonextCompatibilityMode = false;
 
    /* Event needs to know which methods to call when mouse is moved or clicked */
-   Event.observe(this.container, 'mousedown', this.mouseDownListener.bind(this));
-   Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
+   //Event.observe(this.container, 'mousedown', this.mouseDownListener.bind(this));
+   //Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
+   Event.observe(document, 'mousedown', this.mouseDownListener.bind(this));
+   Event.observe(document, 'mousemove', this.mouseMoveListener.bind(this));
 };
 
 /**
@@ -540,7 +542,8 @@ JXG.Board.prototype.mouseUpListener = function (Evt) {
     this.updateQuality = this.BOARD_QUALITY_HIGH;
     
     // release mouseup listener
-    Event.stopObserving(this.container, 'mouseup', this.onMouseUpListener);
+    //Event.stopObserving(this.container, 'mouseup', this.onMouseUpListener);
+    Event.stopObserving(document, 'mouseup', this.onMouseUpListener);
     
     // if origin was moved update everything
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
@@ -575,7 +578,8 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         this.drag_dx = dx - this.origin.scrCoords[1];
         this.drag_dy = dy - this.origin.scrCoords[2];
         this.mode = this.BOARD_MODE_MOVE_ORIGIN;
-        Event.observe(this.container, 'mouseup', this.mouseUpListener.bind(this));
+        //Event.observe(this.container, 'mouseup', this.mouseUpListener.bind(this));
+        Event.observe(document, 'mouseup', this.mouseUpListener.bind(this));
         return;
     }
     if (this.mode==this.BOARD_MODE_CONSTRUCT) return;
