@@ -44,7 +44,7 @@
     	"style"					:	5,
     	"fillColor"				:	"#00ff00",
     	"highlightFillColor"	:	"#EEEEEE",
-	   	"strokeColor"			:	"#0000ff",
+	   	"strokeColor"			:	"#00ff00",
     	"highlightStrokeColor"	:	"#C3D9FF"
 	},
     
@@ -68,7 +68,7 @@
     
     /*special circle options */
     "circle"	:	{
-		"strokeColor"			:	"#0000ff",
+		"strokeColor"			:	"#00ff00",
 		"highlightStrokeColor"	:	"#C3D9FF",
 		"fillColor"				:	"none",
 		"highlightFillColor"	:	"none"
