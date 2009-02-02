@@ -152,6 +152,7 @@ JXG.Options = function() {
 }
 
 JXG.Options.prototype.useStandardOptions = function(board) {
+    var boardHadGrid = board.hasGrid;
     board.hasGrid = this.grid.hasGrid;
     board.gridX = this.grid.gridX;
     board.gridY = this.grid.gridY;
@@ -214,8 +215,12 @@ JXG.Options.prototype.useStandardOptions = function(board) {
     board.fullUpdate = true;
     board.update();
     board.fullUpdate = false;
-    if(board.hasGrid) {
+    if(boardHadGrid && board.hasGrid) {
         board.renderer.removeGrid(board);
+        board.renderer.drawGrid(board);
+    } else if(boardHadGrid && !board.hasGrid) {
+        board.renderer.removeGrid(board);
+    } else if(!boardHadGrid && board.hasGrid) {
         board.renderer.drawGrid(board);
     }
 }
