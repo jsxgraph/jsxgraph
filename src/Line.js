@@ -767,7 +767,7 @@ JXG.createTangent = function(board, parents, attributes) {
                     ], attributes );
     } else if (c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         var Dg = function(t){ return -c.getRadius()*Math.sin(t); };
-        var Df = function(t){ return c.getRadius()*Math.cos(t); };;
+        var Df = function(t){ return c.getRadius()*Math.cos(t); };
         return board.createElement('line', [
                     function(){ return -p.X()*Df(p.position)+p.Y()*Dg(p.position);},
                     function(){ return Df(p.position);},

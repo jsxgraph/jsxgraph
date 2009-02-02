@@ -200,8 +200,8 @@ JXG.JSXGraph = new function (forceRenderer) {
         //Event.stopObserving(board.container, 'mousedown', board.onMouseDownListener);
         //Event.stopObserving(board.container, 'mouseup', board.onMouseUpListener);
         //Event.stopObserving(board.container, 'mousemove', board.onMouseMoveListener);
-        Event.stopObserving(board.container, 'mousedown', board.mouseDownListener);
-        Event.stopObserving(board.container, 'mouseup', board.mouseUpListener);
+        Event.stopObserving(document, 'mousedown', board.mouseDownListener);
+        Event.stopObserving(document, 'mouseup', board.mouseUpListener);
         Event.stopObserving(board.container, 'mousemove', board.mouseMoveListener);
     
         // Remove all objects from the board.

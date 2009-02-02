@@ -422,7 +422,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    //Event.observe(this.container, 'mousedown', this.mouseDownListener.bind(this));
    //Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
    Event.observe(document, 'mousedown', this.mouseDownListener.bind(this));
-   Event.observe(document, 'mousemove', this.mouseMoveListener.bind(this));
+   Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
 };
 
 /**
