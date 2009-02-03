@@ -16,12 +16,15 @@
 <script type="text/javascript">
 /* <![CDATA[ */
 
+    /*
     function testmakro(board,el1, el2) {
     	var l = board.createElement('line', [el1,el2], { strokeWidth:3 });
     }
-    var board = JXG.JSXGraph.initBoard('box',{axis:true});
+    */
+    var board = JXG.JSXGraph.initBoard('box',{axis:false});
 
-    var p1 = board.createElement('point', [1,0,0.5] );
+    var p1 = board.createElement('point', [1,0,0.5] , {name:'A'});
+/*    
     var p2 = board.createElement('point', [1,1,1] );
     var circ = board.createElement('circle', [p1,p2] );
     //var t = board.createElement('line', [1,-1,1],{name:'x'} );
@@ -38,6 +41,7 @@
 
     var p3 = board.createElement('glider', [3,f(3),c],{fixed:true} );
     var t = board.createElement('tangent',[p3], {dash:3,strokeColor:'red'});
+*/    
 /*
     // Ellipse
     board.createElement('curve', 

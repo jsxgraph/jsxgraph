@@ -197,12 +197,15 @@ JXG.JSXGraph = new function (forceRenderer) {
         }
     
         // Remove the event listeners
-        //Event.stopObserving(board.container, 'mousedown', board.onMouseDownListener);
-        //Event.stopObserving(board.container, 'mouseup', board.onMouseUpListener);
-        //Event.stopObserving(board.container, 'mousemove', board.onMouseMoveListener);
-        Event.stopObserving(document, 'mousedown', board.mouseDownListener);
-        Event.stopObserving(document, 'mouseup', board.mouseUpListener);
-        Event.stopObserving(board.container, 'mousemove', board.mouseMoveListener);
+        // // Event.stopObserving(board.container, 'mousedown', board.onMouseDownListener);
+        // // Event.stopObserving(board.container, 'mouseup', board.onMouseUpListener);
+        // // Event.stopObserving(board.container, 'mousemove', board.onMouseMoveListener);
+        //Event.stopObserving(document, 'mousedown', board.mouseDownListener);
+        //Event.stopObserving(document, 'mouseup', board.mouseUpListener);
+        //Event.stopObserving(board.container, 'mousemove', board.mouseMoveListener);
+        JXG.removeEvent(document, 'mousedown', board.mouseDownListener);
+        JXG.removeEvent(document, 'mouseup', board.mouseUpListener);
+        JXG.removeEvent(board.containerObj, 'mousemove', board.mouseMoveListener);
     
         // Remove all objects from the board.
         for(var el in board.objects) {
@@ -325,3 +328,63 @@ JXG.getDimensions = function(elementId) {
     els.visibility = originalVisibility;
     return {width: originalWidth, height: originalHeight};
 };
+
+
+JXG.addEvent = function( obj, type, fn, owner ) {
+    var f = function() {
+        return fn.apply(owner,arguments);
+    }
+    if ( obj.attachEvent ) {
+        obj['e'+type+fn] = f;
+        obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
+        obj.attachEvent( 'on'+type, obj[type+fn] );
+    } else {
+        obj.addEventListener( type, f, false );
+    }
+    
+}
+
+JXG.removeEvent = function( obj, type, fn ) {
+    if ( obj.detachEvent ) {
+        obj.detachEvent( 'on'+type, obj[type+fn] );
+        obj[type+fn] = null;
+    } else {
+        obj.removeEventListener( type, fn, false );
+    }
+}
+
+JXG.getPosition = function (Evt) {
+    var posx = 0;
+    var posy = 0;
+    if (!Evt) var Evt = window.event;
+    if (Evt.pageX || Evt.pageY)     {
+        posx = Evt.pageX;
+        posy = Evt.pageY;
+    }
+    else if (Evt.clientX || Evt.clientY)    {
+        posx = Evt.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        posy = Evt.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+    return [posx,posy];
+}
+
+JXG.getOffset = function (obj) {
+    if (Element.cumulativeOffset) {  // prototype
+        return Element.cumulativeOffset(obj);
+    } else {                         // jQuery
+        return $(obj).offset();
+    }
+}
+
+JXG.getStyle = function (obj, stylename) {
+    if (obj.getStyle) {
+        return obj.getStyle(stylename);
+    } else {
+        if ($(obj).attr('stylename')) {
+            return $(obj).attr('stylename');
+        } else {
+            return $(obj).css('stylename');
+        }
+    }
+}
+    

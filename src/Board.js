@@ -419,10 +419,12 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    this.geonextCompatibilityMode = false;
 
    /* Event needs to know which methods to call when mouse is moved or clicked */
-   //Event.observe(this.container, 'mousedown', this.mouseDownListener.bind(this));
+   // // Event.observe(this.container, 'mousedown', this.mouseDownListener.bind(this));
+   //// Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
+   //Event.observe(document, 'mousedown', this.mouseDownListener.bind(this));
    //Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
-   Event.observe(document, 'mousedown', this.mouseDownListener.bind(this));
-   Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
+   JXG.addEvent(document,'mousedown', this.mouseDownListener, this);
+   JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
 };
 
 /**
@@ -520,16 +522,16 @@ JXG.Board.prototype.generateId = function () {
  */
 JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
     var pCont = this.containerObj;
-    var cPos = Element.cumulativeOffset(pCont);
+    var cPos = JXG.getOffset(pCont); //Element.cumulativeOffset(pCont);
 
     // add border width
-    cPos[0] += parseInt(pCont.getStyle('borderLeftWidth'));
-    cPos[1] += parseInt(pCont.getStyle('borderTopWidth'));
+    cPos[0] += parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
+    cPos[1] += parseInt(JXG.getStyle(pCont,'borderTopWidth'));
 
     // add padding
-    cPos[0] += parseInt(pCont.getStyle('paddingLeft'));
-    cPos[1] += parseInt(pCont.getStyle('paddingTop'));
-
+    cPos[0] += parseInt(JXG.getStyle(pCont,'paddingLeft'));
+    cPos[1] += parseInt(JXG.getStyle(pCont,'paddingTop'));
+    
     return cPos;
 };
 
@@ -542,8 +544,9 @@ JXG.Board.prototype.mouseUpListener = function (Evt) {
     this.updateQuality = this.BOARD_QUALITY_HIGH;
     
     // release mouseup listener
-    //Event.stopObserving(this.container, 'mouseup', this.onMouseUpListener);
-    Event.stopObserving(document, 'mouseup', this.onMouseUpListener);
+    // //Event.stopObserving(this.container, 'mouseup', this.onMouseUpListener);
+    //Event.stopObserving(document, 'mouseup', this.onMouseUpListener);
+    JXG.removeEvent(document, 'mouseup', this.onMouseUpListener);
     
     // if origin was moved update everything
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
@@ -569,17 +572,18 @@ JXG.Board.prototype.mouseUpListener = function (Evt) {
 JXG.Board.prototype.mouseDownListener = function (Evt) {
     var el;
     var cPos = this.getRelativeMouseCoordinates(Evt);
-    
     // position of mouse cursor relative to containers position of container
-    var dx = Event.pointerX(Evt) - cPos[0];
-    var dy = Event.pointerY(Evt) - cPos[1];
+    var absPos = JXG.getPosition(Evt);
+    var dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    var dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
     
     if(Evt.shiftKey) {
         this.drag_dx = dx - this.origin.scrCoords[1];
         this.drag_dy = dy - this.origin.scrCoords[2];
         this.mode = this.BOARD_MODE_MOVE_ORIGIN;
         //Event.observe(this.container, 'mouseup', this.mouseUpListener.bind(this));
-        Event.observe(document, 'mouseup', this.mouseUpListener.bind(this));
+        //Event.observe(document, 'mouseup', this.mouseUpListener.bind(this));
+        JXG.addEvent(document, 'mouseup', this.mouseUpListener, this);
         return;
     }
     if (this.mode==this.BOARD_MODE_CONSTRUCT) return;
@@ -624,7 +628,8 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     
     //    Event.observe(this.container, 'mouseup', this.onMouseUpListener);
     //    Event.observe(document, 'mouseup', this.onMouseUpListener);
-    Event.observe(document, 'mouseup', this.mouseUpListener.bind(this));
+    //Event.observe(document, 'mouseup', this.mouseUpListener.bind(this));
+    JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
 };
 
 /**
@@ -636,8 +641,9 @@ JXG.Board.prototype.mouseMoveListener = function (Evt) {
     var cPos = this.getRelativeMouseCoordinates(Evt);
 
     // position of mouse cursor relative to containers position of container
-    var x = Event.pointerX(Evt) - cPos[0];
-    var y = Event.pointerY(Evt) - cPos[1];
+    var absPos = JXG.getPosition(Evt);
+    var x = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    var y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
 
     this.updateQuality = this.BOARD_QUALITY_LOW;
 
