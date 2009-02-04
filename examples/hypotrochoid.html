@@ -46,15 +46,15 @@ Bogenl&auml;nge =<input type="text" id="D" size="2" maxlength="7"
                 var a = board.round(g1.X()-g2.X(),d);
                 var b = board.round(g3.X(),d);
                 var c = board.round((g1.X()-g2.X())/g2.X(),d);
-                $('parameter').innerHTML = "["+a+"cos(t) + "+b+"cos("+c+"*t)  , " +a+"sin(t) + "+b+"sin("+c+"*t)]";
+                document.getElementById('parameter').innerHTML = "["+a+"cos(t) + "+b+"cos("+c+"*t)  , " +a+"sin(t) + "+b+"sin("+c+"*t)]";
             });
         board.addHook(function(board) {
-                $('D').value = g4.X();
+                document.getElementById('D').value = g4.X();
             });
         /* This is possible, too: */
         /*
         board.addHook(function(board) {
-                $('debug').innerHTML = c1.X.toString() + '<br>'+ c1.Y.toString() ;
+                document.getElementById('debug').innerHTML = c1.X.toString() + '<br>'+ c1.Y.toString() ;
             });
         */
 

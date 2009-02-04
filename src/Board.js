@@ -1757,7 +1757,7 @@ JXG.Board.prototype.addConditions = function (str) {
         var right = term.slice(m+1);
         m = left.indexOf('.'); // Dies erzeugt Probleme bei Variablennamen der Form " Steuern akt."
         var name = left.slice(0,m);    //.replace(/\s+$/,''); // do NOT cut out name (with whitespace)
-        var el = this.elementsByName[name.unescapeHTML()];
+        var el = this.elementsByName[JXG.unescapeHTML(name)];
 
         var property = left.slice(m+1).replace(/\s+/g,'').toLowerCase(); // remove whitespace in property
         right = this.algebra.geonext2JS(right);
@@ -2188,7 +2188,7 @@ JXG.Board.prototype.showDependencies = function() {
 JXG.Board.prototype.showXML = function() {
     var f = window.open("");
     f.document.open();
-    f.document.write("<pre>"+this.xmlString.escapeHTML()+"</pre>");
+    f.document.write("<pre>"+JXG.escapeHTML(this.xmlString)+"</pre>");
     f.document.close();
 }
 

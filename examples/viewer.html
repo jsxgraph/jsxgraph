@@ -2,7 +2,8 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
+<script type="text/javascript" src="../distrib/jquery.min.js"></script>
+<!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -269,28 +270,28 @@
 <script>
    var board;
    function loadFile(bspname,format) {
-        $('box').innerHTML = '';
-        $('debug').innerHTML = "<b>Debug:</b><p>";
+        document.getElementById('box').innerHTML = '';
+        document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";
     
         if(typeof board != 'undefined') {
             JXG.JSXGraph.freeBoard(board);
         }
-        var value = $(bspname).options[$(bspname).selectedIndex].value;
+        var value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value;
         if (value=='') {
-            value = $(bspname).options[$(bspname).selectedIndex].text;
+            value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
         }
         board = JXG.JSXGraph.loadBoardFromFile('box','bspnc/'+value, format);
    }
 
    function loadString(bspname, format) {
-        $('box').innerHTML = '';
-        $('debug').innerHTML = "<b>Debug:</b><p>";
+        document.getElementById('box').innerHTML = '';
+        document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";
     
         if(typeof board != 'undefined') {
             JXG.JSXGraph.freeBoard(board);
         }
         
-        board = JXG.JSXGraph.loadBoardFromString('box', $(bspname).options[$(bspname).selectedIndex].value, format);
+        board = JXG.JSXGraph.loadBoardFromString('box', document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value, format);
    }
 
     function speedTest(board) {

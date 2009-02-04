@@ -50,21 +50,20 @@ this.parseFileContent = function(url, board, format) {
         return;
     }
     this.request.open("GET", url, true);
-
     if(format.toLowerCase()=='raw') {
-       this.cb = (function() {
+       this.cbp = function() {
           var request = this.request;
           board(request.responseText);
-       }).bind(this);        
+       }; //).bind(this);        
     } else {
-       this.cb = (function() {
+       this.cbp = function() {
           var request = this.request;
           if (request.readyState == 4) {
              this.parseString(request.responseText, board, format);
           }
-       }).bind(this);
+       }; //).bind(this);
     }
-
+    this.cb = JXG.bind(this.cbp,this);
     this.request.onreadystatechange = this.cb;
 
     this.request.send(null);

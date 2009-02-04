@@ -128,11 +128,11 @@ JXG.SVGRenderer.prototype.updateAxisTicks = function(axis,dx,dy,start) {
     var ticks = document.getElementById(axis.id + '_ticks');
     if(ticks == null) {
         ticks = this.createPrimitive('path', axis.id+'_ticks');
-        this.lines.appendChild(ticks);
+        this.appendChildPrimitive(ticks,'lines');
     }
     ticks.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);    
     ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
-    this.updatePathPrimitive(ticks, tickStr);
+    this.updatePathPrimitive(ticks, tickStr, axis.board);
 }
 
 JXG.SVGRenderer.prototype.drawArc = function(el) {  
@@ -161,7 +161,7 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     pathString += '0 ';
     pathString += point3.scrCoords[1] + ' ' + point3.scrCoords[2]; // Endpunkt
     
-    this.updatePathPrimitive(node,pathString);
+    this.updatePathPrimitive(node,pathString,el.board);
     this.setStrokeProp(node,el.visProp);
     node.setAttributeNS(null, 'fill', 'none');
     this.setDashStyle(node,el.visProp);
@@ -200,7 +200,7 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     pathString2 += point3.scrCoords[1] + ' ' + point3.scrCoords[2];
     pathString2 += ' L ' + el.midpoint.coords.scrCoords[1] + " " + el.midpoint.coords.scrCoords[2]    + ' z'; // Endpunkt
     
-    this.updatePathPrimitive(node4,pathString2);
+    this.updatePathPrimitive(node4,pathString2,el.board);
     this.setFillProp(node4,el.visProp);
     node4.setAttributeNS(null, 'stroke', 'none');
     
@@ -239,7 +239,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     pathString += '0 ';
     pathString += projectedP3.scrCoords[1] + ' ' + projectedP3.scrCoords[2];
     pathString += ' L ' + el.point2.coords.scrCoords[1] + " " + el.point2.coords.scrCoords[2]    + ' z'; // Endpunkt
-    //this.updatePathPrimitive(node,pathString);
+    //this.updatePathPrimitive(node,pathString,el.board);
     node.setAttributeNS(null, 'd', pathString);    
     
     node.setAttributeNS(null, 'fill', el.visProp['fillColor']);
@@ -260,7 +260,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     pathString += '0 ';
     pathString += projectedP3.scrCoords[1] + ' ' + projectedP3.scrCoords[2]; // Endpunkt    
 
-    //this.updatePathPrimitive(node2,pathString);
+    //this.updatePathPrimitive(node2,pathString,el.board);
     node2.setAttributeNS(null, 'd', pathString);
     node2.setAttributeNS(null, 'id', el.id+'_2');
     node2.setAttributeNS(null, 'fill', 'none');    
@@ -704,7 +704,7 @@ JXG.SVGRenderer.prototype.updateRectPrimitive = function(node,x,y,w,h) {
     node.setAttributeNS(null, 'height', (h));
 };
 
-JXG.SVGRenderer.prototype.updatePathPrimitive = function(node, pointString) {
+JXG.SVGRenderer.prototype.updatePathPrimitive = function(node, pointString, board) {  // board not necessary in SVG
     node.setAttributeNS(null, 'd', pointString);
     node.setAttributeNS(null, 'stroke-linecap', 'round');
     node.setAttributeNS(null, 'stroke-linejoin', 'round');

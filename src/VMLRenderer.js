@@ -133,13 +133,13 @@ JXG.VMLRenderer.prototype.updateAxisTicks = function(axis,dx,dy,start) {
     var ticks = document.getElementById(axis.id + '_ticks');
     if(ticks == null) {
         ticks = this.createPrimitive('path', axis.id+'_ticks');
-        this.lines.appendChild(ticks);
+        this.appendChildPrimitive(ticks,'lines');
     }
     ticks.setAttribute('stroked', 'true');
     ticks.setAttribute('strokecolor', axis.visProp['strokeColor'], 1);
     ticks.setAttribute('strokeweight', axis.visProp['strokeWidth']);   
     //ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
-    this.updatePathPrimitive(ticks, tickArr);
+    this.updatePathPrimitive(ticks, tickArr, axis.board);
 }
 
 JXG.VMLRenderer.prototype.drawArc = function(el) { 
@@ -736,10 +736,10 @@ JXG.VMLRenderer.prototype.updateEllipsePrimitive = function(node,x,y,rx,ry) {
     node.style.height = (ry*2)+'px';
 };
 
-JXG.VMLRenderer.prototype.updatePathPrimitive = function(el,pointString) {
-    var node = el.rendNode;
-    var x = el.board.canvasWidth;
-    var y = el.board.canvasHeight;
+JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString,board) {
+    //var node = el.rendNode;
+    var x = board.canvasWidth;
+    var y = board.canvasHeight;
     node.style.width = x;
     node.style.height = y;
     node.setAttribute('coordsize', x+','+y);

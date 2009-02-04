@@ -104,7 +104,7 @@ this.readNodes = function(gxtEl, Data, nodeType, prefix) {
     for (var n=0;n<arr.length;n++) {
         if (arr[n].firstChild!=null) {
             if (prefix!=null) {
-                key = prefix+arr[n].nodeName.capitalize();
+                key = prefix+JXG.capitalize(arr[n].nodeName);
             } else {
                 key = arr[n].nodeName;
             }
@@ -1196,7 +1196,7 @@ this.fixXML = function(str) {
    var arr = ["active","angle","animate","animated","arc","area","arrow","author","autodigits","axis","back","background","board","border","bottom","buttonsize","cas","circle","color","comment","composition","condition","conditions","content","continuous","control","coord","coordinates","cross","cs","dash","data","description","digits","direction","draft","editable","elements","event","file","fill","first","firstarrow","fix","fontsize","free","full","function","functionx","functiony","GEONEXT","graph","grid","group","height","id","image","info","information","input","intersection","item","jsf","label","last","lastarrow","left","lefttoolbar","lighting","line","loop","max","maximized","member","middle","midpoint","min","modifier","modus","mp","mpx","multi","name","onpolygon","order","origin","output","overline","parametercurve","parent","point","pointsnap","polygon","position","radius","radiusnum","radiusvalue","right","section","selectedlefttoolbar","showconstruction","showcoord","showinfo","showunit","showx","showy","size","slider","snap","speed","src","start","stop","straight","stroke","strokewidth","style","term","text","top","trace","tracecurve","type","unit","value","VERSION","vertex","viewport","visible","width","wot","x","xooy","xval","y","yval","zoom"];
 
     // First, we convert all < to &lt; and > to &gt;
-    str = str.escapeHTML();
+    str = JXG.escapeHTML(str);
     // Second, we convert all GEONExT tags of the form &lt;tag&gt; back to <tag>
     var list = arr.join('|');
     var regex = '\&lt;(/?('+list+'))\&gt;';

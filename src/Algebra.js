@@ -1002,7 +1002,7 @@ JXG.Algebra.prototype.replaceIdByObj = function(term) {
  * @return Given expression in JavaScript syntax
  */
 JXG.Algebra.prototype.geonext2JS = function(term) {
-    //term = term.unescapeHTML();  // This replaces &gt; by >, &lt; by < and &amp; by &.ist aber zu allgemein
+    //term = JXG.unescapeHTML(term);  // This replaces &gt; by >, &lt; by < and &amp; by &.ist aber zu allgemein
     term = term.replace(/&lt;/g,'<'); // Hacks, to enable not well formed XML, @see GeonextReader#replaceLessThan
     term = term.replace(/&gt;/g,'>'); 
     term = term.replace(/&amp;/g,'&'); 

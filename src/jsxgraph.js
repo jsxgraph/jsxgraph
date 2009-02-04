@@ -344,6 +344,13 @@ JXG.addEvent = function( obj, type, fn, owner ) {
     
 }
 
+JXG.bind = function(fn, owner ) {
+    return function() {
+        return fn.apply(owner,arguments);
+    }
+}
+
+
 JXG.removeEvent = function( obj, type, fn ) {
     if ( obj.detachEvent ) {
         obj.detachEvent( 'on'+type, obj[type+fn] );
@@ -378,7 +385,8 @@ JXG.getOffset = function (obj) {
 };
 
 JXG.getStyle = function (obj, stylename) {
-    if (typeof obj.getStyle!='undefined') {
+    if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {
+        // May not exist during the first call in IE
         return obj.getStyle(stylename);
     } else {
         if (typeof $(obj).attr(stylename)!='undefined') {
@@ -396,3 +404,14 @@ JXG.keys = function(object) {
     return keys;
 };
 
+JXG.escapeHTML = function(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+};
+
+JXG.unescapeHTML = function(str) {
+    return str.replace(/<\/?[^>]+>/gi, '').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+}; 
+
+JXG.capitalize = function(str) {
+    return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
+}

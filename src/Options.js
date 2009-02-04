@@ -280,10 +280,11 @@ JXG.Options.prototype.changeColorToBlackWhite = function(color) {
  * @param apply {bool} <tt>true</tt> when options in file should be applied to board after being loaded.
  * @param board {JXG.Board} The board the options should be applied to.
  */
-JXG.Options.prototype.loadFromFile = function(fileurl, apply, board) {
-   this.cb = (function(text) {
-      this.parseString(text, apply, board);
-   }).bind(this);
+JXG.Options.prototype.loadFromFile = function(fileurl, applyTo, board) {
+   this.cbp = function(t) {
+      this.parseString(t, applyTo, board);
+   };
+   this.cb = JXG.bind(this.cbp,this);
 
    JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw');
 }
@@ -294,7 +295,7 @@ JXG.Options.prototype.loadFromFile = function(fileurl, apply, board) {
  * @param apply {bool} <tt>true</tt> if the options should be applied to all objects on the board.
  * @param board {JXG.Board} The board the options should be applied to.
  */
-JXG.Options.prototype.parseString = function(text, apply, board) {
+JXG.Options.prototype.parseString = function(text, applyTo, board) {
    var newOptions = '';
 
    if(text != '') {
@@ -321,7 +322,7 @@ JXG.Options.prototype.parseString = function(text, apply, board) {
    
    applyOption(this, newOptions, 0);
    
-   if(apply && typeof board != 'undefined') {
+   if(applyTo && typeof board != 'undefined') {
        this.useStandardOptions(board);
    }
 }
