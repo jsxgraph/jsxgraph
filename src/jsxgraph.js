@@ -77,7 +77,6 @@ JXG.JSXGraph = new function (forceRenderer) {
                   document.body.scrollLeft;
                   document.body.scrollTop;
                 }
-
                 document.onmousemove = MouseMove;
         }
     } else {
@@ -376,7 +375,7 @@ JXG.getPosition = function (Evt) {
 };
 
 JXG.getOffset = function (obj) {
-    if (typeof Element!='undefined'  && Element.cumulativeOffset) { // prototype
+    if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') { // Prototype lib
         return Element.cumulativeOffset(obj);
     } else {                         // jQuery
         var o = $(obj).offset();
@@ -385,9 +384,8 @@ JXG.getOffset = function (obj) {
 };
 
 JXG.getStyle = function (obj, stylename) {
-    if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {
-        // May not exist during the first call in IE
-        return obj.getStyle(stylename);
+    if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') { // Prototype lib
+        return $(obj).getStyle(stylename);
     } else {
         if (typeof $(obj).attr(stylename)!='undefined') {
             return $(obj).attr(stylename);

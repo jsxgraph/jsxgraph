@@ -85,8 +85,9 @@ JXG.VMLRenderer.prototype.drawAxis = function(el) {
     nodeStroke.setAttribute('endarrowlength', 'long');
     node.appendChild(nodeStroke);
 
-    this.updateAxisTicks(el, 0);
+    //this.updateAxisTicks(el, 0);
     this.container.appendChild(node);
+    this.updateAxis(el);
 }
 
 JXG.VMLRenderer.prototype.updateAxis = function(el) {
@@ -127,7 +128,7 @@ JXG.VMLRenderer.prototype.updateAxisTicks = function(axis,dx,dy,start) {
     var tickArr = [];
     for (var i=start; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
-        tickArr.push(' m ' + (c.scrCoords[1]+dx) + ', ' + (c.scrCoords[2]-dy) + ' l ' + (c.scrCoords[1]-dx) + ', ' + (c.scrCoords[2]+dy));
+        tickArr.push(' m ' + Math.round(c.scrCoords[1]+dx) + ', ' + Math.round(c.scrCoords[2]-dy) + ' l ' + Math.round(c.scrCoords[1]-dx) + ', ' + Math.round(c.scrCoords[2]+dy)+' ');
     }
 
     var ticks = document.getElementById(axis.id + '_ticks');
@@ -743,7 +744,6 @@ JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString,board)
     node.style.width = x;
     node.style.height = y;
     node.setAttribute('coordsize', x+','+y);
-    
     node.setAttribute('path',pointString.join(""));
     //node.points.value = pointString;
 };

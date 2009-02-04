@@ -39,7 +39,7 @@ JXG.require = function(libraryName) {
 JXG.baseFiles;
 
 if (!JXG.useMinify) {
-    JXG.baseFiles ='AbstractRenderer,FileReader,GeonextReader,GeogebraReader,IntergeoReader,jsxgraph,GeometryElement,Board,Options,Coords,Point,Line,Group,Circle,Polygon,Curve,Arc,Sector,Angle,Label,Algebra,Intersection,Composition,Text,Image,Axis,Slider,Math,MathNumerics,MathStatistics,Chart,Base64,Gunzip,Transformation,Wrappers,Turtle,RGBColor';
+    JXG.baseFiles ='AbstractRenderer,FileReader,GeonextReader,GeogebraReader,IntergeoReader,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Polygon,Curve,Arc,Sector,Angle,Label,Algebra,Intersection,Composition,Text,Image,Axis,Slider,Math,MathNumerics,MathStatistics,Chart,Base64,Gunzip,Transformation,Turtle,RGBColor,Board,Options,Wrappers';
 } else {
     JXG.baseFiles = 'jxg';
 }
@@ -57,14 +57,6 @@ JXG.rendererFiles = [];
     //JXG.rendererFiles['silverlight'] = 'Silverlight,createSilverlight,SilverlightRenderer';
 JXG.requirePath = '';
 
-/*
-$A(document.getElementsByTagName("script")).findAll( function(s) {
-    return (s.src && s.src.match(/loadjsxgraph\.js(\?.*)?$/))
-}).each( function(s) {
-    JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/,'');
-    JXG.baseFiles.split(',').each( function(include) { JXG.require(JXG.requirePath+include+'.js') } );
-});
-*/
 for (var i=0;i<document.getElementsByTagName("script").length;i++) {
     var s = document.getElementsByTagName("script")[i];
     if (s.src && s.src.match(/loadjsxgraph\.js(\?.*)?$/)) {

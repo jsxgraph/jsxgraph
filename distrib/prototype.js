@@ -4309,7 +4309,7 @@ Element.ClassNames.prototype = {
   },
 
   toString: function() {
-    return $A(this).join(' ');
+//     return $A(this).join(' ');
   }
 };
 

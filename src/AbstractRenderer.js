@@ -628,7 +628,6 @@ JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) 
         dx = dist/Math.sqrt(1/(slope*slope) + 1);
         dy = -dx/slope;
     }
-
     this.updateAxisTicks(axis,dx,dy,start);
 }
 

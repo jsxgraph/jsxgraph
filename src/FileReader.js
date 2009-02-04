@@ -53,7 +53,9 @@ this.parseFileContent = function(url, board, format) {
     if(format.toLowerCase()=='raw') {
        this.cbp = function() {
           var request = this.request;
-          board(request.responseText);
+          if (request.readyState == 4) {
+            board(request.responseText);
+          }
        }; //).bind(this);        
     } else {
        this.cbp = function() {

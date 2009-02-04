@@ -430,11 +430,12 @@ JXG.Line.prototype.updateTickCoordinates = function (first) {
 
         this.ticks[offset+i+1] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
     }
-
+    
+    /*
     if(!first) {
         this.board.renderer.updateAxisTicks(this, oldTicksCount);
     }
-    
+    */
     this.board.renderer.updateAxisTicksInnerLoop(this, 0);
 };
 

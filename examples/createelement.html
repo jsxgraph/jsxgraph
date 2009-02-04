@@ -10,13 +10,17 @@
 <body>
   <h2>Create Element Examples</h2>
   <div id="box" class="jxgbox" style="width:700px; height:500px;"></div>
-  <div id="debug" style="display:none;"></div>
+  <div id="debug" style="display:block;"></div>
+   <form>
+      <input type='button' value='SW-Modus' onclick="board.options.useBlackWhiteOptions(board);" />  
+   </form>
    <script type="text/javascript">
     /* <![CDATA[ */
     
         // Das Objekt geonext ist global und wird in Geonext.js initialisiert
         // board links oben initialisieren
         board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 50, unitY: 50});
+        
         bx = board.createElement('axis', [[0,0], [0,1]], {});
         by = board.createElement('axis', [[0,0], [1,0]], {});
 
@@ -59,10 +63,8 @@
         board.options.sector.fillColor = 'red';
         board.options.polygon.fillColor = 'blue';
         board.options.useStandardOptions(board);  
+        
   /* ]]> */
   </script>
-   <form>
-      <input type='button' value='SW-Modus' onclick="board.options.useBlackWhiteOptions(board);" />  
-   </form>
 </body>
 </html>
