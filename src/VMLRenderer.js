@@ -102,7 +102,9 @@ JXG.VMLRenderer.prototype.updateAxis = function(el) {
         node.setAttribute('to', (el.board.canvasWidth) + 'px,' + (el.board.origin.scrCoords[2]) + 'px');     
     }    
     this.setStrokeProp(node,el.visProp);
- 
+    this.updateAxisTicksInnerLoop(el,0);
+    
+    /*
     for (var i=0;i<el.ticks.length;i++) {
         var c = el.ticks[i];
         var tick = document.getElementById(el.id+'tick'+i);
@@ -118,6 +120,26 @@ JXG.VMLRenderer.prototype.updateAxis = function(el) {
         tick.setAttribute('strokecolor', el.visProp['strokeColor'], 1);
         tick.setAttribute('strokeweight', el.visProp['strokeWidth']);   
     }
+    */
+}
+
+JXG.VMLRenderer.prototype.updateAxisTicks = function(axis,dx,dy,start) {
+    var tickArr = [];
+    for (var i=start; i<axis.ticks.length; i++) {
+        var c = axis.ticks[i];
+        tickArr.push(' m ' + (c.scrCoords[1]+dx) + ', ' + (c.scrCoords[2]-dy) + ' l ' + (c.scrCoords[1]-dx) + ', ' + (c.scrCoords[2]+dy));
+    }
+
+    var ticks = document.getElementById(axis.id + '_ticks');
+    if(ticks == null) {
+        ticks = this.createPrimitive('path', axis.id+'_ticks');
+        this.lines.appendChild(ticks);
+    }
+    ticks.setAttribute('stroked', 'true');
+    ticks.setAttribute('strokecolor', axis.visProp['strokeColor'], 1);
+    ticks.setAttribute('strokeweight', axis.visProp['strokeWidth']);   
+    //ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
+    this.updatePathPrimitive(ticks, tickArr);
 }
 
 JXG.VMLRenderer.prototype.drawArc = function(el) { 
@@ -714,7 +736,7 @@ JXG.VMLRenderer.prototype.updateEllipsePrimitive = function(node,x,y,rx,ry) {
     node.style.height = (ry*2)+'px';
 };
 
-JXG.VMLRenderer.prototype.updatePathPrimitive2 = function(el,pointString) {
+JXG.VMLRenderer.prototype.updatePathPrimitive = function(el,pointString) {
     var node = el.rendNode;
     var x = el.board.canvasWidth;
     var y = el.board.canvasHeight;
@@ -746,51 +768,6 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
     pStr.push(' e');
 //$('debug').innerHTML = pStr;
     return pStr;
-};
-
-JXG.VMLRenderer.prototype.updatePathStringPrimitiveOld = function(el) {
-    // Loop unrolling
-    var h = 2*el.board.canvasHeight;
-    var w = 2*el.board.canvasWidth;
-    var pStr = '';
-    var scr;
-    var i = 0;
-    var n = el.numberPoints%8;
-    if (n>0) {
-        do 
-        {
-            scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        }
-        while ((--n)>0); // n must be greater than 0 here
-    }
-    n = parseInt(el.numberPoints/8);
-    if (n>0) { do 
-    {
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2]) && Math.abs(scr[1])<=w && Math.abs(scr[2])<=h) { pStr += scr[1] + ',' + scr[2] + ' '; }
-    }
-    while ((--n)>0);}
-    return pStr;
-};
-
-JXG.VMLRenderer.prototype.updatePathStringPrimitiveOld2 = function(el) {
-    var pStr = '';
-    var t = '';
-    for (var i=0; i<el.numberPoints; i++) {
-        var scr = el.points[i].scrCoords;
-            t += scr[1] + ',' + scr[2] + ' ';
-        if (!isNaN(scr[1]) && !isNaN(scr[2])) {
-            pStr += scr[1] + ',' + scr[2] + ' ';
-        }
-    }
-    return pStr;
-    //return el.points.slice(0,el.numberPoints).map(function(p){return p.scrCoords[1]+','+p.scrCoords[2];}).join(' ');
 };
 
 JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,el) {

@@ -62,7 +62,7 @@ JXG.Group = function(board, id, name) {
     delete(this.type);
 
     var objArray;
-    if( (arguments.length == 4) && (Object.isArray(arguments[3])) )
+    if( (arguments.length == 4) && (JXG.IsArray(arguments[3])) )
         objArray = arguments[3];
     else {
         objArray = [];

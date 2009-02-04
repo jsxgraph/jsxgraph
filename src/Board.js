@@ -523,11 +523,9 @@ JXG.Board.prototype.generateId = function () {
 JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
     var pCont = this.containerObj;
     var cPos = JXG.getOffset(pCont); //Element.cumulativeOffset(pCont);
-
     // add border width
     cPos[0] += parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
     cPos[1] += parseInt(JXG.getStyle(pCont,'borderTopWidth'));
-
     // add padding
     cPos[0] += parseInt(JXG.getStyle(pCont,'paddingLeft'));
     cPos[1] += parseInt(JXG.getStyle(pCont,'paddingTop'));
@@ -544,9 +542,7 @@ JXG.Board.prototype.mouseUpListener = function (Evt) {
     this.updateQuality = this.BOARD_QUALITY_HIGH;
     
     // release mouseup listener
-    // //Event.stopObserving(this.container, 'mouseup', this.onMouseUpListener);
-    //Event.stopObserving(document, 'mouseup', this.onMouseUpListener);
-    JXG.removeEvent(document, 'mouseup', this.onMouseUpListener);
+    JXG.removeEvent(document, 'mouseup', this.mouseUpListener);
     
     // if origin was moved update everything
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
@@ -615,20 +611,11 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         return;
     }
 
-    // this.dragObjCoords = this.drag_obj.coords.scrCoords;
-    // this.drag_dx = dx - this.dragObjCoords[1];
-    // this.drag_dy = dy - this.dragObjCoords[2];
-    
     /**
       * New mouse position in screen coordinates.
       */
     this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx,dy], this);
-    //this.drag_dx = dx;// - this.dragObjCoords[1];
-    //this.drag_dy = dy;// - this.dragObjCoords[2];
     
-    //    Event.observe(this.container, 'mouseup', this.onMouseUpListener);
-    //    Event.observe(document, 'mouseup', this.onMouseUpListener);
-    //Event.observe(document, 'mouseup', this.mouseUpListener.bind(this));
     JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
 };
 
@@ -738,8 +725,11 @@ JXG.Board.prototype.getScrCoordsOfMouse = function (x,y) {
  */
 JXG.Board.prototype.getUsrCoordsOfMouse = function (Evt) {    
     var cPos = this.getRelativeMouseCoordinates(Evt);
-    var x = Event.pointerX(Evt) - cPos[0];
-    var y = Event.pointerY(Evt) - cPos[1];
+    //var x = Event.pointerX(Evt) - cPos[0];
+    //var y = Event.pointerY(Evt) - cPos[1];
+    var absPos = JXG.getPosition(Evt);
+    var x = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    var y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
 
     var newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
     if(this.snapToGrid) {
@@ -773,8 +763,11 @@ JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
     var cPos = this.getRelativeMouseCoordinates(Evt);
     
     // mouse position relative to container
-    var dx = Event.pointerX(Evt) - cPos[0];
-    var dy = Event.pointerY(Evt) - cPos[1];
+    //var dx = Event.pointerX(Evt) - cPos[0];
+    //var dy = Event.pointerY(Evt) - cPos[1];
+    var absPos = JXG.getPosition(Evt);
+    var dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    var dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
     var elList = [];
     for (var el in this.objects) {
         if (this.objects[el].hasPoint(dx, dy)) {
@@ -2363,18 +2356,19 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         return;
     };
   
-    if(JXG.IsArray(attributes))
+    if(JXG.IsArray(attributes)) {
         attributes = attributes[0];
-    try {
-    if(el.multipleElements) {
-        for(var s in el) {
-            if(typeof el[s].setProperty != 'undefined')
-                el[s].setProperty(attributes);
-        }  
-    } else {
-        if(typeof el.setProperty != 'undefined')
-            el.setProperty(attributes);
     }
+    try {
+        if(el.multipleElements) {
+            for(var s in el) {
+                if(typeof el[s].setProperty != 'undefined')
+                    el[s].setProperty(attributes);
+            }  
+        } else {
+            if(typeof el.setProperty != 'undefined')
+                el.setProperty(attributes);
+        }
     } catch (e) {};
     
 //    if(!JXG.IsArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
@@ -2430,8 +2424,8 @@ JXG.Board.prototype.beforeLoad = function() {
         divNode.setStyle({
                     zIndex: 999,
                     position: 'absolute',
-                    left: parseInt(this.containerObj.getStyle("left")) + (this.canvasWidth - 100)/2,
-                    top: parseInt(this.containerObj.getStyle("top")) + (this.canvasHeight - 100)/2
+                    left: parseInt(JXG.getStyle(this.containerObj,"left")) + (this.canvasWidth - 100)/2,
+                    top: parseInt(JXG.getStyle(this.containerObj,"top")) + (this.canvasHeight - 100)/2
                 });
     
         document.getElementsByTagName("body")[0].appendChild(divNode);

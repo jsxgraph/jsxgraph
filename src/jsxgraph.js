@@ -366,25 +366,33 @@ JXG.getPosition = function (Evt) {
         posy = Evt.clientY + document.body.scrollTop + document.documentElement.scrollTop;
     }
     return [posx,posy];
-}
+};
 
 JXG.getOffset = function (obj) {
-    if (Element.cumulativeOffset) {  // prototype
+    if (typeof Element!='undefined'  && Element.cumulativeOffset) { // prototype
         return Element.cumulativeOffset(obj);
     } else {                         // jQuery
-        return $(obj).offset();
+        var o = $(obj).offset();
+        return [o.left,o.top];
     }
-}
+};
 
 JXG.getStyle = function (obj, stylename) {
-    if (obj.getStyle) {
+    if (typeof obj.getStyle!='undefined') {
         return obj.getStyle(stylename);
     } else {
-        if ($(obj).attr('stylename')) {
-            return $(obj).attr('stylename');
+        if (typeof $(obj).attr(stylename)!='undefined') {
+            return $(obj).attr(stylename);
         } else {
-            return $(obj).css('stylename');
+            return $(obj).css(stylename);
         }
     }
-}
-    
+};
+   
+JXG.keys = function(object) {
+    var keys = [];
+    for (var property in object)
+      keys.push(property);
+    return keys;
+};
+

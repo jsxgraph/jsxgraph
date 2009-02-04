@@ -335,9 +335,14 @@ JXG.GeometryElement.prototype.setProperty = function () {
         var pairRaw = arguments[i];
         if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
             pair = pairRaw.split(':');
-        } else if (!Object.isArray(pairRaw)) {    // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
+        } else if (!JXG.IsArray(pairRaw)) {    // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
+            /*
             for (var i=0; i<Object.keys(pairRaw).length;i++) {  // Here, the prototype lib is used (Object.keys, Object.isArray)
                 var key = Object.keys(pairRaw)[i];
+                this.setProperty([key,pairRaw[key]]);
+            }
+            */
+            for (var key in pairRaw) {
                 this.setProperty([key,pairRaw[key]]);
             }
             return;
@@ -611,13 +616,13 @@ JXG.GeometryElement.prototype.normalize = function() {
  * Generate JSON of visProp and more
  */
 JXG.GeometryElement.prototype.toJSON = function() {
-    var json = '{"name":' + Object.toJSON(this.name);
-    json += ', ' + '"id":' + Object.toJSON(this.id);
+    var json = '{"name":' + this.name;
+    json += ', ' + '"id":' + this.id;
 
     var vis = [];
     for (var key in this.visProp) {
         if (this.visProp[key]!=null) {
-            vis.push('"' + key + '":' + Object.toJSON(this.visProp[key]));
+            vis.push('"' + key + '":' + this.visProp[key]);
         }
     }
     json += ', "visProp":{'+vis.toString()+'}';

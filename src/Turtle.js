@@ -213,11 +213,9 @@ JXG.Turtle.prototype.setProperty = function() {
         pairRaw = arguments[i];
         if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
             pair = pairRaw.split(':');
-        } else if (!Object.isArray(pairRaw)) {    
+        } else if (!JXG.IsArray(pairRaw)) {    
             // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
-            for (i=0; i<Object.keys(pairRaw).length;i++) {  
-                // Here, the prototype lib is used (Object.keys, Object.isArray)
-                key = Object.keys(pairRaw)[i];
+            for (var key in pairRaw) {
                 this.setProperty([key,pairRaw[key]]);
             }
             return;

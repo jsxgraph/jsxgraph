@@ -264,159 +264,7 @@ JXG.AbstractRenderer.prototype.updateCurve = function(el) {
             this.setDraft(el);
         }
     }
-    this.updatePathPrimitive2(el,this.updatePathStringPrimitive(el));
-};
-
-/**
- * Calculates start and end point for a line.
- * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
- * @param {JXG.Coords} screenCoords1 Coordinates of the point where line drawing begins.
- * @param {JXG.Coords} screenCoords2 Coordinates of the point where line drawing ends.
- * @see JXG.Line
- * @see #drawLine
- * @see #updateLine
- */
-JXG.AbstractRenderer.prototype.calcStraightv1 = function(el, screenCoords1, screenCoords2) {
-    var slope = el.getSlope();
-    var rise = el.getRise();
-    
-    if(slope== "INF") { // senkrechte Gerade
-        // Schnittpunkte mit dem Begrenzungsrahmen
-
-        var x1 = screenCoords1.scrCoords[1];
-        var y1 = screenCoords1.scrCoords[2];
-        var x2 = screenCoords2.scrCoords[1];
-        var y2 = screenCoords2.scrCoords[2];
-        if(screenCoords1.scrCoords[2] < screenCoords2.scrCoords[2]) {
-            if(el.visProp['straightFirst']) {
-                //x1 = screenCoords1.scrCoords[1];
-                y1 = 0;
-            }               
-            if(el.visProp['straightLast']) {
-                //x2 = screenCoords1.scrCoords[1];
-                y2 = el.board.canvasHeight;
-            }
-        } else {
-            if(el.visProp['straightFirst']) {
-                //x2 = screenCoords1.scrCoords[1];
-                y1 = el.board.canvasHeight;
-            } 
-            if(el.visProp['straightLast']) {
-                //x1 = screenCoords1.scrCoords[1];
-                y2 = 0;
-            }
-        }
-        
-        screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, [x1, y1], this);
-        screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, [x2, y2], this);
-        
-        return;
-    } // sonst:
-   
-    // Schnittpunkte mit dem Begrenzungsrahmen
-    var coordsLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, rise], el.board);
-    var coordsRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [el.board.canvasWidth, slope*el.board.canvasWidth + rise], el.board);
-    var coordsTop = new JXG.Coords(JXG.COORDS_BY_SCREEN, [Math.round(-rise/slope), 0], el.board);
-    var coordsBottom = new JXG.Coords(JXG.COORDS_BY_SCREEN, [Math.round((el.board.canvasHeight-rise)/slope), el.board.canvasHeight], el.board);
-
-    if(coordsLeft.scrCoords[2] < 0) { 
-        // Punkt am oberen Rand verwenden
-        var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-        var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-        if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
-            screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-        } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
-            screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-        }
-  
-        if(coordsRight.scrCoords[2] > el.board.canvasHeight) { 
-            // Punkt am unteren Rand verwenden
-            var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
-            if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-            } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-            }
-     
-        } else {
-            // Punkt am rechten Rand verwenden
-            var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
-            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            }
-        }
-    } else if(coordsLeft.scrCoords[2] > el.board.canvasHeight) { 
-        // Punkt am unteren Rand verwenden
-        var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-        var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);   
-        if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
-            screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-        } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
-            screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-        }
- 
-        if(coordsRight.scrCoords[2] < 0) { 
-            // Punkt am oberen Rand verwenden
-            var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-            if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-            } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-            }
-        } else {
-            // Punkt am rechten Rand verwenden
-            var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
-            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            }
-        }          
-    } else {
-        // Punkt am linken Rand verwenden
-        var distP1Left = coordsLeft.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-        var distP2Left = coordsLeft.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-        if((distP1Left < distP2Left) && el.visProp['straightFirst']) {
-            screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsLeft.scrCoords.slice(1));
-        } else if((distP1Left > distP2Left) && el.visProp['straightLast']) {
-            screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsLeft.scrCoords.slice(1));
-        }
-
-        if(coordsRight.scrCoords[2] < 0) {
-            // Punkt am oberen Rand verwenden
-            var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-            if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-            } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-            }
-        } else if(coordsRight.scrCoords[2] > el.board.canvasHeight) {
-            // Punkt am unteren Rand verwenden
-            var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-            if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-            } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-            }
-        } else {
-            // Punkt am rechten Rand verwenden
-            var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);     
-            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            }
-        }
-    }
+    this.updatePathPrimitive(el.rendNode,this.updatePathStringPrimitive(el));
 };
 
 /**
@@ -740,7 +588,7 @@ JXG.AbstractRenderer.prototype.updateAxis = function(axis) { };
  * @see #drawAxis
  * @see #updateAxisTicksInnerLoop
  */
-JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) { };
+JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis,dx,dy,start) { };
 
 /**
  * Update the tick's line objects.
@@ -754,7 +602,6 @@ JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) 
     var eps = 0.00001;
     var slope = -axis.getSlope();
     var dist = 3*axis.r / 2;
-    
     var dx, dy;
     
     if(Math.abs(slope) < eps) {
@@ -781,27 +628,8 @@ JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) 
         dx = dist/Math.sqrt(1/(slope*slope) + 1);
         dy = -dx/slope;
     }
-    
 
-    var tickStr = "";
-    for (var i=start; i<axis.ticks.length; i++) {
-        var c = axis.ticks[i];
-//        var tick = document.getElementById(axis.id+'tick'+i);
-//        var tickLabel = document.getElementById(axis.id+'tick'+i+'text');
-
-        tickStr = tickStr + "M" + (c.scrCoords[1]+dx) + " " + (c.scrCoords[2]-dy) + " L" + (c.scrCoords[1]-dx) + " " + (c.scrCoords[2]+dy) + " ";
-//        this.updateLinePrimitive(tick, c.scrCoords[1]+dx, c.scrCoords[2]-dy, c.scrCoords[1]-dx, c.scrCoords[2]+dy);
-//        this.setStrokeProp(tick, axis.visProp);
-    }
-
-    var ticks = $(axis.id + '_ticks');
-    if(ticks == null) {
-        ticks = this.createPrimitive('path', axis.id+'_ticks');
-        this.lines.appendChild(ticks);
-    }
-    ticks.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);    
-    ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
-    this.updatePathPrimitive(ticks, tickStr);
+    this.updateAxisTicks(axis,dx,dy,start);
 }
 
 /**
@@ -813,10 +641,8 @@ JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) 
  * @see #upateAxisTicksInnerLoop
  */
 JXG.AbstractRenderer.prototype.removeAxisTicks = function(axis) {
-    for(var i=0; i<axis.ticks.length; i++) {
-        var tick = document.getElementById(axis.id+'tick'+i);
-        this.remove(tick);
-    }
+    var tick = document.getElementById(axis.id+'ticks');
+    this.remove(tick);
 }
 
 /**

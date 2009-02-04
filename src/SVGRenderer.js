@@ -118,6 +118,23 @@ JXG.SVGRenderer.prototype.updateAxis = function(el) {
     this.updateAxisTicksInnerLoop(el,0);
 }
 
+JXG.SVGRenderer.prototype.updateAxisTicks = function(axis,dx,dy,start) {
+    var tickStr = "";
+    for (var i=start; i<axis.ticks.length; i++) {
+        var c = axis.ticks[i];
+        tickStr += "M" + (c.scrCoords[1]+dx) + " " + (c.scrCoords[2]-dy) + " L" + (c.scrCoords[1]-dx) + " " + (c.scrCoords[2]+dy) + " ";
+    }
+
+    var ticks = document.getElementById(axis.id + '_ticks');
+    if(ticks == null) {
+        ticks = this.createPrimitive('path', axis.id+'_ticks');
+        this.lines.appendChild(ticks);
+    }
+    ticks.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);    
+    ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
+    this.updatePathPrimitive(ticks, tickStr);
+}
+
 JXG.SVGRenderer.prototype.drawArc = function(el) {  
     var node = this.createPrimitive('path',el.id);
     el.rendNode = node;
@@ -693,12 +710,14 @@ JXG.SVGRenderer.prototype.updatePathPrimitive = function(node, pointString) {
     node.setAttributeNS(null, 'stroke-linejoin', 'round');
 };
 
+/*
 JXG.SVGRenderer.prototype.updatePathPrimitive2 = function(el, pointString) {
     var node = el.rendNode;
     node.setAttributeNS(null, 'd', pointString);
     node.setAttributeNS(null, 'stroke-linecap', 'round');
     node.setAttributeNS(null, 'stroke-linejoin', 'round');
 };
+*/
 
 JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     if (el.numberPoints<=0) { return ''; }
