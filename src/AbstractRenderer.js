@@ -563,85 +563,24 @@ JXG.AbstractRenderer.prototype.updateArrow = function(el) {
 }
 
 /**
- * Draws an axis on the canvas.
- * @param {JXG.Axis} axis Reference to an axis object, that has to be drawn.
- * @see JXG.Axis
- * @see #updateAxis
- * @see #updateAxisTicks
+ * Update ticks of a line.
+ * @param {JXG.Line} axis Reference of an line object, thats ticks have to be updated.
+ * @param {int} dx .
+ * @param {int} dy .
+ * @see JXG.Line
+ * @see #removeTicks
  */
-JXG.AbstractRenderer.prototype.drawAxis = function(axis) { };
-
-/**
- * Update properties of an axis that already exists on the canvas.
- * @param {JXG.Axis} axis Reference to an axis object, that has to be updated.
- * @see JXG.Axis
- * @see #drawAxis
- * @see #updateAxisTicks
- */
-JXG.AbstractRenderer.prototype.updateAxis = function(axis) { };
-
-/**
- * Update ticks of an axis that.
- * @param {JXG.Axis} axis Reference of an axis object, that has to be updated.
- * @param {int} oldTicksCount Number of ticks that already exists.
- * @see JXG.Axis
- * @see #drawAxis
- * @see #updateAxisTicksInnerLoop
- */
-JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis,dx,dy,start) { };
-
-/**
- * Update the tick's line objects.
- * @param {JXG.Axis} axis Reference of an axis object, that's ticks have to be updated.
- * @param {int} start Number of tick where update process should start
- * @see JXG.Axis
- * @see #drawAxis
- * @see #updateAxisTicks
- */
-JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) {
-    var eps = 0.00001;
-    var slope = -axis.getSlope();
-    var dist = 3*axis.r / 2;
-    var dx, dy;
-    
-    if(Math.abs(slope) < eps) {
-        // if the slope of the line is (almost) 0, we can set dx and dy directly
-        dx = 0;
-        dy = dist;
-    } else if((Math.abs(slope) > 1/eps) || (isNaN(slope))) {
-        // if the slope of the line is (theoretically) infinite, we can set dx and dy directly
-        dx = dist;
-        dy = 0;
-    } else {
-        // here we have to calculate dx and dy depending on the slope and the length of the tick (dist)
-        // if slope is the line's slope, the tick's slope is given by
-        // 
-        //            1          dy
-        //     -   -------  =   ----                 (I)
-        //          slope        dx
-        //
-        // when dist is the length of the tick, using the pythagorean theorem we get
-        // 
-        //     dx*dx + dy*dy = dist*dist             (II)
-        //
-        // dissolving (I) by dy and applying that to equation (II) we get the following formulas for dx and dy
-        dx = dist/Math.sqrt(1/(slope*slope) + 1);
-        dy = -dx/slope;
-    }
-    this.updateAxisTicks(axis,dx,dy,start);
-}
+JXG.AbstractRenderer.prototype.updateTicks = function(axis,dx,dy) { };
 
 /**
  * Removes all ticks from an axis
- * @param {JXG.Axis} axis Reference of an axis object, thats ticks have to be removed.
- * @see JXG.Axis
- * @see #drawAxis
- * @see #updateAxis
- * @see #upateAxisTicksInnerLoop
+ * @param {JXG.Line} axis Reference of an line object, thats ticks have to be removed.
+ * @see JXG.Line
+ * @see #upateTicks
  */
-JXG.AbstractRenderer.prototype.removeAxisTicks = function(axis) {
-    var tick = document.getElementById(axis.id+'ticks');
-    this.remove(tick);
+JXG.AbstractRenderer.prototype.removeTicks = function(axis) {
+    var ticks = document.getElementById(axis.id+'_ticks');
+    this.remove(ticks);
 }
 
 /**

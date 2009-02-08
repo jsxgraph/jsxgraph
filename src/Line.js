@@ -430,13 +430,39 @@ JXG.Line.prototype.updateTickCoordinates = function (first) {
 
         this.ticks[offset+i+1] = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
     }
+  
+    // this piece of code was in AbstractRenderer.updateAxisTicksInnerLoop
+    // and has been moved in here to clean up the code.
+    var eps = 0.00001;
+    var slope = -this.getSlope();
+    var dist = 3*this.r / 2;
+    dx = 0; dy = 0;
     
-    /*
-    if(!first) {
-        this.board.renderer.updateAxisTicks(this, oldTicksCount);
+    if(Math.abs(slope) < eps) {
+        // if the slope of the line is (almost) 0, we can set dx and dy directly
+        dx = 0;
+        dy = dist;
+    } else if((Math.abs(slope) > 1/eps) || (isNaN(slope))) {
+        // if the slope of the line is (theoretically) infinite, we can set dx and dy directly
+        dx = dist;
+        dy = 0;
+    } else {
+        // here we have to calculate dx and dy depending on the slope and the length of the tick (dist)
+        // if slope is the line's slope, the tick's slope is given by
+        // 
+        //            1          dy
+        //     -   -------  =   ----                 (I)
+        //          slope        dx
+        //
+        // when dist is the length of the tick, using the pythagorean theorem we get
+        // 
+        //     dx*dx + dy*dy = dist*dist             (II)
+        //
+        // dissolving (I) by dy and applying that to equation (II) we get the following formulas for dx and dy
+        dx = dist/Math.sqrt(1/(slope*slope) + 1);
+        dy = -dx/slope;
     }
-    */
-    this.board.renderer.updateAxisTicksInnerLoop(this, 0);
+    this.board.renderer.updateTicks(this,dx,dy);
 };
 
 /**
@@ -478,7 +504,7 @@ JXG.Line.prototype.disableTicks = function() {
         return;
         
     this.visProp['withTicks'] = false;
-    this.board.renderer.removeAxisTicks(this);
+    this.board.renderer.removeTicks(this);
     this.ticks = new Array();
 };
 

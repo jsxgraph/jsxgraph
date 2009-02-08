@@ -84,43 +84,9 @@ JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
     this.appendChildPrimitive(node,'images');
 };
 
-JXG.SVGRenderer.prototype.drawAxis = function(el) {  
-    var node = this.createPrimitive('line',el.id);
-    node.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);
-    node.setAttributeNS(null, 'stroke-width', el.visProp['strokeWidth']);
-    
-    var node2 = this.createArrowHead(el);
-    node2.setAttributeNS(null, 'fill', el.visProp['strokeColor']);
-    this.defs.appendChild(node2);
-    node.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'Triangle)');
-
-    this.lines.appendChild(node);
-    el.rendNode = node;
-    el.rendNodeTriangle = node2;
-    
-//    this.updateAxisTicks(el, 0);
-    this.updateAxis(el);
-}
-
-JXG.SVGRenderer.prototype.updateAxis = function(el) {
-    var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]], el.board);
-    var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords[1], el.point2.coords.usrCoords[2]], el.board);
-    if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
-       this.calcStraight(el,screenCoords1,screenCoords2); 
-    } 
-    var node = document.getElementById(el.id);
-    if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
-        this.updateLinePrimitive(node,el.board.origin.scrCoords[1],el.board.canvasHeight,el.board.origin.scrCoords[1],0);
-    } else {
-        this.updateLinePrimitive(node,0,el.board.origin.scrCoords[2],el.board.canvasWidth,el.board.origin.scrCoords[2]);
-    }    
-    this.setStrokeProp(node,el.visProp);
-    this.updateAxisTicksInnerLoop(el,0);
-}
-
-JXG.SVGRenderer.prototype.updateAxisTicks = function(axis,dx,dy,start) {
+JXG.SVGRenderer.prototype.updateTicks = function(axis,dx,dy) {
     var tickStr = "";
-    for (var i=start; i<axis.ticks.length; i++) {
+    for (var i=0; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
         tickStr += "M" + (c.scrCoords[1]+dx) + " " + (c.scrCoords[2]-dy) + " L" + (c.scrCoords[1]-dx) + " " + (c.scrCoords[2]+dy) + " ";
     }

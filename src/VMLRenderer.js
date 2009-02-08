@@ -63,70 +63,9 @@ JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     this.appendChildPrimitive(node,'images');
 };
 
-JXG.VMLRenderer.prototype.drawAxis = function(el) { 
-    var node;
-    node = this.container.ownerDocument.createElement('v:line');
-    node.style.position = 'absolute';
-    if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
-        node.setAttribute('from', (el.board.origin.scrCoords[1]) + 'px,' + (el.board.canvasHeight) + 'px');
-        node.setAttribute('to', (el.board.origin.scrCoords[1]) + 'px,' + '0px');      
-    } 
-    else {
-        node.setAttribute('from', '0px,' + (el.board.origin.scrCoords[2]) + 'px');
-        node.setAttribute('to', (el.board.canvasWidth) + 'px,' + (el.board.origin.scrCoords[2]) + 'px');      
-    }    
-    this.setStrokeProp(node,el.visProp);
-    node.style.zIndex = "4"; 
-    node.setAttribute('id', el.id);
-    el.rendNode = node;
-
-    var nodeStroke = this.container.ownerDocument.createElement('v:stroke');
-    nodeStroke.setAttribute('endarrow', 'block');
-    nodeStroke.setAttribute('endarrowlength', 'long');
-    node.appendChild(nodeStroke);
-
-    //this.updateAxisTicks(el, 0);
-    this.container.appendChild(node);
-    this.updateAxis(el);
-}
-
-JXG.VMLRenderer.prototype.updateAxis = function(el) {
-    // not yet
-    var node = document.getElementById(el.id);
-    
-    if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
-        node.setAttribute('from', (el.board.origin.scrCoords[1]) + 'px,' + (el.board.canvasHeight) + 'px');
-        node.setAttribute('to', (el.board.origin.scrCoords[1]) + 'px,' + '0px');     
-    } 
-    else {
-        node.setAttribute('from', '0px,' + (el.board.origin.scrCoords[2]) + 'px');
-        node.setAttribute('to', (el.board.canvasWidth) + 'px,' + (el.board.origin.scrCoords[2]) + 'px');     
-    }    
-    this.setStrokeProp(node,el.visProp);
-    this.updateAxisTicksInnerLoop(el,0);
-    
-    /*
-    for (var i=0;i<el.ticks.length;i++) {
-        var c = el.ticks[i];
-        var tick = document.getElementById(el.id+'tick'+i);
-        tick.setAttribute('from', c.scrCoords[1] + 'px,' + c.scrCoords[2] + 'px');
-        if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
-            tick.setAttribute('to', (c.scrCoords[1] - el.r) + 'px,' + (c.scrCoords[2]) + 'px');   
-        } 
-        else {
-            tick.setAttribute('to', (c.scrCoords[1]) + 'px,' + (c.scrCoords[2] + el.r) + 'px');   
-        }
-        
-        tick.setAttribute('stroked', 'true');
-        tick.setAttribute('strokecolor', el.visProp['strokeColor'], 1);
-        tick.setAttribute('strokeweight', el.visProp['strokeWidth']);   
-    }
-    */
-}
-
-JXG.VMLRenderer.prototype.updateAxisTicks = function(axis,dx,dy,start) {
+JXG.VMLRenderer.prototype.updateTicks = function(axis,dx,dy) {
     var tickArr = [];
-    for (var i=start; i<axis.ticks.length; i++) {
+    for (var i=0; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
         tickArr.push(' m ' + Math.round(c.scrCoords[1]+dx) + ', ' + Math.round(c.scrCoords[2]-dy) + ' l ' + Math.round(c.scrCoords[1]-dx) + ', ' + Math.round(c.scrCoords[2]+dy)+' ');
     }

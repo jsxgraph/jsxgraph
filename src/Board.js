@@ -1343,32 +1343,6 @@ JXG.Board.prototype.addArrow = function(obj) {
 };
 
 /**
- * Registers a axis at the board and adds it to the renderer.
- * @param {JXG.Axis} obj The axis to add.
- * @type String
- * @return Element id of the object.
- */
-JXG.Board.prototype.addAxis = function(obj) {
-    var number = this.numObjects;
-    this.numObjects++;
-
-    // Falls Id nicht vorgegeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'A' + number;
-    }
-
-    // Objekt in das assoziative Array einfuegen
-    this.objects[elementId] = obj;
- 
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
-    this.renderer.drawAxis(obj);
-
-    return elementId;
-};
-
-/**
  * Adds a line to the board and renderer which is orthogonal to the given line and contains point.
  * @param {JXG.Line} l A line.
  * @param {JXG.Point} p A Point.
