@@ -110,7 +110,7 @@ if __name__ == '__main__':
         open('../distrib/loadjsxgraph.js','w').write(jstxt)
 
         # Minify the renderer
-        renderer = ['SVGRenderer','VMLRenderer']
+        renderer = ['VMLRenderer','SVGRenderer']
         for f in renderer:
             print 'minify ' + f
             fin = open('../src/'+f+'.js','r')
