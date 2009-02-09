@@ -351,9 +351,11 @@ JXG.bind = function(fn, owner ) {
 
 
 JXG.removeEvent = function( obj, type, fn ) {
-    if ( obj.detachEvent ) {
-        obj.detachEvent( 'on'+type, obj[type+fn] );
-        obj[type+fn] = null;
+    if (obj.detachEvent) {
+        if (typeof obj[type+fn]!='undefined') { // Only remove the event, if it comes from a JSXGraph division
+            obj.detachEvent( 'on'+type, obj[type+fn] );
+            obj[type+fn] = null;
+        }
     } else {
         obj.removeEventListener( type, fn, false );
     }
