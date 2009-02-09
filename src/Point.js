@@ -280,14 +280,16 @@ JXG.Point.prototype.update = function (fromParent) {
                 }
             }
         } else if(this.slideObject.type == JXG.OBJECT_TYPE_CURVE) {
+            this.updateConstraint(); // In case, the point is a constrained glider.
             this.coords  = this.board.algebra.projectPointToCurve(this, this.slideObject);
-        } 
+        }
     }
     
     /* If point is a calculated point, call updateConstraint() to calculate new coords. */
     if (this.type == JXG.OBJECT_TYPE_CAS) {
         this.updateConstraint();
     }
+
     this.updateTransform();
     
     //this.updateRenderer();
@@ -825,7 +827,8 @@ JXG.createGlider = function(board, parents, atts) {
     if (parents.length==1) {
       el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
     } else {
-      el = new JXG.Point(board, parents.slice(0,-1), atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+      //el = new JXG.Point(board, parents.slice(0,-1), atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+      el = board.createElement('point',parents.slice(0,-1), atts);
     }
     el.makeGlider(parents[parents.length-1]);
     return el;

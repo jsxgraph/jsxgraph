@@ -2,9 +2,9 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-<script type="text/javascript" src="../distrib/jquery.min.js"></script>
-<!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
-<script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+<!--<script type="text/javascript" src="../distrib/jquery.min.js"></script>-->
+<script type="text/javascript" src="../distrib/prototype.js"></script>
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
 <h1>Playground</h1>
@@ -24,8 +24,8 @@
     */
     var board = JXG.JSXGraph.initBoard('box',{axis:true});
 
+/*
     var p1 = board.createElement('point', [1,0,0.5] , {name:'A'});
-
     var p2 = board.createElement('point', [1,1,1] );
     var circ = board.createElement('circle', [p1,p2], {dash:1} );
     //var t = board.createElement('line', [1,-1,1],{name:'x'} );
@@ -40,9 +40,28 @@
     var t = board.createElement('tangent',[p], {dash:3,strokeColor:'red'});
     var t = board.createElement('normal',[p,t], {dash:3,strokeColor:'black'});
 
-    var p3 = board.createElement('glider', [3,f(3),c], {fixed:true});
+    var p3 = board.createElement('glider', [function(){return p1.X();},function(){return f(p1.X());},c]);
     var t = board.createElement('tangent',[p3], {dash:3,strokeColor:'red'});
-    
+*/
+        var p = [];
+        p[0] = board.createElement('point', [-1,-2], {style:4});
+        p[1] = board.createElement('point', [6,5], {style:4});
+        p[2] = board.createElement('point', [-0.5,1], {style:4});
+        p[3] = board.createElement('point', [3,3], {style:4});
+        var f = board.lagrangePolynomial(p);
+    var graph = board.createElement('curve', ['x', f, 'x', -10, 10], {curveType:'graph'});
+ 
+    var g = function(x) {
+         return board.D(f)(x)-(p[1].Y()-p[0].Y())/(p[1].X()-p[0].X());
+        }
+ 
+    var r = board.createElement('glider', [
+                    function() { return board.root(g,(p[0].X()+p[1].X())*0.5); },
+                    function() { return f(board.root(g,(p[0].X()+p[1].X())*0.5)); }, graph], 
+         {name:' ',style:6});
+tang = board.createElement('tangent',[r],{strokeColor:'#ff0000',dash:1});
+line = board.createElement('line',[p[0],p[1]],{strokeColor:'#ff0000',dash:1});
+
 /*
     // Ellipse
     board.createElement('curve', 
