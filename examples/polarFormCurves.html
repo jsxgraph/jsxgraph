@@ -22,12 +22,14 @@
         var eps = board.createElement('point', [0,-3], {style:6,name:'eps'}); 
         var len = board.createElement('point', [2,-4], {style:6,name:'length'}); 
         var f = board.createElement('curve', 
-            [function(phi) { return p.X()/(1-eps.X()*Math.cos(phi)); }, [0,0], 'phi',0,function(){return len.X()*Math.PI}],      
+            [function(phi) { return p.X()/(1-eps.X()*Math.cos(phi)); }, [1,0], 'phi',0,function(){return len.X()*Math.PI}],      
             {curveType:'polar', strokewidth:2}
         );        
 
         board.addHook(function(){$('ausgabe').innerHTML = p.X() + "/(1 - (" + eps.X() + ")*cos(&phi;))";});
-        
+ 
+        var q = board.createElement('glider', [f], {style:6,name:'G'}); 
+        board.createElement('tangent', [q], {dash:3}); 
   /* ]]> */
   </script>
 </body>

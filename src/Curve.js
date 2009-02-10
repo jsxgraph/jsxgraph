@@ -137,7 +137,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     x = checkPoint.usrCoords[1];
     y = checkPoint.usrCoords[2];
-    if (this.curveType=='parameter') { 
+    if (this.curveType=='parameter' || this.curveType=='polar') { 
         // Brute fore search for a point on the curve close to the mouse pointer
         var steps = 300;
         var d = (this.maxX()-this.minX())/steps;
@@ -155,22 +155,6 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
             if (dist<prec) { return true; }
             t+=d;
         }
-    } else if (this.curveType=='polar') {
-    /*
-        t = 0.0;
-        var offs = (this.dataY!=null)?this.dataY:[0,0];
-        t = this.board.root(this.board.D(function(t){ 
-            var r = this.X(t);
-            return (x-r*Math.cos(t)-offs[0])*(x-r*Math.cos(t)-offs[0])+(y-r*Math.sin(t)-offs[1])*(y-r*Math.sin(t)-offs[1]);
-            }), 
-        t);         
-        //if (t<curve.minX()) { t = curve.minX(); }
-        //if (t>curve.maxX()) { t = curve.maxX(); }
-        var r = this.X(t);
-        dist = Math.sqrt((r*Math.cos(t)+offs[0]-x)*(r*Math.cos(t)+offs[0]-x)+
-                         (r*Math.sin(t)+offs[1]-y)*(r*Math.sin(t)+offs[1]-y));
-         */
-         return false;
     } else {
         // Brute force search for a point on the curve close to the mouse pointer
         var steps = 300;
@@ -277,16 +261,7 @@ JXG.Curve.prototype.updateCurve = function () {
             x = mi+i*stepSize;
             y = x;
         }
-        if (this.curveType=='polar') {
-            var r = this.X(x);
-            var offs = [0,0];
-            if (this.dataY!=null) {
-                offs = this.dataY;
-            }
-            this.points[i].setCoordinates(JXG.COORDS_BY_USER, [r*Math.cos(x)+offs[0],r*Math.sin(x)+offs[1]]);
-        } else {
-            this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x),this.Y(y)]);
-        }
+        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x),this.Y(y)]);
         this.updateTransform(this.points[i]);
     }
 };
@@ -361,7 +336,7 @@ JXG.Curve.prototype.generateTerm = function (xterm, yterm, varname, mi, ma) {
         this.X = function(i) { return this.dataX[i]; };
         this.numberPoints = this.dataX.length;
     }
-
+    
     if (typeof yterm=='string') {
         // Convert GEONExT syntax into  JavaScript syntax
         var newyterm = this.board.algebra.geonext2JS(yterm);
@@ -373,6 +348,13 @@ JXG.Curve.prototype.generateTerm = function (xterm, yterm, varname, mi, ma) {
     } else if (typeof yterm=='object') {  // array of values
         this.dataY = yterm;
         this.Y = function(i) { return this.dataY[i]; };
+    }
+    
+    // polar form
+    if (typeof xterm=='function' && typeof yterm=='object') {
+        this.X = function(phi){return (xterm)(phi)*Math.cos(phi)+yterm[0];};
+        this.Y = function(phi){return (xterm)(phi)*Math.sin(phi)+yterm[1];};
+        this.curveType = 'parameter';
     }
 
     // Set the bounds

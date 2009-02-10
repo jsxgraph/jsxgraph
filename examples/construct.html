@@ -24,7 +24,7 @@
     */
     var board = JXG.JSXGraph.initBoard('box',{axis:true});
 
-/*
+
     var p1 = board.createElement('point', [1,0,0.5] , {name:'A'});
     var p2 = board.createElement('point', [1,1,1] );
     var circ = board.createElement('circle', [p1,p2], {dash:1} );
@@ -42,7 +42,8 @@
 
     var p3 = board.createElement('glider', [function(){return p1.X();},function(){return f(p1.X());},c]);
     var t = board.createElement('tangent',[p3], {dash:3,strokeColor:'red'});
-*/
+    board.createElement('glider', [c]);
+/*
         var p = [];
         p[0] = board.createElement('point', [-1,-2], {style:4});
         p[1] = board.createElement('point', [6,5], {style:4});
@@ -61,7 +62,7 @@
          {name:' ',style:6});
 tang = board.createElement('tangent',[r],{strokeColor:'#ff0000',dash:1});
 line = board.createElement('line',[p[0],p[1]],{strokeColor:'#ff0000',dash:1});
-
+*/
 /*
     // Ellipse
     board.createElement('curve', 

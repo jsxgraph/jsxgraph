@@ -620,7 +620,7 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
  */
 JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
     var newCoords,x,y,t;
-    if (curve.curveType=='parameter') { 
+    if (curve.curveType=='parameter' || curve.curveType=='polar') { 
         x = point.X();
         y = point.Y();
         t = point.position || 0.0;
@@ -628,20 +628,6 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
         if (t<curve.minX()) { t = curve.minX(); }
         if (t>curve.maxX()) { t = curve.maxX(); }
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t),curve.Y(t)], this.board);
-    } else if (curve.curveType=='polar') {
-        x = point.X();
-        y = point.Y();
-        t = point.position || 0.0;
-        var offs = (curve.dataY!=null)?curve.dataY:[0,0];
-        t = this.root(this.D(function(t){ 
-            var r = curve.X(t);
-            return (x-r*Math.cos(t)-offs[0])*(x-r*Math.cos(t)-offs[0])+(y-r*Math.sin(t)-offs[1])*(y-r*Math.sin(t)-offs[1]);
-            }), 
-        t);         
-        //if (t<curve.minX()) { t = curve.minX(); }
-        //if (t>curve.maxX()) { t = curve.maxX(); }
-        var r = curve.X(t);
-        newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [r*Math.cos(t)+offs[0],r*Math.sin(t)+offs[1]], this.board);
     } else {
         t = point.X();
         x = t; //curve.X(t);

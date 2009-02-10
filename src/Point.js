@@ -280,7 +280,9 @@ JXG.Point.prototype.update = function (fromParent) {
                 }
             }
         } else if(this.slideObject.type == JXG.OBJECT_TYPE_CURVE) {
-            this.updateConstraint(); // In case, the point is a constrained glider.
+            if (this.type == JXG.OBJECT_TYPE_CAS) {
+                this.updateConstraint(); // In case, the point is a constrained glider.
+            }
             this.coords  = this.board.algebra.projectPointToCurve(this, this.slideObject);
         }
     }
