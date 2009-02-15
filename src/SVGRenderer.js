@@ -91,9 +91,9 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dx,dy) {
         tickStr += "M" + (c.scrCoords[1]+dx) + " " + (c.scrCoords[2]-dy) + " L" + (c.scrCoords[1]-dx) + " " + (c.scrCoords[2]+dy) + " ";
     }
 
-    var ticks = document.getElementById(axis.id + '_ticks');
+    var ticks = document.getElementById(axis.id);
     if(ticks == null) {
-        ticks = this.createPrimitive('path', axis.id+'_ticks');
+        ticks = this.createPrimitive('path', axis.id);
         this.appendChildPrimitive(ticks,'lines');
     }
     ticks.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);    

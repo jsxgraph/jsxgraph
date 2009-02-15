@@ -24,10 +24,11 @@
 */
 JXG.OBJECT_TYPE_ARC  = 0x4F544143;                 // Hex fuer OTAC = Object Type ArC
 JXG.OBJECT_TYPE_ARROW  = 0x4F544157;                 // Hex fuer OTAW = Object Type ArroW
-JXG.OBJECT_TYPE_AXIS  = 0x4F544158;                 // Hex fuer OTAW = Object Type AXis
-JXG.OBJECT_TYPE_CIRCLE  = 0x4F54434C;                 // Hex fuer OTLN = Object Type CirCle 
-JXG.OBJECT_TYPE_CURVE  = 0x4F544750;                 // Hex fuer OTPY = Object Type GraphPlot 
-JXG.OBJECT_TYPE_IMAGE  = 0x4F54524D;                 // Hex fuer OTPY = Object Type IMage
+JXG.OBJECT_TYPE_AXIS  = 0x4F544158;                 // Hex fuer OTAX = Object Type AXis
+JXG.OBJECT_TYPE_TICKS  = 0x4F545458;                 // Hex fuer OTTX = Object Type TiX
+JXG.OBJECT_TYPE_CIRCLE  = 0x4F54434C;                 // Hex fuer OTCC = Object Type CirCle 
+JXG.OBJECT_TYPE_CURVE  = 0x4F544750;                 // Hex fuer OTGP = Object Type GraphPlot 
+JXG.OBJECT_TYPE_IMAGE  = 0x4F54524D;                 // Hex fuer OTIM = Object Type IMage
 JXG.OBJECT_TYPE_LINE  = 0x4F544C4E;                 // Hex fuer OTLN = Object Type LiNe
 JXG.OBJECT_TYPE_POINT  = 0x4F545054;                 // Hex fuer OTPT = Object Type PoinT
 JXG.OBJECT_TYPE_SLIDER = 0x4F545344;                 // Hex fuer OTSD = Object Type SliDer

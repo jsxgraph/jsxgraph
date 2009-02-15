@@ -30,6 +30,7 @@ JXG.Board.prototype.pow = function(a, b){ return this.algebra.pow(a,b); };
 JXG.Board.prototype.round = function(x, n){ return (x).toFixed(n); };
 JXG.Board.prototype.cosh = function(x){ return this.algebra.cosh(x); };
 JXG.Board.prototype.sinh = function(x){ return this.algebra.sinh(x); };
+JXG.Board.prototype.sgn = function(x) { return (x==0 ? 0 : x/(Math.abs(x))); };
 JXG.Board.prototype.D = function(f){ return this.algebra.D(f); };
 JXG.Board.prototype.I = function(interval,f){ return this.algebra.I(interval,f); };
 JXG.Board.prototype.root = function(f,x){ return this.algebra.root(f,x); };

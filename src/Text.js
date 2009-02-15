@@ -117,8 +117,8 @@ JXG.Text.prototype = new JXG.GeometryElement();
 
 /**
  * Empty function (for the moment). It is needed for highlighting
- * @param {x} 
- * @param {y} Find closest point on the text to (xy)
+ * @param {int} x
+ * @param {int} y Find closest point on the text to (xy)
  * @return Always returns false
  */
 JXG.Text.prototype.hasPoint = function (x,y) {

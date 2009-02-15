@@ -332,8 +332,10 @@ JXG.Line.prototype.update = function() {
         if (true ||!this.board.geonextCompatibilityMode) {
             this.updateStdform();
         }
-        if(this.visProp['withTicks'])
-            this.updateTickCoordinates();
+        if(this.visProp['withTicks']) {
+            for(var i=0; i<this.ticks.length; i++)
+              this.ticks[i].calculateTicksCoordinates();
+        }
     }
     if(this.traced) {
         this.cloneToBackground(true);
@@ -365,6 +367,7 @@ JXG.Line.prototype.updateStdform = function() {
  * @param {bool} first Optional parameter, only used in constructor.
  */
 JXG.Line.prototype.updateTickCoordinates = function (first) {
+    return;
     if(typeof first == 'undefined') {
         first = false;
     }
@@ -496,16 +499,16 @@ JXG.Line.prototype.enableTicks = function() {
         
     this.visProp['withTicks'] = true;
     
-    this.updateTickCoordinates();
+//    this.updateTickCoordinates();
 };
 
 JXG.Line.prototype.disableTicks = function() {
     if(!this.visProp['withTicks'])
         return;
         
-    this.visProp['withTicks'] = false;
-    this.board.renderer.removeTicks(this);
-    this.ticks = new Array();
+//    this.visProp['withTicks'] = false;
+//    this.board.renderer.removeTicks(this);
+//    this.ticks = new Array();
 };
 
 /**
@@ -652,6 +655,16 @@ JXG.Line.prototype.setPosition = function (method, x, y) {
     //}
 };
 
+JXG.Line.prototype.addTicks = function(ticks) {
+    if(ticks.id == '' || typeof ticks.id == 'undefined')
+        ticks.id = this.id + '_ticks_' + (this.ticks.length+1);
+    this.ticks.push(ticks);
+    
+    this.ticks[this.ticks.length-1].updateRenderer();
+    
+    return ticks.id;
+}
+
 /**
  * Creates a new line.
  * @param {JXG.Board} board The board the line is put on.
@@ -762,6 +775,7 @@ JXG.createAxis = function(board, parents, attributes) {
 
         var el = board.createElement('line', [point1, point2], attributes);
         el.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
+        var defTicks = board.createElement('ticks', [el, function(i) { return 1; }]);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
         throw ("Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
