@@ -94,8 +94,15 @@ JXG.Ticks = function (line, ticks, multiplier, id, name) {
     
     /**
      * A string appended to any ticks label.
+     * @type String
      */
     this.multiplier = (multiplier == null ? '' : multiplier);
+    
+    /**
+     * Least distance between two ticks, measured in pixels.
+     * @type int
+     */
+    this.minTicksDistance = 10;
     
     /**
      * Draw the zero tick, that lies at line.point1?
@@ -172,6 +179,9 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 
         var deltaX = (ticksDelta * dx) / (total_length);
         var deltaY = (ticksDelta * dy) / (total_length);
+        
+        var newTick = null;
+        var lastTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
     
         //alert(ticksDelta + " : " + dx + " : " + total_length + " : " + deltaX + " : " + x + " : " + c1.usrCoords[1]);
 
@@ -179,8 +189,15 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
             x = x - deltaX;
             y = y - deltaY;
 
-            this.ticks.push(new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board));
-            this.labels.push(position + '' + this.multiplier);
+            newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+            
+            var dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
+                       (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
+            if(  dist > this.minTicksDistance*this.minTicksDistance ) {
+                this.ticks.push(newTick);
+                this.labels.push(position + '' + this.multiplier);
+                lastTick = newTick;
+            }
 
             i = i-1;
             ticksDelta = Math.abs(this.ticksFunction(i));
@@ -209,13 +226,22 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 
         deltaX = (ticksDelta * dx) / (total_length);
         deltaY = (ticksDelta * dy) / (total_length);
+        
+        lastTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
 
         while( ((this.board.sgn(deltaX)*(x-deltaX) >= this.board.sgn(deltaX)*c2.usrCoords[1]) && (this.board.sgn(deltaY)*(y-deltaY) >= this.board.sgn(deltaY)*c2.usrCoords[2])) ) {
             x = x - deltaX;
             y = y - deltaY;
 
-            this.ticks.push(new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board));
-            this.labels.push(position + '' + this.multiplier);
+            newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+            
+            var dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
+                       (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
+            if(  dist > this.minTicksDistance*this.minTicksDistance ) {
+                this.ticks.push(newTick);
+                this.labels.push(position + '' + this.multiplier);
+                lastTick = newTick;
+            }
 
             i = i+1;
             ticksDelta = Math.abs(this.ticksFunction(i));
