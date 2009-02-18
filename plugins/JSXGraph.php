@@ -91,9 +91,9 @@ function jsxgraphOutput( $input, $args, $parser ) {
     $output .= "</script>";
   }
   if(isset($args['filestring'])) {
-    $output .= "<script type='text/javascript'>" . $CRLF;
-    $output .= "  var brd = JXG.JSXGraph.loadBoardFromString('jxgbox', '". htmlspecialchars(strip_tags($args['filestring'])) ."', 'Geonext');" . $CRLF;
-    $output .= "</script> . $CRLF";
+    $output .= "<script type='text/javascript'>";
+    $output .= "  var brd = JXG.JSXGraph.loadBoardFromString('jxgbox', '". htmlspecialchars(strip_tags($args['filestring'])) ."', 'Geonext');";
+    $output .= "</script>";
   }
   $output .= "</html>";
   // if error occured, discard and output error message
