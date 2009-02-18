@@ -20,10 +20,21 @@
  *      <jsxgraph height="300" width="600" filename="myFile.gxt" />
  *    or providing a gxt-string:
  *      <jsxgraph height="300" width="600" filestring="$$GXT-binarystring should be here$$" />
+ *    or providing a javascript-input:
+ *      <jsxgraph height="300" width="600">
+ *        var brd = JXG.JSXGraph....();
+ *      </jsxgraph>
+ *
+ * jsxgraph-params: width, height, filename, filestring or $input (between <jsxgraph>-tags), box (default: jxgbox), board (default: brd)
  */
- 
+
 $jsxgraph_version = "0.1";
- 
+
+if(!defined('MEDIAWIKI')) {
+  echo("This is an extension to the MediaWiki package and cannot be run standalone.\n");
+  die(-1);
+}
+		
 //Avoid unstubbing $wgParser too early on modern (1.12+) MW versions, as per r35980
 if ( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
   $wgHooks['ParserFirstCallInit'][] = 'jsxgraphSetup';
@@ -45,42 +56,42 @@ function jsxgraphSetup() {
   return true;
 }
  
-function jsxgraphOutput( $input, $args, $parser ) {
+function jsxgraphOutput($input, $args, $parser) {
   global $wgServer; // URL of the WIKI's server
   global $jsxgraph_version; // see line 9 of this file
- 
+
   $error_message = "no error"; //will be overwritten, if error occurs
   $CRLF = "\r\n";
-  $quot='"';
- 
-  // TODO: alle möglichen Parameter auflisten
-  // $parameter_array = array("type", "framePossible", "bgcolor", "borderColor", "enableRightClick", "enableShiftDragZoom", "showMenuBar"); 
- 
+
   // Look for required parameters
   if( !isset($args['width'])     ||
       !isset($args['height'])    ||
-      !(isset($args['filename']) || isset($args['filestring']))
+      !(isset($args['filename']) || isset($args['filestring']) || isset($input))
     ) {
-      $error_message = "Missing parameter (width or height, filename or string).";
+      $error_message = "Missing parameter (width or height, filename, string or input).";
     }
-  $output  = "<!-- JSXGraph MediaWiki extension " . $jsxgraph_version . " by PW -->";
+  $output  = "<!-- JSXGraph MediaWiki extension " . $jsxgraph_version . " -->";
   
   // Load necessary stylesheet und scripts
   $output .= "<html>";
   $output .= "<link rel='stylesheet' type='text/css' href='http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css' />";
   $output .= "<script src='http://jsxgraph.uni-bayreuth.de/distrib/prototype.js' type='text/javascript'></script>";
   $output .= "<script src='http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js' type='text/javascript'></script>";
+
+  $outputDivId   = (isset($args['box']))   ? htmlspecialchars(strip_tags($args['box']))   : 'jxgbox';
+  $outputBoardId = (isset($args['board'])) ? htmlspecialchars(strip_tags($args['board'])) : 'brd';
   // Output div
-  $output .= "<div id='jxgbox' class='jxgbox' style='width:"
+  $output .= "<div id='". $outputDivId ."' class='jxgbox' style='width:"
                . htmlspecialchars(strip_tags($args['width'])) .
              "px; height:"
                . htmlspecialchars(strip_tags($args['height'])) .
              "px;'></div>";
-  if(isset($args['filename'])) {
+
+  // construction input method
+  if(isset($args['filename'])) { // string of url to gxt-file
     // retrieve URL of .gxt file
     $gxtBinary = htmlspecialchars(strip_tags($args['filename']));
     $gxtFile = Image::newFromName($gxtBinary);
-    // if (!($gxtFile->exists())) {
     if (!($gxtFile->exists() )) {
       $error_message = "File " . $gxtFile . " not found.";
     } else {
@@ -90,16 +101,23 @@ function jsxgraphOutput( $input, $args, $parser ) {
     $output .= "  var brd = JXG.JSXGraph.loadBoardFromFile('jxgbox', '". $gxtURL ."', 'Geonext');";
     $output .= "</script>";
   }
-  if(isset($args['filestring'])) {
+  if(isset($args['filestring'])) { // binary content of gxt-file
     $output .= "<script type='text/javascript'>";
     $output .= "  var brd = JXG.JSXGraph.loadBoardFromString('jxgbox', '". htmlspecialchars(strip_tags($args['filestring'])) ."', 'Geonext');";
     $output .= "</script>";
   }
+  if(isset($input)) { // content between <jsxgraph>-tags
+    $output .= "<script type='text/javascript'>";
+    $output .= "  ". $input;
+    $output .= "</script>";
+  }
   $output .= "</html>";
+
   // if error occured, discard and output error message
   if ($error_message != "no error") {
         $output = "<p>Error in MediaWiki extension (JSXGraph.php): <em>" . $error_message. "</em></p>" . $CRLF;
   }
+
   // Send the output to the browser
   return $output;
 }
