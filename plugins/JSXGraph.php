@@ -108,14 +108,17 @@ function jsxgraphOutput($input, $args, $parser) {
   }
   if(isset($input)) { // content between <jsxgraph>-tags
     $output .= "<script type='text/javascript'>";
-    $output .= "  ". $input;
+    $temp = split("\n", $input);
+    for($i=0; $i<sizeof($temp); $i++) {
+      $output .= $temp[$i];
+    }
     $output .= "</script>";
   }
   $output .= "</html>";
 
   // if error occured, discard and output error message
   if ($error_message != "no error") {
-        $output = "<p>Error in MediaWiki extension (JSXGraph.php): <em>" . $error_message. "</em></p>" . $CRLF;
+    $output = "<p>Error in MediaWiki extension (JSXGraph.php): <em>" . $error_message. "</em></p>" . $CRLF;
   }
 
   // Send the output to the browser
