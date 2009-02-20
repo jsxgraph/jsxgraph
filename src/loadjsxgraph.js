@@ -39,7 +39,7 @@ JXG.require = function(libraryName) {
 JXG.baseFiles;
 
 if (!JXG.useMinify) {
-    JXG.baseFiles ='AbstractRenderer,FileReader,GeonextReader,GeogebraReader,IntergeoReader,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Polygon,Curve,Arc,Sector,Angle,Label,Algebra,Intersection,Composition,Text,Image,Slider,Math,MathNumerics,MathStatistics,Chart,Base64,Gunzip,Transformation,Turtle,RGBColor,Board,Options,Wrappers,Ticks';
+    JXG.baseFiles ='Math,MathNumerics,MathStatistics,AbstractRenderer,FileReader,GeonextReader,GeogebraReader,IntergeoReader,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Polygon,Curve,Arc,Sector,Angle,Label,Algebra,Intersection,Composition,Text,Image,Slider,Chart,Base64,Gunzip,Transformation,Turtle,RGBColor,Board,Options,Wrappers,Ticks';
 } else {
     JXG.baseFiles = 'jxg';
 }

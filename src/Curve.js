@@ -416,6 +416,21 @@ JXG.createCurve = function(board, parents, attributes) {
 JXG.JSXGraph.registerElement('curve', JXG.createCurve);
 
 /**
+* Curve type "Graph"
+* parents: [f, start, end] or [f]
+**/
+JXG.createCurve = function(board, parents, attributes) {
+    var par = ["x",parents[0],"x"].concat(parents.slice(1));
+    if(attributes == null) 
+        attributes = {};
+    attributes.curveType = 'graph';
+    return new JXG.Curve(board, par, attributes['id'], attributes['name']);
+};
+
+JXG.JSXGraph.registerElement('graph', JXG.createCurve);
+
+
+/**
  * Create a dynamic spline interpolated curve given by sample points p_1 to p_n.
  * @param {JXG.Board} board Reference to the board the spline is drawn on.
  * @param {Array} parents Array of points the spline interpolates

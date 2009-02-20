@@ -30,6 +30,9 @@
     var circ = board.createElement('circle', [p1,p2], {dash:1} );
     //var t = board.createElement('line', [1,-1,1],{name:'x'} );
     
+    board.createElement('graph', [function(x){return -x*x;},0,2]);
+    
+    
     var f = function(t){return p2.Y()*t*Math.sin(t);};
     //var g = function(t){return t;};
     

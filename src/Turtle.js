@@ -287,6 +287,35 @@ JXG.Turtle.prototype.lookTo = function(target) {
 }
 
 /**
+* draws a line to a given coordinate pair.
+* The direction is not changed.
+*/
+JXG.Turtle.prototype.moveTo = function(target) { 
+    if (JXG.IsArray(target)) {
+        var dx = target[0]-this.pos[0];
+        var dy = target[1]-this.pos[1];
+        if (!this.turtleIsHidden) {
+            var t = this.board.createElement('transform', [dx,dy], {type:'translate'});
+            t.applyOnce(this.turtle);
+            t.applyOnce(this.turtle2);
+        }
+        if (this.isPenDown) if (this.curve.dataX.length>=8192) { // IE workaround
+            this.curve = this.board.createElement('curve',
+               [[this.pos[0]],[this.pos[1]]],this.attributes);
+            this.objects.push(this.curve);
+        }
+        this.pos[0] = target[0];
+        this.pos[1] = target[1];
+        if (this.isPenDown) {
+            this.curve.dataX.push(this.pos[0]);
+            this.curve.dataY.push(this.pos[1]);
+        }
+        this.board.update();
+    }
+    return this;
+}
+
+/**
   * Shortcuts
   */
 JXG.Turtle.prototype.fd = function(len) { return this.forward(len); };
