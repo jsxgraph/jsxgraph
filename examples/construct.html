@@ -24,28 +24,26 @@
     */
     var board = JXG.JSXGraph.initBoard('box',{axis:true});
 
-
     var p1 = board.createElement('point', [1,0,0.5] , {name:'A'});
     var p2 = board.createElement('point', [1,1,1] );
+
     var circ = board.createElement('circle', [p1,p2], {dash:1} );
     //var t = board.createElement('line', [1,-1,1],{name:'x'} );
-    
-    board.createElement('graph', [function(x){return -x*x;},0,2]);
-    
+    board.createElement('functiongraph', [function(x){return -x*x;},0,2]);
     
     var f = function(t){return p2.Y()*t*Math.sin(t);};
     //var g = function(t){return t;};
-    
-    var c = board.createElement('curve', ['t',f,'t'], {type:'graph'} );
-
-    //var c = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);},'t'] );
+    var c = board.createElement('functiongraph', [f]);
+    var c1 = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);},'t'] );
     var p = board.createElement('glider', [0.1,2,circ],{name:'S'} );
     var t = board.createElement('tangent',[p], {dash:3,strokeColor:'red'});
     var t = board.createElement('normal',[p,t], {dash:3,strokeColor:'black'});
 
     var p3 = board.createElement('glider', [function(){return p1.X();},function(){return f(p1.X());},c]);
     var t = board.createElement('tangent',[p3], {dash:3,strokeColor:'red'});
-    board.createElement('glider', [c]);
+    var p4 = board.createElement('glider', [c]);
+    //board.createElement('curve',[[p1,p2,p3,p4]]);
+    
 /*
         var p = [];
         p[0] = board.createElement('point', [-1,-2], {style:4});
@@ -53,7 +51,7 @@
         p[2] = board.createElement('point', [-0.5,1], {style:4});
         p[3] = board.createElement('point', [3,3], {style:4});
         var f = board.lagrangePolynomial(p);
-    var graph = board.createElement('curve', ['x', f, 'x', -10, 10], {curveType:'graph'});
+    var graph = board.createElement('functiongraph', [f, -10, 10]);
  
     var g = function(x) {
          return board.D(f)(x)-(p[1].Y()-p[0].Y())/(p[1].X()-p[0].X());

@@ -32,7 +32,7 @@
 
 
 		eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
-		graph = board.createElement('curve', [function(x){ return x; }, function(x){ return f(x); }, "x", -10, 10], {curveType:'graph'});
+		graph = board.createElement('functiongraph', [function(x){ return f(x); }, -10, 10]);
 
 
         p2 = board.createElement('glider', [graph], {style:6, name:'P'});

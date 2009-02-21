@@ -43,7 +43,7 @@
  * @constructor
  * @return A new geometry element Curve
  */
-JXG.Curve = function (board, definingArr, id, name) {
+JXG.Curve = function (board, parents, id, name) {
     this.constructor();
  
     this.points = [];
@@ -52,6 +52,7 @@ JXG.Curve = function (board, definingArr, id, name) {
     this.type = JXG.OBJECT_TYPE_CURVE;
     this.elementClass = JXG.OBJECT_CLASS_CURVE;                
     
+    this.init(board, id, name);
     this.init(board, id, name);
 
     this.visProp['strokeWidth'] = this.board.options.curve.strokeWidth;
@@ -68,7 +69,7 @@ JXG.Curve = function (board, definingArr, id, name) {
      * 'none'
      * 'plot': Data plot
      * 'parameter': we can not distinguish function graphs and parameter curves
-     * 'graph': function graph
+     * 'functiongraph': function graph
      * 'polar'
      * 'implicit' (not yet)
      *
@@ -78,15 +79,15 @@ JXG.Curve = function (board, definingArr, id, name) {
      
     this.curveType = null;
 
-    if (definingArr[2]!=null) {
-        this.varname = definingArr[2];
+    if (parents[2]!=null) {
+        this.varname = parents[2];
     } else {
         this.varname = 'x';
     }
-    this.xterm = definingArr[0];  // usually: "x"
-    this.yterm = definingArr[1];  // usually: e.g. "x^2"
-    this.generateTerm(this.xterm,this.yterm,this.varname,definingArr[3],definingArr[4]);  // Converts GEONExT syntax into JavaScript syntax
-    this.updateCurve();                        // First evaluation of the graph
+    this.xterm = parents[0];  // function graphs: "x"
+    this.yterm = parents[1];  // function graphs: e.g. "x^2"
+    this.generateTerm(this.xterm,this.yterm,this.varname,parents[3],parents[4]);  // Converts GEONExT syntax into JavaScript syntax
+    this.updateCurve();                        // First evaluation of the curve
     this.id = this.board.addCurve(this);
     
     if (typeof this.xterm=='string') {
@@ -99,7 +100,7 @@ JXG.Curve = function (board, definingArr, id, name) {
 JXG.Curve.prototype = new JXG.GeometryElement;
 
 /**
- * Gives the default value of the left bound for the graph.
+ * Gives the default value of the left bound for the curve.
  * May be overwritten in @see generateTerm.
  */
 JXG.Curve.prototype.minX = function () {
@@ -112,7 +113,7 @@ JXG.Curve.prototype.minX = function () {
 };
 
 /**
- * Gives the default value of the right bound for the graph
+ * Gives the default value of the right bound for the curve.
  * May be overwritten in @see generateTerm.
  */
 JXG.Curve.prototype.maxX = function () {
@@ -127,7 +128,7 @@ JXG.Curve.prototype.maxX = function () {
 /**
  * Empty function (for the moment). It is needed for highlighting
  * @param {x} 
- * @param {y} Find closest point on the graph to (xy)
+ * @param {y} Find closest point on the curve to (x,y)
  * @return Always returns false
  */
 JXG.Curve.prototype.hasPoint = function (x,y) {
@@ -312,7 +313,7 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
  * new methods for minX() and maxX().
  *
  * Also, all objects whose name appears in the term are searched and
- * the graph is added as child to these objects. (Commented out!!!!)
+ * the curve is added as child to these objects. (Commented out!!!!)
  * @see Algebra
  * @see #geonext2JS.
  */
@@ -323,7 +324,7 @@ JXG.Curve.prototype.generateTerm = function (xterm, yterm, varname, mi, ma) {
         // Convert GEONExT syntax into  JavaScript syntax
         var newxterm = this.board.algebra.geonext2JS(xterm);
         this.X = new Function(varname,'return ' + newxterm + ';');
-        this.curveType = 'graph';
+        this.curveType = 'functiongraph';
     } else if (typeof xterm=='function') {
         this.X = xterm;
         this.curveType = 'parameter';
@@ -416,18 +417,18 @@ JXG.createCurve = function(board, parents, attributes) {
 JXG.JSXGraph.registerElement('curve', JXG.createCurve);
 
 /**
-* Curve type "Graph"
+* Curve type "functiongraph"
 * parents: [f, start, end] or [f]
 **/
-JXG.createCurve = function(board, parents, attributes) {
+JXG.createFunctiongraph = function(board, parents, attributes) {
     var par = ["x",parents[0],"x"].concat(parents.slice(1));
     if(attributes == null) 
         attributes = {};
-    attributes.curveType = 'graph';
+    attributes.curveType = 'functiongraph';
     return new JXG.Curve(board, par, attributes['id'], attributes['name']);
 };
 
-JXG.JSXGraph.registerElement('graph', JXG.createCurve);
+JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
 
 
 /**

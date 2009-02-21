@@ -41,14 +41,14 @@ board.createElement('integral', [interval, c]);
 
         // Macro Function plotter
         function funktionsPlotter(board, func, atts) {
-            var f = board.createElement('curve', ['x', func, 'x'], atts);
+            var f = board.createElement('functiongraph', [func], atts);
             return f;
         }
         
         // Simplified plotting function
         function plot(func, atts) {
             if (atts==null) {
-                return funktionsPlotter(board, func, {strokewidth:2, curveType:'graph'});
+                return funktionsPlotter(board, func, {strokewidth:2});
             } else {
                 return funktionsPlotter(board, func, atts);
             }    
