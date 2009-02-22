@@ -35,10 +35,12 @@
  * of the function term 
  * is converted into JavaScript syntax.
  * It inherits from @see GeometryElement.
- * The defining array "definingArr" consists of
- * term for the first coordinate, term for the second coordinate, 
- * the variable name (usuallay 'x' or 't') and the lower and upper bounds
- * for the variable. The latter two can be null, then the default 
+ * The defining array "parents" consists of
+ * the variable name (usuallay 'x' or 't'), it is only needed for reading of GEONExT constructions,
+ * the term for the first coordinate, 
+ * the term for the second coordinate, 
+ * the lower and upper bounds
+ * for the variable. The latter two can be null. In this case the default 
  * bounds are the left and right border of the canvas.
  * @constructor
  * @return A new geometry element Curve
@@ -61,7 +63,6 @@ JXG.Curve = function (board, parents, id, name) {
     this.dataX = null;
     this.dataY = null;
     
-    this.curveType = 'none';
     /**
      * The curveType is set in @see generateTerm and used in 
      * @see updateCurve
@@ -76,17 +77,17 @@ JXG.Curve = function (board, parents, id, name) {
      * Only parameter and plot are set directly.
      * polar is set with setProperties only.
      **/
-     
+    // this.curveType = 'none';
     this.curveType = null;
 
-    if (parents[2]!=null) {
-        this.varname = parents[2];
+    if (parents[0]!=null) {
+        this.varname = parents[0];
     } else {
         this.varname = 'x';
     }
-    this.xterm = parents[0];  // function graphs: "x"
-    this.yterm = parents[1];  // function graphs: e.g. "x^2"
-    this.generateTerm(this.xterm,this.yterm,this.varname,parents[3],parents[4]);  // Converts GEONExT syntax into JavaScript syntax
+    this.xterm = parents[1];  // function graphs: "x"
+    this.yterm = parents[2];  // function graphs: e.g. "x^2"
+    this.generateTerm(this.varname,this.xterm,this.yterm,parents[3],parents[4]);  // Converts GEONExT syntax into JavaScript syntax
     this.updateCurve();                        // First evaluation of the curve
     this.id = this.board.addCurve(this);
     
@@ -317,7 +318,7 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
  * @see Algebra
  * @see #geonext2JS.
  */
-JXG.Curve.prototype.generateTerm = function (xterm, yterm, varname, mi, ma) {
+JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
     // Generate the methods X() and Y()
     this.numberPoints = this.board.canvasWidth*1.0;
     if (typeof xterm=='string') {
@@ -411,7 +412,7 @@ JXG.Curve.prototype.notifyParents = function (contentStr) {
 };
 
 JXG.createCurve = function(board, parents, attributes) {
-    return new JXG.Curve(board, parents, attributes['id'], attributes['name']);
+    return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name']);
 };
 
 JXG.JSXGraph.registerElement('curve', JXG.createCurve);
@@ -421,7 +422,7 @@ JXG.JSXGraph.registerElement('curve', JXG.createCurve);
 * parents: [f, start, end] or [f]
 **/
 JXG.createFunctiongraph = function(board, parents, attributes) {
-    var par = ["x",parents[0],"x"].concat(parents.slice(1));
+    var par = ["x","x"].concat(parents);
     if(attributes == null) 
         attributes = {};
     attributes.curveType = 'functiongraph';
@@ -459,7 +460,7 @@ JXG.createSpline = function(board, parents, attributes) {
         return JXG.Math.Numerics.splineEval(t, x, y, D);
     }
     
-    return new JXG.Curve(board, ["x", F], attributes);
+    return new JXG.Curve(board, ["x","x", F], attributes);
 }
 
 /**

@@ -34,7 +34,7 @@
     var f = function(t){return p2.Y()*t*Math.sin(t);};
     //var g = function(t){return t;};
     var c = board.createElement('functiongraph', [f]);
-    var c1 = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);},'t'] );
+    var c1 = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);}] );
     var p = board.createElement('glider', [0.1,2,circ],{name:'S'} );
     var t = board.createElement('tangent',[p], {dash:3,strokeColor:'red'});
     var t = board.createElement('normal',[p,t], {dash:3,strokeColor:'black'});
@@ -71,7 +71,7 @@ line = board.createElement('line',[p[0],p[1]],{strokeColor:'#ff0000',dash:1});
             //"X(A)*Sin(t)","Y(A)*Cos(t)",
             function(t){return p2.X()*Math.sin(t)},
             function(t){return p2.Y()*Math.cos(t)},
-            't', 0, 2*Math.PI
+            0, 2*Math.PI
         ], 
         { strokeWidth:1 });
     

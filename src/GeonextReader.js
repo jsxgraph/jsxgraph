@@ -1037,7 +1037,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
                 gxtEl.funct = Data.getElementsByTagName('data')[0].getElementsByTagName('function')[0].firstChild.data;
                 JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'graphs');
-                var g = new JXG.Curve(board, ['x',gxtEl.funct], gxtEl.id, gxtEl.name);
+                var g = new JXG.Curve(board, ['x','x',gxtEl.funct], gxtEl.id, gxtEl.name);
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 /*
                  * Ignore fillcolor attribute
@@ -1139,7 +1139,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl.functiony = Data.getElementsByTagName('functiony')[0].firstChild.data;
                 gxtEl.min = Data.getElementsByTagName('min')[0].firstChild.data;
                 gxtEl.max = Data.getElementsByTagName('max')[0].firstChild.data;
-                var g = new JXG.Curve(board, [gxtEl.functionx,gxtEl.functiony,'t',gxtEl.min,gxtEl.max], gxtEl.id, gxtEl.name);
+                var g = new JXG.Curve(board, ['t',gxtEl.functionx,gxtEl.functiony,gxtEl.min,gxtEl.max], gxtEl.id, gxtEl.name);
                 g.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,'fillColor:none',
                               'highlightStrokeColor:'+gxtEl.highlightStrokeColor);
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');

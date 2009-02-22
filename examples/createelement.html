@@ -35,7 +35,7 @@
         curve = board.createElement('curve', [
             function(t){ return t; },
             function(t){ return (Math.sin(t)); },
-            "t", -Math.PI*2, Math.PI*2]);
+            -Math.PI*2, Math.PI*2]);
         
         a1 = board.createElement('arc', [p1, p2, p3], {'firstArrow':true,'lastArrow':true});
         a2 = board.createElement('arrow', ['Ursprung', p3]);

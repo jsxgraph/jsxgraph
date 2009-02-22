@@ -74,7 +74,7 @@
         c1 = board.createElement('curve', [
             function(t){ return (b2p2.X()+b2p1.X())*Math.cos(t)-b2p3.X()*Math.cos(t*(b2p2.X()+b2p1.X())/b2p1.X()); },
             function(t){ return (b2p2.X()+b2p1.X())*Math.sin(t)-b2p3.X()*Math.sin(t*(b2p2.X()+b2p1.X())/b2p1.X()); },
-            "t",0,function(){ return Math.PI*4*b2p1.X();}]);		
+            0,function(){ return Math.PI*4*b2p1.X();}]);		
 		
 		// Die Abhaengigkeiten speichern. Mittlerweile nur noch wichtig, falls b1p1 geloescht werden sollte.
         b2p1.addChild(c1);

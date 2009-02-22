@@ -20,14 +20,14 @@
         c1 = board.createElement('curve', [
             function(t){ return (g1.X()-g2.X())*Math.cos(t)+g3.X()*Math.cos(t*(g1.X()-g2.X())/g2.X()); },
             function(t){ return (g1.X()-g2.X())*Math.sin(t)+g3.X()*Math.sin(t*(g1.X()-g2.X())/g2.X()); },
-            "t",0,function(){ return Math.PI*7*Math.abs(g4.X());}], 
+            0,function(){ return Math.PI*7*Math.abs(g4.X());}], 
             {curveType:'parameter'} );          
         // Gleiter auf Parameterkurve. Dazu muss explizit curveType:'parameter' eingestellt sein.
         p = board.createElement('glider', [0,0,c1], {style:6, fillcolor:'red'});
 
         // Gleiter auf Kurve in Polarform
         var f = board.createElement('curve', 
-            [function(phi) { return g1.X()/(1-g2.X()*Math.cos(phi)); }, [0,0], 'phi',0,2.0*Math.PI],      
+            [function(phi) { return g1.X()/(1-g2.X()*Math.cos(phi)); }, [0,0], 0,2.0*Math.PI],      
             {curveType:'polar', strokewidth:1, strokecolor:'red'}
         );        
         q = board.createElement('point', [0,0], {slideObject:f, style:6, fillcolor:'red'});

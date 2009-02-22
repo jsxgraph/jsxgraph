@@ -22,12 +22,12 @@
 		curve = board.createElement('curve', [
             function(t){ return t; },
             function(t){ return (p.X()*Math.sin(p.Y() * 1/t)); },
-            "t", -Math.PI*2, Math.PI*2]);
+            -Math.PI*2, Math.PI*2]);
     
 		curve = board.createElement('curve', [
             function(t){ return t; },
             function(t){ return (p.X()*Math.sin(10*p.Y()*t)/t); },
-            "t", -Math.PI*2, Math.PI*2], {strokeColor: '#ff0000'});
+            -Math.PI*2, Math.PI*2], {strokeColor: '#ff0000'});
 
   /* ]]> */
   </script>

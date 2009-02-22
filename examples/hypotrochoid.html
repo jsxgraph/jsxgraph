@@ -28,7 +28,7 @@ Bogenl&auml;nge =<input type="text" id="D" size="2" maxlength="7"
         c1 = board.createElement('curve', [
             function(t){ return (g1.X()-g2.X())*Math.cos(t)+g3.X()*Math.cos(t*(g1.X()-g2.X())/g2.X()); },
             function(t){ return (g1.X()-g2.X())*Math.sin(t)+g3.X()*Math.sin(t*(g1.X()-g2.X())/g2.X()); },
-            "t",0,function(){ return Math.PI*7*Math.abs(g4.X());}],{
+            0,function(){ return Math.PI*7*Math.abs(g4.X());}],{
                     curveType:'parameter',
                     strokeWidth:function(){return g5.Y()*3;},
                     fillColor:'#356AA0',

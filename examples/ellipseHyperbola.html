@@ -95,14 +95,14 @@
             if (atts.type=='ellipse') {            
                 return board.createElement('curve', 
                     [function(phi) {return conicCoords(phi)[1];},
-                     function(phi) {return conicCoords(phi)[2];},'phi',0,2.01*Math.PI],atts);        
+                     function(phi) {return conicCoords(phi)[2];},0,2.01*Math.PI],atts);        
             } else {
                 return [board.createElement('curve', 
                     [function(phi) {return conicCoords(phi,1)[1];},
-                     function(phi) {return conicCoords(phi,1)[2];},'phi',-2.01*Math.PI,2.01*Math.PI],atts),
+                     function(phi) {return conicCoords(phi,1)[2];},-2.01*Math.PI,2.01*Math.PI],atts),
                         board.createElement('curve', 
                     [function(phi) {return conicCoords(phi,-1)[1];},
-                     function(phi) {return conicCoords(phi,-1)[2];},'phi',-2.01*Math.PI,2.01*Math.PI],atts)];
+                     function(phi) {return conicCoords(phi,-1)[2];},-2.01*Math.PI,2.01*Math.PI],atts)];
             }
         };
 

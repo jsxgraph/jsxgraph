@@ -24,7 +24,7 @@
 //        l1 = board.createElement('line', [p0,p1], {}); 
 //        c1 = board.createElement('circle', [p0,p1], {}); 
         f = board.createElement('curve', 
-            ['x',function(x){return Math.tan(x)*p1.X();},"x"], 
+            ['x',function(x){return Math.tan(x)*p1.X();}], 
             { name:'c',curveType:'plot'});
         p2 = board.createElement('glider', [0,3,f], {style:5, name:'C',strokecolor:'blue', fillcolor:'red'}); 
         
