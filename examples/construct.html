@@ -42,7 +42,7 @@
     var p3 = board.createElement('glider', [function(){return p1.X();},function(){return f(p1.X());},c]);
     var t = board.createElement('tangent',[p3], {dash:3,strokeColor:'red'});
     var p4 = board.createElement('glider', [c]);
-    //board.createElement('curve',[[p1,p2,p3,p4]]);
+    board.createElement('circle', [p3,p2,p1], {dash:5,strokeColor:'black'} );
     
 /*
         var p = [];

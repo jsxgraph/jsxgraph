@@ -336,10 +336,9 @@ JXG.Circle.prototype.setPosition = function (method, x, y) {
 
 JXG.createCircle = function(board, parentArr, atts) {
     var el;
-    if( (parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT) ) {
+    if( parentArr.length==2 && JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) ) {
         // Point/Point
         el = new JXG.Circle(board, 'twoPoints', parentArr[0], parentArr[1], atts['id'], atts['name']);
-
     } else if( ( JXG.IsNumber(parentArr[0]) || JXG.IsFunction(parentArr[0]) || JXG.IsString(parentArr[0])) && (parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT) ) {
         // Number/Point
         el = new JXG.Circle(board, 'pointRadius', parentArr[1], parentArr[0], atts['id'], atts['name']);
@@ -358,6 +357,11 @@ JXG.createCircle = function(board, parentArr, atts) {
     } else if( (parentArr[1].type == JXG.OBJECT_TYPE_LINE) && (parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT)) {
         // Point/Circle
         el = new JXG.Circle(board, 'pointLine', parentArr[0], parentArr[1], atts['id'], atts['name']);
+    } else if( parentArr.length==3 && JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) && JXG.IsPoint(parentArr[2])) {
+        // Circle through three points
+        var arr = JXG.createCircumcircle(board, parentArr, atts); // returns [center, circle]
+        arr[0].setProperty({visible:false});
+        return arr[1];
     } else
         throw ("Can't create circle with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
     
