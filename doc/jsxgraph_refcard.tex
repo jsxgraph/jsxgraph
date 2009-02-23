@@ -357,10 +357,8 @@ of the equation $ a\cdot x+b\cdot y+c\cdot z=0.$
 
 \metax{[p1, p2]}{2 points: center and point on circle line}
 \metax{[p, r]}{center, radius (constant or function)}
-\metax{[p, c]}{center, circle from which the radius is taken}
-\metax{[c, p]}{circle from which the radius is taken, center} 
-\metax{[p, l]}{center, line segment for the radius}
-\metax{[l, p]}{{}line segment for the radius, center}
+\metax{[p, c],[c, p]}{center, circle from which the radius is taken}
+\metax{[p, l],[l, p]}{center, line segment for the radius}
 
 \section{Polygon}
 \metax{brd.createElement('polygon',[p1,p2,...],$\{$attributes$\}$);}{}
@@ -382,7 +380,7 @@ transformed accordingly.
 
 
 \section{Curve}
-{\sl -- Function graph:}\par
+{\sl -- Function graph, $x\mapsto f(x)$:}\par
 \metax{brd.createElement('functiongraph',[parents],$\{$atts$\}$);}{}
 
 {\bf Parent elements:}
@@ -390,13 +388,15 @@ transformed accordingly.
 \metax{[function(x)$\{$return x*x;$\}$,-1,1]}{function term}
 \metax{}{optional: start, end}
 
-{\sl -- Parameter curve:}\par
+The other types of curves are defined through:
 
 \metax{brd.createElement('curve',[parents],$\{$attributes$\}$);}{}
 
 {\bf Parent elements:}
 
-\metax{[function(x)$\{$return 5*x;$\}$,function(x)$\{$return x*x;$\}$,0,2]}{}
+{\sl -- Parameter curve, $t\mapsto(f(t),g(t))$:}\par
+
+\metax{[function(t)$\{$return 5*t;$\}$,function(t)$\{$return t*t;$\}$,0,2]}{}
 \metax{}{$x$ function, $y$ function, optional: start, end}
 
 {\sl -- Polar curve:}\par
@@ -476,7 +476,7 @@ Most of the methods have an abbreviated alternative version.
 
 
 \section{Mathematical functions}
-Functions of the JavaScript object {\sl Math}:\par
+Functions of the intrinsic JavaScript object {\sl Math}:\par
 \metax{Math.abs,Math.acos,Math.asin,Math.atan,Math.ceil,}{}
 \metax{Math.cos,Math.exp,Math.floor,Math.log,Math.max,}{}
 \metax{Math.min,Math.random,Math.sin,Math.sqrt,Math.tan}{}
