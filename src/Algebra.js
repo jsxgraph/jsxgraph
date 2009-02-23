@@ -1428,7 +1428,7 @@ JXG.Algebra.prototype.normalize = function(stdform) {
 /**
  * Computes the Lagrange polynomial.
  * @param {Array} of points of type JXG.Point
- * @return a function f(x) whose graph runs throough the given points.
+ * @return a function f(x) whose graph runs through the given points.
  */
 JXG.Algebra.prototype.lagrangePolynomial = function(p) {  
     return function(x) {
@@ -1448,3 +1448,38 @@ JXG.Algebra.prototype.lagrangePolynomial = function(p) {
         return y;
     };
 }
+
+/**
+ * Computes the Lagrange polynomial for curves with Neville's algorithm.
+ * @param {Array} of points of type JXG.Point
+ * @return an array [f(t),g(t),0,p.length-1] whose curve runs through the given points.
+ */
+JXG.Algebra.prototype.neville = function(p) {
+    return [function(t) {
+                var i,k,L;
+                var val = 0.0;
+                for (i=0;i<p.length;i++) {
+                    L = p[i].X();
+                    for (k=0;k<p.length;k++) if (k!=i) {
+                        L *= (t-k)/(i-k);
+                    }
+                    val += L;
+                }
+                return val;
+            },
+            function(t) {
+                var i,k,L;
+                var val = 0.0;
+                for (i=0;i<p.length;i++) {
+                    L = p[i].Y();
+                    for (k=0;k<p.length;k++) if (k!=i) {
+                        L *= (t-k)/(i-k);
+                    }
+                    val += L;
+                }
+                return val;
+            }, 
+            0, function(){ return p.length-1;}
+        ];
+}
+
