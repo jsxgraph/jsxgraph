@@ -180,11 +180,11 @@ JXG.Polygon.prototype.cloneToBackground = function(addToTrace) {
     delete copy;
 };
 
-JXG.createPolygon = function(board, parentArr, atts) {
+JXG.createPolygon = function(board, parents, atts) {
     var el;
     // Sind alles Punkte?
-    for(var i=0; i<parentArr.length; i++) {
-        if(!JXG.IsPoint(parentArr[i]))
+    for(var i=0; i<parents.length; i++) {
+        if(!JXG.IsPoint(parents[i]))
             throw ("Can't create polygon with parent types other than 'point'.");
     }
     

@@ -175,8 +175,13 @@
 
 \outer\def\title#1{{\titlefont\centerline{#1}}\vskip 1ex plus .5ex}
 
+%\outer\def\section#1{\par\filbreak
+%  \vskip .5ex  minus .1ex {\headingfont #1}\mark{#1}%
+%  \vskip .3ex  minus .1ex}
 \outer\def\section#1{\par\filbreak
-  \vskip .5ex  minus .1ex {\headingfont #1}\mark{#1}%
+  \vskip .5ex  minus .1ex \vskip2\jot
+\hrule width.5\hsize
+\vskip1\jot{\headingfont #1}\mark{#1}%
   \vskip .3ex  minus .1ex}
 
 \outer\def\librarysection#1#2{\par\filbreak
@@ -217,10 +222,14 @@
 \newdimen\metaxwidth
 \metaxwidth=\wd\metaxbox
 
+%\def\metax#1#2{\leavevmode\hbox to \hsize{\hbox to .75\hsize
+%  {\hskip\keyindent\relax#1\hfil}%
+%  \hskip -\metaxwidth minus 1fil
+%  \kbd{#2}\hfil}}
 \def\metax#1#2{\leavevmode\hbox to \hsize{\hbox to .75\hsize
-  {\hskip\keyindent\relax#1\hfil}%
+  {\hskip\keyindent\relax\kbd{#1}\hfil}%
   \hskip -\metaxwidth minus 1fil
-  \kbd{#2}\hfil}}
+  #2\hfil}}
 
 \def\threecol#1#2#3{\hskip\keyindent\relax#1\hfil&\kbd{#2}\quad
   &\kbd{#3}\quad\cr}
@@ -239,17 +248,25 @@ JavaScript code.
 Three files have to be included:
 {\tt jsxgraph.css}, {\tt jsxgraphcore.js} and either {\tt prototype.js} or {\tt jquery.js}.
 
-\metax{$<$link rel="stylesheet" type="text/css" href="xxx/jsxgraph.css"/$>$}{}
-\metax{$<$script type="text/javascript" src="xxx/prototype.js"$>$$<$/script$>$}{}
-\metax{$<$script type="text/javascript" src="xxx/jsxgraphcore.js"$>$$<$/script$>$}{}
+{\obeylines\obeyspaces\parskip0pt\tt
+$<$link rel="stylesheet" type="text/css" 
+        href="domain/jsxgraph.css"/$>$
+$<$script type="text/javascript" 
+          src="domain/prototype.js"$>$$<$/script$>$
+$<$script type="text/javascript" 
+          src="domain/jsxgraphcore.js"$>$$<$/script$>$}
 
 or
 
-\metax{$<$link rel="stylesheet" type="text/css" href="xxx/jsxgraph.css"/$>$}{}
-\metax{$<$script type="text/javascript" src="xxx/jquery.min.js"$>$$<$/script$>$}{}
-\metax{$<$script type="text/javascript" src="xxx/jsxgraphcore.js"$>$$<$/script$>$}{}
+{\obeylines\obeyspaces\parskip0pt\tt
+$<$link rel="stylesheet" type="text/css" 
+        href="domain/jsxgraph.css"/$>$
+$<$script type="text/javascript" 
+          src="domain/jquery.min.js"$>$$<$/script$>$
+$<$script type="text/javascript" 
+          src="domain/jsxgraphcore.js"$>$$<$/script$>$}
 
-{\tt xxx} is the location of the files. This can be a local directory or
+{\tt domain} is the location of the files. This can be a local directory or
 {\tt http://jsxgraph.uni-bayreuth.de/distrib/}
 
 {\bf HTML element containing the construction:}
@@ -263,147 +280,221 @@ or
 \metax{\phantom{xxx}{\tt var brd = JXG.JSXGraph.initBoard('box',$\{$axis:true$\}$);}}{}
 \metax{$<$script$>$}{}
 
-\section{Initialize the board}
-\metax{}{var brd = JXG.JSXGraph.initBoard('box',$\{$attributes$\}$);}
+\section{Initializing the board}
+\metax{var brd = JXG.JSXGraph.initBoard('box',$\{$attributes$\}$);}{}
+
+{\sl -- Attributes of the board}\par
+\metax{unitX, unitY:}{Number of pixels of one unit}
+\metax{}{in $x$/$y$-axis direction}
+\metax{originX, originY:}{the coordinates of the origin}
+\metax{}{in pixel coordinates}
+\metax{zoomX,zoomY:}{zoom factor in $x$/$y$-axis direction}
+\metax{zoomfactor:}{overall zoom factor in both directions}
+
 
 \section{Basic commands}
-\metax{{\tt var el = brd.createElement('type',[parents],$\{$attributes$\}$);}}{}
-\metax{{\tt el.setProperty($\{$attributes$\}$);}}{}
+\metax{var el = brd.createElement('type',[parents],$\{$attributes$\}$);}{}
+\metax{el.setProperty($\{$key1:value1,key2:value2,...$\}$);}{}
 
 \section{Available Elements}
+'board', 'circle', 'curve', 'glider', 'group', 
+'line', 'math functions', 'normal', 'point', 'polygon', 
+'slider', 'spline', 'tangent', 'turtle'
+
+\vskip6pt
+\hrule width.2\hsize
 'angle', 'arc', 'arrow', 'arrowparallel', 'axis',
-'bisector',
+'bisector', 
 'chart', 'circumcircle', 'circumcirclemidpoint',
-'curve', 'circle', 'glider', 'group', 'image', 'integral',
-'line', 'midpoint', 'mirrorpoint',
-'normal', 'parallel', 'parallelpoint', 'perpendicular', 'perpendicularpoint', 'polygon', 
-'point', 'reflection', 'sector', 'slider', 'spline', 'tangent', 'text', 'ticks', 'transform', 'turtle'
+'image', 'integral',
+'midpoint', 'mirrorpoint',
+'parallel', 'parallelpoint', 'perpendicular', 'perpendicularpoint',
+'reflection', 'sector', 'text', 'ticks', 'transform', 
 
 \section{Point}
-\metax{{\tt brd.createElement('point',[parents],$\{$attributes$\}$);}}{}
+\metax{brd.createElement('point',[parents],$\{$attributes$\}$);}{}
 
 {\bf Parent elements:}
 
-\metax{Euclidean coordinates}{[3,-2]}
-\metax{Homogeneous coords ($z$ in first place)}{[1, 3,-2]}
-\metax{Functions for $x,y$, (and $z$)}{[function()$\{$return p1.X();$\}$,}
-\metax{}{function()$\{$return p2.Y();$\}$]}
+\metax{[3,-2]}{Euclidean coordinates}
+\metax{[1, 3,-2]}{Homogeneous coordinates ($z$ in first place)}
+\metax{[function()$\{$return p1.X();$\}$,}{}
+\metax{  function()$\{$return p2.Y();$\}$]}{Functions for $x,y$, (and $z$)}
 
 {\bf Methods}
 
-\metax{$x$-coordinate}{p.X()}
-\metax{$y$-coordinate}{p.Y()}
-\metax{(Homogeneous) $z$-coordinate}{p.Z()}
-\metax{Distance to other point}{p.Dist(q)}
+\metax{p.X()}{$x$-coordinate}
+\metax{p.Y()}{$y$-coordinate}
+\metax{p.Z()}{(Homogeneous) $z$-coordinate}
+\metax{p.Dist(q)}{Distance from $p$ to point $q$}
 
 \section{Glider}
-\metax{{\tt brd.createElement('glider',[parents],$\{$attributes$\}$);}}{}
+\metax{brd.createElement('glider',[parents],$\{$attributes$\}$);}{}
 
 {\bf Parent elements:}
 
-\metax{Initial coordinates and object to glide on}{[3, -2, c]}
-\metax{Object to glide on (initially at origin)}{[c]}
+\metax{[3, -2, c]}{Initial coordinates and object to glide on}
+\metax{[c]}{Object to glide on (initially at origin)}
 
 Coordinates may also be defined by functions, see Point.
 
 
 \section{Line}
-\metax{{\tt brd.createElement('line',[parents],$\{$attributes$\}$);}}{}
+\metax{brd.createElement('line',[parents],$\{$attributes$\}$);}{}
 
 {\bf Parent elements:}
 
-\metax{2 points}{[p1,p2]}
-\metax{3 coordinates (can also be functions)}{[c,a,b]}
+\metax{[p1,p2]}{{}line through 2 points}
+\metax{[c,a,b]}{{}line defined by 3 coordinates (can also be functions)}
 
 In case of coordinates as parents, the line is the set of solutions
-of 
-$$ a\cdot x+b\cdot y+c\cdot z=0.$$
+of the equation $ a\cdot x+b\cdot y+c\cdot z=0.$
 
-\section{Curve}
-The supported curve types are: 
-
-\metax{Function graph}{}
-\metax{{\tt brd.createElement('functiongraph',[parents],$\{$attributes$\}$);}}{}
-
-\metax{Parameter curve}{'parameter'}
-\metax{Data plot}{'plot'}
-\metax{Polar curve}{'polar'}
-\metax{{\tt brd.createElement('curve',[parents],$\{$attributes$\}$);}}{}
+\section{Circle}
+\metax{brd.createElement('circle',[parents],$\{$attributes$\}$);}{}
 
 {\bf Parent elements:}
 
+\metax{[p1, p2]}{2 points: center and point on circle line}
+\metax{[p, r]}{center, radius (constant or function)}
+\metax{[p, c]}{center, circle from which the radius is taken}
+\metax{[c, p]}{circle from which the radius is taken, center} 
+\metax{[p, l]}{center, line segment for the radius}
+\metax{[l, p]}{{}line segment for the radius, center}
+
+\section{Polygon}
+\metax{brd.createElement('polygon',[p1,p2,...],$\{$attributes$\}$);}{}
+\metax{[p1,p2,...]}{array of points}
+The points array connected by line segements and the inner area is filled.
+
+\section{Group}
+\metax{brd.createElement('group',[p1,p2,...],$\{$attributes$\}$);}{}
+\metax{[p1,p2,...]}{array of points}
+Invisible grouping of points. If one point is moved, the others are
+transformed accordingly.
+
+\section{Slider}
+\metax{brd.createElement('slider',[[a,b],[c,d],[e,f,g]],$\{$atts$\}$);}{}
+\metax{[a,b],[c,d]:}{visual start and end position of the slider}
+\metax{[e,f,g]:}{the slider returns values between $e$ and $g$,}
+\metax{}{the initial position is at value $f$}
+\metax{slider.Value():}{returns the position of the slider $\in[e,g]$}
+
+
+\section{Curve}
 {\sl -- Function graph:}\par
-\metax{function [, start, end]}{[function(x)$\{$return x*x;$\}$,-1,1]}
+\metax{brd.createElement('functiongraph',[parents],$\{$atts$\}$);}{}
+
+{\bf Parent elements:}
+
+\metax{[function(x)$\{$return x*x;$\}$,-1,1]}{function term}
+\metax{}{optional: start, end}
 
 {\sl -- Parameter curve:}\par
-\metax{$x$ function, $y$ function [, start, end]}{}
-\metax{}{[function(x)$\{$return x;$\}$,function(x)$\{$return x*x;$\}$]}
 
-{\sl -- Data plot:}\par
-\metax{array of $x$-coordinates,}{}
-\metax{\phantom{xxx}array of $y$-coordinates,}{[[1,2,3],[4,-2,3]]}
-\metax{or array of $x$-coordinates, function}{}
-\metax{}{[[1,2,3],function(x)$\{$return x*x;$\}$]}
+\metax{brd.createElement('curve',[parents],$\{$attributes$\}$);}{}
+
+{\bf Parent elements:}
+
+\metax{[function(x)$\{$return 5*x;$\}$,function(x)$\{$return x*x;$\}$,0,2]}{}
+\metax{}{$x$ function, $y$ function, optional: start, end}
 
 {\sl -- Polar curve:}\par
 Defined by the equation $r=f(\phi)$.
 
-\metax{Defining function, [offset, start, end]}{[f,[1,2],0,Math.PI]}
+\metax{[function(phi)$\{$return 5*phi;$\}$,[1,2],0,Math.PI]}{}
+\metax{}{Defining function, optional: center, start, end}
 
-\section{Circle}
-\metax{{\tt brd.createElement('circle',[parents],$\{$attributes$\}$);}}{}
+{\sl -- Data plot:}\par
+\metax{[[1,2,3],[4,-2,3]]}{}
+\metax{}{array of $x$-coordinates, array of $y$-coordinates, {\sl or}}
+\metax{[[1,2,3],function(x)$\{$return x*x;$\}$]}{}
+\metax{}{array of $x$-coordinates, function term}
 
-{\bf Parent elements:}
+{\sl -- Cubic spline:}\par
+\metax{brd.createElement('spline',[p1,p2,...],$\{$attributes$\}$);}{}
+\metax{[p1,p2,...]}{array of points}
 
-\metax{2 points}{[p1, p2]}
-\metax{point,radius (constant or function)}{[p, r]}
-\metax{point,circle}{[p, c]}
-\metax{circle,point}{[c, p]}
-\metax{point,line segment}{[p, l]}
-\metax{line segment, point}{[l, p]}
+\section{Tangent, normal}
+\metax{var t = brd.createElement('tangent',[g],$\{$attributes$\}$);}{}
+\metax{var t = brd.createElement('normal',[g],$\{$attributes$\}$);}{}
+\metax{g}{glider on circle, line, or curve}
 
 \section{Turtle}
-\metax{{\tt brd.createElement('turtle',[],$\{$attributes$\}$);}}{}
-\metax{{\tt var t = brd.createElement('turtle',[parents],$\{$attributes$\}$);}}{}
+\metax{var t = brd.createElement('turtle');}{}
+\metax{var t = brd.createElement('turtle',[],$\{$attributes$\}$);}{}
+\metax{var t = brd.createElement('turtle',[parents],$\{$atts$\}$);}{}
 
 The turtle has a position and a direction (in degrees). All angles have
 to be supplied in degrees.
 
 {\bf Parent elements:}
 
-\metax{Optional start values for $x$, $y$, direction}{[1,1,70]}
+\metax{[1,2,70]}{Optional start values for $x$, $y$, and direction}
 
 {\bf Methods:}
 
 Most of the methods have an abbreviated alternative version.
 
-\metax{{\tt t.forward(len); t.fd(len);}}{}
-\metax{{\tt t.back(len); or t.bk(len);}}{}
-\metax{{\tt t.right(angle); or t.rt(angle);}}{}
-\metax{{\tt t.left(angle); or t.lt(angle);}}{}
-\metax{{\tt t.penUp(); or t.pu();}}{}
-\metax{{\tt t.penDown(); or t.pd();}}{}
-\metax{{\tt t.clearScreen(); or t.cs();}}{}
-\metax{{\tt t.clean();}}{}
-\metax{{\tt t.setPos(x,y); }}{}
-\metax{{\tt t.home();}}{}
-\metax{{\tt t.hideTurtle(); or t.ht();}}{}
-\metax{{\tt t.showTurtle(); or t.st();}}{}
-\metax{{\tt t.setPenSize(size);}}{}
-\metax{{\tt t.setPenColor(col);}}{} (col: colorString, e.g. 'red' or '\#ff0000')
-
-\metax{{\tt t.setProperty({key1:value1,key2:value2,...});}}{}
-\metax{{\tt t.pushTurtle();}}{}
-\metax{{\tt t.popTurtle();}}{}
-\metax{{\tt t.lookTo([x,y]);}}{} (Turtle looks to a coordinate pair. If t2 is another turtle object: t.lookTo(t2.pos))
-
-\metax{{\tt t.lookTo(dir);}}{} (Turtle looks into a given direction)
-
-\metax{{\tt t.moveTo([x,y]);}}{} 
-
+\metax{t.back(len); or t.bk(len);}{}
+\metax{t.clean();}{erase the turtle lines without resetting the turtle}
+\metax{t.clearScreen(); or t.cs();}{call {\tt t.home()} and {\tt t.clean()}}
+\metax{t.forward(len); t.fd(len);}{}
+\metax{t.hideTurtle(); or t.ht();}{}
+\metax{t.home();}{Set the turtle to [0,0] and direction to 90.}
+\metax{t.left(angle); or t.lt(angle);}{}
+\metax{t.lookTo(t2.pos);}{Turtle looks to the turtle {\tt t2}}
+\metax{t.lookTo([x,y]);}{Turtle looks to a coordinate pair}
+\metax{t.moveTo([x,y]);}{Move the turtle with drawing} 
+\metax{t.penDown(); or t.pd();}{}
+\metax{t.penUp(); or t.pu();}{}
+\metax{t.popTurtle();}{pop turtle status from stack}
+\metax{t.pushTurtle();}{push turtle status on stack}
+\metax{t.right(angle); or t.rt(angle);}{}
+\metax{t.setPos(x,y);}{Move the turtle without drawing}
+\metax{t.setPenColor(col);}{{\tt col}: colorString, e.g. 'red' or '\#ff0000'}
+\metax{t.setPenSize(size);}{{\tt size}: number}
+\metax{t.showTurtle(); or t.st();}{}
 
 \section{Attributes of geometric elements}
+{\sl Generic attributes:}\par
+\metax{strokeWidth:}{number}
+\metax{strokeColor,fillColor,highlightFillColor,}{}
+\metax{highlightStrokeColor,labelColor:}{color string}
+\metax{strokeOpacity,fillOpacity,highlightFillOpacity,}{}
+\metax{highlightStrokeOpacity:}{value between 0 and 1}
+\metax{visible,trace,fixed,draft:}{true, false}
+\metax{dash:}{dash style for lines: $0, 1, \ldots, 6$}
+\metax{style:}{point style: $0, 1, \ldots, 12$}
 
+{\sl Attributes for line elements:}\par
+\metax{straightFirst,straightLast,withTicks:}{true, false}
+
+{\sl Attributes for line and arc elements:}\par
+\metax{firstArrow,lastArrow:}{true, false}
+ 
+
+
+\section{Mathematical functions}
+Functions of the JavaScript object {\sl Math}:\par
+\metax{Math.abs,Math.acos,Math.asin,Math.atan,Math.ceil,}{}
+\metax{Math.cos,Math.exp,Math.floor,Math.log,Math.max,}{}
+\metax{Math.min,Math.random,Math.sin,Math.sqrt,Math.tan}{}
+
+\metax{(number).toFixed(3):}{Rounding a number to fixed precision}
+
+Additional mathematical functions are methods of {\tt JXG.Board}.
+\metax{board.angle(A,B,C)}{angle $ABC$}
+\metax{board.lagrangePolynomial([p1,p2,...])}{}
+\metax{}{returns a polynomial through the given points}
+\metax{board.cosh(x), board.sinh(x)}{}
+\metax{board.pow(a,b)}{$a^b$}
+\metax{board.D(f,x)}{compute ${d\over dx}f$ numerically}
+\metax{board.I([a,b],f)}{compute $\int_a^b f(x)dx$ numerically}
+\metax{board.root(f,x)}{root of the function $f$.}
+\metax{}{Uses Newton method with start value $x$}
+\metax{board.factorial(n)}{computes $n!=1\cdot 2\cdot 3\cdots n$}
+\metax{board.distance(arr1,arr2)}{Euclidean distance}
 
 \section{Links}
 Help pages are available at
