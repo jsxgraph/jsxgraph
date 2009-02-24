@@ -27,8 +27,7 @@
  *
  * jsxgraph-params: width, height, filename, filestring or $input (between <jsxgraph>-tags), box (default: jxgbox), board (default: brd)
  */
-
-$jsxgraph_version = "0.1";
+$jsxgraph_version = "0.2";
 
 if(!defined('MEDIAWIKI')) {
   echo("This is an extension to the MediaWiki package and cannot be run standalone.\n");
@@ -37,9 +36,11 @@ if(!defined('MEDIAWIKI')) {
 		
 //Avoid unstubbing $wgParser too early on modern (1.12+) MW versions, as per r35980
 if ( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
-  $wgHooks['ParserFirstCallInit'][] = 'jsxgraphSetup';
+    $wgHooks['ParserFirstCallInit'][] = 'jsxgraphSetup';
+    $wgHooks['ParserAfterTidy'][] = 'jsxgraphParserAfterTidy';
 } else {
   $wgExtensionFunctions[] = 'jsxgraphSetup';
+  $wgHooks['ParserAfterTidy'][] = 'jsxgraphParserAfterTidy';
 }
  
 $wgExtensionCredits['parserhook'][] = array(
@@ -56,9 +57,11 @@ function jsxgraphSetup() {
   return true;
 }
  
-function jsxgraphOutput($input, $args, $parser) {
+$markerList = array();
+function jsxgraphOutput($input, $args, &$parser) {
   global $wgServer; // URL of the WIKI's server
   global $jsxgraph_version; // see line 9 of this file
+  global $markerList;
 
   $error_message = "no error"; //will be overwritten, if error occurs
   $CRLF = "\r\n";
@@ -73,7 +76,7 @@ function jsxgraphOutput($input, $args, $parser) {
   $output  = "<!-- JSXGraph MediaWiki extension " . $jsxgraph_version . " -->";
   
   // Load necessary stylesheet und scripts
-  $output .= "<html>";
+  //$output .= "<html>";
   $output .= "<link rel='stylesheet' type='text/css' href='http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css' />";
   $output .= "<script src='http://jsxgraph.uni-bayreuth.de/distrib/prototype.js' type='text/javascript'></script>";
   $output .= "<script src='http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js' type='text/javascript'></script>";
@@ -98,30 +101,43 @@ function jsxgraphOutput($input, $args, $parser) {
       $gxtURL = $wgServer . $gxtFile->getURL();
     }
     $output .= "<script type='text/javascript'>";
-    $output .= "  var brd = JXG.JSXGraph.loadBoardFromFile('jxgbox', '". $gxtURL ."', 'Geonext');";
+    $output .= "  var $outputBoardId = JXG.JSXGraph.loadBoardFromFile('$outputDivId', '". $gxtURL ."', 'Geonext');";
     $output .= "</script>";
   }
   if(isset($args['filestring'])) { // binary content of gxt-file
     $output .= "<script type='text/javascript'>";
-    $output .= "  var brd = JXG.JSXGraph.loadBoardFromString('jxgbox', '". htmlspecialchars(strip_tags($args['filestring'])) ."', 'Geonext');";
+    $output .= "  var $outputBoardId = JXG.JSXGraph.loadBoardFromString('$outputDivId', '". htmlspecialchars(strip_tags($args['filestring'])) ."', 'Geonext');";
     $output .= "</script>";
   }
   if(isset($input)) { // content between <jsxgraph>-tags
-    $output .= "<script type='text/javascript'>";
-    $temp = split("\n", $input);
-    for($i=0; $i<sizeof($temp); $i++) {
-      $output .= $temp[$i];
-    }
-    $output .= "</script>";
+    $output .= "<script type='text/javascript'>".$input."</script>";
   }
-  $output .= "</html>";
+  //$output .= "</html>";
 
   // if error occured, discard and output error message
   if ($error_message != "no error") {
-    $output = "<p>Error in MediaWiki extension (JSXGraph.php): <em>" . $error_message. "</em></p>" . $CRLF;
+        $output = "<p>Error in MediaWiki extension (JSXGraph.php): <em>" . $error_message. "</em></p>" . $CRLF;
   }
 
   // Send the output to the browser
-  return $output;
+  $markercount = count($markerList);
+  $marker = "xx-marker".$markercount."-xx";
+  $markerList[$markercount] = $output;
+  return $marker;
 }
+
+function jsxgraphParserAfterTidy(&$parser, &$text) {
+    // find markers in $text
+    // replace markers with actual output
+    global $markerList;
+    $keys = array();
+    $marker_count = count($markerList);
+    
+    for ($i = 0; $i < $marker_count; $i++) {
+        $keys[] = 'xx-marker' . $i . '-xx';
+    }
+    $text = str_replace($keys, $markerList, $text);
+    return true;
+}
+
 ?>
