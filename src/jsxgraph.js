@@ -328,19 +328,15 @@ JXG.getDimensions = function(elementId) {
     return {width: originalWidth, height: originalHeight};
 };
 
-
 JXG.addEvent = function( obj, type, fn, owner ) {
     var f = function() {
         return fn.apply(owner,arguments);
     }
-    if ( obj.attachEvent ) {
-        obj['e'+type+fn] = f;
-        obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
-        obj.attachEvent( 'on'+type, obj[type+fn] );
-    } else {
-        obj.addEventListener( type, f, false );
+    if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
+        Event.observe(obj, type, f); 
+    } else {             // jQuery
+        $(obj).bind(type,f);   
     }
-    
 }
 
 JXG.bind = function(fn, owner ) {
@@ -351,13 +347,10 @@ JXG.bind = function(fn, owner ) {
 
 
 JXG.removeEvent = function( obj, type, fn ) {
-    if (obj.detachEvent) {
-        if (typeof obj[type+fn]!='undefined') { // Only remove the event, if it comes from a JSXGraph division
-            obj.detachEvent( 'on'+type, obj[type+fn] );
-            obj[type+fn] = null;
-        }
-    } else {
-        obj.removeEventListener( type, fn, false );
+    if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
+        Event.stopObserving(obj, type, fn);
+    } else { // jQuery
+        $(obj).unbind(type,fn);   
     }
 }
 
@@ -414,4 +407,20 @@ JXG.unescapeHTML = function(str) {
 
 JXG.capitalize = function(str) {
     return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
+}
+
+/**
+* Dynamic programming approach for recursive functions.
+* From "Speed up your JavaScript, Part 3" by Nicholas C. Zakas.
+* @see{factorial}.
+*/
+JXG.memoizer = function(fundamental, cache){
+    cache = cache || {}
+    var shell = function(arg){
+        if (!(arg in cache)){
+            cache[arg] = fundamental(shell, arg)
+        }
+        return cache[arg];
+    };
+    return shell;
 }

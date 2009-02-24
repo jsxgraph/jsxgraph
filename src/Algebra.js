@@ -1483,3 +1483,9 @@ JXG.Algebra.prototype.neville = function(p) {
         ];
 }
 
+/**
+* returns n*(n-1)...2*1
+*/
+JXG.Algebra.prototype.factorial = JXG.memoizer(function (recur, n) {
+       return n*recur(n-1);
+    }, {"0":1, "1":1});

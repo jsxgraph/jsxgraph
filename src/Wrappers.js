@@ -54,7 +54,9 @@ JXG.Board.prototype.sqrt = Math.sqrt;
 JXG.Board.prototype.tan = Math.tan;
 JXG.Board.prototype.trunc = Math.ceil;
 
+JXG.Board.prototype.factorial = function(n){ return this.algebra.factorial(n); }
 
+/*
 JXG.Board.prototype.factorial = function(n){ 
     if (n<0) { 
         return NaN; 
@@ -67,7 +69,7 @@ JXG.Board.prototype.factorial = function(n){
         return f;
     }
 };
-
+*/
 
 // Some shortcuts 
 JXG.Point.prototype.setPositionX = function (method, x) {

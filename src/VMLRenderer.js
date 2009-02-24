@@ -398,7 +398,7 @@ JXG.VMLRenderer.prototype.setObjectDash = function(el) {
  
 JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     var c, o;
-    /* // Not yet
+    /* // Not yet 
     if (typeof opacity=='function') {
         o = opacity();
     } else {

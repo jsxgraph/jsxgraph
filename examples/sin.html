@@ -2,14 +2,14 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../distrib/jquery.min.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-	<h2>Power Series for Sine</h2>
-	<div id="jxgbox1" class="jxgbox" style="width:600px; height:300px;"></div>
+    <h2>Power Series for Sine</h2>
+    <div id="jxgbox1" class="jxgbox" style="width:600px; height:300px;"></div>
 <br clear=all>
-<div id="debug" style="display:none;"></div>
+<div id="debug" style="display:block;"></div>
 <script language="JavaScript">
 // Board
 board1 = JXG.JSXGraph.initBoard('jxgbox1', {originX: 200, originY: 150, unitX: 25, unitY: 25});
@@ -19,23 +19,22 @@ board1.createElement('axis', [[0,0], [1,0]], {});
 board1.createElement('axis', [[0,0], [0,1]], {});
 board1.snapToGrid = true;
 //
-board1.createElement('curve', [function(t){ return t; }, function(t){ return Math.sin(t); }, -10, 10],{strokeColor: "#cccccc"});
-//
-//var s = board1.createElement('slider', [2,-4,5,0,10,0], {name:'S'});
-var s = board1.createElement('slider', [[2,-4],[7,-4],[0,0,10]], {name:'S'});
-//
+board1.createElement('functiongraph', [function(t){ return Math.sin(t); }, -10, 10],{strokeColor: "#cccccc"});
+var s = board1.createElement('slider', [[2,-4],[7,-4],[0,1,10]], {name:'S'});
+
 board1.createElement('curve', [
-	function(t){ return t; }, 
-	function(t) {
-		var val = 0;
-		for(var i = 0; i < Math.floor(s.X()) + 1; i++) {
-			var f = 1;
-			var n = 1;
-			while (n <= 2 * i + 1) { f = f * n++; }
-   			val = val + Math.pow(-1, i) * Math.pow(t, 2 * i + 1) / f;
-		}
-		return val;
-	},
+    function(t){ return t; }, 
+    function(t) {
+        var val = 0;
+        for(var i = 0; i < Math.floor(s.X()) + 1; i++) {
+            var f = board1.factorial(2*i+1);
+            //var f = 1;
+            //var n = 1;
+            //while (n <= 2 * i + 1) { f = f * n++; }
+               val += Math.pow(-1, i) * Math.pow(t, 2 * i + 1) / f;
+        }
+        return val;
+    },
 -10, 10], {strokeColor: "#bb0000"});
 board1.unsuspendUpdate();
 </script> 
@@ -50,23 +49,22 @@ board2.createElement('axis', [[0,0], [1,0]], {});
 board2.createElement('axis', [[0,0], [0,1]], {});
 board2.snapToGrid = true;
 //
-board2.createElement('curve', [function(t){ return t; }, function(t){ return Math.cos(t); }, -10, 10],{strokeColor: "#cccccc"});
-//
-//var s2 = board2.createElement('slider', [2,-4,5,0,10,0], {name:'T'});
-var s2 = board2.createElement('slider', [[2,-4],[7,-4],[0,0,10]], {name:'S'});
-//
+board2.createElement('functiongraph', [function(t){ return Math.cos(t); }, -10, 10],{strokeColor: "#cccccc"});
+var s2 = board2.createElement('slider', [[2,-4],[7,-4],[0,0,10]], {name:'S2'});
+
 board2.createElement('curve', [
-	function(t){ return t; }, 
-	function(t) {
-		var val = 0;
-		for(var i = 0; i < Math.floor(s2.X()) + 1; i++) {
-			var f = 1;
-			var n = 1;
-			while (n <= 2 * i) { f = f * n++; }
-   			val = val + Math.pow(-1, i) * Math.pow(t, 2 * i) / f;
-		}
-		return val;
-	},
+    function(t){ return t; }, 
+    function(t) {
+        var val = 0;
+        for(var i = 0; i < Math.floor(s2.X()) + 1; i++) {
+            //var f = 1;
+            //var n = 1;
+            //while (n <= 2 * i) { f = f * n++; }
+            var f = board1.factorial(2*i);
+               val += Math.pow(-1, i) * Math.pow(t, 2 * i) / f;
+        }
+        return val;
+    },
 -10, 10],{strokeColor: "#009900"});
 board2.unsuspendUpdate();
 </script>
