@@ -3,12 +3,12 @@
  * JSXGraph extension
  *
  * @author Peter Wilfahrt
- * @version 0.1
+ * @version 0.2
  */
 
 /** Requirements:
  *  Allowing upload of .gxt-Files:
- *  - Add following two lines to LocalSettings.php: 
+ *  - Add the following two lines to LocalSettings.php: 
  *      $wgFileExtensions[] = 'gxt';
  *      $wgVerifyMimeType = false;
  *  - Place this file into:
@@ -25,7 +25,7 @@
  *        var brd = JXG.JSXGraph....();
  *      </jsxgraph>
  *
- * jsxgraph-params: width, height, filename, filestring or $input (between <jsxgraph>-tags), box (default: jxgbox), board (default: brd)
+ * jsxgraph-params: width, height, filename, filestring or $input (between <jsxgraph>-tags), box (default: jxgbox), board (default: brd), codebase (default: http://jsxgraph.uni-bayreuth.de/distrib)
  */
 $jsxgraph_version = "0.2";
 
@@ -39,8 +39,8 @@ if ( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
     $wgHooks['ParserFirstCallInit'][] = 'jsxgraphSetup';
     $wgHooks['ParserAfterTidy'][] = 'jsxgraphParserAfterTidy';
 } else {
-  $wgExtensionFunctions[] = 'jsxgraphSetup';
-  $wgHooks['ParserAfterTidy'][] = 'jsxgraphParserAfterTidy';
+    $wgExtensionFunctions[] = 'jsxgraphSetup';
+    $wgHooks['ParserAfterTidy'][] = 'jsxgraphParserAfterTidy';
 }
  
 $wgExtensionCredits['parserhook'][] = array(
@@ -52,9 +52,9 @@ $wgExtensionCredits['parserhook'][] = array(
 );
  
 function jsxgraphSetup() {
-  global $wgParser;
-  $wgParser->setHook( 'jsxgraph', 'jsxgraphOutput' );
-  return true;
+    global $wgParser;
+    $wgParser->setHook( 'jsxgraph', 'jsxgraphOutput' );
+    return true;
 }
  
 $markerList = array();
@@ -75,14 +75,17 @@ function jsxgraphOutput($input, $args, &$parser) {
     }
   $output  = "<!-- JSXGraph MediaWiki extension " . $jsxgraph_version . " -->";
   
-  // Load necessary stylesheet und scripts
-  //$output .= "<html>";
-  $output .= "<link rel='stylesheet' type='text/css' href='http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css' />";
-  $output .= "<script src='http://jsxgraph.uni-bayreuth.de/distrib/prototype.js' type='text/javascript'></script>";
-  $output .= "<script src='http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js' type='text/javascript'></script>";
-
   $outputDivId   = (isset($args['box']))   ? htmlspecialchars(strip_tags($args['box']))   : 'jxgbox';
   $outputBoardId = (isset($args['board'])) ? htmlspecialchars(strip_tags($args['board'])) : 'brd';
+  $outputURI = (isset($args['codebase'])) ? htmlspecialchars(strip_tags($args['codebase'])) : 'http://jsxgraph.uni-bayreuth.de/distrib';
+
+  // Load necessary stylesheet und scripts
+  $markercount = count($markerList);
+  if ($markercount==0) {
+    $output .= "<link rel='stylesheet' type='text/css' href='".$outputURI."/jsxgraph.css' />";
+    $output .= "<script src='".$outputURI."/prototype.js' type='text/javascript'></script>";
+    $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
+  }
   // Output div
   $output .= "<div id='". $outputDivId ."' class='jxgbox' style='width:"
                . htmlspecialchars(strip_tags($args['width'])) .
@@ -112,7 +115,6 @@ function jsxgraphOutput($input, $args, &$parser) {
   if(isset($input)) { // content between <jsxgraph>-tags
     $output .= "<script type='text/javascript'>".$input."</script>";
   }
-  //$output .= "</html>";
 
   // if error occured, discard and output error message
   if ($error_message != "no error") {
@@ -120,8 +122,7 @@ function jsxgraphOutput($input, $args, &$parser) {
   }
 
   // Send the output to the browser
-  $markercount = count($markerList);
-  $marker = "xx-marker".$markercount."-xx";
+  $marker = "jsxgraph-marker".$markercount."-jsxgraph";
   $markerList[$markercount] = $output;
   return $marker;
 }
@@ -134,7 +135,7 @@ function jsxgraphParserAfterTidy(&$parser, &$text) {
     $marker_count = count($markerList);
     
     for ($i = 0; $i < $marker_count; $i++) {
-        $keys[] = 'xx-marker' . $i . '-xx';
+        $keys[] = 'jsxgraph-marker' . $i . '-jsxgraph';
     }
     $text = str_replace($keys, $markerList, $text);
     return true;
