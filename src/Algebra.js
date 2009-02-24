@@ -1486,6 +1486,31 @@ JXG.Algebra.prototype.neville = function(p) {
 /**
 * returns n*(n-1)...2*1
 */
-JXG.Algebra.prototype.factorial = JXG.memoizer(function (recur, n) {
-       return n*recur(n-1);
-    }, {"0":1, "1":1});
+JXG.Algebra.prototype.factorial = JXG.memoizer(function (n) {
+        if (n<0) return NaN; 
+        if (n==0 || n==1) return 1;
+        return n*arguments.callee(n-1);
+});
+
+/**
+* returns {n\choose k}
+*/
+JXG.Algebra.prototype.binomial = JXG.memoizer(function(n,k) {
+    if (k>n || k<0) return 0;
+    if (k==0 || k==n) return 1;
+    var b = 1;
+    for (var i=0;i<k;i++) {
+        b *= (n-i);
+        b /= (i+1);
+    }
+    return b;
+    //return arguments.callee(n-1,k-1)+arguments.callee(n-1,k);
+});
+
+/*
+    // Just for test purposes;
+    
+JXG.Algebra.prototype.fibonacci = JXG.memoizer(function (n) {
+        if(n < 2) return 1; else return arguments.callee(n-2) + arguments.callee(n-1);  
+    });
+*/    

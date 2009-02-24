@@ -413,14 +413,16 @@ JXG.capitalize = function(str) {
 * Dynamic programming approach for recursive functions.
 * From "Speed up your JavaScript, Part 3" by Nicholas C. Zakas.
 * @see{factorial}.
+* http://blog.thejit.org/2008/09/05/memoization-in-javascript/
 */
-JXG.memoizer = function(fundamental, cache){
-    cache = cache || {}
-    var shell = function(arg){
-        if (!(arg in cache)){
-            cache[arg] = fundamental(shell, arg)
-        }
-        return cache[arg];
-    };
-    return shell;
+JXG.memoizer = function (f) {
+    if (f.memo)
+        return f.memo;
+    var cache = {}, join = Array.prototype.join;
+    return (f.memo = function() {
+        var key = join.call(arguments);
+        return (key in cache)
+            ? cache[key]
+            : cache[key] = f.apply(this, arguments);
+    });
 }

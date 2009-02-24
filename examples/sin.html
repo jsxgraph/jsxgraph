@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -13,6 +13,7 @@
 <script language="JavaScript">
 // Board
 board1 = JXG.JSXGraph.initBoard('jxgbox1', {originX: 200, originY: 150, unitX: 25, unitY: 25});
+
 board1.suspendUpdate();
 // Axes and Properties
 board1.createElement('axis', [[0,0], [1,0]], {});
@@ -31,7 +32,7 @@ board1.createElement('curve', [
             //var f = 1;
             //var n = 1;
             //while (n <= 2 * i + 1) { f = f * n++; }
-               val += Math.pow(-1, i) * Math.pow(t, 2 * i + 1) / f;
+            val += Math.pow(-1, i) * Math.pow(t, 2 * i + 1) / f;
         }
         return val;
     },
@@ -68,5 +69,32 @@ board2.createElement('curve', [
 -10, 10],{strokeColor: "#009900"});
 board2.unsuspendUpdate();
 </script>
+
+<h2>Binomial theorem</h2>
+<div id="jxgbox3" class="jxgbox" style="width:600px; height:300px;"></div>
+<script language="JavaScript">
+board3 = JXG.JSXGraph.initBoard('jxgbox3', {originX: 300, originY: 150, unitX: 25, unitY: 25, axis:true, grid:true});
+board3.suspendUpdate();
+board3.snapToGrid = true;
+//
+var s3 = board3.createElement('slider', [[2,-4],[7,-4],[0,0,10]], {name:'S2'});
+board3.createElement('functiongraph', [function(t){ return board3.pow(1+t,Math.round(s3.Value())); }, -10, 10],{strokeColor: "#cccccc"});
+
+board3.createElement('functiongraph', [
+    function(x) {
+        var val = 0;
+        var n = Math.round(s3.Value());
+        var z = 1;
+        for(var k=0; k<=n; k++) {
+            var f = board3.algebra.binomial(n,k);
+            val += z*f;
+            z *= x;
+        }
+        return val;
+    },
+-3, 3],{strokeColor: "#009900"});
+board3.unsuspendUpdate();
+</script>
+
 </body>
 </html>

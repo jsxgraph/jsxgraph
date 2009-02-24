@@ -298,8 +298,8 @@ $<$script type="text/javascript"
 \metax{el.setProperty($\{$key1:value1,key2:value2,...$\}$);}{}
 
 \section{Available Elements}
-'board', 'circle', 'curve', 'glider', 'group', 
-'line', 'math functions', 'normal', 'point', 'polygon', 
+'circle', 'curve', 'glider', 'group', 
+'line', 'normal', 'point', 'polygon', 
 'slider', 'spline', 'tangent', 'turtle'
 
 \vskip6pt
@@ -466,9 +466,12 @@ Most of the methods have an abbreviated alternative version.
 \metax{highlightStrokeColor,labelColor:}{color string}
 \metax{strokeOpacity,fillOpacity,highlightFillOpacity,}{}
 \metax{highlightStrokeOpacity:}{value between 0 and 1}
-\metax{visible,trace,fixed,draft:}{true, false}
+\metax{visible,trace,draft:}{true, false}
 \metax{dash:}{dash style for lines: $0, 1, \ldots, 6$}
+
+{\sl Attributes for point elements:}\par
 \metax{style:}{point style: $0, 1, \ldots, 12$}
+\metax{fixed:}{true, false}
 
 {\sl Attributes for line elements:}\par
 \metax{straightFirst,straightLast,withTicks:}{true, false}
@@ -494,6 +497,7 @@ Additional mathematical functions are methods of {\tt JXG.Board}.
 \metax{board.root(f,x)}{root of the function $f$.}
 \metax{}{Uses Newton method with start value $x$}
 \metax{board.factorial(n)}{computes $n!=1\cdot 2\cdot 3\cdots n$}
+\metax{board.binomial(n,k)}{computes ${n\choose k}$}
 \metax{board.distance(arr1,arr2)}{Euclidean distance}
 \metax{board.lagrangePolynomial([p1,p2,...])}{}
 \metax{}{returns a polynomial through the given points}

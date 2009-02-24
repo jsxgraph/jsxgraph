@@ -55,21 +55,7 @@ JXG.Board.prototype.tan = Math.tan;
 JXG.Board.prototype.trunc = Math.ceil;
 
 JXG.Board.prototype.factorial = function(n){ return this.algebra.factorial(n); }
-
-/*
-JXG.Board.prototype.factorial = function(n){ 
-    if (n<0) { 
-        return NaN; 
-    } else {
-        var f = 1;
-        while (n>1) {
-            f *= n;
-            n--;
-        }
-        return f;
-    }
-};
-*/
+JXG.Board.prototype.binomial = function(n,k){ return this.algebra.binomial(n,k); }
 
 // Some shortcuts 
 JXG.Point.prototype.setPositionX = function (method, x) {
