@@ -84,7 +84,7 @@ function jsxgraphOutput($input, $args, &$parser) {
     $defaultBox = "jxgbox";
   }
   $outputDivId   = (isset($args['box']))   ? htmlspecialchars(strip_tags($args['box']))   : $defaultBox;
-  $outputBoardId = (isset($args['board'])) ? htmlspecialchars(strip_tags($args['board'])) : $defaultBoard';
+  $outputBoardId = (isset($args['board'])) ? htmlspecialchars(strip_tags($args['board'])) : $defaultBoard;
   $outputURI = (isset($args['codebase'])) ? htmlspecialchars(strip_tags($args['codebase'])) : 'http://jsxgraph.uni-bayreuth.de/distrib';
 
   // Load necessary stylesheet und scripts
