@@ -87,10 +87,20 @@ JXG.Ticks = function (line, ticks, multiplier, id, name) {
      */
     this.fixedTicks = null;
     
+    /**
+     * Aequidistant ticks. Distance is defined by ticksFunction
+     * @type bool
+     */
+    this.aequidistant = false;
+    
     if(JXG.IsFunction(ticks))
         this.ticksFunction = ticks;
-    else
+    else if(JXG.IsArray(ticks))
         this.fixedTicks = ticks;
+    else {
+        this.ticksFunction = function (i) { return ticks; };
+        this.aequidistant = true;
+    }
     
     /**
      * A string appended to any ticks label.
@@ -182,7 +192,9 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         
         var newTick = null;
         var lastTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-    
+        
+        var dist = 0;
+        
         //alert(ticksDelta + " : " + dx + " : " + total_length + " : " + deltaX + " : " + x + " : " + c1.usrCoords[1]);
 
         while( ((this.board.sgn(deltaX)*(x-deltaX) >= this.board.sgn(deltaX)*c1.usrCoords[1]) && (this.board.sgn(deltaY)*(y-deltaY) >= this.board.sgn(deltaY)*c1.usrCoords[2])) ) {
@@ -191,8 +203,11 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 
             newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
             
-            var dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
-                       (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
+            if(!this.aequidistant || (dist == 0)) {
+              dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
+                     (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
+            }
+            
             if(  dist > this.minTicksDistance*this.minTicksDistance ) {
                 this.ticks.push(newTick);
                 this.labels.push(position + '' + this.multiplier);
@@ -228,6 +243,8 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         deltaY = (ticksDelta * dy) / (total_length);
         
         lastTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+        
+        dist = 0;
 
         while( ((this.board.sgn(deltaX)*(x-deltaX) >= this.board.sgn(deltaX)*c2.usrCoords[1]) && (this.board.sgn(deltaY)*(y-deltaY) >= this.board.sgn(deltaY)*c2.usrCoords[2])) ) {
             x = x - deltaX;
@@ -235,8 +252,11 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 
             newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
             
-            var dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
+            if(!this.aequidistant || (dist == 0)) {
+                dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
                        (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
+            }
+            
             if(  dist > this.minTicksDistance*this.minTicksDistance ) {
                 this.ticks.push(newTick);
                 this.labels.push(position + '' + this.multiplier);
@@ -342,7 +362,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 JXG.createTicks = function(board, parents, attributes) {
     var el;
     // Alles 3 Punkte?
-    if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.IsFunction(parents[1]) || JXG.IsArray(parents[1]))) {
+    if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.IsFunction(parents[1]) || JXG.IsArray(parents[1]) || JXG.IsNumber(parents[1]))) {
         el = new JXG.Ticks(parents[0], parents[1], attributes['multiplier'], attributes['id'], attributes['name']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
