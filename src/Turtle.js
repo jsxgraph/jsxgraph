@@ -218,7 +218,7 @@ JXG.Turtle.prototype.setProperty = function() {
             for (var key in pairRaw) {
                 this.setProperty([key,pairRaw[key]]);
             }
-            return;
+            return this;
         } else {                             // pairRaw consists of array [key,value]
             pair = pairRaw;
         }
