@@ -2,8 +2,9 @@
 /**
  * JSXGraph extension
  *
+ * @author Alfred Wassermann
  * @author Peter Wilfahrt
- * @version 0.2
+ * @version 0.3
  */
 
 /** Requirements:
@@ -25,9 +26,15 @@
  *        var brd = JXG.JSXGraph....();
  *      </jsxgraph>
  *
- * jsxgraph-params: width, height, filename, filestring or $input (between <jsxgraph>-tags), box (default: jxgbox), board (default: brd), codebase (default: http://jsxgraph.uni-bayreuth.de/distrib)
+ * jsxgraph-params:
+ *   width:    default: 500
+ *   height:   default: 400
+ *   filename, filestring or $input (between <jsxgraph>-tags) --> required
+ *   box:      default: jxgbox
+ *   board:    default: brd
+ *   codebase: default: http://jsxgraph.uni-bayreuth.de/distrib
  */
-$jsxgraph_version = "0.2";
+$jsxgraph_version = "0.3";
 
 if(!defined('MEDIAWIKI')) {
   echo("This is an extension to the MediaWiki package and cannot be run standalone.\n");
@@ -45,7 +52,7 @@ if ( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
  
 $wgExtensionCredits['parserhook'][] = array(
   'name'        => 'JSXGraph MediaWiki Plugin',
-  'author'      => 'Peter Wilfahrt',
+  'author'      => 'Alfred Wassermann, Peter Wilfahrt',
   'url'         => 'http://www.jsxgraph.org/',
   'description' => 'Add [http://www.jsxgraph.org JSXGraph] to MediaWiki pages.',
   'version'     => $jsxgraph_version
@@ -67,12 +74,9 @@ function jsxgraphOutput($input, $args, &$parser) {
   $CRLF = "\r\n";
 
   // Look for required parameters
-  if( !isset($args['width'])     ||
-      !isset($args['height'])    ||
-      !(isset($args['filename']) || isset($args['filestring']) || isset($input))
-    ) {
-      $error_message = "Missing parameter (width or height, filename, string or input).";
-    }
+  if( !(isset($args['filename']) || isset($args['filestring']) || isset($input)) ) {
+    $error_message = "Missing parameter (width or height, filename, string or input).";
+  }
   $output  = "<!-- JSXGraph MediaWiki extension " . $jsxgraph_version . " -->";
   
   $markercount = count($markerList);
@@ -83,9 +87,11 @@ function jsxgraphOutput($input, $args, &$parser) {
     $defaultBoard = "brd";
     $defaultBox = "jxgbox";
   }
-  $outputDivId   = (isset($args['box']))   ? htmlspecialchars(strip_tags($args['box']))   : $defaultBox;
-  $outputBoardId = (isset($args['board'])) ? htmlspecialchars(strip_tags($args['board'])) : $defaultBoard;
-  $outputURI = (isset($args['codebase'])) ? htmlspecialchars(strip_tags($args['codebase'])) : 'http://jsxgraph.uni-bayreuth.de/distrib';
+  $outputDivId   = (isset($args['box']))      ? htmlspecialchars(strip_tags($args['box']))      : $defaultBox;
+  $outputBoardId = (isset($args['board']))    ? htmlspecialchars(strip_tags($args['board']))    : $defaultBoard;
+  $outputURI     = (isset($args['codebase'])) ? htmlspecialchars(strip_tags($args['codebase'])) : 'http://jsxgraph.uni-bayreuth.de/distrib';
+  $width         = (isset($args['width']))    ? htmlspecialchars(strip_tags($args['width']))    : 500;
+  $height        = (isset($args['height']))   ? htmlspecialchars(strip_tags($args['height']))   : 400;
 
   // Load necessary stylesheet und scripts
   if ($markercount==0) {
@@ -94,11 +100,8 @@ function jsxgraphOutput($input, $args, &$parser) {
     $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
   }
   // Output div
-  $output .= "<div id='". $outputDivId ."' class='jxgbox' style='width:"
-               . htmlspecialchars(strip_tags($args['width'])) .
-             "px; height:"
-               . htmlspecialchars(strip_tags($args['height'])) .
-             "px;'></div>";
+  $output .= "<div id='". $outputDivId ."' class='jxgbox' style='width:". $width ."px; height:". $height ."px;'></div>";
+  $output .= "<script type='text/javascript'>";
 
   // construction input method
   if(isset($args['filename'])) { // string of url to gxt-file
@@ -110,18 +113,15 @@ function jsxgraphOutput($input, $args, &$parser) {
     } else {
       $gxtURL = $wgServer . $gxtFile->getURL();
     }
-    $output .= "<script type='text/javascript'>";
     $output .= "  var " . $outputBoardId ." = JXG.JSXGraph.loadBoardFromFile('" . $outputDivId."', '". $gxtURL ."', 'Geonext');";
-    $output .= "</script>";
   }
   if(isset($args['filestring'])) { // binary content of gxt-file
-    $output .= "<script type='text/javascript'>";
     $output .= "  var ".$outputBoardId ." = JXG.JSXGraph.loadBoardFromString('".$outputDivId."', '". htmlspecialchars(strip_tags($args['filestring'])) ."', 'Geonext');";
-    $output .= "</script>";
   }
   if(isset($input)) { // content between <jsxgraph>-tags
-    $output .= "<script type='text/javascript'>".$input."</script>";
+    $output .= $input;
   }
+  $output .= "</script>";
 
   // if error occured, discard and output error message
   if ($error_message != "no error") {
