@@ -69,7 +69,7 @@ JXG.Point = function (board, coordinates, id, name, show) {
     }
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
     this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
-
+    
     /**
      * Descriptive character, displayed next to the point
      * @type Label

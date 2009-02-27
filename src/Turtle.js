@@ -84,8 +84,9 @@ JXG.Turtle.prototype.init = function() {
             {fixed:true,name:' ',visible:false});
     this.objects.push(this.turtle2);
     
+    var w = this.attributes.strokeWidth || this.attributes.strokewidth || 2;  // Attention; should be moved to Options.js
     this.arrow = this.board.createElement('line',[this.turtle,this.turtle2],
-            {lastArrow:true,strokeColor:'#ff0000',straightFirst:false,straightLast:false});
+            {lastArrow:true,strokeColor:'#ff0000',straightFirst:false,straightLast:false,strokeWidth:w});
     this.objects.push(this.arrow);
     
     this.board.update();

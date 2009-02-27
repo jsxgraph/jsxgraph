@@ -242,7 +242,8 @@ this.readGeonext = function(tree,board) {
     JXG.JSXGraph.boards[board.id] = board;
     board.initGeonextBoard();
     // Update of properties during update() is not necessary in GEONExT files
-    board.renderer.enhancedRendering = false;
+    // But it maybe necessary if we construct with JavaScript afterwards
+    board.renderer.enhancedRendering = true;
 
     JXG.GeonextReader.parseImage(board,boardData.getElementsByTagName('file')[0],'images'); // Background image
 

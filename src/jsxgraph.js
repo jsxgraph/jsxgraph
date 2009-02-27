@@ -73,7 +73,7 @@ JXG.JSXGraph = new function (forceRenderer) {
             //    this.rendererType = 'silverlight';
             //else
                 this.rendererType = 'vml';
-                function MouseMove(e) {
+                function MouseMove(e) { //Magic!
                   document.body.scrollLeft;
                   document.body.scrollTop;
                 }
@@ -153,14 +153,10 @@ JXG.JSXGraph = new function (forceRenderer) {
         //var dimensions = document.getElementById(box).getDimensions();
         var dimensions = JXG.getDimensions(box);
 
-    
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
         var board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
-
         board.beforeLoad();
-
         JXG.FileReader.parseFileContent(file, board, format);
-
         this.boards[board.id] = board;
         return board;
     }
