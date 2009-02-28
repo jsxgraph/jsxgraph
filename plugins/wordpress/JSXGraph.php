@@ -5,6 +5,7 @@
  * get around wordpress content char filter
  * make downloadable package with styles/scripts
  * publish on wordpress.org
+ * create an insert button with all parameters
 */
 
 function jsxgraph_head() {

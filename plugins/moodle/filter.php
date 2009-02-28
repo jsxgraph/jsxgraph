@@ -5,6 +5,7 @@
  * return text around tags after parsing (the text before and after)
  * make downloadable package with styles/scripts
  * publish on moodle.org
+ * create an insert button with all parameters
 */
 
 function jsxgraph_filter($courseid, $text) {
