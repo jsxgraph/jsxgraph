@@ -17,7 +17,7 @@ function jsxgraph_filter($courseid, $text) {
     for($i = 0; $i < $count; $i++) {
       $start = strpos($text, '<jsxgraph');
       $end = (is_int(strpos($text, '</jsxgraph>', $start))) ? strpos($text, '</jsxgraph>', $start)+11 : strpos($text, '/>', $start)+2;
-      $jxg = substr($text, $start, $end-$start);
+      $jxg = substr($text, $start+10, $end-$start-21);
 
       // parse parameters of construction
       $input = split(">", $jxg); // fix for javascript construction input
@@ -46,13 +46,13 @@ function jsxgraph_filter($courseid, $text) {
 
       // construction by filename
       if(isset($params['filename'])) {
-        $gxtBinary = htmlspecialchars(strip_tags($params['filename']));
-        $gxtFile = Image::newFromName($gxtBinary);
-        if (!($gxtFile->exists() )) {
-          $error_message = "File " . $gxtFile . " not found.";
-        } else {
-          $gxtURL = $CFG->wwwroot . $gxtFile->getURL();
-        }
+        // $gxtBinary = htmlspecialchars(strip_tags($params['filename']));
+        // $gxtFile = Image::newFromName($gxtBinary);
+        // if (!($gxtFile->exists() )) {
+        //   $error_message = "File " . $gxtFile . " not found.";
+        // } else {
+        //   $gxtURL = $CFG->wwwroot . $gxtFile->getURL();
+        // }
         $output .= "  var ". $outputBoardId ." = JXG.JSXGraph.loadBoardFromFile('". $outputDivId ."', '". $gxtURL ."', 'Geonext');";
       }
       // construction by filestring
