@@ -532,6 +532,14 @@ JXG.GeometryElement.prototype.setProperty = function () {
             case 'fontsize':
                 this.visProp['fontSize'] = pair[1];
                 break;
+            case 'insertticks':
+                if(this.type == JXG.OBJECT_TYPE_TICKS) {
+                    this.insertTicks = true;
+                    if(pair[1] == 'false' || pair[1] == false) {
+                        this.insertTicks = false;
+                    }
+                }
+                break;
         }
     }
 };

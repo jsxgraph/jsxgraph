@@ -115,6 +115,24 @@ JXG.Ticks = function (line, ticks, multiplier, id, name) {
     this.minTicksDistance = 10;
     
     /**
+     * Maximum distance between two ticks, measured in pixels. Is used only when insertTicks
+     * is set to true.
+     * @type int
+     * @see #insertTicks
+     */
+    this.maxTicksDistance = Math.floor(this.board.unitX + this.board.unitY);
+    
+    /**
+     * When the distance between two ticks is too big we could insert new ticks. If insertTicks
+     * is <tt>true</tt>, we'll do so, otherwise we leave the distance as is.
+     * This option is ignored if aequidistant is false.
+     * @type bool
+     * @see #aequidistant
+     * @see #maxTicksDistance
+     */
+    this.insertTicks = false;
+    
+    /**
      * Draw the zero tick, that lies at line.point1?
      * @type bool
      */
@@ -158,9 +176,14 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     // now let the renderer calculate start and end point of the line on the board, i.e.
     // intersection points of line with the boards edges in the case that the line is a straight.
     this.board.renderer.calcStraight(this.line, c1, c2);
+    
+    // point1 is our reference point (where zero lies on the axis)
     var p1 = this.line.point1.coords;
 
+    // initialise storage arrays
+    // ticks stores the ticks coordinates
     this.ticks = new Array();
+    // labels stores the text to display beside the ticks
     this.labels = new Array();
 
     if(this.ticksFunction != null) {
@@ -170,10 +193,13 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         // distance between start and end points
         var dx = p1.usrCoords[1]-c1.usrCoords[1]; // delta x
         var dy = p1.usrCoords[2]-c1.usrCoords[2]; // delta y
-    
+
+        // the current distance between two ticks
         var ticksDelta = 0;
+        // the length of the axis between c1 and p1
         var total_length = Math.sqrt(dx*dx + dy*dy);
-    
+
+        // x and y store the coordinates of the current tick to add
         var x = p1.usrCoords[1];
         var y = p1.usrCoords[2];
     
@@ -183,43 +209,83 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
             this.labels.push('0');
         }
 
+        // i is the amount of ticks drawn until now.
         var i = -1;
         ticksDelta = Math.abs(this.ticksFunction(i));
+        // position is the current position on the axis
         var position = -ticksDelta;
 
+        // this calculates the difference between the last and the current tick in
+        // x and y direction in user coordinates
         var deltaX = (ticksDelta * dx) / (total_length);
         var deltaY = (ticksDelta * dy) / (total_length);
         
+        // reference to the newly added tick coordinates object
         var newTick = null;
+        // reference to the last added tick coordinates object
         var lastTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
         
+        // the current distance between two ticks in SCREEN coordinates
+        // this is used to omit ticks, if they are too close to each other
+        // and to add new ticks, if they are too far away from each other.
         var dist = 0;
-        
-        //alert(ticksDelta + " : " + dx + " : " + total_length + " : " + deltaX + " : " + x + " : " + c1.usrCoords[1]);
 
+        // loop abort criteria is:
+        // our next tick is completely out of sight.
         while( ((this.board.sgn(deltaX)*(x-deltaX) >= this.board.sgn(deltaX)*c1.usrCoords[1]) && (this.board.sgn(deltaY)*(y-deltaY) >= this.board.sgn(deltaY)*c1.usrCoords[2])) ) {
+            // calculate the new ticks coordinates
             x = x - deltaX;
             y = y - deltaY;
 
+            // and put them into a coords object
             newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
             
+            // we need to calculate the distance. if we're in aequidistant mode, we only need
+            // to calculate it once, otherwise on every walk through the loop.
             if(!this.aequidistant || (dist == 0)) {
-              dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
-                     (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
+                dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
+                       (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
             }
             
+            // if we're in aequidistant mode and want to insert additional ticks automatically, whenever
+            // the distance between two ticks is too big, we need to calculate the new deltaX and deltaY.
+            if(this.insertTicks && this.aequidistant && (dist > this.maxTicksDistance*this.maxTicksDistance)) {
+                // dist is indeed the distance squared. repeat this, until we fall below the maxTicksDistance limit
+                while (dist > this.maxTicksDistance*this.maxTicksDistance) {
+                    // half the distance
+                    deltaX = deltaX/2;
+                    deltaY = deltaY/2;
+                    // move back towards the zeropoint
+                    x = x + deltaX;
+                    y = y + deltaY;
+                    
+                    // recalculate newTick coordinates and distance
+                    newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+                    dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
+                           (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
+                }
+            }
+            
+            // if we're not below the minimum distance between two ticks, add the tick to our list
             if(  dist > this.minTicksDistance*this.minTicksDistance ) {
                 this.ticks.push(newTick);
                 this.labels.push(position + '' + this.multiplier);
                 lastTick = newTick;
             }
 
-            i = i-1;
-            ticksDelta = Math.abs(this.ticksFunction(i));
+            // if not aequidistant, calculate the distance to the next tick
+            if(!this.aequidistant) {
+                i = i-1;
+                ticksDelta = Math.abs(this.ticksFunction(i));
+            }
+            // calculate the ticks label text data
             position = position - ticksDelta;
 
-            deltaX = (ticksDelta * dx) / (total_length);
-            deltaY = (ticksDelta * dy) / (total_length);
+            // recalculate new delta* only if needed
+            if(!this.aequidistant) {
+                deltaX = (ticksDelta * dx) / (total_length);
+                deltaY = (ticksDelta * dy) / (total_length);
+            }
         }
 
 
@@ -235,6 +301,8 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         x = p1.usrCoords[1];
         y = p1.usrCoords[2];
 
+        // code below is mostly the same as above. in here we only increase i and position instead of
+        // decreasing them
         i = 1;
         ticksDelta = Math.abs(this.ticksFunction(i));
         position = ticksDelta;
@@ -257,18 +325,35 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                        (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
             }
             
+            if(this.insertTicks && this.aequidistant && (dist > this.maxTicksDistance*this.maxTicksDistance)) {
+                while (dist > this.maxTicksDistance*this.maxTicksDistance) {
+                    deltaX = deltaX/2;
+                    deltaY = deltaY/2;
+                    x = x + deltaX;
+                    y = y + deltaY;
+                    
+                    newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+                    dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
+                           (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
+                }
+            }
+            
             if(  dist > this.minTicksDistance*this.minTicksDistance ) {
                 this.ticks.push(newTick);
                 this.labels.push(position + '' + this.multiplier);
                 lastTick = newTick;
             }
 
-            i = i+1;
-            ticksDelta = Math.abs(this.ticksFunction(i));
+            if(!this.aequidistant) {
+                i = i+1;
+                ticksDelta = Math.abs(this.ticksFunction(i));
+            }
             position = position + ticksDelta;
 
-            deltaX = (ticksDelta * dx) / (total_length);
-            deltaY = (ticksDelta * dy) / (total_length);
+            if(!this.aequidistant) {
+                deltaX = (ticksDelta * dx) / (total_length);
+                deltaY = (ticksDelta * dy) / (total_length);
+            }
         }
     } else {
         // we have an array of fixed ticks we have to draw
@@ -347,7 +432,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 };
 
 /**
- * Creates a new arc.
+ * Creates new ticks.
  * @param {JXG.Board} board The board the ticks are put on.
  * @param {Array} parents Array containing a line and an array of positions, where ticks should be put on that line or
  *   a function that calculates the distance based on the ticks number that is given as a parameter. E.g.:<br />
@@ -356,16 +441,14 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
  *   <tt>}</tt><br />
  *   for ticks with distance 2 between each tick.
  * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
- * @type JXG.Arc
- * @return Reference to the created arc object.
+ * @type JXG.Ticks
+ * @return Reference to the created ticks object.
  */
 JXG.createTicks = function(board, parents, attributes) {
     var el;
-    // Alles 3 Punkte?
     if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.IsFunction(parents[1]) || JXG.IsArray(parents[1]) || JXG.IsNumber(parents[1]))) {
         el = new JXG.Ticks(parents[0], parents[1], attributes['multiplier'], attributes['id'], attributes['name']);
-    } // Ansonsten eine fette Exception um die Ohren hauen
-    else
+    } else
         throw ("Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
 
     return el;

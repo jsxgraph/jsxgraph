@@ -776,7 +776,7 @@ JXG.createAxis = function(board, parents, attributes) {
         var el = board.createElement('line', [point1, point2], attributes);
         el.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
 //        var defTicks = board.createElement('ticks', [el, function(i) { return 1; }]);
-        var defTicks = board.createElement('ticks', [el, 1]);
+        var defTicks = board.createElement('ticks', [el, 1], {insertTicks: true});
 
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
