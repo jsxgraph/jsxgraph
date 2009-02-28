@@ -3,6 +3,8 @@
 /* TODO:
  * working method for default boards, especially if there's > 1
  * return text around tags after parsing (the text before and after)
+ * make downloadable package with styles/scripts
+ * publish on moodle.org
 */
 
 function jsxgraph_filter($courseid, $text) {
