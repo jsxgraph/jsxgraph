@@ -46,13 +46,13 @@ function jsxgraph_filter($courseid, $text) {
 
       // construction by filename
       if(isset($params['filename'])) {
-        // $gxtBinary = htmlspecialchars(strip_tags($params['filename']));
-        // $gxtFile = Image::newFromName($gxtBinary);
-        // if (!($gxtFile->exists() )) {
-        //   $error_message = "File " . $gxtFile . " not found.";
-        // } else {
-        //   $gxtURL = $CFG->wwwroot . $gxtFile->getURL();
-        // }
+        $gxtBinary = htmlspecialchars(strip_tags($params['filename']));
+        $gxtFile = Image::newFromName($gxtBinary);
+        if (!($gxtFile->exists() )) {
+          $error_message = "File " . $gxtFile . " not found.";
+        } else {
+          $gxtURL = $CFG->wwwroot . $gxtFile->getURL();
+        }
         $output .= "  var ". $outputBoardId ." = JXG.JSXGraph.loadBoardFromFile('". $outputDivId ."', '". $gxtURL ."', 'Geonext');";
       }
       // construction by filestring
