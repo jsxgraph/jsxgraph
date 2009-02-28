@@ -26,9 +26,7 @@ function jsxgraph_filter($courseid, $text) {
       $input[0] = str_replace(' ', '&', $input[0]);
       parse_str($input[0], $params);
 
-      // defaults need to be changed if there's more than one box
       $outputDivId   = (isset($params['box']))      ? htmlspecialchars(strip_tags($params['box']))      : 'box'.$i;
-      // defaults need to be changed if there's more than one board
       $outputBoardId = (isset($params['board']))    ? htmlspecialchars(strip_tags($params['board']))    : 'board'.$i;
       $outputURI     = (isset($params['codebase'])) ? htmlspecialchars(strip_tags($params['codebase'])) : 'http://jsxgraph.uni-bayreuth.de/distrib';
       $width         = (isset($params['width']))    ? htmlspecialchars(strip_tags($params['width']))    : 500;
@@ -42,19 +40,19 @@ function jsxgraph_filter($courseid, $text) {
         $head .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
       }
 
-      // Output div
+      // output div
       $output  = "<div id='". $outputDivId ."' class='jxgbox' style='width:". $width ."px; height:". $height ."px;'></div>";
       $output .= "<script type='text/javascript'>";
 
       // construction by filename
       if(isset($params['filename'])) {
-        // $gxtBinary = htmlspecialchars(strip_tags($params['filename']));
-        // $gxtFile = Image::newFromName($gxtBinary);
-        // if (!($gxtFile->exists() )) {
-        //   $error_message = "File " . $gxtFile . " not found.";
-        // } else {
-        //   $gxtURL = $CFG->wwwroot . $gxtFile->getURL();
-        // }
+        $gxtBinary = htmlspecialchars(strip_tags($params['filename']));
+        $gxtFile = Image::newFromName($gxtBinary);
+        if (!($gxtFile->exists() )) {
+          $error_message = "File " . $gxtFile . " not found.";
+        } else {
+          $gxtURL = $CFG->wwwroot . $gxtFile->getURL();
+        }
         $output .= "  var ". $outputBoardId ." = JXG.JSXGraph.loadBoardFromFile('". $outputDivId ."', '". $gxtURL ."', 'Geonext');";
       }
       // construction by filestring
