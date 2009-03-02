@@ -23,7 +23,7 @@ function jsxgraph_head() {
   } else if (file_exists(get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css')) {
 	$css_url = get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css';
   }
-  echo "\n<link rel='stylesheet' href='$css_url' type='text/css' media='screen' />\n";
+  echo "\n<link rel='stylesheet' type='text/css' href='$css_url' media='screen' />\n";
 
   // prototype
   $prototype_url = "http://jsxgraph.uni-bayreuth.de/distrib/prototype.js";
@@ -32,7 +32,7 @@ function jsxgraph_head() {
   } else if (file_exists(get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/prototype.js")) {
     $prototype_url = get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/prototype.js";
   }
-  echo "<script src='$prototype_url' type='text/javascript'></script>\n";
+  echo "<script type='text/javascript' src='$prototype_url'></script>\n";
 
   // jsxgraph core
   $core_url = "http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js";
@@ -41,7 +41,7 @@ function jsxgraph_head() {
   } else if (file_exists(get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/jsxgraphcore.js")) {
     $core_url = get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/jsxgraphcore.js";
   }
-  echo "<script src='$core_url' type='text/javascript'></script>\n";
+  echo "<script type='text/javascript' src='$core_url'></script>\n";
 }
 
 function jsxgraph_filter($text) {
@@ -92,7 +92,7 @@ function jsxgraph_filter($text) {
       }
       // construction by $input
       else {
-        $output .= $input[1];
+        $output .= html_entity_decode(htmlspecialchars_decode($input[1]));
       }
       $output .= "</script>";
 
