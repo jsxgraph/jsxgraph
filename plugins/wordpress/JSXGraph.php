@@ -92,7 +92,7 @@ function jsxgraph_filter($text) {
       }
       // construction by $input
       else {
-        $output .= html_entity_decode(htmlspecialchars_decode($input[1]));
+        $output .= $input[1];
       }
       $output .= "</script>";
 
