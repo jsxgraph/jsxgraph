@@ -63,11 +63,14 @@ JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     this.appendChildPrimitive(node,'images');
 };
 
-JXG.VMLRenderer.prototype.updateTicks = function(axis,dx,dy) {
+JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     var tickArr = [];
     for (var i=0; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
-        tickArr.push(' m ' + Math.round(c.scrCoords[1]+dx) + ', ' + Math.round(c.scrCoords[2]-dy) + ' l ' + Math.round(c.scrCoords[1]-dx) + ', ' + Math.round(c.scrCoords[2]+dy)+' ');
+        if(c.major)
+            tickArr.push(' m ' + Math.round(c.scrCoords[1]+dxMaj) + ', ' + Math.round(c.scrCoords[2]-dyMaj) + ' l ' + Math.round(c.scrCoords[1]-dxMaj) + ', ' + Math.round(c.scrCoords[2]+dyMaj)+' ');
+        else
+            tickArr.push(' m ' + Math.round(c.scrCoords[1]+dxMin) + ', ' + Math.round(c.scrCoords[2]-dyMin) + ' l ' + Math.round(c.scrCoords[1]-dxMin) + ', ' + Math.round(c.scrCoords[2]+dyMin)+' ');
     }
 
     var ticks = document.getElementById(axis.id + '_ticks');

@@ -16,7 +16,7 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25, axis: false, grid: true});
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25, axis: false, grid: false});
         xax = board.createElement('axis', [[0,0],[1,0]], {strokeColor: '#ff0000', strokeWidth: 1});
         yax = board.createElement('axis', [[0,0],[0,1]]);
 
@@ -48,7 +48,7 @@
 
 //        c = board.createElement('centroid', [p1, p2, p3], {name:'C_{1}', trace:true});
 
-          st = board.createElement('ticks', [xax, [2.5, 4.25]], {strokeColor:'#00ff00'});
+//          st = board.createElement('ticks', [xax, [2.5, 4.25]], {strokeColor:'#00ff00'});
 
 //    var o = new JXG.Options();
 //    o.loadFromFile('options_example.json', true, board);

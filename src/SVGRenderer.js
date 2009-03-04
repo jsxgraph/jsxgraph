@@ -84,11 +84,14 @@ JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
     this.appendChildPrimitive(node,'images');
 };
 
-JXG.SVGRenderer.prototype.updateTicks = function(axis,dx,dy) {
+JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     var tickStr = "";
     for (var i=0; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
-        tickStr += "M" + (c.scrCoords[1]+dx) + " " + (c.scrCoords[2]-dy) + " L" + (c.scrCoords[1]-dx) + " " + (c.scrCoords[2]+dy) + " ";
+        if(c.major)
+            tickStr += "M" + (c.scrCoords[1]+dxMaj) + " " + (c.scrCoords[2]-dyMaj) + " L" + (c.scrCoords[1]-dxMaj) + " " + (c.scrCoords[2]+dyMaj) + " ";
+        else
+            tickStr += "M" + (c.scrCoords[1]+dxMin) + " " + (c.scrCoords[2]-dyMin) + " L" + (c.scrCoords[1]-dxMin) + " " + (c.scrCoords[2]+dyMin) + " ";
     }
 
     var ticks = document.getElementById(axis.id);
