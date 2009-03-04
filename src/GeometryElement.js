@@ -538,7 +538,15 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     if(pair[1] == 'false' || pair[1] == false) {
                         this.insertTicks = false;
                     }
+                    this.calculateTicksCoordinates();
                 }
+                break;
+            case 'majorticks':
+                if(this.type == JXG.OBJECT_TYPE_TICKS) {
+                    if((pair[1] != null) && (pair[1] > 0))
+                        this.majorTicks = pair[1];
+                    this.calculateTicksCoordinates();
+                }                
                 break;
         }
     }

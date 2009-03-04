@@ -88,8 +88,10 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     var tickStr = "";
     for (var i=0; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
-        if(c.major)
+        if(c.major) {
+            this.drawLabel(axis.labels[i]);
             tickStr += "M" + (c.scrCoords[1]+dxMaj) + " " + (c.scrCoords[2]-dyMaj) + " L" + (c.scrCoords[1]-dxMaj) + " " + (c.scrCoords[2]+dyMaj) + " ";
+        }
         else
             tickStr += "M" + (c.scrCoords[1]+dxMin) + " " + (c.scrCoords[2]-dyMin) + " L" + (c.scrCoords[1]-dxMin) + " " + (c.scrCoords[2]+dyMin) + " ";
     }

@@ -67,8 +67,10 @@ JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     var tickArr = [];
     for (var i=0; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
-        if(c.major)
+        if(c.major) {
+            this.drawLabel(axis.labels[i]);
             tickArr.push(' m ' + Math.round(c.scrCoords[1]+dxMaj) + ', ' + Math.round(c.scrCoords[2]-dyMaj) + ' l ' + Math.round(c.scrCoords[1]-dxMaj) + ', ' + Math.round(c.scrCoords[2]+dyMaj)+' ');
+        }
         else
             tickArr.push(' m ' + Math.round(c.scrCoords[1]+dxMin) + ', ' + Math.round(c.scrCoords[2]-dyMin) + ' l ' + Math.round(c.scrCoords[1]-dxMin) + ', ' + Math.round(c.scrCoords[2]+dyMin)+' ');
     }
