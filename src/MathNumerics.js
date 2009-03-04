@@ -284,12 +284,12 @@ JXG.Math.Numerics.splineDef = function(x, y) {
 
 /**
  * Evaluate points on spline.
- * @param {float/Array} x0 A single float value or an array of values to evaluate
+ * @param {float,Array} x0 A single float value or an array of values to evaluate
  * @param {JXG.Math.Vector} x x values of knots
  * @param {JXG.Math.Vector} y y values of knots
  * @param {JXG.Math.Vector} F Second derivatives at knots, calculated by #splineDef
  * @see splineDef
- * @type float/Array
+ * @type float,Array
  * @return A single value
  */
 JXG.Math.Numerics.splineEval = function(x0, x, y, F) {

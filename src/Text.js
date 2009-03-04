@@ -64,7 +64,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
 
     /**
      * Coordinates of the text.
-     * @type Coords
+     * @type JXG.Coords
      */
     if ((this.element = this.board.objects[element])){
         var anchor = this.element.getTextAnchor();

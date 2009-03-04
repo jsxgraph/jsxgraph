@@ -105,7 +105,7 @@ JXG.Group.prototype.ungroup = function() {
 
 /**
  * Sends an update to all group members.
- * @param {Point} point The point that caused the update.
+ * @param {JXG.Point} point The point that caused the update.
  */
 JXG.Group.prototype.update = function(point) {
     var obj = null;
@@ -130,7 +130,7 @@ JXG.Group.prototype.update = function(point) {
 
 /**
  * Adds an Point to this group.
- * @param {Point} object The object added to the group.
+ * @param {JXG.Point} object The object added to the group.
  */
 JXG.Group.prototype.addPoint = function(object) {
     this.objects[object.id] = object;
@@ -147,7 +147,7 @@ JXG.Group.prototype.addPoints = function(objects) {
 
 /**
  * Adds an Pint to this group.
- * @param {Point} object The object added to the group.
+ * @param {JXG.Point} object The object added to the group.
  */
 JXG.Group.prototype.addGroup = function(group) {
     for(var el in group.objects) {

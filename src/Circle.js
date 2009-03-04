@@ -39,15 +39,15 @@
  * It stores all properties required
  * to move, draw a circle.
  * @constructor
- * @param {String,Board} board The board the new circle is drawn on.
+ * @param {String,JXG.Board} board The board the new circle is drawn on.
  * @param {String} method Can be 
  * <ul><li> <b>'twoPoints'</b> which means the circle is defined by its midpoint and a point on the circle.</li>
 //  * <li><b>'pointRadius'</b> which means the circle is defined by its midpoint and its radius in user units</li>
  * <li><b>'pointLine'</b> which means the circle is defined by its midpoint and its radius given by the distance from the startpoint and the endpoint of the line</li>
  * <li><b>'pointCircle'</b> which means the circle is defined by its midpoint and its radius given by the radius of another circle</li></ul>
  * The parameters p1, p2 and radius must be set according to this method parameter.
- * @param {Point} p1 Midpoint of the circle.
- * @param {Point/Line/Circle} p2 Can be
+ * @param {JXG.Point} p1 Midpoint of the circle.
+ * @param {JXG.Point,JXG.Line,JXG.Circle} p2 Can be
  *<ul><li>a point on the circle if method is 'twoPoints'</li>
  <li>a line if the method is 'pointLine'</li>
  <li>a circle if the method is 'pointCircle'</li></ul>
@@ -90,7 +90,7 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
     
     /**
      * The circles midpoint.
-     * @type Point
+     * @type JXG.Point
      */    
     this.midpoint = JXG.GetReferenceFromParameter(this.board, par1); 
     this.midpoint.addChild(this);
@@ -104,28 +104,28 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
     
     /** Point on the circle
      * only set if method is 'twoPoints'
-     * @type Point
+     * @type JXG.Point
      * @see #method
      */
     this.point2 = null;
     
     /** Radius of the circle
      * only set if method is 'pointRadius'
-     * @type Point
+     * @type JXG.Point
      * @see #method     
      */    
     this.radius = 0;
     
     /** Line defining the radius of the circle given by the distance from the startpoint and the endpoint of the line
      * only set if method is 'pointLine'
-     * @type Line
+     * @type JXG.Line
      * @see #method     
      */    
     this.line = null;
     
     /** Circle defining the radius of the circle given by the radius of the other circle
      * only set if method is 'pointLine'
-     * @type Circle
+     * @type JXG.Circle
      * @see #method     
      */     
     this.circle = null;

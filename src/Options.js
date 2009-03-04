@@ -24,8 +24,8 @@
 */
 /**
  * Constructs a new Options object.
- * @class These are the standard options of the board and
- * all of the geometry elements
+ * @class These are the default options of the board and
+ * of all geometry elements.
  * @constructor
  */
 JXG.Options = function() {
@@ -93,8 +93,6 @@ JXG.Options = function() {
     this.line.highlightStrokeColor = this.elements.color.highlightStrokeColor;
     /* line ticks options */
     this.line.ticks = new Object();
-    this.line.ticks.withTicks = false;
-    this.line.ticks.ticksDelta = 1;
     this.line.ticks.minTicksDistance = 10;
     this.line.ticks.minorHeight = 8;
     this.line.ticks.majorHeight = 14;
@@ -155,6 +153,10 @@ JXG.Options = function() {
 
 }
 
+/**
+ * Apply the options stored in this object to all objects on the given board.
+ * @param {JXG.Board} board The board to which objects the options will be applied.
+ */
 JXG.Options.prototype.useStandardOptions = function(board) {
     var boardHadGrid = board.hasGrid;
     board.hasGrid = this.grid.hasGrid;
@@ -179,6 +181,12 @@ JXG.Options.prototype.useStandardOptions = function(board) {
             board.objects[el].visProp['highlightFillColor'] = this.line.highlightFillColor;
             board.objects[el].visProp['strokeColor'] = this.line.strokeColor;
             board.objects[el].visProp['highlightStrokeColor'] = this.line.highlightStrokeColor;
+            for(var t in board.objects[el].ticks) {
+                t.majorTicks = this.line.ticks.majorTicks;
+                t.minTicksDistance = this.line.ticks.minTicksDistance;
+                t.minorHeight = this.line.ticks.minorHeight;
+                t.majorHeight = this.line.ticks.majorHeight;
+            }
         }
         else if(board.objects[el].type == JXG.OBJECT_TYPE_CIRCLE) {
             board.objects[el].visProp['fillColor'] = this.circle.fillColor;
@@ -229,6 +237,11 @@ JXG.Options.prototype.useStandardOptions = function(board) {
     }
 }
 
+/**
+ * Converts all color values to greyscale and calls useStandardOption to put them onto the board.
+ * @param {JXG.Board} board The board to which objects the options will be applied.
+ * @see #useStandardOptions
+ */
 JXG.Options.prototype.useBlackWhiteOptions = function(board) {
     this.point.fillColor = this.changeColorToBlackWhite(this.point.fillColor);
     this.point.highlightFillColor = this.changeColorToBlackWhite(this.point.highlightFillColor);
@@ -263,6 +276,12 @@ JXG.Options.prototype.useBlackWhiteOptions = function(board) {
     this.useStandardOptions(board);
 }
 
+/**
+ * Decolorizes the given color.
+ * @param {String} color HTML string containing the HTML color code.
+ * @type String
+ * @return Returns a HTML color string
+ */
 JXG.Options.prototype.changeColorToBlackWhite = function(color) {
     if(color == 'none') {
         return color;

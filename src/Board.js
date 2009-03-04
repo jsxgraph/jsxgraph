@@ -37,7 +37,7 @@
  * to manage a geonext board like adding geometric elements, removing them, managing
  * mouse over, drag & drop of geometric objects etc.
  * @constructor
- * @param {String/Object} container The id or reference of the html-element the board is drawn in.
+ * @param {String,Object} container The id or reference of the html-element the board is drawn in.
  * @param {JXG.AbstractRenderer} renderer The reference of a geonext renderer.
  * @param {String} id Unique identifier for the board, may be an empty string or null or even undefined.
  * @param {JXG.Coords} origin The coordinates where the origin is placed, in user coordinates.
@@ -431,7 +431,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
  * Generates unique name for the given object. The result depends on object.type, if the object is a point, just capital characters are used, if it is
  * a line just lower case characters. If object is of type Polygon, lower case prefixed with P_ is used and if it's of type circle, lower case characters
  * prefixed with k_ is used. In any other case, lower case chars prefixed with s_ is used.
- * @param {String/Object} object Reference or id or name of an geometry object that is to be named.
+ * @param {String,Object} object Reference or id or name of an geometry object that is to be named.
  * @return {String} Unique name for the object.
  */
 JXG.Board.prototype.generateName = function(object) {
@@ -535,9 +535,9 @@ JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
 
 /**
  * This method is called by the browser when the left mouse button is released.
- * @param {Evt} Event The browsers event object.
+ * @param {Event} Event The browsers event object.
  */
-JXG.Board.prototype.mouseUpListener = function (Evt) {
+JXG.Board.prototype.mouseUpListener = function (Event) {
     // redraw with high precision
     this.updateQuality = this.BOARD_QUALITY_HIGH;
     
@@ -621,14 +621,14 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
 
 /**
  * This method is called by the browser when the left mouse button is clicked.
- * @param {Event} Evt The browsers event object.
+ * @param {Event} Event The browsers event object.
  */
-JXG.Board.prototype.mouseMoveListener = function (Evt) {
+JXG.Board.prototype.mouseMoveListener = function (Event) {
     var el;
-    var cPos = this.getRelativeMouseCoordinates(Evt);
+    var cPos = this.getRelativeMouseCoordinates(Event);
 
     // position of mouse cursor relative to containers position of container
-    var absPos = JXG.getPosition(Evt);
+    var absPos = JXG.getPosition(Event);
     var x = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
     var y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
 
@@ -2168,7 +2168,7 @@ JXG.Board.prototype.showXML = function() {
 
 /** 
  * Sets for all objects the needsUpdate flag to "true".
- * @param {Object/String} drag Element that caused the update.
+ * @param {Object,String} drag Element that caused the update.
  */
 JXG.Board.prototype.prepareUpdate = function(drag) {
     for(var el in this.objects) {
@@ -2178,7 +2178,7 @@ JXG.Board.prototype.prepareUpdate = function(drag) {
 
 /**
   * Runs through all elements and calls their update() method.
-  * @param {Object/String} drag Element that caused the update.
+  * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.updateElements = function(drag) {
     drag = JXG.GetReferenceFromParameter(this, drag);
@@ -2200,7 +2200,7 @@ JXG.Board.prototype.updateElements = function(drag) {
 
 /**
   * Runs through all elements and calls their update() method.
-  * @param {Object/String} drag Element that caused the update.
+  * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.updateRenderer = function(drag) {
 /*  
@@ -2265,7 +2265,7 @@ JXG.Board.prototype.updateHooks = function() {
 /**
   * Runs through all elements and calls their
   * update() method and update thte conditions.
-  * @param {Object/String} drag Element that caused the update.
+  * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.update = function(drag) {
     if (this.isSuspendedUpdate) { return; }

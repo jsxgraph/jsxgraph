@@ -26,6 +26,10 @@
 /**
  @namespace Holds all JSXGraph objects, variables and functions.
 */
+
+/**
+ * JSXGraph namespace.
+ */
 var JXG = {};
 
 // Minified-Modus: ja, nein

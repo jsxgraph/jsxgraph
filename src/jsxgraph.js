@@ -93,7 +93,7 @@ JXG.JSXGraph = new function (forceRenderer) {
     /**
      * Initialise a new board.
      * @param {String} box Html-ID to the Html-element in which the board is painted.
-     * @return {Board} Reference to the created board.
+     * @return {JXG.Board} Reference to the created board.
      */
     this.initBoard = function (box, attributes) {
         // Create a new renderer
@@ -140,8 +140,8 @@ JXG.JSXGraph = new function (forceRenderer) {
      * Load a board from an uncompressed geonext file.
      * @param {String} box Html-ID to the Html-element in which the board is painted.
      * @param {String} file Url to the geonext-file. Must be uncompressed (.nc.gxt).
-     * @return {Board} Reference to the created board.
-     * @see GeonextReader
+     * @return {JXG.Board} Reference to the created board.
+     * @see JXG.GeonextReader
      */
     this.loadBoardFromFile = function (box, file, format) {
         var renderer;
@@ -236,8 +236,8 @@ JXG.JSXGraph = new function (forceRenderer) {
 /**
  * Parameter magic: object may be a string containing the name or id of the object or
  * even the object itself, this function gets a returns to the object. Order: id/object, name.
- * @param {String/Object} object String or reference to the object the reference is needed.
- * @param {Board} board Reference to the board the object belongs to.
+ * @param {String,Object} object String or reference to the object the reference is needed.
+ * @param {JXG.Board} board Reference to the board the object belongs to.
  * @return {Object} Reference to the object given in parameter object
  */
 JXG.GetReferenceFromParameter = function(board, object) {

@@ -769,8 +769,8 @@ JXG.AbstractRenderer.prototype.updateImage = function(el) {
 
 /**
  * Draws the grid.
+ * @param {JXG.Board} board Board on which the grid is drawn.
  * @see #removeGrid
- * @param {Board} board Board on which the grid is drawn.
  */
 JXG.AbstractRenderer.prototype.drawGrid = function(board) { 
     board.hasGrid = true;
@@ -867,8 +867,8 @@ JXG.AbstractRenderer.prototype.drawGrid = function(board) {
 
 /**
  * Removes the grid.
+ * @param {JXG.Board} board Board on which the grid is drawn.
  * @see #drawGrid
- * @param {Board} board Board on which the grid is drawn.
  */
 JXG.AbstractRenderer.prototype.removeGrid = function(board) { };
 
@@ -963,6 +963,7 @@ JXG.AbstractRenderer.prototype.setObjectFillColor = function(obj, color, opacity
 
 /*
 /**
+ * @private
  * Changes all properties of an object.
  * @param {Object} obj Reference of the object that wants new properties.
  */
@@ -1152,7 +1153,3 @@ JXG.AbstractRenderer.prototype.getPointSize = function(style) {
     }   
     return size;
 };
-
-/*
-JXG.AbstractRenderer.prototype.cloneSubTree = function(){};
-*/

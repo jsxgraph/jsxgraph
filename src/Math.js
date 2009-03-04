@@ -29,6 +29,9 @@
  * @author graphjs
  */
  
+ /**
+  * Math namespace.
+  */
 JXG.Math = new Object();
 
 /* Math constants */

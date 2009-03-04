@@ -40,13 +40,13 @@ JXG.COORDS_BY_SCREEN = 0x0002;
  * are defined here.
  * @param {int} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
  * @param {Array} coordinates An array of affine coordinates.
- * @param {AbstractRenderer} renderer A reference to a Renderer.
+ * @param {JXG.AbstractRenderer} renderer A reference to a Renderer.
  * @constructor
  */
 JXG.Coords = function (method, coordinates, board) {
     /**
      * Stores the board the object is used on.
-     * @type Board
+     * @type JXG.Board
      */
     this.board = board;
     
@@ -115,7 +115,7 @@ JXG.Coords.prototype.screen2usr = function() {
 /**
  * Calculate distance of one point to another.
  * @param {int} method The type of coordinates used here. Possible values are <b>COORDS_BY_USER</b> and <b>COORDS_BY_SCREEN</b>.
- * @param {Coords} coordinates The Coords object to which the distance is calculated.
+ * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
  */
 JXG.Coords.prototype.distance = function(method, coordinates) {
     var sum = 0;
