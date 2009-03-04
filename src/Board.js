@@ -425,6 +425,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    //Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
    JXG.addEvent(document,'mousedown', this.mouseDownListener, this);
    JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+   JXG.addEvent(document, 'keypress', this.keyPressListener, this);
 };
 
 /**
@@ -533,6 +534,20 @@ JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
     return cPos;
 };
 
+/**
+ * This method is called by the browser when a key is pressed.
+ * @param {Evt} Event The browsers event object.
+ */
+JXG.Board.prototype.keyPressListener = function (Evt) {
+    if(Evt.shiftKey) {
+        if (Evt.which==42||Evt.keyCode==42) {  // '+'
+            this.zoomIn();
+        } 
+        if (Evt.which==95||Evt.keyCode==95) {  // '-'
+            this.zoomOut();
+        }
+    }
+}
 /**
  * This method is called by the browser when the left mouse button is released.
  * @param {Event} Event The browsers event object.

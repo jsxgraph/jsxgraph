@@ -527,6 +527,76 @@ JXG.Line.prototype.setPosition = function (method, x, y) {
 };
 
 /**
+* Treat the line as parametric curve in homogeneuous coordinates.
+* x = 1 * sin(theta)*cos(phi)
+* y = 1 * sin(theta)*sin(phi)
+* z = 1 * sin(theta)
+* and the line is the set of solutions of a*x+b*y+c*z = 0
+* It follows:
+* sin(theta)*(a*cos(phi)+b*sin(phi))+c*cos(theta) = 0
+* Define:
+*   A = (a*cos(phi)+b*sin(phi))
+*   B = c
+* Then
+* cos(theta) = A/sqrt(A*A+B*B)
+* sin(theta) = -B/sqrt(A*A+B*B)
+* and X(phi) = x from above.
+* phi runs from 0 to 1
+* @return X(phi)
+*/
+JXG.Line.prototype.X = function (phi) {
+    phi *= Math.PI;
+    var a = this.stdform[1];
+    var b = this.stdform[2];
+    var c = this.stdform[0];
+    var A = a*Math.cos(phi)+b*Math.sin(phi);
+    var B = c;
+    var sq = Math.sqrt(A*A+B*B);
+    var sinTheta = -B/sq;
+    var cosTheta = A/sq;
+    if (Math.abs(cosTheta)<this.board.algebra.eps) { cosTheta = 1.0; }
+    return sinTheta*Math.cos(phi)/cosTheta;
+}
+
+/**
+* Treat the line as parametric curve in homogeneous coordinates.
+* @return Y(phi)
+*/
+JXG.Line.prototype.Y = function (phi) {
+    phi *= Math.PI;
+    var a = this.stdform[1];
+    var b = this.stdform[2];
+    var c = this.stdform[0];
+    var A = a*Math.cos(phi)+b*Math.sin(phi);
+    var B = c;
+    var sq = Math.sqrt(A*A+B*B);
+    var sinTheta = -B/sq;
+    var cosTheta = A/sq;
+    if (Math.abs(cosTheta)<this.board.algebra.eps) { cosTheta = 1.0; }
+    return sinTheta*Math.sin(phi)/cosTheta;
+}
+
+/**
+* Treat the line as parametric curve in homogeneous coordinates.
+* @return Z(phi)
+*/
+JXG.Line.prototype.Z = function (phi) {
+    phi *= Math.PI;
+    var a = this.stdform[1];
+    var b = this.stdform[2];
+    var c = this.stdform[0];
+    var A = a*Math.cos(phi)+b*Math.sin(phi);
+    var B = c;
+    var sq = Math.sqrt(A*A+B*B);
+    var cosTheta = A/sq;
+    if (Math.abs(cosTheta)>=this.board.algebra.eps) {
+        return 1.0;
+    } else {
+        return 0.0;
+    }
+}
+
+/**
  * Adds ticks to this line.
  * @param {JXG.Ticks} ticks Reference to a ticks object.
  * @type String

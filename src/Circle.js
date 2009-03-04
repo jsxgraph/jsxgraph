@@ -334,6 +334,26 @@ JXG.Circle.prototype.setPosition = function (method, x, y) {
     //}
 };
 
+/**
+* Treat the circle as parametric curve:
+* Return X(t)= radius*cos(t)+centerX
+* t runs from 0 to 1
+*/
+JXG.Circle.prototype.X = function (t) {
+    t *= 2.0*Math.PI;
+    return this.getRadius()*Math.cos(t)+this.midpoint.coords.usrCoords[1];
+}
+
+/**
+* Treat the circle as parametric curve:
+* Return Y(t)= radius*cos(t)+centerX
+* t runs from 0 to 1
+*/
+JXG.Circle.prototype.Y = function (t) {
+    t *= 2.0*Math.PI;
+    return this.getRadius()*Math.sin(t)+this.midpoint.coords.usrCoords[2];
+}
+
 JXG.createCircle = function(board, parentArr, atts) {
     var el;
     if( parentArr.length==2 && JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) ) {

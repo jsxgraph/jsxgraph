@@ -9,8 +9,9 @@
 <body>
 <h1>Playground</h1>
 
+<form><input type="text"></form>
 <!-- Drawing area -->
-<div id="box" class="jxgbox" style="width:800px; height:500px; overflow:hidden; "></div>
+<div id="box" class="jxgbox" style="width:800px; height:800px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
 <!-- Drawing area -->
 <div id="debug" style="display:block;"></div>
 
@@ -22,15 +23,23 @@
     	var l = board.createElement('line', [el1,el2], { strokeWidth:3 });
     }
     */
-    var board = JXG.JSXGraph.initBoard('box',{axis:true});
+    var board = JXG.JSXGraph.initBoard('box',{axis:true,unitX:80, unitY:80,originY:160,originX:80});
 
-    var p1 = board.createElement('point', [1,0,0.5] , {name:'A'});
+    var p1 = board.createElement('point', [1,0,1] , {name:'A'});
     var p2 = board.createElement('point', [1,1,1] );
 
     var circ = board.createElement('circle', [p1,p2], {dash:1} );
-    //var t = board.createElement('line', [1,-1,1],{name:'x'} );
-    board.createElement('functiongraph', [function(x){return -x*x;},0,2]);
+    var l1 = board.createElement('line', [1,-0.2,1],{name:'x'} );
+    //var l1 = board.createElement('line', [p1,p2],{name:'x'} );
+    board.suspendUpdate();
+    for (var i=.0;i<1.0;i+=0.02) {
+        board.createElement('point', [l1.Z(i),l1.X(i),l1.Y(i)],{name:' '});
+        board.createElement('point', [1,circ.X(i),circ.Y(i)] , {name:' '});
+    }
+    board.unsuspendUpdate();
+    board.createElement('functiongraph', [function(x){return Math.cos(x);},0,Math.PI*2]);
     
+/*    
     var f = function(t){return p2.Y()*t*Math.sin(t);};
     //var g = function(t){return t;};
     var c = board.createElement('functiongraph', [f]);
@@ -43,7 +52,7 @@
     var t = board.createElement('tangent',[p3], {dash:3,strokeColor:'red'});
     var p4 = board.createElement('glider', [c]);
     board.createElement('circle', [p3,p2,p1], {dash:5,strokeColor:'black'} );
-    
+*/    
 /*
         var p = [];
         p[0] = board.createElement('point', [-1,-2], {style:4});
