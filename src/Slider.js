@@ -46,7 +46,8 @@ JXG.createSlider = function(board, parentArr, atts) {
     var l1 = board.createElement('line', [p1,p2], {straightFirst:false,straightLast:false,strokewidth:1,name:''});
     var ticks  = 10;
     l1.ticksDelta = p2.Dist(p1)/ticks;
-    l1.enableTicks();
+    board.createElement('ticks', [l1, 1], {majorTicks: 5, insertTicks: true});
+    //l1.enableTicks();
     p1.needRegularUpdate = false;
     p2.needRegularUpdate = false;
     l1.needRegularUpdate = false;
