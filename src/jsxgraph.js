@@ -133,7 +133,9 @@ JXG.JSXGraph = new function (forceRenderer) {
             board.renderer.drawGrid(board);
         }
         
-        board.renderer.drawZoomBar(board);
+        if(true) {
+            board.renderer.drawZoomBar(board);
+        }
         
         return board;
     }
@@ -159,6 +161,9 @@ JXG.JSXGraph = new function (forceRenderer) {
         var board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
         board.beforeLoad();
         JXG.FileReader.parseFileContent(file, board, format);
+        if(true) {
+            board.renderer.drawZoomBar(board);
+        }
         this.boards[board.id] = board;
         return board;
     }
@@ -179,6 +184,9 @@ JXG.JSXGraph = new function (forceRenderer) {
         board.beforeLoad();
 
         JXG.FileReader.parseString(string, board, format);
+        if(true) {
+            board.renderer.drawZoomBar(board);
+        }
     
         this.boards[board.id] = board;
         return board;
