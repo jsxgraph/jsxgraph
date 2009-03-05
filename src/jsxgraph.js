@@ -132,7 +132,9 @@ JXG.JSXGraph = new function (forceRenderer) {
         if((typeof attributes["grid"] != 'undefined') && attributes["grid"]) {
             board.renderer.drawGrid(board);
         }
-
+        
+        board.renderer.drawZoomBar(board);
+        
         return board;
     }
 

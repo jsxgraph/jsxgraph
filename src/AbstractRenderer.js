@@ -1153,3 +1153,60 @@ JXG.AbstractRenderer.prototype.getPointSize = function(style) {
     }   
     return size;
 };
+
+/**
+ * Zoom bar
+ * @see #updateText
+ */
+JXG.AbstractRenderer.prototype.drawZoomBar = function(board) { 
+    var node = this.container.ownerDocument.createElement('div');
+    //node.setAttribute('id', el.id);
+    node.style.color = '#aaaaaa';
+    node.style.backgroundColor = '#f5f5f5'; 
+    node.style.padding = '2px';
+    node.style.position = 'absolute';
+    node.style.fontSize = '10px';  
+    node.style.cursor = 'pointer';
+    node.className = 'JXGtext';
+    node.style.zIndex = '100';      
+    this.container.appendChild(node);
+    node.style.right = '5px'; //(board.canvasWidth-100)+ 'px'; 
+    node.style.top = (board.canvasHeight-22) + 'px';
+    
+    var node_minus = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_minus);
+    node_minus.innerHTML = '&nbsp;&ndash;&nbsp;';
+    JXG.addEvent(node_minus, 'click', board.zoomOut, board);
+
+    var node_100 = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_100);
+    node_100.innerHTML = '&nbsp;o&nbsp;';
+    JXG.addEvent(node_100, 'click', board.zoom100, board);
+    
+    var node_plus = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_plus);
+    node_plus.innerHTML = '&nbsp;+&nbsp;';
+    JXG.addEvent(node_plus, 'click', board.zoomIn, board);
+    
+    var node_larr = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_larr);
+    node_larr.innerHTML = '&nbsp;&larr;&nbsp;';
+    JXG.addEvent(node_larr, 'click', board.clickLeftArrow, board);
+    
+    var node_uarr = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_uarr);
+    node_uarr.innerHTML = '&nbsp;&uarr;&nbsp;';
+    JXG.addEvent(node_uarr, 'click', board.clickUpArrow, board);
+    
+    var node_darr = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_darr);
+    node_darr.innerHTML = '&nbsp;&darr;&nbsp;';
+    JXG.addEvent(node_darr, 'click', board.clickDownArrow, board);
+    
+    var node_rarr = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_rarr);
+    node_rarr.innerHTML = '&nbsp;&rarr;&nbsp;';
+    JXG.addEvent(node_rarr, 'click', board.clickRightArrow, board);
+
+};
+

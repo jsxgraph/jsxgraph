@@ -548,6 +548,48 @@ JXG.Board.prototype.keyPressListener = function (Evt) {
         }
     }
 }
+
+/**
+* Handler for click on left arrow in the navigation bar
+**/
+JXG.Board.prototype.clickLeftArrow = function (Event) {
+    this.origin.scrCoords[1] -= this.canvasWidth*0.1;
+    this.fullUpdate = true;
+    this.moveOrigin();
+    this.fullUpdate = false;
+};
+
+/**
+* Handler for click on right arrow in the navigation bar
+**/
+JXG.Board.prototype.clickRightArrow = function (Event) {
+    this.origin.scrCoords[1] += this.canvasWidth*0.1;
+    this.fullUpdate = true;
+    this.moveOrigin();
+    this.fullUpdate = false;
+};
+
+/**
+* Handler for click on up arrow in the navigation bar
+**/
+JXG.Board.prototype.clickUpArrow = function (Event) {
+    this.origin.scrCoords[2] += this.canvasHeight*0.1;
+    this.fullUpdate = true;
+    this.moveOrigin();
+    this.fullUpdate = false;
+};
+
+/**
+* Handler for click on down arrow in the navigation bar
+**/
+JXG.Board.prototype.clickDownArrow = function (Event) {
+    this.origin.scrCoords[2] -= this.canvasHeight*0.1;
+    this.fullUpdate = true;
+    this.moveOrigin();
+    this.fullUpdate = false;
+};
+
+
 /**
  * This method is called by the browser when the left mouse button is released.
  * @param {Event} Event The browsers event object.
