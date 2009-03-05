@@ -86,7 +86,7 @@ board3.createElement('functiongraph', [
         var n = Math.round(s3.Value());
         var z = 1;
         for(var k=0; k<=n; k++) {
-            var f = board3.algebra.binomial(n,k);
+            var f = board3.binomial(n,k);
             val += z*f;
             z *= x;
         }

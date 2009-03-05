@@ -86,8 +86,8 @@
                     var x = a*Math.cos(phi); 
                     var y = b*Math.sin(phi);
                 } else {
-                    var x = leave*a*board.algebra.cosh(phi); 
-                    var y = leave*b*board.algebra.sinh(phi);
+                    var x = leave*a*board.cosh(phi); 
+                    var y = leave*b*board.sinh(phi);
                 }
                 return board.algebra.matVecMult(transformFunc(),[1,x,y]);
             };
