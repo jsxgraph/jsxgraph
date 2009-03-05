@@ -629,7 +629,7 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
         x = point.X();
         y = point.Y();
         t = point.position || 0.0;
-        t = this.root(this.D(function(t){ return (x-curve.X(t))*(x-curve.X(t))+(y-curve.Y(t))*(y-curve.Y(t));}), t);
+        t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(function(t){ return (x-curve.X(t))*(x-curve.X(t))+(y-curve.Y(t))*(y-curve.Y(t));}), t);
         if (t<curve.minX()) { t = curve.minX(); }
         if (t>curve.maxX()) { t = curve.maxX(); }
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t),curve.Y(t)], this.board);
@@ -1182,73 +1182,6 @@ JXG.Algebra.prototype.pow = function(a,b) {
 };
 
 /**
- * Calculation of derivative.
- * @param {Function} 
- * @type {Function}
- * @return Derivative of given f.
- */
-JXG.Algebra.prototype.D = function(f) {
-    var h = 0.00001;
-    return function(x){ return (f(x+h)-f(x-h))/(2.0*h); };
-};
-
-/**
- * Cosine hyperbolicus
- * @param {number} 
- */
-JXG.Algebra.prototype.cosh = function(x) {
-    return (Math.exp(x)+Math.exp(-x))*0.5;
-};
-
-/**
- * Sine hyperbolicus
- * @param {number} 
- */
-JXG.Algebra.prototype.sinh = function(x) {
-    return (Math.exp(x)-Math.exp(-x))*0.5;
-};
-
-/**
- * Integral of function f over interval. Warning: Just for backward compatibility, may be removed in futures releases.
- * @param {Array} interval e.g. [a, b] 
- * @param {function} f 
- */
-JXG.Algebra.prototype.I = function(interval, f) {
-    return JXG.Math.Numerics.NewtonCotes(interval, f);
-};
-
-/**
- * Newton method to find roots
- * @param {function} 
- * @param {Number}  
- */
-JXG.Algebra.prototype.newton = function(f,x) {
-    var i = 0;
-    var h = 0.0000001;
-    var newf = f(x);
-    while (i<50 && Math.abs(newf)>h) {
-        var df = this.D(f)(x);
-        if (Math.abs(df)>h) {
-            x -= newf/df;
-        } else {
-            x += (Math.random()*0.2-1.0);
-        }
-        newf = f(x);
-        i++;
-    }
-    return x;
-};
-
-/**
- * abstract method to find roots
- * @param {function} 
- * @param {variable}  
- */
-JXG.Algebra.prototype.root = function(f,x) {
-    return this.newton(f,x);
-};
-
-/**
   * Calculates the crossproducts of two vectors
   * of length three.
   * In case of homogeneous coordinates this is either
@@ -1450,93 +1383,3 @@ JXG.Algebra.prototype.normalize = function(stdform) {
     }
     return stdform;
 };
-
-/**
- * Computes the Lagrange polynomial.
- * @param {Array} of points of type JXG.Point
- * @return a function f(x) whose graph runs through the given points.
- */
-JXG.Algebra.prototype.lagrangePolynomial = function(p) {  
-    return function(x) {
-        var i,k;
-        var y = 0.0;
-        var xc = [];
-        for (i=0;i<p.length;i++) {
-            xc[i] = p[i].X();
-        }
-        for (i=0;i<p.length;i++) {
-            var t = p[i].Y();
-            for (k=0;k<p.length;k++) if (k!=i) {
-                t *= (x-xc[k])/(xc[i]-xc[k]);
-            }
-            y += t;
-        }
-        return y;
-    };
-}
-
-/**
- * Computes the Lagrange polynomial for curves with Neville's algorithm.
- * @param {Array} of points of type JXG.Point
- * @return an array [f(t),g(t),0,p.length-1] whose curve runs through the given points.
- */
-JXG.Algebra.prototype.neville = function(p) {
-    return [function(t) {
-                var i,k,L;
-                var val = 0.0;
-                for (i=0;i<p.length;i++) {
-                    L = p[i].X();
-                    for (k=0;k<p.length;k++) if (k!=i) {
-                        L *= (t-k)/(i-k);
-                    }
-                    val += L;
-                }
-                return val;
-            },
-            function(t) {
-                var i,k,L;
-                var val = 0.0;
-                for (i=0;i<p.length;i++) {
-                    L = p[i].Y();
-                    for (k=0;k<p.length;k++) if (k!=i) {
-                        L *= (t-k)/(i-k);
-                    }
-                    val += L;
-                }
-                return val;
-            }, 
-            0, function(){ return p.length-1;}
-        ];
-}
-
-/**
-* returns n*(n-1)...2*1
-*/
-JXG.Algebra.prototype.factorial = JXG.memoizer(function (n) {
-        if (n<0) return NaN; 
-        if (n==0 || n==1) return 1;
-        return n*arguments.callee(n-1);
-});
-
-/**
-* returns {n\choose k}
-*/
-JXG.Algebra.prototype.binomial = JXG.memoizer(function(n,k) {
-    if (k>n || k<0) return 0;
-    if (k==0 || k==n) return 1;
-    var b = 1;
-    for (var i=0;i<k;i++) {
-        b *= (n-i);
-        b /= (i+1);
-    }
-    return b;
-    //return arguments.callee(n-1,k-1)+arguments.callee(n-1,k);
-});
-
-/*
-    // Just for test purposes;
-    
-JXG.Algebra.prototype.fibonacci = JXG.memoizer(function (n) {
-        if(n < 2) return 1; else return arguments.callee(n-2) + arguments.callee(n-1);  
-    });
-*/    

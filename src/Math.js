@@ -200,4 +200,59 @@ JXG.SingularMatrixException.prototype.what = function() {
       return default_msg + ".";
 };
 
+/**
+* Dynamic programming approach for recursive functions.
+* From "Speed up your JavaScript, Part 3" by Nicholas C. Zakas.
+* @see JXG.Math.factorial
+* http://blog.thejit.org/2008/09/05/memoization-in-javascript/
+*/
+JXG.memoizer = function (f) {
+    if (f.memo)
+        return f.memo;
+    var cache = {}, join = Array.prototype.join;
+    return (f.memo = function() {
+        var key = join.call(arguments);
+        return (key in cache)
+            ? cache[key]
+            : cache[key] = f.apply(this, arguments);
+    });
+}
+
+/**
+* Compute the factorial of a positive integer.
+* @param {integer n}
+* @return {return n*(n-1)...2*1}
+*/
+JXG.Math.factorial = JXG.memoizer(function (n) {
+        if (n<0) return NaN; 
+        if (n==0 || n==1) return 1;
+        return n*arguments.callee(n-1);
+});
+
+/**
+* Comupte the binomial coefficient.
+* @param {integer n}
+* @param {integer k}
+* 
+* @return {n\choose k}
+*/
+JXG.Math.binomial = JXG.memoizer(function(n,k) {
+    if (k>n || k<0) return 0;
+    if (k==0 || k==n) return 1;
+    var b = 1;
+    for (var i=0;i<k;i++) {
+        b *= (n-i);
+        b /= (i+1);
+    }
+    return b;
+    //return arguments.callee(n-1,k-1)+arguments.callee(n-1,k);
+});
+
+/*
+    // Just for test purposes;
+    
+JXG.Math.Numerics.prototype.fibonacci = JXG.memoizer(function (n) {
+        if(n < 2) return 1; else return arguments.callee(n-2) + arguments.callee(n-1);  
+    });
+*/    
 

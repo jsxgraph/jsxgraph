@@ -28,14 +28,14 @@ JXG.Board.prototype.rad = function(A, B, C){ return this.algebra.rad(A,B,C); };
 JXG.Board.prototype.distance = function(arr1, arr2){ return this.algebra.distance(arr1,arr2); };
 JXG.Board.prototype.pow = function(a, b){ return this.algebra.pow(a,b); };
 JXG.Board.prototype.round = function(x, n){ return (x).toFixed(n); };
-JXG.Board.prototype.cosh = function(x){ return this.algebra.cosh(x); };
-JXG.Board.prototype.sinh = function(x){ return this.algebra.sinh(x); };
+JXG.Board.prototype.cosh = function(x){ return JXG.Math.Numerics.cosh(x); };
+JXG.Board.prototype.sinh = function(x){ return JXG.Math.Numerics.sinh(x); };
 JXG.Board.prototype.sgn = function(x) { return (x==0 ? 0 : x/(Math.abs(x))); };
-JXG.Board.prototype.D = function(f){ return this.algebra.D(f); };
-JXG.Board.prototype.I = function(interval,f){ return this.algebra.I(interval,f); };
-JXG.Board.prototype.root = function(f,x){ return this.algebra.root(f,x); };
-JXG.Board.prototype.lagrangePolynomial = function(p){ return this.algebra.lagrangePolynomial(p); };
-JXG.Board.prototype.neville = function(p){ return this.algebra.neville(p); };
+JXG.Board.prototype.D = function(f){ return JXG.Math.Numerics.D(f); };
+JXG.Board.prototype.I = function(interval,f){ return JXG.Math.Numerics.I(interval,f); };
+JXG.Board.prototype.root = function(f,x){ return JXG.Math.Numerics.root(f,x); };
+JXG.Board.prototype.lagrangePolynomial = function(p){ return JXG.Math.Numerics.lagrangePolynomial(p); };
+JXG.Board.prototype.neville = function(p){ return JXG.Math.Numerics.neville(p); };
 
 JXG.Board.prototype.abs = Math.abs;
 JXG.Board.prototype.acos = Math.acos;
@@ -54,8 +54,8 @@ JXG.Board.prototype.sqrt = Math.sqrt;
 JXG.Board.prototype.tan = Math.tan;
 JXG.Board.prototype.trunc = Math.ceil;
 
-JXG.Board.prototype.factorial = function(n){ return this.algebra.factorial(n); }
-JXG.Board.prototype.binomial = function(n,k){ return this.algebra.binomial(n,k); }
+JXG.Board.prototype.factorial = function(n){ return JXG.Math.factorial(n); }
+JXG.Board.prototype.binomial = function(n,k){ return JXG.Math.binomial(n,k); }
 
 // Some shortcuts 
 JXG.Point.prototype.setPositionX = function (method, x) {

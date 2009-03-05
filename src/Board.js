@@ -1918,7 +1918,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     
     pb_on_curve.addChild(pb_on_axis);
     
-    var Int = this.algebra.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
+    var Int = JXG.Math.Numerics.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
     var t = board.createElement('text', [function () { return pb_on_curve.X() + 0.2; }, function () { return pb_on_curve.Y() - 1.0; },'&int; = ' + (Int).toFixed(4)]);
 
     var attribs = {};
@@ -1949,7 +1949,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
         ps.push(pb_on_axis);
         ps.push(pa_on_axis);
 
-        var Int = this.board.algebra.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
+        var Int = JXG.Math.Numerics.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
         t.plaintextStr = '&int; = ' + (Int).toFixed(4);
             
         this.vertices = ps;

@@ -188,7 +188,7 @@ JXG.createPolygon = function(board, parents, atts) {
             throw ("Can't create polygon with parent types other than 'point'.");
     }
     
-    el = new JXG.Polygon(board, parentArr, atts["borders"], atts["id"], atts["name"], atts["withLines"]);
+    el = new JXG.Polygon(board, parents, atts["borders"], atts["id"], atts["name"], atts["withLines"]);
 
     return el;
 };
