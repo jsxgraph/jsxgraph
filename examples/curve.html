@@ -1,0 +1,32 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<!--<script type="text/javascript" src="../distrib/jquery.min.js"></script>-->
+<script type="text/javascript" src="../distrib/prototype.js"></script>
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<!-- Drawing area -->
+<div id="box" class="jxgbox" style="width:600px; height:500px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
+<!-- Drawing area -->
+<div id="debug" style="display:block;"></div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box',{axis:true,originX:300,originY:250,unitX:30,unitY:30});
+var a = brd.createElement('slider',[[2,8],[6,8],[0,3,6]]); brd.createElement('text',[1,8,'a:']);
+var b = brd.createElement('slider',[[2,7],[6,7],[0,2,6]]); brd.createElement('text',[1,7,'b:']);
+var A = brd.createElement('slider',[[2,6],[6,6],[0,3,6]]); brd.createElement('text',[1,6,'A:']);
+var B = brd.createElement('slider',[[2,5],[6,5],[0,3,6]]); brd.createElement('text',[1,5,'B:']);
+var delta = brd.createElement('slider',[[2,4],[6,4],[0,0,Math.PI]]); brd.createElement('text',[1,4,'&delta;:']);
+
+var c = brd.createElement('curve',[
+          function(t){return A.Value()*Math.sin(a.Value()*t+delta.Value());},
+          function(t){return B.Value()*Math.sin(b.Value()*t);},
+          0, 2*Math.PI],{strokeColor:'#aa2233',strokeWidth:3});
+     
+/* ]]> */
+</script>
+</body>
+</html>
