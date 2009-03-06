@@ -43,7 +43,7 @@
 
 \def\versionnumber{0.1}  % Version of this reference card
 \def\year{2009}
-\def\month{Feb}
+\def\month{Mar}
 \def\version{\month\ \year\ v\versionnumber}
 
 \def\shortcopyrightnotice{\vskip .5ex plus 2 fill
@@ -284,7 +284,7 @@ $<$script type="text/javascript"
 \metax{var brd = JXG.JSXGraph.initBoard('box',$\{$attributes$\}$);}{}
 
 {\sl -- Attributes of the board}\par
-\metax{unitX, unitY:}{Number of pixels of one unit}
+\metax{unitX, unitY:}{number of pixels of one unit}
 \metax{}{in $x$/$y$-axis direction}
 \metax{originX, originY:}{the coordinates of the origin}
 \metax{}{in pixel coordinates}
@@ -296,21 +296,6 @@ $<$script type="text/javascript"
 \section{Basic commands}
 \metax{var el = brd.createElement('type',[parents],$\{$attributes$\}$);}{}
 \metax{el.setProperty($\{$key1:value1,key2:value2,...$\}$);}{}
-
-\section{Available Elements}
-'circle', 'curve', 'glider', 'group', 
-'line', 'normal', 'point', 'polygon', 
-'slider', 'spline', 'tangent', 'turtle'
-
-\vskip6pt
-\hrule width.2\hsize
-'angle', 'arc', 'arrow', 'arrowparallel', 'axis',
-'bisector', 
-'chart', 'circumcircle', 'circumcirclemidpoint',
-'image', 'integral',
-'midpoint', 'mirrorpoint',
-'parallel', 'parallelpoint', 'perpendicular', 'perpendicularpoint',
-'reflection', 'sector', 'text', 'ticks', 'transform', 
 
 \section{Point}
 \metax{brd.createElement('point',[parents],$\{$attributes$\}$);}{}
@@ -419,9 +404,9 @@ Defined by the equation $r=f(\phi)$.
 \metax{[p1,p2,...]}{array of points}
 
 \section{Tangent, normal}
-\metax{var t = brd.createElement('tangent',[g],$\{$attributes$\}$);}{}
-\metax{var t = brd.createElement('normal',[g],$\{$attributes$\}$);}{}
-\metax{g}{glider on circle, line, or curve}
+\metax{var el = brd.createElement('tangent',[g],$\{$attributes$\}$);}{}
+\metax{var el = brd.createElement('normal',[g],$\{$attributes$\}$);}{}
+\metax{g}{circle, line, polygon, or curve to glide on}
 
 \section{Turtle}
 \metax{var t = brd.createElement('turtle');}{}
@@ -480,6 +465,60 @@ Most of the methods have an abbreviated alternative version.
 \metax{firstArrow,lastArrow:}{true, false}
  
 
+\section{Text}
+$\ldots$
+
+\section{Transform}
+$\ldots$
+
+\section{Chart}
+$\ldots$
+
+
+
+\section{Other geometric elements}
+{\sl -- angle:} \hfill filled area defined by 3 points
+\metax{el = brd.createElement('angle',[A,B,C],$\{$attributes$\}$);}{}
+\par{\sl -- arc:} \hfill circular arc defined by 3 points
+\metax{el = brd.createElement('arc',[A,B,C],$\{$attributes$\}$);}{}
+\par{\sl -- arrow:} \hfill line through 2 points with arrow head
+\metax{el = brd.createElement('arrow',[A,B],$\{$attributes$\}$);}{}
+\par{\sl -- arrowparallel:} \hfill arrow parallel to arrow $a$ starting at point $P$
+\metax{el = brd.createElement('arrowparallel',[a,P],$\{$atts$\}$);}{}
+\metax{el = brd.createElement('arrowparallel',[P,a],$\{$atts$\}$);}{}
+\par{\sl -- bisector:} \hfill angular bisector defined by 3 points, returns line
+\metax{el = brd.createElement('bisector',[A,B,C],$\{$atts$\}$);}{}
+\par{\sl -- circumcircle:} \hfill circle through 3 points (deprecated)
+\metax{el = brd.createElement('circumcircle',[A,B,C],$\{$atts$\}$);}{}
+\par{\sl -- circumcirclemidpoint:} \hfill center of circle through 3 points
+\metax{el = brd.createElement('circumcirclemidpoint',[A,B,C]);}{}
+\par{\sl -- midpoint:} midpoint between 2 points or the 2 points defined by a line
+
+\metax{el = brd.createElement('midpoint',[A,B],$\{$atts$\}$);}{}
+\metax{el = brd.createElement('midpoint',[line],$\{$atts$\}$);}{}
+\par{\sl -- mirrorpoint:} \hfill rotate point $B$ around point $A$ by $180^\circ$
+\metax{el = brd.createElement('mirrorpoint',[A,B],$\{$atts$\}$);}{}
+\par{\sl -- parallel:} \hfill line parallel to line $l$ through point $P$
+\metax{el = brd.createElement('parallel',[l,P],$\{$atts$\}$);}{}
+\metax{el = brd.createElement('parallel',[P,l],$\{$atts$\}$);}{}
+\par{\sl -- parallelpoint:} \hfill point D such that $ABCD$ from a parallelogram
+\metax{el = brd.createElement('parallelpoint',[A,B,C],$\{$atts$\}$);}{}
+\par{\sl -- perpendicular:} \hfill line perpendicular to line $l$ through point $P$
+\metax{el = brd.createElement('perpendicular',[l,P],$\{$atts$\}$);}{}
+\metax{el = brd.createElement('perpendicular',[P,l],$\{$atts$\}$);}{}
+\par{\sl -- perpendicularpoint:} \hfill  point defining a perpendicular line to line $l$ through point $P$
+
+\metax{el = brd.createElement('perpendicularpoint',[l,P],$\{$$\}$);}{}
+\metax{el = brd.createElement('perpendicularpoint',[P,l],$\{$$\}$);}{}
+
+\par{\sl -- reflection:} \hfill reflection of point $P$ over the line $l$. 
+Superseded by transformations
+
+\metax{el = brd.createElement('reflection',[l,P],$\{$atts$\}$);}{}
+\metax{el = brd.createElement('reflection',[P,l],$\{$atts$\}$);}{}
+\par{\sl -- sector:} \hfill circle sector defined by 3 points \hfill ???
+\metax{el = brd.createElement('sector',[A,B,C],$\{$atts$\}$);}{}
+
 \section{Mathematical functions}
 Functions of the intrinsic JavaScript object {\sl Math}:\par
 \metax{Math.abs,Math.acos,Math.asin,Math.atan,Math.ceil,}{}
@@ -502,6 +541,14 @@ Additional mathematical functions are methods of {\tt JXG.Board}.
 \metax{board.lagrangePolynomial([p1,p2,...])}{}
 \metax{}{returns a polynomial through the given points}
 \metax{board.neville([p1,p2,...])}{polynomial curve interpolation}
+
+{-- Intersection of objects:}
+
+$\ldots$
+
+\section{Todo list}
+'axis','image', 'integral', 'ticks', 
+
 
 \section{Links}
 Help pages are available at
