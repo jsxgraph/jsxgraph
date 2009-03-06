@@ -1383,3 +1383,35 @@ JXG.Algebra.prototype.normalize = function(stdform) {
     }
     return stdform;
 };
+
+JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
+    var count = 0;
+    var t1 = t1ini;
+    var t2 = t2ini;
+    var a, b, c, d, disc;
+    var e, f;
+    e = c1.X(t1)-c2.X(t2);
+    f = c1.Y(t1)-c2.Y(t2);
+    var dist = e*e+f*f;
+    while (dist>JXG.Math.eps && count<1000) {
+        a = JXG.Math.Numerics.D(c1.X)(t1);
+        b = -JXG.Math.Numerics.D(c2.X)(t2);
+        c = JXG.Math.Numerics.D(c1.Y)(t1);
+        d = -JXG.Math.Numerics.D(c1.Y)(t2);
+        disc = a*d-b*c;
+        t1 -= (d*e-b*f)/disc;
+        t2 -= (a*f-c*e)/disc;
+        e = c1.X(t1)-c2.X(t2);
+        f = c1.Y(t1)-c2.Y(t2);
+        dist = e*e+f*f;
+        count++;
+        //$('debug').innerHTML += '('+dist.toFixed(4)+','+t1.toFixed(2)+','+t2.toFixed(2)+') ';
+    }
+    //$('debug').innerHTML += '<br>\n';
+    $('debug').innerHTML = t1+' '+t2+ ' '+count;
+    if (Math.abs(t1)<Math.abs(t2)) {
+        return (new JXG.Coords(JXG.COORDS_BY_USER, [c1.X(t1),c1.Y(t1)], this.board));
+    } else {
+        return (new JXG.Coords(JXG.COORDS_BY_USER, [c2.X(t2),c2.Y(t2)], this.board));
+    }
+}
