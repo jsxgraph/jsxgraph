@@ -546,6 +546,7 @@ JXG.Line.prototype.setPosition = function (method, x, y) {
 */
 JXG.Line.prototype.X = function (phi) {
     phi *= Math.PI;
+//    $('debug').innerHTML += this.id+' ';
     var a = this.stdform[1];
     var b = this.stdform[2];
     var c = this.stdform[0];
@@ -594,6 +595,22 @@ JXG.Line.prototype.Z = function (phi) {
     } else {
         return 0.0;
     }
+}
+
+/**
+* Treat the circle as parametric curve:
+* t runs from 0 to 1
+**/
+JXG.Line.prototype.minX = function () {
+    return 0.0;
+}
+
+/**
+* Treat the circle as parametric curve:
+* t runs from 0 to 1
+**/
+JXG.Line.prototype.maxX = function () {
+    return 1.0;
 }
 
 /**

@@ -354,6 +354,22 @@ JXG.Circle.prototype.Y = function (t) {
     return this.getRadius()*Math.sin(t)+this.midpoint.coords.usrCoords[2];
 }
 
+/**
+* Treat the circle as parametric curve:
+* t runs from 0 to 1
+**/
+JXG.Circle.prototype.minX = function () {
+    return 0.0;
+}
+
+/**
+* Treat the circle as parametric curve:
+* t runs from 0 to 1
+**/
+JXG.Circle.prototype.maxX = function () {
+    return 1.0;
+}
+
 JXG.createCircle = function(board, parentArr, atts) {
     var el;
     if( parentArr.length==2 && JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) ) {

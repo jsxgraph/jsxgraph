@@ -72,9 +72,9 @@ JXG.Board.prototype.getElement = function (el) {return JXG.GetReferenceFromParam
  * GUI interface
  **/
 JXG.Board.prototype.intersectionOptions = ['point',[[JXG.OBJECT_CLASS_LINE,JXG.OBJECT_CLASS_LINE],[JXG.OBJECT_CLASS_LINE,JXG.OBJECT_CLASS_CIRCLE],[JXG.OBJECT_CLASS_CIRCLE,JXG.OBJECT_CLASS_CIRCLE]]];
-JXG.Board.prototype.intersectionFunc = function(el1,el2,i){
+JXG.Board.prototype.intersectionFunc = function(el1,el2,i,j){
     if (el1.elementClass==JXG.OBJECT_CLASS_CURVE || el2.elementClass==JXG.OBJECT_CLASS_CURVE) {
-        return function(){return el1.board.algebra.meetCurveCurve(el1,el2,1,1);};
+        return function(){return el1.board.algebra.meetCurveCurve(el1,el2,i,j);};
     } else {
         return function(){return el1.board.algebra.meet(el1.stdform,el2.stdform)[i];};
     }

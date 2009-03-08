@@ -1384,31 +1384,75 @@ JXG.Algebra.prototype.normalize = function(stdform) {
     return stdform;
 };
 
+/**
+ * Compute an intersection of the curves c1 and c2
+ * with a generalized Newton method.
+ * We want to find values t1, t2 such that
+ * c1(t1) = c2(t2), i.e.
+ * (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2)) = (0,0).
+ * We set
+ * (e,f) := (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2))
+ *
+ * The Jacobinean J is defined by
+ * J = (a, b)
+ *      (c, d)
+ * where
+ * a = c1_x'(t1)
+ * b = -c2_x'(t2)
+ * c = c1_y'(t1)
+ * d = c2_y'(t2)
+ *
+ * The inverse J^(-1) of J is equal to
+ *  (d, -b)/
+ *  (-c, a) / (ad-bc)
+ *
+ * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
+ * 
+ * @param {JXG.Curve} c1: Curve, Line or Circle
+ * @param {JXG.Curve} c2: Curve, Line or Circle
+ * @param {float} t1ini: start value for t1
+ * @param {float} t2ini: start value for t2
+ * If the function meetCurveCurve possesses the properties
+ * t1memo and t2memo then these are taken as start values
+ * for the Newton algorithm.
+ * After stopping of the Newton algorithm the values of t1 and t2 are stored in
+ * t1memo and t2memo.
+ **/
 JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
     var count = 0;
-    var t1 = t1ini;
-    var t2 = t2ini;
+    var t1, t2;
     var a, b, c, d, disc;
     var e, f;
+    if (arguments.callee.t1memo) {
+        t1 = arguments.callee.t1memo;
+        t2 = arguments.callee.t2memo;
+    } else {
+        t1 = t1ini;
+        t2 = t2ini;
+    }
+    if (t1>c1.maxX()) { t1 = c1.maxX(); }
+    if (t1<c1.minX()) { t1 = c1.minX(); }
+    if (t2>c2.maxX()) { t2 = c2.maxX(); }
+    if (t2<c2.minX()) { t2 = c2.minX(); }
     e = c1.X(t1)-c2.X(t2);
     f = c1.Y(t1)-c2.Y(t2);
-    var dist = e*e+f*f;
-    while (dist>JXG.Math.eps && count<1000) {
+    var F = e*e+f*f;
+    while (F>JXG.Math.eps && count<1000) {
         a = JXG.Math.Numerics.D(c1.X)(t1);
         b = -JXG.Math.Numerics.D(c2.X)(t2);
         c = JXG.Math.Numerics.D(c1.Y)(t1);
-        d = -JXG.Math.Numerics.D(c1.Y)(t2);
+        d = -JXG.Math.Numerics.D(c2.Y)(t2);
         disc = a*d-b*c;
         t1 -= (d*e-b*f)/disc;
         t2 -= (a*f-c*e)/disc;
         e = c1.X(t1)-c2.X(t2);
         f = c1.Y(t1)-c2.Y(t2);
-        dist = e*e+f*f;
+        F = e*e+f*f;
         count++;
-        //$('debug').innerHTML += '('+dist.toFixed(4)+','+t1.toFixed(2)+','+t2.toFixed(2)+') ';
     }
-    //$('debug').innerHTML += '<br>\n';
-    $('debug').innerHTML = t1+' '+t2+ ' '+count;
+    //$('debug').innerHTML = arguments.callee.t1memo+' '+arguments.callee.t1memo+ ' '+count;
+    arguments.callee.t1memo = t1;
+    arguments.callee.t2memo = t2;
     if (Math.abs(t1)<Math.abs(t2)) {
         return (new JXG.Coords(JXG.COORDS_BY_USER, [c1.X(t1),c1.Y(t1)], this.board));
     } else {

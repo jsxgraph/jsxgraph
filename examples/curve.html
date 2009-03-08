@@ -8,7 +8,7 @@
 </head>
 <body>
 <!-- Drawing area -->
-<div id="box" class="jxgbox" style="width:600px; height:500px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
+<div id="box" class="jxgbox" style="width:800px; height:500px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
 <!-- Drawing area -->
 <div id="debug" style="display:block;"></div>
 
@@ -16,26 +16,34 @@
 /* <![CDATA[ */
 var brd = JXG.JSXGraph.initBoard('box',{axis:true,originX:300,originY:250,unitX:28,unitY:28});
 var a = brd.createElement('slider',[[2,8],[6,8],[0,3,6]]); brd.createElement('text',[1,8,'a:']);
-var b = brd.createElement('slider',[[2,7],[6,7],[0,0.25,6]]); brd.createElement('text',[1,7,'b:']);
+var b = brd.createElement('slider',[[2,7],[6,7],[0,2,6]]); brd.createElement('text',[1,7,'b:']);
 var A = brd.createElement('slider',[[2,6],[6,6],[0,3,6]]); brd.createElement('text',[1,6,'A:']);
 var B = brd.createElement('slider',[[2,5],[6,5],[0,3,6]]); brd.createElement('text',[1,5,'B:']);
 var delta = brd.createElement('slider',[[2,4],[6,4],[0,0,Math.PI]]); brd.createElement('text',[1,4,'&delta;:']);
 
-/*
+var M = brd.createElement('point',[1,0]);
+var N = brd.createElement('point',[6,0]);
+
+// Lissajous curve
 var c = brd.createElement('curve',[
           function(t){return A.Value()*Math.sin(a.Value()*t+delta.Value());},
           function(t){return B.Value()*Math.sin(b.Value()*t);},
           0, 2*Math.PI],{strokeColor:'#aa2233',strokeWidth:3});
- */
-var c = brd.createElement('curve', [function(phi){return a.Value()+b.Value()*phi; }, [0, 0], 0, 8*Math.PI],
+
+// Archimedean spiral
+var d = brd.createElement('curve', [function(phi){return a.Value()+b.Value()*phi; }, [0, 0], 0, 8*Math.PI],
  {curveType:'polar', strokewidth:3});          
 
-var d = brd.createElement('curve',[
+// Line
+var e = brd.createElement('curve',[
           function(t){return t;},
           function(t){return A.Value()*t+B.Value();},
           -5, 5],{strokeColor:'#1103aa',strokeWidth:3});
-          
-var cd = brd.createElement('point',[brd.intersectionFunc(c,d)],{name:'X'});
+
+//var f = brd.createElement('circle',[M,N]);
+var g = brd.createElement('line',[2,1,3]);
+$('debug').innerHTML = g.id+': ';
+var cd = brd.createElement('point',[brd.intersectionFunc(d,e,4,5)],{name:'X'});
 /* ]]> */
 </script>
 </body>
