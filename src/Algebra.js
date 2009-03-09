@@ -1386,16 +1386,18 @@ JXG.Algebra.prototype.normalize = function(stdform) {
  *  (-c, a) / (ad-bc)
  *
  * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
- * 
- * @param {JXG.Curve} c1: Curve, Line or Circle
- * @param {JXG.Curve} c2: Curve, Line or Circle
- * @param {float} t1ini: start value for t1
- * @param {float} t2ini: start value for t2
  * If the function meetCurveCurve possesses the properties
  * t1memo and t2memo then these are taken as start values
  * for the Newton algorithm.
  * After stopping of the Newton algorithm the values of t1 and t2 are stored in
  * t1memo and t2memo.
+ * 
+ * @param {JXG.Curve} c1: Curve, Line or Circle
+ * @param {JXG.Curve} c2: Curve, Line or Circle
+ * @param {float} t1ini: start value for t1
+ * @param {float} t2ini: start value for t2
+ * @type {JXG.Coords}
+ * @return coordinate object for the intersection point
  **/
 JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
     var count = 0;

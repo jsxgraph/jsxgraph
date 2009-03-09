@@ -34,7 +34,7 @@
 /**
  * Constructs a new Line object.
  * @class This is the Line class. 
- * It is derived from @see GeometryElement.
+ * It is derived from @see JXG.GeometryElement.
  * It stores all properties required
  * to move, draw a line.
  * @constructor
