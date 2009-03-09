@@ -31,9 +31,9 @@ JXG.Board.prototype.round = function(x, n){ return (x).toFixed(n); };
 JXG.Board.prototype.cosh = function(x){ return JXG.Math.Numerics.cosh(x); };
 JXG.Board.prototype.sinh = function(x){ return JXG.Math.Numerics.sinh(x); };
 JXG.Board.prototype.sgn = function(x) { return (x==0 ? 0 : x/(Math.abs(x))); };
-JXG.Board.prototype.D = function(f){ return JXG.Math.Numerics.D(f); };
+JXG.Board.prototype.D = function(f,obj){ return JXG.Math.Numerics.D(f,obj); };
 JXG.Board.prototype.I = function(interval,f){ return JXG.Math.Numerics.I(interval,f); };
-JXG.Board.prototype.root = function(f,x){ return JXG.Math.Numerics.root(f,x); };
+JXG.Board.prototype.root = function(f,x,obj){ return JXG.Math.Numerics.root(f,x,obj); };
 JXG.Board.prototype.lagrangePolynomial = function(p){ return JXG.Math.Numerics.lagrangePolynomial(p); };
 JXG.Board.prototype.neville = function(p){ return JXG.Math.Numerics.neville(p); };
 

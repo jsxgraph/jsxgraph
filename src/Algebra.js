@@ -1438,10 +1438,10 @@ JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
     f = c1.Y(t1)-c2.Y(t2);
     var F = e*e+f*f;
     while (F>JXG.Math.eps && count<1000) {
-        a = JXG.Math.Numerics.D(c1.X)(t1);
-        b = -JXG.Math.Numerics.D(c2.X)(t2);
-        c = JXG.Math.Numerics.D(c1.Y)(t1);
-        d = -JXG.Math.Numerics.D(c2.Y)(t2);
+        a = c1.board.D(c1.X,c1)(t1);
+        b = -c2.board.D(c2.X,c2)(t2);
+        c = c1.board.D(c1.Y,c1)(t1);
+        d = -c2.board.D(c2.Y,c2)(t2);
         disc = a*d-b*c;
         t1 -= (d*e-b*f)/disc;
         t2 -= (a*f-c*e)/disc;

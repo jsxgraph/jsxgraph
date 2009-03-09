@@ -410,9 +410,13 @@ JXG.Math.Numerics.neville = function(p) {
  * @type {Function}
  * @return Derivative of given f.
  */
-JXG.Math.Numerics.D = function(f) {
+JXG.Math.Numerics.D = function(f,obj) {
     var h = 0.00001;
-    return function(x){ return (f(x+h)-f(x-h))/(2.0*h); };
+    if (arguments.length==1){ 
+        return function(x){ return (f(x+h)-f(x-h))/(2.0*h); };
+    } else { // set "this" to "obj" in f 
+        return function(x){ return (f.apply(obj,[x+h])-f.apply(obj,[x-h]))/(2.0*h); };
+    }
 };
 
 /**
@@ -429,18 +433,18 @@ JXG.Math.Numerics.I = function(interval, f) {
  * @param {function} 
  * @param {Number}  
  */
-JXG.Math.Numerics.newton = function(f,x) {
+JXG.Math.Numerics.newton = function(f,x,obj) {
     var i = 0;
     var h = 0.0000001;
-    var newf = f(x);
+    var newf = f.apply(obj,[x]); // set "this" to "obj" in f 
     while (i<50 && Math.abs(newf)>h) {
-        var df = this.D(f)(x);
+        var df = this.D(f,obj)(x);
         if (Math.abs(df)>h) {
             x -= newf/df;
         } else {
             x += (Math.random()*0.2-1.0);
         }
-        newf = f(x);
+        newf = f.apply(obj,[x]);
         i++;
     }
     return x;
@@ -451,8 +455,8 @@ JXG.Math.Numerics.newton = function(f,x) {
  * @param {function} 
  * @param {variable}  
  */
-JXG.Math.Numerics.root = function(f,x) {
-    return this.newton(f,x);
+JXG.Math.Numerics.root = function(f,x,obj) {
+    return this.newton(f,x,obj);
 };
 
 /**

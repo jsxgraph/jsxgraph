@@ -546,7 +546,6 @@ JXG.Line.prototype.setPosition = function (method, x, y) {
 */
 JXG.Line.prototype.X = function (phi) {
     phi *= Math.PI;
-//    $('debug').innerHTML += this.id+' ';
     var a = this.stdform[1];
     var b = this.stdform[2];
     var c = this.stdform[0];
