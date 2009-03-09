@@ -94,8 +94,8 @@ JXG.Options = function() {
     /* line ticks options */
     this.line.ticks = new Object();
     this.line.ticks.minTicksDistance = 10;
-    this.line.ticks.minorHeight = 8;
-    this.line.ticks.majorHeight = 14;
+    this.line.ticks.minorHeight = 4;
+    this.line.ticks.majorHeight = 10;
     this.line.ticks.majorTicks = 1;
 
     /*special circle options */
