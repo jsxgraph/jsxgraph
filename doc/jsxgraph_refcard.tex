@@ -188,7 +188,6 @@
   \vskip .5ex  minus .1ex {\headingfont #1}\quad{\headingfonttt<#2>}\mark{#1}%
   \vskip .3ex  minus .1ex}
 
-
 \newdimen\keyindent
 
 \def\beginindentedkeys{\keyindent=1em}
@@ -234,7 +233,6 @@
 \def\threecol#1#2#3{\hskip\keyindent\relax#1\hfil&\kbd{#2}\quad
   &\kbd{#3}\quad\cr}
 
-
 %**end of header
 
 \title{JSXGraph Reference Card}
@@ -249,21 +247,15 @@ Three files have to be included:
 {\tt jsxgraph.css}, {\tt jsxgraphcore.js} and either {\tt prototype.js} or {\tt jquery.js}.
 
 {\obeylines\obeyspaces\parskip0pt\tt
-$<$link rel="stylesheet" type="text/css" 
-        href="domain/jsxgraph.css"/$>$
-$<$script type="text/javascript" 
+-- $<$script type="text/javascript" 
           src="domain/prototype.js"$>$$<$/script$>$
-$<$script type="text/javascript" 
-          src="domain/jsxgraphcore.js"$>$$<$/script$>$}
-
-or
-
-{\obeylines\obeyspaces\parskip0pt\tt
-$<$link rel="stylesheet" type="text/css" 
-        href="domain/jsxgraph.css"/$>$
-$<$script type="text/javascript" 
+or -- $<$script type="text/javascript" 
           src="domain/jquery.min.js"$>$$<$/script$>$
-$<$script type="text/javascript" 
+
+
+-- $<$link rel="stylesheet" type="text/css" 
+        href="domain/jsxgraph.css"/$>$
+-- $<$script type="text/javascript" 
           src="domain/jsxgraphcore.js"$>$$<$/script$>$}
 
 {\tt domain} is the location of the files. This can be a local directory or
@@ -306,6 +298,8 @@ $<$script type="text/javascript"
 \metax{[z,x,y]}{Homogeneous coordinates ($z$ in first place)}
 \metax{[function()$\{$return p1.X();$\}$,}{}
 \metax{  function()$\{$return p2.Y();$\}$]}{Functions for $x,y$, (and $z$)}
+
+\eject
 
 {\bf Methods}
 
@@ -438,43 +432,13 @@ Most of the methods have an abbreviated alternative version.
 \metax{t.penUp(); or t.pu();}{}
 \metax{t.popTurtle();}{pop turtle status from stack}
 \metax{t.pushTurtle();}{push turtle status on stack}
+
+\eject
 \metax{t.right(angle); or t.rt(angle);}{}
 \metax{t.setPos(x,y);}{Move the turtle without drawing}
 \metax{t.setPenColor(col);}{{\tt col}: colorString, e.g. 'red' or '\#ff0000'}
 \metax{t.setPenSize(size);}{{\tt size}: number}
 \metax{t.showTurtle(); or t.st();}{}
-
-\section{Attributes of geometric elements}
-{\sl Generic attributes:}\par
-\metax{strokeWidth:}{number}
-\metax{strokeColor,fillColor,highlightFillColor,}{}
-\metax{highlightStrokeColor,labelColor:}{color string}
-\metax{strokeOpacity,fillOpacity,highlightFillOpacity,}{}
-\metax{highlightStrokeOpacity:}{value between 0 and 1}
-\metax{visible,trace,draft:}{true, false}
-\metax{dash:}{dash style for lines: $0, 1, \ldots, 6$}
-
-{\sl Attributes for point elements:}\par
-\metax{style:}{point style: $0, 1, \ldots, 12$}
-\metax{fixed:}{true, false}
-
-{\sl Attributes for line elements:}\par
-\metax{straightFirst,straightLast,withTicks:}{true, false}
-
-{\sl Attributes for line and arc elements:}\par
-\metax{firstArrow,lastArrow:}{true, false}
- 
-
-\section{Text}
-$\ldots$
-
-\section{Transform}
-$\ldots$
-
-\section{Chart}
-$\ldots$
-
-
 
 \section{Other geometric elements}
 {\sl -- angle:} \hfill filled area defined by 3 points
@@ -519,6 +483,49 @@ Superseded by transformations
 \par{\sl -- sector:} \hfill circle sector defined by 3 points \hfill ???
 \metax{el = brd.createElement('sector',[A,B,C],$\{$atts$\}$);}{}
 
+\section{Attributes of geometric elements}
+{\sl Generic attributes:}\par
+\metax{strokeWidth:}{number}
+\metax{strokeColor,fillColor,highlightFillColor,}{}
+\metax{highlightStrokeColor,labelColor:}{color string}
+\metax{strokeOpacity,fillOpacity,highlightFillOpacity,}{}
+\metax{highlightStrokeOpacity:}{value between 0 and 1}
+\metax{visible,trace,draft:}{true, false}
+\metax{dash:}{dash style for lines: $0, 1, \ldots, 6$}
+
+{\sl Attributes for point elements:}\par
+\metax{style:}{point style: $0, 1, \ldots, 12$}
+\metax{fixed:}{true, false}
+
+{\sl Attributes for line elements:}\par
+\metax{straightFirst,straightLast,withTicks:}{true, false}
+
+{\sl Attributes for line and arc elements:}\par
+\metax{firstArrow,lastArrow:}{true, false}
+ 
+\section{Text}
+Display static or dynamic texts.\par
+\metax{el = brd.createElement('text',[x,y,"Hello"]);}{}
+\metax{el = brd.createElement('text',[x,y,f]);}{}
+Example for a dynamic text: return the $x$ coordinate of the point $p$.\par
+\metax{f = function()$\{$ return p.X(); $\}$}{}
+
+\section{Transform}
+Affine transformation of objects.\par
+\metax{t = brd.createElement('transform',[data,base],$\{$type:'type'$\}$);}{}
+{\tt base}: the transformation is applied to the coordinates of this object.\par
+Possible types:\par
+-- translate: {\tt data}$=${\tt [x,y]}\par
+-- scale: {\tt data}$=${\tt [x,y]}\par
+-- reflect: {\tt data}$=${\tt [line]} or {\tt [x1,y1,x2,y2]}\par
+-- rotate: {\tt data}$=${\tt [angle,point]} or {\tt [angle,x,y]}\par
+-- shear: {\tt data}$=${\tt [angle]} \par
+-- generic: {\tt data}$=${\tt [v11,v12,v13,v21,$\ldots$,v33]} $3\times 3$ matrix\par
+{\bf Methods:}\par
+\metax{t.bindTo(p)}{the coordinates of $p$ are defined by $t$}
+\metax{t.applyOnce(p)}{apply the transformation once}
+\metax{t.melt(s)}{combine two transformations to one: $ t:= t\cdot s$}
+
 \section{Mathematical functions}
 Functions of the intrinsic JavaScript object {\sl Math}:\par
 \metax{Math.abs,Math.acos,Math.asin,Math.atan,Math.ceil,}{}
@@ -528,26 +535,32 @@ Functions of the intrinsic JavaScript object {\sl Math}:\par
 \metax{(number).toFixed(3):}{Rounding a number to fixed precision}
 
 Additional mathematical functions are methods of {\tt JXG.Board}.
-\metax{board.angle(A,B,C)}{angle $ABC$}
-\metax{board.cosh(x), board.sinh(x)}{}
-\metax{board.pow(a,b)}{$a^b$}
-\metax{board.D(f,x)}{compute ${d\over dx}f$ numerically}
-\metax{board.I([a,b],f)}{compute $\int_a^b f(x)dx$ numerically}
-\metax{board.root(f,x)}{root of the function $f$.}
+\metax{brd.angle(A,B,C)}{angle $ABC$}
+\metax{brd.cosh(x), board.sinh(x)}{}
+\metax{brd.pow(a,b)}{$a^b$}
+\metax{brd.D(f,x)}{compute ${d\over dx}f$ numerically}
+\metax{brd.I([a,b],f)}{compute $\int_a^b f(x)dx$ numerically}
+\metax{brd.root(f,x)}{root of the function $f$.}
 \metax{}{Uses Newton method with start value $x$}
-\metax{board.factorial(n)}{computes $n!=1\cdot 2\cdot 3\cdots n$}
-\metax{board.binomial(n,k)}{computes ${n\choose k}$}
-\metax{board.distance(arr1,arr2)}{Euclidean distance}
-\metax{board.lagrangePolynomial([p1,p2,...])}{}
+\metax{brd.factorial(n)}{computes $n!=1\cdot 2\cdot 3\cdots n$}
+\metax{brd.binomial(n,k)}{computes ${n\choose k}$}
+\metax{brd.distance(arr1,arr2)}{Euclidean distance}
+\metax{brd.lagrangePolynomial([p1,p2,...])}{}
 \metax{}{returns a polynomial through the given points}
-\metax{board.neville([p1,p2,...])}{polynomial curve interpolation}
+\metax{brd.neville([p1,p2,...])}{polynomial curve interpolation}
 
-{-- Intersection of objects:}
-
-$\ldots$
+{-- Intersection of objects:}\par
+\metax{brd.intersection(el1,el2,i,j)}{intersection of the elements}
+\metax{}{$el_1$ and $el_2$ which can be lines, circles or curves}\par
+In case of circle and line intersection, $i\in\{0,1\}$ denotes 
+the first or second intersection. In case of an intersection with a curve, $i$ and $j$ are floats
+which are the start values for the path positions in the Newton method for $el_1$ and $el_2$, resp.
 
 \section{Todo list}
 'axis','image', 'integral', 'ticks', 
+
+\section{Chart}
+To do $\ldots$
 
 
 \section{Links}

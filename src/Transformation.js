@@ -30,6 +30,7 @@
  *
  * Possible types:
  * - translate
+ * - scale
  * - reflect
  * - rotate
  * - shear

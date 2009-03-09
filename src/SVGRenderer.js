@@ -727,8 +727,8 @@ JXG.SVGRenderer.prototype.appendChildPrimitive = function(node,level) {
         case 'angles': this.angles.appendChild(node); break;
         case 'sectors': this.sectors.appendChild(node); break;
         case 'polygone': this.polygone.appendChild(node); break;
-        case 'curves': this.curves.appendChild(node); break;
-        case 'circles': this.circles.appendChild(node); break;
+        case 'curves': this.lines.appendChild(node); break; //this.curves.appendChild(node); break;
+        case 'circles': this.lines.appendChild(node); break; //this.circles.appendChild(node); break;
         case 'lines': this.lines.appendChild(node); break;
         case 'arcs': this.arcs.appendChild(node); break;
         case 'points': this.points.appendChild(node); break;
