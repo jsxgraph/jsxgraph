@@ -1161,17 +1161,18 @@ JXG.AbstractRenderer.prototype.getPointSize = function(style) {
 JXG.AbstractRenderer.prototype.drawZoomBar = function(board) { 
     var node = this.container.ownerDocument.createElement('div');
     //node.setAttribute('id', el.id);
+    node.className = 'JXGtext';
     node.style.color = '#aaaaaa';
     node.style.backgroundColor = '#f5f5f5'; 
     node.style.padding = '2px';
     node.style.position = 'absolute';
     node.style.fontSize = '10px';  
     node.style.cursor = 'pointer';
-    node.className = 'JXGtext';
     node.style.zIndex = '100';      
     this.container.appendChild(node);
     node.style.right = '5px'; //(board.canvasWidth-100)+ 'px'; 
-    node.style.top = (board.canvasHeight-22) + 'px';
+    node.style.bottom = '5px'; 
+    //node.style.top = (board.canvasHeight-22) + 'px';
     
     var node_minus = this.container.ownerDocument.createElement('span');
     node.appendChild(node_minus);

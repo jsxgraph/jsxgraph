@@ -157,6 +157,12 @@ JXG.Ticks = function (line, ticks, major, majorHeight, minorHeight, id, name) {
      */
     this.drawZero = true;
 
+    /**
+     * Draw labels yes/no
+     * @type bool
+     */
+    this.drawLabels = true;
+
     /* Call init defined in GeometryElement to set board, id and name property */
     this.init(this.board, id, name);
 
@@ -202,7 +208,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     if(this.ticks != null) {
         for(var j=0; j<this.ticks.length; j++) {
             if(this.labels[j] != null)
-                this.board.renderer.remove(this.labels[j].rendNode);
+                if (this.labels[j].show) this.board.renderer.remove(this.labels[j].rendNode);
         }
     }
 
@@ -237,7 +243,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
             newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
             this.ticks.push(newTick);
             label = new JXG.Label(this.board, "0", newTick, this.id+"0Label");
-            label.show = true;
+            if (this.drawLabels) label.show = true; else label.show = false;
             this.labels.push(label);
             
             this.ticks[0].major = true;
@@ -253,7 +259,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         // x and y direction in user coordinates
         var deltaX = (ticksDelta * dx) / (total_length);
         var deltaY = (ticksDelta * dy) / (total_length);
-        
+
         // reference to the last added tick coordinates object
         var lastTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
         
@@ -274,14 +280,14 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 
             // and put them into a coords object
             newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-            
+
             // we need to calculate the distance. if we're in equidistant mode, we only need
             // to calculate it once, otherwise on every walk through the loop.
             if(!this.equidistant || (dist == 0)) {
                 dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
                        (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
             }
-            
+                                
             // if we're in equidistant mode and want to insert additional ticks automatically, whenever
             // the distance between two ticks is too big, we need to calculate the new deltaX and deltaY.
             if(this.insertTicks && this.equidistant && (dist > this.maxTicksDistance*this.maxTicksDistance)) {
@@ -309,14 +315,14 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                 newTick.major = false;
                 if(i%this.majorTicks==0)
                     newTick.major = true;
-                
+
                 this.ticks.push(newTick);
                 if(newTick.major) {
                     label = new JXG.Label(this.board, position.toString(), newTick, this.id+i+"Label");
                     label.distanceX = 0;
                     label.distanceY = -10;
                     label.setCoordinates(newTick);
-                    label.show = true;
+                    if (this.drawLabels) label.show = true; else label.show = false;
                     this.labels.push(label);
                 } else
                     this.labels.push(null);
@@ -362,7 +368,6 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         deltaY = (ticksDelta * dy) / (total_length);
         
         lastTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-        
         dist = 0;
 
         while( ((this.board.sgn(deltaX)*(x-deltaX) >= this.board.sgn(deltaX)*c2.usrCoords[1]) && (this.board.sgn(deltaY)*(y-deltaY) >= this.board.sgn(deltaY)*c2.usrCoords[2])) ) {
@@ -403,7 +408,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                     label.distanceX = 0;
                     label.distanceY = -10;
                     label.setCoordinates(newTick);
-                    label.show = true;
+                    if (this.drawLabels) label.show = true; else label.show = false;
                     this.labels.push(label);
                 } else
                     this.labels.push(null);
@@ -453,7 +458,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                 label.distanceX = 0;
                 label.distanceY = -10;
                 label.setCoordinates(newTick);
-                label.show = true;
+                if (this.drawLabels) label.show = true; else label.show = false;
                 this.labels.push(label);
             }
         }

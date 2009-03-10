@@ -44,10 +44,10 @@ JXG.createSlider = function(board, parentArr, atts) {
     var p1 = board.createElement('point', pos0, {visible:false, fixed:true,name:''}); 
     var p2 = board.createElement('point', pos1,{visible:false,fixed:true,name:''}); 
     var l1 = board.createElement('line', [p1,p2], {straightFirst:false,straightLast:false,strokewidth:1,name:''});
-    var ticks  = 10;
-    l1.ticksDelta = p2.Dist(p1)/ticks;
-    board.createElement('ticks', [l1, 1], {majorTicks: 5, insertTicks: true});
-    //l1.enableTicks();
+    var ticks  = 5;
+    var ti = board.createElement('ticks', [l1, p2.Dist(p1)/ticks]); //, {majorTicks: p2.Dist(p1)/ticks});
+    ti.drawLabels = false;
+    
     p1.needRegularUpdate = false;
     p2.needRegularUpdate = false;
     l1.needRegularUpdate = false;
