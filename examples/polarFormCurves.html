@@ -21,8 +21,9 @@
         var p = board.createElement('point', [1,-2], {style:6,name:'p'}); 
         var eps = board.createElement('point', [0,-3], {style:6,name:'eps'}); 
         var len = board.createElement('point', [2,-4], {style:6,name:'length'}); 
+        var rho = board.createElement('slider', [[1,-5],[5,-5],[0,0,2*Math.PI]], {style:6,name:'rho'}); 
         var f = board.createElement('curve', 
-            [function(phi) { return p.X()/(1-eps.X()*Math.cos(phi)); }, [1,0], 0,function(){return len.X()*Math.PI}],      
+            [function(phi) { return p.X()/(1-eps.X()*Math.cos(phi+rho.Value())); }, [1,0], 0,function(){return len.X()*Math.PI}],      
             {curveType:'polar', strokewidth:2}
         );        
 
