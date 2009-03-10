@@ -27,7 +27,7 @@
     var p1 = board.createElement('point', [1,3,1] , {name:'A'});
     var p2 = board.createElement('point', [1,1,1] );
 
-    //var circ = board.createElement('circle', [p1,p2], {dash:1} );
+    var circ = board.createElement('circle', [p1,p2], {dash:1} );
 /*
     var l1 = board.createElement('line', [1,-0.2,1],{name:'x'} );
     //var l1 = board.createElement('line', [p1,p2],{name:'x'} );
@@ -39,20 +39,20 @@
     board.unsuspendUpdate();
 */
 
-    //board.createElement('functiongraph', [function(x){return Math.cos(x);},0,Math.PI*2]);
+    board.createElement('functiongraph', [function(x){return Math.cos(x);},0,Math.PI*2]);
     
     var f = function(t){return p2.Y()*t*Math.sin(t);};
-    //var g = function(t){return t;};
+    var g = function(t){return t;};
     var c = board.createElement('functiongraph', [f]);
-    //var c1 = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);}] );
-    //var p = board.createElement('glider', [0.1,2,circ],{name:'S'} );
-    //var t = board.createElement('tangent',[p], {dash:3,strokeColor:'red'});
-    //var t = board.createElement('normal',[p,t], {dash:3,strokeColor:'black'});
+    var c1 = board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return t-Math.cos(t);}] );
+    var p = board.createElement('glider', [0.1,2,circ],{name:'S'} );
+    var t = board.createElement('tangent',[p], {dash:3,strokeColor:'red'});
+    var t = board.createElement('normal',[p,t], {dash:3,strokeColor:'black'});
 
     var p3 = board.createElement('glider', [function(){return p1.X();},function(){return f(p1.X());},c],{fixed:true});
-    //var t = board.createElement('tangent',[p3], {dash:3,strokeColor:'red'});
-    //var p4 = board.createElement('glider', [c]);
-    //board.createElement('circle', [p3,p2,p1], {dash:5,strokeColor:'black'} );
+    var t = board.createElement('tangent',[p3], {dash:3,strokeColor:'red'});
+    var p4 = board.createElement('glider', [c]);
+    board.createElement('circle', [p3,p2,p1], {dash:5,strokeColor:'black'} );
 /*    
 */    
 /*
