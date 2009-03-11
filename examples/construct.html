@@ -17,8 +17,8 @@
 
 <script type="text/javascript">
 /* <![CDATA[ */
-var board = JXG.JSXGraph.initBoard('box', {originX: 100, originY: 200,
-unitX: 50, unitY: 50});
+var board = JXG.JSXGraph.initBoard('box', {originX: 100, originY: 200, grid:true, unitX: 50, unitY: 50});
+board.snapToGrid = true;
 var p1 = board.createElement('point',[1,1], {name:'A',style:6});
 var p2 = board.createElement('point',[5,1], {name:'B',style:6});
 var p3 = board.createElement('point',[0,-1], {name:'C',style:6});
