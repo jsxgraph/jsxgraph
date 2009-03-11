@@ -17,12 +17,22 @@
 
 <script type="text/javascript">
 /* <![CDATA[ */
+var board = JXG.JSXGraph.initBoard('box', {originX: 100, originY: 200,
+unitX: 50, unitY: 50});
+var p1 = board.createElement('point',[1,1], {name:'A',style:6});
+var p2 = board.createElement('point',[5,1], {name:'B',style:6});
+var p3 = board.createElement('point',[0,-1], {name:'C',style:6});
+var p4 = board.createElement('point',[5,3], {name:'D',style:6});
+var l1 = board.createElement('line',["A","B"],{name:'L1',strokeColor:'#00ff00',strokeWidth:2});
+var l2 = board.createElement('line',["C","D"],{name:'L2',strokeColor:'#00ff00',strokeWidth:2});
+p5 = board.createElement('point',[board.intersection("L1","L2")],{name:'M',style:6});
 
     /*
     function testmakro(board,el1, el2) {
     	var l = board.createElement('line', [el1,el2], { strokeWidth:3 });
     }
     */
+/*    
     var board = JXG.JSXGraph.initBoard('box',{unitX:80, unitY:80,originY:160,originX:80});
     var a1 = board.createElement('axis',[[0,0],[1,0]]);
     var p1 = board.createElement('point', [1,3,1] , {name:'A'});
@@ -30,6 +40,7 @@
     var ac = board.createElement('glider', [4,0,a1],{name:'glide'} );
 
     var circ = board.createElement('circle', [p1,p2], {dash:1} );
+*/    
 /*
     var l1 = board.createElement('line', [1,-0.2,1],{name:'x'} );
     //var l1 = board.createElement('line', [p1,p2],{name:'x'} );
@@ -40,7 +51,7 @@
     }
     board.unsuspendUpdate();
 */
-
+/*
     board.createElement('functiongraph', [function(x){return Math.cos(x);},0,Math.PI*2]);
     
     var f = function(t){return p2.Y()*t*Math.sin(t);};
