@@ -677,6 +677,15 @@ JXG.createLine = function(board, parents, atts) {
                 function() { return -c[1]()*c[0]()+c[2]();},
                 function() { return -c[2]()*c[0]()-c[1]();}],{visible:false,name:' '});
         el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name']);
+    } else if ((parents.length == 2) && (parents[0].length>1 && parents[1].length>1)) {
+        var point1 = new JXG.Point(board, parents[0], '', '', false);
+        var point2 = new JXG.Point(board, parents[1], '', '', false);
+    
+        /* Make the points fixed */
+        point1.fixed = true;
+        point2.fixed = true;
+
+        el = new JXG.Line(board, point1.id, point2.id, atts['id'], atts['name']);
     } else 
         throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     return el;
