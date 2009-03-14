@@ -93,6 +93,9 @@ JXG.Options = function() {
     this.line.highlightStrokeColor = this.elements.color.highlightStrokeColor;
     /* line ticks options */
     this.line.ticks = new Object();
+    this.line.ticks.drawLabels = true;
+    this.line.ticks.drawZero = false;
+    this.line.ticks.insertTicks = false;
     this.line.ticks.minTicksDistance = 4;
     this.line.ticks.minorHeight = 4;
     this.line.ticks.majorHeight = 10;

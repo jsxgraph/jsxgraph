@@ -621,12 +621,21 @@ JXG.Line.prototype.maxX = function () {
 JXG.Line.prototype.addTicks = function(ticks) {
     if(ticks.id == '' || typeof ticks.id == 'undefined')
         ticks.id = this.id + '_ticks_' + (this.ticks.length+1);
+
+    this.board.renderer.drawTicks(ticks);    
     this.ticks.push(ticks);
     
     this.ticks[this.ticks.length-1].updateRenderer();
     
     return ticks.id;
 };
+
+JXG.Line.prototype.removeAllTicks = function() {
+    for(var t=this.ticks.length; t>0; t--) {
+        this.board.renderer.remove(this.ticks[t-1].rendNode);
+    }
+    this.ticks = new Array();
+}
 
 /**
  * Creates a new line.
@@ -732,13 +741,23 @@ JXG.createAxis = function(board, parents, attributes) {
         attributes.lastArrow = true;
         attributes.straightFirst = true;
         attributes.straightLast = true;
-//        attributes.withTicks = true;
         if(attributes.strokeWidth == null)
             attributes.strokeWidth = 1;
 
         var el = board.createElement('line', [point1, point2], attributes);
         el.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
-        var defTicks = board.createElement('ticks', [el, 1], {majorTicks: 5, insertTicks: true});
+        
+        if(attributes.majorTicks == 'undefined' || attributes.majorTicks == null)
+            attributes.majorTicks = 5;
+
+        if((attributes.insertTicks == 'undefined') || (attributes.insertTicks == null))
+            attributes.insertTicks = 'true';
+        
+        var dist = 1;
+        if(attributes.ticksDistance != 'undefined' && attributes.ticksDistance != null)
+            dist = attributes.ticksDistance;
+        
+        var defTicks = board.createElement('ticks', [el, dist], attributes);
 
     } // Ansonsten eine fette Exception um die Ohren hauen
     else

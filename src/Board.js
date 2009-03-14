@@ -2374,7 +2374,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     if(JXG.IsArray(attributes)) {
         attributes = attributes[0];
     }
-    try {
+//    try {
         if(el.multipleElements) {
             for(var s in el) {
                 if(typeof el[s].setProperty != 'undefined')
@@ -2384,7 +2384,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
             if(typeof el.setProperty != 'undefined')
                 el.setProperty(attributes);
         }
-    } catch (e) {};
+//    } catch (e) { alert("Error setting Property:" + e); };
     
 //    if(!JXG.IsArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
 //        el.setProperty(attributes);

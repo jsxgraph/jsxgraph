@@ -63,6 +63,13 @@ JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     this.appendChildPrimitive(node,'images');
 };
 
+JXG.VMLRenderer.prototype.drawTicks = function(axis) {
+    var ticks = this.createPrimitive('path', axis.id+'_ticks');
+    this.appendChildPrimitive(ticks,'lines');
+    
+    axis.rendNode = ticks;
+}
+
 JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     var tickArr = [];
     for (var i=0; i<axis.ticks.length; i++) {

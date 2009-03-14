@@ -17,8 +17,8 @@
     /* <![CDATA[ */
 
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25, axis: false, grid: false});
-        xax = board.createElement('axis', [[0,0],[1,0]], {strokeColor: '#ff0000', strokeWidth: 1});
-        yax = board.createElement('axis', [[0,0],[0,1]]);
+        xax = board.createElement('axis', [[0,0],[1,0]], {strokeColor: '#00ff00', majorTicks: 3, strokeWidth: 1, insertTicks:true});
+        yax = board.createElement('axis', [[0,0],[0,1]], {majorTicks: 2, ticksDistance: 1.3333333, majorTickHeight: 20, strokeWidth: 3, drawZero: true});
 
         p3 = board.createElement('point', [8, 4], {style:1,name:"P_{3}",fixed:true}); // Angabe fester Koordinaten
         p4 = board.createElement('point', [8, 8], {style:2,name:"P_{4}",fixed:true}); // Angabe fester Koordinaten
@@ -31,6 +31,8 @@
 
         p14_1 = board.createElement('point', [board.intersectionFunc(c2,g,0)], {style:8,name:"M",trace:true});
         p14_2 = board.createElement('point', [board.intersectionFunc(c2,g,1)], {style:8,name:"N",trace:true});
+
+//yax.removeAllTicks();
 
 //        var dataArr = [p1, p2, p3, p4];
 //        a = board.createElement('spline', dataArr);
@@ -48,7 +50,7 @@
 
 //        c = board.createElement('centroid', [p1, p2, p3], {name:'C_{1}', trace:true});
 
-//          st = board.createElement('ticks', [xax, [2.5, 4.25]], {strokeColor:'#00ff00'});
+          st = board.createElement('ticks', [xax, [-0.5, 2.5, 4.25]], {strokeColor:'#ff0000'});
 
 //    var o = new JXG.Options();
 //    o.loadFromFile('options_example.json', true, board);

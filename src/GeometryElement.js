@@ -526,19 +526,57 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 break;
             case 'insertticks':
                 if(this.type == JXG.OBJECT_TYPE_TICKS) {
+                    var old = this.insertTicks;
                     this.insertTicks = true;
                     if(pair[1] == 'false' || pair[1] == false) {
                         this.insertTicks = false;
                     }
-                    this.calculateTicksCoordinates();
+                    if(old != this.insertTicks) this.calculateTicksCoordinates();
+                }
+                break;
+            case 'drawlabels':
+                if(this.type == JXG.OBJECT_TYPE_TICKS) {
+                    var old = this.drawLabels;
+                    this.drawLabels = true;
+                    if(pair[1] == 'false' || pair[1] == false) {
+                        this.drawLabels = false;
+                    }
+                    if(old != this.drawLabels) this.calculateTicksCoordinates();
+                }
+                break;
+            case 'drawzero':
+                if(this.type == JXG.OBJECT_TYPE_TICKS) {
+                    var old = this.drawZero;
+                    this.drawZero = true;
+                    if(pair[1] == 'false' || pair[1] == false) {
+                        this.drawZero = false;
+                    }
+                    if(old != this.drawZero) this.calculateTicksCoordinates();
                 }
                 break;
             case 'majorticks':
                 if(this.type == JXG.OBJECT_TYPE_TICKS) {
+                    var old = this.majorTicks;
                     if((pair[1] != null) && (pair[1] > 0))
                         this.majorTicks = pair[1];
-                    this.calculateTicksCoordinates();
+                    if(old != this.majorTicks) this.calculateTicksCoordinates();
                 }                
+                break;
+            case 'majortickheight':
+                if(this.type == JXG.OBJECT_TYPE_TICKS) {
+                    var old = this.majorHeight;
+                    if((pair[1] != null) && (pair[1] > 0))
+                        this.majorHeight = pair[1];
+                    if(old != this.majorHeight) this.calculateTicksCoordinates();
+                }                                
+                break;
+            case 'minortickheight':
+                if(this.type == JXG.OBJECT_TYPE_TICKS) {
+                    var old = this.minorHeight;
+                    if((pair[1] != null) && (pair[1] > 0))
+                        this.minorHeight = pair[1];
+                    if(old != this.minorHeight) this.calculateTicksCoordinates();
+                }                                
                 break;
         }
     }
@@ -595,6 +633,12 @@ JXG.GeometryElement.prototype.setStyle = function(x) {
  * 
  */
 JXG.GeometryElement.prototype.setStraight = function(x,y) {    
+};
+
+/**
+ * 
+ */
+JXG.GeometryElement.prototype.setArrow = function(firstArrow,lastArrow) {    
 };
 
 

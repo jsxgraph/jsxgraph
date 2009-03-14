@@ -84,6 +84,13 @@ JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
     this.appendChildPrimitive(node,'images');
 };
 
+JXG.SVGRenderer.prototype.drawTicks = function(axis) {
+    var ticks = this.createPrimitive('path', axis.id);
+    this.appendChildPrimitive(ticks,'lines');
+    
+    axis.rendNode = ticks;
+}
+
 JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     var tickStr = "";
     for (var i=0; i<axis.ticks.length; i++) {
@@ -102,6 +109,7 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     }
     ticks.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);    
     ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
+    ticks.setAttributeNS(null, 'stroke-width', axis.visProp['strokeWidth']);
     this.updatePathPrimitive(ticks, tickStr, axis.board);
 }
 
