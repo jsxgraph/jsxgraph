@@ -212,9 +212,9 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                 if (this.labels[j].show) this.board.renderer.remove(this.labels[j].rendNode);
         }
     }
-
+/*
 document.getElementById('debug').innerHTML = document.getElementById('debug').innerHTML + '<br /><br />' + c1.usrCoords[1] + "/" + c1.usrCoords[2] + '<br />' + c2.usrCoords[1] + "/" + c2.usrCoords[2] + '<br />' + p1.usrCoords[1] + "/" + p1.usrCoords[2];
-
+*/
     // initialise storage arrays
     // ticks stores the ticks coordinates
     this.ticks = new Array();
