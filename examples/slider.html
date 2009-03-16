@@ -21,7 +21,6 @@
             var n = 1/r;
             return  Math.sqrt(2/Math.PI/(n+1))*Math.pow(2,n)*Math.pow(p*(1-p),n/2);
         }
-//        var s = board.createElement('slider', [0,-.2,0.5,0.0,0.5,0.5], {name:'S'});
         var s = board.createElement('slider', [[0,0],[0.5,1],[0.2,0.5,0.8]], {name:'S'});
         board.createElement('text', [0.2,-0.5,function(){ return 'n='+Math.round((1/s.X())); }]);
         var p1 = board.createElement('point', 

@@ -592,10 +592,9 @@ JXG.Board.prototype.mouseUpListener = function (Event) {
     }
     this.mode = this.BOARD_MODE_NONE;
     
-    var save = this.reducedUpdate;
-    this.reducedUpdate = false;
+    var save = this.reducedUpdate; this.reducedUpdate = false;
     this.update();
-    this.reducedUpdate = save;
+    this.reducedUpdate = save; 
     this.fullUpdate = false;
     
     // release dragged object

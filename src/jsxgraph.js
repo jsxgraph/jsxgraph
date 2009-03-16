@@ -202,12 +202,6 @@ JXG.JSXGraph = new function (forceRenderer) {
         }
     
         // Remove the event listeners
-        // // Event.stopObserving(board.container, 'mousedown', board.onMouseDownListener);
-        // // Event.stopObserving(board.container, 'mouseup', board.onMouseUpListener);
-        // // Event.stopObserving(board.container, 'mousemove', board.onMouseMoveListener);
-        //Event.stopObserving(document, 'mousedown', board.mouseDownListener);
-        //Event.stopObserving(document, 'mouseup', board.mouseUpListener);
-        //Event.stopObserving(board.container, 'mousemove', board.mouseMoveListener);
         JXG.removeEvent(document, 'mousedown', board.mouseDownListener);
         JXG.removeEvent(document, 'mouseup', board.mouseUpListener);
         JXG.removeEvent(board.containerObj, 'mousemove', board.mouseMoveListener);
@@ -350,7 +344,6 @@ JXG.bind = function(fn, owner ) {
         return fn.apply(owner,arguments);
     }
 }
-
 
 JXG.removeEvent = function( obj, type, fn ) {
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype

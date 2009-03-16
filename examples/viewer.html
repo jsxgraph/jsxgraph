@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-<script type="text/javascript" src="../distrib/jquery.min.js"></script>
+<script type="text/javascript" src="../distrib/prototype.js"></script>
 <!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
@@ -265,13 +265,13 @@
     </select>
     <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" />
          </form>
-   <div id="debug" style="overflow:scroll; "></div>
+   <div id="debug" style="overflow:scroll;"></div>
    
 <script>
    var board;
    function loadFile(bspname,format) {
         document.getElementById('box').innerHTML = '';
-        document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";
+        //document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";
     
         if(typeof board != 'undefined') {
             JXG.JSXGraph.freeBoard(board);
