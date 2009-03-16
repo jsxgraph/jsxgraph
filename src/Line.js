@@ -136,6 +136,13 @@ JXG.Line = function (board, p1, p2, id, name) {
     this.ticks = [];
     
     /**
+     * Reference of the ticks created automatically when constructing an axis.
+     * @type JXG.Ticks
+     * @see JXG.Ticks
+     */
+    this.defaultTicks = null;
+    
+    /**
     * If the line is the border of a polygon, the polygone object is stored, otherwise null.
     * @type JXG.Polygon
     */
@@ -630,11 +637,36 @@ JXG.Line.prototype.addTicks = function(ticks) {
     return ticks.id;
 };
 
+/**
+ * Removes all ticks from a line.
+ */
 JXG.Line.prototype.removeAllTicks = function() {
     for(var t=this.ticks.length; t>0; t--) {
         this.board.renderer.remove(this.ticks[t-1].rendNode);
     }
     this.ticks = new Array();
+}
+
+/**
+ * Removes ticks identified by parameter named tick.
+ * @param {JXG.Ticks} tick Reference to tick object to remove.
+ */
+JXG.Line.prototype.removeTicks = function(tick) {
+    if(this.defaultTicks != null && this.defaultTicks == tick) {
+        this.defaultTicks = null;
+    }
+
+    for(var t=this.ticks.length; t>0; t--) {
+        if(this.ticks[t-1] == tick) {
+            this.board.renderer.remove(this.ticks[t-1].rendNode);
+            
+            for(var j=0; j<this.ticks[t-1].ticks.length; j++) {
+                if(this.ticks[t-1].labels[j] != null)
+                    if (this.ticks[t-1].labels[j].show) this.board.renderer.remove(this.ticks[t-1].labels[j].rendNode);
+            }
+            delete(this.ticks[t-1]);
+        }
+    }
 }
 
 /**
@@ -729,7 +761,7 @@ JXG.createAxis = function(board, parents, attributes) {
     // Arrays oder Punkte, mehr brauchen wir nicht.
     if ( (JXG.IsArray(parents[0]) || JXG.IsPoint(parents[0]) ) && (JXG.IsArray(parents[1]) || JXG.IsPoint(parents[1])) ) {
         var point1;
-        if( JXG.IsPoint(parents[0].type) )
+        if( JXG.IsPoint(parents[0]) )
             point1 = parents[0];
         else
             point1 = new JXG.Point(board, parents[0],'','',false);
@@ -753,8 +785,8 @@ JXG.createAxis = function(board, parents, attributes) {
         if(attributes.strokeWidth == null)
             attributes.strokeWidth = 1;
 
-        var el = board.createElement('line', [point1, point2], attributes);
-        el.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
+        var line = board.createElement('line', [point1, point2], attributes);
+        line.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
         
         if(attributes.majorTicks == 'undefined' || attributes.majorTicks == null)
             attributes.majorTicks = 5;
@@ -766,13 +798,13 @@ JXG.createAxis = function(board, parents, attributes) {
         if(attributes.ticksDistance != 'undefined' && attributes.ticksDistance != null)
             dist = attributes.ticksDistance;
         
-        var defTicks = board.createElement('ticks', [el, dist], attributes);
-
-    } // Ansonsten eine fette Exception um die Ohren hauen
+        var defTicks = board.createElement('ticks', [line, dist], attributes);
+        line.defaultTicks = defTicks;
+    }
     else
         throw ("Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
 
-    return el;
+    return line;
 };
 
 JXG.JSXGraph.registerElement('axis', JXG.createAxis);

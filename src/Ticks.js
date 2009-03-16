@@ -212,9 +212,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                 if (this.labels[j].show) this.board.renderer.remove(this.labels[j].rendNode);
         }
     }
-/*
-document.getElementById('debug').innerHTML = document.getElementById('debug').innerHTML + '<br /><br />' + c1.usrCoords[1] + "/" + c1.usrCoords[2] + '<br />' + c2.usrCoords[1] + "/" + c2.usrCoords[2] + '<br />' + p1.usrCoords[1] + "/" + p1.usrCoords[2];
-*/
+
     // initialise storage arrays
     // ticks stores the ticks coordinates
     this.ticks = new Array();
@@ -472,7 +470,7 @@ document.getElementById('debug').innerHTML = document.getElementById('debug').in
                     ny = Math.abs(dy_plus) * this.fixedTicks[i]/length_plus;
                 }
                 
-                newTick = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
+                newTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.usrCoords[1] + nx, p1.usrCoords[2] + ny], this.board);
                 this.ticks.push(newTick);
                 this.ticks[this.ticks.length-1].major = true;
                 labelText = this.fixedTicks[i].toString();
