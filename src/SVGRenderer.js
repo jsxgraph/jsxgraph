@@ -701,18 +701,17 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     if (el.numberPoints<=0) { return ''; }
     var nextSymb = ' M ';
     var pStr = '';
-    var h = 2*el.board.canvasHeight;
-    var w = 2*el.board.canvasWidth;
+    var h = 100*el.board.canvasHeight;  // This is a weak test to detect infinity
+    var w = 100*el.board.canvasWidth;
     for (var i=0; i<el.numberPoints; i++) {
         var scr = el.points[i].scrCoords;
         if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || Math.abs(scr[2])>h) {
             nextSymb = ' M ';
         } else {
-            pStr += nextSymb + scr[1] + ' ' + scr[2];
+            pStr += nextSymb + scr[1] + ' ' + scr[2]; // Attention: first coordinate may be inaccurate if far way)
             nextSymb = ' L ';
         }
     }
-//$('debug').innerHTML = pStr;
     return pStr;
 };
 

@@ -16,6 +16,7 @@
     <asp:TextBox ID="txtData" runat="server"></asp:TextBox>
  -->
 <div id="jxgbox" class="jxgbox" style="width:700px; height:600px;"></div>
+<div id="debug" >&nbsp;</div>
   <p id='output'>Statistics:<br/></p>
 </body>
 <script type="text/javascript" src="../distrib/prototype.js"></script>
@@ -52,7 +53,7 @@
                         var sd = brd.mathStatistics.sd(y);
                         var med = brd.mathStatistics.median(y);
                         if (!graph1) { 
-                            graph1 = brd.createElement('curve', [x,y],{strokeWidth:1}); 
+                            graph1 = brd.createElement('curve', [x,y],{strokeWidth:1, name:'nix'}); 
                             graph2 = brd.createElement('curve', [[x[0],x[x.length-1]],[m,m]], {strokecolor:'red'}); 
                             graph3 = brd.createElement('curve', [[x[0],x[x.length-1]],[m+sd,m+sd]], {strokecolor:'red',dash:2}); 
                             graph4 = brd.createElement('curve', [[x[0],x[x.length-1]],[m-sd,m-sd]], {strokecolor:'red',dash:2}); 

@@ -703,8 +703,8 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
     if (el.numberPoints<=0) { return ''; }
     var nextSymb = ' m ';
     var pStr = [];
-    var h = 2*el.board.canvasHeight;
-    var w = 2*el.board.canvasWidth;
+    var h = 100*el.board.canvasHeight; // This is a weak test to detect infinity
+    var w = 100*el.board.canvasWidth;
     var m = Math.min(el.numberPoints,8192); // otherwise IE 7 crashes in hilbert.html
     
     for (var i=0; i<m; i++) {

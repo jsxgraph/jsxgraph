@@ -278,6 +278,7 @@ JXG.AbstractRenderer.prototype.updateCurve = function(el) {
  */
 JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
     var b = el.board.algebra;
+    var point1First = false;
     // If one of the point is an ideal point in homogeneous coordinates
     // drawing of line segments or rays are not possible. 
     var hasIdealPoint = (Math.abs(point1.scrCoords[0])<b.eps||Math.abs(point2.scrCoords[0])<b.eps)?true:false;
@@ -319,8 +320,10 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             d2 = b.affineDistance(s[0], point2.scrCoords);
             if((d1 < d2) && el.visProp['straightFirst']) {
                 point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                point1First = true;
             } else if((d1 > d2) && el.visProp['straightLast']) {
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                point1First = false;
             }
         }
         if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<b.eps) {  // right intersection out of board
@@ -328,6 +331,7 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             if (hasIdealPoint) { // homogeneous case
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
             } else {
+                /*
                 d1 = b.affineDistance(s[2], point1.scrCoords);
                 d2 = b.affineDistance(s[2], point2.scrCoords);             
                 if((d1 < d2) && el.visProp['straightFirst']) {
@@ -335,18 +339,31 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
                 } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
                 }
+                */
+                if (point1First) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                } else {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                }
             }
         } else {
             // Punkt am rechten Rand verwenden (Right)
             if (hasIdealPoint) { // homogeneous case
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
             } else {
+                /*
                 d1 = b.affineDistance(s[3], point1.scrCoords);
                 d2 = b.affineDistance(s[3], point2.scrCoords);             
                 if((d1 < d2) && el.visProp['straightFirst']) {
                     point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
                 } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                }
+                */
+                if (point1First) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                } else {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
                 }
             }
         }
@@ -359,8 +376,10 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             d2 = b.affineDistance(s[2], point2.scrCoords);   
             if((d1 < d2) && el.visProp['straightFirst']) {
                 point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                point1First = true;
             } else if((d1 > d2) && el.visProp['straightLast']) {
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                point1First = false;
             }
         }
  
@@ -369,6 +388,7 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             if (hasIdealPoint) { // homogeneous case
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
             } else {
+                /*
                 d1 = b.affineDistance(s[0], point1.scrCoords);
                 d2 = b.affineDistance(s[0], point2.scrCoords);
                 if((d1 < d2) && el.visProp['straightFirst']) {
@@ -376,18 +396,31 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
                 } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
                 }
+                */
+                if (point1First) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                } else {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                }
             }
         } else {
             // Punkt am rechten Rand verwenden (Right)
             if (hasIdealPoint) { // homogeneous case
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
             } else {
+                /*
                 d1 = b.affineDistance(s[3], point1.scrCoords);
                 d2 = b.affineDistance(s[3], point2.scrCoords);             
                 if((d1 < d2) && el.visProp['straightFirst']) {
                     point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
                 } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                }
+                */
+                if (point1First) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                } else {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
                 }
             }
         }          
@@ -400,16 +433,18 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             d2 = b.affineDistance(s[1], point2.scrCoords);
             if((d1 < d2) && el.visProp['straightFirst']) {
                 point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
+                point1First = true;
             } else if((d1 > d2) && el.visProp['straightLast']) {
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
+                point1First = false;
             }
         }
-        
         if(s[3][2] < 0 || Math.abs(s[3][0])<b.eps) {
             // Punkt am oberen Rand verwenden (Top)
             if (hasIdealPoint) { // homogeneous case
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
             } else {
+                /*
                 d1 = b.affineDistance(s[0], point1.scrCoords);
                 d2 = b.affineDistance(s[0], point2.scrCoords);
                 if((d1 < d2) && el.visProp['straightFirst']) {
@@ -417,12 +452,19 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
                 } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
                 }
+                */
+                if (point1First) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                } else {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                }
             }
         } else if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<b.eps) {
             // Punkt am unteren Rand verwenden (Bottom)
             if (hasIdealPoint) { // homogeneous case
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
             } else {
+                /*
                 d1 = b.affineDistance(s[2], point1.scrCoords);
                 d2 = b.affineDistance(s[2], point2.scrCoords);
                 if((d1 < d2) && el.visProp['straightFirst']) {
@@ -430,18 +472,31 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
                 } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
                 }
+                */
+                if (point1First) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                } else {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                }
             }
         } else {
             // Punkt am rechten Rand verwenden (Right)
             if (hasIdealPoint) { // homogeneous case
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
             } else {
+                /*
                 d1 = b.affineDistance(s[3], point1.scrCoords);
                 d2 = b.affineDistance(s[3], point2.scrCoords);    
                 if((d1 < d2) && el.visProp['straightFirst']) {
                     point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
                 } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                }
+                */
+                if (point1First) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                } else {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
                 }
             }
         }

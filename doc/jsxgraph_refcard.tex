@@ -41,7 +41,7 @@
 % Thanks:
 %  (reference card macros due to Stephen Gildea)
 
-\def\versionnumber{0.1}  % Version of this reference card
+\def\versionnumber{0.2}  % Version of this reference card
 \def\year{2009}
 \def\month{Mar}
 \def\version{\month\ \year\ v\versionnumber}
@@ -284,6 +284,11 @@ or - $<$script type="text/javascript"
 \metax{zoomfactor:}{overall zoom factor in both directions}
 \metax{axis:true/false:}{show axes}
 \metax{grid:true/false:}{show grid}
+
+{\sl Properties and methods of the board:}\par
+\metax{brd.snapToGrid:true/false:}{grid mode}
+\metax{brd.suspendUpdate()}{stop updating (is speed is needed)}
+\metax{brd.unsuspendUpdate()}{restart updating}
 
 \section{Basic commands}
 \metax{var el = brd.createElement('type',[parents],$\{$attributes$\}$);}{}
