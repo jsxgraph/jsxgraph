@@ -1,7 +1,7 @@
 Using the JSXGraph filter makes it a lot easier to embed JSXGraph constructions into moodle online documents.
 
 Caution:
-The current vrsion has to be regarded as a pre alpha development version. Use with caution!
+The current version has to be regarded as a pre alpha development version. Use with caution!
 
 Installation: (by Moodle Admin)
 1. Upload the complete folder "jsxgraph" into the folder  moodle-->filter
