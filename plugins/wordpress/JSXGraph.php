@@ -1,4 +1,28 @@
 <?php
+/* 
+    Copyright 2008,2009
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /*
 Plugin Name: JSXGraph
 Plugin URI: http://jsxgraph.org
@@ -10,9 +34,6 @@ Author URI: http://www.webconsul.de/
 
 /* TODO:
  * fix wordpress auto format
- * make downloadable package with styles/scripts
- * publish on wordpress.org
- * create an insert button with all parameters
 */
 
 function jsxgraph_head() {
