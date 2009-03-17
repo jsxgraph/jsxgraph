@@ -278,7 +278,6 @@ JXG.AbstractRenderer.prototype.updateCurve = function(el) {
  */
 JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
     var b = el.board.algebra;
-    var taken = 0;
     // If one of the point is an ideal point in homogeneous coordinates
     // drawing of line segments or rays are not possible. 
     var hasIdealPoint = (Math.abs(point1.scrCoords[0])<b.eps||Math.abs(point2.scrCoords[0])<b.eps)?true:false;
@@ -320,10 +319,8 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             d2 = b.affineDistance(s[0], point2.scrCoords);
             if((d1 < d2) && el.visProp['straightFirst']) {
                 point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-                taken = 1;
             } else if((d1 > d2) && el.visProp['straightLast']) {
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-                taken = 2;
             }
         }
         if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<b.eps) {  // right intersection out of board
@@ -333,9 +330,9 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             } else {
                 d1 = b.affineDistance(s[2], point1.scrCoords);
                 d2 = b.affineDistance(s[2], point2.scrCoords);             
-                if((d1 < d2) && el.visProp['straightFirst'] && taken!=1) {
+                if((d1 < d2) && el.visProp['straightFirst']) {
                     point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
-                } else if((d1 > d2) && el.visProp['straightLast'] && taken!=2) {
+                } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
                 }
             }
@@ -346,9 +343,9 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             } else {
                 d1 = b.affineDistance(s[3], point1.scrCoords);
                 d2 = b.affineDistance(s[3], point2.scrCoords);             
-                if((d1 < d2) && el.visProp['straightFirst'] && taken!=1) {
+                if((d1 < d2) && el.visProp['straightFirst']) {
                     point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
-                } else if((d1 > d2) && el.visProp['straightLast'] && taken!=2) {
+                } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
                 }
             }
@@ -362,10 +359,8 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             d2 = b.affineDistance(s[2], point2.scrCoords);   
             if((d1 < d2) && el.visProp['straightFirst']) {
                 point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
-                taken = 1;
             } else if((d1 > d2) && el.visProp['straightLast']) {
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
-                taken = 2;
             }
         }
         if(s[3][2]<0 || Math.abs(s[3][0])<b.eps) { 
@@ -375,9 +370,9 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             } else {
                 d1 = b.affineDistance(s[0], point1.scrCoords);
                 d2 = b.affineDistance(s[0], point2.scrCoords);
-                if((d1 < d2) && el.visProp['straightFirst'] && taken!=1) {
+                if((d1 < d2) && el.visProp['straightFirst']) {
                     point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-                } else if((d1 > d2) && el.visProp['straightLast'] && taken!=2) {
+                } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
                 }
             }
@@ -388,9 +383,9 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             } else {
                 d1 = b.affineDistance(s[3], point1.scrCoords);
                 d2 = b.affineDistance(s[3], point2.scrCoords);             
-                if((d1 < d2) && el.visProp['straightFirst'] && taken!=1) {
+                if((d1 < d2) && el.visProp['straightFirst']) {
                     point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
-                } else if((d1 > d2) && el.visProp['straightLast'] && taken!=2) {
+                } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
                 }
             }
@@ -404,10 +399,8 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             d2 = b.affineDistance(s[1], point2.scrCoords);
             if((d1 < d2) && el.visProp['straightFirst']) {
                 point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
-                taken = 1;
             } else if((d1 > d2) && el.visProp['straightLast']) {
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
-                taken = 2;
             }
         }
         if(s[3][2] < 0 || Math.abs(s[3][0])<b.eps) {
@@ -417,9 +410,9 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             } else {
                 d1 = b.affineDistance(s[0], point1.scrCoords);
                 d2 = b.affineDistance(s[0], point2.scrCoords);
-                if((d1 < d2) && el.visProp['straightFirst'] && taken!=1) {
+                if((d1 < d2) && el.visProp['straightFirst']) {
                     point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-                } else if((d1 > d2) && el.visProp['straightLast'] && taken!=2) {
+                } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
                 }
             }
@@ -430,9 +423,9 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             } else {
                 d1 = b.affineDistance(s[2], point1.scrCoords);
                 d2 = b.affineDistance(s[2], point2.scrCoords);
-                if((d1 < d2) && el.visProp['straightFirst'] && taken!=1) {
+                if((d1 < d2) && el.visProp['straightFirst']) {
                     point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
-                } else if((d1 > d2) && el.visProp['straightLast'] && taken!=2) {
+                } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
                 }
             }
@@ -443,9 +436,9 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             } else {
                 d1 = b.affineDistance(s[3], point1.scrCoords);
                 d2 = b.affineDistance(s[3], point2.scrCoords);    
-                if((d1 < d2) && el.visProp['straightFirst'] && taken!=1) {
+                if((d1 < d2) && el.visProp['straightFirst']) {
                     point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
-                } else if((d1 > d2) && el.visProp['straightLast'] && taken!=2) {
+                } else if((d1 > d2) && el.visProp['straightLast']) {
                     point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
                 }
             }
