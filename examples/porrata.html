@@ -58,7 +58,7 @@
                             graph1 = brd.createElement('curve', [x,y],{strokeWidth:1, name:'nix'}); 
                             graph2 = brd.createElement('curve', [[x[0],x[x.length-1]],[m,m]], {strokecolor:'red'}); 
                             graph2a = brd.createElement('line', [[x[0],-10],[x[x.length-1],-10]], 
-                                {strokecolor:'red',strokeWidth:8,straightFirst:false, straightLast:false}); 
+                                {name:'bingo',strokecolor:'red',strokeWidth:8,straightFirst:false,straightLast:false}); 
                             graph3 = brd.createElement('curve', [[x[0],x[x.length-1]],[m+sd,m+sd]], {strokecolor:'red',dash:2}); 
                             graph4 = brd.createElement('curve', [[x[0],x[x.length-1]],[m-sd,m-sd]], {strokecolor:'red',dash:2}); 
                             graph5 = brd.createElement('curve', [[x[0],x[x.length-1]],[med,med]], {strokecolor:'red',dash:1}); 
