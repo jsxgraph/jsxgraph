@@ -15,4 +15,4 @@ Usage:
 	* inserting a <jsxgraph>-tag wit hall required parameters
 
 Be aware of the fact, that you dont't see the construction unless you leave the editor and save your document.
-On reopening it later, you will notice the link rather than the applet.
+On reopening it later, you will notice the code rather than the jsxgraph-tag.
