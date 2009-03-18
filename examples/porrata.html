@@ -24,9 +24,8 @@
 <script type="text/javascript" language="JavaScript">
     //    brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 300, unitX: 10, unitY: 10, axis:true});
         brd = JXG.JSXGraph.initBoard('jxgbox', { originX: 0, originY: 0, unitX: 1, unitY: 10, axis: false });
-    // workaround for calcStraight bug
-        xax = brd.createElement('axis', [[1,0],[0,0]], {ticksDistance:50});
-        yax = brd.createElement('axis', [[0,-1],[0,0]]);
+        xax = brd.createElement('axis', [[0,0],[1,0]], {ticksDistance:50});
+        yax = brd.createElement('axis', [[0,0],[0,-1]]);
 
         var graph1,graph2,graph3,graph4,graph5;
         var periodical;
