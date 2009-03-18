@@ -324,7 +324,7 @@ JXG.Line.prototype.hasPointOld = function (x, y) {
 
 JXG.Line.prototype.update = function() {    
     if (this.needsUpdate) {
-        if (true ||!this.board.geonextCompatibilityMode) {
+        if (true || !this.board.geonextCompatibilityMode) {
             this.updateStdform();
         }
         for(var i=0; i<this.ticks.length; i++) {

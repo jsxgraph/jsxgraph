@@ -23,9 +23,9 @@
 <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 <script type="text/javascript" language="JavaScript">
     //    brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 300, unitX: 10, unitY: 10, axis:true});
-        brd = JXG.JSXGraph.initBoard('jxgbox', { originX: 0, originY: 0, unitX: 1, unitY: 10, axis: false });
-        xax = brd.createElement('axis', [[0,0],[1,0]], {ticksDistance:50});
-        yax = brd.createElement('axis', [[0,0],[0,-1]]);
+        brd = JXG.JSXGraph.initBoard('jxgbox', { originX: 0, originY: 00, unitX: 1, unitY: 10, axis: false });
+        xax = brd.createElement('axis', [[0,0],[1,0]], {ticksDistance:50,name:'bingo'});
+        //yax = brd.createElement('axis', [[0,0],[0,-1]]);
 
         var graph1,graph2,graph3,graph4,graph5;
         var periodical;
@@ -48,8 +48,6 @@
                              j = j + 1;
                        
                         }
-
-                       
                         
                         var m = brd.mathStatistics.mean(y);
                         var sd = brd.mathStatistics.sd(y);
@@ -59,6 +57,8 @@
                             graph2 = brd.createElement('curve', [[x[0],x[x.length-1]],[m,m]], {strokecolor:'red'}); 
                             graph2a = brd.createElement('line', [[x[0],-10],[x[x.length-1],-10]], 
                                 {name:'bingo',strokecolor:'red',strokeWidth:8,straightFirst:false,straightLast:false}); 
+                            graph2b = brd.createElement('line', [[x[0],-12],[x[x.length-1],-12]], 
+                                {name:'bingo',strokecolor:'red',strokeWidth:8,straightLast:false}); 
                             graph3 = brd.createElement('curve', [[x[0],x[x.length-1]],[m+sd,m+sd]], {strokecolor:'red',dash:2}); 
                             graph4 = brd.createElement('curve', [[x[0],x[x.length-1]],[m-sd,m-sd]], {strokecolor:'red',dash:2}); 
                             graph5 = brd.createElement('curve', [[x[0],x[x.length-1]],[med,med]], {strokecolor:'red',dash:1}); 
