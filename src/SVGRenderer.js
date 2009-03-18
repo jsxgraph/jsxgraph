@@ -543,7 +543,8 @@ JXG.SVGRenderer.prototype.show = function(el) {
 }
 
 JXG.SVGRenderer.prototype.remove = function(shape) {
-    shape.parentNode.removeChild(shape);
+    if(shape!=null && shape.parentNode != null)
+        shape.parentNode.removeChild(shape);
 }
 
 JXG.SVGRenderer.prototype.suspendRedraw = function() {

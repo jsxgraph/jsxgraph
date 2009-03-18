@@ -840,6 +840,8 @@ JXG.Board.prototype.moveOrigin = function () {
         }
     }
     
+    this.clearTraces();
+    
     this.update();
     if(this.hasGrid) {
         this.renderer.removeGrid(this);

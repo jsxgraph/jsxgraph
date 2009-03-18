@@ -327,8 +327,12 @@ JXG.Line.prototype.update = function() {
         if (true ||!this.board.geonextCompatibilityMode) {
             this.updateStdform();
         }
-        for(var i=0; i<this.ticks.length; i++)
-            this.ticks[i].calculateTicksCoordinates();
+        for(var i=0; i<this.ticks.length; i++) {
+            // i don't know why we need this, but if we don't check it, an error will be reported
+            // when the origin is moved. it seems like this.ticks.length is lying.
+            if(typeof this.ticks[i] != 'undefined')
+                this.ticks[i].calculateTicksCoordinates();
+        }
     }
     if(this.traced) {
         this.cloneToBackground(true);
@@ -377,13 +381,6 @@ JXG.Line.prototype.updateStdform = function() {
         //this.board.renderer.updateLine(this); // Why should we need this?
         this.needsUpdate = false;
     }
-};
-
-/**
- * TODO - Removes all ticks.
- */
-JXG.Line.prototype.disableTicks = function() {
-    return;
 };
 
 /**
@@ -788,13 +785,13 @@ JXG.createAxis = function(board, parents, attributes) {
         var line = board.createElement('line', [point1, point2], attributes);
         line.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
         
-        if(attributes.majorTicks == 'undefined' || attributes.majorTicks == null)
-            attributes.majorTicks = 5;
+        if(attributes.minorTicks == 'undefined' || attributes.minorTicks == null)
+            attributes.minorTicks = 4;
 
         if((attributes.insertTicks == 'undefined') || (attributes.insertTicks == null))
             attributes.insertTicks = 'true';
         
-        var dist = 1;
+        var dist = 5;
         if(attributes.ticksDistance != 'undefined' && attributes.ticksDistance != null)
             dist = attributes.ticksDistance;
         

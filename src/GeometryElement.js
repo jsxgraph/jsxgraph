@@ -554,12 +554,12 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     if(old != this.drawZero) this.calculateTicksCoordinates();
                 }
                 break;
-            case 'majorticks':
+            case 'minorticks':
                 if(this.type == JXG.OBJECT_TYPE_TICKS) {
-                    var old = this.majorTicks;
+                    var old = this.minorTicks;
                     if((pair[1] != null) && (pair[1] > 0))
-                        this.majorTicks = pair[1];
-                    if(old != this.majorTicks) this.calculateTicksCoordinates();
+                        this.minorTicks = pair[1];
+                    if(old != this.minorTicks) this.calculateTicksCoordinates();
                 }                
                 break;
             case 'majortickheight':
