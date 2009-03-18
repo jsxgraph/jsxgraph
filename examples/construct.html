@@ -29,8 +29,8 @@ var p1 = board.createElement('point',[1,1], {name:'A',style:6});
 var p2 = board.createElement('point',[5,1], {name:'B',style:6});
 var p3 = board.createElement('point',[0,-1], {name:'C',style:6});
 var p4 = board.createElement('point',[5,3], {name:'D',style:6});
-var l1 = board.createElement('line',["A","B"],{name:'L1',strokeColor:'#00ff00',strokeWidth:2});
-var l2 = board.createElement('line',["C","D"],{name:'L2',strokeColor:'#00ff00',strokeWidth:2});
+var l1 = board.createElement('line',["A","B"],{name:'L1',strokeColor:'#00ff00',strokeWidth:2,straightFirst:false});
+var l2 = board.createElement('line',["C","D"],{name:'L2',strokeColor:'#00ff00',strokeWidth:2,straightFirst:false});
 p5 = board.createElement('point',[board.intersection("L1","L2")],{name:'M',style:6});
 
     /*

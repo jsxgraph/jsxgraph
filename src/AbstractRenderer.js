@@ -277,44 +277,46 @@ JXG.AbstractRenderer.prototype.updateCurve = function(el) {
  * @see #updateLine
  */
 JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
-    var b = el.board.algebra;
+    var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast, 
+        b, c, s, i, j;
+    
+    b = el.board.algebra;
+    straightFirst = el.visProp['straightFirst'];
+    straightLast  = el.visProp['straightLast'];
     // If one of the point is an ideal point in homogeneous coordinates
     // drawing of line segments or rays are not possible. 
-    var hasIdealPoint = (Math.abs(point1.scrCoords[0])<b.eps||Math.abs(point2.scrCoords[0])<b.eps)?true:false;
+    if (Math.abs(point1.scrCoords[0])<b.eps||Math.abs(point2.scrCoords[0])<b.eps) {
+        straightFirst = true;
+        straightLast  = true;
+    }
     
     // Compute the stdform of the line in screen coordinates.
-    var c = [];
+    c = [];
     c[0] = el.stdform[0] - 
            el.stdform[1]*el.board.origin.scrCoords[1]/(el.board.unitX*el.board.zoomX)+
            el.stdform[2]*el.board.origin.scrCoords[2]/(el.board.unitY*el.board.zoomY);
     c[1] = el.stdform[1]/(el.board.unitX*el.board.zoomX);
     c[2] = el.stdform[2]/(-el.board.unitY*el.board.zoomY);
 
-    /**
-      * Intersect the line with the four borders 
-      * of the board.
-      */
-    var s = [];
+    // Intersect the line with the four borders of the board.
+    s = [];
     s[0] = b.crossProduct(c,[0,0,1]);  // top
     s[1] = b.crossProduct(c,[0,1,0]);  // left
     s[2] = b.crossProduct(c,[-el.board.canvasHeight,0,1]);  // bottom
     s[3] = b.crossProduct(c,[-el.board.canvasWidth,1,0]);   // right
 
     // Normalize the intersections 
-    for (var i=0;i<4;i++) {
+    for (i=0;i<4;i++) {
         if (Math.abs(s[i][0])>b.eps) {
-            for (var j=2;j>0;j--) {
+            for (j=2;j>0;j--) {
                 s[i][j] /= s[i][0];
             }
             s[i][0] = 1.0;
         }
     }
     
-    var takePoint1 = false;
-    var takePoint2 = false;
-    var intersect1;
-    var intersect2;
-    
+    takePoint1 = false;
+    takePoint2 = false;
     if (!el.visProp['straightFirst'] &&    // Line starts at point1 and point2 is inside the board
             point1.scrCoords[1]>=0.0 && point1.scrCoords[1]<=el.board.canvasWidth &&
             point1.scrCoords[2]>=0.0 && point1.scrCoords[2]<=el.board.canvasHeight) {
@@ -350,6 +352,7 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             intersect2 = s[3];            // Punkt am rechten Rand verwenden (Right)
         }
     }
+    
     if (!takePoint1) {
         if (!takePoint2) {                // Two border intersection points are used
             point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
@@ -370,24 +373,28 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             }
         }
     }
-/*            
-if (el.name=='bingo')  {  
-    $('debug').innerHTML = "("+point1.usrCoords.toString()+'; '+point2.usrCoords.toString()+')<br>';
-    $('debug').innerHTML += "("+intersect1.toString()+'; '+intersect2.toString()+')<br>';
-}
-*/
 };
 
+/**
+* Looking from point "start", is the point s in the same direction as the 
+* the point p?
+* @private
+*/
 JXG.AbstractRenderer.prototype.isSameDirection = function(start, p, s) {
-    if ( (p.scrCoords[1]-start.scrCoords[1])/(s[1]-start.scrCoords[1])>=0 &&
-         (p.scrCoords[2]-start.scrCoords[2])/(s[2]-start.scrCoords[2])>=0 ) {
-        return true;
-    } else {
-        return false;
+    var p1, p2, s1, s2;
+    p1 = p.scrCoords[1]-start.scrCoords[1];
+    p2 = p.scrCoords[2]-start.scrCoords[2];
+    s1 = s[1]-start.scrCoords[1];
+    s2 = s[2]-start.scrCoords[2];
+    if (p1>=0&&s1>=0) {
+        if ((p2>=0&&s2>=0) || (p2<0&&s2<0)) { return true; }
+    } else if (p1<0&&s1<0){
+        if ((p2>=0&&s2>=0) || (p2<0&&s2<0)) { return true; }        
     }
+    return false;
 }
 
-
+/*
 JXG.AbstractRenderer.prototype.calcStraightOrg = function(el, point1, point2) {
     var b = el.board.algebra;
     // If one of the point is an ideal point in homogeneous coordinates
@@ -402,10 +409,10 @@ JXG.AbstractRenderer.prototype.calcStraightOrg = function(el, point1, point2) {
     c[1] = el.stdform[1]/(el.board.unitX*el.board.zoomX);
     c[2] = el.stdform[2]/(-el.board.unitY*el.board.zoomY);
 
-    /**
-      * Intersect the line with the four borders 
-      * of the board.
-      */
+    //
+    //  Intersect the line with the four borders 
+    //  of the board.
+    // 
     var s = [];
     s[0] = b.crossProduct(c,[0,0,1]);  // top
     s[1] = b.crossProduct(c,[0,1,0]);  // left
@@ -557,6 +564,7 @@ JXG.AbstractRenderer.prototype.calcStraightOrg = function(el, point1, point2) {
         }
     }
 };
+*/
 
 /**
  * Draws a circle on the canvas.
