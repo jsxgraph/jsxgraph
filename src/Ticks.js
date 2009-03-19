@@ -203,6 +203,9 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction) {
         // the length of the axis between c1 and p1
         var total_length = Math.sqrt(dx*dx + dy*dy);
 
+        if (total_length<=0.0) 
+            return;
+            
         // x and y store the coordinates of the current tick to add
         var x = start.usrCoords[1];
         var y = start.usrCoords[2];
@@ -257,6 +260,10 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction) {
             // calculate the new ticks coordinates
             x = x - deltaX;
             y = y - deltaY;
+
+            // break out of loop if this tick is outside of the board
+            if (!((this.board.sgn(deltaX)*(x/*-deltaX*/) >= this.board.sgn(deltaX)*end.usrCoords[1]) && (this.board.sgn(deltaY)*(y/*-deltaY*/) >= this.board.sgn(deltaY)*end.usrCoords[2]))) 
+                break;
 
             // and put them into a coords object
             newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
@@ -352,8 +359,9 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 
     if(this.ticks != null) {
         for(var j=0; j<this.ticks.length; j++) {
-            if(this.labels[j] != null)
+            if(this.labels[j] != null) {
                 if (this.labels[j].show) this.board.renderer.remove(this.labels[j].rendNode);
+            }
         }
     }
 

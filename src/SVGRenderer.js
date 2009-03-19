@@ -97,11 +97,12 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
         var c = axis.ticks[i];
         if(c.major) {
             if (axis.labels[i].show) this.drawLabel(axis.labels[i]);
-            tickStr += "M" + (c.scrCoords[1]+dxMaj) + " " + (c.scrCoords[2]-dyMaj) + " L" + (c.scrCoords[1]-dxMaj) + " " + (c.scrCoords[2]+dyMaj) + " ";
+            tickStr += "M " + (c.scrCoords[1]+dxMaj) + " " + (c.scrCoords[2]-dyMaj) + " L " + (c.scrCoords[1]-dxMaj) + " " + (c.scrCoords[2]+dyMaj) + " ";
         }
         else
-            tickStr += "M" + (c.scrCoords[1]+dxMin) + " " + (c.scrCoords[2]-dyMin) + " L" + (c.scrCoords[1]-dxMin) + " " + (c.scrCoords[2]+dyMin) + " ";
+            tickStr += "M " + (c.scrCoords[1]+dxMin) + " " + (c.scrCoords[2]-dyMin) + " L " + (c.scrCoords[1]-dxMin) + " " + (c.scrCoords[2]+dyMin) + " ";
     }
+    
     var ticks = document.getElementById(axis.id);
     if(ticks == null) {
         ticks = this.createPrimitive('path', axis.id);
