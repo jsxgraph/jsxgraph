@@ -261,7 +261,7 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction) {
             x = x - deltaX;
             y = y - deltaY;
 
-            // break out of loop if this tick is outside of the board
+            // break out of loop if this tick 
             if (!((this.board.sgn(deltaX)*(x/*-deltaX*/) >= this.board.sgn(deltaX)*end.usrCoords[1]) && (this.board.sgn(deltaY)*(y/*-deltaY*/) >= this.board.sgn(deltaY)*end.usrCoords[2]))) 
                 break;
 

@@ -790,10 +790,25 @@ JXG.createAxis = function(board, parents, attributes) {
 
         if((attributes.insertTicks == 'undefined') || (attributes.insertTicks == null))
             attributes.insertTicks = 'true';
-        
-        var dist = 200;
-        if(attributes.ticksDistance != 'undefined' && attributes.ticksDistance != null)
+
+            
+        var dist;
+        if(attributes.ticksDistance != 'undefined' && attributes.ticksDistance != null) {
             dist = attributes.ticksDistance;
+        } else {
+            var c1 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point1.coords.usrCoords.slice(1)],board);
+            var c2 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point2.coords.usrCoords.slice(1)],board);
+            board.renderer.calcStraight(line, c1, c2);
+            var len = c1.distance(JXG.COORDS_BY_USER,c2);
+            len *= 0.25;
+            if (len>=1) {
+                len = Math.round(len*0.2)*5;
+                dist = len;
+            } else {
+                dist = 0.25;
+                while (4*dist>len) { dist *= 0.5; }
+            }
+        }
         
         var defTicks = board.createElement('ticks', [line, dist], attributes);
         line.defaultTicks = defTicks;
