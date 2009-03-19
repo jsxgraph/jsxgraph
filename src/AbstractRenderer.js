@@ -327,32 +327,38 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             point2.scrCoords[2]>=0.0 && point2.scrCoords[2]<=el.board.canvasHeight) {
         takePoint2 = true;
     }
-    
-    if(s[1][2]<0 || Math.abs(s[1][0])<b.eps) { // left intersection out of board (above)
-        intersect1 = s[0];                // Punkt am oberen Rand verwenden (Top)
-        if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<b.eps) {  // right intersection out of board
-            intersect2 = s[2];            // Punkt am unteren Rand verwenden (Bottom)
+
+    if (Math.abs(s[1][0])<b.eps) {                  // line is parallel to "left", take "top" and "bottom"
+        intersect1 = s[0];                          // top
+        intersect2 = s[2];                          // bottom
+    } else if (Math.abs(s[0][0])<b.eps) {           // line is parallel to "top", take "left" and "right"
+        intersect1 = s[1];                          // left
+        intersect2 = s[3];                          // right
+    } else if (s[1][2]<0) {                         // left intersection out of board (above)
+        intersect1 = s[0];                          // top
+        if (s[3][2]>el.board.canvasHeight) {        // right intersection out of board (below)
+            intersect2 = s[2];                      // bottom
         } else {
-            intersect2 = s[3];            // Punkt am rechten Rand verwenden (Right)
+            intersect2 = s[3];                      // right
         }
-    } else if(s[1][2] > el.board.canvasHeight) { // left intersection out of board (below)
-        intersect1 = s[2];                // Punkt am unteren Rand verwenden (Bottom)
-        if(s[3][2]<0 || Math.abs(s[3][0])<b.eps) { 
-            intersect2 = s[0];            // Punkt am oberen Rand verwenden (Top)
+    } else if (s[1][2]>el.board.canvasHeight) {     // left intersection out of board (below)
+        intersect1 = s[2];                          // bottom
+        if (s[3][2]<0) {                            // right intersection out of board (above)
+            intersect2 = s[0];                      // top
         } else {
-            intersect2 = s[3];            // Punkt am rechten Rand verwenden (Right)
+            intersect2 = s[3];                      // right
         }
     } else {
-        intersect1 = s[1];                // Punkt am linken Rand verwenden (Left)
-        if(s[3][2] < 0 || Math.abs(s[3][0])<b.eps) {
-            intersect2 = s[0];            // Punkt am oberen Rand verwenden (Top)
-        } else if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<b.eps) {
-            intersect2 = s[2];            // Punkt am unteren Rand verwenden (Bottom)
+        intersect1 = s[1];                          // left
+        if (s[3][2]<0) {                            // right intersection out of board (above)
+            intersect2 = s[0];                      // top
+        } else if (s[3][2]>el.board.canvasHeight) { // right intersection out of board (below)
+            intersect2 = s[2];                      // bottom
         } else {
-            intersect2 = s[3];            // Punkt am rechten Rand verwenden (Right)
+            intersect2 = s[3];                      // right
         }
     }
-    
+ 
     if (!takePoint1) {
         if (!takePoint2) {                // Two border intersection points are used
             point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
@@ -373,6 +379,9 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             }
         }
     }
+//$('debug').innerHTML = '('+c1.scrCoords.toString()+'; '+c2.scrCoords.toString()+')<br>';
+//$('debug').innerHTML += '('+c1.scrCoords.toString()+'; '+c2.scrCoords.toString()+')<br>';
+
 };
 
 /**

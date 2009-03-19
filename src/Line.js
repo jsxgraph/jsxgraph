@@ -791,7 +791,7 @@ JXG.createAxis = function(board, parents, attributes) {
         if((attributes.insertTicks == 'undefined') || (attributes.insertTicks == null))
             attributes.insertTicks = 'true';
         
-        var dist = 20;
+        var dist = 200;
         if(attributes.ticksDistance != 'undefined' && attributes.ticksDistance != null)
             dist = attributes.ticksDistance;
         

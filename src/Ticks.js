@@ -342,11 +342,11 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     // copy existing lines point coordinates
     var c1 = new JXG.Coords(JXG.COORDS_BY_USER, [this.line.point1.coords.usrCoords[1], this.line.point1.coords.usrCoords[2]], this.board);
     var c2 = new JXG.Coords(JXG.COORDS_BY_USER, [this.line.point2.coords.usrCoords[1], this.line.point2.coords.usrCoords[2]], this.board);
-    
+
     // now let the renderer calculate start and end point of the line on the board, i.e.
     // intersection points of line with the boards edges in the case that the line is a straight.
     this.board.renderer.calcStraight(this.line, c1, c2);
-    
+
     // point1 is our reference point (where zero lies on the axis)
     var p1 = this.line.point1.coords;
 
