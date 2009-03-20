@@ -26,9 +26,9 @@
 /*
 Plugin Name: JSXGraph
 Plugin URI: http://jsxgraph.org
-Description: Embeding jsxgraph constructions
+Description: Embedding jsxgraph constructions
 Author: Peter Wilfahrt
-Version: 0.1
+Version: 0.2
 Author URI: http://www.webconsul.de/
 */
 

@@ -1,9 +1,9 @@
 === JSXGraph - Graphics with JavaScript ===
-Contributors: Matthias Ehmann, Michael Gerhaeuser, Carsten Miller, Bianca Valentin, Alfred Wassermann, Peter Wilfahrt
+Contributors: Matthias Ehmann, Michael Gerhäuser, Carsten Miller, Bianca Valentin, Alfred Wassermann, Peter Wilfahrt
 Tags: jsxgraph, geometry, plotting, visualization, javascript, svg, vml, rendering, graphics
 Requires at least: 2.0
 Tested up to: 2.7.1
-Stable tag: 0.1
+Stable tag: 0.2
 
 Using the JSXGraph filter makes it a lot easier to embed JSXGraph constructions into wordpress pages/posts.
 
@@ -19,29 +19,30 @@ JSXGraph is easy to embed and has a small footprint: only about 55 KB if embedde
 Caution:
 The current version has to be regarded as a development version. Use with caution!
 
-Installation: (by Admin)
-1. Upload the complete folder "jsxgraph" into your blogs plugins folder (wp-content/plugins)
-2. Navigate to the admin panel, there to your plugins and activate the JSXGraph plugin
-optional:
-3. Remove the javascript-files in the plugins-folder in order to load the current version
-   from the jsxgraph-website (same for the stylesheet).
+Installation: (by Admin)<br/>
+1. Upload the complete folder "jsxgraph" into your blogs plugins folder (wp-content/plugins)<br/>
+2. Navigate to the admin panel, there to your plugins and activate the JSXGraph plugin<br/>
+optional:<br/>
+3. Remove the javascript-files in the plugins-folder in order to load the current version<br/>
+   from the jsxgraph-website (same for the stylesheet).<br/>
 
-Usage:
-1. Open a a blog post or new page and
-2. write your desired content. At the position the construction should appear, create a construction by:
-	* switching to the code input
-	* inserting a &lt;jsxgraph&gt;-tag with all required parameters
+Usage:<br/>
+1. Open a a blog post or new page and<br/>
+2. write your desired content. At the position the construction should appear, create a construction by:<br/>
+	* switching to the code input<br/>
+	* inserting a &lt;jsxgraph&gt;-tag with all required parameters<br/>
+	* NOTE: you do have to surround the &lt;jsxgraph&gt;-tag with &lt;pre&gt;&lt;jsxgraph ...&gt;&lt;/pre&gt;<br/>
 
 Be aware of the fact, that you dont't see the construction unless you leave the editor and save your document.
 
 == Screenshots ==
 
-1. Hypotrochoid
-2. Angles
-3. Importing GEONExT and Intergeo files
-4. Chart
-5. Function plot with derivative and integral
-6. Data plot and analysis
+1. Hypotrochoid `/tags/0.2/screenshot-1.jpg`
+2. Angles `/tags/0.2/screenshot-2.jpg`
+3. Importing GEONExT and Intergeo files `/tags/0.2/screenshot-3.jpg`
+4. Chart `/tags/0.2/screenshot-4.jpg`
+5. Function plot with derivative and integral `/tags/0.2/screenshot-5.jpg`
+6. Data plot and analysis `/tags/0.2/screenshot-6.jpg`
 
 
 == Examples ==
@@ -50,5 +51,5 @@ You do find a big compilation of showcases and examples at the [JSXGraph Example
 
 == Frequently Asked Questions ==
 
-You find questions and answers in the related Google group: 
+You find questions and answers in the related Google group: <br/>
 [JSXGraph Google Group](http://groups.google.com/group/jsxgraph)
