@@ -5,6 +5,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
 <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<style type="text/css">
+.JXGtext { color:yellow; }
+</style>
     <title>Cable Plot</title>
 </head>
 <body>
@@ -15,7 +18,7 @@
 <!--    <asp:Button ID="btnGetData" runat="server" Text="Data" />
     <asp:TextBox ID="txtData" runat="server"></asp:TextBox>
  -->
-<div id="jxgbox" class="jxgbox" style="width:700px; height:600px;"></div>
+<div id="jxgbox" class="jxgbox" style="width:700px; height:600px; background-color:#434343; border-color:yellow;"></div>
 <div id="debug" >&nbsp;</div>
   <p id='output'>Statistics:<br/></p>
 </body>
@@ -23,10 +26,9 @@
 <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 <script type="text/javascript" language="JavaScript">
     //    brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 300, unitX: 10, unitY: 10, axis:true});
-        brd = JXG.JSXGraph.initBoard('jxgbox', { originX: 0, originY: 00, unitX: 1, unitY: 10, axis: false });
-        xax = brd.createElement('axis', [[0,0],[1,0]], {name:'bingo'});
-        //yax = brd.createElement('axis', [[0,0],[0,-1]]);
-
+        brd = JXG.JSXGraph.initBoard('jxgbox', { originX: 0, originY: 00, unitX: 0.25, unitY: 10, axis: false });
+        xax = brd.createElement('axis', [[0,0],[1,0]], {name:'bingo',strokeColor:'white',labelColor:'white'});
+        yax = brd.createElement('axis', [[0,0],[0,-1]],{strokeColor:'white',labelColor:'white'});
         var graph1,graph2,graph3,graph4,graph5;
         var periodical;
         
@@ -53,12 +55,14 @@
                         var sd = brd.mathStatistics.sd(y);
                         var med = brd.mathStatistics.median(y);
                         if (!graph1) { 
-                            graph1 = brd.createElement('curve', [x,y],{strokeWidth:1, name:'nix'}); 
+                            graph1 = brd.createElement('curve', [x,y],{strokeWidth:1, name:'nix',strokeColor:'yellow'}); 
                             graph2 = brd.createElement('curve', [[x[0],x[x.length-1]],[m,m]], {strokecolor:'red'}); 
+                            /*
                             graph2a = brd.createElement('line', [[x[0],-10],[x[x.length-1],-10]], 
                                 {name:'bingo',strokecolor:'red',strokeWidth:8,straightFirst:false,straightLast:false}); 
                             graph2b = brd.createElement('line', [[x[0],-12],[x[x.length-1],-12]], 
                                 {name:'bingo',strokecolor:'red',strokeWidth:8,straightLast:false}); 
+                            */
                             graph3 = brd.createElement('curve', [[x[0],x[x.length-1]],[m+sd,m+sd]], {strokecolor:'red',dash:2}); 
                             graph4 = brd.createElement('curve', [[x[0],x[x.length-1]],[m-sd,m-sd]], {strokecolor:'red',dash:2}); 
                             graph5 = brd.createElement('curve', [[x[0],x[x.length-1]],[med,med]], {strokecolor:'red',dash:1}); 
