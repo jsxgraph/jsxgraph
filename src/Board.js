@@ -683,7 +683,6 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
     }
     else if(this.mode == this.BOARD_MODE_DRAG) {
         var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x,y), this);
-
         if(this.drag_obj.type == JXG.OBJECT_TYPE_POINT 
             || this.drag_obj.type == JXG.OBJECT_TYPE_LINE 
             || this.drag_obj.type == JXG.OBJECT_TYPE_CIRCLE
