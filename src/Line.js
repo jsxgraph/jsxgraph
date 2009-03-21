@@ -732,6 +732,29 @@ JXG.createLine = function(board, parents, atts) {
 JXG.JSXGraph.registerElement('line', JXG.createLine);
 
 /**
+ * Creates a new segment, i.e. a line with <tt>visProp['straight*'] = true</tt>.
+ * @param {JXG.Board} board The board the segment is put on.
+ * @param {Array} parents Array of two points defining the segment or three coordinates for a free line
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @type JXG.Line
+ * @return Reference to the created line object.
+ */
+JXG.createSegment = function(board, parents, atts) {
+    var el;
+
+    if(atts == null)
+        atts = new Object();
+    
+    atts.straightFirst = false;
+    atts.straightLast = false;
+    el = board.createElement('line', parents, atts);
+
+    return el;
+};
+
+JXG.JSXGraph.registerElement('segment', JXG.createSegment);
+
+/**
  * Creates a new arrow.
  * @param {JXG.Board} board The board the arrow is put on.
  * @param {Array} parents Array of two points defining the arrow.
