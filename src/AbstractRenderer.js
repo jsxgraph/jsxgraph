@@ -391,10 +391,15 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
 */
 JXG.AbstractRenderer.prototype.isSameDirection = function(start, p, s) {
     var p1, p2, s1, s2;
-    p1 = p.scrCoords[1]-start.scrCoords[1];
-    p2 = p.scrCoords[2]-start.scrCoords[2];
-    s1 = s[1]-start.scrCoords[1];
-    s2 = s[2]-start.scrCoords[2];
+    p1 = p.usrCoords[1]-start.usrCoords[1];
+    p2 = p.usrCoords[2]-start.usrCoords[2];
+    if(s.length > 0) {
+        s1 = s[1]-start.usrCoords[1];
+        s2 = s[2]-start.usrCoords[2];        
+    } else {
+        s1 = s.usrCoords[1]-start.usrCoords[1];
+        s2 = s.usrCoords[2]-start.usrCoords[2];
+    }
     if (p1>=0&&s1>=0) {
         if ((p2>=0&&s2>=0) || (p2<0&&s2<0)) { return true; }
     } else if (p1<0&&s1<0){

@@ -33,7 +33,7 @@
 
 /**
  * Constructs a new Line object.
- * @class This is the Line class. 
+ * @class This is the Line class.
  * It is derived from @see JXG.GeometryElement.
  * It stores all properties required
  * to move, draw a line.
@@ -50,7 +50,7 @@
 JXG.Line = function (board, p1, p2, id, name) {
     /* Call the constructor of GeometryElement */
     this.constructor();
-    
+
     this.init(board, id, name);
 
     /**
@@ -59,7 +59,7 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type int
      */
     this.type = JXG.OBJECT_TYPE_LINE;
-    
+
     /**
      * Class of element, value is OBJECT_CLASS_LINE;
      */
@@ -70,20 +70,20 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type JXG.Point
      */
     this.point1 = JXG.GetReferenceFromParameter(this.board, p1);
-    
+
     /**
      * Endpoint of the line.
      * @type JXG.Point
-     */    
+     */
     this.point2 = JXG.GetReferenceFromParameter(this.board, p2);
 
     /**
      * Image bound to this line
      * @type JXG.Image
-     */    
+     */
     this.image = null;
     this.imageTransformMatrix = [[1,0,0],[0,1,0],[0,0,1]];
-    
+
     /**
      * This is just for the hasPoint() method.
      * @type int
@@ -93,19 +93,19 @@ JXG.Line = function (board, p1, p2, id, name) {
     this.visProp['fillColor'] = this.board.options.line.fillColor;
     this.visProp['highlightFillColor'] = this.board.options.line.highlightFillColor;
     this.visProp['strokeColor'] = this.board.options.line.strokeColor;
-    this.visProp['highlightStrokeColor'] = this.board.options.line.highlightStrokeColor;    
-    
+    this.visProp['highlightStrokeColor'] = this.board.options.line.highlightStrokeColor;
+
     /**
      * Determines if a line is drawn on over the firstpoint.
      * @type bool
      * @see #straightLast
-     */ 
+     */
     this.visProp['straightFirst'] = this.board.options.line.straightFirst;
     /**
      * Determines if a line is drawn on over the lastpoint.
      * @type bool
      * @see #straightFirst
-     */     
+     */
     this.visProp['straightLast'] = this.board.options.line.straightLast;
 
     /**
@@ -113,41 +113,41 @@ JXG.Line = function (board, p1, p2, id, name) {
      * @type bool
      */
     this.visProp['visible'] = true;
-    
+
     /**
      * Determines if a line has an arrow at its firstpoint.
      * @type bool
      * @see #lastArrow
-     */    
+     */
     this.visProp['firstArrow'] = this.board.options.line.firstArrow;
-    
+
     /**
      * Determines if a line has an arrow at its firstpoint.
      * @type bool
      * @see #firstArrow
-     */        
+     */
     this.visProp['lastArrow'] = this.board.options.line.lastArrow;
-    
+
     /**
      * Array of Coords storing the coordinates of all ticks.
      * @type Array
      * @see JXG.Coords
      */
     this.ticks = [];
-    
+
     /**
      * Reference of the ticks created automatically when constructing an axis.
      * @type JXG.Ticks
      * @see JXG.Ticks
      */
     this.defaultTicks = null;
-    
+
     /**
     * If the line is the border of a polygon, the polygone object is stored, otherwise null.
     * @type JXG.Polygon
     */
     this.parentPolygon = null;
-    
+
     /* Register line at board */
     this.id = this.board.addLine(this);
 
@@ -173,11 +173,11 @@ JXG.Line.prototype = new JXG.GeometryElement;
 
     var slope = this.getSlope();
     var rise = this.getRise();
-    
+
     if(this.visProp['straightFirst'] && this.visProp['straightLast']) {
         var c = [];
         // Compute the stdform of the line in screen coordinates.
-        c[0] = this.stdform[0] - 
+        c[0] = this.stdform[0] -
             this.stdform[1]*this.board.origin.scrCoords[1]/(this.board.unitX*this.board.zoomX)+
             this.stdform[2]*this.board.origin.scrCoords[2]/(this.board.unitY*this.board.zoomY);
         c[1] = this.stdform[1]/(this.board.unitX*this.board.zoomX);
@@ -185,12 +185,12 @@ JXG.Line.prototype = new JXG.GeometryElement;
         var s = this.board.algebra.innerProduct(c,coords.scrCoords,3);
         return (Math.abs(s)<0.5)?true:false; // this.r
     }
-    else { 
+    else {
         var p1Scr = this.point1.coords.scrCoords;
         var p2Scr = this.point2.coords.scrCoords;
         if(slope != "INF") {
             for(i = -this.r; i < this.r; i++) {
-                   has = has | (Math.abs(y - (slope*(x+i) + rise)) < this.r); 
+                   has = has | (Math.abs(y - (slope*(x+i) + rise)) < this.r);
                }
                if(has) {
                    var distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
@@ -205,7 +205,7 @@ JXG.Line.prototype = new JXG.GeometryElement;
                        else { // P liegt auf der Seite von P2
                            if(!this.visProp['straightLast']) {
                                has = false;
-                           }                          
+                           }
                        }
                    }
                }
@@ -236,9 +236,9 @@ JXG.Line.prototype = new JXG.GeometryElement;
                            has = false;
                         }
                     }
-                }                
+                }
             }
-        }    
+        }
     }
 
     return has;
@@ -253,21 +253,21 @@ JXG.Line.prototype.hasPointOld = function (x, y) {
 
     var slope = this.getSlope();
     var rise = this.getRise();
-    
+
     if(this.visProp['straightFirst'] && this.visProp['straightLast']) {
         if(slope != "INF") {
             for(i = -this.r; i < this.r; i++) {
-                   has = has | (Math.abs(y - (slope*(x+i) + rise)) < this.r); 
+                   has = has | (Math.abs(y - (slope*(x+i) + rise)) < this.r);
                }
         }
         else { // senkrechte Gerade
             has = (Math.abs(x-p1Scr[1]) < this.r);
         }
     }
-    else { 
+    else {
         if(slope != "INF") {
             for(i = -this.r; i < this.r; i++) {
-                   has = has | (Math.abs(y - (slope*(x+i) + rise)) < this.r); 
+                   has = has | (Math.abs(y - (slope*(x+i) + rise)) < this.r);
                }
                if(has) {
                    var distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
@@ -282,7 +282,7 @@ JXG.Line.prototype.hasPointOld = function (x, y) {
                        else { // P liegt auf der Seite von P2
                            if(!this.visProp['straightLast']) {
                                has = false;
-                           }                          
+                           }
                        }
                    }
                }
@@ -313,16 +313,16 @@ JXG.Line.prototype.hasPointOld = function (x, y) {
                            has = false;
                         }
                     }
-                }                
+                }
             }
-        }    
+        }
     }
 
     return has;
 };
 
 
-JXG.Line.prototype.update = function() {    
+JXG.Line.prototype.update = function() {
     if (this.needsUpdate) {
         if (true || !this.board.geonextCompatibilityMode) {
             this.updateStdform();
@@ -336,10 +336,10 @@ JXG.Line.prototype.update = function() {
     }
     if(this.traced) {
         this.cloneToBackground(true);
-    }    
+    }
 };
 
-JXG.Line.prototype.updateStdform = function() {    
+JXG.Line.prototype.updateStdform = function() {
    /*
     var nx = -(this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]);
     var ny =  this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1];
@@ -366,18 +366,18 @@ JXG.Line.prototype.updateStdform = function() {
         var wasReal = this.isReal;
         this.isReal = (isNaN(this.point1.coords.usrCoords[1]+this.point1.coords.usrCoords[2]+this.point2.coords.usrCoords[1]+this.point2.coords.usrCoords[2]))?false:true;
         if (this.isReal) {
-            if (wasReal!=this.isReal) { 
-                this.board.renderer.show(this); 
-                //if(this.label.show) this.board.renderer.show(this.label); 
+            if (wasReal!=this.isReal) {
+                this.board.renderer.show(this);
+                //if(this.label.show) this.board.renderer.show(this.label);
             }
             this.board.renderer.updateLine(this);
         } else {
-            if (wasReal!=this.isReal) { 
-                this.board.renderer.hide(this); 
-                //if(this.label.show) this.board.renderer.hide(this.label); 
+            if (wasReal!=this.isReal) {
+                this.board.renderer.hide(this);
+                //if(this.label.show) this.board.renderer.hide(this.label);
             }
         }
-        
+
         //this.board.renderer.updateLine(this); // Why should we need this?
         this.needsUpdate = false;
     }
@@ -389,9 +389,9 @@ JXG.Line.prototype.updateStdform = function() {
  * @return The rise of the line
  */
 JXG.Line.prototype.getRise = function () {
-    var p1Scr = this.point1.coords.scrCoords; 
-    var p2Scr = this.point2.coords.scrCoords;     
-                                       
+    var p1Scr = this.point1.coords.scrCoords;
+    var p2Scr = this.point2.coords.scrCoords;
+
     return Math.round((p1Scr[2] - (p1Scr[1]*(p2Scr[2]-p1Scr[2]))/(p2Scr[1]-p1Scr[1])));
 };
 
@@ -401,14 +401,23 @@ JXG.Line.prototype.getRise = function () {
  * @return The slope of the line or INF if the line is parallel to the y-axis.
  */
 JXG.Line.prototype.getSlope = function () {
-    var p1scr = this.point1.coords.scrCoords; 
-    var p2scr = this.point2.coords.scrCoords;  
+    var p1scr = this.point1.coords.scrCoords;
+    var p2scr = this.point2.coords.scrCoords;
+
+    var p1usr = this.point1.coords.usrCoords;
+    var p2usr = this.point2.coords.usrCoords;
     
-    if(Math.abs(p2scr[1]-p1scr[1]) >= 10e-5) {
-       return ((p2scr[2]-p1scr[2])/(p2scr[1]-p1scr[1]));
+    // let's see which one of the coordinates is more useful for us.
+    if(Math.abs(p2scr[1]-p1scr[1]) <= Math.abs(p2usr[1]-p1usr[1])) {
+        p2scr = p2usr;
+        p1scr = p1usr;
+    }
+
+    if(Math.abs(p2scr[1]-p1scr[1]) >= JXG.Math.eps) {
+        return ((p2scr[2]-p1scr[2])/(p2scr[1]-p1scr[1]));
     }
     else {
-       return "INF";
+        return "INF";
     }
 };
 
@@ -422,7 +431,7 @@ JXG.Line.prototype.getSlope = function () {
  JXG.Line.prototype.setStraight = function (straightFirst, straightLast) {
     this.visProp['straightFirst'] = straightFirst;
     this.visProp['straightLast'] = straightLast;
-     
+
     this.board.renderer.updateLine(this);
 };
 
@@ -435,7 +444,7 @@ JXG.Line.prototype.getSlope = function () {
 JXG.Line.prototype.setArrow = function (firstArrow, lastArrow) {
      this.visProp['firstArrow'] = firstArrow;
      this.visProp['lastArrow'] = lastArrow;
-     
+
      this.board.renderer.updateLine(this);
 };
 
@@ -458,9 +467,9 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     this.numTraces++;
     copy.point1 = this.point1;
     copy.point2 = this.point2;
-    
+
     copy.stdform = this.stdform;
-    
+
     copy.board = {};
     copy.board.unitX = this.board.unitX;
     copy.board.unitY = this.board.unitY;
@@ -469,27 +478,27 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.board.origin = this.board.origin;
     copy.board.canvasHeight = this.board.canvasHeight;
     copy.board.canvasWidth = this.board.canvasWidth;
-    copy.board.dimension = this.board.dimension;   
-    copy.board.algebra = this.board.algebra;     
-    
+    copy.board.dimension = this.board.dimension;
+    copy.board.algebra = this.board.algebra;
+
     copy.visProp = this.visProp;
     var s = this.getSlope();
     var r = this.getRise();
     copy.getSlope = function() { return s; };
     copy.getRise = function() { return r; };
-    
+
     this.board.renderer.enhancedRendering = true;
     this.board.renderer.drawLine(copy);
     this.board.renderer.enhancedRendering = false;
     this.traces[copy.id] = document.getElementById(copy.id);
 
     delete copy;
-    
+
 /*
     var id = this.id + 'T' + this.numTraces;
     this.traces[id] = this.board.renderer.cloneSubTree(this,id,'lines');
     this.numTraces++;
-*/    
+*/
 };
 
 JXG.Line.prototype.addTransform = function (transform) {
@@ -626,11 +635,11 @@ JXG.Line.prototype.addTicks = function(ticks) {
     if(ticks.id == '' || typeof ticks.id == 'undefined')
         ticks.id = this.id + '_ticks_' + (this.ticks.length+1);
 
-    this.board.renderer.drawTicks(ticks);    
+    this.board.renderer.drawTicks(ticks);
     this.ticks.push(ticks);
-    
+
     this.ticks[this.ticks.length-1].updateRenderer();
-    
+
     return ticks.id;
 };
 
@@ -656,7 +665,7 @@ JXG.Line.prototype.removeTicks = function(tick) {
     for(var t=this.ticks.length; t>0; t--) {
         if(this.ticks[t-1] == tick) {
             this.board.renderer.remove(this.ticks[t-1].rendNode);
-            
+
             for(var j=0; j<this.ticks[t-1].ticks.length; j++) {
                 if(this.ticks[t-1].labels[j] != null)
                     if (this.ticks[t-1].labels[j].show) this.board.renderer.remove(this.ticks[t-1].labels[j].rendNode);
@@ -676,7 +685,7 @@ JXG.Line.prototype.removeTicks = function(tick) {
  */
 JXG.createLine = function(board, parents, atts) {
     var el;
-    
+
     if((parents[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parents[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
         // line through two points
         var p1 =  JXG.GetReferenceFromParameter(board,parents[0]);
@@ -709,13 +718,13 @@ JXG.createLine = function(board, parents, atts) {
     } else if ((parents.length == 2) && (parents[0].length>1 && parents[1].length>1)) {
         var point1 = new JXG.Point(board, parents[0], '', '', false);
         var point2 = new JXG.Point(board, parents[1], '', '', false);
-    
+
         /* Make the points fixed */
         point1.fixed = true;
         point2.fixed = true;
 
         el = new JXG.Line(board, point1.id, point2.id, atts['id'], atts['name']);
-    } else 
+    } else
         throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     return el;
 };
@@ -732,7 +741,7 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  */
 JXG.createArrow = function(board, parents, attributes) {
     var el;
-    
+
     if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) {
         el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name']);
         el.setStraight(false,false);
@@ -768,14 +777,14 @@ JXG.createAxis = function(board, parents, attributes) {
             point2 = parents[1];
         else
             point2 = new JXG.Point(board,parents[1],'','',false);
-    
+
         /* Make the points fixed */
         point1.fixed = true;
         point2.fixed = true;
 
         if(attributes == null)
             attributes = new Object();
-        
+
         attributes.lastArrow = true;
         attributes.straightFirst = true;
         attributes.straightLast = true;
@@ -784,13 +793,13 @@ JXG.createAxis = function(board, parents, attributes) {
 
         var line = board.createElement('line', [point1, point2], attributes);
         line.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
-        
+
         if(attributes.minorTicks == 'undefined' || attributes.minorTicks == null)
             attributes.minorTicks = 4;
 
         if((attributes.insertTicks == 'undefined') || (attributes.insertTicks == null))
             attributes.insertTicks = 'true';
-            
+
         var dist;
         if(attributes.ticksDistance != 'undefined' && attributes.ticksDistance != null) {
             dist = attributes.ticksDistance;
@@ -808,7 +817,7 @@ JXG.createAxis = function(board, parents, attributes) {
                 while (4*dist>len) { dist *= 0.5; }
             }
         }
-        
+
         var defTicks = board.createElement('ticks', [line, dist], attributes);
         line.defaultTicks = defTicks;
     }
