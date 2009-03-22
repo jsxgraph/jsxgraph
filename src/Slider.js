@@ -45,7 +45,7 @@ JXG.createSlider = function(board, parentArr, atts) {
     p1 = board.createElement('point', pos0, {visible:false, fixed:true,name:''}); 
     p2 = board.createElement('point', pos1,{visible:false,fixed:true,name:''}); 
     l1 = board.createElement('line', [p1,p2], {straightFirst:false,straightLast:false,strokewidth:1,name:''});
-    ticks  = 5;
+    ticks  = 1;
     ti = board.createElement('ticks', [l1, p2.Dist(p1)/ticks]); //, {majorTicks: p2.Dist(p1)/ticks});
     ti.drawLabels = false;
     
