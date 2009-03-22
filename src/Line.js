@@ -832,13 +832,17 @@ JXG.createAxis = function(board, parents, attributes) {
             board.renderer.calcStraight(line, c1, c2);
             var len = c1.distance(JXG.COORDS_BY_USER,c2);
             len *= 0.25;
+            dist = len;
+            /*
             if (len>=1) {
                 len = Math.round(len*0.2)*5;
                 dist = len;
             } else {
                 dist = 0.25;
                 while (4*dist>len) { dist *= 0.5; }
+                dist = len;
             }
+            */
         }
 
         var defTicks = board.createElement('ticks', [line, dist], attributes);
