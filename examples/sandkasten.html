@@ -30,7 +30,8 @@
 
 	p4 = board.createElement('centroid', [p1, p2, p3], {name:"S", trace:true});
 
-        s = board.createElement('segment', [p1, p2], {strokeColor:'green'});
+        s = board.createElement('line', [p1, p2], {strokeColor:'green', straightLast: false});
+        var ticks = board.createElement('ticks', [s, [-1.0, 1.0, 3.0, 9.0]]);
 
 
   /* ]]> */

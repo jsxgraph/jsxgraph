@@ -461,10 +461,14 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         }
     } else {
         // we have an array of fixed ticks we have to draw
+        if(!this.line.visProp['straightFirst'])
+            c1 = p1;
         var dx_minus = p1.usrCoords[1]-c1.usrCoords[1];
         var dy_minus = p1.usrCoords[2]-c1.usrCoords[2];
         var length_minus = Math.sqrt(dx_minus*dx_minus + dy_minus*dy_minus);
 
+        if(!this.line.visProp['straightLast'])
+            c2 = this.line.point2.coords;
         var dx_plus = p1.usrCoords[1]-c2.usrCoords[1];
         var dy_plus = p1.usrCoords[2]-c2.usrCoords[2];
         var length_plus = Math.sqrt(dx_plus*dx_plus + dy_plus*dy_plus);
