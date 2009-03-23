@@ -38,7 +38,7 @@
  * @param {String} forceRenderer If a specific renderer should be chosen. Possible values are 'vml', 'svg', 'silverlight'
  */
 JXG.JSXGraph = new function (forceRenderer) {
-    this.licenseText = 'JSXGraph v0.70 Copyright (C) see http://jsxgraph.org';
+    this.licenseText = 'JSXGraph v0.71 Copyright (C) see http://jsxgraph.org';
 
     /**
      * Stores the renderer that is used to draw the board.

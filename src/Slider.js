@@ -50,9 +50,9 @@ JXG.createSlider = function(board, parentArr, atts) {
     ti.drawLabels = false;
     ti.drawZero = true;
 
-    p1.needRegularUpdate = false;
-    p2.needRegularUpdate = false;
-    l1.needRegularUpdate = false;
+    p1.needsRegularUpdate = false;
+    p2.needsRegularUpdate = false;
+    l1.needsRegularUpdate = false;
     
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);

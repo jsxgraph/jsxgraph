@@ -846,6 +846,7 @@ JXG.createAxis = function(board, parents, attributes) {
         }
 
         var defTicks = board.createElement('ticks', [line, dist], attributes);
+        defTicks.needsRegularUpdate = false;
         line.defaultTicks = defTicks;
     }
     else
