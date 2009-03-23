@@ -406,7 +406,7 @@ JXG.Line.prototype.getSlope = function () {
 
     var p1usr = this.point1.coords.usrCoords;
     var p2usr = this.point2.coords.usrCoords;
-    
+
     // let's see which one of the coordinates is more useful for us.
     if(Math.abs(p2scr[1]-p1scr[1]) <= Math.abs(p2usr[1]-p1usr[1])) {
         p2scr = p2usr;
@@ -744,7 +744,7 @@ JXG.createSegment = function(board, parents, atts) {
 
     if(atts == null)
         atts = new Object();
-    
+
     atts.straightFirst = false;
     atts.straightLast = false;
     el = board.createElement('line', parents, atts);

@@ -48,6 +48,7 @@ JXG.createSlider = function(board, parentArr, atts) {
     ticks  = 1;
     ti = board.createElement('ticks', [l1, p2.Dist(p1)/ticks]); //, {majorTicks: p2.Dist(p1)/ticks});
     ti.drawLabels = false;
+    ti.drawZero = true;
     
     p1.needRegularUpdate = false;
     p2.needRegularUpdate = false;

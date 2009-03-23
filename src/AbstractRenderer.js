@@ -52,7 +52,7 @@ JXG.AbstractRenderer = function() {
  * @see JXG.Point
  * @see #updatePoint
  */
-JXG.AbstractRenderer.prototype.drawPoint = function(el) { 
+JXG.AbstractRenderer.prototype.drawPoint = function(el) {
     var node;
     var node2;
     
@@ -145,13 +145,13 @@ JXG.AbstractRenderer.prototype.updatePoint = function(el) {
  * @see #drawPoint
  */
 JXG.AbstractRenderer.prototype.changePointStyle = function(el) {
-    var node = document.getElementById(el.id);
+    var node = this.getElementById(el.id);
     if(node != null) {
         this.remove(node);
     }
     else {
-        this.remove(document.getElementById(el.id+'_x1'));
-        this.remove(document.getElementById(el.id+'_x2'));
+        this.remove(this.getElementById(el.id+'_x1'));
+        this.remove(this.getElementById(el.id+'_x2'));
     }
     this.drawPoint(el);
     if(!el.visProp['visible']) {
@@ -391,8 +391,10 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
 */
 JXG.AbstractRenderer.prototype.isSameDirection = function(start, p, s) {
     var p1, p2, s1, s2;
+    
     p1 = p.usrCoords[1]-start.usrCoords[1];
     p2 = p.usrCoords[2]-start.usrCoords[2];
+    
     if(s.length > 0) {
         s1 = s[1]-start.usrCoords[1];
         s2 = s[2]-start.usrCoords[2];        
@@ -400,6 +402,8 @@ JXG.AbstractRenderer.prototype.isSameDirection = function(start, p, s) {
         s1 = s.usrCoords[1]-start.usrCoords[1];
         s2 = s.usrCoords[2]-start.usrCoords[2];
     }
+    
+    
     if (p1>=0&&s1>=0) {
         if ((p2>=0&&s2>=0) || (p2<0&&s2<0)) { return true; }
     } else if (p1<0&&s1<0){
@@ -711,7 +715,7 @@ JXG.AbstractRenderer.prototype.updateTicks = function(axis,dx,dy) { };
  * @see #upateTicks
  */
 JXG.AbstractRenderer.prototype.removeTicks = function(axis) {
-    var ticks = document.getElementById(axis.id+'_ticks');
+    var ticks = this.getElementById(axis.id+'_ticks');
     this.remove(ticks);
 }
 
@@ -1341,5 +1345,15 @@ JXG.AbstractRenderer.prototype.drawZoomBar = function(board) {
     node_rarr.innerHTML = '&nbsp;&rarr;&nbsp;';
     JXG.addEvent(node_rarr, 'click', board.clickRightArrow, board);
 
+};
+
+/**
+ * Wrapper for getElementById for maybe other renderers with Elements not directly accessible by DOM methods.
+ * @param {String} id Unique identifier for element.
+ * @type Object
+ * @return Reference to an JavaScript object. In case of SVG/VMLRenderer it's a reference to an HTML node object.
+ */
+JXG.AbstractRenderer.prototype.getElementById = function(id) {
+    return document.getElementById(id);
 };
 

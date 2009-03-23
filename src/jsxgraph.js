@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
@@ -50,7 +50,7 @@ JXG.JSXGraph = new function (forceRenderer) {
      * @type Object
      */
     this.boards = {};
-    
+
     /**
      * Associative array that keeps all registered geometry elements
      * @type Object
@@ -83,12 +83,12 @@ JXG.JSXGraph = new function (forceRenderer) {
         /* the user has chosen a specific renderer */
         this.rendererType = forceRenderer;
     }
-        
+
     /* Load the source files for the renderer */
     //JXG.rendererFiles[this.rendererType].split(',').each( function(include) { JXG.require(JXG.requirePath+include+'.js'); } );
     var arr = JXG.rendererFiles[this.rendererType].split(',');
     for (var i=0;i<arr.length;i++) ( function(include) { JXG.require(JXG.requirePath+include+'.js'); } )(arr[i]);
-    
+
 
     /**
      * Initialise a new board.
@@ -98,10 +98,10 @@ JXG.JSXGraph = new function (forceRenderer) {
     this.initBoard = function (box, attributes) {
         // Create a new renderer
         var renderer;
-        
+
         if(typeof attributes == 'undefined')
             attributes = {};
-            
+
         var originX = ( (typeof attributes["originX"]) == 'undefined' ? 150 : attributes["originX"]);
         var originY = ( (typeof attributes["originY"]) == 'undefined' ? 150 : attributes["originY"]);
         var zoomfactor = ( (typeof attributes["zoom"]) == 'undefined' ? 1.0 : attributes["zoom"]);
@@ -109,34 +109,34 @@ JXG.JSXGraph = new function (forceRenderer) {
         var zoomY = zoomfactor*( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
         var unitX = ( (typeof attributes["unitX"]) == 'undefined' ? 50 : attributes["unitX"]);
         var unitY = ( (typeof attributes["unitY"]) == 'undefined' ? 50 : attributes["unitY"]);
-    
+
+        var dimensions = JXG.getDimensions(box);
+
         if(this.rendererType == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else if(this.rendererType == 'vml') {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
         } else {
-            renderer = new JXG.SilverlightRenderer(document.getElementById(box));
+            renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
         }
-    
-        //var dimensions = document.getElementById(box).getDimensions();
-        var dimensions = JXG.getDimensions(box);
+
         var board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height);
         this.boards[board.id] = board;
         board.initGeonextBoard();
-        
+
         if((typeof attributes["axis"] != 'undefined') && attributes["axis"]) {
             board.createElement('axis', [[0,0], [1,0]], {});
             board.createElement('axis', [[0,0], [0,1]], {});
         }
-    
+
         if((typeof attributes["grid"] != 'undefined') && attributes["grid"]) {
             board.renderer.drawGrid(board);
         }
-        
+
         if(true) {
             board.renderer.drawZoomBar(board);
         }
-        
+
         return board;
     }
 
@@ -187,7 +187,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         if(true) {
             board.renderer.drawZoomBar(board);
         }
-    
+
         this.boards[board.id] = board;
         return board;
     }
@@ -200,33 +200,33 @@ JXG.JSXGraph = new function (forceRenderer) {
         if(typeof(board) == 'string') {
             board = this.boards[board];
         }
-    
+
         // Remove the event listeners
         JXG.removeEvent(document, 'mousedown', board.mouseDownListener);
         JXG.removeEvent(document, 'mouseup', board.mouseUpListener);
         JXG.removeEvent(board.containerObj, 'mousemove', board.mouseMoveListener);
-    
+
         // Remove all objects from the board.
         for(var el in board.objects) {
             board.removeObject(board.objects[el]);
         }
-        
+
         // Remove all the other things, left on the board
         board.containerObj.innerHTML = '';
-        
+
         // Tell the browser the objects aren't needed anymore
         for(var el in board.objects) {
             delete(board.objects[el]);
         }
-        
+
         // Free the renderer and the algebra object
         delete(board.renderer);
         delete(board.algebra);
-        
-        // Finally remove the board itself from the boards array    
+
+        // Finally remove the board itself from the boards array
         delete(this.boards[board.id]);
     }
-    
+
     this.registerElement = function (element, creator) {
         element = element.toLowerCase();
         this.elements[element] = creator;
@@ -252,7 +252,7 @@ JXG.GetReferenceFromParameter = function(board, object) {
             object = board.elementsByName[object];
         }
     }
-    
+
     return object;
 };
 
@@ -265,7 +265,7 @@ JXG.IsNumber = function(obj) {
 };
 
 JXG.IsFunction = function(obj) {
-    return typeof obj == "function"; 
+    return typeof obj == "function";
 };
 
 JXG.IsArray = function(obj) {
@@ -278,7 +278,7 @@ JXG.IsPoint = function(p) {
         return (p.elementClass == JXG.OBJECT_CLASS_POINT);
     }
 
-    return false;        
+    return false;
 };
 
 JXG.createEvalFunction = function(board,param,n) {
@@ -333,9 +333,9 @@ JXG.addEvent = function( obj, type, fn, owner ) {
         return fn.apply(owner,arguments);
     }
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
-        Event.observe(obj, type, f); 
+        Event.observe(obj, type, f);
     } else {             // jQuery
-        $(obj).bind(type,f);   
+        $(obj).bind(type,f);
     }
 }
 
@@ -349,7 +349,7 @@ JXG.removeEvent = function( obj, type, fn ) {
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
         Event.stopObserving(obj, type, fn);
     } else { // jQuery
-        $(obj).unbind(type,fn);   
+        $(obj).unbind(type,fn);
     }
 }
 
@@ -388,7 +388,7 @@ JXG.getStyle = function (obj, stylename) {
         }
     }
 };
-   
+
 JXG.keys = function(object) {
     var keys = [];
     for (var property in object)
@@ -402,7 +402,7 @@ JXG.escapeHTML = function(str) {
 
 JXG.unescapeHTML = function(str) {
     return str.replace(/<\/?[^>]+>/gi, '').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
-}; 
+};
 
 JXG.capitalize = function(str) {
     return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();

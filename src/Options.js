@@ -101,6 +101,7 @@ JXG.Options = function() {
     this.line.ticks.minorHeight = 4;
     this.line.ticks.majorHeight = 10;
     this.line.ticks.minorTicks = 4;
+    this.line.ticks.defaultDistance = 5;
 
     /*special circle options */
     this.circle = new Object();
@@ -315,7 +316,7 @@ JXG.Options.prototype.loadFromFile = function(fileurl, applyTo, board) {
 
    JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw');
 }
- 
+
 /**
  * Apply options given as a string to a board.
  * @param text {String} Options given as a string in .json-Format
@@ -336,7 +337,7 @@ JXG.Options.prototype.parseString = function(text, applyTo, board) {
       if(depth==10)
          return;
       depth++;
-      
+
       for(var key in option) {
          if((JXG.IsNumber(option[key])) || (JXG.IsArray(option[key])) || (JXG.IsString(option[key])) || (option[key]==true) || (option[key]==false)) {
             base[key] = option[key];
@@ -346,9 +347,9 @@ JXG.Options.prototype.parseString = function(text, applyTo, board) {
          }
       }
    }
-   
+
    applyOption(this, newOptions, 0);
-   
+
    if(applyTo && typeof board != 'undefined') {
        this.useStandardOptions(board);
    }
