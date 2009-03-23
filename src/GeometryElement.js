@@ -350,7 +350,6 @@ JXG.GeometryElement.prototype.setProperty = function () {
         } else {                             // pairRaw consists of array [key,value]
             pair = pairRaw;
         }
-
         switch(pair[0].replace(/\s+/g).toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
             case 'strokewidth':
                 this.visProp['strokeWidth'] = pair[1];

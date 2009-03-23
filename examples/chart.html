@@ -19,7 +19,7 @@
     <input type="button" value="Pie chart" onClick="pieChart()" style='margin:1em'><br>
   </p>
   <br clear=all>
-  <div id="debug" style="display:none;"></div>
+  <div id="debug" style="display:block;"></div>
   <script type="text/javascript">
     /* <![CDATA[ */
 
@@ -30,11 +30,9 @@
         // Line chart
         function lineChart() {
             JXG.JSXGraph.freeBoard(board);
-            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50});
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 500, unitX: 50, unitY: 50, axis:true});
             board.suspendUpdate();
-            var b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
-            var b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
-            var a = board.createElement('chart', dataArr, {chartStyle:'line',strokeWidth:4,strokeColor:'#0000ff'});
+            var a = board.createElement('chart', dataArr, {chartStyle:'line',name:'bingo',strokeWidth:4,strokeColor:'#0000ff'});
             board.unsuspendUpdate();
         };
 
@@ -104,10 +102,10 @@
 
             //var s = board.createElement('slider', [5,-1,3,1,2,1], {name:'S'});
             var s = board.createElement('slider', [[5,-1],[8,-1],[1,1,2]], {name:'S'});
-            var f = [function(){return this.board.round(s.X()*4,2);},
-                     function(){return this.board.round(s.X()*(-1),2);},
-                     function(){return this.board.round(s.X()*3,2);},
-                     function(){return this.board.round(s.X()*2,2);}];
+            var f = [function(){return this.board.round(s.Value()*4,2);},
+                     function(){return this.board.round(s.Value()*(-1),2);},
+                     function(){return this.board.round(s.Value()*3,2);},
+                     function(){return this.board.round(s.Value()*2,2);}];
             var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
             board.unsuspendUpdate();
         };

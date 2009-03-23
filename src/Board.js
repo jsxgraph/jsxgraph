@@ -2384,6 +2384,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
             if(typeof el.setProperty != 'undefined')
                 el.setProperty(attributes);
         }
+        
 //    } catch (e) { alert("Error setting Property:" + e); };
     
 //    if(!JXG.IsArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
