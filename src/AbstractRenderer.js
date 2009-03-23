@@ -359,10 +359,18 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
         }
     }
  
+//$('debug').innerHTML = '('+point1.scrCoords.toString()+'; '+point2.scrCoords.toString()+')<br>';
+//$('debug').innerHTML += '('+intersect1.toString()+'; '+intersect2.toString()+')<br>';
+//$('debug').innerHTML +=this.isSameDirection(point1, point2, intersect1);
     if (!takePoint1) {
         if (!takePoint2) {                // Two border intersection points are used
-            point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
-            point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+            if (this.isSameDirection(point1, point2, intersect1)) {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+            } else {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+            }
         } else {                          // Instead of point1 the border intersection is taken
             if (this.isSameDirection(point2, point1, intersect1)) {
                 point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
@@ -379,8 +387,6 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             }
         }
     }
-//$('debug').innerHTML = '('+c1.scrCoords.toString()+'; '+c2.scrCoords.toString()+')<br>';
-//$('debug').innerHTML += '('+c1.scrCoords.toString()+'; '+c2.scrCoords.toString()+')<br>';
 
 };
 
@@ -390,24 +396,28 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
 * @private
 */
 JXG.AbstractRenderer.prototype.isSameDirection = function(start, p, s) {
-    var p1, p2, s1, s2;
+    var dx, dy, sx, sy;
     
-    p1 = p.usrCoords[1]-start.usrCoords[1];
-    p2 = p.usrCoords[2]-start.usrCoords[2];
+    dx = p.scrCoords[1]-start.scrCoords[1];
+    dy = p.scrCoords[2]-start.scrCoords[2];
     
     if(s.length > 0) {
-        s1 = s[1]-start.usrCoords[1];
-        s2 = s[2]-start.usrCoords[2];        
+        sx = s[1]-start.scrCoords[1];
+        sy = s[2]-start.scrCoords[2];        
     } else {
-        s1 = s.usrCoords[1]-start.usrCoords[1];
-        s2 = s.usrCoords[2]-start.usrCoords[2];
+        sx = s.scrCoords[1]-start.scrCoords[1];
+        sy = s.scrCoords[2]-start.scrCoords[2];
     }
-    
-    
-    if (p1>=0&&s1>=0) {
-        if ((p2>=0&&s2>=0) || (p2<0&&s2<0)) { return true; }
-    } else if (p1<0&&s1<0){
-        if ((p2>=0&&s2>=0) || (p2<0&&s2<0)) { return true; }        
+    if (Math.abs(dx)<JXG.Math.eps) dx=0;
+    if (Math.abs(dy)<JXG.Math.eps) dy=0;
+    if (Math.abs(sx)<JXG.Math.eps) sx=0;
+    if (Math.abs(sy)<JXG.Math.eps) sy=0;
+//$('debug').innerHTML += dx+',' +    dy+','+sx+','+sy+'<br>';
+
+    if (dx>=0&&sx>=0) {
+        if ((dy>=0&&sy>=0) || (dy<=0&&sy<=0)) { return true; }
+    } else if (dx<=0&&sx<=0){
+        if ((dy>=0&&sy>=0) || (dy<=0&&sy<=0)) { return true; }        
     }
     return false;
 }
