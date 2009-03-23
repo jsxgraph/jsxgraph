@@ -38,18 +38,15 @@ JXG.VMLRenderer = function(container) {
   
     // Add VML includes and namespace
     // Original: IE <=7
-    if(!document.documentMode || document.documentMode<8) {
-        container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml");
-        container.ownerDocument.createStyleSheet().addRule("v\\:*", "behavior: url(#default#VML);");
-    } 
+    container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml");
+    container.ownerDocument.createStyleSheet().addRule("v\\:*", "behavior: url(#default#VML);");
     // excanvas: 
-    if(document.documentMode && document.documentMode>=8) {
+    /*
         container.ownerDocument.namespaces.add('v', 'urn:schemas-microsoft-com:vml', '#default#VML');
         //container.ownerDocument.createStyleSheet().cssText = "v\\:*{behavior:url(#default#VML)}";
         var ss = container.ownerDocument.createStyleSheet();
         ss.cssText = '.jsxgbox{v\\:*{behavior:url(#default#VML)}';
-    }
-
+    */
 
     // Ohne Fehler, aber falsch:
     //container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml", "#default#VML");

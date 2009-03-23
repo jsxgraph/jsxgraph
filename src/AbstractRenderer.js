@@ -278,7 +278,7 @@ JXG.AbstractRenderer.prototype.updateCurve = function(el) {
  */
 JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
     var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast, 
-        b, c, s, i, j;
+        b, c, s, i, j, p1, p2;
     
     b = el.board.algebra;
     straightFirst = el.visProp['straightFirst'];
@@ -302,6 +302,8 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
     c[1] = el.stdform[1]/(el.board.unitX*el.board.zoomX);
     c[2] = el.stdform[2]/(-el.board.unitY*el.board.zoomY);
 
+    if (isNaN(c[0]+c[1]+c[2])) return; // p1=p2
+    
     // Intersect the line with the four borders of the board.
     s = [];
     s[0] = b.crossProduct(c,[0,0,1]);  // top
@@ -362,10 +364,14 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             intersect2 = s[3];                      // right
         }
     }
+    
+    intersect1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect1.slice(1), el.board);
+    intersect2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect2.slice(1), el.board);
+ 
  
 //$('debug').innerHTML = '('+point1.scrCoords.toString()+'; '+point2.scrCoords.toString()+')<br>';
-//$('debug').innerHTML += '('+intersect1.toString()+'; '+intersect2.toString()+')<br>';
-//$('debug').innerHTML +=this.isSameDirection(point1, point2, intersect1);
+//$('debug').innerHTML = '('+intersect1.usrCoords.toString()+'; '+intersect2.usrCoords.toString()+')<br>';
+/*
     if (!takePoint1) {
         if (!takePoint2) {                // Two border intersection points are used
             if (this.isSameDirection(point1, point2, intersect1)) {
@@ -411,7 +417,55 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
             }
         }
     }
-
+*/
+    if (!takePoint1) {
+        if (!takePoint2) {                // Two border intersection points are used
+            if (this.isSameDirection(point1, point2, intersect1)) {
+                if (!this.isSameDirection(point1, point2, intersect2)) {
+                    p2 = intersect1;
+                    p1 = intersect2;
+                } else {
+                    if (el.board.algebra.affineDistance(point2.usrCoords,intersect1.usrCoords)<el.board.algebra.affineDistance(point2.usrCoords,intersect2.usrCoords)) {
+                        p1 = intersect1;
+                        p2 = intersect2;
+                    } else {
+                        p2 = intersect1;
+                        p1 = intersect2;
+                    }
+                }
+            } else {
+                if (this.isSameDirection(point1, point2, intersect2)) {
+                    p1 = intersect1;
+                    p2 = intersect2;
+                } else {
+                    if (el.board.algebra.affineDistance(point2.usrCoords,intersect1.usrCoords)<el.board.algebra.affineDistance(point2.usrCoords,intersect2.usrCoords)) {
+                        p2 = intersect1;
+                        p1 = intersect2;
+                    } else {
+                        p1 = intersect1;
+                        p2 = intersect2;
+                    }
+                }
+            }
+        } else {                          // Instead of point1 the border intersection is taken
+            if (this.isSameDirection(point2, point1, intersect1)) {
+                p1 = intersect1;
+            } else {
+                p1 = intersect2;
+            }
+        }
+    } else {
+        if (!takePoint2) {                // Instead of point2 the border intersection is taken
+            if (this.isSameDirection(point1, point2, intersect1)) {
+                p2 = intersect1;
+            } else {
+                p2 = intersect2;
+            }
+        }
+    }
+// $('debug').innerHTML += el.name+': ('+point1.usrCoords.toString()+')<br>';
+    if (p1) point1.setCoordinates(JXG.COORDS_BY_USER, p1.usrCoords.slice(1));
+    if (p2) point2.setCoordinates(JXG.COORDS_BY_USER, p2.usrCoords.slice(1));
 };
 
 /**
@@ -422,16 +476,17 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
 JXG.AbstractRenderer.prototype.isSameDirection = function(start, p, s) {
     var dx, dy, sx, sy;
     
-    dx = p.scrCoords[1]-start.scrCoords[1];
-    dy = p.scrCoords[2]-start.scrCoords[2];
-    
+    dx = p.usrCoords[1]-start.usrCoords[1];
+    dy = p.usrCoords[2]-start.usrCoords[2];
+/*    
     if(s.length > 0) {
         sx = s[1]-start.scrCoords[1];
         sy = s[2]-start.scrCoords[2];        
     } else {
-        sx = s.scrCoords[1]-start.scrCoords[1];
-        sy = s.scrCoords[2]-start.scrCoords[2];
-    }
+*/    
+    sx = s.usrCoords[1]-start.usrCoords[1];
+    sy = s.usrCoords[2]-start.usrCoords[2];
+//    }
     if (Math.abs(dx)<JXG.Math.eps) dx=0;
     if (Math.abs(dy)<JXG.Math.eps) dy=0;
     if (Math.abs(sx)<JXG.Math.eps) sx=0;

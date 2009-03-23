@@ -6,7 +6,7 @@
         <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>-->
 	</head>
  	<body>
- 		<div id="jsxgbox" style="width:800px; height:800px;"></div>
+ 		<div id="jsxgbox" class="jxgbox" style="width:800px; height:800px;"></div>
 		<script type="text/javascript">
  			var board = JXG.JSXGraph.initBoard('jsxgbox', {originX: 300, originY: 300, unitX: 50, unitY: 50});
  			//var S = board.createElement('slider', [-5,-6,10,0,1,0.5], {name:'S'});
@@ -17,13 +17,13 @@
 	 		points[1] = board.createElement('point',[-5, 5], {name:' '});	
 	 		points[2] = board.createElement('point',[-5, -5], {name:' '});	
 	 		points[3] = board.createElement('point',[5, -5], {name:' '});	
-	 		 	
-	 		function viereck(pt, n) {
-	 			var arr = new Array();
-	 			for(var i = 0; i < 4; i++) {
+                
+            function viereck(pt, n) {
+                var arr = new Array();
+                for(var i = 0; i < 4; i++) {
                     // Ab Version 0.60:
-                    /*
-	 				arr[i] = board.createElement('point', 
+                    
+                    arr[i] = board.createElement('point', 
                         [function(t) {
                             return function () {var x = pt[t].X(); 
                                                 var x1 = pt[(t+1)%4].X(); 
@@ -38,8 +38,9 @@
                          }}(i)
                         ], 
                         {style:3, name:" "});
-                    */
+                    
                     // Ab Version 0.50 Workaround
+                    /*
                     arr[i] = board.createElement('point', 
                         [function(t) {
                             return function () {var x = pt[t].coords.usrCoords[1]; 
@@ -55,12 +56,13 @@
                          }}(i)
                         ], 
                         {style:3, name:" "});
-	 				//board.createElement('line',[pt[i], pt[(i+1)%4]], {straightFirst:false, straightLast:false, strokeWidth:1});
-	 			}
-	 			board.createElement('polygon',pt, {fillColor: '#5555'+n+''+n});
-	 			if(n>0)
-	 				viereck(arr, --n);
-	 		}
+                    */
+                    //board.createElement('line',[pt[i], pt[(i+1)%4]], {straightFirst:false, straightLast:false, strokeWidth:1});
+                }
+                board.createElement('polygon',pt, {fillColor: '#5555'+n+''+n});
+                if(n>0)
+                    viereck(arr, --n);
+            }
 	 		
             board.suspendUpdate();
 	 		viereck(points,30);

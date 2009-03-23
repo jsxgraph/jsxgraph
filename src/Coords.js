@@ -97,9 +97,9 @@ JXG.Coords.prototype.normalizeUsrCoords = function() {
  * @private
  */
 JXG.Coords.prototype.usr2screen = function() {
-    this.scrCoords[0] = /*Math.round(*/this.usrCoords[0];//);
-    this.scrCoords[1] = /*Math.round(*/this.usrCoords[0]*this.board.origin.scrCoords[1] + this.usrCoords[1]*this.board.unitX*this.board.zoomX;//);
-    this.scrCoords[2] = /*Math.round(*/this.usrCoords[0]*this.board.origin.scrCoords[2] - this.usrCoords[2]*this.board.unitY*this.board.zoomY;//);
+    this.scrCoords[0] = Math.round(this.usrCoords[0]);
+    this.scrCoords[1] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[1] + this.usrCoords[1]*this.board.unitX*this.board.zoomX);
+    this.scrCoords[2] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[2] - this.usrCoords[2]*this.board.unitY*this.board.zoomY);
 };
 
 /**
