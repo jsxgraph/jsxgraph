@@ -831,8 +831,8 @@ JXG.createAxis = function(board, parents, attributes) {
             var c2 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point2.coords.usrCoords.slice(1)],board);
             board.renderer.calcStraight(line, c1, c2);
             var len = c1.distance(JXG.COORDS_BY_USER,c2);
-            len *= 0.25;
-            dist = len;
+            //len *= 0.33;
+            dist = 1.0; //len;
             /*
             if (len>=1) {
                 len = Math.round(len*0.2)*5;

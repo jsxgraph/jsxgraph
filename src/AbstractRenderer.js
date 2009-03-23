@@ -283,6 +283,10 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
     b = el.board.algebra;
     straightFirst = el.visProp['straightFirst'];
     straightLast  = el.visProp['straightLast'];
+    
+    if ( !straightFirst && !straightLast ) {  // Do nothing in case of line segments (inside or outside of the board)
+        return;
+    }
     // If one of the point is an ideal point in homogeneous coordinates
     // drawing of line segments or rays are not possible. 
     if (Math.abs(point1.scrCoords[0])<b.eps||Math.abs(point2.scrCoords[0])<b.eps) {
@@ -317,12 +321,12 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
     
     takePoint1 = false;
     takePoint2 = false;
-    if (!el.visProp['straightFirst'] &&    // Line starts at point1 and point2 is inside the board
+    if (!straightFirst &&    // Line starts at point1 and point2 is inside the board
             point1.scrCoords[1]>=0.0 && point1.scrCoords[1]<=el.board.canvasWidth &&
             point1.scrCoords[2]>=0.0 && point1.scrCoords[2]<=el.board.canvasHeight) {
         takePoint1 = true;
     }
-    if (!el.visProp['straightLast'] &&    // Line ends at point2 and point2 is inside the board
+    if (!straightLast &&    // Line ends at point2 and point2 is inside the board
             point2.scrCoords[1]>=0.0 && point2.scrCoords[1]<=el.board.canvasWidth &&
             point2.scrCoords[2]>=0.0 && point2.scrCoords[2]<=el.board.canvasHeight) {
         takePoint2 = true;
@@ -365,11 +369,31 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
     if (!takePoint1) {
         if (!takePoint2) {                // Two border intersection points are used
             if (this.isSameDirection(point1, point2, intersect1)) {
-                point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                if (!this.isSameDirection(point1, point2, intersect2)) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                } else {
+                    if (el.board.algebra.affineDistance(point2.scrCoords,intersect1)<el.board.algebra.affineDistance(point2.scrCoords,intersect2)) {
+                        point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                        point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                    } else {
+                        point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                        point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                    }
+                }
             } else {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
-                point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                if (this.isSameDirection(point1, point2, intersect2)) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                } else {
+                    if (el.board.algebra.affineDistance(point2.scrCoords,intersect1)<el.board.algebra.affineDistance(point2.scrCoords,intersect2)) {
+                        point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                        point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                    } else {
+                        point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                        point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                    }
+                }
             }
         } else {                          // Instead of point1 the border intersection is taken
             if (this.isSameDirection(point2, point1, intersect1)) {
@@ -412,7 +436,6 @@ JXG.AbstractRenderer.prototype.isSameDirection = function(start, p, s) {
     if (Math.abs(dy)<JXG.Math.eps) dy=0;
     if (Math.abs(sx)<JXG.Math.eps) sx=0;
     if (Math.abs(sy)<JXG.Math.eps) sy=0;
-//$('debug').innerHTML += dx+',' +    dy+','+sx+','+sy+'<br>';
 
     if (dx>=0&&sx>=0) {
         if ((dy>=0&&sy>=0) || (dy<=0&&sy<=0)) { return true; }
