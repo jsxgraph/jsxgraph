@@ -476,4 +476,14 @@ this.readGeogebra = function(tree, board) {
     }
 };
 
+this.prepareString = function(fileStr){
+    if (fileStr.indexOf('<')!=0) {
+    	bA = [];
+    	for (i=0;i<fileStr.length;i++)
+            bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
+            
+        fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");  // Unzip
+    }
+    return fileStr;
+};
 }; // end: GeogebraReader()

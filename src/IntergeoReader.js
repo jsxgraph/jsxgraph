@@ -224,6 +224,18 @@ JXG.IntergeoReader = new function() {
         el.setProperty("straightFirst:false","straightLast:true");
         this.objects[param[0]] = el;
     };
+    
+    this.prepareString = function(fileStr){
+    if (fileStr.indexOf('<')!=0) {
+    	bA = [];
+    	binary = false;
+        for (i=0;i<fileStr.length;i++)
+            bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
+                   
+        fileStr = (new JXG.Util.Unzip(bA)).unzipFile("construction/intergeo.xml");  // Unzip
+    }
+    return fileStr;
+};
 
 };
 

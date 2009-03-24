@@ -1174,7 +1174,7 @@ this.readGeonext = function(tree,board) {
 
 this.decodeString = function(str) {
     if (str.indexOf("<GEONEXT>")<0){
-        var unz = (new JXG.Gunzip(Base64.decodeAsArray(str))).unzip();
+        var unz = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str))).unzip(); // war Gunzip ME
         if (unz=="")
             return str;
         else
@@ -1186,7 +1186,7 @@ this.decodeString = function(str) {
 
 this.prepareString = function(fileStr){
     if (fileStr.indexOf('GEONEXT')<0) {
-        fileStr = JXG.GeonextReader.decodeString(fileStr);  // Base64 decoding
+        fileStr = (JXG.GeonextReader.decodeString(fileStr))[0][0];  // Base64 decoding
     }
     // Hacks to enable not well formed XML. Will be redone in Algebra.geonext2JS and Board.addConditions
     fileStr = JXG.GeonextReader.fixXML(fileStr);

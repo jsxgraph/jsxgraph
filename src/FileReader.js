@@ -61,7 +61,7 @@ this.parseFileContent = function(url, board, format) {
        this.cbp = function() {
           var request = this.request;
           if (request.readyState == 4) {
-             this.parseString(request.responseText, board, format);
+             this.parseString(request.responseText, board, format, url);
           }
        }; //).bind(this);
     }
@@ -103,10 +103,16 @@ this.stringToXMLTree = function(fileStr) {
     return tree;
 };
 
-this.parseString = function(fileStr, board, format) {
+this.parseString = function(fileStr, board, format, url) {
     // fileStr is a string containing the XML code of the construction
     if (format.toLowerCase()=='geonext') { 
         fileStr = JXG.GeonextReader.prepareString(fileStr);
+    }
+    if (format.toLowerCase()=='geogebra') {
+    	fileStr = JXG.GeogebraReader.prepareString(fileStr);
+    }
+    if (format.toLowerCase()=='intergeo') {
+    	fileStr = JXG.IntergeoReader.prepareString(fileStr);
     }
     board.xmlString = fileStr;
     var tree = this.stringToXMLTree(fileStr);
