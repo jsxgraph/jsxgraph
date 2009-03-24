@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -78,49 +78,46 @@ JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
     var node = this.createPrimitive('text','licenseText');
     node.setAttributeNS(null,'x','20');
     node.setAttributeNS(null,'y',2+fontsize);
-    node.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:"+fontsize+"; fill:#356AA0;  opacity:0.3;");
+    node.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:"+fontsize+"px; fill:#356AA0;  opacity:0.3;");
     var t = document.createTextNode(str);
     node.appendChild(t);
     this.appendChildPrimitive(node,'images');
 };
 
-
-JXG.SVGRenderer.prototype.drawAxis = function(el) {  
-    var node = this.createPrimitive('line',el.id);
-    node.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);
-    node.setAttributeNS(null, 'stroke-width', el.visProp['strokeWidth']);
+JXG.SVGRenderer.prototype.drawTicks = function(axis) {
+    var ticks = this.createPrimitive('path', axis.id);
+    this.appendChildPrimitive(ticks,'lines');
     
-    var node2 = this.createArrowHead(el);
-    node2.setAttributeNS(null, 'fill', el.visProp['strokeColor']);
-    this.defs.appendChild(node2);
-    node.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'Triangle)');
-
-    this.lines.appendChild(node);
-    el.rendNode = node;
-    el.rendNodeTriangle = node2;
-    this.updateAxisTicks(el, 0);
-    this.updateAxis(el);
+    axis.rendNode = ticks;
 }
 
-JXG.SVGRenderer.prototype.updateAxis = function(el) {
-    var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]], el.board);
-    var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords[1], el.point2.coords.usrCoords[2]], el.board);
-    if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
-       this.calcStraight(el,screenCoords1,screenCoords2); 
-    } 
-    var node = $(el.id);
-    if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
-        this.updateLinePrimitive(node,el.board.origin.scrCoords[1],el.board.canvasHeight,el.board.origin.scrCoords[1],0);
-    } else {
-        this.updateLinePrimitive(node,0,el.board.origin.scrCoords[2],el.board.canvasWidth,el.board.origin.scrCoords[2]);
-    }    
-    this.setStrokeProp(node,el.visProp);
-    this.updateAxisTicksInnerLoop(el,0);
+JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
+    var tickStr = "";
+    for (var i=0; i<axis.ticks.length; i++) {
+        var c = axis.ticks[i];
+        if(c.major) {
+            if (axis.labels[i].show) this.drawLabel(axis.labels[i]);
+            tickStr += "M " + (c.scrCoords[1]+dxMaj) + " " + (c.scrCoords[2]-dyMaj) + " L " + (c.scrCoords[1]-dxMaj) + " " + (c.scrCoords[2]+dyMaj) + " ";
+        }
+        else
+            tickStr += "M " + (c.scrCoords[1]+dxMin) + " " + (c.scrCoords[2]-dyMin) + " L " + (c.scrCoords[1]-dxMin) + " " + (c.scrCoords[2]+dyMin) + " ";
+    }
+    
+    var ticks = document.getElementById(axis.id);
+    if(ticks == null) {
+        ticks = this.createPrimitive('path', axis.id);
+        this.appendChildPrimitive(ticks,'lines');
+    }
+    ticks.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);    
+    ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
+    ticks.setAttributeNS(null, 'stroke-width', axis.visProp['strokeWidth']);
+    this.updatePathPrimitive(ticks, tickStr, axis.board);
 }
 
 JXG.SVGRenderer.prototype.drawArc = function(el) {  
     var node = this.createPrimitive('path',el.id);
-
+    el.rendNode = node;
+    
     var radius = el.getRadius();  
     var angle = el.board.algebra.trueAngle(el.point2, el.midpoint, el.point3);
     var circle = {}; // um projectToCircle benutzen zu koennen...
@@ -143,7 +140,7 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     pathString += '0 ';
     pathString += point3.scrCoords[1] + ' ' + point3.scrCoords[2]; // Endpunkt
     
-    this.updatePathPrimitive(node,pathString);
+    this.updatePathPrimitive(node,pathString,el.board);
     this.setStrokeProp(node,el.visProp);
     node.setAttributeNS(null, 'fill', 'none');
     this.setDashStyle(node,el.visProp);
@@ -182,12 +179,12 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     pathString2 += point3.scrCoords[1] + ' ' + point3.scrCoords[2];
     pathString2 += ' L ' + el.midpoint.coords.scrCoords[1] + " " + el.midpoint.coords.scrCoords[2]    + ' z'; // Endpunkt
     
-    this.updatePathPrimitive(node4,pathString2);
+    this.updatePathPrimitive(node4,pathString2,el.board);
     this.setFillProp(node4,el.visProp);
     node4.setAttributeNS(null, 'stroke', 'none');
     
     this.arcs.appendChild(node);
-    el.rendNode = node;
+
     this.sectors.appendChild(node4);
     el.rendNodeFill = node4;
     this.setDraft(el);
@@ -221,7 +218,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     pathString += '0 ';
     pathString += projectedP3.scrCoords[1] + ' ' + projectedP3.scrCoords[2];
     pathString += ' L ' + el.point2.coords.scrCoords[1] + " " + el.point2.coords.scrCoords[2]    + ' z'; // Endpunkt
-    //this.updatePathPrimitive(node,pathString);
+    //this.updatePathPrimitive(node,pathString,el.board);
     node.setAttributeNS(null, 'd', pathString);    
     
     node.setAttributeNS(null, 'fill', el.visProp['fillColor']);
@@ -242,7 +239,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     pathString += '0 ';
     pathString += projectedP3.scrCoords[1] + ' ' + projectedP3.scrCoords[2]; // Endpunkt    
 
-    //this.updatePathPrimitive(node2,pathString);
+    //this.updatePathPrimitive(node2,pathString,el.board);
     node2.setAttributeNS(null, 'd', pathString);
     node2.setAttributeNS(null, 'id', el.id+'_2');
     node2.setAttributeNS(null, 'fill', 'none');    
@@ -316,6 +313,7 @@ JXG.SVGRenderer.prototype.removeGrid = function(board) {
 
 JXG.SVGRenderer.prototype.setObjectDash = function(el) {
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) { // Punkte haben keine dash-Eigenschaft
+        var node;
         if(el.type == JXG.OBJECT_TYPE_ANGLE) {
             node = el.rendNode2;
         }
@@ -385,13 +383,13 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
             }                
         }     
         else if(el.type == JXG.OBJECT_TYPE_LINE) {
-            if(!el.visProp['straightFirst'] && el.visProp['firstArrow']) {
+            if(el.visProp['firstArrow']) {
                 el.rendNodeTriangleStart.setAttributeNS(null, 'stroke', c);
                 el.rendNodeTriangleStart.setAttributeNS(null, 'stroke-opacity', o);                
                 el.rendNodeTriangleStart.setAttributeNS(null, 'fill', c);
                 el.rendNodeTriangleStart.setAttributeNS(null, 'fill-opacity', o);                    
             }
-            if(!el.visProp['straightLast'] && el.visProp['lastArrow']) {
+            if(el.visProp['lastArrow']) {
                 el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke', c);
                 el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke-opacity', o);                
                 el.rendNodeTriangleEnd.setAttributeNS(null, 'fill', c);
@@ -546,7 +544,8 @@ JXG.SVGRenderer.prototype.show = function(el) {
 }
 
 JXG.SVGRenderer.prototype.remove = function(shape) {
-    shape.parentNode.removeChild(shape);
+    if(shape!=null && shape.parentNode != null)
+        shape.parentNode.removeChild(shape);
 }
 
 JXG.SVGRenderer.prototype.suspendRedraw = function() {
@@ -578,14 +577,12 @@ JXG.SVGRenderer.prototype.setFillProp = function(node,visProp) {
     //node.setAttributeNS(null, 'opacity', '0.3');    
 }
 
-
 JXG.SVGRenderer.prototype.setDashStyle = function(node,visProp) {
     if(visProp['dash'] > 0) {
         var dashStyle = visProp['dash'];
         node.setAttributeNS(null, 'stroke-dasharray', this.dashArray[dashStyle-1]);
     }
 }
-
 
 JXG.SVGRenderer.prototype.createPrimitive = function(type,id) {
     var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
@@ -687,35 +684,48 @@ JXG.SVGRenderer.prototype.updateRectPrimitive = function(node,x,y,w,h) {
     node.setAttributeNS(null, 'height', (h));
 };
 
-JXG.SVGRenderer.prototype.updatePathPrimitive = function(node,pointString) {
+JXG.SVGRenderer.prototype.updatePathPrimitive = function(node, pointString, board) {  // board not necessary in SVG
     node.setAttributeNS(null, 'd', pointString);
     node.setAttributeNS(null, 'stroke-linecap', 'round');
     node.setAttributeNS(null, 'stroke-linejoin', 'round');
 };
 
+/*
+JXG.SVGRenderer.prototype.updatePathPrimitive2 = function(el, pointString) {
+    var node = el.rendNode;
+    node.setAttributeNS(null, 'd', pointString);
+    node.setAttributeNS(null, 'stroke-linecap', 'round');
+    node.setAttributeNS(null, 'stroke-linejoin', 'round');
+};
+*/
+
 JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     if (el.numberPoints<=0) { return ''; }
-    var j = 0;
-    var screenCoords = el.points[j].scrCoords;
-    while ((isNaN(screenCoords[1]) || isNaN(screenCoords[2])) && (j<el.numberPoints-1)) {
-        j++;
-        screenCoords = el.points[j].scrCoords;
-    }
-    if (j>=el.numberPoints) { return ''; }
-    var pStr = 'M ' + screenCoords[1] + ' ' + screenCoords[2];
-
-    for (var i=j+1; i<el.numberPoints; i++) {
-        var screenCoords = el.points[i].scrCoords;
-        if (!isNaN(screenCoords[1]) && !isNaN(screenCoords[2])) {
-            pStr += ' L '+ screenCoords[1] + ' ' + screenCoords[2];
+    var nextSymb = ' M ';
+    var pStr = '';
+    var h = 100*el.board.canvasHeight;  // This is a weak test to detect infinity
+    var w = 100*el.board.canvasWidth;
+    for (var i=0; i<el.numberPoints; i++) {
+        var scr = el.points[i].scrCoords;
+        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || Math.abs(scr[2])>h) {
+            nextSymb = ' M ';
+        } else {
+            pStr += nextSymb + scr[1] + ' ' + scr[2]; // Attention: first coordinate may be inaccurate if far way)
+            nextSymb = ' L ';
         }
     }
-//$('debug').innerHTML = pStr;
     return pStr;
 };
 
-JXG.SVGRenderer.prototype.updatePolygonePrimitive = function(node,pointString) {
-    node.setAttributeNS(null, 'points', pointString);
+JXG.SVGRenderer.prototype.updatePolygonePrimitive = function(node, el) {
+    node.setAttributeNS(null, 'stroke', 'none');
+    var pStr = "";
+    for(var i=0; i<el.vertices.length-1; i++) {
+        var screenCoords = el.vertices[i].coords.scrCoords;
+        pStr = pStr + screenCoords[1] + "," + screenCoords[2];
+        if(i<el.vertices.length-2) { pStr += " "; }
+    }
+    node.setAttributeNS(null, 'points', pStr);
 };
 
 JXG.SVGRenderer.prototype.appendChildPrimitive = function(node,level) {
@@ -725,8 +735,8 @@ JXG.SVGRenderer.prototype.appendChildPrimitive = function(node,level) {
         case 'angles': this.angles.appendChild(node); break;
         case 'sectors': this.sectors.appendChild(node); break;
         case 'polygone': this.polygone.appendChild(node); break;
-        case 'curves': this.curves.appendChild(node); break;
-        case 'circles': this.circles.appendChild(node); break;
+        case 'curves': this.lines.appendChild(node); break; //this.curves.appendChild(node); break;
+        case 'circles': this.lines.appendChild(node); break; //this.circles.appendChild(node); break;
         case 'lines': this.lines.appendChild(node); break;
         case 'arcs': this.arcs.appendChild(node); break;
         case 'points': this.points.appendChild(node); break;
@@ -740,3 +750,11 @@ JXG.SVGRenderer.prototype.setPropertyPrimitive = function(node,key,val) {
     node.setAttributeNS(null, key, val);
 };
 
+/*
+JXG.SVGRenderer.prototype.cloneSubTree = function(el,id,type) {
+    var n = el.rendNode.cloneNode(true);
+    n.setAttribute('id', id);
+    this.appendChildPrimitive(n,type);
+    return n;
+};
+*/

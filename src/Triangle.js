@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -60,8 +60,8 @@ JXG.createTriangle = function(board, parents, attributes) {
         l2 = board.createElement('line', [p2, p3], attributes);
         l3 = board.createElement('line', [p3, p1], attributes);
         
-        var g = new JXG.Group(board);
-        g.addPoints([p1, p2, p3]);
+        var g = board.createElement('group', [p1, p2, p3]);
+//        g.addPoints([p1, p2, p3]);
                 
         return {A: p1, B: p2, C: p3, a: l1, b: l2, c: l3, G: g, multipleElements: true};
     } else {

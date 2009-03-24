@@ -2,7 +2,8 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
+<script type="text/javascript" src="../distrib/prototype.js"></script>
+<!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -187,34 +188,110 @@
         <option value='intergeo/intergeo3.xml'> intergeo3.xml </option>
     </select>
     <input type='button' value='Read InterGeo file' onclick="loadFile('beispiele_i2g','Intergeo')" /> 
+    <p>
+    Geogebra examples: <br>
+    <select id="beispiele_geo">
+        <option value='ggb/GS_Konstruktion_worksheet.xml'>GS_Konstruktion_worksheet</option>
+        <option value='ggb/GeradenSpiegelung_worksheet.xml'>GeradenSpiegelung_worksheet</option>
+        <option value='ggb/PunktSpiegelung_worksheet.xml'>PunktSpiegelung_worksheet</option>
+        <option value='ggb/Streckung_worksheet.xml'>Streckung_worksheet</option>
+        <option value='ggb/addition_worksheet.xml'>addition_worksheet</option>
+        <option value='ggb/baumdiagramm3.xml' selected>baumdiagramm3</option>
+        <option value='ggb/baumdiagramm3b.xml'>baumdiagramm3b</option>
+        <option value='ggb/betrag_worksheet.xml'>betrag_worksheet</option>
+        <option value='ggb/dynagraph.xml'>dynagraph</option>
+        <option value='ggb/dynagraph_worksheet.xml'>dynagraph_worksheet</option>
+        <option value='ggb/einheitsvektor_worksheet.xml'>einheitsvektor_worksheet</option>
+        <option value='ggb/ellip_worksheet.xml'>ellip_worksheet</option>
+        <option value='ggb/euler_gerade1.xml'>euler_gerade1</option>
+        <option value='ggb/euler_gerade2.xml'>euler_gerade2</option>
+        <option value='ggb/exp01_worksheet.xml'>exp01_worksheet</option>
+        <option value='ggb/exp02_worksheet.xml'>exp02_worksheet</option>
+        <option value='ggb/funktion_steigung1.xml'>funktion_steigung1</option>
+        <option value='ggb/funktion_steigung1b.xml'>funktion_steigung1b</option>
+        <option value='ggb/funktion_steigung2.xml'>funktion_steigung2</option>
+        <option value='ggb/funktion_steigung2b.xml'>funktion_steigung2b</option>
+        <option value='ggb/gegenvektor_worksheet.xml'>gegenvektor_worksheet</option>
+        <option value='ggb/glasscheibe1.xml'>glasscheibe1</option>
+        <option value='ggb/glasscheibe2.xml'>glasscheibe2</option>
+        <option value='ggb/glockenkurve.xml'>glockenkurve</option>
+        <option value='ggb/hoehenschnittpunkt.xml'>hoehenschnittpunkt</option>
+        <option value='ggb/huehner_worksheet.xml'>huehner_worksheet</option>
+        <option value='ggb/kreis_gleichung.xml'>kreis_gleichung</option>
+        <option value='ggb/kreis_tangente.xml'>kreis_tangente</option>
+        <option value='ggb/leiter_wand.xml'>leiter_wand</option>
+        <option value='ggb/malthus01_worksheet.xml'>malthus01_worksheet</option>
+        <option value='ggb/malthus02_worksheet.xml'>malthus02_worksheet</option>
+        <option value='ggb/malthus03_worksheet.xml'>malthus03_worksheet</option>
+        <option value='ggb/muehle_worksheet.xml'>muehle_worksheet</option>
+        <option value='ggb/normalverteilung.xml'>normalverteilung</option>
+        <option value='ggb/parabel_abstand.xml'>parabel_abstand</option>
+        <option value='ggb/parabel_scheitel.xml'>parabel_scheitel</option>
+        <option value='ggb/pascal01.xml'>pascal01</option>
+        <option value='ggb/pascal02.xml'>pascal02</option>
+        <option value='ggb/polare_hauptsatz_worksheet.xml'>polare_hauptsatz_worksheet</option>
+        <option value='ggb/polare_kegelschnitt_worksheet.xml'>polare_kegelschnitt_worksheet</option>
+        <option value='ggb/polare_kreis_worksheet.xml'>polare_kreis_worksheet</option>
+        <option value='ggb/poly2_1.xml'>poly2_1</option>
+        <option value='ggb/poly2_2.xml'>poly2_2</option>
+        <option value='ggb/poly2_3.xml'>poly2_3</option>
+        <option value='ggb/poly3_1.xml'>poly3_1</option>
+        <option value='ggb/poly3_2.xml'>poly3_2</option>
+        <option value='ggb/poly3_3.xml'>poly3_3</option>
+        <option value='ggb/poly3_4.xml'>poly3_4</option>
+        <option value='ggb/pythagoras_worksheet.xml'>pythagoras_worksheet</option>
+        <option value='ggb/rechteck_flaeche.xml'>rechteck_flaeche</option>
+        <option value='ggb/see_grundstueck.xml'>see_grundstueck</option>
+        <option value='ggb/sincostan.xml'>sincostan</option>
+        <option value='ggb/sincostan_funktion.xml'>sincostan_funktion</option>
+        <option value='ggb/skalarmult_worksheet.xml'>skalarmult_worksheet</option>
+        <option value='ggb/streckeabtragen_worksheet.xml'>streckeabtragen_worksheet</option>
+        <option value='ggb/streckenteilung_worksheet.xml'>streckenteilung_worksheet</option>
+        <option value='ggb/subtraktion_worksheet.xml'>subtraktion_worksheet</option>
+        <option value='ggb/thales.xml'>thales</option>
+        <option value='ggb/thales_beweis.xml'>thales_beweis</option>
+        <option value='ggb/trigonometrisch1.xml'>trigonometrisch1</option>
+        <option value='ggb/trigonometrisch2.xml'>trigonometrisch2</option>
+        <option value='ggb/trigonometrisch3.xml'>trigonometrisch3</option>
+        <option value='ggb/trigonometrisch4.xml'>trigonometrisch4</option>
+        <option value='ggb/umfangswinkel_worksheet.xml'>umfangswinkel_worksheet</option>
+        <option value='ggb/unterobersumme.xml'>unterobersumme</option>
+        <option value='ggb/vektor_worksheet.xml'>vektor_worksheet</option>
+        <option value='ggb/verschiebung_worksheet.xml'>verschiebung_worksheet</option>
+        <option value='ggb/verzinsung_worksheet.xml'>verzinsung_worksheet</option>
+        <option value='ggb/geogebra1.xml'> geogebra1.xml </option>
+        <option value='ggb/geogebra2.xml'> geogebra2.xml </option>
+        <option value='ggb/geogebra3.xml'> geogebra3.xml </option>
+    </select>
+    <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" />
          </form>
-   <div id="debug" style="display:none; overflow:scroll; "></div>
+   <div id="debug" style="overflow:scroll;"></div>
    
 <script>
    var board;
    function loadFile(bspname,format) {
-        $('box').innerHTML = '';
-        $('debug').innerHTML = "<b>Debug:</b><p>";
+        document.getElementById('box').innerHTML = '';
+        //document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";
     
         if(typeof board != 'undefined') {
             JXG.JSXGraph.freeBoard(board);
         }
-        var value = $(bspname).options[$(bspname).selectedIndex].value;
+        var value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value;
         if (value=='') {
-            value = $(bspname).options[$(bspname).selectedIndex].text;
+            value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
         }
         board = JXG.JSXGraph.loadBoardFromFile('box','bspnc/'+value, format);
    }
 
    function loadString(bspname, format) {
-        $('box').innerHTML = '';
-        $('debug').innerHTML = "<b>Debug:</b><p>";
+        document.getElementById('box').innerHTML = '';
+        document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";
     
         if(typeof board != 'undefined') {
             JXG.JSXGraph.freeBoard(board);
         }
         
-        board = JXG.JSXGraph.loadBoardFromString('box', $(bspname).options[$(bspname).selectedIndex].value, format);
+        board = JXG.JSXGraph.loadBoardFromString('box', document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value, format);
    }
 
     function speedTest(board) {

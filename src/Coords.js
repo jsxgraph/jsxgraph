@@ -1,5 +1,5 @@
 /* 
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -40,13 +40,13 @@ JXG.COORDS_BY_SCREEN = 0x0002;
  * are defined here.
  * @param {int} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
  * @param {Array} coordinates An array of affine coordinates.
- * @param {AbstractRenderer} renderer A reference to a Renderer.
+ * @param {JXG.AbstractRenderer} renderer A reference to a Renderer.
  * @constructor
  */
 JXG.Coords = function (method, coordinates, board) {
     /**
      * Stores the board the object is used on.
-     * @type Board
+     * @type JXG.Board
      */
     this.board = board;
     
@@ -115,23 +115,22 @@ JXG.Coords.prototype.screen2usr = function() {
 /**
  * Calculate distance of one point to another.
  * @param {int} method The type of coordinates used here. Possible values are <b>COORDS_BY_USER</b> and <b>COORDS_BY_SCREEN</b>.
- * @param {Coords} coordinates The Coords object to which the distance is calculated.
+ * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
  */
 JXG.Coords.prototype.distance = function(method, coordinates) {
-//    var eps = 0.000001;
     var sum = 0;
     if(method == JXG.COORDS_BY_USER) {
 //        if (Math.abs(this.usrCoords[0]+coordinates.usrCoords[0])>eps) {
 //            return Infinity;
 //        }
-        for(var i=1; i<this.board.dimension+1; i++) {
+        for(var i=0; i<=this.board.dimension; i++) {
             sum += (this.usrCoords[i] - coordinates.usrCoords[i])*(this.usrCoords[i] - coordinates.usrCoords[i]);
         }
     } else {
 //        if (Math.abs(this.scrCoords[0]+coordinates.scrCoords[0])>eps) {
 //            return Infinity;
 //        }
-        for(var i=1; i<this.board.dimension+1; i++) {
+        for(var i=0; i<=this.board.dimension; i++) {
             sum += (this.scrCoords[i] - coordinates.scrCoords[i])*(this.scrCoords[i] - coordinates.scrCoords[i]);
         }
     }
@@ -149,8 +148,16 @@ JXG.Coords.prototype.setCoordinates = function(method, coordinates) {
 /*        for(var i=1; i<this.board.dimension+1; i++) {
             this.usrCoords[i] = coordinates[i-1];
         }*/
-        this.usrCoords[1] = coordinates[0];
-        this.usrCoords[2] = coordinates[1];
+        if (coordinates.length==2) { // Euclidean coordinates
+            this.usrCoords[0] = 1.0;
+            this.usrCoords[1] = coordinates[0];
+            this.usrCoords[2] = coordinates[1];
+        } else { // Homogeneous coordinates (normalized)
+            this.usrCoords[0] = coordinates[0];
+            this.usrCoords[1] = coordinates[1];
+            this.usrCoords[2] = coordinates[2];
+            this.normalizeUsrCoords();
+        }
         this.usr2screen();
     } else {
 /*        for(var i=1; i<this.board.dimension+1; i++) {

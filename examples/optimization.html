@@ -42,10 +42,10 @@
         
 		//defining the hook
 		function print_table(board) {
-                $('print_fencelength').innerHTML = board.algebra.round(JXG.GetReferenceFromParameter(board, 'A').Dist(JXG.GetReferenceFromParameter(board, 'B')),2);
-        	$('print_sidelength1').innerHTML = board.algebra.round(JXG.GetReferenceFromParameter(board, 'A').Dist(JXG.GetReferenceFromParameter(board, 'D')),2);
-        	$('print_sidelength2').innerHTML = board.algebra.round(JXG.GetReferenceFromParameter(board, 'M').Dist(JXG.GetReferenceFromParameter(board, 'D')),2);
-        	$('print_area').innerHTML = board.algebra.round(JXG.GetReferenceFromParameter(board, 'A').Dist(JXG.GetReferenceFromParameter(board, 'D')) * JXG.GetReferenceFromParameter(board, 'M').Dist(JXG.GetReferenceFromParameter(board, 'D')),2);
+                $('print_fencelength').innerHTML = board.round(JXG.GetReferenceFromParameter(board, 'A').Dist(JXG.GetReferenceFromParameter(board, 'B')),2);
+        	$('print_sidelength1').innerHTML = board.round(JXG.GetReferenceFromParameter(board, 'A').Dist(JXG.GetReferenceFromParameter(board, 'D')),2);
+        	$('print_sidelength2').innerHTML = board.round(JXG.GetReferenceFromParameter(board, 'M').Dist(JXG.GetReferenceFromParameter(board, 'D')),2);
+        	$('print_area').innerHTML = board.round(JXG.GetReferenceFromParameter(board, 'A').Dist(JXG.GetReferenceFromParameter(board, 'D')) * JXG.GetReferenceFromParameter(board, 'M').Dist(JXG.GetReferenceFromParameter(board, 'D')),2);
 			
 			
         }

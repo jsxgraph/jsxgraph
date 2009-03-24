@@ -1,0 +1,122 @@
+<html>
+<head>
+<title>Koch-Kurve</title>
+<link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<script type="text/javascript" src="../distrib/prototype.js"></script>
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+
+
+<body>
+<FONT FACE="Arial">
+<h2>Koch-Kurve - Experiment 2</h2>
+<div id="debug">OUTPUT</div>
+<div id="box" class="jxgbox" style="width:400px; height:400px; float:left; margin-right:30px"></div>
+ 
+<script type="text/javascript">
+ 
+brd = JXG.JSXGraph.loadBoardFromFile('box', 'dreieck.gxt', 'Geonext');
+//brd = JXG.JSXGraph.initBoard('box', {originX:200, originY:200, unitX:1, unitY:1});
+var p1 = brd.createElement('point',[-150,-100], {name:'U',style:1,visible:false});
+var p2 = brd.createElement('point',[150,-100], {name:'V',style:1,visible:false});
+var p3 = brd.createElement('point',[130,-150], {name:'A',style:1,visible:true});
+var p4 = brd.createElement('point',[180,-150], {name:'B',style:4,visible:true});
+var p5 = brd.createElement('point',[0,160], {name:'C',style:4}); //,visible:false});
+var li = brd.createElement('line',["U","V"], {strokeColor:'#00ff00',strokeWidth:2 , straightFirst:false, straightLast:false, strokeOpacity:0.3 });
+var li1 = brd.createElement('line',[p1,p5], {strokeColor:'#000000',strokeWidth:2 , straightFirst:false, straightLast:false , strokeOpacity:1 });
+var li2 = brd.createElement('line',[p2,p5], {strokeColor:'#00ff00',strokeWidth:2 , straightFirst:false, straightLast:false , strokeOpacity:0.3 });
+var li3 = brd.createElement('line',["A","B"], {strokeColor:'#00ff00',strokeWidth:2 , straightFirst:false, straightLast:false });
+var k1 = brd.createElement('circle',[p1,p2], {name:'k1', strokeColor:'#00ff00',strokeWidth:1   ,visible:false});
+var k2 = brd.createElement('circle',[p2,p1], {name:'k2', strokeColor:'#00ff00',strokeWidth:1   ,visible:false});
+var te = brd.createElement('text',[100,-180, function(){ return "Abstand AB = " + (p3.Dist(p4)).toFixed(0);} ], {visible:true});
+//brd.createElement('functiongraph',[function(x){return Math.sin(x);}],{strokeWidth:10,strokeOpacity:1});
+var t = brd.createElement('turtle',[],{strokeWidth:10});
+
+function posi() {
+t.clearScreen();
+t.pu();
+t.setPos(-150,-100);t.rt(30);
+t.setPenColor('yellow');
+t.setPenSize(3);
+t.setProperty({strokeOpacity:1});
+t.pd();
+}
+
+posi();
+
+//t.setProperty({fillColor:'yellow'});
+
+/*
+function zacken(s) {
+brd.suspendUpdate();
+t.fd(s).lt(60).fd(s).rt(120).fd(s).lt(60).fd(s);
+brd.unsuspendUpdate();
+}
+*/
+
+function recursion(s,u) {
+        koch(s/3,u-1);
+        t.lt(60);
+        koch(s/3,u-1);
+        t.rt(120);
+        koch(s/3,u-1);
+        t.lt(60);
+        koch(s/3,u-1);
+}
+
+function koch(s,u) {
+	    if (u==0) {
+          t.fd(s);
+          return;
+        }
+        recursion(s,u);
+}
+	
+function startFraktal() {	
+//var a=document.xxx.eingabe1.value*1;
+var b=document.xxx.eingabe2.value*1;
+t.clearScreen();
+t.pu();
+t.setPos(-150,-100);t.rt(30);
+t.pd();
+for (i=1;i<4;i++){koch(300,b); t.rt(120);}	
+}
+
+</script>
+
+Von der Koch-Kurve zur Schneeflockenkurve:
+<br>
+Statt mit einer Strecke wird mit einem gleichseitigen Dreieck gestartet.
+<p>
+ <ul>
+<li>
+Experimentiere mit verschiedenen Rekursionsstufen und beschreibe, wie die Schneeflockenkurve entsteht.
+<p>
+
+ </ul>
+<p>
+<hr>
+<p>
+<form name="xxx">
+		<table>
+			<tr>
+				<td>Rekursionsstufe eingeben (beginne mit 0):
+					<input type="text" name="eingabe2" size="5" value="2">
+					<input id="input1" type="button" value="Start" onClick="startFraktal()"> 
+					<p>
+				</td>				
+			</tr>
+		</table>	
+<p>
+<hr>
+<p>
+</form>  
+
+</td>
+</tr>
+<tr>
+<td>
+<a href="koch1.html">Zurück zu Experiment 1</a>
+</font>
+</body>
+</html>

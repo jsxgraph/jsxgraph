@@ -1,3 +1,27 @@
+/*
+    Copyright 2008,2009
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
+*/
 JXG.GeonextReader = new function() {
 
 this.changeOriginIds = function(board,id) {
@@ -26,12 +50,12 @@ this.colorProperties = function(gxtEl, Data) {
 
 this.firstLevelProperties = function(gxtEl, Data) {
     var arr = Data.childNodes;
-    $R(0,arr.length-1).each(function(n) {
+    for (var n=0;n<arr.length;n++) {
         if (arr[n].firstChild!=null && arr[n].nodeName!='data' && arr[n].nodeName!='straight') {
             var key = arr[n].nodeName;
             gxtEl[key] = arr[n].firstChild.data;
         }
-    });
+    };
     return gxtEl;
 }; 
 
@@ -77,16 +101,16 @@ this.visualProperties = function(gxtEl, Data) {
 this.readNodes = function(gxtEl, Data, nodeType, prefix) {
     var key;
     var arr = Data.getElementsByTagName(nodeType)[0].childNodes;
-    $R(0,arr.length-1).each(function(n) {
+    for (var n=0;n<arr.length;n++) {
         if (arr[n].firstChild!=null) {
             if (prefix!=null) {
-                key = prefix+arr[n].nodeName.capitalize();
+                key = prefix+JXG.capitalize(arr[n].nodeName);
             } else {
                 key = arr[n].nodeName;
             }
             gxtEl[key] = arr[n].firstChild.data;
         }
-    });
+    };
     return gxtEl;
 };
 
@@ -218,8 +242,8 @@ this.readGeonext = function(tree,board) {
     JXG.JSXGraph.boards[board.id] = board;
     board.initGeonextBoard();
     // Update of properties during update() is not necessary in GEONExT files
-    board.renderer.enhancedRendering = false;
-
+    // But it maybe necessary if we construct with JavaScript afterwards
+    board.renderer.enhancedRendering = true;
 
     JXG.GeonextReader.parseImage(board,boardData.getElementsByTagName('file')[0],'images'); // Background image
 
@@ -266,10 +290,11 @@ this.readGeonext = function(tree,board) {
         opacity = bgcolor.substr(7,2);
         bgcolor = bgcolor.substr(0,7);
     }    
-    $(board.container).style.backgroundColor = bgcolor;
+    board.containerObj.style.backgroundColor = bgcolor;
     
-    $R(0,tree.getElementsByTagName("elements")[0].childNodes.length-1).each(function(s) {
-        var Data = tree.getElementsByTagName("elements")[0].childNodes[s];
+    var elementsChildNodes = tree.getElementsByTagName("elements")[0].childNodes;
+    for (var s=0;s<elementsChildNodes.length;s++) (function(s) {
+        var Data = elementsChildNodes[s];
         var gxtEl = {};
         gxtEl = JXG.GeonextReader.defProperties(gxtEl, Data);
         if (gxtEl==null) return; // Text nodes are skipped.
@@ -380,16 +405,16 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'animate', 'animate');
                 JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'points');
                 try {
-                    var s = new JXG.Point(board, [1*gxtEl.x, 1*gxtEl.y], gxtEl.id, gxtEl.name, true);
+                    var p = new JXG.Point(board, [1*gxtEl.x, 1*gxtEl.y], gxtEl.id, gxtEl.name, true);
                     gxtEl.parent = JXG.GeonextReader.changeOriginIds(board,gxtEl.parent);
-                    s.makeGlider(gxtEl.parent); 
-                    s.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
+                    p.makeGlider(gxtEl.parent); 
+                    p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                                   'fillColor:'+gxtEl.colorStroke,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                                   'highlightFillColor:'+gxtEl.highlightStrokeColor,'visible:'+gxtEl.visible,
                                   'fixed:'+gxtEl.fixed,'labelColor:'+gxtEl.colorLabel,'draft:'+gxtEl.draft);
-                    s.onPolygon = board.algebra.str2Bool(gxtEl.onpolygon);
-                    s.traced = (gxtEl.trace=='false') ? false : true;      
-                    s.setStyle(1*gxtEl.style);                    
+                    p.onPolygon = board.algebra.str2Bool(gxtEl.onpolygon);
+                    p.traced = (gxtEl.trace=='false') ? false : true;      
+                    p.setStyle(1*gxtEl.style);                    
                     JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 } catch(e) {
                     //$('debug').innerHTML += "* <b>Err:</b>  Slider " + gxtEl.name + " " + gxtEl.id + ': '+ gxtEl.parent +"<br>\n";
@@ -405,7 +430,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
                 JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'points');
                 var p = new JXG.Point(board, [1*gxtEl.xval, 1*gxtEl.yval], gxtEl.id, gxtEl.name, true);
-                p.addConstraint(gxtEl.x,gxtEl.y);  
+                p.addConstraint([gxtEl.x,gxtEl.y]);  
                 p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorStroke,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.highlightStrokeColor,'visible:'+gxtEl.visible,
@@ -653,14 +678,14 @@ this.readGeonext = function(tree,board) {
                         defElColF[i] = tmp.getElementsByTagName('fill')[0].firstChild.data;
                         defElColL[i] = tmp.getElementsByTagName('label')[0].firstChild.data;
                     }                          
-                    var s = new JXG.Sector(board, gxtEl.defEl[0], 
+                    var el = new JXG.Sector(board, gxtEl.defEl[0], 
                                            gxtEl.defEl[1], gxtEl.defEl[2], 
                                            [defEl[0], defEl[1], defEl[2], defEl[3]],
                                            [defElN[0].firstChild.data, defElN[1].firstChild.data, defElN[2].firstChild.data, 
                                                defElN[3].firstChild.data], 
                                            gxtEl.id);   
                     // Sector hat keine eigenen Eigenschaften
-                    //s.setProperty('fillColor:'+defElColF[0],'highlightFillColor:'+defElColF[0], 'strokeColor:none');
+                    //el.setProperty('fillColor:'+defElColF[0],'highlightFillColor:'+defElColF[0], 'strokeColor:none');
                     /* Eigenschaften des Kreisbogens */
                     var arcId = defEl[0];
                     board.objects[arcId].setProperty('strokeColor:'+defElColStr[0],
@@ -1013,7 +1038,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
                 gxtEl.funct = Data.getElementsByTagName('data')[0].getElementsByTagName('function')[0].firstChild.data;
                 JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'graphs');
-                var g = new JXG.Curve(board, ['x',gxtEl.funct], gxtEl.id, gxtEl.name);
+                var g = new JXG.Curve(board, ['x','x',gxtEl.funct], gxtEl.id, gxtEl.name);
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 /*
                  * Ignore fillcolor attribute
@@ -1115,7 +1140,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl.functiony = Data.getElementsByTagName('functiony')[0].firstChild.data;
                 gxtEl.min = Data.getElementsByTagName('min')[0].firstChild.data;
                 gxtEl.max = Data.getElementsByTagName('max')[0].firstChild.data;
-                var g = new JXG.Curve(board, [gxtEl.functionx,gxtEl.functiony,'t',gxtEl.min,gxtEl.max], gxtEl.id, gxtEl.name);
+                var g = new JXG.Curve(board, ['t',gxtEl.functionx,gxtEl.functiony,gxtEl.min,gxtEl.max], gxtEl.id, gxtEl.name);
                 g.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,'fillColor:none',
                               'highlightStrokeColor:'+gxtEl.highlightStrokeColor);
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
@@ -1143,7 +1168,7 @@ this.readGeonext = function(tree,board) {
                 }
         }
         delete(gxtEl);
-    });
+    })(s);
     board.addConditions(boardTmp.conditions);
 };
 
@@ -1172,7 +1197,7 @@ this.fixXML = function(str) {
    var arr = ["active","angle","animate","animated","arc","area","arrow","author","autodigits","axis","back","background","board","border","bottom","buttonsize","cas","circle","color","comment","composition","condition","conditions","content","continuous","control","coord","coordinates","cross","cs","dash","data","description","digits","direction","draft","editable","elements","event","file","fill","first","firstarrow","fix","fontsize","free","full","function","functionx","functiony","GEONEXT","graph","grid","group","height","id","image","info","information","input","intersection","item","jsf","label","last","lastarrow","left","lefttoolbar","lighting","line","loop","max","maximized","member","middle","midpoint","min","modifier","modus","mp","mpx","multi","name","onpolygon","order","origin","output","overline","parametercurve","parent","point","pointsnap","polygon","position","radius","radiusnum","radiusvalue","right","section","selectedlefttoolbar","showconstruction","showcoord","showinfo","showunit","showx","showy","size","slider","snap","speed","src","start","stop","straight","stroke","strokewidth","style","term","text","top","trace","tracecurve","type","unit","value","VERSION","vertex","viewport","visible","width","wot","x","xooy","xval","y","yval","zoom"];
 
     // First, we convert all < to &lt; and > to &gt;
-    str = str.escapeHTML();
+    str = JXG.escapeHTML(str);
     // Second, we convert all GEONExT tags of the form &lt;tag&gt; back to <tag>
     var list = arr.join('|');
     var regex = '\&lt;(/?('+list+'))\&gt;';

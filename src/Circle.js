@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -39,15 +39,15 @@
  * It stores all properties required
  * to move, draw a circle.
  * @constructor
- * @param {String,Board} board The board the new circle is drawn on.
+ * @param {String,JXG.Board} board The board the new circle is drawn on.
  * @param {String} method Can be 
  * <ul><li> <b>'twoPoints'</b> which means the circle is defined by its midpoint and a point on the circle.</li>
 //  * <li><b>'pointRadius'</b> which means the circle is defined by its midpoint and its radius in user units</li>
  * <li><b>'pointLine'</b> which means the circle is defined by its midpoint and its radius given by the distance from the startpoint and the endpoint of the line</li>
  * <li><b>'pointCircle'</b> which means the circle is defined by its midpoint and its radius given by the radius of another circle</li></ul>
  * The parameters p1, p2 and radius must be set according to this method parameter.
- * @param {Point} p1 Midpoint of the circle.
- * @param {Point/Line/Circle} p2 Can be
+ * @param {JXG.Point} p1 Midpoint of the circle.
+ * @param {JXG.Point,JXG.Line,JXG.Circle} p2 Can be
  *<ul><li>a point on the circle if method is 'twoPoints'</li>
  <li>a line if the method is 'pointLine'</li>
  <li>a circle if the method is 'pointCircle'</li></ul>
@@ -90,37 +90,42 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
     
     /**
      * The circles midpoint.
-     * @type Point
+     * @type JXG.Point
      */    
     this.midpoint = JXG.GetReferenceFromParameter(this.board, par1); 
     this.midpoint.addChild(this);
     
     this.visProp['visible'] = true;
     
+    this.visProp['fillColor'] = this.board.options.circle.fillColor;
+    this.visProp['highlightFillColor'] = this.board.options.circle.highlightFillColor;
+    this.visProp['strokeColor'] = this.board.options.circle.strokeColor;
+    this.visProp['highlightStrokeColor'] = this.board.options.circle.highlightStrokeColor;       
+    
     /** Point on the circle
      * only set if method is 'twoPoints'
-     * @type Point
+     * @type JXG.Point
      * @see #method
      */
     this.point2 = null;
     
     /** Radius of the circle
      * only set if method is 'pointRadius'
-     * @type Point
+     * @type JXG.Point
      * @see #method     
      */    
     this.radius = 0;
     
     /** Line defining the radius of the circle given by the distance from the startpoint and the endpoint of the line
      * only set if method is 'pointLine'
-     * @type Line
+     * @type JXG.Line
      * @see #method     
      */    
     this.line = null;
     
     /** Circle defining the radius of the circle given by the radius of the other circle
      * only set if method is 'pointLine'
-     * @type Circle
+     * @type JXG.Circle
      * @see #method     
      */     
     this.circle = null;
@@ -299,7 +304,7 @@ JXG.Circle.prototype.cloneToBackground = function(addToTrace) {
     copy.visProp = this.visProp;
     
     this.board.renderer.drawCircle(copy);
-    this.traces[copy.id] = $(copy.id);
+    this.traces[copy.id] = document.getElementById(copy.id);
 
     delete copy;
 };
@@ -329,12 +334,47 @@ JXG.Circle.prototype.setPosition = function (method, x, y) {
     //}
 };
 
+/**
+* Treat the circle as parametric curve:
+* Return X(t)= radius*cos(t)+centerX
+* t runs from 0 to 1
+*/
+JXG.Circle.prototype.X = function (t) {
+    t *= 2.0*Math.PI;
+    return this.getRadius()*Math.cos(t)+this.midpoint.coords.usrCoords[1];
+}
+
+/**
+* Treat the circle as parametric curve:
+* Return Y(t)= radius*cos(t)+centerX
+* t runs from 0 to 1
+*/
+JXG.Circle.prototype.Y = function (t) {
+    t *= 2.0*Math.PI;
+    return this.getRadius()*Math.sin(t)+this.midpoint.coords.usrCoords[2];
+}
+
+/**
+* Treat the circle as parametric curve:
+* t runs from 0 to 1
+**/
+JXG.Circle.prototype.minX = function () {
+    return 0.0;
+}
+
+/**
+* Treat the circle as parametric curve:
+* t runs from 0 to 1
+**/
+JXG.Circle.prototype.maxX = function () {
+    return 1.0;
+}
+
 JXG.createCircle = function(board, parentArr, atts) {
     var el;
-    if( (parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT) ) {
+    if( parentArr.length==2 && JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) ) {
         // Point/Point
         el = new JXG.Circle(board, 'twoPoints', parentArr[0], parentArr[1], atts['id'], atts['name']);
-
     } else if( ( JXG.IsNumber(parentArr[0]) || JXG.IsFunction(parentArr[0]) || JXG.IsString(parentArr[0])) && (parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT) ) {
         // Number/Point
         el = new JXG.Circle(board, 'pointRadius', parentArr[1], parentArr[0], atts['id'], atts['name']);
@@ -353,6 +393,11 @@ JXG.createCircle = function(board, parentArr, atts) {
     } else if( (parentArr[1].type == JXG.OBJECT_TYPE_LINE) && (parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT)) {
         // Point/Circle
         el = new JXG.Circle(board, 'pointLine', parentArr[0], parentArr[1], atts['id'], atts['name']);
+    } else if( parentArr.length==3 && JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) && JXG.IsPoint(parentArr[2])) {
+        // Circle through three points
+        var arr = JXG.createCircumcircle(board, parentArr, atts); // returns [center, circle]
+        arr[0].setProperty({visible:false});
+        return arr[1];
     } else
         throw ("Can't create circle with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
     

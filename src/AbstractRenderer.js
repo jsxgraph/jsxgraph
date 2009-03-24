@@ -1,5 +1,5 @@
 /* 
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -52,7 +52,7 @@ JXG.AbstractRenderer = function() {
  * @see JXG.Point
  * @see #updatePoint
  */
-JXG.AbstractRenderer.prototype.drawPoint = function(el) { 
+JXG.AbstractRenderer.prototype.drawPoint = function(el) {
     var node;
     var node2;
     
@@ -145,13 +145,13 @@ JXG.AbstractRenderer.prototype.updatePoint = function(el) {
  * @see #drawPoint
  */
 JXG.AbstractRenderer.prototype.changePointStyle = function(el) {
-    var node = $(el.id);
+    var node = this.getElementById(el.id);
     if(node != null) {
         this.remove(node);
     }
     else {
-        this.remove($(el.id+'_x1'));
-        this.remove($(el.id+'_x2'));
+        this.remove(this.getElementById(el.id+'_x1'));
+        this.remove(this.getElementById(el.id+'_x2'));
     }
     this.drawPoint(el);
     if(!el.visProp['visible']) {
@@ -264,159 +264,7 @@ JXG.AbstractRenderer.prototype.updateCurve = function(el) {
             this.setDraft(el);
         }
     }
-    this.updatePathPrimitive(el.rendNode,this.updatePathStringPrimitive(el));
-};
-
-/**
- * Calculates start and end point for a line.
- * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
- * @param {JXG.Coords} screenCoords1 Coordinates of the point where line drawing begins.
- * @param {JXG.Coords} screenCoords2 Coordinates of the point where line drawing ends.
- * @see JXG.Line
- * @see #drawLine
- * @see #updateLine
- */
-JXG.AbstractRenderer.prototype.calcStraightv1 = function(el, screenCoords1, screenCoords2) {
-    var slope = el.getSlope();
-    var rise = el.getRise();
-    
-    if(slope== "INF") { // senkrechte Gerade
-        // Schnittpunkte mit dem Begrenzungsrahmen
-
-        var x1 = screenCoords1.scrCoords[1];
-        var y1 = screenCoords1.scrCoords[2];
-        var x2 = screenCoords2.scrCoords[1];
-        var y2 = screenCoords2.scrCoords[2];
-        if(screenCoords1.scrCoords[2] < screenCoords2.scrCoords[2]) {
-            if(el.visProp['straightFirst']) {
-                //x1 = screenCoords1.scrCoords[1];
-                y1 = 0;
-            }               
-            if(el.visProp['straightLast']) {
-                //x2 = screenCoords1.scrCoords[1];
-                y2 = el.board.canvasHeight;
-            }
-        } else {
-            if(el.visProp['straightFirst']) {
-                //x2 = screenCoords1.scrCoords[1];
-                y1 = el.board.canvasHeight;
-            } 
-            if(el.visProp['straightLast']) {
-                //x1 = screenCoords1.scrCoords[1];
-                y2 = 0;
-            }
-        }
-        
-        screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, [x1, y1], this);
-        screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, [x2, y2], this);
-        
-        return;
-    } // sonst:
-   
-    // Schnittpunkte mit dem Begrenzungsrahmen
-    var coordsLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, rise], el.board);
-    var coordsRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [el.board.canvasWidth, slope*el.board.canvasWidth + rise], el.board);
-    var coordsTop = new JXG.Coords(JXG.COORDS_BY_SCREEN, [Math.round(-rise/slope), 0], el.board);
-    var coordsBottom = new JXG.Coords(JXG.COORDS_BY_SCREEN, [Math.round((el.board.canvasHeight-rise)/slope), el.board.canvasHeight], el.board);
-
-    if(coordsLeft.scrCoords[2] < 0) { 
-        // Punkt am oberen Rand verwenden
-        var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-        var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-        if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
-            screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-        } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
-            screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-        }
-  
-        if(coordsRight.scrCoords[2] > el.board.canvasHeight) { 
-            // Punkt am unteren Rand verwenden
-            var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
-            if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-            } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-            }
-     
-        } else {
-            // Punkt am rechten Rand verwenden
-            var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
-            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            }
-        }
-    } else if(coordsLeft.scrCoords[2] > el.board.canvasHeight) { 
-        // Punkt am unteren Rand verwenden
-        var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-        var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);   
-        if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
-            screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-        } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
-            screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-        }
- 
-        if(coordsRight.scrCoords[2] < 0) { 
-            // Punkt am oberen Rand verwenden
-            var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-            if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-            } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-            }
-        } else {
-            // Punkt am rechten Rand verwenden
-            var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);             
-            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            }
-        }          
-    } else {
-        // Punkt am linken Rand verwenden
-        var distP1Left = coordsLeft.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-        var distP2Left = coordsLeft.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-        if((distP1Left < distP2Left) && el.visProp['straightFirst']) {
-            screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsLeft.scrCoords.slice(1));
-        } else if((distP1Left > distP2Left) && el.visProp['straightLast']) {
-            screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsLeft.scrCoords.slice(1));
-        }
-
-        if(coordsRight.scrCoords[2] < 0) {
-            // Punkt am oberen Rand verwenden
-            var distP1Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Top = coordsTop.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-            if((distP1Top < distP2Top) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-            } else if((distP1Top > distP2Top) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsTop.scrCoords.slice(1));
-            }
-        } else if(coordsRight.scrCoords[2] > el.board.canvasHeight) {
-            // Punkt am unteren Rand verwenden
-            var distP1Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Bottom = coordsBottom.distance(JXG.COORDS_BY_SCREEN, screenCoords2);
-            if((distP1Bottom < distP2Bottom) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-            } else if((distP1Bottom > distP2Bottom) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsBottom.scrCoords.slice(1));
-            }
-        } else {
-            // Punkt am rechten Rand verwenden
-            var distP1Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords1);
-            var distP2Right = coordsRight.distance(JXG.COORDS_BY_SCREEN, screenCoords2);     
-            if((distP1Right < distP2Right) && el.visProp['straightFirst']) {
-                screenCoords1.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            } else if((distP1Right > distP2Right) && el.visProp['straightLast']) {
-                screenCoords2.setCoordinates(JXG.COORDS_BY_SCREEN, coordsRight.scrCoords.slice(1));
-            }
-        }
-    }
+    this.updatePathPrimitive(el.rendNode,this.updatePathStringPrimitive(el),el.board);
 };
 
 /**
@@ -429,8 +277,235 @@ JXG.AbstractRenderer.prototype.calcStraightv1 = function(el, screenCoords1, scre
  * @see #updateLine
  */
 JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
+    var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast, 
+        b, c, s, i, j, p1, p2;
+    
+    b = el.board.algebra;
+    straightFirst = el.visProp['straightFirst'];
+    straightLast  = el.visProp['straightLast'];
+    
+    if ( !straightFirst && !straightLast ) {  // Do nothing in case of line segments (inside or outside of the board)
+        return;
+    }
+    // If one of the point is an ideal point in homogeneous coordinates
+    // drawing of line segments or rays are not possible. 
+    if (Math.abs(point1.scrCoords[0])<b.eps||Math.abs(point2.scrCoords[0])<b.eps) {
+        straightFirst = true;
+        straightLast  = true;
+    }
+    
+    // Compute the stdform of the line in screen coordinates.
+    c = [];
+    c[0] = el.stdform[0] - 
+           el.stdform[1]*el.board.origin.scrCoords[1]/(el.board.unitX*el.board.zoomX)+
+           el.stdform[2]*el.board.origin.scrCoords[2]/(el.board.unitY*el.board.zoomY);
+    c[1] = el.stdform[1]/(el.board.unitX*el.board.zoomX);
+    c[2] = el.stdform[2]/(-el.board.unitY*el.board.zoomY);
+
+    if (isNaN(c[0]+c[1]+c[2])) return; // p1=p2
+    
+    // Intersect the line with the four borders of the board.
+    s = [];
+    s[0] = b.crossProduct(c,[0,0,1]);  // top
+    s[1] = b.crossProduct(c,[0,1,0]);  // left
+    s[2] = b.crossProduct(c,[-el.board.canvasHeight,0,1]);  // bottom
+    s[3] = b.crossProduct(c,[-el.board.canvasWidth,1,0]);   // right
+
+    // Normalize the intersections 
+    for (i=0;i<4;i++) {
+        if (Math.abs(s[i][0])>b.eps) {
+            for (j=2;j>0;j--) {
+                s[i][j] /= s[i][0];
+            }
+            s[i][0] = 1.0;
+        }
+    }
+    
+    takePoint1 = false;
+    takePoint2 = false;
+    if (!straightFirst &&    // Line starts at point1 and point2 is inside the board
+            point1.scrCoords[1]>=0.0 && point1.scrCoords[1]<=el.board.canvasWidth &&
+            point1.scrCoords[2]>=0.0 && point1.scrCoords[2]<=el.board.canvasHeight) {
+        takePoint1 = true;
+    }
+    if (!straightLast &&    // Line ends at point2 and point2 is inside the board
+            point2.scrCoords[1]>=0.0 && point2.scrCoords[1]<=el.board.canvasWidth &&
+            point2.scrCoords[2]>=0.0 && point2.scrCoords[2]<=el.board.canvasHeight) {
+        takePoint2 = true;
+    }
+
+    if (Math.abs(s[1][0])<b.eps) {                  // line is parallel to "left", take "top" and "bottom"
+        intersect1 = s[0];                          // top
+        intersect2 = s[2];                          // bottom
+    } else if (Math.abs(s[0][0])<b.eps) {           // line is parallel to "top", take "left" and "right"
+        intersect1 = s[1];                          // left
+        intersect2 = s[3];                          // right
+    } else if (s[1][2]<0) {                         // left intersection out of board (above)
+        intersect1 = s[0];                          // top
+        if (s[3][2]>el.board.canvasHeight) {        // right intersection out of board (below)
+            intersect2 = s[2];                      // bottom
+        } else {
+            intersect2 = s[3];                      // right
+        }
+    } else if (s[1][2]>el.board.canvasHeight) {     // left intersection out of board (below)
+        intersect1 = s[2];                          // bottom
+        if (s[3][2]<0) {                            // right intersection out of board (above)
+            intersect2 = s[0];                      // top
+        } else {
+            intersect2 = s[3];                      // right
+        }
+    } else {
+        intersect1 = s[1];                          // left
+        if (s[3][2]<0) {                            // right intersection out of board (above)
+            intersect2 = s[0];                      // top
+        } else if (s[3][2]>el.board.canvasHeight) { // right intersection out of board (below)
+            intersect2 = s[2];                      // bottom
+        } else {
+            intersect2 = s[3];                      // right
+        }
+    }
+    
+    intersect1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect1.slice(1), el.board);
+    intersect2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect2.slice(1), el.board);
+ 
+ 
+//$('debug').innerHTML = '('+point1.scrCoords.toString()+'; '+point2.scrCoords.toString()+')<br>';
+//$('debug').innerHTML = '('+intersect1.usrCoords.toString()+'; '+intersect2.usrCoords.toString()+')<br>';
+/*
+    if (!takePoint1) {
+        if (!takePoint2) {                // Two border intersection points are used
+            if (this.isSameDirection(point1, point2, intersect1)) {
+                if (!this.isSameDirection(point1, point2, intersect2)) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                } else {
+                    if (el.board.algebra.affineDistance(point2.scrCoords,intersect1)<el.board.algebra.affineDistance(point2.scrCoords,intersect2)) {
+                        point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                        point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                    } else {
+                        point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                        point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                    }
+                }
+            } else {
+                if (this.isSameDirection(point1, point2, intersect2)) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                } else {
+                    if (el.board.algebra.affineDistance(point2.scrCoords,intersect1)<el.board.algebra.affineDistance(point2.scrCoords,intersect2)) {
+                        point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                        point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                    } else {
+                        point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+                        point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+                    }
+                }
+            }
+        } else {                          // Instead of point1 the border intersection is taken
+            if (this.isSameDirection(point2, point1, intersect1)) {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+            } else {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+            }
+        }
+    } else {
+        if (!takePoint2) {                // Instead of point2 the border intersection is taken
+            if (this.isSameDirection(point1, point2, intersect1)) {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect1.slice(1));
+            } else {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, intersect2.slice(1));
+            }
+        }
+    }
+*/
+    if (!takePoint1) {
+        if (!takePoint2) {                // Two border intersection points are used
+            if (this.isSameDirection(point1, point2, intersect1)) {
+                if (!this.isSameDirection(point1, point2, intersect2)) {
+                    p2 = intersect1;
+                    p1 = intersect2;
+                } else {
+                    if (el.board.algebra.affineDistance(point2.usrCoords,intersect1.usrCoords)<el.board.algebra.affineDistance(point2.usrCoords,intersect2.usrCoords)) {
+                        p1 = intersect1;
+                        p2 = intersect2;
+                    } else {
+                        p2 = intersect1;
+                        p1 = intersect2;
+                    }
+                }
+            } else {
+                if (this.isSameDirection(point1, point2, intersect2)) {
+                    p1 = intersect1;
+                    p2 = intersect2;
+                } else {
+                    if (el.board.algebra.affineDistance(point2.usrCoords,intersect1.usrCoords)<el.board.algebra.affineDistance(point2.usrCoords,intersect2.usrCoords)) {
+                        p2 = intersect1;
+                        p1 = intersect2;
+                    } else {
+                        p1 = intersect1;
+                        p2 = intersect2;
+                    }
+                }
+            }
+        } else {                          // Instead of point1 the border intersection is taken
+            if (this.isSameDirection(point2, point1, intersect1)) {
+                p1 = intersect1;
+            } else {
+                p1 = intersect2;
+            }
+        }
+    } else {
+        if (!takePoint2) {                // Instead of point2 the border intersection is taken
+            if (this.isSameDirection(point1, point2, intersect1)) {
+                p2 = intersect1;
+            } else {
+                p2 = intersect2;
+            }
+        }
+    }
+// $('debug').innerHTML += el.name+': ('+point1.usrCoords.toString()+')<br>';
+    if (p1) point1.setCoordinates(JXG.COORDS_BY_USER, p1.usrCoords.slice(1));
+    if (p2) point2.setCoordinates(JXG.COORDS_BY_USER, p2.usrCoords.slice(1));
+};
+
+/**
+* Looking from point "start", is the point s in the same direction as the 
+* the point p?
+* @private
+*/
+JXG.AbstractRenderer.prototype.isSameDirection = function(start, p, s) {
+    var dx, dy, sx, sy;
+    
+    dx = p.usrCoords[1]-start.usrCoords[1];
+    dy = p.usrCoords[2]-start.usrCoords[2];
+/*    
+    if(s.length > 0) {
+        sx = s[1]-start.scrCoords[1];
+        sy = s[2]-start.scrCoords[2];        
+    } else {
+*/    
+    sx = s.usrCoords[1]-start.usrCoords[1];
+    sy = s.usrCoords[2]-start.usrCoords[2];
+//    }
+    if (Math.abs(dx)<JXG.Math.eps) dx=0;
+    if (Math.abs(dy)<JXG.Math.eps) dy=0;
+    if (Math.abs(sx)<JXG.Math.eps) sx=0;
+    if (Math.abs(sy)<JXG.Math.eps) sy=0;
+
+    if (dx>=0&&sx>=0) {
+        if ((dy>=0&&sy>=0) || (dy<=0&&sy<=0)) { return true; }
+    } else if (dx<=0&&sx<=0){
+        if ((dy>=0&&sy>=0) || (dy<=0&&sy<=0)) { return true; }        
+    }
+    return false;
+}
+
+/*
+JXG.AbstractRenderer.prototype.calcStraightOrg = function(el, point1, point2) {
     var b = el.board.algebra;
-    var eps = 0.0001;
+    // If one of the point is an ideal point in homogeneous coordinates
+    // drawing of line segments or rays are not possible. 
+    var hasIdealPoint = (Math.abs(point1.scrCoords[0])<b.eps||Math.abs(point2.scrCoords[0])<b.eps)?true:false;
     
     // Compute the stdform of the line in screen coordinates.
     var c = [];
@@ -440,10 +515,10 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
     c[1] = el.stdform[1]/(el.board.unitX*el.board.zoomX);
     c[2] = el.stdform[2]/(-el.board.unitY*el.board.zoomY);
 
-    /**
-      * Intersect the line with the four borders 
-      * of the board.
-      */
+    //
+    //  Intersect the line with the four borders 
+    //  of the board.
+    // 
     var s = [];
     s[0] = b.crossProduct(c,[0,0,1]);  // top
     s[1] = b.crossProduct(c,[0,1,0]);  // left
@@ -452,113 +527,150 @@ JXG.AbstractRenderer.prototype.calcStraight = function(el, point1, point2) {
 
     // Normalize the intersections 
     for (var i=0;i<4;i++) {
-        if (Math.abs(s[i][0])>eps) {
-            for (var j=2;j>=0;j--) {
+        if (Math.abs(s[i][0])>b.eps) {
+            for (var j=2;j>0;j--) {
                 s[i][j] /= s[i][0];
             }
+            s[i][0] = 1.0;
         }
     }
-    
     var d1, d2;
-    if(s[1][2]<0 || Math.abs(s[1][0])<eps) { // left intersection out of board (above)
+    if(s[1][2]<0 || Math.abs(s[1][0])<b.eps) { // left intersection out of board (above)
         // Punkt am oberen Rand verwenden (Top)
-        d1 = b.affineDistance(s[0], point1.scrCoords);
-        d2 = b.affineDistance(s[0], point2.scrCoords);
-        if((d1 < d2) && el.visProp['straightFirst']) {
+        if (hasIdealPoint) { // homogeneous case
             point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-        } else if((d1 > d2) && el.visProp['straightLast']) {
-            point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-        }
-  
-        if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<eps) {  // right intersection out of board
-            // Punkt am unteren Rand verwenden (Bottom)
-            d1 = b.affineDistance(s[2], point1.scrCoords);
-            d2 = b.affineDistance(s[2], point2.scrCoords);             
+        } else {
+            d1 = b.affineDistance(s[0], point1.scrCoords);
+            d2 = b.affineDistance(s[0], point2.scrCoords);
             if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
             } else if((d1 > d2) && el.visProp['straightLast']) {
-                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
             }
-     
+        }
+        if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<b.eps) {  // right intersection out of board
+            // Punkt am unteren Rand verwenden (Bottom)
+            if (hasIdealPoint) { // homogeneous case
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+            } else {
+                d1 = b.affineDistance(s[2], point1.scrCoords);
+                d2 = b.affineDistance(s[2], point2.scrCoords);             
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                }
+            }
         } else {
             // Punkt am rechten Rand verwenden (Right)
-            d1 = b.affineDistance(s[3], point1.scrCoords);
-            d2 = b.affineDistance(s[3], point2.scrCoords);             
-            if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
-            } else if((d1 > d2) && el.visProp['straightLast']) {
+            if (hasIdealPoint) { // homogeneous case
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            } else {
+                d1 = b.affineDistance(s[3], point1.scrCoords);
+                d2 = b.affineDistance(s[3], point2.scrCoords);             
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                }
             }
         }
     } else if(s[1][2] > el.board.canvasHeight) { // left intersection out of board (below)
         // Punkt am unteren Rand verwenden (Bottom)
-        d1 = b.affineDistance(s[2], point1.scrCoords);
-        d2 = b.affineDistance(s[2], point2.scrCoords);   
-        if((d1 < d2) && el.visProp['straightFirst']) {
+        if (hasIdealPoint) { // homogeneous case
             point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
-        } else if((d1 > d2) && el.visProp['straightLast']) {
-            point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
-        }
- 
-        if(s[3][2]<0 || Math.abs(s[3][0])<eps) { 
-            // Punkt am oberen Rand verwenden (Top)
-            d1 = b.affineDistance(s[0], point1.scrCoords);
-            d2 = b.affineDistance(s[0], point2.scrCoords);
-            if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-            } else if((d1 > d2) && el.visProp['straightLast']) {
-                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-            }
         } else {
-            // Punkt am rechten Rand verwenden (Right)
-            d1 = b.affineDistance(s[3], point1.scrCoords);
-            d2 = b.affineDistance(s[3], point2.scrCoords);             
-            if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
-            } else if((d1 > d2) && el.visProp['straightLast']) {
-                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
-            }
-        }          
-    } else {
-        // Punkt am linken Rand verwenden (Left)
-        d1 = b.affineDistance(s[1], point1.scrCoords);
-        d2 = b.affineDistance(s[1], point2.scrCoords);
-        if((d1 < d2) && el.visProp['straightFirst']) {
-            point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
-        } else if((d1 > d2) && el.visProp['straightLast']) {
-            point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
-        }
-        
-        if(s[3][2] < 0 || Math.abs(s[3][0])<eps) {
-            // Punkt am oberen Rand verwenden (Top)
-            d1 = b.affineDistance(s[0], point1.scrCoords);
-            d2 = b.affineDistance(s[0], point2.scrCoords);
-            if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-            } else if((d1 > d2) && el.visProp['straightLast']) {
-                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
-            }
-        } else if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<eps) {
-            // Punkt am unteren Rand verwenden (Bottom)
             d1 = b.affineDistance(s[2], point1.scrCoords);
-            d2 = b.affineDistance(s[2], point2.scrCoords);
+            d2 = b.affineDistance(s[2], point2.scrCoords);   
             if((d1 < d2) && el.visProp['straightFirst']) {
                 point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
             } else if((d1 > d2) && el.visProp['straightLast']) {
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
             }
+        }
+        if(s[3][2]<0 || Math.abs(s[3][0])<b.eps) { 
+            // Punkt am oberen Rand verwenden (Top)
+            if (hasIdealPoint) { // homogeneous case
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+            } else {
+                d1 = b.affineDistance(s[0], point1.scrCoords);
+                d2 = b.affineDistance(s[0], point2.scrCoords);
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                }
+            }
         } else {
             // Punkt am rechten Rand verwenden (Right)
-            d1 = b.affineDistance(s[3], point1.scrCoords);
-            d2 = b.affineDistance(s[3], point2.scrCoords);     
-            if((d1 < d2) && el.visProp['straightFirst']) {
-                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
-            } else if((d1 > d2) && el.visProp['straightLast']) {
+            if (hasIdealPoint) { // homogeneous case
                 point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            } else {
+                d1 = b.affineDistance(s[3], point1.scrCoords);
+                d2 = b.affineDistance(s[3], point2.scrCoords);             
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                }
+            }
+        }          
+    } else {
+        // Punkt am linken Rand verwenden (Left)
+        if (hasIdealPoint) { // homogeneous case
+            point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
+        } else {
+            d1 = b.affineDistance(s[1], point1.scrCoords);
+            d2 = b.affineDistance(s[1], point2.scrCoords);
+            if((d1 < d2) && el.visProp['straightFirst']) {
+                point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
+            } else if((d1 > d2) && el.visProp['straightLast']) {
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[1].slice(1));
+            }
+        }
+        if(s[3][2] < 0 || Math.abs(s[3][0])<b.eps) {
+            // Punkt am oberen Rand verwenden (Top)
+            if (hasIdealPoint) { // homogeneous case
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+            } else {
+                d1 = b.affineDistance(s[0], point1.scrCoords);
+                d2 = b.affineDistance(s[0], point2.scrCoords);
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[0].slice(1));
+                }
+            }
+        } else if(s[3][2] > el.board.canvasHeight || Math.abs(s[3][0])<b.eps) {
+            // Punkt am unteren Rand verwenden (Bottom)
+            if (hasIdealPoint) { // homogeneous case
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+            } else {
+                d1 = b.affineDistance(s[2], point1.scrCoords);
+                d2 = b.affineDistance(s[2], point2.scrCoords);
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[2].slice(1));
+                }
+            }
+        } else {
+            // Punkt am rechten Rand verwenden (Right)
+            if (hasIdealPoint) { // homogeneous case
+                point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+            } else {
+                d1 = b.affineDistance(s[3], point1.scrCoords);
+                d2 = b.affineDistance(s[3], point2.scrCoords);    
+                if((d1 < d2) && el.visProp['straightFirst']) {
+                    point1.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                } else if((d1 > d2) && el.visProp['straightLast']) {
+                    point2.setCoordinates(JXG.COORDS_BY_SCREEN, s[3].slice(1));
+                }
             }
         }
     }
 };
+*/
 
 /**
  * Draws a circle on the canvas.
@@ -609,9 +721,9 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
 JXG.AbstractRenderer.prototype.drawPolygon = function(el) { 
     var node = this.createPrimitive('polygon',el.id);
     el.visProp['fillOpacity'] = 0.3;
-    el.visProp['strokeColor'] = 'none';
+    //el.visProp['strokeColor'] = 'none';
     this.setFillProp(node,el.visProp);
-    this.setStrokeProp(node,el.visProp);
+    //this.setStrokeProp(node,el.visProp);
     this.appendChildPrimitive(node,'polygone');
     el.rendNode = node;
     this.setDraft(el);
@@ -628,19 +740,13 @@ JXG.AbstractRenderer.prototype.updatePolygon = function(el) {
     if (this.enhancedRendering) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-            this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
             this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
         } else {
             this.setDraft(el);
         }
     }
-    var pStr = "";
-    for(var i=0; i<el.vertices.length-1; i++) {
-        var screenCoords = el.vertices[i].coords.scrCoords;
-        pStr = pStr + screenCoords[1] + "," + screenCoords[2];
-        if(i<el.vertices.length-2) { pStr += " "; }
-    }
-    this.updatePolygonePrimitive(el.rendNode,pStr);
+
+    this.updatePolygonePrimitive(el.rendNode,el);
 };
 
 /**
@@ -681,112 +787,24 @@ JXG.AbstractRenderer.prototype.updateArrow = function(el) {
 }
 
 /**
- * Draws an axis on the canvas.
- * @param {JXG.Axis} axis Reference to an axis object, that has to be drawn.
- * @see JXG.Axis
- * @see #updateAxis
- * @see #updateAxisTicks
+ * Update ticks of a line.
+ * @param {JXG.Line} axis Reference of an line object, thats ticks have to be updated.
+ * @param {int} dx .
+ * @param {int} dy .
+ * @see JXG.Line
+ * @see #removeTicks
  */
-JXG.AbstractRenderer.prototype.drawAxis = function(axis) { };
-
-/**
- * Update properties of an axis that already exists on the canvas.
- * @param {JXG.Axis} axis Reference to an axis object, that has to be updated.
- * @see JXG.Axis
- * @see #drawAxis
- * @see #updateAxisTicks
- */
-JXG.AbstractRenderer.prototype.updateAxis = function(axis) { };
-
-/**
- * Update ticks of an axis that.
- * @param {JXG.Axis} axis Reference of an axis object, that has to be updated.
- * @param {int} oldTicksCount Number of ticks that already exists.
- * @see JXG.Axis
- * @see #drawAxis
- * @see #updateAxisTicksInnerLoop
- */
-JXG.AbstractRenderer.prototype.updateAxisTicks = function(axis, oldTicksCount) {
-    var i;
-    if(oldTicksCount == axis.ticks.length) {
-        return;
-    } else if(oldTicksCount < axis.ticks.length) {
-        for (i = oldTicksCount; i<axis.ticks.length; i++) {
-            var tick = this.createPrimitive('line',axis.id+'tick'+i);
-            this.appendChildPrimitive(tick, 'lines');
-            this.setStrokeProp(tick, axis.visProp);
-        }   
-        this.updateAxisTicksInnerLoop(axis, oldTicksCount);
-    } else if(oldTicksCount > axis.ticks.length) {
-        for (i = axis.ticks.length; i<oldTicksCount; i++) {
-            this.remove($(axis.id+'tick'+i));
-        }
-    }
-}
-
-/**
- * Update the tick's line objects.
- * @param {JXG.Axis} axis Reference of an axis object, that's ticks have to be updated.
- * @param {int} start Number of tick where update process should start
- * @see JXG.Axis
- * @see #drawAxis
- * @see #updateAxisTicks
- */
-JXG.AbstractRenderer.prototype.updateAxisTicksInnerLoop = function(axis, start) {
-    var eps = 0.00001;
-    var slope = -axis.getSlope();
-    var dist = 3*axis.r / 2;
-    
-    var dx, dy;
-    
-    if(Math.abs(slope) < eps) {
-        // if the slope of the line is (almost) 0, we can set dx and dy directly
-        dx = 0;
-        dy = dist;
-    } else if((Math.abs(slope) > 1/eps) || (isNaN(slope))) {
-        // if the slope of the line is (theoretically) infinite, we can set dx and dy directly
-        dx = dist;
-        dy = 0;
-    } else {
-        // here we have to calculate dx and dy depending on the slope and the length of the tick (dist)
-        // if slope is the line's slope, the tick's slope is given by
-        // 
-        //            1          dy
-        //     -   -------  =   ----                 (I)
-        //          slope        dx
-        //
-        // when dist is the length of the tick, using the pythagorean theorem we get
-        // 
-        //     dx*dx + dy*dy = dist*dist             (II)
-        //
-        // dissolving (I) by dy and applying that to equation (II) we get the following formulas for dx and dy
-        dx = dist/Math.sqrt(1/(slope*slope) + 1);
-        dy = -dx/slope;
-    }
-    
-    for (var i=start; i<axis.ticks.length; i++) {
-        var c = axis.ticks[i];
-        var tick = $(axis.id+'tick'+i);
-        var tickLabel = $(axis.id+'tick'+i+'text');
-
-        this.updateLinePrimitive(tick, c.scrCoords[1]+dx, c.scrCoords[2]-dy, c.scrCoords[1]-dx, c.scrCoords[2]+dy);
-        this.setStrokeProp(tick, axis.visProp);
-    }    
-}
+JXG.AbstractRenderer.prototype.updateTicks = function(axis,dx,dy) { };
 
 /**
  * Removes all ticks from an axis
- * @param {JXG.Axis} axis Reference of an axis object, thats ticks have to be removed.
- * @see JXG.Axis
- * @see #drawAxis
- * @see #updateAxis
- * @see #upateAxisTicksInnerLoop
+ * @param {JXG.Line} axis Reference of an line object, thats ticks have to be removed.
+ * @see JXG.Line
+ * @see #upateTicks
  */
-JXG.AbstractRenderer.prototype.removeAxisTicks = function(axis) {
-    for(var i=0; i<axis.ticks.length; i++) {
-        var tick = $(axis.id+'tick'+i);
-        this.remove(tick);
-    }
+JXG.AbstractRenderer.prototype.removeTicks = function(axis) {
+    var ticks = this.getElementById(axis.id+'_ticks');
+    this.remove(ticks);
 }
 
 /**
@@ -862,6 +880,7 @@ JXG.AbstractRenderer.prototype.drawLabel = function(el) {
     node.style.fontSize = el.board.fontSize + 'px';
     node.style.color = el.color;
     node.className = 'JXGText';
+    node.style.zIndex = '10';   
     node.setAttribute('id', el.id);
     node.innerHTML = el.nameHTML;
     this.container.appendChild(node);
@@ -974,8 +993,8 @@ JXG.AbstractRenderer.prototype.updateImage = function(el) {
 
 /**
  * Draws the grid.
+ * @param {JXG.Board} board Board on which the grid is drawn.
  * @see #removeGrid
- * @param {Board} board Board on which the grid is drawn.
  */
 JXG.AbstractRenderer.prototype.drawGrid = function(board) { 
     board.hasGrid = true;
@@ -1072,8 +1091,8 @@ JXG.AbstractRenderer.prototype.drawGrid = function(board) {
 
 /**
  * Removes the grid.
+ * @param {JXG.Board} board Board on which the grid is drawn.
  * @see #drawGrid
- * @param {Board} board Board on which the grid is drawn.
  */
 JXG.AbstractRenderer.prototype.removeGrid = function(board) { };
 
@@ -1168,6 +1187,7 @@ JXG.AbstractRenderer.prototype.setObjectFillColor = function(obj, color, opacity
 
 /*
 /**
+ * @private
  * Changes all properties of an object.
  * @param {Object} obj Reference of the object that wants new properties.
  */
@@ -1197,8 +1217,8 @@ JXG.AbstractRenderer.prototype.setDraft = function (obj) {
         return;
     }
 
-    var draftColor = '#565656'; //'#D3D3D3';
-    var draftOpacity = 0.8;
+    var draftColor = obj.board.options.elements.draft.color;
+    var draftOpacity = obj.board.options.elements.draft.opacity;
     if(obj.type == JXG.OBJECTT_TYPE_POLYGON) {
         this.setObjectFillColor(obj, draftColor, draftOpacity);
     }     
@@ -1210,7 +1230,7 @@ JXG.AbstractRenderer.prototype.setDraft = function (obj) {
             this.setObjectFillColor(obj, 'none', 0); 
         }
         this.setObjectStrokeColor(obj, draftColor, draftOpacity);    
-        this.setObjectStrokeWidth(obj, '1px');
+        this.setObjectStrokeWidth(obj, obj.board.options.elements.draft.strokeWidth);
     }      
 };
 
@@ -1244,7 +1264,7 @@ JXG.AbstractRenderer.prototype.highlight = function(obj) {
         }
         else if(obj.type == JXG.OBJECT_TYPE_POLYGON) {
             this.setObjectFillColor(obj, obj.visProp['highlightFillColor'], obj.visProp['highlightFillOpacity']);
-            for(i=0; i<obj.borders.length; i++) {
+            for(var i=0; i<obj.borders.length; i++) {
                 this.setObjectStrokeColor(obj.borders[i], obj.borders[i].visProp['highlightStrokeColor'], obj.visProp['highlightStrokeOpacity']);
             }
         }    
@@ -1357,3 +1377,71 @@ JXG.AbstractRenderer.prototype.getPointSize = function(style) {
     }   
     return size;
 };
+
+/**
+ * Zoom bar
+ * @see #updateText
+ */
+JXG.AbstractRenderer.prototype.drawZoomBar = function(board) { 
+    var node = this.container.ownerDocument.createElement('div');
+    //node.setAttribute('id', el.id);
+    node.className = 'JXGtext';
+    node.style.color = '#aaaaaa';
+    node.style.backgroundColor = '#f5f5f5'; 
+    node.style.padding = '2px';
+    node.style.position = 'absolute';
+    node.style.fontSize = '10px';  
+    node.style.cursor = 'pointer';
+    node.style.zIndex = '100';      
+    this.container.appendChild(node);
+    node.style.right = '5px'; //(board.canvasWidth-100)+ 'px'; 
+    node.style.bottom = '5px'; 
+    //node.style.top = (board.canvasHeight-22) + 'px';
+    
+    var node_minus = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_minus);
+    node_minus.innerHTML = '&nbsp;&ndash;&nbsp;';
+    JXG.addEvent(node_minus, 'click', board.zoomOut, board);
+
+    var node_100 = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_100);
+    node_100.innerHTML = '&nbsp;o&nbsp;';
+    JXG.addEvent(node_100, 'click', board.zoom100, board);
+    
+    var node_plus = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_plus);
+    node_plus.innerHTML = '&nbsp;+&nbsp;';
+    JXG.addEvent(node_plus, 'click', board.zoomIn, board);
+    
+    var node_larr = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_larr);
+    node_larr.innerHTML = '&nbsp;&larr;&nbsp;';
+    JXG.addEvent(node_larr, 'click', board.clickLeftArrow, board);
+    
+    var node_uarr = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_uarr);
+    node_uarr.innerHTML = '&nbsp;&uarr;&nbsp;';
+    JXG.addEvent(node_uarr, 'click', board.clickUpArrow, board);
+    
+    var node_darr = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_darr);
+    node_darr.innerHTML = '&nbsp;&darr;&nbsp;';
+    JXG.addEvent(node_darr, 'click', board.clickDownArrow, board);
+    
+    var node_rarr = this.container.ownerDocument.createElement('span');
+    node.appendChild(node_rarr);
+    node_rarr.innerHTML = '&nbsp;&rarr;&nbsp;';
+    JXG.addEvent(node_rarr, 'click', board.clickRightArrow, board);
+
+};
+
+/**
+ * Wrapper for getElementById for maybe other renderers with Elements not directly accessible by DOM methods.
+ * @param {String} id Unique identifier for element.
+ * @type Object
+ * @return Reference to an JavaScript object. In case of SVG/VMLRenderer it's a reference to an HTML node object.
+ */
+JXG.AbstractRenderer.prototype.getElementById = function(id) {
+    return document.getElementById(id);
+};
+

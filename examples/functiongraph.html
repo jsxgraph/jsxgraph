@@ -26,13 +26,18 @@
 		// Axes
         b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
         b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
-		
+
+        s1 = board.createElement('slider', [[0,-2],[5,-2],[-10,0,10]], {style:6, name:'S_1'});
+        s2 = board.createElement('slider', [[0,-3],[5,-3],[-10,0,10]], {style:6, name:'S_2'});
+
+
 		eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
-		graph = board.createElement('curve', [function(x){ return x; }, function(x){ return f(x); }, "x", -10, 10], {curveType:'graph'});
-        
+		graph = board.createElement('functiongraph', [function(x){ return f(x); }, -10, 10]);
+
+
         p2 = board.createElement('glider', [graph], {style:6, name:'P'});
-        g = board.algebra.D(f);
-        p3 = board.createElement('point', [function() { return p2.X()+1;}, function() {return p2.Y()+board.algebra.D(graph.Y)(p2.X());}], {style:1, name:''});
+        g = board.D(f);
+        p3 = board.createElement('point', [function() { return p2.X()+1;}, function() {return p2.Y()+board.D(graph.Y)(p2.X());}], {style:1, name:''});
         l1 = board.createElement('line', [p2,p3],{});
         p4 = board.createElement('point', [function() { return p3.X();}, function() {return p2.Y();}],{style:1, name:''});
         pol = board.createElement('polygon', [p2,p3,p4], {});

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -35,10 +35,10 @@
  * @class This is the Label class. It stores all properties required
  * to display, hide and alter a label.
  * @constructor
- * @param {String,Board} board The board the new label is drawn on.
+ * @param {String,JXG.Board} board The board the new label is drawn on.
  * @param {String} name Not necessarily unique name for the label. That is the information
  * that will be printed on the drawing.
- * @param {Coords} coordinates Coordinates for the label in user coordinates.
+ * @param {JXG.Coords} coordinates Coordinates for the label in user coordinates.
  * @param {String} id Unique identifier for the label.
  */
 JXG.Label = function (board, name, coordinates, id) {
@@ -52,8 +52,8 @@ JXG.Label = function (board, name, coordinates, id) {
     
     /**
      * Reference to board where the label is drawn.
-     * @type Board
-     * @see Board
+     * @type JXG.Board
+     * @see JXG.Board
      */
     this.board = board;
 
@@ -84,7 +84,7 @@ JXG.Label = function (board, name, coordinates, id) {
 
     /**
      * Coordinates of the label.
-     * @type Coords
+     * @type JXG.Coords
      */
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER,
                              [coordinates.usrCoords[1]*1+this.distanceX/(this.board.unitX*this.board.zoomX),
@@ -125,7 +125,7 @@ JXG.Label.prototype.showElement = function() {
 /**
  * Set the coordinates of the label. This is required because there is some computation needed to
  * get the label to the rigth place.
- * @param {Coords} coordinates Coordinates for the label.
+ * @param {JXG.Coords} coordinates Coordinates for the label.
  */
 JXG.Label.prototype.setCoordinates = function(coordinates) {
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER,

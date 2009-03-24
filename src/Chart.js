@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -38,10 +38,10 @@ JXG.Chart = function(board, parents, attributes) {
             */
     this.elements = [];
     
-    var id = attributes['id'];
-    var name = attributes['name'];
+    var id = attributes['id'] || '';
+    var name = attributes['name'] || '';
     this.init(board, id, name);
-    this.id = this.board.addChart(this);
+    
     var x,y,i;
     if (parents.length>0 && (typeof parents[0]=='number')) { // parents looks like [a,b,c,..]
                                                                 // x has to be filled
@@ -66,8 +66,8 @@ JXG.Chart = function(board, parents, attributes) {
             }
         }
         if (parents.length==2) { // parents looks like [[x0,x1,x2,...],[y1,y2,y3,...]]
-            y = parents[1];
             x = parents[0];
+            y = parents[1];
         }
     }
     if (attributes==undefined) attributes = {};
@@ -93,13 +93,15 @@ JXG.Chart = function(board, parents, attributes) {
                 c = this.drawPoints(board,[x,y],attributes);
                 break;
         };
-        this.elements.push(c);
+        //this.elements.push(c);
     };
+    this.id = this.board.addChart(this);
 };
 JXG.Chart.prototype = new JXG.GeometryElement;
 
 JXG.Chart.prototype.drawLine = function(board, parents, attributes) {
     var c = board.createElement('curve', parents, attributes);
+    this.rendNode = c.rendNode;  // This is needed in setProperty
     return c;
 };
 
@@ -118,6 +120,7 @@ JXG.Chart.prototype.drawSpline = function(board, parents, attributes) {
     var py = JXG.Math.Numerics.splineEval(px, x, y, F);
 
     var c = board.createElement('curve', [px, py], attributes);
+    this.rendNode = c.rendNode;  // This is needed in setProperty
     return c;
 }
 
@@ -187,6 +190,8 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
         attributes['withLines'] = false;
         pols[i] = board.createElement('polygon',p,attributes);
     }
+    this.rendNode = pols[0].rendNode;  // This is needed in setProperty
+    
     return pols; //[0];  // Not enough! We need pols, but this gives an error in board.setProperty.
 };
 
@@ -201,6 +206,7 @@ JXG.Chart.prototype.drawPoints = function(board, parents, attributes) {
     for (i=0;i<x.length;i++) {
         points[i] = board.createElement('point',[x[i],y[i]], attributes);
     }
+    this.rendNode = points[0].rendNode;
     return points; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
 };
 
@@ -245,6 +251,7 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         myAtts['fillColor'] = colorArray[i%colorArray.length];
         arc[i] = board.createElement('arc',[center,p[i],p[i+1]], myAtts);
     }
+    this.rendNode = arc[0].rendNode;
     return arc; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
 };
 

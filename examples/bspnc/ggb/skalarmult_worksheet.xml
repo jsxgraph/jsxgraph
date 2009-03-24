@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.5">
+<gui>
+	<show algebraView="false" auxiliaryObjects="true"/>
+	<splitDivider loc="250" locVertical="400" horizontal="true"/>
+	<font  size="12"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="223.0" yZero="188.0" scale="30.0" yscale="30.0"/>
+	<evSettings axes="true" grid="false" pointCapturing="true" pointStyle="0"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Gegenvektor" author="Markus Hohenwarter" date="">
+<element type="vector" label="a">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="13" y="13"/>
+	<labelMode val="1"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="3.0" y="2.0" z="0.0"/>
+	<lineStyle thickness="5" type="0"/>
+	<coordStyle style="cartesian"/>
+	<startPoint  x="0.0" y="0.0" z="1.0"/>
+</element>
+<element type="numeric" label="t">
+	<value val="-2.0"/>
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.1"/>
+	<labelMode val="1"/>
+	<lineStyle thickness="2" type="10"/>
+	<slider min="-3.0" max="3.0" width="6.0" x="-7.0" y="4.0" fixed="true" horizontal="true"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+</element>
+<expression label="b" exp="t a" type="vector" />
+<element type="vector" label="b">
+	<show object="true" label="true"/>
+	<objColor r="153" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-55" y="-12"/>
+	<labelMode val="1"/>
+	<coords x="-6.0" y="-4.0" z="0.0"/>
+	<lineStyle thickness="3" type="0"/>
+	<coordStyle style="cartesian"/>
+</element>
+</construction>
+</geogebra>

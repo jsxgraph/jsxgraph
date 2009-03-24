@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.5">
+<gui>
+	<show algebraView="false" auxiliaryObjects="true"/>
+	<splitDivider loc="250" locVertical="400" horizontal="true"/>
+	<font  size="12"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="267.79999999999995" yZero="208.79999999999995" scale="24.0" yscale="24.0"/>
+	<evSettings axes="true" grid="false" pointCapturing="true" pointStyle="0"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Gegenvektor" author="Markus Hohenwarter" date="">
+<element type="vector" label="a">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="1" y="0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="6.0" y="1.0" z="0.0"/>
+	<lineStyle thickness="4" type="0"/>
+	<coordStyle style="cartesian"/>
+	<startPoint  x="0.0" y="0.0" z="1.0"/>
+</element>
+<expression label="T1" exp="&quot;a = &quot; + a" />
+<element type="text" label="T1">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint  x="-10.166666666666668" y="7.408333333333332" z="1.0"/>
+</element>
+<element type="vector" label="b">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-5" y="0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="2.0" y="5.0" z="0.0"/>
+	<lineStyle thickness="4" type="0"/>
+	<coordStyle style="cartesian"/>
+</element>
+<expression label="c" exp="a + b" type="vector" />
+<element type="vector" label="c">
+	<show object="true" label="true"/>
+	<objColor r="153" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-3" y="-2"/>
+	<coords x="8.0" y="6.0" z="0.0"/>
+	<lineStyle thickness="4" type="0"/>
+	<coordStyle style="cartesian"/>
+</element>
+<expression label="T2" exp="&quot;b = &quot; + b" />
+<element type="text" label="T2">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint  x="-10.158333333333331" y="6.491666666666664" z="1.0"/>
+</element>
+<expression label="T3" exp="&quot;c = &quot; + c" />
+<element type="text" label="T3">
+	<objColor r="153" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint  x="-10.116666666666664" y="5.5333333333333306" z="1.0"/>
+</element>
+</construction>
+</geogebra>

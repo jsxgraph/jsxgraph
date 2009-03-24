@@ -30,7 +30,10 @@ this.parseFileContent = function(url, board, format) {
     var e;
     try {
         this.request = new XMLHttpRequest();
-        this.request.overrideMimeType('text/xml; charset=iso-8859-1');
+        if(format.toLowerCase()=='raw')
+            this.request.overrideMimeType('text/plain; charset=iso-8859-1');
+        else
+            this.request.overrideMimeType('text/xml; charset=iso-8859-1');
     } catch (e) {
         try {
             this.request = new ActiveXObject("Msxml2.XMLHTTP");
@@ -47,14 +50,22 @@ this.parseFileContent = function(url, board, format) {
         return;
     }
     this.request.open("GET", url, true);
-
-    this.cb = (function() {
-        var request = this.request;
-        if (request.readyState == 4) {
-            this.parseString(request.responseText, board, format);
-        }
-        }).bind(this);
-
+    if(format.toLowerCase()=='raw') {
+       this.cbp = function() {
+          var request = this.request;
+          if (request.readyState == 4) {
+            board(request.responseText);
+          }
+       }; //).bind(this);        
+    } else {
+       this.cbp = function() {
+          var request = this.request;
+          if (request.readyState == 4) {
+             this.parseString(request.responseText, board, format);
+          }
+       }; //).bind(this);
+    }
+    this.cb = JXG.bind(this.cbp,this);
     this.request.onreadystatechange = this.cb;
 
     this.request.send(null);
@@ -93,7 +104,6 @@ this.stringToXMLTree = function(fileStr) {
 };
 
 this.parseString = function(fileStr, board, format) {
-//fertig = false; // debug BV
     // fileStr is a string containing the XML code of the construction
     if (format.toLowerCase()=='geonext') { 
         fileStr = JXG.GeonextReader.prepareString(fileStr);
@@ -102,27 +112,27 @@ this.parseString = function(fileStr, board, format) {
     var tree = this.stringToXMLTree(fileStr);
     // Now, we can walk through the tree
     this.readElements(tree, board, format);
-//fertig = true; // debug BV
 }; // end this.parse
 
+/**
+ * Reading the elements of a geonext or geogebra file
+ * @param {} tree expects the content of the parsed geonext file returned by function parseFromString
+ * @param {Object} board board object
+ */
 this.readElements = function(tree, board, format) {
-    /**
-     * Reading the elements of a geonext or geogebra file
-     @param {} tree expects the content of the parsed geonext file returned by function parseFromString
-     @param {Object} board board object
-    */
-
+    board.suspendUpdate();
     if (format.toLowerCase()=='geonext') { 
         if(tree.getElementsByTagName('GEONEXT').length != 0) {
             JXG.GeonextReader.readGeonext(tree, board);
         }
     }
     else if(tree.getElementsByTagName('geogebra').length != 0) {
-        //JXG.GeogebraReader.readGeogebra(tree, board);
+        JXG.GeogebraReader.readGeogebra(tree, board);
     }
     else if(format.toLowerCase()=='intergeo') {
          JXG.IntergeoReader.readIntergeo(tree, board);
     }
+    board.unsuspendUpdate();
     board.afterLoad();    
 }; // end: this.readElements()
 

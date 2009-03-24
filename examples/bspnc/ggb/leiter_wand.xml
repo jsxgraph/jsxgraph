@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.4">
+<gui>
+	<show algebraView="false" auxiliaryObjects="false"/>
+	<splitDivider loc="250" locVertical="400" horizontal="true"/>
+	<font  size="12"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="55.0" yZero="351.0" scale="60.0"/>
+	<evSettings axes="false" grid="false" pointCapturing="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="" author="" date="">
+<element type="point" label="A">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="0.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="B">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="5.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="A" a1="B"/>
+	<output a0="a"/>
+</command>
+<element type="segment" label="a">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="0.0" y="5.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="a"/>
+	<output a0="Leiter"/>
+</command>
+<element type="point" label="Leiter">
+	<show object="true" label="true"/>
+	<objColor r="102" g="51" b="0" alpha="0.0"/>
+	<labelOffset x="-16" y="28"/>
+	<animation step="0.1"/>
+	<coords x="1.3833333333333333" y="-0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="4"/>
+</element>
+<command name="Segment">
+	<input a0="Leiter" a1="B"/>
+	<output a0="r"/>
+</command>
+<element type="segment" label="r">
+	<show object="true" label="true"/>
+	<objColor r="51" g="0" b="153" alpha="0.0"/>
+	<labelOffset x="-7" y="4"/>
+	<labelMode val="1"/>
+	<coords x="-0.0" y="3.6166666666666667" z="0.0"/>
+	<lineStyle thickness="5" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="B" a1="a"/>
+	<output a0="b"/>
+</command>
+<element type="line" label="b">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="-5.0" y="0.0" z="25.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="UnitVector">
+	<input a0="b"/>
+	<output a0="u"/>
+</command>
+<element type="vector" label="u">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="0.0" y="1.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="B"/>
+</element>
+<element type="numeric" label="resi">
+	<value val="4.5"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+</element>
+<expression label="O" exp="B + (resi + 1) u" type="point" />
+<element type="point" label="O">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<coords x="5.0" y="5.5" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="B" a1="O"/>
+	<output a0="d"/>
+</command>
+<element type="segment" label="d">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="-5.5" y="0.0" z="27.5"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="Fenster" exp="B + resi u" type="point" />
+<element type="point" label="Fenster">
+	<show object="true" label="true"/>
+	<objColor r="153" g="153" b="0" alpha="0.0"/>
+	<labelOffset x="8" y="13"/>
+	<coords x="5.0" y="4.5" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="4"/>
+</element>
+<element type="numeric" label="leiter">
+	<value val="5.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+</element>
+<expression label="F" exp="(5, sqrt(25 - r²))" type="point" />
+<element type="point" label="F">
+	<show object="true" label="false"/>
+	<objColor r="102" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="3" y="11"/>
+	<coords x="5.0" y="3.452495072005494" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="B" a1="F"/>
+	<output a0="h"/>
+</command>
+<element type="segment" label="h">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="-5" y="4"/>
+	<labelMode val="1"/>
+	<coords x="-3.452495072005494" y="0.0" z="17.26247536002747"/>
+	<lineStyle thickness="5" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="Leiter" a1="F"/>
+	<output a0="s"/>
+</command>
+<element type="segment" label="s">
+	<show object="true" label="true"/>
+	<objColor r="102" g="51" b="0" alpha="0.0"/>
+	<labelOffset x="-47" y="-20"/>
+	<labelMode val="1"/>
+	<coords x="-3.452495072005494" y="3.6166666666666667" z="4.775951516274266"/>
+	<lineStyle thickness="7" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+</construction>
+</geogebra>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.5">
+<gui>
+	<show algebraView="false" auxiliaryObjects="true"/>
+	<splitDivider loc="317" locVertical="400" horizontal="true"/>
+	<font  size="12"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="97.0" yZero="311.0" scale="30.0" yscale="30.0"/>
+	<evSettings axes="false" grid="false" pointCapturing="true" pointStyle="0"/>
+	<bgColor r="255" g="255" b="255"/>
+	<axesColor r="64" g="64" b="64"/>
+	<gridColor r="192" g="192" b="192"/>
+	<lineStyle axes="1" grid="10"/>
+	<axis id="0" label="" unitLabel="" showNumbers="true"/>
+	<axis id="1" label="" unitLabel="" showNumbers="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Hauptsatz der Polarentheorie" author="Markus Hohenwarter" date="">
+<element type="point" label="A">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="5.766666666666667" y="5.333333333333333" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="B">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="2.8333333333333335" y="4.933333333333334" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="C">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="1.9666666666666666" y="2.7" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="D">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="6.233333333333333" y="1.4666666666666666" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="E">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="8.233333333333333" y="4.033333333333333" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Conic">
+	<input a0="A" a1="B" a2="C" a3="D" a4="E"/>
+	<output a0="c"/>
+</command>
+<element type="conic" label="c">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<lineStyle thickness="3" type="0"/>
+	<eigenvectors  x0="0.9992531356198103" y0="-0.03864157028352897" z0="1.0" x1="0.03864157028352897" y1="0.9992531356198103" z1="1.0"/>
+	<matrix A0="-2.0304011638946573" A1="-5.726948264015252" A2="-99.99999999999999" A3="-0.14316123056281693" A4="10.816563621701741" A5="20.107002846217405"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="point" label="P_1">
+	<show object="true" label="true"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-13" y="-4"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="11.933333333333334" y="6.666666666666667" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="4"/>
+</element>
+<command name="Polar">
+	<input a0="P_1" a1="c"/>
+	<output a0="p_1"/>
+</command>
+<element type="line" label="p_1">
+	<show object="true" label="true"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<coords x="-14.367298471193282" y="-19.78104293193389" z="163.1243448604235"/>
+	<lineStyle thickness="4" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="p_1"/>
+	<output a0="P_2"/>
+</command>
+<element type="point" label="P_2">
+	<show object="true" label="true"/>
+	<objColor r="0" g="153" b="0" alpha="0.0"/>
+	<labelOffset x="-8" y="-10"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="1.6" y="7.084392253164875" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Polar">
+	<input a0="P_2" a1="c"/>
+	<output a0="p_2"/>
+</command>
+<element type="line" label="p_2">
+	<show object="true" label="true"/>
+	<objColor r="51" g="153" b="0" alpha="0.0"/>
+	<labelOffset x="-9" y="-25"/>
+	<coords x="6.553711446717519" y="-20.69400303854878" z="59.752396992829475"/>
+	<lineStyle thickness="4" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Tangent">
+	<input a0="P_2" a1="c"/>
+	<output a0="d" a1="e"/>
+</command>
+<element type="line" label="d">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<coords x="3.6538778867753647" y="0.11485696622320307" z="-6.659896420574264"/>
+	<lineStyle thickness="2" type="10"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="line" label="e">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<coords x="2.029732949306567" y="5.243257956147289" z="-40.39286876476545"/>
+	<lineStyle thickness="2" type="10"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Tangent">
+	<input a0="P_1" a1="c"/>
+	<output a0="f" a1="g"/>
+</command>
+<element type="line" label="f">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<coords x="4.288020419668314" y="-3.854414282448939" z="-25.47428179171562"/>
+	<lineStyle thickness="2" type="10"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="line" label="g">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<coords x="1.3497556310890122" y="-7.899847183060872" z="36.558564022743596"/>
+	<lineStyle thickness="2" type="10"/>
+	<eqnStyle style="implicit"/>
+</element>
+</construction>
+</geogebra>

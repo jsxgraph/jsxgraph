@@ -2,7 +2,8 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
+<script type="text/javascript" src="../distrib/jquery.min.js"></script>
+<!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -21,7 +22,7 @@
         p2 = board.createElement('point', [8, 0], {style:2,name:"P_{2}"}); // Angabe fester Koordinaten
         
         l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast: true});
-        l1.enableTicks();
+        board.createElement('ticks', [l1,2]); //l1.enableTicks();
 
         c = board.createElement('circle', [p1, 2]);
         

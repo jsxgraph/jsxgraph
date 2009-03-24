@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -37,11 +37,84 @@ JXG.VMLRenderer = function(container) {
     this.container.onselectstart = function () { return false; };
   
     // Add VML includes and namespace
+    // Original: IE <=7
     container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml");
+    container.ownerDocument.createStyleSheet().addRule("v\\:*", "behavior: url(#default#VML);");
+    // excanvas: 
+    /*
+        container.ownerDocument.namespaces.add('v', 'urn:schemas-microsoft-com:vml', '#default#VML');
+        //container.ownerDocument.createStyleSheet().cssText = "v\\:*{behavior:url(#default#VML)}";
+        var ss = container.ownerDocument.createStyleSheet();
+        ss.cssText = '.jsxgbox{v\\:*{behavior:url(#default#VML)}';
+    */
 
-    var style = container.ownerDocument.createStyleSheet();
-    style.addRule('v\\:*', "behavior: url(#default#VML);");    
+    // Ohne Fehler, aber falsch:
+    //container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml", "#default#VML");
 
+    // MSDN tip
+   /*
+    if(!document.documentMode || document.documentMode<8) {
+        document.createStyleSheet().addRule('v\\:*', "behavior: url(#default#VML);");
+    }
+    if(document.documentMode && document.documentMode>=8) {
+        document.writeln('<?import namespace="v" implementation="#default#VML" ?>');
+    }
+    */
+
+/*
+    container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml");
+    container.ownerDocument.createStyleSheet().addRule("v\\:shape","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:fill","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:fillcolor","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:stroke","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:from","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:to","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:points","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:control1","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:control2","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:arcsize","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:startangle","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:endangle","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:src","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:cropleft","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:croptop","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:cropright","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:cropbottom","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:embosscolor","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:gain","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:blacklevel","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:gamma","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:grayscale","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:bilevel","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:id","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:type","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:adj","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:path","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:href","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:target","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:class","behavior: url(#default#VML);");
+*/    
+    /*
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
+*/
+    //-------------------------------
+    //container.ownerDocument.createStyleSheet().addRule("v\\:fill", "behavior: url(#default#VML);");
+    //container.ownerDocument.createStyleSheet().addRule("v\\:stroke", "behavior: url(#default#VML);");
+    //container.ownerDocument.createStyleSheet().addRule("v\\:line", "behavior: url(#default#VML);");
+        
     // um Dashes zu realisieren
     this.dashArray = ['Solid', '1 1', 'ShortDash', 'Dash', 'LongDash', 'ShortDashDot', 'LongDashDot'];    
 };
@@ -63,61 +136,35 @@ JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     this.appendChildPrimitive(node,'images');
 };
 
-JXG.VMLRenderer.prototype.drawAxis = function(el) { 
-    var node;
-    node = this.container.ownerDocument.createElement('v:line');
-    node.style.position = 'absolute';
-    if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
-        node.setAttribute('from', (el.board.origin.scrCoords[1]) + 'px,' + (el.board.canvasHeight) + 'px');
-        node.setAttribute('to', (el.board.origin.scrCoords[1]) + 'px,' + '0px');      
-    } 
-    else {
-        node.setAttribute('from', '0px,' + (el.board.origin.scrCoords[2]) + 'px');
-        node.setAttribute('to', (el.board.canvasWidth) + 'px,' + (el.board.origin.scrCoords[2]) + 'px');      
-    }    
-    this.setStrokeProp(node,el.visProp);
-    node.style.zIndex = "4"; 
-    node.setAttribute('id', el.id);
-    el.rendNode = node;
-
-    var nodeStroke = this.container.ownerDocument.createElement('v:stroke');
-    nodeStroke.setAttribute('endarrow', 'block');
-    nodeStroke.setAttribute('endarrowlength', 'long');
-    node.appendChild(nodeStroke);
-
-    this.updateAxisTicks(el, 0);
-    this.container.appendChild(node);
+JXG.VMLRenderer.prototype.drawTicks = function(axis) {
+    var ticks = this.createPrimitive('path', axis.id+'_ticks');
+    this.appendChildPrimitive(ticks,'lines');
+    
+    axis.rendNode = ticks;
 }
 
-JXG.VMLRenderer.prototype.updateAxis = function(el) {
-    // not yet
-    var node = $(el.id);
-    
-    if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
-        node.setAttribute('from', (el.board.origin.scrCoords[1]) + 'px,' + (el.board.canvasHeight) + 'px');
-        node.setAttribute('to', (el.board.origin.scrCoords[1]) + 'px,' + '0px');     
-    } 
-    else {
-        node.setAttribute('from', '0px,' + (el.board.origin.scrCoords[2]) + 'px');
-        node.setAttribute('to', (el.board.canvasWidth) + 'px,' + (el.board.origin.scrCoords[2]) + 'px');     
-    }    
-    this.setStrokeProp(node,el.visProp);
- 
-    for (var i=0;i<el.ticks.length;i++) {
-        var c = el.ticks[i];
-        var tick = $(el.id+'tick'+i);
-        tick.setAttribute('from', c.scrCoords[1] + 'px,' + c.scrCoords[2] + 'px');
-        if (el.point1.coords.scrCoords[1]==el.point2.coords.scrCoords[1]) {
-            tick.setAttribute('to', (c.scrCoords[1] - el.r) + 'px,' + (c.scrCoords[2]) + 'px');   
-        } 
-        else {
-            tick.setAttribute('to', (c.scrCoords[1]) + 'px,' + (c.scrCoords[2] + el.r) + 'px');   
+JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
+    var tickArr = [];
+    for (var i=0; i<axis.ticks.length; i++) {
+        var c = axis.ticks[i];
+        if(c.major) {
+            if (axis.labels[i].show) this.drawLabel(axis.labels[i]);
+            tickArr.push(' m ' + Math.round(c.scrCoords[1]+dxMaj) + ', ' + Math.round(c.scrCoords[2]-dyMaj) + ' l ' + Math.round(c.scrCoords[1]-dxMaj) + ', ' + Math.round(c.scrCoords[2]+dyMaj)+' ');
         }
-        
-        tick.setAttribute('stroked', 'true');
-        tick.setAttribute('strokecolor', el.visProp['strokeColor'], 1);
-        tick.setAttribute('strokeweight', el.visProp['strokeWidth']);   
+        else
+            tickArr.push(' m ' + Math.round(c.scrCoords[1]+dxMin) + ', ' + Math.round(c.scrCoords[2]-dyMin) + ' l ' + Math.round(c.scrCoords[1]-dxMin) + ', ' + Math.round(c.scrCoords[2]+dyMin)+' ');
     }
+
+    var ticks = document.getElementById(axis.id + '_ticks');
+    if(ticks == null) {
+        ticks = this.createPrimitive('path', axis.id+'_ticks');
+        this.appendChildPrimitive(ticks,'lines');
+    }
+    ticks.setAttribute('stroked', 'true');
+    ticks.setAttribute('strokecolor', axis.visProp['strokeColor'], 1);
+    ticks.setAttribute('strokeweight', axis.visProp['strokeWidth']);   
+    //ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
+    this.updatePathPrimitive(ticks, tickArr, axis.board);
 }
 
 JXG.VMLRenderer.prototype.drawArc = function(el) { 
@@ -161,9 +208,14 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     nodeStroke.setAttribute('dashstyle', this.dashArray[tmp]);    
     node.appendChild(nodeStroke);    
    
-    var node2 = this.createPrimitive('shape',el.id+'_fill');    
-    node2.setAttribute('filled', 'true');
-    node2.setAttribute('fillcolor', el.visProp['fillColor']); 
+    var node2 = this.createPrimitive('shape',el.id+'_fill');
+    if(el.visProp['fillColor'] == 'none') {
+        node2.setAttribute('filled', 'false');
+    }
+    else {
+        node2.setAttribute('filled', 'true');
+        node2.setAttribute('fillcolor', el.visProp['fillColor']); 
+    }
     node2.setAttribute('stroked', 'false');
 
     var x = Math.round(radius * el.board.unitX * el.board.zoomX); // Breite des umgebenden Rechtecks?
@@ -335,14 +387,14 @@ JXG.VMLRenderer.prototype.transformImageParent = function(el,m) {};
 JXG.VMLRenderer.prototype.removeGrid = function(board) { 
     board.hasGrid = false;
     for(var i=0; i<=this.gridXsize; i++) {
-        var c = $('gridx'+i);
+        var c = document.getElementById('gridx'+i);
         while (c.childNodes.length>0) {
             c.removeChild(c.firstChild);
         }
         c.remove();
     }
     for(var i=0; i<=this.gridYsize; i++) {
-        var c = $('gridy'+i);
+        var c = document.getElementById('gridy'+i);
         while (c.childNodes.length>0) {
             c.removeChild(c.firstChild);
         }
@@ -420,7 +472,7 @@ JXG.VMLRenderer.prototype.setObjectDash = function(el) {
                 node.setAttribute('dashstyle', this.dashArray[tmp]);            
         }
         else {
-            var node = $(el.id+'stroke');
+            var node = document.getElementById(el.id+'stroke');
             if (node) {
                 var tmp = el.visProp['dash'];
                 node.setAttribute('dashstyle', this.dashArray[tmp]);
@@ -431,7 +483,7 @@ JXG.VMLRenderer.prototype.setObjectDash = function(el) {
  
 JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     var c, o;
-    /* // Not yet
+    /* // Not yet 
     if (typeof opacity=='function') {
         o = opacity();
     } else {
@@ -553,7 +605,7 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         }
     }
     if(el.type == JXG.OBJECT_TYPE_POLYGON || el.type == JXG.OBJECT_TYPE_CIRCLE || el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE || el.type == JXG.OBJECT_TYPE_CURVE) {
-        var nodeFill = $(el.id+'_fillnode');
+        var nodeFill = document.getElementById(el.id+'_fillnode');
         if (o!=undefined) nodeFill.setAttribute('opacity', (o*100)+'%');     
     }
 }
@@ -563,11 +615,11 @@ JXG.VMLRenderer.prototype.remove = function(node) {
 }
 
 JXG.VMLRenderer.prototype.suspendRedraw = function() {
-    //this.container.style.display='none';
+    this.container.style.display='none';
 };
 
 JXG.VMLRenderer.prototype.unsuspendRedraw = function() {
-    //this.container.style.display='';
+    this.container.style.display='';
 };
 
 JXG.VMLRenderer.prototype.setStrokeProp = function(node,visProp) {
@@ -627,8 +679,10 @@ JXG.VMLRenderer.prototype.createPrimitive = function(type,id) {
     var node;
     if (type=='circle' || type=='ellipse' ) {
         node = this.container.ownerDocument.createElement('v:oval');
-    } else if (type=='polygon' || type=='path' ) {
-        node = this.container.ownerDocument.createElement('v:polyline');
+    } else if (type=='polygon') {
+        node = this.container.ownerDocument.createElement('v:shape');
+    } else if (type=='path') {
+        node = this.container.ownerDocument.createElement('v:shape');
     } else {
         node = this.container.ownerDocument.createElement('v:'+type);
     }
@@ -707,53 +761,82 @@ JXG.VMLRenderer.prototype.updateEllipsePrimitive = function(node,x,y,rx,ry) {
     node.style.height = (ry*2)+'px';
 };
 
-JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString) {
-    node.points.value = pointString;
+JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString,board) {
+    //var node = el.rendNode;
+    var x = board.canvasWidth;
+    var y = board.canvasHeight;
+    node.style.width = x;
+    node.style.height = y;
+    node.setAttribute('coordsize', x+','+y);
+    node.setAttribute('path',pointString.join(""));
+    //node.points.value = pointString;
 };
 
 JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
-    // Loop unrolling
-    var pStr = '';
-    var scr;
-    var i = 0;
-    var n = el.numberPoints%8;
-    if (n>0) {
-        do 
-        {
-            scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
+    if (el.numberPoints<=0) { return ''; }
+    var nextSymb = ' m ';
+    var pStr = [];
+    var h = 100*el.board.canvasHeight; // This is a weak test to detect infinity
+    var w = 100*el.board.canvasWidth;
+    var m = Math.min(el.numberPoints,8192); // otherwise IE 7 crashes in hilbert.html
+    
+    for (var i=0; i<m; i++) {
+        var scr = el.points[i].scrCoords;
+        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || Math.abs(scr[2])>h) {
+            nextSymb = ' m ';
+        } else {
+            pStr.push(nextSymb + scr[1] + ', ' + scr[2]);
+            nextSymb = ' l ';
         }
-        while (--n); // n must be greater than 0 here
     }
-    n = parseInt(el.numberPoints/8);
-    if (n>0) { do 
-    {
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-        scr = el.points[i++].scrCoords; if (!isNaN(scr[1]) && !isNaN(scr[2])) { pStr += scr[1] + ',' + scr[2] + ' '; }
-    }
-    while (--n);}
+    pStr.push(' e');
+//$('debug').innerHTML = pStr;
     return pStr;
 };
 
-JXG.VMLRenderer.prototype.updatePathStringPrimitiveOld = function(el) {
-    var pointString = '';
-    for (var i=0; i<el.numberPoints; i++) {
-        var scr = el.points[i].scrCoords;
-        if (!isNaN(scr[1]) && !isNaN(scr[2])) {
-            pointString += scr[1] + ',' + scr[2] + ' ';
+JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,el) {
+    node.setAttribute('stroked', 'false');
+    var minX = el.vertices[0].coords.scrCoords[1];
+    var maxX = el.vertices[0].coords.scrCoords[1];
+    var minY = el.vertices[0].coords.scrCoords[2];
+    var maxY = el.vertices[0].coords.scrCoords[2];
+    for(var i=1; i<el.vertices.length-1; i++) {
+        var screenCoords = el.vertices[i].coords.scrCoords;
+        if(screenCoords[1] < minX) {
+            minX = screenCoords[1];
+        }
+        if(screenCoords[1] > maxX) {
+            maxX = screenCoords[1];
+        }
+        if(screenCoords[2] < minY) {
+            minY = screenCoords[2];
+        }
+        if(screenCoords[2] > maxY) {
+            maxY = screenCoords[2];
         }
     }
-    return pointString;
-    //return el.points.slice(0,el.numberPoints).map(function(p){return p.scrCoords[1]+','+p.scrCoords[2];}).join(' ');
-};
 
-JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,pointString) {
-    node.points.value = pointString;
+    var x = Math.round(maxX-minX); // Breite des umgebenden Rechtecks?
+    var y = Math.round(maxY-minY); // Hoehe des umgebenden Rechtecks?
+    node.style.width = x;
+    node.style.height = y;
+    node.setAttribute('coordsize', x+','+y);
+     
+    var pStr = [];
+    pStr.push("m ");
+    var screenCoords = el.vertices[0].coords.scrCoords;
+    pStr.push(screenCoords[1] + "," + screenCoords[2]);    
+    pStr.push(" l ");
+    for(var i=1; i<el.vertices.length-1; i++) {
+        var screenCoords = el.vertices[i].coords.scrCoords;
+        pStr.push(screenCoords[1] + "," + screenCoords[2]);
+        if(i<el.vertices.length-2) {
+            pStr.push(", ");
+        }
+    }
+    pStr.push(" x e");
+
+    node.setAttribute('path',pStr.join(""));
 };
 
 JXG.VMLRenderer.prototype.appendChildPrimitive = function(node,level) {
@@ -763,8 +846,8 @@ JXG.VMLRenderer.prototype.appendChildPrimitive = function(node,level) {
         case 'angles': node.style.zIndex = "2"; break;
         case 'sectors': node.style.zIndex = "2"; break;
         case 'polygone': node.style.zIndex = "2"; break;
-        case 'curves': node.style.zIndex = "2"; break;
-        case 'circles': node.style.zIndex = "3"; break;
+        case 'curves': node.style.zIndex = "4"; break; //2
+        case 'circles': node.style.zIndex = "4"; break; //3
         case 'lines': node.style.zIndex = "4"; break;
         case 'arcs': node.style.zIndex = "4"; break;
         case 'points': node.style.zIndex = "5"; break;
@@ -796,3 +879,11 @@ JXG.VMLRenderer.prototype.setPropertyPrimitive = function(node,key,val) {
         }
     }
 };
+
+/*
+JXG.VMLRenderer.prototype.cloneSubTree = function(el,id,type) {
+    var node = el.rendNode.cloneNode(true);
+    node.setAttribute('id', id);
+    this.appendChildPrimitive(node,type);
+};
+*/

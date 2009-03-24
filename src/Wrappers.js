@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -27,12 +27,15 @@ JXG.Board.prototype.angle = function(A, B, C){ return this.algebra.angle(A,B,C);
 JXG.Board.prototype.rad = function(A, B, C){ return this.algebra.rad(A,B,C); };
 JXG.Board.prototype.distance = function(arr1, arr2){ return this.algebra.distance(arr1,arr2); };
 JXG.Board.prototype.pow = function(a, b){ return this.algebra.pow(a,b); };
-JXG.Board.prototype.round = function(x, n){ return this.algebra.round(x,n); };
-JXG.Board.prototype.cosh = function(x){ return this.algebra.cosh(x); };
-JXG.Board.prototype.sinh = function(x){ return this.algebra.sinh(x); };
-JXG.Board.prototype.D = function(f){ return this.algebra.D(f); };
-JXG.Board.prototype.I = function(interval,f){ return this.algebra.I(interval,f); };
-JXG.Board.prototype.root = function(f,x){ return this.algebra.root(f,x); };
+JXG.Board.prototype.round = function(x, n){ return (x).toFixed(n); };
+JXG.Board.prototype.cosh = function(x){ return JXG.Math.Numerics.cosh(x); };
+JXG.Board.prototype.sinh = function(x){ return JXG.Math.Numerics.sinh(x); };
+JXG.Board.prototype.sgn = function(x) { return (x==0 ? 0 : x/(Math.abs(x))); };
+JXG.Board.prototype.D = function(f,obj){ return JXG.Math.Numerics.D(f,obj); };
+JXG.Board.prototype.I = function(interval,f){ return JXG.Math.Numerics.I(interval,f); };
+JXG.Board.prototype.root = function(f,x,obj){ return JXG.Math.Numerics.root(f,x,obj); };
+JXG.Board.prototype.lagrangePolynomial = function(p){ return JXG.Math.Numerics.lagrangePolynomial(p); };
+JXG.Board.prototype.neville = function(p){ return JXG.Math.Numerics.neville(p); };
 
 JXG.Board.prototype.abs = Math.abs;
 JXG.Board.prototype.acos = Math.acos;
@@ -51,20 +54,8 @@ JXG.Board.prototype.sqrt = Math.sqrt;
 JXG.Board.prototype.tan = Math.tan;
 JXG.Board.prototype.trunc = Math.ceil;
 
-
-JXG.Board.prototype.factorial = function(n){ 
-    if (n<0) { 
-        return NaN; 
-    } else {
-        var f = 1;
-        while (n>1) {
-            f *= n;
-            n--;
-        }
-        return f;
-    }
-};
-
+JXG.Board.prototype.factorial = function(n){ return JXG.Math.factorial(n); }
+JXG.Board.prototype.binomial = function(n,k){ return JXG.Math.binomial(n,k); }
 
 // Some shortcuts 
 JXG.Point.prototype.setPositionX = function (method, x) {
@@ -81,9 +72,16 @@ JXG.Board.prototype.getElement = function (el) {return JXG.GetReferenceFromParam
  * GUI interface
  **/
 JXG.Board.prototype.intersectionOptions = ['point',[[JXG.OBJECT_CLASS_LINE,JXG.OBJECT_CLASS_LINE],[JXG.OBJECT_CLASS_LINE,JXG.OBJECT_CLASS_CIRCLE],[JXG.OBJECT_CLASS_CIRCLE,JXG.OBJECT_CLASS_CIRCLE]]];
-JXG.Board.prototype.intersectionFunc = function(el1,el2,i){
-    return function(){return el1.board.algebra.meet(el1.stdform,el2.stdform)[i];};
-}; //returns array of intersections
+JXG.Board.prototype.intersection = function(el1,el2,i,j){ 
+    el1 = JXG.GetReferenceFromParameter(this,el1); ;
+    el2 = JXG.GetReferenceFromParameter(this,el2); ;
+    if (el1.elementClass==JXG.OBJECT_CLASS_CURVE || el2.elementClass==JXG.OBJECT_CLASS_CURVE) {
+        return function(){return el1.board.algebra.meetCurveCurve(el1,el2,i,j); };
+    } else {
+        return function(){return el1.board.algebra.meet(el1.stdform,el2.stdform,i); };
+    }
+}; //returns a single point of intersection
+JXG.Board.prototype.intersectionFunc = function(el1,el2,i,j){ return this.intersection(el1,el2,i,j); }; 
 
 JXG.Board.prototype.pointFunc = function(){return [null];};
 JXG.Board.prototype.pointOptions = ['point',[[JXG.OBJECT_CLASS_POINT]]];

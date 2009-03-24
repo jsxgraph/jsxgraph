@@ -86,8 +86,8 @@
                     var x = a*Math.cos(phi); 
                     var y = b*Math.sin(phi);
                 } else {
-                    var x = leave*a*board.algebra.cosh(phi); 
-                    var y = leave*b*board.algebra.sinh(phi);
+                    var x = leave*a*board.cosh(phi); 
+                    var y = leave*b*board.sinh(phi);
                 }
                 return board.algebra.matVecMult(transformFunc(),[1,x,y]);
             };
@@ -95,14 +95,14 @@
             if (atts.type=='ellipse') {            
                 return board.createElement('curve', 
                     [function(phi) {return conicCoords(phi)[1];},
-                     function(phi) {return conicCoords(phi)[2];},'phi',0,2.01*Math.PI],atts);        
+                     function(phi) {return conicCoords(phi)[2];},0,2.01*Math.PI],atts);        
             } else {
                 return [board.createElement('curve', 
                     [function(phi) {return conicCoords(phi,1)[1];},
-                     function(phi) {return conicCoords(phi,1)[2];},'phi',-2.01*Math.PI,2.01*Math.PI],atts),
+                     function(phi) {return conicCoords(phi,1)[2];},-2.01*Math.PI,2.01*Math.PI],atts),
                         board.createElement('curve', 
                     [function(phi) {return conicCoords(phi,-1)[1];},
-                     function(phi) {return conicCoords(phi,-1)[2];},'phi',-2.01*Math.PI,2.01*Math.PI],atts)];
+                     function(phi) {return conicCoords(phi,-1)[2];},-2.01*Math.PI,2.01*Math.PI],atts)];
             }
         };
 

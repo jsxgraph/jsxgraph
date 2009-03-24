@@ -15,13 +15,13 @@ function f(x) {
    return Math.sin(x)*Math.cos(x)*p.X();
 }
 c = plot(f);
-g = board.algebra.D(f);
+g = board.D(f);
 plot(g,{strokecolor:'black', dash:1});
-h = board.algebra.D(g);
+h = board.D(g);
 plot(h, {strokecolor:'red', dash:2});
 
 var interval = [0, 2.5];
-i_m = board.algebra.I(interval, f);
+i_m = board.I(interval, f);
 
 board.createElement('integral', [interval, c]);
 </textarea> <br>
@@ -30,25 +30,25 @@ board.createElement('integral', [interval, c]);
 </p>
 </div>
 <br clear=all>
-<div id="debug" style="display:none;"></div>
+<div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
 
-        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 20});
-		// Axes
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 250, unitY: 20});
+        // Axes
         b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
-        b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
+        //b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 
         // Macro Function plotter
         function funktionsPlotter(board, func, atts) {
-            var f = board.createElement('curve', ['x', func, 'x'], atts);
+            var f = board.createElement('functiongraph', [func], atts);
             return f;
         }
         
         // Simplified plotting function
         function plot(func, atts) {
             if (atts==null) {
-                return funktionsPlotter(board, func, {strokewidth:2, curveType:'graph'});
+                return funktionsPlotter(board, func, {strokewidth:2});
             } else {
                 return funktionsPlotter(board, func, atts);
             }    
@@ -71,11 +71,7 @@ board.createElement('integral', [interval, c]);
             return board;
         }
 /*
-    board.algebra.integration_type = JXG.INT_SIMPSON;
-    i_s = board.algebra.I(interval, f);
-    board.algebra.integration_type = JXG.INT_TRAPEZ;
-    i_t = board.algebra.I(interval, f);
-    board.algebra.integration_type = JXG.INT_MILNE;
+    i_s = board.I(interval, f);
 */        
   /* ]]> */
   </script>

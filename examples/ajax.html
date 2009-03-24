@@ -1,0 +1,89 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <!--<script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>-->
+</head>
+<body>
+<h2>Live data plot and analysis</h2>
+Data is collected with from a simple php script which generates random values, then
+JSXGraph displays the data and prints some statistics.
+<div style='width:950px'>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:400px; float:left"></div>
+  <p style="float:right">
+    <input type="button" value="Start" onClick="Start()"> 
+    <input type="button" value="Stop" onClick="Stop()"> 
+  </p>
+  <p id='output' style="float:right; height:200px; width:10em;">Statistics:<br>
+  </p>
+</div>
+  <br clear=all>
+  <div id="debug" style="display:none;"></div>
+    <script type="text/javascript">
+    /* <![CDATA[ */
+
+        brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 300, unitX: 10, unitY: 10});
+        b1axisx = brd.createElement('axis', [[0,0], [1,0]], {ticksDelta:5, strokeColor:'#000000'});
+        b1axisy = brd.createElement('axis', [[0,0], [0,1]], {ticksDelta:5, strokeColor:'#000000'});
+        b1axisx.ticksDelta = 5;
+        b1axisy.ticksDelta = 5;
+        brd.fullUpdate = true;
+        brd.update();
+        brd.fullUpdate = false;
+        
+        var graph1,graph2,graph3,graph4,graph5;
+        var periodical;
+
+        function doIt() {
+            new Ajax.Request('ajaxserv.php', {
+                onComplete: function(transport) {
+                    if (200 == transport.status) {
+                        var t = transport.responseText;
+                        var a = t.split(';');
+                        var x = [];
+                        var y = [];
+                        for (var i=0;i<a.length-1;i++) { // The last array entry is empty
+                            var b = a[i].split(',');
+                            x[i]=b[0]*1.0;  
+                            y[i]=b[1]*1.0;
+                        }
+                        var m = brd.mathStatistics.mean(y);
+                        var sd = brd.mathStatistics.sd(y);
+                        var med = brd.mathStatistics.median(y);
+                        if (!graph1) { 
+                            graph1 = brd.createElement('curve', [x,y],{strokeWidth:3}); 
+                            graph2 = brd.createElement('curve', [[x[0],x[x.length-1]],[m,m]], {strokecolor:'red'}); 
+                            graph3 = brd.createElement('curve', [[x[0],x[x.length-1]],[m+sd,m+sd]], {strokecolor:'red',dash:2}); 
+                            graph4 = brd.createElement('curve', [[x[0],x[x.length-1]],[m-sd,m-sd]], {strokecolor:'red',dash:2}); 
+                            graph5 = brd.createElement('curve', [[x[0],x[x.length-1]],[med,med]], {strokecolor:'red',dash:1}); 
+                        } else {
+                            graph1.dataX = x;                    graph1.dataY = y;
+                            graph2.dataX = [x[0],x[x.length-1]]; graph2.dataY = [m,m];
+                            graph3.dataX = [x[0],x[x.length-1]]; graph3.dataY = [m+sd,m+sd];
+                            graph4.dataX = [x[0],x[x.length-1]]; graph4.dataY = [m-sd,m-sd];
+                            graph5.dataX = [x[0],x[x.length-1]]; graph5.dataY = [med,med];
+                        }
+                        brd.update();
+
+                        $('output').innerHTML = 'Statistics:<br>'+ 'Mean value=' + brd.round(m,2)+ '<br>Median=' + brd.round(med,2)+'<br>Sd='+brd.round(sd,2);
+                        
+                    };
+                }});
+        }
+        
+        function Start() {
+            periodical = setInterval(doIt,1000);
+        }
+        function Stop() {
+            if (periodical) {
+                clearInterval(periodical);
+            }
+        }
+        
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

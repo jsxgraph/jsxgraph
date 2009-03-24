@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.5">
+<gui>
+	<show algebraView="false" auxiliaryObjects="true"/>
+	<splitDivider loc="250" locVertical="400" horizontal="true"/>
+	<font  size="12"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="180.0" yZero="246.0" scale="30.0" yscale="30.0"/>
+	<evSettings axes="true" grid="false" pointCapturing="true" pointStyle="0"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Gegenvektor" author="Markus Hohenwarter" date="">
+<element type="vector" label="a">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<labelOffset x="13" y="13"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="1.0" y="2.0" z="0.0"/>
+	<lineStyle thickness="3" type="0"/>
+	<coordStyle style="cartesian"/>
+</element>
+<command name="UnitVector">
+	<input a0="a"/>
+	<output a0="a_0"/>
+</command>
+<element type="vector" label="a_0">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="10" y="10"/>
+	<coords x="0.4472135954999579" y="0.8944271909999159" z="0.0"/>
+	<lineStyle thickness="3" type="0"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="A"/>
+</element>
+<element type="point" label="A">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<labelOffset x="-14" y="28"/>
+	<labelMode val="1"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="3.0" y="1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="numeric" label="s">
+	<value val="4.0"/>
+	<show object="true" label="true"/>
+	<objColor r="204" g="0" b="0" alpha="0.1"/>
+	<labelOffset x="-3" y="-1"/>
+	<labelMode val="1"/>
+	<lineStyle thickness="2" type="10"/>
+	<slider min="1.0" max="6.0" width="3.0" x="-5.0" y="4.0" fixed="true" horizontal="true"/>
+	<animation step="1.0"/>
+	<fixed val="false"/>
+</element>
+<expression label="b" exp="s a_0" type="vector" />
+<element type="vector" label="b">
+	<show object="true" label="false"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-5" y="-6"/>
+	<coords x="1.7888543819998317" y="3.5777087639996634" z="0.0"/>
+	<lineStyle thickness="3" type="0"/>
+	<coordStyle style="cartesian"/>
+	<startPoint exp="A"/>
+</element>
+<expression label="B" exp="A + b" type="point" />
+<element type="point" label="B">
+	<show object="true" label="true"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="2" y="-8"/>
+	<labelMode val="1"/>
+	<coords x="4.7888543819998315" y="4.577708763999663" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<expression label="T1" exp="&quot;a =  &quot; + a" />
+<element type="text" label="T1">
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint  x="-4.866666666666668" y="6.666666666666666" z="1.0"/>
+</element>
+<expression label="T2" exp="&quot;a_0 = &quot; + a_0" />
+<element type="text" label="T2">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint  x="-5.1" y="5.699999999999999" z="1.0"/>
+</element>
+</construction>
+</geogebra>

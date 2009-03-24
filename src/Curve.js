@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -35,15 +35,17 @@
  * of the function term 
  * is converted into JavaScript syntax.
  * It inherits from @see GeometryElement.
- * The defining array "definingArr" consists of
- * term for the first coordinate, term for the second coordinate, 
- * the variable name (usuallay 'x' or 't') and the lower and upper bounds
- * for the variable. The latter two can be null, then the default 
+ * The defining array "parents" consists of
+ * the variable name (usuallay 'x' or 't'), it is only needed for reading of GEONExT constructions,
+ * the term for the first coordinate, 
+ * the term for the second coordinate, 
+ * the lower and upper bounds
+ * for the variable. The latter two can be null. In this case the default 
  * bounds are the left and right border of the canvas.
  * @constructor
  * @return A new geometry element Curve
  */
-JXG.Curve = function (board, definingArr, id, name) {
+JXG.Curve = function (board, parents, id, name) {
     this.constructor();
  
     this.points = [];
@@ -53,6 +55,7 @@ JXG.Curve = function (board, definingArr, id, name) {
     this.elementClass = JXG.OBJECT_CLASS_CURVE;                
     
     this.init(board, id, name);
+    this.init(board, id, name);
 
     this.visProp['strokeWidth'] = this.board.options.curve.strokeWidth;
 
@@ -60,7 +63,6 @@ JXG.Curve = function (board, definingArr, id, name) {
     this.dataX = null;
     this.dataY = null;
     
-    this.curveType = 'none';
     /**
      * The curveType is set in @see generateTerm and used in 
      * @see updateCurve
@@ -68,25 +70,25 @@ JXG.Curve = function (board, definingArr, id, name) {
      * 'none'
      * 'plot': Data plot
      * 'parameter': we can not distinguish function graphs and parameter curves
-     * 'graph': function graph
+     * 'functiongraph': function graph
      * 'polar'
      * 'implicit' (not yet)
      *
      * Only parameter and plot are set directly.
      * polar is set with setProperties only.
      **/
-     
+    // this.curveType = 'none';
     this.curveType = null;
 
-    if (definingArr[2]!=null) {
-        this.varname = definingArr[2];
+    if (parents[0]!=null) {
+        this.varname = parents[0];
     } else {
         this.varname = 'x';
     }
-    this.xterm = definingArr[0];  // usually: "x"
-    this.yterm = definingArr[1];  // usually: e.g. "x^2"
-    this.generateTerm(this.xterm,this.yterm,this.varname,definingArr[3],definingArr[4]);  // Converts GEONExT syntax into JavaScript syntax
-    this.updateCurve();                        // First evaluation of the graph
+    this.xterm = parents[1];  // function graphs: "x"
+    this.yterm = parents[2];  // function graphs: e.g. "x^2"
+    this.generateTerm(this.varname,this.xterm,this.yterm,parents[3],parents[4]);  // Converts GEONExT syntax into JavaScript syntax
+    this.updateCurve();                        // First evaluation of the curve
     this.id = this.board.addCurve(this);
     
     if (typeof this.xterm=='string') {
@@ -99,7 +101,7 @@ JXG.Curve = function (board, definingArr, id, name) {
 JXG.Curve.prototype = new JXG.GeometryElement;
 
 /**
- * Gives the default value of the left bound for the graph.
+ * Gives the default value of the left bound for the curve.
  * May be overwritten in @see generateTerm.
  */
 JXG.Curve.prototype.minX = function () {
@@ -112,7 +114,7 @@ JXG.Curve.prototype.minX = function () {
 };
 
 /**
- * Gives the default value of the right bound for the graph
+ * Gives the default value of the right bound for the curve.
  * May be overwritten in @see generateTerm.
  */
 JXG.Curve.prototype.maxX = function () {
@@ -127,7 +129,7 @@ JXG.Curve.prototype.maxX = function () {
 /**
  * Empty function (for the moment). It is needed for highlighting
  * @param {x} 
- * @param {y} Find closest point on the graph to (xy)
+ * @param {y} Find closest point on the curve to (x,y)
  * @return Always returns false
  */
 JXG.Curve.prototype.hasPoint = function (x,y) {
@@ -137,7 +139,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     x = checkPoint.usrCoords[1];
     y = checkPoint.usrCoords[2];
-    if (this.curveType=='parameter') { 
+    if (this.curveType=='parameter' || this.curveType=='polar') { 
         // Brute fore search for a point on the curve close to the mouse pointer
         var steps = 300;
         var d = (this.maxX()-this.minX())/steps;
@@ -155,24 +157,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
             if (dist<prec) { return true; }
             t+=d;
         }
-    } else if (this.curveType=='polar') {
-    /*
-        t = 0.0;
-        var offs = (this.dataY!=null)?this.dataY:[0,0];
-        t = this.board.root(this.board.D(function(t){ 
-            var r = this.X(t);
-            return (x-r*Math.cos(t)-offs[0])*(x-r*Math.cos(t)-offs[0])+(y-r*Math.sin(t)-offs[1])*(y-r*Math.sin(t)-offs[1]);
-            }), 
-        t);         
-        //if (t<curve.minX()) { t = curve.minX(); }
-        //if (t>curve.maxX()) { t = curve.maxX(); }
-        var r = this.X(t);
-        dist = Math.sqrt((r*Math.cos(t)+offs[0]-x)*(r*Math.cos(t)+offs[0]-x)+
-                         (r*Math.sin(t)+offs[1]-y)*(r*Math.sin(t)+offs[1]-y));
-         */
-         return false;
     } else {
-    //$('debug').innerHTML += this.Y.toString()+' ';
         // Brute force search for a point on the curve close to the mouse pointer
         var steps = 300;
         var d = (this.maxX()-this.minX())/steps;
@@ -253,7 +238,7 @@ JXG.Curve.prototype.updateCurve = function () {
         this.numberPoints = this.dataX.length;
     } else {
         if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
-            this.numberPoints = this.board.canvasWidth*1.0;
+            this.numberPoints = this.board.canvasWidth*1.3;
         } else {
             this.numberPoints = this.board.canvasWidth*0.25;
         }
@@ -278,16 +263,7 @@ JXG.Curve.prototype.updateCurve = function () {
             x = mi+i*stepSize;
             y = x;
         }
-        if (this.curveType=='polar') {
-            var r = this.X(x);
-            var offs = [0,0];
-            if (this.dataY!=null) {
-                offs = this.dataY;
-            }
-            this.points[i].setCoordinates(JXG.COORDS_BY_USER, [r*Math.cos(x)+offs[0],r*Math.sin(x)+offs[1]]);
-        } else {
-            this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x),this.Y(y)]);
-        }
+        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x),this.Y(y)]);
         this.updateTransform(this.points[i]);
     }
 };
@@ -338,18 +314,18 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
  * new methods for minX() and maxX().
  *
  * Also, all objects whose name appears in the term are searched and
- * the graph is added as child to these objects. (Commented out!!!!)
+ * the curve is added as child to these objects. (Commented out!!!!)
  * @see Algebra
  * @see #geonext2JS.
  */
-JXG.Curve.prototype.generateTerm = function (xterm, yterm, varname, mi, ma) {
+JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
     // Generate the methods X() and Y()
     this.numberPoints = this.board.canvasWidth*1.0;
     if (typeof xterm=='string') {
         // Convert GEONExT syntax into  JavaScript syntax
         var newxterm = this.board.algebra.geonext2JS(xterm);
         this.X = new Function(varname,'return ' + newxterm + ';');
-        this.curveType = 'graph';
+        this.curveType = 'functiongraph';
     } else if (typeof xterm=='function') {
         this.X = xterm;
         this.curveType = 'parameter';
@@ -362,7 +338,7 @@ JXG.Curve.prototype.generateTerm = function (xterm, yterm, varname, mi, ma) {
         this.X = function(i) { return this.dataX[i]; };
         this.numberPoints = this.dataX.length;
     }
-
+    
     if (typeof yterm=='string') {
         // Convert GEONExT syntax into  JavaScript syntax
         var newyterm = this.board.algebra.geonext2JS(yterm);
@@ -374,6 +350,13 @@ JXG.Curve.prototype.generateTerm = function (xterm, yterm, varname, mi, ma) {
     } else if (typeof yterm=='object') {  // array of values
         this.dataY = yterm;
         this.Y = function(i) { return this.dataY[i]; };
+    }
+    
+    // polar form
+    if (typeof xterm=='function' && typeof yterm=='object') {
+        this.X = function(phi){return (xterm)(phi)*Math.cos(phi)+yterm[0];};
+        this.Y = function(phi){return (xterm)(phi)*Math.sin(phi)+yterm[1];};
+        this.curveType = 'parameter';
     }
 
     // Set the bounds
@@ -428,8 +411,61 @@ JXG.Curve.prototype.notifyParents = function (contentStr) {
     this.board.algebra.findDependencies(this,contentStr);
 };
 
-JXG.createCurve = function(board, parentArr, atts) {
-    return new JXG.Curve(board, parentArr, atts['id'], atts['name']);
+JXG.createCurve = function(board, parents, attributes) {
+    return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name']);
 };
 
 JXG.JSXGraph.registerElement('curve', JXG.createCurve);
+
+/**
+* Curve type "functiongraph"
+* parents: [f, start, end] or [f]
+**/
+JXG.createFunctiongraph = function(board, parents, attributes) {
+    var par = ["x","x"].concat(parents);
+    if(attributes == null) 
+        attributes = {};
+    attributes.curveType = 'functiongraph';
+    return new JXG.Curve(board, par, attributes['id'], attributes['name']);
+};
+
+JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
+
+
+/**
+ * Create a dynamic spline interpolated curve given by sample points p_1 to p_n.
+ * @param {JXG.Board} board Reference to the board the spline is drawn on.
+ * @param {Array} parents Array of points the spline interpolates
+ * @param {Object} attributes Define color, width, ... of the spline
+ * @type JXG.Curve
+ * @return Returns reference to an object of type JXG.Curve.
+ */
+JXG.createSpline = function(board, parents, attributes) {
+    // This is far away from being effective
+    var F = function (t) {
+        var x = new Array();
+        var y = new Array();
+        
+        for(var i=0; i<parents.length; i++) {
+            if(!JXG.IsPoint(parents[i]))
+                throw "JXG.createSpline: Parents has to be an array of JXG.Point."
+            
+            x.push(parents[i].X());
+            y.push(parents[i].Y());
+        }
+        
+        // The array D has only to be calculated when the position of one or more sample point
+        // changes. otherwise D is always the same for all points on the spline.
+        var D = JXG.Math.Numerics.splineDef(x, y);
+        return JXG.Math.Numerics.splineEval(t, x, y, D);
+    }
+    
+    return new JXG.Curve(board, ["x","x", F], attributes);
+}
+
+/**
+ * Register the element type spline at JSXGraph
+ * @private
+ */
+JXG.JSXGraph.registerElement('spline', JXG.createSpline);
+

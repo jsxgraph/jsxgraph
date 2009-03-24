@@ -10,28 +10,32 @@
 <body>
   <h2>Create Element Examples</h2>
   <div id="box" class="jxgbox" style="width:700px; height:500px;"></div>
-  <div id="debug" style="display:none;"></div>
+  <div id="debug" style="display:block;"></div>
+   <form>
+      <input type='button' value='SW-Modus' onclick="board.options.useBlackWhiteOptions(board);" />  
+   </form>
    <script type="text/javascript">
     /* <![CDATA[ */
     
         // Das Objekt geonext ist global und wird in Geonext.js initialisiert
         // board links oben initialisieren
         board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 50, unitY: 50});
+        
         bx = board.createElement('axis', [[0,0], [0,1]], {});
         by = board.createElement('axis', [[0,0], [1,0]], {});
 
-		p1 = board.createElement('point', [1, 1], {strokeColor: '#ff0000'});
-		p2 = board.createElement('point', [2, 0], {fixed: true});
-		p3 = board.createElement('point', [1, 2]);
-		
-		l1 = board.createElement('line', [p1, p2]);
-		
-		c1 = board.createElement('circle', [p1, 3.0]);
-		
-		curve = board.createElement('curve', [
+        p1 = board.createElement('point', [1, 1], {strokeColor: '#ff0000'});
+        p2 = board.createElement('point', [2, 0], {fixed: true});
+        p3 = board.createElement('point', [1, 2]);
+        
+        l1 = board.createElement('line', [p1, p2]);
+        
+        c1 = board.createElement('circle', [p1, 3.0]);
+        
+        curve = board.createElement('curve', [
             function(t){ return t; },
             function(t){ return (Math.sin(t)); },
-            "t", -Math.PI*2, Math.PI*2]);
+            -Math.PI*2, Math.PI*2]);
         
         a1 = board.createElement('arc', [p1, p2, p3], {'firstArrow':true,'lastArrow':true});
         a2 = board.createElement('arrow', ['Ursprung', p3]);
@@ -47,9 +51,18 @@
         tr = board.createElement('triangle', [p7, p9, p10]);
         
         pol = board.createElement('polygon', [p4, p5, p6, p7, p8]);
+        pol.borders[0].hideElement();
+        pol.borders[1].hideElement();
+        pol.borders[2].hideElement();
+        pol.borders[3].hideElement();
 
-//		sec = board.createElement('sector', [p4, p5, p6]);
-        
+        sec = board.createElement('sector', [p4, p5, p6]);
+
+        board.options.grid.hasGrid = true;
+        board.options.grid.gridColor = '#FF0000';
+        board.options.sector.fillColor = 'red';
+        board.options.polygon.fillColor = 'blue';
+        board.options.useStandardOptions(board);  
         
   /* ]]> */
   </script>

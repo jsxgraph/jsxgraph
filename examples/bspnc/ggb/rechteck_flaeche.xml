@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.3">
+<gui>
+	<show algebraView="false"/>
+	<font  size="13"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="41.0" yZero="305.0" scale="30.0"/>
+	<evSettings axes="false" grid="true" pointCapturing="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="1"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Flaeche des Rechtecks" author="" date="">
+<element type="line" label="m">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="0.0" y="1.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="explicit"/>
+</element>
+<element type="line" label="n">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="1.0" y="0.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="n" a1="m"/>
+	<output a0="A"/>
+</command>
+<element type="point" label="A">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-16" y="18"/>
+	<fixed val="false"/>
+	<coords x="0.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<element type="point" label="C">
+	<show object="true" label="true"/>
+	<objColor r="0" g="51" b="255" alpha="0.0"/>
+	<animation step="1.0"/>
+	<fixed val="false"/>
+	<coords x="8.0" y="4.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="C" a1="m"/>
+	<output a0="p"/>
+</command>
+<element type="line" label="p">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="-1.0" y="0.0" z="8.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="C" a1="n"/>
+	<output a0="q"/>
+</command>
+<element type="line" label="q">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="0.0" y="1.0" z="-4.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="q" a1="n"/>
+	<output a0="D"/>
+</command>
+<element type="point" label="D">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-18" y="0"/>
+	<fixed val="false"/>
+	<coords x="0.0" y="-4.0" z="-1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<command name="Intersect">
+	<input a0="p" a1="m"/>
+	<output a0="B"/>
+</command>
+<element type="point" label="B">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="3" y="18"/>
+	<fixed val="false"/>
+	<coords x="-8.0" y="0.0" z="-1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<command name="Polygon">
+	<input a0="A" a1="B" a2="C" a3="D"/>
+	<output a0="P" a1="a" a2="b" a3="c" a4="d"/>
+</command>
+<element type="function" label="P">
+	<show object="true" label="false"/>
+	<objColor r="153" g="51" b="0" alpha="0.1"/>
+</element>
+<element type="segment" label="a">
+	<show object="true" label="true"/>
+	<objColor r="153" g="51" b="0" alpha="0.0"/>
+	<labelMode val="1"/>
+	<coords x="-0.0" y="-8.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="segment" label="b">
+	<show object="true" label="true"/>
+	<objColor r="153" g="51" b="0" alpha="0.0"/>
+	<labelOffset x="-6" y="-4"/>
+	<labelMode val="1"/>
+	<coords x="4.0" y="0.0" z="-32.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="segment" label="c">
+	<show object="true" label="false"/>
+	<objColor r="153" g="51" b="0" alpha="0.0"/>
+	<coords x="0.0" y="8.0" z="-32.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="segment" label="d">
+	<show object="true" label="false"/>
+	<objColor r="153" g="51" b="0" alpha="0.0"/>
+	<coords x="-4.0" y="-0.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+</construction>
+</geogebra>

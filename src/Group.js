@@ -1,3 +1,27 @@
+/*
+    Copyright 2008,2009
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /** 
  * @fileoverview In this file the class Group is defined, a class for
  * managing grouping of points.
@@ -38,7 +62,7 @@ JXG.Group = function(board, id, name) {
     delete(this.type);
 
     var objArray;
-    if( (arguments.length == 4) && (Object.isArray(arguments[3])) )
+    if( (arguments.length == 4) && (JXG.IsArray(arguments[3])) )
         objArray = arguments[3];
     else {
         objArray = [];
@@ -81,7 +105,7 @@ JXG.Group.prototype.ungroup = function() {
 
 /**
  * Sends an update to all group members.
- * @param {Point} point The point that caused the update.
+ * @param {JXG.Point} point The point that caused the update.
  */
 JXG.Group.prototype.update = function(point) {
     var obj = null;
@@ -106,7 +130,7 @@ JXG.Group.prototype.update = function(point) {
 
 /**
  * Adds an Point to this group.
- * @param {Point} object The object added to the group.
+ * @param {JXG.Point} object The object added to the group.
  */
 JXG.Group.prototype.addPoint = function(object) {
     this.objects[object.id] = object;
@@ -123,10 +147,26 @@ JXG.Group.prototype.addPoints = function(objects) {
 
 /**
  * Adds an Pint to this group.
- * @param {Point} object The object added to the group.
+ * @param {JXG.Point} object The object added to the group.
  */
 JXG.Group.prototype.addGroup = function(group) {
     for(var el in group.objects) {
         this.addPoint(group.objects[el]);
     }
 };
+
+/**
+ * Groups points.
+ * @param {JXG.Board} board The board the points are on.
+ * @param {Array} parents Array of points to group.
+ * @param {Object} attributes Visual properties.
+ * @type JXG.Group
+ * @return An object of type JXG.Group.
+ */
+JXG.createGroup = function(board, parents, attributes) {
+    var g = new JXG.Group(board, attributes["id"], attributes["name"], parents);
+                
+    return g;
+};
+
+JXG.JSXGraph.registerElement('group', JXG.createGroup);

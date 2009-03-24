@@ -62,10 +62,10 @@
         
 		//defining the hook
 		function print_table(board) {
-			$('print_fencelength').innerHTML = board.algebra.round(b1p1.Dist(b1p3),2);
-        	$('print_sidelength1').innerHTML = board.algebra.round(b1p1.Dist(b1p5),2);
-        	$('print_sidelength2').innerHTML = board.algebra.round(b1p4.Dist(b1p5),2);
-        	$('print_area').innerHTML = board.algebra.round(b1p1.Dist(b1p5) * b1p4.Dist(b1p5),2);
+			$('print_fencelength').innerHTML = board.round(b1p1.Dist(b1p3),2);
+        	$('print_sidelength1').innerHTML = board.round(b1p1.Dist(b1p5),2);
+        	$('print_sidelength2').innerHTML = board.round(b1p4.Dist(b1p5),2);
+        	$('print_area').innerHTML = board.round(b1p1.Dist(b1p5) * b1p4.Dist(b1p5),2);
 			
 			
         }

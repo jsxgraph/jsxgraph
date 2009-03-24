@@ -1,7 +1,7 @@
  #!/usr/bin/python
     
 license = """/*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -30,6 +30,9 @@ import os
 import jsmin
 import re
 import tempfile
+import sys
+
+compressor = 'yuicompressor-2.4.2'
 
 '''
     Search for line
@@ -82,11 +85,20 @@ if __name__ == '__main__':
     fout.close()
 
     # Minify 
-    fin = open(tmpfilename,'r')
-    fout = open(coreFilename,'a')
-    jsm = jsmin.JavascriptMinify()
-    jsm.minify(fin, fout)
+    if False:
+        # Minify from Douglas Crockford
+        fin = open(tmpfilename,'r')
+        fout = open(coreFilename,'a')
+        jsm = jsmin.JavascriptMinify()
+        jsm.minify(fin, fout)
+    else:
+        # YUI compressor from Yahoo
+        s = 'java -jar ./' + compressor + '/build/' + compressor + '.jar --type js ' + tmpfilename + ' >>' + coreFilename
+        print s
+        os.system(s)
+     
     os.remove(tmpfilename)
+
 
     #
     # The following part is only necessary if we distribute 3 files:
@@ -98,7 +110,7 @@ if __name__ == '__main__':
         open('../distrib/loadjsxgraph.js','w').write(jstxt)
 
         # Minify the renderer
-        renderer = ['SVGRenderer','VMLRenderer']
+        renderer = ['VMLRenderer','SVGRenderer']
         for f in renderer:
             print 'minify ' + f
             fin = open('../src/'+f+'.js','r')

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.5">
+<gui>
+	<show algebraView="false" auxiliaryObjects="false"/>
+	<splitDivider loc="250" locVertical="400" horizontal="true"/>
+	<font  size="14"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="68.0" yZero="322.0" scale="30.0" yscale="30.0"/>
+	<evSettings axes="false" grid="false" pointCapturing="false" pointStyle="0"/>
+</euclidianView>
+<kernel>
+	<decimals val="0"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Höhenschnittpunkt" author="" date="">
+<element type="point" label="A">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<labelOffset x="-4" y="23"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="3.0666666666666664" y="-0.4666666666666667" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="B">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<labelOffset x="4" y="3"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="11.5" y="3.433333333333333" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="C">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="2.6333333333333333" y="7.033333333333333" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Polygon">
+	<input a0="A" a1="B" a2="C"/>
+	<output a0="P" a1="c" a2="a" a3="b"/>
+</command>
+<element type="function" label="P">
+	<show object="true" label="false"/>
+	<objColor r="153" g="51" b="0" alpha="0.1"/>
+</element>
+<element type="segment" label="c">
+	<show object="true" label="true"/>
+	<objColor r="153" g="51" b="0" alpha="0.0"/>
+	<labelOffset x="-5" y="0"/>
+	<coords x="-3.9" y="8.433333333333334" z="15.895555555555555"/>
+	<lineStyle thickness="3" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="segment" label="a">
+	<show object="true" label="true"/>
+	<objColor r="153" g="51" b="0" alpha="0.0"/>
+	<labelOffset x="-13" y="0"/>
+	<coords x="-3.6" y="-8.866666666666667" z="71.84222222222222"/>
+	<lineStyle thickness="3" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="segment" label="b">
+	<show object="true" label="true"/>
+	<objColor r="153" g="51" b="0" alpha="0.0"/>
+	<coords x="7.5" y="0.4333333333333331" z="-22.797777777777775"/>
+	<lineStyle thickness="3" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="A" a1="a"/>
+	<output a0="h_a"/>
+</command>
+<element type="line" label="h_a">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="34" y="1"/>
+	<coords x="8.866666666666667" y="-3.6" z="-28.87111111111111"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="B" a1="b"/>
+	<output a0="h_b"/>
+</command>
+<element type="line" label="h_b">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="7" y="7"/>
+	<coords x="-0.4333333333333331" y="7.5" z="-20.76666666666667"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="C" a1="c"/>
+	<output a0="h_c"/>
+</command>
+<element type="line" label="h_c">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<coords x="-8.433333333333334" y="-3.9" z="49.63777777777778"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="h_b" a1="h_a"/>
+	<output a0="H"/>
+</command>
+<element type="point" label="H">
+	<show object="true" label="true"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-6" y="-6"/>
+	<coords x="291.2933333333333" y="196.64192592592596" z="64.94"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Angle">
+	<input a0="A" a1="C" a2="B"/>
+	<output a0="γ"/>
+</command>
+<element type="angle" label="γ">
+	<value val="1.1274017380166672"/>
+	<show object="true" label="true"/>
+	<objColor r="0" g="100" b="0" alpha="0.1"/>
+	<labelOffset x="-1" y="26"/>
+	<labelMode val="1"/>
+	<arcSize val="30"/>
+	<allowReflexAngle val="false"/>
+</element>
+</construction>
+</geogebra>

@@ -1,5 +1,5 @@
 /* 
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -37,7 +37,7 @@
  * to manage a geonext board like adding geometric elements, removing them, managing
  * mouse over, drag & drop of geometric objects etc.
  * @constructor
- * @param {String/Object} container The id or reference of the html-element the board is drawn in.
+ * @param {String,Object} container The id or reference of the html-element the board is drawn in.
  * @param {JXG.AbstractRenderer} renderer The reference of a geonext renderer.
  * @param {String} id Unique identifier for the board, may be an empty string or null or even undefined.
  * @param {JXG.Coords} origin The coordinates where the origin is placed, in user coordinates.
@@ -152,7 +152,13 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type String
      */
     this.container = container;
-    $(this.container).undoPositioned;
+
+    /**
+     * Pointer to the html element containing the board.
+     * @type Object
+     */
+    this.containerObj = document.getElementById(this.container);
+    this.containerObj.undoPositioned;
 
     /**
      * A reference to this boards renderer.
@@ -233,7 +239,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.mathStatistics = new JXG.MathStatistics();
 
     /* If the given id is not valid, generate an unique id */
-    if((id != '') && (id != null) && (typeof $(id) != 'undefined'))
+    if((id != '') && (id != null) && (typeof document.getElementById(id) != 'undefined'))
         this.id = id;
     else
         this.id = this.generateId();
@@ -412,34 +418,20 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     */
    this.geonextCompatibilityMode = false;
 
-   /**
-    * Event listener for the onMouseDown event.
-    * @private
-    */
-   this.onMouseDownListener = this.mouseDownListener.bindAsEventListener(this);
-   
-   /**
-    * Event listener for the onMouseUp event.
-    * @private
-    */
-   this.onMouseUpListener = this.mouseUpListener.bindAsEventListener(this);
-   
-   /**
-    * Event listener for the onMouseMove event.
-    * @private
-    */
-   this.onMouseMoveListener = this.mouseMoveListener.bindAsEventListener(this);
-
    /* Event needs to know which methods to call when mouse is moved or clicked */
-   Event.observe(this.container, 'mousedown', this.onMouseDownListener);
-   Event.observe(this.container, 'mousemove', this.onMouseMoveListener);
+   // // Event.observe(this.container, 'mousedown', this.mouseDownListener.bind(this));
+   //// Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
+   //Event.observe(document, 'mousedown', this.mouseDownListener.bind(this));
+   //Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
+   JXG.addEvent(document,'mousedown', this.mouseDownListener, this);
+   JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
 };
 
 /**
  * Generates unique name for the given object. The result depends on object.type, if the object is a point, just capital characters are used, if it is
  * a line just lower case characters. If object is of type Polygon, lower case prefixed with P_ is used and if it's of type circle, lower case characters
  * prefixed with k_ is used. In any other case, lower case chars prefixed with s_ is used.
- * @param {String/Object} object Reference or id or name of an geometry object that is to be named.
+ * @param {String,Object} object Reference or id or name of an geometry object that is to be named.
  * @return {String} Unique name for the object.
  */
 JXG.Board.prototype.generateName = function(object) {
@@ -529,29 +521,69 @@ JXG.Board.prototype.generateId = function () {
  * @return Array of coordinates relative the boards container top left corner.
  */
 JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
-    var cPos = Element.cumulativeOffset($(this.container));
-
+    var pCont = this.containerObj;
+    var cPos = JXG.getOffset(pCont); //Element.cumulativeOffset(pCont);
     // add border width
-    cPos[0] += parseInt($(this.container).getStyle('borderLeftWidth'));
-    cPos[1] += parseInt($(this.container).getStyle('borderTopWidth'));
-
+    cPos[0] += parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
+    cPos[1] += parseInt(JXG.getStyle(pCont,'borderTopWidth'));
     // add padding
-    cPos[0] += parseInt($(this.container).getStyle('paddingLeft'));
-    cPos[1] += parseInt($(this.container).getStyle('paddingTop'));
-
+    cPos[0] += parseInt(JXG.getStyle(pCont,'paddingLeft'));
+    cPos[1] += parseInt(JXG.getStyle(pCont,'paddingTop'));
+    
     return cPos;
 };
 
 /**
+* Handler for click on left arrow in the navigation bar
+**/
+JXG.Board.prototype.clickLeftArrow = function (Event) {
+    this.origin.scrCoords[1] -= this.canvasWidth*0.1;
+    this.fullUpdate = true;
+    this.moveOrigin();
+    this.fullUpdate = false;
+};
+
+/**
+* Handler for click on right arrow in the navigation bar
+**/
+JXG.Board.prototype.clickRightArrow = function (Event) {
+    this.origin.scrCoords[1] += this.canvasWidth*0.1;
+    this.fullUpdate = true;
+    this.moveOrigin();
+    this.fullUpdate = false;
+};
+
+/**
+* Handler for click on up arrow in the navigation bar
+**/
+JXG.Board.prototype.clickUpArrow = function (Event) {
+    this.origin.scrCoords[2] += this.canvasHeight*0.1;
+    this.fullUpdate = true;
+    this.moveOrigin();
+    this.fullUpdate = false;
+};
+
+/**
+* Handler for click on down arrow in the navigation bar
+**/
+JXG.Board.prototype.clickDownArrow = function (Event) {
+    this.origin.scrCoords[2] -= this.canvasHeight*0.1;
+    this.fullUpdate = true;
+    this.moveOrigin();
+    this.fullUpdate = false;
+};
+
+
+/**
  * This method is called by the browser when the left mouse button is released.
- * @param {Evt} Event The browsers event object.
+ * @param {Event} Event The browsers event object.
  */
-JXG.Board.prototype.mouseUpListener = function (Evt) {
+JXG.Board.prototype.mouseUpListener = function (Event) {
     // redraw with high precision
     this.updateQuality = this.BOARD_QUALITY_HIGH;
     
     // release mouseup listener
-    Event.stopObserving(this.container, 'mouseup', this.onMouseUpListener);
+    JXG.removeEvent(document, 'mouseup', this.mouseUpListener);
     
     // if origin was moved update everything
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
@@ -560,10 +592,9 @@ JXG.Board.prototype.mouseUpListener = function (Evt) {
     }
     this.mode = this.BOARD_MODE_NONE;
     
-    var save = this.reducedUpdate;
-    this.reducedUpdate = false;
+    var save = this.reducedUpdate; this.reducedUpdate = false;
     this.update();
-    this.reducedUpdate = save;
+    this.reducedUpdate = save; 
     this.fullUpdate = false;
     
     // release dragged object
@@ -577,16 +608,18 @@ JXG.Board.prototype.mouseUpListener = function (Evt) {
 JXG.Board.prototype.mouseDownListener = function (Evt) {
     var el;
     var cPos = this.getRelativeMouseCoordinates(Evt);
-    
     // position of mouse cursor relative to containers position of container
-    var dx = Event.pointerX(Evt) - cPos[0];
-    var dy = Event.pointerY(Evt) - cPos[1];
+    var absPos = JXG.getPosition(Evt);
+    var dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    var dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
     
     if(Evt.shiftKey) {
         this.drag_dx = dx - this.origin.scrCoords[1];
         this.drag_dy = dy - this.origin.scrCoords[2];
         this.mode = this.BOARD_MODE_MOVE_ORIGIN;
-        Event.observe(this.container, 'mouseup', this.onMouseUpListener);
+        //Event.observe(this.container, 'mouseup', this.mouseUpListener.bind(this));
+        //Event.observe(document, 'mouseup', this.mouseUpListener.bind(this));
+        JXG.addEvent(document, 'mouseup', this.mouseUpListener, this);
         return;
     }
     if (this.mode==this.BOARD_MODE_CONSTRUCT) return;
@@ -618,31 +651,26 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         return;
     }
 
-    // this.dragObjCoords = this.drag_obj.coords.scrCoords;
-    // this.drag_dx = dx - this.dragObjCoords[1];
-    // this.drag_dy = dy - this.dragObjCoords[2];
-    
     /**
       * New mouse position in screen coordinates.
       */
     this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx,dy], this);
-    //this.drag_dx = dx;// - this.dragObjCoords[1];
-    //this.drag_dy = dy;// - this.dragObjCoords[2];
     
-    Event.observe(this.container, 'mouseup', this.onMouseUpListener);
+    JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
 };
 
 /**
  * This method is called by the browser when the left mouse button is clicked.
- * @param {Event} Evt The browsers event object.
+ * @param {Event} Event The browsers event object.
  */
-JXG.Board.prototype.mouseMoveListener = function (Evt) {
+JXG.Board.prototype.mouseMoveListener = function (Event) {
     var el;
-    var cPos = this.getRelativeMouseCoordinates(Evt);
+    var cPos = this.getRelativeMouseCoordinates(Event);
 
     // position of mouse cursor relative to containers position of container
-    var x = Event.pointerX(Evt) - cPos[0];
-    var y = Event.pointerY(Evt) - cPos[1];
+    var absPos = JXG.getPosition(Event);
+    var x = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    var y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
 
     this.updateQuality = this.BOARD_QUALITY_LOW;
 
@@ -654,8 +682,7 @@ JXG.Board.prototype.mouseMoveListener = function (Evt) {
         this.moveOrigin();
     }
     else if(this.mode == this.BOARD_MODE_DRAG) {
-        var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
-
+        var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x,y), this);
         if(this.drag_obj.type == JXG.OBJECT_TYPE_POINT 
             || this.drag_obj.type == JXG.OBJECT_TYPE_LINE 
             || this.drag_obj.type == JXG.OBJECT_TYPE_CIRCLE
@@ -737,8 +764,11 @@ JXG.Board.prototype.getScrCoordsOfMouse = function (x,y) {
  */
 JXG.Board.prototype.getUsrCoordsOfMouse = function (Evt) {    
     var cPos = this.getRelativeMouseCoordinates(Evt);
-    var x = Event.pointerX(Evt) - cPos[0];
-    var y = Event.pointerY(Evt) - cPos[1];
+    //var x = Event.pointerX(Evt) - cPos[0];
+    //var y = Event.pointerY(Evt) - cPos[1];
+    var absPos = JXG.getPosition(Evt);
+    var x = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    var y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
 
     var newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
     if(this.snapToGrid) {
@@ -772,10 +802,13 @@ JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
     var cPos = this.getRelativeMouseCoordinates(Evt);
     
     // mouse position relative to container
-    var dx = Event.pointerX(Evt) - cPos[0];
-    var dy = Event.pointerY(Evt) - cPos[1];
+    //var dx = Event.pointerX(Evt) - cPos[0];
+    //var dy = Event.pointerY(Evt) - cPos[1];
+    var absPos = JXG.getPosition(Evt);
+    var dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    var dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
     var elList = [];
-    for (el in this.objects) {
+    for (var el in this.objects) {
         if (this.objects[el].hasPoint(dx, dy)) {
             elList.push(this.objects[el]);
         }
@@ -805,6 +838,8 @@ JXG.Board.prototype.moveOrigin = function () {
                 this.objects[Element].coords.usr2screen();
         }
     }
+    
+    this.clearTraces();
     
     this.update();
     if(this.hasGrid) {
@@ -1349,32 +1384,6 @@ JXG.Board.prototype.addArrow = function(obj) {
 };
 
 /**
- * Registers a axis at the board and adds it to the renderer.
- * @param {JXG.Axis} obj The axis to add.
- * @type String
- * @return Element id of the object.
- */
-JXG.Board.prototype.addAxis = function(obj) {
-    var number = this.numObjects;
-    this.numObjects++;
-
-    // Falls Id nicht vorgegeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'A' + number;
-    }
-
-    // Objekt in das assoziative Array einfuegen
-    this.objects[elementId] = obj;
- 
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
-    this.renderer.drawAxis(obj);
-
-    return elementId;
-};
-
-/**
  * Adds a line to the board and renderer which is orthogonal to the given line and contains point.
  * @param {JXG.Line} l A line.
  * @param {JXG.Point} p A Point.
@@ -1763,7 +1772,7 @@ JXG.Board.prototype.addConditions = function (str) {
         var right = term.slice(m+1);
         m = left.indexOf('.'); // Dies erzeugt Probleme bei Variablennamen der Form " Steuern akt."
         var name = left.slice(0,m);    //.replace(/\s+$/,''); // do NOT cut out name (with whitespace)
-        var el = this.elementsByName[name.unescapeHTML()];
+        var el = this.elementsByName[JXG.unescapeHTML(name)];
 
         var property = left.slice(m+1).replace(/\s+/g,'').toLowerCase(); // remove whitespace in property
         right = this.algebra.geonext2JS(right);
@@ -1778,13 +1787,14 @@ JXG.Board.prototype.addConditions = function (str) {
         switch (property) {
             case 'x': 
                 plaintext += 'y=el.coords.usrCoords[2];\n';  // y stays
-                plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,['+(right) +',y],this);\n';
+                //plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,['+(right) +',y],this);\n';
+                plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,'+(right) +',y);\n';
                 plaintext += 'el.update();\n';
                 break;
             case 'y': 
                 plaintext += 'x=el.coords.usrCoords[1];\n';  // x stays
                 plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
-                plaintext += 'el.update();\n';
+                //plaintext += 'el.update();\n';
                 break;
             case 'visible': 
                 plaintext += 'c='+(right)+';\n'; 
@@ -1934,8 +1944,8 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     
     pb_on_curve.addChild(pb_on_axis);
     
-    var Int = this.algebra.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
-    var t = board.createElement('text', [function () { return pb_on_curve.X() + 0.2; }, function () { return pb_on_curve.Y() - 1.0; },'&int; = ' + this.algebra.round(Int, 4)]);
+    var Int = JXG.Math.Numerics.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
+    var t = board.createElement('text', [function () { return pb_on_curve.X() + 0.2; }, function () { return pb_on_curve.Y() - 1.0; },'&int; = ' + (Int).toFixed(4)]);
 
     var attribs = {};
     if( (typeof atts != 'undefined') && (atts != null))
@@ -1965,8 +1975,8 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
         ps.push(pb_on_axis);
         ps.push(pa_on_axis);
 
-        var Int = this.board.algebra.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
-        t.plaintextStr = '&int; = ' + this.board.algebra.round(Int, 4);
+        var Int = JXG.Math.Numerics.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
+        t.plaintextStr = '&int; = ' + (Int).toFixed(4);
             
         this.vertices = ps;
     }
@@ -2122,11 +2132,11 @@ JXG.Board.prototype.removeObject = function(object) {
                 delete(this.objects[el].childElements[object.id]);
         }
         
-        /* Das Objekt selbst aus board.objects und board.elementsByName l�schen */
+        /* Das Objekt selbst aus board.objects und board.elementsByName loeschen */
         delete(this.objects[object.id]);
         delete(this.elementsByName[object.name]);
         
-        /* Alles weitere erledigt das Objekt selbst f�r uns. Ist sinnvoller, weil man sonst wieder unterscheiden m�sste, was das f�r ein Objekt ist. */
+        /* Alles weitere erledigt das Objekt selbst fuer uns. Ist sinnvoller, weil man sonst wieder unterscheiden muesste, was das fuer ein Objekt ist. */
         if(object.remove != undefined) object.remove();
     } catch(e) {
 //        alert(object.id + ': Could not be removed, JS says:\n\n' + e);
@@ -2157,8 +2167,8 @@ JXG.Board.prototype.initGeonextBoard = function() {
 JXG.Board.prototype.resizeContainer = function(canvasWidth, canvasHeight) {
     this.canvasWidth = 1*canvasWidth;
     this.canvasHeight = 1*canvasHeight;
-    $(this.container).style.width = (this.canvasWidth) + 'px';
-    $(this.container).style.height = (this.canvasHeight) + 'px';
+    this.containerObj.style.width = (this.canvasWidth) + 'px';
+    this.containerObj.style.height = (this.canvasHeight) + 'px';
 };
 
 /**
@@ -2169,13 +2179,13 @@ JXG.Board.prototype.showDependencies = function() {
     var t = '<p>\n';
     for (el in this.objects) {
         var i = 0;
-        for (c in this.objects[el].childElements) {
+        for (var c in this.objects[el].childElements) {
             i++;
         }
         if (i>=0) {
             t += '<b>' + this.objects[el].id + ':</b> ';
         }
-        for (c in this.objects[el].childElements) {
+        for (var c in this.objects[el].childElements) {
             t += this.objects[el].childElements[c].id+'('+this.objects[el].childElements[c].name+')'+', ';
         }
         t += '<p>\n';
@@ -2193,13 +2203,13 @@ JXG.Board.prototype.showDependencies = function() {
 JXG.Board.prototype.showXML = function() {
     var f = window.open("");
     f.document.open();
-    f.document.write("<pre>"+this.xmlString.escapeHTML()+"</pre>");
+    f.document.write("<pre>"+JXG.escapeHTML(this.xmlString)+"</pre>");
     f.document.close();
 }
 
 /** 
  * Sets for all objects the needsUpdate flag to "true".
- * @param {Object/String} drag Element that caused the update.
+ * @param {Object,String} drag Element that caused the update.
  */
 JXG.Board.prototype.prepareUpdate = function(drag) {
     for(var el in this.objects) {
@@ -2209,7 +2219,7 @@ JXG.Board.prototype.prepareUpdate = function(drag) {
 
 /**
   * Runs through all elements and calls their update() method.
-  * @param {Object/String} drag Element that caused the update.
+  * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.updateElements = function(drag) {
     drag = JXG.GetReferenceFromParameter(this, drag);
@@ -2231,7 +2241,7 @@ JXG.Board.prototype.updateElements = function(drag) {
 
 /**
   * Runs through all elements and calls their update() method.
-  * @param {Object/String} drag Element that caused the update.
+  * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.updateRenderer = function(drag) {
 /*  
@@ -2243,7 +2253,7 @@ JXG.Board.prototype.updateRenderer = function(drag) {
         pEl.afterFirstUpdate = true;
     }
 */    
-    drag = JXG.GetReferenceFromParameter(this, drag);
+    var drag = JXG.GetReferenceFromParameter(this, drag);
     
     var count = -1;
     if (!this.reducedUpdate) count = 1;
@@ -2296,7 +2306,7 @@ JXG.Board.prototype.updateHooks = function() {
 /**
   * Runs through all elements and calls their
   * update() method and update thte conditions.
-  * @param {Object/String} drag Element that caused the update.
+  * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.update = function(drag) {
     if (this.isSuspendedUpdate) { return; }
@@ -2334,10 +2344,12 @@ JXG.Board.prototype.update = function(drag) {
  * @return Reference to the created element.
  */
 JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
-    // CM: 
-    if (parents == null || parents.length == 0) {
+    // CM: AW: 
+    if (elementType!='turtle' && (parents == null || parents.length == 0)) {
         return null;
-    }
+    } 
+    if (parents == null) { parents = []; }
+    
     var el;
     elementType = elementType.toLowerCase();
     
@@ -2347,7 +2359,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     for (var i=0; i<parents.length; i++) {
         parents[i] = JXG.GetReferenceFromParameter(this, parents[i]);
     }
-    
+
     if(JXG.JSXGraph.elements[elementType] != null) {
         el = JXG.JSXGraph.elements[elementType](this, parents, attributes);
     } else {
@@ -2359,19 +2371,21 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         return;
     };
   
-    if(JXG.IsArray(attributes))
+    if(JXG.IsArray(attributes)) {
         attributes = attributes[0];
-    try {
-    if(el.multipleElements) {
-        for(var s in el) {
-            if(typeof el[s].setProperty != 'undefined')
-                el[s].setProperty(attributes);
-        }  
-    } else {
-        if(typeof el.setProperty != 'undefined')
-            el.setProperty(attributes);
     }
-    } catch (e) {};
+//    try {
+        if(el.multipleElements) {
+            for(var s in el) {
+                if(typeof el[s].setProperty != 'undefined')
+                    el[s].setProperty(attributes);
+            }  
+        } else {
+            if(typeof el.setProperty != 'undefined')
+                el.setProperty(attributes);
+        }
+        
+//    } catch (e) { alert("Error setting Property:" + e); };
     
 //    if(!JXG.IsArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
 //        el.setProperty(attributes);
@@ -2426,8 +2440,8 @@ JXG.Board.prototype.beforeLoad = function() {
         divNode.setStyle({
                     zIndex: 999,
                     position: 'absolute',
-                    left: parseInt($(this.container).getStyle("left")) + (this.canvasWidth - 100)/2,
-                    top: parseInt($(this.container).getStyle("top")) + (this.canvasHeight - 100)/2
+                    left: parseInt(JXG.getStyle(this.containerObj,"left")) + (this.canvasWidth - 100)/2,
+                    top: parseInt(JXG.getStyle(this.containerObj,"top")) + (this.canvasHeight - 100)/2
                 });
     
         document.getElementsByTagName("body")[0].appendChild(divNode);
@@ -2439,7 +2453,7 @@ JXG.Board.prototype.beforeLoad = function() {
  */
 JXG.Board.prototype.afterLoad = function() {
   /*  if(document.getElementsByTagName("body").length > 0) {
-        document.getElementsByTagName("body")[0].removeChild($("JXGPreLoadAnimation"));
+        document.getElementsByTagName("body")[0].removeChild(document.getElementById("JXGPreLoadAnimation"));
     }*/
 };
 

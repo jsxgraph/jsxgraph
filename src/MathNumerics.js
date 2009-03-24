@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -228,6 +228,18 @@ JXG.Math.Numerics.splineDef = function(x, y) {
         throw "Error in JXG.Math.Numerics.splineDef: Input vector dimensions do not match.";
     
     var n = x.length;
+
+    var data = new Array();
+    var pair;
+    for(var i=0; i<n; i++) {
+        pair = {X: x[i], Y: y[i]};
+        data.push(pair);
+    }
+    data.sort(function (a,b) { return a.X - b.X; });
+    for(var i=0; i<n; i++) {
+        x[i] = data[i].X;
+        y[i] = data[i].Y;
+    }
     
     var dx = new Array();
     var delta = new Array();
@@ -266,18 +278,18 @@ JXG.Math.Numerics.splineDef = function(x, y) {
     // natural cubic spline
     F[0] = 0;
     F[n-1] = 0;
-
-    return new JXG.Math.Vector(F);
+    return F;
+    //return new JXG.Math.Vector(F);
 };
 
 /**
  * Evaluate points on spline.
- * @param {float/Array} x0 A single float value or an array of values to evaluate
+ * @param {float,Array} x0 A single float value or an array of values to evaluate
  * @param {JXG.Math.Vector} x x values of knots
  * @param {JXG.Math.Vector} y y values of knots
  * @param {JXG.Math.Vector} F Second derivatives at knots, calculated by #splineDef
  * @see splineDef
- * @type float/Array
+ * @type float,Array
  * @return A single value
  */
 JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
@@ -300,7 +312,8 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
     for(var i=0; i<l; i++) {
         // is x0 in defining interval?
         if( (x0[i] < x[0]) || (x[i] > x[n-1]))
-            throw "Error in JXG.Math.Numerics.splineEval: Evaluation point outside spline interval.";
+            return 'NaN';
+//            throw "Error in JXG.Math.Numerics.splineEval: Evaluation point outside spline interval.";
         
         // determine part of spline in which x0 lies
         var j;
@@ -316,15 +329,149 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
         var b = (y[j+1]-y[j])/(x[j+1]-x[j]) - (x[j+1]-x[j])/6 * (F[j+1]+2*F[j]);
         var c = F[j]/2;
         var d = (F[j+1]-F[j])/(6*(x[j+1]-x[j]));
-        
         // evaluate x0[i]
         var x_ = x0[i]-x[j];
-        y0.push(a + b*x_ + c*x_*x_ + d*x_*x_*x_);
+        //y0.push(a + b*x_ + c*x_*x_ + d*x_*x_*x_);
+        y0.push(a + (b + (c+ d*x_)*x_)*x_);
     }
-    
+
     if(asArray)
         return y0;
     else
         return y0[0];
     
 };
+
+/**
+ * Computes the polynomial through a given set of coordinates in Lagrange form.
+ * @param {Array of JXG.Points} 
+ * @type function
+ * @return A function of one parameter which returns the value of the polynomial,
+ * whose graph runs through the given points.
+ */
+JXG.Math.Numerics.lagrangePolynomial = function(p) {  
+    return function(x) {
+        var i,k;
+        var y = 0.0;
+        var xc = [];
+        for (i=0;i<p.length;i++) {
+            xc[i] = p[i].X();
+        }
+        for (i=0;i<p.length;i++) {
+            var t = p[i].Y();
+            for (k=0;k<p.length;k++) if (k!=i) {
+                t *= (x-xc[k])/(xc[i]-xc[k]);
+            }
+            y += t;
+        }
+        return y;
+    };
+}
+
+/**
+ * Computes the Lagrange polynomial for curves with Neville's algorithm.
+ * @param {Array of JXG.Points} 
+ * @type {Array function, function vaue, value]}
+ * @return [f(t),g(t),0,p.length-1],
+ * The graph of the parametric curve [f(t),g(t)] runs through the given points.
+ */
+JXG.Math.Numerics.neville = function(p) {
+    return [function(t) {
+                var i,k,L;
+                var val = 0.0;
+                for (i=0;i<p.length;i++) {
+                    L = p[i].X();
+                    for (k=0;k<p.length;k++) if (k!=i) {
+                        L *= (t-k)/(i-k);
+                    }
+                    val += L;
+                }
+                return val;
+            },
+            function(t) {
+                var i,k,L;
+                var val = 0.0;
+                for (i=0;i<p.length;i++) {
+                    L = p[i].Y();
+                    for (k=0;k<p.length;k++) if (k!=i) {
+                        L *= (t-k)/(i-k);
+                    }
+                    val += L;
+                }
+                return val;
+            }, 
+            0, function(){ return p.length-1;}
+        ];
+}
+
+/**
+ * Calculation of derivative.
+ * @param {Function} 
+ * @type {Function}
+ * @return Derivative of given f.
+ */
+JXG.Math.Numerics.D = function(f,obj) {
+    var h = 0.00001;
+    if (arguments.length==1){ 
+        return function(x){ return (f(x+h)-f(x-h))/(2.0*h); };
+    } else { // set "this" to "obj" in f 
+        return function(x){ return (f.apply(obj,[x+h])-f.apply(obj,[x-h]))/(2.0*h); };
+    }
+};
+
+/**
+ * Integral of function f over interval. Warning: Just for backward compatibility, may be removed in futures releases.
+ * @param {Array} interval e.g. [a, b] 
+ * @param {function} f 
+ */
+JXG.Math.Numerics.I = function(interval, f) {
+    return JXG.Math.Numerics.NewtonCotes(interval, f);
+};
+
+/**
+ * Newton method to find roots
+ * @param {function} 
+ * @param {Number}  
+ */
+JXG.Math.Numerics.newton = function(f,x,obj) {
+    var i = 0;
+    var h = 0.0000001;
+    var newf = f.apply(obj,[x]); // set "this" to "obj" in f 
+    while (i<50 && Math.abs(newf)>h) {
+        var df = this.D(f,obj)(x);
+        if (Math.abs(df)>h) {
+            x -= newf/df;
+        } else {
+            x += (Math.random()*0.2-1.0);
+        }
+        newf = f.apply(obj,[x]);
+        i++;
+    }
+    return x;
+};
+
+/**
+ * Abstract method to find roots
+ * @param {function} 
+ * @param {variable}  
+ */
+JXG.Math.Numerics.root = function(f,x,obj) {
+    return this.newton(f,x,obj);
+};
+
+/**
+ * Cosine hyperbolicus
+ * @param {number} 
+ */
+JXG.Math.Numerics.cosh = function(x) {
+    return (Math.exp(x)+Math.exp(-x))*0.5;
+};
+
+/**
+ * Sine hyperbolicus
+ * @param {number} 
+ */
+JXG.Math.Numerics.sinh = function(x) {
+    return (Math.exp(x)-Math.exp(-x))*0.5;
+};
+

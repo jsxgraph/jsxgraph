@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -26,6 +26,10 @@
 /**
  @namespace Holds all JSXGraph objects, variables and functions.
 */
+
+/**
+ * JSXGraph namespace.
+ */
 var JXG = {};
 //JXG.useMinify = true;
 JXG.countDrawings = 0;

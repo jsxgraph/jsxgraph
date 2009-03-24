@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,29 +25,53 @@
 
 /**
  * Slider (Schieberegler)
- * input array: 6 values:
- * start position (x,y), length, min val, max val, startpos
+ * input: 3 arrays:
+ * [x0,y0],[x1,y1],[min,start,max]
+ * The slider is line from [x0,y0] to [x1,y1].
+ * The position [x0,y0]  corresponds to the value "min",
+ * [x1,y1] corresponds to the value max.
+ * Initally, the slider is at position [x0,y0] + ([x1,y1]-[x0,y0])*start/(max-min)
+ * The return value is an invisible point, whos X() or Y() value
+ * returns the position between max and min,
+ * Further, there is a method Value() returning the same value.
  **/
 JXG.createSlider = function(board, parentArr, atts) {
-    var sx = parentArr[0];
-    var sy = parentArr[1];
-    var sw = parentArr[2];
-    var smin = parentArr[3];
-    var smax = parentArr[4];
-    var start = (parentArr[5]-smin)*sw/ (smax - smin);
-    var p1 = board.createElement('point', [sx, sy], {visible:false, fixed:true,name:''}); 
-    var p2 = board.createElement('point', [sx + sw, sy],{visible:false,fixed:true,name:''}); 
-    var l1 = board.createElement('line', [p1,p2], {straightFirst:false,straightLast:false,strokewidth:1,name:''});
-    var ticks  = 10;
-    for(i = 0; i < ticks+1; i++) {
-        var t1 = board.createElement('point', [sx + i*sw/ticks, sy - 0.25 + i%2*0.1], {visible:false, fixed:true,name:''}); 
-        var t2 = board.createElement('point', [sx + i*sw/ticks, sy + 0.25 - i%2*0.1], {visible:false, fixed:true,name:''}); 
-        var tt = board.createElement('line', [t1,t2], {straightFirst:false,straightLast:false,strokewidth:2-i%2,name:''});
-    } 
-    var p3 = board.createElement('point', [sx + start, sy], {slideObject:l1,style:6,strokeColor:'#0080c0',fillColor:'#0080c0',name:''});
-    var p4 = board.createElement('point', [function() {return ((p3.X() - sx)/sw * (smax - smin)+smin);}, function() {return (sy  + 1);}], {visible:false,name:''});
-    var l2 = board.createElement('line', [p1,p3], {straightFirst:false,straightLast:false,strokewidth:3,strokeColor:'#0080c0',name:''}); 
-    var t = board.createElement('text', [sx+sw+0.25, sy, function(){return board.round(p4.X(),2);}],{name:''}); 
+    var pos0, pos1, smin, start, smax, p1, p2, l1, ticks, ti, startx, starty, p3, l2, p4, n, t;
+    pos0 = parentArr[0];
+    pos1 = parentArr[1];
+    smin = parentArr[2][0];
+    start = parentArr[2][1];
+    smax = parentArr[2][2];
+    p1 = board.createElement('point', pos0, {visible:false, fixed:true, name:''}); 
+    p2 = board.createElement('point', pos1, {visible:false, fixed:true, name:''}); 
+    l1 = board.createElement('line', [p1,p2], {straightFirst:false, straightLast:false, strokewidth:1, name:''});
+    ticks  = 1;
+    ti = board.createElement('ticks', [l1, p2.Dist(p1)/ticks],{insertTicks:true}); //, {majorTicks: p2.Dist(p1)/ticks});
+    ti.drawLabels = false;
+    ti.drawZero = true;
+
+    p1.needsRegularUpdate = false;
+    p2.needsRegularUpdate = false;
+    l1.needsRegularUpdate = false;
+    
+    startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
+    starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
+
+    p3 = board.createElement('point', [startx,starty], {slideObject:l1,style:6,strokeColor:'#0080c0',fillColor:'#0080c0',name:''});
+    //l2 = board.createElement('line', [p1,p3], {straightFirst:false, straightLast:false, strokewidth:3, strokeColor:'#0080c0',name:''}); 
+    l2 = board.createElement('line', [p1,p3], {straightFirst:false, straightLast:false, strokewidth:3, strokeColor:'#0080c0',name:''}); 
+    p4 = board.createElement('point', [
+            function() {return p3.Dist(p1)/p2.Dist(p1)*(smax - smin)+smin;}, 
+            function() {return p3.Dist(p1)/p2.Dist(p1)*(smax - smin)+smin;}
+            ], 
+            {visible:false,name:''});
+    p4.Value = p4.X;
+    if (atts['name'] && atts['name']!='') {
+        n = atts['name'] + ' = ';
+    } else {
+        n = '';
+    }
+    t = board.createElement('text', [((pos1[0]-pos0[0])*.05+pos1[0]), ((pos1[1]-pos0[1])*.05+pos1[1]), function(){return n+(p4.X()).toFixed(2);}],{name:''}); 
     return p4;
 };    
 

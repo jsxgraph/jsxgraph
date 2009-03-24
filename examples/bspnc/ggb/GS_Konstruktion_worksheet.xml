@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.4">
+<gui>
+	<show algebraView="true" auxiliaryObjects="true"/>
+	<splitDivider loc="185" locVertical="400" horizontal="true"/>
+	<font  size="12"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="72.25" yZero="530.1875" scale="56.25"/>
+	<evSettings axes="true" grid="false" pointCapturing="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Goldener Schnitt - Konstruktionsbeschreibung" author="" date="">
+<element type="point" label="A">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="1.0" y="1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="B">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="11.0" y="1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="A" a1="B"/>
+	<output a0="s"/>
+</command>
+<element type="segment" label="s">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="0.0" y="10.0" z="-10.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="LineBisector">
+	<input a0="A" a1="B"/>
+	<output a0="m"/>
+</command>
+<element type="line" label="m">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<auxiliary val="true"/>
+	<coords x="-10.0" y="0.0" z="60.0"/>
+	<lineStyle thickness="2" type="15"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="s" a1="m"/>
+	<output a0="M"/>
+</command>
+<element type="point" label="M">
+	<show object="true" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<coords x="600.0" y="100.0" z="100.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="B" a1="s"/>
+	<output a0="a"/>
+</command>
+<element type="line" label="a">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<auxiliary val="true"/>
+	<coords x="-10.0" y="0.0" z="110.0"/>
+	<lineStyle thickness="2" type="15"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Circle">
+	<input a0="B" a1="M"/>
+	<output a0="c"/>
+</command>
+<element type="conic" label="c">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<auxiliary val="true"/>
+	<lineStyle thickness="2" type="20"/>
+	<eigenvectors  x0="1.0" y0="0.0" z0="1.0" x1="-0.0" y1="1.0" z1="1.0"/>
+	<matrix A0="1.0" A1="1.0" A2="97.0" A3="0.0" A4="-11.0" A5="-1.0"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="Intersect">
+	<input a0="c" a1="a"/>
+	<output a0="C" a1="C_2"/>
+</command>
+<element type="point" label="C">
+	<show object="true" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<coords x="11.0" y="6.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="C_2">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<auxiliary val="true"/>
+	<coords x="11.0" y="-4.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="B" a1="C"/>
+	<output a0="s_H"/>
+</command>
+<element type="segment" label="s_H">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="-5.0" y="0.0" z="55.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="A" a1="C"/>
+	<output a0="b"/>
+</command>
+<element type="segment" label="b">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<auxiliary val="true"/>
+	<coords x="-5.0" y="10.0" z="-5.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Circle">
+	<input a0="C" a1="B"/>
+	<output a0="d"/>
+</command>
+<element type="conic" label="d">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<auxiliary val="true"/>
+	<lineStyle thickness="2" type="20"/>
+	<eigenvectors  x0="1.0" y0="0.0" z0="1.0" x1="-0.0" y1="1.0" z1="1.0"/>
+	<matrix A0="1.0" A1="1.0" A2="132.0" A3="0.0" A4="-11.0" A5="-6.0"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="Intersect">
+	<input a0="d" a1="b"/>
+	<output a0="D_2" a1="D"/>
+</command>
+<element type="point" label="D_2">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<auxiliary val="true"/>
+	<coords x="15.47213595499958" y="8.23606797749979" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="D">
+	<show object="true" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<coords x="6.52786404500042" y="3.76393202250021" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Circle">
+	<input a0="A" a1="D"/>
+	<output a0="e"/>
+</command>
+<element type="conic" label="e">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<auxiliary val="true"/>
+	<lineStyle thickness="2" type="20"/>
+	<eigenvectors  x0="1.0" y0="0.0" z0="1.0" x1="-0.0" y1="1.0" z1="1.0"/>
+	<matrix A0="1.0" A1="1.0" A2="-36.196601125010524" A3="0.0" A4="-1.0" A5="-1.0"/>
+	<eqnStyle style="specific"/>
+</element>
+<command name="Intersect">
+	<input a0="e" a1="s"/>
+	<output a0="T" a1="T_2"/>
+</command>
+<element type="point" label="T">
+	<show object="true" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<coords x="7.180339887498949" y="1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="T_2">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<auxiliary val="true"/>
+	<coords x="-5.180339887498951" y="1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="D" a1="A"/>
+	<output a0="x_s"/>
+</command>
+<element type="segment" label="x_s">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="2.76393202250021" y="-5.52786404500042" z="2.76393202250021"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+</construction>
+</geogebra>

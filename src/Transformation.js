@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -30,6 +30,7 @@
  *
  * Possible types:
  * - translate
+ * - scale
  * - reflect
  * - rotate
  * - shear
@@ -172,7 +173,7 @@ JXG.Transformation.prototype.setMatrix = function(board,type,params) {
  * First, update the matrix
  * Second, do the matrix-vector-multiplication
  *
- * @param {GeometryElement} element, which is transformed
+ * @param {JXG.GeometryElement} element, which is transformed
  */
 JXG.Transformation.prototype.apply = function(p){
     this.update();
@@ -219,7 +220,8 @@ JXG.Transformation.prototype.bindTo = function(p){
  * Matrix-vector-multiplication.
  * @param {Array} mat1 In - Two dimensional array of numbers
  * @param {Array} vec In - Array of numbers
- * res: Output - Array of numbers containing result
+ * @type Array
+ * @return Array of numbers containing result
  */
 JXG.Transformation.prototype.matVecMult = function(mat1,vec) {
     return this.board.algebra.matVecMult(mat1,vec);

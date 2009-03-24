@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.3">
+<gui>
+	<show algebraView="false"/>
+	<splitDivider loc="250"/>
+	<font  size="12"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="272.5046728971963" yZero="118.88785046728958" scale="91.96261682242991"/>
+	<evSettings axes="false" grid="false" pointCapturing="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="" author="" date="">
+<element type="point" label="A">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<labelOffset x="2" y="20"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="-1.5" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="numeric" label="r">
+	<value val="1.0"/>
+</element>
+<expression label="180°" exp="A - (r, 0)"/>
+<element type="point" label="180°">
+	<show object="true" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<labelOffset x="-37" y="7"/>
+	<fixed val="false"/>
+	<coords x="-2.5" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<expression label="90°" exp="A + (0, r)"/>
+<element type="point" label="90°">
+	<show object="true" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<labelOffset x="-10" y="-3"/>
+	<fixed val="false"/>
+	<coords x="-1.5" y="1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<expression label="270°" exp="A - (0, r)"/>
+<element type="point" label="270°">
+	<show object="true" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<labelOffset x="-15" y="17"/>
+	<fixed val="false"/>
+	<coords x="-1.5" y="-1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<command name="Segment">
+	<input a0="270°" a1="90°"/>
+	<output a0="g"/>
+</command>
+<element type="segment" label="g">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<coords x="-2.0" y="0.0" z="-3.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Circle">
+	<input a0="A" a1="r"/>
+	<output a0="c"/>
+</command>
+<element type="conic" label="c">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<lineStyle thickness="1" type="0"/>
+	<eigenvectors  x0="1.0" y0="0.0" z0="1.0" x1="-0.0" y1="1.0" z1="1.0"/>
+	<matrix A0="1.0" A1="1.0" A2="1.25" A3="0.0" A4="1.5" A5="-0.0"/>
+	<eqnStyle style="specific"/>
+</element>
+<expression label="0°" exp="A + (1, 0)"/>
+<element type="point" label="0°">
+	<show object="true" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<labelOffset x="2" y="7"/>
+	<fixed val="false"/>
+	<coords x="-0.5" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<command name="Segment">
+	<input a0="180°" a1="0°"/>
+	<output a0="h"/>
+</command>
+<element type="segment" label="h">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<coords x="0.0" y="2.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="c"/>
+	<output a0="P"/>
+</command>
+<element type="point" label="P">
+	<show object="true" label="true"/>
+	<objColor r="125" g="125" b="255" alpha="0.0"/>
+	<labelOffset x="-9" y="-3"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="-2.1011964114568373" y="0.7991012919845777" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Angle">
+	<input a0="0°" a1="A" a2="P"/>
+	<output a0="α"/>
+</command>
+<element type="angle" label="α">
+	<value val="2.215793790121313"/>
+	<show object="true" label="true"/>
+	<objColor r="0" g="102" b="0" alpha="0.1"/>
+	<labelOffset x="5" y="-6"/>
+	<labelMode val="1"/>
+	<arcSize val="30"/>
+</element>
+<command name="Segment">
+	<input a0="A" a1="P"/>
+	<output a0="a"/>
+</command>
+<element type="segment" label="a">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-19" y="-13"/>
+	<labelMode val="2"/>
+	<coords x="-0.7991012919845777" y="-0.6011964114568373" z="-1.1986519379768665"/>
+	<lineStyle thickness="3" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="A" a1="0°"/>
+	<output a0="b"/>
+</command>
+<element type="segment" label="b">
+	<show object="false" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="0.0" y="1.0" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="P" a1="b"/>
+	<output a0="d"/>
+</command>
+<element type="line" label="d">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="-1.0" y="0.0" z="-2.1011964114568373"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="d" a1="b"/>
+	<output a0="D"/>
+</command>
+<element type="point" label="D">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<fixed val="false"/>
+	<coords x="2.1011964114568373" y="0.0" z="-1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="P" a1="D"/>
+	<output a0="sin(α)"/>
+</command>
+<element type="segment" label="sin(α)">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<labelOffset x="-19" y="6"/>
+	<coords x="-0.7991012919845777" y="0.0" z="-1.679068767108517"/>
+	<lineStyle thickness="4" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="A" a1="D"/>
+	<output a0="cos(α)"/>
+</command>
+<element type="segment" label="cos(α)">
+	<show object="true" label="true"/>
+	<objColor r="204" g="51" b="0" alpha="0.0"/>
+	<labelOffset x="-23" y="8"/>
+	<coords x="-0.0" y="0.6011964114568373" z="-0.0"/>
+	<lineStyle thickness="4" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="B" exp="(α, cos(α))"/>
+<element type="point" label="B">
+	<show object="true" label="true"/>
+	<objColor r="204" g="51" b="0" alpha="0.0"/>
+	<labelMode val="2"/>
+	<trace val="true"/>
+	<fixed val="false"/>
+	<coords x="2.215793790121313" y="-0.6011964114568372" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<expression label="E" exp="(α, sin(α))"/>
+<element type="point" label="E">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<labelMode val="2"/>
+	<trace val="true"/>
+	<fixed val="false"/>
+	<coords x="2.215793790121313" y="0.7991012919845777" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<element type="point" label="F">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="0.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<expression label="G" exp="(α, 0)"/>
+<element type="point" label="G">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<fixed val="false"/>
+	<coords x="2.215793790121313" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<element type="point" label="1">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="-17" y="6"/>
+	<fixed val="true"/>
+	<coords x="0.0" y="1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<element type="point" label="-1">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="-23" y="6"/>
+	<fixed val="true"/>
+	<coords x="0.0" y="-1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<command name="Segment">
+	<input a0="1" a1="-1"/>
+	<output a0="e"/>
+</command>
+<element type="segment" label="e">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<coords x="2.0" y="0.0" z="-0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<element type="point" label="π">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="-13" y="15"/>
+	<fixed val="true"/>
+	<coords x="3.141592653589793" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<element type="point" label="π/2">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="-20" y="15"/>
+	<fixed val="true"/>
+	<coords x="1.5707963267948966" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<element type="point" label="3π/2">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="-8" y="16"/>
+	<fixed val="true"/>
+	<coords x="4.71238898038469" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<element type="point" label="2π">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="-3" y="16"/>
+	<fixed val="true"/>
+	<coords x="6.283185307179586" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<command name="Segment">
+	<input a0="F" a1="2π"/>
+	<output a0="f"/>
+</command>
+<element type="segment" label="f">
+	<show object="true" label="false"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<coords x="0.0" y="6.283185307179586" z="0.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="F" a1="G"/>
+	<output a0="α."/>
+</command>
+<element type="segment" label="α.">
+	<show object="true" label="true"/>
+	<objColor r="0" g="102" b="0" alpha="0.0"/>
+	<labelOffset x="-35" y="-22"/>
+	<labelMode val="1"/>
+	<coords x="0.0" y="2.215793790121313" z="0.0"/>
+	<lineStyle thickness="3" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="OrthogonalLine">
+	<input a0="0°" a1="h"/>
+	<output a0="i"/>
+</command>
+<element type="line" label="i">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="-2.0" y="0.0" z="-1.0"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Intersect">
+	<input a0="a" a1="i"/>
+	<output a0="C"/>
+</command>
+<element type="point" label="C">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<fixed val="false"/>
+	<coords x="0.6011964114568373" y="1.5982025839691554" z="-1.2023928229136747"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="0°" a1="C"/>
+	<output a0="tan(α)"/>
+</command>
+<element type="segment" label="tan(α)">
+	<show object="true" label="true"/>
+	<objColor r="153" g="102" b="0" alpha="0.0"/>
+	<labelOffset x="21" y="-1"/>
+	<coords x="-1.5982025839691554" y="0.0" z="-0.7991012919845777"/>
+	<lineStyle thickness="4" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="C" a1="A"/>
+	<output a0="j"/>
+</command>
+<element type="segment" label="j">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="1.5982025839691554" y="1.2023928229136747" z="2.397303875953733"/>
+	<lineStyle thickness="1" type="10"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="H" exp="(α, tan(α))"/>
+<element type="point" label="H">
+	<show object="true" label="true"/>
+	<objColor r="153" g="102" b="0" alpha="0.0"/>
+	<labelMode val="2"/>
+	<trace val="true"/>
+	<fixed val="false"/>
+	<coords x="2.215793790121313" y="-1.329185066238455" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="1"/>
+</element>
+<command name="Segment">
+	<input a0="G" a1="H"/>
+	<output a0="tan"/>
+</command>
+<element type="segment" label="tan">
+	<show object="true" label="false"/>
+	<objColor r="153" g="102" b="0" alpha="0.0"/>
+	<coords x="1.329185066238455" y="0.0" z="-2.9452000156931546"/>
+	<lineStyle thickness="2" type="20"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="G" a1="E"/>
+	<output a0="sin"/>
+</command>
+<element type="segment" label="sin">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<coords x="-0.7991012919845777" y="0.0" z="1.7706436804573453"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Segment">
+	<input a0="G" a1="B"/>
+	<output a0="cos"/>
+</command>
+<element type="segment" label="cos">
+	<show object="true" label="false"/>
+	<objColor r="204" g="51" b="0" alpha="0.0"/>
+	<labelOffset x="-11" y="2"/>
+	<coords x="0.6011964114568372" y="0.0" z="-1.3321272751492776"/>
+	<lineStyle thickness="2" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+</construction>
+</geogebra>

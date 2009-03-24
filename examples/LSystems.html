@@ -1,0 +1,138 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h1>L-Systems</h1>
+<div id="box" class="jxgbox" style="width:600px; height:600px; overflow:hidden; "></div>
+<div id="debug" style="display:block;"></div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, unitX: 1, unitY: 1});
+var t = brd.createElement('turtle');
+
+var level = 6;
+var rules = {
+    'A':'B-A-B', 
+    'B':'A+B+A',
+    '+' : '+',
+    '-' : '-'
+};
+var axiom = 'A';
+var angle = 60;
+var len = 500/Math.pow(2,level);
+/*
+var rules = {
+    '6' : '81++91----71[-81----61]++',
+    '7' : '+81--91[---61--71]+',
+    '8' : '-61++71[+++81++91]-',
+    '9' : '--81++++61[+91++++71]--71',
+    '1' : '',
+    '+' : '+',
+    '-' : '-',
+    '[' : '[',
+    ']' : ']'
+  };
+var axiom = '[7]++[7]++[7]++[7]++[7]';
+var angle = 36.0;
+*/
+  
+function expander(level) {
+    this.source = (level>1) ? new expander(level-1) : (new function() {
+        // Axiom:
+        this.code = axiom;
+        this.pos = 0;
+        this.next = function() {
+            if (this.pos>=this.code.length) return null;
+            return this.code[this.pos++];
+        }
+    });
+    
+    this.code = '';
+    this.pos = 0;
+    this.next = function() {
+        //$('debug').innerHTML += level+' '+this.code.length+'<br>';
+        while (this.pos>=this.code.length) { // produce new symbols from source
+            this.pos = 0;
+            var pattern = this.source.next();
+            if (!pattern) return null // Finished
+            this.code = rules[pattern];
+        }
+        return this.code[this.pos++];
+    }
+}
+
+var x = y = theta = 0.0;
+
+var stack = [];
+var lines = [];
+
+var generator = new expander(level);
+function step() {
+    //result = 'M' + x.toFixed(2) + ',' + y.toFixed(2)
+    for (var c; c=generator.next(); c) {
+        //$('debug').innerHTML += c+' ';
+        switch(c) {
+            case 'A':
+                t.fd(len);
+                break;
+
+            case 'B':
+                t.fd(len);
+                break;
+
+            case '+':
+                t.lt(angle);
+                break;
+
+            case '-':
+                t.rt(angle);
+                break;
+
+            case '[':
+                var x = t.pos[0];
+                var y = t.pos[1];
+                var theta = t.dir;
+                stack.push([x,y,theta]);
+                break;
+
+            case ']':
+                vector = stack.pop()
+                x = vector[0];
+                y = vector[1];
+                theta = vector[2];
+                t.setPos(x,y);
+                t.rt(theta-90);
+        }
+    }
+    return null;
+}
+brd.suspendUpdate();
+t.cs();
+t.hideTurtle();
+t.setPos(-250,-250);
+t.rt(90);
+
+step();
+brd.unsuspendUpdate();
+
+function run() {
+  brd.suspendUpdate();
+  var code = $('inputtext').value;
+  if (code=='') { return; }
+  eval(code);
+  brd.unsuspendUpdate();
+}
+function clearturtle() {
+  t.cs();
+}
+
+     
+/* ]]> */
+</script>
+</body>
+</html>

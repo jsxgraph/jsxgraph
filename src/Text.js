@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -64,7 +64,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
 
     /**
      * Coordinates of the text.
-     * @type Coords
+     * @type JXG.Coords
      */
     if ((this.element = this.board.objects[element])){
         var anchor = this.element.getTextAnchor();
@@ -102,7 +102,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
     } else {
         var plaintext;
         if (typeof this.contentStr=='number') {
-            plaintext = this.board.round(this.contentStr,this.digits);  
+            plaintext = (this.contentStr).toFixed(this.digits);  
         } else {
             plaintext = this.generateTerm(this.contentStr);   // Converts GEONExT syntax into JavaScript string
         }
@@ -117,8 +117,8 @@ JXG.Text.prototype = new JXG.GeometryElement();
 
 /**
  * Empty function (for the moment). It is needed for highlighting
- * @param {x} 
- * @param {y} Find closest point on the text to (xy)
+ * @param {int} x
+ * @param {int} y Find closest point on the text to (xy)
  * @return Always returns false
  */
 JXG.Text.prototype.hasPoint = function (x,y) {
@@ -187,8 +187,8 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
             var res = this.board.algebra.geonext2JS(term); 
             res = res.replace(/\\"/g,'"');
             res = res.replace(/\\'/g,"'");
-            if (res.indexOf('this.board.algebra.round')<0) {  // GEONExT-Hack: apply rounding once only.  
-                plaintext += '+(this.board.algebra.round('+ res + ','+(this.digits)+'))';
+            if (res.indexOf('toFixed')<0) {  // GEONExT-Hack: apply rounding once only.  
+                plaintext += '+('+ res + ').toFixed('+(this.digits)+')';
             } else {
                 plaintext += '+('+ res + ')';
             }
