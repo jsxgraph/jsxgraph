@@ -23,8 +23,56 @@ var board = JXG.JSXGraph.initBoard('box', {originX: 100, originY: 200, grid:true
     var p2 = board.createElement('point', [1,1,0] );
     var l1 = board.createElement('line', [p1,p2],{name:'bingo',straightFirst:true,straightLast:true} );
 */
+// Based on C Code in "Computer Graphics -- Principles and Practice,"
+// Foley et al, 1996, p. 593.
+//
+// H = 0.0 to 360.0 (corresponding to 0..360 degrees around hexcone)
+// NaN (undefined) for S = 0
+// S = 0.0 (shade of gray) to 1.0 (pure color)
+// V = 0.0 (black) to 1.0 (white)
+
+HSV2RGB = function(H,S,V) {
+    var R,G,B, f,i,hTemp, p,q,t;
+    if (s==0) {
+        if (isNaN(H)) {
+            R = V;
+            G = V;
+            B = V;
+        } else {
+            return '#000000';
+        }
+    } else {
+        if (H>=360) {
+            hTemp = 0.0;
+        } else {
+            hTemp = H;
+        }
+        hTemp = hTemp / 60;     // h is now IN [0,6)
+        i = Math.floor(hTemp);        // largest integer <= h
+        f = hTemp - i;                  // fractional part of h
+        p = V * (1.0 - S);
+        q = V * (1.0 - (S * f));
+        t = V * (1.0 - (S * (1.0 - f)));
+        switch (i) {
+            case 0: R = V; G = t;  B = p; break;
+            case 1: R = q; G = V;  B = p; break;
+            case 2: R = p; G = V;  B = t; break;
+            case 3: R = p; G = q;  B = V; break;
+            case 4: R = t; G = p;  B = V; break;
+            case 5: R = V; G = p;  B = q; break;
+        }
+    }
+    R = Math.round(R*255).toString(16); R = (R.length==0)?'00':((R.length==1)?'0'+R:R);
+    G = Math.round(G*255).toString(16); G = (G.length==0)?'00':((G.length==1)?'0'+G:G);
+    B = Math.round(B*255).toString(16); B = (B.length==0)?'00':((B.length==1)?'0'+B:B);
+    return '#'+R+G+B; 
+}
 
 //board.snapToGrid = true;
+var H = board.createElement('slider',[[5,3.5],[10,3.5],[0,1,360]], {name:'H'});
+var S = board.createElement('slider',[[5,3],[10,3],[0,0.8,1]], {name:'S'});
+var V = board.createElement('slider',[[5,2.5],[10,2.5],[0,0.7,1]], {name:'V'});
+
 var p1 = board.createElement('point',[1,1], {name:'A',style:6});
 var p2 = board.createElement('point',[5,1], {name:'B',style:6});
 var p3 = board.createElement('point',[0,-1], {name:'C',style:6});
@@ -45,8 +93,14 @@ p5 = board.createElement('point',[board.intersection("L1","L2")],{name:'M',style
     var p2 = board.createElement('point', [1,1,1] );
     var ac = board.createElement('glider', [4,0,a1],{name:'glide'} );
 
-    var circ = board.createElement('circle', [p1,p2], {dash:1} );
 */    
+    var circ = board.createElement('circle', [p1,p2], {dash:1,fillColor:function(){return HSV2RGB(H.Value(),S.Value(),V.Value());}} );
+    /*
+    var circ = board.createElement('circle', [p1,p2], {dash:1,
+        fillColor:function(){ var t = Math.round(s.Value())*65536+Math.round(s.Value())*255+0; 
+                              return '#'+t.toString(16);
+                            }} );
+    */
 /*
     var l1 = board.createElement('line', [1,-0.2,1],{name:'x'} );
     //var l1 = board.createElement('line', [p1,p2],{name:'x'} );
