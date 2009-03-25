@@ -46,9 +46,7 @@ JXG.createSlider = function(board, parentArr, atts) {
     p2 = board.createElement('point', pos1, {visible:false, fixed:true, name:''}); 
     l1 = board.createElement('line', [p1,p2], {straightFirst:false, straightLast:false, strokewidth:1, name:''});
     ticks  = 1;
-    ti = board.createElement('ticks', [l1, p2.Dist(p1)/ticks],{insertTicks:true}); //, {majorTicks: p2.Dist(p1)/ticks});
-    ti.drawLabels = false;
-    ti.drawZero = true;
+    ti = board.createElement('ticks', [l1, p2.Dist(p1)/ticks],{insertTicks:true, drawLabels:false, drawZero:true}); 
 
     p1.needsRegularUpdate = false;
     p2.needsRegularUpdate = false;
@@ -58,7 +56,6 @@ JXG.createSlider = function(board, parentArr, atts) {
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
 
     p3 = board.createElement('point', [startx,starty], {slideObject:l1,style:6,strokeColor:'#0080c0',fillColor:'#0080c0',name:''});
-    //l2 = board.createElement('line', [p1,p3], {straightFirst:false, straightLast:false, strokewidth:3, strokeColor:'#0080c0',name:''}); 
     l2 = board.createElement('line', [p1,p3], {straightFirst:false, straightLast:false, strokewidth:3, strokeColor:'#0080c0',name:''}); 
     p4 = board.createElement('point', [
             function() {return p3.Dist(p1)/p2.Dist(p1)*(smax - smin)+smin;}, 
