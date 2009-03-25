@@ -28,7 +28,7 @@
  *
  * @author Alfred Wassermann
  * @author Peter Wilfahrt
- * @version 0.3
+ * @version 0.3.1
  */
 
 /** Requirements:
@@ -56,9 +56,11 @@
  *   filename, filestring or $input (between <jsxgraph>-tags) --> required
  *   box:      default: jxgbox
  *   board:    default: brd
- *   codebase: default: http://jsxgraph.uni-bayreuth.de/distrib
  */
-$jsxgraph_version = "0.3";
+$jsxgraph_version = '0.3.1';
+
+// CHANGE this to load local files:
+$outputURI        = 'http://jsxgraph.uni-bayreuth.de/distrib';
 
 if(!defined('MEDIAWIKI')) {
   echo("This is an extension to the MediaWiki package and cannot be run standalone.\n");
@@ -113,7 +115,6 @@ function jsxgraphOutput($input, $args, &$parser) {
   }
   $outputDivId   = (isset($args['box']))      ? htmlspecialchars(strip_tags($args['box']))      : $defaultBox;
   $outputBoardId = (isset($args['board']))    ? htmlspecialchars(strip_tags($args['board']))    : $defaultBoard;
-  $outputURI     = (isset($args['codebase'])) ? htmlspecialchars(strip_tags($args['codebase'])) : 'http://jsxgraph.uni-bayreuth.de/distrib';
   $width         = (isset($args['width']))    ? htmlspecialchars(strip_tags($args['width']))    : 500;
   $height        = (isset($args['height']))   ? htmlspecialchars(strip_tags($args['height']))   : 400;
 
