@@ -269,11 +269,11 @@ or - $<$script type="text/javascript"
 {\bf JavaScript code:}
 
 \metax{$<$script type="text/javascript"$>$}{}
-\metax{\phantom{xxx}{\tt var brd = JXG.JSXGraph.initBoard('box',$\{$axis:true$\}$);}}{}
+\metax{\phantom{xxx}{\tt var brd = JXG.JSXGraph.initBoard(\'box\',$\{$axis:true$\}$);}}{}
 \metax{$<$script$>$}{}
 
 \section{Initializing the board}
-\metax{var brd = JXG.JSXGraph.initBoard('box',$\{$attributes$\}$);}{}
+\metax{var brd = JXG.JSXGraph.initBoard(\'box\',$\{$attributes$\}$);}{}
 
 {\sl -- Attributes of the board}\par
 \metax{unitX, unitY:}{number of pixels of one unit}
@@ -291,11 +291,11 @@ or - $<$script type="text/javascript"
 \metax{brd.unsuspendUpdate()}{restart updating}
 
 \section{Basic commands}
-\metax{var el = brd.createElement('type',[parents],$\{$attributes$\}$);}{}
+\metax{var el = brd.createElement(\'type\',[parents],$\{$attributes$\}$);}{}
 \metax{el.setProperty($\{$key1:value1,key2:value2,...$\}$);}{}
 
 \section{Point}
-\metax{brd.createElement('point',[parents],$\{$attributes$\}$);}{}
+\metax{brd.createElement(\'point\',[parents],$\{$attributes$\}$);}{}
 
 {\bf Parent elements:}
 
@@ -315,7 +315,7 @@ or - $<$script type="text/javascript"
 \section{Glider}
 Point on circle, line or curve.
 
-\metax{brd.createElement('glider',[parents],$\{$attributes$\}$);}{}
+\metax{brd.createElement(\'glider\',[parents],$\{$attributes$\}$);}{}
 
 {\bf Parent elements:}
 
@@ -325,7 +325,7 @@ Point on circle, line or curve.
 Coordinates may also be defined by functions, see Point.
 
 \section{Line}
-\metax{brd.createElement('line',[parents],$\{$attributes$\}$);}{}
+\metax{brd.createElement(\'line\',[parents],$\{$attributes$\}$);}{}
 
 {\bf Parent elements:}
 
@@ -337,7 +337,7 @@ In case of coordinates as parents, the line is the set of solutions
 of the equation $ a\cdot x+b\cdot y+c\cdot z=0.$
 
 \section{Circle}
-\metax{brd.createElement('circle',[parents],$\{$attributes$\}$);}{}
+\metax{brd.createElement(\'circle\',[parents],$\{$attributes$\}$);}{}
 
 {\bf Parent elements:}
 
@@ -348,18 +348,18 @@ of the equation $ a\cdot x+b\cdot y+c\cdot z=0.$
 \metax{[p1,p2,p3]}{circle through 3 points}
 
 \section{Polygon}
-\metax{brd.createElement('polygon',[p1,p2,...],$\{$attributes$\}$);}{}
+\metax{brd.createElement(\'polygon\',[p1,p2,...],$\{$attributes$\}$);}{}
 \metax{[p1,p2,...]}{array of points}
 The points array connected by line segments and the inner area is filled.
 
 \section{Group}
-\metax{brd.createElement('group',[p1,p2,...],$\{$attributes$\}$);}{}
+\metax{brd.createElement(\'group\',[p1,p2,...],$\{$attributes$\}$);}{}
 \metax{[p1,p2,...]}{array of points}
 Invisible grouping of points. If one point is moved, the others are
 transformed accordingly.
 
 \section{Slider}
-\metax{var s = brd.createElement('slider',}{}
+\metax{var s = brd.createElement(\'slider\',}{}
 \metax{\phantom{var s = brd.create}[[a,b],[c,d],[e,f,g]],$\{$atts$\}$);}{}
 \metax{[a,b],[c,d]:}{visual start and end position of the slider}
 \metax{[e,f,g]:}{the slider returns values between $e$ and $g$,}
@@ -369,7 +369,7 @@ transformed accordingly.
 
 \section{Curve}
 {\sl -- Function graph, $x\mapsto f(x)$:}\par
-\metax{brd.createElement('functiongraph',[parents],$\{$atts$\}$);}{}
+\metax{brd.createElement(\'functiongraph\',[parents],$\{$atts$\}$);}{}
 
 {\bf Parent elements:}
 
@@ -378,7 +378,7 @@ transformed accordingly.
 
 The other types of curves are defined through:
 
-\metax{brd.createElement('curve',[parents],$\{$attributes$\}$);}{}
+\metax{brd.createElement(\'curve\',[parents],$\{$attributes$\}$);}{}
 
 {\bf Parent elements:}
 
@@ -400,18 +400,18 @@ Defined by the equation $r=f(\phi)$.
 \metax{}{array of $x$-coordinates, function term}
 
 {\sl -- Cubic spline:}\par
-\metax{brd.createElement('spline',[p1,p2,...],$\{$attributes$\}$);}{}
+\metax{brd.createElement(\'spline\',[p1,p2,...],$\{$attributes$\}$);}{}
 \metax{[p1,p2,...]}{array of points}
 
 \section{Tangent, normal}
-\metax{var el = brd.createElement('tangent',[g],$\{$attributes$\}$);}{}
-\metax{var el = brd.createElement('normal',[g],$\{$attributes$\}$);}{}
+\metax{var el = brd.createElement(\'tangent\',[g],$\{$attributes$\}$);}{}
+\metax{var el = brd.createElement(\'normal\',[g],$\{$attributes$\}$);}{}
 \metax{g}{circle, line, polygon, or curve to glide on}
 
 \section{Turtle}
-\metax{var t = brd.createElement('turtle');}{}
-\metax{var t = brd.createElement('turtle',[],$\{$attributes$\}$);}{}
-\metax{var t = brd.createElement('turtle',[parents],$\{$atts$\}$);}{}
+\metax{var t = brd.createElement(\'turtle');}{}
+\metax{var t = brd.createElement(\'turtle\',[],$\{$attributes$\}$);}{}
+\metax{var t = brd.createElement(\'turtle\',[parents],$\{$atts$\}$);}{}
 
 The turtle has a position and a direction (in degrees). All angles have
 to be supplied in degrees.
@@ -448,46 +448,46 @@ Most of the methods have an abbreviated alternative version.
 
 \section{Other geometric elements}
 {\sl -- angle:} \hfill filled area defined by 3 points
-\metax{el = brd.createElement('angle',[A,B,C],$\{$attributes$\}$);}{}
+\metax{el = brd.createElement(\'angle\',[A,B,C],$\{$attributes$\}$);}{}
 \par{\sl -- arc:} \hfill circular arc defined by 3 points
-\metax{el = brd.createElement('arc',[A,B,C],$\{$attributes$\}$);}{}
+\metax{el = brd.createElement(\'arc\',[A,B,C],$\{$attributes$\}$);}{}
 \par{\sl -- arrow:} \hfill line through 2 points with arrow head
-\metax{el = brd.createElement('arrow',[A,B],$\{$attributes$\}$);}{}
+\metax{el = brd.createElement(\'arrow\',[A,B],$\{$attributes$\}$);}{}
 \par{\sl -- arrowparallel:} \hfill arrow parallel to arrow $a$ starting at point $P$
-\metax{el = brd.createElement('arrowparallel',[a,P],$\{$atts$\}$);}{}
-\metax{el = brd.createElement('arrowparallel',[P,a],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'arrowparallel\',[a,P],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'arrowparallel\',[P,a],$\{$atts$\}$);}{}
 \par{\sl -- bisector:} \hfill angular bisector defined by 3 points, returns line
-\metax{el = brd.createElement('bisector',[A,B,C],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'bisector\',[A,B,C],$\{$atts$\}$);}{}
 \par{\sl -- circumcircle:} \hfill circle through 3 points (deprecated)
-\metax{el = brd.createElement('circumcircle',[A,B,C],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'circumcircle\',[A,B,C],$\{$atts$\}$);}{}
 \par{\sl -- circumcirclemidpoint:} \hfill center of circle through 3 points
-\metax{el = brd.createElement('circumcirclemidpoint',[A,B,C]);}{}
+\metax{el = brd.createElement(\'circumcirclemidpoint\',[A,B,C]);}{}
 \par{\sl -- midpoint:} midpoint between 2 points or the 2 points defined by a line
 
-\metax{el = brd.createElement('midpoint',[A,B],$\{$atts$\}$);}{}
-\metax{el = brd.createElement('midpoint',[line],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'midpoint\',[A,B],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'midpoint\',[line],$\{$atts$\}$);}{}
 \par{\sl -- mirrorpoint:} \hfill rotate point $B$ around point $A$ by $180^\circ$
-\metax{el = brd.createElement('mirrorpoint',[A,B],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'mirrorpoint\',[A,B],$\{$atts$\}$);}{}
 \par{\sl -- parallel:} \hfill line parallel to line $l$ through point $P$
-\metax{el = brd.createElement('parallel',[l,P],$\{$atts$\}$);}{}
-\metax{el = brd.createElement('parallel',[P,l],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'parallel\',[l,P],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'parallel\',[P,l],$\{$atts$\}$);}{}
 \par{\sl -- parallelpoint:} \hfill point D such that $ABCD$ from a parallelogram
-\metax{el = brd.createElement('parallelpoint',[A,B,C],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'parallelpoint\',[A,B,C],$\{$atts$\}$);}{}
 \par{\sl -- perpendicular:} \hfill line perpendicular to line $l$ through point $P$
-\metax{el = brd.createElement('perpendicular',[l,P],$\{$atts$\}$);}{}
-\metax{el = brd.createElement('perpendicular',[P,l],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'perpendicular\',[l,P],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'perpendicular\',[P,l],$\{$atts$\}$);}{}
 \par{\sl -- perpendicularpoint:} \hfill  point defining a perpendicular line to line $l$ through point $P$
 
-\metax{el = brd.createElement('perpendicularpoint',[l,P],$\{$$\}$);}{}
-\metax{el = brd.createElement('perpendicularpoint',[P,l],$\{$$\}$);}{}
+\metax{el = brd.createElement(\'perpendicularpoint\',[l,P],$\{$$\}$);}{}
+\metax{el = brd.createElement(\'perpendicularpoint\',[P,l],$\{$$\}$);}{}
 
 \par{\sl -- reflection:} \hfill reflection of point $P$ over the line $l$. 
 Superseded by transformations
 
-\metax{el = brd.createElement('reflection',[l,P],$\{$atts$\}$);}{}
-\metax{el = brd.createElement('reflection',[P,l],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'reflection\',[l,P],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'reflection\',[P,l],$\{$atts$\}$);}{}
 \par{\sl -- sector:} \hfill circle sector defined by 3 points \hfill ???
-\metax{el = brd.createElement('sector',[A,B,C],$\{$atts$\}$);}{}
+\metax{el = brd.createElement(\'sector\',[A,B,C],$\{$atts$\}$);}{}
 
 \section{Attributes of geometric elements}
 {\sl Generic attributes:}\par
@@ -511,14 +511,14 @@ Superseded by transformations
  
 \section{Text}
 Display static or dynamic texts.\par
-\metax{el = brd.createElement('text',[x,y,"Hello"]);}{}
-\metax{el = brd.createElement('text',[x,y,f]);}{}
+\metax{el = brd.createElement(\'text\',[x,y,"Hello"]);}{}
+\metax{el = brd.createElement(\'text\',[x,y,f]);}{}
 Example for a dynamic text: return the $x$ coordinate of the point $p$.\par
 \metax{f = function()$\{$ return p.X(); $\}$}{}
 
 \section{Transform}
 Affine transformation of objects.\par
-\metax{t = brd.createElement('transform',[data,base],$\{$type:'type'$\}$);}{}
+\metax{t = brd.createElement(\'transform\',[data,base],$\{$type:\'type\'$\}$);}{}
 {\tt base}: the transformation is applied to the coordinates of this object.\par
 Possible types:\par
 -- translate: {\tt data}$=${\tt [x,y]}\par
@@ -563,7 +563,7 @@ the first or second intersection. In case of an intersection with a curve, $i$ a
 which are the start values for the path positions in the Newton method for $el_1$ and $el_2$, resp.
 
 \section{Todo list}
-'axis','image', 'integral', 'ticks', 
+'axis', 'image', 'integral', 'ticks'.
 
 \section{Chart}
 To do $\ldots$
