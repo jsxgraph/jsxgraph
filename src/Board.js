@@ -675,6 +675,9 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
     this.updateQuality = this.BOARD_QUALITY_LOW;
 
     this.dehighlightAll();
+    if(this.mode != this.BOARD_MODE_DRAG)
+        this.renderer.hide(this.infobox);
+    
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) { 
         this.origin.scrCoords[1] = x - this.drag_dx;
         this.origin.scrCoords[2] = y - this.drag_dy;
@@ -717,6 +720,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
                 this.update(this.drag_obj);
             }
         }
+        this.updateInfobox(this.drag_obj);
     }
     else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
         // Elemente ohne Highlight, die unter dem aktuellen Mauszeiger liegen, highlighten
@@ -724,12 +728,26 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
             if((this.objects[el].hasPoint != undefined) && (this.objects[el].hasPoint(x, y)) && (this.objects[el].visProp['visible'] == true)) {
                 this.renderer.highlight(this.objects[el]);
                 this.highlightedObjects[el] = this.objects[el];
+                this.updateInfobox(this.objects[el]);
             }
         }
     }
     this.fullUpdate = false;
     
 };
+
+/**
+ * Updates and displays a little info box to show coordinates of current selected points.
+ * @param {JXG.GeometryElement} el A GeometryElement
+ */
+JXG.Board.prototype.updateInfobox = function(el) {
+    if(el.elementClass == JXG.OBJECT_CLASS_POINT) {
+        this.infobox.setCoordinates(el.coords);
+        this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + el.coords.usrCoords[1] + ', ' + el.coords.usrCoords[2] + ')</span>';
+        this.renderer.show(this.infobox);
+        this.renderer.updateLabel(this.infobox);
+    }
+}
 
 /**
  * Remove highlighting of all elements.
@@ -2027,6 +2045,9 @@ JXG.Board.prototype.applyZoom = function() {
         }
     }    
     this.calculateSnapSizes();
+    
+    this.clearTraces();
+
     this.fullUpdate = true;
     this.update();
     this.fullUpdate = false;
@@ -2157,6 +2178,12 @@ JXG.Board.prototype.initGeonextBoard = function() {
     l1.hideElement();
     var l2 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gYOe0', this.id + 'gYLe0','Y-Achse');
     l2.hideElement();    
+    
+    this.infobox = new JXG.Label(this, '0,0', new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this), this.id + '__infobox');
+    this.infobox.distanceX = -20;
+    this.infobox.distanceY = 25;
+    this.renderer.drawLabel(this.infobox);
+    this.renderer.hide(this.infobox);
 };
 
 /**
