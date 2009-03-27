@@ -743,7 +743,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
 JXG.Board.prototype.updateInfobox = function(el) {
     if(el.elementClass == JXG.OBJECT_CLASS_POINT) {
         this.infobox.setCoordinates(el.coords);
-        this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + (el.coords.usrCoords[1]).toPrecision(2) + ', ' + (el.coords.usrCoords[2]).toPrecision(2) + ')</span>';
+        this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + el.coords.usrCoords[1] + ', ' + el.coords.usrCoords[2] + ')</span>';
         //this.infobox.nameHTML = '(' + el.coords.usrCoords[1] + ', ' + el.coords.usrCoords[2] + ')';
         this.renderer.show(this.infobox);
         this.renderer.updateLabel(this.infobox);

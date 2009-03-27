@@ -55,12 +55,15 @@ body { background-color:#434343; }
                         var m = brd.mathStatistics.mean(y);
                         var sd = brd.mathStatistics.sd(y);
                         var med = brd.mathStatistics.median(y);
+                        brd.suspendUpdate();
                         if (!graph1) { 
-                            graph1 = brd.createElement('curve', [x,y],{strokeWidth:1, name:'nix',strokeColor:'yellow'}); 
+                            //graph1 = brd.createElement('curve', [x,y],{strokeWidth:1,strokeColor:'yellow'}); 
+                            graph1 = brd.createElement('chart', [x,y],{chartStyle:'point,line', style:4,strokeWidth:1,strokeColor:'yellow'}); 
                             graph2 = brd.createElement('curve', [[x[0],x[x.length-1]],[m,m]], {strokecolor:'red'}); 
                             graph3 = brd.createElement('curve', [[x[0],x[x.length-1]],[m+sd,m+sd]], {strokecolor:'red',dash:2}); 
                             graph4 = brd.createElement('curve', [[x[0],x[x.length-1]],[m-sd,m-sd]], {strokecolor:'red',dash:2}); 
                             graph5 = brd.createElement('curve', [[x[0],x[x.length-1]],[med,med]], {strokecolor:'red',dash:1}); 
+                        brd.unsuspendUpdate();
                         } else {
                             graph1.dataX = x;                    graph1.dataY = y;
                             graph2.dataX = [x[0],x[x.length-1]]; graph2.dataY = [m,m];
