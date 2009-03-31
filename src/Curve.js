@@ -469,3 +469,49 @@ JXG.createSpline = function(board, parents, attributes) {
  */
 JXG.JSXGraph.registerElement('spline', JXG.createSpline);
 
+/**
+ * Create Riemann sum for a given function.
+ * @param {JXG.Board} board Reference to the board the spline is drawn on.
+ * @param {f} function defining the Riemann sum
+ * @param {n} partition number: number or function
+ * @param {type} 'left', 'right' or 'middle'. 'left' is the default: string or function
+ * @param {from} optional left interval border: number or function
+ * @param {to} optional right interval border: number or function
+ * @type JXG.Curve
+ * @return Returns reference to an object of type JXG.Curve.
+ */
+JXG.createRiemannsum = function(board, parents, attributes) {
+    var i,n,type,f;
+    f = parents[0];
+    if (typeof parents[1] == 'number') {
+        n = function() {return parents[1];}
+    } else if (typeof parents[1] == 'function') {
+        n = parents[1];
+    } else {
+        throw "JXG.createRiemannsum: n has to be number or function."
+    }
+    if (typeof parents[2] == 'string') {
+        type= function() {return parents[2];}
+    } else if (typeof parents[2] == 'function') {
+        type = parents[2];
+    } else {
+        throw "JXG.createRiemannsum: type has to be string or function."
+    }
+
+    var par = ['x', [0], [0]].concat(parents.slice(3));
+    
+    if(attributes == null) 
+        attributes = {};
+    attributes.opacity   = attributes.opacity || 0.3;
+    attributes.fillColor = attributes.fillColor || '#ffff00';
+    attributes.curveType = 'plot';
+    var c = new JXG.Curve(board, par, attributes['id'], attributes['name']);
+    c.updateDataArray = function() {
+            var u = JXG.Math.Numerics.riemann(f,this.minX(),this.maxX(),n(),type());
+            this.dataX = u[0];
+            this.dataY = u[1];
+        }
+    return c;
+};
+
+JXG.JSXGraph.registerElement('riemannsum', JXG.createRiemannsum);
