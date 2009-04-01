@@ -10,10 +10,10 @@
 <h1>Playground</h1>
 
 <form>Riemann sum type: <select id="sumtype">
-<option selected> left
-<option> right
-<option> middle
-<option> trapezodial
+<option value='left' selected> left
+<option value='right'> right
+<option value='middle'> middle
+<option value='trapezodial'> trapezodial
 </select></form>
 <!-- Drawing area -->
 <div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
@@ -39,7 +39,6 @@ var os = brd.createElement('riemannsum',[f,
 
 brd.createElement('text',[-6,-3,function(){ return 'Sum='+(brd.riemannsum(f,s.Value(),$('sumtype').value,a.Value(),b.Value())).toFixed(2); }],{fontSize:40});
 //brd.createElement('text',[-6,-3,function(){ return 'Sum='+(brd.riemannsum(f,s.Value(),'trapezodial',a.Value(),b.Value())).toFixed(2); }],{fontSize:40});
-
 
 /* ]]> */
 </script>
