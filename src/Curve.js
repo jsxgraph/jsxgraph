@@ -507,7 +507,7 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     attributes.curveType = 'plot';
     var c = new JXG.Curve(board, par, attributes['id'], attributes['name']);
     c.updateDataArray = function() {
-            var u = JXG.Math.Numerics.riemann(f,this.minX(),this.maxX(),n(),type());
+            var u = JXG.Math.Numerics.riemann(f,n(),type(),this.minX(),this.maxX());
             this.dataX = u[0];
             this.dataY = u[1];
         }

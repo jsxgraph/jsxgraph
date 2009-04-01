@@ -480,12 +480,12 @@ JXG.Math.Numerics.sinh = function(x) {
  * Riemann sum.
  * Compute coordinates for the rectangles showing the Riemann sum.
  * @param {f} 
+ * @param {n} 
+ * @param {type} 'left', 'right', 'middle', or 'trapezodial'
  * @param {start} 
  * @param {end} 
- * @param {n} 
- * @param {type} 'left', 'right' or 'middle'
  */
-JXG.Math.Numerics.riemann = function(f, start, end, n, type) {
+JXG.Math.Numerics.riemann = function(f, n, type, start, end) {
     var xarr,yarr,i,delta,j,x,y;
     xarr = [];
     yarr = [];
@@ -498,21 +498,55 @@ JXG.Math.Numerics.riemann = function(f, start, end, n, type) {
         for (i=0;i<n;i++) {
         
             if (type=='right') {
-            //y = Math.max(f(x),f(x+delta));
                 y = f(x+delta);
             } else if (type=='middle') {
                 y = f(x+delta*0.5);
-            } else { // (type=='left') 
+            } else { // (type=='left') of (type=='trapezodial')
                 y = f(x);
             }
             
             j++;
             xarr[j] = x; yarr[j] = y;
             j++; x+=delta;
+            if (type=='trapezodial') {
+                y = f(x);
+            }
             xarr[j] = x; yarr[j] = y;
             j++;
             xarr[j] = x; yarr[j] = 0.0;
          }
     }
     return [xarr,yarr];
+}    
+
+/**
+ * Computation of the Riemann sum.
+ * @param {f} 
+ * @param {n} 
+ * @param {type} 'left', 'right', 'middle', or 'trapezodial'
+ * @param {start} 
+ * @param {end} 
+ */
+JXG.Math.Numerics.riemannsum = function(f, n, type, start, end) {
+    var sum,i,delta,x,y;
+    sum = 0.0;
+    x = start;
+    n = Math.floor(n);
+    if (n>0) {
+        delta = (end-start)/n;
+        for (i=0;i<n;i++) {
+            if (type=='right') {
+                y = f(x+delta);
+            } else if (type=='middle') {
+                y = f(x+delta*0.5);
+            } else if (type=='trapezodial') {
+                y = 0.5*(f(x+delta)+f(x));
+            } else { // (type=='left') 
+                y = f(x);
+            }
+            sum += delta*y;
+            x += delta;
+         }
+    }
+    return sum;
 }    
