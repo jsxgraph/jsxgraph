@@ -9,7 +9,12 @@
 <body>
 <h1>Playground</h1>
 
-<form><input type="text"></form>
+<form>Riemann sum type: <select id="sumtype">
+<option selected> left
+<option> right
+<option> middle
+<option> trapezodial
+</select></form>
 <!-- Drawing area -->
 <div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
 <!-- Drawing area -->
@@ -19,20 +24,20 @@
 /* <![CDATA[ */
 
 var brd = JXG.JSXGraph.initBoard('box', {axis:true, originX: 400, originY: 200, grid:true, unitX: 50, unitY: 50});
-var s = brd.createElement('slider',[[1,3],[5,3],[1,5,50]]);
+var s = brd.createElement('slider',[[1,3],[5,3],[1,10,50]]);
 var a = brd.createElement('slider',[[1,2],[5,2],[-10,-5,0]]);
 var b = brd.createElement('slider',[[1,1],[5,1],[0,5,10]]);
 var f = function(x){ return x*Math.sin(x); }
 var plot = brd.createElement('functiongraph',[f,function(){return a.Value();}, function(){return b.Value();}]);
 
 var os = brd.createElement('riemannsum',[f, 
-    function(){ return s.Value();}, 'left', 
+    function(){ return s.Value();}, function(){ return $('sumtype').value;},
     function(){return a.Value();}, 
     function(){return b.Value();}
     ], 
     {fillColor:'#ffff00', fillOpacity:0.3});
 
-brd.createElement('text',[-6,-3,function(){ return 'Sum='+(brd.riemannsum(f,s.Value(),'left',a.Value(),b.Value())).toFixed(2); }],{fontSize:40});
+brd.createElement('text',[-6,-3,function(){ return 'Sum='+(brd.riemannsum(f,s.Value(),$('sumtype').value,a.Value(),b.Value())).toFixed(2); }],{fontSize:40});
 //brd.createElement('text',[-6,-3,function(){ return 'Sum='+(brd.riemannsum(f,s.Value(),'trapezodial',a.Value(),b.Value())).toFixed(2); }],{fontSize:40});
 
 
