@@ -676,7 +676,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
 
     this.dehighlightAll();
     if(this.mode != this.BOARD_MODE_DRAG)
-        this.renderer.hide(this.infobox);
+      //  this.renderer.hide(this.infobox);
     
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) { 
         this.origin.scrCoords[1] = x - this.drag_dx;

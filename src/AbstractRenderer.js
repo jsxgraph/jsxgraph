@@ -59,9 +59,7 @@ JXG.AbstractRenderer.prototype.drawPoint = function(el) {
     var size = this.getPointSize(el.visProp['style']);
     if(el.visProp['style'] == 0 || el.visProp['style'] == 1 || el.visProp['style'] == 2) { // x
         node = this.createPrimitive('line',el.id+'_x1');
-        this.setStrokeProp(node,el.visProp);
         node2 = this.createPrimitive('line',el.id+'_x2');
-        this.setStrokeProp(node2,el.visProp);
         this.appendChildPrimitive(node,'points');
         this.appendChildPrimitive(node2,'points');
         el.rendNodeX1 = node;
@@ -69,28 +67,25 @@ JXG.AbstractRenderer.prototype.drawPoint = function(el) {
     }
     else if(el.visProp['style'] == 3 || el.visProp['style'] == 4 || el.visProp['style'] == 5 || el.visProp['style'] == 6) { // circle
         node = this.createPrimitive('circle',el.id);
-        this.setStrokeProp(node,el.visProp);
-        this.setFillProp(node,el.visProp);
         this.appendChildPrimitive(node,'points');
         el.rendNode = node;
     }
     else if(el.visProp['style'] == 7 || el.visProp['style'] == 8 || el.visProp['style'] == 9) { // rectangle
         node = this.createPrimitive('rect',el.id);
-        this.setStrokeProp(node,el.visProp);
-        this.setFillProp(node,el.visProp);
         this.appendChildPrimitive(node,'points');
         el.rendNode = node;
     }
     else if(el.visProp['style'] == 10 || el.visProp['style'] == 11 || el.visProp['style'] == 12) { // +
         node = this.createPrimitive('line',el.id+'_x1');
-        this.setStrokeProp(node,el.visProp);
         node2 = this.createPrimitive('line',el.id+'_x2');
-        this.setStrokeProp(node2,el.visProp);
         this.appendChildPrimitive(node,'points');
         this.appendChildPrimitive(node2,'points');
         el.rendNodeX1 = node;
         el.rendNodeX2 = node2;
     }
+    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
+    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
+    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);	
     this.setDraft(el);
     this.updatePoint(el);
 };
@@ -173,7 +168,6 @@ JXG.AbstractRenderer.prototype.drawLine = function(el) {
     var node = this.createPrimitive('line',el.id);
     this.appendChildPrimitive(node,'lines');
     el.rendNode = node;
-    //this.setStrokeProp(el.rendNode,el.visProp);
     this.setDashStyle(el.rendNode,el.visProp);
     //this.setDraft(el);
     this.updateLine(el);
@@ -242,8 +236,9 @@ JXG.AbstractRenderer.prototype.drawCurve = function(el) {
     //node.setAttributeNS(null, 'stroke-linejoin', 'round');
     this.appendChildPrimitive(node,'curves');
     el.rendNode = node;
-    this.setStrokeProp(el.rendNode,el.visProp);
-    this.setFillProp(el.rendNode,el.visProp);
+    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
+    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
+    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
     this.setDashStyle(el.rendNode,el.visProp);
     this.updateCurve(el);
 };
@@ -680,12 +675,10 @@ JXG.AbstractRenderer.prototype.calcStraightOrg = function(el, point1, point2) {
  */
 JXG.AbstractRenderer.prototype.drawCircle = function(el) { 
     var node = this.createPrimitive('ellipse',el.id);
-    this.setStrokeProp(node,el.visProp);
-    this.setFillProp(node,el.visProp);
+    el.rendNode = node;    
     //node.setAttributeNS(null, 'opacity', '1');    
     this.setDashStyle(node,el.visProp);
     this.appendChildPrimitive(node,'circles');
-    el.rendNode = node;
     this.setDraft(el);
     this.updateCircle(el);
 };
@@ -722,8 +715,7 @@ JXG.AbstractRenderer.prototype.drawPolygon = function(el) {
     var node = this.createPrimitive('polygon',el.id);
     el.visProp['fillOpacity'] = 0.3;
     //el.visProp['strokeColor'] = 'none';
-    this.setFillProp(node,el.visProp);
-    //this.setStrokeProp(node,el.visProp);
+    //this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
     this.appendChildPrimitive(node,'polygone');
     el.rendNode = node;
     this.setDraft(el);
@@ -757,7 +749,9 @@ JXG.AbstractRenderer.prototype.updatePolygon = function(el) {
  */
 JXG.AbstractRenderer.prototype.drawArrow = function(el) {
     var node = this.createPrimitive('line',el.id);
-    this.setStrokeProp(node,el.visProp);
+    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
+    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
+    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
     this.setDashStyle(node,el.visProp);
     this.makeArrow(node,el);
     this.appendChildPrimitive(node,'lines');

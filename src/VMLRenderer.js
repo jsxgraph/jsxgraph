@@ -45,7 +45,7 @@ JXG.VMLRenderer = function(container) {
         container.ownerDocument.namespaces.add('v', 'urn:schemas-microsoft-com:vml', '#default#VML');
         //container.ownerDocument.createStyleSheet().cssText = "v\\:*{behavior:url(#default#VML)}";
         var ss = container.ownerDocument.createStyleSheet();
-        ss.cssText = '.jsxgbox{v\\:*{behavior:url(#default#VML)}';
+        ss.cssText = '.jsxgbox{v\\:*{behavior:url(#default#VML)}}';
     */
 
     // Ohne Fehler, aber falsch:
@@ -179,13 +179,24 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
         angle1 -= 360;
     }
 
-    var node = this.createPrimitive('arc',el.id);    
+    var node = this.createPrimitive('arc',el.id); 
+    el.rendNode = node;
 /*  var node = this.container.ownerDocument.createElement('v:arc');
     node.setAttribute('id', el.id);
     node.style.position = 'absolute';
 */
     node.setAttribute('filled', 'false');
-    this.setStrokeProp(node,el.visProp);
+    /*if(el.visProp['strokeColor'] == 'none') {
+        node.setAttribute('stroked', 'false');          
+    }
+    else {
+        node.setAttribute('stroked', 'true');
+        var props    = ['strokeColor','strokeWidth'];
+        var vmlprops = ['strokecolor','strokeweight'];
+        this.setAttributes(node,props,vmlprops,el.visProp);
+    }*/
+    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
+    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     
     node.style.left = (el.midpoint.coords.scrCoords[1] - Math.round(radius * el.board.unitX * el.board.zoomX)) + 'px'; 
     node.style.top = (el.midpoint.coords.scrCoords[2] - Math.round(radius * el.board.unitY * el.board.zoomY))  + 'px'; 
@@ -251,7 +262,7 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     this.appendChildPrimitive(node2,'angles');
 /*    node2.style.zIndex = "2";
     this.container.appendChild(node2);  */
-    el.rendNode = node;
+
     el.rendNodeFill = node2;
     
     if(el.visProp['draft']) {
@@ -483,14 +494,13 @@ JXG.VMLRenderer.prototype.setObjectDash = function(el) {
  
 JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     var c, o;
-    /* // Not yet 
     if (typeof opacity=='function') {
         o = opacity();
     } else {
         o = opacity;
     }
     o = (o>0)?o:0;
-    */
+
     if (typeof color=='function') {
         c = color();
     } else {
@@ -500,7 +510,14 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
         if(el.type == JXG.OBJECT_TYPE_ANGLE) {
             var node = el.rendNode2; 
             node.setAttribute('stroked', 'true');
-            node.setAttribute('strokecolor', c);            
+            node.setAttribute('strokecolor', c);
+            var nodeStroke = this.getElementById(el.id+'stroke');
+            if(nodeStroke == null) {
+                nodeStroke = this.container.ownerDocument.createElement('v:stroke');
+                nodeStroke.setAttribute('id', el.id+'stroke');
+                node.appendChild(nodeStroke);
+            }
+            if (o!=undefined) nodeStroke.setAttribute('opacity', (o*100)+'%');
         }
         else if(el.type == JXG.OBJECT_TYPE_TEXT) {
             el.rendNode.style.color = c;
@@ -509,6 +526,14 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
             var node = el.rendNode;
             node.setAttribute('stroked', 'true');
             node.setAttribute('strokecolor', c);
+            
+            var nodeStroke = this.getElementById(el.id+'stroke');
+            if(nodeStroke == null) {
+                nodeStroke = this.container.ownerDocument.createElement('v:stroke');
+                nodeStroke.setAttribute('id', el.id+'stroke');
+                node.appendChild(nodeStroke);
+            }
+            if (o!=undefined) nodeStroke.setAttribute('opacity', (o*100)+'%');
         }
     }
     else {
@@ -516,14 +541,39 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
             var node = el.rendNode;
             node.setAttribute('stroked', 'true');
             node.setAttribute('strokecolor', c);
+            
+            var nodeStroke = this.getElementById(el.id+'stroke');
+            if(nodeStroke == null) {
+                nodeStroke = this.container.ownerDocument.createElement('v:stroke');
+                nodeStroke.setAttribute('id', el.id+'stroke');
+                node.appendChild(nodeStroke);
+            }
+            if (o!=undefined) nodeStroke.setAttribute('opacity', (o*100)+'%');
         }
         else {
             var node = el.rendNodeX1;
             node.setAttribute('stroked', 'true');
             node.setAttribute('strokecolor', c); 
+            
+            var nodeStroke = this.getElementById(el.id+'_x1stroke');
+            if(nodeStroke == null) {
+                nodeStroke = this.container.ownerDocument.createElement('v:stroke');
+                nodeStroke.setAttribute('id', el.id+'_x1stroke');
+                node.appendChild(nodeStroke);
+            }
+            if (o!=undefined) nodeStroke.setAttribute('opacity', (o*100)+'%');
+            
             var node = el.rendNodeX2;
             node.setAttribute('stroked', 'true');
             node.setAttribute('strokecolor', c);
+            
+            nodeStroke = this.getElementById(el.id+'_x2stroke');
+            if(nodeStroke == null) {
+                nodeStroke = this.container.ownerDocument.createElement('v:stroke');
+                nodeStroke.setAttribute('id', el.id+'_x2stroke');
+                node.appendChild(nodeStroke);
+            }
+            if (o!=undefined) nodeStroke.setAttribute('opacity', (o*100)+'%');
         }
     }
 }
@@ -551,7 +601,7 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
             else {
                 node.setAttribute('filled', 'true');
                 node.setAttribute('fillcolor', c); 
-            }         
+            }
         }
         else if(el.type == JXG.OBJECT_TYPE_ANGLE) {
             node = el.rendNode1; 
@@ -577,12 +627,20 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
     else {
         if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
             var node = el.rendNode;
+            var nodeFill = document.getElementById(el.id+'_fillnode');
+            if(nodeFill == null) {
+                nodeFill = this.container.ownerDocument.createElement('v:fill');
+                nodeFill.setAttribute('id',node.id+'_fillnode');
+                node.appendChild(nodeFill);
+            }        
+            el.rendNodeFill = nodeFill;            
             if(c == 'none') {
                 node.setAttribute('filled', 'false');
             }
             else {
                 node.setAttribute('filled', 'true');
                 node.setAttribute('fillcolor', c); 
+                if (o!=undefined) nodeFill.setAttribute('opacity', (o*100)+'%');
             }
         }
         else {
@@ -606,7 +664,13 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
     }
     if(el.type == JXG.OBJECT_TYPE_POLYGON || el.type == JXG.OBJECT_TYPE_CIRCLE || el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE || el.type == JXG.OBJECT_TYPE_CURVE) {
         var nodeFill = document.getElementById(el.id+'_fillnode');
-        if (o!=undefined) nodeFill.setAttribute('opacity', (o*100)+'%');     
+        if(nodeFill == null) {
+            nodeFill = this.container.ownerDocument.createElement('v:fill');
+            nodeFill.setAttribute('id',node.id+'_fillnode');
+            node.appendChild(nodeFill);
+        }        
+        if (o!=undefined) nodeFill.setAttribute('opacity', (o*100)+'%');
+        el.rendNodeFill = nodeFill;
     }
 }
 
@@ -620,34 +684,6 @@ JXG.VMLRenderer.prototype.suspendRedraw = function() {
 
 JXG.VMLRenderer.prototype.unsuspendRedraw = function() {
     this.container.style.display='';
-};
-
-JXG.VMLRenderer.prototype.setStrokeProp = function(node,visProp) {
-    if(visProp['strokeColor'] == 'none') {
-        node.setAttribute('stroked', 'false');          
-    }
-    else {
-        node.setAttribute('stroked', 'true');
-        var props    = ['strokeColor','strokeWidth'];
-        var vmlprops = ['strokecolor','strokeweight'];
-        this.setAttributes(node,props,vmlprops,visProp);
-        //node.setAttribute('strokeweight', 1);
-    }
-};
-
-JXG.VMLRenderer.prototype.setFillProp = function(node,visProp) {
-//$('debug').innerHTML += node.id +':'+visProp['fillColor']+':<br>';
-    if (visProp['fillColor'] == null || visProp['fillColor'] == 'none') {
-        node.setAttribute('filled', 'false');
-    }
-    else {
-        node.setAttribute('filled', 'true');
-        node.setAttribute('fillcolor', visProp['fillColor']); 
-    }
-    var nodeFill = this.container.ownerDocument.createElement('v:fill');
-    nodeFill.setAttribute('id',node.id+'_fillnode');
-    nodeFill.setAttribute('opacity', (visProp['fillOpacity']*100)+'%'); 
-    node.appendChild(nodeFill); 
 };
 
 JXG.VMLRenderer.prototype.setAttributes = function(node,props,vmlprops,visProp) {

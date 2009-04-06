@@ -141,7 +141,9 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     pathString += point3.scrCoords[1] + ' ' + point3.scrCoords[2]; // Endpunkt
     
     this.updatePathPrimitive(node,pathString,el.board);
-    this.setStrokeProp(node,el.visProp);
+    if (el.visProp['strokeColor']!=null) {node.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);}
+    if (el.visProp['strokeOpacity']!=null) {node.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);}
+    if (el.visProp['strokeWidth']!=null) {node.setAttributeNS(null, 'stroke-width', el.visProp['strokeWidth']);}
     node.setAttributeNS(null, 'fill', 'none');
     this.setDashStyle(node,el.visProp);
 
@@ -149,14 +151,12 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     var node3;
     if(el.visProp['firstArrow']) {
         var node2 = this.createArrowHead(el,'Start');
-        //this.setFillProp(node2,el.visProp);
         this.defs.appendChild(node2);
         el.rendNodeTriangleStart = node2;
         node.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'TriangleStart)');
     }
     if(el.visProp['lastArrow']) {
         var node2 = this.createArrowHead(el,'End');
-        //this.setFillProp(node2,el.visProp);
         this.defs.appendChild(node2);
         el.rendNodeTriangleEnd = node2;
         node.setAttributeNS(null, 'marker-start', 'url(#'+el.id+'TriangleEnd)');
@@ -180,7 +180,8 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     pathString2 += ' L ' + el.midpoint.coords.scrCoords[1] + " " + el.midpoint.coords.scrCoords[2]    + ' z'; // Endpunkt
     
     this.updatePathPrimitive(node4,pathString2,el.board);
-    this.setFillProp(node4,el.visProp);
+    if (el.visProp['fillColor']!=null) {node4.setAttributeNS(null, 'fill', el.visProp['fillColor']);}
+    if (el.visProp['fillOpacity']!=null) {node4.setAttributeNS(null, 'fill-opacity', el.visProp['fillOpacity']);}     
     node4.setAttributeNS(null, 'stroke', 'none');
     
     this.arcs.appendChild(node);
@@ -562,19 +563,6 @@ JXG.SVGRenderer.prototype.unsuspendRedraw = function() {
     //} catch(e) {
         //alert('Unsuspend not working!');
     //}
-}
-
-JXG.SVGRenderer.prototype.setStrokeProp = function(node,visProp) {
-    if (visProp['strokeColor']!=null) {node.setAttributeNS(null, 'stroke', visProp['strokeColor']);}
-    if (visProp['strokeOpacity']!=null) {node.setAttributeNS(null, 'stroke-opacity', visProp['strokeOpacity']);}
-    if (visProp['strokeWidth']!=null) {node.setAttributeNS(null, 'stroke-width', visProp['strokeWidth']);}
-    //node.setAttributeNS(null, 'opacity', '0.3');    
-}
-
-JXG.SVGRenderer.prototype.setFillProp = function(node,visProp) {
-    if (visProp['fillColor']!=null) {node.setAttributeNS(null, 'fill', visProp['fillColor']);}
-    if (visProp['fillOpacity']!=null) {node.setAttributeNS(null, 'fill-opacity', visProp['fillOpacity']);}     
-    //node.setAttributeNS(null, 'opacity', '0.3');    
 }
 
 JXG.SVGRenderer.prototype.setDashStyle = function(node,visProp) {
