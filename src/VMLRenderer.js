@@ -397,20 +397,11 @@ JXG.VMLRenderer.prototype.transformImageParent = function(el,m) {};
 
 JXG.VMLRenderer.prototype.removeGrid = function(board) { 
     board.hasGrid = false;
-    for(var i=0; i<=this.gridXsize; i++) {
-        var c = document.getElementById('gridx'+i);
-        while (c.childNodes.length>0) {
-            c.removeChild(c.firstChild);
-        }
-        c.remove();
-    }
-    for(var i=0; i<=this.gridYsize; i++) {
-        var c = document.getElementById('gridy'+i);
-        while (c.childNodes.length>0) {
-            c.removeChild(c.firstChild);
-        }
-        c.remove();
-    }
+    var c = document.getElementById('gridx');
+    this.remove(c);
+
+    var c = document.getElementById('gridy');
+    this.remove(c);
 }
 
 JXG.VMLRenderer.prototype.hide = function(el) {
@@ -916,6 +907,27 @@ JXG.VMLRenderer.prototype.setPropertyPrimitive = function(node,key,val) {
     }
 };
 
+JXG.VMLRenderer.prototype.drawVerticalGrid = function(topLeft, bottomRight, gx, board) {
+    var node = this.createPrimitive('path', 'gridx');
+    var gridArr = [];
+    while(topLeft.scrCoords[1] < bottomRight.scrCoords[1] + gx - 1) { 
+        gridArr.push(' m ' + topLeft.scrCoords[1] + ', ' + 0 + ' l ' + topLeft.scrCoords[1] + ', ' + board.canvasHeight+' ');
+        topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1] + gx, topLeft.scrCoords[2]]);   
+    }
+    this.updatePathPrimitive(node, gridArr, board);
+    return node;
+}
+
+JXG.VMLRenderer.prototype.drawHorizontalGrid = function(topLeft, bottomRight, gy, board) {
+    var node = this.createPrimitive('path', 'gridy');
+    var gridArr = [];
+    while(topLeft.scrCoords[2] <= bottomRight.scrCoords[2] + gy - 1) {
+        gridArr.push(' m ' + 0 + ', ' + topLeft.scrCoords[2] + ' l ' + board.canvasWidth + ', ' + topLeft.scrCoords[2]+' ');
+        topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1], topLeft.scrCoords[2] + gy]);
+    }
+    this.updatePathPrimitive(node, gridArr, board);
+    return node;
+}
 /*
 JXG.VMLRenderer.prototype.cloneSubTree = function(el,id,type) {
     var node = el.rendNode.cloneNode(true);

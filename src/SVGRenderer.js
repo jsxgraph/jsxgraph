@@ -738,6 +738,28 @@ JXG.SVGRenderer.prototype.setPropertyPrimitive = function(node,key,val) {
     node.setAttributeNS(null, key, val);
 };
 
+JXG.SVGRenderer.prototype.drawVerticalGrid = function(topLeft, bottomRight, gx, board) {
+    var node = this.createPrimitive('path', 'gridx');
+    var gridArr = "";
+    while(topLeft.scrCoords[1] < bottomRight.scrCoords[1] + gx - 1) { 
+        gridArr += ' M ' + topLeft.scrCoords[1] + ' ' + 0 + ' L ' + topLeft.scrCoords[1] + ' ' + board.canvasHeight+' ';
+        topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1] + gx, topLeft.scrCoords[2]]);   
+    }
+    this.updatePathPrimitive(node, gridArr, board);
+    return node;
+}
+
+JXG.SVGRenderer.prototype.drawHorizontalGrid = function(topLeft, bottomRight, gy, board) {
+    var node = this.createPrimitive('path', 'gridy');
+    var gridArr = "";
+    while(topLeft.scrCoords[2] <= bottomRight.scrCoords[2] + gy - 1) {
+        gridArr += ' M ' + 0 + ' ' + topLeft.scrCoords[2] + ' L ' + board.canvasWidth + ' ' + topLeft.scrCoords[2]+' ';
+        topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1], topLeft.scrCoords[2] + gy]);
+    }
+    this.updatePathPrimitive(node, gridArr, board);
+    return node;
+}
+
 /*
 JXG.SVGRenderer.prototype.cloneSubTree = function(el,id,type) {
     var n = el.rendNode.cloneNode(true);

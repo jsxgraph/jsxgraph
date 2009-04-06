@@ -1048,42 +1048,33 @@ JXG.AbstractRenderer.prototype.drawGrid = function(board) {
     var bottomRight = new JXG.Coords(JXG.COORDS_BY_USER,
                                      [Math.floor(k2.usrCoords[1])+j2/gridX, Math.ceil(k2.usrCoords[2])-l2/gridY],
                                      board);
-    var i = 0;
-    while(topLeft.scrCoords[1] < bottomRight.scrCoords[1] + gx - 1) { 
-        var node2 = this.createPrimitive('line','gridx'+i);
-        this.updateLinePrimitive(node2,topLeft.scrCoords[1],0,topLeft.scrCoords[1],board.canvasHeight);
-        if(!board.snapToGrid) {
-            this.setPropertyPrimitive(node2,'stroke', board.gridColor);
-        }
-        else {
-            this.setPropertyPrimitive(node2,'stroke', '#FF8080');
-        }
-        this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
-        if(board.gridDash) {
-            this.setPropertyPrimitive(node2,'stroke-dasharray', '5, 5'); 
-        }
-        this.appendChildPrimitive(node2,'grid');
-        i++;
-        topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1] + gx, topLeft.scrCoords[2]]);
+                                     
+    var node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
+    if(!board.snapToGrid) {
+        this.setPropertyPrimitive(node2,'stroke', board.gridColor);
     }
-    i = 0;
-    while(topLeft.scrCoords[2] <= bottomRight.scrCoords[2] + gy - 1) { 
-        var node2 = this.createPrimitive('line','gridy'+i);
-        this.updateLinePrimitive(node2,0,topLeft.scrCoords[2],board.canvasWidth,topLeft.scrCoords[2]);
-        if(!board.snapToGrid) {
-            this.setPropertyPrimitive(node2,'stroke', board.gridColor);
-        }
-        else {
-            this.setPropertyPrimitive(node2,'stroke', '#FF8080');
-        }
-        this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
-        if(board.gridDash) {
-            this.setPropertyPrimitive(node2,'stroke-dasharray', '5, 5'); 
-        }
-        this.appendChildPrimitive(node2,'grid');
-        i++;
-        topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1], topLeft.scrCoords[2] + gy]);
-    }   
+    else {
+        this.setPropertyPrimitive(node2,'stroke', '#FF8080');
+    }
+    this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
+    if(board.gridDash) {
+        this.setPropertyPrimitive(node2,'stroke-dasharray', '5, 5'); 
+    }
+    this.appendChildPrimitive(node2,'grid');
+
+    var node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
+    if(!board.snapToGrid) {
+        this.setPropertyPrimitive(node2,'stroke', board.gridColor);
+    }
+    else {
+        this.setPropertyPrimitive(node2,'stroke', '#FF8080');
+    }
+    this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
+    if(board.gridDash) {
+        this.setPropertyPrimitive(node2,'stroke-dasharray', '5, 5'); 
+    }
+    this.appendChildPrimitive(node2,'grid');
+   
 };
 
 /**
