@@ -537,7 +537,7 @@ JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
 * Handler for click on left arrow in the navigation bar
 **/
 JXG.Board.prototype.clickLeftArrow = function (Event) {
-    this.origin.scrCoords[1] -= this.canvasWidth*0.1;
+    this.origin.scrCoords[1] += this.canvasWidth*0.1;
     this.fullUpdate = true;
     this.moveOrigin();
     this.fullUpdate = false;
@@ -547,7 +547,7 @@ JXG.Board.prototype.clickLeftArrow = function (Event) {
 * Handler for click on right arrow in the navigation bar
 **/
 JXG.Board.prototype.clickRightArrow = function (Event) {
-    this.origin.scrCoords[1] += this.canvasWidth*0.1;
+    this.origin.scrCoords[1] -= this.canvasWidth*0.1;
     this.fullUpdate = true;
     this.moveOrigin();
     this.fullUpdate = false;
