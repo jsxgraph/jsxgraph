@@ -514,6 +514,7 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
             el.rendNode.style.color = c;
         }        
         else {
+            if(el.name == "blubb") alert("hier"+o+" "+c);        
             var node = el.rendNode;
             node.setAttribute('stroked', 'true');
             node.setAttribute('strokecolor', c);

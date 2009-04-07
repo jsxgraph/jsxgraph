@@ -1051,10 +1051,18 @@ JXG.AbstractRenderer.prototype.drawGrid = function(board) {
                                      
     var node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
     if(!board.snapToGrid) {
-        this.setPropertyPrimitive(node2,'stroke', board.gridColor);
+        var el = new Object();
+        el.rendNode = node2;
+        el.elementClass = JXG.OBJECT_CLASS_LINE;
+        el.id = "gridx";
+        this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
     }
     else {
-        this.setPropertyPrimitive(node2,'stroke', '#FF8080');
+        var el = new Object();
+        el.rendNode = node2;
+        el.elementClass = JXG.OBJECT_CLASS_LINE;
+        el.id = "gridx";        
+        this.setObjectStrokeColor(el, '#FF8080', 0.5) //board.gridOpacity);    
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
     if(board.gridDash) {
@@ -1064,10 +1072,18 @@ JXG.AbstractRenderer.prototype.drawGrid = function(board) {
 
     var node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
     if(!board.snapToGrid) {
-        this.setPropertyPrimitive(node2,'stroke', board.gridColor);
+        var el = new Object();
+        el.rendNode = node2;
+        el.elementClass = JXG.OBJECT_CLASS_LINE;
+        el.id = "gridy";        
+        this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
     }
     else {
-        this.setPropertyPrimitive(node2,'stroke', '#FF8080');
+        var el = new Object();
+        el.rendNode = node2;
+        el.elementClass = JXG.OBJECT_CLASS_LINE;
+        el.id = "gridy";        
+        this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
     if(board.gridDash) {

@@ -39,7 +39,7 @@ JXG.Options = function() {
     this.grid.gridX = 2;
     this.grid.gridY = 2;
     this.grid.gridColor = '#C0C0C0';
-    this.grid.gridOpacity = '1';
+    this.grid.gridOpacity = '0.5';
     this.grid.gridDash = true;
     /* snap to grid options */
     this.grid.snapToGrid = false;

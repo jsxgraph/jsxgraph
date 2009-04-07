@@ -259,11 +259,12 @@ this.readGeonext = function(tree,board) {
     var gridColor = boardData.getElementsByTagName('grid')[1].getElementsByTagName('color')[0].firstChild.data;
     var gridOpacity;
     if (gridColor.length=='9' && gridColor.substr(0,1)=='#') {
-        gridOpacity = gridColor.substr(7,2);                
+        gridOpacity = gridColor.substr(7,2);
+        gridOpacity = parseInt(gridOpacity.toUpperCase(),16)/255        
         gridColor = gridColor.substr(0,7);
     }
     else { 
-        gridOpacity = 'FF';
+        gridOpacity = '1';
     }
     board.gridColor = gridColor;
     board.gridOpacity = gridOpacity;
