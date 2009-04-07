@@ -28,7 +28,7 @@
 
         // Das Objekt geonext ist global und wird in Geonext.js initialisiert
         //board = JXG.JSXGraph.initBoard('box');
-board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb78.nc.gxt','Geonext');
+board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb81.nc.gxt','Geonext');
   /*      var newCasPoint = function() {
             var p = new JXG.Point(board, [0,0], '', '', true);
             p.makeCas($('xterm').value,$('yterm').value);
@@ -163,6 +163,7 @@ board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb78.nc.gxt','Geonext');
       <br>
       <input type='button' value='Show Elements of board' onclick='$("debug").innerHTML = ""; for(var Elements in board.objects) $("debug").innerHTML += Elements + ": " + board.objects[Elements] + "<br/>";'>
       <input type='button' value='Clear All Traces' onclick='board.clearTraces();'>
+      <input type='button' value='Do PSTricks' onclick='board.pstricks.givePsTricksToDiv("debug",board);'>
    </form>
    <div id="debug" style="position:relative; width:600px; height:100px; border:1px dashed black; background-color:white;">
    Test
