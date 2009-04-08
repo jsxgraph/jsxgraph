@@ -768,3 +768,5 @@ JXG.SVGRenderer.prototype.cloneSubTree = function(el,id,type) {
     return n;
 };
 */
+
+

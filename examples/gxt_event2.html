@@ -11,6 +11,7 @@
    <title>GEONExT SVG+VML</title>
    <link rel="stylesheet" type="text/css" href="css/geonext2.css" />
    <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <!--<script type="text/javascript" src="../distrib/jquery.min.js"></script>-->
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -31,7 +32,7 @@
 board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb81.nc.gxt','Geonext');
   /*      var newCasPoint = function() {
             var p = new JXG.Point(board, [0,0], '', '', true);
-            p.makeCas($('xterm').value,$('yterm').value);
+            p.makeCas(document.getElementById('xterm').value,document.getElementById('yterm').value);
             p.traced = true;
             return p;
         }
@@ -116,10 +117,10 @@ board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb81.nc.gxt','Geonext');
         x=<input type="text" size="10" id="xterm" value="X(A)"><br>
         y=<input type="text" size="10" id="yterm" value="Sin(X(A))*2"> <input type='button' value='Neuer CAS-Punkt' onclick='cas = newCasPoint()'>
       <br>
-      <input type='button' value='Geonext-File einlesen' onclick="JXG.JSXGraph.freeBoard(board);board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb'+$('blubb').value+'.nc.gxt','Geonext');" />
+      <input type='button' value='Geonext-File einlesen' onclick="JXG.JSXGraph.freeBoard(board);board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb'+document.getElementById('blubb').value+'.nc.gxt','Geonext');" />
       <input type='text' id='blubb' value="3" size="3">
       <br>
-      <input type='button' value='Geonext-File einlesen' onclick="JXG.JSXGraph.freeBoard(board); board = JXG.JSXGraph.loadBoardFromFile('box','gxt/'+$('blubb_gxt').options[$('blubb_gxt').selectedIndex].value+'.nc.gxt','Geonext');" />
+      <input type='button' value='Geonext-File einlesen' onclick="JXG.JSXGraph.freeBoard(board); board = JXG.JSXGraph.loadBoardFromFile('box','gxt/'+document.getElementById('blubb_gxt').options[document.getElementById('blubb_gxt').selectedIndex].value+'.nc.gxt','Geonext');" />
           <select id="blubb_gxt">
 
         
@@ -161,7 +162,7 @@ board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb81.nc.gxt','Geonext');
         <option value='blubb76'>Curves</option>
         </select>
       <br>
-      <input type='button' value='Show Elements of board' onclick='$("debug").innerHTML = ""; for(var Elements in board.objects) $("debug").innerHTML += Elements + ": " + board.objects[Elements] + "<br/>";'>
+      <input type='button' value='Show Elements of board' onclick='document.getElementById("debug").innerHTML = ""; for(var Elements in board.objects) document.getElementById("debug").innerHTML += Elements + ": " + board.objects[Elements] + "<br/>";'>
       <input type='button' value='Clear All Traces' onclick='board.clearTraces();'>
       <input type='button' value='Do PSTricks' onclick='board.pstricks.givePsTricksToDiv("debug",board);'>
    </form>

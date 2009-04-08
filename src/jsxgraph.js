@@ -202,9 +202,9 @@ JXG.JSXGraph = new function (forceRenderer) {
         }
 
         // Remove the event listeners
-        JXG.removeEvent(document, 'mousedown', board.mouseDownListener);
-        JXG.removeEvent(document, 'mouseup', board.mouseUpListener);
-        JXG.removeEvent(board.containerObj, 'mousemove', board.mouseMoveListener);
+        JXG.removeEvent(document, 'mousedown', board.mouseDownListener, board);
+        JXG.removeEvent(document, 'mouseup', board.mouseUpListener,board);
+        JXG.removeEvent(board.containerObj, 'mousemove', board.mouseMoveListener, board);
 
         // Remove all objects from the board.
         for(var el in board.objects) {
@@ -329,13 +329,18 @@ JXG.getDimensions = function(elementId) {
 };
 
 JXG.addEvent = function( obj, type, fn, owner ) {
-    var f = function() {
-        return fn.apply(owner,arguments);
-    }
+    
+    
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
-        Event.observe(obj, type, f);
+        //Event.observe(obj, type, f);
+        owner['_internal'+type] = fn.bindAsEventListener(owner);
+        Event.observe(obj, type, owner['_internal'+type]);
     } else {             // jQuery
-        $(obj).bind(type,f);
+        owner['_internal'+type] = function() {
+            return fn.apply(owner,arguments);
+        }
+        //$(obj).bind(type,f);
+        $(obj).bind(type,owner['_internal'+type]);
     }
 }
 
@@ -345,11 +350,14 @@ JXG.bind = function(fn, owner ) {
     }
 }
 
-JXG.removeEvent = function( obj, type, fn ) {
+JXG.removeEvent = function( obj, type, fn, owner ) {
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
-        Event.stopObserving(obj, type, fn);
+        //Event.stopObserving(obj, type, fn);
+        Event.stopObserving(obj, type, owner['_internal'+type]);
+        //Event.stopObserving(obj, type);
     } else { // jQuery
-        $(obj).unbind(type,fn);
+        //$(obj).unbind(type,fn);
+        $(obj).unbind(type,owner['_internal'+type]);
     }
 }
 

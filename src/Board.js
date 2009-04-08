@@ -158,7 +158,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type Object
      */
     this.containerObj = document.getElementById(this.container);
-    this.containerObj.undoPositioned;
+    //this.containerObj.undoPositioned;  //???
 
     /**
      * A reference to this boards renderer.
@@ -422,7 +422,8 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    // // Event.observe(this.container, 'mousedown', this.mouseDownListener.bind(this));
    //// Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
    //Event.observe(document, 'mousedown', this.mouseDownListener.bind(this));
-   //Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
+   //Event.observe(this.containerObj, 'mousemove', this.mouseMoveListener.bind(this));
+   
    JXG.addEvent(document,'mousedown', this.mouseDownListener, this);
    JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
   
@@ -580,12 +581,12 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
  * This method is called by the browser when the left mouse button is released.
  * @param {Event} Event The browsers event object.
  */
-JXG.Board.prototype.mouseUpListener = function (Event) {
+JXG.Board.prototype.mouseUpListener = function (evt) {
     // redraw with high precision
     this.updateQuality = this.BOARD_QUALITY_HIGH;
-    
+
     // release mouseup listener
-    JXG.removeEvent(document, 'mouseup', this.mouseUpListener);
+    JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
     
     // if origin was moved update everything
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
@@ -620,7 +621,6 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         this.drag_dy = dy - this.origin.scrCoords[2];
         this.mode = this.BOARD_MODE_MOVE_ORIGIN;
         //Event.observe(this.container, 'mouseup', this.mouseUpListener.bind(this));
-        //Event.observe(document, 'mouseup', this.mouseUpListener.bind(this));
         JXG.addEvent(document, 'mouseup', this.mouseUpListener, this);
         return;
     }
@@ -657,7 +657,6 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
       * New mouse position in screen coordinates.
       */
     this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx,dy], this);
-    
     JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
 };
 
