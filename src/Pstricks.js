@@ -25,6 +25,15 @@ JXG.PsTricks.prototype.convertBoardToPsTricks = function(board) {
             }
         }
     }
+    // Winkel
+    for(var el in board.objects) {
+        var pEl = board.objects[el];
+        if(pEl.type == JXG.OBJECT_TYPE_ANGLE) {
+            if(pEl.visProp['visible']) {
+                this.addAngle(pEl);
+            }
+        }
+    }
     // Kreise
     for(var el in board.objects) {
         var pEl = board.objects[el];
@@ -219,7 +228,27 @@ JXG.PsTricks.prototype.addSector = function(el) {
         this.psTricksString += "("+el.midpoint.coords.usrCoords[1]+","+el.midpoint.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";    
     }
 }
-    
+
+JXG.PsTricks.prototype.addAngle = function(el) {
+    var radius = el.radius;
+    var p = {};
+    p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                          [el.board.canvasWidth/(el.board.unitY*el.board.zoomY), el.point2.coords.usrCoords[2]],
+                          el.board);
+    var angle2 = JXG.Math.round(el.board.algebra.trueAngle(p, el.point2, el.point1),4);
+    var angle1 = JXG.Math.round(el.board.algebra.trueAngle(p, el.point2, el.point3),4);
+
+    if(el.visProp['fillColor'] != 'none' && el.visProp['fillOpacity'] != 0) {
+        this.psTricksString += "\\pswedge";
+        this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+JXG.Math.round(el.visProp['fillOpacity'],5)+"]";
+        this.psTricksString += "("+el.point2.coords.usrCoords[1]+","+el.point2.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";    
+    }
+    this.psTricksString += "\\psarc";
+    this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) + ", linewidth=" +el.visProp['strokeWidth']+"px";
+    this.psTricksString += "]"; 
+    this.psTricksString += "("+el.point2.coords.usrCoords[1]+","+el.point2.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";
+}
+
 JXG.PsTricks.prototype.parseColor = function(color) {
     var c = new JXG.RGBColor(color);
     return "{[rgb]{"+c.r/255+","+c.g/255+","+c.b/255+"}}";
