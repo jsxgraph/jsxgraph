@@ -264,5 +264,17 @@ JXG.Math.Numerics.prototype.fibonacci = JXG.memoizer(function (n) {
 * @return {rounded num}
 */
 JXG.Math.round = function(num, n) {
-    return Math.round(num*Math.pow(10,n))/Math.pow(10,n);
+    //return Math.round(num*Math.pow(10,n))/Math.pow(10,n);
+    //var z = num.toFixed(n);
+    var z = num - Math.ceil(num);
+    var s = z.toString();
+    if(z < 0) {
+        s = s.substr(0,n+3);
+    }
+    else {
+        s = s.substr(0,n+2);
+    }
+    z = parseFloat(s);
+    t = parseInt(num.toString());
+    return t+z;
 }
