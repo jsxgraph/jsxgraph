@@ -194,6 +194,59 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     }
 }
 
+/**
+ * Updates properties of an arc that already exists.
+ * @param {JXG.Arc} arc Reference to an arc object, that has to be updated.
+ * @see JXG.Arc
+ * @see #drawArc
+ */
+JXG.AbstractRenderer.prototype.updateArc = function(el) { 
+    // AW: brutaler fix der update-Methode...
+    // BV: falls die update-Methode doch wieder "normal" funktionsfaehig wird, muss noch auf die Start- und Endpfeile geachtet werden 
+    //    (derzeit noch nicht beruecksichtigt)
+    this.remove(el.rendNode);
+    this.remove(el.rendNodeFill);  
+    var node = el.rendNodeTriangleStart;
+    if(node != null) {
+        this.remove(node);
+    }
+    node = el.rendNodeTriangleEnd;
+    if(node != null) {
+        this.remove(node);
+    }    
+    this.drawArc(el);
+    this.setDraft(el);
+    return;
+
+    //-----------------------------------------------------------
+/*
+    var radius = el.getRadius();
+    
+    var angle = el.board.algebra.trueAngle(el.point2, el.midpoint, el.point3);
+    var circle = {}; // um projectToCircle benutzen zu koennen...
+    circle.midpoint = el.midpoint;
+    circle.getRadius = function() {
+        return radius;
+    }
+    var point3 = el.board.algebra.projectPointToCircle(el.point3,circle);
+
+    node = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
+    var pathString = 'M '+ el.point2.coords.scrCoords[1] +' '+ el.point2.coords.scrCoords[2] +' A '; // Startpunkt
+    pathString += Math.round(radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien
+    // largeArc
+    if(angle >= 180) {
+        pathString += '1 ';
+    }
+    else {
+        pathString += '0 ';
+    }
+    // sweepFlag
+    pathString += '0 ';
+    pathString += point3.scrCoords[1] + ' ' + point3.scrCoords[2]; // Endpunkt
+    node.setAttributeNS(null, 'd', pathString);    
+*/
+};
+
 JXG.SVGRenderer.prototype.drawAngle = function(el) {
     var angle = el.board.algebra.trueAngle(el.point1, el.point2, el.point3);
     var circle = {};  // um projectToCircle benutzen zu koennen...
@@ -465,6 +518,56 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         }
     }
 } ;
+
+/**
+ * Sets an elements stroke width.
+ * @param {Object} el Reference to the geometry element.
+ * @param {int} width The new stroke width to be assigned to the element.
+ */
+JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
+    var w;
+    if (typeof width=='function') {
+        w = width();
+    } else {
+        w = width;
+    }
+    //w = (w>0)?w:0;
+    
+    if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
+        var node;
+        if(el.type == JXG.OBJECT_TYPE_ANGLE) {
+            node = el.rendNode2;
+        }
+        else {
+            node = el.rendNode;
+        }
+        this.setPropertyPrimitive(node,'stroked', 'true');
+        if (w!=null) { 
+            this.setPropertyPrimitive(node,'stroke-width',w);    
+        }
+    }
+    else {
+        if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
+            var node = el.rendNode;
+            this.setPropertyPrimitive(node,'stroked', 'true');
+            if (w!=null) { 
+                this.setPropertyPrimitive(node,'stroke-width',w); 
+            }
+        }
+        else {
+            var node = el.rendNodeX1;
+            this.setPropertyPrimitive(node,'stroked', 'true');
+            if (w!=null) { 
+                this.setPropertyPrimitive(node,'stroke-width',w);  
+            }
+            var node = el.rendNodeX2;
+            this.setPropertyPrimitive(node,'stroked', 'true');
+            if (w!=null) { 
+                this.setPropertyPrimitive(node,'stroke-width',w); 
+            }
+        }
+    }
+};
 
 JXG.SVGRenderer.prototype.hide = function(el) {
     if(JXG.IsPoint(el)) {

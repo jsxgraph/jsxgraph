@@ -167,7 +167,52 @@ JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     this.updatePathPrimitive(ticks, tickArr, axis.board);
 }
 
+JXG.VMLRenderer.prototype.drawArcLine = function(id, radius, angle1, angle2, midpoint, board) {
+    var node = this.createPrimitive('arc',id); 
+    node.style.position = 'absolute';
+    node.setAttribute('filled', 'false');
+
+    node.style.left = (midpoint.coords.scrCoords[1] - Math.round(radius * board.unitX * board.zoomX)) + 'px'; 
+    node.style.top = (midpoint.coords.scrCoords[2] - Math.round(radius * board.unitY * board.zoomY))  + 'px'; 
+    node.style.width = (Math.round(radius * board.unitX * board.zoomX)*2) + 'px'; 
+    node.style.height = (Math.round(radius * board.unitY * board.zoomY)*2) + 'px';  
+    node.setAttribute('startangle', angle1);
+    node.setAttribute('endangle', angle2);  
+    
+    return node;
+}
+
+JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, point3, board) {
+    var node2 = this.createPrimitive('shape', id+'_fill');
+
+    node2.setAttribute('stroked', 'false');
+
+    var x = Math.round(radius * board.unitX * board.zoomX); // Breite des umgebenden Rechtecks?
+    var y = Math.round(radius * board.unitY * board.zoomY); // Hoehe des umgebenden Rechtecks?
+    node2.style.width = x;
+    node2.style.height = y;
+    node2.setAttribute('coordsize', x+','+y);
+    
+    var nodePath = this.container.ownerDocument.createElement('v:path');
+    nodePath.setAttribute('id', id+'path');
+
+    var pathString = 'm ' + midpoint.coords.scrCoords[1] + ',' + midpoint.coords.scrCoords[2] + ' l ';  
+    pathString += point2.coords.scrCoords[1] + ',' + point2.coords.scrCoords[2] + ' at ';
+    pathString += (midpoint.coords.scrCoords[1]-x) + ',' + (midpoint.coords.scrCoords[2]-y) + ',';
+    pathString += (midpoint.coords.scrCoords[1]+x) + ',' + (midpoint.coords.scrCoords[2]+y);
+    pathString += ' ' + point2.coords.scrCoords[1] + ',' + point2.coords.scrCoords[2];
+    pathString += ', ' + point3.coords.scrCoords[1] + ',' + point3.coords.scrCoords[2] + ' l ';
+    pathString += midpoint.coords.scrCoords[1] + ',' + midpoint.coords.scrCoords[2] + ' x e';
+    
+    nodePath.setAttribute('v', pathString);
+    node2.appendChild(nodePath);
+    
+    return node2;
+}
+
+
 JXG.VMLRenderer.prototype.drawArc = function(el) { 
+    /* some computations */
     var radius = el.getRadius();  
     var p = {};
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
@@ -178,34 +223,18 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     if(angle2 < angle1) {
         angle1 -= 360;
     }
-
-    var node = this.createPrimitive('arc',el.id); 
+    
+    /* arc line */
+    var node = this.drawArcLine(el.id, radius, angle1, angle2, el.midpoint, el.board)
     el.rendNode = node;
-/*  var node = this.container.ownerDocument.createElement('v:arc');
-    node.setAttribute('id', el.id);
-    node.style.position = 'absolute';
-*/
-    node.setAttribute('filled', 'false');
-    /*if(el.visProp['strokeColor'] == 'none') {
-        node.setAttribute('stroked', 'false');          
+
+    /* arrows at the ends of the arc line */
+    var nodeStroke = this.getElementById(el.id+'stroke');
+    if(nodeStroke == null) {
+        nodeStroke = this.container.ownerDocument.createElement('v:stroke');
+        nodeStroke.setAttribute('id', el.id+'stroke');
+        node.appendChild(nodeStroke);
     }
-    else {
-        node.setAttribute('stroked', 'true');
-        var props    = ['strokeColor','strokeWidth'];
-        var vmlprops = ['strokecolor','strokeweight'];
-        this.setAttributes(node,props,vmlprops,el.visProp);
-    }*/
-    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
-    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-    
-    node.style.left = (el.midpoint.coords.scrCoords[1] - Math.round(radius * el.board.unitX * el.board.zoomX)) + 'px'; 
-    node.style.top = (el.midpoint.coords.scrCoords[2] - Math.round(radius * el.board.unitY * el.board.zoomY))  + 'px'; 
-    node.style.width = (Math.round(radius * el.board.unitX * el.board.zoomX)*2) + 'px'; 
-    node.style.height = (Math.round(radius * el.board.unitY * el.board.zoomY)*2) + 'px';  
-    node.setAttribute('startangle', angle1);
-    node.setAttribute('endangle', angle2);    
-    
-    var nodeStroke = this.container.ownerDocument.createElement('v:stroke');
     if(el.visProp['lastArrow']) {        
         nodeStroke.setAttribute('endarrow', 'block');
         nodeStroke.setAttribute('endarrowlength', 'long');
@@ -213,106 +242,62 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     if(el.visProp['firstArrow']) {        
         nodeStroke.setAttribute('startarrow', 'block');
         nodeStroke.setAttribute('startarrowlength', 'long');
-    }    
-    nodeStroke.setAttribute('id', el.id+'stroke');
+    }
+    
+    /* stroke color and width */
+    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
+    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
+    
+    /* dashstyle */
     var tmp = el.visProp['dash'];
     nodeStroke.setAttribute('dashstyle', this.dashArray[tmp]);    
     node.appendChild(nodeStroke);    
    
-    var node2 = this.createPrimitive('shape',el.id+'_fill');
-    if(el.visProp['fillColor'] == 'none') {
-        node2.setAttribute('filled', 'false');
-    }
-    else {
-        node2.setAttribute('filled', 'true');
-        node2.setAttribute('fillcolor', el.visProp['fillColor']); 
-    }
-    node2.setAttribute('stroked', 'false');
+    /* arc fill */
+    var p4 = {};
+    p4.coords = el.board.algebra.projectPointToCircle(el.point3,el);      
+    var node2 = this.drawArcFill(el.id, radius, el.midpoint, el.point2, p4, el.board);
+    el.rendNode2 = node2;
 
-    var x = Math.round(radius * el.board.unitX * el.board.zoomX); // Breite des umgebenden Rechtecks?
-    var y = Math.round(radius * el.board.unitY * el.board.zoomY); // Hoehe des umgebenden Rechtecks?
-    node2.style.width = x;
-    node2.style.height = y;
-    node2.setAttribute('coordsize', x+','+y);
-    var nodePath = this.container.ownerDocument.createElement('v:path');
-    nodePath.setAttribute('id', el.id+'path');
-
-    var p4coords = el.board.algebra.projectPointToCircle(el.point3,el);    
-
-    var pathString = 'm ' + el.midpoint.coords.scrCoords[1] + ',' + el.midpoint.coords.scrCoords[2] + ' l ';  
-    pathString += el.point2.coords.scrCoords[1] + ',' + el.point2.coords.scrCoords[2] + ' at ';
-    pathString += (el.midpoint.coords.scrCoords[1]-x) + ',' + (el.midpoint.coords.scrCoords[2]-y) + ',';
-    pathString += (el.midpoint.coords.scrCoords[1]+x) + ',' + (el.midpoint.coords.scrCoords[2]+y);
-    pathString += ' ' + el.point2.coords.scrCoords[1] + ',' + el.point2.coords.scrCoords[2];
-    pathString += ', ' + p4coords.scrCoords[1] + ',' + p4coords.scrCoords[2] + ' l ';
-    pathString += el.midpoint.coords.scrCoords[1] + ',' + el.midpoint.coords.scrCoords[2] + ' x e';
-
-    nodePath.setAttribute('v', pathString);
-    node2.appendChild(nodePath);
-
-    var nodeFill = this.container.ownerDocument.createElement('v:fill');
-    nodeFill.setAttribute('id',el.id+'_fillnode');
-    nodeFill.setAttribute('opacity', (el.visProp['fillOpacity']*100)+'%');
-    node2.appendChild(nodeFill);    
+    /* fill props */
+    this.setObjectFillColor(el, el.visProp['fillColor'], el.visProp['fillOpacity'])
     
-    this.appendChildPrimitive(node,'lines');
-    //this.container.appendChild(node);
-    //node.style.zIndex = "4"; 
-
-    this.appendChildPrimitive(node2,'angles');
-/*    node2.style.zIndex = "2";
-    this.container.appendChild(node2);  */
-
-    el.rendNodeFill = node2;
+    /* append nodes */
+    this.appendChildPrimitive(node,'lines'); //arc
+    this.appendChildPrimitive(node2,'angles'); //fill
     
+    /* draft mode */
     if(el.visProp['draft']) {
        this.setDraft(el);
     }
 }
 
-JXG.VMLRenderer.prototype.drawAngle = function(el) {
-    var node = this.container.ownerDocument.createElement('v:shape');
-    node.style.position = 'absolute';
-    node.setAttribute('filled', 'true');
-    node.setAttribute('fillcolor', el.visProp['fillColor']); 
-    node.setAttribute('stroked', 'false');
-    node.style.zIndex = "2";
-    node.setAttribute('id', el.id+'_1');
-    
-    var x = Math.round(el.radius * el.board.unitX * el.board.zoomX); // Breite des umgebenden Rechtecks?
-    var y = Math.round(el.radius * el.board.unitY * el.board.zoomY); // Hoehe des umgebenden Rechtecks?
-    node.style.width = x;
-    node.style.height = y;
-    node.setAttribute('coordsize', x+','+y);
+/**
+ * Updates properties of an arc that already exists.
+ * @param {JXG.Arc} arc Reference to an arc object, that has to be updated.
+ * @see JXG.Arc
+ * @see #drawArc
+ */
+JXG.AbstractRenderer.prototype.updateArc = function(el) { 
+    // AW: brutaler fix der update-Methode...
+    this.remove(el.rendNode);
+    this.remove(el.rendNodeFill);     
+    this.remove(el.rendNode2);
+    this.drawArc(el);
+    this.setDraft(el);
+    return;
+};
 
+JXG.VMLRenderer.prototype.drawAngle = function(el) {
+    /* some computations */
     var circle = {};  // um projectToCircle benutzen zu koennen...
     circle.midpoint = el.point2;
     circle.getRadius = function() {
         return el.radius;
     }
     var projectedP1 = el.board.algebra.projectPointToCircle(el.point1,circle);
-    var projectedP3 = el.board.algebra.projectPointToCircle(el.point3,circle);    
+    var projectedP3 = el.board.algebra.projectPointToCircle(el.point3,circle);  
     
-    var nodePath = this.container.ownerDocument.createElement('v:path');
-    nodePath.setAttribute('id', el.id+"_path");
-
-    var pathString = 'm ' + el.point2.coords.scrCoords[1] + ',' + el.point2.coords.scrCoords[2] + ' l ';  
-    pathString += projectedP1.scrCoords[1] + ',' + projectedP1.scrCoords[2] + ' at ';
-    pathString += (el.point2.coords.scrCoords[1]-x) + ',' + (el.point2.coords.scrCoords[2]-y) + ',';
-    pathString += (el.point2.coords.scrCoords[1]+x) + ',' + (el.point2.coords.scrCoords[2]+y);
-    pathString += ' ' + projectedP1.scrCoords[1] + ',' + projectedP1.scrCoords[2];
-    pathString += ', ' + projectedP3.scrCoords[1] + ',' + projectedP3.scrCoords[2] + ' l ';
-    pathString += el.point2.coords.scrCoords[1] + ',' + el.point2.coords.scrCoords[2] + ' x e';
-    
-    //alert(pathString);
-    nodePath.setAttribute('v', pathString);
-    node.appendChild(nodePath);    
-
-    var nodeFill = this.container.ownerDocument.createElement('v:fill');
-    nodeFill.setAttribute('opacity', el.visProp['fillOpacity']*10+'%');
-    nodeFill.setAttribute('id',el.id+'_fillnode');
-    node.appendChild(nodeFill);    
-
     var p = {};
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.point2.coords.usrCoords[1], el.board.origin.scrCoords[2]/(el.board.unitY*el.board.zoomY)],
@@ -321,38 +306,55 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
     var angle1 = el.board.algebra.trueAngle(el.point3, el.point2, p);
     if(angle2 < angle1) {
         angle1 -= 360;
-    }
-    var node2 = this.container.ownerDocument.createElement('v:arc');
-    node2.style.position = 'absolute';
-    node2.style.left = (el.point2.coords.scrCoords[1] - Math.round(el.radius * el.board.unitX * el.board.zoomX)) + 'px'; 
-    node2.style.top = (el.point2.coords.scrCoords[2] - Math.round(el.radius * el.board.unitY * el.board.zoomY))  + 'px'; 
-    node2.style.width = (Math.round(el.radius * el.board.unitX * el.board.zoomX)*2) + 'px'; 
-    node2.style.height = (Math.round(el.radius * el.board.unitY * el.board.zoomY)*2) + 'px'; 
-    node2.setAttribute('startangle', angle1);
-    node2.setAttribute('endangle', angle2);   
-    node2.setAttribute('stroked', 'true');
-    node2.setAttribute('strokecolor', el.visProp['strokeColor']);
-    node2.setAttribute('strokeweight', el.visProp['strokeWidth']);
-    node2.setAttribute('filled', 'false');
-    node2.style.zIndex = "4"; 
-    node2.setAttribute('id', el.id+"_2");    
+    }    
+
+    /* arc line */
+    var node = this.drawArcLine(el.id, el.radius, angle1, angle2, el.point2, el.board)
+    el.rendNode = node;
+
+    /* stroke color and width */
+    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
+    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     
-    this.container.appendChild(node);
-    this.container.appendChild(node2);
-    el.rendNode1 = node;
+    /* dashstyle */
+    var tmp = el.visProp['dash'];
+    var nodeStroke = this.getElementById(el.id+'stroke');
+    if(nodeStroke == null) {
+        nodeStroke = this.container.ownerDocument.createElement('v:stroke');
+        nodeStroke.setAttribute('id', el.id+'stroke');
+        node.appendChild(nodeStroke);
+    }    
+    nodeStroke.setAttribute('dashstyle', this.dashArray[tmp]);    
+    node.appendChild(nodeStroke);    
+   
+    /* arc fill */
+    var p1 = {};
+    p1.coords = projectedP1;  
+    var p3 = {}
+    p3.coords = projectedP3;
+    var node2 = this.drawArcFill(el.id, el.radius, el.point2, p1, p3, el.board);
     el.rendNode2 = node2;
+
+    /* fill props */
+    this.setObjectFillColor(el, el.visProp['fillColor'], el.visProp['fillOpacity'])
+    
+    /* append nodes */
+    this.appendChildPrimitive(node,'lines'); //arc
+    this.appendChildPrimitive(node2,'angles'); //fill
+    
+    /* draft mode */
+    if(el.visProp['draft']) {
+       this.setDraft(el);
+    }
 
     if(!el.visProp['visible']) {
         el.hideElement(el);
     }
-    //if(el.visProp['draft']) {
-    //   this.setDraft(el);
-    //}
 }
 
 JXG.VMLRenderer.prototype.updateAngle = function(el) {
     // erstmal nur der brutale Weg... 
-    this.remove(el.rendNode1);
+    this.remove(el.rendNode);
     this.remove(el.rendNode2);  
     this.drawAngle(el);
     return;
@@ -406,19 +408,11 @@ JXG.VMLRenderer.prototype.removeGrid = function(board) {
 
 JXG.VMLRenderer.prototype.hide = function(el) {
     if(!JXG.IsPoint(el)) {
-        if(el.type != JXG.OBJECT_TYPE_ANGLE) {
-            var node = el.rendNode;
-            node.style.visibility = "hidden"; 
-            if(el.type == JXG.OBJECT_TYPE_ARC) {
-                node = el.rendNodeFill; 
-                node.style.visibility = "hidden";         
-            }
-        }
-        else {
-            var node = el.rendNode1;
-            node.style.visibility = "hidden"; 
-            node = el.rendNode2;
-            node.style.visibility = "hidden"; 
+        var node = el.rendNode;
+        node.style.visibility = "hidden"; 
+        if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
+            node = el.rendNodeFill; 
+            node.style.visibility = "hidden";         
         }
     }
     else {
@@ -436,20 +430,12 @@ JXG.VMLRenderer.prototype.hide = function(el) {
 }
 
 JXG.VMLRenderer.prototype.show = function(el) {
-    if(!JXG.IsPoint(el)) {
-        if(el.type != JXG.OBJECT_TYPE_ANGLE) {    
-            var node = el.rendNode;
-            node.style.visibility = "inherit";  
-            if(el.type == JXG.OBJECT_TYPE_ARC) {
-                node = el.rendNodeFill; 
-                node.style.visibility = "inherit";         
-            }
-        }
-        else {
-            var node = el.rendNode1;
-            node.style.visibility = "inherit";     
-            node = el.rendNode2;
-            node.style.visibility = "inherit";
+    if(!JXG.IsPoint(el)) {  
+        var node = el.rendNode;
+        node.style.visibility = "inherit";  
+        if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
+            node = el.rendNodeFill; 
+            node.style.visibility = "inherit";         
         }
     }
     else {
@@ -469,7 +455,7 @@ JXG.VMLRenderer.prototype.show = function(el) {
 JXG.VMLRenderer.prototype.setObjectDash = function(el) {
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) { // Punkte haben keine dash-Eigenschaft
         if(el.type == JXG.OBJECT_TYPE_ANGLE) {
-            var node = el.rendNode2; 
+            var node = el.rendNode; 
                 var tmp = el.visProp['dash'];
                 node.setAttribute('dashstyle', this.dashArray[tmp]);            
         }
@@ -498,23 +484,10 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
         c = color;
     }
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
-        if(el.type == JXG.OBJECT_TYPE_ANGLE) {
-            var node = el.rendNode2; 
-            node.setAttribute('stroked', 'true');
-            node.setAttribute('strokecolor', c);
-            var nodeStroke = this.getElementById(el.id+'stroke');
-            if(nodeStroke == null) {
-                nodeStroke = this.container.ownerDocument.createElement('v:stroke');
-                nodeStroke.setAttribute('id', el.id+'stroke');
-                node.appendChild(nodeStroke);
-            }
-            if (o!=undefined) nodeStroke.setAttribute('opacity', (o*100)+'%');
-        }
-        else if(el.type == JXG.OBJECT_TYPE_TEXT) {
+        if(el.type == JXG.OBJECT_TYPE_TEXT) {
             el.rendNode.style.color = c;
         }        
-        else {
-            if(el.name == "blubb") alert("hier"+o+" "+c);        
+        else {       
             var node = el.rendNode;
             node.setAttribute('stroked', 'true');
             node.setAttribute('strokecolor', c);
@@ -585,25 +558,21 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         c = color;
     }
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
-        if(el.type == JXG.OBJECT_TYPE_ARC) {
-            node = el.rendNodeFill; 
+        if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
+            var node = document.getElementById(el.id+'_fillnode');
+            if(node == null) {
+                node = this.container.ownerDocument.createElement('v:fill');
+                node.setAttribute('id',el.id+'_fillnode');
+                el.rendNode2.appendChild(node);
+            }        
+            el.rendNodeFill = node; 
             if(c == 'none') {
-                node.setAttribute('filled', 'false');
+                el.rendNode2.setAttribute('filled', 'false');
             }
             else {
-                node.setAttribute('filled', 'true');
-                node.setAttribute('fillcolor', c); 
+                el.rendNode2.setAttribute('filled', 'true');
+                el.rendNode2.setAttribute('fillcolor', c); 
             }
-        }
-        else if(el.type == JXG.OBJECT_TYPE_ANGLE) {
-            node = el.rendNode1; 
-            if(c == 'none') {
-                node.setAttribute('filled', 'false');
-            }
-            else {
-                node.setAttribute('filled', 'true');
-                node.setAttribute('fillcolor', c); 
-            }         
         }
         else {
             node = el.rendNode;
@@ -622,7 +591,7 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
             var nodeFill = document.getElementById(el.id+'_fillnode');
             if(nodeFill == null) {
                 nodeFill = this.container.ownerDocument.createElement('v:fill');
-                nodeFill.setAttribute('id',node.id+'_fillnode');
+                nodeFill.setAttribute('id',el.id+'_fillnode');
                 node.appendChild(nodeFill);
             }        
             el.rendNodeFill = nodeFill;            
@@ -658,11 +627,19 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         var nodeFill = document.getElementById(el.id+'_fillnode');
         if(nodeFill == null) {
             nodeFill = this.container.ownerDocument.createElement('v:fill');
-            nodeFill.setAttribute('id',node.id+'_fillnode');
-            node.appendChild(nodeFill);
+            nodeFill.setAttribute('id',el.id+'_fillnode');
+            if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
+                el.rendNode2.appendChild(nodeFill);
+            }
+            else {
+                el.rendNode.appendChild(nodeFill);
+            }
         }        
-        if (o!=undefined) nodeFill.setAttribute('opacity', (o*100)+'%');
-        el.rendNodeFill = nodeFill;
+        el.rendNodeFill = nodeFill;        
+        if (o!=undefined) {
+            nodeFill.setAttribute('opacity', (o*100)+'%');
+            //alert(el.name+"     "+nodeFill.getAttribute('opacity')+"......"+o);
+        }
     }
 }
 
@@ -700,6 +677,50 @@ JXG.VMLRenderer.prototype.setDashStyle = function(node,visProp) {
         node2.setAttribute('id', node.id+'stroke');
         node2.setAttribute('dashstyle', this.dashArray[visProp['dash']]);
         node.appendChild(node2);
+    }
+};
+
+/**
+ * Sets an elements stroke width.
+ * @param {Object} el Reference to the geometry element.
+ * @param {int} width The new stroke width to be assigned to the element.
+ */
+JXG.AbstractRenderer.prototype.setObjectStrokeWidth = function(el, width) {
+    var w;
+    if (typeof width=='function') {
+        w = width();
+    } else {
+        w = width;
+    }
+    //w = (w>0)?w:0;
+    
+    if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
+        var node = el.rendNode;
+        this.setPropertyPrimitive(node,'stroked', 'true');
+        if (w!=null) { 
+            this.setPropertyPrimitive(node,'stroke-width',w);    
+        }
+    }
+    else {
+        if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
+            var node = el.rendNode;
+            this.setPropertyPrimitive(node,'stroked', 'true');
+            if (w!=null) { 
+                this.setPropertyPrimitive(node,'stroke-width',w); 
+            }
+        }
+        else {
+            var node = el.rendNodeX1;
+            this.setPropertyPrimitive(node,'stroked', 'true');
+            if (w!=null) { 
+                this.setPropertyPrimitive(node,'stroke-width',w);  
+            }
+            var node = el.rendNodeX2;
+            this.setPropertyPrimitive(node,'stroked', 'true');
+            if (w!=null) { 
+                this.setPropertyPrimitive(node,'stroke-width',w); 
+            }
+        }
     }
 };
 
