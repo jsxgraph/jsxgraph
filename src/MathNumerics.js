@@ -481,28 +481,42 @@ JXG.Math.Numerics.sinh = function(x) {
  * Compute coordinates for the rectangles showing the Riemann sum.
  * @param {f} 
  * @param {n} 
- * @param {type} 'left', 'right', 'middle', or 'trapezodial'
+ * @param {type} 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'
  * @param {start} 
  * @param {end} 
  */
 JXG.Math.Numerics.riemann = function(f, n, type, start, end) {
-    var xarr,yarr,i,delta,j,x,y;
+    var xarr,yarr,i,delta,j,x,y,x1,delta1,y1;
     xarr = [];
     yarr = [];
     j = 0;
     x = start;
     n = Math.floor(n);
     xarr[j] = x; yarr[j] = 0.0;
+    
     if (n>0) {
         delta = (end-start)/n;
-        for (i=0;i<n;i++) {
+        delta1 = delta*0.01; // for 'lower' and 'upper'
         
+        for (i=0;i<n;i++) {
             if (type=='right') {
                 y = f(x+delta);
             } else if (type=='middle') {
                 y = f(x+delta*0.5);
-            } else { // (type=='left') of (type=='trapezodial')
+            } else if ((type=='left') || (type=='trapezodial')) {
                 y = f(x);
+            } else if (type=='lower') {
+                y = f(x);
+                for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
+                    y1 = f(x1);
+                    if (y1<y) { y = y1 };
+                }
+            } else { // (type=='upper')
+                y = f(x);
+                for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
+                    y1 = f(x1);
+                    if (y1>y) { y = y1 };
+                }
             }
             
             j++;
@@ -523,17 +537,18 @@ JXG.Math.Numerics.riemann = function(f, n, type, start, end) {
  * Computation of the Riemann sum.
  * @param {f} 
  * @param {n} 
- * @param {type} 'left', 'right', 'middle', or 'trapezodial'
+ * @param {type} 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'
  * @param {start} 
  * @param {end} 
  */
 JXG.Math.Numerics.riemannsum = function(f, n, type, start, end) {
-    var sum,i,delta,x,y;
+    var sum,i,delta,x,y,x1,delta1,y1;
     sum = 0.0;
     x = start;
     n = Math.floor(n);
     if (n>0) {
         delta = (end-start)/n;
+        delta1 = delta*0.01; // for 'lower' and 'upper'
         for (i=0;i<n;i++) {
             if (type=='right') {
                 y = f(x+delta);
@@ -541,8 +556,20 @@ JXG.Math.Numerics.riemannsum = function(f, n, type, start, end) {
                 y = f(x+delta*0.5);
             } else if (type=='trapezodial') {
                 y = 0.5*(f(x+delta)+f(x));
-            } else { // (type=='left') 
+            } else if (type=='left') { 
                 y = f(x);
+            } else if (type=='lower') {
+                y = f(x);
+                for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
+                    y1 = f(x1);
+                    if (y1<y) { y = y1 };
+                }
+            } else { // (type=='upper')
+                y = f(x);
+                for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
+                    y1 = f(x1);
+                    if (y1>y) { y = y1 };
+                }
             }
             sum += delta*y;
             x += delta;
