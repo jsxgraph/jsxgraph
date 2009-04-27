@@ -72,40 +72,72 @@ p0 = brd.createElement('point',[0,0],{name:''});
 p1 = brd.createElement('point',[2.0-r1,0],{name:''});
 p2 = brd.createElement('point',[-r1,0],{name:''});
 
-brd.createElement('circle',[p0,Math.abs(1.0/b0)]);
-p1c = brd.createElement('circle',[p0,Math.abs(1/b0)],{visible:false});
-x0 = p0.X();
-y0 = p0.Y();
+c0 = brd.createElement('circle',[p0,Math.abs(1.0/b0)]);
+c1 = brd.createElement('circle',[p1,Math.abs(1/b1)]);
+c2 = brd.createElement('circle',[p2,Math.abs(1/b2)]);
+c0.curvature = b0;
+c1.curvature = b1;
+c2.curvature = b2;
 
-brd.createElement('circle',[p1,Math.abs(1/b1)]);
-x1 = p1.X();
-y1 = p1.Y();
-
-brd.createElement('circle',[p2,Math.abs(1/b2)]);
-x2 = p2.X();
-y2 = p2.Y();
+x0 = c0.midpoint.X();
+x1 = c1.midpoint.X();
+x2 = c2.midpoint.X();
+y0 = c0.midpoint.Y();
+y1 = c1.midpoint.Y();
+y2 = c2.midpoint.Y();
 
 b3 = solveQ2(b0,b1,b2,0);
 bx3 = solveQ2(b0*x0,b1*x1,b2*x2,2);
 by3 = solveQ2(b0*y0,b1*y1,b2*y2,2);
 
 p3 = brd.createElement('point',[bx3[0]/b3[0],by3[0]/b3[0]],{name:''});
-brd.createElement('circle',[p3,Math.abs(1.0/b3[0])]);
+c3 = brd.createElement('circle',[p3,Math.abs(1.0/b3[0])]);
+c3.curvature = b3[0];
 
+/*
 p4 = brd.createElement('point',[bx3[1]/b3[1],by3[1]/b3[1]],{name:''});
-brd.createElement('circle',[p4,Math.abs(1.0/b3[1])]);
+c4 = brd.createElement('circle',[p4,Math.abs(1.0/b3[1])]);
+c4.curvature = b3[1];
+*/
+newCirc = function(circ0,circ1,circ2,nr) {
+    var b0,b1,b2,x0,x1,x2,y0,y1,y3,  b3,b3x,b3y, p,c;
+    b0 = circ0.curvature;
+    b1 = circ1.curvature;
+    b2 = circ2.curvature;
+
+    x0 = circ0.midpoint.X();
+    x1 = circ1.midpoint.X();
+    x2 = circ2.midpoint.X();
+    
+    y0 = circ0.midpoint.Y();
+    y1 = circ1.midpoint.Y();
+    y2 = circ2.midpoint.Y();
+    
+    b3 = solveQ2(b0,b1,b2,0);
+    bx3 = solveQ2(b0*x0,b1*x1,b2*x2,2);
+    by3 = solveQ2(b0*y0,b1*y1,b2*y2,2);
+
+    if (nr==1) {
+        p = brd.createElement('point',[bx3[1]/b3[1],by3[1]/b3[1]],{name:''});
+        c = brd.createElement('circle',[p,Math.abs(1.0/b3[1])]);
+        c.curvature = b3[1];
+    } else {
+        p = brd.createElement('point',[bx3[0]/b3[0],by3[0]/b3[0]],{name:''});
+        c = brd.createElement('circle',[p,Math.abs(1.0/b3[0])]);
+        c.curvature = b3[0];
+    }
+    return c;
+}
 
 //-------------------------------------------------------
-b3 = solveQ2(b0,b2,b3[0],0);
-bx3 = solveQ2(b0*x0,b2*x2,b3[0]*p3.X(),2);
-by3 = solveQ2(b0*y0,b2*y2,b3[0]*p3.Y(),2);
-alert(b3.toString()+' '+bx3.toString()+' '+by3.toString());
+/*
+c4 = newCirc(c0,c1,c3);
+c5 = newCirc(c0,c1,c4);
+c6 = newCirc(c0,c1,c5);
+c7 = newCirc(c0,c4,c5);
+*/
 
-p5 = brd.createElement('point',[bx3[0]/b3[0],by3[0]/b3[0]],{name:'x'});
-brd.createElement('circle',[p5,Math.abs(1.0/b3[0])]);
-
-p6 = brd.createElement('point',[bx3[1]/b3[1],by3[1]/b3[1]],{name:'y'});
-brd.createElement('circle',[p6,Math.abs(1.0/b3[1])]);
+c8 = newCirc(c0,c2,c3,1);
 
 
 /* ]]> */
