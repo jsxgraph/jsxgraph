@@ -1,0 +1,114 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<!--<script type="text/javascript" src="../distrib/jquery.min.js"></script>-->
+<script type="text/javascript" src="../distrib/prototype.js"></script>
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<!-- Drawing area -->
+<div id="box" class="jxgbox" style="width:600px; height:600px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
+<!-- Drawing area -->
+<div id="debug" style="display:block;"></div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, grid:true, unitX: 100, unitY: 100});
+HSV2RGB = function(H,S,V) {
+    var R,G,B, f,i,hTemp, p,q,t;
+    if (s==0) {
+        if (isNaN(H)) {
+            R = V;
+            G = V;
+            B = V;
+        } else {
+            return '#000000';
+        }
+    } else {
+        if (H>=360) {
+            hTemp = 0.0;
+        } else {
+            hTemp = H;
+        }
+        hTemp = hTemp / 60;     // h is now IN [0,6)
+        i = Math.floor(hTemp);        // largest integer <= h
+        f = hTemp - i;                  // fractional part of h
+        p = V * (1.0 - S);
+        q = V * (1.0 - (S * f));
+        t = V * (1.0 - (S * (1.0 - f)));
+        switch (i) {
+            case 0: R = V; G = t;  B = p; break;
+            case 1: R = q; G = V;  B = p; break;
+            case 2: R = p; G = V;  B = t; break;
+            case 3: R = p; G = q;  B = V; break;
+            case 4: R = t; G = p;  B = V; break;
+            case 5: R = V; G = p;  B = q; break;
+        }
+    }
+    R = Math.round(R*255).toString(16); R = (R.length==0)?'00':((R.length==1)?'0'+R:R);
+    G = Math.round(G*255).toString(16); G = (G.length==0)?'00':((G.length==1)?'0'+G:G);
+    B = Math.round(B*255).toString(16); B = (B.length==0)?'00':((B.length==1)?'0'+B:B);
+    return '#'+R+G+B; 
+}
+solveQ2 = function(x1,x2,x3,off) {
+    var a, b, c, d;
+    a = 0.5;
+    b = -(x1+x2+x3);
+    c = x1*x1+x2*x2+x3*x3-0.5*(x1+x2+x3)*(x1+x2+x3)-off;
+    d = b*b-4*a*c;
+    if (Math.abs(d)<0.00000001) d = 0.0;
+    $('debug').innerHTML += d+' ';
+    return [(-b+Math.sqrt(d))/(2.0*a),(-b-Math.sqrt(d))/(2.0*a)];
+}   
+    
+b0 = -0.5;
+r1 = 1.0;
+b1 = 1.0/r1;
+r2 = (2.0-r1);
+b2 = 1.0/r2;
+
+p0 = brd.createElement('point',[0,0],{name:''});
+p1 = brd.createElement('point',[2.0-r1,0],{name:''});
+p2 = brd.createElement('point',[-r1,0],{name:''});
+
+brd.createElement('circle',[p0,Math.abs(1.0/b0)]);
+p1c = brd.createElement('circle',[p0,Math.abs(1/b0)],{visible:false});
+x0 = p0.X();
+y0 = p0.Y();
+
+brd.createElement('circle',[p1,Math.abs(1/b1)]);
+x1 = p1.X();
+y1 = p1.Y();
+
+brd.createElement('circle',[p2,Math.abs(1/b2)]);
+x2 = p2.X();
+y2 = p2.Y();
+
+b3 = solveQ2(b0,b1,b2,0);
+bx3 = solveQ2(b0*x0,b1*x1,b2*x2,2);
+by3 = solveQ2(b0*y0,b1*y1,b2*y2,2);
+
+p3 = brd.createElement('point',[bx3[0]/b3[0],by3[0]/b3[0]],{name:''});
+brd.createElement('circle',[p3,Math.abs(1.0/b3[0])]);
+
+p4 = brd.createElement('point',[bx3[1]/b3[1],by3[1]/b3[1]],{name:''});
+brd.createElement('circle',[p4,Math.abs(1.0/b3[1])]);
+
+//-------------------------------------------------------
+b3 = solveQ2(b0,b2,b3[0],0);
+bx3 = solveQ2(b0*x0,b2*x2,b3[0]*p3.X(),2);
+by3 = solveQ2(b0*y0,b2*y2,b3[0]*p3.Y(),2);
+alert(b3.toString()+' '+bx3.toString()+' '+by3.toString());
+
+p5 = brd.createElement('point',[bx3[0]/b3[0],by3[0]/b3[0]],{name:'x'});
+brd.createElement('circle',[p5,Math.abs(1.0/b3[0])]);
+
+p6 = brd.createElement('point',[bx3[1]/b3[1],by3[1]/b3[1]],{name:'y'});
+brd.createElement('circle',[p6,Math.abs(1.0/b3[1])]);
+
+
+/* ]]> */
+</script>
+</body>
+</html>
