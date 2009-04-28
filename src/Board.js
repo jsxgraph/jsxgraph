@@ -743,9 +743,31 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
  * @param {JXG.GeometryElement} el A GeometryElement
  */
 JXG.Board.prototype.updateInfobox = function(el) {
+    var x, y;
     if(el.elementClass == JXG.OBJECT_CLASS_POINT) {
         this.infobox.setCoordinates(el.coords);
-        this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + el.coords.usrCoords[1] + ', ' + el.coords.usrCoords[2] + ')</span>';
+        x = Math.abs(el.coords.usrCoords[1]);
+        if (x>0.1) {
+            x = el.coords.usrCoords[1].toFixed(2);
+        } else if (x>=0.01) {
+            x = el.coords.usrCoords[1].toFixed(4);
+        } else if (x>=0.0001) {
+            x = el.coords.usrCoords[1].toFixed(6);
+        } else {
+            x = el.coords.usrCoords[1];
+        }
+        y = Math.abs(el.coords.usrCoords[2]);
+        if (y>0.1) {
+            y = el.coords.usrCoords[2].toFixed(2);
+        } else if (y>=0.01) {
+            y = el.coords.usrCoords[2].toFixed(4);
+        } else if (y>=0.0001) {
+            y = el.coords.usrCoords[2].toFixed(6);
+        } else {
+            y = el.coords.usrCoords[2];
+        }
+        
+        this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>';
         //this.infobox.nameHTML = '(' + el.coords.usrCoords[1] + ', ' + el.coords.usrCoords[2] + ')';
         this.renderer.show(this.infobox);
         this.renderer.updateLabel(this.infobox);
