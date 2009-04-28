@@ -371,31 +371,41 @@ JXG.Circle.prototype.maxX = function () {
 }
 
 JXG.createCircle = function(board, parentArr, atts) {
-    var el;
-    if( parentArr.length==2 && JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) ) {
+    var el, p, i;
+    p = [];
+    for (i=0;i<parentArr.length;i++) {
+        if (JXG.IsPoint(parentArr[i])) {
+            p[i] = parentArr[i];              // Point
+        } else if (parentArr[i].length>1) {
+            p[i] = board.createElement('point', parentArr[i], {visible:false,fixed:true});  // Coordinates
+        } else {
+            p[i] = parentArr[i];              // Something else (number, function, string)
+        }
+    }
+    if( parentArr.length==2 && JXG.IsPoint(p[0]) && JXG.IsPoint(p[1]) ) {
         // Point/Point
-        el = new JXG.Circle(board, 'twoPoints', parentArr[0], parentArr[1], atts['id'], atts['name']);
-    } else if( ( JXG.IsNumber(parentArr[0]) || JXG.IsFunction(parentArr[0]) || JXG.IsString(parentArr[0])) && (parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT) ) {
+        el = new JXG.Circle(board, 'twoPoints', p[0], p[1], atts['id'], atts['name']);
+    } else if( ( JXG.IsNumber(p[0]) || JXG.IsFunction(p[0]) || JXG.IsString(p[0])) && JXG.IsPoint(p[1]) ) {
         // Number/Point
-        el = new JXG.Circle(board, 'pointRadius', parentArr[1], parentArr[0], atts['id'], atts['name']);
-    } else if( ( JXG.IsNumber(parentArr[1]) || JXG.IsFunction(parentArr[1]) || JXG.IsString(parentArr[1])) && (parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT) ) {
+        el = new JXG.Circle(board, 'pointRadius', p[1], p[0], atts['id'], atts['name']);
+    } else if( ( JXG.IsNumber(p[1]) || JXG.IsFunction(p[1]) || JXG.IsString(p[1])) && JXG.IsPoint(p[0]) ) {
         // Point/Number
-        el = new JXG.Circle(board, 'pointRadius', parentArr[0], parentArr[1], atts['id'], atts['name']);
-    } else if( (parentArr[0].type == JXG.OBJECT_TYPE_CIRCLE) && (parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT) ) {
+        el = new JXG.Circle(board, 'pointRadius', p[0], p[1], atts['id'], atts['name']);
+    } else if( (p[0].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.IsPoint(p[1]) ) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointCircle', parentArr[1], parentArr[0], atts['id'], atts['name']);
-    } else if( (parentArr[1].type == JXG.OBJECT_TYPE_CIRCLE) && (parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT)) {
+        el = new JXG.Circle(board, 'pointCircle', p[1], p[0], atts['id'], atts['name']);
+    } else if( (p[1].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.IsPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointCircle', parentArr[0], parentArr[1], atts['id'], atts['name']);
-    } else if( (parentArr[0].type == JXG.OBJECT_TYPE_LINE) && (parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
+        el = new JXG.Circle(board, 'pointCircle', p[0], p[1], atts['id'], atts['name']);
+    } else if( (p[0].type == JXG.OBJECT_TYPE_LINE) && JXG.IsPoint(p[1])) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointLine', parentArr[1], parentArr[0], atts['id'], atts['name']);
-    } else if( (parentArr[1].type == JXG.OBJECT_TYPE_LINE) && (parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT)) {
+        el = new JXG.Circle(board, 'pointLine', p[1], p[0], atts['id'], atts['name']);
+    } else if( (p[1].type == JXG.OBJECT_TYPE_LINE) && JXG.IsPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointLine', parentArr[0], parentArr[1], atts['id'], atts['name']);
-    } else if( parentArr.length==3 && JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) && JXG.IsPoint(parentArr[2])) {
+        el = new JXG.Circle(board, 'pointLine', p[0], p[1], atts['id'], atts['name']);
+    } else if( parentArr.length==3 && JXG.IsPoint(p[0]) && JXG.IsPoint(p[1]) && JXG.IsPoint(p[2])) {
         // Circle through three points
-        var arr = JXG.createCircumcircle(board, parentArr, atts); // returns [center, circle]
+        var arr = JXG.createCircumcircle(board, p, atts); // returns [center, circle]
         arr[0].setProperty({visible:false});
         return arr[1];
     } else
