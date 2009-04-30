@@ -28,7 +28,7 @@ Plugin Name: JSXGraph
 Plugin URI: http://jsxgraph.org
 Description: Embedding jsxgraph constructions
 Author: Peter Wilfahrt
-Version: 0.2
+Version: 0.2.3
 Author URI: http://www.webconsul.de/
 */
 
@@ -39,29 +39,28 @@ Author URI: http://www.webconsul.de/
 function jsxgraph_head() {
   // Stylesheet
   $css_url = 'http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css';
-  if (file_exists(get_bloginfo("template_url") . '/jsxgraph.css')) {
+  if(file_exists(get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css'))
+    $css_url = get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css';
+  if(file_exists(get_bloginfo("template_url") . '/jsxgraph.css'))
     $css_url = get_bloginfo('template_url') . '/jsxgraph.css';
-  } else if (file_exists(get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css')) {
-	$css_url = get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css';
-  }
-  echo "\n<link rel='stylesheet' type='text/css' href='$css_url' media='screen' />\n";
 
   // prototype
   $prototype_url = "http://jsxgraph.uni-bayreuth.de/distrib/prototype.js";
-  if (file_exists(get_bloginfo("template_url") . "/prototype.js")) {
-    $prototype_url = get_bloginfo("template_url") . "/prototype.js";
-  } else if (file_exists(get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/prototype.js")) {
+  if(file_exists(get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/prototype.js"))
     $prototype_url = get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/prototype.js";
-  }
-  echo "<script type='text/javascript' src='$prototype_url'></script>\n";
+  if(file_exists(get_bloginfo("template_url") . "/prototype.js"))
+    $prototype_url = get_bloginfo("template_url") . "/prototype.js";
 
   // jsxgraph core
   $core_url = "http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js";
-  if (file_exists(TEMPLATEPATH . "/jsxgraphcore.js")) {
-    $core_url = get_bloginfo("template_url") . "/jsxgraphcore.js";
-  } else if (file_exists(get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/jsxgraphcore.js")) {
-    $core_url = get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/jsxgraphcore.js";
-  }
+  if(file_exists(get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/jsxgraphcore.js"))
+    $core_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/jsxgraphcore.js";
+  if(file_exists(get_bloginfo("template_url") ."/jsxgraphcore.js"))
+    $core_url = get_bloginfo("template_url") ."/jsxgraphcore.js";
+
+  // Header-Output
+  echo "\n<link rel='stylesheet' type='text/css' href='$css_url' media='screen' />\n";
+  echo "<script type='text/javascript' src='$prototype_url'></script>\n";
   echo "<script type='text/javascript' src='$core_url'></script>\n";
 }
 
@@ -113,7 +112,8 @@ function jsxgraph_filter($text) {
       }
       // construction by $input
       else {
-        $output .= $input[1];
+        for($i=1; $i<=sizeof($input); $i++)
+          ($i == 1 || $i == sizeof($input)) ? $output .= $input[$i] : $output .= ">". $input[$i];
       }
       $output .= "</script>";
 
