@@ -62,6 +62,7 @@ function jsxgraph_head() {
   echo "\n<link rel='stylesheet' type='text/css' href='$css_url' media='screen' />\n";
   echo "<script type='text/javascript' src='$prototype_url'></script>\n";
   echo "<script type='text/javascript' src='$core_url'></script>\n";
+  echo "<meta http-equiv='X-UA-Compatible' content='IE=7' />\n";
 }
 
 function jsxgraph_filter($text) {
