@@ -89,7 +89,8 @@ function jsxgraph_filter($courseid, $text) {
       }
       // construction by $input
       else {
-        $output .= $input[1];
+        for($i=1; $i<=sizeof($input); $i++)
+          ($i == 1 || $i == sizeof($input)) ? $output .= $input[$i] : $output .= ">". $input[$i];
       }
       $output .= "</script>";
 
