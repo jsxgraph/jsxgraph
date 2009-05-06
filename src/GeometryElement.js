@@ -143,7 +143,7 @@ JXG.GeometryElement = function() {
      */
     this.numTraces = 0;
 
- /**
+    /**
      * Stores the  transformations which are applied during update in an array
      * @type Array
      * @see JXG.Transformation
@@ -153,6 +153,18 @@ JXG.GeometryElement = function() {
     
     this.descendants = {};
     this.ancestors = {};
+
+    /**
+     * Stores variables for symbolic computations
+     * @type Object
+     */
+    this.symbolic = {};
+
+    /**
+     * Array of strings containing the polynomials defining the element.
+     * Used for determining geometric loci the groebner way.
+     */
+    this.polynoms = [];
 
 /**
   * [c,b0,b1,a,k,r,q0,q1]

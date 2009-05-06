@@ -415,3 +415,45 @@ JXG.unescapeHTML = function(str) {
 JXG.capitalize = function(str) {
     return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
 }
+
+JXG.isSilverlightInstalled = function() {
+    var isInstalled = false;
+
+    try
+    {
+        var activeX = null;
+        var tryOtherBrowsers = false;
+
+        if (window.ActiveXObject)
+        {
+            try
+            {
+                activeX = new ActiveXObject('AgControl.AgControl');
+                isInstalled = true;
+                activeX = null;
+            }
+            catch (e)
+            {
+                tryOtherBrowsers = true;
+            }
+        }
+        else
+        {
+            tryOtherBrowsers = true;
+        }
+        if (tryOtherBrowsers)
+        {
+            var slPlugin = navigator.plugins["Silverlight Plug-In"];
+            if (slPlugin)
+            {
+                    isInstalled = true;
+            }
+        }
+    }
+    catch (e)
+    {
+        isInstalled = false;
+    }
+
+    return isInstalled;
+}
