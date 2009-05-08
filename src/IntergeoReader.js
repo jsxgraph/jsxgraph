@@ -227,12 +227,14 @@ JXG.IntergeoReader = new function() {
     
     this.prepareString = function(fileStr){
     if (fileStr.indexOf('<')!=0) {
-    	bA = [];
-    	binary = false;
+    	var bA = [];
+    	//binary = false;
         for (i=0;i<fileStr.length;i++)
             bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
                    
-        fileStr = (new JXG.Util.Unzip(bA)).unzipFile("construction/intergeo.xml");  // Unzip
+        fileStr = (new JXG.Util.Unzip(bA)).unzipFile("construction/intergeo.xml");  // Unzip 
+                                                                                    // Extract "construction/intergeo.xml" from
+                                                                                    // the zip-archive in bA.
     }
     return fileStr;
 };
