@@ -53,6 +53,11 @@ JXG.Util.Unzip = function (barray){
     var gpflags;
     var files =0;
     var unzipped = [];
+    var crc;
+    var buf32k = new Array(32768);
+    var bIdx = 0;
+
+    var CRC, SIZE;
     
     var bitReverse = [
         0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
@@ -164,12 +169,7 @@ JXG.Util.Unzip = function (barray){
         }
         return res;
     };
-    
-    var buf32k = new Array(32768);
-    var bIdx = 0;
-
-    var CRC, SIZE;
-    
+        
     function flushBuffer(){
         //document.write('FLUSHBUFFER:'+buf32k);
         bIdx = 0;
@@ -762,6 +762,7 @@ JXG.Util.Unzip.prototype.unzip = function() {
  };
 	
 function skipdir(){
+    var crc, 
 	tmp = [];
 	if ((gpflags & 8)) {
 		tmp[0] = readByte();
