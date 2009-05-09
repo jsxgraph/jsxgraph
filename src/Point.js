@@ -460,6 +460,88 @@ JXG.Point.prototype.makeGlider = function (slideObject) {
     this.type = JXG.OBJECT_TYPE_GLIDER;
 
     this.slideObject.addChild(this);
+
+    if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
+        this.generatePolynom = function() {
+            var u1 = this.slideObject.point1.symbolic.x;
+            var u2 = this.slideObject.point1.symbolic.y;
+            var v1 = this.slideObject.point2.symbolic.x;
+            var v2 = this.slideObject.point2.symbolic.y;
+            var w1 = this.symbolic.x;
+            var w2 = this.symbolic.y;
+
+            /*
+             * The polynom in this case is determined by three points being colinear:
+             *
+             *      U (u1,u2)      W (w1,w2)                V (v1,v2)
+             *  ----x--------------x------------------------x----------------
+             *
+             *  The colinearity condition is
+             *
+             *      u2-w2       w2-v2
+             *     -------  =  -------           (1)
+             *      u1-w1       w1-v1
+             *
+             * Multiplying (1) with denominators is
+             *
+             *    u2w1 - u2v1 - w1w2 + w2v1 - u1w2 + u1v2 + w1w2 - w1v2 = 0
+             */
+
+            var p = ''+u2+'*'+w1+'-'+u2+'*'+v1+'-'+w1+'*'+w2+'+'+w2+'*'+v1+'-'+u1+'*'+w2+'+'+u1+'*'+v2+'+'+w1+'*'+w2+'-'+w1+'*'+v2;
+
+            return [p];
+        }
+    } else if (this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+        this.generatePolynom = function() {
+            /*
+             * We have four methods to construct a circle:
+             *   (a) Two points
+             *   (b) Midpoint and radius
+             *   (c) Midpoint and radius given by length of a segment
+             *   (d) Midpoint and radius given by another circle
+             *
+             * In case (b) we have to distinguish two cases:
+             *  (i)  radius is given as a number
+             *  (ii) radius is given as a function
+             * In the latter case there's no guarantee the radius depends on other geometry elements
+             * in a polynomial way so this case has to be omitted.
+             *
+             * Another tricky case is case (d):
+             * The radius depends on another circle so we have to cycle through the ancestors of each circle
+             * until we reach one that's radius does not depend on another circles radius.
+             *
+             *
+             * All cases (a) to (d) vary only in calculation of the radius. So the basic formulae for
+             * a glider G (g1,g2) on a circle with midpoint M (m1,m2) and radius r is just:
+             *
+             *     (g1-m1)^2 + (g2-m2)^2 - r^2 = 0
+             *
+             * So the easiest case is (b) with a fixed radius given as a number. The other two cases (a)
+             * and (c) are quite the same: Euclidean distance between two points A (a1,a2) and B (b1,b2),
+             * squared:
+             *
+             *     r^2 = (a1-b1)^2 + (a2-b2)^2
+             *
+             * For case (d) we have to cycle recursively through all defining circles and finally return the
+             * formulae for calculating r^2. For that we use JXG.Circle.symbolic.generateRadiusSquared().
+             */
+
+            var m1 = this.slideObject.midpoint.symbolic.x;
+            var m2 = this.slideObject.midpoint.symbolic.y;
+            var g1 = this.symbolic.x;
+            var g2 = this.symbolic.y;
+
+            var rsq = this.slideObject.symbolic.getRadius();
+
+            /* No radius can be calculated (Case b.ii) */
+            if (rsq == '')
+                return [];
+
+            var p = '(' + g1 + '-' + m1 + ')^2 + (' + g2 + '-' + m2 + ')^2 - (' + rsq + ')';
+            return [p];
+        }
+    }
+
     //this.position = 0;
     this.needsUpdate = true;
     this.update();
@@ -827,7 +909,7 @@ JXG.createPoint = function(board, parents, atts) {
 /**
  * Extra treatment for the glider point
  * The object on wihich the slider lives has to
- * be the last object in parentArr.#
+ * be the last object in parentArr.
  * parentArr consists of three elements: [number, number, object]
  */
 JXG.createGlider = function(board, parents, atts) {

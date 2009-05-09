@@ -39,3 +39,11 @@ JXG.rendererFiles = [];
 JXG.rendererFiles['svg'] = 'SVGRenderer';
 JXG.rendererFiles['vml'] = 'VMLRenderer';
 JXG.baseFiles = null;
+// this maybe required by additional software/extensions and/or future renderers
+JXG.requirePath = '';
+for (var i=0;i<document.getElementsByTagName("script").length;i++) {
+    var s = document.getElementsByTagName("script")[i];
+    if (s.src && s.src.match(/loadjsxgraphInOneFile\.js(\?.*)?$/))
+        JXG.requirePath = s.src.replace(/loadjsxgraphInOneFile\.js(\?.*)?$/,'');
+}
+

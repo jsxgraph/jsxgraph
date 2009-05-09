@@ -129,7 +129,7 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
      * @see #method     
      */     
     this.circle = null;
-    
+
     if(method == 'twoPoints') {
         this.point2 = JXG.GetReferenceFromParameter(board,par2);
         this.point2.addChild(this);
@@ -178,6 +178,48 @@ JXG.Circle.prototype.hasPoint = function (x, y) {
     return (Math.abs(dist-r) < genauigkeit);
 };
 
+/**
+ * Generate symbolic radius calculation for loci determination with Groebner-Basis algorithm.
+ * @type String
+ * @return String containing symbolic calculation of the circle's radius or an empty string
+ * if the radius can't be expressed in a polynomial equation.
+ */
+JXG.Circle.prototype.symbolic.getRadius = function () {
+    /*
+     * Four cases:
+     *
+     *   (a) Two points
+     *   (b) Midpoint and radius
+     *   (c) Midpoint and radius given by length of a segment
+     *   (d) Midpoint and radius given by another circle
+     */
+
+    var rsq = '';
+
+    if (this.method == "twoPoints") {
+        var m1 = this.midpoint.symbolic.x;
+        var m2 = this.midpoint.symbolic.y;
+        var p1 = this.point2.symbolic.x;
+        var p2 = this.point2.symbolic.y;
+
+        rsq = '(' + p1 + '-' + m1 + ')^2 + (' + p2 + '-' + m2 + ')^2';
+    } else if (this.method == "pointRadius") {
+        if (typeof(this.radius) == 'Number')
+            rsq = '' + this.radius*this.radius;
+    } else if (this.method == "pointLine") {
+        var p1 = this.line.point1.symbolic.x;
+        var p2 = this.line.point1.symbolic.y;
+
+        var q1 = this.line.point2.symbolic.x;
+        var q2 = this.line.point2.symbolic.y;
+
+        rsq = '(' + p1 + '-' + q1 + ')^2 + (' + p2 + '-' + q2 + ')^2';
+    } else if (this.method == "pointCircle") {
+        rsq = this.circle.symbolic.getRadius();
+    }
+
+    return rsq;
+}
 
 /**
  * Uses the boards renderer to update the arrow.

@@ -287,7 +287,7 @@ JXG.Util.Unzip = function (barray){
         }
         if (debug){
         	document.write('<br>Tree: '+Places.length);
-        	for (a=0;a<32;a++){
+        	for (var a=0;a<32;a++){
             	document.write("Places["+a+"].b0="+Places[a].b0+"<br>");
             	document.write("Places["+a+"].b1="+Places[a].b1+"<br>");
         	}
@@ -617,7 +617,7 @@ JXG.Util.Unzip = function (barray){
 JXG.Util.Unzip.prototype.unzipFile = function(name) {
 	this.unzip();
 	//alert(unzipped[0][1]);
-	for (i=0;i<unzipped.length;i++){
+	for (var i=0;i<unzipped.length;i++){
 		if(unzipped[i][1]==name) {
 			return unzipped[i][0];
 		}
@@ -655,7 +655,7 @@ JXG.Util.Unzip.prototype.unzip = function() {
  	if (debug)
  		alert("NEXTFILE");
  	outputArr = [];
- 	tmp = [];
+ 	var tmp = [];
 	tmp[0] = readByte();
 	tmp[1] = readByte();
 	if (tmp[0] == parseInt("78",16) && tmp[1] == parseInt("da",16)){ //GZIP
@@ -682,7 +682,7 @@ JXG.Util.Unzip.prototype.unzip = function() {
 			gpflags = readByte();
 			gpflags |= (readByte()<<8);
 			
-			method = readByte();
+			var method = readByte();
 			method |= (readByte()<<8);
 			if (debug)
 				alert("method: "+method);
@@ -692,17 +692,17 @@ JXG.Util.Unzip.prototype.unzip = function() {
 			readByte();
 			readByte();
 			
-			crc = readByte();
+			var crc = readByte();
 			crc |= (readByte()<<8);
 			crc |= (readByte()<<16);
 			crc |= (readByte()<<24);
 			
-			compSize = readByte();
+			var compSize = readByte();
 			compSize |= (readByte()<<8);
 			compSize |= (readByte()<<16);
 			compSize |= (readByte()<<24);
 			
-			size = readByte();
+			var size = readByte();
 			size |= (readByte()<<8);
 			size |= (readByte()<<16);
 			size |= (readByte()<<24);
@@ -710,10 +710,10 @@ JXG.Util.Unzip.prototype.unzip = function() {
 			if (debug)
 				alert("local CRC: "+crc+"\nlocal Size: "+size+"\nlocal CompSize: "+compSize);
 			
-			filelen = readByte();
+			var filelen = readByte();
 			filelen |= (readByte()<<8);
 			
-			extralen = readByte();
+			var extralen = readByte();
 			extralen |= (readByte()<<8);
 			
 			if (debug)
@@ -721,7 +721,7 @@ JXG.Util.Unzip.prototype.unzip = function() {
 			i = 0;
 			nameBuf = [];
 			while (filelen--){ 
-				c = readByte();
+				var c = readByte();
 				if (c == "/" | c ==":"){
 					i = 0;
 				} else if (i < NAMEMAX-1)
@@ -734,7 +734,7 @@ JXG.Util.Unzip.prototype.unzip = function() {
 			if (!fileout)
 				fileout = nameBuf;
 			
-			i = 0;
+			var i = 0;
 			while (i < extralen)
 				c = readByte();
 				
@@ -771,20 +771,20 @@ function skipdir(){
 		tmp[3] = readByte();
 		
 		if (tmp[0] == parseInt("50",16) && tmp[1] == parseInt("4b",16) && tmp[2] == parseInt("07",16) && tmp[3] == parseInt("08",16)){
-			crc = readByte();
+			var crc = readByte();
 			crc |= (readByte()<<8);
 			crc |= (readByte()<<16);
 			crc |= (readByte()<<24);
 		} else {
-			crc = tmp[0] | (tmp[1]<<8) | (tmp[2]<<16) | (tmp[3]<<24);
+			var crc = tmp[0] | (tmp[1]<<8) | (tmp[2]<<16) | (tmp[3]<<24);
 		}
 		
-		compSize = readByte();
+		var compSize = readByte();
 		compSize |= (readByte()<<8);
 		compSize |= (readByte()<<16);
 		compSize |= (readByte()<<24);
 		
-		size = readByte();
+		var size = readByte();
 		size |= (readByte()<<8);
 		size |= (readByte()<<16);
 		size |= (readByte()<<24);
@@ -815,7 +815,7 @@ function skipdir(){
 	readByte();
 	
 	readByte();
-	os = readByte();
+	var os = readByte();
 	
 	if ((gpflags & 4)){
 		tmp[0] = readByte();
@@ -823,12 +823,13 @@ function skipdir(){
 		len = tmp[0] + 256*tmp[1];
 		if (debug)
 			alert("Extra field size: "+len);
-		for (i=0;i<len;i++)
+		for (var i=0;i<len;i++)
 			readByte();
 	}
 	
+    var c;
 	if ((gpflags & 8)){
-		i=0;
+		var i=0;
 		nameBuf=[];
 		while (c=readByte()){
 			if(c == "7" || c == ":")
@@ -1008,7 +1009,7 @@ JXG.Util.Base64 = {
     
     _destrip: function (stripped){
         stripped.replace(/ /g, "");
-        lines = [];
+        var lines = [];
         var lineno = stripped.length / 76;
         for (var i = 0; i < lineno; i++)
             lines[i]=stripped.substr(i * 76, 76);
@@ -1023,7 +1024,7 @@ JXG.Util.Base64 = {
     decodeAsArray: function (input){
         var dec = this.decode(input);
         var ar = [];
-        for (i=0;i<dec.length;i++){
+        for (var i=0;i<dec.length;i++){
             ar[i]=dec.charCodeAt(i);
         }
         return ar;
@@ -1035,7 +1036,7 @@ JXG.Util.Base64 = {
 };
 
 JXG.Util.asciiCharCodeAt = function(str,i){
-	c = str.charCodeAt(i);
+	var c = str.charCodeAt(i);
 	if (c>255){
     	switch (c) {
 			case 8364: c=128;

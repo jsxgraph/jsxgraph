@@ -60,7 +60,7 @@ JXG.GeometryElement = function() {
      * @see JXG.Board
      */
     this.board = null;
-    
+
     /**
      * Unique identifier for the element. Equivalent to id-attribute of renderer element.
      * @type String
@@ -164,7 +164,7 @@ JXG.GeometryElement = function() {
      * Array of strings containing the polynomials defining the element.
      * Used for determining geometric loci the groebner way.
      */
-    this.polynoms = [];
+    this.generatePolynoms = function () { return []; };
 
 /**
   * [c,b0,b1,a,k,r,q0,q1]

@@ -33,6 +33,33 @@
         s = board.createElement('line', [p1, p2], {strokeColor:'green', straightLast: false});
         var ticks = board.createElement('ticks', [s, [-1.0, 1.0, 3.0, 9.0]]);
 
+        function showAncestors(p) {
+            document.getElementById("debug").innerHTML += p.id + ";" + p.name + ": ";
+            for(var t in p.ancestors) {
+                document.getElementById("debug").innerHTML += t + " -> " + p.ancestors[t] + "<br/>";
+            }
+            document.getElementById("debug").innerHTML += "<br/>";
+        }
+
+
+  /* ]]> */
+  </script>
+<a href="#" onclick="makeTree(p4)">Show ancestorser Spur</a>
+<div id="jxgbox2" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board2 = JXG.JSXGraph.initBoard('jxgbox2', {originX: 50, originY: 400, unitX: 25, unitY: 25, axis: false, grid: false});
+        xax2 = board2.createElement('axis', [[0,0],[1,0]]);
+        yax2 = board2.createElement('axis', [[0,0],[0,1]]);
+
+        p12 = board2.createElement('point', [4, 4], {style:2,name:"A"});
+        p22 = board2.createElement('point', [12, 4], {style:2,name:"B"});
+
+        l12 = board2.createElement('line', [[4,13], [12,13]]);
+        perp = board2.createElement('perpendicular', [p12, l12]);
+
+        //p42 = board2.createElement('centroid', [p12, p22, p32], {name:"S", trace:true});
 
   /* ]]> */
   </script>
