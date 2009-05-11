@@ -74,12 +74,27 @@ JXG.Point = function (board, coordinates, id, name, show) {
      * Descriptive character, displayed next to the point
      * @type JXG.Label
      */
+    /*
     this.label = new JXG.Label(this.board, this.name, this.coords, this.id+"Label");
     this.label.show = show;
     if(!show) {
         this.label.hiddenByParent = true;
     }
+    */
+    this.label = {};
+    this.label.relativeCoords = [10,10];
 
+    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(name)); //?
+    this.board.objects[this.id] = this;
+    this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
+    delete(this.board.objects[this.id]);
+
+    this.label.show = show;
+    this.label.color = '#000000';
+    if(!show) {
+        this.label.hiddenByParent = true;
+    }
+    
     /**
      * False: Point can be moved, True: Point can't be move with the mouse.
      * @type bool
@@ -316,21 +331,23 @@ JXG.Point.prototype.updateRenderer = function () {
         if (this.isReal) {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.show(this); 
-                if(this.label.show) this.board.renderer.show(this.label); 
+                if(this.label.show) this.board.renderer.show(this.label.content); 
             }
             this.board.renderer.updatePoint(this);
         } else {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.hide(this); 
-                if(this.label.show) this.board.renderer.hide(this.label); 
+                if(this.label.show) this.board.renderer.hide(this.label.content); 
             }
         }
     } 
 
     /* Update the label if visible. */
     if(this.label.show && this.isReal) {
-        this.label.setCoordinates(this.coords);
-        this.board.renderer.updateLabel(this.label);
+        //this.label.setCoordinates(this.coords);
+        this.label.content.update();
+        //this.board.renderer.updateLabel(this.label);
+        this.board.renderer.updateText(this.label.content);
     }
 };
 
@@ -804,6 +821,13 @@ JXG.Point.prototype.remove = function() {
  * return TextAnchor
  */
 JXG.Point.prototype.getTextAnchor = function() {
+    return this.coords;
+};
+
+/**
+ * return LabelAnchor
+ */
+JXG.Point.prototype.getLabelAnchor = function() {
     return this.coords;
 };
 

@@ -584,7 +584,7 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
 JXG.Board.prototype.mouseUpListener = function (evt) {
     // redraw with high precision
     this.updateQuality = this.BOARD_QUALITY_HIGH;
-
+    
     // release mouseup listener
     JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
     
@@ -600,6 +600,7 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
     this.reducedUpdate = save; 
     this.fullUpdate = false;
     
+
     // release dragged object
     this.drag_obj = null;
 };
@@ -638,7 +639,6 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
                     && (this.objects[el].visProp['visible'])
                     && (!this.objects[el].fixed)) {
                 this.drag_obj = this.objects[el];
-                
                 // Points are preferred:
                 if ((this.objects[el].type == JXG.OBJECT_TYPE_POINT) || (this.objects[el].type == JXG.OBJECT_TYPE_GLIDER)) {
                     break;
@@ -745,7 +745,8 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
 JXG.Board.prototype.updateInfobox = function(el) {
     var x, y;
     if(el.elementClass == JXG.OBJECT_CLASS_POINT) {
-        this.infobox.setCoordinates(el.coords);
+        this.infobox.setCoords(el.coords.usrCoords[1]*1+this.infobox.distanceX/(this.unitX*this.zoomX),
+                               el.coords.usrCoords[2]*1+this.infobox.distanceY/(this.unitY*this.zoomY));
         x = Math.abs(el.coords.usrCoords[1]);
         if (x>0.1) {
             x = el.coords.usrCoords[1].toFixed(2);
@@ -767,12 +768,14 @@ JXG.Board.prototype.updateInfobox = function(el) {
             y = el.coords.usrCoords[2];
         }
         
-        this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>';
+        //this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>';
         //this.infobox.nameHTML = '(' + el.coords.usrCoords[1] + ', ' + el.coords.usrCoords[2] + ')';
+        this.infobox.setText('<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>');
         this.renderer.show(this.infobox);
-        this.renderer.updateLabel(this.infobox);
+        this.renderer.updateText(this.infobox);
     }
 }
+
 
 /**
  * Remove highlighting of all elements.
@@ -906,7 +909,7 @@ JXG.Board.prototype.addPoint = function (obj) {
     if((elementId == '') || (elementId == null)) {
         elementId = this.id + 'P' + number;
     }
-    obj.label.id = elementId+"Label";
+    obj.label.content.id = elementId+"Label";
     
     // Objekt in die assoziativen Arrays einfuegen
     this.objects[elementId] = obj;
@@ -916,13 +919,13 @@ JXG.Board.prototype.addPoint = function (obj) {
     obj.id = elementId;
     
     this.renderer.drawPoint(obj);
-    this.renderer.drawLabel(obj.label);
+    this.renderer.drawText(obj.label.content);
     if(!obj.visProp['visible']) {
-       this.renderer.hide(obj);
+        this.renderer.hide(obj);
     }
     
     if(!obj.label.show) {
-       this.renderer.hide(obj.label);
+        this.renderer.hide(obj.label.content);
     }
 
     return elementId;
@@ -1163,7 +1166,8 @@ JXG.Board.prototype.addMidpoint = function(p1, p2, id, name) {
         if (this.needsUpdate) {
             this.coords = this.board.algebra.midpoint(point1,point2);
             // Label mitschieben
-            this.label.setCoordinates(this.coords);
+            //this.label.setCoordinates(this.coords);
+            this.label.content.update();
             if(this.traced) {
                 this.cloneToBackground(true);
             }            
@@ -1198,7 +1202,8 @@ JXG.Board.prototype.addReflection = function(line, point, id, name) {
         if (this.needsUpdate) {
             this.coords = this.board.algebra.reflection(li,po);
             // Label mitschieben
-            this.label.setCoordinates(this.coords);
+            //this.label.setCoordinates(this.coords);
+            this.label.content.update();
             if(this.traced) {
                 this.cloneToBackground(true);
             }                        
@@ -1234,7 +1239,8 @@ JXG.Board.prototype.addRotation = function(rotpoint, point, phi, id, name) {
         if (this.needsUpdate) {
             this.coords = this.board.algebra.rotation(ropo,po,phi);
             // Label mitschieben
-            this.label.setCoordinates(this.coords);
+            //this.label.setCoordinates(this.coords);
+            this.label.content.update();
             this.needsUpdate = false;
             if(this.traced) {
                 this.cloneToBackground(true);
@@ -1344,7 +1350,8 @@ JXG.Board.prototype.addArrowParallel = function(a, p, arrowId, pointId, arrowNam
         if (this.needsUpdate) { 
             this.coords = this.board.algebra.parallel(arrow.point1, arrow.point2, point);
             if(this.label.show) {
-                this.label.setCoordinates(this.coords);
+                //this.label.setCoordinates(this.coords);
+                this.label.content.update();
             }
             if(this.traced) {
                 this.cloneToBackground(true);
@@ -1391,7 +1398,8 @@ JXG.Board.prototype.addParallelPoint = function(p1, p2, p3, id, name) {
         if (this.needsUpdate) {
             this.coords = this.board.algebra.parallel(p1,p2,p3);
             // Label mitschieben
-            this.label.setCoordinates(this.coords);
+            //this.label.setCoordinates(this.coords);
+            this.label.content.update();
             if(this.traced) {
                 this.cloneToBackground(true);
             }                
@@ -1585,7 +1593,8 @@ JXG.Board.prototype.addPerpendicularPoint = function(l, p, idP, nameP) {
         if (this.needsUpdate) {
             this.coords = this.board.algebra.perpendicular(line, point)[0];
             // Label mitschieben
-            this.label.setCoordinates(this.coords);
+            //this.label.setCoordinates(this.coords);
+            this.label.content.update();
             if(this.traced) {
                 this.cloneToBackground(true);
             }                
@@ -1633,7 +1642,8 @@ JXG.Board.prototype.addCircumcenter = function(point1, point2, point3, midpointI
         if (this.needsUpdate) {
             this.coords = this.board.algebra.circumcenterMidpoint(p1, p2, p3);
             if(this.label.show) {
-                this.label.setCoordinates(this.coords);
+                //this.label.setCoordinates(this.coords);
+                this.label.content.update();
             }
             if(this.traced) {
                 this.cloneToBackground(true);
@@ -1682,7 +1692,8 @@ JXG.Board.prototype.addCircumcenterMidpoint = function(point1, point2, point3, m
             this.coords = this.board.algebra.circumcenterMidpoint(p1, p2, p3);
             // Label mitschieben
             if(this.label.show) {
-                this.label.setCoordinates(this.coords);
+                //this.label.setCoordinates(this.coords);
+                this.label.content.update();
             }
             if(this.traced) {
                 this.cloneToBackground(true);
@@ -1791,7 +1802,12 @@ JXG.Board.prototype.addText = function (obj) {
 
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
-    this.renderer.drawText(obj);
+    if(!obj.isLabel) {
+        this.renderer.drawText(obj);
+        if(!obj.show) {
+            this.renderer.hide(obj);
+        }
+    }
     
     return elementId;
 };
@@ -2204,10 +2220,11 @@ JXG.Board.prototype.initGeonextBoard = function() {
     var l2 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gYOe0', this.id + 'gYLe0','Y-Achse');
     l2.hideElement();    
     
-    this.infobox = new JXG.Label(this, '0,0', new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this), this.id + '__infobox');
-    this.infobox.distanceX = -20;
+    //this.infobox = new JXG.Label(this, '0,0', new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this), this.id + '__infobox');
+    this.infobox = new JXG.Text(this, '0,0', '', [0,0], this.id + '__infobox',null, null, false);
+    this.infobox.distanceX = -20; 
     this.infobox.distanceY = 25;
-    this.renderer.drawLabel(this.infobox);
+    //this.renderer.drawText(this.infobox);
     this.renderer.hide(this.infobox);
 };
 
