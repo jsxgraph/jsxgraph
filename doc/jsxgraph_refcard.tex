@@ -43,7 +43,7 @@
 
 \def\versionnumber{0.2}  % Version of this reference card
 \def\year{2009}
-\def\month{Mar}
+\def\month{May}
 \def\version{\month\ \year\ v\versionnumber}
 
 \def\shortcopyrightnotice{\vskip .5ex plus 2 fill
@@ -87,10 +87,10 @@
   \vsize 7.5in %% was 7.95in
   \advance\vsize by 1cm
   \hoffset -12mm %-2mm % was -.75in
-  \voffset -.80in
+  \voffset -.81in
   \font\titlefont=cmbx10 \scaledmag2
-  \font\headingfont=cmbx10 \scaledmag1
-  \font\headingfonttt=cmtt10 \scaledmag1
+  \font\headingfont=cmbx9 \scaledmag1
+  \font\headingfonttt=cmtt9 \scaledmag1
   \font\smallfont=cmr6
   \font\smallsy=cmsy6
   \font\eightrm=cmr8
@@ -287,7 +287,7 @@ or - $<$script type="text/javascript"
 
 {\sl Properties and methods of the board:}\par
 \metax{brd.snapToGrid:true/false:}{grid mode}
-\metax{brd.suspendUpdate()}{stop updating (is speed is needed)}
+\metax{brd.suspendUpdate()}{stop updating (if speed is needed)}
 \metax{brd.unsuspendUpdate()}{restart updating}
 
 \section{Basic commands}
@@ -335,7 +335,6 @@ Coordinates may also be defined by functions, see Point.
 
 In case of coordinates as parents, the line is the set of solutions
 of the equation $ a\cdot x+b\cdot y+c\cdot z=0.$
-Points may also be specified as array of coordinates.
 
 \section{Circle}
 \metax{brd.createElement(\'circle\',[parents],$\{$attributes$\}$);}{}
@@ -351,14 +350,8 @@ Points may also be specified as array of coordinates.
 
 \section{Polygon}
 \metax{brd.createElement(\'polygon\',[p1,p2,...],$\{$attributes$\}$);}{}
-\metax{[p1,p2,...]}{array of points}
-The points array connected by line segments and the inner area is filled.
-
-\section{Group}
-\metax{brd.createElement(\'group\',[p1,p2,...],$\{$attributes$\}$);}{}
-\metax{[p1,p2,...]}{array of points}
-Invisible grouping of points. If one point is moved, the others are
-transformed accordingly.
+\metax{[p1,p2,...]}{The array of points}
+is connected by line segments and the inner area is filled.
 
 \section{Slider}
 \metax{var s = brd.createElement(\'slider\',}{}
@@ -368,42 +361,44 @@ transformed accordingly.
 \metax{}{the initial position is at value $f$}
 \metax{s.Value():}{returns the position of the slider $\in[e,g]$}
 
+\section{Group}
+\metax{brd.createElement(\'group\',[p1,p2,...],$\{$attributes$\}$);}{}
+\metax{[p1,p2,...]}{array of points}
+Invisible grouping of points. If one point is moved, the others are
+transformed accordingly.
+
 
 \section{Curve}
-{\sl -- Function graph, $x\mapsto f(x)$:}\par
-\metax{brd.createElement(\'functiongraph\',[parents],$\{$atts$\}$);}{}
-
-{\bf Parent elements:}
+-- \metax{brd.createElement(\'functiongraph\',[parents],$\{$atts$\}$);}{}
+\metax{}{\sl Function graph, $x\mapsto f(x)$}
 
 \metax{[function(x)$\{$return x*x;$\}$,-1,1]}{function term}
 \metax{}{optional: start, end}
 
-The other types of curves are defined through:
+%The other types of curves are defined through:
 
-\metax{brd.createElement(\'curve\',[parents],$\{$attributes$\}$);}{}
-
-{\bf Parent elements:}
-
-{\sl -- Parameter curve, $t\mapsto(f(t),g(t))$:}\par
+-- \metax{brd.createElement(\'curve\',[parents],$\{$attributes$\}$);}{}
+{\sl $\cdot$ Parameter curve, $t\mapsto(f(t),g(t))$:}
 
 \metax{[function(t)$\{$return 5*t;$\}$,function(t)$\{$return t*t;$\}$,0,2]}{}
 \metax{}{$x$ function, $y$ function, optional: start, end}
 
-{\sl -- Polar curve:}\par
+{\sl $\cdot$ Polar curve:} 
 Defined by the equation $r=f(\phi)$.
 
 \metax{[function(phi)$\{$return 5*phi;$\}$,[1,2],0,Math.PI]}{}
 \metax{}{Defining function, optional: center, start, end}
 
-{\sl -- Data plot:}\par
-\metax{[[1,2,3],[4,-2,3]]}{}
-\metax{}{array of $x$-coordinates, array of $y$-coordinates, {\sl or}}
+{\sl $\cdot$ Data plot:}\par
+\metax{[[1,2,3],[4,-2,3]]}{array of $x$- and $y$-coordinates, {\sl or}}
 \metax{[[1,2,3],function(x)$\{$return x*x;$\}$]}{}
 \metax{}{array of $x$-coordinates, function term}
 
-{\sl -- Cubic spline:}\par
-\metax{brd.createElement(\'spline\',[p1,p2,...],$\{$attributes$\}$);}{}
-\metax{[p1,p2,...]}{array of points}
+-- \metax{brd.createElement(\'spline\',[p1,p2,...],$\{$attributes$\}$);}{}
+\metax{[p1,p2,...]}{{\sl Cubic spline:} array of points}
+
+-- \metax{brd.createElement(\'riemannsum\',[f,n,type],$\{$atts$\}$);}{}
+{\sl Riemann sum} of type 'left', 'right', 'middle', 'trapezodial', 'upper', or 'lower'
 
 \section{Tangent, normal}
 \metax{var el = brd.createElement(\'tangent\',[g],$\{$attributes$\}$);}{}
@@ -411,12 +406,12 @@ Defined by the equation $r=f(\phi)$.
 \metax{g}{circle, line, polygon, or curve to glide on}
 
 \section{Turtle}
-\metax{var t = brd.createElement(\'turtle');}{}
-\metax{var t = brd.createElement(\'turtle\',[],$\{$attributes$\}$);}{}
+%\metax{var t = brd.createElement(\'turtle\');}{}
+%\metax{var t = brd.createElement(\'turtle\',[],$\{$attributes$\}$);}{}
 \metax{var t = brd.createElement(\'turtle\',[parents],$\{$atts$\}$);}{}
 
-The turtle has a position and a direction (in degrees). All angles have
-to be supplied in degrees.
+The turtle has a position and a direction (always in degrees). 
+%All angles have to be supplied in degrees.
 
 {\bf Parent elements:}
 
@@ -424,7 +419,7 @@ to be supplied in degrees.
 
 {\bf Methods:}
 
-Most of the methods have an abbreviated alternative version.
+%Most of the methods have an abbreviated alternative version.
 
 \metax{t.back(len); or t.bk(len);}{}
 \metax{t.clean();}{erase the turtle lines without resetting the turtle}
@@ -440,11 +435,10 @@ Most of the methods have an abbreviated alternative version.
 \metax{t.penUp(); or t.pu();}{}
 \metax{t.popTurtle();}{pop turtle status from stack}
 \metax{t.pushTurtle();}{push turtle status on stack}
-
-\eject
 \metax{t.right(angle); or t.rt(angle);}{}
 \metax{t.setPos(x,y);}{Move the turtle without drawing}
 \metax{t.setPenColor(col);}{{\tt col}: colorString, e.g. 'red' or '\#ff0000'}
+%\eject
 \metax{t.setPenSize(size);}{{\tt size}: number}
 \metax{t.showTurtle(); or t.st();}{}
 
@@ -491,6 +485,13 @@ Superseded by transformations
 \par{\sl -- sector:} \hfill circle sector defined by 3 points \hfill ???
 \metax{el = brd.createElement(\'sector\',[A,B,C],$\{$atts$\}$);}{}
 
+\section{Text}
+Display static or dynamic texts.\par
+\metax{el = brd.createElement(\'text\',[x,y,"Hello"]);}{}
+\metax{el = brd.createElement(\'text\',[x,y,f]);}{}
+Example for a dynamic text: return the $x$ coordinate of the point $p$.\par
+\metax{f = function()$\{$ return p.X(); $\}$}{}
+
 \section{Attributes of geometric elements}
 {\sl Generic attributes:}\par
 \metax{strokeWidth:}{number}
@@ -510,13 +511,9 @@ Superseded by transformations
 
 {\sl Attributes for line and arc elements:}\par
 \metax{firstArrow,lastArrow:}{true, false}
- 
-\section{Text}
-Display static or dynamic texts.\par
-\metax{el = brd.createElement(\'text\',[x,y,"Hello"]);}{}
-\metax{el = brd.createElement(\'text\',[x,y,f]);}{}
-Example for a dynamic text: return the $x$ coordinate of the point $p$.\par
-\metax{f = function()$\{$ return p.X(); $\}$}{}
+
+{\sl Attributes for polygons elements:}\par
+\metax{withLines:}{true, false}
 
 \section{Transform}
 Affine transformation of objects.\par
@@ -556,6 +553,8 @@ Additional mathematical functions are methods of {\tt JXG.Board}.
 \metax{brd.lagrangePolynomial([p1,p2,...])}{}
 \metax{}{returns a polynomial through the given points}
 \metax{brd.neville([p1,p2,...])}{polynomial curve interpolation}
+\metax{brd.riemannsum(f,n,type,start,end)}{Volume of Riemann}
+\metax{}{sum, see {\sl Curves}}
 
 {-- Intersection of objects:}\par
 \metax{brd.intersection(el1,el2,i,j)}{intersection of the elements}
