@@ -154,17 +154,19 @@ JXG.GeometryElement = function() {
     this.descendants = {};
     this.ancestors = {};
 
+/*    this.ancestors.getLength = function () {
+        var num = 0;
+        for(var k in this) {
+            num++
+        }
+        return num;
+    }*/
+
     /**
      * Stores variables for symbolic computations
      * @type Object
      */
     this.symbolic = {};
-
-    /**
-     * Array of strings containing the polynomials defining the element.
-     * Used for determining geometric loci the groebner way.
-     */
-    this.generatePolynoms = function () { return []; };
 
 /**
   * [c,b0,b1,a,k,r,q0,q1]
@@ -264,9 +266,17 @@ JXG.GeometryElement.prototype.addChild = function (obj) {
 
 JXG.GeometryElement.prototype.addDescendants = function (obj) {
     this.descendants[obj.id] = obj;
-    for(el in obj.childElements) {
+    for(var el in obj.childElements) {
         this.addDescendants(obj.childElements[el]);
     }
+};
+
+/**
+ * Array of strings containing the polynomials defining the element.
+ * Used for determining geometric loci the groebner way.
+ */
+JXG.GeometryElement.prototype.generatePolynom = function () {
+    return [];
 };
 
 /**

@@ -24,6 +24,8 @@
 */
 
 JXG.createPerpendicular = function(board, parentArr, atts) {
+    var els, p, l, t;
+
     if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
         if(!JXG.IsArray(atts['id'])) {
             atts['id'] = ['',''];
@@ -31,7 +33,9 @@ JXG.createPerpendicular = function(board, parentArr, atts) {
         if(!JXG.IsArray(atts['name'])) {
             atts['name'] = ['',''];
         }    
-        return board.addPerpendicular(parentArr[1], parentArr[0], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);
+        els = board.addPerpendicular(parentArr[1], parentArr[0], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);
+        l = parentArr[1];
+        p = parentArr[0];
     }
     else if(JXG.IsPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {
         if(!JXG.IsArray(atts['id'])) {
@@ -40,26 +44,132 @@ JXG.createPerpendicular = function(board, parentArr, atts) {
         if(!JXG.IsArray(atts['name'])) {
             atts['name'] = ['',''];
         }        
-        return board.addPerpendicular(parentArr[0], parentArr[1], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);    
+        els = board.addPerpendicular(parentArr[0], parentArr[1], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);
+        l = parentArr[0];
+        p = parentArr[1];
     }
     else {
         throw ("Can't create perpendicular with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
     }
+
+    t = els[1];
+
+    t.generatePolynom = function() {
+        /*
+         *  Perpendicular takes point P and line L and creates point T and line M:
+         *
+         *                          | M
+         *                          |
+         *                          x P (p1,p2)
+         *                          |
+         *                          |
+         *  L                       |
+         *  ----------x-------------x------------------------x--------
+         *            A (a1,a2)     |T (t1,t2)               B (b1,b2)
+         *                          |
+         *                          |
+         *
+         * So we have two conditions:
+         *
+         *   (a)  AT  || TB          (collinearity condition)
+         *   (b)  PT _|_ AB          (orthogonality condition)
+         *
+         *      a2-t2       t2-b2
+         *     -------  =  -------           (1)
+         *      a1-t1       t1-b1
+         *
+         *      p2-t2         a1-b1
+         *     -------  =  - -------         (2)
+         *      p1-t1         a2-b2
+         *
+         * Multiplying (1) and (2) with denominators and simplifying gives
+         *
+         *    a2t1 - a2b1 + t2b1 - a1t2 + a1b2 - t1b2 = 0                  (1')
+         *
+         *    p2a2 - p2b2 - t2a2 + t2b2 + p1a1 - p1b1 - t1a1 + t1b1 = 0    (2')
+         *
+         */
+
+        var a1 = l.point1.symbolic.x;
+        var a2 = l.point1.symbolic.y;
+        var b1 = l.point2.symbolic.x;
+        var b2 = l.point2.symbolic.y;
+        var p1 = p.symbolic.x;
+        var p2 = p.symbolic.y;
+        var t1 = t.symbolic.x;
+        var t2 = t.symbolic.y;
+
+        var poly1 = ''+a2+'*'+t1+'-'+a2+'*'+b1+'+'+t2+'*'+b1+'-'+a1+'*'+t2+'+'+a1+'*'+b2+'-'+t1+'*'+b2;
+        var poly2 = ''+p2+'*'+a2+'-'+p2+'*'+b2+'-'+t2+'*'+a2+'+'+t2+'*'+b2+'+'+p1+'*'+a1+'-'+p1+'*'+b1+'-'+t1+'*'+a1+'+'+t1+'*'+b1;
+
+        return [poly1, poly2];
+    }
+
+    return els;
 };
 
 JXG.createMidpoint = function(board, parentArr, atts) {
+    var a, b, t;
     if(parentArr.length == 2 && JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1])) {
-        return board.addMidpoint(parentArr[0], parentArr[1], atts['id'], atts['name']);
+        a = parentArr[0];
+        b = parentArr[1];
+        t = board.addMidpoint(parentArr[0], parentArr[1], atts['id'], atts['name']);
     }
     else if(parentArr.length == 1 && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {
-        return board.addMidpoint(parentArr[0].point1, parentArr[0].point2, atts['id'], atts['name']);
+        a = parentArr[0].point1;
+        b = parentArr[0].point2;
+        t = board.addMidpoint(parentArr[0].point1, parentArr[0].point2, atts['id'], atts['name']);
     }
     else {
         throw ("Can't create midpoint.");    
     }
+
+    t.generatePolynom = function() {
+        /*
+         *  Midpoint takes two point A and B or line L (with points P and Q) and creates point T:
+         *
+         *  L (not necessarily)
+         *  ----------x------------------x------------------x--------
+         *            A (a1,a2)          T (t1,t2)          B (b1,b2)
+         *
+         * So we have two conditions:
+         *
+         *   (a)   AT  ||  TB           (collinearity condition)
+         *   (b)  [AT] == [TB]          (equidistant condition)
+         *
+         *      a2-t2       t2-b2
+         *     -------  =  -------                                         (1)
+         *      a1-t1       t1-b1
+         *
+         *     (a1 - t1)^2 + (a2 - t2)^2 = (b1 - t1)^2 + (b2 - t2)^2       (2)
+         *
+         *
+         * Multiplying (1) with denominators and simplifying (1) and (2) gives
+         *
+         *    a2t1 - a2b1 + t2b1 - a1t2 + a1b2 - t1b2 = 0                      (1')
+         *
+         *    a1^2 - 2a1t1 + a2^2 - 2a2t2 - b1^2 + 2b1t1 - b2^2 + 2b2t2 = 0    (2')
+         *
+         */
+
+        var a1 = a.symbolic.x;
+        var a2 = a.symbolic.y;
+        var b1 = b.symbolic.x;
+        var b2 = b.symbolic.y;
+        var t1 = t.symbolic.x;
+        var t2 = t.symbolic.y;
+
+        var poly1 = ''+a2+'*'+t1+'-'+a2+'*'+b1+'+'+t2+'*'+b1+'-'+a1+'*'+t2+'+'+a1+'*'+b2+'-'+t1+'*'+b2;
+        var poly2 = ''+a1+'^2 - 2*'+a1+'*'+t1+'+'+a2+'^2-2*'+a2+'*'+t2+'-'+b1+'^2+2*'+b1+'*'+t1+'-'+b2+'^2+2*'+b2+'*'+t2;
+
+        return [poly1, poly2];
+    }
+
+    return t;
 };
 
 JXG.createParallel = function(board, parentArr, atts) {
+    /* TODO parallel polynoms */
     if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
         return board.addParallel(parentArr[1], parentArr[0], atts['id'], atts['name']);
     }
@@ -72,6 +182,7 @@ JXG.createParallel = function(board, parentArr, atts) {
 };
 
 JXG.createNormal = function(board, parents, attributes) {
+    /* TODO normal polynoms */
     var p;
     var c;
     if (parents.length==1) { // One arguments: glider on line, circle or curve
@@ -126,6 +237,7 @@ JXG.createNormal = function(board, parents, attributes) {
 };
 
 JXG.createBisector = function(board, parentArr, atts) {
+    /* TODO bisector polynoms */
     if(JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) && JXG.IsPoint(parentArr[2])) {
         return board.addAngleBisector(parentArr[0], parentArr[1], parentArr[2], atts['id'], atts['name']);
     }
@@ -135,6 +247,7 @@ JXG.createBisector = function(board, parentArr, atts) {
 };
 
 JXG.createArrowParallel = function(board, parentArr, atts) {
+    /* TODO arrowparallel polynoms */
     if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_ARROW) {
         if(!JXG.IsArray(atts['id'])) {
             atts['id'] = ['',''];
@@ -159,6 +272,7 @@ JXG.createArrowParallel = function(board, parentArr, atts) {
 };
 
 JXG.createCircumcircle = function(board, parentArr, atts) {
+    /* TODO circumcircle polynoms */
     if(JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) && JXG.IsPoint(parentArr[2])) {
         if(!JXG.IsArray(atts['id'])) {
             atts['id'] = ['',''];
@@ -174,6 +288,7 @@ JXG.createCircumcircle = function(board, parentArr, atts) {
 };
 
 JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
+    /* TODO circumcircle polynoms */
     if(JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) && JXG.IsPoint(parentArr[2])) {
         return board.addCircumcenterMidpoint(parentArr[0], parentArr[1], parentArr[2], atts['id'], atts['name']);
     }
@@ -183,6 +298,7 @@ JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
 };
 
 JXG.createParallelPoint = function(board, parentArr, atts) {
+    /* TODO parallel point polynoms */
     if(JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) && JXG.IsPoint(parentArr[2])) {
         return board.addParallelPoint(parentArr[0], parentArr[1], parentArr[2], atts['id'], atts['name']);
     }
@@ -192,6 +308,7 @@ JXG.createParallelPoint = function(board, parentArr, atts) {
 };
 
 JXG.createReflection = function(board, parentArr, atts) {
+    /* TODO reflection polynoms */
     if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
         return board.addReflection(parentArr[1], parentArr[0], atts['id'], atts['name']);
     }
@@ -204,18 +321,46 @@ JXG.createReflection = function(board, parentArr, atts) {
 };
 
 JXG.createPerpendicularPoint = function(board, parentArr, atts) {
+    var l, p, t;
     if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
-        return board.addPerpendicularPoint(parentArr[1], parentArr[0], atts['id'], atts['name']);
+        p = parentArr[0];
+        l = parentArr[1];
+        t = board.addPerpendicularPoint(parentArr[1], parentArr[0], atts['id'], atts['name']);
     }
     else if(JXG.IsPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
-        return board.addPerpendicularPoint(parentArr[0], parentArr[1], atts['id'], atts['name']);    
+        p = parentArr[1];
+        l = parentArr[0];
+        t = board.addPerpendicularPoint(parentArr[0], parentArr[1], atts['id'], atts['name']);
     }
     else {
         throw ("Can't create perpendicular point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
     }
+
+    t.generatePolynom = function() {
+        /*
+         * For explanations see JXG.createPerpendicular() in Composition.js
+         */
+
+        var a1 = l.point1.symbolic.x;
+        var a2 = l.point1.symbolic.y;
+        var b1 = l.point2.symbolic.x;
+        var b2 = l.point2.symbolic.y;
+        var p1 = p.symbolic.x;
+        var p2 = p.symbolic.y;
+        var t1 = t.symbolic.x;
+        var t2 = t.symbolic.y;
+
+        var poly1 = ''+a2+'*'+t1+'-'+a2+'*'+b1+'+'+t2+'*'+b1+'-'+a1+'*'+t2+'+'+a1+'*'+b2+'-'+t1+'*'+b2;
+        var poly2 = ''+p2+'*'+a2+'-'+p2+'*'+b2+'-'+t2+'*'+a2+'+'+t2+'*'+b2+'+'+p1+'*'+a1+'-'+p1+'*'+b1+'-'+t1+'*'+a1+'+'+t1+'*'+b1;
+
+        return [poly1, poly2];
+    }
+
+    return t;
 };
 
 JXG.createMirrorPoint = function(board, parentArr, atts) {
+    /* TODO mirror polynoms */
     if(JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1])) {
         return board.addRotation(parentArr[0], parentArr[1], Math.PI, atts['id'], atts['name']);
     }

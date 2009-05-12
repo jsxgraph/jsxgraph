@@ -463,82 +463,11 @@ JXG.Point.prototype.makeGlider = function (slideObject) {
 
     if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
         this.generatePolynom = function() {
-            var u1 = this.slideObject.point1.symbolic.x;
-            var u2 = this.slideObject.point1.symbolic.y;
-            var v1 = this.slideObject.point2.symbolic.x;
-            var v2 = this.slideObject.point2.symbolic.y;
-            var w1 = this.symbolic.x;
-            var w2 = this.symbolic.y;
-
-            /*
-             * The polynom in this case is determined by three points being colinear:
-             *
-             *      U (u1,u2)      W (w1,w2)                V (v1,v2)
-             *  ----x--------------x------------------------x----------------
-             *
-             *  The colinearity condition is
-             *
-             *      u2-w2       w2-v2
-             *     -------  =  -------           (1)
-             *      u1-w1       w1-v1
-             *
-             * Multiplying (1) with denominators is
-             *
-             *    u2w1 - u2v1 - w1w2 + w2v1 - u1w2 + u1v2 + w1w2 - w1v2 = 0
-             */
-
-            var p = ''+u2+'*'+w1+'-'+u2+'*'+v1+'-'+w1+'*'+w2+'+'+w2+'*'+v1+'-'+u1+'*'+w2+'+'+u1+'*'+v2+'+'+w1+'*'+w2+'-'+w1+'*'+v2;
-
-            return [p];
+            return this.slideObject.generatePolynom(this);
         }
     } else if (this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         this.generatePolynom = function() {
-            /*
-             * We have four methods to construct a circle:
-             *   (a) Two points
-             *   (b) Midpoint and radius
-             *   (c) Midpoint and radius given by length of a segment
-             *   (d) Midpoint and radius given by another circle
-             *
-             * In case (b) we have to distinguish two cases:
-             *  (i)  radius is given as a number
-             *  (ii) radius is given as a function
-             * In the latter case there's no guarantee the radius depends on other geometry elements
-             * in a polynomial way so this case has to be omitted.
-             *
-             * Another tricky case is case (d):
-             * The radius depends on another circle so we have to cycle through the ancestors of each circle
-             * until we reach one that's radius does not depend on another circles radius.
-             *
-             *
-             * All cases (a) to (d) vary only in calculation of the radius. So the basic formulae for
-             * a glider G (g1,g2) on a circle with midpoint M (m1,m2) and radius r is just:
-             *
-             *     (g1-m1)^2 + (g2-m2)^2 - r^2 = 0
-             *
-             * So the easiest case is (b) with a fixed radius given as a number. The other two cases (a)
-             * and (c) are quite the same: Euclidean distance between two points A (a1,a2) and B (b1,b2),
-             * squared:
-             *
-             *     r^2 = (a1-b1)^2 + (a2-b2)^2
-             *
-             * For case (d) we have to cycle recursively through all defining circles and finally return the
-             * formulae for calculating r^2. For that we use JXG.Circle.symbolic.generateRadiusSquared().
-             */
-
-            var m1 = this.slideObject.midpoint.symbolic.x;
-            var m2 = this.slideObject.midpoint.symbolic.y;
-            var g1 = this.symbolic.x;
-            var g2 = this.symbolic.y;
-
-            var rsq = this.slideObject.symbolic.getRadius();
-
-            /* No radius can be calculated (Case b.ii) */
-            if (rsq == '')
-                return [];
-
-            var p = '(' + g1 + '-' + m1 + ')^2 + (' + g2 + '-' + m2 + ')^2 - (' + rsq + ')';
-            return [p];
+            return this.slideObject.generatePolynom(this);
         }
     }
 
@@ -873,36 +802,6 @@ JXG.createPoint = function(board, parents, atts) {
         el.addConstraint(parents);
     }
     return el;
-
-    /*
-    // parents[0] and parents[1] are numbers
-    if ( (JXG.IsNumber(parents[0])) && (JXG.IsNumber(parents[1])) ) {
-        el = new JXG.Point(board, parents, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
-        if ( atts["slideObject"] != null ) {
-            el.makeGlider(atts["slideObject"]);
-        } else {
-            el.baseElement = el; // Free point
-        }
-    } // (One string and one number) or two strings
-    else if ( (JXG.IsString(parents[0]) || JXG.IsNumber(parents[0]) || JXG.IsFunction(parents[0])) && (JXG.IsString(parents[1]) || JXG.IsNumber(parents[1])) || JXG.IsFunction(parents[1]) ) {
-        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
-        el.addConstraint(parents);
-        //el.addConstraint(parents[0],parents[1]);
-    } // Intersection: one function
-    else if ( (typeof parents[0]=='function') && parents[1]==null ) { 
-        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));   
-        el.addConstraint(parents[0]);
-    } // Transformation
-    else if ( (typeof parents[0]=='object') && (typeof parents[1]=='object') ) { // Transformation
-        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));   
-        el.addTransform(parents[0],parents[1]);
-    }
-    else {// Failure
-        throw ("JSXGraph error: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
-    }
-    return el;
-    */
-        
 };
 
 
@@ -924,5 +823,37 @@ JXG.createGlider = function(board, parents, atts) {
     return el;
 };
 
+/**
+ * This is just a wrapper for board.intersectFunc.
+ * @param {Array} parents Array containing the intersected Elements in the first two fields and
+ *                        the index of the point if there is more than one intersection point.
+ * @type JXG.Point
+ * @return Point intersecting the parent elements.
+ */
+JXG.createIntersectionPoint = function(board, parents, attributes) {
+    var el;
+    if (parents.length>=3) {
+        if(parents.length == 3)
+            parents.push(null);
+        el = board.createElement('point', [board.intersection(parents[0], parents[1], parents[2], parents[3])], attributes);
+    }
+
+    parents[0].addChild(el);
+    parents[0].addChild(el);
+
+    el.generatePolynom = function () {
+        var poly1 = parents[0].generatePolynom(el);
+        var poly2 = parents[1].generatePolynom(el);
+
+        if((poly1.length == 0) || (poly2.length == 0))
+            return [];
+        else
+            return [poly1[0], poly2[0]];
+    }
+    
+    return el;
+};
+
 JXG.JSXGraph.registerElement('point', JXG.createPoint);
 JXG.JSXGraph.registerElement('glider', JXG.createGlider);
+JXG.JSXGraph.registerElement('intersection', JXG.createIntersectionPoint);

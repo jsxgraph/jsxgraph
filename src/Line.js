@@ -383,6 +383,36 @@ JXG.Line.prototype.updateStdform = function() {
     }
 };
 
+JXG.Line.prototype.generatePolynom = function (p) {
+    var u1 = this.point1.symbolic.x;
+    var u2 = this.point1.symbolic.y;
+    var v1 = this.point2.symbolic.x;
+    var v2 = this.point2.symbolic.y;
+    var w1 = p.symbolic.x;
+    var w2 = p.symbolic.y;
+
+    /*
+     * The polynom in this case is determined by three points being collinear:
+     *
+     *      U (u1,u2)      W (w1,w2)                V (v1,v2)
+     *  ----x--------------x------------------------x----------------
+     *
+     *  The collinearity condition is
+     *
+     *      u2-w2       w2-v2
+     *     -------  =  -------           (1)
+     *      u1-w1       w1-v1
+     *
+     * Multiplying (1) with denominators and simplifying is
+     *
+     *    u2w1 - u2v1 + w2v1 - u1w2 + u1v2 - w1v2 = 0
+     */
+
+    var poly = ''+u2+'*'+w1+'-'+u2+'*'+v1+'+'+w2+'*'+v1+'-'+u1+'*'+w2+'+'+u1+'*'+v2+'-'+w1+'*'+v2;
+
+    return [poly];
+}
+
 /**
  * Calculates the rise of the line (Achsenabschnitt)
  * @type float

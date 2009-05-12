@@ -178,13 +178,62 @@ JXG.Circle.prototype.hasPoint = function (x, y) {
     return (Math.abs(dist-r) < genauigkeit);
 };
 
+JXG.Circle.prototype.generatePolynom = function (p) {
+    /*
+     * We have four methods to construct a circle:
+     *   (a) Two points
+     *   (b) Midpoint and radius
+     *   (c) Midpoint and radius given by length of a segment
+     *   (d) Midpoint and radius given by another circle
+     *
+     * In case (b) we have to distinguish two cases:
+     *  (i)  radius is given as a number
+     *  (ii) radius is given as a function
+     * In the latter case there's no guarantee the radius depends on other geometry elements
+     * in a polynomial way so this case has to be omitted.
+     *
+     * Another tricky case is case (d):
+     * The radius depends on another circle so we have to cycle through the ancestors of each circle
+     * until we reach one that's radius does not depend on another circles radius.
+     *
+     *
+     * All cases (a) to (d) vary only in calculation of the radius. So the basic formulae for
+     * a glider G (g1,g2) on a circle with midpoint M (m1,m2) and radius r is just:
+     *
+     *     (g1-m1)^2 + (g2-m2)^2 - r^2 = 0
+     *
+     * So the easiest case is (b) with a fixed radius given as a number. The other two cases (a)
+     * and (c) are quite the same: Euclidean distance between two points A (a1,a2) and B (b1,b2),
+     * squared:
+     *
+     *     r^2 = (a1-b1)^2 + (a2-b2)^2
+     *
+     * For case (d) we have to cycle recursively through all defining circles and finally return the
+     * formulae for calculating r^2. For that we use JXG.Circle.symbolic.generateRadiusSquared().
+     */
+
+    var m1 = this.midpoint.symbolic.x;
+    var m2 = this.midpoint.symbolic.y;
+    var g1 = p.symbolic.x;
+    var g2 = p.symbolic.y;
+
+    var rsq = this.generateRadiusSquared();
+
+    /* No radius can be calculated (Case b.ii) */
+    if (rsq == '')
+        return [];
+
+    var poly = '(' + g1 + '-' + m1 + ')^2 + (' + g2 + '-' + m2 + ')^2 - (' + rsq + ')';
+    return [poly];
+}
+
 /**
  * Generate symbolic radius calculation for loci determination with Groebner-Basis algorithm.
  * @type String
  * @return String containing symbolic calculation of the circle's radius or an empty string
  * if the radius can't be expressed in a polynomial equation.
  */
-JXG.Circle.prototype.symbolic.getRadius = function () {
+JXG.Circle.prototype.generateRadiusSquared = function () {
     /*
      * Four cases:
      *
@@ -204,7 +253,7 @@ JXG.Circle.prototype.symbolic.getRadius = function () {
 
         rsq = '(' + p1 + '-' + m1 + ')^2 + (' + p2 + '-' + m2 + ')^2';
     } else if (this.method == "pointRadius") {
-        if (typeof(this.radius) == 'Number')
+        if (typeof(this.radius) == 'number')
             rsq = '' + this.radius*this.radius;
     } else if (this.method == "pointLine") {
         var p1 = this.line.point1.symbolic.x;
@@ -215,7 +264,7 @@ JXG.Circle.prototype.symbolic.getRadius = function () {
 
         rsq = '(' + p1 + '-' + q1 + ')^2 + (' + p2 + '-' + q2 + ')^2';
     } else if (this.method == "pointCircle") {
-        rsq = this.circle.symbolic.getRadius();
+        rsq = this.circle.getRadius();
     }
 
     return rsq;
