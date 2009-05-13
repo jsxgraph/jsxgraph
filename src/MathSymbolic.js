@@ -73,6 +73,13 @@ JXG.Math.Symbolic.generateSymbolicCoordinatesPartial = function(board, element, 
 
         }
     }
+    
+    if(JXG.IsPoint(element)) {
+        element.symbolic.x = 'x';
+        element.symbolic.y = 'y';
+    }
+
+    return count;
 };
 
 /**
@@ -81,9 +88,69 @@ JXG.Math.Symbolic.generateSymbolicCoordinatesPartial = function(board, element, 
  */
 JXG.Math.Symbolic.clearSymbolicCoordinates = function(board) {
     for(var t in board.objects) {
-        if (JXG.IsPoint(list[t])) {
+        if (JXG.IsPoint(board.objects[t])) {
             board.objects[t].symbolic.x = '';
             board.objects[t].symbolic.y = '';
         }
     }
+};
+
+/**
+ * Generates polynomials for the part of a construction including all the points from that
+ * a specific element depends of.
+ * @param {JXG.Board} board The board that's points polynomials will be generated.
+ * @param {JXG.GeometryElement} element All points in the set of ancestors of this element are used to generate the set of polynomials.
+ * @type Array
+ * @return Array of polynomials as strings.
+ */
+JXG.Math.Symbolic.generatePolynomials = function(board, element, generateCoords) {
+    if(generateCoords)
+        this.generateSymbolicCoordinatesPartial(board, element, 'u', 'brace');
+    
+    var list = element.ancestors;
+    list[element.id] = element;
+    var t_num;
+    var poly = [];
+    var result = [];
+
+    for(var t in list) {
+        t_num = 0;
+        poly = [];
+        if (JXG.IsPoint(list[t])) {
+            for(var k in list[t].ancestors) {
+                t_num++;
+            }
+            if(t_num > 0) {
+                poly = list[t].generatePolynomial();
+                for(var i=0; i<poly.length; i++)
+                    result.push(poly[i]);
+            }
+        }
+    }
+
+    if(generateCoords)
+        this.clearSymbolicCoordinates(board);
+
+    return result;
+};
+
+/**
+ * Calculate geometric locus of a point given on a board. Invokes python script on server.
+ * @param {JXG.Board} board The board on that the point lies.
+ * @param {JXG.Point} point The point that will be traced.
+ * @type Array
+ * @return Array of points.
+ */
+JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point) {
+    var numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace');
+
+    var poly = this.generatePolynomials(board, point);
+
+    var polyStr = poly.join(',');
+
+    var url = JXG.serverBase + 'jxggroebner.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr);
+
+    this.clearSymbolicCoordinates(board);
+
+    return url;
 };

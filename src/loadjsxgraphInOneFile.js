@@ -47,3 +47,4 @@ for (var i=0;i<document.getElementsByTagName("script").length;i++) {
         JXG.requirePath = s.src.replace(/loadjsxgraphInOneFile\.js(\?.*)?$/,'');
 }
 
+JXG.serverBase = JXG.requirePath + 'server/';

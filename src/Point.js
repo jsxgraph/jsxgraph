@@ -462,12 +462,12 @@ JXG.Point.prototype.makeGlider = function (slideObject) {
     this.slideObject.addChild(this);
 
     if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
-        this.generatePolynom = function() {
-            return this.slideObject.generatePolynom(this);
+        this.generatePolynomial = function() {
+            return this.slideObject.generatePolynomial(this);
         }
     } else if (this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
-        this.generatePolynom = function() {
-            return this.slideObject.generatePolynom(this);
+        this.generatePolynomial = function() {
+            return this.slideObject.generatePolynomial(this);
         }
     }
 
@@ -841,9 +841,9 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
     parents[0].addChild(el);
     parents[0].addChild(el);
 
-    el.generatePolynom = function () {
-        var poly1 = parents[0].generatePolynom(el);
-        var poly2 = parents[1].generatePolynom(el);
+    el.generatePolynomial = function () {
+        var poly1 = parents[0].generatePolynomial(el);
+        var poly2 = parents[1].generatePolynomial(el);
 
         if((poly1.length == 0) || (poly2.length == 0))
             return [];

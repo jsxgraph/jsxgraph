@@ -383,7 +383,7 @@ JXG.Line.prototype.updateStdform = function() {
     }
 };
 
-JXG.Line.prototype.generatePolynom = function (p) {
+JXG.Line.prototype.generatePolynomial = function (p) {
     var u1 = this.point1.symbolic.x;
     var u2 = this.point1.symbolic.y;
     var v1 = this.point2.symbolic.x;
@@ -392,7 +392,7 @@ JXG.Line.prototype.generatePolynom = function (p) {
     var w2 = p.symbolic.y;
 
     /*
-     * The polynom in this case is determined by three points being collinear:
+     * The polynomial in this case is determined by three points being collinear:
      *
      *      U (u1,u2)      W (w1,w2)                V (v1,v2)
      *  ----x--------------x------------------------x----------------

@@ -140,7 +140,7 @@ m2 = board.createElement('midpoint', [g1,g3], {style:8,name:"Y",trace:true,strok
                         num++;
                     }
                     if(num > 0) {
-                        poly = list[t].generatePolynom();
+                        poly = list[t].generatePolynomial();
                         for(var i=0; i<poly.length; i++)
                             document.getElementById("debug").innerHTML += ">  " + poly[i] + "<br />";
                     }
@@ -149,11 +149,20 @@ m2 = board.createElement('midpoint', [g1,g3], {style:8,name:"Y",trace:true,strok
             document.getElementById("debug").innerHTML += "<br/>";
         }
 
+        function genPoly2(p) {
+            var url = JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p);
+            document.getElementById("debug").innerHTML = '<a href="' + url + '">hier</a>';
+            return;
+            var poly = url.split(',');
+            document.getElementById("debug").innerHTML = "";
+            for(var i=0; i<poly.length; i++)
+                document.getElementById("debug").innerHTML += '> ' + poly[i] + '<br />';
+        }
   /* ]]> */
   </script>
 <a href="#" onclick="showAncestors(m1)">Show Ancestors</a><br />
 <a href="#" onclick="genSymbCoords(m1)">Generate symbolic coordinates</a><br />
-<a href="#" onclick="genPoly(m1);">Generate Polynomials</a><br />
+<a href="#" onclick="genPoly2(m1);">Generate Polynomials</a><br />
 <div id="debug" style="display:block;"></div>
 <!--
 <div id="jxgbox2" class="jxgbox" style="width:600px; height:450px; float:left"></div>

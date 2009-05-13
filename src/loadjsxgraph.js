@@ -73,3 +73,4 @@ for (var i=0;i<document.getElementsByTagName("script").length;i++) {
 }
 
 JXG.baseFiles = null;
+JXG.serverBase = JXG.requirePath + 'server/';

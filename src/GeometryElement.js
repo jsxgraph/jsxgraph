@@ -275,7 +275,7 @@ JXG.GeometryElement.prototype.addDescendants = function (obj) {
  * Array of strings containing the polynomials defining the element.
  * Used for determining geometric loci the groebner way.
  */
-JXG.GeometryElement.prototype.generatePolynom = function () {
+JXG.GeometryElement.prototype.generatePolynomial = function () {
     return [];
 };
 

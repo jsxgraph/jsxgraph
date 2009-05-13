@@ -178,7 +178,7 @@ JXG.Circle.prototype.hasPoint = function (x, y) {
     return (Math.abs(dist-r) < genauigkeit);
 };
 
-JXG.Circle.prototype.generatePolynom = function (p) {
+JXG.Circle.prototype.generatePolynomial = function (p) {
     /*
      * We have four methods to construct a circle:
      *   (a) Two points
