@@ -101,7 +101,8 @@ m2 = board.createElement('midpoint', [g1,g3], {style:8,name:"Y",trace:true,strok
         }
 
         function genSymbCoords(p) {
-            var list = getDependencies(p);
+//            var list = getDependencies(p);
+            var list = p.ancestors;
             var u = 1;
             var num;
             for(var t in list) {
@@ -127,22 +128,22 @@ m2 = board.createElement('midpoint', [g1,g3], {style:8,name:"Y",trace:true,strok
         }
 
         function genPoly(p) {
-            genSymbCoords(p);
-            var list = getDependencies(p);
-//            var num;
+            var num = JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p, 'u', 'brace');
+            var list = p.ancestors;
+            var num;
             var poly = [];
             for(var t in list) {
-//                num = 0;
+                num = 0;
                 poly = [];
                 if (JXG.IsPoint(list[t])) {
-//                    for(var k in list[t].ancestors) {
-//                        num++;
-//                    }
-//                    if(num > 0) {
+                    for(var k in list[t].ancestors) {
+                        num++;
+                    }
+                    if(num > 0) {
                         poly = list[t].generatePolynom();
                         for(var i=0; i<poly.length; i++)
                             document.getElementById("debug").innerHTML += ">  " + poly[i] + "<br />";
-//                    }
+                    }
                 }
             }
             document.getElementById("debug").innerHTML += "<br/>";
