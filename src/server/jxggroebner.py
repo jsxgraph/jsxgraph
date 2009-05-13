@@ -6,15 +6,15 @@ import os
 os.environ['MPLCONFIGDIR'] = '/tmp'
 
 import matplotlib
+matplotlib.use('Agg')
 from matplotlib.pyplot import *
 from matplotlib.contour import *
+
 import re
 import zlib
 import base64
 import cStringIO
 import cgi
-
-cocoaPath = '/home/michael/tools/cocoa-4.7/'
 
 print """\
 Content-Type: text/html\n
@@ -37,7 +37,7 @@ polys = form.getfirst('polynomials', 'empty')
 number = cgi.escape(number)
 polys = base64.b64decode(cgi.escape(polys))
 
-debug = True;
+debug = False;
 
 input = ""
 
@@ -51,12 +51,13 @@ input += "J := Elim(u[1]..u[%s], I);" % number
 # and ends here
 
 # Fixed code which hasn't to be adjusted on each run of this script
-input += "G := GBasis(J);"
+input += "G := ReducedGBasis(J);"
 input += "Print \\\"resultsbegin\\\", NewLine;"
 input += "For N := 1 To Len(G) Do\\n"
 input += "    B := Factor(G[N]);\\n"
 input += "    For M := 1 To Len(B) Do\\n"
 input += "        StarPrintFold(B[M][1], -1);"
+input += "        Print NewLine;"
 input += "    EndFor;\\n"
 input += "EndFor;\\n"
 input += "Print \\\"resultsend\\\", NewLine;"
@@ -65,7 +66,7 @@ if debug:
     print "Starting CoCoA with input<br />"
     print input + '<br />'
 
-cocoa = os.popen("echo \"" + input + "\" | " + cocoaPath + "cocoa_text")
+cocoa = os.popen("echo \"" + input + "\" | cocoa")
 
 output = cocoa.read()
 
@@ -87,17 +88,16 @@ if debug:
 for i in range(0,len(polynomials)):
     if len(polynomials[i]) == 0:
         continue
+    if (not "x" in polynomials[i]) and (not "y" in polynomials[i]):
+        continue
 
-    x, y = numpy.meshgrid(numpy.linspace(2, 16, 300), numpy.linspace(-2, 16, 300))
-
-    print polynomials[i] + '<br />'
+    x, y = numpy.meshgrid(numpy.linspace(-20, 20, 600), numpy.linspace(-20, 20, 600))
 
     z = eval(polynomials[i])
-    # z = 18496 - 3072*x**3*y**2 - 1536*x*y**4 - 40448*x*y**2 + 17344*x**2*y**2 + 192*x**4*y**2 + 192*x**2*y**4 + 64*x**6 + 64*y**6 + 23172*x**2 + 12768*x**4 + 60384*x + 4576*y**4 - 24956*y**2 - 40448*x**3 - 1536*x**5
     C = contour(x, y, z, [0])
 
     if debug:
-        savefig('test.png')
+        savefig('/tmp/test.png')
 
     con = C.find_nearest_contour(0, 0)
 
@@ -106,7 +106,7 @@ for i in range(0,len(polynomials)):
     data = cStringIO.StringIO()
 
     for i in range(0,len(pa)):
-        print >>data, pa[i,0], " ", pa[i,1] + '<br />'
+        print >>data, pa[i,0], ",", pa[i,1], ";"
 
     enc_data = base64.b64encode(zlib.compress(data.getvalue(), 9))
 

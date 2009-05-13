@@ -148,9 +148,28 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point) {
 
     var polyStr = poly.join(',');
 
-    var url = JXG.serverBase + 'jxggroebner.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr);
+    var fileurl = JXG.serverBase + 'jxggroebner.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr);
+
+    this.cbp = function(t) {
+        var coordpairsStr = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(t))).unzip();
+        var coordpairs = coordpairsStr.toString().split(';');
+//document.getElementById('debug').innerHTML = coordpairsStr;
+        var coords;
+        var px = [];
+        var py = [];
+        for(var i=0; i<coordpairs.length; i++) {
+            coords = coordpairs[i].split(',');
+            px[i] = coords[0];
+            py[i] = coords[1];
+        }
+        var c = board.createElement('curve', [px, py], {strokeColor: 'green'});
+        this.rendNode = c.rendNode;  // This is needed in setProperty
+    };
+    
+    this.cb = JXG.bind(this.cbp,this);
+
+    JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw');
+
 
     this.clearSymbolicCoordinates(board);
-
-    return url;
 };
