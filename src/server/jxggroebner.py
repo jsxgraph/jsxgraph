@@ -33,6 +33,12 @@ form = cgi.FieldStorage();
 number = form.getfirst('number', 'empty')
 polys = form.getfirst('polynomials', 'empty')
 
+# Get viewing rectangle of the board
+xs = float(form.getfirst('xs', '-5'))
+xe = float(form.getfirst('xe', '5'))
+ys = float(form.getfirst('ys', '-5'))
+ye = float(form.getfirst('ye', '5'))
+
 # Clean them up
 number = cgi.escape(number)
 polys = base64.b64decode(cgi.escape(polys))
@@ -85,34 +91,34 @@ if debug:
     for i in range(0,len(polynomials)):
         print "Polynomial ", i+1, ": " + polynomials[i] + '<br />'
 
+data = cStringIO.StringIO()
+
 for i in range(0,len(polynomials)):
     if len(polynomials[i]) == 0:
         continue
     if (not "x" in polynomials[i]) and (not "y" in polynomials[i]):
         continue
 
-    x, y = numpy.meshgrid(numpy.linspace(-20, 20, 600), numpy.linspace(-20, 20, 600))
+    x, y = numpy.meshgrid(numpy.linspace(xs, xe, 200), numpy.linspace(ys, ye, 200))
 
     z = eval(polynomials[i])
     C = contour(x, y, z, [0])
 
     if debug:
-        savefig('/tmp/test.png')
+        savefig('/tmp/test%s.png' % i)
 
     con = C.find_nearest_contour(0, 0)
 
     pa = C.collections[0].get_paths()[0].to_polygons()[0]
 
-    data = cStringIO.StringIO()
-
     for i in range(0,len(pa)):
         print >>data, pa[i,0], ",", pa[i,1], ";"
 
-    enc_data = base64.b64encode(zlib.compress(data.getvalue(), 9))
+enc_data = base64.b64encode(zlib.compress(data.getvalue(), 9))
 
-    if debug:
-        print data.getvalue() + '<br />'
+if debug:
+    print data.getvalue() + '<br />'
 
-    print enc_data
+print enc_data
 
-    data.close()
+data.close()

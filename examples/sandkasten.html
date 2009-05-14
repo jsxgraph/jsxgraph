@@ -18,8 +18,8 @@
 board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25, axis: false, grid: false});
 xax = board.createElement('axis', [[0,0],[1,0]]);
 yax = board.createElement('axis', [[0,0],[0,1]]);
-p1 = board.createElement('point', [7, 8], {style:2,name:"Q",fixed:true});
-p2 = board.createElement('point', [15, 8], {style:2,name:"W",fixed:true});
+p1 = board.createElement('point', [7, 8], {style:2,name:"Q"});
+p2 = board.createElement('point', [15, 8], {style:2,name:"W"});
 //p1 = board.createElement('point', [0, 0], {style:2,name:"Q",fixed:true});
 //p2 = board.createElement('point', [8, 0], {style:2,name:"W",fixed:true});
 c1 = board.createElement('circle', [p1, 4.5]);
@@ -49,116 +49,8 @@ m2 = board.createElement('midpoint', [g1,g3], {style:8,name:"Y",trace:true,strok
         s = board.createElement('line', [p1, p2], {strokeColor:'green', straightLast: false});
         var ticks = board.createElement('ticks', [s, [-1.0, 1.0, 3.0, 9.0]]);
 */
-
-        function getDependencies(e) {
-            var anc = {};
-            var b = e.board;
-
-            // Anlegen temporaerer Variablen
-            for(var i in b.objects) {
-                b.objects[i].symbolic.visited = false;
-                b.objects[i].symbolic.parents = {};
-            }
-
-            // Aufbauen eines Abhaengigkeitsbaums
-            for(var i in b.objects) {
-                for(var j in b.objects[i].childElements) {
-                    b.objects[i].childElements[j].symbolic.parents[b.objects[i].id] = b.objects[i];
-                }
-            }
-
-            // Durchlaufen des Baums um herauszufinden von welchen Punkten der Tracepunkt abhaengt.
-            function walkThrough(x) {
-                if(x.symbolic.visited)
-                    return;
-
-                x.symbolic.visited = true;
-                anc[x.id] = x;
-                for(var i in x.symbolic.parents) {
-                    walkThrough(x.symbolic.parents[i]);
-                }
-            }
-            walkThrough(e);
-            delete anc[e.id];
-
-            for(var i in b.objects) {
-                delete b.objects[i].symbolic.visited;
-                delete b.objects[i].symbolic.parents;
-            }
-
-            return anc;
-        }
-
-        function showAncestors(p) {
-            document.getElementById("debug").innerHTML = "All elements: <br/>";
-            for(var i in p.board.objects) {
-                document.getElementById("debug").innerHTML += "* " + p.board.objects[i].id + "/" + p.board.objects[i].name + " <br/>";
-            }
-            document.getElementById("debug").innerHTML += "Parent elements of " + p.id + " / " + p.name + ": <br/>";
-            var list = getDependencies(p);
-            for(var t in list) {
-                document.getElementById("debug").innerHTML += t + " -> " + p.ancestors[t].name + "<br/>";
-            }
-            document.getElementById("debug").innerHTML += "<br/>";
-        }
-
-        function genSymbCoords(p) {
-//            var list = getDependencies(p);
-            var list = p.ancestors;
-            var u = 1;
-            var num;
-            for(var t in list) {
-                num = 0;
-                if (JXG.IsPoint(list[t])) {
-                    for(var k in list[t].ancestors) {
-                        num++;
-                    }
-                    if(num == 0) {
-                        list[t].symbolic.x = p.ancestors[t].coords.usrCoords[1];
-                        list[t].symbolic.y = p.ancestors[t].coords.usrCoords[2];
-                    } else {
-                        p.ancestors[t].symbolic.x = 'u[' + u + ']';
-                        u++;
-                        p.ancestors[t].symbolic.y = 'u[' + u + ']';
-                        u++;
-                    }
-
-                    document.getElementById("debug").innerHTML += t + " [" + p.ancestors[t].name + "]: (" + p.ancestors[t].symbolic.x + ", " + p.ancestors[t].symbolic.y + ")<br/>";
-                }
-            }
-            document.getElementById("debug").innerHTML += "<br/>";
-        }
-
-        function genPoly(p) {
-            var num = JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p, 'u', 'brace');
-            var list = p.ancestors;
-            var num;
-            var poly = [];
-            for(var t in list) {
-                num = 0;
-                poly = [];
-                if (JXG.IsPoint(list[t])) {
-                    for(var k in list[t].ancestors) {
-                        num++;
-                    }
-                    if(num > 0) {
-                        poly = list[t].generatePolynomial();
-                        for(var i=0; i<poly.length; i++)
-                            document.getElementById("debug").innerHTML += ">  " + poly[i] + "<br />";
-                    }
-                }
-            }
-            document.getElementById("debug").innerHTML += "<br/>";
-        }
-
         function genPoly2(p) {
-            var url = JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p);
-//            document.getElementById("debug").innerHTML = '<a href="' + url + '">hier</a>';
-            return;
-            var poly = url.split(',');
-            document.getElementById("debug").innerHTML = "";
-            for(var i=0; i<poly.length; i++)
-                document.getElementById("debug").innerHTML += '> ' + poly[i] + '<br />';
+            JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p);
         }
   /* ]]> */
   </script>

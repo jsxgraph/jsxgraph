@@ -148,12 +148,14 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point) {
 
     var polyStr = poly.join(',');
 
-    var fileurl = JXG.serverBase + 'jxggroebner.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr);
+    var xsye = new JXG.Coords(JXG.COORDS_BY_USR, [0,0], board);
+    var xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board);
+    var fileurl = JXG.serverBase + 'jxggroebner.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr) + '&xs=' + xsye.usrCoords[1] + '&xe=' + xeys.usrCoords[1] + '&ys=' + xeys.usrCoords[2] + '&ye=' + xsye.usrCoords[2];
 
     this.cbp = function(t) {
         var coordpairsStr = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(t))).unzip();
         var coordpairs = coordpairsStr.toString().split(';');
-//document.getElementById('debug').innerHTML = coordpairsStr;
+
         var coords;
         var px = [];
         var py = [];
@@ -166,7 +168,7 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point) {
         this.rendNode = c.rendNode;  // This is needed in setProperty
     };
     
-    this.cb = JXG.bind(this.cbp,this);
+    this.cb = JXG.bind(this.cbp, this);
 
     JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw');
 
