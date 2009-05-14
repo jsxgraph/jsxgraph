@@ -154,7 +154,10 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point) {
 
     this.cbp = function(t) {
         var coordpairsStr = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(t))).unzip();
-        var coordpairs = coordpairsStr.toString().split(';');
+        coordpairsStr = coordpairsStr.toString().replace(/,geonext\.gxt;/g, "");
+//        coordpairsStr = coordpairsStr.replace(/nextpart/g, "");
+
+        var coordpairs = coordpairsStr.split(';');
 
         var coords;
         var px = [];

@@ -129,7 +129,13 @@ for i in range(0,len(polynomials)):
     for i in range(0,len(pa)):
         print >>data, pa[i,0], ",", pa[i,1], ";"
 
+    print >>data, ";"
+
 enc_data = base64.b64encode(zlib.compress(data.getvalue(), 9))
+
+fd = open('/tmp/tmp.txt', 'w')
+fd.write(data.getvalue())
+fd.close()
 
 if debug:
     print data.getvalue() + '<br />'

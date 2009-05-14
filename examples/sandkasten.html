@@ -28,8 +28,8 @@ g1 = board.createElement('glider', [1, 3, c1], {style:5,name:"Drag me"});
 c3 = board.createElement('circle', [g1, 8]);
 g2 = board.createElement('intersection', [c2,c3,0], {style:5, name: "E"});
 g3 = board.createElement('intersection', [c2,c3,1], {style:5, name: "R"});
-m1 = board.createElement('midpoint', [g1,g2], {style:8,name:"T",trace:true});
-m2 = board.createElement('midpoint', [g1,g3], {style:8,name:"Y",trace:true,strokeColor:'green'});
+m1 = board.createElement('midpoint', [g1,g2], {style:8,name:"T",trace:false});
+m2 = board.createElement('midpoint', [g1,g3], {style:8,name:"Y",trace:false,strokeColor:'green'});
 
 /*
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25, axis: false, grid: false});
@@ -49,14 +49,12 @@ m2 = board.createElement('midpoint', [g1,g3], {style:8,name:"Y",trace:true,strok
         s = board.createElement('line', [p1, p2], {strokeColor:'green', straightLast: false});
         var ticks = board.createElement('ticks', [s, [-1.0, 1.0, 3.0, 9.0]]);
 */
-        function genPoly2(p) {
+        function groebner(p) {
             JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p);
         }
   /* ]]> */
   </script>
-<a href="#" onclick="showAncestors(m1)">Show Ancestors</a><br />
-<a href="#" onclick="genSymbCoords(m1)">Generate symbolic coordinates</a><br />
-<a href="#" onclick="genPoly2(m1);">Generate Polynomials</a><br />
+<a href="#" onclick="groebner(m1);">Generate locus of T and Y</a><br />
 <div id="debug" style="display:block;"></div>
 <!--
 <div id="jxgbox2" class="jxgbox" style="width:600px; height:450px; float:left"></div>
