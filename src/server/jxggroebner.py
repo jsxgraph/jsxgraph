@@ -3,7 +3,24 @@
 import numpy
 import os
 
-os.environ['MPLCONFIGDIR'] = '/tmp'
+############################
+#
+# Config lines
+#
+############################
+
+# Should be changed to something more persistent but must be writable by
+# the webserver
+if not 'MPLCONFIGDIR' in os.environ:
+    os.environ['MPLCONFIGDIR'] = '/tmp'
+
+# Command to start cocoa
+cmd_cocoa = "cocoa"
+
+# Should'nt be changed, except you know what you're doing
+debug = False;
+
+############################
 
 import matplotlib
 matplotlib.use('Agg')
@@ -17,7 +34,7 @@ import cStringIO
 import cgi
 
 print """\
-Content-Type: text/html\n
+Content-Type: text/plain\n
 """
 
 # Data required by this script:
@@ -42,8 +59,6 @@ ye = float(form.getfirst('ye', '5'))
 # Clean them up
 number = cgi.escape(number)
 polys = base64.b64decode(cgi.escape(polys))
-
-debug = False;
 
 input = ""
 
@@ -72,7 +87,7 @@ if debug:
     print "Starting CoCoA with input<br />"
     print input + '<br />'
 
-cocoa = os.popen("echo \"" + input + "\" | cocoa")
+cocoa = os.popen("echo \"" + input + "\" | " + cmd_cocoa)
 
 output = cocoa.read()
 
