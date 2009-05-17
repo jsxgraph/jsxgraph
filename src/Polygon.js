@@ -195,10 +195,24 @@ JXG.createPolygon = function(board, parents, atts) {
 
 JXG.JSXGraph.registerElement('polygon', JXG.createPolygon);
 
-/*
-// !!! TODO
-Polygon.prototype.hideElement = function() {
+JXG.Polygon.prototype.hideElement = function() {
     this.visProp['visible'] = false;
     this.board.renderer.hide(this);
+
+    if(this.withLines) {
+        for(var i=0; i<this.borders.length; i++) {
+            this.borders[i].hideElement();
+        }
+    }
 }
-*/
+
+JXG.Polygon.prototype.showElement = function() {
+    this.visProp['visible'] = true;
+    this.board.renderer.show(this);
+
+    if(this.withLines) {
+        for(var i=0; i<this.borders.length; i++) {
+            this.borders[i].showElement();
+        }
+    }
+}
