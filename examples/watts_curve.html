@@ -1,0 +1,40 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Watt's Curve</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25, axis: false, grid: false});
+    xax = board.createElement('axis', [[0,0],[1,0]]);
+    yax = board.createElement('axis', [[0,0],[0,1]]);
+    p1 = board.createElement('point', [7, 8], {style:2,name:"Q"});
+    p2 = board.createElement('point', [15, 8], {style:2,name:"W"});
+    //p1 = board.createElement('point', [0, 0], {style:2,name:"Q",fixed:true});
+    //p2 = board.createElement('point', [8, 0], {style:2,name:"W",fixed:true});
+    c1 = board.createElement('circle', [p1, 4.5]);
+    c2 = board.createElement('circle', [p2, 4.5]);
+    g1 = board.createElement('glider', [1, 3, c1], {style:5,name:"Drag me"});
+    c3 = board.createElement('circle', [g1, 8]);
+    g2 = board.createElement('intersection', [c2,c3,0], {style:5, name: "E"});
+    g3 = board.createElement('intersection', [c2,c3,1], {style:5, name: "R"});
+    m1 = board.createElement('midpoint', [g1,g2], {style:8,name:"T",trace:false});
+    m2 = board.createElement('midpoint', [g1,g3], {style:8,name:"Y",trace:false,strokeColor:'green'});
+
+    function groebner(p) {
+        JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p);
+    }
+  /* ]]> */
+  </script>
+<a href="#" onclick="groebner(m1);">Generate locus of T and Y</a><br />
+<div id="debug" style="display:block;"></div>
+</body>
+</html>

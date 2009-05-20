@@ -1020,7 +1020,11 @@ this.readGeonext = function(tree,board) {
                 p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.colorFill,
-                              'visible:'+gxtEl.visible,'draft:'+gxtEl.draft,'trace:'+gxtEl.trace);  
+                              'draft:'+gxtEl.draft,'trace:'+gxtEl.trace);
+                // to emulate the geonext behaviour on invisible polygones
+                if(!gxtEl.visible) {
+                    p.setProperty('fillColor:none','highlightFillColor:none');
+                }
                 for(i=0; i<p.borders.length; i++) { 
                     p.borders[i].setStraight(gxtEl.border[i].straightFirst, gxtEl.border[i].straightLast);
                     p.borders[i].setProperty('strokeColor:'+gxtEl.border[i].colorStroke,

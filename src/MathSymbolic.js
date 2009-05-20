@@ -154,8 +154,7 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point) {
 
     this.cbp = function(t) {
         var coordpairsStr = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(t))).unzip();
-        coordpairsStr = coordpairsStr.toString().replace(/,geonext\.gxt;/g, "");
-//        coordpairsStr = coordpairsStr.replace(/nextpart/g, "");
+        coordpairsStr = coordpairsStr.toString().replace(/,geonext\.gxt;/g, "").replace(/\s/g, "");
 
         var coordpairs = coordpairsStr.split(';');
 
@@ -167,8 +166,8 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point) {
             px[i] = coords[0];
             py[i] = coords[1];
         }
-        var c = board.createElement('curve', [px, py], {strokeColor: 'green'});
-        this.rendNode = c.rendNode;  // This is needed in setProperty
+        var c = board.createElement('curve', [px, py], {strokeColor: 'green', strokeWidth: '2px'});
+        this.rendNode = c.rendNode;
     };
     
     this.cb = JXG.bind(this.cbp, this);

@@ -124,12 +124,13 @@ for i in range(0,len(polynomials)):
 
     con = C.find_nearest_contour(0, 0)
 
-    pa = C.collections[0].get_paths()[0].to_polygons()[0]
+    for i in range(0, len(C.collections[0].get_paths())):
+        pa = C.collections[0].get_paths()[i].to_polygons()[0]
 
-    for i in range(0,len(pa)):
-        print >>data, pa[i,0], ",", pa[i,1], ";"
+        for i in range(0,len(pa)):
+            print >>data, pa[i,0], ",", pa[i,1], ";"
 
-    print >>data, ";"
+        print >>data, ";"
 
 enc_data = base64.b64encode(zlib.compress(data.getvalue(), 9))
 
