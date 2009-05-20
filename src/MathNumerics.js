@@ -531,7 +531,7 @@ JXG.Math.Numerics.riemann = function(f, n, type, start, end) {
          }
     }
     return [xarr,yarr];
-}    
+};
 
 /**
  * Computation of the Riemann sum.
@@ -576,4 +576,127 @@ JXG.Math.Numerics.riemannsum = function(f, n, type, start, end) {
          }
     }
     return sum;
-}    
+};
+
+/**
+ * Class for storing butcher arrays for Runge-Kutta-methods
+ * @see JXG.Math.Numerics.rungeKutta
+ */
+JXG.Math.Numerics.Butcher = function () {
+    /**
+     * Order of Runge-Kutta-method
+     * @type int
+     */
+    this.s = 0;
+
+    /**
+     * See http://en.wikipedia.org/wiki/Runge-Kutta_methods
+     */
+    this.A = [];
+
+    /**
+     * See http://en.wikipedia.org/wiki/Runge-Kutta_methods
+     */
+    this.b = [];
+
+    /**
+     * See http://en.wikipedia.org/wiki/Runge-Kutta_methods
+     */
+    this.c = [];
+};
+
+/**
+ * Predefined butcher arrays
+ */
+JXG.Math.Numerics.predefinedButcher = {};
+
+JXG.Math.Numerics.predefinedButcher.RK4 = {
+    s: 4,
+    A: [[ 0,  0,  0, 0],
+        [0.5, 0,  0, 0],
+        [ 0, 0.5, 0, 0],
+        [ 0,  0,  1, 0]],
+    b: [0, 0.5, 0.5, 1],
+    c: [1./6., 1./3., 1./3., 1./6.]
+};
+
+JXG.Math.Numerics.predefinedButcher.Heun = {
+    s: 2,
+    A: [[0, 0], [1, 0]],
+    b: [0.5, 0.5],
+    c: [0, 1]
+};
+
+JXG.Math.Numerics.predefinedButcher.Euler = {
+    s: 1,
+    A: [[0]],
+    b: [1],
+    c: [0]
+};
+
+/**
+ * Solve ordinary differential equations numerically using Runge-Kutta-methods
+ * http://en.wikipedia.org/wiki/Runge-Kutta_methods
+ * todo description
+ */
+JXG.Math.Numerics.rungeKutta = function(butcher, x0, I, N, f) {
+    // TODO error/parameter check:
+    // butcher explicit
+    // interval ok
+    // N not too big (warn or give up?)
+    var x = x0;
+    var y = [];
+    var h = (I[1]-I[0])/N;
+    var t = I[0];
+    var k;
+    var dim = x0.length;
+    var s = butcher.s;
+
+    var result = [];
+
+    for(var i=0; i<N; i++) {
+        result[i] = [];
+        for(var e=0; e<dim; e++)
+            result[i][e] = x[e];
+
+        // init k
+        k = [];
+        for(var j=0; j<s; j++) {
+            // init y = 0
+            for(var e=0; e<dim; e++)
+                y[e] = 0.;
+
+            // Calculate linear combination of former k's and save it in y
+            for(var l=0; l<j; l++) {
+                for(var e=0; e<dim; e++) {
+                    y[e] += (butcher.A[j][l])*h*k[l][e];
+                }
+            }
+
+            // add x(t) to y
+            for(var e=0; e<dim; e++) {
+                y[e] += x[e];
+            }
+
+            // calculate new k and add it to the k matrix
+            k.push(f(t+butcher.c[j]*h, y));
+        }
+
+        // init y = 0
+        for(var e=0; e<dim; e++)
+            y[e] = 0.;
+
+        for(var l=0; l<s; l++) {
+            for(var e=0; e<dim; e++)
+                y[e] += butcher.b[l]*k[l][e];
+        }
+
+        for(var e=0; e<dim; e++) {
+            x[e] = x[e] + h*y[e];
+        }
+
+        t += h;
+    }
+
+    return result;
+};
