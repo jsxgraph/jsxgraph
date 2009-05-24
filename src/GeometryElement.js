@@ -38,6 +38,7 @@ JXG.OBJECT_TYPE_SECTOR  = 0x4F545343;                 // Hex fuer OTSC = Object 
 JXG.OBJECT_TYPE_TEXT  = 0x4F545445;                 // Hex fuer OTTE = Object Type TextElement 
 JXG.OBJECT_TYPE_ANGLE = 0x4F544147;                 // Hex fuer OTAG = Object Type AnGle
 JXG.OBJECT_TYPE_INTERSECTION = 0x4F54524E;          // Hex fuer OTIN = Object Type INtersection 
+JXG.OBJECT_TYPE_TURTLE = 0x4F5455;                 // Hex fuer OTTU = Object Type TUrtle
 
 JXG.OBJECT_CLASS_POINT = 1;                
 JXG.OBJECT_CLASS_LINE = 2;                

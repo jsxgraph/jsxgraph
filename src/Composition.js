@@ -223,12 +223,70 @@ JXG.createNormal = function(board, parents, attributes) {
                     function(){ return Df(p.position);}
                     ], attributes );
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
-        var g = c.X;
-        var f = c.Y;
-        return board.createElement('line', [
+        if (c.curveType!='plot') {
+            var g = c.X;
+            var f = c.Y;
+            return board.createElement('line', [
                     function(){ return -p.X()*board.D(g)(p.position)-p.Y()*board.D(f)(p.position);},
                     function(){ return board.D(g)(p.position);},
                     function(){ return board.D(f)(p.position);}
+                    ], attributes );
+        } else {                         // curveType 'plot'
+            return board.createElement('line', [
+                    function(){ var i=Math.floor(p.position); 
+                                var lbda = p.position-i;
+                                if (i==c.numberPoints-1) {i--; lbda=1; }
+                                if (i<0) return 1.0;
+                                return (c.Y(i)+lbda*(c.Y(i+1)-c.Y(i)))*(c.Y(i)-c.Y(i+1))-(c.X(i)+lbda*(c.X(i+1)-c.X(i)))*(c.X(i+1)-c.X(i));},
+                    function(){ var i=Math.floor(p.position); 
+                                if (i==c.numberPoints-1) i--;
+                                if (i<0) return 0.0;
+                                return c.X(i+1)-c.X(i);},
+                    function(){ var i=Math.floor(p.position); 
+                                if (i==c.numberPoints-1) i--;
+                                if (i<0) return 0.0;
+                                return c.Y(i+1)-c.Y(i);}
+                    ], attributes );
+        }
+    } else if (c.type == JXG.OBJECT_TYPE_TURTLE) {
+            return board.createElement('line', [
+                    function(){ var i=Math.floor(p.position);
+                                var lbda = p.position-i;
+                                var el,j;
+                                for(j=0;j<c.objects.length;j++) {  // run through all curves of this turtle
+                                    el = c.objects[j];
+                                    if (el.type==JXG.OBJECT_TYPE_CURVE) {
+                                        if (i<el.numberPoints) break;
+                                        i-=el.numberPoints;
+                                    }
+                                }
+                                if (i==el.numberPoints-1) { i--; lbda=1.0; }
+                                if (i<0) return 1.0;
+                                return (el.Y(i)+lbda*(el.Y(i+1)-el.Y(i)))*(el.Y(i)-el.Y(i+1))-(el.X(i)+lbda*(el.X(i+1)-el.X(i)))*(el.X(i+1)-el.X(i));},
+                    function(){ var i=Math.floor(p.position); 
+                                var el,j;
+                                for(j=0;j<c.objects.length;j++) {  // run through all curves of this turtle
+                                    el = c.objects[j];
+                                    if (el.type==JXG.OBJECT_TYPE_CURVE) {
+                                        if (i<el.numberPoints) break;
+                                        i-=el.numberPoints;
+                                    }
+                                }
+                                if (i==el.numberPoints-1) i--;
+                                if (i<0) return 0.0;
+                                return el.X(i+1)-el.X(i);},
+                    function(){ var i=Math.floor(p.position); 
+                                var el,j;
+                                for(j=0;j<c.objects.length;j++) {  // run through all curves of this turtle
+                                    el = c.objects[j];
+                                    if (el.type==JXG.OBJECT_TYPE_CURVE) {
+                                        if (i<el.numberPoints) break;
+                                        i-=el.numberPoints;
+                                    }
+                                }
+                                if (i==el.numberPoints-1) i--;
+                                if (i<0) return 0.0;
+                                return el.Y(i+1)-el.Y(i);}
                     ], attributes );
     }
     else {

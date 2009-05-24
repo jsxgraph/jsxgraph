@@ -127,14 +127,15 @@ JXG.Curve.prototype.maxX = function () {
 };
 
 /**
- * Empty function (for the moment). It is needed for highlighting
- * @param {x} 
+ * Checks whether (x,y) is near the curve.
+ * @param {int} x Coordinate in x direction, screen coordinates.
+ * @param {int} y Coordinate in y direction, screen coordinates.
  * @param {y} Find closest point on the curve to (x,y)
- * @return Always returns false
+ * @return {bool} True if (x,y) is near the curve, False otherwise.
  */
 JXG.Curve.prototype.hasPoint = function (x,y) {
-    //return false;
     var t, dist, c, trans, i, j, tX, tY;
+    var lbda, x0, y0, x1, y1, den;
     var prec = 5/(this.board.unitX*this.board.zoomX); // uebergangsweise = 5px
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     x = checkPoint.usrCoords[1];
@@ -156,8 +157,28 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
             dist = Math.sqrt((x-tX)*(x-tX)+(y-tY)*(y-tY));
             if (dist<prec) { return true; }
             t+=d;
+        }  
+    } else if (this.curveType == 'plot') {
+        for (i=0;i<this.numberPoints-1;i++) {
+            x1 = this.X(i+1)-this.X(i);
+            y1 = this.Y(i+1)-this.Y(i);
+            x0 = x-this.X(i);
+            y0 = y-this.Y(i);
+            den = x1*x1+y1*y1;
+            
+            if (den>=JXG.Math.eps) {
+                lbda = (x0*x1+y0*y1)/den;
+                dist = Math.sqrt( x0*x0+y0*y0 - lbda*(x0*x1+y0*y1) );
+            } else {
+                lbda = 0.0;
+                dist = Math.sqrt(x0*x0+y0*y0);
+            }
+            if (lbda>=0.0 && lbda<=1.0 && dist<prec) { 
+                return true; 
+            } 
         }
-    } else {
+        return false;
+    } else { // functiongraph
         // Brute force search for a point on the curve close to the mouse pointer
         var steps = 300;
         var d = (this.maxX()-this.minX())/steps;
@@ -306,7 +327,6 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
     //this.update();
     //}
 };
-
 
 /**
  * Converts the GEONExT syntax of the defining function term into JavaScript.

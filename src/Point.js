@@ -205,7 +205,6 @@ JXG.Point.prototype.update = function (fromParent) {
                 this.coords  = this.board.algebra.projectPointToCircle(this, this.slideObject);
                 this.position = this.board.algebra.rad([this.slideObject.midpoint.X()+1.0,this.slideObject.midpoint.Y()],this.slideObject.midpoint,this);
             }
-
            //this.coords  = this.board.algebra.projectPointToCircle(this, this.slideObject);
         } else if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
             this.coords  = this.board.algebra.projectPointToLine(this, this.slideObject);
@@ -286,10 +285,11 @@ JXG.Point.prototype.update = function (fromParent) {
                 }
             }
         } else if(this.slideObject.type == JXG.OBJECT_TYPE_CURVE) {
-            //if (this.type == JXG.OBJECT_TYPE_CAS) {
             this.updateConstraint(); // In case, the point is a constrained glider.
-            //}
             this.coords  = this.board.algebra.projectPointToCurve(this, this.slideObject);
+        } else if(this.slideObject.type == JXG.OBJECT_TYPE_TURTLE) {
+            this.updateConstraint(); // In case, the point is a constrained glider.
+            this.coords  = this.board.algebra.projectPointToTurtle(this, this.slideObject);
         }
     }
     
@@ -686,7 +686,7 @@ JXG.Point.prototype.animate = function(direction, stepCount) {
         } else {
             newX = Math.round((stepCount - this.intervalCount)/stepCount * this.board.canvasWidth);
         }
-        
+  
         this.coords.setCoordinates(JXG.COORDS_BY_SCREEN, [newX, 0]);
         this.coords = this.board.algebra.projectPointToCurve(this, this.slideObject);
     } else if(this.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {

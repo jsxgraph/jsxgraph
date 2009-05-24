@@ -897,12 +897,69 @@ JXG.createTangent = function(board, parents, attributes) {
     if (c.elementClass == JXG.OBJECT_CLASS_LINE) {
         return board.createElement('line', [c.point1,c.point2], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
-        var g = c.X;
-        var f = c.Y;
-        return board.createElement('line', [
+        if (c.curveType!='plot') {
+            var g = c.X;
+            var f = c.Y;
+            return board.createElement('line', [
                     function(){ return -p.X()*board.D(f)(p.position)+p.Y()*board.D(g)(p.position);},
                     function(){ return board.D(f)(p.position);},
                     function(){ return -board.D(g)(p.position);}
+                    ], attributes );
+        } else {  // curveType 'plot'
+            // equation of the line segment: 0 = y*(x1-x2) + x*(y2-y1) + y1*x2-x1*y2       
+            return board.createElement('line', [
+                    function(){ var i=Math.floor(p.position); 
+                                if (i==c.numberPoints-1) i--;
+                                if (i<0) return 1.0;
+                                return c.Y(i)*c.X(i+1)-c.X(i)*c.Y(i+1);},
+                    function(){ var i=Math.floor(p.position); 
+                                if (i==c.numberPoints-1) i--;
+                                if (i<0) return 0.0;
+                                return c.Y(i+1)-c.Y(i);},
+                    function(){ var i=Math.floor(p.position); 
+                                if (i==c.numberPoints-1) i--;
+                                if (i<0) return 0.0;
+                                return c.X(i)-c.X(i+1);}
+                    ], attributes );
+        }
+    } else if (c.type == JXG.OBJECT_TYPE_TURTLE) {
+            return board.createElement('line', [
+                    function(){ var i=Math.floor(p.position);
+                                var el,j;
+                                for(j=0;j<c.objects.length;j++) {  // run through all curves of this turtle
+                                    el = c.objects[j];
+                                    if (el.type==JXG.OBJECT_TYPE_CURVE) {
+                                        if (i<el.numberPoints) break;
+                                        i-=el.numberPoints;
+                                    }
+                                }
+                                if (i==el.numberPoints-1) i--;
+                                if (i<0) return 1.0;
+                                return el.Y(i)*el.X(i+1)-el.X(i)*el.Y(i+1);},
+                    function(){ var i=Math.floor(p.position); 
+                                var el,j;
+                                for(j=0;j<c.objects.length;j++) {  // run through all curves of this turtle
+                                    el = c.objects[j];
+                                    if (el.type==JXG.OBJECT_TYPE_CURVE) {
+                                        if (i<el.numberPoints) break;
+                                        i-=el.numberPoints;
+                                    }
+                                }
+                                if (i==el.numberPoints-1) i--;
+                                if (i<0) return 0.0;
+                                return el.Y(i+1)-el.Y(i);},
+                    function(){ var i=Math.floor(p.position); 
+                                var el,j;
+                                for(j=0;j<c.objects.length;j++) {  // run through all curves of this turtle
+                                    el = c.objects[j];
+                                    if (el.type==JXG.OBJECT_TYPE_CURVE) {
+                                        if (i<el.numberPoints) break;
+                                        i-=el.numberPoints;
+                                    }
+                                }
+                                if (i==el.numberPoints-1) i--;
+                                if (i<0) return 0.0;
+                                return el.X(i)-el.X(i+1);}
                     ], attributes );
     } else if (c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         var Dg = function(t){ return -c.getRadius()*Math.sin(t); };

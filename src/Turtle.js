@@ -45,7 +45,8 @@
  * All angles are in degrees.
   */
 JXG.Turtle = function (board, parents, attributes) {
-    this.arrowLen = 20.0;
+    var x,y,dir;
+    this.type = JXG.OBJECT_TYPE_TURTLE;
     this.turtleIsHidden = false;
     this.board = board;
     if (attributes==null) {
@@ -55,25 +56,32 @@ JXG.Turtle = function (board, parents, attributes) {
     }
     this.attributes.straightFirst = false;
     this.attributes.straightLast = false;
-    this.init();
-    
+   
+    x = 0;
+    y = 0;
+    dir = 90;
     if (parents.length!=0) {
         if (parents.length==3) {   // [x,y,dir]
             // Only numbers are accepted at the moment
-            this.setPos(parents[0],parents[1]);
-            this.right(90-parents[2]);
+            x = parents[0];
+            y = parents[1];
+            dir = parents[2];
         } else if (parents.length==2) {
             if (JXG.IsArray(parents[0])) {  // [[x,y],dir]
-                this.setPos(parents[0][0],parents[0][1]);
-                this.right(90-parents[1]);
+                x = parents[0][0];
+                y = parents[0][1];
+                dir = parents[1];
             } else {  // [x,y]
-                this.setPos(parents[0],parents[1]);
+                x = parents[0];
+                y = parents[1];
             }
         } else { // [[x,y]]
-           this.setPos(parents[0][0],parents[0][1]);
+            x = parents[0][0];
+            y = parents[0][1];
         }
     }
     
+    this.init(x,y,dir);
     return this;
 } 
 JXG.Turtle.prototype = new JXG.GeometryElement;
@@ -82,10 +90,10 @@ JXG.Turtle.prototype = new JXG.GeometryElement;
 * Initialize a new turtle or reinitialize  a turtle after @see #clearscreen .
 * @private
 */
-JXG.Turtle.prototype.init = function() {
+JXG.Turtle.prototype.init = function(x,y,dir) {
     this.arrowLen = 20.0/Math.sqrt(this.board.unitX*this.board.unitX+this.board.unitY*this.board.unitY);
 
-    this.pos = [0,0];
+    this.pos = [x,y];
     this.isPenDown = true;
     this.dir = 90;
     this.stack = [];
@@ -105,7 +113,8 @@ JXG.Turtle.prototype.init = function() {
     this.arrow = this.board.createElement('line',[this.turtle,this.turtle2],
             {lastArrow:true,strokeColor:'#ff0000',straightFirst:false,straightLast:false,strokeWidth:w});
     this.objects.push(this.arrow);
-    
+
+    this.right(90-dir);
     this.board.update();
 }
 
@@ -229,7 +238,7 @@ JXG.Turtle.prototype.clearScreen = function() {
         var el = this.objects[i];
         this.board.removeObject(el.id);
     }
-    this.init();
+    this.init(0,0,90);
     return this;
 };
 
@@ -286,7 +295,8 @@ JXG.Turtle.prototype.setPenColor = function(colStr) {
 };
 
 /**
-*  Sets properties of the turtle. @see JXG.GeometryElement#setProperty . 
+*  Sets properties of the turtle. @see JXG.GeometryElement#setProperty .
+* Sets the property for all curves of the turtle.
 * @param {Object} key:value pairs
 * @type {JXG.Turtle}
 * @return pointer to the turtle object
@@ -294,7 +304,7 @@ JXG.Turtle.prototype.setPenColor = function(colStr) {
 JXG.Turtle.prototype.setProperty = function() {
     var pair;
     var pairRaw;
-    var i;
+    var i, el;
     var key;
     for (i=0; i<arguments.length; i++) {
         pairRaw = arguments[i];
@@ -311,8 +321,14 @@ JXG.Turtle.prototype.setProperty = function() {
         }
         this.attributes[pair[0]] = pair[1];
     }
-    this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
-    this.objects.push(this.curve);
+    for (i=0; i<this.objects.length; i++) {
+        el = this.objects[i];
+        if (el.type==JXG.OBJECT_TYPE_CURVE) {
+            el.setProperty(this.attributes);
+        }
+    }
+    //this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    //this.objects.push(this.curve);
     return this;
 };
 
@@ -501,6 +517,27 @@ JXG.Turtle.prototype.X = function(target) {
 */
 JXG.Turtle.prototype.Y = function(target) { 
     return this.pos[1]; //this.turtle.Y();
+}
+
+/**
+ * Checks whether (x,y) is near the curve.
+ * @param {int} x Coordinate in x direction, screen coordinates.
+ * @param {int} y Coordinate in y direction, screen coordinates.
+ * @param {y} Find closest point on the curve to (x,y)
+ * @return {bool} True if (x,y) is near the curve, False otherwise.
+ */
+JXG.Turtle.prototype.hasPoint = function (x,y) {
+    var i, el;
+    for(i=0;i<this.objects.length;i++) {  // run through all curves oof this turtle
+        el = this.objects[i];
+        if (el.type==JXG.OBJECT_TYPE_CURVE) {
+            if (el.hasPoint(x,y)) {
+                return true;              // So what??? All other curves have to be notified now (for highlighting)
+                                          // This has to be done, yet.
+            }
+        }
+    }
+    return false;
 }
 
 /**

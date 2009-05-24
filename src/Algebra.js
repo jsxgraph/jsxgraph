@@ -533,8 +533,9 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
 };
 
 /**
- * Calculates the coordinates of the projection of a given point on a given graph. I.o.w. the
- * intersection point of the graph and the parallel to y-axis through the given point.
+ * Calculates the coordinates of the projection of a given point on a given curve. In case of
+ * functon graphs this is the
+ * intersection point of the curve and the parallel to y-axis through the given point.
  * @param {JXG.Point} point Point to project.
  * @param {JXG.Curve} graph Curve on that the point is projected.
  * @type JXG.Coords
@@ -542,6 +543,8 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
  */
 JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
     var newCoords,x,y,t;
+    var x0,y0,x1,y1,den,i,mindist,dist,lbda;
+    var infty = 1000000.0;
     if (curve.curveType=='parameter' || curve.curveType=='polar') { 
         x = point.X();
         y = point.Y();
@@ -550,14 +553,89 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
         if (t<curve.minX()) { t = curve.minX(); }
         if (t>curve.maxX()) { t = curve.maxX(); }
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t),curve.Y(t)], this.board);
-    } else {
+    } else if (curve.curveType == 'plot') {
+        mindist = infty;
+        x = point.X();
+        y = point.Y();
+        for (i=0;i<curve.numberPoints;i++) {
+            x0 = x-curve.X(i);
+            y0 = y-curve.Y(i);
+            dist = Math.sqrt(x0*x0+y0*y0);
+            if (dist<mindist) {
+                mindist = dist;
+                t = i;
+            }
+            if (i==curve.numberPoints-1) { continue; }
+
+            x1 = curve.X(i+1)-curve.X(i);
+            y1 = curve.Y(i+1)-curve.Y(i);
+            den = x1*x1+y1*y1;
+            if (den>=JXG.Math.eps) {
+                lbda = (x0*x1+y0*y1)/den;
+                dist = Math.sqrt( x0*x0+y0*y0 - lbda*(x0*x1+y0*y1) );
+            } else {
+                lbda = 0.0;
+                dist = Math.sqrt(x0*x0+y0*y0);
+            }
+            if (lbda>=0.0 && lbda<=1.0 && dist<mindist) { 
+                t = i+lbda;
+                mindist = dist;
+            } 
+        }
+        i = Math.floor(t);
+        lbda = t-i;
+        if (i<curve.numberPoints-1) {
+            x = lbda*curve.X(i+1)+(1.0-lbda)*curve.X(i);
+            y = lbda*curve.Y(i+1)+(1.0-lbda)*curve.Y(i);
+        } else {
+            x = curve.X(i);
+            y = curve.Y(i);
+        }
+        newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board); 
+    } else {             // functiongraph
         t = point.X();
         x = t; //curve.X(t);
         y = curve.Y(t);
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board); 
     }
-    point.position = t;
+    point.position = t;                      // side effect
     return curve.updateTransform(newCoords);
+};
+
+/**
+ * Calculates the coordinates of the projection of a given point on a given turtle. A turtle consists of
+ * one or more curves of curveType 'plot'.
+ * @param {JXG.Point} point Point to project.
+ * @param {JXG.Turtle} turtle on that the point is projected.
+ * @type JXG.Coords
+ * @return The coordinates of the projection of the given point on the given turtle.
+ */
+JXG.Algebra.prototype.projectPointToTurtle = function(point,turtle) {
+    var newCoords,t,x,y;
+    var np, npmin;
+    var i,mindist,dist,el,minEl;
+    mindist = 1000000.0;
+    np = 0;
+    npmin = 0;
+    for(i=0;i<turtle.objects.length;i++) {  // run through all curves of this turtle
+        var el = turtle.objects[i];
+        if (el.type==JXG.OBJECT_TYPE_CURVE) {
+            newCoords = this.projectPointToCurve(point,el);
+            dist = this.distance(newCoords.usrCoords,point.coords.usrCoords);
+            if (dist<mindist) {
+                x = newCoords.usrCoords[1];
+                y = newCoords.usrCoords[2];
+                t = point.position;
+                mindist = dist;
+                minEl = el;
+                npmin = np;
+            }
+            np += el.numberPoints;
+        }
+    }
+    newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);    
+    point.position = t+npmin;
+    return minEl.updateTransform(newCoords);
 };
 
 /**
