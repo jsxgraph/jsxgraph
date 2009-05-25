@@ -138,3 +138,11 @@ JXG.Board.prototype.perpendicularpointFunc = function(){return arguments;};
 
 JXG.Board.prototype.reflectionOptions = ['reflection',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_LINE]]];
 JXG.Board.prototype.reflectionFunc = function(){return arguments;};
+
+// Wrapper for not-singleton-pstricks. this could be removed after the next release
+// and adjusting examples/pstricks.html and pstricks example in the wiki
+// (http://jsxgraph.uni-bayreuth.de/wiki/index.php/PsTricks_export)
+JXG.Board.prototype.pstricks = {};
+JXG.Board.prototype.pstricks.givePsTricksToDiv = function(divId, board) {
+    JXG.PsTricks.givePsTricksToDiv(divId, board);
+}

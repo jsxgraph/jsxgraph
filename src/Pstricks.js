@@ -1,8 +1,8 @@
-JXG.PsTricks = function() {
+JXG.PsTricks = new function() {
     this.psTricksString = "";
 }
 
-JXG.PsTricks.prototype.convertBoardToPsTricks = function(board) {
+JXG.PsTricks.convertBoardToPsTricks = function(board) {
     var p = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
     var q = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board);
     this.psTricksString = '\\begin{pspicture*}('+q.usrCoords[1]+','+p.usrCoords[2]+')('+p.usrCoords[1]+','+q.usrCoords[2]+')\n';
@@ -73,12 +73,12 @@ JXG.PsTricks.prototype.convertBoardToPsTricks = function(board) {
     this.psTricksString += '\\end{pspicture*}';
 }
 
-JXG.PsTricks.prototype.givePsTricksToDiv = function(divId, board) {
+JXG.PsTricks.givePsTricksToDiv = function(divId, board) {
     this.convertBoardToPsTricks(board);
     document.getElementById(divId).innerHTML = this.psTricksString;
 }
 
-JXG.PsTricks.prototype.addPoint = function(el) {
+JXG.PsTricks.addPoint = function(el) {
     this.psTricksString += "\\psdot";
     this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) + ",";
     this.psTricksString += "dotstyle=";
@@ -140,7 +140,7 @@ JXG.PsTricks.prototype.addPoint = function(el) {
     this.psTricksString += "\\rput("+(el.coords.usrCoords[1]+15/ el.board.unitY / el.board.zoomY)+","+(el.coords.usrCoords[2]+15/ el.board.unitY / el.board.zoomY)+"){\\small $"+el.name+"$}\n";
 }
 
-JXG.PsTricks.prototype.addLine = function(el) {
+JXG.PsTricks.addLine = function(el) {
     var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
     var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
     if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
@@ -165,7 +165,7 @@ JXG.PsTricks.prototype.addLine = function(el) {
     this.psTricksString += "("+screenCoords1.usrCoords[1]+","+screenCoords1.usrCoords[2]+")("+screenCoords2.usrCoords[1]+","+screenCoords2.usrCoords[2]+")\n";
 }
 
-JXG.PsTricks.prototype.addCircle = function(el) {
+JXG.PsTricks.addCircle = function(el) {
     var radius = el.getRadius();
     this.psTricksString += "\\pscircle";
     this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) +", linewidth=" +el.visProp['strokeWidth']+"px";
@@ -176,7 +176,7 @@ JXG.PsTricks.prototype.addCircle = function(el) {
     this.psTricksString += "("+el.midpoint.coords.usrCoords[1]+","+el.midpoint.coords.usrCoords[2]+"){"+radius+"}\n";
 }
 
-JXG.PsTricks.prototype.addPolygon = function(el) {
+JXG.PsTricks.addPolygon = function(el) {
     this.psTricksString += "\\pspolygon";
     this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+JXG.Math.round(el.visProp['fillOpacity'],5)+"]";
     for(var i=0; i < el.vertices.length; i++) {
@@ -185,7 +185,7 @@ JXG.PsTricks.prototype.addPolygon = function(el) {
     this.psTricksString += "\n";
 }
 
-JXG.PsTricks.prototype.addArc = function(el) {
+JXG.PsTricks.addArc = function(el) {
     var radius = el.getRadius();  
     var p = {};
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
@@ -213,7 +213,7 @@ JXG.PsTricks.prototype.addArc = function(el) {
     this.psTricksString += "("+el.midpoint.coords.usrCoords[1]+","+el.midpoint.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";
 }
 
-JXG.PsTricks.prototype.addSector = function(el) {
+JXG.PsTricks.addSector = function(el) {
     var radius = el.getRadius();  
     var p = {};
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
@@ -229,7 +229,7 @@ JXG.PsTricks.prototype.addSector = function(el) {
     }
 }
 
-JXG.PsTricks.prototype.addAngle = function(el) {
+JXG.PsTricks.addAngle = function(el) {
     var radius = el.radius;
     var p = {};
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
@@ -249,7 +249,7 @@ JXG.PsTricks.prototype.addAngle = function(el) {
     this.psTricksString += "("+el.point2.coords.usrCoords[1]+","+el.point2.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";
 }
 
-JXG.PsTricks.prototype.parseColor = function(color) {
+JXG.PsTricks.parseColor = function(color) {
     var c = new JXG.RGBColor(color);
     return "{[rgb]{"+c.r/255+","+c.g/255+","+c.b/255+"}}";
 }

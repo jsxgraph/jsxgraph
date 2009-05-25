@@ -426,8 +426,6 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    
    JXG.addEvent(document,'mousedown', this.mouseDownListener, this);
    JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
-  
-    this.pstricks = new JXG.PsTricks();
 };
 
 /**
