@@ -182,8 +182,10 @@ JXG.Polygon.prototype.cloneToBackground = function(addToTrace) {
 
 JXG.createPolygon = function(board, parents, atts) {
     var el;
+
     // Sind alles Punkte?
     for(var i=0; i<parents.length; i++) {
+        parents[i] = JXG.GetReferenceFromParameter(board, parents[i]);
         if(!JXG.IsPoint(parents[i]))
             throw ("Can't create polygon with parent types other than 'point'.");
     }
