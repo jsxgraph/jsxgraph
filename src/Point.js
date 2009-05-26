@@ -94,7 +94,7 @@ JXG.Point = function (board, coordinates, id, name, show) {
     if(!show) {
         this.label.hiddenByParent = true;
     }
-    
+ 
     /**
      * False: Point can be moved, True: Point can't be move with the mouse.
      * @type bool
