@@ -616,8 +616,8 @@ JXG.Math.Numerics.predefinedButcher.RK4 = {
         [0.5, 0,  0, 0],
         [ 0, 0.5, 0, 0],
         [ 0,  0,  1, 0]],
-    b: [0, 0.5, 0.5, 1],
-    c: [1./6., 1./3., 1./3., 1./6.]
+    b: [1./6., 1./3., 1./3., 1./6.],
+    c: [0, 0.5, 0.5, 1]
 };
 
 JXG.Math.Numerics.predefinedButcher.Heun = {
@@ -641,10 +641,12 @@ JXG.Math.Numerics.predefinedButcher.Euler = {
  */
 JXG.Math.Numerics.rungeKutta = function(butcher, x0, I, N, f) {
     // TODO error/parameter check:
-    // butcher explicit
-    // interval ok
-    // N not too big (warn or give up?)
-    var x = x0;
+    // N not too big (warn or give up?) OR implement step size control
+
+    // don't change x0, so copy it
+    var x = [];
+    for(var e=0; e<x0.length; e++)
+        x[e] = x0[e];
     var y = [];
     var h = (I[1]-I[0])/N;
     var t = I[0];
@@ -652,12 +654,18 @@ JXG.Math.Numerics.rungeKutta = function(butcher, x0, I, N, f) {
     var dim = x0.length;
     var s = butcher.s;
 
-    var result = [];
+    var numberOfResultPoints = 1000;
+    var quotient = N/numberOfResultPoints;
 
+    var result = [];
+    var r = 0;
     for(var i=0; i<N; i++) {
-        result[i] = [];
-        for(var e=0; e<dim; e++)
-            result[i][e] = x[e];
+        if((i % quotient == 0) || (i == N-1)) {
+            result[r] = [];
+            for(var e=0; e<dim; e++)
+                result[r][e] = x[e];
+            r++;
+        }
 
         // init k
         k = [];
