@@ -244,3 +244,50 @@ JXG.RGBColor.prototype.toHex = function () {
     return '#' + r + g + b;
 }
 
+/**
+* Converts HSV color to RGB color.
+* Based on C Code in "Computer Graphics -- Principles and Practice,"
+* Foley et al, 1996, p. 593.
+* See also http://www.efg2.com/Lab/Graphics/Colors/HSV.htm  
+* @param {float} H value between 0 and 360
+* @param {float} S value between 0.0 (shade of gray) to 1.0 (pure color)
+* @param {float} V value between 0.0 (black) to 1.0 (white)
+* @return {string} RGB color string
+*/
+JXG.hsv2rgb = function(H,S,V) {
+    var R,G,B, f,i,hTemp, p,q,t;
+    H = ((H%360.0)+360.0)%360;
+    if (S==0) {
+        if (isNaN(H)) {
+            R = V;
+            G = V;
+            B = V;
+        } else {
+            return '#000000';
+        }
+    } else {
+        if (H>=360) {
+            hTemp = 0.0;
+        } else {
+            hTemp = H;
+        }
+        hTemp = hTemp / 60;     // h is now IN [0,6)
+        i = Math.floor(hTemp);        // largest integer <= h
+        f = hTemp - i;                  // fractional part of h
+        p = V * (1.0 - S);
+        q = V * (1.0 - (S * f));
+        t = V * (1.0 - (S * (1.0 - f)));
+        switch (i) {
+            case 0: R = V; G = t;  B = p; break;
+            case 1: R = q; G = V;  B = p; break;
+            case 2: R = p; G = V;  B = t; break;
+            case 3: R = p; G = q;  B = V; break;
+            case 4: R = t; G = p;  B = V; break;
+            case 5: R = V; G = p;  B = q; break;
+        }
+    }
+    R = Math.round(R*255).toString(16); R = (R.length==0)?'00':((R.length==1)?'0'+R:R);
+    G = Math.round(G*255).toString(16); G = (G.length==0)?'00':((G.length==1)?'0'+G:G);
+    B = Math.round(B*255).toString(16); B = (B.length==0)?'00':((B.length==1)?'0'+B:B);
+    return '#'+R+G+B; 
+}
