@@ -2426,7 +2426,7 @@ JXG.Board.prototype.update = function(drag) {
  */
 JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     // CM: AW: 
-    if (elementType!='turtle' && (parents == null || parents.length == 0)) {
+    if (elementType!='turtle' && (parents == null || parents.length == 0)) {  // Turtle may have no parent elements
         return null;
     } 
     if (parents == null) { parents = []; }
