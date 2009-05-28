@@ -918,6 +918,8 @@ JXG.Board.prototype.addPoint = function (obj) {
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
     
+    this.addText(obj.label.content)
+    
     this.renderer.drawPoint(obj);
     this.renderer.drawText(obj.label.content);
     if(!obj.visProp['visible']) {

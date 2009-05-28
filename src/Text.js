@@ -117,7 +117,9 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
         this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
     }
     this.updateText();                    // First evaluation of the string
-    this.id = this.board.addText(this);
+    if(!this.isLabel) {
+        this.id = this.board.addText(this);
+    }
     this.notifyParents(this.contentStr);
 };
 JXG.Text.prototype = new JXG.GeometryElement();

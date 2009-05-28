@@ -442,12 +442,12 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 }
                 if(opacity == '00') {
                     if (this.label!=null) {
-                        this.label.hideElement();
+                        this.label.content.hideElement();
                     }
                 } 
                 if(this.label!=null) {
                     this.label.color = color;
-                    this.board.renderer.setLabelColor(this.label);
+                    this.board.renderer.setLabelColor(this.label.content);
                 }
                 if(this.type == JXG.OBJECT_TYPE_TEXT) {
                     this.visProp['strokeColor'] = color;

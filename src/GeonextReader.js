@@ -319,7 +319,7 @@ this.readGeonext = function(tree,board) {
                     p.traced = (gxtEl.trace=='false') ? false : true; 
                     JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 } catch(e) {
-                    //alert(e);                
+                    alert(e);                
                     //$('debug').innerHTML += "* <b>Err:</b>  Point " + gxtEl.name + " " + gxtEl.id + "<br>\n";
                 }
                 break;
