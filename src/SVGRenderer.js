@@ -96,7 +96,7 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     for (var i=0; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
         if(c.major) {
-            if (axis.labels[i].show) this.drawLabel(axis.labels[i]);
+            if (axis.labels[i].show) this.drawText(axis.labels[i]);
             tickStr += "M " + (c.scrCoords[1]+dxMaj) + " " + (c.scrCoords[2]-dyMaj) + " L " + (c.scrCoords[1]-dxMaj) + " " + (c.scrCoords[2]+dyMaj) + " ";
         }
         else
@@ -600,11 +600,11 @@ JXG.SVGRenderer.prototype.hide = function(el) {
         node = el.rendNode2;
         node.setAttributeNS(null, 'display', 'none');
         node.style.visibility = "hidden";         
-    }    
+    }   
     else {
         var node = el.rendNode;
         node.setAttributeNS(null, 'display', 'none');
-        node.style.visibility = "hidden";  
+        node.style.visibility = "hidden";     
     }
 }
 

@@ -338,11 +338,22 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
             labelText = position.toString();
             if(labelText.length > 5)
                 labelText = position.toPrecision(3).toString();
-            label = new JXG.Label(this.board, labelText, newTick, this.id+i+"Label");
+            label = new JXG.Text(this.board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], this.id+i+"Label", null, null, true);
             label.distanceX = 0;
             label.distanceY = -10;
-            label.setCoordinates(newTick);
-            if (this.drawLabels) label.show = true; else label.show = false;
+            //label.setCoordinates(newTick);
+            /*label.coords = new JXG.Coords(JXG.COORDS_BY_USER,
+                                    [newTick.usrCoords[1]*1+label.distanceX/(this.board.unitX*this.board.zoomX),
+                                     newTick.usrCoords[2]*1+label.distanceY/(this.board.unitY*this.board.zoomY)],
+                                    this.board);*/
+            label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.unitX*this.board.zoomX), 
+                            newTick.usrCoords[2]*1+label.distanceY/(this.board.unitY*this.board.zoomY));
+            if (this.drawLabels) {
+                label.show = true; 
+            }
+            else {
+                label.show = false;
+            }
             this.labels.push(label);
 
             // store the old coordinates
@@ -438,8 +449,14 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         if(this.drawZero) {
             newTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.usrCoords[1], p1.usrCoords[2]], this.board);
             this.ticks.push(newTick);
-            label = new JXG.Label(this.board, "0", newTick, this.id+"0Label");
-            if (this.drawLabels) label.show = true; else label.show = false;
+            //label = new JXG.Label(this.board, "0", newTick, this.id+"0Label");
+            label = new JXG.Text(this.board, "0", null, [p1.usrCoords[1], p1.usrCoords[2]], this.id+"0Label", null, null, true);
+            if (this.drawLabels) {
+                label.show = true; 
+            }
+            else {
+                label.show = false;
+            }
             this.labels.push(label);
 
             this.ticks[0].major = true;
@@ -494,11 +511,22 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                 labelText = this.fixedTicks[i].toString();
                 if(labelText.length > 5)
                     labelText = this.fixedTicks[i].toFixed(3).toString();
-                label = new JXG.Label(this.board, labelText, newTick, this.id+i+"Label");
+                //label = new JXG.Label(this.board, labelText, newTick, this.id+i+"Label");
+                label = new JXG.Text(this.board, labelText, null, [p1.usrCoords[1] + nx, p1.usrCoords[2] + ny], this.id+i+"Label", null, null, true);
                 label.distanceX = 0;
                 label.distanceY = -10;
-                label.setCoordinates(newTick);
-                if (this.drawLabels) label.show = true; else label.show = false;
+                //label.setCoordinates(newTick);
+                /*label.coords = new JXG.Coords(JXG.COORDS_BY_USER,
+                             [newTick.usrCoords[1]*1+label.distanceX/(this.board.unitX*this.board.zoomX),
+                              newTick.usrCoords[2]*1+label.distanceY/(this.board.unitY*this.board.zoomY)],
+                             this.board);*/    
+                label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.unitX*this.board.zoomX), 
+                                newTick.usrCoords[2]*1+label.distanceY/(this.board.unitY*this.board.zoomY));
+                if (this.drawLabels) {
+                    label.show = true; 
+                } else {
+                    label.show = false;
+                }
                 this.labels.push(label);
             }
         }

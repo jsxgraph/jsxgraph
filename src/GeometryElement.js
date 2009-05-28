@@ -304,7 +304,7 @@ JXG.GeometryElement.prototype.hideElement = function() {
     if (this.label!=null) {
         this.label.hiddenByParent = true;
         if(this.label.show) {
-            this.board.renderer.hide(this.label);
+            this.board.renderer.hide(this.label.content);
             this.label.show = true;
         }
     }
@@ -319,7 +319,7 @@ JXG.GeometryElement.prototype.showElement = function() {
     if (this.label!=null && this.label.hiddenByParent) {
         this.label.hiddenByParent = false;
         if(this.label.show) {
-            this.board.renderer.show(this.label);
+            this.board.renderer.show(this.label.content);
         }
     }
 };
@@ -453,12 +453,12 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 }
                 if(opacity == '00') {
                     if (this.label!=null) {
-                        this.label.hideElement();
+                        this.label.content.hideElement();
                     }
                 } 
                 if(this.label!=null) {
                     this.label.color = color;
-                    this.board.renderer.setLabelColor(this.label);
+                    this.board.renderer.setLabelColor(this.label.content);
                 }
                 if(this.type == JXG.OBJECT_TYPE_TEXT) {
                     this.visProp['strokeColor'] = color;
@@ -642,6 +642,13 @@ JXG.GeometryElement.prototype.remove = function() {
  * 
  */
 JXG.GeometryElement.prototype.getTextAnchor = function() {    
+    return new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
+};
+
+/**
+ * 
+ */
+JXG.GeometryElement.prototype.getLabelAnchor = function() {    
     return new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
 };
 

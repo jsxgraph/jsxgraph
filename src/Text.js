@@ -39,7 +39,8 @@
  * @constructor
  * @return A new geometry element Text
  */
-JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
+JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLabel) {
+    //alert(contentStr);
     this.constructor();
 
     this.type = JXG.OBJECT_TYPE_TEXT;
@@ -50,6 +51,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
     this.contentStr = contentStr;
     this.plaintextStr = '';
 
+    this.isLabel = isLabel;
     // stroke Color = text Color
     this.visProp['strokeColor'] = this.board.options.text.strokeColor;
 
@@ -67,7 +69,13 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
      * @type JXG.Coords
      */
     if ((this.element = this.board.objects[element])){
-        var anchor = this.element.getTextAnchor();
+        var anchor;
+        if(!this.isLabel) {
+            anchor = this.element.getTextAnchor();
+        }
+        else {
+            anchor = this.element.getLabelAnchor();
+        }
         this.element.addChild(this);
         this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [parseFloat(coords[0]),parseFloat(coords[1])],this.board);
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.relativeCoords.usrCoords[1]+anchor.usrCoords[1],this.relativeCoords.usrCoords[2]+anchor.usrCoords[2]], this.board);
@@ -108,9 +116,10 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
         }
         this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
     }
-
     this.updateText();                    // First evaluation of the string
-    this.id = this.board.addText(this);
+    if(!this.isLabel) {
+        this.id = this.board.addText(this);
+    }
     this.notifyParents(this.contentStr);
 };
 JXG.Text.prototype = new JXG.GeometryElement();
@@ -123,6 +132,23 @@ JXG.Text.prototype = new JXG.GeometryElement();
  */
 JXG.Text.prototype.hasPoint = function (x,y) {
     return false;
+};
+
+JXG.Text.prototype.setText = function(text) {
+    var plaintext;
+    if (typeof text=='number') {
+        plaintext = (text).toFixed(this.digits);  
+    } else {
+        plaintext = this.generateTerm(text);   // Converts GEONExT syntax into JavaScript string
+    }
+    this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
+    this.updateText();
+};
+
+JXG.Text.prototype.setCoords = function (x,y) {
+    this.X = function() { return x; };
+    this.Y = function() { return y; };
+    this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
 };
 
 /**
@@ -245,7 +271,7 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
  * The text to display has to be the last entrie in parentArr.
  **/
 JXG.createText = function(board, parentArr, atts) {
-    return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits']);
+    return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false);
 };
 
 JXG.JSXGraph.registerElement('text', JXG.createText);

@@ -594,42 +594,6 @@ JXG.AbstractRenderer.prototype.drawArc = function(arc) { };
  * @see #drawArc
  */
 JXG.AbstractRenderer.prototype.updateArc = function(el) { };
-
-/**
- * Draws a label on the canvas.
- * @param {JXG.Label} el Reference to a label object, that has to be drawn.
- * @see JXG.Label
- * @see #updateLabel
- */
-JXG.AbstractRenderer.prototype.drawLabel = function(el) { 
-    var node = this.container.ownerDocument.createElement('div');
-    node.style.position = 'absolute';
-    node.style.fontSize = el.board.fontSize + 'px';
-    node.style.color = el.color;
-    node.className = 'JXGText';
-    node.style.zIndex = '10';   
-    node.setAttribute('id', el.id);
-    node.innerHTML = el.nameHTML;
-    this.container.appendChild(node);
-    el.rendNode = node;
-    this.updateLabel(el);
-};
-    
-/**
- * Updates properties of a label that already exists on the canvas.
- * @param {JXG.Label} el Reference to a label object, that has to be updated.
- * @see JXG.Label
- * @see #drawLabel
- */
-JXG.AbstractRenderer.prototype.updateLabel = function(el) { 
-    el.rendNode.style.left = (el.coords.scrCoords[1])+'px'; 
-    el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText)+'px'; 
-    if(el.rendNode.innerHTML != el.nameHTML)
-        el.rendNode.innerHTML = el.nameHTML;
-    //if (el.rendNode.firstChild) {
-    //    el.rendNode.firstChild.data = el.nameHTML;
-    //}
-};
     
 /**
  * Draws text on the canvas
