@@ -1033,12 +1033,25 @@ JXG.Algebra.prototype.findDependencies = function(me,term) {
     var elements = this.board.elementsByName;
     for (el in elements) {
         if (el != me.name) {
-            var elmask = el.replace(/\[/g,'\\[');
-            elmask = elmask.replace(/\]/g,'\\]');
-            expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\("+elmask+"\)\(,\[\\w\\[\\]'_ \]+\)*\\)","g");  // Searches (A), (A,B),(A,B,C)
-            if (term.search(expr)>=0) {
+            if(elements[el].type == JXG.OBJECT_TYPE_TEXT) {
+                if(!elements[el].isLabel) {
+                    var elmask = el.replace(/\[/g,'\\[');
+                    elmask = elmask.replace(/\]/g,'\\]');
+                    expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\("+elmask+"\)\(,\[\\w\\[\\]'_ \]+\)*\\)","g");  // Searches (A), (A,B),(A,B,C)
+                    if (term.search(expr)>=0) {
 //alert(el);
-                elements[el].addChild(me);
+                        elements[el].addChild(me);
+                    }
+                }
+            }
+            else {
+                var elmask = el.replace(/\[/g,'\\[');
+                elmask = elmask.replace(/\]/g,'\\]');
+                expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\("+elmask+"\)\(,\[\\w\\[\\]'_ \]+\)*\\)","g");  // Searches (A), (A,B),(A,B,C)
+                if (term.search(expr)>=0) {
+//alert(el);
+                    elements[el].addChild(me);
+                }
             }
         }
     }

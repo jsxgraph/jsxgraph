@@ -62,7 +62,6 @@
 JXG.Circle = function (board, method, par1, par2, id, name) { 
     /* Call the constructor of GeometryElement */
     this.constructor();
-    this.init(board, id, name);
 
     /**
      * Sets type of GeometryElement, value is OBJECT_TYPE_CIRCLE.
@@ -70,7 +69,9 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
      * @type int
      */
     this.type = JXG.OBJECT_TYPE_CIRCLE;
-    this.elementClass = JXG.OBJECT_CLASS_CIRCLE;                
+    this.elementClass = JXG.OBJECT_CLASS_CIRCLE; 
+    
+    this.init(board, id, name);
 
     /**
      * Stores the given method.
@@ -130,29 +131,64 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
      */     
     this.circle = null;
 
+    this.label = {};
+    this.label.relativeCoords = [10,10];
+
+    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
+    this.board.objects[this.id] = this;
+
     if(method == 'twoPoints') {
         this.point2 = JXG.GetReferenceFromParameter(board,par2);
         this.point2.addChild(this);
         this.radius = this.getRadius(); 
-        this.id = this.board.addCircle(this);           
     }
     else if(method == 'pointRadius') {
         this.generateTerm(par2);  // Converts GEONExT syntax into JavaScript syntax
-        this.updateRadius();                        // First evaluation of the graph
+        this.updateRadius();                        // First evaluation of the graph  
+    }
+    else if(method == 'pointLine') {
+        // dann ist p2 die Id eines Objekts vom Typ Line!
+        this.line = JXG.GetReferenceFromParameter(board,par2);
+        this.radius = this.line.point1.coords.distance(JXG.COORDS_BY_USER, this.line.point2.coords);    
+    }
+    else if(method == 'pointCircle') {
+        // dann ist p2 die Id eines Objekts vom Typ Circle!
+        this.circle = JXG.GetReferenceFromParameter(board,par2);
+        this.radius = this.circle.getRadius();     
+    } 
+
+    this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
+    delete(this.board.objects[this.id]);
+
+    this.label.show = this.visProp['visible'];
+    this.label.color = '#000000';
+    if(!this.visProp['visible']) {
+        this.label.hiddenByParent = true;
+    }
+    
+    if(method == 'twoPoints') {
+        //this.point2 = JXG.GetReferenceFromParameter(board,par2);
+        //this.point2.addChild(this);
+        //this.radius = this.getRadius(); 
+        this.id = this.board.addCircle(this);           
+    }
+    else if(method == 'pointRadius') {
+        //this.generateTerm(par2);  // Converts GEONExT syntax into JavaScript syntax
+        //this.updateRadius();                        // First evaluation of the graph
         this.id = this.board.addCircle(this);
         this.notifyParents(par2);      
     }
     else if(method == 'pointLine') {
         // dann ist p2 die Id eines Objekts vom Typ Line!
-        this.line = JXG.GetReferenceFromParameter(board,par2);
-        this.radius = this.line.point1.coords.distance(JXG.COORDS_BY_USER, this.line.point2.coords);
+        //this.line = JXG.GetReferenceFromParameter(board,par2);
+        //this.radius = this.line.point1.coords.distance(JXG.COORDS_BY_USER, this.line.point2.coords);
         this.line.addChild(this);
         this.id = this.board.addCircle(this);        
     }
     else if(method == 'pointCircle') {
         // dann ist p2 die Id eines Objekts vom Typ Circle!
-        this.circle = JXG.GetReferenceFromParameter(board,par2);
-        this.radius = this.circle.getRadius();
+        //this.circle = JXG.GetReferenceFromParameter(board,par2);
+        //this.radius = this.circle.getRadius();
         this.circle.addChild(this);
         this.id = this.board.addCircle(this);        
     }    
@@ -329,6 +365,14 @@ JXG.Circle.prototype.updateRenderer = function () {
         }
         this.needsUpdate = false;
     }
+    
+    /* Update the label if visible. */
+    if(this.label.show && this.isReal) {
+        //this.label.setCoordinates(this.coords);
+        this.label.content.update();
+        //this.board.renderer.updateLabel(this.label);
+        this.board.renderer.updateText(this.label.content);
+    }    
 };
 
 JXG.Circle.prototype.generateTerm = function (term) {
@@ -374,6 +418,18 @@ JXG.Circle.prototype.getRadius = function() {
 JXG.Circle.prototype.getTextAnchor = function() {
     return this.midpoint.coords;
 };
+
+JXG.Circle.prototype.getLabelAnchor = function() {
+    if(this.method == 'twoPoints') {
+        var deltaX = this.midpoint.coords.usrCoords[1]-this.point2.coords.usrCoords[1];
+        var deltaY = this.midpoint.coords.usrCoords[2]-this.point2.coords.usrCoords[2];
+        return new JXG.Coords(JXG.COORDS_BY_USER, [this.midpoint.coords.usrCoords[1]+deltaX, this.midpoint.coords.usrCoords[2]+deltaY], this.board);
+    }
+    else if(this.method == 'pointLine' || this.method == 'pointCircle' || this.method == 'pointRadius') {
+        return new JXG.Coords(JXG.COORDS_BY_USER, [this.midpoint.coords.usrCoords[1]-this.getRadius(),this.midpoint.coords.usrCoords[2]], this.board);
+    }
+};
+
 
 /**
  * Copy the element to the background.

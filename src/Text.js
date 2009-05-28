@@ -159,7 +159,13 @@ JXG.Text.prototype.setCoords = function (x,y) {
 JXG.Text.prototype.update = function () {
     if (this.needsUpdate) {
         if (this.relativeCoords){
-            var anchor = this.element.getTextAnchor();
+            var anchor;
+            if(!this.isLabel) {
+                anchor = this.element.getTextAnchor();
+            }
+            else {
+                anchor = this.element.getLabelAnchor();
+            }
             this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.relativeCoords.usrCoords[1]+anchor.usrCoords[1],this.relativeCoords.usrCoords[2]+anchor.usrCoords[2]]);
         } else {
             this.updateCoords();

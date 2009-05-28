@@ -117,8 +117,9 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
         
         // Label mitschieben
         if(this.label.show) {
-            this.label.setCoordinates(this.coords);
-            this.board.renderer.updateLabel(this.label);
+            //this.label.setCoordinates(this.coords);
+            //this.board.renderer.updateLabel(this.label);
+            this.label.content.update();
         }
         
         //for(var Element in this.childElements) {

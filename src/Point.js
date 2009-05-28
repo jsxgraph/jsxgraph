@@ -84,7 +84,7 @@ JXG.Point = function (board, coordinates, id, name, show) {
     this.label = {};
     this.label.relativeCoords = [10,10];
 
-    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(name)); //?
+    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
     this.board.objects[this.id] = this;
     this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
     delete(this.board.objects[this.id]);

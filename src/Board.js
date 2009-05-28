@@ -978,7 +978,19 @@ JXG.Board.prototype.addCircle = function(obj) {
        
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
+    
+    this.addText(obj.label.content)
+    
     this.renderer.drawCircle(obj);
+    this.renderer.drawText(obj.label.content);
+    if(!obj.visProp['visible']) {
+        this.renderer.hide(obj);
+    }
+    
+    if(!obj.label.show) {
+        this.renderer.hide(obj.label.content);
+    }    
+
 
     return elementId;
 };
