@@ -224,7 +224,6 @@ this.readGeonext = function(tree,board) {
     boardTmp.viewportRight = boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('viewport')[0].getElementsByTagName('right')[0].firstChild.data;
 
     this.readConditions(boardData.getElementsByTagName('conditions')[0],boardTmp);
-
     board.origin = {};
     board.origin.usrCoords = [1, 0, 0];
     board.origin.scrCoords = [1, 1*boardTmp.originX, 1*boardTmp.originY];
@@ -232,7 +231,8 @@ this.readGeonext = function(tree,board) {
     board.zoomY = 1*boardTmp.zoomY;
     board.unitX = 1*boardTmp.unitX;
     board.unitY = 1*boardTmp.unitY;
-    board.fontSize = 1*boardTmp.fontSize;
+    board.fontSize = 12; // 1*boardTmp.fontSize;
+    //alert("fontSize: "+boardTmp.fontSize);
     board.geonextCompatibilityMode = true;
     //board.resizeContainer(boardTmp.width,boardTmp.height);
     
@@ -390,7 +390,7 @@ this.readGeonext = function(tree,board) {
                 }
                 c.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
-                              'highlightFillColor:'+gxtEl.colorFill,'visible:'+gxtEl.visible,'labelColor:'+gxtEl.colorLabel,
+                              'highlightFillColor:'+gxtEl.colorFill,'visible:'+gxtEl.visible,//'labelColor:'+gxtEl.colorLabel,
                               'dash:'+gxtEl.dash,'draft:'+gxtEl.draft);
                 c.traced = (gxtEl.trace=='false') ? false : true;                                       
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
@@ -1133,10 +1133,10 @@ this.readGeonext = function(tree,board) {
                 gxtEl.autodigits = Data.getElementsByTagName('digits')[0].firstChild.data;
                 gxtEl.parent = JXG.GeonextReader.changeOriginIds(board,gxtEl.parent);
                 var c = new JXG.Text(board, gxtEl.mpStr, gxtEl.parent, [gxtEl.x, gxtEl.y], gxtEl.id, gxtEl.name, gxtEl.autodigits, false);
-                c.setProperty('labelColor:'+gxtEl.colorLabel);
-                if(gxtEl.visible == "false") {
+                c.setProperty('labelColor:'+gxtEl.colorLabel, 'visible:'+gxtEl.visible);
+                /*if(gxtEl.visible == "false") {
                     c.hideElement();
-                } 
+                } */
                 break;
             case 'parametercurve':
                 gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);

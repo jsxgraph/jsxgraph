@@ -305,7 +305,7 @@ JXG.GeometryElement.prototype.hideElement = function() {
         this.label.hiddenByParent = true;
         if(this.label.show) {
             this.board.renderer.hide(this.label.content);
-            this.label.show = true;
+            //this.label.show = true;
         }
     }
 };
@@ -458,7 +458,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 } 
                 if(this.label!=null) {
                     this.label.color = color;
-                    this.board.renderer.setLabelColor(this.label.content);
+                    this.board.renderer.setObjectStrokeColor(this.label.content, color, 1);  
                 }
                 if(this.type == JXG.OBJECT_TYPE_TEXT) {
                     this.visProp['strokeColor'] = color;
