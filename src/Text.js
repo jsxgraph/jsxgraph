@@ -50,8 +50,13 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
 
     this.contentStr = contentStr;
     this.plaintextStr = '';
-
-    this.isLabel = isLabel;
+    
+    if((typeof isLabel != 'undefined') && (isLabel != null)) {
+        this.isLabel = isLabel;
+    }
+    else {
+        this.isLabel = false;
+    }
     // stroke Color = text Color
     this.visProp['strokeColor'] = this.board.options.text.strokeColor;
 

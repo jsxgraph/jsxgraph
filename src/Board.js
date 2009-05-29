@@ -1816,7 +1816,7 @@ JXG.Board.prototype.addText = function (obj) {
     obj.id = elementId;
     if(!obj.isLabel) {
         this.renderer.drawText(obj);
-        if(!obj.show) {
+        if(!obj.visProp['visible']) {
             this.renderer.hide(obj);
         }
     }

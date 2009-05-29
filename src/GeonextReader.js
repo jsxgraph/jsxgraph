@@ -231,8 +231,12 @@ this.readGeonext = function(tree,board) {
     board.zoomY = 1*boardTmp.zoomY;
     board.unitX = 1*boardTmp.unitX;
     board.unitY = 1*boardTmp.unitY;
-    board.fontSize = 12; // 1*boardTmp.fontSize;
-    //alert("fontSize: "+boardTmp.fontSize);
+    if(1*boardTmp.fontSize != 0) {
+        board.fontSize = 1*boardTmp.fontSize;
+    }
+    else {
+        board.fontSize = 12;  
+    }
     board.geonextCompatibilityMode = true;
     //board.resizeContainer(boardTmp.width,boardTmp.height);
     
