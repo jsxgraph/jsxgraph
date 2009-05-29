@@ -18,7 +18,6 @@
     board = JXG.JSXGraph.initBoard('jxgbox', {originX: 300, originY: 300, unitX: 200, unitY: 200, axis: false, grid: false});
     xax = board.createElement('axis', [[0,0],[1,0]]);
     yax = board.createElement('axis', [[0,0],[0,1]]);
-    s = board.createElement('slider', [[0.1,1.0],[1.1,1],[0.99,0.994,1.0]],{name:'x'});
 
     var g3 = null;
 
@@ -38,22 +37,8 @@
             return y;
         }
 
-        var x0 = [s.Value(), 0, 0, -2.0015851063790825];
+        var x0 = [0.994, 0, 0, -2.0015851063790825];
 
-        var t = [];
-        var q = I[0];
-        var h = (I[1]-I[0])/N;
-        for(var i=0; i<N; i++) {
-            t.push(q);
-            q += h;
-        }
-/*
-        var datay = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Euler, x0, I, N, f);
-        var g1 = board.createElement('curve', [t, datay]);
-
-        datay = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Heun, x0, I, N, f);
-        var g2 = board.createElement('curve', [t, datay], {strokeColor:'green'});
-*/
         var data = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.RK4, x0, I, N, f);
 
         return data;
@@ -69,15 +54,6 @@
         }
         
         g3 = board.createElement('curve', [dataX, dataY], {strokeColor:'red', strokeWidth:'2px'});
-        g3.updateDataArray = function() {
-            var data = ode();
-            this.dataX = [];
-            this.dataY = [];
-            for(var i=0; i<data.length; i++) {
-                this.dataX[i] = data[i][0];
-                this.dataY[i] = data[i][2];
-            }
-        }
     }
     
     createCurve();

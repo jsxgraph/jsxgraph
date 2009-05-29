@@ -1,0 +1,102 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/Centroid.js"></script>
+   <script type="text/javascript" src="../src/Triangle.js"></script>
+</head>
+<body>
+<h2>Solving ODE numerically with explicit Runge-Kutta-methods</h2>
+<h3>Lotka-Volterra-Model (Predator-Prey-Model)</h3>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:600px; float:left"></div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 500, unitX: 20, unitY: 20, axis: false, grid: false});
+    xax = board.createElement('axis', [[0,0],[1,0]]);
+    yax = board.createElement('axis', [[0,0],[0,1]]);
+    s = board.createElement('slider', [[20.0,23.0],[25.0,23.0],[0.0,0.3,1.0]],{name:'x'});
+    st = board.createElement('text', [18,22, "Birth rate predators"]);
+    u = board.createElement('slider', [[20.0,21.0],[25.0,21.0],[0.0,0.7,1.0]],{name:'y'});
+    ut = board.createElement('text', [18,20, "Birth rate preys"]);
+
+    var g3 = null;
+
+    function ode() {
+        var I = [0, 25];
+        var N = 1000;
+
+        var f = function(t, x) {
+            var bpred = s.Value();//0.3;
+            var bprey = u.Value();//0.7;
+            var dpred = 0.1;
+            var dprey = 0.3;
+
+            var y = [];
+            y[0] = x[0]*(bpred - dpred*x[1]);
+            y[1] = -x[1]*(bprey - dprey*x[0]);
+
+            return y;
+        }
+
+        var x0 = [5, 10];
+
+        var data = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Heun, x0, I, N, f);
+
+        var t = [];
+        var q = I[0];
+        var h = (I[1]-I[0])/N;
+        for(var i=0; i<data.length; i++) {
+            data[i].push(q);
+            q += h;
+        }
+
+        return data;
+    }
+    
+    function createCurve() {
+        var data = ode();
+        var t = [];
+        var dataprey = [];
+        var datapred = [];
+        for(var i=0; i<data.length; i++) {
+            t[i] = data[i][2];
+            datapred[i] = data[i][0];
+            dataprey[i] = data[i][1];
+        }
+        
+        g3 = board.createElement('curve', [t, datapred], {strokeColor:'red', strokeWidth:'2px'});
+        g3.updateDataArray = function() {
+            var data = ode();
+            this.dataX = [];
+            this.dataY = [];
+            for(var i=0; i<data.length; i++) {
+                this.dataX[i] = t[i];
+                this.dataY[i] = data[i][0];
+            }
+        }
+        g4 = board.createElement('curve', [t, dataprey], {strokeColor:'blue', strokeWidth:'2px'});
+        g4.updateDataArray = function() {
+            var data = ode();
+            this.dataX = [];
+            this.dataY = [];
+            for(var i=0; i<data.length; i++) {
+                this.dataX[i] = t[i];
+                this.dataY[i] = data[i][1];
+            }
+        }
+    }
+    
+    createCurve();
+    
+
+  /* ]]> */
+  </script>
+<a href="#" onclick="createCurve();">Solve example ODE</a><br />
+<div id="debug" style="display:block;"></div>
+</body>
+</html>

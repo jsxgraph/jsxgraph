@@ -637,8 +637,8 @@ JXG.Math.Numerics.predefinedButcher.Euler = {
 /**
  * Solve ordinary differential equations numerically using Runge-Kutta-methods
  * http://en.wikipedia.org/wiki/Runge-Kutta_methods
- * todo description
  */
+/* TODO description*/
 JXG.Math.Numerics.rungeKutta = function(butcher, x0, I, N, f) {
     // TODO error/parameter check:
     // N not too big (warn or give up?) OR implement step size control
@@ -660,12 +660,13 @@ JXG.Math.Numerics.rungeKutta = function(butcher, x0, I, N, f) {
     var result = [];
     var r = 0;
     for(var i=0; i<N; i++) {
-        if((i % quotient == 0) || (i == N-1)) {
+        // Optimization doesn't work for ODEs plotted using time
+//        if((i % quotient == 0) || (i == N-1)) {
             result[r] = [];
             for(var e=0; e<dim; e++)
                 result[r][e] = x[e];
             r++;
-        }
+//        }
 
         // init k
         k = [];
