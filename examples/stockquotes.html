@@ -1,0 +1,64 @@
+<html>
+<head>
+   <title>JSXGraph stockquotes example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<div id="jxgbox" class="jxgbox" style="width:700px; height:400px; float:left"></div>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */
+
+brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 0, originY: 300, axis:true, unitX: 2, unitY: 10});
+var graph1;
+var periodical;
+var x = [];
+var y = [];
+
+var hi, lo, delta;
+/*
+new Ajax.Request('stockquotes.php', {
+        onComplete: function(transport) {
+            if (200 == transport.status) {
+                var t = transport.responseText;
+                var a = t.split(',');
+                hi = a[6]*1.01;
+                lo = a[7]*0.99;
+                delta = 400/(hi-lo);
+                brd.origin.scrCoords[2] = hi*10;
+                $('debug').innerHTML = delta + " " + hi+" " +lo;
+                this.unitY = delta;
+                brd.fullUpdate = true; brd.update(); brd.fullUpdate = false;
+            };
+    }});
+*/
+brd.origin.scrCoords[2] = 5010*10;
+brd.fullUpdate = true; brd.update(); brd.fullUpdate = false;
+
+
+var fetchData = function() {
+    new Ajax.Request('stockquotes.php', {
+        onComplete: function(transport) {
+            if (200 == transport.status) {
+                var t = transport.responseText;
+                var a = t.split(',');
+                x.push(x.length+1);
+                y.push(a[1]);
+                $('debug').innerHTML = a[1];
+                if (!graph1) { 
+                    graph1 = brd.createElement('curve', [x,y],{strokeWidth:1}); 
+                } else {
+                    graph1.dataX = x;                    graph1.dataY = y;
+                }
+                brd.update();
+            };
+    }});
+};
+        
+periodical = setInterval(fetchData,1000);
+/* ]]> */
+</script>
+</body>
+</html>
