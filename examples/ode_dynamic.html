@@ -16,13 +16,21 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-    board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 500, unitX: 20, unitY: 20, axis: false, grid: false});
+    board = JXG.JSXGraph.initBoard('jxgbox', {originX: 40, originY: 560, unitX: 20, unitY: 20, axis: false, grid: false});
     xax = board.createElement('axis', [[0,0],[1,0]]);
     yax = board.createElement('axis', [[0,0],[0,1]]);
-    s = board.createElement('slider', [[20.0,23.0],[25.0,23.0],[0.0,0.3,1.0]],{name:'x'});
-    st = board.createElement('text', [18,22, "Birth rate predators"]);
-    u = board.createElement('slider', [[20.0,21.0],[25.0,21.0],[0.0,0.7,1.0]],{name:'y'});
-    ut = board.createElement('text', [18,20, "Birth rate preys"]);
+    s = board.createElement('slider', [[20.0,26.0],[25.0,26.0],[0.0,0.3,1.0]],{name:'&epsilon;1'});
+    st = board.createElement('text', [20,25, "Birth rate predators"]);
+    u = board.createElement('slider', [[20.0,24.0],[25.0,24.0],[0.0,0.7,1.0]],{name:'&epsilon;2'});
+    ut = board.createElement('text', [20,23, "Death rate predators"]);
+
+    o = board.createElement('slider', [[10.0,26.0],[15.0,26.0],[0.0,0.1,1.0]],{name:'&gamma;1'});
+    ot = board.createElement('text', [10,25, "Death rate preys/per predator"]);
+    p = board.createElement('slider', [[10.0,24.0],[15.0,24.0],[0.0,0.3,1.0]],{name:'&gamma;2'});
+    pt = board.createElement('text', [10,23, "Reproduction rate pred./per prey"]);
+
+    startpred = board.createElement('glider', [0, 10, yax], {name:'Preys'});
+    startprey = board.createElement('glider', [0, 5, yax], {name:'Predators'});
 
     var g3 = null;
 
@@ -33,8 +41,8 @@
         var f = function(t, x) {
             var bpred = s.Value();//0.3;
             var bprey = u.Value();//0.7;
-            var dpred = 0.1;
-            var dprey = 0.3;
+            var dpred = o.Value();//0.1;
+            var dprey = p.Value();//0.3;
 
             var y = [];
             y[0] = x[0]*(bpred - dpred*x[1]);
@@ -43,7 +51,7 @@
             return y;
         }
 
-        var x0 = [5, 10];
+        var x0 = [startpred.Y(), startprey.Y()];
 
         var data = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Heun, x0, I, N, f);
 
@@ -96,7 +104,6 @@
 
   /* ]]> */
   </script>
-<a href="#" onclick="createCurve();">Solve example ODE</a><br />
 <div id="debug" style="display:block;"></div>
 </body>
 </html>
