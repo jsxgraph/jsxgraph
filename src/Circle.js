@@ -70,7 +70,7 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
      */
     this.type = JXG.OBJECT_TYPE_CIRCLE;
     this.elementClass = JXG.OBJECT_CLASS_CIRCLE; 
-    
+
     this.init(board, id, name);
 
     /**
@@ -156,7 +156,6 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
         this.circle = JXG.GetReferenceFromParameter(board,par2);
         this.radius = this.circle.getRadius();     
     } 
-
     this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
     delete(this.board.objects[this.id]);
 
@@ -354,13 +353,13 @@ JXG.Circle.prototype.updateRenderer = function () {
         if (this.isReal) {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.show(this); 
-                //if(this.label.show) this.board.renderer.show(this.label); 
+                if(this.label.show) this.board.renderer.show(this.label.content); 
             }
             this.board.renderer.updateCircle(this);
         } else {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.hide(this); 
-                //if(this.label.show) this.board.renderer.hide(this.label); 
+                if(this.label.show) this.board.renderer.hide(this.label.content); 
             }
         }
         this.needsUpdate = false;

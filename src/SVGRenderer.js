@@ -405,7 +405,7 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
         var node = el.rendNode;
         if(el.type == JXG.OBJECT_TYPE_TEXT) {
-            node.style.color = c;
+            node.style.color = c; // Schriftfarbe
         }
         else if(el.type == JXG.OBJECT_TYPE_ANGLE) {
             node = el.rendNode2;

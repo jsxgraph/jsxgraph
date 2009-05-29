@@ -972,7 +972,8 @@ JXG.Board.prototype.addCircle = function(obj) {
     if((elementId == '') || (elementId == null)) {
        elementId = this.id + 'C' + number;
     }
-
+    obj.label.content.id = elementId+"Label";
+    
     // Objekt in das assoziative Array einfuegen
     this.objects[elementId] = obj;
        

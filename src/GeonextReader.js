@@ -394,7 +394,7 @@ this.readGeonext = function(tree,board) {
                 }
                 c.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
-                              'highlightFillColor:'+gxtEl.colorFill,'visible:'+gxtEl.visible,//'labelColor:'+gxtEl.colorLabel,
+                              'highlightFillColor:'+gxtEl.colorFill,'visible:'+gxtEl.visible,'labelColor:'+gxtEl.colorLabel,
                               'dash:'+gxtEl.dash,'draft:'+gxtEl.draft);
                 c.traced = (gxtEl.trace=='false') ? false : true;                                       
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');

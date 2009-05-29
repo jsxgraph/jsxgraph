@@ -960,14 +960,6 @@ JXG.AbstractRenderer.prototype.noHighlight = function(obj) {
 };
 
 /**
- * Changes the color of the element's label to the color of the element.
- * @param {Object} el Reference of the element.
- */
-JXG.AbstractRenderer.prototype.setLabelColor = function(el) {
-    el.rendNode.style.color = el.color;
-};
-
-/**
  * Stop redraw.
  * @see #suspendRedraw
  */

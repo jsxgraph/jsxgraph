@@ -442,7 +442,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
             case 'strokeopacity':
                 this.visProp['highlightStrokeOpacity'] = pair[1];
                 break;
-            case 'labelcolor': // wird derzeit nur umgesetzt, falls opacity = 0 ==> label wird versteckt
+            case 'labelcolor': 
                 color = pair[1];
                 if (color.length=='9' && color.substr(0,1)=='#') {
                     opacity = color.substr(7,2);
@@ -458,7 +458,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 } 
                 if(this.label!=null) {
                     this.label.color = color;
-                    this.board.renderer.setObjectStrokeColor(this.label.content, color, 1);  
+                    this.board.renderer.setObjectStrokeColor(this.label.content, color, opacity);  
                 }
                 if(this.type == JXG.OBJECT_TYPE_TEXT) {
                     this.visProp['strokeColor'] = color;
