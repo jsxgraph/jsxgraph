@@ -8,8 +8,8 @@
    <script type="text/javascript" src="../src/Triangle.js"></script>
 </head>
 <body>
-<h2>Solving ODE numerically with explicit Runge-Kutta-methods</h2>
-<h3>Lotka-Volterra-Model (Predator-Prey-Model)</h3>
+<h2>Solving ODEs numerically with explicit Runge-Kutta methods</h2>
+<h3>Lotka-Volterra equations (Predator-Prey equations)</h3>
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:600px; float:left"></div>
 </div>
@@ -53,7 +53,7 @@
 
         var x0 = [startpred.Y(), startprey.Y()];
 
-        var data = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Heun, x0, I, N, f);
+        var data = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Euler, x0, I, N, f);
 
         var t = [];
         var q = I[0];

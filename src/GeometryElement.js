@@ -344,6 +344,7 @@ JXG.GeometryElement.prototype.showElement = function() {
  *<li>style <i>(Point)</i></li>
  *<li>fixed</li>
  *<li>draft</li>
+ *<li>showInfobox</li>
  *<li>straightFirst <i>(Line)</i></li>
  *<li>straightLast <i>(Line)</i></li>
  *<li>firstArrow <i>(Line,Arc)</li>
@@ -465,6 +466,14 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], 1);    
                 }
                 break;            
+            case 'showinfobox':
+                if(pair[1] == 'false' || pair[1] == false) {
+                    this.showInfobox = false;
+                }
+                else if(pair[1] == 'true' || pair[1] == true) {
+                    this.showInfobox = true;
+                }
+                break;
             case 'visible':
                 if(pair[1] == 'false' || pair[1] == false) {
                     this.visProp['visible'] = false;

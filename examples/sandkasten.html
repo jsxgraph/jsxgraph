@@ -23,7 +23,7 @@
         p2 = board.createElement('point', [12, 4], {style:2,name:"B",fixed:true});
 
         l1 = board.createElement('line', [[4,13], [12,13]]);
-        p3 = board.createElement('glider', [8,13, l1], {style:5,name:"C"});
+        p3 = board.createElement('glider', [8,13, l1], {style:5,name:"C", showInfobox:false});
 
         p4 = board.createElement('centroid', [p1, p2, p3], {name:"S", trace:true});
 

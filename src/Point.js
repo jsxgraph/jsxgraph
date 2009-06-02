@@ -112,7 +112,13 @@ JXG.Point = function (board, coordinates, id, name, show) {
      * Determines whether the point slides on a polygon if point is a glider
      * @type boolean
      */
-    this.onPolygon = false;    
+    this.onPolygon = false;
+
+    /**
+     * If true, the infobox is shown on mouse over, else not.
+     * @type boolean
+     */
+    this.showInfobox = true;
     
     /**
      * Point style.

@@ -742,7 +742,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
  */
 JXG.Board.prototype.updateInfobox = function(el) {
     var x, y;
-    if(el.elementClass == JXG.OBJECT_CLASS_POINT) {
+    if((el.elementClass == JXG.OBJECT_CLASS_POINT) && (el.showInfobox)) {
         this.infobox.setCoords(el.coords.usrCoords[1]*1+this.infobox.distanceX/(this.unitX*this.zoomX),
                                el.coords.usrCoords[2]*1+this.infobox.distanceY/(this.unitY*this.zoomY));
         x = Math.abs(el.coords.usrCoords[1]);
