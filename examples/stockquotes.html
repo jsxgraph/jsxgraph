@@ -11,32 +11,23 @@
 <script type="text/javascript">
 /* <![CDATA[ */
 
-brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 0, originY: 300, axis:true, unitX: 2, unitY: 10});
-var graph1;
-var periodical;
-var x = [];
-var y = [];
-
-var hi, lo, delta;
-/*
+var hi, lo, brd, periodical;
 new Ajax.Request('stockquotes.php', {
         onComplete: function(transport) {
             if (200 == transport.status) {
                 var t = transport.responseText;
                 var a = t.split(',');
-                hi = a[6]*1.01;
-                lo = a[7]*0.99;
-                delta = 400/(hi-lo);
-                brd.origin.scrCoords[2] = hi*10;
-                $('debug').innerHTML = delta + " " + hi+" " +lo;
-                this.unitY = delta;
-                brd.fullUpdate = true; brd.update(); brd.fullUpdate = false;
+                hi = a[6]*1.001;
+                lo = a[7]*0.999;
+                brd = JXG.JSXGraph.initBoard('jxgbox', {axis:true, usrbox:[0,hi,200,lo]});
+                periodical = setInterval(fetchData,1000);
             };
     }});
-*/
-brd.origin.scrCoords[2] = 5010*10;
-brd.fullUpdate = true; brd.update(); brd.fullUpdate = false;
 
+//brd = JXG.JSXGraph.initBoard('jxgbox', {originX: -100, originY: 300, axis:true, unitX: 2, unitY: 10});
+var graph1;
+var x = [];
+var y = [];
 
 var fetchData = function() {
     new Ajax.Request('stockquotes.php', {
@@ -57,7 +48,6 @@ var fetchData = function() {
     }});
 };
         
-periodical = setInterval(fetchData,1000);
 /* ]]> */
 </script>
 </body>

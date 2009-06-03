@@ -98,17 +98,28 @@ JXG.JSXGraph = new function (forceRenderer) {
     this.initBoard = function (box, attributes) {
         // Create a new renderer
         var renderer;
-
+        var originX, originY, unitX, unitY;
+        var w, h;
+        
         if(typeof attributes == 'undefined')
             attributes = {};
 
-        var originX = ( (typeof attributes["originX"]) == 'undefined' ? 150 : attributes["originX"]);
-        var originY = ( (typeof attributes["originY"]) == 'undefined' ? 150 : attributes["originY"]);
+        if (typeof attributes["usrbox"] != 'undefined') {
+            w = parseInt(document.getElementById(box).style.width);
+            h = parseInt(document.getElementById(box).style.height);
+            unitX = w/(attributes["usrbox"][2]-attributes["usrbox"][0]);
+            unitY = h/(-attributes["usrbox"][3]+attributes["usrbox"][1]);
+            originX = -unitX*attributes["usrbox"][0];
+            originY = unitY*attributes["usrbox"][1];
+        } else {
+            originX = ( (typeof attributes["originX"]) == 'undefined' ? 150 : attributes["originX"]);
+            originY = ( (typeof attributes["originY"]) == 'undefined' ? 150 : attributes["originY"]);
+            unitX = ( (typeof attributes["unitX"]) == 'undefined' ? 50 : attributes["unitX"]);
+            unitY = ( (typeof attributes["unitY"]) == 'undefined' ? 50 : attributes["unitY"]);
+        }
         var zoomfactor = ( (typeof attributes["zoom"]) == 'undefined' ? 1.0 : attributes["zoom"]);
         var zoomX = zoomfactor*( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
         var zoomY = zoomfactor*( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
-        var unitX = ( (typeof attributes["unitX"]) == 'undefined' ? 50 : attributes["unitX"]);
-        var unitY = ( (typeof attributes["unitY"]) == 'undefined' ? 50 : attributes["unitY"]);
 
         var dimensions = JXG.getDimensions(box);
 
