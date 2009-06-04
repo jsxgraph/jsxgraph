@@ -150,7 +150,7 @@ If it is set to level=9 the curve is defined by
 
         var oldlev = -1;
         curve.updateDataArray = function() {
-            maxlev = Math.round(s.X());
+            maxlev = Math.round(s.Value());
             if (oldlev==maxlev) {
                 return;
             }
