@@ -481,7 +481,8 @@ JXG.Point.prototype.setPosition = function (method, x, y) {
 JXG.Point.prototype.makeGlider = function (slideObject) {
     this.slideObject = JXG.GetReferenceFromParameter(this.board, slideObject);
     this.type = JXG.OBJECT_TYPE_GLIDER;
-
+    this.snapWidth = null;
+    
     this.slideObject.addChild(this);
 
     if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {

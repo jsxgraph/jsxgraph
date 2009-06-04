@@ -55,13 +55,13 @@ JXG.createSlider = function(board, parentArr, atts) {
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
 
-    p3 = board.createElement('point', [startx,starty], {slideObject:l1,style:6,strokeColor:'#0080c0',fillColor:'#0080c0',name:''});
+    p3 = board.createElement('glider', [startx,starty,l1], {style:6,strokeColor:'#0080c0',fillColor:'#0080c0',showInfobox:false,name:''});
     l2 = board.createElement('line', [p1,p3], {straightFirst:false, straightLast:false, strokewidth:3, strokeColor:'#0080c0',name:''}); 
     p4 = board.createElement('point', [
             function() {return p3.Dist(p1)/p2.Dist(p1)*(smax - smin)+smin;}, 
             function() {return p3.Dist(p1)/p2.Dist(p1)*(smax - smin)+smin;}
             ], 
-            {visible:false,name:''});
+            {visible:false,name:'',snapWidth:1});
     p4.Value = p4.X;
     if (atts['name'] && atts['name']!='') {
         n = atts['name'] + ' = ';

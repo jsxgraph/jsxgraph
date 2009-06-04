@@ -19,14 +19,14 @@
     board = JXG.JSXGraph.initBoard('jxgbox', {originX: 40, originY: 560, unitX: 20, unitY: 20, axis: false, grid: false});
     xax = board.createElement('axis', [[0,0],[1,0]]);
     yax = board.createElement('axis', [[0,0],[0,1]]);
-    s = board.createElement('slider', [[20.0,26.0],[25.0,26.0],[0.0,0.3,1.0]],{name:'&epsilon;1'});
+    s = board.createElement('slider', [[20.0,26.0],[25.0,26.0],[0.0,0.3,1.0]],{name:'&epsilon;<sub>1</sub>'});
     st = board.createElement('text', [20,25, "Birth rate predators"]);
-    u = board.createElement('slider', [[20.0,24.0],[25.0,24.0],[0.0,0.7,1.0]],{name:'&epsilon;2'});
+    u = board.createElement('slider', [[20.0,24.0],[25.0,24.0],[0.0,0.7,1.0]],{name:'&epsilon;<sub>2</sub>'});
     ut = board.createElement('text', [20,23, "Death rate predators"]);
 
-    o = board.createElement('slider', [[10.0,26.0],[15.0,26.0],[0.0,0.1,1.0]],{name:'&gamma;1'});
+    o = board.createElement('slider', [[10.0,26.0],[15.0,26.0],[0.0,0.1,1.0]],{name:'&gamma;<sub>1</sub>'});
     ot = board.createElement('text', [10,25, "Death rate preys/per predator"]);
-    p = board.createElement('slider', [[10.0,24.0],[15.0,24.0],[0.0,0.3,1.0]],{name:'&gamma;2'});
+    p = board.createElement('slider', [[10.0,24.0],[15.0,24.0],[0.0,0.3,1.0]],{name:'&gamma;<sub>2</sub>'});
     pt = board.createElement('text', [10,23, "Reproduction rate pred./per prey"]);
 
     startpred = board.createElement('glider', [0, 10, yax], {name:'Preys'});

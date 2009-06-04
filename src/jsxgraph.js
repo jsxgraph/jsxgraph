@@ -104,13 +104,13 @@ JXG.JSXGraph = new function (forceRenderer) {
         if(typeof attributes == 'undefined')
             attributes = {};
 
-        if (typeof attributes["usrbox"] != 'undefined') {
+        if (typeof attributes["boundingbox"] != 'undefined') {
             w = parseInt(document.getElementById(box).style.width);
             h = parseInt(document.getElementById(box).style.height);
-            unitX = w/(attributes["usrbox"][2]-attributes["usrbox"][0]);
-            unitY = h/(-attributes["usrbox"][3]+attributes["usrbox"][1]);
-            originX = -unitX*attributes["usrbox"][0];
-            originY = unitY*attributes["usrbox"][1];
+            unitX = w/(attributes["boundingbox"][2]-attributes["boundingbox"][0]);
+            unitY = h/(-attributes["boundingbox"][3]+attributes["boundingbox"][1]);
+            originX = -unitX*attributes["boundingbox"][0];
+            originY = unitY*attributes["boundingbox"][1];
         } else {
             originX = ( (typeof attributes["originX"]) == 'undefined' ? 150 : attributes["originX"]);
             originY = ( (typeof attributes["originY"]) == 'undefined' ? 150 : attributes["originY"]);
