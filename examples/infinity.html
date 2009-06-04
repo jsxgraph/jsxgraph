@@ -7,6 +7,7 @@
 	</head>
  	<body>
  		<div id="jsxgbox" class="jxgbox" style="width:800px; height:800px;"></div>
+<div id="debug" style="display:block;"></div>
 		<script type="text/javascript">
 
 var board = JXG.JSXGraph.initBoard('jsxgbox', {originX: 300, originY: 300, unitX: 50, unitY: 50});
@@ -28,37 +29,17 @@ var board = JXG.JSXGraph.initBoard('jsxgbox', {originX: 300, originY: 300, unitX
                         [function(t) {
                             return function () {var x = pt[t].X(); 
                                                 var x1 = pt[(t+1)%4].X(); 
-                                                var s = S.X();
+                                                var s = S.Value();
                                                 return x+(x1-x)*s;
                          }}(i), 
                          function(t) {
                             return function () {var y = pt[t].Y(); 
                                                 var y1 = pt[(t+1)%4].Y(); 
-                                                var s = S.X();
+                                                var s = S.Value();
                                                 return y+(y1-y)*s;
                          }}(i)
                         ], 
                         {style:3, name:" "});
-                    
-                    // Ab Version 0.50 Workaround
-                    /*
-                    arr[i] = board.createElement('point', 
-                        [function(t) {
-                            return function () {var x = pt[t].coords.usrCoords[1]; 
-                                                var x1 = pt[(t+1)%4].coords.usrCoords[1]; 
-                                                var s = S.X();
-                                                return x+(x1-x)*s;
-                         }}(i), 
-                         function(t) {
-                            return function () {var y = pt[t].coords.usrCoords[2]; 
-                                                var y1 = pt[(t+1)%4].coords.usrCoords[2]; 
-                                                var s = S.X();
-                                                return y+(y1-y)*s;
-                         }}(i)
-                        ], 
-                        {style:3, name:" "});
-                    */
-                    //board.createElement('line',[pt[i], pt[(i+1)%4]], {straightFirst:false, straightLast:false, strokeWidth:1});
                 }
                 board.createElement('polygon',pt, {fillColor:JXG.hsv2rgb(100,0.6,(n/30.0)*(n/30.0)),fillOpacity:0.4});
                 if(n>0)

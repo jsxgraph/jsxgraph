@@ -246,6 +246,19 @@ JXG.Point.prototype.update = function (fromParent) {
                     factor = -1;
                 }
                 this.position = factor*distP1S/distP1P2;
+
+                if (this.snapWidth!=null) {
+                    /*
+                    var v = this.Value();
+                    v = Math.floor(v);
+                    $('debug').innerHTML = this.position + ' '+v+' ';
+                    this.position = (v-this._smin)/(this._smax-this._smin)*factor*distP1P2;
+                    $('debug').innerHTML += this.position + ' ';
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER, 
+                                           [p1coords.usrCoords[1] + this.position*(p2coords.usrCoords[1] - p1coords.usrCoords[1]),
+                                            p1coords.usrCoords[2] + this.position*(p2coords.usrCoords[2] - p1coords.usrCoords[2])]);
+                    */
+                }
             }
             var p1Scr = this.slideObject.point1.coords.scrCoords;
             var p2Scr = this.slideObject.point2.coords.scrCoords;
