@@ -278,8 +278,10 @@ or - $<$script type="text/javascript"
 {\sl -- Attributes of the board}\par
 \metax{unitX, unitY:}{number of pixels of one unit}
 \metax{}{in $x$/$y$-axis direction}
-\metax{originX, originY:}{the coordinates of the origin}
+\metax{originX, originY:}{the position of the origin}
 \metax{}{in pixel coordinates}
+\metax{usrbox:}{$[x1,y1,x2,y2]$ user coordinates of the}
+\metax{}{upper left and bottom right corner}
 \metax{zoomX,zoomY:}{zoom factor in $x$/$y$-axis direction}
 \metax{zoomfactor:}{overall zoom factor in both directions}
 \metax{axis:true/false:}{show axes}
@@ -410,7 +412,7 @@ Defined by the equation $r=f(\phi)$.
 %\metax{var t = brd.createElement(\'turtle\',[],$\{$attributes$\}$);}{}
 \metax{var t = brd.createElement(\'turtle\',[parents],$\{$atts$\}$);}{}
 
-The turtle has a position and a direction (always in degrees). 
+\metax{t.pos[], t.dir}{position, direction (in degrees) of the turtle}. 
 %All angles have to be supplied in degrees.
 
 {\bf Parent elements:}
