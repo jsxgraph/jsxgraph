@@ -527,7 +527,6 @@ JXG.Line.prototype.getLabelAnchor = function() {
             return screenCoords1;
         }
         else {
-        alert(this.name);
             return screenCoords2;
         }
     }
