@@ -946,6 +946,8 @@ JXG.Board.prototype.addLine = function (obj) {
     if((elementId == '') || (elementId == null)) {
         elementId = this.id + 'L' + number;
     }
+
+    obj.label.content.id = elementId+"Label";
     
     // Objekt in das assoziative Array einfuegen    
     this.objects[elementId] = obj;
@@ -953,6 +955,14 @@ JXG.Board.prototype.addLine = function (obj) {
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
     this.renderer.drawLine(obj);
+    this.renderer.drawText(obj.label.content);
+    if(!obj.visProp['visible']) {
+        this.renderer.hide(obj);
+    }
+    
+    if(!obj.label.show) {
+        this.renderer.hide(obj.label.content);
+    }
     
     return elementId;
 };

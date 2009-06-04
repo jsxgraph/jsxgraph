@@ -350,7 +350,7 @@ this.readGeonext = function(tree,board) {
                 l.setStraight(gxtEl.straightFirst, gxtEl.straightLast);
                 l.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor, 
-                              'highlightFillColor:'+gxtEl.colorFill, 
+                              'highlightFillColor:'+gxtEl.colorFill, 'labelColor:'+gxtEl.colorLabel,
                               'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash,'draft:'+gxtEl.draft);
                 l.traced = (gxtEl.trace=='false') ? false : true;                                       
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');

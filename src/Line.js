@@ -148,6 +148,20 @@ JXG.Line = function (board, p1, p2, id, name) {
     */
     this.parentPolygon = null;
 
+    this.label = {};
+    this.label.relativeCoords = [10,10];
+
+    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
+    this.board.objects[this.id] = this;
+    this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
+    delete(this.board.objects[this.id]);
+
+    this.label.show = this.visProp['visible'];
+    this.label.color = '#000000';
+    if(!this.visProp['visible']) {
+        this.label.hiddenByParent = true;
+    }    
+    
     /* Register line at board */
     this.id = this.board.addLine(this);
 
@@ -368,19 +382,27 @@ JXG.Line.prototype.updateStdform = function() {
         if (this.isReal) {
             if (wasReal!=this.isReal) {
                 this.board.renderer.show(this);
-                //if(this.label.show) this.board.renderer.show(this.label);
+                if(this.label.show) this.board.renderer.show(this.label.content);
             }
             this.board.renderer.updateLine(this);
         } else {
             if (wasReal!=this.isReal) {
                 this.board.renderer.hide(this);
-                //if(this.label.show) this.board.renderer.hide(this.label);
+                if(this.label.show) this.board.renderer.hide(this.label.content);
             }
         }
 
         //this.board.renderer.updateLine(this); // Why should we need this?
         this.needsUpdate = false;
     }
+    
+    /* Update the label if visible. */
+    if(this.label.show && this.isReal) {
+        //this.label.setCoordinates(this.coords);
+        this.label.content.update();
+        //this.board.renderer.updateLabel(this.label);
+        this.board.renderer.updateText(this.label.content);
+    }     
 };
 
 JXG.Line.prototype.generatePolynomial = function (p) {
@@ -485,6 +507,30 @@ JXG.Line.prototype.setArrow = function (firstArrow, lastArrow) {
  */
 JXG.Line.prototype.getTextAnchor = function() {
     return new JXG.Coords(JXG.COORDS_BY_USER, [0.5*(this.point2.X() - this.point1.X()),0.5*(this.point2.Y() - this.point1.Y())],this.board);
+};
+
+/**
+ * Calculates LabelAnchor.
+ * @type JXG.Coords
+ * @return Text anchor coordinates as JXG.Coords object.
+ */
+JXG.Line.prototype.getLabelAnchor = function() {
+    if(!this.visProp['straightFirst'] && !this.visProp['straightLast']) {
+        return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X()-0.5*(this.point2.X() - this.point1.X()),this.point2.Y()-0.5*(this.point2.Y() - this.point1.Y())],this.board);
+    }
+    else {
+        var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
+        var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
+        this.board.renderer.calcStraight(this, screenCoords1, screenCoords2); 
+        
+        if(this.visProp['straightFirst']) {
+            return screenCoords1;
+        }
+        else {
+        alert(this.name);
+            return screenCoords2;
+        }
+    }
 };
 
 /**
