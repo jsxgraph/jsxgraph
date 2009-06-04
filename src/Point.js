@@ -248,16 +248,12 @@ JXG.Point.prototype.update = function (fromParent) {
                 this.position = factor*distP1S/distP1P2;
 
                 if (this.snapWidth!=null) {
-                    /*
                     var v = this.Value();
-                    v = Math.floor(v);
-                    $('debug').innerHTML = this.position + ' '+v+' ';
-                    this.position = (v-this._smin)/(this._smax-this._smin)*factor*distP1P2;
-                    $('debug').innerHTML += this.position + ' ';
-                    this.coords.setCoordinates(JXG.COORDS_BY_USER, 
-                                           [p1coords.usrCoords[1] + this.position*(p2coords.usrCoords[1] - p1coords.usrCoords[1]),
-                                            p1coords.usrCoords[2] + this.position*(p2coords.usrCoords[2] - p1coords.usrCoords[2])]);
-                    */
+                    v = Math.round(v/this.snapWidth)*this.snapWidth;
+                    //$('debug').innerHTML = this.position + ' '+v+' ';
+                    this.position = factor*(v-this._smin)/(this._smax-this._smin);
+                    //$('debug').innerHTML += this.position;
+                    this.update(true);
                 }
             }
             var p1Scr = this.slideObject.point1.coords.scrCoords;
@@ -275,11 +271,13 @@ JXG.Point.prototype.update = function (fromParent) {
                 if(p1Scr[i] < p2Scr[i]) {
                     if(y < p1Scr[i]) {
                        this.coords = this.slideObject.point1.coords;
+                       this.position = 0;
                     }
                 }
                 else if(p1Scr[i] > p2Scr[i]) {
                     if(y > p1Scr[i]) {
                        this.coords = this.slideObject.point1.coords;
+                       this.position = 0;
                     }
                 }
             }
@@ -287,11 +285,13 @@ JXG.Point.prototype.update = function (fromParent) {
                 if(p1Scr[i] < p2Scr[i]) {
                     if(y > p2Scr[i]) {
                        this.coords = this.slideObject.point2.coords;
+                       this.position = 1;
                     }
                 }
                 else if(p1Scr[i] > p2Scr[i]) {
                     if(y < p2Scr[i]) {
                        this.coords = this.slideObject.point2.coords;
+                       this.position = 1;
                     }
                 }
             }  
