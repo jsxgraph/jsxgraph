@@ -91,12 +91,20 @@
                 polygones[i] = board.createElement('polygon',[q,p[i],p[i+1]], {fillColor:'#FFFF00',name:'P_{'+i+'}'});
             }
             mp[i] = board.createElement('circumcircleMidpoint',[q,p[i],p[i+1]], {name:'',visible:false});
-            board.createElement('text',[mp[i].X(),mp[i].Y(),'P_{'+i+'}'],{});
+            board.createElement('text',[
+                (function(j){ return function(){ return mp[j].X();}; })(i),
+                (function(j){ return function(){ return mp[j].Y();}; })(i),
+                'P<sub>'+i+'</sub>'
+            ],{});
         }
         else {
             polygones[i] = board.createElement('polygon',[q,p[i],p[0]], {fillColor:'#FFFF00',name:'P_{'+i+'}'});
             mp[i] = board.createElement('circumcircleMidpoint',[q,p[i],p[0]], {name:'',visible:false});
-            board.createElement('text',[mp[i].X(),mp[i].Y(),'P_{'+i+'}'],{});
+            board.createElement('text',[
+                (function(j){ return function(){ return mp[j].X();}; })(i),
+                (function(j){ return function(){ return mp[j].Y();}; })(i),
+                'P<sub>'+i+'</sub>'
+            ],{});
         }
     }
     
