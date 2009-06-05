@@ -2449,11 +2449,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         attributes = {};
     }
     for (var i=0; i<parents.length; i++) {
-        if(i<parents.length -1) {
-            if(elementType != 'text') {
-                parents[i] = JXG.GetReferenceFromParameter(this, parents[i]);
-            }
-        }
+        parents[i] = JXG.GetReferenceFromParameter(this, parents[i]);
     }
 
     if(JXG.JSXGraph.elements[elementType] != null) {
