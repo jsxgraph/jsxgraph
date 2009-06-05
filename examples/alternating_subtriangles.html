@@ -1,0 +1,151 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h1>Alternating Subtriangles</h1>
+<br>
+<table><tr><td>
+<table border='1'>
+<tr>
+<script type="text/javascript">
+    n = 8;
+    for(var i = 1; i <= n; i++) {
+        document.write("<td>P<sub>"+i+"</sub></td>\n");
+    }
+</script>
+</tr>
+<tr>
+<script type="text/javascript">
+    for(var i = 1; i <= n; i++) {
+        document.write("<td id='area_"+i+"'> 1 </td>\n");
+    }
+</script>
+</tr>
+</table>
+</td>
+<td width='100'></td>
+<td>
+<table border='1'><tr>
+<script type="text/javascript">
+    document.write("<td>");
+    for(var i = 1; i <= n; i=i+2) {
+        if(i != 1) {
+            document.write(" + P<sub>"+i+"</sub>");
+        }
+        else {
+            document.write("P<sub>"+i+"</sub>");
+        }
+    }
+    document.write("</td>");
+    document.write("<td>");
+    for(var i = 2; i <= n; i=i+2) {
+        if(i != 2) {
+            document.write(" + P<sub>"+i+"</sub>");
+        }
+        else {
+            document.write("P<sub>"+i+"</sub>");
+        }
+    }
+    document.write("</td>");    
+</script>
+</tr>
+<tr>
+<script type="text/javascript">
+    for(var i = 1; i <= 2; i++) {
+        document.write("<td align='center' id='sum_"+i+"'> 1 </td>\n");
+    }
+</script>
+</tr>
+</table>
+</td>
+</table>
+<br>
+<!-- Drawing area -->
+<div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
+<!-- Drawing area -->
+<div id="debug" style="display:block;"></div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var board = JXG.JSXGraph.initBoard('box', {originX: 400, originY: 200, unitX: 150, unitY: 150});
+    var r = 1;
+    var p = new Array(n);
+    for(var i = 0; i < n; i++) {
+        p[i] = board.createElement('point', [r*Math.sin(i*2*Math.PI/n), r*Math.cos(i*2*Math.PI/n)] , {fixed:true});
+    }
+    
+    var q = board.createElement('point',[-0.3,-0.3],{});
+    
+    var polygones = new Array(n);
+    var mp = new Array(n);
+    for(var i=0; i<n; i++) {
+        if(i < n-1) {
+            if(i % 2 == 0) {
+                polygones[i] = board.createElement('polygon',[q,p[i],p[i+1]], {fillColor:'#FF00FF',name:'P_{'+i+'}'});
+            }
+            else {
+                polygones[i] = board.createElement('polygon',[q,p[i],p[i+1]], {fillColor:'#FFFF00',name:'P_{'+i+'}'});
+            }
+            mp[i] = board.createElement('circumcircleMidpoint',[q,p[i],p[i+1]], {name:'',visible:false});
+            board.createElement('text',[mp[i].X(),mp[i].Y(),'P_{'+i+'}'],{});
+        }
+        else {
+            polygones[i] = board.createElement('polygon',[q,p[i],p[0]], {fillColor:'#FFFF00',name:'P_{'+i+'}'});
+            mp[i] = board.createElement('circumcircleMidpoint',[q,p[i],p[0]], {name:'',visible:false});
+            board.createElement('text',[mp[i].X(),mp[i].Y(),'P_{'+i+'}'],{});
+        }
+    }
+    
+    for(var j=0; j < n; j++) {
+        for(var i=0; i < polygones[j].borders.length; i++) {
+            polygones[j].borders[i].label.content.hideElement();
+        }  
+    }
+    
+    // Hook-Funktion definieren
+    function print_table(board) {
+        var distances = new Array(n);
+        for(var i=0; i<n; i++) {
+            distances[i] = q.coords.distance(JXG.COORDS_BY_USER, p[i].coords);
+        }  
+        var border_poly = 2*r*Math.sin(Math.PI/n);
+        var areas = new Array(n);
+        for(var i=0; i<n; i++) {
+            if(i<n-1) {
+                var bordersum = (border_poly+distances[i]+distances[i+1])/2.0;
+                areas[i] = Math.sqrt(bordersum*(bordersum-border_poly)*(bordersum-distances[i])*(bordersum-distances[i+1]));
+            }
+            else {
+                var bordersum = (border_poly+distances[i]+distances[0])/2.0;
+                areas[i] = Math.sqrt(bordersum*(bordersum-border_poly)*(bordersum-distances[i])*(bordersum-distances[0]));
+            }
+        }
+        for(var i=0; i<n; i++) {
+            $('area_'+(i+1)).innerHTML = areas[i].toFixed(2);
+        }
+        
+        var sum = 0;
+        for(var i=0; i<n; i=i+2) {
+            sum += areas[i];
+        }
+        $('sum_2').innerHTML = sum.toFixed(4);
+        sum = 0;
+        for(var i=1; i<n; i=i+2) {
+            sum += areas[i];
+        }
+        $('sum_1').innerHTML = sum.toFixed(4);            
+        
+    }
+    
+    // und beim board registrieren.
+    print_table_id = board.addHook(print_table);
+    
+     
+/* ]]> */
+</script>
+</body>
+</html>
