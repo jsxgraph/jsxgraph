@@ -18,7 +18,7 @@
     board1.suspendUpdate();
     board1.createElement('axis', [[0,0], [1,0]], {ticksDistance: 0.6});
     board1.createElement('axis', [[0,0], [0,1]], {});
-    var s = board1.createElement('slider', [[0.75,-2.5],[5.75,-2.5],[0,0,10]], {name:'S',snapWidth:1});
+    var s = board1.createElement('slider', [[-0.75,-2.5],[4.75,-2.5],[0,0,10]], {name:'S',snapWidth:1});
     board1.createElement('curve', [
         'x', 
         function(t) {

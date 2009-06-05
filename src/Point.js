@@ -226,7 +226,6 @@ JXG.Point.prototype.update = function (fromParent) {
                 this.coords  = this.board.algebra.projectPointToCircle(this, this.slideObject);
                 this.position = this.board.algebra.rad([this.slideObject.midpoint.X()+1.0,this.slideObject.midpoint.Y()],this.slideObject.midpoint,this);
             }
-           //this.coords  = this.board.algebra.projectPointToCircle(this, this.slideObject);
         } else if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
             this.coords  = this.board.algebra.projectPointToLine(this, this.slideObject);
             
@@ -247,12 +246,12 @@ JXG.Point.prototype.update = function (fromParent) {
                 }
                 this.position = factor*distP1S/distP1P2;
 
-                if (this.snapWidth!=null) {
-                    var v = this.Value();
-                    v = Math.round(v/this.snapWidth)*this.snapWidth;
-                    //$('debug').innerHTML = this.position + ' '+v+' ';
+                // Snap the glider point of the slider into its appropiate position
+                // First, recalculate the new value of this.position
+                // Second, call update(fromParent==true) to make the positioning snappier.
+                if (this.snapWidth!=null && Math.abs(this._smax-this._smin)>=JXG.Math.eps) {
+                    var v = Math.round(this.Value()/this.snapWidth)*this.snapWidth;
                     this.position = factor*(v-this._smin)/(this._smax-this._smin);
-                    //$('debug').innerHTML += this.position;
                     this.update(true);
                 }
             }
