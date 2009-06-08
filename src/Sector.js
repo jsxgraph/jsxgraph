@@ -116,7 +116,7 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
         this.board.renderer.updatePoint(this);
         
         // Label mitschieben
-        if(this.label.show) {
+        if(this.label.content.visProp['visible']) {
             //this.label.setCoordinates(this.coords);
             //this.board.renderer.updateLabel(this.label);
             this.label.content.update();

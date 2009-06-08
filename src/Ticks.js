@@ -349,10 +349,10 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
             label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.unitX*this.board.zoomX), 
                             newTick.usrCoords[2]*1+label.distanceY/(this.board.unitY*this.board.zoomY));
             if (this.drawLabels) {
-                label.show = true; 
+                label.visProp['visible'] = true; 
             }
             else {
-                label.show = false;
+                label.visProp['visible'] = false;
             }
             this.labels.push(label);
 
@@ -452,10 +452,10 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
             //label = new JXG.Label(this.board, "0", newTick, this.id+"0Label");
             label = new JXG.Text(this.board, "0", null, [p1.usrCoords[1], p1.usrCoords[2]], this.id+"0Label", null, null, true);
             if (this.drawLabels) {
-                label.show = true; 
+                label.visProp['visible'] = true; 
             }
             else {
-                label.show = false;
+                label.visProp['visible'] = false;
             }
             this.labels.push(label);
 
@@ -523,9 +523,9 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                 label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.unitX*this.board.zoomX), 
                                 newTick.usrCoords[2]*1+label.distanceY/(this.board.unitY*this.board.zoomY));
                 if (this.drawLabels) {
-                    label.show = true; 
+                    label.visProp['visible'] = true; 
                 } else {
-                    label.show = false;
+                    label.visProp['visible'] = false;
                 }
                 this.labels.push(label);
             }

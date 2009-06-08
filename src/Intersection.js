@@ -169,8 +169,16 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
 
             for(var el in this.descendants) {    
                 if(this.descendants[el].visProp['visible'] && this.descendants[el].type != JXG.OBJECT_TYPE_INTERSECTION) {
-                    this.descendants[el].hideElement();
-                    this.descendants[el].visProp['visible'] = true;
+                    if(this.descendants[el].type != JXG.OBJECT_TYPE_TEXT) {
+                        this.descendants[el].hideElement();
+                        this.descendants[el].visProp['visible'] = true;
+                    }
+                    else {
+                        if(!this.descendants[el].isLabel) {
+                            this.descendants[el].hideElement();
+                            this.descendants[el].visProp['visible'] = true;
+                        }
+                    }
                 }      
                 this.descendants[el].notExistingParents[id] = this.board.objects[id];
             }            
@@ -197,10 +205,10 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
               (Intersect2.type == JXG.OBJECT_TYPE_CIRCLE && Intersect1.type == JXG.OBJECT_TYPE_ARC) ) { // Circle <-> Circle, Arc <-> Arc, Arc <-> Circle,
         this.p1 = new JXG.Point(this.board, [0, 0], InterId1, InterName1, false);
         this.p1.fixed = true;
-        this.p1.label.show = true;
+        this.p1.label.content.visProp['visible'] = true;
         this.p2 = new JXG.Point(this.board, [0, 0], InterId2, InterName2, false);
         this.p2.fixed = true;
-        this.p2.label.show = true;
+        this.p2.label.content.visProp['visible'] = true;
         this.addChild(this.p1);
         this.addChild(this.p2);
 
@@ -260,8 +268,16 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
 
             for(var el in this.descendants) {    
                 if(this.descendants[el].visProp['visible'] && this.descendants[el].type != JXG.OBJECT_TYPE_INTERSECTION) {
-                    this.descendants[el].hideElement();
-                    this.descendants[el].visProp['visible'] = true;
+                    if(this.descendants[el].type != JXG.OBJECT_TYPE_TEXT) {
+                        this.descendants[el].hideElement();
+                        this.descendants[el].visProp['visible'] = true;
+                    }
+                    else {
+                        if(!this.descendants[el].isLabel) {
+                            this.descendants[el].hideElement();
+                            this.descendants[el].visProp['visible'] = true;
+                        }
+                    }
                 }      
                 this.descendants[el].notExistingParents[id] = this.board.objects[id];
             }                
@@ -281,10 +297,10 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
     else { // Circle <-> Line, Arc <-> Line, Circle <-> Arrow, Arc <-> Arrow
         this.p1 = new JXG.Point(this.board, [0, 0], InterId1, InterName1, false);
         this.p1.fixed = true;
-        this.p1.label.show = true;        
+        this.p1.label.content.visProp['visible'] = true;        
         this.p2 = new JXG.Point(this.board, [0, 0], InterId2, InterName2, false);
         this.p2.fixed = true;
-        this.p2.label.show = true;
+        this.p2.label.content.visProp['visible'] = true;
         this.addChild(this.p1);
         this.addChild(this.p2);        
         
@@ -359,8 +375,16 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
 
             for(var el in this.descendants) {    
                 if(this.descendants[el].visProp['visible'] && this.descendants[el].type != JXG.OBJECT_TYPE_INTERSECTION) {
-                    this.descendants[el].hideElement();
-                    this.descendants[el].visProp['visible'] = true;
+                    if(this.descendants[el].type != JXG.OBJECT_TYPE_TEXT) {
+                        this.descendants[el].hideElement();
+                        this.descendants[el].visProp['visible'] = true;
+                    }
+                    else {
+                        if(!this.descendants[el].isLabel) {
+                            this.descendants[el].hideElement();
+                            this.descendants[el].visProp['visible'] = true;
+                        }
+                    }
                 }      
                 this.descendants[el].notExistingParents[id] = this.board.objects[id];
             }                

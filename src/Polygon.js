@@ -206,6 +206,13 @@ JXG.Polygon.prototype.hideElement = function() {
             this.borders[i].hideElement();
         }
     }
+    
+    if (this.label!=null) {
+        this.label.hiddenByParent = true;
+        if(this.label.content.visProp['visible']) {
+            this.board.renderer.hide(this.label.content);
+        }
+    }    
 }
 
 JXG.Polygon.prototype.showElement = function() {

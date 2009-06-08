@@ -159,10 +159,10 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
     this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
     delete(this.board.objects[this.id]);
 
-    this.label.show = this.visProp['visible'];
     this.label.color = '#000000';
     if(!this.visProp['visible']) {
         this.label.hiddenByParent = true;
+        this.label.content.visProp['visible'] = false;
     }
     
     if(method == 'twoPoints') {
@@ -353,20 +353,20 @@ JXG.Circle.prototype.updateRenderer = function () {
         if (this.isReal) {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.show(this); 
-                if(this.label.show) this.board.renderer.show(this.label.content); 
+                if(this.label.content.visProp['visible']) this.board.renderer.show(this.label.content); 
             }
             this.board.renderer.updateCircle(this);
         } else {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.hide(this); 
-                if(this.label.show) this.board.renderer.hide(this.label.content); 
+                if(this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content); 
             }
         }
         this.needsUpdate = false;
     }
     
     /* Update the label if visible. */
-    if(this.label.show && this.isReal) {
+    if(this.label.content.visProp['visible'] && this.isReal) {
         //this.label.setCoordinates(this.coords);
         this.label.content.update();
         //this.board.renderer.updateLabel(this.label);

@@ -304,9 +304,8 @@ JXG.GeometryElement.prototype.hideElement = function() {
     this.board.renderer.hide(this);
     if (this.label!=null) {
         this.label.hiddenByParent = true;
-        if(this.label.show) {
+        if(this.label.content.visProp['visible']) {
             this.board.renderer.hide(this.label.content);
-            //this.label.show = true;
         }
     }
 };
@@ -319,7 +318,7 @@ JXG.GeometryElement.prototype.showElement = function() {
     this.board.renderer.show(this);
     if (this.label!=null && this.label.hiddenByParent) {
         this.label.hiddenByParent = false;
-        if(this.label.show) {
+        if(this.label.content.visProp['visible']) {
             this.board.renderer.show(this.label.content);
         }
     }

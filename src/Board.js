@@ -924,7 +924,7 @@ JXG.Board.prototype.addPoint = function (obj) {
         this.renderer.hide(obj);
     }
     
-    if(!obj.label.show) {
+    if(!obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }
 
@@ -960,7 +960,7 @@ JXG.Board.prototype.addLine = function (obj) {
         this.renderer.hide(obj);
     }
     
-    if(!obj.label.show) {
+    if(!obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }
     
@@ -998,7 +998,7 @@ JXG.Board.prototype.addCircle = function(obj) {
         this.renderer.hide(obj);
     }
     
-    if(!obj.label.show) {
+    if(!obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }    
 
@@ -1372,7 +1372,7 @@ JXG.Board.prototype.addArrowParallel = function(a, p, arrowId, pointId, arrowNam
    point2.update = function() {
         if (this.needsUpdate) { 
             this.coords = this.board.algebra.parallel(arrow.point1, arrow.point2, point);
-            if(this.label.show) {
+            if(this.label.content.visProp['visible']) {
                 //this.label.setCoordinates(this.coords);
                 this.label.content.update();
             }
@@ -1664,7 +1664,7 @@ JXG.Board.prototype.addCircumcenter = function(point1, point2, point3, midpointI
     midpoint.update = function() {
         if (this.needsUpdate) {
             this.coords = this.board.algebra.circumcenterMidpoint(p1, p2, p3);
-            if(this.label.show) {
+            if(this.label.content.visProp['visible']) {
                 //this.label.setCoordinates(this.coords);
                 this.label.content.update();
             }
@@ -1714,7 +1714,7 @@ JXG.Board.prototype.addCircumcenterMidpoint = function(point1, point2, point3, m
         if (this.needsUpdate) {
             this.coords = this.board.algebra.circumcenterMidpoint(p1, p2, p3);
             // Label mitschieben
-            if(this.label.show) {
+            if(this.label.content.visProp['visible']) {
                 //this.label.setCoordinates(this.coords);
                 this.label.content.update();
             }
