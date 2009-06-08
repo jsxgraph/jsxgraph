@@ -882,7 +882,7 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
     }
 
     parents[0].addChild(el);
-    parents[0].addChild(el);
+    parents[1].addChild(el);
 
     el.generatePolynomial = function () {
         var poly1 = parents[0].generatePolynomial(el);
