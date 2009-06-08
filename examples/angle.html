@@ -10,14 +10,14 @@
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
 </div>
-<div id="debug" style="display:none;"></div>
+<div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
 
         var p1, p2, l1;
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 300, unitX: 50, unitY: 50});
         
-        p1 = board.createElement('point', [0, 0], {style:5,name:"A_1",fillColor:'blue'}); 
+        p1 = board.createElement('point', [0, 0], {style:5,name:"A",fillColor:'blue'}); 
         p2 = board.createElement('point', [0, 4], {style:5,name:"B",fillColor:'blue'});
         p3 = board.createElement('point', [4, 0], {style:5,name:"C",fillColor:'blue'});         
         
