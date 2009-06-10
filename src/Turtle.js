@@ -102,7 +102,7 @@ JXG.Turtle.prototype.init = function(x,y,dir) {
     this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
     this.objects.push(this.curve);
 
-    this.turtle = this.board.createElement('point',this.pos,{fixed:true,name:' ',visible:false});
+    this.turtle = this.board.createElement('point',this.pos,{fixed:true,name:' ',visible:false,withLabel:false});
     this.objects.push(this.turtle);
     
     this.turtle2 = this.board.createElement('point',[this.pos[0],this.pos[1]+this.arrowLen],
@@ -111,7 +111,7 @@ JXG.Turtle.prototype.init = function(x,y,dir) {
     
     var w = this.attributes.strokeWidth || this.attributes.strokewidth || 2;  // Attention; should be moved to Options.js
     this.arrow = this.board.createElement('line',[this.turtle,this.turtle2],
-            {lastArrow:true,strokeColor:'#ff0000',straightFirst:false,straightLast:false,strokeWidth:w});
+            {lastArrow:true,strokeColor:'#ff0000',straightFirst:false,straightLast:false,strokeWidth:w,withLabel:false});
     this.objects.push(this.arrow);
 
     this.right(90-dir);

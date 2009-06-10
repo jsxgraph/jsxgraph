@@ -15,42 +15,6 @@
 <script type="text/javascript">
 /* <![CDATA[ */
 var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, grid:true, unitX: 100, unitY: 100});
-HSV2RGB = function(H,S,V) {
-    var R,G,B, f,i,hTemp, p,q,t;
-    if (s==0) {
-        if (isNaN(H)) {
-            R = V;
-            G = V;
-            B = V;
-        } else {
-            return '#000000';
-        }
-    } else {
-        if (H>=360) {
-            hTemp = 0.0;
-        } else {
-            hTemp = H;
-        }
-        hTemp = hTemp / 60;     // h is now IN [0,6)
-        i = Math.floor(hTemp);        // largest integer <= h
-        f = hTemp - i;                  // fractional part of h
-        p = V * (1.0 - S);
-        q = V * (1.0 - (S * f));
-        t = V * (1.0 - (S * (1.0 - f)));
-        switch (i) {
-            case 0: R = V; G = t;  B = p; break;
-            case 1: R = q; G = V;  B = p; break;
-            case 2: R = p; G = V;  B = t; break;
-            case 3: R = p; G = q;  B = V; break;
-            case 4: R = t; G = p;  B = V; break;
-            case 5: R = V; G = p;  B = q; break;
-        }
-    }
-    R = Math.round(R*255).toString(16); R = (R.length==0)?'00':((R.length==1)?'0'+R:R);
-    G = Math.round(G*255).toString(16); G = (G.length==0)?'00':((G.length==1)?'0'+G:G);
-    B = Math.round(B*255).toString(16); B = (B.length==0)?'00':((B.length==1)?'0'+B:B);
-    return '#'+R+G+B; 
-}
 solveQ2 = function(x1,x2,x3,off) {
     var a, b, c, d;
     a = 0.5;
@@ -62,13 +26,13 @@ solveQ2 = function(x1,x2,x3,off) {
     return [(-b+Math.sqrt(d))/(2.0*a),(-b-Math.sqrt(d))/(2.0*a)];
 }   
     
-a = brd.createElement('line',[[0,0],[2,0]],{straightFirst:false,straightLast:false,visible:false});
+a = brd.createElement('line',[[0,0],[2,0]],{straightFirst:false,straightLast:false,visible:false,withLabel:false});
 p1 = brd.createElement('glider',[1.3,0,a],{name:''});
 
 b0 = -0.5;
-c0 = brd.createElement('circle',[[0,0],Math.abs(1.0/b0)],{strokeWidth:1});
-c1 = brd.createElement('circle',[p1,function(){return 2-p1.X();}],{strokeWidth:1});
-c2 = brd.createElement('circle',[[function(){return p1.X()-2;},0],function(){return p1.X();}],{strokeWidth:1});
+c0 = brd.createElement('circle',[[0,0],Math.abs(1.0/b0)],{strokeWidth:1,withLabel:false});
+c1 = brd.createElement('circle',[p1,function(){return 2-p1.X();}],{strokeWidth:1,withLabel:false});
+c2 = brd.createElement('circle',[[function(){return p1.X()-2;},0],function(){return p1.X();}],{strokeWidth:1,withLabel:false});
 c0.curvature = function(){ return b0;}; // constant
 c1.curvature = function(){ return 1/(2-p1.X());};
 c2.curvature = function(){ return 1/(p1.X());};
@@ -108,8 +72,8 @@ thirdCircleRadius = function() {
     return 1.0/b3[0];
 }
 
-p3 = brd.createElement('point',[thirdCircleX,thirdCircleY],{name:'',visible:false});
-c3 = brd.createElement('circle',[p3,thirdCircleRadius],{strokeWidth:1});
+p3 = brd.createElement('point',[thirdCircleX,thirdCircleY],{name:'',visible:false,withLabel:false});
+c3 = brd.createElement('circle',[p3,thirdCircleRadius],{strokeWidth:1,withLabel:false});
 c3.curvature = function(){ return 1.0/this.radius;};
 
 otherCirc = function(circs,level) {
@@ -154,7 +118,7 @@ otherCirc = function(circs,level) {
             return 1/b[4];
         }
     }
-    c = brd.createElement('circle',[[fx,fy],fr],{strokeWidth:1,fillColor:HSV2RGB(360*1/(level+1),0.7,0.8),fillOpacity:0.5});
+    c = brd.createElement('circle',[[fx,fy],fr],{strokeWidth:1,fillColor:JXG.hsv2rgb(360*1/(level+1),0.7,0.8),fillOpacity:0.5,withLabel:false});
     c.curvature = function(){ return 1/this.radius;};
     
     otherCirc([circs[0],circs[1],c,circs[2]],level-1);
@@ -165,14 +129,12 @@ otherCirc = function(circs,level) {
 
 //-------------------------------------------------------
 brd.suspendUpdate();
-level = 4;
+level = 2;
 otherCirc([c0,c1,c2,c3],level);
 otherCirc([c3,c1,c2,c0],level);
 otherCirc([c0,c2,c3,c1],level);
 otherCirc([c0,c1,c3,c2],level);
 brd.unsuspendUpdate();
-
-
 /* ]]> */
 </script>
 </body>

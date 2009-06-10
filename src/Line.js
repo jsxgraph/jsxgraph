@@ -47,7 +47,7 @@
  * empty string is given, an unique name will be generated.
  * @see JXG.Board#generateName
  */
-JXG.Line = function (board, p1, p2, id, name) {
+JXG.Line = function (board, p1, p2, id, name, withLabel) {
     /* Call the constructor of GeometryElement */
     this.constructor();
 
@@ -149,18 +149,21 @@ JXG.Line = function (board, p1, p2, id, name) {
     this.parentPolygon = null;
 
     this.label = {};
-    this.label.relativeCoords = [10,10];
+    if (typeof withLabel=='undefined' || withLabel==true) {
+        this.label.relativeCoords = [10,10];
 
-    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
-    this.board.objects[this.id] = this;
-    this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
-    delete(this.board.objects[this.id]);
+        this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
+        this.board.objects[this.id] = this;
+        this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
+        delete(this.board.objects[this.id]);
 
-    this.label.color = '#000000';
-    if(!this.visProp['visible']) {
-        this.label.hiddenByParent = true;
-        this.label.content.visProp['visible'] = false;
-    }    
+        this.label.color = '#000000';
+        if(!this.visProp['visible']) {
+            this.label.hiddenByParent = true;
+            this.label.content.visProp['visible'] = false;
+        }
+        this.hasLabel = true;
+    }
     
     /* Register line at board */
     this.id = this.board.addLine(this);
@@ -382,13 +385,13 @@ JXG.Line.prototype.updateStdform = function() {
         if (this.isReal) {
             if (wasReal!=this.isReal) {
                 this.board.renderer.show(this);
-                if(this.label.content.visProp['visible']) this.board.renderer.show(this.label.content);
+                if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content);
             }
             this.board.renderer.updateLine(this);
         } else {
             if (wasReal!=this.isReal) {
                 this.board.renderer.hide(this);
-                if(this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content);
+                if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content);
             }
         }
 
@@ -397,7 +400,7 @@ JXG.Line.prototype.updateStdform = function() {
     }
     
     /* Update the label if visible. */
-    if(this.label.content.visProp['visible'] && this.isReal) {
+    if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
         //this.label.setCoordinates(this.coords);
         this.label.content.update();
         //this.board.renderer.updateLabel(this.label);
@@ -760,12 +763,16 @@ JXG.Line.prototype.removeTicks = function(tick) {
  */
 JXG.createLine = function(board, parents, atts) {
     var el;
-
+    if (atts==null) {
+        atts = {};
+    }
+    if(atts.withLabel == null)
+        atts.withLabel = true;
     if((parents[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parents[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
         // line through two points
         var p1 =  JXG.GetReferenceFromParameter(board,parents[0]);
         var p2 =  JXG.GetReferenceFromParameter(board,parents[1]);
-        el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name']);
+        el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel']);
     } else if (parents.length==3) {
         // free line
         var c = [];
@@ -789,12 +796,12 @@ JXG.createLine = function(board, parents, atts) {
                 function() { return c[2]()*c[2]()+c[1]()*c[1]();},
                 function() { return -c[1]()*c[0]()+c[2]();},
                 function() { return -c[2]()*c[0]()-c[1]();}],{visible:false,name:' '});
-        el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name']);
+        el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel']);
     } else if ((parents.length == 2) && (parents[0].length>1 && parents[1].length>1)) {
         var point1 = board.createElement('point', parents[0], {visible:false,fixed:true});
         var point2 = board.createElement('point', parents[1], {visible:false,fixed:true});
 
-        el = new JXG.Line(board, point1.id, point2.id, atts['id'], atts['name']);
+        el = new JXG.Line(board, point1.id, point2.id, atts['id'], atts['name'],atts['withLabel']);
     } else
         throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     return el;
@@ -836,8 +843,13 @@ JXG.JSXGraph.registerElement('segment', JXG.createSegment);
 JXG.createArrow = function(board, parents, attributes) {
     var el;
 
+    if (attributes==null) {
+        attributes = {};
+    }
+    if(attributes.withLabel == null)
+        attributes.withLabel = true;
     if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) {
-        el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name']);
+        el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name'],attributes['withLabel']);
         el.setStraight(false,false);
         el.setArrow(false,true);
     } // Ansonsten eine fette Exception um die Ohren hauen
@@ -884,6 +896,8 @@ JXG.createAxis = function(board, parents, attributes) {
         attributes.straightLast = true;
         if(attributes.strokeWidth == null)
             attributes.strokeWidth = 1;
+        if(attributes.withLabel == null)
+            attributes.withLabel = false;
 
         var line = board.createElement('line', [point1, point2], attributes);
         line.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.

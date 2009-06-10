@@ -245,9 +245,9 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         rad += (s!=0)?(2*Math.PI*y[i]/s):0;
         var xcoord = radius*Math.cos(rad)+xc;
         var ycoord = radius*Math.sin(rad)+yc;
-        p[i+1] = board.createElement('point',[xcoord,ycoord], {name:'',fixed:true,visible:false});
+        p[i+1] = board.createElement('point',[xcoord,ycoord], {name:'',fixed:true,visible:false,withLabel:false});
         line[i] = board.createElement('line',[center,p[i]], 
-        {strokeColor:'#ffffff', straightFirst:false, straightLast:false, strokeWidth:6, strokeOpacity:1.0});
+            {strokeColor:'#ffffff', straightFirst:false, straightLast:false, strokeWidth:6, strokeOpacity:1.0,withLabel:false});
         myAtts['fillColor'] = colorArray[i%colorArray.length];
         arc[i] = board.createElement('arc',[center,p[i],p[i+1]], myAtts);
     }

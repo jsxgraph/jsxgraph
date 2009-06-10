@@ -103,7 +103,7 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines) {
     if(withLines) {
         for(var i=0; i<this.vertices.length-1; i++) {
             /* create the borderlines */
-            l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name);
+            l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name, false);
             l.setStraight(false,false); // Strecke
             this.borders[i] = l;
             l.parentPolygon = this;

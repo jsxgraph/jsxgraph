@@ -110,6 +110,12 @@ JXG.GeometryElement = function() {
      */
     this.childElements = {};
     
+    /**
+     * If element has label subelement then this property will be set to true.
+     * @type bool
+     */
+    this.hasLabel = false;
+    
     
     /** 
      * Stores all Intersection Objects which in this moment are not real and
@@ -302,7 +308,7 @@ JXG.GeometryElement.prototype.updateRenderer = function() {
 JXG.GeometryElement.prototype.hideElement = function() {
     this.visProp['visible'] = false;
     this.board.renderer.hide(this);
-    if (this.label!=null) {
+    if (this.label!=null && this.hasLabel) {
         this.label.hiddenByParent = true;
         if(this.label.content.visProp['visible']) {
             this.board.renderer.hide(this.label.content);
@@ -316,7 +322,7 @@ JXG.GeometryElement.prototype.hideElement = function() {
 JXG.GeometryElement.prototype.showElement = function() {
     this.visProp['visible'] = true;
     this.board.renderer.show(this);
-    if (this.label!=null && this.label.hiddenByParent) {
+    if (this.label!=null && this.hasLabel && this.label.hiddenByParent) {
         this.label.hiddenByParent = false;
         if(this.label.content.visProp['visible']) {
             this.board.renderer.show(this.label.content);

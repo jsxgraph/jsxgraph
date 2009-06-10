@@ -450,18 +450,23 @@ JXG.Board.prototype.generateName = function(object) {
     // how long the name can be at most
     var maxNameLength = 3;
     var nameBase = '{';
+    var nameEnd;
     
     if(object.elementClass == JXG.OBJECT_CLASS_POINT || object.elementClass == JXG.OBJECT_CLASS_LINE) {
-        nameBase = '{';
+        nameBase = '';
+        nameEnd = '';
     }
     else if(object.type == JXG.OBJECT_TYPE_POLYGON) {
         nameBase = 'P_{';
+        nameEnd = '}';
     }
     else if(object.type == JXG.OBJECT_TYPE_CIRCLE) {
         nameBase = 'k_{';
+        nameEnd = '}';
     }            
     else {
         nameBase = 's_{';
+        nameEnd = '}';
     }
 
     var indices = [];
@@ -484,7 +489,7 @@ JXG.Board.prototype.generateName = function(object) {
             }
 
             if (this.elementsByName[name+'}'] == null) {
-                return name+'}';
+                return name+nameEnd;
             }
 
         }
@@ -742,7 +747,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
  */
 JXG.Board.prototype.updateInfobox = function(el) {
     var x, y;
-    if((el.elementClass == JXG.OBJECT_CLASS_POINT) && (el.showInfobox)) {
+    if((el.elementClass == JXG.OBJECT_CLASS_POINT) && el.showInfobox) {
         this.infobox.setCoords(el.coords.usrCoords[1]*1+this.infobox.distanceX/(this.unitX*this.zoomX),
                                el.coords.usrCoords[2]*1+this.infobox.distanceY/(this.unitY*this.zoomY));
         x = Math.abs(el.coords.usrCoords[1]);
@@ -907,7 +912,9 @@ JXG.Board.prototype.addPoint = function (obj) {
     if((elementId == '') || (elementId == null)) {
         elementId = this.id + 'P' + number;
     }
-    obj.label.content.id = elementId+"Label";
+    if (obj.hasLabel) {
+        obj.label.content.id = elementId+"Label";
+    } 
     
     // Objekt in die assoziativen Arrays einfuegen
     this.objects[elementId] = obj;
@@ -915,16 +922,19 @@ JXG.Board.prototype.addPoint = function (obj) {
     
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
-    
-    this.addText(obj.label.content)
+    if (obj.hasLabel) {
+        this.addText(obj.label.content);
+    }
     
     this.renderer.drawPoint(obj);
-    this.renderer.drawText(obj.label.content);
+    if (obj.hasLabel) {
+        this.renderer.drawText(obj.label.content);
+    }
     if(!obj.visProp['visible']) {
         this.renderer.hide(obj);
     }
     
-    if(!obj.label.content.visProp['visible']) {
+    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }
 
@@ -947,7 +957,9 @@ JXG.Board.prototype.addLine = function (obj) {
         elementId = this.id + 'L' + number;
     }
 
-    obj.label.content.id = elementId+"Label";
+    if (obj.hasLabel) {
+        obj.label.content.id = elementId+"Label";
+    }
     
     // Objekt in das assoziative Array einfuegen    
     this.objects[elementId] = obj;
@@ -955,12 +967,14 @@ JXG.Board.prototype.addLine = function (obj) {
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
     this.renderer.drawLine(obj);
-    this.renderer.drawText(obj.label.content);
+    if (obj.hasLabel) {
+        this.renderer.drawText(obj.label.content);
+    }
     if(!obj.visProp['visible']) {
         this.renderer.hide(obj);
     }
     
-    if(!obj.label.content.visProp['visible']) {
+    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }
     
@@ -982,7 +996,9 @@ JXG.Board.prototype.addCircle = function(obj) {
     if((elementId == '') || (elementId == null)) {
        elementId = this.id + 'C' + number;
     }
-    obj.label.content.id = elementId+"Label";
+    if (obj.hasLabel) {
+        obj.label.content.id = elementId+"Label";
+    }
     
     // Objekt in das assoziative Array einfuegen
     this.objects[elementId] = obj;
@@ -990,15 +1006,19 @@ JXG.Board.prototype.addCircle = function(obj) {
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
     
-    this.addText(obj.label.content)
+    if (obj.hasLabel) {
+        this.addText(obj.label.content);
+    }
     
     this.renderer.drawCircle(obj);
-    this.renderer.drawText(obj.label.content);
+    if (obj.hasLabel) {
+        this.renderer.drawText(obj.label.content);
+    }
     if(!obj.visProp['visible']) {
         this.renderer.hide(obj);
     }
     
-    if(!obj.label.content.visProp['visible']) {
+    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }    
 

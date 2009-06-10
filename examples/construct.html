@@ -17,11 +17,10 @@
 /* <![CDATA[ */
 var board = JXG.JSXGraph.initBoard('box', {originX: 100, originY: 200, grid:true, unitX: 50, unitY: 50});
 /*
-    var p1 = board.createElement('point', [1,3,1] , {name:'A'});
+    var p1 = board.createElement('point', [1,3,1] , {name:'A',withLabel:false});
     var p2 = board.createElement('point', [1,1,0] );
     var l1 = board.createElement('line', [p1,p2],{name:'bingo',straightFirst:true,straightLast:true} );
 */
-
 
 //board.snapToGrid = true;
 var H = board.createElement('slider',[[5,3.5],[10,3.5],[0,1,360]], {name:'H'});
@@ -50,10 +49,12 @@ var t = board.createElement('text',[ function(){return p3.X()+0.3;}, function(){
     var ac = board.createElement('glider', [4,0,a1],{name:'glide'} );
 
 */    
+/*
     var circ = board.createElement('circle', [p1,p2], {dash:1,
                         fillColor:function(){return JXG.hsv2rgb(H.Value(),S.Value(),V.Value());},
                         highlightfillColor:function(){return JXG.hsv2rgb(H.Value(),1-S.Value(),V.Value());}
                         });
+*/                        
     /*
     var circ = board.createElement('circle', [p1,p2], {dash:1,
         fillColor:function(){ var t = Math.round(s.Value())*65536+Math.round(s.Value())*255+0; 

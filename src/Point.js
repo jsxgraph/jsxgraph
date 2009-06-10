@@ -48,7 +48,7 @@
  * @see JXG.Board#generateName
  * @param {bool} show False if the point is invisible, True otherwise
  */
-JXG.Point = function (board, coordinates, id, name, show) {
+JXG.Point = function (board, coordinates, id, name, show, withLabel) {
     this.constructor();
     
     /**
@@ -81,20 +81,32 @@ JXG.Point = function (board, coordinates, id, name, show) {
         this.label.hiddenByParent = true;
     }
     */
+
+    /**
+     * If true, the infobox is shown on mouse over, else not.
+     * @type boolean
+     */
+    this.showInfobox = true;
+    
     this.label = {};
     this.label.relativeCoords = [10,10];
-
     this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
-    this.board.objects[this.id] = this;
-    this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
-    delete(this.board.objects[this.id]);
+    if (typeof withLabel=='undefined' || withLabel==true) {
+        this.board.objects[this.id] = this;
+        this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, 
+            [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
+        delete(this.board.objects[this.id]);
 
-    this.label.color = '#000000';
-    if(!show) {
-        this.label.hiddenByParent = true;
-        this.label.content.visProp['visible'] = false;
+        this.label.color = '#000000';
+        if(!show) {
+            this.label.hiddenByParent = true;
+            this.label.content.visProp['visible'] = false;
+        }
+        this.hasLabel = true;
+    } else {
+        this.showInfobox = false;
     }
- 
+    
     /**
      * False: Point can be moved, True: Point can't be move with the mouse.
      * @type bool
@@ -113,12 +125,6 @@ JXG.Point = function (board, coordinates, id, name, show) {
      * @type boolean
      */
     this.onPolygon = false;
-
-    /**
-     * If true, the infobox is shown on mouse over, else not.
-     * @type boolean
-     */
-    this.showInfobox = true;
     
     /**
      * Point style.
@@ -349,19 +355,19 @@ JXG.Point.prototype.updateRenderer = function () {
         if (this.isReal) {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.show(this); 
-                if(this.label.content.visProp['visible']) this.board.renderer.show(this.label.content); 
+                if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content); 
             }
             this.board.renderer.updatePoint(this);
         } else {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.hide(this); 
-                if(this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content); 
+                if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content); 
             }
         }
     } 
 
     /* Update the label if visible. */
-    if(this.label.content.visProp['visible'] && this.isReal) {
+    if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
         //this.label.setCoordinates(this.coords);
         this.label.content.update();
         //this.board.renderer.updateLabel(this.label);
@@ -755,7 +761,9 @@ JXG.Point.prototype.setStyle = function(i) {
  * Remove the point from the drawing.
  */
 JXG.Point.prototype.remove = function() {    
-    this.board.renderer.remove(document.getElementById(this.label.id));
+    if (this.hasLabel) {
+        this.board.renderer.remove(document.getElementById(this.label.id));
+    }
     if(this.visProp['style']  >= 3 && this.visProp['style'] <= 9) {
         this.board.renderer.remove(document.getElementById(this.id));
     }
@@ -819,6 +827,13 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
  */
 JXG.createPoint = function(board, parents, atts) {
     var el;
+    if (atts==null) {
+        atts = {};
+    }
+    if (typeof atts.withLabel == 'undefined') {
+        atts.withLabel = true;
+    }
+        
     var isConstrained = false;
     for (var i=0;i<parents.length;i++) {
         if (typeof parents[i]=='function' || typeof parents[i]=='string') {
@@ -827,21 +842,21 @@ JXG.createPoint = function(board, parents, atts) {
     }
     if (!isConstrained) {
         if ( (JXG.IsNumber(parents[0])) && (JXG.IsNumber(parents[1])) ) {
-            el = new JXG.Point(board, parents, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+            el = new JXG.Point(board, parents, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);
             if ( atts["slideObject"] != null ) {
                 el.makeGlider(atts["slideObject"]);
             } else {
                 el.baseElement = el; // Free point
             }
         } else if ( (typeof parents[0]=='object') && (typeof parents[1]=='object') ) { // Transformation
-            el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));   
+            el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);   
             el.addTransform(parents[0],parents[1]);
         }
         else {// Failure
             throw ("JSXGraph error: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         }
     } else {
-        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);
         el.addConstraint(parents);
     }
     return el;
@@ -856,8 +871,14 @@ JXG.createPoint = function(board, parents, atts) {
  */
 JXG.createGlider = function(board, parents, atts) {
     var el;
+    if (atts==null) {
+        atts = {};
+    }
+    if (typeof atts.withLabel == 'undefined') {
+        atts.withLabel = true;
+    }
     if (parents.length==1) {
-      el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
+      el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);
     } else {
       //el = new JXG.Point(board, parents.slice(0,-1), atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']));
       el = board.createElement('point',parents.slice(0,-1), atts);

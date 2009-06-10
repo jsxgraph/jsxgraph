@@ -59,7 +59,7 @@
  * @see Board#generateName
  */            
 
-JXG.Circle = function (board, method, par1, par2, id, name) { 
+JXG.Circle = function (board, method, par1, par2, id, name, withLabel) { 
     /* Call the constructor of GeometryElement */
     this.constructor();
 
@@ -131,12 +131,6 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
      */     
     this.circle = null;
 
-    this.label = {};
-    this.label.relativeCoords = [10,10];
-
-    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
-    this.board.objects[this.id] = this;
-
     if(method == 'twoPoints') {
         this.point2 = JXG.GetReferenceFromParameter(board,par2);
         this.point2.addChild(this);
@@ -156,13 +150,22 @@ JXG.Circle = function (board, method, par1, par2, id, name) {
         this.circle = JXG.GetReferenceFromParameter(board,par2);
         this.radius = this.circle.getRadius();     
     } 
-    this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
-    delete(this.board.objects[this.id]);
+    
+    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
+    this.label = {};
+    if (typeof withLabel=='undefined' || withLabel==true) {
+        this.board.objects[this.id] = this;
+        this.label.relativeCoords = [10,10];
+        this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, 
+            [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
+        delete(this.board.objects[this.id]);
 
-    this.label.color = '#000000';
-    if(!this.visProp['visible']) {
-        this.label.hiddenByParent = true;
-        this.label.content.visProp['visible'] = false;
+        this.label.color = '#000000';
+        if(!this.visProp['visible']) {
+            this.label.hiddenByParent = true;
+            this.label.content.visProp['visible'] = false;
+        }
+        this.hasLabel = true;
     }
     
     if(method == 'twoPoints') {
@@ -353,20 +356,20 @@ JXG.Circle.prototype.updateRenderer = function () {
         if (this.isReal) {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.show(this); 
-                if(this.label.content.visProp['visible']) this.board.renderer.show(this.label.content); 
+                if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content); 
             }
             this.board.renderer.updateCircle(this);
         } else {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.hide(this); 
-                if(this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content); 
+                if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content); 
             }
         }
         this.needsUpdate = false;
     }
     
     /* Update the label if visible. */
-    if(this.label.content.visProp['visible'] && this.isReal) {
+    if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
         //this.label.setCoordinates(this.coords);
         this.label.content.update();
         //this.board.renderer.updateLabel(this.label);
@@ -518,6 +521,13 @@ JXG.Circle.prototype.maxX = function () {
 
 JXG.createCircle = function(board, parentArr, atts) {
     var el, p, i;
+    if (atts==null) {
+        atts={};
+    }
+    if (typeof atts['withLabel']=='undefined') {
+        atts.withLabel = true;
+    }
+    
     p = [];
     for (i=0;i<parentArr.length;i++) {
         if (JXG.IsPoint(parentArr[i])) {
@@ -530,25 +540,25 @@ JXG.createCircle = function(board, parentArr, atts) {
     }
     if( parentArr.length==2 && JXG.IsPoint(p[0]) && JXG.IsPoint(p[1]) ) {
         // Point/Point
-        el = new JXG.Circle(board, 'twoPoints', p[0], p[1], atts['id'], atts['name']);
+        el = new JXG.Circle(board, 'twoPoints', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
     } else if( ( JXG.IsNumber(p[0]) || JXG.IsFunction(p[0]) || JXG.IsString(p[0])) && JXG.IsPoint(p[1]) ) {
         // Number/Point
-        el = new JXG.Circle(board, 'pointRadius', p[1], p[0], atts['id'], atts['name']);
+        el = new JXG.Circle(board, 'pointRadius', p[1], p[0], atts['id'], atts['name'],atts['withLabel']);
     } else if( ( JXG.IsNumber(p[1]) || JXG.IsFunction(p[1]) || JXG.IsString(p[1])) && JXG.IsPoint(p[0]) ) {
         // Point/Number
-        el = new JXG.Circle(board, 'pointRadius', p[0], p[1], atts['id'], atts['name']);
+        el = new JXG.Circle(board, 'pointRadius', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
     } else if( (p[0].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.IsPoint(p[1]) ) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointCircle', p[1], p[0], atts['id'], atts['name']);
+        el = new JXG.Circle(board, 'pointCircle', p[1], p[0], atts['id'], atts['name'],atts['withLabel']);
     } else if( (p[1].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.IsPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointCircle', p[0], p[1], atts['id'], atts['name']);
+        el = new JXG.Circle(board, 'pointCircle', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
     } else if( (p[0].type == JXG.OBJECT_TYPE_LINE) && JXG.IsPoint(p[1])) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointLine', p[1], p[0], atts['id'], atts['name']);
+        el = new JXG.Circle(board, 'pointLine', p[1], p[0], atts['id'], atts['name'],atts['withLabel']);
     } else if( (p[1].type == JXG.OBJECT_TYPE_LINE) && JXG.IsPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointLine', p[0], p[1], atts['id'], atts['name']);
+        el = new JXG.Circle(board, 'pointLine', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
     } else if( parentArr.length==3 && JXG.IsPoint(p[0]) && JXG.IsPoint(p[1]) && JXG.IsPoint(p[2])) {
         // Circle through three points
         var arr = JXG.createCircumcircle(board, p, atts); // returns [center, circle]

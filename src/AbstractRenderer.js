@@ -479,8 +479,10 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
     }
     // Radius umrechnen:
     var radius = el.getRadius();
-    this.updateEllipsePrimitive(el.rendNode,el.midpoint.coords.scrCoords[1],el.midpoint.coords.scrCoords[2],
-        (radius * el.board.unitX * el.board.zoomX),(radius * el.board.unitY * el.board.zoomY));
+    if (radius>0.0 && !isNaN(el.midpoint.coords.scrCoords[1]+el.midpoint.coords.scrCoords[2]) ) {
+        this.updateEllipsePrimitive(el.rendNode,el.midpoint.coords.scrCoords[1],el.midpoint.coords.scrCoords[2],
+            (radius * el.board.unitX * el.board.zoomX),(radius * el.board.unitY * el.board.zoomY));
+    }
 }
     
 /**
@@ -621,6 +623,7 @@ JXG.AbstractRenderer.prototype.drawText = function(el) {
  * @see #drawText
  */
 JXG.AbstractRenderer.prototype.updateText = function(el) { 
+    if (isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) return;
     this.updateTextStyle(el);
     el.rendNode.style.left = (el.coords.scrCoords[1])+'px'; 
     el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText)+'px'; 

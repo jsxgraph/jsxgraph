@@ -30,7 +30,10 @@ Drag the point P to change the figure or change with the radio buttons the numbe
 </td>
 <td width='100'></td>
 <td>
-<table border='1'><tr id="input3">
+<table border='1'>
+<tr id="input3">
+    <td bgcolor='#3CB371' id="input3a"></td>
+        <td bgcolor='#DA70D6' id="input3b"></td>
 </tr>
 <tr>
     <td align='center' id='sum_1'> 1 </td>
@@ -61,7 +64,6 @@ Drag the point P to change the figure or change with the radio buttons the numbe
         for(var i = 1; i <= n; i++) {
             if(i % 2 != 0) {
                 var neu = document.createElement("td");
-                neu.setAttribute('bgcolor','#3CB371');
                 var neuText = document.createTextNode("A");
                 var neu2 = document.createElement("sub");
                 var neuText2 = document.createTextNode(i);
@@ -69,10 +71,10 @@ Drag the point P to change the figure or change with the radio buttons the numbe
                 neu.appendChild(neuText);
                 neu.appendChild(neu2);
                 tr1.appendChild(neu);
+                neu.style.backgroundColor = '#3CB371';
             }
             else {
                 var neu = document.createElement("td");
-                neu.setAttribute('bgcolor','#DA70D6');
                 var neuText = document.createTextNode("A");
                 var neu2 = document.createElement("sub");
                 var neuText2 = document.createTextNode(i);
@@ -80,6 +82,7 @@ Drag the point P to change the figure or change with the radio buttons the numbe
                 neu.appendChild(neuText);
                 neu.appendChild(neu2);
                 tr1.appendChild(neu);        
+                neu.style.backgroundColor = '#DA70D6';
             }
         }    
         
@@ -96,13 +99,8 @@ Drag the point P to change the figure or change with the radio buttons the numbe
             tr2.appendChild(neu);    
         }
         
-        var tr3=document.getElementById("input3");
-        while(tr3.firstChild) {
-            var node = tr3.firstChild;
-            var away = tr3.removeChild(node);
-        }    
-        
-        var s = "<td bgcolor='#3CB371'>";
+        var tr3a=document.getElementById("input3a");
+        var s = "";
         for(var i = 1; i <= n; i=i+2) {
             if(i != 1) {
                 s += " + A<sub>"+i+"</sub>";
@@ -111,8 +109,10 @@ Drag the point P to change the figure or change with the radio buttons the numbe
                 s += "A<sub>"+i+"</sub>";
             }
         }
-        s += "</td>";
-        s += "<td bgcolor='#DA70D6'>";
+        tr3a.innerHTML = s;
+
+        var tr3b=document.getElementById("input3b");
+        s = "";
         for(var i = 2; i <= n; i=i+2) {
             if(i != 2) {
                 s += " + A<sub>"+i+"</sub>";
@@ -121,8 +121,7 @@ Drag the point P to change the figure or change with the radio buttons the numbe
                 s += "A<sub>"+i+"</sub>";
             }
         }
-        s += "</td>";  
-        tr3.innerHTML = s;
+        tr3b.innerHTML = s;
         
         // Board erzeugen
         JXG.JSXGraph.freeBoard(board);
@@ -173,12 +172,13 @@ Drag the point P to change the figure or change with the radio buttons the numbe
         }
         
         // Labels der Polygonseiten verstecken
+/*
         for(var j=0; j < n; j++) {
             for(var i=0; i < polygones[j].borders.length; i++) {
                 polygones[j].borders[i].label.content.hideElement();
             }  
         }
-        
+*/        
         // Hook-Funktion definieren, die die Tabelleninhalte updatet
         function print_table(board) {
             var distances = new Array(n);
