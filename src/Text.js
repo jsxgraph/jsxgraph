@@ -121,7 +121,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
         }
         this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
     }
-    this.updateText();                    // First evaluation of the string
+    //this.updateText();                    // First evaluation of the string    
     if(!this.isLabel) {
         this.id = this.board.addText(this);
     }
@@ -176,7 +176,7 @@ JXG.Text.prototype.update = function () {
             this.updateCoords();
         }
         this.updateText();
-    }
+    }   
 };
 
 /**

@@ -449,24 +449,23 @@ JXG.Board.prototype.generateName = function(object) {
     
     // how long the name can be at most
     var maxNameLength = 3;
-    var nameBase = '{';
-    var nameEnd;
+    var pre = ''
+    var nameBase = '';
+    var post = '';
     
     if(object.elementClass == JXG.OBJECT_CLASS_POINT || object.elementClass == JXG.OBJECT_CLASS_LINE) {
-        nameBase = '';
-        nameEnd = '';
     }
     else if(object.type == JXG.OBJECT_TYPE_POLYGON) {
-        nameBase = 'P_{';
-        nameEnd = '}';
+        pre = 'P_{';
+        post = '}';
     }
     else if(object.type == JXG.OBJECT_TYPE_CIRCLE) {
-        nameBase = 'k_{';
-        nameEnd = '}';
+        pre = 'k_{';
+        post = '}';
     }            
     else {
-        nameBase = 's_{';
-        nameEnd = '}';
+        pre = 's_{';
+        post = '}';
     }
 
     var indices = [];
@@ -482,14 +481,14 @@ JXG.Board.prototype.generateName = function(object) {
     
     while (indices[maxNameLength-1] < possibleNames.length) {
         for(indices[0]=1; indices[0]<possibleNames.length; indices[0]++) {
-            name = nameBase;
+            name = pre;
 
             for(i=maxNameLength; i>0; i--) {
                 name += possibleNames[indices[i-1]];
             }
 
-            if (this.elementsByName[name+'}'] == null) {
-                return name+nameEnd;
+            if (this.elementsByName[name+post] == null) {
+                return name+post;
             }
 
         }
