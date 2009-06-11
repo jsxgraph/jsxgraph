@@ -49,12 +49,13 @@ var t = board.createElement('text',[ function(){return p3.X()+0.3;}, function(){
     var ac = board.createElement('glider', [4,0,a1],{name:'glide'} );
 
 */    
-/*
+
     var circ = board.createElement('circle', [p1,p2], {dash:1,
                         fillColor:function(){return JXG.hsv2rgb(H.Value(),S.Value(),V.Value());},
+                        fillOpacity:0.8,
                         highlightfillColor:function(){return JXG.hsv2rgb(H.Value(),1-S.Value(),V.Value());}
                         });
-*/                        
+                       
     /*
     var circ = board.createElement('circle', [p1,p2], {dash:1,
         fillColor:function(){ var t = Math.round(s.Value())*65536+Math.round(s.Value())*255+0; 
