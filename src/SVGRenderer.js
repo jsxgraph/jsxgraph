@@ -498,8 +498,8 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         }        
         else {
             var node = el.rendNode;
-            node.setAttributeNS(null, 'fill', c);
-            node.setAttributeNS(null, 'fill-opacity', o);                
+            node.setAttributeNS(null, 'fill', c);           
+            node.setAttributeNS(null, 'fill-opacity', o);                   
         }
     }
     else {

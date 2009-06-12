@@ -1,7 +1,7 @@
 <GEONEXT>
 <VERSION>1.71</VERSION>
 <board>
-	<name>Zeichenfl\u00e4che 5</name>
+	<name>Zeichenfl\u00e4che 2</name>
 	<information></information>
 	<author></author>
 	<comment></comment>
@@ -14,7 +14,7 @@
 		<width>350.0</width>
 		<height>300.0</height>
 	</size>
-  	<modus>86</modus>
+  	<modus>210260</modus>
 	<coordinates>
  		<coord>false</coord>
  		<grid>false</grid>
@@ -168,8 +168,8 @@
  			<name>A</name>
  			<id>g2e5</id>
  			<data>
- 				<x>-3.22</x>
- 				<y>3.12</y>
+ 				<x>-0.46</x>
+ 				<y>-2.06</y>
  			</data>
  			<active>true</active>
 			<area>9</area>
@@ -180,7 +180,7 @@
 			<trace>false</trace>
 			<strokewidth>3</strokewidth>
 			<color>
-				<stroke>#800000FF</stroke>
+				<stroke>#FF0000FF</stroke>
 				<lighting>#00FF00FF</lighting>
 				<fill>#00FF0032</fill>
 				<label>#000000FF</label>
@@ -194,14 +194,14 @@
 			<showcoord>false</showcoord>
 			<fix>false</fix>
 			<image></image>
-			<style>0</style>
+			<style>1</style>
 		</point>
  	   <point>
  			<name>B</name>
  			<id>g2e6</id>
  			<data>
- 				<x>-2.32</x>
- 				<y>3.08</y>
+ 				<x>-1.4</x>
+ 				<y>0.76</y>
  			</data>
  			<active>true</active>
 			<area>9</area>
@@ -232,8 +232,8 @@
  			<name>C</name>
  			<id>g2e7</id>
  			<data>
- 				<x>-2.98</x>
- 				<y>2.04</y>
+ 				<x>-1.82</x>
+ 				<y>-1.6</y>
  			</data>
  			<active>true</active>
 			<area>9</area>
@@ -244,7 +244,7 @@
 			<trace>false</trace>
 			<strokewidth>3</strokewidth>
 			<color>
-				<stroke>#B9DB7DFF</stroke>
+				<stroke>#FF0000FF</stroke>
 				<lighting>#00FF00FF</lighting>
 				<fill>#00FF0032</fill>
 				<label>#000000FF</label>
@@ -258,28 +258,29 @@
 			<showcoord>false</showcoord>
 			<fix>false</fix>
 			<image></image>
-			<style>2</style>
+			<style>1</style>
 		</point>
- 	   <point>
- 			<name>D</name>
+ 	   <arc>
+ 			<name>b_a</name>
  			<id>g2e8</id>
  			<data>
- 				<x>-2.12</x>
- 				<y>2.0</y>
+ 				<midpoint>g2e5</midpoint>
+ 				<radius>g2e6</radius>
+ 				<angle>g2e7</angle>
  			</data>
  			<active>true</active>
-			<area>9</area>
+			<area>3</area>
 			<dash>0</dash>
 			<draft>false</draft>
 			<info></info>
 			<visible>true</visible>
 			<trace>false</trace>
-			<strokewidth>3</strokewidth>
+			<strokewidth>2</strokewidth>
 			<color>
-				<stroke>#008040FF</stroke>
-				<lighting>#00FF00FF</lighting>
-				<fill>#00FF0032</fill>
-				<label>#000000FF</label>
+				<stroke>#0000FFFF</stroke>
+				<lighting>#00FFFFFF</lighting>
+				<fill>#00FF0000</fill>
+				<label>#008040FF</label>
 				<draft>#C8C8C864</draft>
 			</color>
 			<showinfo>false</showinfo>
@@ -287,208 +288,16 @@
 				<x>...</x>
 				<y>...</y>
 			</label>
-			<showcoord>false</showcoord>
-			<fix>false</fix>
 			<image></image>
-			<style>3</style>
-		</point>
+			<full>false</full>
+			<firstarrow>false</firstarrow>
+			<lastarrow>false</lastarrow>
+		</arc>
  	   <point>
- 			<name>E</name>
+ 			<name>D</name>
  			<id>g2e9</id>
  			<data>
- 				<x>-1.16</x>
- 				<y>2.88</y>
- 			</data>
- 			<active>true</active>
-			<area>9</area>
-			<dash>0</dash>
-			<draft>false</draft>
-			<info></info>
-			<visible>true</visible>
-			<trace>false</trace>
-			<strokewidth>3</strokewidth>
-			<color>
-				<stroke>#FF0000FF</stroke>
-				<lighting>#00FF00FF</lighting>
-				<fill>#00FF0032</fill>
-				<label>#000000FF</label>
-				<draft>#C8C8C864</draft>
-			</color>
-			<showinfo>false</showinfo>
-			<label>
-				<x>...</x>
-				<y>...</y>
-			</label>
-			<showcoord>false</showcoord>
-			<fix>false</fix>
-			<image></image>
-			<style>4</style>
-		</point>
- 	   <point>
- 			<name>F</name>
- 			<id>g2e10</id>
- 			<data>
- 				<x>-1.04</x>
- 				<y>1.98</y>
- 			</data>
- 			<active>true</active>
-			<area>9</area>
-			<dash>0</dash>
-			<draft>false</draft>
-			<info></info>
-			<visible>true</visible>
-			<trace>false</trace>
-			<strokewidth>3</strokewidth>
-			<color>
-				<stroke>#808080FF</stroke>
-				<lighting>#00FF00FF</lighting>
-				<fill>#00FF0032</fill>
-				<label>#000000FF</label>
-				<draft>#C8C8C864</draft>
-			</color>
-			<showinfo>false</showinfo>
-			<label>
-				<x>...</x>
-				<y>...</y>
-			</label>
-			<showcoord>false</showcoord>
-			<fix>false</fix>
-			<image></image>
-			<style>5</style>
-		</point>
- 	   <point>
- 			<name>G</name>
- 			<id>g2e11</id>
- 			<data>
- 				<x>-0.2</x>
- 				<y>2.06</y>
- 			</data>
- 			<active>true</active>
-			<area>9</area>
-			<dash>0</dash>
-			<draft>false</draft>
-			<info></info>
-			<visible>true</visible>
-			<trace>false</trace>
-			<strokewidth>3</strokewidth>
-			<color>
-				<stroke>#FFAFAFFF</stroke>
-				<lighting>#00FF00FF</lighting>
-				<fill>#00FF0032</fill>
-				<label>#000000FF</label>
-				<draft>#C8C8C864</draft>
-			</color>
-			<showinfo>false</showinfo>
-			<label>
-				<x>...</x>
-				<y>...</y>
-			</label>
-			<showcoord>false</showcoord>
-			<fix>false</fix>
-			<image></image>
-			<style>6</style>
-		</point>
- 	   <point>
- 			<name>H</name>
- 			<id>g2e12</id>
- 			<data>
- 				<x>-0.24</x>
- 				<y>3.22</y>
- 			</data>
- 			<active>true</active>
-			<area>9</area>
-			<dash>0</dash>
-			<draft>false</draft>
-			<info></info>
-			<visible>true</visible>
-			<trace>false</trace>
-			<strokewidth>3</strokewidth>
-			<color>
-				<stroke>#FF9600FF</stroke>
-				<lighting>#00FF00FF</lighting>
-				<fill>#00FF0032</fill>
-				<label>#000000FF</label>
-				<draft>#C8C8C864</draft>
-			</color>
-			<showinfo>false</showinfo>
-			<label>
-				<x>...</x>
-				<y>...</y>
-			</label>
-			<showcoord>false</showcoord>
-			<fix>false</fix>
-			<image></image>
-			<style>7</style>
-		</point>
- 	   <point>
- 			<name>I</name>
- 			<id>g2e13</id>
- 			<data>
- 				<x>0.68</x>
- 				<y>1.8</y>
- 			</data>
- 			<active>true</active>
-			<area>9</area>
-			<dash>0</dash>
-			<draft>false</draft>
-			<info></info>
-			<visible>true</visible>
-			<trace>false</trace>
-			<strokewidth>3</strokewidth>
-			<color>
-				<stroke>#FF0000FF</stroke>
-				<lighting>#00FF00FF</lighting>
-				<fill>#00FF0032</fill>
-				<label>#000000FF</label>
-				<draft>#C8C8C864</draft>
-			</color>
-			<showinfo>false</showinfo>
-			<label>
-				<x>...</x>
-				<y>...</y>
-			</label>
-			<showcoord>false</showcoord>
-			<fix>false</fix>
-			<image></image>
-			<style>8</style>
-		</point>
- 	   <point>
- 			<name>J</name>
- 			<id>g2e14</id>
- 			<data>
- 				<x>-1.66</x>
- 				<y>1.28</y>
- 			</data>
- 			<active>true</active>
-			<area>9</area>
-			<dash>0</dash>
-			<draft>false</draft>
-			<info></info>
-			<visible>true</visible>
-			<trace>false</trace>
-			<strokewidth>3</strokewidth>
-			<color>
-				<stroke>#0080C0FF</stroke>
-				<lighting>#00FF00FF</lighting>
-				<fill>#00FF0032</fill>
-				<label>#000000FF</label>
-				<draft>#C8C8C864</draft>
-			</color>
-			<showinfo>false</showinfo>
-			<label>
-				<x>...</x>
-				<y>...</y>
-			</label>
-			<showcoord>false</showcoord>
-			<fix>false</fix>
-			<image></image>
-			<style>9</style>
-		</point>
- 	   <point>
- 			<name>K</name>
- 			<id>g2e15</id>
- 			<data>
- 				<x>-1.48</x>
+ 				<x>1.5</x>
  				<y>-0.48</y>
  			</data>
  			<active>true</active>
@@ -500,7 +309,7 @@
 			<trace>false</trace>
 			<strokewidth>3</strokewidth>
 			<color>
-				<stroke>#0000FFFF</stroke>
+				<stroke>#FF0000FF</stroke>
 				<lighting>#00FF00FF</lighting>
 				<fill>#00FF0032</fill>
 				<label>#000000FF</label>
@@ -514,14 +323,304 @@
 			<showcoord>false</showcoord>
 			<fix>false</fix>
 			<image></image>
-			<style>10</style>
+			<style>1</style>
+		</point>
+ 	   <point>
+ 			<name>E</name>
+ 			<id>g2e10</id>
+ 			<data>
+ 				<x>0.82</x>
+ 				<y>0.96</y>
+ 			</data>
+ 			<active>true</active>
+			<area>9</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>3</strokewidth>
+			<color>
+				<stroke>#FF0000FF</stroke>
+				<lighting>#00FF00FF</lighting>
+				<fill>#00FF0032</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<showcoord>false</showcoord>
+			<fix>false</fix>
+			<image></image>
+			<style>1</style>
+		</point>
+ 	   <point>
+ 			<name>F</name>
+ 			<id>g2e11</id>
+ 			<data>
+ 				<x>2.62</x>
+ 				<y>0.24</y>
+ 			</data>
+ 			<active>true</active>
+			<area>9</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>3</strokewidth>
+			<color>
+				<stroke>#FF0000FF</stroke>
+				<lighting>#00FF00FF</lighting>
+				<fill>#00FF0032</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<showcoord>false</showcoord>
+			<fix>false</fix>
+			<image></image>
+			<style>1</style>
+		</point>
+ 	   <arc>
+ 			<name>b_b</name>
+ 			<id>g2e12</id>
+ 			<data>
+ 				<midpoint>g2e9</midpoint>
+ 				<radius>g2e10</radius>
+ 				<angle>g2e11</angle>
+ 			</data>
+ 			<active>true</active>
+			<area>3</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#0000FFFF</stroke>
+				<lighting>#00FFFFFF</lighting>
+				<fill>#00FF0000</fill>
+				<label>#008040FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<image></image>
+			<full>false</full>
+			<firstarrow>false</firstarrow>
+			<lastarrow>false</lastarrow>
+		</arc>
+ 	   <point>
+ 			<name>G</name>
+ 			<id>g2e13</id>
+ 			<data>
+ 				<x>5.46</x>
+ 				<y>1.14</y>
+ 			</data>
+ 			<active>true</active>
+			<area>9</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>3</strokewidth>
+			<color>
+				<stroke>#FF0000FF</stroke>
+				<lighting>#00FF00FF</lighting>
+				<fill>#00FF0032</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<showcoord>false</showcoord>
+			<fix>false</fix>
+			<image></image>
+			<style>1</style>
+		</point>
+ 	   <point>
+ 			<name>H</name>
+ 			<id>g2e14</id>
+ 			<data>
+ 				<x>5.56</x>
+ 				<y>-0.08</y>
+ 			</data>
+ 			<active>true</active>
+			<area>9</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>3</strokewidth>
+			<color>
+				<stroke>#FF0000FF</stroke>
+				<lighting>#00FF00FF</lighting>
+				<fill>#00FF0032</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<showcoord>false</showcoord>
+			<fix>false</fix>
+			<image></image>
+			<style>1</style>
+		</point>
+ 	   <point>
+ 			<name>I</name>
+ 			<id>g2e15</id>
+ 			<data>
+ 				<x>5.52</x>
+ 				<y>2.98</y>
+ 			</data>
+ 			<active>true</active>
+			<area>9</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>3</strokewidth>
+			<color>
+				<stroke>#FF0000FF</stroke>
+				<lighting>#00FF00FF</lighting>
+				<fill>#00FF0032</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<showcoord>false</showcoord>
+			<fix>false</fix>
+			<image></image>
+			<style>1</style>
+		</point>
+ 	   <arc>
+ 			<name>b_c</name>
+ 			<id>g2e16</id>
+ 			<data>
+ 				<midpoint>g2e13</midpoint>
+ 				<radius>g2e14</radius>
+ 				<angle>g2e15</angle>
+ 			</data>
+ 			<active>true</active>
+			<area>3</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#0000FFFF</stroke>
+				<lighting>#00FFFFFF</lighting>
+				<fill>#00FF0000</fill>
+				<label>#008040FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<image></image>
+			<full>false</full>
+			<firstarrow>false</firstarrow>
+			<lastarrow>false</lastarrow>
+		</arc>
+ 	   <point>
+ 			<name>J</name>
+ 			<id>g2e17</id>
+ 			<data>
+ 				<x>7.38</x>
+ 				<y>-1.42</y>
+ 			</data>
+ 			<active>true</active>
+			<area>9</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>3</strokewidth>
+			<color>
+				<stroke>#FF0000FF</stroke>
+				<lighting>#00FF00FF</lighting>
+				<fill>#00FF0032</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<showcoord>false</showcoord>
+			<fix>false</fix>
+			<image></image>
+			<style>1</style>
+		</point>
+ 	   <point>
+ 			<name>K</name>
+ 			<id>g2e18</id>
+ 			<data>
+ 				<x>5.68</x>
+ 				<y>-2.18</y>
+ 			</data>
+ 			<active>true</active>
+			<area>9</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>3</strokewidth>
+			<color>
+				<stroke>#FF0000FF</stroke>
+				<lighting>#00FF00FF</lighting>
+				<fill>#00FF0032</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<showcoord>false</showcoord>
+			<fix>false</fix>
+			<image></image>
+			<style>1</style>
 		</point>
  	   <point>
  			<name>L</name>
- 			<id>g2e16</id>
+ 			<id>g2e19</id>
  			<data>
- 				<x>-0.5</x>
- 				<y>-0.38</y>
+ 				<x>7.92</x>
+ 				<y>-0.66</y>
  			</data>
  			<active>true</active>
 			<area>9</area>
@@ -532,7 +631,7 @@
 			<trace>false</trace>
 			<strokewidth>3</strokewidth>
 			<color>
-				<stroke>#FF00FFFF</stroke>
+				<stroke>#FF0000FF</stroke>
 				<lighting>#00FF00FF</lighting>
 				<fill>#00FF0032</fill>
 				<label>#000000FF</label>
@@ -546,14 +645,47 @@
 			<showcoord>false</showcoord>
 			<fix>false</fix>
 			<image></image>
-			<style>11</style>
+			<style>1</style>
 		</point>
+ 	   <arc>
+ 			<name>b_d</name>
+ 			<id>g2e20</id>
+ 			<data>
+ 				<midpoint>g2e17</midpoint>
+ 				<radius>g2e18</radius>
+ 				<angle>g2e19</angle>
+ 			</data>
+ 			<active>true</active>
+			<area>3</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#0000FFFF</stroke>
+				<lighting>#00FFFFFF</lighting>
+				<fill>#00FF0000</fill>
+				<label>#008040FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<image></image>
+			<full>false</full>
+			<firstarrow>false</firstarrow>
+			<lastarrow>false</lastarrow>
+		</arc>
  	   <point>
  			<name>M</name>
- 			<id>g2e17</id>
+ 			<id>g2e21</id>
  			<data>
- 				<x>-0.04</x>
- 				<y>0.68</y>
+ 				<x>1.72</x>
+ 				<y>-4.16</y>
  			</data>
  			<active>true</active>
 			<area>9</area>
@@ -564,7 +696,7 @@
 			<trace>false</trace>
 			<strokewidth>3</strokewidth>
 			<color>
-				<stroke>#008040FF</stroke>
+				<stroke>#FF0000FF</stroke>
 				<lighting>#00FF00FF</lighting>
 				<fill>#00FF0032</fill>
 				<label>#000000FF</label>
@@ -578,14 +710,14 @@
 			<showcoord>false</showcoord>
 			<fix>false</fix>
 			<image></image>
-			<style>12</style>
+			<style>1</style>
 		</point>
  	   <point>
  			<name>N</name>
- 			<id>g2e18</id>
+ 			<id>g2e22</id>
  			<data>
- 				<x>-2.32</x>
- 				<y>-2.32</y>
+ 				<x>2.46</x>
+ 				<y>-3.34</y>
  			</data>
  			<active>true</active>
 			<area>9</area>
@@ -614,10 +746,10 @@
 		</point>
  	   <point>
  			<name>O</name>
- 			<id>g2e19</id>
+ 			<id>g2e23</id>
  			<data>
- 				<x>-1.7</x>
- 				<y>-1.5</y>
+ 				<x>1.22</x>
+ 				<y>-3.88</y>
  			</data>
  			<active>true</active>
 			<area>9</area>
@@ -644,12 +776,13 @@
 			<image></image>
 			<style>1</style>
 		</point>
- 	   <circle>
- 			<name>k_a</name>
- 			<id>g2e20</id>
+ 	   <arc>
+ 			<name>b_e</name>
+ 			<id>g2e24</id>
  			<data>
- 				<midpoint>g2e18</midpoint>
- 				<radius>g2e19</radius>
+ 				<midpoint>g2e21</midpoint>
+ 				<radius>g2e22</radius>
+ 				<angle>g2e23</angle>
  			</data>
  			<active>true</active>
 			<area>3</area>
@@ -658,12 +791,12 @@
 			<info></info>
 			<visible>true</visible>
 			<trace>false</trace>
-			<strokewidth>6</strokewidth>
+			<strokewidth>2</strokewidth>
 			<color>
 				<stroke>#0000FFFF</stroke>
 				<lighting>#00FFFFFF</lighting>
-				<fill>#0080403F</fill>
-				<label>#FF00FFFF</label>
+				<fill>#00FF0000</fill>
+				<label>#008040FF</label>
 				<draft>#C8C8C864</draft>
 			</color>
 			<showinfo>false</showinfo>
@@ -672,115 +805,20 @@
 				<y>...</y>
 			</label>
 			<image></image>
-		</circle>
- 	   <point>
- 			<name>P</name>
- 			<id>g2e21</id>
+			<full>false</full>
+			<firstarrow>false</firstarrow>
+			<lastarrow>false</lastarrow>
+		</arc>
+ 	   <text>
+ 			<name>T0</name>
+ 			<id>g2e25</id>
  			<data>
- 				<x>0.0</x>
- 				<y>-2.88</y>
- 			</data>
- 			<active>true</active>
-			<area>9</area>
-			<dash>0</dash>
-			<draft>false</draft>
-			<info></info>
-			<visible>true</visible>
-			<trace>false</trace>
-			<strokewidth>3</strokewidth>
-			<color>
-				<stroke>#FF0000FF</stroke>
-				<lighting>#00FF00FF</lighting>
-				<fill>#00FF0032</fill>
-				<label>#000000FF</label>
-				<draft>#C8C8C864</draft>
-			</color>
-			<showinfo>false</showinfo>
-			<label>
-				<x>...</x>
-				<y>...</y>
-			</label>
-			<showcoord>false</showcoord>
-			<fix>false</fix>
-			<image></image>
-			<style>1</style>
-		</point>
- 	   <point>
- 			<name>Q</name>
- 			<id>g2e22</id>
- 			<data>
- 				<x>0.68</x>
- 				<y>-1.26</y>
- 			</data>
- 			<active>true</active>
-			<area>9</area>
-			<dash>0</dash>
-			<draft>false</draft>
-			<info></info>
-			<visible>true</visible>
-			<trace>false</trace>
-			<strokewidth>3</strokewidth>
-			<color>
-				<stroke>#FF0000FF</stroke>
-				<lighting>#00FF00FF</lighting>
-				<fill>#00FF0032</fill>
-				<label>#000000FF</label>
-				<draft>#C8C8C864</draft>
-			</color>
-			<showinfo>false</showinfo>
-			<label>
-				<x>...</x>
-				<y>...</y>
-			</label>
-			<showcoord>false</showcoord>
-			<fix>false</fix>
-			<image></image>
-			<style>1</style>
-		</point>
- 	   <arrow>
- 			<name>a</name>
- 			<id>g2e23</id>
- 			<data>
- 				<first>g2e21</first>
- 				<last>g2e22</last>
- 			</data>
- 			<active>true</active>
-			<area>5</area>
-			<dash>0</dash>
-			<draft>false</draft>
-			<info></info>
-			<visible>true</visible>
-			<trace>false</trace>
-			<strokewidth>10</strokewidth>
-			<color>
-				<stroke>#0000FFFF</stroke>
-				<lighting>#00FFFFFF</lighting>
-				<fill>#00FF0032</fill>
-				<label>#FF00FFFF</label>
-				<draft>#C8C8C864</draft>
-			</color>
-			<showinfo>false</showinfo>
-			<label>
-				<x>...</x>
-				<y>...</y>
-			</label>
-			<straight>
-				<first>false</first>
-				<last>false</last>
-			</straight>
-			<editable>false</editable>
- 			<image></image>
-		</arrow>
- 	   <polygon>
- 			<name>P_a</name>
- 			<id>g2e24</id>
- 			<data>
- 				<vertex>g2e14</vertex>
- 				<vertex>g2e10</vertex>
- 				<vertex>g2e11</vertex>
- 				<vertex>g2e17</vertex>
- 				<vertex>g2e16</vertex>
- 				<vertex>g2e14</vertex>
+ 				<content><arc>ggg</content>
+ 				<mp>&arc;ggg</mp>
+ 				<mpx>&arc;ggg</mpx>
+ 				<x>0.4</x>
+ 				<y>0.4</y>
+ 				<parent>g2e8</parent>
  			</data>
  			<active>true</active>
 			<area>5</area>
@@ -791,10 +829,10 @@
 			<trace>false</trace>
 			<strokewidth>2</strokewidth>
 			<color>
-				<stroke>#0000FF00</stroke>
-				<lighting>#FFAFAFFF</lighting>
-				<fill>#00FFFF3F</fill>
-				<label>#FF00FFFF</label>
+				<stroke>#C8C8C800</stroke>
+				<lighting>#646464FF</lighting>
+				<fill>#64646400</fill>
+				<label>#FF0000FF</label>
 				<draft>#C8C8C864</draft>
 			</color>
 			<showinfo>false</showinfo>
@@ -802,157 +840,355 @@
 				<x>...</x>
 				<y>...</y>
 			</label>
-			<border>
-				<name>b</name>
-				<id>g2e24P0</id>
-				<active>true</active>
-				<area>5</area>
-				<dash>0</dash>
-				<draft>false</draft>
-				<info></info>
-				<visible>true</visible>
-				<trace>false</trace>
-				<strokewidth>2</strokewidth>
-				<color>
-					<stroke>#0000FFFF</stroke>
-					<lighting>#00FFFFFF</lighting>
-					<fill>#00FF0032</fill>
-					<label>#00000000</label>
-					<draft>#C8C8C864</draft>
-				</color>
-				<showinfo>false</showinfo>
-				<label>
-					<x>...</x>
-					<y>...</y>
-				</label>
-				<straight>
-					<first>false</first>
-					<last>false</last>
-				</straight>
-				<editable>true</editable>
- 				<image></image>
-			</border>
-			<border>
-				<name>c</name>
-				<id>g2e24P1</id>
-				<active>true</active>
-				<area>5</area>
-				<dash>0</dash>
-				<draft>false</draft>
-				<info></info>
-				<visible>true</visible>
-				<trace>false</trace>
-				<strokewidth>2</strokewidth>
-				<color>
-					<stroke>#0000FFFF</stroke>
-					<lighting>#00FFFFFF</lighting>
-					<fill>#00FF0032</fill>
-					<label>#00000000</label>
-					<draft>#C8C8C864</draft>
-				</color>
-				<showinfo>false</showinfo>
-				<label>
-					<x>...</x>
-					<y>...</y>
-				</label>
-				<straight>
-					<first>false</first>
-					<last>false</last>
-				</straight>
-				<editable>true</editable>
- 				<image></image>
-			</border>
-			<border>
-				<name>d</name>
-				<id>g2e24P2</id>
-				<active>true</active>
-				<area>5</area>
-				<dash>0</dash>
-				<draft>false</draft>
-				<info></info>
-				<visible>true</visible>
-				<trace>false</trace>
-				<strokewidth>2</strokewidth>
-				<color>
-					<stroke>#0000FFFF</stroke>
-					<lighting>#00FFFFFF</lighting>
-					<fill>#00FF0032</fill>
-					<label>#00000000</label>
-					<draft>#C8C8C864</draft>
-				</color>
-				<showinfo>false</showinfo>
-				<label>
-					<x>...</x>
-					<y>...</y>
-				</label>
-				<straight>
-					<first>false</first>
-					<last>false</last>
-				</straight>
-				<editable>true</editable>
- 				<image></image>
-			</border>
-			<border>
-				<name>e</name>
-				<id>g2e24P3</id>
-				<active>true</active>
-				<area>5</area>
-				<dash>0</dash>
-				<draft>false</draft>
-				<info></info>
-				<visible>true</visible>
-				<trace>false</trace>
-				<strokewidth>2</strokewidth>
-				<color>
-					<stroke>#0000FFFF</stroke>
-					<lighting>#00FFFFFF</lighting>
-					<fill>#00FF0032</fill>
-					<label>#00000000</label>
-					<draft>#C8C8C864</draft>
-				</color>
-				<showinfo>false</showinfo>
-				<label>
-					<x>...</x>
-					<y>...</y>
-				</label>
-				<straight>
-					<first>false</first>
-					<last>false</last>
-				</straight>
-				<editable>true</editable>
- 				<image></image>
-			</border>
-			<border>
-				<name>f</name>
-				<id>g2e24P4</id>
-				<active>true</active>
-				<area>5</area>
-				<dash>0</dash>
-				<draft>false</draft>
-				<info></info>
-				<visible>true</visible>
-				<trace>false</trace>
-				<strokewidth>2</strokewidth>
-				<color>
-					<stroke>#0000FFFF</stroke>
-					<lighting>#00FFFFFF</lighting>
-					<fill>#00FF0032</fill>
-					<label>#00000000</label>
-					<draft>#C8C8C864</draft>
-				</color>
-				<showinfo>false</showinfo>
-				<label>
-					<x>...</x>
-					<y>...</y>
-				</label>
-				<straight>
-					<first>false</first>
-					<last>false</last>
-				</straight>
-				<editable>true</editable>
- 				<image></image>
-			</border>
-		</polygon>
+			<condition>false</condition>
+ 			<cs>null</cs>
+ 			<jsf></jsf>
+ 			<fix>false</fix>
+ 			<digits>2</digits>
+ 			<autodigits>true</autodigits>
+ 		</text>
+ 	   <text>
+ 			<name>T1</name>
+ 			<id>g2e26</id>
+ 			<data>
+ 				<content><arrow>erd</arrow></content>
+ 				<mp><arrow>erd</arrow></mp>
+ 				<mpx><arrow>erd</arrow></mpx>
+ 				<x>0.4</x>
+ 				<y>0.4</y>
+ 				<parent>g2e12</parent>
+ 			</data>
+ 			<active>true</active>
+			<area>5</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#C8C8C800</stroke>
+				<lighting>#646464FF</lighting>
+				<fill>#64646400</fill>
+				<label>#FF0000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<condition>false</condition>
+ 			<cs>null</cs>
+ 			<jsf></jsf>
+ 			<fix>false</fix>
+ 			<digits>2</digits>
+ 			<autodigits>true</autodigits>
+ 		</text>
+ 	   <text>
+ 			<name>T2</name>
+ 			<id>g2e27</id>
+ 			<data>
+ 				<content>dfg</content>
+ 				<mp>dfg</mp>
+ 				<mpx>dfg</mpx>
+ 				<x>0.4</x>
+ 				<y>0.4</y>
+ 				<parent>g2e16</parent>
+ 			</data>
+ 			<active>true</active>
+			<area>5</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#C8C8C800</stroke>
+				<lighting>#646464FF</lighting>
+				<fill>#64646400</fill>
+				<label>#FF0000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<condition>false</condition>
+ 			<cs>null</cs>
+ 			<jsf></jsf>
+ 			<fix>false</fix>
+ 			<digits>2</digits>
+ 			<autodigits>true</autodigits>
+ 		</text>
+ 	   <text>
+ 			<name>T3</name>
+ 			<id>g2e28</id>
+ 			<data>
+ 				<content>rrr_{fff}</content>
+ 				<mp>rrr_{fff}</mp>
+ 				<mpx>rrr_{fff}</mpx>
+ 				<x>0.4</x>
+ 				<y>0.4</y>
+ 				<parent>g2e20</parent>
+ 			</data>
+ 			<active>true</active>
+			<area>5</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#C8C8C800</stroke>
+				<lighting>#646464FF</lighting>
+				<fill>#64646400</fill>
+				<label>#FF0000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<condition>false</condition>
+ 			<cs>null</cs>
+ 			<jsf></jsf>
+ 			<fix>false</fix>
+ 			<digits>2</digits>
+ 			<autodigits>true</autodigits>
+ 		</text>
+ 	   <text>
+ 			<name>T4</name>
+ 			<id>g2e29</id>
+ 			<data>
+ 				<content>dfg</content>
+ 				<mp>dfg</mp>
+ 				<mpx>dfg</mpx>
+ 				<x>0.4</x>
+ 				<y>0.4</y>
+ 				<parent>g2e24</parent>
+ 			</data>
+ 			<active>true</active>
+			<area>5</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#C8C8C800</stroke>
+				<lighting>#646464FF</lighting>
+				<fill>#64646400</fill>
+				<label>#FF0000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<condition>false</condition>
+ 			<cs>null</cs>
+ 			<jsf></jsf>
+ 			<fix>false</fix>
+ 			<digits>2</digits>
+ 			<autodigits>true</autodigits>
+ 		</text>
+ 	   <text>
+ 			<name>T5</name>
+ 			<id>g2e30</id>
+ 			<data>
+ 				<content><arc><name>B</name><name>A</name><name>C</name> = <value>Deg(B,A,C)</value>\u00b0</content>
+ 				<mp>&arc;<name>B</name><name>A</name><name>C</name> = <value>Deg(B,A,C)</value>\u00b0</mp>
+ 				<mpx>&arc;<name>B</name><name>A</name><name>C</name> = <value>52.88</value>\u00b0</mpx>
+ 				<x>-1.65</x>
+ 				<y>-0.9499999999999997</y>
+ 				<parent>g2e5</parent>
+ 			</data>
+ 			<active>true</active>
+			<area>5</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#C8C8C800</stroke>
+				<lighting>#646464FF</lighting>
+				<fill>#64646400</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<condition>false</condition>
+ 			<cs>null</cs>
+ 			<jsf></jsf>
+ 			<fix>false</fix>
+ 			<digits>2</digits>
+ 			<autodigits>true</autodigits>
+ 		</text>
+ 	   <text>
+ 			<name>T6</name>
+ 			<id>g2e31</id>
+ 			<data>
+ 				<content><arc><name>E</name><name>D</name><name>F</name> = <value>Deg(E,D,F)</value>\u00b0</content>
+ 				<mp>&arc;<name>E</name><name>D</name><name>F</name> = <value>Deg(E,D,F)</value>\u00b0</mp>
+ 				<mpx>&arc;<name>E</name><name>D</name><name>F</name> = <value>277.46</value>\u00b0</mpx>
+ 				<x>0.49</x>
+ 				<y>2.19</y>
+ 				<parent>g2e9</parent>
+ 			</data>
+ 			<active>true</active>
+			<area>5</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#C8C8C800</stroke>
+				<lighting>#646464FF</lighting>
+				<fill>#64646400</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<condition>false</condition>
+ 			<cs>null</cs>
+ 			<jsf></jsf>
+ 			<fix>false</fix>
+ 			<digits>2</digits>
+ 			<autodigits>true</autodigits>
+ 		</text>
+ 	   <text>
+ 			<name>T7</name>
+ 			<id>g2e32</id>
+ 			<data>
+ 				<content><arc><name>N</name><name>M</name><name>O</name> = <value>Deg(N,M,O)</value>\u00b0</content>
+ 				<mp>&arc;<name>N</name><name>M</name><name>O</name> = <value>Deg(N,M,O)</value>\u00b0</mp>
+ 				<mpx>&arc;<name>N</name><name>M</name><name>O</name> = <value>102.82</value>\u00b0</mpx>
+ 				<x>0.51</x>
+ 				<y>-0.8700000000000001</y>
+ 				<parent>g2e21</parent>
+ 			</data>
+ 			<active>true</active>
+			<area>5</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#C8C8C800</stroke>
+				<lighting>#646464FF</lighting>
+				<fill>#64646400</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<condition>false</condition>
+ 			<cs>null</cs>
+ 			<jsf></jsf>
+ 			<fix>false</fix>
+ 			<digits>2</digits>
+ 			<autodigits>true</autodigits>
+ 		</text>
+ 	   <text>
+ 			<name>T8</name>
+ 			<id>g2e33</id>
+ 			<data>
+ 				<content><arc><name>K</name><name>J</name><name>L</name> = <value>Deg(K,J,L)</value>\u00b0</content>
+ 				<mp>&arc;<name>K</name><name>J</name><name>L</name> = <value>Deg(K,J,L)</value>\u00b0</mp>
+ 				<mpx>&arc;<name>K</name><name>J</name><name>L</name> = <value>210.52</value>\u00b0</mpx>
+ 				<x>1.1100000000000003</x>
+ 				<y>2.37</y>
+ 				<parent>g2e17</parent>
+ 			</data>
+ 			<active>true</active>
+			<area>5</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#C8C8C800</stroke>
+				<lighting>#646464FF</lighting>
+				<fill>#64646400</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<condition>false</condition>
+ 			<cs>null</cs>
+ 			<jsf></jsf>
+ 			<fix>false</fix>
+ 			<digits>2</digits>
+ 			<autodigits>true</autodigits>
+ 		</text>
+ 	   <text>
+ 			<name>T9</name>
+ 			<id>g2e34</id>
+ 			<data>
+ 				<content><arc><name>H</name><name>G</name><name>I</name> = <value>Deg(H,G,I)</value>\u00b0</content>
+ 				<mp>&arc;<name>H</name><name>G</name><name>I</name> = <value>Deg(H,G,I)</value>\u00b0</mp>
+ 				<mpx>&arc;<name>H</name><name>G</name><name>I</name> = <value>173.45</value>\u00b0</mpx>
+ 				<x>1.37</x>
+ 				<y>1.1700000000000002</y>
+ 				<parent>g2e13</parent>
+ 			</data>
+ 			<active>true</active>
+			<area>5</area>
+			<dash>0</dash>
+			<draft>false</draft>
+			<info></info>
+			<visible>true</visible>
+			<trace>false</trace>
+			<strokewidth>2</strokewidth>
+			<color>
+				<stroke>#C8C8C800</stroke>
+				<lighting>#646464FF</lighting>
+				<fill>#64646400</fill>
+				<label>#000000FF</label>
+				<draft>#C8C8C864</draft>
+			</color>
+			<showinfo>false</showinfo>
+			<label>
+				<x>...</x>
+				<y>...</y>
+			</label>
+			<condition>false</condition>
+ 			<cs>null</cs>
+ 			<jsf></jsf>
+ 			<fix>false</fix>
+ 			<digits>2</digits>
+ 			<autodigits>true</autodigits>
+ 		</text>
  	</elements>
  </board>
  <control>

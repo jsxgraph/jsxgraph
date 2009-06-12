@@ -1023,8 +1023,8 @@ this.readGeonext = function(tree,board) {
                 var p = new JXG.Polygon(board, gxtEl.dataVertex, gxtEl.border, gxtEl.id, gxtEl.name);
                 p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
-                              'highlightFillColor:'+gxtEl.colorFill,
-                              'draft:'+gxtEl.draft,'trace:'+gxtEl.trace);
+                              'highlightFillColor:'+gxtEl.colorFill,'labelColor:'+gxtEl.colorLabel,
+                              'draft:'+gxtEl.draft,'trace:'+gxtEl.trace,'visible:true');
                 // to emulate the geonext behaviour on invisible polygones
                 if(!gxtEl.visible) {
                     p.setProperty('fillColor:none','highlightFillColor:none');
@@ -1037,7 +1037,7 @@ this.readGeonext = function(tree,board) {
                                              'highlightStrokeColor:'+gxtEl.border[i].highlightStrokeColor,
                                              'highlightFillColor:'+gxtEl.border[i].colorFill,
                                              'visible:'+gxtEl.border[i].visible,
-                                             'dash:'+gxtEl.border[i].dash,
+                                             'dash:'+gxtEl.border[i].dash,'labelColor:'+gxtEl.border[i].colorLabel,
                                              'draft:'+gxtEl.border[i].draft,'trace:'+gxtEl.border[i].trace);                          
                 }   
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
@@ -1069,7 +1069,7 @@ this.readGeonext = function(tree,board) {
                 var a = new JXG.Line(board, gxtEl.first, gxtEl.last, gxtEl.id, gxtEl.name);
                 a.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
-                              'highlightFillColor:'+gxtEl.colorFill,
+                              'highlightFillColor:'+gxtEl.colorFill,'labelColor:'+gxtEl.colorLabel,
                               'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash, 'draft:'+gxtEl.draft);
                 a.setStraight(false,false);                              
                 a.setArrow(false,true);
@@ -1093,7 +1093,7 @@ this.readGeonext = function(tree,board) {
                                 gxtEl.id, gxtEl.name);
                 a.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
-                              'highlightFillColor:'+gxtEl.colorFill,
+                              'highlightFillColor:'+gxtEl.colorFill,'labelColor:'+gxtEl.colorLabel,
                               'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash, 'draft:'+gxtEl.draft);
                 a.traced = (gxtEl.trace=='false') ? false : true;
                 gxtEl.firstArrow = (gxtEl.firstArrow=='false') ? false : true;
@@ -1111,7 +1111,7 @@ this.readGeonext = function(tree,board) {
                 var a = new JXG.Angle(board, gxtEl.first, gxtEl.middle, gxtEl.last, gxtEl.radius, gxtEl.txt, gxtEl.id, gxtEl.name);
                 a.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
-                              'highlightFillColor:'+gxtEl.colorFill,
+                              'highlightFillColor:'+gxtEl.colorFill,'labelColor:'+gxtEl.colorLabel,
                               'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash /*, 'draft:'+gxtEl.draft*/);                    
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 break;

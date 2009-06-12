@@ -115,6 +115,23 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines) {
         var vertex = JXG.GetReferenceFromParameter(this.board, this.vertices[i]);
         vertex.addChild(this);
     }
+    
+    this.label = {};
+    this.label.relativeCoords = [10,10];
+
+    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
+    this.board.objects[this.id] = this;
+
+    this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
+    delete(this.board.objects[this.id]);
+
+    this.label.color = '#000000';
+    if(!this.visProp['visible']) {
+        this.label.hiddenByParent = true;
+        this.label.content.visProp['visible'] = false;
+    }
+    this.hasLabel = true;
+    
     /* Register polygon at board */
     this.id = this.board.addPolygon(this);
 };
@@ -138,6 +155,12 @@ JXG.Polygon.prototype.updateRenderer = function () {
         this.board.renderer.updatePolygon(this);
         this.needsUpdate = false;
     }
+    if(this.label.content.visProp['visible']) {
+        //this.label.setCoordinates(this.coords);
+        this.label.content.update();
+        //this.board.renderer.updateLabel(this.label);
+        this.board.renderer.updateText(this.label.content);
+    }    
 };
 
 /**
@@ -162,6 +185,26 @@ JXG.Polygon.prototype.getTextAnchor = function() {
     }
     return new JXG.Coords(JXG.COORDS_BY_USER, [(a + x)*0.5, (b + y)*0.5], this.board);
 };
+
+JXG.Polygon.prototype.getLabelAnchor = function() {
+    var a = 0;
+    var b = 0;
+    var x = 0;
+    var y = 0;
+    a = x = this.vertices[0].X();
+    b = y = this.vertices[0].Y();
+    for (var i = 0; i < this.vertices.length; i++) {
+        if (this.vertices[i].X() < a)
+            a = this.vertices[i].X();
+        if (this.vertices[i].X() > x)
+            x = this.vertices[i].X();
+        if (this.vertices[i].Y() > b)
+            b = this.vertices[i].Y();
+        if (this.vertices[i].Y() < y)
+            y = this.vertices[i].Y();
+    }
+    return new JXG.Coords(JXG.COORDS_BY_USER, [(a + x)*0.5, (b + y)*0.5], this.board);
+}
 
 /**
  * Copy the element to the background.

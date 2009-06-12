@@ -246,7 +246,9 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
     this.visProp['fillOpacity'] = this.board.options.elements.color.fillOpacity;    
     this.visProp['highlightFillOpacity'] = this.board.options.elements.color.highlightFillOpacity;   
     
-    this.visProp['draft'] = this.board.options.elements.draft.draft;    
+    this.visProp['draft'] = this.board.options.elements.draft.draft;  
+
+    this.visProp['visible'] = true;
 };
 
 /**
@@ -379,7 +381,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
             return;
         } else {                             // pairRaw consists of array [key,value]
             pair = pairRaw;
-        }
+        }     
         switch(pair[0].replace(/\s+/g).toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
             case 'strokewidth':
                 this.visProp['strokeWidth'] = pair[1];
@@ -398,8 +400,8 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 this.visProp['strokeOpacity'] = parseInt(opacity.toUpperCase(),16)/255;
                 this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);                
                 break;
-            case 'fillcolor':
-                color = pair[1];
+            case 'fillcolor':          
+                color = pair[1];             
                 if (color.length=='9' && color.substr(0,1)=='#') {
                     opacity = color.substr(7,2);
                     color = color.substr(0,7);
@@ -408,8 +410,8 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     opacity = 'FF';
                 }                
                 this.visProp['fillColor'] = color;
-                this.visProp['fillOpacity'] = parseInt(opacity.toUpperCase(),16)/255;    
-                this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);    
+                this.visProp['fillOpacity'] = parseInt(opacity.toUpperCase(),16)/255;             
+                this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);               
                 break;
             case 'highlightstrokecolor':
                 color = pair[1];
@@ -459,11 +461,11 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     opacity = 'FF';
                 }
                 if(opacity == '00') {
-                    if (this.label!=null) {
+                    if (this.label!=null && this.hasLabel) {
                         this.label.content.hideElement();
                     }
                 } 
-                if(this.label!=null) {
+                if(this.label!=null && this.hasLabel) {
                     this.label.color = color;
                     this.board.renderer.setObjectStrokeColor(this.label.content, color, opacity);  
                 }

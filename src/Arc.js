@@ -98,6 +98,22 @@ JXG.Arc = function (board, p1, p2, p3, id, name) {
     this.visProp['highlightFillColor'] = this.board.options.arc.highlightFillColor;
     this.visProp['strokeColor'] = this.board.options.arc.strokeColor;
     this.visProp['highlightStrokeColor'] = this.board.options.arc.highlightStrokeColor;     
+
+    this.label = {};
+    this.label.relativeCoords = [10,10];
+
+    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
+    this.board.objects[this.id] = this;
+
+    this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
+    delete(this.board.objects[this.id]);
+
+    this.label.color = '#000000';
+    if(!this.visProp['visible']) {
+        this.label.hiddenByParent = true;
+        this.label.content.visProp['visible'] = false;
+    }
+    this.hasLabel = true;
     
     /* Register arc at board. */
     this.id = this.board.addArc(this);
@@ -161,6 +177,26 @@ JXG.Arc.prototype.hasPoint = function (x, y) {
  */
 JXG.Arc.prototype.getRadius = function() {
     return(Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-this.point2.coords.usrCoords[1],2) + Math.pow(this.midpoint.coords.usrCoords[2]-this.point2.coords.usrCoords[2],2)));
+};
+
+/**
+ * return TextAnchor
+ */
+JXG.Arc.prototype.getTextAnchor = function() {
+    return this.midpoint.coords;
+}
+
+/**
+ * return LabelAnchor
+ */
+JXG.Arc.prototype.getLabelAnchor = function() {
+    var angle = this.board.algebra.trueAngle(this.point2, this.midpoint, this.point3);
+    var bxminusax = this.point2.coords.usrCoords[1] - this.midpoint.coords.usrCoords[1];
+    var byminusay = this.point2.coords.usrCoords[2] - this.midpoint.coords.usrCoords[2];
+    return new JXG.Coords(JXG.COORDS_BY_USER, 
+                          [this.midpoint.coords.usrCoords[1]+ Math.cos(angle*Math.PI/(2*160))*bxminusax - Math.sin(angle*Math.PI/(2*160))*byminusay, 
+                           this.midpoint.coords.usrCoords[2]+ Math.sin(angle*Math.PI/(2*160))*bxminusax + Math.cos(angle*Math.PI/(2*160))*byminusay], 
+                          this.board);
 };
 
 /**

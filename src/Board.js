@@ -1021,7 +1021,6 @@ JXG.Board.prototype.addCircle = function(obj) {
         this.renderer.hide(obj.label.content);
     }    
 
-
     return elementId;
 };
 
@@ -1040,14 +1039,25 @@ JXG.Board.prototype.addPolygon = function(obj) {
     if((elementId == '') || (elementId == null)) {
         elementId = this.id + 'Py' + number;
     }
-
+    obj.label.content.id = elementId+"Label";
+    
     // Objekt in das assoziative Array einfuegen
     this.objects[elementId] = obj;
  
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
+    this.addText(obj.label.content);  
+    
     this.renderer.drawPolygon(obj);
-
+    this.renderer.drawText(obj.label.content);
+    if(!obj.visProp['visible']) {
+        this.renderer.hide(obj);
+    }
+    
+    if(!obj.label.content.visProp['visible']) {
+        this.renderer.hide(obj.label.content);
+    }   
+    
     return elementId;
 };
 
@@ -1066,13 +1076,24 @@ JXG.Board.prototype.addArc = function(obj) {
     if((elementId == '') || (elementId == null)) {
         elementId = this.id + 'Ac' + number;
     }
+    obj.id = elementId;    
+    obj.label.content.id = elementId+"Label";    
 
     // Objekt in das assoziative Array einfuegen
     this.objects[elementId] = obj;
  
     // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
+    this.addText(obj.label.content)
+    
     this.renderer.drawArc(obj);
+    this.renderer.drawText(obj.label.content);
+    if(!obj.visProp['visible']) {
+        this.renderer.hide(obj);
+    }
+    
+    if(!obj.label.content.visProp['visible']) {
+        this.renderer.hide(obj.label.content);
+    }       
 
     return elementId;
 };
