@@ -34,7 +34,7 @@
 /**
  * Constructs a new Point object.
  * @class This is the Point class. 
- * It is derived from @see GeometryElement.
+ * It is derived from {@link GeometryElement}.
  * It stores all properties required
  * to move, draw a point.
  * @constructor
@@ -182,7 +182,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
 };
 
 /**
- * Inherits here from @see JXG.GeometryElement.
+ * Inherits here from {@lonk JXG.GeometryElement}.
  */
 JXG.Point.prototype = new JXG.GeometryElement();
 
@@ -377,9 +377,9 @@ JXG.Point.prototype.updateRenderer = function () {
 
 /**
  * Getter method for x, this is used by for CAS-points to access point coordinates.
- * @see #coords
  * @see JXG.Coords#x
  * @return {float} User coordinate of point in x direction.
+ * @see #coords
  */
 JXG.Point.prototype.X = function () {
     return this.coords.usrCoords[1];
@@ -387,9 +387,9 @@ JXG.Point.prototype.X = function () {
 
 /**
  * Getter method for y, this is used by CAS-points to access point coordinates.
- * @see #coords
  * @see JXG.Coords#y
  * @return {float} User coordinate of point in y direction.
+ * @see #coords
  */
 JXG.Point.prototype.Y = function () {
     return this.coords.usrCoords[2];
@@ -397,9 +397,9 @@ JXG.Point.prototype.Y = function () {
 
 /**
  * Getter method for z, this is used by CAS-points to access point coordinates.
- * @see #coords
  * @see JXG.Coords#z
  * @return {float} User coordinate of point in z direction.
+ * @see #coords
  */
 JXG.Point.prototype.Z = function () {
     return this.coords.usrCoords[0];
@@ -407,9 +407,7 @@ JXG.Point.prototype.Z = function () {
 
 /**
  * New evaluation of the function term. 
- * This is required for CAS-points: Their XTerm() method is overwritten in @see #addConstraint
- * @see #coords
- * @see JXG.Coords#x
+ * This is required for CAS-points: Their XTerm() method is overwritten in {@link #addConstraint}
  * @return {float} User coordinate of point in x direction.
  */
 JXG.Point.prototype.XEval = function () {
@@ -418,9 +416,7 @@ JXG.Point.prototype.XEval = function () {
 
 /**
  * New evaluation of the function term. 
- * This is required for CAS-points: Their YTerm() method is overwritten in @see #addConstraint
- * @see #coords
- * @see JXG.Coords#y
+ * This is required for CAS-points: Their YTerm() method is overwritten in {@link #addConstraint}
  * @return {float} User coordinate of point in y direction.
  */
 JXG.Point.prototype.YEval = function () {
@@ -429,9 +425,7 @@ JXG.Point.prototype.YEval = function () {
 
 /**
  * New evaluation of the function term. 
- * This is required for CAS-points: Their ZTerm() method is overwritten in @see #addConstraint
- * @see #coords
- * @see JXG.Coords#xz
+ * This is required for CAS-points: Their ZTerm() method is overwritten in {@link #addConstraint}
  * @return {float} User coordinate of point in z direction.
  */
 JXG.Point.prototype.ZEval = function () {
@@ -440,8 +434,6 @@ JXG.Point.prototype.ZEval = function () {
 
 /**
  * Getter method for the distance to a second point, this is required for CAS-elements.
- * @see #coords
- * @see JXG.Coords#dist
  * @return {float} Distance in user coordinate to the point2
  */
 JXG.Point.prototype.Dist = function(point2) {

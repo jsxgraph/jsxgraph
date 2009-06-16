@@ -23,29 +23,25 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @fileoverview Utilities for uncompressing and base64 decoding
+ */
 
-
-
-JXG.Util = new Object();
-	
-/*----------------------------------------------------------------------------
-
-   Unzip
-
-   Klasse zum Dekodieren von Zip-Dateien (GEONExt komprimiert, Geogebra, Intergeo).
-   
-   Grundlage fuer die Implementierung ist der Quellcode zu 
-   gunzip.c von Pasi Ojala
-   http://www.cs.tut.fi/~albert/Dev/gunzip/gunzip.c
-   http://www.cs.tut.fi/~albert
-   Die JavaScript-Portierung enthaelt nur die Dekodierung von
-   Huffman Codes
-
--------------------------------------------------------------------------------
+/**
+  * @class Util class
+  * Class for gunzipping, unzipping and base64 decoding of files.
+  * It is used for reading GEONExT, Geogebra and Intergeo files.
+  *
+  * Only Huffman codes are decoded in gunzip.
+  * The code is based on the source code for gunzip.c by Pasi Ojala 
+  * @see <a href="http://www.cs.tut.fi/~albert/Dev/gunzip/gunzip.c">http://www.cs.tut.fi/~albert/Dev/gunzip/gunzip.c</a>
+  * @see <a href="http://www.cs.tut.fi/~albert">http://www.cs.tut.fi/~albert</a>
+  */
+JXG.Util = {};
                                  
-
------------------------------------------------------------------------------*/
-
+/**
+ * Unzip zip files
+ */
 JXG.Util.Unzip = function (barray){
     var outputArr = [];
     var output = "";
@@ -611,9 +607,6 @@ JXG.Util.Unzip = function (barray){
     return 0;
 };
 
-
-
-    
 JXG.Util.Unzip.prototype.unzipFile = function(name) {
 	this.unzip();
 	//alert(unzipped[0][1]);
@@ -872,8 +865,8 @@ function skipdir(){
 };
 
 /**
-*  Base64 encode / decode
-*  From http://www.webtoolkit.info/
+*  Base64 encoding / decoding
+*  @see <a href="http://www.webtoolkit.info/">http://www.webtoolkit.info/</A>
 */
 JXG.Util.Base64 = {
 
@@ -1035,6 +1028,9 @@ JXG.Util.Base64 = {
     }
 };
 
+/**
+ * @private
+ */
 JXG.Util.asciiCharCodeAt = function(str,i){
 	var c = str.charCodeAt(i);
 	if (c>255){

@@ -28,12 +28,15 @@
  * algorithms for solving linear equations etc.
  * @author graphjs
  */
- 
-JXG.Math.Numerics = new Object();
+/**
+ * Math.Numerics
+ */
+JXG.Math.Numerics = {}; 
 
- 
-/* Namespace constants */
-  /* Constants used for integration with Newton-Cotes-algorithm */
+/**
+ * Namespace constants 
+ * Constants used for integration with Newton-Cotes-algorithm 
+ */
   JXG.Math.Numerics.INT_TRAPEZ  = 0x00001;
   JXG.Math.Numerics.INT_SIMPSON = 0x00002;
   JXG.Math.Numerics.INT_MILNE   = 0x00003;

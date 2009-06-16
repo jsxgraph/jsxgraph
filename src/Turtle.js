@@ -31,7 +31,7 @@
 /**
  * Constructs a new Turtle object.
  * @class This is the Turtle class. 
- * It is derived from @see JXG.GeometryElement.
+ * It is derived from {@link JXG.GeometryElement}.
  * It stores all properties required
  * to move a turtle.
  * @constructor
@@ -87,7 +87,7 @@ JXG.Turtle = function (board, parents, attributes) {
 JXG.Turtle.prototype = new JXG.GeometryElement;
 
 /**
-* Initialize a new turtle or reinitialize  a turtle after @see #clearscreen .
+* Initialize a new turtle or reinitialize  a turtle after {@link #clearscreen}.
 * @private
 */
 JXG.Turtle.prototype.init = function(x,y,dir) {
@@ -295,7 +295,7 @@ JXG.Turtle.prototype.setPenColor = function(colStr) {
 };
 
 /**
-*  Sets properties of the turtle. @see JXG.GeometryElement#setProperty .
+* Sets properties of the turtle, see also {@link JXG.GeometryElement#setProperty}.
 * Sets the property for all curves of the turtle.
 * @param {Object} key:value pairs
 * @type {JXG.Turtle}
@@ -459,47 +459,47 @@ JXG.Turtle.prototype.moveTo = function(target) {
 }
 
 /**
-  * Alias for @see #forward
+  * Alias for {@link #forward}
   */
 JXG.Turtle.prototype.fd = function(len) { return this.forward(len); };
 /**
-  * Alias for @see #back
+  * Alias for {@link #back}
   */
 JXG.Turtle.prototype.bk = function(len) { return this.back(len); };
 /**
-  * Alias for @see #left
+  * Alias for {@link #left}
   */
 JXG.Turtle.prototype.lt = function(angle) { return this.left(angle); };
 /**
-  * Alias for @see #right
+  * Alias for {@link #right}
   */
 JXG.Turtle.prototype.rt = function(angle) { return this.right(angle); };
 /**
-  * Alias for @see #penUp
+  * Alias for {@link #penUp}
   */
 JXG.Turtle.prototype.pu = function() { return this.penUp(); };
 /**
-  * Alias for @see #penDown
+  * Alias for {@link #penDown}
   */
 JXG.Turtle.prototype.pd = function() { return this.penDown(); };
 /**
-  * Alias for @see #hideTurtle
+  * Alias for {@link #hideTurtle}
   */
 JXG.Turtle.prototype.ht = function() { return this.hideTurtle(); };
 /**
-  * Alias for @see #showTurtle
+  * Alias for {@link #showTurtle}
   */
 JXG.Turtle.prototype.st = function() { return this.showTurtle(); };
 /**
-  * Alias for @see #clearScreen
+  * Alias for {@link #clearScreen}
   */
 JXG.Turtle.prototype.cs = function() { return this.clearScreen(); };
 /**
-  * Alias for @see #pushTurtle
+  * Alias for {@link #pushTurtle}
   */
 JXG.Turtle.prototype.push = function() { return this.pushTurtle(); };
 /**
-  * Alias for @see #popTurtle
+  * Alias for {@link #popTurtle}
   */
 JXG.Turtle.prototype.pop = function() { return this.popTurtle(); };
 
@@ -544,7 +544,7 @@ JXG.Turtle.prototype.hasPoint = function (x,y) {
  * Creates a new turtle
  * @param {JXG.Board} board The board the turtle is put on.
  * @param {Array} parents 
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
  * @type JXG.Turtle
  * @return Reference to the created turtle object.
  */

@@ -34,7 +34,7 @@
 /**
  * Constructs a new Line object.
  * @class This is the Line class.
- * It is derived from @see JXG.GeometryElement.
+ * It is derived from {@link JXG.GeometryElement}.
  * It stores all properties required
  * to move, draw a line.
  * @constructor
@@ -757,7 +757,7 @@ JXG.Line.prototype.removeTicks = function(tick) {
  * Creates a new line.
  * @param {JXG.Board} board The board the line is put on.
  * @param {Array} parents Array of two points defining the line or three coordinates for a free line
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
  * @type JXG.Line
  * @return Reference to the created line object.
  */
@@ -813,7 +813,7 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * Creates a new segment, i.e. a line with <tt>visProp['straight*'] = true</tt>.
  * @param {JXG.Board} board The board the segment is put on.
  * @param {Array} parents Array of two points defining the segment or three coordinates for a free line
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
  * @type JXG.Line
  * @return Reference to the created line object.
  */
@@ -836,7 +836,7 @@ JXG.JSXGraph.registerElement('segment', JXG.createSegment);
  * Creates a new arrow.
  * @param {JXG.Board} board The board the arrow is put on.
  * @param {Array} parents Array of two points defining the arrow.
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
  * @type JXG.Line
  * @return Reference to the created line object.
  */
@@ -865,7 +865,7 @@ JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
  * Creates a new axis.
  * @param {JXG.Board} board The board the arrow is put on.
  * @param {Array} parents Array of two points defining the arrow.
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
  * @type JXG.Line
  * @return Reference to the created axis object.
  */

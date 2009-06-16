@@ -28,8 +28,10 @@
  * and algorithms for symbolic computations.
  * @author graphjs
  */
- 
-JXG.Math.Symbolic = new Object();
+/**
+ * Math.Symbolic
+ */ 
+JXG.Math.Symbolic = {};
 
 /**
  * Generates symbolic coordinates for the part of a construction including all the elements from that
