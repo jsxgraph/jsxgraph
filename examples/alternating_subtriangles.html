@@ -144,10 +144,10 @@ Drag the point P to change the figure or change with the radio buttons the numbe
         for(var i=0; i<n; i++) {
             if(i < n-1) {
                 if(i % 2 == 0) {
-                    polygones[i] = board.createElement('polygon',[q,p[i],p[i+1]], {fillColor:'#3CB371',name:'A_{'+i+'}'});
+                    polygones[i] = board.createElement('polygon',[q,p[i],p[i+1]], {fillColor:'#3CB371',name:''});
                 }
                 else {
-                    polygones[i] = board.createElement('polygon',[q,p[i],p[i+1]], {fillColor:'#DA70D6',name:'A_{'+i+'}'});
+                    polygones[i] = board.createElement('polygon',[q,p[i],p[i+1]], {fillColor:'#DA70D6',name:''});
                 }
                 
                 // Labels fuer die Polygone....
@@ -159,7 +159,7 @@ Drag the point P to change the figure or change with the radio buttons the numbe
                 ],{});
             }
             else {
-                polygones[i] = board.createElement('polygon',[q,p[i],p[0]], {fillColor:'#DA70D6',name:'A_{'+i+'}'});
+                polygones[i] = board.createElement('polygon',[q,p[i],p[0]], {fillColor:'#DA70D6',name:''});
                 
                 // Labels fuer die Polygone....
                 mp[i] = board.createElement('circumcircleMidpoint',[q,p[i],p[0]], {name:'',visible:false});

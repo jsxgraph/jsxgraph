@@ -40,7 +40,6 @@
  * @return A new geometry element Text
  */
 JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLabel) {
-    //alert(contentStr);
     this.constructor();
 
     this.type = JXG.OBJECT_TYPE_TEXT;
@@ -111,6 +110,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
     }
 
     if (typeof this.contentStr=='function') {
+    
         this.updateText = function() { this.plaintextStr = this.contentStr(); };
     } else {
         var plaintext;
@@ -254,7 +254,6 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
     }
 */
     plaintext = plaintext.replace(/&amp;/g,'&'); // This should replace &amp;pi; by &pi;
-//alert(plaintext);
     return plaintext;
 };
 

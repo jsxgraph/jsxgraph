@@ -96,7 +96,7 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     for (var i=0; i<axis.ticks.length; i++) {
         var c = axis.ticks[i];
         if(c.major) {
-            if (axis.labels[i].show) this.drawText(axis.labels[i]);
+            if (axis.labels[i].visProp['visible']) this.drawText(axis.labels[i]);
             tickStr += "M " + (c.scrCoords[1]+dxMaj) + " " + (c.scrCoords[2]-dyMaj) + " L " + (c.scrCoords[1]-dxMaj) + " " + (c.scrCoords[2]+dyMaj) + " ";
         }
         else

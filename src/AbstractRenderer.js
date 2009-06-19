@@ -627,6 +627,7 @@ JXG.AbstractRenderer.prototype.updateText = function(el) {
     this.updateTextStyle(el);
     el.rendNode.style.left = (el.coords.scrCoords[1])+'px'; 
     el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText)+'px'; 
+    el.updateText();
     el.rendNode.innerHTML = el.plaintextStr;
 };
 

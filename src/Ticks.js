@@ -355,7 +355,6 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
                 label.visProp['visible'] = false;
             }
             this.labels.push(label);
-
             // store the old coordinates
             lastX = x;
             lastY = y;
@@ -428,7 +427,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     if(this.ticks != null) {
         for(var j=0; j<this.ticks.length; j++) {
             if(this.labels[j] != null) {
-                if (this.labels[j].show) this.board.renderer.remove(this.labels[j].rendNode);
+                if (this.labels[j].visProp['visible']) this.board.renderer.remove(this.labels[j].rendNode);
             }
         }
     }
