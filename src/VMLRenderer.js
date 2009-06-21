@@ -644,7 +644,7 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
 }
 
 JXG.VMLRenderer.prototype.remove = function(node) {
-  node.removeNode(true);
+  if (node!=null) node.removeNode(true);
 }
 
 JXG.VMLRenderer.prototype.suspendRedraw = function() {
