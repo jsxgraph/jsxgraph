@@ -148,22 +148,8 @@ JXG.Line = function (board, p1, p2, id, name, withLabel) {
     */
     this.parentPolygon = null;
 
-    this.label = {};
-    if (typeof withLabel=='undefined' || withLabel==true) {
-        this.label.relativeCoords = [10,10];
-
-        this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
-        this.board.objects[this.id] = this;
-        this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
-        delete(this.board.objects[this.id]);
-
-        this.label.color = '#000000';
-        if(!this.visProp['visible']) {
-            this.label.hiddenByParent = true;
-            this.label.content.visProp['visible'] = false;
-        }
-        this.hasLabel = true;
-    }
+    // create Label
+    this.createLabel(withLabel);
     
     /* Register line at board */
     this.id = this.board.addLine(this);
@@ -766,8 +752,9 @@ JXG.createLine = function(board, parents, atts) {
     if (atts==null) {
         atts = {};
     }
-    if(atts.withLabel == null)
-        atts.withLabel = true;
+    if(atts['withLabel'] == null || typeof atts['withLabel'] == 'undefined') {
+        atts['withLabel'] = true;
+    }
     if((parents[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parents[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
         // line through two points
         var p1 =  JXG.GetReferenceFromParameter(board,parents[0]);
@@ -846,8 +833,9 @@ JXG.createArrow = function(board, parents, attributes) {
     if (attributes==null) {
         attributes = {};
     }
-    if(attributes.withLabel == null)
-        attributes.withLabel = true;
+    if(attributes['withLabel'] == null || typeof atts['withLabel'] == 'undefined') {
+        attributes['withLabel'] = true;
+    }
     if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) {
         el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name'],attributes['withLabel']);
         el.setStraight(false,false);

@@ -59,7 +59,7 @@
  * @see Board#generateName
  */            
 
-JXG.Circle = function (board, method, par1, par2, id, name, withLabel) { 
+JXG.Circle = function (board, method, par1, par2, id, name, withLabel) {
     /* Call the constructor of GeometryElement */
     this.constructor();
 
@@ -151,22 +151,8 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel) {
         this.radius = this.circle.getRadius();     
     } 
     
-    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
-    this.label = {};
-    if (typeof withLabel=='undefined' || withLabel==true) {
-        this.board.objects[this.id] = this;
-        this.label.relativeCoords = [10,10];
-        this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, 
-            [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
-        delete(this.board.objects[this.id]);
-
-        this.label.color = '#000000';
-        if(!this.visProp['visible']) {
-            this.label.hiddenByParent = true;
-            this.label.content.visProp['visible'] = false;
-        }
-        this.hasLabel = true;
-    }
+    // create Label
+    this.createLabel(withLabel);
     
     if(method == 'twoPoints') {
         //this.point2 = JXG.GetReferenceFromParameter(board,par2);
@@ -525,7 +511,7 @@ JXG.createCircle = function(board, parentArr, atts) {
         atts={};
     }
     if (typeof atts['withLabel']=='undefined') {
-        atts.withLabel = true;
+        atts['withLabel'] = true;
     }
     
     p = [];

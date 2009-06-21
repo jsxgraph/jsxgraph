@@ -1020,7 +1020,7 @@ this.readGeonext = function(tree,board) {
                         tmp.getElementsByTagName('color')[0].getElementsByTagName('draft')[0].firstChild.data;
                 }
                 JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'polygone');
-                var p = new JXG.Polygon(board, gxtEl.dataVertex, gxtEl.border, gxtEl.id, gxtEl.name);
+                var p = new JXG.Polygon(board, gxtEl.dataVertex, gxtEl.border, gxtEl.id, gxtEl.name, true,true,true);
                 p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.colorFill,'labelColor:'+gxtEl.colorLabel,

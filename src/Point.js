@@ -822,8 +822,8 @@ JXG.createPoint = function(board, parents, atts) {
     if (atts==null) {
         atts = {};
     }
-    if (typeof atts.withLabel == 'undefined') {
-        atts.withLabel = true;
+    if (typeof atts['withLabel'] == 'undefined') {
+        atts['withLabel'] = true;
     }
         
     var isConstrained = false;
@@ -866,8 +866,8 @@ JXG.createGlider = function(board, parents, atts) {
     if (atts==null) {
         atts = {};
     }
-    if (typeof atts.withLabel == 'undefined') {
-        atts.withLabel = true;
+    if (typeof atts['withLabel'] == 'undefined') {
+        atts['withLabel'] = true;
     }
     if (parents.length==1) {
       el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);

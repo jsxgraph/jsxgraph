@@ -46,7 +46,7 @@
  * @constructor
  * @extends JXG.GeometryElement
  */
-JXG.Arc = function (board, p1, p2, p3, id, name) {
+JXG.Arc = function (board, p1, p2, p3, id, name, withLabel) {
     /* Call the constructor of GeometryElement */
     this.constructor();
     
@@ -99,21 +99,8 @@ JXG.Arc = function (board, p1, p2, p3, id, name) {
     this.visProp['strokeColor'] = this.board.options.arc.strokeColor;
     this.visProp['highlightStrokeColor'] = this.board.options.arc.highlightStrokeColor;     
 
-    this.label = {};
-    this.label.relativeCoords = [10,10];
-
-    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
-    this.board.objects[this.id] = this;
-
-    this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
-    delete(this.board.objects[this.id]);
-
-    this.label.color = '#000000';
-    if(!this.visProp['visible']) {
-        this.label.hiddenByParent = true;
-        this.label.content.visProp['visible'] = false;
-    }
-    this.hasLabel = true;
+    // create Label
+    this.createLabel(withLabel);
     
     /* Register arc at board. */
     this.id = this.board.addArc(this);
@@ -203,7 +190,7 @@ JXG.Arc.prototype.getLabelAnchor = function() {
  * Uses the boards renderer to update the arc.
  * update() is not needed for arc.
  */
- JXG.Arc.prototype.updateRenderer = function () {
+JXG.Arc.prototype.updateRenderer = function () {
     if (this.needsUpdate) { 
         this.board.renderer.updateArc(this);
         this.needsUpdate = false;
@@ -217,10 +204,17 @@ JXG.Arc.prototype.getLabelAnchor = function() {
  * Is stored at visProp['firstArrow'] and visProp['lastArrow']
  */
 JXG.Arc.prototype.setArrow = function (firstArrow, lastArrow) {
-     this.visProp['firstArrow'] = firstArrow;
-     this.visProp['lastArrow'] = lastArrow;
+    this.visProp['firstArrow'] = firstArrow;
+    this.visProp['lastArrow'] = lastArrow;
      
-     this.board.renderer.updateArc(this);
+    this.board.renderer.updateArc(this);
+    
+    if(this.hasLabel && this.label.content.visProp['visible']) {
+        //this.label.setCoordinates(this.coords);
+        this.label.content.update();
+        //this.board.renderer.updateLabel(this.label);
+        this.board.renderer.updateText(this.label.content);
+    }     
 };
 
 /**
@@ -233,9 +227,13 @@ JXG.Arc.prototype.setArrow = function (firstArrow, lastArrow) {
  */
 JXG.createArc = function(board, parents, attributes) {
     var el;
+    
+    if (typeof attributes['withLabel'] == 'undefined') {
+        attributes['withLabel'] = true;
+    }    
     // Alles 3 Punkte?
     if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) && (JXG.IsPoint(parents[2]))) {
-        el = new JXG.Arc(board, parents[0], parents[1], parents[2], attributes['id'], attributes['name']);
+        el = new JXG.Arc(board, parents[0], parents[1], parents[2], attributes['id'], attributes['name'],attributes['withLabel']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
         throw ("Can't create Arc with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");

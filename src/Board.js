@@ -1013,6 +1013,7 @@ JXG.Board.prototype.addCircle = function(obj) {
     if (obj.hasLabel) {
         this.renderer.drawText(obj.label.content);
     }
+
     if(!obj.visProp['visible']) {
         this.renderer.hide(obj);
     }
@@ -1020,7 +1021,6 @@ JXG.Board.prototype.addCircle = function(obj) {
     if(obj.hasLabel && !obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }    
-
     return elementId;
 };
 
@@ -1039,22 +1039,30 @@ JXG.Board.prototype.addPolygon = function(obj) {
     if((elementId == '') || (elementId == null)) {
         elementId = this.id + 'Py' + number;
     }
-    obj.label.content.id = elementId+"Label";
+    if(obj.hasLabel) {
+        obj.label.content.id = elementId+"Label";
+    }
     
     // Objekt in das assoziative Array einfuegen
     this.objects[elementId] = obj;
  
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
-    this.addText(obj.label.content);  
+    
+    if(obj.hasLabel) {
+        this.addText(obj.label.content);  
+    }
     
     this.renderer.drawPolygon(obj);
-    this.renderer.drawText(obj.label.content);
+    
+    if(obj.hasLabel) {
+        this.renderer.drawText(obj.label.content);
+    }
     if(!obj.visProp['visible']) {
         this.renderer.hide(obj);
     }
     
-    if(!obj.label.content.visProp['visible']) {
+    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }   
     
@@ -1077,21 +1085,28 @@ JXG.Board.prototype.addArc = function(obj) {
         elementId = this.id + 'Ac' + number;
     }
     obj.id = elementId;    
-    obj.label.content.id = elementId+"Label";    
-
+    if(obj.hasLabel) {
+        obj.label.content.id = elementId+"Label";    
+    }
+        
     // Objekt in das assoziative Array einfuegen
     this.objects[elementId] = obj;
  
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    this.addText(obj.label.content)
-    
+    if(obj.hasLabel) {    
+        this.addText(obj.label.content)
+    }
+
+    // Objekt an den Renderer zum Zeichnen uebergeben    
     this.renderer.drawArc(obj);
-    this.renderer.drawText(obj.label.content);
+
+    if(obj.hasLabel) {     
+        this.renderer.drawText(obj.label.content);
+    }
     if(!obj.visProp['visible']) {
         this.renderer.hide(obj);
     }
     
-    if(!obj.label.content.visProp['visible']) {
+    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }       
 
@@ -1336,12 +1351,12 @@ JXG.Board.prototype.addParallel = function(l, p, id, name) {
  
    // versteckter Hilfs-Punkt
    var p2coords = this.algebra.parallel(line.point1, line.point2, point).usrCoords.slice(1);
-   var point2 = new JXG.Point(this, p2coords, id+"P2", name, false);
+   var point2 = new JXG.Point(this, p2coords, id+"P2", name+"P2", false);
 
    point2.fixed = true;
    point.addChild(point2); // notwendig, um auch den Punkt upzudaten
    
-   var parallel = new JXG.Line(this, point.id, point2.id, id, id);
+   var parallel = new JXG.Line(this, point.id, point2.id, id, name);
   
    //line.addChild(point2); // notwendig, um auch den Punkt upzudaten
    

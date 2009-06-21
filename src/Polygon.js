@@ -40,7 +40,7 @@
  * @extends JXG.GeometryElement
  */
 
-JXG.Polygon = function (board, vertices, borders, id, name, withLines) {
+JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel, lineLabels) {
     /* Call the constructor of GeometryElement */
     this.constructor();
     /**
@@ -56,6 +56,9 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines) {
     if( (typeof withLines == 'undefined') || (withLines == null) ) {
         withLines = true;
     }
+    if( (typeof lineLabels == 'undefined') || (lineLabels == null) ) {
+        lineLabels = false;
+    }    
         
     /**
      * Is the polygon bordered by lines?
@@ -103,7 +106,7 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines) {
     if(withLines) {
         for(var i=0; i<this.vertices.length-1; i++) {
             /* create the borderlines */
-            l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name, false);
+            l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name, lineLabels); // keine Labels?
             l.setStraight(false,false); // Strecke
             this.borders[i] = l;
             l.parentPolygon = this;
@@ -116,21 +119,8 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines) {
         vertex.addChild(this);
     }
     
-    this.label = {};
-    this.label.relativeCoords = [10,10];
-
-    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
-    this.board.objects[this.id] = this;
-
-    this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
-    delete(this.board.objects[this.id]);
-
-    this.label.color = '#000000';
-    if(!this.visProp['visible']) {
-        this.label.hiddenByParent = true;
-        this.label.content.visProp['visible'] = false;
-    }
-    this.hasLabel = true;
+    // create label 
+    this.createLabel(withLabel);
     
     /* Register polygon at board */
     this.id = this.board.addPolygon(this);
@@ -155,7 +145,7 @@ JXG.Polygon.prototype.updateRenderer = function () {
         this.board.renderer.updatePolygon(this);
         this.needsUpdate = false;
     }
-    if(this.label.content.visProp['visible']) {
+    if(this.hasLabel && this.label.content.visProp['visible']) {
         //this.label.setCoordinates(this.coords);
         this.label.content.update();
         //this.board.renderer.updateLabel(this.label);
@@ -226,6 +216,10 @@ JXG.Polygon.prototype.cloneToBackground = function(addToTrace) {
 JXG.createPolygon = function(board, parents, atts) {
     var el;
 
+    if (typeof atts['withLabel']=='undefined') {
+        atts['withLabel'] = true;
+    }    
+    
     // Sind alles Punkte?
     for(var i=0; i<parents.length; i++) {
         parents[i] = JXG.GetReferenceFromParameter(board, parents[i]);
@@ -233,7 +227,7 @@ JXG.createPolygon = function(board, parents, atts) {
             throw ("Can't create polygon with parent types other than 'point'.");
     }
     
-    el = new JXG.Polygon(board, parents, atts["borders"], atts["id"], atts["name"], atts["withLines"]);
+    el = new JXG.Polygon(board, parents, atts["borders"], atts["id"], atts["name"], atts["withLines"],atts['withLabel']);
 
     return el;
 };
@@ -250,7 +244,7 @@ JXG.Polygon.prototype.hideElement = function() {
         }
     }
     
-    if (this.label!=null) {
+    if (this.hasLabel && this.label!=null) {
         this.label.hiddenByParent = true;
         if(this.label.content.visProp['visible']) {
             this.board.renderer.hide(this.label.content);
