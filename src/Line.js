@@ -833,7 +833,7 @@ JXG.createArrow = function(board, parents, attributes) {
     if (attributes==null) {
         attributes = {};
     }
-    if(attributes['withLabel'] == null || typeof atts['withLabel'] == 'undefined') {
+    if(attributes['withLabel'] == null || typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = true;
     }
     if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) {

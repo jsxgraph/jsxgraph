@@ -195,6 +195,14 @@ JXG.Arc.prototype.updateRenderer = function () {
         this.board.renderer.updateArc(this);
         this.needsUpdate = false;
     }
+    
+    /* Update the label if visible. */
+    if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
+        //this.label.setCoordinates(this.coords);
+        this.label.content.update();
+        //this.board.renderer.updateLabel(this.label);
+        this.board.renderer.updateText(this.label.content);
+    }      
 };
 
 /**

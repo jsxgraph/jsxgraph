@@ -44,10 +44,9 @@
  * @constructor
  * @extends JXG.GeometryElement
  */
-JXG.Angle = function (board, p1, p2, p3, radius, text, id, name) {
+JXG.Angle = function (board, p1, p2, p3, radius, text, id, name, withLabel) {
     /* Call the constructor of GeometryElement */
     this.constructor();
-    
     /**
      * Type of GeometryElement, value is OBJECT_TYPE_ANGLE.
      * @final
@@ -103,6 +102,12 @@ JXG.Angle = function (board, p1, p2, p3, radius, text, id, name) {
     */
     this.text = text;
 
+    // create Label
+    var tmp = this.name;
+    this.name = this.text;
+    this.createLabel(withLabel);    
+    this.name = tmp;
+    
     this.id = this.board.addAngle(this);
     
     /* Add sector as child to defining points */
@@ -131,6 +136,29 @@ JXG.Angle.prototype.hasPoint = function (x, y) {
         this.board.renderer.updateAngle(this);
         this.needsUpdate = false;
     }
+    
+    /* Update the label if visible. */
+    if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
+        //this.label.setCoordinates(this.coords);
+        this.label.content.update();
+        //this.board.renderer.updateLabel(this.label);
+        this.board.renderer.updateText(this.label.content);
+    }      
+};
+
+/**
+ * return LabelAnchor
+ */
+JXG.Angle.prototype.getLabelAnchor = function() {
+    var angle = this.board.algebra.trueAngle(this.point1, this.point2, this.point3);
+    var dist = this.point1.coords.distance(JXG.COORDS_BY_USER,this.point2.coords);
+    var bxminusax = (this.point1.coords.usrCoords[1] - this.point2.coords.usrCoords[1])*this.radius/dist;
+    var byminusay = (this.point1.coords.usrCoords[2] - this.point2.coords.usrCoords[2])*this.radius/dist;
+    var c = new JXG.Coords(JXG.COORDS_BY_USER, 
+                          [this.point2.coords.usrCoords[1]+ Math.cos(angle*Math.PI/(2*160))*bxminusax - Math.sin(angle*Math.PI/(2*160))*byminusay, 
+                           this.point2.coords.usrCoords[2]+ Math.sin(angle*Math.PI/(2*160))*bxminusax + Math.cos(angle*Math.PI/(2*160))*byminusay], 
+                          this.board);
+    return c;
 };
 
 /**
@@ -143,9 +171,17 @@ JXG.Angle.prototype.hasPoint = function (x, y) {
  */
 JXG.createAngle = function(board, parents, attributes) {
     var el;
+    
+    if(attributes['withLabel'] == null || typeof attributes['withLabel'] == 'undefined') {
+        attributes['withLabel'] = true;
+    }
+    if(attributes['text'] == null || typeof attributes['text'] == 'text') {
+        attributes['text'] = '';
+    }    
+    
     // Alles 3 Punkte?
     if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) && (JXG.IsPoint(parents[2]))) {
-        el = new JXG.Angle(board, parents[0], parents[1], parents[2], attributes['id'], attributes['name']);
+        el = new JXG.Angle(board, parents[0], parents[1], parents[2], attributes['radius'], attributes['text'], attributes['id'], attributes['name'],attributes['withLabel']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
         throw ("Can't create angle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
