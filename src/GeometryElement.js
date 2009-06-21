@@ -691,6 +691,12 @@ JXG.GeometryElement.prototype.setStraight = function(x,y) {
 JXG.GeometryElement.prototype.setArrow = function(firstArrow,lastArrow) {    
 };
 
+/**
+ * Creates a label element.
+ * Doesn't add label to board, so it shouldn't be called itself. Use addLabelToElement instead.
+ * @param {Boolean} withLabel true if a label shall be initialised false otherwise
+ * @see addLabelToElement 
+ */
 JXG.GeometryElement.prototype.createLabel = function(withLabel) {    
     this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); 
     this.label = {};
@@ -707,6 +713,19 @@ JXG.GeometryElement.prototype.createLabel = function(withLabel) {
         }
         this.hasLabel = true;
     }
+}
+
+/**
+ * Adds a label to an element.
+ */
+JXG.GeometryElement.prototype.addLabelToElement = function() {
+    this.createLabel(true);
+    this.label.content.id = this.id+"Label";  
+    this.board.addText(this.label.content);
+    this.board.renderer.drawText(this.label.content);
+    if(!this.label.content.visProp['visible']) {
+        board.renderer.hide(this.label.content);
+    }       
 }
 
 /**

@@ -1093,7 +1093,7 @@ JXG.Board.prototype.addArc = function(obj) {
     this.objects[elementId] = obj;
  
     if(obj.hasLabel) {    
-        this.addText(obj.label.content)
+        this.addText(obj.label.content);
     }
 
     // Objekt an den Renderer zum Zeichnen uebergeben    
