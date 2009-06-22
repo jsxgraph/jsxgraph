@@ -179,7 +179,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         board.initInfobox();
         board.beforeLoad();
         JXG.FileReader.parseFileContent(file, board, format);
-        if(true) {
+        if(board.options.showNavigation) {
             board.renderer.drawZoomBar(board);
         }
         this.boards[board.id] = board;
@@ -202,7 +202,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         board.beforeLoad();
 
         JXG.FileReader.parseString(string, board, format);
-        if(true) {
+        if(board.options.showNavigation) {
             board.renderer.drawZoomBar(board);
         }
 

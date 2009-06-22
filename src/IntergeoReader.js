@@ -163,8 +163,9 @@ JXG.IntergeoReader = new function() {
             else {
                 //$('debug').innerHTML += 'NOT: ' + node.nodeName + '<br>';
             }
+            //this.board.update();
         })(s);
-
+        //alert(JXG.GetReferenceFromParameter(this.board,'A').coords.usrCoords.toString());
     };
 
     this.readParams = function(node) {
