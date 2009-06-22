@@ -172,7 +172,6 @@ this.writeBoard = function(tree, board) {
 
   JXG.JSXGraph.boards[board.id] = board;
   board.initGeonextBoard();
-  board.initInfobox();
   // Update of properties during update() is not necessary in GEONExT files
   board.renderer.enhancedRendering = false;
 

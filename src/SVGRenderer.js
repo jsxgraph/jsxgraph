@@ -570,6 +570,7 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
 };
 
 JXG.SVGRenderer.prototype.hide = function(el) {
+    if (el==null) return;
     if(JXG.IsPoint(el)) {
         if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
             var node = el.rendNode;

@@ -176,6 +176,7 @@ JXG.JSXGraph = new function (forceRenderer) {
 
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
         var board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
+        board.initInfobox();
         board.beforeLoad();
         JXG.FileReader.parseFileContent(file, board, format);
         if(true) {
@@ -197,7 +198,7 @@ JXG.JSXGraph = new function (forceRenderer) {
 
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
         var board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
-
+        board.initInfobox();
         board.beforeLoad();
 
         JXG.FileReader.parseString(string, board, format);

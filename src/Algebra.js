@@ -545,7 +545,7 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
     var y = point.Y();
     var t = point.position || 0.0;
     var result = this.projectCoordsToCurve(x,y,t,curve);
-    point.position = t;
+    point.position = result[1];
     return result[0];
 }
 
