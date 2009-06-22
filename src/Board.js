@@ -1154,6 +1154,9 @@ JXG.Board.prototype.addAngle = function (obj) {
     if((elementId == '') || (elementId == null)) {
         elementId = this.id + 'Ag' + number;
     }
+    if(obj.hasLabel) {
+        obj.label.content.id = elementId+"Label";    
+    }    
     // Objekt in das assoziative Array einfuegen
     this.objects[elementId] = obj;
  
@@ -1193,13 +1196,31 @@ JXG.Board.prototype.addCurve = function (obj) {
     if((elementId == '') || (elementId == null)) {
         elementId = this.id + 'G' + number;
     }
-    
+    if(obj.hasLabel) {
+        obj.label.content.id = elementId+"Label";    
+    }    
     // Objekt in das assoziative Array einfuegen    
     this.objects[elementId] = obj;
 
+    if(obj.hasLabel) {    
+        this.addText(obj.label.content);
+    }    
+    
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
     this.renderer.drawCurve(obj);
+    
+    if(obj.hasLabel) {     
+        this.renderer.drawText(obj.label.content);
+    }    
+    
+    if(!obj.visProp['visible']) {
+        this.renderer.hide(obj);
+    }
+    
+    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
+        this.renderer.hide(obj.label.content);
+    }        
     
     return elementId;
 };

@@ -754,7 +754,7 @@ JXG.Point.prototype.setStyle = function(i) {
  */
 JXG.Point.prototype.remove = function() {    
     if (this.hasLabel) {
-        this.board.renderer.remove(document.getElementById(this.label.id));
+        this.board.renderer.remove(document.getElementById(this.label.content.id));
     }
     if(this.visProp['style']  >= 3 && this.visProp['style'] <= 9) {
         this.board.renderer.remove(document.getElementById(this.id));

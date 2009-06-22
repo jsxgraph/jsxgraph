@@ -657,6 +657,9 @@ JXG.GeometryElement.prototype.prepareUpdate = function() {
  */
 JXG.GeometryElement.prototype.remove = function() {    
     this.board.renderer.remove(document.getElementById(this.id));
+    if (this.hasLabel) {
+        this.board.renderer.remove(document.getElementById(this.label.content.id));
+    }    
 };
 
 /**

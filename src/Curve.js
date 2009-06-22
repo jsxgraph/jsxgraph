@@ -45,7 +45,7 @@
  * @constructor
  * @return A new geometry element Curve
  */
-JXG.Curve = function (board, parents, id, name) {
+JXG.Curve = function (board, parents, id, name, withLabel) {
     this.constructor();
  
     this.points = [];
@@ -89,6 +89,8 @@ JXG.Curve = function (board, parents, id, name) {
     this.yterm = parents[2];  // function graphs: e.g. "x^2"
     this.generateTerm(this.varname,this.xterm,this.yterm,parents[3],parents[4]);  // Converts GEONExT syntax into JavaScript syntax
     this.updateCurve();                        // First evaluation of the curve
+    
+    this.createLabel(withLabel);
     this.id = this.board.addCurve(this);
     
     if (typeof this.xterm=='string') {
@@ -235,6 +237,14 @@ JXG.Curve.prototype.updateRenderer = function () {
         this.board.renderer.updateCurve(this);
         this.needsUpdate = false;
     }
+    
+    /* Update the label if visible. */
+    if(this.hasLabel && this.label.content.visProp['visible']) {
+        //this.label.setCoordinates(this.coords);
+        this.label.content.update();
+        //this.board.renderer.updateLabel(this.label);
+        this.board.renderer.updateText(this.label.content);
+    }       
 };
 
 /**
@@ -446,7 +456,10 @@ JXG.Curve.prototype.getLabelAnchor = function() {
 };
 
 JXG.createCurve = function(board, parents, attributes) {
-    return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name']);
+    if (typeof attributes['withLabel'] == 'undefined') {
+        attributes['withLabel'] = true;
+    } 
+    return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name'], attributes['withLabel']);
 };
 
 JXG.JSXGraph.registerElement('curve', JXG.createCurve);
@@ -456,11 +469,14 @@ JXG.JSXGraph.registerElement('curve', JXG.createCurve);
 * parents: [f, start, end] or [f]
 **/
 JXG.createFunctiongraph = function(board, parents, attributes) {
+    if (typeof attributes['withLabel'] == 'undefined') {
+        attributes['withLabel'] = true;
+    } 
     var par = ["x","x"].concat(parents);
     if(attributes == null) 
         attributes = {};
     attributes.curveType = 'functiongraph';
-    return new JXG.Curve(board, par, attributes['id'], attributes['name']);
+    return new JXG.Curve(board, par, attributes['id'], attributes['name'],attributes['withLabel']);
 };
 
 JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
@@ -516,6 +532,9 @@ JXG.JSXGraph.registerElement('spline', JXG.createSpline);
  */
 JXG.createRiemannsum = function(board, parents, attributes) {
     var i,n,type,f;
+    if (typeof attributes['withLabel'] == 'undefined') {
+        attributes['withLabel'] = true;
+    }     
     f = parents[0];
     if (typeof parents[1] == 'number') {
         n = function() {return parents[1];}
@@ -539,7 +558,7 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     attributes.opacity   = attributes.opacity || 0.3;
     attributes.fillColor = attributes.fillColor || '#ffff00';
     attributes.curveType = 'plot';
-    var c = new JXG.Curve(board, par, attributes['id'], attributes['name']);
+    var c = new JXG.Curve(board, par, attributes['id'], attributes['name'], attributes['withLabel']);
     c.updateDataArray = function() {
             var u = JXG.Math.Numerics.riemann(f,n(),type(),this.minX(),this.maxX());
             this.dataX = u[0];
