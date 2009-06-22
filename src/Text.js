@@ -110,7 +110,6 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
     }
 
     if (typeof this.contentStr=='function') {
-    
         this.updateText = function() { this.plaintextStr = this.contentStr(); };
     } else {
         var plaintext;
@@ -125,7 +124,9 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
     if(!this.isLabel) {
         this.id = this.board.addText(this);
     }
-    this.notifyParents(this.contentStr);
+    if (typeof this.contentStr=='string') {
+        this.notifyParents(this.contentStr);
+    }
 };
 JXG.Text.prototype = new JXG.GeometryElement();
 

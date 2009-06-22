@@ -118,7 +118,7 @@ otherCirc = function(circs,level) {
             return 1/b[4];
         }
     }
-    c = brd.createElement('circle',[[fx,fy],fr],{strokeWidth:1,fillColor:JXG.hsv2rgb(360*1/(level+1),0.7,0.8),fillOpacity:0.5,withLabel:false});
+    c = brd.createElement('circle',[[fx,fy],fr],{name:'',strokeWidth:1,fillColor:JXG.hsv2rgb(360*1/(level+1),0.7,0.8),fillOpacity:0.5,withLabel:false});
     c.curvature = function(){ return 1/this.radius;};
     
     otherCirc([circs[0],circs[1],c,circs[2]],level-1);
@@ -129,7 +129,7 @@ otherCirc = function(circs,level) {
 
 //-------------------------------------------------------
 brd.suspendUpdate();
-level = 2;
+level = 4;
 otherCirc([c0,c1,c2,c3],level);
 otherCirc([c3,c1,c2,c0],level);
 otherCirc([c0,c2,c3,c1],level);

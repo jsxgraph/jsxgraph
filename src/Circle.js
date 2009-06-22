@@ -379,8 +379,9 @@ JXG.Circle.prototype.generateTerm = function (term) {
 JXG.Circle.prototype.notifyParents = function (contentStr) {
     var res = null;
     var elements = this.board.elementsByName;
-
-    this.board.algebra.findDependencies(this,contentStr+'');
+    
+    if (typeof contentStr == 'string') 
+        this.board.algebra.findDependencies(this,contentStr+'');
 }
 
 /**
