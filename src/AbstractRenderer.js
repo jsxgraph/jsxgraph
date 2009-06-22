@@ -596,7 +596,7 @@ JXG.AbstractRenderer.prototype.drawArc = function(arc) { };
  * @see #drawArc
  */
 JXG.AbstractRenderer.prototype.updateArc = function(el) { };
-    
+
 /**
  * Draws text on the canvas
  * @param {Text}  text Reference to an text object, that has to be drawn
@@ -613,6 +613,7 @@ JXG.AbstractRenderer.prototype.drawText = function(el) {
     node.style.zIndex = '10';      
     this.container.appendChild(node);
     el.rendNode = node;
+    el.htmlStr = '';
     this.updateText(el);
 };
 
@@ -628,7 +629,10 @@ JXG.AbstractRenderer.prototype.updateText = function(el) {
     el.rendNode.style.left = (el.coords.scrCoords[1])+'px'; 
     el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText)+'px'; 
     el.updateText();
-    el.rendNode.innerHTML = el.plaintextStr;
+    if (el.htmlStr!= el.plaintextStr) {
+        el.rendNode.innerHTML = el.plaintextStr;
+        el.htmlStr = el.plaintextStr;
+    }
 };
 
 /**
