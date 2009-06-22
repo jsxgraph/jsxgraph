@@ -748,19 +748,31 @@ JXG.Line.prototype.removeTicks = function(tick) {
  * @return Reference to the created line object.
  */
 JXG.createLine = function(board, parents, atts) {
-    var el;
+    var el,p1,p2;
     if (atts==null) {
         atts = {};
     }
     if(atts['withLabel'] == null || typeof atts['withLabel'] == 'undefined') {
         atts['withLabel'] = true;
     }
-    if((parents[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parents[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
-        // line through two points
-        var p1 =  JXG.GetReferenceFromParameter(board,parents[0]);
-        var p2 =  JXG.GetReferenceFromParameter(board,parents[1]);
+    
+    if (parents.length == 2) { // The line is defined by two points (or coordinates of two points)
+        if (parents[0].length>1) { // point 1 given by coordinates
+            p1 = board.createElement('point', parents[0], {visible:false,fixed:true});
+        } else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT) {
+            p1 =  JXG.GetReferenceFromParameter(board,parents[0]);
+        } else 
+            throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+        
+        if (parents[1].length>1) { // point 2 given by coordinates
+            p2 = board.createElement('point', parents[1], {visible:false,fixed:true});
+        } else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT) {
+            p2 =  JXG.GetReferenceFromParameter(board,parents[1]);
+        } else 
+            throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel']);
-    } else if (parents.length==3) {
+    }
+    else if (parents.length==3) {  // Line is defined by three coordinates
         // free line
         var c = [];
         for (var i=0;i<3;i++) {
@@ -771,7 +783,7 @@ JXG.createLine = function(board, parents, atts) {
             } else {
                 throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2])+ "'.");
                 return;
-            }
+            } 
         }
         // point 1: (0,c,-b)
         var p1 = board.createElement('point',[
@@ -784,11 +796,6 @@ JXG.createLine = function(board, parents, atts) {
                 function() { return -c[1]()*c[0]()+c[2]();},
                 function() { return -c[2]()*c[0]()-c[1]();}],{visible:false,name:' '});
         el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel']);
-    } else if ((parents.length == 2) && (parents[0].length>1 && parents[1].length>1)) {
-        var point1 = board.createElement('point', parents[0], {visible:false,fixed:true});
-        var point2 = board.createElement('point', parents[1], {visible:false,fixed:true});
-
-        el = new JXG.Line(board, point1.id, point2.id, atts['id'], atts['name'],atts['withLabel']);
     } else
         throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     return el;
@@ -836,13 +843,14 @@ JXG.createArrow = function(board, parents, attributes) {
     if(attributes['withLabel'] == null || typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = true;
     }
-    if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) {
-        el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name'],attributes['withLabel']);
+    //if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) { // The constructability decision is delkegated to the line object
+        el = board.createElement('line',parents,attributes);
+        //el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name'],attributes['withLabel']);
         el.setStraight(false,false);
         el.setArrow(false,true);
-    } // Ansonsten eine fette Exception um die Ohren hauen
-    else
-        throw ("Can't create arrow with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+    //} // Ansonsten eine fette Exception um die Ohren hauen
+    //else
+    //    throw ("Can't create arrow with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
 
     return el;
 };

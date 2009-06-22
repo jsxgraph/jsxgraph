@@ -25,9 +25,9 @@
         by = board.createElement('axis', [[0,0], [1,0]], {});
         p1 = board.createElement('point', [1, 1], {strokeColor: '#ff0000'});
         p2 = board.createElement('point', [2, 0], {fixed: true});
-        p3 = board.createElement('point', [1, 2]);
-        
-        
+        p3 = board.createElement('point', [1, 2],{name:'XXX'});
+        p0 = board.createElement('point', [0,0],{visible:false});
+         
         l1 = board.createElement('line', [p1, p2]);
         
         c1 = board.createElement('circle', [p1, 3.0]);
@@ -38,7 +38,7 @@
             -Math.PI*2, Math.PI*2]);
         
         a1 = board.createElement('arc', [p1, p2, p3], {'firstArrow':true,'lastArrow':true});
-        a2 = board.createElement('arrow', ['Ursprung', p3]);
+        a2 = board.createElement('arrow', [[0,0], 'XXX']);
         
         p4 = board.createElement('point', [-4, 2.2]);
         p5 = board.createElement('point', [-3, 2]);

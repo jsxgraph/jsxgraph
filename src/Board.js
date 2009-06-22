@@ -778,7 +778,6 @@ JXG.Board.prototype.updateInfobox = function(el) {
     }
 }
 
-
 /**
  * Remove highlighting of all elements.
  */
@@ -857,7 +856,7 @@ JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
     var dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
     var elList = [];
     for (var el in this.objects) {
-        if (this.objects[el].hasPoint(dx, dy)) {
+        if (this.objects[el].visProp['visible'] && this.objects[el].hasPoint(dx, dy)) {
             elList.push(this.objects[el]);
         }
     }
@@ -2296,7 +2295,9 @@ JXG.Board.prototype.removeObject = function(object) {
 };
 
 /**
- * Initialise geonext elements of every geonext board and not in gxt files.
+ * Initialise some objects which are contained in every GEONExT construction by default, 
+ * but are not contained in the gxt files.
+ * @private
  */
 JXG.Board.prototype.initGeonextBoard = function() {
     var p1 = new JXG.Point(this, [0,0],this.id + 'gOOe0','Ursprung',false);
@@ -2309,7 +2310,14 @@ JXG.Board.prototype.initGeonextBoard = function() {
     l1.hideElement();
     var l2 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gYOe0', this.id + 'gYLe0','Y-Achse');
     l2.hideElement();    
-    
+}    
+
+/**
+ * Initialise the info box object which is used to display
+ * the coordinates of points under the mouse pointer,
+ * @private
+ */
+JXG.Board.prototype.initInfobox= function() {
     //this.infobox = new JXG.Label(this, '0,0', new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this), this.id + '__infobox');
     this.infobox = new JXG.Text(this, '0,0', '', [0,0], this.id + '__infobox',null, null, false);
     this.infobox.distanceX = -20; 

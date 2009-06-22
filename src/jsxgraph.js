@@ -133,7 +133,8 @@ JXG.JSXGraph = new function (forceRenderer) {
 
         var board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height);
         this.boards[board.id] = board;
-        board.initGeonextBoard();
+        // board.initGeonextBoard();  // Contsruct "Ursprung" and other elements.
+        board.initInfobox();
 
         if((typeof attributes["axis"] != 'undefined') && attributes["axis"]) {
             board.createElement('axis', [[0,0], [1,0]], {});
