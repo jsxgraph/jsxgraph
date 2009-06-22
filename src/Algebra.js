@@ -533,30 +533,45 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
 };
 
 /**
- * Calculates the coordinates of the projection of a given point on a given curve. In case of
- * functon graphs this is the
- * intersection point of the curve and the parallel to y-axis through the given point.
+ * Calculates the coordinates of the projection of a given point on a given curve. 
+ * Uses {@link #projectPointToCurve}.
  * @param {JXG.Point} point Point to project.
  * @param {JXG.Curve} graph Curve on that the point is projected.
  * @type JXG.Coords
  * @return The coordinates of the projection of the given point on the given graph.
  */
 JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
-    var newCoords,x,y,t;
+    var x = point.X();
+    var y = point.Y();
+    var t = point.position || 0.0;
+    var result = this.projectCoordsToCurve(x,y,t,curve);
+    point.position = t;
+    return result[0];
+}
+
+/**
+ * Calculates the coordinates of the projection of a coordinates pair on a given curve. In case of
+ * function graphs this is the
+ * intersection point of the curve and the parallel to y-axis through the given point.
+ * @param {float} x coordinate to project.
+ * @param {float} y coordinate to project.
+ * @param {float} start value for newtons method
+ * @param {JXG.Curve} graph Curve on that the point is projected.
+ * @type JXG.Coords
+ * @return Array containing the coordinates of the projection of the given point on the given graph and 
+ * the position on the curve.
+ */
+JXG.Algebra.prototype.projectCoordsToCurve = function(x,y,t,curve) {
+    var newCoords;
     var x0,y0,x1,y1,den,i,mindist,dist,lbda;
     var infty = 1000000.0;
     if (curve.curveType=='parameter' || curve.curveType=='polar') { 
-        x = point.X();
-        y = point.Y();
-        t = point.position || 0.0;
         t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(function(t){ return (x-curve.X(t))*(x-curve.X(t))+(y-curve.Y(t))*(y-curve.Y(t));}), t);
         if (t<curve.minX()) { t = curve.minX(); }
         if (t>curve.maxX()) { t = curve.maxX(); }
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t),curve.Y(t)], this.board);
     } else if (curve.curveType == 'plot') {
         mindist = infty;
-        x = point.X();
-        y = point.Y();
         for (i=0;i<curve.numberPoints;i++) {
             x0 = x-curve.X(i);
             y0 = y-curve.Y(i);
@@ -593,13 +608,12 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
         }
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board); 
     } else {             // functiongraph
-        t = point.X();
+        t = x;
         x = t; //curve.X(t);
         y = curve.Y(t);
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board); 
     }
-    point.position = t;                      // side effect
-    return curve.updateTransform(newCoords);
+    return [curve.updateTransform(newCoords),t];
 };
 
 /**

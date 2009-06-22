@@ -287,6 +287,8 @@ JXG.Curve.prototype.updateCurve = function () {
         this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x),this.Y(y)]);
         this.updateTransform(this.points[i]);
     }
+    
+    this.getLabelAnchor();
 };
 
 JXG.Curve.prototype.updateTransform = function (p) {
@@ -429,6 +431,18 @@ JXG.Curve.prototype.notifyParents = function (contentStr) {
     var elements = this.board.elementsByName;
 
     this.board.algebra.findDependencies(this,contentStr);
+};
+
+/**
+ * Calculates LabelAnchor.
+ * @type JXG.Coords
+ * @return Text anchor coordinates as JXG.Coords object.
+ */
+JXG.Curve.prototype.getLabelAnchor = function() {
+    var c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, this.board.canvasHeight*0.5], this.board);
+    c = this.board.algebra.projectCoordsToCurve(c.usrCoords[1],c.usrCoords[2],0.0,this)[0];
+    //$('debug').innerHTML = c.usrCoords.toString();
+    return c;
 };
 
 JXG.createCurve = function(board, parents, attributes) {
