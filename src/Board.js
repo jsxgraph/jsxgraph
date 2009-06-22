@@ -388,10 +388,12 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     */
    this.xmlString = '';
     
-   /*
+  /*
     * Display the licence text, @see JSXGraph
     */
-   this.renderer.displayCopyright(JXG.JSXGraph.licenseText,this.options.fontSize);
+    if (this.options.showCopyright) {
+        this.renderer.displayCopyright(JXG.JSXGraph.licenseText,this.options.fontSize);
+    }
     
     
    /**
@@ -577,7 +579,6 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
     this.moveOrigin();
     this.fullUpdate = false;
 };
-
 
 /**
  * This method is called by the browser when the left mouse button is released.
