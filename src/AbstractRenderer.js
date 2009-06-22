@@ -624,6 +624,8 @@ JXG.AbstractRenderer.prototype.drawText = function(el) {
  * @see #drawText
  */
 JXG.AbstractRenderer.prototype.updateText = function(el) { 
+    // Update onky objects that are visible.
+    if (el.visProp['visible'] == false) return;
     if (isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) return;
     this.updateTextStyle(el);
     el.rendNode.style.left = (el.coords.scrCoords[1])+'px'; 

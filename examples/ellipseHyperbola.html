@@ -12,30 +12,7 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-        // Slider-Makro
-        function createSlider(board,parents,atts) {
-        	var sx = parents[0];
-        	var sy = parents[1];
-        	var sw = parents[2];
-        	var smin = parents[3];
-            var smax = parents[4];
-            var p1 = board.createElement('point', [sx, sy], {visible:false, fixed:true}); 
-            var p2 = board.createElement('point', [sx + sw, sy],{visible:false,fixed:true}); 
-            var l1 = board.createElement('line', [p1,p2], {straightFirst:false,straightLast:false,strokewidth:1});
-            //
-            var ticks  = 10;
-            for(i = 0; i < ticks+1; i++) {
-	            var t1 = board.createElement('point', [sx + i*sw/ticks, sy - 0.25 + i%2*0.1], {visible:false, fixed:true}); 
-	            var t2 = board.createElement('point', [sx + i*sw/ticks, sy + 0.25 - i%2*0.1], {visible:false, fixed:true}); 
-	            var tt = board.createElement('line', [t1,t2], {straightFirst:false,straightLast:false,strokewidth:2-i%2});
-	        } 
-            var p3 = board.createElement('glider', [sx + sw/2, sy, l1], {style:6,strokeColor:'#0080c0',fillColor:'#0080c0',name:' '});
-            var p4 = board.createElement('point', [function() {return ((p3.X() - sx)/sw * (smax - smin) -smax);}, function() {return (sy  + 1);}], {visible:false, name:''});
-            var l2 = board.createElement('line', [p1,p3], {straightFirst:false,straightLast:false,strokewidth:3,strokeColor:'#0080c0'}); 
-            var t = board.createElement('text', [sx+sw+0.25, sy, "<value>X("+p4.name+")</value>"]); 
-            return p4;
-        }
-            
+   
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40});
 		// Achsen erzeugen
         b1axisx = board.createElement('axis', [[0,0], [0,1]], {});
@@ -43,7 +20,7 @@
 
         var A = board.createElement('point', [-2,1], {style:6,name:'A'});
         var B = board.createElement('point', [2,-3], {style:6,name:'B'});
-        var s = createSlider(board,[0,-5,5,-8,0],{name:'a'});
+        var s = board.createElement('slider',[[0,-5],[5,-5],[1.5,8,10]],{name:'a'});
 
         // Conic construction from foci: ellipse or hyperbola
         function  Conic(board,F1,F2,a,atts) {
@@ -109,7 +86,7 @@
         var E = Conic(board,A,B,s,{type:'ellipse',strokewidth:3, fillColor:'#00ff0023'});
         var H = Conic(board,A,B,s,{type:'hyperbola',strokewidth:3, fillColor:'#ffff0033'});
 
-        var S = board.createElement('point', [0,3], {slideObject:E, name:'S', style:6});
+        var S = board.createElement('glider', [0,2,E], {name:'S', style:6});
         var a = board.createElement('line', [A,S], {straightFirst:false, straightLast:false});
         var b = board.createElement('line', [B,S], {straightFirst:false, straightLast:false});
         var c = board.createElement('line', [A,B], {straightFirst:false, straightLast:false});
