@@ -120,6 +120,9 @@ JXG.JSXGraph = new function (forceRenderer) {
         var zoomfactor = ( (typeof attributes["zoom"]) == 'undefined' ? 1.0 : attributes["zoom"]);
         var zoomX = zoomfactor*( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
         var zoomY = zoomfactor*( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
+        
+        if (typeof attributes["showcopyright"] != 'undefined') attributes["showCopyright"] = attributes["showcopyright"];
+        var showCopyright = ( (typeof attributes["showCopyright"]) == 'undefined' ? true : attributes["showCopyright"]);
 
         var dimensions = JXG.getDimensions(box);
 
@@ -131,7 +134,7 @@ JXG.JSXGraph = new function (forceRenderer) {
             renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
         }
 
-        var board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height);
+        var board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height,showCopyright);
         this.boards[board.id] = board;
         // board.initGeonextBoard();  // Contsruct "Ursprung" and other elements.
         board.initInfobox();
@@ -145,7 +148,9 @@ JXG.JSXGraph = new function (forceRenderer) {
             board.renderer.drawGrid(board);
         }
 
-        if (board.options.showNavigation) {
+        if (typeof attributes["shownavigation"] != 'undefined') attributes["showNavigation"] = attributes["shownavigation"];
+        var showNavi = ( (typeof attributes["showNavigation"]) == 'undefined' ? board.options.showNavigation : attributes["showNavigation"]);
+        if (showNavi) {
             board.renderer.drawZoomBar(board);
         }
 

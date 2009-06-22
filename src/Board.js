@@ -47,8 +47,9 @@
  * @param {int} unitY Units in y-axis direction
  * @param {int} canvasWidth  The width of canvas
  * @param {int} canvasHeight The height of canvas
+ * @param {bool} showCopyright Display the copyright text
  */
-JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY, canvasWidth, canvasHeight) {
+JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY, canvasWidth, canvasHeight, showCopyright) {
     /**
      * Board is in no special mode, objects are highlighted on mouse over and objects may be
      * clicked to start drag&drop.
@@ -335,7 +336,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    
    /**
     * Determines whether the grid is dashed or not.
-    * @type boolean
+    * @type bool
     */    
    this.gridDash = this.options.grid.gridDash;
    
@@ -388,14 +389,13 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     */
    this.xmlString = '';
     
-  /*
+    /*
     * Display the licence text, @see JSXGraph
     */
-    if (this.options.showCopyright) {
+    if ( (showCopyright!=null && showCopyright) || (showCopyright==null && this.options.showCopyright) ) {
         this.renderer.displayCopyright(JXG.JSXGraph.licenseText,this.options.fontSize);
     }
-    
-    
+        
    /**
     * Full updates are needed after zoom and axis translates.
     * This saves some time during update
