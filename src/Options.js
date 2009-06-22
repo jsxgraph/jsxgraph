@@ -31,8 +31,8 @@
 JXG.Options = function() {
     /* Options that are used directly within the board class */
     this.fontSize = 12;
-    this.showCopyRight = true;
-    this.showNavigation = true;
+    this.showCopyright = true;
+    this.showNavigation = false;
 
     /* grid options */
     this.grid = new Object();

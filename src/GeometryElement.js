@@ -698,14 +698,18 @@ JXG.GeometryElement.prototype.setArrow = function(firstArrow,lastArrow) {
  * @see addLabelToElement 
  */
 JXG.GeometryElement.prototype.createLabel = function(withLabel) {    
+    var isTmpId = false;
     this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); 
     this.label = {};
     if (typeof withLabel=='undefined' || withLabel==true) {
-        this.board.objects[this.id] = this;
+        if (this.board.objects[this.id]==null) {
+            this.board.objects[this.id] = this;
+            isTmpId = true;
+        }
         this.label.relativeCoords = [10,10];
         this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, 
             [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
-        delete(this.board.objects[this.id]);
+        if (isTmpId) delete(this.board.objects[this.id]);
         this.label.color = '#000000';
         if(!this.visProp['visible']) {
             this.label.hiddenByParent = true;

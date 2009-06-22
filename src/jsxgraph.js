@@ -145,7 +145,6 @@ JXG.JSXGraph = new function (forceRenderer) {
             board.renderer.drawGrid(board);
         }
 
-        
         if (board.options.showNavigation) {
             board.renderer.drawZoomBar(board);
         }
