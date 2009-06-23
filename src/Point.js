@@ -222,6 +222,8 @@ JXG.Point.prototype.update = function (fromParent) {
      * a child could be visible and depend on the coordinates of the point (e.g. perpendicular).
      * 
      * Check if point is a glider and calculate new coords in dependency of this.slideObject.
+     * This function is called with fromParent==true for example if
+     * the defining elements of the line or circle have been changed.
      */
     if(this.type == JXG.OBJECT_TYPE_GLIDER) {
         if(this.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
@@ -238,9 +240,11 @@ JXG.Point.prototype.update = function (fromParent) {
             var p1coords = this.slideObject.point1.coords;
             var p2coords = this.slideObject.point2.coords;
             if (fromParent) {
-                this.coords.setCoordinates(JXG.COORDS_BY_USER, 
+                if (Math.abs(p1coords.usrCoords[0])>=JXG.Math.eps && Math.abs(p2coords.usrCoords[0])>=JXG.Math.eps) {
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER, 
                                            [p1coords.usrCoords[1] + this.position*(p2coords.usrCoords[1] - p1coords.usrCoords[1]),
                                             p1coords.usrCoords[2] + this.position*(p2coords.usrCoords[2] - p1coords.usrCoords[2])]);
+                }
             } else {
                 var factor = 1;
                 var distP1S = p1coords.distance(JXG.COORDS_BY_USER, this.coords);
@@ -263,7 +267,7 @@ JXG.Point.prototype.update = function (fromParent) {
             }
             var p1Scr = this.slideObject.point1.coords.scrCoords;
             var p2Scr = this.slideObject.point2.coords.scrCoords;
-            
+
             var i;
             if(this.slideObject.getSlope() == 0) {
                 i = 1;

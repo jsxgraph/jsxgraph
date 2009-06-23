@@ -518,6 +518,8 @@ JXG.Algebra.prototype.projectPointToCircle = function(point,circle) {
  * @return The coordinates of the projection of the given point on the given line.
  */
 JXG.Algebra.prototype.projectPointToLine = function(point, line) {
+/*
+    // Euclidean version
     var fmd = line.point1.coords.usrCoords[2] - line.point2.coords.usrCoords[2];
     var emc = line.point1.coords.usrCoords[1] - line.point2.coords.usrCoords[1];
     var d0 = line.point2.coords.usrCoords[1]*fmd - line.point2.coords.usrCoords[2] *emc;
@@ -528,8 +530,16 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
     }
     var x = (d0*fmd + d1*emc) / den;
     var y = (d1*fmd - d0*emc) /den;
-
     return new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);       
+*/
+    // Homogeneous version
+    var mu = this.innerProduct(point.coords.usrCoords,line.stdform,3)/this.innerProduct(line.stdform,line.stdform,3);
+    var i;
+    var v = [];
+    for (i=0;i<3;i++) {
+        v[i] = point.coords.usrCoords[i] - mu*line.stdform[i];
+    }
+    return new JXG.Coords(JXG.COORDS_BY_USER, v, this.board);       
 };
 
 /**

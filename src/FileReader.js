@@ -126,19 +126,21 @@ this.parseString = function(fileStr, board, format, url) {
  * @param {Object} board board object
  */
 this.readElements = function(tree, board, format) {
-    board.suspendUpdate();
     if (format.toLowerCase()=='geonext') { 
+        board.suspendUpdate();
         if(tree.getElementsByTagName('GEONEXT').length != 0) {
             JXG.GeonextReader.readGeonext(tree, board);
         }
+        board.unsuspendUpdate();
     }
     else if(tree.getElementsByTagName('geogebra').length != 0) {
+        board.suspendUpdate();
         JXG.GeogebraReader.readGeogebra(tree, board);
+        board.unsuspendUpdate();
     }
     else if(format.toLowerCase()=='intergeo') {
          JXG.IntergeoReader.readIntergeo(tree, board);
     }
-    board.unsuspendUpdate();
     board.afterLoad();    
 }; // end: this.readElements()
 

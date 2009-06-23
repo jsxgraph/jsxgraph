@@ -430,10 +430,17 @@ JXG.Line.prototype.generatePolynomial = function (p) {
  * @return The rise of the line
  */
 JXG.Line.prototype.getRise = function () {
+/*
     var p1Scr = this.point1.coords.scrCoords;
     var p2Scr = this.point2.coords.scrCoords;
 
     return Math.round((p1Scr[2] - (p1Scr[1]*(p2Scr[2]-p1Scr[2]))/(p2Scr[1]-p1Scr[1])));
+*/    
+    if (Math.abs(this.stdform[2])>=JXG.Math.eps) {
+        return -this.stdform[0]/this.stdform[2];
+    } else {
+        return "INF";
+    }
 };
 
 /**
@@ -442,6 +449,7 @@ JXG.Line.prototype.getRise = function () {
  * @return The slope of the line or INF if the line is parallel to the y-axis.
  */
 JXG.Line.prototype.getSlope = function () {
+/*
     var p1scr = this.point1.coords.scrCoords;
     var p2scr = this.point2.coords.scrCoords;
 
@@ -460,6 +468,12 @@ JXG.Line.prototype.getSlope = function () {
     else {
         return "INF";
     }
+*/
+    if (Math.abs(this.stdform[2])>=JXG.Math.eps) {
+        return -this.stdform[1]/this.stdform[2];
+    } else {
+        return "INF";
+    }    
 };
 
 /**
