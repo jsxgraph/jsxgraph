@@ -169,162 +169,60 @@ JXG.Line.prototype = new JXG.GeometryElement;
  * @return {bool} True if (x,y) is near the line, False otherwise.
  */
  JXG.Line.prototype.hasPoint = function (x, y) {
-    var coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+    // Compute the stdform of the line in screen coordinates.
+    var c = [];
+    c[0] = this.stdform[0] -
+                this.stdform[1]*this.board.origin.scrCoords[1]/(this.board.unitX*this.board.zoomX)+
+                this.stdform[2]*this.board.origin.scrCoords[2]/(this.board.unitY*this.board.zoomY);
+    c[1] = this.stdform[1]/(this.board.unitX*this.board.zoomX);
+    c[2] = this.stdform[2]/(-this.board.unitY*this.board.zoomY);
 
-    var has = false;
+    // Project the point orthogonally onto the line (Gram-Schmidt)
+    var v = [1,x,y];
+    var vnew = [];
+    var mu = this.board.algebra.innerProduct(v,c,3)/this.board.algebra.innerProduct(c,c,3);
     var i;
-
-    var slope = this.getSlope();
-    var rise = this.getRise();
-
-    if(this.visProp['straightFirst'] && this.visProp['straightLast']) {
-        var c = [];
-        // Compute the stdform of the line in screen coordinates.
-        c[0] = this.stdform[0] -
-            this.stdform[1]*this.board.origin.scrCoords[1]/(this.board.unitX*this.board.zoomX)+
-            this.stdform[2]*this.board.origin.scrCoords[2]/(this.board.unitY*this.board.zoomY);
-        c[1] = this.stdform[1]/(this.board.unitX*this.board.zoomX);
-        c[2] = this.stdform[2]/(-this.board.unitY*this.board.zoomY);
-        var s = this.board.algebra.innerProduct(c,coords.scrCoords,3);
-        return (Math.abs(s)<0.05)?true:false; // this.r
+    for (i=0;i<3;i++) {
+        vnew[i] = v[i] - mu*c[i];
     }
-    else {
+        
+    // Normalize the projected point
+    vnew[1] /= vnew[0];
+    vnew[2] /= vnew[0];
+    vnew[0] = 1.0;
+    
+    // The point is too far away from the line
+    if (this.board.algebra.distance(v,vnew)>this.r) {
+        return false;
+    }
+    
+    if(this.visProp['straightFirst'] && this.visProp['straightLast']) {    
+        return true;
+    } else { // If the line is a ray or segment we have to check if the projected point is "inside" P1 and P2.
+        var coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [vnew[1],vnew[2]], this.board);
         var p1Scr = this.point1.coords.scrCoords;
         var p2Scr = this.point2.coords.scrCoords;
-        if(slope != "INF") {
-            for(i = -this.r; i < this.r; i++) {
-                   has = has | (Math.abs(y - (slope*(x+i) + rise)) < this.r);
-               }
-               if(has) {
-                   var distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
-                   var distP2P = coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
-                   var distP1P2 = this.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
-                   if((distP1P > distP1P2) || (distP2P > distP1P2)) { // P(x|y) liegt nicht zwischen P1 und P2
-                       if(distP1P < distP2P) { // P liegt auf der Seite von P1
-                           if(!this.visProp['straightFirst']) {
-                               has = false;
-                           }
-                       }
-                       else { // P liegt auf der Seite von P2
-                           if(!this.visProp['straightLast']) {
-                               has = false;
-                           }
-                       }
-                   }
-               }
-        }
-        else { // senkrechte Gerade
-            has = (Math.abs(x-p1Scr[1]) < this.r);
-            if(has) { // sonst muss nicht weiter geprueft werden
+        var distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
+        var distP2P = coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
+        var distP1P2 = this.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
+        if((distP1P > distP1P2) || (distP2P > distP1P2)) { // Check if P(x|y) is not bewtween  P1 and P2
+            if(distP1P < distP2P) { // P liegt auf der Seite von P1
                 if(!this.visProp['straightFirst']) {
-                    if(p1Scr[2] < p2Scr[2]) {
-                        if(y < p1Scr[2]) {
-                           has = false;
-                        }
-                    }
-                    else if(p1Scr[2] > p2Scr[2]) {
-                        if(y > p1Scr[2]) {
-                           has = false;
-                        }
-                    }
+                    return false;
                 }
+            } else { // P liegt auf der Seite von P2
                 if(!this.visProp['straightLast']) {
-                    if(p1Scr[2] < p2Scr[2]) {
-                        if(y > p2Scr[2]) {
-                           has = false;
-                        }
-                    }
-                    else if(p1Scr[2] > p2Scr[2]) {
-                        if(y < p2Scr[2]) {
-                           has = false;
-                        }
-                    }
+                    return false;
                 }
             }
         }
+        return true;
     }
-
-    return has;
-};
-JXG.Line.prototype.hasPointOld = function (x, y) {
-    var p1Scr = this.point1.coords.scrCoords;
-    var p2Scr = this.point2.coords.scrCoords;
-    var coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
-
-    var has = false;
-    var i;
-
-    var slope = this.getSlope();
-    var rise = this.getRise();
-
-    if(this.visProp['straightFirst'] && this.visProp['straightLast']) {
-        if(slope != "INF") {
-            for(i = -this.r; i < this.r; i++) {
-                   has = has | (Math.abs(y - (slope*(x+i) + rise)) < this.r);
-               }
-        }
-        else { // senkrechte Gerade
-            has = (Math.abs(x-p1Scr[1]) < this.r);
-        }
-    }
-    else {
-        if(slope != "INF") {
-            for(i = -this.r; i < this.r; i++) {
-                   has = has | (Math.abs(y - (slope*(x+i) + rise)) < this.r);
-               }
-               if(has) {
-                   var distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
-                   var distP2P = coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
-                   var distP1P2 = this.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
-                   if((distP1P > distP1P2) || (distP2P > distP1P2)) { // P(x|y) liegt nicht zwischen P1 und P2
-                       if(distP1P < distP2P) { // P liegt auf der Seite von P1
-                           if(!this.visProp['straightFirst']) {
-                               has = false;
-                           }
-                       }
-                       else { // P liegt auf der Seite von P2
-                           if(!this.visProp['straightLast']) {
-                               has = false;
-                           }
-                       }
-                   }
-               }
-        }
-        else { // senkrechte Gerade
-            has = (Math.abs(x-p1Scr[1]) < this.r);
-            if(has) { // sonst muss nicht weiter geprueft werden
-                if(!this.visProp['straightFirst']) {
-                    if(p1Scr[2] < p2Scr[2]) {
-                        if(y < p1Scr[2]) {
-                           has = false;
-                        }
-                    }
-                    else if(p1Scr[2] > p2Scr[2]) {
-                        if(y > p1Scr[2]) {
-                           has = false;
-                        }
-                    }
-                }
-                if(!this.visProp['straightLast']) {
-                    if(p1Scr[2] < p2Scr[2]) {
-                        if(y > p2Scr[2]) {
-                           has = false;
-                        }
-                    }
-                    else if(p1Scr[2] > p2Scr[2]) {
-                        if(y < p2Scr[2]) {
-                           has = false;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return has;
 };
 
-
+/**
+ * @private
+ */
 JXG.Line.prototype.update = function() {
     if (this.needsUpdate) {
         if (true || !this.board.geonextCompatibilityMode) {
@@ -430,12 +328,6 @@ JXG.Line.prototype.generatePolynomial = function (p) {
  * @return The rise of the line
  */
 JXG.Line.prototype.getRise = function () {
-/*
-    var p1Scr = this.point1.coords.scrCoords;
-    var p2Scr = this.point2.coords.scrCoords;
-
-    return Math.round((p1Scr[2] - (p1Scr[1]*(p2Scr[2]-p1Scr[2]))/(p2Scr[1]-p1Scr[1])));
-*/    
     if (Math.abs(this.stdform[2])>=JXG.Math.eps) {
         return -this.stdform[0]/this.stdform[2];
     } else {
@@ -449,26 +341,6 @@ JXG.Line.prototype.getRise = function () {
  * @return The slope of the line or INF if the line is parallel to the y-axis.
  */
 JXG.Line.prototype.getSlope = function () {
-/*
-    var p1scr = this.point1.coords.scrCoords;
-    var p2scr = this.point2.coords.scrCoords;
-
-    var p1usr = this.point1.coords.usrCoords;
-    var p2usr = this.point2.coords.usrCoords;
-
-    // let's see which one of the coordinates is more useful for us.
-    if(Math.abs(p2scr[1]-p1scr[1]) <= Math.abs(p2usr[1]-p1usr[1])) {
-        p2scr = p2usr;
-        p1scr = p1usr;
-    }
-
-    if(Math.abs(p2scr[1]-p1scr[1]) >= JXG.Math.eps) {
-        return ((p2scr[2]-p1scr[2])/(p2scr[1]-p1scr[1]));
-    }
-    else {
-        return "INF";
-    }
-*/
     if (Math.abs(this.stdform[2])>=JXG.Math.eps) {
         return -this.stdform[1]/this.stdform[2];
     } else {
