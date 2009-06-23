@@ -55,7 +55,6 @@ JXG.Curve = function (board, parents, id, name, withLabel) {
     this.elementClass = JXG.OBJECT_CLASS_CURVE;                
     
     this.init(board, id, name);
-    this.init(board, id, name);
 
     this.visProp['strokeWidth'] = this.board.options.curve.strokeWidth;
 

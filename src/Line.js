@@ -51,9 +51,7 @@ JXG.Line = function (board, p1, p2, id, name, withLabel) {
     /* Call the constructor of GeometryElement */
     this.constructor();
 
-    this.init(board, id, name);
-
-    /**
+   /**
      * Sets type of GeometryElement, value is OBJECT_TYPE_LINE.
      * @final
      * @type int
@@ -65,6 +63,8 @@ JXG.Line = function (board, p1, p2, id, name, withLabel) {
      */
     this.elementClass = JXG.OBJECT_CLASS_LINE;
 
+    this.init(board, id, name);
+    
     /**
      * Startpoint of the line.
      * @type JXG.Point

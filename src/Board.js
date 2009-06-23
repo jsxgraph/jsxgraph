@@ -443,11 +443,13 @@ JXG.Board.prototype.generateName = function(object) {
         // points have capital letters 
         possibleNames = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                                   'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-    } else {
+    } 
+    else {
         // all other elements get lowercase labels
         possibleNames = ['', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-                                  'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];    
+                                  'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']; 
     }
+    
     
     // how long the name can be at most
     var maxNameLength = 3;
@@ -457,19 +459,24 @@ JXG.Board.prototype.generateName = function(object) {
     
     if(object.elementClass == JXG.OBJECT_CLASS_POINT || object.elementClass == JXG.OBJECT_CLASS_LINE) {
     }
-    else if(object.type == JXG.OBJECT_TYPE_POLYGON) {
-        pre = 'P_{';
-        post = '}';
-    }
-    else if(object.type == JXG.OBJECT_TYPE_CIRCLE) {
-        pre = 'k_{';
-        post = '}';
-    }            
     else {
-        pre = 's_{';
-        post = '}';
+        if(object.type == JXG.OBJECT_TYPE_POLYGON) {
+            pre = 'P_{';
+            post = '}';
+        }
+        else if(object.type == JXG.OBJECT_TYPE_CIRCLE) {
+            pre = 'k_{';
+            post = '}';
+        }
+        else if(object.type == JXG.OBJECT_TYPE_ANGLE) {
+            pre = 'W_{';
+            post = '}';
+        }
+        else {
+            pre = 's_{';
+            post = '}';
+        }
     }
-
     var indices = [];
     var name = '';
     var tmp = '';

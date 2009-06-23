@@ -96,10 +96,55 @@ JXG.Angle = function (board, p1, p2, p3, radius, text, id, name, withLabel) {
     this.visProp['highlightFillOpacity'] = this.board.options.angle.highlightFillOpacity;
     this.visProp['strokeColor'] = this.board.options.angle.strokeColor;    
     
+    if(text == '') {
+        var possibleNames = ['&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta', '&theta;',
+                                '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
+                                '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'];
+        var i = 0;
+        while(i < possibleNames.length) {
+            var j=i;
+            var x = possibleNames[i];
+            for(var el in board.objects) {
+                if(board.objects[el].type == JXG.OBJECT_TYPE_ANGLE) {
+                    if(board.objects[el].text == x) {
+                        i++;
+                        break;
+                    }
+                }
+            }
+            if(i==j) {
+                text = x;
+                i = possibleNames.length+1;
+            }
+        }
+        if(i == possibleNames.length) {
+            var pre = '&alpha;_{'
+            var post = '}';
+            var found = false;
+            var j=0;
+            while(!found) {
+                for(var el in board.objects) {
+                    if(board.objects[el].type == JXG.OBJECT_TYPE_ANGLE) {
+                        if(board.objects[el].text == (pre+j+post)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if(found) {
+                    found= false;
+                }
+                else {
+                    found = true;
+                    text = (pre+j+post);
+                }
+            }
+        }
+    }
     /** 
     * Text (ie name) of the Angle
     * @type String
-    */
+    */    
     this.text = text;
 
     // create Label
