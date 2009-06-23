@@ -162,12 +162,13 @@ JXG.IntergeoReader = new function() {
             else if (node.nodeName=='angular_bisector_of_three_points') {
                 JXG.IntergeoReader.addAngularBisectorOfThreePoints(node);
             } 
+            else if (node.nodeName=='angular_bisectors_of_two_lines') {
+                JXG.IntergeoReader.addAngularBisectorsOfTwoLines(node);
+            } 
             else {
-                //$('debug').innerHTML += 'NOT: ' + node.nodeName + '<br>';
+                $('debug').innerHTML += 'NOT implemented: ' + node.nodeName + '<br>';
             }
-            //this.board.update();
         })(s);
-        //alert(JXG.GetReferenceFromParameter(this.board,'A').coords.usrCoords.toString());
     };
 
     this.readParams = function(node) {
@@ -223,24 +224,40 @@ JXG.IntergeoReader = new function() {
 
     this.addAngularBisectorOfThreePoints = function(node) {
         var param = JXG.IntergeoReader.readParams(node); 
-        var el =this.board.createElement('bisector',[param[1],param[2],param[3]],{name:param[0],id:param[0],withLabel:true});
-        el.setProperty("straightFirst:false","straightLast:true");
+        var el = this.board.createElement('bisector',[param[1],param[2],param[3]],{name:param[0],id:param[0],withLabel:true});
+        el.setProperty({straightFirst:false,straightLast:true,strokeColor:'#000000'});
         this.objects[param[0]] = el;
     };
     
-    this.prepareString = function(fileStr){
-    if (fileStr.indexOf('<')!=0) {
-    	var bA = [];
-    	//binary = false;
-        for (i=0;i<fileStr.length;i++)
-            bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
-                   
-        fileStr = (new JXG.Util.Unzip(bA)).unzipFile("construction/intergeo.xml");  // Unzip 
-                                                                                    // Extract "construction/intergeo.xml" from
-                                                                                    // the zip-archive in bA.
+    this.addAngularBisectorsOfTwoLines = function(node) {
+        var param = JXG.IntergeoReader.readParams(node); 
+        var idIntersect = 'P'+param[0]+'_'+param[1];
+        var el = this.board.createElement('intersection',[param[2],param[3],0],{name:idIntersect,id:idIntersect,visible:false,withLabel:false});
+        this.objects[idIntersect] = el;
+        var g1 = this.board.createElement('bisector',[this.objects[param[2]].point2,el,this.objects[param[3]].point2],{name:param[0],id:param[0],withLabel:true});
+        g1.setProperty({straightFirst:true,straightLast:true,strokeColor:'#000000'});
+        var g2 = this.board.createElement('bisector',[this.objects[param[3]].point2,el,this.objects[param[2]].point2],{name:param[1],id:param[1],withLabel:true});
+        g2.setProperty({straightFirst:true,straightLast:true,strokeColor:'#000000'});
     }
-    return fileStr;
-};
+    
+    
+    /**
+     * Extract the xml-code as String from the zipped Intergeo archive.
+     * @return {string} xml code
+     */
+    this.prepareString = function(fileStr){
+        if (fileStr.indexOf('<')!=0) {
+            var bA = [];
+            //binary = false;
+            for (i=0;i<fileStr.length;i++)
+                bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
+                   
+            fileStr = (new JXG.Util.Unzip(bA)).unzipFile("construction/intergeo.xml");  // Unzip 
+                                                                                        // Extract "construction/intergeo.xml" from
+                                                                                        // the zip-archive in bA.
+        }
+        return fileStr;
+    };
 
 };
 
