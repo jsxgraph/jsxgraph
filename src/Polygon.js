@@ -217,7 +217,7 @@ JXG.createPolygon = function(board, parents, atts) {
     var el;
 
     if (typeof atts['withLabel']=='undefined') {
-        atts['withLabel'] = true;
+        atts['withLabel'] = false;
     }    
     
     // Sind alles Punkte?

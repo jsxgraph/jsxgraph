@@ -456,8 +456,10 @@ JXG.Curve.prototype.getLabelAnchor = function() {
 };
 
 JXG.createCurve = function(board, parents, attributes) {
+    if(attributes == null) 
+        attributes = {};
     if (typeof attributes['withLabel'] == 'undefined') {
-        attributes['withLabel'] = true;
+        attributes['withLabel'] = false;
     } 
     return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name'], attributes['withLabel']);
 };
@@ -469,12 +471,12 @@ JXG.JSXGraph.registerElement('curve', JXG.createCurve);
 * parents: [f, start, end] or [f]
 **/
 JXG.createFunctiongraph = function(board, parents, attributes) {
-    if (typeof attributes['withLabel'] == 'undefined') {
-        attributes['withLabel'] = true;
-    } 
     var par = ["x","x"].concat(parents);
     if(attributes == null) 
         attributes = {};
+    if (typeof attributes['withLabel'] == 'undefined') {
+        attributes['withLabel'] = false;
+    } 
     attributes.curveType = 'functiongraph';
     return new JXG.Curve(board, par, attributes['id'], attributes['name'],attributes['withLabel']);
 };
@@ -491,6 +493,11 @@ JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
  * @return Returns reference to an object of type JXG.Curve.
  */
 JXG.createSpline = function(board, parents, attributes) {
+    if(attributes == null) 
+        attributes = {};
+    if (typeof attributes['withLabel'] == 'undefined') {
+        attributes['withLabel'] = false;
+    } 
     // This is far away from being effective
     var F = function (t) {
         var x = new Array();
@@ -532,9 +539,15 @@ JXG.JSXGraph.registerElement('spline', JXG.createSpline);
  */
 JXG.createRiemannsum = function(board, parents, attributes) {
     var i,n,type,f;
+    if(attributes == null) 
+        attributes = {};
     if (typeof attributes['withLabel'] == 'undefined') {
-        attributes['withLabel'] = true;
+        attributes['withLabel'] = false;
     }     
+    attributes.opacity   = attributes.opacity || 0.3;
+    attributes.fillColor = attributes.fillColor || '#ffff00';
+    attributes.curveType = 'plot';
+
     f = parents[0];
     if (typeof parents[1] == 'number') {
         n = function() {return parents[1];}
@@ -552,12 +565,6 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     }
 
     var par = ['x', [0], [0]].concat(parents.slice(3));
-    
-    if(attributes == null) 
-        attributes = {};
-    attributes.opacity   = attributes.opacity || 0.3;
-    attributes.fillColor = attributes.fillColor || '#ffff00';
-    attributes.curveType = 'plot';
     var c = new JXG.Curve(board, par, attributes['id'], attributes['name'], attributes['withLabel']);
     c.updateDataArray = function() {
             var u = JXG.Math.Numerics.riemann(f,n(),type(),this.minX(),this.maxX());

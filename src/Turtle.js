@@ -56,7 +56,7 @@ JXG.Turtle = function (board, parents, attributes) {
     }
     this.attributes.straightFirst = false;
     this.attributes.straightLast = false;
-   
+    this.attributes.withLabel = false;
     x = 0;
     y = 0;
     dir = 90;
@@ -106,7 +106,7 @@ JXG.Turtle.prototype.init = function(x,y,dir) {
     this.objects.push(this.turtle);
     
     this.turtle2 = this.board.createElement('point',[this.pos[0],this.pos[1]+this.arrowLen],
-            {fixed:true,name:' ',visible:false});
+            {fixed:true,name:' ',visible:false,withLabel:false});
     this.objects.push(this.turtle2);
     
     var w = this.attributes.strokeWidth || this.attributes.strokewidth || 2;  // Attention; should be moved to Options.js

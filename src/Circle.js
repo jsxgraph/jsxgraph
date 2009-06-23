@@ -152,7 +152,8 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel) {
     } 
     
     // create Label
-    this.createLabel(withLabel);
+    if (withLabel!=null) 
+        this.createLabel(withLabel);
     
     if(method == 'twoPoints') {
         //this.point2 = JXG.GetReferenceFromParameter(board,par2);
@@ -512,7 +513,7 @@ JXG.createCircle = function(board, parentArr, atts) {
         atts={};
     }
     if (typeof atts['withLabel']=='undefined') {
-        atts['withLabel'] = true;
+        atts['withLabel'] = false;
     }
     
     p = [];

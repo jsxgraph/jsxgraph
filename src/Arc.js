@@ -237,7 +237,7 @@ JXG.createArc = function(board, parents, attributes) {
     var el;
     
     if (typeof attributes['withLabel'] == 'undefined') {
-        attributes['withLabel'] = true;
+        attributes['withLabel'] = false;
     }    
     // Alles 3 Punkte?
     if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) && (JXG.IsPoint(parents[2]))) {

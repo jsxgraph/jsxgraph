@@ -753,7 +753,7 @@ JXG.createLine = function(board, parents, atts) {
         atts = {};
     }
     if(atts['withLabel'] == null || typeof atts['withLabel'] == 'undefined') {
-        atts['withLabel'] = true;
+        atts['withLabel'] = false;
     }
     
     if (parents.length == 2) { // The line is defined by two points (or coordinates of two points)
@@ -816,7 +816,9 @@ JXG.createSegment = function(board, parents, atts) {
 
     if(atts == null)
         atts = new Object();
-
+    if(atts['withLabel'] == null || typeof atts['withLabel'] == 'undefined') {
+        atts['withLabel'] = false;
+    }
     atts.straightFirst = false;
     atts.straightLast = false;
     el = board.createElement('line', parents, atts);
@@ -841,7 +843,7 @@ JXG.createArrow = function(board, parents, attributes) {
         attributes = {};
     }
     if(attributes['withLabel'] == null || typeof attributes['withLabel'] == 'undefined') {
-        attributes['withLabel'] = true;
+        attributes['withLabel'] = false;
     }
     //if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) { // The constructability decision is delkegated to the line object
         el = board.createElement('line',parents,attributes);
@@ -914,16 +916,6 @@ JXG.createAxis = function(board, parents, attributes) {
             var len = c1.distance(JXG.COORDS_BY_USER,c2);
             //len *= 0.33;
             dist = 1.0; //len;
-            /*
-            if (len>=1) {
-                len = Math.round(len*0.2)*5;
-                dist = len;
-            } else {
-                dist = 0.25;
-                while (4*dist>len) { dist *= 0.5; }
-                dist = len;
-            }
-            */
         }
 
         var defTicks = board.createElement('ticks', [line, dist], attributes);
@@ -949,6 +941,10 @@ JXG.JSXGraph.registerElement('axis', JXG.createAxis);
 JXG.createTangent = function(board, parents, attributes) {
     var p = parents[0];
     var c = p.slideObject;
+    if (attributes == null)
+        attributes = {};
+    if (attributes.withLabel == null)
+        attributes.withLabel = false;
     if (c.elementClass == JXG.OBJECT_CLASS_LINE) {
         return board.createElement('line', [c.point1,c.point2], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
