@@ -518,20 +518,72 @@ JXG.Line.prototype.getTextAnchor = function() {
  * @return Text anchor coordinates as JXG.Coords object.
  */
 JXG.Line.prototype.getLabelAnchor = function() {
+    var coords;
     if(!this.visProp['straightFirst'] && !this.visProp['straightLast']) {
         return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X()-0.5*(this.point2.X() - this.point1.X()),this.point2.Y()-0.5*(this.point2.Y() - this.point1.Y())],this.board);
     }
     else {
         var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
         var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
-        this.board.renderer.calcStraight(this, screenCoords1, screenCoords2); 
+        this.board.renderer.calcStraight(this, screenCoords1, screenCoords2);
         
         if(this.visProp['straightFirst']) {
-            return screenCoords1;
+            coords = screenCoords1;
         }
         else {
-            return screenCoords2;
+            coords = screenCoords2;
         }
+        // Hack
+        if(this.label.content != null) {
+            var relCoords;
+            var slope = this.getSlope();
+            if(coords.scrCoords[2]==0) {
+                if(slope == "INF") {
+                    relCoords = [10,-10];                    
+                }
+                else if(slope >= 0) {
+                    relCoords = [10,-10];
+                }
+                else {
+                    relCoords = [-10,-10];
+                }
+            }
+            else if(coords.scrCoords[2]==this.board.canvasHeight) {
+                if(slope == "INF") {
+                    relCoords = [10,10];                    
+                }
+                else if(slope >= 0) {
+                    relCoords = [-10,10];
+                }
+                else {
+                    relCoords = [10,10];
+                }
+            }
+            if(coords.scrCoords[1]==0) {
+                if(slope == "INF") {
+                    relCoords = [10,10]; // ??
+                }
+                else if(slope >= 0) {
+                    relCoords = [10,-10];
+                }
+                else {
+                    relCoords = [10,10];
+                }
+            }
+            else if(coords.scrCoords[1]==this.board.canvasWidth) {
+                if(slope == "INF") {
+                    relCoords = [-10,10]; // ??
+                }
+                else if(slope >= 0) {
+                    relCoords = [-10,10];
+                }
+                else {
+                    relCoords = [-10,-10];
+                }
+            }
+            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [relCoords[0]/(this.board.unitX*this.board.zoomX),relCoords[1]/(this.board.unitY*this.board.zoomY)],this.board);            
+        }
+        return coords;
     }
 };
 
