@@ -31,6 +31,21 @@
  * @version 0.1
  */
 
+
+JXG.POINT_STYLE_X_SMALL      = 0;  // a small sized x
+JXG.POINT_STYLE_X            = 1;  // a medium sized x
+JXG.POINT_STYLE_X_BIG        = 2;  // a big sized x
+JXG.POINT_STYLE_CIRCLE_TINY  = 3;  // a tiny circle
+JXG.POINT_STYLE_CIRCLE_SMALL = 4;  // a small circle
+JXG.POINT_STYLE_CIRCLE       = 5;  // a medium circle
+JXG.POINT_STYLE_CIRCLE_BIG   = 6;  // a big circle
+JXG.POINT_STYLE_SQUARE_SMALL = 7;  // a small rectangle
+JXG.POINT_STYLE_SQUARE       = 8;  // a medium rectangle
+JXG.POINT_STYLE_SQUARE_BIG   = 9;  // a big rectangle
+JXG.POINT_STYLE_PLUS_SMALL   = 10; // a small +
+JXG.POINT_STYLE_PLUS         = 11; // a medium +
+JXG.POINT_STYLE_PLUS_BIG     = 12; // a big +
+
 /**
  * Constructs a new Point object.
  * @class This is the Point class. 

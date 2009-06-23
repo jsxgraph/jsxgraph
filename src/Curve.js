@@ -516,7 +516,7 @@ JXG.createSpline = function(board, parents, attributes) {
         return JXG.Math.Numerics.splineEval(t, x, y, D);
     }
     
-    return new JXG.Curve(board, ["x","x", F], attributes);
+    return new JXG.Curve(board, ["x","x", F], attributes["id"], attributes["name"], attributes['withLabel']);
 }
 
 /**

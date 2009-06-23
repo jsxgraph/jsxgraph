@@ -340,8 +340,8 @@ JXG.GeometryElement.prototype.showElement = function() {
  *<li>strokeColor</li>
  *<li>fillColor</li> 
  *<li>highlightFillColor</li>
- *<li>highlightStrokeColor</li> 
-  *<li>strokeOpacity</li>
+ *<li>highlightStrokeColor</li>
+ *<li>strokeOpacity</li>
  *<li>fillOpacity</li> 
  *<li>highlightFillOpacity</li>
  *<li>highlightStrokeOpacity</li> 
