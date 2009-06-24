@@ -229,15 +229,50 @@ JXG.IntergeoReader = new function() {
         this.objects[param[0]] = el;
     };
     
+    /**
+     * The angular bisectors of two line [c1,a1,b1] and [c2,a2,b2] are determined by the equation:
+     * (a1*x+b1*y+c1*z)/sqrt(a1^2+b1^2) = +/- (a2*x+b2*y+c2*z)/sqrt(a2^2+b2^2)
+     */
     this.addAngularBisectorsOfTwoLines = function(node) {
         var param = JXG.IntergeoReader.readParams(node); 
-        var idIntersect = 'P'+param[0]+'_'+param[1];
-        var el = this.board.createElement('intersection',[param[2],param[3],0],{name:idIntersect,id:idIntersect,visible:false,withLabel:false});
-        this.objects[idIntersect] = el;
-        var g1 = this.board.createElement('bisector',[this.objects[param[2]].point2,el,this.objects[param[3]].point2],{name:param[0],id:param[0],withLabel:true});
-        g1.setProperty({straightFirst:true,straightLast:true,strokeColor:'#000000'});
-        var g2 = this.board.createElement('bisector',[this.objects[param[3]].point2,el,this.objects[param[2]].point2],{name:param[1],id:param[1],withLabel:true});
-        g2.setProperty({straightFirst:true,straightLast:true,strokeColor:'#000000'});
+        var l1 = this.objects[param[2]];
+        var l2 = this.objects[param[3]];
+        var g1 = this.board.createElement('line',[
+            function(){ 
+                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+                return l1.stdform[0]/d1-l2.stdform[0]/d2;
+            },
+            function(){ 
+                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+                return l1.stdform[1]/d1-l2.stdform[1]/d2;
+            },
+            function(){ 
+                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+                return l1.stdform[2]/d1-l2.stdform[2]/d2;
+            },
+        ],{name:param[0],id:param[0],withLabel:true});
+        var g2 = this.board.createElement('line',[
+            function(){ 
+                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+                return l1.stdform[0]/d1+l2.stdform[0]/d2;
+            },
+            function(){ 
+                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+                return l1.stdform[1]/d1+l2.stdform[1]/d2;
+            },
+            function(){ 
+                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+                return l1.stdform[2]/d1+l2.stdform[2]/d2;
+            },
+        ],{name:param[1],id:param[1],withLabel:true});
+        g1.setProperty({straightFirst:true,straightLast:true,strokeColor:'#ff0000'});
+        g2.setProperty({straightFirst:true,straightLast:true,strokeColor:'#ff0000'});
     }
     
     
