@@ -237,42 +237,10 @@ JXG.IntergeoReader = new function() {
         var param = JXG.IntergeoReader.readParams(node); 
         var l1 = this.objects[param[2]];
         var l2 = this.objects[param[3]];
-        var g1 = this.board.createElement('line',[
-            function(){ 
-                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
-                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
-                return l1.stdform[0]/d1-l2.stdform[0]/d2;
-            },
-            function(){ 
-                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
-                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
-                return l1.stdform[1]/d1-l2.stdform[1]/d2;
-            },
-            function(){ 
-                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
-                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
-                return l1.stdform[2]/d1-l2.stdform[2]/d2;
-            },
-        ],{name:param[0],id:param[0],withLabel:true});
-        var g2 = this.board.createElement('line',[
-            function(){ 
-                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
-                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
-                return l1.stdform[0]/d1+l2.stdform[0]/d2;
-            },
-            function(){ 
-                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
-                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
-                return l1.stdform[1]/d1+l2.stdform[1]/d2;
-            },
-            function(){ 
-                var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
-                var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
-                return l1.stdform[2]/d1+l2.stdform[2]/d2;
-            },
-        ],{name:param[1],id:param[1],withLabel:true});
-        g1.setProperty({straightFirst:true,straightLast:true,strokeColor:'#ff0000'});
-        g2.setProperty({straightFirst:true,straightLast:true,strokeColor:'#ff0000'});
+        this.board.createElement('angularbisectorsoftwolines',
+            [l1,l2],
+            {name:[param[0],param[1]], id:[param[0],param[1]],
+            straightFirst:true, straightLast:true, strokeColor:'#ff0000', withLabel:true});
     }
     
     

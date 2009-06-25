@@ -12,7 +12,7 @@
 <div id="debug" style="display:block;"></div>
 <script language="JavaScript">
 // Board
-board1 = JXG.JSXGraph.initBoard('jxgbox1', {originX: 200, originY: 150, unitX: 25, unitY: 25});
+board1 = JXG.JSXGraph.initBoard('jxgbox1', {originX: 200, originY: 150, unitX: 5, unitY: 5});
 
 board1.suspendUpdate();
 // Axes and Properties
@@ -28,10 +28,7 @@ board1.createElement('curve', [
     function(t) {
         var val = 0;
         for(var i = 0; i < s.Value() + 1; i++) {
-            var f = board1.factorial(2*i+1);
-            //var f = 1;
-            //var n = 1;
-            //while (n <= 2 * i + 1) { f = f * n++; }
+            var f = board1.factorial(2*i+1);  // sin
             val += Math.pow(-1, i) * Math.pow(t, 2 * i + 1) / f;
         }
         return val;

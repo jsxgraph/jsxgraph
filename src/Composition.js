@@ -304,6 +304,78 @@ JXG.createBisector = function(board, parentArr, atts) {
     }
 };
 
+/**
+ * The angular bisectors of two line [c1,a1,b1] and [c2,a2,b2] are determined by the equation:
+ * (a1*x+b1*y+c1*z)/sqrt(a1^2+b1^2) = +/- (a2*x+b2*y+c2*z)/sqrt(a2^2+b2^2)
+ */
+JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
+    var l1 = JXG.GetReferenceFromParameter(board,parents[0]);
+    var l2 = JXG.GetReferenceFromParameter(board,parents[1]);
+    var id1 = '';
+    var id2 = '';
+    var n1 = '';
+    var n2 = '';
+    if (attributes==null) attributes = {};
+    if (attributes['id']!=null) {
+        if (JXG.IsArray(attributes['id'])) {
+            id1 = attributes['id'][0];
+            id2 = attributes['id'][1];
+        } else {
+            id1 = attributes['id'];
+            id2 = attributes['id'];
+        }
+    }
+    if (attributes['name']!=null) {
+        if (JXG.IsArray(attributes['name'])) {
+            n1 = attributes['name'][0];
+            n2 = attributes['name'][1];
+        } else {
+            n1 = attributes['name'];
+            n2 = attributes['name'];
+        }
+    }
+    
+    attributes['id'] = id1;
+    attributes['name'] = n1;
+    var g1 = board.createElement('line',[
+        function(){ 
+            var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+            var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+            return l1.stdform[0]/d1-l2.stdform[0]/d2;
+        },
+        function(){ 
+            var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+            var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+            return l1.stdform[1]/d1-l2.stdform[1]/d2;
+        },
+        function(){ 
+            var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+            var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+            return l1.stdform[2]/d1-l2.stdform[2]/d2;
+        },
+    ], attributes);
+    attributes['id'] = id2;
+    attributes['name'] = n2;
+    var g2 = board.createElement('line',[
+        function(){ 
+            var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+            var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+            return l1.stdform[0]/d1+l2.stdform[0]/d2;
+        },
+        function(){ 
+            var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+            var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+            return l1.stdform[1]/d1+l2.stdform[1]/d2;
+        },
+        function(){ 
+            var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
+            var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
+            return l1.stdform[2]/d1+l2.stdform[2]/d2;
+        },
+    ], attributes);
+    return [g1,g2];
+}
+
 JXG.createArrowParallel = function(board, parentArr, atts) {
     /* TODO arrowparallel polynomials */
     if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_ARROW) {
@@ -446,6 +518,7 @@ JXG.createIntegral = function(board, parentArr, atts) {
 
 JXG.JSXGraph.registerElement('arrowparallel', JXG.createArrowParallel);
 JXG.JSXGraph.registerElement('bisector', JXG.createBisector);
+JXG.JSXGraph.registerElement('angularbisectorsoftwolines', JXG.createAngularBisectorsOfTwoLines);
 JXG.JSXGraph.registerElement('circumcircle', JXG.createCircumcircle);
 JXG.JSXGraph.registerElement('circumcirclemidpoint', JXG.createCircumcircleMidpoint);
 JXG.JSXGraph.registerElement('integral', JXG.createIntegral);
@@ -457,3 +530,4 @@ JXG.JSXGraph.registerElement('parallelpoint', JXG.createParallelPoint);
 JXG.JSXGraph.registerElement('perpendicular', JXG.createPerpendicular);
 JXG.JSXGraph.registerElement('perpendicularpoint', JXG.createPerpendicularPoint);
 JXG.JSXGraph.registerElement('reflection', JXG.createReflection);
+
