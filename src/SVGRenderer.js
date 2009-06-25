@@ -780,31 +780,28 @@ JXG.SVGRenderer.prototype.updatePathPrimitive = function(node, pointString, boar
     node.setAttributeNS(null, 'd', pointString);
     node.setAttributeNS(null, 'stroke-linecap', 'round');
     node.setAttributeNS(null, 'stroke-linejoin', 'round');
+    node.setAttributeNS(null, 'shape-rendering', 'geometricPrecision');
 };
-
-/*
-JXG.SVGRenderer.prototype.updatePathPrimitive2 = function(el, pointString) {
-    var node = el.rendNode;
-    node.setAttributeNS(null, 'd', pointString);
-    node.setAttributeNS(null, 'stroke-linecap', 'round');
-    node.setAttributeNS(null, 'stroke-linejoin', 'round');
-};
-*/
 
 JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     if (el.numberPoints<=0) { return ''; }
+    var oldx = -10000.0;
+    var oldy = -10000.0;
     var nextSymb = ' M ';
     var pStr = '';
-    var h = 100*el.board.canvasHeight;  // This is a weak test to detect infinity
+    var h = 3*el.board.canvasHeight; 
     var w = 100*el.board.canvasWidth;
     for (var i=0; i<el.numberPoints; i++) {
         var scr = el.points[i].scrCoords;
-        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || Math.abs(scr[2])>h) {
+        if (Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
+        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (el.curveType=='functiongraph' && (scr[2]>h || scr[2]<-0.5*h)) ) {
             nextSymb = ' M ';
         } else {
-            pStr += nextSymb + scr[1] + ' ' + scr[2]; // Attention: first coordinate may be inaccurate if far way)
+            pStr += [nextSymb,scr[1],' ',scr[2]].join(''); // Attention: first coordinate may be inaccurate if far way
             nextSymb = ' L ';
         }
+        oldx = scr[1];
+        oldy = scr[2];
     }
     return pStr;
 };

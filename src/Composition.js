@@ -518,7 +518,7 @@ JXG.createIntegral = function(board, parentArr, atts) {
 
 JXG.JSXGraph.registerElement('arrowparallel', JXG.createArrowParallel);
 JXG.JSXGraph.registerElement('bisector', JXG.createBisector);
-JXG.JSXGraph.registerElement('angularbisectorsoftwolines', JXG.createAngularBisectorsOfTwoLines);
+JXG.JSXGraph.registerElement('bisectorlines', JXG.createAngularBisectorsOfTwoLines);
 JXG.JSXGraph.registerElement('circumcircle', JXG.createCircumcircle);
 JXG.JSXGraph.registerElement('circumcirclemidpoint', JXG.createCircumcircleMidpoint);
 JXG.JSXGraph.registerElement('integral', JXG.createIntegral);

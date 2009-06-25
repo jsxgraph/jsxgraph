@@ -823,23 +823,27 @@ JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString,board)
 
 JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
     if (el.numberPoints<=0) { return ''; }
+    var oldx = -10000.0;
+    var oldy = -10000.0;
     var nextSymb = ' m ';
     var pStr = [];
-    var h = 100*el.board.canvasHeight; // This is a weak test to detect infinity
+    var h = 3*el.board.canvasHeight;
     var w = 100*el.board.canvasWidth;
     var m = Math.min(el.numberPoints,8192); // otherwise IE 7 crashes in hilbert.html
     
     for (var i=0; i<m; i++) {
         var scr = el.points[i].scrCoords;
-        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || Math.abs(scr[2])>h) {
+        if (Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
+        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (el.curveType=='functiongraph' && (scr[2]>h || scr[2]<-0.5*h)) ) {
             nextSymb = ' m ';
         } else {
-            pStr.push(nextSymb + scr[1] + ', ' + scr[2]);
+            pStr.push([nextSymb,scr[1],', ',scr[2]].join(''));
             nextSymb = ' l ';
         }
+        oldx = scr[1];
+        oldy = scr[2];
     }
     pStr.push(' e');
-//$('debug').innerHTML = pStr;
     return pStr;
 };
 

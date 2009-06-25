@@ -237,7 +237,7 @@ JXG.IntergeoReader = new function() {
         var param = JXG.IntergeoReader.readParams(node); 
         var l1 = this.objects[param[2]];
         var l2 = this.objects[param[3]];
-        this.board.createElement('angularbisectorsoftwolines',
+        this.board.createElement('bisectorlines',
             [l1,l2],
             {name:[param[0],param[1]], id:[param[0],param[1]],
             straightFirst:true, straightLast:true, strokeColor:'#ff0000', withLabel:true});

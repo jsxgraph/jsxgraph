@@ -62,7 +62,7 @@ JXG.Options = function() {
     this.elements.color.highlightFillOpacity = 1;
 
     this.elements.color.strokeColor = '#0000ff';
-    this.elements.color.highlightStrokeColor = '#C3D9FF';
+    this.elements.color.highlightStrokeColor = '#93A9FF'; '#C3D9FF'
     this.elements.color.fillColor = 'none';
     this.elements.color.highlightFillColor = 'none';
 

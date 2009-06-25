@@ -10,7 +10,7 @@
 <div style="width:960px">
 <div id="jxgbox" class="jxgbox" style="width:600px; height:400px; float:left; "></div>
 <p style="float:right">
-  <input type="text" id="eingabe" value="Math.sin(x)*Math.cos(x)"><br />
+  <input type="text" id="eingabe" value="Math.tan(x)*s1.Value()"><br />
   <input type="button" value="set" onClick="doIt()" style='margin:1em'> <br />
   <input type='button' value='Zoom In' onclick='board.zoomIn()' style='margin:1em'><br />
   <input type='button' value='Zoom Out' onclick='board.zoomOut()' style='margin:1em'><br />
@@ -27,7 +27,7 @@
         b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
         b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 
-        s1 = board.createElement('slider', [[0,-2],[5,-2],[-10,0,10]], {style:6, name:'S_1'});
+        s1 = board.createElement('slider', [[0,-2],[5,-2],[-2,1,2]], {style:6, name:'S_1'});
         s2 = board.createElement('slider', [[0,-3],[5,-3],[-10,0,10]], {style:6, name:'S_2'});
 
 
