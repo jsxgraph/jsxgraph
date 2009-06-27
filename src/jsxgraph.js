@@ -107,8 +107,23 @@ JXG.JSXGraph = new function (forceRenderer) {
         if (typeof attributes["boundingbox"] != 'undefined') {
             w = parseInt(document.getElementById(box).style.width);
             h = parseInt(document.getElementById(box).style.height);
-            unitX = w/(attributes["boundingbox"][2]-attributes["boundingbox"][0]);
-            unitY = h/(-attributes["boundingbox"][3]+attributes["boundingbox"][1]);
+            if (attributes["keepaspectratio"]) {
+            /**
+                                * If the boundingbox attribute is given and the ratio of height and width of the sides defined by the bounding box and 
+                                * the ratio of the dimensions of the div tag which contains the board do not coincide, 
+                                * then the smaller side is chosen.
+                                */
+                unitX = w/(attributes["boundingbox"][2]-attributes["boundingbox"][0]);
+                unitY = h/(-attributes["boundingbox"][3]+attributes["boundingbox"][1]);
+                if (unitX>unitY) {
+                    unitY = unitX;
+                } else {
+                    unitX = unitY;
+                }
+            } else {
+                unitX = w/(attributes["boundingbox"][2]-attributes["boundingbox"][0]);
+                unitY = h/(-attributes["boundingbox"][3]+attributes["boundingbox"][1]);
+            }
             originX = -unitX*attributes["boundingbox"][0];
             originY = unitY*attributes["boundingbox"][1];
         } else {
