@@ -36,9 +36,9 @@ JXG.IntergeoReader = new function() {
         this.board.unitY = 30;
 
         this.readElements(tree.getElementsByTagName("elements"));
-        this.board.fullUpdate = true; this.board.update(); this.board.fullUpdate = false; 
+        this.board.fullUpdate();
         this.readConstraints(tree.getElementsByTagName("constraints"));
-        this.board.fullUpdate = true; this.board.update(); this.board.fullUpdate = false; 
+        this.board.fullUpdate();
     };
 
     this.readElements = function(tree) {

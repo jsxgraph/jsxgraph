@@ -100,32 +100,34 @@ JXG.JSXGraph = new function (forceRenderer) {
         var renderer;
         var originX, originY, unitX, unitY;
         var w, h;
+        var bbox;
         
+        var dimensions = JXG.getDimensions(box);
         if(typeof attributes == 'undefined')
             attributes = {};
-
         if (typeof attributes["boundingbox"] != 'undefined') {
-            w = parseInt(document.getElementById(box).style.width);
-            h = parseInt(document.getElementById(box).style.height);
+            bbox = attributes["boundingbox"];
+            w = parseInt(dimensions.width);
+            h = parseInt(dimensions.height);
             if (attributes["keepaspectratio"]) {
             /**
                                 * If the boundingbox attribute is given and the ratio of height and width of the sides defined by the bounding box and 
                                 * the ratio of the dimensions of the div tag which contains the board do not coincide, 
                                 * then the smaller side is chosen.
                                 */
-                unitX = w/(attributes["boundingbox"][2]-attributes["boundingbox"][0]);
-                unitY = h/(-attributes["boundingbox"][3]+attributes["boundingbox"][1]);
+                unitX = w/(bbox[2]-bbox[0]);
+                unitY = h/(-bbox[3]+bbox[1]);
                 if (unitX>unitY) {
                     unitY = unitX;
                 } else {
                     unitX = unitY;
                 }
             } else {
-                unitX = w/(attributes["boundingbox"][2]-attributes["boundingbox"][0]);
-                unitY = h/(-attributes["boundingbox"][3]+attributes["boundingbox"][1]);
+                unitX = w/(bbox[2]-bbox[0]);
+                unitY = h/(-bbox[3]+bbox[1]);
             }
-            originX = -unitX*attributes["boundingbox"][0];
-            originY = unitY*attributes["boundingbox"][1];
+            originX = -unitX*bbox[0];
+            originY = unitY*bbox[1];
         } else {
             originX = ( (typeof attributes["originX"]) == 'undefined' ? 150 : attributes["originX"]);
             originY = ( (typeof attributes["originY"]) == 'undefined' ? 150 : attributes["originY"]);
@@ -138,8 +140,6 @@ JXG.JSXGraph = new function (forceRenderer) {
         
         if (typeof attributes["showcopyright"] != 'undefined') attributes["showCopyright"] = attributes["showcopyright"];
         var showCopyright = ( (typeof attributes["showCopyright"]) == 'undefined' ? true : attributes["showCopyright"]);
-
-        var dimensions = JXG.getDimensions(box);
 
         if(this.rendererType == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));

@@ -401,7 +401,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * This saves some time during update
     * @type bool
     */
-   this.fullUpdate = false;
+   this.needsFullUpdate = false;
     
    /**
     * if {reducedUpdate} is set to true, then only the dragged element and few (i.e. 2) following
@@ -552,9 +552,7 @@ JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
 **/
 JXG.Board.prototype.clickLeftArrow = function (Event) {
     this.origin.scrCoords[1] += this.canvasWidth*0.1;
-    this.fullUpdate = true;
     this.moveOrigin();
-    this.fullUpdate = false;
 };
 
 /**
@@ -562,9 +560,7 @@ JXG.Board.prototype.clickLeftArrow = function (Event) {
 **/
 JXG.Board.prototype.clickRightArrow = function (Event) {
     this.origin.scrCoords[1] -= this.canvasWidth*0.1;
-    this.fullUpdate = true;
     this.moveOrigin();
-    this.fullUpdate = false;
 };
 
 /**
@@ -572,9 +568,7 @@ JXG.Board.prototype.clickRightArrow = function (Event) {
 **/
 JXG.Board.prototype.clickUpArrow = function (Event) {
     this.origin.scrCoords[2] += this.canvasHeight*0.1;
-    this.fullUpdate = true;
     this.moveOrigin();
-    this.fullUpdate = false;
 };
 
 /**
@@ -582,9 +576,7 @@ JXG.Board.prototype.clickUpArrow = function (Event) {
 **/
 JXG.Board.prototype.clickDownArrow = function (Event) {
     this.origin.scrCoords[2] -= this.canvasHeight*0.1;
-    this.fullUpdate = true;
     this.moveOrigin();
-    this.fullUpdate = false;
 };
 
 /**
@@ -600,17 +592,14 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
     
     // if origin was moved update everything
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
-        this.fullUpdate = true;
         this.moveOrigin();
+    } else {
+        var save = this.reducedUpdate; this.reducedUpdate = false;
+        this.fullUpdate();
+        this.reducedUpdate = save; 
     }
-    this.mode = this.BOARD_MODE_NONE;
-    
-    var save = this.reducedUpdate; this.reducedUpdate = false;
-    this.update();
-    this.reducedUpdate = save; 
-    this.fullUpdate = false;
-    
 
+    this.mode = this.BOARD_MODE_NONE;
     // release dragged object
     this.drag_obj = null;
 };
@@ -693,7 +682,6 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) { 
         this.origin.scrCoords[1] = x - this.drag_dx;
         this.origin.scrCoords[2] = y - this.drag_dy;
-        this.fullUpdate = true;
         this.moveOrigin();
     }
     else if(this.mode == this.BOARD_MODE_DRAG) {
@@ -735,7 +723,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
         this.updateInfobox(this.drag_obj);
     }
     else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
-        // Elemente ohne Highlight, die unter dem aktuellen Mauszeiger liegen, highlighten
+        // Elements  below the mouse pointer which are not highlighted are highlighted.
         for(el in this.objects) {
             if((this.objects[el].hasPoint != undefined) && (this.objects[el].hasPoint(x, y)) && (this.objects[el].visProp['visible'] == true)) {
                 this.renderer.highlight(this.objects[el]);
@@ -744,8 +732,6 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
             }
         }
     }
-    this.fullUpdate = false;
-    
 };
 
 /**
@@ -896,7 +882,7 @@ JXG.Board.prototype.moveOrigin = function () {
     
     this.clearTraces();
     
-    this.update();
+    this.fullUpdate();
     if(this.hasGrid) {
         this.renderer.removeGrid(this);
         this.renderer.drawGrid(this);
@@ -2207,9 +2193,7 @@ JXG.Board.prototype.applyZoom = function() {
     
     this.clearTraces();
 
-    this.fullUpdate = true;
-    this.update();
-    this.fullUpdate = false;
+    this.fullUpdate();
     if(this.hasGrid) {
         this.renderer.removeGrid(this);
         this.renderer.drawGrid(this);
@@ -2424,9 +2408,9 @@ JXG.Board.prototype.updateElements = function(drag) {
     if (!this.reducedUpdate) count = 1;
     for(var el in this.objects) {
         var pEl = this.objects[el];
-        if (!this.fullUpdate && !pEl.needsRegularUpdate && pEl.afterFirstUpdate) { continue; }
+        if (!this.needsFullUpdate && !pEl.needsRegularUpdate && pEl.afterFirstUpdate) { continue; }
         if (drag == null || pEl.id != drag.id) {
-            if (count>=0 || !pEl.afterFirstUpdate || this.fullUpdate) { pEl.update(true); }
+            if (count>=0 || !pEl.afterFirstUpdate || this.needsFullUpdate) { pEl.update(true); }
         } else {
             pEl.update(false);
             count = 5;
@@ -2440,24 +2424,15 @@ JXG.Board.prototype.updateElements = function(drag) {
   * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.updateRenderer = function(drag) {
-/*  
-   // Original  updateRenderer
-    for(var el in this.objects) {
-        var pEl = this.objects[el];
-        if (!this.fullUpdate && !pEl.needsRegularUpdate && pEl.afterFirstUpdate) { continue; }
-        pEl.updateRenderer();
-        pEl.afterFirstUpdate = true;
-    }
-*/    
     var drag = JXG.GetReferenceFromParameter(this, drag);
     
     var count = -1;
     if (!this.reducedUpdate) count = 1;
     for(var el in this.objects) {
         var pEl = this.objects[el];
-        if (!this.fullUpdate && !pEl.needsRegularUpdate && pEl.afterFirstUpdate) { continue; }
+        if (!this.needsFullUpdate && !pEl.needsRegularUpdate && pEl.afterFirstUpdate) { continue; }
         if (drag == null || pEl.id != drag.id) {
-            if (count>=0 || !pEl.afterFirstUpdate || this.fullUpdate) { pEl.updateRenderer(); }
+            if (count>=0 || !pEl.afterFirstUpdate || this.needsFullUpdate) { pEl.updateRenderer(); }
         } else {
             pEl.updateRenderer();
             count = 5;
@@ -2500,8 +2475,8 @@ JXG.Board.prototype.updateHooks = function() {
 };
 
 /**
-  * Runs through all elements and calls their
-  * update() method and update thte conditions.
+  * Runs through most elements and calls their
+  * update() method and update the conditions.
   * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.update = function(drag) {
@@ -2527,6 +2502,17 @@ JXG.Board.prototype.update = function(drag) {
         }
     }
 };
+
+/**
+  * Runs through all elements and calls their
+  * update() method and update the conditions.
+  * This is necessary after zooming and changing the bounding box.
+  */
+JXG.Board.prototype.fullUpdate = function() {
+    this.needsFullUpdate = true;
+    this.update();
+    this.needsFullUpdate = false;
+}
 
 /**
  * Creates a new geometric element of type elementType.
@@ -2666,4 +2652,31 @@ JXG.Board.prototype.suspendUpdate = function() {
 JXG.Board.prototype.unsuspendUpdate = function() {
     this.isSuspendedUpdate = false;
     this.update();
+}
+
+/**
+ * Set the bounding box of the board.
+ * @param {Array} New bounding box [x1,y1,x2,y2]
+ * @param {Bool} keepaspectratio: optional flag
+ */
+JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
+    if (!JXG.IsArray(bbox)) return;
+    var h,w;
+    w = this.canvasWidth;
+    h = this.canvasHeight;
+    if (keepaspectratio) {
+        this.unitX = w/(bbox[2]-bbox[0]);
+        this.unitY = h/(-bbox[3]+bbox[1]);
+        if (this.unitX>this.unitY) {
+            this.unitY = this.unitX;
+        } else {
+            this.unitX = this.unitY;
+        }
+    } else {
+        this.unitX = w/(bbox[2]-bbox[0]);
+        this.unitY = h/(-bbox[3]+bbox[1]);
+    }
+    this.originX = -this.unitX*bbox[0];
+    this.originY = this.unitY*bbox[1];
+    this.fullUpdate();
 }

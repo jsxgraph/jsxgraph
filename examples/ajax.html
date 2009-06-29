@@ -29,9 +29,7 @@ JSXGraph displays the data and prints some statistics.
         b1axisy = brd.createElement('axis', [[0,0], [0,1]], {ticksDelta:5, strokeColor:'#000000'});
         b1axisx.ticksDelta = 5;
         b1axisy.ticksDelta = 5;
-        brd.fullUpdate = true;
-        brd.update();
-        brd.fullUpdate = false;
+        brd.fullUpdate();
         
         var graph1,graph2,graph3,graph4,graph5;
         var periodical;

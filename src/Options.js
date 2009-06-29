@@ -231,9 +231,9 @@ JXG.Options.prototype.useStandardOptions = function(board) {
         }
     }
 
-    board.fullUpdate = true;
+    board.needsFullUpdate = true;
     board.update();
-    board.fullUpdate = false;
+    board.needsFullUpdate = false;
     if(boardHadGrid && board.hasGrid) {
         board.renderer.removeGrid(board);
         board.renderer.drawGrid(board);
