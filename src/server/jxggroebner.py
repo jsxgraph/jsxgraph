@@ -13,9 +13,13 @@ import os
 # the webserver
 if not 'MPLCONFIGDIR' in os.environ:
     os.environ['MPLCONFIGDIR'] = '/tmp'
+# Example for Windows using XAMPP
+#    os.environ['MPLCONFIGDIR'] = 'C:/xampp/tmp'
 
 # Command to start cocoa
 cmd_cocoa = "cocoa"
+# If you're using Windows
+#cmd_cocoa = r"C:\cocoa\cocoa.bat"
 
 # Should'nt be changed, except you know what you're doing
 debug = False;
@@ -27,15 +31,16 @@ matplotlib.use('Agg')
 from matplotlib.pyplot import *
 from matplotlib.contour import *
 
+import subprocess
 import re
 import zlib
 import base64
 import cStringIO
 import cgi
 
-print """\
-Content-Type: text/plain\n
-"""
+print "Content-Type: text/plain\n\n"
+print
+print
 
 # Data required by this script:
 #
@@ -73,23 +78,29 @@ input += "J := Elim(u[1]..u[%s], I);" % number
 
 # Fixed code which hasn't to be adjusted on each run of this script
 input += "G := ReducedGBasis(J);"
-input += "Print \\\"resultsbegin\\\", NewLine;"
-input += "For N := 1 To Len(G) Do\\n"
-input += "    B := Factor(G[N]);\\n"
-input += "    For M := 1 To Len(B) Do\\n"
+input += "Print \"resultsbegin\", NewLine;"
+input += "For N := 1 To Len(G) Do\n"
+input += "    B := Factor(G[N]);\n"
+input += "    For M := 1 To Len(B) Do\n"
 input += "        StarPrintFold(B[M][1], -1);"
 input += "        Print NewLine;"
-input += "    EndFor;\\n"
-input += "EndFor;\\n"
-input += "Print \\\"resultsend\\\", NewLine;"
+input += "    EndFor;\n"
+input += "EndFor;\n"
+input += "Print \"resultsend\", NewLine;"
 
 if debug:
     print "Starting CoCoA with input<br />"
     print input + '<br />'
 
-cocoa = os.popen("echo \"" + input + "\" | " + cmd_cocoa)
+#cocoa = subprocess.Popen([cmd_cocoa], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+cocoa = subprocess.Popen([cmd_cocoa], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+cocoa.stdin.write(input)
+output = cocoa.communicate()[0]
+cocoa.stdin.close()
 
-output = cocoa.read()
+#cocoa = os.popen("echo \"" + input + "\" | " + cmd_cocoa)
+
+#output = cocoa.read()
 
 if debug:
     print "Reading and Parsing CoCoA output" + '<br />'
@@ -99,6 +110,7 @@ if debug:
 result = re.split('resultsend', re.split('resultsbegin', output)[1])[0]
 result = re.split('-------------------------------', re.split('-------------------------------', result)[1])[0]
 result = result.replace("^", "**")
+result = result.replace("\r", "")
 polynomials = re.split('\n', result)
 
 if debug:
@@ -111,7 +123,7 @@ data = cStringIO.StringIO()
 for i in range(0,len(polynomials)):
     if len(polynomials[i]) == 0:
         continue
-    if (not "x" in polynomials[i]) and (not "y" in polynomials[i]):
+    if ((not "x" in polynomials[i]) and (not "y" in polynomials[i])) or ("W" in polynomials[i]):
         continue
 
     x, y = numpy.meshgrid(numpy.linspace(xs, xe, 200), numpy.linspace(ys, ye, 200))
@@ -134,9 +146,10 @@ for i in range(0,len(polynomials)):
 
 enc_data = base64.b64encode(zlib.compress(data.getvalue(), 9))
 
-fd = open('/tmp/tmp.txt', 'w')
-fd.write(data.getvalue())
-fd.close()
+if debug:
+    fd = open('/tmp/tmp.txt', 'w')
+    fd.write(data.getvalue())
+    fd.close()
 
 if debug:
     print data.getvalue() + '<br />'
