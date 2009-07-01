@@ -52,6 +52,7 @@ JXG.Util.Unzip = function (barray){
     var crc;
     var buf32k = new Array(32768);
     var bIdx = 0;
+    var modeZIP=false;
 
     var CRC, SIZE;
     
@@ -131,9 +132,11 @@ JXG.Util.Unzip = function (barray){
     
     function readByte(){
         bits+=8;
-        if (bytepos<bA.length)
+        if (bytepos<bA.length){
+        	if (debug)
+        		document.write(bytepos+": "+bA[bytepos]+"<br>");
             return bA[bytepos++];
-        else
+        } else
             return -1;
     };
 
@@ -649,8 +652,11 @@ JXG.Util.Unzip.prototype.unzip = function() {
  		alert("NEXTFILE");
  	outputArr = [];
  	var tmp = [];
+ 	modeZIP = false;
 	tmp[0] = readByte();
 	tmp[1] = readByte();
+	if (debug)
+		alert("type: "+tmp[0]+" "+tmp[1])
 	if (tmp[0] == parseInt("78",16) && tmp[1] == parseInt("da",16)){ //GZIP
 		if (debug)
 			alert("GEONExT-GZIP");
@@ -663,6 +669,7 @@ JXG.Util.Unzip.prototype.unzip = function() {
     	files++;
 	}
 	if (tmp[0] == parseInt("50",16) && tmp[1] == parseInt("4b",16)){ //ZIP
+		modeZIP = true;
 		tmp[2] = readByte();
 		tmp[3] = readByte();
 		if (tmp[2] == parseInt("3",16) && tmp[3] == parseInt("4",16)){
@@ -674,6 +681,8 @@ JXG.Util.Unzip.prototype.unzip = function() {
 			
 			gpflags = readByte();
 			gpflags |= (readByte()<<8);
+			if (debug)
+				alert("gpflags: "+gpflags);
 			
 			var method = readByte();
 			method |= (readByte()<<8);
@@ -728,8 +737,10 @@ JXG.Util.Unzip.prototype.unzip = function() {
 				fileout = nameBuf;
 			
 			var i = 0;
-			while (i < extralen)
+			while (i < extralen){
 				c = readByte();
+				i++
+			}
 				
 			CRC = 0xffffffff;
 			SIZE = 0;
@@ -785,9 +796,10 @@ function skipdir(){
 		if (debug)
 			alert("CRC:");
 			
-		nextFile();
 			
 	}
+	if (modeZIP)
+		nextFile();
 	
 	tmp[0] = readByte();
 	if (tmp[0] != 8) {
