@@ -19,12 +19,11 @@
 			</div>
 		</div>
 <!-- Inhalte -->
-
         <div class="pages">
             <div class="files">p0</div>
             <div class="titles">JSXGraph</div>
-            
         </div>
+<!--
         <div class="pages">
             <div class="files">p1</div>
             <div class="titles">Future trends?</div>
@@ -64,7 +63,6 @@
         <div class="pages">
             <div class="files">p4</div>
             <div class="titles">Features</div>
-            
         </div>
         
         <div class="pages">
@@ -74,6 +72,44 @@
         <div class="pages">
             <div class="files">p7</div>
             <div class="titles">Dependent point</div>
+        </div>
+        <div class="pages">
+            <div class="files">p8</div>
+            <div class="titles">Geometry</div>
+            Point<br>Line<br>Ray<br>Segment<br>Circle<br>Perpendicular<br>Intersection<br>Angle<br>...
+        </div>
+        <div class="pages">
+            <div class="files">p9</div>
+            <div class="titles">Geometry</div>
+            Scripting with JavaScript enables recursive constructions
+        </div>
+-->
+        <div class="pages">
+            <div class="files">p10</div>
+            <div class="titles">Geometry</div>
+            JavaScript is fast...
+        </div>
+        <div class="pages">
+            <div class="files">p11</div>
+            <div class="titles">Turtle graphics</div>
+            <pre style="font-size:60%">
+var t = brd.createElement('turtle');
+function koch(x,level) {
+    if (level<1) t.fd(x);
+    else {
+        koch(x/3,level-1);
+        t.lt(60);
+        koch(x/3,level-1);
+        t.rt(120);
+        koch(x/3,level-1);
+        t.lt(60);
+        koch(x/3,level-1);
+    }
+}
+t.setPos(-250,0);
+t.rt(90);
+koch(400,7);
+            </pre>
         </div>
         
         

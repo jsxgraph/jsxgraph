@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Point</title>
+        <title></title>
         <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.present.css" />
         <script type="text/javascript" src="../distrib/jquery.min.js"></script>
         <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
@@ -9,26 +9,27 @@
         <div class="other">
             <pre class="code">
   var brd = JXG.JSXGraph.initBoard('box');
-  var A = brd.createElement('point',[0,0]);
+  var A = brd.createElement('point',[0,0],{name:'A'});
   var B = brd.createElement('point',
-             [
-               function(){return A.X();},
-               function(){return A.Y()+1;}
-             ],{name:'B'});
+           [
+             function(){return A.X();},
+             function(){return A.Y()+1;}
+           ],{name:'B'});
             </pre>
-        
         </div>
         <div id="box" class="jxgbox jsxgraph_present_small"></div>
         <!-- Drawing area -->
         <script type="text/javascript">
             /* <![CDATA[ */
             var brd = JXG.JSXGraph.initBoard('box');
+            brd.suspendUpdate();
             var A = brd.createElement('point',[0,0],{name:'A'});
             var B = brd.createElement('point',
                 [
                     function(){return A.X();},
                     function(){return A.Y()+1;}
                 ],{name:'B'});
+            brd.unsuspendUpdate();
             /* ]]> */
         </script>
     </body>

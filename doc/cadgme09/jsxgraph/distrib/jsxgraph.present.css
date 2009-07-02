@@ -29,7 +29,7 @@
 	height:						700px;
 	border:						solid 2px #555;
 	background-color:			#ddf;
-	overlay:					hidden;
+	/*overflow:					hidden;*/
 	background-image:			url(../examples/images/background.png);
 	-moz-box-shadow:			4px 4px 4px #555; 
 	-moz-border-radius:			10px;
