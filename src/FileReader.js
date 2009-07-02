@@ -134,9 +134,9 @@ this.readElements = function(tree, board, format) {
         board.unsuspendUpdate();
     }
     else if(tree.getElementsByTagName('geogebra').length != 0) {
-        board.suspendUpdate();
+        //board.suspendUpdate();
         JXG.GeogebraReader.readGeogebra(tree, board);
-        board.unsuspendUpdate();
+        //board.unsuspendUpdate();
     }
     else if(format.toLowerCase()=='intergeo') {
          JXG.IntergeoReader.readIntergeo(tree, board);

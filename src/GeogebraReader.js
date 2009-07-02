@@ -170,6 +170,8 @@ this.writeBoard = function(tree, board) {
   // delete(JXG.JSXGraph.boards[board.id]);
   // board.id = boardTmp.id;
 
+  board.fullUpdate();
+
   JXG.JSXGraph.boards[board.id] = board;
   board.initGeonextBoard();
   // Update of properties during update() is not necessary in GEONExT files
@@ -207,6 +209,8 @@ this.writeBoard = function(tree, board) {
       // axisY.setProperty('strokeColor:'+axisY.visProp['strokeColor'],'strokeWidth:'+axisY.visProp['strokeWidth'],
       //                   'fillColor:none','highlightStrokeColor:'+axisY.visProp['highlightStrokeColor'], 
       //                   'highlightFillColor:none', 'visible:true');
+      axisX.setProperty({strokeColor:'black'});
+      axisY.setProperty({strokeColor:'black'});
   }
   // var bgcolorR = boardData.getElementsByTagName('bgColor')[0].attributes["r"];
   // var bgcolorG = boardData.getElementsByTagName('bgColor')[0].attributes["g"];

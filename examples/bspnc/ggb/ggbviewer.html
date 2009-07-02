@@ -8,7 +8,7 @@
 <body>
 <body id="body">
    <!-- Drawing area  -->
-   <div id="box" class='jxgbox' style="width:1000px; height:600px; overflow: scroll"></div>
+   <div id="box" class='jxgbox' style="width:1000px; height:600px; /*overflow: scroll;*/"></div>
    <!-- Drawing area  -->
 <form>
     <p>
@@ -125,7 +125,7 @@
     </select>
     <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" />
    </form>
-   <div id="debug" style="overflow:scroll;"></div>
+   <div id="debug" style="display:block; /*overflow:scroll;*/"></div>
    
 <script>
    var board;

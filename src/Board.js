@@ -2678,5 +2678,5 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     }
     this.originX = -this.unitX*bbox[0];
     this.originY = this.unitY*bbox[1];
-    this.fullUpdate();
+    this.moveOrigin();
 }
