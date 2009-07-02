@@ -1,0 +1,147 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<body id="body">
+   <!-- Drawing area  -->
+   <div id="box" class='jxgbox' style="width:1000px; height:600px; overflow: scroll"></div>
+   <!-- Drawing area  -->
+<form>
+    <p>
+	<input type='button' value='Zoom In' onclick='board.zoomIn()'>
+	<input type='button' value='Zoom Out' onclick='board.zoomOut()'>
+	<input type='button' value='Zoom 100%' onclick='board.zoom100()'>
+    <p>
+    Geogebra examples: <br>
+    <select id="beispiele_geo">
+		<option value='./elements/abstand.ggb'>abstand</option>
+		<option value='./elements/dreheobjektumpunkt.ggb'>dreheobjektumpunkt</option>
+		<option value='./elements/flaeche.ggb'>flaeche</option>
+		<option value='./elements/geradedurchzweipunkte.ggb'>geradedurchzweipunkte</option>
+		<option value='./elements/geradenspiegelung.ggb'>geradenspiegelung</option>
+		<option value='./elements/halbkreisdurchzweipunkte.ggb'>halbkreisdurchzweipunkte</option>
+		<option value='./elements/kegelschnittdurchfuenfpunkte.ggb'>kegelschnittdurchfuenfpunkte</option>
+		<option value='./elements/kreisbogenmitmittelpunktundzweipunkte.ggb'>kreisbogenmitmittelpunktundzweipunkte</option>
+		<option value='./elements/kreisdurchdreipunkte.ggb'>kreisdurchdreipunkte</option>
+		<option value='./elements/kreismitmittelpunktdurchpunkt.ggb'>kreismitmittelpunktdurchpunkt</option>
+		<option value='./elements/kreismitmittelpunktundradis.ggb'>kreismitmittelpunktundradis</option>
+		<option value='./elements/kreissektormitmittelpunktdurchzweipunkte.ggb'>kreissektormitmittelpunktdurchzweipunkte</option>
+		<option value='./elements/mittelsenkrechte.ggb'>mittelsenkrechte</option>
+		<option value='./elements/parallelegerade.ggb'>parallelegerade</option>
+		<option value='./elements/polareoderkonguierterdurchmesser.ggb'>polareoderkonguierterdurchmesser</option>
+		<option value='./elements/punkt.ggb'>punkt</option>
+		<option value='./elements/punktspiegelung.ggb'>punktspiegelung</option>
+		<option value='./elements/schieberegler.ggb'>schieberegler</option>
+		<option value='./elements/senkrechtegerade.ggb'>senkrechtegerade</option>
+		<option value='./elements/steigung.ggb'>steigung</option>
+		<option value='./elements/strahldurchzweipunkte.ggb'>strahldurchzweipunkte</option>
+		<option value='./elements/streckedurchzweipunkte.ggb'>streckedurchzweipunkte</option>
+		<option value='./elements/streckemitfesterlaengevonpunkt.ggb'>streckemitfesterlaengevonpunkt</option>
+		<option value='./elements/streckeobjektzentrischvonpunkt.ggb'>streckeobjektzentrischvonpunkt</option>
+		<option value='./elements/tangenten.ggb'>tangenten</option>
+		<option value='./elements/umkreisbogendurchdreipunkte.ggb'>umkreisbogendurchdreipunkte</option>
+		<option value='./elements/umkreissektordurchdreipunkte.ggb'>umkreissektordurchdreipunkte</option>
+		<option value='./elements/vektorzwischenzweipunkten.ggb'>vektorzwischenzweipunkten</option>
+		<option value='./elements/verschiebeobjektumvektor.ggb'>verschiebeobjektumvektor</option>
+		<option value='./elements/vieleck-regelmaessig.ggb'>vieleck-regelmaessig</option>
+		<option value='./elements/vieleck.ggb'>vieleck</option>
+		<option value='./elements/winkel.ggb'>winkel</option>
+		<option value='./elements/winkelhalbierende.ggb'>winkelhalbierende</option>
+		<option value='./elements/winkelmitfestergroesse.ggb'>winkelmitfestergroesse</option>
+		<option value='./worksheets/GS_Konstruktion_worksheet.ggb'>GS_Konstruktion_worksheet</option>
+		<option value='./worksheets/GeradenSpiegelung_worksheet.ggb'>GeradenSpiegelung_worksheet</option>
+		<option value='./worksheets/PunktSpiegelung_worksheet.ggb'>PunktSpiegelung_worksheet</option>
+		<option value='./worksheets/Streckung_worksheet.ggb'>Streckung_worksheet</option>
+		<option value='./worksheets/addition_worksheet.ggb'>addition_worksheet</option>
+		<option value='./worksheets/baumdiagramm3.ggb'>baumdiagramm3</option>
+		<option value='./worksheets/baumdiagramm3b.ggb'>baumdiagramm3b</option>
+		<option value='./worksheets/betrag_worksheet.ggb'>betrag_worksheet</option>
+		<option value='./worksheets/dynagraph.ggb'>dynagraph</option>
+		<option value='./worksheets/dynagraph_worksheet.ggb'>dynagraph_worksheet</option>
+		<option value='./worksheets/einheitsvektor_worksheet.ggb'>einheitsvektor_worksheet</option>
+		<option value='./worksheets/ellip_worksheet.ggb'>ellip_worksheet</option>
+		<option value='./worksheets/euler_gerade1.ggb'>euler_gerade1</option>
+		<option value='./worksheets/euler_gerade2.ggb'>euler_gerade2</option>
+		<option value='./worksheets/exp01_worksheet.ggb'>exp01_worksheet</option>
+		<option value='./worksheets/exp02_worksheet.ggb'>exp02_worksheet</option>
+		<option value='./worksheets/funktion_steigung1.ggb'>funktion_steigung1</option>
+		<option value='./worksheets/funktion_steigung1b.ggb'>funktion_steigung1b</option>
+		<option value='./worksheets/funktion_steigung2.ggb'>funktion_steigung2</option>
+		<option value='./worksheets/funktion_steigung2b.ggb'>funktion_steigung2b</option>
+		<option value='./worksheets/gegenvektor_worksheet.ggb'>gegenvektor_worksheet</option>
+		<option value='./worksheets/geogebra.ggb'>geogebra</option>
+		<option value='./worksheets/glasscheibe1.ggb'>glasscheibe1</option>
+		<option value='./worksheets/glasscheibe2.ggb'>glasscheibe2</option>
+		<option value='./worksheets/glockenkurve.ggb'>glockenkurve</option>
+		<option value='./worksheets/hoehenschnittpunkt.ggb'>hoehenschnittpunkt</option>
+		<option value='./worksheets/huehner_worksheet.ggb'>huehner_worksheet</option>
+		<option value='./worksheets/kreis_gleichung.ggb'>kreis_gleichung</option>
+		<option value='./worksheets/kreis_tangente.ggb'>kreis_tangente</option>
+		<option value='./worksheets/leiter_wand.ggb'>leiter_wand</option>
+		<option value='./worksheets/malthus01_worksheet.ggb'>malthus01_worksheet</option>
+		<option value='./worksheets/malthus02_worksheet.ggb'>malthus02_worksheet</option>
+		<option value='./worksheets/malthus03_worksheet.ggb'>malthus03_worksheet</option>
+		<option value='./worksheets/muehle_worksheet.ggb'>muehle_worksheet</option>
+		<option value='./worksheets/normalverteilung.ggb'>normalverteilung</option>
+		<option value='./worksheets/parabel_abstand.ggb'>parabel_abstand</option>
+		<option value='./worksheets/parabel_scheitel.ggb'>parabel_scheitel</option>
+		<option value='./worksheets/pascal01.ggb'>pascal01</option>
+		<option value='./worksheets/pascal02.ggb'>pascal02</option>
+		<option value='./worksheets/polare_hauptsatz_worksheet.ggb'>polare_hauptsatz_worksheet</option>
+		<option value='./worksheets/polare_kegelschnitt_worksheet.ggb'>polare_kegelschnitt_worksheet</option>
+		<option value='./worksheets/polare_kreis_worksheet.ggb'>polare_kreis_worksheet</option>
+		<option value='./worksheets/poly2_1.ggb'>poly2_1</option>
+		<option value='./worksheets/poly2_2.ggb'>poly2_2</option>
+		<option value='./worksheets/poly2_3.ggb'>poly2_3</option>
+		<option value='./worksheets/poly3_1.ggb'>poly3_1</option>
+		<option value='./worksheets/poly3_2.ggb'>poly3_2</option>
+		<option value='./worksheets/poly3_3.ggb'>poly3_3</option>
+		<option value='./worksheets/poly3_4.ggb'>poly3_4</option>
+		<option value='./worksheets/pythagoras_worksheet.ggb'>pythagoras_worksheet</option>
+		<option value='./worksheets/rechteck_flaeche.ggb'>rechteck_flaeche</option>
+		<option value='./worksheets/see_grundstueck.ggb'>see_grundstueck</option>
+		<option value='./worksheets/sincostan.ggb'>sincostan</option>
+		<option value='./worksheets/sincostan_funktion.ggb'>sincostan_funktion</option>
+		<option value='./worksheets/skalarmult_worksheet.ggb'>skalarmult_worksheet</option>
+		<option value='./worksheets/streckeabtragen_worksheet.ggb'>streckeabtragen_worksheet</option>
+		<option value='./worksheets/streckenteilung_worksheet.ggb'>streckenteilung_worksheet</option>
+		<option value='./worksheets/subtraktion_worksheet.ggb'>subtraktion_worksheet</option>
+		<option value='./worksheets/thales.ggb'>thales</option>
+		<option value='./worksheets/thales_beweis.ggb'>thales_beweis</option>
+		<option value='./worksheets/trigonometrisch1.ggb'>trigonometrisch1</option>
+		<option value='./worksheets/trigonometrisch2.ggb'>trigonometrisch2</option>
+		<option value='./worksheets/trigonometrisch3.ggb'>trigonometrisch3</option>
+		<option value='./worksheets/trigonometrisch4.ggb'>trigonometrisch4</option>
+		<option value='./worksheets/umfangswinkel_worksheet.ggb'>umfangswinkel_worksheet</option>
+		<option value='./worksheets/unterobersumme.ggb'>unterobersumme</option>
+		<option value='./worksheets/vektor_worksheet.ggb'>vektor_worksheet</option>
+		<option value='./worksheets/verschiebung_worksheet.ggb'>verschiebung_worksheet</option>
+		<option value='./worksheets/verzinsung_worksheet.ggb'>verzinsung_worksheet</option>
+		
+    </select>
+    <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" />
+   </form>
+   <div id="debug" style="overflow:scroll;"></div>
+   
+<script>
+   var board;
+
+	function loadFile(bspname,format) {
+	        document.getElementById('box').innerHTML = '';
+	        document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";
+
+	        if(typeof board != 'undefined') {
+	            JXG.JSXGraph.freeBoard(board);
+	        }
+	        var value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value;
+			$('debug').innerHTML += value;
+	        board = JXG.JSXGraph.loadBoardFromFile('box',value, format);
+    }
+</script>
+
+</body>
+</html>
