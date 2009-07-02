@@ -793,7 +793,7 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     var w = 100*el.board.canvasWidth;
     for (var i=0; i<el.numberPoints; i++) {
         var scr = el.points[i].scrCoords;
-        if (Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
+        if (el.curveType!='plot' && Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
         if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (el.curveType=='functiongraph' && (scr[2]>h || scr[2]<-0.5*h)) ) {
             nextSymb = ' M ';
         } else {
