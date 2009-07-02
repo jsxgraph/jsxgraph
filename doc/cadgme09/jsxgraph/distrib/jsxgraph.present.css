@@ -156,8 +156,24 @@
 
 h1 {
     text-align:center;
+    padding-top:2ex;
+    padding-bottom:2ex;
+    line-height:1.5;
+    margin-left:10px;
+    margin-right:10px;
+}
+
+h2 {
+    margin-top:10px;
+    margin-left:10px;
+    margin-right:10px;
+    text-align:center;
 }
 
 li {
     margin:2em;
 }
+
+p {
+    margin:1em;
+  }
