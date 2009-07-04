@@ -15,43 +15,46 @@
 	<input type='button' value='Zoom In' onclick='board.zoomIn()'>
 	<input type='button' value='Zoom Out' onclick='board.zoomOut()'>
 	<input type='button' value='Zoom 100%' onclick='board.zoom100()'>
+	<input type='button' value='Show XML' onclick='board.showXML()'>
     <p>
     Geogebra examples: <br>
     <select id="beispiele_geo">
-		<option value='./elements/abstand.ggb'>abstand</option>
-		<option value='./elements/dreheobjektumpunkt.ggb'>dreheobjektumpunkt</option>
+		<option value='./elements/abstand.ggb'>[X] abstand</option>
+		<option value='./elements/dreheobjektumpunkt.ggb'>[\] dreheobjektumpunkt</option>
+		<option value='./elements/geradedurchzweipunkte.ggb'>[X] geradedurchzweipunkte</option>
+		<option value='./elements/geradenspiegelung.ggb'>[X] geradenspiegelung</option>
+		<option value='./elements/kreisbogenmitmittelpunktundzweipunkte.ggb'>[X] kreisbogenmitmittelpunktundzweipunkte</option>
+		<option value='./elements/kreisdurchdreipunkte.ggb'>[X] kreisdurchdreipunkte</option>
+		<option value='./elements/kreismitmittelpunktdurchpunkt.ggb'>[X] kreismitmittelpunktdurchpunkt</option>
+		<option value='./elements/kreismitmittelpunktundradis.ggb'>[X] kreismitmittelpunktundradis</option>
+		<option value='./elements/kreissektormitmittelpunktdurchzweipunkte.ggb'>[X] kreissektormitmittelpunktdurchzweipunkte</option>
+		<option value='./elements/mittelsenkrechte.ggb'>[ ] mittelsenkrechte (mit Hilfsmittelpunkt aber nur Strecke)</option>
+		<option value='./elements/parallelegerade.ggb'>[X] parallelegerade</option>
 		<option value='./elements/flaeche.ggb'>flaeche</option>
-		<option value='./elements/geradedurchzweipunkte.ggb'>geradedurchzweipunkte</option>
-		<option value='./elements/geradenspiegelung.ggb'>geradenspiegelung</option>
-		<option value='./elements/halbkreisdurchzweipunkte.ggb'>halbkreisdurchzweipunkte</option>
-		<option value='./elements/kegelschnittdurchfuenfpunkte.ggb'>kegelschnittdurchfuenfpunkte</option>
-		<option value='./elements/kreisbogenmitmittelpunktundzweipunkte.ggb'>kreisbogenmitmittelpunktundzweipunkte</option>
-		<option value='./elements/kreisdurchdreipunkte.ggb'>kreisdurchdreipunkte</option>
-		<option value='./elements/kreismitmittelpunktdurchpunkt.ggb'>kreismitmittelpunktdurchpunkt</option>
-		<option value='./elements/kreismitmittelpunktundradis.ggb'>kreismitmittelpunktundradis</option>
-		<option value='./elements/kreissektormitmittelpunktdurchzweipunkte.ggb'>kreissektormitmittelpunktdurchzweipunkte</option>
-		<option value='./elements/mittelsenkrechte.ggb'>mittelsenkrechte</option>
-		<option value='./elements/parallelegerade.ggb'>parallelegerade</option>
-		<option value='./elements/polareoderkonguierterdurchmesser.ggb'>polareoderkonguierterdurchmesser</option>
 		<option value='./elements/punkt.ggb'>punkt</option>
-		<option value='./elements/punktspiegelung.ggb'>punktspiegelung</option>
-		<option value='./elements/schieberegler.ggb'>schieberegler</option>
-		<option value='./elements/senkrechtegerade.ggb'>senkrechtegerade</option>
-		<option value='./elements/steigung.ggb'>steigung</option>
-		<option value='./elements/strahldurchzweipunkte.ggb'>strahldurchzweipunkte</option>
-		<option value='./elements/streckedurchzweipunkte.ggb'>streckedurchzweipunkte</option>
-		<option value='./elements/streckemitfesterlaengevonpunkt.ggb'>streckemitfesterlaengevonpunkt</option>
-		<option value='./elements/streckeobjektzentrischvonpunkt.ggb'>streckeobjektzentrischvonpunkt</option>
-		<option value='./elements/tangenten.ggb'>tangenten</option>
+		<option value='./elements/punktspiegelung.ggb'>[X] punktspiegelung</option>
+		<option value='./elements/schieberegler.ggb'>schieberegler (slider + abhaengiger Punkt)</option>
+		<option value='./elements/senkrechtegerade.ggb'>[X] senkrechtegerade (Update um Linien zu zeigen und Punkt weg)</option>
+		<option value='./elements/strahldurchzweipunkte.ggb'>[X] strahldurchzweipunkte</option>
+		<option value='./elements/streckedurchzweipunkte.ggb'>[X] streckedurchzweipunkte</option>
+		<option value='./elements/tangenten.ggb'>[ ] tangenten</option>
 		<option value='./elements/umkreisbogendurchdreipunkte.ggb'>umkreisbogendurchdreipunkte</option>
 		<option value='./elements/umkreissektordurchdreipunkte.ggb'>umkreissektordurchdreipunkte</option>
 		<option value='./elements/vektorzwischenzweipunkten.ggb'>vektorzwischenzweipunkten</option>
 		<option value='./elements/verschiebeobjektumvektor.ggb'>verschiebeobjektumvektor</option>
 		<option value='./elements/vieleck-regelmaessig.ggb'>vieleck-regelmaessig</option>
-		<option value='./elements/vieleck.ggb'>vieleck</option>
-		<option value='./elements/winkel.ggb'>winkel</option>
-		<option value='./elements/winkelhalbierende.ggb'>winkelhalbierende</option>
+		<option value='./elements/vieleck.ggb'>[X] vieleck</option>
+		<option value='./elements/winkel.ggb'>[X] winkel</option>
+		<option value='./elements/winkelhalbierende.ggb'>[X] winkelhalbierende</option>
 		<option value='./elements/winkelmitfestergroesse.ggb'>winkelmitfestergroesse</option>
+		<option>?????????????????</option>
+		<option value='./elements/streckemitfesterlaengevonpunkt.ggb'>streckemitfesterlaengevonpunkt</option>
+		<option value='./elements/streckeobjektzentrischvonpunkt.ggb'>streckeobjektzentrischvonpunkt</option>
+		<option value='./elements/steigung.ggb'>steigung (slope)</option>
+		<option value='./elements/halbkreisdurchzweipunkte.ggb'>halbkreisdurchzweipunkte (semicircle)</option>
+		<option value='./elements/kegelschnittdurchfuenfpunkte.ggb'>kegelschnittdurchfuenfpunkte (conic)</option>
+		<option value='./elements/polareoderkonguierterdurchmesser.ggb'>polareoderkonguierterdurchmesser (polar)</option>
+		<option>-----------------</option>
 		<option value='./worksheets/GS_Konstruktion_worksheet.ggb'>GS_Konstruktion_worksheet</option>
 		<option value='./worksheets/GeradenSpiegelung_worksheet.ggb'>GeradenSpiegelung_worksheet</option>
 		<option value='./worksheets/PunktSpiegelung_worksheet.ggb'>PunktSpiegelung_worksheet</option>
