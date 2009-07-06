@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.present.css" />
+        <link rel="Stylesheet" type="text/css" href="../distrib/css/ui-lightness/jquery-ui-1.7.2.custom.css"/>
+        <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="../distrib/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+<style type="text/css">
+        #slider-frame > div.sliders { padding: 10px !important; };
+</style>
+    <script type="text/javascript">
+    $(function() {
+        $("#sliderc1").slider({
+            orientation: "horizontal",range: "min",min: 0,max: 100,value: 60,
+            slide: function(event, ui) {
+                $("#c1").val((ui.value*0.01).toFixed(2));
+                c1 = ui.value*0.01;
+                board.update();
+            }
+        });
+        $("#sliderf1").slider({
+            orientation: "horizontal",range: "min",min: 1,max: 100,value: 7,
+            slide: function(event, ui) {
+                $("#f1").val(ui.value);
+                f1 = ui.value;
+                board.update();
+            }
+        });
+        $("#c1").val($("#sliderc1").slider("value")*0.01);
+        $("#f1").val($("#sliderf1").slider("value"));
+ 
+        $("#sliderc2").slider({
+            orientation: "horizontal",range: "min",min: 0,max: 100,value: 0,
+            slide: function(event, ui) {
+                $("#c2").val(ui.value*0.01);
+                c2 = ui.value*0.01;
+                board.update();
+            }
+        });
+        $("#sliderf2").slider({
+            orientation: "horizontal",range: "min",min: 1,max: 100,value: 17,
+            slide: function(event, ui) {
+                $("#f2").val(ui.value);
+                f2 = ui.value;
+                board.update();
+            }
+        });
+        $("#c2").val($("#sliderc2").slider("value")*0.01);
+        $("#f2").val($("#sliderf2").slider("value"));
+    });
+    </script>
+    </head>
+    <body class="jsxgraph_body">
+        <div id="box" class="jxgbox jsxgraph_present"></div>
+<div id="draggable" class="sliders" 
+    style="margin:5px; 
+            width:400px;
+            border-color:black; border-width:1; border-style:dashed; 
+            -moz-border-radius:10; "
+>
+  <p>
+    <label for="c1">c1:</label>
+    <input type="text" id="c1" style="border:0; width:50; color:#f6931f; font-weight:bold;" />
+    <label for="f1">f1:</label>
+    <input type="text" id="f1" style="border:0; width:50; color:#f6931f; font-weight:bold;" />
+    <label for="c2">c2:</label>
+    <input type="text" id="c2" style="border:0; width:50; color:#f6931f; font-weight:bold;" />
+    <label for="f2">f2:</label>
+    <input type="text" id="f2" style="border:0; width:50; color:#f6931f; font-weight:bold;" />
+  </p>
+  <div id="sliderc1" style="width:300px;margin:10px;"></div>
+  <div id="sliderf1" style="width:300px;margin:10px;"></div>
+  <div id="sliderc2" style="width:300px;margin:10px;"></div>
+  <div id="sliderf2" style="width:300px;margin:10px;"></div>
+</div>
+
+<script type="text/javascript">
+            /* <![CDATA[ */
+$(document).ready(function(){
+  $("#draggable").draggable().css('position','absolute').css('top','100px');
+});
+            
+board = JXG.JSXGraph.initBoard('box', {boundingbox:[-2.5,2.5,2.5,-2.5], keepaspectratio:true});
+var c1 = 0.6;
+var c2 = 0.0; 
+var f1 = 7; 
+var f2 = 17;
+var c = board.createElement('curve', [
+              function(t) { return Math.cos(t)+ c1*Math.cos(f1*t)+ c2*Math.sin(f2*t);},
+              function(t) { return Math.sin(t)+ c1*Math.sin(f1*t)+ c2*Math.cos(f2*t);},
+              0,2.02*Math.PI],{strokeWidth:2});
+
+        /* ]]> */
+        </script>
+    </body>
+</html>
