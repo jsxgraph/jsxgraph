@@ -23,7 +23,7 @@
             <div class="files">p0</div>
             <div class="titles">JSXGraph</div>
         </div>
-<!--
+
         <div class="pages">
             <div class="files">p1</div>
             <div class="titles">Future trends?</div>
@@ -86,7 +86,9 @@
         <div class="pages">
             <div class="files">p10</div>
             <div class="titles">Curves</div>
-            JavaScript is fast...
+            Space filling Hilbert curve:
+            <p>
+            Who says JavaScript is slow...?
         </div>
         <div class="pages">
             <div class="files">p11</div>
@@ -109,6 +111,7 @@ t.setPos(-250,0);
 t.rt(90);
 koch(400,7);
             </pre>
+16385 data points            
         </div>
         
         <div class="pages">
@@ -151,13 +154,22 @@ t.moveTo([dx+t.X(),dy+t.Y()]);
             <div class="titles">Calculus</div>
             Power series
         </div>
--->
+
         <div class="pages">
             <div class="files">p18</div>
             <div class="titles">Calculus</div>
             Various possibilities for interpolation
         </div>
-           
+
+        <div class="pages">
+            <div class="files">p23</div>
+            <div class="titles">Advanced interaction</div>
+            Controlling JSXGraph from the "outside".
+            <p>
+            There is no "inside" or "outside" of the construction
+            anymore
+        </div>
+
         <!-- Automatic proves -->
 		<div class="pages">
 			<div class="files">p19</div>
@@ -175,6 +187,54 @@ t.moveTo([dx+t.X(),dy+t.Y()]);
 			<div class="titles">CAS way</div>
             <div id="debug" style="padding: 0px; margin: 0px; font-size: 14px; left: -20px"></div>
 		</div>
+
+        <div class="pages">
+            <div class="files">p24</div>
+            <div class="titles">Supported file formats</div>
+            Loading a GEONE<sub>x</Sub>T file:
+            <pre style="font-size:60%">
+JXG.JSXGraph.loadBoardFromFile(
+    'box', 
+    'wuerfel_drehbar_dreieck.gxt', 
+    'Geonext'
+    );            
+</pre>
+&rarr; GEONE<sub>x</Sub>T 2
+        </div>
+
+        <div class="pages">
+            <div class="files">p21</div>
+            <div class="titles">Supported file formats</div>
+            Loading an Intergeo file:
+            <pre style="font-size:60%">
+JXG.JSXGraph.loadBoardFromFile(
+    'box', 
+    'intergeo2.i2g', 
+    'Intergeo'
+    );            
+</pre>
+JSXGraph has (the first?) JavaScript implementations of gunzip and unzip
+        </div>
+
+        <div class="pages">
+            <div class="files">p21</div>
+            <div class="titles">Supported file formats</div>
+            Loading a GeoGebra file:
+            <pre style="font-size:60%">
+JXG.JSXGraph.loadBoardFromFile(
+    'box', 
+    'xxx', 
+    'Geogebra'
+    );            
+</pre>
+        </div>
+
+        <div class="pages">
+            <div class="files">p22</div>
+            <div class="titles"></div>
+            Questions?
+        </div>
+
 <!--      
 		<div class="pages">
 			<div class="files">present-polygon</div>

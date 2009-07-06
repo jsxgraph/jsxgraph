@@ -18,8 +18,8 @@ var p1 = brd.createElement('point',[1,0]);
 var circ = brd.createElement('circle',[p0,p1]);
 var rot = brd.createElement('transform', [function() {return Math.PI*2.0/n.Value();},p0], {type:'rotate'});  // angle, rotation center
 var ptmp = brd.createElement('point',[0,0],{visible:false,withLabel:false});  // dummy point for the rotation
-var cOut = brd.createElement('curve',[[],[]],{fillColor:'#0033ff',highlightFillColor:'#0033ff',fillOpacity:0.5,highlightFillOpacity:0.5});
-var cIn = brd.createElement('curve',[[],[]],{fillColor:'#ff3300',highlightFillColor:'#ff3300',fillOpacity:0.5,highlightFillOpacity:0.5});
+var cOut = brd.createElement('curve',[[],[]],{fillColor:'#0033ff',highlightFillColor:'#0033ff',fillOpacity:0.4,highlightFillOpacity:0.4});
+var cIn = brd.createElement('curve',[[],[]],{fillColor:'#ff3300',highlightFillColor:'#ff3300',fillOpacity:0.4,highlightFillOpacity:0.4});
  
 var tCirc = brd.createElement('text',[-1.5,-1.4,function(){
     return 'Arc length of the circle (radius='+circ.getRadius().toFixed(2)+') = ' + (2.0*circ.getRadius()*Math.PI).toFixed(4);

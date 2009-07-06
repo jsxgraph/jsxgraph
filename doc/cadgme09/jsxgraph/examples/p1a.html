@@ -4,17 +4,25 @@
         <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.present.css" />
         <script type="text/javascript" src="../distrib/jquery.min.js"></script>
         <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+  <script>
+  $(document).ready(function(){
+    $(document.body).click(function () {
+      $("li:hidden:first").fadeIn("slow");
+    });
+
+  });
+  </script>
     </head>
 <body class="jsxgraph_body">
 
 <h2>How to do graphics in the web browser?</h2>
 <ul>
-<li> Java-Plugin: <i>Cinderella, Geonext, Geogebra</i>
+<li style="display:none"> Java-Plugin: <i>Cinderella, GEONE<sub>x</sub>T, GeoGebra</i>
     <p>Who uses Java applets outside of the educational sector?</p>
     <p>Does your grandma use a Java-Applet?</p>
     <p>What to do on the iPhone, Blackberry, Palm Pre, Android?</p>
     </li>
-<li> Flash-Plugin: <i>Tracenpoche </i>
+<li style="display:none"> Flash-Plugin: <i>Tracenpoche </i>
     <p>HTML 5 contains a video element and improved formating </p>
     <p>After all, what happened to the Realplayer?</p>
     </li>
