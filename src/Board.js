@@ -438,6 +438,9 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
  * @return {String} Unique name for the object.
  */
 JXG.Board.prototype.generateName = function(object) {
+    if(object.type == JXG.OBJECT_TYPE_TICKS)
+        return;
+    
     var possibleNames;
     if(object.elementClass == JXG.OBJECT_CLASS_POINT) {
         // points have capital letters 

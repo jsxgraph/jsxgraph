@@ -62,7 +62,7 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name) {
      * @final
      * @type int
      */
-    this.elementClass = JXG.OBJECT_CLASS_LINE;
+    this.elementClass = JXG.OBJECT_CLASS_OTHER;
 
     /**
      * The line the ticks belong to.
