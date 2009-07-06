@@ -1,0 +1,171 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.present.css" />
+        <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+    </head>
+    <body class="jsxgraph_body">
+    <form><textarea cols=70 rows=8 id="inputtext">var level = 6;
+var axiom = 'A';
+var rules = {
+    'A':'B-A-B',
+    'B':'A+B+A',
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'A':'F', 
+                'B':'F', 
+                '+':'+', 
+                '-':'-', 
+                '[':'[', 
+                ']':']'  
+              }; 
+var angle = 60; 
+var len = 300/Math.pow(2,level); 
+t.setPos(-250*Math.pow(-1,level),-150); 
+t.rt(90*Math.pow(-1,level)); 
+</textarea><br>
+<input type="button" value="Plant" onClick="setCode1()">
+<input type="button" value="Penrose" onClick="setCode2()">
+<input type="button" value="run" onClick="run()">
+<input type="button" value="clear" onClick="clearturtle()">
+</form>
+        <div id="box" class="jxgbox jsxgraph_present_small"></div>
+        <!-- Drawing area -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 180, unitX: 1, unitY: 1});
+var t = brd.createElement('turtle',[],{strokeColor:'#0000ff',highlightStrokeColor:'#0000ff'});
+
+function expander(level,axiom,rules) {
+    this.axiom = axiom;
+    this.rules = rules;
+    this.source = (level>1) ? new expander(level-1,axiom,rules) : (new function() {
+        // Axiom:
+        this.code = axiom;
+        this.pos = 0;
+        this.next = function() {
+            if (this.pos>=this.code.length) return null;
+            return this.code.charAt(this.pos++);
+        }
+    });
+    
+    this.code = '';
+    this.pos = 0;
+    this.next = function() {
+        while (this.pos>=this.code.length) { // produce new symbols from source
+            this.pos = 0;
+            var pattern = this.source.next();
+            if (!pattern) return null // Finished
+            this.code = this.rules[pattern];
+        }
+        return this.code.charAt(this.pos++);
+    }
+}
+
+function plotter(generator,symbols,len,angle,t,shrink) {
+    for (var c; c=generator.next(); c) {
+        switch(symbols[c]) {
+            case 'F':
+                t.fd(len);
+                break;
+            case 'f':
+                t.penUp();
+                t.fd(len);
+                t.penDown();
+                break;
+            case '+':
+                t.lt(angle);
+                break;
+            case '-':
+                t.rt(angle);
+                break;
+            case '[':
+                t.pushTurtle();
+                len *= shrink;
+                break;
+            case ']':
+                t.popTurtle();
+                len /= shrink;
+                break;
+            default:
+                ;
+        }
+    }
+    return null;
+  }
+var shrink = 1.0;
+ 
+function run(nr) {
+  brd.suspendUpdate();
+  var code = document.getElementById('inputtext').value;
+  if (code=='') { return; }
+  t.cs();
+  t.hideTurtle();
+  eval(code);
+  var generator = new expander(level,axiom,rules);
+  plotter(generator,symbols,len,angle,t,shrink);
+  brd.unsuspendUpdate();
+}
+
+function clearturtle() {
+  t.cs();
+}
+function setCode1() {
+document.getElementById('inputtext').value = "var level = 4;\n"+
+"var axiom = 'X';\n"+
+"var rules = {\n"+
+"    'F' : 'FF',\n"+
+"    'X' : 'F-[[X]+X]+F[+FX]-X',\n"+
+"    '[' : '[',\n"+
+"    ']' : ']',\n"+
+"    '+' : '+',\n"+
+"    '-' : '-'\n"+
+"};\n"+
+"var symbols = { 'F':'F',\n"+
+"                'X':' ',\n"+
+"                '+':'+',\n"+
+"                '-':'-',\n"+
+"                '[':'[',\n"+
+"                ']':']'\n"+
+"              } ;\n"+
+"              \n"+
+"var angle = 22.5;\n"+
+"var len = 500/Math.pow(3,level);\n"+
+"t.setPos(0,-150);\n"+
+"t.setProperty({strokeColor:'green',strokeWidth:2});\n";
+}
+function setCode2() {
+document.getElementById('inputtext').value = "var level = 3;\n"+
+"var axiom = '[7]++[7]++[7]++[7]++[7]';\n"+
+"var rules = {\n"+
+"    '6' : '81++91----71[-81----61]++',\n"+
+"    '7' : '+81--91[---61--71]+',\n"+
+"    '8' : '-61++71[+++81++91]-',\n"+
+"    '9' : '--81++++61[+91++++71]--71',\n"+
+"    '1' : '',\n"+
+"    '+' : '+',\n"+
+"    '-' : '-',\n"+
+"    '[' : '[',\n"+
+"    ']' : ']'\n"+
+"  };\n"+
+"var symbols = { \n"+
+"                '1':'F',\n"+
+"                '6':' ',\n"+
+"                '7':' ',\n"+
+"                '8':' ',\n"+
+"                '9':' ',\n"+
+"                '+':'+',\n"+
+"                '-':'-',\n"+
+"                '[':'[',\n"+
+"                ']':']'\n"+
+"               };\n"+
+"var angle = 36.0;\n"+
+"var len = 100/(level);\n";
+}
+
+    /* ]]> */
+        </script>
+    </body>
+</html>

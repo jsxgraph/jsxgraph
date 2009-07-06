@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.present.css" />
+        <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+    </head>
+    <body class="jsxgraph_body">
+        <div id="box" class="jxgbox jsxgraph_present"></div>
+        <!-- Drawing area -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, axis:true, grid:true, unitX: 50, unitY: 50});
+brd.suspendUpdate();
+brd.createElement('functiongraph', [function(t){ return Math.sin(t); },-10, 10],{strokeColor: "#cccccc"});
+var s = brd.createElement('slider', [[0.75,-1.5],[5.75,-1.5],[0,0,10]], {name:'S',snapWidth:1});
+brd.createElement('functiongraph', [
+  function(t) {
+    var val = 0;
+    for(var i = 0; i < s.Value()+1; i++) {
+      val = val + Math.pow(-1, i) * Math.pow(t, 2 * i + 1) / brd.factorial(2*i+1);
+    }
+    return val;
+  }, -10, 10], {strokeColor: "#bb0000"});
+brd.unsuspendUpdate();
+        /* ]]> */
+        </script>
+    </body>
+</html>
