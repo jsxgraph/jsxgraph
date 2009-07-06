@@ -47,7 +47,7 @@ JXG.Math.Symbolic = {};
 JXG.Math.Symbolic.generateSymbolicCoordinatesPartial = function(board, element, variable, append) {
     function makeCoords(num) {
         if (append == 'underscore')
-            return '' + variable + '_' + num;
+            return '' + variable + '_{' + num + '}';
         else if (append == 'brace')
             return '' + variable + '[' + num + ']';
         else
