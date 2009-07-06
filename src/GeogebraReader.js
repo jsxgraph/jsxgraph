@@ -173,9 +173,9 @@ this.writeBoard = function(tree, board, registeredElements) {
   // board.fullUpdate();
 
   JXG.JSXGraph.boards[board.id] = board;
-  board.initGeonextBoard();
+  //board.initGeonextBoard();
   // Update of properties during update() is not necessary in GEONExT files
-  board.renderer.enhancedRendering = false;
+  board.renderer.enhancedRendering = true;
 
   // Eigenschaften der Zeichenflaeche setzen
   // das Grid zeichnen
@@ -234,7 +234,7 @@ this.writeElement = function(tree, board, output, input, cmd) {
 	gxtEl.type = cmd;
   }
 
-  $('debug').innerHTML += "<br><b>Konstuiere</b> "+ gxtEl.label +"("+ gxtEl.type +"): <br/>";
+  $('debug').innerHTML += "<br><b>Konstruiere</b> "+ gxtEl.label +"("+ gxtEl.type +"): <br/>";
 
   switch(gxtEl.type) {
     case "point":
@@ -274,6 +274,11 @@ this.writeElement = function(tree, board, output, input, cmd) {
       gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+
+for (var x in attr) {
+    $('debug').innerHTML += x+':'+attr[x]+' ';
+}    
+$('debug').innerHTML += '<br>';
 
       if(JXG.GetReferenceFromParameter(board, input[1].id).type == 1330925652) var type = 'line'; // Punkt -> Gerade
       else if(JXG.GetReferenceFromParameter(board, input[1].id).type == 1330924622) var type = 'parallel'; // Parallele durch Punkt
@@ -616,7 +621,6 @@ this.readGeogebra = function(tree, board) {
 
   // Achsen registieren
   registeredElements = JXG.GeogebraReader.writeBoard(tree, board, registeredElements);
-
   var constructions = tree.getElementsByTagName("construction");
   for (var t=0; t<constructions.length; t++) {
 

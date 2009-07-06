@@ -233,7 +233,6 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
     }
     this.board.elementsByName[name] = this;
     this.name = name;
-    
     this.visProp['strokeColor'] = this.board.options.elements.color.strokeColor //'#36393D';
     this.visProp['highlightStrokeColor'] = this.board.options.elements.color.highlightStrokeColor;
     this.visProp['fillColor'] = this.board.options.elements.color.fillColor;
