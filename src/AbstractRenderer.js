@@ -53,10 +53,10 @@ JXG.AbstractRenderer = function() {
  * @see #updatePoint
  */
 JXG.AbstractRenderer.prototype.drawPoint = function(el) {
-    var node;
-    var node2;
-    
-    var size = this.getPointSize(el.visProp['style']);
+    var node, 
+        node2;
+        // size = this.getPointSize(el.visProp['style']); // not used.
+        
     if(el.visProp['style'] == 0 || el.visProp['style'] == 1 || el.visProp['style'] == 2) { // x
         node = this.createPrimitive('line',el.id+'_x1');
         node2 = this.createPrimitive('line',el.id+'_x2');
@@ -97,6 +97,7 @@ JXG.AbstractRenderer.prototype.drawPoint = function(el) {
  * @see #drawPoint
  */
 JXG.AbstractRenderer.prototype.updatePoint = function(el) {
+    var size;
     if (this.enhancedRendering) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
@@ -107,7 +108,7 @@ JXG.AbstractRenderer.prototype.updatePoint = function(el) {
         }
     }
 
-    var size = this.getPointSize(el.visProp['style']);
+    size = this.getPointSize(el.visProp['style']);
     if(el.visProp['style'] == 0 || el.visProp['style'] == 1 || el.visProp['style'] == 2) { // x
         this.updateLinePrimitive(el.rendNodeX1,
             el.coords.scrCoords[1]-size,el.coords.scrCoords[2]-size,
@@ -181,10 +182,10 @@ JXG.AbstractRenderer.prototype.drawLine = function(el) {
  * @see #calcStraight
  */
 JXG.AbstractRenderer.prototype.updateLine = function(el) {
-    //var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point1.coords.usrCoords[1], el.point1.coords.usrCoords[2]], el.board);
-    //var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords[1], el.point2.coords.usrCoords[2]], el.board);
-    var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
-    var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
+    var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
+        screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
+        ax, ay, bx, by, beta, sgn, x, y, m;
+        
     if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
        this.calcStraight(el,screenCoords1,screenCoords2); 
     } 
@@ -193,20 +194,20 @@ JXG.AbstractRenderer.prototype.updateLine = function(el) {
 
     // Update the image which is connected to the line:
     if (el.image!=null) {
-        var ax = screenCoords1.scrCoords[1];
-        var ay = screenCoords1.scrCoords[2];
-        var bx = screenCoords2.scrCoords[1];
-        var by = screenCoords2.scrCoords[2];
-        var beta;
-        var sgn = (bx-ax>0)?1:-1;
+        ax = screenCoords1.scrCoords[1];
+        ay = screenCoords1.scrCoords[2];
+        bx = screenCoords2.scrCoords[1];
+        by = screenCoords2.scrCoords[2];
+        beta;
+        sgn = (bx-ax>0)?1:-1;
         if (Math.abs(bx-ax)>0.0000001) {
             beta = Math.atan((by-ay)/(bx-ax))+ ((sgn<0)?Math.PI:0);  
         } else {
             beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
         }
-        var x = 250; //ax;
-        var y = 256; //ay;//+el.image.size[1]*0.5;
-        var m = [
+        x = 250; //ax;
+        y = 256; //ay;//+el.image.size[1]*0.5;
+        m = [
                  [1,                                    0,             0],
                  [x*(1-Math.cos(beta))+y*Math.sin(beta),Math.cos(beta),-Math.sin(beta)],
                  [y*(1-Math.cos(beta))-x*Math.sin(beta),Math.sin(beta), Math.cos(beta)]
@@ -233,6 +234,7 @@ JXG.AbstractRenderer.prototype.updateLine = function(el) {
  */
 JXG.AbstractRenderer.prototype.drawCurve = function(el) { 
     var node = this.createPrimitive('path',el.id);
+    
     //node.setAttributeNS(null, 'stroke-linejoin', 'round');
     this.appendChildPrimitive(node,'curves');
     el.rendNode = node;
@@ -702,18 +704,19 @@ JXG.AbstractRenderer.prototype.updateImage = function(el) {
  * @see #removeGrid
  */
 JXG.AbstractRenderer.prototype.drawGrid = function(board) { 
+    var gridX = board.gridX,
+        gridY = board.gridY,
+        k = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0], board),
+        k2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board),
+        tmp = Math.ceil(k.usrCoords[1]),
+        j = 0,
+        i, j2, l, l2,
+        gx, gy, topLeft, bottomRight, node2,
+        el;
+        
     board.hasGrid = true;
-    var gridX = board.gridX;
-    var gridY = board.gridY;
 
-    var node;
-
-    var k = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0], board);
-    var k2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
-
-    var tmp = Math.ceil(k.usrCoords[1]);
-    var j = 0;
-    for(var i = 0; i <= gridX+1; i++) {
+    for(i = 0; i <= gridX+1; i++) {
         if(tmp-i/gridX < k.usrCoords[1]) {
             j = i-1;
             break;
@@ -721,8 +724,8 @@ JXG.AbstractRenderer.prototype.drawGrid = function(board) {
     }
 
     tmp = Math.floor(k2.usrCoords[1]);
-    var j2 = 0;
-    for(var i = 0; i <= gridX+1; i++) {
+    j2 = 0;
+    for(i = 0; i <= gridX+1; i++) {
         if(tmp+i/gridX > k2.usrCoords[1]) {
             j2 = i-1;
             break;
@@ -730,8 +733,8 @@ JXG.AbstractRenderer.prototype.drawGrid = function(board) {
     } 
 
     tmp = Math.ceil(k2.usrCoords[2]);
-    var l2 = 0;
-    for(var i = 0; i <= gridY+1; i++) {
+    l2 = 0;
+    for(i = 0; i <= gridY+1; i++) {
         if(tmp-i/gridY < k2.usrCoords[2]) {
             l2 = i-1;
             break;
@@ -739,34 +742,34 @@ JXG.AbstractRenderer.prototype.drawGrid = function(board) {
     }
 
     tmp = Math.floor(k.usrCoords[2]);
-    var l = 0;
-    for(var i = 0; i <= gridY+1; i++) {
+    l = 0;
+    for(i = 0; i <= gridY+1; i++) {
         if(tmp+i/gridY > k.usrCoords[2]) {
             l = i-1;
             break;
         }
     }
 
-    var gx = Math.round((1.0/gridX)*board.zoomX*board.unitX);
-    var gy = Math.round((1.0/gridY)*board.zoomY*board.unitY);
+    gx = Math.round((1.0/gridX)*board.zoomX*board.unitX);
+    gy = Math.round((1.0/gridY)*board.zoomY*board.unitY);
 
-    var topLeft = new JXG.Coords(JXG.COORDS_BY_USER, 
-                                 [Math.ceil(k.usrCoords[1])-j/gridX, Math.floor(k.usrCoords[2])+l/gridY],
+    topLeft = new JXG.Coords(JXG.COORDS_BY_USER, 
+                             [Math.ceil(k.usrCoords[1])-j/gridX, Math.floor(k.usrCoords[2])+l/gridY],
+                             board);
+    bottomRight = new JXG.Coords(JXG.COORDS_BY_USER,
+                                 [Math.floor(k2.usrCoords[1])+j2/gridX, Math.ceil(k2.usrCoords[2])-l2/gridY],
                                  board);
-    var bottomRight = new JXG.Coords(JXG.COORDS_BY_USER,
-                                     [Math.floor(k2.usrCoords[1])+j2/gridX, Math.ceil(k2.usrCoords[2])-l2/gridY],
-                                     board);
                                      
-    var node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
+    node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
     if(!board.snapToGrid) {
-        var el = new Object();
+        el = new Object();
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";
         this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
     }
     else {
-        var el = new Object();
+        el = new Object();
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";        
@@ -778,16 +781,16 @@ JXG.AbstractRenderer.prototype.drawGrid = function(board) {
     }
     this.appendChildPrimitive(node2,'grid');
 
-    var node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
+    node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
     if(!board.snapToGrid) {
-        var el = new Object();
+        el = new Object();
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridy";        
         this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
     }
     else {
-        var el = new Object();
+        el = new Object();
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridy";        
@@ -887,8 +890,9 @@ JXG.AbstractRenderer.prototype.setDraft = function (obj) {
         return;
     }
 
-    var draftColor = obj.board.options.elements.draft.color;
-    var draftOpacity = obj.board.options.elements.draft.opacity;
+    var draftColor = obj.board.options.elements.draft.color,
+        draftOpacity = obj.board.options.elements.draft.opacity;
+        
     if(obj.type == JXG.OBJECTT_TYPE_POLYGON) {
         this.setObjectFillColor(obj, draftColor, draftOpacity);
     }     
@@ -927,6 +931,7 @@ JXG.AbstractRenderer.prototype.removeDraft = function (obj) {
  * @param {Object} obj Reference of the object that will be highlighted.
  */
 JXG.AbstractRenderer.prototype.highlight = function(obj) {
+    var i;
     if(obj.visProp['draft'] == false) {
         if(obj.type == JXG.OBJECT_CLASS_POINT) {
             this.setObjectStrokeColor(obj, obj.visProp['highlightStrokeColor'], obj.visProp['highlightStrokeOpacity']);
@@ -934,7 +939,7 @@ JXG.AbstractRenderer.prototype.highlight = function(obj) {
         }
         else if(obj.type == JXG.OBJECT_TYPE_POLYGON) {
             this.setObjectFillColor(obj, obj.visProp['highlightFillColor'], obj.visProp['highlightFillOpacity']);
-            for(var i=0; i<obj.borders.length; i++) {
+            for(i=0; i<obj.borders.length; i++) {
                 this.setObjectStrokeColor(obj.borders[i], obj.borders[i].visProp['highlightStrokeColor'], obj.visProp['highlightStrokeOpacity']);
             }
         }    
@@ -951,6 +956,7 @@ JXG.AbstractRenderer.prototype.highlight = function(obj) {
  * @param {Object} obj Reference of the object that will get its normal colors.
  */
 JXG.AbstractRenderer.prototype.noHighlight = function(obj) {
+    var i;
     if(obj.visProp['draft'] == false) {
         if(obj.type == JXG.OBJECT_CLASS_POINT) {
             this.setObjectStrokeColor(obj, obj.visProp['strokeColor'], obj.visProp['strokeOpacity']);
@@ -1045,7 +1051,19 @@ JXG.AbstractRenderer.prototype.getPointSize = function(style) {
  * @see #updateText
  */
 JXG.AbstractRenderer.prototype.drawZoomBar = function(board) { 
-    var node = this.container.ownerDocument.createElement('div');
+    var doc,
+        node,
+        node_minus,
+        node_100,
+        node_plus,
+        node_larr,
+        node_uarr,
+        node_darr,
+        node_rarr;
+
+    doc = this.container.ownerDocument;
+    node = doc.createElement('div');
+    
     //node.setAttribute('id', el.id);
     node.className = 'JXGtext';
     node.style.color = '#aaaaaa';
@@ -1060,37 +1078,37 @@ JXG.AbstractRenderer.prototype.drawZoomBar = function(board) {
     node.style.bottom = '5px'; 
     //node.style.top = (board.canvasHeight-22) + 'px';
     
-    var node_minus = this.container.ownerDocument.createElement('span');
+    node_minus = doc.createElement('span');
     node.appendChild(node_minus);
     node_minus.innerHTML = '&nbsp;&ndash;&nbsp;';
     JXG.addEvent(node_minus, 'click', board.zoomOut, board);
 
-    var node_100 = this.container.ownerDocument.createElement('span');
+    node_100 = doc.createElement('span');
     node.appendChild(node_100);
     node_100.innerHTML = '&nbsp;o&nbsp;';
     JXG.addEvent(node_100, 'click', board.zoom100, board);
     
-    var node_plus = this.container.ownerDocument.createElement('span');
+    node_plus = doc.createElement('span');
     node.appendChild(node_plus);
     node_plus.innerHTML = '&nbsp;+&nbsp;';
     JXG.addEvent(node_plus, 'click', board.zoomIn, board);
     
-    var node_larr = this.container.ownerDocument.createElement('span');
+    node_larr = doc.createElement('span');
     node.appendChild(node_larr);
     node_larr.innerHTML = '&nbsp;&larr;&nbsp;';
     JXG.addEvent(node_larr, 'click', board.clickLeftArrow, board);
     
-    var node_uarr = this.container.ownerDocument.createElement('span');
+    node_uarr = doc.createElement('span');
     node.appendChild(node_uarr);
     node_uarr.innerHTML = '&nbsp;&uarr;&nbsp;';
     JXG.addEvent(node_uarr, 'click', board.clickUpArrow, board);
     
-    var node_darr = this.container.ownerDocument.createElement('span');
+    node_darr = doc.createElement('span');
     node.appendChild(node_darr);
     node_darr.innerHTML = '&nbsp;&darr;&nbsp;';
     JXG.addEvent(node_darr, 'click', board.clickDownArrow, board);
     
-    var node_rarr = this.container.ownerDocument.createElement('span');
+    node_rarr = doc.createElement('span');
     node.appendChild(node_rarr);
     node_rarr.innerHTML = '&nbsp;&rarr;&nbsp;';
     JXG.addEvent(node_rarr, 'click', board.clickRightArrow, board);

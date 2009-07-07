@@ -170,7 +170,12 @@ JXG.Line.prototype = new JXG.GeometryElement;
  */
  JXG.Line.prototype.hasPoint = function (x, y) {
     // Compute the stdform of the line in screen coordinates.
-    var c = [];
+    var c = [],
+        v = [1,x,y],
+        vnew = [],
+        mu, i, coords, p1Scr, p2Scr, distP1P, distP2P, distP1P2;
+        
+    
     c[0] = this.stdform[0] -
                 this.stdform[1]*this.board.origin.scrCoords[1]/(this.board.unitX*this.board.zoomX)+
                 this.stdform[2]*this.board.origin.scrCoords[2]/(this.board.unitY*this.board.zoomY);
@@ -178,10 +183,7 @@ JXG.Line.prototype = new JXG.GeometryElement;
     c[2] = this.stdform[2]/(-this.board.unitY*this.board.zoomY);
 
     // Project the point orthogonally onto the line (Gram-Schmidt)
-    var v = [1,x,y];
-    var vnew = [];
-    var mu = this.board.algebra.innerProduct(v,c,3)/this.board.algebra.innerProduct(c,c,3);
-    var i;
+    mu = this.board.algebra.innerProduct(v,c,3)/this.board.algebra.innerProduct(c,c,3);
     for (i=0;i<3;i++) {
         vnew[i] = v[i] - mu*c[i];
     }
@@ -199,12 +201,12 @@ JXG.Line.prototype = new JXG.GeometryElement;
     if(this.visProp['straightFirst'] && this.visProp['straightLast']) {    
         return true;
     } else { // If the line is a ray or segment we have to check if the projected point is "inside" P1 and P2.
-        var coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [vnew[1],vnew[2]], this.board);
-        var p1Scr = this.point1.coords.scrCoords;
-        var p2Scr = this.point2.coords.scrCoords;
-        var distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
-        var distP2P = coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
-        var distP1P2 = this.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
+        coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [vnew[1],vnew[2]], this.board);
+        p1Scr = this.point1.coords.scrCoords;
+        p2Scr = this.point2.coords.scrCoords;
+        distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
+        distP2P = coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
+        distP1P2 = this.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
         if((distP1P > distP1P2) || (distP2P > distP1P2)) { // Check if P(x|y) is not bewtween  P1 and P2
             if(distP1P < distP2P) { // P liegt auf der Seite von P1
                 if(!this.visProp['straightFirst']) {
@@ -224,11 +226,12 @@ JXG.Line.prototype = new JXG.GeometryElement;
  * @private
  */
 JXG.Line.prototype.update = function() {
+    var i;
     if (this.needsUpdate) {
         if (true || !this.board.geonextCompatibilityMode) {
             this.updateStdform();
         }
-        for(var i=0; i<this.ticks.length; i++) {
+        for(i=0; i<this.ticks.length; i++) {
             // i don't know why we need this, but if we don't check it, an error will be reported
             // when the origin is moved. it seems like this.ticks.length is lying.
             if(typeof this.ticks[i] != 'undefined')
@@ -250,8 +253,7 @@ JXG.Line.prototype.updateStdform = function() {
     this.stdform[1] = nx;
     this.stdform[2] = ny;
     */
-    var v = [];
-    v = this.board.algebra.crossProduct(this.point1.coords.usrCoords,this.point2.coords.usrCoords);
+    var v = this.board.algebra.crossProduct(this.point1.coords.usrCoords,this.point2.coords.usrCoords);
     this.stdform[0] = v[0];
     this.stdform[1] = v[1];
     this.stdform[2] = v[2];
@@ -263,8 +265,10 @@ JXG.Line.prototype.updateStdform = function() {
  * Uses the boards renderer to update the line.
  */
  JXG.Line.prototype.updateRenderer = function () {
+    var wasReal;
+    
     if (this.needsUpdate && this.visProp['visible']) {
-        var wasReal = this.isReal;
+        wasReal = this.isReal;
         this.isReal = (isNaN(this.point1.coords.usrCoords[1]+this.point1.coords.usrCoords[2]+this.point2.coords.usrCoords[1]+this.point2.coords.usrCoords[2]))?false:true;
         if (this.isReal) {
             if (wasReal!=this.isReal) {
@@ -293,12 +297,12 @@ JXG.Line.prototype.updateStdform = function() {
 };
 
 JXG.Line.prototype.generatePolynomial = function (p) {
-    var u1 = this.point1.symbolic.x;
-    var u2 = this.point1.symbolic.y;
-    var v1 = this.point2.symbolic.x;
-    var v2 = this.point2.symbolic.y;
-    var w1 = p.symbolic.x;
-    var w2 = p.symbolic.y;
+    var u1 = this.point1.symbolic.x,
+        u2 = this.point1.symbolic.y,
+        v1 = this.point2.symbolic.x,
+        v2 = this.point2.symbolic.y,
+        w1 = p.symbolic.x,
+        w2 = p.symbolic.y;
 
     /*
      * The polynomial in this case is determined by three points being collinear:
@@ -317,9 +321,7 @@ JXG.Line.prototype.generatePolynomial = function (p) {
      *    u2w1 - u2v1 + w2v1 - u1w2 + u1v2 - w1v2 = 0
      */
 
-    var poly = ''+u2+'*'+w1+'-'+u2+'*'+v1+'+'+w2+'*'+v1+'-'+u1+'*'+w2+'+'+u1+'*'+v2+'-'+w1+'*'+v2;
-
-    return [poly];
+    return [[u2,'*',w1,'-',u2,'*',v1,'+',w2,'*',v1,'-',u1,'*',w2,'+',u1,'*',v2,'-',w1,'*',v2].join('')];
 }
 
 /**
@@ -390,13 +392,15 @@ JXG.Line.prototype.getTextAnchor = function() {
  * @return Text anchor coordinates as JXG.Coords object.
  */
 JXG.Line.prototype.getLabelAnchor = function() {
-    var coords;
+    var coords,screenCoords1,screenCoords2,
+        relCoords, slope;
+    
     if(!this.visProp['straightFirst'] && !this.visProp['straightLast']) {
         return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X()-0.5*(this.point2.X() - this.point1.X()),this.point2.Y()-0.5*(this.point2.Y() - this.point1.Y())],this.board);
     }
     else {
-        var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
-        var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
+        screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
+        screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
         this.board.renderer.calcStraight(this, screenCoords1, screenCoords2);
         
         if(this.visProp['straightFirst']) {
@@ -407,8 +411,8 @@ JXG.Line.prototype.getLabelAnchor = function() {
         }
         // Hack
         if(this.label.content != null) {
-            var relCoords;
-            var slope = this.getSlope();
+            relCoords;
+            slope = this.getSlope();
             if(coords.scrCoords[2]==0) {
                 if(slope == "INF") {
                     relCoords = [10,-10];                    
@@ -464,7 +468,9 @@ JXG.Line.prototype.getLabelAnchor = function() {
  * @param {bool} addToTrace Not used.
  */
 JXG.Line.prototype.cloneToBackground = function(addToTrace) {
-    var copy = {};
+    var copy = {},
+        r, s;
+        
     copy.id = this.id + 'T' + this.numTraces;
     this.numTraces++;
     copy.point1 = this.point1;
@@ -484,8 +490,8 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.board.algebra = this.board.algebra;
 
     copy.visProp = this.visProp;
-    var s = this.getSlope();
-    var r = this.getRise();
+    s = this.getSlope();
+    r = this.getRise();
     copy.getSlope = function() { return s; };
     copy.getRise = function() { return r; };
 
@@ -504,13 +510,13 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
 };
 
 JXG.Line.prototype.addTransform = function (transform) {
-    var list;
+    var list, i;
     if (JXG.IsArray(transform)) {
         list = transform;
     } else {
         list = [transform];
     }
-    for (var i=0;i<list.length;i++) {
+    for (i=0;i<list.length;i++) {
         this.point1.transformations.push(list[i]);
         this.point2.transformations.push(list[i]);
     }
@@ -560,15 +566,16 @@ JXG.Line.prototype.setPosition = function (method, x, y) {
 * @return X(phi)
 */
 JXG.Line.prototype.X = function (phi) {
+    var a = this.stdform[1],
+        b = this.stdform[2],
+        c = this.stdform[0],
+        A, B, sq, sinTheta, cosTheta;
     phi *= Math.PI;
-    var a = this.stdform[1];
-    var b = this.stdform[2];
-    var c = this.stdform[0];
-    var A = a*Math.cos(phi)+b*Math.sin(phi);
-    var B = c;
-    var sq = Math.sqrt(A*A+B*B);
-    var sinTheta = -B/sq;
-    var cosTheta = A/sq;
+    A = a*Math.cos(phi)+b*Math.sin(phi);
+    B = c;
+    sq = Math.sqrt(A*A+B*B);
+    sinTheta = -B/sq;
+    cosTheta = A/sq;
     if (Math.abs(cosTheta)<this.board.algebra.eps) { cosTheta = 1.0; }
     return sinTheta*Math.cos(phi)/cosTheta;
 }
@@ -578,15 +585,16 @@ JXG.Line.prototype.X = function (phi) {
 * @return Y(phi)
 */
 JXG.Line.prototype.Y = function (phi) {
+    var a = this.stdform[1],
+        b = this.stdform[2],
+        c = this.stdform[0],
+        A, B, sq, sinTheta, cosTheta;
     phi *= Math.PI;
-    var a = this.stdform[1];
-    var b = this.stdform[2];
-    var c = this.stdform[0];
-    var A = a*Math.cos(phi)+b*Math.sin(phi);
-    var B = c;
-    var sq = Math.sqrt(A*A+B*B);
-    var sinTheta = -B/sq;
-    var cosTheta = A/sq;
+    A = a*Math.cos(phi)+b*Math.sin(phi);
+    B = c;
+    sq = Math.sqrt(A*A+B*B);
+    sinTheta = -B/sq;
+    cosTheta = A/sq;
     if (Math.abs(cosTheta)<this.board.algebra.eps) { cosTheta = 1.0; }
     return sinTheta*Math.sin(phi)/cosTheta;
 }
@@ -596,14 +604,15 @@ JXG.Line.prototype.Y = function (phi) {
 * @return Z(phi)
 */
 JXG.Line.prototype.Z = function (phi) {
+    var a = this.stdform[1],
+        b = this.stdform[2],
+        c = this.stdform[0],
+        A, B, sq, cosTheta;
     phi *= Math.PI;
-    var a = this.stdform[1];
-    var b = this.stdform[2];
-    var c = this.stdform[0];
-    var A = a*Math.cos(phi)+b*Math.sin(phi);
-    var B = c;
-    var sq = Math.sqrt(A*A+B*B);
-    var cosTheta = A/sq;
+    A = a*Math.cos(phi)+b*Math.sin(phi);
+    B = c;
+    sq = Math.sqrt(A*A+B*B);
+    cosTheta = A/sq;
     if (Math.abs(cosTheta)>=this.board.algebra.eps) {
         return 1.0;
     } else {
@@ -649,7 +658,8 @@ JXG.Line.prototype.addTicks = function(ticks) {
  * Removes all ticks from a line.
  */
 JXG.Line.prototype.removeAllTicks = function() {
-    for(var t=this.ticks.length; t>0; t--) {
+    var t;
+    for(t=this.ticks.length; t>0; t--) {
         this.board.renderer.remove(this.ticks[t-1].rendNode);
     }
     this.ticks = new Array();
@@ -660,15 +670,16 @@ JXG.Line.prototype.removeAllTicks = function() {
  * @param {JXG.Ticks} tick Reference to tick object to remove.
  */
 JXG.Line.prototype.removeTicks = function(tick) {
+    var t, j;
     if(this.defaultTicks != null && this.defaultTicks == tick) {
         this.defaultTicks = null;
     }
 
-    for(var t=this.ticks.length; t>0; t--) {
+    for(t=this.ticks.length; t>0; t--) {
         if(this.ticks[t-1] == tick) {
             this.board.renderer.remove(this.ticks[t-1].rendNode);
 
-            for(var j=0; j<this.ticks[t-1].ticks.length; j++) {
+            for(j=0; j<this.ticks[t-1].ticks.length; j++) {
                 if(this.ticks[t-1].labels[j] != null)
                     if (this.ticks[t-1].labels[j].show) this.board.renderer.remove(this.ticks[t-1].labels[j].rendNode);
             }
@@ -686,7 +697,8 @@ JXG.Line.prototype.removeTicks = function(tick) {
  * @return Reference to the created line object.
  */
 JXG.createLine = function(board, parents, atts) {
-    var el,p1,p2;
+    var el, p1, p2, i,
+        c = [];
     if (atts==null) {
         atts = {};
     }
@@ -712,8 +724,7 @@ JXG.createLine = function(board, parents, atts) {
     }
     else if (parents.length==3) {  // Line is defined by three coordinates
         // free line
-        var c = [];
-        for (var i=0;i<3;i++) {
+        for (i=0;i<3;i++) {
             if (typeof parents[i]=='number') {
                 c[i] = function(z){ return function() { return z; }; }(parents[i]);
             } else if (typeof parents[i]=='function') {
@@ -724,12 +735,12 @@ JXG.createLine = function(board, parents, atts) {
             } 
         }
         // point 1: (0,c,-b)
-        var p1 = board.createElement('point',[
+        p1 = board.createElement('point',[
                 function() { return 0.0;},
                 function() { return c[2]();},
                 function() { return -c[1]();}],{visible:false,name:' '});
         // point 2: (b^2+c^2,-ba+c,-ca-b)
-        var p2 = board.createElement('point',[
+        p2 = board.createElement('point',[
                 function() { return c[2]()*c[2]()+c[1]()*c[1]();},
                 function() { return -c[1]()*c[0]()+c[2]();},
                 function() { return -c[2]()*c[0]()-c[1]();}],{visible:false,name:' '});
@@ -806,15 +817,17 @@ JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
  * @return Reference to the created axis object.
  */
 JXG.createAxis = function(board, parents, attributes) {
+    var point1,
+        point2,
+        line, dist, c1, c2, len, defTicks;
+    
     // Arrays oder Punkte, mehr brauchen wir nicht.
     if ( (JXG.IsArray(parents[0]) || JXG.IsPoint(parents[0]) ) && (JXG.IsArray(parents[1]) || JXG.IsPoint(parents[1])) ) {
-        var point1;
         if( JXG.IsPoint(parents[0]) )
             point1 = parents[0];
         else
             point1 = new JXG.Point(board, parents[0],'','',false);
 
-        var point2;
         if( JXG.IsPoint(parents[1]) )
             point2 = parents[1];
         else
@@ -835,7 +848,7 @@ JXG.createAxis = function(board, parents, attributes) {
         if(attributes.withLabel == null)
             attributes.withLabel = false;
 
-        var line = board.createElement('line', [point1, point2], attributes);
+        line = board.createElement('line', [point1, point2], attributes);
         line.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
 
         if(attributes.minorTicks == 'undefined' || attributes.minorTicks == null)
@@ -844,19 +857,18 @@ JXG.createAxis = function(board, parents, attributes) {
         if((attributes.insertTicks == 'undefined') || (attributes.insertTicks == null))
             attributes.insertTicks = 'true';
 
-        var dist;
         if(attributes.ticksDistance != 'undefined' && attributes.ticksDistance != null) {
             dist = attributes.ticksDistance;
         } else {
-            var c1 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point1.coords.usrCoords.slice(1)],board);
-            var c2 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point2.coords.usrCoords.slice(1)],board);
+            c1 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point1.coords.usrCoords.slice(1)],board);
+            c2 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point2.coords.usrCoords.slice(1)],board);
             board.renderer.calcStraight(line, c1, c2);
-            var len = c1.distance(JXG.COORDS_BY_USER,c2);
+            len = c1.distance(JXG.COORDS_BY_USER,c2);
             //len *= 0.33;
             dist = 1.0; //len;
         }
 
-        var defTicks = board.createElement('ticks', [line, dist], attributes);
+        defTicks = board.createElement('ticks', [line, dist], attributes);
         defTicks.needsRegularUpdate = false;
         line.defaultTicks = defTicks;
     }
@@ -877,8 +889,10 @@ JXG.JSXGraph.registerElement('axis', JXG.createAxis);
  * @return Returns reference to an object of type JXG.Line.
  */
 JXG.createTangent = function(board, parents, attributes) {
-    var p = parents[0];
-    var c = p.slideObject;
+    var p = parents[0],
+        c = p.slideObject,
+        g, f, i, j, el, Dg, Df;
+        
     if (attributes == null)
         attributes = {};
     if (attributes.withLabel == null)
@@ -887,8 +901,8 @@ JXG.createTangent = function(board, parents, attributes) {
         return board.createElement('line', [c.point1,c.point2], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
         if (c.curveType!='plot') {
-            var g = c.X;
-            var f = c.Y;
+            g = c.X;
+            f = c.Y;
             return board.createElement('line', [
                     function(){ return -p.X()*board.D(f)(p.position)+p.Y()*board.D(g)(p.position);},
                     function(){ return board.D(f)(p.position);},
@@ -897,15 +911,15 @@ JXG.createTangent = function(board, parents, attributes) {
         } else {  // curveType 'plot'
             // equation of the line segment: 0 = y*(x1-x2) + x*(y2-y1) + y1*x2-x1*y2       
             return board.createElement('line', [
-                    function(){ var i=Math.floor(p.position); 
+                    function(){ i=Math.floor(p.position); 
                                 if (i==c.numberPoints-1) i--;
                                 if (i<0) return 1.0;
                                 return c.Y(i)*c.X(i+1)-c.X(i)*c.Y(i+1);},
-                    function(){ var i=Math.floor(p.position); 
+                    function(){ i=Math.floor(p.position); 
                                 if (i==c.numberPoints-1) i--;
                                 if (i<0) return 0.0;
                                 return c.Y(i+1)-c.Y(i);},
-                    function(){ var i=Math.floor(p.position); 
+                    function(){ i=Math.floor(p.position); 
                                 if (i==c.numberPoints-1) i--;
                                 if (i<0) return 0.0;
                                 return c.X(i)-c.X(i+1);}
@@ -913,8 +927,7 @@ JXG.createTangent = function(board, parents, attributes) {
         }
     } else if (c.type == JXG.OBJECT_TYPE_TURTLE) {
             return board.createElement('line', [
-                    function(){ var i=Math.floor(p.position);
-                                var el,j;
+                    function(){ i=Math.floor(p.position);
                                 for(j=0;j<c.objects.length;j++) {  // run through all curves of this turtle
                                     el = c.objects[j];
                                     if (el.type==JXG.OBJECT_TYPE_CURVE) {
@@ -925,8 +938,7 @@ JXG.createTangent = function(board, parents, attributes) {
                                 if (i==el.numberPoints-1) i--;
                                 if (i<0) return 1.0;
                                 return el.Y(i)*el.X(i+1)-el.X(i)*el.Y(i+1);},
-                    function(){ var i=Math.floor(p.position); 
-                                var el,j;
+                    function(){ i=Math.floor(p.position); 
                                 for(j=0;j<c.objects.length;j++) {  // run through all curves of this turtle
                                     el = c.objects[j];
                                     if (el.type==JXG.OBJECT_TYPE_CURVE) {
@@ -937,8 +949,7 @@ JXG.createTangent = function(board, parents, attributes) {
                                 if (i==el.numberPoints-1) i--;
                                 if (i<0) return 0.0;
                                 return el.Y(i+1)-el.Y(i);},
-                    function(){ var i=Math.floor(p.position); 
-                                var el,j;
+                    function(){ i=Math.floor(p.position); 
                                 for(j=0;j<c.objects.length;j++) {  // run through all curves of this turtle
                                     el = c.objects[j];
                                     if (el.type==JXG.OBJECT_TYPE_CURVE) {
@@ -951,8 +962,8 @@ JXG.createTangent = function(board, parents, attributes) {
                                 return el.X(i)-el.X(i+1);}
                     ], attributes );
     } else if (c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
-        var Dg = function(t){ return -c.getRadius()*Math.sin(t); };
-        var Df = function(t){ return c.getRadius()*Math.cos(t); };
+        Dg = function(t){ return -c.getRadius()*Math.sin(t); };
+        Df = function(t){ return c.getRadius()*Math.cos(t); };
         return board.createElement('line', [
                     function(){ return -p.X()*Df(p.position)+p.Y()*Dg(p.position);},
                     function(){ return Df(p.position);},

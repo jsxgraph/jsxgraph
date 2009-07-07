@@ -57,9 +57,11 @@ JXG.Algebra = function (board) {
  * @return The angle in radian measure
  */
 JXG.Algebra.prototype.angle = function(A, B, C) {   
-    var a = [];
-    var b = [];
-    var c = [];
+    var a = [],
+        b = [],
+        c = [],
+        u, v, s, t;
+        
     if (A.coords == null) {
         a[0] = A[0];
         a[1] = A[1];
@@ -81,19 +83,11 @@ JXG.Algebra.prototype.angle = function(A, B, C) {
         c[0] = C.coords.usrCoords[1];
         c[1] = C.coords.usrCoords[2];
     }
-    var u = a[0] - b[0];
-    var v = a[1] - b[1];
-    var s = c[0] - b[0];
-    var t = c[1] - b[1];
-/*
-    var u = A.coords.usrCoords[1] - B.coords.usrCoords[1];
-    var v = A.coords.usrCoords[2] - B.coords.usrCoords[2];
-    var s = C.coords.usrCoords[1] - B.coords.usrCoords[1];
-    var t = C.coords.usrCoords[2] - B.coords.usrCoords[2];
-*/
-    var theta = Math.atan((u*t - v*s)/(u*s + v*t));    
-
-    return theta;
+    u = a[0] - b[0];
+    v = a[1] - b[1];
+    s = c[0] - b[0];
+    t = c[1] - b[1];
+    return Math.atan((u*t - v*s)/(u*s + v*t));    
 };
 
 /**
@@ -105,12 +99,15 @@ JXG.Algebra.prototype.angle = function(A, B, C) {
  * @return Angle in degrees.
  */
 JXG.Algebra.prototype.trueAngle = function(A, B, C){
-    var ax;
-    var ay;
-    var bx;
-    var by;
-    var cx;
-    var cy;
+    var ax,
+        ay,
+        bx,
+        by,
+        cx,
+        cy,
+        cp, l1, l2, phiacos, phicos, sp, 
+        phi = 0;
+        
     if (A.coords == null) {
         ax = A[0];
         ay = A[1];
@@ -132,18 +129,17 @@ JXG.Algebra.prototype.trueAngle = function(A, B, C){
         cx = C.coords.usrCoords[1];
         cy = C.coords.usrCoords[2];
     }
-    var sp = (cx - bx) * (ax - bx) + (cy - by) * (ay - by); // scalar product of c-b and a-b
-        var cp = (ax - bx) * (cy - by) - (ay - by) * (cx - bx); // cross product of a-b c-b
-        var l1 = Math.sqrt((ax - bx)*(ax - bx) + (ay - by)*(ay - by)); // length of a-b
-        var l2 = Math.sqrt((cx - bx)*(cx - bx) + (cy - by)*(cy - by)); // length of c-b
-        var phiacos = sp / (l1 * l2); // calculate the angle as cosine from scalar product
-        if (phiacos > 1) { // these things should not happen, but can happen because of numerical inaccurracy
-            phiacos = 1;
-        } else if (phiacos < -1) {
-            phiacos = -1;
-        }
-        var phicos = Math.acos(phiacos); // calculate the angle
-        var phi = 0;
+    sp = (cx - bx) * (ax - bx) + (cy - by) * (ay - by); // scalar product of c-b and a-b
+    cp = (ax - bx) * (cy - by) - (ay - by) * (cx - bx); // cross product of a-b c-b
+    l1 = Math.sqrt((ax - bx)*(ax - bx) + (ay - by)*(ay - by)); // length of a-b
+    l2 = Math.sqrt((cx - bx)*(cx - bx) + (cy - by)*(cy - by)); // length of c-b
+    phiacos = sp / (l1 * l2); // calculate the angle as cosine from scalar product
+    if (phiacos > 1) { // these things should not happen, but can happen because of numerical inaccurracy
+        phiacos = 1;
+    } else if (phiacos < -1) {
+        phiacos = -1;
+    }
+    phicos = Math.acos(phiacos); // calculate the angle
         /*
          * The calculated angle may not be the right angle because of the calculation of acos 
         real     | quadrant  | quadrant | algebraic sign 
@@ -164,12 +160,12 @@ JXG.Algebra.prototype.trueAngle = function(A, B, C){
            4.    |   1.      |   +            |   - 
          So always the negative angle of phicos has to be taken if the product is negative.
          */
-        if ((Math.sin(phicos) * cp) < 0) {
-            phi = 2 * Math.PI - phicos;
-        } else {
-            phi = phicos;
-        }
-        phi = (phi / Math.PI) * 180;
+    if ((Math.sin(phicos) * cp) < 0) {
+        phi = 2 * Math.PI - phicos;
+    } else {
+        phi = phicos;
+    }
+    phi = (phi / Math.PI) * 180;
     return phi;
 };
 
@@ -184,32 +180,38 @@ JXG.Algebra.prototype.trueAngle = function(A, B, C){
  */
 JXG.Algebra.prototype.angleBisector = function(A, B, C) {
     /* First point */
-    var x = A.coords.usrCoords[1]-B.coords.usrCoords[1];
-    var y = A.coords.usrCoords[2]-B.coords.usrCoords[2];
-    var d = Math.sqrt(x*x+y*y);
+    var Ac = A.coords.usrCoords,
+        Bc = B.coords.usrCoords, 
+        Cc = C.coords.usrCoords,
+        x = Ac[1]-Bc[1],
+        y = Ac[2]-Bc[2],
+        d = Math.sqrt(x*x+y*y),
+        phiA, phiC, phi;
     x /= d;
     y /= d;
-    var phiA = Math.acos(x);
+    
+    phiA = Math.acos(x);
     if (y<0) { phiA *= -1; }
     if (phiA<0) { phiA += 2*Math.PI; } 
     
     /* Second point */
-    x = C.coords.usrCoords[1]-B.coords.usrCoords[1];
-    y = C.coords.usrCoords[2]-B.coords.usrCoords[2];
+    x = Cc[1]-Bc[1];
+    y = Cc[2]-Bc[2];
     d = Math.sqrt(x*x+y*y);
     x /= d;
     y /= d;
-    var phiC = Math.acos(x);
-    if (y<0) {phiC *= -1;}
+    
+    phiC = Math.acos(x);
+    if (y<0) { phiC *= -1; }
     if (phiC<0) { phiC += 2*Math.PI; } 
  
-    var phi=(phiA+phiC)*0.5;
+    phi=(phiA+phiC)*0.5;
     if (phiA>phiC) { 
         phi+=Math.PI;
     }
 
-    x = Math.cos(phi)+B.coords.usrCoords[1];
-    y = Math.sin(phi)+B.coords.usrCoords[2];
+    x = Math.cos(phi)+Bc[1];
+    y = Math.sin(phi)+Bc[2];
     
     return new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
 };
@@ -236,9 +238,12 @@ JXG.Algebra.prototype.midpoint = function(A, B) {
  * @return Coordinates of a point defining the parallel together with the given point.
  */
 JXG.Algebra.prototype.parallel = function(point1, point2, point) {
-    var factor = 1;
-    var x = point.coords.usrCoords[1] + factor*(point2.coords.usrCoords[1] - point1.coords.usrCoords[1]);
-    var y = point.coords.usrCoords[2] + factor*(point2.coords.usrCoords[2] - point1.coords.usrCoords[2]);
+    var factor = 1,
+        pc = point.coords.usrCoords,
+        p1c = point1.coords.usrCoords,
+        p2c = point2.coords.usrCoords,
+        x = pc[1] + factor*(p2c[1] - p1c[1]),
+        y = pc[2] + factor*(p2c[2] - p1c[2]);
     
     return new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
 };
@@ -252,17 +257,22 @@ JXG.Algebra.prototype.parallel = function(point1, point2, point) {
  */  
 JXG.Algebra.prototype.reflection = function(line,point) {
     /* (v,w) defines the slope of the line */    
-    var v = line.point2.coords.usrCoords[1]-line.point1.coords.usrCoords[1];
-    var w = line.point2.coords.usrCoords[2]-line.point1.coords.usrCoords[2];
+    var pc = point.coords.usrCoords,
+        p1c = line.point1.coords.usrCoords,
+        p2c = line.point2.coords.usrCoords,
+        x0, y0, x1, y1, v, w, mu;
+        
+    v = p2c[1]-p1c[1];
+    w = p2c[2]-p1c[2];
     
-    var x0 = point.coords.usrCoords[1]-line.point1.coords.usrCoords[1];
-    var y0 = point.coords.usrCoords[2]-line.point1.coords.usrCoords[2];
+    x0 = pc[1]-p1c[1];
+    y0 = pc[2]-p1c[2];
     
-    var mu = (v*y0-w*x0)/(v*v+w*w);
+    mu = (v*y0-w*x0)/(v*v+w*w);
     
     /* point + mu*(-y,x) waere Lotpunkt */
-    var x1 = point.coords.usrCoords[1] + 2*mu*w;
-    var y1 = point.coords.usrCoords[2] - 2*mu*v;
+    x1 = pc[1] + 2*mu*w;
+    y1 = pc[2] - 2*mu*v;
     
     return new JXG.Coords(JXG.COORDS_BY_USER, [x1,y1], this.board);
 };
@@ -279,14 +289,18 @@ JXG.Algebra.prototype.rotation = function(rotpoint, point, phi) {
     // 180 degrees:
     //var x0 = 2*rotpoint.coords.usrCoords[1]-point.coords.usrCoords[1];
     //var y0 = 2*rotpoint.coords.usrCoords[2]-point.coords.usrCoords[2];
-    var x0 = point.coords.usrCoords[1]-rotpoint.coords.usrCoords[1];
-    var y0 = point.coords.usrCoords[2]-rotpoint.coords.usrCoords[2];
-    var x1, y1;
-    var c = Math.cos(phi);
-    var s = Math.sin(phi);
+    var pc = point.coords.usrCoords,
+        rotpc = rotpoint.coords.usrCoords,
+        x0, y0, c, s, x1, y1;
+        
+    x0 = pc[1]-rotpc[1];
+    y0 = pc[2]-rotpc[2];
     
-    x1 = x0*c-y0*s + rotpoint.coords.usrCoords[1];
-    y1 = x0*s+y0*c + rotpoint.coords.usrCoords[2];
+    c = Math.cos(phi);
+    s = Math.sin(phi);
+    
+    x1 = x0*c-y0*s + rotpc[1];
+    y1 = x0*s+y0*c + rotpc[2];
     
     return new JXG.Coords(JXG.COORDS_BY_USER, [x1,y1], this.board);
 };
@@ -300,41 +314,40 @@ JXG.Algebra.prototype.rotation = function(rotpoint, point, phi) {
  * @return Coordinates of a point on the perpendicular to the given line through the given point.
  */
 JXG.Algebra.prototype.perpendicular = function(line, point) {
-    var x;
-    var y;
-    var change;
+    var A = line.point1.coords.usrCoords,
+        B = line.point2.coords.usrCoords,
+        C = point.coords.usrCoords,
+        x, y, change,
+        fmd, emc, d0, d1, den;
     
-    var A = line.point1.coords;
-    var B = line.point2.coords;
-    var C = point.coords;
     if(point == line.point1) { // Punkt ist erster Punkt der Linie
-        x = A.usrCoords[1] + B.usrCoords[2] - A.usrCoords[2];
-        y = A.usrCoords[2] - B.usrCoords[1] + A.usrCoords[1];
+        x = A[1] + B[2] - A[2];
+        y = A[2] - B[1] + A[1];
         change = true;
     }
     else if(point == line.point2) {  // Punkt ist zweiter Punkt der Linie    
-        x = B.usrCoords[1] + A.usrCoords[2] - B.usrCoords[2];
-        y = B.usrCoords[2] - A.usrCoords[1] + B.usrCoords[1];
+        x = B[1] + A[2] - B[2];
+        y = B[2] - A[1] + B[1];
         change = false;
     }
-    else if( ((Math.abs(A.usrCoords[1] - B.usrCoords[1]) > this.eps) && 
-             (Math.abs(C.usrCoords[2] - (A.usrCoords[2] - B.usrCoords[2])*(C.usrCoords[1]-A.usrCoords[1])/(A.usrCoords[1] - B.usrCoords[1])-A.usrCoords[2]) < this.eps)) ||
-             ((Math.abs(A.usrCoords[1] - B.usrCoords[1]) <= this.eps) && (Math.abs(A.usrCoords[1] - C.usrCoords[1]) < this.eps)) ) { // Punkt liegt auf der Linie
-        x = C.usrCoords[1] + B.usrCoords[2] - C.usrCoords[2];
-        y = C.usrCoords[2] - B.usrCoords[1] + C.usrCoords[1]; 
+    else if( ((Math.abs(A[1] - B[1]) > this.eps) && 
+             (Math.abs(C[2] - (A[2] - B[2])*(C[1]-A[1])/(A[1] - B[1])-A[2]) < this.eps)) ||
+             ((Math.abs(A[1] - B[1]) <= this.eps) && (Math.abs(A[1] - C[1]) < this.eps)) ) { // Punkt liegt auf der Linie
+        x = C[1] + B[2] - C[2];
+        y = C[2] - B[1] + C[1]; 
         change = true;
-        if(Math.abs(x - C.usrCoords[1]) < this.eps && Math.abs(y - C.usrCoords[2]) < this.eps) {
-            x = C.usrCoords[1] + A.usrCoords[2] - C.usrCoords[2];
-            y = C.usrCoords[2] - A.usrCoords[1] + C.usrCoords[1];
+        if(Math.abs(x - C[1]) < this.eps && Math.abs(y - C[2]) < this.eps) {
+            x = C[1] + A[2] - C[2];
+            y = C[2] - A[1] + C[1];
             change = false;
         }
     }
     else { // Punkt liegt nicht auf der Linie -> als zweiter Punkt wird der Lotfusspunkt gewaehlt
-        var fmd = line.point1.coords.usrCoords[2] - line.point2.coords.usrCoords[2];
-        var emc = line.point1.coords.usrCoords[1] - line.point2.coords.usrCoords[1];
-        var d0 = line.point2.coords.usrCoords[1]*fmd - line.point2.coords.usrCoords[2] *emc;
-        var d1 = point.coords.usrCoords[1]*emc + point.coords.usrCoords[2]*fmd;
-        var den = fmd*fmd + emc*emc;
+        fmd = A[2] - B[2];
+        emc = A[1] - B[1];
+        d0 = B[1]*fmd - B[2]*emc;
+        d1 = C[1]*emc + C[2]*fmd;
+        den = fmd*fmd + emc*emc;
         if(Math.abs(den)<this.eps) {
             den = this.eps;
         }
@@ -342,7 +355,7 @@ JXG.Algebra.prototype.perpendicular = function(line, point) {
         y = (d1*fmd - d0*emc) /den;
         change = true;
     }                            
-    return [new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board),change];                                  
+    return [new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board),change];             
 };
 
 /**
@@ -354,19 +367,21 @@ JXG.Algebra.prototype.perpendicular = function(line, point) {
  * @return Coordinates of the midpoint of the circumcircle of the given points.
  */
 JXG.Algebra.prototype.circumcenterMidpoint = function(point1, point2, point3) {
-    var u = ((point1.coords.usrCoords[1]-point2.coords.usrCoords[1])*(point1.coords.usrCoords[1]+point2.coords.usrCoords[1]) + 
-             (point1.coords.usrCoords[2]-point2.coords.usrCoords[2])*(point1.coords.usrCoords[2]+point2.coords.usrCoords[2])) / 2.0;
-    var v = ((point2.coords.usrCoords[1]-point3.coords.usrCoords[1])*(point2.coords.usrCoords[1]+point3.coords.usrCoords[1]) + 
-             (point2.coords.usrCoords[2]-point3.coords.usrCoords[2])*(point2.coords.usrCoords[2]+point3.coords.usrCoords[2])) / 2.0;
-    var den = (point1.coords.usrCoords[1]-point2.coords.usrCoords[1])*(point2.coords.usrCoords[2]-point3.coords.usrCoords[2]) - 
-              (point2.coords.usrCoords[1]-point3.coords.usrCoords[1])*(point1.coords.usrCoords[2]-point2.coords.usrCoords[2]);
+    var A = point1.coords.usrCoords,
+        B = point2.coords.usrCoords,
+        C = point3.coords.usrCoords,
+        u, v, den, x, y;
+
+    u = ((A[1]-B[1])*(A[1]+B[1]) + (A[2]-B[2])*(A[2]+B[2])) * 0.5;
+    v = ((B[1]-C[1])*(B[1]+C[1]) + (B[2]-C[2])*(B[2]+C[2])) * 0.5;
+    den = (A[1]-B[1])*(B[2]-C[2]) - (B[1]-C[1])*(A[2]-B[2]);
               
     if (Math.abs(den) < this.eps) {
         den = this.eps;
     }
     
-    var x = (u * (point2.coords.usrCoords[2]-point3.coords.usrCoords[2]) - v*(point1.coords.usrCoords[2]-point2.coords.usrCoords[2])) / den;
-    var y = (v * (point1.coords.usrCoords[1]-point2.coords.usrCoords[1]) - u*(point2.coords.usrCoords[1]-point3.coords.usrCoords[1])) / den;
+    x = (u * (B[2]-C[2]) - v*(A[2]-B[2])) / den;
+    y = (v * (A[1]-B[1]) - u*(B[1]-C[1])) / den;
     
     return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
 };
@@ -379,16 +394,21 @@ JXG.Algebra.prototype.circumcenterMidpoint = function(point1, point2, point3) {
  * @return Coordinates of the intersection point of the given lines.
  */
 JXG.Algebra.prototype.intersectLineLine = function(line1, line2) {
-    var d0 = line1.point1.coords.usrCoords[1]*line1.point2.coords.usrCoords[2] - line1.point1.coords.usrCoords[2]*line1.point2.coords.usrCoords[1];
-    var d1 = line2.point1.coords.usrCoords[1]*line2.point2.coords.usrCoords[2] - line2.point1.coords.usrCoords[2]*line2.point2.coords.usrCoords[1];
-    var den = (line1.point2.coords.usrCoords[2]-line1.point1.coords.usrCoords[2])*(line2.point1.coords.usrCoords[1]-line2.point2.coords.usrCoords[1]) 
-               - (line1.point1.coords.usrCoords[1]-line1.point2.coords.usrCoords[1])*(line2.point2.coords.usrCoords[2]-line2.point1.coords.usrCoords[2]);
+    var A = line1.point1.coords.usrCoords,
+        B = line1.point2.coords.usrCoords,
+        C = line2.point1.coords.usrCoords,
+        D = line2.point2.coords.usrCoords,
+        d0, d1, den, x, y;
+           
+    d0 = A[1]*B[2] - A[2]*B[1];
+    d1 = C[1]*D[2] - C[2]*D[1];
+    den = (B[2]-A[2])*(C[1]-D[1]) - (A[1]-B[1])*(D[2]-C[2]);
                  
     if(Math.abs(den) < this.eps) {
          den = this.eps; 
     }
-    var x = (d0*(line2.point1.coords.usrCoords[1]-line2.point2.coords.usrCoords[1]) - d1*(line1.point1.coords.usrCoords[1]-line1.point2.coords.usrCoords[1])) / den;
-    var y = (d1*(line1.point2.coords.usrCoords[2]-line1.point1.coords.usrCoords[2]) - d0*(line2.point2.coords.usrCoords[2]-line2.point1.coords.usrCoords[2])) / den;
+    x = (d0*(C[1]-D[1]) - d1*(A[1]-B[1])) / den;
+    y = (d1*(B[2]-A[2]) - d0*(D[2]-C[2])) / den;
 
     return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
 };
@@ -402,34 +422,36 @@ JXG.Algebra.prototype.intersectLineLine = function(line1, line2) {
  * the amount of intersection points in the first component of the array.
  */
 JXG.Algebra.prototype.intersectCircleLine = function(circle, line) {
-    var eA = line.point1;
-    var eB = line.point2;
-    var fM = circle.midpoint;
+    var eA = line.point1.coords.usrCoords,
+        eB = line.point2.coords.usrCoords,
+        fM = circle.midpoint.coords.usrCoords,
+        s, d0, d1, b, w, h, r, n1, dx, dy, firstPointX, firstPointY, l, x, y, n1s, firstPoint, secondPoint, d;
 
-    var s = eA.Dist(eB);
+    s = line.point1.Dist(line.point2);
     if (s > 0) {
-        var d0 = fM.Dist(eA);
-        var d1 = fM.Dist(eB);
-        var b = ((d0 * d0) + (s * s) - (d1 * d1)) / (2 * s);
-        var w = (d0 * d0) - (b * b);
+        d0 = circle.midpoint.Dist(line.point1);
+        d1 = circle.midpoint.Dist(line.point2);
+        b = ((d0 * d0) + (s * s) - (d1 * d1)) / (2 * s);
+        w = (d0 * d0) - (b * b);
         w = (w < 0) ? 0 : w;
-        var h = Math.sqrt(w);
-        var r = circle.getRadius();
-        var n1 = Math.sqrt((r * r) - h*h);
-        var dx = eB.coords.usrCoords[1] - eA.coords.usrCoords[1];
-        var dy = eB.coords.usrCoords[2] - eA.coords.usrCoords[2];
-        var firstPointX = fM.coords.usrCoords[1] + (h / s) * dy;
-        var firstPointY = fM.coords.usrCoords[2] - (h / s) * dx;
-        d0 = (eB.coords.usrCoords[1] * dy) - (eB.coords.usrCoords[2] * dx);
+        h = Math.sqrt(w);
+        
+        r = circle.getRadius();
+        n1 = Math.sqrt((r * r) - h*h);
+        dx = eB[1] - eA[1];
+        dy = eB[2] - eA[2];
+        firstPointX = fM[1] + (h / s) * dy;
+        firstPointY = fM[2] - (h / s) * dx;
+        d0 = (eB[1] * dy) - (eB[2] * dx);
         d1 = (firstPointX * dx) + (firstPointY * dy);
-        var l = (dy * dy) + (dx * dx);
+        l = (dy * dy) + (dx * dx);
         if (Math.abs(l) < this.eps) { l = this.eps; }
-        var x = ((d0 * dy) + (d1 * dx)) / l;
-        var y = ((d1 * dy) - (d0 * dx)) / l;
-        var n1s = n1/s;
-        var firstPoint =  new JXG.Coords(JXG.COORDS_BY_USER, [x + n1s * dx, y + n1s * dy], this.board);
-        var secondPoint = new JXG.Coords(JXG.COORDS_BY_USER, [x - n1s * dx, y - n1s * dy], this.board);
-        var d = fM.coords.distance(JXG.COORDS_BY_USER, firstPoint);
+        x = ((d0 * dy) + (d1 * dx)) / l;
+        y = ((d1 * dy) - (d0 * dx)) / l;
+        n1s = n1/s;
+        firstPoint =  new JXG.Coords(JXG.COORDS_BY_USER, [x + n1s * dx, y + n1s * dy], this.board);
+        secondPoint = new JXG.Coords(JXG.COORDS_BY_USER, [x - n1s * dx, y - n1s * dy], this.board);
+        d = circle.midpoint.coords.distance(JXG.COORDS_BY_USER, firstPoint);
       
         if ((r < (d - 1)) || isNaN(d)) {
             return [0];
@@ -448,37 +470,38 @@ JXG.Algebra.prototype.intersectCircleLine = function(circle, line) {
  * amount of intersection points in the first component of the array.
  */
 JXG.Algebra.prototype.intersectCircleCircle = function(circle1, circle2) { 
-    var intersection = {};
-    var r1 = circle1.getRadius();
-    var r2 = circle2.getRadius();
-    
-    var rSum = r1 + r2;
-    var rDiff = Math.abs(r1 - r2);    
-    
+    var intersection = {},
+        r1 = circle1.getRadius(),
+        r2 = circle2.getRadius(),
+        M1 = circle1.midpoint.coords.usrCoords,
+        M2 = circle2.midpoint.coords.usrCoords,
+        rSum, rDiff, s, 
+        dx, dy, a, h;
+        
+    rSum = r1 + r2;
+    rDiff = Math.abs(r1 - r2);    
     // Abstand der Mittelpunkte der beiden Kreise
-    var midpointDist = circle1.midpoint.coords.distance(JXG.COORDS_BY_USER, circle2.midpoint.coords);
-
-    if (midpointDist > rSum) {
+    s = circle1.midpoint.coords.distance(JXG.COORDS_BY_USER, circle2.midpoint.coords);
+    if (s > rSum) {
         return [0]; // Kreise schneiden sich nicht, liegen nebeneinander
     } 
-    else if (midpointDist < rDiff) {
+    else if (s < rDiff) {
         return [0]; // Kreise schneiden sich nicht, liegen ineinander
     } 
     else {
-        var s = midpointDist;
         if (s != 0) {
             intersection[0] = 1; // es gibt einen Schnitt        
-            var dx = circle2.midpoint.coords.usrCoords[1] - circle1.midpoint.coords.usrCoords[1];
-            var dy = circle2.midpoint.coords.usrCoords[2] - circle1.midpoint.coords.usrCoords[2];
-            var a = (s * s - r2 * r2 + r1 * r1) / (2 * s);
-            var h = Math.sqrt(r1 * r1 - a * a);
+            dx = M2[1] - M1[1];
+            dy = M2[2] - M1[2];
+            a = (s * s - r2 * r2 + r1 * r1) / (2 * s);
+            h = Math.sqrt(r1 * r1 - a * a);
             intersection[1] = new JXG.Coords(JXG.COORDS_BY_USER, 
-                                             [circle1.midpoint.coords.usrCoords[1] + (a / s) * dx + (h / s) * dy, 
-                                              circle1.midpoint.coords.usrCoords[2] + (a / s) * dy - (h / s) * dx], 
+                                             [M1[1] + (a / s) * dx + (h / s) * dy, 
+                                              M1[2] + (a / s) * dy - (h / s) * dx], 
                                              this.board);
             intersection[2] = new JXG.Coords(JXG.COORDS_BY_USER, 
-                                             [circle1.midpoint.coords.usrCoords[1] + (a / s) * dx - (h / s) * dy, 
-                                              circle1.midpoint.coords.usrCoords[2] + (a / s) * dy + (h / s) * dx], 
+                                             [M1[1] + (a / s) * dx - (h / s) * dy, 
+                                              M1[2] + (a / s) * dy + (h / s) * dx], 
                                              this.board);    
         }
         else {
@@ -498,13 +521,17 @@ JXG.Algebra.prototype.intersectCircleCircle = function(circle1, circle2) {
  * @return The coordinates of the projection of the given point on the given circle.
  */
 JXG.Algebra.prototype.projectPointToCircle = function(point,circle) {
-    var dist = point.coords.distance(JXG.COORDS_BY_USER, circle.midpoint.coords);
+    var dist = point.coords.distance(JXG.COORDS_BY_USER, circle.midpoint.coords),
+        P = point.coords.usrCoords,
+        M = circle.midpoint.coords.usrCoords,
+        x, y, factor;
+        
     if(Math.abs(dist) < this.eps) {
         dist = this.eps;
     }
-    var factor = circle.getRadius() / dist;
-    var x = circle.midpoint.coords.usrCoords[1] + factor*(point.coords.usrCoords[1] - circle.midpoint.coords.usrCoords[1]);
-    var y = circle.midpoint.coords.usrCoords[2] + factor*(point.coords.usrCoords[2] - circle.midpoint.coords.usrCoords[2]);
+    factor = circle.getRadius() / dist;
+    x = M[1] + factor*(P[1] - M[1]);
+    y = M[2] + factor*(P[2] - M[2]);
     
     return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);    
 };
@@ -533,9 +560,8 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
     return new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);       
 */
     // Homogeneous version
-    var mu = this.innerProduct(point.coords.usrCoords,line.stdform,3)/this.innerProduct(line.stdform,line.stdform,3);
-    var i;
-    var v = [];
+    var mu = this.innerProduct(point.coords.usrCoords,line.stdform,3)/this.innerProduct(line.stdform,line.stdform,3),
+        i, v = [];
     for (i=0;i<3;i++) {
         v[i] = point.coords.usrCoords[i] - mu*line.stdform[i];
     }
@@ -551,11 +577,11 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
  * @return The coordinates of the projection of the given point on the given graph.
  */
 JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
-    var x = point.X();
-    var y = point.Y();
-    var t = point.position || 0.0;
-    var result = this.projectCoordsToCurve(x,y,t,curve);
-    point.position = result[1];
+    var x = point.X(),
+        y = point.Y(),
+        t = point.position || 0.0,
+        result = this.projectCoordsToCurve(x,y,t,curve);
+    point.position = result[1];      // side effect !
     return result[0];
 }
 
@@ -572,9 +598,9 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
  * the position on the curve.
  */
 JXG.Algebra.prototype.projectCoordsToCurve = function(x,y,t,curve) {
-    var newCoords;
-    var x0,y0,x1,y1,den,i,mindist,dist,lbda;
-    var infty = 1000000.0;
+    var newCoords, x0, y0, x1, y1, den, i, mindist, dist, lbda,
+        infty = 1000000.0;
+        
     if (curve.curveType=='parameter' || curve.curveType=='polar') { 
         t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(function(t){ return (x-curve.X(t))*(x-curve.X(t))+(y-curve.Y(t))*(y-curve.Y(t));}), t);
         if (t<curve.minX()) { t = curve.minX(); }
@@ -635,14 +661,14 @@ JXG.Algebra.prototype.projectCoordsToCurve = function(x,y,t,curve) {
  * @return The coordinates of the projection of the given point on the given turtle.
  */
 JXG.Algebra.prototype.projectPointToTurtle = function(point,turtle) {
-    var newCoords,t,x,y;
-    var np, npmin;
-    var i,mindist,dist,el,minEl;
-    mindist = 1000000.0;
-    np = 0;
-    npmin = 0;
+    var newCoords, t, x, y, i,
+        np = 0, 
+        npmin = 0,
+        mindist = 1000000.0, 
+        dist, el, minEl;
+
     for(i=0;i<turtle.objects.length;i++) {  // run through all curves of this turtle
-        var el = turtle.objects[i];
+        el = turtle.objects[i];
         if (el.type==JXG.OBJECT_TYPE_CURVE) {
             newCoords = this.projectPointToCurve(point,el);
             dist = this.distance(newCoords.usrCoords,point.coords.usrCoords);
@@ -669,15 +695,14 @@ JXG.Algebra.prototype.projectPointToTurtle = function(point,turtle) {
  * @return Converted expression.
  */
 JXG.Algebra.prototype.replacePow = function(te) {
-    var count, pos, c;
-    var s = '';
-    var leftop, rightop;
+    var count, pos, c,
+        leftop, rightop, pre, p, left, i, right, expr;
     //te = te.replace(/\s+/g,''); // Loesche allen whitespace
                                 // Achtung: koennte bei Variablennamen mit Leerzeichen
                                 // zu Problemen fuehren.
-    var i = te.indexOf('^');
+    i = te.indexOf('^');
     while (i>=0) {
-        var left = te.slice(0,i);
+        left = te.slice(0,i);
         if (left.charAt(left.length-1)==')') {
             count = 1;
             pos = left.length-2;
@@ -689,8 +714,8 @@ JXG.Algebra.prototype.replacePow = function(te) {
             }   
             if (count==0) {
                 leftop = '';
-                var pre = left.substring(0,pos+1);   // finde evtl. F vor (...)^
-                var p = pos;
+                pre = left.substring(0,pos+1);   // finde evtl. F vor (...)^
+                p = pos;
                 while (p>=0 && pre.substr(p,1).match(/(\w+)/)) {
                     leftop = RegExp.$1+leftop;
                     p--;
@@ -701,7 +726,7 @@ JXG.Algebra.prototype.replacePow = function(te) {
         } else {
             leftop = '\\w+';
         }
-        var right = te.slice(i+1);
+        right = te.slice(i+1);
         if (right.match(/^([\w\.]*\()/)) {
             count = 1;
             pos = RegExp.$1.length;
@@ -718,7 +743,7 @@ JXG.Algebra.prototype.replacePow = function(te) {
         } else {
             rightop = '[\\w\\.]+';  // ^b 
         }
-        var expr = new RegExp('(' + leftop + ')\\^(' + rightop + ')');
+        expr = new RegExp('(' + leftop + ')\\^(' + rightop + ')');
         te = te.replace(expr,"this.board.algebra.pow($1,$2)");
         i = te.indexOf('^');
     }
@@ -732,13 +757,14 @@ JXG.Algebra.prototype.replacePow = function(te) {
  * @return Converted expression.
  */
 JXG.Algebra.prototype.replaceIf = function(te) {
-    var s = '';
-    var left, right;
-    var first = null;
-    var second = null;
-    var third = null;
+    var s = '',
+        left, right,
+        first = null,
+        second = null,
+        third = null,
+        i, pos, count, k1, k2, c, meat;
     
-    var i = te.indexOf('If(');
+    i = te.indexOf('If(');
     if (i<0) { return te; }
 
     te = te.replace(/""/g,'0'); // "" means not defined. Here, we replace it by 0
@@ -747,12 +773,12 @@ JXG.Algebra.prototype.replaceIf = function(te) {
         right = te.slice(i+3); 
         
         // Search the end of the If() command and take out the meat
-        var count = 1;
-        var pos = 0;
-        var k1 = -1;
-        var k2 = -1;
+        count = 1;
+        pos = 0;
+        k1 = -1;
+        k2 = -1;
         while (pos<right.length && count>0) {
-            var c = right.charAt(pos);
+            c = right.charAt(pos);
             if (c==')') { 
                 count--;
             } else if (c=='(') {
@@ -766,7 +792,7 @@ JXG.Algebra.prototype.replaceIf = function(te) {
             }
             pos++;
         } 
-        var meat = right.slice(0,pos-1);
+        meat = right.slice(0,pos-1);
         right = right.slice(pos);
         
         // Test the two kommas
@@ -797,10 +823,11 @@ JXG.Algebra.prototype.replaceIf = function(te) {
  * @return Given string with _{} replaced by &lt;sub&gt;.
  */
 JXG.Algebra.prototype.replaceSub = function(te) {
-    var i = te.indexOf('_{');
+    var i = te.indexOf('_{'),
+        j;
     while (i>=0) {
         te = te.substr(0,i)+te.substr(i).replace(/_\{/,'<sub>');
-        var j = te.substr(i).indexOf('}');
+        j = te.substr(i).indexOf('}');
         if (j>=0) {
             te = te.substr(0,j)+te.substr(j).replace(/\}/,'</sub>');
         }
@@ -822,10 +849,11 @@ JXG.Algebra.prototype.replaceSub = function(te) {
  * @return Given string with ^{} replaced by &lt;sup&gt;.
  */
 JXG.Algebra.prototype.replaceSup = function(te) {
-    var i = te.indexOf('^{');
+    var i = te.indexOf('^{'),
+        j;
     while (i>=0) {
         te = te.substr(0,i)+te.substr(i).replace(/\^\{/,'<sup>');
-        var j = te.substr(i).indexOf('}');
+        j = te.substr(i).indexOf('}');
         if (j>=0) {
             te = te.substr(0,j)+te.substr(j).replace(/\}/,'</sup>');
         }
@@ -845,11 +873,7 @@ JXG.Algebra.prototype.replaceSup = function(te) {
  * Replace element names in terms by element ids
  **/
 JXG.Algebra.prototype.replaceNameById = function(term) {
-    var pos = 0;
-    var end;
-    var elName;
-    var elID;
-    var el;
+    var pos = 0, end, elName, el;
     
     pos = term.indexOf('X(');
     while (pos>=0) {
@@ -1012,27 +1036,24 @@ JXG.Algebra.prototype.replaceIdByObj = function(term) {
  * @return Given expression in JavaScript syntax
  */
 JXG.Algebra.prototype.geonext2JS = function(term) {
+    var expr, newterm, i,
+        from = ['Abs','ACos','ASin','ATan','Ceil','Cos','Exp','Floor','Log','Max','Min','Pow','Random','Round','Sin','Sqrt','Tan','Trunc'], 
+        to = ['Math.abs', 'Math.acos', 'Math.asin', 'Math.atan', 'Math.ceil', 'Math.cos', 'Math.exp', 'Math.floor', 'Math.log', 'Math.max', 'Math.min', 'Math.pow', 'Math.random', 'this.board.round', 'Math.sin', 'Math.sqrt', 'Math.tan', 'Math.ceil'];
+        
     //term = JXG.unescapeHTML(term);  // This replaces &gt; by >, &lt; by < and &amp; by &.ist aber zu allgemein
     term = term.replace(/&lt;/g,'<'); // Hacks, to enable not well formed XML, @see GeonextReader#replaceLessThan
     term = term.replace(/&gt;/g,'>'); 
     term = term.replace(/&amp;/g,'&'); 
-
-    var elements = this.board.elementsByName;
     
     // Umwandeln der GEONExT-Syntax in JavaScript-Syntax
-    var expr;
-    var newterm = term;
-
+    newterm = term;
     newterm = this.replaceNameById(newterm);
     newterm = this.replaceIf(newterm);
     // Exponentiations-Problem x^y -> Math(exp(x,y).
     newterm = this.replacePow(newterm);
     newterm = this.replaceIdByObj(newterm);
     
-    
-    var from = ['Abs','ACos','ASin','ATan','Ceil','Cos','Exp','Floor','Log','Max','Min','Pow','Random','Round','Sin','Sqrt','Tan','Trunc'];
-    var to = ['Math.abs','Math.acos','Math.asin','Math.atan','Math.ceil','Math.cos','Math.exp','Math.floor','Math.log','Math.max','Math.min','Math.pow','Math.random','this.board.round','Math.sin','Math.sqrt','Math.tan', 'Math.ceil'];
-    for (var i=0; i<from.length; i++) {
+    for (i=0; i<from.length; i++) {
         expr = new RegExp(from[i],"g");
         newterm = newterm.replace(expr,to[i]);
     }    
@@ -1052,28 +1073,26 @@ JXG.Algebra.prototype.geonext2JS = function(term) {
  * @param {String} term String containing dependencies for the given object.
  */
 JXG.Algebra.prototype.findDependencies = function(me,term) {
-    var el;
-    var expr;
-    var elements = this.board.elementsByName;
+    var elements = this.board.elementsByName,
+        el, expr, elmask;
+        
     for (el in elements) {
         if (el != me.name) {
             if(elements[el].type == JXG.OBJECT_TYPE_TEXT) {
                 if(!elements[el].isLabel) {
-                    var elmask = el.replace(/\[/g,'\\[');
+                    elmask = el.replace(/\[/g,'\\[');
                     elmask = elmask.replace(/\]/g,'\\]');
                     expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\("+elmask+"\)\(,\[\\w\\[\\]'_ \]+\)*\\)","g");  // Searches (A), (A,B),(A,B,C)
                     if (term.search(expr)>=0) {
-//alert(el);
                         elements[el].addChild(me);
                     }
                 }
             }
             else {
-                var elmask = el.replace(/\[/g,'\\[');
+                elmask = el.replace(/\[/g,'\\[');
                 elmask = elmask.replace(/\]/g,'\\]');
                 expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\("+elmask+"\)\(,\[\\w\\[\\]'_ \]+\)*\\)","g");  // Searches (A), (A,B),(A,B,C)
                 if (term.search(expr)>=0) {
-//alert(el);
                     elements[el].addChild(me);
                 }
             }
@@ -1089,9 +1108,9 @@ JXG.Algebra.prototype.findDependencies = function(me,term) {
  * @return Euclidean distance of the given vectors.
  */
 JXG.Algebra.prototype.distance = function(array1, array2) {
-    var sum = 0;
+    var sum = 0, i;
     if(array1.length != array2.length) { return; }
-    for(var i=0; i<array1.length; i++) {
+    for(i=0; i<array1.length; i++) {
         sum += (array1[i] - array2[i])*(array1[i] - array2[i]);
     }
     return Math.sqrt(sum);
@@ -1108,10 +1127,11 @@ JXG.Algebra.prototype.distance = function(array1, array2) {
  * @return Euclidean (affine) distance of the given vectors.
  */
 JXG.Algebra.prototype.affineDistance = function(array1, array2) {
+    var d;
     if(array1.length != array2.length) { 
         return; 
     }
-    var d = this.distance(array1, array2);
+    d = this.distance(array1, array2);
     if (d>this.eps && (Math.abs(array1[0])<this.eps || Math.abs(array2[0])<this.eps)) {
         return Infinity;
     } else {
@@ -1128,8 +1148,7 @@ JXG.Algebra.prototype.affineDistance = function(array1, array2) {
  * @return Angle in radians.
  */
 JXG.Algebra.prototype.rad = function(A,B,C) {
-    var phi = this.trueAngle(A,B,C);
-    return phi*Math.PI/180.0;
+    return this.trueAngle(A,B,C)*Math.PI/180.0;
 };
 
 /**
@@ -1139,12 +1158,13 @@ JXG.Algebra.prototype.rad = function(A,B,C) {
  * res: Output - Array of numbers containing result
  */
 JXG.Algebra.prototype.matVecMult = function(mat1,vec) {
-    var m = mat1.length;
-    var n = vec.length;
-    var res = [];
-    for (var i=0;i<m;i++) {
-        var s = 0;
-        for (var k=0;k<n;k++) {
+    var m = mat1.length,
+        n = vec.length,
+        res = [],
+        i, s, k;
+    for (i=0;i<m;i++) {
+        s = 0;
+        for (k=0;k<n;k++) {
             s += mat1[i][k]*vec[k];
         }
         res[i] = s;
@@ -1159,18 +1179,20 @@ JXG.Algebra.prototype.matVecMult = function(mat1,vec) {
  * Output res Out - Two dimensional array of numbers
  */
 JXG.Algebra.prototype.matMatMult = function(mat1,mat2) {
-    var m = mat1.length;
-    var n = mat2[0].length;
-    var m2 = mat2.length;
-    var res = [];
-    for (var i=0;i<mat1.length;i++) {
+    var m = mat1.length,
+        n = mat2[0].length,
+        m2 = mat2.length,
+        res = [], 
+        i, j, s, k;
+        
+    for (i=0;i<mat1.length;i++) {
         res[i] = [];
     }
 
     for (i=0;i<m;i++) {
-        for (var j=0;j<n;j++) {
-            var s = 0;
-            for (var k=0;k<m2;k++) {
+        for (j=0;j<n;j++) {
+            s = 0;
+            for (k=0;k<m2;k++) {
                 s += mat1[i][k]*mat2[k][j];
             }
             res[i][j] = s;
@@ -1226,10 +1248,9 @@ JXG.Algebra.prototype.pow = function(a,b) {
   *   of the resulting line / point.
   */
 JXG.Algebra.prototype.crossProduct = function(c1,c2) {
-    var x = c1[1]*c2[2]-c1[2]*c2[1];
-    var y = c1[2]*c2[0]-c1[0]*c2[2];
-    var z = c1[0]*c2[1]-c1[1]*c2[0];
-    return [x,y,z];
+    return [c1[1]*c2[2]-c1[2]*c2[1],
+            c1[2]*c2[0]-c1[0]*c2[2],
+            c1[0]*c2[1]-c1[1]*c2[0]];
 };
 
 /** 
@@ -1237,8 +1258,7 @@ JXG.Algebra.prototype.crossProduct = function(c1,c2) {
   * The length of the vectors is n.
   **/ 
 JXG.Algebra.prototype.innerProduct = function(a,b,n) {    
-    var i;
-    var s = 0;
+    var i, s = 0;
     for (i=0;i<n;i++) {
         s += a[i]*b[i];
     }
@@ -1292,10 +1312,11 @@ JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
   * @type Array
   */
  JXG.Algebra.prototype.meetLineCircle = function(lin,circ,i) {    
+    var a,b,c,d,n, A,B,C, k,t;
+
     if (circ[4]<this.eps) { // Radius is zero, return center of circle
         return new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(1,3), this.board);
     }
-    var a,b,c,d,n, A,B,C, k,t;
     c = circ[0];
     b = circ.slice(1,3);
     a = circ[3];
@@ -1366,13 +1387,14 @@ JXG.Algebra.prototype.meetCircleCircle = function(circ1,circ2,i) {
 
 // [c,b0,b1,a,k,r,q0,q1]
 JXG.Algebra.prototype.normalize = function(stdform) {
-    var a2 = 2*stdform[3];
-    var r = stdform[4]/(a2);  // k/(2a)
+    var a2 = 2*stdform[3],
+        r = stdform[4]/(a2),  // k/(2a)
+        n, signr; 
     stdform[5] = r;
     stdform[6] = -stdform[1]/a2;
     stdform[7] = -stdform[2]/a2;
     if (r==Infinity || isNaN(r)) {
-        var n = Math.sqrt(stdform[1]*stdform[1]+stdform[2]*stdform[2]);
+        n = Math.sqrt(stdform[1]*stdform[1]+stdform[2]*stdform[2]);
         stdform[0] /= n;
         stdform[1] /= n;
         stdform[2] /= n;
@@ -1385,7 +1407,7 @@ JXG.Algebra.prototype.normalize = function(stdform) {
         stdform[3] = 1/(2*r);
         stdform[4] = 1;
     } else {
-        var signr = (r<=0)?(-1):(1/*(r==0)?0:1*/);
+        signr = (r<=0)?(-1):(1/*(r==0)?0:1*/);
         stdform[0] = signr*(stdform[6]*stdform[6]+stdform[7]*stdform[7]-r*r)*0.5;
         stdform[1] = -signr*stdform[6];
         stdform[2] = -signr*stdform[7];
@@ -1432,10 +1454,11 @@ JXG.Algebra.prototype.normalize = function(stdform) {
  * @return coordinate object for the intersection point
  **/
 JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
-    var count = 0;
-    var t1, t2;
-    var a, b, c, d, disc;
-    var e, f;
+    var count = 0,
+        t1, t2,
+        a, b, c, d, disc,
+        e, f, F;
+        
     if (arguments.callee.t1memo) {
         t1 = arguments.callee.t1memo;
         t2 = arguments.callee.t2memo;
@@ -1449,7 +1472,7 @@ JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
     if (t2<c2.minX()) { t2 = c2.minX(); }
     e = c1.X(t1)-c2.X(t2);
     f = c1.Y(t1)-c2.Y(t2);
-    var F = e*e+f*f;
+    F = e*e+f*f;
     while (F>JXG.Math.eps && count<1000) {
         a = c1.board.D(c1.X,c1)(t1);
         b = -c2.board.D(c2.X,c2)(t2);
