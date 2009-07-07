@@ -6,8 +6,8 @@
         <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
     </head>
     <body class="jsxgraph_body">
-        <div id="resulttext"></div>
-        <div id="jxgbox" class="jxgbox  jsxgraph_present_small"  onmousemove="board2.update()"></div>
+        <div id="resulttext"></div><br /><br />
+        <center><div id="jxgbox" class="jxgbox" style="position: relative; width: 380px; height: 380px; overflow: hidden;" onmousemove="board2.update()"></div></center>
         <!-- Drawing area -->
         <script type="text/javascript">
             /* <![CDATA[ */
@@ -46,7 +46,7 @@ board2 = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 1, 1, -1], keepaspe
    tin += inp;
    tout += outp;
  
-   text += '<b><u>Current</u></b><br/>In: ' + inp + ', out: ' + outp + ', total: ' + (inp+outp) + '; ratio: ' + (inp/(inp+outp)) + ', ratio*4: ' + (4*inp/(inp+outp)) + '.<br /><b><u>Total</u></b> (' + count + ' updates in total. Do another <a href="#" onclick="for(var i=0;i<200;i++) board2.update();">200 Updates</a>.)<br/>In: ' + tin + ', out: ' + tout + ', total: ' + (tin+tout) + '; ratio: ' + (tin/(tin+tout)) + ', ratio*4: ' + (4*tin/(tin+tout));
+   text += '<b><u>Current</u></b><br/>In: ' + inp + ', out: ' + outp + ', total: ' + (inp+outp) + '; ratio: ' + (inp/(inp+outp)).toString().slice(0,5) + ', ratio*4: ' + (4*inp/(inp+outp)).toString().slice(0,5) + '.<br /><br /><b><u>Total</u></b> (' + count + ' updates in total. Do another <a href="#" onclick="for(var i=0;i<200;i++) board2.update();">200 Updates</a>.)<br/>In: ' + tin + ', out: ' + tout + ', total: ' + (tin+tout) + '; ratio: ' + (tin/(tin+tout)).toString().slice(0,5) + ', ratio*4: ' + (4*tin/(tin+tout)).toString().slice(0,8);
    document.getElementById('resulttext').innerHTML = text;
  }
  
