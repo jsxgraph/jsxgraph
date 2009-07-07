@@ -105,7 +105,7 @@
             }
         };
 
-        var s = b.createElement('slider', [[0,-110],[70,-110],[1,2,7]], {name:'S',snapWidth:1});
+        var s = b.createElement('slider', [[0,-110],[70,-110],[1,1,7]], {name:'S',snapWidth:1});
         var curve = b.createElement('curve',[pointsX,pointsY],{curveType:'plot'});
 
         var oldlev = -1;
@@ -123,7 +123,8 @@
             this.dataY = pointsY;
             oldlev=maxlev;
         };
-    
+        
+        b.update();
             /* ]]> */
         </script>
     </body>

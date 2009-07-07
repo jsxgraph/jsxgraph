@@ -19,15 +19,15 @@
 
         var p2 = [];
         p2[0] = board.createElement('point', [-1,-2], {style:6});
-        p2[1] = board.createElement('point', [0,0], {style:6});
-        p2[2] = board.createElement('point', [3,1], {style:6});
+        p2[1] = board.createElement('point', [0,-5], {style:6});
+        p2[2] = board.createElement('point', [3,-4], {style:6});
         
         var f = board.lagrangePolynomial(p);
         graph = board.createElement('functiongraph',  [f, -10, 10], {strokeWidth:3});
         d1 = board.createElement('functiongraph', [board.D(f), -10, 10], {dash:1});
 
         graph2 = board.createElement('curve',  board.neville(p2), {strokeWidth:3, strokeColor:'red', strokeOpacity:0.7});
-        g = board.createElement('glider', [1,1,graph2], {name:'Glider'});
+        g = board.createElement('glider', [-1,-4,graph2], {name:'Glider'});
         t = board.createElement('tangent', [g],{dash:1,strokeColor:'green'});
         board.unsuspendUpdate();
 

@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!C:/Programme/Python25/python.exe
+# -*- coding: iso-8859-15 -*-
 
 import numpy
 import os
@@ -12,14 +13,14 @@ import os
 # Should be changed to something more persistent but must be writable by
 # the webserver
 if not 'MPLCONFIGDIR' in os.environ:
-    os.environ['MPLCONFIGDIR'] = '/tmp'
+#    os.environ['MPLCONFIGDIR'] = '/tmp'
 # Example for Windows using XAMPP
-#    os.environ['MPLCONFIGDIR'] = 'C:/xampp/tmp'
+    os.environ['MPLCONFIGDIR'] = 'C:/Dokumente und Einstellungen/alfred/Desktop/xampp/tmp'
 
 # Command to start cocoa
-cmd_cocoa = "cocoa"
+#cmd_cocoa = "cocoa"
 # If you're using Windows
-#cmd_cocoa = r"C:\cocoa\cocoa.bat"
+cmd_cocoa = r"C:\Programme\cocoa-4.7.5-win\emacs-win\cocoa.bat"
 
 # Should'nt be changed, except you know what you're doing
 debug = False;
@@ -132,7 +133,7 @@ for i in range(0,len(polynomials)):
     C = contour(x, y, z, [0])
 
     if debug:
-        savefig('/tmp/test%s.png' % i)
+        savefig('C:/Dokumente und Einstellungen/alfred/Desktop/xampp/tmp/test%s.png' % i)
 
     con = C.find_nearest_contour(0, 0)
 
@@ -147,7 +148,7 @@ for i in range(0,len(polynomials)):
 enc_data = base64.b64encode(zlib.compress(data.getvalue(), 9))
 
 if debug:
-    fd = open('/tmp/tmp.txt', 'w')
+    fd = open('C:/Dokumente und Einstellungen/alfred/Desktop/xampp/tmp', 'w')
     fd.write(data.getvalue())
     fd.close()
 

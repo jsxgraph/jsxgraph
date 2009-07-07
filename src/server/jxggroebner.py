@@ -17,7 +17,7 @@ if not 'MPLCONFIGDIR' in os.environ:
 #    os.environ['MPLCONFIGDIR'] = 'C:/xampp/tmp'
 
 # Command to start cocoa
-cmd_cocoa = "cocoa"
+cmd_cocoa = "cocoaserver"
 # If you're using Windows
 #cmd_cocoa = r"C:\cocoa\cocoa.bat"
 
