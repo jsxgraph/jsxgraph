@@ -7,11 +7,11 @@
     </head>
     <body class="jsxgraph_body">
         <div id="resulttext"></div>
-        <div id="jxgbox" class="jxgbox" style="height: 580px; width: 580px" onmousemove="board2.update()"></div>
+        <div id="jxgbox" class="jxgbox  jsxgraph_present_small"  onmousemove="board2.update()"></div>
         <!-- Drawing area -->
         <script type="text/javascript">
             /* <![CDATA[ */
-board2 = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 1, 1, -1], axis:true});
+board2 = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 1, 1, -1], keepaspectratio:true, axis:true});
  c = board2.createElement('circle', [[0,0], 1]);
  board2.suspendUpdate();
  var p2 = [];
