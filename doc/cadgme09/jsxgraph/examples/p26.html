@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.present.css" />
+        <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+    </head>
+    <body class="jsxgraph_body">
+        <div id="resulttext"></div>
+        <div id="jxgbox" class="jxgbox" style="height: 580px; width: 580px" onmousemove="board2.update()"></div>
+        <!-- Drawing area -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+board2 = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 1, 1, -1], axis:true});
+ c = board2.createElement('circle', [[0,0], 1]);
+ board2.suspendUpdate();
+ var p2 = [];
+ for (var i=0;i<50;i++) {
+   p2[i] = board2.createElement('point',
+           [function(){return 2*Math.random()-1;},function(){ return 2*Math.random()-1;}],
+           {style:5,name:' '});
+ }
+ board2.unsuspendUpdate();
+ 
+ var tin = 0;
+ var tout = 0;
+ var count = 0;
+ 
+ function updText() {
+   count++;
+   var text = '';
+ 
+   var inp = 0;
+   var outp = 0;
+ 
+   for(var i=0; i<p2.length;i++) {
+     var x = p2[i].X();
+     var y = p2[i].Y();
+ 
+     if(x*x+y*y <= 1)
+       inp++;
+     else
+       outp++;
+   }
+ 
+   tin += inp;
+   tout += outp;
+ 
+   text += '<b><u>Current</u></b><br/>In: ' + inp + ', out: ' + outp + ', total: ' + (inp+outp) + '; ratio: ' + (inp/(inp+outp)) + ', ratio*4: ' + (4*inp/(inp+outp)) + '.<br /><b><u>Total</u></b> (' + count + ' updates in total. Do another <a href="#" onclick="for(var i=0;i<50;i++) board2.update();">50 Updates</a>.)<br/>In: ' + tin + ', out: ' + tout + ', total: ' + (tin+tout) + '; ratio: ' + (tin/(tin+tout)) + ', ratio*4: ' + (4*tin/(tin+tout));
+   document.getElementById('resulttext').innerHTML = text;
+ }
+ 
+ var hookid = board2.addHook(updText);
+        /* ]]> */
+        </script>
+    </body>
+</html>
