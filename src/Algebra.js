@@ -1426,7 +1426,7 @@ JXG.Algebra.prototype.normalize = function(stdform) {
  * We set
  * (e,f) := (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2))
  *
- * The Jacobinean J is defined by
+ * The Jacobian J is defined by
  * J = (a, b)
  *      (c, d)
  * where
@@ -1457,7 +1457,9 @@ JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
     var count = 0,
         t1, t2,
         a, b, c, d, disc,
-        e, f, F;
+        e, f, F, 
+        D00, D01, 
+        D10, D11;
         
     if (arguments.callee.t1memo) {
         t1 = arguments.callee.t1memo;
@@ -1473,11 +1475,18 @@ JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
     e = c1.X(t1)-c2.X(t2);
     f = c1.Y(t1)-c2.Y(t2);
     F = e*e+f*f;
-    while (F>JXG.Math.eps && count<1000) {
-        a = c1.board.D(c1.X,c1)(t1);
-        b = -c2.board.D(c2.X,c2)(t2);
-        c = c1.board.D(c1.Y,c1)(t1);
-        d = -c2.board.D(c2.Y,c2)(t2);
+    
+    D00 = c1.board.D(c1.X,c1);
+    D01 = c2.board.D(c2.X,c2);
+    D10 = c1.board.D(c1.Y,c1);
+    D11 = c2.board.D(c2.Y,c2);
+//$('debug').innerHTML = t1+' '+t2+'<br>\n';
+    
+    while (F>JXG.Math.eps && count<10) {
+        a =  D00(t1);
+        b = -D01(t2);
+        c =  D10(t1);
+        d = -D11(t2);
         disc = a*d-b*c;
         t1 -= (d*e-b*f)/disc;
         t2 -= (a*f-c*e)/disc;
@@ -1485,10 +1494,13 @@ JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
         f = c1.Y(t1)-c2.Y(t2);
         F = e*e+f*f;
         count++;
+//$('debug').innerHTML += [a,b,c,d].join(':')+'['+disc+'], '+t1+' '+t2+ ' '+count+'<br>\n ';
     }
-    //$('debug').innerHTML = arguments.callee.t1memo+' '+arguments.callee.t1memo+ ' '+count;
+
     arguments.callee.t1memo = t1;
     arguments.callee.t2memo = t2;
+//    $('debug').innerHTML = arguments.callee.t1memo+' '+arguments.callee.t1memo+ ' '+count;
+    //return (new JXG.Coords(JXG.COORDS_BY_USER, [2,2], this.board));
     if (Math.abs(t1)<Math.abs(t2)) {
         return (new JXG.Coords(JXG.COORDS_BY_USER, [c1.X(t1),c1.Y(t1)], this.board));
     } else {

@@ -358,7 +358,7 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
  * @see #geonext2JS.
  */
 JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
-    var newxterm, newyterm, newMin, newMax;
+    var newxterm, newyterm, newMin, newMax, fx, fy;
     // Generate the methods X() and Y()
     this.numberPoints = this.board.canvasWidth*1.0;
     if (typeof xterm=='string') {
@@ -394,9 +394,23 @@ JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
     
     // polar form
     if (typeof xterm=='function' && typeof yterm=='object') {
-        this.X = function(phi){return (xterm)(phi)*Math.cos(phi)+yterm[0];};
-        this.Y = function(phi){return (xterm)(phi)*Math.sin(phi)+yterm[1];};
-        this.curveType = 'parameter';
+        // Xoffset
+        if (typeof yterm[0]=='function') {
+            fx = yterm[0];
+        } else if (typeof yterm[0]=='number') {
+            fx = function() { return yterm[0]; };
+        } 
+        
+        // Yoffset
+        if (typeof yterm[1]=='function') {
+            fy = yterm[1];
+        } else if (typeof yterm[1]=='number') {
+            fy = function() { return yterm[1]; };
+        } 
+
+        this.X = function(phi){return (xterm)(phi)*Math.cos(phi)+fx();};
+        this.Y = function(phi){return (xterm)(phi)*Math.sin(phi)+fy();};
+        this.curveType = 'polar';
     }
 
     // Set the bounds
