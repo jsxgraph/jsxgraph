@@ -118,19 +118,22 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
 }
 
 JXG.SVGRenderer.prototype.drawArc = function(el) {  
-    var node = this.createPrimitive('path',el.id);
+    var node = this.createPrimitive('path',el.id),
+        radius, angle, circle, point3,
+        pathString, pathString2, node2, node4;
+        
     el.rendNode = node;
     
-    var radius = el.getRadius();  
-    var angle = el.board.algebra.trueAngle(el.point2, el.midpoint, el.point3);
-    var circle = {}; // um projectToCircle benutzen zu koennen...
+    radius = el.getRadius();  
+    angle = el.board.algebra.trueAngle(el.point2, el.midpoint, el.point3);
+    circle = {}; // um projectToCircle benutzen zu koennen...
     circle.midpoint = el.midpoint;
     circle.getRadius = function() {
         return radius;
     }
-    var point3 = el.board.algebra.projectPointToCircle(el.point3,circle);
+    point3 = el.board.algebra.projectPointToCircle(el.point3,circle);
 
-    var pathString = 'M '+ el.point2.coords.scrCoords[1] +' '+ el.point2.coords.scrCoords[2] +' A '; // Startpunkt
+    pathString = 'M '+ el.point2.coords.scrCoords[1] +' '+ el.point2.coords.scrCoords[2] +' A '; // Startpunkt
     pathString += Math.round(radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien
     // largeArc
     if(angle >= 180) {
@@ -150,24 +153,22 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     node.setAttributeNS(null, 'fill', 'none');
     this.setDashStyle(node,el.visProp);
 
-    var node2;
-    var node3;
     if(el.visProp['firstArrow']) {
-        var node2 = this.createArrowHead(el,'Start');
+        node2 = this.createArrowHead(el,'Start');
         this.defs.appendChild(node2);
         el.rendNodeTriangleStart = node2;
         node.setAttributeNS(null, 'marker-end', 'url(#'+el.id+'TriangleStart)');
     }
     if(el.visProp['lastArrow']) {
-        var node2 = this.createArrowHead(el,'End');
+        node2 = this.createArrowHead(el,'End');
         this.defs.appendChild(node2);
         el.rendNodeTriangleEnd = node2;
         node.setAttributeNS(null, 'marker-start', 'url(#'+el.id+'TriangleEnd)');
     }      
     
     // Fuellflaeche
-    var node4 = this.createPrimitive('path',el.id+'_fill');
-    var pathString2 = 'M ' + el.midpoint.coords.scrCoords[1] + " " + el.midpoint.coords.scrCoords[2];
+    node4 = this.createPrimitive('path',el.id+'_fill');
+    pathString2 = 'M ' + el.midpoint.coords.scrCoords[1] + " " + el.midpoint.coords.scrCoords[2];
     pathString2 += ' L '+ el.point2.coords.scrCoords[1] +' '+ el.point2.coords.scrCoords[2] +' A '; // Startpunkt
     pathString2 += Math.round(radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien
     // largeArc
@@ -207,14 +208,15 @@ JXG.AbstractRenderer.prototype.updateArc = function(el) {
     // AW: brutaler fix der update-Methode...
     // BV: falls die update-Methode doch wieder "normal" funktionsfaehig wird, muss noch auf die Start- und Endpfeile geachtet werden 
     //    (derzeit noch nicht beruecksichtigt)
+    var node;
     this.remove(el.rendNode);
     this.remove(el.rendNodeFill);  
-    var node = el.rendNodeTriangleStart;
-    if(node != null) {
+    node = el.rendNodeTriangleStart;
+    if (node != null) {
         this.remove(node);
     }
     node = el.rendNodeTriangleEnd;
-    if(node != null) {
+    if (node != null) {
         this.remove(node);
     }    
     this.drawArc(el);
@@ -251,21 +253,23 @@ JXG.AbstractRenderer.prototype.updateArc = function(el) {
 };
 
 JXG.SVGRenderer.prototype.drawAngle = function(el) {
-    var angle = el.board.algebra.trueAngle(el.point1, el.point2, el.point3);
-    var circle = {};  // um projectToCircle benutzen zu koennen...
+    var angle = el.board.algebra.trueAngle(el.point1, el.point2, el.point3),
+        circle, projectedP1, projectedP3,
+        node, node2, pathString;
+    circle = {};  // um projectToCircle benutzen zu koennen...
     circle.midpoint = el.point2;
     circle.getRadius = function() {
         return el.radius;
     }
-    var projectedP1 = el.board.algebra.projectPointToCircle(el.point1,circle);
-    var projectedP3 = el.board.algebra.projectPointToCircle(el.point3,circle);
+    projectedP1 = el.board.algebra.projectPointToCircle(el.point1,circle);
+    projectedP3 = el.board.algebra.projectPointToCircle(el.point3,circle);
 
-    var node = this.createPrimitive('path',el.id+'_1');
-    var pathString = 'M ' + el.point2.coords.scrCoords[1] + " " + el.point2.coords.scrCoords[2];
+    node = this.createPrimitive('path',el.id+'_1');
+    pathString = 'M ' + el.point2.coords.scrCoords[1] + " " + el.point2.coords.scrCoords[2];
     pathString += ' L '+ projectedP1.scrCoords[1] +' '+ projectedP1.scrCoords[2] +' A '; // Startpunkt
     pathString += Math.round(el.radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(el.radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien
     // largeArc
-    if(angle >= 180) {
+    if (angle >= 180) {
         pathString += '1 ';
     }
     else {
@@ -282,11 +286,11 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     node.setAttributeNS(null, 'fill-opacity', el.visProp['fillOpacity']);    
     node.setAttributeNS(null, 'stroke', 'none');    
    
-    var node2 = this.createPrimitive('path',el.id+'_2');
-    var pathString = 'M '+  projectedP1.scrCoords[1] +' '+  projectedP1.scrCoords[2] +' A '; // Startpunkt
+    node2 = this.createPrimitive('path',el.id+'_2');
+    pathString = 'M '+  projectedP1.scrCoords[1] +' '+  projectedP1.scrCoords[2] +' A '; // Startpunkt
     pathString += Math.round(el.radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(el.radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien
     // largeArc
-    if(angle >= 180) {
+    if (angle >= 180) {
         pathString += '1 ';
     }
     else {
@@ -303,7 +307,6 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     node2.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);    
     node2.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);
 
-
     this.appendChildPrimitive(node,'angles');
     el.rendNode1 = node;
     this.appendChildPrimitive(node2,'angles');
@@ -318,15 +321,15 @@ JXG.SVGRenderer.prototype.updateAngle = function(el) {
     this.remove(el.rendNode1);
     this.remove(el.rendNode2);    
     this.drawAngle(el);
-    if(!el.visProp['visible']) {
+    if (!el.visProp['visible']) {
         el.hideElement();
     }
     return;
 };
 
 JXG.SVGRenderer.prototype.drawImage = function(el) {
-    var imageBase64 = 'data:image/png;base64,' + el.imageBase64String;    
-    var node = this.createPrimitive('image',el.id);
+    var imageBase64 = 'data:image/png;base64,' + el.imageBase64String,    
+        node = this.createPrimitive('image',el.id);
 
     node.setAttributeNS(this.xlinkNamespace, 'xlink:href', imageBase64);
     this.appendChildPrimitive(node,el.displayLevel);
@@ -335,42 +338,44 @@ JXG.SVGRenderer.prototype.drawImage = function(el) {
 }
 
 JXG.SVGRenderer.prototype.transformImage = function(el,t) {
-    var node = el.rendNode;
-    var str = node.getAttributeNS(null, 'transform');
+    var node = el.rendNode,
+        str = node.getAttributeNS(null, 'transform');
+        
     str += ' ' + this.joinTransforms(el,t);
     node.setAttributeNS(null, 'transform', str);
 }
 
 JXG.SVGRenderer.prototype.joinTransforms = function(el,t) {
-    var str = '';
-    for (var i=0;i<t.length;i++) {
-        var s = t[i].matrix[1][1]+','+t[i].matrix[2][1]+','+t[i].matrix[1][2]+','+t[i].matrix[2][2]+','+t[i].matrix[1][0]+','+t[i].matrix[2][0];
+    var str = '', i, s;
+    for (i=0;i<t.length;i++) {
+        s = t[i].matrix[1][1]+','+t[i].matrix[2][1]+','+t[i].matrix[1][2]+','+t[i].matrix[2][2]+','+t[i].matrix[1][0]+','+t[i].matrix[2][0];
         str += 'matrix('+s+') ';
     }
     return str;
 }
   
 JXG.SVGRenderer.prototype.transformImageParent = function(el,m) {
+    var s, str;
     if (m!=null) {
-        var s = m[1][1]+','+m[2][1]+','+m[1][2]+','+m[2][2]+','+m[1][0]+','+m[2][0];
-        var str = 'matrix('+s+')';
+        s = m[1][1]+','+m[2][1]+','+m[1][2]+','+m[2][2]+','+m[1][0]+','+m[2][0];
+        str = 'matrix('+s+')';
     } else {
-        var str = '';
+        str = '';
     }
     el.rendNode.setAttributeNS(null, 'transform', str);
 }
   
 JXG.SVGRenderer.prototype.removeGrid = function(board) { 
-    board.hasGrid = false;
     var c = this.grid;
+    board.hasGrid = false;
     while (c.childNodes.length>0) {
         c.removeChild(c.firstChild);
     }
 }
 
 JXG.SVGRenderer.prototype.setObjectDash = function(el) {
+    var node, dashStyle;
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) { // Punkte haben keine dash-Eigenschaft
-        var node;
         if(el.type == JXG.OBJECT_TYPE_ANGLE) {
             node = el.rendNode2;
         }
@@ -378,7 +383,7 @@ JXG.SVGRenderer.prototype.setObjectDash = function(el) {
             node = el.rendNode;
         }
         if(el.visProp['dash'] > 0) {
-            var dashStyle = el.visProp['dash'];
+            dashStyle = el.visProp['dash'];
             node.setAttributeNS(null, 'stroke-dasharray', this.dashArray[dashStyle-1]);
         }
         else {
@@ -390,10 +395,10 @@ JXG.SVGRenderer.prototype.setObjectDash = function(el) {
 }
  
 JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
+    var c, o, node;
     if(opacity == undefined) {
         opacity = 1;
     }
-    var c, o;
     if (typeof opacity=='function') {
         o = opacity();
     } else {
@@ -406,7 +411,7 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
         c = color;
     }
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
-        var node = el.rendNode;
+        node = el.rendNode;
         if(el.type == JXG.OBJECT_TYPE_TEXT) {
             node.style.color = c; // Schriftfarbe
         }
@@ -456,12 +461,12 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     }
     else {
         if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
-            var node = el.rendNode;
+            node = el.rendNode;
             node.setAttributeNS(null, 'stroke', c);      
             node.setAttributeNS(null, 'stroke-opacity', o);              
         }
         else {
-            var node = el.rendNodeX1;
+            node = el.rendNodeX1;
             node.setAttributeNS(null, 'stroke', c);   
             node.setAttributeNS(null, 'stroke-opacity', o);             
             node = el.rendNodeX2;
@@ -472,10 +477,10 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
 };
 
 JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
+    var c, o, node;
     if(opacity==undefined) {
         opacity = 1;
     }
-    var c, o;
     if (typeof opacity=='function') {
         o = opacity();
     } else {
@@ -490,7 +495,7 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
     
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
         if(el.type == JXG.OBJECT_TYPE_ARC) {
-            var node = el.rendNodeFill;
+            node = el.rendNodeFill;
             node.setAttributeNS(null, 'fill', c);
             node.setAttributeNS(null, 'fill-opacity', o);        
         }
@@ -500,19 +505,19 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
             node.setAttributeNS(null, 'fill-opacity', o);            
         }        
         else {
-            var node = el.rendNode;
+            node = el.rendNode;
             node.setAttributeNS(null, 'fill', c);           
             node.setAttributeNS(null, 'fill-opacity', o);                   
         }
     }
     else {
         if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
-            var node = el.rendNode;
+            node = el.rendNode;
             node.setAttributeNS(null, 'fill', c); 
             node.setAttributeNS(null, 'fill-opacity', o);
         }
         else {
-            var node = el.rendNodeX1;
+            node = el.rendNodeX1;
             node.setAttributeNS(null, 'fill', c);
             node.setAttributeNS(null, 'fill-opacity', o);    
             node = el.rendNodeX2;
@@ -528,7 +533,7 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
  * @param {int} width The new stroke width to be assigned to the element.
  */
 JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
-    var w;
+    var w, node;
     if (typeof width=='function') {
         w = width();
     } else {
@@ -537,7 +542,7 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
     //w = (w>0)?w:0;
     
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
-        var node;
+        node;
         if(el.type == JXG.OBJECT_TYPE_ANGLE) {
             node = el.rendNode2;
         }
@@ -551,19 +556,19 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
     }
     else {
         if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
-            var node = el.rendNode;
+            node = el.rendNode;
             this.setPropertyPrimitive(node,'stroked', 'true');
             if (w!=null) { 
                 this.setPropertyPrimitive(node,'stroke-width',w); 
             }
         }
         else {
-            var node = el.rendNodeX1;
+            node = el.rendNodeX1;
             this.setPropertyPrimitive(node,'stroked', 'true');
             if (w!=null) { 
                 this.setPropertyPrimitive(node,'stroke-width',w);  
             }
-            var node = el.rendNodeX2;
+            node = el.rendNodeX2;
             this.setPropertyPrimitive(node,'stroked', 'true');
             if (w!=null) { 
                 this.setPropertyPrimitive(node,'stroke-width',w); 
@@ -573,15 +578,16 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
 };
 
 JXG.SVGRenderer.prototype.hide = function(el) {
+    var node;
     if (el==null) return;
     if(JXG.IsPoint(el)) {
         if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
-            var node = el.rendNode;
+            node = el.rendNode;
             node.setAttributeNS(null, 'display', 'none');
             node.style.visibility = "hidden";    
         }
         else {
-            var node = el.rendNodeX1;
+            node = el.rendNodeX1;
             node.setAttributeNS(null, 'display', 'none');
             node.style.visibility = "hidden";  
             node = el.rendNodeX2;
@@ -590,7 +596,7 @@ JXG.SVGRenderer.prototype.hide = function(el) {
         }
     }
     else if(el.type == JXG.OBJECT_TYPE_ARC) {
-        var node = el.rendNode;
+        node = el.rendNode;
         node.setAttributeNS(null, 'display', 'none');
         node.style.visibility = "hidden"; 
         node = el.rendNodeFill;
@@ -598,7 +604,7 @@ JXG.SVGRenderer.prototype.hide = function(el) {
         node.style.visibility = "hidden";         
     }
     else if(el.type == JXG.OBJECT_TYPE_ANGLE) {
-        var node = el.rendNode1;
+        node = el.rendNode1;
         node.setAttributeNS(null, 'display', 'none');
         node.style.visibility = "hidden"; 
         node = el.rendNode2;
@@ -606,21 +612,22 @@ JXG.SVGRenderer.prototype.hide = function(el) {
         node.style.visibility = "hidden";         
     }   
     else {
-        var node = el.rendNode;
+        node = el.rendNode;
         node.setAttributeNS(null, 'display', 'none');
         node.style.visibility = "hidden";     
     }
 }
 
 JXG.SVGRenderer.prototype.show = function(el) {
+    var node;
     if(JXG.IsPoint(el)) {
         if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
-            var node = el.rendNode;
+            node = el.rendNode;
             node.setAttributeNS(null, 'display', 'inline');
             node.style.visibility = "inherit"; 
         }
         else {
-            var node = el.rendNodeX1;
+            node = el.rendNodeX1;
             node.setAttributeNS(null, 'display', 'inline');
             node.style.visibility = "inherit"; 
             node = el.rendNodeX2;
@@ -629,7 +636,7 @@ JXG.SVGRenderer.prototype.show = function(el) {
         }
     }
     else if(el.type == JXG.OBJECT_TYPE_ARC) {
-        var node = el.rendNode;
+        node = el.rendNode;
         node.setAttributeNS(null, 'display', 'inline');
         node.style.visibility = "inherit"; 
         node = el.rendNodeFill;
@@ -637,7 +644,7 @@ JXG.SVGRenderer.prototype.show = function(el) {
         node.style.visibility = "inherit";     
     }
     else if(el.type == JXG.OBJECT_TYPE_ANGLE) {
-        var node = el.rendNode1;
+        node = el.rendNode1;
         node.setAttributeNS(null, 'display', 'inline');
         node.style.visibility = "inherit"; 
         node = el.rendNode2;
@@ -645,7 +652,7 @@ JXG.SVGRenderer.prototype.show = function(el) {
         node.style.visibility = "inherit";         
     }    
     else {
-        var node = el.rendNode;
+        node = el.rendNode;
         node.setAttributeNS(null, 'display', 'inline');
         node.style.visibility = "inherit"; 
     }
@@ -662,19 +669,16 @@ JXG.SVGRenderer.prototype.suspendRedraw = function() {
 }
 
 JXG.SVGRenderer.prototype.unsuspendRedraw = function() {
-    //try {
-        if (true) { 
-            this.svgRoot.unsuspendRedraw(this.suspendHandle);
-            this.svgRoot.forceRedraw();
-        }
-    //} catch(e) {
-        //alert('Unsuspend not working!');
-    //}
+    if (true) { 
+        this.svgRoot.unsuspendRedraw(this.suspendHandle);
+        this.svgRoot.forceRedraw();
+    }
 }
 
 JXG.SVGRenderer.prototype.setDashStyle = function(node,visProp) {
+    var dashStyle;
     if(visProp['dash'] > 0) {
-        var dashStyle = visProp['dash'];
+        dashStyle = visProp['dash'];
         node.setAttributeNS(null, 'stroke-dasharray', this.dashArray[dashStyle-1]);
     }
 }
@@ -687,9 +691,11 @@ JXG.SVGRenderer.prototype.createPrimitive = function(type,id) {
 }
 
 JXG.SVGRenderer.prototype.createArrowHead = function(el,idAppendix) {
-    var id = el.id+'Triangle';
+    var id = el.id+'Triangle',
+        node2, node3;
+        
     if (idAppendix!=null) { id += idAppendix; }
-    var node2 = this.createPrimitive('marker',id);
+    node2 = this.createPrimitive('marker',id);
     node2.setAttributeNS(null, 'viewBox', '0 0 10 6');
     node2.setAttributeNS(null, 'refY', '3');
     node2.setAttributeNS(null, 'markerUnits', 'strokeWidth');
@@ -700,7 +706,7 @@ JXG.SVGRenderer.prototype.createArrowHead = function(el,idAppendix) {
     node2.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);            
     node2.setAttributeNS(null, 'fill', el.visProp['strokeColor']);
     node2.setAttributeNS(null, 'fill-opacity', el.visProp['strokeOpacity']);    
-    var node3 = this.container.ownerDocument.createElementNS(this.svgNamespace,'path');
+    node3 = this.container.ownerDocument.createElementNS(this.svgNamespace,'path');
     if (idAppendix=='End') {
         node2.setAttributeNS(null, 'refX', '0');
         node3.setAttributeNS(null, 'd', 'M 0 3 L 10 6 L 10 0 z');
@@ -720,8 +726,9 @@ JXG.SVGRenderer.prototype.makeArrow = function(node,el,idAppendix) {
 };
 
 JXG.SVGRenderer.prototype.makeArrows = function(el) {
+    var node2;
     if(el.visProp['firstArrow']) {
-        var node2 = el.rendNodeTriangleStart;
+        node2 = el.rendNodeTriangleStart;
         if(node2 == null) {
             node2 = this.createArrowHead(el,'End');
             this.defs.appendChild(node2);            
@@ -730,13 +737,13 @@ JXG.SVGRenderer.prototype.makeArrows = function(el) {
         }    
     }
     else {
-        var node2 = el.rendNodeTriangleStart;
+        node2 = el.rendNodeTriangleStart;
         if(node2 != null) {
             this.remove(node2);
         }
     }
     if(el.visProp['lastArrow']) {
-        var node2 = el.rendNodeTriangleEnd;
+        node2 = el.rendNodeTriangleEnd;
         if(node2 == null) {
             node2 = this.createArrowHead(el,'Start');
             this.defs.appendChild(node2);            
@@ -745,7 +752,7 @@ JXG.SVGRenderer.prototype.makeArrows = function(el) {
         }    
     }
     else {
-        var node2 = el.rendNodeTriangleEnd;
+        node2 = el.rendNodeTriangleEnd;
         if(node2 != null) {
             this.remove(node2);
         }        
@@ -787,17 +794,22 @@ JXG.SVGRenderer.prototype.updatePathPrimitive = function(node, pointString, boar
 };
 
 JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
+    var oldx = -10000.0,
+        oldy = -10000.0,
+        nextSymb = ' M ',
+        pStr = '',
+        h = 3*el.board.canvasHeight,
+        w = 100*el.board.canvasWidth,
+        i, scr, 
+        isNoPlot = (el.curveType!='plot');
+        isFunctionGraph = (el.curveType=='functiongraph');
+
     if (el.numberPoints<=0) { return ''; }
-    var oldx = -10000.0;
-    var oldy = -10000.0;
-    var nextSymb = ' M ';
-    var pStr = '';
-    var h = 3*el.board.canvasHeight; 
-    var w = 100*el.board.canvasWidth;
-    for (var i=0; i<el.numberPoints; i++) {
-        var scr = el.points[i].scrCoords;
-        if (el.curveType!='plot' && Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
-        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (el.curveType=='functiongraph' && (scr[2]>h || scr[2]<-0.5*h)) ) {
+    
+    for (i=0; i<el.numberPoints; i++) {
+        scr = el.points[i].scrCoords;
+        if (isNoPlot && Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
+        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (isFunctionGraph && (scr[2]>h || scr[2]<-0.5*h)) ) {
             nextSymb = ' M ';
         } else {
             pStr += [nextSymb,scr[1],' ',scr[2]].join(''); // Attention: first coordinate may be inaccurate if far way
@@ -810,10 +822,11 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
 };
 
 JXG.SVGRenderer.prototype.updatePolygonePrimitive = function(node, el) {
+    var pStr = '', 
+        screenCoords, i;
     node.setAttributeNS(null, 'stroke', 'none');
-    var pStr = "";
-    for(var i=0; i<el.vertices.length-1; i++) {
-        var screenCoords = el.vertices[i].coords.scrCoords;
+    for(i=0; i<el.vertices.length-1; i++) {
+        screenCoords = el.vertices[i].coords.scrCoords;
         pStr = pStr + screenCoords[1] + "," + screenCoords[2];
         if(i<el.vertices.length-2) { pStr += " "; }
     }
@@ -843,8 +856,9 @@ JXG.SVGRenderer.prototype.setPropertyPrimitive = function(node,key,val) {
 };
 
 JXG.SVGRenderer.prototype.drawVerticalGrid = function(topLeft, bottomRight, gx, board) {
-    var node = this.createPrimitive('path', 'gridx');
-    var gridArr = "";
+    var node = this.createPrimitive('path', 'gridx'),
+        gridArr = '';
+        
     while(topLeft.scrCoords[1] < bottomRight.scrCoords[1] + gx - 1) { 
         gridArr += ' M ' + topLeft.scrCoords[1] + ' ' + 0 + ' L ' + topLeft.scrCoords[1] + ' ' + board.canvasHeight+' ';
         topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1] + gx, topLeft.scrCoords[2]]);   
@@ -854,8 +868,9 @@ JXG.SVGRenderer.prototype.drawVerticalGrid = function(topLeft, bottomRight, gx, 
 }
 
 JXG.SVGRenderer.prototype.drawHorizontalGrid = function(topLeft, bottomRight, gy, board) {
-    var node = this.createPrimitive('path', 'gridy');
-    var gridArr = "";
+    var node = this.createPrimitive('path', 'gridy'),
+        gridArr = '';
+        
     while(topLeft.scrCoords[2] <= bottomRight.scrCoords[2] + gy - 1) {
         gridArr += ' M ' + 0 + ' ' + topLeft.scrCoords[2] + ' L ' + board.canvasWidth + ' ' + topLeft.scrCoords[2]+' ';
         topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1], topLeft.scrCoords[2] + gy]);

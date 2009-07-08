@@ -143,7 +143,7 @@ JXG.Curve.prototype.maxX = function () {
 JXG.Curve.prototype.hasPoint = function (x,y) {
     var t, dist, c, trans, i, j, tX, tY,
         lbda, x0, y0, x1, y1, den,
-        steps = 600, 
+        steps = 300, 
         d = (this.maxX()-this.minX())/steps,
         prec = this.r/(this.board.unitX*this.board.zoomX),
         checkPoint;

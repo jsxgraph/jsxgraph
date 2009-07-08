@@ -2088,6 +2088,8 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
                 type: JXG.OBJECT_TYPE_POINT,
                 elementClass: JXG.OBJECT_CLASS_POINT,
                 addChild: function(el) { },
+                X: function(){},
+                Y: function(){},
                 coords: curve.points[i]
             };
             points.push( fakePoint );
@@ -2111,7 +2113,14 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     pb_on_curve.addChild(pb_on_axis);
     
     var Int = JXG.Math.Numerics.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
-    var t = board.createElement('text', [function () { return pb_on_curve.X() + 0.2; }, function () { return pb_on_curve.Y() - 1.0; },'&int; = ' + (Int).toFixed(4)]);
+    var t = board.createElement('text', [
+        function () { return pb_on_curve.X() + 0.2; }, 
+        function () { return pb_on_curve.Y() - 1.0; },
+        function () {
+                var Int = JXG.Math.Numerics.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
+                return '&int; = ' + (Int).toFixed(4);
+            }
+        ]);
 
     var attribs = {};
     if( (typeof atts != 'undefined') && (atts != null))
@@ -2132,6 +2141,8 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
                     type: JXG.OBJECT_TYPE_POINT,
                     elementClass: JXG.OBJECT_CLASS_POINT,
                     addChild: function(el) { },
+                    X: function(){},
+                    Y: function(){},
                     coords: curve.points[i]
                 };
                 ps.push( fakePoint );
@@ -2140,10 +2151,6 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
         ps.push(pb_on_curve);
         ps.push(pb_on_axis);
         ps.push(pa_on_axis);
-
-        var Int = JXG.Math.Numerics.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
-        t.plaintextStr = '&int; = ' + (Int).toFixed(4);
-            
         this.vertices = ps;
     }
     
