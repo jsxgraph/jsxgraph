@@ -1,13 +1,8 @@
 JXG.GeogebraReader = new function() {
 
-this.changeOriginIds = function(board,id) {
-    if((id == 'gOOe0') || (id == 'gXOe0') || (id == 'gYOe0') || (id == 'gXLe0') || (id == 'gYLe0')) {
-        return board.id + id;
-    }
-    else {
-        return id;
-    }
-};
+this.debug = function(s) {
+  $('debug').innerHTML += "Debug: "+ s +"<br/>";
+}
 
 /**
  * Set color properties of a geonext element.
@@ -31,45 +26,19 @@ this.colorProperties = function(Data, attr) {
   return attr;
 }; 
 
-this.firstLevelProperties = function(gxtEl, Data) {
-    var arr = Data.childNodes;
-    for(var n=0;n<arr.length;n++) {
-        if (arr[n].firstChild!=null && arr[n].nodeName!='data' && arr[n].nodeName!='straight') {
-            var key = arr[n].nodeName;
-            gxtEl[key] = arr[n].firstChild.data;
-        }
-    }
-    return gxtEl;
-}; 
-
 /**
  * Set the board properties of a geonext element.
  * Set active, area, dash, draft and showinfo attributes.
  * @param {Object} gxtEl element of which attributes are to set
+ * @param {Object} Data element of which attributes are to set
  */
 this.boardProperties = function(gxtEl, Data, attr) {
   return attr;
 }; 
 
 /**
- * Set the defining properties of a geonext element.
- * Writing the nodeName to ident; setting the name attribute and defining the element id.
- * @param {Object} gxtEl element of which attributes are to set
+ 
  */
-this.defProperties = function(gxtEl, Data) {
-    if (Data.nodeType==3 || Data.nodeType==8 ) { return null; } // 3==TEXT_NODE, 8==COMMENT_NODE
-    gxtEl.ident = Data.nodeName;
-    if(gxtEl.ident == "text" || gxtEl.ident == "intersection" || gxtEl.ident == "composition") {
-        gxtEl.label = '';
-    } 
-    else { 
-        gxtEl.label = Data.getElementsByTagName('name')[0].firstChild.data; 
-    }
-    gxtEl.id = Data.getElementsByTagName('id')[0].firstChild.data;
-    
-    return gxtEl;
-}; 
-
 this.coordinates = function(gxtEl, Data) {
   gxtEl.x = (Data.getElementsByTagName("coords")[0]) ? 1*Data.getElementsByTagName("coords")[0].attributes["x"].value : (Data.getElementsByTagName("startPoint")[0]) ? 1*Data.getElementsByTagName("startPoint")[0].attributes["x"].value: false;
   gxtEl.y = (Data.getElementsByTagName("coords")[0]) ? 1*Data.getElementsByTagName("coords")[0].attributes["y"].value : (Data.getElementsByTagName("startPoint")[0]) ? 1*Data.getElementsByTagName("startPoint")[0].attributes["y"].value: false;
@@ -77,6 +46,12 @@ this.coordinates = function(gxtEl, Data) {
   return gxtEl;
 }
 
+/**
+ * Writing element attributes to the given object
+ * @param {XMLNode} Data expects the content of the current element
+ * @param {Object} the name of the element to search for
+ * @return {Object} object with according attributes
+ */
 this.visualProperties = function(Data, attr) {
   (Data.getElementsByTagName("show")[0].attributes["object"]) ? attr.visible= Data.getElementsByTagName("show")[0].attributes["object"].value: false ;
   (Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.visibleLabel= Data.getElementsByTagName("show")[0].attributes["label"].value : false;
@@ -88,50 +63,651 @@ this.visualProperties = function(Data, attr) {
   return attr;
 };
 
-this.readNodes = function(gxtEl, Data, nodeType, prefix) {
-    // gxtEl.x = Data.getElementsByTagName("coords")[0].attributes["x"].value;
-    // gxtEl.y = Data.getElementsByTagName("coords")[0].attributes["y"].value;
-    // gxtEl.z = Data.getElementsByTagName("coords")[0].attributes["z"].value;
-    // gxtEl.coordsStyle = Data.getElementsByTagName("coordStyle")[0].attributes["style"].value;
 
-    var key;
-    var arr = Data.getElementsByTagName(nodeType)[0].childNodes;
-    for (var n=0;n<arr.length;n++) {
-        if (arr[n].firstChild!=null) {
-            if (prefix!=null) {
-                key = prefix+arr[n].nodeName.capitalize();
-            } else {
-                key = arr[n].nodeName;
-            }
-            gxtEl[key] = arr[n].firstChild.data;
-        }
-    }
-    return gxtEl;
-};
+/**
 
-this.subtreeToString = function(root) {
-    try {
-        // firefox
-        return (new XMLSerializer()).serializeToString(root);
-    } catch (e) {
-        // IE
-        return root.xml;
-    } 
-    return null;
-};
+ */
+this.ggbParse = function(exp, registeredElements) {
+	/*
+	    Default template driver for JS/CC generated parsers running as
+	    browser-based JavaScript/ECMAScript applications.
 
-this.readConditions = function(node,board) {
-    board.conditions = '';
-    if (node!=null) {
-        for(var i=0; i<node.getElementsByTagName('data').length; i++) {
-            var s;
-            var e;
-            var ob = node.getElementsByTagName('data')[i];
-            s = JXG.GeogebraReader.subtreeToString(ob);
-            board.conditions += s;
-        }
-    }
-};
+	    WARNING:     This parser template will not run as console and has lesser
+	                features for debugging than the console derivates for the
+	                various JavaScript platforms.
+
+	    Features:
+	    - Parser trace messages
+	    - Integrated panic-mode error recovery
+
+	    Written 2007, 2008 by Jan Max Meyer, J.M.K S.F. Software Technologies
+
+	    This is in the public domain.
+	*/
+
+	var _dbg_withtrace        = false;
+	var _dbg_string            = new String();
+
+	function __dbg_print( text )
+	{
+	    _dbg_string += text + "\n";
+	}
+
+	function __lex( info )
+	{
+	    var state        = 0;
+	    var match        = -1;
+	    var match_pos    = 0;
+	    var start        = 0;
+	    var pos            = info.offset + 1;
+
+	    do
+	    {
+	        pos--;
+	        state = 0;
+	        match = -2;
+	        start = pos;
+
+	        if( info.src.length <= start )
+	            return 16;
+
+	        do
+	        {
+
+	switch( state )
+	{
+	    case 0:
+	        if( info.src.charCodeAt( pos ) == 9 || info.src.charCodeAt( pos ) == 32 ) state = 1;
+	        else if( info.src.charCodeAt( pos ) == 40 ) state = 2;
+	        else if( info.src.charCodeAt( pos ) == 41 ) state = 3;
+	        else if( info.src.charCodeAt( pos ) == 42 ) state = 4;
+	        else if( info.src.charCodeAt( pos ) == 43 ) state = 5;
+	        else if( info.src.charCodeAt( pos ) == 44 ) state = 6;
+	        else if( info.src.charCodeAt( pos ) == 45 ) state = 7;
+	        else if( info.src.charCodeAt( pos ) == 47 ) state = 8;
+	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 9;
+	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+	        else if( info.src.charCodeAt( pos ) == 34 ) state = 14;
+	        else if( info.src.charCodeAt( pos ) == 46 ) state = 15;
+	        else if( info.src.charCodeAt( pos ) == 38 ) state = 19;
+	        else state = -1;
+	        break;
+
+	    case 1:
+	        state = -1;
+	        match = 1;
+	        match_pos = pos;
+	        break;
+
+	    case 2:
+	        state = -1;
+	        match = 2;
+	        match_pos = pos;
+	        break;
+
+	    case 3:
+	        state = -1;
+	        match = 3;
+	        match_pos = pos;
+	        break;
+
+	    case 4:
+	        state = -1;
+	        match = 12;
+	        match_pos = pos;
+	        break;
+
+	    case 5:
+	        state = -1;
+	        match = 9;
+	        match_pos = pos;
+	        break;
+
+	    case 6:
+	        state = -1;
+	        match = 10;
+	        match_pos = pos;
+	        break;
+
+	    case 7:
+	        state = -1;
+	        match = 11;
+	        match_pos = pos;
+	        break;
+
+	    case 8:
+	        state = -1;
+	        match = 13;
+	        match_pos = pos;
+	        break;
+
+	    case 9:
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 9;
+	        else if( info.src.charCodeAt( pos ) == 46 ) state = 11;
+	        else state = -1;
+	        match = 4;
+	        match_pos = pos;
+	        break;
+
+	    case 10:
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 18;
+	        else state = -1;
+	        match = 7;
+	        match_pos = pos;
+	        break;
+
+	    case 11:
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 11;
+	        else state = -1;
+	        match = 5;
+	        match_pos = pos;
+	        break;
+
+	    case 12:
+	        state = -1;
+	        match = 8;
+	        match_pos = pos;
+	        break;
+
+	    case 13:
+	        if( info.src.charCodeAt( pos ) == 38 ) state = 19;
+	        else state = -1;
+	        match = 6;
+	        match_pos = pos;
+	        break;
+
+	    case 14:
+	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 16;
+	        else state = -1;
+	        break;
+
+	    case 15:
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 11;
+	        else state = -1;
+	        break;
+
+	    case 16:
+	        if( info.src.charCodeAt( pos ) == 34 ) state = 12;
+	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 16;
+	        else state = -1;
+	        break;
+
+	    case 17:
+	        if( info.src.charCodeAt( pos ) == 59 ) state = 13;
+	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 17;
+	        else state = -1;
+	        break;
+
+	    case 18:
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 18;
+	        else state = -1;
+	        break;
+
+	    case 19:
+	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 17;
+	        else state = -1;
+	        break;
+
+	}
+
+
+	            pos++;
+
+	        }
+	        while( state > -1 );
+
+	    }
+	    while( 1 > -1 && match == 1 );
+
+	    if( match > -1 )
+	    {
+	        info.att = info.src.substr( start, match_pos - start );
+	        info.offset = match_pos;
+
+	switch( match )
+	{
+	    case 4:
+	        {
+	         info.att = parseInt( info.att );
+	        }
+	        break;
+
+	    case 5:
+	        {
+	         info.att = parseFloat( info.att );
+	        }
+	        break;
+
+	    case 6:
+	        {
+	         info.att = String( info.att )
+	        }
+	        break;
+
+	    case 7:
+	        {
+	         info.att = "registeredElements['"+ info.att +"']"
+	        }
+	        break;
+
+	    case 8:
+	        {
+	         info.att = String( info.att )
+	        }
+	        break;
+
+	}
+
+
+	    }
+	    else
+	    {
+	        info.att = new String();
+	        match = -1;
+	    }
+
+	    return match;
+	}
+
+
+	function __parse( src, err_off, err_la )
+	{
+	    var        sstack            = new Array();
+	    var        vstack            = new Array();
+	    var     err_cnt            = 0;
+	    var        act;
+	    var        go;
+	    var        la;
+	    var        rval;
+	    var     parseinfo        = new Function( "", "var offset; var src; var att;" );
+	    var        info            = new parseinfo();
+
+	/* Pop-Table */
+	var pop_tab = new Array(
+	    new Array( 0/* p' */, 1 ),
+	    new Array( 15/* p */, 1 ),
+	    new Array( 14/* e */, 3 ),
+	    new Array( 14/* e */, 3 ),
+	    new Array( 14/* e */, 3 ),
+	    new Array( 14/* e */, 3 ),
+	    new Array( 14/* e */, 3 ),
+	    new Array( 14/* e */, 2 ),
+	    new Array( 14/* e */, 3 ),
+	    new Array( 14/* e */, 3 ),
+	    new Array( 14/* e */, 1 ),
+	    new Array( 14/* e */, 1 ),
+	    new Array( 14/* e */, 1 ),
+	    new Array( 14/* e */, 1 ),
+	    new Array( 14/* e */, 1 )
+	);
+
+	/* Action-Table */
+	var act_tab = new Array(
+	    /* State 0 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
+	    /* State 1 */ new Array( 16/* "$" */,0 ),
+	    /* State 2 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,12 , 11/* "-" */,13 , 9/* "+" */,14 , 16/* "$" */,-1 ),
+	    /* State 3 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
+	    /* State 4 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
+	    /* State 5 */ new Array( 7/* "VAR" */,17 , 16/* "$" */,-12 , 9/* "+" */,-12 , 11/* "-" */,-12 , 10/* "," */,-12 , 12/* "*" */,-12 , 13/* "/" */,-12 , 3/* ")" */,-12 ),
+	    /* State 6 */ new Array( 16/* "$" */,-10 , 9/* "+" */,-10 , 11/* "-" */,-10 , 10/* "," */,-10 , 12/* "*" */,-10 , 13/* "/" */,-10 , 3/* ")" */,-10 ),
+	    /* State 7 */ new Array( 16/* "$" */,-11 , 9/* "+" */,-11 , 11/* "-" */,-11 , 10/* "," */,-11 , 12/* "*" */,-11 , 13/* "/" */,-11 , 3/* ")" */,-11 ),
+	    /* State 8 */ new Array( 16/* "$" */,-13 , 9/* "+" */,-13 , 11/* "-" */,-13 , 10/* "," */,-13 , 12/* "*" */,-13 , 13/* "/" */,-13 , 3/* ")" */,-13 ),
+	    /* State 9 */ new Array( 16/* "$" */,-14 , 9/* "+" */,-14 , 11/* "-" */,-14 , 10/* "," */,-14 , 12/* "*" */,-14 , 13/* "/" */,-14 , 3/* ")" */,-14 ),
+	    /* State 10 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
+	    /* State 11 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
+	    /* State 12 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
+	    /* State 13 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
+	    /* State 14 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
+	    /* State 15 */ new Array( 13/* "/" */,-7 , 12/* "*" */,-7 , 10/* "," */,-7 , 11/* "-" */,-7 , 9/* "+" */,-7 , 16/* "$" */,-7 , 3/* ")" */,-7 ),
+	    /* State 16 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,12 , 11/* "-" */,13 , 9/* "+" */,14 , 3/* ")" */,23 ),
+	    /* State 17 */ new Array( 6/* "HTML" */,24 ),
+	    /* State 18 */ new Array( 13/* "/" */,-6 , 12/* "*" */,-6 , 10/* "," */,-6 , 11/* "-" */,-6 , 9/* "+" */,-6 , 16/* "$" */,-6 , 3/* ")" */,-6 ),
+	    /* State 19 */ new Array( 13/* "/" */,-5 , 12/* "*" */,-5 , 10/* "," */,-5 , 11/* "-" */,-5 , 9/* "+" */,-5 , 16/* "$" */,-5 , 3/* ")" */,-5 ),
+	    /* State 20 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,-4 , 11/* "-" */,-4 , 9/* "+" */,-4 , 16/* "$" */,-4 , 3/* ")" */,-4 ),
+	    /* State 21 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,-3 , 11/* "-" */,-3 , 9/* "+" */,-3 , 16/* "$" */,-3 , 3/* ")" */,-3 ),
+	    /* State 22 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,-2 , 11/* "-" */,-2 , 9/* "+" */,-2 , 16/* "$" */,-2 , 3/* ")" */,-2 ),
+	    /* State 23 */ new Array( 16/* "$" */,-8 , 9/* "+" */,-8 , 11/* "-" */,-8 , 10/* "," */,-8 , 12/* "*" */,-8 , 13/* "/" */,-8 , 3/* ")" */,-8 ),
+	    /* State 24 */ new Array( 16/* "$" */,-9 , 9/* "+" */,-9 , 11/* "-" */,-9 , 10/* "," */,-9 , 12/* "*" */,-9 , 13/* "/" */,-9 , 3/* ")" */,-9 )
+	);
+
+	/* Goto-Table */
+	var goto_tab = new Array(
+	    /* State 0 */ new Array( 15/* p */,1 , 14/* e */,2 ),
+	    /* State 1 */ new Array( ),
+	    /* State 2 */ new Array( ),
+	    /* State 3 */ new Array( 14/* e */,15 ),
+	    /* State 4 */ new Array( 14/* e */,16 ),
+	    /* State 5 */ new Array( ),
+	    /* State 6 */ new Array( ),
+	    /* State 7 */ new Array( ),
+	    /* State 8 */ new Array( ),
+	    /* State 9 */ new Array( ),
+	    /* State 10 */ new Array( 14/* e */,18 ),
+	    /* State 11 */ new Array( 14/* e */,19 ),
+	    /* State 12 */ new Array( 14/* e */,20 ),
+	    /* State 13 */ new Array( 14/* e */,21 ),
+	    /* State 14 */ new Array( 14/* e */,22 ),
+	    /* State 15 */ new Array( ),
+	    /* State 16 */ new Array( ),
+	    /* State 17 */ new Array( ),
+	    /* State 18 */ new Array( ),
+	    /* State 19 */ new Array( ),
+	    /* State 20 */ new Array( ),
+	    /* State 21 */ new Array( ),
+	    /* State 22 */ new Array( ),
+	    /* State 23 */ new Array( ),
+	    /* State 24 */ new Array( )
+	);
+
+
+
+	/* Symbol labels */
+	var labels = new Array(
+	    "p'" /* Non-terminal symbol */,
+	    "WHITESPACE" /* Terminal symbol */,
+	    "(" /* Terminal symbol */,
+	    ")" /* Terminal symbol */,
+	    "INT" /* Terminal symbol */,
+	    "FLOAT" /* Terminal symbol */,
+	    "HTML" /* Terminal symbol */,
+	    "VAR" /* Terminal symbol */,
+	    "STRING" /* Terminal symbol */,
+	    "+" /* Terminal symbol */,
+	    "," /* Terminal symbol */,
+	    "-" /* Terminal symbol */,
+	    "*" /* Terminal symbol */,
+	    "/" /* Terminal symbol */,
+	    "e" /* Non-terminal symbol */,
+	    "p" /* Non-terminal symbol */,
+	    "$" /* Terminal symbol */
+	);
+
+
+
+	    info.offset = 0;
+	    info.src = src;
+	    info.att = new String();
+
+	    if( !err_off )
+	        err_off    = new Array();
+	    if( !err_la )
+	    err_la = new Array();
+
+	    sstack.push( 0 );
+	    vstack.push( 0 );
+
+	    la = __lex( info );
+
+	    while( true )
+	    {
+	        act = 26;
+	        for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
+	        {
+	            if( act_tab[sstack[sstack.length-1]][i] == la )
+	            {
+	                act = act_tab[sstack[sstack.length-1]][i+1];
+	                break;
+	            }
+	        }
+
+	        if( _dbg_withtrace && sstack.length > 0 )
+	        {
+	            __dbg_print( "\nState " + sstack[sstack.length-1] + "\n" +
+	                            "\tLookahead: " + labels[la] + " (\"" + info.att + "\")\n" +
+	                            "\tAction: " + act + "\n" +
+	                            "\tSource: \"" + info.src.substr( info.offset, 30 ) + ( ( info.offset + 30 < info.src.length ) ?
+	                                    "..." : "" ) + "\"\n" +
+	                            "\tStack: " + sstack.join() + "\n" +
+	                            "\tValue stack: " + vstack.join() + "\n" );
+	        }
+
+
+	        //Panic-mode: Try recovery when parse-error occurs!
+	        if( act == 26 )
+	        {
+	            if( _dbg_withtrace )
+	                __dbg_print( "Error detected: There is no reduce or shift on the symbol " + labels[la] );
+
+	            err_cnt++;
+	            err_off.push( info.offset - info.att.length );            
+	            err_la.push( new Array() );
+	            for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
+	                err_la[err_la.length-1].push( labels[act_tab[sstack[sstack.length-1]][i]] );
+
+	            //Remember the original stack!
+	            var rsstack = new Array();
+	            var rvstack = new Array();
+	            for( var i = 0; i < sstack.length; i++ )
+	            {
+	                rsstack[i] = sstack[i];
+	                rvstack[i] = vstack[i];
+	            }
+
+	            while( act == 26 && la != 16 )
+	            {
+	                if( _dbg_withtrace )
+	                    __dbg_print( "\tError recovery\n" +
+	                                    "Current lookahead: " + labels[la] + " (" + info.att + ")\n" +
+	                                    "Action: " + act + "\n\n" );
+	                if( la == -1 )
+	                    info.offset++;
+
+	                while( act == 26 && sstack.length > 0 )
+	                {
+	                    sstack.pop();
+	                    vstack.pop();
+
+	                    if( sstack.length == 0 )
+	                        break;
+
+	                    act = 26;
+	                    for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
+	                    {
+	                        if( act_tab[sstack[sstack.length-1]][i] == la )
+	                        {
+	                            act = act_tab[sstack[sstack.length-1]][i+1];
+	                            break;
+	                        }
+	                    }
+	                }
+
+	                if( act != 26 )
+	                    break;
+
+	                for( var i = 0; i < rsstack.length; i++ )
+	                {
+	                    sstack.push( rsstack[i] );
+	                    vstack.push( rvstack[i] );
+	                }
+
+	                la = __lex( info );
+	            }
+
+	            if( act == 26 )
+	            {
+	                if( _dbg_withtrace )
+	                    __dbg_print( "\tError recovery failed, terminating parse process..." );
+	                break;
+	            }
+
+
+	            if( _dbg_withtrace )
+	                __dbg_print( "\tError recovery succeeded, continuing" );
+	        }
+
+	        /*
+	        if( act == 26 )
+	            break;
+	        */
+
+
+	        //Shift
+	        if( act > 0 )
+	        {            
+	            if( _dbg_withtrace )
+	                __dbg_print( "Shifting symbol: " + labels[la] + " (" + info.att + ")" );
+
+	            sstack.push( act );
+	            vstack.push( info.att );
+
+	            la = __lex( info );
+
+	            if( _dbg_withtrace )
+	                __dbg_print( "\tNew lookahead symbol: " + labels[la] + " (" + info.att + ")" );
+	        }
+	        //Reduce
+	        else
+	        {        
+	            act *= -1;
+
+	            if( _dbg_withtrace )
+	                __dbg_print( "Reducing by producution: " + act );
+
+	            rval = void(0);
+
+	            if( _dbg_withtrace )
+	                __dbg_print( "\tPerforming semantic action..." );
+
+	switch( act )
+	{
+	    case 0:
+	    {
+	        rval = vstack[ vstack.length - 1 ];
+	    }
+	    break;
+	    case 1:
+	    {
+	         JXG.GeogebraReader.debug( vstack[ vstack.length - 1 ] );
+	    }
+	    break;
+	    case 2:
+	    {
+	         rval = vstack[ vstack.length - 3 ] + vstack[ vstack.length - 1 ];
+	    }
+	    break;
+	    case 3:
+	    {
+	         rval = vstack[ vstack.length - 3 ] - vstack[ vstack.length - 1 ];
+	    }
+	    break;
+	    case 4:
+	    {
+	         rval = "x: "+ vstack[ vstack.length - 3 ] +", y: "+ vstack[ vstack.length - 1 ];
+	    }
+	    break;
+	    case 5:
+	    {
+	         rval = vstack[ vstack.length - 3 ] * vstack[ vstack.length - 1 ];
+	    }
+	    break;
+	    case 6:
+	    {
+	         rval = vstack[ vstack.length - 3 ] / vstack[ vstack.length - 1 ];
+	    }
+	    break;
+	    case 7:
+	    {
+	         rval = vstack[ vstack.length - 1 ] * -1;
+	    }
+	    break;
+	    case 8:
+	    {
+	         rval = vstack[ vstack.length - 2 ];
+	    }
+	    break;
+	    case 9:
+	    {
+	         rval = "label: "+ vstack[ vstack.length - 2 ]
+	    }
+	    break;
+	    case 10:
+	    {
+	        rval = vstack[ vstack.length - 1 ];
+	    }
+	    break;
+	    case 11:
+	    {
+	        rval = vstack[ vstack.length - 1 ];
+	    }
+	    break;
+	    case 12:
+	    {
+	        rval = vstack[ vstack.length - 1 ];
+	    }
+	    break;
+	    case 13:
+	    {
+	        rval = vstack[ vstack.length - 1 ];
+	    }
+	    break;
+	    case 14:
+	    {
+	        rval = vstack[ vstack.length - 1 ];
+	    }
+	    break;
+	}
+
+
+
+	            if( _dbg_withtrace )
+	                __dbg_print( "\tPopping " + pop_tab[act][1] + " off the stack..." );
+
+	            for( var i = 0; i < pop_tab[act][1]; i++ )
+	            {
+	                sstack.pop();
+	                vstack.pop();
+	            }
+
+	            go = -1;
+	            for( var i = 0; i < goto_tab[sstack[sstack.length-1]].length; i+=2 )
+	            {
+	                if( goto_tab[sstack[sstack.length-1]][i] == pop_tab[act][0] )
+	                {
+	                    go = goto_tab[sstack[sstack.length-1]][i+1];
+	                    break;
+	                }
+	            }
+
+	            if( act == 0 )
+	                break;
+
+	            if( _dbg_withtrace )
+	                __dbg_print( "\tPushing non-terminal " + labels[ pop_tab[act][0] ] );
+
+	            sstack.push( go );
+	            vstack.push( rval );            
+	        }
+
+	        if( _dbg_withtrace )
+	        {        
+	            JXG.GeogebraReader.debug( _dbg_string );
+	            _dbg_string = new String();
+	        }
+	    }
+
+	    if( _dbg_withtrace )
+	    {
+	        __dbg_print( "\nParse complete." );
+	        JXG.GeogebraReader.debug( _dbg_string );
+	    }
+
+	    return err_cnt;
+	}
+
+
+
+  var error_offsets = new Array(); var error_lookaheads = new Array(); var error_count = 0;
+  // var str = prompt( "Please enter a string to be parsed:", "" );
+  var str = exp;
+  if( ( error_count = __parse( str, error_offsets, error_lookaheads ) ) > 0 ) {
+	var errstr = new String();
+	for( var i = 0; i < error_count; i++ ) errstr += "Parse error in line " + ( str.substr( 0, error_offsets[i] ).match( /\n/g ) ? str.substr( 0, error_offsets[i] ).match( /\n/g ).length : 1 ) + " near \"" + str.substr( error_offsets[i] ) + "\", expecting \"" + error_lookaheads[i].join() + "\"\n" ;
+    JXG.GeogebraReader.debug( errstr );
+  }
+}
+
 
 /**
  * Searching for an element in the geogebra tree
@@ -153,6 +729,8 @@ this.getElement = function(tree, name) {
  * Searching for an element in the geogebra tree
  * @param {XMLTree} tree expects the content of the parsed geogebra file returned by function parseFF/parseIE
  * @param {Object} board object
+ * @param {Array} registeredElements contains the list of all generated elements
+ * @return {Array} updated registeredElements with the newly created references to the axes
  */
 this.writeBoard = function(tree, board, registeredElements) {
   var boardData = tree.getElementsByTagName("euclidianView")[0];
@@ -231,10 +809,10 @@ this.writeElement = function(tree, board, output, input, cmd) {
   attr.name= gxtEl.label;
 
   if(typeof cmd != 'undefined' && (gxtEl.type != cmd)) {
-	gxtEl.type = cmd;
+  gxtEl.type = cmd;
   }
 
-  $('debug').innerHTML += "<br><b>Konstruiere</b> "+ gxtEl.label +"("+ gxtEl.type +"): <br/>";
+  JXG.GeogebraReader.debug("<br><b>Konstruiere</b> "+ gxtEl.label +"("+ gxtEl.type +"):");
 
   switch(gxtEl.type) {
     case "point":
@@ -316,12 +894,12 @@ $('debug').innerHTML += '<br>';
 
       try {
         $('debug').innerHTML += "* <b>Polygon:</b> First: " + input[0].name + ", Second: " + input[1].name + ", Third: " + input[2].name + "<br>\n";
-		// var border = []
-		// for(var i=1; i<output.length; i++) {
-		// 	border[i] = "{name: '"+output[i].attributes['label'].value+"'}";
-		// }
+    // var border = []
+    // for(var i=1; i<output.length; i++) {
+    //   border[i] = "{name: '"+output[i].attributes['label'].value+"'}";
+    // }
         // l = board.createElement('polygon', input , {borders: border});
-		l = board.createElement('polygon', input, attr);
+    l = board.createElement('polygon', input, attr);
         return l;
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> Polygon " + attr.name +"<br>\n";
@@ -336,8 +914,8 @@ $('debug').innerHTML += '<br>';
 
       try {
         $('debug').innerHTML += "* <b>Intersection:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
-		// l = board.createElement('intersection', input, attr);
-		l = new JXG.Intersection(board, null, input[0], input[1]);
+    // l = board.createElement('intersection', input, attr);
+    l = new JXG.Intersection(board, null, input[0], input[1]);
         // l.setStraight(false, false);
         return l;
       } catch(e) {
@@ -555,6 +1133,37 @@ $('debug').innerHTML += '<br>';
         return false;
       }
     break;
+    case 'numeric':
+      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+
+      if(element.getElementsByTagName('slider').length == 1) { // Hier handelt es sich um einen Slider
+        var sx = element.getElementsByTagName('slider')[0].attributes['x'].value;
+        var sy = element.getElementsByTagName('slider')[0].attributes['y'].value;
+        if(element.getElementsByTagName('slider')[0].attributes['horizontal'].value == 'true') {
+          var ex = sx + element.getElementsByTagName('slider')[0].attributes['width'].value;
+          var ey = sy;
+        } else {
+          var ex = sx;
+          var ey = sy + element.getElementsByTagName('slider')[0].attributes['width'].value;
+        }
+
+        var sip = element.getElementsByTagName('value')[0].attributes['val'].value;
+        var smin = element.getElementsByTagName('slider')[0].attributes['min'].value;
+        var smax = element.getElementsByTagName('slider')[0].attributes['max'].value;
+
+        try {
+          $('debug').innerHTML += "* <b>Numeric:</b> First: " + input[0].name + "<br>\n";
+          n = board.createElement('slider', [[sx,sy], [ex,ey], [smin, sip, smax]]);
+          return n;
+        } catch(e) {
+          $('debug').innerHTML += "* <b>Err:</b> Numeric " + attr.name +"<br>\n";
+          return false;
+        }
+      }
+    break;
 //    case 'polar':
 //    break;
 //    case 'radius':
@@ -574,8 +1183,6 @@ $('debug').innerHTML += '<br>';
 //    case 'midpoint':
 //    break;
 //    case 'function':
-//    break;
-//    case 'numeric':
 //    break;
 //    case 'vector':
 //    break;
@@ -660,18 +1267,35 @@ this.readGeogebra = function(tree, board) {
       }
 
     }
+
+    // Hier starten wir die Expressions zu parsen
+    var expr = constructions[t].getElementsByTagName('expression');
+    for(var s=0; s<expr.length; s++) {
+      var label = expr[s].attributes['label'].value;
+      var exp = expr[s].attributes['exp'].value;
+      var type = (expr[s].attributes['type']) ? expr[s].attributes['type'].value : false;
+      $('debug').innerHTML += "Expression: label: "+ label +", exp: "+ exp +", type: "+ type +"<br/>";
+      /*
+        Zur Konstruktion:
+        Falls A nicht in regEls vorhanden -> konstruieren
+      Übergabe der ausgelesenen Werte
+      */
+
+      var out = JXG.GeogebraReader.ggbParse(exp, registeredElements);
+    }
+
   }
   board.fullUpdate();
 };
 
 this.prepareString = function(fileStr){
-    if (fileStr.indexOf('<')!=0) {
-    	bA = [];
-    	for (i=0;i<fileStr.length;i++)
-            bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
+  if (fileStr.indexOf('<')!=0) {
+    bA = [];
+    for (i=0;i<fileStr.length;i++)
+      bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
             
-        fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");  // Unzip
-    }
-    return fileStr;
+    fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");  // Unzip
+  }
+  return fileStr;
 };
 }; // end: GeogebraReader()
