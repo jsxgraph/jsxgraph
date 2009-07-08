@@ -141,7 +141,8 @@
 	            JXG.JSXGraph.freeBoard(board);
 	        }
 	        var value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value;
-			$('debug').innerHTML += value;
+			$('debug').innerHTML += value +"<br/>";
+			document.title = "JSXGraph example: "+ document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
 	        board = JXG.JSXGraph.loadBoardFromFile('box',value, format);
     }
 </script>
