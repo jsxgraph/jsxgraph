@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.present.css" />
+        <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+        <!--<script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>-->
+        <script type="text/javascript" src="../../../../src/loadjsxgraph.js"></script>
+    </head>
+    <body class="jsxgraph_body">
+        <div id="jxgbox" class="jxgbox jsxgraph_present"></div>
+        <!-- Drawing area -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 450, unitX: 50, unitY: 50, axis:true});
+            board.suspendUpdate();
+
+            var s = board.createElement('slider', [[5,-1],[8,-1],[1,1,2]], {name:'S'});
+            var f = [function(){return this.board.round(s.Value()*4,2);},
+                     function(){return this.board.round(s.Value()*(-1),2);},
+                     function(){return this.board.round(s.Value()*3,2);},
+                     function(){return this.board.round(s.Value()*2,2);}];
+            var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
+            board.unsuspendUpdate();
+
+        /* ]]> */
+        </script>
+    </body>
+</html>

@@ -107,7 +107,7 @@ koch(400,7);
         
         <div class="pages">
             <div class="files">p27</div>
-            <div class="titles">Geometry</div>
+            <div class="titles"></div>
         </div>
         <div class="pages">
             <div class="files">p32</div><!--p8-->
@@ -122,7 +122,7 @@ koch(400,7);
 
         <div class="pages">
             <div class="files">p28</div>
-            <div class="titles">Turtle Graphics</div>
+            <div class="titles"></div>
         </div>
         
         <div class="pages">
@@ -158,7 +158,7 @@ t.moveTo([dx+t.X(),dy+t.Y()]);
 
         <div class="pages">
             <div class="files">p29</div>
-            <div class="titles">Curves</div>
+            <div class="titles"></div>
         </div>
         <div class="pages">
             <div class="files">p25</div>
@@ -185,6 +185,10 @@ t.moveTo([dx+t.X(),dy+t.Y()]);
             <li>Polynomial curve interpolation
             </ul>
         </div>
+        <div class="pages">
+            <div class="files">p33</div>
+            <div class="titles">Charts</div>
+        </div>
 
         <div class="pages">
             <div class="files">p23</div>
@@ -209,19 +213,20 @@ t.moveTo([dx+t.X(),dy+t.Y()]);
         <!-- Automatic proves -->
         <div class="pages">
             <div class="files">p30</div>
-            <div class="titles">Loci</div>
+            <div class="titles"></div>
         </div>
 		<div class="pages">
 			<div class="files">p20</div>
 			<div class="titles">Interactive way</div>
-			<p>With JSXGraph elements like points can leave a traced.</p>
+			<p>With JSXGraph elements like points can leave a trace.</p>
 			<p>This is useful to determine geometric loci.</p>
-            <p>But for this in some cases two points are required because of how JSXGraph distinguishes the two intersection points.</p>
+            <!--<p>But for this in some cases two points are required because of how JSXGraph distinguishes the two intersection points.</p>-->
 		</div>
 		<div class="pages">
 			<div class="files">p12</div>
 			<div class="titles">Client/server model</div>
-			Example for how to extend JSXGraph server side using AJAX: Determination of geometric loci with CoCoA and matplotlib.
+			<p>Example for how to extend JSXGraph server side using AJAX: 
+            <p>Determination of geometric loci with CoCoA and matplotlib.
 		</div>
 		<div class="pages">
 			<div class="files">p19</div>
@@ -231,12 +236,12 @@ t.moveTo([dx+t.X(),dy+t.Y()]);
 
         <div class="pages">
             <div class="files">p31</div>
-            <div class="titles">Reading Files</div>
+            <div class="titles"></div>
         </div>
         <div class="pages">
             <div class="files">p24</div>
             <div class="titles">Supported file formats</div>
-            Loading a GEONE<sub>x</Sub>T file:
+            GEONE<sub>x</Sub>T:
             <pre style="font-size:60%">
 JXG.JSXGraph.loadBoardFromFile(
     'box', 
@@ -250,7 +255,7 @@ JXG.JSXGraph.loadBoardFromFile(
         <div class="pages">
             <div class="files">p21</div>
             <div class="titles">Supported file formats</div>
-            Loading an Intergeo file:
+            Intergeo:
             <pre style="font-size:60%">
 JXG.JSXGraph.loadBoardFromFile(
     'box', 
@@ -264,7 +269,7 @@ JSXGraph has (the first?) JavaScript implementations of gunzip and unzip
         <div class="pages">
             <div class="files">p21</div>
             <div class="titles">Supported file formats</div>
-            Loading a GeoGebra file:
+            GeoGebra (very experimental):
             <pre style="font-size:60%">
 JXG.JSXGraph.loadBoardFromFile(
     'box', 
