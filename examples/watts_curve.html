@@ -26,7 +26,7 @@
     m2 = board.createElement('midpoint', [g1,g3], {style:8,name:"Y",trace:true,strokeColor:'green'});
 
     function groebner(p) {
-        JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p);
+        JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
     }
 
     function symbcoords(p) {
@@ -60,6 +60,10 @@
         }
         $('debug').innerHTML += '</ul>';
         JXG.Math.Symbolic.clearSymbolicCoordinates(board);
+    }
+
+    function cb(poly) {
+        alert(poly[0].replace(/\*\*(\d+)/g,'<sup>$1</sup>').replace(/\*/g,''));
     }
   /* ]]> */
   </script>

@@ -17,7 +17,7 @@ if not 'MPLCONFIGDIR' in os.environ:
 #    os.environ['MPLCONFIGDIR'] = 'C:/xampp/tmp'
 
 # Command to start cocoa
-cmd_cocoa = "cocoaserver"
+cmd_cocoa = "cocoa"
 # If you're using Windows
 #cmd_cocoa = r"C:\cocoa\cocoa.bat"
 
@@ -119,6 +119,7 @@ if debug:
         print "Polynomial ", i+1, ": " + polynomials[i] + '<br />'
 
 data = cStringIO.StringIO()
+polynomialsReturn = ""
 
 for i in range(0,len(polynomials)):
     if len(polynomials[i]) == 0:
@@ -126,6 +127,7 @@ for i in range(0,len(polynomials)):
     if ((not "x" in polynomials[i]) and (not "y" in polynomials[i])) or ("W" in polynomials[i]):
         continue
 
+    polynomialsReturn = polynomialsReturn + polynomials[i] + ";"
     x, y = numpy.meshgrid(numpy.linspace(xs, xe, 200), numpy.linspace(ys, ye, 200))
 
     z = eval(polynomials[i])
@@ -143,6 +145,9 @@ for i in range(0,len(polynomials)):
             print >>data, pa[i,0], ",", pa[i,1], ";"
 
         print >>data, ";"
+
+print >>data, "-----"
+print >>data, polynomialsReturn,";"
 
 enc_data = base64.b64encode(zlib.compress(data.getvalue(), 9))
 

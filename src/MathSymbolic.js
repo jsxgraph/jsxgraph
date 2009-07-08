@@ -140,10 +140,12 @@ JXG.Math.Symbolic.generatePolynomials = function(board, element, generateCoords)
  * Calculate geometric locus of a point given on a board. Invokes python script on server.
  * @param {JXG.Board} board The board on that the point lies.
  * @param {JXG.Point} point The point that will be traced.
+ * @param {function} callback A callback function that is called after the server request is finished.
+ *    Must take an array of strings as the only parameter.
  * @type Array
  * @return Array of points.
  */
-JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point) {
+JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback) {
     var numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace');
 
     var poly = this.generatePolynomials(board, point);
@@ -156,7 +158,10 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point) {
 
     this.cbp = function(t) {
         var coordpairsStr = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(t))).unzip();
-        coordpairsStr = coordpairsStr.toString().replace(/,geonext\.gxt;/g, "").replace(/\s/g, "");
+        coordpairsStr = coordpairsStr.toString().replace(/,geonext\.gxt/g, "").replace(/\s/g, "");
+
+        var returnstr = coordpairsStr.split('-----');
+        coordpairsStr = returnstr[0];
 
         var coordpairs = coordpairsStr.split(';');
 
@@ -170,6 +175,8 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point) {
         }
         var c = board.createElement('curve', [px, py], {strokeColor: 'green', strokeWidth: '2px'});
         this.rendNode = c.rendNode;
+        alert(returnstr[1]);
+        callback(returnstr[1].split(';'));
     };
     
     this.cb = JXG.bind(this.cbp, this);
