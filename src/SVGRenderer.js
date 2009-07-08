@@ -75,11 +75,12 @@ JXG.SVGRenderer = function(container) {
 JXG.SVGRenderer.prototype = new JXG.AbstractRenderer;
 
 JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
-    var node = this.createPrimitive('text','licenseText');
+    var node = this.createPrimitive('text','licenseText'),
+        t;
     node.setAttributeNS(null,'x','20');
     node.setAttributeNS(null,'y',2+fontsize);
     node.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:"+fontsize+"px; fill:#356AA0;  opacity:0.3;");
-    var t = document.createTextNode(str);
+    t = document.createTextNode(str);
     node.appendChild(t);
     this.appendChildPrimitive(node,'images');
 };
@@ -92,18 +93,20 @@ JXG.SVGRenderer.prototype.drawTicks = function(axis) {
 }
 
 JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
-    var tickStr = "";
-    for (var i=0; i<axis.ticks.length; i++) {
-        var c = axis.ticks[i];
-        if(c.major) {
+    var tickStr = "",
+        i, c, ticks;
+        
+    for (i=0; i<axis.ticks.length; i++) {
+        c = axis.ticks[i].scrCoords;
+        if (axis.ticks[i].major) {
             if (axis.labels[i].visProp['visible']) this.drawText(axis.labels[i]);
-            tickStr += "M " + (c.scrCoords[1]+dxMaj) + " " + (c.scrCoords[2]-dyMaj) + " L " + (c.scrCoords[1]-dxMaj) + " " + (c.scrCoords[2]+dyMaj) + " ";
+            tickStr += "M " + (c[1]+dxMaj) + " " + (c[2]-dyMaj) + " L " + (c[1]-dxMaj) + " " + (c[2]+dyMaj) + " ";
         }
         else
-            tickStr += "M " + (c.scrCoords[1]+dxMin) + " " + (c.scrCoords[2]-dyMin) + " L " + (c.scrCoords[1]-dxMin) + " " + (c.scrCoords[2]+dyMin) + " ";
+            tickStr += "M " + (c[1]+dxMin) + " " + (c[2]-dyMin) + " L " + (c[1]-dxMin) + " " + (c[2]+dyMin) + " ";
     }
     
-    var ticks = document.getElementById(axis.id);
+    ticks = document.getElementById(axis.id);
     if(ticks == null) {
         ticks = this.createPrimitive('path', axis.id);
         this.appendChildPrimitive(ticks,'lines');

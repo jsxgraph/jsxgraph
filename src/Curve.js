@@ -61,6 +61,12 @@ JXG.Curve = function (board, parents, id, name, withLabel) {
     this.visProp['visible'] = true;
     this.dataX = null;
     this.dataY = null;
+
+    /**
+     * This is just for the hasPoint() method.
+     * @type int
+     */
+    this.r = this.board.options.precision.hasPoint;
     
     /**
      * The curveType is set in @see generateTerm and used in 
@@ -137,11 +143,12 @@ JXG.Curve.prototype.maxX = function () {
 JXG.Curve.prototype.hasPoint = function (x,y) {
     var t, dist, c, trans, i, j, tX, tY,
         lbda, x0, y0, x1, y1, den,
-        steps = 300, 
+        steps = 600, 
         d = (this.maxX()-this.minX())/steps,
         prec = this.r/(this.board.unitX*this.board.zoomX),
-        checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
-        
+        checkPoint;
+
+    checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     x = checkPoint.usrCoords[1];
     y = checkPoint.usrCoords[2];
     if (this.curveType=='parameter' || this.curveType=='polar') { 
@@ -262,11 +269,7 @@ JXG.Curve.prototype.updateDataArray = function () {};
  * points. Otherwise, e.g. on mouseup, many points are used.
  */
 JXG.Curve.prototype.updateCurve = function () {
-    var len = this.numberPoints,
-        mi = this.minX(),
-        ma = this.maxX(),
-        x, y, i,
-        stepSize = (ma-mi)/len;
+    var len, mi, ma, x, y, i, stepSize;
     
     this.updateDataArray();
     if (this.curveType=='plot' && this.dataX!=null) {
@@ -278,9 +281,14 @@ JXG.Curve.prototype.updateCurve = function () {
             this.numberPoints = this.board.canvasWidth*0.8;
         }
     }
+    len = this.numberPoints;
     this.allocatePoints();  // It is possible, that the array length has increased.
+    
+    mi = this.minX();
+    ma = this.maxX();
+    stepSize = (ma-mi)/len;
 
-    for(i=0; i<len; i++) {
+    for (i=0; i<len; i++) {
         if (this.dataX!=null) { // x-coordinates are in an array
             x = i;
             if (this.dataY!=null) { // y-coordinates are in an array
@@ -300,11 +308,11 @@ JXG.Curve.prototype.updateCurve = function () {
 };
 
 JXG.Curve.prototype.updateTransform = function (p) {
-    var t, c;
+    var t, c, i;
     if (this.transformations.length==0) {
         return p;
     }
-    for (var i=0;i<this.transformations.length;i++) {
+    for (i=0; i<this.transformations.length; i++) {
         t = this.transformations[i];
         t.update();
         c = t.matVecMult(t.matrix,p.usrCoords);
@@ -538,8 +546,8 @@ JXG.JSXGraph.registerElement('spline', JXG.createSpline);
  * @return Returns reference to an object of type JXG.Curve.
  */
 JXG.createRiemannsum = function(board, parents, attributes) {
-    var i, n, type, f,
-        par, c;
+    var n, type, f, par, c;
+    
     if(attributes == null) 
         attributes = {};
     if (typeof attributes['withLabel'] == 'undefined') {
