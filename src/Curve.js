@@ -135,16 +135,17 @@ JXG.Curve.prototype.maxX = function () {
  * @return {bool} True if (x,y) is near the curve, False otherwise.
  */
 JXG.Curve.prototype.hasPoint = function (x,y) {
-    var t, dist, c, trans, i, j, tX, tY;
-    var lbda, x0, y0, x1, y1, den;
-    var prec = 5/(this.board.unitX*this.board.zoomX); // uebergangsweise = 5px
-    var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+    var t, dist, c, trans, i, j, tX, tY,
+        lbda, x0, y0, x1, y1, den,
+        steps = 300, 
+        d = (this.maxX()-this.minX())/steps,
+        prec = this.r/(this.board.unitX*this.board.zoomX),
+        checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+        
     x = checkPoint.usrCoords[1];
     y = checkPoint.usrCoords[2];
     if (this.curveType=='parameter' || this.curveType=='polar') { 
         // Brute fore search for a point on the curve close to the mouse pointer
-        var steps = 300;
-        var d = (this.maxX()-this.minX())/steps;
         for (i=0,t=this.minX(); i<steps; i++) {
             tX = this.X(t);
             tY = this.Y(t);
@@ -181,8 +182,6 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
         return false;
     } else { // functiongraph
         // Brute force search for a point on the curve close to the mouse pointer
-        var steps = 300;
-        var d = (this.maxX()-this.minX())/steps;
         for (i=0,t=this.minX(); i<steps; i++) {
             tX = this.X(t);
             tY = this.Y(t);
@@ -200,16 +199,16 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
         //dist = Math.abs(this.Y(x)-y);
     }
     return (dist<prec);
-
 };
 
 /**
   * Allocate points in the Coords array this.points
   */
 JXG.Curve.prototype.allocatePoints = function () {
+    var i;
     // At this point this.numberPoints has been set in this.generateTerm
     if (this.points.length<this.numberPoints) {
-        for (var i=this.points.length;i<this.numberPoints;i++) {
+        for (i=this.points.length; i<this.numberPoints; i++) {
             this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
         }
     }
@@ -263,6 +262,12 @@ JXG.Curve.prototype.updateDataArray = function () {};
  * points. Otherwise, e.g. on mouseup, many points are used.
  */
 JXG.Curve.prototype.updateCurve = function () {
+    var len = this.numberPoints,
+        mi = this.minX(),
+        ma = this.maxX(),
+        x, y, i,
+        stepSize = (ma-mi)/len;
+    
     this.updateDataArray();
     if (this.curveType=='plot' && this.dataX!=null) {
         this.numberPoints = this.dataX.length;
@@ -274,14 +279,8 @@ JXG.Curve.prototype.updateCurve = function () {
         }
     }
     this.allocatePoints();  // It is possible, that the array length has increased.
-    var len = this.numberPoints;
 
-    var mi = this.minX();
-    var ma = this.maxX();
-    var x, y;
-    var stepSize = (ma-mi)/len;
-
-    for(var i=0;i<len;i++) {
+    for(i=0; i<len; i++) {
         if (this.dataX!=null) { // x-coordinates are in an array
             x = i;
             if (this.dataY!=null) { // y-coordinates are in an array
@@ -301,26 +300,27 @@ JXG.Curve.prototype.updateCurve = function () {
 };
 
 JXG.Curve.prototype.updateTransform = function (p) {
+    var t, c;
     if (this.transformations.length==0) {
         return p;
     }
     for (var i=0;i<this.transformations.length;i++) {
-        var t = this.transformations[i];
+        t = this.transformations[i];
         t.update();
-        var c = t.matVecMult(t.matrix,p.usrCoords);
+        c = t.matVecMult(t.matrix,p.usrCoords);
         p.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
     }
     return p;
 };
 
 JXG.Curve.prototype.addTransform = function (transform) {
-    var list;
+    var list, i;
     if (JXG.IsArray(transform)) {
         list = transform;
     } else {
         list = [transform];
     }
-    for (var i=0;i<list.length;i++) {
+    for (i=0; i<list.length; i++) {
         this.transformations.push(list[i]);
     }
 };
@@ -350,11 +350,12 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
  * @see #geonext2JS.
  */
 JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
+    var newxterm, newyterm, newMin, newMax;
     // Generate the methods X() and Y()
     this.numberPoints = this.board.canvasWidth*1.0;
     if (typeof xterm=='string') {
         // Convert GEONExT syntax into  JavaScript syntax
-        var newxterm = this.board.algebra.geonext2JS(xterm);
+        newxterm = this.board.algebra.geonext2JS(xterm);
         this.X = new Function(varname,'return ' + newxterm + ';');
         this.curveType = 'functiongraph';
     } else if (typeof xterm=='function') {
@@ -372,7 +373,7 @@ JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
     
     if (typeof yterm=='string') {
         // Convert GEONExT syntax into  JavaScript syntax
-        var newyterm = this.board.algebra.geonext2JS(yterm);
+        newyterm = this.board.algebra.geonext2JS(yterm);
         this.Y = new Function(varname,'return ' + newyterm + ';');
     } else if (typeof yterm=='function') {
         this.Y = yterm;
@@ -394,7 +395,7 @@ JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
     // lower bound
     if (mi!=null) {
         if (typeof mi == 'string') {
-            var newMin = this.board.algebra.geonext2JS(mi);
+            newMin = this.board.algebra.geonext2JS(mi);
             this.minX = new Function('','return ' +  newMin + ';');
         } else if (typeof mi=='function') {
             this.minX = mi;
@@ -405,7 +406,7 @@ JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
     // upper bound
     if (ma!=null) {
         if (typeof ma == 'string') {
-            var newMax = this.board.algebra.geonext2JS(ma);
+            newMax = this.board.algebra.geonext2JS(ma);
             this.maxX = new Function('','return ' +  newMax + ';');
         } else if (typeof ma=='function') {
             this.maxX = ma;
@@ -436,9 +437,8 @@ JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
  * @param {String} term String containing dependencies for the given object.
  */
 JXG.Curve.prototype.notifyParents = function (contentStr) {
-    var res = null;
-    var elements = this.board.elementsByName;
-
+    //var res = null;
+    //var elements = this.board.elementsByName;
     this.board.algebra.findDependencies(this,contentStr);
 };
 
@@ -450,7 +450,6 @@ JXG.Curve.prototype.notifyParents = function (contentStr) {
 JXG.Curve.prototype.getLabelAnchor = function() {
     var c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, this.board.canvasHeight*0.5], this.board);
     c = this.board.algebra.projectCoordsToCurve(c.usrCoords[1],c.usrCoords[2],0.0,this)[0];
-    //$('debug').innerHTML = c.usrCoords.toString();
     return c;
 };
 
@@ -492,17 +491,19 @@ JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
  * @return Returns reference to an object of type JXG.Curve.
  */
 JXG.createSpline = function(board, parents, attributes) {
+    var F;
     if(attributes == null) 
         attributes = {};
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     } 
     // This is far away from being effective
-    var F = function (t) {
-        var x = new Array();
-        var y = new Array();
+    F = function (t) {
+        var x = new Array(),
+            y = new Array(),
+            i, D;
         
-        for(var i=0; i<parents.length; i++) {
+        for(i=0; i<parents.length; i++) {
             if(!JXG.IsPoint(parents[i]))
                 throw "JXG.createSpline: Parents has to be an array of JXG.Point."
             
@@ -512,7 +513,7 @@ JXG.createSpline = function(board, parents, attributes) {
         
         // The array D has only to be calculated when the position of one or more sample point
         // changes. otherwise D is always the same for all points on the spline.
-        var D = JXG.Math.Numerics.splineDef(x, y);
+        D = JXG.Math.Numerics.splineDef(x, y);
         return JXG.Math.Numerics.splineEval(t, x, y, D);
     }
     
@@ -537,7 +538,8 @@ JXG.JSXGraph.registerElement('spline', JXG.createSpline);
  * @return Returns reference to an object of type JXG.Curve.
  */
 JXG.createRiemannsum = function(board, parents, attributes) {
-    var i,n,type,f;
+    var i, n, type, f,
+        par, c;
     if(attributes == null) 
         attributes = {};
     if (typeof attributes['withLabel'] == 'undefined') {
@@ -563,8 +565,8 @@ JXG.createRiemannsum = function(board, parents, attributes) {
         throw "JXG.createRiemannsum: type has to be string or function."
     }
 
-    var par = ['x', [0], [0]].concat(parents.slice(3));
-    var c = new JXG.Curve(board, par, attributes['id'], attributes['name'], attributes['withLabel']);
+    par = ['x', [0], [0]].concat(parents.slice(3));
+    c = new JXG.Curve(board, par, attributes['id'], attributes['name'], attributes['withLabel']);
     c.updateDataArray = function() {
             var u = JXG.Math.Numerics.riemann(f,n(),type(),this.minX(),this.maxX());
             this.dataX = u[0];

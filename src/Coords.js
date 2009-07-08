@@ -107,9 +107,11 @@ JXG.Coords.prototype.usr2screen = function() {
  * @private
  */
 JXG.Coords.prototype.screen2usr = function() {
+    var o = this.board.origin.scrCoords,
+        b = this.board;
     this.usrCoords[0] =  1.0;
-    this.usrCoords[1] = (this.scrCoords[1] - this.board.origin.scrCoords[1])/(this.board.unitX*this.board.zoomX);
-    this.usrCoords[2] = (this.board.origin.scrCoords[2] - this.scrCoords[2])/(this.board.unitY*this.board.zoomY);
+    this.usrCoords[1] = (this.scrCoords[1] - o[1])/(b.unitX*b.zoomX);
+    this.usrCoords[2] = (o[2] - this.scrCoords[2])/(b.unitY*b.zoomY);
 };
 
 /**
@@ -118,20 +120,23 @@ JXG.Coords.prototype.screen2usr = function() {
  * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
  */
 JXG.Coords.prototype.distance = function(method, coordinates) {
-    var sum = 0;
-    if(method == JXG.COORDS_BY_USER) {
+    var sum = 0,
+        i, f;
+    if (method == JXG.COORDS_BY_USER) {
 //        if (Math.abs(this.usrCoords[0]+coordinates.usrCoords[0])>eps) {
 //            return Infinity;
 //        }
-        for(var i=0; i<=this.board.dimension; i++) {
-            sum += (this.usrCoords[i] - coordinates.usrCoords[i])*(this.usrCoords[i] - coordinates.usrCoords[i]);
+        for (i=0; i<=this.board.dimension; i++) {
+            f = this.usrCoords[i] - coordinates.usrCoords[i];
+            sum += f*f;
         }
     } else {
 //        if (Math.abs(this.scrCoords[0]+coordinates.scrCoords[0])>eps) {
 //            return Infinity;
 //        }
-        for(var i=0; i<=this.board.dimension; i++) {
-            sum += (this.scrCoords[i] - coordinates.scrCoords[i])*(this.scrCoords[i] - coordinates.scrCoords[i]);
+        for (i=0; i<=this.board.dimension; i++) {
+            f = this.scrCoords[i] - coordinates.scrCoords[i];
+            sum += f*f;
         }
     }
 
@@ -144,7 +149,7 @@ JXG.Coords.prototype.distance = function(method, coordinates) {
  * @param {Array} coordinates An array of affine coordinates the Coords object is set to.
  */
 JXG.Coords.prototype.setCoordinates = function(method, coordinates) {
-    if(method == JXG.COORDS_BY_USER) {
+    if (method == JXG.COORDS_BY_USER) {
 /*        for(var i=1; i<this.board.dimension+1; i++) {
             this.usrCoords[i] = coordinates[i-1];
         }*/

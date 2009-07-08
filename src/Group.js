@@ -39,13 +39,16 @@
  * @constructor
  */
 JXG.Group = function(board, id, name) {
+    var number,
+        objArray,
+        i, obj, el;
+        
     this.board = board;
     this.objects = {};
-
-    var number = this.board.numObjects;
+    number = this.board.numObjects;
     this.board.numObjects++;
 
-    if((id == '') || (id == null) || (typeof id == 'undefined')) {
+    if ((id == '') || (id == null) || (typeof id == 'undefined')) {
         this.id = this.board.id + 'Group' + number;
     } else {
         this.id = id;
@@ -54,27 +57,26 @@ JXG.Group = function(board, id, name) {
     this.type = JXG.OBJECT_TYPE_POINT;
     this.elementClass = JXG.OBJECT_CLASS_POINT;                
 
-    if((name == '') || (name == null) || (typeof name == 'undefined')) {
+    if ((name == '') || (name == null) || (typeof name == 'undefined')) {
         this.name = 'group_' + this.board.generateName(this);
     } else {
         this.name = name;
     }
     delete(this.type);
 
-    var objArray;
-    if( (arguments.length == 4) && (JXG.IsArray(arguments[3])) )
+    if ( (arguments.length == 4) && (JXG.IsArray(arguments[3])) )
         objArray = arguments[3];
     else {
         objArray = [];
-        for(var i=3; i<arguments.length; i++) {
+        for (i=3; i<arguments.length; i++) {
             objArray.push(arguments[i]);
         }
     }
 
-    for (var i=0; i<objArray.length; i++) {
-        var obj = JXG.GetReferenceFromParameter(this.board, objArray[i]);
+    for (i=0; i<objArray.length; i++) {
+        obj = JXG.GetReferenceFromParameter(this.board, objArray[i]);
         if( (!obj.fixed) && ( (obj.type == JXG.OBJECT_TYPE_POINT) || (obj.type == JXG.OBJECT_TYPE_GLIDER) ) ) {
-            if(obj.group.length != 0) {
+            if (obj.group.length != 0) {
                 this.addGroup(obj.group[obj.group.length-1]);
             } else {
                 this.addPoint(obj);
@@ -82,7 +84,7 @@ JXG.Group = function(board, id, name) {
         }
     }
     
-    for(var el in this.objects) {
+    for (el in this.objects) {
         this.objects[el].group.push(this);
     }
 
@@ -94,11 +96,11 @@ JXG.Group = function(board, id, name) {
  * Releases the group added to the points in this group, but only if this group is the last group.
  */
 JXG.Group.prototype.ungroup = function() {
-    for(var el in this.objects) {
-        if(this.objects[el].group[this.objects[el].group.length-1] == this) {
+    var el;
+    for (el in this.objects) {
+        if (this.objects[el].group[this.objects[el].group.length-1] == this) {
             this.objects[el].group.pop();
         }
-        
         delete(this.objects[el]);
     }
 };
@@ -108,22 +110,23 @@ JXG.Group.prototype.ungroup = function() {
  * @param {JXG.Point} point The point that caused the update.
  */
 JXG.Group.prototype.update = function(point) {
-    var obj = null;
+    var obj = null,
+        el;
     
-    for(var Elements in this.objects) {
-        obj = this.objects[Elements];
-        if(obj.id != point.id) {
+    for (el in this.objects) {
+        obj = this.objects[el];
+        if (obj.id != point.id) {
             obj.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [obj.coords.scrCoords[1] + this.dX, obj.coords.scrCoords[2] + this.dY], obj.board);
         }
     }
     
-    for(var Elements in this.objects) {
+    for (el in this.objects) {
         /* Wurde das Element vielleicht geloescht? */
-        if(this.board.objects[Elements] != undefined) {
+        if (this.board.objects[el] != undefined) {
             /* Nein, wurde es nicht, also updaten */
-            this.objects[Elements].update(false);
+            this.objects[el].update(false);
         } else { /* es wurde geloescht, also aus dem Array entfernen */
-            delete(this.objects[Elements]);
+            delete(this.objects[el]);
         }
     }
 };
@@ -141,7 +144,8 @@ JXG.Group.prototype.addPoint = function(object) {
  * @param {Array} objects An array of points to add to the group.
  */
 JXG.Group.prototype.addPoints = function(objects) {
-    for(var p in objects)
+    var p;
+    for (p in objects)
         this.objects[p.id] = p;
 };
 
@@ -150,7 +154,8 @@ JXG.Group.prototype.addPoints = function(objects) {
  * @param {JXG.Point} object The object added to the group.
  */
 JXG.Group.prototype.addGroup = function(group) {
-    for(var el in group.objects) {
+    var el;
+    for (el in group.objects) {
         this.addPoint(group.objects[el]);
     }
 };
@@ -164,9 +169,7 @@ JXG.Group.prototype.addGroup = function(group) {
  * @return An object of type JXG.Group.
  */
 JXG.createGroup = function(board, parents, attributes) {
-    var g = new JXG.Group(board, attributes["id"], attributes["name"], parents);
-                
-    return g;
+    return new JXG.Group(board, attributes["id"], attributes["name"], parents);
 };
 
 JXG.JSXGraph.registerElement('group', JXG.createGroup);
