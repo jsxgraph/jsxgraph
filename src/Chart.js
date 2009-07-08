@@ -93,9 +93,10 @@ JXG.Chart = function(board, parents, attributes) {
                 c = this.drawPoints(board,[x,y],attributes);
                 break;
         };
-        //this.elements.push(c);
+        this.elements.push(c);
     };
     this.id = this.board.addChart(this);
+    return this.elements;
 };
 JXG.Chart.prototype = new JXG.GeometryElement;
 
@@ -191,7 +192,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
         pols[i] = board.createElement('polygon',p,attributes);
     }
     this.rendNode = pols[0].rendNode;  // This is needed in setProperty
-    
+
     return pols; //[0];  // Not enough! We need pols, but this gives an error in board.setProperty.
 };
 
