@@ -98,6 +98,8 @@ JXG.AbstractRenderer.prototype.drawPoint = function(el) {
  */
 JXG.AbstractRenderer.prototype.updatePoint = function(el) {
     var size;
+    if (isNaN(el.coords.scrCoords[2]) || isNaN(el.coords.scrCoords[1])) return;
+    
     if (this.enhancedRendering) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
