@@ -1144,9 +1144,9 @@ $('debug').innerHTML += '<br>';
       if(element.getElementsByTagName('slider').length == 1) { // Hier handelt es sich um einen Slider
         var sx = parseFloat(element.getElementsByTagName('slider')[0].attributes['x'].value);
         var sy = parseFloat(element.getElementsByTagName('slider')[0].attributes['y'].value);
-		// var tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [sx, sy], board);
-		// sx = tmp.coords.usrCoords[1];
-		// sy = tmp.coords.usrCoords[2];
+		var tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [sx, sy], board);
+		sx = tmp.usrCoords[1];
+		sy = tmp.usrCoords[2];
 		
         if(element.getElementsByTagName('slider')[0].attributes['horizontal'].value == 'true') {
           var len = parseFloat(element.getElementsByTagName('slider')[0].attributes['width'].value)/(board.unitX*board.zoomX);
@@ -1324,6 +1324,7 @@ this.readGeogebra = function(tree, board) {
       // var s = exp.replace(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/g, 'VAR').split(' ');
       var s = exp.split(' ');
       var o = '';
+//TODO: Zahlen und alle "Multiplikatoren" berücksichtigen
       for(var i=0; i<s.length; i++) {
         if(s.length != i+1)
           // if(s[i].search(/\)$/) > -1 || s[i].search(/$/) > -1)
