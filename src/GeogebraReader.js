@@ -1,90 +1,9 @@
 JXG.GeogebraReader = new function() {
 
-this.debug = function(s) {
-  $('debug').innerHTML += "Debug: "+ s +"<br/>";
-}
-
-/**
- * Set color properties of a geonext element.
- * Set stroke, fill, lighting, label and draft color attributes.
- * @param {Object} gxtEl element of which attributes are to set
- */
-this.colorProperties = function(Data, attr) {
-  var a = (Data.getElementsByTagName("objColor")[0].attributes["alpha"]) ? 1*Data.getElementsByTagName("objColor")[0].attributes["alpha"].value : 0;
-  var r = (Data.getElementsByTagName("objColor")[0].attributes["r"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["r"].value).toString(16) : 0;
-  var g = (Data.getElementsByTagName("objColor")[0].attributes["g"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["g"].value).toString(16) : 0;
-  var b = (Data.getElementsByTagName("objColor")[0].attributes["b"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["b"].value).toString(16) : 0;
-  // gxtEl.colorA = (Data.getElementsByTagName("objColor")[0].attributes["alpha"]) ? 1*Data.getElementsByTagName("objColor")[0].attributes["alpha"].value : 0;
-  if (r.length == 1) r = '0' + r;
-  if (g.length == 1) g = '0' + g;
-  if (b.length == 1) b = '0' + b;
-
-  if(a != 0) {
-    attr.fillColor= '#'+ r + g + b;
-    attr.fillOpacity= a;
-  }
-  return attr;
-}; 
-
-/**
- * Set the board properties of a geonext element.
- * Set active, area, dash, draft and showinfo attributes.
- * @param {Object} gxtEl element of which attributes are to set
- * @param {Object} Data element of which attributes are to set
- */
-this.boardProperties = function(gxtEl, Data, attr) {
-  return attr;
-}; 
-
-/**
- 
- */
-this.coordinates = function(gxtEl, Data) {
-  gxtEl.x = (Data.getElementsByTagName("coords")[0]) ? 1*Data.getElementsByTagName("coords")[0].attributes["x"].value : (Data.getElementsByTagName("startPoint")[0]) ? 1*Data.getElementsByTagName("startPoint")[0].attributes["x"].value: false;
-  gxtEl.y = (Data.getElementsByTagName("coords")[0]) ? 1*Data.getElementsByTagName("coords")[0].attributes["y"].value : (Data.getElementsByTagName("startPoint")[0]) ? 1*Data.getElementsByTagName("startPoint")[0].attributes["y"].value: false;
-  gxtEl.z = (Data.getElementsByTagName("coords")[0]) ? 1*Data.getElementsByTagName("coords")[0].attributes["z"].value : (Data.getElementsByTagName("startPoint")[0]) ? 1*Data.getElementsByTagName("startPoint")[0].attributes["z"].value: false;
-  return gxtEl;
-}
-
-/**
- * Writing element attributes to the given object
- * @param {XMLNode} Data expects the content of the current element
- * @param {Object} the name of the element to search for
- * @return {Object} object with according attributes
- */
-this.visualProperties = function(Data, attr) {
-  (Data.getElementsByTagName("show")[0].attributes["object"]) ? attr.visible= Data.getElementsByTagName("show")[0].attributes["object"].value: false ;
-  (Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.visibleLabel= Data.getElementsByTagName("show")[0].attributes["label"].value : false;
-  (Data.getElementsByTagName('pointSize')[0]) ? attr.style= Data.getElementsByTagName('pointSize')[0].attributes["val"].value : false;
-  (Data.getElementsByTagName("labelOffset")[0]) ? attr.labelX= 1*Data.getElementsByTagName("labelOffset")[0].attributes["x"].value : false;
-  (Data.getElementsByTagName("labelOffset")[0]) ? attr.labelY= 1*Data.getElementsByTagName("labelOffset")[0].attributes["y"].value : false;
-  (Data.getElementsByTagName("trace")[0]) ? attr.trace= Data.getElementsByTagName("trace")[0].attributes["val"].value : false;
-  (Data.getElementsByTagName('fix')[0]) ? attr.fixed= Data.getElementsByTagName('fix')[0].attributes["val"].value : false;
-  return attr;
-};
-
-
 /**
 
  */
-this.ggbParse = function(exp, registeredElements) {
-	/*
-	    Default template driver for JS/CC generated parsers running as
-	    browser-based JavaScript/ECMAScript applications.
-
-	    WARNING:     This parser template will not run as console and has lesser
-	                features for debugging than the console derivates for the
-	                various JavaScript platforms.
-
-	    Features:
-	    - Parser trace messages
-	    - Integrated panic-mode error recovery
-
-	    Written 2007, 2008 by Jan Max Meyer, J.M.K S.F. Software Technologies
-
-	    This is in the public domain.
-	*/
-
+this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	var _dbg_withtrace        = false;
 	var _dbg_string            = new String();
 
@@ -128,8 +47,8 @@ this.ggbParse = function(exp, registeredElements) {
 	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 9;
 	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
 	        else if( info.src.charCodeAt( pos ) == 34 ) state = 14;
-	        else if( info.src.charCodeAt( pos ) == 46 ) state = 15;
-	        else if( info.src.charCodeAt( pos ) == 38 ) state = 19;
+	        else if( info.src.charCodeAt( pos ) == 38 ) state = 15;
+	        else if( info.src.charCodeAt( pos ) == 46 ) state = 16;
 	        else state = -1;
 	        break;
 
@@ -183,7 +102,7 @@ this.ggbParse = function(exp, registeredElements) {
 
 	    case 9:
 	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 9;
-	        else if( info.src.charCodeAt( pos ) == 46 ) state = 11;
+	        else if( info.src.charCodeAt( pos ) == 46 ) state = 12;
 	        else state = -1;
 	        match = 4;
 	        match_pos = pos;
@@ -198,38 +117,37 @@ this.ggbParse = function(exp, registeredElements) {
 	        break;
 
 	    case 11:
-	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 11;
-	        else state = -1;
-	        match = 5;
-	        match_pos = pos;
-	        break;
-
-	    case 12:
 	        state = -1;
 	        match = 8;
 	        match_pos = pos;
 	        break;
 
-	    case 13:
-	        if( info.src.charCodeAt( pos ) == 38 ) state = 19;
+	    case 12:
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 12;
 	        else state = -1;
+	        match = 5;
+	        match_pos = pos;
+	        break;
+
+	    case 13:
+	        state = -1;
 	        match = 6;
 	        match_pos = pos;
 	        break;
 
 	    case 14:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 16;
+	        if( info.src.charCodeAt( pos ) == 34 ) state = 11;
+	        else if( info.src.charCodeAt( pos ) == 32 || info.src.charCodeAt( pos ) == 46 || ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 14;
 	        else state = -1;
 	        break;
 
 	    case 15:
-	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 11;
+	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 17;
 	        else state = -1;
 	        break;
 
 	    case 16:
-	        if( info.src.charCodeAt( pos ) == 34 ) state = 12;
-	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 16;
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 12;
 	        else state = -1;
 	        break;
 
@@ -242,11 +160,6 @@ this.ggbParse = function(exp, registeredElements) {
 	    case 18:
 	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
 	        else if( info.src.charCodeAt( pos ) == 95 ) state = 18;
-	        else state = -1;
-	        break;
-
-	    case 19:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 17;
 	        else state = -1;
 	        break;
 
@@ -288,7 +201,24 @@ this.ggbParse = function(exp, registeredElements) {
 
 	    case 7:
 	        {
-	         info.att = "registeredElements['"+ info.att +"']"
+              JXG.GeogebraReader.debug("Geparstes Element/Variable: "+ info.att);
+              // Falls das Element noch nicht existiert, muss es erzeugt werden
+		      if(typeof registeredElements[info.att] == 'undefined' || registeredElements[info.att] == '') {
+		        var input = JXG.GeogebraReader.getElement(tree, info.att);
+		        registeredElements[info.att] = JXG.GeogebraReader.writeElement(tree, board, input);
+				JXG.GeogebraReader.debug("regged: "+ info.att +" (id: "+ registeredElements[info.att].id +")");
+		      }
+		
+		     // TODO: Fallunterscheidung zu unterschiedlichen Elementtypen und anhand deren die Wertzuweisung
+			  // 		     switch(JXG.GetReferenceFromParameter(board, registeredElements[info.att].id).type) {
+			  // case 1330923340: /* Slider */
+			  //   info.att = JXG.GetReferenceFromParameter(board, registeredElements[info.att].id).Value();
+			  // break;
+			  // default:
+			  //   info.att = JXG.GetReferenceFromParameter(board, registeredElements[info.att].id).Value();
+			  // break;
+			  // 		     }
+
 	        }
 	        break;
 
@@ -345,31 +275,31 @@ this.ggbParse = function(exp, registeredElements) {
 
 	/* Action-Table */
 	var act_tab = new Array(
-	    /* State 0 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
+	    /* State 0 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
 	    /* State 1 */ new Array( 16/* "$" */,0 ),
 	    /* State 2 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,12 , 11/* "-" */,13 , 9/* "+" */,14 , 16/* "$" */,-1 ),
-	    /* State 3 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
-	    /* State 4 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
-	    /* State 5 */ new Array( 7/* "VAR" */,17 , 16/* "$" */,-12 , 9/* "+" */,-12 , 11/* "-" */,-12 , 10/* "," */,-12 , 12/* "*" */,-12 , 13/* "/" */,-12 , 3/* ")" */,-12 ),
+	    /* State 3 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
+	    /* State 4 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
+	    /* State 5 */ new Array( 9/* "+" */,17 , 16/* "$" */,-14 , 11/* "-" */,-14 , 10/* "," */,-14 , 12/* "*" */,-14 , 13/* "/" */,-14 , 3/* ")" */,-14 ),
 	    /* State 6 */ new Array( 16/* "$" */,-10 , 9/* "+" */,-10 , 11/* "-" */,-10 , 10/* "," */,-10 , 12/* "*" */,-10 , 13/* "/" */,-10 , 3/* ")" */,-10 ),
 	    /* State 7 */ new Array( 16/* "$" */,-11 , 9/* "+" */,-11 , 11/* "-" */,-11 , 10/* "," */,-11 , 12/* "*" */,-11 , 13/* "/" */,-11 , 3/* ")" */,-11 ),
-	    /* State 8 */ new Array( 16/* "$" */,-13 , 9/* "+" */,-13 , 11/* "-" */,-13 , 10/* "," */,-13 , 12/* "*" */,-13 , 13/* "/" */,-13 , 3/* ")" */,-13 ),
-	    /* State 9 */ new Array( 16/* "$" */,-14 , 9/* "+" */,-14 , 11/* "-" */,-14 , 10/* "," */,-14 , 12/* "*" */,-14 , 13/* "/" */,-14 , 3/* ")" */,-14 ),
-	    /* State 10 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
-	    /* State 11 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
-	    /* State 12 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
-	    /* State 13 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
-	    /* State 14 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 6/* "HTML" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 7/* "VAR" */,8 , 8/* "STRING" */,9 ),
+	    /* State 8 */ new Array( 16/* "$" */,-12 , 9/* "+" */,-12 , 11/* "-" */,-12 , 10/* "," */,-12 , 12/* "*" */,-12 , 13/* "/" */,-12 , 3/* ")" */,-12 ),
+	    /* State 9 */ new Array( 16/* "$" */,-13 , 9/* "+" */,-13 , 11/* "-" */,-13 , 10/* "," */,-13 , 12/* "*" */,-13 , 13/* "/" */,-13 , 3/* ")" */,-13 ),
+	    /* State 10 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
+	    /* State 11 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
+	    /* State 12 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
+	    /* State 13 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
+	    /* State 14 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
 	    /* State 15 */ new Array( 13/* "/" */,-7 , 12/* "*" */,-7 , 10/* "," */,-7 , 11/* "-" */,-7 , 9/* "+" */,-7 , 16/* "$" */,-7 , 3/* ")" */,-7 ),
 	    /* State 16 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,12 , 11/* "-" */,13 , 9/* "+" */,14 , 3/* ")" */,23 ),
-	    /* State 17 */ new Array( 6/* "HTML" */,24 ),
+	    /* State 17 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
 	    /* State 18 */ new Array( 13/* "/" */,-6 , 12/* "*" */,-6 , 10/* "," */,-6 , 11/* "-" */,-6 , 9/* "+" */,-6 , 16/* "$" */,-6 , 3/* ")" */,-6 ),
 	    /* State 19 */ new Array( 13/* "/" */,-5 , 12/* "*" */,-5 , 10/* "," */,-5 , 11/* "-" */,-5 , 9/* "+" */,-5 , 16/* "$" */,-5 , 3/* ")" */,-5 ),
 	    /* State 20 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,-4 , 11/* "-" */,-4 , 9/* "+" */,-4 , 16/* "$" */,-4 , 3/* ")" */,-4 ),
 	    /* State 21 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,-3 , 11/* "-" */,-3 , 9/* "+" */,-3 , 16/* "$" */,-3 , 3/* ")" */,-3 ),
 	    /* State 22 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,-2 , 11/* "-" */,-2 , 9/* "+" */,-2 , 16/* "$" */,-2 , 3/* ")" */,-2 ),
 	    /* State 23 */ new Array( 16/* "$" */,-8 , 9/* "+" */,-8 , 11/* "-" */,-8 , 10/* "," */,-8 , 12/* "*" */,-8 , 13/* "/" */,-8 , 3/* ")" */,-8 ),
-	    /* State 24 */ new Array( 16/* "$" */,-9 , 9/* "+" */,-9 , 11/* "-" */,-9 , 10/* "," */,-9 , 12/* "*" */,-9 , 13/* "/" */,-9 , 3/* ")" */,-9 )
+	    /* State 24 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,-9 , 11/* "-" */,-9 , 9/* "+" */,-9 , 16/* "$" */,-9 , 3/* ")" */,-9 )
 	);
 
 	/* Goto-Table */
@@ -391,7 +321,7 @@ this.ggbParse = function(exp, registeredElements) {
 	    /* State 14 */ new Array( 14/* e */,22 ),
 	    /* State 15 */ new Array( ),
 	    /* State 16 */ new Array( ),
-	    /* State 17 */ new Array( ),
+	    /* State 17 */ new Array( 14/* e */,24 ),
 	    /* State 18 */ new Array( ),
 	    /* State 19 */ new Array( ),
 	    /* State 20 */ new Array( ),
@@ -594,7 +524,15 @@ this.ggbParse = function(exp, registeredElements) {
 	    break;
 	    case 4:
 	    {
-	         rval = "x: "+ vstack[ vstack.length - 3 ] +", y: "+ vstack[ vstack.length - 1 ];
+		     JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ registeredElements[element].name + "("+ registeredElements[element].id +")");
+             JXG.GeogebraReader.debug("value: "+JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 3 ]].id).Value());
+			 JXG.GetReferenceFromParameter(board, registeredElements[element].id).setPosition(
+				null, function() {
+						return JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 3 ]].id).Value();
+					}, function() {
+						return JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 1 ]].id).Value();
+					});
+	         rval = "x: "+ typeof vstack[ vstack.length - 3 ] +" ("+ vstack[ vstack.length - 3 ] +"), y: "+ typeof vstack[ vstack.length - 1 ] +"("+ vstack[ vstack.length - 1 ] +")";
 	    }
 	    break;
 	    case 5:
@@ -619,7 +557,7 @@ this.ggbParse = function(exp, registeredElements) {
 	    break;
 	    case 9:
 	    {
-	         rval = "label: "+ vstack[ vstack.length - 2 ]
+	        rval = vstack[ vstack.length - 3 ];
 	    }
 	    break;
 	    case 10:
@@ -696,8 +634,6 @@ this.ggbParse = function(exp, registeredElements) {
 	    return err_cnt;
 	}
 
-
-
   var error_offsets = new Array(); var error_lookaheads = new Array(); var error_count = 0;
   // var str = prompt( "Please enter a string to be parsed:", "" );
   var str = exp;
@@ -708,6 +644,69 @@ this.ggbParse = function(exp, registeredElements) {
   }
 }
 
+
+this.debug = function(s) {
+  $('debug').innerHTML += s +"<br/>";
+};
+
+/**
+ * Set color properties of a geonext element.
+ * Set stroke, fill, lighting, label and draft color attributes.
+ * @param {Object} gxtEl element of which attributes are to set
+ */
+this.colorProperties = function(Data, attr) {
+  var a = (Data.getElementsByTagName("objColor")[0].attributes["alpha"]) ? 1*Data.getElementsByTagName("objColor")[0].attributes["alpha"].value : 0;
+  var r = (Data.getElementsByTagName("objColor")[0].attributes["r"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["r"].value).toString(16) : 0;
+  var g = (Data.getElementsByTagName("objColor")[0].attributes["g"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["g"].value).toString(16) : 0;
+  var b = (Data.getElementsByTagName("objColor")[0].attributes["b"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["b"].value).toString(16) : 0;
+  // gxtEl.colorA = (Data.getElementsByTagName("objColor")[0].attributes["alpha"]) ? 1*Data.getElementsByTagName("objColor")[0].attributes["alpha"].value : 0;
+  if (r.length == 1) r = '0' + r;
+  if (g.length == 1) g = '0' + g;
+  if (b.length == 1) b = '0' + b;
+
+  if(a != 0) {
+    attr.fillColor= '#'+ r + g + b;
+    attr.fillOpacity= a;
+  }
+  return attr;
+}; 
+
+/**
+ * Set the board properties of a geonext element.
+ * Set active, area, dash, draft and showinfo attributes.
+ * @param {Object} gxtEl element of which attributes are to set
+ * @param {Object} Data element of which attributes are to set
+ */
+this.boardProperties = function(gxtEl, Data, attr) {
+  return attr;
+}; 
+
+/**
+ 
+ */
+this.coordinates = function(gxtEl, Data) {
+  gxtEl.x = (Data.getElementsByTagName("coords")[0]) ? 1*Data.getElementsByTagName("coords")[0].attributes["x"].value : (Data.getElementsByTagName("startPoint")[0]) ? 1*Data.getElementsByTagName("startPoint")[0].attributes["x"].value: false;
+  gxtEl.y = (Data.getElementsByTagName("coords")[0]) ? 1*Data.getElementsByTagName("coords")[0].attributes["y"].value : (Data.getElementsByTagName("startPoint")[0]) ? 1*Data.getElementsByTagName("startPoint")[0].attributes["y"].value: false;
+  gxtEl.z = (Data.getElementsByTagName("coords")[0]) ? 1*Data.getElementsByTagName("coords")[0].attributes["z"].value : (Data.getElementsByTagName("startPoint")[0]) ? 1*Data.getElementsByTagName("startPoint")[0].attributes["z"].value: false;
+  return gxtEl;
+}
+
+/**
+ * Writing element attributes to the given object
+ * @param {XMLNode} Data expects the content of the current element
+ * @param {Object} the name of the element to search for
+ * @return {Object} object with according attributes
+ */
+this.visualProperties = function(Data, attr) {
+  (Data.getElementsByTagName("show")[0].attributes["object"]) ? attr.visible = Data.getElementsByTagName("show")[0].attributes["object"].value : false;
+  (Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.visibleLabel = Data.getElementsByTagName("show")[0].attributes["label"].value : false;
+  (Data.getElementsByTagName('pointSize')[0]) ? attr.style = Data.getElementsByTagName('pointSize')[0].attributes["val"].value : false;
+  (Data.getElementsByTagName("labelOffset")[0]) ? attr.labelX = 1*Data.getElementsByTagName("labelOffset")[0].attributes["x"].value : false;
+  (Data.getElementsByTagName("labelOffset")[0]) ? attr.labelY = 1*Data.getElementsByTagName("labelOffset")[0].attributes["y"].value : false;
+  (Data.getElementsByTagName("trace")[0]) ? attr.trace = Data.getElementsByTagName("trace")[0].attributes["val"].value : false;
+  (Data.getElementsByTagName('fix')[0]) ? attr.fixed = Data.getElementsByTagName('fix')[0].attributes["val"].value : false;
+  return attr;
+};
 
 /**
  * Searching for an element in the geogebra tree
@@ -777,8 +776,8 @@ this.writeBoard = function(tree, board, registeredElements) {
   // board.gridOpacity = gridOpacity;
 
   var grid = (boardData.getElementsByTagName('evSettings')[0].attributes["grid"].value == "true") ? board.renderer.drawGrid(board) : null;
-  
-  if(boardData.getElementsByTagName('evSettings')[0].attributes["axes"].value == "true") {
+
+  if(boardData.getElementsByTagName('evSettings')[0].attributes["axes"] && boardData.getElementsByTagName('evSettings')[0].attributes["axes"].value == "true") {
       registeredElements["xAxis"] = board.createElement('axis', [[0, 0], [1, 0]], {strokeColor:'black'});
       registeredElements["yAxis"] = board.createElement('axis', [[0, 0], [0, 1]], {strokeColor:'black'});
   }
@@ -876,9 +875,12 @@ $('debug').innerHTML += '<br>';
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
 
+      if(JXG.GetReferenceFromParameter(board, input[0].id).type == 1330925652) var type = 'perpendicularpoint';
+      else if(JXG.GetReferenceFromParameter(board, input[0].id).type == 1330924622) var type = 'perpendicular';
+
       try {
         $('debug').innerHTML += "* <b>Orthogonalline:</b> First: " + input[0].id + ", Last: " + input[1].id + "<br>\n";
-        l = board.createElement('perpendicular', [input[1], input[0]], attr);
+        l = board.createElement(type, [input[0], input[1]], attr);
         l.setStraight(false, false);
         return l;
       } catch(e) {
@@ -914,7 +916,7 @@ $('debug').innerHTML += '<br>';
 
       try {
         $('debug').innerHTML += "* <b>Intersection:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
-    // l = board.createElement('intersection', input, attr);
+        // l = board.createElement('intersection', input, attr);
     l = new JXG.Intersection(board, null, input[0], input[1]);
         // l.setStraight(false, false);
         return l;
@@ -1136,32 +1138,70 @@ $('debug').innerHTML += '<br>';
     case 'numeric':
       gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
-      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      // gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
 
       if(element.getElementsByTagName('slider').length == 1) { // Hier handelt es sich um einen Slider
-        var sx = element.getElementsByTagName('slider')[0].attributes['x'].value;
-        var sy = element.getElementsByTagName('slider')[0].attributes['y'].value;
+        var sx = parseFloat(element.getElementsByTagName('slider')[0].attributes['x'].value);
+        var sy = parseFloat(element.getElementsByTagName('slider')[0].attributes['y'].value);
+		// var tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [sx, sy], board);
+		// sx = tmp.coords.usrCoords[1];
+		// sy = tmp.coords.usrCoords[2];
+		
         if(element.getElementsByTagName('slider')[0].attributes['horizontal'].value == 'true') {
-          var ex = sx + element.getElementsByTagName('slider')[0].attributes['width'].value;
+          var len = parseFloat(element.getElementsByTagName('slider')[0].attributes['width'].value)/(board.unitX*board.zoomX);
+          var ex = sx + len;
           var ey = sy;
         } else {
+          var len = parseFloat(element.getElementsByTagName('slider')[0].attributes['width'].value)/(board.unitX*board.zoomX);
           var ex = sx;
-          var ey = sy + element.getElementsByTagName('slider')[0].attributes['width'].value;
+          var ey = sy + len;
         }
 
-        var sip = element.getElementsByTagName('value')[0].attributes['val'].value;
-        var smin = element.getElementsByTagName('slider')[0].attributes['min'].value;
-        var smax = element.getElementsByTagName('slider')[0].attributes['max'].value;
+        var sip = parseFloat(element.getElementsByTagName('value')[0].attributes['val'].value);
+        var smin = parseFloat(element.getElementsByTagName('slider')[0].attributes['min'].value);
+        var smax = parseFloat(element.getElementsByTagName('slider')[0].attributes['max'].value);
+
+        (element.getElementsByTagName('animation')[0]) ? attr.snapWidth = parseFloat(element.getElementsByTagName('animation')[0].attributes['step'].value) : false;
 
         try {
-          $('debug').innerHTML += "* <b>Numeric:</b> First: " + input[0].name + "<br>\n";
-          n = board.createElement('slider', [[sx,sy], [ex,ey], [smin, sip, smax]]);
+          $('debug').innerHTML += "* <b>Numeric:</b> First: " + attr.name + "<br>\n";
+          n = board.createElement('slider', [[sx,sy], [ex,ey], [smin, sip, smax]], attr);
           return n;
         } catch(e) {
           $('debug').innerHTML += "* <b>Err:</b> Numeric " + attr.name +"<br>\n";
           return false;
         }
+      }
+    break;
+    case 'midpoint':
+      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+
+      try {
+          p = board.createElement('midpoint', input, attr);
+          $('debug').innerHTML += "* <b>Midpoint ("+ p.id +"):</b> "+ attr.name + "("+ gxtEl.x +", "+ gxtEl.y +")<br>\n";
+          return p;
+      } catch(e) {
+          $('debug').innerHTML += "* <b>Err:</b> Midpoint " + attr.name +"<br>\n";
+          return false;
+      }
+    break;
+    case 'center':
+      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+
+      try {
+          p = board.createElement('point', [function() {return JXG.GetReferenceFromParameter(board, input[0].id).midpoint.X();}, function() {return JXG.GetReferenceFromParameter(board, input[0].id).midpoint.Y();}], attr);
+          $('debug').innerHTML += "* <b>Center ("+ p.id +"):</b> "+ attr.name + "("+ gxtEl.x +", "+ gxtEl.y +")<br>\n";
+          return p;
+      } catch(e) {
+          $('debug').innerHTML += "* <b>Err:</b> Center " + attr.name +"<br>\n";
+          return false;
       }
     break;
 //    case 'polar':
@@ -1180,15 +1220,11 @@ $('debug').innerHTML += '<br>';
 //    break;
 //    case 'integral':
 //    break;
-//    case 'midpoint':
-//    break;
 //    case 'function':
 //    break;
 //    case 'vector':
 //    break;
 //    case 'unitvector':
-//    break;
-//    case 'center':
 //    break;
 //    case 'extremum':
 //    break;
@@ -1268,20 +1304,38 @@ this.readGeogebra = function(tree, board) {
 
     }
 
+// TODO: label in element (siehe Parser) umbenennen
     // Hier starten wir die Expressions zu parsen
     var expr = constructions[t].getElementsByTagName('expression');
     for(var s=0; s<expr.length; s++) {
       var label = expr[s].attributes['label'].value;
       var exp = expr[s].attributes['exp'].value;
       var type = (expr[s].attributes['type']) ? expr[s].attributes['type'].value : false;
-      $('debug').innerHTML += "Expression: label: "+ label +", exp: "+ exp +", type: "+ type +"<br/>";
-      /*
-        Zur Konstruktion:
-        Falls A nicht in regEls vorhanden -> konstruieren
-      Übergabe der ausgelesenen Werte
-      */
+      JXG.GeogebraReader.debug("Expression: label: "+ label +", exp: "+ exp +", type: "+ type);
 
-      var out = JXG.GeogebraReader.ggbParse(exp, registeredElements);
+      // Gibt es das Ausgabeelement schon?
+      if(typeof registeredElements[label] == 'undefined' || registeredElements[label] == '') {
+        var input = JXG.GeogebraReader.getElement(tree, label);
+        registeredElements[label] = JXG.GeogebraReader.writeElement(tree, board, input, null, type);
+        JXG.GeogebraReader.debug("regged: "+registeredElements[label].id);
+      }
+
+      // String vorbehandeln
+      // var s = exp.replace(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/g, 'VAR').split(' ');
+      var s = exp.split(' ');
+      var o = '';
+      for(var i=0; i<s.length; i++) {
+        if(s.length != i+1)
+          // if(s[i].search(/\)$/) > -1 || s[i].search(/$/) > -1)
+          if(s[i].search(/\)$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
+            // if(s[i+1].search(/^\(/) > -1 || s[i+1].search(/^VAR/) > -1)
+            if(s[i+1].search(/^\(/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
+              s[i] = s[i] + "*";
+        o += s[i];
+      }
+
+      // JS/CC-Parser aufrufen
+      var out = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, label, o);
     }
 
   }
