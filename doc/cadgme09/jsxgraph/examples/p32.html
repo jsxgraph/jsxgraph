@@ -27,7 +27,7 @@ pCAB = brd.createElement('perpendicular',[pol.borders[2],B],{strokeWidth:1,dash:
 pABC[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
 pBCA[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
 pCAB[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-i1 = brd.createElement('intersection',[pABC[0],pCAB[0],0],{strokeColor:'#009256',fillColor:'#65B72E'});
+i1 = brd.createElement('intersection',[pABC[0],pCAB[0],0],{strokeColor:'#009256',fillColor:'#65B72E',name:'H'});
 pABC[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
 pBCA[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
 pCAB[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
@@ -38,9 +38,9 @@ mCA = brd.createElement('midpoint',[C,A],{strokeColor:'#901B77',fillColor:'#CA14
 ma = brd.createElement('line',[mBC,A],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
 mb = brd.createElement('line',[mCA,B],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
 mc = brd.createElement('line',[mAB,C],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
-i2 = brd.createElement('intersection',[ma,mc,0],{strokeColor:'#009256',fillColor:'#65B72E'});
+i2 = brd.createElement('intersection',[ma,mc,0],{strokeColor:'#009256',fillColor:'#65B72E',name:'S'});
 
-i3 = brd.createElement('circumcirclemidpoint',[A,B,C],{strokeColor:'#009256',fillColor:'#65B72E'});
+i3 = brd.createElement('circumcirclemidpoint',[A,B,C],{strokeColor:'#009256',fillColor:'#65B72E',name:'U'});
 c = brd.createElement('circumcircle',[A,B,C],{strokeColor:'#000000',dash:3,strokeWidth:1});
 c[0].setProperty('visible:false');
 c[1].setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
