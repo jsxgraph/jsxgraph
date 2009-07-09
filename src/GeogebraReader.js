@@ -4,6 +4,9 @@ JXG.GeogebraReader = new function() {
 
  */
 this.ggbParse = function(board, tree, registeredElements, element, exp) {
+JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ registeredElements[element].name + "("+ registeredElements[element].id +")");
+var p = JXG.GetReferenceFromParameter(board, registeredElements[element].id);
+
 	var _dbg_withtrace        = false;
 	var _dbg_string            = new String();
 
@@ -28,7 +31,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	        start = pos;
 
 	        if( info.src.length <= start )
-	            return 16;
+	            return 17;
 
 	        do
 	        {
@@ -46,9 +49,10 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	        else if( info.src.charCodeAt( pos ) == 47 ) state = 8;
 	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 9;
 	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
-	        else if( info.src.charCodeAt( pos ) == 34 ) state = 14;
-	        else if( info.src.charCodeAt( pos ) == 38 ) state = 15;
-	        else if( info.src.charCodeAt( pos ) == 46 ) state = 16;
+	        else if( info.src.charCodeAt( pos ) == 94 ) state = 11;
+	        else if( info.src.charCodeAt( pos ) == 34 ) state = 15;
+	        else if( info.src.charCodeAt( pos ) == 38 ) state = 16;
+	        else if( info.src.charCodeAt( pos ) == 46 ) state = 17;
 	        else state = -1;
 	        break;
 
@@ -102,7 +106,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 
 	    case 9:
 	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 9;
-	        else if( info.src.charCodeAt( pos ) == 46 ) state = 12;
+	        else if( info.src.charCodeAt( pos ) == 46 ) state = 13;
 	        else state = -1;
 	        match = 4;
 	        match_pos = pos;
@@ -110,7 +114,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 
 	    case 10:
 	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 18;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 19;
 	        else state = -1;
 	        match = 7;
 	        match_pos = pos;
@@ -118,48 +122,54 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 
 	    case 11:
 	        state = -1;
-	        match = 8;
+	        match = 14;
 	        match_pos = pos;
 	        break;
 
 	    case 12:
-	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 12;
+	        state = -1;
+	        match = 8;
+	        match_pos = pos;
+	        break;
+
+	    case 13:
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 13;
 	        else state = -1;
 	        match = 5;
 	        match_pos = pos;
 	        break;
 
-	    case 13:
+	    case 14:
 	        state = -1;
 	        match = 6;
 	        match_pos = pos;
 	        break;
 
-	    case 14:
-	        if( info.src.charCodeAt( pos ) == 34 ) state = 11;
-	        else if( info.src.charCodeAt( pos ) == 32 || info.src.charCodeAt( pos ) == 46 || ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 14;
-	        else state = -1;
-	        break;
-
 	    case 15:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 17;
+	        if( info.src.charCodeAt( pos ) == 34 ) state = 12;
+	        else if( info.src.charCodeAt( pos ) == 32 || info.src.charCodeAt( pos ) == 46 || ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 15;
 	        else state = -1;
 	        break;
 
 	    case 16:
-	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 12;
+	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 18;
 	        else state = -1;
 	        break;
 
 	    case 17:
-	        if( info.src.charCodeAt( pos ) == 59 ) state = 13;
-	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 17;
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 13;
 	        else state = -1;
 	        break;
 
 	    case 18:
+	        if( info.src.charCodeAt( pos ) == 59 ) state = 14;
+	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 18;
+	        else state = -1;
+	        break;
+
+	    case 19:
 	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 18;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 19;
 	        else state = -1;
 	        break;
 
@@ -201,24 +211,14 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 
 	    case 7:
 	        {
-              JXG.GeogebraReader.debug("Geparstes Element/Variable: "+ info.att);
-              // Falls das Element noch nicht existiert, muss es erzeugt werden
+	         // info.att = "registeredElements['"+ info.att +"'].id"
+			  JXG.GeogebraReader.debug("Geparstes Element/Variable: "+ info.att);
+	          // Falls das Element noch nicht existiert, muss es erzeugt werden
 		      if(typeof registeredElements[info.att] == 'undefined' || registeredElements[info.att] == '') {
 		        var input = JXG.GeogebraReader.getElement(tree, info.att);
 		        registeredElements[info.att] = JXG.GeogebraReader.writeElement(tree, board, input);
 				JXG.GeogebraReader.debug("regged: "+ info.att +" (id: "+ registeredElements[info.att].id +")");
 		      }
-		
-		     // TODO: Fallunterscheidung zu unterschiedlichen Elementtypen und anhand deren die Wertzuweisung
-			  // 		     switch(JXG.GetReferenceFromParameter(board, registeredElements[info.att].id).type) {
-			  // case 1330923340: /* Slider */
-			  //   info.att = JXG.GetReferenceFromParameter(board, registeredElements[info.att].id).Value();
-			  // break;
-			  // default:
-			  //   info.att = JXG.GetReferenceFromParameter(board, registeredElements[info.att].id).Value();
-			  // break;
-			  // 		     }
-
 	        }
 	        break;
 
@@ -257,78 +257,83 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	/* Pop-Table */
 	var pop_tab = new Array(
 	    new Array( 0/* p' */, 1 ),
-	    new Array( 15/* p */, 1 ),
-	    new Array( 14/* e */, 3 ),
-	    new Array( 14/* e */, 3 ),
-	    new Array( 14/* e */, 3 ),
-	    new Array( 14/* e */, 3 ),
-	    new Array( 14/* e */, 3 ),
-	    new Array( 14/* e */, 2 ),
-	    new Array( 14/* e */, 3 ),
-	    new Array( 14/* e */, 3 ),
-	    new Array( 14/* e */, 1 ),
-	    new Array( 14/* e */, 1 ),
-	    new Array( 14/* e */, 1 ),
-	    new Array( 14/* e */, 1 ),
-	    new Array( 14/* e */, 1 )
+	    new Array( 16/* p */, 1 ),
+	    new Array( 15/* e */, 3 ),
+	    new Array( 15/* e */, 3 ),
+	    new Array( 15/* e */, 3 ),
+	    new Array( 15/* e */, 3 ),
+	    new Array( 15/* e */, 3 ),
+	    new Array( 15/* e */, 3 ),
+	    new Array( 15/* e */, 2 ),
+	    new Array( 15/* e */, 3 ),
+	    new Array( 15/* e */, 3 ),
+	    new Array( 15/* e */, 1 ),
+	    new Array( 15/* e */, 1 ),
+	    new Array( 15/* e */, 1 ),
+	    new Array( 15/* e */, 1 ),
+	    new Array( 15/* e */, 1 )
 	);
 
 	/* Action-Table */
 	var act_tab = new Array(
 	    /* State 0 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
-	    /* State 1 */ new Array( 16/* "$" */,0 ),
-	    /* State 2 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,12 , 11/* "-" */,13 , 9/* "+" */,14 , 16/* "$" */,-1 ),
+	    /* State 1 */ new Array( 17/* "$" */,0 ),
+	    /* State 2 */ new Array( 14/* "^" */,10 , 13/* "/" */,11 , 12/* "*" */,12 , 10/* "," */,13 , 11/* "-" */,14 , 9/* "+" */,15 , 17/* "$" */,-1 ),
 	    /* State 3 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
 	    /* State 4 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
-	    /* State 5 */ new Array( 9/* "+" */,17 , 16/* "$" */,-14 , 11/* "-" */,-14 , 10/* "," */,-14 , 12/* "*" */,-14 , 13/* "/" */,-14 , 3/* ")" */,-14 ),
-	    /* State 6 */ new Array( 16/* "$" */,-10 , 9/* "+" */,-10 , 11/* "-" */,-10 , 10/* "," */,-10 , 12/* "*" */,-10 , 13/* "/" */,-10 , 3/* ")" */,-10 ),
-	    /* State 7 */ new Array( 16/* "$" */,-11 , 9/* "+" */,-11 , 11/* "-" */,-11 , 10/* "," */,-11 , 12/* "*" */,-11 , 13/* "/" */,-11 , 3/* ")" */,-11 ),
-	    /* State 8 */ new Array( 16/* "$" */,-12 , 9/* "+" */,-12 , 11/* "-" */,-12 , 10/* "," */,-12 , 12/* "*" */,-12 , 13/* "/" */,-12 , 3/* ")" */,-12 ),
-	    /* State 9 */ new Array( 16/* "$" */,-13 , 9/* "+" */,-13 , 11/* "-" */,-13 , 10/* "," */,-13 , 12/* "*" */,-13 , 13/* "/" */,-13 , 3/* ")" */,-13 ),
+	    /* State 5 */ new Array( 9/* "+" */,18 , 17/* "$" */,-15 , 11/* "-" */,-15 , 10/* "," */,-15 , 12/* "*" */,-15 , 13/* "/" */,-15 , 14/* "^" */,-15 , 3/* ")" */,-15 ),
+	    /* State 6 */ new Array( 17/* "$" */,-11 , 9/* "+" */,-11 , 11/* "-" */,-11 , 10/* "," */,-11 , 12/* "*" */,-11 , 13/* "/" */,-11 , 14/* "^" */,-11 , 3/* ")" */,-11 ),
+	    /* State 7 */ new Array( 17/* "$" */,-12 , 9/* "+" */,-12 , 11/* "-" */,-12 , 10/* "," */,-12 , 12/* "*" */,-12 , 13/* "/" */,-12 , 14/* "^" */,-12 , 3/* ")" */,-12 ),
+	    /* State 8 */ new Array( 17/* "$" */,-13 , 9/* "+" */,-13 , 11/* "-" */,-13 , 10/* "," */,-13 , 12/* "*" */,-13 , 13/* "/" */,-13 , 14/* "^" */,-13 , 3/* ")" */,-13 ),
+	    /* State 9 */ new Array( 17/* "$" */,-14 , 9/* "+" */,-14 , 11/* "-" */,-14 , 10/* "," */,-14 , 12/* "*" */,-14 , 13/* "/" */,-14 , 14/* "^" */,-14 , 3/* ")" */,-14 ),
 	    /* State 10 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
 	    /* State 11 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
 	    /* State 12 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
 	    /* State 13 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
 	    /* State 14 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
-	    /* State 15 */ new Array( 13/* "/" */,-7 , 12/* "*" */,-7 , 10/* "," */,-7 , 11/* "-" */,-7 , 9/* "+" */,-7 , 16/* "$" */,-7 , 3/* ")" */,-7 ),
-	    /* State 16 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,12 , 11/* "-" */,13 , 9/* "+" */,14 , 3/* ")" */,23 ),
-	    /* State 17 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
-	    /* State 18 */ new Array( 13/* "/" */,-6 , 12/* "*" */,-6 , 10/* "," */,-6 , 11/* "-" */,-6 , 9/* "+" */,-6 , 16/* "$" */,-6 , 3/* ")" */,-6 ),
-	    /* State 19 */ new Array( 13/* "/" */,-5 , 12/* "*" */,-5 , 10/* "," */,-5 , 11/* "-" */,-5 , 9/* "+" */,-5 , 16/* "$" */,-5 , 3/* ")" */,-5 ),
-	    /* State 20 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,-4 , 11/* "-" */,-4 , 9/* "+" */,-4 , 16/* "$" */,-4 , 3/* ")" */,-4 ),
-	    /* State 21 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,-3 , 11/* "-" */,-3 , 9/* "+" */,-3 , 16/* "$" */,-3 , 3/* ")" */,-3 ),
-	    /* State 22 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,-2 , 11/* "-" */,-2 , 9/* "+" */,-2 , 16/* "$" */,-2 , 3/* ")" */,-2 ),
-	    /* State 23 */ new Array( 16/* "$" */,-8 , 9/* "+" */,-8 , 11/* "-" */,-8 , 10/* "," */,-8 , 12/* "*" */,-8 , 13/* "/" */,-8 , 3/* ")" */,-8 ),
-	    /* State 24 */ new Array( 13/* "/" */,10 , 12/* "*" */,11 , 10/* "," */,-9 , 11/* "-" */,-9 , 9/* "+" */,-9 , 16/* "$" */,-9 , 3/* ")" */,-9 )
+	    /* State 15 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
+	    /* State 16 */ new Array( 14/* "^" */,10 , 13/* "/" */,-8 , 12/* "*" */,-8 , 10/* "," */,-8 , 11/* "-" */,-8 , 9/* "+" */,-8 , 17/* "$" */,-8 , 3/* ")" */,-8 ),
+	    /* State 17 */ new Array( 14/* "^" */,10 , 13/* "/" */,11 , 12/* "*" */,12 , 10/* "," */,13 , 11/* "-" */,14 , 9/* "+" */,15 , 3/* ")" */,25 ),
+	    /* State 18 */ new Array( 11/* "-" */,3 , 2/* "(" */,4 , 8/* "STRING" */,5 , 4/* "INT" */,6 , 5/* "FLOAT" */,7 , 6/* "HTML" */,8 , 7/* "VAR" */,9 ),
+	    /* State 19 */ new Array( 14/* "^" */,-7 , 13/* "/" */,-7 , 12/* "*" */,-7 , 10/* "," */,-7 , 11/* "-" */,-7 , 9/* "+" */,-7 , 17/* "$" */,-7 , 3/* ")" */,-7 ),
+	    /* State 20 */ new Array( 14/* "^" */,10 , 13/* "/" */,-6 , 12/* "*" */,-6 , 10/* "," */,-6 , 11/* "-" */,-6 , 9/* "+" */,-6 , 17/* "$" */,-6 , 3/* ")" */,-6 ),
+	    /* State 21 */ new Array( 14/* "^" */,10 , 13/* "/" */,-5 , 12/* "*" */,-5 , 10/* "," */,-5 , 11/* "-" */,-5 , 9/* "+" */,-5 , 17/* "$" */,-5 , 3/* ")" */,-5 ),
+	    /* State 22 */ new Array( 14/* "^" */,10 , 13/* "/" */,11 , 12/* "*" */,12 , 10/* "," */,-4 , 11/* "-" */,-4 , 9/* "+" */,-4 , 17/* "$" */,-4 , 3/* ")" */,-4 ),
+	    /* State 23 */ new Array( 14/* "^" */,10 , 13/* "/" */,11 , 12/* "*" */,12 , 10/* "," */,-3 , 11/* "-" */,-3 , 9/* "+" */,-3 , 17/* "$" */,-3 , 3/* ")" */,-3 ),
+	    /* State 24 */ new Array( 14/* "^" */,10 , 13/* "/" */,11 , 12/* "*" */,12 , 10/* "," */,-2 , 11/* "-" */,-2 , 9/* "+" */,-2 , 17/* "$" */,-2 , 3/* ")" */,-2 ),
+	    /* State 25 */ new Array( 17/* "$" */,-9 , 9/* "+" */,-9 , 11/* "-" */,-9 , 10/* "," */,-9 , 12/* "*" */,-9 , 13/* "/" */,-9 , 14/* "^" */,-9 , 3/* ")" */,-9 ),
+	    /* State 26 */ new Array( 14/* "^" */,10 , 13/* "/" */,11 , 12/* "*" */,12 , 10/* "," */,-10 , 11/* "-" */,-10 , 9/* "+" */,-10 , 17/* "$" */,-10 , 3/* ")" */,-10 )
 	);
 
 	/* Goto-Table */
 	var goto_tab = new Array(
-	    /* State 0 */ new Array( 15/* p */,1 , 14/* e */,2 ),
+	    /* State 0 */ new Array( 16/* p */,1 , 15/* e */,2 ),
 	    /* State 1 */ new Array( ),
 	    /* State 2 */ new Array( ),
-	    /* State 3 */ new Array( 14/* e */,15 ),
-	    /* State 4 */ new Array( 14/* e */,16 ),
+	    /* State 3 */ new Array( 15/* e */,16 ),
+	    /* State 4 */ new Array( 15/* e */,17 ),
 	    /* State 5 */ new Array( ),
 	    /* State 6 */ new Array( ),
 	    /* State 7 */ new Array( ),
 	    /* State 8 */ new Array( ),
 	    /* State 9 */ new Array( ),
-	    /* State 10 */ new Array( 14/* e */,18 ),
-	    /* State 11 */ new Array( 14/* e */,19 ),
-	    /* State 12 */ new Array( 14/* e */,20 ),
-	    /* State 13 */ new Array( 14/* e */,21 ),
-	    /* State 14 */ new Array( 14/* e */,22 ),
-	    /* State 15 */ new Array( ),
+	    /* State 10 */ new Array( 15/* e */,19 ),
+	    /* State 11 */ new Array( 15/* e */,20 ),
+	    /* State 12 */ new Array( 15/* e */,21 ),
+	    /* State 13 */ new Array( 15/* e */,22 ),
+	    /* State 14 */ new Array( 15/* e */,23 ),
+	    /* State 15 */ new Array( 15/* e */,24 ),
 	    /* State 16 */ new Array( ),
-	    /* State 17 */ new Array( 14/* e */,24 ),
-	    /* State 18 */ new Array( ),
+	    /* State 17 */ new Array( ),
+	    /* State 18 */ new Array( 15/* e */,26 ),
 	    /* State 19 */ new Array( ),
 	    /* State 20 */ new Array( ),
 	    /* State 21 */ new Array( ),
 	    /* State 22 */ new Array( ),
 	    /* State 23 */ new Array( ),
-	    /* State 24 */ new Array( )
+	    /* State 24 */ new Array( ),
+	    /* State 25 */ new Array( ),
+	    /* State 26 */ new Array( )
 	);
 
 
@@ -349,6 +354,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	    "-" /* Terminal symbol */,
 	    "*" /* Terminal symbol */,
 	    "/" /* Terminal symbol */,
+	    "^" /* Terminal symbol */,
 	    "e" /* Non-terminal symbol */,
 	    "p" /* Non-terminal symbol */,
 	    "$" /* Terminal symbol */
@@ -372,7 +378,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 
 	    while( true )
 	    {
-	        act = 26;
+	        act = 28;
 	        for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
 	        {
 	            if( act_tab[sstack[sstack.length-1]][i] == la )
@@ -395,7 +401,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 
 
 	        //Panic-mode: Try recovery when parse-error occurs!
-	        if( act == 26 )
+	        if( act == 28 )
 	        {
 	            if( _dbg_withtrace )
 	                __dbg_print( "Error detected: There is no reduce or shift on the symbol " + labels[la] );
@@ -415,7 +421,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	                rvstack[i] = vstack[i];
 	            }
 
-	            while( act == 26 && la != 16 )
+	            while( act == 28 && la != 17 )
 	            {
 	                if( _dbg_withtrace )
 	                    __dbg_print( "\tError recovery\n" +
@@ -424,7 +430,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	                if( la == -1 )
 	                    info.offset++;
 
-	                while( act == 26 && sstack.length > 0 )
+	                while( act == 28 && sstack.length > 0 )
 	                {
 	                    sstack.pop();
 	                    vstack.pop();
@@ -432,7 +438,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	                    if( sstack.length == 0 )
 	                        break;
 
-	                    act = 26;
+	                    act = 28;
 	                    for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
 	                    {
 	                        if( act_tab[sstack[sstack.length-1]][i] == la )
@@ -443,7 +449,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	                    }
 	                }
 
-	                if( act != 26 )
+	                if( act != 28 )
 	                    break;
 
 	                for( var i = 0; i < rsstack.length; i++ )
@@ -455,7 +461,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	                la = __lex( info );
 	            }
 
-	            if( act == 26 )
+	            if( act == 28 )
 	            {
 	                if( _dbg_withtrace )
 	                    __dbg_print( "\tError recovery failed, terminating parse process..." );
@@ -468,7 +474,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	        }
 
 	        /*
-	        if( act == 26 )
+	        if( act == 28 )
 	            break;
 	        */
 
@@ -524,15 +530,13 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	    break;
 	    case 4:
 	    {
-		     JXG.GeogebraReader.debug("2Zu aktualisierendes Element: "+ registeredElements[element].name + "("+ registeredElements[element].id +")");
-	
-             var p = JXG.GetReferenceFromParameter(board, registeredElements[element].id);
-             var s = JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 3 ]].id);
-             (function(z) { fx = function() { return z.Value(); };
-                            fy = function() { return z.Value(); };
-                            p.addConstraint([fx, fy]);
-                          }) (s);
-
+	         var s1 = JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 1 ]].id);
+	         var s2 = JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 3 ]].id);
+	         (function(x, y) { fx = function() { return x.Value(); };
+	                           fy = function() { return y.Value(); };
+	                           p.addConstraint([fx, fy]);
+	                          }) (s1, s2);
+			//DEBUG
 	         rval = "x: "+ typeof vstack[ vstack.length - 3 ] +" ("+ vstack[ vstack.length - 3 ] +"), y: "+ typeof vstack[ vstack.length - 1 ] +"("+ vstack[ vstack.length - 1 ] +")";
 	    }
 	    break;
@@ -548,22 +552,35 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	    break;
 	    case 7:
 	    {
-	         rval = vstack[ vstack.length - 1 ] * -1;
+           if(typeof vstack[ vstack.length - 3 ] == 'string')
+             var vstack3 = JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 3 ]].id).Value();
+           else
+             var vstack3 = vstack[ vstack.length - 3 ];
+
+           if(typeof vstack[ vstack.length - 1 ] == 'string')
+             var vstack1 = JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 1 ]].id).Value();
+           else
+             var vstack1 = vstack[ vstack.length - 1 ];
+
+			rval = function(x, y) { return Math.pow(x, y); } (vstack3, vstack1);
+             // rval = Math.pow(vstack3, vstack1);
+
+             // rval = Math.pow(vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]);
 	    }
 	    break;
 	    case 8:
 	    {
-	         rval = vstack[ vstack.length - 2 ];
+	         rval = vstack[ vstack.length - 1 ] * -1;
 	    }
 	    break;
 	    case 9:
 	    {
-	        rval = vstack[ vstack.length - 3 ];
+	         rval = vstack[ vstack.length - 2 ];
 	    }
 	    break;
 	    case 10:
 	    {
-	        rval = vstack[ vstack.length - 1 ];
+	        rval = vstack[ vstack.length - 3 ];
 	    }
 	    break;
 	    case 11:
@@ -586,7 +603,14 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 	        rval = vstack[ vstack.length - 1 ];
 	    }
 	    break;
+	    case 15:
+	    {
+	        rval = vstack[ vstack.length - 1 ];
+	    }
+	    break;
 	}
+
+
 
 	            if( _dbg_withtrace )
 	                __dbg_print( "\tPopping " + pop_tab[act][1] + " off the stack..." );
@@ -632,6 +656,7 @@ this.ggbParse = function(board, tree, registeredElements, element, exp) {
 
 	    return err_cnt;
 	}
+
 
   var error_offsets = new Array(); var error_lookaheads = new Array(); var error_count = 0;
   // var str = prompt( "Please enter a string to be parsed:", "" );
@@ -681,15 +706,15 @@ this.boardProperties = function(gxtEl, Data, attr) {
 }; 
 
 /**
- 
+ * @param {Object} gxtEl element of which attributes are to set
+ * @param {Object} Data element of which attributes are to set
  */
 this.coordinates = function(gxtEl, Data) {
-//TODO: userCoords hier umrechnen, für alle Elemente
   gxtEl.x = (Data.getElementsByTagName("coords")[0]) ? parseFloat(Data.getElementsByTagName("coords")[0].attributes["x"].value) : (Data.getElementsByTagName("startPoint")[0]) ? parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["x"].value) : false;
   gxtEl.y = (Data.getElementsByTagName("coords")[0]) ? parseFloat(Data.getElementsByTagName("coords")[0].attributes["y"].value) : (Data.getElementsByTagName("startPoint")[0]) ? parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["y"].value) : false;
   gxtEl.z = (Data.getElementsByTagName("coords")[0]) ? parseFloat(Data.getElementsByTagName("coords")[0].attributes["z"].value) : (Data.getElementsByTagName("startPoint")[0]) ? parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["z"].value) : false;
   return gxtEl;
-}
+};
 
 /**
  * Writing element attributes to the given object
@@ -699,7 +724,6 @@ this.coordinates = function(gxtEl, Data) {
  */
 this.visualProperties = function(Data, attr) {
   (Data.getElementsByTagName("show")[0].attributes["object"]) ? attr.visible = Data.getElementsByTagName("show")[0].attributes["object"].value : false;
-  // attr.visible = 'true';
   (Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.visibleLabel = Data.getElementsByTagName("show")[0].attributes["label"].value : false;
   (Data.getElementsByTagName('pointSize')[0]) ? attr.style = Data.getElementsByTagName('pointSize')[0].attributes["val"].value : false;
   (Data.getElementsByTagName("labelOffset")[0]) ? attr.labelX = 1*Data.getElementsByTagName("labelOffset")[0].attributes["x"].value : false;
@@ -805,21 +829,21 @@ this.writeElement = function(tree, board, output, input, cmd) {
   gxtEl.type = element.attributes["type"].value.toLowerCase();
   gxtEl.label = element.attributes["label"].value;
 
-  var attr = {} // Attributes of geometric elements
-  attr.name= gxtEl.label;
+  var attr = {}; // Attributes of geometric elements
+  attr.name = gxtEl.label;
 
   if(typeof cmd != 'undefined' && (gxtEl.type != cmd)) {
-  gxtEl.type = cmd;
+    gxtEl.type = cmd;
   }
 
   JXG.GeogebraReader.debug("<br><b>Konstruiere</b> "+ gxtEl.label +"("+ gxtEl.type +"):");
 
   switch(gxtEl.type) {
     case "point":
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
           p = board.createElement('point', [gxtEl.x, gxtEl.y], attr);
@@ -831,13 +855,13 @@ this.writeElement = function(tree, board, output, input, cmd) {
       }
     break;
     case 'segment':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-      attr.strokeColor = attr.fillColor;
-      attr.strokeOpacity = attr.fillOpacity;
+      // attr.strokeColor = attr.fillColor;
+      // attr.strokeOpacity = attr.fillOpacity;
 
       try {
         $('debug').innerHTML += "* <b>Segment:</b> ("+ attr.name +") First: " + input[0].name + ", Last: " + input[1].name + "<br>\n";
@@ -851,10 +875,10 @@ this.writeElement = function(tree, board, output, input, cmd) {
       }
     break;
     case 'line':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       attr.strokeColor = attr.fillColor;
       attr.strokeOpacity = attr.fillOpacity;
@@ -876,17 +900,14 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case "orthogonalline":
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
         $('debug').innerHTML += "* <b>Orthogonalline:</b> First: " + input[0].id + ", Last: " + input[1].id + "<br>\n";
         l = board.createElement('normal', [input[0], input[1]], attr);
-        // l[0].setStraight(false, false);
-        // l[0].setProperty("visible: false");
-        // l[1].setProperty("visible: false");
         return l;
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> Orthogonalline " + attr.label +"<br>\n";
@@ -894,10 +915,10 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case "polygon":
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
         $('debug').innerHTML += "* <b>Polygon:</b> First: " + input[0].name + ", Second: " + input[1].name + ", Third: " + input[2].name + "<br>\n";
@@ -916,17 +937,14 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'intersect':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
         $('debug').innerHTML += "* <b>Intersection:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
         l = board.createElement('intersection', [input[0], input[1], 0], attr);
-        // l = new board.Intersection(board, null, input[0], input[1]);
-        // l = board.intersection(input[0], input[1]);
-        // l.setStraight(false, false);
         return l;
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> Intersection " + attr.name +"<br>\n";
@@ -934,10 +952,10 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'distance':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
         $('debug').innerHTML += "* <b>Distance:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
@@ -954,10 +972,10 @@ $('debug').innerHTML += '<br>';
     break;
     case 'rotate':
 //TODO: Abhaengigkeit einbauen, BSP: dreheobjektumpunkt --> B' immer abhaengig von A und B
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
         $('debug').innerHTML += "* <b>Rotate:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
@@ -970,10 +988,10 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'mirror':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       if(JXG.GetReferenceFromParameter(board, input[1].id).type == 1330925652) var type = 'mirrorpoint'; // Punktspiegelung
       else if(JXG.GetReferenceFromParameter(board, input[1].id).type == 1330924622) var type = 'reflection'; // Geradenspiegelung
@@ -988,10 +1006,10 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'circle':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
         $('debug').innerHTML += "* <b>Circle:</b> First: " + input[0].name + ", Second: " + input[1] + "<br>\n";
@@ -1003,10 +1021,10 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'circlearc':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
         $('debug').innerHTML += "* <b>CircleArc:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
@@ -1018,10 +1036,10 @@ $('debug').innerHTML += '<br>';
       }
     break;
     // case 'conic':
-    //   gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-    //   gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+    //   attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+    //   attr = JXG.GeogebraReader.colorProperties(element, attr);
     //   gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-    //   gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+    //   attr = JXG.GeogebraReader.visualProperties(element, attr);
     // 
     //   try {
     //     $('debug').innerHTML += "* <b>Conic:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
@@ -1033,10 +1051,10 @@ $('debug').innerHTML += '<br>';
     //   }
     // break;
     case 'circlesector':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
         $('debug').innerHTML += "* <b>CircleSector:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
@@ -1048,10 +1066,10 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'linebisector':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
         $('debug').innerHTML += "* <b>LineBiSector (Mittelsenkrechte):</b> First: " + input[0].name + "<br>\n";
@@ -1066,10 +1084,10 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'ray':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
         $('debug').innerHTML += "* <b>Strahl:</b> First: " + input[0].name + "<br>\n";
@@ -1084,10 +1102,10 @@ $('debug').innerHTML += '<br>';
     break;
     case 'tangent':
 //TODO: nur ein Element?
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
         $('debug').innerHTML += "* <b>Tangente:</b> First: " + input[0].name + "<br>\n";
@@ -1099,7 +1117,7 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'circumcirclearc':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
@@ -1114,7 +1132,7 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'angle':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
@@ -1129,7 +1147,7 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'angularbisector':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
@@ -1144,7 +1162,7 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'numeric':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       attr = JXG.GeogebraReader.colorProperties(element, attr);
       // gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
@@ -1183,10 +1201,10 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'midpoint':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
           p = board.createElement('midpoint', input, attr);
@@ -1198,13 +1216,17 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'center':
-      gxtEl = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-      gxtEl = JXG.GeogebraReader.colorProperties(element, attr);
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-      gxtEl = JXG.GeogebraReader.visualProperties(element, attr);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
-          p = board.createElement('point', [function() {return JXG.GetReferenceFromParameter(board, input[0].id).midpoint.X();}, function() {return JXG.GetReferenceFromParameter(board, input[0].id).midpoint.Y();}], attr);
+          p = board.createElement('point', [function() {
+                                                  return JXG.GetReferenceFromParameter(board, input[0].id).midpoint.X();
+                                        },  function() {
+                                                  return JXG.GetReferenceFromParameter(board, input[0].id).midpoint.Y();
+                                        }], attr);
           $('debug').innerHTML += "* <b>Center ("+ p.id +"):</b> "+ attr.name + "("+ gxtEl.x +", "+ gxtEl.y +")<br>\n";
           return p;
       } catch(e) {
@@ -1307,7 +1329,7 @@ this.readGeogebra = function(tree, board) {
         for(var i=1; i<output.length; i++) {
           registeredElements[registeredElements[el].borders[i-1].name] = registeredElements[el].borders[i-1];
           // var borderAttr = {};
-          // JXG.GeogebraReader.colorProperties(JXG.GeogebraRedaer.getElement(tree, registeredElements[el].borders[i-1].name), {});
+          // borderAttr = JXG.GeogebraReader.colorProperties(JXG.GeogebraReader.getElement(tree, output[i].attributes['label'].value), borderAttr);
           // registeredElements[el].borders[i-1].setProperty('strokeColor: '+borderAttr.fillColor, 'strokeOpacity: '+borderAttr.fillOpacity);
           $('debug').innerHTML += i+") regged: "+output[i].attributes['label'].value+"("+ registeredElements[output[i].attributes['label'].value].id +")<br/>";
         }
@@ -1328,20 +1350,17 @@ this.readGeogebra = function(tree, board) {
       if(typeof registeredElements[label] == 'undefined' || registeredElements[label] == '') {
         var input = JXG.GeogebraReader.getElement(tree, label);
         registeredElements[label] = JXG.GeogebraReader.writeElement(tree, board, input, null, type);
-        JXG.GeogebraReader.debug("regged: "+registeredElements[label].id);
+        JXG.GeogebraReader.debug("regged: "+ registeredElements[label].id);
       }
 
       // String vorbehandeln
       // var s = exp.replace(/([a-zA-Z]+(\_*[a-zA-Z0-9]+)*)/g, 'VAR($1)').split(' ');
       var s = exp.split(' ');
       var o = '';
-//TODO: Zahlen und alle "Multiplikatoren" berücksichtigen
       for(var i=0; i<s.length; i++) {
         if(s.length != i+1)
-          // if(s[i].search(/\)$/) > -1 || s[i].search(/$/) > -1)
-          if(s[i].search(/\)$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
-            // if(s[i+1].search(/^\(/) > -1 || s[i+1].search(/^VAR/) > -1)
-            if(s[i+1].search(/^\(/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
+          if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
+            if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
               s[i] = s[i] + "*";
         o += s[i];
       }
