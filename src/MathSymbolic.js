@@ -175,7 +175,6 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
         }
         var c = board.createElement('curve', [px, py], {strokeColor: 'green', strokeWidth: '2px'});
         this.rendNode = c.rendNode;
-        alert(returnstr[1]);
         callback(returnstr[1].split(';'));
     };
     
