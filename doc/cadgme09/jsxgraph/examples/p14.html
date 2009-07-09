@@ -30,6 +30,7 @@ t.rt(90*Math.pow(-1,level));
 <input type="button" value="clear" onClick="clearturtle()">
 <input type="button" value="Plant" onClick="setCode1()">
 <input type="button" value="Penrose" onClick="setCode2()">
+<input type="button" value="Sierpinski" onClick="setCode3()">
 </form>
         <div id="box" class="jxgbox jsxgraph_present_small"></div>
         <!-- Drawing area -->
@@ -163,6 +164,27 @@ document.getElementById('inputtext').value = "var level = 3;\n"+
 "               };\n"+
 "var angle = 36.0;\n"+
 "var len = 100/(level);\n";
+}
+function setCode3() {
+document.getElementById('inputtext').value = "var level = 6;\n"+
+"var axiom = 'A';\n"+
+"var rules = {\n"+
+"    'A':'B-A-B',\n"+
+"    'B':'A+B+A',\n"+
+"    '+' : '+',\n"+
+"    '-' : '-'\n"+
+"};\n"+
+"var symbols = { 'A':'F', \n"+
+"                'B':'F', \n"+
+"                '+':'+', \n"+
+"                '-':'-', \n"+
+"                '[':'[', \n"+
+"                ']':']'  \n"+
+"              }; \n"+
+"var angle = 60; \n"+
+"var len = 300/Math.pow(2,level); \n"+
+"t.setPos(-250*Math.pow(-1,level),-150); \n"+
+"t.rt(90*Math.pow(-1,level)); \n";
 }
 
     /* ]]> */
