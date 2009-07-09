@@ -11,14 +11,24 @@
         <!-- Drawing area -->
         <script type="text/javascript">
             /* <![CDATA[ */
-board2 = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 1, 1, -1], keepaspectratio:true, axis:true});
- c = board2.createElement('circle', [[0,0], 1]);
+ board2 = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1.2, 1.2, 1.2, -1.2], keepaspectratio:true, axis:false});  
+ var c = board2.createElement('circle', [[0,0], 1],{strokeColor:'#541972',fillColor:'#E9E0EC',highlightFillColor:'#E9E0EC'});
+ var point1 = board2.createElement('point',[1,1],{visible:false});
+ var point3 = board2.createElement('point',[-1,-1],{visible:false});
+ var point2 = board2.createElement('point',[-1,1],{visible:false});
+ var point4 = board2.createElement('point',[1,-1],{visible:false});
+ var poly = board2.createElement('polygon',[point1,point2,point3,point4,point1],{fillColor:'#DCF0ED',highlightFillColor:'#DCF0ED'});
+ for(i=0;i<poly.borders.length;i++) {
+    poly.borders[i].setProperty('strokeColor:#245399');
+ }
+  board2.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
+ board2.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});
  board2.suspendUpdate();
  var p2 = [];
  for (var i=0;i<10;i++) {
    p2[i] = board2.createElement('point',
            [function(){return 2*Math.random()-1;},function(){ return 2*Math.random()-1;}],
-           {style:5,name:' ',withLabel:false});
+           {style:5,name:' ',withLabel:false, strokeColor:'#245399',fillColor:'#FDFBFD'});
  }
  board2.unsuspendUpdate();
  
