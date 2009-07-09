@@ -688,8 +688,11 @@ this.colorProperties = function(Data, attr) {
   if (g.length == 1) g = '0' + g;
   if (b.length == 1) b = '0' + b;
 
+  attr.fillColor = '#'+ r + g + b;
+  attr.strokeColor = attr.fillColor;
+
   if(a != 0) {
-    attr.fillColor = '#'+ r + g + b;
+    attr.strokeOpacity = attr.fillOpacity;
     attr.fillOpacity = a;
   }
   return attr;
@@ -860,9 +863,6 @@ this.writeElement = function(tree, board, output, input, cmd) {
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-      // attr.strokeColor = attr.fillColor;
-      // attr.strokeOpacity = attr.fillOpacity;
-
       try {
         $('debug').innerHTML += "* <b>Segment:</b> ("+ attr.name +") First: " + input[0].name + ", Last: " + input[1].name + "<br>\n";
         attr.straightFirst = false;
@@ -880,8 +880,6 @@ this.writeElement = function(tree, board, output, input, cmd) {
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-      attr.strokeColor = attr.fillColor;
-      attr.strokeOpacity = attr.fillOpacity;
 for (var x in attr) {
     $('debug').innerHTML += x+':'+attr[x]+' ';
 }    
