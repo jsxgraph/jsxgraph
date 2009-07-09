@@ -917,7 +917,8 @@ $('debug').innerHTML += '<br>';
       try {
         $('debug').innerHTML += "* <b>Intersection:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
         // l = board.createElement('intersection', input, attr);
-    l = new JXG.Intersection(board, null, input[0], input[1]);
+        // l = new board.Intersection(board, null, input[0], input[1]);
+        l = board.intersection(input[0], input[1]);
         // l.setStraight(false, false);
         return l;
       } catch(e) {
@@ -1321,7 +1322,7 @@ this.readGeogebra = function(tree, board) {
       }
 
       // String vorbehandeln
-      // var s = exp.replace(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/g, 'VAR').split(' ');
+      // var s = exp.replace(/([a-zA-Z]+(\_*[a-zA-Z0-9]+)*)/g, 'VAR($1)').split(' ');
       var s = exp.split(' ');
       var o = '';
 //TODO: Zahlen und alle "Multiplikatoren" berücksichtigen

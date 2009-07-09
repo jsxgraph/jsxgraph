@@ -9,7 +9,7 @@ var exp = ['(p_1 p_2 p_3)', '(p_1 (1 - p_2) (1 - p_3))', '(p_1 p_2 (1 - p_3))', 
 
 for(var j=0; j<exp.length; j++) {
 debug('<b>'+ exp[j] +'</b>');
-string = exp[j].replace(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/g, 'VAR');
+string = exp[j].replace(/([a-zA-Z]+(\_*[a-zA-Z0-9]+)*)/g, "VAR($1)");
 debug(string);
 
 var s = string.split(' ');
