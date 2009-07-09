@@ -17,9 +17,9 @@ var p0 = brd.createElement('point',[0,0],{strokeColor:'black',fillColor:'white',
 var p1 = brd.createElement('point',[1,0],{strokeColor:'black',fillColor:'white',name:''});
 var rot = brd.createElement('transform', [function() {return Math.PI*2.0/n.Value();},p0], {type:'rotate'});  // angle, rotation center
 var ptmp = brd.createElement('point',[0,0],{visible:false,withLabel:false});  // dummy point for the rotation
-var cOut = brd.createElement('curve',[[],[]],{fillColor:'#0077BF',highlightFillColor:'#0077BF',fillOpacity:1,highlightFillOpacity:1,strokeColor:'black',highlightStrokeColor:'black'});
-var circ = brd.createElement('circle',[p0,p1],{fillColor:'#FEFD00',highlightFillColor:'#FEFD00',fillOpacity:1,highlightFillOpacity:1,strokeColor:'black',highlightStrokeColor:'black'});
-var cIn = brd.createElement('curve',[[],[]],{fillColor:'#D7137A',highlightFillColor:'#D7137A',fillOpacity:1,highlightFillOpacity:1,strokeColor:'black',highlightStrokeColor:'black'});
+var cOut = brd.createElement('curve',[[],[]],{fillColor:'#5e9abf',highlightFillColor:'#5e9abf',fillOpacity:1,highlightFillOpacity:1,strokeColor:'black',highlightStrokeColor:'black'});
+var circ = brd.createElement('circle',[p0,p1],{fillColor:'#fefd4c',highlightFillColor:'#fefd4c',fillOpacity:1,highlightFillOpacity:1,strokeColor:'black',highlightStrokeColor:'black'});
+var cIn = brd.createElement('curve',[[],[]],{fillColor:'#d769a3',highlightFillColor:'#d769a3',fillOpacity:1,highlightFillOpacity:1,strokeColor:'black',highlightStrokeColor:'black'});
  
 var tCirc = brd.createElement('text',[-1.5,-1.4,function(){
     return 'Arc length of the circle (radius='+circ.getRadius().toFixed(2)+') = ' + (2.0*circ.getRadius()*Math.PI).toFixed(4);
