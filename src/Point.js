@@ -531,8 +531,15 @@ JXG.Point.prototype.makeGlider = function (slideObject) {
 
 /**
  * Convert the point to CAS point and call update().
- * @param {String} xterm Calculation term for x coordinate in geonext syntax
- * @param {String} yterm Calculation term for y coordinate in geonext syntax
+ * @param {Array} [[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
+ * The z-coordinate is optional and it is used for homogeneaous coordinates.
+ * The coordinates may be either 
+ *   - a JavaScript function
+ *   - a string containing GEONExT syntax. This string will be converted into a JavaScript 
+ *     function here,
+ *   - a number
+ *   - a pointer to a slider object. This will be converted into a call of the Value()-method 
+ *     of this slider.
  * @see JXG.Algebra#geonext2JS
  */
 JXG.Point.prototype.addConstraint = function (terms) {
@@ -551,6 +558,8 @@ JXG.Point.prototype.addConstraint = function (terms) {
             newfuncs[i] = v;
         } else if (typeof v=='number') {
             newfuncs[i] = function(z){ return function() { return z; }; }(v);
+        } else if (typeof v == 'object' && typeof v.Value == 'function') {    // Slider
+            newfuncs[i] = (function(a) { return function() { return a.Value(); };})(v);
         }
     }
     if (terms.length==1) { // Intersection function
@@ -570,57 +579,6 @@ JXG.Point.prototype.addConstraint = function (terms) {
         this.updateConstraint = new Function('',fs);
     }
     
-    if (!this.board.isSuspendedUpdate) { this.update(); }
-    return;
-    
-};
-JXG.Point.prototype.addConstraintOld = function (xterm, yterm) {
-    this.type = JXG.OBJECT_TYPE_CAS;
-    var elements = this.board.elementsByName;
-
-    // Only xterm is given
-    if (yterm==null) {  // Intersection
-        this.updateConstraint = function() { this.coords = xterm(); };
-        if (!this.board.isSuspendedUpdate) { this.update(); }
-        return;
-    }
-
-    // Convert GEONExT syntax into JavaScript syntax
-    // Generate the methods X() and Y()
-    if (typeof xterm=='string') {
-        // Convert GEONExT syntax into  JavaScript syntax
-        var newxterm = this.board.algebra.geonext2JS(xterm);
-        this.XEval = new Function('','return ' + newxterm + ';');
-    } else if (typeof xterm=='function') {
-        this.XEval = xterm;
-    } else if (typeof xterm=='number') {
-        this.XEval = function() { return xterm; };
-    }
-    if (typeof yterm=='string') {
-        // Convert GEONExT syntax into  JavaScript syntax
-        var newyterm = this.board.algebra.geonext2JS(yterm);
-        this.YEval = new Function('','return ' + newyterm + ';');
-    } else if (typeof yterm=='function') {
-        this.YEval = yterm;
-    } else if (typeof yterm=='number') {
-        this.YEval = function() { return yterm; };
-    }
-    var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.XEval(),this.YEval()]);';
-    this.updateConstraint = new Function('',fs);
-    
-    // Find parent elements
-    /*
-    for (el in elements) {
-        if (el != this.name) {
-            var s1 = "X(" + el + ")";
-            var s2 = "Y(" + el + ")";
-            if (xterm.indexOf(s1)>=0 || xterm.indexOf(s2)>=0 ||
-                yterm.indexOf(s1)>=0 || yterm.indexOf(s2)>=0) {
-                elements[el].addChild(this);
-            }
-        }
-    }
-    */
     if (!this.board.isSuspendedUpdate) { this.update(); }
     return;
     

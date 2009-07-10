@@ -278,7 +278,7 @@ JXG.Curve.prototype.updateCurve = function () {
         if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
             this.numberPoints = this.board.canvasWidth*4;
         } else {
-            this.numberPoints = this.board.canvasWidth*0.8;
+            this.numberPoints = this.board.canvasWidth*0.5;
         }
     }
     len = this.numberPoints;

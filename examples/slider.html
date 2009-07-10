@@ -23,17 +23,18 @@
         }
         var s = board.createElement('slider', [[0,1],[0.6,1],[0.2,0.5,0.8]], {name:'S'});
         board.createElement('text', [0.2,-0.5,function(){ return 'n='+Math.round((1/s.Value())); }]);
+        
+        var p1 = board.createElement('point', 
+            [ s, function(){return f(s.Value());}
+            ], {trace:true, strokecolor:'red'}); 
+            
+/*
         var p1 = board.createElement('point', 
             [
-             function(){return s.X();},
-             function(){return f(s.X());}
+             function(){return s.Value();},
+             function(){return f(s.Value());}
             ], {trace:true, strokecolor:'red'}); 
-        
-/*
-for (var el in board.objects) {
-$('debug').innerHTML += Object.toJSON(board.objects[el]);
-}
-*/
+*/        
   /* ]]> */
   </script>
 </body>
