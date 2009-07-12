@@ -385,17 +385,16 @@ JXG.Math.Numerics.neville = function(p) {
     return [function(t) {
                 var i,k,L,
                     val = 0.0,
-                    nom = 1.0;
-                
+                    nom = 1.0,
+                    denom = -JXG.Math.factorial(p.length-1);
+
                 for (i=0;i<p.length;i++) {
                     nom *= (t-i);
                 }
-                
-                for (i=0;i<p.length;i++) {
-                    L = p[i].X()*nom/(t-i);
-                    for (k=0;k<p.length;k++) if (k!=i) {
-                        L /= (i-k);
-                    }
+                val = p[0].X()*nom/(t-0)/denom;
+                for (i=1;i<p.length;i++) {
+                    denom *= (-1)*i/(p.length-i);
+                    L = p[i].X()*nom/(t-i)/denom;
                     val += L;
                 }
                 return val;
@@ -403,16 +402,16 @@ JXG.Math.Numerics.neville = function(p) {
             function(t) {
                 var i,k,L,
                     val = 0.0,
-                    nom = 1.0;
+                    nom = 1.0,
+                    denom = -JXG.Math.factorial(p.length-1);
                 
                 for (i=0;i<p.length;i++) {
                     nom *= (t-i);
                 }
-                for (i=0;i<p.length;i++) {
-                    L = p[i].Y()*nom/(t-i);
-                    for (k=0;k<p.length;k++) if (k!=i) {
-                        L /= (i-k);
-                    }
+                val = p[0].Y()*nom/(t-0)/denom;
+                for (i=1;i<p.length;i++) {
+                    denom *= (-1)*i/(p.length-i);
+                    L = p[i].Y()*nom/(t-i)/denom;
                     val += L;
                 }
                 return val;
