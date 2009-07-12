@@ -355,15 +355,18 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
     return function(x) {
         var i,k,t,
             y = 0.0,
-            xc = [];
+            xc = [],
+            nom = 1.0;
             
         for (i=0;i<p.length;i++) {
             xc[i] = p[i].X();
+            nom *= (x-xc[i]);
         }
+        
         for (i=0;i<p.length;i++) {
-            t = p[i].Y();
+            t = p[i].Y()*nom/(x-xc[i]);
             for (k=0;k<p.length;k++) if (k!=i) {
-                t *= (x-xc[k])/(xc[i]-xc[k]);
+                t /= (xc[i]-xc[k]);
             }
             y += t;
         }
@@ -381,12 +384,17 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
 JXG.Math.Numerics.neville = function(p) {
     return [function(t) {
                 var i,k,L,
-                    val = 0.0;
-                    
+                    val = 0.0,
+                    nom = 1.0;
+                
                 for (i=0;i<p.length;i++) {
-                    L = p[i].X();
+                    nom *= (t-i);
+                }
+                
+                for (i=0;i<p.length;i++) {
+                    L = p[i].X()*nom/(t-i);
                     for (k=0;k<p.length;k++) if (k!=i) {
-                        L *= (t-k)/(i-k);
+                        L /= (i-k);
                     }
                     val += L;
                 }
@@ -394,11 +402,16 @@ JXG.Math.Numerics.neville = function(p) {
             },
             function(t) {
                 var i,k,L,
-                    val = 0.0;
+                    val = 0.0,
+                    nom = 1.0;
+                
                 for (i=0;i<p.length;i++) {
-                    L = p[i].Y();
+                    nom *= (t-i);
+                }
+                for (i=0;i<p.length;i++) {
+                    L = p[i].Y()*nom/(t-i);
                     for (k=0;k<p.length;k++) if (k!=i) {
-                        L *= (t-k)/(i-k);
+                        L /= (i-k);
                     }
                     val += L;
                 }
