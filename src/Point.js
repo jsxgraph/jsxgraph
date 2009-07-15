@@ -49,8 +49,7 @@ JXG.POINT_STYLE_PLUS_BIG     = 12; // a big +
 /**
  * Constructs a new Point object.
  * @class This is the Point class. 
- * It is derived from {@link GeometryElement}.
- * It stores all properties required
+ * It is derived from {@link GeometryElement} and stores all properties required
  * to move, draw a point.
  * @constructor
  * @param {String,JXG.Board} board The board the new point is drawn on.
