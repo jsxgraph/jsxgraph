@@ -53,7 +53,7 @@ JXG.IntergeoReader = new function() {
                 JXG.IntergeoReader.storeLine(node);
             } 
             else {
-                //$('debug').innerHTML += node.nodeName + ' ' + node.getAttribute('id') + '<br>';
+                document.getElementById('debug').innerHTML += 'Not implemented: '+node.nodeName + ' ' + node.getAttribute('id') + '<br>';
             }
         })(s);
     };
@@ -62,46 +62,65 @@ JXG.IntergeoReader = new function() {
      * Points are created instantly via createElement
      */
     this.addPoint = function(node) {
-        var i = 0;
-        var el;
-        var p = node.childNodes[i];
-        while (p.nodeType>1) {
+        var i = 0, 
+            j = 0,
+            l = 0,
+            el,
+            p = node.childNodes[i],
+            c;
+            
+        while (p.nodeType>1) {  // skip non element nodes
             i++;
             p = node.childNodes[i];
         }
         //var id = node.getAttribute('id');
         if (p.nodeName == 'homogeneous_coordinates') {
-            var c = [];
-            for (var j=0;j<p.childNodes.length;j++) {
+            c = [];
+            for (j=0;j<p.childNodes.length;j++) {
                 if (p.childNodes[j].nodeType==1) {
                     if (p.childNodes[j].nodeName=='double') {
                         c.push(p.childNodes[j].firstChild.data);  // content of <double>...</double>
+                    } else if (p.childNodes[j].nodeName=='complex') {
+                            for (l=0;l<p.childNodes[j].childNodes.length;l++) {
+                                if (p.childNodes[j].childNodes[l].nodeName=='double') {
+                                    c.push(p.childNodes[j].childNodes[l].firstChild.data);
+                                }
+                            }
                     } else {
-                        //$('debug').innerHTML += 'Not: '+ p.childNodes[j].nodeName + '<br>';  // <complex>
+                        document.getElementById('debug').innerHTML += 'Not implemented: '+ p.childNodes[j].nodeName + '<br>';  // <complex>
                     }
                 }
             }
-            for (j=0;j<3;j++) { c[j] = parseFloat(c[j]); }
+            for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
             //alert([c[2],c[0],c[1]].toString());
-            el = this.board.createElement('point',[c[2],c[0],c[1]], {name:node.getAttribute('id'),withLabel:true});
+            if (c.length==3) { // Real
+                el = this.board.createElement('point',[c[2],c[0],c[1]], {name:node.getAttribute('id'),withLabel:true});
+            } else if (c.length==6 && Math.abs(c[1])<1e-10 && Math.abs(c[3])<1e-10 && Math.abs(c[5])<1e-10) {  // complex, but real
+                el = this.board.createElement('point',[c[4],c[0],c[2]], {name:node.getAttribute('id'),withLabel:true});
+            } else {
+                document.getElementById('debug').innerHTML += 'type not supported, yet <br>';  // <complex>
+            }
         } else if (p.nodeName == 'euclidean_coordinates') {
-            var c = [];
-            for (var j=0;j<p.childNodes.length;j++) {
+            c = [];
+            for (j=0;j<p.childNodes.length;j++) {
                 if (p.childNodes[j].nodeType==1) {
                     c.push(p.childNodes[j].firstChild.data);  // content of <double>...</double>
                 }
             }
+            for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
             el = this.board.createElement('point',[c[0],c[1]], {name:node.getAttribute('id'),withLabel:true});
         } else if (p.nodeName == 'polar_coordinates') {
-            var c = [];
-            for (var j=0;j<p.childNodes.length;j++) {
+            c = [];
+            for (j=0;j<p.childNodes.length;j++) {
                 if (p.childNodes[j].nodeType==1) {
                     c.push(p.childNodes[j].firstChild.data);  // content of <double>...</double>
                 }
             }
+            for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
             el = this.board.createElement('point',[c[0]*Math.cos(c[1]),c[0]*Math.sin(c[1])],{name:node.getAttribute('id'),withLabel:true});
         } else {
-            return; //$('debug').innerHTML += "This coordinate type is not yet implemented: " +p.nodeName+'<br>';
+            document.getElementById('debug').innerHTML += "This coordinate type is not yet implemented: " +p.nodeName+'<br>';
+            return; 
         }
         this.objects[node.getAttribute('id')] = el;
     };
@@ -115,7 +134,7 @@ JXG.IntergeoReader = new function() {
         this.objects[node.getAttribute('id')] = {'id':node.getAttribute('id'), 'coords':null};
         var i = 0;
         var p = node.childNodes[i];
-        while (p.nodeType>1) {
+        while (p.nodeType>1) {  // skip non element nodes
             i++;
             p = node.childNodes[i];
         }
