@@ -858,7 +858,7 @@ JXG.createGlider = function(board, parents, atts) {
 /**
  * This is just a wrapper for board.intersectFunc.
  * @param {Array} parents Array containing the intersected Elements in the first two fields and
- *                        the index of the point if there is more than one intersection point.
+ *                        the index of the point if there could be more than one intersection point.
  * @type JXG.Point
  * @return Point intersecting the parent elements.
  */
