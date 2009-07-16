@@ -55,6 +55,9 @@ JXG.IntergeoReader = new function() {
             else if (node.nodeName=='line_segment') {
                 JXG.IntergeoReader.storeLine(node);
             } 
+            else if (node.nodeName=='circle') {
+                JXG.IntergeoReader.storeCircle(node);
+            } 
             else {
                 document.getElementById('debug').innerHTML += 'Not implemented: '+node.nodeName + ' ' + node.getAttribute('id') + '<br>';
             }
@@ -142,6 +145,49 @@ JXG.IntergeoReader = new function() {
             p = node.childNodes[i];
         }
         if (p.nodeName == 'homogeneous_coordinates') {
+            var c = [];
+            for (var j=0;j<p.childNodes.length;j++) {
+                if (p.childNodes[j].nodeType==1) {
+                    if (p.childNodes[j].nodeName=='double') {
+                        c.push(parseFloat(p.childNodes[j].firstChild.data));  // content of <double>...</double>
+                    } else {
+                        //$('debug').innerHTML += 'Not: '+ p.childNodes[j].nodeName + '<br>';  // <complex>
+                    }
+                }
+            }
+            this.objects[node.getAttribute('id')].coords = c;
+        }
+    };
+
+    /**
+     * Circle data is stored in an array
+     * for further access during the reading of constraints.
+     * There, id and name are needed.
+     * Concretely, the circle   (x-1)^2 + (y-3)^2 = 4   has matrix
+     * (  1  0 -1 )
+     * (  0  1 -3 )
+     * ( -1 -3  6 )
+     *
+     * In general
+     * Ax^2+Bxy+Cy^2+Dx+Ey+F = 0
+     * is stored as
+     * (  A   B/2  D/2 )
+     * (  B/2  C   E/2 )
+     * (  D/2 E/2  F )
+     *
+     *  Mx = D/A
+     *  My = E/C
+     *  r = A*Mx^2+B*My^2-F
+     **/
+    this.storeCircle = function(node) {
+        this.objects[node.getAttribute('id')] = {'id':node.getAttribute('id'), 'coords':null};
+        var i = 0;
+        var p = node.childNodes[i];
+        while (p.nodeType>1) {  // skip non element nodes
+            i++;
+            p = node.childNodes[i];
+        }
+        if (p.nodeName == 'matrix') {
             var c = [];
             for (var j=0;j<p.childNodes.length;j++) {
                 if (p.childNodes[j].nodeType==1) {
