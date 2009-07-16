@@ -52,6 +52,9 @@ JXG.IntergeoReader = new function() {
             else if (node.nodeName=='line') {
                 JXG.IntergeoReader.storeLine(node);
             } 
+            else if (node.nodeName=='line_segment') {
+                JXG.IntergeoReader.storeLine(node);
+            } 
             else {
                 document.getElementById('debug').innerHTML += 'Not implemented: '+node.nodeName + ' ' + node.getAttribute('id') + '<br>';
             }
@@ -166,8 +169,14 @@ JXG.IntergeoReader = new function() {
             else if (node.nodeName=='line_perpendicular_to_line_through_point') {
                 JXG.IntergeoReader.addLinePerpendicularToLineThroughPoint(node);
             } 
-            else if (node.nodeName=='point_intersection_of_two_lines') {
-                JXG.IntergeoReader.addPointIntersectionOfTwoLines(node);
+            else if (node.nodeName=='line_segment_by_points') {
+                JXG.IntergeoReader.addLineSegmentByTwoPoints(node);
+            } 
+            else if (node.nodeName=='line_segment_by_points') {
+                JXG.IntergeoReader.addLineSegmentByTwoPoints(node);
+            } 
+            else if (node.nodeName=='endpoints_of_line_segment') {
+                JXG.IntergeoReader.addEndpointsOfLineSegment(node);
             } 
             else if (node.nodeName=='free_point') {
                 // do nothing
@@ -220,6 +229,32 @@ JXG.IntergeoReader = new function() {
         this.objects[param[0]] = comp[0];
     };
 
+    this.addLineSegmentByTwoPoints = function(node) {
+        var param = JXG.IntergeoReader.readParams(node); 
+        var el = this.board.createElement('line',[this.objects[param[1]],this.objects[param[2]]], 
+                        {name:param[0],
+                            straightFirst:false, straightLast:false,
+                            strokeColor:'black',
+                            withLabel:true});
+        this.objects[param[0]] = el;
+    };
+
+    this.addEndpointsOfLineSegment = function(node) {
+        var param = JXG.IntergeoReader.readParams(node),
+            line = this.objects[param[2]]; 
+
+        this.objects[param[0]].addConstraint([
+                    function(){return line.point1.Z();},
+                    function(){return line.point1.X();},
+                    function(){return line.point1.Y();}
+                    ]);
+        this.objects[param[1]].addConstraint([
+                    function(){return line.point2.Z();},
+                    function(){return line.point2.X();},
+                    function(){return line.point2.Y();}
+                    ]);
+    }
+    
     this.addPointIntersectionOfTwoLines = function(node) {
         var param = JXG.IntergeoReader.readParams(node); 
         this.objects[param[0]].addConstraint([this.board.intersectionFunc(this.objects[param[1]],this.objects[param[2]],0)]);

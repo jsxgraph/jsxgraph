@@ -411,7 +411,7 @@ JXG.Line.prototype.getLabelAnchor = function() {
         }
         // Hack
         if(this.label.content != null) {
-            relCoords;
+            relCoords = [0,0];
             slope = this.getSlope();
             if(coords.scrCoords[2]==0) {
                 if(slope == "INF") {
