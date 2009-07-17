@@ -254,6 +254,12 @@ JXG.IntergeoReader = new function() {
             else if (node.nodeName=='angular_bisectors_of_two_lines') {
                 JXG.IntergeoReader.addAngularBisectorsOfTwoLines(node);
             } 
+            else if (node.nodeName=='point_intersection_of_two_lines') {
+                JXG.IntergeoReader.addPointIntersectionOfTwoLines(node);
+            } 
+            else if (node.nodeName=='locus_defined_by_point') {
+                JXG.IntergeoReader.addLocusDefinedByPoint(node);
+            } 
             else {
                 $('debug').innerHTML += 'NOT implemented: ' + node.nodeName + '<br>';
             }
@@ -358,6 +364,12 @@ JXG.IntergeoReader = new function() {
             straightFirst:true, straightLast:true, strokeColor:'#ff0000', withLabel:true});
     };
     
+    this.addLocusDefinedByPoint = function(node) {
+        var param = JXG.IntergeoReader.readParams(node); 
+        var el = JXG.GetReferenceFromParameter(this.board,param[1]);
+        el.setProperty({trace:true});
+        this.objects[param[1]] = el;
+    };
     
     /**
      * Extract the xml-code as String from the zipped Intergeo archive.
