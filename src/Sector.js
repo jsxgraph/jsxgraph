@@ -97,7 +97,7 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
     var radius = this.getRadius();
     circle.getRadius = function() {
         return radius;
-    }
+    };
     var p4coords = this.board.algebra.projectPointToCircle(this.point3,circle);
     
     var p = new JXG.Point(board, [p4coords.usrCoords[1], p4coords.usrCoords[2]], ids[1], names[1], true);
@@ -110,7 +110,7 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
 
         circle.getRadius = function() {
             return radius;
-        }    
+        };
         p4coords = this.board.algebra.projectPointToCircle(JXG.GetReferenceFromParameter(this.board, p3),circle);
         this.coords = p4coords;
         this.board.renderer.updatePoint(this);
@@ -125,7 +125,7 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
         //for(var Element in this.childElements) {
         //    this.childElements[Element].update();
         //}     
-    }    
+    };
    
     var l1 = new JXG.Line(board, p1, p2, ids[2], names[2]);
     var l2 = new JXG.Line(board, p1, p.id, ids[3], names[3]);

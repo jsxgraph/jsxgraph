@@ -314,12 +314,12 @@ JXG.IntergeoReader = new function() {
                     function(){return line.point2.X();},
                     function(){return line.point2.Y();}
                     ]);
-    }
+    };
     
     this.addPointIntersectionOfTwoLines = function(node) {
         var param = JXG.IntergeoReader.readParams(node); 
         this.objects[param[0]].addConstraint([this.board.intersectionFunc(this.objects[param[1]],this.objects[param[2]],0)]);
-    }
+    };
 
     this.addFreeLine = function(node) {
         var param = JXG.IntergeoReader.readParams(node); 
@@ -356,7 +356,7 @@ JXG.IntergeoReader = new function() {
             [l1,l2],
             {name:[param[0],param[1]], id:[param[0],param[1]],
             straightFirst:true, straightLast:true, strokeColor:'#ff0000', withLabel:true});
-    }
+    };
     
     
     /**

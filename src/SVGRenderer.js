@@ -70,7 +70,7 @@ JXG.SVGRenderer = function(container) {
     
     // um Dashes zu realisieren
     this.dashArray = ['2, 2', '5, 5', '10, 10', '20, 20', '20, 10, 10, 10', '20, 5, 10, 5'];
-}
+};
 
 JXG.SVGRenderer.prototype = new JXG.AbstractRenderer;
 
@@ -90,7 +90,7 @@ JXG.SVGRenderer.prototype.drawTicks = function(axis) {
     this.appendChildPrimitive(ticks,'lines');
     
     axis.rendNode = ticks;
-}
+};
 
 JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     var tickStr = "",
@@ -115,7 +115,7 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
     ticks.setAttributeNS(null, 'stroke-width', axis.visProp['strokeWidth']);
     this.updatePathPrimitive(ticks, tickStr, axis.board);
-}
+};
 
 JXG.SVGRenderer.prototype.drawArc = function(el) {  
     var node = this.createPrimitive('path',el.id),
@@ -130,7 +130,7 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     circle.midpoint = el.midpoint;
     circle.getRadius = function() {
         return radius;
-    }
+    };
     point3 = el.board.algebra.projectPointToCircle(el.point3,circle);
 
     pathString = 'M '+ el.point2.coords.scrCoords[1] +' '+ el.point2.coords.scrCoords[2] +' A '; // Startpunkt
@@ -196,7 +196,7 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     if(!el.visProp['visible']) {
         el.hideElement();
     }
-}
+};
 
 /**
  * Updates properties of an arc that already exists.
@@ -260,7 +260,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     circle.midpoint = el.point2;
     circle.getRadius = function() {
         return el.radius;
-    }
+    };
     projectedP1 = el.board.algebra.projectPointToCircle(el.point1,circle);
     projectedP3 = el.board.algebra.projectPointToCircle(el.point3,circle);
 
@@ -314,7 +314,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     //   this.setDraft(el);
     
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-}
+};
 
 JXG.SVGRenderer.prototype.updateAngle = function(el) {
     /* erstmal nur der brutale Weg... */
@@ -335,7 +335,7 @@ JXG.SVGRenderer.prototype.drawImage = function(el) {
     this.appendChildPrimitive(node,el.displayLevel);
     el.rendNode = node;
     this.updateImage(el);
-}
+};
 
 JXG.SVGRenderer.prototype.transformImage = function(el,t) {
     var node = el.rendNode,
@@ -343,7 +343,7 @@ JXG.SVGRenderer.prototype.transformImage = function(el,t) {
         
     str += ' ' + this.joinTransforms(el,t);
     node.setAttributeNS(null, 'transform', str);
-}
+};
 
 JXG.SVGRenderer.prototype.joinTransforms = function(el,t) {
     var str = '', i, s;
@@ -352,7 +352,7 @@ JXG.SVGRenderer.prototype.joinTransforms = function(el,t) {
         str += 'matrix('+s+') ';
     }
     return str;
-}
+};
   
 JXG.SVGRenderer.prototype.transformImageParent = function(el,m) {
     var s, str;
@@ -363,7 +363,7 @@ JXG.SVGRenderer.prototype.transformImageParent = function(el,m) {
         str = '';
     }
     el.rendNode.setAttributeNS(null, 'transform', str);
-}
+};
   
 JXG.SVGRenderer.prototype.removeGrid = function(board) { 
     var c = this.grid;
@@ -371,7 +371,7 @@ JXG.SVGRenderer.prototype.removeGrid = function(board) {
     while (c.childNodes.length>0) {
         c.removeChild(c.firstChild);
     }
-}
+};
 
 JXG.SVGRenderer.prototype.setObjectDash = function(el) {
     var node, dashStyle;
@@ -392,7 +392,7 @@ JXG.SVGRenderer.prototype.setObjectDash = function(el) {
             }
         }
     }
-}
+};
  
 JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     var c, o, node;
@@ -616,7 +616,7 @@ JXG.SVGRenderer.prototype.hide = function(el) {
         node.setAttributeNS(null, 'display', 'none');
         node.style.visibility = "hidden";     
     }
-}
+};
 
 JXG.SVGRenderer.prototype.show = function(el) {
     var node;
@@ -656,24 +656,24 @@ JXG.SVGRenderer.prototype.show = function(el) {
         node.setAttributeNS(null, 'display', 'inline');
         node.style.visibility = "inherit"; 
     }
-}
+};
 
 JXG.SVGRenderer.prototype.remove = function(shape) {
     if(shape!=null && shape.parentNode != null)
         shape.parentNode.removeChild(shape);
-}
+};
 
 JXG.SVGRenderer.prototype.suspendRedraw = function() {
     // It seems to be important for the Linux version of firefox
     if (true) { this.suspendHandle = this.svgRoot.suspendRedraw(10000); }
-}
+};
 
 JXG.SVGRenderer.prototype.unsuspendRedraw = function() {
     if (true) { 
         this.svgRoot.unsuspendRedraw(this.suspendHandle);
         this.svgRoot.forceRedraw();
     }
-}
+};
 
 JXG.SVGRenderer.prototype.setDashStyle = function(node,visProp) {
     var dashStyle;
@@ -681,14 +681,14 @@ JXG.SVGRenderer.prototype.setDashStyle = function(node,visProp) {
         dashStyle = visProp['dash'];
         node.setAttributeNS(null, 'stroke-dasharray', this.dashArray[dashStyle-1]);
     }
-}
+};
 
 JXG.SVGRenderer.prototype.createPrimitive = function(type,id) {
     var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
     node.setAttributeNS(null, 'id', id);
     node.style.position = 'absolute';
     return node;
-}
+};
 
 JXG.SVGRenderer.prototype.createArrowHead = function(el,idAppendix) {
     var id = el.id+'Triangle',
@@ -865,7 +865,7 @@ JXG.SVGRenderer.prototype.drawVerticalGrid = function(topLeft, bottomRight, gx, 
     }
     this.updatePathPrimitive(node, gridArr, board);
     return node;
-}
+};
 
 JXG.SVGRenderer.prototype.drawHorizontalGrid = function(topLeft, bottomRight, gy, board) {
     var node = this.createPrimitive('path', 'gridy'),
@@ -877,7 +877,7 @@ JXG.SVGRenderer.prototype.drawHorizontalGrid = function(topLeft, bottomRight, gy
     }
     this.updatePathPrimitive(node, gridArr, board);
     return node;
-}
+};
 
 /*
 JXG.SVGRenderer.prototype.cloneSubTree = function(el,id,type) {

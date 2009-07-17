@@ -126,7 +126,7 @@ JXG.MathStatistics.prototype.range = function(arr) {
 
 JXG.MathStatistics.prototype.diff = function(arr) { // ?????
     return arr;
-}
+};
 
 JXG.MathStatistics.prototype.min = function(arr) {
     if (arr.length==0) { return NaN; }

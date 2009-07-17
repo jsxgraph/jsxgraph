@@ -194,7 +194,7 @@ JXG.Polygon.prototype.getLabelAnchor = function() {
             y = this.vertices[i].Y();
     }
     return new JXG.Coords(JXG.COORDS_BY_USER, [(a + x)*0.5, (b + y)*0.5], this.board);
-}
+};
 
 /**
  * Copy the element to the background.
@@ -250,7 +250,7 @@ JXG.Polygon.prototype.hideElement = function() {
             this.board.renderer.hide(this.label.content);
         }
     }    
-}
+};
 
 JXG.Polygon.prototype.showElement = function() {
     this.visProp['visible'] = true;
@@ -261,4 +261,4 @@ JXG.Polygon.prototype.showElement = function() {
             this.borders[i].showElement();
         }
     }
-}
+};

@@ -456,7 +456,7 @@ JXG.Board.prototype.generateName = function(object) {
     
     // how long the name can be at most
     var maxNameLength = 3;
-    var pre = ''
+    var pre = '';
     var nameBase = '';
     var post = '';
     
@@ -773,7 +773,7 @@ JXG.Board.prototype.updateInfobox = function(el) {
         this.renderer.show(this.infobox);
         this.renderer.updateText(this.infobox);
     }
-}
+};
 
 /**
  * Remove highlighting of all elements.
@@ -800,7 +800,7 @@ JXG.Board.prototype.getScrCoordsOfMouse = function (x,y) {
     } else {
         return [x,y];
     }
-}
+};
 
 /**
  * In case of snapToGrid activated this method caclulates the user coords of mouse "snapped to grid".
@@ -821,7 +821,7 @@ JXG.Board.prototype.getUsrCoordsOfMouse = function (Evt) {
              Math.round((newCoords.usrCoords[2])*this.snapSizeY)/this.snapSizeY]);
     }
     return [newCoords.usrCoords[1], newCoords.usrCoords[2]];
-}
+};
 
 /**
  * Collects all elements under current mouse position plus current user coordinates of mouse cursor.
@@ -2106,7 +2106,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     attribs.id = ids[3];
     attribs.slideObject = null;
     attribs.visible = false;
-    var pb_on_axis = board.createElement('point', [function () { return pb_on_curve.X() }, 0], attribs);
+    var pb_on_axis = board.createElement('point', [function () { return pb_on_curve.X(); }, 0], attribs);
     points.push(pb_on_curve);
     points.push(pb_on_axis);
     
@@ -2152,7 +2152,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
         ps.push(pb_on_axis);
         ps.push(pa_on_axis);
         this.vertices = ps;
-    }
+    };
     
     pa_on_curve.addChild(p);
     pb_on_curve.addChild(p);
@@ -2160,7 +2160,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     pb_on_curve.addChild(t);
     
     return p;//[pa_on_axis, pb_on_axis, p, t];
-}
+};
 
 /**
  * Calculates adequate snap sizes.
@@ -2333,7 +2333,7 @@ JXG.Board.prototype.initGeonextBoard = function() {
     l1.hideElement();
     var l2 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gYOe0', this.id + 'gYLe0','Y-Achse');
     l2.hideElement();    
-}    
+};
 
 /**
  * Initialise the info box object which is used to display
@@ -2395,7 +2395,7 @@ JXG.Board.prototype.showXML = function() {
     f.document.open();
     f.document.write("<pre>"+JXG.escapeHTML(this.xmlString)+"</pre>");
     f.document.close();
-}
+};
 
 /** 
  * Sets for all objects the needsUpdate flag to "true".
@@ -2464,7 +2464,7 @@ JXG.Board.prototype.addHook = function(hook) {
     hook(this);
     
     return (this.hooks.length-1);
-}
+};
 
 /**
   * Deletes a hook from this board.
@@ -2472,7 +2472,7 @@ JXG.Board.prototype.addHook = function(hook) {
   */
 JXG.Board.prototype.removeHook = function(id) {
     this.hooks[id] = null;
-}
+};
 
 /**
   * Runs through all hooked functions and calls them.
@@ -2522,7 +2522,7 @@ JXG.Board.prototype.fullUpdate = function() {
     this.needsFullUpdate = true;
     this.update();
     this.needsFullUpdate = false;
-}
+};
 
 /**
  * Creates a new geometric element of type elementType.
@@ -2654,7 +2654,7 @@ JXG.Board.prototype.afterLoad = function() {
  */
 JXG.Board.prototype.suspendUpdate = function() {
     this.isSuspendedUpdate = true;
-}
+};
 
 /**
  * Enable updates of the board again.
@@ -2662,7 +2662,7 @@ JXG.Board.prototype.suspendUpdate = function() {
 JXG.Board.prototype.unsuspendUpdate = function() {
     this.isSuspendedUpdate = false;
     this.update();
-}
+};
 
 /**
  * Set the bounding box of the board.
@@ -2689,4 +2689,4 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     this.originX = -this.unitX*bbox[0];
     this.originY = this.unitY*bbox[1];
     this.moveOrigin();
-}
+};

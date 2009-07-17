@@ -250,7 +250,7 @@ JXG.Circle.prototype.generatePolynomial = function (p) {
 
     var poly = '(' + g1 + '-' + m1 + ')^2 + (' + g2 + '-' + m2 + ')^2 - (' + rsq + ')';
     return [poly];
-}
+};
 
 /**
  * Generate symbolic radius calculation for loci determination with Groebner-Basis algorithm.
@@ -293,7 +293,7 @@ JXG.Circle.prototype.generateRadiusSquared = function () {
     }
 
     return rsq;
-}
+};
 
 /**
  * Uses the boards renderer to update the arrow.
@@ -375,7 +375,7 @@ JXG.Circle.prototype.generateTerm = function (term) {
     } else { // function
         this.updateRadius = term;
     }
-}    
+};   
 
 JXG.Circle.prototype.notifyParents = function (contentStr) {
     var res = null;
@@ -383,7 +383,7 @@ JXG.Circle.prototype.notifyParents = function (contentStr) {
     
     if (typeof contentStr == 'string') 
         this.board.algebra.findDependencies(this,contentStr+'');
-}
+};
 
 /**
  * Calculates the radius of the circle, independent from the used method.
@@ -400,7 +400,7 @@ JXG.Circle.prototype.getRadius = function() {
     else if(this.method == 'pointRadius') {
         return this.updateRadius();
     }
-}
+};
 
 /**
  * return TextAnchor
@@ -479,7 +479,7 @@ JXG.Circle.prototype.setPosition = function (method, x, y) {
 JXG.Circle.prototype.X = function (t) {
     t *= 2.0*Math.PI;
     return this.getRadius()*Math.cos(t)+this.midpoint.coords.usrCoords[1];
-}
+};
 
 /**
 * Treat the circle as parametric curve:
@@ -489,7 +489,7 @@ JXG.Circle.prototype.X = function (t) {
 JXG.Circle.prototype.Y = function (t) {
     t *= 2.0*Math.PI;
     return this.getRadius()*Math.sin(t)+this.midpoint.coords.usrCoords[2];
-}
+};
 
 /**
 * Treat the circle as parametric curve:
@@ -497,7 +497,7 @@ JXG.Circle.prototype.Y = function (t) {
 **/
 JXG.Circle.prototype.minX = function () {
     return 0.0;
-}
+};
 
 /**
 * Treat the circle as parametric curve:
@@ -505,7 +505,7 @@ JXG.Circle.prototype.minX = function () {
 **/
 JXG.Circle.prototype.maxX = function () {
     return 1.0;
-}
+};
 
 JXG.createCircle = function(board, parentArr, atts) {
     var el, p, i;

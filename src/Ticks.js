@@ -378,7 +378,7 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
             deltaY = (ticksDelta * dy) / (total_length);
         }
     }
-}
+};
 
 /**
  * (Re-)calculates the ticks coordinates.

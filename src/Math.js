@@ -216,7 +216,7 @@ JXG.memoizer = function (f) {
             ? cache[key]
             : cache[key] = f.apply(this, arguments);
     });
-}
+};
 
 /**
 * Compute the factorial of a positive integer.
@@ -277,4 +277,4 @@ JXG.Math.round = function(num, n) {
     z = parseFloat(s);
     t = parseInt(num.toString());
     return t+z;
-}
+};

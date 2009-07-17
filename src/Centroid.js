@@ -53,7 +53,7 @@ JXG.createCentroid = function(board, parents, attributes) {
 
         cent.generatePolynom = function() {
             /* TODO generate polynom*/
-        }
+        };
         
         return cent;
     } else {

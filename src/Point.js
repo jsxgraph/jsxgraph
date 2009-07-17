@@ -216,7 +216,9 @@ JXG.Point.prototype.hasPoint = function (x,y) {
 * @private
 */
 
-JXG.Point.prototype.updateConstraint = function() {}
+JXG.Point.prototype.updateConstraint = function() {};
+
+
 /**
  * Updates the position of the point
  */
@@ -516,11 +518,11 @@ JXG.Point.prototype.makeGlider = function (slideObject) {
     if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
         this.generatePolynomial = function() {
             return this.slideObject.generatePolynomial(this);
-        }
+        };
     } else if (this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         this.generatePolynomial = function() {
             return this.slideObject.generatePolynomial(this);
-        }
+        };
     }
 
     //this.position = 0;
@@ -737,7 +739,7 @@ JXG.Point.prototype.remove = function() {
     }
     else {
         this.board.renderer.remove(document.getElementById(this.id+'_x1'));
-        this.board.renderer.remove(document.getElementById(this.id+'_x2'))        
+        this.board.renderer.remove(document.getElementById(this.id+'_x2'));
     }
 };
 
@@ -881,7 +883,7 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
             return [];
         else
             return [poly1[0], poly2[0]];
-    }
+    };
     
     return el;
 };

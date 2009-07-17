@@ -55,8 +55,8 @@ JXG.Board.prototype.sqrt = Math.sqrt;
 JXG.Board.prototype.tan = Math.tan;
 JXG.Board.prototype.trunc = Math.ceil;
 
-JXG.Board.prototype.factorial = function(n){ return JXG.Math.factorial(n); }
-JXG.Board.prototype.binomial = function(n,k){ return JXG.Math.binomial(n,k); }
+JXG.Board.prototype.factorial = function(n){ return JXG.Math.factorial(n); };
+JXG.Board.prototype.binomial = function(n,k){ return JXG.Math.binomial(n,k); };
 
 // Some shortcuts 
 JXG.Point.prototype.setPositionX = function (method, x) {
@@ -145,4 +145,4 @@ JXG.Board.prototype.reflectionFunc = function(){return arguments;};
 JXG.Board.prototype.pstricks = {};
 JXG.Board.prototype.pstricks.givePsTricksToDiv = function(divId, board) {
     JXG.PsTricks.givePsTricksToDiv(divId, board);
-}
+};

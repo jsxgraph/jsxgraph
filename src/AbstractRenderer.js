@@ -226,7 +226,7 @@ JXG.AbstractRenderer.prototype.updateLine = function(el) {
             this.setDraft(el);
         }
     }    
-}
+};
 
 /**
  * Draws a graph on the canvas.
@@ -447,7 +447,7 @@ JXG.AbstractRenderer.prototype.isSameDirection = function(start, p, s) {
         if ((dy>=0&&sy>=0) || (dy<=0&&sy<=0)) { return true; }        
     }
     return false;
-}
+};
 
 /**
  * Draws a circle on the canvas.
@@ -487,7 +487,7 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
         this.updateEllipsePrimitive(el.rendNode,el.midpoint.coords.scrCoords[1],el.midpoint.coords.scrCoords[2],
             (radius * el.board.unitX * el.board.zoomX),(radius * el.board.unitY * el.board.zoomY));
     }
-}
+};
     
 /**
  * Draws a polygon on the canvas.
@@ -562,7 +562,7 @@ JXG.AbstractRenderer.prototype.updateArrow = function(el) {
     }
     this.updateLinePrimitive(el.rendNode,el.point1.coords.scrCoords[1],el.point1.coords.scrCoords[2],
         el.point2.coords.scrCoords[1],el.point2.coords.scrCoords[2]);
-}
+};
 
 /**
  * Update ticks of a line.
@@ -583,7 +583,7 @@ JXG.AbstractRenderer.prototype.updateTicks = function(axis,dx,dy) { };
 JXG.AbstractRenderer.prototype.removeTicks = function(axis) {
     var ticks = this.getElementById(axis.id+'_ticks');
     this.remove(ticks);
-}
+};
 
 /**
  * Draws an arc on the canvas.
@@ -775,7 +775,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";        
-        this.setObjectStrokeColor(el, '#FF8080', 0.5) //board.gridOpacity);    
+        this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
     if(board.gridDash) {

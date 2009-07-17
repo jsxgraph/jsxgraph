@@ -225,7 +225,7 @@ this.readGeonext = function(tree,board) {
     boardTmp.fontSize = (xmlNode != null) ? document.body.style.fontSize = xmlNode.firstChild.data : document.body.style.fontSize;
     boardTmp.modus = boardData.getElementsByTagName('modus')[0].firstChild.data;
     
-    xmlNode =  boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('origin')[0]
+    xmlNode =  boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('origin')[0];
     boardTmp.originX = xmlNode.getElementsByTagName('x')[0].firstChild.data;
     boardTmp.originY = xmlNode.getElementsByTagName('y')[0].firstChild.data;
     
@@ -233,7 +233,7 @@ this.readGeonext = function(tree,board) {
     boardTmp.zoomX = xmlNode.getElementsByTagName('x')[0].firstChild.data;
     boardTmp.zoomY = xmlNode.getElementsByTagName('y')[0].firstChild.data;
     
-    xmlNode = boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('unit')[0]
+    xmlNode = boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('unit')[0];
     boardTmp.unitX = xmlNode.getElementsByTagName('x')[0].firstChild.data;
     boardTmp.unitY = xmlNode.getElementsByTagName('y')[0].firstChild.data;
     
@@ -283,7 +283,7 @@ this.readGeonext = function(tree,board) {
     gridColor = boardData.getElementsByTagName('grid')[1].getElementsByTagName('color')[0].firstChild.data;
     if (gridColor.length=='9' && gridColor.substr(0,1)=='#') {
         gridOpacity = gridColor.substr(7,2);
-        gridOpacity = parseInt(gridOpacity.toUpperCase(),16)/255        
+        gridOpacity = parseInt(gridOpacity.toUpperCase(),16)/255;      
         gridColor = gridColor.substr(0,7);
     }
     else { 
@@ -492,7 +492,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl.outputFirstStyle = xmlNode.getElementsByTagName('style')[0].firstChild.data;
                 gxtEl.outputFirstStrokewidth =  xmlNode.getElementsByTagName('strokewidth')[0].firstChild.data;
                 
-                xmlNode = Data.getElementsByTagName('first')[1].getElementsByTagName('color')[0]
+                xmlNode = Data.getElementsByTagName('first')[1].getElementsByTagName('color')[0];
                 gxtEl.outputFirstColorStroke = xmlNode.getElementsByTagName('stroke')[0].firstChild.data;
                 gxtEl.outputFirstHighlightStrokeColor = xmlNode.getElementsByTagName('lighting')[0].firstChild.data;
                 gxtEl.outputFirstColorFill = xmlNode.getElementsByTagName('fill')[0].firstChild.data;

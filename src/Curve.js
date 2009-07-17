@@ -527,7 +527,7 @@ JXG.createSpline = function(board, parents, attributes) {
         
         for(i=0; i<parents.length; i++) {
             if(!JXG.IsPoint(parents[i]))
-                throw "JXG.createSpline: Parents has to be an array of JXG.Point."
+                throw "JXG.createSpline: Parents has to be an array of JXG.Point.";
             
             x.push(parents[i].X());
             y.push(parents[i].Y());
@@ -537,10 +537,10 @@ JXG.createSpline = function(board, parents, attributes) {
         // changes. otherwise D is always the same for all points on the spline.
         D = JXG.Math.Numerics.splineDef(x, y);
         return JXG.Math.Numerics.splineEval(t, x, y, D);
-    }
+    };
     
     return new JXG.Curve(board, ["x","x", F], attributes["id"], attributes["name"], attributes['withLabel']);
-}
+};
 
 /**
  * Register the element type spline at JSXGraph
@@ -573,18 +573,18 @@ JXG.createRiemannsum = function(board, parents, attributes) {
 
     f = parents[0];
     if (typeof parents[1] == 'number') {
-        n = function() {return parents[1];}
+        n = function() {return parents[1];};
     } else if (typeof parents[1] == 'function') {
         n = parents[1];
     } else {
-        throw "JXG.createRiemannsum: n has to be number or function."
+        throw "JXG.createRiemannsum: n has to be number or function.";
     }
     if (typeof parents[2] == 'string') {
-        type= function() {return parents[2];}
+        type= function() {return parents[2];};
     } else if (typeof parents[2] == 'function') {
         type = parents[2];
     } else {
-        throw "JXG.createRiemannsum: type has to be string or function."
+        throw "JXG.createRiemannsum: type has to be string or function.";
     }
 
     par = ['x', [0], [0]].concat(parents.slice(3));
@@ -593,7 +593,7 @@ JXG.createRiemannsum = function(board, parents, attributes) {
             var u = JXG.Math.Numerics.riemann(f,n(),type(),this.minX(),this.maxX());
             this.dataX = u[0];
             this.dataY = u[1];
-        }
+        };
     return c;
 };
 

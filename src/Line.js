@@ -322,7 +322,7 @@ JXG.Line.prototype.generatePolynomial = function (p) {
      */
 
     return [[u2,'*',w1,'-',u2,'*',v1,'+',w2,'*',v1,'-',u1,'*',w2,'+',u1,'*',v2,'-',w1,'*',v2].join('')];
-}
+};
 
 /**
  * Calculates the rise of the line (Achsenabschnitt)
@@ -578,7 +578,7 @@ JXG.Line.prototype.X = function (phi) {
     cosTheta = A/sq;
     if (Math.abs(cosTheta)<this.board.algebra.eps) { cosTheta = 1.0; }
     return sinTheta*Math.cos(phi)/cosTheta;
-}
+};
 
 /**
 * Treat the line as parametric curve in homogeneous coordinates.
@@ -597,7 +597,7 @@ JXG.Line.prototype.Y = function (phi) {
     cosTheta = A/sq;
     if (Math.abs(cosTheta)<this.board.algebra.eps) { cosTheta = 1.0; }
     return sinTheta*Math.sin(phi)/cosTheta;
-}
+};
 
 /**
 * Treat the line as parametric curve in homogeneous coordinates.
@@ -618,7 +618,7 @@ JXG.Line.prototype.Z = function (phi) {
     } else {
         return 0.0;
     }
-}
+};
 
 /**
 * Treat the circle as parametric curve:
@@ -626,7 +626,7 @@ JXG.Line.prototype.Z = function (phi) {
 **/
 JXG.Line.prototype.minX = function () {
     return 0.0;
-}
+};
 
 /**
 * Treat the circle as parametric curve:
@@ -634,7 +634,7 @@ JXG.Line.prototype.minX = function () {
 **/
 JXG.Line.prototype.maxX = function () {
     return 1.0;
-}
+};
 
 /**
  * Adds ticks to this line.
@@ -663,7 +663,7 @@ JXG.Line.prototype.removeAllTicks = function() {
         this.board.renderer.remove(this.ticks[t-1].rendNode);
     }
     this.ticks = new Array();
-}
+};
 
 /**
  * Removes ticks identified by parameter named tick.
@@ -686,7 +686,7 @@ JXG.Line.prototype.removeTicks = function(tick) {
             delete(this.ticks[t-1]);
         }
     }
-}
+};
 
 /**
  * Creates a new line.
@@ -970,7 +970,7 @@ JXG.createTangent = function(board, parents, attributes) {
                     function(){ return -Dg(p.position);}
                     ], attributes );
     }
-}
+};
 
 /**
  * Register the element type tangent at JSXGraph

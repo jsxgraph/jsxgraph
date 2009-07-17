@@ -39,7 +39,7 @@ JXG.countDrawings = 0;
 JXG.countTime = 0;
 JXG.require = function(libraryName) {
     document.write('<script type="text/javascript" src="' + libraryName + '"><\/script>');
-}
+};
 JXG.baseFiles;
 
 if (!JXG.useMinify) {
@@ -67,7 +67,7 @@ for (var i=0;i<document.getElementsByTagName("script").length;i++) {
         JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/,'');
         var arr = JXG.baseFiles.split(',');
         for (var n=0;n<arr.length;n++) 
-            (function(include) { JXG.require(JXG.requirePath+include+'.js')})(arr[n]);
+            (function(include) { JXG.require(JXG.requirePath+include+'.js');})(arr[n]);
     }
 }
 

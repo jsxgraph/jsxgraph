@@ -1,6 +1,6 @@
 JXG.PsTricks = new function() {
     this.psTricksString = "";
-}
+};
 
 JXG.PsTricks.convertBoardToPsTricks = function(board) {
     var p = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
@@ -71,12 +71,12 @@ JXG.PsTricks.convertBoardToPsTricks = function(board) {
         }
     }    
     this.psTricksString += '\\end{pspicture*}';
-}
+};
 
 JXG.PsTricks.givePsTricksToDiv = function(divId, board) {
     this.convertBoardToPsTricks(board);
     document.getElementById(divId).innerHTML = this.psTricksString;
-}
+};
 
 JXG.PsTricks.addPoint = function(el) {
     this.psTricksString += "\\psdot";
@@ -138,7 +138,7 @@ JXG.PsTricks.addPoint = function(el) {
     
     // Label
     this.psTricksString += "\\rput("+(el.coords.usrCoords[1]+15/ el.board.unitY / el.board.zoomY)+","+(el.coords.usrCoords[2]+15/ el.board.unitY / el.board.zoomY)+"){\\small $"+el.name+"$}\n";
-}
+};
 
 JXG.PsTricks.addLine = function(el) {
     var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
@@ -163,7 +163,7 @@ JXG.PsTricks.addLine = function(el) {
         }
     }
     this.psTricksString += "("+screenCoords1.usrCoords[1]+","+screenCoords1.usrCoords[2]+")("+screenCoords2.usrCoords[1]+","+screenCoords2.usrCoords[2]+")\n";
-}
+};
 
 JXG.PsTricks.addCircle = function(el) {
     var radius = el.getRadius();
@@ -174,7 +174,7 @@ JXG.PsTricks.addCircle = function(el) {
     }
     this.psTricksString += "]";
     this.psTricksString += "("+el.midpoint.coords.usrCoords[1]+","+el.midpoint.coords.usrCoords[2]+"){"+radius+"}\n";
-}
+};
 
 JXG.PsTricks.addPolygon = function(el) {
     this.psTricksString += "\\pspolygon";
@@ -183,7 +183,7 @@ JXG.PsTricks.addPolygon = function(el) {
         this.psTricksString += "("+el.vertices[i].coords.usrCoords[1]+","+el.vertices[i].coords.usrCoords[2]+")";
     }
     this.psTricksString += "\n";
-}
+};
 
 JXG.PsTricks.addArc = function(el) {
     var radius = el.getRadius();  
@@ -211,7 +211,7 @@ JXG.PsTricks.addArc = function(el) {
         }
     }    
     this.psTricksString += "("+el.midpoint.coords.usrCoords[1]+","+el.midpoint.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";
-}
+};
 
 JXG.PsTricks.addSector = function(el) {
     var radius = el.getRadius();  
@@ -227,7 +227,7 @@ JXG.PsTricks.addSector = function(el) {
         this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+JXG.Math.round(el.visProp['fillOpacity'],5)+"]";
         this.psTricksString += "("+el.midpoint.coords.usrCoords[1]+","+el.midpoint.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";    
     }
-}
+};
 
 JXG.PsTricks.addAngle = function(el) {
     var radius = el.radius;
@@ -247,9 +247,9 @@ JXG.PsTricks.addAngle = function(el) {
     this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) + ", linewidth=" +el.visProp['strokeWidth']+"px";
     this.psTricksString += "]"; 
     this.psTricksString += "("+el.point2.coords.usrCoords[1]+","+el.point2.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";
-}
+};
 
 JXG.PsTricks.parseColor = function(color) {
     var c = new JXG.RGBColor(color);
     return "{[rgb]{"+c.r/255+","+c.g/255+","+c.b/255+"}}";
-}
+};

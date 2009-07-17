@@ -123,7 +123,7 @@ JXG.Chart.prototype.drawSpline = function(board, parents, attributes) {
     var c = board.createElement('curve', [px, py], attributes);
     this.rendNode = c.rendNode;  // This is needed in setProperty
     return c;
-}
+};
 
 JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
     var i;

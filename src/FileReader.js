@@ -94,7 +94,7 @@ this.stringToXMLTree = function(fileStr) {
              d.loadXML(str);
              return d;
           } 
-       }
+       };
     }
     var parser=new DOMParser();
     

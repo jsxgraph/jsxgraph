@@ -170,7 +170,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         }
 
         return board;
-    }
+    };
 
     /**
      * Load a board from an uncompressed geonext file.
@@ -199,7 +199,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         }
         this.boards[board.id] = board;
         return board;
-    }
+    };
 
     this.loadBoardFromString = function(box, string, format) {
         var renderer;
@@ -223,7 +223,7 @@ JXG.JSXGraph = new function (forceRenderer) {
 
         this.boards[board.id] = board;
         return board;
-    }
+    };
 
     /**
      * Free a board.
@@ -258,16 +258,16 @@ JXG.JSXGraph = new function (forceRenderer) {
 
         // Finally remove the board itself from the boards array
         delete(this.boards[board.id]);
-    }
+    };
 
     this.registerElement = function (element, creator) {
         element = element.toLowerCase();
         this.elements[element] = creator;
-    }
+    };
 
     this.unregisterElement = function (element) {
         delete (this.elements[element]);
-    }
+    };
 };
 
 /**
@@ -334,7 +334,7 @@ JXG.createEvalFunction = function(board,param,n) {
             return a;
         }
         return 0;
-    }
+    };
 };
 
 JXG.getDimensions = function(elementId) {
@@ -371,17 +371,17 @@ JXG.addEvent = function( obj, type, fn, owner ) {
     } else {             // jQuery
         owner['_internal'+type] = function() {
             return fn.apply(owner,arguments);
-        }
+        };
         //$(obj).bind(type,f);
         $(obj).bind(type,owner['_internal'+type]);
     }
-}
+};
 
 JXG.bind = function(fn, owner ) {
     return function() {
         return fn.apply(owner,arguments);
-    }
-}
+    };
+};
 
 JXG.removeEvent = function( obj, type, fn, owner ) {
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
@@ -392,7 +392,7 @@ JXG.removeEvent = function( obj, type, fn, owner ) {
         //$(obj).unbind(type,fn);
         $(obj).unbind(type,owner['_internal'+type]);
     }
-}
+};
 
 JXG.getPosition = function (Evt) {
     var posx = 0;
@@ -447,7 +447,7 @@ JXG.unescapeHTML = function(str) {
 
 JXG.capitalize = function(str) {
     return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
-}
+};
 
 JXG.isSilverlightInstalled = function() {
     var isInstalled = false;
@@ -489,4 +489,4 @@ JXG.isSilverlightInstalled = function() {
     }
 
     return isInstalled;
-}
+};

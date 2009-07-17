@@ -171,7 +171,7 @@ JXG.Arc.prototype.getRadius = function() {
  */
 JXG.Arc.prototype.getTextAnchor = function() {
     return this.midpoint.coords;
-}
+};
 
 /**
  * return LabelAnchor

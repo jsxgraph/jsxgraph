@@ -158,7 +158,7 @@ JXG.Options = function() {
     this.precision.hasPoint = 4;
     this.precision.epsilon = 0.0001;
 
-}
+};
 
 /**
  * Apply the options stored in this object to all objects on the given board.
@@ -242,7 +242,7 @@ JXG.Options.prototype.useStandardOptions = function(board) {
     } else if(!boardHadGrid && board.hasGrid) {
         board.renderer.drawGrid(board);
     }
-}
+};
 
 /**
  * Converts all color values to greyscale and calls useStandardOption to put them onto the board.
@@ -281,7 +281,7 @@ JXG.Options.prototype.useBlackWhiteOptions = function(board) {
     this.grid.gridColor = this.changeColorToBlackWhite(this.grid.gridColor);
 
     this.useStandardOptions(board);
-}
+};
 
 /**
  * Decolorizes the given color.
@@ -302,7 +302,7 @@ JXG.Options.prototype.changeColorToBlackWhite = function(color) {
     var tmp = HexChars.charAt((x>>4)&0xf)+HexChars.charAt(x&0xf);
     color = "#" + tmp + "" + tmp + "" + tmp;
     return color;
-}
+};
 
 /**
  * Load options from a file using FileReader
@@ -317,7 +317,7 @@ JXG.Options.prototype.loadFromFile = function(fileurl, applyTo, board) {
    this.cb = JXG.bind(this.cbp,this);
 
    JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw');
-}
+};
 
 /**
  * Apply options given as a string to a board.
@@ -348,11 +348,11 @@ JXG.Options.prototype.parseString = function(text, applyTo, board) {
             applyOption(base[key], option[key], depth);
          }
       }
-   }
+   };
 
    applyOption(this, newOptions, 0);
 
    if(applyTo && typeof board != 'undefined') {
        this.useStandardOptions(board);
    }
-}
+};

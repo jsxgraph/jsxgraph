@@ -656,7 +656,7 @@ JXG.Util.Unzip.prototype.unzip = function() {
 	tmp[0] = readByte();
 	tmp[1] = readByte();
 	if (debug)
-		alert("type: "+tmp[0]+" "+tmp[1])
+		alert("type: "+tmp[0]+" "+tmp[1]);
 	if (tmp[0] == parseInt("78",16) && tmp[1] == parseInt("da",16)){ //GZIP
 		if (debug)
 			alert("GEONExT-GZIP");
@@ -739,7 +739,7 @@ JXG.Util.Unzip.prototype.unzip = function() {
 			var i = 0;
 			while (i < extralen){
 				c = readByte();
-				i++
+				i++;
 			}
 				
 			CRC = 0xffffffff;
@@ -1106,4 +1106,4 @@ JXG.Util.asciiCharCodeAt = function(str,i){
 	    }
 	}
 	return c;
-}
+};

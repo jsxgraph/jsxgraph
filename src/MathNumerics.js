@@ -372,7 +372,7 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
         }
         return y;
     };
-}
+};
 
 /**
  * Computes the Lagrange polynomial for curves with Neville's algorithm.
@@ -418,7 +418,7 @@ JXG.Math.Numerics.neville = function(p) {
             }, 
             0, function(){ return p.length-1;}
         ];
-}
+};
 
 /**
  * Calculation of derivative.
@@ -529,13 +529,13 @@ JXG.Math.Numerics.riemann = function(f, n, type, start, end) {
                 y = f(x);
                 for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
                     y1 = f(x1);
-                    if (y1<y) { y = y1 };
+                    if (y1<y) { y = y1; };
                 }
             } else { // (type=='upper')
                 y = f(x);
                 for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
                     y1 = f(x1);
-                    if (y1>y) { y = y1 };
+                    if (y1>y) { y = y1; };
                 }
             }
             
@@ -582,13 +582,13 @@ JXG.Math.Numerics.riemannsum = function(f, n, type, start, end) {
                 y = f(x);
                 for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
                     y1 = f(x1);
-                    if (y1<y) { y = y1 };
+                    if (y1<y) { y = y1; };
                 }
             } else { // (type=='upper')
                 y = f(x);
                 for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
                     y1 = f(x1);
-                    if (y1>y) { y = y1 };
+                    if (y1>y) { y = y1; };
                 }
             }
             sum += delta*y;

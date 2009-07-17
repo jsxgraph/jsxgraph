@@ -583,7 +583,7 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
         result = this.projectCoordsToCurve(x,y,t,curve);
     point.position = result[1];      // side effect !
     return result[0];
-}
+};
 
 /**
  * Calculates the coordinates of the projection of a coordinates pair on a given curve. In case of
@@ -1263,7 +1263,7 @@ JXG.Algebra.prototype.innerProduct = function(a,b,n) {
         s += a[i]*b[i];
     }
     return s;
-}
+};
 
 JXG.Algebra.prototype.meet = function(el1,el2,i) {
     var eps = 0.000001;
@@ -1506,4 +1506,4 @@ JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
     } else {
         return (new JXG.Coords(JXG.COORDS_BY_USER, [c2.X(t2),c2.Y(t2)], this.board));
     }
-}
+};

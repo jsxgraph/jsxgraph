@@ -227,12 +227,12 @@ JXG.RGBColor = function(color_string) {
     this.g = (this.g < 0 || isNaN(this.g)) ? 0 : ((this.g > 255) ? 255 : this.g);
     this.b = (this.b < 0 || isNaN(this.b)) ? 0 : ((this.b > 255) ? 255 : this.b);
 
-}
+};
 
 // some getters
 JXG.RGBColor.prototype.toRGB = function () {
     return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ')';
-}
+};
 
 JXG.RGBColor.prototype.toHex = function () {
     var r = this.r.toString(16);
@@ -242,7 +242,7 @@ JXG.RGBColor.prototype.toHex = function () {
     if (g.length == 1) g = '0' + g;
     if (b.length == 1) b = '0' + b;
     return '#' + r + g + b;
-}
+};
 
 /**
 * Converts HSV color to RGB color.
@@ -290,4 +290,4 @@ JXG.hsv2rgb = function(H,S,V) {
     G = Math.round(G*255).toString(16); G = (G.length==0)?'00':((G.length==1)?'0'+G:G);
     B = Math.round(B*255).toString(16); B = (B.length==0)?'00':((B.length==1)?'0'+B:B);
     return '#'+R+G+B; 
-}
+};

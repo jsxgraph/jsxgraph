@@ -103,7 +103,7 @@ JXG.createPerpendicular = function(board, parentArr, atts) {
         var poly2 = ''+p2+'*'+a2+'-'+p2+'*'+b2+'-'+t2+'*'+a2+'+'+t2+'*'+b2+'+'+p1+'*'+a1+'-'+p1+'*'+b1+'-'+t1+'*'+a1+'+'+t1+'*'+b1;
 
         return [poly1, poly2];
-    }
+    };
 
     return els;
 };
@@ -163,7 +163,7 @@ JXG.createMidpoint = function(board, parentArr, atts) {
         var poly2 = ''+a1+'^2 - 2*'+a1+'*'+t1+'+'+a2+'^2-2*'+a2+'*'+t2+'-'+b1+'^2+2*'+b1+'*'+t1+'-'+b2+'^2+2*'+b2+'*'+t2;
 
         return [poly1, poly2];
-    }
+    };
 
     return t;
 };
@@ -374,7 +374,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
         },
     ], attributes);
     return [g1,g2];
-}
+};
 
 JXG.createArrowParallel = function(board, parentArr, atts) {
     /* TODO arrowparallel polynomials */
@@ -484,7 +484,7 @@ JXG.createPerpendicularPoint = function(board, parentArr, atts) {
         var poly2 = ''+p2+'*'+a2+'-'+p2+'*'+b2+'-'+t2+'*'+a2+'+'+t2+'*'+b2+'+'+p1+'*'+a1+'-'+p1+'*'+b1+'-'+t1+'*'+a1+'+'+t1+'*'+b1;
 
         return [poly1, poly2];
-    }
+    };
 
     return t;
 };

@@ -83,7 +83,7 @@ JXG.Turtle = function (board, parents, attributes) {
     
     this.init(x,y,dir);
     return this;
-} 
+};
 JXG.Turtle.prototype = new JXG.GeometryElement;
 
 /**
@@ -116,7 +116,7 @@ JXG.Turtle.prototype.init = function(x,y,dir) {
 
     this.right(90-dir);
     this.board.update();
-}
+};
 
 /**
 * Move the turtle forward.
@@ -266,7 +266,7 @@ JXG.Turtle.prototype.setPos = function(x,y) {
     this.objects.push(this.curve);
     this.board.update();
     return this;
-}
+};
 
 /**
 *  Sets the pen size. Equivalent to setProperty({strokeWidth:size})
@@ -423,7 +423,7 @@ JXG.Turtle.prototype.lookTo = function(target) {
         this.right(this.dir-(target));
     }
     return this;
-}
+};
 
 /**
 * Moves the turtle to a given coordinate pair.
@@ -456,7 +456,7 @@ JXG.Turtle.prototype.moveTo = function(target) {
         this.board.update();
     }
     return this;
-}
+};
 
 /**
   * Alias for {@link #forward}
@@ -509,7 +509,7 @@ JXG.Turtle.prototype.pop = function() { return this.popTurtle(); };
 */
 JXG.Turtle.prototype.X = function(target) { 
     return this.pos[0]; //this.turtle.X();
-}
+};
 
 /**
 * @return y-coordinate of the turtle position
@@ -517,7 +517,7 @@ JXG.Turtle.prototype.X = function(target) {
 */
 JXG.Turtle.prototype.Y = function(target) { 
     return this.pos[1]; //this.turtle.Y();
-}
+};
 
 /**
  * Checks whether (x,y) is near the curve.
@@ -538,7 +538,7 @@ JXG.Turtle.prototype.hasPoint = function (x,y) {
         }
     }
     return false;
-}
+};
 
 /**
  * Creates a new turtle
@@ -553,6 +553,6 @@ JXG.createTurtle = function(board, parents, attributes) {
         var parents = [];
     }
     return new JXG.Turtle(board,parents,attributes);
-}
+};
 
 JXG.JSXGraph.registerElement('turtle', JXG.createTurtle);

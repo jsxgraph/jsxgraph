@@ -118,7 +118,7 @@ JXG.Angle = function (board, p1, p2, p3, radius, text, id, name, withLabel) {
             }
         }
         if(i == possibleNames.length) {
-            var pre = '&alpha;_{'
+            var pre = '&alpha;_{';
             var post = '}';
             var found = false;
             var j=0;

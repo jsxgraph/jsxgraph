@@ -72,7 +72,7 @@ JXG.createSlider = function(board, parentArr, atts) {
     p3 = board.createElement('glider', [startx,starty,l1], {style:6,strokeColor:atts['strokeColor'],fillColor:atts['fillColor'],showInfobox:false,name:'',snapWidth:snapWidth});
     
     l2 = board.createElement('line', [p1,p3], {straightFirst:false, straightLast:false, strokewidth:3, strokeColor:atts['strokeColor'],name:'',withLabel:false}); 
-    p3.Value = function() { return this.Dist(p1)/p2.Dist(p1)*(smax - smin)+smin; } 
+    p3.Value = function() { return this.Dist(p1)/p2.Dist(p1)*(smax - smin)+smin; };
     p3._smax = smax;
     p3._smin = smin;
 
