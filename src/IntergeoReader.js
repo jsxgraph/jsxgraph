@@ -157,7 +157,22 @@ JXG.IntergeoReader = new function() {
             }
             this.objects[node.getAttribute('id')].coords = c;
         }
+        //this.addLine(node.getAttribute('id'));
     };
+    
+    /** 
+     * Direct construction of a line 
+     * in read elements
+     **/
+    this.addLine = function(id) {    
+        var j,
+            c = this.objects[id].coords,
+            el;
+            
+        for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
+        el = this.board.createElement('line',c,{name:id, strokeColor:'black', withLabel:true});
+        this.objects[id] = el;
+    }
 
     /**
      * Circle data is stored in an array
