@@ -806,28 +806,28 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
  * 
  *  var board = JXG.JXGGraph.initBoard('jxgbox', {boundingbox: [-5 5 5 -5]});
  * 
-
  */
+
 /**
  * @class This element is used to provide a constructor for a general point. A free point is created if the given parent elements are all numbers
  * and the property fixed is not set or set to false. If one or more parent elements is not a number but a string containing a GEONE<sub>x</sub>T
- * constraint or a function the point will be considered as constrained or even fixed. That means that the user won't be able to change the point's
- * position in that coordinate. 
+ * constraint or a function the point will be considered as constrained). That means that the user won't be able to change the point's
+ * position directly.
+ * @pseudo
+ * @description Description needed?
  * @name Point
  * @augments JXG.Point
- * @property {undefined} dummy Just a dummy property for this example page
- * @property {number} dumnum Just another dummy property
  * @method 
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {number/string/function,number/string/function[,number/string/function]} coordinate Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
+ * @param {number,string,function_number,string,function_number,string,function} z_,x,y Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
  * constraint, or a function which takes no parameter and returns a number. Every parent element determines one coordinate. If a coordinate is
  * given by a number, the number determines the initial position of a free point. If given by a string or a function that coordinate will be constrained
- * that means the user won't be able to change the point's position in this direction because it will be calculated automatically depending on the string
+ * that means the user won't be able to change the point's position directly by mouse because it will be calculated automatically depending on the string
  * or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine euclidean coordinates, if three such
  * parent elements are given they will be interpreted as homogeneous coordinates.
- * @param {JXG.Point,JXG.Transformation} Transformation A point can also be created providing a transformation. The resulting point is a clone of the base
+ * @param {JXG.Point_JXG.Transformation} Point,Transformation A point can also be created providing a transformation. The resulting point is a clone of the base
  * point transformed by the given Transformation. {see JXG.Transformation}.
  * @example
  * // Create a free point using affine euclidean coordinates 

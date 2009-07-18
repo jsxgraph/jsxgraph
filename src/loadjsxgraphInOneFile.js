@@ -23,12 +23,11 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-/**
- @namespace Holds all JSXGraph objects, variables and functions.
-*/
 
 /**
- * JSXGraph namespace.
+ * JSXGraph namespace. Holds all classes, objects, functions and variables belonging to JSXGraph
+ * to reduce the risc of interfering with other JavaScript code.
+ * @namespace
  */
 var JXG = {};
 //JXG.useMinify = true;

@@ -1,0 +1,6 @@
+JSXGraph files for JsDoc-Toolkit
+
+
+
+All files in ./plugins have to be placed in /path/to/jsdoc-toolkit/app/plugins.
+All files in ./template have to be placed in /path/to/jsdoc-toolkit/templates/jsdoc
