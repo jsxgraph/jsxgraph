@@ -814,7 +814,7 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
  * constraint or a function the point will be considered as constrained). That means that the user won't be able to change the point's
  * position directly.
  * @pseudo
- * @description Description needed?
+ * @description
  * @name Point
  * @augments JXG.Point
  * @method 
@@ -850,6 +850,13 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
  * // Create a point using transformations 
  * var trans = board.createElement('transform', [2, 0.5], {type:'scale'});
  * var p3 = board.createElement('point', [p2, trans]);
+ * </pre><div id="630afdf3-0a64-46e0-8a44-f51bd197bb8d" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var board = JXG.JSXGraph.initBoard('630afdf3-0a64-46e0-8a44-f51bd197bb8d', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var trans = board.createElement('transform', [2, 0.5], {type:'scale'});
+ *   var p2 = board.createElement('point', [3.5, function () { return p1.X(); }]);
+ *   var p3 = board.createElement('point', [p2, trans]);
+ * </script><pre>
  */
 JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** object */ atts) {
     var el;
@@ -890,10 +897,43 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
 
 
 /**
- * Extra treatment for the glider point
- * The object on wihich the slider lives has to
- * be the last object in parentArr.
- * parentArr consists of three elements: [number, number, object]
+ * @class This element is used to provide a constructor for a glider point. 
+ * @pseudo
+ * @description A glider is a point which lives on another geometric element like a line, circle, curve, turtle.
+ * @name Glider
+ * @augments JXG.Point
+ * @method
+ * @constructor
+ * @type JXG.Point
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {number,number,JXG.GeometryElement} z_,x_,y_,GlideObject Parent elements can be two or three elements of type number and the object the glider lives on.
+ * The coordinates are completely optional. If not given the origin is used. If you provide two numbers for coordinates they will be interpreted as affine euclidean
+ * coordinates, otherwise they will be interpreted as homogeneous coordinates. In any case the point will be projected on the glide object.
+ * @example
+ * // Create a glider with user defined coordinates. If the coordinates are not on
+ * // the circle (like in this case) the point will be projected onto the circle.
+ * var p1 = board.createElement('point', [2.0, 2.0]);
+ * var c1 = board.createElement('circle', [p1, 2.0]);
+ * var p2 = board.createElement('glider', [2.0, 1.5, c1]);
+ * </pre><div id="4f65f32f-e50a-4b50-9b7c-f6ec41652930" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var board = JXG.JSXGraph.initBoard('4f65f32f-e50a-4b50-9b7c-f6ec41652930', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.createElement('point', [2.0, 2.0]);
+ *   var c1 = board.createElement('circle', [p1, 2.0]);
+ *   var p2 = board.createElement('glider', [2.0, 1.5, c1]);
+ * </script><pre>
+ * @example
+ * // Create a glider with default coordinates (0,0,0). Same premises as above.
+ * var p1 = board.createElement('point', [2.0, 2.0]);
+ * var c1 = board.createElement('circle', [p1, 2.0]);
+ * var p2 = board.createElement('glider', [c1]);
+ * </pre><div id="4de7f181-631a-44b1-a12f-bc4d995609e8" style="width: 200px; height: 200px;"></div>
+ * <script type="text/javascript">
+ *   var board = JXG.JSXGraph.initBoard('4de7f181-631a-44b1-a12f-bc4d995609e8', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.createElement('point', [2.0, 2.0]);
+ *   var c1 = board.createElement('circle', [p1, 2.0]);
+ *   var p2 = board.createElement('glider', [c1]);
+ * </script><pre>
  */
 JXG.createGlider = function(board, parents, atts) {
     var el;

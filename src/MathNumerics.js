@@ -28,40 +28,63 @@
  * algorithms for solving linear equations etc.
  * @author graphjs
  */
+
+
 /**
- * Math.Numerics
+ * Math.Numerics namespace holds numerical algorithms, constants, and variables.
+ * @namespace
  */
 JXG.Math.Numerics = {}; 
 
 /**
- * Namespace constants 
- * Constants used for integration with Newton-Cotes-algorithm 
+ * A constant representing the trapez rule for numerical integration. Is used in conjunction with {@link JXG.Math.Numerics.integration_type}
+ * and {@link JXG.Math.Numerics.NewtonCotes}.
+ * @type number
+ * @constant
  */
-  JXG.Math.Numerics.INT_TRAPEZ  = 0x00001;
-  JXG.Math.Numerics.INT_SIMPSON = 0x00002;
-  JXG.Math.Numerics.INT_MILNE   = 0x00003;
+JXG.Math.Numerics.INT_TRAPEZ  = 0x00001;
+
+/**
+ * A constant representing the simpson rule for numerical integration. Is used in conjunction with {@link JXG.Math.Numerics.integration_type}
+ * and {@link JXG.Math.Numerics.NewtonCotes}.
+ * @type number
+ * @constant
+ */
+JXG.Math.Numerics.INT_SIMPSON = 0x00002;
+
+/**
+ * A constant representing the milne rule for numerical integration. Is used in conjunction with {@link JXG.Math.Numerics.integration_type}
+ * and {@link JXG.Math.Numerics.NewtonCotes}.
+ * @type number
+ * @constant
+ */
+JXG.Math.Numerics.INT_MILNE   = 0x00003;
   
 /**
- * Number of nodes for evaluation, used for integration
- * @type int
+ * Number of nodes for evaluation, used for integration algorithms.
+ * @type number
  */
 JXG.Math.Numerics.number_of_nodes = 28;
 
 /**
- * Type of integration algorithm, possible values are: <ul><li>JXG.INT_TRAPEZ</li><li>JXG.INT_SIMPSON</li><li>JXG.INT_MILNE</li></ul>
- * @type int
+ * Type of integration algorithm, possible values are:
+ * <ul>
+ *   <li>{@link JXG.Math.Numerics.INT_TRAPEZ}</li>
+ *   <li>{@link JXG.Math.Numerics.INT_SIMPSON}</li>
+ *   <li>{@link JXG.Math.Numerics.INT_MILNE}</li>
+ * </ul>
+ * @type number
  */
 JXG.Math.Numerics.integration_type = JXG.INT_MILNE;
 
 /**
- * Solves a system of lineare equations given by the right triangular matrix R and vector b.
- * @param {JXG.Math.Matrix} R Right triangular matrix. All entries a_(i,j) with i < j are ignored.
- * @param {JXG.Math.Vector} b Right hand side of the linear equation system.
- * @type JXG.Math.Vector
+ * Solves a system of linear equations given by the right triangular matrix R and vector b.
+ * @param R Right triangular matrix. All entries a_(i,j) with i < j are ignored.
+ * @param b Right hand side of the linear equation system.
  * @return A vector that solves the system of linear equations.
  * @private
  */ 
-JXG.Math.Numerics.backwardSolve = function(R, b) {
+JXG.Math.Numerics.backwardSolve = function(/** JXG.Math.Matrix */ R, /** JXG.Math.Vector */ b) /** JXG.Math.Vector */ {
    var x = b,
         i, j;
 
@@ -77,15 +100,14 @@ JXG.Math.Numerics.backwardSolve = function(R, b) {
 
 /**
  * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
- * @param {JXG.Math.Matrix} A Square matrix containing the coefficients of the lineare equation system.
- * @param {JXG.Math.Vector} b A vector containing the linear equation system's right hand side. 
- * @type JXG.Math.Vector
+ * @param A Square matrix containing the coefficients of the lineare equation system.
+ * @param b A vector containing the linear equation system's right hand side. 
  * @throws {JXG.DimensionMismatchException} If a non-square-matrix is given or the b has not the right length.
  * @throws {JXG.SingularMatrixException} If A's rank is not full.
  * @return A vector that solves the linear equation system.
  */
-JXG.Math.Numerics.Gauss = function(A, b) {
-    var eps = 1.e-12,
+JXG.Math.Numerics.Gauss = function(/** JXG.Math.Matrix */ A, /** JXG.Math.Vector */ b) /** JXG.Math.Vector */ {
+    var eps = JXG.Math.eps,
         i, j, k, P,
         x, y;
     
@@ -135,11 +157,12 @@ JXG.Math.Numerics.Gauss = function(A, b) {
 };
 
 /**
- * Decomposites the matrix A in an orthogonal matrix Q and a right triangular matrix R. 
+ * NEEDS IMPLEMENTATION. TODO Decomposites the matrix A in an orthogonal matrix Q and a right triangular matrix R. 
  * @param {JXG.Math.Matrix} A A matrix.
  * @type Object
- * @throws {JXG.SingularMatrixException} If A's rank is not full.
+ * @throws {Exception} If A's rank is not full.
  * @return The matrices Q and R.
+ * @private
  */
 JXG.Math.Numerics.QR = function(A, b) {
     // TODO needs implementation
@@ -147,12 +170,25 @@ JXG.Math.Numerics.QR = function(A, b) {
 
 /**
  * Calculates the integral of function f over interval using Newton-Cotes-algorithm.
- * @param {Array} interval e.g. [a, b] 
- * @param {function} f
- * @type float
+ * @param interval The integration interval, e.g. [0, 3]. 
+ * @param f A function which takes one argument of type number and returns a number.
  * @return Integral value of f over interval interval
+ * @throws {Exception} If {@link JXG.Math.Numerics.number_of_nodes} doesn't match
+ * {@link JXG.Math.Numerics.integration_type} an exception is thrown. If you want to use
+ * simpson rule respectively milne rule {@link JXG.Math.Numerics.number_of_nodes} must be dividable by
+ * 2 respectively 4.
+ * @example
+ * function f(x) {
+ *   return x*x;
+ * }
+ * 
+ * // calculates integral of <tt>f</tt> from 0 to 2.
+ * var area1 = JXG.Math.Numerics.NewtonCotes([0, 2], f);
+ * 
+ * // the same with anonymous function
+ * var area2 = JXG.Math.Numerics.NewtonCotes([0, 2], function (x) { return x*x; });
  */
-JXG.Math.Numerics.NewtonCotes = function(interval, f) {
+JXG.Math.Numerics.NewtonCotes = function(/** array */ interval, /** function */ f) /** float */ {
     var integral_value = 0.0,
         step_size = (interval[1] - interval[0]) / this.number_of_nodes,
         evaluation_point, i, number_of_intervals;
@@ -172,7 +208,7 @@ JXG.Math.Numerics.NewtonCotes = function(interval, f) {
             break;
         case JXG.INT_SIMPSON:
             if (this.number_of_nodes%2 > 0) {
-                throw "Error: INT_SIMPSONS requires Algebra.number_of_nodes dividable by 2.";
+                throw "Error: INT_SIMPSON requires JXG.Math.Numerics.number_of_nodes dividable by 2.";
             }
             number_of_intervals = this.number_of_nodes / 2.0;
             integral_value = f(interval[0]) + f(interval[1]);
@@ -192,7 +228,7 @@ JXG.Math.Numerics.NewtonCotes = function(interval, f) {
             break;
         default:
             if (this.number_of_nodes%4 > 0) {
-                throw "Error in INT_MILNE: Algebra.number_of_nodes must be a multiple of 4";
+                throw "Error in INT_MILNE: JXG.Math.Numerics.number_of_nodes must be a multiple of 4";
             }
             number_of_intervals = this.number_of_nodes * 0.25;
             integral_value = 7.0 * (f(interval[0]) + f(interval[1]));
@@ -221,12 +257,11 @@ JXG.Math.Numerics.NewtonCotes = function(interval, f) {
 
 /**
  * Calculates second derivatives at the knots.
- * @param {JXG.Math.Vector} x x values of knots
- * @param {JXG.Math.Vector} y y values of knots
- * @type JXG.Math.Vector
+ * @param x x values of knots
+ * @param y y values of knots
  * @return Second derivatives of interpolated function at the knots.
  */
-JXG.Math.Numerics.splineDef = function(x, y) {
+JXG.Math.Numerics.splineDef = function(/** JXG.Math.Vector */ x, /** JXG.Math.Vector */ y) /** JXG.Math.Vector */ {
     var n = x.length,
         pair, i, diag, z, l,
         data = new Array(),

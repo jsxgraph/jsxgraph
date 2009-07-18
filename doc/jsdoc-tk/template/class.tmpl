@@ -305,7 +305,7 @@
 						<dl class="detailList">
                         <if test="data.isPseudo">
                             This element has no direct constructor. To create an instance of this element you have to call {+(new Link().toSymbol("JXG.Board.createElement"))+}
-                            with type &quot;point&quot;.<br /><br />
+                            with type &quot;{+data.alias.toLowerCase()+}&quot;.<br /><br />
     						<dt class="heading">Possible parent array combinations are:</dt>
                         </if>
                         <if test="!data.isPseudo">
