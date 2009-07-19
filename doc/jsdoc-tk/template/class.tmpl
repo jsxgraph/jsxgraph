@@ -496,12 +496,6 @@
 						<if test="member.author"><br /><i>Author: </i>{+member.author+}.</if>
 					</div>
 					
-					<if test="member.example.length">
-					<for each="example" in="member.example">
-					<pre class="code">{+example+}</pre>
-					</for>
-					</if>
-					
 						<if test="member.params.length">
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
@@ -565,6 +559,15 @@
 							</dl>
 						</if>
 
+					<if test="member.example.length">
+					<dl class="detailList">
+					<dt class="heading">Examples:</dt>
+					<for each="example" in="member.example">
+					<pre class="code">{+example+}</pre>
+					</for>
+					</dl>
+					</if>
+					
 					<if test="!$member_last"><hr /></if>
 				</for>
 			</if>

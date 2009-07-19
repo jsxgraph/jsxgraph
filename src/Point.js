@@ -906,7 +906,7 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {number,number,JXG.GeometryElement} z_,x_,y_,GlideObject Parent elements can be two or three elements of type number and the object the glider lives on.
+ * @param {number_number_number_JXG.GeometryElement} z_,x_,y_,GlideObject Parent elements can be two or three elements of type number and the object the glider lives on.
  * The coordinates are completely optional. If not given the origin is used. If you provide two numbers for coordinates they will be interpreted as affine euclidean
  * coordinates, otherwise they will be interpreted as homogeneous coordinates. In any case the point will be projected on the glide object.
  * @example

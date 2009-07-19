@@ -473,20 +473,24 @@ JXG.Math.Numerics.D = function(f,obj) {
 };
 
 /**
- * Integral of function f over interval. Warning: Just for backward compatibility, may be removed in futures releases.
- * @param {Array} interval e.g. [a, b] 
- * @param {function} f 
+ * Integral of function f over interval.
+ * @deprecated Use {@link JXG.Math.Numerics.NewtonCotes} instead.
+ * @see JXG.Math.Numerics.NewtonCotes
  */
-JXG.Math.Numerics.I = function(interval, f) {
+JXG.Math.Numerics.I = function(/** array */ interval, /** function */ f) {
     return JXG.Math.Numerics.NewtonCotes(interval, f);
 };
 
 /**
+ * TODO: Describe f, x, obj with @param tag; Declare what type obj is expected;
+ * Describe what will be returned with the @return tag
  * Newton method to find roots
- * @param {function} 
- * @param {Number}  
+ * @param f <description>
+ * @param x <description>
+ * @param obj <description>
+ * @return <describe what will be returned>
  */
-JXG.Math.Numerics.newton = function(f,x,obj) {
+JXG.Math.Numerics.newton = function(/** function */ f, /** number */ x, obj) /** number */ {
     var i = 0,
         h = 0.0000001,
         newf = f.apply(obj,[x]), // set "this" to "obj" in f 
@@ -515,32 +519,36 @@ JXG.Math.Numerics.root = function(f,x,obj) {
 };
 
 /**
- * Cosine hyperbolicus
- * @param {number} 
+ * Cosine hyperbolicus of x.
+ * @param x The number the cosine hyperbolicus will be calculated of.
+ * @return Cosine hyperbolicus of the given value.
  */
-JXG.Math.Numerics.cosh = function(x) {
+JXG.Math.Numerics.cosh = function(/** number */ x) /** number */ {
     return (Math.exp(x)+Math.exp(-x))*0.5;
 };
 
 /**
- * Sine hyperbolicus
- * @param {number} 
+ * Sine hyperbolicus of x.
+ * @param x The number the sine hyperbolicus will be calculated of.
+ * @return Sine hyperbolicus of the given value.
  */
-JXG.Math.Numerics.sinh = function(x) {
+JXG.Math.Numerics.sinh = function(/** number */ x) /** number */ {
     return (Math.exp(x)-Math.exp(-x))*0.5;
 };
 
 
 /**
- * Riemann sum.
+ * TODO Riemann sum.
  * Compute coordinates for the rectangles showing the Riemann sum.
- * @param {f} 
- * @param {n} 
- * @param {type} 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'
- * @param {start} 
- * @param {end} 
+ * @param f  <description>
+ * @param n  <description>
+ * @param type <description needed>.
+ * Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
+ * @param start <description> 
+ * @param end  <description>
+ * @return An array of two arrays containing the x and y coordinates for the rectangles showing the Riemann sum.
  */
-JXG.Math.Numerics.riemann = function(f, n, type, start, end) {
+JXG.Math.Numerics.riemann = function(/** function */ f, /** type */ n,  /** type */ type,  /** type */ start,  /** type */ end)  /** array */ {
     var xarr,yarr,i,delta,j,x,y,x1,delta1,y1;
     xarr = [];
     yarr = [];
@@ -589,14 +597,17 @@ JXG.Math.Numerics.riemann = function(f, n, type, start, end) {
 };
 
 /**
- * Computation of the Riemann sum.
- * @param {f} 
- * @param {n} 
- * @param {type} 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'
- * @param {start} 
- * @param {end} 
+ * TODO Riemann sum.
+ * Compute the area described by the riemann sum rectangles.
+ * @param f  <description>
+ * @param n  <description>
+ * @param type <description needed>.
+ * Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
+ * @param start <description> 
+ * @param end  <description>
+ * @return The area value of the rectangles describing the riemann sum.
  */
-JXG.Math.Numerics.riemannsum = function(f, n, type, start, end) {
+JXG.Math.Numerics.riemannsum = function(/** function */ f, /** type */ n,  /** type */ type,  /** type */ start,  /** type */ end)  /** number */ {
     var sum,i,delta,x,y,x1,delta1,y1;
     sum = 0.0;
     x = start;
@@ -634,37 +645,50 @@ JXG.Math.Numerics.riemannsum = function(f, n, type, start, end) {
 };
 
 /**
- * Class for storing butcher arrays for Runge-Kutta-methods
+ * Object for storing butcher tableaus for Runge-Kutta-methods.
+ * @class
+ * @description
  * @see JXG.Math.Numerics.rungeKutta
  */
 JXG.Math.Numerics.Butcher = function () {
     /**
-     * Order of Runge-Kutta-method
-     * @type int
+     * Order of Runge-Kutta-method.
+     * @type number
      */
     this.s = 0;
 
     /**
-     * See http://en.wikipedia.org/wiki/Runge-Kutta_methods
+     * 2-dimensional array containing the butcher tableau matrix.
+     * See <a href="http://en.wikipedia.org/wiki/Runge-Kutta_methods">http://en.wikipedia.org/wiki/Runge-Kutta_methods</a>.
+     * @type array
      */
     this.A = [];
 
     /**
-     * See http://en.wikipedia.org/wiki/Runge-Kutta_methods
+     * Array containing the coefficients below the butcher tableau matrix.
+     * See <a href="http://en.wikipedia.org/wiki/Runge-Kutta_methods">http://en.wikipedia.org/wiki/Runge-Kutta_methods</a>.
+     * @type array
      */
     this.b = [];
 
     /**
-     * See http://en.wikipedia.org/wiki/Runge-Kutta_methods
+     * Array containing the coefficients to the left of the butcher tableau matrix.
+     * See <a href="http://en.wikipedia.org/wiki/Runge-Kutta_methods">http://en.wikipedia.org/wiki/Runge-Kutta_methods</a>.
+     * @type array
      */
     this.c = [];
 };
 
 /**
- * Predefined butcher arrays
+ * Predefined butcher tableaus for the common Runge-Kutta method (fourth order), Heun method (second order), and Euler method (first order).
+ * @namespace
  */
 JXG.Math.Numerics.predefinedButcher = {};
 
+/**
+ * Butcher tableau for common fourth order Runge-Kutta method.
+ * @type JXG.Math.Numerics.Butcher
+ */
 JXG.Math.Numerics.predefinedButcher.RK4 = {
     s: 4,
     A: [[ 0,  0,  0, 0],
@@ -675,6 +699,10 @@ JXG.Math.Numerics.predefinedButcher.RK4 = {
     c: [0, 0.5, 0.5, 1]
 };
 
+/**
+ * Butcher tableau for heun method.
+ * @type JXG.Math.Numerics.Butcher
+ */
 JXG.Math.Numerics.predefinedButcher.Heun = {
     s: 2,
     A: [[0, 0], [1, 0]],
@@ -682,6 +710,10 @@ JXG.Math.Numerics.predefinedButcher.Heun = {
     c: [0, 1]
 };
 
+/**
+ * Butcher tableau for euler method.
+ * @type JXG.Math.Numerics.Butcher
+ */
 JXG.Math.Numerics.predefinedButcher.Euler = {
     s: 1,
     A: [[0]],
@@ -690,13 +722,61 @@ JXG.Math.Numerics.predefinedButcher.Euler = {
 };
 
 /**
- * Solve ordinary differential equations numerically using Runge-Kutta-methods
- * http://en.wikipedia.org/wiki/Runge-Kutta_methods
+ * Solve initial value problems numerically using Runge-Kutta-methods.
+ * See {@link http://en.wikipedia.org/wiki/Runge-Kutta_methods} for more information on the algorithm.
+ * @param butcher Butcher tableau describing the Runge-Kutta method to use.
+ * @param x0 Initial value vector. If the problem is of one-dimensional, the initial value also has to be given in an array.
+ * @param I Interval on which to integrate.
+ * @param N Number of evaluation points.
+ * @param f Function describing the right hand side of the first order ordinary differential equation, i.e. if the ode
+ * is given by the equation <pre>dx/dt = f(t, x(t)).</pre> So f has to take two parameters, a number <tt>t</tt> and a
+ * vector <tt>x</tt>, and has to return a vector of the same dimension as <tt>x</tt> has.
+ * @return An array of vectors describing the solution of the ode on the given interval I.
+ * @example
+ * // A very simple autonomous system dx(t)/dt = x(t);
+ * function f(t, x) {
+ *     return x;
+ * }
+ * 
+ * // We want to use the method of heun.
+ * var method = JXG.Math.Numerics.predefinedButcher.Heun;
+ * // Solve it with initial value x(0) = 1 on the interval [0, 2]
+ * // with 20 evaluation points.
+ * var data = JXG.Math.Numerics.rungeKutta(method, [1], [0, 2], 20, f);
+ * 
+ * // Prepare data for plotting the solution of the ode using a curve. 
+ * var dataX = [];
+ * var dataY = [];
+ * var h = 0.1;        // (I[1] - I[0])/N  = (2-0)/20
+ * for(var i=0; i&lt;data.length; i++) {
+ *     dataX[i] = i*h;
+ *     dataY[i] = data[i][0];
+ * }
+ * var g = board.createElement('curve', [dataX, dataY], {strokeWidth:'2px'});
+ * </pre><div id="d2432d04-4ef7-4159-a90b-a2eb8d38c4f6" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ * var board = JXG.JSXGraph.initBoard('d2432d04-4ef7-4159-a90b-a2eb8d38c4f6', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+ * function f(t, x) {
+ *     // we have to copy the value.
+ *     // return x; would just return the reference.
+ *     return [x[0]];
+ * }
+ * var data = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Heun, [1], [0, 2], 20, f);
+ * var dataX = [];
+ * var dataY = [];
+ * var h = 0.1;
+ * for(var i=0; i<data.length; i++) {
+ *     dataX[i] = i*h;
+ *     dataY[i] = data[i][0];
+ * }
+ * var g = board.createElement('curve', [dataX, dataY], {strokeColor:'red', strokeWidth:'2px'});
+ * </script><pre>
  */
-/* TODO description*/
-JXG.Math.Numerics.rungeKutta = function(butcher, x0, I, N, f) {
-    // TODO error/parameter check:
-    // N not too big (warn or give up?) OR implement step size control
+JXG.Math.Numerics.rungeKutta = function(/** JXG.Math.Numerics.Butcher */ butcher, /** array */ x0,
+										/** array */ I, /** number */ N, /** function */ f) /** array */ {
+
+	// TODO error/parameter check:
+    // N not too big (warn or give up?) OR adaptive stepsize.
 
     var x = [],
         y = [],
