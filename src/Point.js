@@ -828,7 +828,7 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
  * or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine euclidean coordinates, if three such
  * parent elements are given they will be interpreted as homogeneous coordinates.
  * @param {JXG.Point_JXG.Transformation} Point,Transformation A point can also be created providing a transformation. The resulting point is a clone of the base
- * point transformed by the given Transformation. {see JXG.Transformation}.
+ * point transformed by the given Transformation. {@see JXG.Transformation}.
  * @example
  * // Create a free point using affine euclidean coordinates 
  * var p1 = board.createElement('point', [3.5, 2.0]);
