@@ -803,9 +803,6 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
  * - 1 function: intersection of objects, this is just a constrained point too
  * - 1 transformation object: clone of a base point transformed by the given Transformation
  * - 3 numbers: homogeneous coordinates of a free point
- * 
- *  var board = JXG.JXGGraph.initBoard('jxgbox', {boundingbox: [-5 5 5 -5]});
- * 
  */
 
 /**
