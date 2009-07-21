@@ -28,7 +28,7 @@
  * @fileoverview AbstractRenderer is the base class for all renderers. This class is subject
  * to change the next time that only a few methods are strictly required for a special
  * renderer derived from this class to have a working special renderer. Of course other
- * methods may be overwritten for performance reasons.
+ * methods may be overwritten for performance reasons, too.
  */
 
 /**
@@ -515,6 +515,48 @@ JXG.AbstractRenderer.prototype.removeTicks = function(/** JXG.Line */ axis) {
 };
 
 
+/**
+ * Creates a rendering node for an arrow on the board.
+ * @param el Reference to an arrow object, that has to be drawn.
+ * @see Arrow
+ * @see JXG.Line
+ * @see #updateArrow
+ */
+JXG.AbstractRenderer.prototype.drawArrow = function(/** JXG.Line */ el) {
+    var node = this.createPrimitive('line',el.id);
+    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
+    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
+    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
+    this.setDashStyle(node,el.visProp);
+    this.makeArrow(node,el);
+    this.appendChildPrimitive(node,'lines');
+    el.rendNode = node;
+    this.setDraft(el);
+    this.updateArrow(el);
+};
+
+/**
+ * Updates properties of an arrow that already exists on the canvas.
+ * @param el Reference to an arrow object, that has to be updated.
+ * @see Arrow
+ * @see JXG.Line
+ * @see #drawArrow
+ */
+JXG.AbstractRenderer.prototype.updateArrow = function(/** JXG.Line */ el) {
+    if (this.enhancedRendering) {
+        if (!el.visProp['draft']) {
+            this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
+            this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
+            this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
+        } else {
+            this.setDraft(el);
+        }
+    }
+    this.updateLinePrimitive(el.rendNode,el.point1.coords.scrCoords[1],el.point1.coords.scrCoords[2],
+        el.point2.coords.scrCoords[1],el.point2.coords.scrCoords[2]);
+};
+
+
 /* ************************** 
  *    Curve related stuff
  * **************************/
@@ -644,50 +686,6 @@ JXG.AbstractRenderer.prototype.updatePolygon = function(/** JXG.Polygon */ el) {
     }
 
     this.updatePolygonePrimitive(el.rendNode,el);
-};
-
-
-/* ************************** 
- *    Arrow related stuff
- * **************************/
-
-/**
- * Creates a rendering node for an arrow on the board.
- * @param el Reference to an arrow object, that has to be drawn.
- * @see JXG.Arrow
- * @see #updateArrow
- */
-JXG.AbstractRenderer.prototype.drawArrow = function(/** JXG.Arrow */ el) {
-    var node = this.createPrimitive('line',el.id);
-    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
-    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
-    this.setDashStyle(node,el.visProp);
-    this.makeArrow(node,el);
-    this.appendChildPrimitive(node,'lines');
-    el.rendNode = node;
-    this.setDraft(el);
-    this.updateArrow(el);
-};
-
-/**
- * Updates properties of an arrow that already exists on the canvas.
- * @param el Reference to an arrow object, that has to be updated.
- * @see JXG.Arrow
- * @see #drawArrow
- */
-JXG.AbstractRenderer.prototype.updateArrow = function(/** JXG.Arrow */ el) {
-    if (this.enhancedRendering) {
-        if (!el.visProp['draft']) {
-            this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-            this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
-            this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
-        } else {
-            this.setDraft(el);
-        }
-    }
-    this.updateLinePrimitive(el.rendNode,el.point1.coords.scrCoords[1],el.point1.coords.scrCoords[2],
-        el.point2.coords.scrCoords[1],el.point2.coords.scrCoords[2]);
 };
 
 
