@@ -43,20 +43,20 @@ JXG.Util = {};
  * Unzip zip files
  */
 JXG.Util.Unzip = function (barray){
-    var outputArr = [];
-    var output = "";
-    var debug = false;
-    var gpflags;
-    var files =0;
-    var unzipped = [];
-    var crc;
-    var buf32k = new Array(32768);
-    var bIdx = 0;
-    var modeZIP=false;
+    var outputArr = [],
+        output = "",
+        debug = false,
+        gpflags,
+        files = 0,
+        unzipped = [],
+        crc,
+        buf32k = new Array(32768),
+        bIdx = 0,
+        modeZIP=false,
 
-    var CRC, SIZE;
+        CRC, SIZE,
     
-    var bitReverse = [
+        bitReverse = [
         0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
         0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0,
         0x08, 0x88, 0x48, 0xc8, 0x28, 0xa8, 0x68, 0xe8,
@@ -89,52 +89,53 @@ JXG.Util.Unzip = function (barray){
         0x17, 0x97, 0x57, 0xd7, 0x37, 0xb7, 0x77, 0xf7,
         0x0f, 0x8f, 0x4f, 0xcf, 0x2f, 0xaf, 0x6f, 0xef,
         0x1f, 0x9f, 0x5f, 0xdf, 0x3f, 0xbf, 0x7f, 0xff
-    ];
+    ],
     
-    var cplens = [
+    cplens = [
         3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
         35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0
-    ];
+    ],
 
-    var cplext = [
+    cplext = [
         0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
         3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 99, 99
-    ]; /* 99==invalid */
+    ], /* 99==invalid */
 
-    var cpdist = [
+    cpdist = [
         0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0007, 0x0009, 0x000d,
         0x0011, 0x0019, 0x0021, 0x0031, 0x0041, 0x0061, 0x0081, 0x00c1,
         0x0101, 0x0181, 0x0201, 0x0301, 0x0401, 0x0601, 0x0801, 0x0c01,
         0x1001, 0x1801, 0x2001, 0x3001, 0x4001, 0x6001
-    ];
+    ],
 
-    var cpdext = [
+    cpdext = [
         0,  0,  0,  0,  1,  1,  2,  2,
         3,  3,  4,  4,  5,  5,  6,  6,
         7,  7,  8,  8,  9,  9, 10, 10,
         11, 11, 12, 12, 13, 13
-    ];
+    ],
     
-    var border = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+    border = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15],
     
-    var bA = barray;
+    bA = barray,
 
-    var bytepos=0;
-    var bitpos=0;
-    var bb = 1;
-    var bits=0;
+    bytepos=0,
+    bitpos=0,
+    bb = 1,
+    bits=0,
     
-    var NAMEMAX = 256;
+    NAMEMAX = 256,
     
-    var nameBuf = [];
+    nameBuf = [],
     
-    var fileout;
+    fileout;
     
     function readByte(){
+        var len = bA.length;
         bits+=8;
-        if (bytepos<bA.length){
-        	if (debug)
-        		document.write(bytepos+": "+bA[bytepos]+"<br>");
+        if (bytepos<len){
+            if (debug)
+                document.write(bytepos+": "+bA[bytepos]+"<br>");
             return bA[bytepos++];
         } else
             return -1;
@@ -145,8 +146,9 @@ JXG.Util.Unzip = function (barray){
     };
     
     function readBit(){
+        var carry;
         bits++;
-        var carry = (bb & 1);
+        carry = (bb & 1);
         bb >>= 1;
         if (bb==0){
             bb = readByte();
@@ -157,8 +159,8 @@ JXG.Util.Unzip = function (barray){
     };
 
     function readBits(a) {
-        var res = 0;
-        var i = a;
+        var res = 0,
+            i = a;
     
         while(i--) {
             res = (res<<1) | readBit();
@@ -311,12 +313,14 @@ JXG.Util.Unzip = function (barray){
     };
     
     function DecodeValue(currentTree) {
-        var xtreepos=0;
-        var X = currentTree[xtreepos];
+        var len, i,
+            xtreepos=0,
+            X = currentTree[xtreepos],
+            b;
 
         /* decode one symbol of the data */
         while(1) {
-            var b=readBit();
+            b=readBit();
             if (debug)
             	document.write("b="+b);
             if(b) {
@@ -326,7 +330,8 @@ JXG.Util.Unzip = function (barray){
                     return X.b1;    /* If leaf node, return data */
                 }
                 X = X.jump;
-                for (var i=0;i<currentTree.length;i++){
+                len = currentTree.length;
+                for (i=0;i<len;i++){
                     if (currentTree[i]===X){
                         xtreepos=i;
                         break;
@@ -350,7 +355,7 @@ JXG.Util.Unzip = function (barray){
     };
     
     function DeflateLoop() {
-    var last, c, type, i;
+    var last, c, type, i, len;
 
     do {
         /*if((last = readBit())){
@@ -358,9 +363,8 @@ JXG.Util.Unzip = function (barray){
         } else {
             fprintf(errfp, "Not Last Block: ");
         }*/
-        var last = readBit();
-
-        var type = readBits(2);
+        last = readBit();
+        type = readBits(2);
         switch(type) {
             case 0:
             	if (debug)
@@ -493,7 +497,8 @@ JXG.Util.Unzip = function (barray){
             }
             //fprintf(errfp, "\n");
             //document.write('<br>ll:'+ll);
-            for (i=0; i<distanceTree.length; i++)
+            len = distanceTree.length;
+            for (i=0; i<len; i++)
                 distanceTree[i]=new HufNode();
             if(CreateTree(distanceTree, 19, ll, 0)) {
                 flushBuffer();
@@ -556,13 +561,15 @@ JXG.Util.Unzip = function (barray){
             }
             fprintf(errfp, "\n");*/
             // Can overwrite tree decode tree as it is not used anymore
-            for (i=0; i<literalTree.length; i++)
+            len = literalTree.length;
+            for (i=0; i<len; i++)
                 literalTree[i]=new HufNode();
             if(CreateTree(literalTree, literalCodes, ll, 0)) {
                 flushBuffer();
                 return 1;
             }
-            for (i=0; i<distanceTree.length; i++)
+            len = literalTree.length;
+            for (i=0; i<len; i++)
                 distanceTree[i]=new HufNode();
             var ll2 = new Array();
             for (i=literalCodes; i <ll.length; i++){
