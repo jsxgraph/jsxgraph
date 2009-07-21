@@ -94,9 +94,10 @@ JXG.SVGRenderer.prototype.drawTicks = function(axis) {
 
 JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     var tickStr = "",
-        i, c, ticks;
+        i, c, ticks, 
+        len = axis.ticks.length;
         
-    for (i=0; i<axis.ticks.length; i++) {
+    for (i=0; i<len; i++) {
         c = axis.ticks[i].scrCoords;
         if (axis.ticks[i].major) {
             if (axis.labels[i].visProp['visible']) this.drawText(axis.labels[i]);
@@ -346,8 +347,10 @@ JXG.SVGRenderer.prototype.transformImage = function(el,t) {
 };
 
 JXG.SVGRenderer.prototype.joinTransforms = function(el,t) {
-    var str = '', i, s;
-    for (i=0;i<t.length;i++) {
+    var str = '', i, s,
+        len = t.length;
+        
+    for (i=0;i<len;i++) {
         s = t[i].matrix[1][1]+','+t[i].matrix[2][1]+','+t[i].matrix[1][2]+','+t[i].matrix[2][2]+','+t[i].matrix[1][0]+','+t[i].matrix[2][0];
         str += 'matrix('+s+') ';
     }
@@ -796,7 +799,9 @@ JXG.SVGRenderer.prototype.updatePathPrimitive = function(node, pointString, boar
 JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     var oldx = -10000.0,
         oldy = -10000.0,
-        nextSymb = ' M ',
+        symbm = ' M ',
+        symbl = ' L ',
+        nextSymb = symbm,
         pStr = '',
         h = 3*el.board.canvasHeight,
         w = 100*el.board.canvasWidth,
@@ -810,10 +815,10 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
         scr = el.points[i].scrCoords;
         if (isNoPlot && Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
         if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (isFunctionGraph && (scr[2]>h || scr[2]<-0.5*h)) ) {
-            nextSymb = ' M ';
+            nextSymb = symbm;
         } else {
             pStr += [nextSymb,scr[1],' ',scr[2]].join(''); // Attention: first coordinate may be inaccurate if far way
-            nextSymb = ' L ';
+            nextSymb = symbl;
         }
         oldx = scr[1];
         oldy = scr[2];
@@ -823,12 +828,14 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
 
 JXG.SVGRenderer.prototype.updatePolygonePrimitive = function(node, el) {
     var pStr = '', 
-        screenCoords, i;
+        screenCoords, i,
+        len = el.vertices.length;
+        
     node.setAttributeNS(null, 'stroke', 'none');
-    for(i=0; i<el.vertices.length-1; i++) {
+    for(i=0; i<len-1; i++) {
         screenCoords = el.vertices[i].coords.scrCoords;
         pStr = pStr + screenCoords[1] + "," + screenCoords[2];
-        if(i<el.vertices.length-2) { pStr += " "; }
+        if(i<len-2) { pStr += " "; }
     }
     node.setAttributeNS(null, 'points', pStr);
 };

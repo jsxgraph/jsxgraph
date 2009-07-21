@@ -665,9 +665,10 @@ JXG.Algebra.prototype.projectPointToTurtle = function(point,turtle) {
         np = 0, 
         npmin = 0,
         mindist = 1000000.0, 
-        dist, el, minEl;
-
-    for(i=0;i<turtle.objects.length;i++) {  // run through all curves of this turtle
+        dist, el, minEl, 
+        len = turtle.objects.length;
+    
+    for(i=0;i<len;i++) {  // run through all curves of this turtle
         el = turtle.objects[i];
         if (el.type==JXG.OBJECT_TYPE_CURVE) {
             newCoords = this.projectPointToCurve(point,el);
@@ -1108,9 +1109,12 @@ JXG.Algebra.prototype.findDependencies = function(me,term) {
  * @return Euclidean distance of the given vectors.
  */
 JXG.Algebra.prototype.distance = function(array1, array2) {
-    var sum = 0, i;
+    var sum = 0, 
+        i, len;
+        
     if(array1.length != array2.length) { return; }
-    for(i=0; i<array1.length; i++) {
+    len = array1.length;
+    for(i=0; i<len; i++) {
         sum += (array1[i] - array2[i])*(array1[i] - array2[i]);
     }
     return Math.sqrt(sum);
@@ -1185,7 +1189,7 @@ JXG.Algebra.prototype.matMatMult = function(mat1,mat2) {
         res = [], 
         i, j, s, k;
         
-    for (i=0;i<mat1.length;i++) {
+    for (i=0;i<m;i++) {
         res[i] = [];
     }
 

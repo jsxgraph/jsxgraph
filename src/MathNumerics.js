@@ -388,19 +388,20 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
  */
 JXG.Math.Numerics.lagrangePolynomial = function(p) {  
     return function(x) {
-        var i,k,t,
+        var i, k, t,
             y = 0.0,
             xc = [],
-            nom = 1.0;
+            nom = 1.0, 
+            len = p.length;
             
-        for (i=0;i<p.length;i++) {
+        for (i=0;i<len;i++) {
             xc[i] = p[i].X();
             nom *= (x-xc[i]);
         }
         
-        for (i=0;i<p.length;i++) {
+        for (i=0;i<len;i++) {
             t = p[i].Y()*nom/(x-xc[i]);
-            for (k=0;k<p.length;k++) if (k!=i) {
+            for (k=0;k<len;k++) if (k!=i) {
                 t /= (xc[i]-xc[k]);
             }
             y += t;
@@ -421,14 +422,15 @@ JXG.Math.Numerics.neville = function(p) {
                 var i,k,L,
                     val = 0.0,
                     nom = 1.0,
-                    denom = -JXG.Math.factorial(p.length-1);
+                    len = p.length,
+                    denom = -JXG.Math.factorial(len-1);
 
-                for (i=0;i<p.length;i++) {
+                for (i=0;i<len;i++) {
                     nom *= (t-i);
                 }
                 val = p[0].X()*nom/(t-0)/denom;
-                for (i=1;i<p.length;i++) {
-                    denom *= (-1)*i/(p.length-i);
+                for (i=1;i<len;i++) {
+                    denom *= (-1)*i/(len-i);
                     L = p[i].X()*nom/(t-i)/denom;
                     val += L;
                 }
@@ -438,14 +440,15 @@ JXG.Math.Numerics.neville = function(p) {
                 var i,k,L,
                     val = 0.0,
                     nom = 1.0,
-                    denom = -JXG.Math.factorial(p.length-1);
+                    len = p.length,
+                    denom = -JXG.Math.factorial(len-1);
                 
-                for (i=0;i<p.length;i++) {
+                for (i=0;i<len;i++) {
                     nom *= (t-i);
                 }
                 val = p[0].Y()*nom/(t-0)/denom;
-                for (i=1;i<p.length;i++) {
-                    denom *= (-1)*i/(p.length-i);
+                for (i=1;i<len;i++) {
+                    denom *= (-1)*i/(len-i);
                     L = p[i].Y()*nom/(t-i)/denom;
                     val += L;
                 }
@@ -792,7 +795,7 @@ JXG.Math.Numerics.rungeKutta = function(/** JXG.Math.Numerics.Butcher */ butcher
         r = 0;
         
     // don't change x0, so copy it
-    for (e=0; e<x0.length; e++)
+    for (e=0; e<dim; e++)
         x[e] = x0[e];
     for (i=0; i<N; i++) {
         // Optimization doesn't work for ODEs plotted using time

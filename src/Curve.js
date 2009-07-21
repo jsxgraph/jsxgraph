@@ -125,10 +125,11 @@ JXG.Curve.prototype.minX = function () {
  * May be overwritten in @see generateTerm.
  */
 JXG.Curve.prototype.maxX = function () {
+    var rightCoords;
     if (this.curveType=='polar') {
         return 2.0*Math.PI;
     } else {
-        var rightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board);
+        rightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board);
         return rightCoords.usrCoords[1];
     }
 };
@@ -146,17 +147,18 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
         steps = 300, 
         d = (this.maxX()-this.minX())/steps,
         prec = this.r/(this.board.unitX*this.board.zoomX),
-        checkPoint;
+        checkPoint, len;
 
     checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     x = checkPoint.usrCoords[1];
     y = checkPoint.usrCoords[2];
     if (this.curveType=='parameter' || this.curveType=='polar') { 
         // Brute fore search for a point on the curve close to the mouse pointer
+        len = this.transformations.length;
         for (i=0,t=this.minX(); i<steps; i++) {
             tX = this.X(t);
             tY = this.Y(t);
-            for (j=0; j<this.transformations.length; j++) {
+            for (j=0; j<len; j++) {
                 trans = this.transformations[j];
                 trans.update();
                 c = trans.matVecMult(trans.matrix,[1,tX,tY]);
@@ -168,7 +170,8 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
             t+=d;
         }  
     } else if (this.curveType == 'plot') {
-        for (i=0;i<this.numberPoints-1;i++) {
+        len = this.numberPoints;
+        for (i=0;i<len-1;i++) {
             x1 = this.X(i+1)-this.X(i);
             y1 = this.Y(i+1)-this.Y(i);
             x0 = x-this.X(i);
@@ -192,7 +195,8 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
         for (i=0,t=this.minX(); i<steps; i++) {
             tX = this.X(t);
             tY = this.Y(t);
-            for (j=0; j<this.transformations.length; j++) {
+            len = this.transformations.length;
+            for (j=0; j<len; j++) {
                 trans = this.transformations[j];
                 trans.update();
                 c = trans.matVecMult(trans.matrix,[1,tX,tY]);
@@ -212,10 +216,11 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
   * Allocate points in the Coords array this.points
   */
 JXG.Curve.prototype.allocatePoints = function () {
-    var i;
+    var i, len;
     // At this point this.numberPoints has been set in this.generateTerm
+    len = this.numberPoints;
     if (this.points.length<this.numberPoints) {
-        for (i=this.points.length; i<this.numberPoints; i++) {
+        for (i=this.points.length; i<len; i++) {
             this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
         }
     }
@@ -308,11 +313,12 @@ JXG.Curve.prototype.updateCurve = function () {
 };
 
 JXG.Curve.prototype.updateTransform = function (p) {
-    var t, c, i;
-    if (this.transformations.length==0) {
+    var t, c, i, 
+        len = this.transformations.length;
+    if (len==0) {
         return p;
     }
-    for (i=0; i<this.transformations.length; i++) {
+    for (i=0; i<len; i++) {
         t = this.transformations[i];
         t.update();
         c = t.matVecMult(t.matrix,p.usrCoords);
@@ -322,13 +328,14 @@ JXG.Curve.prototype.updateTransform = function (p) {
 };
 
 JXG.Curve.prototype.addTransform = function (transform) {
-    var list, i;
+    var list, i, len;
     if (JXG.IsArray(transform)) {
         list = transform;
     } else {
         list = [transform];
     }
-    for (i=0; i<list.length; i++) {
+    len = list.length;
+    for (i=0; i<len; i++) {
         this.transformations.push(list[i]);
     }
 };

@@ -920,7 +920,7 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
  *   var p2 = board.createElement('glider', [2.0, 1.5, c1]);
  * </script><pre>
  * @example
- * // Create a glider with default coordinates (0,0,0). Same premises as above.
+ * // Create a glider with default coordinates (1,0,0). Same premises as above.
  * var p1 = board.createElement('point', [2.0, 2.0]);
  * var c1 = board.createElement('circle', [p1, 2.0]);
  * var p2 = board.createElement('glider', [c1]);
