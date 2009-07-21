@@ -24,18 +24,17 @@
 */
 
 /** 
- * @fileoverview In this file the class Algebra is defined, a class for
- * managing algebraic computation like intersections and midpoints etc.
- * @author graphjs
+ * @fileoverview This file contains the class Algebra, a class for calculating algebraic/geometric
+ * stuff like intersection points, angles, midpoint, and so on.
  */
  
 /**
  * Creates a new instance of Algebra.
- * @class In this class all algebraic computation is done.
- * @param {JXG.Board} board The board the algebra is associated with.
+ * @class A class for algebraic computations like determining intersection points, angles, midpoints, ...
+ * @param board The board the algebra object is associated with.
  * @constructor
  */
-JXG.Algebra = function (board) {
+JXG.Algebra = function (/** JXG.Board */ board) {
     /**
      * Reference to board.
      * @type JXG.Board
@@ -43,18 +42,24 @@ JXG.Algebra = function (board) {
     this.board = board;
     
     /**
-     * Defines float precision. Everything with abs(f) < eps is assumed being zero.
+     * Defines float precision. Every number <tt>f</tt> with
+     * Math.abs(f) < eps is assumed to be zero.
+     * @default {@link JXG.Math#eps}
+     * @see JXG.Math#eps
      */
-    this.eps = 0.00001;
+    this.eps = JXG.Math.eps;
 };
 
 /**
- * Calculates the angle between the points A, B, C.
- * @param {JXG.Point} A A point  or [x,y] array.
- * @param {JXG.Point} B Another point or [x,y] array.
- * @param {JXG.Point} C A circle - no, of course the third point or [x,y] array.
- * @type float
- * @return The angle in radian measure
+ * Calculates the angle defined by the points A, B, C.
+ * @param {JXG.Point,array} A A point  or [x,y] array.
+ * @param {JXG.Point,array} B Another point or [x,y] array.
+ * @param {JXG.Point,array} C A circle - no, of course the third point or [x,y] array.
+ * @type number
+ * @return The angle in radian measure.
+ * @deprecated Use {@link JXG.Algebra#rad} instead.
+ * @see #rad
+ * @see #trueAngle
  */
 JXG.Algebra.prototype.angle = function(A, B, C) {   
     var a = [],
@@ -91,14 +96,14 @@ JXG.Algebra.prototype.angle = function(A, B, C) {
 };
 
 /**
- * Calculates the internal angle between the three points A, B, C
- * @param {JXG.Point} A Point or [x,y] array
- * @param {JXG.Point} B Point or [x,y] array
- * @param {JXG.Point} C Point or [x,y] array
- * @type float
- * @return Angle in degrees.
+ * Calculates the angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
+ * @param A Point or [x,y] array
+ * @param B Point or [x,y] array
+ * @param C Point or [x,y] array
+ * @return The angle in degrees.
+ * @see rad
  */
-JXG.Algebra.prototype.trueAngle = function(A, B, C){
+JXG.Algebra.prototype.trueAngle = function(/** JXG.Point */ A, /** JXG.Point */ B, /** JXG.Point */ C) /** number */ {
     var ax,
         ay,
         bx,
@@ -170,15 +175,27 @@ JXG.Algebra.prototype.trueAngle = function(A, B, C){
 };
 
 /**
+ * Calculates the internal angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
+ * @param {JXG.Point} A Point or [x,y] array
+ * @param {JXG.Point} B Point or [x,y] array
+ * @param {JXG.Point} C Point or [x,y] array
+ * @type number
+ * @see #trueAngle
+ * @return Angle in radians.
+ */
+JXG.Algebra.prototype.rad = function(A,B,C) {
+    return this.trueAngle(A,B,C)*Math.PI/180.0;
+};
+
+/**
  * Calculates the bisection between the three points A, B, C. The bisection is defined by two points:
  * Parameter B and a point with the coordinates calculated in this function.
- * @param {JXG.Point} A Point
- * @param {JXG.Point} B Point
- * @param {JXG.Point} C Point
- * @type JXG.Coords
+ * @param A Point
+ * @param B Point
+ * @param C Point
  * @return Coordinates of the second point defining the bisection.
  */
-JXG.Algebra.prototype.angleBisector = function(A, B, C) {
+JXG.Algebra.prototype.angleBisector = function(/** JXG.Point */ A, /** JXG.Point */ B, /** JXG.Point */ C) /** JXG.Coords */ {
     /* First point */
     var Ac = A.coords.usrCoords,
         Bc = B.coords.usrCoords, 
@@ -278,12 +295,12 @@ JXG.Algebra.prototype.reflection = function(line,point) {
 };
 
 /**
- * !!! ToDo
- * @param {JXG.Point} rotpoint
- * @param {JXG.Point} point
- * @param {float} phi
+ * TODO Description what function does and how it is done
+ * @param {JXG.Point} rotpoint TODO description of this parameter
+ * @param {JXG.Point} point TODO description of this parameter
+ * @param {number} phi TODO description of this parameter
  * @type JXG.Coords
- * @return !!! ToDo
+ * @return TODO what function returns
  */
 JXG.Algebra.prototype.rotation = function(rotpoint, point, phi) {
     // 180 degrees:
@@ -308,7 +325,7 @@ JXG.Algebra.prototype.rotation = function(rotpoint, point, phi) {
 /**
  * Calculates the coordinates of a point on the perpendicular to the given line through
  * the given point.
- * @param {JXG.Line} line Line.
+ * @param {JXG.Line} line A line.
  * @param {JXG.Point} point Intersection point of line to perpendicular.
  * @type JXG.Coords
  * @return Coordinates of a point on the perpendicular to the given line through the given point.
@@ -359,7 +376,7 @@ JXG.Algebra.prototype.perpendicular = function(line, point) {
 };
 
 /**
- * Calculates the midpoint of the circumcircle of the given points.
+ * Calculates the midpoint of the circumcircle of the three given points.
  * @param {JXG.Point} point1 Point
  * @param {JXG.Point} point2 Point
  * @param {JXG.Point} point3 Point
@@ -417,7 +434,7 @@ JXG.Algebra.prototype.intersectLineLine = function(line1, line2) {
  * Calculates the coordinates of the intersection of the given line and circle.
  * @param {JXG.Circle} circle Circle.
  * @param {JXG.Line} line Line.
- * @type Array
+ * @type array
  * @return Array of the Coordinates of the intersection points of the given circle with the given line and
  * the amount of intersection points in the first component of the array.
  */
@@ -465,7 +482,7 @@ JXG.Algebra.prototype.intersectCircleLine = function(circle, line) {
  * Calculates the coordinates of the intersection of the given circles.
  * @param {JXG.Circle} circle1 Circle.
  * @param {JXG.Circle} circle2 Circle.
- * @type Array
+ * @type array
  * @return Array of the Coordinates of the intersection points of the given circles and the
  * amount of intersection points in the first component of the array.
  */
@@ -570,10 +587,11 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
 
 /**
  * Calculates the coordinates of the projection of a given point on a given curve. 
- * Uses {@link #projectPointToCurve}.
+ * Uses {@link #projectCoordsToCurve}.
  * @param {JXG.Point} point Point to project.
  * @param {JXG.Curve} graph Curve on that the point is projected.
  * @type JXG.Coords
+ * @see #projectCoordsToCurve
  * @return The coordinates of the projection of the given point on the given graph.
  */
 JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
@@ -594,6 +612,7 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
  * @param {float} start value for newtons method
  * @param {JXG.Curve} graph Curve on that the point is projected.
  * @type JXG.Coords
+ * @see #projectPointToCurve
  * @return Array containing the coordinates of the projection of the given point on the given graph and 
  * the position on the curve.
  */
@@ -654,7 +673,7 @@ JXG.Algebra.prototype.projectCoordsToCurve = function(x,y,t,curve) {
 
 /**
  * Calculates the coordinates of the projection of a given point on a given turtle. A turtle consists of
- * one or more curves of curveType 'plot'.
+ * one or more curves of curveType 'plot'. Uses {@link #projectPointToCurve}.
  * @param {JXG.Point} point Point to project.
  * @param {JXG.Turtle} turtle on that the point is projected.
  * @type JXG.Coords
@@ -871,9 +890,11 @@ JXG.Algebra.prototype.replaceSup = function(te) {
 };
 
 /**
- * Replace element names in terms by element ids
+ * Replace an element's name in terms by an element's id.
+ * @param term Term containing names of elements.
+ * @return The same string with names replaced by ids.
  **/
-JXG.Algebra.prototype.replaceNameById = function(term) {
+JXG.Algebra.prototype.replaceNameById = function(/** string */ term) /** string */ {
     var pos = 0, end, elName, el;
     
     pos = term.indexOf('X(');
@@ -1013,9 +1034,11 @@ JXG.Algebra.prototype.replaceNameById = function(term) {
 };
 
 /**
- * Replace element ids in terms by element this.board.objects['id']
+ * Replaces element ids in terms by element this.board.objects['id'].
+ * @param term A GEONE<sub>x</sub>T function string with JSXGraph ids in it.
+ * @return The input string with element ids replaced by this.board.objects["id"]. 
  **/
-JXG.Algebra.prototype.replaceIdByObj = function(term) {
+JXG.Algebra.prototype.replaceIdByObj = function(/** string */ term) /** string */ {
     var expr = /(X|Y|L)\(([\w_]+)\)/g;  // Suche "X(gi23)" oder "Y(gi23A)" und wandle in objects['gi23'].X() um.
     term = term.replace(expr,"this.board.objects[\"$2\"].$1()");
 
@@ -1031,10 +1054,10 @@ JXG.Algebra.prototype.replaceIdByObj = function(term) {
 };
 
 /**
- * Converts algebraic expression in GEONExT syntax into expressions in JavaScript syntax.
+ * Converts the given algebraic expression in GEONE<sub>x</sub>T syntax into an equivalent expression in JavaScript syntax.
  * @param {String} term Expression in GEONExT syntax
  * @type String
- * @return Given expression in JavaScript syntax
+ * @return Given expression translated to JavaScript.
  */
 JXG.Algebra.prototype.geonext2JS = function(term) {
     var expr, newterm, i,
@@ -1073,7 +1096,7 @@ JXG.Algebra.prototype.geonext2JS = function(term) {
  * @param {JXG.GeometryElement} me Object depending on objects in given term.
  * @param {String} term String containing dependencies for the given object.
  */
-JXG.Algebra.prototype.findDependencies = function(me,term) {
+JXG.Algebra.prototype.findDependencies = function(me, term) {
     var elements = this.board.elementsByName,
         el, expr, elmask;
         
@@ -1102,10 +1125,10 @@ JXG.Algebra.prototype.findDependencies = function(me,term) {
 };
 
 /**
- * Calculates euclidean distance for two given arrays of the same length.
- * @param {Array} array1 Array of float or integer.
- * @param {Array} array2 Array of float or integer.
- * @type float
+ * Calculates euclidean norm for two given arrays of the same length.
+ * @param {array} array1 Array of float or integer.
+ * @param {array} array2 Array of float or integer.
+ * @type number
  * @return Euclidean distance of the given vectors.
  */
 JXG.Algebra.prototype.distance = function(array1, array2) {
@@ -1122,12 +1145,11 @@ JXG.Algebra.prototype.distance = function(array1, array2) {
 
 /**
  * Calculates euclidean distance for two given arrays of the same length.
- * If one of the arrays contains a zero in coordinate 0, and the euclidean distance
- * is different from zero it is
- * a point at infinity and we return Infinity.
- * @param {Array} array1 Array of float or integer.
- * @param {Array} array2 Array of float or integer.
- * @type float
+ * If one of the arrays contains a zero in the first coordinate, and the euclidean distance
+ * is different from zero it is a point at infinity and we return Infinity.
+ * @param {array} array1 Array containing elements of number.
+ * @param {array} array2 Array containing elements of type number.
+ * @type number
  * @return Euclidean (affine) distance of the given vectors.
  */
 JXG.Algebra.prototype.affineDistance = function(array1, array2) {
@@ -1144,24 +1166,12 @@ JXG.Algebra.prototype.affineDistance = function(array1, array2) {
 };
 
 /**
- * Calculates the internal angle between the three points A, B, C
- * @param {JXG.Point} A Point or [x,y] array
- * @param {JXG.Point} B Point or [x,y] array
- * @param {JXG.Point} C Point or [x,y] array
- * @type float
- * @return Angle in radians.
+ * Matrix-vector multiplication.
+ * @param mat1 Two dimensional array of numbers
+ * @param vec Array of numbers
+ * @return Array of numbers containing result
  */
-JXG.Algebra.prototype.rad = function(A,B,C) {
-    return this.trueAngle(A,B,C)*Math.PI/180.0;
-};
-
-/**
- * Matrix-vector-multiplication.
- * @param {Array} mat1 In - Two dimensional array of numbers
- * @param {Array} vec In - Array of numbers
- * res: Output - Array of numbers containing result
- */
-JXG.Algebra.prototype.matVecMult = function(mat1,vec) {
+JXG.Algebra.prototype.matVecMult = function(/** array */ mat1, /** array */ vec) /** array */ {
     var m = mat1.length,
         n = vec.length,
         res = [],
@@ -1177,12 +1187,12 @@ JXG.Algebra.prototype.matVecMult = function(mat1,vec) {
 };
 
 /**
- * Matrix-matrix-multiplication.
- * @param {Array} mat1 In - Two dimensional array of numbers
- * @param {Array} mat2 In - Two dimensional array of numbers
- * Output res Out - Two dimensional array of numbers
+ * Matrix-matrix multiplication.
+ * @param mat1 Two dimensional array of numbers
+ * @param mat2 Two dimensional array of numbers
+ * @return Two dimensional Array of numbers containing result
  */
-JXG.Algebra.prototype.matMatMult = function(mat1,mat2) {
+JXG.Algebra.prototype.matMatMult = function(/** array */ mat1, /** array */ mat2) /** array */ {
     var m = mat1.length,
         n = mat2[0].length,
         m2 = mat2.length,
@@ -1205,7 +1215,12 @@ JXG.Algebra.prototype.matMatMult = function(mat1,mat2) {
     return res;
 };
 
-JXG.Algebra.prototype.str2Bool = function(s) {
+/**
+ * Converts a string containing either <strong>true</strong> or <strong>false</strong> into a boolean value.
+ * @param s String containing either <strong>true</strong> or <strong>false</strong>.
+ * @return String typed boolean value converted to boolean.
+ */
+JXG.Algebra.prototype.str2Bool = function(/** string */ s) /** boolean */ {
     if (s==undefined || s==null) {
         return true;
     }
@@ -1221,11 +1236,12 @@ JXG.Algebra.prototype.str2Bool = function(s) {
 
 /**
  * Compute power a^b
- * @param {Number} a
- * @param {Number} b
+ * @param a Base.
+ * @param b Exponent.
+ * @return a to the power of b.
  */
-JXG.Algebra.prototype.pow = function(a,b) {
-    if (a==null || b==null) { 
+JXG.Algebra.prototype.pow = function(/** number */ a, /** number */ b) /** number */ {
+    if (a==0 || b==0) { 
         return 1;
     }
     if (Math.floor(b)==b) {// b is integer
@@ -1234,7 +1250,7 @@ JXG.Algebra.prototype.pow = function(a,b) {
         if (a>0) {
             return Math.exp(b*Math.log(Math.abs(a)));
         } else {
-            return null;
+            return NaN;
         }
     }
 };
@@ -1257,20 +1273,36 @@ JXG.Algebra.prototype.crossProduct = function(c1,c2) {
             c1[0]*c2[1]-c1[1]*c2[0]];
 };
 
-/** 
-  * Inner product of two vectors a, b.
-  * The length of the vectors is n.
-  **/ 
-JXG.Algebra.prototype.innerProduct = function(a,b,n) {    
+/**
+ * Inner product of two vectors a, b. n is the length of the vectors.
+ * @param a Vector
+ * @param b Vector
+ * @param [n] Length of the Vectors. If not given the length of the first vector is taken.
+ * @return The inner product of a and b.
+ */JXG.Algebra.prototype.innerProduct = function(a, b, n) {    
     var i, s = 0;
+    
+    if(typeof n == 'undefined')
+    	n = a.length;
+    
     for (i=0;i<n;i++) {
         s += a[i]*b[i];
     }
     return s;
 };
 
-JXG.Algebra.prototype.meet = function(el1,el2,i) {
-    var eps = 0.000001;
+/**
+ * TODO description, The type of el1 and el2 is not clear!
+ * @param el1 TODO type and description
+ * @param el2 TODO type and description
+ * @param i Index of the intersection point that should be returned.
+ * @return One of the possible two or more intersection points. Which point will
+ * be returned is determined by i.
+ */
+JXG.Algebra.prototype.meet = function(el1, el2, /** number */ i) /** JXG.Coords */ {
+//    var eps = 0.000001;
+    var eps = this.eps;
+
     if (Math.abs(el1[3])<eps && Math.abs(el2[3])<eps) { // line line
         return this.meetLineLine(el1,el2,i);
     } else if (Math.abs(el1[3])>=eps && Math.abs(el2[3])<eps) { // circle line
@@ -1283,6 +1315,7 @@ JXG.Algebra.prototype.meet = function(el1,el2,i) {
 };
 
 /**
+  * TODO Description seems to be wrong just like the parameter types and descriptions.
   * Intersection of two lines.
   * To be consistent we always return two intersection points.
   * @param {JXG.Line} l1 Line
@@ -1308,6 +1341,7 @@ JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
 };
 
 /**
+  * TODO Description seems to be wrong just like the parameter types and descriptions.
   * Intersection of line and circle.
   * To be consistent we always return two intersection points.
   * @param {JXG.Line} lin Line
@@ -1357,6 +1391,7 @@ JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
 };
 
 /**
+  * TODO Description seems to be wrong just like the parameter types and descriptions.
   * Intersection of two circles.
   * To be consistent we always return two intersection points.
   * @param {JXG.Circle} circ1 Circle
@@ -1389,7 +1424,10 @@ JXG.Algebra.prototype.meetCircleCircle = function(circ1,circ2,i) {
     // Returns do not work with homogeneous coordinates, yet
 };
 
-// [c,b0,b1,a,k,r,q0,q1]
+/**
+ * TODO description, paramter types and descriptions, return type and description
+ * [c,b0,b1,a,k,r,q0,q1]
+ */
 JXG.Algebra.prototype.normalize = function(stdform) {
     var a2 = 2*stdform[3],
         r = stdform[4]/(a2),  // k/(2a)
@@ -1432,7 +1470,7 @@ JXG.Algebra.prototype.normalize = function(stdform) {
  *
  * The Jacobian J is defined by
  * J = (a, b)
- *      (c, d)
+ *     (c, d)
  * where
  * a = c1_x'(t1)
  * b = -c2_x'(t2)
