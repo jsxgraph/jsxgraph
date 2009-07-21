@@ -64,6 +64,7 @@ JXG.Transformation.prototype.update = function(){};
  */
 JXG.Transformation.prototype.setMatrix = function(board,type,params) {
     var i;
+    
     this.isNumericMatrix = true;
     for (i=0;i<params.length;i++) {
         if (typeof params[i]!='number') {
@@ -95,23 +96,25 @@ JXG.Transformation.prototype.setMatrix = function(board,type,params) {
             this.evalParam = JXG.createEvalFunction(board,params,4);
         }
         this.update = function() {
+            var x, y, xoff, yoff, d;
+            
             if (params.length==1) { // line
-                var x = params[0].point2.X()-params[0].point1.X();
-                var y = params[0].point2.Y()-params[0].point1.Y();
-                var xoff = params[0].point1.X();
-                var yoff = params[0].point1.Y();
+                x = params[0].point2.X()-params[0].point1.X();
+                y = params[0].point2.Y()-params[0].point1.Y();
+                xoff = params[0].point1.X();
+                yoff = params[0].point1.Y();
             } else if (params.length==2){ // two points
-                var x = params[1].X()-params[0].X();
-                var y = params[1].Y()-params[0].Y();
-                var xoff = params[0].X();
-                var yoff = params[0].Y();
+                x = params[1].X()-params[0].X();
+                y = params[1].Y()-params[0].Y();
+                xoff = params[0].X();
+                yoff = params[0].Y();
             } else if (params.length==4){ // two points coordinates [px,py,qx,qy]
-                var x = this.evalParam(2)-this.evalParam(0);
-                var y = this.evalParam(3)-this.evalParam(1);
-                var xoff = this.evalParam(0);
-                var yoff = this.evalParam(1);
+                x = this.evalParam(2)-this.evalParam(0);
+                y = this.evalParam(3)-this.evalParam(1);
+                xoff = this.evalParam(0);
+                yoff = this.evalParam(1);
             }
-            var d = x*x+y*y;
+            d = x*x+y*y;
             this.matrix[1][1] = (x*x-y*y)/d;
             this.matrix[1][2] = 2*x*y/d;
             this.matrix[2][1] = 2*x*y/d;
@@ -129,18 +132,18 @@ JXG.Transformation.prototype.setMatrix = function(board,type,params) {
             } 
         }
         this.update = function() {
-            var beta = this.evalParam(0);
+            var beta = this.evalParam(0), x, y;
             this.matrix[1][1] = Math.cos(beta); 
             this.matrix[1][2] = -Math.sin(beta);  
             this.matrix[2][1] = Math.sin(beta); 
             this.matrix[2][2] = Math.cos(beta); 
             if (params.length>1) {  // rotate around [x,y] otherwise rotate around [0,0]
                 if (params.length==3) {
-                    var x = this.evalParam(1);
-                    var y = this.evalParam(2);
+                    x = this.evalParam(1);
+                    y = this.evalParam(2);
                 } else {
-                    var x = params[1].X();
-                    var y = params[1].Y();
+                    x = params[1].X();
+                    y = params[1].Y();
                 }
                 this.matrix[1][0] = x*(1-Math.cos(beta))+y*Math.sin(beta);
                 this.matrix[2][0] = y*(1-Math.cos(beta))-x*Math.sin(beta);
@@ -190,14 +193,16 @@ JXG.Transformation.prototype.apply = function(p){
  * and will overwrite the trasnformed coordinates.
  */
 JXG.Transformation.prototype.applyOnce = function(p){
+    var c, len, i;
     if (!JXG.IsArray(p)) {   
         this.update();
-        var c = this.matVecMult(this.matrix,p.coords.usrCoords);
+        c = this.matVecMult(this.matrix,p.coords.usrCoords);
         p.coords.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
     } else {
-        for (var i=0; i<p.length; i++) {
+        len = p.length;
+        for (i=0; i<len; i++) {
             this.update();
-            var c = this.matVecMult(this.matrix,p[i].coords.usrCoords);
+            c = this.matVecMult(this.matrix,p[i].coords.usrCoords);
             p[i].coords.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
         }
     }
@@ -207,8 +212,10 @@ JXG.Transformation.prototype.applyOnce = function(p){
  * Bind a transformation to a GeometryElement
  */
 JXG.Transformation.prototype.bindTo = function(p){
+    var i, len;
     if (JXG.IsArray(p)) {   
-        for (var i=0; i<p.length; i++) {
+        len = p.length;
+        for (i=0; i<len; i++) {
             p[i].transformations.push(this);
         }
     } else {
@@ -234,24 +241,30 @@ JXG.Transformation.prototype.setProperty = function(term) {};
  * this = t join this
  */
 JXG.Transformation.prototype.melt = function(t){
-    var res = [];
-    for (var i=0;i<t.matrix.length;i++) {
+    var res = [], i, len, len0, k, s, j;
+    
+    len = t.matrix.length;
+    len0 = this.matrix[0].length;
+    
+    for (i=0;i<len;i++) {
         res[i] = [];
     }
     this.update();
     t.update();
-    for (i=0;i<t.matrix.length;i++) {
-        for (var j=0;j<this.matrix[0].length;j++) {
-            var s = 0;
-            for (var k=0;k<this.matrix.length;k++) {
+    for (i=0;i<len;i++) {
+        for (j=0;j<len0;j++) {
+            s = 0;
+            for (k=0;k<len;k++) {
                 s += t.matrix[i][k]*this.matrix[k][j];
             }
             res[i][j] = s;
         }
     }
     this.update = function() {
-        for (i=0;i<this.matrix.length;i++) {
-            for (j=0;j<this.matrix[0].length;j++) {
+        var len = this.matrix.length,
+            len0 = this.matrix[0].length;
+        for (i=0;i<len;i++) {
+            for (j=0;j<len0;j++) {
                 this.matrix[i][j] = res[i][j];
             }
         }
