@@ -230,6 +230,8 @@ JXG.JSXGraph = new function (forceRenderer) {
      * @param {String} box Html-ID to the Html-element in which the board was painted.
      */
     this.freeBoard = function (board) {
+        var el;
+
         if(typeof(board) == 'string') {
             board = this.boards[board];
         }
@@ -240,7 +242,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         JXG.removeEvent(board.containerObj, 'mousemove', board.mouseMoveListener, board);
 
         // Remove all objects from the board.
-        for(var el in board.objects) {
+        for(el in board.objects) {
             board.removeObject(board.objects[el]);
         }
 
@@ -248,7 +250,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         board.containerObj.innerHTML = '';
 
         // Tell the browser the objects aren't needed anymore
-        for(var el in board.objects) {
+        for(el in board.objects) {
             delete(board.objects[el]);
         }
 
