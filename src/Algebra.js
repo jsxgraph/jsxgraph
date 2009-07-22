@@ -295,12 +295,13 @@ JXG.Algebra.prototype.reflection = function(line,point) {
 };
 
 /**
- * TODO Description what function does and how it is done
- * @param {JXG.Point} rotpoint TODO description of this parameter
- * @param {JXG.Point} point TODO description of this parameter
- * @param {number} phi TODO description of this parameter
+ * Computes the new position of a point which is rotated 
+ * around a second point (called rotpoint) by the angle phi.
+ * @param {JXG.Point} rotpoint Center of the rotation
+ * @param {JXG.Point} point point to be rotated
+ * @param {number} phi rotation angle in arc length
  * @type JXG.Coords
- * @return TODO what function returns
+ * @return Coordinates of the new position.
  */
 JXG.Algebra.prototype.rotation = function(rotpoint, point, phi) {
     // 180 degrees:
@@ -1292,12 +1293,16 @@ JXG.Algebra.prototype.crossProduct = function(c1,c2) {
 };
 
 /**
- * TODO description, The type of el1 and el2 is not clear!
- * @param el1 TODO type and description
- * @param el2 TODO type and description
- * @param i Index of the intersection point that should be returned.
- * @return One of the possible two or more intersection points. Which point will
- * be returned is determined by i.
+ * 
+ * @private
+ * Computes the intersection of a pair of lines, circles or both.
+ * It uses the internal data array stdform of these elements.
+ * @param {Array} el1 stdform of the first element (line or circle)
+ * @param {Array}  stdform of the second element (line or circle)
+ * @param {int} i Index of the intersection point that should be returned.
+ * @type JXG.Coords
+ * @return Coordinates of one of the possible two or more intersection points. 
+ * Which point will be returned is determined by i.
  */
 JXG.Algebra.prototype.meet = function(el1, el2, /** number */ i) /** JXG.Coords */ {
 //    var eps = 0.000001;
@@ -1315,13 +1320,14 @@ JXG.Algebra.prototype.meet = function(el1, el2, /** number */ i) /** JXG.Coords 
 };
 
 /**
-  * TODO Description seems to be wrong just like the parameter types and descriptions.
-  * Intersection of two lines.
-  * To be consistent we always return two intersection points.
-  * @param {JXG.Line} l1 Line
-  * @param {JXG.Line} l2 Line
-  * @return Array containing two Coords objects
-  * @type Array
+  * @private
+  * 
+  * Intersection of two lines using the stdform.
+  * @param {Array} l1 stdform of the first line
+  * @param {Array} l2 stdform of the second line
+  * @param {int} unused
+  * @type JXG.Coords
+  * @return Coordinates of the intersection point.
   */
 JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
     var s = this.crossProduct(l1,l2);
@@ -1330,24 +1336,21 @@ JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
         s[2] /= s[0];
         s[0] = 1.0;
     }
-    /*
-    var s1 = l1;
-    var s2 = l2;
-    var z = s1[1]*s2[2]-s1[2]*s2[1];
-    var x = (s1[2]*s2[0]-s1[0]*s2[2])/z;
-    var y = (s1[0]*s2[1]-s1[1]*s2[0])/z;
-    */
     return new JXG.Coords(JXG.COORDS_BY_USER, s, this.board);
 };
 
 /**
-  * TODO Description seems to be wrong just like the parameter types and descriptions.
-  * Intersection of line and circle.
-  * To be consistent we always return two intersection points.
-  * @param {JXG.Line} lin Line
-  * @param {JXG.Circle} circ Circle
-  * @return Array containing two Coords objects
-  * @type Array
+  * @private
+  * 
+  * Intersection of line and circle using the stdform.
+  * 
+  * @param {Array} lin stdform of the line
+  * @param {Array} circ stdform of the circle
+  * @param {int} number of the returned intersection point. 
+  *   i==0: use the positive square root, 
+  *   i==1: use the negative square root.
+  * @type JXG.Coords
+  * @return Coordinates of the intersection point
   */
  JXG.Algebra.prototype.meetLineCircle = function(lin,circ,i) {    
     var a,b,c,d,n, A,B,C, k,t;
@@ -1391,13 +1394,17 @@ JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
 };
 
 /**
-  * TODO Description seems to be wrong just like the parameter types and descriptions.
-  * Intersection of two circles.
-  * To be consistent we always return two intersection points.
-  * @param {JXG.Circle} circ1 Circle
-  * @param {JXG.Circle} circ2 Circle
-  * @return Array containing two Coords objects
-  * @type Array
+  * @private
+  * 
+  * Intersection of two circles using the stdform.
+  * 
+  * @param {Array} circ1 stdform of the first circle
+  * @param {Array} circ2 stdform of the second circle
+  * @param {int} number of the returned intersection point. 
+  *   i==0: use the positive square root, 
+  *   i==1: use the negative square root.
+  * @type JXG.Coords
+  * @return Coordinates of the intersection point
   */
 JXG.Algebra.prototype.meetCircleCircle = function(circ1,circ2,i) {
     var radicalAxis;
@@ -1425,9 +1432,13 @@ JXG.Algebra.prototype.meetCircleCircle = function(circ1,circ2,i) {
 };
 
 /**
- * TODO description, paramter types and descriptions, return type and description
- * [c,b0,b1,a,k,r,q0,q1]
- */
+  * @private
+  *
+  * Normalize the stdform [c,b0,b1,a,k,r,q0,q1].
+  * @param {Array} stdform to be normalized.
+  * @type {Array}
+  * @return The normalized stdform.
+  */
 JXG.Algebra.prototype.normalize = function(stdform) {
     var a2 = 2*stdform[3],
         r = stdform[4]/(a2),  // k/(2a)
