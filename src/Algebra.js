@@ -101,7 +101,7 @@ JXG.Algebra.prototype.angle = function(A, B, C) {
  * @param B Point or [x,y] array
  * @param C Point or [x,y] array
  * @return The angle in degrees.
- * @see rad
+ * @see #rad
  */
 JXG.Algebra.prototype.trueAngle = function(/** JXG.Point */ A, /** JXG.Point */ B, /** JXG.Point */ C) /** number */ {
     var ax,
@@ -1298,8 +1298,8 @@ JXG.Algebra.prototype.crossProduct = function(c1,c2) {
  * Computes the intersection of a pair of lines, circles or both.
  * It uses the internal data array stdform of these elements.
  * @param {Array} el1 stdform of the first element (line or circle)
- * @param {Array}  stdform of the second element (line or circle)
- * @param {int} i Index of the intersection point that should be returned.
+ * @param {Array} el2 stdform of the second element (line or circle)
+ * @param {number} i Index of the intersection point that should be returned.
  * @type JXG.Coords
  * @return Coordinates of one of the possible two or more intersection points. 
  * Which point will be returned is determined by i.
@@ -1325,7 +1325,7 @@ JXG.Algebra.prototype.meet = function(el1, el2, /** number */ i) /** JXG.Coords 
   * Intersection of two lines using the stdform.
   * @param {Array} l1 stdform of the first line
   * @param {Array} l2 stdform of the second line
-  * @param {int} unused
+  * @param {number} i unused
   * @type JXG.Coords
   * @return Coordinates of the intersection point.
   */
@@ -1346,7 +1346,7 @@ JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
   * 
   * @param {Array} lin stdform of the line
   * @param {Array} circ stdform of the circle
-  * @param {int} number of the returned intersection point. 
+  * @param {number} i number of the returned intersection point. 
   *   i==0: use the positive square root, 
   *   i==1: use the negative square root.
   * @type JXG.Coords
@@ -1400,7 +1400,7 @@ JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
   * 
   * @param {Array} circ1 stdform of the first circle
   * @param {Array} circ2 stdform of the second circle
-  * @param {int} number of the returned intersection point. 
+  * @param {number} i number of the returned intersection point. 
   *   i==0: use the positive square root, 
   *   i==1: use the negative square root.
   * @type JXG.Coords

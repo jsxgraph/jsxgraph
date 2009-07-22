@@ -116,7 +116,7 @@ JXG.Coords.prototype.screen2usr = function() {
 
 /**
  * Calculate distance of one point to another.
- * @param {int} method The type of coordinates used here. Possible values are <b>COORDS_BY_USER</b> and <b>COORDS_BY_SCREEN</b>.
+ * @param {int} method The type of coordinates used here. Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
  * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
  */
 JXG.Coords.prototype.distance = function(method, coordinates) {

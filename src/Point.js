@@ -59,25 +59,6 @@ JXG.POINT_STYLE_PLUS_BIG     = 12; // a big +
  * @param {String} name Not necessarily unique name for the point. If null or an
  *  empty string is given, an unique name will be generated
  * @param {boolean} show False if the point is invisible, True otherwise
- * @property {boolean} showInfobox If true a infobox is shown when the  mouse is near the point.
- * @property {number} style There are different point styles which differ in appearance and size.
- * Posssible values are
- * <table><tr><th>Constant name</th><th>Value</th><th>Meaning</th></tr>
- * <tr><td>JXG.POINT_STYLE_X_SMALL</td><td>0</td><td>small sized x</td></tr>
- * <tr><td>JXG.POINT_STYLE_X</td><td>1</td><td>medium sized x</td></tr>
- * <tr><td>JXG.POINT_STYLE_X_BIG</td><td>2</td><td>big sized x</td></tr>
- * <tr><td>JXG.POINT_STYLE_CIRCLE_TINY</td><td>3</td><td>tiny circle</td></tr>
- * <tr><td>JXG.POINT_STYLE_CIRCLE_SMALL</td><td>4</td><td>small circle</td></tr>
- * <tr><td>JXG.POINT_STYLE_CIRCLE</td><td>5</td><td>medium circle</td></tr>
- * <tr><td>JXG.POINT_STYLE_CIRCLE_BIG</td><td>6</td><td>big circle</td></tr>
- * <tr><td>JXG.POINT_STYLE_SQUARE_SMALL</td><td>7</td><td>small rectangle</td></tr>
- * <tr><td>JXG.POINT_STYLE_SQUARE</td><td>8</td><td>medium rectangle</td></tr>
- * <tr><td>JXG.POINT_STYLE_SQUARE_BIG</td><td>9</td><td>big rectangle</td></tr>
- * <tr><td>JXG.POINT_STYLE_PLUS_SMALL</td><td>10</td><td>small +</td></tr>
- * <tr><td>JXG.POINT_STYLE_PLUS</td><td>11</td><td>medium +</td></tr>
- * <tr><td>JXG.POINT_STYLE_PLUS_BIG</td><td>12</td><td>big +</td></tr></table>
- * @property {boolean} fixed If true the user won't be able to move the point using the mouse.
- * 
  * @see JXG.Board#generateName
  * @see JXG.Board#addPoint
  */
@@ -85,11 +66,19 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
     this.constructor();
     
     /**
-     * Type of point; Possible values are OBJECT_TYPE_POINT, OBJECT_TYPE_GLIDER, OBJECT_TYPE_CAS. Default is OBJECT_TYPE_POINT
+     * Type of point; Possible values are {@link JXG.OBJECT_TYPE_POINT}, {@link JXG.OBJECT_TYPE_GLIDER}, {@link JXG.OBJECT_TYPE_CAS}.
+     * @default {@link JXG.OBJECT_TYPE_POINT}
      * @type number
      * @private
      */
     this.type = JXG.OBJECT_TYPE_POINT;
+    
+    /**
+     * Class of this point element; Values is OBJECT_CLASS_POINT.
+     * @constant
+     * @type number
+     * @private
+     */
     this.elementClass = JXG.OBJECT_CLASS_POINT;
 
     this.init(board, id, name);
@@ -115,6 +104,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
     /**
      * Descriptive character, displayed next to the point
      * @type JXG.Label
+     * @private
      */
     this.label = {};
     this.label.relativeCoords = [10,10];
@@ -136,7 +126,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
     }
     
     /**
-     * False: Point can be moved, True: Point can't be move with the mouse.
+     * False: Point can be moved, True: Point can't be moved with the mouse.
      * @type boolean
      * @default false
      */
@@ -150,32 +140,33 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
     this.position = null;
 
     /**
-     * Determines whether the point slides on a polygon if point is a glider
+     * Determines whether the point slides on a polygon if point is a glider.
      * @type boolean
      * @default false
+     * @private
      */
     this.onPolygon = false;
     
     /**
-     * Point style.
-     * Possible values are
-     * <ul><li> 0 for a small x</li>
-     * <li> 1 for a medium x</li>
-     * <li> 2 for a big x</li>
-     * <li> 3 for a tiny circle</li>
-     * <li> 4 for a small circle</li>
-     * <li> 5 for a medium circle </li>
-     * <li> 6 for a big circle </li>
-     * <li> 7 for a small rectangle </li>
-     * <li> 8 for a medium rectangle </li>
-     * <li> 9 for a big rectangle </li>
-     * <li> 10 for a small +</li>
-     * <li> 11 for a medium +</li>
-     * <li> 12 for a big +</li>
-     * </ul>
-     * @type int
+     * There are different point styles which differ in appearance and size.
+     * Posssible values are
+     * <table><tr><th>Constant name</th><th>Value</th><th>Meaning</th></tr>
+     * <tr><td>JXG.POINT_STYLE_X_SMALL</td><td>0</td><td>small sized x</td></tr>
+     * <tr><td>JXG.POINT_STYLE_X</td><td>1</td><td>medium sized x</td></tr>
+     * <tr><td>JXG.POINT_STYLE_X_BIG</td><td>2</td><td>big sized x</td></tr>
+     * <tr><td>JXG.POINT_STYLE_CIRCLE_TINY</td><td>3</td><td>tiny circle</td></tr>
+     * <tr><td>JXG.POINT_STYLE_CIRCLE_SMALL</td><td>4</td><td>small circle</td></tr>
+     * <tr><td>JXG.POINT_STYLE_CIRCLE</td><td>5</td><td>medium circle</td></tr>
+     * <tr><td>JXG.POINT_STYLE_CIRCLE_BIG</td><td>6</td><td>big circle</td></tr>
+     * <tr><td>JXG.POINT_STYLE_SQUARE_SMALL</td><td>7</td><td>small rectangle</td></tr>
+     * <tr><td>JXG.POINT_STYLE_SQUARE</td><td>8</td><td>medium rectangle</td></tr>
+     * <tr><td>JXG.POINT_STYLE_SQUARE_BIG</td><td>9</td><td>big rectangle</td></tr>
+     * <tr><td>JXG.POINT_STYLE_PLUS_SMALL</td><td>10</td><td>small +</td></tr>
+     * <tr><td>JXG.POINT_STYLE_PLUS</td><td>11</td><td>medium +</td></tr>
+     * <tr><td>JXG.POINT_STYLE_PLUS_BIG</td><td>12</td><td>big +</td></tr></table>
+     * @type number
      * @see #setStyle
-     * @see JXG.Options.point#style
+     * @default JXG.Options.point#style
      */
     this.visProp['style'] = this.board.options.point.style;
 
@@ -194,12 +185,6 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
     this.visProp['highlightFillColor'] = this.board.options.point.highlightFillColor;  
     this.visProp['strokeColor'] = this.board.options.point.strokeColor;
     this.visProp['highlightStrokeColor'] = this.board.options.point.highlightStrokeColor;        
-
-    /**
-     * True when this object is visible, false otherwise.
-     * @type boolean
-     * @private
-     */
     this.visProp['visible'] = show; 
 
     /**
@@ -207,7 +192,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
      * {@link JXG.Point#makeGlider} and DO NOT set this property directly as it will break the dependency tree.
 	 * TODO: Requires renaming to glideObject
      * @type JXG.GeometryElement
-     * @default null
+     * @name Glider#slideObject
      */
     this.slideObject = null;
     
@@ -232,7 +217,8 @@ JXG.Point.prototype = new JXG.GeometryElement();
  * Checks whether (x,y) is near the point.
  * @param {int} x Coordinate in x direction, screen coordinates.
  * @param {int} y Coordinate in y direction, screen coordinates.
- * @return {bool} True if (x,y) is near the point, False otherwise.
+ * @type boolean
+ * @return True if (x,y) is near the point, False otherwise.
  */
 JXG.Point.prototype.hasPoint = function (x,y) {
     var coordsScr = this.coords.scrCoords;
@@ -243,12 +229,11 @@ JXG.Point.prototype.hasPoint = function (x,y) {
 * Dummy function for unconstrained points or gliders.
 * @private
 */
-
 JXG.Point.prototype.updateConstraint = function() {};
 
 
 /**
- * Updates the position of the point
+ * Updates the position of the point.
  */
 JXG.Point.prototype.update = function (fromParent) {
     if (!this.needsUpdate) { return; }
@@ -393,6 +378,7 @@ JXG.Point.prototype.update = function (fromParent) {
 
 /**
  * Calls the renderer to update the drawing.
+ * @private
  */
 JXG.Point.prototype.updateRenderer = function () {
     /* Call the renderer only if point is visible. */
@@ -425,9 +411,8 @@ JXG.Point.prototype.updateRenderer = function () {
 
 /**
  * Getter method for x, this is used by for CAS-points to access point coordinates.
- * @see JXG.Coords#x
- * @return {float} User coordinate of point in x direction.
- * @see #coords
+ * @return User coordinate of point in x direction.
+ * @type number
  */
 JXG.Point.prototype.X = function () {
     return this.coords.usrCoords[1];
@@ -435,9 +420,8 @@ JXG.Point.prototype.X = function () {
 
 /**
  * Getter method for y, this is used by CAS-points to access point coordinates.
- * @see JXG.Coords#y
- * @return {float} User coordinate of point in y direction.
- * @see #coords
+ * @return User coordinate of point in y direction.
+ * @type number
  */
 JXG.Point.prototype.Y = function () {
     return this.coords.usrCoords[2];
@@ -445,9 +429,8 @@ JXG.Point.prototype.Y = function () {
 
 /**
  * Getter method for z, this is used by CAS-points to access point coordinates.
- * @see JXG.Coords#z
- * @return {float} User coordinate of point in z direction.
- * @see #coords
+ * @return User coordinate of point in z direction.
+ * @type number
  */
 JXG.Point.prototype.Z = function () {
     return this.coords.usrCoords[0];
@@ -456,7 +439,9 @@ JXG.Point.prototype.Z = function () {
 /**
  * New evaluation of the function term. 
  * This is required for CAS-points: Their XTerm() method is overwritten in {@link #addConstraint}
- * @return {float} User coordinate of point in x direction.
+ * @return User coordinate of point in x direction.
+ * @type number
+ * @private
  */
 JXG.Point.prototype.XEval = function () {
     return this.coords.usrCoords[1];
@@ -465,7 +450,9 @@ JXG.Point.prototype.XEval = function () {
 /**
  * New evaluation of the function term. 
  * This is required for CAS-points: Their YTerm() method is overwritten in {@link #addConstraint}
- * @return {float} User coordinate of point in y direction.
+ * @return User coordinate of point in y direction.
+ * @type number
+ * @private
  */
 JXG.Point.prototype.YEval = function () {
     return this.coords.usrCoords[2];
@@ -474,7 +461,9 @@ JXG.Point.prototype.YEval = function () {
 /**
  * New evaluation of the function term. 
  * This is required for CAS-points: Their ZTerm() method is overwritten in {@link #addConstraint}
- * @return {float} User coordinate of point in z direction.
+ * @return User coordinate of point in z direction.
+ * @type number
+ * @private
  */
 JXG.Point.prototype.ZEval = function () {
     return this.coords.usrCoords[0];
@@ -482,17 +471,19 @@ JXG.Point.prototype.ZEval = function () {
 
 /**
  * Getter method for the distance to a second point, this is required for CAS-elements.
- * @return {float} Distance in user coordinate to the point2
+ * @param {JXG.Point} point2 The point to which the distance shall be calculated.
+ * @return Distance in user coordinate to the given point
+ * @type number
  */
 JXG.Point.prototype.Dist = function(point2) {
     return this.coords.distance(JXG.COORDS_BY_USER, point2.coords);
 };
 
 /**
- * Sets x and y coordinate and calls update() method.
- * @param {int} x x coordinate in screen/user units
- * @param {int} y y coordinate in screen/user units
- * @see #update
+ * Sets x and y coordinate and calls the point's update() method.
+ * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+ * @param {number} x x coordinate in screen/user units
+ * @param {number} y y coordinate in screen/user units
  */
 JXG.Point.prototype.setPositionDirectly = function (method, x, y) {
     var oldCoords = this.coords;
@@ -507,6 +498,12 @@ JXG.Point.prototype.setPositionDirectly = function (method, x, y) {
     }
 };
 
+/**
+ * TODO
+ * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+ * @param {number} x x coordinate in screen/user units
+ * @param {number} y y coordinate in screen/user units
+ */
 JXG.Point.prototype.setPositionByTransform = function (method, x, y) {
     var oldCoords = this.coords;
     var t = this.board.createElement('transform',[x,y],{type:'translate'});
@@ -528,16 +525,22 @@ JXG.Point.prototype.setPositionByTransform = function (method, x, y) {
     }
 };
 
+/**
+ * Sets x and y coordinate and calls the point's update() method.
+ * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+ * @param {number} x x coordinate in screen/user units
+ * @param {number} y y coordinate in screen/user units
+ */
 JXG.Point.prototype.setPosition = function (method, x, y) { 
     this.setPositionByTransform(method, x, y);
 };
 
 /**
- * Convert the point to glider and call update().
- * @param {String,Object} slideObject Object the point is bound to.
+ * Convert the point to glider and update the construction.
+ * @param {String,Object} glideObject The Object the point will be bound to.
  */
-JXG.Point.prototype.makeGlider = function (slideObject) {
-    this.slideObject = JXG.GetReferenceFromParameter(this.board, slideObject);
+JXG.Point.prototype.makeGlider = function (glideObject) {
+    this.slideObject = JXG.GetReferenceFromParameter(this.board, glideObject);
     this.type = JXG.OBJECT_TYPE_GLIDER;
     this.snapWidth = null;
     
@@ -560,15 +563,16 @@ JXG.Point.prototype.makeGlider = function (slideObject) {
 
 /**
  * Convert the point to CAS point and call update().
- * @param {Array} [[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
+ * @param {array} terms [[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
  * The z-coordinate is optional and it is used for homogeneaous coordinates.
- * The coordinates may be either 
- *   - a JavaScript function
- *   - a string containing GEONExT syntax. This string will be converted into a JavaScript 
- *     function here,
- *   - a number
- *   - a pointer to a slider object. This will be converted into a call of the Value()-method 
- *     of this slider.
+ * The coordinates may be either <ul>
+ *   <li>a JavaScript function,</li>
+ *   <li>a string containing GEONExT syntax. This string will be converted into a JavaScript 
+ *     function here,</li>
+ *   <li>a number</li>
+ *   <li>a pointer to a slider object. This will be converted into a call of the Value()-method 
+ *     of this slider.</li>
+ *   </ul>
  * @see JXG.Algebra#geonext2JS
  */
 JXG.Point.prototype.addConstraint = function (terms) {
@@ -607,12 +611,14 @@ JXG.Point.prototype.addConstraint = function (terms) {
         fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.ZEval(),this.XEval(),this.YEval()]);';
         this.updateConstraint = new Function('',fs);
     }
-    
+
     if (!this.board.isSuspendedUpdate) { this.update(); }
     return;
-    
 };
 
+/**
+ * TODO
+ */
 JXG.Point.prototype.updateTransform = function () {
     if (this.transformations.length==0 || this.baseElement==null) {
         return;
@@ -629,6 +635,11 @@ JXG.Point.prototype.updateTransform = function () {
     }
 };
 
+/**
+ * TODO
+ * @param el TODO
+ * @param transform TODO
+ */
 JXG.Point.prototype.addTransform = function (el, transform) {
     if (this.transformations.length==0) { // There is only one baseElement possible
         this.baseElement = el;
@@ -645,10 +656,12 @@ JXG.Point.prototype.addTransform = function (el, transform) {
 };
 
 /**
- * Start animation.
- * @param {int} direction The direction the glider is animated.
- * @param {int} stepCount The number of steps.
- * @see #stopAnimation
+ * Animate the point. 
+ * @param {number} direction The direction the glider is animated. Can be +1 or -1.
+ * @param {number} stepCount The number of steps.
+ * @name Glider#startAnimation
+ * @see Glider#stopAnimation
+ * @function
  */
 JXG.Point.prototype.startAnimation = function(direction, stepCount) {
     if((this.type == JXG.OBJECT_TYPE_GLIDER) && (typeof this.intervalCode == 'undefined')) {
@@ -660,20 +673,21 @@ JXG.Point.prototype.startAnimation = function(direction, stepCount) {
 
 /**
  * Stop animation.
- * @see #startAnimation
+ * @name Glider#stopAnimation
+ * @see Glider#startAnimation
+ * @function
  */
 JXG.Point.prototype.stopAnimation = function() {
     if(typeof this.intervalCode != 'undefined') {
         window.clearInterval(this.intervalCode);
         delete(this.intervalCode);
-//        delete(this.intervalCount);
     }
 };
 
 /**
  * Animates a glider. Is called by the browser after startAnimation is called.
- * @param {int} direction The direction the glider is animated.
- * @param {int} stepCount The number of steps.
+ * @param {number} direction The direction the glider is animated.
+ * @param {number} stepCount The number of steps.
  * @see #startAnimation
  * @see #stopAnimation
  * @private
@@ -747,8 +761,8 @@ JXG.Point.prototype.animate = function(direction, stepCount) {
 
 /**
  * Set the style of a point.
- * @param {int} i Integer to determine the style.
- * @see #style
+ * @param {int} i Integer to determine the style. See {@link JXG.GeometryElement#style} for a list of available styles.
+ * @see JXG.GeometryElement#style
  */
 JXG.Point.prototype.setStyle = function(i) {
     this.visProp['style'] = i;
@@ -772,14 +786,20 @@ JXG.Point.prototype.remove = function() {
 };
 
 /**
- * return TextAnchor
+ * TODO
+ * @return TODO
+ * @type JXG.Coords
+ * @private
  */
 JXG.Point.prototype.getTextAnchor = function() {
     return this.coords;
 };
 
 /**
- * return LabelAnchor
+ * TODO
+ * @return TODO
+ * @type JXG.Coords
+ * @private
  */
 JXG.Point.prototype.getLabelAnchor = function() {
     return this.coords;
@@ -787,8 +807,9 @@ JXG.Point.prototype.getLabelAnchor = function() {
 
 /**
  * Copy the element to the background.
+ * @param addToTrace If true the clone will be added to trace control and can be removed using {@link JXG.GeometryElement#clearTrace}.
  */
-JXG.Point.prototype.cloneToBackground = function(addToTrace) {
+JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     var copy = {};
     copy.id = this.id + 'T' + this.numTraces;
     this.numTraces++;
@@ -833,7 +854,6 @@ JXG.Point.prototype.cloneToBackground = function(addToTrace) {
  * @description
  * @name Point
  * @augments JXG.Point
- * @method 
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -918,7 +938,6 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
  * @description A glider is a point which lives on another geometric element like a line, circle, curve, turtle.
  * @name Glider
  * @augments JXG.Point
- * @method
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -970,11 +989,39 @@ JXG.createGlider = function(board, parents, atts) {
 };
 
 /**
- * This is just a wrapper for board.intersectFunc.
- * @param {Array} parents Array containing the intersected Elements in the first two fields and
- *                        the index of the point if there could be more than one intersection point.
+ * @class This element is used to provide a constructor for an intersection point. 
+ * @pseudo
+ * @description An intersection point is a point which lives on two Lines or Circles or one Line and one Circle at the same time, i.e.
+ * an intersection point of the two elements.
+ * @name Intersection
+ * @augments JXG.Point
+ * @constructor
  * @type JXG.Point
- * @return Point intersecting the parent elements.
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_number} el1,el2,i The result will be a intersection point on el1 and el2. i determines the
+ * intersection point if two points are available: <ul>
+ *   <li>i==0: use the positive square root,</li> 
+ *   <li>i==1: use the negative square root.</li></ul>
+ * @example
+ * // Create an intersection point of circle and line
+ * var p1 = board.createElement('point', [2.0, 2.0]);
+ * var c1 = board.createElement('circle', [p1, 2.0]);
+ * 
+ * var p2 = board.createElement('point', [2.0, 2.0]);
+ * var p3 = board.createElement('point', [2.0, 2.0]);
+ * var l1 = board.createElement('line', [p2, p3]);
+ * 
+ * var i = board.createElement('intersection', [c1, l1, 0]);
+ * </pre><div id="e5b0e190-5200-4bc3-b995-b6cc53dc5dc0" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var board = JXG.JSXGraph.initBoard('e5b0e190-5200-4bc3-b995-b6cc53dc5dc0', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.createElement('point', [4.0, 4.0]);
+ *   var c1 = board.createElement('circle', [p1, 2.0]);
+ *   var p2 = board.createElement('point', [1.0, 1.0]);
+ *   var p3 = board.createElement('point', [5.0, 3.0]);
+ *   var l1 = board.createElement('line', [p2, p3]);
+ *   var i = board.createElement('intersection', [c1, l1, 0]);
+ * </script><pre>
  */
 JXG.createIntersectionPoint = function(board, parents, attributes) {
     var el;
