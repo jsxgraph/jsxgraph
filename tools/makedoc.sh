@@ -1,4 +1,14 @@
 ROOT=~/public_html/jsxgraph/jsdoc-toolkit
+#
+# Update our own jsdoc template
+#
+cp ../doc/jsdoc-tk/plugins/* $ROOT/app/plugins/
+cp -r ../doc/jsdoc-tk/template/* $ROOT/templates/jsdoc
+mkdir $ROOT/templates/jsdoc/static
+cp ../distrib/jquery.min.js $ROOT/templates/jsdoc/static
+cp ../distrib/jsxgraphcore.js $ROOT/templates/jsdoc/static
+cp ../distrib/jsxgraph.css $ROOT/templates/jsdoc/static
+
 FILELIST=$(cat ../src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk -F \' '{ print $2 }' | sed 's/,/.js ..\/src\//g')
 #echo $FILELIST
 #----------------------
