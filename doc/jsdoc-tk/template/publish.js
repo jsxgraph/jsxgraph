@@ -128,6 +128,9 @@ function publish(symbolSet) {
     IO.copyFile(publish.conf.templatesDir+"static/logo.gif", publish.conf.outDir+"static/");
     IO.copyFile(publish.conf.templatesDir+"static/logo.gif", publish.conf.outDir+"symbols/static/");
     IO.copyFile(publish.conf.templatesDir+"static/logo.gif", publish.conf.outDir+"symbols/src/static/");
+    IO.copyFile(publish.conf.templatesDir+"static/expandable.gif", publish.conf.outDir+"static/");
+    IO.copyFile(publish.conf.templatesDir+"static/expandable.gif", publish.conf.outDir+"symbols/static/");
+    IO.copyFile(publish.conf.templatesDir+"static/expandable.gif", publish.conf.outDir+"symbols/src/static/");
     IO.copyFile(publish.conf.templatesDir+"static/jsxgraph.css", publish.conf.outDir+"static/");
     IO.copyFile(publish.conf.templatesDir+"static/jquery.min.js", publish.conf.outDir+"static/");
     IO.copyFile(publish.conf.templatesDir+"static/jsxgraphcore.js", publish.conf.outDir+"static/");

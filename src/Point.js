@@ -878,9 +878,9 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
  * var p2 = board.createElement('point', [3.5, function () { return p1.X(); }]);
  * </pre><div id="4fd4410c-3383-4e80-b1bb-961f5eeef224" style="width: 200px; height: 200px;"></div>
  * <script type="text/javascript">
- *   var board = JXG.JSXGraph.initBoard('4fd4410c-3383-4e80-b1bb-961f5eeef224', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var p1 = board.createElement('point', [3.5, 2.0]);
- *   var p2 = board.createElement('point', [3.5, function () { return p1.X(); }]);
+ *   var fpex1_board = JXG.JSXGraph.initBoard('4fd4410c-3383-4e80-b1bb-961f5eeef224', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var fpex1_p1 = fpex1_board.createElement('point', [3.5, 2.0]);
+ *   var fpex1_p2 = fpex1_board.createElement('point', [3.5, function () { return fpex1_p1.X(); }]);
  * </script><pre>
  * @example
  * // Create a point using transformations 
@@ -888,10 +888,10 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
  * var p3 = board.createElement('point', [p2, trans]);
  * </pre><div id="630afdf3-0a64-46e0-8a44-f51bd197bb8d" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var board = JXG.JSXGraph.initBoard('630afdf3-0a64-46e0-8a44-f51bd197bb8d', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var trans = board.createElement('transform', [2, 0.5], {type:'scale'});
- *   var p2 = board.createElement('point', [3.5, function () { return p1.X(); }]);
- *   var p3 = board.createElement('point', [p2, trans]);
+ *   var fpex2_board = JXG.JSXGraph.initBoard('630afdf3-0a64-46e0-8a44-f51bd197bb8d', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var fpex2_trans = fpex2_board.createElement('transform', [2, 0.5], {type:'scale'});
+ *   var fpex2_p2 = fpex2_board.createElement('point', [3.5, 2.0]);
+ *   var fpex2_p3 = fpex2_board.createElement('point', [fpex2_p2, fpex2_trans]);
  * </script><pre>
  */
 JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** object */ atts) {
@@ -952,10 +952,10 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
  * var p2 = board.createElement('glider', [2.0, 1.5, c1]);
  * </pre><div id="4f65f32f-e50a-4b50-9b7c-f6ec41652930" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var board = JXG.JSXGraph.initBoard('4f65f32f-e50a-4b50-9b7c-f6ec41652930', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var p1 = board.createElement('point', [2.0, 2.0]);
- *   var c1 = board.createElement('circle', [p1, 2.0]);
- *   var p2 = board.createElement('glider', [2.0, 1.5, c1]);
+ *   var gpex1_board = JXG.JSXGraph.initBoard('4f65f32f-e50a-4b50-9b7c-f6ec41652930', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var gpex1_p1 = gpex1_board.createElement('point', [2.0, 2.0]);
+ *   var gpex1_c1 = gpex1_board.createElement('circle', [gpex1_p1, 2.0]);
+ *   var gpex1_p2 = gpex1_board.createElement('glider', [2.0, 1.5, gpex1_c1]);
  * </script><pre>
  * @example
  * // Create a glider with default coordinates (1,0,0). Same premises as above.
@@ -964,10 +964,10 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
  * var p2 = board.createElement('glider', [c1]);
  * </pre><div id="4de7f181-631a-44b1-a12f-bc4d995609e8" style="width: 200px; height: 200px;"></div>
  * <script type="text/javascript">
- *   var board = JXG.JSXGraph.initBoard('4de7f181-631a-44b1-a12f-bc4d995609e8', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var p1 = board.createElement('point', [2.0, 2.0]);
- *   var c1 = board.createElement('circle', [p1, 2.0]);
- *   var p2 = board.createElement('glider', [c1]);
+ *   var gpex2_board = JXG.JSXGraph.initBoard('4de7f181-631a-44b1-a12f-bc4d995609e8', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var gpex2_p1 = gpex2_board.createElement('point', [2.0, 2.0]);
+ *   var gpex2_c1 = gpex2_board.createElement('circle', [gpex2_p1, 2.0]);
+ *   var gpex2_p2 = gpex2_board.createElement('glider', [gpex2_c1]);
  * </script><pre>
  */
 JXG.createGlider = function(board, parents, atts) {
@@ -1014,13 +1014,13 @@ JXG.createGlider = function(board, parents, atts) {
  * var i = board.createElement('intersection', [c1, l1, 0]);
  * </pre><div id="e5b0e190-5200-4bc3-b995-b6cc53dc5dc0" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var board = JXG.JSXGraph.initBoard('e5b0e190-5200-4bc3-b995-b6cc53dc5dc0', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var p1 = board.createElement('point', [4.0, 4.0]);
- *   var c1 = board.createElement('circle', [p1, 2.0]);
- *   var p2 = board.createElement('point', [1.0, 1.0]);
- *   var p3 = board.createElement('point', [5.0, 3.0]);
- *   var l1 = board.createElement('line', [p2, p3]);
- *   var i = board.createElement('intersection', [c1, l1, 0]);
+ *   var ipex1_board = JXG.JSXGraph.initBoard('e5b0e190-5200-4bc3-b995-b6cc53dc5dc0', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var ipex1_p1 = ipex1_board.createElement('point', [4.0, 4.0]);
+ *   var ipex1_c1 = ipex1_board.createElement('circle', [ipex1_p1, 2.0]);
+ *   var ipex1_p2 = ipex1_board.createElement('point', [1.0, 1.0]);
+ *   var ipex1_p3 = ipex1_board.createElement('point', [5.0, 3.0]);
+ *   var ipex1_l1 = ipex1_board.createElement('line', [ipex1_p2, ipex1_p3]);
+ *   var ipex1_i = ipex1_board.createElement('intersection', [ipex1_c1, ipex1_l1, 0]);
  * </script><pre>
  */
 JXG.createIntersectionPoint = function(board, parents, attributes) {
