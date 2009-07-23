@@ -9,7 +9,7 @@ JSDOC.PluginManager.registerPlugin(
             }
 
             // Ignore symbols with neither a description nor a class description
-            if((classCreator.desc.toString() == "") && (classCreator.classDesc.toString() == "")) {
+            if((classCreator.desc.toString() == "") && (classCreator.classDesc.toString() == "") && !JSDOC.opt.p) {
             	classCreator.isIgnored = true;
             }
             
