@@ -205,7 +205,7 @@ var p = JXG.GetReferenceFromParameter(board, registeredElements[element].id);
 
 	    case 6:
 	        {
-	         info.att = String( info.att )
+	         info.att = String( info.att );
 	        }
 	        break;
 
@@ -224,7 +224,7 @@ var p = JXG.GetReferenceFromParameter(board, registeredElements[element].id);
 
 	    case 8:
 	        {
-	         info.att = String( info.att )
+	         info.att = String( info.att );
 	        }
 	        break;
 
@@ -666,7 +666,7 @@ var p = JXG.GetReferenceFromParameter(board, registeredElements[element].id);
 	for( var i = 0; i < error_count; i++ ) errstr += "Parse error in line " + ( str.substr( 0, error_offsets[i] ).match( /\n/g ) ? str.substr( 0, error_offsets[i] ).match( /\n/g ).length : 1 ) + " near \"" + str.substr( error_offsets[i] ) + "\", expecting \"" + error_lookaheads[i].join() + "\"\n" ;
     JXG.GeogebraReader.debug( errstr );
   }
-}
+};
 
 
 this.debug = function(s) {

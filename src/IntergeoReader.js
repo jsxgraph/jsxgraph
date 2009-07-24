@@ -176,7 +176,7 @@ JXG.IntergeoReader = new function() {
         for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
         el = this.board.createElement('line',[c[2],c[0],c[1]],{name:id, strokeColor:'black', withLabel:true});
         this.objects[id] = el;
-    }
+    };
 
     /**
      * Circle data is stored in an array
@@ -432,7 +432,7 @@ JXG.IntergeoReader = new function() {
                 function(){ return 0.5*(p1.X()+p2.X());},
                 function(){ return 0.5*(p1.Y()+p2.Y());},
                 ]);
-    }
+    };
 
     this.addMidpointLineSegment = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
@@ -443,7 +443,7 @@ JXG.IntergeoReader = new function() {
                 function(){ return 0.5*(l.point1.X()+l.point2.X());},
                 function(){ return 0.5*(l.point1.Y()+l.point2.Y());},
                 ]);
-    }
+    };
     
     /**
      * The angular bisectors of two line [c1,a1,b1] and [c2,a2,b2] are determined by the equation:
@@ -503,14 +503,14 @@ JXG.IntergeoReader = new function() {
         this.board.createElement('circle',
             [this.objects[param[1]],this.objects[param[2]]],
             {name:param[0],id:param[0],withLabel:true});
-    }
+    };
 
     this.addCenterOfCircle = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
             el = JXG.GetReferenceFromParameter(this.board,param[0]),
             c = JXG.GetReferenceFromParameter(this.board,param[1]);
         el.addConstraint([function(){return c.midpoint.X();},function(){return c.midpoint.Y();}]);
-    }
+    };
 
     this.addIntersectionPointsOfTwoCircles = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
@@ -520,7 +520,7 @@ JXG.IntergeoReader = new function() {
             p2 = this.objects[param[1]];
         p1.addConstraint([this.board.intersection(c1,c2,0)]);
         p2.addConstraint([this.board.intersection(c1,c2,1)]);
-    }
+    };
     
     this.addIntersectionPointsOfCircleAndLine = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
@@ -530,7 +530,7 @@ JXG.IntergeoReader = new function() {
             p2 = this.objects[param[1]];
         p1.addConstraint([this.board.intersection(c1,c2,0)]);
         p2.addConstraint([this.board.intersection(c1,c2,1)]);
-    }
+    };
 
     /**
      * Extract the xml-code as String from the zipped Intergeo archive.
