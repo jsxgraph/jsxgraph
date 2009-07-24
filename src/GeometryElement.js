@@ -822,6 +822,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
  * Set the dash style of an object. See {@link #dash} for a list of available dash styles.
  * You should use {@link #setProperty} instead of this method. 
  * @param {number} dash Indicates the new dash style
+ * @private
 */
 JXG.GeometryElement.prototype.setDash = function(dash) {
     this.visProp['dash'] = dash;
@@ -848,7 +849,7 @@ JXG.GeometryElement.prototype.prepareUpdate = function() {
 };
 
 /**
- * Remove this element from the construction.
+ * Removes the element from the construction.
  */
 JXG.GeometryElement.prototype.remove = function() {    
     this.board.renderer.remove(document.getElementById(this.id));

@@ -32,11 +32,10 @@
  */
 
 /**
- * Constructs a new Line object.
- * @class This is the Line class.
- * It is derived from {@link JXG.GeometryElement}.
- * It stores all properties required
- * to move, draw a line.
+ * The Line class is a basic class for all kind of line objects, e.g. line, arrow, and axis. It is usually defined by two points and can
+ * be intersected with some other geometry elements.
+ * @class Creates a new basic line object. Do not use this constructor to create a line. Use {@link JXG.Board#createElement} with
+ * type {@link Line}, {@link Arrow}, or {@link Axis} instead.  
  * @constructor
  * @param {String,JXG.Board} board The board the new line is drawn on.
  * @param {Point} p1 Startpoint of the line.
@@ -53,85 +52,114 @@ JXG.Line = function (board, p1, p2, id, name, withLabel) {
 
    /**
      * Sets type of GeometryElement, value is OBJECT_TYPE_LINE.
-     * @final
+     * @constant
      * @type int
+     * @default JXG#OBJECT_TYPE_LINE
+     * @private
      */
     this.type = JXG.OBJECT_TYPE_LINE;
 
     /**
      * Class of element, value is OBJECT_CLASS_LINE;
+     * @type int
+     * @constant
+     * @default JXG#OBJECT_CLASS_LINE
+     * @private
      */
     this.elementClass = JXG.OBJECT_CLASS_LINE;
 
     this.init(board, id, name);
     
     /**
-     * Startpoint of the line.
+     * Startpoint of the line. You really should not set this field directly as it may break JSXGraph's
+     * udpate system so your construction won't be updated properly.
      * @type JXG.Point
      */
     this.point1 = JXG.GetReferenceFromParameter(this.board, p1);
 
     /**
-     * Endpoint of the line.
+     * Endpoint of the line. Just like {@link #point1} you shouldn't write this field directly.
      * @type JXG.Point
      */
     this.point2 = JXG.GetReferenceFromParameter(this.board, p2);
 
     /**
-     * Image bound to this line
+     * An image bound to this line.
      * @type JXG.Image
+     * @default null
+     * @private
      */
     this.image = null;
+    
+    /**
+     * TODO description
+     * @type array
+     * @default [[1,0,0],[0,1,0],[0,0,1]]
+     * @private
+     */
     this.imageTransformMatrix = [[1,0,0],[0,1,0],[0,0,1]];
 
     /**
      * This is just for the hasPoint() method.
      * @type int
+     * @private
      */
     this.r = this.board.options.precision.hasPoint;
 
+    /* Wurde in GeometryElement schon dokumentiert. */
     this.visProp['fillColor'] = this.board.options.line.fillColor;
     this.visProp['highlightFillColor'] = this.board.options.line.highlightFillColor;
     this.visProp['strokeColor'] = this.board.options.line.strokeColor;
     this.visProp['highlightStrokeColor'] = this.board.options.line.highlightStrokeColor;
 
     /**
-     * Determines if a line is drawn on over the firstpoint.
-     * @type bool
-     * @see #straightLast
+     * Determines if a line is drawn beyond {@link #point1}.
+     * @name JXG.Line#straightFirst
+     * @type boolean
+     * @default JXG.Options.line#straightFirst
+     * @field
+     * @see JXG.Line#straightLast
      */
     this.visProp['straightFirst'] = this.board.options.line.straightFirst;
+    
     /**
-     * Determines if a line is drawn on over the lastpoint.
-     * @type bool
-     * @see #straightFirst
+     * Determines if a line is drawn beyond {@link #point2}.
+     * @name JXG.Line#straightLast
+     * @type boolean
+     * @default JXG.Options.line#straightLast
+     * @field
+     * @see JXG.Line#straightFirst
      */
     this.visProp['straightLast'] = this.board.options.line.straightLast;
 
-    /**
-     * True when the object is visible, false otherwise.
-     * @type bool
-     */
+    /* Already documented in JXG.GeometryElement */
     this.visProp['visible'] = true;
 
     /**
-     * Determines if a line has an arrow at its firstpoint.
-     * @type bool
-     * @see #lastArrow
+     * Determines if a line has an arrow at {@link #point1}.
+     * @name JXG.Line#firstArrow
+     * @type boolean
+     * @default JXG.Options.line#firstArrow
+     * @field
+     * @see JXG.Line#lastArrow
      */
     this.visProp['firstArrow'] = this.board.options.line.firstArrow;
 
     /**
-     * Determines if a line has an arrow at its firstpoint.
-     * @type bool
-     * @see #firstArrow
+     * Determines if a line has an arrow at {@link #point1}.
+     * @name JXG.Line#lastArrow
+     * @type boolean
+     * @default JXG.Options.line#lastArrow
+     * @field
+     * @see JXG.Line#firstArrow
      */
     this.visProp['lastArrow'] = this.board.options.line.lastArrow;
 
     /**
-     * Array of Coords storing the coordinates of all ticks.
-     * @type Array
-     * @see JXG.Coords
+     * Array of ticks storing all the ticks on this line. Do not set this field directly and use
+     * {@link #addTicks} and {@link #removeTicks} to add and remove ticks to and from the line.
+     * @type array
+     * @see JXG.Ticks
      */
     this.ticks = [];
 
@@ -143,8 +171,10 @@ JXG.Line = function (board, p1, p2, id, name, withLabel) {
     this.defaultTicks = null;
 
     /**
-    * If the line is the border of a polygon, the polygone object is stored, otherwise null.
+    * If the line is the border of a polygon, the polygon object is stored, otherwise null.
     * @type JXG.Polygon
+    * @default null
+    * @private
     */
     this.parentPolygon = null;
 
@@ -166,7 +196,7 @@ JXG.Line.prototype = new JXG.GeometryElement;
  * Checks whether (x,y) is near the line.
  * @param {int} x Coordinate in x direction, screen coordinates.
  * @param {int} y Coordinate in y direction, screen coordinates.
- * @return {bool} True if (x,y) is near the line, False otherwise.
+ * @return {boolean} True if (x,y) is near the line, False otherwise.
  */
  JXG.Line.prototype.hasPoint = function (x, y) {
     // Compute the stdform of the line in screen coordinates.
@@ -223,6 +253,7 @@ JXG.Line.prototype = new JXG.GeometryElement;
 };
 
 /**
+ * TODO description. maybe. already documented in geometryelement?
  * @private
  */
 JXG.Line.prototype.update = function() {
@@ -243,6 +274,10 @@ JXG.Line.prototype.update = function() {
     }
 };
 
+/**
+ * TODO description. already documented in geometryelement?
+ * @private
+ */
 JXG.Line.prototype.updateStdform = function() {
    /*
     var nx = -(this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]);
@@ -263,6 +298,7 @@ JXG.Line.prototype.updateStdform = function() {
 
 /**
  * Uses the boards renderer to update the line.
+ * @private
  */
  JXG.Line.prototype.updateRenderer = function () {
     var wasReal;
@@ -296,7 +332,13 @@ JXG.Line.prototype.updateStdform = function() {
     }     
 };
 
-JXG.Line.prototype.generatePolynomial = function (p) {
+/**
+ * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to {@link #point1}
+ * and {@link #point2}.
+ * @param p The point for that the polynomial is generated.
+ * @return An array containing the generated polynomial.
+ */
+JXG.Line.prototype.generatePolynomial = function (/** JXG.Point */ p) /** array */{
     var u1 = this.point1.symbolic.x,
         u2 = this.point1.symbolic.y,
         v1 = this.point2.symbolic.x,
@@ -325,37 +367,38 @@ JXG.Line.prototype.generatePolynomial = function (p) {
 };
 
 /**
- * Calculates the rise of the line (Achsenabschnitt)
+ * Calculates the rise of the line.
  * @type float
- * @return The rise of the line
+ * @return The rise of the line.
  */
 JXG.Line.prototype.getRise = function () {
     if (Math.abs(this.stdform[2])>=JXG.Math.eps) {
         return -this.stdform[0]/this.stdform[2];
     } else {
-        return "INF";
+        return Infinity;
     }
 };
 
 /**
- * Calculates the slope of the line described by the arrow. (Steigung)
+ * Calculates the slope of the line.
  * @type float
- * @return The slope of the line or INF if the line is parallel to the y-axis.
+ * @return The slope of the line or Infinity if the line is parallel to the y-axis.
  */
 JXG.Line.prototype.getSlope = function () {
     if (Math.abs(this.stdform[2])>=JXG.Math.eps) {
         return -this.stdform[1]/this.stdform[2];
     } else {
-        return "INF";
+        return Infinity;
     }    
 };
 
 /**
- * Determines whether the line is drawn on over start and end point and updates the line.
- * @param {bool} straightFirst True if the Line shall be drawn on over the startpoint, false otherwise.
- * @param {bool} straightLast True if the Line shall be drawn on over the endpoint, false otherwise.
+ * Determines whether the line is drawn beyond {@link #point1} and {@link #point2} and updates the line.
+ * @param {boolean} straightFirst True if the Line shall be drawn beyond {@link #point1}, false otherwise.
+ * @param {boolean} straightLast True if the Line shall be drawn beyond {@link #point2}, false otherwise.
  * @see #straightFirst
  * @see #straightLast
+ * @private
  */
  JXG.Line.prototype.setStraight = function (straightFirst, straightLast) {
     this.visProp['straightFirst'] = straightFirst;
@@ -365,10 +408,10 @@ JXG.Line.prototype.getSlope = function () {
 };
 
 /**
- * Determines whether the line has arrows at start or end of the line.
- * @param {bool} firstArrow True if there is an arrow at the start of the line, false otherwise.
- * @param {bool} lastArrow True if there is an arrow at the end of the line, false otherwise.
- * Is stored at visProp['firstArrow'] and visProp['lastArrow']
+ * Determines whether the line has arrows at start or end of the line. Is stored in visProp['firstArrow'] and visProp['lastArrow']
+ * @param {boolean} firstArrow True if there is an arrow at the start of the line, false otherwise.
+ * @param {boolean} lastArrow True if there is an arrow at the end of the line, false otherwise.
+ * @private
  */
 JXG.Line.prototype.setArrow = function (firstArrow, lastArrow) {
      this.visProp['firstArrow'] = firstArrow;
@@ -378,18 +421,20 @@ JXG.Line.prototype.setArrow = function (firstArrow, lastArrow) {
 };
 
 /**
- * Calculates TextAnchor.
+ * Calculates TextAnchor. DESCRIPTION
  * @type JXG.Coords
  * @return Text anchor coordinates as JXG.Coords object.
+ * @private
  */
 JXG.Line.prototype.getTextAnchor = function() {
     return new JXG.Coords(JXG.COORDS_BY_USER, [0.5*(this.point2.X() - this.point1.X()),0.5*(this.point2.Y() - this.point1.Y())],this.board);
 };
 
 /**
- * Calculates LabelAnchor.
+ * Calculates LabelAnchor. DESCRIPTION
  * @type JXG.Coords
  * @return Text anchor coordinates as JXG.Coords object.
+ * @private
  */
 JXG.Line.prototype.getLabelAnchor = function() {
     var coords,screenCoords1,screenCoords2,
@@ -414,7 +459,7 @@ JXG.Line.prototype.getLabelAnchor = function() {
             relCoords = [0,0];
             slope = this.getSlope();
             if(coords.scrCoords[2]==0) {
-                if(slope == "INF") {
+                if(slope == Infinity) {
                     relCoords = [10,-10];                    
                 }
                 else if(slope >= 0) {
@@ -425,7 +470,7 @@ JXG.Line.prototype.getLabelAnchor = function() {
                 }
             }
             else if(coords.scrCoords[2]==this.board.canvasHeight) {
-                if(slope == "INF") {
+                if(slope == Infinity) {
                     relCoords = [10,10];                    
                 }
                 else if(slope >= 0) {
@@ -436,7 +481,7 @@ JXG.Line.prototype.getLabelAnchor = function() {
                 }
             }
             if(coords.scrCoords[1]==0) {
-                if(slope == "INF") {
+                if(slope == Infinity) {
                     relCoords = [10,10]; // ??
                 }
                 else if(slope >= 0) {
@@ -447,7 +492,7 @@ JXG.Line.prototype.getLabelAnchor = function() {
                 }
             }
             else if(coords.scrCoords[1]==this.board.canvasWidth) {
-                if(slope == "INF") {
+                if(slope == Infinity) {
                     relCoords = [-10,10]; // ??
                 }
                 else if(slope >= 0) {
@@ -464,8 +509,8 @@ JXG.Line.prototype.getLabelAnchor = function() {
 };
 
 /**
- * Copy the element to the background.
- * @param {bool} addToTrace Not used.
+ * Clone the element to the background to leave a trail of it on the board.
+ * @param {boolean} addToTrace Not used.
  */
 JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     var copy = {},
@@ -509,7 +554,11 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
 */
 };
 
-JXG.Line.prototype.addTransform = function (transform) {
+/**
+ * DESCRIPTION
+ * @param transform A {@link #JXG.Transformation} object or an array of it.
+ */
+JXG.Line.prototype.addTransform = function (/** JXG.Transformation,array */ transform) {
     var list, i;
     if (JXG.IsArray(transform)) {
         list = transform;
@@ -522,6 +571,12 @@ JXG.Line.prototype.addTransform = function (transform) {
     }
 };
 
+/**
+ * TODO DESCRIPTION. What is this method for? -- michael
+ * @param method TYPE & DESCRIPTION. UNUSED.
+ * @param x TYPE & DESCRIPTION
+ * @param y TYPE & DESCRIPTION
+ */
 JXG.Line.prototype.setPosition = function (method, x, y) {
     //var oldCoords = this.coords;
     //if(this.group.length != 0) {
@@ -548,23 +603,24 @@ JXG.Line.prototype.setPosition = function (method, x, y) {
 };
 
 /**
-* Treat the line as parametric curve in homogeneuous coordinates.
-* x = 1 * sin(theta)*cos(phi)
-* y = 1 * sin(theta)*sin(phi)
-* z = 1 * sin(theta)
-* and the line is the set of solutions of a*x+b*y+c*z = 0
-* It follows:
-* sin(theta)*(a*cos(phi)+b*sin(phi))+c*cos(theta) = 0
-* Define:
-*   A = (a*cos(phi)+b*sin(phi))
-*   B = c
-* Then
-* cos(theta) = A/sqrt(A*A+B*B)
-* sin(theta) = -B/sqrt(A*A+B*B)
-* and X(phi) = x from above.
-* phi runs from 0 to 1
-* @return X(phi)
-*/
+ * Treat the line as parametric curve in homogeneuous coordinates.
+ * <pre>x = 1 * sin(theta)*cos(phi)
+ * y = 1 * sin(theta)*sin(phi)
+ * z = 1 * sin(theta)</pre>
+ * and the line is the set of solutions of <tt>a*x+b*y+c*z = 0</tt>.
+ * It follows:
+ * <pre>sin(theta)*(a*cos(phi)+b*sin(phi))+c*cos(theta) = 0</pre>
+ * Define:
+ * <pre>  A = (a*cos(phi)+b*sin(phi))
+ *   B = c</pre>
+ * Then
+ * <pre>cos(theta) = A/sqrt(A*A+B*B)
+ * sin(theta) = -B/sqrt(A*A+B*B)</pre>
+ * and <tt>X(phi) = x</tt> from above.
+ * phi runs from 0 to 1
+ * @type float
+ * @return X(phi) TODO description
+ */
 JXG.Line.prototype.X = function (phi) {
     var a = this.stdform[1],
         b = this.stdform[2],
@@ -581,9 +637,10 @@ JXG.Line.prototype.X = function (phi) {
 };
 
 /**
-* Treat the line as parametric curve in homogeneous coordinates.
-* @return Y(phi)
-*/
+ * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
+ * @type float
+ * @return Y(phi) TODO description
+ */
 JXG.Line.prototype.Y = function (phi) {
     var a = this.stdform[1],
         b = this.stdform[2],
@@ -600,9 +657,10 @@ JXG.Line.prototype.Y = function (phi) {
 };
 
 /**
-* Treat the line as parametric curve in homogeneous coordinates.
-* @return Z(phi)
-*/
+ * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
+ * @type float
+ * @return Z(phi) TODO description
+ */
 JXG.Line.prototype.Z = function (phi) {
     var a = this.stdform[1],
         b = this.stdform[2],
@@ -621,24 +679,30 @@ JXG.Line.prototype.Z = function (phi) {
 };
 
 /**
-* Treat the circle as parametric curve:
-* t runs from 0 to 1
-**/
+ * TODO circle?!? --michael
+ * private or public? --michael
+ * Treat the circle as parametric curve:
+ * t runs from 0 to 1
+ * @private
+ */
 JXG.Line.prototype.minX = function () {
     return 0.0;
 };
 
 /**
-* Treat the circle as parametric curve:
-* t runs from 0 to 1
-**/
+ * TODO circle?!? --michael
+ * private or public? --michael
+ * Treat the circle as parametric curve:
+ * t runs from 0 to 1
+ * @private
+ */
 JXG.Line.prototype.maxX = function () {
     return 1.0;
 };
 
 /**
- * Adds ticks to this line.
- * @param {JXG.Ticks} ticks Reference to a ticks object.
+ * Adds ticks to this line. Ticks can be added to any kind of line: line, arrow, and axis.
+ * @param {JXG.Ticks} ticks Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).
  * @type String
  * @return Id of the ticks object.
  */
@@ -666,7 +730,7 @@ JXG.Line.prototype.removeAllTicks = function() {
 };
 
 /**
- * Removes ticks identified by parameter named tick.
+ * Removes ticks identified by parameter named tick from this line.
  * @param {JXG.Ticks} tick Reference to tick object to remove.
  */
 JXG.Line.prototype.removeTicks = function(tick) {
@@ -689,12 +753,37 @@ JXG.Line.prototype.removeTicks = function(tick) {
 };
 
 /**
- * Creates a new line.
- * @param {JXG.Board} board The board the line is put on.
- * @param {Array} parents Array of two points defining the line or three coordinates for a free line
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
+ * @class This element is used to provide a constructor for a general line. A general line is given by two points. By setting additional properties
+ * a line can be used as an arrow and/or axis.
+ * @pseudo
+ * @description
+ * @name Line
+ * @augments JXG.Line
+ * @constructor
  * @type JXG.Line
- * @return Reference to the created line object.
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
+ * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
+ * @param {number_number_number} x,y,z A line can also be created providing a three coordinates. TODO DESCRIPTION NEEDED.
+ * @example
+ * // Create a line using point and coordinates/
+ * // The second point will be fixed and invisible. 
+ * var p1 = board.createElement('point', [4.5, 2.0]);
+ * var l1 = board.createElement('line', [p1, [1.0, 1.0]]);
+ * </pre><div id="c0ae3461-10c4-4d39-b9be-81d74759d122" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var glex1_board = JXG.JSXGraph.initBoard('c0ae3461-10c4-4d39-b9be-81d74759d122', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var glex1_p1 = glex1_board.createElement('point', [4.5, 2.0]);
+ *   var glex1_l1 = glex1_board.createElement('line', [glex1_p1, [1.0, 1.0]]);
+ * </script><pre>
+ * @example
+ * // Create a point using three coordinates
+ * var l1 = board.createElement('line', [1.0, -2.0, 3.0]);
+ * </pre><div id="cf45e462-f964-4ba4-be3a-c9db94e2593f" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var glex2_board = JXG.JSXGraph.initBoard('cf45e462-f964-4ba4-be3a-c9db94e2593f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var glex2_l1 = glex2_board.createElement('line', [1.0, -2.0, 3.0]);
+ * </script><pre>
  */
 JXG.createLine = function(board, parents, atts) {
     var el, p1, p2, i,
@@ -753,14 +842,33 @@ JXG.createLine = function(board, parents, atts) {
 JXG.JSXGraph.registerElement('line', JXG.createLine);
 
 /**
- * Creates a new segment, i.e. a line with <tt>visProp['straight*'] = true</tt>.
- * @param {JXG.Board} board The board the segment is put on.
- * @param {Array} parents Array of two points defining the segment or three coordinates for a free line
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
+ * @class This element is used to provide a constructor for a segment. It's strictly spoken just a wrapper for element {@link Line} with {@link #straightFirst}
+ * and {@link #straightLast} properties set to false.
+ * @pseudo
+ * @description
+ * @name Segment
+ * @augments JXG.Line
+ * @constructor
  * @type JXG.Line
- * @return Reference to the created line object.
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
+ * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
+ * @param {number_number_number} x,y,z A line can also be created providing a three coordinates. TODO DESCRIPTION NEEDED.
+ * @see Line
+ * @example
+ * // Create a segment providing two points.
+ *   var p1 = board.createElement('point', [4.5, 2.0]);
+ *   var p2 = board.createElement('point', [1.0, 1.0]);
+ *   var l1 = board.createElement('segment', [p1, p2]);
+ * </pre><div id="d70e6aac-7c93-4525-a94c-a1820fa38e2f" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var slex1_board = JXG.JSXGraph.initBoard('d70e6aac-7c93-4525-a94c-a1820fa38e2f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var slex1_p1 = slex1_board.createElement('point', [4.5, 2.0]);
+ *   var slex1_p2 = slex1_board.createElement('point', [1.0, 1.0]);
+ *   var slex1_l1 = slex1_board.createElement('segment', [slex1_p1, slex1_p2]);
+ * </script><pre>
  */
-JXG.createSegment = function(board, parents, atts) {
+ JXG.createSegment = function(board, parents, atts) {
     var el;
 
     if(atts == null)
@@ -778,12 +886,31 @@ JXG.createSegment = function(board, parents, atts) {
 JXG.JSXGraph.registerElement('segment', JXG.createSegment);
 
 /**
- * Creates a new arrow.
- * @param {JXG.Board} board The board the arrow is put on.
- * @param {Array} parents Array of two points defining the arrow.
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
+ * @class This element is used to provide a constructor for arrow, which is just a wrapper for element {@link Line} with {@link #straightFirst}
+ * and {@link #straightLast} properties set to false and {@link JXG.Line#lastArrow} set to true.
+ * @pseudo
+ * @description
+ * @name Arrow
+ * @augments JXG.Line
+ * @constructor
  * @type JXG.Line
- * @return Reference to the created line object.
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
+ * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
+ * @param {number_number_number} x,y,z A line can also be created providing a three coordinates. TODO DESCRIPTION NEEDED.
+ * @see Line
+ * @example
+ * // Create an arrow providing two points.
+ *   var p1 = board.createElement('point', [4.5, 2.0]);
+ *   var p2 = board.createElement('point', [1.0, 1.0]);
+ *   var l1 = board.createElement('arrow', [p1, p2]);
+ * </pre><div id="1d26bd22-7d6d-4018-b164-4c8bc8d22ccf" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var alex1_board = JXG.JSXGraph.initBoard('1d26bd22-7d6d-4018-b164-4c8bc8d22ccf', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var alex1_p1 = alex1_board.createElement('point', [4.5, 2.0]);
+ *   var alex1_p2 = alex1_board.createElement('point', [1.0, 1.0]);
+ *   var alex1_l1 = alex1_board.createElement('arrow', [alex1_p1, alex1_p2]);
+ * </script><pre>
  */
 JXG.createArrow = function(board, parents, attributes) {
     var el;
@@ -809,12 +936,26 @@ JXG.createArrow = function(board, parents, attributes) {
 JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
 
 /**
- * Creates a new axis.
- * @param {JXG.Board} board The board the arrow is put on.
- * @param {Array} parents Array of two points defining the arrow.
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
+ * @class This element is used to provide a constructor for an axis. It's strictly spoken just a wrapper for element line with {@link #straightFirst}
+ * and {@link #straightLast} properties set to true. Additionally {@link #lastArrow} is set to true and default {@link Ticks} will be created.
+ * @pseudo
+ * @description
+ * @name Axis
+ * @augments JXG.Line
+ * @constructor
  * @type JXG.Line
- * @return Reference to the created axis object.
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
+ * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
+ * @param {number_number_number} x,y,z A line can also be created providing a three coordinates. TODO DESCRIPTION NEEDED.
+ * @example
+ * // Create an axis providing two coord pairs.
+ *   var l1 = board.createElement('axis', [[0.0, 1.0], [1.0, 1.3]]);
+ * </pre><div id="4f414733-624c-42e4-855c-11f5530383ae" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var axex1_board = JXG.JSXGraph.initBoard('4f414733-624c-42e4-855c-11f5530383ae', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var axex1_l1 = axex1_board.createElement('axis', [[0.0, 1.0], [1.0, 1.3]]);
+ * </script><pre>
  */
 JXG.createAxis = function(board, parents, attributes) {
     var point1,
@@ -881,12 +1022,28 @@ JXG.createAxis = function(board, parents, attributes) {
 JXG.JSXGraph.registerElement('axis', JXG.createAxis);
 
 /**
- * Create a tangent to a curve, line or circle c through a point p
- * @param {JXG.Board} board Reference to the board the tangent is drawn on.
- * @param {Array} parents Array containing a glider object p.
- * @param {Object} attributes Define color, width, ... of the tangent
- * @type JXG.Curve
- * @return Returns reference to an object of type JXG.Line.
+ * @class With the element tangent the slope of a line, circle, or curve in a certain point can be visualized. A tangent is always constructed
+ * by a glider on a line, circle, or curve and describes the tangent in the glider point on that line, circle, or curve.
+ * @pseudo
+ * @description
+ * @name Tangent
+ * @augments JXG.Line
+ * @constructor
+ * @type JXG.Line
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {Glider} g A glider on a line, circle, or curve.
+ * @example
+ * // Create a tangent providing a glider on a function graph
+ *   var c1 = board.createElement('curve', [function(t){return t},function(t){return t*t*t;}]);
+ *   var g1 = board.createElement('glider', [0.6, 1.2, c1]);
+ *   var t1 = board.createElement('tangent', [g1]);
+ * </pre><div id="7b7233a0-f363-47dd-9df5-4018d0d17a98" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var tlex1_board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-4018d0d17a98', {boundingbox: [-6, 6, 6, -6], axis: true, showcopyright: false, shownavigation: false});
+ *   var tlex1_c1 = tlex1_board.createElement('curve', [function(t){return t},function(t){return t*t*t;}]);
+ *   var tlex1_g1 = tlex1_board.createElement('glider', [0.6, 1.2, tlex1_c1]);
+ *   var tlex1_t1 = tlex1_board.createElement('tangent', [tlex1_g1]);
+ * </script><pre>
  */
 JXG.createTangent = function(board, parents, attributes) {
     var p = parents[0],
