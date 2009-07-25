@@ -37,6 +37,7 @@
  * @class Creates a new basic line object. Do not use this constructor to create a line. Use {@link JXG.Board#createElement} with
  * type {@link Line}, {@link Arrow}, or {@link Axis} instead.  
  * @constructor
+ * @augments JXG.GeometryElement
  * @param {String,JXG.Board} board The board the new line is drawn on.
  * @param {Point} p1 Startpoint of the line.
  * @param {Point} p2 Endpoint of the line.
@@ -765,7 +766,8 @@ JXG.Line.prototype.removeTicks = function(tick) {
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
  * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number_number_number} x,y,z A line can also be created providing a three coordinates. TODO DESCRIPTION NEEDED.
+ * @param {number_number_number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
+ * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @example
  * // Create a line using point and coordinates/
  * // The second point will be fixed and invisible. 
@@ -854,7 +856,8 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number_number_number} x,y,z A line can also be created providing a three coordinates. TODO DESCRIPTION NEEDED.
+ * @param {number_number_number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
+ * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @see Line
  * @example
  * // Create a segment providing two points.
@@ -898,7 +901,8 @@ JXG.JSXGraph.registerElement('segment', JXG.createSegment);
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number_number_number} x,y,z A line can also be created providing a three coordinates. TODO DESCRIPTION NEEDED.
+ * @param {number_number_number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
+ * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @see Line
  * @example
  * // Create an arrow providing two points.
@@ -948,7 +952,8 @@ JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number_number_number} x,y,z A line can also be created providing a three coordinates. TODO DESCRIPTION NEEDED.
+ * @param {number_number_number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
+ * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @example
  * // Create an axis providing two coord pairs.
  *   var l1 = board.createElement('axis', [[0.0, 1.0], [1.0, 1.3]]);

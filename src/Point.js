@@ -168,6 +168,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
      * @type number
      * @see #setStyle
      * @default JXG.Options.point#style
+     * @name JXG.Point#style
      */
     this.visProp['style'] = this.board.options.point.style;
 
@@ -220,6 +221,7 @@ JXG.Point.prototype = new JXG.GeometryElement();
  * @param {int} y Coordinate in y direction, screen coordinates.
  * @type boolean
  * @return True if (x,y) is near the point, False otherwise.
+ * @private
  */
 JXG.Point.prototype.hasPoint = function (x,y) {
     var coordsScr = this.coords.scrCoords;
