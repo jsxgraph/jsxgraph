@@ -337,6 +337,7 @@ JXG.Line.prototype.updateStdform = function() {
  * and {@link #point2}.
  * @param p The point for that the polynomial is generated.
  * @return An array containing the generated polynomial.
+ * @private
  */
 JXG.Line.prototype.generatePolynomial = function (/** JXG.Point */ p) /** array */{
     var u1 = this.point1.symbolic.x,
@@ -842,8 +843,8 @@ JXG.createLine = function(board, parents, atts) {
 JXG.JSXGraph.registerElement('line', JXG.createLine);
 
 /**
- * @class This element is used to provide a constructor for a segment. It's strictly spoken just a wrapper for element {@link Line} with {@link #straightFirst}
- * and {@link #straightLast} properties set to false.
+ * @class This element is used to provide a constructor for a segment. It's strictly spoken just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
+ * and {@link JXG.Line#straightLast} properties set to false.
  * @pseudo
  * @description
  * @name Segment
@@ -886,8 +887,8 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
 JXG.JSXGraph.registerElement('segment', JXG.createSegment);
 
 /**
- * @class This element is used to provide a constructor for arrow, which is just a wrapper for element {@link Line} with {@link #straightFirst}
- * and {@link #straightLast} properties set to false and {@link JXG.Line#lastArrow} set to true.
+ * @class This element is used to provide a constructor for arrow, which is just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
+ * and {@link JXG.Line#straightLast} properties set to false and {@link JXG.Line#lastArrow} set to true.
  * @pseudo
  * @description
  * @name Arrow
@@ -936,8 +937,8 @@ JXG.createArrow = function(board, parents, attributes) {
 JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
 
 /**
- * @class This element is used to provide a constructor for an axis. It's strictly spoken just a wrapper for element line with {@link #straightFirst}
- * and {@link #straightLast} properties set to true. Additionally {@link #lastArrow} is set to true and default {@link Ticks} will be created.
+ * @class This element is used to provide a constructor for an axis. It's strictly spoken just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
+ * and {@link JXG.Line#straightLast} properties set to true. Additionally {@link JXG.Line#lastArrow} is set to true and default {@link Ticks} will be created.
  * @pseudo
  * @description
  * @name Axis
