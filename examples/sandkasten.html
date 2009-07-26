@@ -29,6 +29,8 @@
         l2 = board.createElement('line', [p2, p3], {straightFirst:false, straightLast: false});
         a = board.createElement('angle', [p1, p2, p3], {name: "", showLabel: false});
 
+           var intex1_c1 = board.createElement('functiongraph', [function (t) { return t*t*t; }]);
+           var intex1_i1 = board.createElement('integral', [[-2.0, 3.0], intex1_c1]);
 //        p4 = board.createElement('centroid', [p1, p2, p3], {name:"S", trace:true});
 
 /*        pol = board.createElement('polygon', [p1, p2, p3, p4]);
