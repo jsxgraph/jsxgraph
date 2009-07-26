@@ -2130,7 +2130,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     attribs.id = ids[4];
     attribs.visible = true;
     
-    var p = board.createElement('polygon', points, attribs);
+    var p = this.createElement('polygon', points, attribs);
     
     p.update = function() {
         var fakePoint;
