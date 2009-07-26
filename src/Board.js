@@ -2067,14 +2067,14 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     else
         start = curve.points[0].usrCoords[1];
 
-    var pa_on_curve = board.createElement('point', [start, curve.yterm(start)], attribs);
+    var pa_on_curve = this.createElement('point', [start, curve.yterm(start)], attribs);
 
     attribs.name = names[1];
     attribs.id = ids[1];
     attribs.visible = false;
     attribs.slideObject = null;
 
-    var pa_on_axis = board.createElement('point', [function () { return pa_on_curve.X(); }, 0], attribs);
+    var pa_on_axis = this.createElement('point', [function () { return pa_on_curve.X(); }, 0], attribs);
 
     points.push(pa_on_axis);
     points.push(pa_on_curve);
@@ -2100,20 +2100,20 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     attribs.id = ids[2];
     attribs.slideObject = curve;
     attribs.visible = true;
-    var pb_on_curve = board.createElement('point', [points[points.length-1].coords.usrCoords[1], curve.yterm(points[points.length-1].coords.usrCoords[1])], attribs);
+    var pb_on_curve = this.createElement('point', [points[points.length-1].coords.usrCoords[1], curve.yterm(points[points.length-1].coords.usrCoords[1])], attribs);
     
     attribs.name = names[3];
     attribs.id = ids[3];
     attribs.slideObject = null;
     attribs.visible = false;
-    var pb_on_axis = board.createElement('point', [function () { return pb_on_curve.X(); }, 0], attribs);
+    var pb_on_axis = this.createElement('point', [function () { return pb_on_curve.X(); }, 0], attribs);
     points.push(pb_on_curve);
     points.push(pb_on_axis);
     
     pb_on_curve.addChild(pb_on_axis);
     
     var Int = JXG.Math.Numerics.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
-    var t = board.createElement('text', [
+    var t = this.createElement('text', [
         function () { return pb_on_curve.X() + 0.2; }, 
         function () { return pb_on_curve.Y() - 1.0; },
         function () {

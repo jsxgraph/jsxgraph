@@ -875,15 +875,13 @@ JXG.createMirrorPoint = function(board, parentArr, atts) {
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {array_JXG.Curve} p,l The constructed point is the orthogonal projection of p onto l. 
  * @example
- * // WARNING: THIS EXAMPLE DOESN'T WORK BY NOW.
- * // We're investigating the bug.
  * var c1 = board.createElement('functiongraph', [function (t) { return t*t*t; }]);
  * var i1 = board.createElement('integral', [[-1.0, 4.0], c1]);
  * </pre><div id="d45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var intex1_board = JXG.JSXGraph.initBoard('d45d7188-6624-4d6e-bebb-1efa2a305c8a', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
  *   var intex1_c1 = intex1_board.createElement('functiongraph', [function (t) { return t*t*t; }]);
- *   var intex1_i1 = intex1_board.createElement('integral', [[-2.0, 3.0], intex1_c1]);
+ *   var intex1_i1 = intex1_board.createElement('integral', [[-2.0, 2.0], intex1_c1]);
  * </script><pre>
  */
 JXG.createIntegral = function(board, parentArr, atts) {
