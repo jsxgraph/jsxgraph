@@ -159,6 +159,9 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type Object
      */
     this.containerObj = document.getElementById(this.container);
+    if (this.containerObj==null) {
+        throw ("\nJSXGraph error: HTML container element '" + (box) + "' not found.");
+    }
     //this.containerObj.undoPositioned;  //???
 
     /**
@@ -252,11 +255,17 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.hooks = [];
 
     /**
+     * An array containing all other boards that are updated after this board has been updated. 
+     * @type Array
+     */
+    this.dependentBoards = [];
+
+    /**
      * An associative array containing all geometric objects belonging to the board. Key is the id of the object and value is a reference to the object.
      * @type Object
      */
     this.objects = {};
-    
+        
     /**
      * An associative array containing all highlighted geometric objects belonging to the board.
      * @type Object
@@ -2485,11 +2494,33 @@ JXG.Board.prototype.updateHooks = function() {
 };
 
 /**
+  * Adds a dependent board to this board.
+  * @param {object}  A reference to board which will be updated after an update of this board occured.
+  */
+JXG.Board.prototype.addChild = function(board) {
+    this.dependentBoards.push(board);
+};
+
+/**
+  * Deletes a board from the list of dependent boards.
+  * @param {object} board Reference to the board which will be removed.
+  */
+JXG.Board.prototype.removeChild = function(board) {
+    var i;
+    for (i=this.dependentBoards.length-1; i>=0; i--) {
+        if (this.dependentBoards[i] == board) {
+            this.dependentBoards.splice(i,1);
+        }
+    }
+};
+
+/**
   * Runs through most elements and calls their
   * update() method and update the conditions.
   * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.update = function(drag) {
+    var i, len, boardId;
     if (this.isSuspendedUpdate) { return; }
     this.prepareUpdate(drag);
     this.updateElements(drag);
@@ -2500,16 +2531,20 @@ JXG.Board.prototype.update = function(drag) {
     this.updateHooks();
 
     // To resolve dependencies between boards
-    for(var boards in JXG.JSXGraph.boards) {
-        if(JXG.JSXGraph.boards[boards] != this) {
-            JXG.JSXGraph.boards[boards].prepareUpdate(drag);
-            JXG.JSXGraph.boards[boards].updateElements(drag);
-            JXG.JSXGraph.boards[boards].updateConditions();
-            JXG.JSXGraph.boards[boards].renderer.suspendRedraw();
-            JXG.JSXGraph.boards[boards].updateRenderer(drag);
-            JXG.JSXGraph.boards[boards].renderer.unsuspendRedraw();
-            JXG.JSXGraph.boards[boards].updateHooks();
+    //for(var board in JXG.JSXGraph.boards) {
+    len = this.dependentBoards.length;
+    for (i=0; i<len; i++) {
+        boardId = this.dependentBoards[i].id;
+        if(JXG.JSXGraph.boards[boardId] != this) {
+            JXG.JSXGraph.boards[boardId].prepareUpdate(drag);
+            JXG.JSXGraph.boards[boardId].updateElements(drag);
+            JXG.JSXGraph.boards[boardId].updateConditions();
+            JXG.JSXGraph.boards[boardId].renderer.suspendRedraw();
+            JXG.JSXGraph.boards[boardId].updateRenderer(drag);
+            JXG.JSXGraph.boards[boardId].renderer.unsuspendRedraw();
+            JXG.JSXGraph.boards[boardId].updateHooks();
         }
+        
     }
 };
 

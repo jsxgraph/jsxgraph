@@ -342,6 +342,9 @@ JXG.createEvalFunction = function(board,param,n) {
 JXG.getDimensions = function(elementId) {
     // Borrowed from prototype.js
     var element = document.getElementById(elementId);
+    if (element==null) {
+        throw ("\nJSXGraph error: HTML container element '" + (elementId) + "' not found.");
+    }
     var display = element.style['display'];
     if (display != 'none' && display != null) // Safari bug
       return {width: element.offsetWidth, height: element.offsetHeight};
