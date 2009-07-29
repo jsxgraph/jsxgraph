@@ -790,10 +790,10 @@ JXG.SVGRenderer.prototype.updateRectPrimitive = function(node,x,y,w,h) {
 };
 
 JXG.SVGRenderer.prototype.updatePathPrimitive = function(node, pointString, board) {  // board not necessary in SVG
-    node.setAttributeNS(null, 'd', pointString);
     node.setAttributeNS(null, 'stroke-linecap', 'round');
     node.setAttributeNS(null, 'stroke-linejoin', 'round');
-    node.setAttributeNS(null, 'shape-rendering', 'geometricPrecision');
+    //node.setAttributeNS(null, 'shape-rendering', 'geometricPrecision');
+    node.setAttributeNS(null, 'd', pointString);
 };
 
 JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
@@ -876,13 +876,13 @@ JXG.SVGRenderer.prototype.RDP = function(pts,i,j,eps,newPts) {
         this.RDP(pts, i,result[1], eps,newPts);
         this.RDP(pts, result[1],j, eps,newPts);
     } else {
-        newPts.push(pts[i]);
+        //newPts.push(pts[i]);
         newPts.push(pts[j]);
     }
 };
 
 JXG.SVGRenderer.prototype.RamenDouglasPeuker = function(pts) {
-    var eps = 1.1,
+    var eps = 1.0,
         newPts = [pts[0]];
     
     this.RDP(pts,0,pts.length-1,eps,newPts);
