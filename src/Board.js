@@ -2499,6 +2499,7 @@ JXG.Board.prototype.updateHooks = function() {
   */
 JXG.Board.prototype.addChild = function(board) {
     this.dependentBoards.push(board);
+    this.update();
 };
 
 /**
