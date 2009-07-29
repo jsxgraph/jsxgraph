@@ -811,9 +811,13 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
 
     if (el.numberPoints<=0) { return ''; }
     
-    for (i=0; i<el.numberPoints; i++) {
+    if (isNoPlot) {
+        el.points = this.RamenDouglasPeuker(el.points);
+    }
+    
+    for (i=0; i<Math.min(el.points.length,el.numberPoints); i++) {
         scr = el.points[i].scrCoords;
-        if (isNoPlot && Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
+        //if (isNoPlot && Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
         if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (isFunctionGraph && (scr[2]>h || scr[2]<-0.5*h)) ) {
             nextSymb = symbm;
         } else {
@@ -824,6 +828,66 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
         oldy = scr[2];
     }
     return pStr;
+};
+
+JXG.SVGRenderer.prototype.findSplit = function(pts, i, j) {
+    var dist = 0, 
+        f = i, 
+        d, k, ci, cj, ck,
+        x0, y0, x1, y1,
+        den, lbda;
+    if (j-2<5) return [-1.0,0];
+    
+    ci = pts[i].scrCoords;
+    cj = pts[j].scrCoords;
+    for (k=i+1; k<j; k++) {
+        ck = pts[k].scrCoords;
+        x0 = ck[1]-ci[1];
+        y0 = ck[2]-ci[2];
+        d = Math.sqrt(x0*x0+y0*y0);
+        if (d<dist) {
+            dist = d;
+            f = k;
+        }
+
+        x1 = cj[1]-ci[1];
+        y1 = cj[2]-ci[2];
+        den = x1*x1+y1*y1;
+        if (den>=JXG.Math.eps) {
+            lbda = (x0*x1+y0*y1)/den;
+            d = Math.sqrt( x0*x0+y0*y0 - lbda*(x0*x1+y0*y1) );
+        } else {
+            lbda = 0.0;
+            d = Math.sqrt(x0*x0+y0*y0);
+        }
+        if (d>dist) {
+            dist = d;
+            f = k;
+        }
+    }
+    //$('debug').innerHTML += '('+i+','+j+','+dist.toFixed(2)+': '+f+'): ';
+    //$('debug').innerHTML += '('+ci.toString()+' |'+cj.toString()+' | '+pts[f].scrCoords.toString()+')<br> ';
+    return [dist,f];
+};
+
+JXG.SVGRenderer.prototype.RDP = function(pts,i,j,eps,newPts) {
+    var result = this.findSplit(pts,i,j);
+    if (result[0]>eps) {
+        this.RDP(pts, i,result[1], eps,newPts);
+        this.RDP(pts, result[1],j, eps,newPts);
+    } else {
+        newPts.push(pts[i]);
+        newPts.push(pts[j]);
+    }
+};
+
+JXG.SVGRenderer.prototype.RamenDouglasPeuker = function(pts) {
+    var eps = 1.1,
+        newPts = [pts[0]];
+    
+    this.RDP(pts,0,pts.length-1,eps,newPts);
+    //$('debug').innerHTML = newPts.length;
+    return newPts;
 };
 
 JXG.SVGRenderer.prototype.updatePolygonePrimitive = function(node, el) {

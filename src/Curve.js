@@ -69,7 +69,7 @@ JXG.Curve = function (board, parents, id, name, withLabel) {
     
     /**
      * The curveType is set in @see generateTerm and used in 
-     * @see updateCurve
+     * {@link updateCurve}
      * Possible values are:
      * 'none'
      * 'plot': Data plot
@@ -227,7 +227,7 @@ JXG.Curve.prototype.allocatePoints = function () {
 
 /**
  * Computes for equidistant points on the x-axis the values
- * of the function. @see #updateCurve
+ * of the function, {@link #updateCurve}
  * Then, the update function of the renderer
  * is called. 
  */

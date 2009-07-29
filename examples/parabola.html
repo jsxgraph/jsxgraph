@@ -31,6 +31,8 @@
 						
 
 				board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 50, unitY: 50});
+                board2.addChild(board);
+                
 				// Axes
 				b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
 				b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
