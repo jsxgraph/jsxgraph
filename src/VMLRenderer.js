@@ -836,22 +836,29 @@ JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString,board)
 };
 
 JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
-    var oldx, oldy, nextSymb, pStr, h, w, m, i, scr,
-       symbm = ' m ', symbl = ' l ';
+    var oldx = -10000.0, 
+        oldy = -10000.0, 
+        pStr = [], 
+        h = 3*el.board.canvasHeight, 
+        w = 100*el.board.canvasWidth, 
+        len = Math.min(el.numberPoints,8192), // otherwise IE 7 crashes in hilbert.html
+        i, scr,
+        symbm = ' m ', 
+        symbl = ' l ',
+        nextSymb = symbm, 
+        isNoPlot = (el.curveType!='plot'),
+        isFunctionGraph = (el.curveType=='functiongraph');
     
     if (el.numberPoints<=0) { return ''; }
-    oldx = -10000.0;
-    oldy = -10000.0;
-    nextSymb = symbm;
-    pStr = [];
-    h = 3*el.board.canvasHeight;
-    w = 100*el.board.canvasWidth;
-    m = Math.min(el.numberPoints,8192); // otherwise IE 7 crashes in hilbert.html
-    
-    for (i=0; i<m; i++) {
+    if (isNoPlot) {
+        el.points = this.RamenDouglasPeuker(el.points);
+    }
+    len = Math.min(len,el.points.length);
+
+    for (i=0; i<len; i++) {
         scr = el.points[i].scrCoords;
-        if (el.curveType!='plot' && Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
-        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (el.curveType=='functiongraph' && (scr[2]>h || scr[2]<-0.5*h)) ) {
+        //if (el.curveType!='plot' && Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
+        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (isFunctionGraph && (scr[2]>h || scr[2]<-0.5*h)) ) {  // PenUp
             nextSymb = symbm;
         } else {
             pStr.push([nextSymb,scr[1],', ',scr[2]].join(''));

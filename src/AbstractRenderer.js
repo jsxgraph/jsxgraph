@@ -1188,3 +1188,65 @@ JXG.AbstractRenderer.prototype.getElementById = function(/** string */ id) /** o
     return document.getElementById(id);
 };
 
+JXG.AbstractRenderer.prototype.findSplit = function(pts, i, j) {
+    var dist = 0, 
+        f = i, 
+        d, k, ci, cj, ck,
+        x0, y0, x1, y1,
+        den, lbda;
+    if (j-2<5) return [-1.0,0];
+    
+    ci = pts[i].scrCoords;
+    cj = pts[j].scrCoords;
+    for (k=i+1; k<j; k++) {
+        ck = pts[k].scrCoords;
+        x0 = ck[1]-ci[1];
+        y0 = ck[2]-ci[2];
+        x1 = cj[1]-ci[1];
+        y1 = cj[2]-ci[2];
+        den = x1*x1+y1*y1;
+        if (den>=JXG.Math.eps) {
+            lbda = (x0*x1+y0*y1)/den;
+            d = Math.sqrt( x0*x0+y0*y0 - lbda*(x0*x1+y0*y1) );
+        } else {
+            lbda = 0.0;
+            d = Math.sqrt(x0*x0+y0*y0);
+        }
+        if (lbda<0.0) {
+            d = Math.sqrt(x0*x0+y0*y0);
+        } else if (lbda>1.0) {
+            x0 = ck[1]-cj[1];
+            y0 = ck[2]-cj[2];
+            d = Math.sqrt(x0*x0+y0*y0);
+        }
+        if (d>dist) {
+            dist = d;
+            f = k;
+        }
+    }
+    //$('debug').innerHTML += '('+i+','+j+','+dist.toFixed(2)+': '+f+'): ';
+    //$('debug').innerHTML += '('+ci.toString()+' |'+cj.toString()+' | '+pts[f].scrCoords.toString()+')<br> ';
+    return [dist,f];
+};
+
+JXG.AbstractRenderer.prototype.RDP = function(pts,i,j,eps,newPts) {
+    var result = this.findSplit(pts,i,j);
+    if (result[0]>eps) {
+        this.RDP(pts, i,result[1], eps,newPts);
+        this.RDP(pts, result[1],j, eps,newPts);
+    } else {
+        //newPts.push(pts[i]);
+        newPts.push(pts[j]);
+    }
+};
+
+JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(pts) {
+    var eps = 1.0,
+        newPts = [pts[0]];
+    
+    this.RDP(pts,0,pts.length-1,eps,newPts);
+    //$('debug').innerHTML = newPts.length;
+    return newPts;
+};
+
+
