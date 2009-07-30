@@ -388,21 +388,16 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
  */
 JXG.Math.Numerics.lagrangePolynomial = function(p) {  
     return function(x) {
-        var i, k, t,
-            y = 0.0,
-            xc = [],
-            nom = 1.0, 
-            len = p.length;
-            
-        for (i=0;i<len;i++) {
+        var i,k;
+        var y = 0.0;
+        var xc = [];
+        for (i=0;i<p.length;i++) {
             xc[i] = p[i].X();
-            nom *= (x-xc[i]);
         }
-        
-        for (i=0;i<len;i++) {
-            t = p[i].Y()*nom/(x-xc[i]);
-            for (k=0;k<len;k++) if (k!=i) {
-                t /= (xc[i]-xc[k]);
+        for (i=0;i<p.length;i++) {
+            var t = p[i].Y();
+            for (k=0;k<p.length;k++) if (k!=i) {
+                t *= (x-xc[k])/(xc[i]-xc[k]);
             }
             y += t;
         }
@@ -419,41 +414,29 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
  */
 JXG.Math.Numerics.neville = function(p) {
     return [function(t) {
-                var i,k,L,
-                    val = 0.0,
-                    nom = 1.0,
-                    len = p.length,
-                    denom = -JXG.Math.factorial(len-1);
-
-                for (i=0;i<len;i++) {
-                    nom *= (t-i);
-                }
-                val = p[0].X()*nom/(t-0)/denom;
-                for (i=1;i<len;i++) {
-                    denom *= (-1)*i/(len-i);
-                    L = p[i].X()*nom/(t-i)/denom;
+                var i,k,L;
+                var val = 0.0;
+                for (i=0;i<p.length;i++) {
+                    L = p[i].X();
+                    for (k=0;k<p.length;k++) if (k!=i) {
+                        L *= (t-k)/(i-k);
+                    }
                     val += L;
                 }
                 return val;
             },
             function(t) {
-                var i,k,L,
-                    val = 0.0,
-                    nom = 1.0,
-                    len = p.length,
-                    denom = -JXG.Math.factorial(len-1);
-                
-                for (i=0;i<len;i++) {
-                    nom *= (t-i);
-                }
-                val = p[0].Y()*nom/(t-0)/denom;
-                for (i=1;i<len;i++) {
-                    denom *= (-1)*i/(len-i);
-                    L = p[i].Y()*nom/(t-i)/denom;
+                var i,k,L;
+                var val = 0.0;
+                for (i=0;i<p.length;i++) {
+                    L = p[i].Y();
+                    for (k=0;k<p.length;k++) if (k!=i) {
+                        L *= (t-k)/(i-k);
+                    }
                     val += L;
                 }
                 return val;
-            }, 
+            },
             0, function(){ return p.length-1;}
         ];
 };

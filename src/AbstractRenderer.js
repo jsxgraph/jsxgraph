@@ -1263,7 +1263,6 @@ JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(pts) {
         newPts = [pts[0]];
     
     this.RDP(pts,0,pts.length-1,eps,newPts);
-    //$('debug').innerHTML = newPts.length;
     return newPts;
 };
 
