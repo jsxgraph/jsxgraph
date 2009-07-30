@@ -851,7 +851,7 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
     
     if (el.numberPoints<=0) { return ''; }
     if (isNoPlot) {
-        el.points = this.RamenDouglasPeuker(el.points);
+        el.points = this.RamenDouglasPeuker(el.points,1.0);
     }
     len = Math.min(len,el.points.length);
 
@@ -861,7 +861,7 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
         if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (isFunctionGraph && (scr[2]>h || scr[2]<-0.5*h)) ) {  // PenUp
             nextSymb = symbm;
         } else {
-            pStr.push([nextSymb,scr[1],', ',scr[2]].join(''));
+            pStr.push([nextSymb,Math.round(scr[1]),', ',Math.round(scr[2])].join(''));
             nextSymb = symbl;
         }
         oldx = scr[1];

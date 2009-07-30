@@ -280,7 +280,7 @@ JXG.Curve.prototype.updateCurve = function () {
         this.numberPoints = this.dataX.length;
     } else {
         if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
-            this.numberPoints = this.board.canvasWidth*4;
+            this.numberPoints = this.board.canvasWidth*2;
         } else {
             this.numberPoints = this.board.canvasWidth*0.5;
         }
@@ -304,7 +304,7 @@ JXG.Curve.prototype.updateCurve = function () {
             x = mi+i*stepSize;
             y = x;
         }
-        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x),this.Y(y)]);
+        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x),this.Y(y)], false); // The last parameter prevents rounding in usr2screen().
         this.updateTransform(this.points[i]);
     }
     

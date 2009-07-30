@@ -96,10 +96,16 @@ JXG.Coords.prototype.normalizeUsrCoords = function() {
  * Compute screen coordinates out of given user coordinates.
  * @private
  */
-JXG.Coords.prototype.usr2screen = function() {
-    this.scrCoords[0] = Math.round(this.usrCoords[0]);
-    this.scrCoords[1] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[1] + this.usrCoords[1]*this.board.unitX*this.board.zoomX);
-    this.scrCoords[2] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[2] - this.usrCoords[2]*this.board.unitY*this.board.zoomY);
+JXG.Coords.prototype.usr2screen = function(doRound) {
+    if (doRound==null || doRound) {
+        this.scrCoords[0] = Math.round(this.usrCoords[0]);
+        this.scrCoords[1] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[1] + this.usrCoords[1]*this.board.unitX*this.board.zoomX);
+        this.scrCoords[2] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[2] - this.usrCoords[2]*this.board.unitY*this.board.zoomY);
+    } else {
+        this.scrCoords[0] = this.usrCoords[0];
+        this.scrCoords[1] = this.usrCoords[0]*this.board.origin.scrCoords[1] + this.usrCoords[1]*this.board.unitX*this.board.zoomX;
+        this.scrCoords[2] = this.usrCoords[0]*this.board.origin.scrCoords[2] - this.usrCoords[2]*this.board.unitY*this.board.zoomY;
+    }
 };
 
 /**
@@ -147,8 +153,10 @@ JXG.Coords.prototype.distance = function(method, coordinates) {
  * Set coordinates by method
  * @param {int} method The type of coordinates used here. Possible values are <b>COORDS_BY_USER</b> and <b>COORDS_BY_SCREEN</b>.
  * @param {Array} coordinates An array of affine coordinates the Coords object is set to.
+ * @param {boolean} optional flag If true or null round the coordinates in usr2screen. This is used in smooth curve plotting.
+ * The IE needs rounded coordinates. Id doRound==false we have to round in updatePathString.
  */
-JXG.Coords.prototype.setCoordinates = function(method, coordinates) {
+JXG.Coords.prototype.setCoordinates = function(method, coordinates, doRound) {
     if (method == JXG.COORDS_BY_USER) {
 /*        for(var i=1; i<this.board.dimension+1; i++) {
             this.usrCoords[i] = coordinates[i-1];
@@ -163,7 +171,7 @@ JXG.Coords.prototype.setCoordinates = function(method, coordinates) {
             this.usrCoords[2] = coordinates[2];
             this.normalizeUsrCoords();
         }
-        this.usr2screen();
+        this.usr2screen(doRound);
     } else {
 /*        for(var i=1; i<this.board.dimension+1; i++) {
             this.scrCoords[i] = coordinates[i-1];

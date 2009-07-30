@@ -813,7 +813,7 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     if (el.numberPoints<=0) { return ''; }
     
     if (isNoPlot) {
-        el.points = this.RamenDouglasPeuker(el.points);
+        el.points = this.RamenDouglasPeuker(el.points,0.5);
     }
     len = Math.min(el.points.length,el.numberPoints);
     for (i=0; i<len; i++) {

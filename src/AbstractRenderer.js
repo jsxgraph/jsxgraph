@@ -1258,11 +1258,11 @@ JXG.AbstractRenderer.prototype.RDP = function(pts,i,j,eps,newPts) {
   * pts. The computation is done in screen coordinates.
   * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
   */
-JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(pts) {
-    var eps = 1.0,
-        newPts = [pts[0]];
+JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(pts,eps) {
+    var newPts = [pts[0]];
     
     this.RDP(pts,0,pts.length-1,eps,newPts);
+    //$('debug').innerHTML = newPts.length;
     return newPts;
 };
 
