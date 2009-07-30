@@ -1646,14 +1646,14 @@ JXG.Board.prototype.addPerpendicular = function(l, p, idL, nameL, idP, nameP) {
     line.addChild(point2); // notwendig, um auch den Punkt upzudaten
     
     var perpendicular;
-    if(erg[1]) {
+    if(erg[1]) { // is needed to make sure that intersections with perpendiculars from GEONExT are drawn in the right order
         perpendicular = new JXG.Line(this, point2.id, point.id, idL, nameL);
     }
     else {
         perpendicular = new JXG.Line(this, point.id, point2.id, idL, nameL);
     }
     perpendicular.setStraight(false, false);
-    perpendicular.changed = erg[1];
+    perpendicular.changed = erg[1]; 
    
     //point.addChild(perpendicular);
     //line.addChild(perpendicular);
@@ -1662,7 +1662,7 @@ JXG.Board.prototype.addPerpendicular = function(l, p, idL, nameL, idP, nameP) {
         if (this.needsUpdate) {
             var erg = this.board.algebra.perpendicular(line, point);
             point2.coords = erg[0];
-            if(this.changed != erg[1]) {
+            if(this.changed != erg[1]) { // is needed to make sure that intersections with perpendiculars from GEONExT are drawn in the right order
                 var tmp = this.point1;
                 this.point1 = this.point2;
                 this.point2 = tmp;
