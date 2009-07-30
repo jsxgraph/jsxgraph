@@ -19,18 +19,23 @@
         xax = board.createElement('axis', [[0,0],[1,0]]);
         yax = board.createElement('axis', [[0,0],[0,1]]);
 
-        p1 = board.createElement('point', [4, 9], {style:2,name:"",fixed:true});
-        p2 = board.createElement('point', [7, 4], {style:2,name:"",fixed:true});
+        p1 = board.createElement('point', [4, 9], {style:2,name:""});
+        p2 = board.createElement('point', [7, 4], {style:2,name:""});
 
 //        l1 = board.createElement('line', [[4,13], [12,13]]);
 //        p3 = board.createElement('glider', [8,13, l1], {style:5,name:"C", showInfobox:false});
         p3 = board.createElement('point', [10,10], {style:2,name:"", showInfobox:false});
         l1 = board.createElement('line', [p1, p2], {straightFirst:false, straightLast: false});
-        l2 = board.createElement('line', [p2, p3], {straightFirst:false, straightLast: false});
-        a = board.createElement('angle', [p1, p2, p3], {name: "", showLabel: false});
+//        l2 = board.createElement('line', [p2, p3], {straightFirst:false, straightLast: false});
+//        a = board.createElement('angle', [p1, p2, p3], {name: "", showLabel: false});
 
-           var intex1_c1 = board.createElement('functiongraph', [function (t) { return t*t*t; }]);
-           var intex1_i1 = board.createElement('integral', [[-2.0, 3.0], intex1_c1]);
+//           var intex1_c1 = board.createElement('functiongraph', [function (t) { return t*t*t; }]);
+//           var intex1_i1 = board.createElement('integral', [[-2.0, 3.0], intex1_c1]);
+
+
+	perp2 = board.createElement('perpendicular', [l1, p2]);
+	perp = board.createElement('perpendicular', [l1, p3]);
+	perp[0].setStraight(false, true);
 //        p4 = board.createElement('centroid', [p1, p2, p3], {name:"S", trace:true});
 
 /*        pol = board.createElement('polygon', [p1, p2, p3, p4]);

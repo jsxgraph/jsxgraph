@@ -77,31 +77,40 @@
 JXG.createPerpendicular = function(board, parentArr, atts) {
     var els, p, l, t;
 
-    if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
-        if(!JXG.IsArray(atts['id'])) {
-            atts['id'] = ['',''];
-        }
-        if(!JXG.IsArray(atts['name'])) {
-            atts['name'] = ['',''];
-        }    
-        els = board.addPerpendicular(parentArr[1], parentArr[0], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);
+    parentArr[0] = JXG.GetReferenceFromParameter(board, parentArr[0]);
+    parentArr[1] = JXG.GetReferenceFromParameter(board, parentArr[1]);
+
+    if(JXG.IsPoint(parentArr[0]) && parentArr[1].elementClass == JXG.OBJECT_CLASS_LINE) {
         l = parentArr[1];
         p = parentArr[0];
     }
-    else if(JXG.IsPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {
-        if(!JXG.IsArray(atts['id'])) {
-            atts['id'] = ['',''];
-        }
-        if(!JXG.IsArray(atts['name'])) {
-            atts['name'] = ['',''];
-        }        
-        els = board.addPerpendicular(parentArr[0], parentArr[1], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);
+    else if(JXG.IsPoint(parentArr[1]) && parentArr[0].elementClass == JXG.OBJECT_CLASS_LINE) {
         l = parentArr[0];
         p = parentArr[1];
     }
     else {
         throw ("Can't create perpendicular with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
     }
+
+    if(!JXG.IsArray(atts['id'])) {
+        atts['id'] = ['',''];
+    }
+    if(!JXG.IsArray(atts['name'])) {
+        atts['name'] = ['',''];
+    }        
+
+//    els = board.addPerpendicular(l, p, atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);
+
+    /* BEGIN board.addPerpendicular */
+    var point2 = board.createElement('point', [function () { return board.algebra.perpendicular(l, p)[0]; }], {fixed: true, name: atts['name'][1], id: atts['id'][1]});
+    p.addChild(point2); // notwendig, um auch den Punkt upzudaten
+    l.addChild(point2); // notwendig, um auch den Punkt upzudaten
+  
+    var perpendicular = board.createElement('segment', [function () { return (board.algebra.perpendicular(l, p)[1] ? [point2, p] : [p, point2]); }], {name: atts['name'][0], id: atts['id'][0]});
+    
+    /* END board.addPerpendicular */
+    els = [perpendicular, point2];
+
 
     t = els[1];
 

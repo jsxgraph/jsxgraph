@@ -258,7 +258,19 @@ JXG.Line.prototype = new JXG.GeometryElement;
  * @private
  */
 JXG.Line.prototype.update = function() {
-    var i;
+    var i, funps;
+    
+    if(this.constrained) {
+    	if(typeof this.funps != 'undefined') {
+    		funps = this.funps();
+    		this.point1 = funps[0];
+    		this.point2 = funps[1];
+    	} else {
+            this.point1 = this.funp1();
+            this.point2 = this.funp2();
+    	}
+    }
+    
     if (this.needsUpdate) {
         if (true || !this.board.geonextCompatibilityMode) {
             this.updateStdform();
@@ -798,11 +810,15 @@ JXG.createLine = function(board, parents, atts) {
         atts['withLabel'] = false;
     }
     
+    var constrained = false;
     if (parents.length == 2) { // The line is defined by two points (or coordinates of two points)
         if (parents[0].length>1) { // point 1 given by coordinates
             p1 = board.createElement('point', parents[0], {visible:false,fixed:true});
         } else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT) {
             p1 =  JXG.GetReferenceFromParameter(board,parents[0]);
+        } else if ((typeof parents[0] == 'function') && (parents[0]().elementClass == JXG.OBJECT_CLASS_POINT)) {
+            p1 = parents[0]();
+            constrained = true;
         } else 
             throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         
@@ -810,9 +826,17 @@ JXG.createLine = function(board, parents, atts) {
             p2 = board.createElement('point', parents[1], {visible:false,fixed:true});
         } else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT) {
             p2 =  JXG.GetReferenceFromParameter(board,parents[1]);
+        } else if ((typeof parents[1] == 'function') && (parents[1]().elementClass == JXG.OBJECT_CLASS_POINT)) {
+            p2 = parents[1]();
+            constrained = true;
         } else 
             throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel']);
+        if(constrained) {
+        	el.constrained = true;
+        	el.funp1 = parents[0];
+        	el.funp2 = parents[1];
+        }
     }
     else if (parents.length==3) {  // Line is defined by three coordinates
         // free line
@@ -837,6 +861,13 @@ JXG.createLine = function(board, parents, atts) {
                 function() { return -c[1]()*c[0]()+c[2]();},
                 function() { return -c[2]()*c[0]()-c[1]();}],{visible:false,name:' '});
         el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel']);
+    }
+    else if ((parents.length==1) && (typeof parents[0] == 'function') && (parents[0]().length == 2) &&
+    		 (parents[0]()[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parents[0]()[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
+    	var ps = parents[0]();
+        el = new JXG.Line(board, ps[0].id, ps[1].id, atts['id'], atts['name'],atts['withLabel']);
+        el.constrained = true;
+        el.funps = parents[0];
     } else
         throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     return el;
