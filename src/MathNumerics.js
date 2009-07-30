@@ -406,7 +406,9 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
 };
 
 /**
- * Computes the Lagrange polynomial for curves with Neville's algorithm.
+ * Returns the Lagrange polynomials for curves with equidistant nodes, see
+ * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
+ * SIAM Review, Vol 46, No 3, (2004) 501-517.
  * @param {Array of JXG.Points} 
  * @type {Array function, function vaue, value]}
  * @return [f(t),g(t),0,p.length-1],
@@ -414,28 +416,38 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
  */
 JXG.Math.Numerics.neville = function(p) {
     return [function(t) {
-                var i,k,L;
-                var val = 0.0;
-                for (i=0;i<p.length;i++) {
-                    L = p[i].X();
-                    for (k=0;k<p.length;k++) if (k!=i) {
-                        L *= (t-k)/(i-k);
+                var i, d, L,
+                    len = p.length,
+                    num = 0.0, 
+                    denom = 0.0;
+                for (i=0;i<len;i++) {
+                    d = (t-i);
+                    if (d==0) {
+                        return p[i].X();
+                    } else {
+                        L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
                     }
-                    val += L;
+                    num   += p[i].X()*L;
+                    denom += L;
                 }
-                return val;
+                return num/denom;
             },
             function(t) {
-                var i,k,L;
-                var val = 0.0;
-                for (i=0;i<p.length;i++) {
-                    L = p[i].Y();
-                    for (k=0;k<p.length;k++) if (k!=i) {
-                        L *= (t-k)/(i-k);
+                var i, d, L,
+                    len = p.length,
+                    num = 0.0, 
+                    denom = 0.0;
+                for (i=0;i<len;i++) {
+                    d = (t-i);
+                    if (d==0) {
+                        return p[i].Y();
+                    } else {
+                        L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
                     }
-                    val += L;
+                    num   += p[i].Y()*L;
+                    denom += L;
                 }
-                return val;
+                return num/denom;
             },
             0, function(){ return p.length-1;}
         ];

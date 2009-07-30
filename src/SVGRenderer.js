@@ -45,7 +45,7 @@ JXG.SVGRenderer = function(container) {
 
     this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace,'defs');
     this.svgRoot.appendChild(this.defs);
-
+    
     // um eine passende Reihenfolge herzustellen
     this.images = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
     this.svgRoot.appendChild(this.images);
