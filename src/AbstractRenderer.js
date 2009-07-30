@@ -1188,6 +1188,11 @@ JXG.AbstractRenderer.prototype.getElementById = function(/** string */ id) /** o
     return document.getElementById(id);
 };
 
+/**
+ * findSplit() is a subroutine for {@link #RamenDouglasPeuker}.
+ * It searches for the point between index i and j which 
+ * has the largest distance from the line petween poin_i and point_j.
+ **/
 JXG.AbstractRenderer.prototype.findSplit = function(pts, i, j) {
     var dist = 0, 
         f = i, 
@@ -1224,22 +1229,34 @@ JXG.AbstractRenderer.prototype.findSplit = function(pts, i, j) {
             f = k;
         }
     }
-    //$('debug').innerHTML += '('+i+','+j+','+dist.toFixed(2)+': '+f+'): ';
-    //$('debug').innerHTML += '('+ci.toString()+' |'+cj.toString()+' | '+pts[f].scrCoords.toString()+')<br> ';
     return [dist,f];
 };
 
+/**
+ * RDB() is a subroutine for {@link #RamenDouglasPeuker}.
+ * It runs recursively through the point set and searches the
+ * point which has the largest distance from the line between the first point and
+ * the last point. If the distance from the line is greater than eps, this point is 
+ * included in our new point set otherwise it is discarded.
+ * If it is taken, we recursively apply the subroutine to the point set before
+ * and after the chosen point.
+ */
 JXG.AbstractRenderer.prototype.RDP = function(pts,i,j,eps,newPts) {
     var result = this.findSplit(pts,i,j);
     if (result[0]>eps) {
         this.RDP(pts, i,result[1], eps,newPts);
         this.RDP(pts, result[1],j, eps,newPts);
     } else {
-        //newPts.push(pts[i]);
         newPts.push(pts[j]);
     }
 };
 
+/**
+  * Ramen-Douglas-Peuker algorithm.
+  * It discard points which are not necessary from the polygonal line defined by the point array
+  * pts. The computation is done in screen coordinates.
+  * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
+  */
 JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(pts) {
     var eps = 1.0,
         newPts = [pts[0]];
