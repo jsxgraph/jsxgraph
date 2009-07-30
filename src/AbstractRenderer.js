@@ -1199,7 +1199,8 @@ JXG.AbstractRenderer.prototype.findSplit = function(pts, i, j) {
         d, k, ci, cj, ck,
         x0, y0, x1, y1,
         den, lbda;
-    if (j-2<5) return [-1.0,0];
+        
+    if (j-i<2) return [-1.0,0];
     
     ci = pts[i].scrCoords;
     cj = pts[j].scrCoords;
@@ -1212,24 +1213,24 @@ JXG.AbstractRenderer.prototype.findSplit = function(pts, i, j) {
         den = x1*x1+y1*y1;
         if (den>=JXG.Math.eps) {
             lbda = (x0*x1+y0*y1)/den;
-            d = Math.sqrt( x0*x0+y0*y0 - lbda*(x0*x1+y0*y1) );
+            d = x0*x0+y0*y0 - lbda*(x0*x1+y0*y1);
         } else {
             lbda = 0.0;
-            d = Math.sqrt(x0*x0+y0*y0);
+            d = x0*x0+y0*y0;
         }
         if (lbda<0.0) {
-            d = Math.sqrt(x0*x0+y0*y0);
+            d = x0*x0+y0*y0;
         } else if (lbda>1.0) {
             x0 = ck[1]-cj[1];
             y0 = ck[2]-cj[2];
-            d = Math.sqrt(x0*x0+y0*y0);
+            d = x0*x0+y0*y0;
         }
         if (d>dist) {
             dist = d;
             f = k;
         }
     }
-    return [dist,f];
+    return [Math.sqrt(dist),f];
 };
 
 /**
@@ -1253,7 +1254,7 @@ JXG.AbstractRenderer.prototype.RDP = function(pts,i,j,eps,newPts) {
 
 /**
   * Ramen-Douglas-Peuker algorithm.
-  * It discard points which are not necessary from the polygonal line defined by the point array
+  * It discards points which are not necessary from the polygonal line defined by the point array
   * pts. The computation is done in screen coordinates.
   * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
   */
