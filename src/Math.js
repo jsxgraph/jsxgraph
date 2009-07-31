@@ -212,7 +212,8 @@ JXG.memoizer = function (f) {
     var cache = {}, join = Array.prototype.join;
     return (f.memo = function() {
         var key = join.call(arguments);
-        return (key in cache)
+        //return (key in cache)
+        return (typeof cache[key]!='undefined') // Seems to be a bit faster than "if (a in b)"
             ? cache[key]
             : cache[key] = f.apply(this, arguments);
     });

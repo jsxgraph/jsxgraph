@@ -416,16 +416,22 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
  */
 JXG.Math.Numerics.neville = function(p) {
     return [function(t) {
-                var i, d, L,
+                var i, d, L, s, 
+                    func = JXG.Math.binomial,
                     len = p.length,
+                    len1 = len - 1,
                     num = 0.0, 
                     denom = 0.0;
+                d = t;
+                s = 1;
                 for (i=0;i<len;i++) {
-                    d = (t-i);
                     if (d==0) {
                         return p[i].X();
                     } else {
-                        L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
+                        //L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
+                        L = func(len1,i)*s/d;
+                        s *= (-1);
+                        d -= 1;
                     }
                     num   += p[i].X()*L;
                     denom += L;
@@ -433,16 +439,22 @@ JXG.Math.Numerics.neville = function(p) {
                 return num/denom;
             },
             function(t) {
-                var i, d, L,
+                var i, d, L, s, 
+                    func = JXG.Math.binomial,
                     len = p.length,
+                    len1 = len - 1,
                     num = 0.0, 
                     denom = 0.0;
+                d = t;
+                s = 1;
                 for (i=0;i<len;i++) {
-                    d = (t-i);
                     if (d==0) {
                         return p[i].Y();
                     } else {
-                        L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
+                        //L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
+                        L = func(len1,i)*s/d;
+                        s *= (-1);
+                        d -= 1;
                     }
                     num   += p[i].Y()*L;
                     denom += L;
