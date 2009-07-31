@@ -152,6 +152,7 @@ JXG.Options = function() {
     this.curve = new Object();
     this.curve.strokeWidth = '1px';
     this.curve.strokeColor = this.elements.color.strokeColor;
+    this.curve.RDPsmoothing = true; // Apply the Ramen-Douglas-Peuker algorithm
 
     /* precision options */
     this.precision = new Object();

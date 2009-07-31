@@ -850,7 +850,7 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
         isFunctionGraph = (el.curveType=='functiongraph');
     
     if (el.numberPoints<=0) { return ''; }
-    if (isNoPlot) {
+    if (isNoPlot && el.board.options.curve.RDPsmoothing) {
         el.points = this.RamenDouglasPeuker(el.points,1.0);
     }
     len = Math.min(len,el.points.length);
