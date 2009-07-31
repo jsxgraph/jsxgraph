@@ -371,14 +371,14 @@ JXG.addEvent = function( obj, type, fn, owner ) {
     
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
         //Event.observe(obj, type, f);
-        owner['_internal'+type] = fn.bindAsEventListener(owner);
-        Event.observe(obj, type, owner['_internal'+type]);
+        owner['x_internal'+type] = fn.bindAsEventListener(owner);
+        Event.observe(obj, type, owner['x_internal'+type]);
     } else {             // jQuery
-        owner['_internal'+type] = function() {
+        owner['x_internal'+type] = function() {
             return fn.apply(owner,arguments);
         };
         //$(obj).bind(type,f);
-        $(obj).bind(type,owner['_internal'+type]);
+        $(obj).bind(type,owner['x_internal'+type]);
     }
 };
 
@@ -391,11 +391,11 @@ JXG.bind = function(fn, owner ) {
 JXG.removeEvent = function( obj, type, fn, owner ) {
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
         //Event.stopObserving(obj, type, fn);
-        Event.stopObserving(obj, type, owner['_internal'+type]);
+        Event.stopObserving(obj, type, owner['x_internal'+type]);
         //Event.stopObserving(obj, type);
     } else { // jQuery
         //$(obj).unbind(type,fn);
-        $(obj).unbind(type,owner['_internal'+type]);
+        $(obj).unbind(type,owner['x_internal'+type]);
     }
 };
 
