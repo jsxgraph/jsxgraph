@@ -45,6 +45,27 @@ JXG.SVGRenderer = function(container) {
 
     this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace,'defs');
     this.svgRoot.appendChild(this.defs);
+    this.filter = this.container.ownerDocument.createElementNS(this.svgNamespace,'filter');
+    this.filter.setAttributeNS(null, 'id', 'f1');
+    this.filter.setAttributeNS(null, 'width', '300%');
+    this.filter.setAttributeNS(null, 'height', '300%');
+    this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace,'feOffset');
+    this.feOffset.setAttributeNS(null, 'result', 'offOut');
+    this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+    this.feOffset.setAttributeNS(null, 'dx', '5');
+    this.feOffset.setAttributeNS(null, 'dy', '5');
+    this.filter.appendChild(this.feOffset);
+    this.feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace,'feGaussianBlur');
+    this.feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+    this.feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+    this.feGaussianBlur.setAttributeNS(null, 'stdDeviation', '3');
+    this.filter.appendChild(this.feGaussianBlur);
+    this.feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace,'feBlend');
+    this.feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+    this.feBlend.setAttributeNS(null, 'in2', 'blurOut');
+    this.feBlend.setAttributeNS(null, 'mode', 'normal');
+    this.filter.appendChild(this.feBlend);
+    this.defs.appendChild(this.filter);    
     
     // um eine passende Reihenfolge herzustellen
     this.images = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
@@ -73,6 +94,34 @@ JXG.SVGRenderer = function(container) {
 };
 
 JXG.SVGRenderer.prototype = new JXG.AbstractRenderer;
+
+JXG.SVGRenderer.prototype.addShadowToElement = function(element) {
+    if(element.rendNode != null) {
+        element.rendNode.setAttributeNS(null,'filter','url(#f1)');
+    }
+    else {
+        if(element.rendNodeX1 != null) {
+            element.rendNodeX1.setAttributeNS(null,'filter','url(#f1)');
+        }       
+        if(element.rendNodeX2 != null) {
+            element.rendNodeX2.setAttributeNS(null,'filter','url(#f1)');
+        }
+    }
+    element.board.fullUpdate();
+}
+
+JXG.SVGRenderer.prototype.addShadowToGroup = function(groupname, board) {
+    if(groupname == "lines") {
+        this.lines.setAttributeNS(null, 'filter', 'url(#f1)');
+    }
+    else if(groupname == "points") {
+        this.points.setAttributeNS(null, 'filter', 'url(#f1)');
+    }
+    else if(groupname == "circles") {
+        this.circles.setAttributeNS(null, 'filter', 'url(#f1)');
+    }    
+    board.fullUpdate();
+}
 
 JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
     var node = this.createPrimitive('text','licenseText'),
@@ -853,7 +902,7 @@ JXG.SVGRenderer.prototype.appendChildPrimitive = function(node,level) {
         case 'sectors': this.sectors.appendChild(node); break;
         case 'polygone': this.polygone.appendChild(node); break;
         case 'curves': this.lines.appendChild(node); break; //this.curves.appendChild(node); break;
-        case 'circles': this.lines.appendChild(node); break; //this.circles.appendChild(node); break;
+        case 'circles': this.circles.appendChild(node); break; // this.lines.appendChild(node); break; //
         case 'lines': this.lines.appendChild(node); break;
         case 'arcs': this.arcs.appendChild(node); break;
         case 'points': this.points.appendChild(node); break;

@@ -2585,7 +2585,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         attributes = {};
     }
     for (var i=0; i<parents.length; i++) {
-        parents[i] = JXG.GetReferenceFromParameter(this, parents[i]);
+        parents[i] = JXG.GetReferenceFromParameter(this, parents[i]); // TODO: should not be done for content-parameter of JXG.Text
     }
 
     if(JXG.JSXGraph.elements[elementType] != null) {
