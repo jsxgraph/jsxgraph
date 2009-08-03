@@ -26,7 +26,6 @@ var delta = brd.createElement('slider',[[2,4],[6,4],[0,0,Math.PI]],{name:'&delta
 
 var c = brd.createElement('functiongraph',[function(x){ return b.Value()*Math.sin(a.Value()*x);}, -10, 10],{strokeWidth:1});
 
-
 // Lissajous curve
 var c = brd.createElement('curve',[
           function(t){return A.Value()*Math.sin(a.Value()*t+delta.Value());},

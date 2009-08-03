@@ -316,6 +316,10 @@ JXG.IsPoint = function(p) {
     return false;
 };
 
+/**
+  * Convert String, number or function to function.
+  * This method is used in Transformation.js
+  */
 JXG.createEvalFunction = function(board,param,n) {
     // convert GEONExT syntax into function
     var f = [];
@@ -338,6 +342,24 @@ JXG.createEvalFunction = function(board,param,n) {
         return 0;
     };
 };
+
+/**
+  * Convert String, number or function to function.
+  **/
+JXG.createFunction = function(term,board,variableName) {
+    var newTerm;
+    
+    if (JXG.IsString(term)) {
+        // Convert GEONExT syntax into  JavaScript syntax
+        newTerm = board.algebra.geonext2JS(term);
+        return new Function(variableName,'return ' + newTerm + ';');
+    } else if (JXG.IsFunction(term)) {
+        return term;
+    } else if (JXG.IsNumber(term)) {
+        return function() { return term; };
+    } 
+    return null;
+}
 
 JXG.getDimensions = function(elementId) {
     // Borrowed from prototype.js
@@ -366,9 +388,10 @@ JXG.getDimensions = function(elementId) {
     return {width: originalWidth, height: originalHeight};
 };
 
+/** 
+  * addEvent: Abstraction layer for Prototype.js and jQuery
+  */
 JXG.addEvent = function( obj, type, fn, owner ) {
-    
-    
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
         //Event.observe(obj, type, f);
         owner['x_internal'+type] = fn.bindAsEventListener(owner);
@@ -388,6 +411,9 @@ JXG.bind = function(fn, owner ) {
     };
 };
 
+/** 
+  * removeEvent: Abstraction layer for Prototype.js and jQuery
+  */
 JXG.removeEvent = function( obj, type, fn, owner ) {
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
         //Event.stopObserving(obj, type, fn);
@@ -399,6 +425,9 @@ JXG.removeEvent = function( obj, type, fn, owner ) {
     }
 };
 
+/** 
+  * getPosition: independent from prototype and jQuery
+  */
 JXG.getPosition = function (Evt) {
     var posx = 0;
     var posy = 0;
@@ -414,6 +443,9 @@ JXG.getPosition = function (Evt) {
     return [posx,posy];
 };
 
+/**
+  * getOffset: Abstraction layer for Prototype.js and jQuery
+  */
 JXG.getOffset = function (obj) {
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') { // Prototype lib
         return Element.cumulativeOffset(obj);
@@ -423,6 +455,9 @@ JXG.getOffset = function (obj) {
     }
 };
 
+/**
+  * getStyle: Abstraction layer for Prototype.js and jQuery
+  */
 JXG.getStyle = function (obj, stylename) {
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') { // Prototype lib
         return $(obj).getStyle(stylename);

@@ -84,26 +84,8 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
         this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [parseFloat(coords[0]),parseFloat(coords[1])],this.board);
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.relativeCoords.usrCoords[1]+anchor.usrCoords[1],this.relativeCoords.usrCoords[2]+anchor.usrCoords[2]], this.board);
     } else {
-        var xterm = coords[0];
-        if (typeof xterm=='string') {
-            // Convert GEONExT syntax into  JavaScript syntax
-            var newxterm = this.board.algebra.geonext2JS(xterm);
-            this.X = new Function('','return ' + newxterm + ';');
-        } else if (typeof xterm=='function') {
-            this.X = xterm;
-        } else if (typeof xterm=='number') {
-            this.X = function() { return xterm; };
-        }
-        var yterm = coords[1];
-        if (typeof yterm=='string') {
-            // Convert GEONExT syntax into  JavaScript syntax
-            var newyterm = this.board.algebra.geonext2JS(yterm);
-            this.Y = new Function('','return ' + newyterm + ';');
-        } else if (typeof yterm=='function') {
-            this.Y = yterm;
-        } else if (typeof yterm=='number') {
-            this.Y = function() { return yterm; };
-        }
+        this.X = JXG.createFunction(coords[0],this.board,'');
+        this.Y = JXG.createFunction(coords[1],this.board,'');
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
         var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.X(),this.Y()]);';
         this.updateCoords = new Function('',fs);

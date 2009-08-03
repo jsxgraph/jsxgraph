@@ -364,56 +364,36 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
  * @see #geonext2JS.
  */
 JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
-    var newxterm, newyterm, newMin, newMax, fx, fy;
-    // Generate the methods X() and Y()
+    var fx, fy;
     this.numberPoints = this.board.canvasWidth*1.0;
-    if (typeof xterm=='string') {
-        // Convert GEONExT syntax into  JavaScript syntax
-        newxterm = this.board.algebra.geonext2JS(xterm);
-        this.X = new Function(varname,'return ' + newxterm + ';');
-        this.curveType = 'functiongraph';
-    } else if (typeof xterm=='function') {
-        this.X = xterm;
-        this.curveType = 'parameter';
-    } else if (typeof xterm=='number') {
-        this.X = function() { return xterm; };
-        this.curveType = 'parameter';
-    } else if (typeof xterm=='object') {  // array of values
-        this.curveType = 'plot';
+
+    // Generate the methods X() and Y()
+    if (JXG.IsArray(xterm)) {
         this.dataX = xterm;
         this.X = function(i) { return this.dataX[i]; };
+        this.curveType = 'plot';
         this.numberPoints = this.dataX.length;
+    } else {
+        this.X = JXG.createFunction(xterm,this.board,varname);
+        if (JXG.IsString(xterm)) { 
+            this.curveType = 'functiongraph'; 
+        } else if (JXG.IsFunction(xterm) || JXG.IsNumber(xterm)) {
+            this.curveType = 'parameter';
+        }
     }
-    
-    if (typeof yterm=='string') {
-        // Convert GEONExT syntax into  JavaScript syntax
-        newyterm = this.board.algebra.geonext2JS(yterm);
-        this.Y = new Function(varname,'return ' + newyterm + ';');
-    } else if (typeof yterm=='function') {
-        this.Y = yterm;
-    } else if (typeof yterm=='number') {
-        this.Y = function() { return yterm; };
-    } else if (typeof yterm=='object') {  // array of values
+
+    if (JXG.IsArray(yterm)) {
         this.dataY = yterm;
         this.Y = function(i) { return this.dataY[i]; };
+    } else {
+        this.Y = JXG.createFunction(yterm,this.board,varname);
     }
-    
-    // polar form
-    if (typeof xterm=='function' && typeof yterm=='object') {
-        // Xoffset
-        if (typeof yterm[0]=='function') {
-            fx = yterm[0];
-        } else if (typeof yterm[0]=='number') {
-            fx = function() { return yterm[0]; };
-        } 
-        
-        // Yoffset
-        if (typeof yterm[1]=='function') {
-            fy = yterm[1];
-        } else if (typeof yterm[1]=='number') {
-            fy = function() { return yterm[1]; };
-        } 
 
+    // polar form
+    if (JXG.IsFunction(xterm) && JXG.IsArray(yterm)) {
+        // Xoffset, Yoffset
+        fx = JXG.createFunction(yterm[0],this.board,'');
+        fy = JXG.createFunction(yterm[1],this.board,'');
         this.X = function(phi){return (xterm)(phi)*Math.cos(phi)+fx();};
         this.Y = function(phi){return (xterm)(phi)*Math.sin(phi)+fy();};
         this.curveType = 'polar';
@@ -421,28 +401,9 @@ JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
 
     // Set the bounds
     // lower bound
-    if (mi!=null) {
-        if (typeof mi == 'string') {
-            newMin = this.board.algebra.geonext2JS(mi);
-            this.minX = new Function('','return ' +  newMin + ';');
-        } else if (typeof mi=='function') {
-            this.minX = mi;
-        } else if (typeof mi=='number') {
-            this.minX = function() { return mi; };
-        }
-    }
-    // upper bound
-    if (ma!=null) {
-        if (typeof ma == 'string') {
-            newMax = this.board.algebra.geonext2JS(ma);
-            this.maxX = new Function('','return ' +  newMax + ';');
-        } else if (typeof ma=='function') {
-            this.maxX = ma;
-        } else if (typeof ma=='number') {
-            this.maxX = function() { return ma; };
-        }
-    }
-    
+    this.minX = JXG.createFunction(mi,this.board,'');
+    this.maxX = JXG.createFunction(ma,this.board,'');
+
 /*    
     // Find dependencies
     var elements = this.board.elementsByName;
@@ -577,20 +538,14 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     attributes.fillColor = attributes.fillColor || '#ffff00';
     attributes.curveType = 'plot';
 
-    f = parents[0];
-    if (typeof parents[1] == 'number') {
-        n = function() {return parents[1];};
-    } else if (typeof parents[1] == 'function') {
-        n = parents[1];
-    } else {
-        throw "JXG.createRiemannsum: n has to be number or function.";
+    f = parents[0]; 
+    n = JXG.createFunction(parents[1],board,'');
+    if (n==null) {
+        throw "JXG.createRiemannsum: argument '2' n has to be number or function.";
     }
-    if (typeof parents[2] == 'string') {
-        type= function() {return parents[2];};
-    } else if (typeof parents[2] == 'function') {
-        type = parents[2];
-    } else {
-        throw "JXG.createRiemannsum: type has to be string or function.";
+    type = JXG.createFunction(parents[2],board,'');
+    if (type==null) {
+        throw "JXG.createRiemannsum: argument 3 'type' has to be string or function.";
     }
 
     par = ['x', [0], [0]].concat(parents.slice(3));
