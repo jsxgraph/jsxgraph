@@ -223,8 +223,17 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
     var arc = [];
     var s = board.mathStatistics.sum(y);
     var colorArray = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
+    var highlightColorArray = attributes['highlightColorArray'] || ['#FF7400'];
+    var la = new Array(y.length);
+    for(i=0; i<y.length; i++) {
+        la[i] = '';
+    }
+    var labelArray = attributes['labelArray'] || la;
     var radius = attributes['radius'] || 4;
     var myAtts = {};
+    if (typeof attributes['highlightOnSector']  =='undefined') {
+        attributes['highlightOnSector'] = false;
+    }    
     myAtts['name'] = attributes['name'];
     myAtts['id'] = attributes['id'];
     myAtts['strokeWidth'] = attributes['strokeWidth'] || 1;
@@ -234,7 +243,7 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
     myAtts['fillColor'] = attributes['fillColor'] || '#FFFF88';
     myAtts['fillOpacity'] = attributes['fillOpacity'] || 0.6;
     myAtts['highlightFillColor'] = attributes['highlightFillColor'] || '#FF7400';
-    myAtts['highlightStrokeColor'] = attributes['highlightStrokeColor'] || '#FF7400';
+    myAtts['highlightStrokeColor'] = attributes['highlightStrokeColor'] || '#FFFFFF';
     var cent = attributes['center'] || [0,0];
     var xc = cent[0];
     var yc = cent[1];
@@ -248,9 +257,60 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         var ycoord = radius*Math.sin(rad)+yc;
         p[i+1] = board.createElement('point',[xcoord,ycoord], {name:'',fixed:true,visible:false,withLabel:false});
         line[i] = board.createElement('line',[center,p[i]], 
-            {strokeColor:'#ffffff', straightFirst:false, straightLast:false, strokeWidth:6, strokeOpacity:1.0,withLabel:false});
+            {strokeColor:myAtts['strokeColor'], straightFirst:false, straightLast:false, strokeWidth:myAtts['strokeWidth'], strokeOpacity:1.0,withLabel:false,highlightStrokeColor:myAtts['highlightStrokeColor']});
         myAtts['fillColor'] = colorArray[i%colorArray.length];
+        myAtts['name'] = labelArray[i];
+        if(myAtts['name'] != '') {
+            myAtts['withLabel'] = true;
+        }
+        else {
+            myAtts['withLabel'] = false;
+        }
+        myAtts['labelColor'] = colorArray[i%colorArray.length];
+        myAtts['highlightfillColor'] = highlightColorArray[i%highlightColorArray.length];
         arc[i] = board.createElement('arc',[center,p[i],p[i+1]], myAtts);
+        
+        if(attributes['highlightOnSector']) {
+            arc[i].hasPoint = arc[i].hasPointSector; // overwrite hasPoint so that the whole sector is used for highlighting
+        }
+        arc[i].highlight = function() {
+            this.board.renderer.highlight(this);
+            if(this.label.content != null) {
+                this.label.content.rendNode.style.fontSize = (2*this.board.fontSize) + 'px';
+            }
+            /*
+            var dx = - this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
+            var dy = - this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+            
+            var ddx = 10/(this.board.unitX*this.board.zoomX);
+            var ddy = 10/(this.board.unitY*this.board.zoomY);
+            var z = Math.sqrt(dx*dx+dy*dy);
+            
+            this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx*(z+ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy*(z+ddy)/z],
+                                                this.board);
+            this.board.renderer.updateArc(this); */
+        }
+        arc[i].noHighlight = function() {
+            this.board.renderer.noHighlight(this);
+            if(this.label.content != null) {
+                this.label.content.rendNode.style.fontSize = (this.board.fontSize) + 'px';
+            }
+            /*
+            var dx = -this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
+            var dy = -this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+            
+            var ddx = 10/(this.board.unitX*this.board.zoomX);
+            var ddy = 10/(this.board.unitY*this.board.zoomY);
+            var z = Math.sqrt(dx*dx+dy*dy);
+            
+            this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx*(z-ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy*(z-ddy)/z],
+                                                this.board);
+            this.board.renderer.updateArc(this);         */
+        }        
     }
     this.rendNode = arc[0].rendNode;
     return arc; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.

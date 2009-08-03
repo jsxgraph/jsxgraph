@@ -116,7 +116,7 @@
             board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 450, unitX: 50, unitY: 50});
             board.suspendUpdate();
             var a = board.createElement('chart', dataArr, 
-                {chartStyle:'pie', colorArray:['#B02B2C','#3F4C6B','#C79810','#D15600'],fillOpacity:0.9,center:[5,2]}
+                {chartStyle:'pie', colorArray:['#B02B2C','#3F4C6B','#C79810','#D15600'],fillOpacity:0.9,center:[5,2],strokeColor:'#ffffff',strokeWidth:6}
             );
             board.unsuspendUpdate();
         }

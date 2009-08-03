@@ -738,7 +738,8 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
         // Elements  below the mouse pointer which are not highlighted are highlighted.
         for(el in this.objects) {
             if((this.objects[el].hasPoint != undefined) && (this.objects[el].hasPoint(x, y)) && (this.objects[el].visProp['visible'] == true)) {
-                this.renderer.highlight(this.objects[el]);
+                //this.renderer.highlight(this.objects[el]);
+                this.objects[el].highlight();
                 this.highlightedObjects[el] = this.objects[el];
                 this.updateInfobox(this.objects[el]);
             }
@@ -789,7 +790,8 @@ JXG.Board.prototype.updateInfobox = function(el) {
  */
 JXG.Board.prototype.dehighlightAll = function() {
     for(var Element in this.highlightedObjects) {
-        this.renderer.noHighlight(this.highlightedObjects[Element]);
+        //this.renderer.noHighlight(this.highlightedObjects[Element]);
+        this.highlightedObjects[Element].noHighlight();
     }
     this.highlightedObjects = {};
 };

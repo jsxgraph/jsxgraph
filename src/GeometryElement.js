@@ -250,7 +250,7 @@ JXG.GeometryElement = function() {
     /**
      * TODO description
      * @type boolean
-     * @default false
+     * @default true
      * @private
      */
     this.needsRegularUpdate = true;
@@ -859,9 +859,11 @@ JXG.GeometryElement.prototype.remove = function() {
 };
 
 /**
- * TODO Description
+ * Returns the coords object where a text that is bound to the element shall be drawn.
+ * Differs in some cases from the values that getLabelAnchor returns.
  * @type JXG.Coords
- * @return TODO
+ * @return JXG.Coords Place where the text shall be drawn.
+ * @see #getLabelAnchor
  * @private
  */
 JXG.GeometryElement.prototype.getTextAnchor = function() {    
@@ -869,10 +871,11 @@ JXG.GeometryElement.prototype.getTextAnchor = function() {
 };
 
 /**
- * Wo ist der Unterschied zu #getTextAnchor? Kann man dann nicht eine von beiden
- * entfernen? JXG.Label wurde doch mit JXG.Text gemerged? --michael
+ * Returns the coords object where the label of the element shall be drawn.
+  * Differs in some cases from the values that getTextAnchor returns.
  * @type JXG.Coords
- * @return TODO
+ * @return JXG.Coords Place where the label of an element shall be drawn.
+  * @see #getTextAnchor
  * @private
  */
 JXG.GeometryElement.prototype.getLabelAnchor = function() {    
@@ -912,7 +915,10 @@ JXG.GeometryElement.prototype.setArrow = function(firstArrow,lastArrow) {
  * @see #addLabelToElement 
  * @private
  */
-JXG.GeometryElement.prototype.createLabel = function(withLabel) {    
+JXG.GeometryElement.prototype.createLabel = function(withLabel,coords) { 
+    if (typeof coords=='undefined' || coords==null) {
+        coords = [10,10];
+    }
     var isTmpId = false;
     this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); 
     this.label = {};
@@ -921,7 +927,7 @@ JXG.GeometryElement.prototype.createLabel = function(withLabel) {
             this.board.objects[this.id] = this;
             isTmpId = true;
         }
-        this.label.relativeCoords = [10,10];
+        this.label.relativeCoords = coords;
         this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, 
             [this.label.relativeCoords[0]/(this.board.unitX*this.board.zoomX),this.label.relativeCoords[1]/(this.board.unitY*this.board.zoomY)], this.id+"Label", "", null, true);
         if (isTmpId) delete(this.board.objects[this.id]);
@@ -945,6 +951,20 @@ JXG.GeometryElement.prototype.addLabelToElement = function() {
     if(!this.label.content.visProp['visible']) {
         board.renderer.hide(this.label.content);
     }       
+};
+
+/**
+ * Highlights the element.
+ */
+JXG.GeometryElement.prototype.highlight = function() {
+    this.board.renderer.highlight(this);
+};
+
+/**
+ * Uses the "normal" properties of the element.
+ */
+JXG.GeometryElement.prototype.noHighlight = function() {
+    this.board.renderer.noHighlight(this);
 };
 
 /**

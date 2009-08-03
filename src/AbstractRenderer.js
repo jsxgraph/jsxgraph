@@ -1293,7 +1293,7 @@ JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(pts,eps) {
 };
 
 /**
- * Adds a shadow to an geometry element. Currently only supported withSVG.
+ * Adds a shadow to an geometry element.
  * @param {JXG.GeometyElement} element Reference to a geometry object, that should get a shadow
  * @see #addShadowToGroup
  */
@@ -1301,7 +1301,7 @@ JXG.AbstractRenderer.prototype.addShadowToElement = function(element) {
 };
 
 /**
- * Adds a shadow to a group of geometry elements.  Currently only supported with SVG.
+ * Adds a shadow to a group of geometry elements.  
  * @param {string} groupname Name of the group of which every object shall get a shadow, currently supported:
  * <ul><li>points</li>
  * <li>lines</li>

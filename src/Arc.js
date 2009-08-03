@@ -100,7 +100,7 @@ JXG.Arc = function (board, p1, p2, p3, id, name, withLabel) {
     this.visProp['highlightStrokeColor'] = this.board.options.arc.highlightStrokeColor;     
 
     // create Label
-    this.createLabel(withLabel);
+    this.createLabel(withLabel,[0,0]);
     
     /* Register arc at board. */
     this.id = this.board.addArc(this);
@@ -158,6 +158,50 @@ JXG.Arc.prototype.hasPoint = function (x, y) {
 };
 
 /**
+ * Checks whether (x,y) is within the sector defined by the arc.
+ * @param {int} x Coordinate in x direction, screen coordinates.
+ * @param {int} y Coordinate in y direction, screen coordinates.
+ * @return {bool} True if (x,y) is within the sector defined by the arc, False otherwise.
+ */
+JXG.Arc.prototype.hasPointSector = function (x, y) { 
+    var genauigkeit = this.r/(this.board.unitX*this.board.zoomX);
+    
+    var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+    var r = this.getRadius();
+    
+    var dist = Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-checkPoint.usrCoords[1],2) + 
+                         Math.pow(this.midpoint.coords.usrCoords[2]-checkPoint.usrCoords[2],2));
+   
+    var has = (dist < r);
+    if(has) {
+        var p = {};
+        p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                              [this.midpoint.coords.usrCoords[1], 
+                               this.board.origin.usrCoords[2]/(this.board.unitY*this.board.zoomY)],
+                              this.board);
+        var angle1 = this.board.algebra.trueAngle(this.point2, this.midpoint, p);
+        var angle2 = this.board.algebra.trueAngle(this.point3, this.midpoint, p);
+
+        var xy = {};
+        xy.coords = checkPoint;
+        var angle3 = this.board.algebra.trueAngle(xy, this.midpoint, p); 
+        if(angle1 >= angle2) {
+            if(angle1 < angle3 || angle3 < angle2) {
+                has = false;
+            }
+        }
+        else {
+            if(angle3 > angle1) {
+                if(angle3 < angle2) {
+                    has = false;
+                }
+            }
+        }
+    }
+    return has;    
+};
+
+/**
  * Calculates the arcs radius.
  * @type float
  * @return The arcs radius
@@ -178,12 +222,31 @@ JXG.Arc.prototype.getTextAnchor = function() {
  */
 JXG.Arc.prototype.getLabelAnchor = function() {
     var angle = this.board.algebra.trueAngle(this.point2, this.midpoint, this.point3);
+    var dx = 10/(this.board.unitX*this.board.zoomX);
+    var dy = 10/(this.board.unitY*this.board.zoomY);
+    
     var bxminusax = this.point2.coords.usrCoords[1] - this.midpoint.coords.usrCoords[1];
     var byminusay = this.point2.coords.usrCoords[2] - this.midpoint.coords.usrCoords[2];
-    return new JXG.Coords(JXG.COORDS_BY_USER, 
-                          [this.midpoint.coords.usrCoords[1]+ Math.cos(angle*Math.PI/(2*160))*bxminusax - Math.sin(angle*Math.PI/(2*160))*byminusay, 
-                           this.midpoint.coords.usrCoords[2]+ Math.sin(angle*Math.PI/(2*160))*bxminusax + Math.cos(angle*Math.PI/(2*160))*byminusay], 
+
+    if(this.label.content != null) {                          
+        this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [0/(this.board.unitX*this.board.zoomX),0/(this.board.unitY*this.board.zoomY)],this.board);                      
+    }  
+
+    var coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                          [this.midpoint.coords.usrCoords[1]+ Math.cos(angle*Math.PI/(2*180))*bxminusax - Math.sin(angle*Math.PI/(2*180))*byminusay, 
+                           this.midpoint.coords.usrCoords[2]+ Math.sin(angle*Math.PI/(2*180))*bxminusax + Math.cos(angle*Math.PI/(2*180))*byminusay], 
                           this.board);
+
+    var vecx = coords.usrCoords[1] - this.midpoint.coords.usrCoords[1];
+    var vecy = coords.usrCoords[2] - this.midpoint.coords.usrCoords[2];
+    
+    var length = Math.sqrt(vecx*vecx+vecy*vecy);
+    vecx = vecx*(length+dx)/length;
+    vecy = vecy*(length+dy)/length;
+
+    var coords2 = new JXG.Coords(JXG.COORDS_BY_USER, [this.midpoint.coords.usrCoords[1]+vecx,this.midpoint.coords.usrCoords[2]+vecy],this.board);
+    
+    return coords2;
 };
 
 /**

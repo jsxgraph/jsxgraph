@@ -74,14 +74,14 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
      */
     if ((this.element = this.board.objects[element])){
         var anchor;
+        this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [parseFloat(coords[0]),parseFloat(coords[1])],this.board);     
         if(!this.isLabel) {
             anchor = this.element.getTextAnchor();
         }
         else {
             anchor = this.element.getLabelAnchor();
-        }
+        }      
         this.element.addChild(this);
-        this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [parseFloat(coords[0]),parseFloat(coords[1])],this.board);
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.relativeCoords.usrCoords[1]+anchor.usrCoords[1],this.relativeCoords.usrCoords[2]+anchor.usrCoords[2]], this.board);
     } else {
         this.X = JXG.createFunction(coords[0],this.board,'');
