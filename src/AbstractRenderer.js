@@ -1204,6 +1204,8 @@ JXG.AbstractRenderer.prototype.findSplit = function(pts, i, j) {
     
     ci = pts[i].scrCoords;
     cj = pts[j].scrCoords;
+    if (isNaN(ci[1]+ci[2]+cj[1]+cj[2])) return [NaN,j];
+    
     for (k=i+1; k<j; k++) {
         ck = pts[k].scrCoords;
         x0 = ck[1]-ci[1];
@@ -1259,9 +1261,22 @@ JXG.AbstractRenderer.prototype.RDP = function(pts,i,j,eps,newPts) {
   * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
   */
 JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(pts,eps) {
-    var newPts = [pts[0]];
+    var newPts = [], i, k, len;
+    len = pts.length;
     
-    this.RDP(pts,0,pts.length-1,eps,newPts);
+    // Search for the left most point woithout NaN coordinates
+    i = 0;
+    while (i<len && isNaN(pts[i].scrCoords[1]+pts[i].scrCoords[2])) {i++;}
+    // Search for the right most point woithout NaN coordinates
+    k = len - 1;
+    while (k>i && isNaN(pts[k].scrCoords[1]+pts[k].scrCoords[2])) {k--;}
+
+    // Exit if nothing is left
+    if (i>k || i==len) { return []; }
+    
+    newPts[0] = pts[i];
+    this.RDP(pts,i,k,eps,newPts);
+    //this.RDP(pts,0,pts.length-1,eps,newPts);
     //$('debug').innerHTML = newPts.length;
     return newPts;
 };
