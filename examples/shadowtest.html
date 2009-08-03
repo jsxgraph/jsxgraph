@@ -11,9 +11,9 @@
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
 </div>
 <div id="debug" style="display:block;"></div>
-<input type='button' value='Schatten fuer Kreise' onClick='board.renderer.addShadowToGroup("circles");'>
-<input type='button' value='Schatten fuer Punkte' onClick='board.renderer.addShadowToGroup("points");'>
-<input type='button' value='Schatten fuer Linien' onClick='board.renderer.addShadowToGroup("lines");'>
+<input type='button' value='Schatten fuer Kreise' onClick='board.renderer.addShadowToGroup("circles",board);'>
+<input type='button' value='Schatten fuer Punkte' onClick='board.renderer.addShadowToGroup("points",board);'>
+<input type='button' value='Schatten fuer Linien' onClick='board.renderer.addShadowToGroup("lines",board);'>
 <input type='button' value='Schatten fuer b' onClick='board.renderer.addShadowToElement(l4);'>
 <input type='button' value='Schatten fuer E' onClick='board.renderer.addShadowToElement(p5);'>
 <input type='button' value='Schatten fuer Umkreis' onClick='board.renderer.addShadowToElement(c1[1]);'>
