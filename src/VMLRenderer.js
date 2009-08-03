@@ -121,6 +121,69 @@ JXG.VMLRenderer = function(container) {
 
 JXG.VMLRenderer.prototype = new JXG.AbstractRenderer;
 
+JXG.VMLRenderer.prototype.addShadowToElement = function(element) {
+    var nodeShadow;
+    if(element.rendNode != null) {
+        nodeShadow = this.container.ownerDocument.createElement('v:shadow');
+        nodeShadow.setAttribute('id', element.id+'shadow');
+        nodeShadow.setAttribute('On', 'True');
+        nodeShadow.setAttribute('Offset', '3pt,3pt');
+        nodeShadow.setAttribute('Opacity', '60%');
+        nodeShadow.setAttribute('Color', '#aaaaaa');
+        element.rendNode.appendChild(nodeShadow);
+    }
+    else {
+        if(element.rendNodeX1 != null) {
+            nodeShadow = this.container.ownerDocument.createElement('v:shadow');
+            nodeShadow.setAttribute('id', element.id+'_x1'+'shadow');
+            nodeShadow.setAttribute('On', 'True');
+            nodeShadow.setAttribute('Offset', '3pt,3pt');
+            nodeShadow.setAttribute('Opacity', '60%');
+            nodeShadow.setAttribute('Color', '#aaaaaa');
+            element.rendNodeX1.appendChild(nodeShadow);
+        }       
+        if(element.rendNodeX2 != null) {
+            nodeShadow = this.container.ownerDocument.createElement('v:shadow');
+            nodeShadow.setAttribute('id', element.id+'_x2'+'shadow');
+            nodeShadow.setAttribute('On', 'True');
+            nodeShadow.setAttribute('Offset', '3pt,3pt');
+            nodeShadow.setAttribute('Opacity', '60%');
+            nodeShadow.setAttribute('Color', '#aaaaaa');
+            element.rendNodeX2.appendChild(nodeShadow);
+        }
+    }
+    element.board.fullUpdate();
+};
+
+JXG.VMLRenderer.prototype.addShadowToGroup = function(groupname, board) {
+    var el, pEl;
+    if(groupname == "lines") {
+        for(el in board.objects) {
+            pEl = board.objects[el];
+            if(pEl.elementClass == JXG.OBJECT_CLASS_LINE) {
+                this.addShadowToElement(pEl);
+            }
+        }
+    }
+    else if(groupname == "points") {
+        for(el in board.objects) {
+            pEl = board.objects[el];
+            if(pEl.elementClass == JXG.OBJECT_CLASS_POINT) {
+                this.addShadowToElement(pEl);
+            }
+        }
+    }
+    else if(groupname == "circles") {
+        for(el in board.objects) {
+            pEl = board.objects[el];
+            if(pEl.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+                this.addShadowToElement(pEl);
+            }
+        }
+    }    
+    board.fullUpdate();
+};
+
 JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     var node = this.createPrimitive('textbox','licenseText'), 
         t;
