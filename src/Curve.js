@@ -401,8 +401,9 @@ JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
 
     // Set the bounds
     // lower bound
-    this.minX = JXG.createFunction(mi,this.board,'');
-    this.maxX = JXG.createFunction(ma,this.board,'');
+    alert(typeof mi);
+    if (mi!=null) this.minX = JXG.createFunction(mi,this.board,'');
+    if (ma!=null) this.maxX = JXG.createFunction(ma,this.board,'');
 
 /*    
     // Find dependencies
