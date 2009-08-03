@@ -914,7 +914,7 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
     
     if (el.numberPoints<=0) { return ''; }
     if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-        el.points = this.RamenDouglasPeuker(el.points,1.0);
+        //el.points = this.RamenDouglasPeuker(el.points,1.0); // Takes too long in IE.
     }
     len = Math.min(len,el.points.length);
 

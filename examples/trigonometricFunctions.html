@@ -1,0 +1,77 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<!--<script type="text/javascript" src="../distrib/jquery.min.js"></script>-->
+<script type="text/javascript" src="../distrib/prototype.js"></script>
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<!-- Drawing area -->
+<div id="box" class="jxgbox" style="width:800px; height:500px; overflow:hidden;"></div>
+<!-- Drawing area -->
+<div id="debug" style="display:block;"></div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, grid:true, unitX: 100, unitY: 100});
+var ax = brd.createElement('line',[[0,0],[1,0]],{visible:false});
+var ay = brd.createElement('line',[[0,0],[0,1]],{visible:false});
+
+var p0 = brd.createElement('point',[0,0],{fixed:true,visible:false});
+var p1 = brd.createElement('point',[1,0],{name:'',visible:false,fixed:true});
+var c = brd.createElement('circle',[p0,p1],{dash:2,strokeWidth:1,strokeOpacity:0.6});
+var p2 = brd.createElement('glider',[0.4,1.0,c],{name:'',withLabel:false});
+var p3 = brd.createElement('point',[function(){return p2.X();},0.0],{visible:false,name:'',withLabel:false});
+var p4 = brd.createElement('point',[0.0,function(){return p2.Y();}],{visible:false,name:'',withLabel:false});
+
+brd.createElement('line',[p0,p2],{straightFirst:false,straightLast:false,strokeColor:'black'});   // Hypotenuse
+brd.createElement('line',[p2,p3],{straightFirst:false,straightLast:false,strokeColor:'red'});     // sin
+brd.createElement('line',[p2,p4],{straightFirst:false,straightLast:false,strokeColor:'red'});     // cos
+
+var t = brd.createElement('tangent',[p2],{visible:true,dash:4,strokeWidth:1});
+var p5 = brd.createElement('point',[brd.intersectionFunc(t,ax,0)],{visible:true,name:'',withLabel:false});
+var p6 = brd.createElement('point',[brd.intersectionFunc(t,ay,0)],{visible:true,name:'',withLabel:false});
+brd.createElement('line',[p5,p6],{straightFirst:false,straightLast:false,name:'LONE'});                       // tan + cot
+brd.createElement('line',[p0,p6],{straightFirst:false,straightLast:false,strokeColor:'green'});   // csc
+brd.createElement('line',[p0,p5],{straightFirst:false,straightLast:false,strokeColor:'green'});   // sec
+
+brd.createElement('text',[
+        function(){return (p0.X()+p2.X())*0.5;},
+        function(){return (p0.Y()+p2.Y())*0.5;},
+        '1'],{});
+
+brd.createElement('text',[
+        function(){return (p2.X()+p4.X())*0.3;},
+        function(){return (p2.Y()+p4.Y())*0.5;},
+        'cos'],{});
+
+brd.createElement('text',[
+        function(){return (p2.X()+p3.X())*0.5;},
+        function(){return (p2.Y()+p3.Y())*0.5;},
+        'sin'],{});
+
+brd.createElement('text',[
+        function(){return 0.1+(p2.X()+p5.X())*0.5;},
+        function(){return 0.1+(p2.Y()+p5.Y())*0.5;},
+        'tan'],{});
+
+brd.createElement('text',[
+        function(){return 0.1+(p2.X()+p6.X())*0.5;},
+        function(){return 0.1+(p2.Y()+p6.Y())*0.5;},
+        'cot'],{});
+
+brd.createElement('text',[
+        function(){return -0.2+(p0.X()+p6.X())*0.5;},
+        function(){return (p0.Y()+p6.Y())*0.5;},
+        'csc'],{});
+
+brd.createElement('text',[
+        function(){return (p0.X()+p5.X())*0.5;},
+        function(){return (p0.Y()+p5.Y())*0.5;},
+        'sec'],{});
+        
+/* ]]> */
+</script>
+</body>
+</html>

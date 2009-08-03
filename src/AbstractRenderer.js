@@ -266,9 +266,9 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
         screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
         ax, ay, bx, by, beta, sgn, x, y, m;
         
-    if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
+    //if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
        this.calcStraight(el,screenCoords1,screenCoords2); 
-    } 
+    //} 
     this.updateLinePrimitive(el.rendNode,screenCoords1.scrCoords[1],screenCoords1.scrCoords[2],
             screenCoords2.scrCoords[1],screenCoords2.scrCoords[2]);
 
@@ -323,15 +323,24 @@ JXG.AbstractRenderer.prototype.calcStraight = function(/** JXG.Line */ el, /** J
     b = el.board.algebra;
     straightFirst = el.visProp['straightFirst'];
     straightLast  = el.visProp['straightLast'];
-    
-    if ( !straightFirst && !straightLast ) {  // Do nothing in case of line segments (inside or outside of the board)
-        return;
-    }
-    // If one of the point is an ideal point in homogeneous coordinates
-    // drawing of line segments or rays are not possible. 
+
+/*
     if (Math.abs(point1.scrCoords[0])<b.eps||Math.abs(point2.scrCoords[0])<b.eps) {
         straightFirst = true;
         straightLast  = true;
+    }
+*/    
+    // If one of the point is an ideal point in homogeneous coordinates
+    // drawing of line segments or rays are not possible. 
+    if (Math.abs(point1.scrCoords[0])<b.eps) {
+        straightFirst = true;
+    }
+    if (Math.abs(point2.scrCoords[0])<b.eps) {
+        straightLast  = true;
+    }
+
+    if ( !straightFirst && !straightLast ) {  // Do nothing in case of line segments (inside or outside of the board)
+        return;
     }
     
     // Compute the stdform of the line in screen coordinates.
@@ -1262,6 +1271,8 @@ JXG.AbstractRenderer.prototype.RDP = function(pts,i,j,eps,newPts) {
   */
 JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(pts,eps) {
     var newPts = [], i, k, len;
+    //return pts;
+
     len = pts.length;
     
     // Search for the left most point woithout NaN coordinates
