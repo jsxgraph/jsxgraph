@@ -343,3 +343,59 @@ JXG.createSemicircle = function(board, parents, attributes) {
 };
 
 JXG.JSXGraph.registerElement('semicircle', JXG.createSemicircle);
+
+/**
+ * Creates a new circumcircle arc through three defining points.
+ * @param {JXG.Board} board The board the arc is put on.
+ * @param {Array} parents Array of three points defining the circumcircle arc.
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @type JXG.Arc
+ * @return Reference to the created arc object.
+ */
+JXG.createCircumcircleArc = function(board, parents, attributes) {
+    var el, mp, idmp, det;
+    
+    if (typeof attributes['withLabel'] == 'undefined') {
+        attributes['withLabel'] = false;
+    }    
+    if(attributes['id'] != null) {
+        idmp = attributes['id']+'_mp';
+    }
+    
+    // Alles 3 Punkte?
+    if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) && (JXG.IsPoint(parents[2]))) {
+        mp = board.createElement('circumcirclemidpoint',[parents[0], parents[1], parents[2]], {id:idmp, withLabel:false, visible:false});
+        det = (parents[0].coords.usrCoords[1]-parents[2].coords.usrCoords[1])*(parents[0].coords.usrCoords[2]-parents[1].coords.usrCoords[2]) -
+              (parents[0].coords.usrCoords[2]-parents[2].coords.usrCoords[2])*(parents[0].coords.usrCoords[1]-parents[1].coords.usrCoords[1]);
+        if(det < 0) {
+            el = new JXG.Arc(board, mp, parents[0], parents[2], attributes['id'], attributes['name'],attributes['withLabel']);
+        }
+        else {
+            el = new JXG.Arc(board, mp, parents[2], parents[0], attributes['id'], attributes['name'],attributes['withLabel']);         
+        }
+        
+        el.update = function() {
+            var determinante;
+            if(this.traced) {
+                this.cloneToBackground(true);
+            }
+            determinante = (parents[0].coords.usrCoords[1]-parents[2].coords.usrCoords[1])*(parents[0].coords.usrCoords[2]-parents[1].coords.usrCoords[2]) -
+                           (parents[0].coords.usrCoords[2]-parents[2].coords.usrCoords[2])*(parents[0].coords.usrCoords[1]-parents[1].coords.usrCoords[1]);
+            if(determinante < 0) {
+                this.point2 = parents[0];
+                this.point3 = parents[2];
+            }
+            else {
+                this.point2 = parents[2];
+                this.point3 = parents[0];
+            }
+        };
+    } // Ansonsten eine fette Exception um die Ohren hauen
+    else
+        throw ("Can't create Circumcircle Arc with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
+
+
+    return el;
+};
+
+JXG.JSXGraph.registerElement('circumcirclearc', JXG.createCircumcircleArc);
