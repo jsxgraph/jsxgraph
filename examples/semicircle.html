@@ -6,7 +6,7 @@
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h2>Semicircles and Circumcircle Arcs</h2>
+<h2>Semicircles and Circumcircle Arcs/Sectors</h2>
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
 </div>
@@ -17,7 +17,7 @@
         var p1, p2, l1;
         board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 250, originY: 300, unitX: 50, unitY: 50});
         
-        p1 = board.createElement('point', [0, 0], {style:5,name:"A",fillColor:'blue'}); 
+       /* p1 = board.createElement('point', [0, 0], {style:5,name:"A",fillColor:'blue'}); 
         p2 = board.createElement('point', [0, 4], {style:5,name:"B",fillColor:'blue'});
         p3 = board.createElement('point', [4, 0], {style:5,name:"C",fillColor:'blue'});
         p4 = board.createElement('point', [2, 2], {style:5,name:"D",fillColor:'blue'});
@@ -25,13 +25,13 @@
         
         t = board.createElement('semicircle',[p2,p3]);
         u = board.createElement('semicircle',[p4,p3]);
-        v = board.createElement('semicircle',[p4,p1]);
+        v = board.createElement('semicircle',[p4,p1]);*/
         
         p6 = board.createElement('point', [0, 0], {style:5,name:"F",fillColor:'blue'});
         p7 = board.createElement('point', [-2, 1], {style:5,name:"G",fillColor:'blue'});
         p8 = board.createElement('point', [0, 2], {style:5,name:"H",fillColor:'blue'});        
-       // u = board.createElement('circumcirclearc',[p6,p7,p8],{strokeColor:'red'});
-        v = board.createElement('circumcirclearc',[p8,p7,p6],{strokeColor:'blue'});
+        u = board.createElement('circumcirclesector',[p8,p7,p6]);
+       // v = board.createElement('circumcirclearc',[p8,p7,p6],{strokeColor:'blue'});
   /* ]]> */
   </script>
 </body>
