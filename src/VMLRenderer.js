@@ -35,6 +35,8 @@ JXG.VMLRenderer = function(container) {
     this.container = container;
     this.container.style.overflow = 'hidden';
     this.container.onselectstart = function () { return false; };
+    
+    this.resolution = 10; // Paths are drawn with a a resolution of this.resolution/pixel.
   
     // Add VML includes and namespace
     // Original: IE <=7
@@ -215,10 +217,16 @@ JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
         c = axis.ticks[i];
         if(c.major) {
             if (axis.labels[i].visProp['visible']) this.drawText(axis.labels[i]);        
-            tickArr.push(' m ' + Math.round(c.scrCoords[1]+dxMaj) + ', ' + Math.round(c.scrCoords[2]-dyMaj) + ' l ' + Math.round(c.scrCoords[1]-dxMaj) + ', ' + Math.round(c.scrCoords[2]+dyMaj)+' ');
+            tickArr.push(' m ' + Math.round(this.resolution*(c.scrCoords[1]+dxMaj)) + 
+                         ', ' + Math.round(this.resolution*(c.scrCoords[2]-dyMaj)) + 
+                         ' l ' + Math.round(this.resolution*(c.scrCoords[1]-dxMaj)) + 
+                         ', ' + Math.round(this.resolution*(c.scrCoords[2]+dyMaj))+' ');
         }
         else
-            tickArr.push(' m ' + Math.round(c.scrCoords[1]+dxMin) + ', ' + Math.round(c.scrCoords[2]-dyMin) + ' l ' + Math.round(c.scrCoords[1]-dxMin) + ', ' + Math.round(c.scrCoords[2]+dyMin)+' ');
+            tickArr.push(' m ' + Math.round(this.resolution*(c.scrCoords[1]+dxMin)) + 
+                         ', ' + Math.round(this.resolution*(c.scrCoords[2]-dyMin)) + 
+                         ' l ' + Math.round(this.resolution*(c.scrCoords[1]-dxMin)) + 
+                         ', ' + Math.round(this.resolution*(c.scrCoords[2]+dyMin))+' ');
     }
 
     ticks = document.getElementById(axis.id + '_ticks');
@@ -893,7 +901,7 @@ JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString,board)
     var y = board.canvasHeight;
     node.style.width = x;
     node.style.height = y;
-    node.setAttribute('coordsize', x+','+y);
+    node.setAttribute('coordsize', (this.resolution*x)+','+(this.resolution*y));
     node.setAttribute('path',pointString.join(""));
     //node.points.value = pointString;
 };
@@ -924,7 +932,9 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
         if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (isFunctionGraph && (scr[2]>h || scr[2]<-0.5*h)) ) {  // PenUp
             nextSymb = symbm;
         } else {
-            pStr.push([nextSymb,Math.round(scr[1]),', ',Math.round(scr[2])].join(''));
+            pStr.push([nextSymb,Math.round(this.resolution*scr[1]),
+                       ', ',
+                       Math.round(this.resolution*scr[2])].join(''));
             nextSymb = symbl;
         }
         oldx = scr[1];
@@ -1033,7 +1043,10 @@ JXG.VMLRenderer.prototype.drawVerticalGrid = function(topLeft, bottomRight, gx, 
         gridArr = [];
         
     while(topLeft.scrCoords[1] < bottomRight.scrCoords[1] + gx - 1) { 
-        gridArr.push(' m ' + topLeft.scrCoords[1] + ', ' + 0 + ' l ' + topLeft.scrCoords[1] + ', ' + board.canvasHeight+' ');
+        gridArr.push(' m ' + (this.resolution*topLeft.scrCoords[1]) + 
+                     ', ' + 0 + 
+                     ' l ' + (this.resolution*topLeft.scrCoords[1]) + 
+                     ', ' + (this.resolution*board.canvasHeight)+' ');
         topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1] + gx, topLeft.scrCoords[2]]);   
     }
     this.updatePathPrimitive(node, gridArr, board);
@@ -1044,7 +1057,10 @@ JXG.VMLRenderer.prototype.drawHorizontalGrid = function(topLeft, bottomRight, gy
     var node = this.createPrimitive('path', 'gridy'),
         gridArr = [];
     while(topLeft.scrCoords[2] <= bottomRight.scrCoords[2] + gy - 1) {
-        gridArr.push(' m ' + 0 + ', ' + topLeft.scrCoords[2] + ' l ' + board.canvasWidth + ', ' + topLeft.scrCoords[2]+' ');
+        gridArr.push(' m ' + 0 + 
+                     ', ' + (this.resolution*topLeft.scrCoords[2]) + 
+                     ' l ' + (this.resolution*board.canvasWidth) + 
+                     ', ' + (this.resolution*topLeft.scrCoords[2])+' ');
         topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1], topLeft.scrCoords[2] + gy]);
     }
     this.updatePathPrimitive(node, gridArr, board);
