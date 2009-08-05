@@ -1,0 +1,33 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Angles</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var p1, p2, l1;
+        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 50, originY: 300, unitX: 50, unitY: 50});
+        
+        p1 = board.createElement('point', [0, 0], {style:5,name:"A",fillColor:'blue'}); 
+        p2 = board.createElement('point', [0, 4], {style:5,name:"B",fillColor:'blue'});
+        p3 = board.createElement('point', [4, 0], {style:5,name:"C",fillColor:'blue'});
+        p4 = board.createElement('point', [2, 2], {style:5,name:"D",fillColor:'blue'});
+        p5 = board.createElement('point', [4, 4], {style:5,name:"E",fillColor:'blue'});        
+        
+        t = board.createElement('semicircle',[p2,p3]);
+        //u = board.createElement('semicircle',[p3,p4]);
+        u = board.createElement('semicircle',[p4,p3]);
+        v = board.createElement('semicircle',[p4,p1]);
+  /* ]]> */
+  </script>
+</body>
+</html>

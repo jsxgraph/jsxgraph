@@ -313,3 +313,33 @@ JXG.createArc = function(board, parents, attributes) {
 };
 
 JXG.JSXGraph.registerElement('arc', JXG.createArc);
+
+/**
+ * Creates a new semicircle. The semicircle is drawn clock-wise between the first and the second defining point.
+ * @param {JXG.Board} board The board the semicircle is put on.
+ * @param {Array} parents Array of two opposite points defining the semicircle.
+ * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @type JXG.Arc
+ * @return Reference to the created arc object.
+ */
+JXG.createSemicircle = function(board, parents, attributes) {
+    var el, mp, idmp;
+    
+    if (typeof attributes['withLabel'] == 'undefined') {
+        attributes['withLabel'] = false;
+    }    
+    if(attributes['id'] != null) {
+        idmp = attributes['id']+'_mp';
+    }
+    // Alles 2 Punkte?
+    if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) {
+        mp = board.createElement('midpoint', [parents[0], parents[1]], {id:idmp, withLabel:false, visible:false});
+        el = new JXG.Arc(board, mp, parents[1], parents[0], attributes['id'], attributes['name'],attributes['withLabel']);
+    } // Ansonsten eine fette Exception um die Ohren hauen
+    else
+        throw ("Can't create Semicircle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+
+    return el;
+};
+
+JXG.JSXGraph.registerElement('semicircle', JXG.createSemicircle);
