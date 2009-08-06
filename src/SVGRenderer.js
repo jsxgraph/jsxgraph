@@ -99,14 +99,6 @@ JXG.SVGRenderer.prototype.addShadowToElement = function(element) {
     if(element.rendNode != null) {
         element.rendNode.setAttributeNS(null,'filter','url(#f1)');
     }
-    else {
-        if(element.rendNodeX1 != null) {
-            element.rendNodeX1.setAttributeNS(null,'filter','url(#f1)');
-        }       
-        if(element.rendNodeX2 != null) {
-            element.rendNodeX2.setAttributeNS(null,'filter','url(#f1)');
-        }
-    }
     element.board.fullUpdate();
 }
 
@@ -462,70 +454,53 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     } else {
         c = color;
     }
-    if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
-        node = el.rendNode;
-        if(el.type == JXG.OBJECT_TYPE_TEXT) {
-            node.style.color = c; // Schriftfarbe
-        }
-        else if(el.type == JXG.OBJECT_TYPE_ANGLE) {
-            node = el.rendNode2;
-            node.setAttributeNS(null, 'stroke', c);
-            node.setAttributeNS(null, 'stroke-opacity', o);            
-        }
-        else {
-            node.setAttributeNS(null, 'stroke', c);
-            node.setAttributeNS(null, 'stroke-opacity', o);        
-        }
-        if(el.type == JXG.OBJECT_TYPE_ARROW) {
-             el.rendNodeTriangle.setAttributeNS(null, 'stroke', c);
-             el.rendNodeTriangle.setAttributeNS(null, 'stroke-opacity', o);
-             el.rendNodeTriangle.setAttributeNS(null, 'fill', c);
-             el.rendNodeTriangle.setAttributeNS(null, 'fill-opacity', o);             
-        }
-        if(el.type == JXG.OBJECT_TYPE_ARC) {
-            if(el.visProp['firstArrow']) {
-                el.rendNodeTriangleStart.setAttributeNS(null, 'stroke', c);
-                el.rendNodeTriangleStart.setAttributeNS(null, 'stroke-opacity', o);                
-                el.rendNodeTriangleStart.setAttributeNS(null, 'fill', c);
-                el.rendNodeTriangleStart.setAttributeNS(null, 'fill-opacity', o);                    
-            }
-            if(el.visProp['lastArrow']) {
-                el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke', c);
-                el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke-opacity', o);                
-                el.rendNodeTriangleEnd.setAttributeNS(null, 'fill', c);
-                el.rendNodeTriangleEnd.setAttributeNS(null, 'fill-opacity', o);    
-            }                
-        }     
-        else if(el.type == JXG.OBJECT_TYPE_LINE) {
-            if(el.visProp['firstArrow']) {
-                el.rendNodeTriangleStart.setAttributeNS(null, 'stroke', c);
-                el.rendNodeTriangleStart.setAttributeNS(null, 'stroke-opacity', o);                
-                el.rendNodeTriangleStart.setAttributeNS(null, 'fill', c);
-                el.rendNodeTriangleStart.setAttributeNS(null, 'fill-opacity', o);                    
-            }
-            if(el.visProp['lastArrow']) {
-                el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke', c);
-                el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke-opacity', o);                
-                el.rendNodeTriangleEnd.setAttributeNS(null, 'fill', c);
-                el.rendNodeTriangleEnd.setAttributeNS(null, 'fill-opacity', o);    
-            }                
-        }         
+    node = el.rendNode;
+    if(el.type == JXG.OBJECT_TYPE_TEXT) {
+        node.style.color = c; // Schriftfarbe
+    }
+    else if(el.type == JXG.OBJECT_TYPE_ANGLE) {
+        node = el.rendNode2;
+        node.setAttributeNS(null, 'stroke', c);
+        node.setAttributeNS(null, 'stroke-opacity', o);            
     }
     else {
-        if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
-            node = el.rendNode;
-            node.setAttributeNS(null, 'stroke', c);      
-            node.setAttributeNS(null, 'stroke-opacity', o);              
+        node.setAttributeNS(null, 'stroke', c);
+        node.setAttributeNS(null, 'stroke-opacity', o);        
+    }
+    if(el.type == JXG.OBJECT_TYPE_ARROW) {
+         el.rendNodeTriangle.setAttributeNS(null, 'stroke', c);
+         el.rendNodeTriangle.setAttributeNS(null, 'stroke-opacity', o);
+         el.rendNodeTriangle.setAttributeNS(null, 'fill', c);
+         el.rendNodeTriangle.setAttributeNS(null, 'fill-opacity', o);             
+    }
+    if(el.type == JXG.OBJECT_TYPE_ARC) {
+        if(el.visProp['firstArrow']) {
+            el.rendNodeTriangleStart.setAttributeNS(null, 'stroke', c);
+            el.rendNodeTriangleStart.setAttributeNS(null, 'stroke-opacity', o);                
+            el.rendNodeTriangleStart.setAttributeNS(null, 'fill', c);
+            el.rendNodeTriangleStart.setAttributeNS(null, 'fill-opacity', o);                    
         }
-        else {
-            node = el.rendNodeX1;
-            node.setAttributeNS(null, 'stroke', c);   
-            node.setAttributeNS(null, 'stroke-opacity', o);             
-            node = el.rendNodeX2;
-            node.setAttributeNS(null, 'stroke', c);
-            node.setAttributeNS(null, 'stroke-opacity', o);             
+        if(el.visProp['lastArrow']) {
+            el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke', c);
+            el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke-opacity', o);                
+            el.rendNodeTriangleEnd.setAttributeNS(null, 'fill', c);
+            el.rendNodeTriangleEnd.setAttributeNS(null, 'fill-opacity', o);    
+        }                
+    }     
+    else if(el.type == JXG.OBJECT_TYPE_LINE) {
+        if(el.visProp['firstArrow']) {
+            el.rendNodeTriangleStart.setAttributeNS(null, 'stroke', c);
+            el.rendNodeTriangleStart.setAttributeNS(null, 'stroke-opacity', o);                
+            el.rendNodeTriangleStart.setAttributeNS(null, 'fill', c);
+            el.rendNodeTriangleStart.setAttributeNS(null, 'fill-opacity', o);                    
         }
-    } 
+        if(el.visProp['lastArrow']) {
+            el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke', c);
+            el.rendNodeTriangleEnd.setAttributeNS(null, 'stroke-opacity', o);                
+            el.rendNodeTriangleEnd.setAttributeNS(null, 'fill', c);
+            el.rendNodeTriangleEnd.setAttributeNS(null, 'fill-opacity', o);    
+        }                
+    }
 };
 
 JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
@@ -545,37 +520,20 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         c = color;
     }
     
-    if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
-        if(el.type == JXG.OBJECT_TYPE_ARC) {
-            node = el.rendNodeFill;
-            node.setAttributeNS(null, 'fill', c);
-            node.setAttributeNS(null, 'fill-opacity', o);        
-        }
-        else if(el.type == JXG.OBJECT_TYPE_ANGLE) {
-            node = el.rendNode1;
-            node.setAttributeNS(null, 'fill', c);
-            node.setAttributeNS(null, 'fill-opacity', o);            
-        }        
-        else {
-            node = el.rendNode;
-            node.setAttributeNS(null, 'fill', c);           
-            node.setAttributeNS(null, 'fill-opacity', o);                   
-        }
+    if(el.type == JXG.OBJECT_TYPE_ARC) {
+        node = el.rendNodeFill;
+        node.setAttributeNS(null, 'fill', c);
+        node.setAttributeNS(null, 'fill-opacity', o);        
     }
+    else if(el.type == JXG.OBJECT_TYPE_ANGLE) {
+        node = el.rendNode1;
+        node.setAttributeNS(null, 'fill', c);
+        node.setAttributeNS(null, 'fill-opacity', o);            
+    }        
     else {
-        if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
-            node = el.rendNode;
-            node.setAttributeNS(null, 'fill', c); 
-            node.setAttributeNS(null, 'fill-opacity', o);
-        }
-        else {
-            node = el.rendNodeX1;
-            node.setAttributeNS(null, 'fill', c);
-            node.setAttributeNS(null, 'fill-opacity', o);    
-            node = el.rendNodeX2;
-            node.setAttributeNS(null, 'fill', c); 
-            node.setAttributeNS(null, 'fill-opacity', o);                
-        }
+        node = el.rendNode;
+        node.setAttributeNS(null, 'fill', c);           
+        node.setAttributeNS(null, 'fill-opacity', o);                   
     }
 } ;
 
@@ -607,24 +565,10 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
         }
     }
     else {
-        if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
-            node = el.rendNode;
-            this.setPropertyPrimitive(node,'stroked', 'true');
-            if (w!=null) { 
-                this.setPropertyPrimitive(node,'stroke-width',w); 
-            }
-        }
-        else {
-            node = el.rendNodeX1;
-            this.setPropertyPrimitive(node,'stroked', 'true');
-            if (w!=null) { 
-                this.setPropertyPrimitive(node,'stroke-width',w);  
-            }
-            node = el.rendNodeX2;
-            this.setPropertyPrimitive(node,'stroked', 'true');
-            if (w!=null) { 
-                this.setPropertyPrimitive(node,'stroke-width',w); 
-            }
+        node = el.rendNode;
+        this.setPropertyPrimitive(node,'stroked', 'true');
+        if (w!=null) { 
+            this.setPropertyPrimitive(node,'stroke-width',w); 
         }
     }
 };
@@ -632,22 +576,7 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
 JXG.SVGRenderer.prototype.hide = function(el) {
     var node;
     if (el==null) return;
-    if(JXG.IsPoint(el)) {
-        if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
-            node = el.rendNode;
-            node.setAttributeNS(null, 'display', 'none');
-            node.style.visibility = "hidden";    
-        }
-        else {
-            node = el.rendNodeX1;
-            node.setAttributeNS(null, 'display', 'none');
-            node.style.visibility = "hidden";  
-            node = el.rendNodeX2;
-            node.setAttributeNS(null, 'display', 'none');
-            node.style.visibility = "hidden";        
-        }
-    }
-    else if(el.type == JXG.OBJECT_TYPE_ARC) {
+    if(el.type == JXG.OBJECT_TYPE_ARC) {
         node = el.rendNode;
         node.setAttributeNS(null, 'display', 'none');
         node.style.visibility = "hidden"; 
@@ -672,22 +601,7 @@ JXG.SVGRenderer.prototype.hide = function(el) {
 
 JXG.SVGRenderer.prototype.show = function(el) {
     var node;
-    if(JXG.IsPoint(el)) {
-        if(el.visProp['style'] >= 3 && el.visProp['style'] <= 9) {
-            node = el.rendNode;
-            node.setAttributeNS(null, 'display', 'inline');
-            node.style.visibility = "inherit"; 
-        }
-        else {
-            node = el.rendNodeX1;
-            node.setAttributeNS(null, 'display', 'inline');
-            node.style.visibility = "inherit"; 
-            node = el.rendNodeX2;
-            node.setAttributeNS(null, 'display', 'inline');
-            node.style.visibility = "inherit";    
-        }
-    }
-    else if(el.type == JXG.OBJECT_TYPE_ARC) {
+    if(el.type == JXG.OBJECT_TYPE_ARC) {
         node = el.rendNode;
         node.setAttributeNS(null, 'display', 'inline');
         node.style.visibility = "inherit"; 
@@ -879,6 +793,23 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     }
     return pStr;
 };
+
+JXG.SVGRenderer.prototype.updatePathStringPoint = function(el, size, type) {
+    var s = '';
+    if(type == 'x') {
+        s = 'M ' + (el.coords.scrCoords[1]-size) + ' ' + (el.coords.scrCoords[2]-size) + ' L ' + 
+        (el.coords.scrCoords[1]+size) + ' ' + (el.coords.scrCoords[2]+size) + ' M ' + 
+        (el.coords.scrCoords[1]+size) + ' ' + (el.coords.scrCoords[2]-size) + ' L ' +
+        (el.coords.scrCoords[1]-size) + ' ' + (el.coords.scrCoords[2]+size);
+    }
+    else if(type == '+') {
+        s = 'M ' + (el.coords.scrCoords[1]-size) + ' ' + (el.coords.scrCoords[2]) + ' L ' + 
+        (el.coords.scrCoords[1]+size) + ' ' + (el.coords.scrCoords[2]) + ' M ' + 
+        (el.coords.scrCoords[1]) + ' ' + (el.coords.scrCoords[2]-size) + ' L ' +
+        (el.coords.scrCoords[1]) + ' ' + (el.coords.scrCoords[2]+size);    
+    }
+    return s;
+}
 
 JXG.SVGRenderer.prototype.updatePolygonePrimitive = function(node, el) {
     var pStr = '', 

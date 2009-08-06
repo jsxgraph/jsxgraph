@@ -74,12 +74,9 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
         node2;
         
     if(el.visProp['style'] == 0 || el.visProp['style'] == 1 || el.visProp['style'] == 2) { // x
-        node = this.createPrimitive('line',el.id+'_x1');
-        node2 = this.createPrimitive('line',el.id+'_x2');
+        node = this.createPrimitive('path',el.id);
         this.appendChildPrimitive(node,'points');
-        this.appendChildPrimitive(node2,'points');
-        el.rendNodeX1 = node;
-        el.rendNodeX2 = node2;
+        el.rendNode = node;        
     }
     else if(el.visProp['style'] == 3 || el.visProp['style'] == 4 || el.visProp['style'] == 5 || el.visProp['style'] == 6) { // circle
         node = this.createPrimitive('circle',el.id);
@@ -92,17 +89,14 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
         el.rendNode = node;
     }
     else if(el.visProp['style'] == 10 || el.visProp['style'] == 11 || el.visProp['style'] == 12) { // +
-        node = this.createPrimitive('line',el.id+'_x1');
-        node2 = this.createPrimitive('line',el.id+'_x2');
+        node = this.createPrimitive('path',el.id);
         this.appendChildPrimitive(node,'points');
-        this.appendChildPrimitive(node2,'points');
-        el.rendNodeX1 = node;
-        el.rendNodeX2 = node2;
+        el.rendNode = node;              
     }
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
     this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);	
-    this.setDraft(el);
+
     this.updatePoint(el);
 };
    
@@ -129,12 +123,7 @@ JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
 
     size = this.getPointSize(el.visProp['style']);
     if(el.visProp['style'] == 0 || el.visProp['style'] == 1 || el.visProp['style'] == 2) { // x
-        this.updateLinePrimitive(el.rendNodeX1,
-            el.coords.scrCoords[1]-size,el.coords.scrCoords[2]-size,
-            el.coords.scrCoords[1]+size,el.coords.scrCoords[2]+size);
-        this.updateLinePrimitive(el.rendNodeX2,
-            el.coords.scrCoords[1]+size,el.coords.scrCoords[2]-size,
-            el.coords.scrCoords[1]-size,el.coords.scrCoords[2]+size);
+        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'x'), el.board); 
     }
     else if(el.visProp['style'] == 3 || el.visProp['style'] == 4 || el.visProp['style'] == 5 || el.visProp['style'] == 6) { // circle
         this.updateCirclePrimitive(el.rendNode,el.coords.scrCoords[1],el.coords.scrCoords[2],size+1);            
@@ -144,12 +133,7 @@ JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
                 el.coords.scrCoords[1]-size, el.coords.scrCoords[2]-size, size*2, size*2);
     }
     else if(el.visProp['style'] == 10 || el.visProp['style'] == 11 || el.visProp['style'] == 12) { // +
-        this.updateLinePrimitive(el.rendNodeX1,
-            el.coords.scrCoords[1]-size,el.coords.scrCoords[2],
-            el.coords.scrCoords[1]+size,el.coords.scrCoords[2]);
-        this.updateLinePrimitive(el.rendNodeX2,
-            el.coords.scrCoords[1],el.coords.scrCoords[2]-size,
-            el.coords.scrCoords[1],el.coords.scrCoords[2]+size);
+        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'+'), el.board); 
     }
 };
 
@@ -166,10 +150,6 @@ JXG.AbstractRenderer.prototype.changePointStyle = function(/** JXG.Point */el) {
     var node = this.getElementById(el.id);
     if(node != null) {
         this.remove(node);
-    }
-    else {
-        this.remove(this.getElementById(el.id+'_x1'));
-        this.remove(this.getElementById(el.id+'_x2'));
     }
     this.drawPoint(el);
     if(!el.visProp['visible']) {
@@ -1311,5 +1291,8 @@ JXG.AbstractRenderer.prototype.addShadowToElement = function(element) {
  * @see #addShadowToElement
  */
 JXG.AbstractRenderer.prototype.addShadowToGroup = function(groupname, board) {
+};
+
+JXG.AbstractRenderer.prototype.updatePathStringPoint = function(el, size, type) {
 };
 
