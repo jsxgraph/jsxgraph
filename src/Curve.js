@@ -25,8 +25,6 @@
 
 /**
  * @fileoverview In this file the geometry element Curve is defined.
- * @author graphjs
- * @version 0.1
  */
 
 /**
@@ -47,13 +45,29 @@
 JXG.Curve = function (board, parents, id, name, withLabel) {
     this.constructor();
  
-    this.points = [];
-    this.numberPoints = 0;
+    this.points = []; 
 
     this.type = JXG.OBJECT_TYPE_CURVE;
     this.elementClass = JXG.OBJECT_CLASS_CURVE;                
     
     this.init(board, id, name);
+
+    /** 
+      * Number of points on curves after mouseUp, i.e. high quality output
+      * May be overwritten.
+      **/
+    this.numberPointsHigh = this.board.options.curve.numberPointsHigh;
+    /** 
+      * Number of points on curves after mousemove, i.e. low quality output
+      * May be overwritten.
+      **/
+    this.numberPointsLow = this.board.options.curve.numberPointsLow;
+    /** 
+      * Number of points on curves. This value changes
+      * between numberPointsLow and numberPointsHigh.
+      * It is set in {@link #updateCurve}.
+      */
+    this.numberPoints = this.numberPointsHigh; 
 
     this.visProp['strokeWidth'] = this.board.options.curve.strokeWidth;
 
@@ -141,9 +155,10 @@ JXG.Curve.prototype.maxX = function () {
  * @return {bool} True if (x,y) is near the curve, False otherwise.
  */
 JXG.Curve.prototype.hasPoint = function (x,y) {
-    var t, dist, c, trans, i, j, tX, tY,
+    var t, dist = 10000.0, 
+        c, trans, i, j, tX, tY,
         lbda, x0, y0, x1, y1, den,
-        steps = 300, 
+        steps = 400, 
         d = (this.maxX()-this.minX())/steps,
         prec = this.r/(this.board.unitX*this.board.zoomX),
         checkPoint, len;
@@ -151,7 +166,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
     checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     x = checkPoint.usrCoords[1];
     y = checkPoint.usrCoords[2];
-    if (this.curveType=='parameter' || this.curveType=='polar') { 
+    if (this.curveType=='parameter' || this.curveType=='polar' || this.curveType=='functiongraph') { 
         // Brute fore search for a point on the curve close to the mouse pointer
         len = this.transformations.length;
         for (i=0,t=this.minX(); i<steps; i++) {
@@ -189,25 +204,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
             } 
         }
         return false;
-    } else { // functiongraph
-        // Brute force search for a point on the curve close to the mouse pointer
-        for (i=0,t=this.minX(); i<steps; i++) {
-            tX = this.X(t);
-            tY = this.Y(t);
-            len = this.transformations.length;
-            for (j=0; j<len; j++) {
-                trans = this.transformations[j];
-                trans.update();
-                c = trans.matVecMult(trans.matrix,[1,tX,tY]);
-                tX = c[1];
-                tY = c[2];
-            }
-            dist = Math.sqrt((x-tX)*(x-tX)+(y-tY)*(y-tY));
-            if (dist<prec) { return true; }
-            t+=d;
-        }
-        //dist = Math.abs(this.Y(x)-y);
-    }
+    } 
     return (dist<prec);
 };
 
@@ -216,7 +213,6 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
   */
 JXG.Curve.prototype.allocatePoints = function () {
     var i, len;
-    // At this point this.numberPoints has been set in this.generateTerm
     len = this.numberPoints;
     if (this.points.length<this.numberPoints) {
         for (i=this.points.length; i<len; i++) {
@@ -280,9 +276,9 @@ JXG.Curve.prototype.updateCurve = function () {
         this.numberPoints = this.dataX.length;
     } else {
         if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
-            this.numberPoints = this.board.canvasWidth*2;
+            this.numberPoints = this.numberPointsHigh;
         } else {
-            this.numberPoints = this.board.canvasWidth*0.5;
+            this.numberPoints = this.numberPointsLow;
         }
     }
     len = this.numberPoints;
@@ -365,7 +361,6 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
  */
 JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
     var fx, fy;
-    this.numberPoints = this.board.canvasWidth*1.0;
 
     // Generate the methods X() and Y()
     if (JXG.IsArray(xterm)) {

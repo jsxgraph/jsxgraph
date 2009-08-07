@@ -152,7 +152,9 @@ JXG.Options = function() {
     this.curve = new Object();
     this.curve.strokeWidth = '1px';
     this.curve.strokeColor = this.elements.color.strokeColor;
-    this.curve.RDPsmoothing = true; // Apply the Ramen-Douglas-Peuker algorithm
+    this.curve.RDPsmoothing = false; // Apply the Ramen-Douglas-Peuker algorithm
+    this.curve.numberPointsHigh = 1600; // Number of points on curves after mouseUp
+    this.curve.numberPointsLow = 400;   // Number of points on curves after mousemove
 
     /* precision options */
     this.precision = new Object();
