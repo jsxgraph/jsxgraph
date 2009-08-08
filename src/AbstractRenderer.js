@@ -72,22 +72,22 @@ JXG.AbstractRenderer = function() {
 JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
     var node;
         
-    if(el.visProp['style'] == 0 || el.visProp['style'] == 1 || el.visProp['style'] == 2) { // x
+    if(el.visProp['face'] == 'cross') { // x
         node = this.createPrimitive('path',el.id);
         this.appendChildPrimitive(node,'points');
         this.appendNodesToElement(el, 'path');
     }
-    else if(el.visProp['style'] == 3 || el.visProp['style'] == 4 || el.visProp['style'] == 5 || el.visProp['style'] == 6) { // circle
+    else if(el.visProp['face'] == 'circle') { // circle
         node = this.createPrimitive('circle',el.id);
         this.appendChildPrimitive(node,'points');
         this.appendNodesToElement(el, 'circle');
     }
-    else if(el.visProp['style'] == 7 || el.visProp['style'] == 8 || el.visProp['style'] == 9) { // rectangle
+    else if(el.visProp['face'] == 'square') { // rectangle
         node = this.createPrimitive('rect',el.id);
         this.appendChildPrimitive(node,'points');
         this.appendNodesToElement(el, 'rect');
     }
-    else if(el.visProp['style'] == 10 || el.visProp['style'] == 11 || el.visProp['style'] == 12) { // +
+    else if(el.visProp['face'] == 'plus') { // +
         node = this.createPrimitive('path',el.id);
         this.appendChildPrimitive(node,'points');  
         this.appendNodesToElement(el, 'path');
@@ -110,7 +110,7 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
  * @see #changePointStyle
  */
 JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
-    var size;
+    var size = el.visProp['size'];
     if (isNaN(el.coords.scrCoords[2]) || isNaN(el.coords.scrCoords[1])) return;
     
     if (this.enhancedRendering) {
@@ -123,18 +123,17 @@ JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
         }
     }
 
-    size = this.getPointSize(el.visProp['style']);
-    if(el.visProp['style'] == 0 || el.visProp['style'] == 1 || el.visProp['style'] == 2) { // x
+    if(el.visProp['face'] == 'cross') { // x
         this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'x'), el.board); 
     }
-    else if(el.visProp['style'] == 3 || el.visProp['style'] == 4 || el.visProp['style'] == 5 || el.visProp['style'] == 6) { // circle
+    else if(el.visProp['face'] == 'circle') { // circle
         this.updateCirclePrimitive(el.rendNode,el.coords.scrCoords[1], el.coords.scrCoords[2],size+1);            
     }
-    else if(el.visProp['style'] == 7 || el.visProp['style'] == 8 || el.visProp['style'] == 9) { // rectangle
+    else if(el.visProp['face'] == 'square') { // rectangle
         this.updateRectPrimitive(el.rendNode,
                 el.coords.scrCoords[1]-size, el.coords.scrCoords[2]-size, size*2, size*2);
     }
-    else if(el.visProp['style'] == 10 || el.visProp['style'] == 11 || el.visProp['style'] == 12) { // +
+    else if(el.visProp['face'] == 'plus') { // +
         this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'+'), el.board); 
     }
 };
@@ -160,58 +159,6 @@ JXG.AbstractRenderer.prototype.changePointStyle = function(/** JXG.Point */el) {
     if(el.visProp['draft']) {
         this.setDraft(el);
     }
-};
-
-/**
- * Determines the size of a point depending on its style.
- * @param style A point style constant.
- * @return Size of a point style.
- */
-JXG.AbstractRenderer.prototype.getPointSize = function(/** number */ style) /** number */ {
-    var size = 0;
-    switch (style) {    
-        case 0:
-            size = 2; // small x
-            break;
-        case 1:
-            size = 3; // medium x
-            break;
-        case 2:
-            size = 4; // big x
-            break;
-        case 3:
-            size = 1; // tiny circle
-            break;
-        case 4:
-            size = 2; // small circle 
-            break;
-        case 5:
-            size = 3; // medium circle
-            break;
-        case 6:
-            size = 4; // big circle
-            break;
-        case 7:
-            size = 2; // small rectangle
-            break;
-        case 8:
-            size = 3; // medium rectangle
-            break;
-        case 9:
-            size = 4; // big rectangle
-            break;
-        case 10:
-            size = 2; // small +
-            break;
-        case 11:
-            size = 3; // medium +
-            break;
-        case 12:
-            size = 4; // big +
-            break;
-        default:
-    }   
-    return size;
 };
 
 

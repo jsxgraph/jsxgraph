@@ -16,8 +16,8 @@
 
         board = JXG.JSXGraph.initBoard('jxgbox', {grid:true,originX: 250, originY: 300, unitX: 50, unitY: 50, axis:true});
         
-        p1 = board.createElement('point', [0, 0], {style:6,name:"A",fillColor:'red',strokeColor:'yellow'}); 
-        p2 = board.createElement('point', [1, 1], {style:12,name:"B",strokeColor:'green'});
+        p1 = board.createElement('point', [0, 0], {face:'circle',size:6,name:"A",fillColor:'red',strokeColor:'yellow'}); 
+        p2 = board.createElement('point', [1, 1], {face:'cross',size:3,name:"B",strokeColor:'green'});
         
         p2.setProperty('strokewidth:3pt');
         
@@ -31,10 +31,10 @@
         p3 = board.createElement('point', [2, 2]);
         a1 = board.createElement('semicircle',[p3,p2], {strokeColor:'red',dash:1});
         
-        p4 = board.createElement('point', [-2, 2]);
-        p5 = board.createElement('point', [-2, 3]);
-        p6 = board.createElement('point', [-3, 3]);
-        p7 = board.createElement('point', [-3, 2]);
+        p4 = board.createElement('point', [-2, 2],{face:'square',size:7});
+        p5 = board.createElement('point', [-2, 3],{face:'square',size:5});
+        p6 = board.createElement('point', [-3, 3],{face:'square',size:6});
+        p7 = board.createElement('point', [-3, 2],{face:'plus',size:4,strokeWidth:'3pt'});
         
         pply1 = board.createElement('polygon',[p4,p5,p6,p7]);
         

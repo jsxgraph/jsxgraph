@@ -82,54 +82,54 @@ JXG.PsTricks.addPoint = function(el) {
     this.psTricksString += "\\psdot";
     this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) + ",";
     this.psTricksString += "dotstyle=";
-    if(el.visProp['style'] == 0 || el.visProp['style'] == 1 || el.visProp['style'] == 2) { // x
+    if(el.visProp['face'] == 'cross') { // x
         this.psTricksString += "x, dotsize=";
-        if(el.visProp['style'] == 0) {
+        if(el.visProp['size'] == 2) {
             this.psTricksString += "2pt 2";
         }
-        else if(el.visProp['style'] == 1) {
+        else if(el.visProp['size'] == 3) {
             this.psTricksString += "5pt 2";
         }
-        else if(el.visProp['style'] == 2) {
+        else if(el.visProp['size'] >= 4) {
             this.psTricksString += "5pt 3";
         }        
     }
-    else if(el.visProp['style'] == 3 || el.visProp['style'] == 4 || el.visProp['style'] == 5 || el.visProp['style'] == 6) { // circle
+    else if(el.visProp['face'] == 'circle') { // circle
         this.psTricksString += "*, dotsize=";
-        if(el.visProp['style'] == 3) {
+        if(el.visProp['size'] == 1) {
             this.psTricksString += "2pt 2";
         }
-        else if(el.visProp['style'] == 4) {
+        else if(el.visProp['size'] == 2) {
             this.psTricksString += "4pt 2";
         }
-        else if(el.visProp['style'] == 5) {
+        else if(el.visProp['size'] == 3) {
             this.psTricksString += "6pt 2";
         }  
-        else if(el.visProp['style'] == 6) {
+        else if(el.visProp['size'] >= 4) { // TODO
             this.psTricksString += "6pt 3";
         }          
     }
-    else if(el.visProp['style'] == 7 || el.visProp['style'] == 8 || el.visProp['style'] == 9) { // rectangle
+    else if(el.visProp['face'] == 'square') { // rectangle
         this.psTricksString += "square*, dotsize=";
-        if(el.visProp['style'] == 7) {
+        if(el.visProp['size'] == 2) {
             this.psTricksString += "2pt 2";
         }
-        else if(el.visProp['style'] == 8) {
+        else if(el.visProp['size'] == 3) {
             this.psTricksString += "5pt 2";
         }
-        else if(el.visProp['style'] == 9) {
+        else if(el.visProp['size'] >= 4) { // TODO
             this.psTricksString += "5pt 3";
         }           
     }
-    else if(el.visProp['style'] == 10 || el.visProp['style'] == 11 || el.visProp['style'] == 12) { // +
+    else if(el.visProp['face'] == 'plus') { // +
         this.psTricksString += "+, dotsize=";
-        if(el.visProp['style'] == 10) {
+        if(el.visProp['size'] == 2) {
             this.psTricksString += "2pt 2";
         }
-        else if(el.visProp['style'] == 11) {
+        else if(el.visProp['size'] == 3) {
             this.psTricksString += "5pt 2";
         }
-        else if(el.visProp['style'] == 12) {
+        else if(el.visProp['size'] >= 4) { // TODO
             this.psTricksString += "5pt 3";
         }            
     }

@@ -170,7 +170,33 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
      * @default JXG.Options.point#style
      * @name JXG.Point#style
      */
+    /* TODO: muss das noch hier stehen? wird nicht mehr benutzt, aber in setProperty kann noch style:xy gesetzt werden! -> wird in face/size uebertragen */
     this.visProp['style'] = this.board.options.point.style;
+    
+    /**
+     * There are different point styles which differ in appearance.
+     * Posssible values are
+     * <table><tr><th>Value</th></tr>
+     * <tr><td>cross</td></tr>
+     * <tr><td>circle</td></tr>
+     * <tr><td>squareG</td></tr>
+     * <tr><td>plus</td></tr>
+     * </table>
+     * @type string
+     * @see #setStyle
+     * @default circle
+     * @name JXG.Point#face
+     */
+    this.visProp['face'] = 'circle';
+    /**
+    * Determines the size of a point.
+    * Means radius resp. half the width of a point (depending on the face).
+    * @type number
+     * @see #setStyle
+     * @default 3     
+     * @name JXG.Point#size
+     */    
+    this.visProp['size'] = 3;
 
     /**
      * Size of the point. This is just for the renderer and the hasPoint() method
@@ -767,9 +793,77 @@ JXG.Point.prototype.animate = function(direction, stepCount) {
  * @param {int} i Integer to determine the style. See {@link JXG.GeometryElement#style} for a list of available styles.
  * @see JXG.GeometryElement#style
  * @private
+ * @deprecated
  */
 JXG.Point.prototype.setStyle = function(i) {
-    this.visProp['style'] = i;
+    if(i == 0 || i == 1 || i == 2) { // x
+        this.visProp['face'] = 'cross';
+        if(i == 0) {
+            this.visProp['size'] = 2;
+        }
+        else if(i == 1) {
+            this.visProp['size'] = 3;
+        }
+        else {
+            this.visProp['size'] = 4;
+        }        
+    }
+    else if(i == 3 || i == 4 || i == 5 || i == 6) { // circle
+        this.visProp['face'] = 'circle';
+        if(i == 3) {
+            this.visProp['size'] = 1;
+        }
+        else if(i == 4) {
+            this.visProp['size'] = 2;
+        }
+        else if(i == 5) {
+            this.visProp['size'] = 3;
+        }        
+        else {
+            this.visProp['size'] = 4;
+        }            
+    }
+    else if(i == 7 || i == 8 || i == 9) { // rectangle
+        this.visProp['face'] = 'square';
+        if(i == 7) {
+            this.visProp['size'] = 2;
+        }
+        else if(i == 8) {
+            this.visProp['size'] = 3;
+        }
+        else {
+            this.visProp['size'] = 4;
+        }  
+    }
+    else if(i == 10 || i == 11 || i == 12) { // +
+        this.visProp['face'] = 'plus';
+        if(i == 10) {
+            this.visProp['size'] = 2;
+        }
+        else if(i == 11) {
+            this.visProp['size'] = 3;
+        }
+        else {
+            this.visProp['size'] = 4;
+        }  
+    }    
+    
+    this.board.renderer.changePointStyle(this);
+};
+
+/**
+ * Set the face of a point.
+ * @param {string} s String which determines the face of the point. See {@link JXG.GeometryElement#face} for a list of available faces.
+ * @see JXG.GeometryElement#face
+ * @private
+ */
+JXG.Point.prototype.setFace = function(s) {
+    if(s == 'cross' || s == 'plus' || s == 'circle' || s == 'square') {
+        this.visProp['face'] = s;
+    }
+    else {
+        this.visProp['face'] = 'circle';
+    }
     this.board.renderer.changePointStyle(this);
 };
 
@@ -780,13 +874,7 @@ JXG.Point.prototype.remove = function() {
     if (this.hasLabel) {
         this.board.renderer.remove(document.getElementById(this.label.content.id));
     }
-    if(this.visProp['style']  >= 3 && this.visProp['style'] <= 9) {
-        this.board.renderer.remove(document.getElementById(this.id));
-    }
-    else {
-        this.board.renderer.remove(document.getElementById(this.id+'_x1'));
-        this.board.renderer.remove(document.getElementById(this.id+'_x2'));
-    }
+    this.board.renderer.remove(document.getElementById(this.id));
 };
 
 /**
@@ -824,13 +912,7 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     
     this.board.renderer.drawPoint(copy);
 
-    if( (this.visProp['style']  >= 3) && (this.visProp['style'] <= 9) ) {
-        this.traces[copy.id] = document.getElementById(copy.id);
-    }
-    else {
-        this.traces[copy.id + '_x1'] = document.getElementById(copy.id+'_x1');
-        this.traces[copy.id + '_x2'] = document.getElementById(copy.id+'_x2');
-    }
+    this.traces[copy.id] = document.getElementById(copy.id);
 
     delete copy;
 /*   

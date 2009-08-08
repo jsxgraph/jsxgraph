@@ -699,6 +699,13 @@ JXG.GeometryElement.prototype.setProperty = function () {
             case 'style':
                 this.setStyle(1*pair[1]);
                 break;
+            case 'face':
+                this.setFace(pair[1]);
+                break;
+            case 'size':
+                this.visProp['size'] = 1*pair[1];
+                this.board.renderer.updatePoint(this);
+                break;  
             case 'fixed':          
                 this.fixed = (pair[1]=='false') ? false : true;
                 break;
