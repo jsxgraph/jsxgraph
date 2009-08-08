@@ -268,6 +268,7 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         }
         myAtts['labelColor'] = colorArray[i%colorArray.length];
         myAtts['highlightfillColor'] = highlightColorArray[i%highlightColorArray.length];
+        //myAtts['gradient'] = 'linear';
         arc[i] = board.createElement('arc',[center,p[i],p[i+1]], myAtts);
         
         if(attributes['highlightOnSector']) {

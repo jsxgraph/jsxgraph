@@ -123,17 +123,40 @@ JXG.VMLRenderer = function(container) {
 
 JXG.VMLRenderer.prototype = new JXG.AbstractRenderer;
 
-JXG.VMLRenderer.prototype.addShadowToElement = function(element) {
-    var nodeShadow;
-    if(element.rendNode != null) {
-        nodeShadow = element.rendNodeShadow;
-        nodeShadow.setAttribute('id', element.id+'shadow');
+JXG.VMLRenderer.prototype.setShadow = function(element) {
+    var nodeShadow = element.rendNodeShadow;
+    if(element.visProp['shadow']) {
         nodeShadow.setAttribute('On', 'True');
         nodeShadow.setAttribute('Offset', '3pt,3pt');
         nodeShadow.setAttribute('Opacity', '60%');
         nodeShadow.setAttribute('Color', '#aaaaaa');
     }
-    element.board.fullUpdate();
+    else {
+        nodeShadow.setAttribute('On', 'False');
+    }
+};
+
+JXG.VMLRenderer.prototype.setGradient = function(element) {
+    var nodeFill = element.rendNodeFill;
+    if(element.type == JXG.OBJECT_TYPE_ARC || element.type == JXG.OBJECT_TYPE_ANGLE) {
+        nodeFill = element.rendNode2Fill;
+    }    
+    
+    if(element.visProp['gradient'] == 'linear') {
+        nodeFill.setAttribute('type','gradient');
+        nodeFill.setAttribute('color2',element.visProp['gradientSecondColor']);
+        nodeFill.setAttribute('opacity2',element.visProp['gradientSecondOpacity']);
+        nodeFill.setAttribute('angle',element.visProp['gradientAngle']);
+    }
+    else if (element.visProp['gradient'] == 'radial') {
+        nodeFill.setAttribute('type','gradientradial');
+        nodeFill.setAttribute('color2',element.visProp['gradientSecondColor']);
+        nodeFill.setAttribute('opacity2',element.visProp['gradientSecondOpacity']);
+        nodeFill.setAttribute('focusposition', element.visProp['gradientPositonX']*100+'%,'+element.visProp['gradientPositonY']*100+'%');
+    }
+    else {
+        nodeFill.setAttribute('type','solid');
+    }
 };
 
 JXG.VMLRenderer.prototype.addShadowToGroup = function(groupname, board) {
@@ -324,7 +347,6 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     
     /* arc line */
     node = this.drawArcLine(el.id, radius, angle1, angle2, el.midpoint, el.board, el);
-    //this.appendNodesToElement(el, 'arc');
     
     /* arrows at the ends of the arc line */
     nodeStroke = el.rendNodeStroke;
@@ -341,8 +363,9 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     
-    /* dashstyle */
+    /* dashstyle and shadow */
     this.setDashStyle(el,el.visProp);  
+    this.setShadow(el);    
    
     /* arc fill */
     p4.coords = el.board.algebra.projectPointToCircle(el.point3,el);      
@@ -405,10 +428,11 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     
-    /* dashstyle */
+    /* dashstyle and shadow */
     tmp = el.visProp['dash'];
     nodeStroke = el.rendNodeStroke;    
     nodeStroke.setAttribute('dashstyle', this.dashArray[tmp]);     
+    this.setShadow(el); 
    
     /* arc fill */
     p1.coords = projectedP1;  

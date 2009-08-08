@@ -413,6 +413,22 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @default true
      */
     this.visProp.visible = true;
+
+    /**
+     * If true the element will get a shadow.
+     * @type boolean
+     * @name JXG.GeometryElement#shadow
+     * @default false
+     */
+    this.visProp['shadow'] = false;
+    
+    // TODO: comment
+    this.visProp['gradient'] = 'none';
+    this.visProp['gradientSecondColor'] = 'blue';
+    this.visProp['gradientAngle'] = '90';
+    this.visProp['gradientSecondOpacity'] = this.visProp['fillOpacity'];
+    this.visProp['gradientPositonX'] = 0.5;
+    this.visProp['gradientPositonY'] = 0.5;    
 };
 
 /**
@@ -709,6 +725,19 @@ JXG.GeometryElement.prototype.setProperty = function () {
             case 'fixed':          
                 this.fixed = (pair[1]=='false') ? false : true;
                 break;
+            case 'shadow':
+                if(pair[1] == 'false' || pair[1] == false) {
+                    this.visProp['shadow'] = false;
+                }
+                else if(pair[1] == 'true' || pair[1] == true) {
+                    this.visProp['shadow'] = true;                
+                }  
+                this.board.renderer.setShadow(this);
+                break;
+            case 'gradient':
+                this.visProp['gradient'] = pair[1];
+                this.board.renderer.setGradient(this);
+                break;                
             case 'draft': 
                 if(pair[1] == 'false' || pair[1] == false) {
                     if(this.visProp['draft'] == true) {

@@ -95,25 +95,50 @@ JXG.SVGRenderer = function(container) {
 
 JXG.SVGRenderer.prototype = new JXG.AbstractRenderer;
 
-JXG.SVGRenderer.prototype.addShadowToElement = function(element) {
+JXG.SVGRenderer.prototype.setShadow = function(element) {
     if(element.rendNode != null) {
-        element.rendNode.setAttributeNS(null,'filter','url(#f1)');
+        if(element.visProp['shadow']) {
+            element.rendNode.setAttributeNS(null,'filter','url(#f1)');
+        }
+        else {
+            element.rendNode.removeAttributeNS(null,'filter');
+
+        }    
     }
-    element.board.fullUpdate();
 }
 
-JXG.SVGRenderer.prototype.addShadowToGroup = function(groupname, board) {
-    if(groupname == "lines") {
-        this.lines.setAttributeNS(null, 'filter', 'url(#f1)');
+JXG.SVGRenderer.prototype.setGradient = function(element) {
+
+    if(element.visProp['gradient'] == 'linear') {
+
+        var node = this.createPrimitive('linearGradient',element.id+'_gradient');
+        var x1 = '0%'; // TODO: get x1,x2,y1,y2 from el.visProp['angle']
+        var x2 = '100%';
+        var y1 = '0%';
+        var y2 = '0%'; //means 270 degrees
+
+        node.setAttributeNS(null,'x1',x1);
+        node.setAttributeNS(null,'x2',x2);
+        node.setAttributeNS(null,'y1',y1);
+        node.setAttributeNS(null,'y2',y2);
+        var node2 = this.createPrimitive('stop',element.id+'_gradient1');
+        node2.setAttributeNS(null,'offset','0%');
+        node2.setAttributeNS(null,'style','stop-color:'+element.visProp['fillColor']+';stop-opacity:'+element.visProp['fillOpacity']);     
+        var node3 = this.createPrimitive('stop',element.id+'_gradient2');
+        node3.setAttributeNS(null,'offset','100%');
+        node3.setAttributeNS(null,'style','stop-color:'+element.visProp['gradientSecondColor']+';stop-opacity:'+element.visProp['gradientSecondOpacity']);
+        node.appendChild(node2);
+        node.appendChild(node3);     
+        this.defs.appendChild(node);
+        element.rendNode.setAttributeNS(null, 'style', 'fill:url(#'+element.id+'_gradient)');       
     }
-    else if(groupname == "points") {
-        this.points.setAttributeNS(null, 'filter', 'url(#f1)');
+    else if (el.visProp['gradient'] == 'radial') {
+        // TODO
     }
-    else if(groupname == "circles") {
-        this.circles.setAttributeNS(null, 'filter', 'url(#f1)');
-    }    
-    board.fullUpdate();
-}
+    else {
+        element.rendNode.removeAttributeNS(null,'style');
+    }
+};
 
 JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
     var node = this.createPrimitive('text','licenseText'),
@@ -194,6 +219,8 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     if (el.visProp['strokeWidth']!=null) {node.setAttributeNS(null, 'stroke-width', el.visProp['strokeWidth']);}
     node.setAttributeNS(null, 'fill', 'none');
     this.setDashStyle(el,el.visProp);
+    
+    this.setShadow(el);
 
     if(el.visProp['firstArrow']) {
         node2 = this.createArrowHead(el,'Start');
@@ -322,6 +349,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
 
     this.appendChildPrimitive(node,'angles');
     el.rendNode = node;
+    this.setShadow(el);    
     this.appendChildPrimitive(node2,'angles');
     el.rendNode2 = node2;
    

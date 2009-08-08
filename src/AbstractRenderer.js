@@ -136,6 +136,7 @@ JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
     else if(el.visProp['face'] == 'plus') { // +
         this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'+'), el.board); 
     }
+    this.setShadow(el);
 };
 
 /**
@@ -223,16 +224,17 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
         el.imageTransformMatrix = m;
     }
     this.makeArrows(el);
-
+    
     if (this.enhancedRendering) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
             this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
-            this.setDashStyle(el,el.visProp);            
+            this.setDashStyle(el,el.visProp);    
+            this.setShadow(el);
         } else {
             this.setDraft(el);
         }
-    }    
+    }     
 };
 
 /**
@@ -462,14 +464,14 @@ JXG.AbstractRenderer.prototype.removeTicks = function(/** JXG.Line */ axis) {
  */
 JXG.AbstractRenderer.prototype.drawArrow = function(/** JXG.Line */ el) {
     var node = this.createPrimitive('line',el.id);
-    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
-    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
-    this.setDashStyle(el,el.visProp);
+    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']); // ?
+    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']); // ?
+    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']); // ?
+    this.setDashStyle(el,el.visProp); // ?
     this.makeArrow(node,el);
     this.appendChildPrimitive(node,'lines');
     this.appendNodesToElement(el,'lines');
-    this.setDraft(el);
+
     this.updateArrow(el);
 };
 
@@ -486,6 +488,8 @@ JXG.AbstractRenderer.prototype.updateArrow = function(/** JXG.Line */ el) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
             this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
             this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
+            this.setShadow(el);
+            this.setDashStyle(el,el.visProp);
         } else {
             this.setDraft(el);
         }
@@ -511,10 +515,10 @@ JXG.AbstractRenderer.prototype.drawCurve = function(el) {
     //node.setAttributeNS(null, 'stroke-linejoin', 'round');
     this.appendChildPrimitive(node,'curves');
     this.appendNodesToElement(el,'path');
-    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
-    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
-    this.setDashStyle(el,el.visProp);
+    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']); // ?
+    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']); // ?
+    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']); // ?
+    this.setDashStyle(el,el.visProp); // ?
     this.updateCurve(el);
 };
 
@@ -530,6 +534,8 @@ JXG.AbstractRenderer.prototype.updateCurve = function(/** JXG.Curve */ el) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
             this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
             this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
+            this.setDashStyle(el,el.visProp);
+            this.setShadow(el);
         } else {
             this.setDraft(el);
         }
@@ -569,6 +575,7 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
             this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
             this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
             this.setDashStyle(el,el.visProp);
+            this.setShadow(el);
         } else {
             this.setDraft(el);
         }
@@ -613,6 +620,7 @@ JXG.AbstractRenderer.prototype.updatePolygon = function(/** JXG.Polygon */ el) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
             this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
+            this.setShadow(el); 
         } else {
             this.setDraft(el);
         }
@@ -1217,25 +1225,12 @@ JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(pts,eps) {
 };
 
 /**
- * Adds a shadow to an geometry element.
+ * Sets the shadow properties to a geometry element.
  * @param {JXG.GeometyElement} element Reference to a geometry object, that should get a shadow
- * @see #addShadowToGroup
  */
-JXG.AbstractRenderer.prototype.addShadowToElement = function(element) {
+JXG.AbstractRenderer.prototype.setShadow = function(element) {
 };
 
-/**
- * Adds a shadow to a group of geometry elements.  
- * @param {string} groupname Name of the group of which every object shall get a shadow, currently supported:
- * <ul><li>points</li>
- * <li>lines</li>
- * <li>circles</li>
- * </ul>
- * @param {JXG.Board} board Board on which the element is drawn.
- * @see #addShadowToElement
- */
-JXG.AbstractRenderer.prototype.addShadowToGroup = function(groupname, board) {
-};
 
 JXG.AbstractRenderer.prototype.updatePathStringPoint = function(el, size, type) {
 };

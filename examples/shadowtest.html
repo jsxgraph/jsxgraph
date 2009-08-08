@@ -11,46 +11,24 @@
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
 </div>
 <div id="debug" style="display:block;"></div>
-<form>
-<input type='button' value='Schatten fuer Kreise' onClick='board.renderer.addShadowToGroup("circles",board);'>
-<input type='button' value='Schatten fuer Punkte' onClick='board.renderer.addShadowToGroup("points",board);'>
-<input type='button' value='Schatten fuer Linien' onClick='board.renderer.addShadowToGroup("lines",board);'>
-<input type='button' value='Schatten fuer b' onClick='board.renderer.addShadowToElement(l4);'>
-<input type='button' value='Schatten fuer E' onClick='board.renderer.addShadowToElement(p5);'>
-<input type='button' value='Schatten fuer Umkreis' onClick='board.renderer.addShadowToElement(c1[1]);'>
-<input type='button' value='Schatten fuer alle Elemente (einzeln)' onClick='add()'>
-</form>
    <script type="text/javascript">
     /* <![CDATA[ */
 
-    function add() {
-        board.renderer.addShadowToElement(p1);
-        board.renderer.addShadowToElement(p2);
-        board.renderer.addShadowToElement(p3);
-        board.renderer.addShadowToElement(p4);
-        board.renderer.addShadowToElement(p5);
-        board.renderer.addShadowToElement(l1);
-        board.renderer.addShadowToElement(l4);
-        board.renderer.addShadowToElement(c1[1]);
-        board.renderer.addShadowToElement(c2);
-        board.renderer.addShadowToElement(c3);
-    }
-    
         var p1, p2, l1;
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 300, unitX: 50, unitY: 50});
         
-        p1 = board.createElement('point', [0, 0], {style:5,name:"A",fillColor:'blue'}); 
-        p2 = board.createElement('point', [0, 4], {style:5,name:"B",fillColor:'blue'});
-        p3 = board.createElement('point', [4, 0], {style:5,name:"C",fillColor:'blue'});
-        p4 = board.createElement('point', [2, 2], {style:5,name:"D",fillColor:'blue'});
-        p5 = board.createElement('point', [5, 4], {style:5,name:"E",fillColor:'blue'});        
+        p1 = board.createElement('point', [0, 0], {style:5,name:"A",fillColor:'blue', shadow:true}); 
+        p2 = board.createElement('point', [0, 4], {style:5,name:"B",fillColor:'blue', shadow:true});
+        p3 = board.createElement('point', [4, 0], {style:5,name:"C",fillColor:'blue', shadow:true});
+        p4 = board.createElement('point', [2, 2], {style:5,name:"D",fillColor:'blue', shadow:true});
+        p5 = board.createElement('point', [5, 4], {style:5,name:"E",fillColor:'blue', shadow:true});        
         
-        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'green',withLabel:true});
+        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'green',withLabel:true,shadow:true});
         l4 = board.createElement('line', [p1, p3], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'blue',withLabel:true});        
 
         
         var c1 = board.createElement('circumcircle',['A','B','C'],{name:['P','k_a']});
-        var c2 = board.createElement('circle',['C','D']);
+        var c2 = board.createElement('circle',['C','D'], {shadow:true});
         var c3 = board.createElement('circle',['E','D']);
         c1[0].setProperty('visible:false');
         

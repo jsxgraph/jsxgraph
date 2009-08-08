@@ -25,16 +25,16 @@
         
         ax4 = board.createElement('axis', [[0,1],[1,1]]);
         board.createElement('ticks', [ax4, [-4.33333, -1.5, 3.5, 4.321]], {strokeColor: '#00ff00', majorTickHeight: 15});
-        
-        c1 = board.createElement('circle',[p1,p2], {strokeColor:'yellow',fillColor:'#00FFFF55',visible:true});
-        
+
+        c1 = board.createElement('circle',[p1,p2], {strokeColor:'yellow',fillColor:'#00FFFF55',visible:true, shadow:true, gradient:'linear'});
+
         p3 = board.createElement('point', [2, 2]);
         a1 = board.createElement('semicircle',[p3,p2], {strokeColor:'red',dash:1});
         
-        p4 = board.createElement('point', [-2, 2],{face:'square',size:7});
+        p4 = board.createElement('point', [-2, 2],{face:'square',size:7,shadow:true});
         p5 = board.createElement('point', [-2, 3],{face:'square',size:5});
         p6 = board.createElement('point', [-3, 3],{face:'square',size:6});
-        p7 = board.createElement('point', [-3, 2],{face:'plus',size:4,strokeWidth:'3pt'});
+        p7 = board.createElement('point', [-3, 2],{face:'plus',size:4,strokeWidth:'3pt',shadow:true});
         
         pply1 = board.createElement('polygon',[p4,p5,p6,p7]);
         
