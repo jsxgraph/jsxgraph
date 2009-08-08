@@ -806,10 +806,10 @@ this.readGeonext = function(tree,board) {
                     }
                     gxtEl.outputFixed = Data.getElementsByTagName('output')[0].getElementsByTagName('fix')[0].firstChild.data;
                     gxtEl.outputStyle = Data.getElementsByTagName('output')[0].getElementsByTagName('style')[0].firstChild.data;
-//                    board.addPerpendicular(gxtEl.defEl[1], gxtEl.defEl[0], 
-//                                           defEl[1], defElN[1].firstChild.data, defEl[0], 
-//                                           defElN[0].firstChild.data);
-                    board.createElement('perpendicular', [gxtEl.defEl[1], gxtEl.defEl[0]], {name: [defElN[1], defElN[0]], id: [defEl[1], defEl[0]]});
+                    board.addPerpendicular(gxtEl.defEl[1], gxtEl.defEl[0], 
+                                           defEl[1], defElN[1].firstChild.data, defEl[0], 
+                                           defElN[0].firstChild.data);
+                    //board.createElement('perpendicular', [gxtEl.defEl[1], gxtEl.defEl[0]], {name: [defElN[1], defElN[0]], id: [defEl[1], defEl[0]]});
                     /* Eigenschaften des Lotfusspunkts */
                     pid = defEl[0];
                     board.objects[pid].setProperty('strokeColor:'+defElColStr[0],

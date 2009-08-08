@@ -14,13 +14,32 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-        var p1, p2, l1;
-        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 250, originY: 300, unitX: 50, unitY: 50});
+        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true,originX: 250, originY: 300, unitX: 50, unitY: 50, axis:true});
         
         p1 = board.createElement('point', [0, 0], {style:6,name:"A",fillColor:'red',strokeColor:'yellow'}); 
         p2 = board.createElement('point', [1, 1], {style:12,name:"B",strokeColor:'green'});
         
         p2.setProperty('strokewidth:3pt');
+        
+        l1 = board.createElement('line',[p1,p2], {strokeColor:'#FF00FF55', straightFirst:false,lastArrow:true, firstArrow:true, name:'l', withLabel:true, dash:2});
+        
+        ax4 = board.createElement('axis', [[0,1],[1,1]]);
+        board.createElement('ticks', [ax4, [-4.33333, -1.5, 3.5, 4.321]], {strokeColor: '#00ff00', majorTickHeight: 15});
+        
+        c1 = board.createElement('circle',[p1,p2], {strokeColor:'yellow',fillColor:'#00FFFF55',visible:true});
+        
+        p3 = board.createElement('point', [2, 2]);
+        a1 = board.createElement('semicircle',[p3,p2], {strokeColor:'red',dash:1});
+        
+        p4 = board.createElement('point', [-2, 2]);
+        p5 = board.createElement('point', [-2, 3]);
+        p6 = board.createElement('point', [-3, 3]);
+        p7 = board.createElement('point', [-3, 2]);
+        
+        pply1 = board.createElement('polygon',[p4,p5,p6,p7]);
+        
+        s1 = board.createElement('sector',[p5,p4,p3]);
+        s1.arc.setProperty('fillColor:#FF00FF55');
   /* ]]> */
   </script>
 </body>

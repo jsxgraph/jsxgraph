@@ -70,29 +70,31 @@ JXG.AbstractRenderer = function() {
  * @see #updatePoint
  */
 JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
-    var node, 
-        node2;
+    var node;
         
     if(el.visProp['style'] == 0 || el.visProp['style'] == 1 || el.visProp['style'] == 2) { // x
         node = this.createPrimitive('path',el.id);
         this.appendChildPrimitive(node,'points');
-        el.rendNode = node;        
+        this.appendNodesToElement(el, 'path');
     }
     else if(el.visProp['style'] == 3 || el.visProp['style'] == 4 || el.visProp['style'] == 5 || el.visProp['style'] == 6) { // circle
         node = this.createPrimitive('circle',el.id);
         this.appendChildPrimitive(node,'points');
-        el.rendNode = node;
+        this.appendNodesToElement(el, 'circle');
     }
     else if(el.visProp['style'] == 7 || el.visProp['style'] == 8 || el.visProp['style'] == 9) { // rectangle
         node = this.createPrimitive('rect',el.id);
         this.appendChildPrimitive(node,'points');
-        el.rendNode = node;
+        this.appendNodesToElement(el, 'rect');
     }
     else if(el.visProp['style'] == 10 || el.visProp['style'] == 11 || el.visProp['style'] == 12) { // +
         node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,'points');
-        el.rendNode = node;              
+        this.appendChildPrimitive(node,'points');  
+        this.appendNodesToElement(el, 'path');
     }
+    el.rendNode = node;
+    
+    
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
     this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);	
@@ -126,7 +128,7 @@ JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
         this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'x'), el.board); 
     }
     else if(el.visProp['style'] == 3 || el.visProp['style'] == 4 || el.visProp['style'] == 5 || el.visProp['style'] == 6) { // circle
-        this.updateCirclePrimitive(el.rendNode,el.coords.scrCoords[1],el.coords.scrCoords[2],size+1);            
+        this.updateCirclePrimitive(el.rendNode,el.coords.scrCoords[1], el.coords.scrCoords[2],size+1);            
     }
     else if(el.visProp['style'] == 7 || el.visProp['style'] == 8 || el.visProp['style'] == 9) { // rectangle
         this.updateRectPrimitive(el.rendNode,
@@ -228,9 +230,8 @@ JXG.AbstractRenderer.prototype.getPointSize = function(/** number */ style) /** 
 JXG.AbstractRenderer.prototype.drawLine = function(el) { 
     var node = this.createPrimitive('line',el.id);
     this.appendChildPrimitive(node,'lines');
-    el.rendNode = node;
-    this.setDashStyle(el.rendNode,el.visProp);
-    //this.setDraft(el);
+    this.appendNodesToElement(el,'lines');
+
     this.updateLine(el);
 };
 
@@ -280,6 +281,7 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
             this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
+            this.setDashStyle(el,el.visProp);            
         } else {
             this.setDraft(el);
         }
@@ -516,10 +518,10 @@ JXG.AbstractRenderer.prototype.drawArrow = function(/** JXG.Line */ el) {
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
     this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
-    this.setDashStyle(node,el.visProp);
+    this.setDashStyle(el,el.visProp);
     this.makeArrow(node,el);
     this.appendChildPrimitive(node,'lines');
-    el.rendNode = node;
+    this.appendNodesToElement(el,'lines');
     this.setDraft(el);
     this.updateArrow(el);
 };
@@ -561,11 +563,11 @@ JXG.AbstractRenderer.prototype.drawCurve = function(el) {
     
     //node.setAttributeNS(null, 'stroke-linejoin', 'round');
     this.appendChildPrimitive(node,'curves');
-    el.rendNode = node;
+    this.appendNodesToElement(el,'path');
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
     this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
-    this.setDashStyle(el.rendNode,el.visProp);
+    this.setDashStyle(el,el.visProp);
     this.updateCurve(el);
 };
 
@@ -601,13 +603,8 @@ JXG.AbstractRenderer.prototype.updateCurve = function(/** JXG.Curve */ el) {
  */
 JXG.AbstractRenderer.prototype.drawCircle = function(/** JXG.Circle */ el) { 
     var node = this.createPrimitive('ellipse',el.id);
-    el.rendNode = node;    
-
-    this.setDashStyle(node,el.visProp);
     this.appendChildPrimitive(node,'circles');
-    
-    /* TODO What's this for? --michael */
-    this.setDraft(el);
+    this.appendNodesToElement(el,'ellipse'); 
     
     this.updateCircle(el);
 };
@@ -624,6 +621,7 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
             this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
             this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
+            this.setDashStyle(el,el.visProp);
         } else {
             this.setDraft(el);
         }
@@ -653,8 +651,7 @@ JXG.AbstractRenderer.prototype.drawPolygon = function(/** JXG.Polygon */ el) {
     //el.visProp['strokeColor'] = 'none';
     //this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
     this.appendChildPrimitive(node,'polygone');
-    el.rendNode = node;
-    this.setDraft(el);
+    this.appendNodesToElement(el,'polygon');
     this.updatePolygon(el);
 };
     
@@ -753,9 +750,10 @@ JXG.AbstractRenderer.prototype.updateText = function(/** JXG.Text */ el) {
  * @see #updateText
  */
 JXG.AbstractRenderer.prototype.updateTextStyle = function(/** JXG.Text */ el) { 
+    var fs;
     if (el.visProp['fontSize']) {
         if (typeof el.visProp['fontSize'] == 'function') {
-            var fs = el.visProp['fontSize']();
+            fs = el.visProp['fontSize']();
             el.rendNode.style.fontSize = (fs>0?fs:0); 
         } else {
             el.rendNode.style.fontSize = (el.visProp['fontSize']); 
@@ -834,7 +832,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         j = 0,
         i, j2, l, l2,
         gx, gy, topLeft, bottomRight, node2,
-        el;
+        el, eltmp;
         
     board.hasGrid = true;
 
@@ -883,6 +881,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
                                  board);
                                      
     node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
+    this.appendChildPrimitive(node2,'grid');
     if(!board.snapToGrid) {
         el = new Object();
         el.rendNode = node2;
@@ -899,11 +898,11 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
     if(board.gridDash) {
-        this.setPropertyPrimitive(node2,'stroke-dasharray', '5, 5'); 
+        this.setGridDash("gridx"); 
     }
-    this.appendChildPrimitive(node2,'grid');
 
     node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
+    this.appendChildPrimitive(node2,'grid');
     if(!board.snapToGrid) {
         el = new Object();
         el.rendNode = node2;
@@ -920,9 +919,8 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
     if(board.gridDash) {
-        this.setPropertyPrimitive(node2,'stroke-dasharray', '5, 5'); 
+        this.setGridDash("gridy"); 
     }
-    this.appendChildPrimitive(node2,'grid');
    
 };
 
@@ -989,7 +987,6 @@ JXG.AbstractRenderer.prototype.setDraft = function (/** JXG.GeometryElement */ o
     if (!obj.visProp['draft']) {
         return;
     }
-
     var draftColor = obj.board.options.elements.draft.color,
         draftOpacity = obj.board.options.elements.draft.opacity;
         
