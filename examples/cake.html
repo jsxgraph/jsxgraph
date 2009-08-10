@@ -1,0 +1,47 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Cake</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2,2,8,-2], keepaspectratio:true, axis:true});
+        var N = board.createElement('slider', [[0,1.5],[3,1.5],[1,3,40]], {name:'n',snapWidth:1});
+        board.createElement('circle',[[0,0],1],{strokeWidth:1});
+        
+        var c = board.createElement('curve', [[0],[0]],{trace:true, strokecolor:'red', strokeWidth:2}); 
+        
+        c.updateDataArray = function() {
+                var r = 1, n = Math.floor(N.Value()), x = [0], y = [0],
+                    h = r*Math.cos(2*Math.PI/(2*n)),
+                    s = r*Math.sin(2*Math.PI/(2*n)),
+                    i, j, px = 0, py = 0, sgn = 1, 
+                    d = 16, dt = 2*Math.PI/(2*n)/(d), pt;
+                    
+                for (i=0;i<n;i++) {
+                    for (j=-d;j<=d;j++) {
+                        pt = dt*j;
+                        x.push(px+r*Math.sin(pt));
+                        py = sgn*r*Math.cos(pt)-(sgn-1)*h*0.5;
+                        y.push(py);
+                    }
+                    px += s;
+                    sgn *= (-1);
+                }
+                x.push((n-1)*s);
+                y.push(h+(sgn-1)*h*0.5);
+                this.dataX = x;
+                this.dataY = y;
+            }
+            board.update();
+  /* ]]> */
+  </script>
+</body>
+</html>
