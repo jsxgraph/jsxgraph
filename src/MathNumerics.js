@@ -381,9 +381,9 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
 
 /**
  * Computes the polynomial through a given set of coordinates in Lagrange form.
- * @param {Array of JXG.Points} 
- * @type function
- * @return A function of one parameter which returns the value of the polynomial,
+ * @param {array} p Array of JXG.Points
+ * @type {function}
+ * @return {function} A function of one parameter which returns the value of the polynomial,
  * whose graph runs through the given points.
  */
 JXG.Math.Numerics.lagrangePolynomial = function(p) {  
@@ -409,10 +409,10 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
  * Returns the Lagrange polynomials for curves with equidistant nodes, see
  * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
  * SIAM Review, Vol 46, No 3, (2004) 501-517.
- * @param {Array of JXG.Points} 
- * @type {Array function, function vaue, value]}
- * @return [f(t),g(t),0,p.length-1],
  * The graph of the parametric curve [f(t),g(t)] runs through the given points.
+ * @param {Array} p Artray of JXG.Points
+ * @type {Array function, function value, value]}
+ * @return {array} [f(t),g(t),0,p.length-1],
  */
 JXG.Math.Numerics.neville = function(p) {
     return [function(t) {
@@ -466,12 +466,14 @@ JXG.Math.Numerics.neville = function(p) {
 };
 
 /**
- * Calculation of derivative.
- * @param {Function} 
- * @type {Function}
- * @return Derivative of given f.
+ * Numerical (symmetric) approximation of derivative.
+ * @param {function} f Function in one variable to be differentiated.
+ * @param {object} obj Optional object that is treated as "this" in the function body. This is useful, if the function is a 
+ *                 method of an object and contains a reference to its parent object via "this".
+ * @type {function}
+ * @return {function} Derivative function of a given function f.
  */
-JXG.Math.Numerics.D = function(f,obj) {
+JXG.Math.Numerics.D = function(/** function */ f, /** object */ obj) /* function */ {
     var h = 0.00001,
         h2 = h*2.0;
         
@@ -492,17 +494,16 @@ JXG.Math.Numerics.I = function(/** array */ interval, /** function */ f) {
 };
 
 /**
- * TODO: Describe f, x, obj with @param tag; Declare what type obj is expected;
- * Describe what will be returned with the @return tag
- * Newton method to find roots
- * @param f <description>
- * @param x <description>
- * @param obj <description>
- * @return <describe what will be returned>
+ * Newton's method to find roots of a funtion in one variable.
+ * @param {function} f We search for a solution of f(x)=0.
+ * @param {float} x initial guess for the root, i.e. staring value.
+ * @param {object} obj optional object that is treated as "this" in the function body. This is useful, if the function is a 
+ *                 method of an object and contains a reference to its parent object via "this".
+ * @return {float} root of the function f.
  */
-JXG.Math.Numerics.newton = function(/** function */ f, /** number */ x, obj) /** number */ {
+JXG.Math.Numerics.newton = function(/** function */ f, /** number */ x, /** object */ obj) /** number */ {
     var i = 0,
-        h = 0.0000001,
+        h = 0.000001,
         newf = f.apply(obj,[x]), // set "this" to "obj" in f 
         df;
         
@@ -520,18 +521,21 @@ JXG.Math.Numerics.newton = function(/** function */ f, /** number */ x, obj) /**
 };
 
 /**
- * Abstract method to find roots
- * @param {function} 
- * @param {variable}  
+ * Abstract method to find roots of univariate functions.
+ * @param {function} f We search for a solution of f(x)=0.
+ * @param {float} x initial guess for the root, i.e. staring value.
+ * @param {object} obj optional object that is treated as "this" in the function body. This is useful, if the function is a 
+ *                 method of an object and contains a reference to its parent object via "this".
+ * @return {float} root of the function f.
  */
-JXG.Math.Numerics.root = function(f,x,obj) {
+JXG.Math.Numerics.root = function(/** function */ f, /** number */ x, /** object */ obj) /** number */ {
     return this.newton(f,x,obj);
 };
 
 /**
  * Cosine hyperbolicus of x.
- * @param x The number the cosine hyperbolicus will be calculated of.
- * @return Cosine hyperbolicus of the given value.
+ * @param {float} x The number the cosine hyperbolicus will be calculated of.
+ * @return {float} Cosine hyperbolicus of the given value.
  */
 JXG.Math.Numerics.cosh = function(/** number */ x) /** number */ {
     return (Math.exp(x)+Math.exp(-x))*0.5;
@@ -539,8 +543,8 @@ JXG.Math.Numerics.cosh = function(/** number */ x) /** number */ {
 
 /**
  * Sine hyperbolicus of x.
- * @param x The number the sine hyperbolicus will be calculated of.
- * @return Sine hyperbolicus of the given value.
+ * @param {number} x The number the sine hyperbolicus will be calculated of.
+ * @return {number} Sine hyperbolicus of the given value.
  */
 JXG.Math.Numerics.sinh = function(/** number */ x) /** number */ {
     return (Math.exp(x)-Math.exp(-x))*0.5;
@@ -548,15 +552,15 @@ JXG.Math.Numerics.sinh = function(/** number */ x) /** number */ {
 
 
 /**
- * TODO Riemann sum.
+ * Hlper function to create curve which displays Riemann sums.
  * Compute coordinates for the rectangles showing the Riemann sum.
- * @param f  <description>
- * @param n  <description>
- * @param type <description needed>.
- * Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
- * @param start <description> 
- * @param end  <description>
- * @return An array of two arrays containing the x and y coordinates for the rectangles showing the Riemann sum.
+ * @param {function} f Function f, whose integral is approximated by the Riemann sum.
+ * @param {int} n number of rectangles.
+ * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
+ * @param {float} start Left border of the approximation interval
+ * @param {float} end Right border of the approximation interval
+ * @return {array} An array of two arrays containing the x and y coordinates for the rectangles showing the Riemann sum. This array may be used as
+ *                 parent array of a JXG.Curve.
  */
 JXG.Math.Numerics.riemann = function(/** function */ f, /** type */ n,  /** type */ type,  /** type */ start,  /** type */ end)  /** array */ {
     var xarr,yarr,i,delta,j,x,y,x1,delta1,y1;
@@ -607,15 +611,14 @@ JXG.Math.Numerics.riemann = function(/** function */ f, /** type */ n,  /** type
 };
 
 /**
- * TODO Riemann sum.
+ * Approximate the integral by Riemann sums.
  * Compute the area described by the riemann sum rectangles.
- * @param f  <description>
- * @param n  <description>
- * @param type <description needed>.
- * Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
- * @param start <description> 
- * @param end  <description>
- * @return The area value of the rectangles describing the riemann sum.
+ * @param {function} f Function f, whose integral is approximated by the Riemann sum.
+ * @param {int} n number of rectangles.
+ * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
+ * @param {float} start Left border of the approximation interval
+ * @param {float} end Right border of the approximation interval
+ * @return {float} The sum of the areas of the rectangles.
  */
 JXG.Math.Numerics.riemannsum = function(/** function */ f, /** type */ n,  /** type */ type,  /** type */ start,  /** type */ end)  /** number */ {
     var sum,i,delta,x,y,x1,delta1,y1;
