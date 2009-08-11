@@ -437,6 +437,77 @@ JXG.Curve.prototype.getLabelAnchor = function() {
     return c;
 };
 
+/**
+ * @class This element is used to provide a constructor for curve, which is just a wrapper for element {@link Curve}. 
+ * A curve is a mapping from R to R^2. t mapsto (x(t),y(t)). The graph is drawn for t in the interval [a,b]. 
+ * <p>
+ * The following types of curves can be plotted:
+ * <ul>
+ *  <li> parametric curves: t mapsto (x(t),y(t)), where x() and y() are univariate functions.
+ *  <li> polar curves: curves commonly written with polar equations like spirals and cardioids.
+ *  <li> data plots: plot linbe segments through a given list of coordinates.
+ * </ul>
+ * @pseudo
+ * @description
+ * @name Curve
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Curve
+ * @param {function,number,array} x(t) Function term describing the x-coordinate of the curve. In case of a number, x(t) is the constant function
+ *                                     returning this number. In case of an array the curve type is data plot, regardless of the second paremeter.
+ *                                     If the second parameter is a function the data plot evaluates this function at the values of that array.
+ * @param {function,number,array} y(t) Function term describing the y-coordinate of the curve. In case of a number, y(t) is the constant function
+ *                                     returning this number. In case of a polar curve this second parameter is the offset of the curve. Then, it has to be
+ *                                     an array containg numbers or functions.
+ * @param {number, function} a Optional number or function for the left interval border for t. Default value is a=-10.
+ * @param {number, function} b Optional number or function for the right interval border for t. Default value is b=10.
+ * @see JXG.Curve
+ * @example
+ * // Parametric curve
+ * // Create a curve of the form (t-sin(t), 1-cos(t), i.e.
+ * // the cycloid curve.
+ *   var graph = board.createElement('curve', 
+ *                        [function(t){ return t-Math.sin(t);}, 
+ *                         function(t){ return 1-Math.cos(t);},
+ *                         0, 2*Math.PI]
+ *                     );
+ * </pre><div id="af9f818b-f3b6-4c4d-8c4c-e4a4078b726d" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var c1_board = JXG.JSXGraph.initBoard('af9f818b-f3b6-4c4d-8c4c-e4a4078b726d', {boundingbox: [-1, 5, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var graph1 = c1_board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return 1-Math.cos(t);},0, 2*Math.PI]);
+ * </script><pre>
+ * @example
+ * // Polar plot
+ * // Create a curve with the equation r(phi)= a*(1+phi), i.e.
+ * // a cardioid.
+ *   var a = board.createElement('slider',[[0,2],[2,2],[0,1,2]]);
+ *   var graph = board.createElement('curve', 
+ *                        [function(phi){ return a.Value()*(1-Math.cos(phi));}, 
+ *                         [1,0], 
+ *                         0, 2*Math.PI]
+ *                     );
+ * </pre><div id="d0bc7a2a-8124-45ca-a6e7-142321a8f8c2" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var c2_board = JXG.JSXGraph.initBoard('d0bc7a2a-8124-45ca-a6e7-142321a8f8c2', {boundingbox: [-3,3,3,-3], axis: true, showcopyright: false, shownavigation: false});
+ *   var a = c2_board.createElement('slider',[[0,2],[2,2],[0,1,2]]);
+ *   var graph2 = c2_board.createElement('curve', [function(phi){ return a.Value()*(1-Math.cos(phi));}, [1,0], 0, 2*Math.PI]);
+ * </script><pre>
+ * @example
+ * // Data plots
+ * // Connect a set of points given by coordinates with dashed line segments.
+ * // The x- and y-coordinates of the points are given in two separate 
+ * // arrays.
+ *   var x = [0,1,2,3,4,5,6,7,8,9];
+ *   var y = [9.2,1.3,7.2,-1.2,4.0,5.3,0.2,6.5,1.1,0.0];
+ *   var graph = board.createElement('curve', [x,y], {dash:2});
+ * </pre><div id="7dcbb00e-b6ff-481d-b4a8-887f5d8c6a83" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var c3_board = JXG.JSXGraph.initBoard('7dcbb00e-b6ff-481d-b4a8-887f5d8c6a83', {boundingbox: [-1,10,10,-1], axis: true, showcopyright: false, shownavigation: false});
+ *   var x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+ *   var y = [9.2, 1.3, 7.2, -1.2, 4.0, 5.3, 0.2, 6.5, 1.1, 0.0];
+ *   var graph3 = c3_board.createElement('curve', [x,y], {dash:2});
+ * </script><pre>
+ */
 JXG.createCurve = function(board, parents, attributes) {
     if(attributes == null) 
         attributes = {};
@@ -449,9 +520,43 @@ JXG.createCurve = function(board, parents, attributes) {
 JXG.JSXGraph.registerElement('curve', JXG.createCurve);
 
 /**
-* Curve type "functiongraph"
-* parents: [f, start, end] or [f]
-**/
+ * @class This element is used to provide a constructor for functiongraph, which is just a wrapper for element {@link Curve} with {@link JXG.Curve#X()}
+ * set to x. The graph is drawn for x in the interval [a,b].
+ * @pseudo
+ * @description
+ * @name Functiongraph
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Curve
+ * @param {function} f Function term f(x) describing the function graph
+ * @param {number, function} a Optional number or function for the left interval border. Default value is a=-10.
+ * @param {number, function} b Optional number or function for the right interval border. Default value is b=10.
+ * @see JXG.Curve
+ * @example
+ * // Create a function graph for f(x) = 0.5*x*x-2*x
+ *   var graph = board.createElement('functiongraph', 
+ *                        [function(x){ return 0.5*x*x-2*x;}, -2, 4]
+ *                     );
+ * </pre><div id="efd432b5-23a3-4846-ac5b-b471e668b437" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var alex1_board = JXG.JSXGraph.initBoard('efd432b5-23a3-4846-ac5b-b471e668b437', {boundingbox: [-3, 7, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var graph = alex1_board.createElement('functiongraph', [function(x){ return 0.5*x*x-2*x;}, -2, 4]);
+ * </script><pre>
+ * @example
+ * // Create a function graph for f(x) = 0.5*x*x-2*x with variable interval
+ *   var s = board.createElement('slider',[[0,4],[3,4],[-2,4,5]]);
+ *   var graph = board.createElement('functiongraph', 
+ *                        [function(x){ return 0.5*x*x-2*x;}, 
+ *                         -2, 
+ *                         function(){return s.Value();}]
+ *                     );
+ * </pre><div id="4a203a84-bde5-4371-ad56-44619690bb50" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var alex2_board = JXG.JSXGraph.initBoard('4a203a84-bde5-4371-ad56-44619690bb50', {boundingbox: [-3, 7, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var s = alex2_board.createElement('slider',[[0,4],[3,4],[-2,4,5]]);
+ *   var graph = alex2_board.createElement('functiongraph', [function(x){ return 0.5*x*x-2*x;}, -2, function(){return s.Value();}]);
+ * </script><pre>
+ */
 JXG.createFunctiongraph = function(board, parents, attributes) {
     var par = ["x","x"].concat(parents);
     if(attributes == null) 
@@ -467,6 +572,7 @@ JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
 
 
 /**
+ * TODO
  * Create a dynamic spline interpolated curve given by sample points p_1 to p_n.
  * @param {JXG.Board} board Reference to the board the spline is drawn on.
  * @param {Array} parents Array of points the spline interpolates

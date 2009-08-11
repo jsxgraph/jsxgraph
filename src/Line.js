@@ -27,8 +27,6 @@
  * @fileoverview The geometry object Line is defined in this file. Line stores all
  * style and functional properties that are required to draw and move a line on
  * a board.
- * @author graphjs
- * @version 0.1
  */
 
 /**

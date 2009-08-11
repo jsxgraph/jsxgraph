@@ -1033,6 +1033,7 @@ JXG.GeometryElement.prototype.normalize = function() {
 /**
  * EXPERIMENTAL. Generate JSON object code of visProp and other properties.
  * @type string
+ * @private
  * @return JSON string containing element's properties.
  */
 JXG.GeometryElement.prototype.toJSON = function() {
