@@ -38,27 +38,27 @@
  * @param {String} forceRenderer If a specific renderer should be chosen. Possible values are 'vml', 'svg', 'silverlight'
  */
 JXG.JSXGraph = new function (forceRenderer) {
+    var ie, opera, i, arr;
     this.licenseText = 'JSXGraph v0.76 Copyright (C) see http://jsxgraph.org';
 
     /**
-     * Stores the renderer that is used to draw the board.
-     * @type String
-     */
+            * Stores the renderer that is used to draw the board.
+            * @type String
+            */
     this.rendererType = '';
+    
     /**
-     * Associative array that keeps all boards.
-     * @type Object
-     */
+            * Associative array that keeps all boards.
+            * @type Object
+            */
     this.boards = {};
 
     /**
-     * Associative array that keeps all registered geometry elements
-     * @type Object
-     */
+            * Associative array that keeps all registered geometry elements
+            * @type Object
+            */
     this.elements = {};
 
-    var ie;
-    var opera;
     if( (forceRenderer == 'undefined') || (forceRenderer == null) || (forceRenderer == '') ) {
         /* Determine the users browser */
         ie = navigator.appVersion.match(/MSIE (\d\.\d)/);
@@ -86,25 +86,29 @@ JXG.JSXGraph = new function (forceRenderer) {
 
     /* Load the source files for the renderer */
     //JXG.rendererFiles[this.rendererType].split(',').each( function(include) { JXG.require(JXG.requirePath+include+'.js'); } );
-    var arr = JXG.rendererFiles[this.rendererType].split(',');
-    for (var i=0;i<arr.length;i++) ( function(include) { JXG.require(JXG.requirePath+include+'.js'); } )(arr[i]);
+    arr = JXG.rendererFiles[this.rendererType].split(',');
+    for (i=0;i<arr.length;i++) ( function(include) { JXG.require(JXG.requirePath+include+'.js'); } )(arr[i]);
 
 
     /**
-     * Initialise a new board.
-     * @param {String} box Html-ID to the Html-element in which the board is painted.
-     * @return {JXG.Board} Reference to the created board.
-     */
+            * Initialise a new board.
+            * @param {String} box Html-ID to the Html-element in which the board is painted.
+            * @return {JXG.Board} Reference to the created board.
+            */
     this.initBoard = function (box, attributes) {
         // Create a new renderer
-        var renderer;
-        var originX, originY, unitX, unitY;
-        var w, h;
-        var bbox;
+        var renderer,
+            originX, originY, unitX, unitY,
+            w, h, dimensions,
+            bbox,
+            zoomfactor, zoomX, zoomY,
+            showCopyright, showNavi,
+            board;
         
-        var dimensions = JXG.getDimensions(box);
-        if(typeof attributes == 'undefined')
+        dimensions = JXG.getDimensions(box);
+        if (typeof attributes == 'undefined') {
             attributes = {};
+        }
         if (typeof attributes["boundingbox"] != 'undefined') {
             bbox = attributes["boundingbox"];
             w = parseInt(dimensions.width);
@@ -134,12 +138,12 @@ JXG.JSXGraph = new function (forceRenderer) {
             unitX = ( (typeof attributes["unitX"]) == 'undefined' ? 50 : attributes["unitX"]);
             unitY = ( (typeof attributes["unitY"]) == 'undefined' ? 50 : attributes["unitY"]);
         }
-        var zoomfactor = ( (typeof attributes["zoom"]) == 'undefined' ? 1.0 : attributes["zoom"]);
-        var zoomX = zoomfactor*( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
-        var zoomY = zoomfactor*( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
+        zoomfactor = ( (typeof attributes["zoom"]) == 'undefined' ? 1.0 : attributes["zoom"]);
+        zoomX = zoomfactor*( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
+        zoomY = zoomfactor*( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
         
         if (typeof attributes["showcopyright"] != 'undefined') attributes["showCopyright"] = attributes["showcopyright"];
-        var showCopyright = ( (typeof attributes["showCopyright"]) == 'undefined' ? true : attributes["showCopyright"]);
+        showCopyright = ( (typeof attributes["showCopyright"]) == 'undefined' ? true : attributes["showCopyright"]);
 
         if(this.rendererType == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
@@ -149,7 +153,7 @@ JXG.JSXGraph = new function (forceRenderer) {
             renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
         }
 
-        var board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height,showCopyright);
+        board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height,showCopyright);
         this.boards[board.id] = board;
         // board.initGeonextBoard();  // Contsruct "Ursprung" and other elements.
         board.initInfobox();
@@ -159,12 +163,12 @@ JXG.JSXGraph = new function (forceRenderer) {
             board.createElement('axis', [[0,0], [0,1]], {});
         }
 
-        if((typeof attributes["grid"] != 'undefined') && attributes["grid"]) {
+        if ((typeof attributes["grid"] != 'undefined') && attributes["grid"]) {
             board.renderer.drawGrid(board);
         }
 
         if (typeof attributes["shownavigation"] != 'undefined') attributes["showNavigation"] = attributes["shownavigation"];
-        var showNavi = ( (typeof attributes["showNavigation"]) == 'undefined' ? board.options.showNavigation : attributes["showNavigation"]);
+        showNavi = ( (typeof attributes["showNavigation"]) == 'undefined' ? board.options.showNavigation : attributes["showNavigation"]);
         if (showNavi) {
             board.renderer.drawZoomBar(board);
         }
@@ -180,17 +184,18 @@ JXG.JSXGraph = new function (forceRenderer) {
      * @see JXG.GeonextReader
      */
     this.loadBoardFromFile = function (box, file, format) {
-        var renderer;
+        var renderer, board, dimensions;
+        
         if(this.rendererType == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
         }
         //var dimensions = document.getElementById(box).getDimensions();
-        var dimensions = JXG.getDimensions(box);
+        dimensions = JXG.getDimensions(box);
 
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
-        var board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
+        board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
         board.initInfobox();
         board.beforeLoad();
         JXG.FileReader.parseFileContent(file, board, format);
@@ -202,22 +207,23 @@ JXG.JSXGraph = new function (forceRenderer) {
     };
 
     this.loadBoardFromString = function(box, string, format) {
-        var renderer;
+        var renderer, dimensions, board;
+        
         if(this.rendererType == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
         }
         //var dimensions = document.getElementById(box).getDimensions();
-        var dimensions = JXG.getDimensions(box);
+        dimensions = JXG.getDimensions(box);
 
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
-        var board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
+        board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
         board.initInfobox();
         board.beforeLoad();
 
         JXG.FileReader.parseString(string, board, format);
-        if(board.options.showNavigation) {
+        if (board.options.showNavigation) {
             board.renderer.drawZoomBar(board);
         }
 
@@ -322,10 +328,11 @@ JXG.IsPoint = function(p) {
   */
 JXG.createEvalFunction = function(board,param,n) {
     // convert GEONExT syntax into function
-    var f = [];
-    for (var i=0;i<n;i++) {
+    var f = [], i, str;
+    
+    for (i=0;i<n;i++) {
         if (typeof param[i] == 'string') {
-            var str = board.algebra.geonext2JS(param[i]);
+            str = board.algebra.geonext2JS(param[i]);
             str = str.replace(/this\.board\./g,'board.');
             f[i] = new Function('','return ' + (str) + ';');
         }
@@ -362,26 +369,32 @@ JXG.createFunction = function(term,board,variableName) {
 }
 
 JXG.getDimensions = function(elementId) {
+    var element, display, els, originalVisibility, originalPosition,
+        originalDisplay, originalWidth, originalHeight;
+    
     // Borrowed from prototype.js
-    var element = document.getElementById(elementId);
+    element = document.getElementById(elementId);
     if (element==null) {
         throw ("\nJSXGraph error: HTML container element '" + (elementId) + "' not found.");
     }
-    var display = element.style['display'];
-    if (display != 'none' && display != null) // Safari bug
-      return {width: element.offsetWidth, height: element.offsetHeight};
+    
+    display = element.style['display'];
+    if (display != 'none' && display != null) {// Safari bug
+        return {width: element.offsetWidth, height: element.offsetHeight};
+    }
 
     // All *Width and *Height properties give 0 on elements with display none,
     // so enable the element temporarily
-    var els = element.style;
-    var originalVisibility = els.visibility;
-    var originalPosition = els.position;
-    var originalDisplay = els.display;
+    els = element.style;
+    originalVisibility = els.visibility;
+    originalPosition = els.position;
+    originalDisplay = els.display;
     els.visibility = 'hidden';
     els.position = 'absolute';
     els.display = 'block';
-    var originalWidth = element.clientWidth;
-    var originalHeight = element.clientHeight;
+    
+    originalWidth = element.clientWidth;
+    originalHeight = element.clientHeight;
     els.display = originalDisplay;
     els.position = originalPosition;
     els.visibility = originalVisibility;
@@ -429,9 +442,14 @@ JXG.removeEvent = function( obj, type, fn, owner ) {
   * getPosition: independent from prototype and jQuery
   */
 JXG.getPosition = function (Evt) {
-    var posx = 0;
-    var posy = 0;
-    if (!Evt) var Evt = window.event;
+    var posx = 0,
+        posy = 0,
+        Evt;
+        
+    if (!Evt) {
+        Evt = window.event;
+    }
+    
     if (Evt.pageX || Evt.pageY)     {
         posx = Evt.pageX;
         posy = Evt.pageY;
@@ -447,10 +465,12 @@ JXG.getPosition = function (Evt) {
   * getOffset: Abstraction layer for Prototype.js and jQuery
   */
 JXG.getOffset = function (obj) {
+    var o;
+    
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') { // Prototype lib
         return Element.cumulativeOffset(obj);
     } else {                         // jQuery
-        var o = $(obj).offset();
+        o = $(obj).offset();
         return [o.left,o.top];
     }
 };
@@ -471,9 +491,11 @@ JXG.getStyle = function (obj, stylename) {
 };
 
 JXG.keys = function(object) {
-    var keys = [];
-    for (var property in object)
-      keys.push(property);
+    var keys = [], property;
+    
+    for (property in object) {
+        keys.push(property);
+    }
     return keys;
 };
 
@@ -490,12 +512,13 @@ JXG.capitalize = function(str) {
 };
 
 JXG.isSilverlightInstalled = function() {
-    var isInstalled = false;
+    var isInstalled = false,
+        activeX, tryOtherBrowsers, slPlugin;
 
     try
     {
-        var activeX = null;
-        var tryOtherBrowsers = false;
+        activeX = null;
+        tryOtherBrowsers = false;
 
         if (window.ActiveXObject)
         {
@@ -516,7 +539,7 @@ JXG.isSilverlightInstalled = function() {
         }
         if (tryOtherBrowsers)
         {
-            var slPlugin = navigator.plugins["Silverlight Plug-In"];
+            slPlugin = navigator.plugins["Silverlight Plug-In"];
             if (slPlugin)
             {
                     isInstalled = true;

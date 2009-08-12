@@ -44,13 +44,14 @@ JXG.Math.eps = 0.000001;
  * @return JXG.Math.Vector
  */
 JXG.Math.Vector = function(elements) {
-   this.length = 0;
+    var i;
+    this.length = 0;
     
-   if((typeof elements != undefined) && (elements != null)) {
-      for(var i=0; i<elements.length; i++) {
-          this.push(elements[i]);
-      }
-   }
+    if((typeof elements != undefined) && (elements != null)) {
+        for(i=0; i<elements.length; i++) {
+            this.push(elements[i]);
+        }
+    }
 };
 
 /*
@@ -63,7 +64,7 @@ JXG.Math.Vector.prototype = new Array();
  * @type int
  */
 JXG.Math.Vector.prototype.n = function() {
-   return this.length;
+    return this.length;
 };
 
 /**
@@ -72,10 +73,10 @@ JXG.Math.Vector.prototype.n = function() {
  * @param {int} j The second element that is to be exchanged.
  */
 JXG.Math.Vector.prototype.exchange = function(i, j) {
-   var temp = this[i];
+    var temp = this[i];
     
-   this[i] = this[j];
-   this[j] = temp; 
+    this[i] = this[j];
+    this[j] = temp; 
 };
 
 /**
@@ -86,30 +87,33 @@ JXG.Math.Vector.prototype.exchange = function(i, j) {
  * @return JXG.Math.Vector
  */
 JXG.Math.Matrix = function(elements) {
-   this.length = 0;
-   var oldLength = 0;
-   var testLength = false;
+    var oldLength = 0,
+        testLength = false,
+        i, j, len, leni;
     
-   if((typeof elements != undefined) && (elements != null)) {
-      
-      for(var i=0; i<elements.length; i++) {
-          this.push(new Array());
+    this.length = 0;
+    
+    if ((typeof elements != undefined) && (elements != null)) {
+        len = elements.length;
+        for (i=0; i<len; i++) {
+            leni = elements[i].length;
+            this.push(new Array());
           
-          if(testLength) {
-             if(oldLength != elements[i].length) {
-                this.length = 0;
-                throw new JXG.DimensionMismatchException("Your array contains arrays with different lengths.");
-             }
-          }
+            if (testLength) {
+                if (oldLength != leni) {
+                    this.length = 0;
+                    throw new JXG.DimensionMismatchException("Your array contains arrays with different lengths.");
+                }
+            }
                 
-          for(var j=0; j<elements[i].length; j++) {
-             this[i].push(elements[i][j]);
-          }
+            for (j=0; j<leni; j++) {
+                this[i].push(elements[i][j]);
+            }
           
-          oldLength = elements[i].length;
-          testLength = true;
-      }
-   }
+            oldLength = leni;
+            testLength = true;
+        }
+    }
 };
 
 /*
@@ -154,10 +158,10 @@ JXG.Math.Matrix.prototype.exchangeRows = function(i, j) {
  * @param {string} message A message which explains what went wrong-
  */
 JXG.DimensionMismatchException = function(message) {
-   if((typeof message != undefined) && (message != null))
-      this.message = message;
-   else
-      this.message = null;
+    if ((typeof message != undefined) && (message != null))
+        this.message = message;
+    else
+        this.message = null;
 };
 
 /**
@@ -166,12 +170,12 @@ JXG.DimensionMismatchException = function(message) {
  * @return A string explaining why this exception was raised.
  */
 JXG.DimensionMismatchException.prototype.what = function() {
-   var default_msg = "Matrix has incorrect dimensions";
+    var default_msg = "Matrix has incorrect dimensions";
    
-   if(this.message != null)
-      return default_msg + ": " + this.message + ".";
-   else
-      return default_msg + ".";
+    if (this.message != null)
+        return default_msg + ": " + this.message + ".";
+    else
+        return default_msg + ".";
 };
 
 /**
@@ -180,10 +184,10 @@ JXG.DimensionMismatchException.prototype.what = function() {
  * @param {string} message A message which explains what exactly went wrong-
  */
 JXG.SingularMatrixException = function(message) {
-   if((typeof message != undefined) && (message != null))
-      this.message = message;
-   else
-      this.message = null;
+    if ((typeof message != undefined) && (message != null))
+        this.message = message;
+    else
+        this.message = null;
 };
 
 /**
@@ -192,12 +196,12 @@ JXG.SingularMatrixException = function(message) {
  * @return A string explaining why this exception was raised.
  */
 JXG.SingularMatrixException.prototype.what = function() {
-   var default_msg = "Matrix is singular";
+    var default_msg = "Matrix is singular";
    
-   if(this.message != null)
-      return default_msg + ": " + this.message + ".";
-   else
-      return default_msg + ".";
+    if (this.message != null)
+        return default_msg + ": " + this.message + ".";
+    else
+        return default_msg + ".";
 };
 
 /**
@@ -207,9 +211,14 @@ JXG.SingularMatrixException.prototype.what = function() {
 * http://blog.thejit.org/2008/09/05/memoization-in-javascript/
 */
 JXG.memoizer = function (f) {
-    if (f.memo)
+    var cache, join;
+    
+    if (f.memo) {
         return f.memo;
-    var cache = {}, join = Array.prototype.join;
+    }
+    cache = {};
+    join = Array.prototype.join;
+
     return (f.memo = function() {
         var key = join.call(arguments);
         //return (key in cache)
@@ -238,10 +247,13 @@ JXG.Math.factorial = JXG.memoizer(function (n) {
 * @return {n\choose k}
 */
 JXG.Math.binomial = JXG.memoizer(function(n,k) {
+    var b, i;
+    
     if (k>n || k<0) return 0;
     if (k==0 || k==n) return 1;
-    var b = 1;
-    for (var i=0;i<k;i++) {
+    
+    b = 1;
+    for (i=0;i<k;i++) {
         b *= (n-i);
         b /= (i+1);
     }
@@ -265,11 +277,13 @@ JXG.Math.Numerics.prototype.fibonacci = JXG.memoizer(function (n) {
 * @return {rounded num}
 */
 JXG.Math.round = function(num, n) {
+    var z, s;
     //return Math.round(num*Math.pow(10,n))/Math.pow(10,n);
     //var z = num.toFixed(n);
-    var z = num - Math.ceil(num);
-    var s = z.toString();
-    if(z < 0) {
+    
+    z = num - Math.ceil(num);
+    s = z.toString();
+    if (z < 0) {
         s = s.substr(0,n+3);
     }
     else {

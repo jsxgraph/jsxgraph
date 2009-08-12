@@ -85,17 +85,17 @@ JXG.Math.Numerics.integration_type = JXG.INT_MILNE;
  * @private
  */ 
 JXG.Math.Numerics.backwardSolve = function(/** JXG.Math.Matrix */ R, /** JXG.Math.Vector */ b) /** JXG.Math.Vector */ {
-   var x = b,
+    var x = b,
         i, j;
 
-   for (i = R.m()-1; i >= 0; i--) {
-      for (j = R.n()-1; j > i; j--) {
-         x[i] -= R[i][j] * x[j];
-      }
-      x[i] /= R[i][i];
-   }
+    for (i = R.m()-1; i >= 0; i--) {
+        for (j = R.n()-1; j > i; j--) {
+            x[i] -= R[i][j] * x[j];
+        }
+        x[i] /= R[i][i];
+    }
    
-   return x;
+    return x;
 };
 
 /**
@@ -388,15 +388,17 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
  */
 JXG.Math.Numerics.lagrangePolynomial = function(p) {  
     return function(x) {
-        var i,k;
-        var y = 0.0;
-        var xc = [];
-        for (i=0;i<p.length;i++) {
+        var i,k,t,
+            len = p.length,
+            y = 0.0,
+            xc = [];
+        
+        for (i=0;i<len;i++) {
             xc[i] = p[i].X();
         }
-        for (i=0;i<p.length;i++) {
-            var t = p[i].Y();
-            for (k=0;k<p.length;k++) if (k!=i) {
+        for (i=0;i<len;i++) {
+            t = p[i].Y();
+            for (k=0;k<len;k++) if (k!=i) {
                 t *= (x-xc[k])/(xc[i]-xc[k]);
             }
             y += t;
@@ -564,6 +566,7 @@ JXG.Math.Numerics.sinh = function(/** number */ x) /** number */ {
  */
 JXG.Math.Numerics.riemann = function(/** function */ f, /** type */ n,  /** type */ type,  /** type */ start,  /** type */ end)  /** array */ {
     var xarr,yarr,i,delta,j,x,y,x1,delta1,y1;
+    
     xarr = [];
     yarr = [];
     j = 0;
@@ -622,6 +625,7 @@ JXG.Math.Numerics.riemann = function(/** function */ f, /** type */ n,  /** type
  */
 JXG.Math.Numerics.riemannsum = function(/** function */ f, /** type */ n,  /** type */ type,  /** type */ start,  /** type */ end)  /** number */ {
     var sum,i,delta,x,y,x1,delta1,y1;
+    
     sum = 0.0;
     x = start;
     n = Math.floor(n);

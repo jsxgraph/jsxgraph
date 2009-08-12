@@ -55,8 +55,9 @@
  * @see JXG.Board#generateName
  */
 JXG.createSlider = function(board, parentArr, atts) {
-    var pos0, pos1, smin, start, smax, p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t;
-    var snapWidth;
+    var pos0, pos1, smin, start, smax, p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t,
+        snapWidth;
+        
     pos0 = parentArr[0];
     pos1 = parentArr[1];
     smin = parentArr[2][0];
