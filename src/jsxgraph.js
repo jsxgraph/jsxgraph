@@ -353,10 +353,10 @@ JXG.createEvalFunction = function(board,param,n) {
 /**
   * Convert String, number or function to function.
   **/
-JXG.createFunction = function(term,board,variableName) {
+JXG.createFunction = function(term,board,variableName,evalGeonext) {
     var newTerm;
     
-    if (JXG.IsString(term)) {
+    if ((evalGeonext==null || evalGeonext==true) && JXG.IsString(term)) {
         // Convert GEONExT syntax into  JavaScript syntax
         newTerm = board.algebra.geonext2JS(term);
         return new Function(variableName,'return ' + newTerm + ';');
@@ -364,7 +364,9 @@ JXG.createFunction = function(term,board,variableName) {
         return term;
     } else if (JXG.IsNumber(term)) {
         return function() { return term; };
-    } 
+    } else if (JXG.IsString(term)) {        // In case of string function like fontsize
+        return function() { return term; };
+    }
     return null;
 }
 

@@ -453,14 +453,37 @@ JXG.Curve.prototype.getLabelAnchor = function() {
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
- * @param {function,number,array} x(t) Function term describing the x-coordinate of the curve. In case of a number, x(t) is the constant function
- *                                     returning this number. In case of an array the curve type is data plot, regardless of the second paremeter.
- *                                     If the second parameter is a function the data plot evaluates this function at the values of that array.
- * @param {function,number,array} y(t) Function term describing the y-coordinate of the curve. In case of a number, y(t) is the constant function
- *                                     returning this number. In case of a polar curve this second parameter is the offset of the curve. Then, it has to be
- *                                     an array containg numbers or functions.
- * @param {number, function} a Optional number or function for the left interval border for t. Default value is a=-10.
- * @param {number, function} b Optional number or function for the right interval border for t. Default value is b=10.
+ *
+ * @param {function,number_function,number_function,number_function,number} x,y,a_,b_ Parent elements for Parametric Curves. 
+ *                     <p>
+ *                     x describes the x-coordinate of the curve. It may be a function term in one variable, e.g. x(t). 
+ *                     In case of x being of type number, x(t) is set to  a constant function.
+ *                     this function at the values of the array.
+ *                     <p>
+ *                     y describes the y-coordinate of the curve. In case of a number, y(t) is set to the constant function
+ *                     returning this number. 
+ *                     <p>
+ *                     Further parameters are an optional number or function for the left interval border a, 
+ *                     and an optional number or function for the right interval border b. 
+ *                     <p>
+ *                     Default values are a=-10 and b=10.
+ * @param {array_array,function,number} x,y Parent elements for Data Plots. 
+ *                     <p>
+ *                     x and y are arrays contining the x and y coordinates of the data points which are connected by
+ *                     line segments. The individual entries of x and y may also be functions.
+ *                     In case of x being an array the curve type is data plot, regardless of the second parameter and 
+ *                     if additionally the second parameter y is a function term the data plot evaluates.
+ * @param {function_array,function,number_function,number_function,number} r,offset_,a_,b_ Parent elements for Polar Curves. 
+ *                     <p>
+ *                     The first parameter is a function term r(phi) describing the polar curve.
+ *                     <p>
+ *                     The second parameter is the offset of the curve. It has to be
+ *                     an array containing numbers or functions describing the offset. Default value is the origin [0,0].
+ *                     <p>
+ *                     Further parameters are an optional number or function for the left interval border a, 
+ *                     and an optional number or function for the right interval border b. 
+ *                     <p>
+ *                     Default values are a=-10 and b=10.
  * @see JXG.Curve
  * @example
  * // Parametric curve
@@ -477,6 +500,21 @@ JXG.Curve.prototype.getLabelAnchor = function() {
  *   var graph1 = c1_board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return 1-Math.cos(t);},0, 2*Math.PI]);
  * </script><pre>
  * @example
+ * // Data plots
+ * // Connect a set of points given by coordinates with dashed line segments.
+ * // The x- and y-coordinates of the points are given in two separate 
+ * // arrays.
+ *   var x = [0,1,2,3,4,5,6,7,8,9];
+ *   var y = [9.2,1.3,7.2,-1.2,4.0,5.3,0.2,6.5,1.1,0.0];
+ *   var graph = board.createElement('curve', [x,y], {dash:2});
+ * </pre><div id="7dcbb00e-b6ff-481d-b4a8-887f5d8c6a83" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var c3_board = JXG.JSXGraph.initBoard('7dcbb00e-b6ff-481d-b4a8-887f5d8c6a83', {boundingbox: [-1,10,10,-1], axis: true, showcopyright: false, shownavigation: false});
+ *   var x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+ *   var y = [9.2, 1.3, 7.2, -1.2, 4.0, 5.3, 0.2, 6.5, 1.1, 0.0];
+ *   var graph3 = c3_board.createElement('curve', [x,y], {dash:2});
+ * </script><pre>
+ * @example
  * // Polar plot
  * // Create a curve with the equation r(phi)= a*(1+phi), i.e.
  * // a cardioid.
@@ -491,21 +529,6 @@ JXG.Curve.prototype.getLabelAnchor = function() {
  *   var c2_board = JXG.JSXGraph.initBoard('d0bc7a2a-8124-45ca-a6e7-142321a8f8c2', {boundingbox: [-3,3,3,-3], axis: true, showcopyright: false, shownavigation: false});
  *   var a = c2_board.createElement('slider',[[0,2],[2,2],[0,1,2]]);
  *   var graph2 = c2_board.createElement('curve', [function(phi){ return a.Value()*(1-Math.cos(phi));}, [1,0], 0, 2*Math.PI]);
- * </script><pre>
- * @example
- * // Data plots
- * // Connect a set of points given by coordinates with dashed line segments.
- * // The x- and y-coordinates of the points are given in two separate 
- * // arrays.
- *   var x = [0,1,2,3,4,5,6,7,8,9];
- *   var y = [9.2,1.3,7.2,-1.2,4.0,5.3,0.2,6.5,1.1,0.0];
- *   var graph = board.createElement('curve', [x,y], {dash:2});
- * </pre><div id="7dcbb00e-b6ff-481d-b4a8-887f5d8c6a83" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- *   var c3_board = JXG.JSXGraph.initBoard('7dcbb00e-b6ff-481d-b4a8-887f5d8c6a83', {boundingbox: [-1,10,10,-1], axis: true, showcopyright: false, shownavigation: false});
- *   var x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
- *   var y = [9.2, 1.3, 7.2, -1.2, 4.0, 5.3, 0.2, 6.5, 1.1, 0.0];
- *   var graph3 = c3_board.createElement('curve', [x,y], {dash:2});
  * </script><pre>
  */
 JXG.createCurve = function(board, parents, attributes) {
@@ -528,9 +551,12 @@ JXG.JSXGraph.registerElement('curve', JXG.createCurve);
  * @augments JXG.Curve
  * @constructor
  * @type JXG.Curve
- * @param {function} f Function term f(x) describing the function graph
- * @param {number, function} a Optional number or function for the left interval border. Default value is a=-10.
- * @param {number, function} b Optional number or function for the right interval border. Default value is b=10.
+ * @param {function_number,function_number,function} f,a_,b_ Parent elements are a function term f(x) describing the function graph. 
+ *         <p>
+ *         Further, an optional number or function for the left interval border a, 
+ *         and an optional number or function for the right interval border b. 
+ *         <p>
+ *         Default values are a=-10 and b=10.
  * @see JXG.Curve
  * @example
  * // Create a function graph for f(x) = 0.5*x*x-2*x
@@ -617,15 +643,43 @@ JXG.createSpline = function(board, parents, attributes) {
 JXG.JSXGraph.registerElement('spline', JXG.createSpline);
 
 /**
- * Create Riemann sum for a given function.
- * @param {JXG.Board} board Reference to the board the spline is drawn on.
- * @param {f} function defining the Riemann sum
- * @param {n} partition number: number or function
- * @param {type} 'left', 'right' or 'middle'. 'left' is the default: string or function
- * @param {from} optional left interval border: number or function
- * @param {to} optional right interval border: number or function
+ * @class This element is used to provide a constructor for Riemann sums, which is relaized as a special curve. 
+ * @pseudo
+ * @description
+ * @name Riemannsum
+ * @augments JXG.Curve
+ * @constructor
  * @type JXG.Curve
- * @return Returns reference to an object of type JXG.Curve.
+ * @param {function_number,function_string,function_function,number_function,number} f,n,type_,a_,b_ Parent elements of Riemannsum are a 
+ *         function term f(x) describing the function graph which is filled by the Riemann rectangles.
+ *         <p>
+ *         n determines the number of rectangles, it is either a fixed number or a function.
+ *         <p>
+ *         type is a string or function returning one of the values:  'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
+ *         Default value is 'left'.
+ *         <p>
+ *         Further parameters are an optional number or function for the left interval border a, 
+ *         and an optional number or function for the right interval border b. 
+ *         <p>
+ *         Default values are a=-10 and b=10.
+ * @see JXG.Curve
+ * @example
+ * // Create Riemann sums for f(x) = 0.5*x*x-2*x.
+ *   var s = board.createElement('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
+ *   var f = function(x) { return 0.5*x*x-2*x; };
+ *   var r = board.createElement('riemannsum', 
+ *               [f, function(){return s.Value();}, 'upper', -2, 5],
+ *               {fillOpacity:0.4}
+ *               );
+ *   var g = board.createElement('functiongraph',[f, -2, 5]);
+ * </pre><div id="940f40cc-2015-420d-9191-c5d83de988cf" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var rs1_board = JXG.JSXGraph.initBoard('940f40cc-2015-420d-9191-c5d83de988cf', {boundingbox: [-3, 7, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var f = function(x) { return 0.5*x*x-2*x; };
+ *   var s = rs1_board.createElement('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
+ *   var r = rs1_board.createElement('riemannsum', [f, function(){return s.Value();}, 'upper', -2, 5], {fillOpacity:0.4});
+ *   var g = rs1_board.createElement('functiongraph', [f, -2, 5]);
+ * </script><pre>
  */
 JXG.createRiemannsum = function(board, parents, attributes) {
     var n, type, f, par, c;
@@ -644,13 +698,19 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     if (n==null) {
         throw "JXG.createRiemannsum: argument '2' n has to be number or function.";
     }
-    type = JXG.createFunction(parents[2],board,'');
+    type = JXG.createFunction(parents[2],board,'',false);
     if (type==null) {
         throw "JXG.createRiemannsum: argument 3 'type' has to be string or function.";
     }
 
     par = ['x', [0], [0]].concat(parents.slice(3));
+    /**
+     * @private
+     */
     c = new JXG.Curve(board, par, attributes['id'], attributes['name'], attributes['withLabel']);
+    /**
+     * @private
+     */
     c.updateDataArray = function() {
             var u = JXG.Math.Numerics.riemann(f,n(),type(),this.minX(),this.maxX());
             this.dataX = u[0];

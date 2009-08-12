@@ -25,8 +25,6 @@
 
 /**
  * @fileoverview In this file the Text element is defined.
- * @author graphjs
- * @version 0.1
  */
 
 
@@ -56,8 +54,25 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
     else {
         this.isLabel = false;
     }
-    // stroke Color = text Color
+    
+    /**
+     * The stroke color of the given text.
+     * @type {string}
+     * @name JXG.Text#strokeColor
+     */
     this.visProp['strokeColor'] = this.board.options.text.strokeColor;
+    /**
+     * The stroke opacity of the given text.
+     * @type {string}
+     * @name JXG.Text#strokeOpacity
+     */
+     /**
+     * The font size color of the given text.
+     * @type {string}
+     * @name JXG.Text#fontSize
+     * @default {@link JXG.Options.fontSize}
+     */
+
 
     this.visProp['visible'] = true;
     //this.show = true; // noch noetig? BV
@@ -70,6 +85,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
 
     /**
      * Coordinates of the text.
+     * @ private
      * @type JXG.Coords
      */
     if ((this.element = this.board.objects[element])){
@@ -113,6 +129,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
 JXG.Text.prototype = new JXG.GeometryElement();
 
 /**
+ * @private
  * Empty function (for the moment). It is needed for highlighting
  * @param {int} x
  * @param {int} y Find closest point on the text to (xy)
@@ -122,6 +139,11 @@ JXG.Text.prototype.hasPoint = function (x,y) {
     return false;
 };
 
+/**
+ * Overwrite the text.
+ * @param {string,function} str
+ * @return {object} reference to the text object.
+ */
 JXG.Text.prototype.setText = function(text) {
     var plaintext;
     if (typeof text=='number') {
@@ -131,12 +153,20 @@ JXG.Text.prototype.setText = function(text) {
     }
     this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
     this.updateText();
+    return this;
 };
 
+/**
+ * Set the text to new, fixed coordinates.
+ * @param {number} x
+ * @param {number} y
+ * @return {object} reference to the text object.
+ */
 JXG.Text.prototype.setCoords = function (x,y) {
     this.X = function() { return x; };
     this.Y = function() { return y; };
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+    return this;
 };
 
 /**
@@ -160,24 +190,27 @@ JXG.Text.prototype.update = function () {
         }
         this.updateText();
     }   
+    return this;
 };
 
 /**
- * Evaluates the text.
- * Then, the update function of the renderer
+ * The update function of the renderer
  * is called. 
+ * @private
  */
 JXG.Text.prototype.updateRenderer = function () {
     if (this.needsUpdate) {
         this.board.renderer.updateText(this);
         this.needsUpdate = false;
     }
+    return this;
 };
 
 /**
  * Converts the GEONExT syntax of the <value> terms into JavaScript.
  * Also, all Objects whose name appears in the term are searched and
  * the text is added as child to these objects.
+ * @private
  * @see Algebra
  * @see #geonext2JS.
  */
@@ -246,6 +279,7 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
  * Finds dependencies in a given term and notifies the parents by adding the
  * dependent object to the found objects child elements.
  * @param {String} term String containing dependencies for the given object.
+ * @private
  */
 JXG.Text.prototype.notifyParents = function (contentStr) {
     var res = null;
@@ -260,11 +294,48 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
             contentStr = contentStr.replace(search,'');
         }
     } while (res!=null);
+    return this;
 };
 
 /**
- * The text to display has to be the last entrie in parentArr.
- **/
+ * @class This element is used to provide a constructor for text, which is just a wrapper for element {@link Text}. 
+ * @pseudo
+ * @description
+ * @name Text
+ * @augments JXG.Text
+ * @constructor
+ * @type JXG.Text
+ *
+ * @param {number,function_number,function_String,function} x,y,str Parent elements for text elements.
+ *                     <p>
+ *                     x and y are the coordinates of the lower left corner of the text box. The position of the text is fixed, 
+ *                     x and y are numbers. The position is variable if x or y are functions.
+ *                     <p>
+ *                     The text to display may be given as string or as function returning a string.
+ * @see JXG.Text
+ * @example
+ * // Create a fixed text at position [0,1].
+ *   var t1 = board.createElement('text',[0,1,"Hello World"]); 
+ * </pre><div id="896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var t1_board = JXG.JSXGraph.initBoard('896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var t1 = t1_board.createElement('text',[0,1,"Hello World"]);
+ * </script><pre>
+ * @example
+ * // Create a variable text at a variable position.
+ *   var s = board.createElement('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var graph = board.createElement('text', 
+ *                        [function(x){ return s.Value();}, 1,
+ *                         function(){return "The value of s is"+s.Value().toFixed(2);}
+ *                        ]
+ *                     );
+ * </pre><div id="5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var t2_board = JXG.JSXGraph.initBoard('5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var s = t2_board.createElement('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var t2 = t2_board.createElement('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+s.Value().toFixed(2);}]);
+ * </script><pre>
+ */
 JXG.createText = function(board, parentArr, atts) {
     return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false);
 };

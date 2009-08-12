@@ -1305,8 +1305,7 @@ JXG.Algebra.prototype.crossProduct = function(c1,c2) {
  * Which point will be returned is determined by i.
  */
 JXG.Algebra.prototype.meet = function(el1, el2, /** number */ i) /** JXG.Coords */ {
-//    var eps = 0.000001;
-    var eps = this.eps;
+    var eps = this.eps; //    var eps = 0.000001;
 
     if (Math.abs(el1[3])<eps && Math.abs(el2[3])<eps) { // line line
         return this.meetLineLine(el1,el2,i);
