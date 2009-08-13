@@ -689,7 +689,7 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     }     
-    attributes.opacity   = attributes.opacity || 0.3;
+    attributes.fillOpacity   = attributes.fillOpacity || 0.3;
     attributes.fillColor = attributes.fillColor || '#ffff00';
     attributes.curveType = 'plot';
 

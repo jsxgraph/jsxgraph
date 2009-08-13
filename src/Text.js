@@ -302,7 +302,7 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
  * @pseudo
  * @description
  * @name Text
- * @augments JXG.Text
+ * @augments JXG.GeometryElement
  * @constructor
  * @type JXG.Text
  *

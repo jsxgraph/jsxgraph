@@ -271,7 +271,8 @@ JXG.Math.Numerics.prototype.fibonacci = JXG.memoizer(function (n) {
 
 /**
 * Round a decimal number to n decimal places
-* @param {integer num} Number to round
+* @deprecated Use (number).toFixed(n) instead.
+* @param {float num} Number to round
 * @param {integer n} number of digits after the point to leave
 * 
 * @return {rounded num}
