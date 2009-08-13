@@ -204,6 +204,76 @@ JXG.SingularMatrixException.prototype.what = function() {
         return default_msg + ".";
 };
 
+
+/**
+ * Matrix-vector multiplication.
+ * @param {Array} mat1 Two dimensional array of numbers
+ * @param {Array} vec Array of numbers
+ * @return {Array} Array of numbers containing result
+ */
+JXG.Math.matVecMult = function(/** array */ mat1, /** array */ vec) /** array */ {
+    var m = mat1.length,
+        n = vec.length,
+        res = [],
+        i, s, k;
+    for (i=0;i<m;i++) {
+        s = 0;
+        for (k=0;k<n;k++) {
+            s += mat1[i][k]*vec[k];
+        }
+        res[i] = s;
+    }
+    return res;
+};
+
+/**
+ * Matrix-matrix multiplication.
+ * @param {Array} mat1 Two dimensional array of numbers
+ * @param {Array} mat2 Two dimensional array of numbers
+ * @return {Array} Two dimensional Array of numbers containing result
+ */
+JXG.Math.matMatMult = function(/** array */ mat1, /** array */ mat2) /** array */ {
+    var m = mat1.length,
+        n = mat2[0].length,
+        m2 = mat2.length,
+        res = [], 
+        i, j, s, k;
+        
+    for (i=0;i<m;i++) {
+        res[i] = [];
+    }
+
+    for (i=0;i<m;i++) {
+        for (j=0;j<n;j++) {
+            s = 0;
+            for (k=0;k<m2;k++) {
+                s += mat1[i][k]*mat2[k][j];
+            }
+            res[i][j] = s;
+        }
+    }
+    return res;
+};
+
+/**
+ * Matrix-matrix multiplication.
+ * @param {JXG.Math.Matrix} M 
+ * @return {JXG.Math.Matrix} transpose of M
+ */
+JXG.Math.Matrix.transpose = function(/** JXG.Math.Matrix */ M) /** JXG.Math.Matrix*/  {
+    var tmp = [], i, j, 
+        m = M.m(), 
+        n = M.n();
+
+    for (i=0;i<n;i++) {
+        tmp.push([]);
+        for (j=0;j<m;j++) {
+            tmp[i].push(M[j][i]);
+        }
+    }
+    return new JXG.Math.Matrix(tmp);
+}
+
 /**
 * Dynamic programming approach for recursive functions.
 * From "Speed up your JavaScript, Part 3" by Nicholas C. Zakas.

@@ -502,7 +502,7 @@ JXG.VMLRenderer.prototype.joinTransforms = function(el,t) {
         len = t.length;
         
     for (i=0;i<len;i++) {
-        m = el.board.algebra.matMatMult(t[i].matrix,m);
+        m = JXG.Math.matMatMult(t[i].matrix,m);
     }
     return m;
 };

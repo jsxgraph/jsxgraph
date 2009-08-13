@@ -25,20 +25,8 @@
 brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 100, data.length+2, -70], grid: false, axis:true});
 brd.createElement('curve',[datax,data],{strokeColor:'gray',dash:2});     
 
-JXG.Math.Matrix.transpose = function(/** JXG.Math.Matrix*/ M) {
-    var tmp = [], i, j, m, n;
-    m = M.m();
-    n = M.n();
-    for (i=0;i<n;i++) {
-        tmp.push([]);
-        for (j=0;j<m;j++) {
-            tmp[i].push(M[j][i]);
-        }
-    }
-    return new JXG.Math.Matrix(tmp);
-}
 
-degree = 3;
+degree = 8;
 n = data.length;
 tmp = [];
 for (j=0;j<n;j++) {
@@ -53,8 +41,8 @@ M = new JXG.Math.Matrix(tmp);
 y = new JXG.Math.Vector(data);
 MT = JXG.Math.Matrix.transpose(M);
 
-B = brd.algebra.matMatMult(MT,M);
-c = brd.algebra.matVecMult(MT,y);
+B = JXG.Math.matMatMult(MT,M);
+c = JXG.Math.matVecMult(MT,y);
 beta = JXG.Math.Numerics.Gauss(new JXG.Math.Matrix(B), new JXG.Math.Vector(c));
 
 brd.createElement('functiongraph',[

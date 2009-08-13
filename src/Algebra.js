@@ -1171,8 +1171,10 @@ JXG.Algebra.prototype.affineDistance = function(array1, array2) {
  * @param mat1 Two dimensional array of numbers
  * @param vec Array of numbers
  * @return Array of numbers containing result
+ * @deprecated moved to JXG.Math
  */
-JXG.Algebra.prototype.matVecMult = function(/** array */ mat1, /** array */ vec) /** array */ {
+/* 
+JXG.Algebra.prototype.matVecMult = function(mat1, array vec) array  {
     var m = mat1.length,
         n = vec.length,
         res = [],
@@ -1186,14 +1188,17 @@ JXG.Algebra.prototype.matVecMult = function(/** array */ mat1, /** array */ vec)
     }
     return res;
 };
+*/
 
 /**
  * Matrix-matrix multiplication.
  * @param mat1 Two dimensional array of numbers
  * @param mat2 Two dimensional array of numbers
  * @return Two dimensional Array of numbers containing result
+ * @deprecated moved to JXG.Math
  */
-JXG.Algebra.prototype.matMatMult = function(/** array */ mat1, /** array */ mat2) /** array */ {
+/* 
+JXG.Algebra.prototype.matMatMult = function(mat1, mat2){
     var m = mat1.length,
         n = mat2[0].length,
         m2 = mat2.length,
@@ -1215,6 +1220,8 @@ JXG.Algebra.prototype.matMatMult = function(/** array */ mat1, /** array */ mat2
     }
     return res;
 };
+*/
+
 
 /**
  * Converts a string containing either <strong>true</strong> or <strong>false</strong> into a boolean value.

@@ -181,9 +181,9 @@ JXG.Transformation.prototype.setMatrix = function(board,type,params) {
 JXG.Transformation.prototype.apply = function(p){
     this.update();
     if (arguments[1]!=null) {
-        return this.matVecMult(this.matrix,p.initialCoords.usrCoords);
+        return JXG.Math.matVecMult(this.matrix,p.initialCoords.usrCoords);
     } else {
-        return this.matVecMult(this.matrix,p.coords.usrCoords);
+        return JXG.Math.matVecMult(this.matrix,p.coords.usrCoords);
     }
 };
 
@@ -196,13 +196,13 @@ JXG.Transformation.prototype.applyOnce = function(p){
     var c, len, i;
     if (!JXG.IsArray(p)) {   
         this.update();
-        c = this.matVecMult(this.matrix,p.coords.usrCoords);
+        c = JXG.Math.matVecMult(this.matrix,p.coords.usrCoords);
         p.coords.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
     } else {
         len = p.length;
         for (i=0; i<len; i++) {
             this.update();
-            c = this.matVecMult(this.matrix,p[i].coords.usrCoords);
+            c = JXG.Math.matVecMult(this.matrix,p[i].coords.usrCoords);
             p[i].coords.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
         }
     }
@@ -230,10 +230,11 @@ JXG.Transformation.prototype.bindTo = function(p){
  * @type Array
  * @return Array of numbers containing result
  */
+/* 
 JXG.Transformation.prototype.matVecMult = function(mat1,vec) {
-    return this.board.algebra.matVecMult(mat1,vec);
+    return JXG.Math.matVecMult(mat1,vec);
 };
-
+*/
 JXG.Transformation.prototype.setProperty = function(term) {};
 
 /**

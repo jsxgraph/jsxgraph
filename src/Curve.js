@@ -175,7 +175,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
             for (j=0; j<len; j++) {
                 trans = this.transformations[j];
                 trans.update();
-                c = trans.matVecMult(trans.matrix,[1,tX,tY]);
+                c = JXG.Math.matVecMult(trans.matrix,[1,tX,tY]);
                 tX = c[1];
                 tY = c[2];
             }
@@ -316,7 +316,7 @@ JXG.Curve.prototype.updateTransform = function (p) {
     for (i=0; i<len; i++) {
         t = this.transformations[i];
         t.update();
-        c = t.matVecMult(t.matrix,p.usrCoords);
+        c = JXG.Math.matVecMult(t.matrix,p.usrCoords);
         p.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
     }
     return p;
