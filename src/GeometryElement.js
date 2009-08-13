@@ -422,10 +422,12 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      */
     this.visProp['shadow'] = false;
     
+    // TODO: withLabel
+    
     // TODO: comment
     this.visProp['gradient'] = 'none';
-    this.visProp['gradientSecondColor'] = 'blue';
-    this.visProp['gradientAngle'] = '90';
+    this.visProp['gradientSecondColor'] = 'black';
+    this.visProp['gradientAngle'] = '270';
     this.visProp['gradientSecondOpacity'] = this.visProp['fillOpacity'];
     this.visProp['gradientPositonX'] = 0.5;
     this.visProp['gradientPositonY'] = 0.5;    

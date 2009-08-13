@@ -244,6 +244,7 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
     myAtts['fillOpacity'] = attributes['fillOpacity'] || 0.6;
     myAtts['highlightFillColor'] = attributes['highlightFillColor'] || '#FF7400';
     myAtts['highlightStrokeColor'] = attributes['highlightStrokeColor'] || '#FFFFFF';
+    myAtts['gradient'] = attributes['gradient'] || 'none';
     var cent = attributes['center'] || [0,0];
     var xc = cent[0];
     var yc = cent[1];
@@ -268,7 +269,6 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         }
         myAtts['labelColor'] = colorArray[i%colorArray.length];
         myAtts['highlightfillColor'] = highlightColorArray[i%highlightColorArray.length];
-        //myAtts['gradient'] = 'linear';
         arc[i] = board.createElement('arc',[center,p[i],p[i+1]], myAtts);
         
         if(attributes['highlightOnSector']) {

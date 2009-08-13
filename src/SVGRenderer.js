@@ -108,9 +108,12 @@ JXG.SVGRenderer.prototype.setShadow = function(element) {
 }
 
 JXG.SVGRenderer.prototype.setGradient = function(element) {
-
+    var fillNode = element.rendNode;
+    if(element.type == JXG.OBJECT_TYPE_ARC || element.type == JXG.OBJECT_TYPE_ANGLE) {
+        fillNode = element.rendNode2;
+        
+    } 
     if(element.visProp['gradient'] == 'linear') {
-
         var node = this.createPrimitive('linearGradient',element.id+'_gradient');
         var x1 = '0%'; // TODO: get x1,x2,y1,y2 from el.visProp['angle']
         var x2 = '100%';
@@ -130,13 +133,31 @@ JXG.SVGRenderer.prototype.setGradient = function(element) {
         node.appendChild(node2);
         node.appendChild(node3);     
         this.defs.appendChild(node);
-        element.rendNode.setAttributeNS(null, 'style', 'fill:url(#'+element.id+'_gradient)');       
+        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+element.id+'_gradient)');       
     }
-    else if (el.visProp['gradient'] == 'radial') {
-        // TODO
+    else if (element.visProp['gradient'] == 'radial') {
+        var node = this.createPrimitive('radialGradient',element.id+'_gradient');
+
+        node.setAttributeNS(null, 'cx', '50%')
+        node.setAttributeNS(null, 'cy', '50%')
+        node.setAttributeNS(null, 'r', '50%')
+        node.setAttributeNS(null, 'fx', element.visProp['gradientPositonX']*100+'%')
+        node.setAttributeNS(null, 'fy', element.visProp['gradientPositonY']*100+'%')
+
+        var node2 = this.createPrimitive('stop',element.id+'_gradient1');
+        node2.setAttributeNS(null,'offset','0%');
+        node2.setAttributeNS(null,'style','stop-color:'+element.visProp['gradientSecondColor']+';stop-opacity:'+element.visProp['gradientSecondOpacity']);
+        var node3 = this.createPrimitive('stop',element.id+'_gradient2');
+        node3.setAttributeNS(null,'offset','100%');
+        node3.setAttributeNS(null,'style','stop-color:'+element.visProp['fillColor']+';stop-opacity:'+element.visProp['fillOpacity']);         
+
+        node.appendChild(node2);
+        node.appendChild(node3);     
+        this.defs.appendChild(node);
+        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+element.id+'_gradient)'); 
     }
     else {
-        element.rendNode.removeAttributeNS(null,'style');
+        fillNode.removeAttributeNS(null,'style');
     }
 };
 
@@ -237,6 +258,8 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     
     // Fuellflaeche
     node4 = this.createPrimitive('path',el.id+'sector');
+    el.rendNode2 = node4;
+    
     pathString2 = 'M ' + el.midpoint.coords.scrCoords[1] + " " + el.midpoint.coords.scrCoords[2];
     pathString2 += ' L '+ el.point2.coords.scrCoords[1] +' '+ el.point2.coords.scrCoords[2] +' A '; // Startpunkt
     pathString2 += Math.round(radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien
@@ -256,11 +279,12 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     if (el.visProp['fillColor']!=null) {node4.setAttributeNS(null, 'fill', el.visProp['fillColor']);}
     if (el.visProp['fillOpacity']!=null) {node4.setAttributeNS(null, 'fill-opacity', el.visProp['fillOpacity']);}     
     node4.setAttributeNS(null, 'stroke', 'none');
+    this.setGradient(el);
     
     this.arcs.appendChild(node);
 
     this.sectors.appendChild(node4);
-    el.rendNode2 = node4;
+
     if (el.visProp['draft']) {
         this.setDraft(el);
     }

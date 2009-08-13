@@ -153,6 +153,7 @@ JXG.VMLRenderer.prototype.setGradient = function(element) {
         nodeFill.setAttribute('color2',element.visProp['gradientSecondColor']);
         nodeFill.setAttribute('opacity2',element.visProp['gradientSecondOpacity']);
         nodeFill.setAttribute('focusposition', element.visProp['gradientPositonX']*100+'%,'+element.visProp['gradientPositonY']*100+'%');
+        nodeFill.setAttribute('focussize', '0,0');
     }
     else {
         nodeFill.setAttribute('type','solid');
@@ -365,7 +366,7 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     
     /* dashstyle and shadow */
     this.setDashStyle(el,el.visProp);  
-    this.setShadow(el);    
+    this.setShadow(el); 
    
     /* arc fill */
     p4.coords = el.board.algebra.projectPointToCircle(el.point3,el);      
@@ -373,6 +374,7 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     
     /* fill props */
     this.setObjectFillColor(el, el.visProp['fillColor'], el.visProp['fillOpacity']);
+    this.setGradient(el);    
     
     /* append nodes */
     this.appendChildPrimitive(node,'lines'); //arc

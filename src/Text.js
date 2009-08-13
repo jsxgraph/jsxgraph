@@ -56,18 +56,18 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
     }
     
     /**
-     * The stroke color of the given text.
+     * The text color of the given text.
      * @type {string}
      * @name JXG.Text#strokeColor
      */
     this.visProp['strokeColor'] = this.board.options.text.strokeColor;
     /**
-     * The stroke opacity of the given text.
+     * The text opacity of the given text.
      * @type {string}
      * @name JXG.Text#strokeOpacity
      */
      /**
-     * The font size color of the given text.
+     * The font size of the given text.
      * @type {string}
      * @name JXG.Text#fontSize
      * @default {@link JXG.Options.fontSize}
