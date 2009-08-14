@@ -21,39 +21,61 @@
         }
     
 
+$('debug').innerHTML += 'Number of unsuspended calls:<br> ';
 
 brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 100, data.length+2, -70], grid: false, axis:true});
-brd.createElement('curve',[datax,data],{strokeColor:'gray',dash:2});     
-
-
-degree = 8;
-n = data.length;
-tmp = [];
-for (j=0;j<n;j++) {
-    tmp.push([1]);
+s = brd.createElement('slider',[[10,70],[100,70],[0,1,1]]);     
+deg = brd.createElement('slider',[[10,90],[100,90],[1,1,10]],{name:'degree',snapWidth:1});     
+curve = brd.createElement('curve',[datax,[]],{strokeColor:'gray',dash:2});     
+curve.updateDataArray = function() {
+    var i, len = data.length;
+    for(i=0;i<len;i++) { this.dataY[i] = s.Value()*data[i]; }
 }
-for (i=1;i<=degree;i++) {
-    for (j=0;j<n;j++) {
-        tmp[j][i] = tmp[j][i-1]*datax[j];
-    }
-}
-M = new JXG.Math.Matrix(tmp);
-y = new JXG.Math.Vector(data);
-MT = JXG.Math.Matrix.transpose(M);
 
-B = JXG.Math.matMatMult(MT,M);
-c = JXG.Math.matVecMult(MT,y);
-beta = JXG.Math.Numerics.Gauss(new JXG.Math.Matrix(B), new JXG.Math.Vector(c));
 
-brd.createElement('functiongraph',[
-        function(x){
-            var i, s = beta[degree];
-            for (i=degree-1;i>=0;i--) {
-                s = (s*x+beta[i]);
+generateFunction = function() { 
+    var container = []; 
+    var dbg_count = 0;
+    var fct = function(x,suspendedUpdate){
+            var i, j, M, MT, y, B, c, s,
+                tmp, degree,
+                len = datax.length;                        // input data
+                
+            degree = Math.floor(deg.Value());              // input data
+            if (!suspendedUpdate) {
+                $('debug').innerHTML += (dbg_count++)+' ';
+                tmp = [];
+                for (j=0;j<len;j++) {
+                    tmp.push([1]);
+                }
+                for (i=1;i<=degree;i++) {
+                    for (j=0;j<len;j++) {
+                        tmp[j][i] = tmp[j][i-1]*datax[j];  // input data
+                    }
+                }
+                M = new JXG.Math.Matrix(tmp);
+                y = new JXG.Math.Vector(curve.dataY);      // input data
+                MT = JXG.Math.Matrix.transpose(M);
+
+                B = JXG.Math.matMatMult(MT,M);
+                c = JXG.Math.matVecMult(MT,y);
+                container = JXG.Math.Numerics.Gauss(new JXG.Math.Matrix(B), new JXG.Math.Vector(c));
             }
-            return s;}],
-        {strokeColor:'black'});     
+            
+            // Horner's scheme toevaluate polynomial
+            s = container[degree];
+            for (i=degree-1;i>=0;i--) {
+                s = (s*x+container[i]);
+            }
+            return s;
+        };
+        return fct;
+    }
+    
+regressionPolynomial = generateFunction();
 
+reg = brd.createElement('functiongraph',[regressionPolynomial],{strokeColor:'black'});     
+brd.createElement('glider',[100,30,reg],{strokeColor:'black'});     
 
 
   /* ]]> */

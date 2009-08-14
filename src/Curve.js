@@ -161,7 +161,8 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
         steps = 400, 
         d = (this.maxX()-this.minX())/steps,
         prec = this.r/(this.board.unitX*this.board.zoomX),
-        checkPoint, len;
+        checkPoint, len,
+        suspendUpdate = true;
 
     checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     x = checkPoint.usrCoords[1];
@@ -170,8 +171,8 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
         // Brute fore search for a point on the curve close to the mouse pointer
         len = this.transformations.length;
         for (i=0,t=this.minX(); i<steps; i++) {
-            tX = this.X(t);
-            tY = this.Y(t);
+            tX = this.X(t,suspendUpdate);
+            tY = this.Y(t,suspendUpdate);
             for (j=0; j<len; j++) {
                 trans = this.transformations[j];
                 trans.update();
@@ -269,7 +270,8 @@ JXG.Curve.prototype.updateDataArray = function () {};
  * points. Otherwise, e.g. on mouseup, many points are used.
  */
 JXG.Curve.prototype.updateCurve = function () {
-    var len, mi, ma, x, y, i, stepSize;
+    var len, mi, ma, x, y, i, stepSize,
+        suspendUpdate = false;
     
     this.updateDataArray();
     if (this.curveType=='plot' && this.dataX!=null) {
@@ -300,8 +302,9 @@ JXG.Curve.prototype.updateCurve = function () {
             x = mi+i*stepSize;
             y = x;
         }
-        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x),this.Y(y)], false); // The last parameter prevents rounding in usr2screen().
+        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x),this.Y(y,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
         this.updateTransform(this.points[i]);
+        suspendUpdate = true;
     }
     
     this.getLabelAnchor();
