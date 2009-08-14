@@ -21,8 +21,6 @@
         }
     
 
-$('debug').innerHTML += 'Number of unsuspended calls:<br> ';
-
 brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 100, data.length+2, -70], grid: false, axis:true});
 s = brd.createElement('slider',[[10,70],[100,70],[0,1,1]]);     
 deg = brd.createElement('slider',[[10,90],[100,90],[1,1,10]],{name:'degree',snapWidth:1});     
@@ -31,7 +29,7 @@ curve.updateDataArray = function() {
     var i, len = data.length;
     for(i=0;i<len;i++) { this.dataY[i] = s.Value()*data[i]; }
 }
-brd.update();
+//brd.update();
 
 generateFunction = function() { 
     var container = []; 
@@ -43,7 +41,7 @@ generateFunction = function() {
                 
             degree = Math.floor(deg.Value());              // input data
             if (!suspendedUpdate) {
-                //$('debug').innerHTML += (dbg_count++)+' ';
+                $('debug').innerHTML = 'Number of unsuspended calls: '+(dbg_count++)+'<br>';
                 M = [];
                 for (j=0;j<len;j++) {
                     M.push([1]);

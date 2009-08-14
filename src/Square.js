@@ -25,7 +25,7 @@
 
 JXG.createSquare = function(board, parentArr, atts) {
     
-    if(JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1])) {
+    if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1])) {
         
         var p1 = parentArr[0], p2 = parentArr[1], p3, p4;
         var l1, l2, l3, l4;

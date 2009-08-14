@@ -85,7 +85,7 @@ JXG.Image.prototype.updateTransform = function () {
 };
 
 JXG.Image.prototype.addTransform = function (transform) {
-    if (JXG.IsArray(transform)) {
+    if (JXG.isArray(transform)) {
         for (var i=0;i<transform.length;i++) {
             this.transformations.push(transform[i]);
         }

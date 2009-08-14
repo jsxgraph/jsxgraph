@@ -579,7 +579,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
         var pairRaw = arguments[i];
         if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
             pair = pairRaw.split(':');
-        } else if (!JXG.IsArray(pairRaw)) {    // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
+        } else if (!JXG.isArray(pairRaw)) {    // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
             /*
             for (var i=0; i<Object.keys(pairRaw).length;i++) {  // Here, the prototype lib is used (Object.keys, Object.isArray)
                 var key = Object.keys(pairRaw)[i];

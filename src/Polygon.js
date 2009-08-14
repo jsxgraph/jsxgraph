@@ -74,7 +74,7 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
      */    
     this.vertices = [];    
     for(var i=0; i<vertices.length; i++) {
-       var vertex = JXG.GetReferenceFromParameter(this.board, vertices[i]);
+       var vertex = JXG.getReference(this.board, vertices[i]);
        this.vertices[i] = vertex;
     }
     
@@ -115,7 +115,7 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
     
     /* Add polygon as child to defining points */
     for(var i=0; i<this.vertices.length-1; i++) { // last vertex is first vertex
-        var vertex = JXG.GetReferenceFromParameter(this.board, this.vertices[i]);
+        var vertex = JXG.getReference(this.board, this.vertices[i]);
         vertex.addChild(this);
     }
     
@@ -222,8 +222,8 @@ JXG.createPolygon = function(board, parents, atts) {
     
     // Sind alles Punkte?
     for(var i=0; i<parents.length; i++) {
-        parents[i] = JXG.GetReferenceFromParameter(board, parents[i]);
-        if(!JXG.IsPoint(parents[i]))
+        parents[i] = JXG.getReference(board, parents[i]);
+        if(!JXG.isPoint(parents[i]))
             throw ("Can't create polygon with parent types other than 'point'.");
     }
     

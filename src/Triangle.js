@@ -46,7 +46,7 @@
  */
 JXG.createTriangle = function(board, parents, attributes) {
     
-    if(JXG.IsPoint(parents[0]) && JXG.IsPoint(parents[1]) && JXG.IsPoint(parents[2])) {
+    if(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2])) {
         var p1 = parents[0], p2 = parents[1], p3 = parents[2];
         var l1, l2, l3;
         

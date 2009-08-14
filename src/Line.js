@@ -74,13 +74,13 @@ JXG.Line = function (board, p1, p2, id, name, withLabel) {
      * udpate system so your construction won't be updated properly.
      * @type JXG.Point
      */
-    this.point1 = JXG.GetReferenceFromParameter(this.board, p1);
+    this.point1 = JXG.getReference(this.board, p1);
 
     /**
      * Endpoint of the line. Just like {@link #point1} you shouldn't write this field directly.
      * @type JXG.Point
      */
-    this.point2 = JXG.GetReferenceFromParameter(this.board, p2);
+    this.point2 = JXG.getReference(this.board, p2);
 
     /**
      * An image bound to this line.
@@ -572,7 +572,7 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
  */
 JXG.Line.prototype.addTransform = function (/** JXG.Transformation,array */ transform) {
     var list, i;
-    if (JXG.IsArray(transform)) {
+    if (JXG.isArray(transform)) {
         list = transform;
     } else {
         list = [transform];
@@ -813,7 +813,7 @@ JXG.createLine = function(board, parents, atts) {
         if (parents[0].length>1) { // point 1 given by coordinates
             p1 = board.createElement('point', parents[0], {visible:false,fixed:true});
         } else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT) {
-            p1 =  JXG.GetReferenceFromParameter(board,parents[0]);
+            p1 =  JXG.getReference(board,parents[0]);
         } else if ((typeof parents[0] == 'function') && (parents[0]().elementClass == JXG.OBJECT_CLASS_POINT)) {
             p1 = parents[0]();
             constrained = true;
@@ -823,7 +823,7 @@ JXG.createLine = function(board, parents, atts) {
         if (parents[1].length>1) { // point 2 given by coordinates
             p2 = board.createElement('point', parents[1], {visible:false,fixed:true});
         } else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT) {
-            p2 =  JXG.GetReferenceFromParameter(board,parents[1]);
+            p2 =  JXG.getReference(board,parents[1]);
         } else if ((typeof parents[1] == 'function') && (parents[1]().elementClass == JXG.OBJECT_CLASS_POINT)) {
             p2 = parents[1]();
             constrained = true;
@@ -955,7 +955,7 @@ JXG.createArrow = function(board, parents, attributes) {
     if(attributes['withLabel'] == null || typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     }
-    //if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) { // The constructability decision is delkegated to the line object
+    //if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) ) { // The constructability decision is delkegated to the line object
         el = board.createElement('line',parents,attributes);
         //el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name'],attributes['withLabel']);
         el.setStraight(false,false);
@@ -998,13 +998,13 @@ JXG.createAxis = function(board, parents, attributes) {
         line, dist, c1, c2, len, defTicks;
     
     // Arrays oder Punkte, mehr brauchen wir nicht.
-    if ( (JXG.IsArray(parents[0]) || JXG.IsPoint(parents[0]) ) && (JXG.IsArray(parents[1]) || JXG.IsPoint(parents[1])) ) {
-        if( JXG.IsPoint(parents[0]) )
+    if ( (JXG.isArray(parents[0]) || JXG.isPoint(parents[0]) ) && (JXG.isArray(parents[1]) || JXG.isPoint(parents[1])) ) {
+        if( JXG.isPoint(parents[0]) )
             point1 = parents[0];
         else
             point1 = new JXG.Point(board, parents[0],'','',false);
 
-        if( JXG.IsPoint(parents[1]) )
+        if( JXG.isPoint(parents[1]) )
             point2 = parents[1];
         else
             point2 = new JXG.Point(board,parents[1],'','',false);

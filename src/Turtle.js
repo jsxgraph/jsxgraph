@@ -67,7 +67,7 @@ JXG.Turtle = function (board, parents, attributes) {
             y = parents[1];
             dir = parents[2];
         } else if (parents.length==2) {
-            if (JXG.IsArray(parents[0])) {  // [[x,y],dir]
+            if (JXG.isArray(parents[0])) {  // [[x,y],dir]
                 x = parents[0][0];
                 y = parents[0][1];
                 dir = parents[1];
@@ -250,7 +250,7 @@ JXG.Turtle.prototype.clearScreen = function() {
 * @return pointer to the turtle object
 */
 JXG.Turtle.prototype.setPos = function(x,y) {
-    if (JXG.IsArray(x)) {
+    if (JXG.isArray(x)) {
         this.pos = x;
     } else {
         this.pos = [x,y];
@@ -310,7 +310,7 @@ JXG.Turtle.prototype.setProperty = function() {
         pairRaw = arguments[i];
         if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
             pair = pairRaw.split(':');
-        } else if (!JXG.IsArray(pairRaw)) {    
+        } else if (!JXG.isArray(pairRaw)) {    
             // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
             for (var key in pairRaw) {
                 this.setProperty([key,pairRaw[key]]);
@@ -405,7 +405,7 @@ JXG.Turtle.prototype.popTurtle = function() {
 * @return pointer to the turtle object
 */
 JXG.Turtle.prototype.lookTo = function(target) { 
-    if (JXG.IsArray(target)) {
+    if (JXG.isArray(target)) {
         var ax = this.pos[0];
         var ay = this.pos[1];
         var bx = target[0];
@@ -419,7 +419,7 @@ JXG.Turtle.prototype.lookTo = function(target) {
             beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
         }
         this.right(this.dir-(beta*180/Math.PI));
-    } else if (JXG.IsNumber(target)) {
+    } else if (JXG.isNumber(target)) {
         this.right(this.dir-(target));
     }
     return this;
@@ -434,7 +434,7 @@ JXG.Turtle.prototype.lookTo = function(target) {
 * @return pointer to the turtle object
 */
 JXG.Turtle.prototype.moveTo = function(target) { 
-    if (JXG.IsArray(target)) {
+    if (JXG.isArray(target)) {
         var dx = target[0]-this.pos[0];
         var dy = target[1]-this.pos[1];
         if (!this.turtleIsHidden) {

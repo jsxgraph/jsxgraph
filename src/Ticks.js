@@ -94,9 +94,9 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name) {
      */
     this.equidistant = false;
 
-    if(JXG.IsFunction(ticks))
+    if(JXG.isFunction(ticks))
         this.ticksFunction = ticks;
-    else if(JXG.IsArray(ticks))
+    else if(JXG.isArray(ticks))
         this.fixedTicks = ticks;
     else {
         if(Math.abs(ticks) < JXG.Math.eps)
@@ -600,7 +600,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
  */
 JXG.createTicks = function(board, parents, attributes) {
     var el;
-    if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.IsFunction(parents[1]) || JXG.IsArray(parents[1]) || JXG.IsNumber(parents[1]))) {
+    if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.isFunction(parents[1]) || JXG.isArray(parents[1]) || JXG.isNumber(parents[1]))) {
         el = new JXG.Ticks(parents[0], parents[1], attributes['minorTicks'], attributes['majHeight'], attributes['minHeight'], attributes['id'], attributes['name']);
     } else
         throw ("Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");

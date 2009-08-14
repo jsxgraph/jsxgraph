@@ -64,7 +64,7 @@ JXG.Group = function(board, id, name) {
     }
     delete(this.type);
 
-    if ( (arguments.length == 4) && (JXG.IsArray(arguments[3])) )
+    if ( (arguments.length == 4) && (JXG.isArray(arguments[3])) )
         objArray = arguments[3];
     else {
         objArray = [];
@@ -74,7 +74,7 @@ JXG.Group = function(board, id, name) {
     }
 
     for (i=0; i<objArray.length; i++) {
-        obj = JXG.GetReferenceFromParameter(this.board, objArray[i]);
+        obj = JXG.getReference(this.board, objArray[i]);
         if( (!obj.fixed) && ( (obj.type == JXG.OBJECT_TYPE_POINT) || (obj.type == JXG.OBJECT_TYPE_GLIDER) ) ) {
             if (obj.group.length != 0) {
                 this.addGroup(obj.group[obj.group.length-1]);

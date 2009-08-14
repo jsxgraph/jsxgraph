@@ -574,7 +574,7 @@ JXG.Point.prototype.setPosition = function (method, x, y) {
  * @param {String,Object} glideObject The Object the point will be bound to.
  */
 JXG.Point.prototype.makeGlider = function (glideObject) {
-    this.slideObject = JXG.GetReferenceFromParameter(this.board, glideObject);
+    this.slideObject = JXG.getReference(this.board, glideObject);
     this.type = JXG.OBJECT_TYPE_GLIDER;
     this.snapWidth = null;
     
@@ -679,7 +679,7 @@ JXG.Point.prototype.addTransform = function (el, transform) {
         this.baseElement = el;
     }
     var list;
-    if (JXG.IsArray(transform)) {
+    if (JXG.isArray(transform)) {
         list = transform;
     } else {
         list = [transform];
@@ -1002,7 +1002,7 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
         }
     }
     if (!isConstrained) {
-        if ( (JXG.IsNumber(parents[0])) && (JXG.IsNumber(parents[1])) ) {
+        if ( (JXG.isNumber(parents[0])) && (JXG.isNumber(parents[1])) ) {
             el = new JXG.Point(board, parents, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);
             if ( atts["slideObject"] != null ) {
                 el.makeGlider(atts["slideObject"]);

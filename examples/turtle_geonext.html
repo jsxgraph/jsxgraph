@@ -31,11 +31,11 @@
     brd.createElement('point',[3,4],{name:'B'});
     
     // Convert free point to glider
-    p = JXG.GetReferenceFromParameter(brd,'A');
+    p = JXG.getReference(brd,'A');
     p.makeGlider(t);
 
     // Bind free point to turtle
-    p2 = JXG.GetReferenceFromParameter(brd,'B');
+    p2 = JXG.getReference(brd,'B');
     p2.addConstraint([ function() { return t.X();}, function() { return t.Y();} ]) ;
     brd.update();
 
@@ -43,7 +43,7 @@
     no = brd.createElement('normal',[p],{dash:1,strokeColor:'red'});
     */
 
-    var p = JXG.GetReferenceFromParameter(brd,'A');
+    var p = JXG.getReference(brd,'A');
     
     //p.makeGlider(t);
     p.addConstraint([ function() { return t.X();}, function() { return t.Y();} ]) ;

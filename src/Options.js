@@ -344,7 +344,7 @@ JXG.Options.prototype.parseString = function(text, applyTo, board) {
       depth++;
 
       for(var key in option) {
-         if((JXG.IsNumber(option[key])) || (JXG.IsArray(option[key])) || (JXG.IsString(option[key])) || (option[key]==true) || (option[key]==false)) {
+         if((JXG.isNumber(option[key])) || (JXG.isArray(option[key])) || (JXG.isString(option[key])) || (option[key]==true) || (option[key]==false)) {
             base[key] = option[key];
          }
          else {

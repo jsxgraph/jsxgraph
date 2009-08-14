@@ -365,7 +365,7 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
         throw "Error in JXG.Math.Numerics.splineEval: Defining vector dimensions do not match.";
     
     // number of points to be evaluated
-    if(JXG.IsArray(x0)) {
+    if(JXG.isArray(x0)) {
         l = x0.length;
         asArray = true;
     } else

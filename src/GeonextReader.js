@@ -679,8 +679,8 @@ this.readGeonext = function(tree,board) {
                 }
                 else if(gxtEl.typeName == "PARALLELOGRAM_POINT") {
                     if (gxtEl.defEl.length==2) { // line, point
-                        board.addParallelPoint(JXG.GetReferenceFromParameter(gxtEl.defEl[0]).point1,
-                                               JXG.GetReferenceFromParameter(gxtEl.defEl[0]).point2, 
+                        board.addParallelPoint(JXG.getReference(gxtEl.defEl[0]).point1,
+                                               JXG.getReference(gxtEl.defEl[0]).point2, 
                                                gxtEl.defEl[1],
                                                gxtEl.outputId, gxtEl.outputName);
                     } else {  // point, point, point

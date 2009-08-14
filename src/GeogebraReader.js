@@ -5,7 +5,7 @@ JXG.GeogebraReader = new function() {
  */
 this.ggbParse = function(board, tree, registeredElements, element, exp) {
 JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ registeredElements[element].name + "("+ registeredElements[element].id +")");
-var p = JXG.GetReferenceFromParameter(board, registeredElements[element].id);
+var p = JXG.getReference(board, registeredElements[element].id);
 
 	var _dbg_withtrace        = false;
 	var _dbg_string            = new String();
@@ -530,8 +530,8 @@ var p = JXG.GetReferenceFromParameter(board, registeredElements[element].id);
 	    break;
 	    case 4:
 	    {
-	         var s1 = JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 1 ]].id);
-	         var s2 = JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 3 ]].id);
+	         var s1 = JXG.getReference(board, registeredElements[vstack[ vstack.length - 1 ]].id);
+	         var s2 = JXG.getReference(board, registeredElements[vstack[ vstack.length - 3 ]].id);
 	         (function(x, y) { fx = function() { return x.Value(); };
 	                           fy = function() { return y.Value(); };
 	                           p.addConstraint([fx, fy]);
@@ -553,12 +553,12 @@ var p = JXG.GetReferenceFromParameter(board, registeredElements[element].id);
 	    case 7:
 	    {
            if(typeof vstack[ vstack.length - 3 ] == 'string')
-             var vstack3 = JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 3 ]].id).Value();
+             var vstack3 = JXG.getReference(board, registeredElements[vstack[ vstack.length - 3 ]].id).Value();
            else
              var vstack3 = vstack[ vstack.length - 3 ];
 
            if(typeof vstack[ vstack.length - 1 ] == 'string')
-             var vstack1 = JXG.GetReferenceFromParameter(board, registeredElements[vstack[ vstack.length - 1 ]].id).Value();
+             var vstack1 = JXG.getReference(board, registeredElements[vstack[ vstack.length - 1 ]].id).Value();
            else
              var vstack1 = vstack[ vstack.length - 1 ];
 
@@ -885,8 +885,8 @@ for (var x in attr) {
 }    
 $('debug').innerHTML += '<br>';
 
-      if(JXG.GetReferenceFromParameter(board, input[1].id).type == 1330925652) var type = 'line'; // Punkt -> Gerade
-      else if(JXG.GetReferenceFromParameter(board, input[1].id).type == 1330924622) var type = 'parallel'; // Parallele durch Punkt
+      if(JXG.getReference(board, input[1].id).type == 1330925652) var type = 'line'; // Punkt -> Gerade
+      else if(JXG.getReference(board, input[1].id).type == 1330924622) var type = 'parallel'; // Parallele durch Punkt
 
       try {
         $('debug').innerHTML += "* <b>Line:</b> ("+ attr.name +") First: " + input[0].id + ", Last: " + input[1].id + "<br>\n";
@@ -960,7 +960,7 @@ $('debug').innerHTML += '<br>';
         m = board.createElement('midpoint', input, {visible: 'false'});
         t = board.createElement('text', [function(){return m.X();}, function(){return m.Y();}, function(){
               return "<span style='text-decoration: overline'>"+ input[0].name + input[1].name +"</span> = "
-                     + JXG.GetReferenceFromParameter(board, input[0].id).Dist(JXG.GetReferenceFromParameter(board, input[1].id));
+                     + JXG.getReference(board, input[0].id).Dist(JXG.getReference(board, input[1].id));
                 }]);
         return t;
       } catch(e) {
@@ -991,8 +991,8 @@ $('debug').innerHTML += '<br>';
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-      if(JXG.GetReferenceFromParameter(board, input[1].id).type == 1330925652) var type = 'mirrorpoint'; // Punktspiegelung
-      else if(JXG.GetReferenceFromParameter(board, input[1].id).type == 1330924622) var type = 'reflection'; // Geradenspiegelung
+      if(JXG.getReference(board, input[1].id).type == 1330925652) var type = 'mirrorpoint'; // Punktspiegelung
+      else if(JXG.getReference(board, input[1].id).type == 1330924622) var type = 'reflection'; // Geradenspiegelung
 
       try {
         $('debug').innerHTML += "* <b>Mirror:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
@@ -1221,9 +1221,9 @@ $('debug').innerHTML += '<br>';
 
       try {
           p = board.createElement('point', [function() {
-                                                  return JXG.GetReferenceFromParameter(board, input[0].id).midpoint.X();
+                                                  return JXG.getReference(board, input[0].id).midpoint.X();
                                         },  function() {
-                                                  return JXG.GetReferenceFromParameter(board, input[0].id).midpoint.Y();
+                                                  return JXG.getReference(board, input[0].id).midpoint.Y();
                                         }], attr);
           $('debug').innerHTML += "* <b>Center ("+ p.id +"):</b> "+ attr.name + "("+ gxtEl.x +", "+ gxtEl.y +")<br>\n";
           return p;

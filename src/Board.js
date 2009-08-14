@@ -1270,8 +1270,8 @@ JXG.Board.prototype.addChart = function (obj) {
  * @return Element id of the object.
  */
 JXG.Board.prototype.addMidpoint = function(p1, p2, id, name) {
-   var point1 = JXG.GetReferenceFromParameter(this, p1);
-   var point2 = JXG.GetReferenceFromParameter(this, p2);
+   var point1 = JXG.getReference(this, p1);
+   var point2 = JXG.getReference(this, p2);
    
    var midpointCoords = this.algebra.midpoint(point1,point2).usrCoords.slice(1);
    var p = new JXG.Point(this, midpointCoords, id, name, true);
@@ -1306,8 +1306,8 @@ JXG.Board.prototype.addMidpoint = function(p1, p2, id, name) {
  * @return Element id of the object.
  */
 JXG.Board.prototype.addReflection = function(line, point, id, name) {
-   var po = JXG.GetReferenceFromParameter(this, point);
-   var li = JXG.GetReferenceFromParameter(this, line);
+   var po = JXG.getReference(this, point);
+   var li = JXG.getReference(this, line);
    
    var reflectCoords = this.algebra.reflection(li,po).usrCoords.slice(1);
    var p = new JXG.Point(this, reflectCoords, id, name, true);
@@ -1343,8 +1343,8 @@ JXG.Board.prototype.addReflection = function(line, point, id, name) {
  * @return Element id of the object.
  */
 JXG.Board.prototype.addRotation = function(rotpoint, point, phi, id, name) {
-    var po = JXG.GetReferenceFromParameter(this, point);
-    var ropo = JXG.GetReferenceFromParameter(this, rotpoint);
+    var po = JXG.getReference(this, point);
+    var ropo = JXG.getReference(this, rotpoint);
    
     var rotCoords = this.algebra.rotation(ropo,po,phi).usrCoords.slice(1);
     var p = new JXG.Point(this, rotCoords, id, name, true);
@@ -1380,8 +1380,8 @@ JXG.Board.prototype.addRotation = function(rotpoint, point, phi, id, name) {
  * @return Element id of the object.
  */
 JXG.Board.prototype.addParallel = function(l, p, id, name) {
-    var point = JXG.GetReferenceFromParameter(this, p);
-    var line = JXG.GetReferenceFromParameter(this, l);
+    var point = JXG.getReference(this, p);
+    var line = JXG.getReference(this, l);
  
     var number = this.numObjects;
     number++;
@@ -1428,8 +1428,8 @@ JXG.Board.prototype.addParallel = function(l, p, id, name) {
  * @return Element id of the object.
  */
 JXG.Board.prototype.addArrowParallel = function(a, p, arrowId, pointId, arrowName, pointName) {
-    var point = JXG.GetReferenceFromParameter(this, p);
-    var arrow = JXG.GetReferenceFromParameter(this, a);
+    var point = JXG.getReference(this, p);
+    var arrow = JXG.getReference(this, a);
     
     var number = this.numObjects;
     number++;
@@ -1499,9 +1499,9 @@ JXG.Board.prototype.addParallelPoint = function(p1, p2, p3, id, name) {
         id = this.id + 'P' + number;
     }
  
-    p1 = JXG.GetReferenceFromParameter(this, p1);
-    p2 = JXG.GetReferenceFromParameter(this, p2);
-    p3 = JXG.GetReferenceFromParameter(this, p3);
+    p1 = JXG.getReference(this, p1);
+    p2 = JXG.getReference(this, p2);
+    p3 = JXG.getReference(this, p3);
     var p2coords = this.algebra.parallel(p1, p2, p3).usrCoords.slice(1);
     var point2 = new JXG.Point(this, p2coords, id, name, true);
     point2.fixed = true;
@@ -1564,8 +1564,8 @@ JXG.Board.prototype.addArrow = function(obj) {
  * @return Element id of the object.
  */
 JXG.Board.prototype.addNormal = function(l, p, id, name) {
-    var point = JXG.GetReferenceFromParameter(this, p);
-    var line = JXG.GetReferenceFromParameter(this, l);
+    var point = JXG.getReference(this, p);
+    var line = JXG.getReference(this, l);
    
     var number = this.numObjects;
     number++;
@@ -1627,8 +1627,8 @@ JXG.Board.prototype.addNormal = function(l, p, id, name) {
  * @return Array of element ids of the created objects. First element is id of line, second is id of point.
  */
 JXG.Board.prototype.addPerpendicular = function(l, p, idL, nameL, idP, nameP) {
-    var point = JXG.GetReferenceFromParameter(this, p);
-    var line = JXG.GetReferenceFromParameter(this, l);
+    var point = JXG.getReference(this, p);
+    var line = JXG.getReference(this, l);
    
     var number = this.numObjects;
     number ++;
@@ -1691,8 +1691,8 @@ JXG.Board.prototype.addPerpendicular = function(l, p, idL, nameL, idP, nameP) {
  */
 JXG.Board.prototype.addPerpendicularPoint = function(l, p, idP, nameP) {
 
-    var point = JXG.GetReferenceFromParameter(this, p);
-    var line = JXG.GetReferenceFromParameter(this, l);
+    var point = JXG.getReference(this, p);
+    var line = JXG.getReference(this, l);
    
     var number = this.numObjects;
     number++;
@@ -1738,9 +1738,9 @@ JXG.Board.prototype.addPerpendicularPoint = function(l, p, idP, nameP) {
  * @return Array of element ids of the created objects. First element is midpoint, second is circle.
  */
 JXG.Board.prototype.addCircumcenter = function(point1, point2, point3, midpointId, midpointName, circleId, circleName) {
-    var p1 = JXG.GetReferenceFromParameter(this, point1);
-    var p2 = JXG.GetReferenceFromParameter(this, point2);
-    var p3 = JXG.GetReferenceFromParameter(this, point3);
+    var p1 = JXG.getReference(this, point1);
+    var p2 = JXG.getReference(this, point2);
+    var p3 = JXG.getReference(this, point3);
    
     var midpointCoordinates = this.algebra.circumcenterMidpoint(p1, p2, p3);
     var midpoint = new JXG.Point(this, midpointCoordinates.usrCoords.slice(1), midpointId, midpointName, true);
@@ -1793,9 +1793,9 @@ JXG.Board.prototype.addCircumcenter = function(point1, point2, point3, midpointI
  * @return Element id of the object.
  */
 JXG.Board.prototype.addCircumcenterMidpoint = function(point1, point2, point3, midpointId, midpointName) {
-    var p1 = JXG.GetReferenceFromParameter(this, point1);
-    var p2 = JXG.GetReferenceFromParameter(this, point2);
-    var p3 = JXG.GetReferenceFromParameter(this, point3);
+    var p1 = JXG.getReference(this, point1);
+    var p2 = JXG.getReference(this, point2);
+    var p3 = JXG.getReference(this, point3);
    
     var mp = this.algebra.circumcenterMidpoint(p1, p2, p3).usrCoords.slice(1);
     var midpoint = new JXG.Point(this, mp, midpointId, midpointName, true);
@@ -1861,9 +1861,9 @@ JXG.Board.prototype.addIntersection = function (obj) {
  * @return Element id of the object.
  */
 JXG.Board.prototype.addAngleBisector = function(p1, p2, p3, id, name) {
-   var point1 = JXG.GetReferenceFromParameter(this, p1);
-   var point2 = JXG.GetReferenceFromParameter(this, p2);
-   var point3 = JXG.GetReferenceFromParameter(this, p3);
+   var point1 = JXG.getReference(this, p1);
+   var point2 = JXG.getReference(this, p2);
+   var point3 = JXG.getReference(this, p3);
    
     var number = this.numObjects;
     number++;
@@ -2055,10 +2055,10 @@ JXG.Board.prototype.addImage = function (obj) {
  * @return Reference to the created polygon object.
  */
 JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
-    if(!JXG.IsArray(ids) || (ids.length != 5)) {
+    if(!JXG.isArray(ids) || (ids.length != 5)) {
         ids = ['','','','',''];
     }
-    if(!JXG.IsArray(names) || (names.length != 5)) {
+    if(!JXG.isArray(names) || (names.length != 5)) {
        names = ['','','','',''];
     }
 
@@ -2299,7 +2299,7 @@ JXG.Board.prototype.zoomAllPoints = function() {
  * @param {GeometryElement} object The object to remove.
  */
 JXG.Board.prototype.removeObject = function(object) {
-    object = JXG.GetReferenceFromParameter(this, object);
+    object = JXG.getReference(this, object);
 
     /* Wenn weder die ID noch der Name des Objekts bekannt ist, einfach wieder zurueckgehen */
     if(object == undefined) {
@@ -2423,7 +2423,7 @@ JXG.Board.prototype.prepareUpdate = function(drag) {
   * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.updateElements = function(drag) {
-    drag = JXG.GetReferenceFromParameter(this, drag);
+    drag = JXG.getReference(this, drag);
     
     var count = -1;
     if (!this.reducedUpdate) count = 1;
@@ -2445,7 +2445,7 @@ JXG.Board.prototype.updateElements = function(drag) {
   * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.updateRenderer = function(drag) {
-    var drag = JXG.GetReferenceFromParameter(this, drag);
+    var drag = JXG.getReference(this, drag);
     
     var count = -1;
     if (!this.reducedUpdate) count = 1;
@@ -2587,7 +2587,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         attributes = {};
     }
     for (var i=0; i<parents.length; i++) {
-        parents[i] = JXG.GetReferenceFromParameter(this, parents[i]); // TODO: should not be done for content-parameter of JXG.Text
+        parents[i] = JXG.getReference(this, parents[i]); // TODO: should not be done for content-parameter of JXG.Text
     }
 
     if(JXG.JSXGraph.elements[elementType] != null) {
@@ -2601,7 +2601,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         return;
     };
   
-    if(JXG.IsArray(attributes)) {
+    if(JXG.isArray(attributes)) {
         attributes = attributes[0];
     }
 //    try {
@@ -2617,7 +2617,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         
 //    } catch (e) { alert("Error setting Property:" + e); };
     
-//    if(!JXG.IsArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
+//    if(!JXG.isArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
 //        el.setProperty(attributes);
 //    }
 /* AW: Doch erstmal wieder auskommentiert
@@ -2631,7 +2631,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
 */
 /*
     for (var s in attributes) {
-        if(!JXG.IsArray(el)) {
+        if(!JXG.isArray(el)) {
             el.setProperty(s+':'+attributes[s]);
         }
         else {
@@ -2708,7 +2708,7 @@ JXG.Board.prototype.unsuspendUpdate = function() {
  * @param {Bool} keepaspectratio: optional flag
  */
 JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
-    if (!JXG.IsArray(bbox)) return;
+    if (!JXG.isArray(bbox)) return;
     var h,w;
     w = this.canvasWidth;
     h = this.canvasHeight;

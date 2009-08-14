@@ -72,6 +72,8 @@
         b1p1.addChild(b2p1);
         b1p1.addChild(b2p2);
 
+        board.addChild(board2);
+
         // Deklarationen fuer die Animation 
         var animated = false;
         function animate(point, direction, count) {
@@ -86,7 +88,7 @@
         
         // Hook-Funktion definieren
         function print_table(board) {
-			var rad = board.algebra.rad(JXG.GetReferenceFromParameter(board, 'Punkt_1_0'), JXG.GetReferenceFromParameter(board, 'Ursprung'), b1p1);
+			var rad = board.algebra.rad([1,0], [0,0], b1p1);
         	$('print_rad').innerHTML = board.round(rad,2);
         	$('print_kpi').innerHTML = board.round(rad*Math.PI,2) + ' * pi';
         	$('print_grad').innerHTML = board.round(rad/Math.PI*180,2);

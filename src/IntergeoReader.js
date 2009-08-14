@@ -23,6 +23,12 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+
+/* Compatibility for <= 0.75.4 */
+JXG.getReference = function(board, object) {
+    return JXG.GetReferenceFromParameter(board, object);
+};
+
 JXG.IntergeoReader = new function() {
     this.board = null;
     this.objects = {};
@@ -403,15 +409,15 @@ JXG.IntergeoReader = new function() {
 
     this.addPointOnLine = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            p = JXG.GetReferenceFromParameter(this.board,param[0]),
-            l = JXG.GetReferenceFromParameter(this.board,param[1]);
+            p = JXG.getReference(this.board,param[0]),
+            l = JXG.getReference(this.board,param[1]);
         p.makeGlider(l);
     };
 
     this.addPointOnCircle = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            p = JXG.GetReferenceFromParameter(this.board,param[0]),
-            c = JXG.GetReferenceFromParameter(this.board,param[1]);
+            p = JXG.getReference(this.board,param[0]),
+            c = JXG.getReference(this.board,param[1]);
         p.makeGlider(c);
     };
 
@@ -424,9 +430,9 @@ JXG.IntergeoReader = new function() {
     
     this.addMidpointOfTwoPoints = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            p0 = JXG.GetReferenceFromParameter(this.board,param[0]),
-            p1 = JXG.GetReferenceFromParameter(this.board,param[1]),
-            p2 = JXG.GetReferenceFromParameter(this.board,param[2]);
+            p0 = JXG.getReference(this.board,param[0]),
+            p1 = JXG.getReference(this.board,param[1]),
+            p2 = JXG.getReference(this.board,param[2]);
         p0.addConstraint([
                 function(){ return 0.5*(p1.Z()+p2.Z());},
                 function(){ return 0.5*(p1.X()+p2.X());},
@@ -436,8 +442,8 @@ JXG.IntergeoReader = new function() {
 
     this.addMidpointLineSegment = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            p0 = JXG.GetReferenceFromParameter(this.board,param[0]),
-            l = JXG.GetReferenceFromParameter(this.board,param[1]);
+            p0 = JXG.getReference(this.board,param[0]),
+            l = JXG.getReference(this.board,param[1]);
         p0.addConstraint([
                 function(){ return 0.5*(l.point1.Z()+l.point2.Z());},
                 function(){ return 0.5*(l.point1.X()+l.point2.X());},
@@ -461,28 +467,28 @@ JXG.IntergeoReader = new function() {
     
     this.addLocusDefinedByPoint = function(node) {
         var param = JXG.IntergeoReader.readParams(node), 
-            el = JXG.GetReferenceFromParameter(this.board,param[1]);
+            el = JXG.getReference(this.board,param[1]);
         el.setProperty({trace:true});
         this.objects[param[1]] = el;
     };
     
     this.addLocusDefinedByPointOnLine = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            el = JXG.GetReferenceFromParameter(this.board,param[1]);
+            el = JXG.getReference(this.board,param[1]);
         el.setProperty({trace:true});
         this.objects[param[1]] = el;
     };
 
     this.addLocusDefinedByLineThroughPoint = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            el = JXG.GetReferenceFromParameter(this.board,param[1]);
+            el = JXG.getReference(this.board,param[1]);
         el.setProperty({trace:true});
         this.objects[param[1]] = el;
     };
     
     this.addLocusDefinedByPointOnCircle = function(node) {
         var param = JXG.IntergeoReader.readParams(node), 
-            el = JXG.GetReferenceFromParameter(this.board,param[1]);
+            el = JXG.getReference(this.board,param[1]);
         el.setProperty({trace:true});
         this.objects[param[1]] = el;
     };
@@ -491,7 +497,7 @@ JXG.IntergeoReader = new function() {
         var param = JXG.IntergeoReader.readParams(node),
             p = [], i, ar;
         for (i=0;i<3;i++) {
-          p[i] = JXG.GetReferenceFromParameter(this.board,param[i+1]);
+          p[i] = JXG.getReference(this.board,param[i+1]);
         }
         ar = this.board.createElement('circumcircle',p,{name:['',param[0]],id:['',param[0]],withLabel:true});
         ar[0].setProperty({visible:false}); // center should be invisible
@@ -507,15 +513,15 @@ JXG.IntergeoReader = new function() {
 
     this.addCenterOfCircle = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            el = JXG.GetReferenceFromParameter(this.board,param[0]),
-            c = JXG.GetReferenceFromParameter(this.board,param[1]);
+            el = JXG.getReference(this.board,param[0]),
+            c = JXG.getReference(this.board,param[1]);
         el.addConstraint([function(){return c.midpoint.X();},function(){return c.midpoint.Y();}]);
     };
 
     this.addIntersectionPointsOfTwoCircles = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            c1 = JXG.GetReferenceFromParameter(this.board,param[2]),
-            c2 = JXG.GetReferenceFromParameter(this.board,param[3]),
+            c1 = JXG.getReference(this.board,param[2]),
+            c2 = JXG.getReference(this.board,param[3]),
             p1 = this.objects[param[0]],
             p2 = this.objects[param[1]];
         p1.addConstraint([this.board.intersection(c1,c2,0)]);
@@ -524,8 +530,8 @@ JXG.IntergeoReader = new function() {
     
     this.addIntersectionPointsOfCircleAndLine = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            c1 = JXG.GetReferenceFromParameter(this.board,param[2]),
-            c2 = JXG.GetReferenceFromParameter(this.board,param[3]),
+            c1 = JXG.getReference(this.board,param[2]),
+            c2 = JXG.getReference(this.board,param[3]),
             p1 = this.objects[param[0]],
             p2 = this.objects[param[1]];
         p1.addConstraint([this.board.intersection(c1,c2,0)]);

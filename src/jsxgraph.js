@@ -285,7 +285,7 @@ JXG.JSXGraph = new function (forceRenderer) {
  * @param {JXG.Board} board Reference to the board the object belongs to.
  * @return {Object} Reference to the object given in parameter object
  */
-JXG.GetReferenceFromParameter = function(board, object) {
+JXG.getReference = function(board, object) {
     if(typeof(object) == 'string') {
         if(board.objects[object] != null) { // Search by ID
             object = board.objects[object];
@@ -297,24 +297,24 @@ JXG.GetReferenceFromParameter = function(board, object) {
     return object;
 };
 
-JXG.IsString = function(obj) {
+JXG.isString = function(obj) {
     return typeof obj == "string";
 };
 
-JXG.IsNumber = function(obj) {
+JXG.isNumber = function(obj) {
     return typeof obj == "number";
 };
 
-JXG.IsFunction = function(obj) {
+JXG.isFunction = function(obj) {
     return typeof obj == "function";
 };
 
-JXG.IsArray = function(obj) {
+JXG.isArray = function(obj) {
     // Borrowed from prototype.js
     return obj != null && typeof obj == "object" && 'splice' in obj && 'join' in obj;
 };
 
-JXG.IsPoint = function(p) {
+JXG.isPoint = function(p) {
     if(typeof p == 'object') {
         return (p.elementClass == JXG.OBJECT_CLASS_POINT);
     }
@@ -356,15 +356,15 @@ JXG.createEvalFunction = function(board,param,n) {
 JXG.createFunction = function(term,board,variableName,evalGeonext) {
     var newTerm;
     
-    if ((evalGeonext==null || evalGeonext==true) && JXG.IsString(term)) {
+    if ((evalGeonext==null || evalGeonext==true) && JXG.isString(term)) {
         // Convert GEONExT syntax into  JavaScript syntax
         newTerm = board.algebra.geonext2JS(term);
         return new Function(variableName,'return ' + newTerm + ';');
-    } else if (JXG.IsFunction(term)) {
+    } else if (JXG.isFunction(term)) {
         return term;
-    } else if (JXG.IsNumber(term)) {
+    } else if (JXG.isNumber(term)) {
         return function() { return term; };
-    } else if (JXG.IsString(term)) {        // In case of string function like fontsize
+    } else if (JXG.isString(term)) {        // In case of string function like fontsize
         return function() { return term; };
     }
     return null;

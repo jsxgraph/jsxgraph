@@ -71,7 +71,7 @@ JXG.Angle = function (board, p1, p2, p3, radius, text, id, name, withLabel) {
      * @type JXG.Point
      * @private
      */
-    this.point1 = JXG.GetReferenceFromParameter(this.board, p1);
+    this.point1 = JXG.getReference(this.board, p1);
 
     /**
      * Second point B defining the angle ABC. Do no set this property directly as it
@@ -79,7 +79,7 @@ JXG.Angle = function (board, p1, p2, p3, radius, text, id, name, withLabel) {
      * @type JXG.Point
      * @private
      */    
-    this.point2 = JXG.GetReferenceFromParameter(this.board, p2);
+    this.point2 = JXG.getReference(this.board, p2);
     
     /**
      * Third point C defining the angle ABC. Do no set this property directly as it
@@ -87,7 +87,7 @@ JXG.Angle = function (board, p1, p2, p3, radius, text, id, name, withLabel) {
      * @type JXG.Point
      * @private
      */
-    this.point3 = JXG.GetReferenceFromParameter(this.board, p3);    
+    this.point3 = JXG.getReference(this.board, p3);    
 
     /**
     * Determines the radius of the sector that visualizes the angle.
@@ -242,7 +242,7 @@ JXG.createAngle = function(board, parents, attributes) {
     }    
     
     // Alles 3 Punkte?
-    if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) && (JXG.IsPoint(parents[2]))) {
+    if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
         el = new JXG.Angle(board, parents[0], parents[1], parents[2], attributes['radius'], attributes['text'], attributes['id'], attributes['name'],attributes['withLabel']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else

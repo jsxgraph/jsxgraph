@@ -327,7 +327,7 @@ JXG.Curve.prototype.updateTransform = function (p) {
 
 JXG.Curve.prototype.addTransform = function (transform) {
     var list, i, len;
-    if (JXG.IsArray(transform)) {
+    if (JXG.isArray(transform)) {
         list = transform;
     } else {
         list = [transform];
@@ -366,21 +366,21 @@ JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
     var fx, fy;
 
     // Generate the methods X() and Y()
-    if (JXG.IsArray(xterm)) {
+    if (JXG.isArray(xterm)) {
         this.dataX = xterm;
         this.X = function(i) { return this.dataX[i]; };
         this.curveType = 'plot';
         this.numberPoints = this.dataX.length;
     } else {
         this.X = JXG.createFunction(xterm,this.board,varname);
-        if (JXG.IsString(xterm)) { 
+        if (JXG.isString(xterm)) { 
             this.curveType = 'functiongraph'; 
-        } else if (JXG.IsFunction(xterm) || JXG.IsNumber(xterm)) {
+        } else if (JXG.isFunction(xterm) || JXG.isNumber(xterm)) {
             this.curveType = 'parameter';
         }
     }
 
-    if (JXG.IsArray(yterm)) {
+    if (JXG.isArray(yterm)) {
         this.dataY = yterm;
         this.Y = function(i) { return this.dataY[i]; };
     } else {
@@ -388,7 +388,7 @@ JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
     }
 
     // polar form
-    if (JXG.IsFunction(xterm) && JXG.IsArray(yterm)) {
+    if (JXG.isFunction(xterm) && JXG.isArray(yterm)) {
         // Xoffset, Yoffset
         fx = JXG.createFunction(yterm[0],this.board,'');
         fy = JXG.createFunction(yterm[1],this.board,'');
@@ -623,7 +623,7 @@ JXG.createSpline = function(board, parents, attributes) {
             i, D;
         
         for(i=0; i<parents.length; i++) {
-            if(!JXG.IsPoint(parents[i]))
+            if(!JXG.isPoint(parents[i]))
                 throw "JXG.createSpline: Parents has to be an array of JXG.Point.";
             
             x.push(parents[i].X());

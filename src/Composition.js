@@ -77,14 +77,14 @@
 JXG.createPerpendicular = function(board, parentArr, atts) {
     var els, p, l, t;
 
-    parentArr[0] = JXG.GetReferenceFromParameter(board, parentArr[0]);
-    parentArr[1] = JXG.GetReferenceFromParameter(board, parentArr[1]);
+    parentArr[0] = JXG.getReference(board, parentArr[0]);
+    parentArr[1] = JXG.getReference(board, parentArr[1]);
 
-    if(JXG.IsPoint(parentArr[0]) && parentArr[1].elementClass == JXG.OBJECT_CLASS_LINE) {
+    if(JXG.isPoint(parentArr[0]) && parentArr[1].elementClass == JXG.OBJECT_CLASS_LINE) {
         l = parentArr[1];
         p = parentArr[0];
     }
-    else if(JXG.IsPoint(parentArr[1]) && parentArr[0].elementClass == JXG.OBJECT_CLASS_LINE) {
+    else if(JXG.isPoint(parentArr[1]) && parentArr[0].elementClass == JXG.OBJECT_CLASS_LINE) {
         l = parentArr[0];
         p = parentArr[1];
     }
@@ -92,10 +92,10 @@ JXG.createPerpendicular = function(board, parentArr, atts) {
         throw ("Can't create perpendicular with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
     }
 
-    if(!JXG.IsArray(atts['id'])) {
+    if(!JXG.isArray(atts['id'])) {
         atts['id'] = ['',''];
     }
-    if(!JXG.IsArray(atts['name'])) {
+    if(!JXG.isArray(atts['name'])) {
         atts['name'] = ['',''];
     }        
 
@@ -201,7 +201,7 @@ JXG.createPerpendicular = function(board, parentArr, atts) {
  */
 JXG.createMidpoint = function(board, parentArr, atts) {
     var a, b, t;
-    if(parentArr.length == 2 && JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1])) {
+    if(parentArr.length == 2 && JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1])) {
         a = parentArr[0];
         b = parentArr[1];
         t = board.addMidpoint(parentArr[0], parentArr[1], atts['id'], atts['name']);
@@ -289,10 +289,10 @@ JXG.createMidpoint = function(board, parentArr, atts) {
  */
 JXG.createParallel = function(board, parentArr, atts) {
     /* TODO parallel polynomials */
-    if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
+    if(JXG.isPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
         return board.addParallel(parentArr[1], parentArr[0], atts['id'], atts['name']);
     }
-    else if(JXG.IsPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
+    else if(JXG.isPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
         return board.addParallel(parentArr[0], parentArr[1], atts['id'], atts['name']);    
     }
     else {
@@ -338,10 +338,10 @@ JXG.createNormal = function(board, parents, attributes) {
         p = parents[0];
         c = p.slideObject;
     } else if (parents.length==2) { // Two arguments: (point,line), (point,circle), (line,point) or (circle,point)
-        if (JXG.IsPoint(parents[0])) { 
+        if (JXG.isPoint(parents[0])) { 
             p = parents[0];
             c = parents[1];
-        } else if (JXG.IsPoint(parents[1])) { 
+        } else if (JXG.isPoint(parents[1])) { 
             c = parents[0];
             p = parents[1];
         } else {
@@ -472,7 +472,7 @@ JXG.createNormal = function(board, parents, attributes) {
  */
 JXG.createBisector = function(board, parentArr, atts) {
     /* TODO bisector polynomials */
-    if(JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) && JXG.IsPoint(parentArr[2])) {
+    if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1]) && JXG.isPoint(parentArr[2])) {
         return board.addAngleBisector(parentArr[0], parentArr[1], parentArr[2], atts['id'], atts['name']);
     }
     else {
@@ -487,15 +487,15 @@ JXG.createBisector = function(board, parentArr, atts) {
  * @private
  */
 JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
-    var l1 = JXG.GetReferenceFromParameter(board,parents[0]);
-    var l2 = JXG.GetReferenceFromParameter(board,parents[1]);
+    var l1 = JXG.getReference(board,parents[0]);
+    var l2 = JXG.getReference(board,parents[1]);
     var id1 = '';
     var id2 = '';
     var n1 = '';
     var n2 = '';
     if (attributes==null) attributes = {};
     if (attributes['id']!=null) {
-        if (JXG.IsArray(attributes['id'])) {
+        if (JXG.isArray(attributes['id'])) {
             id1 = attributes['id'][0];
             id2 = attributes['id'][1];
         } else {
@@ -504,7 +504,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
         }
     }
     if (attributes['name']!=null) {
-        if (JXG.IsArray(attributes['name'])) {
+        if (JXG.isArray(attributes['name'])) {
             n1 = attributes['name'][0];
             n2 = attributes['name'][1];
         } else {
@@ -588,20 +588,20 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
  */
 JXG.createArrowParallel = function(board, parentArr, atts) {
     /* TODO arrowparallel polynomials */
-    if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_ARROW) {
-        if(!JXG.IsArray(atts['id'])) {
+    if(JXG.isPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_ARROW) {
+        if(!JXG.isArray(atts['id'])) {
             atts['id'] = ['',''];
         }
-        if(!JXG.IsArray(atts['name'])) {
+        if(!JXG.isArray(atts['name'])) {
             atts['name'] = ['',''];
         }    
         return board.addArrowParallel(parentArr[1], parentArr[0], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);
     }
-    else if(JXG.IsPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_ARROW) {
-        if(!JXG.IsArray(atts['id'])) {
+    else if(JXG.isPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_ARROW) {
+        if(!JXG.isArray(atts['id'])) {
             atts['id'] = ['',''];
         }
-        if(!JXG.IsArray(atts['name'])) {
+        if(!JXG.isArray(atts['name'])) {
             atts['name'] = ['',''];
         }        
         return board.addArrowParallel(parentArr[0], parentArr[1], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);    
@@ -640,11 +640,11 @@ JXG.createArrowParallel = function(board, parentArr, atts) {
  */
 JXG.createCircumcircle = function(board, parentArr, atts) {
     /* TODO circumcircle polynomials */
-    if(JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) && JXG.IsPoint(parentArr[2])) {
-        if(!JXG.IsArray(atts['id'])) {
+    if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1]) && JXG.isPoint(parentArr[2])) {
+        if(!JXG.isArray(atts['id'])) {
             atts['id'] = ['',''];
         }
-        if(!JXG.IsArray(atts['name'])) {
+        if(!JXG.isArray(atts['name'])) {
             atts['name'] = ['',''];
         }    
         return board.addCircumcenter(parentArr[0], parentArr[1], parentArr[2], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);
@@ -684,7 +684,7 @@ JXG.createCircumcircle = function(board, parentArr, atts) {
  */
 JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
     /* TODO circumcircle polynomials */
-    if(JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) && JXG.IsPoint(parentArr[2])) {
+    if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1]) && JXG.isPoint(parentArr[2])) {
         return board.addCircumcenterMidpoint(parentArr[0], parentArr[1], parentArr[2], atts['id'], atts['name']);
     }
     else {
@@ -722,7 +722,7 @@ JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
  */
 JXG.createParallelPoint = function(board, parentArr, atts) {
     /* TODO parallel point polynomials */
-    if(JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1]) && JXG.IsPoint(parentArr[2])) {
+    if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1]) && JXG.isPoint(parentArr[2])) {
         return board.addParallelPoint(parentArr[0], parentArr[1], parentArr[2], atts['id'], atts['name']);
     }
     else {
@@ -760,10 +760,10 @@ JXG.createParallelPoint = function(board, parentArr, atts) {
  */
 JXG.createReflection = function(board, parentArr, atts) {
     /* TODO reflection polynomials */
-    if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
+    if(JXG.isPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
         return board.addReflection(parentArr[1], parentArr[0], atts['id'], atts['name']);
     }
-    else if(JXG.IsPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
+    else if(JXG.isPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
         return board.addReflection(parentArr[0], parentArr[1], atts['id'], atts['name']);    
     }
     else {
@@ -801,12 +801,12 @@ JXG.createReflection = function(board, parentArr, atts) {
  */
 JXG.createPerpendicularPoint = function(board, parentArr, atts) {
     var l, p, t;
-    if(JXG.IsPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
+    if(JXG.isPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
         p = parentArr[0];
         l = parentArr[1];
         t = board.addPerpendicularPoint(parentArr[1], parentArr[0], atts['id'], atts['name']);
     }
-    else if(JXG.IsPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
+    else if(JXG.isPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
         p = parentArr[1];
         l = parentArr[0];
         t = board.addPerpendicularPoint(parentArr[0], parentArr[1], atts['id'], atts['name']);
@@ -863,7 +863,7 @@ JXG.createPerpendicularPoint = function(board, parentArr, atts) {
  */
 JXG.createMirrorPoint = function(board, parentArr, atts) {
     /* TODO mirror polynomials */
-    if(JXG.IsPoint(parentArr[0]) && JXG.IsPoint(parentArr[1])) {
+    if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1])) {
         return board.addRotation(parentArr[0], parentArr[1], Math.PI, atts['id'], atts['name']);
     }
     else {
@@ -894,16 +894,16 @@ JXG.createMirrorPoint = function(board, parentArr, atts) {
  * </script><pre>
  */
 JXG.createIntegral = function(board, parentArr, atts) {
-    if(!JXG.IsArray(atts['id']) || (atts['id'].length != 5)) {
+    if(!JXG.isArray(atts['id']) || (atts['id'].length != 5)) {
         atts['id'] = ['','','','',''];
     }
-    if(!JXG.IsArray(atts['name']) || (atts['name'].length != 5)) {
+    if(!JXG.isArray(atts['name']) || (atts['name'].length != 5)) {
        atts['name'] = ['','','','',''];
     }    
 
-    if(JXG.IsArray(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_CURVE) {
+    if(JXG.isArray(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_CURVE) {
         return board.addIntegral(parentArr[0], parentArr[1], atts['id'], atts['name'], atts);
-    } else if(JXG.IsArray(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_CURVE) {
+    } else if(JXG.isArray(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_CURVE) {
         return board.addIntegral(parentArr[1], parentArr[0], atts['id'], atts['name'], atts);
     } else {
         throw ("Can't create integral with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    

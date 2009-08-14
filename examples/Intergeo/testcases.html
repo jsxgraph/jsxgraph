@@ -4,7 +4,8 @@
    <meta http-equiv="X-UA-Compatible" content="IE=7" />
    <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/prototype.js"></script>
-   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/branches/0.80/src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+   <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/branches/0.80/src/loadjsxgraph.js"></script>-->
    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/branches/0.80/src/IntergeoReader.js"></script>
 </head>
 <body>
@@ -15,7 +16,6 @@
    <script type="text/javascript">
     /* <![CDATA[ */
         fname = 'Points.i2g';
-        fname = 'center_of_three_points.xml';
         fname = 'intersections_circles_line.xml';
         fname = 'locus_parabola.xml';
         fname = 'locus_cardioid.xml';
@@ -23,6 +23,7 @@
         fname = 'locus_shadow.xml';
         fname = 'rotating_circle.xml';
         fname = 'tangents_to_circle.xml';
+        fname = 'center_of_three_points.xml';
         $('debug').innerHTML = fname+'<br>';
         board = JXG.JSXGraph.loadBoardFromFile('jxgbox', fname , 'Intergeo');
   /* ]]> */

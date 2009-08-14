@@ -59,7 +59,7 @@ JXG.Math.Symbolic.generateSymbolicCoordinatesPartial = function(board, element, 
     var t_num;
     for(var t in list) {
         t_num = 0;
-        if (JXG.IsPoint(list[t])) {
+        if (JXG.isPoint(list[t])) {
             for(var k in list[t].ancestors) {
                 t_num++;
             }
@@ -76,7 +76,7 @@ JXG.Math.Symbolic.generateSymbolicCoordinatesPartial = function(board, element, 
         }
     }
     
-    if(JXG.IsPoint(element)) {
+    if(JXG.isPoint(element)) {
         element.symbolic.x = 'x';
         element.symbolic.y = 'y';
     }
@@ -90,7 +90,7 @@ JXG.Math.Symbolic.generateSymbolicCoordinatesPartial = function(board, element, 
  */
 JXG.Math.Symbolic.clearSymbolicCoordinates = function(board) {
     for(var t in board.objects) {
-        if (JXG.IsPoint(board.objects[t])) {
+        if (JXG.isPoint(board.objects[t])) {
             board.objects[t].symbolic.x = '';
             board.objects[t].symbolic.y = '';
         }
@@ -118,7 +118,7 @@ JXG.Math.Symbolic.generatePolynomials = function(board, element, generateCoords)
     for(var t in list) {
         t_num = 0;
         poly = [];
-        if (JXG.IsPoint(list[t])) {
+        if (JXG.isPoint(list[t])) {
             for(var k in list[t].ancestors) {
                 t_num++;
             }

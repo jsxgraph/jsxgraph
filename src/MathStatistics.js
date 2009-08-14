@@ -139,7 +139,7 @@ JXG.MathStatistics.prototype.min = function(arr) {
 
 JXG.MathStatistics.prototype.abs = function(arr) {  // This can be generalized with Prototype.js and should be done for all Math. methods
     var res = [];
-    if (typeof JXG.IsArray(arr1)) {
+    if (typeof JXG.isArray(arr1)) {
         for (var i=0, len=arr.length;i<len;i++) { res[i] = Math.abs(arr[i]); }
     } else if (typeof arr=='number') {
         return Math.abs(arr);
@@ -151,11 +151,11 @@ JXG.MathStatistics.prototype.abs = function(arr) {  // This can be generalized w
 
 JXG.MathStatistics.prototype.add = function(arr1,arr2) {
     var res = [];
-    if (typeof JXG.IsArray(arr1) && typeof arr2=='number') {
+    if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]+arr2; }
-    } else if (typeof arr1=='number' && typeof JXG.IsArray(arr2)) {
+    } else if (typeof arr1=='number' && typeof JXG.isArray(arr2)) {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1+arr2[i]; }
-    } else if (typeof JXG.IsArray(arr1) && typeof JXG.IsArray(arr2)) {
+    } else if (typeof JXG.isArray(arr1) && typeof JXG.isArray(arr2)) {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]+arr2[i]; }
     } else if (typeof arr1=='number' && typeof arr2=='number') {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1+arr2; }
@@ -167,11 +167,11 @@ JXG.MathStatistics.prototype.add = function(arr1,arr2) {
 
 JXG.MathStatistics.prototype.divide = function(arr1,arr2) {
     var res = [];
-    if (typeof JXG.IsArray(arr1) && typeof arr2=='number') {
+    if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]/arr2; }
-    } else if (typeof arr1=='number' && typeof JXG.IsArray(arr2)) {
+    } else if (typeof arr1=='number' && typeof JXG.isArray(arr2)) {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1/arr2[i]; }
-    } else if (typeof JXG.IsArray(arr1) && typeof JXG.IsArray(arr2)) {
+    } else if (typeof JXG.isArray(arr1) && typeof JXG.isArray(arr2)) {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]/arr2[i]; }
     } else if (typeof arr1=='number' && typeof arr2=='number') {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1/arr2; }
@@ -183,11 +183,11 @@ JXG.MathStatistics.prototype.divide = function(arr1,arr2) {
 
 JXG.MathStatistics.prototype.mod = function(arr1,arr2) {
     var res = [];
-    if (typeof JXG.IsArray(arr1) && typeof arr2=='number') {
+    if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]%arr2; }
-    } else if (typeof arr1=='number' && typeof JXG.IsArray(arr2)) {
+    } else if (typeof arr1=='number' && typeof JXG.isArray(arr2)) {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1%arr2[i]; }
-    } else if (typeof JXG.IsArray(arr1) && typeof JXG.IsArray(arr2)) {
+    } else if (typeof JXG.isArray(arr1) && typeof JXG.isArray(arr2)) {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]%arr2[i]; }
     } else if (typeof arr1=='number' && typeof arr2=='number') {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1%arr2; }
@@ -199,11 +199,11 @@ JXG.MathStatistics.prototype.mod = function(arr1,arr2) {
 
 JXG.MathStatistics.prototype.multiply = function(arr1,arr2) {
     var res = [];
-    if (typeof JXG.IsArray(arr1) && typeof arr2=='number') {
+    if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]*arr2; }
-    } else if (typeof arr1=='number' && typeof JXG.IsArray(arr2)) {
+    } else if (typeof arr1=='number' && typeof JXG.isArray(arr2)) {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1*arr2[i]; }
-    } else if (typeof JXG.IsArray(arr1) && typeof JXG.IsArray(arr2)) {
+    } else if (typeof JXG.isArray(arr1) && typeof JXG.isArray(arr2)) {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]*arr2[i]; }
     } else if (typeof arr1=='number' && typeof arr2=='number') {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1*arr2; }
@@ -215,11 +215,11 @@ JXG.MathStatistics.prototype.multiply = function(arr1,arr2) {
 
 JXG.MathStatistics.prototype.subtract = function(arr1,arr2) {
     var res = [];
-    if (typeof JXG.IsArray(arr1) && typeof arr2=='number') {
+    if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]-arr2; }
-    } else if (typeof arr1=='number' && typeof JXG.IsArray(arr2)) {
+    } else if (typeof arr1=='number' && typeof JXG.isArray(arr2)) {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1-arr2[i]; }
-    } else if (typeof JXG.IsArray(arr1) && typeof JXG.IsArray(arr2)) {
+    } else if (typeof JXG.isArray(arr1) && typeof JXG.isArray(arr2)) {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]-arr2[i]; }
     } else if (typeof arr1=='number' && typeof arr2=='number') {
         for (var i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1-arr2; }

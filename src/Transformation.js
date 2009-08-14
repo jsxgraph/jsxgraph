@@ -87,10 +87,10 @@ JXG.Transformation.prototype.setMatrix = function(board,type,params) {
         };
     } else if (type=='reflect') {  // Input: line or two points
         if (params.length<4) { // line or two points
-            params[0] = JXG.GetReferenceFromParameter(board,params[0]);
+            params[0] = JXG.getReference(board,params[0]);
         }
         if (params.length==2) { // two points
-            params[1] = JXG.GetReferenceFromParameter(board,params[1]);
+            params[1] = JXG.getReference(board,params[1]);
         }
         if (params.length==4) { // 4 coordinates [px,py,qx,qy]
             this.evalParam = JXG.createEvalFunction(board,params,4);
@@ -128,7 +128,7 @@ JXG.Transformation.prototype.setMatrix = function(board,type,params) {
         } else if (params.length<=2) { // angle, p or angle
             this.evalParam = JXG.createEvalFunction(board,params,1);
             if (params.length==2) {
-                params[1] = JXG.GetReferenceFromParameter(board,params[1]);
+                params[1] = JXG.getReference(board,params[1]);
             } 
         }
         this.update = function() {
@@ -194,7 +194,7 @@ JXG.Transformation.prototype.apply = function(p){
  */
 JXG.Transformation.prototype.applyOnce = function(p){
     var c, len, i;
-    if (!JXG.IsArray(p)) {   
+    if (!JXG.isArray(p)) {   
         this.update();
         c = JXG.Math.matVecMult(this.matrix,p.coords.usrCoords);
         p.coords.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
@@ -213,7 +213,7 @@ JXG.Transformation.prototype.applyOnce = function(p){
  */
 JXG.Transformation.prototype.bindTo = function(p){
     var i, len;
-    if (JXG.IsArray(p)) {   
+    if (JXG.isArray(p)) {   
         len = p.length;
         for (i=0; i<len; i++) {
             p[i].transformations.push(this);

@@ -58,11 +58,11 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
 
     this.init(board, id, '');
     
-    if(!JXG.IsArray(ids)) {
+    if(!JXG.isArray(ids)) {
         ids = [null, null, null, null];
     }
     
-    if(!JXG.IsArray(names)) {
+    if(!JXG.isArray(names)) {
         names = [null, null, null, null];
     }
 
@@ -70,19 +70,19 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
      * Midpoint of the sector.
      * @type JXG.Point
      */
-    this.point1 = JXG.GetReferenceFromParameter(this.board, p1);
+    this.point1 = JXG.getReference(this.board, p1);
 
     /**
      * Point defining the sectors circle.
      * @type JXG.Point
      */    
-    this.point2 = JXG.GetReferenceFromParameter(this.board, p2);
+    this.point2 = JXG.getReference(this.board, p2);
     
     /**
      * The point defining the angle of the sector.
      * @type JXG.Point
      */
-    this.point3 = JXG.GetReferenceFromParameter(this.board, p3);
+    this.point3 = JXG.getReference(this.board, p3);
 
     /**
      * This is just for the hasPoint() method. Precision for highlighting.
@@ -105,13 +105,13 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
     this.addChild(p);
     p.update = function() {
         var circle = {}; // um projectToCircle benutzen zu koennen
-        circle.midpoint = JXG.GetReferenceFromParameter(this.board, p1);
-        var radius = (Math.sqrt(Math.pow(JXG.GetReferenceFromParameter(this.board, p1).coords.usrCoords[1]-JXG.GetReferenceFromParameter(this.board, p2).coords.usrCoords[1],2) + Math.pow(JXG.GetReferenceFromParameter(this.board, p1).coords.usrCoords[2]-JXG.GetReferenceFromParameter(this.board, p2).coords.usrCoords[2],2)));
+        circle.midpoint = JXG.getReference(this.board, p1);
+        var radius = (Math.sqrt(Math.pow(JXG.getReference(this.board, p1).coords.usrCoords[1]-JXG.getReference(this.board, p2).coords.usrCoords[1],2) + Math.pow(JXG.getReference(this.board, p1).coords.usrCoords[2]-JXG.getReference(this.board, p2).coords.usrCoords[2],2)));
 
         circle.getRadius = function() {
             return radius;
         };
-        p4coords = this.board.algebra.projectPointToCircle(JXG.GetReferenceFromParameter(this.board, p3),circle);
+        p4coords = this.board.algebra.projectPointToCircle(JXG.getReference(this.board, p3),circle);
         this.coords = p4coords;
         this.board.renderer.updatePoint(this);
         
@@ -197,7 +197,7 @@ JXG.Sector.prototype.getRadius = function() {
 JXG.createSector = function(board, parentArr, atts) {
     var el;
     // Alles 3 Punkte?
-    if ( (JXG.IsPoint(parentArr[0])) && (JXG.IsPoint(parentArr[1])) && (JXG.IsPoint(parentArr[2]))) {
+    if ( (JXG.isPoint(parentArr[0])) && (JXG.isPoint(parentArr[1])) && (JXG.isPoint(parentArr[2]))) {
         el = new JXG.Sector(board, parentArr[0], parentArr[1], parentArr[2], atts["ids"], atts["names"], atts['id']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
@@ -227,7 +227,7 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
     }
     
     // Alles 3 Punkte?
-    if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) && (JXG.IsPoint(parents[2]))) {
+    if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
         mp = board.createElement('circumcirclemidpoint',[parents[0], parents[1], parents[2]], {id:idmp, withLabel:false, visible:false});
         det = (parents[0].coords.usrCoords[1]-parents[2].coords.usrCoords[1])*(parents[0].coords.usrCoords[2]-parents[1].coords.usrCoords[2]) -
               (parents[0].coords.usrCoords[2]-parents[2].coords.usrCoords[2])*(parents[0].coords.usrCoords[1]-parents[1].coords.usrCoords[1]);

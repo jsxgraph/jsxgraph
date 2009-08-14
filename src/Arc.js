@@ -71,17 +71,17 @@ JXG.Arc = function (board, p1, p2, p3, id, name, withLabel) {
      * Midpoint of the arc.
      * @type JXG.Point
      */
-    this.midpoint = JXG.GetReferenceFromParameter(this.board, p1);
+    this.midpoint = JXG.getReference(this.board, p1);
     /**
      * Point defining the arcs circle.
      * @type JXG.Point
      */
-    this.point2 = JXG.GetReferenceFromParameter(this.board, p2);
+    this.point2 = JXG.getReference(this.board, p2);
     /**
      * The point defining the angle of the arc.
      * @type JXG.Point
      */
-    this.point3 = JXG.GetReferenceFromParameter(this.board, p3);
+    this.point3 = JXG.getReference(this.board, p3);
     
     /**
      * This is just for the hasPoint() method. Precision for highlighting.
@@ -303,7 +303,7 @@ JXG.createArc = function(board, parents, attributes) {
         attributes['withLabel'] = false;
     }    
     // Alles 3 Punkte?
-    if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) && (JXG.IsPoint(parents[2]))) {
+    if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
         el = new JXG.Arc(board, parents[0], parents[1], parents[2], attributes['id'], attributes['name'],attributes['withLabel']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
@@ -332,7 +332,7 @@ JXG.createSemicircle = function(board, parents, attributes) {
         idmp = attributes['id']+'_mp';
     }
     // Alles 2 Punkte?
-    if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) ) {
+    if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) ) {
         mp = board.createElement('midpoint', [parents[0], parents[1]], {id:idmp, withLabel:false, visible:false});
         el = new JXG.Arc(board, mp, parents[1], parents[0], attributes['id'], attributes['name'],attributes['withLabel']);
     } // Ansonsten eine fette Exception um die Ohren hauen
@@ -363,7 +363,7 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
     }
     
     // Alles 3 Punkte?
-    if ( (JXG.IsPoint(parents[0])) && (JXG.IsPoint(parents[1])) && (JXG.IsPoint(parents[2]))) {
+    if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
         mp = board.createElement('circumcirclemidpoint',[parents[0], parents[1], parents[2]], {id:idmp, withLabel:false, visible:false});
         det = (parents[0].coords.usrCoords[1]-parents[2].coords.usrCoords[1])*(parents[0].coords.usrCoords[2]-parents[1].coords.usrCoords[2]) -
               (parents[0].coords.usrCoords[2]-parents[2].coords.usrCoords[2])*(parents[0].coords.usrCoords[1]-parents[1].coords.usrCoords[1]);

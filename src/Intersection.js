@@ -89,14 +89,14 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
      * @type JXG.GeometryElement
      * @see #intersect2
      */
-    this.intersect1 = JXG.GetReferenceFromParameter(this.board, Intersect1);
+    this.intersect1 = JXG.getReference(this.board, Intersect1);
 
     /**
      * Geometry element that is intersected with intersect1.
      * @type JXG.GeometryElement
      * @see #intersect1
      */
-    this.intersect2 = JXG.GetReferenceFromParameter(this.board, Intersect2);
+    this.intersect2 = JXG.getReference(this.board, Intersect2);
 
     /**
      * Type of this object. For internal use only.
