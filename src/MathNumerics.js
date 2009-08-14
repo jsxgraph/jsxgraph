@@ -407,12 +407,46 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
 
 /**
  * Computes the polynomial through a given set of coordinates in Lagrange form.
+ * Returns the Lagrange polynomials, see
+ * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
+ * SIAM Review, Vol 46, No 3, (2004) 501-517.
  * @param {array} p Array of JXG.Points
  * @type {function}
  * @return {function} A function of one parameter which returns the value of the polynomial,
  * whose graph runs through the given points.
  */
 JXG.Math.Numerics.lagrangePolynomial = function(p) {  
+    var w = [];
+    var fct = function(x,suspendedUpdate)  {
+        var i, k, len, xi, s,
+            num = 0, denom = 0;
+        
+        len = p.length;
+        if (!suspendedUpdate) {
+            for (i=0;i<len;i++) {
+                w[i] = 1.0;
+                xi = p[i].X();
+                for (k=0;k<len;k++) if (k!=i) {
+                    w[i] *= (xi-p[k].X());
+                }
+                w[i] = 1/w[i];
+             }
+        }
+        for (i=0;i<len;i++) {
+            xi = p[i].X();
+            if (x==xi) { 
+                return p[i].Y(); 
+            } else {
+                s = w[i]/(x-xi)
+                denom += s;
+                num += s*p[i].Y();
+            }
+        }
+        return nom/denom;
+    }
+    return fct;
+
+/*
     return function(x) {
         var i,k,t,
             len = p.length,
@@ -431,6 +465,7 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
         }
         return y;
     };
+*/    
 };
 
 /**
@@ -443,6 +478,69 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
  * @return {array} [f(t),g(t),0,p.length-1],
  */
 JXG.Math.Numerics.neville = function(p) {
+    var w = [];
+    
+    var xfct = function(t, suspendedUpdate) {
+        var i, d, L, s, 
+            bin = JXG.Math.binomial,
+            len = p.length,
+            len1 = len - 1,
+            num = 0.0, 
+            denom = 0.0;
+            
+        if (!suspendedUpdate) {
+            s = 1;
+            for (i=0;i<len;i++) {
+                w[i] = bin(len1,i)*s;
+                s *= (-1);
+            }
+        }
+
+        d = t;
+        for (i=0;i<len;i++) {
+            if (d==0) {
+                return p[i].X();
+            } else {
+                s = w[i]/d;
+                d--;
+                num   += p[i].X()*s;
+                denom += s;
+            }
+        }
+        return num/denom;
+    }
+    var yfct = function(t, suspendedUpdate) {
+        var i, d, L, s, 
+            bin = JXG.Math.binomial,
+            len = p.length,
+            len1 = len - 1,
+            num = 0.0, 
+            denom = 0.0;
+            
+        if (!suspendedUpdate) {
+            //L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
+            s = 1;
+            for (i=0;i<len;i++) {
+                w[i] = bin(len1,i)*s;
+                s *= (-1);
+            }
+        }
+
+        d = t;
+        for (i=0;i<len;i++) {
+            if (d==0) {
+                return p[i].Y();
+            } else {
+                s = w[i]/d;
+                d--;
+                num   += p[i].Y()*s;
+                denom += s;
+            }
+        }
+        return num/denom;
+    }
+    return [xfct, yfct, 0, function(){ return p.length-1;}];
+/*
     return [function(t) {
                 var i, d, L, s, 
                     bin = JXG.Math.binomial,
@@ -491,6 +589,7 @@ JXG.Math.Numerics.neville = function(p) {
             },
             0, function(){ return p.length-1;}
         ];
+*/        
 };
 
 /**
