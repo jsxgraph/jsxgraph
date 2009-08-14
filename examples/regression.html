@@ -31,38 +31,37 @@ curve.updateDataArray = function() {
     var i, len = data.length;
     for(i=0;i<len;i++) { this.dataY[i] = s.Value()*data[i]; }
 }
-
+brd.update();
 
 generateFunction = function() { 
     var container = []; 
     var dbg_count = 0;
     var fct = function(x,suspendedUpdate){
             var i, j, M, MT, y, B, c, s,
-                tmp, degree,
+                degree,
                 len = datax.length;                        // input data
                 
             degree = Math.floor(deg.Value());              // input data
             if (!suspendedUpdate) {
                 $('debug').innerHTML += (dbg_count++)+' ';
-                tmp = [];
+                M = [];
                 for (j=0;j<len;j++) {
-                    tmp.push([1]);
+                    M.push([1]);
                 }
                 for (i=1;i<=degree;i++) {
                     for (j=0;j<len;j++) {
-                        tmp[j][i] = tmp[j][i-1]*datax[j];  // input data
+                        M[j][i] = M[j][i-1]*datax[j];      // input data
                     }
                 }
-                M = new JXG.Math.Matrix(tmp);
-                y = new JXG.Math.Vector(curve.dataY);      // input data
+                y = curve.dataY;                           // input data
                 MT = JXG.Math.Matrix.transpose(M);
 
                 B = JXG.Math.matMatMult(MT,M);
                 c = JXG.Math.matVecMult(MT,y);
-                container = JXG.Math.Numerics.Gauss(new JXG.Math.Matrix(B), new JXG.Math.Vector(c));
+                container = JXG.Math.Numerics.Gauss(B, c);
             }
             
-            // Horner's scheme toevaluate polynomial
+            // Horner's scheme to evaluate polynomial
             s = container[degree];
             for (i=degree-1;i>=0;i--) {
                 s = (s*x+container[i]);

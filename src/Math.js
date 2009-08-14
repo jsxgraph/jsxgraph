@@ -256,22 +256,24 @@ JXG.Math.matMatMult = function(/** array */ mat1, /** array */ mat2) /** array *
 };
 
 /**
- * Matrix-matrix multiplication.
- * @param {JXG.Math.Matrix} M 
- * @return {JXG.Math.Matrix} transpose of M
+ * Transpose a matrix which is of type array of arrays.
+ * @param {Array} M 
+ * @return {Array} transpose of M
  */
-JXG.Math.Matrix.transpose = function(/** JXG.Math.Matrix */ M) /** JXG.Math.Matrix*/  {
-    var tmp = [], i, j, 
-        m = M.m(), 
-        n = M.n();
+JXG.Math.Matrix.transpose = function(/** Array */ M) /** Array*/  {
+    var MT = [], i, j, 
+        m, n;
+    
+    m = M.length;                   // number of rows of M
+    n = (M.length>0)?M[0].length:0; // number of columns of M
 
     for (i=0;i<n;i++) {
-        tmp.push([]);
+        MT.push([]);
         for (j=0;j<m;j++) {
-            tmp[i].push(M[j][i]);
+            MT[i].push(M[j][i]);
         }
     }
-    return new JXG.Math.Matrix(tmp);
+    return MT;
 }
 
 /**

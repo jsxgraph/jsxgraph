@@ -86,10 +86,22 @@ JXG.Math.Numerics.integration_type = JXG.INT_MILNE;
  */ 
 JXG.Math.Numerics.backwardSolve = function(/** JXG.Math.Matrix */ R, /** JXG.Math.Vector */ b) /** JXG.Math.Vector */ {
     var x = b,
+        m, n,
         i, j;
 
-    for (i = R.m()-1; i >= 0; i--) {
-        for (j = R.n()-1; j > i; j--) {
+    // m: number of rows of R
+    // n: number of columns of R
+    // Relaxation: R may be of type JXG.Math.Matrix or Array
+    //             b may be of type JXG.Math.Vector or Array
+    if (R.m) { // R is of type JXG.Math.Matrix
+        m = R.m();
+        n = R.n();
+    } else {   // R is of type array
+        m = R.length;
+        n = (R.length>0)?R[0].length:0;
+    }
+    for (i = m-1; i >= 0; i--) {
+        for (j = n-1; j > i; j--) {
             x[i] -= R[i][j] * x[j];
         }
         x[i] /= R[i][i];
@@ -100,6 +112,7 @@ JXG.Math.Numerics.backwardSolve = function(/** JXG.Math.Matrix */ R, /** JXG.Mat
 
 /**
  * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
+ * The algorithm runs in-place. I.e. the entries of A and b are changed.
  * @param A Square matrix containing the coefficients of the lineare equation system.
  * @param b A vector containing the linear equation system's right hand side. 
  * @throws {JXG.DimensionMismatchException} If a non-square-matrix is given or the b has not the right length.
@@ -108,19 +121,29 @@ JXG.Math.Numerics.backwardSolve = function(/** JXG.Math.Matrix */ R, /** JXG.Mat
  */
 JXG.Math.Numerics.Gauss = function(/** JXG.Math.Matrix */ A, /** JXG.Math.Vector */ b) /** JXG.Math.Vector */ {
     var eps = JXG.Math.eps,
+        n,                 
         i, j, k, P,
         x, y;
     
+    // n: number of columns of A
+    // Relaxation: A may be of type JXG.Math.Matrix or Array
+    //             b may be of type JXG.Math.Vector or Array
+    if (A.n) { // A is of type JXG.Math.Matrix
+        n = A.n();
+    } else {   // A is of type array
+        n = (A.length>0)?A[0].length:0;
+    }
+    
     /* vector to keep track of permutations caused by pivotion */
     P = new JXG.Math.Vector();
-    for (i = 0; i < A.n(); i++) {
+    for (i = 0; i < n; i++) {
         P.push(i);
     }
     
    /* Gauss-Jordan-elimination */
-    for (j=0; j < A.n(); j++)
+    for (j=0; j < n; j++)
     {
-        for (i = A.n()-1; i > j; i--) {
+        for (i = n-1; i > j; i--) {
             /* Is the element which is to eliminate greater than zero? */
             if (Math.abs(A[i][j]) > JXG.Math.eps) {
                 /* Equals pivot element zero? */
@@ -136,7 +159,7 @@ JXG.Math.Numerics.Gauss = function(/** JXG.Math.Matrix */ A, /** JXG.Math.Vector
                     /* Transform right-hand-side b */
                     b[i] -= A[i][j] * b[j];
                     /* subtract the multiple of A[i][j] / A[j][j] of the j-th row from the i-th. */
-                    for (k = j + 1; k < A.n(); k ++) {
+                    for (k = j + 1; k < n; k ++) {
                         A[i][k] -= A[i][j] * A[j][k];
                     }
                 }
@@ -147,13 +170,16 @@ JXG.Math.Numerics.Gauss = function(/** JXG.Math.Matrix */ A, /** JXG.Math.Vector
         }
     }
    
+    return JXG.Math.Numerics.backwardSolve(A, b); // return Array
+    /* 
     y = JXG.Math.Numerics.backwardSolve(A, b);
     x = new JXG.Math.Vector();
-    for (i = 0; i < y.n(); i++) {
+    for (i = 0; i < n ; i++) { // y.n()
         x.push(y[P[i]]);
     }
    
-    return x;
+    return x; // return JXG.Math.Vector
+    */
 };
 
 /**
