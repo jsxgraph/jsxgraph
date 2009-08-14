@@ -31,6 +31,9 @@
  */
 var JXG = {};
 
+// Further global variables:
+var i, s, n, arr;
+
 // Minified-Modus: ja, nein
 JXG.useMinify = false;
 
@@ -60,12 +63,12 @@ JXG.rendererFiles = [];
     //JXG.rendererFiles['silverlight'] = 'Silverlight,createSilverlight,SilverlightRenderer';
 JXG.requirePath = '';
 
-for (var i=0;i<document.getElementsByTagName("script").length;i++) {
-    var s = document.getElementsByTagName("script")[i];
+for (i=0;i<document.getElementsByTagName("script").length;i++) {
+    s = document.getElementsByTagName("script")[i];
     if (s.src && s.src.match(/loadjsxgraph\.js(\?.*)?$/)) {
         JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/,'');
-        var arr = JXG.baseFiles.split(',');
-        for (var n=0;n<arr.length;n++) 
+        arr = JXG.baseFiles.split(',');
+        for (n=0;n<arr.length;n++) 
             (function(include) { JXG.require(JXG.requirePath+include+'.js');})(arr[n]);
     }
 }
