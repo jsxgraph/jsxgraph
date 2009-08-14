@@ -43,7 +43,7 @@ generateFunction = function() {
                 
             degree = Math.floor(deg.Value());              // input data
             if (!suspendedUpdate) {
-                $('debug').innerHTML += (dbg_count++)+' ';
+                //$('debug').innerHTML += (dbg_count++)+' ';
                 M = [];
                 for (j=0;j<len;j++) {
                     M.push([1]);
@@ -75,6 +75,7 @@ regressionPolynomial = generateFunction();
 
 reg = brd.createElement('functiongraph',[regressionPolynomial],{strokeColor:'black'});     
 brd.createElement('glider',[100,30,reg],{strokeColor:'black'});     
+regD = brd.createElement('functiongraph',[brd.D(regressionPolynomial)],{strokeColor:'black'});     
 
 
   /* ]]> */

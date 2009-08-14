@@ -37,6 +37,7 @@
 
         p2 = board.createElement('glider', [graph], {style:6, name:'P'});
         g = board.D(f);
+        g2 = board.createElement('functiongraph', [g, -10, 10],{dash:4});
         p3 = board.createElement('point', [function() { return p2.X()+1;}, function() {return p2.Y()+board.D(graph.Y)(p2.X());}], {style:1, name:''});
         l1 = board.createElement('line', [p2,p3],{});
         p4 = board.createElement('point', [function() { return p3.X();}, function() {return p2.Y();}],{style:1, name:''});

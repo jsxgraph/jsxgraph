@@ -445,7 +445,7 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
 JXG.Math.Numerics.neville = function(p) {
     return [function(t) {
                 var i, d, L, s, 
-                    func = JXG.Math.binomial,
+                    bin = JXG.Math.binomial,
                     len = p.length,
                     len1 = len - 1,
                     num = 0.0, 
@@ -457,7 +457,7 @@ JXG.Math.Numerics.neville = function(p) {
                         return p[i].X();
                     } else {
                         //L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
-                        L = func(len1,i)*s/d;
+                        L = bin(len1,i)*s/d;
                         s *= (-1);
                         d -= 1;
                     }
@@ -468,7 +468,7 @@ JXG.Math.Numerics.neville = function(p) {
             },
             function(t) {
                 var i, d, L, s, 
-                    func = JXG.Math.binomial,
+                    bin = JXG.Math.binomial,
                     len = p.length,
                     len1 = len - 1,
                     num = 0.0, 
@@ -480,7 +480,7 @@ JXG.Math.Numerics.neville = function(p) {
                         return p[i].Y();
                     } else {
                         //L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
-                        L = func(len1,i)*s/d;
+                        L = bin(len1,i)*s/d;
                         s *= (-1);
                         d -= 1;
                     }
@@ -498,17 +498,18 @@ JXG.Math.Numerics.neville = function(p) {
  * @param {function} f Function in one variable to be differentiated.
  * @param {object} obj Optional object that is treated as "this" in the function body. This is useful, if the function is a 
  *                 method of an object and contains a reference to its parent object via "this".
+ * suspendUpdate is piped through, {@link JXG.Curve#updateCurve} and {@link JXG.Curve#hasPoint}.
  * @type {function}
  * @return {function} Derivative function of a given function f.
  */
 JXG.Math.Numerics.D = function(/** function */ f, /** object */ obj) /* function */ {
     var h = 0.00001,
-        h2 = h*2.0;
-        
-    if (arguments.length==1){ 
-        return function(x){ return (f(x+h)-f(x-h))/h2; };
-    } else { // set "this" to "obj" in f 
-        return function(x){ return (f.apply(obj,[x+h])-f.apply(obj,[x-h]))/h2; };
+        h2 = 1.0/(h*2.0);
+    
+    if (arguments.length==1 || (arguments.length>1 && typeof arguments[1]=='undefined') ){ 
+        return function(x,suspendUpdate){ return (f(x+h,suspendUpdate)-f(x-h,suspendUpdate))*h2; };
+    } else {                   // set "this" to "obj" in f 
+        return function(x,suspendUpdate){ return (f.apply(obj,[x+h,suspendUpdate])-f.apply(obj,[x-h,suspendUpdate]))*h2; };
     }
 };
 
