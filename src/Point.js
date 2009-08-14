@@ -174,7 +174,6 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
      * @name JXG.Point#style
      * @deprecated
      */
-    /* TODO: muss das noch hier stehen? wird nicht mehr benutzt, aber in setProperty kann noch style:xy gesetzt werden! -> wird in face/size uebertragen */
     this.visProp['style'] = this.board.options.point.style;
     
     /**

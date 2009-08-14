@@ -120,7 +120,7 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
     }
     
     // create label 
-    this.createLabel(withLabel);
+    this.createLabel(withLabel,[0,0]);
     
     /* Register polygon at board */
     this.id = this.board.addPolygon(this);

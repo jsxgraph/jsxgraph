@@ -718,7 +718,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
             var oldCoords = this.drag_obj.coords;
             // First the new position of the glider is set to the new mouse position
             this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
-            // Then, from this position we comute the projection to the object the glider on which the glider lives.
+            // Then, from this position we compute the projection to the object the glider on which the glider lives.
             if(this.drag_obj.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
                 this.drag_obj.coords = this.algebra.projectPointToCircle(this.drag_obj, this.drag_obj.slideObject);
             } else if (this.drag_obj.slideObject.type == JXG.OBJECT_TYPE_LINE) {
