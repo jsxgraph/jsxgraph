@@ -34,6 +34,7 @@ curve.updateDataArray = function() {
 generateFunction = function() { 
     var container = []; 
     var dbg_count = 0;
+    var term = '';
     var fct = function(x,suspendedUpdate){
             var i, j, M, MT, y, B, c, s,
                 degree,
@@ -57,6 +58,8 @@ generateFunction = function() {
                 B = JXG.Math.matMatMult(MT,M);
                 c = JXG.Math.matVecMult(MT,y);
                 container = JXG.Math.Numerics.Gauss(B, c);
+                
+                term = JXG.Math.Numerics.generatePolynomialTerm(container,degree,'x',3);         
             }
             
             // Horner's scheme to evaluate polynomial
@@ -66,6 +69,9 @@ generateFunction = function() {
             }
             return s;
         };
+        fct.getTerm = function() {
+            return term;
+        };
         return fct;
     }
     
@@ -74,6 +80,11 @@ regressionPolynomial = generateFunction();
 reg = brd.createElement('functiongraph',[regressionPolynomial],{strokeColor:'black'});     
 brd.createElement('glider',[100,30,reg],{strokeColor:'black'});     
 regD = brd.createElement('functiongraph',[brd.D(regressionPolynomial)],{strokeColor:'black'});     
+
+t = brd.createElement('text',[20,40,
+            function(){ return "r(x) = " + regressionPolynomial.getTerm();}
+            ],
+            {strokeColor:'black',fontSize:'14px'});     
 
 
   /* ]]> */

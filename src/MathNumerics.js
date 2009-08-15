@@ -406,6 +406,23 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
 };
 
 /**
+  * Generate a string containing the function term of a polynomial.
+  * @param {Array} coeffs Coefficients of the polynomial. The position i belongs to x^i.
+  * @param {int} deg Degree of the polynomial
+  * @param {String} varname Name of the variable (usually 'x')
+  * @param {int} prec Precision
+  * @return {String} String containg the function term of the polynomial.
+  */
+JXG.Math.Numerics.generatePolynomialTerm = function(coeffs,deg,varname,prec) {
+    var t = '', i;
+    for (i=deg;i>=0;i--) {
+        t += '('+coeffs[i].toPrecision(prec)+')';
+        if (i>1) { t+='*'+varname+'<sup>'+i+'</sup> + '; }
+        else if (i==1) { t+='*'+varname+' + '; }
+    }
+    return t;
+}
+/**
  * Computes the polynomial through a given set of coordinates in Lagrange form.
  * Returns the Lagrange polynomials, see
  * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
@@ -417,6 +434,7 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
  */
 JXG.Math.Numerics.lagrangePolynomial = function(p) {  
     var w = [];
+    var term = '';
     var fct = function(x,suspendedUpdate)  {
         var i, k, len, xi, s,
             num = 0, denom = 0;
@@ -431,7 +449,30 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
                 }
                 w[i] = 1/w[i];
              }
+
+            M = [];
+            for (j=0;j<len;j++) {
+                M.push([1]);
+            }
+            for (i=1;i<=degree;i++) {
+                    for (j=0;j<len;j++) {
+                        M[j][i] = M[j][i-1]*datax[j];      // input data
+                    }
+                }
+                y = curve.dataY;                           // input data
+                MT = JXG.Math.Matrix.transpose(M);
+
+                B = JXG.Math.matMatMult(MT,M);
+                c = JXG.Math.matVecMult(MT,y);
+                container = JXG.Math.Numerics.Gauss(B, c);
+                
+                for (i=degree, term='';i>=0;i--) {
+                    term += '('+container[i].toPrecision(3)+')';
+                    if (i>1) { term+='*x<sup>'+i+'</sup> + '; }
+                    else if (i==1) { term+='*x + '; }
+                }
         }
+        
         for (i=0;i<len;i++) {
             xi = p[i].X();
             if (x==xi) { 
@@ -442,8 +483,12 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
                 num += s*p[i].Y();
             }
         }
-        return nom/denom;
+        return num/denom;
     }
+    fct.getTerm = function() {
+        return term;
+    };
+    
     return fct;
 
 /*
