@@ -31,25 +31,25 @@
  */
 var JXG = {};
 
-// Further global variables:
-var i, s, n, arr;
+(function(){ // Hide the initialization in an anonymous function
+    var i, s, n, arr;
 
-// Minified-Modus: ja, nein
-JXG.useMinify = false;
+    // Minified-Modus: ja, nein
+    JXG.useMinify = false;
 
-JXG.countDrawings = 0;
-JXG.countTime = 0;
-JXG.require = function(libraryName) {
-    document.write('<script type="text/javascript" src="' + libraryName + '"><\/script>');
-};
-JXG.baseFiles;
+    JXG.countDrawings = 0;
+    JXG.countTime = 0;
+    JXG.require = function(libraryName) {
+        document.write('<script type="text/javascript" src="' + libraryName + '"><\/script>');
+    };
+    JXG.baseFiles;
 
-if (!JXG.useMinify) {
-    JXG.baseFiles ='Math,MathNumerics,MathStatistics,MathSymbolic,Complex,AbstractRenderer,FileReader,GeonextReader,GeogebraReader,IntergeoReader,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Polygon,Curve,Arc,Sector,Angle,Algebra,Intersection,Composition,Text,Image,Slider,Chart,Transformation,Turtle,RGBColor,Board,Options,Wrappers,Ticks,Util,Pstricks';
-} else {
-    JXG.baseFiles = 'jxg';
-}
-JXG.rendererFiles = [];
+    if (!JXG.useMinify) {
+        JXG.baseFiles ='Math,MathNumerics,MathStatistics,MathSymbolic,Complex,AbstractRenderer,FileReader,GeonextReader,GeogebraReader,IntergeoReader,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Polygon,Curve,Arc,Sector,Angle,Algebra,Intersection,Composition,Text,Image,Slider,Chart,Transformation,Turtle,RGBColor,Board,Options,Wrappers,Ticks,Util,Pstricks';
+    } else {
+        JXG.baseFiles = 'jxg';
+    }
+    JXG.rendererFiles = [];
     if (JXG.useMinify) {
         JXG.rendererFiles['svg'] = 'SVGRendererMinify';
     } else {
@@ -61,17 +61,19 @@ JXG.rendererFiles = [];
         JXG.rendererFiles['vml'] = 'VMLRenderer';
     }
     //JXG.rendererFiles['silverlight'] = 'Silverlight,createSilverlight,SilverlightRenderer';
-JXG.requirePath = '';
+    JXG.requirePath = '';
 
-for (i=0;i<document.getElementsByTagName("script").length;i++) {
-    s = document.getElementsByTagName("script")[i];
-    if (s.src && s.src.match(/loadjsxgraph\.js(\?.*)?$/)) {
-        JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/,'');
-        arr = JXG.baseFiles.split(',');
-        for (n=0;n<arr.length;n++) 
-            (function(include) { JXG.require(JXG.requirePath+include+'.js');})(arr[n]);
+    for (i=0;i<document.getElementsByTagName("script").length;i++) {
+        s = document.getElementsByTagName("script")[i];
+        if (s.src && s.src.match(/loadjsxgraph\.js(\?.*)?$/)) {
+            JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/,'');
+            arr = JXG.baseFiles.split(',');
+            for (n=0;n<arr.length;n++) {
+                (function(include) { JXG.require(JXG.requirePath+include+'.js');})(arr[n]);
+            }
+        }
     }
-}
 
-JXG.baseFiles = null;
-JXG.serverBase = JXG.requirePath + 'server/';
+    JXG.baseFiles = null;
+    JXG.serverBase = JXG.requirePath + 'server/';
+})();

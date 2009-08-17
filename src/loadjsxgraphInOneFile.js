@@ -30,20 +30,23 @@
  * @namespace
  */
 var JXG = {};
-//JXG.useMinify = true;
-JXG.countDrawings = 0;
-JXG.countTime = 0;
-JXG.require = function(libraryName) {};
-JXG.rendererFiles = [];
-JXG.rendererFiles['svg'] = 'SVGRenderer';
-JXG.rendererFiles['vml'] = 'VMLRenderer';
-JXG.baseFiles = null;
-// this maybe required by additional software/extensions and/or future renderers
-JXG.requirePath = '';
-for (var i=0;i<document.getElementsByTagName("script").length;i++) {
-    var s = document.getElementsByTagName("script")[i];
-    if (s.src && s.src.match(/loadjsxgraphInOneFile\.js(\?.*)?$/))
-        JXG.requirePath = s.src.replace(/loadjsxgraphInOneFile\.js(\?.*)?$/,'');
-}
-
+(function(){
+    var i, s;
+    //JXG.useMinify = true;
+    JXG.countDrawings = 0;
+    JXG.countTime = 0;
+    JXG.require = function(libraryName) {};
+    JXG.rendererFiles = [];
+    JXG.rendererFiles['svg'] = 'SVGRenderer';
+    JXG.rendererFiles['vml'] = 'VMLRenderer';
+    JXG.baseFiles = null;
+    // this maybe required by additional software/extensions and/or future renderers
+    JXG.requirePath = '';
+    for (i=0;i<document.getElementsByTagName("script").length;i++) {
+        s = document.getElementsByTagName("script")[i];
+        if (s.src && s.src.match(/loadjsxgraphInOneFile\.js(\?.*)?$/)) {
+            JXG.requirePath = s.src.replace(/loadjsxgraphInOneFile\.js(\?.*)?$/,'');
+        }
+    }
 JXG.serverBase = JXG.requirePath + 'server/';
+})();
