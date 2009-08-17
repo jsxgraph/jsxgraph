@@ -638,6 +638,73 @@ JXG.Math.Numerics.neville = function(p) {
 };
 
 /**
+ * Computes the regression polynomial of a given degree through a given set of coordinates.
+ * Returns the regression polynomial function.
+ * @param degree number, function or slider.
+ * @param dataX x-coordinates of the data set
+ * @param dataY y-coordinates of the data set
+ * @type {function}
+ * @return {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
+ * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
+ */
+JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) { 
+    var coeffs = []; 
+    var dbg_count = 0;
+    var deg;
+    var term = '';
+    
+    if (JXG.isPoint(degree) && typeof degree.Value == 'function') {  // Slider
+        deg = function(){return degree.Value();};
+    } else if (JXG.isFunction(degree)) {
+        deg = degree;
+    } else if (JXG.isNumber(degree)) {
+        deg = function(){return degree;};
+    } else {
+        throw ("JSXGraph error: Can't create regressionPolynomial from degree of type'" + (typeof degree) + "'.");
+    }
+    
+    var fct = function(x,suspendedUpdate){
+            var i, j, M, MT, y, B, c, s,
+                d,
+                len = dataX.length;                        // input data
+                
+            d = Math.floor(deg());                         // input data
+            if (!suspendedUpdate) {
+                //$('debug').innerHTML = 'Number of unsuspended calls: '+(dbg_count++)+'<br>';
+                M = [];
+                for (j=0;j<len;j++) {
+                    M.push([1]);
+                }
+                for (i=1;i<=d;i++) {
+                    for (j=0;j<len;j++) {
+                        M[j][i] = M[j][i-1]*dataX[j];      // input data
+                    }
+                }
+                y = dataY;                                 // input data
+                MT = JXG.Math.Matrix.transpose(M);
+
+                B = JXG.Math.matMatMult(MT,M);
+                c = JXG.Math.matVecMult(MT,y);
+                coeffs = JXG.Math.Numerics.Gauss(B, c);
+                
+                term = JXG.Math.Numerics.generatePolynomialTerm(coeffs,d,'x',3);         
+            }
+            
+            // Horner's scheme to evaluate polynomial
+            s = coeffs[d];
+            for (i=d-1;i>=0;i--) {
+                s = (s*x+coeffs[i]);
+            }
+            return s;
+    };
+    fct.getTerm = function() {
+        return term;
+    };
+    return fct;
+}
+    
+
+/**
  * Numerical (symmetric) approximation of derivative.
  * @param {function} f Function in one variable to be differentiated.
  * @param {object} obj Optional object that is treated as "this" in the function body. This is useful, if the function is a 

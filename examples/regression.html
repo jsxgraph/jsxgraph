@@ -31,6 +31,7 @@ curve.updateDataArray = function() {
 }
 //brd.update();
 
+/*
 generateFunction = function() { 
     var container = []; 
     var dbg_count = 0;
@@ -74,12 +75,13 @@ generateFunction = function() {
         };
         return fct;
     }
-    
-regressionPolynomial = generateFunction();
+*/
+
+regressionPolynomial = JXG.Math.Numerics.regressionPolynomial(deg,datax,curve.dataY);  // generateFunction();
 
 reg = brd.createElement('functiongraph',[regressionPolynomial],{strokeColor:'black'});     
 brd.createElement('glider',[100,30,reg],{strokeColor:'black'});     
-regD = brd.createElement('functiongraph',[brd.D(regressionPolynomial)],{strokeColor:'black'});     
+regD = brd.createElement('functiongraph',[brd.D(regressionPolynomial)],{strokeColor:'red'});     
 
 t = brd.createElement('text',[20,40,
             function(){ return "r(x) = " + regressionPolynomial.getTerm();}
