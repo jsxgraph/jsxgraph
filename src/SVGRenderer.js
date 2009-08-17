@@ -438,27 +438,6 @@ JXG.SVGRenderer.prototype.removeGrid = function(board) {
         c.removeChild(c.firstChild);
     }
 };
-
-JXG.SVGRenderer.prototype.setObjectDash = function(el) {
-    var node, dashStyle;
-    if(el.elementClass != JXG.OBJECT_CLASS_POINT) { // Punkte haben keine dash-Eigenschaft
-        if(el.type == JXG.OBJECT_TYPE_ANGLE) {
-            node = el.rendNode2;
-        }
-        else {
-            node = el.rendNode;
-        }
-        if(el.visProp['dash'] > 0) {
-            dashStyle = el.visProp['dash'];
-            node.setAttributeNS(null, 'stroke-dasharray', this.dashArray[dashStyle-1]);
-        }
-        else {
-            if(node.hasAttributeNS(null, 'stroke-dasharray')) {
-                node.removeAttributeNS(null, 'stroke-dasharray');
-            }
-        }
-    }
-};
  
 JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     var c, o, node;
@@ -654,11 +633,15 @@ JXG.SVGRenderer.prototype.unsuspendRedraw = function() {
 };
 
 JXG.SVGRenderer.prototype.setDashStyle = function(el,visProp) {
-    var dashStyle;
-    if(visProp['dash'] > 0) {
-        dashStyle = visProp['dash'];
-        el.rendNode.setAttributeNS(null, 'stroke-dasharray', this.dashArray[dashStyle-1]);
+    var dashStyle = el.visProp['dash'], node = el.rendNode;
+    if(el.visProp['dash'] > 0) {
+        node.setAttributeNS(null, 'stroke-dasharray', this.dashArray[dashStyle-1]);
     }
+    else {
+        if(node.hasAttributeNS(null, 'stroke-dasharray')) {
+            node.removeAttributeNS(null, 'stroke-dasharray');
+        }
+    }    
 };
 
 JXG.SVGRenderer.prototype.setGridDash = function(id) {

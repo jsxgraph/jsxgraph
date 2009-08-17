@@ -537,21 +537,11 @@ JXG.VMLRenderer.prototype.show = function(el) {
     }
 };
 
-JXG.VMLRenderer.prototype.setObjectDash = function(el) {
-    var node, tmp;
-    if(el.elementClass != JXG.OBJECT_CLASS_POINT) { // Punkte haben keine dash-Eigenschaft
-        if(el.type == JXG.OBJECT_TYPE_ANGLE) {
-            node = el.rendNode; 
-            tmp = el.visProp['dash'];
-            node.setAttribute('dashstyle', this.dashArray[tmp]);            
-        }
-        else {
-            node = document.getElementById(el.id+'stroke');
-            if (node) {
-                tmp = el.visProp['dash'];
-                node.setAttribute('dashstyle', this.dashArray[tmp]);
-            }
-        }
+JXG.VMLRenderer.prototype.setDashStyle = function(el,visProp) {
+    var node;
+    if(visProp['dash'] >= 0) {
+        node = el.rendNodeStroke;
+        node.setAttribute('dashstyle', this.dashArray[visProp['dash']]);
     }
 };
  
@@ -659,14 +649,6 @@ JXG.VMLRenderer.prototype.setAttributes = function(node,props,vmlprops,visProp) 
             }
             node.setAttribute(vmlprops[i], val);
         }
-    }
-};
-
-JXG.VMLRenderer.prototype.setDashStyle = function(el,visProp) {
-    var node;
-    if(visProp['dash'] >= 0) {
-        node = el.rendNodeStroke;
-        node.setAttribute('dashstyle', this.dashArray[visProp['dash']]);
     }
 };
 
@@ -792,6 +774,7 @@ JXG.VMLRenderer.prototype.updateLinePrimitive = function(node,p1x,p1y,p2x,p2y) {
 };
 
 JXG.VMLRenderer.prototype.updateCirclePrimitive = function(node,x,y,r) {
+    //node.setAttribute('style','left:'+(x-r)+'px; top:'+(y-r)+'px; width:'+(r*2)+'px; height:'+ (r*2)+'px'); 
     node.style.left = (x-r)+'px';
     node.style.top = (y-r)+'px';    
     node.style.width = (r*2)+'px'; 

@@ -864,7 +864,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
 */
 JXG.GeometryElement.prototype.setDash = function(dash) {
     this.visProp['dash'] = dash;
-    this.board.renderer.setObjectDash(this);
+    this.board.renderer.setDashStyle(this,this.visProp);
 };
 
 /**

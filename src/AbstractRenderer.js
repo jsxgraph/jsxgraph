@@ -921,12 +921,6 @@ JXG.AbstractRenderer.prototype.setObjectStrokeWidth = function(/** JXG.GeometryE
 JXG.AbstractRenderer.prototype.setObjectStrokeColor = function(/** JXG.GeometryElement */ obj, /** string */ color, /** number */ opacity) { };
 
 /**
- * Changes an objects dash style.
- * @param obj Reference of the object that's dash style will be changed.
- */
-JXG.AbstractRenderer.prototype.setObjectDash = function(/** JXG.GeometryElement */ obj) { };
-   
-/**
  * Sets an objects fill color.
  * @param obj Reference of the object that wants a new fill color.
  * @param color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose 'none'.
