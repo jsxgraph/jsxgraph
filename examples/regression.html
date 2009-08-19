@@ -88,6 +88,17 @@ t = brd.createElement('text',[20,40,
             ],
             {strokeColor:'black',fontSize:'14px'});     
 
+// random coordinates after each update
+brd.suspendUpdate();
+pointlist = [];
+for (i=0; i<30;i++) {
+    pointlist.push(brd.createElement('point', [function() { return 200*Math.random(); }, function() { return -30*Math.random()-20;}], { style:4, strokecolor:"#0000a0", name:" "})); 
+}
+
+regression2 = JXG.Math.Numerics.regressionPolynomial(deg,pointlist); 
+reg2 = brd.createElement('functiongraph',[regression2],{strokeColor:'green'});     
+
+brd.unsuspendUpdate();
 
   /* ]]> */
   </script>

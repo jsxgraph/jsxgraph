@@ -297,7 +297,7 @@
                 <title>Reduce the download and initialization time</title>
                 <para>
                     The JavaScript source code of 
-                    JSXGraph version 0.76 consists of 20 files, which add up to about 980 kBytes including comments.
+                    JSXGraph version 0.76 consists of 20 individual files, which add up to about 980 kBytes including comments.
                     These 20 files are bundled together in one big file which is subsequently compressed by the 
                     YUI compressor<footnote><para><ulink url="http://developer.yahoo.com/yui/compressor/">http://developer.yahoo.com/yui/compressor/</ulink></para>
                     </footnote> from Yahoo!. 

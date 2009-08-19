@@ -641,17 +641,21 @@ JXG.Math.Numerics.neville = function(p) {
  * Computes the regression polynomial of a given degree through a given set of coordinates.
  * Returns the regression polynomial function.
  * @param degree number, function or slider.
- * @param dataX x-coordinates of the data set
- * @param dataY y-coordinates of the data set
+ * Either
+ * @param dataX array containing the x-coordinates of the data set
+ * @param dataY array containing the y-coordinates of the data set, 
+ * or
+ * @param data array consisting of JXG.Points.
  * @type {function}
  * @return {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
  * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
  */
 JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) { 
-    var coeffs = []; 
-    var dbg_count = 0;
-    var deg;
-    var term = '';
+    var coeffs = [],
+        dbg_count = 0,
+        deg, dX, dY,
+        inputType,
+        term = '';
     
     if (JXG.isPoint(degree) && typeof degree.Value == 'function') {  // Slider
         deg = function(){return degree.Value();};
@@ -663,24 +667,43 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
         throw ("JSXGraph error: Can't create regressionPolynomial from degree of type'" + (typeof degree) + "'.");
     }
     
+    if (arguments.length==3 && JXG.isArray(dataX) && JXG.isArray(dataY)) {              // Parameters degree, dataX, dataY
+        dX = dataX;
+        dY = dataY;
+        inputType = 0;
+    } else if ( arguments.length==2 && JXG.isArray(dataX) && JXG.isPoint(dataX[0]) ) {  // Parameters degree, point array
+        inputType = 1;
+    } else {
+        throw ("JSXGraph error: Can't create regressionPolynomial. Wrong parameters.");
+    }
+    
     var fct = function(x,suspendedUpdate){
             var i, j, M, MT, y, B, c, s,
                 d,
                 len = dataX.length;                        // input data
                 
-            d = Math.floor(deg());                         // input data
+            d = Math.floor(deg());                      // input data
             if (!suspendedUpdate) {
-                //$('debug').innerHTML = 'Number of unsuspended calls: '+(dbg_count++)+'<br>';
+                
+                if (inputType==1) {  // point list as input 
+                    dX = [];
+                    dY = [];
+                    for (i=0;i<len;i++) {
+                        dX[i] = dataX[i].X();
+                        dY[i] = dataX[i].Y();
+                    }
+                }
+                
                 M = [];
                 for (j=0;j<len;j++) {
                     M.push([1]);
                 }
                 for (i=1;i<=d;i++) {
                     for (j=0;j<len;j++) {
-                        M[j][i] = M[j][i-1]*dataX[j];      // input data
+                        M[j][i] = M[j][i-1]*dX[j];      // input data
                     }
                 }
-                y = dataY;                                 // input data
+                y = dY;                                 // input data
                 MT = JXG.Math.Matrix.transpose(M);
 
                 B = JXG.Math.matMatMult(MT,M);
