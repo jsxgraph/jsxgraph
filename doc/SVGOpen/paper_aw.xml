@@ -240,7 +240,14 @@
                         compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
                         In most cases, this is less than the same construction would take as non-interactive PNG image.
                         </listitem>
-                     <listitem>A very special, but decisive speed improvement has been done for the Internet Explorer.  
+                     <listitem>A very special, but decisive speed improvement has been done for the Internet Explorer version 6 and 7.  
+                     With the following piece of code which is executed at initialization time the update speed is improved by an order of magnitude.
+                <programlisting><![CDATA[
+    function MouseMove(e) {
+        document.body.scrollLeft;
+        document.body.scrollTop;
+    }
+    document.onmousemove = MouseMove;]]></programlisting>
                      </listitem>
                 </itemizedlist>
                 
@@ -255,14 +262,14 @@
                 <abbrev>Crockford2008</abbrev>
                 <authorgroup>
                     <author><personname>
-                        <firstname>Douglas.</firstname><surname>Crockford</surname>
+                        <firstname>Douglas</firstname><surname>Crockford</surname>
                     </personname></author>
                 </authorgroup>
                 <biblioid class="isbn">978-0-596-51774-8</biblioid>
                 <publisher>
                     <publishername>O'Reilly</publishername>
                 </publisher>
-                <title>JavvaScript: The Good Parts</title>
+                <title>JavaScript: The Good Parts</title>
             </biblioentry>
 
             <biblioentry xml:id="VML98">

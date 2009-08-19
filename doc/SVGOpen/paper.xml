@@ -146,7 +146,7 @@ Other file formats are under development. For example, JSXGraph is involved in t
                 That is one of the reason, why Internet Explorer is widely used in schools. Since we can not afford to exclude schools as
                 users of JSXGraph we had to adapt it to the Internet Explorer, too. Since the year 1998 
                 Microsoft<footnote><para>See <ulink url="http://www.w3.org/TR/1998/NOTE-VML-19980513">http://www.w3.org/TR/1998/NOTE-VML-19980513</ulink> for the specification.</para>
-                </footnote> <xref  linkend="VML98"/>
+                </footnote> <xref  linkend="VML98" />
                 supports VML 
                 - vector markup language - as vector graphic language in the Internet Explorer. 
                 Early in the development process of JSXGraph we decided to support SVG and VML directly, without using one of their
@@ -263,6 +263,43 @@ Other file formats are under development. For example, JSXGraph is involved in t
     </section>       
     <bibliography xmlns="http://docbook.org/ns/docbook">
         <bibliodiv><title>Books</title>
+            <biblioentry xml:id="Crockford2008">
+                <abbrev>Crockford2008</abbrev>
+                <authorgroup>
+                    <author><personname>
+                        <firstname>Douglas.</firstname><surname>Crockford</surname>
+                    </personname></author>
+                </authorgroup>
+                <biblioid class="isbn">978-0-596-51774-8</biblioid>
+                <publisher>
+                    <publishername>O'Reilly</publishername>
+                </publisher>
+                <title>JavvaScript: The Good Parts</title>
+            </biblioentry>
+
+            <biblioentry xml:id="VML98">
+                <abbrev>VML1998</abbrev>
+                <authorgroup>
+                    <author><personname><firstname>John</firstname><surname>Bowler</surname></personname></author>
+                    <author><personname><firstname>Howard</firstname><surname>Cooperstein</surname></personname></author>
+                    <author><personname><firstname>Brian</firstname><surname>Dister</surname></personname></author>
+                    <author><personname><firstname>Ajay</firstname><surname>Jindal</surname></personname></author>
+                    <author><personname><firstname>Daniel</firstname><surname>Lee</surname></personname></author>
+                    <author><personname><firstname>Brian</firstname><surname>Mathews</surname></personname></author>
+                    <author><personname><firstname>Tuan</firstname><surname>Nguyen</surname></personname></author>
+                    <author><personname><firstname>Troy</firstname><surname>Sandal</surname></personname></author>
+                    <author><personname><firstname>Peter</firstname><surname>Wu</surname></personname></author>
+                </authorgroup>
+                <copyright><year>1998</year>
+                    <holder>W3C</holder></copyright>
+                <biblioid class="isbn"></biblioid>
+                <publisher>
+                    <publishername>http://www.w3.org/TR/1998/NOTE-VML-19980513</publishername>
+                </publisher>
+                <title>Vector Markup Language (VML)</title>
+            </biblioentry>
+
+            <!-- OLD -->
             
             <biblioentry xml:id="AhoSethiUllman96">
                 <abbrev>AhoSethiUllman96</abbrev>
