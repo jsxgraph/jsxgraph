@@ -65,7 +65,7 @@
     </section>
     <section>
         <title>Mathematics</title>
-        <para>The originally intended purpose of JSXGraph was having a JavaScript library for displaying geometric constructions in a web browser. So it is possible to visualize geometric elements that are taught in schools and universities like points, lines, circles, arcs and angles, as well as predefined composition elements. JSXGraph not only provides tools for displaying geometric constructions but also for doing calculus like plotting curves starting from function graphs with tangents up to parametric and polar curves, splines or other interpolation methods. </para>
+        <para>The originally intended purpose of JSXGraph was having a JavaScript library for displaying geometric constructions in a web browser. So it is possible to visualize geometric elements that are taught in schools and universities like points, lines, circles, arcs, and angles, as well as predefined composition elements. JSXGraph not only provides tools for displaying geometric constructions but also for doing calculus like plotting curves starting from function graphs with tangents up to parametric and polar curves, splines or other interpolation methods. </para>
         <section>
             <title>JSXGraph as a web viewer for dynamic geometry software</title>
             <para>Dynamic geometry software (DGS) are computer programs which allow one to create and then manipulate geometric constructions, primarily in plane geometry. In most DGS, one starts construction by putting a few points and using them to define new objects such as lines, circles or other points. After some construction is done, one can move the points one started with and see how the construction changes.</para>
@@ -75,20 +75,20 @@
         <section>
             <title>Currently supported file formats</title>
             <para>Since JSXGraph has evolved from the GEONExT project, the support of its file format is almost complete. 
-Other file formats are under development. For example, JSXGraph is involved in the European Intergeo project which shall unite several dynamic geometry softwares (Geogebra, Cabri, GEONExT, Cinderella, etc.) agreeing about a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Another reader for reading Geogebra files directly is under development together with the developers of Geogebra.
+Other file formats are under development. For example, JSXGraph is involved in the European Intergeo project which shall unite several dynamic geometry softwares (Geogebra, Cabri, GEONExT, Cinderella, etc.) agreeing about a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Support for reading Geogebra files directly is under development in cooperation with the Geogebra developers.
             </para>
         </section>
         <section>
-            <title>Constructions from scratch</title>
-            <para> So JSXGraph contains functions for almost anything in euclidean geometry basing on points, lines, circles, arcs and polygons. Those can be intersected or constructed in predefined ways like for example a line that is parallel to another one or a point that is the midpoint between two other points. </para>
-            <para>In addition, JSXGraph uses the style properties that are offered by SVG and VML, so that the geometric objects can be displayed in different colors and styles that can be changed on runtime.
+            <title>Constructing from scratch</title>
+            <para>The JSXGraph API used in the readers for the different file formats can also be used to create a construction from scratch or to manipulate a construction loaded from a given file. JSXGraph contains functions for compass and ruler constructions in euclidean geometry basing on points, lines, circles, arcs, and angles. Those can be intersected or combined in predefined ways. For example one can construct a line that is parallel to another one or a point that is the midpoint between two other points by using integrated JSXGraph methods. Additionally, one can easily implement own composition elements with JavaScript and the above-mentioned functions. 
             </para>
         </section>
         <section>
             <title>Calculus</title>
-            <para>Today, dynamic geometry software is no longer restricted to geometry, but is also able to display analytic content.</para>
-            <para>Starting with the easiest way of doing analysis, it may be useful (not only) for schools to plot functiongraphs to visualize the influence of their parameters. JSXGraph is able to plot these functions, but can display also parametric and polar curves which can be analysed using the implemented methods for tangents, integrals or spline interpolation. 
+            <para>Beyond the capabilities of JSXGraph with regard to geometric constructions, one is also able to visualize calculus.</para>
+            <para>The possibilities start from plotting simple functiongraphs to displaying more complex graphs like parametric and polar curves which can be analyzed using the implemented methods for tangents, integrals or spline interpolation. 
             </para>
+            <para>Example:  examine the influence of function parameters like in code example 1[TODO]</para>
             <para>With an implementation of an explicit Runge-Kutta process, JSXGraph can also solve ordinary differential equations on the fly with the opportunity to change the parameters on runtime and watching the results.
             </para>
         </section>            
@@ -104,13 +104,15 @@ Other file formats are under development. For example, JSXGraph is involved in t
     <section>
         <title>Charts</title>
         <para>Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts which provide all the optical properties that are integrated in JSXGraph. So it is possible to create easily dynamic bar charts or interactive pie charts.</para>
+        <!--<para>
+            JSXGraph uses the style properties that are offered by SVG and VML, so that the geometric objects can be displayed in different colors and styles that can be changed on runtime.</para>        -->
         <section>
             <title>Title of subsubsection</title>
             <para>A paragraph ...</para>
         </section>
     </section>
     <section>
-        <title>Using JSXGraph with a connection to a server</title>
+        <title>JSXGraph as front end to server side applications</title>
         <para> A paragraph ...</para>          
     </section>
     <section>
