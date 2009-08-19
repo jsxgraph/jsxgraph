@@ -1,0 +1,181 @@
+<!-- saved from url=(0022)http://internet.e-mail -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title xmlns="">Interactive SVG with JSXGraph</title><meta xmlns="" name="keywords" content="conference proceedings, paper formats"/><meta xmlns="" name="author" content="Bianca Valentin"/><meta xmlns="" name="author" content="Michael Gerhaeuser"/><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="Content-Style-Type" content="text/css"/><style type="text/css">
+ul.simple {list-style-type: none}
+ul.bulleted {list-style-type: disc}
+ul.openBulleted {list-style-type: circle}
+ul.dashed {list-style-type: square}
+ol.arabic {list-style-type: decimal}
+ol.ualpha {list-style-type: upper-alpha}
+ol.uroman {list-style-type: upper-roman}
+ol.lalpha {list-style-type: lower-alpha}
+ol.lroman {list-style-type: lower-roman}
+ol.ftnote {list-style-type: decimal}
+    </style><link rel="stylesheet" type="text/css" href="http://www.svgopen.org/2008/docbook/ideadb.css"/></head><body><h1 xmlns="" class="title">Interactive SVG with JSXGraph</h1><h2 xmlns="" class="subt">JSXGraph</h2><p xmlns="" class="keyword"><i class="keywordHeader">Keywords: </i><a id="K1.conference.proceedings" title="conference proceedings"/>conference proceedings, <a id="K2.paper.formats" title="paper formats"/>paper formats</p><p xmlns="" class="author"><span class="authorName">Bianca Valentin</span><br/>PhD student<br/><br/>University of Bayreuth<br/>Department of mathematics<br/>
+                            <br/>Bayreuth
+                            <br/>Universitaetsstr. 30
+                            <br/>95444
+                            <br/>Germany
+                            <br/>++49-921 55 3389
+                        </p><p xmlns="" class="bioHeader"><i>Biography</i></p><blockquote xmlns="" class="bio"><p>Bla bla</p></blockquote><p xmlns="" class="author"><span class="authorName">Michael Gerhaeuser</span><br/>Student<br/><br/>University of Bayreuth<br/>Department of mathematics<br/>
+                            <br/>Bayreuth
+                            <br/>Universitaetsstr. 30
+                            <br/>95444
+                            <br/>Germany
+                            <br/>
+                        </p><p xmlns="" class="bioHeader"><i>Biography</i></p><blockquote xmlns="" class="bio"><p>Bla bla</p></blockquote><hr xmlns="" class="upperBorder"/><h2 xmlns="" class="abstractHeader">Abstract</h2><hr xmlns="" class="lowerBorder"/><div xmlns="" class="abstract"><p>JSXGraph is a client-side web library for displaying interactive mathematics and drawings in a web browser. This article shall demonstrate the possibilities of JSXGraph and explain how they are implemented.</p></div><hr class="upperBorder"/><h2 class="tocHeader">Table of Contents</h2><hr class="lowerBorder"/><p class="toc"><b xmlns=""><a href="#S1.">1. Possibilities of JSXGraph</a></b><br xmlns=""/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <a xmlns="" href="#S1.1">1.1 Mathematics</a><br xmlns=""/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <a xmlns="" href="#S1.1.1">1.1.1 On- and offline reading of files from dynamic geometry software (DGS)</a><br xmlns=""/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <a xmlns="" href="#S1.1.2">1.1.2 Modelling</a><br xmlns=""/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <a xmlns="" href="#S1.2">1.2 Turtle graphics</a><br xmlns=""/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <a xmlns="" href="#S1.2.1">1.2.1 Programming with turtle graphics</a><br xmlns=""/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <a xmlns="" href="#S1.3">1.3 Charts</a><br xmlns=""/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <a xmlns="" href="#S1.3.1">1.3.1 Title of subsubsection</a><br xmlns=""/><b xmlns=""><a href="#S2.">2. Using JSXGraph with a connection to a server</a></b><br xmlns=""/><b xmlns=""><a href="#S3.">3. Implementation hurdles</a></b><br xmlns=""/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <a xmlns="" href="#S3.1">3.1 SVG vs. VML</a><br xmlns=""/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <a xmlns="" href="#S3.2">3.2 Speed improvements</a><br xmlns=""/><b xmlns=""><a href="#S.Bibliography">Bibliography</a></b><br xmlns=""/></p>
+        <h2 xmlns=""><a id="S1.">1. Possibilities of JSXGraph</a></h2>
+        <p xmlns="">Para 1</p>
+        
+            <h3 xmlns=""><a id="S"> Mathematics</a></h3>
+            <p xmlns="">The originally intended purpose of JSXGraph was having a JavaScript library for displaying geometric constructions in a web browser. So it is possible to visualize almost everything that is taught in schools and universities with points, lines, circles, arcs, polygones, ... as well as predefined constructed elements as perpendicular lines or circumcircles. But there is not only the possibility of displaying geometry but also lots of tools for doing analysis with plotting curves starting from function graphs with tangents up to parametric and polar curves together with splines or other interpolation methods. </p>
+            
+                <h4 xmlns=""><a id="S"> On- and offline reading of files from dynamic geometry software (DGS)</a></h4>
+                <p xmlns="">There is lots of different available software to play around with geometry at schools or universities. Most of them are based on Java, such as Geogebra, Cinderella, Compass and Ruler, Geometer's Sketchpad or GEONExT, so if you want to use these constructions in a web page, it takes some time to load the corresponding Java applet before you can use it. As there are moreover big doubts about the future of Java in a web browser, the idea of JSXGraph was to read GEONExT Files and display them in the browser using JavaScript to manipulate the corrisponding DOM elements of SVG and VML, depending on what browser is used. </p>
+                <p xmlns="">It is furthermore prossible to control the construction by mouse movements like in any other dynamic geometry software. So JSXGraph contains functions for almost anything in euclidean geometry basing on points, lines, circles, arcs and polygones. Those can be intersected or constructed in predefined ways like for example a line that is parallel to another one or a point that is the midpoint between two other points. </p>
+                <p xmlns="">In addition, JSXGraph uses the style properties that are offered by SVG and VML, so that the geometric objects can be displayed in different colors and styles that can be changed on runtime.
+                </p>
+                <p xmlns="">As JSXGraph can also display geometric constructions independently from any file format by constructing them 'by hand' with JavaScript, it is useful for the European Intergeo project which shall unite several dynamic geometry softwares (Geogebra, Cabri, Geonext, Cinderella, ...) agreeing about a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Another reader for reading Geogebra files directly is under development together with the developers of Geogebra.
+                </p>
+            
+            
+                <h4 xmlns=""><a id="S"> Modelling</a></h4>
+                <p xmlns="">Today, dynamic geometry software is no longer restricted to geometry, but is also able to display analytic content.</p>
+                <p xmlns="">Starting with the easiest way of doing analysis, it may be useful (not only) for schools to plot functiongraphs to visualize the influence of their parameters. JSXGraph is able to plot these functions, but can display also parametric and polar curves which can be analysed using the implemented methods for tangents, integrals or spline interpolation. 
+                </p>
+                <p xmlns="">With an implementation of an explicit Runge-Kutta process, JSXGraph can also solve ordinary differential equations on the fly with the opportunity to change the parameters on runtime and watching the results.
+                </p>
+                        
+        
+        
+            <h3 xmlns=""><a id="S"> Turtle graphics</a></h3>
+            <p xmlns="">Mathematic modelling with differential equations can also be done by using turtle graphics. But turtle graphics have their own appeal, too.</p>
+            
+                <h4 xmlns=""><a id="S"> Programming with turtle graphics</a></h4>
+                <p xmlns="">With turtle graphics one can easily produce beautiful Lindenmayer systems like plants, penrose tilings, the Sierpinski triangle or the Koch curve. Moreover, abecedarian games like snake can be implemented in a few lines.</p>
+            
+        
+        
+            <h3 xmlns=""><a id="S"> Charts</a></h3>
+            <p xmlns="">Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts which provide all the optical properties that are integrated in JSXGraph. So it is possible to create easily dynamic bar charts or interactive pie charts.</p>
+            
+                <h4 xmlns=""><a id="S"> Title of subsubsection</a></h4>
+                <p xmlns="">A paragraph ...</p>
+            
+                
+    
+        <h2 xmlns=""><a id="S2.">2. Using JSXGraph with a connection to a server</a></h2>
+        <p xmlns=""> A paragraph ...</p>          
+    
+        <h2 xmlns=""><a id="S3.">3. Implementation hurdles</a></h2>
+        <p xmlns=""> A paragraph ...</p> 
+        
+            <h3 xmlns=""><a id="S"> SVG vs. VML</a></h3>
+            <p xmlns=""/>
+         
+        
+            <h3 xmlns=""><a id="S"> Speed improvements</a></h3>
+            <p xmlns=""/>
+          
+    <h2 xmlns="" class="bibliogHeader"><a id="S.Bibliography">Bibliography</a></h2><dl xmlns="" class="bibliog">Books
+            
+            
+                AhoSethiUllman96
+                
+                    
+                        Alfred V. Aho
+                    
+                    
+                        Ravi Sethi
+                    
+                    
+                        Jeffrey D. Ullman
+                    
+                
+                1996
+                    Bell Telephone Laboratories, Inc.
+                
+                    James T. DeWolf
+                
+                0-201-10088-6
+                
+                    Addison-Wesley Publishing Company
+                
+                Compilers, Principles, Techniques, and Tools
+            
+            
+            
+                
+                    
+                        Andrea Bahadur
+                    
+                    
+                        Mark Shwarek
+                    
+                
+                19741975
+                    Product Development International Holding N. V.
+                
+                0-88459-021-6
+                
+                    Plenary Publications International, Inc.
+                
+                Kites
+                Ancient Craft to Modern Sport
+                988-999
+            
+            
+        Periodicals
+            
+            
+                Walsh97
+                
+                    XML: Principles, Tools, and Techniques
+                    
+                        O'Reilly &amp; Associates, Inc.
+                    
+                    1085-2301
+                    
+                        Dan Connolly
+                    
+                
+                
+                    A Guide to XML
+                    
+                         WalshNorman
+                    
+                    1997ArborText, Inc.
+                    97-108
+                
+            
+            
+        </dl><p class="credits"><small>XHTML rendition made possible by
+      <a href="http://www.schemasoft.com">SchemaSoft</a>'s
+      <a href="http://www.schemasoft.com/DocBook/">Document Interpreter</a>&trade;
+      technology.</small></p></body></html>
