@@ -61,7 +61,10 @@
     </info>
     <section>
         <title>Introduction</title>
-        <para>Para 1</para>
+        <para>JSXGraph<footnote><para><ulink url="http://jsxgraph.org">http://jsxgraph.org</ulink></para>
+                </footnote>  
+                
+        </para>
     </section>
     <section>
         <title>Mathematics</title>

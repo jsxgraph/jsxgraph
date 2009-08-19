@@ -60,6 +60,52 @@
         </abstract>
     </info>
     <section>
+        <title>Introduction</title>
+        <para>JSXGraph<footnote><para><ulink url="http://jsxgraph.org">http://jsxgraph.org</ulink></para>
+                </footnote>  
+            is a client-side web application/library for advanced visualizations in a web browser. Its range of application starts from
+            the display of simple bar and pie charts to the interactive display of function graphs and Geometry constructions knwon from the good old
+            Highschool days. 
+            Even more advanced features of JSXGraph are the on-the-fly solving of Differential Equation Systems, the display of 
+            Lindenmayer systems<footnote><para>Inspired by the work of Sam Ruby: <ulink url="http://intertwingly.net/blog/2006/07/06/Penrose-Tiling">http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</ulink></para>
+            </footnote>, which are of importance in Biology, and dynamic computation of regression polynomials.
+        </para>
+        <para>
+            JSXGraph is a library which may be used in various situations. The main application is to be some kind of a viewer applet for
+            educational Mathematics material from schools and universities. 
+            Many of these constructions, especially from Euclidean Geometry, are available in some propietary XML file format. Usually they are 
+            displayed by some Java applet. In order to compensate the slow demise of Java applets in the web browsers, JSXGraph may prove to be
+            useful. At the moment JSXGraph supports the file format of 
+            GEONExT<footnote><para><ulink url="http://geonext.de">http://geonext.de</ulink></para></footnote>, 
+            Intergeo<footnote><para><ulink url="http://i2geo.net">http://i2geo.net</ulink></para></footnote>, 
+            and - at least partially - 
+            GeoGebra<footnote><para><ulink url="http://geogebra.org">http://geogebra.org</ulink></para></footnote>.
+        </para>
+        <para>
+            Beside the usage as viewer of existing material, the JSXGraph library may be used as an API for advanced special purpose visualizations.
+            JSXGraph enables interactive experiments with sophisticated mathematical models, for example the 
+            epidemiology model of the swine flu<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu">http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu</ulink></para></footnote>.
+            The possibilities of JSXGraph in this respect exceed by far the options offered by software which is common in schools today.
+        </para>
+        <para>
+            Another possible application of JSXGraph is as front end for server based applications. 
+            One example is the popular free statistics software R<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Analyze_data_with_the_Statistics_software_R">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Analyze_data_with_the_Statistics_software_R</ulink></para></footnote>. On the mouse up event
+            data is sent via AJAX to R interface on server side. The result of the computation is sent back to the browser
+            and displayed by JSXGraph. 
+            JSXGraph can also be used on server side to generate charts - for example with PHP - which are sent to the 
+            Browser. The download size of JSXGraph is less than 100 kByte, which is smaller than most bitmap images.
+        </para>
+        <para>
+            From a technical point of view, JSXGraph is implemented in JavaScript. It generates SVG output on Mozilla- and Webkit-based 
+            browsers, and VML on the Internet Explorer. 
+            Therefore, JSXGraph runs on every modern browser. 
+        </para>
+        <para>
+            JSXGraph is open source software, released under the LGPL – Lesser GNU General Public License. The source code
+            is hosted by sourceforge.
+        </para>
+    </section>
+    <section>
         <title>Possibilities of JSXGraph</title>
         <para>Para 1</para>
         <section>
@@ -150,7 +196,7 @@
                 So, nearly all visual properties are realized with attributes and filters. But filters in SVG are still not 
                 implemented satisfactorily. Since version 0.76 JSXGraph supports shadows and gradients. 
                 The SVG filter to display lines, circles and points with shadows is implemented dynamically with the following
-                commands.
+                commands. 
                 <programlisting><![CDATA[
     this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace,'defs');
     this.svgRoot.appendChild(this.defs);
@@ -208,12 +254,18 @@
                 has been started.
                 Here, we list a few of the tricks of the trade, which proved to be useful. Of course, the benefits 
                 of most of these tricks depend on the browser implementations and may change with new versions of the browsers.
-                <itemizedlist>
-                    <listitem>Avoid DOM accesses with getElementById(). When a new SVG node is created, a reference to the DOM node 
-                        is safed internally. Later on, access to this node is realized via this pointer variable, exclusively.
-                        Using the $() operator of prototype.js or jquery.js proved to be much too slow.
-                    </listitem>
-                    <listitem>Before a construction is updated, triggered by a mouse move or mouse up event, the redrawing 
+            </para>
+            <section>
+                <title>Avoid DOM accesses with getElementById()</title>
+                <para>When a new SVG node is created, a reference to the DOM node 
+                    is safed internally. Later on, access to this node is realized via this pointer variable, exclusively.
+                    Using getElementById() or the $() operator of prototype.js or jquery.js proved to be much too slow.
+                 </para>
+            </section>
+            <section>
+                <title>Suspend the update of SVG nodes</title>
+                <para>
+                        Before a construction is updated, triggered by a mouse move or mouse up event, the redrawing 
                         of the SVG nodes is suspended, until the position of all elements has been recalculated.
                         Then, the redrawing of the SVG nodes is forced.
                 <programlisting><![CDATA[
@@ -221,37 +273,54 @@
     // Expensive recalculations ...
     this.svgRoot.unsuspendRedraw(this.suspendHandle);
     this.svgRoot.forceRedraw();]]></programlisting>
-                    This seems to speed up at least the linux version of Firefox considerably.
-                    </listitem>
-                    <listitem>Common functions like binomial() and factorial() are realized with memoizer techniques, 
+                        This seems to speed up at least the linux version of Firefox considerably.                 
+                </para>
+            </section>
+            <section>
+                <title>Use memoizers</title>
+                <para>
+                        Common functions like binomial() and factorial() are realized with memoizer techniques, 
                         as descripted in <xref  linkend="Crockford2008"/>, page 44.
                         Thus, the expensive computation of each value of these functions is done only once.
-                    </listitem>
-                    <listitem>For curves there are two update modes, resulting in different quality in output: During the update following a
-                        mouse move event, a curve is plotted evaluationg only few data points. The default value is 400 points.
-                        In the update follwoing a mouse up event the same curve is plotted with much more points. The default value
-                        now is 200 points. These values can be adapted in Options.js.
-                        </listitem>
-                    <listitem>Reducing the download and initalization time: The JavaScript source code of 
-                        JSXGraph version 0.76 consists of 20 files, which add up to about 980 kBytes including comments.
-                        These 20 files are bundled together in one big file which is subsequently compressed by the 
-                        YUI compressor<footnote><para><ulink url="http://developer.yahoo.com/yui/compressor/">http://developer.yahoo.com/yui/compressor/</ulink></para>              </footnote>. During this process comments and superfluous whitespace are removed. The resulting file jsxgraphcore.js
-                        only consists of 380 kBytes. If the web server which delivers jsxgraphcore.js has DEFLATE enabled, which means it
-                        compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
-                        In most cases, this is less than the same construction would take as non-interactive PNG image.
-                        </listitem>
-                     <listitem>A very special, but decisive speed improvement has been done for the Internet Explorer version 6 and 7.  
-                     With the following piece of code which is executed at initialization time the update speed is improved by an order of magnitude.
-                <programlisting><![CDATA[
+                 </para>
+            </section>
+            <section>
+                <title>Distinguish mouse move and mouse up events</title>
+                <para>
+                    For curves there are two update modes, resulting in different quality in output. During the update following a
+                    mouse move event, a curve is plotted evaluating only few data points. The default value here is to use 400 points.
+                    In the update follwoing a mouse up event the same curve is plotted with much more points. The default value
+                    now is to use 2000 points. These values can be adapted in Options.js.                 
+                </para>
+            </section>
+            <section>
+                <title>Reduce the download and initialization time</title>
+                <para>
+                    The JavaScript source code of 
+                    JSXGraph version 0.76 consists of 20 files, which add up to about 980 kBytes including comments.
+                    These 20 files are bundled together in one big file which is subsequently compressed by the 
+                    YUI compressor<footnote><para><ulink url="http://developer.yahoo.com/yui/compressor/">http://developer.yahoo.com/yui/compressor/</ulink></para>
+                    </footnote> from Yahoo!. 
+                    During this process comments and superfluous whitespace are removed. The resulting file jsxgraphcore.js
+                    only consists of 380 kBytes. If the web server which delivers jsxgraphcore.js has DEFLATE enabled, which means it
+                    compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
+                    In most cases, this is less than the same construction would take as non-interactive PNG image.
+                </para>
+            </section>
+            <section>
+                <title>An Internet Explorer trick</title>
+                <para>
+                    A very special, but decisive speed improvement has been done for the Internet Explorer version 6 and 7.  
+                     With the following piece of code which is executed at initialization time the update speed of the Internet Explorer has been improved by an order of magnitude.
+                <programlisting><![CDATA[    
     function MouseMove(e) {
         document.body.scrollLeft;
         document.body.scrollTop;
     }
     document.onmousemove = MouseMove;]]></programlisting>
-                     </listitem>
-                </itemizedlist>
-                
-            </para>
+                    We are not aware that this trick has been mentioned before anywhere else.
+                </para>
+            </section>
         </section>  
     </section>    
     
