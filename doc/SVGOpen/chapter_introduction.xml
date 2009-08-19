@@ -2,37 +2,45 @@
         <title>Introduction</title>
         <para>JSXGraph<footnote><para><ulink url="http://jsxgraph.org">http://jsxgraph.org</ulink></para>
                 </footnote>  
-            is a client-side web application/library for advanced visualizations in a web browser. Its range of application starts from
-            the display of simple bar and pie charts to the interactive display of function graphs and Geometry constructions knwon from the good old
-            Highschool days. 
+            is a client-side web application/library for advanced vector graphics in a web browser. Its range of applications starts from
+            the display of simple bar charts and pie charts up to the interactive display of function graphs and 
+            Geometry constructions used in schools and universities.
             Even more advanced features of JSXGraph are the on-the-fly solving of Differential Equation Systems, the display of 
-            Lindenmayer systems<footnote><para>Inspired by the work of Sam Ruby: <ulink url="http://intertwingly.net/blog/2006/07/06/Penrose-Tiling">http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</ulink></para>
+            Lindenmayer systems<footnote><para>Inspired by the work of Sam Ruby: 
+            <ulink url="http://intertwingly.net/blog/2006/07/06/Penrose-Tiling">http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</ulink></para>
             </footnote>, which are of importance in Biology, and dynamic computation of regression polynomials.
         </para>
         <para>
-            JSXGraph is a library which may be used in various situations. The main application is to be some kind of a viewer applet for
-            educational Mathematics material from schools and universities. 
-            Many of these constructions, especially from Euclidean Geometry, are available in some propietary XML file format. Usually they are 
-            displayed by some Java applet. In order to compensate the slow demise of Java applets in the web browsers, JSXGraph may prove to be
-            useful. At the moment JSXGraph supports the file format of 
+            JSXGraph is a library which may be used in various situations. The main application is to serve as a client-side viewer for
+            educational Mathematics materials for schools and universities. 
+            Usually, these constructions, especially from Euclidean Geometry, are available in different propietary XML file formats, and are 
+            intended to be displayed by their associated Java applet. 
+            In order to compensate the slow demise of Java applets in the web browsers, JSXGraph may prove to be
+            valuable. 
+            At the moment JSXGraph supports the file format of 
             GEONExT<footnote><para><ulink url="http://geonext.de">http://geonext.de</ulink></para></footnote>, 
             Intergeo<footnote><para><ulink url="http://i2geo.net">http://i2geo.net</ulink></para></footnote>, 
             and - at least partially - 
             GeoGebra<footnote><para><ulink url="http://geogebra.org">http://geogebra.org</ulink></para></footnote>.
+            Since JSXGraph comes with its own implementation of unzip and gunzip, 
+            it should be easy to adapt JSXGraph to a whole varity of even more file formats.
         </para>
         <para>
-            Beside the usage as viewer of existing material, the JSXGraph library may be used as an API for advanced special purpose visualizations.
-            JSXGraph enables interactive experiments with sophisticated mathematical models, for example the 
-            epidemiology model of the swine flu<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu">http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu</ulink></para></footnote>.
+            Beside the using it as viewer of existing material, the JSXGraph library may be used as an API for advanced special purpose visualizations.
+            JSXGraph enables interactive experiments with sophisticated mathematical problems in the web browser. One example is the simulation
+            of the epidemiology model for the swine flu<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu">http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu</ulink></para></footnote>.
             The possibilities of JSXGraph in this respect exceed by far the options offered by software which is common in schools today.
         </para>
         <para>
-            Another possible application of JSXGraph is as front end for server based applications. 
-            One example is the popular free statistics software R<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Analyze_data_with_the_Statistics_software_R">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Analyze_data_with_the_Statistics_software_R</ulink></para></footnote>. On the mouse up event
-            data is sent via AJAX to R interface on server side. The result of the computation is sent back to the browser
-            and displayed by JSXGraph. 
-            JSXGraph can also be used on server side to generate charts - for example with PHP - which are sent to the 
-            Browser. The download size of JSXGraph is less than 100 kByte, which is smaller than most bitmap images.
+            Another possible application of JSXGraph is to use it as front end for server based applications. 
+            One example is the widely-spread free statistics software R<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Analyze_data_with_the_Statistics_software_R">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Analyze_data_with_the_Statistics_software_R</ulink></para></footnote>. 
+            After the mouse up event is fired in this application, the coordinates of the points
+            are sent via AJAX to the R interface on server side. After doing some R computations on the server side, the 
+            web server sends the results back to the browser. There, the display is updated by JSXGraph. 
+            A more simple application of JSXGraph can be the creation of charts on server side.
+            For example, PHP could be used to generate JSXGraph charts which are sent to the web
+            browser. In this way, the high quality of the vector graphics display can be fully exploited.
+            The additional overhead of downloading JSXGraph is less than 100 kByte, which is smaller than most bitmap images.
         </para>
         <para>
             From a technical point of view, JSXGraph is implemented in JavaScript. It generates SVG output on Mozilla- and Webkit-based 
