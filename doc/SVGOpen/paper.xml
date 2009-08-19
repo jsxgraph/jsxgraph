@@ -65,14 +65,23 @@
     </section>
     <section>
         <title>Mathematics</title>
-        <para>The originally intended purpose of JSXGraph was having a JavaScript library for displaying geometric constructions in a web browser. So it is possible to visualize almost everything that is taught in schools and universities with points, lines, circles, arcs, polygones, ... as well as predefined constructed elements as perpendicular lines or circumcircles. But there is not only the possibility of displaying geometry but also lots of tools for doing analysis with plotting curves starting from function graphs with tangents up to parametric and polar curves together with splines or other interpolation methods. </para>
+        <para>The originally intended purpose of JSXGraph was having a JavaScript library for displaying geometric constructions in a web browser. So it is possible to visualize geometric elements that are taught in schools and universities like points, lines, circles, arcs and angles, as well as predefined composition elements. JSXGraph not only provides tools for displaying geometric constructions but also for doing calculus like plotting curves starting from function graphs with tangents up to parametric and polar curves, splines or other interpolation methods. </para>
         <section>
-            <title>JSXGraph as web viewer for dynamic geometry software (DGS)</title>
-            <para>There is lots of different available software to play around with geometry at schools or universities. Most of them are based on Java, such as Geogebra, Cinderella, Compass and Ruler, Geometer's Sketchpad or GEONExT, so if you want to use these constructions in a web page, it takes some time to load the corresponding Java applet before you can use it. As there are moreover big doubts about the future of Java in a web browser, the idea of JSXGraph was to read GEONExT Files and display them in the browser using JavaScript to manipulate the corrisponding DOM elements of SVG and VML, depending on what browser is used. </para>
-            <para>It is furthermore prossible to control the construction by mouse movements like in any other dynamic geometry software. So JSXGraph contains functions for almost anything in euclidean geometry basing on points, lines, circles, arcs and polygones. Those can be intersected or constructed in predefined ways like for example a line that is parallel to another one or a point that is the midpoint between two other points. </para>
-            <para>In addition, JSXGraph uses the style properties that are offered by SVG and VML, so that the geometric objects can be displayed in different colors and styles that can be changed on runtime.
+            <title>JSXGraph as a web viewer for dynamic geometry software</title>
+            <para>Dynamic geometry software (DGS) are computer programs which allow one to create and then manipulate geometric constructions, primarily in plane geometry. In most DGS, one starts construction by putting a few points and using them to define new objects such as lines, circles or other points. After some construction is done, one can move the points one started with and see how the construction changes.</para>
+            <para>
+            There are lots of different available software packages to play around dynamically with geometry at schools and universities. Most of them are written in Java, such as Geogebra, Cinderella, Compass and Ruler or GEONExT, others like The Geometer's Sketchpad or Cabri offer a Java based web viewer. So if you want to integrate a construction that was created with one of these DGS in a web page, it takes some time to load the corresponding Java applet before you can use it. There are moreover big doubts about the future of Java in a web browser because Java applets are vanishing more and more from the internet and are actually not supported in browsers on modern mobile internet devices. As a result, the idea of JSXGraph was to read GEONExT Files and display them in the browser using JavaScript to manage the corresponding DOM elements of SVG or VML, depending on what browser is used. JavaScript is furthermore used to realize the dynamic in DGS by capturing the browser's mouse events. </para>
+        </section>
+        <section>
+            <title>Currently supported file formats</title>
+            <para>Since JSXGraph has evolved from the GEONExT project, the support of its file format is almost complete. 
+Other file formats are under development. For example, JSXGraph is involved in the European Intergeo project which shall unite several dynamic geometry softwares (Geogebra, Cabri, GEONExT, Cinderella, etc.) agreeing about a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Another reader for reading Geogebra files directly is under development together with the developers of Geogebra.
             </para>
-            <para>As JSXGraph can also display geometric constructions independently from any file format by constructing them 'by hand' with JavaScript, it is useful for the European Intergeo project which shall unite several dynamic geometry softwares (Geogebra, Cabri, Geonext, Cinderella, ...) agreeing about a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Another reader for reading Geogebra files directly is under development together with the developers of Geogebra.
+        </section>
+        <section>
+            <title>Constructions from scratch</title>
+            <para> So JSXGraph contains functions for almost anything in euclidean geometry basing on points, lines, circles, arcs and polygons. Those can be intersected or constructed in predefined ways like for example a line that is parallel to another one or a point that is the midpoint between two other points. </para>
+            <para>In addition, JSXGraph uses the style properties that are offered by SVG and VML, so that the geometric objects can be displayed in different colors and styles that can be changed on runtime.
             </para>
         </section>
         <section>
@@ -105,7 +114,11 @@
         <para> A paragraph ...</para>          
     </section>
     <section>
-        <title>Implementation hurdles</title>
+        <title>JSXGraph Plugins</title>
+        <para> Para 1</para>
+    </section>
+    <section>
+        <title>Implementation details</title>
         <para> A paragraph ...</para> 
         <section>
             <title>SVG vs. VML</title>
