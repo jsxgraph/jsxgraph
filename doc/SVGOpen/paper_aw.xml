@@ -104,22 +104,190 @@
         <title>Using JSXGraph with a connection to a server</title>
         <para> A paragraph ...</para>          
     </section>
+    
     <section>
-        <title>Implementation hurdles</title>
-        <para> A paragraph ...</para> 
+        <title>Implementation details</title>
+        <para>
+            The main focus of JSXGraph is on interactivity. The user should experience immediate response to the dragging of points
+            with the mouse. So, special care had to be spent on fast reacting to the mouse move events and mouse up events. Contrarily
+            we want to exploit the superb output quality of vector graphics. These two controversial goals - 
+            speed versus quality - have to be balanced. 
+        </para> 
+        <para>
+            For the browser abstraction JSXGraph uses either the Prototype JavaScript library<footnote><para><ulink url="http://prototypejs.org">http://prototypejs.org</ulink></para>
+                </footnote> 
+            or 
+            jQuery<footnote><para><ulink url="http://jquery.com">http://jquery.com</ulink></para>
+                </footnote>.  
+            JSXGraph can be used with either of these two libraries equally good. 
+            The access to these libraries is restricted to a minimum and it is capsuled in a few lines in the
+            source code file jsxgraph.js. These libraries are nerly exclusively used for the corss-browser handling of events.
+            Everything else in JSXGraph is built up from scratch and does not rely on third-party libraries.
+            So, it should be easy to port JSXGraph to a further framework, if necessary.
+        </para>
         <section>
             <title>SVG vs. VML</title>
-            <para></para>
+            <para>
+                One of the major user audiences of JSXGraph are schools. In general, schools are adapting only slowly to new technologies.
+                That is one of the reason, why Internet Explorer is widely used in schools. Since we can not afford to exclude schools as
+                users of JSXGraph we had to adapt it to the Internet Explorer, too. Since the year 1998 
+                Microsoft<footnote><para>See <ulink url="http://www.w3.org/TR/1998/NOTE-VML-19980513">http://www.w3.org/TR/1998/NOTE-VML-19980513</ulink> for the specification.</para>
+                </footnote> <xref  linkend="VML98"/>
+                supports VML 
+                - vector markup language - as vector graphic language in the Internet Explorer. 
+                Early in the development process of JSXGraph we decided to support SVG and VML directly, without using one of their
+                existing abstraction layers. The reason was performance, the existing layers were too slow at that time.
+            </para>
+            <para>
+                SVG and VML are similar in many aspects, but different in many details. In order to realize visual properties VML makes heavily use of
+                subnodes of XML nodes. SVG uses mostly attributes for the same visual properties.
+                But overall the differences are not too large. The JSXGraph source contains two files SVGRenderer.js and VMLRenderer.js which handle 
+                different language features. Each file consists of about 700 lines including comments.
+            </para>
+            <para>
+                In SVG JSXGraph rarely uses CSS formatting.  The reason is that in the beginning of the development process
+                the use of CSS styles consumed to much computing resources, especially setting opacity with Firefox. 
+                So, nearly all visual properties are realized with attributes and filters. But filters in SVG are still not 
+                implemented satisfactorily. Since version 0.76 JSXGraph supports shadows and gradients. 
+                The SVG filter to display lines, circles and points with shadows is implemented dynamically with the following
+                commands.
+                <programlisting><![CDATA[
+    this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace,'defs');
+    this.svgRoot.appendChild(this.defs);
+    this.filter = this.container.ownerDocument.createElementNS(this.svgNamespace,'filter');
+    this.filter.setAttributeNS(null, 'id', 'f1');
+    this.filter.setAttributeNS(null, 'width', '300%');
+    this.filter.setAttributeNS(null, 'height', '300%');
+    this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace,'feOffset');
+    this.feOffset.setAttributeNS(null, 'result', 'offOut');
+    this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
+    this.feOffset.setAttributeNS(null, 'dx', '5');
+    this.feOffset.setAttributeNS(null, 'dy', '5');
+    this.filter.appendChild(this.feOffset);
+    this.feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace,'feGaussianBlur');
+    this.feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
+    this.feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
+    this.feGaussianBlur.setAttributeNS(null, 'stdDeviation', '3');
+    this.filter.appendChild(this.feGaussianBlur);
+    this.feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace,'feBlend');
+    this.feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
+    this.feBlend.setAttributeNS(null, 'in2', 'blurOut');
+    this.feBlend.setAttributeNS(null, 'mode', 'normal');
+    this.filter.appendChild(this.feBlend);
+    this.defs.appendChild(this.filter);]]></programlisting>
+                At the time of writing shadows slow down the browser considerably on the Firefox. Further, there seems to be a bug for
+                horizontal and vertical lines. In these cases no shadows are displayed.
+                In Webkit based browsers like Chrome and Safari these filters are not implemented, yet. In Opera it looks ugly.
+                VML realizes shadows as a subnode. There, no noticable speed reduction is observable.
+            </para>
         </section> 
         <section>
+            <title>HTML elements</title>
+            <para>
+                For the display of text, like labels of points or results of computations, JSXGraph does not use the text element of SVG.
+                Instead, div tags in HTML are used. That means the browsers display the text as HTML elements above the SVG image. 
+                In order to update the text the innerHTML property of HTML is used. This is slow, but since many texts are never changed,
+                it is used rarely.
+                We decided to use HTML elements for SVG, because 
+                <itemizedlist>
+                    <listitem>at that time HTML tags and HTML entities in texts were not supported 
+                        in the Firefox implementation, 
+                        </listitem>
+                    <listitem>VML does not contain a text  element. Therefore, we do not need to distinguish SVG and VML 
+                        for texts.
+                        </listitem>
+                </itemizedlist>
+            </para>
+        </section>  
+        <section>
             <title>Speed improvements</title>
-            <para></para>
+            <para>
+                In order to make a fast enough reaction to user interaction like mouse move possible, JSXGraph contains many 
+                tricks to speed up the computations. Special care about implementation details is still necessary, even if the
+                JavaScript interpreters, respectively Just-in-time-compilers, have made huge progress since the development of JSXGraph 
+                has been started.
+                Here, we list a few of the tricks of the trade, which proved to be useful. Of course, the benefits 
+                of most of these tricks depend on the browser implementations and may change with new versions of the browsers.
+                <itemizedlist>
+                    <listitem>Avoid DOM accesses with getElementById(). When a new SVG node is created, a reference to the DOM node 
+                        is safed internally. Later on, access to this node is realized via this pointer variable, exclusively.
+                        Using the $() operator of prototype.js or jquery.js proved to be much too slow.
+                    </listitem>
+                    <listitem>Before a construction is updated, triggered by a mouse move or mouse up event, the redrawing 
+                        of the SVG nodes is suspended, until the position of all elements has been recalculated.
+                        Then, the redrawing of the SVG nodes is forced.
+                <programlisting><![CDATA[
+    this.suspendHandle = this.svgRoot.suspendRedraw(10000);
+    // Expensive recalculations ...
+    this.svgRoot.unsuspendRedraw(this.suspendHandle);
+    this.svgRoot.forceRedraw();]]></programlisting>
+                    This seems to speed up at least the linux version of Firefox considerably.
+                    </listitem>
+                    <listitem>Common functions like binomial() and factorial() are realized with memoizer techniques, 
+                        as descripted in <xref  linkend="Crockford2008"/>, page 44.
+                        Thus, the expensive computation of each value of these functions is done only once.
+                    </listitem>
+                    <listitem>For curves there are two update modes, resulting in different quality in output: During the update following a
+                        mouse move event, a curve is plotted evaluationg only few data points. The default value is 400 points.
+                        In the update follwoing a mouse up event the same curve is plotted with much more points. The default value
+                        now is 200 points. These values can be adapted in Options.js.
+                        </listitem>
+                    <listitem>Reducing the download and initalization time: The JavaScript source code of 
+                        JSXGraph version 0.76 consists of 20 files, which add up to about 980 kBytes including comments.
+                        These 20 files are bundled together in one big file which is subsequently compressed by the 
+                        YUI compressor<footnote><para><ulink url="http://developer.yahoo.com/yui/compressor/">http://developer.yahoo.com/yui/compressor/</ulink></para>              </footnote>. During this process comments and superfluous whitespace are removed. The resulting file jsxgraphcore.js
+                        only consists of 380 kBytes. If the web server which delivers jsxgraphcore.js has DEFLATE enabled, which means it
+                        compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
+                        In most cases, this is less than the same construction would take as non-interactive PNG image.
+                        </listitem>
+                     <listitem>A very special, but decisive speed improvement has been done for the Internet Explorer.  
+                     </listitem>
+                </itemizedlist>
+                
+            </para>
         </section>  
     </section>    
     
     <bibliography xmlns="http://docbook.org/ns/docbook">
         <bibliodiv><title>Books</title>
-            
+
+            <biblioentry xml:id="Crockford2008">
+                <abbrev>Crockford2008</abbrev>
+                <authorgroup>
+                    <author><personname>
+                        <firstname>Douglas.</firstname><surname>Crockford</surname>
+                    </personname></author>
+                </authorgroup>
+                <biblioid class="isbn">978-0-596-51774-8</biblioid>
+                <publisher>
+                    <publishername>O'Reilly</publishername>
+                </publisher>
+                <title>JavvaScript: The Good Parts</title>
+            </biblioentry>
+
+            <biblioentry xml:id="VML98">
+                <abbrev>VML1998</abbrev>
+                <authorgroup>
+                    <author><personname><firstname>John</firstname><surname>Bowler</surname></personname></author>
+                    <author><personname><firstname>Howard</firstname><surname>Cooperstein</surname></personname></author>
+                    <author><personname><firstname>Brian</firstname><surname>Dister</surname></personname></author>
+                    <author><personname><firstname>Ajay</firstname><surname>Jindal</surname></personname></author>
+                    <author><personname><firstname>Daniel</firstname><surname>Lee</surname></personname></author>
+                    <author><personname><firstname>Brian</firstname><surname>Mathews</surname></personname></author>
+                    <author><personname><firstname>Tuan</firstname><surname>Nguyen</surname></personname></author>
+                    <author><personname><firstname>Troy</firstname><surname>Sandal</surname></personname></author>
+                    <author><personname><firstname>Peter</firstname><surname>Wu</surname></personname></author>
+                </authorgroup>
+                <copyright><year>1998</year>
+                    <holder>W3C</holder></copyright>
+                <biblioid class="isbn"></biblioid>
+                <publisher>
+                    <publishername>http://www.w3.org/TR/1998/NOTE-VML-19980513</publishername>
+                </publisher>
+                <title>Vector Markup Language (VML)</title>
+            </biblioentry>
+
+            <!-- OLD -->
             <biblioentry xml:id="AhoSethiUllman96">
                 <abbrev>AhoSethiUllman96</abbrev>
                 <authorgroup>
