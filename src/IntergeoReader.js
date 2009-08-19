@@ -25,9 +25,11 @@
 */
 
 /* Compatibility for <= 0.75.4 */
+/*
 JXG.getReference = function(board, object) {
     return JXG.GetReferenceFromParameter(board, object);
 };
+*/
 
 JXG.IntergeoReader = new function() {
     this.board = null;
@@ -556,7 +558,6 @@ JXG.IntergeoReader = new function() {
         }
         return fileStr;
     };
-
 };
 
 
