@@ -1,8 +1,8 @@
 #!/bin/sh
 python makeDistrib.py
 cd ..
-rm -f tools/jsxgraph0.75.zip
-zip tools/jsxgraph0.75.zip src/*.js src/COPYING src/COPYING.LESSER distrib/jsxgraphcore.js distrib/jsxgraph.css distrib/prototype.js tools/makeDistrib.py
+rm -f tools/jsxgraph0.76.zip
+zip tools/jsxgraph0.76.zip src/*.js src/COPYING src/COPYING.LESSER distrib/jsxgraphcore.js distrib/jsxgraph.css distrib/prototype.js tools/makeDistrib.py
 cd tools
 echo "makeDoc"
 sh makedoc.sh

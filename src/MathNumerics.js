@@ -454,7 +454,8 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
             for (j=0;j<len;j++) {
                 M.push([1]);
             }
-            for (i=1;i<=degree;i++) {
+                /* // Function term not yet
+                for (i=1;i<len;i++) {
                     for (j=0;j<len;j++) {
                         M[j][i] = M[j][i-1]*datax[j];      // input data
                     }
@@ -471,6 +472,7 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
                     if (i>1) { term+='*x<sup>'+i+'</sup> + '; }
                     else if (i==1) { term+='*x + '; }
                 }
+                */
         }
         
         for (i=0;i<len;i++) {

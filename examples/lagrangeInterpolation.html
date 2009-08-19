@@ -28,8 +28,8 @@
         p[4] = board.createElement('point', [-2,-2], {style:6});
         p[5] = board.createElement('point', [-3,2], {style:6});
             
-    graph = board.createElement('curve', board.neville(p),{strokeWidth:6,strokeOpacity:0.5});
-    //graph = board.createElement('functiongraph', [board.lagrangePolynomial(p)],{strokeWidth:6,strokeOpacity:0.5});
+    //graph = board.createElement('curve', board.neville(p),{strokeWidth:6,strokeOpacity:0.5});
+    graph = board.createElement('functiongraph', [board.lagrangePolynomial(p)],{strokeWidth:6,strokeOpacity:0.5});
     g = board.createElement('glider', [graph]);
     t = board.createElement('tangent', [g],{dash:1,strokeColor:'green'});
     l = board.createElement('line', [p[0],p[5]],{dash:1,strokeColor:'green'});
