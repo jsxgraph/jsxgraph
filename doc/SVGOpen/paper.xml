@@ -60,45 +60,45 @@
         </abstract>
     </info>
     <section>
-        <title>Possibilities of JSXGraph</title>
+        <title>Introduction</title>
         <para>Para 1</para>
+    </section>
+    <section>
+        <title>Mathematics</title>
+        <para>The originally intended purpose of JSXGraph was having a JavaScript library for displaying geometric constructions in a web browser. So it is possible to visualize almost everything that is taught in schools and universities with points, lines, circles, arcs, polygones, ... as well as predefined constructed elements as perpendicular lines or circumcircles. But there is not only the possibility of displaying geometry but also lots of tools for doing analysis with plotting curves starting from function graphs with tangents up to parametric and polar curves together with splines or other interpolation methods. </para>
         <section>
-            <title>Mathematics</title>
-            <para>The originally intended purpose of JSXGraph was having a JavaScript library for displaying geometric constructions in a web browser. So it is possible to visualize almost everything that is taught in schools and universities with points, lines, circles, arcs, polygones, ... as well as predefined constructed elements as perpendicular lines or circumcircles. But there is not only the possibility of displaying geometry but also lots of tools for doing analysis with plotting curves starting from function graphs with tangents up to parametric and polar curves together with splines or other interpolation methods. </para>
-            <section>
-                <title>On- and offline reading of files from dynamic geometry software (DGS)</title>
-                <para>There is lots of different available software to play around with geometry at schools or universities. Most of them are based on Java, such as Geogebra, Cinderella, Compass and Ruler, Geometer's Sketchpad or GEONExT, so if you want to use these constructions in a web page, it takes some time to load the corresponding Java applet before you can use it. As there are moreover big doubts about the future of Java in a web browser, the idea of JSXGraph was to read GEONExT Files and display them in the browser using JavaScript to manipulate the corrisponding DOM elements of SVG and VML, depending on what browser is used. </para>
-                <para>It is furthermore prossible to control the construction by mouse movements like in any other dynamic geometry software. So JSXGraph contains functions for almost anything in euclidean geometry basing on points, lines, circles, arcs and polygones. Those can be intersected or constructed in predefined ways like for example a line that is parallel to another one or a point that is the midpoint between two other points. </para>
-                <para>In addition, JSXGraph uses the style properties that are offered by SVG and VML, so that the geometric objects can be displayed in different colors and styles that can be changed on runtime.
-                </para>
-                <para>As JSXGraph can also display geometric constructions independently from any file format by constructing them 'by hand' with JavaScript, it is useful for the European Intergeo project which shall unite several dynamic geometry softwares (Geogebra, Cabri, Geonext, Cinderella, ...) agreeing about a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Another reader for reading Geogebra files directly is under development together with the developers of Geogebra.
-                </para>
-            </section>
-            <section>
-                <title>Modelling</title>
-                <para>Today, dynamic geometry software is no longer restricted to geometry, but is also able to display analytic content.</para>
-                <para>Starting with the easiest way of doing analysis, it may be useful (not only) for schools to plot functiongraphs to visualize the influence of their parameters. JSXGraph is able to plot these functions, but can display also parametric and polar curves which can be analysed using the implemented methods for tangents, integrals or spline interpolation. 
-                </para>
-                <para>With an implementation of an explicit Runge-Kutta process, JSXGraph can also solve ordinary differential equations on the fly with the opportunity to change the parameters on runtime and watching the results.
-                </para>
-            </section>            
+            <title>JSXGraph as web viewer for dynamic geometry software (DGS)</title>
+            <para>There is lots of different available software to play around with geometry at schools or universities. Most of them are based on Java, such as Geogebra, Cinderella, Compass and Ruler, Geometer's Sketchpad or GEONExT, so if you want to use these constructions in a web page, it takes some time to load the corresponding Java applet before you can use it. As there are moreover big doubts about the future of Java in a web browser, the idea of JSXGraph was to read GEONExT Files and display them in the browser using JavaScript to manipulate the corrisponding DOM elements of SVG and VML, depending on what browser is used. </para>
+            <para>It is furthermore prossible to control the construction by mouse movements like in any other dynamic geometry software. So JSXGraph contains functions for almost anything in euclidean geometry basing on points, lines, circles, arcs and polygones. Those can be intersected or constructed in predefined ways like for example a line that is parallel to another one or a point that is the midpoint between two other points. </para>
+            <para>In addition, JSXGraph uses the style properties that are offered by SVG and VML, so that the geometric objects can be displayed in different colors and styles that can be changed on runtime.
+            </para>
+            <para>As JSXGraph can also display geometric constructions independently from any file format by constructing them 'by hand' with JavaScript, it is useful for the European Intergeo project which shall unite several dynamic geometry softwares (Geogebra, Cabri, Geonext, Cinderella, ...) agreeing about a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Another reader for reading Geogebra files directly is under development together with the developers of Geogebra.
+            </para>
         </section>
         <section>
-            <title>Turtle graphics</title>
-            <para>Mathematic modelling with differential equations can also be done by using turtle graphics. But turtle graphics have their own appeal, too.</para>
-            <section>
-                <title>Programming with turtle graphics</title>
-                <para>With turtle graphics one can easily produce beautiful Lindenmayer systems like plants, penrose tilings, the Sierpinski triangle or the Koch curve. Moreover, abecedarian games like snake can be implemented in a few lines.</para>
-            </section>
-        </section>
+            <title>Calculus</title>
+            <para>Today, dynamic geometry software is no longer restricted to geometry, but is also able to display analytic content.</para>
+            <para>Starting with the easiest way of doing analysis, it may be useful (not only) for schools to plot functiongraphs to visualize the influence of their parameters. JSXGraph is able to plot these functions, but can display also parametric and polar curves which can be analysed using the implemented methods for tangents, integrals or spline interpolation. 
+            </para>
+            <para>With an implementation of an explicit Runge-Kutta process, JSXGraph can also solve ordinary differential equations on the fly with the opportunity to change the parameters on runtime and watching the results.
+            </para>
+        </section>            
+    </section>
+    <section>
+        <title>Turtle graphics</title>
+        <para>Mathematic modelling with differential equations can also be done by using turtle graphics. But turtle graphics have their own appeal, too.</para>
         <section>
-            <title>Charts</title>
-            <para>Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts which provide all the optical properties that are integrated in JSXGraph. So it is possible to create easily dynamic bar charts or interactive pie charts.</para>
-            <section>
-                <title>Title of subsubsection</title>
-                <para>A paragraph ...</para>
-            </section>
-        </section>        
+            <title>Programming with turtle graphics</title>
+            <para>With turtle graphics one can easily produce beautiful Lindenmayer systems like plants, penrose tilings, the Sierpinski triangle or the Koch curve. Moreover, abecedarian games like snake can be implemented in a few lines.</para>
+        </section>
+    </section>
+    <section>
+        <title>Charts</title>
+        <para>Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts which provide all the optical properties that are integrated in JSXGraph. So it is possible to create easily dynamic bar charts or interactive pie charts.</para>
+        <section>
+            <title>Title of subsubsection</title>
+            <para>A paragraph ...</para>
+        </section>
     </section>
     <section>
         <title>Using JSXGraph with a connection to a server</title>
