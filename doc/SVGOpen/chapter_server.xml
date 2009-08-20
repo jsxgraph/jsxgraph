@@ -1,12 +1,19 @@
-    <section>
-        <title>JSXGraph as front end to server side applications</title>
-        <para>JavaScript enables us to use the XMLHTTPRequest object to interact with server side applications. Currently one can use our XMLHTTPRequest object wrapper JXG.FileReader or the AJAX wrappers
+﻿    <section>
+        <title>JSXGraph as a front end to server side applications</title>
+        <para>JavaScript enables us to use the XMLHTTPRequest object to interact with server side applications. Currently one can use our AJAX wrapper JXG.FileReader or the one
         provided by Prototype<footnote><para><ulink url="http://prototypejs.org">http://prototypejs.org</ulink></para></footnote> and jQuery <footnote><para><ulink url="http://jquery.com">http://jquery.com</ulink></para></footnote>.
         So JSXGraph can be used to visualize the output of server side calculations but provides new input for server applications, too.
         </para>
-        <example>
-        <title>maybe a little example, but what? the r example is quite too big...</title>
-        <programlisting><![CDATA[       
+        <section>
+            <title>Use R to compute location and scale</title>
+            <para>
+            For example one can use R<footnote><para><ulink url="http://www.r-project.org">http://www.r-project.org</ulink></para></footnote> runnig on a server using a PHP wrapper to catch the CGI variables and passes them to a R script. This script then calculates the mean value,
+            standard deviation, median, median absolute deviation, and radius-minimax estimator and returns these values through the PHP script back to JSXGraph. Finally
+            lines are plotted to visualize that values.
+            </para>
+           <example>
+            <title>A R script is invoked using AJAX and PHP</title>
+            <programlisting><![CDATA[       
 <div id="jxgbox" class="jxgbox" style="width:700px; height:400px;" onmouseup="doUpdate();"></div> 
 <script>
 var brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 300, unitX: 60, unitY: 5, axis:true}),
@@ -59,3 +66,4 @@ passthru($cmd);
       ]]> </programlisting>
         </example>
     </section>
+</section>
