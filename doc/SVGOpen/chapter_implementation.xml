@@ -139,7 +139,7 @@
             <section>
                 <title>Distinguish mouse move and mouse up events</title>
                 <para>
-                    For curves there are two update modes, resulting in different quality in output. During the update following a
+                    For curves there are  A very special, but decisive speed improvement has been done for the Internet Explorer version 6 and 7. With the following piece of code which is executed at initialization time the update speed of the Internet Explorer has been improved by an order of magnitude. two update modes, resulting in different quality in output. During the update following a
                     mouse move event, a curve is plotted evaluating only few data points. The default value here is to use 400 points.
                     In the update follwoing a mouse up event the same curve is plotted with much more points. The default value
                     now is to use 2000 points. These values can be adapted in Options.js.                 
@@ -157,6 +157,66 @@
                     only consists of 380 kBytes. If the web server which delivers jsxgraphcore.js has DEFLATE enabled, which means it
                     compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
                     In most cases, this is less than the same construction would take as non-interactive PNG image.
+                </para>
+            </section>
+            <section>
+                <title>Use the function invocation pattern</title>
+                <para>
+                Sometimes function graphs are expensive to compute. One example is a regression polynomial through 
+                a given set of points. On update the position of all points has to be determined, the resulting linear system of
+                equations has to solved. Its solutions gives the coefficients of the polynomial.
+                We certainly do not want to do this computation for determining a single function value, since for one update 
+                of the function graph we have to compute more than a thousand values of that function.
+                </para>
+                <para>
+                We apply the following strategy: When the function graph is updated, we compute the coefficients of the polynomial once.
+                Then we use these coefficients for the computation of all function values.
+                But where to store the coefficients. Using the "this" keyword does not give the desired results in a function.
+                But fortunately, we can use the function invocation pattern, see <xref  linkend="Crockford2008"/>, page 28.
+                In the example below, the function which is returned by the call of "generateFunction()" still has access to the 
+                variable "coeffs". This is based on the powerful concept of closures, which is part of JavaScript and comes from 
+                functional programming languages.
+                So, we can compute many function values very fast, and we do not have to do the bookkeeping, where these
+                coefficients are stored.
+                <example>
+                <title>Use of the function invocation pattern</title>
+                <programlisting><![CDATA[     
+generateFunction = function(degree,dataX,dataY) { 
+    var coeffs = [];                 
+    var fct = function(x,suspendedUpdate){
+            var i, j, M, MT, y, B, c, s,
+                len = dataX.length;                       
+                
+            if (!suspendedUpdate) {  // Recomputation of the cooefficents: expensive
+                M = [];
+                for (j=0;j<len;j++) {
+                    M.push([1]);
+                }
+                for (i=1;i<=degree;i++) {
+                    for (j=0;j<len;j++) {
+                        M[j][i] = M[j][i-1]*datax[j];  
+                    }
+                }
+                y = dataY;                       
+                MT = JXG.Math.Matrix.transpose(M);
+
+                B = JXG.Math.matMatMult(MT,M);
+                c = JXG.Math.matVecMult(MT,y);
+                coeffs = JXG.Math.Numerics.Gauss(B, c);
+                
+            }
+            
+            // Horner's scheme to evaluate polynomial: cheap
+            s = coeffs[degree];
+            for (i=degree-1;i>=0;i--) {
+                s = (s*x+coeffs[i]);
+            }
+            return s;
+        };
+        return fct;
+    };
+                ]]></programlisting>           
+                </example>
                 </para>
             </section>
             <section>

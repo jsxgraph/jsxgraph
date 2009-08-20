@@ -66,7 +66,11 @@ ol.ftnote {list-style-type: decimal}
     &nbsp;&nbsp;&nbsp;&nbsp;
   
     &nbsp;&nbsp;&nbsp;&nbsp;
-  <a xmlns="" href="#S8.3.6">8.3.6 An Internet Explorer trick</a><br xmlns=""/><b xmlns=""><a href="#S.Bibliography">Bibliography</a></b><br xmlns=""/><b xmlns=""><a href="#S.Footnotes">Footnotes</a></b><br xmlns=""/></p>
+  <a xmlns="" href="#S8.3.6">8.3.6 Use the function invocation pattern</a><br xmlns=""/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <a xmlns="" href="#S8.3.7">8.3.7 An Internet Explorer trick</a><br xmlns=""/><b xmlns=""><a href="#S.Bibliography">Bibliography</a></b><br xmlns=""/><b xmlns=""><a href="#S.Footnotes">Footnotes</a></b><br xmlns=""/></p>
         <h2 xmlns=""><a id="S1.">1. Introduction</a></h2>
         <p xmlns="">JSXGraph<a href="#FT1" class="fnref"><b>[1]</b></a>  
             is a client-side web application/library for advanced vector graphics in a web browser. Its range of applications starts from
@@ -298,7 +302,7 @@ var t = brd.createElement('point',[4,3]);
                 One of the major user audiences of JSXGraph are schools. In general, schools are adapting only slowly to new technologies.
                 That is one of the reason, why Internet Explorer is widely used in schools. Since we can not afford to exclude schools as
                 users of JSXGraph we had to adapt it to the Internet Explorer, too. Since the year 1998 
-                Microsoft<a href="#FT12" class="fnref"><b>[12]</b></a><a href="#VML98" class="xref"><b>Paragraph 41</b></a>
+                Microsoft<a href="#FT12" class="fnref"><b>[12]</b></a><a href="#VML98" class="xref"><b>Paragraph 43</b></a>
                 supports VML 
                 - vector markup language - as vector graphic language in the Internet Explorer. 
                 Early in the development process of JSXGraph we decided to support SVG and VML directly, without using one of their
@@ -396,14 +400,14 @@ var t = brd.createElement('point',[4,3]);
                 <h4 xmlns=""><a id="S"> Use memoizers</a></h4>
                 <p xmlns="">
                         Common functions like binomial() and factorial() are realized with memoizer techniques, 
-                        as descripted in <a href="#Crockford2008" class="xref"><b>Paragraph 41</b></a>, page 44.
+                        as descripted in <a href="#Crockford2008" class="xref"><b>Paragraph 43</b></a>, page 44.
                         Thus, the expensive computation of each value of these functions is done only once.
                  </p>
             
             
                 <h4 xmlns=""><a id="S"> Distinguish mouse move and mouse up events</a></h4>
                 <p xmlns="">
-                    For curves there are two update modes, resulting in different quality in output. During the update following a
+                    For curves there are  A very special, but decisive speed improvement has been done for the Internet Explorer version 6 and 7. With the following piece of code which is executed at initialization time the update speed of the Internet Explorer has been improved by an order of magnitude. two update modes, resulting in different quality in output. During the update following a
                     mouse move event, a curve is plotted evaluating only few data points. The default value here is to use 400 points.
                     In the update follwoing a mouse up event the same curve is plotted with much more points. The default value
                     now is to use 2000 points. These values can be adapted in Options.js.                 
@@ -421,6 +425,62 @@ var t = brd.createElement('point',[4,3]);
                     compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
                     In most cases, this is less than the same construction would take as non-interactive PNG image.
                 </p>
+            
+            
+                <h4 xmlns=""><a id="S"> Use the function invocation pattern</a></h4>
+                <p xmlns="">
+                Sometimes function graphs are expensive to compute. One example is a regression polynomial through 
+                a given set of points. On update the position of all points has to be determined, the resulting linear system of
+                equations has to solved. Its solutions gives the coefficients of the polynomial.
+                We certainly do not want to do this computation for determining a single function value, since for one update 
+                of the function graph we have to compute more than a thousand values of that function.
+                </p>
+                <p xmlns="">
+                We apply the following strategy: When the function graph is updated, we compute the coefficients of the polynomial once.
+                Then we use these coefficients for the computation of all function values.
+                But where to store the coefficients. Using the "this" keyword does not give the desired results in a function.
+                But fortunately, we can use the function invocation pattern, see <a href="#Crockford2008" class="xref"><b>Paragraph 43</b></a>, page 28.
+                In the example below, the function which is returned by the call of "generateFunction()" still has access to the 
+                variable "coeffs". This is based on the powerful concept of closures, which is part of JavaScript and comes from 
+                functional programming languages.
+                So, we can compute many function values very fast, and we do not have to do the bookkeeping, where these
+                coefficients are stored.
+                <div class="figure"><table class="codeBlock"><tr><td><pre>     
+generateFunction = function(degree,dataX,dataY) { 
+    var coeffs = [];                 
+    var fct = function(x,suspendedUpdate){
+            var i, j, M, MT, y, B, c, s,
+                len = dataX.length;                       
+                
+            if (!suspendedUpdate) {  // Recomputation of the cooefficents: expensive
+                M = [];
+                for (j=0;j&lt;len;j++) {
+                    M.push([1]);
+                }
+                for (i=1;i&lt;=degree;i++) {
+                    for (j=0;j&lt;len;j++) {
+                        M[j][i] = M[j][i-1]*datax[j];  
+                    }
+                }
+                y = dataY;                       
+                MT = JXG.Math.Matrix.transpose(M);
+
+                B = JXG.Math.matMatMult(MT,M);
+                c = JXG.Math.matVecMult(MT,y);
+                coeffs = JXG.Math.Numerics.Gauss(B, c);
+                
+            }
+            
+            // Horner's scheme to evaluate polynomial: cheap
+            s = coeffs[degree];
+            for (i=degree-1;i&gt;=0;i--) {
+                s = (s*x+coeffs[i]);
+            }
+            return s;
+        };
+        return fct;
+    };
+                </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 3: Use of the function invocation pattern</b></p></blockquote></div></p>
             
             
                 <h4 xmlns=""><a id="S"> An Internet Explorer trick</a></h4>
