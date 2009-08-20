@@ -1,0 +1,10 @@
+﻿    <section>
+        <title>JSXGraph as front end to server side applications</title>
+        <para>JavaScript enables us to use the XMLHTTPRequest object to interact with server side applications. Currently one can use our XMLHTTPRequest object wrapper JXG.FileReader or the AJAX wrappers
+        provided by Prototype<footnote><para><ulink url="http://prototypejs.org">http://prototypejs.org</ulink></para></footnote> and jQuery <footnote><para><ulink url="http://jquery.com">http://jquery.com</ulink></para></footnote>.
+        So JSXGraph can be used to visualize the output of server side calculations but provides new input for server applications, too.
+        </para>
+        <example>
+        <title>maybe a little example, but what? the r example is quite too big...</title>
+        </example>
+    </section>

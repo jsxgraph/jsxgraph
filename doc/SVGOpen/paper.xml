@@ -2,6 +2,8 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V5.0b5//EN"
                "docbook_5.0b5.dtd" [
 <!ENTITY chapter_introduction SYSTEM "chapter_introduction.xml" >
+<!ENTITY chapter_server SYSTEM "chapter_server.xml" >
+<!ENTITY chapter_plugins SYSTEM "chapter_plugins.xml" >
 <!ENTITY chapter_implementation SYSTEM "chapter_implementation.xml" >
 ]>
 <?oxygen RNGSchema="http://www.docbook.org/xml/5.0/rng/docbook.rng" type="xml"?>
@@ -158,16 +160,9 @@ Other file formats are under development. For example, JSXGraph is involved in t
         </section>
     </section>
     
-    <section>
-        <title>JSXGraph as front end to server side applications</title>
-        <para> A paragraph ...</para>          
-    </section>
-    
-    <section>
-        <title>JSXGraph Plugins</title>
-        <para> Para 1</para>
-    </section>
-    
+    &chapter_server;
+
+    &chapter_plugins;
     
     &chapter_implementation;    
     
