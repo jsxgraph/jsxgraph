@@ -133,7 +133,6 @@ Other file formats are under development. For example, JSXGraph is involved in t
                 t.left(90);
                 t.forward(100*Math.sqrt(2));
             ]]></programlisting>
-            <programlisting><![CDATA[
                 <figure xml:id="nikolaus">
                     <title>The Nikolaus Graph</title>
                     <mediaobject>
@@ -143,7 +142,6 @@ Other file formats are under development. For example, JSXGraph is involved in t
                          <textobject><phrase>The Nikolaus Graph</phrase></textobject>
                     </mediaobject>
                 </figure>
-            ]]></programlisting>       
             <para>This approach can be used to produce easily beautiful Lindenmayer systems known from chaos theory like plants or penrose tilings. Similarly, well-known fractals like the Sierpinski triangle or the Koch curve can be drawn. Other applications can be found in statistics where one can simulate random walks with turtles. Additionally, abecedarian games like snake can be implemented in a few lines.
             </para>
         </section>

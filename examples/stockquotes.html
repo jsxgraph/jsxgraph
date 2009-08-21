@@ -12,7 +12,7 @@
 /* <![CDATA[ */
 
 var hi, lo, brd, periodical;
-new Ajax.Request('stockquotes.php', {
+new Ajax.Request('/ajax/stockquotes.php', {
         onComplete: function(transport) {
             if (200 == transport.status) {
                 var t = transport.responseText;

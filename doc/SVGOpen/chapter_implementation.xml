@@ -1,9 +1,4 @@
     <section>
-        <title>Using JSXGraph with a connection to a server</title>
-        <para> A paragraph ...</para>          
-    </section>
-    
-    <section>
         <title>Implementation details</title>
         <para>
             The main focus of JSXGraph is on interactivity. The user should experience immediate response to the dragging of points

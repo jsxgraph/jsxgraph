@@ -36,7 +36,9 @@ ol.ftnote {list-style-type: decimal}
     &nbsp;&nbsp;&nbsp;&nbsp;
   <a xmlns="" href="#S3.2">3.2 Drawing with turtle graphics</a><br xmlns=""/><b xmlns=""><a href="#S4.">4. Charts</a></b><br xmlns=""/>
     &nbsp;&nbsp;&nbsp;&nbsp;
-  <a xmlns="" href="#S4.1">4.1 Title of subsubsection</a><br xmlns=""/><b xmlns=""><a href="#S5.">5. JSXGraph as front end to server side applications</a></b><br xmlns=""/><b xmlns=""><a href="#S6.">6. Plugins for integration in other web applications</a></b><br xmlns=""/><b xmlns=""><a href="#S7.">7. Using JSXGraph with a connection to a server</a></b><br xmlns=""/><b xmlns=""><a href="#S8.">8. Implementation details</a></b><br xmlns=""/>
+  <a xmlns="" href="#S4.1">4.1 Title of subsubsection</a><br xmlns=""/><b xmlns=""><a href="#S5.">5. JSXGraph as a front end to server side applications</a></b><br xmlns=""/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+  <a xmlns="" href="#S5.1">5.1 Use R to compute location and scale</a><br xmlns=""/><b xmlns=""><a href="#S6.">6. Plugins for integration in other web applications</a></b><br xmlns=""/><b xmlns=""><a href="#S7.">7. Using JSXGraph with a connection to a server</a></b><br xmlns=""/><b xmlns=""><a href="#S8.">8. Implementation details</a></b><br xmlns=""/>
     &nbsp;&nbsp;&nbsp;&nbsp;
   <a xmlns="" href="#S8.1">8.1 SVG vs. VML</a><br xmlns=""/>
     &nbsp;&nbsp;&nbsp;&nbsp;
@@ -205,12 +207,19 @@ Other file formats are under development. For example, JSXGraph is involved in t
             <p xmlns="">A paragraph ...</p>
         
     
-        <h2 xmlns=""><a id="S5.">5. JSXGraph as front end to server side applications</a></h2>
-        <p xmlns="">JavaScript enables us to use the XMLHTTPRequest object to interact with server side applications. Currently one can use our XMLHTTPRequest object wrapper JXG.FileReader or the AJAX wrappers
+        <h2 xmlns=""><a id="S5.">5. JSXGraph as a front end to server side applications</a></h2>
+        <p xmlns="">JavaScript enables us to use the XMLHTTPRequest object to interact with server side applications. Currently one can use our AJAX wrapper JXG.FileReader or the one
         provided by Prototype<a href="#FT8" class="fnref"><b>[8]</b></a> and jQuery <a href="#FT9" class="fnref"><b>[9]</b></a>.
         So JSXGraph can be used to visualize the output of server side calculations but provides new input for server applications, too.
         </p>
-        <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre>       
+        
+            <h3 xmlns=""><a id="S"> Use R to compute location and scale</a></h3>
+            <p xmlns="">
+            For example one can use R<a href="#FT10" class="fnref"><b>[10]</b></a> runnig on a server using a PHP wrapper to catch the CGI variables and passes them to a R script. This script then calculates the mean value,
+            standard deviation, median, median absolute deviation, and radius-minimax estimator and returns these values through the PHP script back to JSXGraph. Finally
+            lines are plotted to visualize that values.
+            </p>
+           <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre>       
 &lt;div id="jxgbox" class="jxgbox" style="width:700px; height:400px;" onmouseup="doUpdate();"&gt;&lt;/div&gt; 
 &lt;script&gt;
 var brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 300, unitX: 60, unitY: 5, axis:true}),
@@ -260,8 +269,9 @@ if (!get_magic_quotes_gpc()) {
 $cmd = "/usr/bin/Rscript LokSkala.R '" . $input ."'";
 passthru($cmd);
 ?&gt;
-       </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 1: maybe a little example, but what? the r example is quite too big...</b></p></blockquote></div>
+       </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 1: A R script is invoked using AJAX and PHP</b></p></blockquote></div>
     
+
         <h2 xmlns=""><a id="S6.">6. Plugins for integration in other web applications</a></h2>
         <p xmlns="">To ease the integration of JSXGraph into other web applications we provide some plugins for a couple of existing web applications. That are the blogging software Wordpress, 
         the basis software for Wikipedia called MediaWiki, and the course management system Moodle. The latter one ist still experimental. The user only has to provide a few options for the drawing panel
@@ -287,9 +297,9 @@ var t = brd.createElement('point',[4,3]);
             speed versus quality - have to be balanced. 
         </p> 
         <p xmlns="">
-            For the browser abstraction JSXGraph uses either the Prototype JavaScript library<a href="#FT10" class="fnref"><b>[10]</b></a> 
+            For the browser abstraction JSXGraph uses either the Prototype JavaScript library<a href="#FT11" class="fnref"><b>[11]</b></a> 
             or 
-            jQuery<a href="#FT11" class="fnref"><b>[11]</b></a>.  
+            jQuery<a href="#FT12" class="fnref"><b>[12]</b></a>.  
             JSXGraph can be used with either of these two libraries equally good. 
             The access to these libraries is restricted to a minimum and it is capsuled in a few lines in the
             source code file jsxgraph.js. These libraries are nerly exclusively used for the corss-browser handling of events.
@@ -302,7 +312,7 @@ var t = brd.createElement('point',[4,3]);
                 One of the major user audiences of JSXGraph are schools. In general, schools are adapting only slowly to new technologies.
                 That is one of the reason, why Internet Explorer is widely used in schools. Since we can not afford to exclude schools as
                 users of JSXGraph we had to adapt it to the Internet Explorer, too. Since the year 1998 
-                Microsoft<a href="#FT12" class="fnref"><b>[12]</b></a><a href="#VML98" class="xref"><b>Paragraph 43</b></a>
+                Microsoft<a href="#FT13" class="fnref"><b>[13]</b></a><a href="#VML98" class="xref"><b>Paragraph 44</b></a>
                 supports VML 
                 - vector markup language - as vector graphic language in the Internet Explorer. 
                 Early in the development process of JSXGraph we decided to support SVG and VML directly, without using one of their
@@ -400,7 +410,7 @@ var t = brd.createElement('point',[4,3]);
                 <h4 xmlns=""><a id="S"> Use memoizers</a></h4>
                 <p xmlns="">
                         Common functions like binomial() and factorial() are realized with memoizer techniques, 
-                        as descripted in <a href="#Crockford2008" class="xref"><b>Paragraph 43</b></a>, page 44.
+                        as descripted in <a href="#Crockford2008" class="xref"><b>Paragraph 44</b></a>, page 44.
                         Thus, the expensive computation of each value of these functions is done only once.
                  </p>
             
@@ -419,7 +429,7 @@ var t = brd.createElement('point',[4,3]);
                     The JavaScript source code of 
                     JSXGraph version 0.76 consists of 20 individual files, which add up to about 980 kBytes including comments.
                     These 20 files are bundled together in one big file which is subsequently compressed by the 
-                    YUI compressor<a href="#FT13" class="fnref"><b>[13]</b></a> from Yahoo!. 
+                    YUI compressor<a href="#FT14" class="fnref"><b>[14]</b></a> from Yahoo!. 
                     During this process comments and superfluous whitespace are removed. The resulting file jsxgraphcore.js
                     only consists of 380 kBytes. If the web server which delivers jsxgraphcore.js has DEFLATE enabled, which means it
                     compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
@@ -439,7 +449,7 @@ var t = brd.createElement('point',[4,3]);
                 We apply the following strategy: When the function graph is updated, we compute the coefficients of the polynomial once.
                 Then we use these coefficients for the computation of all function values.
                 But where to store the coefficients. Using the "this" keyword does not give the desired results in a function.
-                But fortunately, we can use the function invocation pattern, see <a href="#Crockford2008" class="xref"><b>Paragraph 43</b></a>, page 28.
+                But fortunately, we can use the function invocation pattern, see <a href="#Crockford2008" class="xref"><b>Paragraph 44</b></a>, page 28.
                 In the example below, the function which is returned by the call of "generateFunction()" still has access to the 
                 variable "coeffs". This is based on the powerful concept of closures, which is part of JavaScript and comes from 
                 functional programming languages.
@@ -606,7 +616,7 @@ generateFunction = function(degree,dataX,dataY) {
             
             
         </dl><h2 xmlns="" class="ftnoteHeader"><a id="S.Footnotes">Footnotes</a></h2><ol xmlns="" class="ftnote"><li><p><a id="FT1"/>http://jsxgraph.org</p></li><li><p><a id="FT2"/>Inspired by the work of Sam Ruby: 
-            http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</p></li><li><p><a id="FT3"/>http://geonext.de</p></li><li><p><a id="FT4"/>http://i2geo.net</p></li><li><p><a id="FT5"/>http://geogebra.org</p></li><li><p><a id="FT6"/>http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu</p></li><li><p><a id="FT7"/>http://jsxgraph.uni-bayreuth.de/wiki/index.php/Analyze_data_with_the_Statistics_software_R</p></li><li><p><a id="FT8"/>http://prototypejs.org</p></li><li><p><a id="FT9"/>http://jquery.com</p></li><li><p><a id="FT10"/>http://prototypejs.org</p></li><li><p><a id="FT11"/>http://jquery.com</p></li><li><p><a id="FT12"/>See http://www.w3.org/TR/1998/NOTE-VML-19980513 for the specification.</p></li><li><p><a id="FT13"/>http://developer.yahoo.com/yui/compressor/</p></li></ol><p class="credits"><small>XHTML rendition made possible by
+            http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</p></li><li><p><a id="FT3"/>http://geonext.de</p></li><li><p><a id="FT4"/>http://i2geo.net</p></li><li><p><a id="FT5"/>http://geogebra.org</p></li><li><p><a id="FT6"/>http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu</p></li><li><p><a id="FT7"/>http://jsxgraph.uni-bayreuth.de/wiki/index.php/Analyze_data_with_the_Statistics_software_R</p></li><li><p><a id="FT8"/>http://prototypejs.org</p></li><li><p><a id="FT9"/>http://jquery.com</p></li><li><p><a id="FT10"/>http://www.r-project.org</p></li><li><p><a id="FT11"/>http://prototypejs.org</p></li><li><p><a id="FT12"/>http://jquery.com</p></li><li><p><a id="FT13"/>See http://www.w3.org/TR/1998/NOTE-VML-19980513 for the specification.</p></li><li><p><a id="FT14"/>http://developer.yahoo.com/yui/compressor/</p></li></ol><p class="credits"><small>XHTML rendition made possible by
       <a href="http://www.schemasoft.com">SchemaSoft</a>'s
       <a href="http://www.schemasoft.com/DocBook/">Document Interpreter</a>&trade;
       technology.</small></p></body></html>
