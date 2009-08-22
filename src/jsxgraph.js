@@ -509,6 +509,33 @@ JXG.unescapeHTML = function(str) {
     return str.replace(/<\/?[^>]+>/gi, '').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 };
 
+JXG.toJSON = function(obj) {
+    switch (typeof obj) {
+        case 'object':
+            if (obj) {
+                var list = [];
+                if (obj instanceof Array) {
+                    for (var i=0;i < obj.length;i++) {
+                        list.push(JXG.toJSON(obj[i]));
+                    }
+                    return '[' + list.join(',') + ']';
+                } else {
+                    for (var prop in obj) {
+                        list.push('"' + prop + '":' + JXG.toJSON(obj[prop]));
+                    }
+                    return '{' + list.join(',') + '}';
+                }
+            } else {
+                return 'null';
+            }
+        case 'string':
+            return '"' + obj.replace(/(["'])/g, '\\$1') + '"';
+        case 'number':
+        case 'boolean':
+            return new String(obj);
+    }
+};
+
 JXG.capitalize = function(str) {
     return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
 };
