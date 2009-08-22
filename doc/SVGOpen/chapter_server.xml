@@ -1,69 +1,105 @@
 ﻿    <section>
         <title>JSXGraph as a front end to server side applications</title>
-        <para>JavaScript enables us to use the XMLHTTPRequest object to interact with server side applications. Currently one can use our AJAX wrapper JXG.FileReader or the one
+        <para>JavaScript enables us to use the XmlHTTPRequest object to interact with server side applications. Currently one can use our AJAX wrapper JXG.FileReader or the one
         provided by Prototype<footnote><para><ulink url="http://prototypejs.org">http://prototypejs.org</ulink></para></footnote> and jQuery <footnote><para><ulink url="http://jquery.com">http://jquery.com</ulink></para></footnote>.
         So JSXGraph can be used to visualize the output of server side calculations but provides new input for server applications, too.
         </para>
         <section>
-            <title>Use R to compute location and scale</title>
+            <title>Just AJAX</title>
             <para>
-            For example one can use R<footnote><para><ulink url="http://www.r-project.org">http://www.r-project.org</ulink></para></footnote> runnig on a server using a PHP wrapper to catch the CGI variables and passes them to a R script. This script then calculates the mean value,
-            standard deviation, median, median absolute deviation, and radius-minimax estimator and returns these values through the PHP script back to JSXGraph. Finally
-            lines are plotted to visualize that values.
+            For example one can fetch share prices from a web site like Yahoo finance. To do this one needs a script on his own webserver because of security restrictions concerning the XmlHTTPRequest object which
+            cannot be used in conjunction with a url that is not on the same server as the web site starting the request. After starting the script from JavaScript it sends back the data from Yahoo which then is parsed by
+            the JavaScript and visualized using a curve.
             </para>
            <example>
-            <title>A R script is invoked using AJAX and PHP</title>
-            <programlisting><![CDATA[       
-<div id="jxgbox" class="jxgbox" style="width:700px; height:400px;" onmouseup="doUpdate();"></div> 
-<script>
-var brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 300, unitX: 60, unitY: 5, axis:true}),
-    g = brd.createElement('curve', [[0,11],[0,0]], {strokecolor:'red'}),
-    i,
-    p = [];
-
-for (i=0;i<12;i++) {
-    p[i] = brd.createElement('point', [i,Math.random()*50],{name:' ',style:7}); 
-} 
-
-var doUpdate = function() {
-    brd.update();
-    // Generate a ";"-separated list
-    var t = '';
-    for (var i=0;i<p.length;i++) {
-        t += p[i].Y() + ';';
-    }
-    new Ajax.Request('/directory/rserv.php', {
-        method:'post',
-        parameters:'input='+escape(t),
+            <title>JavaScript invoking a PHP script using AJAX</title>
+            <programlisting><![CDATA[
+var hi, lo, brd, periodical, 
+    brd, g, txt, val,
+    x = [],
+    y = [];
+ 
+ 
+fetchData = function() {
+    new Ajax.Request('/ajax/stockquotes.php', {
         onComplete: function(transport) {
-            var t, result, a, m;
+            var t, a;
             if (200 == transport.status) {
-                var t = transport.responseText;
-                var result = t.match(/"(.*)"/gi);
-                result = RegExp.$1;
-                a = res.split(";");
-                m = a[0]*1.0;
-                g.dataY = [m,m];
+                t = transport.responseText;
+                a = t.split(',');
+                x.push(x.length+1);
+                y.push(a[1]);
+                val = a[1];  // set the text
+                if (!g) { 
+                    g = brd.createElement('curve', [x,y],{strokeWidth:3, strokeColor:'green',shadow:true}); 
+                    txt = brd.createElement('text', [3,(hi+lo)*0.5,function(){return 'GDAXI = '+val;}],{fontSize:'14px'}); 
+                } else {
+                    g.dataX = x;                    
+                    g.dataY = y;
+                }
                 brd.update();
             };
-        }
-    });
-};  
-
-doUpdate();
-</script>
-
-//---------------------------------------------
-// The PHP file rserv.php for the response:
+    }});
+};
+ 
+// Fetch max and min, and start the periodical update.
+new Ajax.Request('/ajax/stockquotes.php', {
+        onComplete: function(transport) {
+            var a, t;
+            if (200 == transport.status) {
+                t = transport.responseText;
+                a = t.split(',');
+                hi = a[6]*1.001;
+                lo = a[7]*0.999;
+                brd = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[0,hi,200,lo]});
+                brd.createElement('axis',[[0,lo],[1,lo]]);
+            };
+    }});
+ 
+      periodical = setInterval(fetchData,1000);  // Start the periodical update
+]]>
+</programlisting>
+<programlisting><![CDATA[
 <?php
-$input = $_POST["input"];
-if (!get_magic_quotes_gpc()) {
-    $input = addslashes($input);
-}
-$cmd = "/usr/bin/Rscript LokSkala.R '" . $input ."'";
-passthru($cmd);
+  $fp = fopen ("http://finance.yahoo.com/d/quotes.csv?s=^gdaxi&f=sl1d1t1c1ohgv&e=.csv","r");
+  echo fgets ($fp, 1024);
+  fclose ($fp);
 ?>
       ]]> </programlisting>
         </example>
+    </section>
+    <section>
+    <title>JXG.Server</title>
+    <para>
+      For quick'n'dirty solutions the AJAX interface is nice. But if you want to implement an interface to a server side program and want to use it with other worksheets or share it with other people, you'd better take
+      a look at JXG.Server. This is a frontend to a python based plugin system. These plugins are called modules and can be loaded easily with just one function call. After initializing the functionality is avaiable through
+      a JavaScript interface in the browser and all the AJAX stuff like parameter handling and return data parsing is done by the module.
+    </para>
+    <example>
+      <title>
+        Python module on the server which multiplies a given number by 3
+      </title>
+      <para>
+      <programlisting><![CDATA[
+from JXGServerModule import JXGServerModule
+import JXG
+
+class JXGModuleMultiply(JXGServerModule):
+
+    def init(self, resp):
+        resp.addHandler(self.mult, 'function(data) { alert(data.y); }')
+        return
+
+    def mult(self, resp, x):
+        resp.addData('y', 3*x)
+        return
+      ]]>
+      </programlisting>
+      This module is in a file called jxgmodulemultiply.py and can be loaded with JXG.Server through
+      <programlisting><![CDATA[ JXG.Server.loadModule('jxgmodulemultiply'); ]]></programlisting>
+      After the module has been loaded the python function can be accessed with
+      <programlisting><![CDATA[ JXG.Server.modules.jxgmodulemultiply.mult(5); ]]></programlisting>
+      which will result in an alert notification window displaying "15".</para>
+    </example>
     </section>
 </section>
