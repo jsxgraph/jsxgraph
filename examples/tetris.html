@@ -9,15 +9,23 @@
         border-width:2px;
         border-color:#000000;
        }
+       body {
+        font-family:Arial;
+       }
     </style> 
    
    <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-  <h2>Tetris</h2>
-  <div id="jxgbox" class="jxgbox" style="width:250px; height:500px;position:absolute;left:200px"></div> 
-  <div id="jxgbox2" class="jxgbox" style="width:125px; height:125px;position:absolute;left:500px"></div> 
+  <h1><font color='#DC143C'>T</font><font color='#FF8C00'>e</font><font color='#0000CD'>t</font><font color='#FFD700'>r</font><font color='#4B0082'>i</font><font color='#32CD32'>s</font></h1>
+  <div id="jxgbox" class="jxgbox" style="width:250px; height:500px;position:absolute;left:200px;top:75px"></div>
+  <div style="width:125px; height:25px;position:absolute;left:500px;top:75px"><b>Next</b></div>  
+  <div id="jxgbox2" class="jxgbox" style="width:125px; height:125px;position:absolute;left:500px;top:100px"></div>
+  <div style="width:125px; height:25px;position:absolute;left:500px;top:300px"><b>Level</b></div>
+  <div style="width:125px; height:25px;position:absolute;left:500px;top:325px"><b id='level'>1</b></div>   
+  <div style="width:125px; height:25px;position:absolute;left:500px;top:400px"><b>Score</b></div>
+  <div style="width:125px; height:25px;position:absolute;left:500px;top:425px"><b id='score'>0</b></div>  
   <br clear=all>
   <div id="debug" style="display:block;position:absolute;left:500px;width:200px"></div>
   <script type="text/javascript">
@@ -219,13 +227,28 @@
     function removeLines() {
         var arr = testLines(),i,j,k, line;
         if(arr.length > 0) {
+            if(arr.length == 1) {
+                score += (level+1)*40;
+            }
+            else if(arr.length == 2) {
+                score += (level+1)*100;
+            }
+            else if(arr.length == 3) {
+                score += (level+1)*300;
+            }
+            else if(arr.length == 4) {
+                score += (level+1)*1200;
+            }     
+            scoreNode.innerHTML = score;             
             for(i=0;i<arr.length;i++) {
                 line = arr[i];
                 for(j=line+1-i;j<20;j++) {
                     for(k=0;k<10;k++) {
                         if(usedPolys[k][j] == 1) {
-                            showCube(k,j-1,board.objects['poly_'+k+'_'+(j-1)].visProp['fillColor']);
+                            showCube(k,j-1,board.objects['poly_'+k+'_'+j].visProp['fillColor']);
                             usedPolys[k][j-1] = 1;
+                            hideCube(k,j);
+                            usedPolys[k][j] = 0;
                         }
                         else {
                             hideCube(k,j-1);
@@ -286,6 +309,8 @@
             removeShape(curShape.shape,curShape.x,curShape.y);
             if(compareWithAbsoluteShape(curShape.shape,curShape.x,curShape.y-1)) {           
                 curShape = drawShape(curShape.shape,curShape.x,curShape.y-1);
+                score += (level + 1);
+                scoreNode.innerHTML = score;
             }
             else {
                 curShape = drawShape(curShape.shape,curShape.x,curShape.y);
@@ -306,6 +331,8 @@
                     }
                     i--;
                 }
+                score += (level + 1)*(curShape.y-min);
+                scoreNode.innerHTML = score;                   
                 curShape = drawShape(curShape.shape,curShape.x,min);
             }
         }
@@ -314,7 +341,7 @@
     
     function gameOver() {
         for(i=0;i<10; i++) {
-            if(usedPolys[i][19] == 1) {
+            if(usedPolys[i][18] == 1) {
                 return true;
             }
         }
@@ -325,17 +352,24 @@
         removeShape(curShape.shape,curShape.x,curShape.y);
         if(compareWithAbsoluteShape(curShape.shape,curShape.x,curShape.y-1)) {           
             curShape = drawShape(curShape.shape,curShape.x,curShape.y-1);
-            setTimeout(goDownByTime,1000);
+            setTimeout(goDownByTime,timeOutTimes[level]);
         }
         else {
             curShape = drawShape(curShape.shape,curShape.x,curShape.y);
+            document.getElementById('score').innerHTML
             if(!gameOver()) {
                 removeLines();
-                curShape = drawShape(shape(next),4,16);
-                next = getRandom();
-                clearVorschau();
-                drawVorschauShape(shape(next),1,1);
-                setTimeout(goDownByTime,1000);
+                if(compareWithAbsoluteShape(shape(next),4,16)) {
+                    curShape = drawShape(shape(next),4,16);
+                    next = getRandom();
+                    clearVorschau();
+                    drawVorschauShape(shape(next),1,1);
+                    setTimeout(goDownByTime,timeOutTimes[level]);
+                }
+                else {
+                    curShape = drawShape(shape(next),4,16);
+                    alert("Game Over!");
+                }
             }
             else {
                 alert("Game Over!");
@@ -344,15 +378,27 @@
          
     }
     
+    function levelUp() {
+        if(level < 15) {
+            level += 1;
+            document.getElementById('level').innerHTML = level;
+            setTimeout(levelUp,1000*30);
+        }
+    }
     var pArray = drawPointsAndPolys(board,10,20,false);
     drawPointsAndPolys(board2,5,5,true);
-    alert('dine');
+    
+    var score = 0;
+    var scoreNode = document.getElementById('score');
+    var level = 1;
+    var timeOutTimes = [2000,1000,900,800,700,600,500,400,350,300,250,200,150,100,50,25]
     var curShape = drawShape(shape(getRandom()),4,16); 
     var next = getRandom();
     drawVorschauShape(shape(next),1,1);
     
     document.onkeydown = keyDown;    
-    setTimeout(goDownByTime,1000);
+    setTimeout(goDownByTime,timeOutTimes[level]);
+    setTimeout(levelUp,1000*30);
   /* ]]> */
   </script>
 </body>
