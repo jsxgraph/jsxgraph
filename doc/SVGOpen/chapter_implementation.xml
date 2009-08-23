@@ -1,4 +1,4 @@
-    <section>
+﻿    <section>
         <title>Implementation details</title>
         <para>
             The main focus of JSXGraph lies on interactivity. The JSXGraph user should experience an immediate feedback to the dragging of points
@@ -22,6 +22,7 @@
             Everything else in JSXGraph is built up from scratch and does not rely on any third-party library.
             So, it should be easy to port JSXGraph to a further frameworks, if necessary.
         </para>
+        </section>
         <section>
             <title>SVG vs. VML</title>
             <para>
