@@ -13,8 +13,9 @@
         <title>Interactive SVG with JSXGraph</title>
         <subtitle>JSXGraph</subtitle>
         <keywordset>
-            <keyword>conference proceedings</keyword>
-            <keyword>paper formats</keyword>
+            <keyword>JSXGraph</keyword>
+            <keyword>Dynamic geometry</keyword>
+            <keyword>Interactive drawings</keyword>
         </keywordset>
         <authorgroup>
             <author>
@@ -64,7 +65,7 @@
         </authorgroup>
         <!-- If you have several authors, you could nest all authors within an authorgroup element -->
         <abstract>
-            <para>JSXGraph is a client-side web library for displaying interactive mathematics and drawings in a web browser. This article shall demonstrate the possibilities of JSXGraph and explain how they are implemented.</para>
+            <para>JSXGraph is a open-source client-side web library for displaying interactive mathematics and drawings in a web browser. This article shall demonstrate the possibilities of JSXGraph and explain how they are implemented.</para>
         </abstract>
     </info>
     
@@ -106,44 +107,61 @@ Other file formats are under development. For example, JSXGraph is involved in t
         <section>
             <title>Turtle graphics in mathematical modelling</title>
             <para>Mathematic modelling with differential equations can also be done by using turtle graphics. Exponential population growth model can be easily simulated by using the discrete analogue of the corresponding differential equation and computing the movement of the turtle in equidistant small time intervals. </para>
-                <programlisting><![CDATA[ 
-                var board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
-                var t = board.createElement('turtle',[4,3,70]);
-                ...
-                var dy = alpha*t.Y()*dx;   // Exponential growth
-                t.moveTo([dx+t.X(),dy+t.Y()]);
-                ]]></programlisting>
+                <example>
+                    <title>Simulating exponential population growth with turtle graphics</title>
+                    <programlisting><![CDATA[ 
+                        var board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
+                        var t = board.createElement('turtle',[4,3,70]);
+                        ...
+                        var dy = alpha*t.Y()*dx;   // Exponential growth
+                        t.moveTo([dx+t.X(),dy+t.Y()]);
+                    ]]></programlisting>
+                </example>
             <para>In a similar way, logistic or autocatalytic population growth processes can be modelled. A further application which can be simulated with turtle graphics is epidemiology where a set of differential equations is given to predict the immediate consequences of a epidemic like the Hong Kong flu or the swine flu. With few lines of programm code in JSXGraph one can study the chronological sequence of the rate of susceptible, infected and recovered population.
             </para>
         </section>
         <section>
             <title>Drawing with turtle graphics</title>
             <para>An advantage of using turtle graphics is the easy way to draw. The standard commands are going forward for a given numer of units and turning left or right in a given angle. The following programm listing draws the Nikolaus graph shown in the picture below.</para>
-                <programlisting><![CDATA[ 
-                for(i=1;i<=4;i++) {
-                    t.forward(100);
-                    t.right(90);
-                }
-                t.right(45);
-                t.forward(100*Math.sqrt(2));
-                for(i=1;i<=2;i++) {
-                   t.left(90);
-                   t.forward(50*Math.sqrt(2));
-                }
-                t.left(90);
-                t.forward(100*Math.sqrt(2));
-            ]]></programlisting>
+                <example>
+                    <title>Drawing the Nikolaus Graph with a turtle</title>
+                        <programlisting><![CDATA[ 
+                        for(i=1;i<=4;i++) {
+                            t.forward(100);
+                            t.right(90);
+                        }
+                        t.right(45);
+                        t.forward(100*Math.sqrt(2));
+                        for(i=1;i<=2;i++) {
+                           t.left(90);
+                           t.forward(50*Math.sqrt(2));
+                        }
+                        t.left(90);
+                        t.forward(100*Math.sqrt(2));
+                        ]]></programlisting>
+                </example>
                 <figure xml:id="nikolaus">
                     <title>The Nikolaus Graph</title>
                     <mediaobject>
                         <imageobject>
-                            <imagedata fileref="nikolaus.svg" format="svg" width="60%"/>
+                            <!--<imagedata fileref="nikolaus.svg" format="svg" width="60%"/>-->
+                            <imagedata width="50%" fileref="nikolaus.jpg" format="JPEG"/>
                         </imageobject>
                          <textobject><phrase>The Nikolaus Graph</phrase></textobject>
                     </mediaobject>
                 </figure>
             <para>This approach can be used to produce easily beautiful Lindenmayer systems known from chaos theory like plants or penrose tilings. Similarly, well-known fractals like the Sierpinski triangle or the Koch curve can be drawn. Other applications can be found in statistics where one can simulate random walks with turtles. Additionally, abecedarian games like snake can be implemented in a few lines.
             </para>
+                <figure xml:id="koch">
+                    <title>The Koch curve</title>
+                    <mediaobject>
+                        <imageobject>
+                            <!--<imagedata fileref="nikolaus.svg" format="svg" width="60%"/>-->
+                            <imagedata width="50%" fileref="koch.jpg" format="JPEG"/>
+                        </imageobject>
+                         <textobject><phrase>The Koch curve with recursion level 7</phrase></textobject>
+                    </mediaobject>
+                </figure>            
         </section>
     </section>
     
