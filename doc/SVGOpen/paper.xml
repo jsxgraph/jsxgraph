@@ -24,7 +24,7 @@
                     <surname>Valentin</surname>
                 </personname>
                 <email>bianca.valentin@uni-bayreuth.de</email>
-                <personblurb><para>Bla bla</para></personblurb>
+                <personblurb><para>Bianca Valentin is PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory and applications of JSXGraph.</para></personblurb>
                 <affiliation>
                     <jobtitle>PhD student</jobtitle>
                     <org>
@@ -46,7 +46,7 @@
                     <surname>Gerhaeuser</surname>
                 </personname>
                 <email>michael.gerhaeuser@gmail.com</email>
-                <personblurb><para>Bla bla</para></personblurb>
+                <personblurb><para>Michael Gerhaeuser is currently pursuing graduate studies in Mathematics at the University of Bayreuth. His research focus is computing geometric loci using JSXGraph.</para></personblurb>
                 <affiliation>
                     <jobtitle>Student</jobtitle>
                     <org>
@@ -109,13 +109,13 @@ Other file formats are under development. For example, JSXGraph is involved in t
             <para>Mathematic modelling with differential equations can also be done by using turtle graphics. Exponential population growth model can be easily simulated by using the discrete analogue of the corresponding differential equation and computing the movement of the turtle in equidistant small time intervals. </para>
                 <example>
                     <title>Simulating exponential population growth with turtle graphics</title>
-                    <programlisting><![CDATA[ 
-                        var board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
-                        var t = board.createElement('turtle',[4,3,70]);
-                        ...
-                        var dy = alpha*t.Y()*dx;   // Exponential growth
-                        t.moveTo([dx+t.X(),dy+t.Y()]);
-                    ]]></programlisting>
+<programlisting><![CDATA[ 
+var board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
+var t = board.createElement('turtle',[4,3,70]);
+...
+var dy = alpha*t.Y()*dx;   // Exponential growth
+t.moveTo([dx+t.X(),dy+t.Y()]);
+]]></programlisting>
                 </example>
             <para>In a similar way, logistic or autocatalytic population growth processes can be modelled. A further application which can be simulated with turtle graphics is epidemiology where a set of differential equations is given to predict the immediate consequences of a epidemic like the Hong Kong flu or the swine flu. With few lines of programm code in JSXGraph one can study the chronological sequence of the rate of susceptible, infected and recovered population.
             </para>
@@ -125,20 +125,20 @@ Other file formats are under development. For example, JSXGraph is involved in t
             <para>An advantage of using turtle graphics is the easy way to draw. The standard commands are going forward for a given numer of units and turning left or right in a given angle. The following programm listing draws the Nikolaus graph shown in the picture below.</para>
                 <example>
                     <title>Drawing the Nikolaus Graph with a turtle</title>
-                        <programlisting><![CDATA[ 
-                        for(i=1;i<=4;i++) {
-                            t.forward(100);
-                            t.right(90);
-                        }
-                        t.right(45);
-                        t.forward(100*Math.sqrt(2));
-                        for(i=1;i<=2;i++) {
-                           t.left(90);
-                           t.forward(50*Math.sqrt(2));
-                        }
-                        t.left(90);
-                        t.forward(100*Math.sqrt(2));
-                        ]]></programlisting>
+<programlisting><![CDATA[ 
+for(i=1;i<=4;i++) {
+    t.forward(100);
+    t.right(90);
+}
+t.right(45);
+t.forward(100*Math.sqrt(2));
+for(i=1;i<=2;i++) {
+   t.left(90);
+   t.forward(50*Math.sqrt(2));
+}
+t.left(90);
+t.forward(100*Math.sqrt(2));
+]]></programlisting>
                 </example>
                 <figure xml:id="nikolaus">
                     <title>The Nikolaus Graph</title>
