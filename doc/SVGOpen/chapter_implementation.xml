@@ -2,7 +2,7 @@
         <title>Implementation details</title>
         <para>
             The main focus of JSXGraph lies on interactivity. The JSXGraph user should experience an immediate feedback to the dragging of points
-            with the mouse. So, special attention has to be paid to fast reacting to the mouse move events and mouse up events. Contrarily
+            with the mouse. So, special attention has to be paid to fast reacting to the mouse move and mouse up events. Contrarily
             we want to exploit the superb output quality of vector graphics as offered by SVG. These two controversial goals - 
             speed versus quality - have to be balanced. 
         </para> 
@@ -20,7 +20,7 @@
             Only very few features of these libraries are used and and the access is capsuled in some lines in the
             source code file jsxgraph.js. Mainly the cross-browser handling of events is delegated to the external libraries.
             Everything else in JSXGraph is built up from scratch and does not rely on any third-party library.
-            So, it should be easy to port JSXGraph to a further frameworks, if necessary.
+            So, it should be easy to port JSXGraph to a further framework, if necessary.
         </para>
         </section>
         <section>
@@ -134,7 +134,7 @@
                 <para>
                     For curves in JSXGraph there are two update modes, resulting in different output resolutions. During the update following a
                     mouse move event, curves are plotted evaluating only few data points. The default value here is to use 400 points.
-                    In the update follwoing a mouse up event curves are plotted with much more points. The default value
+                    In the update following a mouse up event curves are plotted with much more points. The default value
                     now is to use 2000 points. These values can be adapted in Options.js.                 
                 </para>
             </section>
@@ -146,7 +146,7 @@
                     These 20 files are bundled together in one big file which is subsequently compressed by the 
                     YUI compressor<footnote><para><ulink url="http://developer.yahoo.com/yui/compressor/">http://developer.yahoo.com/yui/compressor/</ulink></para>
                     </footnote> from Yahoo!. 
-                    During this process comments and superfluous whitespace are removed. The resulting file jsxgraphcore.js
+                    During this process comments and superfluous whitespaces are removed. The resulting file jsxgraphcore.js
                     only consists of 380 kBytes. If the web server which delivers jsxgraphcore.js has DEFLATE enabled, which means it
                     compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
                     In most cases, this is still less than delivering the same construction as a non-interactive PNG image.
