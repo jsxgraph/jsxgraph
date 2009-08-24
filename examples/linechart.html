@@ -1,0 +1,76 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Spline chart with special highlighted points</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:600px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 500, unitX: 50, unitY: 50});
+            board.suspendUpdate();
+            var s = board.createElement('slider', [[1,9],[4,9],[1,1,1.5]], {name:'S',strokeColor:'black',fillColor:'white'});
+            var dataArr = [[0,1,2,3,4,5,6,7,8,9,10], [4,1,3,2,5,7,1.5,2,4.5,8,5]];        
+            var axisx = board.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
+            var axisy = board.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});
+            var chart = board.createElement('chart', dataArr, {chartStyle:'spline,point',labels:dataArr});
+            chart[0].setProperty({strokeColor:'#32CD32',highlightStrokeColor:'#32CD32',strokeWidth:'3px',shadow:true});
+            board.unsuspendUpdate(); 
+            var i;
+            for(i=0; i<chart[1].length; i++) {
+                chart[1][i].setProperty({face:'square',size:5,strokeColor:'#32CD32',fillColor:'#EEE9BF',strokeWidth:'3px',shadow:true});
+                chart[1][i].highlight = function() {    
+                    var ms = 200, to = 10, from = 5, difference, el = this, start = new Date, animate;
+                    difference = (to-from)/ms;
+                    
+                    function step() {
+                        var time = new Date - start, current;
+                        if(time < ms) {            
+                            current = from + time * difference;
+                            el.visProp['size'] = current;
+                            el.board.renderer.updatePoint(el);
+                            animate = setTimeout(step,1);
+                        }
+                        else {
+                            current = from + ms * difference;
+                            el.visProp['size'] = current;
+                            el.board.renderer.updatePoint(el);
+                            clearTimeout(animate);
+                        }
+                    }
+                    animate = setTimeout(step,1);
+                    
+                }
+                chart[1][i].noHighlight = function() {
+                    var ms = 200, from = 10, to = 5, difference, el = this, start = new Date;
+                    difference = (to-from)/ms;
+                   
+                    function step() {
+                        var time = new Date - start, current;
+                        if(time < ms) {            
+                            current = from + time * difference;
+                            el.visProp['size'] = current;
+                            el.board.renderer.updatePoint(el);
+                            animate = setTimeout(step,1);
+                        }
+                        else {
+                            current = from + ms * difference;
+                            el.visProp['size'] = current;
+                            el.board.renderer.updatePoint(el);
+                            clearTimeout(animate);
+                        }
+                    }
+                    animate = setTimeout(step,1);            
+                }                  
+            } 
+      
+          /* ]]> */
+  </script>
+</body>
+</html>

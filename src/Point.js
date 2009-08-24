@@ -254,8 +254,12 @@ JXG.Point.prototype = new JXG.GeometryElement();
  * @private
  */
 JXG.Point.prototype.hasPoint = function (x,y) {
-    var coordsScr = this.coords.scrCoords;
-    return ((Math.abs(coordsScr[1]-x) < this.r+2) && (Math.abs(coordsScr[2]-y)) < this.r+2);
+    var coordsScr = this.coords.scrCoords, r;
+    r = this.visProp['size'];
+    if(r < this.r) {
+        r = this.r;
+    }
+    return ((Math.abs(coordsScr[1]-x) < r+2) && (Math.abs(coordsScr[2]-y)) < r+2);
 };
 
 /**

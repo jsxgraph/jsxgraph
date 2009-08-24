@@ -686,7 +686,8 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
 
     this.updateQuality = this.BOARD_QUALITY_LOW;
 
-    this.dehighlightAll();
+    
+    this.dehighlightAll(x,y);
     if(this.mode != this.BOARD_MODE_DRAG) {
         this.renderer.hide(this.infobox);
     }
@@ -739,9 +740,11 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
         for(el in this.objects) {
             if((this.objects[el].hasPoint != undefined) && (this.objects[el].hasPoint(x, y)) && (this.objects[el].visProp['visible'] == true)) {
                 //this.renderer.highlight(this.objects[el]);
-                this.objects[el].highlight();
-                this.highlightedObjects[el] = this.objects[el];
-                this.updateInfobox(this.objects[el]);
+                if(this.highlightedObjects[el] == null) { // highlight only if not highlighted
+                    this.objects[el].highlight();
+                    this.highlightedObjects[el] = this.objects[el];
+                    this.updateInfobox(this.objects[el]);
+                }
             }
         }
     }
@@ -788,12 +791,16 @@ JXG.Board.prototype.updateInfobox = function(el) {
 /**
  * Remove highlighting of all elements.
  */
-JXG.Board.prototype.dehighlightAll = function() {
+JXG.Board.prototype.dehighlightAll = function(x,y) {
     for(var Element in this.highlightedObjects) {
         //this.renderer.noHighlight(this.highlightedObjects[Element]);
-        this.highlightedObjects[Element].noHighlight();
+        if((this.highlightedObjects[Element].hasPoint == undefined) || 
+           (!this.highlightedObjects[Element].hasPoint(x, y)) || 
+           (this.highlightedObjects[Element].visProp['visible'] == false)) { // dehighlight only if necessary
+                this.highlightedObjects[Element].noHighlight();
+                delete(this.highlightedObjects[Element]);
+        }
     }
-    this.highlightedObjects = {};
 };
 
 /**

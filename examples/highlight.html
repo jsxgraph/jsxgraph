@@ -1,0 +1,82 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Playground</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true,originX: 250, originY: 300, unitX: 50, unitY: 50, axis:true});
+        
+        p1 = board.createElement('point', [2, 2], {face:'circle',size:5,name:"A",fillColor:'red',strokeColor:'yellow'}); 
+        p1.highlight = function() {
+            p1.board.renderer.highlight(p1);
+                   //this.visProp['size'] = 10;
+                    //this.board.renderer.updatePoint(this);            
+            var ms = 200;
+            var to = 10;
+            var from = 5;
+            var diff = (to - from) / ms;
+            
+            var start = new Date;
+            var el = this;
+            var animation_in_progress;
+            function tick() {
+                var time = new Date - start, now;
+                if (time < ms) {            
+                    now = from + time * diff;
+                    el.visProp['size'] = now;
+                    el.board.renderer.updatePoint(el);
+                    animation_in_progress = setTimeout(tick,1);
+                }
+                else {
+                    now = from + ms * diff;
+                    el.visProp['size'] = now;
+                    el.board.renderer.updatePoint(el);
+                    clearTimeout(animation_in_progress);
+                }
+            }
+            animation_in_progress = setTimeout(tick,1);
+            
+        }
+        p1.noHighlight = function() {
+            p1.board.renderer.noHighlight(p1);
+                   // this.visProp['size'] = 5;
+                   // this.board.renderer.updatePoint(this);            
+            var ms = 200;
+            var from = 10;
+            var to = 5;
+            var diff = (to - from) / ms;
+            var now = from + ms * diff;
+            
+            var start = new Date;
+            var el = this;
+            function tick() {
+                var time = new Date - start, now;
+                if (time < ms) {            
+                    now = from + time * diff;
+                    el.visProp['size'] = now;
+                    el.board.renderer.updatePoint(el);
+                    animation_in_progress = setTimeout(tick,1);
+                }
+                else {
+                    now = from + ms * diff;
+                    el.visProp['size'] = now;
+                    el.board.renderer.updatePoint(el);
+                    clearTimeout(animation_in_progress);
+                }
+            }
+            animation_in_progress = setTimeout(tick,1);            
+        }        
+  /* ]]> */
+  </script>
+</body>
+</html>
