@@ -16,13 +16,13 @@ ol.ftnote {list-style-type: decimal}
                             <br/>95444
                             <br/>Germany
                             <br/>++49-921 55 3389
-                        </p><p xmlns="" class="bioHeader"><i>Biography</i></p><blockquote xmlns="" class="bio"><p>Bla bla</p></blockquote><p xmlns="" class="author"><span class="authorName">Michael Gerhaeuser</span><br/>Student<br/><br/>University of Bayreuth<br/>Department of mathematics<br/>
+                        </p><p xmlns="" class="bioHeader"><i>Biography</i></p><blockquote xmlns="" class="bio"><p>Bianca Valentin is PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory and 3D-applications of JSXGraph.</p></blockquote><p xmlns="" class="author"><span class="authorName">Michael Gerhaeuser</span><br/>Student<br/><br/>University of Bayreuth<br/>Department of mathematics<br/>
                             <br/>Bayreuth
                             <br/>Universitaetsstr. 30
                             <br/>95444
                             <br/>Germany
                             <br/>
-                        </p><p xmlns="" class="bioHeader"><i>Biography</i></p><blockquote xmlns="" class="bio"><p>Bla bla</p></blockquote><hr xmlns="" class="upperBorder"/><h2 xmlns="" class="abstractHeader">Abstract</h2><hr xmlns="" class="lowerBorder"/><div xmlns="" class="abstract"><p>JSXGraph is a open-source client-side web library for displaying interactive mathematics and drawings in a web browser. This article shall demonstrate the possibilities of JSXGraph and explain how they are implemented.</p></div><hr class="upperBorder"/><h2 class="tocHeader">Table of Contents</h2><hr class="lowerBorder"/><p class="toc"><b xmlns=""><a href="#S1.">1. Introduction</a></b><br xmlns=""/><b xmlns=""><a href="#S2.">2. Mathematics</a></b><br xmlns=""/>
+                        </p><p xmlns="" class="bioHeader"><i>Biography</i></p><blockquote xmlns="" class="bio"><p>Michael Gerhaeuser is currently pursuing graduate studies in Mathematics at the University of Bayreuth. His research focus is computing geometric loci using JSXGraph.</p></blockquote><hr xmlns="" class="upperBorder"/><h2 xmlns="" class="abstractHeader">Abstract</h2><hr xmlns="" class="lowerBorder"/><div xmlns="" class="abstract"><p>JSXGraph is a open-source client-side web library for displaying interactive mathematics and drawings in a web browser. This article shall demonstrate the possibilities of JSXGraph and explain how they are implemented.</p></div><hr class="upperBorder"/><h2 class="tocHeader">Table of Contents</h2><hr class="lowerBorder"/><p class="toc"><b xmlns=""><a href="#S1.">1. Introduction</a></b><br xmlns=""/><b xmlns=""><a href="#S2.">2. Mathematics</a></b><br xmlns=""/>
     &nbsp;&nbsp;&nbsp;&nbsp;
   <a xmlns="" href="#S2.1">2.1 JSXGraph as a web viewer for dynamic geometry software</a><br xmlns=""/>
     &nbsp;&nbsp;&nbsp;&nbsp;
@@ -162,12 +162,12 @@ Other file formats are under development. For example, JSXGraph is involved in t
             <h3 xmlns=""><a id="S"> Turtle graphics in mathematical modelling</a></h3>
             <p xmlns="">Mathematic modelling with differential equations can also be done by using turtle graphics. Exponential population growth model can be easily simulated by using the discrete analogue of the corresponding differential equation and computing the movement of the turtle in equidistant small time intervals. </p>
                 <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre> 
-                        var board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
-                        var t = board.createElement('turtle',[4,3,70]);
-                        ...
-                        var dy = alpha*t.Y()*dx;   // Exponential growth
-                        t.moveTo([dx+t.X(),dy+t.Y()]);
-                    </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 1: Simulating exponential population growth with turtle graphics</b></p></blockquote></div>
+var board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
+var t = board.createElement('turtle',[4,3,70]);
+...
+var dy = alpha*t.Y()*dx;   // Exponential growth
+t.moveTo([dx+t.X(),dy+t.Y()]);
+</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 1: Simulating exponential population growth with turtle graphics</b></p></blockquote></div>
             <p xmlns="">In a similar way, logistic or autocatalytic population growth processes can be modelled. A further application which can be simulated with turtle graphics is epidemiology where a set of differential equations is given to predict the immediate consequences of a epidemic like the Hong Kong flu or the swine flu. With few lines of programm code in JSXGraph one can study the chronological sequence of the rate of susceptible, infected and recovered population.
             </p>
         
@@ -175,39 +175,41 @@ Other file formats are under development. For example, JSXGraph is involved in t
             <h3 xmlns=""><a id="S"> Drawing with turtle graphics</a></h3>
             <p xmlns="">An advantage of using turtle graphics is the easy way to draw. The standard commands are going forward for a given numer of units and turning left or right in a given angle. The following programm listing draws the Nikolaus graph shown in the picture below.</p>
                 <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre> 
-                        for(i=1;i&lt;=4;i++) {
-                            t.forward(100);
-                            t.right(90);
-                        }
-                        t.right(45);
-                        t.forward(100*Math.sqrt(2));
-                        for(i=1;i&lt;=2;i++) {
-                           t.left(90);
-                           t.forward(50*Math.sqrt(2));
-                        }
-                        t.left(90);
-                        t.forward(100*Math.sqrt(2));
-                        </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 2: Drawing the Nikolaus Graph with a turtle</b></p></blockquote></div>
+for(i=1;i&lt;=4;i++) {
+    t.forward(100);
+    t.right(90);
+}
+t.right(45);
+t.forward(100*Math.sqrt(2));
+for(i=1;i&lt;=2;i++) {
+   t.left(90);
+   t.forward(50*Math.sqrt(2));
+}
+t.left(90);
+t.forward(100*Math.sqrt(2));
+</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 2: Drawing the Nikolaus Graph with a turtle</b></p></blockquote></div>
                 <div xmlns="" class="figure"><a id="nikolaus"/>
                         
                             
                             <div class="graphic"><img alt="nikolaus.jpg" src="nikolaus.jpg" width="50%"/></div>
                         
-                         The Nikolaus Graph
                     <blockquote class="figureTitle"><p><b>Figure 1: The Nikolaus Graph</b></p></blockquote></div>
             <p xmlns="">This approach can be used to produce easily beautiful Lindenmayer systems known from chaos theory like plants or penrose tilings. Similarly, well-known fractals like the Sierpinski triangle or the Koch curve can be drawn. Other applications can be found in statistics where one can simulate random walks with turtles. Additionally, abecedarian games like snake can be implemented in a few lines.
             </p>
                 <div xmlns="" class="figure"><a id="koch"/>
                         
-                            
                             <div class="graphic"><img alt="koch.jpg" src="koch.jpg" width="50%"/></div>
                         
-                         The Koch curve with recursion level 7
-                    <blockquote class="figureTitle"><p><b>Figure 2: The Koch curve</b></p></blockquote></div>            
+                    <blockquote class="figureTitle"><p><b>Figure 2: The Koch curve with recursion level 7</b></p></blockquote></div>            
         
     
         <h2 xmlns=""><a id="S4.">4. Charts</a></h2>
         <p xmlns="">Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts which provide all the optical properties that are integrated in JSXGraph. So it is possible to create easily dynamic bar charts or interactive pie charts.</p>
+                <div xmlns="" class="figure"><a id="barchart"/>
+                        
+                            <div class="graphic"><img alt="barchart.jpg" src="barchart.jpg" width="50%"/></div>
+                        
+                    <blockquote class="figureTitle"><p><b>Figure 3: An interactive bar chart</b></p></blockquote></div>        
         
         
             <h3 xmlns=""><a id="S"> Title of subsubsection</a></h3>
@@ -327,7 +329,7 @@ var t = brd.createElement('point',[4,3]);
         <h2 xmlns=""><a id="S7.">7. Implementation details</a></h2>
         <p xmlns="">
             The main focus of JSXGraph lies on interactivity. The JSXGraph user should experience an immediate feedback to the dragging of points
-            with the mouse. So, special attention has to be paid to fast reacting to the mouse move events and mouse up events. Contrarily
+            with the mouse. So, special attention has to be paid to fast reacting to the mouse move and mouse up events. Contrarily
             we want to exploit the superb output quality of vector graphics as offered by SVG. These two controversial goals - 
             speed versus quality - have to be balanced. 
         </p> 
@@ -343,7 +345,7 @@ var t = brd.createElement('point',[4,3]);
             Only very few features of these libraries are used and and the access is capsuled in some lines in the
             source code file jsxgraph.js. Mainly the cross-browser handling of events is delegated to the external libraries.
             Everything else in JSXGraph is built up from scratch and does not rely on any third-party library.
-            So, it should be easy to port JSXGraph to a further frameworks, if necessary.
+            So, it should be easy to port JSXGraph to a further framework, if necessary.
         </p>
         
         
@@ -456,7 +458,7 @@ var t = brd.createElement('point',[4,3]);
                 <p xmlns="">
                     For curves in JSXGraph there are two update modes, resulting in different output resolutions. During the update following a
                     mouse move event, curves are plotted evaluating only few data points. The default value here is to use 400 points.
-                    In the update follwoing a mouse up event curves are plotted with much more points. The default value
+                    In the update following a mouse up event curves are plotted with much more points. The default value
                     now is to use 2000 points. These values can be adapted in Options.js.                 
                 </p>
             
@@ -467,7 +469,7 @@ var t = brd.createElement('point',[4,3]);
                     JSXGraph version 0.76 consists of 20 individual files, which add up to about 980 kBytes including comments.
                     These 20 files are bundled together in one big file which is subsequently compressed by the 
                     YUI compressor<a href="#FT13" class="fnref"><b>[13]</b></a> from Yahoo!. 
-                    During this process comments and superfluous whitespace are removed. The resulting file jsxgraphcore.js
+                    During this process comments and superfluous whitespaces are removed. The resulting file jsxgraphcore.js
                     only consists of 380 kBytes. If the web server which delivers jsxgraphcore.js has DEFLATE enabled, which means it
                     compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
                     In most cases, this is still less than delivering the same construction as a non-interactive PNG image.
