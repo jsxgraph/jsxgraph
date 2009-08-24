@@ -24,7 +24,7 @@
                     <surname>Valentin</surname>
                 </personname>
                 <email>bianca.valentin@uni-bayreuth.de</email>
-                <personblurb><para>Bianca Valentin is PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory and applications of JSXGraph.</para></personblurb>
+                <personblurb><para>Bianca Valentin is PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory and 3D-applications of JSXGraph.</para></personblurb>
                 <affiliation>
                     <jobtitle>PhD student</jobtitle>
                     <org>
@@ -147,19 +147,16 @@ t.forward(100*Math.sqrt(2));
                             <!--<imagedata fileref="nikolaus.svg" format="svg" width="60%"/>-->
                             <imagedata width="50%" fileref="nikolaus.jpg" format="JPEG"/>
                         </imageobject>
-                         <textobject><phrase>The Nikolaus Graph</phrase></textobject>
                     </mediaobject>
                 </figure>
             <para>This approach can be used to produce easily beautiful Lindenmayer systems known from chaos theory like plants or penrose tilings. Similarly, well-known fractals like the Sierpinski triangle or the Koch curve can be drawn. Other applications can be found in statistics where one can simulate random walks with turtles. Additionally, abecedarian games like snake can be implemented in a few lines.
             </para>
                 <figure xml:id="koch">
-                    <title>The Koch curve</title>
+                    <title>The Koch curve with recursion level 7</title>
                     <mediaobject>
                         <imageobject>
-                            <!--<imagedata fileref="nikolaus.svg" format="svg" width="60%"/>-->
                             <imagedata width="50%" fileref="koch.jpg" format="JPEG"/>
                         </imageobject>
-                         <textobject><phrase>The Koch curve with recursion level 7</phrase></textobject>
                     </mediaobject>
                 </figure>            
         </section>
@@ -168,6 +165,14 @@ t.forward(100*Math.sqrt(2));
     <section>
         <title>Charts</title>
         <para>Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts which provide all the optical properties that are integrated in JSXGraph. So it is possible to create easily dynamic bar charts or interactive pie charts.</para>
+                <figure xml:id="barchart">
+                    <title>An interactive bar chart</title>
+                    <mediaobject>
+                        <imageobject>
+                            <imagedata width="50%" fileref="barchart.jpg" format="JPEG"/>
+                        </imageobject>
+                    </mediaobject>
+                </figure>        
         <!--<para>
             JSXGraph uses the style properties that are offered by SVG and VML, so that the geometric objects can be displayed in different colors and styles that can be changed on runtime.</para>        -->
         <section>
