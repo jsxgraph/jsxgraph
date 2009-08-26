@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V5.0b5//EN"
                "docbook_5.0b5.dtd" [
 <!ENTITY chapter_introduction SYSTEM "chapter_introduction.xml" >
@@ -65,7 +65,7 @@
         </authorgroup>
         <!-- If you have several authors, you could nest all authors within an authorgroup element -->
         <abstract>
-            <para>JSXGraph is a open-source client-side web library for displaying interactive mathematics and drawings in a web browser. This article shall demonstrate the possibilities of JSXGraph and explain how they are implemented.</para>
+            <para>JSXGraph is a open-source client-side web library for displaying interactive mathematics and drawings in a web browser. This article demonstrates what one can do with JSXGraph and explains how these things are implemented. The latter focuses more on SVG and VML.</para>
         </abstract>
     </info>
     
@@ -76,14 +76,14 @@
         <para>The originally intended purpose of JSXGraph was having a JavaScript library for displaying geometric constructions in a web browser. So it is possible to visualize geometric elements that are taught in schools and universities like points, lines, circles, arcs, and angles, as well as predefined composition elements. JSXGraph not only provides tools for displaying geometric constructions but also for doing calculus like plotting curves starting from function graphs with tangents up to parametric and polar curves, splines or other interpolation methods. </para>
         <section>
             <title>JSXGraph as a web viewer for dynamic geometry software</title>
-            <para>Dynamic geometry software (DGS) are computer programs which allow one to create and then manipulate geometric constructions, primarily in plane geometry. In most DGS, one starts construction by putting a few points and using them to define new objects such as lines, circles or other points. After some construction is done, one can move the points one started with and see how the construction changes.</para>
+            <para>Dynamic geometry software (DGS) are computer programs which allow one to create and then manipulate geometric constructions, primarily in plane geometry. In most DGS, one starts a construction by putting a few points and using them to define new objects such as lines, circles or other points. After some construction is done, one can move the points one started with and see how the construction changes.</para>
             <para>
-            There are lots of different available software packages to play around dynamically with geometry at schools and universities. Most of them are written in Java, such as GeoGebra, Cinderella, Compass and Ruler or GEONExT, others like The Geometer's Sketchpad or Cabri offer a Java based web viewer. So if you want to integrate a construction that was created with one of these DGS in a web page, it takes some time to load the corresponding Java applet before you can use it. There are moreover big doubts about the future of Java in a web browser because Java applets are vanishing more and more from the internet and are actually not supported in browsers on modern mobile internet devices. As a result, the idea of JSXGraph was to read GEONExT Files and display them in the browser using JavaScript to manage the corresponding DOM elements of SVG or VML, depending on what browser is used. JavaScript is furthermore used to realize the dynamic in DGS by capturing the browser's mouse events. </para>
+            There are lots of different available software packages to play around dynamically with geometry at schools and universities. Most of them are written in Java, such as GeoGebra, Cinderella, Compass and Ruler or GEONExT, others like The Geometer's Sketchpad or Cabri offer a Java based web viewer. So if you want to integrate a construction that was created with one of these DGS in a web page, it takes some time to load the corresponding Java applet before you can use it. There are moreover big doubts about the future of Java in a web browser because Java applets are vanishing more and more from the internet and are actually not supported in browsers on modern mobile internet devices. As a result, the idea of JSXGraph was to read GEONExT Files and display them in the browser using JavaScript to manage the corresponding DOM elements of SVG or VML, depending on what browser is used. JavaScript is furthermore used to realize the dynamic part in DGS by capturing the browser's mouse events. </para>
         </section>
         <section>
             <title>Currently supported file formats</title>
             <para>Since JSXGraph has evolved from the GEONExT project, the support of its file format is almost complete. 
-Other file formats are under development. For example, JSXGraph is involved in the European Intergeo project which shall unite several dynamic geometry softwares (GeoGebra, Cabri, GEONExT, Cinderella, etc.) agreeing about a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Support for reading GeoGebra files directly is under development in cooperation with the GeoGebra developers.
+Other file formats are under development. For example, JSXGraph is involved in the European Intergeo project which unites several dynamic geometry systems (GeoGebra, Cabri, GEONExT, Cinderella, etc.) with a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Support for reading GeoGebra files directly is under development in cooperation with the GeoGebra developer team.
             </para>
         </section>
         <section>
@@ -97,18 +97,18 @@ Other file formats are under development. For example, JSXGraph is involved in t
             <para>The possibilities start from plotting simple functiongraphs to displaying more complex graphs like parametric and polar curves which can be analyzed using the implemented methods for tangents, integrals or spline interpolation. 
             </para>
             <para>Example:  examine the influence of function parameters like in code example 1[TODO]</para>
-            <para>With an implementation of an explicit Runge-Kutta process, JSXGraph can also solve ordinary differential equations on the fly with the opportunity to change the parameters on runtime and watching the results.
+            <para>With an implementation of an explicit Runge-Kutta process, JSXGraph can also solve ordinary differential equations on the fly with the possibility to change the parameters on runtime and watching the results.
             </para>
         </section>            
     </section>
     <section>
         <title>Turtle graphics</title>
-        <para>Turtle graphics as a method of drawing offer a huge variety of applications. So JSXGraph provides a comfortable support of functions round about them.</para>
+        <para>Turtle graphics as a method of drawing offer a huge variety of applications. So JSXGraph provides an easy-to-use interface to them.</para>
         <section>
             <title>Turtle graphics in mathematical modelling</title>
-            <para>Mathematic modelling with differential equations can also be done by using turtle graphics. Exponential population growth model can be easily simulated by using the discrete analogue of the corresponding differential equation and computing the movement of the turtle in equidistant small time intervals. </para>
+            <para>Mathematic modelling with differential equations can also be done by using turtle graphics. Exponential population growth model can be simulated easily by using the discrete analogue of the corresponding differential equation and computing the movement of the turtle in equidistant small time intervals. </para>
                 <example>
-                    <title>Simulating exponential population growth with turtle graphics</title>
+                    <title>Simulating exponential population growth using turtle graphics</title>
 <programlisting><![CDATA[ 
 var board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
 var t = board.createElement('turtle',[4,3,70]);
@@ -117,14 +117,14 @@ var dy = alpha*t.Y()*dx;   // Exponential growth
 t.moveTo([dx+t.X(),dy+t.Y()]);
 ]]></programlisting>
                 </example>
-            <para>In a similar way, logistic or autocatalytic population growth processes can be modelled. A further application which can be simulated with turtle graphics is epidemiology where a set of differential equations is given to predict the immediate consequences of a epidemic like the Hong Kong flu or the swine flu. With few lines of programm code in JSXGraph one can study the chronological sequence of the rate of susceptible, infected and recovered population.
+            <para>In a similar way, logistic or autocatalytic population growth processes can be modelled. A further application which can be simulated with turtle graphics is epidemiology where a set of differential equations is given to predict the immediate consequences of a epidemic like the Hong Kong flu or the swine flu. With only a few lines of programm code in JSXGraph one can study the chronological sequence of the rate of susceptible, infected and recovered population.
             </para>
         </section>
         <section>
             <title>Drawing with turtle graphics</title>
             <para>An advantage of using turtle graphics is the easy way to draw. The standard commands are going forward for a given numer of units and turning left or right in a given angle. The following programm listing draws the Nikolaus graph shown in the picture below.</para>
                 <example>
-                    <title>Drawing the Nikolaus Graph with a turtle</title>
+                    <title>Drawing the Nikolaus Graph using a turtle</title>
 <programlisting><![CDATA[ 
 for(i=1;i<=4;i++) {
     t.forward(100);
@@ -149,7 +149,7 @@ t.forward(100*Math.sqrt(2));
                         </imageobject>
                     </mediaobject>
                 </figure>
-            <para>This approach can be used to produce easily beautiful Lindenmayer systems known from chaos theory like plants or penrose tilings. Similarly, well-known fractals like the Sierpinski triangle or the Koch curve can be drawn. Other applications can be found in statistics where one can simulate random walks with turtles. Additionally, abecedarian games like snake can be implemented in a few lines.
+            <para>This approach can be used to easily produce beautiful Lindenmayer systems known from chaos theory like plants or penrose tilings. Similarly, well-known fractals like the Sierpinski triangle or the Koch curve can be drawn. Other applications can be found in statistics where one can simulate random walks with turtles. Additionally, simple games like snake can be implemented in a few lines.
             </para>
                 <figure xml:id="koch">
                     <title>The Koch curve with recursion level 7</title>
@@ -164,7 +164,7 @@ t.forward(100*Math.sqrt(2));
     
     <section>
         <title>Charts</title>
-        <para>Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts which provide all the optical properties that are integrated in JSXGraph. So it is possible to create easily dynamic bar charts or interactive pie charts.</para>
+        <para>Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts which provide all the optical properties that are integrated in JSXGraph. So you're able to easily create dynamic bar charts or interactive pie charts.</para>
                 <figure xml:id="barchart">
                     <title>An interactive bar chart</title>
                     <mediaobject>

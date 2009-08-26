@@ -14,8 +14,8 @@
             either the Prototype JavaScript library<footnote><para><ulink url="http://prototypejs.org">http://prototypejs.org</ulink></para>
                 </footnote> 
             or the
-            jQuery<footnote><para><ulink url="http://jquery.com">http://jquery.com</ulink></para>
-                </footnote> library.  
+            jQuery library<footnote><para><ulink url="http://jquery.com">http://jquery.com</ulink></para>
+                </footnote>.  
             JSXGraph can be used with either of these two libraries equally good. 
             Only very few features of these libraries are used and and the access is capsuled in some lines in the
             source code file jsxgraph.js. Mainly the cross-browser handling of events is delegated to the external libraries.
@@ -40,14 +40,22 @@
                 SVG and VML are similar in many aspects, but different in many details. In order to realize visual properties VML heavily makes use of
                 subnodes of XML nodes. SVG however mostly uses attributes for the same visual properties.
                 Therefore, the JSXGraph source contains the two files SVGRenderer.js and VMLRenderer.js which control
-                the different graphics languages. Each file consists of about 700 lines including comments.
+                the different graphics languages. The user working with JSXGraph should not get aware of this separation at all because all methods for accessing the drawing layer are encapsulated by JSXGraph.
             </para>
+                <figure xml:id="jsxrenderer">
+                    <title>Scheme showing the renderer split and encapsulation in JSXGraph</title>
+                    <mediaobject>
+                        <imageobject>
+                            <imagedata width="25%" fileref="JSXRenderer.png" format="PNG"/>
+                        </imageobject>
+                    </mediaobject>
+                </figure>
             <para>
                 For SVG drawing JSXGraph rarely uses formatting through CSS.  The reason is that in the beginning of the development process
                 the use of CSS styles consumed to much computing resources, especially setting the opacity with Firefox. 
                 So, nearly all visual properties are realized by setting attributes and applying filters. Even if filters in SVG are still not 
                 implemented satisfactorily in all browsers, JSXGraph supports shadows and gradients via filters since version 0.76. 
-                The SVG filter to display lines, circles and points with shadows is implemented dynamically with the following
+                <!--The SVG filter to display lines, circles and points with shadows is implemented dynamically with the following
                 commands. 
                 <programlisting><![CDATA[
     this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace,'defs');
@@ -72,7 +80,7 @@
     this.feBlend.setAttributeNS(null, 'in2', 'blurOut');
     this.feBlend.setAttributeNS(null, 'mode', 'normal');
     this.filter.appendChild(this.feBlend);
-    this.defs.appendChild(this.filter);]]></programlisting>
+    this.defs.appendChild(this.filter);]]></programlisting>//-->
                 At the time of writing shadows slow down the Firefox browser considerably. Further, there seems to be a bug for
                 horizontal and vertical lines. In these cases neither the line nor its shadow is visible.
                 In Webkit based browsers like Chrome and Safari these filters are not implemented, yet. In Opera it looks ugly.
