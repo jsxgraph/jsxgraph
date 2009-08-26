@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V5.0b5//EN"
                "docbook_5.0b5.dtd" [
 <!ENTITY chapter_introduction SYSTEM "chapter_introduction.xml" >
@@ -24,7 +24,7 @@
                     <surname>Valentin</surname>
                 </personname>
                 <email>bianca.valentin@uni-bayreuth.de</email>
-                <personblurb><para>Bianca Valentin is PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory and 3D-applications of JSXGraph.</para></personblurb>
+                <personblurb><para>Bianca Valentin is PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory, discrete mathematics, and applications of JSXGraph.</para></personblurb>
                 <affiliation>
                     <jobtitle>PhD student</jobtitle>
                     <org>
@@ -90,6 +90,53 @@ Other file formats are under development. For example, JSXGraph is involved in t
             <title>Constructing from scratch</title>
             <para>The JSXGraph API used in the readers for the different file formats can also be used to create a construction from scratch or to manipulate a construction loaded from a given file. JSXGraph contains functions for compass and ruler constructions in euclidean geometry basing on points, lines, circles, arcs, and angles. Those can be intersected or combined in predefined ways. For example one can construct a line that is parallel to another one or a point that is the midpoint between two other points by using integrated JSXGraph methods. Additionally, one can easily implement own composition elements with JavaScript and the above-mentioned functions. 
             </para>
+            <example>
+                    <title>Constructing the euler line of a triangle from scratch</title>
+<programlisting><![CDATA[ 
+A = brd.createElement('point',[1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
+B = brd.createElement('point',[-1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
+C = brd.createElement('point',[0.2,1.5],{strokeColor:'#901B77',fillColor:'#CA147A'});
+pol = brd.createElement('polygon',[A,B,C], {fillColor:'#FFFF0050'});
+for(i=0;i<=2;i++) {
+    pol.borders[i].setProperty('strokeColor:#009256');
+}
+ 
+pABC = brd.createElement('perpendicular',[pol.borders[0],C],{strokeWidth:1,dash:2, name:['','H_c']});
+pBCA = brd.createElement('perpendicular',[pol.borders[1],A],{strokeWidth:1,dash:2, name:['','H_a']});
+pCAB = brd.createElement('perpendicular',[pol.borders[2],B],{strokeWidth:1,dash:2, name:['','H_b']});
+pABC[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
+pBCA[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
+pCAB[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
+i1 = brd.createElement('intersection',[pABC[0],pCAB[0],0],{strokeColor:'#009256',fillColor:'#65B72E',name:'H'});
+pABC[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+pBCA[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+pCAB[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+ 
+mAB = brd.createElement('midpoint',[A,B],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_c'});
+mBC = brd.createElement('midpoint',[B,C],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_a'});
+mCA = brd.createElement('midpoint',[C,A],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_b'});
+ma = brd.createElement('line',[mBC,A],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
+mb = brd.createElement('line',[mCA,B],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
+mc = brd.createElement('line',[mAB,C],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
+i2 = brd.createElement('intersection',[ma,mc,0],{strokeColor:'#009256',fillColor:'#65B72E',name:'S'});
+ 
+i3 = brd.createElement('circumcirclemidpoint',[A,B,C],{strokeColor:'#009256',fillColor:'#65B72E',name:'U'});
+c = brd.createElement('circumcircle',[A,B,C],{strokeColor:'#000000',dash:3,strokeWidth:1});
+c[0].setProperty('visible:false');
+c[1].setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
+ 
+euler = brd.createElement('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
+]]></programlisting>
+            </example>
+                <figure xml:id="euler">
+                    <title>The Euler Line</title>
+                    <mediaobject>
+                        <imageobject>
+                            <!--<imagedata fileref="nikolaus.svg" format="svg" width="60%"/>-->
+                            <imagedata width="50%" fileref="euler.jpg" format="JPEG"/>
+                        </imageobject>
+                    </mediaobject>
+                </figure>
         </section>
         <section>
             <title>Calculus</title>
@@ -164,21 +211,35 @@ t.forward(100*Math.sqrt(2));
     
     <section>
         <title>Charts</title>
-        <para>Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts which provide all the optical properties that are integrated in JSXGraph. So you're able to easily create dynamic bar charts or interactive pie charts.</para>
+        <para>Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts providing the optical properties that are integrated in JSXGraph like fill and stroke colors, fill gradients, line styles, shadows or special highlighting effects. The corresponding data can be connected to elements like sliders to have interactive charts which can be altered on runtime with the mouse. JSXGraph contains support for pie charts, horizontal and vertical bar charts, line charts with line segments or splines, and point charts.</para>
+                <example>
+                    <title>Drawing an interactive bar chart</title>
+<programlisting><![CDATA[ 
+board = JXG.JSXGraph.initBoard('box', {originX: 50, originY: 450, unitX: 50, unitY: 50, axis:false});
+board.suspendUpdate();
+board.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
+board.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});            
+
+var s = board.createElement('slider', [[8,7],[11,7],[1,1,1.5]], {name:'S',strokeColor:'black',fillColor:'white'});
+var f = [function(){return this.board.round(s.Value()*4.5,2);},
+         function(){return this.board.round(s.Value()*(-1),2);},
+        ...
+         function(){return this.board.round(s.Value()*(-1.25),2);}
+         ];
+var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
+/* ...
+   setting additional style properties
+   ...
+*/
+]]></programlisting>
                 <figure xml:id="barchart">
-                    <title>An interactive bar chart</title>
+                    <title>An interactive bar chart together with a line chart</title>
                     <mediaobject>
                         <imageobject>
                             <imagedata width="50%" fileref="barchart.jpg" format="JPEG"/>
                         </imageobject>
                     </mediaobject>
                 </figure>        
-        <!--<para>
-            JSXGraph uses the style properties that are offered by SVG and VML, so that the geometric objects can be displayed in different colors and styles that can be changed on runtime.</para>        -->
-        <section>
-            <title>Title of subsubsection</title>
-            <para>A paragraph ...</para>
-        </section>
     </section>
     
     &chapter_server;
