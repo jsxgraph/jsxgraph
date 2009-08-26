@@ -232,6 +232,7 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
    ...
 */
 ]]></programlisting>
+        </example>
                 <figure xml:id="barchart">
                     <title>An interactive bar chart together with a line chart</title>
                     <mediaobject>
@@ -240,7 +241,6 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
                         </imageobject>
                     </mediaobject>
                 </figure>        
-                </example>
     </section>
     
     &chapter_server;
