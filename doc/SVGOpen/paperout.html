@@ -16,7 +16,7 @@ ol.ftnote {list-style-type: decimal}
                             <br/>95444
                             <br/>Germany
                             <br/>++49-921 55 3389
-                        </p><p xmlns="" class="bioHeader"><i>Biography</i></p><blockquote xmlns="" class="bio"><p>Bianca Valentin is PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory and 3D-applications of JSXGraph.</p></blockquote><p xmlns="" class="author"><span class="authorName">Michael Gerhaeuser</span><br/>Student<br/><br/>University of Bayreuth<br/>Department of mathematics<br/>
+                        </p><p xmlns="" class="bioHeader"><i>Biography</i></p><blockquote xmlns="" class="bio"><p>Bianca Valentin is PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory, discrete mathematics, and applications of JSXGraph.</p></blockquote><p xmlns="" class="author"><span class="authorName">Michael Gerhaeuser</span><br/>Student<br/><br/>University of Bayreuth<br/>Department of mathematics<br/>
                             <br/>Bayreuth
                             <br/>Universitaetsstr. 30
                             <br/>95444
@@ -34,9 +34,7 @@ ol.ftnote {list-style-type: decimal}
     &nbsp;&nbsp;&nbsp;&nbsp;
   <a xmlns="" href="#S3.1">3.1 Turtle graphics in mathematical modelling</a><br xmlns=""/>
     &nbsp;&nbsp;&nbsp;&nbsp;
-  <a xmlns="" href="#S3.2">3.2 Drawing with turtle graphics</a><br xmlns=""/><b xmlns=""><a href="#S4.">4. Charts</a></b><br xmlns=""/>
-    &nbsp;&nbsp;&nbsp;&nbsp;
-  <a xmlns="" href="#S4.1">4.1 Title of subsubsection</a><br xmlns=""/><b xmlns=""><a href="#S5.">5. JSXGraph as a front end to server side applications</a></b><br xmlns=""/>
+  <a xmlns="" href="#S3.2">3.2 Drawing with turtle graphics</a><br xmlns=""/><b xmlns=""><a href="#S4.">4. Charts</a></b><br xmlns=""/><b xmlns=""><a href="#S5.">5. JSXGraph as a front end to server side applications</a></b><br xmlns=""/>
     &nbsp;&nbsp;&nbsp;&nbsp;
   <a xmlns="" href="#S5.1">5.1 Just AJAX</a><br xmlns=""/>
     &nbsp;&nbsp;&nbsp;&nbsp;
@@ -145,6 +143,47 @@ Other file formats are under development. For example, JSXGraph is involved in t
             <h3 xmlns=""><a id="S"> Constructing from scratch</a></h3>
             <p xmlns="">The JSXGraph API used in the readers for the different file formats can also be used to create a construction from scratch or to manipulate a construction loaded from a given file. JSXGraph contains functions for compass and ruler constructions in euclidean geometry basing on points, lines, circles, arcs, and angles. Those can be intersected or combined in predefined ways. For example one can construct a line that is parallel to another one or a point that is the midpoint between two other points by using integrated JSXGraph methods. Additionally, one can easily implement own composition elements with JavaScript and the above-mentioned functions. 
             </p>
+            <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre> 
+A = brd.createElement('point',[1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
+B = brd.createElement('point',[-1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
+C = brd.createElement('point',[0.2,1.5],{strokeColor:'#901B77',fillColor:'#CA147A'});
+pol = brd.createElement('polygon',[A,B,C], {fillColor:'#FFFF0050'});
+for(i=0;i&lt;=2;i++) {
+    pol.borders[i].setProperty('strokeColor:#009256');
+}
+ 
+pABC = brd.createElement('perpendicular',[pol.borders[0],C],{strokeWidth:1,dash:2, name:['','H_c']});
+pBCA = brd.createElement('perpendicular',[pol.borders[1],A],{strokeWidth:1,dash:2, name:['','H_a']});
+pCAB = brd.createElement('perpendicular',[pol.borders[2],B],{strokeWidth:1,dash:2, name:['','H_b']});
+pABC[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
+pBCA[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
+pCAB[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
+i1 = brd.createElement('intersection',[pABC[0],pCAB[0],0],{strokeColor:'#009256',fillColor:'#65B72E',name:'H'});
+pABC[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+pBCA[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+pCAB[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+ 
+mAB = brd.createElement('midpoint',[A,B],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_c'});
+mBC = brd.createElement('midpoint',[B,C],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_a'});
+mCA = brd.createElement('midpoint',[C,A],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_b'});
+ma = brd.createElement('line',[mBC,A],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
+mb = brd.createElement('line',[mCA,B],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
+mc = brd.createElement('line',[mAB,C],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
+i2 = brd.createElement('intersection',[ma,mc,0],{strokeColor:'#009256',fillColor:'#65B72E',name:'S'});
+ 
+i3 = brd.createElement('circumcirclemidpoint',[A,B,C],{strokeColor:'#009256',fillColor:'#65B72E',name:'U'});
+c = brd.createElement('circumcircle',[A,B,C],{strokeColor:'#000000',dash:3,strokeWidth:1});
+c[0].setProperty('visible:false');
+c[1].setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
+ 
+euler = brd.createElement('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
+</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 1: Constructing the euler line of a triangle from scratch</b></p></blockquote></div>
+                <div xmlns="" class="figure"><a id="euler"/>
+                        
+                            
+                            <div class="graphic"><img alt="euler.jpg" src="euler.jpg" width="50%"/></div>
+                        
+                    <blockquote class="figureTitle"><p><b>Figure 1: The Euler Line</b></p></blockquote></div>
         
         
             <h3 xmlns=""><a id="S"> Calculus</a></h3>
@@ -167,7 +206,7 @@ var t = board.createElement('turtle',[4,3,70]);
 ...
 var dy = alpha*t.Y()*dx;   // Exponential growth
 t.moveTo([dx+t.X(),dy+t.Y()]);
-</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 1: Simulating exponential population growth using turtle graphics</b></p></blockquote></div>
+</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 2: Simulating exponential population growth using turtle graphics</b></p></blockquote></div>
             <p xmlns="">In a similar way, logistic or autocatalytic population growth processes can be modelled. A further application which can be simulated with turtle graphics is epidemiology where a set of differential equations is given to predict the immediate consequences of a epidemic like the Hong Kong flu or the swine flu. With only a few lines of programm code in JSXGraph one can study the chronological sequence of the rate of susceptible, infected and recovered population.
             </p>
         
@@ -187,34 +226,42 @@ for(i=1;i&lt;=2;i++) {
 }
 t.left(90);
 t.forward(100*Math.sqrt(2));
-</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 2: Drawing the Nikolaus Graph using a turtle</b></p></blockquote></div>
+</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 3: Drawing the Nikolaus Graph using a turtle</b></p></blockquote></div>
                 <div xmlns="" class="figure"><a id="nikolaus"/>
                         
                             
                             <div class="graphic"><img alt="nikolaus.jpg" src="nikolaus.jpg" width="50%"/></div>
                         
-                    <blockquote class="figureTitle"><p><b>Figure 1: The Nikolaus Graph</b></p></blockquote></div>
+                    <blockquote class="figureTitle"><p><b>Figure 2: The Nikolaus Graph</b></p></blockquote></div>
             <p xmlns="">This approach can be used to easily produce beautiful Lindenmayer systems known from chaos theory like plants or penrose tilings. Similarly, well-known fractals like the Sierpinski triangle or the Koch curve can be drawn. Other applications can be found in statistics where one can simulate random walks with turtles. Additionally, simple games like snake can be implemented in a few lines.
             </p>
                 <div xmlns="" class="figure"><a id="koch"/>
                         
                             <div class="graphic"><img alt="koch.jpg" src="koch.jpg" width="50%"/></div>
                         
-                    <blockquote class="figureTitle"><p><b>Figure 2: The Koch curve with recursion level 7</b></p></blockquote></div>            
+                    <blockquote class="figureTitle"><p><b>Figure 3: The Koch curve with recursion level 7</b></p></blockquote></div>            
         
     
         <h2 xmlns=""><a id="S4.">4. Charts</a></h2>
-        <p xmlns="">Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts which provide all the optical properties that are integrated in JSXGraph. So you're able to easily create dynamic bar charts or interactive pie charts.</p>
-                <div xmlns="" class="figure"><a id="barchart"/>
-                        
-                            <div class="graphic"><img alt="barchart.jpg" src="barchart.jpg" width="50%"/></div>
-                        
-                    <blockquote class="figureTitle"><p><b>Figure 3: An interactive bar chart</b></p></blockquote></div>        
-        
-        
-            <h3 xmlns=""><a id="S"> Title of subsubsection</a></h3>
-            <p xmlns="">A paragraph ...</p>
-        
+        <p xmlns="">Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts providing the optical properties that are integrated in JSXGraph like fill and stroke colors, fill gradients, line styles, shadows or special highlighting effects. The corresponding data can be connected to elements like sliders to have interactive charts which can be altered on runtime with the mouse. JSXGraph contains support for pie charts, horizontal and vertical bar charts, line charts with line segments or splines, and point charts.</p>
+                <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre> 
+board = JXG.JSXGraph.initBoard('box', {originX: 50, originY: 450, unitX: 50, unitY: 50, axis:false});
+board.suspendUpdate();
+board.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
+board.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});            
+
+var s = board.createElement('slider', [[8,7],[11,7],[1,1,1.5]], {name:'S',strokeColor:'black',fillColor:'white'});
+var f = [function(){return this.board.round(s.Value()*4.5,2);},
+         function(){return this.board.round(s.Value()*(-1),2);},
+        ...
+         function(){return this.board.round(s.Value()*(-1.25),2);}
+         ];
+var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
+/* ...
+   setting additional style properties
+   ...
+*/
+</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 4: Drawing an interactive bar chart</b></p></blockquote></div>
     
         <h2 xmlns=""><a id="S5.">5. JSXGraph as a front end to server side applications</a></h2>
         <p xmlns="">JavaScript enables us to use the XmlHTTPRequest object to interact with server side applications. Currently one can use our AJAX wrapper JXG.FileReader or the one
@@ -279,7 +326,7 @@ new Ajax.Request('/ajax/stockquotes.php', {
   echo fgets ($fp, 1024);
   fclose ($fp);
 ?&gt;
-       </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 3: JavaScript invoking a PHP script using AJAX</b></p></blockquote></div>
+       </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 5: JavaScript invoking a PHP script using AJAX</b></p></blockquote></div>
     
     
     <h3 xmlns=""><a id="S"> JXG.Server</a></h3>
@@ -307,7 +354,7 @@ class JXGModuleMultiply(JXGServerModule):
       <table class="codeBlock"><tr><td><pre> JXG.Server.loadModule('jxgmodulemultiply'); </pre></td></tr></table>
       After the module has been loaded the python function can be accessed with
       <table class="codeBlock"><tr><td><pre> JXG.Server.modules.jxgmodulemultiply.mult(5); </pre></td></tr></table>
-      which will result in an alert notification window displaying "15".</p></blockquote><blockquote class="figureTitle"><p><b>Example 4: 
+      which will result in an alert notification window displaying "15".</p></blockquote><blockquote class="figureTitle"><p><b>Example 6: 
         Python module on the server which multiplies a given number by 3
       </b></p></blockquote></div>
     
@@ -324,7 +371,7 @@ brd = JXG.JSXGraph.initBoard('box1', {originX: 10, originY: 250, unitX: 40, unit
 var t = brd.createElement('point',[4,3]);
 &lt;/jsxgraph&gt;
 [... wiki page content ...]
-         </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 5: Include a JSXGraph construction on a MedaWiki page using the MediaWiki plugin</b></p></blockquote></div>
+         </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 7: Include a JSXGraph construction on a MedaWiki page using the MediaWiki plugin</b></p></blockquote></div>
    
         <h2 xmlns=""><a id="S7.">7. Implementation details</a></h2>
         <p xmlns="">
@@ -354,7 +401,7 @@ var t = brd.createElement('point',[4,3]);
                 The Microsoft Internet Explorer has still the largest market share of all browsers. 
                 Since we do not want to exclude the users of the Internet Explorer 
                 we have to adapt JSXGraph to this browser as well. The Internet Explorer can not display SVG, but since the year 1998 
-                Microsoft<a href="#FT12" class="fnref"><b>[12]</b></a><a href="#VML98" class="xref"><b>Paragraph 45</b></a>
+                Microsoft<a href="#FT12" class="fnref"><b>[12]</b></a><a href="#VML98" class="xref"><b>Paragraph 44</b></a>
                 supports VML 
                 - vector markup language - as vector graphic language in the Internet Explorer. 
                 Early in the development process of JSXGraph we decided to implement SVG and VML drawing separately, without using one of the
@@ -370,7 +417,7 @@ var t = brd.createElement('point',[4,3]);
                         
                             <div class="graphic"><img alt="JSXRenderer.png" src="JSXRenderer.png" width="25%"/></div>
                         
-                    <blockquote class="figureTitle"><p><b>Figure 4: Scheme showing the renderer split and encapsulation in JSXGraph</b></p></blockquote></div>
+                    <blockquote class="figureTitle"><p><b>Figure 5: Scheme showing the renderer split and encapsulation in JSXGraph</b></p></blockquote></div>
             <p xmlns="">
                 For SVG drawing JSXGraph rarely uses formatting through CSS.  The reason is that in the beginning of the development process
                 the use of CSS styles consumed to much computing resources, especially setting the opacity with Firefox. 
@@ -429,7 +476,7 @@ var t = brd.createElement('point',[4,3]);
                 <h4 xmlns=""><a id="S"> Use memoizers</a></h4>
                 <p xmlns="">
                         Common functions like binomial() and factorial() are realized with memoizer techniques, 
-                        as descripted in <a href="#Crockford2008" class="xref"><b>Paragraph 45</b></a>, page 44.
+                        as descripted in <a href="#Crockford2008" class="xref"><b>Paragraph 44</b></a>, page 44.
                         Thus, the expensive computation of each value of these functions is done only once.
                  </p>
             
@@ -468,7 +515,7 @@ var t = brd.createElement('point',[4,3]);
                 We apply the following strategy: When the function graph is updated, we compute the coefficients of the polynomial only once.
                 Then we use these coefficients for the computation of all function values.
                 But where to store the coefficients? Using the "this" keyword does not give the desired results in a function.
-                But fortunately, we can use the function invocation pattern, see <a href="#Crockford2008" class="xref"><b>Paragraph 45</b></a>, page 28.
+                But fortunately, we can use the function invocation pattern, see <a href="#Crockford2008" class="xref"><b>Paragraph 44</b></a>, page 28.
                 In the example below, the function which is returned by the call of "generateFunction()" still has access to the 
                 variable "coeffs". This is based on the powerful concept of closures, which is part of JavaScript and comes from 
                 functional programming languages.
@@ -508,7 +555,7 @@ generateFunction = function(degree,dataX,dataY) {
         };
         return fct;
     };
-                </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 6: Use of the function invocation pattern</b></p></blockquote></div></p>
+                </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 8: Use of the function invocation pattern</b></p></blockquote></div></p>
             
             
                 <h4 xmlns=""><a id="S"> An Internet Explorer trick</a></h4>

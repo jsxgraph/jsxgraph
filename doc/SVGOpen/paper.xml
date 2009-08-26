@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V5.0b5//EN"
                "docbook_5.0b5.dtd" [
 <!ENTITY chapter_introduction SYSTEM "chapter_introduction.xml" >
@@ -240,6 +240,7 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
                         </imageobject>
                     </mediaobject>
                 </figure>        
+                </example>
     </section>
     
     &chapter_server;
