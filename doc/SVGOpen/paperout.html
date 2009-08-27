@@ -138,46 +138,46 @@ ol.ftnote {list-style-type: decimal}
             <p xmlns="">Since JSXGraph has evolved from the GEONExT project, the support of its file format is almost complete. 
 Other file formats are under development. For example, JSXGraph is involved in the European Intergeo project which unites several dynamic geometry systems (GeoGebra, Cabri, GEONExT, Cinderella, etc.) with a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Support for reading GeoGebra files directly is under development in cooperation with the GeoGebra developer team.
             </p>
+            <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre> 
+&lt;div id="box" class="jxgbox" style="width:500px; height:500px;"&gt;&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+   var b2 = JXG.JSXGraph.loadBoardFromFile('box', 'geonextConstruction.gxt', 'Geonext');
+&lt;/script&gt;
+</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 1: Loading a GEONExT construction from file</b></p></blockquote></div>
         
         
             <h3 xmlns=""><a id="S"> Constructing from scratch</a></h3>
             <p xmlns="">The JSXGraph API used in the readers for the different file formats can also be used to create a construction from scratch or to manipulate a construction loaded from a given file. JSXGraph contains functions for compass and ruler constructions in euclidean geometry basing on points, lines, circles, arcs, and angles. Those can be intersected or combined in predefined ways. For example one can construct a line that is parallel to another one or a point that is the midpoint between two other points by using integrated JSXGraph methods. Additionally, one can easily implement own composition elements with JavaScript and the above-mentioned functions. 
             </p>
             <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre> 
-A = brd.createElement('point',[1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
-B = brd.createElement('point',[-1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
-C = brd.createElement('point',[0.2,1.5],{strokeColor:'#901B77',fillColor:'#CA147A'});
-pol = brd.createElement('polygon',[A,B,C], {fillColor:'#FFFF0050'});
-for(i=0;i&lt;=2;i++) {
-    pol.borders[i].setProperty('strokeColor:#009256');
-}
+/* triangle */
+A = brd.createElement('point',[1,0]);
+B = brd.createElement('point',[-1,0]);
+C = brd.createElement('point',[0.2,1.5]);
+triangle = brd.createElement('polygon',[A,B,C]);
+
+/* heights */ 
+hc = brd.createElement('perpendicular',[pol.borders[0],C],{name:['','H_c']});
+ha = brd.createElement('perpendicular',[pol.borders[1],A],{name:['','H_a']});
+hb = brd.createElement('perpendicular',[pol.borders[2],B],{name:['','H_b']});
+h = brd.createElement('intersection',[hc[0],hb[0],0],{name:'H'});
+
+/* median lines */ 
+mc = brd.createElement('midpoint',[A,B],{name:'M_c'});
+ma = brd.createElement('midpoint',[B,C],{name:'M_a'});
+mb = brd.createElement('midpoint',[C,A],{name:'M_b'});
+sa = brd.createElement('segment',[ma,A]);
+sb = brd.createElement('segment',[mb,B]);
+sc = brd.createElement('segment',[mc,C]);
+/* centroid */
+s = brd.createElement('intersection',[sa,sc,0],{name:'S'});
  
-pABC = brd.createElement('perpendicular',[pol.borders[0],C],{strokeWidth:1,dash:2, name:['','H_c']});
-pBCA = brd.createElement('perpendicular',[pol.borders[1],A],{strokeWidth:1,dash:2, name:['','H_a']});
-pCAB = brd.createElement('perpendicular',[pol.borders[2],B],{strokeWidth:1,dash:2, name:['','H_b']});
-pABC[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-pBCA[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-pCAB[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-i1 = brd.createElement('intersection',[pABC[0],pCAB[0],0],{strokeColor:'#009256',fillColor:'#65B72E',name:'H'});
-pABC[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
-pBCA[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
-pCAB[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+/* circumcircle */
+[cPoint,cCirc] = brd.createElement('circumcircle',[A,B,C],{name:['U','']});
+cCirc.setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
  
-mAB = brd.createElement('midpoint',[A,B],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_c'});
-mBC = brd.createElement('midpoint',[B,C],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_a'});
-mCA = brd.createElement('midpoint',[C,A],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_b'});
-ma = brd.createElement('line',[mBC,A],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
-mb = brd.createElement('line',[mCA,B],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
-mc = brd.createElement('line',[mAB,C],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
-i2 = brd.createElement('intersection',[ma,mc,0],{strokeColor:'#009256',fillColor:'#65B72E',name:'S'});
- 
-i3 = brd.createElement('circumcirclemidpoint',[A,B,C],{strokeColor:'#009256',fillColor:'#65B72E',name:'U'});
-c = brd.createElement('circumcircle',[A,B,C],{strokeColor:'#000000',dash:3,strokeWidth:1});
-c[0].setProperty('visible:false');
-c[1].setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
- 
-euler = brd.createElement('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
-</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 1: Constructing the euler line of a triangle from scratch</b></p></blockquote></div>
+eulerLine = brd.createElement('line',[s,cPoint],{strokeWidth:2,strokeColor:'#901B77'});
+</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 2: Constructing the euler line of a triangle from scratch</b></p></blockquote></div>
                 <div xmlns="" class="figure"><a id="euler"/>
                         
                             
@@ -190,7 +190,7 @@ euler = brd.createElement('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
             <p xmlns="">Beyond the capabilities of JSXGraph with regard to geometric constructions, one is also able to visualize calculus.</p>
             <p xmlns="">The possibilities start from plotting simple functiongraphs to displaying more complex graphs like parametric and polar curves which can be analyzed using the implemented methods for tangents, integrals or spline interpolation. 
             </p>
-            <p xmlns="">Example:  examine the influence of function parameters like in code example 1[TODO]</p>
+            <p xmlns="">TODO: Bild + Code einfuegen: calculus_svgopen.html </p>
             <p xmlns="">With an implementation of an explicit Runge-Kutta process, JSXGraph can also solve ordinary differential equations on the fly with the possibility to change the parameters on runtime and watching the results.
             </p>
                     
@@ -206,13 +206,14 @@ var t = board.createElement('turtle',[4,3,70]);
 ...
 var dy = alpha*t.Y()*dx;   // Exponential growth
 t.moveTo([dx+t.X(),dy+t.Y()]);
-</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 2: Simulating exponential population growth using turtle graphics</b></p></blockquote></div>
+</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 3: Simulating exponential population growth using turtle graphics</b></p></blockquote></div>
             <p xmlns="">In a similar way, logistic or autocatalytic population growth processes can be modelled. A further application which can be simulated with turtle graphics is epidemiology where a set of differential equations is given to predict the immediate consequences of a epidemic like the Hong Kong flu or the swine flu. With only a few lines of programm code in JSXGraph one can study the chronological sequence of the rate of susceptible, infected and recovered population.
             </p>
         
         
             <h3 xmlns=""><a id="S"> Drawing with turtle graphics</a></h3>
             <p xmlns="">An advantage of using turtle graphics is the easy way to draw. The standard commands are going forward for a given numer of units and turning left or right in a given angle. The following programm listing draws the Nikolaus graph shown in the picture below.</p>
+            <p xmlns="">TODO: Satz drüber + Code + Bild in Turtle---SVG aendern</p>
                 <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre> 
 for(i=1;i&lt;=4;i++) {
     t.forward(100);
@@ -226,7 +227,7 @@ for(i=1;i&lt;=2;i++) {
 }
 t.left(90);
 t.forward(100*Math.sqrt(2));
-</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 3: Drawing the Nikolaus Graph using a turtle</b></p></blockquote></div>
+</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 4: Drawing the Nikolaus Graph using a turtle</b></p></blockquote></div>
                 <div xmlns="" class="figure"><a id="nikolaus"/>
                         
                             
@@ -244,9 +245,7 @@ t.forward(100*Math.sqrt(2));
     
         <h2 xmlns=""><a id="S4.">4. Charts</a></h2>
         <p xmlns="">After implementing all the geometric objects and calculus in JSXGraph it was not difficult to extend JSXGraph to support charts. For example line charts and cubic spline interpolated charts are made of function graphs,
-        sectors are used to display pie charts, and bar charts are based on polygons. Of course all of the visual options from the geometric elements are passed on to the charts. But also the dynamics is still available, so even dynamic
-        charts can be done with JSXGraph which is useful for forecasts with varying parameters.</p>
-        
+        sectors are used to display pie charts, and horizontal resp. vertical bar charts are based on polygons. Of course all of the visual options from the geometric elements like fill and stroke colors, fill gradients, line styles, shadows or special highlighting effects are passed on to the charts. But also the dynamics is still available, so even interactive charts can be done with JSXGraph which is useful for forecasts with varying parameters.</p>
                 <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre> 
 board = JXG.JSXGraph.initBoard('box', {originX: 50, originY: 450, unitX: 50, unitY: 50, axis:false});
 board.suspendUpdate();
@@ -264,7 +263,8 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
    setting additional style properties
    ...
 */
-</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 4: Drawing an interactive bar chart</b></p></blockquote></div>
+</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 5: Drawing an interactive bar chart</b></p></blockquote></div>
+        <p xmlns="">TODO: Pie chart Bild hinzufuegen, Bar chart kleiner machen (oben und unten)</p>
                 <div xmlns="" class="figure"><a id="barchart"/>
                         
                             <div class="graphic"><img alt="barchart.png" src="barchart.png"/></div>
@@ -334,7 +334,7 @@ new Ajax.Request('/ajax/stockquotes.php', {
   echo fgets ($fp, 1024);
   fclose ($fp);
 ?&gt;
-       </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 5: JavaScript invoking a PHP script using AJAX</b></p></blockquote></div>
+       </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 6: JavaScript invoking a PHP script using AJAX</b></p></blockquote></div>
     
     
     <h3 xmlns=""><a id="S"> JXG.Server</a></h3>
@@ -355,14 +355,12 @@ class JXGModuleMultiply(JXGServerModule):
 
     def mult(self, resp, x):
         resp.addData('y', 3*x)
-        return
-      
-      </pre></td></tr></table>
+        return</pre></td></tr></table>
       This module is in a file called jxgmodulemultiply.py and can be loaded with JXG.Server through
       <table class="codeBlock"><tr><td><pre> JXG.Server.loadModule('jxgmodulemultiply'); </pre></td></tr></table>
       After the module has been loaded the python function can be accessed with
       <table class="codeBlock"><tr><td><pre> JXG.Server.modules.jxgmodulemultiply.mult(5); </pre></td></tr></table>
-      which will result in an alert notification window displaying "15".</p></blockquote><blockquote class="figureTitle"><p><b>Example 6: 
+      which will result in an alert notification window displaying "15".</p></blockquote><blockquote class="figureTitle"><p><b>Example 7: 
         Python module on the server which multiplies a given number by 3
       </b></p></blockquote></div>
     
@@ -379,12 +377,12 @@ brd = JXG.JSXGraph.initBoard('box1', {originX: 10, originY: 250, unitX: 40, unit
 var t = brd.createElement('point',[4,3]);
 &lt;/jsxgraph&gt;
 [... wiki page content ...]
-         </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 7: Include a JSXGraph construction on a MedaWiki page using the MediaWiki plugin</b></p></blockquote></div>
+         </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 8: Include a JSXGraph construction on a MedaWiki page using the MediaWiki plugin</b></p></blockquote></div>
    
         <h2 xmlns=""><a id="S7.">7. Implementation details</a></h2>
         <p xmlns="">
             The main focus of JSXGraph lies on interactivity. The JSXGraph user should experience an immediate feedback to the dragging of points
-            with the mouse. So, special attention has to be paid to fast reacting to the mouse move and mouse up events. Contrarily
+            with the mouse. So, special attention has to be paid to fast reacting to the mouse move and mouse up events. On the other hand
             we want to exploit the superb output quality of vector graphics as offered by SVG. These two controversial goals - 
             speed versus quality - have to be balanced. 
         </p> 
@@ -409,7 +407,7 @@ var t = brd.createElement('point',[4,3]);
                 The Microsoft Internet Explorer has still the largest market share of all browsers. 
                 Since we do not want to exclude the users of the Internet Explorer 
                 we have to adapt JSXGraph to this browser as well. The Internet Explorer can not display SVG, but since the year 1998 
-                Microsoft<a href="#FT12" class="fnref"><b>[12]</b></a><a href="#VML98" class="xref"><b>Paragraph 44</b></a>
+                Microsoft<a href="#FT12" class="fnref"><b>[12]</b></a><a href="#VML98" class="xref"><b>Paragraph 46</b></a>
                 supports VML 
                 - vector markup language - as vector graphic language in the Internet Explorer. 
                 Early in the development process of JSXGraph we decided to implement SVG and VML drawing separately, without using one of the
@@ -484,7 +482,7 @@ var t = brd.createElement('point',[4,3]);
                 <h4 xmlns=""><a id="S"> Use memoizers</a></h4>
                 <p xmlns="">
                         Common functions like binomial() and factorial() are realized with memoizer techniques, 
-                        as descripted in <a href="#Crockford2008" class="xref"><b>Paragraph 44</b></a>, page 44.
+                        as descripted in <a href="#Crockford2008" class="xref"><b>Paragraph 46</b></a>, page 44.
                         Thus, the expensive computation of each value of these functions is done only once.
                  </p>
             
@@ -523,7 +521,7 @@ var t = brd.createElement('point',[4,3]);
                 We apply the following strategy: When the function graph is updated, we compute the coefficients of the polynomial only once.
                 Then we use these coefficients for the computation of all function values.
                 But where to store the coefficients? Using the "this" keyword does not give the desired results in a function.
-                But fortunately, we can use the function invocation pattern, see <a href="#Crockford2008" class="xref"><b>Paragraph 44</b></a>, page 28.
+                But fortunately, we can use the function invocation pattern, see <a href="#Crockford2008" class="xref"><b>Paragraph 46</b></a>, page 28.
                 In the example below, the function which is returned by the call of "generateFunction()" still has access to the 
                 variable "coeffs". This is based on the powerful concept of closures, which is part of JavaScript and comes from 
                 functional programming languages.
@@ -563,7 +561,7 @@ generateFunction = function(degree,dataX,dataY) {
         };
         return fct;
     };
-                </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 8: Use of the function invocation pattern</b></p></blockquote></div></p>
+                </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 9: Use of the function invocation pattern</b></p></blockquote></div></p>
             
             
                 <h4 xmlns=""><a id="S"> An Internet Explorer trick</a></h4>
@@ -616,79 +614,8 @@ generateFunction = function(degree,dataX,dataY) {
                 
                 Vector Markup Language (VML)
             
-
-            
-            
-            
-                AhoSethiUllman96
-                
-                    
-                        Alfred V. Aho
-                    
-                    
-                        Ravi Sethi
-                    
-                    
-                        Jeffrey D. Ullman
-                    
-                
-                1996
-                    Bell Telephone Laboratories, Inc.
-                
-                    James T. DeWolf
-                
-                0-201-10088-6
-                
-                    Addison-Wesley Publishing Company
-                
-                Compilers, Principles, Techniques, and Tools
-            
-            
-            
-                
-                    
-                        Andrea Bahadur
-                    
-                    
-                        Mark Shwarek
-                    
-                
-                19741975
-                    Product Development International Holding N. V.
-                
-                0-88459-021-6
-                
-                    Plenary Publications International, Inc.
-                
-                Kites
-                Ancient Craft to Modern Sport
-                988-999
-            
-            
-        Periodicals
-            
-            
-                Walsh97
-                
-                    XML: Principles, Tools, and Techniques
-                    
-                        O'Reilly &amp; Associates, Inc.
-                    
-                    1085-2301
-                    
-                        Dan Connolly
-                    
-                
-                
-                    A Guide to XML
-                    
-                         WalshNorman
-                    
-                    1997ArborText, Inc.
-                    97-108
-                
-            
-            
+        Websites
+        
         </dl><h2 xmlns="" class="ftnoteHeader"><a id="S.Footnotes">Footnotes</a></h2><ol xmlns="" class="ftnote"><li><p><a id="FT1"/>http://jsxgraph.org</p></li><li><p><a id="FT2"/>Inspired by the work of Sam Ruby: 
             http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</p></li><li><p><a id="FT3"/>http://geonext.de</p></li><li><p><a id="FT4"/>http://i2geo.net</p></li><li><p><a id="FT5"/>http://geogebra.org</p></li><li><p><a id="FT6"/>http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu</p></li><li><p><a id="FT7"/>http://jsxgraph.uni-bayreuth.de/wiki/index.php/Analyze_data_with_the_Statistics_software_R</p></li><li><p><a id="FT8"/>http://prototypejs.org</p></li><li><p><a id="FT9"/>http://jquery.com</p></li><li><p><a id="FT10"/>http://prototypejs.org</p></li><li><p><a id="FT11"/>http://jquery.com</p></li><li><p><a id="FT12"/>See http://www.w3.org/TR/1998/NOTE-VML-19980513 for the specification.</p></li><li><p><a id="FT13"/>http://developer.yahoo.com/yui/compressor/</p></li></ol><p class="credits"><small>XHTML rendition made possible by
       <a href="http://www.schemasoft.com">SchemaSoft</a>'s
