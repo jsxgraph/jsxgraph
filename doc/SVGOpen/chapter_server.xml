@@ -92,9 +92,7 @@ class JXGModuleMultiply(JXGServerModule):
 
     def mult(self, resp, x):
         resp.addData('y', 3*x)
-        return
-      ]]>
-      </programlisting>
+        return]]></programlisting>
       This module is in a file called jxgmodulemultiply.py and can be loaded with JXG.Server through
       <programlisting><![CDATA[ JXG.Server.loadModule('jxgmodulemultiply'); ]]></programlisting>
       After the module has been loaded the python function can be accessed with

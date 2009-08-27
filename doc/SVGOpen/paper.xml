@@ -85,6 +85,15 @@
             <para>Since JSXGraph has evolved from the GEONExT project, the support of its file format is almost complete. 
 Other file formats are under development. For example, JSXGraph is involved in the European Intergeo project which unites several dynamic geometry systems (GeoGebra, Cabri, GEONExT, Cinderella, etc.) with a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Support for reading GeoGebra files directly is under development in cooperation with the GeoGebra developer team.
             </para>
+            <example>
+                <title>Loading a GEONExT construction from file</title>
+<programlisting><![CDATA[ 
+<div id="box" class="jxgbox" style="width:500px; height:500px;"></div>
+<script type="text/javascript">
+   var b2 = JXG.JSXGraph.loadBoardFromFile('box', 'geonextConstruction.gxt', 'Geonext');
+</script>]]>
+</programlisting>
+            </example>
         </section>
         <section>
             <title>Constructing from scratch</title>
@@ -93,39 +102,33 @@ Other file formats are under development. For example, JSXGraph is involved in t
             <example>
                     <title>Constructing the euler line of a triangle from scratch</title>
 <programlisting><![CDATA[ 
-A = brd.createElement('point',[1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
-B = brd.createElement('point',[-1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
-C = brd.createElement('point',[0.2,1.5],{strokeColor:'#901B77',fillColor:'#CA147A'});
-pol = brd.createElement('polygon',[A,B,C], {fillColor:'#FFFF0050'});
-for(i=0;i<=2;i++) {
-    pol.borders[i].setProperty('strokeColor:#009256');
-}
+/* triangle */
+A = brd.createElement('point',[1,0]);
+B = brd.createElement('point',[-1,0]);
+C = brd.createElement('point',[0.2,1.5]);
+triangle = brd.createElement('polygon',[A,B,C]);
+
+/* heights */ 
+hc = brd.createElement('perpendicular',[pol.borders[0],C],{name:['','H_c']});
+ha = brd.createElement('perpendicular',[pol.borders[1],A],{name:['','H_a']});
+hb = brd.createElement('perpendicular',[pol.borders[2],B],{name:['','H_b']});
+h = brd.createElement('intersection',[hc[0],hb[0],0],{name:'H'});
+
+/* median lines */ 
+mc = brd.createElement('midpoint',[A,B],{name:'M_c'});
+ma = brd.createElement('midpoint',[B,C],{name:'M_a'});
+mb = brd.createElement('midpoint',[C,A],{name:'M_b'});
+sa = brd.createElement('segment',[ma,A]);
+sb = brd.createElement('segment',[mb,B]);
+sc = brd.createElement('segment',[mc,C]);
+/* centroid */
+s = brd.createElement('intersection',[sa,sc,0],{name:'S'});
  
-pABC = brd.createElement('perpendicular',[pol.borders[0],C],{strokeWidth:1,dash:2, name:['','H_c']});
-pBCA = brd.createElement('perpendicular',[pol.borders[1],A],{strokeWidth:1,dash:2, name:['','H_a']});
-pCAB = brd.createElement('perpendicular',[pol.borders[2],B],{strokeWidth:1,dash:2, name:['','H_b']});
-pABC[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-pBCA[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-pCAB[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-i1 = brd.createElement('intersection',[pABC[0],pCAB[0],0],{strokeColor:'#009256',fillColor:'#65B72E',name:'H'});
-pABC[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
-pBCA[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
-pCAB[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+/* circumcircle */
+[cPoint,cCirc] = brd.createElement('circumcircle',[A,B,C],{name:['U','']});
+cCirc.setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
  
-mAB = brd.createElement('midpoint',[A,B],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_c'});
-mBC = brd.createElement('midpoint',[B,C],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_a'});
-mCA = brd.createElement('midpoint',[C,A],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_b'});
-ma = brd.createElement('line',[mBC,A],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
-mb = brd.createElement('line',[mCA,B],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
-mc = brd.createElement('line',[mAB,C],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
-i2 = brd.createElement('intersection',[ma,mc,0],{strokeColor:'#009256',fillColor:'#65B72E',name:'S'});
- 
-i3 = brd.createElement('circumcirclemidpoint',[A,B,C],{strokeColor:'#009256',fillColor:'#65B72E',name:'U'});
-c = brd.createElement('circumcircle',[A,B,C],{strokeColor:'#000000',dash:3,strokeWidth:1});
-c[0].setProperty('visible:false');
-c[1].setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
- 
-euler = brd.createElement('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
+eulerLine = brd.createElement('line',[s,cPoint],{strokeWidth:2,strokeColor:'#901B77'});
 ]]></programlisting>
             </example>
                 <figure xml:id="euler">
@@ -143,7 +146,7 @@ euler = brd.createElement('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
             <para>Beyond the capabilities of JSXGraph with regard to geometric constructions, one is also able to visualize calculus.</para>
             <para>The possibilities start from plotting simple functiongraphs to displaying more complex graphs like parametric and polar curves which can be analyzed using the implemented methods for tangents, integrals or spline interpolation. 
             </para>
-            <para>Example:  examine the influence of function parameters like in code example 1[TODO]</para>
+            <para>TODO: Bild + Code einfuegen: calculus_svgopen.html </para>
             <para>With an implementation of an explicit Runge-Kutta process, JSXGraph can also solve ordinary differential equations on the fly with the possibility to change the parameters on runtime and watching the results.
             </para>
         </section>            
@@ -170,6 +173,7 @@ t.moveTo([dx+t.X(),dy+t.Y()]);
         <section>
             <title>Drawing with turtle graphics</title>
             <para>An advantage of using turtle graphics is the easy way to draw. The standard commands are going forward for a given numer of units and turning left or right in a given angle. The following programm listing draws the Nikolaus graph shown in the picture below.</para>
+            <para>TODO: Satz drüber + Code + Bild in Turtle---SVG aendern</para>
                 <example>
                     <title>Drawing the Nikolaus Graph using a turtle</title>
 <programlisting><![CDATA[ 
@@ -212,9 +216,7 @@ t.forward(100*Math.sqrt(2));
     <section>
         <title>Charts</title>
         <para>After implementing all the geometric objects and calculus in JSXGraph it was not difficult to extend JSXGraph to support charts. For example line charts and cubic spline interpolated charts are made of function graphs,
-        sectors are used to display pie charts, and bar charts are based on polygons. Of course all of the visual options from the geometric elements are passed on to the charts. But also the dynamics is still available, so even dynamic
-        charts can be done with JSXGraph which is useful for forecasts with varying parameters.</para>
-        <!--para>Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts providing the optical properties that are integrated in JSXGraph like fill and stroke colors, fill gradients, line styles, shadows or special highlighting effects. The corresponding data can be connected to elements like sliders to have interactive charts which can be altered on runtime with the mouse. JSXGraph contains support for pie charts, horizontal and vertical bar charts, line charts with line segments or splines, and point charts.</para-->
+        sectors are used to display pie charts, and horizontal resp. vertical bar charts are based on polygons. Of course all of the visual options from the geometric elements like fill and stroke colors, fill gradients, line styles, shadows or special highlighting effects are passed on to the charts. But also the dynamics is still available, so even interactive charts can be done with JSXGraph which is useful for forecasts with varying parameters.</para>
                 <example>
                     <title>Drawing an interactive bar chart</title>
 <programlisting><![CDATA[ 
@@ -236,6 +238,7 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
 */
 ]]></programlisting>
         </example>
+        <para>TODO: Pie chart Bild hinzufuegen, Bar chart kleiner machen (oben und unten)</para>
                 <figure xml:id="barchart">
                     <title>An interactive bar chart together with a line chart</title>
                     <mediaobject>
@@ -290,81 +293,9 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
                 </publisher>
                 <title>Vector Markup Language (VML)</title>
             </biblioentry>
-
-            <!-- OLD -->
-            
-            <biblioentry xml:id="AhoSethiUllman96">
-                <abbrev>AhoSethiUllman96</abbrev>
-                <authorgroup>
-                    <author><personname>
-                        <firstname>Alfred V.</firstname><surname>Aho</surname>
-                    </personname></author>
-                    <author><personname>
-                        <firstname>Ravi</firstname><surname>Sethi</surname>
-                    </personname></author>
-                    <author><personname>
-                        <firstname>Jeffrey D.</firstname><surname>Ullman</surname>
-                    </personname></author>
-                </authorgroup>
-                <copyright><year>1996</year>
-                    <holder>Bell Telephone Laboratories, Inc.</holder></copyright>
-                <editor><personname>
-                    <firstname>James T.</firstname><surname>DeWolf</surname>
-                </personname></editor>
-                <biblioid class="isbn">0-201-10088-6</biblioid>
-                <publisher>
-                    <publishername>Addison-Wesley Publishing Company</publishername>
-                </publisher>
-                <title>Compilers, Principles, Techniques, and Tools</title>
-            </biblioentry>
-            
-            <biblioentry xreflabel="Kites75">
-                <authorgroup>
-                    <author><personname>
-                        <firstname>Andrea</firstname><surname>Bahadur</surname>
-                    </personname></author>
-                    <author><personname>
-                        <firstname>Mark</firstname><surname>Shwarek</surname>
-                    </personname></author>
-                </authorgroup>
-                <copyright><year>1974</year><year>1975</year>
-                    <holder>Product Development International Holding N. V.</holder>
-                </copyright>
-                <biblioid class="isbn">0-88459-021-6</biblioid>
-                <publisher>
-                    <publishername>Plenary Publications International, Inc.</publishername>
-                </publisher>
-                <title>Kites</title>
-                <subtitle>Ancient Craft to Modern Sport</subtitle>
-                <pagenums>988-999</pagenums>
-            </biblioentry>
-            
         </bibliodiv>
-        <bibliodiv><title>Periodicals</title>
-            
-            <biblioentry>
-                <abbrev>Walsh97</abbrev>
-                <biblioset relation="journal">
-                    <title>XML: Principles, Tools, and Techniques</title>
-                    <publisher>
-                        <publishername>O'Reilly &amp; Associates, Inc.</publishername>
-                    </publisher>
-                    <biblioid class="issn">1085-2301</biblioid>
-                    <editor><personname>
-                        <firstname>Dan</firstname><surname>Connolly</surname>
-                    </personname></editor>
-                </biblioset>
-                <biblioset relation="article">
-                    <title>A Guide to XML</title>
-                    <author><personname>
-                        <surname>Walsh</surname><firstname>Norman</firstname>
-                    </personname></author>
-                    <copyright><year>1997</year><holder>ArborText, Inc.</holder></copyright>
-                    <pagenums>97-108</pagenums>
-                </biblioset>
-            </biblioentry>
-            
-        </bibliodiv>
+        <bibliodiv><title>Websites</title>
         
+        </bibliodiv>
     </bibliography>
 </article>

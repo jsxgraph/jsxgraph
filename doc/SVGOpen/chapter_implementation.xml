@@ -2,7 +2,7 @@
         <title>Implementation details</title>
         <para>
             The main focus of JSXGraph lies on interactivity. The JSXGraph user should experience an immediate feedback to the dragging of points
-            with the mouse. So, special attention has to be paid to fast reacting to the mouse move and mouse up events. Contrarily
+            with the mouse. So, special attention has to be paid to fast reacting to the mouse move and mouse up events. On the other hand
             we want to exploit the superb output quality of vector graphics as offered by SVG. These two controversial goals - 
             speed versus quality - have to be balanced. 
         </para> 
