@@ -298,23 +298,83 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
             <biblioentry xml:id="SVG09">
                 <abbrev>SVG2009</abbrev>
                 <authorgroup>
-                    <author><personname><firstname>Ola</firstname><surname>Andersson</surname></personname></author>
-                    <author><personname><firstname>Phil</firstname><surname>Armstrong</surname></personname></author>
-                    <author><personname><firstname>Henric</firstname><surname>Axelsson</surname></personname></author>
-                    <author><personname><firstname>Robin</firstname><surname>Berjon</surname></personname></author>
-                    <author><personname><firstname>Benoît</firstname><surname>Bézaire</surname></personname></author>
-                    <author><personname><firstname>John</firstname><surname>Bowler</surname></personname></author>
-                    <author><personname><firstname>Craig</firstname><surname>Brown</surname></personname></author>
-                    <author><personname><firstname>Mike</firstname><surname>Bultrowicz</surname></personname></author>
-                    <author><personname><firstname>Tolga</firstname><surname>Capin</surname></personname></author>
-                    <author><personname><firstname>Milt</firstname><surname>Capsimalis</surname></personname></author>
-                    <author><personname><firstname>Mathias Larsson</firstname><surname>Carlander</surname></personname></author>
-                    <author><personname><firstname>Jakob</firstname><surname>Cederquist</surname></personname></author>
-                    <author><personname><firstname>Charilaos</firstname><surname>Christopoulos</surname></personname></author>
-                    <author><personname><firstname>Richard</firstname><surname>Cohn</surname></personname></author>
-                    <author><personname><firstname>Lee</firstname><surname>Cole</surname></personname></author>
-                    <author><personname><firstname>Don </firstname><surname>Cone</surname></personname></author>
-                    <author><personname><firstname>Alex</firstname><surname>Danilo</surname></personname></author>                    
+                  <author><personname><firstname>Ola</firstname><surname>Andersson</surname></personname></author>
+                  <author><personname><firstname>Phil</firstname><surname>Armstrong</surname></personname></author>
+                  <author><personname><firstname>Henric</firstname><surname>Axelsson</surname></personname></author>
+
+                  <author><personname><firstname>Robin</firstname><surname>Berjon</surname></personname></author>
+                  <author><personname><firstname>Beno&#238;t</firstname><surname>B&#233;zaire</surname></personname></author>
+                  <author><personname><firstname>John</firstname><surname>Bowler</surname></personname></author>
+                  <author><personname><firstname>Craig</firstname><surname>Brown</surname></personname></author>
+                  <author><personname><firstname>Mike</firstname><surname>Bultrowicz</surname></personname></author>
+
+          <author><personname><firstname>Tolga</firstname><surname>Capin</surname></personname></author>
+          <author><personname><firstname>Milt</firstname><surname>Capsimalis</surname></personname></author>
+          <author><personname><firstname>Mathias Larsson</firstname><surname>Carlander</surname></personname></author>
+          <author><personname><firstname>Jakob</firstname><surname>Cederquist</surname></personname></author>
+          <author><personname><firstname>Charilaos</firstname><surname>Christopoulos</surname></personname></author>
+          <author><personname><firstname>Richard</firstname><surname>Cohn</surname></personname></author>
+
+          <author><personname><firstname>Lee</firstname><surname>Cole</surname></personname></author>
+          <author><personname><firstname>Don</firstname><surname>Cone</surname></personname></author>
+          <author><personname><firstname>Alex</firstname><surname>Danilo</surname></personname></author>
+          <author><personname><firstname>Thomas</firstname><surname>DeWeese</surname></personname></author>
+          <author><personname><firstname>David</firstname><surname>Dodds</surname></personname></author>
+          <author><personname><firstname>Andrew</firstname><surname>Donoho</surname></personname></author>
+
+          <author><personname><firstname>David</firstname><surname>Duce</surname></personname></author>
+          <author><personname><firstname>Jerry</firstname><surname>Evans</surname></personname></author>
+          <author><personname><firstname>Jon</firstname><surname>Ferraiolo</surname></personname></author>
+          <author><personname><firstname>Darryl</firstname><surname>Fuller</surname></personname></author>
+          <author><personname><surname>&#34276;&#27810;</surname><firstname>&#28147;</firstname></personname></author>
+
+          <author><personname><firstname>Scott</firstname><surname>Furman</surname></personname></author>
+          <author><personname><firstname>Brent</firstname><surname>Getlin</surname></personname></author>
+          <author><personname><firstname>Peter</firstname><surname>Graffagnino</surname></personname></author>
+          <author><personname><firstname>Rick</firstname><surname>Graham</surname></personname></author>
+          <author><personname><firstname>Vincent</firstname><surname>Hardy</surname></personname></author>
+          <author><personname><surname>&#31471;&#23665;</surname><firstname>&#36020;&#20063;</firstname></personname></author>
+
+          <author><personname><firstname>Lofton</firstname><surname>Henderson</surname></personname></author>
+          <author><personname><firstname>Jan Christian</firstname><surname>Herlitz</surname></personname></author>
+          <author><personname><firstname>Alan</firstname><surname>Hester</surname></personname></author>
+          <author><personname><firstname>Bob</firstname><surname>Hopgood</surname></personname></author>
+          <author><personname><surname>&#30707;&#24029;</surname><firstname>&#38597;&#24247;</firstname></personname></author>
+
+          <author><personname><firstname>Dean</firstname><surname>Jackson</surname></personname></author>
+          <author><personname><firstname>Christophe</firstname><surname>Jolif</surname></personname></author>
+          <author><personname><firstname>Lee</firstname><surname>Klosterman</surname></personname></author>
+          <author><personname><surname>&#23567;&#26519;</surname><firstname>&#20124;&#20196;</firstname></personname></author>
+          <author><personname><firstname>Thierry</firstname><surname>Kormann</surname></personname></author>
+
+          <author><personname><firstname>Yuri</firstname><surname>Khramov</surname></personname></author>
+          <author><personname><firstname>Kelvin</firstname><surname>Lawrence</surname></personname></author>
+          <author><personname><firstname>H&#229;kon</firstname><surname>Lie</surname></personname></author>
+          <author><personname><firstname>Chris</firstname><surname>Lilley</surname></personname></author>
+          <author><personname><firstname>Philip</firstname><surname>Mansfield</surname></personname></author>
+
+                  <author><personname><firstname>Kevin</firstname><surname>McCluskey</surname></personname></author>
+                  <author><personname><surname>&#27700;&#21475;</surname><firstname>&#20805;</firstname></personname></author>
+                  <author><personname><firstname>Luc</firstname><surname>Minnebo</surname></personname></author>
+                  <author><personname><firstname>Tuan</firstname><surname>Nguyen</surname></personname></author>
+                  <author><personname><surname>&#23567;&#37326;</surname><firstname>&#20462;&#19968;&#37070;</firstname></personname></author>
+
+                  <author><personname><firstname>Antoine</firstname><surname>Quint</surname></personname></author>
+                  <author><personname><surname>&#30456;&#33391;</surname><firstname>&#27589;</firstname></personname></author>
+                  <author><personname><firstname>Troy</firstname><surname>Sandal</surname></personname></author>
+                  <author><personname><firstname>Peter</firstname><surname>Santangeli</surname></personname></author>
+                  <author><personname><firstname>Haroon</firstname><surname>Sheikh</surname></personname></author>
+
+                  <author><personname><firstname>Brad</firstname><surname>Sipes</surname></personname></author>
+                  <author><personname><firstname>Peter</firstname><surname>Sorotokin</surname></personname></author>
+                  <author><personname><firstname>Gavriel</firstname><surname>State</surname></personname></author>
+                  <author><personname><firstname>Robert</firstname><surname>Stevahn</surname></personname></author>
+                  <author><personname><firstname>Timothy</firstname><surname>Thompson</surname></personname></author>
+                  <author><personname><surname>&#19978;&#30000;</surname><firstname>&#23439;&#39640;</firstname></personname></author>
+
+                  <author><personname><firstname>Rick</firstname><surname>Yardumian</surname></personname></author>
+                  <author><personname><firstname>Charles</firstname><surname>Ying</surname></personname></author>
+                  <author><personname><firstname>Shenxue</firstname><surname>Zhou</surname></personname></author>
                 </authorgroup>
                 <copyright><year>2009</year>
                     <holder>W3C</holder></copyright>
