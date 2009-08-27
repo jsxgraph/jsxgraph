@@ -11,13 +11,11 @@
             <para>
             JSXGraph works on every major browser. In JSXGraph the cross-browser issues are handled by an external library, where
             the web developer who uses JSXGraph can choose between
-            either the Prototype JavaScript library<footnote><para><ulink url="http://prototypejs.org">http://prototypejs.org</ulink></para>
-                </footnote> 
+            either the Prototype JavaScript library 
             or the
-            jQuery library<footnote><para><ulink url="http://jquery.com">http://jquery.com</ulink></para>
-                </footnote>.  
+            jQuery library.
             JSXGraph can be used with either of these two libraries equally good. 
-            Only very few features of these libraries are used and and the access is capsuled in some lines in the
+            Only very few features of these libraries are used and the access is capsuled in some lines in the
             source code file jsxgraph.js. Mainly the cross-browser handling of events is delegated to the external libraries.
             Everything else in JSXGraph is built up from scratch and does not rely on any third-party library.
             So, it should be easy to port JSXGraph to a further framework, if necessary.
@@ -29,8 +27,7 @@
                 The Microsoft Internet Explorer has still the largest market share of all browsers. 
                 Since we do not want to exclude the users of the Internet Explorer 
                 we have to adapt JSXGraph to this browser as well. The Internet Explorer can not display SVG, but since the year 1998 
-                Microsoft<footnote><para>See <ulink url="http://www.w3.org/TR/1998/NOTE-VML-19980513">http://www.w3.org/TR/1998/NOTE-VML-19980513</ulink> for the specification.</para>
-                </footnote> <xref  linkend="VML98"/>
+                Microsoft<xref  linkend="VML98"/>
                 supports VML 
                 - vector markup language - as vector graphic language in the Internet Explorer. 
                 Early in the development process of JSXGraph we decided to implement SVG and VML drawing separately, without using one of the
@@ -46,7 +43,7 @@
                     <title>Scheme showing the renderer split and encapsulation in JSXGraph</title>
                     <mediaobject>
                         <imageobject>
-                            <imagedata width="25%" fileref="JSXRenderer.png" format="PNG"/>
+                            <imagedata fileref="JSXRenderer.png" format="PNG"/>
                         </imageobject>
                     </mediaobject>
                 </figure>
@@ -55,32 +52,6 @@
                 the use of CSS styles consumed to much computing resources, especially setting the opacity with Firefox. 
                 So, nearly all visual properties are realized by setting attributes and applying filters. Even if filters in SVG are still not 
                 implemented satisfactorily in all browsers, JSXGraph supports shadows and gradients via filters since version 0.76. 
-                <!--The SVG filter to display lines, circles and points with shadows is implemented dynamically with the following
-                commands. 
-                <programlisting><![CDATA[
-    this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace,'defs');
-    this.svgRoot.appendChild(this.defs);
-    this.filter = this.container.ownerDocument.createElementNS(this.svgNamespace,'filter');
-    this.filter.setAttributeNS(null, 'id', 'f1');
-    this.filter.setAttributeNS(null, 'width', '300%');
-    this.filter.setAttributeNS(null, 'height', '300%');
-    this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace,'feOffset');
-    this.feOffset.setAttributeNS(null, 'result', 'offOut');
-    this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
-    this.feOffset.setAttributeNS(null, 'dx', '5');
-    this.feOffset.setAttributeNS(null, 'dy', '5');
-    this.filter.appendChild(this.feOffset);
-    this.feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace,'feGaussianBlur');
-    this.feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
-    this.feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
-    this.feGaussianBlur.setAttributeNS(null, 'stdDeviation', '3');
-    this.filter.appendChild(this.feGaussianBlur);
-    this.feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace,'feBlend');
-    this.feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
-    this.feBlend.setAttributeNS(null, 'in2', 'blurOut');
-    this.feBlend.setAttributeNS(null, 'mode', 'normal');
-    this.filter.appendChild(this.feBlend);
-    this.defs.appendChild(this.filter);]]></programlisting>//-->
                 At the time of writing shadows slow down the Firefox browser considerably. Further, there seems to be a bug for
                 horizontal and vertical lines. In these cases neither the line nor its shadow is visible.
                 In Webkit based browsers like Chrome and Safari these filters are not implemented, yet. In Opera it looks ugly.
@@ -121,8 +92,7 @@
                         Before a construction is updated, triggered by mouse move or mouse up events, the redrawing 
                         of the SVG nodes is suspended, until the position of all elements has been recalculated.
                         Then, the redrawing of the SVG nodes is forced.
-                <programlisting><![CDATA[
-    this.suspendHandle = this.svgRoot.suspendRedraw(10000);
+                <programlisting><![CDATA[this.suspendHandle = this.svgRoot.suspendRedraw(10000);
     // Expensive recalculations ...
     this.svgRoot.unsuspendRedraw(this.suspendHandle);
     this.svgRoot.forceRedraw();]]></programlisting>
@@ -181,8 +151,7 @@
                 coefficients are stored.
                 <example>
                 <title>Use of the function invocation pattern</title>
-                <programlisting><![CDATA[     
-generateFunction = function(degree,dataX,dataY) { 
+                <programlisting><![CDATA[generateFunction = function(degree,dataX,dataY) { 
     var coeffs = [];                 
     var fct = function(x,suspendedUpdate){
             var i, j, M, MT, y, B, c, s,
@@ -213,9 +182,7 @@ generateFunction = function(degree,dataX,dataY) {
             }
             return s;
         };
-        return fct;
-    };
-                ]]></programlisting>           
+        return fct;};]]></programlisting>
                 </example>
                 </para>
             </section>
@@ -224,8 +191,7 @@ generateFunction = function(degree,dataX,dataY) {
                 <para>
                     A very special, but decisive speed improvement has been done for the Internet Explorer version 6 and 7.  
                      With the following piece of code which is executed at initialization time the update speed of the Internet Explorer has been improved by an order of magnitude.
-                <programlisting><![CDATA[    
-    function MouseMove(e) {
+                <programlisting><![CDATA[function MouseMove(e) {
         document.body.scrollLeft;
         document.body.scrollTop;
     }

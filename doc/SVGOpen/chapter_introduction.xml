@@ -18,10 +18,10 @@
             In order to compensate the slow demise of Java applets in the web browsers, JSXGraph may prove to be
             valuable. 
             At the moment JSXGraph supports the file format of 
-            GEONExT<footnote><para><ulink url="http://geonext.de">http://geonext.de</ulink></para></footnote>, 
-            Intergeo<footnote><para><ulink url="http://i2geo.net">http://i2geo.net</ulink></para></footnote>, 
+            GEONExT<xref linkend="GXT"/>, 
+            Intergeo<xref linkend="I2GEO"/>, 
             and - at least partially - 
-            GeoGebra<footnote><para><ulink url="http://geogebra.org">http://geogebra.org</ulink></para></footnote>.
+            GeoGebra<xref linkend="GGB"/>.
             Since JSXGraph comes with its own implementation of unzip and gunzip, 
             it should be easy to adapt JSXGraph to a whole varity of even more file formats.
         </para>
@@ -32,14 +32,14 @@
             The possibilities of JSXGraph in this respect exceed by far the options offered by software which is common in schools today.
         </para>
         <para>
-            Another possible application of JSXGraph is to use it as front end for server based applications. 
-            One example is the widely-spread free statistics software R<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Analyze_data_with_the_Statistics_software_R">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Analyze_data_with_the_Statistics_software_R</ulink></para></footnote>. 
+            Another possible application of JSXGraph is to use it as a front end for server based applications. 
+            One example is the widely-spread free statistics software R<xref linkend="R"/>. 
             After the mouse up event is fired in this application, the coordinates of the points
             are sent via AJAX to the R interface on server side. After doing some R computations on the server side, the 
             web server sends the results back to the browser. There the display is updated by JSXGraph. 
             A more simple application of JSXGraph can be the creation of charts on server side.
-            For example, PHP could be used to generate JSXGraph charts which are sent to the web
-            browser. In this way, the high quality of the vector graphics display can be fully exploited.
+            For example PHP could be used to generate JSXGraph charts which are sent to the web
+            browser. Hence the high quality of the vector graphics display can be fully exploited.
             The additional overhead of downloading JSXGraph is less than 100 kByte, which is smaller than most bitmap images.
         </para>
         <para>

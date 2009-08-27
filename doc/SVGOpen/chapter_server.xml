@@ -1,25 +1,23 @@
 ﻿    <section>
         <title>JSXGraph as a front end to server side applications</title>
         <para>JavaScript enables us to use the XmlHTTPRequest object to interact with server side applications. Currently one can use our AJAX wrapper JXG.FileReader or the one
-        provided by Prototype<footnote><para><ulink url="http://prototypejs.org">http://prototypejs.org</ulink></para></footnote> and jQuery <footnote><para><ulink url="http://jquery.com">http://jquery.com</ulink></para></footnote>.
+        provided by Prototype<footnote><para><ulink url="http://prototype.org">http://prototype.org</ulink></para></footnote> or jQuery<footnote><para><ulink url="http://jquery.org">http://jquery.org</ulink></para></footnote>.
         So JSXGraph can be used to visualize the output of server side calculations but provides new input for server applications, too.
         </para>
         <section>
             <title>Just AJAX</title>
             <para>
-            For example one can fetch share prices from a web site like Yahoo finance. To do this one needs a script on his own webserver because of security restrictions concerning the XmlHTTPRequest object which
+            For example you can fetch share prices from a web site like Yahoo finance. To do this a script on your own webserver is required because of security restrictions concerning the XmlHTTPRequest object which
             cannot be used in conjunction with a url that is not on the same server as the web site starting the request. After starting the script from JavaScript it sends back the data from Yahoo which then is parsed by
             the JavaScript and visualized using a curve.
             </para>
            <example>
             <title>JavaScript invoking a PHP script using AJAX</title>
-            <programlisting><![CDATA[
-var hi, lo, brd, periodical, 
+            <programlisting><![CDATA[var hi, lo, brd, periodical, 
     brd, g, txt, val,
     x = [],
     y = [];
- 
- 
+  
 fetchData = function() {
     new Ajax.Request('/ajax/stockquotes.php', {
         onComplete: function(transport) {
@@ -56,16 +54,12 @@ new Ajax.Request('/ajax/stockquotes.php', {
             };
     }});
  
-      periodical = setInterval(fetchData,1000);  // Start the periodical update
-]]>
-</programlisting>
-<programlisting><![CDATA[
-<?php
+periodical = setInterval(fetchData,1000);  // Start the periodical update]]></programlisting>
+<programlisting><![CDATA[<?php
   $fp = fopen ("http://finance.yahoo.com/d/quotes.csv?s=^gdaxi&f=sl1d1t1c1ohgv&e=.csv","r");
   echo fgets ($fp, 1024);
   fclose ($fp);
-?>
-      ]]> </programlisting>
+?>      ]]> </programlisting>
         </example>
     </section>
     <section>
@@ -80,8 +74,7 @@ new Ajax.Request('/ajax/stockquotes.php', {
         Python module on the server which multiplies a given number by 3
       </title>
       <para>
-      <programlisting><![CDATA[
-from JXGServerModule import JXGServerModule
+      <programlisting><![CDATA[from JXGServerModule import JXGServerModule
 import JXG
 
 class JXGModuleMultiply(JXGServerModule):
