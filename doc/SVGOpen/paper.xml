@@ -293,6 +293,37 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
                 </publisher>
                 <title>Vector Markup Language (VML)</title>
             </biblioentry>
+            
+            
+            <biblioentry xml:id="SVG09">
+                <abbrev>SVG2009</abbrev>
+                <authorgroup>
+                    <author><personname><firstname>Ola</firstname><surname>Andersson</surname></personname></author>
+                    <author><personname><firstname>Phil</firstname><surname>Armstrong</surname></personname></author>
+                    <author><personname><firstname>Henric</firstname><surname>Axelsson</surname></personname></author>
+                    <author><personname><firstname>Robin</firstname><surname>Berjon</surname></personname></author>
+                    <author><personname><firstname>Benoît</firstname><surname>Bézaire</surname></personname></author>
+                    <author><personname><firstname>John</firstname><surname>Bowler</surname></personname></author>
+                    <author><personname><firstname>Craig</firstname><surname>Brown</surname></personname></author>
+                    <author><personname><firstname>Mike</firstname><surname>Bultrowicz</surname></personname></author>
+                    <author><personname><firstname>Tolga</firstname><surname>Capin</surname></personname></author>
+                    <author><personname><firstname>Milt</firstname><surname>Capsimalis</surname></personname></author>
+                    <author><personname><firstname>Mathias Larsson</firstname><surname>Carlander</surname></personname></author>
+                    <author><personname><firstname>Jakob</firstname><surname>Cederquist</surname></personname></author>
+                    <author><personname><firstname>Charilaos</firstname><surname>Christopoulos</surname></personname></author>
+                    <author><personname><firstname>Richard</firstname><surname>Cohn</surname></personname></author>
+                    <author><personname><firstname>Lee</firstname><surname>Cole</surname></personname></author>
+                    <author><personname><firstname>Don </firstname><surname>Cone</surname></personname></author>
+                    <author><personname><firstname>Alex</firstname><surname>Danilo</surname></personname></author>                    
+                </authorgroup>
+                <copyright><year>2009</year>
+                    <holder>W3C</holder></copyright>
+                <biblioid class="isbn"></biblioid>
+                <publisher>
+                    <publishername>http://www.w3.org/TR/SVG11/</publishername>
+                </publisher>
+                <title>Scalable Vector Graphics (SVG) 1.1 Specification</title>
+            </biblioentry>            
         </bibliodiv>
         <bibliodiv><title>Websites</title>
         
