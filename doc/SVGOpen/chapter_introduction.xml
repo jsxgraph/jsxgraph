@@ -4,7 +4,7 @@
                 </footnote>  
             is a client-side web application/library for advanced vector graphics in a web browser. Its range of applications starts from
             the display of simple bar charts and pie charts up to the interactive display of function graphs and 
-            Geometry constructions used in schools and universities.
+            geometric constructions used in schools and universities.
             Even more advanced features of JSXGraph are the on-the-fly solving of Differential Equation Systems, the display of 
             Lindenmayer systems<footnote><para>Inspired by the work of Sam Ruby: 
             <ulink url="http://intertwingly.net/blog/2006/07/06/Penrose-Tiling">http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</ulink></para>
@@ -48,7 +48,7 @@
             Therefore, JSXGraph runs on every modern browser. 
         </para>
         <para>
-            JSXGraph is open source software, released under the LGPL – Lesser GNU General Public License. The source code
+            JSXGraph is open source software, released under the Lesser GNU General Public License (LGPL). The source code
             is hosted by sourceforge.
         </para>
     </section>

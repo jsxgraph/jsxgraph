@@ -24,7 +24,7 @@
                     <surname>Valentin</surname>
                 </personname>
                 <email>bianca.valentin@uni-bayreuth.de</email>
-                <personblurb><para>Bianca Valentin is PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory, discrete mathematics, and applications of JSXGraph.</para></personblurb>
+                <personblurb><para>Bianca Valentin is a PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory, discrete mathematics, and applications of JSXGraph.</para></personblurb>
                 <affiliation>
                     <jobtitle>PhD student</jobtitle>
                     <org>
@@ -133,7 +133,7 @@ euler = brd.createElement('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
                     <mediaobject>
                         <imageobject>
                             <!--<imagedata fileref="nikolaus.svg" format="svg" width="60%"/>-->
-                            <imagedata width="50%" fileref="euler.jpg" format="JPEG"/>
+                            <imagedata fileref="euler.png" format="PNG"/>
                         </imageobject>
                     </mediaobject>
                 </figure>
@@ -202,7 +202,7 @@ t.forward(100*Math.sqrt(2));
                     <title>The Koch curve with recursion level 7</title>
                     <mediaobject>
                         <imageobject>
-                            <imagedata width="50%" fileref="koch.jpg" format="JPEG"/>
+                            <imagedata fileref="koch.png" format="PNG"/>
                         </imageobject>
                     </mediaobject>
                 </figure>            
@@ -211,7 +211,10 @@ t.forward(100*Math.sqrt(2));
     
     <section>
         <title>Charts</title>
-        <para>Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts providing the optical properties that are integrated in JSXGraph like fill and stroke colors, fill gradients, line styles, shadows or special highlighting effects. The corresponding data can be connected to elements like sliders to have interactive charts which can be altered on runtime with the mouse. JSXGraph contains support for pie charts, horizontal and vertical bar charts, line charts with line segments or splines, and point charts.</para>
+        <para>After implementing all the geometric objects and calculus in JSXGraph it was not difficult to extend JSXGraph to support charts. For example line charts and cubic spline interpolated charts are made of function graphs,
+        sectors are used to display pie charts, and bar charts are based on polygons. Of course all of the visual options from the geometric elements are passed on to the charts. But also the dynamics is still available, so even dynamic
+        charts can be done with JSXGraph which is useful for forecasts with varying parameters.</para>
+        <!--para>Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts providing the optical properties that are integrated in JSXGraph like fill and stroke colors, fill gradients, line styles, shadows or special highlighting effects. The corresponding data can be connected to elements like sliders to have interactive charts which can be altered on runtime with the mouse. JSXGraph contains support for pie charts, horizontal and vertical bar charts, line charts with line segments or splines, and point charts.</para-->
                 <example>
                     <title>Drawing an interactive bar chart</title>
 <programlisting><![CDATA[ 
@@ -237,7 +240,7 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
                     <title>An interactive bar chart together with a line chart</title>
                     <mediaobject>
                         <imageobject>
-                            <imagedata width="50%" fileref="barchart.jpg" format="JPEG"/>
+                            <imagedata fileref="barchart.png" format="PNG"/>
                         </imageobject>
                     </mediaobject>
                 </figure>        

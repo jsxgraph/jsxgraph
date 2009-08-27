@@ -16,7 +16,7 @@ ol.ftnote {list-style-type: decimal}
                             <br/>95444
                             <br/>Germany
                             <br/>++49-921 55 3389
-                        </p><p xmlns="" class="bioHeader"><i>Biography</i></p><blockquote xmlns="" class="bio"><p>Bianca Valentin is PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory, discrete mathematics, and applications of JSXGraph.</p></blockquote><p xmlns="" class="author"><span class="authorName">Michael Gerhaeuser</span><br/>Student<br/><br/>University of Bayreuth<br/>Department of mathematics<br/>
+                        </p><p xmlns="" class="bioHeader"><i>Biography</i></p><blockquote xmlns="" class="bio"><p>Bianca Valentin is a PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory, discrete mathematics, and applications of JSXGraph.</p></blockquote><p xmlns="" class="author"><span class="authorName">Michael Gerhaeuser</span><br/>Student<br/><br/>University of Bayreuth<br/>Department of mathematics<br/>
                             <br/>Bayreuth
                             <br/>Universitaetsstr. 30
                             <br/>95444
@@ -79,7 +79,7 @@ ol.ftnote {list-style-type: decimal}
         <p xmlns="">JSXGraph<a href="#FT1" class="fnref"><b>[1]</b></a>  
             is a client-side web application/library for advanced vector graphics in a web browser. Its range of applications starts from
             the display of simple bar charts and pie charts up to the interactive display of function graphs and 
-            Geometry constructions used in schools and universities.
+            geometric constructions used in schools and universities.
             Even more advanced features of JSXGraph are the on-the-fly solving of Differential Equation Systems, the display of 
             Lindenmayer systems<a href="#FT2" class="fnref"><b>[2]</b></a>, which are of importance in Biology, and dynamic computation of regression polynomials.
         </p>
@@ -121,7 +121,7 @@ ol.ftnote {list-style-type: decimal}
             Therefore, JSXGraph runs on every modern browser. 
         </p>
         <p xmlns="">
-            JSXGraph is open source software, released under the LGPL – Lesser GNU General Public License. The source code
+            JSXGraph is open source software, released under the Lesser GNU General Public License (LGPL). The source code
             is hosted by sourceforge.
         </p>
     
@@ -181,7 +181,7 @@ euler = brd.createElement('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
                 <div xmlns="" class="figure"><a id="euler"/>
                         
                             
-                            <div class="graphic"><img alt="euler.jpg" src="euler.jpg" width="50%"/></div>
+                            <div class="graphic"><img alt="euler.png" src="euler.png"/></div>
                         
                     <blockquote class="figureTitle"><p><b>Figure 1: The Euler Line</b></p></blockquote></div>
         
@@ -237,13 +237,16 @@ t.forward(100*Math.sqrt(2));
             </p>
                 <div xmlns="" class="figure"><a id="koch"/>
                         
-                            <div class="graphic"><img alt="koch.jpg" src="koch.jpg" width="50%"/></div>
+                            <div class="graphic"><img alt="koch.png" src="koch.png"/></div>
                         
                     <blockquote class="figureTitle"><p><b>Figure 3: The Koch curve with recursion level 7</b></p></blockquote></div>            
         
     
         <h2 xmlns=""><a id="S4.">4. Charts</a></h2>
-        <p xmlns="">Having all the geometric objects with all their possibilities within JSXGraph, it was not difficult to integrate support for charts providing the optical properties that are integrated in JSXGraph like fill and stroke colors, fill gradients, line styles, shadows or special highlighting effects. The corresponding data can be connected to elements like sliders to have interactive charts which can be altered on runtime with the mouse. JSXGraph contains support for pie charts, horizontal and vertical bar charts, line charts with line segments or splines, and point charts.</p>
+        <p xmlns="">After implementing all the geometric objects and calculus in JSXGraph it was not difficult to extend JSXGraph to support charts. For example line charts and cubic spline interpolated charts are made of function graphs,
+        sectors are used to display pie charts, and bar charts are based on polygons. Of course all of the visual options from the geometric elements are passed on to the charts. But also the dynamics is still available, so even dynamic
+        charts can be done with JSXGraph which is useful for forecasts with varying parameters.</p>
+        
                 <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre> 
 board = JXG.JSXGraph.initBoard('box', {originX: 50, originY: 450, unitX: 50, unitY: 50, axis:false});
 board.suspendUpdate();
@@ -262,6 +265,11 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
    ...
 */
 </pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 4: Drawing an interactive bar chart</b></p></blockquote></div>
+                <div xmlns="" class="figure"><a id="barchart"/>
+                        
+                            <div class="graphic"><img alt="barchart.png" src="barchart.png"/></div>
+                        
+                    <blockquote class="figureTitle"><p><b>Figure 4: An interactive bar chart together with a line chart</b></p></blockquote></div>        
     
         <h2 xmlns=""><a id="S5.">5. JSXGraph as a front end to server side applications</a></h2>
         <p xmlns="">JavaScript enables us to use the XmlHTTPRequest object to interact with server side applications. Currently one can use our AJAX wrapper JXG.FileReader or the one
