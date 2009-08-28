@@ -143,7 +143,7 @@ eulerLine = brd.createElement('line',[s,cPoint],{strokeWidth:2,strokeColor:'#901
             The possibilities start from plotting simple function graphs to displaying more complex graphs like parametric and polar curves which can be analyzed using the implemented methods for tangents, integrals or spline interpolation. 
             </para>
             <example>
-            <title>Sourcecode to construction shown in <xref linkend="calculus"/></title>
+            <title>Sourcecode to the construction shown in <xref linkend="calculus"/></title>
             <programlisting><![CDATA[var brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 400, originY: 200, grid:true, unitX: 50, unitY: 50});
 brd.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
 brd.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});         
