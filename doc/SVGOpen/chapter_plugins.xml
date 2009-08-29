@@ -1,7 +1,7 @@
 ﻿    <section>
         <title>Plugins for integration in other web applications</title>
-        <para>To ease the integration of JSXGraph into other web applications we provide some plugins for a couple of existing web applications. That are the blogging software Wordpress<footnote><para><ulink url="http://wordpress.com">http://wordpress.com</ulink></para></footnote>, 
-        the basis software for Wikipedia called MediaWiki<footnote><para><ulink url="http://mediawiki.org">http://mediawiki.org</ulink></para></footnote>, and the course management system Moodle<footnote><para><ulink url="http://moodle.org">http://moodle.org</ulink></para></footnote>. The latter one ist still experimental. The user only has to provide a few options for the drawing panel
+        <para>To ease the integration of JSXGraph into other web applications we provide some plugins for a couple of them. Those are the blogging software Wordpress<footnote><para><ulink url="http://wordpress.com">http://wordpress.com</ulink></para></footnote>, 
+        the basis software for Wikipedia called MediaWiki<footnote><para><ulink url="http://mediawiki.org">http://mediawiki.org</ulink></para></footnote>, and the course management system Moodle<footnote><para><ulink url="http://moodle.org">http://moodle.org</ulink></para></footnote>. The plugin for the latter one ist still experimental. The user only has to provide a few options for the drawing panel
         and the JavaScript construction code or a url to a file in a format supported by JSXGraph. The rest is done by the plugin, like loading the necessary files, initializing the division element containing the
         drawing panel and finally loading the file or the javascript construction code.</para>
         <example>

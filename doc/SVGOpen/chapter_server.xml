@@ -2,7 +2,7 @@
         <title>JSXGraph as a front end to server side applications</title>
         <para>JavaScript enables us to use the XmlHTTPRequest object to interact with server side applications. Currently one can use our AJAX wrapper JXG.FileReader or the one
         provided by Prototype<footnote><para><ulink url="http://prototype.org">http://prototype.org</ulink></para></footnote> or jQuery<footnote><para><ulink url="http://jquery.org">http://jquery.org</ulink></para></footnote>.
-        So JSXGraph can be used to visualize the output of server side calculations but provides new input for server applications, too.
+        So JSXGraph can be used to visualize the output of server side calculations and provides new input data for server applications.
         </para>
         <section>
             <title>Just AJAX</title>
@@ -18,6 +18,7 @@
     x = [],
     y = [];
   
+// Update method, called periodically every second
 fetchData = function() {
     new Ajax.Request('/ajax/stockquotes.php', {
         onComplete: function(transport) {
@@ -40,7 +41,7 @@ fetchData = function() {
     }});
 };
  
-// Fetch max and min, and start the periodical update.
+// Fetch maximum and minimum values, initialize the board and start the periodical update.
 new Ajax.Request('/ajax/stockquotes.php', {
         onComplete: function(transport) {
             var a, t;
@@ -66,8 +67,8 @@ periodical = setInterval(fetchData,1000);  // Start the periodical update]]></pr
     <title>JXG.Server</title>
     <para>
       For quick'n'dirty solutions the AJAX interface is nice. But if you want to implement an interface to a server side program and want to use it with other worksheets or share it with other people, you'd better take
-      a look at JXG.Server. This is a frontend to a python based plugin system. These plugins are called modules and can be loaded easily with just one function call. After initializing the functionality is avaiable through
-      a JavaScript interface in the browser and all the AJAX stuff like parameter handling and return data parsing is done by the module.
+      a look at JXG.Server. This is a frontend to a python based plugin system. These plugins are called modules and can be loaded easily with just one function call. After initializing the functionality is available through
+      an interface in JSXGraph and all the AJAX stuff like parameter handling and return data parsing is done by the module.
     </para>
     <example>
       <title>

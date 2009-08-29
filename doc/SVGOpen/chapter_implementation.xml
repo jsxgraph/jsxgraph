@@ -2,14 +2,14 @@
         <title>Implementation details</title>
         <para>
             The main focus of JSXGraph lies on interactivity. The JSXGraph user should experience an immediate feedback to the dragging of points
-            with the mouse. So, special attention has to be paid to fast reacting to the mouse move and mouse up events. On the other hand
+            with the mouse. So, special attention has to be paid to fast reactions to mouse move and mouse up events. On the other hand
             we want to exploit the superb output quality of vector graphics as offered by SVG. These two controversial goals - 
             speed versus quality - have to be balanced. 
         </para> 
         <section>
             <title>Cross-browser development</title>
             <para>
-            JSXGraph works on every major browser. In JSXGraph the cross-browser issues are handled by an external library, where
+            JSXGraph works on every major browser. The cross-browser issues are handled by an external library, where
             the web developer who uses JSXGraph can choose between
             either the Prototype JavaScript library 
             or the
@@ -26,7 +26,7 @@
             <para>
                 The Microsoft Internet Explorer has still the largest market share of all browsers. 
                 Since we do not want to exclude the users of the Internet Explorer 
-                we have to adapt JSXGraph to this browser as well. The Internet Explorer can not display SVG, but since the year 1998 
+                we have to adapt JSXGraph to this browser as well. The Internet Explorer can not display SVG, but since 1998 
                 Microsoft<xref  linkend="VML98"/>
                 supports VML 
                 - vector markup language - as vector graphic language in the Internet Explorer. 
@@ -40,7 +40,7 @@
                 the different graphics languages. The user working with JSXGraph should not get aware of this separation at all because all methods for accessing the drawing layer are encapsulated by JSXGraph.
             </para>
                 <figure xml:id="jsxrenderer">
-                    <title>Scheme showing the renderer split and encapsulation in JSXGraph</title>
+                    <title>Scheme showing the renderer split in JSXGraph</title>
                     <mediaobject>
                         <imageobject>
                             <imagedata fileref="JSXRenderer.png" format="PNG"/>
@@ -49,7 +49,7 @@
                 </figure>
             <para>
                 For SVG drawing JSXGraph rarely uses formatting through CSS.  The reason is that in the beginning of the development process
-                the use of CSS styles consumed to much computing resources, especially setting the opacity with Firefox. 
+                the use of CSS styles consumed to much computing resources, especially setting the opacity in Firefox. 
                 So, nearly all visual properties are realized by setting attributes and applying filters. Even if filters in SVG are still not 
                 implemented satisfactorily in all browsers, JSXGraph supports shadows and gradients via filters since version 0.76. 
                 At the time of writing shadows slow down the Firefox browser considerably. Further, there seems to be a bug for
@@ -72,7 +72,7 @@
         <section>
             <title>Speed improvements</title>
             <para>
-                In order to make a fast enough reaction to user interactions like mouse moves possible, JSXGraph contains many 
+                In order to enable fast reactions to user interactions like mouse moves, JSXGraph contains many 
                 tricks to speed up the computations. Even if the
                 JavaScript interpreters, respectively Just-in-time-compilers, have made huge progress since the development of JSXGraph 
                 has been started, special care about implementation details is still necessary.
@@ -83,19 +83,19 @@
                 <title>Avoid DOM accesses with getElementById()</title>
                 <para>When a new SVG node is created, JSXGraph keeps an internal reference to this DOM node. 
                     Later on, access to this node is realized via this pointer variable, exclusively.
-                    Using getElementById() or the $() operator of prototype.js or jquery.js proved to be much too slow.
+                    Using getElementById() or the $() operator of Prototype or jQuery proved to be much too slow.
                  </para>
             </section>
             <section>
                 <title>Suspend the update of SVG nodes</title>
                 <para>
-                        Before a construction is updated, triggered by mouse move or mouse up events, the redrawing 
+                        Before a construction update is triggered by a mouse move or mouse up event, the redrawing 
                         of the SVG nodes is suspended, until the position of all elements has been recalculated.
                         Then, the redrawing of the SVG nodes is forced.
                 <programlisting><![CDATA[this.suspendHandle = this.svgRoot.suspendRedraw(10000);
-    // Expensive recalculations ...
-    this.svgRoot.unsuspendRedraw(this.suspendHandle);
-    this.svgRoot.forceRedraw();]]></programlisting>
+// Expensive recalculations ...
+this.svgRoot.unsuspendRedraw(this.suspendHandle);
+this.svgRoot.forceRedraw();]]></programlisting>
                         This seems to speed up at least the linux version of Firefox considerably.                 
                 </para>
             </section>
@@ -125,9 +125,9 @@
                     YUI compressor<footnote><para><ulink url="http://developer.yahoo.com/yui/compressor/">http://developer.yahoo.com/yui/compressor/</ulink></para>
                     </footnote> from Yahoo!. 
                     During this process comments and superfluous whitespaces are removed. The resulting file jsxgraphcore.js
-                    only consists of 380 kBytes. If the web server which delivers jsxgraphcore.js has DEFLATE enabled, which means it
+                    only consists of 380 kBytes. If the web server delivering jsxgraphcore.js has DEFLATE enabled, which means it
                     compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
-                    In most cases, this is still less than delivering the same construction as a non-interactive PNG image.
+                    In many cases this is still less than delivering the same construction as a non-interactive PNG image.
                 </para>
             </section>
             <section>
@@ -135,7 +135,7 @@
                 <para>
                 Sometimes function graphs are expensive to compute. One example is a regression polynomial through 
                 a given set of points. On update the position of all points has to be determined, the resulting linear system of
-                equations has to solved. Its solutions gives the coefficients of the polynomial.
+                equations has to solved. Its solutions give the coefficients of the polynomial.
                 We certainly do not want to do this computation for determining every single function value, since during every update
                 of the function graph we have to compute more than a thousand values of that function.
                 </para>
@@ -189,7 +189,7 @@
             <section>
                 <title>An Internet Explorer trick</title>
                 <para>
-                    A very special, but decisive speed improvement has been done for the Internet Explorer version 6 and 7.  
+                    A very special, but decisive speed improvement has been done for the Internet Explorer versions 6 and 7.  
                      With the following piece of code which is executed at initialization time the update speed of the Internet Explorer has been improved by an order of magnitude.
                 <programlisting><![CDATA[function MouseMove(e) {
         document.body.scrollLeft;
