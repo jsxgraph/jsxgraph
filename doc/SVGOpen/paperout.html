@@ -91,10 +91,10 @@ ol.ftnote {list-style-type: decimal}
             In order to compensate the slow demise of Java applets in the web browsers, JSXGraph may prove to be
             valuable. 
             At the moment JSXGraph supports the file format of 
-            GEONExT<a href="#GXT" class="xref"><b>Paragraph 42</b></a>, 
-            Intergeo<a href="#I2GEO" class="xref"><b>Paragraph 42</b></a>, 
+            GEONExT<a href="#GXT" class="xref"><b>Paragraph 43</b></a>, 
+            Intergeo<a href="#I2GEO" class="xref"><b>Paragraph 43</b></a>, 
             and - at least partially - 
-            GeoGebra<a href="#GGB" class="xref"><b>Paragraph 42</b></a>.
+            GeoGebra<a href="#GGB" class="xref"><b>Paragraph 43</b></a>.
             Since JSXGraph comes with its own implementation of unzip and gunzip, 
             it should be easy to adapt JSXGraph to a whole varity of even more file formats.
         </p>
@@ -106,7 +106,7 @@ ol.ftnote {list-style-type: decimal}
         </p>
         <p xmlns="">
             Another possible application of JSXGraph is to use it as a front end for server based applications. 
-            One example is the widely-spread free statistics software R<a href="#R" class="xref"><b>Paragraph 42</b></a>. 
+            One example is the widely-spread free statistics software R<a href="#R" class="xref"><b>Paragraph 43</b></a>. 
             After the mouse up event is fired in this application, the coordinates of the points
             are sent via AJAX to the R interface on server side. After doing some R computations on the server side, the 
             web server sends the results back to the browser. There the display is updated by JSXGraph. 
@@ -131,7 +131,7 @@ ol.ftnote {list-style-type: decimal}
             <h3 xmlns=""><a id="S"> JSXGraph as a web viewer for dynamic geometry software</a></h3>
             <p xmlns="">Dynamic geometry software (DGS) are computer programs which allow one to create and then manipulate geometric constructions, primarily in plane geometry. In most DGS, one starts a construction by putting a few points and using them to define new objects such as lines, circles or other points. After some construction is done, one can move the points one started with and see how the construction changes.</p>
             <p xmlns="">
-            There are lots of different available software packages to play around dynamically with geometry at schools and universities. Most of them are written in Java, such as GeoGebra, Cinderella<a href="#CDY" class="xref"><b>Paragraph 42</b></a>, Compass and Ruler<a href="#CaR" class="xref"><b>Paragraph 42</b></a> or GEONExT, others like The Geometer's Sketchpad<a href="#TGS" class="xref"><b>Paragraph 42</b></a> or Cabri<a href="#CABRI" class="xref"><b>Paragraph 42</b></a> offer a Java based web viewer. So if you want to integrate a construction that was created with one of these DGS in a web page, it takes some time to load the corresponding Java applet before you can use it. There are moreover big doubts about the future of Java in a web browser because Java applets are vanishing more and more from the internet and are actually not supported in browsers on modern mobile internet devices. As a result, the idea of JSXGraph was to read GEONExT Files and display them in the browser using JavaScript to manage the corresponding DOM elements of SVG or VML, depending on what browser is used. JavaScript is furthermore used to realize the dynamic part in DGS by capturing the browser's mouse events. </p>
+            There are lots of different available software packages to play around dynamically with geometry at schools and universities. Most of them are written in Java, such as GeoGebra, Cinderella<a href="#CDY" class="xref"><b>Paragraph 43</b></a>, Compass and Ruler<a href="#CaR" class="xref"><b>Paragraph 43</b></a> or GEONExT, others like The Geometer's Sketchpad<a href="#TGS" class="xref"><b>Paragraph 43</b></a> or Cabri<a href="#CABRI" class="xref"><b>Paragraph 43</b></a> offer a Java based web viewer. So if you want to integrate a construction that was created with one of these DGS in a web page, it takes some time to load the corresponding Java applet before you can use it. There are moreover big doubts about the future of Java in a web browser because Java applets are vanishing more and more from the internet and are actually not supported in browsers on modern mobile internet devices. As a result, the idea of JSXGraph was to read GEONExT Files and display them in the browser using JavaScript to manage the corresponding DOM elements of SVG or VML, depending on what browser is used. JavaScript is furthermore used to realize the dynamic part in DGS by capturing the browser's mouse events. </p>
         
         
             <h3 xmlns=""><a id="S"> Currently supported file formats</a></h3>
@@ -194,7 +194,7 @@ var f = function(x){ return b.Value()*Math.sin(x); }
 var plot = brd.createElement('functiongraph',[f,-7,7], {strokeColor:'#32CD32', strokeWidth:'4px'});
 var g = brd.D(f);
 var plot2 = brd.createElement('functiongraph',[g,-7,7], {strokeColor:'#9370DB', strokeWidth:'2px'});
-var os = brd.createElement('riemannsum',[f, 35, 'middle', -7, 7], {fillColor:'#B22222', fillOpacity:0.3, strokeColor:'#8B1A1A', strokeWidth:'2px'});</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 3: Sourcecode to construction shown in <a href="#calculus" class="xref"><b>Figure 2</b></a></b></p></blockquote></div>
+var os = brd.createElement('riemannsum',[f, 35, 'middle', -7, 7], {fillColor:'#B22222', fillOpacity:0.3, strokeColor:'#8B1A1A', strokeWidth:'2px'});</pre></td></tr></table><blockquote class="figureTitle"><p><b>Example 3: Sourcecode to the construction shown in <a href="#calculus" class="xref"><b>Figure 2</b></a></b></p></blockquote></div>
               <div xmlns="" class="figure"><a id="calculus"/>
                         
                            <div class="graphic"><img alt="calculus.png" src="calculus.png"/></div>
@@ -220,7 +220,7 @@ t.moveTo([dx+t.X(),dy+t.Y()]);</pre></td></tr></table><blockquote class="figureT
         
             <h3 xmlns=""><a id="S"> Drawing with turtle graphics</a></h3>
             <p xmlns="">An advantage of using turtle graphics is the easy way to draw. The standard commands are going forward for a given numer of units and turning left or right in a given angle. The following programm listing draws "SVG" shown in the picture below.</p>
-                <div xmlns="" class="figure"><a id="svgturtlesource"/><table class="codeBlock"><tr><td><pre>var t = board.createElement('turtle');
+                <div xmlns="" class="figure"><a id="svgturtlesource"/><blockquote class="figurePara"><p>The rt(), fd(), and lt() methods are just abbreviations for right(), forward(), and left(). A full list of commands can be found in our wiki<a href="#FT4" class="fnref"><b>[4]</b></a></p></blockquote><table class="codeBlock"><tr><td><pre>var t = board.createElement('turtle');
 // Draw the S,
 t.rt(90); t.fd(100); t.lt(90); t.fd(100); t.lt(90); t.fd(100); t.rt(90); t.fd(100); t.rt(90); t.fd(100);
 // the V, and
@@ -268,7 +268,7 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
     
         <h2 xmlns=""><a id="S5.">5. JSXGraph as a front end to server side applications</a></h2>
         <p xmlns="">JavaScript enables us to use the XmlHTTPRequest object to interact with server side applications. Currently one can use our AJAX wrapper JXG.FileReader or the one
-        provided by Prototype<a href="#FT4" class="fnref"><b>[4]</b></a> or jQuery<a href="#FT5" class="fnref"><b>[5]</b></a>.
+        provided by Prototype<a href="#FT5" class="fnref"><b>[5]</b></a> or jQuery<a href="#FT6" class="fnref"><b>[6]</b></a>.
         So JSXGraph can be used to visualize the output of server side calculations but provides new input for server applications, too.
         </p>
         
@@ -354,8 +354,8 @@ class JXGModuleMultiply(JXGServerModule):
     
 
         <h2 xmlns=""><a id="S6.">6. Plugins for integration in other web applications</a></h2>
-        <p xmlns="">To ease the integration of JSXGraph into other web applications we provide some plugins for a couple of existing web applications. That are the blogging software Wordpress<a href="#FT6" class="fnref"><b>[6]</b></a>, 
-        the basis software for Wikipedia called MediaWiki<a href="#FT7" class="fnref"><b>[7]</b></a>, and the course management system Moodle<a href="#FT8" class="fnref"><b>[8]</b></a>. The latter one ist still experimental. The user only has to provide a few options for the drawing panel
+        <p xmlns="">To ease the integration of JSXGraph into other web applications we provide some plugins for a couple of existing web applications. That are the blogging software Wordpress<a href="#FT7" class="fnref"><b>[7]</b></a>, 
+        the basis software for Wikipedia called MediaWiki<a href="#FT8" class="fnref"><b>[8]</b></a>, and the course management system Moodle<a href="#FT9" class="fnref"><b>[9]</b></a>. The latter one ist still experimental. The user only has to provide a few options for the drawing panel
         and the JavaScript construction code or a url to a file in a format supported by JSXGraph. The rest is done by the plugin, like loading the necessary files, initializing the division element containing the
         drawing panel and finally loading the file or the javascript construction code.</p>
         <div xmlns="" class="figure"><table class="codeBlock"><tr><td><pre>[... wiki page content ...]
@@ -393,7 +393,7 @@ var t = brd.createElement('point',[4,3]);
                 The Microsoft Internet Explorer has still the largest market share of all browsers. 
                 Since we do not want to exclude the users of the Internet Explorer 
                 we have to adapt JSXGraph to this browser as well. The Internet Explorer can not display SVG, but since the year 1998 
-                Microsoft<a href="#VML98" class="xref"><b>Paragraph 42</b></a>
+                Microsoft<a href="#VML98" class="xref"><b>Paragraph 43</b></a>
                 supports VML 
                 - vector markup language - as vector graphic language in the Internet Explorer. 
                 Early in the development process of JSXGraph we decided to implement SVG and VML drawing separately, without using one of the
@@ -466,7 +466,7 @@ var t = brd.createElement('point',[4,3]);
                 <h4 xmlns=""><a id="S"> Use memoizers</a></h4>
                 <p xmlns="">
                         Common functions like binomial() and factorial() are realized with memoizer techniques, 
-                        as descripted in <a href="#Crockford2008" class="xref"><b>Paragraph 42</b></a>, page 44.
+                        as descripted in <a href="#Crockford2008" class="xref"><b>Paragraph 43</b></a>, page 44.
                         Thus, the expensive computation of each value of these functions is done only once.
                  </p>
             
@@ -485,7 +485,7 @@ var t = brd.createElement('point',[4,3]);
                     The JavaScript source code of 
                     JSXGraph version 0.76 consists of 20 individual files, which add up to about 980 kBytes including comments.
                     These 20 files are bundled together in one big file which is subsequently compressed by the 
-                    YUI compressor<a href="#FT9" class="fnref"><b>[9]</b></a> from Yahoo!. 
+                    YUI compressor<a href="#FT10" class="fnref"><b>[10]</b></a> from Yahoo!. 
                     During this process comments and superfluous whitespaces are removed. The resulting file jsxgraphcore.js
                     only consists of 380 kBytes. If the web server which delivers jsxgraphcore.js has DEFLATE enabled, which means it
                     compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
@@ -505,7 +505,7 @@ var t = brd.createElement('point',[4,3]);
                 We apply the following strategy: When the function graph is updated, we compute the coefficients of the polynomial only once.
                 Then we use these coefficients for the computation of all function values.
                 But where to store the coefficients? Using the "this" keyword does not give the desired results in a function.
-                But fortunately, we can use the function invocation pattern, see <a href="#Crockford2008" class="xref"><b>Paragraph 42</b></a>, page 28.
+                But fortunately, we can use the function invocation pattern, see <a href="#Crockford2008" class="xref"><b>Paragraph 43</b></a>, page 28.
                 In the example below, the function which is returned by the call of "generateFunction()" still has access to the 
                 variable "coeffs". This is based on the powerful concept of closures, which is part of JavaScript and comes from 
                 functional programming languages.
@@ -715,7 +715,7 @@ var t = brd.createElement('point',[4,3]);
          
         
         </dl><h2 xmlns="" class="ftnoteHeader"><a id="S.Footnotes">Footnotes</a></h2><ol xmlns="" class="ftnote"><li><p><a id="FT1"/>http://jsxgraph.org</p></li><li><p><a id="FT2"/>Inspired by the work of Sam Ruby: 
-            http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</p></li><li><p><a id="FT3"/>http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu</p></li><li><p><a id="FT4"/>http://prototype.org</p></li><li><p><a id="FT5"/>http://jquery.org</p></li><li><p><a id="FT6"/>http://wordpress.com</p></li><li><p><a id="FT7"/>http://mediawiki.org</p></li><li><p><a id="FT8"/>http://moodle.org</p></li><li><p><a id="FT9"/>http://developer.yahoo.com/yui/compressor/</p></li></ol><p class="credits"><small>XHTML rendition made possible by
+            http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</p></li><li><p><a id="FT3"/>http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu</p></li><li><p><a id="FT4"/>http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands</p></li><li><p><a id="FT5"/>http://prototype.org</p></li><li><p><a id="FT6"/>http://jquery.org</p></li><li><p><a id="FT7"/>http://wordpress.com</p></li><li><p><a id="FT8"/>http://mediawiki.org</p></li><li><p><a id="FT9"/>http://moodle.org</p></li><li><p><a id="FT10"/>http://developer.yahoo.com/yui/compressor/</p></li></ol><p class="credits"><small>XHTML rendition made possible by
       <a href="http://www.schemasoft.com">SchemaSoft</a>'s
       <a href="http://www.schemasoft.com/DocBook/">Document Interpreter</a>&trade;
       technology.</small></p></body></html>

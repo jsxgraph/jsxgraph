@@ -188,6 +188,7 @@ t.moveTo([dx+t.X(),dy+t.Y()]);]]></programlisting>
             <para>An advantage of using turtle graphics is the easy way to draw. The standard commands are going forward for a given numer of units and turning left or right in a given angle. The following programm listing draws &#34;SVG&#34; shown in the picture below.</para>
                 <example xml:id="svgturtlesource">
                     <title>Drawing &#34;SVG&#34; using a turtle.</title>
+                    <para>The rt(), fd(), and lt() methods are just abbreviations for right(), forward(), and left(). A full list of commands can be found in our wiki<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands">http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands</ulink></para></footnote></para>.
 <programlisting><![CDATA[var t = board.createElement('turtle');
 // Draw the S,
 t.rt(90); t.fd(100); t.lt(90); t.fd(100); t.lt(90); t.fd(100); t.rt(90); t.fd(100); t.rt(90); t.fd(100);
@@ -258,7 +259,7 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
     
     
     <bibliography xmlns="http://docbook.org/ns/docbook"><title>References</title>
-        <bibliolist>
+        <bibliodiv>
             <biblioentry xml:id="Crockford2008">
                 <abbrev>Crockford2008</abbrev>
                 <authorgroup>
@@ -373,7 +374,7 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
                 </publisher>
                 <title>Scalable Vector Graphics (SVG) 1.1 Specification</title>
             </biblioentry>
-        </bibliolist>
+        </bibliodiv>
         
         
         <bibliodiv><title>Websites</title>
