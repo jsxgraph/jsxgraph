@@ -128,7 +128,7 @@ cCirc.setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
 eulerLine = brd.createElement('line',[s,cPoint],{strokeWidth:2,strokeColor:'#901B77'});]]></programlisting>
             </example>
                 <figure xml:id="euler">
-                    <title>The Euler Line</title>
+                    <title>The Euler Line <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Euler_line_II">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Euler_line_II</ulink></para></footnote></title>
                     <mediaobject>
                         <imageobject>
                             <!--<imagedata fileref="nikolaus.svg" format="svg" width="60%"/>-->
@@ -155,7 +155,7 @@ var plot2 = brd.createElement('functiongraph',[g,-7,7], {strokeColor:'#9370DB', 
 var os = brd.createElement('riemannsum',[f, 35, 'middle', -7, 7], {fillColor:'#B22222', fillOpacity:0.3, strokeColor:'#8B1A1A', strokeWidth:'2px'});]]></programlisting>
             </example>
               <figure xml:id="calculus">
-                    <title>Sine with it's derivative and riemann sum.</title>
+                    <title>Sine with it's derivative and riemann sum. <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Riemann_sum_II">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Riemann_sum_II</ulink></para></footnote></title>
                     <mediaobject>
                         <imageobject>
                            <imagedata fileref="calculus.png" format="PNG"/>
@@ -173,7 +173,7 @@ var os = brd.createElement('riemannsum',[f, 35, 'middle', -7, 7], {fillColor:'#B
             <title>Turtle graphics in mathematical modelling</title>
             <para>Mathematical modelling with differential equations can also be done using turtle graphics. Exponential population growth models can be simulated easily by using the discrete analogue of the corresponding differential equation and computing the movement of the turtle in equidistant small time intervals. </para>
                 <example>
-                    <title>Simulating exponential population growth using turtle graphics</title>
+                    <title>Simulating exponential population growth using turtle graphics <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Population_growth_models">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Population_growth_models</ulink></para></footnote></title>
 <programlisting><![CDATA[var board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
 var t = board.createElement('turtle',[4,3,70]);
 ...
@@ -188,7 +188,7 @@ t.moveTo([dx+t.X(),dy+t.Y()]);]]></programlisting>
             <para>An advantage of using turtle graphics is the easy way to draw. The basic commands are &quot;Go forward a given number of units&quot; and &quot;Rotate left resp. right a given angle&quot;. The following programm listing draws &#34;SVG&#34; shown in the picture below.</para>
                 <example xml:id="svgturtlesource">
                     <title>Drawing &#34;SVG&#34; using a turtle.</title>
-                    <para>The rt(), fd(), and lt() methods are just abbreviations for right(), forward(), and left(). A full list of commands can be found in our wiki<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands">http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands</ulink></para></footnote></para>.
+                    <para>The rt(), fd(), and lt() methods are just abbreviations for right(), forward(), and left(). A full list of commands can be found in the JSXGraph wiki<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands">http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands</ulink></para></footnote></para>.
 <programlisting><![CDATA[var t = board.createElement('turtle');
 // Draw the S,
 t.rt(90); t.fd(100); t.lt(90); t.fd(100); t.lt(90); t.fd(100); t.rt(90); t.fd(100); t.rt(90); t.fd(100);
@@ -198,7 +198,7 @@ t.rt(70); t.fd(210); t.lt(140); t.fd(210);
 t.rt(70); t.fd(100); t.bk(100); t.rt(90); t.fd(200); t.lt(90); t.fd(100); t.lt(90); t.fd(100); t.lt(90); t.fd(40);]]></programlisting>
                 </example>
                 <figure xml:id="nikolaus">
-                    <title>SVG written by a turtle. Result of <xref linkend="svgturtlesource"/></title>
+                    <title>SVG written by a turtle. Result of <xref linkend="svgturtlesource"/> <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Programming_turtle_graphics">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Programming_turtle_graphics</ulink></para></footnote></title>
                     <mediaobject>
                         <imageobject>
                             <imagedata fileref="svgturtle.png" format="PNG"/>
@@ -208,7 +208,7 @@ t.rt(70); t.fd(100); t.bk(100); t.rt(90); t.fd(200); t.lt(90); t.fd(100); t.lt(9
             <para>This approach can be used to easily produce beautiful Lindenmayer systems like plants or penrose tilings which are known from chaos theory . Similarly, well-known fractals like the sierpinski triangle or the Koch snowflake can be drawn. Other applications can be found in statistics where one can visualize random walks with turtles.
             </para>
                 <figure xml:id="koch">
-                    <title>The Koch curve with recursion level 7</title>
+                    <title>The Koch curve with recursion level 7 <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Koch_curve">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Koch_curve</ulink></para></footnote></title>
                     <mediaobject>
                         <imageobject>
                             <imagedata fileref="koch.png" format="PNG"/>

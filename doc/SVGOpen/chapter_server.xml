@@ -12,7 +12,7 @@
             the JavaScript and visualized using a curve.
             </para>
            <example>
-            <title>JavaScript invoking a PHP script using AJAX</title>
+            <title>JavaScript invoking a PHP script using AJAX <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Display_stock_quotes_from_Yahoo!">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Display_stock_quotes_from_Yahoo!</ulink></para></footnote></title>
             <programlisting><![CDATA[var hi, lo, brd, periodical, 
     brd, g, txt, val,
     x = [],
