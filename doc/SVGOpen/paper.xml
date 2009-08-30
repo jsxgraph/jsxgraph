@@ -29,7 +29,7 @@
                     <jobtitle>PhD student</jobtitle>
                     <org>
                         <orgname>University of Bayreuth</orgname>
-                        <orgdiv>Department of mathematics</orgdiv>
+                        <orgdiv>Department of Mathematics</orgdiv>
                         <address>
                             <city>Bayreuth</city>
                             <street>Universit&#228;tsstr. 30</street>
@@ -51,7 +51,7 @@
                     <jobtitle>Student</jobtitle>
                     <org>
                         <orgname>University of Bayreuth</orgname>
-                        <orgdiv>Department of mathematics</orgdiv>
+                        <orgdiv>Department of Mathematics</orgdiv>
                         <address>
                             <city>Bayreuth</city>
                             <street>Universit&#228;tsstr. 30</street>
@@ -65,7 +65,7 @@
         </authorgroup>
         <!-- If you have several authors, you could nest all authors within an authorgroup element -->
         <abstract>
-            <para>JSXGraph is a open-source client-side web library for displaying interactive mathematics and drawings in a web browser. This article demonstrates what can be done with JSXGraph and explains how these things are implemented. The latter focuses more on SVG and VML.</para>
+            <para>JSXGraph is a open-source client-side web library for displaying interactive mathematics and drawings in a web browser. This article demonstrates what can be done with JSXGraph and explains how these things are implemented. The latter focuses on SVG and VML.</para>
         </abstract>
     </info>
     
@@ -188,7 +188,7 @@ t.moveTo([dx+t.X(),dy+t.Y()]);]]></programlisting>
             <para>An advantage of using turtle graphics is the easy way to draw. The basic commands are &quot;Go forward a given number of units&quot; and &quot;Rotate left resp. right a given angle&quot;. The following programm listing draws &#34;SVG&#34; shown in the picture below.</para>
                 <example xml:id="svgturtlesource">
                     <title>Drawing &#34;SVG&#34; using a turtle.</title>
-                    <para>The rt(), fd(), and lt() methods are just abbreviations for right(), forward(), and left(). A full list of commands can be found in the JSXGraph wiki<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands">http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands</ulink></para></footnote></para>.
+                    <para>The rt(), lt(), fd(), and bk() methods are abbreviations for right(), left(), forward(), and back(). A full list of commands can be found in the JSXGraph wiki<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands">http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands</ulink></para></footnote></para>.
 <programlisting><![CDATA[var t = board.createElement('turtle');
 // Draw the S,
 t.rt(90); t.fd(100); t.lt(90); t.fd(100); t.lt(90); t.fd(100); t.rt(90); t.fd(100); t.rt(90); t.fd(100);
@@ -220,7 +220,7 @@ t.rt(70); t.fd(100); t.bk(100); t.rt(90); t.fd(200); t.lt(90); t.fd(100); t.lt(9
     
     <section>
         <title>Charts</title>
-        <para>After implementing all the geometric objects and calculus in JSXGraph it was not difficult to extend our library to support charts. For example line charts and cubic spline interpolated charts are made of function graphs,
+        <para>After implementing all the geometric objects and calculus in JSXGraph it was not difficult to extend the library to support charts. For example line charts and cubic spline interpolated charts are made of function graphs,
         sectors are used to display pie charts, and horizontal resp. vertical bar charts are based on polygons. Of course all of the visual options from the geometric elements like fill and stroke colors, fill gradients, line styles, shadows or special highlighting effects are passed on to the charts. But also the dynamics is still available, so even interactive charts can be done with JSXGraph which is useful for forecasts with varying parameters to model different scenarios.</para>
                 <example>
                     <title>Drawing an interactive bar chart</title>

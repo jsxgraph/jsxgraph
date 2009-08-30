@@ -7,7 +7,7 @@
         <section>
             <title>Just AJAX</title>
             <para>
-            For example you can fetch share prices from a web site like Yahoo finance. To do this a script on your own webserver is required because of security restrictions concerning the XmlHTTPRequest object which
+            For example it is possible fetch share prices from a web site like Yahoo finance. To do this a script on your own webserver is required because of security restrictions concerning the XmlHTTPRequest object which
             cannot be used in conjunction with a url that is not on the same server as the web site starting the request. After starting the script from JavaScript it sends back the data from Yahoo which then is parsed by
             the JavaScript and visualized using a curve.
             </para>
