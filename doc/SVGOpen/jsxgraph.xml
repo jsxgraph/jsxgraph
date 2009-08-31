@@ -1,9 +1,6 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V5.0b5//EN"
-               "docbook_5.0b5.dtd" >
-<?oxygen RNGSchema="http://www.docbook.org/xml/5.0/rng/docbook.rng" type="xml"?>
+﻿<?oxygen RNGSchema="http://www.docbook.org/xml/5.0/rng/docbook.rng" type="xml"?>
 
-<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+<article xmlns="http://docbook.org/ns/docbook" version="5.0">
     <info>
         <title>Interactive SVG with JSXGraph</title>
         <subtitle>JSXGraph</subtitle>
@@ -68,14 +65,14 @@
     <section>
         <title>Introduction</title>
         <para>
-        JSXGraph<footnote><para><ulink url="http://jsxgraph.org">http://jsxgraph.org</ulink></para>
+        JSXGraph<footnote><para>http://jsxgraph.org</para>
                 </footnote>  
             is a client-side web application/library for advanced vector graphics in a web browser. Its range of applications starts from
             the display of simple bar charts and pie charts up to the interactive display of function graphs and 
             geometric constructions used in schools and universities.
             Even more advanced features of JSXGraph are the on-the-fly solving of Differential Equation Systems, the display of 
             Lindenmayer systems<footnote><para>Inspired by the work of Sam Ruby: 
-            <ulink url="http://intertwingly.net/blog/2006/07/06/Penrose-Tiling">http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</ulink></para>
+            http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</para>
             </footnote>, which are of importance in Biology, and dynamic computation of regression polynomials.
         </para>
         <para>
@@ -96,7 +93,7 @@
         <para>
             Beside using it as a viewer for existing material, the JSXGraph library may be used as an API for advanced special purpose visualizations.
             JSXGraph enables interactive experiments with sophisticated mathematical problems in the web browser. One example is the simulation
-            of the epidemiology model for the swine flu<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu">http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu</ulink></para></footnote>.
+            of the epidemiology model for the swine flu<footnote><para>http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu</para></footnote>.
             The possibilities of JSXGraph in this respect exceed by far the options offered by software which is common in schools today.
         </para>
         <para>
@@ -179,7 +176,7 @@ cCirc.setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
 eulerLine = brd.createElement('line',[s,cPoint],{strokeWidth:2,strokeColor:'#901B77'});]]></programlisting>
             </example>
                 <figure xml:id="euler">
-                    <title>The Euler Line <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Euler_line_II">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Euler_line_II</ulink></para></footnote></title>
+                    <title>The Euler Line <footnote><para>http://jsxgraph.uni-bayreuth.de/wiki/index.php/Euler_line_II</para></footnote></title>
                     <mediaobject>
                         <imageobject>
                             <!--<imagedata fileref="nikolaus.svg" format="svg" width="60%"/>-->
@@ -206,7 +203,7 @@ var plot2 = brd.createElement('functiongraph',[g,-7,7], {strokeColor:'#9370DB', 
 var os = brd.createElement('riemannsum',[f, 35, 'middle', -7, 7], {fillColor:'#B22222', fillOpacity:0.3, strokeColor:'#8B1A1A', strokeWidth:'2px'});]]></programlisting>
             </example>
               <figure xml:id="calculus">
-                    <title>Sine with it's derivative and riemann sum. <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Riemann_sum_II">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Riemann_sum_II</ulink></para></footnote></title>
+                    <title>Sine with it's derivative and riemann sum. <footnote><para>http://jsxgraph.uni-bayreuth.de/wiki/index.php/Riemann_sum_II</para></footnote></title>
                     <mediaobject>
                         <imageobject>
                            <imagedata fileref="calculus.png" format="PNG"/>
@@ -224,7 +221,7 @@ var os = brd.createElement('riemannsum',[f, 35, 'middle', -7, 7], {fillColor:'#B
             <title>Turtle graphics in mathematical modelling</title>
             <para>Mathematical modelling with differential equations can also be done using turtle graphics. Exponential population growth models can be simulated easily by using the discrete analogue of the corresponding differential equation and computing the movement of the turtle in equidistant small time intervals. </para>
                 <example>
-                    <title>Simulating exponential population growth using turtle graphics <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Population_growth_models">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Population_growth_models</ulink></para></footnote></title>
+                    <title>Simulating exponential population growth using turtle graphics <footnote><para>http://jsxgraph.uni-bayreuth.de/wiki/index.php/Population_growth_models</para></footnote></title>
 <programlisting><![CDATA[var board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
 var t = board.createElement('turtle',[4,3,70]);
 ...
@@ -236,11 +233,11 @@ t.moveTo([dx+t.X(),dy+t.Y()]);]]></programlisting>
         </section>
         <section>
             <title>Drawing with turtle graphics</title>
-            <para>An advantage of using turtle graphics is the easy way to draw. The basic commands are &quot;Go forward a given number of units&quot; and &quot;Rotate left resp. right a given angle&quot;. The following programm listing draws &#34;SVG&#34; shown in the picture below.</para>
+            <para>An advantage of using turtle graphics is the easy way to draw. The basic commands are &quot;Go forward a given number of units&quot; and &quot;Rotate left resp. right a given angle&quot;. The following programm listing draws &quot;SVG&quot; shown in the picture below.</para>
                 <example xml:id="svgturtlesource">
-                    <title>Drawing &#34;SVG&#34; using a turtle.</title>
-                    <para>The rt(), lt(), fd(), and bk() methods are abbreviations for right(), left(), forward(), and back(). A full list of commands can be found in the JSXGraph wiki<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands">http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands</ulink></para></footnote></para>.
-<programlisting><![CDATA[var t = board.createElement('turtle');
+                    <title>Drawing &quot;SVG&quot; using a turtle.</title>
+                    <para>The rt(), lt(), fd(), and bk() methods are abbreviations for right(), left(), forward(), and back(). A full list of commands can be found in the JSXGraph wiki<footnote><para>http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands</para></footnote>.</para>
+<programlisting><![CDATA[var t = board.createElement('turtle');>
 // Draw the S,
 t.rt(90); t.fd(100); t.lt(90); t.fd(100); t.lt(90); t.fd(100); t.rt(90); t.fd(100); t.rt(90); t.fd(100);
 // the V, and
@@ -249,7 +246,7 @@ t.rt(70); t.fd(210); t.lt(140); t.fd(210);
 t.rt(70); t.fd(100); t.bk(100); t.rt(90); t.fd(200); t.lt(90); t.fd(100); t.lt(90); t.fd(100); t.lt(90); t.fd(40);]]></programlisting>
                 </example>
                 <figure xml:id="nikolaus">
-                    <title>SVG written by a turtle. Result of <xref linkend="svgturtlesource"/> <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Programming_turtle_graphics">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Programming_turtle_graphics</ulink></para></footnote></title>
+                    <title>SVG written by a turtle. Result of <xref linkend="svgturtlesource"/> <footnote><para>http://jsxgraph.uni-bayreuth.de/wiki/index.php/Programming_turtle_graphics</para></footnote></title>
                     <mediaobject>
                         <imageobject>
                             <imagedata fileref="svgturtle.png" format="PNG"/>
@@ -259,7 +256,7 @@ t.rt(70); t.fd(100); t.bk(100); t.rt(90); t.fd(200); t.lt(90); t.fd(100); t.lt(9
             <para>This approach can be used to easily produce beautiful Lindenmayer systems like plants or penrose tilings which are known from chaos theory . Similarly, well-known fractals like the sierpinski triangle or the Koch snowflake can be drawn. Other applications can be found in statistics where one can visualize random walks with turtles.
             </para>
                 <figure xml:id="koch">
-                    <title>The Koch curve with recursion level 7 <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Koch_curve">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Koch_curve</ulink></para></footnote></title>
+                    <title>The Koch curve with recursion level 7 <footnote><para>http://jsxgraph.uni-bayreuth.de/wiki/index.php/Koch_curve</para></footnote></title>
                     <mediaobject>
                         <imageobject>
                             <imagedata fileref="koch.png" format="PNG"/>
@@ -292,7 +289,7 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
    ...*/]]></programlisting>
         </example>
                 <figure xml:id="chart">
-                    <title>A pie chart on the left hand side<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Pie_chart">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Pie_chart</ulink></para></footnote> and an interactive bar chart together with a static line chart on the right hand side<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Dynamic_bar_chart">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Dynamic_bar_chart</ulink></para></footnote>.</title>
+                    <title>A pie chart on the left hand side<footnote><para>http://jsxgraph.uni-bayreuth.de/wiki/index.php/Pie_chart</para></footnote> and an interactive bar chart together with a static line chart on the right hand side<footnote><para>http://jsxgraph.uni-bayreuth.de/wiki/index.php/Dynamic_bar_chart</para></footnote>.</title>
                     <mediaobject>
                         <imageobject>
                             <imagedata fileref="charts.png" format="PNG"/>
@@ -304,7 +301,7 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
     <section>
         <title>JSXGraph as a front end to server side applications</title>
         <para>JavaScript enables us to use the XmlHTTPRequest object to interact with server side applications. Currently one can use our AJAX wrapper JXG.FileReader or the one
-        provided by Prototype<footnote><para><ulink url="http://prototype.org">http://prototype.org</ulink></para></footnote> or jQuery<footnote><para><ulink url="http://jquery.org">http://jquery.org</ulink></para></footnote>.
+        provided by Prototype<footnote><para>http://prototype.org</para></footnote> or jQuery<footnote><para>http://jquery.org</para></footnote>.
         So JSXGraph can be used to visualize the output of server side calculations and provides new input data for server applications.
         </para>
         <section>
@@ -315,7 +312,7 @@ var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels
             the JavaScript and visualized using a curve.
             </para>
            <example>
-            <title>JavaScript invoking a PHP script using AJAX <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Display_stock_quotes_from_Yahoo!">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Display_stock_quotes_from_Yahoo!</ulink></para></footnote></title>
+            <title>JavaScript invoking a PHP script using AJAX <footnote><para>http://jsxgraph.uni-bayreuth.de/wiki/index.php/Display_stock_quotes_from_Yahoo!</para></footnote></title>
             <programlisting><![CDATA[var hi, lo, brd, periodical, 
     brd, g, txt, val,
     x = [],
@@ -402,8 +399,8 @@ class JXGModuleMultiply(JXGServerModule):
 
     <section>
         <title>Plugins for integration in other web applications</title>
-        <para>To ease the integration of JSXGraph into other web applications we provide some plugins for a couple of them. Those are the blogging software Wordpress<footnote><para><ulink url="http://wordpress.com">http://wordpress.com</ulink></para></footnote>, 
-        the basis software for Wikipedia called MediaWiki<footnote><para><ulink url="http://mediawiki.org">http://mediawiki.org</ulink></para></footnote>, and the course management system Moodle<footnote><para><ulink url="http://moodle.org">http://moodle.org</ulink></para></footnote>. The plugin for the latter one ist still experimental. The user only has to provide a few options for the drawing panel
+        <para>To ease the integration of JSXGraph into other web applications we provide some plugins for a couple of them. Those are the blogging software Wordpress<footnote><para>http://wordpress.com</para></footnote>, 
+        the basis software for Wikipedia called MediaWiki<footnote><para>http://mediawiki.org</para></footnote>, and the course management system Moodle<footnote><para>http://moodle.org</para></footnote>. The plugin for the latter one ist still experimental. The user only has to provide a few options for the drawing panel
         and the JavaScript construction code or a url to a file in a format supported by JSXGraph. The rest is done by the plugin, like loading the necessary files, initializing the division element containing the
         drawing panel and finally loading the file or the javascript construction code.</para>
         <example>
@@ -542,7 +539,7 @@ this.svgRoot.forceRedraw();]]></programlisting>
                     The JavaScript source code of 
                     JSXGraph version 0.76 consists of 20 individual files, which add up to about 980 kBytes including comments.
                     These 20 files are bundled together in one big file which is subsequently compressed by the 
-                    YUI compressor<footnote><para><ulink url="http://developer.yahoo.com/yui/compressor/">http://developer.yahoo.com/yui/compressor/</ulink></para>
+                    YUI compressor<footnote><para>http://developer.yahoo.com/yui/compressor/</para>
                     </footnote> from Yahoo!. 
                     During this process comments and superfluous whitespaces are removed. The resulting file jsxgraphcore.js
                     only consists of 380 kBytes. If the web server delivering jsxgraphcore.js has DEFLATE enabled, which means it
@@ -625,7 +622,7 @@ this.svgRoot.forceRedraw();]]></programlisting>
     
     
     <bibliography xmlns="http://docbook.org/ns/docbook"><title>References</title>
-        <bibliodiv>
+        <bibliodiv><title>Books</title>
             <biblioentry xml:id="Crockford2008">
                 <abbrev>Crockford2008</abbrev>
                 <authorgroup>
