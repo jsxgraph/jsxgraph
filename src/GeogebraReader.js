@@ -544,13 +544,15 @@ switch( act )
         // Loesung ueber function?
         var s2 = (typeof vstack[ vstack.length - 1 ] === 'string')
                  ? JXG.getReference(board, registeredElements[vstack[ vstack.length - 1 ]].id)
-                 : (function(x) { var y = x; return y; })(vstack[ vstack.length - 1 ]);
+                 : vstack[ vstack.length - 1 ];
 
         JXG.GeogebraReader.debug("<br/><b>Aktualisierung des Punktes:</b>: <li>x[id: "+ s1.id +"type: "+ typeof s1 +", value: "+ s1 +"]</li><li>y[id: "+ s2.id +"type: "+ typeof s2 +", value: "+ s2 +"]</li>");
-        (function(x, y) { fx = function() { return x; }();
-                          fy = function() { return y; }();
-                          p.addConstraint([fx, fy]);
-                        }) (s1, s2);
+        if(typeof s2 === 'function') {
+            p.addConstraint([s1, function() {return s2(s1.Value());}]); // s2 ist eine Funktion, die von dem Slider s1 abhaengt, z.B. s1^2, der entsprechende Wert wird hier eingesetzt
+        }
+        else {
+            p.addConstraint([s1,s2]);
+        }
     }
     break;
     case 3:
@@ -575,18 +577,16 @@ switch( act )
     break;
     case 7:
     {
-        var s1 = (typeof vstack[ vstack.length - 3 ] === 'string')
+        var s11 = (typeof vstack[ vstack.length - 3 ] === 'string')
                  ? JXG.getReference(board, registeredElements[vstack[ vstack.length - 3 ]].id)
                  : vstack[ vstack.length - 3 ];
-        var s2 = (typeof vstack[ vstack.length - 1 ] === 'string')
+        var s21 = (typeof vstack[ vstack.length - 1 ] === 'string')
                  ? JXG.getReference(board, registeredElements[vstack[ vstack.length - 1 ]].id)
                  : vstack[ vstack.length - 1 ];
 
-        JXG.GeogebraReader.debug("pow: x[id: "+ s1.id +", type: "+ typeof s1 +", value: "+ s1.Value() +"], y[id: "+ s2.id +", type: "+ typeof s2 +", value: "+ s2 +"]");
-        rval = function(x, y) { fx = function() { return 2+x.Value(); }(); // +2 um zu sehen ob Potenz bei Start funktioniert
-                                fy = function() { return y; }();
-                                return Math.pow(fx, fy);
-                              } (s1, s2);
+      JXG.GeogebraReader.debug("pow: x[id: "+ s11.id +", type: "+ typeof s1 +", value: "+ s11.Value() +"], y[id: "+ s21.id +", type: "+ typeof s21 +", value: "+ s21 +"]");
+        rval = function(x) { return Math.pow(x, s21); }; 
+       // rval = function(x) {return (function(y) { return Math.pow(x, y); })(s2);};
     }
     break;
     case 8:
