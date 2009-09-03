@@ -702,10 +702,10 @@ this.colorProperties = function(Data, attr) {
   attr.fillColor = '#'+ r + g + b;
   attr.strokeColor = attr.fillColor;
 
-  if(a != 0) {
+  // if(a != 0) {
     attr.strokeOpacity = attr.fillOpacity;
     attr.fillOpacity = a;
-  }
+  // }
   return attr;
 }; 
 
@@ -1144,8 +1144,9 @@ $('debug').innerHTML += '<br>';
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
-        $('debug').innerHTML += "* <b>Tangente:</b> First: " + input[0].name + "<br>\n";
-        p = board.createElement('tangent', input[1], attr);
+        $('debug').innerHTML += "* <b>Tangente:</b> First: " + input[0].name + ", Sec.: "+ input[1].name +"<br>\n";
+        t1 = board.createElement('glider', [input[1]], attr);
+        t2 = board.createElement('tangent', [input[1]], attr);
         return p;
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> Tangente " + attr.name +"<br>\n";
