@@ -1,0 +1,29 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Spline chart with special highlighted points</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:600px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 500, unitX: 50, unitY: 50});
+            board.suspendUpdate();
+
+            var p = board.createElement('point',[3,4]);
+            var c = board.createElement('circle',[p,2]);
+            var p2 = board.createElement('point',[7,8]);
+            var p3 = board.createElement('point',[1,8]);
+            var poly = board.createElement('polygon',[p,p2,p3]);
+            alert(c.area());
+            alert(poly.area());
+          /* ]]> */
+  </script>
+</body>
+</html>

@@ -566,6 +566,11 @@ JXG.Circle.prototype.maxX = function () {
     return 1.0;
 };
 
+JXG.Circle.prototype.area = function() {
+    var area = this.getRadius()*this.getRadius()*Math.PI;
+    return area;
+};
+
 /**
  * @class This element is used to provide a constructor for a circle. 
  * @pseudo

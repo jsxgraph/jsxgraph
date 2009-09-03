@@ -262,3 +262,13 @@ JXG.Polygon.prototype.showElement = function() {
         }
     }
 };
+
+JXG.Polygon.prototype.area = function() {
+    //Surveyor's Formula
+    var area=0, i;
+    for(i=0; i<this.vertices.length-1; i++) {
+        area += (this.vertices[i].X()*this.vertices[i+1].Y()-this.vertices[i+1].X()*this.vertices[i].Y()); // last vertex is first vertex
+    }
+    area /= 2.0;
+    return Math.abs(area);
+};
