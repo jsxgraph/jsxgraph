@@ -1,0 +1,45 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */
+var board = JXG.JSXGraph.initBoard('box', {boundingbox:[-4,4,12,-4], keepaspectratio:true,axis:true});
+    
+var p1 = board.createElement('point', [0,2] , {name:'A',fillColor:'red',strokeColor:'red'});
+var p2 = board.createElement('point', [0,3] , {name:'B',fillColor:'red',strokeColor:'red'});
+var c = board.createElement('circle', [p1,p2] , {name:'c',strokeColor:'red'});
+var p3 = board.createElement('point', [0,-1] , {name:'C',fillColor:'red',strokeColor:'red'});
+    
+var m = function(circ){
+    return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
+             -circ.midpoint.X(),-circ.midpoint.Y()],
+            [-circ.midpoint.X(),1,0],
+            [-circ.midpoint.Y(),0,1]
+            ]
+    }
+var t = board.createElement('line', [
+    function(){ return JXG.Math.matVecMult(m(c),p3.coords.usrCoords)[0]; },
+    function(){ return JXG.Math.matVecMult(m(c),p3.coords.usrCoords)[1]; },
+    function(){ return JXG.Math.matVecMult(m(c),p3.coords.usrCoords)[2]; }
+] , {visible:false});     
+
+var i1 = board.createElement('intersection', [c,t,0],{visible:false});
+var i2 = board.createElement('intersection', [c,t,1],{visible:false});
+var t1 = board.createElement('line', [p3,i1]);
+var t2 = board.createElement('line', [p3,i2]);
+
+//board.update();
+//alert(m(c).toString());
+//alert(p3.coords.usrCoords.toString());
+//alert(JXG.Math.matVecMult(m(c),p3.coords.usrCoords).toString());
+/* ]]> */
+</script>
+</body>
+</html>
