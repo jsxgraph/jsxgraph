@@ -4,8 +4,10 @@ JXG.GeogebraReader = new function() {
 
  */
 this.ggbParse = function(board, tree, registeredElements, element, exp) {
-JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ registeredElements[element].name + "("+ registeredElements[element].id +")");
-var p = JXG.getReference(board, registeredElements[element].id);
+if(typeof registeredElements[element] !== 'undefined') {
+  JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ registeredElements[element].name + "("+ registeredElements[element].id +")");
+  var p = JXG.getReference(board, registeredElements[element].id);
+}
 
 /*
     Default template driver for JS/CC generated parsers running as
@@ -27,8 +29,7 @@ var p = JXG.getReference(board, registeredElements[element].id);
 var _dbg_withtrace        = false;
 var _dbg_string            = new String();
 
-function __dbg_print( text )
-{
+function __dbg_print( text ) {
     _dbg_string += text + "\n";
 }
 
@@ -753,12 +754,22 @@ this.visualProperties = function(Data, attr) {
  * @param {String} the name of the element to search for
  * @return {Object} object with according label
  */
-this.getElement = function(tree, name) {
+this.getElement = function(tree, name, expr) {
+  expr = expr || false;
   for(var i=0; i<tree.getElementsByTagName("construction").length; i++)
-    for(var j=0; j<tree.getElementsByTagName("construction")[i].getElementsByTagName("element").length; j++) {
-      var Data = tree.getElementsByTagName("construction")[i].getElementsByTagName("element")[j];
-      if(name == Data.attributes["label"].value) {
-        return Data;
+    if(expr == false) {
+      for(var j=0; j<tree.getElementsByTagName("construction")[i].getElementsByTagName("element").length; j++) {
+        var Data = tree.getElementsByTagName("construction")[i].getElementsByTagName("element")[j];
+        if(name == Data.attributes["label"].value) {
+          return Data;
+        }
+      }
+    } else {
+      for(var j=0; j<tree.getElementsByTagName("construction")[i].getElementsByTagName("expression").length; j++) {
+        var Data = tree.getElementsByTagName("construction")[i].getElementsByTagName("expression")[j];
+        if(name == Data.attributes["label"].value) {
+          return Data;
+        }
       }
     }
 };
@@ -934,6 +945,7 @@ $('debug').innerHTML += '<br>';
       for(var i=0; i<input.length; i++) if(JXG.isNumber(parseInt(input[i]))) corner = parseInt(input[i]);
       JXG.GeogebraReader.debug('Ecken: '+ corner);
 
+      // TODO fixed points with regular polygons
       try {
         $('debug').innerHTML += "* <b>Polygon:</b> First: " + input[0].name + ", Second: " + input[1].name + ", Third: " + input[2].name + "<br>\n";
 
@@ -1113,7 +1125,7 @@ $('debug').innerHTML += '<br>';
         attr.straightLast =  true;
         m = board.createElement('midpoint', input, {visible: 'false'});
         p = board.createElement('perpendicular', [m, input[0]], attr);
-        return p;
+        return p[0];
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> LineBiSector (Mittelsenkrechte) " + attr.name +"<br>\n";
         return false;
@@ -1137,7 +1149,6 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'tangent':
-//TODO: nur ein Element?
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
@@ -1145,9 +1156,22 @@ $('debug').innerHTML += '<br>';
 
       try {
         $('debug').innerHTML += "* <b>Tangente:</b> First: " + input[0].name + ", Sec.: "+ input[1].name +"<br>\n";
-        t1 = board.createElement('glider', [input[1]], attr);
-        t2 = board.createElement('tangent', [input[1]], attr);
-        return p;
+        var m = function(circ) {
+		    return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
+                     -circ.midpoint.X(),-circ.midpoint.Y()],
+                    [-circ.midpoint.X(),1,0],
+                    [-circ.midpoint.Y(),0,1]
+                   ];
+            };
+        var t = board.createElement('line', [
+                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[0]; },
+                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[1]; },
+                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[2]; }
+                ], {visible:false});
+        var i1 = board.createElement('intersection', [input[1],t,0],{visible:false});
+        var i2 = board.createElement('intersection', [input[1],t,1],{visible:false});
+        var t1 = board.createElement('line', [input[0],i1]);
+        var t2 = board.createElement('line', [input[0],i2]);
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> Tangente " + attr.name +"<br>\n";
         return false;
@@ -1257,7 +1281,6 @@ $('debug').innerHTML += '<br>';
       attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
-
       try {
           p = board.createElement('point', [function() {
                                                   return JXG.getReference(board, input[0].id).midpoint.X();
@@ -1271,6 +1294,25 @@ $('debug').innerHTML += '<br>';
           return false;
       }
     break;
+
+    case 'function':
+      // attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      // attr = JXG.GeogebraReader.colorProperties(element, attr);
+      // gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      // attr = JXG.GeogebraReader.visualProperties(element, attr);
+
+      var func = JXG.GeogebraReader.getElement(tree, attr.name, true);
+      // f = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, attr.name, func.attributes['exp'].value);
+      try {
+        f = board.createElement('functiongraph', [function(x) { return func.attributes['exp'].value; }]);
+        $('debug').innerHTML += "Functiongraph: "+ attr.name +" "+ func.attributes['exp'].value +"<br/>\n";
+        return f;
+      } catch(e) {
+        $('debug').innerHTML += "* <b>Err:</b> Functiongraph " + attr.name +"<br>\n";
+        return false;
+      }
+    break;
+
 //    case 'polar':
 //    break;
 //    case 'radius':
@@ -1286,8 +1328,6 @@ $('debug').innerHTML += '<br>';
 //    case 'ellipse':
 //    break;
 //    case 'integral':
-//    break;
-//    case 'function':
 //    break;
 //    case 'vector':
 //    break;
@@ -1347,7 +1387,7 @@ this.readGeogebra = function(tree, board) {
           if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
             var elnode = JXG.GeogebraReader.getElement(tree, el);
             registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, elnode);
-            $('debug').innerHTML += "regged: "+registeredElements[el].id+"<br/>";
+            $('debug').innerHTML += "regged: "+ registeredElements[el] +"<br/>";
           }
           input[i] = registeredElements[el];
         }
@@ -1377,7 +1417,7 @@ this.readGeogebra = function(tree, board) {
     for(var s=0; s<expr.length; s++) {
       var label = expr[s].attributes['label'].value;
       var exp = expr[s].attributes['exp'].value;
-      var type = (expr[s].attributes['type']) ? expr[s].attributes['type'].value : false;
+      var type = (expr[s].attributes['type']) ? expr[s].attributes['type'].value : 'false';
       JXG.GeogebraReader.debug("Expression: label: "+ label +", exp: "+ exp +", type: "+ type);
 
       // Gibt es das Ausgabeelement schon?
