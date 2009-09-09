@@ -740,10 +740,12 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
         for(el in this.objects) {
             if((this.objects[el].hasPoint != undefined) && (this.objects[el].hasPoint(x, y)) && (this.objects[el].visProp['visible'] == true)) {
                 //this.renderer.highlight(this.objects[el]);
+
+		// this is required in any case because otherwise the box won't be shown until the point is dragged
+                this.updateInfobox(this.objects[el]);
                 if(this.highlightedObjects[el] == null) { // highlight only if not highlighted
                     this.objects[el].highlight();
                     this.highlightedObjects[el] = this.objects[el];
-                    this.updateInfobox(this.objects[el]);
                 }
             }
         }
