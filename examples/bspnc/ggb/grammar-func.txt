@@ -7,11 +7,23 @@
     '\('
     '\)'
     '[0-9]+'                        INT    [* %match = parseInt( %match ); *]
-    '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+' FLOAT  [* %match = function() {return parseFloat( %match ); }; *]
-    '\&[a-zA-Z]+\;'                 HTML   [* %match = String( %match ) *]
+    '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+' FLOAT  [* %match = parseFloat( %match ); *]
+    '[a-zA-Z0-9]+\([a-zA-Z0-9]+[a-zA-Z0-9,\ ]*\)[\ ]*[=][\ ]*' FUNC   [* %match = (function(x) {
+            var input = x.split('(')[1].split(')')[0];
+            vars = input.split(',');
+            var output = '__'+ vars[0];
+            if(vars.length > 1) {
+              for(var i=1; i<vars.length; i++) { output += ', __'+ vars[i]; }
+            }
+            return "function ("+output+") ";
+         })(%match); *]
+    '[a-zA-Z0-9+-*\\]*'             EXPR   [* %match = (function(x){ for(var i=0; i<vars.length; i++) {
+                                                                          x.replace(/vars[i]/g, "__"+vars[i]);
+                                                                        } return x; })(%match); *]
     '[a-zA-Z]+(\_*[a-zA-Z0-9]+)*'   VAR    [* %match = "registeredElements['"+ %match +"'].id" *]
+    '\&[a-zA-Z]+\;'                 HTML   [* %match = String( %match ) *]
     '\"[a-zA-Z0-9\.\ ]*\"'          STRING [* %match = String( %match ) *]
-    '[a-zA-Z0-9]+\([a-zA-Z0-9]+[a-zA-Z0-9,\ ]*\)[\ ]*[=][\ ]*' FUNC   [* %match = "function("+ %match.split('(')[1].split(')')[0] +") " *]
+
     ;
 
 /~ Left-associative tokens, lowest precedence ~/
@@ -43,7 +55,7 @@ e:        e ',' e      [* %% = "x: "+ %1 +", y: "+ %3; *]
         | '(' e ')'    [* %% = %2; *]
         | VAR
         | STRING '+' e /~ &quot;&quot; + (1 - p_2) ~/
-        | FUNC e       [* %% = alert(%1 + "{ return "+ %2 +"; };"); *] /~ f(x) = e ~/  /~ spaeter kein alert, ... ~/
+        | FUNC EXPR    [* %% = alert(%1 + "{ return "+ %2 +"; };"); *] /~ f(x) = e ~/  /~ spaeter kein alert, ... ~/
         | INT
         | FLOAT
         | HTML
