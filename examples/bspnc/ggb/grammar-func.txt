@@ -1,0 +1,51 @@
+/~ --- Token definitions --- ~/
+
+/~ Characters to be ignored ~/
+!   ' |\t';
+
+/~ Non-associative tokens ~/
+    '\('
+    '\)'
+    '[0-9]+'                                     INT    [* %match = parseInt( %match ); *]
+    '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+'              FLOAT  [* %match = function() {return parseFloat( %match ); }; *]
+    '\&[a-zA-Z]+\;'                              HTML   [* %match = String( %match ) *]
+    '[a-zA-Z]+(\_*[a-zA-Z0-9]+)*'                VAR    [* %match = "registeredElements['"+ %match +"'].id" *]
+    '\"[a-zA-Z0-9\.\ ]*\"'                       STRING [* %match = String( %match ) *]
+    '[a-zA-Z0-9]+\([a-zA-Z0-9,]+\)[\ ]*[=][\ ]*' FUNC   [* %match = "function("+ %match.split('(')[1].split(')')[0] +") " *]
+    ;
+
+/~ Left-associative tokens, lowest precedence ~/
+<  '\+'
+   '\,'
+   '\-';
+        
+/~ Left-associative tokens, middle precedence ~/
+<  '\*'
+   '/';
+
+/~ Left-associative tokens, highest precedence ~/
+<  '^';
+
+##
+
+/~ --- Grammar specification --- ~/
+
+p:      e              [* alert( %1 ); *] /~ spaeter JXG.GeogebraReader.debug(%1); ~/
+        ;
+
+e:        e ',' e      [* %% = "x: "+ %1 +", y: "+ %3; *]
+        | e '+' e      [* %% = %1 + %3; *]
+        | e '-' e      [* %% = %1 - %3; *]
+        | e '*' e      [* %% = %1 * %3; *]
+        | e '/' e      [* %% = %1 / %3; *]
+        | e '^' e      [* %% = Math.pow(%1, %3); *]
+        | '-' e &'*'   [* %% = %2 * -1; *]
+        | '(' e ')'    [* %% = %2; *]
+        | VAR
+        | STRING '+' e /~ &quot;&quot; + (1 - p_2) ~/
+        | FUNC e       [* %% = alert(%1 + "{ "+ %2 +" };"); *] /~ f(x) = e ~/  /~ spaeter kein alert, ... ~/
+        | INT
+        | FLOAT
+        | HTML
+        | STRING       /~ &quot;F&quot; ~/
+        ;

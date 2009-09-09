@@ -545,7 +545,7 @@ switch( act )
                  ? JXG.getReference(board, registeredElements[vstack[ vstack.length - 1 ]].id)
                  : vstack[ vstack.length - 1 ];
 
-        JXG.GeogebraReader.debug("<br/><b>Aktualisierung des Punktes:</b>: <li>x[id: "+ s1.id +"type: "+ typeof s1 +", value: "+ s1 +"]</li><li>y[id: "+ s2.id +"type: "+ typeof s2 +", value: "+ s2 +"]</li>");
+        // JXG.GeogebraReader.debug("<br/><b>Aktualisierung des Punktes:</b>: <li>x[id: "+ s1.id +"type: "+ typeof s1 +", value: "+ s1 +"]</li><li>y[id: "+ s2.id +"type: "+ typeof s2 +", value: "+ s2 +"]</li>");
         if(typeof s2 === 'function') {
             p.addConstraint([s1, function() {return s2(s1.Value());}]); // s2 ist eine Funktion, die von dem Slider s1 abhaengt, z.B. s1^2, der entsprechende Wert wird hier eingesetzt
         }
@@ -1123,8 +1123,14 @@ $('debug').innerHTML += '<br>';
         $('debug').innerHTML += "* <b>LineBiSector (Mittelsenkrechte):</b> First: " + input[0].name + "<br>\n";
         attr.straightFirst = true;
         attr.straightLast =  true;
+
         m = board.createElement('midpoint', input, {visible: 'false'});
-        p = board.createElement('perpendicular', [m, input[0]], attr);
+        if(JXG.getReference(board, input[0].id).type == 1330925652 && JXG.getReference(board, input[1].id).type == 1330925652) {
+          l = board.createElement('line', input, {visible: 'false'});
+          p = board.createElement('perpendicular', [m, l], attr);
+        } else {
+          p = board.createElement('perpendicular', [m, input[0]], attr);
+        }
         return p[0];
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> LineBiSector (Mittelsenkrechte) " + attr.name +"<br>\n";
