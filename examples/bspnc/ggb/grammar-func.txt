@@ -1,5 +1,6 @@
 /~ funktioniert bis erstes "Rechenzeichen" kommt ~/
 /~ Funktionen wie sin(x), cos(), ... muessen noch beruecksichtigt werden ~/
+/~ evtl. nach Alternative zu eval() suchen ~/
 
 /~ --- Token definitions --- ~/
 
