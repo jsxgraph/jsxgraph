@@ -1,4 +1,5 @@
 /~ funktioniert bis erstes "Rechenzeichen" kommt ~/
+/~ Funktionen wie sin(x), cos(), ... muessen noch beruecksichtigt werden ~/
 
 /~ --- Token definitions --- ~/
 
