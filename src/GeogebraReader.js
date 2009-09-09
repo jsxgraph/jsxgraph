@@ -210,25 +210,25 @@ switch( state )
 switch( match )
 {
     case 4:
-        {
+        { // parsing INT
          info.att = parseInt( info.att );
         }
         break;
 
     case 5:
-        {
+        { // parsing FLOAT
          info.att = function() {return parseFloat( info.att ); };
         }
         break;
 
     case 6:
-        {
+        { // parsing HTML
          info.att = String( info.att )
         }
         break;
 
     case 7:
-        {
+        { // parsing VAR
          // info.att = "registeredElements['"+ info.att +"'].id"
          JXG.GeogebraReader.debug("Geparstes Element/Variable: "+ info.att);
          // Falls das Element noch nicht existiert, muss es erzeugt werden
@@ -241,7 +241,7 @@ switch( match )
         break;
 
     case 8:
-        {
+        { // parsing STRING
          info.att = String( info.att )
         }
         break;
@@ -532,12 +532,12 @@ switch( act )
     }
     break;
     case 1:
-    {
+    { // parsing error
         JXG.GeogebraReader.debug("<b style='color:red'>Fehler:</b> "+ vstack[ vstack.length - 1 ] );
     }
     break;
     case 2:
-    {	
+    { // parsing: e ',' e
         var s1 = (typeof vstack[ vstack.length - 3 ] === 'string')
                  ? JXG.getReference(board, registeredElements[vstack[ vstack.length - 3 ]].id)
                  : vstack[ vstack.length - 3 ];
@@ -555,7 +555,7 @@ switch( act )
     }
     break;
     case 3:
-    {
+    { // parsing e '+' e
         //TODO: checking if numbers before adding together to avoid string concatenation
         // rval = vstack[ vstack.length - 3 ] + vstack[ vstack.length - 1 ];
         rval = (JXG.isNumber(vstack[ vstack.length - 3 ])) ? vstack[ vstack.length - 3 ] : parseInt(vstack[ vstack.length - 3 ])
@@ -564,22 +564,22 @@ switch( act )
     }
     break;
     case 4:
-    {
+    { // parsing e '-' e
         rval = vstack[ vstack.length - 3 ] - vstack[ vstack.length - 1 ];
     }
     break;
     case 5:
-    {
+    { // parsing e '*' e
         rval = vstack[ vstack.length - 3 ] * vstack[ vstack.length - 1 ];
     }
     break;
     case 6:
-    {
+    { // parsing e '/' e
         rval = vstack[ vstack.length - 3 ] / vstack[ vstack.length - 1 ];
     }
     break;
     case 7:
-    {
+    { // parsing e '^' e
         var s11 = (typeof vstack[ vstack.length - 3 ] === 'string')
                  ? JXG.getReference(board, registeredElements[vstack[ vstack.length - 3 ]].id)
                  : vstack[ vstack.length - 3 ];
@@ -591,42 +591,42 @@ switch( act )
     }
     break;
     case 8:
-    {
+    { // parsing '-' e &'*'
         rval = vstack[ vstack.length - 1 ] * -1;
     }
     break;
     case 9:
-    {
+    { // parsing '(' e ')'
         rval = vstack[ vstack.length - 2 ];
     }
     break;
     case 10:
-    {
+    { // parsing VAR
         rval = vstack[ vstack.length - 1 ];
     }
     break;
     case 11:
-    {
+    { // parsing STRING '+' e
         rval = vstack[ vstack.length - 3 ];
     }
     break;
     case 12:
-    {
+    { // parsing INT
         rval = vstack[ vstack.length - 1 ];
     }
     break;
     case 13:
-    {
+    { // parsing FLOAT
         rval = vstack[ vstack.length - 1 ];
     }
     break;
     case 14:
-    {
+    { // parsing HTML
         rval = vstack[ vstack.length - 1 ];
     }
     break;
     case 15:
-    {
+    { // parsing STRING
         rval = vstack[ vstack.length - 1 ];
     }
     break;
@@ -1435,21 +1435,23 @@ this.readGeogebra = function(tree, board) {
 
       // // String vorbehandeln
       // // var s = exp.replace(/([a-zA-Z]+(\_*[a-zA-Z0-9]+)*)/g, 'VAR($1)').split(' ');
-      // var s = exp.split(' ');
-      // var o = '';
-      // for(var i=0; i<s.length; i++) {
-      //   if(s.length != i+1)
-      //     if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
-      //       if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
-      //         s[i] = s[i] + "*";
-      //   o += s[i];
-      // }
+      var s = exp.split(' ');
+      var o = '';
+      for(var i=0; i<s.length; i++) {
+        if(s.length != i+1)
+          if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
+            if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
+              s[i] = s[i] + "*";
+        o += s[i];
+      }
 
       // JS/CC-Parser aufrufen
-      var out = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, label, exp);
+      // var out = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, label, exp);
+      // mit Stringvorbehandlung zum *
+      var out = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, label, o);
     }
 
-    // Restesammer: Elemente erzeugen, die von nichts abhängen
+    // Restesammler: Elemente erzeugen, die von nichts abhängen
     var elements = constructions[t].getElementsByTagName("element");
     for (var s=0; s<elements.length; s++) {
       var Data = elements[s];
