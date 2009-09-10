@@ -1590,8 +1590,18 @@ this.readGeogebra = function(tree, board) {
     for (var s=0; s<elements.length; s++) {
       var Data = elements[s];
       var el = Data.attributes['label'].value;
+      JXG.GeogebraReader.debug("Betrachte Rest: "+ el);
       if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
-        registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
+        // check if there is an according expression
+        if(expr = JXG.GeogebraReader.getElement(tree, el, true)) {
+          var func = JXG.GeogebraReader.functionParse(expr.attributes['exp'].value);
+// TODO: call to writeElement to construct expression with functiongrpah or whatever
+          // var out = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, el, JXG.GeogebraReader.functionParse(exp));
+          
+          // registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
+        } else {
+          registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
+        }
         JXG.GeogebraReader.debug("Rest: "+ el +", regged: "+ typeof registeredElements[el]);
       }
     }
