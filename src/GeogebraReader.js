@@ -4,7 +4,7 @@ JXG.GeogebraReader = new function() {
 
  */
 this.ggbParse = function(board, tree, registeredElements, element, exp) {
-if(typeof registeredElements[element] !== 'undefined') {
+if(!element || typeof registeredElements[element] !== 'undefined') {
   JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ registeredElements[element].name + "("+ registeredElements[element].id +")");
   var p = JXG.getReference(board, registeredElements[element].id);
 }
@@ -775,6 +775,44 @@ this.getElement = function(tree, name, expr) {
 };
 
 /**
+ * @param {String} exp Expression to parse and correct
+ * @return {String} correct expression with fixed function and multiplication
+ */
+this.functionParse = function(exp) {
+JXG.GeogebraReader.debug('* in: '+ exp);
+    // String vorbehandeln: Multiplikation aufloesen
+    var s = exp.split(' ');
+    var o = '';
+    for(var i=0; i<s.length; i++) {
+      if(s.length != i+1)
+        if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
+          if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
+            s[i] = s[i] + "*";
+      o += s[i];
+    }
+    // Funktionen aufloesen
+    if(o.match(/[a-zA-Z0-9]+\([a-zA-Z0-9]+[a-zA-Z0-9,\ ]*\)[\ ]*[=][\ ]*[a-zA-Z0-9\+\-\*\/]+/)) {
+      var input = o.split('(')[1].split(')')[0];
+      var vars = input.split(', ');
+      var output = '__'+ vars[0];
+      if(vars.length > 1) {
+        for(var i=1; i<vars.length; i++) {
+          output += ', __'+ vars[i];
+        }
+      }
+      var expr = o.split('=')[1];
+      for(var i=0; i<vars.length; i++) {
+        expr = expr.replace(eval('/'+vars[i]+'/g'), '__'+vars[i]);
+      }
+      // sin-parse workaround:
+      expr = (expr.match(/sin/)) ? expr.replace(/sin/, "Math.sin") : expr;
+
+JXG.GeogebraReader.debug("* out: function ("+output+") { return "+ expr +"; }");
+      return "function ("+output+") { return "+ expr +"; }";
+    }
+};
+
+/**
  * Searching for an element in the geogebra tree
  * @param {XMLTree} tree expects the content of the parsed geogebra file returned by function parseFF/parseIE
  * @param {Object} board object
@@ -1308,10 +1346,13 @@ $('debug').innerHTML += '<br>';
       // attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       var func = JXG.GeogebraReader.getElement(tree, attr.name, true);
-      // f = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, attr.name, func.attributes['exp'].value);
+      func = JXG.GeogebraReader.functionParse(func.attributes['exp'].value);
+      // func = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, attr.name, func);
       try {
-        f = board.createElement('functiongraph', [function(x) { return func.attributes['exp'].value; }]);
-        $('debug').innerHTML += "Functiongraph: "+ attr.name +" "+ func.attributes['exp'].value +"<br/>\n";
+	JXG.GeogebraReader.debug("debug: "+ typeof func);
+        f = board.createElement('functiongraph', [func]); // not working
+        // f = board.createElement('functiongraph', [function (__x) { return Math.sin(__x); }]); // working
+        $('debug').innerHTML += "Functiongraph: "+ attr.name +": "+ func +"<br/>\n";
         return f;
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> Functiongraph " + attr.name +"<br>\n";
@@ -1417,8 +1458,19 @@ this.readGeogebra = function(tree, board) {
 
     }
 
+    // Restesammler: Elemente erzeugen, die von nichts abhängen
+    var elements = constructions[t].getElementsByTagName("element");
+    for (var s=0; s<elements.length; s++) {
+      var Data = elements[s];
+      var el = Data.attributes['label'].value;
+      if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
+        registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
+      }
+    }
+
 // TODO: label in element (siehe Parser) umbenennen
     // Hier starten wir die Expressions zu parsen
+/*
     var expr = constructions[t].getElementsByTagName('expression');
     for(var s=0; s<expr.length; s++) {
       var label = expr[s].attributes['label'].value;
@@ -1433,39 +1485,18 @@ this.readGeogebra = function(tree, board) {
         JXG.GeogebraReader.debug("regged: "+ registeredElements[label].id);
       }
 
-      // String vorbehandeln
-      var s = exp.split(' ');
-      var o = '';
-      for(var i=0; i<s.length; i++) {
-        if(s.length != i+1)
-          if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
-            if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
-              s[i] = s[i] + "*";
-        o += s[i];
-      }
-
       // JS/CC-Parser aufrufen
       // var out = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, label, exp);
-      // mit Stringvorbehandlung zum *
-      var out = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, label, o);
+      var out = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, label, JXG.GeogebraReader.functionParse(exp));
     }
+*/
 
-    // Restesammler: Elemente erzeugen, die von nichts abhängen
-    var elements = constructions[t].getElementsByTagName("element");
-    for (var s=0; s<elements.length; s++) {
-      var Data = elements[s];
-      var el = Data.attributes['label'].value;
-      if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
-        registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
-      }
-	}
-
-  }
+  } // end: for construction
   board.fullUpdate();
 };
 
-this.prepareString = function(fileStr){
-  if (fileStr.indexOf('<')!=0) {
+this.prepareString = function(fileStr) {
+  if (fileStr.indexOf('<') != 0) {
     bA = [];
     for (i=0;i<fileStr.length;i++)
       bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
