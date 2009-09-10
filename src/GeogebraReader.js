@@ -1072,7 +1072,6 @@ $('debug').innerHTML += '<br>';
       }
     break;
     case 'rotate':
-//TODO: Abhaengigkeit einbauen, BSP: dreheobjektumpunkt --> B' immer abhaengig von A und B
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
@@ -1095,17 +1094,6 @@ $('debug').innerHTML += '<br>';
       attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
-
-      // p0 = board.createElement('point', [1, 1], {face:'circle',size:6,name:"O",fillColor:'red',strokeColor:'yellow'});
-      // p1 = board.createElement('point', [2, 2], {face:'circle',size:6,name:"A",fillColor:'red',strokeColor:'yellow'}); 
-      // p2 = board.createElement('point', [2, 1], {face:'circle',size:6,name:"B",fillColor:'red',strokeColor:'yellow'});
-      // p3 = board.createElement('point', [1, 2], {face:'circle',size:6,name:"C",fillColor:'red',strokeColor:'yellow'});
-      // t1 = board.createElement('transform', [2, 2], {type:'scale'});
-      // t2 = board.createElement('transform', [function() { return (1-2)*p0.X(); },
-      //                                        function() { return (1-2)*p0.Y(); }], {type:'translate'});
-      // p4 = board.createElement('point', [p1,[t1,t2]], {name:'zentrA'}); 
-      // p5 = board.createElement('point', [p2,[t1,t2]], {name:'zentrB'});  
-      // p6 = board.createElement('point', [p3,[t1,t2]], {name:'zentrC'});
 
       try {
         $('debug').innerHTML += "* <b>Dilate:</b> First: " + input[0].name + ", Second: " + input[1] + "<br>\n";
@@ -1136,8 +1124,6 @@ $('debug').innerHTML += '<br>';
         $('debug').innerHTML += "* <b>Err:</b> Translate " + attr.name +"<br>\n";
         return false;
       }
-    break;
-    case 'transform':
     break;
     case 'mirror':
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
@@ -1485,13 +1471,36 @@ $('debug').innerHTML += '<br>';
        return false;
      }
    break;
+   case 'slope':
+     attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+     attr = JXG.GeogebraReader.colorProperties(element, attr);
+     gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+     attr = JXG.GeogebraReader.visualProperties(element, attr);
+
+     try {
+       $('debug').innerHTML += "* <b>Slope:</b> First: " + input[0].name +"<br>\n";
+       var l1 = board.createElement('line', [input[0].point1, [(1+input[0].point1.X()), input[0].point1.Y()]], {visible: false});
+       var l2 = board.createElement('normal', [l1, l1.point2], {visible: false});
+       var i  = board.createElement('intersection', [input[0], l2, 0], {visible: false});
+       var m  = board.createElement('midpoint', [l1.point2, i], {visible: false});
+       var slope = function() { return i.Y()-l1.point1.Y();};
+       var t = board.createElement('text', [function(){return m.X();}, function(){return m.Y();}, function(){ return "m = "+ slope(); }]);
+       return m;
+     } catch(e) {
+       $('debug').innerHTML += "* <b>Err:</b> Slope " + attr.name +"<br>\n";
+       return false;
+     }
+   break;
+
+// noch zu implementieren: slope, area, funktionen
+
+// case 'transform':
+// break;
 //    case 'radius':
 //    break;
 //    case 'derivative':
 //    break;
 //    case 'root':
-//    break;
-//    case 'slope':
 //    break;
 //    case 'corner':
 //    break;
@@ -1545,7 +1554,7 @@ this.readGeogebra = function(tree, board) {
       var input = [];
       for (i=0; i<Data.getElementsByTagName("input")[0].attributes.length; i++) {
         el = Data.getElementsByTagName("input")[0].attributes[i].value;
-        if(el.match(/°/) || !el.match(/\D/)) {
+        if(el.match(/°/) || !el.match(/\D/) || el.match(/Circle/)) {
           input[i] = el;
         } else {
           if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
@@ -1557,20 +1566,21 @@ this.readGeogebra = function(tree, board) {
         }
       }
 
-      var output = [];
+      var output = [], elname = Data.getElementsByTagName("output")[0].attributes[0].value;
       for (i=0; i<Data.getElementsByTagName("output")[0].attributes.length; i++) {
         el = Data.getElementsByTagName("output")[0].attributes[i].value;
         output[i] = JXG.GeogebraReader.getElement(tree, el);
       }
-      if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
-        registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, output, input, Data.attributes['name'].value.toLowerCase());
-        $('debug').innerHTML += "regged: "+registeredElements[el].id+"<br/>";
+      if(typeof registeredElements[elname] == 'undefined' || registeredElements[elname] == '') {
+        registeredElements[elname] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, output, input, Data.attributes['name'].value.toLowerCase());
+        $('debug').innerHTML += "regged: "+registeredElements[elname].id+"<br/>";
 
         /* Bei Element mit Raendern die jeweiligen Geraden als registrierte Elemente speichern */
-        for(var i=1; i<output.length; i++) {
-          registeredElements[registeredElements[el].borders[i-1].name] = registeredElements[el].borders[i-1];
-          $('debug').innerHTML += i+") regged: "+output[i].attributes['label'].value+"("+ registeredElements[output[i].attributes['label'].value].id +")<br/>";
-        }
+        if(registeredElements[elname].borders)
+          for(var i=0; i<registeredElements[elname].borders.length; i++) {
+            registeredElements[registeredElements[elname].borders[i].name] = registeredElements[elname].borders[i];
+            $('debug').innerHTML += i+") regged: "+registeredElements[elname].borders[i].name+"("+ registeredElements[registeredElements[elname].borders[i].name].id +")<br/>";
+          }
       }
 
     }
@@ -1582,6 +1592,7 @@ this.readGeogebra = function(tree, board) {
       var el = Data.attributes['label'].value;
       if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
         registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
+        JXG.GeogebraReader.debug("Rest: "+ el +", regged: "+ typeof registeredElements[el]);
       }
     }
 
