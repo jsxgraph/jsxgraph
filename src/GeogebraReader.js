@@ -1433,8 +1433,7 @@ this.readGeogebra = function(tree, board) {
         JXG.GeogebraReader.debug("regged: "+ registeredElements[label].id);
       }
 
-      // // String vorbehandeln
-      // // var s = exp.replace(/([a-zA-Z]+(\_*[a-zA-Z0-9]+)*)/g, 'VAR($1)').split(' ');
+      // String vorbehandeln
       var s = exp.split(' ');
       var o = '';
       for(var i=0; i<s.length; i++) {
