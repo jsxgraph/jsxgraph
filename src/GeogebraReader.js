@@ -1056,6 +1056,21 @@ $('debug').innerHTML += '<br>';
         return false;
       }
     break;
+    case 'vector':
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
+      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
+
+      try {
+        $('debug').innerHTML += "* <b>Vector:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
+        v = board.createElement('arrow', input, attr);
+        return v;
+      } catch(e) {
+        $('debug').innerHTML += "* <b>Err:</b> Intersection " + attr.name +"<br>\n";
+        return false;
+      }
+    break;
     case 'rotate':
 //TODO: Abhaengigkeit einbauen, BSP: dreheobjektumpunkt --> B' immer abhaengig von A und B
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
@@ -1064,14 +1079,65 @@ $('debug').innerHTML += '<br>';
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
-        $('debug').innerHTML += "* <b>Rotate:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n";
+        $('debug').innerHTML += "* <b>Rotate:</b> First: " + input[0].name + ", Second: " + input[1] + "<br>\n";
         attr.type = 'rotate';
-        r = board.createElement('transform', [[parseInt(input[1]), input[2]], input[0]], attr);
-        return r;
+        var d = parseInt(input[1]);
+        r = board.createElement('transform', [d, input[2]], {type:'rotate'});
+        p = board.createElement('point', [input[0], r], attr)
+        return p;
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> Rotate " + attr.name +"<br>\n";
         return false;
       }
+    break;
+    case 'dilate':
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
+      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
+
+      // p0 = board.createElement('point', [1, 1], {face:'circle',size:6,name:"O",fillColor:'red',strokeColor:'yellow'});
+      // p1 = board.createElement('point', [2, 2], {face:'circle',size:6,name:"A",fillColor:'red',strokeColor:'yellow'}); 
+      // p2 = board.createElement('point', [2, 1], {face:'circle',size:6,name:"B",fillColor:'red',strokeColor:'yellow'});
+      // p3 = board.createElement('point', [1, 2], {face:'circle',size:6,name:"C",fillColor:'red',strokeColor:'yellow'});
+      // t1 = board.createElement('transform', [2, 2], {type:'scale'});
+      // t2 = board.createElement('transform', [function() { return (1-2)*p0.X(); },
+      //                                        function() { return (1-2)*p0.Y(); }], {type:'translate'});
+      // p4 = board.createElement('point', [p1,[t1,t2]], {name:'zentrA'}); 
+      // p5 = board.createElement('point', [p2,[t1,t2]], {name:'zentrB'});  
+      // p6 = board.createElement('point', [p3,[t1,t2]], {name:'zentrC'});
+
+      try {
+        $('debug').innerHTML += "* <b>Dilate:</b> First: " + input[0].name + ", Second: " + input[1] + "<br>\n";
+        attr.type = 'rotate';
+        var d = parseInt(input[1]);
+        d1 = board.createElement('transform', [d, d], {type:'scale'});
+        d2 = board.createElement('transform', [function() { return (1-d) * input[2].X(); },
+                                               function() { return (1-d) * input[2].Y(); }], {type:'translate'});
+        p = board.createElement('point', [input[0], [d1, d2]], attr)
+        return p;
+      } catch(e) {
+        $('debug').innerHTML += "* <b>Err:</b> Dilate " + attr.name +"<br>\n";
+        return false;
+      }
+    break;
+    case 'translate':
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
+      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
+
+      try {
+	    t = board.createElement('transform', [function() { return input[1].point2.X()-input[1].point1.X(); },
+	                                          function() { return input[1].point2.Y()-input[1].point1.Y(); }], {type:'translate'});
+	    p = board.createElement('point', [input[0], t], attr);        
+        return p;
+      } catch(e) {
+        $('debug').innerHTML += "* <b>Err:</b> Translate " + attr.name +"<br>\n";
+        return false;
+      }
+    break;
+    case 'transform':
     break;
     case 'mirror':
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
@@ -1236,6 +1302,39 @@ $('debug').innerHTML += '<br>';
         return false;
       }
     break;
+    case 'circumcirclesector':
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
+      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
+
+      try {
+        $('debug').innerHTML += "* <b>CircumcircleSector:</b> First: " + input[0].name + "<br>\n";
+        p = board.createElement('sector', [input[0], input[2], input[1]], attr);
+        return p;
+      } catch(e) {
+        $('debug').innerHTML += "* <b>Err:</b> CircumcircleSector " + attr.name +"<br>\n";
+        return false;
+      }
+    break;
+    case 'semicircle':
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
+      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
+
+      try {
+        $('debug').innerHTML += "* <b>Semicircle:</b> First: " + input[0].name + "<br>\n";
+        m = board.createElement('midpoint', input, {visible: 'false'});
+        p = board.createElement('sector', [m, input[0], input[1]], attr);
+        return p;
+      } catch(e) {
+        $('debug').innerHTML += "* <b>Err:</b> Semicircle " + attr.name +"<br>\n";
+        return false;
+      }
+    break;
+	//    case 'semicircle':
+	//    break;
     case 'angle':
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       attr = JXG.GeogebraReader.colorProperties(element, attr);
@@ -1360,8 +1459,32 @@ $('debug').innerHTML += '<br>';
       }
     break;
 
-//    case 'polar':
-//    break;
+   case 'polar':
+     attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+     attr = JXG.GeogebraReader.colorProperties(element, attr);
+     gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+     attr = JXG.GeogebraReader.visualProperties(element, attr);
+
+     try {
+       $('debug').innerHTML += "* <b>Polar:</b> First: " + input[0].name + ", Sec.: "+ input[1].name +"<br>\n";
+       var m = function(circ) {
+		    return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
+                    -circ.midpoint.X(),-circ.midpoint.Y()],
+                   [-circ.midpoint.X(),1,0],
+                   [-circ.midpoint.Y(),0,1]
+                  ];
+           };
+       var p = board.createElement('line', [
+                   function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[0]; },
+                   function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[1]; },
+                   function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[2]; }
+               ], attr);
+       return p;
+     } catch(e) {
+       $('debug').innerHTML += "* <b>Err:</b> Polar " + attr.name +"<br>\n";
+       return false;
+     }
+   break;
 //    case 'radius':
 //    break;
 //    case 'derivative':
@@ -1376,8 +1499,6 @@ $('debug').innerHTML += '<br>';
 //    break;
 //    case 'integral':
 //    break;
-//    case 'vector':
-//    break;
 //    case 'unitvector':
 //    break;
 //    case 'extremum':
@@ -1386,15 +1507,11 @@ $('debug').innerHTML += '<br>';
 //    break;
 //    case 'arc':
 //    break;
-//    case 'semicircle':
-//    break;
 //    case 'circlepart':
 //    break;
 //    case 'uppersum':
 //    break;
 //    case 'lowersum':
-//    break;
-//    case 'dilate':
 //    break;
 //    case 'image':
 //    break;
@@ -1428,7 +1545,7 @@ this.readGeogebra = function(tree, board) {
       var input = [];
       for (i=0; i<Data.getElementsByTagName("input")[0].attributes.length; i++) {
         el = Data.getElementsByTagName("input")[0].attributes[i].value;
-        if(!el.match(/°/) && !isNaN(el)) {
+        if(el.match(/°/) || !el.match(/\D/)) {
           input[i] = el;
         } else {
           if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
