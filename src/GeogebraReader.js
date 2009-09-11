@@ -1382,7 +1382,7 @@ $('debug').innerHTML += '<br>';
 
         try {
           $('debug').innerHTML += "* <b>Numeric:</b> First: " + attr.name + "<br>\n";
-          n = board.createElement('slider', [[sx,sy], [ex,ey], [smin, sip, smax]], attr);
+          n = board.createElement('slider', [[sx,sy], [ex,ey], [smin, sip, smax]], attr);'__x','__y','return Math.sin(__x);'
           return n;
         } catch(e) {
           $('debug').innerHTML += "* <b>Err:</b> Numeric " + attr.name +"<br>\n";
@@ -1433,9 +1433,17 @@ $('debug').innerHTML += '<br>';
       var func = JXG.GeogebraReader.getElement(tree, attr.name, true);
       func = JXG.GeogebraReader.functionParse(func.attributes['exp'].value);
       // func = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, attr.name, func);
+      alert(typeof func);
       try {
-	JXG.GeogebraReader.debug("debug: "+ typeof func);
+        JXG.GeogebraReader.debug("debug: "+ typeof func);
         f = board.createElement('functiongraph', [func]); // not working
+        /*
+        if (l==1) {
+            f = board.createElement('functiongraph', [Function('__x','return Math.sin(__x);']); 
+        } else if (l==2) {
+            f = board.createElement('functiongraph', [Function('__x','__y','return Math.sin(__x);']); 
+        }
+        */
         // f = board.createElement('functiongraph', [function (__x) { return Math.sin(__x); }]); // working
         $('debug').innerHTML += "Functiongraph: "+ attr.name +": "+ func +"<br/>\n";
         return f;
