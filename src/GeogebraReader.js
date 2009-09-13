@@ -4,7 +4,7 @@ JXG.GeogebraReader = new function() {
 
  */
 this.ggbParse = function(board, tree, registeredElements, element, exp) {
-if(!element || typeof registeredElements[element] !== 'undefined') {
+if(element || typeof registeredElements[element] !== 'undefined') {
   JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ registeredElements[element].name + "("+ registeredElements[element].id +")");
   var p = JXG.getReference(board, registeredElements[element].id);
 }
@@ -661,15 +661,13 @@ switch( act )
             vstack.push( rval );            
         }
         
-        if( _dbg_withtrace )
-        {        
+        if( _dbg_withtrace ) {        
             JXG.GeogebraReader.debug( _dbg_string );
             _dbg_string = new String();
         }
     }
 
-    if( _dbg_withtrace )
-    {
+    if( _dbg_withtrace ) {
         __dbg_print( "\nParse complete." );
         JXG.GeogebraReader.debug( _dbg_string );
     }
@@ -677,8 +675,17 @@ switch( act )
     return err_cnt;
 }
 
-var error_offsets = new Array(); var error_lookaheads = new Array(); var error_count = 0; var str = exp; if( ( error_count = __parse( str, error_offsets, error_lookaheads ) ) > 0 ) { var errstr = new String(); for( var i = 0; i < error_count; i++ ) errstr += "Parse error in line " + ( str.substr( 0, error_offsets[i] ).match( /\n/g ) ? str.substr( 0, error_offsets[i] ).match( /\n/g ).length : 1 ) + " near \"" + str.substr( error_offsets[i] ) + "\", expecting \"" + error_lookaheads[i].join() + "\"\n" ; JXG.GeogebraReader.debug( errstr );}
-};
+var error_offsets = new Array();
+var error_lookaheads = new Array();
+var error_count = 0;
+var str = exp;
+if( ( error_count = __parse( str, error_offsets, error_lookaheads ) ) > 0 ) {
+  var errstr = new String();
+  for( var i = 0; i < error_count; i++ )
+    errstr += "Parse error in line " + ( str.substr( 0, error_offsets[i] ).match( /\n/g ) ? str.substr( 0, error_offsets[i] ).match( /\n/g ).length : 1 ) + " near \"" + str.substr( error_offsets[i] ) + "\", expecting \"" + error_lookaheads[i].join() + "\"\n" ;
+  JXG.GeogebraReader.debug( errstr );
+}
+}; //end: ggbParse()
 
 
 this.debug = function(s) {
@@ -794,21 +801,22 @@ JXG.GeogebraReader.debug('* in: '+ exp);
     if(o.match(/[a-zA-Z0-9]+\([a-zA-Z0-9]+[a-zA-Z0-9,\ ]*\)[\ ]*[=][\ ]*[a-zA-Z0-9\+\-\*\/]+/)) {
       var input = o.split('(')[1].split(')')[0];
       var vars = input.split(', ');
-      var output = '__'+ vars[0];
-      if(vars.length > 1) {
-        for(var i=1; i<vars.length; i++) {
-          output += ', __'+ vars[i];
-        }
+
+      var output = [];
+      for(var i=0; i<vars.length; i++) {
+        output.push("__"+vars[i]);
       }
       var expr = o.split('=')[1];
       for(var i=0; i<vars.length; i++) {
         expr = expr.replace(eval('/'+vars[i]+'/g'), '__'+vars[i]);
       }
+
       // sin-parse workaround:
       expr = (expr.match(/sin/)) ? expr.replace(/sin/, "Math.sin") : expr;
 
-JXG.GeogebraReader.debug("* out: function ("+output+") { return "+ expr +"; }");
-      return "function ("+output+") { return "+ expr +"; }";
+      output.push("return "+ expr +";");
+      JXG.GeogebraReader.debug("* out: "+ output.toString());
+      return output;
     }
 };
 
@@ -882,22 +890,19 @@ this.writeBoard = function(tree, board, registeredElements) {
  * @param {String} text of expression to write
  */
 this.writeElement = function(registeredElements, tree, board, output, input, cmd) {
-  if(typeof output === 'object' && typeof output.attributes === 'undefined') {
-    element = output[0];
-  } else {
-    element = output;
-  }
+  element = (typeof output === 'object' && typeof output.attributes === 'undefined') ? output[0] : output;
 
   var gxtEl = {};
-  gxtEl.type = element.attributes['type'].value.toLowerCase();
+  gxtEl.type = (element.attributes['type'] && typeof cmd === 'undefined') ? element.attributes['type'].value.toLowerCase() : cmd;
   gxtEl.label = element.attributes['label'].value;
 
   var attr = {}; // Attributes of geometric elements
   attr.name = gxtEl.label;
 
-  if(typeof cmd != 'undefined' && (gxtEl.type != cmd)) {
-    gxtEl.type = cmd;
-  }
+  //TODO: check if needed after modification of line 901
+  // if(typeof cmd !== 'undefined' && gxtEl.type !== cmd) {
+  //   gxtEl.type = cmd;
+  // }
 
   JXG.GeogebraReader.debug("<br><b>Konstruiere</b> "+ gxtEl.label +"("+ gxtEl.type +"):");
 
@@ -940,10 +945,8 @@ this.writeElement = function(registeredElements, tree, board, output, input, cmd
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-for (var x in attr) {
-    $('debug').innerHTML += x+':'+attr[x]+' ';
-}    
-$('debug').innerHTML += '<br>';
+      for (var x in attr) $('debug').innerHTML += x+':'+attr[x]+' ';    
+      $('debug').innerHTML += '<br>';
 
       if(JXG.getReference(board, input[1].id).type == 1330925652) var type = 'line'; // Punkt -> Gerade
       else if(JXG.getReference(board, input[1].id).type == 1330924622) var type = 'parallel'; // Parallele durch Punkt
@@ -1423,7 +1426,6 @@ $('debug').innerHTML += '<br>';
           return false;
       }
     break;
-
     case 'function':
       // attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       // attr = JXG.GeogebraReader.colorProperties(element, attr);
@@ -1432,62 +1434,63 @@ $('debug').innerHTML += '<br>';
 
       var func = JXG.GeogebraReader.getElement(tree, attr.name, true);
       func = JXG.GeogebraReader.functionParse(func.attributes['exp'].value);
-      // func = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, attr.name, func);
-      alert(typeof func);
+      //TODO: expression parsen
+      func = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, false, func);
+
       try {
-        JXG.GeogebraReader.debug("debug: "+ typeof func);
-        f = board.createElement('functiongraph', [func]); // not working
-        /*
-        if (l==1) {
-            f = board.createElement('functiongraph', [Function('__x','return Math.sin(__x);']); 
-        } else if (l==2) {
-            f = board.createElement('functiongraph', [Function('__x','__y','return Math.sin(__x);']); 
-        }
-        */
-        // f = board.createElement('functiongraph', [function (__x) { return Math.sin(__x); }]); // working
-        $('debug').innerHTML += "Functiongraph: "+ attr.name +": "+ func +"<br/>\n";
+        var l = func.length - 1;
+        if (l==1)
+          f = board.createElement('functiongraph', [Function(func[0], func[1])]);
+        else if (l==2)
+          f = board.createElement('functiongraph', [Function(func[0], func[1], func[2])]);
+        else if (l==3)
+          f = board.createElement('functiongraph', [Function(func[0], func[1], func[2], func[3])]);
+        else if (l==4)
+          f = board.createElement('functiongraph', [Function(func[0], func[1], func[2], func[3], func[4])]);
+
+        $('debug').innerHTML += "Functiongraph: "+ attr.name +": "+ func[l] +" f="+f.toString() +"<br/>\n";
         return f;
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> Functiongraph " + attr.name +"<br>\n";
         return false;
       }
+     break;
+     case 'polar':
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
+      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
+
+      try {
+        $('debug').innerHTML += "* <b>Polar:</b> First: " + input[0].name + ", Sec.: "+ input[1].name +"<br>\n";
+        var m = function(circ) {
+          return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
+                     -circ.midpoint.X(),-circ.midpoint.Y()],
+                    [-circ.midpoint.X(),1,0],
+                    [-circ.midpoint.Y(),0,1]
+                   ];
+        };
+        var p = board.createElement('line', [
+                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[0]; },
+                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[1]; },
+                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[2]; }
+                ], attr);
+        return p;
+      } catch(e) {
+        $('debug').innerHTML += "* <b>Err:</b> Polar " + attr.name +"<br>\n";
+        return false;
+      }
     break;
-
-   case 'polar':
-     attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-     attr = JXG.GeogebraReader.colorProperties(element, attr);
-     gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-     attr = JXG.GeogebraReader.visualProperties(element, attr);
-
-     try {
-       $('debug').innerHTML += "* <b>Polar:</b> First: " + input[0].name + ", Sec.: "+ input[1].name +"<br>\n";
-       var m = function(circ) {
-		    return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
-                    -circ.midpoint.X(),-circ.midpoint.Y()],
-                   [-circ.midpoint.X(),1,0],
-                   [-circ.midpoint.Y(),0,1]
-                  ];
-           };
-       var p = board.createElement('line', [
-                   function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[0]; },
-                   function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[1]; },
-                   function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[2]; }
-               ], attr);
-       return p;
-     } catch(e) {
-       $('debug').innerHTML += "* <b>Err:</b> Polar " + attr.name +"<br>\n";
-       return false;
-     }
-   break;
    case 'slope':
      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
      attr = JXG.GeogebraReader.colorProperties(element, attr);
      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
+     //TODO: Farben anpassen und keine durchgehende Normale
      try {
        $('debug').innerHTML += "* <b>Slope:</b> First: " + input[0].name +"<br>\n";
-       var l1 = board.createElement('line', [input[0].point1, [(1+input[0].point1.X()), input[0].point1.Y()]], {visible: false});
+       var l1 = board.createElement('segment', [input[0].point1, [(1+input[0].point1.X()), input[0].point1.Y()]], {visible: false});
        var l2 = board.createElement('normal', [l1, l1.point2], {visible: false});
        var i  = board.createElement('intersection', [input[0], l2, 0], {visible: false});
        var m  = board.createElement('midpoint', [l1.point2, i], {visible: false});
@@ -1500,7 +1503,7 @@ $('debug').innerHTML += '<br>';
      }
    break;
 
-// noch zu implementieren: slope, area, funktionen
+// noch zu implementieren: area, funktionen
 
 // case 'transform':
 // break;
@@ -1601,41 +1604,14 @@ this.readGeogebra = function(tree, board) {
       JXG.GeogebraReader.debug("Betrachte Rest: "+ el);
       if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
         // check if there is an according expression
-        if(expr = JXG.GeogebraReader.getElement(tree, el, true)) {
-          var func = JXG.GeogebraReader.functionParse(expr.attributes['exp'].value);
-// TODO: call to writeElement to construct expression with functiongrpah or whatever
-          // var out = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, el, JXG.GeogebraReader.functionParse(exp));
-          
-          // registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
-        } else {
+        if(expr = JXG.GeogebraReader.getElement(tree, el, true))
+          registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, expr, false, 'function');
+        else
           registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
-        }
+
         JXG.GeogebraReader.debug("Rest: "+ el +", regged: "+ typeof registeredElements[el]);
       }
     }
-
-// TODO: label in element (siehe Parser) umbenennen
-    // Hier starten wir die Expressions zu parsen
-/*
-    var expr = constructions[t].getElementsByTagName('expression');
-    for(var s=0; s<expr.length; s++) {
-      var label = expr[s].attributes['label'].value;
-      var exp = expr[s].attributes['exp'].value;
-      var type = (expr[s].attributes['type']) ? expr[s].attributes['type'].value : 'false';
-      JXG.GeogebraReader.debug("Expression: label: "+ label +", exp: "+ exp +", type: "+ type);
-
-      // Gibt es das Ausgabeelement schon?
-      if(typeof registeredElements[label] == 'undefined' || registeredElements[label] == '') {
-        var input = JXG.GeogebraReader.getElement(tree, label);
-        registeredElements[label] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, input, null, type);
-        JXG.GeogebraReader.debug("regged: "+ registeredElements[label].id);
-      }
-
-      // JS/CC-Parser aufrufen
-      // var out = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, label, exp);
-      var out = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, label, JXG.GeogebraReader.functionParse(exp));
-    }
-*/
 
   } // end: for construction
   board.fullUpdate();
@@ -1646,8 +1622,8 @@ this.prepareString = function(fileStr) {
     bA = [];
     for (i=0;i<fileStr.length;i++)
       bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
-            
-    fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");  // Unzip
+    // Unzip
+    fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");
   }
   return fileStr;
 };
