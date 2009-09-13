@@ -10,20 +10,14 @@ if(element || typeof registeredElements[element] !== 'undefined') {
 }
 
 /*
-    Default template driver for JS/CC generated parsers running as
-    browser-based JavaScript/ECMAScript applications.
-    
-    WARNING:     This parser template will not run as console and has lesser
-                features for debugging than the console derivates for the
-                various JavaScript platforms.
-    
-    Features:
-    - Parser trace messages
-    - Integrated panic-mode error recovery
-    
-    Written 2007, 2008 by Jan Max Meyer, J.M.K S.F. Software Technologies
-    
-    This is in the public domain.
+  This parser was generated with: The LALR(1) parser and lexical analyzer generator for JavaScript, written in JavaScript
+  In the version 0.30 on http://jscc.jmksf.com/
+
+  It is based on the default template driver for JS/CC generated parsers running as
+  browser-based JavaScript/ECMAScript applications and was strongly modified.
+
+  The parser was written 2007, 2008 by Jan Max Meyer, J.M.K S.F. Software Technologies
+  This is in the public domain.
 */
 
 var _dbg_withtrace        = false;
@@ -945,9 +939,6 @@ this.writeElement = function(registeredElements, tree, board, output, input, cmd
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-      for (var x in attr) $('debug').innerHTML += x+':'+attr[x]+' ';    
-      $('debug').innerHTML += '<br>';
-
       if(JXG.getReference(board, input[1].id).type == 1330925652) var type = 'line'; // Punkt -> Gerade
       else if(JXG.getReference(board, input[1].id).type == 1330924622) var type = 'parallel'; // Parallele durch Punkt
 
@@ -1435,7 +1426,7 @@ this.writeElement = function(registeredElements, tree, board, output, input, cmd
       var func = JXG.GeogebraReader.getElement(tree, attr.name, true);
       func = JXG.GeogebraReader.functionParse(func.attributes['exp'].value);
       //TODO: expression parsen
-      func = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, false, func);
+      // func = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, false, func);
 
       try {
         var l = func.length - 1;
@@ -1448,7 +1439,7 @@ this.writeElement = function(registeredElements, tree, board, output, input, cmd
         else if (l==4)
           f = board.createElement('functiongraph', [Function(func[0], func[1], func[2], func[3], func[4])]);
 
-        $('debug').innerHTML += "Functiongraph: "+ attr.name +": "+ func[l] +" f="+f.toString() +"<br/>\n";
+        $('debug').innerHTML += "Functiongraph "+ attr.name +"("+ func[0] +", ...) = "+ func[l] +"<br/>\n";
         return f;
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> Functiongraph " + attr.name +"<br>\n";
@@ -1503,7 +1494,7 @@ this.writeElement = function(registeredElements, tree, board, output, input, cmd
      }
    break;
 
-// noch zu implementieren: area, funktionen
+// noch zu implementieren: .area() als Flaeche
 
 // case 'transform':
 // break;
@@ -1601,15 +1592,16 @@ this.readGeogebra = function(tree, board) {
     for (var s=0; s<elements.length; s++) {
       var Data = elements[s];
       var el = Data.attributes['label'].value;
-      JXG.GeogebraReader.debug("Betrachte Rest: "+ el);
+
+      // JXG.GeogebraReader.debug("Betrachte Rest: "+ el);
       if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
         // check if there is an according expression
         if(expr = JXG.GeogebraReader.getElement(tree, el, true))
-          registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, expr, false, 'function');
+          registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, expr, false, Data.attributes['type'].value);
         else
           registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
 
-        JXG.GeogebraReader.debug("Rest: "+ el +", regged: "+ typeof registeredElements[el]);
+        // JXG.GeogebraReader.debug("Rest: "+ el +", regged: "+ typeof registeredElements[el]);
       }
     }
 

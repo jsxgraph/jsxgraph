@@ -1,15 +1,13 @@
 <html>
 <head>
-   <title>JSXGraph example</title>
-   <link rel="stylesheet" type="text/css" href="../../../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../../../distrib/prototype.js"></script>
-   <script type="text/javascript" src="../../../src/loadjsxgraph.js"></script>
+  <title>JSXGraph example</title>
+  <link rel="stylesheet" type="text/css" href="../../../distrib/jsxgraph.css" />
+  <script type="text/javascript" src="../../../distrib/prototype.js"></script>
+  <script type="text/javascript" src="../../../src/loadjsxgraph.js"></script>
 </head>
 <body>
 <body id="body">
-   <!-- Drawing area  -->
-   <div id="box" class='jxgbox' style="width:1000px; height:400px; /*overflow: scroll;*/"></div>
-   <!-- Drawing area  -->
+<div id="box" class='jxgbox' style="width:1000px; height:400px;"></div>
 <form>
     <p>
 	<input type='button' value='Zoom In' onclick='board.zoomIn()'>
@@ -23,7 +21,7 @@
 		<option value='./elements/dreheobjektumpunkt.ggb'>[X] dreheobjektumpunkt</option>
 		<option value='./elements/geradedurchzweipunkte.ggb'>[X] geradedurchzweipunkte</option>
 		<option value='./elements/geradenspiegelung.ggb'>[X] geradenspiegelung</option>
-		<option value='./elements/halbkreisdurchzweipunkte.ggb'>halbkreisdurchzweipunkte (semicircle)</option><!-- noch mit Fehler, wird aber richtig angezeigt, Konstr. ueber sector -->
+		<option value='./elements/halbkreisdurchzweipunkte.ggb'>[X] halbkreisdurchzweipunkte (semicircle)</option><!-- noch mit Fehler, wird aber richtig angezeigt, Konstr. ueber sector -->
 		<option value='./elements/kreisbogenmitmittelpunktundzweipunkte.ggb'>[X] kreisbogenmitmittelpunktundzweipunkte</option>
 		<option value='./elements/kreisdurchdreipunkte.ggb'>[X] kreisdurchdreipunkte</option>
 		<option value='./elements/kreismitmittelpunktdurchpunkt.ggb'>[X] kreismitmittelpunktdurchpunkt</option>
@@ -59,6 +57,7 @@
 		<option value='./elements/flaeche.ggb'>flaeche</option><!-- Textpol1 mit Flaechenangabe implementieren -->
 		
 		<option value='./elements/sin-point+slider.ggb' selected>Sinus(punkt + slider)</option>
+		<option value='./elements/sin-intervall.ggb'>Sinus -3, 3</option>
 		<option value='./elements/kurvendiskussion.ggb'>kurvendiskussion (x^3 + 3 x^2 + 1)</option>
 		<option>-----------------</option>
 		<option value='./worksheets/GS_Konstruktion_worksheet.ggb'>GS_Konstruktion_worksheet</option>
@@ -131,28 +130,22 @@
 		<option value='./worksheets/vektor_worksheet.ggb'>vektor_worksheet</option>
 		<option value='./worksheets/verschiebung_worksheet.ggb'>verschiebung_worksheet</option>
 		<option value='./worksheets/verzinsung_worksheet.ggb'>verzinsung_worksheet</option>
-		
     </select>
     <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" />
-   </form>
-   <div id="debug" style="display:block; /*overflow:scroll;*/"></div>
-   
-<script>
-   var board;
+</form>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+  var board;
+  function loadFile(bspname, format) {
+    document.getElementById('box').innerHTML = '';
+    var value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value;
+    $('debug').innerHTML = "<b>Debug (lade "+ value +" ...):</b>";
 
-	function loadFile(bspname,format) {
-	        document.getElementById('box').innerHTML = '';
-	        document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";
+    if(typeof board != 'undefined') JXG.JSXGraph.freeBoard(board);
 
-	        if(typeof board != 'undefined') {
-	            JXG.JSXGraph.freeBoard(board);
-	        }
-	        var value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value;
-			$('debug').innerHTML += value +"<br/>";
-			document.title = "JSXGraph example: "+ document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
-	        board = JXG.JSXGraph.loadBoardFromFile('box',value, format);
-    }
+    document.title = "JSXGraph example: "+ document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
+    board = JXG.JSXGraph.loadBoardFromFile('box',value, format);
+  }
 </script>
-
 </body>
 </html>

@@ -7,6 +7,7 @@ Implementiert:
 * Strahl: Strahl durch zwei Punkte
 * Vieleck: Vieleck, Regelmäßiges Vieleck
 * Gerade: Gerade durch zwei Punkte, Parallele Gerade, Senkrechte Gerade, Mittelsenkrechte, Winkelhalbierende, Tangenten, Polare oder konjugierter Durchmesser
+* Ortslinie: Ortslinie (serverseitig)
 * Kegelschnitt: Kreis mit Mittelpunkt durch Punkt, Kreis mit Mittelpunkt und Radius, Kreis durch drei Punkte
 * Bogen und Sektor: Halbkreis, Kreisbogen mit Mittelpunkt durch zwei Punkte, Kreissektor mit Mittelpunkt durch zwei Punkte, Umkreisbogen durch drei Punkte, Umkreissektor durch drei Punkte
 * Zahl und Winkel: Abstand oder Länge, Fläche, Steigung, Schieberegler, Winkel, Winkel mit fester Größe
@@ -21,15 +22,11 @@ Noch nicht implementiert:
 * Zahl und Winkel: Fläche
 * Wahrheitswerte: Kontrollkästchen um Objekte anzuzeigen / auszublenden
 * Text: Text, LaTeX Formeln
-* Ortslinie: Ortslinie
 
 Noch nicht funktionsfähig:
 * Kegelschnitt: Kegelschnitt durch fünf Punkte
-* Bild: Bild einfügen
+* Bild: Bild einfügen (IE-Problem)
 * Eigenschaften von Bildern: Hintergrundbild, Transparenzeffekt
-
-Fragen:
-* Ortslinie: Ortslinie (in: noch nicht implementiert)
 
 -------
 
@@ -38,7 +35,6 @@ Implementiert:
 * Zahlen und Winkel: Schieberegler und Pfeiltasten, Werte einschränken
 * Punkte und Vektoren
 * Gerade: xAchse und yAchse
-* Funktion von x: Funktion auf Intervall einschränken
 * Zahl: Länge, Abstand, Steigung
 * Winkel: Winkel
 * Punkt: Punkt, Mittelpunkt, Schwerpunkt
@@ -55,28 +51,21 @@ Implementiert:
 
 Noch nicht implementiert:
 * Allgemeines: Werte von Objekten ändern, Animation
+* Funktion von x: Funktion auf Intervall einschränken
 * Liste von Objekten
 * Arithmetische Operationen (Parser und Grammatik im Aufbau)
 * Wahrheitswerte: Kontrollkästchen und Pfeiltasten
-* Boolesche Operationen
+* Boolesche Operationen, Boolesche Befehle
 * Allgemeine Befehle: Beziehung, Lösche, Element
 * Zahl: Fläche, Ganzzahliger Rest, Ganzzahldivision, Krümmung, Radius, Umfang, Parameter, Hauptachsenlänge, Nebenachsenlänge, Exzentrizität, Integral, Untersumme, Obersumme, Iteration, Minimum und Maximum, Teilverhältnis, Doppelverhältnis
 * Punkt: Brennpunkt, Scheitel, Schneide, Nullstelle, Extremum, Wendepunkt
 * Vektor: Richtung, Einheitsvektor, Normalvektor, Einheitsnormalvektor, Krümmungsvektor
 * Gerade: Asymptote,  Leitlinie,  Hauptachse,  Nebenachse,  Durchmesser
-* Kegelschnitt: Krümmungskreis,  Ellipse,  Hyperbel, Parabel
+* Kegelschnitt: Ellipse, Hyperbel, Parabel
 * Funktion: Ableitung,  Integral,  Polynom,  TaylorPolynom,  Funktion (im Aufbau),  Bedingte Funktion
+* Folge: Folge, Andere Befehle für Folgen, Iterationsliste
 * Ortslinie: Ortslinie
 
 Noch nicht funktionsfähig:
-* Kegelschnitt
-* Boolesche Befehle
-* Kegelschnitt: Krümmungskreis,  Kegelschnitt
-* Bild: Eckpunkt
-* Folge: Folge, Andere Befehle für Folgen, Iterationsliste
-
-Fragen:
-* Gerade: Asymptote, Leitlinie, Hauptachse,  Nebenachse (in: noch nicht implementiert)
-* Kegelschnitt: Krümmungskreis,  Hyperbel (in: noch nicht implementiert und !funktionsfähig)
-* Ortslinie: Ortslinie (in: noch nicht implementiert)
-* Folge: Folge, Andere Befehle für Folgen, Iterationsliste (in: noch nicht funktionsfähig)
+* Kegelschnitt: Krümmungskreis, Kegelschnitt
+* Bild: Eckpunkt (IE-Problem)
