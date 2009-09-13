@@ -4,7 +4,7 @@ JXG.GeogebraReader = new function() {
 
  */
 this.ggbParse = function(board, tree, registeredElements, element, exp) {
-if(element || typeof registeredElements[element] !== 'undefined') {
+if(element) {
   JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ registeredElements[element].name + "("+ registeredElements[element].id +")");
   var p = JXG.getReference(board, registeredElements[element].id);
 }
@@ -696,7 +696,6 @@ this.colorProperties = function(Data, attr) {
   var r = (Data.getElementsByTagName("objColor")[0].attributes["r"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["r"].value).toString(16) : 0;
   var g = (Data.getElementsByTagName("objColor")[0].attributes["g"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["g"].value).toString(16) : 0;
   var b = (Data.getElementsByTagName("objColor")[0].attributes["b"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["b"].value).toString(16) : 0;
-  // gxtEl.colorA = (Data.getElementsByTagName("objColor")[0].attributes["alpha"]) ? 1*Data.getElementsByTagName("objColor")[0].attributes["alpha"].value : 0;
   if (r.length == 1) r = '0' + r;
   if (g.length == 1) g = '0' + g;
   if (b.length == 1) b = '0' + b;
@@ -705,8 +704,9 @@ this.colorProperties = function(Data, attr) {
   attr.strokeColor = attr.fillColor;
 
   // if(a != 0) {
-    attr.strokeOpacity = attr.fillOpacity;
     attr.fillOpacity = a;
+    // attr.strokeOpacity = attr.fillOpacity;
+
   // }
   return attr;
 }; 
@@ -811,6 +811,8 @@ JXG.GeogebraReader.debug('* in: '+ exp);
       output.push("return "+ expr +";");
       JXG.GeogebraReader.debug("* out: "+ output.toString());
       return output;
+    } else {
+      return o;
     }
 };
 
@@ -1593,15 +1595,23 @@ this.readGeogebra = function(tree, board) {
       var Data = elements[s];
       var el = Data.attributes['label'].value;
 
-      // JXG.GeogebraReader.debug("Betrachte Rest: "+ el);
       if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
-        // check if there is an according expression
-        if(expr = JXG.GeogebraReader.getElement(tree, el, true))
-          registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, expr, false, Data.attributes['type'].value);
-        else
-          registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
+        JXG.GeogebraReader.debug("Betrachte Rest: "+ el);
+        registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
 
-        // JXG.GeogebraReader.debug("Rest: "+ el +", regged: "+ typeof registeredElements[el]);
+        if(expr = JXG.GeogebraReader.getElement(tree, el, true)) {
+          var type = Data.attributes['type'].value;
+          switch(type) {
+            case 'text':
+            case 'function':
+              // registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, expr, false, type);
+            break;
+            default:
+              JXG.GeogebraReader.ggbParse(board, tree, registeredElements, el, expr.attributes['exp'].value);
+            break;
+          }
+        }
+
       }
     }
 
