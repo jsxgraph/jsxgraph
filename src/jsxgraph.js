@@ -177,9 +177,10 @@ JXG.JSXGraph = new function (forceRenderer) {
     };
 
     /**
-     * Load a board from an uncompressed geonext file.
+     * Load a board from a file of format GEONExT or Intergeo.
      * @param {String} box Html-ID to the Html-element in which the board is painted.
-     * @param {String} file Url to the geonext-file. Must be uncompressed (.nc.gxt).
+     * @param {String} file Url to the geonext-file. 
+     * @param {String} string containing the file format: 'Geonext' or 'Intergeo'. 
      * @return {JXG.Board} Reference to the created board.
      * @see JXG.GeonextReader
      */
@@ -206,6 +207,14 @@ JXG.JSXGraph = new function (forceRenderer) {
         return board;
     };
 
+    /**
+     * Load a board from a base64 encoded string containing a GEONExT or Intergeo construction.
+     * @param {String} box Html-ID to the Html-element in which the board is painted.
+     * @param {String} string base64 encoded string.
+     * @param {String} string containing the file format: 'Geonext' or 'Intergeo'. 
+     * @return {JXG.Board} Reference to the created board.
+     * @see JXG.GeonextReader
+     */
     this.loadBoardFromString = function(box, string, format) {
         var renderer, dimensions, board;
         

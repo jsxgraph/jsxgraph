@@ -54,6 +54,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * Board is in no special mode, objects are highlighted on mouse over and objects may be
      * clicked to start drag&drop.
      * @type int
+     * @private
      * @final
      */
     this.BOARD_MODE_NONE = 0x0000;
@@ -63,6 +64,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * drag_obj is updated on mouse movement.
      * @type int
      * @see #drag_obj
+     * @private
      * @final
      */
     this.BOARD_MODE_DRAG = 0x0001;
@@ -72,6 +74,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * is determined by the construction type stored in the field constructionType.
      * @type int
      * @see #constructionType
+     * @private
      * @final
      */
     this.BOARD_MODE_CONSTRUCT = 0x0010;
@@ -79,6 +82,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     /**
      * Board is in move origin mode.
      * @type int
+     * @private
      * @final
      */
     this.BOARD_MODE_MOVE_ORIGIN = 0x0002;
@@ -87,6 +91,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * Updating is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
      * @type int
      * @see #updateQuality
+     * @private
      * @final
      */
     this.BOARD_QUALITY_LOW = 0x1;
@@ -95,6 +100,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * Updating is made with high quality, e.g. graphs are evaluated at much more points.
      * @type int
      * @see #updateQuality
+     * @private
      * @final
      */
     this.BOARD_QUALITY_HIGH = 0x2;
@@ -102,48 +108,56 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     /**
      * When the board is in construction mode this construction type says we want to construct a point.
      * @type int
+     * @private
      * @final
      */
     this.CONSTRUCTION_TYPE_POINT         = 0x43545054;       // CTPT
     /**
      * When the board is in construction mode this construction type says we want to construct a circle.
      * @type int
+     * @private
      * @final
      */
     this.CONSTRUCTION_TYPE_CIRCLE        = 0x4354434C;       // CTCL
     /**
      * When the board is in construction mode this construction type says we want to construct a line.
      * @type int
+     * @private
      * @final
      */
     this.CONSTRUCTION_TYPE_LINE          = 0x43544C4E;       // CTLN
     /**
      * When the board is in construction mode this construction type says we want to construct a glider.
      * @type int
+     * @private
      * @final
      */
     this.CONSTRUCTION_TYPE_GLIDER        = 0x43544744;       // CTSD
     /**
      * When the board is in construction mode this construction type says we want to construct a midpoint.
      * @type int
+     * @private
      * @final
      */
     this.CONSTRUCTION_TYPE_MIDPOINT      = 0x43544D50;       // CTMP
     /**
      * When the board is in construction mode this construction type says we want to construct a perpendicular.
      * @type int
+     * @private
      * @final
      */
     this.CONSTRUCTION_TYPE_PERPENDICULAR = 0x43545044;       // CTPD
     /**
      * When the board is in construction mode this construction type says we want to construct a parallel.
      * @type int
+     * @private
      * @final
      */
     this.CONSTRUCTION_TYPE_PARALLEL      = 0x4354504C;       // CTPL
     /**
      * When the board is in construction mode this construction type says we want to construct a intersection.
      * @type int
+     * @private
      * @final
      */
     this.CONSTRUCTION_TYPE_INTERSECTION  = 0x43544953;       // CTIS
@@ -166,6 +180,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
 
     /**
      * A reference to this boards renderer.
+     * @private
      * @type AbstractRenderer
      */
     this.renderer = renderer;
@@ -178,6 +193,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     
     /**
      * Dimension of the board.
+     * @private
      * @type int
      */
     this.dimension = 2;
@@ -237,6 +253,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     /**
      * A reference to an object of class Algebra.
      * @see Algebra
+     * @private
      * @type Algebra
      */
     this.algebra = new JXG.Algebra(this);
@@ -256,24 +273,28 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
 
     /**
      * An array containing all other boards that are updated after this board has been updated. 
+     * @private
      * @type Array
      */
     this.dependentBoards = [];
 
     /**
      * An associative array containing all geometric objects belonging to the board. Key is the id of the object and value is a reference to the object.
+     * @private
      * @type Object
      */
     this.objects = {};
         
     /**
      * An associative array containing all highlighted geometric objects belonging to the board.
+     * @private
      * @type Object
      */
     this.highlightedObjects = {};
     
     /**
      * Number of objects ever created on this board. This includes every object, even invisible and deleted ones.
+     * @private
      * @type int
      */
     this.numObjects = 0;
@@ -291,6 +312,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * <li>Board.BOARD_MODE_DRAG</li>
      * <li>Board.BOARD_MODE_CONSTRUCT</li>
      * </ul>
+     * @private
      * @type int
      */
     this.mode = this.BOARD_MODE_NONE;
@@ -303,12 +325,14 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * <li>BOARD_QUALITY_HIGH</li>
      * </ul>
      * @see #mode
+     * @private
      * @type int
      */
     this.updateQuality = this.BOARD_QUALITY_HIGH;
     
    /**
     * If true updates are skipped
+     * @private
     * @type bool
     */   
    this.isSuspendedRedraw = false;
@@ -365,6 +389,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    
    /**
     * Visibility of the boards grid.
+    * @private
     * @type bool
     */
    this.hasGrid = this.options.grid.hasGrid;
@@ -374,6 +399,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @type int
     * @see drag_dy
     * @see #drag_obj
+    * @private
     */
    this.drag_dx = 0;
    
@@ -382,19 +408,24 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @type int
     * @see drag_dx
     * @see #drag_obj
+    * @private
     */
    this.drag_dy = 0;
    
    /**
     * A reference to the object that is dragged on the board.
+    * @private
     * @type Object
     */
    this.drag_obj = null;
 
    /**
     * string containing the XML text of the construction.
-    * it is set in @see FileReader.parseString
+    * it is set in @see FileReader.parseString.
+    * Only useful if a construction from GEONExT, Intergeo, ...
+    * is read.
     * @type string
+    * @private
     */
    this.xmlString = '';
     
@@ -408,6 +439,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    /**
     * Full updates are needed after zoom and axis translates.
     * This saves some time during update
+    * @private
     * @type bool
     */
    this.needsFullUpdate = false;
@@ -416,6 +448,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * if {reducedUpdate} is set to true, then only the dragged element and few (i.e. 2) following
     * elements are updated during mouse move. On muose up the whole construction is
     * updated. This enables JSXGraph even on very slow devices.
+    * @private
     * @type bool
     */
    this.reducedUpdate = false;
@@ -425,6 +458,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * then this property should be set to true.
     * Then no stdform updates and no dragging
     * of lines, circles and curves is possible.
+    * @private
     * @type bool
     */
    this.geonextCompatibilityMode = false;
@@ -440,6 +474,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
 };
 
 /**
+ * @private
  * Generates unique name for the given object. The result depends on object.type, if the object is a point, just capital characters are used, if it is
  * a line just lower case characters. If object is of type Polygon, lower case prefixed with P_ is used and if it's of type circle, lower case characters
  * prefixed with k_ is used. In any other case, lower case chars prefixed with s_ is used.
@@ -528,6 +563,7 @@ JXG.Board.prototype.generateName = function(object) {
 /**
  * Generates unique id for a board. The result is randomly generated and prefixed with 'gxtBoard'.
  * @return {String} Unique id for a board.
+ * @private
  */
 JXG.Board.prototype.generateId = function () {
     var r = 1;
@@ -541,6 +577,7 @@ JXG.Board.prototype.generateId = function () {
 };
 
 /**
+ * @private
  * Calculates mouse coordinates relative to the boards container.
  * @param {Event} Evt The browsers event object.
  * @type Array
@@ -560,32 +597,36 @@ JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
 };
 
 /**
-* Handler for click on left arrow in the navigation bar
-**/
+ * @private
+ * Handler for click on left arrow in the navigation bar
+ **/
 JXG.Board.prototype.clickLeftArrow = function (Event) {
     this.origin.scrCoords[1] += this.canvasWidth*0.1;
     this.moveOrigin();
 };
 
 /**
-* Handler for click on right arrow in the navigation bar
-**/
+ * @private
+ * Handler for click on right arrow in the navigation bar
+ **/
 JXG.Board.prototype.clickRightArrow = function (Event) {
     this.origin.scrCoords[1] -= this.canvasWidth*0.1;
     this.moveOrigin();
 };
 
 /**
-* Handler for click on up arrow in the navigation bar
-**/
+ * @private
+ * Handler for click on up arrow in the navigation bar
+ **/
 JXG.Board.prototype.clickUpArrow = function (Event) {
     this.origin.scrCoords[2] += this.canvasHeight*0.1;
     this.moveOrigin();
 };
 
 /**
-* Handler for click on down arrow in the navigation bar
-**/
+ * @private
+ * Handler for click on down arrow in the navigation bar
+ **/
 JXG.Board.prototype.clickDownArrow = function (Event) {
     this.origin.scrCoords[2] -= this.canvasHeight*0.1;
     this.moveOrigin();
@@ -594,6 +635,7 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
 /**
  * This method is called by the browser when the left mouse button is released.
  * @param {Event} Event The browsers event object.
+ * @private
  */
 JXG.Board.prototype.mouseUpListener = function (evt) {
     // redraw with high precision
@@ -619,6 +661,7 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
 /**
  * This method is called by the browser when the mouse is moved.
  * @param {Event} Evt The browsers event object.
+ * @private
  */
 JXG.Board.prototype.mouseDownListener = function (Evt) {
     var el;
@@ -674,6 +717,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
 /**
  * This method is called by the browser when the left mouse button is clicked.
  * @param {Event} Event The browsers event object.
+ * @private
  */
 JXG.Board.prototype.mouseMoveListener = function (Event) {
     var el;
@@ -755,6 +799,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
 /**
  * Updates and displays a little info box to show coordinates of current selected points.
  * @param {JXG.GeometryElement} el A GeometryElement
+ * @private
  */
 JXG.Board.prototype.updateInfobox = function(el) {
     var x, y;
@@ -792,6 +837,7 @@ JXG.Board.prototype.updateInfobox = function(el) {
 
 /**
  * Remove highlighting of all elements.
+ * @private
  */
 JXG.Board.prototype.dehighlightAll = function(x,y) {
     for(var Element in this.highlightedObjects) {
@@ -848,6 +894,7 @@ JXG.Board.prototype.getUsrCoordsOfMouse = function (Evt) {
  * @param {Event} Evt Event object containing the mouse coordinates.
  * @type Array
  * @return Array of elements at the current mouse position plus current user coordinates of mouse.
+ * @private
  */
 JXG.Board.prototype.getAllUnderMouse = function (Evt) {
     var elList = this.getAllObjectsUnderMouse(Evt);
@@ -861,6 +908,7 @@ JXG.Board.prototype.getAllUnderMouse = function (Evt) {
  * @param {Event} Evt Event object containing the mouse coordinates.
  * @type Array
  * @return Array of elements at the current mouse position.
+ * @private
  */
 JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
     var cPos = this.getRelativeMouseCoordinates(Evt);
@@ -884,6 +932,7 @@ JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
  * Sets the board mode.
  * @param {int} mode The board mode the board should be set to. Possible values are
  * <li><ul>BOARD_MODE_NONE</ul><ul>BOARD_MODE_DRAG</ul><ul>BOARD_MODE_CONSTRUCT</ul><ul>BOARD_MODE_MOVE_ORIGIN</ul></li>
+ * @private
  */
 JXG.Board.prototype.setBoardMode = function (mode) {
     this.mode = mode;
@@ -891,6 +940,7 @@ JXG.Board.prototype.setBoardMode = function (mode) {
 
 /**
  * Moves the origin and initializes an update of all elements.
+ * @private
  */
 JXG.Board.prototype.moveOrigin = function () {
     for(var Element in this.objects) {
@@ -917,6 +967,7 @@ JXG.Board.prototype.moveOrigin = function () {
  * @param {JXG.Point} obj The point to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addPoint = function (obj) {   
     var number = this.numObjects;
@@ -961,6 +1012,7 @@ JXG.Board.prototype.addPoint = function (obj) {
  * @param {JXG.Line} obj The line to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addLine = function (obj) {
     var number = this.numObjects;
@@ -1001,6 +1053,7 @@ JXG.Board.prototype.addLine = function (obj) {
  * @param {JXG.Circle} obj The circle to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addCircle = function(obj) {
     var number = this.numObjects;
@@ -1045,6 +1098,7 @@ JXG.Board.prototype.addCircle = function(obj) {
  * @param {JXG.Polygon} obj The polygon to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addPolygon = function(obj) {
     var number = this.numObjects;
@@ -1090,6 +1144,7 @@ JXG.Board.prototype.addPolygon = function(obj) {
  * @param {JXG.Arc} obj The arc to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addArc = function(obj) {
     var number = this.numObjects;
@@ -1134,6 +1189,7 @@ JXG.Board.prototype.addArc = function(obj) {
  * @param {JXG.Sector} obj The sector to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addSector = function(obj) {
     var number = this.numObjects;
@@ -1160,6 +1216,7 @@ JXG.Board.prototype.addSector = function(obj) {
  * @param {JXG.Angle} obj The angle to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addAngle = function (obj) {
     var number = this.numObjects;
@@ -1202,6 +1259,7 @@ JXG.Board.prototype.addAngle = function (obj) {
  * @param {JXG.Curve} obj The curve to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addCurve = function (obj) {
     var number = this.numObjects;
@@ -1246,6 +1304,7 @@ JXG.Board.prototype.addCurve = function (obj) {
  * @param {JXG.Chart} obj The chart to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addChart = function (obj) {
     var number = this.numObjects;
@@ -1277,6 +1336,7 @@ JXG.Board.prototype.addChart = function (obj) {
  * empty string is given, an unique name will be generated.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addMidpoint = function(p1, p2, id, name) {
    var point1 = JXG.getReference(this, p1);
@@ -1313,6 +1373,7 @@ JXG.Board.prototype.addMidpoint = function(p1, p2, id, name) {
  * empty string is given, an unique name will be generated.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addReflection = function(line, point, id, name) {
    var po = JXG.getReference(this, point);
@@ -1350,6 +1411,7 @@ JXG.Board.prototype.addReflection = function(line, point, id, name) {
  * empty string is given, an unique name will be generated.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addRotation = function(rotpoint, point, phi, id, name) {
     var po = JXG.getReference(this, point);
@@ -1387,6 +1449,7 @@ JXG.Board.prototype.addRotation = function(rotpoint, point, phi, id, name) {
  * empty string is given, an unique name will be generated. 
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addParallel = function(l, p, id, name) {
     var point = JXG.getReference(this, p);
@@ -1435,6 +1498,7 @@ JXG.Board.prototype.addParallel = function(l, p, id, name) {
  * empty string is given, an unique name will be generated. 
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addArrowParallel = function(a, p, arrowId, pointId, arrowName, pointName) {
     var point = JXG.getReference(this, p);
@@ -1500,6 +1564,7 @@ JXG.Board.prototype.addArrowParallel = function(a, p, arrowId, pointId, arrowNam
  * empty string is given, an unique name will be generated.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addParallelPoint = function(p1, p2, p3, id, name) {
     var number = this.numObjects;
@@ -1540,6 +1605,7 @@ JXG.Board.prototype.addParallelPoint = function(p1, p2, p3, id, name) {
  * @param {JXG.Arrow} obj The arrow to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addArrow = function(obj) {
     var number = this.numObjects;
@@ -1571,6 +1637,7 @@ JXG.Board.prototype.addArrow = function(obj) {
  * empty string is given, an unique name will be generated.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addNormal = function(l, p, id, name) {
     var point = JXG.getReference(this, p);
@@ -1634,6 +1701,7 @@ JXG.Board.prototype.addNormal = function(l, p, id, name) {
  * empty string is given, an unique name will be generated.
  * @type Array
  * @return Array of element ids of the created objects. First element is id of line, second is id of point.
+ * @private
  */
 JXG.Board.prototype.addPerpendicular = function(l, p, idL, nameL, idP, nameP) {
     var point = JXG.getReference(this, p);
@@ -1697,6 +1765,7 @@ JXG.Board.prototype.addPerpendicular = function(l, p, idL, nameL, idP, nameP) {
  * empty string is given, an unique name will be generated.
  * @type Array
  * @return Array of element ids of the created objects. First element is id of line, second is id of point.
+ * @private
  */
 JXG.Board.prototype.addPerpendicularPoint = function(l, p, idP, nameP) {
 
@@ -1745,6 +1814,7 @@ JXG.Board.prototype.addPerpendicularPoint = function(l, p, idP, nameP) {
  * empty string is given, an unique name will be generated.
  * @type Array
  * @return Array of element ids of the created objects. First element is midpoint, second is circle.
+ * @private
  */
 JXG.Board.prototype.addCircumcenter = function(point1, point2, point3, midpointId, midpointName, circleId, circleName) {
     var p1 = JXG.getReference(this, point1);
@@ -1800,6 +1870,7 @@ JXG.Board.prototype.addCircumcenter = function(point1, point2, point3, midpointI
  * empty string is given, an unique name will be generated.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addCircumcenterMidpoint = function(point1, point2, point3, midpointId, midpointName) {
     var p1 = JXG.getReference(this, point1);
@@ -1835,6 +1906,7 @@ JXG.Board.prototype.addCircumcenterMidpoint = function(point1, point2, point3, m
  * @param {JXG.Intersection} obj The intersection to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addIntersection = function (obj) {
     var number = this.numObjects;
@@ -1868,6 +1940,7 @@ JXG.Board.prototype.addIntersection = function (obj) {
  * empty string is given, an unique name will be generated.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addAngleBisector = function(p1, p2, p3, id, name) {
    var point1 = JXG.getReference(this, p1);
@@ -1913,6 +1986,7 @@ JXG.Board.prototype.addAngleBisector = function(p1, p2, p3, id, name) {
  * @param {JXG.Text} obj The text to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addText = function (obj) {
     var number = this.numObjects;
@@ -2022,6 +2096,7 @@ JXG.Board.prototype.addConditions = function (str) {
  * Computes the commands in the conditions-section of the gxt file.
  * It is evaluated after an update, before the unsuspendRedraw.
  * The function is generated in @see #addConditions
+ * @private
  */
 JXG.Board.prototype.updateConditions = function() { return false; };
 
@@ -2030,6 +2105,7 @@ JXG.Board.prototype.updateConditions = function() { return false; };
  * @param {JXG.Image} obj The image to add.
  * @type String
  * @return Element id of the object.
+ * @private
  */
 JXG.Board.prototype.addImage = function (obj) {
     var number = this.numObjects;
@@ -2062,6 +2138,7 @@ JXG.Board.prototype.addImage = function (obj) {
  * @param {JXG.Curve} curve Integrated curve, must be of type 'plot'.
  * @type JXG.Polygon
  * @return Reference to the created polygon object.
+ * @private
  */
 JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     if(!JXG.isArray(ids) || (ids.length != 5)) {
@@ -2184,6 +2261,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
 
 /**
  * Calculates adequate snap sizes.
+ * @private
  */
 JXG.Board.prototype.calculateSnapSizes = function() {
     var p1 = new JXG.Coords(JXG.COORDS_BY_USER,[0,0],this);
@@ -2207,6 +2285,7 @@ JXG.Board.prototype.calculateSnapSizes = function() {
 /**
  * Apply update on all objects with the
  * new zoom-factors.
+ * @private
  */
 JXG.Board.prototype.applyZoom = function() {
     this.updateQuality = this.BOARD_QUALITY_HIGH;
@@ -2420,6 +2499,7 @@ JXG.Board.prototype.showXML = function() {
 /** 
  * Sets for all objects the needsUpdate flag to "true".
  * @param {Object,String} drag Element that caused the update.
+ * @private
  */
 JXG.Board.prototype.prepareUpdate = function(drag) {
     for(var el in this.objects) {
@@ -2430,6 +2510,7 @@ JXG.Board.prototype.prepareUpdate = function(drag) {
 /**
   * Runs through all elements and calls their update() method.
   * @param {Object,String} drag Element that caused the update.
+  * @private
   */
 JXG.Board.prototype.updateElements = function(drag) {
     drag = JXG.getReference(this, drag);
@@ -2452,6 +2533,7 @@ JXG.Board.prototype.updateElements = function(drag) {
 /**
   * Runs through all elements and calls their update() method.
   * @param {Object,String} drag Element that caused the update.
+  * @private
   */
 JXG.Board.prototype.updateRenderer = function(drag) {
     var drag = JXG.getReference(this, drag);
@@ -2496,6 +2578,7 @@ JXG.Board.prototype.removeHook = function(id) {
 
 /**
   * Runs through all hooked functions and calls them.
+  * @private
   */
 JXG.Board.prototype.updateHooks = function() {
     for(var i=0; i<this.hooks.length; i++) {
@@ -2668,6 +2751,7 @@ JXG.Board.prototype.clearTraces = function() {
 
 /**
  * Method called before a board is initialized or load from a file. Currently unused.
+ * @private
  */
 JXG.Board.prototype.beforeLoad = function() {
 /*    if(document.getElementsByTagName("body").length > 0) {
@@ -2689,6 +2773,7 @@ JXG.Board.prototype.beforeLoad = function() {
 
 /**
  * Method called after a board got initialized or load from a file. Currently unused.
+ * @private
  */
 JXG.Board.prototype.afterLoad = function() {
   /*  if(document.getElementsByTagName("body").length > 0) {
