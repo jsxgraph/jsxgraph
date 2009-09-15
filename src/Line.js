@@ -375,7 +375,7 @@ JXG.Line.prototype.generatePolynomial = function (/** JXG.Point */ p) /** array 
      *    u2w1 - u2v1 + w2v1 - u1w2 + u1v2 - w1v2 = 0
      */
 
-    return [[u2,'*',w1,'-',u2,'*',v1,'+',w2,'*',v1,'-',u1,'*',w2,'+',u1,'*',v2,'-',w1,'*',v2].join('')];
+    return [['(',u2,')*(',w1,')-(',u2,')*(',v1,')+(',w2,')*(',v1,')-(',u1,')*(',w2,')+(',u1,')*(',v2,')-(',w1,')*(',v2,')'].join('')];
 };
 
 /**

@@ -266,7 +266,7 @@ JXG.Circle.prototype.generatePolynomial = function (p) {
     if (rsq == '')
         return [];
 
-    var poly = '(' + g1 + '-' + m1 + ')^2 + (' + g2 + '-' + m2 + ')^2 - (' + rsq + ')';
+    var poly = '((' + g1 + ')-(' + m1 + '))^2 + ((' + g2 + ')-(' + m2 + '))^2 - (' + rsq + ')';
     return [poly];
 };
 
