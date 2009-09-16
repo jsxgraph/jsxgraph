@@ -27,14 +27,26 @@
         b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
         b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 
-        s1 = board.createElement('slider', [[0,-2],[5,-2],[-2,1,2]], {style:6, name:'S_1'});
-        s2 = board.createElement('slider', [[0,-3],[5,-3],[-10,0,10]], {style:6, name:'S_2'});
+        s1 = board.createElement('slider', [[0,-2],[5,-2],[-2,0.05,2]], {style:6, name:'S_1'});
+        s2 = board.createElement('slider', [[0,-3],[5,-3],[0,5,40]], {style:6, name:'S_2'});
+        
+        // Tagaki-Landsberg
+        var s = function(x){ return Math.abs(x-Math.round(x)); };
+        function f(x){
+            var n, su, wval;
+            su = 0.0;
+            wval = s1.Value();
+            for (n=0;n<s2.Value();n++) {
+                su += Math.pow(wval,n)*s(Math.pow(2,n)*x);
+            }
+            return su;
+        }
+
+		//eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
+		graph = board.createElement('functiongraph', [function(x){ return f(x); }, -10, 10],{strokecolor:'red'});
 
 
-		eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
-		graph = board.createElement('functiongraph', [function(x){ return f(x); }, -10, 10]);
-
-
+        /*
         p2 = board.createElement('glider', [graph], {style:6, name:'P'});
         g = board.D(f);
         g2 = board.createElement('functiongraph', [g, -10, 10],{dash:4});
@@ -43,7 +55,7 @@
         p4 = board.createElement('point', [function() { return p3.X();}, function() {return p2.Y();}],{style:1, name:''});
         pol = board.createElement('polygon', [p2,p3,p4], {});
         t = board.createElement('text', [function(){return p2.X()+1.1;},function(){return p2.Y()+(p3.Y()-p4.Y())/2;},function(){ return "m="+(board.round(p3.Y()-p4.Y(),2));}]); 
-        
+        */
         function doIt(){
         	eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
         	graph.yterm = function(x){ return f(x); };  // usually: e.g. "x^2"

@@ -828,7 +828,7 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
     for (i=0; i<len; i++) {
         scr = el.points[i].scrCoords;
         //if (el.curveType!='plot' && Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
-        if (isNaN(scr[1]) || isNaN(scr[2]) || Math.abs(scr[1])>w || (isFunctionGraph && (scr[2]>h || scr[2]<-0.5*h)) ) {  // PenUp
+        if (isNaN(scr[1]) || isNaN(scr[2]) /* || Math.abs(scr[1])>w || (isFunctionGraph && (scr[2]>h || scr[2]<-0.5*h))*/ ) {  // PenUp
             nextSymb = symbm;
         } else {
             pStr.push([nextSymb,Math.round(this.resolution*scr[1]),

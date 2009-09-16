@@ -185,7 +185,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
             t+=d;
         }  
     } else if (this.curveType == 'plot') {
-        len = this.numberPoints;
+        len = this.numberPointsLow; // Rough search quality
         for (i=0;i<len-1;i++) {
             x1 = this.X(i+1)-this.X(i);
             y1 = this.Y(i+1)-this.Y(i);
@@ -284,7 +284,6 @@ JXG.Curve.prototype.updateCurve = function () {
         }
     }
     len = this.numberPoints;
-    this.allocatePoints();  // It is possible, that the array length has increased.
     
     mi = this.minX();
     ma = this.maxX();
@@ -292,6 +291,7 @@ JXG.Curve.prototype.updateCurve = function () {
 
     // Discrete data points
     if (this.dataX!=null) { // x-coordinates are in an array
+        this.allocatePoints();  // It is possible, that the array length has increased.
         for (i=0; i<len; i++) {
             x = i;
             if (this.dataY!=null) { // y-coordinates are in an array
@@ -304,33 +304,180 @@ JXG.Curve.prototype.updateCurve = function () {
             suspendUpdate = true;
         }
     } else { // continuous x data
-        for (i=0; i<len; i++) {
-            t = mi+i*stepSize;
-            this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
-            this.updateTransform(this.points[i]);
-            suspendUpdate = true;
-        }
+        //this.updateParametricCurveNaive(mi,ma,len);
+        this.updateParametricCurve(mi,ma,len);
     }
-/*
+    this.getLabelAnchor();
+};
+
+JXG.Curve.prototype.updateParametricCurveNaive = function(mi,ma,len) {
+    var i, t,
+        suspendUpdate = false,
+        stepSize = (ma-mi)/len;
+        
     for (i=0; i<len; i++) {
-        if (this.dataX!=null) { // x-coordinates are in an array
-            x = i;
-            if (this.dataY!=null) { // y-coordinates are in an array
-                y = i;
-            } else {
-                y = this.X(x,suspendUpdate); // polar plot
-            }
-        } else {     // continuous data
-            x = mi+i*stepSize;
-            y = x;
-        }
-        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x,suspendUpdate),this.Y(y,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
+        t = mi+i*stepSize;
+        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
         this.updateTransform(this.points[i]);
         suspendUpdate = true;
     }
-*/    
-    this.getLabelAnchor();
-};
+}
+
+JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
+    var i, t, t0,
+        suspendUpdate = false,
+        stepSize = (ma-mi)/len,
+        po = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board),
+        x, y, x0, y0, top, depth,
+        MAX_DEPTH,
+        MAX_XDIST,
+        MAX_YDIST,
+        dyadicStack = [],
+        depthStack = [],
+        pointStack = [],
+        divisors = [], 
+        xd_ = NaN, yd_ = NaN,
+        doJump = false,
+        distOK = false,
+        j = 0;
+
+    
+    if (this.board.updateQuality==this.board.BOARD_QUALITY_LOW) {
+        MAX_DEPTH = 15;
+        MAX_XDIST = 15;
+        MAX_YDIST = 20;
+    } else {
+        MAX_DEPTH = 20;
+        MAX_XDIST = 1;
+        MAX_YDIST = 2;
+    }
+    
+    divisors[0] = ma-mi;
+    for (i=1;i<MAX_DEPTH;i++) {
+        divisors[i] = divisors[i-1]*0.5;
+    }
+    
+    i = 1;
+    dyadicStack[0] = 1;
+    depthStack[0] = 0;
+    t = mi;
+    po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
+    suspendUpdate = true;
+    x0 = po.scrCoords[1];
+    y0 = po.scrCoords[2];
+    t0 = t;
+    
+    t = ma;
+    po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
+    x = po.scrCoords[1];
+    y = po.scrCoords[2];
+    
+    pointStack[0] = [x,y];
+    
+    top = 1;
+    depth = 0;
+
+    this.points = [];
+    this.points[j++] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x0, y0], this.board);
+    
+    do {
+        distOK = (Math.abs(x-x0)<MAX_XDIST && Math.abs(y-y0)<MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
+        while ( depth<MAX_DEPTH &&
+               (!distOK || depth<3 /*|| (j>1 &&!this.bendOK(xd_,yd_,x-x0,y-y0))*/ )
+            ) {
+            dyadicStack[top] = i;
+            depthStack[top] = depth;
+            pointStack[top] = [x,y];
+            top++;
+            
+            i = 2*i-1;
+            depth++;
+            t = mi+i*divisors[depth];
+            po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
+            x = po.scrCoords[1];
+            y = po.scrCoords[2];
+            distOK = (Math.abs(x-x0)<MAX_XDIST && Math.abs(y-y0)<MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
+
+        }
+        if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH && !this.isContinuous(t0,t,8)) {
+            this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+            j++;
+        }
+        this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+        j++;
+        //xd_ = x-x0;
+        //yd_ = x-y0;
+        x0 = x;
+        y0 = y;
+        t0 = t;
+        
+        top--;
+        x = pointStack[top][0];
+        y = pointStack[top][1];
+        depth = depthStack[top]+1;
+        i = dyadicStack[top]*2;
+        
+    } while (top != 0);
+    this.numberPoints = this.points.length;
+    $('debug').innerHTML = ' '+this.numberPoints;
+        
+}
+
+JXG.Curve.prototype.isSegmentOutside = function (x0,y0,x1,y1) {
+    if (y0<0 && y1<0) { return true; }
+    else if (y0>this.board.canvasHeight && y1>this.board.canvasHeight) { return true; }
+    else if (x0<0 && x1<0) { return true; }
+    else if (x0>this.board.canvasWidth && x1>this.board.canvasWidth) { return true; }
+    return false;
+}
+
+JXG.Curve.prototype.isContinuous = function (t0, t1, MAX_ITER) {
+    var left, middle, right, tm,
+        iter = 0,
+        initDist, dist = Infinity,
+        dl, dr; 
+
+    if (Math.abs(t0-t1)<JXG.Math.eps) { return true; }
+    left = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
+    middle = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
+    right = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
+    
+    left.setCoordinates(JXG.COORDS_BY_USER, [this.X(t0,true),this.Y(t0,true)], false);
+    right.setCoordinates(JXG.COORDS_BY_USER, [this.X(t1,true),this.Y(t1,true)], false);
+    
+    initDist = Math.max(Math.abs(left.scrCoords[1]-right.scrCoords[1]),Math.abs(left.scrCoords[2]-right.scrCoords[2]));
+    while (iter++<MAX_ITER && dist>initDist*0.9) {
+        tm = (t0+t1)*0.5;
+        middle.setCoordinates(JXG.COORDS_BY_USER, [this.X(t0,true),this.Y(t0,true)], false);
+        dl = Math.max(Math.abs(left.scrCoords[1]-middle.scrCoords[1]),Math.abs(left.scrCoords[2]-middle.scrCoords[2]));
+        dr = Math.max(Math.abs(middle.scrCoords[1]-right.scrCoords[1]),Math.abs(middle.scrCoords[2]-right.scrCoords[2]));
+        
+        if (dl>dr) {
+            dist = dl;
+            t1 = tm;
+        } else {
+            dist = dr;
+            t0 = tm;
+        }
+        if (Math.abs(t0-t1)<JXG.Math.eps) { return true;}
+    }
+    return dist<=initDist*0.9;
+}
+
+/*
+JXG.Curve.prototype.bendOK = function (xd_,yd_,xd,yd) {
+    var ip = xd_*xd+yd_*yd,
+        MAX_BEND = Math.tan(45*Math.PI/180.0);
+
+    if (isNaN(ip)) {
+        return true;
+    } else if (ip<=0.0) {
+        return false;
+    } else {
+        return Math.abs(xd_*yd-yd_*xd)<MAX_BEND*ip;
+    }
+}
+*/
 
 JXG.Curve.prototype.updateTransform = function (p) {
     var t, c, i, 
