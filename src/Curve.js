@@ -270,7 +270,7 @@ JXG.Curve.prototype.updateDataArray = function () {};
  * points. Otherwise, e.g. on mouseup, many points are used.
  */
 JXG.Curve.prototype.updateCurve = function () {
-    var len, mi, ma, x, y, i, stepSize,
+    var len, mi, ma, x, y, i, t, stepSize,
         suspendUpdate = false;
     
     this.updateDataArray();
@@ -290,13 +290,35 @@ JXG.Curve.prototype.updateCurve = function () {
     ma = this.maxX();
     stepSize = (ma-mi)/len;
 
+    // Discrete data points
+    if (this.dataX!=null) { // x-coordinates are in an array
+        for (i=0; i<len; i++) {
+            x = i;
+            if (this.dataY!=null) { // y-coordinates are in an array
+                y = i;
+            } else {
+                y = this.X(x); // discrete x data, continuous y data
+            }
+            this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x,suspendUpdate),this.Y(y,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
+            this.updateTransform(this.points[i]);
+            suspendUpdate = true;
+        }
+    } else { // continuous x data
+        for (i=0; i<len; i++) {
+            t = mi+i*stepSize;
+            this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
+            this.updateTransform(this.points[i]);
+            suspendUpdate = true;
+        }
+    }
+/*
     for (i=0; i<len; i++) {
         if (this.dataX!=null) { // x-coordinates are in an array
             x = i;
             if (this.dataY!=null) { // y-coordinates are in an array
                 y = i;
             } else {
-                y = this.X(x);
+                y = this.X(x,suspendUpdate); // polar plot
             }
         } else {     // continuous data
             x = mi+i*stepSize;
@@ -306,7 +328,7 @@ JXG.Curve.prototype.updateCurve = function () {
         this.updateTransform(this.points[i]);
         suspendUpdate = true;
     }
-    
+*/    
     this.getLabelAnchor();
 };
 
