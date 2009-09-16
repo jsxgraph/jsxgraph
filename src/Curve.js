@@ -321,7 +321,7 @@ JXG.Curve.prototype.updateParametricCurveNaive = function(mi,ma,len) {
         this.updateTransform(this.points[i]);
         suspendUpdate = true;
     }
-}
+};
 
 JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
     var i, t, t0,
@@ -421,7 +421,7 @@ JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
     this.numberPoints = this.points.length;
     $('debug').innerHTML = ' '+this.numberPoints;
         
-}
+};
 
 JXG.Curve.prototype.isSegmentOutside = function (x0,y0,x1,y1) {
     if (y0<0 && y1<0) { return true; }
@@ -429,7 +429,12 @@ JXG.Curve.prototype.isSegmentOutside = function (x0,y0,x1,y1) {
     else if (x0<0 && x1<0) { return true; }
     else if (x0>this.board.canvasWidth && x1>this.board.canvasWidth) { return true; }
     return false;
-}
+};
+
+JXG.Curve.prototype.isDefined = function (x0,y0,x1,y1) {
+    if (isNaN(x0+y0+x1+y1)) { return false; }
+    return true;
+};
 
 JXG.Curve.prototype.isContinuous = function (t0, t1, MAX_ITER) {
     var left, middle, right, tm,
@@ -462,7 +467,7 @@ JXG.Curve.prototype.isContinuous = function (t0, t1, MAX_ITER) {
         if (Math.abs(t0-t1)<JXG.Math.eps) { return true;}
     }
     return dist<=initDist*0.9;
-}
+};
 
 /*
 JXG.Curve.prototype.bendOK = function (xd_,yd_,xd,yd) {
@@ -476,7 +481,7 @@ JXG.Curve.prototype.bendOK = function (xd_,yd_,xd,yd) {
     } else {
         return Math.abs(xd_*yd-yd_*xd)<MAX_BEND*ip;
     }
-}
+};
 */
 
 JXG.Curve.prototype.updateTransform = function (p) {
