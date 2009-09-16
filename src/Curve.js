@@ -302,7 +302,7 @@ JXG.Curve.prototype.updateCurve = function () {
             x = mi+i*stepSize;
             y = x;
         }
-        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x),this.Y(y,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
+        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x,suspendUpdate),this.Y(y,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
         this.updateTransform(this.points[i]);
         suspendUpdate = true;
     }
