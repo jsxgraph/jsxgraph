@@ -343,9 +343,9 @@ JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
 
     
     if (this.board.updateQuality==this.board.BOARD_QUALITY_LOW) {
-        MAX_DEPTH = 15;
-        MAX_XDIST = 15;
-        MAX_YDIST = 20;
+        MAX_DEPTH = 12;
+        MAX_XDIST = 8;
+        MAX_YDIST = 8;
     } else {
         MAX_DEPTH = 20;
         MAX_XDIST = 1;
@@ -444,7 +444,7 @@ JXG.Curve.prototype.isSegmentDefined = function (x0,y0,x1,y1) {
     if (isNaN(x0+y0) && isNaN(x1+y1)) { return false; }
     return true;
 };
-
+/*
 JXG.Curve.prototype.isContinuous = function (t0, t1, MAX_ITER) {
     var left, middle, right, tm,
         iter = 0,
@@ -481,6 +481,7 @@ JXG.Curve.prototype.isContinuous = function (t0, t1, MAX_ITER) {
         return true;
     }
 };
+*/
 
 /*
 JXG.Curve.prototype.bendOK = function (xd_,yd_,xd,yd) {
