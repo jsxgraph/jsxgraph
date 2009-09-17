@@ -1028,7 +1028,7 @@ JXG.createAxis = function(board, parents, attributes) {
         line.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
 
         if(attributes.minorTicks == 'undefined' || attributes.minorTicks == null)
-            attributes.minorTicks = 4;
+            attributes.minorTicks = 3;
 
         if((attributes.insertTicks == 'undefined') || (attributes.insertTicks == null))
             attributes.insertTicks = 'true';

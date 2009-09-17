@@ -623,8 +623,10 @@ JXG.Algebra.prototype.projectCoordsToCurve = function(x,y,t,curve) {
         
     if (curve.curveType=='parameter' || curve.curveType=='polar') { 
         t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(function(t){ return (x-curve.X(t))*(x-curve.X(t))+(y-curve.Y(t))*(y-curve.Y(t));}), t);
-        if (t<curve.minX()) { t = curve.minX(); }
-        if (t>curve.maxX()) { t = curve.maxX(); }
+        //if (t<curve.minX()) { t = curve.minX(); }
+        //if (t>curve.maxX()) { t = curve.maxX(); }
+        if (t<curve.minX()) { t = curve.maxX()+t-curve.minX(); }
+        if (t>curve.maxX()) { t = curve.minX()+t-curve.maxX(); }
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t),curve.Y(t)], this.board);
     } else if (curve.curveType == 'plot') {
         mindist = infty;

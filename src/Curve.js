@@ -399,11 +399,14 @@ JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
             y = po.scrCoords[2];
             distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
         }
-        if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH && !this.isContinuous(t0,t,8)) {
+        /*
+        if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH && !this.isContinuous(t0,t,MAX_DEPTH)) {
             //$('debug').innerHTML += 'x ';
             this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+            //this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [1, 1], this.board);
             j++;
         }
+        */
         this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
         j++;
         //xd_ = x-x0;
@@ -420,7 +423,7 @@ JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
         
     } while (top != 0);
     this.numberPoints = this.points.length;
-    $('debug').innerHTML = ' '+this.numberPoints;
+    //$('debug').innerHTML = ' '+this.numberPoints;
         
 };
 
@@ -459,7 +462,7 @@ JXG.Curve.prototype.isContinuous = function (t0, t1, MAX_ITER) {
     initDist = Math.max(Math.abs(left.scrCoords[1]-right.scrCoords[1]),Math.abs(left.scrCoords[2]-right.scrCoords[2]));
     while (iter++<MAX_ITER && dist>initDist*0.9) {
         tm = (t0+t1)*0.5;
-        middle.setCoordinates(JXG.COORDS_BY_USER, [this.X(t0,true),this.Y(t0,true)], false);
+        middle.setCoordinates(JXG.COORDS_BY_USER, [this.X(tm,true),this.Y(tm,true)], false);
         dl = Math.max(Math.abs(left.scrCoords[1]-middle.scrCoords[1]),Math.abs(left.scrCoords[2]-middle.scrCoords[2]));
         dr = Math.max(Math.abs(middle.scrCoords[1]-right.scrCoords[1]),Math.abs(middle.scrCoords[2]-right.scrCoords[2]));
         

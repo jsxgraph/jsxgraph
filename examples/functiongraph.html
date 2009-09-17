@@ -27,7 +27,7 @@
         b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
         b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 
-        s1 = board.createElement('slider', [[0,-2],[5,-2],[-2,0.05,2]], {style:6, name:'S_1'});
+        s1 = board.createElement('slider', [[0,-2],[5,-2],[-2,1.05,2]], {style:6, name:'S_1'});
         s2 = board.createElement('slider', [[0,-3],[5,-3],[0,5,40]], {style:6, name:'S_2'});
         
         // Tagaki-Landsberg
@@ -42,9 +42,9 @@
             return su;
         }
 
-		//eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
-		graph = board.createElement('functiongraph', [function(x){ return f(x); }, -10, 10],{strokecolor:'red'});
-
+        //eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
+        graph = board.createElement('functiongraph', [function(x){ return f(x); }, -10, 10],{strokecolor:'red'});
+    
 
         /*
         p2 = board.createElement('glider', [graph], {style:6, name:'P'});
@@ -64,6 +64,7 @@
     		board.update();
         } 
         
+        //doIt();
   /* ]]> */
   </script>
 </body>
