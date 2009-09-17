@@ -755,23 +755,21 @@ JXG.SVGRenderer.prototype.updateRectPrimitive = function(node,x,y,w,h) {
 JXG.SVGRenderer.prototype.updatePathPrimitive = function(node, pointString, board) {  // board not necessary in SVG
     node.setAttributeNS(null, 'stroke-linecap', 'round');
     node.setAttributeNS(null, 'stroke-linejoin', 'round');
-    //node.setAttributeNS(null, 'shape-rendering', 'geometricPrecision');
+    node.setAttributeNS(null, 'shape-rendering', 'geometricPrecision');
     node.setAttributeNS(null, 'd', pointString);
 };
 
 JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
-    var oldx = -10000.0,
-        oldy = -10000.0,
-        symbm = ' M ',
+    var symbm = ' M ',
         symbl = ' L ',
         nextSymb = symbm,
         pStr = '',
-        h = 3*el.board.canvasHeight,
-        w = 100*el.board.canvasWidth,
+        //h = 3*el.board.canvasHeight,
+        //w = 100*el.board.canvasWidth,
         i, scr, 
-        len,
         isNoPlot = (el.curveType!='plot'),
-        isFunctionGraph = (el.curveType=='functiongraph');
+        //isFunctionGraph = (el.curveType=='functiongraph'),
+        len;
 
     if (el.numberPoints<=0) { return ''; }
     
@@ -781,16 +779,19 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     len = Math.min(el.points.length,el.numberPoints);
     for (i=0; i<len; i++) {
         scr = el.points[i].scrCoords;
-        //if (isNoPlot && Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
         //if (isNaN(scr[1]) || isNaN(scr[2]) /*|| Math.abs(scr[1])>w || (isFunctionGraph && (scr[2]>h || scr[2]<-0.5*h))*/ ) {  // PenUp
         if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
             nextSymb = symbm;
         } else {
+            // Chrome has problems with values  being too far away.
+            if (scr[1]>20000.0) { scr[1] = 20000.0; }
+            else if (scr[1]<-20000.0) { scr[1] = -20000.0; }
+            if (scr[2]>20000.0) { scr[2] = 20000.0; }
+            else if (scr[2]<-20000.0) { scr[2] = -20000.0; }
+            
             pStr += [nextSymb,scr[1],' ',scr[2]].join(''); // Attention: first coordinate may be inaccurate if far way
             nextSymb = symbl;
         }
-        oldx = scr[1];
-        oldy = scr[2];
     }
     return pStr;
 };

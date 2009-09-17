@@ -806,18 +806,16 @@ JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString,board)
 };
 
 JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
-    var oldx = -10000.0, 
-        oldy = -10000.0, 
-        pStr = [], 
-        h = 3*el.board.canvasHeight, 
-        w = 100*el.board.canvasWidth, 
-        len = Math.min(el.numberPoints,8192), // otherwise IE 7 crashes in hilbert.html
+    var pStr = [], 
+        //h = 3*el.board.canvasHeight, 
+        //w = 100*el.board.canvasWidth, 
         i, scr,
         symbm = ' m ', 
         symbl = ' l ',
         nextSymb = symbm, 
         isNoPlot = (el.curveType!='plot'),
-        isFunctionGraph = (el.curveType=='functiongraph');
+        //isFunctionGraph = (el.curveType=='functiongraph'),
+        len = Math.min(el.numberPoints,8192); // otherwise IE 7 crashes in hilbert.html
     
     if (el.numberPoints<=0) { return ''; }
     if (isNoPlot && el.board.options.curve.RDPsmoothing) {
@@ -827,17 +825,20 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
 
     for (i=0; i<len; i++) {
         scr = el.points[i].scrCoords;
-        //if (el.curveType!='plot' && Math.abs(oldx-scr[1])+Math.abs(oldy-scr[2])<4) continue;
         if (isNaN(scr[1]) || isNaN(scr[2]) /* || Math.abs(scr[1])>w || (isFunctionGraph && (scr[2]>h || scr[2]<-0.5*h))*/ ) {  // PenUp
             nextSymb = symbm;
         } else {
+            // IE has problems with values  being too far away.
+            if (scr[1]>20000.0) { scr[1] = 20000.0; }
+            else if (scr[1]<-20000.0) { scr[1] = -20000.0; }
+            if (scr[2]>20000.0) { scr[2] = 20000.0; }
+            else if (scr[2]<-20000.0) { scr[2] = -20000.0; }
+
             pStr.push([nextSymb,Math.round(this.resolution*scr[1]),
                        ', ',
                        Math.round(this.resolution*scr[2])].join(''));
             nextSymb = symbl;
         }
-        oldx = scr[1];
-        oldy = scr[2];
     }
     pStr.push(' e');
     return pStr;

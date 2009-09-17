@@ -381,9 +381,10 @@ JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
     this.points[j++] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x0, y0], this.board);
     
     do {
-        distOK = (Math.abs(x-x0)<MAX_XDIST && Math.abs(y-y0)<MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
+        distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
         while ( depth<MAX_DEPTH &&
-               (!distOK || depth<3 /*|| (j>1 &&!this.bendOK(xd_,yd_,x-x0,y-y0))*/ )
+               (!distOK || depth<3 /*|| (j>1 &&!this.bendOK(xd_,yd_,x-x0,y-y0))*/) &&
+               !(!this.isSegmentDefined(x0,y0,x,y) && depth>8)
             ) {
             dyadicStack[top] = i;
             depthStack[top] = depth;
@@ -396,11 +397,11 @@ JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
             po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
             x = po.scrCoords[1];
             y = po.scrCoords[2];
-            distOK = (Math.abs(x-x0)<MAX_XDIST && Math.abs(y-y0)<MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
-
+            distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
         }
         if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH && !this.isContinuous(t0,t,8)) {
-            this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+            //$('debug').innerHTML += 'x ';
+            this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [-1, 1], this.board);
             j++;
         }
         this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
@@ -431,8 +432,13 @@ JXG.Curve.prototype.isSegmentOutside = function (x0,y0,x1,y1) {
     return false;
 };
 
-JXG.Curve.prototype.isDefined = function (x0,y0,x1,y1) {
+JXG.Curve.prototype.isDistOK = function (x0,y0,x1,y1,MAXX,MAXY) {
     if (isNaN(x0+y0+x1+y1)) { return false; }
+    return (Math.abs(x1-x0)<MAXY && Math.abs(y1-y0)<MAXY);
+};
+
+JXG.Curve.prototype.isSegmentDefined = function (x0,y0,x1,y1) {
+    if (isNaN(x0+y0) && isNaN(x1+y1)) { return false; }
     return true;
 };
 
@@ -466,7 +472,11 @@ JXG.Curve.prototype.isContinuous = function (t0, t1, MAX_ITER) {
         }
         if (Math.abs(t0-t1)<JXG.Math.eps) { return true;}
     }
-    return dist<=initDist*0.9;
+    if (dist>initDist*0.9) {
+        return false;
+    } else {
+        return true;
+    }
 };
 
 /*
