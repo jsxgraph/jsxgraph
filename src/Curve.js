@@ -401,7 +401,7 @@ JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
         }
         if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH && !this.isContinuous(t0,t,8)) {
             //$('debug').innerHTML += 'x ';
-            this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [-1, 1], this.board);
+            this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             j++;
         }
         this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
