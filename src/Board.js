@@ -829,11 +829,15 @@ JXG.Board.prototype.updateInfobox = function(el) {
         
         //this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>';
         //this.infobox.nameHTML = '(' + el.coords.usrCoords[1] + ', ' + el.coords.usrCoords[2] + ')';
-        this.infobox.setText('<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>');
+        this.highlightInfobox(x,y,el);
         this.renderer.show(this.infobox);
         this.renderer.updateText(this.infobox);
     }
 };
+
+JXG.Board.prototype.highlightInfobox = function(x,y,el) {
+    this.infobox.setText('<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>');
+}
 
 /**
  * Remove highlighting of all elements.
