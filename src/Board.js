@@ -1571,10 +1571,9 @@ JXG.Board.prototype.addArrowParallel = function(a, p, arrowId, pointId, arrowNam
  * @private
  */
 JXG.Board.prototype.addParallelPoint = function(p1, p2, p3, id, name) {
-    var number = this.numObjects;
-    number++;
+    var num = this.numObjects + 1;
     if((id == '') || (id == null)) {
-        id = this.id + 'P' + number;
+        id = this.id + 'P' + num;
     }
  
     p1 = JXG.getReference(this, p1);
@@ -1612,23 +1611,23 @@ JXG.Board.prototype.addParallelPoint = function(p1, p2, p3, id, name) {
  * @private
  */
 JXG.Board.prototype.addArrow = function(obj) {
-    var number = this.numObjects;
+    var num = this.numObjects, elId;
     this.numObjects++;
 
     // Falls Id nicht vorgegeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'A' + number;
+    elId = obj.id;
+    if((elId == '') || (elId == null)) {
+        elId = this.id + 'A' + num;
     }
 
     // Objekt in das assoziative Array einfuegen
-    this.objects[elementId] = obj;
+    this.objects[elId] = obj;
  
     // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
+    obj.id = elId;
     this.renderer.drawArrow(obj);
 
-    return elementId;
+    return elId;
 };
 
 /**
@@ -1708,45 +1707,46 @@ JXG.Board.prototype.addNormal = function(l, p, id, name) {
  * @private
  */
 JXG.Board.prototype.addPerpendicular = function(l, p, idL, nameL, idP, nameP) {
-    var point = JXG.getReference(this, p);
-    var line = JXG.getReference(this, l);
-   
-    var number = this.numObjects;
-    number ++;
+    var num, erg, p2coords, p2, perp;
+    
+    p = JXG.getReference(this, p);
+    l = JXG.getReference(this, l);
+
+    num = this.numObjects + 1;
     if((idL == '') || (idL == null)) {
-        idL = this.id + 'L' + number;
+        idL = this.id + 'L' + num;
     }
-    number++;
+    num++;
     if((idP == '') || (idP == null)) {
-        idP = this.id + 'P' + number;
+        idP = this.id + 'P' + num;
     }    
    
-    var erg = this.algebra.perpendicular(line, point);
-    var p2coords = erg[0].usrCoords.slice(1);
-    var point2 = new JXG.Point(this, p2coords, idP, nameP, true);
-    point2.fixed = true;  
-    point.addChild(point2); // notwendig, um auch den Punkt upzudaten
-    line.addChild(point2); // notwendig, um auch den Punkt upzudaten
+    erg = this.algebra.perpendicular(l, p);
+    p2coords = erg[0].usrCoords.slice(1);
+    p2 = new JXG.Point(this, p2coords, idP, nameP, true);
+    p2.fixed = true;  
+    p.addChild(p2); // notwendig, um auch den Punkt upzudaten
+    l.addChild(p2); // notwendig, um auch den Punkt upzudaten
     
-    var perpendicular;
     if(erg[1]) { // is needed to make sure that intersections with perpendiculars from GEONExT are drawn in the right order
-        perpendicular = new JXG.Line(this, point2.id, point.id, idL, nameL);
+        perp = new JXG.Line(this, p2.id, p.id, idL, nameL);
     }
     else {
-        perpendicular = new JXG.Line(this, point.id, point2.id, idL, nameL);
+        perp = new JXG.Line(this, p.id, p2.id, idL, nameL);
     }
-    perpendicular.setStraight(false, false);
-    perpendicular.changed = erg[1]; 
+    perp.setStraight(false, false);
+    perp.changed = erg[1]; 
    
-    //point.addChild(perpendicular);
-    //line.addChild(perpendicular);
+    //p.addChild(perp);
+    //l.addChild(perp);
    
-    perpendicular.update = function() {
+    perp.update = function() {
+        var erg, tmp;
         if (this.needsUpdate) {
-            var erg = this.board.algebra.perpendicular(line, point);
+            erg = this.board.algebra.perpendicular(l, p);
             point2.coords = erg[0];
             if(this.changed != erg[1]) { // is needed to make sure that intersections with perpendiculars from GEONExT are drawn in the right order
-                var tmp = this.point1;
+                tmp = this.point1;
                 this.point1 = this.point2;
                 this.point2 = tmp;
             }
@@ -1756,7 +1756,7 @@ JXG.Board.prototype.addPerpendicular = function(l, p, idL, nameL, idP, nameP) {
             }                
         }
     };
-    return [perpendicular, point2];
+    return [perp, p2];
 };
 
 /**
@@ -1772,26 +1772,26 @@ JXG.Board.prototype.addPerpendicular = function(l, p, idL, nameL, idP, nameP) {
  * @private
  */
 JXG.Board.prototype.addPerpendicularPoint = function(l, p, idP, nameP) {
+    var num, p2coords, p2;
 
-    var point = JXG.getReference(this, p);
-    var line = JXG.getReference(this, l);
+    p = JXG.getReference(this, p);
+    l = JXG.getReference(this, l);
    
-    var number = this.numObjects;
-    number++;
+    num = this.numObjects+1;
     if((idP == '') || (idP == null)) {
-        idP = this.id + 'P' + number;
+        idP = this.id + 'P' + num;
     }    
 
-    var p2coords = this.algebra.perpendicular(line, point)[0].usrCoords.slice(1);
-    var point2 = new JXG.Point(this, p2coords, idP, nameP, true);
-    point2.fixed = true;  
+    p2coords = this.algebra.perpendicular(l, p)[0].usrCoords.slice(1);
+    p2 = new JXG.Point(this, p2coords, idP, nameP, true);
+    p2.fixed = true;  
    
-    point.addChild(point2); 
-    line.addChild(point2); 
+    p.addChild(p2); 
+    l.addChild(p2); 
    
-    point2.update = function() {
+    p2.update = function() {
         if (this.needsUpdate) {
-            this.coords = this.board.algebra.perpendicular(line, point)[0];
+            this.coords = this.board.algebra.perpendicular(l, p)[0];
             // Label mitschieben
             //this.label.setCoordinates(this.coords);
             this.label.content.update();
@@ -1800,7 +1800,7 @@ JXG.Board.prototype.addPerpendicularPoint = function(l, p, idP, nameP) {
             }                
         }
    };
-   return point2;
+   return p2;
 };
 
 /**
@@ -1821,25 +1821,26 @@ JXG.Board.prototype.addPerpendicularPoint = function(l, p, idP, nameP) {
  * @private
  */
 JXG.Board.prototype.addCircumcenter = function(point1, point2, point3, midpointId, midpointName, circleId, circleName) {
-    var p1 = JXG.getReference(this, point1);
-    var p2 = JXG.getReference(this, point2);
-    var p3 = JXG.getReference(this, point3);
-   
-    var midpointCoordinates = this.algebra.circumcenterMidpoint(p1, p2, p3);
-    var midpoint = new JXG.Point(this, midpointCoordinates.usrCoords.slice(1), midpointId, midpointName, true);
-    midpoint.fixed = true;
+    var p1 = JXG.getReference(this, point1),
+        p2 = JXG.getReference(this, point2),
+        p3 = JXG.getReference(this, point3),
+        midpointCoordinates = this.algebra.circumcenterMidpoint(p1, p2, p3),
+        midp = new JXG.Point(this, midpointCoordinates.usrCoords.slice(1), midpointId, midpointName, true),
+        cc;
+        
+    midp.fixed = true;
 
-    p1.addChild(midpoint);
-    p2.addChild(midpoint);
-    p3.addChild(midpoint);
+    p1.addChild(midp);
+    p2.addChild(midp);
+    p3.addChild(midp);
    
-    var circumcircle = new JXG.Circle(this, 'pointRadius', midpoint.id, function(){ return this.midpoint.coords.distance(JXG.COORDS_BY_USER, p1.coords);} , circleId, circleName);
+    cc = new JXG.Circle(this, 'pointRadius', midp.id, function(){ return this.midpoint.coords.distance(JXG.COORDS_BY_USER, p1.coords);} , circleId, circleName);
 
-    p1.addChild(circumcircle);
-    p2.addChild(circumcircle);
-    p3.addChild(circumcircle);        
+    p1.addChild(cc);
+    p2.addChild(cc);
+    p3.addChild(cc);        
     
-    midpoint.update = function() {
+    midp.update = function() {
         if (this.needsUpdate) {
             this.coords = this.board.algebra.circumcenterMidpoint(p1, p2, p3);
             if(this.label.content.visProp['visible']) {
@@ -1851,7 +1852,7 @@ JXG.Board.prototype.addCircumcenter = function(point1, point2, point3, midpointI
             }                
         }
     };
-    circumcircle.update = function() {
+    cc.update = function() {
         if (this.needsUpdate) { 
             this.updateRadius(); 
             this.updateStdform(); // For the new intersection functions
@@ -1860,7 +1861,7 @@ JXG.Board.prototype.addCircumcenter = function(point1, point2, point3, midpointI
             }    
         }
     };
-    return [midpoint, circumcircle];
+    return [midp, cc];
 };
 
 /**
@@ -2268,10 +2269,10 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
  * @private
  */
 JXG.Board.prototype.calculateSnapSizes = function() {
-    var p1 = new JXG.Coords(JXG.COORDS_BY_USER,[0,0],this);
-    var p2 = new JXG.Coords(JXG.COORDS_BY_USER,[1/this.gridX,1/this.gridY],this);
-    var x = p1.scrCoords[1]-p2.scrCoords[1];
-    var y = p1.scrCoords[2]-p2.scrCoords[2];
+    var p1 = new JXG.Coords(JXG.COORDS_BY_USER,[0,0],this),
+        p2 = new JXG.Coords(JXG.COORDS_BY_USER,[1/this.gridX,1/this.gridY],this),
+        x = p1.scrCoords[1]-p2.scrCoords[1],
+        y = p1.scrCoords[2]-p2.scrCoords[2];
     
     this.snapSizeX = this.gridX;
     while(Math.abs(x) > 25) {
@@ -2292,14 +2293,16 @@ JXG.Board.prototype.calculateSnapSizes = function() {
  * @private
  */
 JXG.Board.prototype.applyZoom = function() {
+    var el;
+    
     this.updateQuality = this.BOARD_QUALITY_HIGH;
-    for(var Element in this.objects) {
-        if( (this.objects[Element].elementClass == JXG.OBJECT_CLASS_POINT) ||
-            (this.objects[Element].type == JXG.OBJECT_TYPE_CURVE) ||
-            (this.objects[Element].type == JXG.OBJECT_TYPE_AXIS) ||
-            (this.objects[Element].type == JXG.OBJECT_TYPE_TEXT) ) {
-            if((this.objects[Element].type != JXG.OBJECT_TYPE_CURVE) && (this.objects[Element].type != JXG.OBJECT_TYPE_AXIS))
-                this.objects[Element].coords.usr2screen();
+    for(el in this.objects) {
+        if( (this.objects[el].elementClass == JXG.OBJECT_CLASS_POINT) ||
+            (this.objects[el].type == JXG.OBJECT_TYPE_CURVE) ||
+            (this.objects[el].type == JXG.OBJECT_TYPE_AXIS) ||
+            (this.objects[el].type == JXG.OBJECT_TYPE_TEXT) ) {
+            if((this.objects[el].type != JXG.OBJECT_TYPE_CURVE) && (this.objects[el].type != JXG.OBJECT_TYPE_AXIS))
+                this.objects[el].coords.usr2screen();
         }
     }    
     this.calculateSnapSizes();
@@ -2344,41 +2347,43 @@ JXG.Board.prototype.zoom100 = function() {
  * Zooms the board so every visible point is shown. Keeps aspect ratio.
  */
 JXG.Board.prototype.zoomAllPoints = function() {
-    var ratio = this.zoomX / this.zoomY;
-    var minX = 0; // (0,0) soll auch sichtbar bleiben
-    var maxX = 0;
-    var minY = 0;
-    var maxY = 0;
-    for(var Element in this.objects) {
-        if( (this.objects[Element].elementClass == JXG.OBJECT_CLASS_POINT) &&
-            this.objects[Element].visProp['visible']) {
-            if(this.objects[Element].coords.usrCoords[1] < minX) {
-                minX = this.objects[Element].coords.usrCoords[1];
-            }
-            if(this.objects[Element].coords.usrCoords[1] > maxX) {
-                maxX = this.objects[Element].coords.usrCoords[1];
+    var ratio, minX, maxX, minY, maxY, el,
+        border, borderX, borderY, distX, distY, newZoom, newZoomX, newZoomY, 
+        newOriginX, newOriginY;
+    
+    ratio = this.zoomX / this.zoomY;
+    minX = 0; // (0,0) soll auch sichtbar bleiben
+    maxX = 0;
+    minY = 0;
+    maxY = 0;
+    for(el in this.objects) {
+        if( (this.objects[el].elementClass == JXG.OBJECT_CLASS_POINT) &&
+            this.objects[el].visProp['visible']) {
+            if(this.objects[el].coords.usrCoords[1] < minX) {
+                minX = this.objects[el].coords.usrCoords[1];
+            } else if(this.objects[el].coords.usrCoords[1] > maxX) {
+                maxX = this.objects[el].coords.usrCoords[1];
             }   
-            if(this.objects[Element].coords.usrCoords[2] > maxY) {
-                maxY = this.objects[Element].coords.usrCoords[2];
-            }
-            if(this.objects[Element].coords.usrCoords[2] < minY) {
-                minY = this.objects[Element].coords.usrCoords[2];
+            if(this.objects[el].coords.usrCoords[2] > maxY) {
+                maxY = this.objects[el].coords.usrCoords[2];
+            } else if(this.objects[el].coords.usrCoords[2] < minY) {
+                minY = this.objects[el].coords.usrCoords[2];
             }                       
         }            
     }
-    var border = 50;
-    var borderX = border/(this.unitX*this.zoomX);
-    var borderY = border/(this.unitY*this.zoomY);
+    border = 50;
+    borderX = border/(this.unitX*this.zoomX);
+    borderY = border/(this.unitY*this.zoomY);
 
-    var distX = maxX - minX + 2*borderX;
-    var distY = maxY - minY + 2*borderY;
+    distX = maxX - minX + 2*borderX;
+    distY = maxY - minY + 2*borderY;
     
-    var newZoom = Math.min(this.canvasWidth/(this.unitX*distX), this.canvasHeight/(this.unitY*distY));
-    var newZoomY = newZoom;
-    var newZoomX = newZoom*ratio;
+    newZoom = Math.min(this.canvasWidth/(this.unitX*distX), this.canvasHeight/(this.unitY*distY));
+    newZoomY = newZoom;
+    newZoomX = newZoom*ratio;
     
-    var newOriginX = -(minX-borderX)*this.unitX*newZoomX;
-    var newOriginY = (maxY+borderY)*this.unitY*newZoomY;
+    newOriginX = -(minX-borderX)*this.unitX*newZoomX;
+    newOriginY = (maxY+borderY)*this.unitY*newZoomY;
     this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [newOriginX, newOriginY], this);
     this.zoomX = newZoomX;
     this.zoomY = newZoomY;
@@ -2391,6 +2396,8 @@ JXG.Board.prototype.zoomAllPoints = function() {
  * @param {GeometryElement} object The object to remove.
  */
 JXG.Board.prototype.removeObject = function(object) {
+    var el;
+    
     object = JXG.getReference(this, object);
 
     /* Wenn weder die ID noch der Name des Objekts bekannt ist, einfach wieder zurueckgehen */
@@ -2400,11 +2407,11 @@ JXG.Board.prototype.removeObject = function(object) {
     
     try{
         /* Alle Kinder entfernen */
-        for(var Elements in object.childElements) {
-            object.childElements[Elements].board.removeObject(object.childElements[Elements]);
+        for(el in object.childElements) {
+            object.childElements[el].board.removeObject(object.childElements[el]);
         }
         
-        for(var el in this.objects) {
+        for(el in this.objects) {
             if(typeof this.objects[el].childElements != 'undefined')
                 delete(this.objects[el].childElements[object.id]);
         }
@@ -2426,15 +2433,17 @@ JXG.Board.prototype.removeObject = function(object) {
  * @private
  */
 JXG.Board.prototype.initGeonextBoard = function() {
-    var p1 = new JXG.Point(this, [0,0],this.id + 'gOOe0','Ursprung',false);
+    var p1, p2, p3, l1, l2;
+    
+    p1 = new JXG.Point(this, [0,0],this.id + 'gOOe0','Ursprung',false);
     p1.fixed = true;
-    var p2 = new JXG.Point(this, [1,0],this.id + 'gXOe0','Punkt_1_0',false);
+    p2 = new JXG.Point(this, [1,0],this.id + 'gXOe0','Punkt_1_0',false);
     p2.fixed = true;
-    var p3 = new JXG.Point(this, [0,1],this.id + 'gYOe0','Punkt_0_1',false);
+    p3 = new JXG.Point(this, [0,1],this.id + 'gYOe0','Punkt_0_1',false);
     p3.fixed = true;
-    var l1 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gXOe0', this.id + 'gXLe0','X-Achse');
+    l1 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gXOe0', this.id + 'gXLe0','X-Achse');
     l1.hideElement();
-    var l2 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gYOe0', this.id + 'gYLe0','Y-Achse');
+    l2 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gYOe0', this.id + 'gYLe0','Y-Achse');
     l2.hideElement();    
 };
 
@@ -2468,23 +2477,24 @@ JXG.Board.prototype.resizeContainer = function(canvasWidth, canvasHeight) {
  * Lists the dependencies graph in a new HTML-window.
  */
 JXG.Board.prototype.showDependencies = function() {
-    var el;
-    var t = '<p>\n';
+    var el, t, c, f, i; 
+    
+    t = '<p>\n';
     for (el in this.objects) {
-        var i = 0;
-        for (var c in this.objects[el].childElements) {
+        i = 0;
+        for (c in this.objects[el].childElements) {
             i++;
         }
         if (i>=0) {
             t += '<b>' + this.objects[el].id + ':</b> ';
         }
-        for (var c in this.objects[el].childElements) {
+        for (c in this.objects[el].childElements) {
             t += this.objects[el].childElements[c].id+'('+this.objects[el].childElements[c].name+')'+', ';
         }
         t += '<p>\n';
     }
     t += '</p>\n';
-    var f = window.open();
+    f = window.open();
     f.document.open();
     f.document.write(t);
     f.document.close();
@@ -2506,7 +2516,8 @@ JXG.Board.prototype.showXML = function() {
  * @private
  */
 JXG.Board.prototype.prepareUpdate = function(drag) {
-    for(var el in this.objects) {
+    var el;
+    for(el in this.objects) {
        this.objects[el].needsUpdate = true;
     }
 };
@@ -2517,20 +2528,19 @@ JXG.Board.prototype.prepareUpdate = function(drag) {
   * @private
   */
 JXG.Board.prototype.updateElements = function(drag) {
+    var el, pEl;
+    
     drag = JXG.getReference(this, drag);
     
-    var count = -1;
-    if (!this.reducedUpdate) count = 1;
-    for(var el in this.objects) {
-        var pEl = this.objects[el];
-        if (!this.needsFullUpdate && !pEl.needsRegularUpdate && pEl.afterFirstUpdate) { continue; }
+    for(el in this.objects) {
+        pEl = this.objects[el];
+        if (!this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
         if (drag == null || pEl.id != drag.id) {
-            if (count>=0 || !pEl.afterFirstUpdate || this.needsFullUpdate) { pEl.update(true); }
+            //if (this.needsFullUpdate) { pEl.update(true); }
+            pEl.update(true);
         } else {
             pEl.update(false);
-            count = 5;
         }
-        if (this.reducedUpdate) count--;
     }
 };
 
@@ -2540,21 +2550,19 @@ JXG.Board.prototype.updateElements = function(drag) {
   * @private
   */
 JXG.Board.prototype.updateRenderer = function(drag) {
-    var drag = JXG.getReference(this, drag);
+    var el, pEl;
     
-    var count = -1;
-    if (!this.reducedUpdate) count = 1;
-    for(var el in this.objects) {
-        var pEl = this.objects[el];
-        if (!this.needsFullUpdate && !pEl.needsRegularUpdate && pEl.afterFirstUpdate) { continue; }
+    drag = JXG.getReference(this, drag);
+    
+    for(el in this.objects) {
+        pEl = this.objects[el];
+        if (!this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
         if (drag == null || pEl.id != drag.id) {
-            if (count>=0 || !pEl.afterFirstUpdate || this.needsFullUpdate) { pEl.updateRenderer(); }
+            //if (this.needsFullUpdate) { pEl.updateRenderer(); }
+            pEl.updateRenderer();
         } else {
             pEl.updateRenderer();
-            count = 5;
         }
-        if (this.reducedUpdate) count--;
-        pEl.afterFirstUpdate = true;
     }
 };
 
@@ -2585,7 +2593,8 @@ JXG.Board.prototype.removeHook = function(id) {
   * @private
   */
 JXG.Board.prototype.updateHooks = function() {
-    for(var i=0; i<this.hooks.length; i++) {
+    var i;
+    for(i=0; i<this.hooks.length; i++) {
         if(this.hooks[i] != null)
             this.hooks[i](this);
     }
@@ -2620,6 +2629,7 @@ JXG.Board.prototype.removeChild = function(board) {
   */
 JXG.Board.prototype.update = function(drag) {
     var i, len, boardId;
+    
     if (this.isSuspendedUpdate) { return; }
     this.prepareUpdate(drag);
     this.updateElements(drag);
@@ -2670,19 +2680,20 @@ JXG.Board.prototype.fullUpdate = function() {
  * @return Reference to the created element.
  */
 JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
+    var el, i, s;
+    
     // CM: AW: 
     if (elementType!='turtle' && (parents == null || parents.length == 0)) {  // Turtle may have no parent elements
         return null;
     } 
     if (parents == null) { parents = []; }
     
-    var el;
     elementType = elementType.toLowerCase();
     
     if (attributes==null) {
         attributes = {};
     }
-    for (var i=0; i<parents.length; i++) {
+    for (i=0; i<parents.length; i++) {
         parents[i] = JXG.getReference(this, parents[i]); // TODO: should not be done for content-parameter of JXG.Text
     }
 
@@ -2702,7 +2713,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     }
 //    try {
         if(el.multipleElements) {
-            for(var s in el) {
+            for(s in el) {
                 if(typeof el[s].setProperty != 'undefined')
                     el[s].setProperty(attributes);
             }  
@@ -2747,7 +2758,9 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
  * Delete the elements drawn as part of a trace of an element.
  */
 JXG.Board.prototype.clearTraces = function() {
-    for(var el in this.objects) {
+    var el;
+    
+    for(el in this.objects) {
         if (this.objects[el].traced)
             this.objects[el].clearTrace();
     }

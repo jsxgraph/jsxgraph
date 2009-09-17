@@ -240,15 +240,11 @@ JXG.GeometryElement = function() {
     this.stdform = [1,0,0,0,1, 1,0,0];
     
     /**
-     * TODO description
-     * @type boolean
-     * @default false
-     * @private
-     */
-    this.afterFirstUpdate = false;
-    
-    /**
-     * TODO description
+     * If this is set to true, the element is updated in every update 
+     * call of the board. If set to false, the element is updated only after
+     * zoom events or more generally, when the bounding box has been changed.
+     * Examples for the latter behaviour should be axes.
+     * 
      * @type boolean
      * @default true
      * @private
