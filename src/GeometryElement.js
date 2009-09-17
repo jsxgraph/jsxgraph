@@ -871,15 +871,19 @@ JXG.GeometryElement.prototype.prepareUpdate = function() {
     this.needsUpdate = true;
     return; // Im Moment steigen wir nicht rekursiv hinab
     /* End of function  */
-    for(var Elements in this.childElements) {
-        /* Wurde das Element vielleicht geloescht? */
-        if(this.board.objects[Elements] != undefined) {
-            /* Nein, wurde es nicht, also updaten */
-            this.childElements[Elements].prepareUpdate(); 
-        } else { /* es wurde geloescht, also aus dem Array entfernen */
-            delete(this.childElements[Elements]);
+    
+    /*
+    var el;
+    for(el in this.childElements) {
+        // Wurde das Element vielleicht geloescht? 
+        if(this.board.objects[el] != undefined) {
+            // Nein, wurde es nicht, also updaten 
+            this.childElements[el].prepareUpdate(); 
+        } else { //  es wurde geloescht, also aus dem Array entfernen
+            delete(this.childElements[el]);
         }
     }
+    */
 };
 
 /**

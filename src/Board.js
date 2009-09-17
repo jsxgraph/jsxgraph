@@ -584,8 +584,9 @@ JXG.Board.prototype.generateId = function () {
  * @return Array of coordinates relative the boards container top left corner.
  */
 JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
-    var pCont = this.containerObj;
-    var cPos = JXG.getOffset(pCont); //Element.cumulativeOffset(pCont);
+    var pCont = this.containerObj,
+        cPos = JXG.getOffset(pCont); //Element.cumulativeOffset(pCont);
+        
     // add border width
     cPos[0] += parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
     cPos[1] += parseInt(JXG.getStyle(pCont,'borderTopWidth'));
@@ -648,9 +649,8 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
         this.moveOrigin();
     } else {
-        var save = this.reducedUpdate; this.reducedUpdate = false;
-        this.fullUpdate();
-        this.reducedUpdate = save; 
+        //this.fullUpdate(); // Full update only needed on moveOrigin? (AW)
+        this.update();
     }
 
     this.mode = this.BOARD_MODE_NONE;
@@ -664,12 +664,13 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
  * @private
  */
 JXG.Board.prototype.mouseDownListener = function (Evt) {
-    var el;
-    var cPos = this.getRelativeMouseCoordinates(Evt);
+    var el, pEl, cPos, absPos, dx, dy;
+    
+    cPos = this.getRelativeMouseCoordinates(Evt);
     // position of mouse cursor relative to containers position of container
-    var absPos = JXG.getPosition(Evt);
-    var dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
-    var dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
+    absPos = JXG.getPosition(Evt);
+    dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
     
     if(Evt.shiftKey) {
         this.drag_dx = dx - this.origin.scrCoords[1];
@@ -684,17 +685,18 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     this.mode = this.BOARD_MODE_DRAG;
     if (this.mode==this.BOARD_MODE_DRAG) {   
         for(el in this.objects) {
-            if( (this.objects[el].hasPoint != undefined)
-                    && (this.objects[el].hasPoint(dx, dy))
-                    && ((this.objects[el].type == JXG.OBJECT_TYPE_POINT) || (this.objects[el].type == JXG.OBJECT_TYPE_GLIDER) 
-                        /*|| (!this.geonextCompatibilityMode && this.objects[el].type == JXG.OBJECT_TYPE_LINE)  // not yet
-                        || (!this.geonextCompatibilityMode && this.objects[el].type == JXG.OBJECT_TYPE_CIRCLE)
-                        || (!this.geonextCompatibilityMode && this.objects[el].type == JXG.OBJECT_TYPE_CURVE)*/ )
-                    && (this.objects[el].visProp['visible'])
-                    && (!this.objects[el].fixed)) {
+            pEl = this.objects[el];
+            if( (pEl.hasPoint != undefined)
+                    && (pEl.hasPoint(dx, dy))
+                    && ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER) 
+                        /*|| (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_LINE)  // not yet
+                        || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CIRCLE)
+                        || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CURVE)*/ )
+                    && (pEl.visProp['visible'])
+                    && (!pEl.fixed)) {
                 this.drag_obj = this.objects[el];
                 // Points are preferred:
-                if ((this.objects[el].type == JXG.OBJECT_TYPE_POINT) || (this.objects[el].type == JXG.OBJECT_TYPE_GLIDER)) {
+                if ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)) {
                     break;
                 }
             }
@@ -720,13 +722,14 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
  * @private
  */
 JXG.Board.prototype.mouseMoveListener = function (Event) {
-    var el;
-    var cPos = this.getRelativeMouseCoordinates(Event);
+    var el, pEl, cPos, absPos, dx, dy, newPos;
+    
+    cPos = this.getRelativeMouseCoordinates(Event);
 
     // position of mouse cursor relative to containers position of container
-    var absPos = JXG.getPosition(Event);
-    var x = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
-    var y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
+    absPos = JXG.getPosition(Event);
+    x = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
 
     this.updateQuality = this.BOARD_QUALITY_LOW;
 
@@ -742,8 +745,8 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
         this.moveOrigin();
     }
     else if(this.mode == this.BOARD_MODE_DRAG) {
-        var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x,y), this);
-        if(this.drag_obj.type == JXG.OBJECT_TYPE_POINT 
+        newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x,y), this);
+        if (this.drag_obj.type == JXG.OBJECT_TYPE_POINT 
             || this.drag_obj.type == JXG.OBJECT_TYPE_LINE 
             || this.drag_obj.type == JXG.OBJECT_TYPE_CIRCLE
             || this.drag_obj.type == JXG.OBJECT_TYPE_CURVE) {
@@ -782,14 +785,15 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
     else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
         // Elements  below the mouse pointer which are not highlighted are highlighted.
         for(el in this.objects) {
-            if((this.objects[el].hasPoint != undefined) && (this.objects[el].hasPoint(x, y)) && (this.objects[el].visProp['visible'] == true)) {
-                //this.renderer.highlight(this.objects[el]);
+            pEl = this.objects[el];
+            if( pEl.hasPoint!=undefined && pEl.visProp['visible']==true && pEl.hasPoint(x, y)) {
+                //this.renderer.highlight(pEl);
 
-		// this is required in any case because otherwise the box won't be shown until the point is dragged
-                this.updateInfobox(this.objects[el]);
+                // this is required in any case because otherwise the box won't be shown until the point is dragged
+                this.updateInfobox(pEl);
                 if(this.highlightedObjects[el] == null) { // highlight only if not highlighted
-                    this.objects[el].highlight();
-                    this.highlightedObjects[el] = this.objects[el];
+                    pEl.highlight();
+                    this.highlightedObjects[el] = pEl;
                 }
             }
         }
@@ -802,29 +806,31 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
  * @private
  */
 JXG.Board.prototype.updateInfobox = function(el) {
-    var x, y;
+    var x, y, xc, yc;
     if((el.elementClass == JXG.OBJECT_CLASS_POINT) && el.showInfobox) {
-        this.infobox.setCoords(el.coords.usrCoords[1]*1+this.infobox.distanceX/(this.unitX*this.zoomX),
-                               el.coords.usrCoords[2]*1+this.infobox.distanceY/(this.unitY*this.zoomY));
-        x = Math.abs(el.coords.usrCoords[1]);
+        xc = el.coords.usrCoords[1]*1;
+        yc = el.coords.usrCoords[2]*1;
+        this.infobox.setCoords(xc+this.infobox.distanceX/(this.unitX*this.zoomX),
+                               yc+this.infobox.distanceY/(this.unitY*this.zoomY));
+        x = Math.abs(xc);
         if (x>0.1) {
-            x = el.coords.usrCoords[1].toFixed(2);
+            x = xc.toFixed(2);
         } else if (x>=0.01) {
-            x = el.coords.usrCoords[1].toFixed(4);
+            x = xc.toFixed(4);
         } else if (x>=0.0001) {
-            x = el.coords.usrCoords[1].toFixed(6);
+            x = xc.toFixed(6);
         } else {
-            x = el.coords.usrCoords[1];
+            x = xc;
         }
-        y = Math.abs(el.coords.usrCoords[2]);
+        y = Math.abs(yc);
         if (y>0.1) {
-            y = el.coords.usrCoords[2].toFixed(2);
+            y = yc.toFixed(2);
         } else if (y>=0.01) {
-            y = el.coords.usrCoords[2].toFixed(4);
+            y = yc.toFixed(4);
         } else if (y>=0.0001) {
-            y = el.coords.usrCoords[2].toFixed(6);
+            y = yc.toFixed(6);
         } else {
-            y = el.coords.usrCoords[2];
+            y = yc;
         }
         
         //this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>';
@@ -844,13 +850,16 @@ JXG.Board.prototype.highlightInfobox = function(x,y,el) {
  * @private
  */
 JXG.Board.prototype.dehighlightAll = function(x,y) {
-    for(var Element in this.highlightedObjects) {
-        //this.renderer.noHighlight(this.highlightedObjects[Element]);
-        if((this.highlightedObjects[Element].hasPoint == undefined) || 
-           (!this.highlightedObjects[Element].hasPoint(x, y)) || 
-           (this.highlightedObjects[Element].visProp['visible'] == false)) { // dehighlight only if necessary
-                this.highlightedObjects[Element].noHighlight();
-                delete(this.highlightedObjects[Element]);
+    var el, pEl;
+    
+    for(el in this.highlightedObjects) {
+        //this.renderer.noHighlight(this.highlightedObjects[el]);
+        pEl = this.highlightedObjects[el];
+        if((pEl.hasPoint == undefined) || 
+           (!pEl.hasPoint(x, y)) || 
+           (pEl.visProp['visible'] == false)) { // dehighlight only if necessary
+                pEl.noHighlight();
+                delete(this.highlightedObjects[el]);
         }
     }
 };
@@ -1019,13 +1028,13 @@ JXG.Board.prototype.addPoint = function (obj) {
  * @private
  */
 JXG.Board.prototype.addLine = function (obj) {
-    var number = this.numObjects;
+    var num = this.numObjects;
     this.numObjects++;
     
     // Falls Id nicht vergeben, eine Neue generieren:
     var elementId = obj.id;
     if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'L' + number;
+        elementId = this.id + 'L' + num;
     }
 
     if (obj.hasLabel) {
@@ -2528,14 +2537,21 @@ JXG.Board.prototype.prepareUpdate = function(drag) {
   * @private
   */
 JXG.Board.prototype.updateElements = function(drag) {
-    var el, pEl;
+    var el, pEl, 
+        isBeforeDrag = true; // If possible, we start the update at the dragged object.
     
     drag = JXG.getReference(this, drag);
+    if (drag==null) {
+        isBeforeDrag = false; 
+    }
     
     for(el in this.objects) {
         pEl = this.objects[el];
-        if (!this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
-        if (drag == null || pEl.id != drag.id) {
+        if (drag!=null && pEl.id != drag.id) { 
+            isBeforeDrag = false; 
+        }
+        if (!(isBeforeDrag || this.needsFullUpdate || pEl.needsRegularUpdate)) { continue; }
+        if (drag==null || pEl.id!=drag.id) {
             //if (this.needsFullUpdate) { pEl.update(true); }
             pEl.update(true);
         } else {
