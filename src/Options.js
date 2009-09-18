@@ -155,7 +155,9 @@ JXG.Options = function() {
     this.curve.RDPsmoothing = false; // Apply the Ramen-Douglas-Peuker algorithm
     this.curve.numberPointsHigh = 1600; // Number of points on curves after mouseUp
     this.curve.numberPointsLow = 400;   // Number of points on curves after mousemove
-
+    this.curve.doAdvancedPlot = true;   // Use the algorithm by Gillam and Hohenwarter
+                                        // It is much slower, but the result is better
+    
     /* precision options */
     this.precision = new Object();
     this.precision.hasPoint = 4;

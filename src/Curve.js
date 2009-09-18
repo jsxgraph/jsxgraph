@@ -52,13 +52,22 @@ JXG.Curve = function (board, parents, id, name, withLabel) {
     
     this.init(board, id, name);
 
+
+    /** Use the algorithm by Gillam and Hohenwarter for plotting.
+      * If false the naive algorithm is used.
+      * It is much slower, but the result is better.
+      */
+    this.doAdvancedPlot = this.board.options.curve.doAdvancedPlot;
+    
     /** 
-      * Number of points on curves after mouseUp, i.e. high quality output
+      * Number of points on curves after mouseUp, i.e. high quality output.
+      * Only used if this.doAdvancedPlot==false
       * May be overwritten.
       **/
     this.numberPointsHigh = this.board.options.curve.numberPointsHigh;
     /** 
-      * Number of points on curves after mousemove, i.e. low quality output
+      * Number of points on curves after mousemove, i.e. low quality output.
+      * Only used if this.doAdvancedPlot==false
       * May be overwritten.
       **/
     this.numberPointsLow = this.board.options.curve.numberPointsLow;
@@ -155,15 +164,16 @@ JXG.Curve.prototype.maxX = function () {
  * @return {bool} True if (x,y) is near the curve, False otherwise.
  */
 JXG.Curve.prototype.hasPoint = function (x,y) {
-    var t, dist = 10000.0, 
+    var t, dist = Infinity, 
         c, trans, i, j, tX, tY,
         lbda, x0, y0, x1, y1, den,
-        steps = 400, 
+        steps = this.numberPointsLow, 
         d = (this.maxX()-this.minX())/steps,
         prec = this.r/(this.board.unitX*this.board.zoomX),
         checkPoint, len,
         suspendUpdate = true;
 
+    prec = prec*prec;
     checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     x = checkPoint.usrCoords[1];
     y = checkPoint.usrCoords[2];
@@ -180,7 +190,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
                 tX = c[1];
                 tY = c[2];
             }
-            dist = Math.sqrt((x-tX)*(x-tX)+(y-tY)*(y-tY));
+            dist = (x-tX)*(x-tX)+(y-tY)*(y-tY);
             if (dist<prec) { return true; }
             t+=d;
         }  
@@ -195,10 +205,10 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
             
             if (den>=JXG.Math.eps) {
                 lbda = (x0*x1+y0*y1)/den;
-                dist = Math.sqrt( x0*x0+y0*y0 - lbda*(x0*x1+y0*y1) );
+                dist = x0*x0+y0*y0 - lbda*(x0*x1+y0*y1);
             } else {
                 lbda = 0.0;
-                dist = Math.sqrt(x0*x0+y0*y0);
+                dist = x0*x0+y0*y0;
             }
             if (lbda>=0.0 && lbda<=1.0 && dist<prec) { 
                 return true; 
@@ -270,27 +280,17 @@ JXG.Curve.prototype.updateDataArray = function () {};
  * points. Otherwise, e.g. on mouseup, many points are used.
  */
 JXG.Curve.prototype.updateCurve = function () {
-    var len, mi, ma, x, y, i, t, stepSize,
+    var len, mi, ma, x, y, i,
         suspendUpdate = false;
     
     this.updateDataArray();
-    if (this.curveType=='plot' && this.dataX!=null) {
-        this.numberPoints = this.dataX.length;
-    } else {
-        if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
-            this.numberPoints = this.numberPointsHigh;
-        } else {
-            this.numberPoints = this.numberPointsLow;
-        }
-    }
-    len = this.numberPoints;
-    
     mi = this.minX();
     ma = this.maxX();
-    stepSize = (ma-mi)/len;
 
     // Discrete data points
     if (this.dataX!=null) { // x-coordinates are in an array
+        this.numberPoints = this.dataX.length;
+        len = this.numberPoints;
         this.allocatePoints();  // It is possible, that the array length has increased.
         for (i=0; i<len; i++) {
             x = i;
@@ -304,8 +304,18 @@ JXG.Curve.prototype.updateCurve = function () {
             suspendUpdate = true;
         }
     } else { // continuous x data
-        //this.updateParametricCurveNaive(mi,ma,len);
-        this.updateParametricCurve(mi,ma,len);
+        if (this.doAdvancedPlot) {
+            this.updateParametricCurve(mi,ma,len);
+        } else {
+            if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
+                this.numberPoints = this.numberPointsHigh;
+            } else {
+                this.numberPoints = this.numberPointsLow;
+            }
+            len = this.numberPoints;
+            this.allocatePoints();  // It is possible, that the array length has increased.
+            this.updateParametricCurveNaive(mi,ma,len);
+        }
     }
     this.getLabelAnchor();
 };
@@ -326,7 +336,6 @@ JXG.Curve.prototype.updateParametricCurveNaive = function(mi,ma,len) {
 JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
     var i, t, t0,
         suspendUpdate = false,
-        stepSize = (ma-mi)/len,
         po = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board),
         x, y, x0, y0, top, depth,
         MAX_DEPTH,
@@ -336,8 +345,7 @@ JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
         depthStack = [],
         pointStack = [],
         divisors = [], 
-        xd_ = NaN, yd_ = NaN,
-        doJump = false,
+        //xd_ = NaN, yd_ = NaN,
         distOK = false,
         j = 0;
 
@@ -408,6 +416,7 @@ JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
         }
         */
         this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+        this.updateTransform(this.points[j]);
         j++;
         //xd_ = x-x0;
         //yd_ = x-y0;
