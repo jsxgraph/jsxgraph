@@ -1,0 +1,124 @@
+<!-- This example illustrates the constraints 
+other_intersection_point_of_circle_and_line
+and other_intersection_point_of_two_circles
+
+Equivalent WIRIS code:
+	A = point(-4,0)
+	B = point(4,0)
+	C = point(0,-3)
+	a = circumference(A,distance(A,C))
+	b = circumference(B,distance(B,C))
+	F = point(-10,-3)
+	l = line(F,C)
+	D = other_intersection_point_of_two_circles(C,a,b)
+	E = other_intersection_point_of_circle_and_line(C,b,l)
+-->
+
+<construction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xml/intergeo.xsd">
+	<elements>
+		<point id="A">
+			<homogeneous_coordinates>
+				<double>-4</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="B">
+			<homogeneous_coordinates>
+				<double>4</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="C">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>-3</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="D">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>3</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="E">
+			<homogeneous_coordinates>
+				<double>8</double>
+				<double>-3</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="F">
+			<homogeneous_coordinates>
+				<double>-6</double>
+				<double>-3</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<circle id="a">
+			<matrix>
+				<double>1</double>
+				<double>0</double>
+				<double>-4</double>
+				<double>0</double>
+				<double>1</double>
+				<double>0</double>
+				<double>-4</double>
+				<double>0</double>
+				<double>-9</double>
+			</matrix>
+		</circle>
+		<circle id="b">
+			<matrix>
+				<double>1</double>
+				<double>0</double>
+				<double>4</double>
+				<double>0</double>
+				<double>1</double>
+				<double>0</double>
+				<double>4</double>
+				<double>0</double>
+				<double>-9</double>
+			</matrix>
+		</circle>
+		<line id="l">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>1</double>
+				<double>3</double>
+			</homogeneous_coordinates>
+		</line>
+	</elements>
+	<constraints>
+		<circle_by_center_and_point>
+			<circle out="true">a</circle>
+			<point>A</point>
+			<point>C</point>
+		</circle_by_center_and_point>
+		<circle_by_center_and_point>
+			<circle out="true">b</circle>
+			<point>B</point>
+			<point>C</point>
+		</circle_by_center_and_point>
+		<line_through_two_points>
+			<line out="true">l</line>
+			<point>F</point>
+			<point>C</point>
+		</line_through_two_points>
+		<other_intersection_point_of_two_circles>
+			<point out="true">D</point>
+			<point>C</point>
+			<circle>a</circle>
+			<circle>b</circle>
+		</other_intersection_point_of_two_circles>
+		<other_intersection_point_of_circle_and_line>
+			<point out="true">E</point>
+			<point>C</point>
+			<circle>b</circle>
+			<line>l</line>			
+		</other_intersection_point_of_circle_and_line>
+	</constraints>
+</construction>
