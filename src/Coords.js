@@ -131,10 +131,33 @@ JXG.Coords.prototype.screen2usr = function() {
  * @param {int} method The type of coordinates used here. Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
  * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
  */
-JXG.Coords.prototype.distance = function(method, coordinates) {
+JXG.Coords.prototype.distance = function(meth, crd) {
     var sum = 0,
-        i, f;
-    if (method == JXG.COORDS_BY_USER) {
+        c,
+        ucr = this.usrCoords,
+        scr = this.scrCoords,
+        f;
+        
+    if (meth == JXG.COORDS_BY_USER) {
+        c = crd.usrCoords;
+        f = ucr[0]-c[0];
+        sum = f*f;
+        f = ucr[1]-c[1];
+        sum += f*f;
+        f = ucr[2]-c[2];
+        sum += f*f;
+    } else {
+        c = crd.scrCoords;
+        f = scr[0]-c[0];
+        sum = f*f;
+        f = scr[1]-c[1];
+        sum += f*f;
+        f = scr[2]-c[2];
+        sum += f*f;
+    }
+
+    /*
+    if (meth == JXG.COORDS_BY_USER) {
 //        if (Math.abs(this.usrCoords[0]+coordinates.usrCoords[0])>eps) {
 //            return Infinity;
 //        }
@@ -151,7 +174,8 @@ JXG.Coords.prototype.distance = function(method, coordinates) {
             sum += f*f;
         }
     }
-
+    */
+    
     return Math.sqrt(sum);
 };
 

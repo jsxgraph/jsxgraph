@@ -508,12 +508,25 @@ JXG.Point.prototype.ZEval = function () {
 
 /**
  * Getter method for the distance to a second point, this is required for CAS-elements.
+ * Here, function inlining seems to be worthwile  (for plotting).
  * @param {JXG.Point} point2 The point to which the distance shall be calculated.
  * @return Distance in user coordinate to the given point
  * @type number
  */
 JXG.Point.prototype.Dist = function(point2) {
-    return this.coords.distance(JXG.COORDS_BY_USER, point2.coords);
+    var sum,
+        c = point2.coords.usrCoords,
+        ucr = this.coords.usrCoords,
+        f;
+        
+    f = ucr[0]-c[0];
+    sum = f*f;
+    f = ucr[1]-c[1];
+    sum += f*f;
+    f = ucr[2]-c[2];
+    sum += f*f;
+    return Math.sqrt(sum);
+    //return this.coords.distance(JXG.COORDS_BY_USER, point2.coords);
 };
 
 /**
