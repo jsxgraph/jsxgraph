@@ -236,7 +236,7 @@ JXG.Line.prototype = new JXG.GeometryElement;
         distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
         distP2P = coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
         distP1P2 = this.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
-        if((distP1P > distP1P2) || (distP2P > distP1P2)) { // Check if P(x|y) is not bewtween  P1 and P2
+        if((distP1P > distP1P2) || (distP2P > distP1P2)) { // Check if P(x|y) is not between  P1 and P2
             if(distP1P < distP2P) { // P liegt auf der Seite von P1
                 if(!this.visProp['straightFirst']) {
                     return false;

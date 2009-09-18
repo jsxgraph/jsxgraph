@@ -166,7 +166,7 @@ JXG.Curve.prototype.maxX = function () {
 JXG.Curve.prototype.hasPoint = function (x,y) {
     var t, dist = Infinity, 
         c, trans, i, j, tX, tY,
-        lbda, x0, y0, x1, y1, den,
+        lbda, x0, y0, x1, y1, xy, den,
         steps = this.numberPointsLow, 
         d = (this.maxX()-this.minX())/steps,
         prec = this.r/(this.board.unitX*this.board.zoomX),
@@ -204,8 +204,9 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
             den = x1*x1+y1*y1;
             
             if (den>=JXG.Math.eps) {
-                lbda = (x0*x1+y0*y1)/den;
-                dist = x0*x0+y0*y0 - lbda*(x0*x1+y0*y1);
+                xy = x0*x1+y0*y1;
+                lbda = xy/den;
+                dist = x0*x0+y0*y0 - lbda*xy;
             } else {
                 lbda = 0.0;
                 dist = x0*x0+y0*y0;
@@ -242,6 +243,7 @@ JXG.Curve.prototype.update = function () {
     if (this.needsUpdate) {
         this.updateCurve();
     }
+    return this;
 };
 
 /**
@@ -261,6 +263,7 @@ JXG.Curve.prototype.updateRenderer = function () {
         //this.board.renderer.updateLabel(this.label);
         this.board.renderer.updateText(this.label.content);
     }       
+    return this;
 };
 
 /**
@@ -271,7 +274,7 @@ JXG.Curve.prototype.updateRenderer = function () {
   * Default is an empty method, can be overwritten
   * by the user.
   */
-JXG.Curve.prototype.updateDataArray = function () {};
+JXG.Curve.prototype.updateDataArray = function () { return this; };
 
 /**
  * Computes for equidistant points on the x-axis the values
@@ -318,6 +321,7 @@ JXG.Curve.prototype.updateCurve = function () {
         }
     }
     this.getLabelAnchor();
+    return this;
 };
 
 JXG.Curve.prototype.updateParametricCurveNaive = function(mi,ma,len) {
@@ -331,6 +335,7 @@ JXG.Curve.prototype.updateParametricCurveNaive = function(mi,ma,len) {
         this.updateTransform(this.points[i]);
         suspendUpdate = true;
     }
+    return this;
 };
 
 JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
@@ -433,6 +438,7 @@ JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
     } while (top != 0);
     this.numberPoints = this.points.length;
     //$('debug').innerHTML = ' '+this.numberPoints;
+    return this;
         
 };
 
@@ -533,6 +539,7 @@ JXG.Curve.prototype.addTransform = function (transform) {
     for (i=0; i<len; i++) {
         this.transformations.push(list[i]);
     }
+    return this;
 };
 
 JXG.Curve.prototype.setPosition = function (method, x, y) {
@@ -547,6 +554,7 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
     }
     //this.update();
     //}
+    return this;
 };
 
 /**

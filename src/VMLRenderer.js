@@ -800,7 +800,7 @@ JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString,board)
         y = board.canvasHeight;
     node.style.width = x;
     node.style.height = y;
-    node.setAttribute('coordsize', (this.resolution*x)+','+(this.resolution*y));
+    node.setAttribute('coordsize', [(this.resolution*x),(this.resolution*y)].join(','));
     node.setAttribute('path',pointString.join(""));
     //node.points.value = pointString;
 };
@@ -810,6 +810,8 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
         //h = 3*el.board.canvasHeight, 
         //w = 100*el.board.canvasWidth, 
         i, scr,
+        r = this.resolution,
+        mround = Math.round,
         symbm = ' m ', 
         symbl = ' l ',
         nextSymb = symbm, 
@@ -834,9 +836,7 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
             if (scr[2]>20000.0) { scr[2] = 20000.0; }
             else if (scr[2]<-20000.0) { scr[2] = -20000.0; }
 
-            pStr.push([nextSymb,Math.round(this.resolution*scr[1]),
-                       ', ',
-                       Math.round(this.resolution*scr[2])].join(''));
+            pStr.push([nextSymb,mround(r*scr[1]),', ',mround(r*scr[2])].join(''));
             nextSymb = symbl;
         }
     }
@@ -845,18 +845,21 @@ JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
 };
 
 JXG.VMLRenderer.prototype.updatePathStringPoint = function(el, size, type) {
-    var s = [];
+    var s = [],
+        scr = el.coords.scrCoords,
+        r = this.resolution;
+    
     if(type == 'x') {
-        s.push('m ' + (this.resolution*(el.coords.scrCoords[1]-size)) + ', ' + (this.resolution*(el.coords.scrCoords[2]-size)) + ' l ' + 
-        (this.resolution*(el.coords.scrCoords[1]+size)) + ', ' + (this.resolution*(el.coords.scrCoords[2]+size)) + ' m ' + 
-        (this.resolution*(el.coords.scrCoords[1]+size)) + ', ' + (this.resolution*(el.coords.scrCoords[2]-size)) + ' l ' +
-        (this.resolution*(el.coords.scrCoords[1]-size)) + ', ' + (this.resolution*(el.coords.scrCoords[2]+size)));
+        s.push(['m ',(r*(scr[1]-size)),', ',(r*(scr[2]-size)),' l ',
+        (r*(scr[1]+size)),', ',(r*(scr[2]+size)),' m ',
+        (r*(scr[1]+size)),', ',(r*(scr[2]-size)),' l ',
+        (r*(scr[1]-size)),', ',(r*(scr[2]+size))].join(''));
     }
     else if(type == '+') {
-        s.push('m ' + (this.resolution*(el.coords.scrCoords[1]-size)) + ', ' + (this.resolution*(el.coords.scrCoords[2])) + ' l ' + 
-        (this.resolution*(el.coords.scrCoords[1]+size)) + ', ' + (this.resolution*(el.coords.scrCoords[2])) + ' m ' + 
-        (this.resolution*(el.coords.scrCoords[1])) + ', ' + (this.resolution*(el.coords.scrCoords[2]-size)) + ' l ' +
-        (this.resolution*(el.coords.scrCoords[1])) + ', ' + (this.resolution*(el.coords.scrCoords[2]+size)));    
+        s.push(['m ',(r*(scr[1]-size)),', ',(r*(scr[2])),' l ',
+        (r*(scr[1]+size)),', ',(r*(scr[2])),' m ',
+        (r*(scr[1])),', ',(r*(scr[2]-size)),' l ',
+        (r*(scr[1])),', ',(r*(scr[2]+size))].join(''));    
     }
     return s;
 }
@@ -868,23 +871,23 @@ JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,el) {
         maxY = el.vertices[0].coords.scrCoords[2],
         i, 
         len = el.vertices.length,
-        screenCoords, x, y, 
+        scr, x, y, 
         pStr = [];
         
     node.setAttribute('stroked', 'false');
     for(i=1; i<len-1; i++) {
-        screenCoords = el.vertices[i].coords.scrCoords;
-        if(screenCoords[1] < minX) {
-            minX = screenCoords[1];
+        scr = el.vertices[i].coords.scrCoords;
+        if(scr[1] < minX) {
+            minX = scr[1];
         }
-        if(screenCoords[1] > maxX) {
-            maxX = screenCoords[1];
+        if(scr[1] > maxX) {
+            maxX = scr[1];
         }
-        if(screenCoords[2] < minY) {
-            minY = screenCoords[2];
+        if(scr[2] < minY) {
+            minY = scr[2];
         }
-        if(screenCoords[2] > maxY) {
-            maxY = screenCoords[2];
+        if(scr[2] > maxY) {
+            maxY = scr[2];
         }
     }
 
@@ -895,14 +898,12 @@ JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,el) {
     node.style.height = y;
     node.setAttribute('coordsize', x+','+y);
      
-    pStr.push("m ");
-    screenCoords = el.vertices[0].coords.scrCoords;
-    pStr.push(screenCoords[1] + "," + screenCoords[2]);    
-    pStr.push(" l ");
+    scr = el.vertices[0].coords.scrCoords;
+    pStr.push(["m ",scr[1],",",scr[2]," l "].join(''));
     
     for(i=1; i<len-1; i++) {
-        screenCoords = el.vertices[i].coords.scrCoords;
-        pStr.push(screenCoords[1] + "," + screenCoords[2]);
+        scr = el.vertices[i].coords.scrCoords;
+        pStr.push(scr[1] + "," + scr[2]);
         if(i<len-2) {
             pStr.push(", ");
         }

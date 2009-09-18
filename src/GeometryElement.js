@@ -457,6 +457,7 @@ JXG.GeometryElement.prototype.addChild = function (obj) {
             this.ancestors[el].descendants[this.descendants[el2].id] = this.descendants[el2];
         }
     }
+    return this;
 };
 
 /**
@@ -472,6 +473,7 @@ JXG.GeometryElement.prototype.addDescendants = function (/** JXG.GeometryElement
     for(el in obj.childElements) {
         this.addDescendants(obj.childElements[el]);
     }
+    return this;
 };
 
 /**
@@ -493,6 +495,7 @@ JXG.GeometryElement.prototype.update = function() {
     if(this.traced) {
         this.cloneToBackground(true);
     }
+    return this;
 };
 
 /**
@@ -514,6 +517,7 @@ JXG.GeometryElement.prototype.hideElement = function() {
             this.board.renderer.hide(this.label.content);
         }
     }
+    return this;
 };
 
 /**
@@ -528,6 +532,7 @@ JXG.GeometryElement.prototype.showElement = function() {
             this.board.renderer.show(this.label.content);
         }
     }
+    return this;
 };
 
 
@@ -573,11 +578,12 @@ JXG.GeometryElement.prototype.showElement = function() {
  * p.hideElement();
  */
 JXG.GeometryElement.prototype.setProperty = function () {
-    var color;
-    var opacity;
-    var pair;
-    for (var i=0; i<arguments.length; i++) {
-        var pairRaw = arguments[i];
+    var i, key, color, pairRaw,
+        opacity,
+        pair;
+        
+    for (i=0; i<arguments.length; i++) {
+        pairRaw = arguments[i];
         if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
             pair = pairRaw.split(':');
         } else if (!JXG.isArray(pairRaw)) {    // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
@@ -587,10 +593,10 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 this.setProperty([key,pairRaw[key]]);
             }
             */
-            for (var key in pairRaw) {
+            for (key in pairRaw) {
                 this.setProperty([key,pairRaw[key]]);
             }
-            return;
+            return this;
         } else {                             // pairRaw consists of array [key,value]
             pair = pairRaw;
         }     
@@ -855,6 +861,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 }
         }
     }
+    return this;
 };
 
 /**
@@ -866,6 +873,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
 JXG.GeometryElement.prototype.setDash = function(dash) {
     this.visProp['dash'] = dash;
     this.board.renderer.setDashStyle(this,this.visProp);
+    return this;
 };
 
 /**
@@ -874,7 +882,7 @@ JXG.GeometryElement.prototype.setDash = function(dash) {
  */
 JXG.GeometryElement.prototype.prepareUpdate = function() {
     this.needsUpdate = true;
-    return; // Im Moment steigen wir nicht rekursiv hinab
+    return this; // Im Moment steigen wir nicht rekursiv hinab
     /* End of function  */
     
     /*
@@ -899,6 +907,7 @@ JXG.GeometryElement.prototype.remove = function() {
     if (this.hasLabel) {
         this.board.renderer.remove(document.getElementById(this.label.content.id));
     }    
+    return this;
 };
 
 /**
@@ -932,6 +941,7 @@ JXG.GeometryElement.prototype.getLabelAnchor = function() {
  * @private
  */
 JXG.GeometryElement.prototype.setStyle = function(x) {    
+    return this;
 };
 
 /**
@@ -941,6 +951,7 @@ JXG.GeometryElement.prototype.setStyle = function(x) {
  * @private
  */
 JXG.GeometryElement.prototype.setStraight = function(x,y) {    
+    return this;
 };
 
 /**
@@ -949,6 +960,7 @@ JXG.GeometryElement.prototype.setStraight = function(x,y) {
  * @private
  */
 JXG.GeometryElement.prototype.setArrow = function(firstArrow,lastArrow) {    
+    return this;
 };
 
 /**
@@ -959,10 +971,10 @@ JXG.GeometryElement.prototype.setArrow = function(firstArrow,lastArrow) {
  * @private
  */
 JXG.GeometryElement.prototype.createLabel = function(withLabel,coords) { 
+    var isTmpId = false;
     if (typeof coords=='undefined' || coords==null) {
         coords = [10,10];
     }
-    var isTmpId = false;
     this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); 
     this.label = {};
     if (typeof withLabel=='undefined' || withLabel==true) {
@@ -981,6 +993,7 @@ JXG.GeometryElement.prototype.createLabel = function(withLabel,coords) {
         }
         this.hasLabel = true;
     }
+    return this;
 };
 
 /**
@@ -994,6 +1007,7 @@ JXG.GeometryElement.prototype.addLabelToElement = function() {
     if(!this.label.content.visProp['visible']) {
         board.renderer.hide(this.label.content);
     }       
+    return this;
 };
 
 /**
@@ -1001,6 +1015,7 @@ JXG.GeometryElement.prototype.addLabelToElement = function() {
  */
 JXG.GeometryElement.prototype.highlight = function() {
     this.board.renderer.highlight(this);
+    return this;
 };
 
 /**
@@ -1008,16 +1023,20 @@ JXG.GeometryElement.prototype.highlight = function() {
  */
 JXG.GeometryElement.prototype.noHighlight = function() {
     this.board.renderer.noHighlight(this);
+    return this;
 };
 
 /**
  * Removes all objects generated by the trace function.
  */
 JXG.GeometryElement.prototype.clearTrace = function() {
-    for(var obj in this.traces) {
+    var obj;
+    
+    for(obj in this.traces) {
         this.board.renderer.remove(this.traces[obj]);
     }
     this.numTraces = 0;
+    return this;
 };
 
 /**
@@ -1025,7 +1044,7 @@ JXG.GeometryElement.prototype.clearTrace = function() {
  * @private
  */
 JXG.GeometryElement.prototype.cloneToBackground = function(addToTrace) {
-    return;
+    return this;
 };
 
 // [c,b0,b1,a,k]
@@ -1035,6 +1054,7 @@ JXG.GeometryElement.prototype.cloneToBackground = function(addToTrace) {
  */
 JXG.GeometryElement.prototype.normalize = function() {
     this.stdform = this.board.algebra.normalize(this.stdform);
+    return this;
 };
 
 /**

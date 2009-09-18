@@ -604,6 +604,7 @@ JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
 JXG.Board.prototype.clickLeftArrow = function (Event) {
     this.origin.scrCoords[1] += this.canvasWidth*0.1;
     this.moveOrigin();
+    return this;
 };
 
 /**
@@ -613,6 +614,7 @@ JXG.Board.prototype.clickLeftArrow = function (Event) {
 JXG.Board.prototype.clickRightArrow = function (Event) {
     this.origin.scrCoords[1] -= this.canvasWidth*0.1;
     this.moveOrigin();
+    return this;
 };
 
 /**
@@ -622,6 +624,7 @@ JXG.Board.prototype.clickRightArrow = function (Event) {
 JXG.Board.prototype.clickUpArrow = function (Event) {
     this.origin.scrCoords[2] += this.canvasHeight*0.1;
     this.moveOrigin();
+    return this;
 };
 
 /**
@@ -631,6 +634,7 @@ JXG.Board.prototype.clickUpArrow = function (Event) {
 JXG.Board.prototype.clickDownArrow = function (Event) {
     this.origin.scrCoords[2] -= this.canvasHeight*0.1;
     this.moveOrigin();
+    return this;
 };
 
 /**
@@ -839,10 +843,12 @@ JXG.Board.prototype.updateInfobox = function(el) {
         this.renderer.show(this.infobox);
         this.renderer.updateText(this.infobox);
     }
+    return this;
 };
 
 JXG.Board.prototype.highlightInfobox = function(x,y,el) {
     this.infobox.setText('<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>');
+    return this;
 }
 
 /**
@@ -862,6 +868,7 @@ JXG.Board.prototype.dehighlightAll = function(x,y) {
                 delete(this.highlightedObjects[el]);
         }
     }
+    return this;
 };
 
 /**
@@ -949,6 +956,7 @@ JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
  */
 JXG.Board.prototype.setBoardMode = function (mode) {
     this.mode = mode;
+    return this;
 };
 
 /**
@@ -973,6 +981,7 @@ JXG.Board.prototype.moveOrigin = function () {
         this.renderer.removeGrid(this);
         this.renderer.drawGrid(this);
     }
+    return this;
 };
 
 /**
@@ -2294,6 +2303,7 @@ JXG.Board.prototype.calculateSnapSizes = function() {
         this.snapSizeY *= 2;
         y /= 2;
     }    
+    return this;
 };
 
 /**
@@ -2323,6 +2333,7 @@ JXG.Board.prototype.applyZoom = function() {
         this.renderer.removeGrid(this);
         this.renderer.drawGrid(this);
     }
+    return this;
 };
  
 /**
@@ -2332,6 +2343,7 @@ JXG.Board.prototype.zoomIn = function() {
     this.zoomX *= this.options.zoom.factor;
     this.zoomY *= this.options.zoom.factor;    
     this.applyZoom();
+    return this;
 };
 
 /**
@@ -2341,6 +2353,7 @@ JXG.Board.prototype.zoomOut = function() {
     this.zoomX /= this.options.zoom.factor;
     this.zoomY /= this.options.zoom.factor;
     this.applyZoom();
+    return this;
 };
 
 /**
@@ -2350,6 +2363,7 @@ JXG.Board.prototype.zoom100 = function() {
     this.zoomX = 1.0;
     this.zoomY = 1.0;
     this.applyZoom();
+    return this;
 };
 
 /**
@@ -2398,6 +2412,7 @@ JXG.Board.prototype.zoomAllPoints = function() {
     this.zoomY = newZoomY;
     
     this.applyZoom();
+    return this;
 };
 
 /**
@@ -2411,7 +2426,7 @@ JXG.Board.prototype.removeObject = function(object) {
 
     /* Wenn weder die ID noch der Name des Objekts bekannt ist, einfach wieder zurueckgehen */
     if(object == undefined) {
-        return;
+        return this;
     }
     
     try{
@@ -2434,6 +2449,7 @@ JXG.Board.prototype.removeObject = function(object) {
     } catch(e) {
 //        alert(object.id + ': Could not be removed, JS says:\n\n' + e);
     }
+    return this;
 };
 
 /**
@@ -2454,6 +2470,7 @@ JXG.Board.prototype.initGeonextBoard = function() {
     l1.hideElement();
     l2 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gYOe0', this.id + 'gYLe0','Y-Achse');
     l2.hideElement();    
+    return this;
 };
 
 /**
@@ -2468,6 +2485,7 @@ JXG.Board.prototype.initInfobox= function() {
     this.infobox.distanceY = 25;
     //this.renderer.drawText(this.infobox);
     this.renderer.hide(this.infobox);
+    return this;
 };
 
 /**
@@ -2480,6 +2498,7 @@ JXG.Board.prototype.resizeContainer = function(canvasWidth, canvasHeight) {
     this.canvasHeight = 1*canvasHeight;
     this.containerObj.style.width = (this.canvasWidth) + 'px';
     this.containerObj.style.height = (this.canvasHeight) + 'px';
+    return this;
 };
 
 /**
@@ -2507,6 +2526,7 @@ JXG.Board.prototype.showDependencies = function() {
     f.document.open();
     f.document.write(t);
     f.document.close();
+    return this;
 };
 
 /**
@@ -2517,6 +2537,7 @@ JXG.Board.prototype.showXML = function() {
     f.document.open();
     f.document.write("<pre>"+JXG.escapeHTML(this.xmlString)+"</pre>");
     f.document.close();
+    return this;
 };
 
 /** 
@@ -2529,6 +2550,7 @@ JXG.Board.prototype.prepareUpdate = function(drag) {
     for(el in this.objects) {
        this.objects[el].needsUpdate = true;
     }
+    return this;
 };
 
 /**
@@ -2558,6 +2580,7 @@ JXG.Board.prototype.updateElements = function(drag) {
             pEl.update(false);
         }
     }
+    return this;
 };
 
 /**
@@ -2580,6 +2603,7 @@ JXG.Board.prototype.updateRenderer = function(drag) {
             pEl.updateRenderer();
         }
     }
+    return this;
 };
 
 /**
@@ -2602,6 +2626,7 @@ JXG.Board.prototype.addHook = function(hook) {
   */
 JXG.Board.prototype.removeHook = function(id) {
     this.hooks[id] = null;
+    return this;
 };
 
 /**
@@ -2614,6 +2639,7 @@ JXG.Board.prototype.updateHooks = function() {
         if(this.hooks[i] != null)
             this.hooks[i](this);
     }
+    return this;
 };
 
 /**
@@ -2623,6 +2649,7 @@ JXG.Board.prototype.updateHooks = function() {
 JXG.Board.prototype.addChild = function(board) {
     this.dependentBoards.push(board);
     this.update();
+    return this;
 };
 
 /**
@@ -2636,6 +2663,7 @@ JXG.Board.prototype.removeChild = function(board) {
             this.dependentBoards.splice(i,1);
         }
     }
+    return this;
 };
 
 /**
@@ -2646,10 +2674,8 @@ JXG.Board.prototype.removeChild = function(board) {
 JXG.Board.prototype.update = function(drag) {
     var i, len, boardId;
     
-    if (this.isSuspendedUpdate) { return; }
-    this.prepareUpdate(drag);
-    this.updateElements(drag);
-    this.updateConditions();
+    if (this.isSuspendedUpdate) { return this; }
+    this.prepareUpdate(drag).updateElements(drag).updateConditions();
     this.renderer.suspendRedraw();
     this.updateRenderer(drag);
     this.renderer.unsuspendRedraw();
@@ -2661,9 +2687,7 @@ JXG.Board.prototype.update = function(drag) {
     for (i=0; i<len; i++) {
         boardId = this.dependentBoards[i].id;
         if(JXG.JSXGraph.boards[boardId] != this) {
-            JXG.JSXGraph.boards[boardId].prepareUpdate(drag);
-            JXG.JSXGraph.boards[boardId].updateElements(drag);
-            JXG.JSXGraph.boards[boardId].updateConditions();
+            JXG.JSXGraph.boards[boardId].prepareUpdate(drag).updateElements(drag).updateConditions();
             JXG.JSXGraph.boards[boardId].renderer.suspendRedraw();
             JXG.JSXGraph.boards[boardId].updateRenderer(drag);
             JXG.JSXGraph.boards[boardId].renderer.unsuspendRedraw();
@@ -2671,6 +2695,7 @@ JXG.Board.prototype.update = function(drag) {
         }
         
     }
+    return this;
 };
 
 /**
@@ -2682,6 +2707,7 @@ JXG.Board.prototype.fullUpdate = function() {
     this.needsFullUpdate = true;
     this.update();
     this.needsFullUpdate = false;
+    return this;
 };
 
 /**
@@ -2780,6 +2806,7 @@ JXG.Board.prototype.clearTraces = function() {
         if (this.objects[el].traced)
             this.objects[el].clearTrace();
     }
+    return this;
 };
 
 /**
@@ -2854,4 +2881,5 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     this.originX = -this.unitX*bbox[0];
     this.originY = this.unitY*bbox[1];
     this.moveOrigin();
+    return this;
 };
