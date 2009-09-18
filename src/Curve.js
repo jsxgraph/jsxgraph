@@ -352,11 +352,11 @@ JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
     
     if (this.board.updateQuality==this.board.BOARD_QUALITY_LOW) {
         MAX_DEPTH = 12;
-        MAX_XDIST = 8;
-        MAX_YDIST = 8;
+        MAX_XDIST = 12;
+        MAX_YDIST = 12;
     } else {
         MAX_DEPTH = 20;
-        MAX_XDIST = 1;
+        MAX_XDIST = 2;
         MAX_YDIST = 2;
     }
     
