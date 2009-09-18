@@ -46,7 +46,7 @@ JXG.Image = function (board, imageBase64String, coordinates, size, displayLevel,
     this.init(board, id, name);
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
     this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
-    this.size = [size[0]*board.zoomX*board.unitX,size[1]*board.zoomY*board.unitY];
+    this.size = [size[0]*board.stretchX,size[1]*board.stretchY];
     this.imageBase64String = imageBase64String;
     this.displayLevel = displayLevel;
     this.parent = el;

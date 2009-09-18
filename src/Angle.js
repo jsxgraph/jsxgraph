@@ -218,7 +218,7 @@ JXG.Angle.prototype.getLabelAnchor = function() {
                            this.point2.coords.usrCoords[2]+ Math.sin(angle*Math.PI/(2*160))*bxminusax + Math.cos(angle*Math.PI/(2*160))*byminusay], 
                           this.board);
     if(this.label.content != null) {                          
-        this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [0/(this.board.unitX*this.board.zoomX),0/(this.board.unitY*this.board.zoomY)],this.board);                      
+        this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [0/(this.board.stretchX),0/(this.board.stretchY)],this.board);                      
     }
     return c;
 };

@@ -833,6 +833,9 @@ this.writeBoard = function(tree, board, registeredElements) {
   // board.zoomY = 1*boardData.getElementsByTagName("coordSystem")[0].attributes["yscale"].value;
   board.unitX = (boardData.getElementsByTagName("coordSystem")[0].attributes["scale"]) ? 1*boardData.getElementsByTagName("coordSystem")[0].attributes["scale"].value : 1;
   board.unitY = (boardData.getElementsByTagName("coordSystem")[0].attributes["yscale"]) ? 1*boardData.getElementsByTagName("coordSystem")[0].attributes["yscale"].value : 1;
+  board.stretchX = board.zoomX*board.unitX;
+  board.stretchY = board.zoomY*board.unitY;
+  
   board.fontSize = 1*tree.getElementsByTagName("gui")[0].getElementsByTagName("font")[0].attributes["size"].value;
   // board.geonextCompatibilityMode = true;
 

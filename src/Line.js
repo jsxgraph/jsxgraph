@@ -206,10 +206,10 @@ JXG.Line.prototype = new JXG.GeometryElement;
         
     
     c[0] = this.stdform[0] -
-                this.stdform[1]*this.board.origin.scrCoords[1]/(this.board.unitX*this.board.zoomX)+
-                this.stdform[2]*this.board.origin.scrCoords[2]/(this.board.unitY*this.board.zoomY);
-    c[1] = this.stdform[1]/(this.board.unitX*this.board.zoomX);
-    c[2] = this.stdform[2]/(-this.board.unitY*this.board.zoomY);
+                this.stdform[1]*this.board.origin.scrCoords[1]/this.board.stretchX+
+                this.stdform[2]*this.board.origin.scrCoords[2]/this.board.stretchY;
+    c[1] = this.stdform[1]/this.board.stretchX;
+    c[2] = this.stdform[2]/(-this.board.stretchY);
 
     // Project the point orthogonally onto the line (Gram-Schmidt)
     mu = this.board.algebra.innerProduct(v,c,3)/this.board.algebra.innerProduct(c,c,3);
@@ -223,19 +223,29 @@ JXG.Line.prototype = new JXG.GeometryElement;
     vnew[0] = 1.0;
     
     // The point is too far away from the line
-    if (this.board.algebra.distance(v,vnew)>this.r) {
+    // dist(v,vnew)^2 projective
+    //if (this.board.algebra.distance(v,vnew)>this.r) {
+    if ((v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2])>this.r*this.r) {
         return false;
     }
     
     if(this.visProp['straightFirst'] && this.visProp['straightLast']) {    
         return true;
     } else { // If the line is a ray or segment we have to check if the projected point is "inside" P1 and P2.
+/*    
         coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [vnew[1],vnew[2]], this.board);
         p1Scr = this.point1.coords.scrCoords;
         p2Scr = this.point2.coords.scrCoords;
         distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
         distP2P = coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
         distP1P2 = this.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
+*/
+        p1Scr = this.point1.coords.scrCoords;
+        p2Scr = this.point2.coords.scrCoords;
+        distP1P2 = (p2Scr[1]-p1Scr[1])*(p2Scr[1]-p1Scr[1])+(p2Scr[2]-p1Scr[2])*(p2Scr[2]-p1Scr[2]);  // dist(p1,p2)^2 affine
+        distP1P = (vnew[1]-p1Scr[1])*(vnew[1]-p1Scr[1])+(vnew[2]-p1Scr[2])*(vnew[2]-p1Scr[2]);       // dist(vnew,p1)^2 affine
+        distP2P = (vnew[1]-p2Scr[1])*(vnew[1]-p2Scr[1])+(vnew[2]-p2Scr[2])*(vnew[2]-p2Scr[2]);       // dist(vnew,p2)^2 affine
+        
         if((distP1P > distP1P2) || (distP2P > distP1P2)) { // Check if P(x|y) is not between  P1 and P2
             if(distP1P < distP2P) { // P liegt auf der Seite von P1
                 if(!this.visProp['straightFirst']) {
@@ -514,7 +524,7 @@ JXG.Line.prototype.getLabelAnchor = function() {
                     relCoords = [-10,-10];
                 }
             }
-            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [relCoords[0]/(this.board.unitX*this.board.zoomX),relCoords[1]/(this.board.unitY*this.board.zoomY)],this.board);            
+            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [relCoords[0]/this.board.stretchX,relCoords[1]/this.board.stretchY],this.board);            
         }
         return coords;
     }
@@ -540,6 +550,8 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.board.unitY = this.board.unitY;
     copy.board.zoomX = this.board.zoomX;
     copy.board.zoomY = this.board.zoomY;
+    copy.board.stretchX = this.board.stretchX;
+    copy.board.stretchY = this.board.stretchY;
     copy.board.origin = this.board.origin;
     copy.board.canvasHeight = this.board.canvasHeight;
     copy.board.canvasWidth = this.board.canvasWidth;

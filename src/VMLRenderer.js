@@ -272,10 +272,10 @@ JXG.VMLRenderer.prototype.drawArcLine = function(id, radius, angle1, angle2, mid
     node.style.position = 'absolute';
     node.setAttribute('filled', 'false');
 
-    node.style.left = (midpoint.coords.scrCoords[1] - Math.round(radius * board.unitX * board.zoomX)) + 'px'; 
-    node.style.top = (midpoint.coords.scrCoords[2] - Math.round(radius * board.unitY * board.zoomY))  + 'px'; 
-    node.style.width = (Math.round(radius * board.unitX * board.zoomX)*2) + 'px'; 
-    node.style.height = (Math.round(radius * board.unitY * board.zoomY)*2) + 'px';  
+    node.style.left = (midpoint.coords.scrCoords[1] - Math.round(radius * board.stretchX)) + 'px'; 
+    node.style.top = (midpoint.coords.scrCoords[2] - Math.round(radius * board.stretchY))  + 'px'; 
+    node.style.width = (Math.round(radius * board.stretchX)*2) + 'px'; 
+    node.style.height = (Math.round(radius * board.stretchY)*2) + 'px';  
     node.setAttribute('startangle', angle1);
     node.setAttribute('endangle', angle2);  
     
@@ -312,8 +312,8 @@ JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, p
         
     node2.setAttribute('stroked', 'false');
 
-    x = Math.round(radius * board.unitX * board.zoomX); // Breite des umgebenden Rechtecks?
-    y = Math.round(radius * board.unitY * board.zoomY); // Hoehe des umgebenden Rechtecks?
+    x = Math.round(radius * board.stretchX); // Breite des umgebenden Rechtecks?
+    y = Math.round(radius * board.stretchY); // Hoehe des umgebenden Rechtecks?
 
     node2.style.width = x;
     node2.style.height = y;
@@ -338,7 +338,7 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     /* some computations */
     radius = el.getRadius();  
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                          [el.midpoint.coords.usrCoords[1], el.board.origin.scrCoords[2]/(el.board.unitY*el.board.zoomY)],
+                          [el.midpoint.coords.usrCoords[1], el.board.origin.scrCoords[2]/el.board.stretchY],
                           el.board);
     angle2 = el.board.algebra.trueAngle(el.point2, el.midpoint, p);
     angle1 = el.board.algebra.trueAngle(el.point3, el.midpoint, p);
@@ -415,7 +415,7 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
     projectedP3 = el.board.algebra.projectPointToCircle(el.point3,circle);  
     
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                          [el.point2.coords.usrCoords[1], el.board.origin.scrCoords[2]/(el.board.unitY*el.board.zoomY)],
+                          [el.point2.coords.usrCoords[1], el.board.origin.scrCoords[2]/(el.board.stretchY)],
                           el.board);
     angle2 = el.board.algebra.trueAngle(el.point1, el.point2, p);
     angle1 = el.board.algebra.trueAngle(el.point3, el.point2, p);

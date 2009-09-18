@@ -42,6 +42,8 @@ JXG.IntergeoReader = new function() {
         this.board.origin.scrCoords = [1, 400, 300];
         this.board.unitX = 30;
         this.board.unitY = 30;
+        this.board.stretchX = this.board.zoomX*this.board.unitX;
+        this.board.stretchY = this.board.zoomY*this.board.unitY;
 
         this.readElements(tree.getElementsByTagName("elements"));
         this.board.fullUpdate();

@@ -277,10 +277,10 @@ JXG.AbstractRenderer.prototype.calcStraight = function(/** JXG.Line */ el, /** J
     // Compute the stdform of the line in screen coordinates.
     c = [];
     c[0] = el.stdform[0] - 
-           el.stdform[1]*el.board.origin.scrCoords[1]/(el.board.unitX*el.board.zoomX)+
-           el.stdform[2]*el.board.origin.scrCoords[2]/(el.board.unitY*el.board.zoomY);
-    c[1] = el.stdform[1]/(el.board.unitX*el.board.zoomX);
-    c[2] = el.stdform[2]/(-el.board.unitY*el.board.zoomY);
+           el.stdform[1]*el.board.origin.scrCoords[1]/el.board.stretchX+
+           el.stdform[2]*el.board.origin.scrCoords[2]/el.board.stretchY;
+    c[1] = el.stdform[1]/el.board.stretchX;
+    c[2] = el.stdform[2]/(-el.board.stretchY);
 
     if (isNaN(c[0]+c[1]+c[2])) return; // p1=p2
     
@@ -584,7 +584,7 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
     var radius = el.getRadius();
     if (radius>0.0 && !isNaN(el.midpoint.coords.scrCoords[1]+el.midpoint.coords.scrCoords[2]) ) {
         this.updateEllipsePrimitive(el.rendNode,el.midpoint.coords.scrCoords[1],el.midpoint.coords.scrCoords[2],
-            (radius * el.board.unitX * el.board.zoomX),(radius * el.board.unitY * el.board.zoomY));
+            (radius * el.board.stretchX),(radius * el.board.stretchY));
     }
 };
     
@@ -825,8 +825,8 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         }
     }
 
-    gx = Math.round((1.0/gridX)*board.zoomX*board.unitX);
-    gy = Math.round((1.0/gridY)*board.zoomY*board.unitY);
+    gx = Math.round((1.0/gridX)*board.stretchX);
+    gy = Math.round((1.0/gridY)*board.stretchY);
 
     topLeft = new JXG.Coords(JXG.COORDS_BY_USER, 
                              [Math.ceil(k.usrCoords[1])-j/gridX, Math.floor(k.usrCoords[2])+l/gridY],

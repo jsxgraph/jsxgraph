@@ -203,8 +203,9 @@ JXG.Circle.prototype = new JXG.GeometryElement;
  * @private
  */
 JXG.Circle.prototype.hasPoint = function (x, y) {
+/*
     var genauigkeit = this.board.options.precision.hasPoint;
-    genauigkeit = genauigkeit/(this.board.unitX*this.board.zoomX); 
+    genauigkeit = genauigkeit/(this.board.stretchX); 
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     var r = this.getRadius();
@@ -213,6 +214,14 @@ JXG.Circle.prototype.hasPoint = function (x, y) {
                          Math.pow(this.midpoint.coords.usrCoords[2]-checkPoint.usrCoords[2],2));
    
     return (Math.abs(dist-r) < genauigkeit);
+*/    
+    var prec = this.board.options.precision.hasPoint/(this.board.stretchX),
+        mp = this.midpoint.coords.usrCoords,
+        p = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
+        r = this.getRadius();
+    
+    var dist = Math.sqrt((mp[1]-p.usrCoords[1])*(mp[1]-p.usrCoords[1]) + (mp[2]-p.usrCoords[2])*(mp[2]-p.usrCoords[2]));
+    return (Math.abs(dist-r) < prec);
 };
 
 /**
@@ -490,6 +499,8 @@ JXG.Circle.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     copy.board.unitY = this.board.unitY;
     copy.board.zoomX = this.board.zoomX;
     copy.board.zoomY = this.board.zoomY;
+    copy.board.stretchX = this.board.stretchX;
+    copy.board.stretchY = this.board.stretchY;
 
     copy.visProp = this.visProp;
     

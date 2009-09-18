@@ -97,14 +97,19 @@ JXG.Coords.prototype.normalizeUsrCoords = function() {
  * @private
  */
 JXG.Coords.prototype.usr2screen = function(doRound) {
+    var mround = Math.round,
+        b = this.board,
+        uc = this.usrCoords,
+        oc = this.board.origin.scrCoords;
+        
     if (doRound==null || doRound) {
-        this.scrCoords[0] = Math.round(this.usrCoords[0]);
-        this.scrCoords[1] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[1] + this.usrCoords[1]*this.board.unitX*this.board.zoomX);
-        this.scrCoords[2] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[2] - this.usrCoords[2]*this.board.unitY*this.board.zoomY);
+        this.scrCoords[0] = mround(uc[0]);
+        this.scrCoords[1] = mround(uc[0]*oc[1] + uc[1]*b.stretchX);
+        this.scrCoords[2] = mround(uc[0]*oc[2] - uc[2]*b.stretchY);
     } else {
-        this.scrCoords[0] = this.usrCoords[0];
-        this.scrCoords[1] = this.usrCoords[0]*this.board.origin.scrCoords[1] + this.usrCoords[1]*this.board.unitX*this.board.zoomX;
-        this.scrCoords[2] = this.usrCoords[0]*this.board.origin.scrCoords[2] - this.usrCoords[2]*this.board.unitY*this.board.zoomY;
+        this.scrCoords[0] = uc[0];
+        this.scrCoords[1] = uc[0]*oc[1] + uc[1]*b.stretchX;
+        this.scrCoords[2] = uc[0]*oc[2] - uc[2]*b.stretchY;
     }
 };
 
@@ -114,10 +119,11 @@ JXG.Coords.prototype.usr2screen = function(doRound) {
  */
 JXG.Coords.prototype.screen2usr = function() {
     var o = this.board.origin.scrCoords,
+        sc = this.scrCoords,
         b = this.board;
     this.usrCoords[0] =  1.0;
-    this.usrCoords[1] = (this.scrCoords[1] - o[1])/(b.unitX*b.zoomX);
-    this.usrCoords[2] = (o[2] - this.scrCoords[2])/(b.unitY*b.zoomY);
+    this.usrCoords[1] = (sc[1] - o[1])/b.stretchX;
+    this.usrCoords[2] = (o[2] - sc[2])/b.stretchY;
 };
 
 /**
@@ -156,28 +162,25 @@ JXG.Coords.prototype.distance = function(method, coordinates) {
  * @param {boolean} optional flag If true or null round the coordinates in usr2screen. This is used in smooth curve plotting.
  * The IE needs rounded coordinates. Id doRound==false we have to round in updatePathString.
  */
-JXG.Coords.prototype.setCoordinates = function(method, coordinates, doRound) {
+JXG.Coords.prototype.setCoordinates = function(method, crd, doRound) {
+    var uc = this.usrCoords,
+        sc = this.scrCoords;
+        
     if (method == JXG.COORDS_BY_USER) {
-/*        for(var i=1; i<this.board.dimension+1; i++) {
-            this.usrCoords[i] = coordinates[i-1];
-        }*/
-        if (coordinates.length==2) { // Euclidean coordinates
-            this.usrCoords[0] = 1.0;
-            this.usrCoords[1] = coordinates[0];
-            this.usrCoords[2] = coordinates[1];
+        if (crd.length==2) { // Euclidean coordinates
+            uc[0] = 1.0;
+            uc[1] = crd[0];
+            uc[2] = crd[1];
         } else { // Homogeneous coordinates (normalized)
-            this.usrCoords[0] = coordinates[0];
-            this.usrCoords[1] = coordinates[1];
-            this.usrCoords[2] = coordinates[2];
+            uc[0] = crd[0];
+            uc[1] = crd[1];
+            uc[2] = crd[2];
             this.normalizeUsrCoords();
         }
         this.usr2screen(doRound);
     } else {
-/*        for(var i=1; i<this.board.dimension+1; i++) {
-            this.scrCoords[i] = coordinates[i-1];
-        }*/
-        this.scrCoords[1] = coordinates[0];
-        this.scrCoords[2] = coordinates[1];
+        sc[1] = crd[0];
+        sc[2] = crd[1];
         this.screen2usr();
     }
 };

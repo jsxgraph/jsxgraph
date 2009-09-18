@@ -283,8 +283,8 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
             var dx = - this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
             var dy = - this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
             
-            var ddx = 10/(this.board.unitX*this.board.zoomX);
-            var ddy = 10/(this.board.unitY*this.board.zoomY);
+            var ddx = 10/(this.board.stretchX);
+            var ddy = 10/(this.board.stretchY);
             var z = Math.sqrt(dx*dx+dy*dy);
             
             this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
@@ -302,8 +302,8 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
             var dx = -this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
             var dy = -this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
             
-            var ddx = 10/(this.board.unitX*this.board.zoomX);
-            var ddy = 10/(this.board.unitY*this.board.zoomY);
+            var ddx = 10/(this.board.stretchX);
+            var ddy = 10/(this.board.stretchY);
             var z = Math.sqrt(dx*dx+dy*dy);
             
             this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 

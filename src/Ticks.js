@@ -343,11 +343,11 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
             label.distanceY = -10;
             //label.setCoordinates(newTick);
             /*label.coords = new JXG.Coords(JXG.COORDS_BY_USER,
-                                    [newTick.usrCoords[1]*1+label.distanceX/(this.board.unitX*this.board.zoomX),
-                                     newTick.usrCoords[2]*1+label.distanceY/(this.board.unitY*this.board.zoomY)],
+                                    [newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX),
+                                     newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY)],
                                     this.board);*/
-            label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.unitX*this.board.zoomX), 
-                            newTick.usrCoords[2]*1+label.distanceY/(this.board.unitY*this.board.zoomY));
+            label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX), 
+                            newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY));
             if (this.drawLabels) {
                 label.visProp['visible'] = true; 
             }
@@ -516,11 +516,11 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                 label.distanceY = -10;
                 //label.setCoordinates(newTick);
                 /*label.coords = new JXG.Coords(JXG.COORDS_BY_USER,
-                             [newTick.usrCoords[1]*1+label.distanceX/(this.board.unitX*this.board.zoomX),
-                              newTick.usrCoords[2]*1+label.distanceY/(this.board.unitY*this.board.zoomY)],
+                             [newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX),
+                              newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY)],
                              this.board);*/    
-                label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.unitX*this.board.zoomX), 
-                                newTick.usrCoords[2]*1+label.distanceY/(this.board.unitY*this.board.zoomY));
+                label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX), 
+                                newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY));
                 if (this.drawLabels) {
                     label.visProp['visible'] = true; 
                 } else {

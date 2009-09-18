@@ -137,7 +137,7 @@ JXG.PsTricks.addPoint = function(el) {
     this.psTricksString += "("+el.coords.usrCoords[1]+","+el.coords.usrCoords[2]+")\n";
     
     // Label
-    this.psTricksString += "\\rput("+(el.coords.usrCoords[1]+15/ el.board.unitY / el.board.zoomY)+","+(el.coords.usrCoords[2]+15/ el.board.unitY / el.board.zoomY)+"){\\small $"+el.name+"$}\n";
+    this.psTricksString += "\\rput("+(el.coords.usrCoords[1]+15/ el.board.stretchY)+","+(el.coords.usrCoords[2]+15/ el.board.stretchY)+"){\\small $"+el.name+"$}\n";
 };
 
 JXG.PsTricks.addLine = function(el) {
@@ -189,7 +189,7 @@ JXG.PsTricks.addArc = function(el) {
     var radius = el.getRadius();  
     var p = {};
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                          [el.board.canvasWidth/(el.board.unitY*el.board.zoomY), el.midpoint.coords.usrCoords[2]],
+                          [el.board.canvasWidth/(el.board.stretchY), el.midpoint.coords.usrCoords[2]],
                           el.board);
     var angle2 = JXG.Math.round(el.board.algebra.trueAngle(p, el.midpoint, el.point2),4);
     var angle1 = JXG.Math.round(el.board.algebra.trueAngle(p, el.midpoint, el.point3),4);
@@ -217,7 +217,7 @@ JXG.PsTricks.addSector = function(el) {
     var radius = el.getRadius();  
     var p = {};
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                          [el.board.canvasWidth/(el.board.unitY*el.board.zoomY), el.midpoint.coords.usrCoords[2]],
+                          [el.board.canvasWidth/(el.board.stretchY), el.midpoint.coords.usrCoords[2]],
                           el.board);
     var angle2 = JXG.Math.round(el.board.algebra.trueAngle(p, el.midpoint, el.point2),4);
     var angle1 = JXG.Math.round(el.board.algebra.trueAngle(p, el.midpoint, el.point3),4);
@@ -233,7 +233,7 @@ JXG.PsTricks.addAngle = function(el) {
     var radius = el.radius;
     var p = {};
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                          [el.board.canvasWidth/(el.board.unitY*el.board.zoomY), el.point2.coords.usrCoords[2]],
+                          [el.board.canvasWidth/(el.board.stretchY), el.point2.coords.usrCoords[2]],
                           el.board);
     var angle2 = JXG.Math.round(el.board.algebra.trueAngle(p, el.point2, el.point1),4);
     var angle1 = JXG.Math.round(el.board.algebra.trueAngle(p, el.point2, el.point3),4);

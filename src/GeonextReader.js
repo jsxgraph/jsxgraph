@@ -251,6 +251,9 @@ this.readGeonext = function(tree,board) {
     board.zoomY = 1*boardTmp.zoomY;
     board.unitX = 1*boardTmp.unitX;
     board.unitY = 1*boardTmp.unitY;
+    board.stretchX = board.zoomX*board.unitX;
+    board.stretchY = board.zoomY*board.unitY;
+    
     if(1*boardTmp.fontSize != 0) {
         board.fontSize = 1*boardTmp.fontSize;
     }

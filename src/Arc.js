@@ -120,7 +120,7 @@ JXG.Arc.prototype = new JXG.GeometryElement;
  * @return {bool} True if (x,y) is near the arc, False otherwise.
  */
 JXG.Arc.prototype.hasPoint = function (x, y) { 
-    var genauigkeit = this.r/(this.board.unitX*this.board.zoomX);
+    var genauigkeit = this.r/(this.board.stretchX);
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     var r = this.getRadius();
@@ -133,7 +133,7 @@ JXG.Arc.prototype.hasPoint = function (x, y) {
         var p = {};
         p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                               [this.midpoint.coords.usrCoords[1], 
-                               this.board.origin.usrCoords[2]/(this.board.unitY*this.board.zoomY)],
+                               this.board.origin.usrCoords[2]/(this.board.stretchY)],
                               this.board);
         var angle1 = this.board.algebra.trueAngle(this.point2, this.midpoint, p);
         var angle2 = this.board.algebra.trueAngle(this.point3, this.midpoint, p);
@@ -164,7 +164,7 @@ JXG.Arc.prototype.hasPoint = function (x, y) {
  * @return {bool} True if (x,y) is within the sector defined by the arc, False otherwise.
  */
 JXG.Arc.prototype.hasPointSector = function (x, y) { 
-    var genauigkeit = this.r/(this.board.unitX*this.board.zoomX);
+    var genauigkeit = this.r/(this.board.stretchX);
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     var r = this.getRadius();
@@ -177,7 +177,7 @@ JXG.Arc.prototype.hasPointSector = function (x, y) {
         var p = {};
         p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                               [this.midpoint.coords.usrCoords[1], 
-                               this.board.origin.usrCoords[2]/(this.board.unitY*this.board.zoomY)],
+                               this.board.origin.usrCoords[2]/(this.board.stretchY)],
                               this.board);
         var angle1 = this.board.algebra.trueAngle(this.point2, this.midpoint, p);
         var angle2 = this.board.algebra.trueAngle(this.point3, this.midpoint, p);
@@ -222,14 +222,14 @@ JXG.Arc.prototype.getTextAnchor = function() {
  */
 JXG.Arc.prototype.getLabelAnchor = function() {
     var angle = this.board.algebra.trueAngle(this.point2, this.midpoint, this.point3);
-    var dx = 10/(this.board.unitX*this.board.zoomX);
-    var dy = 10/(this.board.unitY*this.board.zoomY);
+    var dx = 10/(this.board.stretchX);
+    var dy = 10/(this.board.stretchY);
     
     var bxminusax = this.point2.coords.usrCoords[1] - this.midpoint.coords.usrCoords[1];
     var byminusay = this.point2.coords.usrCoords[2] - this.midpoint.coords.usrCoords[2];
 
     if(this.label.content != null) {                          
-        this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [0/(this.board.unitX*this.board.zoomX),0/(this.board.unitY*this.board.zoomY)],this.board);                      
+        this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [0/(this.board.stretchX),0/(this.board.stretchY)],this.board);                      
     }  
 
     var coords = new JXG.Coords(JXG.COORDS_BY_USER, 

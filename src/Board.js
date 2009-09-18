@@ -231,7 +231,14 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type int
      */
     this.unitY = unitY;
-    
+
+    /**
+      * Saving some multiplications
+      * @private
+      */
+    this.stretchX = this.zoomX*this.unitX;
+    this.stretchY = this.zoomY*this.unitY;
+
     /**
      * Canvas Width
      * @type int
@@ -814,8 +821,8 @@ JXG.Board.prototype.updateInfobox = function(el) {
     if((el.elementClass == JXG.OBJECT_CLASS_POINT) && el.showInfobox) {
         xc = el.coords.usrCoords[1]*1;
         yc = el.coords.usrCoords[2]*1;
-        this.infobox.setCoords(xc+this.infobox.distanceX/(this.unitX*this.zoomX),
-                               yc+this.infobox.distanceY/(this.unitY*this.zoomY));
+        this.infobox.setCoords(xc+this.infobox.distanceX/(this.stretchX),
+                               yc+this.infobox.distanceY/(this.stretchY));
         x = Math.abs(xc);
         if (x>0.1) {
             x = xc.toFixed(2);
@@ -2341,7 +2348,9 @@ JXG.Board.prototype.applyZoom = function() {
  */
 JXG.Board.prototype.zoomIn = function() {
     this.zoomX *= this.options.zoom.factor;
-    this.zoomY *= this.options.zoom.factor;    
+    this.zoomY *= this.options.zoom.factor;  
+    this.stretchX = this.zoomX*this.unitX;
+    this.stretchY = this.zoomY*this.unitY;
     this.applyZoom();
     return this;
 };
@@ -2352,6 +2361,8 @@ JXG.Board.prototype.zoomIn = function() {
 JXG.Board.prototype.zoomOut = function() {
     this.zoomX /= this.options.zoom.factor;
     this.zoomY /= this.options.zoom.factor;
+    this.stretchX = this.zoomX*this.unitX;
+    this.stretchY = this.zoomY*this.unitY;
     this.applyZoom();
     return this;
 };
@@ -2362,6 +2373,8 @@ JXG.Board.prototype.zoomOut = function() {
 JXG.Board.prototype.zoom100 = function() {
     this.zoomX = 1.0;
     this.zoomY = 1.0;
+    this.stretchX = this.zoomX*this.unitX;
+    this.stretchY = this.zoomY*this.unitY;
     this.applyZoom();
     return this;
 };
@@ -2410,7 +2423,9 @@ JXG.Board.prototype.zoomAllPoints = function() {
     this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [newOriginX, newOriginY], this);
     this.zoomX = newZoomX;
     this.zoomY = newZoomY;
-    
+    this.stretchX = this.zoomX*this.unitX;
+    this.stretchY = this.zoomY*this.unitY;
+   
     this.applyZoom();
     return this;
 };
@@ -2880,6 +2895,9 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     }
     this.originX = -this.unitX*bbox[0];
     this.originY = this.unitY*bbox[1];
+    this.stretchX = this.zoomX*this.unitX;
+    this.stretchY = this.zoomY*this.unitY;
+    
     this.moveOrigin();
     return this;
 };

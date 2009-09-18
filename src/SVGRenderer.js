@@ -222,7 +222,7 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     point3 = el.board.algebra.projectPointToCircle(el.point3,circle);
 
     pathString = 'M '+ el.point2.coords.scrCoords[1] +' '+ el.point2.coords.scrCoords[2] +' A '; // Startpunkt
-    pathString += Math.round(radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien
+    pathString += Math.round(radius * el.board.stretchX) + ' ' + Math.round(radius * el.board.stretchY) + ' 0 '; // Radien
     // largeArc
     if(angle >= 180) {
         pathString += '1 ';
@@ -262,7 +262,7 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     
     pathString2 = 'M ' + el.midpoint.coords.scrCoords[1] + " " + el.midpoint.coords.scrCoords[2];
     pathString2 += ' L '+ el.point2.coords.scrCoords[1] +' '+ el.point2.coords.scrCoords[2] +' A '; // Startpunkt
-    pathString2 += Math.round(radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien
+    pathString2 += Math.round(radius * el.board.stretchX) + ' ' + Math.round(radius * el.board.stretchY) + ' 0 '; // Radien
     // largeArc
     if(angle >= 180) {
         pathString2 += '1 ';
@@ -332,7 +332,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     node = this.createPrimitive('path',el.id+'_1');
     pathString = 'M ' + el.point2.coords.scrCoords[1] + " " + el.point2.coords.scrCoords[2];
     pathString += ' L '+ projectedP1.scrCoords[1] +' '+ projectedP1.scrCoords[2] +' A '; // Startpunkt
-    pathString += Math.round(el.radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(el.radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien
+    pathString += Math.round(el.radius * el.board.stretchX) + ' ' + Math.round(el.radius * el.board.stretchY) + ' 0 '; // Radien
     // largeArc
     if (angle >= 180) {
         pathString += '1 ';
@@ -353,7 +353,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
    
     node2 = this.createPrimitive('path',el.id+'_2');
     pathString = 'M '+  projectedP1.scrCoords[1] +' '+  projectedP1.scrCoords[2] +' A '; // Startpunkt
-    pathString += Math.round(el.radius * el.board.unitX * el.board.zoomX) + ' ' + Math.round(el.radius * el.board.unitY * el.board.zoomY) + ' 0 '; // Radien
+    pathString += Math.round(el.radius * el.board.stretchX) + ' ' + Math.round(el.radius * el.board.stretchY) + ' 0 '; // Radien
     // largeArc
     if (angle >= 180) {
         pathString += '1 ';
