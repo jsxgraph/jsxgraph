@@ -32,18 +32,27 @@
         
         // Tagaki-Landsberg
         var s = function(x){ return Math.abs(x-Math.round(x)); };
-        function f(x){
-            var n, su, wval;
-            su = 0.0;
-            wval = s1.Value();
-            for (n=0;n<s2.Value();n++) {
-                su += Math.pow(wval,n)*s(Math.pow(2,n)*x);
-            }
-            return su;
-        }
+        var generateF = function() {
+            var s1v = 0.0,
+                s2v = 0.0;
+                
+            return function (x,suspend){
+                var n, su, wval;
+                su = 0.0;
+                if (!suspend) {
+                    s1v = s1.Value();
+                    s2v = s2.Value();
+                }
+                wval = s1v;
+                for (n=0;n<s2v;n++) {
+                    su += Math.pow(wval,n)*s(Math.pow(2,n)*x);
+                }
+                return su;
+            };
+        };
 
         //eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
-        graph = board.createElement('functiongraph', [function(x){ return f(x); }, -10, 10],{strokecolor:'red'});
+        graph = board.createElement('functiongraph', [generateF(), -10, 10],{strokecolor:'red'});
     
 
         /*

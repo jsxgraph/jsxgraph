@@ -35,9 +35,11 @@
         board1.createElement('curve', [
             'x', 
             function(t) {
-                var val = 0;
-                var k = 1;
-                for(var i = 0; i < s.Value() + 1; i++) {
+                var val = 0, i,
+                k = 1,
+                sv = s.Value();
+                
+                for(i = 0; i < sv + 1; i++) {
                     val = val + Math.sin(2*Math.PI*(2*k-1)*t)/(2*k-1);
                     k += 1;
                 }

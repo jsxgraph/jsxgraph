@@ -55,7 +55,7 @@
  * @see JXG.Board#generateName
  */
 JXG.createSlider = function(board, parentArr, atts) {
-    var pos0, pos1, smin, start, smax, p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t,
+    var pos0, pos1, smin, start, smax, sdiff, p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t,
         snapWidth;
         
     pos0 = parentArr[0];
@@ -63,6 +63,7 @@ JXG.createSlider = function(board, parentArr, atts) {
     smin = parentArr[2][0];
     start = parentArr[2][1];
     smax = parentArr[2][2];
+    sdiff = smax -smin;
     
     if(atts == null) 
         atts = {};
@@ -92,7 +93,8 @@ JXG.createSlider = function(board, parentArr, atts) {
     p3 = board.createElement('glider', [startx,starty,l1], {style:6,strokeColor:atts['strokeColor'],fillColor:atts['fillColor'],showInfobox:false,name:'',snapWidth:snapWidth});
     
     l2 = board.createElement('line', [p1,p3], {straightFirst:false, straightLast:false, strokewidth:3, strokeColor:atts['strokeColor'],name:'',withLabel:false}); 
-    p3.Value = function() { return this.Dist(p1)/p2.Dist(p1)*(smax - smin)+smin; };
+    //p3.Value = function() { return this.position*(smax - smin)+smin; };
+    p3.Value = function() { return this.position*sdiff+smin; };
     p3._smax = smax;
     p3._smin = smin;
 
