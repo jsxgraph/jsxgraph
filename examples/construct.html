@@ -16,64 +16,18 @@
 <script type="text/javascript">
 /* <![CDATA[ */
 var board = JXG.JSXGraph.initBoard('box', {originX: 100, originY: 200, grid:true, unitX: 50, unitY: 50});
-/*
-    var p1 = board.createElement('point', [1,3,1] , {name:'A',withLabel:false});
-    var p2 = board.createElement('point', [1,1,0] );
-    var l1 = board.createElement('line', [p1,p2],{name:'bingo',straightFirst:true,straightLast:true} );
-*/
-
-//board.snapToGrid = true;
-var H = board.createElement('slider',[[5,3.5],[10,3.5],[0,1,360]], {name:'H'});
-var S = board.createElement('slider',[[5,3],[10,3],[0,0.8,1]], {name:'S'});
-var V = board.createElement('slider',[[5,2.5],[10,2.5],[0,0.7,1]], {name:'V'});
-
 var p1 = board.createElement('point',[1,1], {name:'A',style:6});
-var p2 = board.createElement('point',[5,1], {name:'B',style:6});
+var p2 = board.createElement('point',[5,2], {name:'B',style:6});
 var p3 = board.createElement('point',[0,-1], {name:'C',style:6});
 var p4 = board.createElement('point',[5,3], {name:'D',style:6});
-var l1 = board.createElement('line',["A","B"],{name:'L1',strokeColor:'#00ff00',strokeWidth:2,straightFirst:false});
-var l2 = board.createElement('line',["C","D"],{name:'L2',strokeColor:'#00ff00',strokeWidth:2,straightFirst:false});
-p5 = board.createElement('point',[board.intersection("L1","L2")],{name:'M',style:6});
-var t = board.createElement('text',[ function(){return p3.X()+0.3;}, function(){return p3.Y()+0.5;},
-                                     'This is a text'], {fontSize:50});
-    /*
-    function testmakro(board,el1, el2) {
-    	var l = board.createElement('line', [el1,el2], { strokeWidth:3 });
-    }
-    */
-/*    
-    var board = JXG.JSXGraph.initBoard('box',{unitX:80, unitY:80,originY:160,originX:80});
-    var a1 = board.createElement('axis',[[0,0],[1,0]]);
-    var p1 = board.createElement('point', [1,3,1] , {name:'A'});
-    var p2 = board.createElement('point', [1,1,1] );
-    var ac = board.createElement('glider', [4,0,a1],{name:'glide'} );
 
-*/    
-
-    var circ = board.createElement('circle', [p1,p2], {dash:1,
-                        fillColor:function(){return JXG.hsv2rgb(H.Value(),S.Value(),V.Value());},
-                        fillOpacity:0.8,
-                        highlightfillColor:function(){return JXG.hsv2rgb(H.Value(),1-S.Value(),V.Value());}
-                        });
+var f = board.createElement('functiongraph', [function(x){return Math.cos(x);},0,Math.PI*2]);
+var circ = board.createElement('circle', [p1,p2], {dash:1,fillOpacity:0.8});
+var ac = board.createElement('glider', [4,0,circ],{name:'glide'} );
+var t = board.createElement('normal',[ac], {dash:3,strokeColor:'black'});
+var t = board.createElement('normal',[p2,circ], {dash:3,strokeColor:'black'});
                        
-    /*
-    var circ = board.createElement('circle', [p1,p2], {dash:1,
-        fillColor:function(){ var t = Math.round(s.Value())*65536+Math.round(s.Value())*255+0; 
-                              return '#'+t.toString(16);
-                            }} );
-    */
 /*
-    var l1 = board.createElement('line', [1,-0.2,1],{name:'x'} );
-    //var l1 = board.createElement('line', [p1,p2],{name:'x'} );
-    board.suspendUpdate();
-    for (var i=.0;i<1.0;i+=0.02) {
-        board.createElement('point', [l1.Z(i),l1.X(i),l1.Y(i)],{name:' '});
-        board.createElement('point', [1,circ.X(i),circ.Y(i)] , {name:' '});
-    }
-    board.unsuspendUpdate();
-*/
-/*
-    board.createElement('functiongraph', [function(x){return Math.cos(x);},0,Math.PI*2]);
     
     var f = function(t){return p2.Y()*t*Math.sin(t);};
     var g = function(t){return t;};

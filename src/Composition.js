@@ -364,6 +364,7 @@ JXG.createNormal = function(board, parents, attributes) {
                     ], attributes );
     }
     else if(c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {    
+        /*
         var Dg = function(t){ return -c.getRadius()*Math.sin(t); };
         var Df = function(t){ return c.getRadius()*Math.cos(t); };
         return board.createElement('line', [
@@ -371,6 +372,8 @@ JXG.createNormal = function(board, parents, attributes) {
                     function(){ return Dg(p.position);},
                     function(){ return Df(p.position);}
                     ], attributes );
+        */
+        return board.createElement('line', [c.midpoint,p], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
         if (c.curveType!='plot') {
             var g = c.X;
