@@ -318,6 +318,9 @@ JXG.IntergeoReader = new function() {
             else if (node.nodeName=='intersection_points_of_circle_and_line') {
                 JXG.IntergeoReader.addIntersectionPointsOfCircleAndLine(node);
             } 
+            else if (node.nodeName=='circle_tangent_lines_by_point') {
+                JXG.IntergeoReader.addCircleTangentLinesByPoint(node);
+            } 
             else {
                 param = JXG.IntergeoReader.readParams(node);
                 $('debug').innerHTML += 'readConstraints: not implemented: ' + node.nodeName + ': ' + param[0]+'<br>';
@@ -538,6 +541,37 @@ JXG.IntergeoReader = new function() {
             p2 = this.objects[param[1]];
         p1.addConstraint([this.board.intersection(c1,c2,0)]);
         p2.addConstraint([this.board.intersection(c1,c2,1)]);
+    };
+
+    this.addCircleTangentLinesByPoint = function(node) {
+        var param = JXG.IntergeoReader.readParams(node),
+            c = JXG.getReference(this.board,param[2]),
+            p = JXG.getReference(this.board,param[3]),
+            //t1 = this.objects[param[0]],
+            //t2 = this.objects[param[1]];
+            m, polar, i1, i2, t1, t2;
+        
+        // Quadratic form of circle
+        m = function(c){
+                var cm = c.midpoint;
+                return [[cm.X()*cm.X()+cm.Y()*cm.Y()-c.getRadius()*c.getRadius(),-cm.X(),-cm.Y()],
+                        [-cm.X(),1,0],
+                        [-cm.Y(),0,1]
+                        ];
+            };
+            
+        polar = this.board.createElement('line', [
+                    function(){ return JXG.Math.matVecMult(m(c),p.coords.usrCoords)[0]; },
+                    function(){ return JXG.Math.matVecMult(m(c),p.coords.usrCoords)[1]; },
+                    function(){ return JXG.Math.matVecMult(m(c),p.coords.usrCoords)[2]; }
+                ] , {visible:false});     
+
+        i1 = this.board.createElement('intersection', [c,polar,0],{visible:false});
+        i2 = this.board.createElement('intersection', [c,polar,1],{visible:false});
+        t1 = this.board.createElement('line', [p,i1]);
+        t2 = this.board.createElement('line', [p,i2]);
+        this.objects[param[0]] = t1;
+        this.objects[param[1]] = t2;
     };
 
     /**

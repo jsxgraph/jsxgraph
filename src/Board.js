@@ -2766,7 +2766,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         }
     }
 */
-    this.update();
+    this.update(el); // We start updating at the newly created element. AW
     return el;
 };
 
