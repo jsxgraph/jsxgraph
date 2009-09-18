@@ -334,8 +334,21 @@ JXG.Circle.prototype.update = function () {
         }
         if (!this.board.geonextCompatibilityMode) {
             this.updateStdform();
+            this.updateQuadraticform();
         }
     }
+};
+
+/**
+ * TODO description
+ * @private
+ */
+JXG.Circle.prototype.updateQuadraticform = function () {
+    var m = this.midpoint;
+    this.quadraticform = [[m.X()*m.X()+m.Y()*m.Y()-this.getRadius()*this.getRadius(),-m.X(),-m.Y()],
+                          [-m.X(),1,0],
+                          [-m.Y(),0,1]
+                         ];
 };
 
 /**

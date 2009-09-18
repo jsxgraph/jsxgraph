@@ -16,14 +16,17 @@ var p1 = board.createElement('point', [0,2] , {name:'A',fillColor:'red',strokeCo
 var p2 = board.createElement('point', [0,3] , {name:'B',fillColor:'red',strokeColor:'red'});
 var c = board.createElement('circle', [p1,p2] , {name:'c',strokeColor:'red'});
 var p3 = board.createElement('point', [0,-1] , {name:'C',fillColor:'red',strokeColor:'red'});
-    
+
+var t2 = board.createElement('tangent', [c,p2]);
+
 var m = function(circ){
     return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
              -circ.midpoint.X(),-circ.midpoint.Y()],
             [-circ.midpoint.X(),1,0],
             [-circ.midpoint.Y(),0,1]
-            ]
-    }
+            ];
+    };
+    
 var t = board.createElement('line', [
     function(){ return JXG.Math.matVecMult(m(c),p3.coords.usrCoords)[0]; },
     function(){ return JXG.Math.matVecMult(m(c),p3.coords.usrCoords)[1]; },
@@ -32,8 +35,10 @@ var t = board.createElement('line', [
 
 var i1 = board.createElement('intersection', [c,t,0],{visible:false});
 var i2 = board.createElement('intersection', [c,t,1],{visible:false});
-var t1 = board.createElement('line', [p3,i1]);
-var t2 = board.createElement('line', [p3,i2]);
+//var t1 = board.createElement('line', [p3,i1]);
+//var t2 = board.createElement('line', [p3,i2]);
+var t1 = board.createElement('tangent', [c,i1]);
+var t2 = board.createElement('tangent', [c,i2]);
 
 //board.update();
 //alert(m(c).toString());

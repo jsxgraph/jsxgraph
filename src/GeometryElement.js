@@ -240,6 +240,11 @@ JXG.GeometryElement = function() {
     this.stdform = [1,0,0,0,1, 1,0,0];
     
     /**
+     * Quadratic form representation of circles (and conics)
+     */
+    this.quadraticform = [[1,0,0],[0,1,0],[0,0,1]];
+    
+    /**
      * If this is set to true, the element is updated in every update 
      * call of the board. If set to false, the element is updated only after
      * zoom events or more generally, when the bounding box has been changed.
