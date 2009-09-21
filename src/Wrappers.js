@@ -84,6 +84,25 @@ JXG.Board.prototype.intersection = function(el1,el2,i,j){
 }; //returns a single point of intersection
 JXG.Board.prototype.intersectionFunc = function(el1,el2,i,j){ return this.intersection(el1,el2,i,j); }; 
 
+/**
+* Intersectionof  circles and line
+*/ 
+JXG.Board.prototype.otherIntersection = function(el1,el2,el){ 
+    el1 = JXG.getReference(this,el1);
+    el2 = JXG.getReference(this,el2);
+    return function(){
+        var c = el1.board.algebra.meet(el1.stdform,el2.stdform,0);
+        if (Math.abs(el.X()-c.usrCoords[1])>JXG.Math.eps ||
+            Math.abs(el.Y()-c.usrCoords[2])>JXG.Math.eps ||
+            Math.abs(el.Z()-c.usrCoords[0])>JXG.Math.eps) {
+            return c;
+        } else {
+            return el1.board.algebra.meet(el1.stdform,el2.stdform,1);
+        }
+    };
+}; //returns a single point of intersection
+
+
 JXG.Board.prototype.pointFunc = function(){return [null];};
 JXG.Board.prototype.pointOptions = ['point',[[JXG.OBJECT_CLASS_POINT]]];
 

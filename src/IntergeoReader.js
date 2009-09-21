@@ -320,6 +320,12 @@ JXG.IntergeoReader = new function() {
             else if (node.nodeName=='intersection_points_of_circle_and_line') {
                 JXG.IntergeoReader.addIntersectionPointsOfCircleAndLine(node);
             } 
+            else if (node.nodeName=='other_intersection_point_of_two_circles') {
+                JXG.IntergeoReader.addOtherIntersectionPointOfTwoCircles(node);
+            } 
+            else if (node.nodeName=='other_intersection_point_of_circle_and_line') {
+                JXG.IntergeoReader.addOtherIntersectionPointOfCircleAndLine(node);
+            } 
             else if (node.nodeName=='circle_tangent_lines_by_point') {
                 JXG.IntergeoReader.addCircleTangentLinesByPoint(node);
             } 
@@ -543,6 +549,24 @@ JXG.IntergeoReader = new function() {
             p2 = this.objects[param[1]];
         p1.addConstraint([this.board.intersection(c1,c2,0)]);
         p2.addConstraint([this.board.intersection(c1,c2,1)]);
+    };
+    
+    this.addOtherIntersectionPointOfTwoCircles = function(node) {
+        var param = JXG.IntergeoReader.readParams(node),
+            c1 = JXG.getReference(this.board,param[2]),
+            c2 = JXG.getReference(this.board,param[3]),
+            p1  = this.objects[param[1]],
+            p2  = this.objects[param[0]]; // output
+        p2.addConstraint([this.board.otherIntersection(c1,c2,p1)]);
+    };
+    
+    this.addOtherIntersectionPointOfCircleAndLine = function(node) {
+        var param = JXG.IntergeoReader.readParams(node),
+            c1 = JXG.getReference(this.board,param[2]),
+            c2 = JXG.getReference(this.board,param[3]),
+            p1  = this.objects[param[1]],
+            p2  = this.objects[param[0]]; // output
+        p2.addConstraint([this.board.otherIntersection(c1,c2,p1)]);
     };
 
     this.addCircleTangentLinesByPoint = function(node) {

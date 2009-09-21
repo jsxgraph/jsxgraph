@@ -1155,6 +1155,68 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
     return el;
 };
 
+/**
+ * @class This element is used to provide a constructor for the "other" intersection point.
+ * @pseudo
+ * @description An intersection point is a point which lives on two Lines or Circles or one Line and one Circle at the same time, i.e.
+ * an intersection point of the two elements. Additionally, one intersection point is provided. The function returns the other intersection point.
+ * @name OtherIntersection
+ * @augments JXG.Point
+ * @constructor
+ * @type JXG.Point
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_JXG.Point} el1,el2,p The result will be a intersection point on el1 and el2. i determines the
+ * intersection point different from p: 
+ * @example
+ * // Create an intersection point of circle and line
+ * var p1 = board.createElement('point', [2.0, 2.0]);
+ * var c1 = board.createElement('circle', [p1, 2.0]);
+ * 
+ * var p2 = board.createElement('point', [2.0, 2.0]);
+ * var p3 = board.createElement('point', [2.0, 2.0]);
+ * var l1 = board.createElement('line', [p2, p3]);
+ * 
+ * var i = board.createElement('intersection', [c1, l1, 0]);
+ * var j = board.createElement('otherintersection', [c1, l1, i]);
+ * </pre><div id="e5b0e190-5200-4bc3-b995-b6cc53dc5dc0" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var ipex2_board = JXG.JSXGraph.initBoard('e5b0e190-5200-4bc3-b995-b6cc53dc5dc0', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var ipex2_p1 = ipex1_board.createElement('point', [4.0, 4.0]);
+ *   var ipex2_c1 = ipex1_board.createElement('circle', [ipex2_p1, 2.0]);
+ *   var ipex2_p2 = ipex1_board.createElement('point', [1.0, 1.0]);
+ *   var ipex2_p3 = ipex1_board.createElement('point', [5.0, 3.0]);
+ *   var ipex2_l1 = ipex1_board.createElement('line', [ipex2_p2, ipex2_p3]);
+ *   var ipex2_i = ipex1_board.createElement('intersection', [ipex2_c1, ipex2_l1, 0]);
+ *   var ipex2_j = ipex1_board.createElement('intersection', [ipex2_c1, ipex2_l1, ipex2_i]);
+ * </script><pre>
+ */
+JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
+    var el;
+    if (parents.length==3) {
+        el = board.createElement('point', [board.otherIntersection(parents[0], parents[1], parents[2])], attributes);
+    }
+    else {// Failure
+        throw ("JSXGraph error: Can't create 'other intersection point' with parent types '" + (typeof parents[0]) + "',  '" + (typeof parents[1])+ "'and  '" + (typeof parents[2]) + "'.");
+    }
+    
+    parents[0].addChild(el);
+    parents[1].addChild(el);
+
+    el.generatePolynomial = function () {
+        var poly1 = parents[0].generatePolynomial(el);
+        var poly2 = parents[1].generatePolynomial(el);
+
+        if((poly1.length == 0) || (poly2.length == 0))
+            return [];
+        else
+            return [poly1[0], poly2[0]];
+    };
+    
+    return el;
+};
+
+
 JXG.JSXGraph.registerElement('point', JXG.createPoint);
 JXG.JSXGraph.registerElement('glider', JXG.createGlider);
 JXG.JSXGraph.registerElement('intersection', JXG.createIntersectionPoint);
+JXG.JSXGraph.registerElement('otherintersection', JXG.createOtherIntersectionPoint);
