@@ -821,10 +821,12 @@ JXG.createSpline = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     } 
+    
+    /*
     // This is far away from being effective
     F = function (t) {
-        var x = new Array(),
-            y = new Array(),
+        var x = [],
+            y = [],
             i, D;
         
         for(i=0; i<parents.length; i++) {
@@ -840,8 +842,36 @@ JXG.createSpline = function(board, parents, attributes) {
         D = JXG.Math.Numerics.splineDef(x, y);
         return JXG.Math.Numerics.splineEval(t, x, y, D);
     };
+    */
     
-    return new JXG.Curve(board, ["x","x", F], attributes["id"], attributes["name"], attributes['withLabel']);
+    F = function() {
+        var D, x=[], y=[];
+        
+        var fct = function (t,suspended) {
+            var i;
+        
+            if (!suspended) {
+                x = [];
+                y = [];
+                for(i=0; i<parents.length; i++) {
+                    if(!JXG.isPoint(parents[i]))
+                        throw "JXG.createSpline: Parents has to be an array of JXG.Point.";
+            
+                    x.push(parents[i].X());
+                    y.push(parents[i].Y());
+                }
+        
+                // The array D has only to be calculated when the position of one or more sample point
+                // changes. otherwise D is always the same for all points on the spline.
+                D = JXG.Math.Numerics.splineDef(x, y);
+            }
+            return JXG.Math.Numerics.splineEval(t, x, y, D);
+        };
+        return fct;
+    };
+    
+    
+    return new JXG.Curve(board, ["x","x", F()], attributes["id"], attributes["name"], attributes['withLabel']);
 };
 
 /**
