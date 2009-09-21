@@ -20,16 +20,25 @@
         xax = board.createElement('axis', [[0,0],[1,0]]);
         yax = board.createElement('axis', [[0,0],[0,1]]);
 
-        p1 = board.createElement('point', [4, 9], {style:2,name:"A"});
-        p2 = board.createElement('point', [7, 4], {style:2,name:"B"});
+        p1 = board.createElement('glider', [4, 0, xax], {style:2,name:"G"});
+        c1 = board.createElement('circle', [p1, 7], {name:"k_1", withlabel: true});
+        p2 = board.createElement('intersection', [yax, c1, 0], {style:2,name:"I"});
+        p3 = board.createElement('midpoint', [p1, p2], {style:2, name:"M"});
+        p4 = board.createElement('midpoint', [p2, p3], {style:2, name:"T"});
 
-        var p3, p4, l1, l2, l3, l4;
 
-        [p3, p4, l1, l2, l3, l4] = board.createElement('square', [p1, p2]);
+        function groebner(p) {
+            JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p);
+        }
+
+
+//        var p3, p4, l1, l2, l3, l4;
+
+//        [p3, p4, l1, l2, l3, l4] = board.createElement('square', [p1, p2]);
 
   /* ]]> */
   </script>
-<a href="#" onclick="groebner(m1);">Generate locus of T and Y</a><br />
+<a href="#" onclick="groebner(p4);">Generate locus of T</a><br />
 <div id="debug" style="display:block;"></div>
 </body>
 </html>
