@@ -31,6 +31,7 @@ $(document).ready(function() {
     $('.center_div')[0].appendChild(dd);
 	$(".dropdownbox").change(function() {
         var idx = document.getElementById('dropdownbox').value;
+        ix = idx;
 		$(".content_iframe").attr("src", files[idx] + ".html");
 		$(".content_text_head").fadeTo(500, 0, function() {
 			$(this).html(titles[idx]).show().fadeTo(1000, 1); 
