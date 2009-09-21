@@ -242,11 +242,23 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
         var tmpCoords = new JXG.Coords(JXG.COORDS_BY_USER, [deltaX, deltaY], this.board);
         dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
 
+        // New: (AW)
+        ticksDelta = Math.pow(10,Math.round(Math.log(ticksDelta,10)));
+        deltaX = (ticksDelta * dx) / (total_length);
+        deltaY = (ticksDelta * dy) / (total_length);
 
+//$('debug').innerHTML += 'x: '+ticksDelta+': '+this.minTicksDistance+'; '  + Math.sqrt(dist)+'<br>';
         while(dist < this.minTicksDistance*this.minTicksDistance) {
+            /*
             deltaX += deltaX_original;
             deltaY += deltaY_original;
             ticksDelta += ticksDelta_original;
+            */
+            // New: (AW)
+            ticksDelta *= 10;
+            deltaX = (ticksDelta * dx) / (total_length);
+            deltaY = (ticksDelta * dy) / (total_length);
+//$('debug').innerHTML += 'y: '+ticksDelta+'; '  + Math.sqrt(dist)+'<br>';
 
             tmpCoords = new JXG.Coords(JXG.COORDS_BY_USER, [deltaX, deltaY], this.board);
             dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);

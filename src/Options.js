@@ -98,12 +98,12 @@ JXG.Options = function() {
     this.line.ticks.drawLabels = true;
     this.line.ticks.drawZero = false;
     this.line.ticks.insertTicks = false;
-    this.line.ticks.minTicksDistance = 100;
+    this.line.ticks.minTicksDistance = 50; //100; (AW)
     this.line.ticks.maxTicksDistance = 300;
     this.line.ticks.minorHeight = 4;
     this.line.ticks.majorHeight = 10;
     this.line.ticks.minorTicks = 4;
-    this.line.ticks.defaultDistance = 5;
+    this.line.ticks.defaultDistance = 1;
 
     /*special circle options */
     this.circle = new Object();
