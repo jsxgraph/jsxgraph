@@ -24,10 +24,28 @@ $(document).ready(function() {
 	});
 		
 
-    $('.center_div')[0].innerHTML += '<select id="dropdownbox"></select>';
-    var dd = $('dropdownbox');
+    var dd = document.createElement('select');
+    dd.setAttribute('id', 'dropdownbox');
+    dd.setAttribute('class', 'dropdownbox');
+//    dd.setAttribute('onchange', '$(".content_iframe").attr("src", document.getElementById("dropdownbox").value + ".html"); $(".content_text_head").fadeTo(500, 0, function() {	$(this).html(titles[ix]).show().fadeTo(1000, 1); }); $(".content_text_text").fadeTo(500, 0, function() { $(this).html(pages[ix]).show().fadeTo(1000, 1); });');
+    $('.center_div')[0].appendChild(dd);
+	$(".dropdownbox").change(function() {
+        var idx = document.getElementById('dropdownbox').value;
+		$(".content_iframe").attr("src", files[idx] + ".html");
+		$(".content_text_head").fadeTo(500, 0, function() {
+			$(this).html(titles[idx]).show().fadeTo(1000, 1); 
+		});
+		$(".content_text_text").fadeTo(500, 0, function() {
+			$(this).html(pages[idx]).show().fadeTo(1000, 1); 
+		}); 
+	});
+
     for(ix=0; ix < files.length; ix++) {
-        dd.innerHTML += '<option value="' + files[ix] + '">' + titles[ix] + '</option>';
+        var option = document.createElement('option');
+        option.appendChild(document.createTextNode(titles[ix]));
+        option.setAttribute('value', '' + ix);
+    
+        dd.appendChild(option);
     }
 	
 	ix = 0;

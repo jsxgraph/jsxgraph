@@ -30,7 +30,7 @@
 	border:						solid 2px #555;
 	background-color:			#ddf;
 	/*overflow:					hidden;*/
-	background-image:			url(../examples/images/background.png);
+	background-image:			url(../images/background.png);
 	-moz-box-shadow:			4px 4px 4px #555; 
 	-moz-border-radius:			10px;
 }
@@ -90,7 +90,7 @@
 	-moz-transform:				rotate(5deg);	
 	-moz-box-shadow:			4px 4px 4px #555; 
 	-moz-border-radius:			10px;
-	background-image:			url(../examples/images/background_text.png);
+	background-image:			url(../images/background_text.png);
 }
 .content_text_head {
 	position:					absolute;
