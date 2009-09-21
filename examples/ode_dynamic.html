@@ -31,9 +31,9 @@
     pt = board.createElement('text', [10,23, "Reproduction rate pred./per prey"]);
 
 
-    scp1 = board.createElement('glider', [12, 0, xax], {name: ""});
-    scp2 = board.createElement('point', [function() { return scp1.X(); }, 5], {visible: false});
-    scl = board.createElement('line', [scp1, scp2], {straightFirst: false, strokeWidth: '1px'});
+    scp1 = board.createElement('glider', [12, 0, xax], {name: "", showinfobox: false});
+    scp2 = board.createElement('point', [function() { return scp1.X(); }, 22], {visible: false});
+    scl = board.createElement('segment', [scp1, scp2], {strokeWidth: '1px'});
 
 
     startpred = board.createElement('glider', [0, 10, yax], {name:'Preys'});
