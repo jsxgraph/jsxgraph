@@ -37,7 +37,7 @@
     /* <![CDATA[ */
     
         function solve() {
-            t=400;
+            t=800;
             change(1);
             p11m.moveTo([33,18],t);
             p12m.moveTo([39,18],t);
@@ -280,9 +280,9 @@
         var m1 = false;
 
         // First polygon (mirrored)
-        var p11m = board.createElement('point',[7,17],{face:'circle',fillColor:'blue',withLabel:true,visible:false});
+        var p11m = board.createElement('point',[7,17],{face:'circle',fillColor:'blue',withLabel:false,visible:false});
         var c11m = board.createElement('circle',[p11m,6],{visible:false});
-        var p12m = board.createElement('glider',[1,17,c11m],{face:'plus',withLabel:true,visible:false});
+        var p12m = board.createElement('glider',[1,17,c11m],{face:'plus',withLabel:false,visible:false});
         var l11m = board.createElement('line',[p11m,p12m],{visible:false});        
         var l12m = board.createElement('normal',[l11m,p12m],{visible:false});
         var c12m = board.createElement('circle',[p12m,4],{visible:false});
@@ -686,7 +686,7 @@
         }   
         var m14 = false;
         
-        // Fourteenth polygon
+        // Fourteenth polygon (mirrored)
         var p141m = board.createElement('point',[20,1],{face:'circle',fillColor:'blue',withLabel:false,visible:false});
         var c141m = board.createElement('circle',[p141m,6],{visible:false});
         var p142m = board.createElement('glider',[14,1,c141m],{face:'plus',withLabel:false,visible:false});        
