@@ -729,13 +729,14 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         for(el in this.objects) {
             pEl = this.objects[el];
             if( (pEl.hasPoint != undefined)
-                    && (pEl.hasPoint(dx, dy))
                     && ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER) 
                         /*|| (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_LINE)  // not yet
                         || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CIRCLE)
                         || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CURVE)*/ )
                     && (pEl.visProp['visible'])
-                    && (!pEl.fixed)) {
+                    && (!pEl.fixed)
+                    && (pEl.hasPoint(dx, dy))
+                    ) {
                 this.drag_obj = this.objects[el];
                 // Points are preferred:
                 if ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)) {
@@ -1049,7 +1050,7 @@ JXG.Board.prototype.finalizeAdding = function (obj) {
  * @private
  */
 JXG.Board.prototype.addPoint = function (obj) {   
-    this.elementsByName[obj.name] = obj;
+    //this.elementsByName[obj.name] = obj;
     elementId = this.setId(obj,'P');
     
     /*
