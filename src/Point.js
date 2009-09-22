@@ -266,7 +266,7 @@ JXG.Point.prototype.hasPoint = function (x,y) {
 * Dummy function for unconstrained points or gliders.
 * @private
 */
-JXG.Point.prototype.updateConstraint = function() {};
+JXG.Point.prototype.updateConstraint = function() { return this; };
 
 
 /**
@@ -411,6 +411,7 @@ JXG.Point.prototype.update = function (fromParent) {
     
     //this.updateRenderer();
     this.needsUpdate = false;
+    return this;
 };
 
 /**
@@ -444,6 +445,7 @@ JXG.Point.prototype.updateRenderer = function () {
         //this.board.renderer.updateLabel(this.label);
         this.board.renderer.updateText(this.label.content);
     }
+    return this;
 };
 
 /**
@@ -546,6 +548,7 @@ JXG.Point.prototype.setPositionDirectly = function (method, x, y) {
     } else {
         this.update();
     }
+    return this;
 };
 
 /**
@@ -573,6 +576,7 @@ JXG.Point.prototype.setPositionByTransform = function (method, x, y) {
     } else {
         this.update();
     }
+    return this;
 };
 
 /**
@@ -583,6 +587,7 @@ JXG.Point.prototype.setPositionByTransform = function (method, x, y) {
  */
 JXG.Point.prototype.setPosition = function (method, x, y) { 
     this.setPositionByTransform(method, x, y);
+    return this;
 };
 
 /**
@@ -609,6 +614,7 @@ JXG.Point.prototype.makeGlider = function (glideObject) {
     //this.position = 0;
     this.needsUpdate = true;
     this.update();
+    return this;
 };
 
 /**
@@ -648,7 +654,7 @@ JXG.Point.prototype.addConstraint = function (terms) {
     if (terms.length==1) { // Intersection function
         this.updateConstraint = function() { this.coords = newfuncs[0](); };
         if (!this.board.isSuspendedUpdate) { this.update(); }
-        return;
+        return this;
     } else if (terms.length==2) { // Euclidean coordinates
         this.XEval = newfuncs[0];
         this.YEval = newfuncs[1];
@@ -663,7 +669,7 @@ JXG.Point.prototype.addConstraint = function (terms) {
     }
 
     if (!this.board.isSuspendedUpdate) { this.update(); }
-    return;
+    return this;
 };
 
 /**
@@ -683,6 +689,7 @@ JXG.Point.prototype.updateTransform = function () {
         c = this.transformations[i].apply(this);
         this.coords.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
     }
+    return this;
 };
 
 /**
@@ -703,6 +710,7 @@ JXG.Point.prototype.addTransform = function (el, transform) {
     for (var i=0;i<list.length;i++) {
         this.transformations.push(list[i]);
     }
+    return this;
 };
 
 /**
@@ -719,6 +727,7 @@ JXG.Point.prototype.startAnimation = function(direction, stepCount) {
         if(typeof this.intervalCount == 'undefined')
             this.intervalCount = 0;
     }
+    return this;
 };
 
 /**
@@ -732,6 +741,7 @@ JXG.Point.prototype.stopAnimation = function() {
         window.clearInterval(this.intervalCode);
         delete(this.intervalCode);
     }
+    return this;
 };
 
 /**
@@ -755,6 +765,7 @@ JXG.Point.prototype.moveTo = function(where, time) {
 	}
 	this.animationPath = coords;
 	this.intervalcode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].objects[\'' + this.id + '\'].animate(null, null);', delay);
+    return this;
 };
 
 /**
@@ -776,7 +787,7 @@ JXG.Point.prototype.animate = function(direction, stepCount) {
 			this.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - this.coords.usrCoords[1], newCoords[1] - this.coords.usrCoords[2]);
 			this.board.update();
 		}
-		return;
+		return this;
 	}
 
 	 if(stepCount != null) {
@@ -845,6 +856,7 @@ JXG.Point.prototype.animate = function(direction, stepCount) {
     }
     
     this.board.update(this);
+    return this;
 };
 
 /**
@@ -908,6 +920,7 @@ JXG.Point.prototype.setStyle = function(i) {
     }    
     
     this.board.renderer.changePointStyle(this);
+    return this;
 };
 
 /**
@@ -924,6 +937,7 @@ JXG.Point.prototype.setFace = function(s) {
         this.visProp['face'] = 'circle';
     }
     this.board.renderer.changePointStyle(this);
+    return this;
 };
 
 /**
@@ -977,6 +991,7 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
 /*   
     this.board.renderer.cloneSubTree(this);
 */    
+    return this;
 };
 
 
