@@ -1178,9 +1178,9 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
  * 
  * var i = board.createElement('intersection', [c1, l1, 0]);
  * var j = board.createElement('otherintersection', [c1, l1, i]);
- * </pre><div id="e5b0e190-5200-4bc3-b995-b6cc53dc5dc0" style="width: 300px; height: 300px;"></div>
+ * </pre><div id="45e25f12-a1de-4257-a466-27a2ae73614c" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var ipex2_board = JXG.JSXGraph.initBoard('e5b0e190-5200-4bc3-b995-b6cc53dc5dc0', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var ipex2_board = JXG.JSXGraph.initBoard('45e25f12-a1de-4257-a466-27a2ae73614c', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
  *   var ipex2_p1 = ipex1_board.createElement('point', [4.0, 4.0]);
  *   var ipex2_c1 = ipex1_board.createElement('circle', [ipex2_p1, 2.0]);
  *   var ipex2_p2 = ipex1_board.createElement('point', [1.0, 1.0]);
@@ -1192,11 +1192,15 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
  */
 JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
     var el;
-    if (parents.length==3) {
-        el = board.createElement('point', [board.otherIntersection(parents[0], parents[1], parents[2])], attributes);
-    }
-    else {// Failure
+    if (parents.length!=3 || 
+        !JXG.isPoint(parents[2]) ||
+        (parents[0].elementClass != JXG.OBJECT_CLASS_LINE && parents[0].elementClass != JXG.OBJECT_CLASS_CIRCLE) ||
+        (parents[1].elementClass != JXG.OBJECT_CLASS_LINE && parents[1].elementClass != JXG.OBJECT_CLASS_CIRCLE) ) {
+        // Failure
         throw ("JSXGraph error: Can't create 'other intersection point' with parent types '" + (typeof parents[0]) + "',  '" + (typeof parents[1])+ "'and  '" + (typeof parents[2]) + "'.");
+    }
+    else {
+        el = board.createElement('point', [board.otherIntersection(parents[0], parents[1], parents[2])], attributes);
     }
     
     parents[0].addChild(el);
