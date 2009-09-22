@@ -55,7 +55,7 @@
 				delete(p1.intervalcode);
 				delete(p1.animationPath);
 			} else {
-				p1.setPositionByTransform(JXG.COORDS_BY_USER, -p1.X()+newCoords[0], -p1.Y()+newCoords[1]);
+				p1.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - p1.coords.usrCoords[1], newCoords[1] - p1.coords.usrCoords[2]);
 				board.update();
 			}
 		}
@@ -64,15 +64,16 @@
 			var delay = 35;
 			var steps = Math.ceil(milliseconds/(delay * 1.0));
 			var coords = new Array(steps+1);
-			var X = p.coords.usrCoords[1];
-			var Y = p.coords.usrCoords[2];
-			var dX = (moveTo[1] - p.coords.usrCoords[1]);
-			var dY = (moveTo[2] - p.coords.usrCoords[2]);
+			var X = p.X();
+			var Y = p.Y();
+			var dX = (moveTo[1] - X);
+			var dY = (moveTo[2] - Y);
 			var i;
 			for(i=steps; i>=0; i--) {
-				coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y+ dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
+				coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y + dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
 			}
 			p.animationPath = coords;
+			alert('number of steps: ' + p.animationPath.length);
 			p.intervalcode = window.setInterval('onestep2()', delay);
 		}
 
