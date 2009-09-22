@@ -1160,7 +1160,7 @@ JXG.Board.prototype.addCurve = function (obj) {
  * @private
  */
 JXG.Board.prototype.addChart = function (obj) {
-    return = this.setId(obj,'Chart');
+    return this.setId(obj,'Chart');
 };
 
 /**
