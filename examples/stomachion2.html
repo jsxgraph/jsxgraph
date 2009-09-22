@@ -27,6 +27,7 @@
   <input type='button' value='Mirror #12' style='background-color:#FF9999' onClick='change(12)'><br><br>
   <input type='button' value='Mirror #13' style='background-color:#0099CC' onClick='change(13)'><br><br>
   <input type='button' value='Mirror #14' style='background-color:#FFCCFF' onClick='change(14)'>
+  <input type='button' value='Solve it!' onClick='solve()'>
   <form></td>
   </tr>
   </table>
@@ -34,6 +35,41 @@
 <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
+    
+        function solve() {
+            t=400;
+            change(1);
+            p11m.moveTo([33,18],t);
+            p12m.moveTo([39,18],t);
+            change(2);
+            p21m.moveTo([39,14],t);
+            p22m.moveTo([39,12],t);
+            change(3);
+            p31m.moveTo([36,12],t);
+            p32m.moveTo([39,12],t);
+            change(4);
+            p41m.moveTo([36,12],t);
+            p42m.moveTo([39,6],t); 
+            change(5);
+            p51m.moveTo([33,12],t);
+            p52m.moveTo([33,18],t);
+            p61.moveTo([33,12],t);
+            p62.moveTo([33,6],t);
+            p71.moveTo([33,6], t);
+            p81.moveTo([30,6], t);
+            p91.moveTo([30,6],t);
+            p92.moveTo([30,12],t);
+            p101.moveTo([27,6], t);
+            p111.moveTo([27,6],t);
+            p121.moveTo([27,18],t);
+            p122.moveTo([27,6],t);
+            change(13);
+            p131m.moveTo([33,18],t);
+            p132m.moveTo([33,12],t);
+            p141.moveTo([33,18],t);
+            p142.moveTo([27,18],t);
+        }
+    
         function exchange(p1,p2,p1m,p2m,f,fm) {
             p1m.setPositionByTransform(JXG.COORDS_BY_USER, p2.X()-p1m.X(), p2.Y()-p1m.Y());
             p1.setProperty('visible:false');
