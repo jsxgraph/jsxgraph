@@ -561,12 +561,7 @@ JXG.IntergeoReader = new function() {
     };
     
     this.addOtherIntersectionPointOfCircleAndLine = function(node) {
-        var param = JXG.IntergeoReader.readParams(node),
-            c1 = JXG.getReference(this.board,param[2]),
-            c2 = JXG.getReference(this.board,param[3]),
-            p1  = this.objects[param[1]],
-            p2  = this.objects[param[0]]; // output
-        p2.addConstraint([this.board.otherIntersection(c1,c2,p1)]);
+        this.addOtherIntersectionPointOfTwoCircles(node);
     };
 
     this.addCircleTangentLinesByPoint = function(node) {

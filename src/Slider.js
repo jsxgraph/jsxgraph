@@ -68,10 +68,10 @@ JXG.createSlider = function(board, parentArr, atts) {
     if(atts == null) 
         atts = {};
     if(atts['strokeColor'] == null || typeof atts['strokeColor'] == 'undefined') {
-        atts['strokeColor'] = '#0080c0';
+        atts['strokeColor'] = '#000000'; //'#0080c0';
     }
     if(atts['fillColor'] == null || typeof atts['fillColor'] == 'undefined') {
-        atts['fillColor'] = '#0080c0';
+        atts['fillColor'] = '#ffffff'; //'#0080c0';
     }    
 
     p1 = board.createElement('point', pos0, {visible:false, fixed:true, name:'',withLabel:false}); 
@@ -83,7 +83,7 @@ JXG.createSlider = function(board, parentArr, atts) {
                 name:'',
                 withLabel:false,
                 strokeColor:atts['strokeColor']});
-    ticks  = 1;
+    ticks  = 2;
     ti = board.createElement('ticks', [l1, p2.Dist(p1)/ticks],
                 {insertTicks:true, drawLabels:false, drawZero:true}); 
 
@@ -96,13 +96,20 @@ JXG.createSlider = function(board, parentArr, atts) {
 
     if (atts['snapWidth']!=null) snapWidth = atts['snapWidth'];
     if (atts['snapwidth']!=null) snapWidth = atts['snapwidth'];
+    
     p3 = board.createElement('glider', [startx,starty,l1],
                 {style:6,strokeColor:atts['strokeColor'],
                  fillColor:atts['fillColor'],
                  showInfobox:false,name:'',
                  snapWidth:snapWidth});
     
-    l2 = board.createElement('line', [p1,p3], {straightFirst:false, straightLast:false, strokewidth:3, strokeColor:atts['strokeColor'],name:'',withLabel:false}); 
+    l2 = board.createElement('line', [p1,p3], 
+                {straightFirst:false, 
+                 straightLast:false, strokewidth:3, 
+                 strokeColor:atts['strokeColor'],
+                 name:'',
+                 withLabel:false}); 
+                 
     //p3.Value = function() { return this.position*(smax - smin)+smin; };
     p3.Value = function() { return this.position*sdiff+smin; };
     p3._smax = smax;
@@ -113,7 +120,10 @@ JXG.createSlider = function(board, parentArr, atts) {
     } else {
         n = '';
     }
-    t = board.createElement('text', [((pos1[0]-pos0[0])*.05+pos1[0]), ((pos1[1]-pos0[1])*.05+pos1[1]), function(){return n+(p3.Value()).toFixed(2);}],{name:''}); 
+    t = board.createElement('text', [((pos1[0]-pos0[0])*.05+pos1[0]), 
+                                     ((pos1[1]-pos0[1])*.05+pos1[1]), 
+                                     function(){return n+(p3.Value()).toFixed(2);}],
+                                     {name:''}); 
     return p3;
 };    
 

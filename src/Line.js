@@ -1025,8 +1025,9 @@ JXG.createAxis = function(board, parents, attributes) {
         point1.fixed = true;
         point2.fixed = true;
 
-        if(attributes == null)
-            attributes = new Object();
+        if(attributes == null) {
+            attributes = {};
+        }
 
         attributes.lastArrow = true;
         attributes.straightFirst = true;
