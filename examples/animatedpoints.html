@@ -9,6 +9,7 @@
 <h2>Animate a free point</h2>
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+  <div id="jxgbox2" class="jxgbox" style="width:600px; height:450px;"></div>
 </div>
    <script type="text/javascript">
    /* <![CDATA[ */
@@ -19,26 +20,17 @@
 
         p1 = board.createElement('point', [7, 5], {name:"A"});
 
-		var steps = 55.;
+		var steps = 30.;
 		var delay = 35;
 		var moveTo = [1, -5, -7];
 
         t = board.createElement('point', moveTo, {style:2,name:""});
         
-//		alert(p1.animDX + ', ' + p1.animDY);
-
 		var ix = 0;
 
 		function onestep() {
 			p1.coords.setCoordinates(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + p1.animDX, p1.coords.usrCoords[2] + p1.animDY]);
 			board.update();
-/*			if(board.algebra.affineDistance(p1.coords.usrCoords, moveTo) < 0.4 * p1.animDistance) {
-				// Die letzten 20% der Strecke etwas ruhiger angehen lassen...
-				if(p1.animDX > 7*JXG.Math.eps)
-					p1.animDX /= 2.;
-				if(p1.animDY > 7*JXG.Math.eps)
-					p1.animDY /= 2.;
-			}*/
 			if(board.algebra.affineDistance([1, p1.coords.usrCoords[1] + p1.animDX, p1.coords.usrCoords[2] + p1.animDY], moveTo) > board.algebra.affineDistance(p1.coords.usrCoords, moveTo)) {
 				window.clearInterval(p1.intervalcode);
 				delete(p1.intervalcode);
@@ -53,11 +45,72 @@
 			p1.animDX = (moveTo[1] - p1.coords.usrCoords[1])/steps;
 			p1.animDY = (moveTo[2] - p1.coords.usrCoords[2])/steps;
 			p1.intervalcode = window.setInterval('onestep()', delay);
-		}		
+		}
+
+		//alternative animation using animation path
+		function onestep2() {
+			var newCoords = p1.animationPath.pop();
+			if(typeof newCoords  == 'undefined') {
+				window.clearInterval(p1.intervalcode);
+				delete(p1.intervalcode);
+				delete(p1.animationPath);
+			} else {
+				p1.coords.setCoordinates(JXG.COORDS_BY_USER, newCoords);
+				board.update();
+			}
+		}
+
+		function start2(p, milliseconds) {
+			var delay = 35;
+			var steps = Math.ceil(milliseconds/(delay * 1.0));
+			var coords = new Array(steps+1);
+			var X = p.coords.usrCoords[1];
+			var Y = p.coords.usrCoords[2];
+			var dX = (moveTo[1] - p.coords.usrCoords[1]);
+			var dY = (moveTo[2] - p.coords.usrCoords[2]);
+			var i;
+			for(i=steps; i>=0; i--) {
+				coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y+ dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
+			}
+			p.animationPath = coords;
+			p.intervalcode = window.setInterval('onestep2()', delay);
+		}
+
+
+        board2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-1, 4, 5, -1], keepaspectratio: true, axis: false, grid: false});
+        xax2 = board2.createElement('axis', [[0,0],[1,0]]);
+        yax2 = board2.createElement('axis', [[0,0],[0,1]]);
+
+		var someData = [[1, 3, 2, 2.5],
+		         		[3, 2, 1, 3.6],
+		         		[1.5, 2, 0.5, 1],
+			         	[0.5, 3, 1, 2]];
+        var p = [board2.createElement('point', [0, 1], {name:"A", visible: false}),
+				 board2.createElement('point', [0, 3], {name:"B", visible: false}),
+        		 board2.createElement('point', [0, 2], {name:"C", visible: false}),
+        		 board2.createElement('point', [0, 2.5], {name:"D", visible: false})];
+
+		function changebars() {
+			var ix = document.getElementById('choose').value,
+				i;
+			for(i=0; i<4; i++) {
+				p[i].moveTo([p[i].X(), someData[ix][i]], 1000);
+			}
+		}
+
+        var chartData = [function() { return p[0].Y(); },
+                         function() { return p[1].Y(); },
+                         function() { return p[2].Y(); },
+                         function() { return p[3].Y(); }];
+
+		var chart = board2.createElement('chart', [chartData], {chartStyle:'bar',labels:['animierte', 'charts', 'sind', 'toll'],width:0.8});
+		var choose = board2.createElement('text', [3, 3.5, '<select id="choose" onchange="changebars();"><option value="0">Januar</option><option value="1">Februar</option><option value="2">Maerz</option><option value="3">April</option></select>']);
 
   /* ]]> */
   </script>
 <a href="#" onclick="start();">Start animation</a><br />
+<a href="#" onclick="start2(p1, 2000);">Start animation v2</a><br />
+<a href="#" onclick="p1.moveTo([-5, 2], 800);">Built-in animation (should match animation v2)</a><br />
 <div id="debug" style="display:block;"></div>
 </body>
 </html>

@@ -735,6 +735,29 @@ JXG.Point.prototype.stopAnimation = function() {
 };
 
 /**
+ * Starts an animated point movement towards the given coordinates <tt>where</tt>. The animation is done after <tt>time</tt> milliseconds.
+ * @param {Array} where Array containing the x and y coordinate of the target location.
+ * @param {int} time Number of milliseconds the animation should last.
+ * @see #animate
+ */
+JXG.Point.prototype.moveTo = function(where, time) {
+	var delay = 35,
+	    steps = Math.ceil(time/(delay * 1.0)),
+		coords = new Array(steps+1),
+		X = this.coords.usrCoords[1],
+		Y = this.coords.usrCoords[2],
+		dX = (where[0] - X),
+		dY = (where[1] - Y),
+	    i;
+	
+	for(i=steps; i>=0; i--) {
+		coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y+ dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
+	}
+	this.animationPath = coords;
+	this.intervalcode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].objects[\'' + this.id + '\'].animate(null, null);', delay);
+};
+
+/**
  * Animates a glider. Is called by the browser after startAnimation is called.
  * @param {number} direction The direction the glider is animated.
  * @param {number} stepCount The number of steps.
@@ -743,9 +766,24 @@ JXG.Point.prototype.stopAnimation = function() {
  * @private
  */
 JXG.Point.prototype.animate = function(direction, stepCount) {
-    this.intervalCount++;
-    if(this.intervalCount > stepCount)
-        this.intervalCount = 0;
+ 	if(typeof this.animationPath != 'undefined') {
+		var newCoords = this.animationPath.pop();
+		if(typeof newCoords  == 'undefined') {
+			window.clearInterval(this.intervalcode);
+			delete(this.intervalcode);
+			delete(this.animationPath);
+		} else {
+			this.coords.setCoordinates(JXG.COORDS_BY_USER, newCoords);
+			this.board.update();
+		}
+		return;
+	}
+
+	 if(stepCount != null) {
+		this.intervalCount++;
+		if(this.intervalCount > stepCount)
+			this.intervalCount = 0;
+	}
     
     if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
         var distance = this.slideObject.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.slideObject.point2.coords);
@@ -805,7 +843,7 @@ JXG.Point.prototype.animate = function(direction, stepCount) {
 
         this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.coords.usrCoords[1] + radius*Math.cos(alpha), this.slideObject.midpoint.coords.usrCoords[2] + radius*Math.sin(alpha)]);
     }
-
+    
     this.board.update(this);
 };
 
