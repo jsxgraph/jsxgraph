@@ -17,10 +17,10 @@
 			var B = [];
 			var C = [];
 			var D = [];
-			A[0] = brd.createElement('point', [2,-7], {withLabel:true,strokeColor:'black',fillColor:'black',face:'cross'});
-			B[0] = brd.createElement('point', [11,8], {withLabel:true,strokeColor:'black',fillColor:'black',face:'cross'});
-			C[0] = brd.createElement('point', [-8,-5], {withLabel:true,strokeColor:'black',fillColor:'black',face:'cross'});
-			D[0] = brd.createElement('point', [-7,9], {withLabel:true,strokeColor:'black',fillColor:'black',face:'cross'});
+			A[0] = brd.createElement('point', [2,-7], {withLabel:false,strokeColor:'black',fillColor:'black',face:'cross'});
+			B[0] = brd.createElement('point', [11,8], {withLabel:false,strokeColor:'black',fillColor:'black',face:'cross'});
+			C[0] = brd.createElement('point', [-8,-5], {withLabel:false,strokeColor:'black',fillColor:'black',face:'cross'});
+			D[0] = brd.createElement('point', [-7,9], {withLabel:false,strokeColor:'black',fillColor:'black',face:'cross'});
 			
 			for (var i = 0; i<=18; i++) {
 				A[i+1]= brd.createElement('point', (function(i){var p = 0.05*(i+1); return [  
