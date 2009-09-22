@@ -1,0 +1,63 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Animate a free point</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: false, grid: false});
+        xax = board.createElement('axis', [[0,0],[1,0]]);
+        yax = board.createElement('axis', [[0,0],[0,1]]);
+
+        p1 = board.createElement('point', [7, 5], {name:"A"});
+
+		var steps = 55.;
+		var delay = 35;
+		var moveTo = [1, -5, -7];
+
+        t = board.createElement('point', moveTo, {style:2,name:""});
+        
+//		alert(p1.animDX + ', ' + p1.animDY);
+
+		var ix = 0;
+
+		function onestep() {
+			p1.coords.setCoordinates(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + p1.animDX, p1.coords.usrCoords[2] + p1.animDY]);
+			board.update();
+/*			if(board.algebra.affineDistance(p1.coords.usrCoords, moveTo) < 0.4 * p1.animDistance) {
+				// Die letzten 20% der Strecke etwas ruhiger angehen lassen...
+				if(p1.animDX > 7*JXG.Math.eps)
+					p1.animDX /= 2.;
+				if(p1.animDY > 7*JXG.Math.eps)
+					p1.animDY /= 2.;
+			}*/
+			if(board.algebra.affineDistance([1, p1.coords.usrCoords[1] + p1.animDX, p1.coords.usrCoords[2] + p1.animDY], moveTo) > board.algebra.affineDistance(p1.coords.usrCoords, moveTo)) {
+				window.clearInterval(p1.intervalcode);
+				delete(p1.intervalcode);
+				alert('done');
+			}
+			p1.animOldDist = board.algebra.affineDistance(p1.coords.usrCoords, moveTo);
+		}
+
+		function start() {
+			p1.animDistance = board.algebra.affineDistance(p1.coords.usrCoords, moveTo);
+			p1.animOldDistance = p1.animDistance;
+			p1.animDX = (moveTo[1] - p1.coords.usrCoords[1])/steps;
+			p1.animDY = (moveTo[2] - p1.coords.usrCoords[2])/steps;
+			p1.intervalcode = window.setInterval('onestep()', delay);
+		}		
+
+  /* ]]> */
+  </script>
+<a href="#" onclick="start();">Start animation</a><br />
+<div id="debug" style="display:block;"></div>
+</body>
+</html>
