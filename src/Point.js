@@ -773,7 +773,7 @@ JXG.Point.prototype.animate = function(direction, stepCount) {
 			delete(this.intervalcode);
 			delete(this.animationPath);
 		} else {
-			this.coords.setCoordinates(JXG.COORDS_BY_USER, newCoords);
+			this.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0]-this.X(), newCoords[1]-this.Y());
 			this.board.update();
 		}
 		return;

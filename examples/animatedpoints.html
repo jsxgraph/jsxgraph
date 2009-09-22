@@ -22,16 +22,16 @@
 
 		var steps = 30.;
 		var delay = 35;
-		var moveTo = [1, -5, -7];
+		var moveTo = [1,-5, -7];
 
         t = board.createElement('point', moveTo, {style:2,name:""});
         
 		var ix = 0;
 
 		function onestep() {
-			p1.coords.setCoordinates(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + p1.animDX, p1.coords.usrCoords[2] + p1.animDY]);
+			p1.setPositionByTransform(JXG.COORDS_BY_USER, p1.animDX, p1.animDY);
 			board.update();
-			if(board.algebra.affineDistance([1, p1.coords.usrCoords[1] + p1.animDX, p1.coords.usrCoords[2] + p1.animDY], moveTo) > board.algebra.affineDistance(p1.coords.usrCoords, moveTo)) {
+			if(board.algebra.affineDistance([1, p1.X() + p1.animDX, p1.Y() + p1.animDY], moveTo) > board.algebra.affineDistance(p1.coords.usrCoords, moveTo)) {
 				window.clearInterval(p1.intervalcode);
 				delete(p1.intervalcode);
 				alert('done');
@@ -55,7 +55,7 @@
 				delete(p1.intervalcode);
 				delete(p1.animationPath);
 			} else {
-				p1.coords.setCoordinates(JXG.COORDS_BY_USER, newCoords);
+				p1.setPositionByTransform(JXG.COORDS_BY_USER, -p1.X()+newCoords[0], -p1.Y()+newCoords[1]);
 				board.update();
 			}
 		}
