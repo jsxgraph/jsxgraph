@@ -1051,44 +1051,10 @@ JXG.Board.prototype.finalizeAdding = function (obj) {
  */
 JXG.Board.prototype.addPoint = function (obj) {   
     //this.elementsByName[obj.name] = obj;
-    elementId = this.setId(obj,'P');
-    
-    /*
-    var elementId = obj.id;
-     
-    // Falls Id nicht vergeben, eine neue generieren:
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'P' + number;
-    }
-    if (obj.hasLabel) {
-        obj.label.content.id = elementId+"Label";
-    } 
-    
-    // Objekt in die assoziativen Arrays einfuegen
-    this.objects[elementId] = obj;
-    
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
-    if (obj.hasLabel) {
-        this.addText(obj.label.content);
-    }
-    */
-    
+    var id = this.setId(obj,'P');
     this.renderer.drawPoint(obj);
     this.finalizeAdding(obj);
-    /*
-    if (obj.hasLabel) {
-        this.renderer.drawText(obj.label.content);
-    }
-    if(!obj.visProp['visible']) {
-        this.renderer.hide(obj);
-    }
-    
-    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
-        this.renderer.hide(obj.label.content);
-    }
-    */
-    return elementId;
+    return id;
 };
 
 /**
@@ -1099,42 +1065,10 @@ JXG.Board.prototype.addPoint = function (obj) {
  * @private
  */
 JXG.Board.prototype.addLine = function (obj) {
-    //this.elementsByName[obj.name] = obj;
-    elementId = this.setId(obj,'L');
-
-    /*
-    // Falls Id nicht vergeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'L' + num;
-    }
-
-    if (obj.hasLabel) {
-        obj.label.content.id = elementId+"Label";
-    }
-    
-    // Objekt in das assoziative Array einfuegen    
-    this.objects[elementId] = obj;
-
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
-    */
-    
+    var id = this.setId(obj,'L');
     this.renderer.drawLine(obj);
     this.finalizeAdding(obj);
-    /*
-    if (obj.hasLabel) {
-        this.renderer.drawText(obj.label.content);
-    }
-    if(!obj.visProp['visible']) {
-        this.renderer.hide(obj);
-    }
-    
-    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
-        this.renderer.hide(obj.label.content);
-    }
-    */
-    return elementId;
+    return id;
 };
 
 /**
@@ -1145,46 +1079,10 @@ JXG.Board.prototype.addLine = function (obj) {
  * @private
  */
 JXG.Board.prototype.addCircle = function(obj) {
-    //this.elementsByName[obj.name] = obj;
-    elementId = this.setId(obj,'C');
-    
-    /*
-    // Falls Id nicht vorgegeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-       elementId = this.id + 'C' + number;
-    }
-    if (obj.hasLabel) {
-        obj.label.content.id = elementId+"Label";
-    }
-    
-    // Objekt in das assoziative Array einfuegen
-    this.objects[elementId] = obj;
-       
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
-    
-    if (obj.hasLabel) {
-        this.addText(obj.label.content);
-    }
-    */
-    
+    var id = this.setId(obj,'C');
     this.renderer.drawCircle(obj);
     this.finalizeAdding(obj);
-    /*
-    if (obj.hasLabel) {
-        this.renderer.drawText(obj.label.content);
-    }
-
-    if(!obj.visProp['visible']) {
-        this.renderer.hide(obj);
-    }
-    
-    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
-        this.renderer.hide(obj.label.content);
-    }    
-    */
-    return elementId;
+    return id;
 };
 
 /**
@@ -1195,45 +1093,10 @@ JXG.Board.prototype.addCircle = function(obj) {
  * @private
  */
 JXG.Board.prototype.addPolygon = function(obj) {
-    //this.elementsByName[obj.name] = obj;
-    elementId = this.setId(obj,'Py');
-    
-    /*
-    // Falls Id nicht vorgegeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'Py' + number;
-    }
-    if(obj.hasLabel) {
-        obj.label.content.id = elementId+"Label";
-    }
-    
-    // Objekt in das assoziative Array einfuegen
-    this.objects[elementId] = obj;
- 
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
-    if(obj.hasLabel) {
-        this.addText(obj.label.content);  
-    }
-    */
-    
+    var id = this.setId(obj,'Py');
     this.renderer.drawPolygon(obj);
     this.finalizeAdding(obj);
-    /*
-    
-    if(obj.hasLabel) {
-        this.renderer.drawText(obj.label.content);
-    }
-    if(!obj.visProp['visible']) {
-        this.renderer.hide(obj);
-    }
-    
-    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
-        this.renderer.hide(obj.label.content);
-    }   
-    */
-    return elementId;
+    return id;
 };
 
 /**
@@ -1244,45 +1107,10 @@ JXG.Board.prototype.addPolygon = function(obj) {
  * @private
  */
 JXG.Board.prototype.addArc = function(obj) {
-    //this.elementsByName[obj.name] = obj;
-    elementId = this.setId(obj,'Ac');
-    
-    /*
-    // Falls Id nicht vorgegeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'Ac' + number;
-    }
-    obj.id = elementId;    
-    if(obj.hasLabel) {
-        obj.label.content.id = elementId+"Label";    
-    }
-        
-    // Objekt in das assoziative Array einfuegen
-    this.objects[elementId] = obj;
- 
-    if(obj.hasLabel) {    
-        this.addText(obj.label.content);
-    }
-    */
-    
-    // Objekt an den Renderer zum Zeichnen uebergeben    
+    var id = this.setId(obj,'Ac');
     this.renderer.drawArc(obj);
     this.finalizeAdding(obj);
-    /*
-
-    if(obj.hasLabel) {     
-        this.renderer.drawText(obj.label.content);
-    }
-    if(!obj.visProp['visible']) {
-        this.renderer.hide(obj);
-    }
-    
-    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
-        this.renderer.hide(obj.label.content);
-    }       
-    */
-    return elementId;
+    return id;
 };
 
 /**
@@ -1293,24 +1121,7 @@ JXG.Board.prototype.addArc = function(obj) {
  * @private
  */
 JXG.Board.prototype.addSector = function(obj) {
-    //this.elementsByName[obj.name] = obj;
-    elementId = this.setId(obj,'Sc');
-        
-    /*
-    // Falls Id nicht vorgegeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'Sc' + number;
-    }
-
-    // Objekt in das assoziative Array einfuegen
-    this.objects[elementId] = obj;
- 
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
-    // nichts zeichnen, Kindelemente werden einzeln gezeichnet
-    */
-    return elementId;
+    return this.setId(obj,'Sc');
 };
 
 /**
@@ -1321,43 +1132,10 @@ JXG.Board.prototype.addSector = function(obj) {
  * @private
  */
 JXG.Board.prototype.addAngle = function (obj) {
-    //this.elementsByName[obj.name] = obj;
-    elementId = this.setId(obj,'Ag');
-    
-    /*
-    // Falls Id nicht vergeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'Ag' + number;
-    }
-    if(obj.hasLabel) {
-        obj.label.content.id = elementId+"Label";    
-    }    
-    // Objekt in das assoziative Array einfuegen
-    this.objects[elementId] = obj;
- 
-    if(obj.hasLabel) {    
-        this.addText(obj.label.content);
-    }
-    */
-    
-    // Objekt an den Renderer zum Zeichnen uebergeben    
+    var id = this.setId(obj,'Ag');
     this.renderer.drawAngle(obj);
     this.finalizeAdding(obj);
-    /*
-
-    if(obj.hasLabel) {     
-        this.renderer.drawText(obj.label.content);
-    }
-    if(!obj.visProp['visible']) {
-        this.renderer.hide(obj);
-    }
-    
-    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
-        this.renderer.hide(obj.label.content);
-    }           
-    */
-    return elementId;
+    return id;
 };
 
 /**
@@ -1368,45 +1146,10 @@ JXG.Board.prototype.addAngle = function (obj) {
  * @private
  */
 JXG.Board.prototype.addCurve = function (obj) {
-    //this.elementsByName[obj.name] = obj;
-    elementId = this.setId(obj,'G');
-    
-    /*
-    // Falls Id nicht vergeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'G' + number;
-    }
-    if(obj.hasLabel) {
-        obj.label.content.id = elementId+"Label";    
-    }    
-    // Objekt in das assoziative Array einfuegen    
-    this.objects[elementId] = obj;
-
-    if(obj.hasLabel) {    
-        this.addText(obj.label.content);
-    }    
-    
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
-    */
+    var id = this.setId(obj,'G');
     this.renderer.drawCurve(obj);
     this.finalizeAdding(obj);
-    /*
-    
-    if(obj.hasLabel) {     
-        this.renderer.drawText(obj.label.content);
-    }    
-    
-    if(!obj.visProp['visible']) {
-        this.renderer.hide(obj);
-    }
-    
-    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
-        this.renderer.hide(obj.label.content);
-    }        
-    */
-    return elementId;
+    return id;
 };
 
 /**
@@ -1417,25 +1160,7 @@ JXG.Board.prototype.addCurve = function (obj) {
  * @private
  */
 JXG.Board.prototype.addChart = function (obj) {
-    //this.elementsByName[obj.name] = obj;
-    elementId = this.setId(obj,'Chart');
-    
-    /*
-    // Falls Id nicht vergeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'Chart' + number;
-    }
-    
-    // Objekt in das assoziative Array einfuegen    
-    this.objects[elementId] = obj;
-
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
-    */
-    //this.renderer.drawCurve(obj);
-    
-    return elementId;
+    return = this.setId(obj,'Chart');
 };
 
 /**
