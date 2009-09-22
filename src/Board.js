@@ -692,7 +692,7 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
         this.moveOrigin();
     } else {
         //this.fullUpdate(); // Full update only needed on moveOrigin? (AW)
-        this.update();
+        this.update(null,this.BOARD_QUALITY_HIGH);
     }
 
     this.mode = this.BOARD_MODE_NONE;
@@ -804,7 +804,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
                 // Save new mouse position in screen coordinates.
                 this.dragObjCoords = newPos; 
             }
-            this.update();
+            this.update(null,this.BOARD_QUALITY_LOW);
         } else if(this.drag_obj.type == JXG.OBJECT_TYPE_GLIDER) {
             var oldCoords = this.drag_obj.coords;
             // First the new position of the glider is set to the new mouse position
@@ -820,7 +820,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
                 this.drag_obj.group[this.drag_obj.group.length-1].dY = this.drag_obj.coords.scrCoords[2] - oldCoords.scrCoords[2];
                 this.drag_obj.group[this.drag_obj.group.length-1].update(this);
             } else {
-                this.update(this.drag_obj);
+                this.update(this.drag_obj,this.BOARD_QUALITY_LOW);
             }
         }
         this.updateInfobox(this.drag_obj);
@@ -2471,7 +2471,7 @@ JXG.Board.prototype.updateHooks = function() {
   */
 JXG.Board.prototype.addChild = function(board) {
     this.dependentBoards.push(board);
-    this.update();
+    this.update(null,this.BOARD_QUALITY_HIGH);
     return this;
 };
 
@@ -2493,11 +2493,18 @@ JXG.Board.prototype.removeChild = function(board) {
   * Runs through most elements and calls their
   * update() method and update the conditions.
   * @param {Object,String} drag Element that caused the update.
+  * @param {int} quality Sets the update quality. If not set, we use update quality high.
   */
-JXG.Board.prototype.update = function(drag) {
+JXG.Board.prototype.update = function(drag,quality) {
     var i, len, boardId;
     
     if (this.isSuspendedUpdate) { return this; }
+    if (quality == this.BOARD_QUALITY_LOW) {
+        this.updateQuality = this.BOARD_QUALITY_LOW;
+    } else {
+        this.updateQuality = this.BOARD_QUALITY_HIGH;
+    }
+    
     this.prepareUpdate(drag).updateElements(drag).updateConditions();
     this.renderer.suspendRedraw();
     this.updateRenderer(drag);
@@ -2510,6 +2517,7 @@ JXG.Board.prototype.update = function(drag) {
     for (i=0; i<len; i++) {
         boardId = this.dependentBoards[i].id;
         if(JXG.JSXGraph.boards[boardId] != this) {
+            JXG.JSXGraph.boards[boardId].updateQuality = this.updateQuality;
             JXG.JSXGraph.boards[boardId].prepareUpdate(drag).updateElements(drag).updateConditions();
             JXG.JSXGraph.boards[boardId].renderer.suspendRedraw();
             JXG.JSXGraph.boards[boardId].updateRenderer(drag);

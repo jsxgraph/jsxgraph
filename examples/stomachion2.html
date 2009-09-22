@@ -250,6 +250,7 @@
 
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 0, originY: 600, unitX: 25, unitY: 25});
         
+        board.suspendUpdate();
             
         var p1 = board.createElement('point',[27,6],{visible:false}); 
         var p2 = board.createElement('point',[27,18],{visible:false});         
@@ -700,6 +701,7 @@
         for(i=0; i<f14m.borders.length; i++) {
             f14m.borders[i].setProperty('strokeColor:black');
         }           
+        board.unsuspendUpdate();
         
   /* ]]> */
   </script>
