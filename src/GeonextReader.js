@@ -641,12 +641,9 @@ this.readGeonext = function(tree,board) {
                 gxtEl.defEl[2] = JXG.GeonextReader.changeOriginIds(board,gxtEl.defEl[2]);
                 if(gxtEl.typeName == "MIDPOINT") {
                     if (numberDefEls==2) {  // Midpoint of two points
-                        board.addMidpoint(gxtEl.defEl[0], gxtEl.defEl[1], 
-                                          gxtEl.outputId, gxtEl.outputName);
+                    	board.createElement('midpoint', [gxtEl.defEl[0], gxtEl.defEl[1]], {name: gxtEl.outputName, id: gxtEl.outputId});
                     } else if (numberDefEls==1) { // Midpoint of a line
-                        board.addMidpoint(board.objects[gxtEl.defEl[0]].point1.id, 
-                                          board.objects[gxtEl.defEl[0]].point2.id, 
-                                          gxtEl.outputId, gxtEl.outputName);
+                    	board.createElement('midpoint', [gxtEl.defEl[0]], {name: gxtEl.outputName, id: gxtEl.outputId});
                     }                                                                        
                 }
                 else if(gxtEl.typeName == "NORMAL") {

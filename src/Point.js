@@ -152,19 +152,19 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
      * There are different point styles which differ in appearance and size.
      * Possible values are
      * <table><tr><th>Constant name</th><th>Value</th><th>Meaning</th><th>face</th><th>size</th></tr>
-     * <tr><td>JXG.POINT_STYLE_X_SMALL</td><td>0</td><td>small sized x</td><td>cross</td><td>2</td></tr>
-     * <tr><td>JXG.POINT_STYLE_X</td><td>1</td><td>medium sized x</td><td>cross</td><td>3</td></tr>
-     * <tr><td>JXG.POINT_STYLE_X_BIG</td><td>2</td><td>big sized x</td><td>cross</td><td>4</td></tr>
-     * <tr><td>JXG.POINT_STYLE_CIRCLE_TINY</td><td>3</td><td>tiny circle</td><td>circle</td><td>1</td></tr>
-     * <tr><td>JXG.POINT_STYLE_CIRCLE_SMALL</td><td>4</td><td>small circle</td><td>circle</td><td>2</td></tr>
-     * <tr><td>JXG.POINT_STYLE_CIRCLE</td><td>5</td><td>medium circle</td><td>circle</td><td>3</td></tr>
-     * <tr><td>JXG.POINT_STYLE_CIRCLE_BIG</td><td>6</td><td>big circle</td><td>circle</td><td>4</td></tr>
-     * <tr><td>JXG.POINT_STYLE_SQUARE_SMALL</td><td>7</td><td>small rectangle</td><td>square</td><td>2</td></tr>
-     * <tr><td>JXG.POINT_STYLE_SQUARE</td><td>8</td><td>medium rectangle</td><td>square</td><td>3</td></tr>
-     * <tr><td>JXG.POINT_STYLE_SQUARE_BIG</td><td>9</td><td>big rectangle</td><td>square</td><td>4</td></tr>
-     * <tr><td>JXG.POINT_STYLE_PLUS_SMALL</td><td>10</td><td>small +</td><td>plus</td><td>2</td></tr>
-     * <tr><td>JXG.POINT_STYLE_PLUS</td><td>11</td><td>medium +</td><td>plus</td><td>3</td></tr>
-     * <tr><td>JXG.POINT_STYLE_PLUS_BIG</td><td>12</td><td>big +</td><td>plus</td><td>4</td></tr></table>
+     * <tr><td>JXG.POINT_STYLE_X_SMALL</td><td>0</td><td>small sized x</td><td>cross or x</td><td>2</td></tr>
+     * <tr><td>JXG.POINT_STYLE_X</td><td>1</td><td>medium sized x</td><td>cross or x</td><td>3</td></tr>
+     * <tr><td>JXG.POINT_STYLE_X_BIG</td><td>2</td><td>big sized x</td><td>cross or x</td><td>4</td></tr>
+     * <tr><td>JXG.POINT_STYLE_CIRCLE_TINY</td><td>3</td><td>tiny circle</td><td>circle or o</td><td>1</td></tr>
+     * <tr><td>JXG.POINT_STYLE_CIRCLE_SMALL</td><td>4</td><td>small circle</td><td>circle or o</td><td>2</td></tr>
+     * <tr><td>JXG.POINT_STYLE_CIRCLE</td><td>5</td><td>medium circle</td><td>circle or o</td><td>3</td></tr>
+     * <tr><td>JXG.POINT_STYLE_CIRCLE_BIG</td><td>6</td><td>big circle</td><td>circle or o</td><td>4</td></tr>
+     * <tr><td>JXG.POINT_STYLE_SQUARE_SMALL</td><td>7</td><td>small rectangle</td><td>square or []</td><td>2</td></tr>
+     * <tr><td>JXG.POINT_STYLE_SQUARE</td><td>8</td><td>medium rectangle</td><td>square or []</td><td>3</td></tr>
+     * <tr><td>JXG.POINT_STYLE_SQUARE_BIG</td><td>9</td><td>big rectangle</td><td>square or []</td><td>4</td></tr>
+     * <tr><td>JXG.POINT_STYLE_PLUS_SMALL</td><td>10</td><td>small +</td><td>plus or +</td><td>2</td></tr>
+     * <tr><td>JXG.POINT_STYLE_PLUS</td><td>11</td><td>medium +</td><td>plus or +</td><td>3</td></tr>
+     * <tr><td>JXG.POINT_STYLE_PLUS_BIG</td><td>12</td><td>big +</td><td>plus or +</td><td>4</td></tr></table>
      * <b>Hint:</b> This attribute is internally replaced by face and size, whose opportunities are wider, , as given in the table above.
      * @see JXG.Point#face
      * @see JXG.Point#size
@@ -918,7 +918,8 @@ JXG.Point.prototype.setStyle = function(i) {
  * @private
  */
 JXG.Point.prototype.setFace = function(s) {
-    if(s == 'cross' || s == 'plus' || s == 'circle' || s == 'square') {
+	s = s.toLowerCase();
+    if(s == 'cross' || s == 'x' || s == 'plus' || s == '+' || s == 'circle' || s == 'o' || s == 'square' || s == '[]') {
         this.visProp['face'] = s;
     }
     else {

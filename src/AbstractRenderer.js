@@ -70,24 +70,25 @@ JXG.AbstractRenderer = function() {
  * @see #updatePoint
  */
 JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
-    var node;
+    var node,
+    	f = el.visProp['face'];
         
-    if(el.visProp['face'] == 'cross') { // x
+    if(f == 'cross' || f == 'x') { // x
         node = this.createPrimitive('path',el.id);
         this.appendChildPrimitive(node,'points');
         this.appendNodesToElement(el, 'path');
     }
-    else if(el.visProp['face'] == 'circle') { // circle
+    else if(f == 'circle' || f == 'o') { // circle
         node = this.createPrimitive('circle',el.id);
         this.appendChildPrimitive(node,'points');
         this.appendNodesToElement(el, 'circle');
     }
-    else if(el.visProp['face'] == 'square') { // rectangle
+    else if(f == 'square' || f == '[]') { // rectangle
         node = this.createPrimitive('rect',el.id);
         this.appendChildPrimitive(node,'points');
         this.appendNodesToElement(el, 'rect');
     }
-    else if(el.visProp['face'] == 'plus') { // +
+    else if(f == 'plus' || f == '+') { // +
         node = this.createPrimitive('path',el.id);
         this.appendChildPrimitive(node,'points');  
         this.appendNodesToElement(el, 'path');
@@ -110,7 +111,8 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
  * @see #changePointStyle
  */
 JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
-    var size = el.visProp['size'];
+    var size = el.visProp['size'],
+    	f = el.visProp['face'];
     if (isNaN(el.coords.scrCoords[2]) || isNaN(el.coords.scrCoords[1])) return;
     
     if (this.enhancedRendering) {
@@ -123,17 +125,17 @@ JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
         }
     }
 
-    if(el.visProp['face'] == 'cross') { // x
+    if(f == 'cross' || f == 'x') { // x
         this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'x'), el.board); 
     }
-    else if(el.visProp['face'] == 'circle') { // circle
+    else if(f == 'circle' || f == 'o') { // circle
         this.updateCirclePrimitive(el.rendNode,el.coords.scrCoords[1], el.coords.scrCoords[2],size+1);            
     }
-    else if(el.visProp['face'] == 'square') { // rectangle
+    else if(f == 'square' || f == '[]') { // rectangle
         this.updateRectPrimitive(el.rendNode,
                 el.coords.scrCoords[1]-size, el.coords.scrCoords[2]-size, size*2, size*2);
     }
-    else if(el.visProp['face'] == 'plus') { // +
+    else if(f == 'plus' || f == '+') { // +
         this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'+'), el.board); 
     }
     this.setShadow(el);

@@ -22,9 +22,14 @@
    <script type="text/javascript">
    /* <![CDATA[ */
 
-        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-0.5, 350, 5, -30], axis: true, grid: false});
+        b = JXG._board('jxgbox', {boundingbox: [-0.5, 350, 5, -30], axis: true, grid: false});
 
-		var c = board.createElement('chart', ['data'], {chartStyle: 'bar,point', dynamic: true, withLabel: true, degree: 2, dir: 'vertical', face: 'cross', size: 4, strokeWidth: '2px', withLabel: true, strokeColor: ['#abf', '#e12', '#3d21a3', '#020310', '#020abc']});
+		c = b._chart(['data'], { chartStyle: 'bar,point',
+							     dynamic: true, withLabel: true,
+							     degree: 2, dir: 'vertical',
+							     face: 'X', size: 4,
+							     strokeWidth: '2px', withLabel: true,
+							     strokeColor: ['#abf', '#e12', '#3d21a3', '#020310', '#020abc']});
 
   /* ]]> */
   </script>

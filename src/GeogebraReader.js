@@ -217,7 +217,7 @@ switch( match )
 
     case 6:
         { // parsing HTML
-         info.att = String( info.att )
+         info.att = String( info.att );
         }
         break;
 
@@ -236,7 +236,7 @@ switch( match )
 
     case 8:
         { // parsing STRING
-         info.att = String( info.att )
+         info.att = String( info.att );
         }
         break;
 
@@ -1081,7 +1081,7 @@ this.writeElement = function(registeredElements, tree, board, output, input, cmd
         attr.type = 'rotate';
         var d = parseInt(input[1]);
         r = board.createElement('transform', [d, input[2]], {type:'rotate'});
-        p = board.createElement('point', [input[0], r], attr)
+        p = board.createElement('point', [input[0], r], attr);
         return p;
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> Rotate " + attr.name +"<br>\n";
@@ -1101,7 +1101,7 @@ this.writeElement = function(registeredElements, tree, board, output, input, cmd
         d1 = board.createElement('transform', [d, d], {type:'scale'});
         d2 = board.createElement('transform', [function() { return (1-d) * input[2].X(); },
                                                function() { return (1-d) * input[2].Y(); }], {type:'translate'});
-        p = board.createElement('point', [input[0], [d1, d2]], attr)
+        p = board.createElement('point', [input[0], [d1, d2]], attr);
         return p;
       } catch(e) {
         $('debug').innerHTML += "* <b>Err:</b> Dilate " + attr.name +"<br>\n";
@@ -1381,7 +1381,7 @@ this.writeElement = function(registeredElements, tree, board, output, input, cmd
 
         try {
           $('debug').innerHTML += "* <b>Numeric:</b> First: " + attr.name + "<br>\n";
-          n = board.createElement('slider', [[sx,sy], [ex,ey], [smin, sip, smax]], attr);'__x','__y','return Math.sin(__x);'
+          n = board.createElement('slider', [[sx,sy], [ex,ey], [smin, sip, smax]], attr);'__x','__y','return Math.sin(__x);';
           return n;
         } catch(e) {
           $('debug').innerHTML += "* <b>Err:</b> Numeric " + attr.name +"<br>\n";

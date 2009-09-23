@@ -204,16 +204,25 @@ JXG.createMidpoint = function(board, parentArr, atts) {
     if(parentArr.length == 2 && JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1])) {
         a = parentArr[0];
         b = parentArr[1];
-        t = board.addMidpoint(parentArr[0], parentArr[1], atts['id'], atts['name']);
     }
     else if(parentArr.length == 1 && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {
         a = parentArr[0].point1;
         b = parentArr[0].point2;
-        t = board.addMidpoint(parentArr[0].point1, parentArr[0].point2, atts['id'], atts['name']);
     }
     else {
         throw ("Can't create midpoint.");    
     }
+
+    if(atts) {
+    	atts['fixed'] = true;
+    } else {
+    	atts = {fixed: true};
+    }
+    
+    t = board.createElement('point', [function () { return (a.coords.usrCoords[1] + b.coords.usrCoords[1])/2.; },
+                                      function () { return (a.coords.usrCoords[2] + b.coords.usrCoords[2])/2.; }], atts);
+    a.addChild(t);
+    b.addChild(t);
 
     t.generatePolynomial = function() {
         /*

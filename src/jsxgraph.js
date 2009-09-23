@@ -338,6 +338,10 @@ JXG.isPoint = function(p) {
     return false;
 };
 
+JXG._board = function(box, attributes) {
+	return JXG.JSXGraph.initBoard(box, attributes);
+};
+
 /**
   * Convert String, number or function to function.
   * This method is used in Transformation.js
@@ -384,7 +388,7 @@ JXG.createFunction = function(term,board,variableName,evalGeonext) {
         return function() { return term; };
     }
     return null;
-}
+};
 
 JXG.getDimensions = function(elementId) {
     var element, display, els, originalVisibility, originalPosition,

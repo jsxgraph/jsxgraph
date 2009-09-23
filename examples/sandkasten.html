@@ -10,29 +10,29 @@
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
 </div>
+<div id="debug" style="display:block;"></div>
    <script type="text/javascript">
    /* <![CDATA[ */
 
-        b = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25, axis: false, grid: false});
+        b = JXG._board('jxgbox', {boundingbox: [-2, 16, 22, -2], axis: false, grid: false});
         xax = b._axis([[0,0],[1,0]]);
         yax = b._axis([[0,0],[0,1]]);
 
 
         var p = [];
-        p.push(b._point([1, 4]));
-        p.push(b._point([2, 2]));
-        p.push(b._point([3, 5]));
+        p.push(b._point([1, 4], {face: '+', size: 3}));
+        p.push(b._point([2, 2], {face: 'x', size: 5}));
+        p.push(b._point([3, 5], {face: '[]', size: 7}));
         
 		var data = [], i;
 		for(i=0; i<p.length; i++) 
-			data.push(function () { return p[i].Y(); });
+			data.push(function () { return function () { return p[i].Y(); }; });
 
-		b._chart(data, {chartStyle: 'line'});
-        
+		data = [function () { return p[0].Y(); }, function () { return p[1].Y(); }, function () { return p[2].Y(); }];
+
+		b._chart([data], {chartStyle: 'bar'});
 
   /* ]]> */
   </script>
-<a href="#" onclick="groebner(p4);">Generate locus of T</a><br />
-<div id="debug" style="display:block;"></div>
 </body>
 </html>
