@@ -73,7 +73,6 @@
 				coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y + dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
 			}
 			p.animationPath = coords;
-			alert('number of steps: ' + p.animationPath.length);
 			p.intervalcode = window.setInterval('onestep2()', delay);
 		}
 
