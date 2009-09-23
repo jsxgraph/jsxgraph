@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+        <script type="text/javascript" src="distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+    </head>
+    <body class="jsxgraph_body">
+        <div id="box" class="jxgbox jsxgraph_present"></div>
+        <!-- Drawing area -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, unitX: 1, unitY: 1});
+var t = brd.createElement('turtle');
+function koch(x,level) {
+    if (level<1) {
+        t.fd(x);
+    } else {
+        koch(x/3,level-1);
+        t.lt(60);
+        koch(x/3,level-1);
+        t.rt(120);
+        koch(x/3,level-1);
+        t.lt(60);
+        koch(x/3,level-1);
+    }
+}
+brd.suspendUpdate();
+t.cs();
+t.hideTurtle();
+t.setPos(-250,0);
+t.rt(90);
+koch(400,7);
+brd.unsuspendUpdate();
+           /* ]]> */
+        </script>
+    </body>
+</html>
