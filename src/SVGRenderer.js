@@ -173,14 +173,15 @@ JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
 };
 
 JXG.SVGRenderer.prototype.drawTicks = function(axis) {
-    var ticks = this.createPrimitive('path', axis.id);
-    this.appendChildPrimitive(ticks,'lines');
-    this.appendNodesToElement(axis,'path');
+    var node = this.createPrimitive('path', axis.id);
+    node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
+    this.appendChildPrimitive(node,'lines');
+    this.appendNodesToElement(axis,'path'); 
 };
 
 JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     var tickStr = "",
-        i, c, ticks, 
+        i, c, node, 
         len = axis.ticks.length;
         
     for (i=0; i<len; i++) {
@@ -193,16 +194,17 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
             tickStr += "M " + (c[1]+dxMin) + " " + (c[2]-dyMin) + " L " + (c[1]-dxMin) + " " + (c[2]+dyMin) + " ";
     }
     
-    ticks = document.getElementById(axis.id);
-    if(ticks == null) {
-        ticks = this.createPrimitive('path', axis.id);
-        this.appendChildPrimitive(ticks,'lines');
+    node = document.getElementById(axis.id);
+    if(node == null) {
+        node = this.createPrimitive('path', axis.id);
+        node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
+        this.appendChildPrimitive(node,'lines');
         this.appendNodesToElement(axis,'path');
     }
-    ticks.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);    
-    ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
-    ticks.setAttributeNS(null, 'stroke-width', axis.visProp['strokeWidth']);
-    this.updatePathPrimitive(ticks, tickStr, axis.board);
+    node.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);    
+    node.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
+    node.setAttributeNS(null, 'stroke-width', axis.visProp['strokeWidth']);
+    this.updatePathPrimitive(node, tickStr, axis.board);
 };
 
 JXG.SVGRenderer.prototype.drawArc = function(el) {  
@@ -653,6 +655,11 @@ JXG.SVGRenderer.prototype.createPrimitive = function(type,id) {
     var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
     node.setAttributeNS(null, 'id', id);
     node.style.position = 'absolute';
+    if (type=='path') {
+        node.setAttributeNS(null, 'stroke-linecap', 'butt');
+        node.setAttributeNS(null, 'stroke-linejoin', 'round');
+        //node.setAttributeNS(null, 'shape-rendering', 'geometricPrecision'); // 'crispEdges'
+    }
     return node;
 };
 
@@ -753,9 +760,12 @@ JXG.SVGRenderer.prototype.updateRectPrimitive = function(node,x,y,w,h) {
 };
 
 JXG.SVGRenderer.prototype.updatePathPrimitive = function(node, pointString, board) {  // board not necessary in SVG
-    node.setAttributeNS(null, 'stroke-linecap', 'round');
+    /*
+    node.setAttributeNS(null, 'stroke-linecap', 'butt');
     node.setAttributeNS(null, 'stroke-linejoin', 'round');
-    node.setAttributeNS(null, 'shape-rendering', 'geometricPrecision');
+    //node.setAttributeNS(null, 'shape-rendering', 'geometricPrecision');
+    //node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
+    */
     node.setAttributeNS(null, 'd', pointString);
 };
 
@@ -763,6 +773,7 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
     var symbm = ' M ',
         symbl = ' L ',
         nextSymb = symbm,
+        maxSize = 5000.0,
         pStr = '',
         //h = 3*el.board.canvasHeight,
         //w = 100*el.board.canvasWidth,
@@ -784,10 +795,10 @@ JXG.SVGRenderer.prototype.updatePathStringPrimitive = function(el) {
             nextSymb = symbm;
         } else {
             // Chrome has problems with values  being too far away.
-            if (scr[1]>20000.0) { scr[1] = 20000.0; }
-            else if (scr[1]<-20000.0) { scr[1] = -20000.0; }
-            if (scr[2]>20000.0) { scr[2] = 20000.0; }
-            else if (scr[2]<-20000.0) { scr[2] = -20000.0; }
+            if (scr[1]>maxSize) { scr[1] = maxSize; }
+            else if (scr[1]<-maxSize) { scr[1] = -maxSize; }
+            if (scr[2]>maxSize) { scr[2] = maxSize; }
+            else if (scr[2]<-maxSize) { scr[2] = -maxSize; }
             
             pStr += [nextSymb,scr[1],' ',scr[2]].join(''); // Attention: first coordinate may be inaccurate if far way
             nextSymb = symbl;
