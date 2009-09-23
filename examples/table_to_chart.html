@@ -12,7 +12,7 @@
 <tr><td>Food</td><td>280</td><td>190</td><td>210</td><td>310</td></tr>
 <tr><td>Gas</td><td>150</td><td>130</td><td>165</td><td>190</td></tr>
 <tr><td>Cell</td><td>60</td><td>90</td><td>76</td><td>82</td></tr>
-<tr><td>Other things</td><td>200</td><td>170</td><td>265</td><td>183</td></tr>
+<tr><td>Other things</td><td>200</td><td>170</td><td>265</td><td>179</td></tr>
 </table>
 <div id="debug" style="display:block;"></div>
 <div style="width:800px">
@@ -23,7 +23,7 @@
 
         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-0.5, 350, 5, -30], axis: true, grid: false});
 
-   		var c = board.createElement('chart', ['data'], {chartStyle: 'spline', strokeWidth: '2px', withLabel: true});
+		var c = board.createElement('chart', ['data'], {chartStyle: 'point,fit', withLabel: true, degree: 2, face: 'cross', size: 2, strokeWidth: '2px', withLabel: true, strokeColor: ['#abf123', '#e121da', '#3d21a3', '#020310']});
 
   /* ]]> */
   </script>

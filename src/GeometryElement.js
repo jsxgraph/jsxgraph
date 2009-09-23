@@ -725,11 +725,14 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 this.setStyle(1*pair[1]);
                 break;
             case 'face':
-                this.setFace(pair[1]);
+            	if(this.elementClass == JXG.OBJECT_CLASS_POINT)
+            		this.setFace(pair[1]);
                 break;
             case 'size':
-                this.visProp['size'] = 1*pair[1];
-                this.board.renderer.updatePoint(this);
+            	if(this.elementClass == JXG.OBJECT_CLASS_POINT) {
+            		this.visProp['size'] = 1*pair[1];
+                	this.board.renderer.updatePoint(this);
+        		}
                 break;  
             case 'fixed':          
                 this.fixed = (pair[1]=='false') ? false : true;

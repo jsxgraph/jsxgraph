@@ -83,6 +83,9 @@ JXG.Chart = function(board, parents, attributes) {
             case 'line':
                 c = this.drawLine(board, [x, y], attributes);
                 break;
+            case 'fit':
+                c = this.drawFit(board, [x, y], attributes);
+                break;
             case 'spline':
                 c = this.drawSpline(board, [x, y], attributes);
                 break;
@@ -122,6 +125,22 @@ JXG.Chart.prototype.drawSpline = function(board, parents, attributes) {
 
     var c = board.createElement('curve', [px, py], attributes);
     this.rendNode = c.rendNode;  // This is needed in setProperty
+    return c;
+};
+
+JXG.Chart.prototype.drawFit = function(board, parents, attributes) {
+    var x = parents[0],
+    	y = parents[1],
+    	deg = (((typeof attributes.degree == 'undefined') || (parseInt(attributes.degree) == NaN)|| (parseInt(attributes.degree) < 1)) ? 1 : parseInt(attributes.degree));
+
+    
+    // don't need that for fits
+    delete(attributes.fillColor);
+    delete(attributes.highlightFillColor);
+    
+    var regression = JXG.Math.Numerics.regressionPolynomial(deg, x, y); 
+    var reg = board.createElement('functiongraph',[regression],attributes);
+    this.rendNode = reg.rendNode;  // This is needed in setProperty
     return c;
 };
 
@@ -347,7 +366,7 @@ JXG.Chart.prototype.updateDataArray = function () {};
 JXG.createChart = function(board, parents, attributes) {
 	if((parents.length == 1) && (typeof parents[0] == 'string')) {
 		var table = document.getElementById(parents[0]),
-			data, row, i, j, col, cell;
+			data, row, i, j, col, cell, charts = [];
 		if(typeof table != 'undefined') {
 			// extract the data
 			row = table.getElementsByTagName('tr');
@@ -367,6 +386,8 @@ JXG.createChart = function(board, parents, attributes) {
 			
 			if(typeof attributes == 'undefined')
 				attributes = {};
+			else
+				patt = attributes;
 			if(typeof attributes['withHeaders'] == 'undefined')
 				attributes['withHeaders'] = true;
 			if(!attributes['withHeaders']) {
@@ -380,15 +401,21 @@ JXG.createChart = function(board, parents, attributes) {
 				for(i=0; i<data.length; i++) {
 					col.push(data[i][0]);
 					attributes.labels = row;
-					attributes.name = data[i][0];
-					attributes.strokeColor = JXG.hsv2rgb(((i+1)/(1.0*data.length))*360,0.9,0.7)
-					new JXG.Chart(board, [data[i].slice(1)], attributes);
+					if((typeof patt.name != 'undefined') && (patt.name.length == data.length))
+						attributes.name = patt.name[i];
+					else
+						attributes.name = col[i];
+					if((typeof patt.strokeColor != 'undefined') && (patt.strokeColor.length == data.length))
+						attributes.strokeColor = patt.strokeColor[i];
+					else
+						attributes.strokeColor = JXG.hsv2rgb(((i+1)/(1.0*data.length))*360,0.9,0.7)
+					charts.push(new JXG.Chart(board, [data[i].slice(1)], attributes));
 				}
 			}
 		}
-	}
-	
-    return new JXG.Chart(board, parents, attributes);
+		return charts;
+	} else 	
+		return new JXG.Chart(board, parents, attributes);
 };    
 
 JXG.JSXGraph.registerElement('chart', JXG.createChart);
