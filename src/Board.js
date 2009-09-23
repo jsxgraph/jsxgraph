@@ -291,6 +291,12 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type Object
      */
     this.objects = {};
+    
+    /**
+     * This is used for general purpose animations. Stores all the objects that are currently running an animation. 
+     * @private
+     */
+    this.animationObjects = {};
         
     /**
      * An associative array containing all highlighted geometric objects belonging to the board.
@@ -888,7 +894,7 @@ JXG.Board.prototype.updateInfobox = function(el) {
 JXG.Board.prototype.highlightInfobox = function(x,y,el) {
     this.infobox.setText('<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>');
     return this;
-}
+};
 
 /**
  * Remove highlighting of all elements.
@@ -1040,7 +1046,7 @@ JXG.Board.prototype.finalizeAdding = function (obj) {
     if(obj.hasLabel && !obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }
-}
+};
 
 /**
  * Registers a point at the board and adds it to the renderer.
@@ -2708,4 +2714,36 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     
     this.moveOrigin();
     return this;
+};
+
+/**
+ * General purpose animation function, currently only supporting moving points from one place to another. Is faster than
+ * managing the animation per point, especially if there is more than one animated point at the same time.
+ */
+JXG.Board.prototype.animate = function() {
+	var count = 0,
+		el, o, newCoords;
+	
+	for(el in this.animationObjects) {
+		if(this.animationObjects[el] == null)
+			continue;
+
+		count++;
+		o = this.animationObjects[el];
+		newCoords = o.animationPath.pop();
+		if(typeof newCoords  == 'undefined') {
+			this.animationObjects[el] = null;
+			delete(this.animationObjects[el]);
+			delete(o.animationPath);
+		} else {
+			o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
+		}
+	}
+
+	if(count == 0) {
+		window.clearInterval(this.animationIntervalCode);
+		delete(this.animationIntervalCode);
+	} else {
+		board.update();
+	}
 };

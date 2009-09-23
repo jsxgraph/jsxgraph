@@ -764,7 +764,10 @@ JXG.Point.prototype.moveTo = function(where, time) {
 		coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y+ dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
 	}
 	this.animationPath = coords;
-	this.intervalcode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].objects[\'' + this.id + '\'].animate(null, null);', delay);
+	this.board.animationObjects[this.id] = this;
+	if(typeof this.board.animationIntervalCode == 'undefined') {
+		this.board.animationIntervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].animate();', delay);
+	}
     return this;
 };
 
@@ -777,24 +780,9 @@ JXG.Point.prototype.moveTo = function(where, time) {
  * @private
  */
 JXG.Point.prototype.animate = function(direction, stepCount) {
- 	if(typeof this.animationPath != 'undefined') {
-		var newCoords = this.animationPath.pop();
-		if(typeof newCoords  == 'undefined') {
-			window.clearInterval(this.intervalcode);
-			delete(this.intervalcode);
-			delete(this.animationPath);
-		} else {
-			this.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - this.coords.usrCoords[1], newCoords[1] - this.coords.usrCoords[2]);
-			this.board.update();
-		}
-		return this;
-	}
-
-	 if(stepCount != null) {
-		this.intervalCount++;
-		if(this.intervalCount > stepCount)
-			this.intervalCount = 0;
-	}
+	this.intervalCount++;
+	if(this.intervalCount > stepCount)
+		this.intervalCount = 0;
     
     if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
         var distance = this.slideObject.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.slideObject.point2.coords);
