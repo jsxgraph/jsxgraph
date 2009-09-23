@@ -160,8 +160,8 @@ JXG.JSXGraph = new function (forceRenderer) {
 
         if((typeof attributes["axis"] != 'undefined') && attributes["axis"]) {
         	board.defaultAxes = {};
-            board.defaultAxes.y = board.createElement('axis', [[0,0], [1,0]], {});
-            board.defaultAxes.x = board.createElement('axis', [[0,0], [0,1]], {});
+            board.defaultAxes.x = board.createElement('axis', [[0,0], [1,0]], {});
+            board.defaultAxes.y = board.createElement('axis', [[0,0], [0,1]], {});
         }
 
         if ((typeof attributes["grid"] != 'undefined') && attributes["grid"]) {
