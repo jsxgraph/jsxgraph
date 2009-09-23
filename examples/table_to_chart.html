@@ -1,0 +1,31 @@
+<html>
+<head>
+   <title>JSXGraph example: Line charts out of data given in a table</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Line charts out of data given in a table</h2>
+<table id="data">
+<tr><td>Things</td><td>August 2008</td><td>September 2008</td><td>October 2008</td><td>November 2008</td></tr>
+<tr><td>Food</td><td>280</td><td>190</td><td>210</td><td>310</td></tr>
+<tr><td>Gas</td><td>150</td><td>130</td><td>165</td><td>190</td></tr>
+<tr><td>Cell</td><td>60</td><td>90</td><td>76</td><td>82</td></tr>
+<tr><td>Other things</td><td>200</td><td>170</td><td>265</td><td>183</td></tr>
+</table>
+<div id="debug" style="display:block;"></div>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-0.5, 350, 5, -30], axis: true, grid: false});
+
+   		var c = board.createElement('chart', ['data'], {chartStyle: 'spline', strokeWidth: '2px', withLabel: true});
+
+  /* ]]> */
+  </script>
+</body>
+</html>

@@ -34,8 +34,8 @@ JXG.Chart = function(board, parents, attributes) {
     if (parents.length==0) { return; }  // No input data in parentArr
     
     /**
-            * Contains lpointers to the various displays.
-            */
+     * Contains lpointers to the various displays.
+     */
     this.elements = [];
     
     var id = attributes['id'] || '';
@@ -292,7 +292,7 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
                                                  this.midpoint.coords.usrCoords[2]+dy*(z+ddy)/z],
                                                 this.board);
             this.board.renderer.updateArc(this); */
-        }
+        };
         arc[i].noHighlight = function() {
             this.board.renderer.noHighlight(this);
             if(this.label.content != null) {
@@ -311,8 +311,8 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
                                                  this.midpoint.coords.usrCoords[2]+dy*(z-ddy)/z],
                                                 this.board);
             this.board.renderer.updateArc(this);         */
-        }        
-    }
+        };
+    };
     this.rendNode = arc[0].rendNode;
     return arc; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
 };
@@ -345,6 +345,49 @@ JXG.Chart.prototype.updateDataArray = function () {};
 
 
 JXG.createChart = function(board, parents, attributes) {
+	if((parents.length == 1) && (typeof parents[0] == 'string')) {
+		var table = document.getElementById(parents[0]),
+			data, row, i, j, col, cell;
+		if(typeof table != 'undefined') {
+			// extract the data
+			row = table.getElementsByTagName('tr');
+			data = new Array(row.length);
+			
+			for(i=0; i<row.length; i++) {
+				col = row[i].getElementsByTagName('td');
+				data[i] = new Array(col.length);
+				for(j=0; j<col.length; j++) {
+					cell = col[j].innerHTML;
+					if('' + parseFloat(cell) == cell)
+						data[i][j] = parseFloat(cell);
+					else
+						data[i][j] = cell;
+				}
+			}
+			
+			if(typeof attributes == 'undefined')
+				attributes = {};
+			if(typeof attributes['withHeaders'] == 'undefined')
+				attributes['withHeaders'] = true;
+			if(!attributes['withHeaders']) {
+				for(i=0; i<data.length; i++) {
+					new JXG.Chart(board, [data[i]], attributes);
+				}
+			} else {
+				row = data[0].slice(1);
+				data = data.slice(1);
+				col = new Array();
+				for(i=0; i<data.length; i++) {
+					col.push(data[i][0]);
+					attributes.labels = row;
+					attributes.name = data[i][0];
+					attributes.strokeColor = JXG.hsv2rgb(((i+1)/(1.0*data.length))*360,0.9,0.7)
+					new JXG.Chart(board, [data[i].slice(1)], attributes);
+				}
+			}
+		}
+	}
+	
     return new JXG.Chart(board, parents, attributes);
 };    
 
