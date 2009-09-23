@@ -159,8 +159,9 @@ JXG.JSXGraph = new function (forceRenderer) {
         board.initInfobox();
 
         if((typeof attributes["axis"] != 'undefined') && attributes["axis"]) {
-            board.createElement('axis', [[0,0], [1,0]], {});
-            board.createElement('axis', [[0,0], [0,1]], {});
+        	board.defaultAxes = {};
+            board.defaultAxes.y = board.createElement('axis', [[0,0], [1,0]], {});
+            board.defaultAxes.x = board.createElement('axis', [[0,0], [0,1]], {});
         }
 
         if ((typeof attributes["grid"] != 'undefined') && attributes["grid"]) {

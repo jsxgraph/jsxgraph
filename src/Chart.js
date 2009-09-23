@@ -169,7 +169,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
         }
         w *=0.8;
     }
-    
+
     for (i=0;i<x.length;i++) {
         var xp0,xp1,xp2, yp, ypL;
         
@@ -366,7 +366,8 @@ JXG.Chart.prototype.updateDataArray = function () {};
 JXG.createChart = function(board, parents, attributes) {
 	if((parents.length == 1) && (typeof parents[0] == 'string')) {
 		var table = document.getElementById(parents[0]),
-			data, row, i, j, col, cell, charts = [];
+			data, row, i, j, col, cell, charts = [], w, x,
+			originalWidth, name, strokeColor, fillColor;
 		if(typeof table != 'undefined') {
 			// extract the data
 			row = table.getElementsByTagName('tr');
@@ -386,31 +387,61 @@ JXG.createChart = function(board, parents, attributes) {
 			
 			if(typeof attributes == 'undefined')
 				attributes = {};
-			else
-				patt = attributes;
+			
 			if(typeof attributes['withHeaders'] == 'undefined')
 				attributes['withHeaders'] = true;
+			
 			if(!attributes['withHeaders']) {
-				for(i=0; i<data.length; i++) {
-					new JXG.Chart(board, [data[i]], attributes);
-				}
 			} else {
 				row = data[0].slice(1);
 				data = data.slice(1);
 				col = new Array();
 				for(i=0; i<data.length; i++) {
 					col.push(data[i][0]);
-					attributes.labels = row;
-					if((typeof patt.name != 'undefined') && (patt.name.length == data.length))
-						attributes.name = patt.name[i];
-					else
-						attributes.name = col[i];
-					if((typeof patt.strokeColor != 'undefined') && (patt.strokeColor.length == data.length))
-						attributes.strokeColor = patt.strokeColor[i];
-					else
-						attributes.strokeColor = JXG.hsv2rgb(((i+1)/(1.0*data.length))*360,0.9,0.7)
-					charts.push(new JXG.Chart(board, [data[i].slice(1)], attributes));
+					data[i] = data[i].slice(1);
+
 				}
+			}
+			
+			originalWidth = attributes['width'];
+			name = attributes['name'];
+			strokeColor = attributes['strokeColor'];
+			fillColor = attributes['fillColor'];
+
+			for(i=0; i<data.length; i++) {
+				x = [];
+				if(attributes['chartStyle'] && attributes['chartStyle'].indexOf('bar') != -1) {
+					if(originalWidth) {
+						w = originalWidth;
+					} else {
+						w = 0.8;
+					}
+					x.push(1 - w/2. + (i+0.5)*w/(1.0*data.length));
+					for(j=1; j<data[i].length; j++) {
+						x.push(x[j-1] + 1);
+					}
+					attributes['width'] = w/(1.0*data.length);
+				}
+			    
+				if(name && name.length == data.length)
+					attributes['name'] = name[i];
+				else if(attributes['withHeaders'])
+					attributes['name'] = col[i];
+				
+				if(strokeColor && strokeColor.length == data.length)
+					attributes['strokeColor'] = strokeColor[i];
+				else
+					attributes['strokeColor'] = JXG.hsv2rgb(((i+1)/(1.0*data.length))*360,0.9,0.6);
+				
+				if(fillColor && fillColor.length == data.length)
+					attributes['fillColor'] = fillColor[i];
+				else
+					attributes['fillColor'] = JXG.hsv2rgb(((i+1)/(1.0*data.length))*360,0.9,1.0);
+				
+				if(attributes['chartStyle'] && attributes['chartStyle'].indexOf('bar') != -1) {
+					charts.push(new JXG.Chart(board, [x, data[i]], attributes));
+				} else
+					charts.push(new JXG.Chart(board, [data[i]], attributes));
 			}
 		}
 		return charts;
