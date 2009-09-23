@@ -692,7 +692,7 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
         this.moveOrigin();
     } else {
         //this.fullUpdate(); // Full update only needed on moveOrigin? (AW)
-        this.update(null,this.BOARD_QUALITY_HIGH);
+        this.update();
     }
 
     this.mode = this.BOARD_MODE_NONE;
@@ -775,7 +775,6 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
     y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
 
     this.updateQuality = this.BOARD_QUALITY_LOW;
-
     
     this.dehighlightAll(x,y);
     if(this.mode != this.BOARD_MODE_DRAG) {
@@ -804,7 +803,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
                 // Save new mouse position in screen coordinates.
                 this.dragObjCoords = newPos; 
             }
-            this.update(null,this.BOARD_QUALITY_LOW);
+            this.update(this.drag_obj);
         } else if(this.drag_obj.type == JXG.OBJECT_TYPE_GLIDER) {
             var oldCoords = this.drag_obj.coords;
             // First the new position of the glider is set to the new mouse position
@@ -820,7 +819,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
                 this.drag_obj.group[this.drag_obj.group.length-1].dY = this.drag_obj.coords.scrCoords[2] - oldCoords.scrCoords[2];
                 this.drag_obj.group[this.drag_obj.group.length-1].update(this);
             } else {
-                this.update(this.drag_obj,this.BOARD_QUALITY_LOW);
+                this.update(this.drag_obj);
             }
         }
         this.updateInfobox(this.drag_obj);
@@ -841,6 +840,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
             }
         }
     }
+    this.updateQuality = this.BOARD_QUALITY_HIGH;
 };
 
 /**
@@ -2129,7 +2129,6 @@ JXG.Board.prototype.calculateSnapSizes = function() {
 JXG.Board.prototype.applyZoom = function() {
     var el;
     
-    this.updateQuality = this.BOARD_QUALITY_HIGH;
     for(el in this.objects) {
         if( (this.objects[el].elementClass == JXG.OBJECT_CLASS_POINT) ||
             (this.objects[el].type == JXG.OBJECT_TYPE_CURVE) ||
@@ -2471,7 +2470,7 @@ JXG.Board.prototype.updateHooks = function() {
   */
 JXG.Board.prototype.addChild = function(board) {
     this.dependentBoards.push(board);
-    this.update(null,this.BOARD_QUALITY_HIGH);
+    this.update();
     return this;
 };
 
@@ -2493,18 +2492,11 @@ JXG.Board.prototype.removeChild = function(board) {
   * Runs through most elements and calls their
   * update() method and update the conditions.
   * @param {Object,String} drag Element that caused the update.
-  * @param {int} quality Sets the update quality. If not set, we use update quality high.
   */
-JXG.Board.prototype.update = function(drag,quality) {
+JXG.Board.prototype.update = function(drag) {
     var i, len, boardId;
     
     if (this.isSuspendedUpdate) { return this; }
-    if (quality == this.BOARD_QUALITY_LOW) {
-        this.updateQuality = this.BOARD_QUALITY_LOW;
-    } else {
-        this.updateQuality = this.BOARD_QUALITY_HIGH;
-    }
-    
     this.prepareUpdate(drag).updateElements(drag).updateConditions();
     this.renderer.suspendRedraw();
     this.updateRenderer(drag);
