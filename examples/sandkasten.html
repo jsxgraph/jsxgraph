@@ -4,9 +4,6 @@
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-   <script type="text/javascript" src="../src/Centroid.js"></script>
-   <script type="text/javascript" src="../src/Triangle.js"></script>
-   <script type="text/javascript" src="../src/Square.js"></script>
 </head>
 <body>
 <h2>Playground to test things temporarily. May change very often.</h2>
@@ -16,25 +13,22 @@
    <script type="text/javascript">
    /* <![CDATA[ */
 
-        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25, axis: false, grid: false});
-        xax = board.createElement('axis', [[0,0],[1,0]]);
-        yax = board.createElement('axis', [[0,0],[0,1]]);
-
-        p1 = board.createElement('glider', [4, 0, xax], {style:2,name:"G"});
-        c1 = board.createElement('circle', [p1, 7], {name:"k_1", withlabel: true});
-        p2 = board.createElement('intersection', [yax, c1, 0], {style:2,name:"I"});
-        p3 = board.createElement('midpoint', [p1, p2], {style:2, name:"M"});
-        p4 = board.createElement('midpoint', [p2, p3], {style:2, name:"T"});
+        b = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25, axis: false, grid: false});
+        xax = b._axis([[0,0],[1,0]]);
+        yax = b._axis([[0,0],[0,1]]);
 
 
-        function groebner(p) {
-            JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p);
-        }
+        var p = [];
+        p.push(b._point([1, 4]));
+        p.push(b._point([2, 2]));
+        p.push(b._point([3, 5]));
+        
+		var data = [], i;
+		for(i=0; i<p.length; i++) 
+			data.push(function () { return p[i].Y(); });
 
-
-//        var p3, p4, l1, l2, l3, l4;
-
-//        [p3, p4, l1, l2, l3, l4] = board.createElement('square', [p1, p2]);
+		b._chart(data, {chartStyle: 'line'});
+        
 
   /* ]]> */
   </script>

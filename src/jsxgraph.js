@@ -281,10 +281,16 @@ JXG.JSXGraph = new function (forceRenderer) {
     this.registerElement = function (element, creator) {
         element = element.toLowerCase();
         this.elements[element] = creator;
+
+        JXG.Board.prototype['_' + element] = function (parents, attributes) {
+        	return this.createElement(element, parents, attributes);
+        };
+        
     };
 
     this.unregisterElement = function (element) {
-        delete (this.elements[element]);
+        delete (this.elements[element.toLowerCase()]);
+        delete (JXG.Board.prototype['_' + element.toLowerCase()]);
     };
 };
 
