@@ -1,21 +1,18 @@
 <html>
-<head>
-   <title>JSXGraph example</title>
-   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-</head>
-<body>
-<h2>Spline chart with special highlighted points</h2>
-<div style="width:800px">
-  <div id="jxgbox" class="jxgbox" style="width:800px; height:600px; float:left"></div>
-</div>
-<div id="debug" style="display:block;"></div>
-   <script type="text/javascript">
+	<head>
+   		<title>JSXGraph example</title>
+		<link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+		<script type="text/javascript" src="distrib/jquery.min.js"></script>
+		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+	</head>
+	<body class="jsxgraph_body">
+		<div id="box" class="jxgbox jsxgraph_present"></div>
+		<!-- Drawing area -->
+		<div id="debug" style="display:none;"></div>
+		<script type="text/javascript">
     /* <![CDATA[ */
-            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 550, unitX: 50, unitY: 1});
+            board = JXG.JSXGraph.initBoard('box', {originX: 50, originY: 550, unitX: 50, unitY: 1});
             board.suspendUpdate();
-            //var s = board.createElement('slider', [[1,9],[4,9],[1,1,1.5]], {name:'S',strokeColor:'black',fillColor:'white'});
             var dataArr = [[1,2,3,4,5,6,7,8,9,10,11,12], [232,94,312,278,432,341,159,201,496,143,48,281]];        
             var axisx = board.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
             var axisy = board.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});

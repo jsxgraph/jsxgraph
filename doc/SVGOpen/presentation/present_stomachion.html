@@ -1,24 +1,15 @@
 <html>
-<head>
-   <title>JSXGraph example</title>
-   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-</head>
-<body>
-<h2>Stomachion</h2>
-<div style="width:1200px">
-  <table border='0'>
-  <tr><td>
-  <div id="jxgbox" class="jxgbox" style="width:1100px; height:600px; float:left"></div></td>
-  <td valign='top'><form>
-  <input type='button' value='Solve it!' onClick='solve()'>
-  <form></td>
-  </tr>
-  </table>
-  </div>
-<div id="debug" style="display:block;"></div>
-   <script type="text/javascript">
+	<head>
+   		<title>JSXGraph example</title>
+		<link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+		<script type="text/javascript" src="distrib/jquery.min.js"></script>
+		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+	</head>
+	<body class="jsxgraph_body">
+		<div id="box" class="jxgbox jsxgraph_present"></div>
+		<!-- Drawing area -->
+		<div id="debug" style="display:none;"></div>
+		<script type="text/javascript">
     /* <![CDATA[ */
     
         function solve() {
@@ -53,7 +44,7 @@
     
 
 
-        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 0, originY: 600, unitX: 25, unitY: 25});
+        board = JXG.JSXGraph.initBoard('box', {originX: 0, originY: 600, unitX: 25, unitY: 25});
         
             
         var p1 = board.createElement('point',[27,6],{visible:false}); 
