@@ -629,15 +629,26 @@ JXG.Board.prototype.setId = function (obj, type) {
  */
 JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
     var pCont = this.containerObj,
-        cPos = JXG.getOffset(pCont); //Element.cumulativeOffset(pCont);
-        
-    // add border width
-    cPos[0] += parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
-    cPos[1] += parseInt(JXG.getStyle(pCont,'borderTopWidth'));
-    // add padding
-    cPos[0] += parseInt(JXG.getStyle(pCont,'paddingLeft'));
-    cPos[1] += parseInt(JXG.getStyle(pCont,'paddingTop'));
+        cPos = JXG.getOffset(pCont), n; //Element.cumulativeOffset(pCont);
     
+    // add border width
+    n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
+    if (isNaN(n)) n = 0; // IE problem if border-width not set explicitly
+    cPos[0] += 0;
+    
+    n = parseInt(JXG.getStyle(pCont,'borderTopWidth'));
+    if (isNaN(n)) n = 0;
+    cPos[1] += n;
+    
+    // add padding
+    n = parseInt(JXG.getStyle(pCont,'paddingLeft'));
+    if (isNaN(n)) n = 0;
+    cPos[0] += 0;
+    
+    n = parseInt(JXG.getStyle(pCont,'paddingTop'));
+    if (isNaN(n)) n = 0;
+    cPos[1] += n;
+
     return cPos;
 };
 
