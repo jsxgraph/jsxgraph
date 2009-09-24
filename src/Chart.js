@@ -104,41 +104,51 @@ JXG.Chart = function(board, parents, attributes) {
 JXG.Chart.prototype = new JXG.GeometryElement;
 
 JXG.Chart.prototype.drawLine = function(board, parents, attributes) {
-    var c = board.createElement('curve', parents, attributes);
+    var x = parents[0],
+        y = parents[1];
+
+    Fy = function(_x) {
+        var i, j = 0;
+
+        for(i=0; i<x.length; i++) {
+            if(x[i] == _x) {
+                j = i;
+                break;
+            }
+        }
+
+        if(typeof y[j] == 'function')
+            return y[j]();
+        else
+            return y[j];
+    }
+
+    var c = board.createElement('curve', [x, Fy], attributes);
     this.rendNode = c.rendNode;  // This is needed in setProperty
     return c;
 };
 
 JXG.Chart.prototype.drawSpline = function(board, parents, attributes) {
-    var x = parents[0];
-    var y = parents[1];
-    
-    var F = JXG.Math.Numerics.splineDef(x, y);
-    var px = new Array();
-    var i = 0;
-    var delta = (x[x.length-1]-x[0])/board.canvasWidth*1.0;
-    while(x[0] + i*delta < x[x.length-1]) {
-        px[i] = x[0] + i*delta;
-        i++;
-    }
-    var py = JXG.Math.Numerics.splineEval(px, x, y, F);
+    var x = parents[0],
+        y = parents[1],
+        i;
 
-    var c = board.createElement('curve', [px, py], attributes);
+    var c = board.createElement('spline', [x, y], attributes);
     this.rendNode = c.rendNode;  // This is needed in setProperty
     return c;
 };
 
 JXG.Chart.prototype.drawFit = function(board, parents, attributes) {
     var x = parents[0],
-    	y = parents[1],
-    	deg = (((typeof attributes.degree == 'undefined') || (parseInt(attributes.degree) == NaN)|| (parseInt(attributes.degree) < 1)) ? 1 : parseInt(attributes.degree));
+        y = parents[1],
+        deg = (((typeof attributes.degree == 'undefined') || (parseInt(attributes.degree) == NaN)|| (parseInt(attributes.degree) < 1)) ? 1 : parseInt(attributes.degree));
 
     
     // don't need that for fits
     delete(attributes.fillColor);
     delete(attributes.highlightFillColor);
     
-    var regression = JXG.Math.Numerics.regressionPolynomial(deg, x, y); 
+    var regression = JXG.Math.Numerics.regressionPolynomial(deg, x, y);
     var reg = board.createElement('functiongraph',[regression],attributes);
     this.rendNode = reg.rendNode;  // This is needed in setProperty
     return c;
@@ -364,89 +374,88 @@ JXG.Chart.prototype.updateDataArray = function () {};
 
 
 JXG.createChart = function(board, parents, attributes) {
-	if((parents.length == 1) && (typeof parents[0] == 'string')) {
-		var table = document.getElementById(parents[0]),
-			data, row, i, j, col, cell, charts = [], w, x,
-			originalWidth, name, strokeColor, fillColor;
-		if(typeof table != 'undefined') {
-			// extract the data
-			row = table.getElementsByTagName('tr');
-			data = new Array(row.length);
-			
-			for(i=0; i<row.length; i++) {
-				col = row[i].getElementsByTagName('td');
-				data[i] = new Array(col.length);
-				for(j=0; j<col.length; j++) {
-					cell = col[j].innerHTML;
-					if('' + parseFloat(cell) == cell)
-						data[i][j] = parseFloat(cell);
-					else
-						data[i][j] = cell;
-				}
-			}
-			
-			if(typeof attributes == 'undefined')
-				attributes = {};
-			
-			if(typeof attributes['withHeaders'] == 'undefined')
-				attributes['withHeaders'] = true;
-			
-			if(!attributes['withHeaders']) {
-			} else {
-				row = data[0].slice(1);
-				data = data.slice(1);
-				col = new Array();
-				for(i=0; i<data.length; i++) {
-					col.push(data[i][0]);
-					data[i] = data[i].slice(1);
+    if((parents.length == 1) && (typeof parents[0] == 'string')) {
+        var table = document.getElementById(parents[0]),            data, row, i, j, col, cell, charts = [], w, x,
+            originalWidth, name, strokeColor, fillColor;
+        if(typeof table != 'undefined') {
+            // extract the data
+            row = table.getElementsByTagName('tr');
+            data = new Array(row.length);
 
-				}
-			}
-			
-			originalWidth = attributes['width'];
-			name = attributes['name'];
-			strokeColor = attributes['strokeColor'];
-			fillColor = attributes['fillColor'];
+            for(i=0; i<row.length; i++) {
+                col = row[i].getElementsByTagName('td');
+                data[i] = new Array(col.length);
+                for(j=0; j<col.length; j++) {
+                cell = col[j].innerHTML;
+                    if('' + parseFloat(cell) == cell)
+                        data[i][j] = parseFloat(cell);
+                    else
+                        data[i][j] = cell;
+                }
+            }
+            
+            if(typeof attributes == 'undefined')
+                attributes = {};
+            
+            if(typeof attributes['withHeaders'] == 'undefined')
+                attributes['withHeaders'] = true;
+            
+            if(!attributes['withHeaders']) {
+            } else {
+                row = data[0].slice(1);
+                data = data.slice(1);
+                col = new Array();
+                for(i=0; i<data.length; i++) {
+                    col.push(data[i][0]);
+                    data[i] = data[i].slice(1);
 
-			for(i=0; i<data.length; i++) {
-				x = [];
-				if(attributes['chartStyle'] && attributes['chartStyle'].indexOf('bar') != -1) {
-					if(originalWidth) {
-						w = originalWidth;
-					} else {
-						w = 0.8;
-					}
-					x.push(1 - w/2. + (i+0.5)*w/(1.0*data.length));
-					for(j=1; j<data[i].length; j++) {
-						x.push(x[j-1] + 1);
-					}
-					attributes['width'] = w/(1.0*data.length);
-				}
-			    
-				if(name && name.length == data.length)
-					attributes['name'] = name[i];
-				else if(attributes['withHeaders'])
-					attributes['name'] = col[i];
-				
-				if(strokeColor && strokeColor.length == data.length)
-					attributes['strokeColor'] = strokeColor[i];
-				else
-					attributes['strokeColor'] = JXG.hsv2rgb(((i+1)/(1.0*data.length))*360,0.9,0.6);
-				
-				if(fillColor && fillColor.length == data.length)
-					attributes['fillColor'] = fillColor[i];
-				else
-					attributes['fillColor'] = JXG.hsv2rgb(((i+1)/(1.0*data.length))*360,0.9,1.0);
-				
-				if(attributes['chartStyle'] && attributes['chartStyle'].indexOf('bar') != -1) {
-					charts.push(new JXG.Chart(board, [x, data[i]], attributes));
-				} else
-					charts.push(new JXG.Chart(board, [data[i]], attributes));
-			}
-		}
-		return charts;
-	} else 	
-		return new JXG.Chart(board, parents, attributes);
+                }
+            }
+            
+            originalWidth = attributes['width'];
+            name = attributes['name'];
+            strokeColor = attributes['strokeColor'];
+            fillColor = attributes['fillColor'];
+
+            for(i=0; i<data.length; i++) {
+                x = [];
+                if(attributes['chartStyle'] && attributes['chartStyle'].indexOf('bar') != -1) {
+                    if(originalWidth) {
+                        w = originalWidth;
+                    } else {
+                        w = 0.8;
+                    }
+                    x.push(1 - w/2. + (i+0.5)*w/(1.0*data.length));
+                    for(j=1; j<data[i].length; j++) {
+                        x.push(x[j-1] + 1);
+                    }
+                    attributes['width'] = w/(1.0*data.length);
+                }
+                
+                if(name && name.length == data.length)
+                    attributes['name'] = name[i];
+                else if(attributes['withHeaders'])
+                    attributes['name'] = col[i];
+                
+                if(strokeColor && strokeColor.length == data.length)
+                    attributes['strokeColor'] = strokeColor[i];
+                else
+                    attributes['strokeColor'] = JXG.hsv2rgb(((i+1)/(1.0*data.length))*360,0.9,0.6);
+                
+                if(fillColor && fillColor.length == data.length)
+                    attributes['fillColor'] = fillColor[i];
+                else
+                    attributes['fillColor'] = JXG.hsv2rgb(((i+1)/(1.0*data.length))*360,0.9,1.0);
+                
+                if(attributes['chartStyle'] && attributes['chartStyle'].indexOf('bar') != -1) {
+                    charts.push(new JXG.Chart(board, [x, data[i]], attributes));
+                } else
+                    charts.push(new JXG.Chart(board, [data[i]], attributes));
+            }
+        }
+        return charts;
+    } else     
+        return new JXG.Chart(board, parents, attributes);
 };    
 
 JXG.JSXGraph.registerElement('chart', JXG.createChart);

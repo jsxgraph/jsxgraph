@@ -822,43 +822,47 @@ JXG.createSpline = function(board, parents, attributes) {
         attributes['withLabel'] = false;
     } 
     
-    /*
-    // This is far away from being effective
-    F = function (t) {
-        var x = [],
-            y = [],
-            i, D;
-        
-        for(i=0; i<parents.length; i++) {
-            if(!JXG.isPoint(parents[i]))
-                throw "JXG.createSpline: Parents has to be an array of JXG.Point.";
-            
-            x.push(parents[i].X());
-            y.push(parents[i].Y());
-        }
-        
-        // The array D has only to be calculated when the position of one or more sample point
-        // changes. otherwise D is always the same for all points on the spline.
-        D = JXG.Math.Numerics.splineDef(x, y);
-        return JXG.Math.Numerics.splineEval(t, x, y, D);
-    };
-    */
-    
     F = function() {
         var D, x=[], y=[];
         
         var fct = function (t,suspended) {
-            var i;
+            var i, j;
         
             if (!suspended) {
                 x = [];
                 y = [];
-                for(i=0; i<parents.length; i++) {
-                    if(!JXG.isPoint(parents[i]))
-                        throw "JXG.createSpline: Parents has to be an array of JXG.Point.";
-            
-                    x.push(parents[i].X());
-                    y.push(parents[i].Y());
+
+                // given as [x[], y[]]
+                if(parents.length == 2 && JXG.isArray(parents[0]) && JXG.isArray(parents[1]) && parents[0].length == parents[1].length) {
+                    for(i=0; i<parents[0].length; i++) {
+                        if(typeof parents[0][i] == 'function')
+                            x.push(parents[0][i]());
+                        else
+                            x.push(parents[0][i]);
+                        if(typeof parents[1][i] == 'function')
+                            y.push(parents[1][i]());
+                        else
+                            y.push(parents[1][i]);
+                    }
+                } else {
+                    for(i=0; i<parents.length; i++) {
+                        if(JXG.isPoint(parents[i])) {
+                            //throw "JXG.createSpline: Parents has to be an array of JXG.Point.";
+                            x.push(parents[i].X());
+                            y.push(parents[i].Y());
+                        } else if (JXG.isArray(parents[i]) && parents[i].length == 2) {     // given as [[x1,y1], [x2, y2], ...]
+                            for(i=0; i<parents.length; i++) {
+                                if(typeof parents[i][0] == 'function')
+                                    x.push(parents[i][0]());
+                                else
+                                    x.push(parents[i][0]);
+                                if(typeof parents[i][1] == 'function')
+                                    y.push(parents[i][1]());
+                                else
+                                    y.push(parents[i][1]);
+                            }
+                        }
+                    }
                 }
         
                 // The array D has only to be calculated when the position of one or more sample point
