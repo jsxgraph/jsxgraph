@@ -136,23 +136,23 @@ JXG.VMLRenderer.prototype.setShadow = function(element) {
     }
 };
 
-JXG.VMLRenderer.prototype.setGradient = function(element) {
-    var nodeFill = element.rendNodeFill;
-    if(element.type == JXG.OBJECT_TYPE_ARC || element.type == JXG.OBJECT_TYPE_ANGLE) {
-        nodeFill = element.rendNode2Fill;
+JXG.VMLRenderer.prototype.setGradient = function(el) {
+    var nodeFill = el.rendNodeFill;
+    if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
+        nodeFill = el.rendNode2Fill;
     }    
     
-    if(element.visProp['gradient'] == 'linear') {
+    if(el.visProp['gradient'] == 'linear') {
         nodeFill.setAttribute('type','gradient');
-        nodeFill.setAttribute('color2',element.visProp['gradientSecondColor']);
-        nodeFill.setAttribute('opacity2',element.visProp['gradientSecondOpacity']);
-        nodeFill.setAttribute('angle',element.visProp['gradientAngle']);
+        nodeFill.setAttribute('color2',el.visProp['gradientSecondColor']);
+        nodeFill.setAttribute('opacity2',el.visProp['gradientSecondOpacity']);
+        nodeFill.setAttribute('angle',el.visProp['gradientAngle']);
     }
-    else if (element.visProp['gradient'] == 'radial') {
+    else if (el.visProp['gradient'] == 'radial') {
         nodeFill.setAttribute('type','gradientradial');
-        nodeFill.setAttribute('color2',element.visProp['gradientSecondColor']);
-        nodeFill.setAttribute('opacity2',element.visProp['gradientSecondOpacity']);
-        nodeFill.setAttribute('focusposition', element.visProp['gradientPositonX']*100+'%,'+element.visProp['gradientPositonY']*100+'%');
+        nodeFill.setAttribute('color2',el.visProp['gradientSecondColor']);
+        nodeFill.setAttribute('opacity2',el.visProp['gradientSecondOpacity']);
+        nodeFill.setAttribute('focusposition', el.visProp['gradientPositionX']*100+'%,'+el.visProp['gradientPositionY']*100+'%');
         nodeFill.setAttribute('focussize', '0,0');
     }
     else {

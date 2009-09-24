@@ -107,14 +107,26 @@ JXG.SVGRenderer.prototype.setShadow = function(element) {
     }
 }
 
-JXG.SVGRenderer.prototype.setGradient = function(element) {
-    var fillNode = element.rendNode;
-    if(element.type == JXG.OBJECT_TYPE_ARC || element.type == JXG.OBJECT_TYPE_ANGLE) {
-        fillNode = element.rendNode2;
-        
+JXG.SVGRenderer.prototype.setGradient = function(el) {
+    var fillNode = el.rendNode, col, op;
+    
+    if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
+        fillNode = el.rendNode2;
     } 
-    if(element.visProp['gradient'] == 'linear') {
-        var node = this.createPrimitive('linearGradient',element.id+'_gradient');
+    if (typeof el.visProp['fillOpacity']=='function') {
+        op = el.visProp['fillOpacity']();
+    } else {
+        op = el.visProp['fillOpacity'];
+    }
+    op = (op>0)?op:0;
+    if (typeof el.visProp['fillColor']=='function') {
+        col = el.visProp['fillColor']();
+    } else {
+        col = el.visProp['fillColor'];
+    }
+
+    if(el.visProp['gradient'] == 'linear') {
+        var node = this.createPrimitive('linearGradient',el.id+'_gradient');
         var x1 = '0%'; // TODO: get x1,x2,y1,y2 from el.visProp['angle']
         var x2 = '100%';
         var y1 = '0%';
@@ -124,42 +136,50 @@ JXG.SVGRenderer.prototype.setGradient = function(element) {
         node.setAttributeNS(null,'x2',x2);
         node.setAttributeNS(null,'y1',y1);
         node.setAttributeNS(null,'y2',y2);
-        var node2 = this.createPrimitive('stop',element.id+'_gradient1');
+        var node2 = this.createPrimitive('stop',el.id+'_gradient1');
         node2.setAttributeNS(null,'offset','0%');
-        node2.setAttributeNS(null,'style','stop-color:'+element.visProp['fillColor']+';stop-opacity:'+element.visProp['fillOpacity']);     
-        var node3 = this.createPrimitive('stop',element.id+'_gradient2');
+        node2.setAttributeNS(null,'style','stop-color:'+col+';stop-opacity:'+op);     
+        var node3 = this.createPrimitive('stop',el.id+'_gradient2');
         node3.setAttributeNS(null,'offset','100%');
-        node3.setAttributeNS(null,'style','stop-color:'+element.visProp['gradientSecondColor']+';stop-opacity:'+element.visProp['gradientSecondOpacity']);
+        node3.setAttributeNS(null,'style','stop-color:'+el.visProp['gradientSecondColor']+';stop-opacity:'+el.visProp['gradientSecondOpacity']);
         node.appendChild(node2);
         node.appendChild(node3);     
         this.defs.appendChild(node);
-        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+element.id+'_gradient)');       
+        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+el.id+'_gradient)');       
     }
-    else if (element.visProp['gradient'] == 'radial') {
-        var node = this.createPrimitive('radialGradient',element.id+'_gradient');
+    else if (el.visProp['gradient'] == 'radial') {
+        var node = this.createPrimitive('radialGradient',el.id+'_gradient');
 
         node.setAttributeNS(null, 'cx', '50%')
         node.setAttributeNS(null, 'cy', '50%')
         node.setAttributeNS(null, 'r', '50%')
-        node.setAttributeNS(null, 'fx', element.visProp['gradientPositonX']*100+'%')
-        node.setAttributeNS(null, 'fy', element.visProp['gradientPositonY']*100+'%')
+        node.setAttributeNS(null, 'fx', el.visProp['gradientPositionX']*100+'%')
+        node.setAttributeNS(null, 'fy', el.visProp['gradientPositionY']*100+'%')
 
-        var node2 = this.createPrimitive('stop',element.id+'_gradient1');
+        var node2 = this.createPrimitive('stop',el.id+'_gradient1');
         node2.setAttributeNS(null,'offset','0%');
-        node2.setAttributeNS(null,'style','stop-color:'+element.visProp['gradientSecondColor']+';stop-opacity:'+element.visProp['gradientSecondOpacity']);
-        var node3 = this.createPrimitive('stop',element.id+'_gradient2');
+        node2.setAttributeNS(null,'style','stop-color:'+el.visProp['gradientSecondColor']+';stop-opacity:'+el.visProp['gradientSecondOpacity']);
+        var node3 = this.createPrimitive('stop',el.id+'_gradient2');
         node3.setAttributeNS(null,'offset','100%');
-        node3.setAttributeNS(null,'style','stop-color:'+element.visProp['fillColor']+';stop-opacity:'+element.visProp['fillOpacity']);         
+        node3.setAttributeNS(null,'style','stop-color:'+col+';stop-opacity:'+op);         
 
         node.appendChild(node2);
         node.appendChild(node3);     
         this.defs.appendChild(node);
-        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+element.id+'_gradient)'); 
+        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+el.id+'_gradient)'); 
     }
     else {
         fillNode.removeAttributeNS(null,'style');
     }
 };
+
+JXG.SVGRenderer.prototype.updateGradient = function(el) {
+    var node2, node3;
+    // TODO
+    if(el.visProp['gradient'] == 'linear') {
+    } else if (el.visProp['gradient'] == 'radial') {
+    }
+}; 
 
 JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
     var node = this.createPrimitive('text','licenseText'),
@@ -527,6 +547,10 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         node = el.rendNode;
         node.setAttributeNS(null, 'fill', c);           
         node.setAttributeNS(null, 'fill-opacity', o);                   
+    }
+    
+    if (el.visProp['gradient']!=null) {
+        this.updateGradient(el);
     }
 } ;
 
