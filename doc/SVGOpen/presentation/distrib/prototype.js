@@ -1,4 +1,4 @@
-/*  Prototype JavaScript framework, version 1.6.1_rc3
+/*  Prototype JavaScript framework, version 1.6.1
  *  (c) 2005-2009 Sam Stephenson
  *
  *  Prototype is freely distributable under the terms of an MIT-style license.
@@ -7,7 +7,7 @@
  *--------------------------------------------------------------------------*/
 
 var Prototype = {
-  Version: '1.6.1_rc3',
+  Version: '1.6.1',
 
   Browser: (function(){
     var ua = navigator.userAgent;
@@ -147,10 +147,7 @@ var Class = (function() {
 })();
 (function() {
 
-  function getClass(object) {
-    return Object.prototype.toString.call(object)
-     .match(/^\[object\s(.*)\]$/)[1];
-  }
+  var _toString = Object.prototype.toString;
 
   function extend(destination, source) {
     for (var property in source)
@@ -223,7 +220,7 @@ var Class = (function() {
   }
 
   function isArray(object) {
-    return getClass(object) === "Array";
+    return _toString.call(object) == "[object Array]";
   }
 
 
@@ -236,11 +233,11 @@ var Class = (function() {
   }
 
   function isString(object) {
-    return getClass(object) === "String";
+    return _toString.call(object) == "[object String]";
   }
 
   function isNumber(object) {
-    return getClass(object) === "Number";
+    return _toString.call(object) == "[object Number]";
   }
 
   function isUndefined(object) {
@@ -398,11 +395,10 @@ var PeriodicalExecuter = Class.create({
       try {
         this.currentlyExecuting = true;
         this.execute();
-      } catch(e) {
-        /* empty catch for clients that don't support try/finally */
-      }
-      finally {
         this.currentlyExecuting = false;
+      } catch(e) {
+        this.currentlyExecuting = false;
+        throw e;
       }
     }
   }
@@ -500,16 +496,11 @@ Object.extend(String.prototype, (function() {
   }
 
   function escapeHTML() {
-    escapeHTML.text.data = this;
-    return escapeHTML.div.innerHTML;
+    return this.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   function unescapeHTML() {
-    var div = document.createElement('div');
-    div.innerHTML = this.stripTags();
-    return div.childNodes[0] ? (div.childNodes.length > 1 ?
-      $A(div.childNodes).inject('', function(memo, node) { return memo+node.nodeValue }) :
-      div.childNodes[0].nodeValue) : '';
+    return this.stripTags().replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
   }
 
 
@@ -565,17 +556,23 @@ Object.extend(String.prototype, (function() {
   }
 
   function underscore() {
-    return this.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'#{1}_#{2}').gsub(/([a-z\d])([A-Z])/,'#{1}_#{2}').gsub(/-/,'_').toLowerCase();
+    return this.replace(/::/g, '/')
+               .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+               .replace(/([a-z\d])([A-Z])/g, '$1_$2')
+               .replace(/-/g, '_')
+               .toLowerCase();
   }
 
   function dasherize() {
-    return this.gsub(/_/,'-');
+    return this.replace(/_/g, '-');
   }
 
   function inspect(useDoubleQuotes) {
-    var escapedString = this.gsub(/[\x00-\x1f\\]/, function(match) {
-      var character = String.specialChar[match[0]];
-      return character ? character : '\\u00' + match[0].charCodeAt().toPaddedString(2, 16);
+    var escapedString = this.replace(/[\x00-\x1f\\]/g, function(character) {
+      if (character in String.specialChar) {
+        return String.specialChar[character];
+      }
+      return '\\u00' + character.charCodeAt().toPaddedString(2, 16);
     });
     if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
     return "'" + escapedString.replace(/'/g, '\\\'') + "'";
@@ -586,7 +583,7 @@ Object.extend(String.prototype, (function() {
   }
 
   function unfilterJSON(filter) {
-    return this.sub(filter || Prototype.JSONFilter, '#{1}');
+    return this.replace(filter || Prototype.JSONFilter, '$1');
   }
 
   function isJSON() {
@@ -664,24 +661,6 @@ Object.extend(String.prototype, (function() {
   };
 })());
 
-Object.extend(String.prototype.escapeHTML, {
-  div:  document.createElement('div'),
-  text: document.createTextNode('')
-});
-
-String.prototype.escapeHTML.div.appendChild(String.prototype.escapeHTML.text);
-
-if ('<\n>'.escapeHTML() !== '&lt;\n&gt;') {
-  String.prototype.escapeHTML = function() {
-    return this.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  };
-}
-
-if ('&lt;\n&gt;'.unescapeHTML() !== '<\n>') {
-  String.prototype.unescapeHTML = function() {
-    return this.stripTags().replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
-  };
-}
 var Template = Class.create({
   initialize: function(template, pattern) {
     this.template = template.toString();
@@ -704,7 +683,7 @@ var Template = Class.create({
       if (match == null) return before;
 
       while (match != null) {
-        var comp = match[1].startsWith('[') ? match[2].gsub('\\\\]', ']') : match[1];
+        var comp = match[1].startsWith('[') ? match[2].replace(/\\\\]/g, ']') : match[1];
         ctx = ctx[comp];
         if (null == ctx || '' == match[3]) break;
         expr = expr.substring('[' == match[3] ? match[1].length : match[0].length);
@@ -2096,42 +2075,19 @@ Element.Methods = {
     return id;
   },
 
-  readAttribute: (function(){
-
-    var iframeGetAttributeThrowsError = (function(){
-      var el = document.createElement('iframe'),
-          isBuggy = false;
-
-      document.documentElement.appendChild(el);
-      try {
-        el.getAttribute('type', 2);
-      } catch(e) {
-        isBuggy = true;
+  readAttribute: function(element, name) {
+    element = $(element);
+    if (Prototype.Browser.IE) {
+      var t = Element._attributeTranslations.read;
+      if (t.values[name]) return t.values[name](element, name);
+      if (t.names[name]) name = t.names[name];
+      if (name.include(':')) {
+        return (!element.attributes || !element.attributes[name]) ? null :
+         element.attributes[name].value;
       }
-      document.documentElement.removeChild(el);
-      el = null;
-      return isBuggy;
-    })();
-
-    return function(element, name) {
-      element = $(element);
-      if (iframeGetAttributeThrowsError &&
-          name === 'type' &&
-          element.tagName.toUpperCase() == 'IFRAME') {
-        return element.getAttribute('type');
-      }
-      if (Prototype.Browser.IE) {
-        var t = Element._attributeTranslations.read;
-        if (t.values[name]) return t.values[name](element, name);
-        if (t.names[name]) name = t.names[name];
-        if (name.include(':')) {
-          return (!element.attributes || !element.attributes[name]) ? null :
-           element.attributes[name].value;
-        }
-      }
-      return element.getAttribute(name);
     }
-  })(),
+    return element.getAttribute(name);
+  },
 
   writeAttribute: function(element, name, value) {
     element = $(element);
@@ -2655,6 +2611,9 @@ else if (Prototype.Browser.IE) {
         },
         values: {
           _getAttr: function(element, attribute) {
+            return element.getAttribute(attribute);
+          },
+          _getAttr2: function(element, attribute) {
             return element.getAttribute(attribute, 2);
           },
           _getAttrNode: function(element, attribute) {
@@ -2676,14 +2635,14 @@ else if (Prototype.Browser.IE) {
                 attribute = attribute.split('{')[1];
                 attribute = attribute.split('}')[0];
                 return attribute.strip();
-              }
+              };
             }
             else if (value === '') {
               f = function(element, attribute) {
                 attribute = element.getAttribute(attribute);
                 if (!attribute) return null;
                 return attribute.strip();
-              }
+              };
             }
             el = null;
             return f;
@@ -2728,8 +2687,8 @@ else if (Prototype.Browser.IE) {
 
   (function(v) {
     Object.extend(v, {
-      href:        v._getAttr,
-      src:         v._getAttr,
+      href:        v._getAttr2,
+      src:         v._getAttr2,
       type:        v._getAttr,
       action:      v._getAttrNode,
       disabled:    v._flag,
@@ -2947,11 +2906,9 @@ Element.extend = (function() {
   }
 
   var HTMLOBJECTELEMENT_PROTOTYPE_BUGGY = checkDeficiency('object');
-  var HTMLAPPLETELEMENT_PROTOTYPE_BUGGY = checkDeficiency('applet');
 
   if (Prototype.BrowserFeatures.SpecificElementExtensions) {
-    if (HTMLOBJECTELEMENT_PROTOTYPE_BUGGY &&
-        HTMLAPPLETELEMENT_PROTOTYPE_BUGGY) {
+    if (HTMLOBJECTELEMENT_PROTOTYPE_BUGGY) {
       return function(element) {
         if (element && typeof element._extendedByPrototype == 'undefined') {
           var t = element.tagName;
@@ -3335,7 +3292,7 @@ var Selector = Class.create({
       case 'selectorsAPI':
         if (root !== document) {
           var oldId = root.id, id = $(root).identify();
-          id = id.replace(/[\.:]/g, "\\$0");
+          id = id.replace(/([\.:])/g, "\\$1");
           e = "#" + id + " " + e;
         }
 
@@ -4915,4 +4872,3 @@ Element.ClassNames.prototype = {
 Object.extend(Element.ClassNames.prototype, Enumerable);
 
 /*--------------------------------------------------------------------------*/
-
