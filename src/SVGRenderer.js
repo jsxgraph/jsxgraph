@@ -145,7 +145,9 @@ JXG.SVGRenderer.prototype.setGradient = function(el) {
         node.appendChild(node2);
         node.appendChild(node3);     
         this.defs.appendChild(node);
-        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+el.id+'_gradient)');       
+        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+el.id+'_gradient)');      
+        el.gradNode1 = node2;
+        el.gradNode2 = node3;
     }
     else if (el.visProp['gradient'] == 'radial') {
         var node = this.createPrimitive('radialGradient',el.id+'_gradient');
@@ -167,6 +169,8 @@ JXG.SVGRenderer.prototype.setGradient = function(el) {
         node.appendChild(node3);     
         this.defs.appendChild(node);
         fillNode.setAttributeNS(null, 'style', 'fill:url(#'+el.id+'_gradient)'); 
+        el.gradNode1 = node2;
+        el.gradNode2 = node3;
     }
     else {
         fillNode.removeAttributeNS(null,'style');
@@ -174,10 +178,31 @@ JXG.SVGRenderer.prototype.setGradient = function(el) {
 };
 
 JXG.SVGRenderer.prototype.updateGradient = function(el) {
-    var node2, node3;
-    // TODO
+    var node2 = el.gradNode1, 
+        node3 = el.gradNode2, 
+        col, op;
+
+    if (node2==null || node3==0) {
+        return;
+    }
+    if (typeof el.visProp['fillOpacity']=='function') {
+        op = el.visProp['fillOpacity']();
+    } else {
+        op = el.visProp['fillOpacity'];
+    }
+    op = (op>0)?op:0;
+    if (typeof el.visProp['fillColor']=='function') {
+        col = el.visProp['fillColor']();
+    } else {
+        col = el.visProp['fillColor'];
+    }
+    
     if(el.visProp['gradient'] == 'linear') {
+        node2.setAttributeNS(null,'style','stop-color:'+col+';stop-opacity:'+op);     
+        node3.setAttributeNS(null,'style','stop-color:'+el.visProp['gradientSecondColor']+';stop-opacity:'+el.visProp['gradientSecondOpacity']);
     } else if (el.visProp['gradient'] == 'radial') {
+        node2.setAttributeNS(null,'style','stop-color:'+el.visProp['gradientSecondColor']+';stop-opacity:'+el.visProp['gradientSecondOpacity']);
+        node3.setAttributeNS(null,'style','stop-color:'+col+';stop-opacity:'+op);         
     }
 }; 
 
