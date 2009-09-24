@@ -75,7 +75,7 @@
 }
 .content_logo {
 	position:					absolute;
-	bottom:						25px;
+	top:						25px;
 	right:						25px;
 }
 .content_text {
@@ -123,11 +123,12 @@
 	top:						95px;
 	left:						20px;
 	border:						solid 2px #095;
-	width:						680px;
+	width:						900px;
 	height:						580px;	
 	background-color:			#fff;
 	-moz-box-shadow:			4px 4px 4px #555; 
 	-moz-border-radius:			10px;
+	opacity:					0.8;
 }
 .jsxgraph_present {
 	position:					relative; /* for IE 7 */  
