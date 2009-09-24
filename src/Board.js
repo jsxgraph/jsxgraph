@@ -2744,6 +2744,6 @@ JXG.Board.prototype.animate = function() {
 		window.clearInterval(this.animationIntervalCode);
 		delete(this.animationIntervalCode);
 	} else {
-		board.update();
+		this.update();
 	}
 };

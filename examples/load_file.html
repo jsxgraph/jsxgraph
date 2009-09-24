@@ -1,0 +1,51 @@
+<!--
+  $Date: 2007-12-11 17:26:38 +0100 (Di, 11 Dez 2007) $
+  $Revision: 50 $
+  $Author: graphjs $
+  $HeadURL: svn://btmdx1.mat.uni-bayreuth.de/graphjs/gxt_event.html $
+  $Id: gxt_event.html 50 2007-12-11 16:26:38Z graphjs $
+
+-->
+<html>
+<head>
+   <title>Load geonext file by string</title>
+   <!--<link rel="stylesheet" type="text/css" href="css/geonext2.css" />-->
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <!--<script type="text/javascript" src="../distrib/jquery.min.js"></script>-->
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+   <!-- 
+      Drawing area 
+   -->
+   <div id="box" style="width:800px; height:500px; overflow:hidden; border:1px dashed black; ">
+   </div>
+   <!-- 
+      Drawing area 
+   -->
+
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    
+    var board;
+
+    function loadFile() {
+        var filename = document.getElementById('filename').value;
+        if(board)
+    		JXG.JSXGraph.freeBoard(board);
+		board = JXG.JSXGraph.loadBoardFromFile('box', filename, 'Geonext');
+    }
+	/* ]]> */
+	</script>
+	    
+	<form>
+		<input type='text' value='Enter filename' id='filename' onclick='if(this.value == "Enter filename") {this.value = "";}' />
+		<input type='button' value='Load file' onclick="loadFile();" />
+   </form>
+   <div id="debug" style="position:relative; width:600px; height:100px; border:none; background-color:white;">
+   </div>
+
+</body>
+</html>

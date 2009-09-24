@@ -772,6 +772,40 @@ JXG.Point.prototype.moveTo = function(where, time) {
 };
 
 /**
+ * Starts an animated point movement towards the given coordinates <tt>where</tt>. After arriving at <tt>where</tt> the point moves back to where it started.
+ * The animation is done after <tt>time</tt> milliseconds.
+ * @param {Array} where Array containing the x and y coordinate of the target location.
+ * @param {int} time Number of milliseconds the animation should last.
+ * @param {int} repeat Optional: How often the animation should be repeated. The time value is then taken for one repeat.
+ * @see #animate
+ */
+JXG.Point.prototype.visit = function(where, time, repeat) {
+    if(arguments.length == 2)
+        repeat = 1;
+
+	var delay = 35,
+	    steps = Math.ceil(time/(delay * 1.0)),
+		coords = new Array(repeat*(steps+1)),
+		X = this.coords.usrCoords[1],
+		Y = this.coords.usrCoords[2],
+		dX = (where[0] - X),
+		dY = (where[1] - Y),
+	    i, j;
+	
+    for(j=0; j<repeat; j++) {
+        for(i=steps; i>=0; i--) {
+            coords[j*(steps+1) + steps-i] = [X + dX * Math.pow(Math.sin((i/(steps*1.0))*Math.PI), 2.), Y+ dY * Math.pow(Math.sin((i/(steps*1.0))*Math.PI), 2.)];
+        }
+    }
+	this.animationPath = coords;
+	this.board.animationObjects[this.id] = this;
+	if(typeof this.board.animationIntervalCode == 'undefined') {
+		this.board.animationIntervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].animate();', delay);
+	}
+    return this;
+};
+
+/**
  * Animates a glider. Is called by the browser after startAnimation is called.
  * @param {number} direction The direction the glider is animated.
  * @param {number} stepCount The number of steps.

@@ -282,6 +282,8 @@ JXG.JSXGraph = new function (forceRenderer) {
         element = element.toLowerCase();
         this.elements[element] = creator;
 
+        if(JXG.Board.prototype['_' + element])
+        	throw "Can't create wrapper method in JXG.Board because member '_" + element + "' already exists'";
         JXG.Board.prototype['_' + element] = function (parents, attributes) {
         	return this.createElement(element, parents, attributes);
         };
