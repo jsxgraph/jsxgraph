@@ -20,9 +20,10 @@
 
 
         var p = [];
-        p.push(b._point([0, 4], {face: '+', size: 3}));
+        p.push(b._point([0, 4], {face: '+', size: 5}));
         p.push(b._point([0, 2], {face: 'x', size: 5}));
-        p.push(b._point([0, 5], {face: '[]', size: 7}));
+        p.push(b._point([0, 5], {face: '[]', size: 5}));
+        p.push(b._point([0, 7], {face: '[]', size: 5}));
         
 		var data = [], i;
 		for(i=0; i<p.length; i++) {
@@ -32,7 +33,7 @@
 
 		//data = [function () { return p[0].Y(); }, function () { return p[1].Y(); }, function () { return p[2].Y(); }];
 
-		b._chart([data], {chartStyle: 'line'});
+		b._chart([data], {chartStyle: 'point,fit', degree: 2});
 
   /* ]]> */
   </script>

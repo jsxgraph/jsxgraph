@@ -670,8 +670,9 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
     }
     
     if (arguments.length==3 && JXG.isArray(dataX) && JXG.isArray(dataY)) {              // Parameters degree, dataX, dataY
-        dX = dataX;
-        dY = dataY;
+//        dX = dataX;
+//        dY = dataY;
+// is done later
         inputType = 0;
     } else if ( arguments.length==2 && JXG.isArray(dataX) && JXG.isPoint(dataX[0]) ) {  // Parameters degree, point array
         inputType = 1;
@@ -696,6 +697,21 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
                     }
                 }
                 
+                if (inputType==0) {  // check for functions
+                    dX = [];
+                    dY = [];
+                    for(i=0;i<len;i++) {
+                        if(JXG.isFunction(dataX[i]))
+                            dX.push(dataX[i]());
+                        else
+                            dX.push(dataX[i]);
+                        if(JXG.isFunction(dataY[i]))
+                            dY.push(dataY[i]());
+                        else
+                            dY.push(dataX[i]);
+                    }
+                }
+
                 M = [];
                 for (j=0;j<len;j++) {
                     M.push([1]);
@@ -705,7 +721,9 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
                         M[j][i] = M[j][i-1]*dX[j];      // input data
                     }
                 }
+
                 y = dY;                                 // input data
+
                 MT = JXG.Math.Matrix.transpose(M);
 
                 B = JXG.Math.matMatMult(MT,M);

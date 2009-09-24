@@ -143,14 +143,9 @@ JXG.Chart.prototype.drawFit = function(board, parents, attributes) {
         y = parents[1],
         deg = (((typeof attributes.degree == 'undefined') || (parseInt(attributes.degree) == NaN)|| (parseInt(attributes.degree) < 1)) ? 1 : parseInt(attributes.degree));
 
-    
-    // don't need that for fits
-    delete(attributes.fillColor);
-    delete(attributes.highlightFillColor);
-    
     var regression = JXG.Math.Numerics.regressionPolynomial(deg, x, y);
-    var reg = board.createElement('functiongraph',[regression],attributes);
-    this.rendNode = reg.rendNode;  // This is needed in setProperty
+    var c = board.createElement('functiongraph', [regression], attributes);
+    this.rendNode = c.rendNode;  // This is needed in setProperty
     return c;
 };
 
