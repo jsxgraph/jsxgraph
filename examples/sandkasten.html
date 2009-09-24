@@ -25,10 +25,12 @@
         p.push(b._point([3, 5], {face: '[]', size: 7}));
         
 		var data = [], i;
-		for(i=0; i<p.length; i++) 
-			data.push(function () { return function () { return p[i].Y(); }; });
+		for(i=0; i<p.length; i++) {
+            data.push( (function(p_,i_){ return function () { return p_[i_].Y(); }; })(p,i) );
+        }
+            //data.push( (function(j){ return function(){ return function () { return p[j].Y(); }; }; })(i) );
 
-		data = [function () { return p[0].Y(); }, function () { return p[1].Y(); }, function () { return p[2].Y(); }];
+		//data = [function () { return p[0].Y(); }, function () { return p[1].Y(); }, function () { return p[2].Y(); }];
 
 		b._chart([data], {chartStyle: 'bar'});
 
