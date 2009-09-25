@@ -6,7 +6,7 @@
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<div id="jxgbox" class="jxgbox" style="width:700px; height:400px; float:left"></div>
+<div id="jxgbox" class="jxgbox" style="width:700px; height:400px;"></div>
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
 /* <![CDATA[ */
@@ -38,12 +38,13 @@ var fetchData = function() {
                 var a = t.split(',');
                 x.push(x.length+1);
                 y.push(a[1]);
-                $('debug').innerHTML = a[1];
+                //$('debug').innerHTML = a[1];
                 if (!graph1) { 
                     graph1 = brd.createElement('curve', [x,y],{strokeWidth:1}); 
                 } else {
                     graph1.dataX = x;                    graph1.dataY = y;
                 }
+                $('debug').innerHTML = t;
                 brd.update();
             };
     }});

@@ -29,53 +29,6 @@ curve.updateDataArray = function() {
     var i, len = data.length;
     for(i=0;i<len;i++) { this.dataY[i] = s.Value()*data[i]; }
 }
-//brd.update();
-
-/*
-generateFunction = function() { 
-    var container = []; 
-    var dbg_count = 0;
-    var term = '';
-    var fct = function(x,suspendedUpdate){
-            var i, j, M, MT, y, B, c, s,
-                degree,
-                len = datax.length;                        // input data
-                
-            degree = Math.floor(deg.Value());              // input data
-            if (!suspendedUpdate) {
-                $('debug').innerHTML = 'Number of unsuspended calls: '+(dbg_count++)+'<br>';
-                M = [];
-                for (j=0;j<len;j++) {
-                    M.push([1]);
-                }
-                for (i=1;i<=degree;i++) {
-                    for (j=0;j<len;j++) {
-                        M[j][i] = M[j][i-1]*datax[j];      // input data
-                    }
-                }
-                y = curve.dataY;                           // input data
-                MT = JXG.Math.Matrix.transpose(M);
-
-                B = JXG.Math.matMatMult(MT,M);
-                c = JXG.Math.matVecMult(MT,y);
-                container = JXG.Math.Numerics.Gauss(B, c);
-                
-                term = JXG.Math.Numerics.generatePolynomialTerm(container,degree,'x',3);         
-            }
-            
-            // Horner's scheme to evaluate polynomial
-            s = container[degree];
-            for (i=degree-1;i>=0;i--) {
-                s = (s*x+container[i]);
-            }
-            return s;
-        };
-        fct.getTerm = function() {
-            return term;
-        };
-        return fct;
-    }
-*/
 
 regressionPolynomial = JXG.Math.Numerics.regressionPolynomial(deg,datax,curve.dataY);  // generateFunction();
 
