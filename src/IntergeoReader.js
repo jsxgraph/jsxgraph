@@ -293,8 +293,8 @@ JXG.IntergeoReader = new function() {
             else if (node.nodeName=='midpoint') {
                 JXG.IntergeoReader.addMidpointOfTwoPoints(node);
             } 
-            else if (node.nodeName=='midpoint_line_segment') {
-                JXG.IntergeoReader.addMidpointLineSegment(node);
+            else if (node.nodeName=='midpoint_of_line_segment') {
+                JXG.IntergeoReader.addMidpointOfLineSegment(node);
             } 
             else if (node.nodeName=='point_intersection_of_two_lines') {
                 JXG.IntergeoReader.addPointIntersectionOfTwoLines(node);
@@ -473,7 +473,7 @@ JXG.IntergeoReader = new function() {
         this.setAttributes(p0);
     };
 
-    this.addMidpointLineSegment = function(node) {
+    this.addMidpointOfLineSegment = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
             p0 = JXG.getReference(this.board,param[0]),
             l = JXG.getReference(this.board,param[1]);
