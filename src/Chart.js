@@ -383,7 +383,7 @@ JXG.Chart.prototype.updateDataArray = function () {};
 JXG.createChart = function(board, parents, attributes) {
     if((parents.length == 1) && (typeof parents[0] == 'string')) {
         var table = document.getElementById(parents[0]),            data, row, i, j, col, cell, charts = [], w, x,
-            originalWidth, name, strokeColor, fillColor, len;
+            originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len;
         if(typeof table != 'undefined') {
             // extract the data
             row = table.getElementsByTagName('tr');
@@ -411,11 +411,11 @@ JXG.createChart = function(board, parents, attributes) {
             
             if(!attributes['withHeaders']) {
             } else {
-                row = data[0].slice(1);
+                col = data[0].slice(1);
                 data = data.slice(1);
-                col = new Array();
+                row = new Array();
                 for(i=0; i<data.length; i++) {
-                    col.push(data[i][0]);
+                    row.push(data[i][0]);
                     data[i] = data[i].slice(1);
 
                 }
@@ -425,11 +425,27 @@ JXG.createChart = function(board, parents, attributes) {
             name = attributes['name'];
             strokeColor = attributes['strokeColor'];
             fillColor = attributes['fillColor'];
+            hStrokeColor = attributes['highlightStrokeColor'];
+            hFillColor = attributes['highlightFillColor'];
 
             board.suspendUpdate();
 
             len = data.length;
             for(i=0; i<len; i++) {
+
+                cont = true;
+                if (attributes['rows'] && JXG.isArray(attributes['rows'])) {
+                    for(j=0; j<attributes['rows'].length; j++) {
+                        if((attributes['rows'][j] == i) || (attributes['withHeaders'] && attributes['rows'][j] == row[i])) {
+                            cont = false;
+                            break;
+                        }
+                    }
+                } else
+                    cont = false;
+
+                if(cont)
+                    continue;
 
                 x = [];
                 if(attributes['chartStyle'] && attributes['chartStyle'].indexOf('bar') != -1) {
@@ -459,6 +475,16 @@ JXG.createChart = function(board, parents, attributes) {
                     attributes['fillColor'] = fillColor[i];
                 else
                     attributes['fillColor'] = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,1.0);
+                
+                if(hStrokeColor && hStrokeColor.length == len)
+                    attributes['highlightStrokeColor'] = hStrokeColor[i];
+                else
+                    attributes['highlightStrokeColor'] = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,1.0);
+                
+                if(hFillColor && hFillColor.length == len)
+                    attributes['highlightFillColor'] = hFillColor[i];
+                else
+                    attributes['highlightFillColor'] = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,0.6);
                 
                 if(attributes['chartStyle'] && attributes['chartStyle'].indexOf('bar') != -1) {
                     charts.push(new JXG.Chart(board, [x, data[i]], attributes));

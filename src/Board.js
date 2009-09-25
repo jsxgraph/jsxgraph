@@ -2259,7 +2259,12 @@ JXG.Board.prototype.zoomAllPoints = function() {
  * @param {GeometryElement} object The object to remove.
  */
 JXG.Board.prototype.removeObject = function(object) {
-    var el;
+    var el, i;
+
+    if(JXG.isArray(object)) {
+        for(i=0; i<object.length; i++)
+            this.removeObject(object[i]);
+    }
     
     object = JXG.getReference(this, object);
 
@@ -2635,6 +2640,11 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     this.update(el); // We start updating at the newly created element. AW
     return el;
 };
+
+/**
+ * Wrapper for {@link #createElement()}.
+ */
+JXG.Board.prototype.create = JXG.Board.prototype.createElement;
 
 /**
  * Delete the elements drawn as part of a trace of an element.
