@@ -51,7 +51,7 @@
     
 
 
-        board = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 0, originY: 710, unitX: 30, unitY: 30});
+        board = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 0, originY: 670, unitX: 30, unitY: 30});
         
             
         var p1 = board.createElement('point',[11,5],{visible:false}); 
@@ -104,9 +104,9 @@
         }  
         
         // Fifth polygon
-        var p51 = board.createElement('point',[1+5*Math.sqrt(2),14],{face:'circle',fillColor:'blue',withLabel:false,visible:true});
+        var p51 = board.createElement('point',[1+5*Math.sqrt(2),13.5],{face:'circle',fillColor:'blue',withLabel:false,visible:true});
         var c51 = board.createElement('circle',[p51,5*Math.sqrt(2)],{visible:false});
-        var p52 = board.createElement('glider',[1,14,c51],{face:'plus',withLabel:false,visible:true});
+        var p52 = board.createElement('glider',[1,13.5,c51],{face:'plus',withLabel:false,visible:true});
         var p53 = board.createElement('point',[function() {return -p52.Y()+p51.Y()+p52.X()},function() {return -p51.X()+p52.X()+p52.Y()}],{face:'circle',fillColor:'blue',withLabel:false,visible:false});
         var f5 = board.createElement('polygon',[p51,p52,p53],{fillcolor:'#996699',visible:true});
         for(i=0; i<f5.borders.length; i++) {
@@ -125,9 +125,9 @@
         }      
             
         // Seventh polygon
-        var p71 = board.createElement('point',[6,15],{face:'circle',fillColor:'blue',withLabel:false,visible:true});
+        var p71 = board.createElement('point',[6,14.5],{face:'circle',fillColor:'blue',withLabel:false,visible:true});
         var c71 = board.createElement('circle',[p71,5/2*Math.sqrt(2)],{visible:false});
-        var p72 = board.createElement('glider',[8.5,17.5,c71],{face:'plus',withLabel:false,visible:true});
+        var p72 = board.createElement('glider',[8.5,17,c71],{face:'plus',withLabel:false,visible:true});
         var p73 = board.createElement('point',[function() {return p72.X()-p71.X()-p72.Y()+p71.Y()+p72.X()},function() {return p72.X()-p71.X()+p72.Y()-p71.Y()+p72.Y()}],{face:'circle',fillColor:'blue',withLabel:false,visible:false});
         var p74 = board.createElement('point',[function() {return p72.X()-p71.X()-p72.Y()+p71.Y()+p71.X()},function() {return p72.X()-p71.X()+p72.Y()-p71.Y()+p71.Y()}],{face:'rectangle',fillColor:'blue',withLabel:false,visible:false}); 
         var f7 = board.createElement('polygon',[p71,p72,p73,p74],{fillcolor:'#FFCC33',visible:true});
