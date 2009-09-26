@@ -2,36 +2,96 @@
 	<head>
    		<title>JSXGraph example</title>
 		<link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
-		<script type="text/javascript" src="distrib/jquery.min.js"></script>
-		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+        <link rel="Stylesheet" type="text/css" href="distrib/css/ui-lightness/jquery-ui-1.7.2.custom.css"/>
+        <script type="text/javascript" src="distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="distrib/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+        <style type="text/css">
+            #slider-frame > div.sliders { color:green;padding: 10px !important; };
+        </style>        
+        <script type="text/javascript">
+        $(function() {
+            $("#sliderH").slider({
+                orientation: "horizontal",range: "min",min: 0,max: 360,value: 1,
+                slide: function(event, ui) {
+                    $("#H").val((ui.value));
+                    h = ui.value;
+                    brd.update();
+                }
+            });
+            $("#sliderS").slider({
+                orientation: "horizontal",range: "min",min: 0,max: 100,value: 100,
+                slide: function(event, ui) {
+                    $("#S").val(ui.value*0.01);
+                    s = ui.value*0.01;
+                    brd.update();
+                }
+            });
+            $("#sliderV").slider({
+                orientation: "horizontal",range: "min",min: 0,max: 100,value: 100,
+                slide: function(event, ui) {
+                    $("#V").val(ui.value*0.01);
+                    v = ui.value*0.01;
+                    brd.update();
+                }
+            });            
+            $("#H").val($("#sliderH").slider("value"));
+            $("#S").val($("#sliderS").slider("value")*0.01);
+            $("#V").val($("#sliderV").slider("value")*0.01);
+            
+            $("#sliderV").css("color", "#FF0000")
+        });
+        </script>        
 	</head>
 	<body class="jsxgraph_body">
 		<div id="box" class="jxgbox jsxgraph_present"></div>
 		<!-- Drawing area -->
+        <div id="draggable" class="sliders" 
+            style="margin:5px; 
+                    width:340px;
+                    border-color:black; border-width:1; border-style:dashed; 
+                    -moz-border-radius:10; "
+        >
+            <p>
+                <label for="H">H:</label>
+                <input type="text" id="H" style="border:0; width:50; color:#32CD32; font-weight:bold;" />
+                <label for="S">S:</label>
+                <input type="text" id="S" style="border:0; width:50; color:#32CD32; font-weight:bold;" />
+                <label for="V">V:</label>
+                <input type="text" id="V" style="border:0; width:50; color:#32CD32; font-weight:bold;" />
+            </p>
+            <div id="sliderH" style="width:300px;margin:15px 10px 15px 15px;"></div>
+            <div id="sliderS" style="width:300px;margin:15px 10px 15px 15px;"></div>
+            <div id="sliderV" style="width:300px;margin:15px 10px 15px 15px;"></div>
+        </div>        
 		<div id="debug" style="display:none;"></div>
 		<script type="text/javascript">
     /* <![CDATA[ */
-        var brd = JXG.JSXGraph.initBoard('box', {boundingbox:[-4,4,4,-4], keepaspectratio:true});
-        var H = brd.createElement('slider',[[-3,3.5],[2,3.5],[0,1,360]], {name:'H',fillColor:'black',strokeColor:'black'});
-        var S = brd.createElement('slider',[[-3,3],[2,3],[0,1,1]], {name:'S',fillColor:'black',strokeColor:'black'});
-        var V = brd.createElement('slider',[[-3,2.5],[2,2.5],[0,1,1]], {name:'V',fillColor:'black',strokeColor:'black'});
+        $(document).ready(function(){
+          $("#draggable").draggable().css('position','absolute').css('top','25px').css('left','25px');
+        });    
+        var brd = JXG.JSXGraph.initBoard('box', {boundingbox:[-4,4,4,-4],keepaspectratio:true});
+
+        var h = 1;
+        var s = 1.0;
+        var v = 1.0;
         
         var r1 = 2;
         var r2 = 1/4.75;
         var lambda = 8;
         var phi = 0;
-var c = brd.createElement('curve',[
+        var c = brd.createElement('curve',[
           function(t){return r1*Math.sin(t)+r2*Math.sin(lambda*t+phi);},
           function(t){return r1*Math.cos(t)+r2*Math.cos(lambda*t+phi)-0.5;},
           0, 2*Math.PI],
-          {fillcolor:function(){ return JXG.hsv2rgb(H.Value(),S.Value(),V.Value()); },
-           highlightFillcolor:function(){ return JXG.hsv2rgb(H.Value(),S.Value(),V.Value()); },
+          {fillcolor:function(){ return JXG.hsv2rgb(h,s,v); },
+           highlightFillcolor:function(){ return JXG.hsv2rgb(h,s,v); },
            strokeColor:'black',strokeWidth:3});
           
         var p = brd.createElement('point',[0,-0.5],{visible:false});
         var ci = brd.createElement('circle',[p,1], 
-                {fillcolor:function(){ return JXG.hsv2rgb(180+H.Value(),S.Value(),V.Value()); },
-                 highlightFillcolor:function(){ return JXG.hsv2rgb(180+H.Value(),S.Value(),V.Value()); },
+                {fillcolor:function(){ return JXG.hsv2rgb(180+h,s,v); },
+                 highlightFillcolor:function(){ return JXG.hsv2rgb(180+h,s,v); },
                  strokewidth:3,
                  strokeColor:'black'
                 });             

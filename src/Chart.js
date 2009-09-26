@@ -225,6 +225,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
             }
         }
         attributes['withLines'] = false;
+        attributes['fillColor'] = attributes['colorArray'][i%attributes['colorArray'].length];
         pols[i] = board.createElement('polygon',p,attributes);
     }
     this.rendNode = pols[0].rendNode;  // This is needed in setProperty
