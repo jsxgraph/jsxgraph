@@ -402,79 +402,79 @@ JXG.Util.Unzip = function (barray){
             if(((blockLen ^ ~cSum) & 0xffff)) {
                 document.write("BlockLen checksum mismatch\n");
             }
-               while(blockLen--) {
+            while(blockLen--) {
                 c = readByte();
                 addBuffer(c);
             }
-    } else if(type==1) {
-        var j;
+        } else if(type==1) {
+            var j;
 
-        /* Fixed Huffman tables -- fixed decode routine */
-        while(1) {
-        /*
-            256    0000000        0
-            :   :     :
-            279    0010111        23
-            0   00110000    48
-            :    :      :
-            143    10111111    191
-            280 11000000    192
-            :    :      :
-            287 11000111    199
-            144    110010000    400
-            :    :       :
-            255    111111111    511
+            /* Fixed Huffman tables -- fixed decode routine */
+            while(1) {
+            /*
+                256    0000000        0
+                :   :     :
+                279    0010111        23
+                0   00110000    48
+                :    :      :
+                143    10111111    191
+                280 11000000    192
+                :    :      :
+                287 11000111    199
+                144    110010000    400
+                :    :       :
+                255    111111111    511
+    
+                Note the bit order!
+                */
 
-            Note the bit order!
-         */
+            j = (bitReverse[readBits(7)]>>1);
+            if(j > 23) {
+                j = (j<<1) | readBit();    /* 48..255 */
 
-        j = (bitReverse[readBits(7)]>>1);
-        if(j > 23) {
-            j = (j<<1) | readBit();    /* 48..255 */
-
-            if(j > 199) {    /* 200..255 */
-            j -= 128;    /*  72..127 */
-            j = (j<<1) | readBit();        /* 144..255 << */
-            } else {        /*  48..199 */
-            j -= 48;    /*   0..151 */
-            if(j > 143) {
-                j = j+136;    /* 280..287 << */
-                    /*   0..143 << */
+                if(j > 199) {    /* 200..255 */
+                    j -= 128;    /*  72..127 */
+                    j = (j<<1) | readBit();        /* 144..255 << */
+                } else {        /*  48..199 */
+                    j -= 48;    /*   0..151 */
+                    if(j > 143) {
+                        j = j+136;    /* 280..287 << */
+                        /*   0..143 << */
+                    }
+                }
+            } else {    /*   0..23 */
+                j += 256;    /* 256..279 << */
             }
-            }
-        } else {    /*   0..23 */
-            j += 256;    /* 256..279 << */
-        }
-        if(j < 256) {
-            addBuffer(j);
-            //document.write("out:"+String.fromCharCode(j));
-/*fprintf(errfp, "@%d %02x\n", SIZE, j);*/
-        } else if(j == 256) {
-            /* EOF */
-            break;
-        } else {
-            var len, dist;
-
-            j -= 256 + 1;    /* bytes + EOF */
-            len = readBits(cplext[j]) + cplens[j];
-
-            j = bitReverse[readBits(5)]>>3;
-            if(cpdext[j] > 8) {
-            dist = readBits(8);
-            dist |= (readBits(cpdext[j]-8)<<8);
+            if(j < 256) {
+                addBuffer(j);
+                //document.write("out:"+String.fromCharCode(j));
+                /*fprintf(errfp, "@%d %02x\n", SIZE, j);*/
+            } else if(j == 256) {
+                /* EOF */
+                break;
             } else {
-            dist = readBits(cpdext[j]);
-            }
-            dist += cpdist[j];
+                var len, dist;
 
-/*fprintf(errfp, "@%d (l%02x,d%04x)\n", SIZE, len, dist);*/
-            for(j=0;j<len;j++) {
-            var c = buf32k[(bIdx - dist) & 0x7fff];
-            addBuffer(c);
+                j -= 256 + 1;    /* bytes + EOF */
+                len = readBits(cplext[j]) + cplens[j];
+
+                j = bitReverse[readBits(5)]>>3;
+                if(cpdext[j] > 8) {
+                    dist = readBits(8);
+                    dist |= (readBits(cpdext[j]-8)<<8);
+                } else {
+                    dist = readBits(cpdext[j]);
+                }
+                dist += cpdist[j];
+
+                /*fprintf(errfp, "@%d (l%02x,d%04x)\n", SIZE, len, dist);*/
+                for(j=0;j<len;j++) {
+                    var c = buf32k[(bIdx - dist) & 0x7fff];
+                    addBuffer(c);
+                }
             }
-        }
-        }
-    } else if(type==2) {
+            } // while
+        } else if(type==2) {
             var j, n, literalCodes, distCodes, lenCodes;
             var ll = new Array(288+32);    // "static" just to preserve stack
     
@@ -618,9 +618,10 @@ JXG.Util.Unzip = function (barray){
 };
 
 JXG.Util.Unzip.prototype.unzipFile = function(name) {
+    var i;
 	this.unzip();
 	//alert(unzipped[0][1]);
-	for (var i=0;i<unzipped.length;i++){
+	for (i=0;i<unzipped.length;i++){
 		if(unzipped[i][1]==name) {
 			return unzipped[i][0];
 		}
@@ -774,37 +775,42 @@ JXG.Util.Unzip.prototype.unzip = function() {
 	
 function skipdir(){
     var crc, 
-	tmp = [];
+        tmp = [],
+        compSize, size, os, i, c;
+    
 	if ((gpflags & 8)) {
 		tmp[0] = readByte();
 		tmp[1] = readByte();
 		tmp[2] = readByte();
 		tmp[3] = readByte();
 		
-		if (tmp[0] == parseInt("50",16) && tmp[1] == parseInt("4b",16) && tmp[2] == parseInt("07",16) && tmp[3] == parseInt("08",16)){
-			var crc = readByte();
-			crc |= (readByte()<<8);
-			crc |= (readByte()<<16);
-			crc |= (readByte()<<24);
+		if (tmp[0] == parseInt("50",16) && 
+            tmp[1] == parseInt("4b",16) && 
+            tmp[2] == parseInt("07",16) && 
+            tmp[3] == parseInt("08",16))
+        {
+            crc = readByte();
+            crc |= (readByte()<<8);
+            crc |= (readByte()<<16);
+            crc |= (readByte()<<24);
 		} else {
-			var crc = tmp[0] | (tmp[1]<<8) | (tmp[2]<<16) | (tmp[3]<<24);
+			crc = tmp[0] | (tmp[1]<<8) | (tmp[2]<<16) | (tmp[3]<<24);
 		}
 		
-		var compSize = readByte();
+		compSize = readByte();
 		compSize |= (readByte()<<8);
 		compSize |= (readByte()<<16);
 		compSize |= (readByte()<<24);
 		
-		var size = readByte();
+		size = readByte();
 		size |= (readByte()<<8);
 		size |= (readByte()<<16);
 		size |= (readByte()<<24);
 		
 		if (debug)
 			alert("CRC:");
-			
-			
 	}
+
 	if (modeZIP)
 		nextFile();
 	
@@ -812,7 +818,7 @@ function skipdir(){
 	if (tmp[0] != 8) {
 		if (debug)
 			alert("Unknown compression method!");
-			return 0;	
+        return 0;	
 	}
 	
 	gpflags = readByte();
@@ -827,7 +833,7 @@ function skipdir(){
 	readByte();
 	
 	readByte();
-	var os = readByte();
+	os = readByte();
 	
 	if ((gpflags & 4)){
 		tmp[0] = readByte();
@@ -835,13 +841,12 @@ function skipdir(){
 		len = tmp[0] + 256*tmp[1];
 		if (debug)
 			alert("Extra field size: "+len);
-		for (var i=0;i<len;i++)
+		for (i=0;i<len;i++)
 			readByte();
 	}
 	
-    var c;
 	if ((gpflags & 8)){
-		var i=0;
+		i=0;
 		nameBuf=[];
 		while (c=readByte()){
 			if(c == "7" || c == ":")
@@ -861,8 +866,8 @@ function skipdir(){
 	}
 	
 	if ((gpflags & 2)){
-		reabByte();
-		reabByte();
+		readByte();
+		readByte();
 	}
 	
 	DeflateLoop();
@@ -894,9 +899,9 @@ JXG.Util.Base64 = {
 
     // public method for encoding
     encode : function (input) {
-        var output = "";
-        var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-        var i = 0;
+        var output = [],
+            chr1, chr2, chr3, enc1, enc2, enc3, enc4,
+            i = 0;
 
         input = JXG.Util.Base64._utf8_encode(input);
 
@@ -917,21 +922,21 @@ JXG.Util.Base64 = {
                 enc4 = 64;
             }
 
-            output = output +
-            this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
-            this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-
+            output.push([this._keyStr.charAt(enc1),
+                         this._keyStr.charAt(enc2),
+                         this._keyStr.charAt(enc3),
+                         this._keyStr.charAt(enc4)].join(''));
         }
 
-        return output;
+        return output.join('');
     },
 
     // public method for decoding
     decode : function (input, utf8) {
-        var output = "";
-        var chr1, chr2, chr3;
-        var enc1, enc2, enc3, enc4;
-        var i = 0;
+        var output = [],
+            chr1, chr2, chr3,
+            enc1, enc2, enc3, enc4,
+            i = 0;
 
         input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
 
@@ -946,20 +951,21 @@ JXG.Util.Base64 = {
             chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
             chr3 = ((enc3 & 3) << 6) | enc4;
 
-            output = output + String.fromCharCode(chr1);
+            output.push(String.fromCharCode(chr1));
 
             if (enc3 != 64) {
-                output = output + String.fromCharCode(chr2);
+                output.push(String.fromCharCode(chr2));
             }
             if (enc4 != 64) {
-                output = output + String.fromCharCode(chr3);
+                output.push(String.fromCharCode(chr3));
             }
-
         }
         
-        if (utf8)
+        output = output.join(''); 
+        
+        if (utf8) {
             output = JXG.Util.Base64._utf8_decode(output);
-
+        }
         return output;
 
     },
@@ -993,50 +999,54 @@ JXG.Util.Base64 = {
 
     // private method for UTF-8 decoding
     _utf8_decode : function (utftext) {
-        var string = "";
-        var i = 0;
-        var c, c2, c3;
-        c = c2 = c3 = 0;
+        var string = [],
+            i = 0,
+            c = 0, c2 = 0, c3 = 0;
 
         while ( i < utftext.length ) {
             c = utftext.charCodeAt(i);
             if (c < 128) {
-                string += String.fromCharCode(c);
+                string.push(String.fromCharCode(c));
                 i++;
             }
             else if((c > 191) && (c < 224)) {
                 c2 = utftext.charCodeAt(i+1);
-                string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+                string.push(String.fromCharCode(((c & 31) << 6) | (c2 & 63)));
                 i += 2;
             }
             else {
                 c2 = utftext.charCodeAt(i+1);
                 c3 = utftext.charCodeAt(i+2);
-                string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+                string.push(String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63)));
                 i += 3;
             }
         }
-        return string;
+        return string.join('');
     },
     
-    _destrip: function (stripped){
+    _destrip: function (stripped, wrap){
+        var lines = [], lineno, i,
+            destripped = [];
+        
+        if (wrap==null) 
+            wrap = 76;
+            
         stripped.replace(/ /g, "");
-        var lines = [];
-        var lineno = stripped.length / 76;
-        for (var i = 0; i < lineno; i++)
-            lines[i]=stripped.substr(i * 76, 76);
-        if (lineno != stripped.length / 76)
-            lines[lines.length]=stripped.substr(lineno * 76, stripped.length-(lineno * 76));
-        var destripped = "";
-        for (var i = 0; i < lines.length; i++)
-            destripped += lines[i]+"\n";
-        return destripped;
+        lineno = stripped.length / wrap;
+        for (i = 0; i < lineno; i++)
+            lines[i]=stripped.substr(i * wrap, wrap);
+        if (lineno != stripped.length / wrap)
+            lines[lines.length]=stripped.substr(lineno * wrap, stripped.length-(lineno * wrap));
+            
+        for (i = 0; i < lines.length; i++)
+            destripped.push(lines[i]);
+        return destripped.join('\n');
     },
     
     decodeAsArray: function (input){
-        var dec = this.decode(input);
-        var ar = [];
-        for (var i=0;i<dec.length;i++){
+        var dec = this.decode(input),
+            ar = [], i;
+        for (i=0;i<dec.length;i++){
             ar[i]=dec.charCodeAt(i);
         }
         return ar;
