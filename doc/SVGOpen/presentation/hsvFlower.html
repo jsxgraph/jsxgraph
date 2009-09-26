@@ -11,7 +11,7 @@
 		<div id="debug" style="display:none;"></div>
 		<script type="text/javascript">
     /* <![CDATA[ */
-        var brd = JXG.JSXGraph.initBoard('box', {boundingbox:[-4,4,4,-4]});
+        var brd = JXG.JSXGraph.initBoard('box', {boundingbox:[-4,4,4,-4], keepaspectratio:true});
         var H = brd.createElement('slider',[[-3,3.5],[2,3.5],[0,1,360]], {name:'H',fillColor:'black',strokeColor:'black'});
         var S = brd.createElement('slider',[[-3,3],[2,3],[0,1,1]], {name:'S',fillColor:'black',strokeColor:'black'});
         var V = brd.createElement('slider',[[-3,2.5],[2,2.5],[0,1,1]], {name:'V',fillColor:'black',strokeColor:'black'});
