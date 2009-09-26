@@ -9,7 +9,9 @@
 <h1>test</h1>
 
 <script type="text/javascript">
+    JXG.serverBase = '../src/server/'
     JXG.Server.loadModule('jxgtestplugin');
+    JXG.Server.modules.jxgtestplugin.calcTest(10);
 </script>
 
 <form>

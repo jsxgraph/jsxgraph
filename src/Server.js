@@ -40,10 +40,13 @@ JXG.Server.handleError = function(data) {
 	alert('error occured, server says: ' + data.message);
 };
 
-JXG.Server.callServer = function(action, callback, data) {
-	var fileurl,
+JXG.Server.callServer = function(action, callback, data, sync) {
+	var fileurl, passdata,
 	params, id, dataJSONStr,
 	k;
+
+    if(typeof sync == 'undefined' || sync == null)
+        sync = false;
 
 	params = '';
 	for(k in data) {
@@ -62,7 +65,8 @@ JXG.Server.callServer = function(action, callback, data) {
 	if(typeof data.module != 'undefined')
 		this.runningCalls[id].module = data.module;
 
-	fileurl = JXG.serverBase + 'JXGServer.py?action=' + escape(action) + '&id=' + id + '&dataJSON=' + escape(JXG.Util.Base64.encode(dataJSONStr));
+	fileurl = JXG.serverBase + 'JXGServer.py';
+    passdata = 'action=' + escape(action) + '&id=' + id + '&dataJSON=' + escape(JXG.Util.Base64.encode(dataJSONStr));
 
 	this.cbp = function(d) {
 		var str, data,
@@ -70,8 +74,11 @@ JXG.Server.callServer = function(action, callback, data) {
 		i, j;
 
 		str = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(d))).unzip();
-		if(str.length > 0)
+		if(JXG.isArray(str) && str.length > 0)
 			str = str[0][0];
+
+        if(typeof str != 'string')
+            return;
 
 		data =  eval("(" + str + ")");
 
@@ -120,8 +127,47 @@ JXG.Server.callServer = function(action, callback, data) {
 	// bind cbp callback method to JXG.Server to get access to JXG.Server fields from within cpb
 	this.cb = JXG.bind(this.cbp, this);
 
+    // we're using our own XMLHttpRequest object in here because of a/sync and POST
+    if (window.XMLHttpRequest) {
+        AJAX = new XMLHttpRequest();
+        AJAX.overrideMimeType('text/plain; charset=iso-8859-1');
+    } else {                                  
+        AJAX = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    if (AJAX) {
+        // POST is required if data sent to server is too long for a url.
+        // some browsers/http servers don't accept long urls.
+        AJAX.open("POST", fileurl, !sync);
+        AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-	JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw');
+        if(!sync) {
+            // Define function to fetch data received from server
+            // that function returning a function is required to make this.cb known to the function.
+            AJAX.onreadystatechange = (function(cb){ return function () {
+                switch(AJAX.readyState) {
+                    // server is ready for take-off
+                    case 4:
+                        if(AJAX.status != 200)
+                            alert("Fehler:" + AJAX.status);
+                        else  // grab it and call the server callback to debase64, unzip, and parse the data
+                            cb(AJAX.responseText);
+                    break;
+                    default:
+                        return false;
+                    break;
+                }
+            }})(this.cb);
+        }
+
+        // send the data
+        AJAX.send(passdata);
+        if(sync)
+            this.cb(AJAX.responseText);
+    } else {
+        return false;
+    }
+
+//	JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw', !sync);
 };
 
 JXG.Server.loadModule_cb = function(data) {
@@ -131,11 +177,6 @@ JXG.Server.loadModule_cb = function(data) {
 };
 
 JXG.Server.loadModule = function(module) {
-	JXG.Server.callServer('load', JXG.Server.loadModule_cb, {'module': module});
+	JXG.Server.callServer('load', JXG.Server.loadModule_cb, {'module': module}, true);
 };
 
-JXG.Server.waitFor = function(module) {
-	var start = (new Date()).getTime();
-//	while((typeof JXG.Server.modules[module] == 'undefined') && ((new Date()).getTime() - start < 30000)) {};
-	while((typeof JXG.Server.modules[module] == 'undefined')) {};
-};

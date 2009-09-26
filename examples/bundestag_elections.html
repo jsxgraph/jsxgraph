@@ -329,7 +329,7 @@
 </form>
 </div>
 
-<div id="debug" style="display:block;"></div>
+<div id="debug" style="display:block; float: right;"></div>
    <script type="text/javascript">
    /* <![CDATA[ */
         var b = JXG._board('jxgbox', {boundingbox: [-1, 50, 17, -5], axis: true, grid: false}), charts, i,
@@ -363,6 +363,14 @@
             this.infobox.rendNode.style.padding = '5px';
             this.infobox.rendNode.style.backgroundColor = 'white';
         }  
+
+    var elements = [];
+    for(var o in JXG.JSXGraph.elements) {
+        elements.push(o);
+    }
+
+    elements.sort();
+    $('#debug').html(elements.join('<br/>'));
 
   /* ]]> */
   </script>
