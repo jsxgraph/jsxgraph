@@ -382,7 +382,7 @@ JXG.Chart.prototype.updateDataArray = function () {};
 
 JXG.createChart = function(board, parents, attributes) {
     if((parents.length == 1) && (typeof parents[0] == 'string')) {
-        var table = document.getElementById(parents[0]),            data, row, i, j, col, cell, charts = [], w, x,
+        var table = document.getElementById(parents[0]),            data, row, i, j, col, cell, charts = [], w, x, showRows,
             originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len;
         if(typeof table != 'undefined') {
             // extract the data
@@ -431,21 +431,23 @@ JXG.createChart = function(board, parents, attributes) {
             board.suspendUpdate();
 
             len = data.length;
-            for(i=0; i<len; i++) {
-
-                cont = true;
-                if (attributes['rows'] && JXG.isArray(attributes['rows'])) {
+            showRows = [];
+            if (attributes['rows'] && JXG.isArray(attributes['rows'])) {
+                for(i=0; i<len; i++) {
                     for(j=0; j<attributes['rows'].length; j++) {
                         if((attributes['rows'][j] == i) || (attributes['withHeaders'] && attributes['rows'][j] == row[i])) {
-                            cont = false;
+                            showRows.push(data[i]);
                             break;
                         }
                     }
-                } else
-                    cont = false;
+                }
+            } else {
+                showRows = data;
+            }
 
-                if(cont)
-                    continue;
+            len = showRows.length;
+
+            for(i=0; i<len; i++) {
 
                 x = [];
                 if(attributes['chartStyle'] && attributes['chartStyle'].indexOf('bar') != -1) {
@@ -455,7 +457,7 @@ JXG.createChart = function(board, parents, attributes) {
                         w = 0.8;
                     }
                     x.push(1 - w/2. + (i+0.5)*w/(1.0*len));
-                    for(j=1; j<data[i].length; j++) {
+                    for(j=1; j<showRows[i].length; j++) {
                         x.push(x[j-1] + 1);
                     }
                     attributes['width'] = w/(1.0*len);
@@ -487,9 +489,9 @@ JXG.createChart = function(board, parents, attributes) {
                     attributes['highlightFillColor'] = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,0.6);
                 
                 if(attributes['chartStyle'] && attributes['chartStyle'].indexOf('bar') != -1) {
-                    charts.push(new JXG.Chart(board, [x, data[i]], attributes));
+                    charts.push(new JXG.Chart(board, [x, showRows[i]], attributes));
                 } else
-                    charts.push(new JXG.Chart(board, [data[i]], attributes));
+                    charts.push(new JXG.Chart(board, [showRows[i]], attributes));
             }
 
             board.unsuspendUpdate();

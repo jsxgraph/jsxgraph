@@ -333,29 +333,32 @@
    <script type="text/javascript">
    /* <![CDATA[ */
         var b = JXG._board('jxgbox', {boundingbox: [-1, 50, 17, -5], axis: true, grid: false}), charts, i,
-            colors = ['black', 'black', 'red', 'yellow', 'green', '#8B00FF', '#965220', '#96abee', 'gray', '#965220', 'red', 'blue', 'orange'],
+            colors = ['black', '#333333', 'red', 'yellow', 'green', '#8B00FF', '#965220', '#96abee', 'gray', '#965220', 'red', 'blue', 'orange'],
             hStroke = [];
 
         function all() {
             b.removeObject(charts);
 
-	    	charts = b.create('chart', ['btw'], {chartStyle: 'point,line', withHeaders: true, strokeColor: colors, fillColor: colors, highlightFillColor: colors, highlightStrokeColor: colors, rows: []});
+	    	charts = b.create('chart', ['btw'], {chartStyle: 'point,line', withHeaders: true, strokeColor: colors, fillColor: colors, highlightFillColor: colors, highlightStrokeColor: colors});
         }
 
         function select_parties() {
-            var i;
+            var i, chartType = 'line', color = [];
 
             b.removeObject(charts);
 
             var part = [];
-            $('input[name=parties]').each(function () { if(this.checked) { part.push(parseInt($(this).val())); } });
+            $('input[name=parties]').each(function () { if(this.checked) { part.push(parseInt($(this).val())); color.push(colors[parseInt($(this).val())]); } });
 
-	    	charts = b.create('chart', ['btw'], {chartStyle: 'point,line', withHeaders: true, strokeColor: colors, fillColor: colors, highlightFillColor: colors, highlightStrokeColor: colors, rows: part});
+            if(part.length <4)
+                chartType = 'bar';
+
+	    	charts = b.create('chart', ['btw'], {chartStyle: 'point,' + chartType, withHeaders: true, strokeColor: color, fillColor: color, highlightFillColor: color, highlightStrokeColor: color, rows: part});
         }
 
         b.highlightInfobox = function(x,y,el) {
             var years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005];
-            this.infobox.setText('<span style="color:black;font-weight:bold">' + years[Math.floor(x)-1] + ': ' + y + ' %</span>');
+            this.infobox.setText('<span style="color:black;font-weight:bold">' + years[Math.round(x)-1] + ': ' + y + ' %</span>');
             this.infobox.rendNode.style.border = 'groove ' + el.visProp['strokeColor'] + ' 2px';
             this.infobox.rendNode.style.padding = '5px';
             this.infobox.rendNode.style.backgroundColor = 'white';

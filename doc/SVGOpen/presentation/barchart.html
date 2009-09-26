@@ -16,17 +16,17 @@
             board.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});            
 
             var s = board.createElement('slider', [[8,7],[11,7],[1,1,1.5]], {name:'S',strokeColor:'black',fillColor:'white'});
-            var f = [function(){return this.board.round(s.Value()*4.5,2);},
-                     function(){return this.board.round(s.Value()*(-1),2);},
-                     function(){return this.board.round(s.Value()*3,2);},
-                     function(){return this.board.round(s.Value()*2,2);},
-                     function(){return this.board.round(s.Value()*(-0.5),2);},
-                     function(){return this.board.round(s.Value()*5.5,2);},
-                     function(){return this.board.round(s.Value()*2.5,2);},
-                     function(){return this.board.round(s.Value()*(-0.75),2);},
-                     function(){return this.board.round(s.Value()*(3.5),2);},
-                     function(){return this.board.round(s.Value()*(2),2);},
-                     function(){return this.board.round(s.Value()*(-1.25),2);},
+            var f = [function(){return board.round(s.Value()*4.5,2);},
+                     function(){return parseFloat(board.round(s.Value()*(-1),2));},
+                     function(){return board.round(s.Value()*3,2);},
+                     function(){return board.round(s.Value()*2,2);},
+                     function(){return parseFloat(board.round(s.Value()*(-0.5),2));},
+                     function(){return board.round(s.Value()*5.5,2);},
+                     function(){return board.round(s.Value()*2.5,2);},
+                     function(){return parseFloat(board.round(s.Value()*(-0.75),2));},
+                     function(){return board.round(s.Value()*(3.5),2);},
+                     function(){return board.round(s.Value()*(2),2);},
+                     function(){return parseFloat(board.round(s.Value()*(-1.25),2));},
                      ];
             var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
             chart[0][0].setProperty('fillColor:#8E1B77');
@@ -42,7 +42,7 @@
             chart[0][10].setProperty('fillColor:#C1E212');
             
             var dataArr = [4,1,3,2,5,6.5,1.5,2,0.5,1.5,-1];            
-            var chart2 = board.createElement('chart', dataArr, {chartStyle:'line,point'});
+            var chart2 = board.createElement('chart', [f], {chartStyle:'line,point'});
             chart2[0].setProperty('strokeColor:black','strokeWidth:2pt');
             for(var i=0; i<11;i++) {
                 chart2[1][i].setProperty('strokeColor:black','fillColor:white','style:9','strokeWidth:2pt');
