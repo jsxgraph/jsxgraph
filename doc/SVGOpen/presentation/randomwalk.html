@@ -3,39 +3,43 @@
    		<title>JSXGraph example</title>
 		<link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
 		<script type="text/javascript" src="distrib/jquery.min.js"></script>
-		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+		<script type="text/javascript" src="../../../src/loadjsxgraph.js"></script> <!-- TODO: has to be set back! -->
 	</head>
 	<body class="jsxgraph_body">
+        <form><input type="button" value="Run!" onClick="run()"></form>
 		<div id="box" class="jxgbox jsxgraph_present"></div>
 		<!-- Drawing area -->
 		<div id="debug" style="display:none;"></div>
 		<script type="text/javascript">
-        var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, unitX: 3, unitY: 3});
+        var brd = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 300, originY: 300, unitX: 3, unitY: 3});
         var t = brd.createElement('turtle');
          
         function run() {
-          var i,j,dist,sumdist=0.0;
-          var stepSize = 5; 
-          brd.suspendUpdate();
-          var nr = 40; // can be changed
-          for (i=0;i<nr;i++) {
-             t.setPenColor(JXG.hsv2rgb(Math.round(Math.random()*255),Math.random(),Math.random()));
-             for (j=0;j<100;j++) {
-                var a = Math.floor(360*Math.random()); 
-                t.right(a); 
-                t.forward(stepSize);
-             }
-             dist = t.pos[0]*t.pos[0]+t.pos[1]*t.pos[1];
-             sumdist += dist;
-             t.home();
-          }
-          $('output').value = (sumdist/nr).toFixed(3);
-          brd.unsuspendUpdate();
+            var i, j, dist, sumdist=0.0, color, a, nr = 25, stepSize=5;
+            brd.suspendUpdate();
+            for (i=0;i<nr;i++) {
+                color = JXG.hsv2rgb(Math.round(Math.random()*360),Math.random(),Math.random())
+                t.setPenColor(color);
+                t.setHighlightPenColor(color);
+                //t.objects[i].setProperty('highlightStrokeColor:'+color);
+                t.objects[i].highlight = function() { this.board.renderer.setObjectStrokeWidth(this,'3px');}
+                t.objects[i].noHighlight = function() { this.board.renderer.setObjectStrokeWidth(this,'1px');}
+                for (j=0;j<100;j++) {
+                    a = Math.floor(360*Math.random()); 
+                    t.right(a); 
+                    t.forward(stepSize);
+                }
+                dist = t.pos[0]*t.pos[0]+t.pos[1]*t.pos[1];
+                sumdist += dist;
+                t.home();
+            }
+            $('output').value = (sumdist/nr).toFixed(3);
+            brd.unsuspendUpdate();
+            t.ht();
         }
         function clearturtle() {
-          t.cs();
+            t.cs();
         }
-        run();
   </script>
 </body>
 </html>

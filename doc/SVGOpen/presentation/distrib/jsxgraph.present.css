@@ -130,6 +130,15 @@
 	-moz-border-radius:			10px;
 	opacity:					0.8;
 }
+
+.jsxgraph_present_big {
+	position:					relative; /* for IE 7 */  
+   	width:						800px;
+	height:						580px; 
+	overflow:					hidden; 
+        border-width:1px;
+}
+
 .jsxgraph_present {
 	position:					relative; /* for IE 7 */  
    	width:						680px;

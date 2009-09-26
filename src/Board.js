@@ -2067,12 +2067,12 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     var Int = JXG.Math.Numerics.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
     var t = this.createElement('text', [
         function () { return pb_on_curve.X() + 0.2; }, 
-        function () { return pb_on_curve.Y() - 1.0; },
+        function () { return pb_on_curve.Y() - 0.8; },
         function () {
                 var Int = JXG.Math.Numerics.I([points[0].coords.usrCoords[1], points[points.length-1].coords.usrCoords[1]], curve.yterm);
                 return '&int; = ' + (Int).toFixed(4);
             }
-        ]);
+        ],{labelColor:atts['labelColor']});
 
     var attribs = {};
     if( (typeof atts != 'undefined') && (atts != null))

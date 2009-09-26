@@ -295,6 +295,19 @@ JXG.Turtle.prototype.setPenColor = function(colStr) {
 };
 
 /**
+*  Sets the highlight pen color. Equivalent to setProperty({highlightStrokeColor:color})
+* @param {string} color
+* @type {JXG.Turtle}
+* @return pointer to the turtle object
+*/
+JXG.Turtle.prototype.setHighlightPenColor = function(colStr) { 
+    this.attributes.highlightStrokeColor = colStr; 
+    this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.objects.push(this.curve);
+    return this;
+};
+
+/**
 * Sets properties of the turtle, see also {@link JXG.GeometryElement#setProperty}.
 * Sets the property for all curves of the turtle.
 * @param {Object} key:value pairs
@@ -528,7 +541,7 @@ JXG.Turtle.prototype.Y = function(target) {
  */
 JXG.Turtle.prototype.hasPoint = function (x,y) {
     var i, el;
-    for(i=0;i<this.objects.length;i++) {  // run through all curves oof this turtle
+    for(i=0;i<this.objects.length;i++) {  // run through all curves of this turtle
         el = this.objects[i];
         if (el.type==JXG.OBJECT_TYPE_CURVE) {
             if (el.hasPoint(x,y)) {

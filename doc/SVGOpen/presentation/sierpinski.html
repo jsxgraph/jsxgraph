@@ -6,18 +6,22 @@
 		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
 	</head>
 	<body class="jsxgraph_body">
+        <form>
+            <input type="text" value="5" name='Level' style='margin-left:10px'>
+            <input type="button" value="Set Level!" onClick="level = 1*document.forms[0].Level.value-1; run();">
+        </form>
 		<div id="box" class="jxgbox jsxgraph_present"></div>
 		<!-- Drawing area -->
 		<div id="debug" style="display:none;"></div>
 		<script type="text/javascript">
         /* <![CDATA[ */
 
-        board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 390, unitX: 380, unitY: 380});
+        board = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 100, originY: 420, unitX: 380, unitY: 380 });
                 
         var level = 4;
         function run() {
             JXG.JSXGraph.freeBoard(board);        
-            board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 390, unitX: 380, unitY: 380});            
+            board = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 100, originY: 420, unitX: 380, unitY: 380 });            
             level++;
             board.suspendUpdate();
              paint();
@@ -32,21 +36,23 @@
             drawTriangle({x:0,y:0}, {x:1,y:0}, {x:0.5,y:1}, level);
         }
         
-        function drawPolygon(xCoords, yCoords,level) {
-            p1 = board.createElement('point', [xCoords[0], yCoords[0]], {visible:false,name:''});
-            p2 = board.createElement('point', [xCoords[1], yCoords[1]], {visible:false,name:''});
-            p3 = board.createElement('point', [xCoords[2], yCoords[2]], {visible:false,name:''});
-            var colors=['#000000','#665566','#994499','#BB33BB','#EE99FF','#FFCCFF'];
-            l1 = board.createElement('line',[p1,p2],{straightFirst:false,straightLast:false,strokeColor:colors[level%6],name:''});
-            l2 = board.createElement('line',[p2,p3],{straightFirst:false,straightLast:false,strokeColor:colors[level%6],name:''});
-            l3 = board.createElement('line',[p3,p1],{straightFirst:false,straightLast:false,strokeColor:colors[level%6],name:''});
+        function drawPolygon(xCoords, yCoords,actlvl) {
+            p1 = board.createElement('point', [xCoords[0], yCoords[0]], {visible:false,withLabel:false});
+            p2 = board.createElement('point', [xCoords[1], yCoords[1]], {visible:false,withLabel:false});
+            p3 = board.createElement('point', [xCoords[2], yCoords[2]], {visible:false,withLabel:false});
+            l1 = board.createElement('segment',[p1,p2],{strokeColor:JXG.hsv2rgb(180/level*actlvl+160,0.85,0.85)});
+            l2 = board.createElement('segment',[p2,p3],{strokeColor:JXG.hsv2rgb(180/level*actlvl+160,0.85,0.85)});
+            l3 = board.createElement('segment',[p3,p1],{strokeColor:JXG.hsv2rgb(180/level*actlvl+160,0.85,0.85)});
+            l1.highlight = function () {return;};
+            l2.highlight = function () {return;};
+            l3.highlight = function () {return;};
         }
 
         function drawTriangle(a, b, c, level) {
             if (level==0) return;
             level -= 1;
 
-            // In das übergebene Dreieck, wird ein auf dem Kopf stehendes Dreieck eingefügt
+            // In das uebergebene Dreieck, wird ein auf dem Kopf stehendes Dreieck eingefuegt
             var xCoords = [c.x, (c.x+b.x)/2, (a.x+c.x)/2];
             var yCoords = [b.y, (c.y+a.y)/2, (c.y+a.y)/2];
 

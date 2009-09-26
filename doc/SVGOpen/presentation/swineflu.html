@@ -6,13 +6,7 @@
 		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
 	</head>
 	<body class="jsxgraph_body">
-    The lines in the JSXGraph-simulation below have the following meaning:
-    <ul>
- <li><span style="color:Blue">Blue: Rate of susceptible population</span></li>
- <li><span style="color:red">Red: Rate of infected population</span></li>
- <li><span style="color:green">Green: Rate of recovered population</span></li>
- </ul>
-<form><input type="button" value="clear and run a simulation of 200 days" onClick="clearturtle();run()">
+<form><input type="button" value="clear and run a simulation of 200 days" onClick="t1.setProperty('visible:true');t2.setProperty('visible:true');t3.setProperty('visible:true');clearturtle();run()">
 <input type="button" value="stop" onClick="stop()">
 <input type="button" value="continue" onClick="goOn()"></form>
 		<div id="box" class="jxgbox jsxgraph_present"></div>
@@ -20,7 +14,7 @@
 		<div id="debug" style="display:none;"></div>
 		<script type="text/javascript">
     /* <![CDATA[ */
-        var brd = JXG.JSXGraph.initBoard('box', {originX: 20, originY: 300, unitX: 3, unitY: 250, axis:true});
+        var brd = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 20, originY: 300, unitX: 3, unitY: 250, axis:true});
          
         var S = brd.createElement('turtle',[],{strokeColor:'blue',strokeWidth:3});
         var I = brd.createElement('turtle',[],{strokeColor:'red',strokeWidth:3});
@@ -41,6 +35,9 @@
                                    ": infected="+(1000000*I.Y()).toFixed(1)+
                                    " recovered="+(1000000*R.Y()).toFixed(1)+
                                    " dead="+(1000000*R.Y()*mort.Value()*0.01).toFixed(0);}]);
+        t1 = brd.createElement('text', [5,0.9,"Rate of susceptible population"], {strokeColor:'blue',visible:false});
+        t2 = brd.createElement('text', [5,0.8,"Rate of infected population"], {strokeColor:'red',visible:false});
+        t3 = brd.createElement('text', [5,0.7,"Rate of recovered population"], {strokeColor:'green',visible:false});
          
         S.hideTurtle();
         I.hideTurtle();

@@ -6,7 +6,7 @@
 		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
 	</head>
 	<body class="jsxgraph_body">
-		<div id="box" class="jxgbox jsxgraph_present"></div>
+		<div id="box" class="jxgbox jsxgraph_present_big"></div>
 		<!-- Drawing area -->
 		<div id="debug" style="display:none;"></div>
 		<script type="text/javascript">
@@ -14,7 +14,7 @@
    
 
     var dataArr = [30,16,12,8,8,8,6,4,4,2];
-    var board = JXG.JSXGraph.initBoard('box', {originX: 120, originY: 400, unitX: 50, unitY: 50});
+    var board = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 120, originY: 400, unitX: 50, unitY: 50});
     board.containerObj.style.backgroundColor = 'black';
     board.suspendUpdate();
 
