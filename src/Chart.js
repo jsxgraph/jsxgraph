@@ -162,16 +162,12 @@ JXG.Chart.prototype.drawFit = function(board, parents, attributes) {
 };
 
 JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
-    var i;
-    var pols = [];
+    var i, pols = [], x = parents[0], y = parents[1], w, xp0,xp1,xp2, yp, ypL, colorArray, p = [];
     if (attributes['fillOpacity'] == undefined) {
         attributes['fillOpacity'] = 0.6;
     }
-    var x = parents[0];
-    var y = parents[1];
     
     // Determine the width of the bars
-    var w;
     if (attributes && attributes['width']) {  // width given
         w = attributes['width'];
     } else {
@@ -187,9 +183,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
         w *=0.8;
     }
 
-    for (i=0;i<x.length;i++) {
-        var xp0,xp1,xp2, yp, ypL;
-        
+    for (i=0;i<x.length;i++) {        
         if (typeof x[i]=='function') {  // Not yet
             xp0 = function() { return x[i]()-w*0.5; };
             xp1 = function() { return x[i](); };
@@ -205,8 +199,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
             ypL = y[i]+0.2;
         }
         yp = y[i];
-        
-        var p = [];
+       
         if (attributes['dir']=='horizontal') {  // horizontal bars
             p[0] = board.createElement('point',[0,xp0], {name:'',fixed:true,visible:false});
             p[1] = board.createElement('point',[yp,xp0], {name:'',fixed:true,visible:false});
@@ -225,7 +218,8 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
             }
         }
         attributes['withLines'] = false;
-        attributes['fillColor'] = attributes['colorArray'][i%attributes['colorArray'].length];
+        colorArray = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
+        attributes['fillColor'] = colorArray[i%colorArray.length];
         pols[i] = board.createElement('polygon',p,attributes);
     }
     this.rendNode = pols[0].rendNode;  // This is needed in setProperty
