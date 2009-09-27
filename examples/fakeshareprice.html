@@ -6,8 +6,8 @@
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h2>Get shareprices with YahooFinance server module</h2>
-In case there's no internet connection goto <a href="fakeshareprice.html">fake data</a> example.
+<h2>Get shareprices with YahooFinance server module, FAKE version</h2>
+Goto <a href="shareprice.html">real data</a> example.
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
 </div>
@@ -15,7 +15,7 @@ In case there's no internet connection goto <a href="fakeshareprice.html">fake d
 <script type="text/javascript">
 /* <![CDATA[ */
 
-    var x = [], y = [], g, board, val, hi, lo, share = "^DJI"; //"^GDAXI";
+    var x = [], y = [], g, board, val, hi, lo, share = "^GDAXI"; //"^GDAXI";
 
     var init = function (data) {
         hi = data.max*1.00002;
@@ -25,7 +25,7 @@ In case there's no internet connection goto <a href="fakeshareprice.html">fake d
     }
 
     JXG.Server.loadModule('YahooFinance');
-    JXG.Server.modules.YahooFinance.getMinMax(share, init);
+    JXG.Server.modules.YahooFinance.getFakeMinMax(share, init);
 
     var cb = function (data) {
         x.push(x.length+1);
@@ -42,7 +42,7 @@ In case there's no internet connection goto <a href="fakeshareprice.html">fake d
         board.update();
     }
 
-    window.setInterval('JXG.Server.modules.YahooFinance.getCurrentSharePrice("' + share + '", cb);', 1300);
+    window.setInterval('JXG.Server.modules.YahooFinance.getFakeCurrentSharePrice("' + share + '", cb);', 1300);
 
   /* ]]> */
   </script>

@@ -1,12 +1,22 @@
 from JXGServerModule import JXGServerModule
 import JXG
 import urllib2, httplib, StringIO, gzip
+import datetime, math, random
 
 class YahooFinance(JXGServerModule):
+
+    def __init__(self):
+        self.djmin = 9641.01
+        self.djmax = 9735.93
+        self.daxmin = 5559.47
+        self.daxmax = 5620.13
+        JXGServerModule.__init__(self)
 
     def init(self, resp):
         resp.addHandler(self.getCurrentSharePrice, 'function(data) { alert(data.price); }')
         resp.addHandler(self.getMinMax, 'function(data) { }')
+        resp.addHandler(self.getFakeCurrentSharePrice, 'function(data) { alert(data.price); }')
+        resp.addHandler(self.getFakeMinMax, 'function(data) { }')
         return
 
     def _getData(self, share):
@@ -42,4 +52,30 @@ class YahooFinance(JXGServerModule):
 
         resp.addData('max', datalist[6])
         resp.addData('min', datalist[7])
+        return
+
+    def getFakeCurrentSharePrice(self, resp, share):
+        if share=='^DJI':
+            smax = self.djmax
+            smin = self.djmin
+        else:
+            smax = self.daxmax
+            smin = self.daxmin
+        
+        diff = smax - smin
+        base = smin + diff/2. * (1. + math.sin(datetime.datetime.now().second * 2*math.pi))
+        price = base + random.uniform(-diff/60., diff/60.)
+        resp.addData('price', price)
+        return
+
+    def getFakeMinMax(self, resp, share):
+        if share=='^DJI':
+            smax = self.djmax
+            smin = self.djmin
+        else:
+            smax = self.daxmax
+            smin = self.daxmin
+        
+        resp.addData('max', smax)
+        resp.addData('min', smin)
         return

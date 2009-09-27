@@ -83,7 +83,7 @@ JXG.Server.callServer = function(action, callback, data, sync) {
 		data =  eval("(" + str + ")");
 
 		if(data.type == 'error') {
-			handleError(data);
+			this.handleError(data);
 		} else if (data.type == 'response') {
 			id = data.id;
 
