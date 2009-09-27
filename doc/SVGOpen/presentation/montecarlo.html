@@ -56,10 +56,10 @@
                 tin += inp;
                 tout += outp;
 
-                text += '<b><u>Current</u></b><br/>In: ' + inp + ', out: ' + outp + ', total: ' + (inp+outp) + '; ratio: ' 
+                text += '<!--b><u>Current</u></b><br/>In: ' + inp + ', out: ' + outp + ', total: ' + (inp+outp) + '; ratio: ' 
                         + (inp/(inp+outp)).toString().slice(0,5) + ', ratio*4: ' + (4*inp/(inp+outp)).toString().slice(0,5) 
-                        + '.<br /><br /><b><u>Total</u></b> (' + count + ' updates in total. Do another' 
-                        + '<a href="#" onclick="for(var i=0;i<100;i++) board2.update();">100 Updates</a>.)<br/>In: ' + tin + ', out: ' 
+                        + '.<br /><br /><b><u>Total</u></b> (//-->' + count + ' updates in total. Do another' 
+                        + ' <a href="#" onclick="for(var i=0;i<100;i++) board2.update();">100 Updates</a>.<!--)--><br/>In: ' + tin + ', out: ' 
                         + tout + ', total: ' + (tin+tout) + '; ratio: ' + (tin/(tin+tout)).toString().slice(0,5) + ', ratio*4: ' 
                         + (4*tin/(tin+tout)).toString().slice(0,8);
                 document.getElementById('resulttext').innerHTML = text;
