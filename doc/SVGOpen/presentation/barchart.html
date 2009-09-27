@@ -30,11 +30,11 @@
             var chart = board.createElement('chart', [f], 
                                             {chartStyle:'bar',width:0.8,labels:f,
                                              colorArray:['#8E1B77','#BE1679','#DC1765','#DA2130','#DB311B','#DF4917','#E36317','#E87F1A',
-                                                         '#F1B112','#FCF302','#C1E212']});
+                                                         '#F1B112','#FCF302','#C1E212'],shadow:true});
             
             var dataArr2 = [4,1,3,2,5,6.5,1.5,2,0.5,1.5,-1];            
             var chart2 = board.createElement('chart', dataArr2, {chartStyle:'line,point'});
-            chart2[0].setProperty('strokeColor:black','strokeWidth:2pt');
+            chart2[0].setProperty('strokeColor:black','strokeWidth:2pt','shadow:true');
             for(var i=0; i<11;i++) {
                 chart2[1][i].setProperty({strokeColor:'black',fillColor:'white',face:'[]', size:4, strokeWidth:'2pt'});
             }

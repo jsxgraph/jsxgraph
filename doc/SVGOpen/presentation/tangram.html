@@ -15,6 +15,13 @@
     
         function solve() {
             t=400;
+            f1.setProperty('shadow:false');
+            f2.setProperty('shadow:false');
+            f3.setProperty('shadow:false');
+            f4.setProperty('shadow:false');
+            f5.setProperty('shadow:false');
+            f6.setProperty('shadow:false');
+            f7.setProperty('shadow:false');
             board.suspendUpdate();
             p11.moveTo([16,5],t);
             p21.moveTo([16,5],t);
@@ -68,7 +75,7 @@
         var c11 = board.createElement('circle',[p11,5],{visible:false});
         var p12 = board.createElement('glider',[21,16,c11],{face:'plus',withLabel:false,visible:true});
         var p13 = board.createElement('point',[function() {return -p12.Y()+p11.Y()+p12.X()},function() {return -p11.X()+p12.X()+p12.Y()}],{face:'circle',fillColor:'blue',withLabel:false,visible:false});
-        var f1 = board.createElement('polygon',[p11,p12,p13],{fillcolor:'#99FF00',visible:true});
+        var f1 = board.createElement('polygon',[p11,p12,p13],{fillcolor:'#99FF00',visible:true,shadow:true});
         for(i=0; i<f1.borders.length; i++) {
             f1.borders[i].setProperty('strokeColor:black');
         }
@@ -78,7 +85,7 @@
         var c21 = board.createElement('circle',[p21,5/2.0*Math.sqrt(2)],{visible:false});
         var p22 = board.createElement('glider',[11.0+5/2.0*Math.sqrt(2),16,c21],{face:'plus',withLabel:false,visible:true});
         var p23 = board.createElement('point',[function() {return -p22.Y()+p21.Y()+p22.X()},function() {return -p21.X()+p22.X()+p22.Y()}],{face:'circle',fillColor:'blue',withLabel:false,visible:false});
-        var f2 = board.createElement('polygon',[p21,p22,p23],{fillcolor:'#0099CC',visible:true});
+        var f2 = board.createElement('polygon',[p21,p22,p23],{fillcolor:'#0099CC',visible:true,shadow:true});
         for(i=0; i<f2.borders.length; i++) {
             f2.borders[i].setProperty('strokeColor:black');
         }
@@ -88,7 +95,7 @@
         var c31 = board.createElement('circle',[p31,5/2.0*Math.sqrt(2)],{visible:false});
         var p32 = board.createElement('glider',[11,21,c31],{face:'plus',withLabel:false,visible:true});
         var p33 = board.createElement('point',[function() {return -p32.Y()+p31.Y()+p32.X()},function() {return -p31.X()+p32.X()+p32.Y()}],{face:'circle',fillColor:'blue',withLabel:false,visible:false});
-        var f3 = board.createElement('polygon',[p31,p32,p33],{fillcolor:'#FFFF00',visible:true});
+        var f3 = board.createElement('polygon',[p31,p32,p33],{fillcolor:'#FFFF00',visible:true,shadow:true});
         for(i=0; i<f3.borders.length; i++) {
             f3.borders[i].setProperty('strokeColor:black');
         }    
@@ -98,7 +105,7 @@
         var c41 = board.createElement('circle',[p41,5*Math.sqrt(2)],{visible:false});
         var p42 = board.createElement('glider',[1+5*Math.sqrt(2),5,c41],{face:'plus',withLabel:false,visible:true});
         var p43 = board.createElement('point',[function() {return -p42.Y()+p41.Y()+p42.X()},function() {return -p41.X()+p42.X()+p42.Y()}],{face:'circle',fillColor:'blue',withLabel:false,visible:false});
-        var f4 = board.createElement('polygon',[p41,p42,p43],{fillcolor:'#FFCCFF',visible:true});
+        var f4 = board.createElement('polygon',[p41,p42,p43],{fillcolor:'#FFCCFF',visible:true,shadow:true});
         for(i=0; i<f4.borders.length; i++) {
             f4.borders[i].setProperty('strokeColor:black');
         }  
@@ -108,7 +115,7 @@
         var c51 = board.createElement('circle',[p51,5*Math.sqrt(2)],{visible:false});
         var p52 = board.createElement('glider',[1,13.5,c51],{face:'plus',withLabel:false,visible:true});
         var p53 = board.createElement('point',[function() {return -p52.Y()+p51.Y()+p52.X()},function() {return -p51.X()+p52.X()+p52.Y()}],{face:'circle',fillColor:'blue',withLabel:false,visible:false});
-        var f5 = board.createElement('polygon',[p51,p52,p53],{fillcolor:'#996699',visible:true});
+        var f5 = board.createElement('polygon',[p51,p52,p53],{fillcolor:'#996699',visible:true,shadow:true});
         for(i=0; i<f5.borders.length; i++) {
             f5.borders[i].setProperty('strokeColor:black');
         }    
@@ -119,7 +126,7 @@
         var p62 = board.createElement('glider',[1+5/2*Math.sqrt(2),15,c61],{face:'plus',withLabel:false,visible:true});
         var p63 = board.createElement('point',[function() {return -p62.Y()+p61.Y()+p62.X()},function() {return -p61.X()+p62.X()+p62.Y()}],{face:'circle',fillColor:'blue',withLabel:false,visible:false});    
         var p64 = board.createElement('point',[function() {return -p62.Y()+p61.Y()+p61.X()},function() {return -p61.X()+p62.X()+p61.Y()}],{face:'circle',fillColor:'blue',withLabel:false,visible:false}); 
-        var f6 = board.createElement('polygon',[p61,p62,p63,p64],{fillcolor:'#EE0000',visible:true});
+        var f6 = board.createElement('polygon',[p61,p62,p63,p64],{fillcolor:'#EE0000',visible:true,shadow:true});
         for(i=0; i<f6.borders.length; i++) {
             f6.borders[i].setProperty('strokeColor:black');
         }      
@@ -130,7 +137,7 @@
         var p72 = board.createElement('glider',[8.5,17,c71],{face:'plus',withLabel:false,visible:true});
         var p73 = board.createElement('point',[function() {return p72.X()-p71.X()-p72.Y()+p71.Y()+p72.X()},function() {return p72.X()-p71.X()+p72.Y()-p71.Y()+p72.Y()}],{face:'circle',fillColor:'blue',withLabel:false,visible:false});
         var p74 = board.createElement('point',[function() {return p72.X()-p71.X()-p72.Y()+p71.Y()+p71.X()},function() {return p72.X()-p71.X()+p72.Y()-p71.Y()+p71.Y()}],{face:'rectangle',fillColor:'blue',withLabel:false,visible:false}); 
-        var f7 = board.createElement('polygon',[p71,p72,p73,p74],{fillcolor:'#FFCC33',visible:true});
+        var f7 = board.createElement('polygon',[p71,p72,p73,p74],{fillcolor:'#FFCC33',visible:true,shadow:true});
         for(i=0; i<f7.borders.length; i++) {
             f7.borders[i].setProperty('strokeColor:black');
         } 
