@@ -15,25 +15,30 @@
         var t = brd.createElement('turtle');
          
         function run() {
-            var i, j, dist, sumdist=0.0, color, a, nr = 25, stepSize=5;
+            var i, j, //dist, sumdist=0.0, 
+                color, a, nr = 25, stepSize=5;
             brd.suspendUpdate();
             for (i=0;i<nr;i++) {
-                color = JXG.hsv2rgb(Math.round(Math.random()*360),Math.random(),Math.random())
+                color = JXG.hsv2rgb(Math.round(Math.random()*360),Math.random(),Math.random());
+
                 t.setPenColor(color);
                 t.setHighlightPenColor(color);
+
                 //t.objects[i].setProperty('highlightStrokeColor:'+color);
-                t.objects[i].highlight = function() { this.board.renderer.setObjectStrokeWidth(this,'3px');}
-                t.objects[i].noHighlight = function() { this.board.renderer.setObjectStrokeWidth(this,'1px');}
+                j = t.objects.length-1; 
+                t.objects[j].highlight = function() { this.board.renderer.setObjectStrokeWidth(this,'3px');}
+                t.objects[j].noHighlight = function() { this.board.renderer.setObjectStrokeWidth(this,'1px');}
+
                 for (j=0;j<100;j++) {
                     a = Math.floor(360*Math.random()); 
                     t.right(a); 
                     t.forward(stepSize);
                 }
-                dist = t.pos[0]*t.pos[0]+t.pos[1]*t.pos[1];
-                sumdist += dist;
+                //dist = t.pos[0]*t.pos[0]+t.pos[1]*t.pos[1];
+                //sumdist += dist;
                 t.home();
             }
-            $('output').value = (sumdist/nr).toFixed(3);
+            //$('output').value = (sumdist/nr).toFixed(3);
             brd.unsuspendUpdate();
             t.ht();
         }
