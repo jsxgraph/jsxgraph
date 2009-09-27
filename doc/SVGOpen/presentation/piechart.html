@@ -13,7 +13,7 @@
     /* <![CDATA[ */
    
 
-    var dataArr = [30,16,12,8,8,8,6,4,4,2];
+    var dataArr = [30,16,14,10,10,8,6,6,4,4];
     var board = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 120, originY: 400, unitX: 50, unitY: 50});
     board.containerObj.style.backgroundColor = 'black';
     board.suspendUpdate();
@@ -27,6 +27,81 @@
          highlightOnSector:true,
          gradient:'linear'}
     );
+
+    for(var i=0; i< a[0].arcs.length; i++) {
+        a[0].arcs[i].highlight = function() {
+            this.board.renderer.highlight(this);
+            if(this.label.content != null) {
+                this.label.content.rendNode.style.fontSize = (2*this.board.fontSize) + 'px';
+            }
+            
+            var dx = - this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
+            var dy = - this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+            
+            var ddx = 20/(this.board.stretchX);
+            var ddy = 20/(this.board.stretchY);
+            var z = Math.sqrt(dx*dx+dy*dy);
+            
+            this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx*(z+ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy*(z+ddy)/z],
+                                                this.board);
+            this.board.renderer.updateArc(this); 
+            
+            this.board.renderer.updateLine(this.additionalLines[0]);
+            
+            dx = - this.midpoint.coords.usrCoords[1] + this.additionalLines[1].point2.coords.usrCoords[1];
+            dy = - this.midpoint.coords.usrCoords[2] + this.additionalLines[1].point2.coords.usrCoords[2];
+            
+            ddx = 20/(this.board.stretchX);
+            ddy = 20/(this.board.stretchY);
+            z = Math.sqrt(dx*dx+dy*dy);            
+            this.additionalLines[1].point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx*(z+ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy*(z+ddy)/z],
+                                                this.board);
+            this.board.renderer.highlight(this.additionalLines[1]);
+            this.board.renderer.updateLine(this.additionalLines[1]); 
+        };
+          
+        a[0].arcs[i].noHighlight = function() {
+            this.board.renderer.noHighlight(this);
+            if(this.label.content != null) {
+                this.label.content.rendNode.style.fontSize = (this.board.fontSize) + 'px';
+            }
+            
+            var dx = -this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
+            var dy = -this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+            
+            var ddx = 20/(this.board.stretchX);
+            var ddy = 20/(this.board.stretchY);
+            var z = Math.sqrt(dx*dx+dy*dy);
+            
+            this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx*(z-ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy*(z-ddy)/z],
+                                                this.board);
+            this.board.renderer.updateArc(this);
+            
+            this.board.renderer.updateLine(this.additionalLines[0]);                                              
+
+
+            this.board.renderer.noHighlight(this);
+            
+            dx = -this.midpoint.coords.usrCoords[1] + this.additionalLines[1].point2.coords.usrCoords[1];
+            dy = -this.midpoint.coords.usrCoords[2] + this.additionalLines[1].point2.coords.usrCoords[2];
+            
+            ddx = 20/(this.board.stretchX);
+            ddy = 20/(this.board.stretchY);
+            z = Math.sqrt(dx*dx+dy*dy);
+            
+            this.additionalLines[1].point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx*(z-ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy*(z-ddy)/z],
+                                                this.board);                                               
+            this.board.renderer.updateLine(this.additionalLines[1]); 
+        }; 
+    }
     board.unsuspendUpdate();
   /* ]]> */
   </script>

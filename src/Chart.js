@@ -305,47 +305,13 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         if(attributes['highlightOnSector']) {
             arc[i].hasPoint = arc[i].hasPointSector; // overwrite hasPoint so that the whole sector is used for highlighting
         }
-        arc[i].highlight = function() {
-            this.board.renderer.highlight(this);
-            if(this.label.content != null) {
-                this.label.content.rendNode.style.fontSize = (2*this.board.fontSize) + 'px';
-            }
-            /*
-            var dx = - this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
-            var dy = - this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
-            
-            var ddx = 10/(this.board.stretchX);
-            var ddy = 10/(this.board.stretchY);
-            var z = Math.sqrt(dx*dx+dy*dy);
-            
-            this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                                                [this.midpoint.coords.usrCoords[1]+dx*(z+ddx)/z,
-                                                 this.midpoint.coords.usrCoords[2]+dy*(z+ddy)/z],
-                                                this.board);
-            this.board.renderer.updateArc(this); */
-        };
-        arc[i].noHighlight = function() {
-            this.board.renderer.noHighlight(this);
-            if(this.label.content != null) {
-                this.label.content.rendNode.style.fontSize = (this.board.fontSize) + 'px';
-            }
-            /*
-            var dx = -this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
-            var dy = -this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
-            
-            var ddx = 10/(this.board.stretchX);
-            var ddy = 10/(this.board.stretchY);
-            var z = Math.sqrt(dx*dx+dy*dy);
-            
-            this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                                                [this.midpoint.coords.usrCoords[1]+dx*(z-ddx)/z,
-                                                 this.midpoint.coords.usrCoords[2]+dy*(z-ddy)/z],
-                                                this.board);
-            this.board.renderer.updateArc(this);         */
-        };
-    };
+
+    }
+    for (i=0;i<y.length;i++) {    
+        arc[i].additionalLines = [line[i],line[(i+1)%y.length]];
+    }
     this.rendNode = arc[0].rendNode;
-    return arc; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
+    return {arcs:arc, lines:line, points:p, midpoint:center}; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
 };
 
 /**
