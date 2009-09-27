@@ -41,7 +41,7 @@ JXG.Server.handleError = function(data) {
 };
 
 JXG.Server.callServer = function(action, callback, data, sync) {
-	var fileurl, passdata,
+	var fileurl, passdata, AJAX,
 	params, id, dataJSONStr,
 	k;
 
@@ -95,24 +95,25 @@ JXG.Server.callServer = function(action, callback, data, sync) {
 			}
 
 			// inject handlers
-			for(i=0; i<data.fields.length; i++) {
+			for(i=0; i<data.handler.length; i++) {
 				tmp = data.handler[i];
 				paramlist = [];
+
 				for(j=0; j<tmp.parameters.length; j++) {
 					paramlist[j] = '"' + tmp.parameters[j] + '": ' + tmp.parameters[j];
 				}
 				// insert subnamespace named after module.
 				inject = 'if(typeof JXG.Server.modules.' + this.runningCalls[id].module + ' == "undefined")' +
-				'JXG.Server.modules.' + this.runningCalls[id].module + ' = function(){};';
+				'JXG.Server.modules.' + this.runningCalls[id].module + ' = {};';
 
 				// insert callback method which fetches and uses the server's data for calculation in JavaScript
 				inject += 'JXG.Server.modules.' + this.runningCalls[id].module + '.' + tmp.name + '_cb = ' + tmp.callback + ';';
 
 				// insert handler as JXG.Server.modules.<module name>.<handler name>
-				inject += 'JXG.Server.modules.' + this.runningCalls[id].module + '.' + tmp.name + ' = function (' + tmp.parameters.join(',') + ') {' +
-				'var par;' +
-				'par = {' + paramlist.join(',') + ', "module": "' + this.runningCalls[id].module + '", "handler": "' + tmp.name + '" };' +
-				'JXG.Server.callServer("exec", JXG.Server.modules.' + this.runningCalls[id].module + '.' + tmp.name + '_cb, par);' +
+				inject += 'JXG.Server.modules.' + this.runningCalls[id].module + '.' + tmp.name + ' = function (' + tmp.parameters.join(',') + ', __JXGSERVER_CB__) {' +
+				'if(typeof __JXGSERVER_CB__ == "undefined") __JXGSERVER_CB__ = JXG.Server.modules.' + this.runningCalls[id].module + '.' + tmp.name + '_cb;' +
+				'var __JXGSERVER_PAR__ = {' + paramlist.join(',') + ', "module": "' + this.runningCalls[id].module + '", "handler": "' + tmp.name + '" };' +
+				'JXG.Server.callServer("exec", __JXGSERVER_CB__, __JXGSERVER_PAR__);' +
 				'};';
 				eval(inject);
 			}
