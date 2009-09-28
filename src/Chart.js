@@ -218,8 +218,10 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
             }
         }
         attributes['withLines'] = false;
-        colorArray = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
-        attributes['fillColor'] = colorArray[i%colorArray.length];
+        if(attributes['fillColor']) {} else {
+            colorArray = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
+            attributes['fillColor'] = colorArray[i%colorArray.length];
+        }
         pols[i] = board.createElement('polygon',p,attributes);
     }
     this.rendNode = pols[0].rendNode;  // This is needed in setProperty

@@ -1,16 +1,34 @@
 <html>
 <head>
-   <title>JSXGraph example: Bundestag elections</title>
-   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/jquery.min.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <title>JSXGraph example: Bundestag elections</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <style type="text/css">
+        a.topmenu {
+            padding: 5px;
+            background-color: #ddd;
+            text-decoration: none;
+            color: black;
+        }
+
+        a.topmenu:hover {
+            padding: 5px;
+            margin: 0px;
+            background-color: #999;
+            text-decoration: underline;
+            color: white;
+        }
+
+    </style>
 </head>
 <body>
 <h2>German Bundestag elections - From 1949 to 2005</h2>
 
-<div style="width:800px">
-  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
-</div>
+<a href="#" onclick="show('page0');" class="topmenu">Table</a><a href="#" onclick="show('page1');" class="topmenu">Whole table as chart</a><a href="#" onclick="show('page2');" class="topmenu">Choose parties to display</a><a href="#" onclick="show('page3');" class="topmenu">Choose year to display</a>
+<br /><br />
+<!-- Sub page 0: The table with the data -->
+<div id="page0" style="display: block;">
 <table id="btw" style="border: 1px solid gray;">
 <tr>
 <td>Wahljahr</td>
@@ -306,12 +324,17 @@
 <td>1.7</td>
 </tr>
 </table>
+</div>
 
-<div style="float: left">
-<a href="#" onclick="all();">Create chart from whole table</a>
-<br/>
-<a href="#" onclick="select_parties();">Choose parties to display</a>
-<br/>
+<!-- Sub page 1: Chart showing the data from the whole table of page 0 -->
+
+<div style="width:800px; display: block;" id="page1">
+  <div id="jxgbox1" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+
+<div style="width:800px; display: block;" id="page2">
+  <div id="jxgbox2" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+<div style="float: left"> <a href="#" onclick="select_parties();" class="topmenu">Update display</a><br /><br />
 <form name="form_parties">
     <input type="checkbox" value="0" name="parties">CDU<br/>
     <input type="checkbox" value="1" name="parties">CSU<br/>
@@ -326,26 +349,58 @@
     <input type="checkbox" value="10" name="parties">KPD<br/>
     <input type="checkbox" value="11" name="parties">BP<br/>
     <input type="checkbox" value="12" name="parties">Sonstige<br/>
-</form>
+</form></div>
+</div>
+
+<div style="width:800px; display: block;" id="page3">
+  <div id="jxgbox3" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+<div style="float: left"> <a href="#" onclick="select_parties();" class="topmenu">Update display</a><br /><br />
+<option id="select_years">
+    <option value="0">1949</option>
+    <option value="1">1953</option>
+    <option value="2">1957</option>
+    <option value="3">1961</option>
+    <option value="4">1965</option>
+    <option value="5">1969</option>
+    <option value="6">1972</option>
+    <option value="7">1976</option>
+    <option value="8">1980</option>
+    <option value="9">1983</option>
+    <option value="10">1987</option>
+    <option value="11">1990</option>
+    <option value="12">1994</option>
+    <option value="13">1998</option>
+    <option value="14">2002</option>
+    <option value="15">2005</option>
+    <option value="16">2009</option>
+</select></div>
 </div>
 
 <div id="debug" style="display:block; float: right;"></div>
    <script type="text/javascript">
    /* <![CDATA[ */
-        var b = JXG._board('jxgbox', {boundingbox: [-1, 50, 17, -5], axis: true, grid: false}), charts, i,
+        var board1 = JXG.JSXGraph.initBoard('jxgbox1', {boundingbox: [-1, 50, 17, -5], axis: true, grid: false}),
+            board2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-1, 50, 17, -5], axis: true, grid: false}),
             colors = ['black', '#333333', 'red', 'yellow', 'green', '#8B00FF', '#965220', '#96abee', 'gray', '#965220', 'red', 'blue', 'orange'],
-            hStroke = [];
+            hStroke = [], charts1, charts2, i;
 
-        function all() {
-            b.removeObject(charts);
+        // sub page 1
+        charts1 = board1.create('chart', ['btw'], {chartStyle: 'point,line', withHeaders: true, colorArray: colors, strokeColor: colors, fillColor: colors, highlightFillColor: colors, highlightStrokeColor: colors});
 
-	    	charts = b.create('chart', ['btw'], {chartStyle: 'point,line', withHeaders: true, strokeColor: colors, fillColor: colors, highlightFillColor: colors, highlightStrokeColor: colors});
+        board1.highlightInfobox = function(x,y,el) {
+            var years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005];
+            this.infobox.setText('<span style="color:black;font-weight:bold">' + years[Math.round(x)-1] + ': ' + y + ' %</span>');
+            this.infobox.rendNode.style.border = 'groove ' + el.visProp['strokeColor'] + ' 2px';
+            this.infobox.rendNode.style.padding = '5px';
+            this.infobox.rendNode.style.backgroundColor = 'white';
         }
 
+        // sub page 2
         function select_parties() {
             var i, chartType = 'line', color = [];
 
-            b.removeObject(charts);
+            if(charts2)
+                board2.removeObject(charts2);
 
             var part = [];
             $('input[name=parties]').each(function () { if(this.checked) { part.push(parseInt($(this).val())); color.push(colors[parseInt($(this).val())]); } });
@@ -353,24 +408,27 @@
             if(part.length <4)
                 chartType = 'bar';
 
-	    	charts = b.create('chart', ['btw'], {chartStyle: 'point,' + chartType, withHeaders: true, strokeColor: color, fillColor: color, highlightFillColor: color, highlightStrokeColor: color, rows: part});
+	    	charts2 = board2.create('chart', ['btw'], {chartStyle: 'point,' + chartType, withHeaders: true, colorArray: color, strokeColor: color, fillColor: color, highlightFillColor: color, highlightStrokeColor: color, rows: part});
         }
 
-        b.highlightInfobox = function(x,y,el) {
+        board2.highlightInfobox = function(x,y,el) {
             var years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005];
             this.infobox.setText('<span style="color:black;font-weight:bold">' + years[Math.round(x)-1] + ': ' + y + ' %</span>');
             this.infobox.rendNode.style.border = 'groove ' + el.visProp['strokeColor'] + ' 2px';
             this.infobox.rendNode.style.padding = '5px';
             this.infobox.rendNode.style.backgroundColor = 'white';
-        }  
+        }
 
-    var elements = [];
-    for(var o in JXG.JSXGraph.elements) {
-        elements.push(o);
-    }
+        // general
+        function show(page) {
+            var i;
+            for(i=0; i<4; i++) {
+                $('#page' + i).css('display', 'none');
+            }
 
-    elements.sort();
-    $('#debug').html(elements.join('<br/>'));
+            $('#' + page).css('display', 'block');
+        }
+        show('page0');
 
   /* ]]> */
   </script>
