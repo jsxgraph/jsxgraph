@@ -17,7 +17,7 @@ JXG.decompress = function(str) {
 $txt = rawurlencode(file_get_contents("./test.js"));
 $comp = gzcompress($txt,9);
 $base64 = base64_encode($comp);
-echo "compressed = \"$base64\";";
+echo "var compressed = \"$base64\";";
 ?>
 
 uncompressed = JXG.decompress(compressed);
