@@ -164,7 +164,7 @@ JXG.Chart.prototype.drawFit = function(board, parents, attributes) {
 };
 
 JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
-    var i, pols = [], x = parents[0], y = parents[1], w, xp0,xp1,xp2, yp, ypL, colorArray, p = [];
+    var i, pols = [], x = parents[0], y = parents[1], w, xp0,xp1,xp2, yp, ypL, colorArray, p = [], fill;
     if (attributes['fillOpacity'] == undefined) {
         attributes['fillOpacity'] = 0.6;
     }
@@ -185,6 +185,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
         w *=0.8;
     }
 
+    fill = attributes['fillColor']
     for (i=0;i<x.length;i++) {        
         if (typeof x[i]=='function') {  // Not yet
             xp0 = function() { return x[i]()-w*0.5; };
@@ -220,7 +221,8 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
             }
         }
         attributes['withLines'] = false;
-        if(attributes['fillColor']) {} else {
+
+        if(typeof fill == 'undefined' && fill == null) {
             colorArray = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
             attributes['fillColor'] = colorArray[i%colorArray.length];
         }

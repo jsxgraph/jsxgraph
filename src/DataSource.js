@@ -188,7 +188,7 @@ JXG.DataSource.prototype.getColumn = function(col) {
     return result;
 };
 
-JXG.DataSource.prototype.getColumn = function(row) {
+JXG.DataSource.prototype.getRow = function(row) {
     var result, i;
 
     // get column index if column is given as column header title

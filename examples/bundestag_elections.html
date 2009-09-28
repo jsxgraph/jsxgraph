@@ -48,6 +48,7 @@
 <td>1998</td>
 <td>2002</td>
 <td>2005</td>
+<td>2009</td>
 
 </tr>
 <tr>
@@ -69,6 +70,7 @@
 <td>28.4</td>
 <td>29.5</td>
 <td>27.8</td>
+<td>27.3</td>
 
 </tr>
 <tr>
@@ -90,6 +92,7 @@
 <td>6.7</td>
 <td>9.0</td>
 <td>7.4</td>
+<td>6.5</td>
 
 </tr>
 <tr>
@@ -111,6 +114,7 @@
 <td>40.9</td>
 <td>38.5</td>
 <td>34.2</td>
+<td>23.0</td>
 
 </tr>
 <tr>
@@ -132,6 +136,7 @@
 <td>6.2</td>
 <td>7.4</td>
 <td>9.8</td>
+<td>14.6</td>
 
 </tr>
 <tr>
@@ -153,10 +158,11 @@
 <td>6.7</td>
 <td>8.6</td>
 <td>8.1</td>
+<td>10.7</td>
 
 </tr>
 <tr>
-<td>PDS/Linke.PDS</td>
+<td>PDS/Linke</td>
 <td>-</td>
 <td>-</td>
 <td>-</td>
@@ -174,6 +180,30 @@
 <td>5.1</td>
 <td>4.0</td>
 <td>8.7</td>
+<td>11.9</td>
+
+</tr>
+
+<tr>
+<td>Piraten</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>2.0</td>
 
 </tr>
 <tr>
@@ -195,6 +225,7 @@
 <td>0.3</td>
 <td>0.4</td>
 <td>1.6</td>
+<td>1.5</td>
 
 </tr>
 <tr>
@@ -207,6 +238,7 @@
 <td>-</td>
 <td>-</td>
 
+<td>-</td>
 <td>-</td>
 <td>-</td>
 <td>-</td>
@@ -237,6 +269,7 @@
 <td>-</td>
 <td>-</td>
 <td>-</td>
+<td>-</td>
 
 </tr>
 <tr>
@@ -258,6 +291,7 @@
 <td>1.8</td>
 <td>0.6</td>
 <td>0.6</td>
+<td>0.4</td>
 
 </tr>
 <tr>
@@ -270,6 +304,7 @@
 <td>-</td>
 <td>-</td>
 
+<td>-</td>
 <td>-</td>
 <td>-</td>
 <td>-</td>
@@ -301,6 +336,8 @@
 <td>0.0</td>
 
 <td>0.1</td>
+<td>0.1</td>
+
 </tr>
 <tr>
 <td>Sonstige</td>
@@ -322,6 +359,8 @@
 <td>3.0</td>
 
 <td>1.7</td>
+<td>2.0</td>
+
 </tr>
 </table>
 </div>
@@ -341,14 +380,15 @@
     <input type="checkbox" value="2" onclick="select_parties();" name="parties">SPD<br/>
     <input type="checkbox" value="3" onclick="select_parties();" name="parties">FDP<br/>
     <input type="checkbox" value="4" onclick="select_parties();" name="parties">B&uuml;ndnis 90/Die Gr&uuml;nen<br/>
-    <input type="checkbox" value="5" onclick="select_parties();" name="parties">PDS/Linke.PDS<br/>
-    <input type="checkbox" value="6" onclick="select_parties();" name="parties">NPD<br/>
-    <input type="checkbox" value="7" onclick="select_parties();" name="parties">DP<br/>
-    <input type="checkbox" value="8" onclick="select_parties();" name="parties">GB/BHE<br/>
-    <input type="checkbox" value="9" onclick="select_parties();" name="parties">REP<br/>
-    <input type="checkbox" value="10" onclick="select_parties();" name="parties">KPD<br/>
-    <input type="checkbox" value="11" onchange="select_parties();" name="parties">BP<br/>
-    <input type="checkbox" value="12" onchange="select_parties();" name="parties">Sonstige<br/>
+    <input type="checkbox" value="5" onclick="select_parties();" name="parties">PDS/Linke<br/>
+    <input type="checkbox" value="6" onclick="select_parties();" name="parties">Piraten<br/>
+    <input type="checkbox" value="7" onclick="select_parties();" name="parties">NPD<br/>
+    <input type="checkbox" value="8" onclick="select_parties();" name="parties">DP<br/>
+    <input type="checkbox" value="9" onclick="select_parties();" name="parties">GB/BHE<br/>
+    <input type="checkbox" value="10" onclick="select_parties();" name="parties">REP<br/>
+    <input type="checkbox" value="11" onclick="select_parties();" name="parties">KPD<br/>
+    <input type="checkbox" value="12" onchange="select_parties();" name="parties">BP<br/>
+    <input type="checkbox" value="13" onchange="select_parties();" name="parties">Sonstige<br/>
 </form></div>
 </div>
 
@@ -379,17 +419,17 @@
 <div id="debug" style="display:block; float: right;"></div>
    <script type="text/javascript">
    /* <![CDATA[ */
-        var board1 = JXG.JSXGraph.initBoard('jxgbox1', {boundingbox: [-1, 50, 17, -5], axis: true, grid: false}),
-            board2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-1, 50, 17, -5], axis: true, grid: false}),
-            board3 = JXG.JSXGraph.initBoard('jxgbox3', {boundingbox: [-1, 50, 17, -5], axis: true, grid: false}),
-            colors = ['black', '#333333', 'red', 'yellow', 'green', '#8B00FF', '#965220', '#96abee', 'gray', '#965220', 'red', 'blue', 'orange'],
+        var board1 = JXG.JSXGraph.initBoard('jxgbox1', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false}),
+            board2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false}),
+            board3 = JXG.JSXGraph.initBoard('jxgbox3', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false}),
+            colors = ['black', '#333333', 'red', 'yellow', 'green', '#8B00FF', 'orange', '#965220', '#96abee', 'gray', '#965220', 'red', 'blue', 'lightgray'],
+            years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005, 2009],
             hStroke = [], charts1, charts2, charts3, i;
 
         // sub page 1
         charts1 = board1.create('chart', ['btw'], {chartStyle: 'point,line', withHeaders: true, colorArray: colors, strokeColor: colors, fillColor: colors, highlightFillColor: colors, highlightStrokeColor: colors});
 
         board1.highlightInfobox = function(x,y,el) {
-            var years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005];
             this.infobox.setText('<span style="color:black;font-weight:bold">' + years[Math.round(x)-1] + ': ' + y + ' %</span>');
             this.infobox.rendNode.style.border = 'groove ' + el.visProp['strokeColor'] + ' 2px';
             this.infobox.rendNode.style.padding = '5px';
@@ -413,7 +453,6 @@
         }
 
         board2.highlightInfobox = function(x,y,el) {
-            var years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005, 2009];
             this.infobox.setText('<span style="color:black;font-weight:bold">' + years[Math.round(x)-1] + ': ' + y + ' %</span>');
             this.infobox.rendNode.style.border = 'groove ' + el.visProp['strokeColor'] + ' 2px';
             this.infobox.rendNode.style.padding = '5px';
@@ -423,14 +462,27 @@
         // sub page 3
         function select_years() {
             var years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005],
-                i, chartType = 'bar', color = [];
+                i, data, table, col;
 
-            year = '' + years[$('#select_years').val()];
+            year = parseInt($('#select_years').val());
 
-            if(charts3) {}
-                // nix board3.removeObject(charts3);
-            else
-    	    	charts3 = board3.create('chart', ['btw'], {chartStyle: 'bar', withHeaders: true, colorArray: color, strokeColor: color, fillColor: color, highlightFillColor: color, highlightStrokeColor: color, cols: [year]});
+            table = (new JXG.DataSource()).loadFromTable('btw', true, true);
+            col = table.getColumn(year);
+            for(i=0; i<col.length; i++) {
+                if(isNaN(col[i]))
+                    col[i] = 0.;
+            }
+
+            if(charts3) {
+                for(i=0; i<charts3[0].length; i++) {
+                    charts3[0][i].vertices[1].moveTo([charts3[0][i].vertices[1].X(), col[i]], 500);
+                    charts3[0][i].vertices[2].moveTo([charts3[0][i].vertices[2].X(), col[i]], 500);
+                }
+            } else {
+                board3.suspendUpdate();
+    	    	charts3 = board3.create('chart', [col], {chartStyle: 'bar', colorArray: colors});
+                board3.unsuspendUpdate();
+            }
         }
 
         // general
@@ -443,15 +495,6 @@
             $('#' + page).css('display', 'block');
         }
         show('page0');
-
-/*
-        var murks = (new JXG.DataSource()).loadFromTable('btw', true, true).data;
-        for(var q=0; q<murks.length; q++) {
-            for(var r=0; r<murks[q].length; r++) {
-                $('#debug').html($('#debug').html() + murks[q][r] + ';');
-            }
-            $('#debug').html($('#debug').html() + '<br/>');
-        }*/
 
   /* ]]> */
   </script>

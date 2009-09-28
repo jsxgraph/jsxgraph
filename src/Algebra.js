@@ -846,6 +846,8 @@ JXG.Algebra.prototype.replaceIf = function(te) {
  * @return Given string with _{} replaced by &lt;sub&gt;.
  */
 JXG.Algebra.prototype.replaceSub = function(te) {
+    if(te['indexOf']) {} else return te;
+
     var i = te.indexOf('_{'),
         j;
     while (i>=0) {
@@ -872,6 +874,8 @@ JXG.Algebra.prototype.replaceSub = function(te) {
  * @return Given string with ^{} replaced by &lt;sup&gt;.
  */
 JXG.Algebra.prototype.replaceSup = function(te) {
+    if(te['indexOf']) {} else return te;
+
     var i = te.indexOf('^{'),
         j;
     while (i>=0) {
