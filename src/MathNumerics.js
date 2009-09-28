@@ -743,6 +743,47 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
     return fct;
 }
     
+/**
+ * Computes the cubic Bezier curve through a given set of points..
+ * @param data array consisting of 3*k+1 JXG.Points.
+ * The points at position k with k mod 3 = 0 are the data points,
+ * points at position k with k mod 3 = 1 or 2 are the control points.
+ * @type {function}
+ * @return {function} A function of one parameter which returns the value of the cubic Bezier curve.
+ */
+JXG.Math.Numerics.bezier = function(points) {
+    var len = 0; 
+    
+    return [function(t,suspendedUpdate) {
+                var z = Math.floor(t)*3,
+                    t0 = t % 1,
+                    t1 = 1-t0;
+                        
+                if (!suspendedUpdate) {
+                    len = Math.floor(points.length/3);
+                }
+                        
+                if (t<0) { return points[0].X(); }
+                if (t>=len) { return points[points.length-1].X(); }
+                if (isNaN(t)) { return NaN; }
+                return t1*t1*(t1*points[z].X()+3*t0*points[z+1].X())+(3*t1*points[z+2].X()+t0*points[z+3].X())*t0*t0;
+            },
+            function(t,suspendedUpdate) {
+                var z = Math.floor(t)*3,
+                    t0 = t % 1,
+                    t1 = 1-t0;
+                        
+                if (!suspendedUpdate) {
+                    len = Math.floor(points.length/3);
+                }
+                        
+                if (t<0) { return points[0].X(); }
+                if (t>=len) { return points[points.length-1].X(); }
+                if (isNaN(t)) { return NaN; }
+                return t1*t1*(t1*points[z].Y()+3*t0*points[z+1].Y())+(3*t1*points[z+2].Y()+t0*points[z+3].Y())*t0*t0;
+            }, 
+            0, function() {return Math.floor(points.length/3);}];
+};
 
 /**
  * Numerical (symmetric) approximation of derivative.

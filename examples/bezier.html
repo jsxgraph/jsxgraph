@@ -1,0 +1,55 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Bezier curves</h2>
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
+  <div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var board, i, p, col;
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, axis:true});
+        p = [];
+        for (i=0;i<2*3+1;i++) {
+            if (i%3==0) {
+                col = 'red';
+            } else {
+                col = 'blue';
+            }
+            p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4,],{strokeColor:col,fillColor:col}));
+        }
+/*        
+        bezier = [function(t) {
+                        var len =  Math.floor(p.length/3),
+                            z = Math.floor(t)*3,
+                            t0 = t % 1,
+                            t1 = 1-t0;
+                        
+                        if (t<0) { return p[0].X(); }
+                        if (t>=len) { return p[p.length-1].X(); }
+                        if (isNaN(t)) { return NaN; }
+                        return t1*t1*(t1*p[z].X()+3*t0*p[z+1].X())+(3*t1*p[z+2].X()+t0*p[z+3].X())*t0*t0;
+                    },
+                  function(t) {
+                        var len =  Math.floor(p.length/3),
+                            z = Math.floor(t)*3,
+                            t0 = t % 1,
+                            t1 = 1-t0;
+                            
+                        if (t<0) { return p[0].Z(); }
+                        if (t>=len) { return p[p.length-1].Y(); }
+                        if (isNaN(t)) { return NaN; }
+                        return t1*t1*(t1*p[z].Y()+3*t0*p[z+1].Y())+(3*t1*p[z+2].Y()+t0*p[z+3].Y())*t0*t0;
+                    }, 0, function() {return Math.floor(p.length/3);}];
+*/                    
+        var c = board.createElement('curve', JXG.Math.Numerics.bezier(p),{strokecolor:'blue', strokeWidth:2}); 
+        
+  /* ]]> */
+  </script>
+</body>
+</html>
