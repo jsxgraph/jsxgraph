@@ -166,6 +166,7 @@ JXG.Curve.prototype.maxX = function () {
 JXG.Curve.prototype.hasPoint = function (x,y) {
     var t, dist = Infinity, 
         c, trans, i, j, tX, tY,
+        xi, xi1, yi, yi1,
         lbda, x0, y0, x1, y1, xy, den,
         steps = this.numberPointsLow, 
         d = (this.maxX()-this.minX())/steps,
@@ -195,12 +196,24 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
             t+=d;
         }  
     } else if (this.curveType == 'plot') {
-        len = this.numberPointsLow; // Rough search quality
+        //$('debug').innerHTML +='. ';
+        len = this.numberPoints; // Rough search quality
         for (i=0;i<len-1;i++) {
-            x1 = this.X(i+1)-this.X(i);
-            y1 = this.Y(i+1)-this.Y(i);
-            x0 = x-this.X(i);
-            y0 = y-this.Y(i);
+            xi = this.X(i);
+            xi1 = this.X(i+1);
+            //if (i!=xi) {
+            //    yi = this.Y(xi);
+            //    yi1 = this.Y(xi1);
+            //} else {
+                yi = this.Y(i);
+                yi1 = this.Y(i+1);
+               // $('debug').innerHTML = this.Y.toString();
+            //}
+            x1 = xi1 - xi;
+            y1 = yi1-yi;
+            
+            x0 = x-xi; //this.X(i);
+            y0 = y-yi; //this.Y(i);
             den = x1*x1+y1*y1;
             
             if (den>=JXG.Math.eps) {
@@ -587,7 +600,13 @@ JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
 
     if (JXG.isArray(yterm)) {
         this.dataY = yterm;
-        this.Y = function(i) { return this.dataY[i]; };
+        this.Y = function(i) { 
+                if (JXG.isFunction(this.dataY[i])) { 
+                    return this.dataY[i](); 
+                } else {
+                    return this.dataY[i]; 
+                }
+            };
     } else {
         this.Y = JXG.createFunction(yterm,this.board,varname);
     }

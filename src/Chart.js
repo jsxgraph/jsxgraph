@@ -104,30 +104,32 @@ JXG.Chart = function(board, parents, attributes) {
 JXG.Chart.prototype = new JXG.GeometryElement;
 
 JXG.Chart.prototype.drawLine = function(board, parents, attributes) {
-    var x = parents[0],
-        y = parents[1];
+    var _x = parents[0],
+        _y = parents[1];
 
-    Fy = function(_x) {
+    /*
+    var Fy = function(x) {
         var i, j = 0;
 
-        for(i=0; i<x.length; i++) {
-            if(x[i] == _x) {
+        for(i=0; i<_x.length; i++) {
+            if(_x[i] == x) {
                 j = i;
                 break;
             }
         }
 
-        if(typeof y[j] == 'function')
-            return y[j]();
+        if(typeof _y[j] == 'function')
+            return _y[j]();
         else
-            return y[j];
+            return _y[j];
     }
-
+    */
+    
     // not needed
     attributes['fillColor'] = 'none';
     attributes['highlightFillColor'] = 'none';
 
-    var c = board.createElement('curve', [x, Fy], attributes);
+    var c = board.createElement('curve', [_x, _y], attributes);
     this.rendNode = c.rendNode;  // This is needed in setProperty
     return c;
 };
@@ -345,7 +347,8 @@ JXG.Chart.prototype.updateDataArray = function () {};
 
 JXG.createChart = function(board, parents, attributes) {
     if((parents.length == 1) && (typeof parents[0] == 'string')) {
-        var table = document.getElementById(parents[0]),            data, row, i, j, col, cell, charts = [], w, x, showRows,
+        var table = document.getElementById(parents[0]),
+            data, row, i, j, col, cell, charts = [], w, x, showRows,
             originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len;
         if(typeof table != 'undefined') {
             // extract the data

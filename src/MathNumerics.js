@@ -753,7 +753,7 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
  */
 JXG.Math.Numerics.bezier = function(points) {
     var len = 0; 
-    
+
     return [function(t,suspendedUpdate) {
                 var z = Math.floor(t)*3,
                     t0 = t % 1,
