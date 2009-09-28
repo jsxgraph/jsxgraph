@@ -16,9 +16,9 @@
     /* <![CDATA[ */
         var brd = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 20, originY: 300, unitX: 3, unitY: 250, axis:true});
          
-        var S = brd.createElement('turtle',[],{strokeColor:'blue',strokeWidth:3});
-        var I = brd.createElement('turtle',[],{strokeColor:'red',strokeWidth:3});
-        var R = brd.createElement('turtle',[],{strokeColor:'green',strokeWidth:3});
+        var S = brd.createElement('turtle',[],{strokeColor:'blue',highlightStrokeColor:'blue',strokeWidth:3});
+        var I = brd.createElement('turtle',[],{strokeColor:'red',highlightStrokeColor:'red',strokeWidth:3});
+        var R = brd.createElement('turtle',[],{strokeColor:'green',highlightStrokeColor:'green',strokeWidth:3});
          
         var s = brd.createElement('slider', [[0,-0.3], [60,-0.3],[0,1E-6,1]], {name:'s'});
         var beta = brd.createElement('slider', [[0,-0.4], [60,-0.4],[0,0.2857,1]], {name:'&beta;'});
