@@ -263,7 +263,7 @@ JXG.hsv2rgb = function(H,S,V) {
             G = V;
             B = V;
         } else {
-            return '#000000';
+            return '#ffffff';
         }
     } else {
         if (H>=360) {
@@ -286,8 +286,8 @@ JXG.hsv2rgb = function(H,S,V) {
             case 5: R = V; G = p;  B = q; break;
         }
     }
-    R = Math.round(R*255).toString(16); R = (R.length==0)?'00':((R.length==1)?'0'+R:R);
-    G = Math.round(G*255).toString(16); G = (G.length==0)?'00':((G.length==1)?'0'+G:G);
-    B = Math.round(B*255).toString(16); B = (B.length==0)?'00':((B.length==1)?'0'+B:B);
-    return '#'+R+G+B; 
+    R = Math.round(R*255).toString(16); R = (R.length==2)?R:((R.length==1)?'0'+R:'00');
+    G = Math.round(G*255).toString(16); G = (G.length==2)?G:((G.length==1)?'0'+G:'00');
+    B = Math.round(B*255).toString(16); B = (B.length==2)?B:((B.length==1)?'0'+B:'00');
+    return ['#',R,G,B].join(''); 
 };
