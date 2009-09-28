@@ -352,41 +352,12 @@ JXG.createChart = function(board, parents, attributes) {
             originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len;
         if(typeof table != 'undefined') {
             // extract the data
-            row = table.getElementsByTagName('tr');
-            data = new Array(row.length);
+            if(attributes['withHeader']) {} else attributes['withHeader'] = true;
+            table = (new JXG.DataSource()).loadFromTable(parents[0], attributes['withHeader'], attributes['withHeader']);
+            data = table.data;
+            col = table.columnHeader;
+            row = table.rowHeader;
 
-            for(i=0; i<row.length; i++) {
-                col = row[i].getElementsByTagName('td');
-                data[i] = new Array(col.length);
-                for(j=0; j<col.length; j++) {
-                cell = col[j].innerHTML;
-                    if('' + parseFloat(cell) == cell)
-                        data[i][j] = parseFloat(cell);
-                    else if (cell != '-')
-                        data[i][j] = cell;
-                    else
-                        data[i][j] = NaN;
-                }
-            }
-            
-            if(typeof attributes == 'undefined')
-                attributes = {};
-            
-            if(typeof attributes['withHeaders'] == 'undefined')
-                attributes['withHeaders'] = true;
-            
-            if(!attributes['withHeaders']) {
-            } else {
-                col = data[0].slice(1);
-                data = data.slice(1);
-                row = new Array();
-                for(i=0; i<data.length; i++) {
-                    row.push(data[i][0]);
-                    data[i] = data[i].slice(1);
-
-                }
-            }
-            
             originalWidth = attributes['width'];
             name = attributes['name'];
             strokeColor = attributes['strokeColor'];

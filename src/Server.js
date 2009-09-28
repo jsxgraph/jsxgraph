@@ -30,16 +30,42 @@
 
 /** TODO: Documentation */
 
+/**
+ * @namespace
+ * JXG.Server namespace holding functions to load JXG server modules.
+ */
 JXG.Server = function(){};
 
+/**
+ * This is where all of a module's handlers are accessed from. If you're loading a module named JXGModule which
+ * provides a handler called ImaHandler, then this handler can be called by invoking JXG.Server.modules.JXGModule.ImaHandler().
+ * @namespace
+ */
 JXG.Server.modules = function(){};
 
+/**
+ * Stores all asynchronous calls to server which aren't finished yet.
+ * @private
+ */
 JXG.Server.runningCalls = {};
 
+/**
+ * Handles errors, just a default implementation, can be overwritten by you, if you want to handle errors by yourself.
+ * @param {object} data An object holding a field of type string named message handling the error described in the message string.
+ */
 JXG.Server.handleError = function(data) {
 	alert('error occured, server says: ' + data.message);
 };
 
+/**
+ * The main method of JXG.Server. Actually makes the calls to the server and parses the feedback.
+ * @param {string} action Can be 'load' or 'exec'.
+ * @param {function} callback Function pointer or anonymous function which takes as it's only argument an
+ * object containing the data from the server. The fields of this object depend on the reply of the server
+ * module. See the correspondings server module readme.
+ * @param {object} data What is to be sent to the server.
+ * @param {boolean} sync If the call should be synchronous or not.
+ */
 JXG.Server.callServer = function(action, callback, data, sync) {
 	var fileurl, passdata, AJAX,
 	params, id, dataJSONStr,
@@ -171,12 +197,20 @@ JXG.Server.callServer = function(action, callback, data, sync) {
 //	JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw', !sync);
 };
 
+/**
+ * Callback for the default action 'load'.
+ */
 JXG.Server.loadModule_cb = function(data) {
 	var i;
 	for(i=0; i<data.length; i++)
 		alert(data[i].name + ': ' + data[i].value);
 };
 
+/**
+ * Loads a module from the server.
+ * @param {string} module A string containing the module. Has to match the filename of the Python module on the server exactly including
+ * lower and upper case letters without the file ending .py.
+ */
 JXG.Server.loadModule = function(module) {
 	JXG.Server.callServer('load', JXG.Server.loadModule_cb, {'module': module}, true);
 };

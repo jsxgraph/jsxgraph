@@ -45,7 +45,7 @@ var JXG = {};
     JXG.baseFiles;
 
     if (!JXG.useMinify) {
-        JXG.baseFiles ='Math,MathNumerics,MathStatistics,MathSymbolic,Complex,AbstractRenderer,FileReader,GeonextReader,GeogebraReader,IntergeoReader,Board,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Polygon,Curve,Arc,Sector,Angle,Algebra,Intersection,Composition,Text,Image,Slider,Chart,Transformation,Turtle,RGBColor,Options,Wrappers,Ticks,Util,Pstricks,Server';
+        JXG.baseFiles ='Math,MathNumerics,MathStatistics,MathSymbolic,Complex,AbstractRenderer,FileReader,GeonextReader,GeogebraReader,IntergeoReader,Board,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Polygon,Curve,Arc,Sector,Angle,Algebra,Intersection,Composition,Text,Image,Slider,Chart,Transformation,Turtle,RGBColor,Options,Wrappers,Ticks,Util,Pstricks,Server,DataSource';
     } else {
         JXG.baseFiles = 'jxg';
     }
