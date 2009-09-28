@@ -777,8 +777,8 @@ JXG.Math.Numerics.bezier = function(points) {
                     len = Math.floor(points.length/3);
                 }
                         
-                if (t<0) { return points[0].X(); }
-                if (t>=len) { return points[points.length-1].X(); }
+                if (t<0) { return points[0].Y(); }
+                if (t>=len) { return points[points.length-1].Y(); }
                 if (isNaN(t)) { return NaN; }
                 return t1*t1*(t1*points[z].Y()+3*t0*points[z+1].Y())+(3*t1*points[z+2].Y()+t0*points[z+3].Y())*t0*t0;
             }, 
