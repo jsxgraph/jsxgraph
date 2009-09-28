@@ -425,7 +425,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
     
     // TODO: withLabel
     
-    // TODO: comment
+    // TODO: comment gradient possibilities
     this.visProp['gradient'] = 'none';
     this.visProp['gradientSecondColor'] = 'black';
     this.visProp['gradientAngle'] = '270';
@@ -749,6 +749,23 @@ JXG.GeometryElement.prototype.setProperty = function () {
             case 'gradient':
                 this.visProp['gradient'] = pair[1];
                 this.board.renderer.setGradient(this);
+                break;    
+            case 'gradientsecondcolor':
+                color = pair[1];
+                if (color.length=='9' && color.substr(0,1)=='#') {
+                    opacity = color.substr(7,2);
+                    color = color.substr(0,7);
+                }
+                else {
+                    opacity = 'FF';
+                }
+                this.visProp['gradientSecondColor'] = color;
+                this.visProp['gradientSecondOpacity'] = parseInt(opacity.toUpperCase(),16)/255;  
+                this.board.renderer.updateGradient(this);
+                break;
+            case 'gradientsecondopacity':
+                this.visProp['gradientSecondOpacity'] = pair[1];
+                this.board.renderer.updateGradient(this);
                 break;                
             case 'draft': 
                 if(pair[1] == 'false' || pair[1] == false) {

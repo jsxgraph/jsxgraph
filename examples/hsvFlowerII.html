@@ -28,14 +28,15 @@ var c = brd.createElement('curve',[
           0, 2*Math.PI],
           {fillcolor:function(){ return JXG.hsv2rgb(H.Value(),S.Value(),V.Value()); },
            highlightFillcolor:function(){ return JXG.hsv2rgb(H.Value(),S.Value(),V.Value()); },
-           strokeColor:'black',strokeWidth:3,gradient:'radial'});
+           strokeColor:'black',strokeWidth:3,gradient:'radial',gradientsecondcolor:'white'
+           });
           
         var p = brd.createElement('point',[0,-0.5],{visible:false});
         var ci = brd.createElement('circle',[p,1], 
                 {fillcolor:function(){ return JXG.hsv2rgb(180+H.Value(),S.Value(),V.Value()); },
                  highlightFillcolor:function(){ return JXG.hsv2rgb(180+H.Value(),S.Value(),V.Value()); },
                  strokewidth:3,
-                 strokeColor:'black',gradient:'linear'
+                 strokeColor:'black',gradient:'linear',gradientsecondcolor:'white',gradientSecondOpacity:'0'
                 });             
           /* ]]> */
   </script>

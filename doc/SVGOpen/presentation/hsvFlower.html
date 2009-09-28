@@ -86,14 +86,15 @@
           0, 2*Math.PI],
           {fillcolor:function(){ return JXG.hsv2rgb(h,s,v); },
            highlightFillcolor:function(){ return JXG.hsv2rgb(h,s,v); },
-           strokeColor:'black',strokeWidth:3});
+           strokeColor:'black',strokeWidth:3,
+           gradient:'radial',gradientsecondcolor:'white'});
           
         var p = brd.createElement('point',[0,-0.5],{visible:false});
         var ci = brd.createElement('circle',[p,1], 
                 {fillcolor:function(){ return JXG.hsv2rgb(180+h,s,v); },
                  highlightFillcolor:function(){ return JXG.hsv2rgb(180+h,s,v); },
                  strokewidth:3,
-                 strokeColor:'black'
+                 strokeColor:'black',gradient:'linear'//,gradientsecondcolor:'white'
                 });             
           /* ]]> */
   </script>
