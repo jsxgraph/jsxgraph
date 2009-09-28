@@ -240,16 +240,18 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
         
         var zero = new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this.board);
         var tmpCoords = new JXG.Coords(JXG.COORDS_BY_USER, [deltaX, deltaY], this.board);
-        dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
+        dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + 
+               (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
 
+//$('debug').innerHTML += 'a: '+(ticksDelta) +' '+dist+ ' '+deltaX+' tl='+total_length+'<br>';
         // New: (AW)
-        ticksDelta = Math.pow(10,Math.floor(Math.log(ticksDelta,10)));
+        ticksDelta = Math.pow(10,Math.floor(Math.log(ticksDelta)/Math.LN10));
         deltaX = (ticksDelta * dx) / (total_length);
         deltaY = (ticksDelta * dy) / (total_length);
 
-//$('debug').innerHTML += 'x: '+ticksDelta +': ' + Math.sqrt(dist)+': '+this.minTicksDistance+'<br>';
+//$('debug').innerHTML += 'x: '+(ticksDelta) +': ' +this.minTicksDistance*this.minTicksDistance+'<br>';
         // If necessary, reduce ticksDelta
-        while(dist > 4*this.minTicksDistance*this.minTicksDistance) {
+        while(dist > 8*this.minTicksDistance*this.minTicksDistance) {
             /*
             deltaX += deltaX_original;
             deltaY += deltaY_original;
@@ -261,9 +263,12 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
             deltaY = (ticksDelta * dy) / (total_length);
 
             tmpCoords = new JXG.Coords(JXG.COORDS_BY_USER, [deltaX, deltaY], this.board);
-            dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
+            dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + 
+                   (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
         }
+//$('debug').innerHTML += 'y: '+(ticksDelta) +': ' +(tmpCoords.scrCoords[1]-zero.scrCoords[1])+': '+this.minTicksDistance+'<br>';
         // If necessary, enlarge ticksDelta
+        var factor = 5;
         while(dist < this.minTicksDistance*this.minTicksDistance) {
             /*
             deltaX += deltaX_original;
@@ -271,15 +276,21 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
             ticksDelta += ticksDelta_original;
             */
             // New: (AW)
-            ticksDelta *= 10;
+            ticksDelta *= factor;
+            if (factor==5) { 
+                factor = 2;
+            } else {
+                factor = 5;
+            }
             deltaX = (ticksDelta * dx) / (total_length);
             deltaY = (ticksDelta * dy) / (total_length);
-//$('debug').innerHTML += '>: '+ticksDelta +': ' + Math.sqrt(dist)+': '+this.minTicksDistance+'<br>';
 
             tmpCoords = new JXG.Coords(JXG.COORDS_BY_USER, [deltaX, deltaY], this.board);
-            dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
+            dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + 
+                   (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
         }
     }
+//$('debug').innerHTML += 'z: '+(ticksDelta) +': ' +deltaX+': tl='+total_length+' '+this.minTicksDistance+'<br><br>';
 
     // position is the current position on the axis
     var position = direction*ticksDelta;
@@ -309,7 +320,8 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
     // our next tick is completely out of sight.
     while( first || 
            (
-             this.board.sgn(deltaX)*(x-over*deltaX) >= this.board.sgn(deltaX)*end.usrCoords[1] && this.board.sgn(deltaY)*(y-over*deltaY) >= this.board.sgn(deltaY)*end.usrCoords[2]
+             this.board.sgn(deltaX)*(x-over*deltaX) >= this.board.sgn(deltaX)*end.usrCoords[1] && 
+             this.board.sgn(deltaY)*(y-over*deltaY) >= this.board.sgn(deltaY)*end.usrCoords[2]
             ) 
          ) {
         // we're in it, so we have at least one tick and the deltaX/Y correction
@@ -338,11 +350,12 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
                 // half the distance
                 deltaX *= 0.5;
                 deltaY *= 0.5;
+                ticksDelta *= 0.5;
+
                 // move back towards the zeropoint
                 x += deltaX;
                 y += deltaY;
 
-                ticksDelta = ticksDelta/2;
                 position = position - direction*ticksDelta;
 
                 // recalculate newTick coordinates and distance
