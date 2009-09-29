@@ -56,7 +56,7 @@ JXG.Chart = function(board, parents, attributes) {
             y = parents[0];
             x = [];
             var len;
-            if (typeof y=='function') {
+            if (JXG.isFunction(y)) {
                 len = y().length;
             } else {
                 len = y.length;
@@ -187,7 +187,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
 
     fill = attributes['fillColor']
     for (i=0;i<x.length;i++) {        
-        if (typeof x[i]=='function') {  // Not yet
+        if (JXG.isFunction(x[i])) {  // Not yet
             xp0 = function() { return x[i]()-w*0.5; };
             xp1 = function() { return x[i](); };
             xp2 = function() { return x[i]()+w*0.5; };
@@ -196,7 +196,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
             xp1 = x[i];
             xp2 = x[i]+w*0.5;
         }
-        if (typeof y[i]=='function') {  // Not yet
+        if (JXG.isFunction(y[i])) {  // Not yet
             ypL = yp; //function() { return y[i]()*1.1; };
         } else {
             ypL = y[i]+0.2;

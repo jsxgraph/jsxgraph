@@ -161,6 +161,8 @@ JXG.VMLRenderer.prototype.setGradient = function(el) {
     }
 };
 
+JXG.VMLRenderer.prototype.updateGradient = function(el) {}; // Not needed in VML;
+
 JXG.VMLRenderer.prototype.addShadowToGroup = function(groupname, board) {
     var el, pEl;
     if(groupname == "lines") {
