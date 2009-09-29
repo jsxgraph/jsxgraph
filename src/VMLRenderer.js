@@ -125,6 +125,7 @@ JXG.VMLRenderer.prototype = new JXG.AbstractRenderer;
 
 JXG.VMLRenderer.prototype.setShadow = function(element) {
     var nodeShadow = element.rendNodeShadow;
+    if (!nodeShadow) return;                          // Added 29.9.09. A.W.
     if(element.visProp['shadow']) {
         nodeShadow.setAttribute('On', 'True');
         nodeShadow.setAttribute('Offset', '3pt,3pt');
@@ -254,11 +255,11 @@ JXG.VMLRenderer.prototype.drawArcLine = function(id, radius, angle1, angle2, mid
     
     var node = this.container.ownerDocument.createElement('v:arc');
     node.setAttribute('id', id);
-    fillNode = this.container.ownerDocument.createElement('v:fill');
+    var fillNode = this.container.ownerDocument.createElement('v:fill');
     fillNode.setAttribute('id', id+'_fill');
-    strokeNode = this.container.ownerDocument.createElement('v:stroke');
+    var strokeNode = this.container.ownerDocument.createElement('v:stroke');
     strokeNode.setAttribute('id', id+'_stroke');
-    shadowNode = this.container.ownerDocument.createElement('v:shadow');
+    var shadowNode = this.container.ownerDocument.createElement('v:shadow');
     shadowNode.setAttribute('id', id+'_shadow');
     node.appendChild(fillNode);
     node.appendChild(strokeNode);
@@ -287,12 +288,13 @@ JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, p
     id = id+'sector';
     
     // createPrimitive doesn't work here...
-    fillNode = this.container.ownerDocument.createElement('v:fill');
+    var fillNode = this.container.ownerDocument.createElement('v:fill');
     fillNode.setAttribute('id', id+'_fill');
-    strokeNode = this.container.ownerDocument.createElement('v:stroke');
+    var strokeNode = this.container.ownerDocument.createElement('v:stroke');
     strokeNode.setAttribute('id', id+'_stroke');
-    shadowNode = this.container.ownerDocument.createElement('v:shadow');
+    var shadowNode = this.container.ownerDocument.createElement('v:shadow');
     shadowNode.setAttribute('id', id+'_shadow');    
+    
     pathNode = this.container.ownerDocument.createElement('v:path');
     pathNode.setAttribute('id', id+'_path');        
  
@@ -615,7 +617,7 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         else {
             el.rendNode.setAttribute('filled', 'true');
             el.rendNode.setAttribute('fillcolor', c); 
-            if (o!=undefined) {
+            if (o!=undefined &&  el.rendNodeFill) {  // Added el.rendNodeFill 29.9.09  A.W.
                 el.rendNodeFill.setAttribute('opacity', (o*100)+'%');
             }
         }
