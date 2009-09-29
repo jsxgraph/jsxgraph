@@ -2003,6 +2003,111 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
        names = ['','','','',''];
     }
 
+    var attribs = {};
+    if( (typeof atts != 'undefined') && (atts != null))
+        attribs = atts;
+
+    attribs.name = names[0];
+    attribs.id = ids[0];
+
+    // Correct the interval if necessary
+    var start = 0;
+    if(interval[0] > curve.points[0].usrCoords[1])
+        start = interval[0];
+    else
+        start = curve.points[0].usrCoords[1];
+        
+    var end = 0;
+    if(interval[1] < curve.points[curve.points.length-1].usrCoords[1]) 
+        end = interval[1];
+    else
+        end = curve.points[curve.points.length-1].usrCoords[1];
+
+    var pa_on_curve = this.createElement('glider', [start, curve.yterm(start), curve], attribs);
+
+    attribs.name = names[1];
+    attribs.id = ids[1];
+    attribs.visible = false;
+    var pa_on_axis = this.createElement('point', [function () { return pa_on_curve.X(); }, 0], attribs);
+
+    pa_on_curve.addChild(pa_on_axis);
+    
+    attribs.name = names[2];
+    attribs.id = ids[2];
+    attribs.visible = true;
+    var pb_on_curve = this.createElement('glider', [end, curve.yterm(end), curve], attribs);
+    
+    attribs.name = names[3];
+    attribs.id = ids[3];
+    attribs.visible = false;
+    var pb_on_axis = this.createElement('point', [function () { return pb_on_curve.X(); }, 0], attribs);
+    
+    pb_on_curve.addChild(pb_on_axis);
+    
+    var Int = JXG.Math.Numerics.I([start, end], curve.yterm);
+    var t = this.createElement('text', [
+        function () { return pb_on_curve.X() + 0.2; }, 
+        function () { return pb_on_curve.Y() - 0.8; },
+        function () {
+                var Int = JXG.Math.Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.yterm);
+                return '&int; = ' + (Int).toFixed(4);
+            }
+        ],{labelColor:atts['labelColor']});
+
+    var attribs = {};
+    if( (typeof atts != 'undefined') && (atts != null))
+        attribs = atts;
+    attribs.name = names[4];
+    attribs.id = ids[4];
+    attribs.visible = true;
+    attribs.fillColor = attribs.fillColor || this.options.polygon.fillColor;
+    attribs.highlightFillColor = attribs.highlightFillColor || this.options.polygon.highlightFillColor;
+    attribs.fillOpacity = attribs.fillOpacity || this.options.polygon.fillOpacity;
+    attribs.highlightFillOpacity = attribs.highlightFillOpacity || this.options.polygon.highlightFillOpacity;
+    attribs.strokeWidth = 0;
+    attribs.strokeOpacity = 0;
+    
+    var p = this.createElement('curve', [[0],[0]], attribs);
+    p.updateDataArray = function() {
+        var x = [pa_on_axis.coords.usrCoords[1], pa_on_curve.coords.usrCoords[1]];
+        var y = [pa_on_axis.coords.usrCoords[2], pa_on_curve.coords.usrCoords[2]];
+        for(var i=0; i < curve.numberPoints; i++) {
+            if( (pa_on_axis.X() <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= pb_on_axis.X()) ) {
+                x.push(curve.points[i].usrCoords[1]);
+                y.push(curve.points[i].usrCoords[2]);
+            }
+        }
+        x.push(pb_on_curve.coords.usrCoords[1]);
+        y.push(pb_on_curve.coords.usrCoords[2]);
+        x.push(pb_on_axis.coords.usrCoords[1]);
+        y.push(pb_on_axis.coords.usrCoords[2]);
+
+        x.push(pa_on_axis.coords.usrCoords[1]); // close the curve
+        y.push(pa_on_axis.coords.usrCoords[2]);
+        
+        this.dataX = x;
+        this.dataY = y;
+    }
+    pa_on_curve.addChild(p);
+    pb_on_curve.addChild(p);
+    pa_on_curve.addChild(t);
+    pb_on_curve.addChild(t);
+    
+    return p;//[pa_on_axis, pb_on_axis, p, t];
+};
+
+///
+// Old version:
+//////////////////////////////////
+/*
+JXG.Board.prototype.addIntegral2 = function (interval, curve, ids, names, atts) {
+    if(!JXG.isArray(ids) || (ids.length != 5)) {
+        ids = ['','','','',''];
+    }
+    if(!JXG.isArray(names) || (names.length != 5)) {
+       names = ['','','','',''];
+    }
+
     var points = [];
     
     var attribs = {};
@@ -2113,6 +2218,8 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     
     return p;//[pa_on_axis, pb_on_axis, p, t];
 };
+*/
+
 
 /**
  * Calculates adequate snap sizes.
