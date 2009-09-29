@@ -45,7 +45,7 @@
 	background-color:			#bcd;
 	padding:					10px;
 	text-align:					center;
-	-moz-transform:				rotate(-10deg);	
+/*	-moz-transform:				rotate(-10deg);*/	
 	-moz-box-shadow:			4px 4px 4px #555; 
 	-moz-border-radius:			10px;
 }
@@ -94,8 +94,8 @@
 }
 .content_text_head {
 	position:					absolute;
-	top:						10px;
-	right:						10px;
+	top:						25px;
+	left:						160px;
 	border:						none;
 	width:						350px;
 	height:						30px;
@@ -128,7 +128,7 @@
 	background-color:			#fff;
 	-moz-box-shadow:			4px 4px 4px #555; 
 	-moz-border-radius:			10px;
-	opacity:					0.8;
+/*	opacity:					0.8;*/
 }
 
 .jsxgraph_present_big {
