@@ -2031,7 +2031,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     points.push(pa_on_axis);
     points.push(pa_on_curve);
     
-    pa_on_curve.addChild(pa_on_axis);    
+    pa_on_curve.addChild(pa_on_axis);
     
     var fakePoint;
     for(var i=0; i < curve.numberPoints; i++) {
@@ -2040,9 +2040,9 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
                 type: JXG.OBJECT_TYPE_POINT,
                 elementClass: JXG.OBJECT_CLASS_POINT,
                 addChild: function(el) { },
-                X: function(){},
-                Y: function(){},
-                coords: curve.points[i]
+                coords: curve.points[i],
+                X: function(){ return this.coords.usrCoords[1]; },
+                Y: function(){ return this.coords.usrCoords[2]; }
             };
             points.push( fakePoint );
         }
@@ -2093,9 +2093,9 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
                     type: JXG.OBJECT_TYPE_POINT,
                     elementClass: JXG.OBJECT_CLASS_POINT,
                     addChild: function(el) { },
-                    X: function(){},
-                    Y: function(){},
-                    coords: curve.points[i]
+                    coords: curve.points[i],
+                    X: function(){ return this.coords.usrCoords[1]; },
+                    Y: function(){ return this.coords.usrCoords[2]; }
                 };
                 ps.push( fakePoint );
             }
