@@ -113,8 +113,8 @@ function jsxgraph_filter($text) {
       }
       // construction by $input
       else {
-        for($i=1; $i<=sizeof($input); $i++)
-          ($i == 1 || $i == sizeof($input)) ? $output .= $input[$i] : $output .= ">". $input[$i];
+        for($j=1; $j<=sizeof($input); $j++)
+          ($j == 1 || $j == sizeof($input)) ? $output .= $input[$j] : $output .= ">". $input[$j];
       }
       $output .= "</script>";
 
@@ -130,6 +130,7 @@ add_action('wp_head', 'jsxgraph_head');
 
 // We want to run after other filters; hence, a priority of 99.
 add_filter('the_content', 'jsxgraph_filter', 99);
-add_filter('comment_text', 'jsxgraph_filter', 99);
+// JSXGraph not enabled by default.  30.9.09 A.Wassermann
+//add_filter('comment_text', 'jsxgraph_filter', 99);
 
 ?>
