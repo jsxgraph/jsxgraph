@@ -28,7 +28,7 @@ Plugin Name: JSXGraph
 Plugin URI: http://jsxgraph.org
 Description: Embedding jsxgraph constructions
 Author: Peter Wilfahrt
-Version: 0.2.3
+Version: 0.77
 Author URI: http://www.webconsul.de/
 */
 
@@ -39,35 +39,24 @@ Author URI: http://www.webconsul.de/
 function jsxgraph_head() {
   // Stylesheet
   $css_url = 'http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css';
-  if(file_exists(get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css'))
-    $css_url = get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css';
-  if(file_exists(get_bloginfo("template_url") . '/jsxgraph.css'))
-    $css_url = get_bloginfo('template_url') . '/jsxgraph.css';
-
-  // prototype
-  $prototype_url = "http://jsxgraph.uni-bayreuth.de/distrib/prototype.js";
-  if(file_exists(get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/prototype.js"))
-    $prototype_url = get_bloginfo("wpurl") . "/wp-content/plugins/jsxgraph/prototype.js";
-  if(file_exists(get_bloginfo("template_url") . "/prototype.js"))
-    $prototype_url = get_bloginfo("template_url") . "/prototype.js";
+  if(file_exists('wp-content/plugins/jsxgraph/jsxgraph.css')) $css_url = get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css';
+  if(file_exists(get_bloginfo("template_url") . '/jsxgraph.css')) $css_url = get_bloginfo('template_url') . '/jsxgraph.css';
 
   // jsxgraph core
   $core_url = "http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js";
-  if(file_exists(get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/jsxgraphcore.js"))
-    $core_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/jsxgraphcore.js";
-  if(file_exists(get_bloginfo("template_url") ."/jsxgraphcore.js"))
-    $core_url = get_bloginfo("template_url") ."/jsxgraphcore.js";
+  if(file_exists("wp-content/plugins/jsxgraph/jsxgraphcore.js")) $core_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/jsxgraphcore.js";
 
+  // jquery
+  $pt_url = "http://jsxgraph.uni-bayreuth.de/distrib/prototype.js";
+  if(file_exists("wp-includes/js/prototype.js")) $pt_url = get_bloginfo("wpurl") ."/wp-includes/js/prototype.js";
   // Header-Output
   echo "\n<link rel='stylesheet' type='text/css' href='$css_url' media='screen' />\n";
-  echo "<script type='text/javascript' src='$prototype_url'></script>\n";
+  echo "<script type='text/javascript' src='$pt_url'></script>\n";
   echo "<script type='text/javascript' src='$core_url'></script>\n";
-  echo "<meta http-equiv='X-UA-Compatible' content='IE=7' />\n";
 }
 
 function jsxgraph_filter($text) {
   if(is_int(strpos($text, '<jsxgraph'))) {
-    $jsxgraph_version = '0.1';
 
     // get every construction
     $count = substr_count($text, '<jsxgraph');
@@ -131,6 +120,6 @@ add_action('wp_head', 'jsxgraph_head');
 // We want to run after other filters; hence, a priority of 99.
 add_filter('the_content', 'jsxgraph_filter', 99);
 // JSXGraph not enabled by default.  30.9.09 A.Wassermann
-//add_filter('comment_text', 'jsxgraph_filter', 99);
+// add_filter('comment_text', 'jsxgraph_filter', 99);
 
 ?>

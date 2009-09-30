@@ -1,9 +1,9 @@
 === JSXGraph - Graphics with JavaScript ===
 Contributors: Matthias Ehmann, Michael Gerhäuser, Carsten Miller, Bianca Valentin, Alfred Wassermann, Peter Wilfahrt
 Tags: jsxgraph, geometry, plotting, visualization, javascript, svg, vml, rendering, graphics
-Requires at least: 2.0
-Tested up to: 2.7.1
-Stable tag: 0.2.3
+Requires at least: 2.2
+Tested up to: 2.8.4
+Stable tag: 0.77
 
 Using the JSXGraph filter makes it a lot easier to embed JSXGraph constructions into wordpress pages/posts.
 
@@ -37,12 +37,12 @@ Be aware of the fact, that you dont't see the construction unless you leave the 
 
 == Screenshots ==
 
-1. Hypotrochoid `/tags/0.2/screenshot-1.jpg`
-2. Angles `/tags/0.2/screenshot-2.jpg`
-3. Importing GEONExT and Intergeo files `/tags/0.2/screenshot-3.jpg`
-4. Chart `/tags/0.2/screenshot-4.jpg`
-5. Function plot with derivative and integral `/tags/0.2/screenshot-5.jpg`
-6. Data plot and analysis `/tags/0.2/screenshot-6.jpg`
+1. Hypotrochoid `/tags/0.2.5/screenshot-1.jpg`
+2. Angles `/tags/0.2.5/screenshot-2.jpg`
+3. Importing GEONExT and Intergeo files `/tags/0.2.5/screenshot-3.jpg`
+4. Chart `/tags/0.2.5/screenshot-4.jpg`
+5. Function plot with derivative and integral `/tags/0.2.5/screenshot-5.jpg`
+6. Data plot and analysis `/tags/0.2.5/screenshot-6.jpg`
 
 
 == Examples ==
