@@ -19,6 +19,8 @@ Goto <a href="shareprice.html">real data</a> example.
 
     var x = [], y = [], g, board, val, hi, lo, share, timer, restart = true;
 
+    JXG.serverBase = 'http://svgopen/presentation/srv/';
+
     JXG.Server.loadModule('YahooFinance');
 
     var init = function (data) {

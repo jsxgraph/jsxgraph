@@ -759,6 +759,9 @@ JXG.Point.prototype.moveTo = function(where, time) {
 		dX = (where[0] - X),
 		dY = (where[1] - Y),
 	    i;
+
+    if(Math.abs(dX) < JXG.Math.eps && Math.abs(dY) < JXG.Math.eps)
+        return this;
 	
 	for(i=steps; i>=0; i--) {
 		coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y+ dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
