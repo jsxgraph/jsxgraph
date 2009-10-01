@@ -6,7 +6,7 @@ $(document).ready(function() {
 	var ix = 0;
 	$(".pages").each(function() {
 		pages[ix++] = $(this).html();
-	});			
+	});
 	ix = 0;
 	$(".files").each(function() {
 		files[ix++] = $(this).text();
