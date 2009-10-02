@@ -7,7 +7,7 @@
     </head>
     <body class="jsxgraph_body">
         <form>
-            <input type="text" value="7" name='Level' style='margin-left:10px'>
+            <input type="text" value="5" name='Level' style='margin-left:10px'>
             <input type="button" value="Set Level!" onClick="level = 1*document.forms[0].Level.value; run();">
         </form>    
         <div id="box" class="jxgbox jsxgraph_present"></div>
@@ -16,7 +16,7 @@
             /* <![CDATA[ */
             var brd = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 300, originY: 300, unitX: 1, unitY: 1});
             var t = brd.createElement('turtle');
-            var level = 7;
+            var level = 5;
             function koch(x,level) {
                 if (level<1) {
                     t.fd(x);

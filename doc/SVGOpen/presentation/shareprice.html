@@ -26,7 +26,7 @@ In case there's no internet connection goto <a href="fakeshareprice.html">fake d
     var init = function (data) {
         hi = data.max*1.00002;
         lo = data.min*0.99998;
-        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [0, hi, 200, lo], axis: true, grid: false});
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [0, hi, 200, lo], axis: true, grid: false, showcopyright: false, shownavigation: false});
         board.createElement('axis',[[0,lo],[1,lo]]);
     }
 

@@ -11,19 +11,19 @@
 		<div id="debug" style="display:none;"></div>
 		<script type="text/javascript">
 			/* <![CDATA[ */
-			var brd = JXG.JSXGraph.initBoard('box',{shownavigation:false,showcopyright:false,axis:false,originX:20,originY:560,unitX:50,unitY:50});
+			var brd = JXG.JSXGraph.initBoard('box',{boundingbox: [0, 12, 12, -2], keepaspectratio: true, shownavigation:false,showcopyright:false,axis:false});
 			
-			var a = brd.createElement('point',[3,3],{name:'A'});
-			var b = brd.createElement('point',[6,2],{name:'B'}); 
-			var c = brd.createElement('point',[1,8],{name:'C'}); 
-			var l = brd.createElement('line',[b, c],{name:'g', withlabel:true}); 
+			var a = brd.createElement('point', [3,3], {name:'A'});
+			var b = brd.createElement('point', [6,2], {name:'B'}); 
+			var c = brd.createElement('point', [1,8], {name:'C', strokeColor: 'green', fillColor: 'yellow', highlightFillColor: 'black', size: 8}); 
+			var l = brd.createElement('line', [b, c], {name:'g'}); 
 			
-			var d = brd.createElement('point',[8,7],{name:'D'}); 
-			var e = brd.createElement('point',[10.5,5],{name:'E'}); 
-			var cr = brd.createElement('circle',[d, e],{name:'k_1', withlabel:true});
+			var d = brd.createElement('point', [8,7], {name:'D'}); 
+			var e = brd.createElement('point', [10.5,5], {name:'E'}); 
+			var cr = brd.createElement('circle', [d, e], {name:'k_1'});
 
 			var i1 = brd.createElement('intersection', [cr, l, 0], {face:'square'});
-			var i2 = brd.createElement('intersection', [cr, l, 1], {face:'square'});
+			var i2 = brd.createElement('intersection', [cr, l, 1], {face:'[]', size: 7});
 			
 			/* ]]> */
 		</script>

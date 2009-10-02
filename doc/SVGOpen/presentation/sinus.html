@@ -11,7 +11,7 @@
 		<div id="debug" style="display:none;"></div>
 		<script type="text/javascript">
     /* <![CDATA[ */
-        var brd = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 400, originY: 200, grid:true, unitX: 50, unitY: 50, axis:true});        
+        var brd = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 400, originY: 300, grid:true, unitX: 50, unitY: 50, axis:true});        
         var b = brd.createElement('slider',[[0.5,3.5],[4.5,3.5],[0,1,3]],{name:'a', strokeColor:'black', fillColor:'white'});
         var f = function(x){ return b.Value()*Math.sin(x); }
         var plot = brd.createElement('functiongraph',[f,-7,7], {strokeColor:'#32CD32', strokeWidth:'4px'});

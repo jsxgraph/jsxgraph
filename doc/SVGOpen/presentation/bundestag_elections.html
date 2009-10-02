@@ -23,6 +23,7 @@
     </style>
 </head>
 <body>
+<br /><br />
 <a href="#" onclick="show('page0');" class="topmenu">Table</a><a href="#" onclick="show('page1');" class="topmenu">Whole table as chart</a><a href="#" onclick="show('page2');" class="topmenu">Choose parties to display</a><a href="#" onclick="show('page3');" class="topmenu">Choose year to display</a>
 <br /><br />
 <!-- Sub page 0: The table with the data -->
@@ -371,7 +372,7 @@
 
 <div style="width:800px; display: block;" id="page2">
   <div id="jxgbox2" class="jxgbox" style="width:600px; height:450px; float:left"></div>
-<div style="float: left"><br/> <!--a href="#" onclick="select_parties();" class="topmenu">Update display</a--><br /><br />
+<div style="position: absolute; top: 40px; left: 620px;"><br/> <!--a href="#" onclick="select_parties();" class="topmenu">Update display</a--><br /><br />
 <form name="form_parties">
     <input type="checkbox" value="0" onclick="select_parties();" name="parties">CDU<br/>
     <input type="checkbox" value="1" onclick="select_parties();" name="parties">CSU<br/>
@@ -417,9 +418,9 @@
 <div id="debug" style="display:block; float: right;"></div>
    <script type="text/javascript">
    /* <![CDATA[ */
-        var board1 = JXG.JSXGraph.initBoard('jxgbox1', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false}),
-            board2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false}),
-            board3 = JXG.JSXGraph.initBoard('jxgbox3', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false}),
+        var board1 = JXG.JSXGraph.initBoard('jxgbox1', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false, showcopyright: false, shownavigation: false}),
+            board2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false, showcopyright: false, shownavigation: false}),
+            board3 = JXG.JSXGraph.initBoard('jxgbox3', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false, showcopyright: false, shownavigation: false}),
             colors = ['black', '#333333', 'red', 'yellow', 'green', '#8B00FF', 'orange', '#965220', '#96abee', 'gray', '#965220', 'red', 'blue', 'lightgray'],
             years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005, 2009],
             hStroke = [], charts1, charts2, charts3, i;
@@ -482,6 +483,8 @@
                 board3.unsuspendUpdate();
             }
         }
+
+//        select_years();
 
         // general
         function show(page) {
