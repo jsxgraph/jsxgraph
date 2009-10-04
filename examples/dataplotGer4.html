@@ -1,0 +1,104 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="germany.js"></script>
+</head>
+<body>
+<h2>Curve Test</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    var wahlkreise = [];
+    var points = [];
+for(i=0;i<data.length;i++) {
+    if(i%6==1) {
+        wahlkreise.push(data[i]);
+    }
+    else if(i%6 == 5) {
+        points.push(data[i]);
+    }
+}
+    
+    var minXArr =[];
+var minYArr = [];
+var maxXArr = [];
+var maxYArr = [];
+var xArr = [];
+var yArr = [];
+
+var anz = 100; // mehr dauert zu lange...
+//var anz = points.length;
+for(j=0;j<anz;j++) {
+    var xy = points[j].split(',');
+    var x = [];
+    var y = [];
+    for(var i=0;i<xy.length;i++) {
+        var a = xy[i].split(' ');
+        x.push(1*(1*a[0]).toFixed(1));
+        y.push(1*(1*a[1]).toFixed(1));
+    }
+        
+
+    var minX = 10000000000000000;
+    var maxX = -100000000000000;
+    var minY = 200000000000000000;
+    var maxY = -10000000000000;
+    for(var i=0;i<x.length;i++) {
+        if(x[i] < minX) {
+            minX = x[i];
+        }
+        if(x[i] > maxX) {
+            maxX = x[i];
+        }
+
+        if(y[i] < minY) {
+            minY = y[i];
+        }
+        if(y[i] > maxY) {
+            maxY = y[i];
+        }
+    }
+    minXArr.push(minX);
+    minYArr.push(minY);
+    maxXArr.push(maxX);
+    maxYArr.push(maxY);
+    xArr.push(x);
+    yArr.push(y);
+}
+
+var minX = 10000000000000000;
+var maxX = -100000000000000;
+var minY = 200000000000000000;
+var maxY = -10000000000000;
+for(i=0;i<xArr.length;i++) {
+    if(minXArr[i] < minX) {
+        minX = minXArr[i];
+    }
+    if(maxXArr[i] > maxX) {
+        maxX = maxXArr[i];
+    }
+
+    if(minYArr[i] < minY) {
+        minY = minYArr[i];
+    }
+    if(maxYArr[i] > maxY) {
+        maxY = maxYArr[i];
+    }
+}
+
+    var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-1000,maxY+1000,maxX+1000,minY-1000]});
+    brd.suspendUpdate();
+for(i=0;i<xArr.length;i++) {
+    var graph = brd.createElement('curve', [xArr[i],yArr[i]], {});
+}
+brd.unsuspendUpdate();
+          /* ]]> */
+  </script>
+</body>
+</html>
