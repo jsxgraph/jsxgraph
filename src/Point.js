@@ -222,7 +222,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
     /**
      * When used as a glider this member stores the object, where to glide on. To set the object to glide on use the method
      * {@link JXG.Point#makeGlider} and DO NOT set this property directly as it will break the dependency tree.
-	 * TODO: Requires renaming to glideObject
+     * TODO: Requires renaming to glideObject
      * @type JXG.GeometryElement
      * @name Glider#slideObject
      */
@@ -786,25 +786,25 @@ JXG.Point.prototype.visit = function(where, time, repeat) {
     if(arguments.length == 2)
         repeat = 1;
 
-	var delay = 35,
-	    steps = Math.ceil(time/(delay * 1.0)),
-		coords = new Array(repeat*(steps+1)),
-		X = this.coords.usrCoords[1],
-		Y = this.coords.usrCoords[2],
-		dX = (where[0] - X),
-		dY = (where[1] - Y),
-	    i, j;
-	
+    var delay = 35,
+        steps = Math.ceil(time/(delay * 1.0)),
+        coords = new Array(repeat*(steps+1)),
+        X = this.coords.usrCoords[1],
+        Y = this.coords.usrCoords[2],
+        dX = (where[0] - X),
+        dY = (where[1] - Y),
+        i, j;
+    
     for(j=0; j<repeat; j++) {
         for(i=steps; i>=0; i--) {
             coords[j*(steps+1) + steps-i] = [X + dX * Math.pow(Math.sin((i/(steps*1.0))*Math.PI), 2.), Y+ dY * Math.pow(Math.sin((i/(steps*1.0))*Math.PI), 2.)];
         }
     }
-	this.animationPath = coords;
-	this.board.animationObjects[this.id] = this;
-	if(typeof this.board.animationIntervalCode == 'undefined') {
-		this.board.animationIntervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].animate();', delay);
-	}
+    this.animationPath = coords;
+    this.board.animationObjects[this.id] = this;
+    if(typeof this.board.animationIntervalCode == 'undefined') {
+        this.board.animationIntervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].animate();', delay);
+    }
     return this;
 };
 
@@ -817,9 +817,9 @@ JXG.Point.prototype.visit = function(where, time, repeat) {
  * @private
  */
 JXG.Point.prototype.animate = function(direction, stepCount) {
-	this.intervalCount++;
-	if(this.intervalCount > stepCount)
-		this.intervalCount = 0;
+    this.intervalCount++;
+    if(this.intervalCount > stepCount)
+        this.intervalCount = 0;
     
     if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
         var distance = this.slideObject.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.slideObject.point2.coords);
@@ -955,7 +955,7 @@ JXG.Point.prototype.setStyle = function(i) {
  * @private
  */
 JXG.Point.prototype.setFace = function(s) {
-	s = s.toLowerCase();
+    s = s.toLowerCase();
     if(s == 'cross' || s == 'x' || s == 'plus' || s == '+' || s == 'circle' || s == 'o' || s == 'square' || s == '[]') {
         this.visProp['face'] = s;
     }
