@@ -269,6 +269,64 @@ JXG.createMidpoint = function(board, parentArr, atts) {
 };
 
 /**
+ * @class This element is used to construct a parallel point.
+ * @pseudo
+ * @description A parallel point is given by three points. Taking the euclidean vector from the first to the
+ * second point, the parallel point is determined by adding that vector to the third point.
+ * The line determined by the first two points is parallel to the line determined by the third point and the constructed point.
+ * @constructor
+ * @name Parallelpoint
+ * @type JXG.Point
+ * @augments JXG.Point
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 Taking the euclidean vector <tt>v=p2-p1</tt> the parallel point is determined by
+ * <tt>p4 = p3+v</tt>
+ * @param {JXG.Line_JXG.Point} l,p The resulting point will together with p specify a line which is parallel to l.
+ * @example
+ * var p1 = board.createElement('point', [0.0, 2.0]);
+ * var p2 = board.createElement('point', [2.0, 1.0]);
+ * var p3 = board.createElement('point', [3.0, 3.0]);
+ *
+ * var pp1 = board.createElement('parallelpoint', [p1, p2, p3]);
+ * </pre><div id="488c4be9-274f-40f0-a469-c5f70abe1f0e" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var ppex1_board = JXG.JSXGraph.initBoard('488c4be9-274f-40f0-a469-c5f70abe1f0e', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var ppex1_p1 = ppex1_board.createElement('point', [0.0, 2.0]);
+ *   var ppex1_p2 = ppex1_board.createElement('point', [2.0, 1.0]);
+ *   var ppex1_p3 = ppex1_board.createElement('point', [3.0, 3.0]);
+ *   var ppex1_pp1 = ppex1_board.createElement('parallelpoint', [ppex1_p1, ppex1_p2, ppex1_p3]);
+ * </script><pre>
+ */
+JXG.createParallelPoint = function(board, parentArr, atts) {
+    var p1, p2, p3, p;
+
+    /* TODO parallel point polynomials */
+    if(parentArr.length == 3 && parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[2].elementClass == JXG.OBJECT_CLASS_POINT) {
+        p1 = parentArr[0];
+        p2 = parentArr[1];
+        p3 = parentArr[2];
+    } else if (parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_LINE) {
+        p3 = parentArr[0];
+        p1 = parentArr[1].point1;
+        p2 = parentArr[1].point2;
+    } else if (parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[0].elementClass == JXG.OBJECT_CLASS_LINE) {
+        p3 = parentArr[1];
+        p1 = parentArr[0].point1;
+        p2 = parentArr[0].point2;
+    }
+    else {
+        throw ("Can't create parallel point with parent types '" + (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");    
+    }
+
+    p = board.createElement('point', [function () { return p3.coords.usrCoords[1] + p2.coords.usrCoords[1] - p1.coords.usrCoords[1]; }, function () { return p3.coords.usrCoords[2] + p2.coords.usrCoords[2] - p1.coords.usrCoords[2]; }], atts);
+    p1.addChild(p); // required for algorithms requiring dependencies between elements
+    p2.addChild(p);
+    p3.addChild(p);
+
+    return p;
+};
+
+/**
  * @class Constructor for a parallel line.
  * @pseudo
  * @description A parallel is a line through a given point with the same slope as a given line. 
@@ -296,17 +354,92 @@ JXG.createMidpoint = function(board, parentArr, atts) {
  *   var plex1_pl1 = plex1_board.createElement('parallel', [plex1_l1, plex1_p3]);
  * </script><pre>
  */
-JXG.createParallel = function(board, parentArr, atts) {
-    /* TODO parallel polynomials */
-    if(JXG.isPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
-        return board.addParallel(parentArr[1], parentArr[0], atts['id'], atts['name']);
+JXG.createParallel = function(board, parents, atts) {
+    var p, pp, pl, cAtts;
+
+    /* parallel point polynomials are done in createParallelPoint */
+
+    cAtts = {name: null, id: null, fixed: true, visible: false};
+    if(atts['name'].length == 2)
+        cAtts['name'] = atts['name'][1];
+    if(atts['id'].length == 2)
+        cAtts['id'] = atts['id'][1];
+
+    if(atts) {
+        cAtts = JXG.cloneAndCopy(atts, cAtts);
     }
-    else if(JXG.isPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
-        return board.addParallel(parentArr[0], parentArr[1], atts['id'], atts['name']);    
+
+    try {
+        pp = JXG.createParallelPoint(board, parents, cAtts);
+    } catch (e) {
+        throw ("Can't create parallel with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");    
     }
-    else {
-        throw ("Can't create parallel with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
+
+    if(atts['name'].length == 2)
+        atts['name'] = atts['name'][0];
+    if(atts['id'].length == 2)
+        atts['id'] = atts['id'][0];
+
+    p = null;
+    if(parents.length == 3)
+        p = parents[2];
+    else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT)
+        p = parents[0];
+    else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT)
+        p = parents[1];
+
+    pl = board.createElement('line', [p, pp], atts);
+
+    return pl;
+};
+
+/**
+ * TODO is this really required? it is the same as 'parallel', except that it doesn't touch the first/lastarrow properties and it returns
+ * the parallel point. for now it is set to private. please review the docs-comment before making it public. especially the example section
+ * isn't done by now. --michael
+ * @private
+ * @class Constructs two elements: an arrow and a point.
+ * @pseudo
+ * @description An arrow parallel is an arrow through a given point with the same slope as another given arrow. 
+ * @constructor
+ * @name Arrowparallel
+ * @type JXG.Line
+ * @augments JXG.Line
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {Arrow_JXG.Point} a,p The constructed arrow contains p and has the same slope as a.
+ * @example
+ * // Create a parallel
+ * var p1 = board.createElement('point', [0.0, 2.0]);
+ * var p2 = board.createElement('point', [2.0, 1.0]);
+ * var l1 = board.createElement('line', [p1, p2]);
+ * 
+ * var p3 = board.createElement('point', [3.0, 3.0]);
+ * var pl1 = board.createElement('parallel', [l1, p3]);
+ * </pre><div id="qwe" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var plex1_board = JXG.JSXGraph.initBoard('asd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var plex1_p1 = plex1_board.createElement('point', [0.0, 2.0]);
+ *   var plex1_p2 = plex1_board.createElement('point', [2.0, 1.0]);
+ *   var plex1_l1 = plex1_board.createElement('line', [plex1_p1, plex1_p2]);
+ *   var plex1_p3 = plex1_board.createElement('point', [3.0, 3.0]);
+ *   var plex1_pl1 = plex1_board.createElement('parallel', [plex1_l1, plex1_p3]);
+ * </script><pre>
+ */
+JXG.createArrowParallel = function(board, parents, atts) {
+    var l, cAtts;
+
+    /* parallel arrow point polynomials are done in createParallelPoint */
+    try {
+        // we don't have to get onto that whole createElement stack here
+        // because that'll be run for the line l right after leaving that function.
+        l = JXG.createParallel(board, parents, atts);
+    } catch (e) {
+        throw ("Can't create arrowparallel with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");    
     }
+
+    l.setStraight(false, false);
+    l.setArrow(false,true);
+    return l;
 };
 
 /**
@@ -456,7 +589,7 @@ JXG.createNormal = function(board, parents, attributes) {
 };
 
 /**
- * @class Provides a constructor for a angle bisector.
+ * @class Provides a constructor for an angle bisector.
  * @pseudo
  * @description A bisector is a line which divides an angle into two equal angles. It is given by three points A, B, and C and divides the angle ABC into two
  * equal sized parts.  
@@ -483,9 +616,27 @@ JXG.createNormal = function(board, parents, attributes) {
  * </script><pre>
  */
 JXG.createBisector = function(board, parentArr, atts) {
+    var p, l, cAtts, i;
     /* TODO bisector polynomials */
-    if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1]) && JXG.isPoint(parentArr[2])) {
-        return board.addAngleBisector(parentArr[0], parentArr[1], parentArr[2], atts['id'], atts['name']);
+    if(parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[2].elementClass == JXG.OBJECT_CLASS_POINT) {
+
+        cAtts = {name: null, id: null, fixed: true, visible: false};
+        if(atts) {
+            cAtts = JXG.cloneAndCopy(atts, cAtts);
+        }
+
+        // hidden and fixed helper
+        p = board.createElement('point', [function () { return board.algebra.angleBisector(parentArr[0], parentArr[1], parentArr[2]); }], cAtts);
+
+        for(i=0; i<3; i++)
+            parentArr[i].addChild(p); // required for algorithm requiring dependencies between elements
+
+        if(typeof atts['straightFirst'] == 'undefined')
+            atts['straightFirst'] = false;
+        if(typeof atts['straightLast'] == 'undefined')
+            atts['straightLast'] = true;
+        l = board.createElement('line', [parentArr[1], p], atts);
+        return l;
     }
     else {
         throw ("Can't create angle bisector with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
@@ -566,62 +717,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
     return [g1,g2];
 };
 
-/**
- * TODO is this really required? it is the same as 'parallel', except that it doesn't touch the first/lastarrow properties and it returns
- * the parallel point. for now it is set to private. please review the docs-comment before making it public. especially the example section
- * isn't done by now. --michael
- * @private
- * @class Constructs two elements: an arrow and a point.
- * @pseudo
- * @description An arrow parallel is an arrow through a given point with the same slope as another given arrow. 
- * @constructor
- * @name Arrowparallel
- * @type JXG.Line
- * @augments JXG.Line
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Arrow_JXG.Point} a,p The constructed arrow contains p and has the same slope as a.
- * @example
- * // Create a parallel
- * var p1 = board.createElement('point', [0.0, 2.0]);
- * var p2 = board.createElement('point', [2.0, 1.0]);
- * var l1 = board.createElement('line', [p1, p2]);
- * 
- * var p3 = board.createElement('point', [3.0, 3.0]);
- * var pl1 = board.createElement('parallel', [l1, p3]);
- * </pre><div id="qwe" style="width: 400px; height: 400px;"></div>
- * <script type="text/javascript">
- *   var plex1_board = JXG.JSXGraph.initBoard('asd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var plex1_p1 = plex1_board.createElement('point', [0.0, 2.0]);
- *   var plex1_p2 = plex1_board.createElement('point', [2.0, 1.0]);
- *   var plex1_l1 = plex1_board.createElement('line', [plex1_p1, plex1_p2]);
- *   var plex1_p3 = plex1_board.createElement('point', [3.0, 3.0]);
- *   var plex1_pl1 = plex1_board.createElement('parallel', [plex1_l1, plex1_p3]);
- * </script><pre>
- */
-JXG.createArrowParallel = function(board, parentArr, atts) {
-    /* TODO arrowparallel polynomials */
-    if(JXG.isPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_ARROW) {
-        if(!JXG.isArray(atts['id'])) {
-            atts['id'] = ['',''];
-        }
-        if(!JXG.isArray(atts['name'])) {
-            atts['name'] = ['',''];
-        }    
-        return board.addArrowParallel(parentArr[1], parentArr[0], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);
-    }
-    else if(JXG.isPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_ARROW) {
-        if(!JXG.isArray(atts['id'])) {
-            atts['id'] = ['',''];
-        }
-        if(!JXG.isArray(atts['name'])) {
-            atts['name'] = ['',''];
-        }        
-        return board.addArrowParallel(parentArr[0], parentArr[1], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);    
-    }
-    else {
-        throw ("Can't create parallel arrow with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
-    }
-};
+// here we have to continue with replacing board.add* stuff
 
 /**
  * @class Constructs two elements: a point and a circle. The circle is given by three points which lie on the circle,
@@ -701,44 +797,6 @@ JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
     }
     else {
         throw ("Can't create circumcircle midpoint with parent types '" + (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");    
-    }
-};
-
-/**
- * @class This element is used to construct a parallel point.
- * @pseudo
- * @description A parallel point is given by three points. Taking the euclidean vector from the first to the
- * second point, the parallel point is determined by adding that vector to the third point.
- * The line determined by the first two points is parallel to the line determined by the third point and the constructed point.
- * @constructor
- * @name Parallelpoint
- * @type JXG.Point
- * @augments JXG.Point
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 Taking the euclidean vector <tt>v=p2-p1</tt> the parallel point is determined by
- * <tt>p4 = p3+v</tt>
- * @example
- * var p1 = board.createElement('point', [0.0, 2.0]);
- * var p2 = board.createElement('point', [2.0, 1.0]);
- * var p3 = board.createElement('point', [3.0, 3.0]);
- *
- * var pp1 = board.createElement('parallelpoint', [p1, p2, p3]);
- * </pre><div id="488c4be9-274f-40f0-a469-c5f70abe1f0e" style="width: 400px; height: 400px;"></div>
- * <script type="text/javascript">
- *   var ppex1_board = JXG.JSXGraph.initBoard('488c4be9-274f-40f0-a469-c5f70abe1f0e', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var ppex1_p1 = ppex1_board.createElement('point', [0.0, 2.0]);
- *   var ppex1_p2 = ppex1_board.createElement('point', [2.0, 1.0]);
- *   var ppex1_p3 = ppex1_board.createElement('point', [3.0, 3.0]);
- *   var ppex1_pp1 = ppex1_board.createElement('parallelpoint', [ppex1_p1, ppex1_p2, ppex1_p3]);
- * </script><pre>
- */
-JXG.createParallelPoint = function(board, parentArr, atts) {
-    /* TODO parallel point polynomials */
-    if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1]) && JXG.isPoint(parentArr[2])) {
-        return board.addParallelPoint(parentArr[0], parentArr[1], parentArr[2], atts['id'], atts['name']);
-    }
-    else {
-        throw ("Can't create parallel point with parent types '" + (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");    
     }
 };
 

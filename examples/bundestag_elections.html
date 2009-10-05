@@ -426,7 +426,8 @@
             years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005, 2009],
             hStroke = [], charts1, charts2, charts3, i;
 
-        // sub page 1
+       
+ // sub page 1
         charts1 = board1.create('chart', ['btw'], {chartStyle: 'point,line', withHeaders: true, colorArray: colors, strokeColor: colors, fillColor: colors, highlightFillColor: colors, highlightStrokeColor: colors});
 
         board1.highlightInfobox = function(x,y,el) {
@@ -449,7 +450,7 @@
             if(part.length <4)
                 chartType = 'bar';
 
-	    	charts2 = board2.create('chart', ['btw'], {chartStyle: 'point,' + chartType, withHeaders: true, colorArray: color, strokeColor: color, fillColor: color, highlightFillColor: color, highlightStrokeColor: color, rows: part});
+	    	charts2 = board2.create('chart', ['btw'], {chartStyle: chartType, withHeaders: true, colorArray: color, strokeColor: color, fillColor: color, highlightFillColor: color, highlightStrokeColor: color, rows: part});
         }
 
         board2.highlightInfobox = function(x,y,el) {

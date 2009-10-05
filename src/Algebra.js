@@ -234,6 +234,9 @@ JXG.Algebra.prototype.angleBisector = function(/** JXG.Point */ A, /** JXG.Point
 };
     
 /**
+ @private
+ @deprecated
+ OBSOLETE
  * Calculates the midpoint between two points A and B.
  * @param {JXG.Point} A Point
  * @param {JXG.Point} B Point
@@ -247,6 +250,9 @@ JXG.Algebra.prototype.midpoint = function(A, B) {
 };
 
 /**
+ @private
+ @deprecated
+ OBSOLETE
  * Calculates the coordinates of a point on the parallel through the given point to the given line through point1 and point2.
  * @param {JXG.Point} point1 First point lying on the given line.
  * @param {JXG.Point} point2 Second point lying on the given line.
@@ -254,7 +260,7 @@ JXG.Algebra.prototype.midpoint = function(A, B) {
  * @type JXG.Coords
  * @return Coordinates of a point defining the parallel together with the given point.
  */
-JXG.Algebra.prototype.parallel = function(point1, point2, point) {
+/*JXG.Algebra.prototype.parallel = function(point1, point2, point) {
     var factor = 1,
         pc = point.coords.usrCoords,
         p1c = point1.coords.usrCoords,
@@ -263,7 +269,7 @@ JXG.Algebra.prototype.parallel = function(point1, point2, point) {
         y = pc[2] + factor*(p2c[2] - p1c[2]);
     
     return new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-};
+};*/
 
 /**
  * Reflects the point along the line.

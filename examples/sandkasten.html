@@ -21,10 +21,10 @@
 
 
         var p = [];
-        p.push(b._point([0, 4], {face: '+', size: 5}));
-        p.push(b._point([0, 2], {face: 'x', size: 5}));
-        p.push(b._point([0, 5], {face: '[]', size: 5}));
-        p.push(b._point([0, 7], {face: '[]', size: 5}));
+        p.push(b._point([5, 4], {face: '+', size: 5}));
+        p.push(b._point([6, 2], {face: 'x', size: 5}));
+        p.push(b._point([7, 5], {face: '[]', size: 5}));
+        p.push(b._point([8, 7], {face: '[]', size: 5}));
         
 		var data = [], i;
 		for(i=0; i<p.length; i++) {
@@ -34,7 +34,9 @@
 
 		//data = [function () { return p[0].Y(); }, function () { return p[1].Y(); }, function () { return p[2].Y(); }];
 
-		b._chart([data], {chartStyle: 'point,line', withHeaders: true});
+//		b._chart([data], {chartStyle: 'point,line', withHeaders: true});
+        var l = b._line([p[1], p[2]]);
+        b._arrowparallel([l, p[0]]);
 
   /* ]]> */
   </script>
