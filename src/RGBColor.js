@@ -291,3 +291,42 @@ JXG.hsv2rgb = function(H,S,V) {
     B = Math.round(B*255).toString(16); B = (B.length==2)?B:((B.length==1)?'0'+B:'00');
     return ['#',R,G,B].join(''); 
 };
+
+/**
+ * Converts r, g, b color to h, s, v.
+ * See http://zach.in.tu-clausthal.de/teaching/cg1_0708/folien/13_color_3_4up.pdf for more information.
+ * @param {number} r Amount of red in color. Number between 0 and 255.
+ * @param {number} g Amount of green. Number between 0 and 255.
+ * @param {number} b Amount of blue. Number between 0 and 255.
+ * @type Object
+ * @return Hashmap containing h,s, and v field.
+ */
+JXG.rgb2hsv = function(r, g, b) {
+    var h, s, v, max, min, stx=new JXG.MathStatistics();
+    max = stx.max([r, g, b]);
+    min = stx.min([r, g, b]);
+
+    v = max;
+
+    s = 0.;
+    if(v>0) {
+        s = (v-min)/(v*1.);
+    }
+
+    h = 1./(max-min);
+    if(s > 0) {
+        if(v == r)
+            h = (g-b)*h;
+        else if(v == g)
+            h = 2 + (b-r)*h;
+        else
+            h = 4 + (r-g)*h;
+    }
+
+    h *= 360;
+    if(h < 0)
+        h += 360;
+    v /= 255.;
+
+    return {h: h, s: s, v: v};
+};

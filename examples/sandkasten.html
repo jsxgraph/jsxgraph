@@ -36,7 +36,12 @@
 
 //		b._chart([data], {chartStyle: 'point,line', withHeaders: true});
         var l = b._line([p[1], p[2]]);
-        b._arrowparallel([l, p[0]]);
+//        b._arrowparallel([l, p[0]]);
+
+        var hsv = JXG.rgb2hsv(231, 190, 92);
+        alert(hsv.h + ', ' + hsv.s + ', ' + hsv.v);
+        var rgb = new JXG.RGBColor(JXG.hsv2rgb(hsv.h, hsv.s, hsv.v));
+        alert(rgb.toRGB());
 
   /* ]]> */
   </script>
