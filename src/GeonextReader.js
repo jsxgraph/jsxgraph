@@ -657,14 +657,16 @@ this.readGeonext = function(tree,board) {
                 else if(gxtEl.typeName == "CIRCUMCIRCLE") {
                     umkreisId = Data.getElementsByTagName('output')[1].getElementsByTagName('id')[0].firstChild.data;
                     umkreisName = Data.getElementsByTagName('output')[1].getElementsByTagName('name')[0].firstChild.data;
-                    board.addCircumcenter(gxtEl.defEl[0], gxtEl.defEl[1],
-                                          gxtEl.defEl[2], gxtEl.outputId, gxtEl.outputName,
-                                          umkreisId, umkreisName);
+                    board.createElement('circumcircle', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], {name: [gxtEl.outputName, umkreisName], id: [gxtEl.outputId, umkreisId]});
+//                    board.addCircumcenter(gxtEl.defEl[0], gxtEl.defEl[1],
+//                                          gxtEl.defEl[2], gxtEl.outputId, gxtEl.outputName,
+//                                          umkreisId, umkreisName);
                 }
                 else if(gxtEl.typeName == "CIRCUMCIRCLE_CENTER") {
-                    board.addCircumcenterMidpoint(gxtEl.defEl[0], gxtEl.defEl[1],
-                                                  gxtEl.defEl[2], gxtEl.outputId,
-                                                  gxtEl.outputName);
+                    board.createElement('circumcirclemidpoint', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], {id: gxtEl.outputId, name: gxtEl.outputName});
+//                    board.addCircumcenterMidpoint(gxtEl.defEl[0], gxtEl.defEl[1],
+//                                                  gxtEl.defEl[2], gxtEl.outputId,
+//                                                  gxtEl.outputName);
                 }
                 else if(gxtEl.typeName == "BISECTOR") {
 //                    board.addAngleBisector(gxtEl.defEl[0], gxtEl.defEl[1],

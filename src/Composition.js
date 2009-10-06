@@ -722,49 +722,6 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
 // here we have to continue with replacing board.add* stuff
 
 /**
- * @class Constructs two elements: a point and a circle. The circle is given by three points which lie on the circle,
- * the point is the midpoint of the circle. 
- * @pseudo
- * @description A circumcircle is given by three points which are all lying on the circle.
- * @constructor
- * @name Circumcircle
- * @type array
- * @returns An array containing the midpoint in the first component and the circumcircle in the second component.
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the midpoint of the circle determined
- * by p1, p2, and p3.
- * @example
- * var p1 = board.createElement('point', [0.0, 2.0]);
- * var p2 = board.createElement('point', [2.0, 1.0]);
- * var p3 = board.createElement('point', [3.0, 3.0]);
- *
- * var cc1 = board.createElement('circumcircle', [p1, p2, p3]);
- * </pre><div id="e65c9861-0bf0-402d-af57-3ab11962f5ac" style="width: 400px; height: 400px;"></div>
- * <script type="text/javascript">
- *   var ccex1_board = JXG.JSXGraph.initBoard('e65c9861-0bf0-402d-af57-3ab11962f5ac', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var ccex1_p1 = ccex1_board.createElement('point', [0.0, 2.0]);
- *   var ccex1_p2 = ccex1_board.createElement('point', [6.0, 1.0]);
- *   var ccex1_p3 = ccex1_board.createElement('point', [3.0, 7.0]);
- *   var ccex1_cc1 = ccex1_board.createElement('circumcircle', [ccex1_p1, ccex1_p2, ccex1_p3]);
- * </script><pre>
- */
-JXG.createCircumcircle = function(board, parentArr, atts) {
-    /* TODO circumcircle polynomials */
-    if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1]) && JXG.isPoint(parentArr[2])) {
-        if(!JXG.isArray(atts['id'])) {
-            atts['id'] = ['',''];
-        }
-        if(!JXG.isArray(atts['name'])) {
-            atts['name'] = ['',''];
-        }    
-        return board.addCircumcenter(parentArr[0], parentArr[1], parentArr[2], atts['id'][0], atts['name'][0], atts['id'][1], atts['name'][1]);
-    }
-    else {
-        throw ("Can't create circumcircle with parent types '" + (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");    
-    }
-};
-
-/**
  * @class Constructs the midpoint of a {@link Circumcircle}. Like the circumcircle the circumcirclemidpoint
  * is constructed by providing three points.
  * @pseudo
@@ -793,13 +750,72 @@ JXG.createCircumcircle = function(board, parentArr, atts) {
  * </script><pre>
  */
 JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
+    var p, i;
+
     /* TODO circumcircle polynomials */
-    if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1]) && JXG.isPoint(parentArr[2])) {
-        return board.addCircumcenterMidpoint(parentArr[0], parentArr[1], parentArr[2], atts['id'], atts['name']);
+
+    if(parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[2].elementClass == JXG.OBJECT_CLASS_POINT) {
+        p = JXG.createPoint(board, [function () { return board.algebra.circumcenterMidpoint(parentArr[0], parentArr[1], parentArr[2]); }], atts);
+        p.setProperty({fixed:true});
+
+        for(i=0; i<3; i++)
+            parentArr[i].addChild(p);
+
+        return p;
     }
     else {
         throw ("Can't create circumcircle midpoint with parent types '" + (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");    
     }
+};
+
+/**
+ * @class Constructs two elements: a point and a circle. The circle is given by three points which lie on the circle,
+ * the point is the midpoint of the circle. 
+ * @pseudo
+ * @description A circumcircle is given by three points which are all lying on the circle.
+ * @constructor
+ * @name Circumcircle
+ * @type array
+ * @returns An array containing the midpoint in the first component and the circumcircle in the second component.
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the midpoint of the circle determined
+ * by p1, p2, and p3.
+ * @example
+ * var p1 = board.createElement('point', [0.0, 2.0]);
+ * var p2 = board.createElement('point', [2.0, 1.0]);
+ * var p3 = board.createElement('point', [3.0, 3.0]);
+ *
+ * var cc1 = board.createElement('circumcircle', [p1, p2, p3]);
+ * </pre><div id="e65c9861-0bf0-402d-af57-3ab11962f5ac" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var ccex1_board = JXG.JSXGraph.initBoard('e65c9861-0bf0-402d-af57-3ab11962f5ac', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var ccex1_p1 = ccex1_board.createElement('point', [0.0, 2.0]);
+ *   var ccex1_p2 = ccex1_board.createElement('point', [6.0, 1.0]);
+ *   var ccex1_p3 = ccex1_board.createElement('point', [3.0, 7.0]);
+ *   var ccex1_cc1 = ccex1_board.createElement('circumcircle', [ccex1_p1, ccex1_p2, ccex1_p3]);
+ * </script><pre>
+ */
+JXG.createCircumcircle = function(board, parentArr, atts) {
+    var p, c, cAtts;
+
+    cAtts = JXG.clone(atts);
+    if(atts['name'] && JXG.isArray(atts['name'])) {
+        cAtts['name'] = atts['name'][0];
+        atts['name'] = atts['name'][1];
+    }
+    if(atts['id'] && JXG.isArray(atts['id'])) {
+        cAtts['id'] = atts['id'][0];
+        atts['id'] = atts['id'][1];
+    }
+
+    try {
+        p = JXG.createCircumcircleMidpoint(board, parentArr, cAtts);
+        c = JXG.createCircle(board, [p, parentArr[0]], atts);
+    } catch(e) {
+        throw ("Can't create circumcircle with parent types '" + (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");            
+    }
+
+    return [p, c];
 };
 
 /**
