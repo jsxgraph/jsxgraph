@@ -303,30 +303,36 @@ JXG.hsv2rgb = function(H,S,V) {
  */
 JXG.rgb2hsv = function(r, g, b) {
     var h, s, v, max, min, stx=new JXG.MathStatistics();
+    fr = r/255.;
+    fg = g/255.;
+    fb = b/255.;
     max = stx.max([r, g, b]);
     min = stx.min([r, g, b]);
+    fmax = max/255.;
+    fmin = min/255.;
 
-    v = max;
+    v = fmax;
 
     s = 0.;
     if(v>0) {
-        s = (v-min)/(v*1.);
+        s = (v-fmin)/(v*1.);
     }
 
-    h = 1./(max-min);
+    h = 1./(fmax-fmin);
     if(s > 0) {
-        if(v == r)
-            h = (g-b)*h;
-        else if(v == g)
-            h = 2 + (b-r)*h;
+        if(max==r)
+            h = (fg-fb)*h;
+        else if(max==g)
+            h = 2 + (fb-fr)*h;
         else
-            h = 4 + (r-g)*h;
+            h = 4 + (fr-fg)*h;
     }
+    if(max==min)
+        h = 0.;
 
-    h *= 360;
+    h *= 60;
     if(h < 0)
         h += 360;
-    v /= 255.;
 
     return {h: h, s: s, v: v};
 };

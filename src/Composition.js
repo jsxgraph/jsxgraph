@@ -635,7 +635,9 @@ JXG.createBisector = function(board, parentArr, atts) {
             atts['straightFirst'] = false;
         if(typeof atts['straightLast'] == 'undefined')
             atts['straightLast'] = true;
-        l = board.createElement('line', [parentArr[1], p], atts);
+        // no need to fire up the createElement stack because only attributes need to be set and they
+        // will be set for l after returning.
+        l = JXG.createLine(board, [parentArr[1], p], atts);
         return l;
     }
     else {
