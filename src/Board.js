@@ -2319,29 +2319,29 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
  * managing the animation per point, especially if there is more than one animated point at the same time.
  */
 JXG.Board.prototype.animate = function() {
-	var count = 0,
-		el, o, newCoords;
-	
-	for(el in this.animationObjects) {
-		if(this.animationObjects[el] == null)
-			continue;
+    var count = 0,
+        el, o, newCoords;
+    
+    for(el in this.animationObjects) {
+        if(this.animationObjects[el] == null)
+            continue;
 
-		count++;
-		o = this.animationObjects[el];
-		newCoords = o.animationPath.pop();
-		if(typeof newCoords  == 'undefined') {
-			this.animationObjects[el] = null;
-			delete(this.animationObjects[el]);
-			delete(o.animationPath);
-		} else {
-			o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
-		}
-	}
+        count++;
+        o = this.animationObjects[el];
+        newCoords = o.animationPath.pop();
+        if(typeof newCoords  == 'undefined') {
+            this.animationObjects[el] = null;
+            delete(this.animationObjects[el]);
+            delete(o.animationPath);
+        } else {
+            o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
+        }
+    }
 
-	if(count == 0) {
-		window.clearInterval(this.animationIntervalCode);
-		delete(this.animationIntervalCode);
-	} else {
-		this.update();
-	}
+    if(count == 0) {
+        window.clearInterval(this.animationIntervalCode);
+        delete(this.animationIntervalCode);
+    } else {
+        this.update();
+    }
 };

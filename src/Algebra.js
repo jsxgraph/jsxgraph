@@ -104,12 +104,21 @@ JXG.Algebra.prototype.angle = function(A, B, C) {
  * @see #rad
  */
 JXG.Algebra.prototype.trueAngle = function(/** JXG.Point */ A, /** JXG.Point */ B, /** JXG.Point */ C) /** number */ {
-    var ax,
-        ay,
-        bx,
-        by,
-        cx,
-        cy,
+    return this.rad(A,B,C)*57.295779513082323; // *180.0/Math.PI;
+};
+
+/**
+ * Calculates the internal angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
+ * @param {JXG.Point} A Point or [x,y] array
+ * @param {JXG.Point} B Point or [x,y] array
+ * @param {JXG.Point} C Point or [x,y] array
+ * @type number
+ * @see #trueAngle
+ * @return Angle in radians.
+ */
+JXG.Algebra.prototype.rad = function(A,B,C) {
+    var ax, ay, bx, by, cx, cy,
+        abx, aby, cbx, cby,
         cp, l1, l2, phiacos, phicos, sp, 
         phi = 0;
         
@@ -134,11 +143,16 @@ JXG.Algebra.prototype.trueAngle = function(/** JXG.Point */ A, /** JXG.Point */ 
         cx = C.coords.usrCoords[1];
         cy = C.coords.usrCoords[2];
     }
-    sp = (cx - bx) * (ax - bx) + (cy - by) * (ay - by); // scalar product of c-b and a-b
-    cp = (ax - bx) * (cy - by) - (ay - by) * (cx - bx); // cross product of a-b c-b
-    l1 = Math.sqrt((ax - bx)*(ax - bx) + (ay - by)*(ay - by)); // length of a-b
-    l2 = Math.sqrt((cx - bx)*(cx - bx) + (cy - by)*(cy - by)); // length of c-b
-    phiacos = sp / (l1 * l2); // calculate the angle as cosine from scalar product
+    cbx = cx - bx;
+    cby = cy - by;
+    abx = ax - bx;
+    aby = ay - by;
+    
+    sp = cbx*abx + cby*aby;               // scalar product of c-b and a-b
+    cp = abx*cby - aby*cbx;               // cross product of a-b c-b
+    l1 = Math.sqrt(abx*abx + aby*aby);    // length of a-b
+    l2 = Math.sqrt(cbx*cbx + cby*cby);    // length of c-b
+    phiacos = sp / (l1 * l2);             // calculate the angle as cosine from scalar product
     if (phiacos > 1) { // these things should not happen, but can happen because of numerical inaccurracy
         phiacos = 1;
     } else if (phiacos < -1) {
@@ -166,25 +180,11 @@ JXG.Algebra.prototype.trueAngle = function(/** JXG.Point */ A, /** JXG.Point */ 
          So always the negative angle of phicos has to be taken if the product is negative.
          */
     if ((Math.sin(phicos) * cp) < 0) {
-        phi = 2 * Math.PI - phicos;
+        phi = 6.2831853071795862 - phicos; // 2 * Math.PI - phicos;
     } else {
         phi = phicos;
     }
-    phi = (phi / Math.PI) * 180;
     return phi;
-};
-
-/**
- * Calculates the internal angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
- * @param {JXG.Point} A Point or [x,y] array
- * @param {JXG.Point} B Point or [x,y] array
- * @param {JXG.Point} C Point or [x,y] array
- * @type number
- * @see #trueAngle
- * @return Angle in radians.
- */
-JXG.Algebra.prototype.rad = function(A,B,C) {
-    return this.trueAngle(A,B,C)*Math.PI/180.0;
 };
 
 /**
@@ -245,7 +245,9 @@ JXG.Algebra.prototype.angleBisector = function(/** JXG.Point */ A, /** JXG.Point
  */
 JXG.Algebra.prototype.midpoint = function(A, B) {   
     return new JXG.Coords(JXG.COORDS_BY_USER, 
-                      [(A.coords.usrCoords[1] + B.coords.usrCoords[1])/2, (A.coords.usrCoords[2] + B.coords.usrCoords[2])/2], 
+                      [(A.coords.usrCoords[0] + B.coords.usrCoords[0])*0.5, 
+                       (A.coords.usrCoords[1] + B.coords.usrCoords[1])*0.5, 
+                       (A.coords.usrCoords[2] + B.coords.usrCoords[2])*0.5], 
                       this.board);
 };
 
