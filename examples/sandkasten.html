@@ -35,11 +35,11 @@
 		//data = [function () { return p[0].Y(); }, function () { return p[1].Y(); }, function () { return p[2].Y(); }];
 
 //		b._chart([data], {chartStyle: 'point,line', withHeaders: true});
-//        var l = b._line([p[1], p[2]]);
+        var l = b._line([p[1], p[2]]);
 
 
 //        var ccm = b._circumcirclemidpoint(p);
-        var cc = b._circumcircle(p, {name: ['foo', 'bar'], id: ['FOO', 'BAR']});
+        var cc = b._reflection([p[0], l], {name: 'foo', id: 'FOO'});
 
 
   /* ]]> */

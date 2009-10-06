@@ -360,10 +360,14 @@ JXG.createParallel = function(board, parents, atts) {
     /* parallel point polynomials are done in createParallelPoint */
 
     cAtts = {name: null, id: null, fixed: true, visible: false};
-    if(atts['name'].length == 2)
+    if(JXG.isArray(atts['name']) && atts['name'].length == 2) {
         cAtts['name'] = atts['name'][1];
-    if(atts['id'].length == 2)
+        atts['name'] = atts['name'][0];
+    }
+    if(JXG.isArray(atts['name']) & atts['id'].length == 2) {
         cAtts['id'] = atts['id'][1];
+        atts['id'] = atts['id'][0];
+    }
 
     if(atts) {
         cAtts = JXG.cloneAndCopy(atts, cAtts);
@@ -374,11 +378,6 @@ JXG.createParallel = function(board, parents, atts) {
     } catch (e) {
         throw ("Can't create parallel with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");    
     }
-
-    if(atts['name'].length == 2)
-        atts['name'] = atts['name'][0];
-    if(atts['id'].length == 2)
-        atts['id'] = atts['id'][0];
 
     p = null;
     if(parents.length == 3)
@@ -437,6 +436,8 @@ JXG.createArrowParallel = function(board, parents, atts) {
         throw ("Can't create arrowparallel with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");    
     }
 
+    // Select the default behavior. If the user wants something else he would set it in atts.
+    // That gets parsed and set right after this function.
     l.setStraight(false, false);
     l.setArrow(false,true);
     return l;
@@ -719,8 +720,6 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
     return [g1,g2];
 };
 
-// here we have to continue with replacing board.add* stuff
-
 /**
  * @class Constructs the midpoint of a {@link Circumcircle}. Like the circumcircle the circumcirclemidpoint
  * is constructed by providing three points.
@@ -847,17 +846,31 @@ JXG.createCircumcircle = function(board, parentArr, atts) {
  * </script><pre>
  */
 JXG.createReflection = function(board, parentArr, atts) {
+    var l, p, r;
+
     /* TODO reflection polynomials */
-    if(JXG.isPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
-        return board.addReflection(parentArr[1], parentArr[0], atts['id'], atts['name']);
+    if(parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_LINE) {
+        p = parentArr[0];
+        l = parentArr[1];
     }
-    else if(JXG.isPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {    
-        return board.addReflection(parentArr[0], parentArr[1], atts['id'], atts['name']);    
+    else if(parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[0].elementClass == JXG.OBJECT_CLASS_LINE) {
+        p = parentArr[1];
+        l = parentArr[0];
     }
     else {
-        throw ("Can't create reflection point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
+        throw ("Can't create reflection point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
     }
+
+    // force a fixed point
+    atts['fixed'] = true;
+    r = JXG.createPoint(board, [function () { return board.algebra.reflection(l, p); }], atts);
+    p.addChild(r);
+    l.addChild(r);
+
+    return r;
 };
+
+// here we have to continue with replacing board.add* stuff
 
 /**
  * @class This is used to construct a perpendicular point.
