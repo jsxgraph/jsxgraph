@@ -387,9 +387,11 @@ JXG.IntergeoReader = new function() {
 
     this.addLinePerpendicularToLineThroughPoint = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            comp =this.board.createElement('perpendicular',[this.objects[param[1]].id,this.objects[param[2]].id],{name:param[0],withLabel:true});
-        comp[0].setProperty("straightFirst:true","straightLast:true");
-        comp[1].setProperty("visible:false");
+            comp =this.board.createElement('perpendicular',[this.objects[param[1]].id,this.objects[param[2]].id],
+                                {name:[param[0],param[0]+'foot'],id:[param[0],param[0]+'foot'],withLabel:true});
+                                
+        comp[0].setProperty("straightFirst:true","straightLast:true"); // line
+        comp[1].setProperty("visible:false");                          // point
         this.objects[param[0]] = comp[0];
     };
 
@@ -455,7 +457,8 @@ JXG.IntergeoReader = new function() {
 
     this.addAngularBisectorOfThreePoints = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            el = this.board.createElement('bisector',[param[1],param[2],param[3]],{name:param[0],id:param[0],withLabel:true});
+            el = this.board.createElement('bisector',[param[1],param[2],param[3]],
+                                {name:[param[0]+'_1',param[0]+'_2'], id:[param[0]+'_1',param[0]+'_2'], withLabel:true});
         el.setProperty({straightFirst:false,straightLast:true,strokeColor:'#000000'});
         this.objects[param[0]] = el;
     };
@@ -537,7 +540,7 @@ JXG.IntergeoReader = new function() {
         for (i=0;i<3;i++) {
           p[i] = JXG.getReference(this.board,param[i+1]);
         }
-        ar = this.board.createElement('circumcircle',p,{name:['',param[0]],id:['',param[0]],withLabel:true});
+        ar = this.board.createElement('circumcircle',p, {name:[param[0]+'c',param[0]], id:[param[0]+'c',param[0]],withLabel:true});
         ar[0].setProperty({visible:false}); // center should be invisible
         ar[1].setProperty({withLabel:true}); // label of circle does not work yet
     };
@@ -574,6 +577,7 @@ JXG.IntergeoReader = new function() {
             c2 = JXG.getReference(this.board,param[3]),
             p1 = this.objects[param[0]],
             p2 = this.objects[param[1]];
+        
         p1.addConstraint([this.board.intersection(c1,c2,0)]);
         p2.addConstraint([this.board.intersection(c1,c2,1)]);
         this.setAttributes(p1);
@@ -586,6 +590,7 @@ JXG.IntergeoReader = new function() {
             c2 = JXG.getReference(this.board,param[3]),
             p1  = this.objects[param[1]],
             p2  = this.objects[param[0]]; // output
+
         p2.addConstraint([this.board.otherIntersection(c1,c2,p1)]);
         this.setAttributes(p2);
     };

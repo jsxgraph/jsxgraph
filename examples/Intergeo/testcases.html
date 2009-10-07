@@ -11,7 +11,7 @@
 <body>
   <h2>Intergeo test cases in JSXGraph</h2>
   <form><input type='button' value='Show XML' onclick='board.showXML()'></form>
-  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="jxgbox" class="jxgbox" style="width:800px; height:500px;"></div>
   <div id="debug" style="display:block; margin-top:20px"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
@@ -24,7 +24,8 @@
         //fname = 'rotating_circle.xml';
         //fname = 'tangents_to_circle.xml';     // ok
         //fname = 'center_of_three_points.xml'; // ok
-        fname = 'other_intersections.xml';      // ok
+        //fname = 'other_intersections.xml';      // ok
+        fname = 'all.i2g';      // ok (GEONExT example)
         $('debug').innerHTML = fname+'<br>';
         board = JXG.JSXGraph.loadBoardFromFile('jxgbox', fname , 'Intergeo');
   /* ]]> */
