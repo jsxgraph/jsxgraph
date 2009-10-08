@@ -380,7 +380,7 @@ JXG.IntergeoReader = new function() {
     };
 
     this.addLineParallelToLineThroughPoint = function(node) {
-        var param = JXG.IntergeoReader.readParams(node),
+        var param = JXG.IntergeoReader.readParams(node), 
             comp = this.board.createElement('parallel',[this.objects[param[1]].id,this.objects[param[2]].id], {name:param[0],withLabel:true});
         this.objects[param[0]] = comp;
     };
