@@ -23,8 +23,8 @@ JXG.rgbParser = function() {
         arguments.length = 1;
     }
 
-    var color_string;
-    if(JXG.isArray(arguments[0])) {
+    var color_string = arguments[0];
+    if(JXG.isArray(color_string)) {
         var testFloat = false, i;
         for(i=0; i<3; i++)
             testFloat |= /\./.test(arguments[0][i].toString());
@@ -269,7 +269,7 @@ JXG.rgbParser = function() {
  */
 JXG.rgb2css = function () {
     var r, g, b;
-    [r, g, b] = JXG.rgbParser(arguments);
+    [r, g, b] = JXG.rgbParser.apply(JXG.rgbParser, arguments);
     return 'rgb(' + r + ', ' + g + ', ' + b + ')';
 };
 
@@ -278,7 +278,7 @@ JXG.rgb2css = function () {
  */
 JXG.rgb2hex = function () {
     var r, g, b;
-    [r, g, b] = JXG.rgbParser(arguments);
+    [r, g, b] = JXG.rgbParser.apply(JXG.rgbParser, arguments);
     r = r.toString(16);
     g = g.toString(16);
     b = b.toString(16);
@@ -347,7 +347,7 @@ JXG.hsv2rgb = function(H,S,V) {
  */
 JXG.rgb2hsv = function() {
     var r, g, b;
-    [r, g, b] = JXG.rgbParser(arguments);
+    [r, g, b] = JXG.rgbParser.apply(JXG.rgbParser, arguments);
     var h, s, v, max, min, stx=new JXG.MathStatistics();
     fr = r/255.;
     fg = g/255.;
@@ -380,5 +380,5 @@ JXG.rgb2hsv = function() {
     if(h < 0)
         h += 360;
 
-    return {h: h, s: s, v: v};
+    return [h, s, v];
 };
