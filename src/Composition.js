@@ -319,9 +319,13 @@ JXG.createParallelPoint = function(board, parentArr, atts) {
     }
 
     p = board.createElement('point', [function () { return p3.coords.usrCoords[1] + p2.coords.usrCoords[1] - p1.coords.usrCoords[1]; }, function () { return p3.coords.usrCoords[2] + p2.coords.usrCoords[2] - p1.coords.usrCoords[2]; }], atts);
-    p1.addChild(p); // required for algorithms requiring dependencies between elements
-    p2.addChild(p);
+//    p1.addChild(p); // required for algorithms requiring dependencies between elements
+//    p2.addChild(p);
     p3.addChild(p);
+
+    // required to set the coordinates because functions are considered as constraints. hence, the coordinates get set first after an update.
+    // can be removed if the above issue is resolved.
+    p.update();
 
     return p;
 };
@@ -363,11 +367,13 @@ JXG.createParallel = function(board, parents, atts) {
     if(JXG.isArray(atts['name']) && atts['name'].length == 2) {
         cAtts['name'] = atts['name'][1];
         atts['name'] = atts['name'][0];
-    }
-    if(JXG.isArray(atts['name']) && atts['id'].length == 2) {
+    } else
+        cAtts['name'] = atts['name'] + 'p2';
+    if(JXG.isArray(atts['id']) && atts['id'].length == 2) {
         cAtts['id'] = atts['id'][1];
         atts['id'] = atts['id'][0];
-    }
+    } else
+        cAtts['id'] = atts['id'] + 'p2';
 
     if(atts) {
         cAtts = JXG.cloneAndCopy(atts, cAtts);

@@ -262,7 +262,7 @@ JXG.Algebra.prototype.midpoint = function(A, B) {
  * @type JXG.Coords
  * @return Coordinates of a point defining the parallel together with the given point.
  */
-/*JXG.Algebra.prototype.parallel = function(point1, point2, point) {
+JXG.Algebra.prototype.parallel = function(point1, point2, point) {
     var factor = 1,
         pc = point.coords.usrCoords,
         p1c = point1.coords.usrCoords,
@@ -271,7 +271,7 @@ JXG.Algebra.prototype.midpoint = function(A, B) {
         y = pc[2] + factor*(p2c[2] - p1c[2]);
     
     return new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-};*/
+};
 
 /**
  * Reflects the point along the line.
