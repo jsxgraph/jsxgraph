@@ -298,13 +298,10 @@ JXG.Options.prototype.changeColorToBlackWhite = function(color) {
     if(color == 'none') {
         return color;
     }
-    var col = new JXG.RGBColor(color);
-    var r = col.r;
-    var g = col.g;
-    var b = col.b;
-    var x = 0.3*r + 0.59*g + 0.11*b;
-    var HexChars="0123456789ABCDEF";
-    var tmp = HexChars.charAt((x>>4)&0xf)+HexChars.charAt(x&0xf);
+    var r, g, b, x, HexChars="0123456789ABCDEF", tmp;
+    [r, g, b] = JXG.rgbParser(color);
+    x = 0.3*r + 0.59*g + 0.11*b;
+    tmp = HexChars.charAt((x>>4)&0xf)+HexChars.charAt(x&0xf);
     color = "#" + tmp + "" + tmp + "" + tmp;
     return color;
 };

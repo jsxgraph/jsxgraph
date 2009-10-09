@@ -1,12 +1,47 @@
 /**
- * A class to parse color values
- * @author Stoyan Stefanov <sstoo@gmail.com>
- * @link   http://www.phpied.com/rgb-color-parser-in-javascript/
- * @license Use it if you like it
+ * Functions for color conversions. Based on a class to parse color values by Stoyan Stefanov <sstoo@gmail.com>
+ * @see http://www.phpied.com/rgb-color-parser-in-javascript/
  */
 
-JXG.RGBColor = function(color_string) {
-    this.ok = false;
+/**
+ * Converts a valid HTML/CSS color string into a rgb value array. This is the base
+ * function for the following wrapper functions which only adjust the output to
+ * different flavors like an object, string or hex values.
+ * @parameter {string} color_string A valid HTML or CSS styled color value, e.g. #12ab21, #abc, black, or rgb(12, 132, 233) <strong>or</string>
+ * @parameter {array} color_array Array containing three color values either from 0.0 to 1.0 or from 0 to 255. They will be interpreted as red, green, and blue values <strong>OR</strong>
+ * @parameter {number} r,g,b Three color values r, g, and b like those in the array variant.
+ * @type array
+ * @return RGB color values as an array [r, g, b] which component's are between 0 and 255.
+ */
+JXG.rgbParser = function() {
+
+    if(arguments.length == 0)
+        return;
+
+    if(arguments.length >= 3) {
+        arguments[0] = [arguments[0], arguments[1], arguments[2]];
+        arguments.length = 1;
+    }
+
+    var color_string;
+    if(JXG.isArray(arguments[0])) {
+        var testFloat = false, i;
+        for(i=0; i<3; i++)
+            testFloat |= /\./.test(arguments[0][i].toString());
+        for(i=0; i<3; i++)
+            testFloat &= (arguments[0][i] >= 0.0) & (arguments[0][i] <= 1.0);
+
+        if(testFloat)
+            return [Math.ceil(arguments[0][0] * 255), Math.ceil(arguments[0][1] * 255), Math.ceil(arguments[0][2] * 255)];
+        else {
+            arguments[0].length = 3;
+            return arguments[0];
+        }
+    } else if(typeof arguments[0] == 'string') {
+        color_string = arguments[0];
+    }
+
+    var r, g, b;
 
     // strip any leading #
     if (color_string.charAt(0) == '#') { // remove # if any
@@ -214,30 +249,39 @@ JXG.RGBColor = function(color_string) {
         var bits = re.exec(color_string);
         if (bits) {
             channels = processor(bits);
-            this.r = channels[0];
-            this.g = channels[1];
-            this.b = channels[2];
-            this.ok = true;
+            r = channels[0];
+            g = channels[1];
+            b = channels[2];
         }
 
     }
 
     // validate/cleanup values
-    this.r = (this.r < 0 || isNaN(this.r)) ? 0 : ((this.r > 255) ? 255 : this.r);
-    this.g = (this.g < 0 || isNaN(this.g)) ? 0 : ((this.g > 255) ? 255 : this.g);
-    this.b = (this.b < 0 || isNaN(this.b)) ? 0 : ((this.b > 255) ? 255 : this.b);
+    r = (r < 0 || isNaN(r)) ? 0 : ((r > 255) ? 255 : r);
+    g = (g < 0 || isNaN(g)) ? 0 : ((g > 255) ? 255 : g);
+    b = (b < 0 || isNaN(b)) ? 0 : ((b > 255) ? 255 : b);
 
+    return [r, g, b];
 };
 
-// some getters
-JXG.RGBColor.prototype.toRGB = function () {
-    return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ')';
+/**
+ * Returns output of JXG.rgbParser as a CSS styled rgb() string.
+ */
+JXG.rgb2css = function () {
+    var r, g, b;
+    [r, g, b] = JXG.rgbParser(arguments);
+    return 'rgb(' + r + ', ' + g + ', ' + b + ')';
 };
 
-JXG.RGBColor.prototype.toHex = function () {
-    var r = this.r.toString(16);
-    var g = this.g.toString(16);
-    var b = this.b.toString(16);
+/**
+ * Returns array returned by JXG.rgbParser as a HTML rgb string.
+ */
+JXG.rgb2hex = function () {
+    var r, g, b;
+    [r, g, b] = JXG.rgbParser(arguments);
+    r = r.toString(16);
+    g = g.toString(16);
+    b = b.toString(16);
     if (r.length == 1) r = '0' + r;
     if (g.length == 1) g = '0' + g;
     if (b.length == 1) b = '0' + b;
@@ -301,7 +345,9 @@ JXG.hsv2rgb = function(H,S,V) {
  * @type Object
  * @return Hashmap containing h,s, and v field.
  */
-JXG.rgb2hsv = function(r, g, b) {
+JXG.rgb2hsv = function() {
+    var r, g, b;
+    [r, g, b] = JXG.rgbParser(arguments);
     var h, s, v, max, min, stx=new JXG.MathStatistics();
     fr = r/255.;
     fg = g/255.;
