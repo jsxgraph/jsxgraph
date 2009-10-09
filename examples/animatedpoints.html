@@ -85,18 +85,11 @@
 		         		[3, 2, 1, 3.6],
 		         		[1.5, 2, 0.5, 1],
 			         	[0.5, 3, 1, 2]];
+
         var p = [board2.createElement('point', [0, 1], {name:"A", visible: false}),
 				 board2.createElement('point', [0, 3], {name:"B", visible: false}),
         		 board2.createElement('point', [0, 2], {name:"C", visible: false}),
         		 board2.createElement('point', [0, 2.5], {name:"D", visible: false})];
-
-		function changebars() {
-			var ix = document.getElementById('choose').value,
-				i;
-			for(i=0; i<4; i++) {
-				p[i].moveTo([p[i].X(), someData[ix][i]], 1000);
-			}
-		}
 
         var chartData = [function() { return p[0].Y(); },
                          function() { return p[1].Y(); },
@@ -106,11 +99,33 @@
 		var chart = board2.createElement('chart', [chartData], {chartStyle:'bar',labels:['animierte', 'charts', 'sind', 'toll'],width:0.8});
 		var choose = board2.createElement('text', [3, 3.5, '<select id="choose" onchange="changebars();"><option value="0">Januar</option><option value="1">Februar</option><option value="2">Maerz</option><option value="3">April</option></select>']);
 
+		function changebars() {
+            function GetRandom( min, max ) {
+                if( min > max ) {
+                   return( -1 );
+                }
+                if( min == max ) {
+                   return( min );
+                }
+                return( min + parseInt( Math.random() * ( max-min+1 ) ) );
+            }
+
+
+			var ix = document.getElementById('choose').value,
+				i;
+			for(i=0; i<4; i++) {
+				p[i].moveTo([p[i].X(), someData[ix][i]], 1000);
+                chart[0][i].animate({fillColor: '#' + GetRandom(0, 255) + '' + GetRandom(0, 255) + '' + GetRandom(0, 255), fillOpacity: GetRandom(0, 100)/100.}, 1000);
+			}
+		}
+
   /* ]]> */
   </script>
 <a href="#" onclick="start();">Start animation</a><br />
 <a href="#" onclick="start2(p1, 2000);">Start animation v2</a><br />
 <a href="#" onclick="p1.moveTo([-5, 2], 800);">Built-in animation (should match animation v2)</a><br />
+<a href="#" onclick="p1.animate({fillColor: '#00ff00'}, 1500);">Built-in color animation</a><br />
+<a href="#" onclick="p1.moveTo([-5, -6], 1500); p1.animate({fillColor: '#00ff00', strokeColor: '#00ff00'}, 1500);">Built-in color & movement animation</a><br />
 <a href="#" onclick="p1.visit([-5, 2], 2200, 2);">Built-in animation &quot;visit&quot;</a><br />
 <div id="debug" style="display:block;"></div>
 </body>

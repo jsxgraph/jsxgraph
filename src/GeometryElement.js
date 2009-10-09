@@ -488,6 +488,75 @@ JXG.GeometryElement.prototype.generatePolynomial = function () {
 };
 
 /**
+ * Animates properties for that object like stroke or fill color, opacity and maybe
+ * even more later.
+ * @param {Object} hash Object containing propiertes with target values for the animation.
+ * @param {number} time Number of milliseconds to complete the animation.
+ * @return A reference to the object
+ * @type JXG.GeometryElement
+ */
+JXG.GeometryElement.prototype.animate = function(hash, time) {
+    var r, p,
+	    delay = 35,
+	    steps = Math.ceil(time/(delay * 1.0)),
+        i, self = this;
+//        strokeC, strokeO, strokeW, fillC, fillO;
+
+    this.animationData = {};
+
+    var animateColor = function(startRGB, endRGB, property) {
+        var hsv1, hsv2, sh, ss, sv;
+        hsv1 = JXG.rgb2hsv(startRGB);
+        hsv2 = JXG.rgb2hsv(endRGB);
+        sh = (hsv2[0]-hsv1[0])/(1.*steps);
+        ss = (hsv2[1]-hsv1[1])/(1.*steps);
+        sv = (hsv2[2]-hsv1[2])/(1.*steps);
+        self.animationData[property] = new Array(steps);
+        for(i=0; i<steps; i++) {
+            self.animationData[property][steps-i-1] = JXG.hsv2rgb(hsv1[0]+(i+1)*sh, hsv1[1]+(i+1)*ss, hsv1[2]+(i+1)*sv);
+        }
+    },
+
+    animateFloat = function(start, end, property) {
+        start = parseFloat(start);
+        end = parseFloat(end);
+        var s = (end - start)/(1.*steps);
+        self.animationData[property] = new Array(steps);
+        for(i=0; i<steps; i++) {
+            self.animationData[property][steps-i-1] = start + (i+1)*s;
+        }
+    };
+
+    for(r in hash) {
+        p = r.toLowerCase();
+        switch(p) {
+            case 'strokecolor':
+                    animateColor(this.visProp['strokeColor'], hash[r], 'strokeColor');
+                break;
+            case 'strokeopacity':
+                    animateFloat(this.visProp['strokeOpacity'], hash[r], 'strokeOpacity');
+                break;
+            case 'strokewidth':
+                    animateFloat(this.visProp['strokeWidth'], hash[r], 'strokeWidth');
+                break;
+            case 'fillcolor':
+                    animateColor(this.visProp['fillColor'], hash[r], 'fillColor');
+                break;
+            case 'fillopacity':
+                    animateFloat(this.visProp['fillOpacity'], hash[r], 'fillOpacity');
+                break;
+        }
+    }
+
+	this.board.animationObjects[this.id] = this;
+	if(typeof this.board.animationIntervalCode == 'undefined') {
+		this.board.animationIntervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].animate();', delay);
+	}
+
+    return this;
+};
+
+/**
  * General update method. Should be overwritten by the element itself.
  * Can be used sometimes to commit changes to the object.
  */

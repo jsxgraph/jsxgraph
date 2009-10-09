@@ -2272,7 +2272,7 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
  */
 JXG.Board.prototype.animate = function() {
     var count = 0,
-        el, o, newCoords;
+        el, o, newCoords, r, p, c;
     
     for(el in this.animationObjects) {
         if(this.animationObjects[el] == null)
@@ -2280,13 +2280,32 @@ JXG.Board.prototype.animate = function() {
 
         count++;
         o = this.animationObjects[el];
-        newCoords = o.animationPath.pop();
-        if(typeof newCoords  == 'undefined') {
+        if(o.animationPath) {
+            newCoords = o.animationPath.pop();
+            if(typeof newCoords  == 'undefined') {
+                delete(o.animationPath);
+            } else {
+                o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
+            }
+        }
+        if(o.animationData) {
+            c = 0;
+            for(r in o.animationData) {
+                p = o.animationData[r].pop();
+                if(typeof p == 'undefined') {
+                    delete(o.animationData[p]);
+                } else {
+                    c++;
+                    o.setProperty(r + ':' + p);
+                }
+            }
+            if(c==0)
+                delete(o.animationData);
+        }
+
+        if(typeof o.animationData == 'undefined' && typeof o.animationPath == 'undefined') {
             this.animationObjects[el] = null;
-            delete(this.animationObjects[el]);
-            delete(o.animationPath);
-        } else {
-            o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
+            delete(this.animationObjects[el]);            
         }
     }
 
@@ -2295,5 +2314,6 @@ JXG.Board.prototype.animate = function() {
         delete(this.animationIntervalCode);
     } else {
         this.update();
+//	window.setTimeout('JXG.JSXGraph.boards[\'' + this.id + '\'].animate();', 35);
     }
 };

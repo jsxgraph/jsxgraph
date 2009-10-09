@@ -723,7 +723,7 @@ JXG.Point.prototype.addTransform = function (el, transform) {
  */
 JXG.Point.prototype.startAnimation = function(direction, stepCount) {
     if((this.type == JXG.OBJECT_TYPE_GLIDER) && (typeof this.intervalCode == 'undefined')) {
-        this.intervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].objects[\'' + this.id + '\'].animate(' + direction + ', ' + stepCount + ')', 250);
+        this.intervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].objects[\'' + this.id + '\'].anim(' + direction + ', ' + stepCount + ')', 250);
         if(typeof this.intervalCount == 'undefined')
             this.intervalCount = 0;
     }
@@ -816,7 +816,7 @@ JXG.Point.prototype.visit = function(where, time, repeat) {
  * @see #stopAnimation
  * @private
  */
-JXG.Point.prototype.animate = function(direction, stepCount) {
+JXG.Point.prototype.anim = function(direction, stepCount) {
     this.intervalCount++;
     if(this.intervalCount > stepCount)
         this.intervalCount = 0;
