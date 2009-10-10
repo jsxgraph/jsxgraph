@@ -41,10 +41,14 @@
 //        var ccm = b._circumcirclemidpoint(p);
         var cc = b._reflection([p[0], l], {name: 'foo', id: 'FOO'});
 
+try {
         var h, s, v, rgb;
-        [h, s, v] = JXG.rgb2hsv(122, 122, 123);
-        rgb = JXG.hsv2rgb(h, s, v);
+        h = JXG.rgb2hsv(122, 122, 123);
+        rgb = JXG.hsv2rgb(h[0], h[1], h[2]);
         alert(JXG.rgb2css(rgb));
+} catch(e) {
+    alert(e);
+}
 
   /* ]]> */
   </script>

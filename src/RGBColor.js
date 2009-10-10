@@ -269,7 +269,10 @@ JXG.rgbParser = function() {
  */
 JXG.rgb2css = function () {
     var r, g, b;
-    [r, g, b] = JXG.rgbParser.apply(JXG.rgbParser, arguments);
+    r = JXG.rgbParser.apply(JXG.rgbParser, arguments);
+    g = r[1];
+    b = r[2];
+    r = r[0];
     return 'rgb(' + r + ', ' + g + ', ' + b + ')';
 };
 
@@ -278,7 +281,10 @@ JXG.rgb2css = function () {
  */
 JXG.rgb2hex = function () {
     var r, g, b;
-    [r, g, b] = JXG.rgbParser.apply(JXG.rgbParser, arguments);
+    r = JXG.rgbParser.apply(JXG.rgbParser, arguments);
+    g = r[1];
+    b = r[2];
+    r = r[0];
     r = r.toString(16);
     g = g.toString(16);
     b = b.toString(16);
@@ -347,7 +353,10 @@ JXG.hsv2rgb = function(H,S,V) {
  */
 JXG.rgb2hsv = function() {
     var r, g, b;
-    [r, g, b] = JXG.rgbParser.apply(JXG.rgbParser, arguments);
+    r = JXG.rgbParser.apply(JXG.rgbParser, arguments);
+    g = r[1];
+    b = r[2];
+    r = r[0];
     var h, s, v, max, min, stx=new JXG.MathStatistics();
     fr = r/255.;
     fg = g/255.;
