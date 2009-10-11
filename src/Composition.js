@@ -265,6 +265,18 @@ JXG.createMidpoint = function(board, parentArr, atts) {
         return [poly1, poly2];
     };
 
+    // 2009/10/11, mg:
+    // * this is just a test: we're forming three closures in here: One with generatePolynomial and two when we create the
+    //   point by using function objects as positions. So a reference to the current Activation object is held in the scope of
+    //   those three functions. But we don't need a reference to the atts object in any of them, so we're deleting the
+    //   reference to it. Hence, the garbage collector can remove it from memory, if there's no reference to it left.
+    // * first test successful: attributes will be set properly. it remains to test, if this helps us to reduce memory usage.
+    //   for the test we'll query a JXG attribute "nullAtts" which has to be set to true to null the atts parameter. Then
+    //   50,000 midpoints will be created in an example file with resp. without nulling the atts parameter and after that chrome
+    //   will be used to compare the memory usage.
+    if(JXG.nullAtts)
+        atts = null;
+
     return t;
 };
 
