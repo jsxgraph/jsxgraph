@@ -508,6 +508,7 @@ JXG.GeometryElement.prototype.animate = function(hash, time) {
         var hsv1, hsv2, sh, ss, sv;
         hsv1 = JXG.rgb2hsv(startRGB);
         hsv2 = JXG.rgb2hsv(endRGB);
+
         sh = (hsv2[0]-hsv1[0])/(1.*steps);
         ss = (hsv2[1]-hsv1[1])/(1.*steps);
         sv = (hsv2[2]-hsv1[2])/(1.*steps);
@@ -520,6 +521,13 @@ JXG.GeometryElement.prototype.animate = function(hash, time) {
     animateFloat = function(start, end, property) {
         start = parseFloat(start);
         end = parseFloat(end);
+
+        // we can't animate without having valid numbers.
+        // And parseFloat returns NaN if the given string doesn't contain
+        // a valid float number.
+        if(isNaN(start) || isNaN(end))
+            return;
+
         var s = (end - start)/(1.*steps);
         self.animationData[property] = new Array(steps);
         for(i=0; i<steps; i++) {

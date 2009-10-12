@@ -18,7 +18,18 @@
         xax = board.createElement('axis', [[0,0],[1,0]]);
         yax = board.createElement('axis', [[0,0],[0,1]]);
 
-        p1 = board.createElement('point', [7, 5], {name:"A"});
+        p1 = board.createElement('point', [7, 5], {name:"A", strokeWidth: 2, size: 10, strokeColor: '#ccc'});
+
+        p1.highlight = function () {
+//            p1.setProperty({strokeColor: 'orange'});
+//            p1.animate({strokeWidth: 5.}, 500);
+            p1.animate({strokeWidth: 7., strokeColor: 'orange'}, 500);
+        }
+
+        p1.noHighlight = function () {
+//            p1.setProperty({strokeColor: '#ccc'});
+            p1.animate({strokeWidth: 2., strokeColor: '#ccc'}, 500);
+        }
 
 		var steps = 30.;
 		var delay = 35;

@@ -308,7 +308,7 @@ JXG.hsv2rgb = function(H,S,V) {
     var R,G,B, f,i,hTemp, p,q,t;
     H = ((H%360.0)+360.0)%360;
     if (S==0) {
-        if (isNaN(H)) {
+        if (isNaN(H) || H < JXG.Math.eps) {
             R = V;
             G = V;
             B = V;
@@ -382,12 +382,13 @@ JXG.rgb2hsv = function() {
         else
             h = 4 + (fr-fg)*h;
     }
-    if(max==min)
-        h = 0.;
 
     h *= 60;
     if(h < 0)
         h += 360;
+
+    if(max==min)
+        h = 0.;
 
     return [h, s, v];
 };
