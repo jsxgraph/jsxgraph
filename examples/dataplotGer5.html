@@ -2,18 +2,27 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
    <script type="text/javascript" src="germany.js"></script>
 </head>
 <body>
 <h2>Curve Test</h2>
-<div style="width:800px">
-  <div id="jxgbox" class="jxgbox" style="width:500px; height:700px; float:left"></div>
-</div>
+<div id="jxgbox" class="jxgbox" style="width:500px; height:700px;"></div>
 <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
+
+count1 = 0;
+count2 = 0;
+
+minX =-289319.4;
+maxY = 6827620;
+maxX = 351315.7;
+minY = 5960587;
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-1000,maxY+1000,maxX+1000,minY-1000],
+                                    keepaspectratio:true});
+
     var wahlkreise = [];
     var points = [];
 for(i=0;i<data.length;i++) {
@@ -31,6 +40,7 @@ var maxXArr = [];
 var maxYArr = [];
 var xArr = [];
 var yArr = [];
+var cArr = [];
 
 //var anz = 100; // mehr dauert zu lange...
 var anz = points.length;
@@ -38,13 +48,23 @@ for(j=0;j<anz;j++) {
     var xy = points[j].split(',');
     var x = [];
     var y = [];
-    for(var i=0;i<xy.length;i++) {
+    var c = [];
+    len = xy.length;
+    for(var i=0;i<len;i++) {
         var a = xy[i].split(' ');
-        x.push(1*(1*a[0]).toFixed(1));
-        y.push(1*(1*a[1]).toFixed(1));
+        c.push(new JXG.Coords(JXG.COORDS_BY_USER, [1*a[0], 1*a[1]], brd));
+        //x.push(1*(1*a[0]).toFixed(1));
+        //y.push(1*(1*a[1]).toFixed(1));
     }
-        
-
+    count1 += len;
+    c = brd.renderer.RamenDouglasPeuker(c,2.0);
+    len = c.length;
+    for (i=0;i<len;i++) {
+        x.push(c[i].usrCoords[1]);
+        y.push(c[i].usrCoords[2]);
+    }
+    count2 += len;
+    
     var minX = 10000000000000000;
     var maxX = -100000000000000;
     var minY = 200000000000000000;
@@ -71,6 +91,7 @@ for(j=0;j<anz;j++) {
     xArr.push(x);
     yArr.push(y);
 }
+$('debug').innerHTML = count1+' '+count2;
 
 var minX = 10000000000000000;
 var maxX = -100000000000000;
@@ -92,12 +113,11 @@ for(i=0;i<xArr.length;i++) {
     }
 }
 
-    var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-1000,maxY+1000,maxX+1000,minY-1000],
-                                    keepaspectratio:true});
     brd.suspendUpdate();
 graph = [];
 for(i=0;i<xArr.length;i++) {
-    graph[i] = brd.createElement('curve', [xArr[i],yArr[i]], {fillColor:'red',highlightFillColor:'yellow'});
+    graph[i] = brd.createElement('curve', [xArr[i],yArr[i]], 
+    {fillColor:'red',highlightFillColor:'yellow',strokeWidth:2});
 }
 brd.unsuspendUpdate();
           /* ]]> */
