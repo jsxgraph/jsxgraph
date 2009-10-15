@@ -500,7 +500,6 @@ JXG.GeometryElement.prototype.animate = function(hash, time) {
 	    delay = 35,
 	    steps = Math.ceil(time/(delay * 1.0)),
         i, self = this;
-//        strokeC, strokeO, strokeW, fillC, fillO;
 
     this.animationData = {};
 

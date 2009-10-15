@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../distrib/jquery.min.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -10,17 +10,38 @@
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
   <div id="jxgbox2" class="jxgbox" style="width:600px; height:450px;"></div>
+  <div id="jxgbox3" class="jxgbox" style="width:300px; height:300px;"></div>
 </div>
    <script type="text/javascript">
    /* <![CDATA[ */
 
-        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: false, grid: false});
-        xax = board.createElement('axis', [[0,0],[1,0]]);
-        yax = board.createElement('axis', [[0,0],[0,1]]);
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true, grid: false});
+//        xax = board.createElement('axis', [[0,0],[1,0]]);
+//        yax = board.createElement('axis', [[0,0],[0,1]]);
+
+        JXG.GeometryElement.prototype.hover = function() {
+            var s = this.visProp.highlightStrokeColor,
+                f = this.visProp.highlightFillColor;
+            this.visProp.highlightStrokeColor = this.visProp.strokeColor;
+            this.visProp.highlightFillColor = this.visProp.fillColor;
+            this.animate({strokeColor: s, fillColor: f}, 200);
+        };
+//        hover = JXG.bind(hover, JXG.GeometryElement.prototype);
+
+//        JXG.GeometryElement.prototype.highlight = JXG.GeometryElement.prototype.hover;
+//        JXG.GeometryElement.prototype.noHighlight = JXG.GeometryElement.prototype.hover;
 
         p1 = board.createElement('point', [7, 5], {name:"A", strokeWidth: 2, size: 10, strokeColor: '#ccc'});
+        p2 = board.createElement('point', [1, 3], {name:"B", face: '[]'});
+        p3 = board.createElement('point', [-2, -3], {name:"C", face: 'x'});
+        p4 = board.createElement('point', [4, -1], {name:"D", size: 5});
 
-        p1.highlight = function () {
+/*        l1 = board._line([p1, p3]);
+        l2 = board._perpendicular([l1, p2]);
+
+        c1 = board._circle([p2, p4]);/*
+
+/*        p1.highlight = function () {
 //            p1.setProperty({strokeColor: 'orange'});
 //            p1.animate({strokeWidth: 5.}, 500);
             p1.animate({strokeWidth: 7., strokeColor: 'orange'}, 500);
@@ -30,7 +51,7 @@
 //            p1.setProperty({strokeColor: '#ccc'});
             p1.animate({strokeWidth: 2., strokeColor: '#ccc'}, 500);
         }
-
+*/
 		var steps = 30.;
 		var delay = 35;
 		var moveTo = [1,-5, -7];
@@ -107,7 +128,14 @@
                          function() { return p[2].Y(); },
                          function() { return p[3].Y(); }];
 
-		var chart = board2.createElement('chart', [chartData], {chartStyle:'bar',labels:['animierte', 'charts', 'sind', 'toll'],width:0.8});
+		var chart = board2.createElement('chart', [chartData], {chartStyle:'bar',labels:['animierte', 'charts', 'sind', 'toll'],width:0.8, fillOpacity: 0.6});
+
+        // animate fillOpacity on mouse over
+        for(var i=0; i<4; i++) {
+            chart[0][i].setProperty({fillOpacity: 0.6});
+            $(chart[0][i].rendNode).mouseover((function (_i) { return function () { chart[0][_i].animate({fillOpacity: 1.0}, 500); } })(i));
+            $(chart[0][i].rendNode).mouseout((function (_i) { return function () { chart[0][_i].animate({fillOpacity: 0.6}, 500); } })(i));
+        }
 		var choose = board2.createElement('text', [3, 3.5, '<select id="choose" onchange="changebars();"><option value="0">Januar</option><option value="1">Februar</option><option value="2">Maerz</option><option value="3">April</option></select>']);
 
 		function changebars() {
@@ -129,6 +157,22 @@
                 chart[0][i].animate({fillColor: '#' + GetRandom(0, 255) + '' + GetRandom(0, 255) + '' + GetRandom(0, 255), fillOpacity: GetRandom(0, 100)/100.}, 1000);
 			}
 		}
+
+// browser event handler test:
+
+        b3 = JXG.JSXGraph.initBoard('jxgbox3', {boundingbox: [-10, 10, 10, -10], axis: false, grid: false});
+
+        var i, numPoints = 150, evp = new Array(numPoints);
+
+        indicator = b3._point([0,0], {size: 5, strokeColor: 'green', highlightStrokeColor: 'blue', fillColor: 'green', highlightFillColor: 'blue'});
+
+        board.suspendUpdate();
+        for(i=0; i<numPoints; i++) {
+            evp[i] = b3._point([-10+Math.random()*20, -10+Math.random()*20], {name:"A", withLabel:false});
+            $(evp[i].rendNode).mouseover(function () { indicator.highlight(); });
+            $(evp[i].rendNode).mouseout(function () { indicator.noHighlight(); });
+        }
+        board.unsuspendUpdate();
 
   /* ]]> */
   </script>
