@@ -174,7 +174,7 @@ xDat[40]=1.5541  ;yDat[40]=6.5571 ;
     xSplineOnly = false;
 
 
-    If (true) {
+    if (true) {
         // Simple  plot-Loesung
         x = [];
         y = [];
@@ -243,10 +243,10 @@ xDat[40]=1.5541  ;yDat[40]=6.5571 ;
       for (i=1;i<gliders.length;i++){
          	lenPolyLine = lenPolyLine + gliders[i-1].Dist(gliders[i]);
       }
-      return "Länge:" + lenPolyLine.toFixed(2);
+      return "LÃ¤nge:" + lenPolyLine.toFixed(2);
    }
 
-   //textEl = board.createElement('text',[4,3,"Länge: " lenPolyLine])
+   //textEl = board.createElement('text',[4,3,"Lï¿½nge: " lenPolyLine])
    textEl = board.createElement('text',[4,3,lineLength]);
    
    //function toggle Spline-Graph

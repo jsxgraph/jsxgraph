@@ -56,6 +56,21 @@ graph = [];
 for(i=0;i<xArr.length;i++) {
     graph[i] = brd.createElement('curve', [xArr[i],yArr[i]], 
                     {fillColor:'red',highlightFillColor:'yellow',strokeWidth:2});
+    graph[i].hasPoint = function(x,y){ // see: http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
+        var k, j, c = false , xx, yy;
+        checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+        xx = checkPoint.usrCoords[1];
+        yy = checkPoint.usrCoords[2];    
+        for (k = 0, j = this.dataX.length-1; k < this.dataX.length; j = k++) {
+            if ((((this.dataY[k] <= yy) && (yy < this.dataY[j])) ||
+                ((this.dataY[j] <= yy) && (yy < this.dataY[k]))) &&
+                (xx < (this.dataX[j] - this.dataX[k]) * (yy - this.dataY[k]) / (this.dataY[j] - this.dataY[k]) + this.dataX[k])) {
+                    c = !c;
+                }
+        }
+        //document.getElementById('debug').innerHTML += (this.name+':'+c+';');        
+        return c;
+    }
 }
 brd.unsuspendUpdate();
           /* ]]> */

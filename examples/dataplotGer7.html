@@ -2,7 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../distrib/jquery.min.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
    <script type="text/javascript" src="germany.js"></script>
 </head>
@@ -13,8 +13,6 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-count1 = 0;
-count2 = 0;
 
 minX =-289319.4;
 maxY = 6827620;
@@ -34,16 +32,13 @@ for(i=0;i<len;i++) {
         points.push(data[i]);
     }
 }
-    
 
 var xArr = [];
 var yArr = [];
-var cArr = [];
+var col = 0;
 
-//var anz = 100; // mehr dauert zu lange...
-var anz = points.length;
-for(j=0;j<anz;j++) {
-    var xy = points[j].split(',');
+function createCurve(area)  {
+    var xy = area.split(',');
     var x = [];
     var y = [];
     var c = [];
@@ -52,29 +47,20 @@ for(j=0;j<anz;j++) {
         var a = xy[i].split(' ');
         c.push(new JXG.Coords(JXG.COORDS_BY_USER, [1*a[0], 1*a[1]], brd));
     }
-    count1 += len;
     c = brd.renderer.RamenDouglasPeuker(c,1.5);
     len = c.length;
     for (i=0;i<len;i++) {
         x.push(c[i].usrCoords[1]);
         y.push(c[i].usrCoords[2]);
     }
-    count2 += len;
-    xArr.push(x);
-    yArr.push(y);
-}
-$('debug').innerHTML = count1+' '+count2;
-//$('debug').innerHTML = [xArr,yArr].toJSON();
+    var graph = brd.createElement('curve', [x,y], 
+                    {fillColor:JXG.hsv2rgb(col++,0.6,0.9),highlightFillColor:'yellow',strokeWidth:1,strokeColor:'black',highlightStrokeColor:'black'});
 
-brd.suspendUpdate();
-graph = [];
-for(i=0;i<xArr.length;i++) {
-    graph[i] = brd.createElement('curve', [xArr[i],yArr[i]], 
-                    {fillColor:'red',highlightFillColor:'yellow',strokeWidth:2});
-
-    //$(evp[i].rendNode).mouseover(function () { indicator.highlight(); });
-    //$(evp[i].rendNode).mouseout(function () { indicator.noHighlight(); });
-    graph[i].hasPoint = function(x,y){ // see: http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
+    $(graph.rendNode).mouseover(function () { graph.highlight(); });
+    $(graph.rendNode).mouseout(function () { graph.noHighlight(); });
+    graph.hasPoint = function(){return false; };
+    /*
+    graph.hasPoint = function(x,y){ // see: http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
         var k, j, c = false , xx, yy;
         checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
         xx = checkPoint.usrCoords[1];
@@ -89,9 +75,38 @@ for(i=0;i<xArr.length;i++) {
         //document.getElementById('debug').innerHTML += (this.name+':'+c+';');        
         return c;
     }
-
+    */
 }
-brd.unsuspendUpdate();
+
+function final() {
+    brd.unsuspendUpdate();
+    //document.getElementById('debug').innerHTML += '. ';
+}
+
+//Copyright 2009 Nicholas C. Zakas. All rights reserved.
+//MIT Licensed
+function timedChunk(items, process, context, callback){
+    var todo = items.concat();   //create a clone of the original
+
+    setTimeout(function(){
+
+        var start = +new Date();
+
+        do {
+             process.call(context, todo.shift());
+        } while (todo.length > 0 && (+new Date() - start < 300));
+
+        if (todo.length > 0){
+            setTimeout(arguments.callee, 5);
+        } else {
+            callback(items);
+        }
+    }, 5);
+}
+
+brd.suspendUpdate();
+timedChunk(points, createCurve, null, final);
+
           /* ]]> */
   </script>
 </body>
