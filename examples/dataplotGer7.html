@@ -1,50 +1,52 @@
 <html>
 <head>
    <title>JSXGraph example</title>
+   <META http-equiv=Content-Type content="text/html; charset=UTF-8">
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../distrib/jquery.min.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
    <script type="text/javascript" src="germany.js"></script>
 </head>
 <body>
-<h2>Curve Test</h2>
+<h2>Wahlkreise in Deutschland</h2>
 <div id="jxgbox" class="jxgbox" style="width:500px; height:700px;"></div>
+<div id="wahlkreis">&nbsp;</div>
 <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
-    /* <![CDATA[ */
+   /* <![CDATA[ */
 
 
-minX =-289319.4;
-maxY = 6827620;
-maxX = 351315.7;
-minY = 5960587;
-var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-1000,maxY+1000,maxX+1000,minY-1000],
+var minX =-289319.4,
+    maxY = 6827620,
+    maxX = 351315.7,
+    minY = 5960587,
+    brd,
+    wahlkreisNode = document.getElementById('wahlkreis').firstChild,    
+    points = [],
+    len = data.length, // from germany.js
+    lastWk = null,
+    i, col = 0;
+    
+brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-1000,maxY+1000,maxX+1000,minY-1000],
                                     keepaspectratio:true});
 
-var wahlkreise = [];
-var points = [];
-len = data.length;
 for(i=0;i<len;i++) {
     if(i%6==1) {
-        wahlkreise.push(data[i]);
+        lastWk = data[i];
     }
     else if(i%6 == 5) {
-        points.push(data[i]);
+        points.push([data[i],lastWk]);
     }
 }
 
-var xArr = [];
-var yArr = [];
-var col = 0;
-
 function createCurve(area)  {
-    var xy = area.split(',');
-    var x = [];
-    var y = [];
-    var c = [];
+    var xy = area[0].split(','),
+        x = [], y = [],
+        c = [], len, i, a, graph;
+        
     len = xy.length;
-    for(var i=0;i<len;i++) {
-        var a = xy[i].split(' ');
+    for(i=0;i<len;i++) {
+        a = xy[i].split(' ');
         c.push(new JXG.Coords(JXG.COORDS_BY_USER, [1*a[0], 1*a[1]], brd));
     }
     c = brd.renderer.RamenDouglasPeuker(c,1.5);
@@ -53,49 +55,29 @@ function createCurve(area)  {
         x.push(c[i].usrCoords[1]);
         y.push(c[i].usrCoords[2]);
     }
-    var graph = brd.createElement('curve', [x,y], 
-                    {fillColor:JXG.hsv2rgb(col++,0.6,0.9),highlightFillColor:'yellow',strokeWidth:1,strokeColor:'black',highlightStrokeColor:'black'});
+    graph = brd.createElement('curve', [x,y], 
+                    {fillColor:JXG.hsv2rgb(col++,0.6,0.9),
+                     highlightFillColor:'yellow',
+                     strokeWidth:1,strokeColor:'black',highlightStrokeColor:'black'});
 
-    $(graph.rendNode).mouseover(function () { graph.highlight(); });
-    $(graph.rendNode).mouseout(function () { graph.noHighlight(); });
+    JXG.addEvent(graph.rendNode, 'mouseover', function(){graph.highlight(); wahlkreisNode.nodeValue=area[1];}, graph);
+    JXG.addEvent(graph.rendNode, 'mouseout', function(){graph.noHighlight();}, graph);
     graph.hasPoint = function(){return false; };
-    /*
-    graph.hasPoint = function(x,y){ // see: http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
-        var k, j, c = false , xx, yy;
-        checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
-        xx = checkPoint.usrCoords[1];
-        yy = checkPoint.usrCoords[2];    
-        for (k = 0, j = this.dataX.length-1; k < this.dataX.length; j = k++) {
-            if ((((this.dataY[k] <= yy) && (yy < this.dataY[j])) ||
-                ((this.dataY[j] <= yy) && (yy < this.dataY[k]))) &&
-                (xx < (this.dataX[j] - this.dataX[k]) * (yy - this.dataY[k]) / (this.dataY[j] - this.dataY[k]) + this.dataX[k])) {
-                    c = !c;
-                }
-        }
-        //document.getElementById('debug').innerHTML += (this.name+':'+c+';');        
-        return c;
-    }
-    */
 }
 
 function final() {
     brd.unsuspendUpdate();
-    //document.getElementById('debug').innerHTML += '. ';
 }
 
 //Copyright 2009 Nicholas C. Zakas. All rights reserved.
 //MIT Licensed
 function timedChunk(items, process, context, callback){
     var todo = items.concat();   //create a clone of the original
-
     setTimeout(function(){
-
         var start = +new Date();
-
         do {
-             process.call(context, todo.shift());
+            process.call(context, todo.shift());
         } while (todo.length > 0 && (+new Date() - start < 300));
-
         if (todo.length > 0){
             setTimeout(arguments.callee, 1);
         } else {
@@ -106,8 +88,7 @@ function timedChunk(items, process, context, callback){
 
 brd.suspendUpdate();
 timedChunk(points, createCurve, null, final);
-
-          /* ]]> */
+  /* ]]> */
   </script>
 </body>
 </html>

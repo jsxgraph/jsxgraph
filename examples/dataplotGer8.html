@@ -48,8 +48,8 @@ function createCurve(number)  {
                      strokeColor:'black',
                      highlightStrokeColor:'black'});
 
-    $(graph.rendNode).mouseover(function () { graph.highlight(); });
-    $(graph.rendNode).mouseout(function () { graph.noHighlight(); });
+    JXG.addEvent(graph.rendNode, 'mouseover', function(){graph.highlight();}, graph);
+    JXG.addEvent(graph.rendNode, 'mouseout', function(){graph.noHighlight();}, graph);
     graph.hasPoint = function(){return false; };
 }
 
