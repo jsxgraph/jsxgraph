@@ -9,11 +9,19 @@
 <h2>HSV Color Scheme II</h2>
 <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
 <form><input type="button" value="Export SVG" 
-    onClick="alert(new XMLSerializer().serializeToString(brd.renderer.svgRoot));"
+    onClick="writeSVG(XMLSerializer().serializeToString(brd.renderer.svgRoot));"
 ></form>
 <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
+        function writeSVG(t) {
+            w = window.open();
+            w.document.open();
+            t = t.replace(/</g,'&lt;');
+            t = t.replace(/>/g,'&gt;\n');
+            w.document.write(t);
+            w.document.close();
+        }
         var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4]});
         var H = brd.createElement('slider',[[-3,3.5],[2,3.5],[0,1,360]], {name:'H',fillColor:'black',strokeColor:'black'});
         var S = brd.createElement('slider',[[-3,3],[2,3],[0,1,1]], {name:'S',fillColor:'black',strokeColor:'black'});
