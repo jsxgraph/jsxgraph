@@ -634,7 +634,6 @@ JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
     // add border width
     n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
     if (isNaN(n)) n = 0; // IE problem if border-width not set explicitly
-    $('debug').innerHTML = n;
     cPos[0] += n;
     
     n = parseInt(JXG.getStyle(pCont,'borderTopWidth'));
