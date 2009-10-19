@@ -7,9 +7,10 @@
 </head>
 <body>
 <h2>HSV Color Scheme II</h2>
-<div style="width:800px">
-  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px; float:left"></div>
-</div>
+<div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+<form><input type="button" value="Export SVG" 
+    onClick="alert(new XMLSerializer().serializeToString(brd.renderer.svgRoot));"
+></form>
 <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
