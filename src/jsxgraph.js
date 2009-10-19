@@ -501,8 +501,11 @@ JXG.getOffset = function (obj) {
 
 /**
   * getStyle: Abstraction layer for Prototype.js and jQuery
+  * Now independent from Prototype  and jQuery
   */
 JXG.getStyle = function (obj, stylename) {
+    return obj.style[stylename];
+/*
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') { // Prototype lib
         return $(obj).getStyle(stylename);
     } else {
@@ -512,6 +515,7 @@ JXG.getStyle = function (obj, stylename) {
             return $(obj).css(stylename);
         }
     }
+*/    
 };
 
 JXG.keys = function(object) {
@@ -590,6 +594,7 @@ JXG.capitalize = function(str) {
     return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
 };
 
+/*
 JXG.isSilverlightInstalled = function() {
     var isInstalled = false,
         activeX, tryOtherBrowsers, slPlugin;
@@ -632,3 +637,4 @@ JXG.isSilverlightInstalled = function() {
 
     return isInstalled;
 };
+*/

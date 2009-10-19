@@ -634,7 +634,8 @@ JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
     // add border width
     n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
     if (isNaN(n)) n = 0; // IE problem if border-width not set explicitly
-    cPos[0] += 0;
+    $('debug').innerHTML = n;
+    cPos[0] += n;
     
     n = parseInt(JXG.getStyle(pCont,'borderTopWidth'));
     if (isNaN(n)) n = 0;
@@ -643,7 +644,7 @@ JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
     // add padding
     n = parseInt(JXG.getStyle(pCont,'paddingLeft'));
     if (isNaN(n)) n = 0;
-    cPos[0] += 0;
+    cPos[0] += n;
     
     n = parseInt(JXG.getStyle(pCont,'paddingTop'));
     if (isNaN(n)) n = 0;
