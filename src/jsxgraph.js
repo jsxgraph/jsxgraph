@@ -429,6 +429,15 @@ JXG.getDimensions = function(elementId) {
   * addEvent: Abstraction layer for Prototype.js and jQuery
   */
 JXG.addEvent = function( obj, type, fn, owner ) {
+    owner['x_internal'+type] = function() {return fn.apply(owner,arguments);};
+    if (typeof obj.addEventListener!='undefined') { // Non-IE browser
+        obj.addEventListener(type, owner['x_internal'+type], false);
+    } else {  // IE
+        obj.attachEvent('on'+type, owner['x_internal'+type]);
+    }
+};
+/*  
+JXG.addEvent = function( obj, type, fn, owner ) {
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
         //Event.observe(obj, type, f);
         owner['x_internal'+type] = fn.bindAsEventListener(owner);
@@ -441,16 +450,19 @@ JXG.addEvent = function( obj, type, fn, owner ) {
         $(obj).bind(type,owner['x_internal'+type]);
     }
 };
-
-JXG.bind = function(fn, owner ) {
-    return function() {
-        return fn.apply(owner,arguments);
-    };
-};
+*/
 
 /** 
   * removeEvent: Abstraction layer for Prototype.js and jQuery
   */
+JXG.removeEvent = function( obj, type, fn, owner ) {
+    if (typeof obj.addEventListener!='undefined') { // Non-IE browser
+        obj.removeEventListener(type, owner['x_internal'+type], false);
+    } else {  // IE
+        obj.detachEvent('on'+type, owner['x_internal'+type]);
+    }
+};
+/*
 JXG.removeEvent = function( obj, type, fn, owner ) {
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
         //Event.stopObserving(obj, type, fn);
@@ -460,6 +472,14 @@ JXG.removeEvent = function( obj, type, fn, owner ) {
         //$(obj).unbind(type,fn);
         $(obj).unbind(type,owner['x_internal'+type]);
     }
+};
+*/
+
+
+JXG.bind = function(fn, owner ) {
+    return function() {
+        return fn.apply(owner,arguments);
+    };
 };
 
 /** 
@@ -489,6 +509,22 @@ JXG.getPosition = function (Evt) {
   * getOffset: Abstraction layer for Prototype.js and jQuery
   */
 JXG.getOffset = function (obj) {
+    var o=obj, 
+        l=o.offsetLeft;
+        t=o.offsetTop;
+    while(o=o.offsetParent) {
+        l+=o.offsetLeft;
+        t+=o.offsetTop;
+        if(o.offsetParent) {
+            l+=o.clientLeft;
+            t+=o.clientTop;
+        }
+    }
+    return [l,t];
+};
+
+/*
+JXG.getOffset = function (obj) {
     var o;
     
     if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') { // Prototype lib
@@ -498,6 +534,7 @@ JXG.getOffset = function (obj) {
         return [o.left,o.top];
     }
 };
+*/
 
 /**
   * getStyle: Abstraction layer for Prototype.js and jQuery
