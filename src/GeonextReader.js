@@ -46,10 +46,10 @@ this.colorProperties = function(gxtEl, Data) {
     gxtEl.colorLabel = Data.getElementsByTagName('color')[0].getElementsByTagName('label')[0].firstChild.data;
     gxtEl.colorDraft = Data.getElementsByTagName('color')[0].getElementsByTagName('draft')[0].firstChild.data;
     return gxtEl;
-}; 
+};
 
 this.firstLevelProperties = function(gxtEl, Data) {
-    var arr = Data.childNodes, 
+    var arr = Data.childNodes,
         n, key;
     for (n=0;n<arr.length;n++) {
         if (arr[n].firstChild!=null && arr[n].nodeName!='data' && arr[n].nodeName!='straight') {
@@ -58,7 +58,7 @@ this.firstLevelProperties = function(gxtEl, Data) {
         }
     };
     return gxtEl;
-}; 
+};
 
 /**
  * Set the board properties of a geonext element.
@@ -72,7 +72,7 @@ this.boardProperties = function(gxtEl, Data) {
     //gxtEl.draft = Data.getElementsByTagName('draft')[0].firstChild.data;
     //gxtEl.showinfo = Data.getElementsByTagName('showinfo')[0].firstChild.data;
     return gxtEl;
-}; 
+};
 
 /**
  * Set the defining properties of a geonext element.
@@ -84,14 +84,14 @@ this.defProperties = function(gxtEl, Data) {
     gxtEl.ident = Data.nodeName;
     if(gxtEl.ident == "text" || gxtEl.ident == "intersection" || gxtEl.ident == "composition") {
         gxtEl.name = '';
-    } 
-    else { 
-        gxtEl.name = Data.getElementsByTagName('name')[0].firstChild.data; 
+    }
+    else {
+        gxtEl.name = Data.getElementsByTagName('name')[0].firstChild.data;
     }
     gxtEl.id = Data.getElementsByTagName('id')[0].firstChild.data;
-    
+
     return gxtEl;
-}; 
+};
 
 this.visualProperties = function(gxtEl, Data) {
     gxtEl.visible = Data.getElementsByTagName('visible')[0].firstChild.data;
@@ -122,14 +122,14 @@ this.subtreeToString = function(root) {
     } catch (e) {
         // IE
         return root.xml;
-    } 
+    }
     return null;
 };
 
 this.readImage = function(node) {
     var pic = '',
         nod = node;
-        
+
     if (nod!=null) {
         pic = nod.data;
         while (nod.nextSibling!=null) {
@@ -142,7 +142,7 @@ this.readImage = function(node) {
 
 this.parseImage = function(board,fileNode,level,x,y,w,h,el) {
     var tag, wOrg, hOrg, id, im, node, picStr;
-    
+
     if (fileNode==null) { return null; }
     if (fileNode.getElementsByTagName('src')[0]!=null) {  // Background image
         tag = 'src';
@@ -170,7 +170,7 @@ this.parseImage = function(board,fileNode,level,x,y,w,h,el) {
             wOrg = (wOrg==0)?3:wOrg; // Hack!
             hOrg = (hOrg==0)?3:hOrg;
 
-            y -= hOrg*w/wOrg*0.5; 
+            y -= hOrg*w/wOrg*0.5;
             h = hOrg*w/wOrg;
             document.getElementsByTagName('body')[0].removeChild(node);
         }
@@ -220,23 +220,23 @@ this.readGeonext = function(tree,board) {
     boardTmp.id = boardData.getElementsByTagName('id')[0].firstChild.data;
     boardTmp.width = boardData.getElementsByTagName('width')[0].firstChild.data;
     boardTmp.height = boardData.getElementsByTagName('height')[0].firstChild.data;
-    
+
     xmlNode = boardData.getElementsByTagName('fontsize')[0];
     boardTmp.fontSize = (xmlNode != null) ? document.body.style.fontSize = xmlNode.firstChild.data : document.body.style.fontSize;
     boardTmp.modus = boardData.getElementsByTagName('modus')[0].firstChild.data;
-    
+
     xmlNode =  boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('origin')[0];
     boardTmp.originX = xmlNode.getElementsByTagName('x')[0].firstChild.data;
     boardTmp.originY = xmlNode.getElementsByTagName('y')[0].firstChild.data;
-    
+
     xmlNode =  boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('zoom')[0];
     boardTmp.zoomX = xmlNode.getElementsByTagName('x')[0].firstChild.data;
     boardTmp.zoomY = xmlNode.getElementsByTagName('y')[0].firstChild.data;
-    
+
     xmlNode = boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('unit')[0];
     boardTmp.unitX = xmlNode.getElementsByTagName('x')[0].firstChild.data;
     boardTmp.unitY = xmlNode.getElementsByTagName('y')[0].firstChild.data;
-    
+
     xmlNode = boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('viewport')[0];
     boardTmp.viewportTop = xmlNode.getElementsByTagName('top')[0].firstChild.data;
     boardTmp.viewportLeft = xmlNode.getElementsByTagName('left')[0].firstChild.data;
@@ -253,17 +253,17 @@ this.readGeonext = function(tree,board) {
     board.unitY = 1*boardTmp.unitY;
     board.stretchX = board.zoomX*board.unitX;
     board.stretchY = board.zoomY*board.unitY;
-    
+
     if(1*boardTmp.fontSize != 0) {
         board.fontSize = 1*boardTmp.fontSize;
     }
     else {
-        board.fontSize = 12;  
+        board.fontSize = 12;
     }
     board.geonextCompatibilityMode = true;
     //board.resizeContainer(boardTmp.width,boardTmp.height);
-    
-    delete(JXG.JSXGraph.boards[board.id]);                       
+
+    delete(JXG.JSXGraph.boards[board.id]);
     board.id = boardTmp.id;
 
     JXG.JSXGraph.boards[board.id] = board;
@@ -286,16 +286,16 @@ this.readGeonext = function(tree,board) {
     gridColor = boardData.getElementsByTagName('grid')[1].getElementsByTagName('color')[0].firstChild.data;
     if (gridColor.length=='9' && gridColor.substr(0,1)=='#') {
         gridOpacity = gridColor.substr(7,2);
-        gridOpacity = parseInt(gridOpacity.toUpperCase(),16)/255;      
+        gridOpacity = parseInt(gridOpacity.toUpperCase(),16)/255;
         gridColor = gridColor.substr(0,7);
     }
-    else { 
+    else {
         gridOpacity = '1';
     }
     board.gridColor = gridColor;
     board.gridOpacity = gridOpacity;
     grid = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('grid')[0].firstChild.data == "true") ? board.renderer.drawGrid(board) : null;
-    
+
     if(boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('coord')[0].firstChild.data == "true") {
 //        var p1coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board);
 //        var p2coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
@@ -303,12 +303,12 @@ this.readGeonext = function(tree,board) {
 //        var axisX = board.createElement('axis', [[p1coords.usrCoords[1], 0], [p2coords.usrCoords[1], 0]]);
         axisX = board.createElement('axis', [[0, 0], [1, 0]]);
         axisX.setProperty('strokeColor:'+axisX.visProp['strokeColor'],'strokeWidth:'+axisX.visProp['strokeWidth'],
-                          'fillColor:none','highlightStrokeColor:'+axisX.visProp['highlightStrokeColor'], 
+                          'fillColor:none','highlightStrokeColor:'+axisX.visProp['highlightStrokeColor'],
                           'highlightFillColor:none', 'visible:true');
 //        var axisY = board.createElement('axis', [[0, p2coords.usrCoords[2]], [0, p1coords.usrCoords[2]]]);
         axisY = board.createElement('axis', [[0, 0], [0, 1]]);
         axisY.setProperty('strokeColor:'+axisY.visProp['strokeColor'],'strokeWidth:'+axisY.visProp['strokeWidth'],
-                          'fillColor:none','highlightStrokeColor:'+axisY.visProp['highlightStrokeColor'], 
+                          'fillColor:none','highlightStrokeColor:'+axisY.visProp['highlightStrokeColor'],
                           'highlightFillColor:none', 'visible:true');
     }
     bgcolor = boardData.getElementsByTagName('background')[0].getElementsByTagName('color')[0].firstChild.data;
@@ -316,14 +316,14 @@ this.readGeonext = function(tree,board) {
     if (bgcolor.length=='9' && bgcolor.substr(0,1)=='#') {
         opacity = bgcolor.substr(7,2);
         bgcolor = bgcolor.substr(0,7);
-    }    
+    }
     board.containerObj.style.backgroundColor = bgcolor;
-    
+
     elChildNodes = tree.getElementsByTagName("elements")[0].childNodes;
     for (s=0; s<elChildNodes.length; s++) (
     function(s) {
-        var i, 
-            gxtEl = {}, 
+        var i,
+            gxtEl = {},
             l, x, y, w, h, c, numberDefEls,
             umkreisId, umkreisName,
             defEl = [],
@@ -331,14 +331,14 @@ this.readGeonext = function(tree,board) {
             defElV = [],
             defElT = [],
             defElD = [],
-            defElDr = [],                    
+            defElDr = [],
             defElSW = [],
             defElColStr = [],
             defElHColStr = [],
             defElColF = [],
             defElColL = [],
             el,  arcId, pointId, line1Id, line2Id, pid, lid, aid, cid, p;
-    
+
         Data = elChildNodes[s];
         gxtEl = JXG.GeonextReader.defProperties(gxtEl, Data);
         if (gxtEl==null) return; // Text nodes are skipped.
@@ -353,16 +353,16 @@ this.readGeonext = function(tree,board) {
                 gxtEl.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
                 JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'points');
                 try {
-                    p = new JXG.Point(board, [1*gxtEl.x, 1*gxtEl.y], gxtEl.id, gxtEl.name, true);  
+                    p = new JXG.Point(board, [1*gxtEl.x, 1*gxtEl.y], gxtEl.id, gxtEl.name, true);
                     p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                                   'fillColor:'+gxtEl.colorStroke,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                                   'highlightFillColor:'+gxtEl.highlightStrokeColor,'labelColor:'+gxtEl.colorLabel,
                                   'visible:'+gxtEl.visible,'fixed:'+gxtEl.fixed,'draft:'+gxtEl.draft);
                     p.setStyle(1*gxtEl.style);
-                    p.traced = (gxtEl.trace=='false') ? false : true; 
+                    p.traced = (gxtEl.trace=='false') ? false : true;
                     JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 } catch(e) {
-                    alert(e);                
+                    alert(e);
                     //$('debug').innerHTML += "* <b>Err:</b>  Point " + gxtEl.name + " " + gxtEl.id + "<br>\n";
                 }
                 break;
@@ -383,15 +383,15 @@ this.readGeonext = function(tree,board) {
                 w = l.point1.coords.distance(JXG.COORDS_BY_USER, l.point2.coords);
                 h = 0; // dummy
                 l.image = JXG.GeonextReader.parseImage(board,Data,'lines',x,y,w,h,l);
-                
+
                 gxtEl.straightFirst = (gxtEl.straightFirst=='false') ? false : true;
-                gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;                      
+                gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;
                 l.setStraight(gxtEl.straightFirst, gxtEl.straightLast);
                 l.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
-                              'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor, 
+                              'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.colorFill, 'labelColor:'+gxtEl.colorLabel,
                               'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash,'draft:'+gxtEl.draft);
-                l.traced = (gxtEl.trace=='false') ? false : true;                                       
+                l.traced = (gxtEl.trace=='false') ? false : true;
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 break;
             case "circle":
@@ -420,22 +420,22 @@ this.readGeonext = function(tree,board) {
                     }
                     else if(board.objects[gxtEl.radiuspoint].type == JXG.OBJECT_TYPE_CIRCLE) {
                         gxtEl.method = "pointCircle";
-                    }                        
+                    }
                 }
                 if (gxtEl.method=='pointRadius') {
                     gxtEl.midpoint = JXG.GeonextReader.changeOriginIds(board,gxtEl.midpoint);
-                    c = new JXG.Circle(board, gxtEl.method, gxtEl.midpoint,  
-                                        gxtEl.radius, gxtEl.id, gxtEl.name);      
+                    c = new JXG.Circle(board, gxtEl.method, gxtEl.midpoint,
+                                        gxtEl.radius, gxtEl.id, gxtEl.name);
                 } else {
                     gxtEl.midpoint = JXG.GeonextReader.changeOriginIds(board,gxtEl.midpoint);
-                    c = new JXG.Circle(board, gxtEl.method, gxtEl.midpoint, gxtEl.radiuspoint, 
-                                        gxtEl.id, gxtEl.name);      
+                    c = new JXG.Circle(board, gxtEl.method, gxtEl.midpoint, gxtEl.radiuspoint,
+                                        gxtEl.id, gxtEl.name);
                 }
                 c.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.colorFill,'visible:'+gxtEl.visible,'labelColor:'+gxtEl.colorLabel,
                               'dash:'+gxtEl.dash,'draft:'+gxtEl.draft);
-                c.traced = (gxtEl.trace=='false') ? false : true;                                       
+                c.traced = (gxtEl.trace=='false') ? false : true;
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 break;
             case "slider":
@@ -451,14 +451,14 @@ this.readGeonext = function(tree,board) {
                 try {
                     p = new JXG.Point(board, [1*gxtEl.x, 1*gxtEl.y], gxtEl.id, gxtEl.name, true);
                     gxtEl.parent = JXG.GeonextReader.changeOriginIds(board,gxtEl.parent);
-                    p.makeGlider(gxtEl.parent); 
+                    p.makeGlider(gxtEl.parent);
                     p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                                   'fillColor:'+gxtEl.colorStroke,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                                   'highlightFillColor:'+gxtEl.highlightStrokeColor,'visible:'+gxtEl.visible,
                                   'fixed:'+gxtEl.fixed,'labelColor:'+gxtEl.colorLabel,'draft:'+gxtEl.draft);
                     p.onPolygon = board.algebra.str2Bool(gxtEl.onpolygon);
-                    p.traced = (gxtEl.trace=='false') ? false : true;      
-                    p.setStyle(1*gxtEl.style);                    
+                    p.traced = (gxtEl.trace=='false') ? false : true;
+                    p.setStyle(1*gxtEl.style);
                     JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 } catch(e) {
                     //$('debug').innerHTML += "* <b>Err:</b>  Slider " + gxtEl.name + " " + gxtEl.id + ': '+ gxtEl.parent +"<br>\n";
@@ -474,12 +474,12 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
                 JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'points');
                 p = new JXG.Point(board, [1*gxtEl.xval, 1*gxtEl.yval], gxtEl.id, gxtEl.name, true);
-                p.addConstraint([gxtEl.x,gxtEl.y]);  
+                p.addConstraint([gxtEl.x,gxtEl.y]);
                 p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorStroke,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.highlightStrokeColor,'visible:'+gxtEl.visible,
                               'fixed:'+gxtEl.fixed,'labelColor:'+gxtEl.colorLabel,'draft:'+gxtEl.draft);
-                p.traced = (gxtEl.trace=='false') ? false : true;  
+                p.traced = (gxtEl.trace=='false') ? false : true;
                 p.setStyle(1*gxtEl.style);
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 break;
@@ -488,32 +488,32 @@ this.readGeonext = function(tree,board) {
                 xmlNode = Data.getElementsByTagName('first')[1];
                 gxtEl.outputFirstId = xmlNode.getElementsByTagName('id')[0].firstChild.data;  // 1 statt 0
                 gxtEl.outputFirstName = xmlNode.getElementsByTagName('name')[0].firstChild.data;
-                gxtEl.outputFirstVisible = xmlNode.getElementsByTagName('visible')[0].firstChild.data;  
+                gxtEl.outputFirstVisible = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
                 gxtEl.outputFirstTrace = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
-                
+
                 gxtEl.outputFirstFixed = xmlNode.getElementsByTagName('fix')[0].firstChild.data;
                 gxtEl.outputFirstStyle = xmlNode.getElementsByTagName('style')[0].firstChild.data;
                 gxtEl.outputFirstStrokewidth =  xmlNode.getElementsByTagName('strokewidth')[0].firstChild.data;
-                
+
                 xmlNode = Data.getElementsByTagName('first')[1].getElementsByTagName('color')[0];
                 gxtEl.outputFirstColorStroke = xmlNode.getElementsByTagName('stroke')[0].firstChild.data;
                 gxtEl.outputFirstHighlightStrokeColor = xmlNode.getElementsByTagName('lighting')[0].firstChild.data;
                 gxtEl.outputFirstColorFill = xmlNode.getElementsByTagName('fill')[0].firstChild.data;
                 gxtEl.outputFirstColorLabel = xmlNode.getElementsByTagName('label')[0].firstChild.data;
                 gxtEl.outputFirstColorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
-                
+
                 gxtEl.first = JXG.GeonextReader.changeOriginIds(board,gxtEl.first);
                 gxtEl.last = JXG.GeonextReader.changeOriginIds(board,gxtEl.last);
-                if( (((board.objects[gxtEl.first]).type == (board.objects[gxtEl.last]).type) && ((board.objects[gxtEl.first]).type == JXG.OBJECT_TYPE_LINE || (board.objects[gxtEl.first]).type == JXG.OBJECT_TYPE_ARROW)) 
+                if( (((board.objects[gxtEl.first]).type == (board.objects[gxtEl.last]).type) && ((board.objects[gxtEl.first]).type == JXG.OBJECT_TYPE_LINE || (board.objects[gxtEl.first]).type == JXG.OBJECT_TYPE_ARROW))
                      || (((board.objects[gxtEl.first]).type == JXG.OBJECT_TYPE_LINE) && ((board.objects[gxtEl.last]).type == JXG.OBJECT_TYPE_ARROW))
                      || (((board.objects[gxtEl.last]).type == JXG.OBJECT_TYPE_LINE) && ((board.objects[gxtEl.first]).type == JXG.OBJECT_TYPE_ARROW)) ) {
-                    inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first], 
-                                                     board.objects[gxtEl.last], gxtEl.outputFirstId, '', 
-                                                     gxtEl.outputFirstName, '');  
+                    inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first],
+                                                     board.objects[gxtEl.last], gxtEl.outputFirstId, '',
+                                                     gxtEl.outputFirstName, '');
                     /* offensichtlich braucht man dieses if doch */
                     if(gxtEl.outputFirstVisible == "false") {
                         inter.hideElement();
-                    }   
+                    }
                     inter.p.setProperty('strokeColor:'+gxtEl.outputFirstColorStroke,
                                         'strokeWidth:'+gxtEl.outputFirstStrokewidth,
                                         //'fillColor:'+gxtEl.outputFirstColorFill,
@@ -523,9 +523,9 @@ this.readGeonext = function(tree,board) {
                                         //'highlightFillColor:'+gxtEl.outputFirstColorFill,
                                         'visible:'+gxtEl.outputFirstVisible,
                                         'labelColor:'+gxtEl.outputFirstColorLabel,
-                                        'draft:'+gxtEl.draft); 
+                                        'draft:'+gxtEl.draft);
                     inter.p.setStyle(1*gxtEl.outputFirstStyle);
-                    inter.p.traced = (gxtEl.outputFirstTrace=='false') ? false : true;                                                
+                    inter.p.traced = (gxtEl.outputFirstTrace=='false') ? false : true;
                 }
                 else {
                     //gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'last','outputLast');
@@ -537,17 +537,17 @@ this.readGeonext = function(tree,board) {
                     gxtEl.outputLastFixed = xmlNode.getElementsByTagName('fix')[0].firstChild.data;
                     gxtEl.outputLastStyle = xmlNode.getElementsByTagName('style')[0].firstChild.data;
                     gxtEl.outputLastStrokewidth = xmlNode.getElementsByTagName('strokewidth')[0].firstChild.data;
-                    
+
                     xmlNode = Data.getElementsByTagName('last')[1].getElementsByTagName('color')[0];
                     gxtEl.outputLastColorStroke = xmlNode.getElementsByTagName('stroke')[0].firstChild.data;
                     gxtEl.outputLastHighlightStrokeColor = xmlNode.getElementsByTagName('lighting')[0].firstChild.data;
                     gxtEl.outputLastColorFill = xmlNode.getElementsByTagName('fill')[0].firstChild.data;
                     gxtEl.outputLastColorLabel = xmlNode.getElementsByTagName('label')[0].firstChild.data;
-                    gxtEl.outputLastColorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;   
-                    
-                    inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first], 
-                                            board.objects[gxtEl.last], gxtEl.outputFirstId, gxtEl.outputLastId, 
-                                            gxtEl.outputFirstName, gxtEl.outputLastName);    
+                    gxtEl.outputLastColorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
+
+                    inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first],
+                                            board.objects[gxtEl.last], gxtEl.outputFirstId, gxtEl.outputLastId,
+                                            gxtEl.outputFirstName, gxtEl.outputLastName);
                     inter.p1.setProperty('strokeColor:'+gxtEl.outputFirstColorStroke,
                                         'strokeWidth:'+gxtEl.outputFirstStrokewidth,
                                         //'fillColor:'+gxtEl.outputFirstColorFill,
@@ -557,9 +557,9 @@ this.readGeonext = function(tree,board) {
                                         'highlightFillColor:'+gxtEl.outputFirstHighlightStrokeColor,
                                         'visible:'+gxtEl.outputFirstVisible,
                                         'labelColor:'+gxtEl.outputFirstColorLabel,
-                                        'draft:'+gxtEl.draft); 
+                                        'draft:'+gxtEl.draft);
                     inter.p1.setStyle(1*gxtEl.outputFirstStyle);
-                    inter.p1.traced = (gxtEl.outputFirstTrace=='false') ? false : true;  
+                    inter.p1.traced = (gxtEl.outputFirstTrace=='false') ? false : true;
                     inter.p2.setProperty('strokeColor:'+gxtEl.outputLastColorStroke,
                                         'strokeWidth:'+gxtEl.outputLastStrokewidth,
                                         //'fillColor:'+gxtEl.outputLastColorFill,
@@ -569,9 +569,9 @@ this.readGeonext = function(tree,board) {
                                         'highlightFillColor:'+gxtEl.outputLastHighlightStrokeColor,
                                         'visible:'+gxtEl.outputLastVisible,
                                         'labelColor:'+gxtEl.outputLastColorLabel,
-                                        'draft:'+gxtEl.draft); 
+                                        'draft:'+gxtEl.draft);
                     inter.p2.setStyle(1*gxtEl.outputLastStyle);
-                    inter.p2.traced = (gxtEl.outputLastTrace=='false') ? false : true; 
+                    inter.p2.traced = (gxtEl.outputLastTrace=='false') ? false : true;
 
                     /* if-Statement evtl. unnoetig BV*/
                     if(gxtEl.outputFirstVisible == "false") {
@@ -580,13 +580,13 @@ this.readGeonext = function(tree,board) {
                         }
                         else {
                             inter.p1.hideElement();
-                        }                                    
+                        }
                     }
                     else {
                         if(gxtEl.outputLastVisible == "false") {
                             inter.p2.hideElement();
                         }
-                    }           
+                    }
                 }
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 break;
@@ -608,7 +608,7 @@ this.readGeonext = function(tree,board) {
                     case "210170": gxtEl.typeName = "PERPENDICULAR_POINT"; break;
                     case "210180": gxtEl.typeName = "ROTATION"; break; // FEHLT
                     case "210190": gxtEl.typeName = "SECTOR"; break;
-                }    
+                }
                 gxtEl.defEl = [];
                 numberDefEls = 0;
                 xmlNode = Data.getElementsByTagName('data')[0].getElementsByTagName('input');
@@ -621,20 +621,20 @@ this.readGeonext = function(tree,board) {
                 gxtEl.outputName = xmlNode.getElementsByTagName('name')[0].firstChild.data;
                 gxtEl.outputVisible = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
                 gxtEl.outputTrace = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
-                        
+
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'output','output');
                 gxtEl.outputName = xmlNode.getElementsByTagName('name')[0].firstChild.data;
-                gxtEl.outputDash = xmlNode.getElementsByTagName('dash')[0].firstChild.data;  
-                gxtEl.outputDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;                   
+                gxtEl.outputDash = xmlNode.getElementsByTagName('dash')[0].firstChild.data;
+                gxtEl.outputDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
                 gxtEl.outputStrokewidth = xmlNode.getElementsByTagName('strokewidth')[0].firstChild.data;
                 //    Data.getElementsByTagName('output')[0].getElementsByTagName('strokewidth')[0].firstChild.data;
-                
+
                 xmlNode = Data.getElementsByTagName('output')[0].getElementsByTagName('color')[0];
                 gxtEl.outputColorStroke = xmlNode.getElementsByTagName('stroke')[0].firstChild.data;
                 gxtEl.outputHighlightStrokeColor = xmlNode.getElementsByTagName('lighting')[0].firstChild.data;
                 gxtEl.outputColorFill = xmlNode.getElementsByTagName('fill')[0].firstChild.data;
                 gxtEl.outputColorLabel = xmlNode.getElementsByTagName('label')[0].firstChild.data;
-                gxtEl.outputColorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;                
+                gxtEl.outputColorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
 
                 gxtEl.defEl[0] = JXG.GeonextReader.changeOriginIds(board,gxtEl.defEl[0]);
                 gxtEl.defEl[1] = JXG.GeonextReader.changeOriginIds(board,gxtEl.defEl[1]);
@@ -644,7 +644,7 @@ this.readGeonext = function(tree,board) {
                     	board.createElement('midpoint', [gxtEl.defEl[0], gxtEl.defEl[1]], {name: gxtEl.outputName, id: gxtEl.outputId});
                     } else if (numberDefEls==1) { // Midpoint of a line
                     	board.createElement('midpoint', [gxtEl.defEl[0]], {name: gxtEl.outputName, id: gxtEl.outputId});
-                    }                                                                        
+                    }
                 }
                 else if(gxtEl.typeName == "NORMAL") {
                     board.addNormal(gxtEl.defEl[1], gxtEl.defEl[0], gxtEl.outputId, gxtEl.outputName);
@@ -669,13 +669,12 @@ this.readGeonext = function(tree,board) {
                 }
                 else if(gxtEl.typeName == "MIRROR_POINT") {
                     // Spaeter: Rotation --> Winkel statt Math.PI
-                    board.addRotation(gxtEl.defEl[0], gxtEl.defEl[1], Math.PI,
-                                      gxtEl.outputId, gxtEl.outputName);
+                    board.createElement('mirrorpoint', [gxtEl.defEl[0], gxtEl.defEl[1]], {name: gxtEl.outputName, id: gxtEl.outputId});
                 }
                 else if(gxtEl.typeName == "PARALLELOGRAM_POINT") {
                     if (gxtEl.defEl.length==2) { // line, point
                         board.createElement('parallelpoint', [JXG.getReference(gxtEl.defEl[0]).point1,
-                                               JXG.getReference(gxtEl.defEl[0]).point2, 
+                                               JXG.getReference(gxtEl.defEl[0]).point2,
                                                gxtEl.defEl[1]], {id: gxtEl.outputId, name: gxtEl.outputName});
                     } else {  // point, point, point
                         board.createElement('parallelpoint', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], {id: gxtEl.outputId, name: gxtEl.outputName});
@@ -687,25 +686,25 @@ this.readGeonext = function(tree,board) {
                         xmlNode = Data.getElementsByTagName('output')[i];
                         defEl[i] = xmlNode.getElementsByTagName('id')[0].firstChild.data;
                         defEl[i] = JXG.GeonextReader.changeOriginIds(board,defEl[i]);
-                        defElN[i] = xmlNode.getElementsByTagName('name')[0];  
+                        defElN[i] = xmlNode.getElementsByTagName('name')[0];
                         defElV[i] = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
                         defElT[i] = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
                         defElD[i] = xmlNode.getElementsByTagName('dash')[0].firstChild.data;
-                        defElDr[i] = xmlNode.getElementsByTagName('draft')[0].firstChild.data;                        
+                        defElDr[i] = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
                         defElSW[i] = xmlNode.getElementsByTagName('strokewidth')[0].firstChild.data;
-                        
+
                         xmlNode = Data.getElementsByTagName('output')[i].getElementsByTagName('color')[0];
                         defElColStr[i] = xmlNode.getElementsByTagName('stroke')[0].firstChild.data;
                         defElHColStr[i] = xmlNode.getElementsByTagName('lighting')[0].firstChild.data;
                         defElColF[i] = xmlNode.getElementsByTagName('fill')[0].firstChild.data;
                         defElColL[i] = xmlNode.getElementsByTagName('label')[0].firstChild.data;
-                    }                          
-                    el = new JXG.Sector(board, gxtEl.defEl[0], 
-                                           gxtEl.defEl[1], gxtEl.defEl[2], 
+                    }
+                    el = new JXG.Sector(board, gxtEl.defEl[0],
+                                           gxtEl.defEl[1], gxtEl.defEl[2],
                                            [defEl[0], defEl[1], defEl[2], defEl[3]],
-                                           [defElN[0].firstChild.data, defElN[1].firstChild.data, defElN[2].firstChild.data, 
-                                               defElN[3].firstChild.data], 
-                                           gxtEl.id);   
+                                           [defElN[0].firstChild.data, defElN[1].firstChild.data, defElN[2].firstChild.data,
+                                               defElN[3].firstChild.data],
+                                           gxtEl.id);
                     // Sector hat keine eigenen Eigenschaften
                     //el.setProperty('fillColor:'+defElColF[0],'highlightFillColor:'+defElColF[0], 'strokeColor:none');
                     /* Eigenschaften des Kreisbogens */
@@ -724,8 +723,8 @@ this.readGeonext = function(tree,board) {
                     gxtEl.firstArrow = Data.getElementsByTagName('output')[0].getElementsByTagName('firstarrow')[0].firstChild.data;
                     gxtEl.lastArrow = Data.getElementsByTagName('output')[0].getElementsByTagName('lastarrow')[0].firstChild.data;
                     gxtEl.firstArrow = (gxtEl.firstArrow=='false') ? false : true;
-                    gxtEl.lastArrow = (gxtEl.lastArrow=='false') ? false : true;     
-                    board.objects[arcId].setArrow(gxtEl.firstArrow,gxtEl.lastArrow); 
+                    gxtEl.lastArrow = (gxtEl.lastArrow=='false') ? false : true;
+                    board.objects[arcId].setArrow(gxtEl.firstArrow,gxtEl.lastArrow);
                     /* Eigenschaften des Endpunkts */
                     pointId = defEl[1];
                     gxtEl.fixed = Data.getElementsByTagName('output')[1].getElementsByTagName('fix')[0].firstChild.data;
@@ -742,15 +741,15 @@ this.readGeonext = function(tree,board) {
                                                        'draft:'+defElDr[1]);
                     gxtEl.style = Data.getElementsByTagName('output')[1].getElementsByTagName('style')[0].firstChild.data;
                     board.objects[pointId].setStyle(1*gxtEl.style);
-                    board.objects[pointId].traced = (defElT[1]=='false') ? false : true;   
+                    board.objects[pointId].traced = (defElT[1]=='false') ? false : true;
                     /* Eigenschaften der ersten Linie */
                     line1Id = defEl[2];
-                    
+
                     xmlNode = Data.getElementsByTagName('output')[2].getElementsByTagName('straight')[0];
                     gxtEl.straightFirst = xmlNode.getElementsByTagName('first')[0].firstChild.data;
-                    gxtEl.straightLast = xmlNode.getElementsByTagName('last')[0].firstChild.data;                                   
+                    gxtEl.straightLast = xmlNode.getElementsByTagName('last')[0].firstChild.data;
                     gxtEl.straightFirst = (gxtEl.straightFirst=='false') ? false : true;
-                    gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;                      
+                    gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;
                     board.objects[line1Id].setStraight(gxtEl.straightFirst, gxtEl.straightLast);
                     board.objects[line1Id].setProperty('strokeColor:'+defElColStr[2],
                                                        'strokeWidth:'+defElSW[2],
@@ -760,15 +759,15 @@ this.readGeonext = function(tree,board) {
                                                        'visible:'+defElV[2],
                                                        'dash:'+defElD[2],
                                                        'draft:'+defElDr[2]);
-                    board.objects[line1Id].traced = (defElT[2]=='false') ? false : true;  
+                    board.objects[line1Id].traced = (defElT[2]=='false') ? false : true;
                     /* Eigenschaften der zweiten Linie */
 
                     line2Id = defEl[3];
                     xmlNode = Data.getElementsByTagName('output')[3].getElementsByTagName('straight')[0];
                     gxtEl.straightFirst = xmlNode.getElementsByTagName('first')[0].firstChild.data;
-                    gxtEl.straightLast = xmlNode.getElementsByTagName('last')[0].firstChild.data;                 
+                    gxtEl.straightLast = xmlNode.getElementsByTagName('last')[0].firstChild.data;
                     gxtEl.straightFirst = (gxtEl.straightFirst=='false') ? false : true;
-                    gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;                      
+                    gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;
                     board.objects[line2Id].setStraight(gxtEl.straightFirst, gxtEl.straightLast);
                     board.objects[line2Id].setProperty('strokeColor:'+defElColStr[3],
                                                        'strokeWidth:'+defElSW[3],
@@ -778,14 +777,14 @@ this.readGeonext = function(tree,board) {
                                                        'visible:'+defElV[3],
                                                        'dash:'+defElD[3],
                                                        'draft:'+defElDr[3]);
-                    board.objects[line2Id].traced = (defElT[3]=='false') ? false : true;  
+                    board.objects[line2Id].traced = (defElT[3]=='false') ? false : true;
                 }
                 else if(gxtEl.typeName == "PERPENDICULAR") {
                     for(i=0; i<Data.getElementsByTagName('output').length; i++) {
                         xmlNode = Data.getElementsByTagName('output')[i];
                         defEl[i] = xmlNode.getElementsByTagName('id')[0].firstChild.data;
                         defEl[i] = JXG.GeonextReader.changeOriginIds(board,defEl[i]);
-                        defElN[i] = xmlNode.getElementsByTagName('name')[0];  
+                        defElN[i] = xmlNode.getElementsByTagName('name')[0];
                         defElV[i] = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
                         defElT[i] = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
                         defElD[i] = xmlNode.getElementsByTagName('dash')[0].firstChild.data;
@@ -799,11 +798,9 @@ this.readGeonext = function(tree,board) {
                     }
                     gxtEl.outputFixed = Data.getElementsByTagName('output')[0].getElementsByTagName('fix')[0].firstChild.data;
                     gxtEl.outputStyle = Data.getElementsByTagName('output')[0].getElementsByTagName('style')[0].firstChild.data;
-                    //board.addPerpendicular(gxtEl.defEl[1], gxtEl.defEl[0], 
-                    //                       defEl[1], defElN[1].firstChild.data, defEl[0], 
-                    //                       defElN[0].firstChild.data);
-                    board.createElement('perpendicular', [gxtEl.defEl[1], gxtEl.defEl[0]], 
-                                        {name: [defElN[1].firstChild.data, defElN[0].firstChild.data], 
+
+                    board.createElement('perpendicular', [gxtEl.defEl[1], gxtEl.defEl[0]],
+                                        {name: [defElN[1].firstChild.data, defElN[0].firstChild.data],
                                          id:[defEl[1], defEl[0]]});
                     /* Eigenschaften des Lotfusspunkts */
                     pid = defEl[0];
@@ -819,7 +816,7 @@ this.readGeonext = function(tree,board) {
                                                                           'labelColor:'+defElColL[0],
                                                                           'draft:'+defElDr[0]);
                     board.objects[pid].setStyle(1*gxtEl.outputStyle);
-                    board.objects[pid].traced = (defElT[0]=='false') ? false : true;      
+                    board.objects[pid].traced = (defElT[0]=='false') ? false : true;
                     /* Eigenschaften der Lotstrecke */
                     lid = defEl[1];
                     board.objects[lid].setProperty('strokeColor:'+defElColStr[1],
@@ -830,14 +827,14 @@ this.readGeonext = function(tree,board) {
                                                                           'visible:'+defElV[1],
                                                                           'dash:'+defElD[1],
                                                                           'draft:'+defElDr[1]);
-                    board.objects[lid].traced = (defElT[1]=='false') ? false : true;                        
+                    board.objects[lid].traced = (defElT[1]=='false') ? false : true;
                 }
                 else if(gxtEl.typeName == "ARROW_PARALLEL") {
                     for(i=0; i<Data.getElementsByTagName('output').length; i++) {
                         xmlNode = Data.getElementsByTagName('output')[i];
                         defEl[i] = xmlNode.getElementsByTagName('id')[0].firstChild.data;
                         defEl[i] = JXG.GeonextReader.changeOriginIds(board,defEl[i]);
-                        defElN[i] = xmlNode.getElementsByTagName('name')[0];  
+                        defElN[i] = xmlNode.getElementsByTagName('name')[0];
                         defElV[i] = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
                         defElT[i] = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
                         defElD[i] = xmlNode.getElementsByTagName('dash')[0].firstChild.data;
@@ -863,8 +860,8 @@ this.readGeonext = function(tree,board) {
                                                                           'highlightFillColor:'+defElColF[0],
                                                                           'visible:'+defElV[0],
                                                                           'dash:'+defElD[0],
-                                                                          'draft:'+defElDr[0]);                                                                      
-                    board.objects[aid].traced = (defElT[0]=='false') ? false : true;      
+                                                                          'draft:'+defElDr[0]);
+                    board.objects[aid].traced = (defElT[0]=='false') ? false : true;
                     /* Eigenschaften des Endpunkts */
                     pid = defEl[1];
                     board.objects[pid].setProperty('strokeColor:'+defElColStr[1],
@@ -878,22 +875,21 @@ this.readGeonext = function(tree,board) {
                                                                           'fixed:'+gxtEl.outputFixed,
                                                                           'labelColor:'+defElColL[1],
                                                                           'draft:'+defElDr[1]);
-                    board.objects[pid].setStyle(1*gxtEl.outputStyle);                                                                          
-                    board.objects[pid].traced = (defElT[1]=='false') ? false : true;                 
+                    board.objects[pid].setStyle(1*gxtEl.outputStyle);
+                    board.objects[pid].traced = (defElT[1]=='false') ? false : true;
                 }
                 else if(gxtEl.typeName == "PERPENDICULAR_POINT") {
-                    board.addPerpendicularPoint(gxtEl.defEl[1], gxtEl.defEl[0],
-                                                gxtEl.outputId, gxtEl.outputName);
+                    board.createElement('perpendicularpoint', [gxtEl.defEl[1], gxtEl.defEl[0]], {name: gxtEl.outputName, id: gxtEl.outputId});
                 }
                 else {
                     throw('GEONExT-Element ' + gxtEl.typeName + ' not yet implemented');
-                }  
+                }
                 /* noch die Eigenschaften der uebrigen Elemente setzen */
                 if(gxtEl.typeName == "MIDPOINT" || gxtEl.typeName == "MIRROR_LINE" ||
                    gxtEl.typeName == "CIRCUMCIRCLE_CENTER" || gxtEl.typeName == "PERPENDICULAR_POINT" ||
                    gxtEl.typeName == "MIRROR_POINT" || gxtEl.typeName == "PARALLELOGRAM_POINT") { // hier wird jeweils ein Punkt angelegt
                     gxtEl.outputFixed = Data.getElementsByTagName('output')[0].getElementsByTagName('fix')[0].firstChild.data;
-                    gxtEl.outputStyle = Data.getElementsByTagName('output')[0].getElementsByTagName('style')[0].firstChild.data;                
+                    gxtEl.outputStyle = Data.getElementsByTagName('output')[0].getElementsByTagName('style')[0].firstChild.data;
                     board.objects[gxtEl.outputId].setProperty('strokeColor:'+gxtEl.outputColorStroke,
                                                                        'strokeWidth:'+gxtEl.outputStrokewidth,
                                                                        //'fillColor:'+gxtEl.outputColorFill,
@@ -908,13 +904,13 @@ this.readGeonext = function(tree,board) {
                     board.objects[gxtEl.outputId].setStyle(1*gxtEl.outputStyle);
                     board.objects[gxtEl.outputId].traced = (gxtEl.outputTrace=='false') ? false : true;
                 }
-                else if(gxtEl.typeName == "BISECTOR" || gxtEl.typeName == "NORMAL" || 
+                else if(gxtEl.typeName == "BISECTOR" || gxtEl.typeName == "NORMAL" ||
                         gxtEl.typeName == "PARALLEL") { // hier wird jeweils eine Linie angelegt
                     xmlNode = Data.getElementsByTagName('output')[0].getElementsByTagName('straight')[0];
                     gxtEl.straightFirst = xmlNode.getElementsByTagName('first')[0].firstChild.data;
-                    gxtEl.straightLast = xmlNode.getElementsByTagName('last')[0].firstChild.data;                        
+                    gxtEl.straightLast = xmlNode.getElementsByTagName('last')[0].firstChild.data;
                     gxtEl.straightFirst = (gxtEl.straightFirst=='false') ? false : true;
-                    gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;                      
+                    gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;
                     board.objects[gxtEl.outputId].setStraight(gxtEl.straightFirst, gxtEl.straightLast);
                     board.objects[gxtEl.outputId].setProperty('strokeColor:'+gxtEl.outputColorStroke,
                                                                        'strokeWidth:'+gxtEl.outputStrokewidth,
@@ -924,14 +920,14 @@ this.readGeonext = function(tree,board) {
                                                                        'visible:'+gxtEl.outputVisible,
                                                                        'dash:'+gxtEl.outputDash,
                                                                        'draft:'+gxtEl.outputDraft);
-                    board.objects[gxtEl.outputId].traced = (gxtEl.outputTrace=='false') ? false : true;                          
+                    board.objects[gxtEl.outputId].traced = (gxtEl.outputTrace=='false') ? false : true;
                 }
-                else if(gxtEl.typeName == "CIRCUMCIRCLE") { 
+                else if(gxtEl.typeName == "CIRCUMCIRCLE") {
                     for(i=0; i<Data.getElementsByTagName('output').length; i++) {
                         xmlNode = Data.getElementsByTagName('output')[i];
                         defEl[i] = xmlNode.getElementsByTagName('id')[0].firstChild.data;
                         defEl[i] = JXG.GeonextReader.changeOriginIds(board,defEl[i]);
-                        defElN[i] = xmlNode.getElementsByTagName('name')[0];  
+                        defElN[i] = xmlNode.getElementsByTagName('name')[0];
                         defElV[i] = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
                         defElT[i] = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
                         defElD[i] = xmlNode.getElementsByTagName('dash')[0].firstChild.data;
@@ -944,7 +940,7 @@ this.readGeonext = function(tree,board) {
                         defElColL[i] = xmlNode.getElementsByTagName('label')[0].firstChild.data;
                     }
                     gxtEl.outputFixed = Data.getElementsByTagName('output')[0].getElementsByTagName('fix')[0].firstChild.data;
-                    gxtEl.outputStyle = Data.getElementsByTagName('output')[0].getElementsByTagName('style')[0].firstChild.data;         
+                    gxtEl.outputStyle = Data.getElementsByTagName('output')[0].getElementsByTagName('style')[0].firstChild.data;
                     /* Eigenschaften des Umkreismittelpunkts */
                     pid = defEl[0];
                     board.objects[pid].setProperty('strokeColor:'+defElColStr[0],
@@ -959,7 +955,7 @@ this.readGeonext = function(tree,board) {
                                                                           'labelColor:'+defElColL[0],
                                                                           'draft:'+defElDr[0]);
                     board.objects[pid].setStyle(1*gxtEl.outputStyle);
-                    board.objects[pid].traced = (defElT[0]=='false') ? false : true;      
+                    board.objects[pid].traced = (defElT[0]=='false') ? false : true;
                     /* Eigenschaften des Umkreises */
                     cid = defEl[1];
                     board.objects[cid].setProperty('strokeColor:'+defElColStr[1],
@@ -970,7 +966,7 @@ this.readGeonext = function(tree,board) {
                                                                           'visible:'+defElV[1],
                                                                           'dash:'+defElD[1],
                                                                           'draft:'+defElDr[1]);
-                    board.objects[cid].traced = (defElT[1]=='false') ? false : true;                   
+                    board.objects[cid].traced = (defElT[1]=='false') ? false : true;
                 }
                 // "PERPENDICULAR" und "SECTOR" werden direkt im oberen if erledigt
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
@@ -989,18 +985,18 @@ this.readGeonext = function(tree,board) {
                     xmlNode = Data.getElementsByTagName('border')[i];
                     gxtEl.border[i].id = xmlNode.getElementsByTagName('id')[0].firstChild.data;
                     gxtEl.border[i].name = xmlNode.getElementsByTagName('name')[0].firstChild.data;
-                    gxtEl.border[i].straightFirst = 
+                    gxtEl.border[i].straightFirst =
                         xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('first')[0].firstChild.data;
-                    gxtEl.border[i].straightLast = 
+                    gxtEl.border[i].straightLast =
                         xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('last')[0].firstChild.data;
                     gxtEl.border[i].straightFirst = (gxtEl.border[i].straightFirst=='false') ? false : true;
                     gxtEl.border[i].straightLast = (gxtEl.border[i].straightLast=='false') ? false : true;
-                    gxtEl.border[i].strokewidth = xmlNode.getElementsByTagName('strokewidth')[0].firstChild.data;   
-                    gxtEl.border[i].dash = xmlNode.getElementsByTagName('dash')[0].firstChild.data; 
-                    gxtEl.border[i].visible = xmlNode.getElementsByTagName('visible')[0].firstChild.data;                    
-                    gxtEl.border[i].draft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;      
-                    gxtEl.border[i].trace = xmlNode.getElementsByTagName('trace')[0].firstChild.data;  
-                    
+                    gxtEl.border[i].strokewidth = xmlNode.getElementsByTagName('strokewidth')[0].firstChild.data;
+                    gxtEl.border[i].dash = xmlNode.getElementsByTagName('dash')[0].firstChild.data;
+                    gxtEl.border[i].visible = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
+                    gxtEl.border[i].draft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
+                    gxtEl.border[i].trace = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
+
                     xmlNode = Data.getElementsByTagName('border')[i].getElementsByTagName('color')[0];
                     gxtEl.border[i].colorStroke = xmlNode.getElementsByTagName('stroke')[0].firstChild.data;
                     gxtEl.border[i].highlightStrokeColor = xmlNode.getElementsByTagName('lighting')[0].firstChild.data;
@@ -1018,7 +1014,7 @@ this.readGeonext = function(tree,board) {
                 if(!gxtEl.visible) {
                     p.setProperty('fillColor:none','highlightFillColor:none');
                 }
-                for(i=0; i<p.borders.length; i++) { 
+                for(i=0; i<p.borders.length; i++) {
                     p.borders[i].setStraight(gxtEl.border[i].straightFirst, gxtEl.border[i].straightLast);
                     p.borders[i].setProperty('strokeColor:'+gxtEl.border[i].colorStroke,
                                              'strokeWidth:'+gxtEl.border[i].strokewidth,
@@ -1027,8 +1023,8 @@ this.readGeonext = function(tree,board) {
                                              'highlightFillColor:'+gxtEl.border[i].colorFill,
                                              'visible:'+gxtEl.border[i].visible,
                                              'dash:'+gxtEl.border[i].dash,'labelColor:'+gxtEl.border[i].colorLabel,
-                                             'draft:'+gxtEl.border[i].draft,'trace:'+gxtEl.border[i].trace);                          
-                }   
+                                             'draft:'+gxtEl.border[i].draft,'trace:'+gxtEl.border[i].trace);
+                }
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 break;
             case "graph":
@@ -1044,11 +1040,11 @@ this.readGeonext = function(tree,board) {
                               'highlightStrokeColor:'+gxtEl.highlightStrokeColor);*/
                 c.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,'fillColor:none',
                               'highlightStrokeColor:'+gxtEl.highlightStrokeColor);
-                              
+
                 break;
             case "arrow":
                 gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);                
+                gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'straight','straight');
@@ -1060,25 +1056,25 @@ this.readGeonext = function(tree,board) {
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.colorFill,'labelColor:'+gxtEl.colorLabel,
                               'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash, 'draft:'+gxtEl.draft);
-                l.setStraight(false,false);                              
+                l.setStraight(false,false);
                 l.setArrow(false,true);
-                l.traced = (gxtEl.trace=='false') ? false : true;                         
+                l.traced = (gxtEl.trace=='false') ? false : true;
                 JXG.GeonextReader.printDebugMessage('debug',l,Data.nodeName,'OK');
                 break;
             case "arc":
                 gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
-                gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);        
+                gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
-                
+
                 gxtEl.firstArrow = Data.getElementsByTagName('firstarrow')[0].firstChild.data;
                 gxtEl.lastArrow = Data.getElementsByTagName('lastarrow')[0].firstChild.data;
                 JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'arcs');
                 gxtEl.midpoint = JXG.GeonextReader.changeOriginIds(board,gxtEl.midpoint);
                 gxtEl.angle = JXG.GeonextReader.changeOriginIds(board,gxtEl.angle);
                 gxtEl.radius = JXG.GeonextReader.changeOriginIds(board,gxtEl.radius);
-                c = new JXG.Arc(board, gxtEl.midpoint, gxtEl.radius, gxtEl.angle, 
+                c = new JXG.Arc(board, gxtEl.midpoint, gxtEl.radius, gxtEl.angle,
                                 gxtEl.id, gxtEl.name);
                 c.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
@@ -1086,7 +1082,7 @@ this.readGeonext = function(tree,board) {
                               'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash, 'draft:'+gxtEl.draft);
                 c.traced = (gxtEl.trace=='false') ? false : true;
                 gxtEl.firstArrow = (gxtEl.firstArrow=='false') ? false : true;
-                gxtEl.lastArrow = (gxtEl.lastArrow=='false') ? false : true;     
+                gxtEl.lastArrow = (gxtEl.lastArrow=='false') ? false : true;
                 c.setArrow(gxtEl.firstArrow,gxtEl.lastArrow);
                 JXG.GeonextReader.printDebugMessage('debug',c,Data.nodeName,'OK');
                 break;
@@ -1102,7 +1098,7 @@ this.readGeonext = function(tree,board) {
                 c.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.colorFill,'labelColor:'+gxtEl.colorLabel,
-                              'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash /*, 'draft:'+gxtEl.draft*/);                    
+                              'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash /*, 'draft:'+gxtEl.draft*/);
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 break;
             case "text":

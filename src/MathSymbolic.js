@@ -23,14 +23,14 @@
     along with JSXGraph. If not, see <http://www.gnu.org/licenses/>.
 */
 
-/** 
+/**
  * @fileoverview In this file the namespace Math.Symbolic is defined, which holds methods
  * and algorithms for symbolic computations.
  * @author graphjs
  */
 /**
  * Math.Symbolic
- */ 
+ */
 JXG.Math.Symbolic = {};
 
 /**
@@ -64,18 +64,18 @@ JXG.Math.Symbolic.generateSymbolicCoordinatesPartial = function(board, element, 
                 t_num++;
             }
             if(t_num == 0) {
-                list[t].symbolic.x = element.ancestors[t].coords.usrCoords[1];
-                list[t].symbolic.y = element.ancestors[t].coords.usrCoords[2];
+                list[t].symbolic.x = list[t].coords.usrCoords[1];
+                list[t].symbolic.y = list[t].coords.usrCoords[2];
             } else {
                 count++;
-                element.ancestors[t].symbolic.x = makeCoords(count);
+                list[t].symbolic.x = makeCoords(count);
                 count++;
-                element.ancestors[t].symbolic.y = makeCoords(count);
+                list[t].symbolic.y = makeCoords(count);
             }
 
         }
     }
-    
+
     if(JXG.isPoint(element)) {
         element.symbolic.x = 'x';
         element.symbolic.y = 'y';
@@ -108,24 +108,25 @@ JXG.Math.Symbolic.clearSymbolicCoordinates = function(board) {
 JXG.Math.Symbolic.generatePolynomials = function(board, element, generateCoords) {
     if(generateCoords)
         this.generateSymbolicCoordinatesPartial(board, element, 'u', 'brace');
-    
-    var list = element.ancestors;
-    list[element.id] = element;
-    var t_num;
-    var poly = [];
-    var result = [];
 
-    for(var t in list) {
-        t_num = 0;
-        poly = [];
+    var list = element.ancestors,
+        number_of_ancestors,
+        pgs = [],
+        result = [],
+        t, k, i;
+    list[element.id] = element;
+
+    for(t in list) {
+        number_of_ancestors = 0;
+        pgs = [];
         if (JXG.isPoint(list[t])) {
-            for(var k in list[t].ancestors) {
-                t_num++;
+            for(k in list[t].ancestors) {
+                number_of_ancestors++;
             }
-            if(t_num > 0) {
-                poly = list[t].generatePolynomial();
-                for(var i=0; i<poly.length; i++)
-                    result.push(poly[i]);
+            if(number_of_ancestors > 0) {
+                pgs = list[t].generatePolynomial();
+                for(i=0; i<pgs.length; i++)
+                    result.push(pgs[i]);
             }
         }
     }
@@ -145,16 +146,19 @@ JXG.Math.Symbolic.generatePolynomials = function(board, element, generateCoords)
  * @type Array
  * @return Array of points.
  */
-JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback) {
-    var numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace');
+JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback, debug) {
+    var numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace'),
+        poly = this.generatePolynomials(board, point);
+    var polyStr = poly.join(','),
+        xsye = new JXG.Coords(JXG.COORDS_BY_USR, [0,0], board),
+        xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board),
+        fileurl;
 
-    var poly = this.generatePolynomials(board, point);
+    if(debug)
+        fileurl = JXG.serverBase + 'jxggroebner_debug.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr) + '&xs=' + xsye.usrCoords[1] + '&xe=' + xeys.usrCoords[1] + '&ys=' + xeys.usrCoords[2] + '&ye=' + xsye.usrCoords[2];
+    else
+        fileurl = JXG.serverBase + 'jxggroebner.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr) + '&xs=' + xsye.usrCoords[1] + '&xe=' + xeys.usrCoords[1] + '&ys=' + xeys.usrCoords[2] + '&ye=' + xsye.usrCoords[2];
 
-    var polyStr = poly.join(',');
-
-    var xsye = new JXG.Coords(JXG.COORDS_BY_USR, [0,0], board);
-    var xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board);
-    var fileurl = JXG.serverBase + 'jxggroebner.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr) + '&xs=' + xsye.usrCoords[1] + '&xe=' + xeys.usrCoords[1] + '&ys=' + xeys.usrCoords[2] + '&ye=' + xsye.usrCoords[2];
 
     this.cbp = function(t) {
         var coordpairsStr = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(t))).unzip();
@@ -177,7 +181,7 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
         this.rendNode = c.rendNode;
         callback(returnstr[1].split(';'));
     };
-    
+
     this.cb = JXG.bind(this.cbp, this);
 
     JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw');

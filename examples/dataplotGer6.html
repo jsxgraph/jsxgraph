@@ -14,6 +14,8 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
+var starttime = (new Date()).getTime();
+
 count1 = 0;
 count2 = 0;
 
@@ -73,6 +75,9 @@ for(i=0;i<xArr.length;i++) {
     }
 }
 brd.unsuspendUpdate();
+
+document.getElementById('debug').innerHTML += '<br/>' + ((new Date()).getTime() - starttime);
+
           /* ]]> */
   </script>
 </body>

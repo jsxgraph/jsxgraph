@@ -21,8 +21,8 @@ cmd_cocoa = "cocoa"
 # If you're using Windows
 #cmd_cocoa = r"C:\cocoa\cocoa.bat"
 
-# Should'nt be changed, except you know what you're doing
-debug = False;
+# Shouldn't be changed, except you know what you're doing
+debug = True;
 
 ############################
 
@@ -32,6 +32,7 @@ from matplotlib.pyplot import *
 from matplotlib.contour import *
 
 import subprocess
+import signal
 import re
 import zlib
 import base64
@@ -65,38 +66,80 @@ ye = float(form.getfirst('ye', '5'))
 number = cgi.escape(number)
 polys = base64.b64decode(cgi.escape(polys))
 
-input = ""
+cinput = ""
 
 # Variable code begins here
 # Here indeterminates of polynomial ring have to be adjusted
-input += "Use R ::= QQ[u[1..%s],x,y];" % number
+cinput += "Use R ::= QQ[u[1..%s],x,y], DegRevLex;" % number
 # Of course the polynomials generating the ideal must be adjusted
-input += "I := Ideal(%s);" % polys
+cinput += "I := Ideal(%s);" % polys
 # So have to be the indeterminates to be eliminated
-input += "J := Elim(u[1]..u[%s], I);" % number
+cinput += "J := Elim(u[1]..u[%s], I); J;" % number
 # and ends here
 
 # Fixed code which hasn't to be adjusted on each run of this script
-input += "G := ReducedGBasis(J);"
-input += "Print \"resultsbegin\", NewLine;"
-input += "For N := 1 To Len(G) Do\n"
-input += "    B := Factor(G[N]);\n"
-input += "    For M := 1 To Len(B) Do\n"
-input += "        StarPrintFold(B[M][1], -1);"
-input += "        Print NewLine;"
-input += "    EndFor;\n"
-input += "EndFor;\n"
-input += "Print \"resultsend\", NewLine;"
+cinput += "G := ReducedGBasis(J);"
+cinput += "Print \"resultsbegin\", NewLine;"
+cinput += "For N := 1 To Len(G) Do\n"
+cinput += "    B := Factor(G[N]);\n"
+cinput += "    For M := 1 To Len(B) Do\n"
+cinput += "        StarPrintFold(B[M][1], -1);"
+cinput += "        Print NewLine;"
+cinput += "    EndFor;\n"
+cinput += "EndFor;\n"
+cinput += "Print \"resultsend\", NewLine;"
 
 if debug:
     print "Starting CoCoA with input<br />"
-    print input + '<br />'
+    print cinput + '<br />'
 
 #cocoa = subprocess.Popen([cmd_cocoa], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-cocoa = subprocess.Popen([cmd_cocoa], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-cocoa.stdin.write(input)
-output = cocoa.communicate()[0]
-cocoa.stdin.close()
+
+# The suicide pill for the CoCoA process:
+# If not done within the following amount
+# of seconds, the subprocess will be terminated
+
+time_left = 10
+
+class TimeoutException(Exception): pass
+
+def time_limit(seconds):
+    def signal_handler(signum, frame):
+        raise TimeoutException, "Timed out!"
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(seconds)
+
+cocoa_process = None
+output = ''
+
+def callCoCoA():
+    # Global variables aren't that nice, but this time is see no way out
+    global cocoa_process, output
+    cocoa_process = subprocess.Popen([cmd_cocoa], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+    #cocoa_process.stdin.write(input)
+    output = cocoa_process.communicate(cinput)[0]
+    #cocoa_process.stdin.close()
+
+
+try:
+    time_limit(time_left)
+    callCoCoA()
+except TimeoutException, msg:
+    # This is only tested with linux/unix
+    # and works ONLY if the cocoa script cd-ing
+    # to the cocoa dir and starting cocoa executes
+    # it with
+    # $ exec ./cocoa_text
+    # This is NOT YET TESTED WITH WINDOWS! (though
+    # sharing tests would be nice).
+    cocoa_process.kill()
+    #cocoa_process.terminate()
+    #cocoa_process.send_signal(signal.SIGTERM)
+    #subprocess.Popen(["killall", "cocoa_text"])
+    #os.system('killall -9 cocoa_text')
+    if debug:
+        print "Timed out!"
+    exit()
 
 #cocoa = os.popen("echo \"" + input + "\" | " + cmd_cocoa)
 
@@ -135,8 +178,6 @@ for i in range(0,len(polynomials)):
 
     if debug:
         savefig('/tmp/test%s.png' % i)
-
-    con = C.find_nearest_contour(0, 0)
 
     for i in range(0, len(C.collections[0].get_paths())):
         pa = C.collections[0].get_paths()[i].to_polygons()[0]

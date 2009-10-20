@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
@@ -58,7 +58,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @final
      */
     this.BOARD_MODE_NONE = 0x0000;
-    
+
     /**
      * Board is in drag mode, objects aren't highlighted on mouse over and the object referenced in
      * drag_obj is updated on mouse movement.
@@ -68,7 +68,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @final
      */
     this.BOARD_MODE_DRAG = 0x0001;
-    
+
     /**
      * Board is in construction mode, objects are highlighted on mouse over and the behaviour of the board
      * is determined by the construction type stored in the field constructionType.
@@ -86,7 +86,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @final
      */
     this.BOARD_MODE_MOVE_ORIGIN = 0x0002;
-    
+
     /**
      * Updating is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
      * @type int
@@ -95,7 +95,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @final
      */
     this.BOARD_QUALITY_LOW = 0x1;
-    
+
     /**
      * Updating is made with high quality, e.g. graphs are evaluated at much more points.
      * @type int
@@ -184,13 +184,13 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type AbstractRenderer
      */
     this.renderer = renderer;
-    
+
     /**
     * Some standard options
     * @type Options
     */
     this.options = new JXG.Options();
-    
+
     /**
      * Dimension of the board.
      * @private
@@ -201,7 +201,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     /**
      * Coordinates of the boards origin
      * @type Coords
-     */    
+     */
     this.origin = {};
     this.origin.usrCoords = [1, 0, 0];
     this.origin.scrCoords = [1, origin[0], origin[1]];
@@ -211,20 +211,20 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type int
      */
     this.zoomX = zoomX;
-    
+
     /**
      * Zoom factor in Y direction
      * @type int
      */
     this.zoomY = zoomY;
-    
+
     /**
      * This means the number of pixel which represents
      * one unit in user-coordinates in x direction.
      * @type int
      */
     this.unitX = unitX;
-    
+
     /**
      * This means the number of pixel which represents
      * one unit in user-coordinates in y direction.
@@ -256,7 +256,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type int
      */
     this.fontSize = this.options.fontSize;
-        
+
     /**
      * A reference to an object of class Algebra.
      * @see Algebra
@@ -271,7 +271,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
         this.id = id;
     else
         this.id = this.generateId();
-        
+
     /**
      * An array containing all hooked functions.
      * @type Array
@@ -279,7 +279,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.hooks = [];
 
     /**
-     * An array containing all other boards that are updated after this board has been updated. 
+     * An array containing all other boards that are updated after this board has been updated.
      * @private
      * @type Array
      */
@@ -291,33 +291,33 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type Object
      */
     this.objects = {};
-    
+
     /**
-     * This is used for general purpose animations. Stores all the objects that are currently running an animation. 
+     * This is used for general purpose animations. Stores all the objects that are currently running an animation.
      * @private
      */
     this.animationObjects = {};
-        
+
     /**
      * An associative array containing all highlighted geometric objects belonging to the board.
      * @private
      * @type Object
      */
     this.highlightedObjects = {};
-    
+
     /**
      * Number of objects ever created on this board. This includes every object, even invisible and deleted ones.
      * @private
      * @type int
      */
     this.numObjects = 0;
-    
+
     /**
      * An associative array to store the objects of the board by name. the name of the object is the key and value is a reference to the object.
      * @type Object
      */
     this.elementsByName = {};
-    
+
     /**
      * The board mode the board is currently in. Possible values are
      * <ul>
@@ -329,7 +329,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type int
      */
     this.mode = this.BOARD_MODE_NONE;
-    
+
     /**
      * The update quality of the board. In most cases this is set to Board.BOARD_QUALITY_HIGH when mode is not Board.BOARD_MODE_DRAG
      * and Board.QUALITY_HIGH otherwise. Possible values are
@@ -342,71 +342,71 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type int
      */
     this.updateQuality = this.BOARD_QUALITY_HIGH;
-    
+
    /**
     * If true updates are skipped
      * @private
     * @type bool
-    */   
+    */
    this.isSuspendedRedraw = false;
-    
+
    /**
     * The way objects can be dragged. If true, objects can only moved on a predefined grid, if false objects can be moved smoothly almost everywhere.
     * @type bool
     */
    this.snapToGrid = this.options.grid.snapToGrid;
-   
+
    /**
     * The amount of grid points plus one that fit in one unit of user coordinates in x direction.
     * @type int
     */
    this.gridX = this.options.grid.gridX;
-   
+
    /**
     * The amount of grid points plus one that fit in one unit of user coordinates in y direction.
     * @type int
     */
    this.gridY = this.options.grid.gridY;
-    
+
    /**
     * Color of the grid.
     * @type string
-    */        
+    */
    this.gridColor = this.options.grid.gridColor;
-   
+
    /**
     * Opacity of the grid color, between 0 and 1.
     * @type float
-    */        
+    */
    this.gridOpacity = this.options.grid.gridOpacity;
-   
+
    /**
     * Determines whether the grid is dashed or not.
     * @type bool
-    */    
+    */
    this.gridDash = this.options.grid.gridDash;
-   
+
    /**
     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in x direction.
     * @type int
     */
    this.snapSizeX = this.options.grid.snapSizeX;
-   
+
    /**
     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in y direction.
     * @type int
     */
-   this.snapSizeY = this.options.grid.snapSizeY;    
-   
+   this.snapSizeY = this.options.grid.snapSizeY;
+
    this.calculateSnapSizes();
-   
+
    /**
     * Visibility of the boards grid.
     * @private
     * @type bool
     */
    this.hasGrid = this.options.grid.hasGrid;
-    
+
    /**
     * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
     * @type int
@@ -415,7 +415,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @private
     */
    this.drag_dx = 0;
-   
+
    /**
     * The distance from the mouse to the dragged object in y direction when the user clicked the mouse button.
     * @type int
@@ -424,7 +424,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @private
     */
    this.drag_dy = 0;
-   
+
    /**
     * A reference to the object that is dragged on the board.
     * @private
@@ -441,14 +441,14 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @private
     */
    this.xmlString = '';
-    
+
     /*
     * Display the licence text, @see JSXGraph
     */
     if ( (showCopyright!=null && showCopyright) || (showCopyright==null && this.options.showCopyright) ) {
         this.renderer.displayCopyright(JXG.JSXGraph.licenseText,this.options.fontSize);
     }
-        
+
    /**
     * Full updates are needed after zoom and axis translates.
     * This saves some time during update
@@ -456,7 +456,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @type bool
     */
    this.needsFullUpdate = false;
-    
+
    /**
     * if {reducedUpdate} is set to true, then only the dragged element and few (i.e. 2) following
     * elements are updated during mouse move. On muose up the whole construction is
@@ -466,7 +466,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     */
    this.reducedUpdate = false;
 
-   /** 
+   /**
     * If GEONExT constructions are displayed,
     * then this property should be set to true.
     * Then no stdform updates and no dragging
@@ -481,7 +481,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    //// Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
    //Event.observe(document, 'mousedown', this.mouseDownListener.bind(this));
    //Event.observe(this.containerObj, 'mousemove', this.mouseMoveListener.bind(this));
-   
+
    JXG.addEvent(document,'mousedown', this.mouseDownListener, this);
    JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
 };
@@ -497,26 +497,26 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
 JXG.Board.prototype.generateName = function(object) {
     if(object.type == JXG.OBJECT_TYPE_TICKS)
         return;
-    
+
     var possibleNames;
     if(object.elementClass == JXG.OBJECT_CLASS_POINT) {
-        // points have capital letters 
+        // points have capital letters
         possibleNames = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                                   'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-    } 
+    }
     else {
         // all other elements get lowercase labels
         possibleNames = ['', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-                                  'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']; 
+                                  'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
     }
-    
-    
+
+
     // how long the name can be at most
     var maxNameLength = 3;
     var pre = '';
     var nameBase = '';
     var post = '';
-    
+
     if(object.elementClass == JXG.OBJECT_CLASS_POINT || object.elementClass == JXG.OBJECT_CLASS_LINE) {
     }
     else {
@@ -547,7 +547,7 @@ JXG.Board.prototype.generateName = function(object) {
     for(i=0; i<maxNameLength; i++) {
         indices[i] = 0;
     }
-    
+
     while (indices[maxNameLength-1] < possibleNames.length) {
         for(indices[0]=1; indices[0]<possibleNames.length; indices[0]++) {
             name = pre;
@@ -603,7 +603,7 @@ JXG.Board.prototype.setId = function (obj, type) {
     var num = this.numObjects,
         elId = obj.id;
     this.numObjects++;
-    
+
     // Falls Id nicht vorgegeben, eine Neue generieren:
     if((elId == '') || (elId == null)) {
         elId = this.id + type + num;
@@ -615,7 +615,7 @@ JXG.Board.prototype.setId = function (obj, type) {
 
     if(obj.hasLabel) {
         obj.label.content.id = elId+"Label";
-        this.addText(obj.label.content);  
+        this.addText(obj.label.content);
     }
     return elId;
 };
@@ -630,21 +630,21 @@ JXG.Board.prototype.setId = function (obj, type) {
 JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
     var pCont = this.containerObj,
         cPos = JXG.getOffset(pCont), n; //Element.cumulativeOffset(pCont);
-    
+
     // add border width
     n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
     if (isNaN(n)) n = 0; // IE problem if border-width not set explicitly
     cPos[0] += n;
-    
+
     n = parseInt(JXG.getStyle(pCont,'borderTopWidth'));
     if (isNaN(n)) n = 0;
     cPos[1] += n;
-    
+
     // add padding
     n = parseInt(JXG.getStyle(pCont,'paddingLeft'));
     if (isNaN(n)) n = 0;
     cPos[0] += n;
-    
+
     n = parseInt(JXG.getStyle(pCont,'paddingTop'));
     if (isNaN(n)) n = 0;
     cPos[1] += n;
@@ -700,10 +700,10 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
 JXG.Board.prototype.mouseUpListener = function (evt) {
     // redraw with high precision
     this.updateQuality = this.BOARD_QUALITY_HIGH;
-    
+
     // release mouseup listener
     JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
-    
+
     // if origin was moved update everything
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
         this.moveOrigin();
@@ -724,13 +724,13 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
  */
 JXG.Board.prototype.mouseDownListener = function (Evt) {
     var el, pEl, cPos, absPos, dx, dy;
-    
+
     cPos = this.getRelativeMouseCoordinates(Evt);
     // position of mouse cursor relative to containers position of container
     absPos = JXG.getPosition(Evt);
     dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
     dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
-    
+
     if(Evt.shiftKey) {
         this.drag_dx = dx - this.origin.scrCoords[1];
         this.drag_dy = dy - this.origin.scrCoords[2];
@@ -742,11 +742,11 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     if (this.mode==this.BOARD_MODE_CONSTRUCT) return;
 
     this.mode = this.BOARD_MODE_DRAG;
-    if (this.mode==this.BOARD_MODE_DRAG) {   
+    if (this.mode==this.BOARD_MODE_DRAG) {
         for(el in this.objects) {
             pEl = this.objects[el];
             if( (pEl.hasPoint != undefined)
-                    && ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER) 
+                    && ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)
                         /*|| (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_LINE)  // not yet
                         || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CIRCLE)
                         || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CURVE)*/ )
@@ -783,7 +783,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
  */
 JXG.Board.prototype.mouseMoveListener = function (Event) {
     var el, pEl, cPos, absPos, dx, dy, newPos;
-    
+
     cPos = this.getRelativeMouseCoordinates(Event);
 
     // position of mouse cursor relative to containers position of container
@@ -792,21 +792,21 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
     y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
 
     this.updateQuality = this.BOARD_QUALITY_LOW;
-    
+
     this.dehighlightAll(x,y);
     if(this.mode != this.BOARD_MODE_DRAG) {
         this.renderer.hide(this.infobox);
     }
-    
-    if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) { 
+
+    if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
         this.origin.scrCoords[1] = x - this.drag_dx;
         this.origin.scrCoords[2] = y - this.drag_dy;
         this.moveOrigin();
     }
     else if(this.mode == this.BOARD_MODE_DRAG) {
         newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x,y), this);
-        if (this.drag_obj.type == JXG.OBJECT_TYPE_POINT 
-            || this.drag_obj.type == JXG.OBJECT_TYPE_LINE 
+        if (this.drag_obj.type == JXG.OBJECT_TYPE_POINT
+            || this.drag_obj.type == JXG.OBJECT_TYPE_LINE
             || this.drag_obj.type == JXG.OBJECT_TYPE_CIRCLE
             || this.drag_obj.type == JXG.OBJECT_TYPE_CURVE) {
 
@@ -814,11 +814,11 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
                 // This is for performance reasons with GEONExT files and for groups (transformations do not work yet with groups)
                 this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
             } else {
-                this.drag_obj.setPositionByTransform(JXG.COORDS_BY_USER, 
-                    newPos.usrCoords[1]-this.dragObjCoords.usrCoords[1], 
+                this.drag_obj.setPositionByTransform(JXG.COORDS_BY_USER,
+                    newPos.usrCoords[1]-this.dragObjCoords.usrCoords[1],
                     newPos.usrCoords[2]-this.dragObjCoords.usrCoords[2]);
                 // Save new mouse position in screen coordinates.
-                this.dragObjCoords = newPos; 
+                this.dragObjCoords = newPos;
             }
             this.update(this.drag_obj);
         } else if(this.drag_obj.type == JXG.OBJECT_TYPE_GLIDER) {
@@ -892,7 +892,7 @@ JXG.Board.prototype.updateInfobox = function(el) {
         } else {
             y = yc;
         }
-        
+
         //this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>';
         //this.infobox.nameHTML = '(' + el.coords.usrCoords[1] + ', ' + el.coords.usrCoords[2] + ')';
         this.highlightInfobox(x,y,el);
@@ -913,12 +913,12 @@ JXG.Board.prototype.highlightInfobox = function(x,y,el) {
  */
 JXG.Board.prototype.dehighlightAll = function(x,y) {
     var el, pEl;
-    
+
     for(el in this.highlightedObjects) {
         //this.renderer.noHighlight(this.highlightedObjects[el]);
         pEl = this.highlightedObjects[el];
-        if((pEl.hasPoint == undefined) || 
-           (!pEl.hasPoint(x, y)) || 
+        if((pEl.hasPoint == undefined) ||
+           (!pEl.hasPoint(x, y)) ||
            (pEl.visProp['visible'] == false)) { // dehighlight only if necessary
                 pEl.noHighlight();
                 delete(this.highlightedObjects[el]);
@@ -948,7 +948,7 @@ JXG.Board.prototype.getScrCoordsOfMouse = function (x,y) {
  * In case of snapToGrid activated this method caclulates the user coords of mouse "snapped to grid".
  * @param {Event} Evt Event object containing the mouse coordinates.
  */
-JXG.Board.prototype.getUsrCoordsOfMouse = function (Evt) {    
+JXG.Board.prototype.getUsrCoordsOfMouse = function (Evt) {
     var cPos = this.getRelativeMouseCoordinates(Evt);
     //var x = Event.pointerX(Evt) - cPos[0];
     //var y = Event.pointerY(Evt) - cPos[1];
@@ -988,7 +988,7 @@ JXG.Board.prototype.getAllUnderMouse = function (Evt) {
  */
 JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
     var cPos = this.getRelativeMouseCoordinates(Evt);
-    
+
     // mouse position relative to container
     //var dx = Event.pointerX(Evt) - cPos[0];
     //var dy = Event.pointerY(Evt) - cPos[1];
@@ -1029,9 +1029,9 @@ JXG.Board.prototype.moveOrigin = function () {
                 this.objects[Element].coords.usr2screen();
         }
     }
-    
+
     this.clearTraces();
-    
+
     this.fullUpdate();
     if(this.hasGrid) {
         this.renderer.removeGrid(this);
@@ -1041,19 +1041,19 @@ JXG.Board.prototype.moveOrigin = function () {
 };
 
 /**
- * After construction of the object the visibility is set 
+ * After construction of the object the visibility is set
  * and the label is constructed if necessary.
  * @param {Object} obj The object to add.
  * @private
  */
-JXG.Board.prototype.finalizeAdding = function (obj) {   
+JXG.Board.prototype.finalizeAdding = function (obj) {
     if (obj.hasLabel) {
         this.renderer.drawText(obj.label.content);
     }
     if(!obj.visProp['visible']) {
         this.renderer.hide(obj);
     }
-    
+
     if(obj.hasLabel && !obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }
@@ -1066,7 +1066,7 @@ JXG.Board.prototype.finalizeAdding = function (obj) {
  * @return Element id of the object.
  * @private
  */
-JXG.Board.prototype.addPoint = function (obj) {   
+JXG.Board.prototype.addPoint = function (obj) {
     //this.elementsByName[obj.name] = obj;
     var id = this.setId(obj,'P');
     this.renderer.drawPoint(obj);
@@ -1181,45 +1181,6 @@ JXG.Board.prototype.addChart = function (obj) {
 };
 
 /**
- * Adds a copy of point to the board and the renderer that is rotated by angle phi around rotpoint.
- * @param {JXG.Point} rotpoint The resulting point will be rotated around this point.
- * @param {JXG.Point} point This point will be copied.
- * @param {float} phi The point will be rotated by this angle.
- * @param {String} id Unique identifier for this object.  If null or an empty string is given,
- * an unique id will be generated by Board
- * @param {String} name Not necessarily unique name, displayed on the board.  If null or an
- * empty string is given, an unique name will be generated.
- * @type String
- * @return Element id of the object.
- * @private
- */
-JXG.Board.prototype.addRotation = function(rotpoint, point, phi, id, name) {
-    var po = JXG.getReference(this, point);
-    var ropo = JXG.getReference(this, rotpoint);
-   
-    var rotCoords = this.algebra.rotation(ropo,po,phi).usrCoords.slice(1);
-    var p = new JXG.Point(this, rotCoords, id, name, true);
-    p.fixed = true;
-   
-    po.addChild(p);
-    ropo.addChild(p);
-   
-    p.update = function() {
-        if (this.needsUpdate) {
-            this.coords = this.board.algebra.rotation(ropo,po,phi);
-            // Label mitschieben
-            //this.label.setCoordinates(this.coords);
-            this.label.content.update();
-            this.needsUpdate = false;
-            if(this.traced) {
-                this.cloneToBackground(true);
-            }                
-        }
-    };
-    return p;
-};
-
-/**
  * Registers a arrow at the board and adds it to the renderer.
  * @param {JXG.Arrow} obj The arrow to add.
  * @type String
@@ -1238,7 +1199,7 @@ JXG.Board.prototype.addArrow = function(obj) {
 
     // Objekt in das assoziative Array einfuegen
     this.objects[elId] = obj;
- 
+
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elId;
     this.renderer.drawArrow(obj);
@@ -1261,21 +1222,21 @@ JXG.Board.prototype.addArrow = function(obj) {
 JXG.Board.prototype.addNormal = function(l, p, id, name) {
     var point = JXG.getReference(this, p);
     var line = JXG.getReference(this, l);
-   
+
     var number = this.numObjects;
     number++;
     if((id == '') || (id == null)) {
         id = this.id + 'L' + number;
     }
-   
+
     // versteckter Hilfs-Punkt
     var erg = this.algebra.perpendicular(line, point);
     var p2coords = erg[0].usrCoords.slice(1);
     var point2 = new JXG.Point(this, p2coords, id+"P2", '', false);
-    point2.fixed = true; 
+    point2.fixed = true;
     point.addChild(point2); // notwendig, um auch den Punkt upzudaten
     line.addChild(point2); // notwendig, um auch den Punkt upzudaten
-    
+
     var perpendicular;
     if(erg[1]) {
         perpendicular = new JXG.Line(this, point2.id, point.id, id, name);
@@ -1283,14 +1244,14 @@ JXG.Board.prototype.addNormal = function(l, p, id, name) {
     else {
         perpendicular = new JXG.Line(this, point.id, point2.id, id, name);
     }
-    perpendicular.changed = erg[1];   
+    perpendicular.changed = erg[1];
     //point.addChild(perpendicular);
     //line.addChild(perpendicular);
-   
+
     perpendicular.update = function() {
         if (this.needsUpdate) {
             var erg = this.board.algebra.perpendicular(line, point);
-            point2.coords = erg[0];            
+            point2.coords = erg[0];
             if(this.changed != erg[1]) {
                 var tmp = this.point1;
                 this.point1 = this.point2;
@@ -1299,54 +1260,10 @@ JXG.Board.prototype.addNormal = function(l, p, id, name) {
             this.updateStdform(); // For the new intersection functions
             if(this.traced) {
                 this.cloneToBackground(true);
-            }                
+            }
         }
     };
     return perpendicular;
-};
-
-/**
- * Adds a point to the board contained by the line and the perpendicular through the point.
- * @param {JXG.Line} l A line.
- * @param {JXG.Point} p A Point.
- * @param {String} idP Unique identifier for this object.  If null or an empty string is given,
- * an unique id will be generated by Board
- * @param {String} nameP Not necessarily unique name, displayed on the board.  If null or an
- * empty string is given, an unique name will be generated.
- * @type Array
- * @return Array of element ids of the created objects. First element is id of line, second is id of point.
- * @private
- */
-JXG.Board.prototype.addPerpendicularPoint = function(l, p, idP, nameP) {
-    var num, p2coords, p2;
-
-    p = JXG.getReference(this, p);
-    l = JXG.getReference(this, l);
-   
-    num = this.numObjects+1;
-    if((idP == '') || (idP == null)) {
-        idP = this.id + 'P' + num;
-    }    
-
-    p2coords = this.algebra.perpendicular(l, p)[0].usrCoords.slice(1);
-    p2 = new JXG.Point(this, p2coords, idP, nameP, true);
-    p2.fixed = true;  
-   
-    p.addChild(p2); 
-    l.addChild(p2); 
-   
-    p2.update = function() {
-        if (this.needsUpdate) {
-            this.coords = this.board.algebra.perpendicular(l, p)[0];
-            // Label mitschieben
-            //this.label.setCoordinates(this.coords);
-            this.label.content.update();
-            if(this.traced) {
-                this.cloneToBackground(true);
-            }                
-        }
-   };
-   return p2;
 };
 
 /**
@@ -1360,15 +1277,15 @@ JXG.Board.prototype.addIntersection = function (obj) {
     var number = this.numObjects;
     this.numObjects++;
     var elementId = obj.id;
-     
+
     // Falls Id nicht vergeben, eine neue generieren:
     if((elementId == '') || (elementId == null)) {
         elementId = this.id + 'I' + number;
     }
-    
+
     // Objekt in das assoziative Array einfuegen
     this.objects[elementId] = obj;
-    
+
     obj.id = elementId;
 
     obj.intersect1.addChild(obj);
@@ -1387,14 +1304,14 @@ JXG.Board.prototype.addIntersection = function (obj) {
 JXG.Board.prototype.addText = function (obj) {
     var number = this.numObjects;
     this.numObjects++;
-    
+
     // Falls Id nicht vergeben, eine Neue generieren:
     var elementId = obj.id;
     if((elementId == '') || (elementId == null)) {
         elementId = this.id + 'T' + number;
     }
-    
-    // Objekt in das assoziative Array einfuegen    
+
+    // Objekt in das assoziative Array einfuegen
     this.objects[elementId] = obj;
 
     // Objekt an den Renderer zum Zeichnen uebergeben
@@ -1405,7 +1322,7 @@ JXG.Board.prototype.addText = function (obj) {
             this.renderer.hide(obj);
         }
     }
-    
+
     return elementId;
 };
 
@@ -1434,40 +1351,40 @@ JXG.Board.prototype.addConditions = function (str) {
         right = this.algebra.geonext2JS(right);
         right = right.replace(/this\.board\./g,'this.');
 
-        // Debug 
+        // Debug
         if (typeof this.elementsByName[name]=='undefined'){
             alert("debug conditions: |"+name+"| undefined");
         }
         plaintext += "el = this.objects[\"" + el.id + "\"];\n";
         //plaintext += "if (el==undefined) { $('debug').value = \"" + name + "\"; } else {\n";
         switch (property) {
-            case 'x': 
+            case 'x':
                 plaintext += 'y=el.coords.usrCoords[2];\n';  // y stays
                 //plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,['+(right) +',y],this);\n';
                 plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,'+(right) +',y);\n';
                 plaintext += 'el.update();\n';
                 break;
-            case 'y': 
+            case 'y':
                 plaintext += 'x=el.coords.usrCoords[1];\n';  // x stays
                 plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
                 //plaintext += 'el.update();\n';
                 break;
-            case 'visible': 
-                plaintext += 'c='+(right)+';\n'; 
+            case 'visible':
+                plaintext += 'c='+(right)+';\n';
                 plaintext += 'if (c) {el.showElement();} else {el.hideElement();}\n';
                 break;
-            case 'position': 
+            case 'position':
                 plaintext += 'el.position = ' + (right) +';\n';
                 plaintext += 'el.update();\n';
                 //plaintext += 'this.updateElements();\n';
                 break;
-            case 'stroke': 
+            case 'stroke':
                 plaintext += 'el.strokeColor = ' + (right) +';\n';
                 break;
-            case 'strokewidth': 
+            case 'strokewidth':
                 plaintext += 'el.strokeWidth = ' + (right) +';\n';   // wird auch bei Punkten verwendet, was nicht realisiert ist.
                 break;
-            case 'label': 
+            case 'label':
                 //plaintext += 'var color = ' + (right) +';\n';
                 //plaintext += 'el.setProperty("labelColor:color");\n';
                 break;
@@ -1507,24 +1424,24 @@ JXG.Board.prototype.addImage = function (obj) {
     var number = this.numObjects;
     this.numObjects++;
     var elementId = obj.id;
-     
+
     // Falls Id nicht vergeben, eine neue generieren:
     if((elementId == '') || (elementId == null)) {
         elementId = this.id + 'Im' + number;
     }
-    
+
     // Objekt in die assoziativen Arrays einfuegen
     this.objects[elementId] = obj;
     this.elementsByName[obj.name] = obj;
-    
+
     // Objekt an den Renderer zum Zeichnen uebergeben
     obj.id = elementId;
-    
+
     this.renderer.drawImage(obj);
     if(!obj.visProp['visible']) {
        this.renderer.hide(obj);
     }
-    
+
     return elementId;
 };
 
@@ -1541,8 +1458,8 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
         start = 0, end = 0,
         pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis,
         Int, t, p
-        
-    
+
+
     if(!JXG.isArray(ids) || (ids.length != 5)) {
         ids = ['','','','',''];
     }
@@ -1561,8 +1478,8 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
         start = interval[0];
     else
         start = curve.points[0].usrCoords[1];
-        
-    if(interval[1] < curve.points[curve.points.length-1].usrCoords[1]) 
+
+    if(interval[1] < curve.points[curve.points.length-1].usrCoords[1])
         end = interval[1];
     else
         end = curve.points[curve.points.length-1].usrCoords[1];
@@ -1575,22 +1492,22 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     pa_on_axis = this.createElement('point', [function () { return pa_on_curve.X(); }, 0], attribs);
 
     pa_on_curve.addChild(pa_on_axis);
-    
+
     attribs.name = names[2];
     attribs.id = ids[2];
     attribs.visible = true;
     pb_on_curve = this.createElement('glider', [end, curve.yterm(end), curve], attribs);
-    
+
     attribs.name = names[3];
     attribs.id = ids[3];
     attribs.visible = false;
     pb_on_axis = this.createElement('point', [function () { return pb_on_curve.X(); }, 0], attribs);
-    
+
     pb_on_curve.addChild(pb_on_axis);
-    
+
     Int = JXG.Math.Numerics.I([start, end], curve.yterm);
     t = this.createElement('text', [
-        function () { return pb_on_curve.X() + 0.2; }, 
+        function () { return pb_on_curve.X() + 0.2; },
         function () { return pb_on_curve.Y() - 0.8; },
         function () {
                 var Int = JXG.Math.Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.yterm);
@@ -1610,13 +1527,13 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     attribs.highlightFillOpacity = attribs.highlightFillOpacity || this.options.polygon.highlightFillOpacity;
     attribs.strokeWidth = 0;
     attribs.strokeOpacity = 0;
-    
+
     p = this.createElement('curve', [[0],[0]], attribs);
     p.updateDataArray = function() {
         var x = [pa_on_axis.coords.usrCoords[1], pa_on_curve.coords.usrCoords[1]],
             y = [pa_on_axis.coords.usrCoords[2], pa_on_curve.coords.usrCoords[2]],
             i;
-            
+
         for(i=0; i < curve.numberPoints; i++) {
             if( (pa_on_axis.X() <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= pb_on_axis.X()) ) {
                 x.push(curve.points[i].usrCoords[1]);
@@ -1630,7 +1547,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
 
         x.push(pa_on_axis.coords.usrCoords[1]); // close the curve
         y.push(pa_on_axis.coords.usrCoords[2]);
-        
+
         this.dataX = x;
         this.dataY = y;
     }
@@ -1638,7 +1555,7 @@ JXG.Board.prototype.addIntegral = function (interval, curve, ids, names, atts) {
     pb_on_curve.addChild(p);
     pa_on_curve.addChild(t);
     pb_on_curve.addChild(t);
-    
+
     return p;//[pa_on_axis, pb_on_axis, p, t];
 };
 
@@ -1651,18 +1568,18 @@ JXG.Board.prototype.calculateSnapSizes = function() {
         p2 = new JXG.Coords(JXG.COORDS_BY_USER,[1/this.gridX,1/this.gridY],this),
         x = p1.scrCoords[1]-p2.scrCoords[1],
         y = p1.scrCoords[2]-p2.scrCoords[2];
-    
+
     this.snapSizeX = this.gridX;
     while(Math.abs(x) > 25) {
         this.snapSizeX *= 2;
         x /= 2;
     }
-    
+
     this.snapSizeY = this.gridY;
     while(Math.abs(y) > 25) {
         this.snapSizeY *= 2;
         y /= 2;
-    }    
+    }
     return this;
 };
 
@@ -1673,7 +1590,7 @@ JXG.Board.prototype.calculateSnapSizes = function() {
  */
 JXG.Board.prototype.applyZoom = function() {
     var el;
-    
+
     for(el in this.objects) {
         if( (this.objects[el].elementClass == JXG.OBJECT_CLASS_POINT) ||
             (this.objects[el].type == JXG.OBJECT_TYPE_CURVE) ||
@@ -1682,9 +1599,9 @@ JXG.Board.prototype.applyZoom = function() {
             if((this.objects[el].type != JXG.OBJECT_TYPE_CURVE) && (this.objects[el].type != JXG.OBJECT_TYPE_AXIS))
                 this.objects[el].coords.usr2screen();
         }
-    }    
+    }
     this.calculateSnapSizes();
-    
+
     this.clearTraces();
 
     this.fullUpdate();
@@ -1694,13 +1611,13 @@ JXG.Board.prototype.applyZoom = function() {
     }
     return this;
 };
- 
+
 /**
  * Zooms into the board.
  */
 JXG.Board.prototype.zoomIn = function() {
     this.zoomX *= this.options.zoom.factor;
-    this.zoomY *= this.options.zoom.factor;  
+    this.zoomY *= this.options.zoom.factor;
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
     this.applyZoom();
@@ -1736,9 +1653,9 @@ JXG.Board.prototype.zoom100 = function() {
  */
 JXG.Board.prototype.zoomAllPoints = function() {
     var ratio, minX, maxX, minY, maxY, el,
-        border, borderX, borderY, distX, distY, newZoom, newZoomX, newZoomY, 
+        border, borderX, borderY, distX, distY, newZoom, newZoomX, newZoomY,
         newOriginX, newOriginY;
-    
+
     ratio = this.zoomX / this.zoomY;
     minX = 0; // (0,0) soll auch sichtbar bleiben
     maxX = 0;
@@ -1751,13 +1668,13 @@ JXG.Board.prototype.zoomAllPoints = function() {
                 minX = this.objects[el].coords.usrCoords[1];
             } else if(this.objects[el].coords.usrCoords[1] > maxX) {
                 maxX = this.objects[el].coords.usrCoords[1];
-            }   
+            }
             if(this.objects[el].coords.usrCoords[2] > maxY) {
                 maxY = this.objects[el].coords.usrCoords[2];
             } else if(this.objects[el].coords.usrCoords[2] < minY) {
                 minY = this.objects[el].coords.usrCoords[2];
-            }                       
-        }            
+            }
+        }
     }
     border = 50;
     borderX = border/(this.unitX*this.zoomX);
@@ -1765,11 +1682,11 @@ JXG.Board.prototype.zoomAllPoints = function() {
 
     distX = maxX - minX + 2*borderX;
     distY = maxY - minY + 2*borderY;
-    
+
     newZoom = Math.min(this.canvasWidth/(this.unitX*distX), this.canvasHeight/(this.unitY*distY));
     newZoomY = newZoom;
     newZoomX = newZoom*ratio;
-    
+
     newOriginX = -(minX-borderX)*this.unitX*newZoomX;
     newOriginY = (maxY+borderY)*this.unitY*newZoomY;
     this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [newOriginX, newOriginY], this);
@@ -1777,7 +1694,7 @@ JXG.Board.prototype.zoomAllPoints = function() {
     this.zoomY = newZoomY;
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
-   
+
     this.applyZoom();
     return this;
 };
@@ -1793,29 +1710,29 @@ JXG.Board.prototype.removeObject = function(object) {
         for(i=0; i<object.length; i++)
             this.removeObject(object[i]);
     }
-    
+
     object = JXG.getReference(this, object);
 
     /* Wenn weder die ID noch der Name des Objekts bekannt ist, einfach wieder zurueckgehen */
     if(object == undefined) {
         return this;
     }
-    
+
     try{
         /* Alle Kinder entfernen */
         for(el in object.childElements) {
             object.childElements[el].board.removeObject(object.childElements[el]);
         }
-        
+
         for(el in this.objects) {
             if(typeof this.objects[el].childElements != 'undefined')
                 delete(this.objects[el].childElements[object.id]);
         }
-        
+
         /* Das Objekt selbst aus board.objects und board.elementsByName loeschen */
         delete(this.objects[object.id]);
         delete(this.elementsByName[object.name]);
-        
+
         /* Alles weitere erledigt das Objekt selbst fuer uns. Ist sinnvoller, weil man sonst wieder unterscheiden muesste, was das fuer ein Objekt ist. */
         if(object.remove != undefined) object.remove();
     } catch(e) {
@@ -1825,13 +1742,13 @@ JXG.Board.prototype.removeObject = function(object) {
 };
 
 /**
- * Initialise some objects which are contained in every GEONExT construction by default, 
+ * Initialise some objects which are contained in every GEONExT construction by default,
  * but are not contained in the gxt files.
  * @private
  */
 JXG.Board.prototype.initGeonextBoard = function() {
     var p1, p2, p3, l1, l2;
-    
+
     p1 = new JXG.Point(this, [0,0],this.id + 'gOOe0','Ursprung',false);
     p1.fixed = true;
     p2 = new JXG.Point(this, [1,0],this.id + 'gXOe0','Punkt_1_0',false);
@@ -1841,7 +1758,7 @@ JXG.Board.prototype.initGeonextBoard = function() {
     l1 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gXOe0', this.id + 'gXLe0','X-Achse');
     l1.hideElement();
     l2 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gYOe0', this.id + 'gYLe0','Y-Achse');
-    l2.hideElement();    
+    l2.hideElement();
     return this;
 };
 
@@ -1853,7 +1770,7 @@ JXG.Board.prototype.initGeonextBoard = function() {
 JXG.Board.prototype.initInfobox= function() {
     //this.infobox = new JXG.Label(this, '0,0', new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this), this.id + '__infobox');
     this.infobox = new JXG.Text(this, '0,0', '', [0,0], this.id + '__infobox',null, null, false);
-    this.infobox.distanceX = -20; 
+    this.infobox.distanceX = -20;
     this.infobox.distanceY = 25;
     //this.renderer.drawText(this.infobox);
     this.renderer.hide(this.infobox);
@@ -1877,8 +1794,8 @@ JXG.Board.prototype.resizeContainer = function(canvasWidth, canvasHeight) {
  * Lists the dependencies graph in a new HTML-window.
  */
 JXG.Board.prototype.showDependencies = function() {
-    var el, t, c, f, i; 
-    
+    var el, t, c, f, i;
+
     t = '<p>\n';
     for (el in this.objects) {
         i = 0;
@@ -1912,7 +1829,7 @@ JXG.Board.prototype.showXML = function() {
     return this;
 };
 
-/** 
+/**
  * Sets for all objects the needsUpdate flag to "true".
  * @param {Object,String} drag Element that caused the update.
  * @private
@@ -1931,18 +1848,18 @@ JXG.Board.prototype.prepareUpdate = function(drag) {
   * @private
   */
 JXG.Board.prototype.updateElements = function(drag) {
-    var el, pEl, 
+    var el, pEl,
         isBeforeDrag = true; // If possible, we start the update at the dragged object.
-    
+
     drag = JXG.getReference(this, drag);
     if (drag==null) {
-        isBeforeDrag = false; 
+        isBeforeDrag = false;
     }
-    
+
     for(el in this.objects) {
         pEl = this.objects[el];
-        if (drag!=null && pEl.id != drag.id) { 
-            isBeforeDrag = false; 
+        if (drag!=null && pEl.id != drag.id) {
+            isBeforeDrag = false;
         }
         if (!(isBeforeDrag || this.needsFullUpdate || pEl.needsRegularUpdate)) { continue; }
         if (drag==null || pEl.id!=drag.id) {
@@ -1962,9 +1879,9 @@ JXG.Board.prototype.updateElements = function(drag) {
   */
 JXG.Board.prototype.updateRenderer = function(drag) {
     var el, pEl;
-    
+
     drag = JXG.getReference(this, drag);
-    
+
     for(el in this.objects) {
         pEl = this.objects[el];
         if (!this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
@@ -1986,9 +1903,9 @@ JXG.Board.prototype.updateRenderer = function(drag) {
   */
 JXG.Board.prototype.addHook = function(hook) {
     this.hooks.push(hook);
-    
+
     hook(this);
-    
+
     return (this.hooks.length-1);
 };
 
@@ -2045,7 +1962,7 @@ JXG.Board.prototype.removeChild = function(board) {
   */
 JXG.Board.prototype.update = function(drag) {
     var i, len, boardId;
-    
+
     if (this.isSuspendedUpdate) { return this; }
     this.prepareUpdate(drag).updateElements(drag).updateConditions();
     this.renderer.suspendRedraw();
@@ -2066,7 +1983,7 @@ JXG.Board.prototype.update = function(drag) {
             JXG.JSXGraph.boards[boardId].renderer.unsuspendRedraw();
             JXG.JSXGraph.boards[boardId].updateHooks();
         }
-        
+
     }
     return this;
 };
@@ -2096,15 +2013,15 @@ JXG.Board.prototype.fullUpdate = function() {
  */
 JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     var el, i, s;
-    
-    // CM: AW: 
+
+    // CM: AW:
     if (elementType!='turtle' && (parents == null || parents.length == 0)) {  // Turtle may have no parent elements
         return null;
-    } 
+    }
     if (parents == null) { parents = []; }
-    
+
     elementType = elementType.toLowerCase();
-    
+
     if (attributes==null) {
         attributes = {};
     }
@@ -2118,11 +2035,11 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         throw "JXG.createElement: Unknown element type given: "+elementType;
     }
 
-    if (el==undefined) { 
+    if (el==undefined) {
         //throw "JXG.createElement: failure creating "+elementType;
         return;
     };
-  
+
     if(JXG.isArray(attributes)) {
         attributes = attributes[0];
     }
@@ -2132,14 +2049,14 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
             for(s in el) {
                 if(typeof el[s].setProperty != 'undefined')
                     el[s].setProperty(attributes);
-            }  
+            }
         } else {
             if(typeof el.setProperty != 'undefined')
                 el.setProperty(attributes);
         }
-        
+
 //    } catch (e) { alert("Error setting Property:" + e); };
-    
+
 //    if(!JXG.isArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
 //        el.setProperty(attributes);
 //    }
@@ -2180,7 +2097,7 @@ JXG.Board.prototype.create = JXG.Board.prototype.createElement;
  */
 JXG.Board.prototype.clearTraces = function() {
     var el;
-    
+
     for(el in this.objects) {
         if (this.objects[el].traced)
             this.objects[el].clearTrace();
@@ -2205,7 +2122,7 @@ JXG.Board.prototype.beforeLoad = function() {
                     left: parseInt(JXG.getStyle(this.containerObj,"left")) + (this.canvasWidth - 100)/2,
                     top: parseInt(JXG.getStyle(this.containerObj,"top")) + (this.canvasHeight - 100)/2
                 });
-    
+
         document.getElementsByTagName("body")[0].appendChild(divNode);
     }*/
 };
@@ -2261,7 +2178,7 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     this.originY = this.unitY*bbox[1];
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
-    
+
     this.moveOrigin();
     return this;
 };
@@ -2273,7 +2190,7 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
 JXG.Board.prototype.animate = function() {
     var count = 0,
         el, o, newCoords, r, p, c;
-    
+
     for(el in this.animationObjects) {
         if(this.animationObjects[el] == null)
             continue;
@@ -2305,7 +2222,7 @@ JXG.Board.prototype.animate = function() {
 
         if(typeof o.animationData == 'undefined' && typeof o.animationPath == 'undefined') {
             this.animationObjects[el] = null;
-            delete(this.animationObjects[el]);            
+            delete(this.animationObjects[el]);
         }
     }
 
