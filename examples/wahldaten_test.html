@@ -1,0 +1,37 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="wahldaten.js"></script>
+</head>
+<body>
+<h2>Curve Test</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+</div><br>
+<div id="debug" ></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    //alert(data.length);
+    for(var i=5; i<337; i++) {
+        if(data[i*135+1] != "") { // keine Leerzeile
+            if(data[i*135+3] != "99" && data[i*135+3] != "") { // kein Bundesland, auch nicht Bundesgebiet
+                $('debug').innerHTML += i+": "+data[i*135+1] +" = "+ data[i*135+2]+" || gült. 2.St.: "+data[i*135+18]+
+                "|| SPD: "+data[i*135+22]+" || CDU/CSU: ";
+                if(data[i*135+3] == "9") {
+                    $('debug').innerHTML += data[i*135+42]; // CSU
+                }
+                else {
+                    $('debug').innerHTML += data[i*135+26]; // CDU
+                }
+                $('debug').innerHTML += " || FDP: " +data[i*135+30]+
+                " || Linke: " +data[i*135+34]+" || Grüne: " +data[i*135+38]+"<br>";
+            }
+        }
+    }
+          /* ]]> */
+  </script>
+</body>
+</html>
