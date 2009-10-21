@@ -27,7 +27,7 @@ var minX =-289319.4,
     lastWk = null,
     i, col = 0;
     
-brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-1000,maxY+1000,maxX+1000,minY-1000],
+brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-10000,maxY+10000,maxX+10000,minY-10000],
                                     keepaspectratio:true});
 
 for(i=0;i<len;i++) {
@@ -40,29 +40,35 @@ for(i=0;i<len;i++) {
 }
 
 function createCurve(area)  {
-    var xy = area[0].split(','),
+    var compos = area[0].split(';'), // Zusammenhangskomponenten
         x = [], y = [],
-        c = [], len, i, a, graph;
+        c = [], num, i, a, graph, k, a;
         
-    len = xy.length;
-    for(i=0;i<len;i++) {
-        a = xy[i].split(' ');
-        c.push(new JXG.Coords(JXG.COORDS_BY_USER, [1*a[0], 1*a[1]], brd));
-    }
-    c = brd.renderer.RamenDouglasPeuker(c,1.3);
-    len = c.length;
-    for (i=0;i<len;i++) {
-        x.push(c[i].usrCoords[1]);
-        y.push(c[i].usrCoords[2]);
-    }
-    graph = brd.createElement('curve', [x,y], 
+    num = compos.length;
+    for (k=0;k<num;k++) {
+        x = []; y = []; c = [];
+        xy = compos[k].split(',');
+        len = xy.length;
+        for(i=0;i<len;i++) {
+            a = xy[i].split(' ');
+            c.push(new JXG.Coords(JXG.COORDS_BY_USER, [1*a[0], 1*a[1]], brd));
+        }
+        c = brd.renderer.RamenDouglasPeuker(c,1.3);
+        len = c.length;
+        for (i=0;i<len;i++) {
+            x.push(c[i].usrCoords[1]);
+            y.push(c[i].usrCoords[2]);
+        }
+        graph = brd.createElement('curve', [x,y], 
                     {fillColor:JXG.hsv2rgb(col++,0.6,0.9),
                      highlightFillColor:'yellow',
                      strokeWidth:1,strokeColor:'black',highlightStrokeColor:'black'});
-
-    JXG.addEvent(graph.rendNode, 'mouseover', function(){graph.highlight(); wahlkreisNode.nodeValue=area[1];}, graph);
-    JXG.addEvent(graph.rendNode, 'mouseout', function(){graph.noHighlight();}, graph);
-    graph.hasPoint = function(){return false; };
+        if (k==0) {
+            JXG.addEvent(graph.rendNode, 'mouseover', (function(g){ return function(){g.highlight(); wahlkreisNode.nodeValue=area[1];};})(graph), graph);
+            JXG.addEvent(graph.rendNode, 'mouseout', (function(g){ return function(){g.noHighlight();};})(graph), graph);
+        }
+        graph.hasPoint = function(){return false; };
+    }
 }
 
 function final() {
