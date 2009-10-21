@@ -1,0 +1,134 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="wahldaten.js"></script>
+   <script type="text/javascript" src="germany_json.js"></script>   
+</head>
+<body>
+<h2>Curve Test</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:700px; float:left"></div>
+</div>
+<form>
+    <input type="checkbox" value="0" onclick="selectParty(0);" name="parties" checked='checked'>CDU/CSU<br/>
+    <input type="checkbox" value="1" onclick="selectParty(1);" name="parties">SPD<br/>
+    <input type="checkbox" value="2" onclick="selectParty(2);" name="parties">FDP<br/>
+    <input type="checkbox" value="3" onclick="selectParty(3);" name="parties">Die Gr&uuml;nen<br/>
+    <input type="checkbox" value="4" onclick="selectParty(4);" name="parties">Die Linke<br/>
+</form>
+<br>
+<div id="debug" ></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    
+    minX =-289319.4;
+    maxY = 6827620;
+    maxX = 351315.7;
+    minY = 5960587;
+    var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-1000,maxY+1000,maxX+1000,minY-1000],
+                                        keepaspectratio:true});
+
+    var xArr = germany[0];
+    var yArr = germany[1];
+    var list = [];
+    for (i=0;i<xArr.length;i++) { list[i] = i; };
+    var col = 0;
+    
+    var CDUcols = ['#d3e9fe','#8db0fe','#405dff','#002ba5','#001654'];
+    var CDUCSU = new Array(299);
+    var SPD = new Array(299);
+    var FDP = new Array(299);
+    var GRUEN = new Array(299);
+    var LINKS = new Array(299);
+    var Zweit = new Array(299);
+    
+    for(var i=5; i<337; i++) {
+        if(data[i*135+1] != "") { // keine Leerzeile
+            if(data[i*135+3] != "99" && data[i*135+3] != "") { // kein Bundesland, auch nicht Bundesgebiet
+                if(data[i*135+3] == "9") {
+                    CDUCSU[ data[i*135+1] ] = data[i*135+42]/data[i*135+18]*100; // CSU
+                }
+                else {
+                    CDUCSU[ data[i*135+1] ] = data[i*135+26]/data[i*135+18]*100; // CDU
+                }
+                
+                SPD[ 1*data[i*135+1] ] = data[i*135+22]/data[i*135+18]*100;
+                FDP[ 1*data[i*135+1] ] = data[i*135+30]/data[i*135+18]*100;
+                GRUEN[ 1*data[i*135+1] ] = data[i*135+38]/data[i*135+18]*100;
+                LINKS[ 1*data[i*135+1] ] = data[i*135+34]/data[i*135+18]*100;
+                Zweit[ 1*data[i*135+1] ] =  data[i*135+18];
+            }
+        }
+    }    
+
+    function createCurve(number)  {
+        var x = [];
+        var y = [];
+        var c = [];
+        len = xArr[number].length;
+        for(var i=0;i<len;i++) {
+            c.push(new JXG.Coords(JXG.COORDS_BY_USER, [xArr[number][i], yArr[number][i]], brd));
+        }
+        c = brd.renderer.RamenDouglasPeuker(c,1.5);
+        len = c.length;
+        for (i=0;i<len;i++) {
+            x.push(c[i].usrCoords[1]);
+            y.push(c[i].usrCoords[2]);
+        }
+        var graph = brd.createElement('curve', [x,y], 
+                        {fillColor: function() 
+                        {
+                            if(CDUCSU[col] <= 30) { return CDUcols[0]; }
+                            else if(CDUCSU[col] > 30 && CDUCSU[col] <= 35) { return CDUcols[1]; }
+                            else if(CDUCSU[col] > 35 && CDUCSU[col] <= 40) { return CDUcols[2]; }
+                            else if(CDUCSU[col] > 40 && CDUCSU[col] <= 45) { return CDUcols[3]; }
+                            else { return CDUcols[4]; }
+                        }
+                        ,                    
+                         highlightFillColor:'yellow',
+                         strokeWidth:1,
+                         strokeColor:'black',
+                         highlightStrokeColor:'black',id:'wk'+(col-1)});
+        col++;
+        JXG.addEvent(graph.rendNode, 'mouseover', function(){graph.highlight();}, graph);
+        JXG.addEvent(graph.rendNode, 'mouseout', function(){graph.noHighlight();}, graph);
+        graph.hasPoint = function(){return false; };
+    }
+
+    function final() {
+        brd.unsuspendUpdate();
+        //document.getElementById('debug').innerHTML += '. ';
+    }
+
+    //Copyright 2009 Nicholas C. Zakas. All rights reserved.
+    //MIT Licensed
+    function timedChunk(items, process, context, callback){
+        var todo = items.concat();   //create a clone of the original
+
+        setTimeout(function(){
+
+            var start = +new Date();
+
+            do {
+                 process.call(context, todo.shift());
+            } while (todo.length > 0 && (+new Date() - start < 300));
+
+            if (todo.length > 0){
+                setTimeout(arguments.callee, 1);
+            } else {
+                callback(items);
+            }
+        }, 1);
+    }
+
+    brd.suspendUpdate();
+    timedChunk(list, createCurve, null, final);    
+    
+
+          /* ]]> */
+  </script>
+</body>
+</html>
