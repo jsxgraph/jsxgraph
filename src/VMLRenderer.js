@@ -42,7 +42,8 @@ JXG.VMLRenderer = function(container) {
     // Original: IE <=7
     container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml");
     container.ownerDocument.createStyleSheet().addRule("v\\:*", "behavior: url(#default#VML);");
-    // excanvas: 
+    //container.ownerDocument.createStyleSheet().addRule(".jsxgraphvml", "behavior:url(#default#VML)"); // Raphael
+    
     /*
         container.ownerDocument.namespaces.add('v', 'urn:schemas-microsoft-com:vml', '#default#VML');
         //container.ownerDocument.createStyleSheet().cssText = "v\\:*{behavior:url(#default#VML)}";
@@ -54,68 +55,48 @@ JXG.VMLRenderer = function(container) {
     //container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml", "#default#VML");
 
     // MSDN tip
-   /*
-    if(!document.documentMode || document.documentMode<8) {
-        document.createStyleSheet().addRule('v\\:*', "behavior: url(#default#VML);");
+/*   
+    if(!container.ownerDocument.documentMode || container.ownerDocument.documentMode<8) {
+        container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml");
+        container.ownerDocument.createStyleSheet().addRule('v\\:*', "behavior: url(#default#VML);");
     }
-    if(document.documentMode && document.documentMode>=8) {
-        document.writeln('<?import namespace="v" implementation="#default#VML" ?>');
+    if(container.ownerDocument.documentMode && container.ownerDocument.documentMode>=8) {
+        container.ownerDocument.writeln('<?import namespace="v" implementation="#default#VML" ?>');
     }
-    */
-
-/*
-    container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml");
-    container.ownerDocument.createStyleSheet().addRule("v\\:shape","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:fill","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:fillcolor","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:stroke","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:from","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:to","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:points","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:control1","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:control2","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:arcsize","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:startangle","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:endangle","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:src","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:cropleft","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:croptop","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:cropright","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:cropbottom","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:embosscolor","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:gain","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:blacklevel","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:gamma","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:grayscale","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:bilevel","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:id","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:type","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:adj","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:path","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:href","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:target","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:class","behavior: url(#default#VML);");
+*/   
+/*    
+    style.addRule("v\\:shape","behavior: url(#default#VML);");
+    style.addRule("v\\:fill", "behavior: url(#default#VML);");
+    style.addRule("v\\:stroke", "behavior: url(#default#VML);");
+    style.addRule("v\\:strokecolor", "behavior: url(#default#VML);");
+    style.addRule("v\\:fillcolor","behavior: url(#default#VML);");
+    style.addRule("v\\:from","behavior: url(#default#VML);");
+    style.addRule("v\\:to","behavior: url(#default#VML);");
+    style.addRule("v\\:points","behavior: url(#default#VML);");
+    style.addRule("v\\:control1","behavior: url(#default#VML);");
+    style.addRule("v\\:control2","behavior: url(#default#VML);");
+    style.addRule("v\\:arcsize","behavior: url(#default#VML);");
+    style.addRule("v\\:startangle","behavior: url(#default#VML);");
+    style.addRule("v\\:endangle","behavior: url(#default#VML);");
+    style.addRule("v\\:src","behavior: url(#default#VML);");
+    style.addRule("v\\:cropleft","behavior: url(#default#VML);");
+    style.addRule("v\\:croptop","behavior: url(#default#VML);");
+    style.addRule("v\\:cropright","behavior: url(#default#VML);");
+    style.addRule("v\\:cropbottom","behavior: url(#default#VML);");
+    style.addRule("v\\:embosscolor","behavior: url(#default#VML);");
+    style.addRule("v\\:gain","behavior: url(#default#VML);");
+    style.addRule("v\\:blacklevel","behavior: url(#default#VML);");
+    style.addRule("v\\:gamma","behavior: url(#default#VML);");
+    style.addRule("v\\:grayscale","behavior: url(#default#VML);");
+    style.addRule("v\\:bilevel","behavior: url(#default#VML);");
+    style.addRule("v\\:id","behavior: url(#default#VML);");
+    style.addRule("v\\:type","behavior: url(#default#VML);");
+    style.addRule("v\\:adj","behavior: url(#default#VML);");
+    style.addRule("v\\:path","behavior: url(#default#VML);");
+    style.addRule("v\\:href","behavior: url(#default#VML);");
+    style.addRule("v\\:target","behavior: url(#default#VML);");
+    style.addRule("v\\:class","behavior: url(#default#VML);");
 */    
-    /*
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-    container.ownerDocument.createStyleSheet().addRule("v\\:","behavior: url(#default#VML);");
-*/
-    //-------------------------------
-    //container.ownerDocument.createStyleSheet().addRule("v\\:fill", "behavior: url(#default#VML);");
-    //container.ownerDocument.createStyleSheet().addRule("v\\:stroke", "behavior: url(#default#VML);");
-    //container.ownerDocument.createStyleSheet().addRule("v\\:line", "behavior: url(#default#VML);");
         
     // um Dashes zu realisieren
     this.dashArray = ['Solid', '1 1', 'ShortDash', 'Dash', 'LongDash', 'ShortDashDot', 'LongDashDot'];    
