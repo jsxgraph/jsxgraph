@@ -23,11 +23,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
-/* TODO:
- * make downloadable package with styles/scripts
- * publish on moodle.org
- * create an insert button with all parameters
-*/
 
 function jsxgraph_filter($courseid, $text) {
   global $CFG;
@@ -50,19 +45,15 @@ function jsxgraph_filter($courseid, $text) {
       $input[0] = str_replace(' ', '&', $input[0]);
       parse_str($input[0], $params);
 
-      $outputDivId   = (isset($params['box']))      ? htmlspecialchars(strip_tags($params['box']))      : 'box'.$i;
-      $outputBoardId = (isset($params['board']))    ? htmlspecialchars(strip_tags($params['board']))    : 'board'.$i;
-      $outputURI     = (isset($params['codebase'])) ? htmlspecialchars(strip_tags($params['codebase'])) : 'http://jsxgraph.uni-bayreuth.de/distrib';
-      $width         = (isset($params['width']))    ? htmlspecialchars(strip_tags($params['width']))    : 500;
-      $height        = (isset($params['height']))   ? htmlspecialchars(strip_tags($params['height']))   : 400;
+      $outputDivId   = (isset($params['box']))      ? htmlspecialchars(strip_tags($params['box']))    : 'box'.$i;
+      $outputBoardId = (isset($params['board']))    ? htmlspecialchars(strip_tags($params['board']))  : 'board'.$i;
+      $width         = (isset($params['width']))    ? htmlspecialchars(strip_tags($params['width']))  : 500;
+      $height        = (isset($params['height']))   ? htmlspecialchars(strip_tags($params['height'])) : 400;
 
       // Load necessary stylesheet und scripts
-      if($i == 0) {
-        $head  = '<!-- JSXGraph Moodle extension '. $jsxgraph_version .' -->';
-        $head .= "<link rel='stylesheet' type='text/css' href='".$outputURI."/jsxgraph.css' />";
-        $head .= "<script src='".$outputURI."/prototype.js' type='text/javascript'></script>";
-        $head .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
-      }
+      echo $PAGE->requires->js('filter/jsxgraph/prototype.js')->asap();
+      echo $PAGE->requires->js('filter/jsxgraph/jsxgraphcore.js')->asap();
+      echo $PAGE->requires->css('filter/jsxgraph/jsxgraph.css')->asap();
 
       // output div
       $output  = "<div id='". $outputDivId ."' class='jxgbox' style='width:". $width ."px; height:". $height ."px;'></div>";
@@ -95,7 +86,6 @@ function jsxgraph_filter($courseid, $text) {
       $output .= "</script>";
 
       $text = substr_replace($text, $output, $start, $end-$start);
-      if($head) $text = $head.$text;
     }
   }
 
