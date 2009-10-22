@@ -75,6 +75,7 @@ if __name__ == '__main__':
         jstxt += '\n';
 
     tmpfilename = tempfile.mktemp()
+    #tmpfilename = 'xxx.js'
     fout = open(tmpfilename,'w')
     fout.write(jstxt)
     fout.close()

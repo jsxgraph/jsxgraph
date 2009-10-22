@@ -250,7 +250,6 @@ JXG.PsTricks.addAngle = function(el) {
 };
 
 JXG.PsTricks.parseColor = function(color) {
-    var r, g, b;
-    [r, g, b] = JXG.rgbParser(color);
-    return "{[rgb]{"+r/255+","+g/255+","+b/255+"}}";
+    var arr = JXG.rgbParser(color);
+    return "{[rgb]{"+arr[0]/255+","+arr[1]/255+","+arr[2]/255+"}}";
 };
