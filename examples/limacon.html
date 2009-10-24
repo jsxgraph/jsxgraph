@@ -18,18 +18,20 @@
     xax = board.createElement('axis', [[0,0],[1,0]]);
     yax = board.createElement('axis', [[0,0],[0,1]]);
 
-    p3 = board.createElement('point', [8, 4], {style:1,name:"P_{3}",fixed:true}); // Angabe fester Koordinaten
-    p4 = board.createElement('point', [8, 8], {style:2,name:"P_{4}",fixed:true}); // Angabe fester Koordinaten
-    c1 = board.createElement('circle', [p4, p3]);
+    p3 = board.createElement('point', [8, 3], {style:1,name:"P_{3}", fixed: false});
+    p4 = board.createElement('point', [8, 8], {style:2,name:"P_{4}"});
+    c1 = board.createElement('circle', [p4, 4]);
 
     p6 = board.createElement('glider', [0, 0, c1], {style:3,name:"P_{6}"});
     g = board.createElement('line', [p3, p6]);
 
     c2 = board.createElement('circle', [p6, 3]);
 
-    p14_1 = board.createElement('intersection', [c2,g,0], {style:8,name:"M",trace:true});
-    p14_2 = board.createElement('intersection', [c2,g,1], {style:8,name:"N",trace:true});
-       
+    p14_1 = board.createElement('intersection', [c2,g,0], {style:8,name:"M",trace:false});
+    p14_2 = board.createElement('intersection', [c2,g,1], {style:8,name:"N",trace:false});
+
+    loc = board.createElement('locus', [p14_1], {strokeColor: 'red'});
+
     function makecoords(p) {
         JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p, 'u', 'brace');
 

@@ -26,8 +26,8 @@ JXG.OBJECT_TYPE_ARC  = 0x4F544143;                 // Hex fuer OTAC = Object Typ
 JXG.OBJECT_TYPE_ARROW  = 0x4F544157;                 // Hex fuer OTAW = Object Type ArroW
 JXG.OBJECT_TYPE_AXIS  = 0x4F544158;                 // Hex fuer OTAX = Object Type AXis
 JXG.OBJECT_TYPE_TICKS  = 0x4F545458;                 // Hex fuer OTTX = Object Type TiX
-JXG.OBJECT_TYPE_CIRCLE  = 0x4F54434C;                 // Hex fuer OTCC = Object Type CirCle 
-JXG.OBJECT_TYPE_CURVE  = 0x4F544750;                 // Hex fuer OTGP = Object Type GraphPlot 
+JXG.OBJECT_TYPE_CIRCLE  = 0x4F54434C;                 // Hex fuer OTCC = Object Type CirCle
+JXG.OBJECT_TYPE_CURVE  = 0x4F544750;                 // Hex fuer OTGP = Object Type GraphPlot
 JXG.OBJECT_TYPE_GLIDER  = 0x4F54474C;                 // Hex fuer OTGL = Object Type GLider
 JXG.OBJECT_TYPE_IMAGE  = 0x4F54524D;                 // Hex fuer OTIM = Object Type IMage
 JXG.OBJECT_TYPE_LINE  = 0x4F544C4E;                 // Hex fuer OTLN = Object Type LiNe
@@ -36,18 +36,18 @@ JXG.OBJECT_TYPE_SLIDER = 0x4F545344;                 // Hex fuer OTSD = Object T
 JXG.OBJECT_TYPE_CAS    = 0x4F544350;                 // Hex fuer OTCP = Object Type CasPoint
 JXG.OBJECT_TYPE_POLYGON  = 0x4F545059;                 // Hex fuer OTPY = Object Type PolYgon
 JXG.OBJECT_TYPE_SECTOR  = 0x4F545343;                 // Hex fuer OTSC = Object Type SeCtor
-JXG.OBJECT_TYPE_TEXT  = 0x4F545445;                 // Hex fuer OTTE = Object Type TextElement 
+JXG.OBJECT_TYPE_TEXT  = 0x4F545445;                 // Hex fuer OTTE = Object Type TextElement
 JXG.OBJECT_TYPE_ANGLE = 0x4F544147;                 // Hex fuer OTAG = Object Type AnGle
-JXG.OBJECT_TYPE_INTERSECTION = 0x4F54524E;          // Hex fuer OTIN = Object Type INtersection 
+JXG.OBJECT_TYPE_INTERSECTION = 0x4F54524E;          // Hex fuer OTIN = Object Type INtersection
 JXG.OBJECT_TYPE_TURTLE = 0x4F5455;                 // Hex fuer OTTU = Object Type TUrtle
 
-JXG.OBJECT_CLASS_POINT = 1;                
-JXG.OBJECT_CLASS_LINE = 2;                
-JXG.OBJECT_CLASS_CIRCLE = 3;                
-JXG.OBJECT_CLASS_CURVE = 4;                
-JXG.OBJECT_CLASS_AREA = 5;                
-JXG.OBJECT_CLASS_OTHER = 6;                
- 
+JXG.OBJECT_CLASS_POINT = 1;
+JXG.OBJECT_CLASS_LINE = 2;
+JXG.OBJECT_CLASS_CIRCLE = 3;
+JXG.OBJECT_CLASS_CURVE = 4;
+JXG.OBJECT_CLASS_AREA = 5;
+JXG.OBJECT_CLASS_OTHER = 6;
+
 /**
  * Constructs a new GeometryElement object.
  * @class This is the basic class for geometry elements like points, circles and lines.
@@ -79,7 +79,7 @@ JXG.GeometryElement = function() {
      * @private
      */
     this.needsUpdate = true;
-    
+
     /**
      * Not necessarily unique name for the element.
      * @type String
@@ -87,7 +87,7 @@ JXG.GeometryElement = function() {
      * @see JXG.Board#generateName
      */
     this.name = '';
-    
+
     /**
      * An associative array containing all visual properties.
      * @type Object
@@ -104,7 +104,7 @@ JXG.GeometryElement = function() {
      */
     this.isReal = true;
 
-    /** 
+    /**
      * Determines the elements border-style.
      * Possible values are:
      * <ul><li>0 for a solid line</li>
@@ -119,14 +119,14 @@ JXG.GeometryElement = function() {
      * @default 0
      */
     this.visProp['dash'] = 0;
-    
+
     /**
      * Stores all dependent objects to be updated when this point is moved.
      * @type Object
      * @private
      */
     this.childElements = {};
-    
+
     /**
      * If element has a label subelement then this property will be set to true.
      * @type boolean
@@ -134,16 +134,16 @@ JXG.GeometryElement = function() {
      * @private
      */
     this.hasLabel = false;
-    
-    
-    /** 
+
+
+    /**
      * Stores all Intersection Objects which in this moment are not real and
      * so hide this element.
      * @type object
      * @private
      */
     this.notExistingParents = {};
-    
+
     /**
      * If true the element will be traced, i.e. on every movement the element will be copied
      * to the background. Use {@link #clearTrace} to delete the trace elements.
@@ -155,7 +155,7 @@ JXG.GeometryElement = function() {
      * @name JXG.GeometryElement#trace
      */
     this.traced = false;
-    
+
     /**
      * Keeps track of all objects drawn as part of the trace of the element.
      * @see #traced
@@ -165,7 +165,7 @@ JXG.GeometryElement = function() {
      * @private
      */
     this.traces = {};
-    
+
     /**
      * Counts the number of objects drawn as part of the trace of the element.
      * @see #traced
@@ -217,7 +217,7 @@ JXG.GeometryElement = function() {
      *
      * See
      * A.E. Middleditch, T.W. Stacey, and S.B. Tor:
-     * "Intersection Algorithms for Lines and Circles", 
+     * "Intersection Algorithms for Lines and Circles",
      * ACM Transactions on Graphics, Vol. 8, 1, 1989, pp 25-40.
      *
      * The meaning of the parameters is:
@@ -238,18 +238,18 @@ JXG.GeometryElement = function() {
      * @private
      */
     this.stdform = [1,0,0,0,1, 1,0,0];
-    
+
     /**
      * Quadratic form representation of circles (and conics)
      */
     this.quadraticform = [[1,0,0],[0,1,0],[0,0,1]];
-    
+
     /**
-     * If this is set to true, the element is updated in every update 
+     * If this is set to true, the element is updated in every update
      * call of the board. If set to false, the element is updated only after
      * zoom events or more generally, when the bounding box has been changed.
      * Examples for the latter behaviour should be axes.
-     * 
+     *
      * @type boolean
      * @default true
      * @private
@@ -275,7 +275,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
     if (typeof(board) == 'string') {
         board = JXG.JSXGraph.boards[board];
     }
-    
+
     /* already documented in constructor */
     this.board = board;
 
@@ -350,7 +350,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @default {@link JXG.Options.elements#strokeWidth}
      */
     this.visProp.strokeWidth = this.board.options.elements.strokeWidth;
-    
+
     /**
      * Opacity for element's stroke color.
      * @type number
@@ -396,7 +396,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @default {@link JXG.Options.elements.color#highlightFillOpacity}
      */
     this.visProp.highlightFillOpacity = this.board.options.elements.color.highlightFillOpacity;
-    
+
     /**
      * If true the element will be drawn in grey scale colors to visualize that it's only a draft.
      * @type boolean
@@ -422,16 +422,16 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @default false
      */
     this.visProp['shadow'] = false;
-    
+
     // TODO: withLabel
-    
+
     // TODO: comment gradient possibilities
     this.visProp['gradient'] = 'none';
     this.visProp['gradientSecondColor'] = 'black';
     this.visProp['gradientAngle'] = '270';
     this.visProp['gradientSecondOpacity'] = this.visProp['fillOpacity'];
     this.visProp['gradientPositionX'] = 0.5;
-    this.visProp['gradientPositionY'] = 0.5;    
+    this.visProp['gradientPositionY'] = 0.5;
 };
 
 /**
@@ -440,11 +440,11 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
  */
 JXG.GeometryElement.prototype.addChild = function (obj) {
 	var el, el2;
-	
+
     this.childElements[obj.id] = obj;
-    
+
     this.addDescendants(obj);
-    
+
     obj.ancestors[this.id] = this;
     for(el in this.descendants) {
         this.descendants[el].ancestors[this.id] = this;
@@ -468,7 +468,7 @@ JXG.GeometryElement.prototype.addChild = function (obj) {
  */
 JXG.GeometryElement.prototype.addDescendants = function (/** JXG.GeometryElement */ obj) {
 	var el;
-	
+
     this.descendants[obj.id] = obj;
     for(el in obj.childElements) {
         this.addDescendants(obj.childElements[el]);
@@ -616,13 +616,13 @@ JXG.GeometryElement.prototype.showElement = function() {
 * <ul>Possible keys:</ul>
 *<li>strokeWidth</li>
 *<li>strokeColor</li>
-*<li>fillColor</li> 
+*<li>fillColor</li>
 *<li>highlightFillColor</li>
 *<li>highlightStrokeColor</li>
 *<li>strokeOpacity</li>
-*<li>fillOpacity</li> 
+*<li>fillOpacity</li>
 *<li>highlightFillOpacity</li>
-*<li>highlightStrokeOpacity</li> 
+*<li>highlightStrokeOpacity</li>
 *<li>labelColor</li>
 *<li>visible</li>
 *<li>dash</li>
@@ -646,10 +646,10 @@ JXG.GeometryElement.prototype.showElement = function() {
  * // Set property directly on creation of an element using the attributes object parameter
  * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, 1]};
  * var p = board.createElement('point', [2, 2], {visible: false});
- * 
+ *
  * // Now make this point visible and fixed:
  * p.setProperty('fixed:true', 'visible:true');
- * 
+ *
  * // Alternatively you can use #hideElement resp. #showElement:
  * p.hideElement();
  */
@@ -657,7 +657,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
     var i, key, color, pairRaw,
         opacity,
         pair;
-        
+
     for (i=0; i<arguments.length; i++) {
         pairRaw = arguments[i];
         if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
@@ -675,37 +675,37 @@ JXG.GeometryElement.prototype.setProperty = function () {
             return this;
         } else {                             // pairRaw consists of array [key,value]
             pair = pairRaw;
-        }     
+        }
         switch(pair[0].replace(/\s+/g).toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
             case 'strokewidth':
                 this.visProp['strokeWidth'] = pair[1];
                 this.board.renderer.setObjectStrokeWidth(this, this.visProp['strokeWidth']);
                 break;
             case 'strokecolor':
-                color = pair[1];                
-                if (color.length=='9' && color.substr(0,1)=='#') {
-                    opacity = color.substr(7,2);                
-                    color = color.substr(0,7);
-                }
-                else { 
-                    opacity = 'FF';
-                }
-                this.visProp['strokeColor'] = color;
-                this.visProp['strokeOpacity'] = parseInt(opacity.toUpperCase(),16)/255;
-                this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);                
-                break;
-            case 'fillcolor':          
-                color = pair[1];             
+                color = pair[1];
                 if (color.length=='9' && color.substr(0,1)=='#') {
                     opacity = color.substr(7,2);
                     color = color.substr(0,7);
                 }
-                else { 
+                else {
                     opacity = 'FF';
-                }                
+                }
+                this.visProp['strokeColor'] = color;
+                this.visProp['strokeOpacity'] = parseInt(opacity.toUpperCase(),16)/255;
+                this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);
+                break;
+            case 'fillcolor':
+                color = pair[1];
+                if (color.length=='9' && color.substr(0,1)=='#') {
+                    opacity = color.substr(7,2);
+                    color = color.substr(0,7);
+                }
+                else {
+                    opacity = 'FF';
+                }
                 this.visProp['fillColor'] = color;
-                this.visProp['fillOpacity'] = parseInt(opacity.toUpperCase(),16)/255;             
-                this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);               
+                this.visProp['fillOpacity'] = parseInt(opacity.toUpperCase(),16)/255;
+                this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);
                 break;
             case 'highlightstrokecolor':
                 color = pair[1];
@@ -717,7 +717,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     opacity = 'FF';
                 }
                 this.visProp['highlightStrokeColor'] = color;
-                this.visProp['highlightStrokeOpacity'] = parseInt(opacity.toUpperCase(),16)/255;                
+                this.visProp['highlightStrokeOpacity'] = parseInt(opacity.toUpperCase(),16)/255;
                 break;
             case 'highlightfillcolor':
                 color = pair[1];
@@ -729,23 +729,23 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     opacity = 'FF';
                 }
                 this.visProp['highlightFillColor'] = color;
-                this.visProp['highlightFillOpacity'] = parseInt(opacity.toUpperCase(),16)/255;                
+                this.visProp['highlightFillOpacity'] = parseInt(opacity.toUpperCase(),16)/255;
                 break;
             case 'fillopacity':
                 this.visProp['fillOpacity'] = pair[1];
-                this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);                
+                this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);
                 break;
             case 'strokeopacity':
                 this.visProp['strokeOpacity'] = pair[1];
-                this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);                 
-                break;        
+                this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);
+                break;
             case 'highlightfillopacity':
                 this.visProp['highlightFillOpacity'] = pair[1];
                 break;
             case 'highlightstrokeopacity':
                 this.visProp['highlightStrokeOpacity'] = pair[1];
                 break;
-            case 'labelcolor': 
+            case 'labelcolor':
                 color = pair[1];
                 if (color.length=='9' && color.substr(0,1)=='#') {
                     opacity = color.substr(7,2);
@@ -758,16 +758,16 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     if (this.label!=null && this.hasLabel) {
                         this.label.content.hideElement();
                     }
-                } 
+                }
                 if(this.label!=null && this.hasLabel) {
                     this.label.color = color;
-                    this.board.renderer.setObjectStrokeColor(this.label.content, color, opacity);  
+                    this.board.renderer.setObjectStrokeColor(this.label.content, color, opacity);
                 }
                 if(this.type == JXG.OBJECT_TYPE_TEXT) {
                     this.visProp['strokeColor'] = color;
-                    this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], 1);    
+                    this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], 1);
                 }
-                break;            
+                break;
             case 'showinfobox':
                 if(pair[1] == 'false' || pair[1] == false) {
                     this.showInfobox = false;
@@ -809,23 +809,23 @@ JXG.GeometryElement.prototype.setProperty = function () {
             		this.visProp['size'] = 1*pair[1];
                 	this.board.renderer.updatePoint(this);
         		}
-                break;  
-            case 'fixed':          
-                this.fixed = (pair[1]=='false') ? false : true;
+                break;
+            case 'fixed':
+                this.fixed = ((pair[1]=='false') || (pair[1]==false)) ? false : true;
                 break;
             case 'shadow':
                 if(pair[1] == 'false' || pair[1] == false) {
                     this.visProp['shadow'] = false;
                 }
                 else if(pair[1] == 'true' || pair[1] == true) {
-                    this.visProp['shadow'] = true;                
-                }  
+                    this.visProp['shadow'] = true;
+                }
                 this.board.renderer.setShadow(this);
                 break;
             case 'gradient':
                 this.visProp['gradient'] = pair[1];
                 this.board.renderer.setGradient(this);
-                break;    
+                break;
             case 'gradientsecondcolor':
                 color = pair[1];
                 if (color.length=='9' && color.substr(0,1)=='#') {
@@ -836,14 +836,14 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     opacity = 'FF';
                 }
                 this.visProp['gradientSecondColor'] = color;
-                this.visProp['gradientSecondOpacity'] = parseInt(opacity.toUpperCase(),16)/255;  
+                this.visProp['gradientSecondOpacity'] = parseInt(opacity.toUpperCase(),16)/255;
                 this.board.renderer.updateGradient(this);
                 break;
             case 'gradientsecondopacity':
                 this.visProp['gradientSecondOpacity'] = pair[1];
                 this.board.renderer.updateGradient(this);
-                break;                
-            case 'draft': 
+                break;
+            case 'draft':
                 if(pair[1] == 'false' || pair[1] == false) {
                     if(this.visProp['draft'] == true) {
                         this.visProp['draft'] = false;
@@ -853,7 +853,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 else if(pair[1] == 'true' || pair[1] == true) {
                     this.visProp['draft'] = true;
                     this.board.renderer.setDraft(this);
-                }            
+                }
                 break;
             case 'straightfirst':
                 if(pair[1] == 'false' || pair[1] == false) {
@@ -861,36 +861,36 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 }
                 else if(pair[1] == 'true' || pair[1] == true) {
                     this.visProp['straightFirst'] = true;
-                }    
+                }
                 this.setStraight(this.visProp['straightFirst'], this.visProp['straightLast']);
-                break;    
+                break;
             case 'straightlast':
                 if(pair[1] == 'false' || pair[1] == false) {
                     this.visProp['straightLast'] = false;
                 }
                 else if(pair[1] == 'true' || pair[1] == true) {
                     this.visProp['straightLast'] = true;
-                }            
+                }
                 this.setStraight(this.visProp['straightFirst'], this.visProp['straightLast']);
-                break;    
+                break;
             case 'firstarrow':
                 if(pair[1] == 'false' || pair[1] == false) {
                     this.visProp['firstArrow'] = false;
                 }
                 else if(pair[1] == 'true' || pair[1] == true) {
                     this.visProp['firstArrow'] = true;
-                }    
+                }
                 this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
-                break;    
+                break;
             case 'lastarrow':
                 if(pair[1] == 'false' || pair[1] == false) {
                     this.visProp['lastArrow'] = false;
                 }
                 else if(pair[1] == 'true' || pair[1] == true) {
                     this.visProp['lastArrow'] = true;
-                }            
+                }
                 this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
-                break;                   
+                break;
             case 'curvetype':
                 this.curveType = pair[1];
                 break;
@@ -933,7 +933,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     if((pair[1] != null) && (pair[1] > 0))
                         this.minorTicks = pair[1];
                     if(old != this.minorTicks) this.calculateTicksCoordinates();
-                }                
+                }
                 break;
             case 'majortickheight':
                 if(this.type == JXG.OBJECT_TYPE_TICKS) {
@@ -941,7 +941,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     if((pair[1] != null) && (pair[1] > 0))
                         this.majorHeight = pair[1];
                     if(old != this.majorHeight) this.calculateTicksCoordinates();
-                }                                
+                }
                 break;
             case 'minortickheight':
                 if(this.type == JXG.OBJECT_TYPE_TICKS) {
@@ -949,7 +949,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     if((pair[1] != null) && (pair[1] > 0))
                         this.minorHeight = pair[1];
                     if(old != this.minorHeight) this.calculateTicksCoordinates();
-                }                                
+                }
                 break;
             case 'snapwidth':
                 if(this.type == JXG.OBJECT_TYPE_GLIDER) {
@@ -962,7 +962,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
 
 /**
  * Set the dash style of an object. See {@link #dash} for a list of available dash styles.
- * You should use {@link #setProperty} instead of this method. 
+ * You should use {@link #setProperty} instead of this method.
  * @param {number} dash Indicates the new dash style
  * @private
 */
@@ -980,14 +980,14 @@ JXG.GeometryElement.prototype.prepareUpdate = function() {
     this.needsUpdate = true;
     return this; // Im Moment steigen wir nicht rekursiv hinab
     /* End of function  */
-    
+
     /*
     var el;
     for(el in this.childElements) {
-        // Wurde das Element vielleicht geloescht? 
+        // Wurde das Element vielleicht geloescht?
         if(this.board.objects[el] != undefined) {
-            // Nein, wurde es nicht, also updaten 
-            this.childElements[el].prepareUpdate(); 
+            // Nein, wurde es nicht, also updaten
+            this.childElements[el].prepareUpdate();
         } else { //  es wurde geloescht, also aus dem Array entfernen
             delete(this.childElements[el]);
         }
@@ -998,11 +998,11 @@ JXG.GeometryElement.prototype.prepareUpdate = function() {
 /**
  * Removes the element from the construction.
  */
-JXG.GeometryElement.prototype.remove = function() {    
+JXG.GeometryElement.prototype.remove = function() {
     this.board.renderer.remove(document.getElementById(this.id));
     if (this.hasLabel) {
         this.board.renderer.remove(document.getElementById(this.label.content.id));
-    }    
+    }
     return this;
 };
 
@@ -1014,7 +1014,7 @@ JXG.GeometryElement.prototype.remove = function() {
  * @see #getLabelAnchor
  * @private
  */
-JXG.GeometryElement.prototype.getTextAnchor = function() {    
+JXG.GeometryElement.prototype.getTextAnchor = function() {
     return new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
 };
 
@@ -1026,7 +1026,7 @@ JXG.GeometryElement.prototype.getTextAnchor = function() {
   * @see #getTextAnchor
  * @private
  */
-JXG.GeometryElement.prototype.getLabelAnchor = function() {    
+JXG.GeometryElement.prototype.getLabelAnchor = function() {
     return new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
 };
 
@@ -1036,7 +1036,7 @@ JXG.GeometryElement.prototype.getLabelAnchor = function() {
  * Sollte das dann nicht nur in Point.js zu finden sein? --michael
  * @private
  */
-JXG.GeometryElement.prototype.setStyle = function(x) {    
+JXG.GeometryElement.prototype.setStyle = function(x) {
     return this;
 };
 
@@ -1046,7 +1046,7 @@ JXG.GeometryElement.prototype.setStyle = function(x) {
  * Sollte das dann nicht nur in Line.js zu finden sein? --michael
  * @private
  */
-JXG.GeometryElement.prototype.setStraight = function(x,y) {    
+JXG.GeometryElement.prototype.setStraight = function(x,y) {
     return this;
 };
 
@@ -1055,7 +1055,7 @@ JXG.GeometryElement.prototype.setStraight = function(x,y) {
  * Dito setStraight. Das gilt doch eh nur fuer lines, also wozu hier reinstellen? --michael
  * @private
  */
-JXG.GeometryElement.prototype.setArrow = function(firstArrow,lastArrow) {    
+JXG.GeometryElement.prototype.setArrow = function(firstArrow,lastArrow) {
     return this;
 };
 
@@ -1063,15 +1063,15 @@ JXG.GeometryElement.prototype.setArrow = function(firstArrow,lastArrow) {
  * Creates a label element for this geometry element.
  * Doesn't add the label to the board, so it shouldn't be called itself. Use {@link #addLabelToElement} instead.
  * @param {boolean} withLabel true if a label shall be initialized, false otherwise.
- * @see #addLabelToElement 
+ * @see #addLabelToElement
  * @private
  */
-JXG.GeometryElement.prototype.createLabel = function(withLabel,coords) { 
+JXG.GeometryElement.prototype.createLabel = function(withLabel,coords) {
     var isTmpId = false;
     if (typeof coords=='undefined' || coords==null) {
         coords = [10,10];
     }
-    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); 
+    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name));
     this.label = {};
     if (typeof withLabel=='undefined' || withLabel==true) {
         if (this.board.objects[this.id]==null) {
@@ -1079,7 +1079,7 @@ JXG.GeometryElement.prototype.createLabel = function(withLabel,coords) {
             isTmpId = true;
         }
         this.label.relativeCoords = coords;
-        this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, 
+        this.label.content = new JXG.Text(this.board, this.nameHTML, this.id,
             [this.label.relativeCoords[0]/(this.board.stretchX),this.label.relativeCoords[1]/(this.board.stretchY)], this.id+"Label", "", null, true);
         if (isTmpId) delete(this.board.objects[this.id]);
         this.label.color = '#000000';
@@ -1097,12 +1097,12 @@ JXG.GeometryElement.prototype.createLabel = function(withLabel,coords) {
  */
 JXG.GeometryElement.prototype.addLabelToElement = function() {
     this.createLabel(true);
-    this.label.content.id = this.id+"Label";  
+    this.label.content.id = this.id+"Label";
     this.board.addText(this.label.content);
     this.board.renderer.drawText(this.label.content);
     if(!this.label.content.visProp['visible']) {
         board.renderer.hide(this.label.content);
-    }       
+    }
     return this;
 };
 
@@ -1127,7 +1127,7 @@ JXG.GeometryElement.prototype.noHighlight = function() {
  */
 JXG.GeometryElement.prototype.clearTrace = function() {
     var obj;
-    
+
     for(obj in this.traces) {
         this.board.renderer.remove(this.traces[obj]);
     }
