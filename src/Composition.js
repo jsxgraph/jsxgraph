@@ -1012,6 +1012,72 @@ JXG.createIntegral = function(board, parentArr, atts) {
     }
 };
 
+/**
+ * @class This element is used to visualize the locus of a given dependent point.
+ * @pseudo
+ * @description The locus element is used to visualize the curve a given point describes.
+ * @constructor
+ * @name Locus
+ * @type JXG.Curve
+ * @augments JXG.Curve
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point} p The constructed curve is the geometric locus of the given point.
+ * @example
+ *  // This examples needs JXG.Server up and running, otherwise it won't work.
+ *  p1 = board.createElement('point', [0, 0]);
+ *  p2 = board.createElement('point', [6, -1]);
+ *  c1 = board.createElement('circle', [p1, 2]);
+ *  c2 = board.createElement('circle', [p2, 1.5]);
+ *  g1 = board.createElement('glider', [6, 3, c1]);
+ *  c3 = board.createElement('circle', [g1, 4]);
+ *  g2 = board.createElement('intersection', [c2,c3,0]);
+ *  m1 = board.createElement('midpoint', [g1,g2]);
+ *  loc = board.createElement('locus', [m1], {strokeColor: 'red'});
+ * </pre><div id="d45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *  lcex_board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 10, -6], axis: true, grid: false, keepaspectratio: true});
+ *  lcex_p1 = lcex_board.createElement('point', [0, 0]);
+ *  lcex_p2 = lcex_board.createElement('point', [6, -1]);
+ *  lcex_c1 = lcex_board.createElement('circle', [lcex_p1, 2]);
+ *  lcex_c2 = lcex_board.createElement('circle', [lcex_p2, 1.5]);
+ *  lcex_g1 = lcex_board.createElement('glider', [6, 3, lcex_c1]);
+ *  lcex_c3 = lcex_board.createElement('circle', [lcex_g1, 4]);
+ *  lcex_g2 = lcex_board.createElement('intersection', [lcex_c2,lcex_c3,0]);
+ *  lcex_m1 = lcex_board.createElement('midpoint', [lcex_g1,lcex_g2]);
+ *  lcex_loc = board.createElement('locus', [lcex_m1], {strokeColor: 'red'});
+ * </script><pre>
+ */
+JXG.createLocus = function(board, parents, attributes) {
+    var c, p;
+
+    if(JXG.isArray(parents) && parents.length == 1 && parents[0].elementClass == JXG.OBJECT_CLASS_POINT) {
+        p = parents[0];
+    } else {
+        throw ("Can't create locus with parent of type other than point.");
+    }
+
+    c = board.createElement('curve', [[null], [null]], attributes);
+    c.dontCallServer = false;
+
+    c.updateDataArray = function () {
+        cb = function(x, y, eq) {
+            c.dataX = x;
+            c.dataY = y;
+            board.update();
+        };
+
+        if(board.mode == board.BOARD_MODE_NONE && !this.dontCallServer) {
+            JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
+            // don't bother the server on the next update, because it's fired
+            // to plot the datapoints received by the server.
+            this.dontCallServer = true;
+        } else {
+            this.dontCallServer = false;
+        }
+    };
+    return c;
+};
+
 JXG.JSXGraph.registerElement('arrowparallel', JXG.createArrowParallel);
 JXG.JSXGraph.registerElement('bisector', JXG.createBisector);
 JXG.JSXGraph.registerElement('bisectorlines', JXG.createAngularBisectorsOfTwoLines);
@@ -1026,3 +1092,4 @@ JXG.JSXGraph.registerElement('parallelpoint', JXG.createParallelPoint);
 JXG.JSXGraph.registerElement('perpendicular', JXG.createPerpendicular);
 JXG.JSXGraph.registerElement('perpendicularpoint', JXG.createPerpendicularPoint);
 JXG.JSXGraph.registerElement('reflection', JXG.createReflection);
+JXG.JSXGraph.registerElement('locus', JXG.createLocus);

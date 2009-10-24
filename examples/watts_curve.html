@@ -13,7 +13,7 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 10, 14, -2], axis: true, grid: false});
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 10, -6], axis: true, grid: false, keepaspectratio: true});
     p1 = board.createElement('point', [0, 0], {style:2,name:"Q"});
     p2 = board.createElement('point', [6, -1], {style:2,name:"W"});
     c1 = board.createElement('circle', [p1, 2]);
@@ -21,9 +21,11 @@
     g1 = board.createElement('glider', [6, 3, c1], {style:5,name:"Drag me"});
     c3 = board.createElement('circle', [g1, 4]);
     g2 = board.createElement('intersection', [c2,c3,0], {style:5, name: "E"});
-    g3 = board.createElement('intersection', [c2,c3,1], {style:5, name: "R"});
-    m1 = board.createElement('midpoint', [g1,g2], {style:8,name:"T",trace:true});
-    m2 = board.createElement('midpoint', [g1,g3], {style:8,name:"Y",trace:true,strokeColor:'green'});
+    m1 = board.createElement('midpoint', [g1,g2], {style:8,name:"T",trace:false});
+
+    loc = board.createElement('locus', [m1], {strokeColor: 'red'});
+
+
 
     function groebner(p) {
         JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
@@ -62,8 +64,9 @@
         JXG.Math.Symbolic.clearSymbolicCoordinates(board);
     }
 
-    function cb(poly) {
-        alert(poly[0].replace(/\*\*(\d+)/g,'<sup>$1</sup>').replace(/\*/g,''));
+    function cb(x, y, poly) {
+//        alert(poly[0].replace(/\*\*(\d+)/g,'<sup>$1</sup>').replace(/\*/g,''));
+        alert(poly[0]);
     }
   /* ]]> */
   </script>

@@ -22,7 +22,7 @@ cmd_cocoa = "cocoa"
 #cmd_cocoa = r"C:\cocoa\cocoa.bat"
 
 # Shouldn't be changed, except you know what you're doing
-debug = True;
+debug = False
 
 ############################
 
@@ -38,6 +38,8 @@ import zlib
 import base64
 import cStringIO
 import cgi
+
+debugOutput = cStringIO.StringIO()
 
 print "Content-Type: text/plain\n\n"
 print
@@ -63,18 +65,28 @@ ys = float(form.getfirst('ys', '-5'))
 ye = float(form.getfirst('ye', '5'))
 
 # Clean them up
-number = cgi.escape(number)
+number = int(cgi.escape(number))
 polys = base64.b64decode(cgi.escape(polys))
 
 cinput = ""
 
 # Variable code begins here
 # Here indeterminates of polynomial ring have to be adjusted
-cinput += "Use R ::= QQ[u[1..%s],x,y], DegRevLex;" % number
+
+if number > 0:
+    cinput += "Use R ::= QQ[u[1..%s],x,y];" % number
+else:
+    cinput += "Use R ::= QQ[x,y];"
+
 # Of course the polynomials generating the ideal must be adjusted
 cinput += "I := Ideal(%s);" % polys
+
 # So have to be the indeterminates to be eliminated
-cinput += "J := Elim(u[1]..u[%s], I); J;" % number
+if number > 0:
+    cinput += "J := Elim(u[1]..u[%s], I); J;" % number
+else:
+    cinput += "J := I; J;"
+
 # and ends here
 
 # Fixed code which hasn't to be adjusted on each run of this script
@@ -90,8 +102,8 @@ cinput += "EndFor;\n"
 cinput += "Print \"resultsend\", NewLine;"
 
 if debug:
-    print "Starting CoCoA with input<br />"
-    print cinput + '<br />'
+    print >>debugOutput, "Starting CoCoA with input<br />"
+    print >>debugOutput, cinput + '<br />'
 
 #cocoa = subprocess.Popen([cmd_cocoa], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
@@ -138,7 +150,7 @@ except TimeoutException, msg:
     #subprocess.Popen(["killall", "cocoa_text"])
     #os.system('killall -9 cocoa_text')
     if debug:
-        print "Timed out!"
+        print >>debugOutput, "Timed out!"
     exit()
 
 #cocoa = os.popen("echo \"" + input + "\" | " + cmd_cocoa)
@@ -146,8 +158,8 @@ except TimeoutException, msg:
 #output = cocoa.read()
 
 if debug:
-    print "Reading and Parsing CoCoA output" + '<br />'
-    print output + '<br />'
+    print >>debugOutput, "Reading and Parsing CoCoA output" + '<br />'
+    print >>debugOutput, output + '<br />'
 
 # Extract results
 result = re.split('resultsend', re.split('resultsbegin', output)[1])[0]
@@ -157,9 +169,9 @@ result = result.replace("\r", "")
 polynomials = re.split('\n', result)
 
 if debug:
-    print "Found the following polynomials:" + '<br />'
+    print >>debugOutput, "Found the following polynomials:" + '<br />'
     for i in range(0,len(polynomials)):
-        print "Polynomial ", i+1, ": " + polynomials[i] + '<br />'
+        print >>debugOutput, "Polynomial ", i+1, ": " + polynomials[i] + '<br />'
 
 data = cStringIO.StringIO()
 polynomialsReturn = ""
@@ -198,8 +210,10 @@ if debug:
     fd.close()
 
 if debug:
-    print data.getvalue() + '<br />'
+    print >>debugOutput, data.getvalue() + '<br />'
+    print debugOutput.getvalue()
 
 print enc_data
 
 data.close()
+debugOutput.close()

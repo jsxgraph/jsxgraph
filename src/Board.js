@@ -704,6 +704,8 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
     // release mouseup listener
     JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
 
+    this.mode = this.BOARD_MODE_NONE;
+
     // if origin was moved update everything
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
         this.moveOrigin();
@@ -712,7 +714,6 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
         this.update();
     }
 
-    this.mode = this.BOARD_MODE_NONE;
     // release dragged object
     this.drag_obj = null;
 };

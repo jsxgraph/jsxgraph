@@ -25,32 +25,38 @@
         p.push(b._point([6, 2], {face: 'x', size: 5}));
         p.push(b._point([7, 5], {face: '[]', size: 5}));
         p.push(b._point([8, 7], {face: '[]', size: 5}));
-        
-		var data = [], i;
-		for(i=0; i<p.length; i++) {
+
+        var data = [], i;
+        for(i=0; i<p.length; i++) {
             data.push( (function(p_,i_){ return function () { return p_[i_].Y(); }; })(p,i) );
         }
             //data.push( (function(j){ return function(){ return function () { return p[j].Y(); }; }; })(i) );
 
-		//data = [function () { return p[0].Y(); }, function () { return p[1].Y(); }, function () { return p[2].Y(); }];
+        //data = [function () { return p[0].Y(); }, function () { return p[1].Y(); }, function () { return p[2].Y(); }];
+
+        c1 = b._circle([p[1], function () { return p[0].coords.distance(JXG.COORDS_BY_USER, p[2].coords); }]);
+        c2 = b._circle([p[2], function () { return p[0].coords.distance(JXG.COORDS_BY_USER, p[1].coords); } ]);
+
+        i1 = b._intersection([c1, c2, 0]);
+        i2 = b._intersection([c1, c2, 1]);
 
 //		b._chart([data], {chartStyle: 'point,line', withHeaders: true});
-        var l = b._line([p[1], p[2]]);
+//        var l = b._line([p[1], p[2]]);
 
 
 //        var ccm = b._circumcirclemidpoint(p);
-        var cc = b._reflection([p[0], l], {name: 'foo', id: 'FOO'});
+//        var cc = b._reflection([p[0], l], {name: 'foo', id: 'FOO'});
 
-        var mp = b._midpoint([p[2], p[3]], {name: 'bar', id: 'BAR', strokeColor: 'green', fillColor: 'white', highlightStrokeColor: 'red', highlightFillColor: 'peru', face: '[]', size: 4});
+//        var mp = b._midpoint([p[2], p[3]], {name: 'bar', id: 'BAR', strokeColor: 'green', fillColor: 'white', highlightStrokeColor: 'red', highlightFillColor: 'peru', face: '[]', size: 4});
 
-try {
+/*try {
         var h, s, v, rgb;
         h = JXG.rgb2hsv(122, 122, 122);
         rgb = JXG.hsv2rgb(h[0], h[1], h[2]);
         alert(JXG.rgb2css(rgb));
 } catch(e) {
     alert(e);
-}
+}*/
 
   /* ]]> */
   </script>

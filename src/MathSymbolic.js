@@ -146,7 +146,7 @@ JXG.Math.Symbolic.generatePolynomials = function(board, element, generateCoords)
  * @type Array
  * @return Array of points.
  */
-JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback, debug) {
+JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback) {
     var numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace'),
         poly = this.generatePolynomials(board, point);
     var polyStr = poly.join(','),
@@ -154,11 +154,7 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
         xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board),
         fileurl;
 
-    if(debug)
-        fileurl = JXG.serverBase + 'jxggroebner_debug.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr) + '&xs=' + xsye.usrCoords[1] + '&xe=' + xeys.usrCoords[1] + '&ys=' + xeys.usrCoords[2] + '&ye=' + xsye.usrCoords[2];
-    else
-        fileurl = JXG.serverBase + 'jxggroebner.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr) + '&xs=' + xsye.usrCoords[1] + '&xe=' + xeys.usrCoords[1] + '&ys=' + xeys.usrCoords[2] + '&ye=' + xsye.usrCoords[2];
-
+    fileurl = JXG.serverBase + 'jxggroebner.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr) + '&xs=' + xsye.usrCoords[1] + '&xe=' + xeys.usrCoords[1] + '&ys=' + xeys.usrCoords[2] + '&ye=' + xsye.usrCoords[2];
 
     this.cbp = function(t) {
         var coordpairsStr = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(t))).unzip();
@@ -177,9 +173,9 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
             px[i] = coords[0];
             py[i] = coords[1];
         }
-        var c = board.createElement('curve', [px, py], {strokeColor: 'green', strokeWidth: '2px'});
-        this.rendNode = c.rendNode;
-        callback(returnstr[1].split(';'));
+//        var c = board.createElement('curve', [px, py], {strokeColor: 'green', strokeWidth: '2px'});
+//        this.rendNode = c.rendNode;
+        callback(px, py, returnstr[1].split(';'));
     };
 
     this.cb = JXG.bind(this.cbp, this);
