@@ -46,37 +46,14 @@ JXG.VMLRenderer = function(container) {
     this.container.ownerDocument.createStyleSheet().addRule(".jxgvml", "behavior:url(#default#VML)");
     try {
         !container.ownerDocument.namespaces.jxgvml && container.ownerDocument.namespaces.add("jxgvml", "urn:schemas-microsoft-com:vml");
-            this.createNode = function (tagName) {
-                return container.ownerDocument.createElement('<jxgvml:' + tagName + ' class="jxgvml">');
-            };
+        this.createNode = function (tagName) {
+            return container.ownerDocument.createElement('<jxgvml:' + tagName + ' class="jxgvml">');
+        };
     } catch (e) {
-            this.createNode = function (tagName) {
-                return container.ownerDocument.createElement('<' + tagName + ' xmlns="urn:schemas-microsoft.com:vml" class="jxgvml">');
-            };
+        this.createNode = function (tagName) {
+            return container.ownerDocument.createElement('<' + tagName + ' xmlns="urn:schemas-microsoft.com:vml" class="jxgvml">');
+        };
     }
-
-    //container.ownerDocument.createStyleSheet().addRule(".jsxgraphvml", "behavior:url(#default#VML)"); // Raphael
-    
-    /*
-        container.ownerDocument.namespaces.add('v', 'urn:schemas-microsoft-com:vml', '#default#VML');
-        //container.ownerDocument.createStyleSheet().cssText = "v\\:*{behavior:url(#default#VML)}";
-        var ss = container.ownerDocument.createStyleSheet();
-        ss.cssText = '.jsxgbox{v\\:*{behavior:url(#default#VML)}}';
-    */
-
-    // Ohne Fehler, aber falsch:
-    //container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml", "#default#VML");
-
-    // MSDN tip
-/*   
-    if(!container.ownerDocument.documentMode || container.ownerDocument.documentMode<8) {
-        container.ownerDocument.namespaces.add("v", "urn:schemas-microsoft-com:vml");
-        container.ownerDocument.createStyleSheet().addRule('v\\:*', "behavior: url(#default#VML);");
-    }
-    if(container.ownerDocument.documentMode && container.ownerDocument.documentMode>=8) {
-        container.ownerDocument.writeln('<?import namespace="v" implementation="#default#VML" ?>');
-    }
-*/   
         
     // um Dashes zu realisieren
     this.dashArray = ['Solid', '1 1', 'ShortDash', 'Dash', 'LongDash', 'ShortDashDot', 'LongDashDot'];    
@@ -84,17 +61,37 @@ JXG.VMLRenderer = function(container) {
 
 JXG.VMLRenderer.prototype = new JXG.AbstractRenderer;
 
+JXG.VMLRenderer.prototype.setAttr = function(node, key, val, val2) {
+    try {
+        if (document.documentMode==8) {
+            node[key] = val;
+        } else {
+            node.setAttribute(key,val,val2);
+        }
+    } catch (e) {
+        //document.getElementById('debug').innerHTML += node.id+' '+key+' '+val+'<br>\n';
+    }
+};
+
+JXG.VMLRenderer.prototype.eval = function(val) {
+    if (typeof val=='function') {
+        return val();
+    } else {
+        return val;
+    }
+};
+
 JXG.VMLRenderer.prototype.setShadow = function(element) {
     var nodeShadow = element.rendNodeShadow;
     if (!nodeShadow) return;                          // Added 29.9.09. A.W.
     if(element.visProp['shadow']) {
-        nodeShadow.setAttribute('On', 'True');
-        nodeShadow.setAttribute('Offset', '3pt,3pt');
-        nodeShadow.setAttribute('Opacity', '60%');
-        nodeShadow.setAttribute('Color', '#aaaaaa');
+        this.setAttr(nodeShadow, 'On', 'True');
+        this.setAttr(nodeShadow, 'Offset', '3pt,3pt');
+        this.setAttr(nodeShadow, 'Opacity', '60%');
+        this.setAttr(nodeShadow, 'Color', '#aaaaaa');
     }
     else {
-        nodeShadow.setAttribute('On', 'False');
+        this.setAttr(nodeShadow, 'On', 'False');
     }
 };
 
@@ -105,20 +102,20 @@ JXG.VMLRenderer.prototype.setGradient = function(el) {
     }    
     
     if(el.visProp['gradient'] == 'linear') {
-        nodeFill.setAttribute('type','gradient');
-        nodeFill.setAttribute('color2',el.visProp['gradientSecondColor']);
-        nodeFill.setAttribute('opacity2',el.visProp['gradientSecondOpacity']);
-        nodeFill.setAttribute('angle',el.visProp['gradientAngle']);
+        this.setAttr(nodeFill, 'type', 'gradient');
+        this.setAttr(nodeFill, 'color2', el.visProp['gradientSecondColor']);
+        this.setAttr(nodeFill, 'opacity2', el.visProp['gradientSecondOpacity']);
+        this.setAttr(nodeFill, 'angle', el.visProp['gradientAngle']);
     }
     else if (el.visProp['gradient'] == 'radial') {
-        nodeFill.setAttribute('type','gradientradial');
-        nodeFill.setAttribute('color2',el.visProp['gradientSecondColor']);
-        nodeFill.setAttribute('opacity2',el.visProp['gradientSecondOpacity']);
-        nodeFill.setAttribute('focusposition', el.visProp['gradientPositionX']*100+'%,'+el.visProp['gradientPositionY']*100+'%');
-        nodeFill.setAttribute('focussize', '0,0');
+        this.setAttr(nodeFill, 'type','gradientradial');
+        this.setAttr(nodeFill, 'color2',el.visProp['gradientSecondColor']);
+        this.setAttr(nodeFill, 'opacity2',el.visProp['gradientSecondOpacity']);
+        this.setAttr(nodeFill, 'focusposition', el.visProp['gradientPositionX']*100+'%,'+el.visProp['gradientPositionY']*100+'%');
+        this.setAttr(nodeFill, 'focussize', '0,0');
     }
     else {
-        nodeFill.setAttribute('type','solid');
+        this.setAttr(nodeFill, 'type','solid');
     }
 };
 
@@ -159,14 +156,14 @@ JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     //node = this.container.ownerDocument.createElement('v:textbox');
     node = this.createNode('textbox');
     node.style.position = 'absolute';
-    node.setAttribute('id', 'licenseText');
+    this.setAttr(node,'id', 'licenseText');
     
     node.style.left = 20;
     node.style.top = (2);
     node.style.fontSize = (fontsize);
     node.style.color = '#356AA0';
     node.style.fontFamily = 'Arial,Helvetica,sans-serif';
-    node.setAttribute('opacity','30%');
+    this.setAttr(node,'opacity','30%');
     node.style.filter = 'alpha(opacity = 30)';
     
     t = document.createTextNode(str);
@@ -207,15 +204,9 @@ JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
         this.appendChildPrimitive(ticks,'lines');
         this.appendNodesToElement(axis,'path');
     } 
-    if (document.documentMode==8) {
-        ticks.stroked = true;
-        ticks.strokecolor = axis.visProp['strokeColor'];
-        ticks.strokeweight = axis.visProp['strokeWidth'];
-    } else {
-        ticks.setAttribute('stroked', 'true');
-        ticks.setAttribute('strokecolor', axis.visProp['strokeColor'], 1);
-        ticks.setAttribute('strokeweight', axis.visProp['strokeWidth']);   
-    }
+    this.setAttr(ticks,'stroked', 'true');
+    this.setAttr(ticks,'strokecolor', axis.visProp['strokeColor'], 1);
+    this.setAttr(ticks,'strokeweight', axis.visProp['strokeWidth']);   
     //ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
     this.updatePathPrimitive(ticks, tickArr, axis.board);
 };
@@ -227,16 +218,12 @@ JXG.VMLRenderer.prototype.drawArcLine = function(id, radius, angle1, angle2, mid
     var fillNode = this.createNode('fill');
     var strokeNode = this.createNode('stroke');
     var shadowNode = this.createNode('shadow');
-/*
-    var node = this.container.ownerDocument.createElement('v:arc');
-    var fillNode = this.container.ownerDocument.createElement('v:fill');
-    var strokeNode = this.container.ownerDocument.createElement('v:stroke');
-    var shadowNode = this.container.ownerDocument.createElement('v:shadow');
-*/
-    node.setAttribute('id', id);
-    fillNode.setAttribute('id', id+'_fill');
-    strokeNode.setAttribute('id', id+'_stroke');
-    shadowNode.setAttribute('id', id+'_shadow');
+
+    this.setAttr(node,'id', id);
+    this.setAttr(fillNode,'id', id+'_fill');
+    this.setAttr(strokeNode,'id', id+'_stroke');
+    this.setAttr(shadowNode,'id', id+'_shadow');
+
     node.appendChild(fillNode);
     node.appendChild(strokeNode);
     node.appendChild(shadowNode);   
@@ -247,14 +234,14 @@ JXG.VMLRenderer.prototype.drawArcLine = function(id, radius, angle1, angle2, mid
     el.rendNodeShadow = shadowNode;    
     
     node.style.position = 'absolute';
-    node.setAttribute('filled', 'false');
+    this.setAttr(node,'filled', 'false');
 
     node.style.left = (midpoint.coords.scrCoords[1] - Math.round(radius * board.stretchX)) + 'px'; 
     node.style.top = (midpoint.coords.scrCoords[2] - Math.round(radius * board.stretchY))  + 'px'; 
     node.style.width = (Math.round(radius * board.stretchX)*2) + 'px'; 
     node.style.height = (Math.round(radius * board.stretchY)*2) + 'px';  
-    node.setAttribute('startangle', angle1);
-    node.setAttribute('endangle', angle2);  
+    this.setAttr(node,'startangle', angle1);
+    this.setAttr(node,'endangle', angle2);  
     
     return node;
 };
@@ -269,24 +256,18 @@ JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, p
     var fillNode = this.createNode('fill');
     var strokeNode = this.createNode('stroke');
     var shadowNode = this.createNode('shadow');
-/*
-    pathNode = this.container.ownerDocument.createElement('v:path');
-    node2 = this.container.ownerDocument.createElement('v:shape');
-    var fillNode = this.container.ownerDocument.createElement('v:fill');
-    var strokeNode = this.container.ownerDocument.createElement('v:stroke');
-    var shadowNode = this.container.ownerDocument.createElement('v:shadow');
-*/
-    fillNode.setAttribute('id', id+'_fill');
-    strokeNode.setAttribute('id', id+'_stroke');
-    shadowNode.setAttribute('id', id+'_shadow');    
+ 
+    this.setAttr(fillNode,'id', id+'_fill');
+    this.setAttr(strokeNode,'id', id+'_stroke');
+    this.setAttr(shadowNode,'id', id+'_shadow');    
     
-    pathNode.setAttribute('id', id+'_path');        
+    this.setAttr(pathNode, 'id', id+'_path');        
  
     node2.appendChild(fillNode);
     node2.appendChild(strokeNode);
     node2.appendChild(shadowNode);   
     node2.appendChild(pathNode);
-    node2.setAttribute('id', id);
+    this.setAttr(node2,'id', id);
     node2.style.position = 'absolute';    
     
     element.rendNode2 = node2;
@@ -295,14 +276,14 @@ JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, p
     element.rendNode2Shadow = shadowNode;
     element.rendNode2Path = pathNode;
         
-    node2.setAttribute('stroked', 'false');
+    this.setAttr(node2,'stroked', 'false');
 
     x = Math.round(radius * board.stretchX); // Breite des umgebenden Rechtecks?
     y = Math.round(radius * board.stretchY); // Hoehe des umgebenden Rechtecks?
 
     node2.style.width = x;
     node2.style.height = y;
-    node2.setAttribute('coordsize', x+','+y);
+    this.setAttr(node2,'coordsize', x+','+y);
 
     pathString = 'm ' + midpoint.coords.scrCoords[1] + ',' + midpoint.coords.scrCoords[2] + ' l ';  
     pathString += point2.coords.scrCoords[1] + ',' + point2.coords.scrCoords[2] + ' at ';
@@ -312,7 +293,7 @@ JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, p
     pathString += ', ' + point3.coords.scrCoords[1] + ',' + point3.coords.scrCoords[2] + ' l ';
     pathString += midpoint.coords.scrCoords[1] + ',' + midpoint.coords.scrCoords[2] + ' x e';
     
-    pathNode.setAttribute('v', pathString);
+    this.setAttr(pathNode,'v', pathString);
     
     return node2;
 };
@@ -337,12 +318,12 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     /* arrows at the ends of the arc line */
     nodeStroke = el.rendNodeStroke;
     if(el.visProp['lastArrow']) {        
-        nodeStroke.setAttribute('endarrow', 'block');
-        nodeStroke.setAttribute('endarrowlength', 'long');
+        this.setAttr(nodeStroke,'endarrow', 'block');
+        this.setAttr(nodeStroke,'endarrowlength', 'long');
     }
     if(el.visProp['firstArrow']) {        
-        nodeStroke.setAttribute('startarrow', 'block');
-        nodeStroke.setAttribute('startarrowlength', 'long');
+        this.setAttr(nodeStroke,'startarrow', 'block');
+        this.setAttr(nodeStroke,'startarrowlength', 'long');
     }
     
     /* stroke color and width */
@@ -386,7 +367,8 @@ JXG.AbstractRenderer.prototype.updateArc = function(el) {
 };
 
 JXG.VMLRenderer.prototype.drawAngle = function(el) {
-    var circle  = {}, projectedP1, projectedP3, p = {}, angle1, angle2, node, tmp, nodeStroke,
+    var circle  = {}, projectedP1, projectedP3, p = {}, 
+        angle1, angle2, node, tmp, nodeStroke,
         p1 = {}, p3 = {}, node2;
 
     /* some computations */
@@ -418,7 +400,7 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
     /* dashstyle and shadow */
     tmp = el.visProp['dash'];
     nodeStroke = el.rendNodeStroke;    
-    nodeStroke.setAttribute('dashstyle', this.dashArray[tmp]);     
+    this.setAttr(nodeStroke,'dashstyle', this.dashArray[tmp]);     
     this.setShadow(el); 
    
     /* arc fill */
@@ -459,9 +441,9 @@ JXG.VMLRenderer.prototype.drawImage = function(el) {
     
     node = this.container.ownerDocument.createElement('img');
     node.style.position = 'absolute';
-    node.setAttribute('id', el.id);
+    this.setAttr(node,'id', el.id);
 
-    node.setAttribute('src',imageBase64);
+    this.setAttr(node,'src',imageBase64);
     this.container.appendChild(node);
     this.appendChildPrimitive(node,el.displayLevel);
     node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
@@ -526,40 +508,23 @@ JXG.VMLRenderer.prototype.setDashStyle = function(el,visProp) {
     var node;
     if(visProp['dash'] >= 0) {
         node = el.rendNodeStroke;
-        if (document.documentMode==8) {
-            node.dashstyle = this.dashArray[visProp['dash']];
-        } else {
-            node.setAttribute('dashstyle', this.dashArray[visProp['dash']]);
-        }
+        this.setAttr(node,'dashstyle', this.dashArray[visProp['dash']]);
     }
 };
  
 JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
-    var c, o, node, nodeStroke;
-    if (typeof opacity=='function') {
-        o = opacity();
-    } else {
-        o = opacity;
-    }
-    o = (o>0)?o:0;
+    var c = this.eval(color), 
+        o = this.eval(opacity), 
+        node, nodeStroke;
 
-    if (typeof color=='function') {
-        c = color();
-    } else {
-        c = color;
-    }
+    o = (o>0)?o:0;
     if(el.type == JXG.OBJECT_TYPE_TEXT) {
         el.rendNode.style.color = c;
     }        
     else {       
         node = el.rendNode;
-        if (document.documentMode==8) {
-            node.stroked = true;
-            node.strokecolor = c;
-        } else {
-            node.setAttribute('stroked', 'true');
-            node.setAttribute('strokecolor', c);
-        }
+        this.setAttr(node,'stroked', 'true');
+        this.setAttr(node,'strokecolor', c);
         
         if(el.id == 'gridx') {
             nodeStroke = document.getElementById('gridx_stroke')
@@ -571,76 +536,37 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
             nodeStroke = el.rendNodeStroke;
         }
         if (o!=undefined) {
-            if (document.documentMode==8) {
-                nodeStroke.opacity =  (o*100)+'%';  
-            } else {
-                nodeStroke.setAttribute('opacity', (o*100)+'%');  
-            }
+            this.setAttr(nodeStroke,'opacity', (o*100)+'%');  
         }
     }
 };
 
 JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
-    var c, o;
+    var c = this.eval(color), 
+        o = this.eval(opacity);
 
-    if (typeof opacity=='function') {
-        o = opacity();
-    } else {
-        o = opacity;
-    }
     o = (o>0)?o:0;
-    if (typeof color=='function') {
-        c = color();
-    } else {
-        c = color;
-    }
     if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
         if(c == 'none') {
-            if (document.documentMode==8) {
-                el.rendNode2.filled = false;
-            } else {
-                el.rendNode2.setAttribute('filled', 'false');
-            }
+             this.setAttr(el.rendNode2,'filled', 'false');
         }
         else {
-            if (document.documentMode==8) {
-                el.rendNode2.filled = false;
-                el.rendNode2.fillcolor = c; 
-            } else {
-                el.rendNode2.setAttribute('filled', 'true');
-                el.rendNode2.setAttribute('fillcolor', c); 
-            }
+            this.setAttr(el.rendNode2,'filled', 'true');
+            this.setAttr(el.rendNode2,'fillcolor', c); 
             if (o!=undefined) {
-                if (document.documentMode==8) {
-                    el.rendNode2Fill.opacity = (o*100)+'%';
-                } else {
-                    el.rendNode2Fill.setAttribute('opacity', (o*100)+'%');
-                }
+                 this.setAttr(el.rendNode2Fill,'opacity', (o*100)+'%');
             }
         }
     }
     else {
         if(c == 'none') {
-            if (document.documentMode==8) {
-                el.rendNode.filled = false;
-            } else {
-                el.rendNode.setAttribute('filled', 'false');
-            }
+            this.setAttr(el.rendNode,'filled', 'false');
         }
         else {
-            if (document.documentMode==8) {
-                el.rendNode.filled = false;
-                el.rendNode.fillcolor = c; 
-            } else {
-                el.rendNode.setAttribute('filled', 'true');
-                el.rendNode.setAttribute('fillcolor', c); 
-            }
-            if (o!=undefined &&  el.rendNodeFill) {  // Added el.rendNodeFill 29.9.09  A.W.
-                if (document.documentMode==8) {
-                    el.rendNodeFill.opacity = (o*100)+'%';
-                } else {
-                    el.rendNodeFill.setAttribute('opacity', (o*100)+'%');
-                }
+            this.setAttr(el.rendNode,'filled', 'true');
+            this.setAttr(el.rendNode,'fillcolor', c); 
+            if (o!=undefined && el.rendNodeFill) {  // Added el.rendNodeFill 29.9.09  A.W.
+                this.setAttr(el.rendNodeFill,'opacity', (o*100)+'%');
             }
         }
     }
@@ -665,28 +591,16 @@ JXG.VMLRenderer.prototype.setAttributes = function(node,props,vmlprops,visProp) 
     for (i=0;i<len;i++) {
         p = props[i];
         if (visProp[p]!=null) {
-            if (typeof visProp[p]=='function') {
-                val = visProp[p]();
-                val = (val>0)?val:0;
-            } else {
-                val = visProp[p];
-            }
-            if (document.documentMode==8) {
-                node[vmlprops[i]] = val;
-            } else {
-                node.setAttribute(vmlprops[i], val);
-            }
+            val = this.eval(visProp[p]);
+            val = (val>0)?val:0;
+            this.setAttr(node,vmlprops[i], val);
         }
     }
 };
 
 JXG.VMLRenderer.prototype.setGridDash = function(id, node) {
     var node = document.getElementById(id+'_stroke');
-    if (document.documentMode==8) {
-        node.dash = 'Dash';
-    } else {
-        node.setAttribute('dashstyle', 'Dash');
-    }
+    this.setAttr(node,'dashstyle', 'Dash');
 };
 
 /**
@@ -695,12 +609,8 @@ JXG.VMLRenderer.prototype.setGridDash = function(id, node) {
  * @param {int} width The new stroke width to be assigned to the element.
  */
 JXG.VMLRenderer.prototype.setObjectStrokeWidth = function(el, width) {
-    var w, node;
-    if (typeof width=='function') {
-        w = width();
-    } else {
-        w = width;
-    }
+    var w = this.eval(width), 
+        node;
     //w = (w>0)?w:0;
     
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
@@ -727,15 +637,9 @@ JXG.VMLRenderer.prototype.createPrimitive = function(type, id) {
     strokeNode = this.createNode('stroke');
     shadowNode = this.createNode('shadow');
 
-    if (document.documentMode==8) {
-        fillNode['id'] = id+'_fill';
-        strokeNode['id'] = id+'_stroke';
-        shadowNode['id'] = id+'_shadow';
-    } else {
-        fillNode.setAttribute('id', id+'_fill');
-        strokeNode.setAttribute('id', id+'_stroke');
-        shadowNode.setAttribute('id', id+'_shadow');
-    }
+    this.setAttr(fillNode, 'id', id+'_fill');
+    this.setAttr(strokeNode, 'id', id+'_stroke');
+    this.setAttr(shadowNode, 'id', id+'_shadow');
     
     if (type=='circle' || type=='ellipse' ) {
         node = this.createNode('oval');
@@ -748,11 +652,7 @@ JXG.VMLRenderer.prototype.createPrimitive = function(type, id) {
         node.appendChild(strokeNode);
         node.appendChild(shadowNode);   
         pathNode = this.createNode('path');
-        if (document.documentMode==8) {
-            pathNode['id'] = id+'_path';        
-        } else {
-            pathNode.setAttribute('id', id+'_path');        
-        }
+        this.setAttr(pathNode, 'id', id+'_path');        
         node.appendChild(pathNode);
     } else {
         node = this.createNode(type);
@@ -760,42 +660,8 @@ JXG.VMLRenderer.prototype.createPrimitive = function(type, id) {
         node.appendChild(strokeNode);
         node.appendChild(shadowNode);
     }
-    /* create subnodes */
-    /*
-    fillNode = this.container.ownerDocument.createElement('v:fill');
-    fillNode.setAttribute('id', id+'_fill');
-    strokeNode = this.container.ownerDocument.createElement('v:stroke');
-    strokeNode.setAttribute('id', id+'_stroke');
-    shadowNode = this.container.ownerDocument.createElement('v:shadow');
-    shadowNode.setAttribute('id', id+'_shadow');
-    
-    if (type=='circle' || type=='ellipse' ) {
-        node = this.container.ownerDocument.createElement('v:oval');
-        node.appendChild(fillNode);
-        node.appendChild(strokeNode);
-        node.appendChild(shadowNode);
-    } else if (type == 'polygon' || type == 'path' || type == 'shape') {    
-        node = this.container.ownerDocument.createElement('v:shape');
-        node.appendChild(fillNode);
-        node.appendChild(strokeNode);
-        node.appendChild(shadowNode);   
-        pathNode = this.container.ownerDocument.createElement('v:path');
-        pathNode.setAttribute('id', id+'_path');        
-        node.appendChild(pathNode);
-    } else {
-        node = this.container.ownerDocument.createElement('v:'+type);
-        node.appendChild(fillNode);
-        node.appendChild(strokeNode);
-        node.appendChild(shadowNode);
-    }
-    */
     node.style.position = 'absolute';
-    
-    if (document.documentMode==8) {
-        node['id'] = id;
-    } else {
-        node.setAttribute('id', id);
-    }
+    this.setAttr(node, 'id', id);
     
     return node;
 };
@@ -807,19 +673,13 @@ JXG.VMLRenderer.prototype.appendNodesToElement = function(element, type) {
     element.rendNodeFill = document.getElementById(element.id+'_fill');
     element.rendNodeStroke = document.getElementById(element.id+'_stroke');
     element.rendNodeShadow = document.getElementById(element.id+'_shadow');
-
     element.rendNode = document.getElementById(element.id);
 };
 
 JXG.VMLRenderer.prototype.makeArrow = function(node,el,idAppendix) {
     var nodeStroke = el.rendNodeStroke;
-    if (document.documentMode==8) {
-        nodeStroke['endarrow'] = 'block';
-        nodeStroke['endarrowlength'] = 'long';
-    } else {
-        nodeStroke.setAttribute('endarrow', 'block');
-        nodeStroke.setAttribute('endarrowlength', 'long');
-    }
+    this.setAttr(nodeStroke, 'endarrow', 'block');
+    this.setAttr(nodeStroke, 'endarrowlength', 'long');
 };
 
 JXG.VMLRenderer.prototype.makeArrows = function(el) {
@@ -827,46 +687,32 @@ JXG.VMLRenderer.prototype.makeArrows = function(el) {
     
     if(el.visProp['firstArrow']) {
         nodeStroke = el.rendNodeStroke;
-        if (document.documentMode==8) {
-            nodeStroke['startarrow'] = 'block';
-            nodeStroke['startarrowlength'] = 'long';  
-        } else {
-            nodeStroke.setAttribute('startarrow', 'block');
-            nodeStroke.setAttribute('startarrowlength', 'long');                 
-        }
+        this.setAttr(nodeStroke, 'startarrow', 'block');
+        this.setAttr(nodeStroke, 'startarrowlength', 'long');                 
     }
     else {
         nodeStroke = el.rendNodeStroke;
         if(nodeStroke != null) {
-            if (document.documentMode==8) {
-                nodeStroke['startarrow'] = 'none';
-            } else {
-                nodeStroke.setAttribute('startarrow', 'none');
-            }
+            this.setAttr(nodeStroke, 'startarrow', 'none');
         }            
     }
     if(el.visProp['lastArrow']) {
         nodeStroke = el.rendNodeStroke;
-        nodeStroke.setAttribute('id', el.id+"stroke");
-        nodeStroke.setAttribute('endarrow', 'block');
-        nodeStroke.setAttribute('endarrowlength', 'long');            
+        this.setAttr(nodeStroke, 'id', el.id+"stroke");
+        this.setAttr(nodeStroke, 'endarrow', 'block');
+        this.setAttr(nodeStroke, 'endarrowlength', 'long');            
     }
     else {
         nodeStroke = el.rendNodeStroke;
         if(nodeStroke != null) {
-            nodeStroke.setAttribute('endarrow', 'none');
+            this.setAttr(nodeStroke, 'endarrow', 'none');
         }        
     }    
 };
 
 JXG.VMLRenderer.prototype.updateLinePrimitive = function(node,p1x,p1y,p2x,p2y) {
-    if (document.documentMode==8) {
-        node['from'] = [p1x,p1y].join(','); 
-        node['to'] = [p2x,p2y].join(',');      
-    } else {
-        node.setAttribute('from', [p1x,p1y].join(',')); 
-        node.setAttribute('to', [p2x,p2y].join(','));      
-    }
+    this.setAttr(node, 'from', [p1x,p1y].join(',')); 
+    this.setAttr(node, 'to', [p2x,p2y].join(','));      
 };
 
 JXG.VMLRenderer.prototype.updateCirclePrimitive = function(node,x,y,r) {
@@ -896,14 +742,8 @@ JXG.VMLRenderer.prototype.updatePathPrimitive = function(node,pointString,board)
         y = board.canvasHeight;
     node.style.width = x;
     node.style.height = y;
-    if (document.documentMode==8) {
-        node['coordsize'] = [(this.resolution*x),(this.resolution*y)].join(',');
-        node['path'] = pointString.join("");
-    } else {
-        node.setAttribute('coordsize', [(this.resolution*x),(this.resolution*y)].join(','));
-        node.setAttribute('path',pointString.join(""));
-    }
-    //node.points.value = pointString;
+    this.setAttr(node, 'coordsize', [(this.resolution*x),(this.resolution*y)].join(','));
+    this.setAttr(node, 'path',pointString.join(""));
 };
 
 JXG.VMLRenderer.prototype.updatePathStringPrimitive = function(el) {
@@ -975,29 +815,31 @@ JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,el) {
         scr, x, y, 
         pStr = [];
         
-    node.setAttribute('stroked', 'false');
+    this.setAttr(node, 'stroked', 'false');
     for(i=1; i<len-1; i++) {
         scr = el.vertices[i].coords.scrCoords;
         if(scr[1] < minX) {
             minX = scr[1];
         }
-        if(scr[1] > maxX) {
+        else if(scr[1] > maxX) {
             maxX = scr[1];
         }
         if(scr[2] < minY) {
             minY = scr[2];
         }
-        if(scr[2] > maxY) {
+        else if(scr[2] > maxY) {
             maxY = scr[2];
         }
     }
 
     x = Math.round(maxX-minX); // Breite des umgebenden Rechtecks?
     y = Math.round(maxY-minY); // Hoehe des umgebenden Rechtecks?
-    
-    node.style.width = x;
-    node.style.height = y;
-    node.setAttribute('coordsize', x+','+y);
+
+    if (!isNaN(x) && !isNaN(y)) {
+        node.style.width = x;
+        node.style.height = y;
+        this.setAttr(node, 'coordsize', x+','+y);
+    }
      
     scr = el.vertices[0].coords.scrCoords;
     pStr.push(["m ",scr[1],",",scr[2]," l "].join(''));
@@ -1011,7 +853,7 @@ JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,el) {
     }
     pStr.push(" x e");
 
-    node.setAttribute('path',pStr.join(""));
+    this.setAttr(node, 'path',pStr.join(""));
 };
 
 JXG.VMLRenderer.prototype.appendChildPrimitive = function(node,level) {
@@ -1040,17 +882,8 @@ JXG.VMLRenderer.prototype.setPropertyPrimitive = function(node,key,val) {
         case 'stroke-dasharray': keyVml = 'dashstyle'; break;
     }
     if (keyVml!='') {
-        v;
-        if (typeof val=='function') {
-            v = val();
-        } else {
-            v = val;
-        }
-        if (document.documentMode==8) {
-            node[keyVml] = v;
-        } else {
-            node.setAttribute(keyVml, v);
-        }
+        v = this.eval(val);
+        this.setAttr(node, keyVml, v);
     }
 };
 

@@ -956,12 +956,12 @@ JXG.createReflection = function(board, parentArr, atts) {
  * </script><pre>
  */
 JXG.createMirrorPoint = function(board, parentArr, atts) {
-    var point;
+    var p;
 
     /* TODO mirror polynomials */
     if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1])) {
         atts['fixed'] = atts['fixed'] || true;
-        point = JXG.createPoint(board, [function () { return board.algebra.rotation(parentArr[0], parentArr[1], Math.PI); }], atts);
+        p = JXG.createPoint(board, [function () { return board.algebra.rotation(parentArr[0], parentArr[1], Math.PI); }], atts);
 
         for(i=0; i<2; i++)
             parentArr[i].addChild(p);
@@ -970,7 +970,7 @@ JXG.createMirrorPoint = function(board, parentArr, atts) {
         throw ("Can't create mirror point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
     }
 
-    return point;
+    return p;
 };
 
 /**

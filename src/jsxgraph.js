@@ -426,7 +426,7 @@ JXG.getDimensions = function(elementId) {
 };
 
 /** 
-  * addEvent: Abstraction layer for Prototype.js and jQuery
+  * addEvent.
   */
 JXG.addEvent = function( obj, type, fn, owner ) {
     owner['x_internal'+type] = function() {return fn.apply(owner,arguments);};
@@ -436,45 +436,21 @@ JXG.addEvent = function( obj, type, fn, owner ) {
         obj.attachEvent('on'+type, owner['x_internal'+type]);
     }
 };
-/*  
-JXG.addEvent = function( obj, type, fn, owner ) {
-    if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
-        //Event.observe(obj, type, f);
-        owner['x_internal'+type] = fn.bindAsEventListener(owner);
-        Event.observe(obj, type, owner['x_internal'+type]);
-    } else {             // jQuery
-        owner['x_internal'+type] = function() {
-            return fn.apply(owner,arguments);
-        };
-        //$(obj).bind(type,f);
-        $(obj).bind(type,owner['x_internal'+type]);
-    }
-};
-*/
 
 /** 
-  * removeEvent: Abstraction layer for Prototype.js and jQuery
+  * removeEvent.
   */
 JXG.removeEvent = function( obj, type, fn, owner ) {
-    if (typeof obj.addEventListener!='undefined') { // Non-IE browser
-        obj.removeEventListener(type, owner['x_internal'+type], false);
-    } else {  // IE
-        obj.detachEvent('on'+type, owner['x_internal'+type]);
+    try {
+        if (typeof obj.addEventListener!='undefined') { // Non-IE browser
+            obj.removeEventListener(type, owner['x_internal'+type], false);
+        } else {  // IE
+            obj.detachEvent('on'+type, owner['x_internal'+type]);
+        }
+    } catch(e) {
+        //document.getElementById('debug').innerHTML += 'on'+type+': ' + owner['x_internal'+type]+'<br>\n';
     }
 };
-/*
-JXG.removeEvent = function( obj, type, fn, owner ) {
-    if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') {  // Prototype
-        //Event.stopObserving(obj, type, fn);
-        Event.stopObserving(obj, type, owner['x_internal'+type]);
-        //Event.stopObserving(obj, type);
-    } else { // jQuery
-        //$(obj).unbind(type,fn);
-        $(obj).unbind(type,owner['x_internal'+type]);
-    }
-};
-*/
-
 
 JXG.bind = function(fn, owner ) {
     return function() {

@@ -1093,7 +1093,11 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
                 //gxtEl.txt = JXG.GeonextReader.subtreeToString(Data.getElementsByTagName('text')[0]).firstChild.data;
-                gxtEl.txt = Data.getElementsByTagName('text')[0].firstChild.data;
+                try {
+                    gxtEl.txt = Data.getElementsByTagName('text')[0].firstChild.data;
+                } catch (e) {
+                    gxtEl.txt = '';
+                }
                 c = new JXG.Angle(board, gxtEl.first, gxtEl.middle, gxtEl.last, gxtEl.radius, gxtEl.txt, gxtEl.id, gxtEl.name);
                 c.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
@@ -1181,11 +1185,15 @@ this.decodeString = function(str) {
 };
 
 this.prepareString = function(fileStr){
-    if (fileStr.indexOf('GEONEXT')<0) {
-        fileStr = (JXG.GeonextReader.decodeString(fileStr))[0][0];  // Base64 decoding
+    try {
+        if (fileStr.indexOf('GEONEXT')<0) {
+            fileStr = (JXG.GeonextReader.decodeString(fileStr))[0][0];  // Base64 decoding
+        }
+        // Hacks to enable not well formed XML. Will be redone in Algebra.geonext2JS and Board.addConditions
+        fileStr = JXG.GeonextReader.fixXML(fileStr);
+    } catch(e) {
+        fileStr = '';
     }
-    // Hacks to enable not well formed XML. Will be redone in Algebra.geonext2JS and Board.addConditions
-    fileStr = JXG.GeonextReader.fixXML(fileStr);
     return fileStr;
 };
 

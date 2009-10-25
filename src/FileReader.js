@@ -51,19 +51,19 @@ this.parseFileContent = function(url, board, format) {
     }
     this.request.open("GET", url, true);
     if(format.toLowerCase()=='raw') {
-       this.cbp = function() {
-          var request = this.request;
-          if (request.readyState == 4) {
-            board(request.responseText);
-          }
-       }; //).bind(this);        
+        this.cbp = function() {
+            var request = this.request;
+            if (request.readyState == 4) {
+                board(request.responseText);
+            }
+        }; //).bind(this);        
     } else {
-       this.cbp = function() {
-          var request = this.request;
-          if (request.readyState == 4) {
-             this.parseString(request.responseText, board, format, url);
-          }
-       }; //).bind(this);
+        this.cbp = function() {
+            var request = this.request;
+            if (request.readyState == 4) {
+                this.parseString(request.responseText, board, format, url);
+            }
+        }; //).bind(this);
     }
     this.cb = JXG.bind(this.cbp,this);
     this.request.onreadystatechange = this.cb;

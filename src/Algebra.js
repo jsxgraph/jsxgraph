@@ -485,6 +485,7 @@ JXG.Algebra.prototype.intersectCircleLine = function(circle, line) {
             return [2,firstPoint,secondPoint];       
         }
     }
+    return [0];
 };
 
 /**
