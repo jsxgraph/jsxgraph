@@ -213,11 +213,10 @@ JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
 
 JXG.VMLRenderer.prototype.drawArcLine = function(id, radius, angle1, angle2, midpoint, board, el) {
     //var node = this.createPrimitive('arc',id);  doesn't work here
-    
-    var node = this.createNode('arc');
-    var fillNode = this.createNode('fill');
-    var strokeNode = this.createNode('stroke');
-    var shadowNode = this.createNode('shadow');
+    var node = this.createNode('arc'),
+        fillNode = this.createNode('fill'),
+        strokeNode = this.createNode('stroke'),
+        shadowNode = this.createNode('shadow');
 
     this.setAttr(node,'id', id);
     this.setAttr(fillNode,'id', id+'_fill');
@@ -247,27 +246,25 @@ JXG.VMLRenderer.prototype.drawArcLine = function(id, radius, angle1, angle2, mid
 };
 
 JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, point3, board, element) {
-    var node2, x, y, pathNode, pathString;
-    id = id+'sector';
-    
     // createPrimitive doesn't work here...
-    pathNode = this.createNode('path');
-    node2 = this.createNode('shape');
-    var fillNode = this.createNode('fill');
-    var strokeNode = this.createNode('stroke');
-    var shadowNode = this.createNode('shadow');
+    var x, y, pathString,
+        pathNode = this.createNode('path'),
+        node2 = this.createNode('shape'),
+        fillNode = this.createNode('fill'),
+        strokeNode = this.createNode('stroke'),
+        shadowNode = this.createNode('shadow');
  
+    id = id+'sector';
+    this.setAttr(pathNode, 'id', id+'_path');        
     this.setAttr(fillNode,'id', id+'_fill');
     this.setAttr(strokeNode,'id', id+'_stroke');
     this.setAttr(shadowNode,'id', id+'_shadow');    
-    
-    this.setAttr(pathNode, 'id', id+'_path');        
+    this.setAttr(node2,'id', id);
  
     node2.appendChild(fillNode);
     node2.appendChild(strokeNode);
     node2.appendChild(shadowNode);   
     node2.appendChild(pathNode);
-    this.setAttr(node2,'id', id);
     node2.style.position = 'absolute';    
     
     element.rendNode2 = node2;
@@ -633,13 +630,12 @@ JXG.VMLRenderer.prototype.setObjectStrokeWidth = function(el, width) {
 };
 
 JXG.VMLRenderer.prototype.createPrimitive = function(type, id) {
-    var node, fillNode, strokeNode, shadowNode, pathNode;
+    var node, 
+        fillNode = this.createNode('fill'), 
+        strokeNode = this.createNode('stroke'), 
+        shadowNode = this.createNode('shadow'), 
+        pathNode;
     
-    /* create subnodes */
-    fillNode = this.createNode('fill');
-    strokeNode = this.createNode('stroke');
-    shadowNode = this.createNode('shadow');
-
     this.setAttr(fillNode, 'id', id+'_fill');
     this.setAttr(strokeNode, 'id', id+'_stroke');
     this.setAttr(shadowNode, 'id', id+'_shadow');
