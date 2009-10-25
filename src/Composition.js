@@ -90,6 +90,7 @@ JXG.createPerpendicularPoint = function(board, parentArr, atts) {
     p.addChild(t); // notwendig, um auch den Punkt upzudaten
     l.addChild(t);
 
+    t.update();
 
     t.generatePolynomial = function() {
         /*
@@ -247,7 +248,7 @@ JXG.createMidpoint = function(board, parentArr, atts) {
         a = parentArr[0];
         b = parentArr[1];
     }
-    else if(parentArr.length == 1 && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {
+    else if(parentArr.length == 1 && parentArr[0].elementClass == JXG.OBJECT_CLASS_LINE) {
         a = parentArr[0].point1;
         b = parentArr[0].point2;
     }
@@ -265,6 +266,8 @@ JXG.createMidpoint = function(board, parentArr, atts) {
                                       function () { return (a.coords.usrCoords[2] + b.coords.usrCoords[2])/2.; }], atts);
     a.addChild(t);
     b.addChild(t);
+
+    t.update();
 
     t.generatePolynomial = function() {
         /*
@@ -927,6 +930,8 @@ JXG.createReflection = function(board, parentArr, atts) {
     p.addChild(r);
     l.addChild(r);
 
+    r.update();
+
     return r;
 };
 
@@ -964,13 +969,15 @@ JXG.createMirrorPoint = function(board, parentArr, atts) {
         p = JXG.createPoint(board, [function () { return board.algebra.rotation(parentArr[0], parentArr[1], Math.PI); }], atts);
 
         for(i=0; i<2; i++)
-            parentArr[i].addChild(p);
+            parentArr[i].addChild(point);
     }
     else {
         throw new Error("JSXGraph: Can't create mirror point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
     }
 
-    return p;
+    point.update();
+
+    return point;
 };
 
 /**
