@@ -201,7 +201,7 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
        this.calcStraight(el,screenCoords1,screenCoords2); 
     //} 
     this.updateLinePrimitive(el.rendNode,screenCoords1.scrCoords[1],screenCoords1.scrCoords[2],
-            screenCoords2.scrCoords[1],screenCoords2.scrCoords[2]);
+            screenCoords2.scrCoords[1],screenCoords2.scrCoords[2],el.board);
 
     // Update the image which is connected to the line:
     if (el.image!=null) {
@@ -497,7 +497,7 @@ JXG.AbstractRenderer.prototype.updateArrow = function(/** JXG.Line */ el) {
         }
     }
     this.updateLinePrimitive(el.rendNode,el.point1.coords.scrCoords[1],el.point1.coords.scrCoords[2],
-        el.point2.coords.scrCoords[1],el.point2.coords.scrCoords[2]);
+        el.point2.coords.scrCoords[1],el.point2.coords.scrCoords[2],el.board);
 };
 
 

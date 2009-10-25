@@ -645,7 +645,7 @@ JXG.VMLRenderer.prototype.createPrimitive = function(type, id) {
         node.appendChild(fillNode);
         node.appendChild(strokeNode);
         node.appendChild(shadowNode);
-    } else if (type == 'polygon' || type == 'path' || type == 'shape') {    
+    } else if (type == 'polygon' || type == 'path' || type == 'shape' || type == 'line') {    
         node = this.createNode('shape');
         node.appendChild(fillNode);
         node.appendChild(strokeNode);
@@ -709,9 +709,14 @@ JXG.VMLRenderer.prototype.makeArrows = function(el) {
     }    
 };
 
-JXG.VMLRenderer.prototype.updateLinePrimitive = function(node,p1x,p1y,p2x,p2y) {
+JXG.VMLRenderer.prototype.updateLinePrimitive = function(node,p1x,p1y,p2x,p2y,board) {
+    /* 
     this.setAttr(node, 'from', [p1x,p1y].join(',')); 
     this.setAttr(node, 'to', [p2x,p2y].join(','));      
+    */
+    var s, r = this.resolution;
+    s = ['m ',r*p1x,', ',r*p1y,' l ',r*p2x,', ',r*p2y];
+    this.updatePathPrimitive(node,s,board);
 };
 
 JXG.VMLRenderer.prototype.updateCirclePrimitive = function(node,x,y,r) {
