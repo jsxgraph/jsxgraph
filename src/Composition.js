@@ -969,15 +969,15 @@ JXG.createMirrorPoint = function(board, parentArr, atts) {
         p = JXG.createPoint(board, [function () { return board.algebra.rotation(parentArr[0], parentArr[1], Math.PI); }], atts);
 
         for(i=0; i<2; i++)
-            parentArr[i].addChild(point);
+            parentArr[i].addChild(p);
     }
     else {
         throw new Error("JSXGraph: Can't create mirror point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
     }
 
-    point.update();
+    p.update();
 
-    return point;
+    return p;
 };
 
 /**
