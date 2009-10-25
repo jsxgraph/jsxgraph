@@ -1,0 +1,144 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/Triangle.js"></script>
+</head>
+<body>
+<h2>Watt's Curve</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 10, 14, -2], axis: true, grid: false});
+    p1 = board.createElement('point', [0, 0], {style:2,name:"A"});
+    p2 = board.createElement('point', [6, 0], {style:2,name:"B"});
+    p3 = board.createElement('point', [4, 4], {style:2,name:"C"});
+
+    t1 = board.createElement('triangle', [p1, p2, p3], {strokeWidth: '1px'});
+
+    m1 = board.createElement('point', [4, 1.5], {style:2,name:"X"});
+
+    l1 = board.createElement('perpendicularpoint', [m1, t1.c]);
+    l2 = board.createElement('perpendicularpoint', [m1, t1.a]);
+    l3 = board.createElement('perpendicularpoint', [m1, t1.b]);
+
+    t2 = board.createElement('triangle', [l1, l2, l3], {strokeWidth: '1px'});
+
+    // Get area of triangle given by the three points A, B, C
+    getTriangleArea = function(A, B, C, square) {
+        var a = B.coords.distance(JXG.COORDS_BY_USER, C.coords),
+            b = A.coords.distance(JXG.COORDS_BY_USER, C.coords),
+            c = B.coords.distance(JXG.COORDS_BY_USER, A.coords),
+            s = (typeof square == 'undefined' ? true : square);
+
+        if (s)
+            return (4*a*a*c*c-(a*a+c*c-b*b)*(a*a+c*c-b*b));
+        else
+            return Math.sqrt((4*a*a*c*c-(a*a+c*c-b*b)*(a*a+c*c-b*b))/16.);
+    };
+
+    te = board.createElement('text', [10, 5, function () { return getTriangleArea(l1, l2, l3, false); }]);
+
+    // dependency and polynomial hacking
+    m1.ancestors[l1.id] = l1;
+    m1.ancestors[l2.id] = l2;
+    m1.ancestors[l3.id] = l3;
+    m1.ancestors[p1.id] = p1;
+    m1.ancestors[p2.id] = p2;
+    m1.ancestors[p3.id] = p3;
+
+    m1.generatePolynomial = function () {
+        var as16 = getTriangleArea(l1, l2, l3),
+            as = '((('+l2.symbolic.x+')-('+l3.symbolic.x+'))^2+(('+l2.symbolic.y+')-('+l3.symbolic.y+'))^2)',
+            bs = '((('+l1.symbolic.x+')-('+l3.symbolic.x+'))^2+(('+l1.symbolic.y+')-('+l3.symbolic.y+'))^2)',
+            cs = '((('+l2.symbolic.x+')-('+l1.symbolic.x+'))^2+(('+l2.symbolic.y+')-('+l1.symbolic.y+'))^2)',
+            poly = '4*'+as+'*'+cs+'-('+as+'+'+cs+'-'+bs+')*('+as+'+'+cs+'-'+bs+')-('+as16+')';
+
+        return ['4*'+as+'*'+cs+'-('+as+'+'+cs+'-'+bs+')*('+as+'+'+cs+'-'+bs+')-('+as16+')'];
+    };
+
+    loc = board.createElement('locus', [m1], {strokeColor: 'red', strokeWidth: '1px'});
+
+    createControlElements = function () {
+        glider = board.createElement('glider', [0, 5, loc]);
+        lg1 = board.createElement('perpendicularpoint', [glider, t1.a]);
+        lg2 = board.createElement('perpendicularpoint', [glider, t1.b]);
+        lg3 = board.createElement('perpendicularpoint', [glider, t1.c]);
+
+        tecontrol = board.createElement('text', [10, 7, function () { return getTriangleArea(lg1, lg2, lg3, false); }]);
+    }
+
+
+    function groebner(p, debug) {
+        if(debug)
+            JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb, true);
+        else
+            JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
+    }
+
+    function symbcoords(p) {
+        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p, 'u', 'underscore');
+
+        $('debug').innerHTML = '';
+        for(var o in board.objects) {
+            if(typeof board.objects[o].symbolic.x != 'undefined') {
+                $('debug').innerHTML += board.objects[o].name + ': ';
+                $('debug').innerHTML += '(' + board.objects[o].symbolic.x + ', ' + board.objects[o].symbolic.y + ')<br />';
+                board.objects[o].label.content.setText(board.objects[o].name + ' (' + board.objects[o].symbolic.x + ', ' + board.objects[o].symbolic.y + ')');
+            }
+        }
+        board.update();
+        JXG.Math.Symbolic.clearSymbolicCoordinates(board);
+    }
+
+    function genpoly(p, method) {
+        var m = 'underscore';
+        if(method == 2)
+            m = 'brace';
+        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p, 'u', m);
+
+        var poly = JXG.Math.Symbolic.generatePolynomials(board, p, false);
+
+        if(method==2)
+            $('debug').innerHTML = 'Ideal(';
+        else
+            $('debug').innerHTML = '<ul>';
+
+        for(var i=0; i<poly.length; i++) {
+            if(method==2) {
+                $('debug').innerHTML += '' + poly[i];
+                if(i < poly.length-1)
+                    $('debug').innerHTML += ', ';
+            } else {
+                poly[i] = poly[i].replace(/\^(\d+)/g,'<sup>$1</sup>');
+                poly[i] = board.algebra.replaceSub(poly[i]);
+                poly[i] = poly[i].replace(/\*/g,'');
+                $('debug').innerHTML += '<li>' + poly[i] + '</li>';
+            }
+        }
+        if(method==2)
+            $('debug').innerHTML += ')';
+        else
+            $('debug').innerHTML += '</ul>';
+
+        JXG.Math.Symbolic.clearSymbolicCoordinates(board);
+    }
+
+    function cb(poly) {
+        alert(poly[0].replace(/\*\*(\d+)/g,'<sup>$1</sup>').replace(/\*/g,''));
+    }
+  /* ]]> */
+  </script>
+<a href="#" onclick="symbcoords(m1);">Generate symbolic coordinates</a><br />
+<a href="#" onclick="genpoly(m1, 1);">Build polynomials (human readable)</a><br />
+<a href="#" onclick="genpoly(m1, 2);">Build polynomials (cocoa ideal generator)</a><br />
+<a href="#" onclick="groebner(m1);">Generate locus</a><br />
+<a href="#" onclick="createControlElements();">Control the results</a><br />
+<div id="debug" style="display:block; width: 400px;"></div>
+</body>
+</html>

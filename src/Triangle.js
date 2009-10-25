@@ -24,9 +24,9 @@
 */
 
 /**
- * @fileoverview Example file for a triangle implemented as a extension to JSXGraph. 
+ * @fileoverview Example file for a triangle implemented as a extension to JSXGraph.
  */
- 
+
 /**
  * Creates a new triangle using three points and the given attributes.
  * @param {JXG.Board} board The board the triangle is put on.
@@ -45,27 +45,27 @@
  * </table>
  */
 JXG.createTriangle = function(board, parents, attributes) {
-    
+
     if(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2])) {
         var p1 = parents[0], p2 = parents[1], p3 = parents[2];
         var l1, l2, l3;
-        
+
         if((attributes == null) || (typeof attribues == undefined))
             attributes = new Object();
-            
+
         attributes.straightFirst = false;
         attributes.straightLast = false;
-        
+
         l1 = board.createElement('line', [p1, p2], attributes);
         l2 = board.createElement('line', [p2, p3], attributes);
         l3 = board.createElement('line', [p3, p1], attributes);
-        
+
         var g = board.createElement('group', [p1, p2, p3]);
 //        g.addPoints([p1, p2, p3]);
-                
-        return {A: p1, B: p2, C: p3, a: l1, b: l2, c: l3, G: g, multipleElements: true};
+
+        return {A: p1, B: p2, C: p3, a: l2, b: l3, c: l1, G: g, multipleElements: true};
     } else {
-        throw new Error("JSXGraph: Can't create triangle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");    
+        throw new Error("JSXGraph: Can't create triangle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
     }
 };
 

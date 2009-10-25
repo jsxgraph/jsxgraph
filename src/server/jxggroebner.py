@@ -22,7 +22,7 @@ cmd_cocoa = "cocoa"
 #cmd_cocoa = r"C:\cocoa\cocoa.bat"
 
 # Shouldn't be changed, except you know what you're doing
-debug = False
+debug = True
 
 ############################
 
@@ -111,7 +111,7 @@ if debug:
 # If not done within the following amount
 # of seconds, the subprocess will be terminated
 
-time_left = 10
+time_left = 20
 
 class TimeoutException(Exception): pass
 
