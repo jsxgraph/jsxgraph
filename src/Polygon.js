@@ -224,7 +224,7 @@ JXG.createPolygon = function(board, parents, atts) {
     for(var i=0; i<parents.length; i++) {
         parents[i] = JXG.getReference(board, parents[i]);
         if(!JXG.isPoint(parents[i]))
-            throw ("Can't create polygon with parent types other than 'point'.");
+            throw new Error("JSXGraph: Can't create polygon with parent types other than 'point'.");
     }
     
     el = new JXG.Polygon(board, parents, atts["borders"], atts["id"], atts["name"], atts["withLines"],atts['withLabel'],atts['lineLabels']);

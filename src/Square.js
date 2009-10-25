@@ -40,7 +40,7 @@ JXG.createSquare = function(board, parentArr, atts) {
         
         return [p3, p4, l1, l2, l3, l4];
     } else {
-        throw ("Can't create square with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
+        throw new Error("JSXGraph: Can't create square with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");    
     }
 };
 

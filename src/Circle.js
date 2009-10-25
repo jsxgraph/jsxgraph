@@ -674,7 +674,7 @@ JXG.createCircle = function(board, parentArr, atts) {
         arr[0].setProperty({visible:false});
         return arr[1];
     } else
-        throw ("Can't create circle with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
+        throw new Error("JSXGraph: Can't create circle with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
     
     return el;
 };

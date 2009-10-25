@@ -307,7 +307,7 @@ JXG.createArc = function(board, parents, attributes) {
         el = new JXG.Arc(board, parents[0], parents[1], parents[2], attributes['id'], attributes['name'],attributes['withLabel']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
-        throw ("Can't create Arc with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
+        throw new Error("JSXGraph: Can't create Arc with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
 
     return el;
 };
@@ -337,7 +337,7 @@ JXG.createSemicircle = function(board, parents, attributes) {
         el = new JXG.Arc(board, mp, parents[1], parents[0], attributes['id'], attributes['name'],attributes['withLabel']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
-        throw ("Can't create Semicircle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+        throw new Error("JSXGraph: Can't create Semicircle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
 
     return el;
 };
@@ -392,7 +392,7 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
         };
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
-        throw ("Can't create Circumcircle Arc with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
+        throw new Error("JSXGraph: create Circumcircle Arc with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
 
 
     return el;

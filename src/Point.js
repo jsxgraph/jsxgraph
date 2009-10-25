@@ -1109,7 +1109,7 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
             el.addTransform(parents[0],parents[1]);
         }
         else {// Failure
-            throw ("JSXGraph error: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         }
     } else {
         el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);
@@ -1276,7 +1276,7 @@ JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
         (parents[0].elementClass != JXG.OBJECT_CLASS_LINE && parents[0].elementClass != JXG.OBJECT_CLASS_CIRCLE) ||
         (parents[1].elementClass != JXG.OBJECT_CLASS_LINE && parents[1].elementClass != JXG.OBJECT_CLASS_CIRCLE) ) {
         // Failure
-        throw ("JSXGraph error: Can't create 'other intersection point' with parent types '" + (typeof parents[0]) + "',  '" + (typeof parents[1])+ "'and  '" + (typeof parents[2]) + "'.");
+        throw new Error("JSXGraph: Can't create 'other intersection point' with parent types '" + (typeof parents[0]) + "',  '" + (typeof parents[1])+ "'and  '" + (typeof parents[2]) + "'.");
     }
     else {
         el = board.createElement('point', [board.otherIntersection(parents[0], parents[1], parents[2])], attributes);

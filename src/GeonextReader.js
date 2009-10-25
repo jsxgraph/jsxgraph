@@ -882,7 +882,7 @@ this.readGeonext = function(tree,board) {
                     board.createElement('perpendicularpoint', [gxtEl.defEl[1], gxtEl.defEl[0]], {name: gxtEl.outputName, id: gxtEl.outputId});
                 }
                 else {
-                    throw('GEONExT-Element ' + gxtEl.typeName + ' not yet implemented');
+                    throw new Error("JSXGraph: GEONExT-Element " + gxtEl.typeName + ' not yet implemented');
                 }
                 /* noch die Eigenschaften der uebrigen Elemente setzen */
                 if(gxtEl.typeName == "MIDPOINT" || gxtEl.typeName == "MIRROR_LINE" ||

@@ -201,7 +201,7 @@ JXG.createSector = function(board, parentArr, atts) {
         el = new JXG.Sector(board, parentArr[0], parentArr[1], parentArr[2], atts["ids"], atts["names"], atts['id']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
-        throw ("Can't create sector with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");
+        throw new Error("JSXGraph: Can't create sector with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");
 
     return el;
 };
@@ -257,7 +257,7 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
         el.point4.setProperty({visible:false});
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
-        throw ("Can't create circumcircle sector with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
+        throw new Error("JSXGraph: Can't create circumcircle sector with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
 
     return el;
 };

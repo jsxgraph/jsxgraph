@@ -65,7 +65,7 @@ JXG.createTriangle = function(board, parents, attributes) {
                 
         return {A: p1, B: p2, C: p3, a: l1, b: l2, c: l3, G: g, multipleElements: true};
     } else {
-        throw ("Can't create triangle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");    
+        throw new Error("JSXGraph: Can't create triangle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");    
     }
 };
 

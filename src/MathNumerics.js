@@ -234,7 +234,7 @@ JXG.Math.Numerics.NewtonCotes = function(/** array */ interval, /** function */ 
             break;
         case JXG.INT_SIMPSON:
             if (this.number_of_nodes%2 > 0) {
-                throw "Error: INT_SIMPSON requires JXG.Math.Numerics.number_of_nodes dividable by 2.";
+                throw new Error("JSXGraph:  INT_SIMPSON requires JXG.Math.Numerics.number_of_nodes dividable by 2.");
             }
             number_of_intervals = this.number_of_nodes / 2.0;
             integral_value = f(interval[0]) + f(interval[1]);
@@ -254,7 +254,7 @@ JXG.Math.Numerics.NewtonCotes = function(/** array */ interval, /** function */ 
             break;
         default:
             if (this.number_of_nodes%4 > 0) {
-                throw "Error in INT_MILNE: JXG.Math.Numerics.number_of_nodes must be a multiple of 4";
+                throw new Error("JSXGraph: Error in INT_MILNE: JXG.Math.Numerics.number_of_nodes must be a multiple of 4");
             }
             number_of_intervals = this.number_of_nodes * 0.25;
             integral_value = 7.0 * (f(interval[0]) + f(interval[1]));
@@ -296,7 +296,7 @@ JXG.Math.Numerics.splineDef = function(/** JXG.Math.Vector */ x, /** JXG.Math.Ve
         F;
         
     if (x.length != y.length)
-        throw "Error in JXG.Math.Numerics.splineDef: Input vector dimensions do not match.";
+        throw new Error("JSXGraph: Error in JXG.Math.Numerics.splineDef: Input vector dimensions do not match.");
     
     for (i=0; i<n; i++) {
         pair = {X: x[i], Y: y[i]};
@@ -362,7 +362,7 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
         y0, i, j, a, b, c, d, x_;
 
     if (n != y.length)
-        throw "Error in JXG.Math.Numerics.splineEval: Defining vector dimensions do not match.";
+        throw new Error("JSXGraph: Error in JXG.Math.Numerics.splineEval: Defining vector dimensions do not match.");
     
     // number of points to be evaluated
     if(JXG.isArray(x0)) {
@@ -377,7 +377,7 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
         // is x0 in defining interval?
         if( (x0[i] < x[0]) || (x[i] > x[n-1]))
             return 'NaN';
-//            throw "Error in JXG.Math.Numerics.splineEval: Evaluation point outside spline interval.";
+//            throw new Error("JSXGraph: Error in JXG.Math.Numerics.splineEval: Evaluation point outside spline interval.");
         
         // determine part of spline in which x0 lies
         j;
@@ -666,7 +666,7 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
     } else if (JXG.isNumber(degree)) {
         deg = function(){return degree;};
     } else {
-        throw ("JSXGraph error: Can't create regressionPolynomial from degree of type'" + (typeof degree) + "'.");
+        throw new Error("JSXGraph: Can't create regressionPolynomial from degree of type'" + (typeof degree) + "'.");
     }
     
     if (arguments.length==3 && JXG.isArray(dataX) && JXG.isArray(dataY)) {              // Parameters degree, dataX, dataY
@@ -677,7 +677,7 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
     } else if ( arguments.length==2 && JXG.isArray(dataX) && JXG.isPoint(dataX[0]) ) {  // Parameters degree, point array
         inputType = 1;
     } else {
-        throw ("JSXGraph error: Can't create regressionPolynomial. Wrong parameters.");
+        throw new Error("JSXGraph: Can't create regressionPolynomial. Wrong parameters.");
     }
     
     var fct = function(x,suspendedUpdate){

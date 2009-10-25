@@ -866,7 +866,7 @@ JXG.createSpline = function(board, parents, attributes) {
                 } else {
                     for(i=0; i<parents.length; i++) {
                         if(JXG.isPoint(parents[i])) {
-                            //throw "JXG.createSpline: Parents has to be an array of JXG.Point.";
+                            //throw new Error("JSXGraph: JXG.createSpline: Parents has to be an array of JXG.Point.");
                             x.push(parents[i].X());
                             y.push(parents[i].Y());
                         } else if (JXG.isArray(parents[i]) && parents[i].length == 2) {     // given as [[x1,y1], [x2, y2], ...]
@@ -957,11 +957,11 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     f = parents[0]; 
     n = JXG.createFunction(parents[1],board,'');
     if (n==null) {
-        throw "JXG.createRiemannsum: argument '2' n has to be number or function.";
+        throw new Error("JSXGraph: JXG.createRiemannsum: argument '2' n has to be number or function.");
     }
     type = JXG.createFunction(parents[2],board,'',false);
     if (type==null) {
-        throw "JXG.createRiemannsum: argument 3 'type' has to be string or function.";
+        throw new Error("JSXGraph: JXG.createRiemannsum: argument 3 'type' has to be string or function.");
     }
 
     par = ['x', [0], [0]].concat(parents.slice(3));

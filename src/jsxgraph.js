@@ -283,7 +283,7 @@ JXG.JSXGraph = new function (forceRenderer) {
         this.elements[element] = creator;
 
         if(JXG.Board.prototype['_' + element])
-        	throw "Can't create wrapper method in JXG.Board because member '_" + element + "' already exists'";
+        	throw new Error("JSXGraph: Can't create wrapper method in JXG.Board because member '_" + element + "' already exists'");
         JXG.Board.prototype['_' + element] = function (parents, attributes) {
         	return this.createElement(element, parents, attributes);
         };
@@ -399,7 +399,7 @@ JXG.getDimensions = function(elementId) {
     // Borrowed from prototype.js
     element = document.getElementById(elementId);
     if (element==null) {
-        throw ("\nJSXGraph error: HTML container element '" + (elementId) + "' not found.");
+        throw new Error("\nJSXGraph: HTML container element '" + (elementId) + "' not found.");
     }
     
     display = element.style['display'];

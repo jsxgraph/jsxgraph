@@ -174,7 +174,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      */
     this.containerObj = document.getElementById(this.container);
     if (this.containerObj==null) {
-        throw ("\nJSXGraph error: HTML container element '" + (box) + "' not found.");
+        throw new Error("\nJSXGraph: HTML container element '" + (box) + "' not found.");
     }
     //this.containerObj.undoPositioned;  //???
 
@@ -2033,11 +2033,11 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     if(JXG.JSXGraph.elements[elementType] != null) {
         el = JXG.JSXGraph.elements[elementType](this, parents, attributes);
     } else {
-        throw "JXG.createElement: Unknown element type given: "+elementType;
+        throw new Error("JSXGraph: JXG.createElement: Unknown element type given: "+elementType);
     }
 
     if (el==undefined) {
-        //throw "JXG.createElement: failure creating "+elementType;
+        //throw new Error("JSXGraph: JXG.createElement: failure creating "+elementType);
         return;
     };
 

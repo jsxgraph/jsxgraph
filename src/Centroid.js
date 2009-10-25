@@ -57,7 +57,7 @@ JXG.createCentroid = function(board, parents, attributes) {
         
         return cent;
     } else {
-        throw ("Can't create centroid with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");    
+        throw new Error("JSXGraph: Can't create centroid with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");    
     }
 };
 

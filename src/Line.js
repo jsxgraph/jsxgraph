@@ -830,7 +830,7 @@ JXG.createLine = function(board, parents, atts) {
             p1 = parents[0]();
             constrained = true;
         } else
-            throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
 
         if (parents[1].length>1) { // point 2 given by coordinates
             p2 = board.createElement('point', parents[1], {visible:false,fixed:true});
@@ -840,7 +840,7 @@ JXG.createLine = function(board, parents, atts) {
             p2 = parents[1]();
             constrained = true;
         } else
-            throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel']);
         if(constrained) {
         	el.constrained = true;
@@ -856,7 +856,7 @@ JXG.createLine = function(board, parents, atts) {
             } else if (typeof parents[i]=='function') {
                 c[i] = parents[i];
             } else {
-                throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2])+ "'.");
+                throw new Error("JSXGraph: Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2])+ "'.");
                 return;
             }
         }
@@ -879,7 +879,7 @@ JXG.createLine = function(board, parents, atts) {
         el.constrained = true;
         el.funps = parents[0];
     } else
-        throw ("Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+        throw new Error("JSXGraph: Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     return el;
 };
 
@@ -974,7 +974,7 @@ JXG.createArrow = function(board, parents, attributes) {
         el.setArrow(false,true);
     //} // Ansonsten eine fette Exception um die Ohren hauen
     //else
-    //    throw ("Can't create arrow with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+    //    throw new Error("JSXGraph: Can't create arrow with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
 
     return el;
 };
@@ -1055,7 +1055,7 @@ JXG.createAxis = function(board, parents, attributes) {
         line.defaultTicks = defTicks;
     }
     else
-        throw ("Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+        throw new Error("JSXGraph: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
 
     return line;
 };
@@ -1102,10 +1102,10 @@ JXG.createTangent = function(board, parents, attributes) {
             c = parents[0];
             p = parents[1];
         } else {
-            throw ("Can't create normal with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create normal with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         }
     } else {
-        throw ("Can't create normal with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+        throw new Error("JSXGraph: Can't create normal with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     }
 
     if (attributes == null)

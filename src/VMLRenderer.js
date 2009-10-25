@@ -350,6 +350,9 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     if(el.visProp['draft']) {
        this.setDraft(el);
     }
+    if(!el.visProp['visible']) {
+        el.hideElement(el);
+    }
 };
 
 /**

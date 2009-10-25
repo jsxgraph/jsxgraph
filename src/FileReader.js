@@ -68,7 +68,11 @@ this.parseFileContent = function(url, board, format) {
     this.cb = JXG.bind(this.cbp,this);
     this.request.onreadystatechange = this.cb;
 
-    this.request.send(null);
+    try {
+        this.request.send(null);
+    } catch (e) {
+        throw new Error("JSXGraph: problems opening " + url + " !");
+    }
 }; // end: this.parseFileContent
 
 this.cleanWhitespace = function(el) {
