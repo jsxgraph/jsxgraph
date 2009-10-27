@@ -254,6 +254,12 @@ this.readGeonext = function(tree,board) {
     board.stretchX = board.zoomX*board.unitX;
     board.stretchY = board.zoomY*board.unitY;
 
+    if (board.options.takeSizeFromFile) {
+        board.resizeContainer(boardTmp.width,boardTmp.height);
+        //board.setBoundingBox([1*boardTmp.viewportLeft,1*boardTmp.viewportTop,
+        //                      1*boardTmp.viewportRight,1*boardTmp.viewportBottom],true);
+    }
+
     if(1*boardTmp.fontSize != 0) {
         board.fontSize = 1*boardTmp.fontSize;
     }
@@ -261,7 +267,6 @@ this.readGeonext = function(tree,board) {
         board.fontSize = 12;
     }
     board.geonextCompatibilityMode = true;
-    //board.resizeContainer(boardTmp.width,boardTmp.height);
 
     delete(JXG.JSXGraph.boards[board.id]);
     board.id = boardTmp.id;

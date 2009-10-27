@@ -33,6 +33,7 @@ JXG.Options = function() {
     this.fontSize = 12;
     this.showCopyright = true;
     this.showNavigation = true;
+    this.takeSizeFromFile = true; // If true, the construction - when read from a file or string - the size of the div can be changed.
 
     /* grid options */
     this.grid = new Object();
@@ -180,6 +181,7 @@ JXG.Options.prototype.useStandardOptions = function(board) {
     board.snapToGrid = this.grid.snapToGrid;
     board.snapSizeX = this.grid.SnapSizeX;
     board.snapSizeY = this.grid.SnapSizeY;
+    board.takeSizeFromFile = this.takeSizeFromFile;
 
     for(var el in board.objects) {
         if(board.objects[el].type == JXG.OBJECT_TYPE_POINT) {
