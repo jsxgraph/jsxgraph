@@ -6,11 +6,11 @@
 /~ Non-associative tokens ~/
     '\('
     '\)'
-    '[0-9]+'                        INT    [* %match = parseInt( %match ); *]
-    '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+' FLOAT  [* %match = function() {return parseFloat( %match ); }; *]
-    '\&[a-zA-Z]+\;'                 HTML   [* %match = String( %match ) *]
-    '[a-zA-Z]+(\_*[a-zA-Z0-9]+)*'   VAR    [* %match = "registeredElements['"+ %match +"'].id" *]
-    '\"[a-zA-Z0-9\.\ ]*\"'          STRING [* %match = String( %match ) *]
+    '[0-9]+'                        INT    [* %match = JXG.GeogebraReader.ggbMatch('int', %match) *]
+    '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+' FLOAT  [* %match = JXG.GeogebraReader.ggbMatch('float', %match) *]
+    '\&[a-zA-Z]+\;'                 HTML   [* %match = JXG.GeogebraReader.ggbMatch('html', %match); *]
+    '[a-zA-Z]+(\_*[a-zA-Z0-9]+)*'   VAR    [* %match = JXG.GeogebraReader.ggbMatch('var', %match); *]
+    '\"[a-zA-Z0-9\.\ ]*\"'          STRING [* %match = JXG.GeogebraReader.ggbMatch('string', %match); *]
     ;
 
 /~ Left-associative tokens, lowest precedence ~/
@@ -29,21 +29,21 @@
 
 /~ --- Grammar specification --- ~/
 
-p:      e              [* JXG.GeogebraReader.debug( %1 ); *]
+p:      e              [* JXG.GeogebraReader.ggbAct('error', %1); *]
         ;
 
-e:        e ',' e      [* %% = "x: "+ %1 +", y: "+ %3; *]
-        | e '+' e      [* %% = %1 + %3; *]
-        | e '-' e      [* %% = %1 - %3; *]
-        | e '*' e      [* %% = %1 * %3; *]
-        | e '/' e      [* %% = %1 / %3; *]
-        | e '^' e      [* %% = Math.pow(%1, %3); *]
-        | '-' e &'*'   [* %% = %2 * -1; *]
-        | '(' e ')'    [* %% = %2; *]
-        | VAR
-        | STRING '+' e /~ &quot;&quot; + (1 - p_2) ~/
-        | INT
-        | FLOAT
-        | HTML
-        | STRING       /~ &quot;F&quot; ~/
+e:        e ',' e      [* %% = JXG.GeogebraReader.ggbAct('coord', %1, %3, p) *]
+        | e '+' e      [* %% = JXG.GeogebraReader.ggbAct('add', %1, %3); *]
+        | e '-' e      [* %% = JXG.GeogebraReader.ggbAct('sub', %1, %3); *]
+        | e '*' e      [* %% = JXG.GeogebraReader.ggbAct('mult', %1, %3); *]
+        | e '/' e      [* %% = JXG.GeogebraReader.ggbAct('div', %1, %3); *]
+        | e '^' e      [* %% = JXG.GeogebraReader.ggbAct('pow', %1, %3); *]
+        | '-' e &'*'   [* %% = JXG.GeogebraReader.ggbAct('negmult') *]
+        | '(' e ')'    [* %% = JXG.GeogebraReader.ggbAct('bra', %2); *]
+        | VAR          [* %% = JXG.GeogebraReader.ggbAct('var', %1); *]
+        | STRING '+' e [* %% = JXG.GeogebraReader.ggbAct('string', %1); *]
+        | INT          [* %% = JXG.GeogebraReader.ggbAct('int', %1); *]
+        | FLOAT        [* %% = JXG.GeogebraReader.ggbAct('float', %1); *]
+        | HTML         [* %% = JXG.GeogebraReader.ggbAct('html', %1); *]
+        | STRING       [* %% = JXG.GeogebraReader.ggbAct('string', %1); *]
         ;

@@ -1,13 +1,118 @@
 JXG.GeogebraReader = new function() {
 
+this.registeredElements = [];
+/**
+ * Identifying non-associative tokens
+ * @param {} 
+ * @return {} 
+ */
+this.ggbMatch = function(type, att) {
+  switch(type.toLowerCase()) {
+    case 'int':
+      return function() { return parseInt(att); };
+    break;
+    case 'float':
+      return function() { return parseFloat(att); };
+    break;
+    case 'html':
+      return function() { return String(att); };
+    break;
+    case 'var':
+      JXG.GeogebraReader.debug("Geparstes Element/Variable: "+ att);
+      // Falls das Element noch nicht existiert, muss es erzeugt werden
+      if(typeof JXG.GeogebraReader.registeredElements[att] == 'undefined' || JXG.GeogebraReader.registeredElements[att] == '') {
+        var input = JXG.GeogebraReader.getElement(tree, att);
+        JXG.GeogebraReader.registeredElements[att] = JXG.GeogebraReader.writeElement(tree, board, input);
+        JXG.GeogebraReader.debug("regged: "+ att +" (id: "+ JXG.GeogebraReader.registeredElements[att].id +")");
+      }
+      return JXG.GeogebraReader.registeredElements[att];
+    break;
+    case 'string':
+      return function() { return String(att); };
+    break;
+  }
+}
+
+this.ggbAct = function(type, m, n, p) {
+  var v1 = m, v2 = n;
+  switch(type.toLowerCase()) {
+    case 'error':
+      JXG.GeogebraReader.debug("<b style='color:red'>Fehler:</b> "+ v1);
+    break;
+    case 'coord':
+      var s1 = (JXG.GeogebraReader.registeredElements[v1])
+               ? JXG.getReference(board, JXG.GeogebraReader.registeredElements[v1].id)
+               : v1;
+      var s2 = (JXG.GeogebraReader.registeredElements[v2])
+               ? JXG.getReference(board, JXG.GeogebraReader.registeredElements[v2].id)
+               : v2;
+
+      JXG.GeogebraReader.debug("<br/><b>Aktualisierung des Punktes:</b>: <li>x[id: "+ s1.id +"type: "+ typeof s1 +", value: "+ s1 +"]</li><li>y[id: "+ s2.id +"type: "+ typeof s2 +", value: "+ s2 +"]</li>");
+      if(typeof s2 === 'function') {
+          p.addConstraint([s1, function() { return s2( s1.Value() ); }]); // s2 ist eine Funktion, die von dem Slider s1 abhaengt, z.B. s1^2, der entsprechende Wert wird hier eingesetzt
+      }
+      else {
+          p.addConstraint([s1, s2]);
+      }
+    break;
+    case 'add':
+      return (JXG.isNumber(v1)) ? v1 : parseInt(v1)
+             +
+             (JXG.isNumber(v2)) ? v2 : parseInt(v2);
+    break;
+    case 'sub':
+      return v1 - v2;
+    break;
+    case 'mult':
+      return v1 * v2;
+    break;
+    case 'div':
+      return v1 / v2;
+    break;
+    case 'pow':
+      var t1 = v1;
+      var t2 = v2;
+      var s11 = (JXG.GeogebraReader.registeredElements[t1])
+               ? JXG.getReference(board, JXG.GeogebraReader.registeredElements[t1].id)
+               : t1;
+      var s21 = (JXG.GeogebraReader.registeredElements[t2])
+               ? JXG.getReference(board, JXG.GeogebraReader.registeredElements[t2].id)
+               : t2;
+
+      return function(x) { return Math.pow(x, s21); };
+    break;
+    case 'negmult':
+      return v1 * -1;
+    break;
+    case 'bra':
+      return v1;
+    break;
+    case 'var':
+      return v1;
+    break;
+    case 'string':
+      return v1;
+    break;
+    case 'int':
+      return v1;
+    break;
+    case 'float':
+      return v1;
+    break;
+    case 'html':
+      return v1;
+    break;
+  }
+}
+
 /**
 
  */
-this.ggbParse = function(board, tree, registeredElements, element, exp) {
-if(element) {
-  JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ registeredElements[element].name + "("+ registeredElements[element].id +")");
-  var p = JXG.getReference(board, registeredElements[element].id);
-}
+this.ggbParse = function(board, tree, element, exp) {
+  if(element) {
+    JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ JXG.GeogebraReader.registeredElements[element].name + "("+ JXG.GeogebraReader.registeredElements[element].id +")");
+    var p = JXG.getReference(board, JXG.GeogebraReader.registeredElements[element].id);
+  }
 
 /*
   This parser was generated with: The LALR(1) parser and lexical analyzer generator for JavaScript, written in JavaScript
@@ -205,38 +310,31 @@ switch( match )
 {
     case 4:
         { // parsing INT
-         info.att = parseInt( info.att );
+         JXG.GeogebraReader.ggbMatch('int', info.att);
         }
         break;
 
     case 5:
         { // parsing FLOAT
-         info.att = function() {return parseFloat( info.att ); };
+         JXG.GeogebraReader.ggbMatch('float', info.att);
         }
         break;
 
     case 6:
         { // parsing HTML
-         info.att = String( info.att );
+         JXG.GeogebraReader.ggbMatch('html', info.att);
         }
         break;
 
     case 7:
         { // parsing VAR
-         // info.att = "registeredElements['"+ info.att +"'].id"
-         JXG.GeogebraReader.debug("Geparstes Element/Variable: "+ info.att);
-         // Falls das Element noch nicht existiert, muss es erzeugt werden
-         if(typeof registeredElements[info.att] == 'undefined' || registeredElements[info.att] == '') {
-           var input = JXG.GeogebraReader.getElement(tree, info.att);
-           registeredElements[info.att] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, input);
-           JXG.GeogebraReader.debug("regged: "+ info.att +" (id: "+ registeredElements[info.att].id +")");
-         }
+         JXG.GeogebraReader.ggbMatch('var', info.att);
         }
         break;
 
     case 8:
         { // parsing STRING
-         info.att = String( info.att );
+         JXG.GeogebraReader.ggbMatch('string', info.att);
         }
         break;
 
@@ -527,101 +625,77 @@ switch( act )
     break;
     case 1:
     { // parsing error
-        JXG.GeogebraReader.debug("<b style='color:red'>Fehler:</b> "+ vstack[ vstack.length - 1 ] );
+        JXG.GeogebraReader.ggbAct('error', vstack[ vstack.length - 1 ]);
     }
     break;
     case 2:
     { // parsing: e ',' e
-        var s1 = (typeof vstack[ vstack.length - 3 ] === 'string')
-                 ? JXG.getReference(board, registeredElements[vstack[ vstack.length - 3 ]].id)
-                 : vstack[ vstack.length - 3 ];
-        var s2 = (typeof vstack[ vstack.length - 1 ] === 'string')
-                 ? JXG.getReference(board, registeredElements[vstack[ vstack.length - 1 ]].id)
-                 : vstack[ vstack.length - 1 ];
-
-        // JXG.GeogebraReader.debug("<br/><b>Aktualisierung des Punktes:</b>: <li>x[id: "+ s1.id +"type: "+ typeof s1 +", value: "+ s1 +"]</li><li>y[id: "+ s2.id +"type: "+ typeof s2 +", value: "+ s2 +"]</li>");
-        if(typeof s2 === 'function') {
-            p.addConstraint([s1, function() {return s2(s1.Value());}]); // s2 ist eine Funktion, die von dem Slider s1 abhaengt, z.B. s1^2, der entsprechende Wert wird hier eingesetzt
-        }
-        else {
-            p.addConstraint([s1,s2]);
-        }
+		rval = JXG.GeogebraReader.ggbAct('coord', vstack[ vstack.length - 3], vstack[ vstack.length - 1], p);
     }
     break;
     case 3:
     { // parsing e '+' e
-        //TODO: checking if numbers before adding together to avoid string concatenation
-        // rval = vstack[ vstack.length - 3 ] + vstack[ vstack.length - 1 ];
-        rval = (JXG.isNumber(vstack[ vstack.length - 3 ])) ? vstack[ vstack.length - 3 ] : parseInt(vstack[ vstack.length - 3 ])
-               +
-               (JXG.isNumber(vstack[ vstack.length - 3 ])) ? vstack[ vstack.length - 1 ] : parseInt(vstack[ vstack.length - 1 ]);
+        rval = JXG.GeogebraReader.ggbAct('add', vstack[ vstack.length - 3], vstack[ vstack.length - 1]);
     }
     break;
     case 4:
     { // parsing e '-' e
-        rval = vstack[ vstack.length - 3 ] - vstack[ vstack.length - 1 ];
+        rval = JXG.GeogebraReader.ggbAct('sub', vstack[ vstack.length - 3], vstack[ vstack.length - 1]);
     }
     break;
     case 5:
     { // parsing e '*' e
-        rval = vstack[ vstack.length - 3 ] * vstack[ vstack.length - 1 ];
+        rval = JXG.GeogebraReader.ggbAct('mult', vstack[ vstack.length - 3], vstack[ vstack.length - 1]);
     }
     break;
     case 6:
     { // parsing e '/' e
-        rval = vstack[ vstack.length - 3 ] / vstack[ vstack.length - 1 ];
+        rval = JXG.GeogebraReader.ggbAct('div', vstack[ vstack.length - 3], vstack[ vstack.length - 1]);
     }
     break;
     case 7:
     { // parsing e '^' e
-        var s11 = (typeof vstack[ vstack.length - 3 ] === 'string')
-                 ? JXG.getReference(board, registeredElements[vstack[ vstack.length - 3 ]].id)
-                 : vstack[ vstack.length - 3 ];
-        var s21 = (typeof vstack[ vstack.length - 1 ] === 'string')
-                 ? JXG.getReference(board, registeredElements[vstack[ vstack.length - 1 ]].id)
-                 : vstack[ vstack.length - 1 ];
-
-        rval = function(x) { return Math.pow(x, s21); };
+        rval = JXG.GeogebraReader.ggbAct('pow', vstack[ vstack.length - 3], vstack[ vstack.length - 1]);
     }
     break;
     case 8:
     { // parsing '-' e &'*'
-        rval = vstack[ vstack.length - 1 ] * -1;
+        rval = JXG.GeogebraReader.ggbAct('negmult', vstack[ vstack.length - 1]);
     }
     break;
     case 9:
     { // parsing '(' e ')'
-        rval = vstack[ vstack.length - 2 ];
+        rval = JXG.GeogebraReader.ggbAct('bra', vstack[ vstack.length - 2]);
     }
     break;
     case 10:
     { // parsing VAR
-        rval = vstack[ vstack.length - 1 ];
+        rval = JXG.GeogebraReader.ggbAct('var', vstack[ vstack.length - 1]);
     }
     break;
     case 11:
     { // parsing STRING '+' e
-        rval = vstack[ vstack.length - 3 ];
+        rval = JXG.GeogebraReader.ggbAct('string', vstack[ vstack.length - 3]);
     }
     break;
     case 12:
     { // parsing INT
-        rval = vstack[ vstack.length - 1 ];
+        rval = JXG.GeogebraReader.ggbAct('int', vstack[ vstack.length - 1]);
     }
     break;
     case 13:
     { // parsing FLOAT
-        rval = vstack[ vstack.length - 1 ];
+        rval = JXG.GeogebraReader.ggbAct('float', vstack[ vstack.length - 1]);
     }
     break;
     case 14:
     { // parsing HTML
-        rval = vstack[ vstack.length - 1 ];
+        rval = JXG.GeogebraReader.ggbAct('html', vstack[ vstack.length - 1]);
     }
     break;
     case 15:
     { // parsing STRING
-        rval = vstack[ vstack.length - 1 ];
+        rval = JXG.GeogebraReader.ggbAct('string', vstack[ vstack.length - 1]);
     }
     break;
 }
@@ -820,10 +894,10 @@ JXG.GeogebraReader.debug('* in: '+ exp);
  * Searching for an element in the geogebra tree
  * @param {XMLTree} tree expects the content of the parsed geogebra file returned by function parseFF/parseIE
  * @param {Object} board object
- * @param {Array} registeredElements contains the list of all generated elements
- * @return {Array} updated registeredElements with the newly created references to the axes
+ * @param {Array} JXG.GeogebraReader.registeredElements contains the list of all generated elements
+ * @return {Array} updated JXG.GeogebraReader.registeredElements with the newly created references to the axes
  */
-this.writeBoard = function(tree, board, registeredElements) {
+this.writeBoard = function(tree, board) {
   var boardData = tree.getElementsByTagName("euclidianView")[0];
 
   board.origin = {};
@@ -873,10 +947,10 @@ this.writeBoard = function(tree, board, registeredElements) {
   var grid = (boardData.getElementsByTagName('evSettings')[0].attributes["grid"].value == "true") ? board.renderer.drawGrid(board) : null;
 
   if(boardData.getElementsByTagName('evSettings')[0].attributes["axes"] && boardData.getElementsByTagName('evSettings')[0].attributes["axes"].value == "true") {
-      registeredElements["xAxis"] = board.createElement('axis', [[0, 0], [1, 0]], {strokeColor:'black'});
-      registeredElements["yAxis"] = board.createElement('axis', [[0, 0], [0, 1]], {strokeColor:'black'});
+      JXG.GeogebraReader.registeredElements["xAxis"] = board.createElement('axis', [[0, 0], [1, 0]], {strokeColor:'black'});
+      JXG.GeogebraReader.registeredElements["yAxis"] = board.createElement('axis', [[0, 0], [0, 1]], {strokeColor:'black'});
   }
-  return registeredElements;
+  return JXG.GeogebraReader.registeredElements;
 };
 
 /**
@@ -888,7 +962,7 @@ this.writeBoard = function(tree, board, registeredElements) {
  * @param {String} typeName output construction method
  * @param {String} text of expression to write
  */
-this.writeElement = function(registeredElements, tree, board, output, input, cmd) {
+this.writeElement = function(tree, board, output, input, cmd) {
   element = (typeof output === 'object' && typeof output.attributes === 'undefined') ? output[0] : output;
 
   var gxtEl = {};
@@ -1008,10 +1082,10 @@ this.writeElement = function(registeredElements, tree, board, output, input, cmd
         for(var i=(output.length - corner + 2); i<output.length; i++) {
           var el = output[i].attributes['label'].value;
           // Construct the corner if not yet registered
-          if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
-            registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, output[i]);
+          if(typeof JXG.GeogebraReader.registeredElements[el] == 'undefined' || JXG.GeogebraReader.registeredElements[el] == '') {
+            JXG.GeogebraReader.registeredElements[el] = JXG.GeogebraReader.writeElement(tree, board, output[i]);
           }
-          points.push(registeredElements[el]);
+          points.push(JXG.GeogebraReader.registeredElements[el]);
         }
 
         l = board.createElement('polygon', points, attr);
@@ -1431,7 +1505,7 @@ this.writeElement = function(registeredElements, tree, board, output, input, cmd
       var func = JXG.GeogebraReader.getElement(tree, attr.name, true);
       func = JXG.GeogebraReader.functionParse(func.attributes['exp'].value);
       //TODO: expression parsen
-      // func = JXG.GeogebraReader.ggbParse(board, tree, registeredElements, false, func);
+      // func = JXG.GeogebraReader.ggbParse(board, tree, JXG.GeogebraReader.registeredElements, false, func);
 
       try {
         var l = func.length - 1;
@@ -1545,12 +1619,12 @@ this.writeElement = function(registeredElements, tree, board, output, input, cmd
  * @param {Object} board board object
  */
 this.readGeogebra = function(tree, board) {
-  var registeredElements = [];
+  // var registeredElements = [];
   var el, Data, i;
   var els = [];
 
   // Achsen registieren
-  registeredElements = JXG.GeogebraReader.writeBoard(tree, board, registeredElements);
+  JXG.GeogebraReader.writeBoard(tree, board);
   var constructions = tree.getElementsByTagName("construction");
   for (var t=0; t<constructions.length; t++) {
 
@@ -1564,12 +1638,12 @@ this.readGeogebra = function(tree, board) {
         if(el.match(/°/) || !el.match(/\D/) || el.match(/Circle/)) {
           input[i] = el;
         } else {
-          if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
+          if(typeof JXG.GeogebraReader.registeredElements[el] == 'undefined' || JXG.GeogebraReader.registeredElements[el] == '') {
             var elnode = JXG.GeogebraReader.getElement(tree, el);
-            registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, elnode);
-            $('debug').innerHTML += "regged: "+ registeredElements[el] +"<br/>";
+            JXG.GeogebraReader.registeredElements[el] = JXG.GeogebraReader.writeElement(tree, board, elnode);
+            $('debug').innerHTML += "regged: "+ JXG.GeogebraReader.registeredElements[el] +"<br/>";
           }
-          input[i] = registeredElements[el];
+          input[i] = JXG.GeogebraReader.registeredElements[el];
         }
       }
 
@@ -1578,15 +1652,15 @@ this.readGeogebra = function(tree, board) {
         el = Data.getElementsByTagName("output")[0].attributes[i].value;
         output[i] = JXG.GeogebraReader.getElement(tree, el);
       }
-      if(typeof registeredElements[elname] == 'undefined' || registeredElements[elname] == '') {
-        registeredElements[elname] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, output, input, Data.attributes['name'].value.toLowerCase());
-        $('debug').innerHTML += "regged: "+registeredElements[elname].id+"<br/>";
+      if(typeof JXG.GeogebraReader.registeredElements[elname] == 'undefined' || JXG.GeogebraReader.registeredElements[elname] == '') {
+        JXG.GeogebraReader.registeredElements[elname] = JXG.GeogebraReader.writeElement(tree, board, output, input, Data.attributes['name'].value.toLowerCase());
+        $('debug').innerHTML += "regged: "+JXG.GeogebraReader.registeredElements[elname].id+"<br/>";
 
         /* Bei Element mit Raendern die jeweiligen Geraden als registrierte Elemente speichern */
-        if(registeredElements[elname].borders)
-          for(var i=0; i<registeredElements[elname].borders.length; i++) {
-            registeredElements[registeredElements[elname].borders[i].name] = registeredElements[elname].borders[i];
-            $('debug').innerHTML += i+") regged: "+registeredElements[elname].borders[i].name+"("+ registeredElements[registeredElements[elname].borders[i].name].id +")<br/>";
+        if(JXG.GeogebraReader.registeredElements[elname].borders)
+          for(var i=0; i<JXG.GeogebraReader.registeredElements[elname].borders.length; i++) {
+            JXG.GeogebraReader.registeredElements[JXG.GeogebraReader.registeredElements[elname].borders[i].name] = JXG.GeogebraReader.registeredElements[elname].borders[i];
+            $('debug').innerHTML += i+") regged: "+JXG.GeogebraReader.registeredElements[elname].borders[i].name+"("+ JXG.GeogebraReader.registeredElements[JXG.GeogebraReader.registeredElements[elname].borders[i].name].id +")<br/>";
           }
       }
 
@@ -1598,19 +1672,19 @@ this.readGeogebra = function(tree, board) {
       var Data = elements[s];
       var el = Data.attributes['label'].value;
 
-      if(typeof registeredElements[el] == 'undefined' || registeredElements[el] == '') {
+      if(typeof JXG.GeogebraReader.registeredElements[el] == 'undefined' || JXG.GeogebraReader.registeredElements[el] == '') {
         JXG.GeogebraReader.debug("Betrachte Rest: "+ el);
-        registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, Data);
+        JXG.GeogebraReader.registeredElements[el] = JXG.GeogebraReader.writeElement(tree, board, Data);
 
         if(expr = JXG.GeogebraReader.getElement(tree, el, true)) {
           var type = Data.attributes['type'].value;
           switch(type) {
             case 'text':
             case 'function':
-              // registeredElements[el] = JXG.GeogebraReader.writeElement(registeredElements, tree, board, expr, false, type);
+              // JXG.GeogebraReader.registeredElements[el] = JXG.GeogebraReader.writeElement(JXG.GeogebraReader.registeredElements, tree, board, expr, false, type);
             break;
             default:
-              JXG.GeogebraReader.ggbParse(board, tree, registeredElements, el, expr.attributes['exp'].value);
+              JXG.GeogebraReader.ggbParse(board, tree, el, expr.attributes['exp'].value);
             break;
           }
         }
