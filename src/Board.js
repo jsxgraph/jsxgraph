@@ -477,7 +477,11 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    this.geonextCompatibilityMode = false;
 
     if (this.options.text.useASCIIMathML) {
-        init();
+        if (typeof translateASCIIMath != 'undefined') {
+            init();
+        } else {
+            this.options.text.useASCIIMathML = false;
+        }
     }
    
    /* Event needs to know which methods to call when mouse is moved or clicked */
