@@ -231,7 +231,6 @@ JXG.SVGRenderer.prototype.updateInternalText = function(/** JXG.Text */ el) {
     el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] - this.vOffsetText)+'px'); 
     el.updateText();
     if (el.htmlStr!= el.plaintextStr) {
-        //el.rendNode.getFirstChild().value = el.plaintextStr;
         el.rendNodeText.data = el.plaintextStr;
         el.htmlStr = el.plaintextStr;
     }
