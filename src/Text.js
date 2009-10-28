@@ -37,7 +37,7 @@
  * @constructor
  * @return A new geometry element Text
  */
-JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLabel) {
+JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLabel, type) {
     this.constructor();
 
     this.type = JXG.OBJECT_TYPE_TEXT;
@@ -47,6 +47,13 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
 
     this.contentStr = contentStr;
     this.plaintextStr = '';
+
+    /**
+     * There is choice between 'html' and 'internal'
+     * 'internal' is the text element of SVG and the textpath element 
+     * of VML.
+     */
+    this.type = type || 'html'; 
     
     if((typeof isLabel != 'undefined') && (isLabel != null)) {
         this.isLabel = isLabel;
@@ -337,7 +344,13 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
  * </script><pre>
  */
 JXG.createText = function(board, parentArr, atts) {
-    return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false);
+    if (atts==null) {
+        atts = {};
+    }
+    if (typeof atts['type']=='undefined') {
+        atts['type'] = 'html'; // 'html' or 'internal'
+    }
+    return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false, atts['type']);
 };
 
 JXG.JSXGraph.registerElement('text', JXG.createText);

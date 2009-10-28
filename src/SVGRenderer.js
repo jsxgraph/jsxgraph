@@ -217,6 +217,26 @@ JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
     this.appendChildPrimitive(node,'images');
 };
 
+JXG.SVGRenderer.prototype.drawInternalText = function(el) {
+    var node = this.createPrimitive('text',el.id);
+    node.setAttributeNS(null, "class", "JXGtext");
+    el.rendNodeText = document.createTextNode('');
+    node.appendChild(el.rendNodeText);
+    this.appendChildPrimitive(node,'points');
+    return node;
+};
+
+JXG.SVGRenderer.prototype.updateInternalText = function(/** JXG.Text */ el) { 
+    el.rendNode.setAttributeNS(null, 'x', (el.coords.scrCoords[1])+'px'); 
+    el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] - this.vOffsetText)+'px'); 
+    el.updateText();
+    if (el.htmlStr!= el.plaintextStr) {
+        //el.rendNode.getFirstChild().value = el.plaintextStr;
+        el.rendNodeText.data = el.plaintextStr;
+        el.htmlStr = el.plaintextStr;
+    }
+};
+
 JXG.SVGRenderer.prototype.drawTicks = function(axis) {
     var node = this.createPrimitive('path', axis.id);
     node.setAttributeNS(null, 'shape-rendering', 'crispEdges');

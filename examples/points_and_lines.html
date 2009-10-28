@@ -2,7 +2,6 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -14,11 +13,22 @@
     <input type="button" value="Lines" onClick="doLines()"><br><br>
     <input type="button" value="Glider" onClick="doGlider()"><br><br>
     <input type="button" value="Random points" onClick="doRandomPoints()">
+<form><input type="button" value="Export SVG" 
+    onClick="writeSVG(XMLSerializer().serializeToString(board.renderer.svgRoot));"
+></form>
   </p>
 </div>
 <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
+        function writeSVG(t) {
+            w = window.open();
+            w.document.open();
+            t = t.replace(/</g,'&lt;');
+            t = t.replace(/>/g,'&gt;\n');
+            w.document.write(t);
+            w.document.close();
+        }
 
         var p1, p2, l1, l2, l3;
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 20});

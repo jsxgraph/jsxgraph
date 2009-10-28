@@ -665,18 +665,26 @@ JXG.AbstractRenderer.prototype.updateArc = function(/** JXG.Arc */ el) { };
  * @see #updateTextStyle
  */
 JXG.AbstractRenderer.prototype.drawText = function(/** JXG.Text */ el) { 
-    var node = this.container.ownerDocument.createElement('div');
-    node.setAttribute('id', el.id);
-    node.style.position = 'absolute';
-    node.style.fontSize = el.board.fontSize + 'px';  
-    node.style.color = el.visProp['strokeColor'];
-    node.className = 'JXGtext';
-    node.style.zIndex = '10';      
-    this.container.appendChild(node);
+    var node;
+    if (el.type=='html') {
+        node = this.container.ownerDocument.createElement('div');
+        node.style.position = 'absolute';
+        node.style.fontSize = el.board.fontSize + 'px';  
+        node.style.color = el.visProp['strokeColor'];
+        node.className = 'JXGtext';
+        node.style.zIndex = '10';      
+        this.container.appendChild(node);
+        node.setAttribute('id', el.id);
+    } else {
+        node = this.drawInternalText(el);
+    }
     el.rendNode = node;
     el.htmlStr = '';
     this.updateText(el);
 };
+
+JXG.AbstractRenderer.prototype.drawInternalText = function(el) {};
+
 
 /**
  * Updates GeometryElement properties of an already existing text element.
@@ -690,14 +698,20 @@ JXG.AbstractRenderer.prototype.updateText = function(/** JXG.Text */ el) {
     if (el.visProp['visible'] == false) return;
     if (isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) return;
     this.updateTextStyle(el);
-    el.rendNode.style.left = (el.coords.scrCoords[1])+'px'; 
-    el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText)+'px'; 
-    el.updateText();
-    if (el.htmlStr!= el.plaintextStr) {
-        el.rendNode.innerHTML = el.plaintextStr;
-        el.htmlStr = el.plaintextStr;
+    if (el.type=='html') {
+        el.rendNode.style.left = (el.coords.scrCoords[1])+'px'; 
+        el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText)+'px'; 
+        el.updateText();
+        if (el.htmlStr!= el.plaintextStr) {
+            el.rendNode.innerHTML = el.plaintextStr;
+            el.htmlStr = el.plaintextStr;
+        }
+    } else {
+        this.updateInternalText(el);
     }
 };
+
+JXG.AbstractRenderer.prototype.updateInternalText = function(el) {};
 
 /**
  * Updates CSS style properties of a text node.

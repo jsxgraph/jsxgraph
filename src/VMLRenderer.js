@@ -171,6 +171,32 @@ JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     this.appendChildPrimitive(node,'images');
 };
 
+JXG.VMLRenderer.prototype.drawInternalText = function(el) {
+    var node;
+    node = this.createNode('textbox');
+    node.style.position = 'absolute';
+    if (document.documentMode==8) {    
+        node.setAttribute('class', 'JXGtext');
+    } else {
+        node.setAttribute('className', 'JXGtext');
+    }
+    el.rendNodeText = document.createTextNode('');
+    node.appendChild(el.rendNodeText);
+    this.appendChildPrimitive(node,'points');
+    return node;
+};
+
+JXG.VMLRenderer.prototype.updateInternalText = function(/** JXG.Text */ el) { 
+    el.rendNode.style.left = (el.coords.scrCoords[1])+'px'; 
+    el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText)+'px'; 
+    el.updateText();
+    if (el.htmlStr!= el.plaintextStr) {
+        el.rendNodeText.data = el.plaintextStr;
+        el.htmlStr = el.plaintextStr;
+    }
+};
+
+
 JXG.VMLRenderer.prototype.drawTicks = function(ticks) {
     var ticksNode = this.createPrimitive('path', ticks.id);
     this.appendChildPrimitive(ticksNode,'lines');
