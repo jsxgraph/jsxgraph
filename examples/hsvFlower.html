@@ -3,10 +3,11 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
+   <script type="text/javascript" src="../src/ASCIIMathML.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h2>HSV Color Scheme II</h2>
+<h2 id="XXX">HSV Color Scheme II</h2>
 <div style="margin:50px;">
 <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
 </div>
@@ -16,6 +17,7 @@
 <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
+    
         function writeSVG(t) {
             w = window.open();
             w.document.open();
@@ -43,7 +45,8 @@
                  strokeColor:'black'
                 });             
                 
-        brd.createElement('text',[2,-3.2,'Hällo \u03B1 檔案'],{type:'internal'});
+        brd.createElement('text',[2,-2.2,'Hällo \u03B1 檔案'],{type:'internal'});
+        brd.createElement('text',[2,-2.8,'`sum_(i=1)^n (x^i)`'],{type:'html'});
           /* ]]> */
   </script>
 </body>

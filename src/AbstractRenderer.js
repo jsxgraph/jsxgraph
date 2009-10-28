@@ -704,6 +704,9 @@ JXG.AbstractRenderer.prototype.updateText = function(/** JXG.Text */ el) {
         el.updateText();
         if (el.htmlStr!= el.plaintextStr) {
             el.rendNode.innerHTML = el.plaintextStr;
+            if (el.board.options.text.useASCIIMathML) {
+                AMprocessNode(el.rendNode,false);
+            }
             el.htmlStr = el.plaintextStr;
         }
     } else {

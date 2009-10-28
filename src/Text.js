@@ -1,4 +1,4 @@
-/*
+﻿/*
     Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
@@ -121,7 +121,11 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
         if (typeof this.contentStr=='number') {
             plaintext = (this.contentStr).toFixed(this.digits);  
         } else {
-            plaintext = this.generateTerm(this.contentStr);   // Converts GEONExT syntax into JavaScript string
+            if (this.board.options.text.useASCIIMathML) {
+                plaintext = "'"+this.contentStr+"'";              // Convert via ASCIIMathML
+            } else {
+                plaintext = this.generateTerm(this.contentStr);   // Converts GEONExT syntax into JavaScript string
+            }
         }
         this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
     }

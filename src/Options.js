@@ -148,6 +148,7 @@ JXG.Options = function() {
     /* special text options */
     this.text = new Object();
     this.text.strokeColor = '#000000';
+    this.text.useASCIIMathML = false;
 
     /* special curve options */
     this.curve = new Object();
