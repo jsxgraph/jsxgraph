@@ -51,7 +51,6 @@ function jsxgraph_filter($courseid, $text) {
       $height        = (isset($params['height']))   ? htmlspecialchars(strip_tags($params['height'])) : 400;
 
       // Load necessary stylesheet und scripts
-      echo $PAGE->requires->js('filter/jsxgraph/prototype.js')->asap();
       echo $PAGE->requires->js('filter/jsxgraph/jsxgraphcore.js')->asap();
       echo $PAGE->requires->css('filter/jsxgraph/jsxgraph.css')->asap();
 

@@ -299,8 +299,8 @@ JXG.JSXGraph = new function (forceRenderer) {
 /**
  * Parameter magic: object may be a string containing the name or id of the object or
  * even the object itself, this function gets a returns to the object. Order: id/object, name.
- * @param {String,Object} object String or reference to the object the reference is needed.
  * @param {JXG.Board} board Reference to the board the object belongs to.
+ * @param {String,Object} object String or reference to the object the reference is needed.
  * @return {Object} Reference to the object given in parameter object
  */
 JXG.getReference = function(board, object) {

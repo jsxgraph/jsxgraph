@@ -95,6 +95,7 @@ function jsxgraphOutput($input, $args, &$parser) {
   global $wgServer; // URL of the WIKI's server
   global $jsxgraph_version; // see line 9 of this file
   global $markerList;
+  global $outputURI;
 
   $error_message = "no error"; //will be overwritten, if error occurs
   $CRLF = "\r\n";
@@ -122,7 +123,6 @@ function jsxgraphOutput($input, $args, &$parser) {
   if ($markercount==0) {
     $output .= "<meta http-equiv='X-UA-Compatible' content='IE=7' />";
     $output .= "<link rel='stylesheet' type='text/css' href='".$outputURI."/jsxgraph.css' />";
-    $output .= "<script src='".$outputURI."/prototype.js' type='text/javascript'></script>";
     $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
   }
   // Output div

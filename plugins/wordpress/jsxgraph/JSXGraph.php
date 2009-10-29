@@ -46,9 +46,6 @@ function jsxgraph_head() {
   $core_url = "http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js";
   if(file_exists("wp-content/plugins/jsxgraph/jsxgraphcore.js")) $core_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/jsxgraphcore.js";
 
-  // jquery
-  $pt_url = "http://jsxgraph.uni-bayreuth.de/distrib/prototype.js";
-  if(file_exists("wp-includes/js/prototype.js")) $pt_url = get_bloginfo("wpurl") ."/wp-includes/js/prototype.js";
   // Header-Output
   echo "\n<link rel='stylesheet' type='text/css' href='$css_url' media='screen' />\n";
   echo "<script type='text/javascript' src='$pt_url'></script>\n";
