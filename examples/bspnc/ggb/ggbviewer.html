@@ -139,7 +139,7 @@
   function loadFile(bspname, format) {
     document.getElementById('box').innerHTML = '';
     var value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value;
-    $('debug').innerHTML = "<b>Debug (lade "+ value +" ...):</b>";
+    document.getElementById('debug').innerHTML = "<b>Debug (lade "+ value +" ...):</b>";
 
     if(typeof board != 'undefined') JXG.JSXGraph.freeBoard(board);
 
