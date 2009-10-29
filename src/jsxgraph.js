@@ -104,7 +104,7 @@ JXG.JSXGraph = new function (forceRenderer) {
             zoomfactor, zoomX, zoomY,
             showCopyright, showNavi,
             board;
-        
+
         dimensions = JXG.getDimensions(box);
         if (typeof attributes == 'undefined') {
             attributes = {};
@@ -486,8 +486,9 @@ JXG.getPosition = function (Evt) {
   */
 JXG.getOffset = function (obj) {
     var o=obj, 
-        l=o.offsetLeft;
+        l=o.offsetLeft,
         t=o.offsetTop;
+        
     while(o=o.offsetParent) {
         l+=o.offsetLeft;
         t+=o.offsetTop;

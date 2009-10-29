@@ -464,7 +464,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @private
     * @type bool
     */
-   this.reducedUpdate = false;
+    this.reducedUpdate = false;
 
    /**
     * If GEONExT constructions are displayed,
@@ -474,7 +474,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @private
     * @type bool
     */
-   this.geonextCompatibilityMode = false;
+    this.geonextCompatibilityMode = false;
 
     if (this.options.text.useASCIIMathML) {
         if (typeof translateASCIIMath != 'undefined') {
@@ -637,7 +637,8 @@ JXG.Board.prototype.setId = function (obj, type) {
  */
 JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
     var pCont = this.containerObj,
-        cPos = JXG.getOffset(pCont), n; //Element.cumulativeOffset(pCont);
+        cPos = JXG.getOffset(pCont), 
+        n; //Element.cumulativeOffset(pCont);
 
     // add border width
     n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));

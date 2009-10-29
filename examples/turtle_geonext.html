@@ -2,13 +2,12 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
 <form>
 <textarea rows=3 cols=30 id="input">t.fd(3);</textarea><br>
-<input type="button" value="los" onclick="eval($('input').value)">
+<input type="button" value="los" onclick="eval(document.getElementById('input').value)">
 </form>
 <h2>convert a free GOENExT point to a glider on a turtle</h2>
   <div id="jxgbox" class="jxgbox" style="width:700px; height:400px;"></div>
@@ -25,7 +24,6 @@
         t.fd((i+1)*0.20);
         t.left(60);
     }
-    
     /*
     brd.createElement('point',[3,3],{name:'A'});
     brd.createElement('point',[3,4],{name:'B'});
@@ -42,14 +40,11 @@
     ta = brd.createElement('tangent',[p],{dash:1});
     no = brd.createElement('normal',[p],{dash:1,strokeColor:'red'});
     */
-
     var p = JXG.getReference(brd,'A');
     
     //p.makeGlider(t);
     p.addConstraint([ function() { return t.X();}, function() { return t.Y();} ]) ;
-
     brd.update();
-
   /* ]]> */
   </script>
 </body>
