@@ -1131,7 +1131,7 @@ this.readGeonext = function(tree,board) {
                 // not used gxtEl.digits = Data.getElementsByTagName('cs')[0].firstChild.data;
                 gxtEl.autodigits = Data.getElementsByTagName('digits')[0].firstChild.data;
                 gxtEl.parent = JXG.GeonextReader.changeOriginIds(board,gxtEl.parent);
-                c = new JXG.Text(board, gxtEl.mpStr, gxtEl.parent, [gxtEl.x, gxtEl.y], gxtEl.id, gxtEl.name, gxtEl.autodigits, false);
+                c = new JXG.Text(board, gxtEl.mpStr, gxtEl.parent, [gxtEl.x, gxtEl.y], gxtEl.id, gxtEl.name, gxtEl.autodigits, false,       board.options.text.defaultType);
                 c.setProperty('labelColor:'+gxtEl.colorLabel, 'visible:'+gxtEl.visible);
                 /*if(gxtEl.visible == "false") {
                     c.hideElement();

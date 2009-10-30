@@ -382,7 +382,7 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
             labelText = position.toString();
             if(labelText.length > 5)
                 labelText = position.toPrecision(3).toString();
-            label = new JXG.Text(this.board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], this.id+i+"Label", null, null, true);
+            label = new JXG.Text(this.board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], this.id+i+"Label", null, null, true, this.board.options.text.defaultType);
             label.distanceX = 0;
             label.distanceY = -10;
             //label.setCoordinates(newTick);
@@ -493,7 +493,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
             newTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.usrCoords[1], p1.usrCoords[2]], this.board);
             this.ticks.push(newTick);
             //label = new JXG.Label(this.board, "0", newTick, this.id+"0Label");
-            label = new JXG.Text(this.board, "0", null, [p1.usrCoords[1], p1.usrCoords[2]], this.id+"0Label", null, null, true);
+            label = new JXG.Text(this.board, "0", null, [p1.usrCoords[1], p1.usrCoords[2]], this.id+"0Label", null, null, true, this.board.options.text.defaultType);
             if (this.drawLabels) {
                 label.visProp['visible'] = true; 
             }
@@ -555,7 +555,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                 if(labelText.length > 5)
                     labelText = this.fixedTicks[i].toFixed(3).toString();
                 //label = new JXG.Label(this.board, labelText, newTick, this.id+i+"Label");
-                label = new JXG.Text(this.board, labelText, null, [p1.usrCoords[1] + nx, p1.usrCoords[2] + ny], this.id+i+"Label", null, null, true);
+                label = new JXG.Text(this.board, labelText, null, [p1.usrCoords[1] + nx, p1.usrCoords[2] + ny], this.id+i+"Label", null, null, true, this.board.options.text.defaultType);
                 label.distanceX = 0;
                 label.distanceY = -10;
                 //label.setCoordinates(newTick);

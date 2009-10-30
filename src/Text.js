@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright 2008,2009
         Matthias Ehmann,
         Michael Gerhaeuser,
@@ -352,7 +352,7 @@ JXG.createText = function(board, parentArr, atts) {
         atts = {};
     }
     if (typeof atts['type']=='undefined') {
-        atts['type'] = 'html'; // 'html' or 'internal'
+        atts['type'] = board.options.text.defaultType;  // 'html' or 'internal'
     }
     return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false, atts['type']);
 };

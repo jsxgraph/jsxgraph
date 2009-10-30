@@ -1779,7 +1779,7 @@ JXG.Board.prototype.initGeonextBoard = function() {
  */
 JXG.Board.prototype.initInfobox= function() {
     //this.infobox = new JXG.Label(this, '0,0', new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this), this.id + '__infobox');
-    this.infobox = new JXG.Text(this, '0,0', '', [0,0], this.id + '__infobox',null, null, false);
+    this.infobox = new JXG.Text(this, '0,0', '', [0,0], this.id + '__infobox',null, null, false, 'html');
     this.infobox.distanceX = -20;
     this.infobox.distanceY = 25;
     //this.renderer.drawText(this.infobox);

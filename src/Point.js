@@ -113,7 +113,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
     if (typeof withLabel=='undefined' || withLabel==true) {
         this.board.objects[this.id] = this;
         this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, 
-            [this.label.relativeCoords[0]/this.board.stretchX,this.label.relativeCoords[1]/this.board.stretchY], this.id+"Label", "", null, true);
+            [this.label.relativeCoords[0]/this.board.stretchX,this.label.relativeCoords[1]/this.board.stretchY], this.id+"Label", "", null, true, this.board.options.text.defaultType);
         delete(this.board.objects[this.id]);
 
         this.label.color = '#000000';
