@@ -23,7 +23,7 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
- * Constructs a new Options object.
+ * Options object.
  * @class These are the default options of the board and
  * of all geometry elements.
  * @constructor
@@ -85,7 +85,7 @@ JXG.Options = {
         fillColor : '#ff0000',
         highlightFillColor : '#EEEEEE',
         strokeColor : '#0000ff',         //elements.color.strokeColor,
-        highlightStrokeColor : '#C3D9FF',//this.elements.color.highlightStrokeColor
+        highlightStrokeColor : '#C3D9FF' //this.elements.color.highlightStrokeColor
     },
 
     /* special line options */
@@ -117,7 +117,7 @@ JXG.Options = {
         fillColor : 'none',              //this.elements.color.fillColor,
         highlightFillColor : 'none',     //this.elements.color.highlightFillColor,
         strokeColor : '#0000ff',         //this.elements.color.strokeColor,
-        highlightStrokeColor : '#C3D9FF',//this.elements.color.highlightStrokeColor
+        highlightStrokeColor : '#C3D9FF' //this.elements.color.highlightStrokeColor
     },
 
     /* special angle options */
@@ -137,7 +137,7 @@ JXG.Options = {
         fillColor : 'none',               //this.elements.color.fillColor,
         highlightFillColor : 'none',      //this.elements.color.highlightFillColor,
         strokeColor : '#0000ff',          //this.elements.color.strokeColor,
-        highlightStrokeColor : '#C3D9FF', //this.elements.color.highlightStrokeColor
+        highlightStrokeColor : '#C3D9FF'  //this.elements.color.highlightStrokeColor
     },
     
     /* special polygon options */
@@ -159,7 +159,7 @@ JXG.Options = {
     /* special text options */
     text : {
         strokeColor : '#000000',
-        useASCIIMathML : true,
+        useASCIIMathML : false,
         defaultType : 'html' //'html' or 'internal'
     },
 

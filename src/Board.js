@@ -191,7 +191,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     */
     //this.options = new JXG.Options();
     this.options = JXG.deepCopy(JXG.Options);
-
+    
     /**
      * Dimension of the board.
      * @private

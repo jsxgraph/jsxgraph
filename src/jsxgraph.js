@@ -39,7 +39,7 @@
  */
 JXG.JSXGraph = new function (forceRenderer) {
     var ie, opera, i, arr;
-    this.licenseText = 'JSXGraph v0.78.1 Copyright (C) see http://jsxgraph.org';
+    this.licenseText = 'JSXGraph v0.78.2 Copyright (C) see http://jsxgraph.org';
 
     /**
             * Stores the renderer that is used to draw the board.

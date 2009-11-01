@@ -1,8 +1,7 @@
-<html>
+﻿<html>
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
    <script type="text/javascript" src="../distrib/AM3.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
@@ -17,6 +16,8 @@
 <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
+    
+    JXG.Options.text.useASCIIMathML = true;
     
         function writeSVG(t) {
             w = window.open();
@@ -46,7 +47,7 @@
                 });             
                 
         brd.createElement('text',[2,-2.2,'SVG Text: \u03B1 檔案'],{type:'internal'});
-        brd.createElement('text',[2,-2.8,'ASCIIMathML: `sum_(i=1)^n (x^i)`'],{type:'html'});
+        brd.createElement('text',[2,-2.8,'ASCIIMath: `sum_(i=1)^n (x^i)`'],{type:'html'});
           /* ]]> */
   </script>
 </body>

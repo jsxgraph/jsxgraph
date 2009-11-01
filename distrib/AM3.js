@@ -4,8 +4,7 @@ AM.js (version 2.X.X.3 May 2009
 This version of ASCIIMathML has been modified with TeX conversion for 
 IMG fallback (c) David Lippman http://www.pierce.ctc.edu/dlippman
 If browser supports MathML, it is used. Otherwise, image-
-based math rendering is used (set AMTcgiloc for renderer). JeMTcgiloc
-forces image fallback for all browsers (for Mathtex and Latex).
+based math rendering is used (set AMTcgiloc for renderer).
 
 Extended to handle output of tinyMCE editor plugins for graphs, including
 image-based fallback for the editor-produced graphs.
@@ -48,25 +47,22 @@ FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
 (at http://www.gnu.org/licences/lgpl.html) for more details.
 */
 var AMTcgiloc = "http://korpelainen.net/cgi-bin/mathtex.cgi?\\gammacorrection{1.4}";//path to fallback script - only for temporary testing purposes
-var JeMTcgiloc = "http://korpelainen.net/cgi-bin/mathtex.cgi?\\gammacorrection{1.4}";//It is recommendable to install some LaTeX distribution like
 var AScgiloc = "http://korpelainen.net/plugindemo/lib/editor/common/php/svgimg.php";//TeX Live and compile Mathtex to use it - see the links above
 var dsvglocation = "http://korpelainen.net/"; // path to d.svg (blank if same as ASCIIMathML.js loc)
 var alertIfAMnoMathML = false; // show alert box if no MathML capability
 var alertIfNoMathML = false; // show alert box if no MathML capability
 var AMdelimiter1 = "`", AMescape1 = "\\\\`"; // can use other characters
 var AMdocumentId = "wikitext" // PmWiki element containing math (default=body)
-var isIE = document.createElementNS==null;
+var isIE = !(navigator.oscpu && document.getElementsByClassName);
 var AMnoMathML = false, AMtranslated = false;
 var ASAMdelimiter1 = "`", ASAMescape1 = "\\\\`"; // can use other characters
 var ASAMdocumentId = "wikitext" // PmWiki element containing math (default=body)
 var ASavoidinnerHTML = true; // this must be true - needed for latexmathml inside asciisvg
 var automathrecognize = false; // writing "amath" on page makes this true
 var avoidinnerHTML = true;
-var checkForMathML = true; // check if browser can display MathML
 var checkforprocessasciimathinmoodle = false; // true for systems like Moodle
 var decimalsign = "."; // change to "," if you like, beware of `(1,2)`!
 var displaystyle = true; // puts limits above and below large operators
-var isIE = document.createElementNS==null;
 var mathcolor = ""; // change it to "" (to inherit) or any other color
 var mathfontfamily = 'STIXGeneral,Arial Unicode MS,"Lucida Sans Unicode","Lucida Grande",Garuda,sans-serif'; // change to "" to inherit (works in IE)
 var mathfontsize = "1.2em"; // change to e.g. 1.2em for larger math
@@ -77,7 +73,7 @@ var showasciiformulaonhover = true; // helps students learn ASCIIMath
 var translateASCIIMath = true; // false to preserve `..`
 var translateASCIIsvg = true;
 var translated = false;
-var translateLaTeX = false; // false to preserve $..$, $$..$$
+var translateLaTeX = true; // false to preserve $..$, $$..$$
 var translateLaTeXformatting = true; // false to preserve \emph,\begin{},\end{}
 var translateOnLoad = true; // set to false to do call translators from js 
 var ASnoSVG = false;
@@ -103,9 +99,6 @@ var arccoth = function(x) { return arctanh(1/x) };
 var sign = function(x) { return (x==0?0:(x<0?-1:1)) };
 var logten = function(x) { return (Math.LOG10E*Math.log(x)) };
 var checkIfSVGavailable = true;
-var notifyIfNoSVG = false;
-var alertIfNoSVG = false;
-var noSVG = false;
 var defaultborder = 0;
 var border = defaultborder; // in pixel
 var defaultstrokewidth = "1"; // default line width in pixel
@@ -151,7 +144,6 @@ var strokewidth, strokedasharray, stroke, fill, strokeopacity, fillopacity;
 var fontstyle, fontfamily, fontsize, fontweight, fontstroke, fontfill;
 var marker, endpoints, dynamic = {};
 var picture, svgpicture, doc, width, height;
-var isIE = document.createElementNS==null;
 var cpi = "\u03C0", ctheta = "\u03B8"; // character for pi, theta
 var log = function(x) { return ln(x)/ln(10) };
 var pi = Math.PI, e = Math.E, ln = Math.log, sqrt = Math.sqrt;
@@ -1536,36 +1528,17 @@ var IsColorName = /^(?:greenyellow|yellow|goldenrod|dandelion|apricot|peach|melo
 
 var LMbody;
 var LMAMnoMathML = false, LMtranslated = false;
-var JeMnames = []; //list of input symbols
 var displaystyle = true; // puts limits above and below large operators
 var showasciiformulaonhover = true; // helps students learn ASCIIMath
 var decimalsign = "."; // change to "," if you like, beware of `(1,2)`!
-var isIE = document.createElementNS==null;
-if (isIE) {JJJnoMathML = true;KMJJJnoMathML = true;} else {JJJnoMathML = true;KMJJJnoMathML = true;}
-if ((ver = navigator.userAgent.toLowerCase().match(/chrome\/([\d\.]+)/))!=null) {JJJnoMathML = true;KMJJJnoMathML = true;}
-if ((ver = navigator.userAgent.toLowerCase().match(/safari\/(\d+)/))!=null) {JJJnoMathML = true;KMJJJnoMathML = true;}
-if ((ver = navigator.userAgent.toLowerCase().match(/opera\/([\d\.]+)/))!=null) {JJJnoMathML = true;KMJJJnoMathML = true;}
-var JeMtranslated = false;
-var JeMsymbols = [
-{input:"alpha", tag:"mi", output:"\u03B1", tex:null, ttype:CONST}
-];
-var JeMnestingDepth,JeMpreviousSymbol,JeMcurrentSymbol;
-var KMsymbols = LMsymbols;
-var KMnames = []; //list of input symbols
-var KMmathml = "http://www.w3.org/1998/Math/MathML";
-var KMpreviousSymbol,KMcurrentSymbol;
-var KMbody;
-var KMJJJnoMathML = false, KMtranslated = false;
 
 
 function AMinit(){
  var msg, warnings = new Array();
  if (document.getElementById==null){
- alert("This webpage requires a recent browser such as Mozilla Firefox/Netscape 7+ or Internet Explorer 6+ with MathPlayer and Adobe SVGviewer");
+ alert("This webpage requires a recent browser such as Firefox");
  return null;
  }
- if (checkForMathML && (msg = checkMathML())) warnings.push(msg);
- if (warnings.length>0) displayWarnings(warnings);
  initSymbols();
  var i;
  LMsymbols.sort(AMCNames);
@@ -1994,7 +1967,7 @@ function AMTparseExpr(str,rightbracket) {
  
  str = AMremoveCharsAndBlanks(str,symbol.input.length);
  if (typeof symbol.invisible != "boolean" || !symbol.invisible) {
- node = '\\right'+AMTgetTeXbracket(symbol); //AMcreateMmlNode("mo",document.createTextNode(symbol.output));
+ node = '\\right'+AMTgetTeXbracket(symbol);
  newFrag += node;
  addedright = true;
  } else {
@@ -2108,11 +2081,7 @@ function AMparseSexpr(str) { //parses str and returns [node,tailstr]
  result[0].childNodes[i].firstChild.nodeValue);
  var newst = [];
  for (var j=0; j<st.length; j++)
- if (isIE) {if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) newst = newst +
- String.fromCharCode(symbol.codes[st.charCodeAt(j)-65]);
- else newst = newst + st.charAt(j);} else {
  if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) {newst = newst + fixedFromCharCode(symbol.codes[st.charCodeAt(j)-65]);} else newst = newst + st.charAt(j);
- }
  if (result[0].nodeName=="mi")
  result[0]=createMmlNode("mo").
  appendChild(document.createTextNode(newst));
@@ -2464,8 +2433,7 @@ function LMinitSymbols() {
 
 
 function LMcreateElementMathML(t) {
- if (isIE) return document.createElement("m:"+t);
- else return document.createElementNS(LMmathml,t);
+ if (!isIE) return document.createElementNS(LMmathml,t);
 }
 function LMremoveCharsAndBlanks(str,n) {
 //remove n characters and any following blanks
@@ -2651,10 +2619,6 @@ function LMparseSexpr(str) { //parses str and returns [node,tailstr,(node)tag]
  mask = mask.replace(/c/g,"center ");
  node.setAttribute("columnalign",mask);
  node.setAttribute("displaystyle","false");
- if (isIE)
- return [node,result[1],null];
-// trying to get a *little* bit of space around the array
-// (IE already includes it)
  var lspace = LMcreateElementMathML("mspace");
  lspace.setAttribute("width","0.167em");
  var rspace = LMcreateElementMathML("mspace");
@@ -2666,9 +2630,6 @@ function LMparseSexpr(str) { //parses str and returns [node,tailstr,(node)tag]
  } else { // eqnarray
  result = LMparseExpr("{"+str,true,true);
  node = createMmlNode("mtable",result[0]);
- if (isIE)
- node.setAttribute("columnspacing","0.25em"); // best in practice?
- else
  node.setAttribute("columnspacing","0.167em"); // correct (but ignored?)
  node.setAttribute("columnalign","right center left");
  node.setAttribute("displaystyle","true");
@@ -2705,26 +2666,11 @@ function LMparseSexpr(str) { //parses str and returns [node,tailstr,(node)tag]
  return [createMmlNode(symbol.tag,document.createTextNode(symbol.output)),str,symbol.tag];
  } else {
  node = createMmlNode("mrow",createMmlNode(symbol.tag,document.createTextNode(symbol.output)));
- if (isIE) {
- var space = LMcreateElementMathML("mspace");
- space.setAttribute("width","0.167em");
- node.appendChild(space);
- }
  node.appendChild(result[0]);
  return [node,result[1],symbol.tag];
  }
  }
  if (symbol.input == "\\sqrt") { // sqrt
- if (isIE) { // set minsize, for \surd
- var space = LMcreateElementMathML("mspace");
- space.setAttribute("height","1.2ex");
- space.setAttribute("width","0em"); // probably no effect
- node = createMmlNode(symbol.tag,result[0])
-// node.setAttribute("minsize","1"); // ignored
-// node = createMmlNode("mrow",node); // hopefully unnecessary
- node.appendChild(space);
- return [node,result[1],symbol.tag];
- } else
  return [createMmlNode(symbol.tag,result[0]),result[1],symbol.tag];
  } else if (typeof symbol.acc == "boolean" && symbol.acc) { // accent
  node = createMmlNode(symbol.tag,result[0]);
@@ -2764,11 +2710,7 @@ function LMparseSexpr(str) { //parses str and returns [node,tailstr,(node)tag]
  result[0].childNodes[i].firstChild.nodeValue);
  var newst = [];
  for (var j=0; j<st.length; j++)
- if (isIE) {if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) newst = newst +
- String.fromCharCode(symbol.codes[st.charCodeAt(j)-65]);
- else newst = newst + st.charAt(j);} else {
  if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) {newst = newst + fixedFromCharCode(symbol.codes[st.charCodeAt(j)-65]);} else newst = newst + st.charAt(j);
- }
  if (result[0].nodeName=="mi")
  result[0]=LMcreateElementMathML("mo").
  appendChild(document.createTextNode(newst));
@@ -3108,1458 +3050,6 @@ function LMAMpNode(nlm) {
  }
 }
 
-
-function JeMinit(){
- var i;
- KMsymbols.sort(JeMCNames);
- for (i=0; i<KMsymbols.length; i++) KMnames[i] = KMsymbols[i].input;
- return true;
-}
-
-function JeMtranslate(spanclassJeM) {
- if (!JeMtranslated) { // run this only once
- JeMtranslated = true;
- JeMbody = document.getElementsByTagName("body")[0];
-KMJeMpNode(JeMbody, false, spanclassJeM);
- }
-}
-
-function JeMCEXHTML(t) {
- if (isIE) return document.createElement(t);
- else return document.createElementNS("http://www.w3.org/1999/xhtml",t);
-}
-
-function JeMcMmlN(t,frag) {
- if (isIE) var node = document.createElement("m:"+t);
- else var node = document.createElementNS("http://www.w3.org/1998/Math/MathML",t);
- if (frag) node.appendChild(frag);
- return node;
-}
-
-function JeMremoveCharsAndBlanks(str,n) {
-//remove n characters and any following blanks
- var st;
- if (str.charAt(n)=="\\" && str.charAt(n+1)!="\\" && str.charAt(n+1)!=" ") 
- st = str.slice(n+1);
- else st = str.slice(n);
- for (var i=0; i<st.length && st.charCodeAt(i)<=32; i=i+1);
- return st.slice(i);
-}
-
-function JeMpos(arr, str, n) { 
-// return JeMpos >=n where str appears or would be inserted
-// assumes arr is sorted
- if (n==0) {
- var h,m;
- n = -1;
- h = arr.length;
- while (n+1<h) {
- m = (n+h) >> 1;
- if (arr[m]<str) n = m; else h = m;
- }
- return h;
- } else
- for (var i=n; i<arr.length && arr[i]<str; i++);
- return i; // i=arr.length || arr[i]>=str
-}
-
-function JeMgetSymbol(str) {
-//return maximal initial substring of str that appears in names
-//return null if there is none
- var k = 0; //new pos
- var j = 0; //old pos
- var mk; //match pos
- var st;
- var tagst;
- var match = "";
- var more = true;
- for (var i=1; i<=str.length && more; i++) {
- st = str.slice(0,i); //initial substring of length i
- j = k;
- k = JeMpos(JeMnames, st, j);
- if (k<JeMnames.length && str.slice(0,JeMnames[k].length)==JeMnames[k]){
- match = JeMnames[k];
- mk = k;
- i = match.length;
- }
- more = k<JeMnames.length && str.slice(0,JeMnames[k].length)>=JeMnames[k];
- }
- JeMpreviousSymbol=JeMcurrentSymbol;
- if (match!=""){
- JeMcurrentSymbol=JeMsymbols[mk].ttype;
- return JeMsymbols[mk]; 
- }
-// if str[0] is a digit or - return maxsubstring of digits.digits
- JeMcurrentSymbol=CONST;
- k = 1;
- st = str.slice(0,1);
- var integ = true;
- while ("0"<=st && st<="9" && k<=str.length) {
- st = str.slice(k,k+1);
- k++;
- }
- if (st == decimalsign) {
- st = str.slice(k,k+1);
- if ("0"<=st && st<="9") {
- integ = false;
- k++;
- while ("0"<=st && st<="9" && k<=str.length) {
- st = str.slice(k,k+1);
- k++;
- }
- }
- }
- if ((integ && k>1) || k>2) {
- st = str.slice(0,k-1);
- tagst = "mn";
- } else {
- k = 2;
- st = str.slice(0,1); //take 1 character
- tagst = (("A">st || st>"Z") && ("a">st || st>"z")?"mo":"mi");
- }
- if (st=="-" && JeMpreviousSymbol==INFIX) {
- JeMcurrentSymbol = INFIX;
- return {input:st, tag:tagst, output:st, ttype:UNARY, func:true, val:true};
- }
- return {input:st, tag:tagst, output:st, ttype:CONST, val:true};
-}
-
-function JeMremoveBrackets(node) {
- var st;
- if (node.nodeName=="mrow") {
- st = node.firstChild.firstChild.nodeValue;
- if (st=="(" || st=="[" || st=="{") node.removeChild(node.firstChild);
- }
- if (node.nodeName=="mrow") {
- st = node.lastChild.firstChild.nodeValue;
- if (st==")" || st=="]" || st=="}") node.removeChild(node.lastChild);
- }
-}
-
-//TeX conversion version
-function JeMTremoveBrackets(node) {
- 
- var st;
- if (node.charAt(0)=='{' && node.charAt(node.length-1)=='}') {
-
- st = node.charAt(1);
- if (st=="(" || st=="[") node = '{'+node.substr(2);
- st = node.substr(1,6);
- if (st=="\\left(" || st=="\\left[" || st=="\\left{") node = '{'+node.substr(7);
- st = node.substr(1,12);
- if (st=="\\left\\lbrace" || st=="\\left\\langle") node = '{'+node.substr(13);
- st = node.charAt(node.length-2);
- if (st==")" || st=="]") node = node.substr(0,node.length-8)+'}';
- st = node.substr(node.length-8,7)
- if (st=="\\rbrace" || st=="\\rangle") node = node.substr(0,node.length-14) + '}';
- 
- } 
- return node;
-}
-
-
-
-function JeMTgetTeXsymbol(symb) {
- if (typeof symb.val == "boolean" && symb.val) {
- pre = '';
- } else {
- pre = '\\';
- }
- if (symb.tex==null) {
- return (pre+symb.input);
- } else {
- return (pre+symb.tex);
- }
-}
-function JeMTgetTeXbracket(symb) {
- if (symb.tex==null) {
- return (symb.input);
- } else {
- return ('\\'+symb.tex);
- }
-}
-
-function JeMTparseSexpr(str) { //parses str and returns [node,tailstr]
- var symbol, node, result, i, st,// rightvert = false,
- newFrag = '';
- str = JeMremoveCharsAndBlanks(str,0);
- symbol = JeMgetSymbol(str); //either a token or a bracket or empty
- if (symbol == null || symbol.ttype == RIGHTBRACKET && JeMnestingDepth > 0) {
- return [null,str];
- }
- if (symbol.ttype == DEFINITION) {
- str = symbol.output+JeMremoveCharsAndBlanks(str,symbol.input.length); 
- symbol = JeMgetSymbol(str);
- }
- switch (symbol.ttype) {
- case UNDEROVER:
- case CONST:
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- var texsymbol = JeMTgetTeXsymbol(symbol);
- if (texsymbol.charAt(0)=="\\" || symbol.tag=="mo") return [texsymbol,str];
- else return ['{'+texsymbol+'}',str];
- 
- case LEFTBRACKET: //read (expr+)
- JeMnestingDepth++;
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- 
- result = JeMTparseExpr(str,true);
- JeMnestingDepth--;
- if (typeof symbol.invisible == "boolean" && symbol.invisible) 
- node = '{\\left.'+result[0]+'}';
- else {
- node = '{\\left'+JeMTgetTeXbracket(symbol) + result[0]+'}';
- }
- return [node,result[1]];
- case TEXT:
- if (symbol!=JeMquote) str = JeMremoveCharsAndBlanks(str,symbol.input.length);
- if (str.charAt(0)=="{") i=str.indexOf("}");
- else if (str.charAt(0)=="(") i=str.indexOf(")");
- else if (str.charAt(0)=="[") i=str.indexOf("]");
- else if (symbol==JeMquote) i=str.slice(1).indexOf("\"")+1;
- else i = 0;
- if (i==-1) i = str.length;
- st = str.slice(1,i);
- if (st.charAt(0) == " ") {
- newFrag = '\\ ';
- }
- newFrag += '\\text{'+st+'}';
- if (st.charAt(st.length-1) == " ") {
- newFrag += '\\ ';
- }
- str = JeMremoveCharsAndBlanks(str,i+1);
- return [newFrag,str];
- case UNARY:
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- result = JeMTparseSexpr(str);
- if (result[0]==null) return ['{'+JeMTgetTeXsymbol(symbol)+'}',str];
- if (typeof symbol.func == "boolean" && symbol.func) { // functions hack
- st = str.charAt(0);
- if (st=="^" || st=="_" || st=="/" || st=="|" || st==",") {
- return ['{'+JeMTgetTeXsymbol(symbol)+'}',str];
- } else {
- node = '{'+JeMTgetTeXsymbol(symbol)+'{'+result[0]+'}}';
- return [node,result[1]];
- }
- }
- result[0] = JeMTremoveBrackets(result[0]);
- if (symbol.input == "sqrt") { // sqrt
- return ['\\sqrt{'+result[0]+'}',result[1]];
- } else if (typeof symbol.acc == "boolean" && symbol.acc) { // accent
- return ['{'+JeMTgetTeXsymbol(symbol)+'{'+result[0]+'}}',result[1]];
- } else { // font change command 
- return ['{'+JeMTgetTeXsymbol(symbol)+'{'+result[0]+'}}',result[1]];
- }
- case BINARY:
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- result = JeMTparseSexpr(str);
- if (result[0]==null) return ['{'+JeMTgetTeXsymbol(symbol)+'}',str];
- result[0] = JeMTremoveBrackets(result[0]);
- var result2 = JeMTparseSexpr(result[1]);
- if (result2[0]==null) return ['{'+JeMTgetTeXsymbol(symbol)+'}',str];
- result2[0] = JeMTremoveBrackets(result2[0]);
- if (symbol.input=="root" || symbol.input=="stackrel") {
- if (symbol.input=="root") {
- newFrag = '{\\sqrt['+result[0]+']{'+result2[0]+'}}';
- } else {
- newFrag = '{'+JeMTgetTeXsymbol(symbol)+'{'+result[0]+'}{'+result2[0]+'}}';
- }
- }
- if (symbol.input=="frac") {
- newFrag = '{\\frac{'+result[0]+'}{'+result2[0]+'}}';
- }
- return [newFrag,result2[1]];
- case INFIX:
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- return [symbol.output,str];
- case SPACE:
- str = JeMremoveCharsAndBlanks(str,symbol.input.length);
- return ['{\\quad\\text{'+symbol.input+'}\\quad}',str];
- case LEFTRIGHT:
-// if (rightvert) return [null,str]; else rightvert = true;
- JeMnestingDepth++;
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- result = JeMTparseExpr(str,false);
- JeMnestingDepth--;
- var st = "";
- st = result[0].charAt(result[0].length -1);
-//alert(result[0].lastChild+"***"+st);
- if (st == "|") { // its an absolute value subterm
- node = '{\\left|'+result[0]+'}';
- return [node,result[1]];
- } else { // the "|" is a \mid
- node = '{\\mid}';
- return [node,str];
- }
- 
- default:
-//alert("default");
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- return ['{'+JeMTgetTeXsymbol(symbol)+'}',str];
- }
-}
-
-function JeMTparseIexpr(str) {
- var symbol, sym1, sym2, node, result, underover;
- str = JeMremoveCharsAndBlanks(str,0);
- sym1 = JeMgetSymbol(str);
- result = JeMTparseSexpr(str);
- node = result[0];
- str = result[1];
- symbol = JeMgetSymbol(str);
- if (symbol.ttype == INFIX && symbol.input != "/") {
- str = JeMremoveCharsAndBlanks(str,symbol.input.length);
- // if (symbol.input == "/") result = JeMTparseIexpr(str); else 
- result = JeMTparseSexpr(str);
- if (result[0] == null) // show box in place of missing argument
- result[0] = '{}';
- else result[0] = JeMTremoveBrackets(result[0]);
- str = result[1];
-// if (symbol.input == "/") JeMTremoveBrackets(node);
- if (symbol.input == "_") {
- sym2 = JeMgetSymbol(str);
- underover = (sym1.ttype == UNDEROVER);
- if (sym2.input == "^") {
- str = JeMremoveCharsAndBlanks(str,sym2.input.length);
- var res2 = JeMTparseSexpr(str);
- res2[0] = JeMTremoveBrackets(res2[0]);
- str = res2[1];
- node = '{' + node;
- node += '_{'+result[0]+'}';
- node += '^{'+res2[0]+'}';
- node += '}';
- } else {
- node += '_{'+result[0]+'}';
- }
- } else { //must be ^
- node = '{'+node+'}^{'+result[0]+'}';
- }
- } 
- 
- return [node,str];
-}
-
-function JeMTparseExpr(str,rightbracket) {
- var symbol, node, result, i, nodeList = [],
- newFrag = '';
- var addedright = false;
- do {
- str = JeMremoveCharsAndBlanks(str,0);
- result = JeMTparseIexpr(str);
- node = result[0];
- str = result[1];
- symbol = JeMgetSymbol(str);
- if (symbol.ttype == INFIX && symbol.input == "/") {
- str = JeMremoveCharsAndBlanks(str,symbol.input.length);
- result = JeMTparseIexpr(str);
- 
- if (result[0] == null) // show box in place of missing argument
- result[0] = '{}';
- else result[0] = JeMTremoveBrackets(result[0]);
- str = result[1];
- node = JeMTremoveBrackets(node);
- node = '\\frac' + '{'+ node + '}';
- node += '{'+result[0]+'}';
- newFrag += node;
- symbol = JeMgetSymbol(str);
- } else if (node!=undefined) newFrag += node;
- } while ((symbol.ttype != RIGHTBRACKET && 
- (symbol.ttype != LEFTRIGHT || rightbracket)
- || JeMnestingDepth == 0) && symbol!=null && symbol.output!="");
- if (symbol.ttype == RIGHTBRACKET || symbol.ttype == LEFTRIGHT) {
-// if (JeMnestingDepth > 0) JeMnestingDepth--;
- var len = newFrag.length;
- if (len>2 && newFrag.charAt(0)=='{' && newFrag.indexOf(',')>0) { //could be matrix (total rewrite from .js)
- var right = newFrag.charAt(len - 2);
- if (right==')' || right==']') {
- var left = newFrag.charAt(6);
- if ((left=='(' && right==')' && symbol.output != '}') || (left=='[' && right==']')) {
- var mxout = '\\matrix{';
- var pos = new Array(); //JeMpos of commas
- pos.push(0);
- var matrix = true;
- var mxnestingd = 0;
- for (i=1; i<len-1; i++) {
- if (newFrag.charAt(i)==left) mxnestingd++;
- if (newFrag.charAt(i)==right) {
- mxnestingd--;
- if (mxnestingd==0 && newFrag.charAt(i+2)==',' && newFrag.charAt(i+3)=='{') pos.push(i+2);
- }
- }
- pos.push(len);
- var lastmxsubcnt = -1;
- if (mxnestingd==0 && pos.length>0) {
- for (i=0;i<pos.length-1;i++) {
- if (i>0) mxout += '\\\\';
- if (i==0) {
- var subarr = newFrag.substr(pos[i]+7,pos[i+1]-pos[i]-15).split(',');
- } else {
- var subarr = newFrag.substr(pos[i]+8,pos[i+1]-pos[i]-16).split(',');
- }
- if (lastmxsubcnt>0 && subarr.length!=lastmxsubcnt) {
- matrix = false;
- } else if (lastmxsubcnt==-1) {
- lastmxsubcnt=subarr.length;
- }
- mxout += subarr.join('&');
- }
- }
- mxout += '}';
- if (matrix) { newFrag = mxout;}
- }
- }
- }
- 
- str = JeMremoveCharsAndBlanks(str,symbol.input.length);
- if (typeof symbol.invisible != "boolean" || !symbol.invisible) {
- node = '\\right'+JeMTgetTeXbracket(symbol); //JeMJeMcMmlN("mo",document.createTextNode(symbol.output));
- newFrag += node;
- addedright = true;
- } else {
- newFrag += '\\right.';
- addedright = true;
- }
- 
- }
- if(JeMnestingDepth>0 && !addedright) {
- newFrag += '\\right.'; //adjust for non-matching left brackets
- //todo: adjust for non-matching right brackets
- }
- 
- return [newFrag,str];
-}
-
-function JeMTparseJeMtoTeX(str) {
- //DKMOD to remove &nbsp;, which editor adds on multiple spaces
- JeMnestingDepth = 0;
- str = str.replace(/&nbsp;/g,"");
- str = str.replace(/&gt;/g,">");
- str = str.replace(/&lt;/g,"<");
- str = str.replace(/ /g," ");
- return JeMTparseExpr(str.replace(/^\s+/g,""),false)[0];
-}
-
-function JeMTparseMath(str,istex) {
- str = str.replace(/&nbsp;/g,"");
- str = str.replace(/&gt;/g,">");
- str = str.replace(/&lt;/g,"<");
- str = str.replace(/ /g," ");
- if (istex) { 
- var texstring = str;
- } else {
- var texstring = JeMTparseAMtoTeX(str);
- }
- if (texstring=="") {texstring = "\\hspace{0}";
- } else {
- //alert(texstring);
- if (mathcolor!="") {
- texstring = "\\"+mathcolor + " " + texstring;
- }
- if (displaystyle) {
- texstring = "\\displaystyle " + texstring;
- } else {
- texstring = "\\textstyle " + texstring;
- }
- }
- var node = createElementXHTML("img");
- if (typeof encodeURIComponent == "function") {
- texstring = encodeURIComponent(texstring);
- } else {
- texstring = escape(texstring);
- }
- node.src = JeMTcgiloc + texstring;
- node.style.verticalAlign = "middle";
- if (showasciiformulaonhover) //fixed by djhsu so newline
- node.setAttribute("title",str.replace(/\s+/g," "));//does not show in Gecko
- 
- return node;
-}
-
-function JeMparseSexpr(str) { //parses str and returns [node,tailstr]
- var symbol, node, result, i, st,// rightvert = false,
- newFrag = document.createDocumentFragment();
- str = JeMremoveCharsAndBlanks(str,0);
- symbol = JeMgetSymbol(str); //either a token or a bracket or empty
- if (symbol == null || symbol.ttype == RIGHTBRACKET && JeMnestingDepth > 0) {
- return [null,str];
- }
- if (symbol.ttype == DEFINITION) {
- str = symbol.output+JeMremoveCharsAndBlanks(str,symbol.input.length); 
- symbol = JeMgetSymbol(str);
- }
- switch (symbol.ttype) { case UNDEROVER:
- case CONST:
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- return [JeMcMmlN(symbol.tag, //its a constant
- document.createTextNode(symbol.output)),str];
- case LEFTBRACKET: //read (expr+)
- JeMnestingDepth++;
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- result = JeMparseExpr(str,true);
- JeMnestingDepth--;
- if (typeof symbol.invisible == "boolean" && symbol.invisible) 
- node = JeMcMmlN("mrow",result[0]);
- else {
- node = JeMcMmlN("mo",document.createTextNode(symbol.output));
- node = JeMcMmlN("mrow",node);
- node.appendChild(result[0]);
- }
- return [node,result[1]];
- case TEXT:
- if (symbol!=JeMquote) str = JeMremoveCharsAndBlanks(str,symbol.input.length);
- if (str.charAt(0)=="{") i=str.indexOf("}");
- else if (str.charAt(0)=="(") i=str.indexOf(")");
- else if (str.charAt(0)=="[") i=str.indexOf("]");
- else if (symbol==JeMquote) i=str.slice(1).indexOf("\"")+1;
- else i = 0;
- if (i==-1) i = str.length;
- st = str.slice(1,i);
- if (st.charAt(0) == " ") {
- node = JeMcMmlN("mspace");
- node.setAttribute("width","1ex");
- newFrag.appendChild(node);
- }
- newFrag.appendChild(
- JeMcMmlN(symbol.tag,document.createTextNode(st)));
- if (st.charAt(st.length-1) == " ") {
- node = JeMcMmlN("mspace");
- node.setAttribute("width","1ex");
- newFrag.appendChild(node);
- }
- str = JeMremoveCharsAndBlanks(str,i+1);
- return [JeMcMmlN("mrow",newFrag),str];
- case UNARY:
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- result = JeMparseSexpr(str);
- if (result[0]==null) return [JeMcMmlN(symbol.tag,
- document.createTextNode(symbol.output)),str];
- if (typeof symbol.func == "boolean" && symbol.func) { // functions hack
- st = str.charAt(0);
- if (st=="^" || st=="_" || st=="/" || st=="|" || st==",") {
- return [JeMcMmlN(symbol.tag,
- document.createTextNode(symbol.output)),str];
- } else {
- node = JeMcMmlN("mrow",
- JeMcMmlN(symbol.tag,document.createTextNode(symbol.output)));
- node.appendChild(result[0]);
- return [node,result[1]];
- }
- }
- JeMremoveBrackets(result[0]);
- if (symbol.input == "sqrt") { // sqrt
- return [JeMcMmlN(symbol.tag,result[0]),result[1]];
- } else if (typeof symbol.acc == "boolean" && symbol.acc) { // accent
- node = JeMcMmlN(symbol.tag,result[0]);
- node.appendChild(JeMcMmlN("mo",document.createTextNode(symbol.output)));
- return [node,result[1]];
- } else { // font change command
- if (!isIE && typeof symbol.codes != "undefined") {
- for (i=0; i<result[0].childNodes.length; i++)
- if (result[0].childNodes[i].nodeName=="mi" || result[0].nodeName=="mi") {
- st = (result[0].nodeName=="mi"?result[0].firstChild.nodeValue:
- result[0].childNodes[i].firstChild.nodeValue);
- var newst = [];
- for (var j=0; j<st.length; j++)
- if (isIE) {if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) newst = newst +
- String.fromCharCode(symbol.codes[st.charCodeAt(j)-65]);
- else newst = newst + st.charAt(j);} else {
- if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) {newst = newst + fixedFromCharCode(symbol.codes[st.charCodeAt(j)-65]);} else newst = newst + st.charAt(j);
- }
- if (result[0].nodeName=="mi")
- result[0]=JeMcMmlN("mo").
- appendChild(document.createTextNode(newst));
- else result[0].replaceChild(JeMcMmlN("mo").
- appendChild(document.createTextNode(newst)),
- result[0].childNodes[i]);
- }
- }
- node = JeMcMmlN(symbol.tag,result[0]);
- node.setAttribute(symbol.atname,symbol.atval);
- return [node,result[1]];
- }
- case BINARY:
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- result = JeMparseSexpr(str);
- if (result[0]==null) return [JeMcMmlN("mo",
- document.createTextNode(symbol.input)),str];
- JeMremoveBrackets(result[0]);
- var result2 = JeMparseSexpr(result[1]);
- if (result2[0]==null) return [JeMcMmlN("mo",
- document.createTextNode(symbol.input)),str];
- JeMremoveBrackets(result2[0]);
- if (symbol.input=="root" || symbol.input=="stackrel") 
- newFrag.appendChild(result2[0]);
- newFrag.appendChild(result[0]);
- if (symbol.input=="frac") newFrag.appendChild(result2[0]);
- return [JeMcMmlN(symbol.tag,newFrag),result2[1]];
- case INFIX:
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- return [JeMcMmlN("mo",document.createTextNode(symbol.output)),str];
- case SPACE:
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- node = JeMcMmlN("mspace");
- node.setAttribute("width","1ex");
- newFrag.appendChild(node);
- newFrag.appendChild(
- JeMcMmlN(symbol.tag,document.createTextNode(symbol.output)));
- node = JeMcMmlN("mspace");
- node.setAttribute("width","1ex");
- newFrag.appendChild(node);
- return [JeMcMmlN("mrow",newFrag),str];
- case LEFTRIGHT:
-// if (rightvert) return [null,str]; else rightvert = true;
- JeMnestingDepth++;
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- result = JeMparseExpr(str,false);
- JeMnestingDepth--;
- var st = "";
- if (result[0].lastChild!=null)
- st = result[0].lastChild.firstChild.nodeValue;
- if (st == "|") { // its an absolute value subterm
- node = JeMcMmlN("mo",document.createTextNode(symbol.output));
- node = JeMcMmlN("mrow",node);
- node.appendChild(result[0]);
- return [node,result[1]];
- } else { // the "|" is a \mid so use unicode 2223 (divides) for spacing
- node = JeMcMmlN("mo",document.createTextNode("\u2223"));
- node = JeMcMmlN("mrow",node);
- return [node,str];
- }
- default:
-//alert("default");
- str = JeMremoveCharsAndBlanks(str,symbol.input.length); 
- return [JeMcMmlN(symbol.tag, //its a constant
- document.createTextNode(symbol.output)),str];
- }
-}
-
-function JeMparseIexpr(str) {
- var symbol, sym1, sym2, node, result, underover;
- str = JeMremoveCharsAndBlanks(str,0);
- sym1 = JeMgetSymbol(str);
- result = JeMparseSexpr(str);
- node = result[0];
- str = result[1];
- symbol = JeMgetSymbol(str);
- if (symbol.ttype == INFIX && symbol.input != "/") {
- str = JeMremoveCharsAndBlanks(str,symbol.input.length);
-// if (symbol.input == "/") result = JeMparseIexpr(str); else ...
- result = JeMparseSexpr(str);
- if (result[0] == null) // show box in place of missing argument
- result[0] = JeMcMmlN("mo",document.createTextNode("\u25A1"));
- else JeMremoveBrackets(result[0]);
- str = result[1];
-// if (symbol.input == "/") JeMremoveBrackets(node);
- if (symbol.input == "_") {
- sym2 = JeMgetSymbol(str);
- underover = (sym1.ttype == UNDEROVER);
- if (sym2.input == "^") {
- str = JeMremoveCharsAndBlanks(str,sym2.input.length);
- var res2 = JeMparseSexpr(str);
- JeMremoveBrackets(res2[0]);
- str = res2[1];
- node = JeMcMmlN((underover?"munderover":"msubsup"),node);
- node.appendChild(result[0]);
- node.appendChild(res2[0]);
- node = JeMcMmlN("mrow",node); // so sum does not stretch
- } else {
- node = JeMcMmlN((underover?"munder":"msub"),node);
- node.appendChild(result[0]);
- }
- } else {
- node = JeMcMmlN(symbol.tag,node);
- node.appendChild(result[0]);
- }
- }
- return [node,str];
-}
-
-function JeMparseExpr(str,rightbracket) {
- var symbol, node, result, i, nodeList = [],
- newFrag = document.createDocumentFragment();
- do {
- str = JeMremoveCharsAndBlanks(str,0);
- result = JeMparseIexpr(str);
- node = result[0];
- str = result[1];
- symbol = JeMgetSymbol(str);
- if (symbol.ttype == INFIX && symbol.input == "/") {
- str = JeMremoveCharsAndBlanks(str,symbol.input.length);
- result = JeMparseIexpr(str);
- if (result[0] == null) // show box in place of missing argument
- result[0] = JeMcMmlN("mo",document.createTextNode("\u25A1"));
- else JeMremoveBrackets(result[0]);
- str = result[1];
- JeMremoveBrackets(node);
- node = JeMcMmlN(symbol.tag,node);
- node.appendChild(result[0]);
- newFrag.appendChild(node);
- symbol = JeMgetSymbol(str);
- } 
- else if (node!=undefined) newFrag.appendChild(node);
- } while ((symbol.ttype != RIGHTBRACKET && 
- (symbol.ttype != LEFTRIGHT || rightbracket)
- || JeMnestingDepth == 0) && symbol!=null && symbol.output!="");
- if (symbol.ttype == RIGHTBRACKET || symbol.ttype == LEFTRIGHT) {
-// if (JeMnestingDepth > 0) JeMnestingDepth--;
- var len = newFrag.childNodes.length;
- if (len>0 && newFrag.childNodes[len-1].nodeName == "mrow" && len>1 &&
- newFrag.childNodes[len-2].nodeName == "mo" &&
- newFrag.childNodes[len-2].firstChild.nodeValue == ",") { //matrix
- var right = newFrag.childNodes[len-1].lastChild.firstChild.nodeValue;
- if (right==")" || right=="]") {
- var left = newFrag.childNodes[len-1].firstChild.firstChild.nodeValue;
- if (left=="(" && right==")" && symbol.output != "}" || 
- left=="[" && right=="]") {
- var pos = []; // JeMposs of commas
- var matrix = true;
- var m = newFrag.childNodes.length;
- for (i=0; matrix && i<m; i=i+2) {
- pos[i] = [];
- node = newFrag.childNodes[i];
- if (matrix) matrix = node.nodeName=="mrow" && 
- (i==m-1 || node.nextSibling.nodeName=="mo" && 
- node.nextSibling.firstChild.nodeValue==",")&&
- node.firstChild.firstChild.nodeValue==left &&
- node.lastChild.firstChild.nodeValue==right;
- if (matrix) 
- for (var j=0; j<node.childNodes.length; j++)
- if (node.childNodes[j].firstChild.nodeValue==",")
- pos[i][pos[i].length]=j;
- if (matrix && i>1) matrix = pos[i].length == pos[i-2].length;
- }
- if (matrix) {
- var row, frag, n, k, table = document.createDocumentFragment();
- for (i=0; i<m; i=i+2) {
- row = document.createDocumentFragment();
- frag = document.createDocumentFragment();
- node = newFrag.firstChild; // <mrow>(-,-,...,-,-)</mrow>
- n = node.childNodes.length;
- k = 0;
- node.removeChild(node.firstChild); //remove (
- for (j=1; j<n-1; j++) {
- if (typeof pos[i][k] != "undefined" && j==pos[i][k]){
- node.removeChild(node.firstChild); //remove ,
- row.appendChild(JeMcMmlN("mtd",frag));
- k++;
- } else frag.appendChild(node.firstChild);
- }
- row.appendChild(JeMcMmlN("mtd",frag));
- if (newFrag.childNodes.length>2) {
- newFrag.removeChild(newFrag.firstChild); //remove <mrow>)</mrow>
- newFrag.removeChild(newFrag.firstChild); //remove <mo>,</mo>
- }
- table.appendChild(JeMcMmlN("mtr",row));
- }
- node = JeMcMmlN("mtable",table);
- if (typeof symbol.invisible == "boolean" && symbol.invisible) node.setAttribute("columnalign","left");
- newFrag.replaceChild(node,newFrag.firstChild);
- }
- }
- }
- }
- str = JeMremoveCharsAndBlanks(str,symbol.input.length);
- if (typeof symbol.invisible != "boolean" || !symbol.invisible) {
- node = JeMcMmlN("mo",document.createTextNode(symbol.output));
- newFrag.appendChild(node);
- }
- }
- return [newFrag,str];
-}
-
-function JeMparseMath(str,latex) {
- var frag, node;
- JeMnestingDepth = 0;
- frag = latex ? KMparseExpr(str.replace(/^\s+/g,""),false,false)[0] : JeMparseExpr(str.replace(/^\s+/g,""),false)[0];
- node = JeMcMmlN("mstyle",frag);
- node.setAttribute("mathcolor",mathcolor);
- node.setAttribute("fontfamily",mathfontfamily);
- node.setAttribute("mathsize",mathfontsize);
- if (displaystyle) node.setAttribute("displaystyle","true");
- node = JeMcMmlN("math",node);
- if (showasciiformulaonhover) //fixed by djhsu so newline
- node.setAttribute("title",str.replace(/\s+/g," "));//does not show in Gecko
- return node;
-}
-
-function JeMsa2dF(arr, linebreaks, latex) {
- var newFrag=document.createDocumentFragment();
- var expr = false;
- for (var i=0; i<arr.length; i++) {
- if (expr && JJJnoMathML) newFrag.appendChild(JeMTparseMath(arr[i],latex));
- else if (expr && !JJJnoMathML) newFrag.appendChild(JeMparseMath(arr[i],latex));
- else {
- var arri = (linebreaks ? arr[i].split("\n\n") : [arr[i]]);
- newFrag.appendChild(JeMCEXHTML("span").
- appendChild(document.createTextNode(arri[0])));
- for (var j=1; j<arri.length; j++) {
- newFrag.appendChild(JeMCEXHTML("p"));
- newFrag.appendChild(JeMCEXHTML("span").
- appendChild(document.createTextNode(arri[j])));
- }
- }
- expr = !expr;
- }
- return newFrag;
-}
-
-function JeMpNodeR(n, linebreaks,latex) {
- var mtch, str, arr, frg, i;
- if (n.childNodes.length == 0) {
- if ((n.nodeType!=8 || linebreaks) &&
- n.parentNode.nodeName!="form" && n.parentNode.nodeName!="FORM" &&
- n.parentNode.nodeName!="textarea" && n.parentNode.nodeName!="TEXTAREA" /*&&
- n.parentNode.nodeName!="pre" && n.parentNode.nodeName!="PRE"*/) {
- str = n.nodeValue;
- if (!(str == null)) {
- str = str.replace(/\r\n\r\n/g,"\n\n");
- str = str.replace(/\x20+/g," ");
- str = str.replace(/\s*\r\n/g," ");
- if(latex) {
-// DELIMITERS:
- mtch = (str.indexOf("\@\@")==-1 ? false : true);
- str = str.replace(/([^\\])\@\@/g,"$1 \@\@");
- str = str.replace(/^\@\@/," \@\@"); // in case \@\@ at start of string
- arr = str.split(" \@\@");
- for (i=0; i<arr.length; i++)
- arr[i]=arr[i].replace(/\\\@\@/g,"\@\@");
- } 
- if (arr.length>1 || mtch) {
- //if (!JJJnoMathML) {
- frg = JeMsa2dF(arr,n.nodeType==8,latex);
- var len = frg.childNodes.length;
- n.parentNode.replaceChild(frg,n);
- return len-1;
- //} else return 0;
- }
- }
- } else return 0;
- } else if (n.nodeName!="math") {
- for (i=0; i<n.childNodes.length; i++)
- i += JeMpNodeR(n.childNodes[i], linebreaks,latex);
- }
- return 0;
-}
-
-
-
-function JeMCNames(s1,s2) {
- if (s1.input > s2.input) return 1
- else return -1;
-}
-
-
-function KMinitSymbols() {
- KMsymbols.sort(JeMCNames);
- for (i=0; i<KMsymbols.length; i++) KMnames[i] = KMsymbols[i].input;
-}
-
-
-
-function KMcreateElementMathML(t) {
- if (isIE) return document.createElement("m:"+t);
- else return document.createElementNS(KMmathml,t);
-}
-
-function KMJeMcMmlN(t,frag) {
-// var node = KMcreateElementMathML(name);
- if (isIE) var node = document.createElement("m:"+t);
- else var node = document.createElementNS(KMmathml,t);
- node.appendChild(frag);
- return node;
-}
-
-function newcommand(oldstr,newstr) {
- KMsymbols = KMsymbols.concat([{input:oldstr, tag:"mo", output:newstr,
- ttype:DEFINITION}]);
-}
-
-function KMremoveCharsAndBlanks(str,n) {
-//remove n characters and any following blanks
- var st;
- st = str.slice(n);
- for (var i=0; i<st.length && st.charCodeAt(i)<=32; i=i+1);
- return st.slice(i);
-}
-
-function KMgetSymbol(str) {
-//return maximal initial substring of str that appears in names
-//return null if there is none
- var k = 0; //new pos
- var j = 0; //old pos
- var mk; //match pos
- var st;
- var tagst;
- var match = "";
- var more = true;
- for (var i=1; i<=str.length && more; i++) {
- st = str.slice(0,i); //initial substring of length i
- j = k;
- k = JeMpos(KMnames, st, j);
- if (k<KMnames.length && str.slice(0,KMnames[k].length)==KMnames[k]){
- match = KMnames[k];
- mk = k;
- i = match.length;
- }
- more = k<KMnames.length && str.slice(0,KMnames[k].length)>=KMnames[k];
- }
- KMpreviousSymbol=KMcurrentSymbol;
- if (match!=""){
- KMcurrentSymbol=KMsymbols[mk].ttype;
- return KMsymbols[mk];
- }
- KMcurrentSymbol=CONST;
- k = 1;
- st = str.slice(0,1); //take 1 character
- if ("0"<=st && st<="9") tagst = "mn";
- else tagst = (("A">st || st>"Z") && ("a">st || st>"z")?"mo":"mi");
- return {input:st, tag:tagst, output:st, ttype:CONST};
-}
-
-
-function KMparseSexpr(str) { //parses str and returns [node,tailstr,(node)tag]
- var symbol, node, result, result2, i, st,// rightvert = false,
- newFrag = document.createDocumentFragment();
- str = KMremoveCharsAndBlanks(str,0);
- symbol = KMgetSymbol(str); //either a token or a bracket or empty
- if (symbol == null || symbol.ttype == RIGHTBRACKET)
- return [null,str,null];
- if (symbol.ttype == DEFINITION) {
- str = symbol.output+KMremoveCharsAndBlanks(str,symbol.input.length);
- symbol = KMgetSymbol(str);
- if (symbol == null || symbol.ttype == RIGHTBRACKET)
- return [null,str,null];
- }
- str = KMremoveCharsAndBlanks(str,symbol.input.length);
- switch (symbol.ttype) {
- case SPACE:
- node = KMcreateElementMathML(symbol.tag);
- node.setAttribute(symbol.atname,symbol.atval);
- return [node,str,symbol.tag];
- case UNDEROVER:
- if (isIE) {
- if (symbol.input.substr(0,4) == "\\big") { // botch for missing symbols
- str = "\\"+symbol.input.substr(4)+str; // make \bigcup = \cup etc.
- symbol = KMgetSymbol(str);
- symbol.ttype = UNDEROVER;
- str = KMremoveCharsAndBlanks(str,symbol.input.length);
- }
- }
- return [KMJeMcMmlN(symbol.tag,
- document.createTextNode(symbol.output)),str,symbol.tag];
- case CONST:
- var output = symbol.output;
- if (isIE) {
- if (symbol.input == "'")
- output = "\u2032";
- else if (symbol.input == "''")
- output = "\u2033";
- else if (symbol.input == "'''")
- output = "\u2033\u2032";
- else if (symbol.input == "''''")
- output = "\u2033\u2033";
- else if (symbol.input == "\\square")
- output = "\u25A1"; // same as \Box
- else if (symbol.input.substr(0,5) == "\\frac") {
- // botch for missing fractions
- var denom = symbol.input.substr(6,1);
- if (denom == "5" || denom == "6") {
- str = symbol.input.replace(/\\frac/,"\\frac ")+str;
- return [node,str,symbol.tag];
- }
- }
- }
- node = KMJeMcMmlN(symbol.tag,document.createTextNode(output));
- return [node,str,symbol.tag];
- case LONG: // added by DRW
- node = KMJeMcMmlN(symbol.tag,document.createTextNode(symbol.output));
- node.setAttribute("minsize","1.5");
- node.setAttribute("maxsize","1.5");
- node = KMJeMcMmlN("mover",node);
- node.appendChild(KMcreateElementMathML("mspace"));
- return [node,str,symbol.tag];
- case STRETCHY: // added by DRW
- if (isIE && symbol.input == "\\backslash")
- symbol.output = "\\"; // doesn't expand, but then nor does "\u2216"
- node = KMJeMcMmlN(symbol.tag,document.createTextNode(symbol.output));
- if (symbol.input == "|" || symbol.input == "\\vert" ||
- symbol.input == "\\|" || symbol.input == "\\Vert") {
- node.setAttribute("lspace","0em");
- node.setAttribute("rspace","0em");
- }
- node.setAttribute("maxsize",symbol.atval); // don't allow to stretch here
- if (symbol.rtag != null)
- return [node,str,symbol.rtag];
- else
- return [node,str,symbol.tag];
- case BIG: // added by DRW
- var atval = symbol.atval;
- if (isIE)
- atval = symbol.ieval;
- symbol = KMgetSymbol(str);
- if (symbol == null)
- return [null,str,null];
- str = KMremoveCharsAndBlanks(str,symbol.input.length);
- node = KMJeMcMmlN(symbol.tag,document.createTextNode(symbol.output));
- if (isIE) { // to get brackets to expand
- var space = KMcreateElementMathML("mspace");
- space.setAttribute("height",atval+"ex");
- node = KMJeMcMmlN("mrow",node);
- node.appendChild(space);
- } else { // ignored in IE
- node.setAttribute("minsize",atval);
- node.setAttribute("maxsize",atval);
- }
- return [node,str,symbol.tag];
- case LEFTBRACKET: //read (expr+)
- if (symbol.input == "\\left") { // left what?
- symbol = KMgetSymbol(str);
- if (symbol != null) {
- if (symbol.input == ".")
- symbol.invisible = true;
- str = KMremoveCharsAndBlanks(str,symbol.input.length);
- }
- }
- result = KMparseExpr(str,true,false);
- if (symbol==null ||
- (typeof symbol.invisible == "boolean" && symbol.invisible))
- node = KMJeMcMmlN("mrow",result[0]);
- else {
- node = KMJeMcMmlN("mo",document.createTextNode(symbol.output));
- node = KMJeMcMmlN("mrow",node);
- node.appendChild(result[0]);
- }
- return [node,result[1],result[2]];
- case MATRIX: //read (expr+)
- if (symbol.input == "\\begin{array}") {
- var mask = "";
- symbol = KMgetSymbol(str);
- str = KMremoveCharsAndBlanks(str,0);
- if (symbol == null)
- mask = "l";
- else {
- str = KMremoveCharsAndBlanks(str,symbol.input.length);
- if (symbol.input != "{")
- mask = "l";
- else do {
- symbol = KMgetSymbol(str);
- if (symbol != null) {
- str = KMremoveCharsAndBlanks(str,symbol.input.length);
- if (symbol.input != "}")
- mask = mask+symbol.input;
- }
- } while (symbol != null && symbol.input != "" && symbol.input != "}");
- }
- result = KMparseExpr("{"+str,true,true);
-// if (result[0]==null) return [KMJeMcMmlN("mo",
-// document.createTextNode(symbol.input)),str];
- node = KMJeMcMmlN("mtable",result[0]);
- mask = mask.replace(/l/g,"left ");
- mask = mask.replace(/r/g,"right ");
- mask = mask.replace(/c/g,"center ");
- node.setAttribute("columnalign",mask);
- node.setAttribute("displaystyle","false");
- if (isIE)
- return [node,result[1],null];
-// trying to get a *little* bit of space around the array
-// (IE already includes it)
- var lspace = KMcreateElementMathML("mspace");
- lspace.setAttribute("width","0.167em");
- var rspace = KMcreateElementMathML("mspace");
- rspace.setAttribute("width","0.167em");
- var node1 = KMJeMcMmlN("mrow",lspace);
- node1.appendChild(node);
- node1.appendChild(rspace);
- return [node1,result[1],null];
- } else { // eqnarray
- result = KMparseExpr("{"+str,true,true);
- node = KMJeMcMmlN("mtable",result[0]);
- if (isIE)
- node.setAttribute("columnspacing","0.25em"); // best in practice?
- else
- node.setAttribute("columnspacing","0.167em"); // correct (but ignored?)
- node.setAttribute("columnalign","right center left");
- node.setAttribute("displaystyle","true");
- node = KMJeMcMmlN("mrow",node);
- return [node,result[1],null];
- }
- case TEXT:
- if (str.charAt(0)=="{") i=str.indexOf("}");
- else i = 0;
- if (i==-1)
- i = str.length;
- st = str.slice(1,i);
- if (st.charAt(0) == " ") {
- node = KMcreateElementMathML("mspace");
- node.setAttribute("width","0.33em"); // was 1ex
- newFrag.appendChild(node);
- }
- newFrag.appendChild(
- KMJeMcMmlN(symbol.tag,document.createTextNode(st)));
- if (st.charAt(st.length-1) == " ") {
- node = KMcreateElementMathML("mspace");
- node.setAttribute("width","0.33em"); // was 1ex
- newFrag.appendChild(node);
- }
- str = KMremoveCharsAndBlanks(str,i+1);
- return [KMJeMcMmlN("mrow",newFrag),str,null];
- case UNARY:
- result = KMparseSexpr(str);
- if (result[0]==null) return [KMJeMcMmlN(symbol.tag,document.createTextNode(symbol.output)),str];
- if (typeof symbol.func == "boolean" && symbol.func) { // functions hack
- st = str.charAt(0);
-// if (st=="^" || st=="_" || st=="/" || st=="|" || st==",") {
- if (st=="^" || st=="_" || st==",") {
- return [KMJeMcMmlN(symbol.tag,document.createTextNode(symbol.output)),str,symbol.tag];
- } else {
- node = KMJeMcMmlN("mrow",KMJeMcMmlN(symbol.tag,document.createTextNode(symbol.output)));
- if (isIE) {
- var space = KMcreateElementMathML("mspace");
- space.setAttribute("width","0.167em");
- node.appendChild(space);
- }
- node.appendChild(result[0]);
- return [node,result[1],symbol.tag];
- }
- }
- if (symbol.input == "\\sqrt") { // sqrt
- if (isIE) { // set minsize, for \surd
- var space = KMcreateElementMathML("mspace");
- space.setAttribute("height","1.2ex");
- space.setAttribute("width","0em"); // probably no effect
- node = KMJeMcMmlN(symbol.tag,result[0])
-// node.setAttribute("minsize","1"); // ignored
-// node = KMJeMcMmlN("mrow",node); // hopefully unnecessary
- node.appendChild(space);
- return [node,result[1],symbol.tag];
- } else
- return [KMJeMcMmlN(symbol.tag,result[0]),result[1],symbol.tag];
- } else if (typeof symbol.acc == "boolean" && symbol.acc) { // accent
- node = KMJeMcMmlN(symbol.tag,result[0]);
- var output = symbol.output;
- if (isIE) {
- if (symbol.input == "\\hat")
- output = "\u0302";
- else if (symbol.input == "\\widehat")
- output = "\u005E";
- else if (symbol.input == "\\bar")
- output = "\u00AF";
- else if (symbol.input == "\\grave")
- output = "\u0300";
- else if (symbol.input == "\\tilde")
- output = "\u0303";
- }
- var node1 = KMJeMcMmlN("mo",document.createTextNode(output));
- if (symbol.input == "\\vec" || symbol.input == "\\check")
- // don't allow to stretch
- node1.setAttribute("maxsize","1.2");
- // why doesn't "1" work? \vec nearly disappears in firefox
- if (isIE && symbol.input == "\\bar")
- node1.setAttribute("maxsize","0.5");
- if (symbol.input == "\\underbrace" || symbol.input == "\\underline")
- node1.setAttribute("accentunder","true");
- else
- node1.setAttribute("accent","true");
- node.appendChild(node1);
- if (symbol.input == "\\overbrace" || symbol.input == "\\underbrace")
- node.ttype = UNDEROVER;
- return [node,result[1],symbol.tag];
- } else { // font change or displaystyle command
- if (!isIE && typeof symbol.codes != "undefined") {
- for (i=0; i<result[0].childNodes.length; i++)
- if (result[0].childNodes[i].nodeName=="mi" || result[0].nodeName=="mi") {
- st = (result[0].nodeName=="mi"?result[0].firstChild.nodeValue:
- result[0].childNodes[i].firstChild.nodeValue);
- var newst = [];
- for (var j=0; j<st.length; j++)
- if (isIE) {if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) newst = newst +
- String.fromCharCode(symbol.codes[st.charCodeAt(j)-65]);
- else newst = newst + st.charAt(j);} else {
- if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) {newst = newst + fixedFromCharCode(symbol.codes[st.charCodeAt(j)-65]);} else newst = newst + st.charAt(j);
- }
- if (result[0].nodeName=="mi")
- result[0]=KMcreateElementMathML("mo").
- appendChild(document.createTextNode(newst));
- else result[0].replaceChild(KMcreateElementMathML("mo").
- appendChild(document.createTextNode(newst)),result[0].childNodes[i]);
- }
- }
- node = KMJeMcMmlN(symbol.tag,result[0]);
- node.setAttribute(symbol.atname,symbol.atval);
- if (symbol.input == "\\scriptstyle" ||
- symbol.input == "\\scriptscriptstyle")
- node.setAttribute("displaystyle","false");
- return [node,result[1],symbol.tag];
- }
- case BINARY:
- result = KMparseSexpr(str);
- if (result[0]==null) return [KMJeMcMmlN("mo",document.createTextNode(symbol.input)),str,null];
- result2 = KMparseSexpr(result[1]);
- if (result2[0]==null) return [KMJeMcMmlN("mo",document.createTextNode(symbol.input)),str,null];
- if (symbol.input=="\\textcolor" || symbol.input=="\\colorbox") { 
- var tclr = str.match(/\{\s*([#\w]+)\s*\}/); //get's color from beginning of str
- str = str.replace(/\{\s*[#\w]+\s*\}/,""); 
- if(tclr!=null) {
- if(IsColorName.test(tclr[1].toLowerCase())) {
- tclr=LaTeXColor[tclr[1].toLowerCase()];
- } else {
- tclr=tclr[1]; // no checking for valid color!!
- } 
- node = KMcreateElementMathML("mstyle");
- node.setAttribute(symbol.atval,tclr);
- node.appendChild(result2[0]); 
- return [node,result2[1],symbol.tag]; 
- } 
- }
-
- if (symbol.input=="\\root" || symbol.input=="\\stackrel") newFrag.appendChild(result2[0]);
- newFrag.appendChild(result[0]);
- if (symbol.input=="\\frac") newFrag.appendChild(result2[0]);
- return [KMJeMcMmlN(symbol.tag,newFrag),result2[1],symbol.tag];
- case INFIX:
- str = KMremoveCharsAndBlanks(str,symbol.input.length);
- return [KMJeMcMmlN("mo",document.createTextNode(symbol.output)),
- str,symbol.tag];
- default:
- return [KMJeMcMmlN(symbol.tag, //its a constant
- document.createTextNode(symbol.output)),str,symbol.tag];
- }
-}
-
-function KMparseIexpr(str) {
- var symbol, sym1, sym2, node, result, tag, underover;
- str = KMremoveCharsAndBlanks(str,0);
- sym1 = KMgetSymbol(str);
- result = KMparseSexpr(str);
- node = result[0];
- str = result[1];
- tag = result[2];
- symbol = KMgetSymbol(str);
- if (symbol.ttype == INFIX) {
- str = KMremoveCharsAndBlanks(str,symbol.input.length);
- result = KMparseSexpr(str);
- if (result[0] == null) // show box in place of missing argument
- result[0] = KMJeMcMmlN("mo",document.createTextNode("\u25A1"));
- str = result[1];
- tag = result[2];
- if (symbol.input == "_" || symbol.input == "^") {
- sym2 = KMgetSymbol(str);
- tag = null; // no space between x^2 and a following sin, cos, etc.
-// This is for \underbrace and \overbrace
- underover = ((sym1.ttype == UNDEROVER) || (node.ttype == UNDEROVER));
-// underover = (sym1.ttype == UNDEROVER);
- if (symbol.input == "_" && sym2.input == "^") {
- str = KMremoveCharsAndBlanks(str,sym2.input.length);
- var res2 = KMparseSexpr(str);
- str = res2[1];
- tag = res2[2]; // leave space between x_1^2 and a following sin etc.
- node = KMJeMcMmlN((underover?"munderover":"msubsup"),node);
- node.appendChild(result[0]);
- node.appendChild(res2[0]);
- } else if (symbol.input == "_") {
- node = KMJeMcMmlN((underover?"munder":"msub"),node);
- node.appendChild(result[0]);
- } else {
- node = KMJeMcMmlN((underover?"mover":"msup"),node);
- node.appendChild(result[0]);
- }
- node = KMJeMcMmlN("mrow",node); // so sum does not stretch
- } else {
- node = KMJeMcMmlN(symbol.tag,node);
- if (symbol.input == "\\atop" || symbol.input == "\\choose")
- node.setAttribute("linethickness","0ex");
- node.appendChild(result[0]);
- if (symbol.input == "\\choose")
- node = KMJeMcMmlN("mfenced",node);
- }
- }
- return [node,str,tag];
-}
-
-function KMparseExpr(str,rightbracket,matrix) {
- var symbol, node, result, i, tag,
- newFrag = document.createDocumentFragment();
- do {
- str = KMremoveCharsAndBlanks(str,0);
- result = KMparseIexpr(str);
- node = result[0];
- str = result[1];
- tag = result[2];
- symbol = KMgetSymbol(str);
- if (node!=undefined) {
- if ((tag == "mn" || tag == "mi") && symbol!=null &&
- typeof symbol.func == "boolean" && symbol.func) {
- // Add space before \sin in 2\sin x or x\sin x
- var space = KMcreateElementMathML("mspace");
- space.setAttribute("width","0.167em");
- node = KMJeMcMmlN("mrow",node);
- node.appendChild(space);
- }
- newFrag.appendChild(node);
- }
- } while ((symbol.ttype != RIGHTBRACKET)
- && symbol!=null && symbol.output!="");
- tag = null;
- if (symbol.ttype == RIGHTBRACKET) {
- if (symbol.input == "\\right") { // right what?
- str = KMremoveCharsAndBlanks(str,symbol.input.length);
- symbol = KMgetSymbol(str);
- if (symbol != null && symbol.input == ".")
- symbol.invisible = true;
- if (symbol != null)
- tag = symbol.rtag;
- }
- if (symbol!=null)
- str = KMremoveCharsAndBlanks(str,symbol.input.length); // ready to return
- var len = newFrag.childNodes.length;
- if (matrix &&
- len>0 && newFrag.childNodes[len-1].nodeName == "mrow" && len>1 &&
- newFrag.childNodes[len-2].nodeName == "mo" &&
- newFrag.childNodes[len-2].firstChild.nodeValue == "&") { //matrix
- var pos = []; // JeMposs of ampersands
- var m = newFrag.childNodes.length;
- for (i=0; matrix && i<m; i=i+2) {
- pos[i] = [];
- node = newFrag.childNodes[i];
- for (var j=0; j<node.childNodes.length; j++)
- if (node.childNodes[j].firstChild.nodeValue=="&")
- pos[i][pos[i].length]=j;
- }
- var row, frag, n, k, table = document.createDocumentFragment();
- for (i=0; i<m; i=i+2) {
- row = document.createDocumentFragment();
- frag = document.createDocumentFragment();
- node = newFrag.firstChild; // <mrow> -&-&...&-&- </mrow>
- n = node.childNodes.length;
- k = 0;
- for (j=0; j<n; j++) {
- if (typeof pos[i][k] != "undefined" && j==pos[i][k]){
- node.removeChild(node.firstChild); //remove &
- row.appendChild(KMJeMcMmlN("mtd",frag));
- k++;
- } else frag.appendChild(node.firstChild);
- }
- row.appendChild(KMJeMcMmlN("mtd",frag));
- if (newFrag.childNodes.length>2) {
- newFrag.removeChild(newFrag.firstChild); //remove <mrow> </mrow>
- newFrag.removeChild(newFrag.firstChild); //remove <mo>&</mo>
- }
- table.appendChild(KMJeMcMmlN("mtr",row));
- }
- return [table,str];
- }
- if (typeof symbol.invisible != "boolean" || !symbol.invisible) {
- node = KMJeMcMmlN("mo",document.createTextNode(symbol.output));
- newFrag.appendChild(node);
- }
- }
- return [newFrag,str,tag];
-}
-
-function KMparseMath(str) {
- var result, node = KMcreateElementMathML("mstyle");
- //added by J. Knisley to allow limited implementation of \color 
- var cclr = str.match(/\\color\s*\{\s*([#\w]+)\s*\}/);
- str = str.replace(/\\color\s*\{\s*[#\w]+\s*\}/g,"");
- if(cclr!=null) {
- if(IsColorName.test(cclr[1].toLowerCase())) {
- cclr=LaTeXColor[cclr[1].toLowerCase()];
- } else {
- cclr=cclr[1]; // no checking for valid color!!
- }
- node.setAttribute("mathcolor",cclr);
- } else { 
- if (mathcolor != "") node.setAttribute("mathcolor",mathcolor);
- };
- if (mathfontfamily != "") node.setAttribute("fontfamily",mathfontfamily);
- node.appendChild(KMparseExpr(str.replace(/^\s+/g,""),false,false)[0]);
- node = KMJeMcMmlN("math",node);
- if (showasciiformulaonhover) //fixed by djhsu so newline
- node.setAttribute("title",str.replace(/\s+/g," "));//does not show in Gecko
- if (false ) { //&& mathfontfamily != "" && (isIE || mathfontfamily != "serif")) {
- var fnode = JeMCEXHTML("font");
- fnode.setAttribute("face",mathfontfamily);
- fnode.appendChild(node);
- return fnode;
- }
- return node;
-}
-
-function KMJeMsa2dF(arr, linebreaks) {
- var newFrag=document.createDocumentFragment();
- var expr = false;
- for (var i=0; i<arr.length; i++) {
- if (expr) newFrag.appendChild(KMparseMath(arr[i]));
- else {
- var arri = (linebreaks ? arr[i].split("\n\n") : [arr[i]]);
- newFrag.appendChild(JeMCEXHTML("span").
- appendChild(document.createTextNode(arri[0])));
- for (var j=1; j<arri.length; j++) {
- newFrag.appendChild(JeMCEXHTML("p"));
- newFrag.appendChild(JeMCEXHTML("span").
- appendChild(document.createTextNode(arri[j])));
- }
- }
- expr = !expr;
- }
- return newFrag;
-}
-
-function KMJeMpNodeR(n, linebreaks) {
- var mtch, str, arr, frg, i;
- if (n.childNodes.length == 0) {
- if ((n.nodeType!=8 || linebreaks) &&
- n.parentNode.nodeName!="form" && n.parentNode.nodeName!="FORM" &&
- n.parentNode.nodeName!="textarea" && n.parentNode.nodeName!="TEXTAREA" &&
- n.parentNode.nodeName!="pre" && n.parentNode.nodeName!="PRE") {
- str = n.nodeValue;
- if (!(str == null)) {
- str = str.replace(/\r\n\r\n/g,"\n\n");
- str = str.replace(/\x20+/g," ");
- str = str.replace(/\s*\r\n/g," ");
-// DELIMITERS:
- mtch = (str.indexOf("\@\@")==-1 ? false : true);
- str = str.replace(/([^\\])\@\@/g,"$1 \@\@");
- str = str.replace(/^\@\@/," \@\@"); // in case \@\@ at start of string
- arr = str.split(" \@\@");
- for (i=0; i<arr.length; i++)
- arr[i]=arr[i].replace(/\\\@\@/g,"\@\@");
- if (arr.length>1 || mtch) {
- if (!KMJJJnoMathML) {
- frg = KMJeMsa2dF(arr,n.nodeType==8);
- var len = frg.childNodes.length;
- n.parentNode.replaceChild(frg,n);
- return len-1;
- } else return 0;
- }
- }
- } else return 0;
- } else if (n.nodeName!="math") {
- for (i=0; i<n.childNodes.length; i++)
- i += KMJeMpNodeR(n.childNodes[i], linebreaks);
- }
- return 0;
-}
-
-function KMJeMpNode(nlm) {
- var st;
- try {
- st = nlm.innerHTML;
- } catch(err) {}
- if ((st==null || st.indexOf("\@\@ ")!=-1 || st.indexOf("\@\@<")!=-1 || 
- st.indexOf("\\begin")!=-1 || st.slice(-1)=="@@" ||
- st.indexOf("\@\@\n")!=-1)&& !/edit-content|HTMLArea|wikiedit|wpTextbox1/.test(st)){
- JeMpNodeR(nlm,false,true);
- }
-}
-
-
-
-function myCreateElementXHTML(t) {
- if (isIE) return document.createElement(t);
- else return document.createElementNS("http://www.w3.org/1999/xhtml",t);
-}
-
 function isSVGavailable() {
 //Safari 3 can do SVG, but still has issues. 
  if ((ver = navigator.userAgent.toLowerCase().match(/safari\/(\d+)/))!=null) {
@@ -4584,14 +3074,7 @@ function isSVGavailable() {
  if (rv!=null && 10000*rv[0]+100*rv[1]+1*rv[2]>=10800) return null;
  else return 1;
  }
- //IE + AdobeSVGviewer
- if (navigator.appName.slice(0,9)=="Microsoft")
- try {
- var oSVG=eval("new ActiveXObject('Adobe.SVGCtl.3');");
- return null;
- } catch (e) {
- return 1;
- }
+ //IE 
  else return 1;
 }
 
@@ -4935,48 +3418,11 @@ setStylesheet("#ASAMMLcloseDiv \{font-size:0.8em; padding-top:1em; color:#014\}\
 function init(){
  var msg, warnings = new Array();
  if (document.getElementById==null){
- alert("This webpage requires a recent browser such as Mozilla Firefox/Netscape 7+ or Internet Explorer 6+ with MathPlayer and Adobe SVGviewer");
+ alert("This webpage requires a recent browser such as Firefox");
  return null;
  }
- if (checkForMathML && (msg = checkMathML())) warnings.push(msg);
- if (checkIfSVGavailable && (msg = checkSVG())) warnings.push(msg);
- if (warnings.length>0) displayWarnings(warnings);
  initSymbols();
  return true;
-}
-
-function checkMathML(){
- 
- if (navigator.product && navigator.product=='Gecko') {
- var rv = navigator.userAgent.toLowerCase().match(/rv:\s*([\d\.]+)/);
- if (rv!=null) {
- rv = rv[1].split('.');
- if (rv.length<3) { rv[2] = 0;}
- if (rv.length<2) { rv[1] = 0;}
- }
- if (rv!=null && 10000*rv[0]+100*rv[1]+1*rv[2]>=10100) {
- noMathML = null;
- } else {
- noMathML = true;
- }
- }
- else if (navigator.appName.slice(0,9)=="Microsoft")
- try {
- var ActiveX = new ActiveXObject("MathPlayer.Factory.1");
- noMathML = null;
- } catch (e) {
- noMathML = true;
- }
- else noMathML = true;
- 
-//noMathML = true; //uncomment to check
- if (noMathML && notifyIfNoMathML) {
- var msg = "To view the ASCIIMathML notation use Internet Explorer + MathPlayer or Mozilla Firefox 2.0 or later.";
- if (alertIfNoMathML)
- alert(msg);
- else return msg;
- }
- 
 }
 
 function hideWarning(){
@@ -5022,13 +3468,12 @@ function translate(spanclassASAM) {
 }
 
 function createElementXHTML(t) {
- if (isIE) return document.createElement(t);
- else return document.createElementNS("http://www.w3.org/1999/xhtml",t);
+  if (isIE) return document.createElement(t);
+  else return document.createElementNS("http://www.w3.org/1999/xhtml",t);
 }
 
 function createMmlNode(t,frag) {
- if (isIE) var node = document.createElement("m:"+t);
- else var node = document.createElementNS("http://www.w3.org/1998/Math/MathML",t);
+ var node = document.createElementNS("http://www.w3.org/1998/Math/MathML",t);
  if (frag) node.appendChild(frag);
  return node;
 }
@@ -5614,11 +4059,7 @@ function ASAMparseSexpr(str) { //parses str and returns [node,tailstr]
  result[0].childNodes[i].firstChild.nodeValue);
  var newst = [];
  for (var j=0; j<st.length; j++)
- if (isIE) {if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) newst = newst +
- String.fromCharCode(symbol.codes[st.charCodeAt(j)-65]);
- else newst = newst + st.charAt(j);} else {
  if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) {newst = newst + fixedFromCharCode(symbol.codes[st.charCodeAt(j)-65]);} else newst = newst + st.charAt(j);
- }
  if (result[0].nodeName=="mi")
  result[0]=createMmlNode("mo").
  appendChild(document.createTextNode(newst));
@@ -5855,8 +4296,8 @@ function strarr2docFrag(arr, linebreaks, latex) {
  var newFrag=document.createDocumentFragment();
  var expr = false;
  for (var i=0; i<arr.length; i++) {
- if (expr && noMathML) newFrag.appendChild(ASAMTparseMath(arr[i],latex));
- else if (expr && !noMathML) newFrag.appendChild(parseMath(arr[i],latex));
+ if (expr && isIE) newFrag.appendChild(ASAMTparseMath(arr[i],latex));
+ else if (expr && !isIE) newFrag.appendChild(parseMath(arr[i],latex));
  else {
  var arri = (linebreaks ? arr[i].split("\n\n") : [arr[i]]);
  newFrag.appendChild(createElementXHTML("span").
@@ -5941,12 +4382,10 @@ function processNodeR(n, linebreaks,latex) {
  arr[i]=arr[i].replace(/ASAMescape1/g,ASAMdelimiter1);
  }
  if (arr.length>1 || mtch) {
- //if (!noMathML) {
  frg = strarr2docFrag(arr,n.nodeType==8,latex);
  var len = frg.childNodes.length;
  n.parentNode.replaceChild(frg,n);
  return len-1;
- //} else return 0;
  }
  }
  } else return 0;
@@ -6128,15 +4567,8 @@ function ASLMparseSexpr(str) { //parses str and returns [node,tailstr,(node)tag]
  return [null,str,null];
  str = ASLMremoveCharsAndBlanks(str,symbol.input.length);
  node = createMmlNode(symbol.tag,document.createTextNode(symbol.output));
- if (isIE) { // to get brackets to expand
- var space = createMmlNode("mspace");
- space.setAttribute("height",atval+"ex");
- node = createMmlNode("mrow",node);
- node.appendChild(space);
- } else { // ignored in IE
  node.setAttribute("minsize",atval);
  node.setAttribute("maxsize",atval);
- }
  return [node,str,symbol.tag];
  case LEFTBRACKET: //read (expr+)
  if (symbol.input == "\\left") { // left what?
@@ -6186,10 +4618,6 @@ function ASLMparseSexpr(str) { //parses str and returns [node,tailstr,(node)tag]
  mask = mask.replace(/c/g,"center ");
  node.setAttribute("columnalign",mask);
  node.setAttribute("displaystyle","false");
- if (isIE)
- return [node,result[1],null];
-// trying to get a *little* bit of space around the array
-// (IE already includes it)
  var lspace = createMmlNode("mspace");
  lspace.setAttribute("width","0.167em");
  var rspace = createMmlNode("mspace");
@@ -6201,9 +4629,6 @@ function ASLMparseSexpr(str) { //parses str and returns [node,tailstr,(node)tag]
  } else { // eqnarray
  result = ASLMparseExpr("{"+str,true,true);
  node = createMmlNode("mtable",result[0]);
- if (isIE)
- node.setAttribute("columnspacing","0.25em"); // best in practice?
- else
  node.setAttribute("columnspacing","0.167em"); // correct (but ignored?)
  node.setAttribute("columnalign","right center left");
  node.setAttribute("displaystyle","true");
@@ -6243,26 +4668,11 @@ function ASLMparseSexpr(str) { //parses str and returns [node,tailstr,(node)tag]
  } else {
  node = createMmlNode("mrow",
  createMmlNode(symbol.tag,document.createTextNode(symbol.output)));
- if (isIE) {
- var space = createMmlNode("mspace");
- space.setAttribute("width","0.167em");
- node.appendChild(space);
- }
  node.appendChild(result[0]);
  return [node,result[1],symbol.tag];
  }
  }
  if (symbol.input == "\\sqrt") { // sqrt
- if (isIE) { // set minsize, for \surd
- var space = createMmlNode("mspace");
- space.setAttribute("height","1.2ex");
- space.setAttribute("width","0em"); // probably no effect
- node = createMmlNode(symbol.tag,result[0])
-// node.setAttribute("minsize","1"); // ignored
-// node = createMmlNode("mrow",node); // hopefully unnecessary
- node.appendChild(space);
- return [node,result[1],symbol.tag];
- } else
  return [createMmlNode(symbol.tag,result[0]),result[1],symbol.tag];
  } else if (typeof symbol.acc == "boolean" && symbol.acc) { // accent
  node = createMmlNode(symbol.tag,result[0]);
@@ -6302,11 +4712,7 @@ function ASLMparseSexpr(str) { //parses str and returns [node,tailstr,(node)tag]
  result[0].childNodes[i].firstChild.nodeValue);
  var newst = [];
  for (var j=0; j<st.length; j++)
- if (isIE) {if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) newst = newst +
- String.fromCharCode(symbol.codes[st.charCodeAt(j)-65]);
- else newst = newst + st.charAt(j);} else {
  if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) {newst = newst + fixedFromCharCode(symbol.codes[st.charCodeAt(j)-65]);} else newst = newst + st.charAt(j);
- }
  if (result[0].nodeName=="mi")
  result[0]=createMmlNode("mo").
  appendChild(document.createTextNode(newst));
@@ -6567,8 +4973,7 @@ function ran(a,b,n) { // Generate random number in [a,b] with n digits after .
 }
 
 function myCreateElementSVG(t) {
- if (isIE) return doc.createElement(t);
- else return doc.createElementNS("http://www.w3.org/2000/svg",t);
+return doc.createElementNS("http://www.w3.org/2000/svg",t);
 }
 
 function getElementsByClass(container, tagName, clsName){
@@ -6599,29 +5004,6 @@ function findPos(obj) { // top-left corner of obj on HTML page in pixel
  }
  }
  return [curleft,curtop];
-}
-
-function checkSVG(){
- if (navigator.appName.slice(0,8)=="Netscape") 
- if (window['SVGElement']) noSVG = null;
- else noSVG = true;
- else if (navigator.appName.slice(0,9)=="Microsoft")
- try {
- var oSVG=eval("new ActiveXObject('Adobe.SVGCtl.3');");
- noSVG = null;
- } catch (e) {
- noSVG = true;
- }
- else if (navigator.appName.slice(0,5)=="Opera") // works only for 9.50b1
- noSVG = null;
- else noSVG = true;
-//noSVG = true; //uncomment to check
- if (noSVG && notifyIfNoSVG) {
- var msg = "To view the ASCIIsvg images use Internet Explorer + Adobe SVGviewer or Mozilla Firefox 2.0 or later."
- if (alertIfNoSVG)
- alert(msg);
- else return msg;
- }
 }
 
 function setText(st,id) { // add text to an existing node with given id
@@ -7906,8 +6288,6 @@ ASupdateCoords = [function() {updateCoords(0)},
 //end of asciimathml.js
 function generic()
 {
- if(!JeMinit()) return;
- JeMtranslate();
  if(!AMinit()) return;
  if (translateOnLoad) {
  var nd = document.getElementById("processasciimathinmoodle");
