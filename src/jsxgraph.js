@@ -562,6 +562,64 @@ JXG.clone = function(obj) {
 };
 
 /**
+ * Outputs a deep copy of an existing object and not only a flat copy.
+ * @param {Object} obj Object to be copied.
+ * @type Object
+ * @return Deep copy of given object.
+ */
+JXG.deepCopy = function(obj) {
+    var c, i, prop, j;
+    
+    if (typeof obj !== 'object' || obj == null) {
+        return obj;
+    }
+    if (this.isArray(obj)) {
+        c = [];
+        for (i=0; i<obj.length; i++) {
+            prop = obj[i];
+            if (typeof prop == 'object') {
+                if (this.isArray(prop)) {
+                    c[i] = [];
+                    for (j = 0; j < prop.length; j++) {
+                        if (typeof prop[j] != 'object') {
+                            c[i].push(prop[j]);
+                        } else {
+                            c[i].push(this.deepCopy(prop[j]));
+                        }
+                    }
+                } else {
+                    c[i] = this.deepCopy(prop);
+                }
+            } else {
+                c[i] = prop;
+            }
+        }
+    } else {
+        c = {};
+        for (i in obj) {
+            prop = obj[i];
+            if (typeof prop == 'object') {
+                if (this.isArray(prop)) {
+                    c[i] = [];
+                    for (j = 0; j < prop.length; j++) {
+                        if (typeof prop[j] != 'object') {
+                            c[i].push(prop[j]);
+                        } else {
+                            c[i].push(this.deepCopy(prop[j]));
+                        }
+                    }
+                } else {
+                    c[i] = this.deepCopy(prop);
+                }
+            } else {
+                c[i] = prop;
+            }
+        }
+    }
+    return c;
+};
+
+/**
  * Outputs a copy of an existing object just like {@link #clone} and copies the contents of the second object to the new one.
  * @param {Object} obj Object to be copied.
  * @param {Object} obj2 Object with data that is to be copied to the new one as well.

@@ -3,7 +3,6 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 <!--<script type="text/javascript" src="../distrib/jquery.min.js"></script>-->
-<script type="text/javascript" src="../distrib/prototype.js"></script>
 <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -15,8 +14,10 @@
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
 /* <![CDATA[ */
+
 var board = JXG.JSXGraph.initBoard('box', {originX: 100, originY: 200, grid:true, unitX: 50, unitY: 50});
 var p1 = board.createElement('point',[1,1], {name:'A',style:6});
+
 var p2 = board.createElement('point',[5,2], {name:'B',style:6});
 var p3 = board.createElement('point',[0,-1], {name:'C',style:6});
 var p4 = board.createElement('point',[5,3], {name:'D',style:6});
@@ -26,7 +27,8 @@ var circ = board.createElement('circle', [p1,p2], {dash:1,fillOpacity:0.8});
 var ac = board.createElement('glider', [4,0,circ],{name:'glide'} );
 var t = board.createElement('normal',[ac], {dash:3,strokeColor:'black'});
 var t = board.createElement('normal',[p2,circ], {dash:3,strokeColor:'black'});
-                       
+
+
 /*
     
     var f = function(t){return p2.Y()*t*Math.sin(t);};

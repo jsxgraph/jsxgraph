@@ -28,221 +28,237 @@
  * of all geometry elements.
  * @constructor
  */
-JXG.Options = function() {
+JXG.Options = {
     /* Options that are used directly within the board class */
-    this.fontSize = 12;
-    this.showCopyright = true;
-    this.showNavigation = true;
-    this.takeSizeFromFile = true; // If true, the construction - when read from a file or string - the size of the div can be changed.
+    fontSize : 12,
+    showCopyright : true,
+    showNavigation : true,
+    takeSizeFromFile : true, // If true, the construction - when read from a file or string - the size of the div can be changed.
 
     /* grid options */
-    this.grid = new Object();
-    /* grid styles */
-    this.grid.hasGrid = false;
-    this.grid.gridX = 2;
-    this.grid.gridY = 2;
-    this.grid.gridColor = '#C0C0C0';
-    this.grid.gridOpacity = '0.5';
-    this.grid.gridDash = true;
-    /* snap to grid options */
-    this.grid.snapToGrid = false;
-    this.grid.snapSizeX = 2;
-    this.grid.snapSizeY = 2;
-
+    grid : {
+        /* grid styles */
+        hasGrid : false,
+        gridX : 2,
+        gridY : 2,
+        gridColor : '#C0C0C0',
+        gridOpacity : '0.5',
+        gridDash : true,
+        /* snap to grid options */
+        snapToGrid : false,
+        snapSizeX : 2,
+        snapSizeY : 2
+    },
     /* zoom options */
-    this.zoom = new Object();
-    this.zoom.factor = 1.25;
+    zoom : {
+        factor : 1.25
+    },
 
     /* geometry element options */
-    this.elements = new Object();
-    /* color options */
-    this.elements.color = new Object();
-    this.elements.color.strokeOpacity = 1;
-    this.elements.color.highlightStrokeOpacity = 1;
-    this.elements.color.fillOpacity = 1;
-    this.elements.color.highlightFillOpacity = 1;
+    elements : {
+        /* color options */
+        color : {
+            strokeOpacity : 1,
+            highlightStrokeOpacity : 1,
+            fillOpacity : 1,
+            highlightFillOpacity : 1,
 
-    this.elements.color.strokeColor = '#0000ff';
-    this.elements.color.highlightStrokeColor = '#C3D9FF';
-    this.elements.color.fillColor = 'none';
-    this.elements.color.highlightFillColor = 'none';
+            strokeColor : '#0000ff',
+            highlightStrokeColor : '#C3D9FF',
+            fillColor : 'none',
+            highlightFillColor : 'none'
+        },
+        strokeWidth : '2px',
 
-    this.elements.strokeWidth = '2px';
-
-    /*draft options */
-    this.elements.draft = new Object();
-    this.elements.draft.draft = false;
-    this.elements.draft.color = '#565656';
-    this.elements.draft.opacity = 0.8;
-    this.elements.draft.strokeWidth = '1px';
-
+        /*draft options */
+        draft : {
+            draft : false,
+            color : '#565656',
+            opacity : 0.8,
+            strokeWidth : '1px'
+        }
+    },
+    
     /* special point options */
-    this.point = new Object();
-    this.point.style = 5; //1;
-    this.point.fillColor = '#ff0000';
-    this.point.highlightFillColor = '#EEEEEE';
-    this.point.strokeColor = this.elements.color.strokeColor;
-    this.point.highlightStrokeColor = this.elements.color.highlightStrokeColor;
+    point : {
+        style : 5, //1;
+        fillColor : '#ff0000',
+        highlightFillColor : '#EEEEEE',
+        strokeColor : '#0000ff',         //elements.color.strokeColor,
+        highlightStrokeColor : '#C3D9FF',//this.elements.color.highlightStrokeColor
+    },
 
     /* special line options */
-    this.line = new Object();
-    this.line.firstArrow = false;
-    this.line.lastArrow = false;
-    this.line.straightFirst = true;
-    this.line.straightLast = true;
-    this.line.fillColor = this.elements.color.fillColor;
-    this.line.highlightFillColor = this.elements.color.highlightFillColor;
-    this.line.strokeColor = '#000000';          //this.elements.color.strokeColor;
-    this.line.highlightStrokeColor = '#888888'; //this.elements.color.highlightStrokeColor;
-    /* line ticks options */
-    this.line.ticks = new Object();
-    this.line.ticks.drawLabels = true;
-    this.line.ticks.drawZero = false;
-    this.line.ticks.insertTicks = false;
-    this.line.ticks.minTicksDistance = 50; //100; (AW)
-    this.line.ticks.maxTicksDistance = 300;
-    this.line.ticks.minorHeight = 4;
-    this.line.ticks.majorHeight = 10;
-    this.line.ticks.minorTicks = 4;
-    this.line.ticks.defaultDistance = 1;
-
+    line : {    
+        firstArrow : false,
+        lastArrow : false,
+        straightFirst : true,
+        straightLast : true,
+        fillColor : '#000000',            //this.elements.color.fillColor,
+        highlightFillColor : 'none',      //this.elements.color.highlightFillColor,
+        strokeColor : '#0000ff',          //this.elements.color.strokeColor,
+        highlightStrokeColor : '#888888', //this.elements.color.highlightStrokeColor,
+        /* line ticks options */
+        ticks : {
+            drawLabels : true,
+            drawZero : false,
+            insertTicks : false,
+            minTicksDistance : 50, //100, (AW)
+            maxTicksDistance : 300,
+            minorHeight : 4,
+            majorHeight : 10,
+            minorTicks : 4,
+            defaultDistance : 1
+        }
+    },
+    
     /*special circle options */
-    this.circle = new Object();
-    this.circle.fillColor = this.elements.color.fillColor;
-    this.circle.highlightFillColor = this.elements.color.highlightFillColor;
-    this.circle.strokeColor = this.elements.color.strokeColor;
-    this.circle.highlightStrokeColor = this.elements.color.highlightStrokeColor;
+    circle : {
+        fillColor : 'none',              //this.elements.color.fillColor,
+        highlightFillColor : 'none',     //this.elements.color.highlightFillColor,
+        strokeColor : '#0000ff',         //this.elements.color.strokeColor,
+        highlightStrokeColor : '#C3D9FF',//this.elements.color.highlightStrokeColor
+    },
 
     /* special angle options */
-    this.angle = new Object();
-    this.angle.radius = 1.0;
-    this.angle.fillColor = '#FF7F00';
-    this.angle.highlightFillColor = '#FF7F00';
-    this.angle.strokeColor = '#FF7F00';
-    this.angle.fillOpacity = 0.3;
-    this.angle.highlightFillOpacity = 0.3;
+    angle : {
+        radius : 1.0,
+        fillColor : '#FF7F00',
+        highlightFillColor : '#FF7F00',
+        strokeColor : '#FF7F00',
+        fillOpacity : 0.3,
+        highlightFillOpacity : 0.3
+    },
 
     /* special arc options */
-    this.arc = new Object();
-    this.arc.firstArrow = false;
-    this.arc.lastArrow = false;
-    this.arc.fillColor = this.elements.color.fillColor;
-    this.arc.highlightFillColor = this.elements.color.highlightFillColor;
-    this.arc.strokeColor = this.elements.color.strokeColor;
-    this.arc.highlightStrokeColor = this.elements.color.highlightStrokeColor;
-
+    arc : {
+        firstArrow : false,
+        lastArrow : false,
+        fillColor : 'none',               //this.elements.color.fillColor,
+        highlightFillColor : 'none',      //this.elements.color.highlightFillColor,
+        strokeColor : '#0000ff',          //this.elements.color.strokeColor,
+        highlightStrokeColor : '#C3D9FF', //this.elements.color.highlightStrokeColor
+    },
+    
     /* special polygon options */
-    this.polygon = new Object();
-    this.polygon.fillColor = '#00FF00';
-    this.polygon.highlightFillColor = '#00FF00';
-    this.polygon.fillOpacity = 0.3;
-    this.polygon.highlightFillOpacity = 0.3;
-
+    polygon : {
+        fillColor : '#00FF00',
+        highlightFillColor : '#00FF00',
+        fillOpacity : 0.3,
+        highlightFillOpacity : 0.3
+    },
+    
     /* special sector options */
-    this.sector = new Object();
-    this.sector.fillColor = '#00FF00';
-    this.sector.highlightFillColor = '#00FF00';
-    this.sector.fillOpacity = 0.3;
-    this.sector.highlightFillOpacity = 0.3;
-
+    sector : {
+        fillColor : '#00FF00',
+        highlightFillColor : '#00FF00',
+        fillOpacity : 0.3,
+        highlightFillOpacity : 0.3
+    },
+    
     /* special text options */
-    this.text = new Object();
-    this.text.strokeColor = '#000000';
-    this.text.useASCIIMathML = true;
-    this.text.defaultType = 'html'; //'html' or 'internal'
+    text : {
+        strokeColor : '#000000',
+        useASCIIMathML : true,
+        defaultType : 'html' //'html' or 'internal'
+    },
 
     /* special curve options */
-    this.curve = new Object();
-    this.curve.strokeWidth = '1px';
-    this.curve.strokeColor = this.elements.color.strokeColor;
-    this.curve.RDPsmoothing = false; // Apply the Ramen-Douglas-Peuker algorithm
-    this.curve.numberPointsHigh = 1600; // Number of points on curves after mouseUp
-    this.curve.numberPointsLow = 400;   // Number of points on curves after mousemove
-    this.curve.doAdvancedPlot = true;   // Use the algorithm by Gillam and Hohenwarter
-                                        // It is much slower, but the result is better
+    curve : {
+        strokeWidth : '1px',
+        strokeColor : '#0000ff',//this.elements.color.strokeColor,
+        RDPsmoothing : false, // Apply the Ramen-Douglas-Peuker algorithm
+        numberPointsHigh : 1600, // Number of points on curves after mouseUp
+        numberPointsLow : 400,   // Number of points on curves after mousemove
+        doAdvancedPlot : true   // Use the algorithm by Gillam and Hohenwarter
+                                    // It is much slower, but the result is better
+    }, 
     
     /* precision options */
-    this.precision = new Object();
-    this.precision.hasPoint = 4;
-    this.precision.epsilon = 0.0001;
-
+    precision : {
+        hasPoint : 4,
+        epsilon : 0.0001
+    }
 };
 
 /**
  * Apply the options stored in this object to all objects on the given board.
  * @param {JXG.Board} board The board to which objects the options will be applied.
  */
-JXG.Options.prototype.useStandardOptions = function(board) {
-    var boardHadGrid = board.hasGrid;
-    board.hasGrid = this.grid.hasGrid;
-    board.gridX = this.grid.gridX;
-    board.gridY = this.grid.gridY;
-    board.gridColor = this.grid.gridColor;
-    board.gridOpacity = this.grid.gridOpacity;
-    board.gridDash = this.grid.gridDash;
-    board.snapToGrid = this.grid.snapToGrid;
-    board.snapSizeX = this.grid.SnapSizeX;
-    board.snapSizeY = this.grid.SnapSizeY;
-    board.takeSizeFromFile = this.takeSizeFromFile;
+JXG.useStandardOptions = function(board) {
+    var o = JXG.Options,
+        boardHadGrid = board.hasGrid,
+        el, t;
+        
+    board.hasGrid = o.grid.hasGrid;
+    board.gridX = o.grid.gridX;
+    board.gridY = o.grid.gridY;
+    board.gridColor = o.grid.gridColor;
+    board.gridOpacity = o.grid.gridOpacity;
+    board.gridDash = o.grid.gridDash;
+    board.snapToGrid = o.grid.snapToGrid;
+    board.snapSizeX = o.grid.SnapSizeX;
+    board.snapSizeY = o.grid.SnapSizeY;
+    board.takeSizeFromFile = o.takeSizeFromFile;
 
-    for(var el in board.objects) {
-        if(board.objects[el].type == JXG.OBJECT_TYPE_POINT) {
-            board.objects[el].visProp['fillColor'] = this.point.fillColor;
-            board.objects[el].visProp['highlightFillColor'] = this.point.highlightFillColor;
-            board.objects[el].visProp['strokeColor'] = this.point.strokeColor;
-            board.objects[el].visProp['highlightStrokeColor'] = this.point.highlightStrokeColor;
+    for(el in board.objects) {
+        p = board.objects[el];
+        if(p.elementClass == JXG.OBJECT_CLASS_POINT) {
+            p.visProp['fillColor'] = o.point.fillColor;
+            p.visProp['highlightFillColor'] = o.point.highlightFillColor;
+            p.visProp['strokeColor'] = o.point.strokeColor;
+            p.visProp['highlightStrokeColor'] = o.point.highlightStrokeColor;
         }
-        else if(board.objects[el].type == JXG.OBJECT_TYPE_LINE) {
-            board.objects[el].visProp['fillColor'] = this.line.fillColor;
-            board.objects[el].visProp['highlightFillColor'] = this.line.highlightFillColor;
-            board.objects[el].visProp['strokeColor'] = this.line.strokeColor;
-            board.objects[el].visProp['highlightStrokeColor'] = this.line.highlightStrokeColor;
-            for(var t in board.objects[el].ticks) {
-                t.majorTicks = this.line.ticks.majorTicks;
-                t.minTicksDistance = this.line.ticks.minTicksDistance;
-                t.minorHeight = this.line.ticks.minorHeight;
-                t.majorHeight = this.line.ticks.majorHeight;
+        else if(p.elementClass == JXG.OBJECT_CLASS_LINE) {
+            p.visProp['fillColor'] = o.line.fillColor;
+            p.visProp['highlightFillColor'] = o.line.highlightFillColor;
+            p.visProp['strokeColor'] = o.line.strokeColor;
+            p.visProp['highlightStrokeColor'] = o.line.highlightStrokeColor;
+            for(t in p.ticks) {
+                t.majorTicks = o.line.ticks.majorTicks;
+                t.minTicksDistance = o.line.ticks.minTicksDistance;
+                t.minorHeight = o.line.ticks.minorHeight;
+                t.majorHeight = o.line.ticks.majorHeight;
             }
         }
-        else if(board.objects[el].type == JXG.OBJECT_TYPE_CIRCLE) {
-            board.objects[el].visProp['fillColor'] = this.circle.fillColor;
-            board.objects[el].visProp['highlightFillColor'] = this.circle.highlightFillColor;
-            board.objects[el].visProp['strokeColor'] = this.circle.strokeColor;
-            board.objects[el].visProp['highlightStrokeColor'] = this.circle.highlightStrokeColor;
+        else if(p.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+            p.visProp['fillColor'] = o.circle.fillColor;
+            p.visProp['highlightFillColor'] = o.circle.highlightFillColor;
+            p.visProp['strokeColor'] = o.circle.strokeColor;
+            p.visProp['highlightStrokeColor'] = o.circle.highlightStrokeColor;
         }
-        else if(board.objects[el].type == JXG.OBJECT_TYPE_ANGLE) {
-            board.objects[el].visProp['fillColor'] = this.angle.fillColor;
-            board.objects[el].visProp['highlightFillColor'] = this.angle.highlightFillColor;
-            board.objects[el].visProp['strokeColor'] = this.angle.strokeColor;
+        else if(p.type == JXG.OBJECT_TYPE_ANGLE) {
+            p.visProp['fillColor'] = o.angle.fillColor;
+            p.visProp['highlightFillColor'] = o.angle.highlightFillColor;
+            p.visProp['strokeColor'] = o.angle.strokeColor;
         }
-        else if(board.objects[el].type == JXG.OBJECT_TYPE_ARC) {
-            board.objects[el].visProp['fillColor'] = this.arc.fillColor;
-            board.objects[el].visProp['highlightFillColor'] = this.arc.highlightFillColor;
-            board.objects[el].visProp['strokeColor'] = this.arc.strokeColor;
-            board.objects[el].visProp['highlightStrokeColor'] = this.arc.highlightStrokeColor;
+        else if(p.type == JXG.OBJECT_TYPE_ARC) {
+            p.visProp['fillColor'] = o.arc.fillColor;
+            p.visProp['highlightFillColor'] = o.arc.highlightFillColor;
+            p.visProp['strokeColor'] = o.arc.strokeColor;
+            p.visProp['highlightStrokeColor'] = o.arc.highlightStrokeColor;
         }
-        else if(board.objects[el].type == JXG.OBJECT_TYPE_POLYGON) {
-            board.objects[el].visProp['fillColor'] = this.polygon.fillColor;
-            board.objects[el].visProp['highlightFillColor'] = this.polygon.highlightFillColor;
-            board.objects[el].visProp['fillOpacity'] = this.polygon.fillOpacity;
-            board.objects[el].visProp['highlightFillOpacity'] = this.polygon.highlightFillOpacity;
+        else if(p.type == JXG.OBJECT_TYPE_POLYGON) {
+            p.visProp['fillColor'] = o.polygon.fillColor;
+            p.visProp['highlightFillColor'] = o.polygon.highlightFillColor;
+            p.visProp['fillOpacity'] = o.polygon.fillOpacity;
+            p.visProp['highlightFillOpacity'] = o.polygon.highlightFillOpacity;
         }
-        else if(board.objects[el].type == JXG.OBJECT_TYPE_CURVE) {
-            board.objects[el].visProp['strokeColor'] = this.curve.strokeColor;
+        else if(p.type == JXG.OBJECT_TYPE_CURVE) {
+            p.visProp['strokeColor'] = o.curve.strokeColor;
         }
     }
-    for(var el in board.objects) {
-        if(board.objects[el].type == JXG.OBJECT_TYPE_SECTOR) {
-            board.objects[el].arc.visProp['fillColor'] = this.sector.fillColor;
-            board.objects[el].arc.visProp['highlightFillColor'] = this.sector.highlightFillColor;
-            board.objects[el].arc.visProp['fillOpacity'] = this.sector.fillOpacity;
-            board.objects[el].arc.visProp['highlightFillOpacity'] = this.sector.highlightFillOpacity;
+    for(el in board.objects) {
+        p = board.objects[el];
+        if(p.type == JXG.OBJECT_TYPE_SECTOR) {
+            p.arc.visProp['fillColor'] = o.sector.fillColor;
+            p.arc.visProp['highlightFillColor'] = o.sector.highlightFillColor;
+            p.arc.visProp['fillOpacity'] = o.sector.fillOpacity;
+            p.arc.visProp['highlightFillOpacity'] = o.sector.highlightFillOpacity;
         }
     }
 
-    board.needsFullUpdate = true;
-    board.update();
-    board.needsFullUpdate = false;
+    board.fullUpdate();
     if(boardHadGrid && board.hasGrid) {
         board.renderer.removeGrid(board);
         board.renderer.drawGrid(board);
@@ -258,38 +274,38 @@ JXG.Options.prototype.useStandardOptions = function(board) {
  * @param {JXG.Board} board The board to which objects the options will be applied.
  * @see #useStandardOptions
  */
-JXG.Options.prototype.useBlackWhiteOptions = function(board) {
-    this.point.fillColor = this.changeColorToBlackWhite(this.point.fillColor);
-    this.point.highlightFillColor = this.changeColorToBlackWhite(this.point.highlightFillColor);
-    this.point.strokeColor = this.changeColorToBlackWhite(this.point.strokeColor);
-    this.point.highlightStrokeColor = this.changeColorToBlackWhite(this.point.highlightStrokeColor);
+JXG.useBlackWhiteOptions = function(board) {
+    o = JXG.Options;
+    o.point.fillColor = JXG.rgb2bw(o.point.fillColor);
+    o.point.highlightFillColor = JXG.rgb2bw(o.point.highlightFillColor);
+    o.point.strokeColor = JXG.rgb2bw(o.point.strokeColor);
+    o.point.highlightStrokeColor = JXG.rgb2bw(o.point.highlightStrokeColor);
 
-    this.line.fillColor = this.changeColorToBlackWhite(this.line.fillColor);
-    this.line.highlightFillColor = this.changeColorToBlackWhite(this.line.highlightFillColor);
-    this.line.strokeColor = this.changeColorToBlackWhite(this.line.strokeColor);
-    this.line.highlightStrokeColor = this.changeColorToBlackWhite(this.line.highlightStrokeColor);
+    o.line.fillColor = JXG.rgb2bw(o.line.fillColor);
+    o.line.highlightFillColor = JXG.rgb2bw(o.line.highlightFillColor);
+    o.line.strokeColor = JXG.rgb2bw(o.line.strokeColor);
+    o.line.highlightStrokeColor = JXG.rgb2bw(o.line.highlightStrokeColor);
 
-    this.circle.fillColor = this.changeColorToBlackWhite(this.circle.fillColor);
-    this.circle.highlightFillColor = this.changeColorToBlackWhite(this.circle.highlightFillColor);
-    this.circle.strokeColor = this.changeColorToBlackWhite(this.circle.strokeColor);
-    this.circle.highlightStrokeColor = this.changeColorToBlackWhite(this.circle.highlightStrokeColor);
+    o.circle.fillColor = JXG.rgb2bw(o.circle.fillColor);
+    o.circle.highlightFillColor = JXG.rgb2bw(o.circle.highlightFillColor);
+    o.circle.strokeColor = JXG.rgb2bw(o.circle.strokeColor);
+    o.circle.highlightStrokeColor = JXG.rgb2bw(o.circle.highlightStrokeColor);
 
-    this.arc.fillColor = this.changeColorToBlackWhite(this.arc.fillColor);
-    this.arc.highlightFillColor = this.changeColorToBlackWhite(this.arc.highlightFillColor);
-    this.arc.strokeColor = this.changeColorToBlackWhite(this.arc.strokeColor);
-    this.arc.highlightStrokeColor = this.changeColorToBlackWhite(this.arc.highlightStrokeColor);
+    o.arc.fillColor = JXG.rgb2bw(o.arc.fillColor);
+    o.arc.highlightFillColor = JXG.rgb2bw(o.arc.highlightFillColor);
+    o.arc.strokeColor = JXG.rgb2bw(o.arc.strokeColor);
+    o.arc.highlightStrokeColor = JXG.rgb2bw(o.arc.highlightStrokeColor);
 
-    this.polygon.fillColor = this.changeColorToBlackWhite(this.polygon.fillColor);
-    this.polygon.highlightFillColor  = this.changeColorToBlackWhite(this.polygon.highlightFillColor);
+    o.polygon.fillColor = JXG.rgb2bw(o.polygon.fillColor);
+    o.polygon.highlightFillColor  = JXG.rgb2bw(o.polygon.highlightFillColor);
 
-    this.sector.fillColor = this.changeColorToBlackWhite(this.sector.fillColor);
-    this.sector.highlightFillColor  = this.changeColorToBlackWhite(this.sector.highlightFillColor);
+    o.sector.fillColor = JXG.rgb2bw(o.sector.fillColor);
+    o.sector.highlightFillColor  = JXG.rgb2bw(o.sector.highlightFillColor);
 
-    this.curve.strokeColor = this.changeColorToBlackWhite(this.curve.strokeColor);
+    o.curve.strokeColor = JXG.rgb2bw(o.curve.strokeColor);
+    o.grid.gridColor = JXG.rgb2bw(o.grid.gridColor);
 
-    this.grid.gridColor = this.changeColorToBlackWhite(this.grid.gridColor);
-
-    this.useStandardOptions(board);
+    JXG.useStandardOptions(board);
 };
 
 /**
@@ -298,7 +314,7 @@ JXG.Options.prototype.useBlackWhiteOptions = function(board) {
  * @type String
  * @return Returns a HTML color string
  */
-JXG.Options.prototype.changeColorToBlackWhite = function(color) {
+JXG.rgb2bw = function(color) {
     if(color == 'none') {
         return color;
     }
@@ -316,7 +332,7 @@ JXG.Options.prototype.changeColorToBlackWhite = function(color) {
  * @param apply {bool} <tt>true</tt> when options in file should be applied to board after being loaded.
  * @param board {JXG.Board} The board the options should be applied to.
  */
-JXG.Options.prototype.loadFromFile = function(fileurl, applyTo, board) {
+JXG.loadOptionsFromFile = function(fileurl, applyTo, board) {
    this.cbp = function(t) {
       this.parseString(t, applyTo, board);
    };
@@ -331,7 +347,7 @@ JXG.Options.prototype.loadFromFile = function(fileurl, applyTo, board) {
  * @param apply {bool} <tt>true</tt> if the options should be applied to all objects on the board.
  * @param board {JXG.Board} The board the options should be applied to.
  */
-JXG.Options.prototype.parseString = function(text, applyTo, board) {
+JXG.parseOptionsString = function(text, applyTo, board) {
    var newOptions = '';
 
    if(text != '') {
@@ -359,6 +375,6 @@ JXG.Options.prototype.parseString = function(text, applyTo, board) {
    applyOption(this, newOptions, 0);
 
    if(applyTo && typeof board != 'undefined') {
-       this.useStandardOptions(board);
+       JXG.useStandardOptions(board);
    }
 };
