@@ -355,34 +355,84 @@ JXG.createMidpoint = function(board, parentArr, atts) {
  * </script><pre>
  */
 JXG.createParallelPoint = function(board, parentArr, atts) {
-    var p1, p2, p3, p;
+    var a, b, c, p;
 
-    /* TODO parallel point polynomials */
     if(parentArr.length == 3 && parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[2].elementClass == JXG.OBJECT_CLASS_POINT) {
-        p1 = parentArr[0];
-        p2 = parentArr[1];
-        p3 = parentArr[2];
+        a = parentArr[0];
+        b = parentArr[1];
+        c = parentArr[2];
     } else if (parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_LINE) {
-        p3 = parentArr[0];
-        p1 = parentArr[1].point1;
-        p2 = parentArr[1].point2;
+        c = parentArr[0];
+        a = parentArr[1].point1;
+        b = parentArr[1].point2;
     } else if (parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[0].elementClass == JXG.OBJECT_CLASS_LINE) {
-        p3 = parentArr[1];
-        p1 = parentArr[0].point1;
-        p2 = parentArr[0].point2;
+        c = parentArr[1];
+        a = parentArr[0].point1;
+        b = parentArr[0].point2;
     }
     else {
         throw new Error("JSXGraph: Can't create parallel point with parent types '" + (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");
     }
 
-    p = board.createElement('point', [function () { return p3.coords.usrCoords[1] + p2.coords.usrCoords[1] - p1.coords.usrCoords[1]; }, function () { return p3.coords.usrCoords[2] + p2.coords.usrCoords[2] - p1.coords.usrCoords[2]; }], atts);
+    p = board.createElement('point', [function () { return c.coords.usrCoords[1] + b.coords.usrCoords[1] - a.coords.usrCoords[1]; }, function () { return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2]; }], atts);
 //    p1.addChild(p); // required for algorithms requiring dependencies between elements
 //    p2.addChild(p);
-    p3.addChild(p);
+    c.addChild(p);
 
     // required to set the coordinates because functions are considered as constraints. hence, the coordinates get set first after an update.
     // can be removed if the above issue is resolved.
     p.update();
+
+    p.generatePolynomial = function() {
+        /*
+         *  Parallelpoint takes three points A, B and C or line L (with points B and C) and creates point T:
+         *
+         *
+         *                     C (c1,c2)                             T (t1,t2)
+         *                      x                                     x
+         *                     /                                     /
+         *                    /                                     /
+         *                   /                                     /
+         *                  /                                     /
+         *                 /                                     /
+         *                /                                     /
+         *               /                                     /
+         *              /                                     /
+         *  L (opt)    /                                     /
+         *  ----------x-------------------------------------x--------
+         *            A (a1,a2)                             B (b1,b2)
+         *
+         * So we have two conditions:
+         *
+         *   (a)   CT  ||  AB           (collinearity condition I)
+         *   (b)   BT  ||  AC           (collinearity condition II)
+         *
+         * The corresponding equations are
+         *
+         *    (b2 - a2)(t1 - c1) - (t2 - c2)(b1 - a1) = 0         (1)
+         *    (t2 - b2)(a1 - c1) - (t1 - b1)(a2 - c2) = 0         (2)
+         *
+         * Simplifying (1) and (2) gives
+         *
+         *    b2t1 - b2c1 - a2t1 + a2c1 - t2b1 + t2a1 + c2b1 - c2a1 = 0      (1')
+         *    t2a1 - t2c1 - b2a1 + b2c1 - t1a2 + t1c2 + b1a2 - b1c2 = 0      (2')
+         *
+         */
+
+        var a1 = a.symbolic.x;
+        var a2 = a.symbolic.y;
+        var b1 = b.symbolic.x;
+        var b2 = b.symbolic.y;
+        var c1 = c.symbolic.x;
+        var c2 = c.symbolic.y;
+        var t1 = p.symbolic.x;
+        var t2 = p.symbolic.y;
+
+        var poly1 =  '('+b2+')*('+t1+')-('+b2+')*('+c1+')-('+a2+')*('+t1+')+('+a2+')*('+c1+')-('+t2+')*('+b1')+('+t2+')*('+a1')+('+c2+')*('+b1+')-('+c2+')*('+a1+')';
+        var poly2 =  '('+t2+')*('+a1+')-('+t2+')*('+c1+')-('+b2+')*('+a1+')+('+b2+')*('+c1+')-('+t1+')*('+a2')+('+t1+')*('+c2')+('+b1+')*('+a2+')-('+b1+')*('+c2+')';
+
+        return [poly1, poly2];
+    };
 
     return p;
 };

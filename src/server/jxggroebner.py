@@ -22,7 +22,7 @@ cmd_cocoa = "cocoa"
 #cmd_cocoa = r"C:\cocoa\cocoa.bat"
 
 # Shouldn't be changed, except you know what you're doing
-debug = True
+debug = False
 
 ############################
 
