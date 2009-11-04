@@ -2,8 +2,9 @@ JXG.GeogebraReader = new function() {
 
 /**
  * Identifying non-associative tokens
- * @param {} 
- * @return {} 
+ * @param {String} type the type of the non-associative token 
+ * @param {String} att the value of the token 
+ * @return {Function} return the function that returns the correct value 
  */
 this.ggbMatch = function(type, att) {
   switch(type.toLowerCase()) {
@@ -31,6 +32,13 @@ this.ggbMatch = function(type, att) {
   }
 };
 
+/**
+ * @param {String} type the type of expression
+ * @param {String} m first input value
+ * @param {String} n second input value
+ * @param {Object} p point or object to update 
+ * @return {String} return the object, string or calculated value
+ */
 this.ggbAct = function(type, m, n, p) {
   var v1 = m, v2 = n;
   switch(type.toLowerCase()) {
@@ -105,7 +113,11 @@ this.ggbAct = function(type, m, n, p) {
 };
 
 /**
-
+ * JS/CC parser to convert the input expression to a working javascript function.
+ * @param {XMLTree} tree expects the content of the parsed geogebra file returned by function parseFF/parseIE
+ * @param {Object} board object
+ * @param {Object} element Element that needs to be updated
+ * @param {String} exp String which contains the function, expression or information 
  */
 this.ggbParse = function(board, tree, element, exp) {
   if(element) {
@@ -131,8 +143,7 @@ function __dbg_print( text ) {
     _dbg_string += text + "\n";
 }
 
-function __lex( info )
-{
+function __lex( info ) {
     var state        = 0;
     var match        = -1;
     var match_pos    = 0;
@@ -763,6 +774,8 @@ this.debug = function(s) {
  * Set color properties of a geogebra element.
  * Set stroke, fill, lighting, label and draft color attributes.
  * @param {Object} gxtEl element of which attributes are to set
+ * @param {Object} attr object carrying all necessary attribute values
+ * @return {Object} returning the updated attr-attributes object
  */
 this.colorProperties = function(Data, attr) {
   var a = (Data.getElementsByTagName("objColor")[0].attributes["alpha"]) ? 1*Data.getElementsByTagName("objColor")[0].attributes["alpha"].value : 0;
@@ -785,6 +798,7 @@ this.colorProperties = function(Data, attr) {
  * Set active, area, dash, draft and showinfo attributes.
  * @param {Object} gxtEl element of which attributes are to set
  * @param {Object} Data element of which attributes are to set
+ * @param {Object} attr object containing the necessary attribute values
  */
 this.boardProperties = function(gxtEl, Data, attr) {
   return attr;
@@ -793,6 +807,7 @@ this.boardProperties = function(gxtEl, Data, attr) {
 /**
  * @param {Object} gxtEl element of which attributes are to set
  * @param {Object} Data element of which attributes are to set
+ * @return {Object} updated element
  */
 this.coordinates = function(gxtEl, Data) {
   gxtEl.x = (Data.getElementsByTagName("coords")[0]) ? parseFloat(Data.getElementsByTagName("coords")[0].attributes["x"].value) : (Data.getElementsByTagName("startPoint")[0]) ? parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["x"].value) : false;
@@ -804,7 +819,6 @@ this.coordinates = function(gxtEl, Data) {
 /**
  * Writing element attributes to the given object
  * @param {XMLNode} Data expects the content of the current element
- * @param {Object} the name of the element to search for
  * @return {Object} object with according attributes
  */
 this.visualProperties = function(Data, attr) {
@@ -822,6 +836,7 @@ this.visualProperties = function(Data, attr) {
  * Searching for an element in the geogebra tree
  * @param {XMLTree} tree expects the content of the parsed geogebra file returned by function parseFF/parseIE
  * @param {String} the name of the element to search for
+ * @param {Boolean} whether it is search for an expression or not
  * @return {Object} object with according label
  */
 this.getElement = function(tree, name, expr) {
@@ -833,24 +848,25 @@ this.getElement = function(tree, name, expr) {
         if(name == Data.attributes["label"].value) {
           return Data;
         }
-      }
+      };
     } else {
       for(var j=0; j<tree.getElementsByTagName("construction")[i].getElementsByTagName("expression").length; j++) {
         var Data = tree.getElementsByTagName("construction")[i].getElementsByTagName("expression")[j];
         if(name == Data.attributes["label"].value) {
           return Data;
         }
-      }
+      };
     }
 };
 
 /**
+ * Prepare expression for this.ggbParse with solving multiplications and replacing mathematical functions.
  * @param {String} exp Expression to parse and correct
  * @return {String} correct expression with fixed function and multiplication
  */
 this.functionParse = function(exp) {
 JXG.GeogebraReader.debug('* in: '+ exp);
-    // String vorbehandeln: Multiplikation aufloesen
+    // prepare string: "solve" multiplications 'a b' to 'a*b'
     var s = exp.split(' ');
     var o = '';
     for(var i=0; i<s.length; i++) {
@@ -859,20 +875,19 @@ JXG.GeogebraReader.debug('* in: '+ exp);
           if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
             s[i] = s[i] + "*";
       o += s[i];
-    }
+    };
     // search for function params
     if(o.match(/[a-zA-Z0-9]+\([a-zA-Z0-9]+[a-zA-Z0-9,\ ]*\)[\ ]*[=][\ ]*[a-zA-Z0-9\+\-\*\/]+/)) {
       var input = o.split('(')[1].split(')')[0];
       var vars = input.split(', ');
 
       var output = [];
-      for(var i=0; i<vars.length; i++) {
+      for(var i=0; i<vars.length; i++)
         output.push("__"+vars[i]);
-      }
+
       var expr = o.split('=')[1];
-      for(var i=0; i<vars.length; i++) {
+      for(var i=0; i<vars.length; i++)
         expr = expr.replace(eval('/'+vars[i]+'/g'), '__'+vars[i]);
-      }
 
       // sin-parse workaround:
       expr = (expr.match(/sin/)) ? expr.replace(/sin/, "Math.sin") : expr;
@@ -889,8 +904,6 @@ JXG.GeogebraReader.debug('* in: '+ exp);
  * Searching for an element in the geogebra tree
  * @param {XMLTree} tree expects the content of the parsed geogebra file returned by function parseFF/parseIE
  * @param {Object} board object
- * @param {Array} board.ggbElements contains the list of all generated elements
- * @return {Array} updated board.ggbElements with the newly created references to the axes
  */
 this.writeBoard = function(tree, board) {
   var boardData = tree.getElementsByTagName("euclidianView")[0];
@@ -907,13 +920,8 @@ this.writeBoard = function(tree, board) {
   
   board.fontSize = 1*tree.getElementsByTagName("gui")[0].getElementsByTagName("font")[0].attributes["size"].value;
 
-  // delete(JXG.JSXGraph.boards[board.id]);
-  // board.id = boardTmp.id;
-
-  // board.fullUpdate();
-
   JXG.JSXGraph.boards[board.id] = board;
-  //board.initGeonextBoard();
+
   // Update of properties during update() is not necessary in GEONExT files
   board.renderer.enhancedRendering = true;
 
@@ -932,10 +940,10 @@ this.writeBoard = function(tree, board) {
  * Searching for an element in the geogebra tree
  * @param {XMLTree} tree expects the content of the parsed geogebra file returned by function parseFF/parseIE
  * @param {Object} board object
- * @param {Object} gxtEl element whose attributes are to parse
+ * @param {Object} ggb element whose attributes are to parse
  * @param {Array} input list of all input elements
  * @param {String} typeName output construction method
- * @param {String} text of expression to write
+ * @return {Object} return newly created element or false
  */
 this.writeElement = function(tree, board, output, input, cmd) {
   element = (typeof output === 'object' && typeof output.attributes === 'undefined') ? output[0] : output;
@@ -1367,8 +1375,6 @@ this.writeElement = function(tree, board, output, input, cmd) {
         return false;
       }
     break;
-	//    case 'semicircle':
-	//    break;
     case 'angle':
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       attr = JXG.GeogebraReader.colorProperties(element, attr);
@@ -1405,7 +1411,7 @@ this.writeElement = function(tree, board, output, input, cmd) {
       // gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-      if(element.getElementsByTagName('slider').length == 1) { // Hier handelt es sich um einen Slider
+      if(element.getElementsByTagName('slider').length == 1) { // it's a slider
         var sx = parseFloat(element.getElementsByTagName('slider')[0].attributes['x'].value);
         var sy = parseFloat(element.getElementsByTagName('slider')[0].attributes['y'].value);
 		var tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [sx, sy], board);
@@ -1430,7 +1436,7 @@ this.writeElement = function(tree, board, output, input, cmd) {
 
         try {
           JXG.GeogebraReader.debug("* <b>Numeric:</b> First: " + attr.name + "<br>\n");
-          n = board.createElement('slider', [[sx,sy], [ex,ey], [smin, sip, smax]], attr);'__x','__y','return Math.sin(__x);';
+          n = board.createElement('slider', [[sx,sy], [ex,ey], [smin, sip, smax]], attr);
           return n;
         } catch(e) {
           JXG.GeogebraReader.debug("* <b>Err:</b> Numeric " + attr.name +"<br>\n");
@@ -1621,13 +1627,13 @@ this.readGeogebra = function(tree, board) {
           }
           input[i] = board.ggbElements[el];
         }
-      }
+      };
 
       var output = [], elname = Data.getElementsByTagName("output")[0].attributes[0].value;
       for (i=0; i<Data.getElementsByTagName("output")[0].attributes.length; i++) {
         el = Data.getElementsByTagName("output")[0].attributes[i].value;
         output[i] = JXG.GeogebraReader.getElement(tree, el);
-      }
+      };
       if(typeof board.ggbElements[elname] == 'undefined' || board.ggbElements[elname] == '') {
         board.ggbElements[elname] = JXG.GeogebraReader.writeElement(tree, board, output, input, Data.attributes['name'].value.toLowerCase());
         JXG.GeogebraReader.debug("regged: "+board.ggbElements[elname].id+"<br/>");
@@ -1637,10 +1643,10 @@ this.readGeogebra = function(tree, board) {
           for(var i=0; i<board.ggbElements[elname].borders.length; i++) {
             board.ggbElements[board.ggbElements[elname].borders[i].name] = board.ggbElements[elname].borders[i];
             JXG.GeogebraReader.debug(i+") regged: "+board.ggbElements[elname].borders[i].name+"("+ board.ggbElements[board.ggbElements[elname].borders[i].name].id +")<br/>");
-          }
+          };
       }
 
-    }
+    };
 
     // create "single" elements which do not depend on any other
     var elements = constructions[t].getElementsByTagName("element");
@@ -1666,13 +1672,18 @@ this.readGeogebra = function(tree, board) {
         }
 
       }
-    }
+    };
 
-  } // end: for construction
+  }; // end: for construction
   board.fullUpdate();
   delete(board.ggbElements);
 };
 
+/**
+ * Extracting the packed geogebra file in order to return the "blank" xml-tree for further parsing.
+ * @param {String} archive containing geogebra.xml-file or raw input string (eg. xml-tree)
+ * @return {String} content of geogebra.xml-file if archive was passed in
+ */
 this.prepareString = function(fileStr) {
   if (fileStr.indexOf('<') != 0) {
     bA = [];
