@@ -16,17 +16,37 @@
    <script type="text/javascript">
     /* <![CDATA[ */
         fname = 'linesegment.xml';
-        //fname = 'Points.i2g';
-        //fname = 'intersections_circles_line.xml'; //ok
-        //fname = 'locus_parabola.xml';
-        //fname = 'locus_cardioid.xml';
-        //fname = 'locus_pacman.xml';
-        //fname = 'locus_shadow.xml';
-        //fname = 'rotating_circle.xml';
-        //fname = 'tangents_to_circle.xml';     // ok
-        //fname = 'center_of_three_points.xml'; // ok
-        //fname = 'other_intersections.xml';      // ok
-        //fname = 'all.i2g';      // ok (GEONExT example)
+//-------- good ----------
+//fname = 'all.i2g';      // ok (GEONExT example)
+//fname = 'center_of_three_points.xml';
+//fname = 'endpoints_of_line_segment.xml'; //fname = 'linesegment.xml';
+//fname = 'midpoint_of_line_segment.xml';
+//fname = 'line_segment_by_points.xml';
+//fname = 'line_through_two_points.xml';
+//fname = 'midpoint_of_two_points.xml';
+//fname = 'parallel_perpendicular_through.xml';
+//fname = 'tangents_to_circle.xml';
+//fname = 'intersections_circles_line.xml';
+
+fname = 'other_intersections.xml';
+//-------  not good ---------
+
+//-------  open ---------
+
+//fname = 'locus_cardioid.xml';
+//fname = 'locus_frequency_duplicator.xml';
+//fname = 'locus_pacman.xml';
+//fname = 'locus_parabola.xml';
+//fname = 'locus_shadow.xml';
+//fname = 'line.xml';
+//fname = 'point.xml';
+//fname = 'circle.xml';
+//fname = 'rotating_circle.xml';
+
+//fname = 'free_point.xml';
+//fname = 'conic.xml';
+//fname = 'Points.i2g';
+//fname = 'all.xml';
         $('debug').innerHTML = fname+'<br>';
         board = JXG.JSXGraph.loadBoardFromFile('jxgbox', fname , 'Intergeo');
   /* ]]> */

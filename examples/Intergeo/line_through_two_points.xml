@@ -1,0 +1,41 @@
+<!-- This example ilustrates the construction of a line passing through two points
+
+  WIRIS CODE:
+  P = point(0,0)
+  Q = point(1,2)
+  l = line(P,Q)
+-->
+
+
+<construction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xml/intergeo.xsd">
+	<elements>
+		<line id="l">
+			<homogeneous_coordinates>
+				<double>2</double>
+				<double>-1</double>
+				<double>0</double>
+			</homogeneous_coordinates>
+		</line>
+		<point id="P">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="Q">
+			<homogeneous_coordinates>
+				<double>1</double>
+				<double>2</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+	</elements>
+	<constraints>
+		<line_through_two_points>
+			<line out="true">l</line>
+			<point>P</point>
+			<point>Q</point>
+		</line_through_two_points>
+	</constraints>
+</construction>
