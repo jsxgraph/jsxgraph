@@ -2,7 +2,6 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -34,11 +33,11 @@
     function symbcoords(p) {
         JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p, 'u', 'underscore');
 
-        $('debug').innerHTML = '';
+        document.getElementById('debug').innerHTML = '';
         for(var o in board.objects) {
             if(typeof board.objects[o].symbolic.x != 'undefined') {
-                $('debug').innerHTML += board.objects[o].name + ': ';
-                $('debug').innerHTML += '(' + board.objects[o].symbolic.x + ', ' + board.objects[o].symbolic.y + ')<br />';
+                document.getElementById('debug').innerHTML += board.objects[o].name + ': ';
+                document.getElementById('debug').innerHTML += '(' + board.objects[o].symbolic.x + ', ' + board.objects[o].symbolic.y + ')<br />';
                 board.objects[o].label.content.setText(board.objects[o].name + ' (' + board.objects[o].symbolic.x + ', ' + board.objects[o].symbolic.y + ')');
             }
         }
@@ -51,16 +50,16 @@
 
         var poly = JXG.Math.Symbolic.generatePolynomials(board, p, false);
 
-        $('debug').innerHTML = '<ul>';
+        document.getElementById('debug').innerHTML = '<ul>';
         for(var i=0; i<poly.length; i++) {
 
             poly[i] = poly[i].replace(/\^(\d+)/g,'<sup>$1</sup>');
             poly[i] = board.algebra.replaceSub(poly[i]);
             poly[i] = poly[i].replace(/\*/g,'');
 
-            $('debug').innerHTML += '<li> ' + poly[i] + ' </li>';
+            document.getElementById('debug').innerHTML += '<li> ' + poly[i] + ' </li>';
         }
-        $('debug').innerHTML += '</ul>';
+        document.getElementById('debug').innerHTML += '</ul>';
         JXG.Math.Symbolic.clearSymbolicCoordinates(board);
     }
 

@@ -519,7 +519,7 @@ JXG.IntergeoReader = new function() {
             l1 = this.objects[param[1]],
             l2 = this.objects[param[2]];
         
-        this.objects[param[0]] = this.board.createElement('intersection',[l1,l2,0]);
+        this.objects[param[0]] = this.board.createElement('intersection',[l1,l2,0], {name:param[0],id:param[0], withLabel:true});
         this.setAttributes(this.objects[param[0]]);
         this.objects[param[0]].exists = true;
     };
@@ -547,7 +547,9 @@ JXG.IntergeoReader = new function() {
         var param = JXG.IntergeoReader.readParams(node),
             c = JXG.getReference(this.board,param[1]),
             el;
-        el = this.board.createElement('glider',[0,0,c],{name:param[0],id:param[0],withLabel:true});
+        c.update();
+        el = this.board.createElement('glider',[this.objects[param[0]].coords[1],this.objects[param[0]].coords[2],c],
+                    {name:param[0],id:param[0],withLabel:true});
         //this.setAttributes(p);
         this.objects[param[0]].exists = true;
     };
@@ -650,7 +652,6 @@ JXG.IntergeoReader = new function() {
         this.objects[param[0]].exists = true;
         this.objects[param[1]].exists = true;
     };
-
 
     this.addIntersectionPointsOfTwoCircles = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
