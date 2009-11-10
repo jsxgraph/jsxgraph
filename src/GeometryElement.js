@@ -747,6 +747,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 break;
             case 'labelcolor':
                 color = pair[1];
+                if (color==null) break;
                 if (color.length=='9' && color.substr(0,1)=='#') {
                     opacity = color.substr(7,2);
                     color = color.substr(0,7);
