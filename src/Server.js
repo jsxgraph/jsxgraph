@@ -212,6 +212,6 @@ JXG.Server.loadModule_cb = function(data) {
  * lower and upper case letters without the file ending .py.
  */
 JXG.Server.loadModule = function(module) {
-	JXG.Server.callServer('load', JXG.Server.loadModule_cb, {'module': module}, true);
+	return JXG.Server.callServer('load', JXG.Server.loadModule_cb, {'module': module}, true);
 };
 

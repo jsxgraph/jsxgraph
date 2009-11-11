@@ -154,9 +154,16 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
         xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board),
         fileurl;
 
-    fileurl = JXG.serverBase + 'jxggroebner.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr) + '&xs=' + xsye.usrCoords[1] + '&xe=' + xeys.usrCoords[1] + '&ys=' + xeys.usrCoords[2] + '&ye=' + xsye.usrCoords[2];
+    if(typeof JXG.Server.modules.geoloci == 'undefined')
+        JXG.Server.loadModule('geoloci')
 
-    this.cbp = function(t) {
+//    fileurl = JXG.serverBase + 'jxggroebner.py?number=' + numDependent + '&polynomials=' + JXG.Util.Base64.encode(polyStr) + '&xs=' + xsye.usrCoords[1] + '&xe=' + xeys.usrCoords[1] + '&ys=' + xeys.usrCoords[2] + '&ye=' + xsye.usrCoords[2];
+
+    this.cbp = function(data) {
+//        for(var i in data) {
+//            alert(i + ": " + data[i]);
+//        }
+/*        return;
         var coordpairsStr = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(t))).unzip();
         coordpairsStr = coordpairsStr.toString().replace(/,geonext\.gxt/g, "").replace(/\s/g, "");
 
@@ -172,16 +179,17 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
             coords = coordpairs[i].split(',');
             px[i] = coords[0];
             py[i] = coords[1];
-        }
+        }*/
 //        var c = board.createElement('curve', [px, py], {strokeColor: 'green', strokeWidth: '2px'});
 //        this.rendNode = c.rendNode;
-        callback(px, py, returnstr[1].split(';'));
+//        callback(px, py, returnstr[1].split(';'));
+        callback(data.datax, data.datay, data.polynomial);
     };
 
     this.cb = JXG.bind(this.cbp, this);
 
-    JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw');
-
+//    JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw');
+    JXG.Server.modules.geoloci.lociCoCoA(xsye.usrCoords[1], xeys.usrCoords[1], xeys.usrCoords[2], xsye.usrCoords[2], numDependent, polyStr, this.cb);
 
     this.clearSymbolicCoordinates(board);
 };

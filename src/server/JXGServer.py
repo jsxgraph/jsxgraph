@@ -43,7 +43,7 @@ def import_module(plugin, resp):
             return tp
     except Exception as e:
         resp.error("error loading jxg server module: \"" + plugin + "\": " + e.__str__())
-        return tp
+        return
 
     return tp
 
