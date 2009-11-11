@@ -4,6 +4,12 @@ import JXG
 import numpy
 import os
 
+# Should be changed to something more persistent but must be writable by
+# the webserver (usually user www-data)
+if not 'MPLCONFIGDIR' in os.environ:
+    os.environ['MPLCONFIGDIR'] = '/tmp/'
+#    os.environ['MPLCONFIGDIR'] = 'C:/xampp/tmp'
+
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib.pyplot import *
@@ -17,16 +23,6 @@ import base64
 import cStringIO
 import cgi
 
-# Should be changed to something more persistent but must be writable by
-# the webserver
-#if not 'MPLCONFIGDIR' in os.environ:
-#os.environ['MPLCONFIGDIR'] = '/tmp'
-# Example for Windows using XAMPP
-#    os.environ['MPLCONFIGDIR'] = 'C:/xampp/tmp'
-
-#cocoa_process = None
-#output = ''
-
 class JXGGeoLociModule(JXGServerModule):
 
     def __init__(self):
@@ -37,13 +33,6 @@ class JXGGeoLociModule(JXGServerModule):
         #
         ############################
 
-        # Should be changed to something more persistent but must be writable by
-        # the webserver
-        #if not 'MPLCONFIGDIR' in os.environ:
-        os.environ['MPLCONFIGDIR'] = '/tmp'
-        # Example for Windows using XAMPP
-        #    os.environ['MPLCONFIGDIR'] = 'C:/xampp/tmp'
-    
         # Command to start cocoa
         self.cmd_cocoa = "cocoa"
         # If you're using Windows
@@ -65,7 +54,6 @@ class JXGGeoLociModule(JXGServerModule):
         return
 
     def lociCoCoA(self, resp, xs, xe, ys, ye, number, polys):
-        self.debug = False;
         cinput = ""
 
         # Variable code begins here
@@ -102,8 +90,6 @@ class JXGGeoLociModule(JXGServerModule):
         if self.debug:
             print >>self.debugOutput, "Starting CoCoA with input<br />"
             print >>self.debugOutput, cinput + '<br />'
-
-        #cocoa = subprocess.Popen([cmd_cocoa], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
         # The suicide pill for the CoCoA process:
         # If not done within the following amount
@@ -160,7 +146,6 @@ class JXGGeoLociModule(JXGServerModule):
             for i in range(0,len(polynomials)):
                 print >>self.debugOutput, "Polynomial ", i+1, ": " + polynomials[i] + '<br />'
         
-        #data = cStringIO.StringIO()
         datax = []
         datay = []
         polynomialsReturn = []
@@ -186,32 +171,22 @@ class JXGGeoLociModule(JXGServerModule):
                 for i in range(0,len(pa)):
                     datax.append(pa[i,0])
                     datay.append(pa[i,1])
-                    # print >>data, pa[i,0], ",", pa[i,1], ";"
     
-                #print >>data, ";"
                 datax.append('null')
                 datay.append('null')
 
-        #print >>data, "-----"
-        #print >>data, polynomialsReturn,";"
-        
-        #enc_data = base64.b64encode(zlib.compress(data.getvalue(), 9))
         resp.addData('datax', datax)
         resp.addData('datay', datay)
         resp.addData('polynomial', polynomialsReturn)
 
-        #if self.debug:
-        #    fd = open('/tmp/tmp.txt', 'w')
-        #    fd.write(data.getvalue())
-        #    fd.close()
-
         if self.debug:
-            #print >>self.debugOutput, data.getvalue() + '<br />'
+            print >>self.debugOutput, ", ".join(map(str, datax)) + '<br />'
+            print >>self.debugOutput, ", ".join(map(str, datay)) + '<br />'
+            print "Content-Type: text/plain\n\n"
+            print
+            print
             print self.debugOutput.getvalue()
 
-        #print enc_data
-
-        #datax.close()
         self.debugOutput.close()
 
         return
