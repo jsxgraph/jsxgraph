@@ -50,10 +50,8 @@ JXG.IntergeoReader = new function() {
         this.board.stretchY = this.board.zoomY*this.board.unitY;
 
         this.readElements(tree.getElementsByTagName("elements"));
-        this.board.fullUpdate();
-        $('debug').innerHTML += 'start read constraints<br>';
         this.readConstraints(tree.getElementsByTagName("constraints"));
-        $('debug').innerHTML += 'end read constraints<br>';
+        this.cleanUp();
         this.board.fullUpdate();
     };
 
@@ -443,11 +441,22 @@ JXG.IntergeoReader = new function() {
         if (!p.exists) {
             p.exists = true;
             p = this.board.createElement('point',p.coords,{name:p.id});
-            this.setAttributes(p);
+            p.setProperty({strokecolor:'red',fillColor:'red'});
+
+            //this.setAttributes(p);
         }
         return p;
     };
 
+    this.cleanUp = function() {
+        var p;
+        for (p in this.objects) {
+            if (this.objects[p].exists==false) {
+                this.addPoint(this.objects[p]);
+            }
+        }
+    };
+    
     this.addLineThroughTwoPoints = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
             el1, el2, el;
