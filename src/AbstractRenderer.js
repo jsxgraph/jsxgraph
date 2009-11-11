@@ -209,7 +209,7 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
         ay = screenCoords1.scrCoords[2];
         bx = screenCoords2.scrCoords[1];
         by = screenCoords2.scrCoords[2];
-        beta;
+        //beta;                                              // ???
         sgn = (bx-ax>0)?1:-1;
         if (Math.abs(bx-ax)>0.0000001) {
             beta = Math.atan((by-ay)/(bx-ax))+ ((sgn<0)?Math.PI:0);  

@@ -189,8 +189,6 @@ this.readConditions = function(node,board) {
     board.conditions = '';
     if (node!=null) {
         for(i=0; i<node.getElementsByTagName('data').length; i++) {
-            s;
-            e;
             ob = node.getElementsByTagName('data')[i];
             s = JXG.GeonextReader.subtreeToString(ob);
             board.conditions += s;
@@ -1167,9 +1165,9 @@ this.readGeonext = function(tree,board) {
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 break;
             default:
-                if (Data.nodeName!="#text") {
+                //if (Data.nodeName!="#text") {
                     //$('debug').innerHTML += "* <b>Err:</b> " + Data.nodeName + " not yet implemented <br>\n";
-                }
+                //}
         }
         delete(gxtEl);
     })(s);

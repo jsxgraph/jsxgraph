@@ -613,7 +613,6 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
     //w = (w>0)?w:0;
     
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
-        node;
         if(el.type == JXG.OBJECT_TYPE_ANGLE) {
             node = el.rendNode2;
         }

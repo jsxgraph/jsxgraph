@@ -809,7 +809,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
             var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
             var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
             return l1.stdform[2]/d1-l2.stdform[2]/d2;
-        },
+        }
     ], attributes);
     attributes['id'] = id2;
     attributes['name'] = n2;
@@ -828,7 +828,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
             var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
             var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
             return l1.stdform[2]/d1+l2.stdform[2]/d2;
-        },
+        }
     ], attributes);
     return [g1,g2];
 };
