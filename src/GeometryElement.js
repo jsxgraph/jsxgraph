@@ -676,6 +676,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
         } else {                             // pairRaw consists of array [key,value]
             pair = pairRaw;
         }
+        if (pair[1]==null) continue;
         switch(pair[0].replace(/\s+/g).toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
             case 'strokewidth':
                 this.visProp['strokeWidth'] = pair[1];
@@ -747,7 +748,6 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 break;
             case 'labelcolor':
                 color = pair[1];
-                if (color==null) break;
                 if (color.length=='9' && color.substr(0,1)=='#') {
                     opacity = color.substr(7,2);
                     color = color.substr(0,7);
