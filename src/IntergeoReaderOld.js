@@ -33,11 +33,7 @@ JXG.getReference = function(board, object) {
 
 JXG.IntergeoReader = new function() {
     this.board = null;
-    /**
-     * this.objects holds all objects from the XML file.
-     * Every object hets an attribute "exists"
-     */
-    this.objects = {}; 
+    this.objects = {};
 
     this.readIntergeo = function(tree,board) {
         this.board = board;
@@ -50,19 +46,20 @@ JXG.IntergeoReader = new function() {
         this.board.stretchY = this.board.zoomY*this.board.unitY;
 
         this.readElements(tree.getElementsByTagName("elements"));
+        this.board.fullUpdate();
         this.readConstraints(tree.getElementsByTagName("constraints"));
-        this.cleanUp();
         this.board.fullUpdate();
     };
 
     this.readElements = function(tree) {
         var s;
+        //$('debug').innerHTML = '';
         for (var s=0;s<tree[0].childNodes.length;s++) (function(s) {
             var node;
             node = tree[0].childNodes[s];
             if (node.nodeType>1) { return; } // not an element node
             if (node.nodeName=='point') {
-                JXG.IntergeoReader.storePoint(node); //addPoint(node);
+                JXG.IntergeoReader.addPoint(node);
             } 
             else if (node.nodeName=='line') {
                 JXG.IntergeoReader.storeLine(node);
@@ -82,7 +79,7 @@ JXG.IntergeoReader = new function() {
     /**
      * Points are created instantly via createElement
      */
-    this.addPointOld = function(node) {
+    this.addPoint = function(node) {
         var i = 0, 
             j = 0,
             l = 0,
@@ -151,77 +148,6 @@ JXG.IntergeoReader = new function() {
     };
 
     /**
-     * Points are created instantly via createElement
-     */
-    this.storePoint = function(node) {
-        var i = 0, 
-            j = 0,
-            l = 0,
-            p = node.childNodes[i],
-            c = [],
-            parents = [];
-            
-        while (p.nodeType>1) {  // skip non element nodes
-            i++;
-            p = node.childNodes[i];
-        }
-
-        if (p.nodeName == 'homogeneous_coordinates') {
-            for (j=0;j<p.childNodes.length;j++) {
-                if (p.childNodes[j].nodeType==1) {
-                    if (p.childNodes[j].nodeName=='double') {
-                        c.push(p.childNodes[j].firstChild.data);  // content of <double>...</double>
-                    } else if (p.childNodes[j].nodeName=='complex') {
-                            for (l=0;l<p.childNodes[j].childNodes.length;l++) {
-                                if (p.childNodes[j].childNodes[l].nodeName=='double') {
-                                    c.push(p.childNodes[j].childNodes[l].firstChild.data);
-                                }
-                            }
-                    } else {
-                        document.getElementById('debug').innerHTML += 'Not implemented: '+ p.childNodes[j].nodeName + '<br>';  // <complex>
-                        return;
-                    }
-                }
-            }
-            for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
-            if (c.length==3) { // Real
-                parents = [c[2],c[0],c[1]];
-            } else if (c.length==6 && Math.abs(c[1])<1e-10 && Math.abs(c[3])<1e-10 && Math.abs(c[5])<1e-10) {  // complex, but real
-                parents = [c[4],c[0],c[2]];
-            } else {
-                document.getElementById('debug').innerHTML += 'type not supported, yet <br>';  // <complex>
-                return;
-            }
-        } else if (p.nodeName == 'euclidean_coordinates') {
-            for (j=0;j<p.childNodes.length;j++) {
-                if (p.childNodes[j].nodeType==1) {
-                    c.push(p.childNodes[j].firstChild.data);  // content of <double>...</double>
-                }
-            }
-            for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
-            parents = [c[0],c[1]];
-        } else if (p.nodeName == 'polar_coordinates') {
-            for (j=0;j<p.childNodes.length;j++) {
-                if (p.childNodes[j].nodeType==1) {
-                    c.push(p.childNodes[j].firstChild.data);  // content of <double>...</double>
-                }
-            }
-            for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
-            parents = [c[0]*Math.cos(c[1]),c[0]*Math.sin(c[1])];
-        } else {
-            document.getElementById('debug').innerHTML += "This coordinate type is not yet implemented: " +p.nodeName+'<br>';
-            return; 
-        }
-        
-        this.objects[node.getAttribute('id')] = {'id':node.getAttribute('id'), 'coords':null};
-        this.objects[node.getAttribute('id')].coords = parents;
-        this.objects[node.getAttribute('id')].id = node.getAttribute('id');
-        this.objects[node.getAttribute('id')].exists = false;
-        //el = this.board.createElement('point', parents, attributes);
-        //this.objects[node.getAttribute('id')] = el;
-    };
-
-    /**
      * Line data is stored in an array
      * for further access during the reading of constraints.
      * There, id and name are needed.
@@ -248,9 +174,7 @@ JXG.IntergeoReader = new function() {
                 }
             }
             this.objects[node.getAttribute('id')].coords = c;
-            this.objects[node.getAttribute('id')].id = node.getAttribute('id');
-            this.objects[node.getAttribute('id')].exists = false;
-       }
+        }
         //this.addLine(node.getAttribute('id'));
     };
     
@@ -310,8 +234,6 @@ JXG.IntergeoReader = new function() {
                 }
             }
             this.objects[node.getAttribute('id')].coords = c;
-            this.objects[node.getAttribute('id')].id = node.getAttribute('id');
-            this.objects[node.getAttribute('id')].exists = false;
         }
     };
 
@@ -371,7 +293,7 @@ JXG.IntergeoReader = new function() {
             else if (node.nodeName=='midpoint') {
                 JXG.IntergeoReader.addMidpointOfTwoPoints(node);
             } 
-            else if (node.nodeName=='midpoint_of_line_segment' || node.nodeName=='midpoint_line_segment') {
+            else if (node.nodeName=='midpoint_of_line_segment') {
                 JXG.IntergeoReader.addMidpointOfLineSegment(node);
             } 
             else if (node.nodeName=='point_intersection_of_two_lines') {
@@ -437,100 +359,75 @@ JXG.IntergeoReader = new function() {
         return param;
     };
 
-    this.addPoint = function(p) {
-        if (!p.exists) {
-            p.exists = true;
-            p = this.board.createElement('point',p.coords,{name:p.id});
-            p.setProperty({strokecolor:'red',fillColor:'red'});
-
-            //this.setAttributes(p);
-        }
-        return p;
-    };
-
-    this.cleanUp = function() {
-        var p;
-        for (p in this.objects) {
-            if (this.objects[p].exists==false) {
-                this.addPoint(this.objects[p]);
-            }
-        }
-    };
-    
     this.addLineThroughTwoPoints = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            el1, el2, el;
-            
-        el1 = this.addPoint(this.objects[param[1]]);
-        el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.createElement('line', [el1.id,el2.id], {name:param[0],withLabel:true});
+            el = this.board.createElement('line',[this.objects[param[1]],this.objects[param[2]]], {name:param[0],withLabel:true});
         this.objects[param[0]] = el;
-        this.objects[param[0]].exists = true;
     };
 
     this.addLineThroughPoint = function(node) {        
         var param = JXG.IntergeoReader.readParams(node),
             j,
             c = this.objects[param[0]].coords,
-            p = this.addPoint(this.objects[param[1]]),
+            p = this.objects[param[1]],
             el;
-        
+            
         for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
         el = this.board.createElement('line',[
                     function() { return c[2]-c[0]*p.X()-c[1]*p.Y()-c[2]*p.Z(); }, c[0], c[1]
                 ],{name:param[0], strokeColor:'black', withLabel:true});
         this.objects[param[0]] = el;
-        this.objects[param[0]].exists = true;
     };
 
     this.addLineParallelToLineThroughPoint = function(node) {
         var param = JXG.IntergeoReader.readParams(node), 
-            el1, el2, el;
-
-        el1 = this.addPoint(this.objects[param[1]]);
-        el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.createElement('parallel',[el1.id,el2.id], {name:param[0],withLabel:true});
-        this.objects[param[0]] = el;
-        this.objects[param[0]].exists = true;
+            comp = this.board.createElement('parallel',[this.objects[param[1]].id,this.objects[param[2]].id], {name:param[0],withLabel:true});
+        this.objects[param[0]] = comp;
     };
 
     this.addLinePerpendicularToLineThroughPoint = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            el1, el2, el;
-        
-        el1 = this.addPoint(this.objects[param[1]]);
-        el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.createElement('perpendicular',[el1.id,el2.id],
+            comp =this.board.createElement('perpendicular',[this.objects[param[1]].id,this.objects[param[2]].id],
                                 {name:[param[0],param[0]+'foot'],id:[param[0],param[0]+'foot'],withLabel:true});
-        el[0].setProperty("straightFirst:true","straightLast:true"); // line
-        el[1].setProperty("visible:false");                          // point
-        this.objects[param[0]] = el[0];
-        this.objects[param[0]].exists = true;
+                                
+        comp[0].setProperty("straightFirst:true","straightLast:true"); // line
+        comp[1].setProperty("visible:false");                          // point
+        this.objects[param[0]] = comp[0];
     };
 
     this.addLineSegmentByTwoPoints = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            el1, el2, el;
-
-        el1 = this.addPoint(this.objects[param[1]]);
-        el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.createElement('line',[el1.id,el2.id], 
+            el = this.board.createElement('line',[this.objects[param[1]],this.objects[param[2]]], 
                         {name:param[0],
                             straightFirst:false, straightLast:false,
                             strokeColor:'black',
                             withLabel:true});
         this.objects[param[0]] = el;
-        this.objects[param[0]].exists = true;
     };
 
-    this.addPointIntersectionOfTwoLines = function(node) {
+    this.addEndpointsOfLineSegment = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            l1 = this.objects[param[1]],
-            l2 = this.objects[param[2]];
-        
-        this.objects[param[0]] = this.board.createElement('intersection',[l1,l2,0], {name:param[0],id:param[0], withLabel:true});
+            line = this.objects[param[2]]; 
+
+        this.objects[param[0]].addConstraint([
+                    function(){return line.point1.Z();},
+                    function(){return line.point1.X();},
+                    function(){return line.point1.Y();}
+                    ]);
+        this.objects[param[1]].addConstraint([
+                    function(){return line.point2.Z();},
+                    function(){return line.point2.X();},
+                    function(){return line.point2.Y();}
+                    ]);
         this.setAttributes(this.objects[param[0]]);
-        this.objects[param[0]].exists = true;
+        this.setAttributes(this.objects[param[1]]);
+
+    };
+    
+    this.addPointIntersectionOfTwoLines = function(node) {
+        var param = JXG.IntergeoReader.readParams(node); 
+        this.objects[param[0]].addConstraint([this.board.intersectionFunc(this.objects[param[1]],this.objects[param[2]],0)]);
+        this.setAttributes(this.objects[param[0]]);
     };
 
     this.addFreeLine = function(node) {
@@ -540,191 +437,57 @@ JXG.IntergeoReader = new function() {
             c = this.objects[param[0]].coords[2];
             el = this.board.createElement('line',[c,a,b],{name:param[0],id:param[0],withLabel:true});
         this.objects[param[0]] = el;
-        this.objects[param[0]].exists = true;
     };
 
     this.addPointOnLine = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            l = JXG.getReference(this.board,param[1]),
-            el;
-        el = this.board.createElement('glider',[0,0,l],{name:param[0],id:param[0],withLabel:true});
+            p = JXG.getReference(this.board,param[0]),
+            l = JXG.getReference(this.board,param[1]);
+        p.makeGlider(l);
         //this.setAttributes(p);
-        this.objects[param[0]].exists = true;
     };
 
     this.addPointOnCircle = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            c = JXG.getReference(this.board,param[1]),
-            el;
-        c.update();
-        el = this.board.createElement('glider',[this.objects[param[0]].coords[1],this.objects[param[0]].coords[2],c],
-                    {name:param[0],id:param[0],withLabel:true});
+            p = JXG.getReference(this.board,param[0]),
+            c = JXG.getReference(this.board,param[1]);
+        p.makeGlider(c);
         //this.setAttributes(p);
-        this.objects[param[0]].exists = true;
     };
 
-    this.addEndpointsOfLineSegment = function(node) {
-        var param = JXG.IntergeoReader.readParams(node),
-            line = this.objects[param[2]],
-            p = this.addPoint(this.objects[param[0]]),
-            q = this.addPoint(this.objects[param[1]]);
-
-        p.addConstraint([
-                    function(){return line.point1.Z();},
-                    function(){return line.point1.X();},
-                    function(){return line.point1.Y();}
-                    ]);
-        q.addConstraint([
-                    function(){return line.point2.Z();},
-                    function(){return line.point2.X();},
-                    function(){return line.point2.Y();}
-                    ]);
-        this.setAttributes(p);
-        this.setAttributes(q);
-    };
-    
     this.addAngularBisectorOfThreePoints = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            el1, el2, el3, el;
-            
-        el1 = this.addPoint(this.objects[param[1]]);
-        el2 = this.addPoint(this.objects[param[2]]);
-        el3 = this.addPoint(this.objects[param[3]]);
-        el = this.board.createElement('bisector',[el1.id,el2.id,el3.id],
+            el = this.board.createElement('bisector',[param[1],param[2],param[3]],
                                 {name:[param[0]+'_1',param[0]+'_2'], id:[param[0]+'_1',param[0]+'_2'], withLabel:true});
         el.setProperty({straightFirst:false,straightLast:true,strokeColor:'#000000'});
         this.objects[param[0]] = el;
-        this.objects[param[0]].exists = true;
     };
     
     this.addMidpointOfTwoPoints = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            el1, el2, el3;
-
-        el1 = this.addPoint(this.objects[param[1]]);
-        el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.createElement('midpoint',[el1.id,el2.id],{name:param[0]});
-        this.setAttributes(el);
-        this.objects[param[0]].exists = true;
+            p0 = JXG.getReference(this.board,param[0]),
+            p1 = JXG.getReference(this.board,param[1]),
+            p2 = JXG.getReference(this.board,param[2]);
+        p0.addConstraint([
+                function(){ return 0.5*(p1.Z()+p2.Z());},
+                function(){ return 0.5*(p1.X()+p2.X());},
+                function(){ return 0.5*(p1.Y()+p2.Y());},
+                ]);
+        this.setAttributes(p0);
     };
 
     this.addMidpointOfLineSegment = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
+            p0 = JXG.getReference(this.board,param[0]),
             l = JXG.getReference(this.board,param[1]);
-        el = this.board.createElement('midpoint',[l.point1,l.point2],{name:param[0]});
-        this.setAttributes(el);
-        this.objects[param[0]].exists = true;
-    };
-
-    this.addCircleByThreePoints = function(node) {
-        var param = JXG.IntergeoReader.readParams(node),
-            p = [], i, ar;
-        for (i=0;i<3;i++) {
-          p[i] = this.addPoint(this.objects[param[i+1]]); //JXG.getReference(this.board,param[i+1]);
-        }
-        ar = this.board.createElement('circumcircle',p, {name:[param[0]+'c',param[0]], id:[param[0]+'c',param[0]],withLabel:true});
-        ar[0].setProperty({visible:false}); // center should be invisible
-        ar[1].setProperty({withLabel:true}); // label of circle does not work yet
-    };
-
-    this.addCenterOfCircle = function(node) {
-        var param = JXG.IntergeoReader.readParams(node),
-            c = JXG.getReference(this.board,param[1]),
-            el = this.board.createElement('point',[function(){return c.midpoint.X();},function(){return c.midpoint.Y();}],
-                    {name:param[0], id:param[0],withLabel:true});
-        this.setAttributes(el);
-        this.objects[param[0]].exists = true;
-    };
-
-    this.addCircleTangentLinesByPoint = function(node) {
-        var param = JXG.IntergeoReader.readParams(node),
-            c = JXG.getReference(this.board,param[2]),
-            p = this.addPoint(this.objects[param[3]]),
-            //t1 = this.objects[param[0]],
-            //t2 = this.objects[param[1]];
-            m, polar, i1, i2, t1, t2;
-        
-        polar = this.board.createElement('line', [
-                    function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[0]; },
-                    function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[1]; },
-                    function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[2]; }
-                ] , {visible:false});     
-
-        i1 = this.board.createElement('intersection', [c,polar,0],{visible:false});
-        i2 = this.board.createElement('intersection', [c,polar,1],{visible:false});
-        //t1 = this.board.createElement('line', [p,i1]);
-        //t2 = this.board.createElement('line', [p,i2]);
-        t1 = this.board.createElement('tangent', [i1,c]);
-        t2 = this.board.createElement('tangent', [i2,c]);
-        this.objects[param[0]] = t1;
-        this.objects[param[1]] = t2;
-        this.objects[param[0]].exists = true;
-        this.objects[param[1]].exists = true;
-    };
-
-    this.addIntersectionPointsOfTwoCircles = function(node) {
-        var param = JXG.IntergeoReader.readParams(node),
-            c1 = JXG.getReference(this.board,param[2]),
-            c2 = JXG.getReference(this.board,param[3]),
-            p1, p2;
-            //p1 = this.objects[param[0]],
-            //p2 = this.objects[param[1]];
-        //p1.addConstraint([this.board.intersection(c1,c2,0)]);
-        //p2.addConstraint([this.board.intersection(c1,c2,1)]);
-        p1 = this.board.createElement('intersection',[c1,c2,0], {name:param[0], id:param[0],withLabel:true});
-        p2 = this.board.createElement('intersection',[c1,c2,1], {name:param[1], id:param[1],withLabel:true});
-        this.setAttributes(p1);
-        this.setAttributes(p2);
-        this.objects[param[0]].exists = true;
-        this.objects[param[1]].exists = true;
+        p0.addConstraint([
+                function(){ return 0.5*(l.point1.Z()+l.point2.Z());},
+                function(){ return 0.5*(l.point1.X()+l.point2.X());},
+                function(){ return 0.5*(l.point1.Y()+l.point2.Y());},
+                ]);
+        this.setAttributes(p0);
     };
     
-    this.addIntersectionPointsOfCircleAndLine = function(node) {
-        var param = JXG.IntergeoReader.readParams(node),
-            c1 = JXG.getReference(this.board,param[2]),
-            c2 = JXG.getReference(this.board,param[3]),
-            p1, p2;
-            //p1 = this.objects[param[0]],
-            //p2 = this.objects[param[1]];
-        
-        p1 = this.board.createElement('intersection',[c1,c2,0], {name:param[0], id:param[0],withLabel:true});
-        p2 = this.board.createElement('intersection',[c1,c2,1], {name:param[1], id:param[1],withLabel:true});
-        this.setAttributes(p1);
-        this.setAttributes(p2);
-        this.objects[param[0]].exists = true;
-        this.objects[param[1]].exists = true;
-    };
-
-    this.addCircleByCenterAndPoint = function(node) {
-        var param = JXG.IntergeoReader.readParams(node),
-            el1 = this.addPoint(this.objects[param[1]]),
-            el2 = this.addPoint(this.objects[param[2]]);
-            
-        el = this.board.createElement('circle',
-            [el1.id,el2.id],
-            {name:param[0],id:param[0],withLabel:true});
-        this.objects[param[0]].exists = true;
-    };
-
-    this.addOtherIntersectionPointOfTwoCircles = function(node) {
-        var param = JXG.IntergeoReader.readParams(node),
-            c1 = JXG.getReference(this.board,param[2]),
-            c2 = JXG.getReference(this.board,param[3]),
-            p1 = JXG.getReference(this.board,param[1]), // Should exist by now
-            p2;
-            //p1  = this.objects[param[1]],
-            //p2  = this.objects[param[0]]; // output
-
-        //p2.addConstraint([this.board.otherIntersection(c1,c2,p1)]);
-        p2 = this.board.createElement('otherintersection',[c1,c2,p1], {name:param[0], id:param[0],withLabel:true});
-        this.setAttributes(p2);
-        this.objects[param[0]].exists = true;
-    };
-    
-    this.addOtherIntersectionPointOfCircleAndLine = function(node) {
-        this.addOtherIntersectionPointOfTwoCircles(node);
-    };
-
     /**
      * The angular bisectors of two line [c1,a1,b1] and [c2,a2,b2] are determined by the equation:
      * (a1*x+b1*y+c1*z)/sqrt(a1^2+b1^2) = +/- (a2*x+b2*y+c2*z)/sqrt(a2^2+b2^2)
@@ -732,18 +495,12 @@ JXG.IntergeoReader = new function() {
     this.addAngularBisectorsOfTwoLines = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
             l1 = this.objects[param[2]],
-            l2 = this.objects[param[3]],
-	    ar;
-
-        ar = this.board.createElement('bisectorlines',
+            l2 = this.objects[param[3]];
+        this.board.createElement('bisectorlines',
             [l1,l2],
             {name:[param[0],param[1]], id:[param[0],param[1]],
             straightFirst:true, straightLast:true, strokeColor:'#ff0000', withLabel:true});
-        this.objects[param[0]].exists = true;
-        this.objects[param[1]].exists = true;
     };
-
-// ----------------------------------------------------------------------------------------------------
     
     this.addLocusDefinedByPoint = function(node) {
         var param = JXG.IntergeoReader.readParams(node), 
@@ -776,8 +533,96 @@ JXG.IntergeoReader = new function() {
         this.objects[param[1]] = el;
         this.setAttributes(el);
     };
-        
     
+    this.addCircleByThreePoints = function(node) {
+        var param = JXG.IntergeoReader.readParams(node),
+            p = [], i, ar;
+        for (i=0;i<3;i++) {
+          p[i] = JXG.getReference(this.board,param[i+1]);
+        }
+        ar = this.board.createElement('circumcircle',p, {name:[param[0]+'c',param[0]], id:[param[0]+'c',param[0]],withLabel:true});
+        ar[0].setProperty({visible:false}); // center should be invisible
+        ar[1].setProperty({withLabel:true}); // label of circle does not work yet
+    };
+
+    this.addCircleByCenterAndPoint = function(node) {
+        var param = JXG.IntergeoReader.readParams(node);
+        this.board.createElement('circle',
+            [this.objects[param[1]],this.objects[param[2]]],
+            {name:param[0],id:param[0],withLabel:true});
+    };
+
+    this.addCenterOfCircle = function(node) {
+        var param = JXG.IntergeoReader.readParams(node),
+            el = JXG.getReference(this.board,param[0]),
+            c = JXG.getReference(this.board,param[1]);
+        el.addConstraint([function(){return c.midpoint.X();},function(){return c.midpoint.Y();}]);
+    };
+
+    this.addIntersectionPointsOfTwoCircles = function(node) {
+        var param = JXG.IntergeoReader.readParams(node),
+            c1 = JXG.getReference(this.board,param[2]),
+            c2 = JXG.getReference(this.board,param[3]),
+            p1 = this.objects[param[0]],
+            p2 = this.objects[param[1]];
+        p1.addConstraint([this.board.intersection(c1,c2,0)]);
+        p2.addConstraint([this.board.intersection(c1,c2,1)]);
+        this.setAttributes(p1);
+        this.setAttributes(p2);
+    };
+    
+    this.addIntersectionPointsOfCircleAndLine = function(node) {
+        var param = JXG.IntergeoReader.readParams(node),
+            c1 = JXG.getReference(this.board,param[2]),
+            c2 = JXG.getReference(this.board,param[3]),
+            p1 = this.objects[param[0]],
+            p2 = this.objects[param[1]];
+        
+        p1.addConstraint([this.board.intersection(c1,c2,0)]);
+        p2.addConstraint([this.board.intersection(c1,c2,1)]);
+        this.setAttributes(p1);
+        this.setAttributes(p2);
+    };
+    
+    this.addOtherIntersectionPointOfTwoCircles = function(node) {
+        var param = JXG.IntergeoReader.readParams(node),
+            c1 = JXG.getReference(this.board,param[2]),
+            c2 = JXG.getReference(this.board,param[3]),
+            p1  = this.objects[param[1]],
+            p2  = this.objects[param[0]]; // output
+
+        p2.addConstraint([this.board.otherIntersection(c1,c2,p1)]);
+        this.setAttributes(p2);
+    };
+    
+    this.addOtherIntersectionPointOfCircleAndLine = function(node) {
+        this.addOtherIntersectionPointOfTwoCircles(node);
+    };
+
+    this.addCircleTangentLinesByPoint = function(node) {
+        var param = JXG.IntergeoReader.readParams(node),
+            c = JXG.getReference(this.board,param[2]),
+            p = JXG.getReference(this.board,param[3]),
+            //t1 = this.objects[param[0]],
+            //t2 = this.objects[param[1]];
+            m, polar, i1, i2, t1, t2;
+        
+        polar = this.board.createElement('line', [
+                    function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[0]; },
+                    function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[1]; },
+                    function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[2]; }
+                ] , {visible:false});     
+
+        i1 = this.board.createElement('intersection', [c,polar,0],{visible:false});
+        i2 = this.board.createElement('intersection', [c,polar,1],{visible:false});
+        //t1 = this.board.createElement('line', [p,i1]);
+        //t2 = this.board.createElement('line', [p,i2]);
+        t1 = this.board.createElement('tangent', [i1,c]);
+        t2 = this.board.createElement('tangent', [i2,c]);
+        this.objects[param[0]] = t1;
+        this.objects[param[1]] = t2;
+    };
+
     /**
      * Extract the xml-code as String from the zipped Intergeo archive.
      * @return {string} xml code
