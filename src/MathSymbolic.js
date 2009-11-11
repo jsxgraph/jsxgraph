@@ -161,6 +161,7 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
         throw new Error("JSXGraph: Unable to load JXG.Server module 'geoloci.py'.");
 
     this.cbp = function(data) {
+        //alert(data.exectime);
         callback(data.datax, data.datay, data.polynomial);
     };
 

@@ -17,6 +17,7 @@ from matplotlib.contour import *
 
 import subprocess
 import signal
+import time
 import re
 import zlib
 import base64
@@ -54,6 +55,8 @@ class JXGGeoLociModule(JXGServerModule):
         return
 
     def lociCoCoA(self, resp, xs, xe, ys, ye, number, polys):
+        self.output = ''
+        self.cococa_process = None
         cinput = ""
 
         # Variable code begins here
@@ -105,15 +108,16 @@ class JXGGeoLociModule(JXGServerModule):
             signal.signal(signal.SIGALRM, signal_handler)
             signal.alarm(seconds)
         
-        global cocoa_process
-        global output
+        #global cocoa_process
+        #global output
         
         def callCoCoA():
             # Global variables aren't that nice, but this time they're useful
-            global cocoa_process, output
-            cocoa_process = subprocess.Popen([self.cmd_cocoa], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
-            output = cocoa_process.communicate(cinput)[0]
-        
+            #global cocoa_process, output
+            self.cocoa_process = subprocess.Popen([self.cmd_cocoa], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+            self.output = self.cocoa_process.communicate(cinput)[0]
+
+        calc_time = time.time()
         try:
             time_limit(time_left)
             callCoCoA()
@@ -125,17 +129,21 @@ class JXGGeoLociModule(JXGServerModule):
             # $ exec ./cocoa_text
             # This is NOT YET TESTED WITH WINDOWS! (though
             # sharing tests would be nice).
-            cocoa_process.kill()
+            self.cocoa_process.kill()
             if self.debug:
                 print >>self.debugOutput, "Timed out!"
             resp.error("Timeout, maybe the system of polynomial is too big or there's an error in it.")
+            return
+
+        calc_time = time.time() - calc_time
+        resp.addData('exectime', calc_time)
         
         if self.debug:
             print >>self.debugOutput, "Reading and Parsing CoCoA output" + '<br />'
-            print >>self.debugOutput, output + '<br />'
+            print >>self.debugOutput, self.output + '<br />'
         
         # Extract results
-        result = re.split('resultsend', re.split('resultsbegin', output)[1])[0]
+        result = re.split('resultsend', re.split('resultsbegin', self.output)[1])[0]
         result = re.split('-------------------------------', re.split('-------------------------------', result)[1])[0]
         result = result.replace("^", "**")
         result = result.replace("\r", "")
