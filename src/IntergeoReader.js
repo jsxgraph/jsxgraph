@@ -625,6 +625,7 @@ JXG.IntergeoReader = new function() {
         ar = this.board.createElement('circumcircle',p, {name:[param[0]+'c',param[0]], id:[param[0]+'c',param[0]],withLabel:true});
         ar[0].setProperty({visible:false}); // center should be invisible
         ar[1].setProperty({withLabel:true}); // label of circle does not work yet
+        this.objects[param[0]].exists = true;
     };
 
     this.addCenterOfCircle = function(node) {

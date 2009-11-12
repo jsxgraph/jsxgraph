@@ -119,7 +119,7 @@ and other_intersection_point_of_circle_and_line constraints.
 		</line_through_two_points>
 		<other_intersection_point_of_circle_and_line>
 			<point out="true">D</point>
-			<point>A</point>
+			<point>C</point>
 			<circle>d</circle>
 			<line>l</line>
 		</other_intersection_point_of_circle_and_line>
