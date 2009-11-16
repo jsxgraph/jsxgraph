@@ -865,16 +865,20 @@ this.getElement = function(tree, name, expr) {
  * @return {String} correct expression with fixed function and multiplication
  */
 this.functionParse = function(exp) {
-JXG.GeogebraReader.debug('* in: '+ exp);
-    // prepare string: "solve" multiplications 'a b' to 'a*b'
-    var s = exp.split(' ');
-    var o = '';
-    for(var i=0; i<s.length; i++) {
-      if(s.length != i+1)
-        if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
-          if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
-            s[i] = s[i] + "*";
-      o += s[i];
+JXG.GeogebraReader.debug('* in (format: '+ JXG.GeogebraReader.format +'): '+ exp);
+    if(JXG.GeogebraReader.format <= 3.01) {
+      // prepare string: "solve" multiplications 'a b' to 'a*b'
+      var s = exp.split(' ');
+      var o = '';
+      for(var i=0; i<s.length; i++) {
+        if(s.length != i+1)
+          if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
+            if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
+              s[i] = s[i] + "*";
+        o += s[i];
+      };
+    } else {
+      var o = exp;
     };
     // search for function params
     if(o.match(/[a-zA-Z0-9]+\([a-zA-Z0-9]+[a-zA-Z0-9,\ ]*\)[\ ]*[=][\ ]*[a-zA-Z0-9\+\-\*\/]+/)) {
@@ -914,7 +918,7 @@ this.writeBoard = function(tree, board) {
   // board.zoomX = 1*boardData.getElementsByTagName("coordSystem")[0].attributes["scale"].value;
   // board.zoomY = 1*boardData.getElementsByTagName("coordSystem")[0].attributes["yscale"].value;
   board.unitX = (boardData.getElementsByTagName("coordSystem")[0].attributes["scale"]) ? 1*boardData.getElementsByTagName("coordSystem")[0].attributes["scale"].value : 1;
-  board.unitY = (boardData.getElementsByTagName("coordSystem")[0].attributes["yscale"]) ? 1*boardData.getElementsByTagName("coordSystem")[0].attributes["yscale"].value : 1;
+  board.unitY = (boardData.getElementsByTagName("coordSystem")[0].attributes["yscale"]) ? 1*boardData.getElementsByTagName("coordSystem")[0].attributes["yscale"].value : board.unitX;
   board.stretchX = board.zoomX*board.unitX;
   board.stretchY = board.zoomY*board.unitY;
   
@@ -1098,7 +1102,7 @@ this.writeElement = function(tree, board, output, input, cmd) {
       attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
-
+      
       try {
         JXG.GeogebraReader.debug("* <b>Distance:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
         m = board.createElement('midpoint', input, {visible: 'false'});
@@ -1546,7 +1550,8 @@ this.writeElement = function(tree, board, output, input, cmd) {
        var i  = board.createElement('intersection', [input[0], l2, 0], {visible: false});
        var m  = board.createElement('midpoint', [l1.point2, i], {visible: false});
        var slope = function() { return i.Y()-l1.point1.Y();};
-       var t = board.createElement('text', [function(){return m.X();}, function(){return m.Y();}, function(){ return "m = "+ slope(); }]);
+       var t = board.createElement('text', [function(){return m.X();}, function(){return m.Y();},
+											function(){ return "m = "+ function(){ return i.Y()-l1.point1.Y();}(); }]);
        return m;
      } catch(e) {
        JXG.GeogebraReader.debug("* <b>Err:</b> Slope " + attr.name +"<br>\n");
@@ -1604,6 +1609,7 @@ this.readGeogebra = function(tree, board) {
   var els = [];
 
   board.ggbElements = [];
+  JXG.GeogebraReader.format = parseFloat(tree.getElementsByTagName('geogebra')[0].attributes['format'].value);
 
   JXG.GeogebraReader.writeBoard(tree, board);
 
