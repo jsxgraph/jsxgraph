@@ -75,7 +75,7 @@ if __name__ == '__main__':
         jstxt += '\n';
 
     tmpfilename = tempfile.mktemp()
-    tmpfilename = 'xxx.js'
+    #tmpfilename = 'xxx.js'
     fout = open(tmpfilename,'w')
     fout.write(jstxt)
     fout.close()
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         print s
         os.system(s)
      
-    #os.remove(tmpfilename)
+    os.remove(tmpfilename)
 
 
     #

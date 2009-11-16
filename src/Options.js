@@ -84,8 +84,8 @@ JXG.Options = {
         style : 5, //1;
         fillColor : '#ff0000',
         highlightFillColor : '#EEEEEE',
-        strokeColor : '#0000ff',         //elements.color.strokeColor,
-        highlightStrokeColor : '#C3D9FF' //this.elements.color.highlightStrokeColor
+        strokeColor : '#0000ff',         
+        highlightStrokeColor : '#C3D9FF' 
     },
 
     /* special line options */
@@ -94,16 +94,16 @@ JXG.Options = {
         lastArrow : false,
         straightFirst : true,
         straightLast : true,
-        fillColor : '#000000',            //this.elements.color.fillColor,
-        highlightFillColor : 'none',      //this.elements.color.highlightFillColor,
-        strokeColor : '#0000ff',          //this.elements.color.strokeColor,
-        highlightStrokeColor : '#888888', //this.elements.color.highlightStrokeColor,
+        fillColor : '#000000',            
+        highlightFillColor : 'none',      
+        strokeColor : '#0000ff',          
+        highlightStrokeColor : '#888888', 
         /* line ticks options */
         ticks : {
             drawLabels : true,
             drawZero : false,
             insertTicks : false,
-            minTicksDistance : 50, //100, (AW)
+            minTicksDistance : 50, 
             maxTicksDistance : 300,
             minorHeight : 4,
             majorHeight : 10,
@@ -114,10 +114,10 @@ JXG.Options = {
     
     /*special circle options */
     circle : {
-        fillColor : 'none',              //this.elements.color.fillColor,
-        highlightFillColor : 'none',     //this.elements.color.highlightFillColor,
-        strokeColor : '#0000ff',         //this.elements.color.strokeColor,
-        highlightStrokeColor : '#C3D9FF' //this.elements.color.highlightStrokeColor
+        fillColor : 'none',              
+        highlightFillColor : 'none',     
+        strokeColor : '#0000ff',         
+        highlightStrokeColor : '#C3D9FF' 
     },
 
     /* special angle options */
@@ -134,10 +134,10 @@ JXG.Options = {
     arc : {
         firstArrow : false,
         lastArrow : false,
-        fillColor : 'none',               //this.elements.color.fillColor,
-        highlightFillColor : 'none',      //this.elements.color.highlightFillColor,
-        strokeColor : '#0000ff',          //this.elements.color.strokeColor,
-        highlightStrokeColor : '#C3D9FF'  //this.elements.color.highlightStrokeColor
+        fillColor : 'none',               
+        highlightFillColor : 'none',      
+        strokeColor : '#0000ff',          
+        highlightStrokeColor : '#C3D9FF'  
     },
     
     /* special polygon options */
@@ -166,12 +166,12 @@ JXG.Options = {
     /* special curve options */
     curve : {
         strokeWidth : '1px',
-        strokeColor : '#0000ff',//this.elements.color.strokeColor,
-        RDPsmoothing : false, // Apply the Ramen-Douglas-Peuker algorithm
+        strokeColor : '#0000ff',
+        RDPsmoothing : false,    // Apply the Ramen-Douglas-Peuker algorithm
         numberPointsHigh : 1600, // Number of points on curves after mouseUp
         numberPointsLow : 400,   // Number of points on curves after mousemove
-        doAdvancedPlot : true   // Use the algorithm by Gillam and Hohenwarter
-                                    // It is much slower, but the result is better
+        doAdvancedPlot : true    // Use the algorithm by Gillam and Hohenwarter
+                                 // It is much slower, but the result is better
     }, 
     
     /* precision options */
