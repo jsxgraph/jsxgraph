@@ -121,7 +121,6 @@ function jsxgraphOutput($input, $args, &$parser) {
 
   // Load necessary stylesheet und scripts
   if ($markercount==0) {
-    $output .= "<meta http-equiv='X-UA-Compatible' content='IE=7' />";
     $output .= "<link rel='stylesheet' type='text/css' href='".$outputURI."/jsxgraph.css' />";
     $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
   }

@@ -3,14 +3,14 @@ Contributors: Matthias Ehmann, Michael Gerhäuser, Carsten Miller, Bianca Valent
 Tags: jsxgraph, geometry, plotting, visualization, javascript, svg, vml, rendering, graphics
 Requires at least: 2.2
 Tested up to: 2.8.4
-Stable tag: 0.77
+Stable tag: 0.78
 
 Using the JSXGraph filter makes it a lot easier to embed JSXGraph constructions into wordpress pages/posts.
 
 == Description ==
 
 [JSXGraph](http://www.jsxgraph.org/) is a cross-browser library for interactive geometry, function plotting, graphs, and data visualization in a web browser. It is implemented completely in JavaScript and uses SVG and VML.
-JSXGraph is easy to embed and has a small footprint: only about 55 KB if embedded in a web page. No plug-ins are required! JSXGraph uses the JavaScript libraries/frameworks Prototype or jQuery.
+JSXGraph is easy to embed and has a small footprint: only about 80 KB if embedded in a web page. No plug-ins are required! 
 [JSXGraph](http://www.jsxgraph.org/) is developed at the [Lehrstuhl für Mathematik und ihre Didaktik](http://did.mat.uni-bayreuth.de/), [University of Bayreuth](http://www.uni-bayreuth.de/), Germany.
 
 
