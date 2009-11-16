@@ -1685,6 +1685,28 @@ this.readGeogebra = function(tree, board) {
   delete(board.ggbElements);
 };
 
+this.utf8 = function (string) {
+  string = string.replace(/\r\n/g,"\n");
+  var utftext = [];
+
+  for (var n = 0; n < string.length; n++) {
+    var c = string.charCodeAt(n);
+
+    if (c < 128) {
+      utftext.push(String.fromCharCode(c));
+    } else if((c > 127) && (c < 2048)) {
+      utftext.push(String.fromCharCode((c >> 6) | 192));
+      utftext.push(String.fromCharCode((c & 63) | 128));
+    } else {
+      utftext.push(String.fromCharCode((c >> 12) | 224));
+      utftext.push(String.fromCharCode(((c >> 6) & 63) | 128));
+      utftext.push(String.fromCharCode((c & 63) | 128));
+    }
+  }
+ 
+  return utftext.join('');
+};
+
 /**
  * Extracting the packed geogebra file in order to return the "blank" xml-tree for further parsing.
  * @param {String} archive containing geogebra.xml-file or raw input string (eg. xml-tree)
@@ -1698,6 +1720,7 @@ this.prepareString = function(fileStr) {
     // Unzip
     fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");
   }
+  fileStr = JXG.GeogebraReader.utf8(fileStr);
   return fileStr;
 };
 }; // end: GeogebraReader()
