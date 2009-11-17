@@ -36,7 +36,7 @@ this.ggbMatch = function(type, att) {
       return function() { return JXG.getReference(board, String(att)[2]).Y(); };
     break;
     case 'sin':
-      return 'Math.sin('+ att +')';
+      return function() { return Math.sin(att); };
     break;
   }
 };
@@ -110,6 +110,9 @@ this.ggbAct = function(type, m, n, p) {
     case 'y':
       return v1;
     break;
+    case 'sin':
+      return v1;
+    break;
     case 'var':
       return v1;
     break;
@@ -174,16 +177,15 @@ this.ggbParse = function(board, exp, element) {
     This is in the public domain.
 */
 
+/***** begin replace *****/
   var _dbg_withtrace        = false;
   var _dbg_string            = new String();
 
-  function __dbg_print( text )
-  {
+  function __dbg_print( text ) {
       _dbg_string += text + "\n";
   }
 
-  function __lex( info )
-  {
+  function __lex( info ) {
       var state        = 0;
       var match        = -1;
       var match_pos    = 0;
@@ -198,7 +200,7 @@ this.ggbParse = function(board, exp, element) {
           start = pos;
 
           if( info.src.length <= start )
-              return 19;
+              return 20;
 
           do
           {
@@ -215,13 +217,14 @@ this.ggbParse = function(board, exp, element) {
           else if( info.src.charCodeAt( pos ) == 45 ) state = 7;
           else if( info.src.charCodeAt( pos ) == 47 ) state = 8;
           else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 9;
-          else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 87 ) || info.src.charCodeAt( pos ) == 90 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+          else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 82 ) || ( info.src.charCodeAt( pos ) >= 84 && info.src.charCodeAt( pos ) <= 87 ) || info.src.charCodeAt( pos ) == 90 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
           else if( info.src.charCodeAt( pos ) == 94 ) state = 11;
-          else if( info.src.charCodeAt( pos ) == 34 ) state = 17;
-          else if( info.src.charCodeAt( pos ) == 88 ) state = 18;
-          else if( info.src.charCodeAt( pos ) == 38 ) state = 19;
-          else if( info.src.charCodeAt( pos ) == 46 ) state = 20;
-          else if( info.src.charCodeAt( pos ) == 89 ) state = 27;
+          else if( info.src.charCodeAt( pos ) == 34 ) state = 18;
+          else if( info.src.charCodeAt( pos ) == 88 ) state = 19;
+          else if( info.src.charCodeAt( pos ) == 38 ) state = 20;
+          else if( info.src.charCodeAt( pos ) == 46 ) state = 21;
+          else if( info.src.charCodeAt( pos ) == 83 ) state = 32;
+          else if( info.src.charCodeAt( pos ) == 89 ) state = 33;
           else state = -1;
           break;
 
@@ -245,31 +248,31 @@ this.ggbParse = function(board, exp, element) {
 
       case 4:
           state = -1;
-          match = 14;
+          match = 15;
           match_pos = pos;
           break;
 
       case 5:
           state = -1;
-          match = 11;
+          match = 12;
           match_pos = pos;
           break;
 
       case 6:
           state = -1;
-          match = 12;
+          match = 13;
           match_pos = pos;
           break;
 
       case 7:
           state = -1;
-          match = 13;
+          match = 14;
           match_pos = pos;
           break;
 
       case 8:
           state = -1;
-          match = 15;
+          match = 16;
           match_pos = pos;
           break;
 
@@ -283,21 +286,21 @@ this.ggbParse = function(board, exp, element) {
 
       case 10:
           if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
-          else if( info.src.charCodeAt( pos ) == 95 ) state = 22;
+          else if( info.src.charCodeAt( pos ) == 95 ) state = 23;
           else state = -1;
-          match = 9;
+          match = 10;
           match_pos = pos;
           break;
 
       case 11:
           state = -1;
-          match = 16;
+          match = 17;
           match_pos = pos;
           break;
 
       case 12:
           state = -1;
-          match = 10;
+          match = 11;
           match_pos = pos;
           break;
 
@@ -310,7 +313,7 @@ this.ggbParse = function(board, exp, element) {
 
       case 14:
           state = -1;
-          match = 8;
+          match = 9;
           match_pos = pos;
           break;
 
@@ -327,70 +330,114 @@ this.ggbParse = function(board, exp, element) {
           break;
 
       case 17:
-          if( info.src.charCodeAt( pos ) == 34 ) state = 12;
-          else if( info.src.charCodeAt( pos ) == 32 || info.src.charCodeAt( pos ) == 46 || ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 17;
-          else state = -1;
-          break;
-
-      case 18:
-          if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
-          else if( info.src.charCodeAt( pos ) == 95 ) state = 22;
-          else if( info.src.charCodeAt( pos ) == 40 ) state = 23;
-          else state = -1;
-          match = 9;
+          state = -1;
+          match = 8;
           match_pos = pos;
           break;
 
-      case 19:
-          if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 21;
+      case 18:
+          if( info.src.charCodeAt( pos ) == 34 ) state = 12;
+          else if( info.src.charCodeAt( pos ) == 32 || info.src.charCodeAt( pos ) == 46 || ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 18;
           else state = -1;
           break;
 
+      case 19:
+          if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+          else if( info.src.charCodeAt( pos ) == 95 ) state = 23;
+          else if( info.src.charCodeAt( pos ) == 40 ) state = 24;
+          else state = -1;
+          match = 10;
+          match_pos = pos;
+          break;
+
       case 20:
-          if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 13;
+          if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 22;
           else state = -1;
           break;
 
       case 21:
-          if( info.src.charCodeAt( pos ) == 59 ) state = 14;
-          else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 21;
+          if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 13;
           else state = -1;
           break;
 
       case 22:
-          if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
-          else if( info.src.charCodeAt( pos ) == 95 ) state = 22;
+          if( info.src.charCodeAt( pos ) == 59 ) state = 14;
+          else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 22;
           else state = -1;
           break;
 
       case 23:
-          if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 24;
+          if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+          else if( info.src.charCodeAt( pos ) == 95 ) state = 23;
           else state = -1;
           break;
 
       case 24:
-          if( info.src.charCodeAt( pos ) == 41 ) state = 15;
-          else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 24;
+          if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 25;
           else state = -1;
           break;
 
       case 25:
-          if( info.src.charCodeAt( pos ) == 41 ) state = 16;
+          if( info.src.charCodeAt( pos ) == 41 ) state = 15;
           else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 25;
           else state = -1;
           break;
 
       case 26:
-          if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 25;
+          if( info.src.charCodeAt( pos ) == 41 ) state = 16;
+          else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 26;
           else state = -1;
           break;
 
       case 27:
-          if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
-          else if( info.src.charCodeAt( pos ) == 95 ) state = 22;
-          else if( info.src.charCodeAt( pos ) == 40 ) state = 26;
+          if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 28;
           else state = -1;
-          match = 9;
+          break;
+
+      case 28:
+          if( info.src.charCodeAt( pos ) == 41 ) state = 17;
+          else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 28;
+          else state = -1;
+          break;
+
+      case 29:
+          if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 77 ) || ( info.src.charCodeAt( pos ) >= 79 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+          else if( info.src.charCodeAt( pos ) == 95 ) state = 23;
+          else if( info.src.charCodeAt( pos ) == 78 ) state = 30;
+          else state = -1;
+          match = 10;
+          match_pos = pos;
+          break;
+
+      case 30:
+          if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+          else if( info.src.charCodeAt( pos ) == 95 ) state = 23;
+          else if( info.src.charCodeAt( pos ) == 40 ) state = 27;
+          else state = -1;
+          match = 10;
+          match_pos = pos;
+          break;
+
+      case 31:
+          if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 26;
+          else state = -1;
+          break;
+
+      case 32:
+          if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 72 ) || ( info.src.charCodeAt( pos ) >= 74 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+          else if( info.src.charCodeAt( pos ) == 95 ) state = 23;
+          else if( info.src.charCodeAt( pos ) == 73 ) state = 29;
+          else state = -1;
+          match = 10;
+          match_pos = pos;
+          break;
+
+      case 33:
+          if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+          else if( info.src.charCodeAt( pos ) == 95 ) state = 23;
+          else if( info.src.charCodeAt( pos ) == 40 ) state = 31;
+          else state = -1;
+          match = 10;
           match_pos = pos;
           break;
 
@@ -409,7 +456,7 @@ this.ggbParse = function(board, exp, element) {
       {
           info.att = info.src.substr( start, match_pos - start );
           info.offset = match_pos;
-
+        
   switch( match )
   {
       case 4:
@@ -438,17 +485,23 @@ this.ggbParse = function(board, exp, element) {
 
       case 8:
           {
-           info.att = JXG.GeogebraReader.ggbMatch('html', info.att);
+           info.att = JXG.GeogebraReader.ggbMatch('sin', info.att);
           }
           break;
 
       case 9:
           {
-           info.att = JXG.GeogebraReader.ggbMatch('var', info.att);
+           info.att = JXG.GeogebraReader.ggbMatch('html', info.att);
           }
           break;
 
       case 10:
+          {
+           info.att = JXG.GeogebraReader.ggbMatch('var', info.att);
+          }
+          break;
+
+      case 11:
           {
            info.att = JXG.GeogebraReader.ggbMatch('string', info.att);
           }
@@ -468,8 +521,7 @@ this.ggbParse = function(board, exp, element) {
   }
 
 
-  function __parse( src, err_off, err_la )
-  {
+  function __parse( src, err_off, err_la ) {
       var        sstack            = new Array();
       var        vstack            = new Array();
       var     err_cnt            = 0;
@@ -479,69 +531,71 @@ this.ggbParse = function(board, exp, element) {
       var        rval;
       var     parseinfo        = new Function( "", "var offset; var src; var att;" );
       var        info            = new parseinfo();
-
+    
   /* Pop-Table */
   var pop_tab = new Array(
       new Array( 0/* p' */, 1 ),
-      new Array( 18/* p */, 1 ),
-      new Array( 17/* e */, 3 ),
-      new Array( 17/* e */, 3 ),
-      new Array( 17/* e */, 3 ),
-      new Array( 17/* e */, 3 ),
-      new Array( 17/* e */, 3 ),
-      new Array( 17/* e */, 3 ),
-      new Array( 17/* e */, 2 ),
-      new Array( 17/* e */, 3 ),
-      new Array( 17/* e */, 1 ),
-      new Array( 17/* e */, 1 ),
-      new Array( 17/* e */, 1 ),
-      new Array( 17/* e */, 3 ),
-      new Array( 17/* e */, 1 ),
-      new Array( 17/* e */, 1 ),
-      new Array( 17/* e */, 1 ),
-      new Array( 17/* e */, 1 )
+      new Array( 19/* p */, 1 ),
+      new Array( 18/* e */, 3 ),
+      new Array( 18/* e */, 3 ),
+      new Array( 18/* e */, 3 ),
+      new Array( 18/* e */, 3 ),
+      new Array( 18/* e */, 3 ),
+      new Array( 18/* e */, 3 ),
+      new Array( 18/* e */, 2 ),
+      new Array( 18/* e */, 3 ),
+      new Array( 18/* e */, 1 ),
+      new Array( 18/* e */, 1 ),
+      new Array( 18/* e */, 1 ),
+      new Array( 18/* e */, 1 ),
+      new Array( 18/* e */, 3 ),
+      new Array( 18/* e */, 1 ),
+      new Array( 18/* e */, 1 ),
+      new Array( 18/* e */, 1 ),
+      new Array( 18/* e */, 1 )
   );
 
   /* Action-Table */
   var act_tab = new Array(
-      /* State 0 */ new Array( 13/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 9/* "VAR" */,7 , 10/* "STRING" */,8 , 4/* "INT" */,9 , 5/* "FLOAT" */,10 , 8/* "HTML" */,11 ),
-      /* State 1 */ new Array( 19/* "$" */,0 ),
-      /* State 2 */ new Array( 16/* "^" */,12 , 15/* "/" */,13 , 14/* "*" */,14 , 13/* "-" */,15 , 11/* "+" */,16 , 12/* "," */,17 , 19/* "$" */,-1 ),
-      /* State 3 */ new Array( 13/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 9/* "VAR" */,7 , 10/* "STRING" */,8 , 4/* "INT" */,9 , 5/* "FLOAT" */,10 , 8/* "HTML" */,11 ),
-      /* State 4 */ new Array( 13/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 9/* "VAR" */,7 , 10/* "STRING" */,8 , 4/* "INT" */,9 , 5/* "FLOAT" */,10 , 8/* "HTML" */,11 ),
-      /* State 5 */ new Array( 19/* "$" */,-10 , 12/* "," */,-10 , 11/* "+" */,-10 , 13/* "-" */,-10 , 14/* "*" */,-10 , 15/* "/" */,-10 , 16/* "^" */,-10 , 3/* ")" */,-10 ),
-      /* State 6 */ new Array( 19/* "$" */,-11 , 12/* "," */,-11 , 11/* "+" */,-11 , 13/* "-" */,-11 , 14/* "*" */,-11 , 15/* "/" */,-11 , 16/* "^" */,-11 , 3/* ")" */,-11 ),
-      /* State 7 */ new Array( 19/* "$" */,-12 , 12/* "," */,-12 , 11/* "+" */,-12 , 13/* "-" */,-12 , 14/* "*" */,-12 , 15/* "/" */,-12 , 16/* "^" */,-12 , 3/* ")" */,-12 ),
-      /* State 8 */ new Array( 11/* "+" */,20 , 19/* "$" */,-17 , 12/* "," */,-17 , 13/* "-" */,-17 , 14/* "*" */,-17 , 15/* "/" */,-17 , 16/* "^" */,-17 , 3/* ")" */,-17 ),
-      /* State 9 */ new Array( 19/* "$" */,-14 , 12/* "," */,-14 , 11/* "+" */,-14 , 13/* "-" */,-14 , 14/* "*" */,-14 , 15/* "/" */,-14 , 16/* "^" */,-14 , 3/* ")" */,-14 ),
-      /* State 10 */ new Array( 19/* "$" */,-15 , 12/* "," */,-15 , 11/* "+" */,-15 , 13/* "-" */,-15 , 14/* "*" */,-15 , 15/* "/" */,-15 , 16/* "^" */,-15 , 3/* ")" */,-15 ),
-      /* State 11 */ new Array( 19/* "$" */,-16 , 12/* "," */,-16 , 11/* "+" */,-16 , 13/* "-" */,-16 , 14/* "*" */,-16 , 15/* "/" */,-16 , 16/* "^" */,-16 , 3/* ")" */,-16 ),
-      /* State 12 */ new Array( 13/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 9/* "VAR" */,7 , 10/* "STRING" */,8 , 4/* "INT" */,9 , 5/* "FLOAT" */,10 , 8/* "HTML" */,11 ),
-      /* State 13 */ new Array( 13/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 9/* "VAR" */,7 , 10/* "STRING" */,8 , 4/* "INT" */,9 , 5/* "FLOAT" */,10 , 8/* "HTML" */,11 ),
-      /* State 14 */ new Array( 13/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 9/* "VAR" */,7 , 10/* "STRING" */,8 , 4/* "INT" */,9 , 5/* "FLOAT" */,10 , 8/* "HTML" */,11 ),
-      /* State 15 */ new Array( 13/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 9/* "VAR" */,7 , 10/* "STRING" */,8 , 4/* "INT" */,9 , 5/* "FLOAT" */,10 , 8/* "HTML" */,11 ),
-      /* State 16 */ new Array( 13/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 9/* "VAR" */,7 , 10/* "STRING" */,8 , 4/* "INT" */,9 , 5/* "FLOAT" */,10 , 8/* "HTML" */,11 ),
-      /* State 17 */ new Array( 13/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 9/* "VAR" */,7 , 10/* "STRING" */,8 , 4/* "INT" */,9 , 5/* "FLOAT" */,10 , 8/* "HTML" */,11 ),
-      /* State 18 */ new Array( 16/* "^" */,12 , 15/* "/" */,-8 , 14/* "*" */,-8 , 13/* "-" */,-8 , 11/* "+" */,-8 , 12/* "," */,-8 , 19/* "$" */,-8 , 3/* ")" */,-8 ),
-      /* State 19 */ new Array( 16/* "^" */,12 , 15/* "/" */,13 , 14/* "*" */,14 , 13/* "-" */,15 , 11/* "+" */,16 , 12/* "," */,17 , 3/* ")" */,27 ),
-      /* State 20 */ new Array( 13/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 9/* "VAR" */,7 , 10/* "STRING" */,8 , 4/* "INT" */,9 , 5/* "FLOAT" */,10 , 8/* "HTML" */,11 ),
-      /* State 21 */ new Array( 16/* "^" */,-7 , 15/* "/" */,-7 , 14/* "*" */,-7 , 13/* "-" */,-7 , 11/* "+" */,-7 , 12/* "," */,-7 , 19/* "$" */,-7 , 3/* ")" */,-7 ),
-      /* State 22 */ new Array( 16/* "^" */,12 , 15/* "/" */,-6 , 14/* "*" */,-6 , 13/* "-" */,-6 , 11/* "+" */,-6 , 12/* "," */,-6 , 19/* "$" */,-6 , 3/* ")" */,-6 ),
-      /* State 23 */ new Array( 16/* "^" */,12 , 15/* "/" */,-5 , 14/* "*" */,-5 , 13/* "-" */,-5 , 11/* "+" */,-5 , 12/* "," */,-5 , 19/* "$" */,-5 , 3/* ")" */,-5 ),
-      /* State 24 */ new Array( 16/* "^" */,12 , 15/* "/" */,13 , 14/* "*" */,14 , 13/* "-" */,-4 , 11/* "+" */,-4 , 12/* "," */,-4 , 19/* "$" */,-4 , 3/* ")" */,-4 ),
-      /* State 25 */ new Array( 16/* "^" */,12 , 15/* "/" */,13 , 14/* "*" */,14 , 13/* "-" */,-3 , 11/* "+" */,-3 , 12/* "," */,-3 , 19/* "$" */,-3 , 3/* ")" */,-3 ),
-      /* State 26 */ new Array( 16/* "^" */,12 , 15/* "/" */,13 , 14/* "*" */,14 , 13/* "-" */,-2 , 11/* "+" */,-2 , 12/* "," */,-2 , 19/* "$" */,-2 , 3/* ")" */,-2 ),
-      /* State 27 */ new Array( 19/* "$" */,-9 , 12/* "," */,-9 , 11/* "+" */,-9 , 13/* "-" */,-9 , 14/* "*" */,-9 , 15/* "/" */,-9 , 16/* "^" */,-9 , 3/* ")" */,-9 ),
-      /* State 28 */ new Array( 16/* "^" */,12 , 15/* "/" */,13 , 14/* "*" */,14 , 13/* "-" */,-13 , 11/* "+" */,-13 , 12/* "," */,-13 , 19/* "$" */,-13 , 3/* ")" */,-13 )
+      /* State 0 */ new Array( 14/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 8/* "SIN" */,7 , 10/* "VAR" */,8 , 11/* "STRING" */,9 , 4/* "INT" */,10 , 5/* "FLOAT" */,11 , 9/* "HTML" */,12 ),
+      /* State 1 */ new Array( 20/* "$" */,0 ),
+      /* State 2 */ new Array( 17/* "^" */,13 , 16/* "/" */,14 , 15/* "*" */,15 , 14/* "-" */,16 , 12/* "+" */,17 , 13/* "," */,18 , 20/* "$" */,-1 ),
+      /* State 3 */ new Array( 14/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 8/* "SIN" */,7 , 10/* "VAR" */,8 , 11/* "STRING" */,9 , 4/* "INT" */,10 , 5/* "FLOAT" */,11 , 9/* "HTML" */,12 ),
+      /* State 4 */ new Array( 14/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 8/* "SIN" */,7 , 10/* "VAR" */,8 , 11/* "STRING" */,9 , 4/* "INT" */,10 , 5/* "FLOAT" */,11 , 9/* "HTML" */,12 ),
+      /* State 5 */ new Array( 20/* "$" */,-10 , 13/* "," */,-10 , 12/* "+" */,-10 , 14/* "-" */,-10 , 15/* "*" */,-10 , 16/* "/" */,-10 , 17/* "^" */,-10 , 3/* ")" */,-10 ),
+      /* State 6 */ new Array( 20/* "$" */,-11 , 13/* "," */,-11 , 12/* "+" */,-11 , 14/* "-" */,-11 , 15/* "*" */,-11 , 16/* "/" */,-11 , 17/* "^" */,-11 , 3/* ")" */,-11 ),
+      /* State 7 */ new Array( 20/* "$" */,-12 , 13/* "," */,-12 , 12/* "+" */,-12 , 14/* "-" */,-12 , 15/* "*" */,-12 , 16/* "/" */,-12 , 17/* "^" */,-12 , 3/* ")" */,-12 ),
+      /* State 8 */ new Array( 20/* "$" */,-13 , 13/* "," */,-13 , 12/* "+" */,-13 , 14/* "-" */,-13 , 15/* "*" */,-13 , 16/* "/" */,-13 , 17/* "^" */,-13 , 3/* ")" */,-13 ),
+      /* State 9 */ new Array( 12/* "+" */,21 , 20/* "$" */,-18 , 13/* "," */,-18 , 14/* "-" */,-18 , 15/* "*" */,-18 , 16/* "/" */,-18 , 17/* "^" */,-18 , 3/* ")" */,-18 ),
+      /* State 10 */ new Array( 20/* "$" */,-15 , 13/* "," */,-15 , 12/* "+" */,-15 , 14/* "-" */,-15 , 15/* "*" */,-15 , 16/* "/" */,-15 , 17/* "^" */,-15 , 3/* ")" */,-15 ),
+      /* State 11 */ new Array( 20/* "$" */,-16 , 13/* "," */,-16 , 12/* "+" */,-16 , 14/* "-" */,-16 , 15/* "*" */,-16 , 16/* "/" */,-16 , 17/* "^" */,-16 , 3/* ")" */,-16 ),
+      /* State 12 */ new Array( 20/* "$" */,-17 , 13/* "," */,-17 , 12/* "+" */,-17 , 14/* "-" */,-17 , 15/* "*" */,-17 , 16/* "/" */,-17 , 17/* "^" */,-17 , 3/* ")" */,-17 ),
+      /* State 13 */ new Array( 14/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 8/* "SIN" */,7 , 10/* "VAR" */,8 , 11/* "STRING" */,9 , 4/* "INT" */,10 , 5/* "FLOAT" */,11 , 9/* "HTML" */,12 ),
+      /* State 14 */ new Array( 14/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 8/* "SIN" */,7 , 10/* "VAR" */,8 , 11/* "STRING" */,9 , 4/* "INT" */,10 , 5/* "FLOAT" */,11 , 9/* "HTML" */,12 ),
+      /* State 15 */ new Array( 14/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 8/* "SIN" */,7 , 10/* "VAR" */,8 , 11/* "STRING" */,9 , 4/* "INT" */,10 , 5/* "FLOAT" */,11 , 9/* "HTML" */,12 ),
+      /* State 16 */ new Array( 14/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 8/* "SIN" */,7 , 10/* "VAR" */,8 , 11/* "STRING" */,9 , 4/* "INT" */,10 , 5/* "FLOAT" */,11 , 9/* "HTML" */,12 ),
+      /* State 17 */ new Array( 14/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 8/* "SIN" */,7 , 10/* "VAR" */,8 , 11/* "STRING" */,9 , 4/* "INT" */,10 , 5/* "FLOAT" */,11 , 9/* "HTML" */,12 ),
+      /* State 18 */ new Array( 14/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 8/* "SIN" */,7 , 10/* "VAR" */,8 , 11/* "STRING" */,9 , 4/* "INT" */,10 , 5/* "FLOAT" */,11 , 9/* "HTML" */,12 ),
+      /* State 19 */ new Array( 17/* "^" */,13 , 16/* "/" */,-8 , 15/* "*" */,-8 , 14/* "-" */,-8 , 12/* "+" */,-8 , 13/* "," */,-8 , 20/* "$" */,-8 , 3/* ")" */,-8 ),
+      /* State 20 */ new Array( 17/* "^" */,13 , 16/* "/" */,14 , 15/* "*" */,15 , 14/* "-" */,16 , 12/* "+" */,17 , 13/* "," */,18 , 3/* ")" */,28 ),
+      /* State 21 */ new Array( 14/* "-" */,3 , 2/* "(" */,4 , 6/* "X" */,5 , 7/* "Y" */,6 , 8/* "SIN" */,7 , 10/* "VAR" */,8 , 11/* "STRING" */,9 , 4/* "INT" */,10 , 5/* "FLOAT" */,11 , 9/* "HTML" */,12 ),
+      /* State 22 */ new Array( 17/* "^" */,-7 , 16/* "/" */,-7 , 15/* "*" */,-7 , 14/* "-" */,-7 , 12/* "+" */,-7 , 13/* "," */,-7 , 20/* "$" */,-7 , 3/* ")" */,-7 ),
+      /* State 23 */ new Array( 17/* "^" */,13 , 16/* "/" */,-6 , 15/* "*" */,-6 , 14/* "-" */,-6 , 12/* "+" */,-6 , 13/* "," */,-6 , 20/* "$" */,-6 , 3/* ")" */,-6 ),
+      /* State 24 */ new Array( 17/* "^" */,13 , 16/* "/" */,-5 , 15/* "*" */,-5 , 14/* "-" */,-5 , 12/* "+" */,-5 , 13/* "," */,-5 , 20/* "$" */,-5 , 3/* ")" */,-5 ),
+      /* State 25 */ new Array( 17/* "^" */,13 , 16/* "/" */,14 , 15/* "*" */,15 , 14/* "-" */,-4 , 12/* "+" */,-4 , 13/* "," */,-4 , 20/* "$" */,-4 , 3/* ")" */,-4 ),
+      /* State 26 */ new Array( 17/* "^" */,13 , 16/* "/" */,14 , 15/* "*" */,15 , 14/* "-" */,-3 , 12/* "+" */,-3 , 13/* "," */,-3 , 20/* "$" */,-3 , 3/* ")" */,-3 ),
+      /* State 27 */ new Array( 17/* "^" */,13 , 16/* "/" */,14 , 15/* "*" */,15 , 14/* "-" */,-2 , 12/* "+" */,-2 , 13/* "," */,-2 , 20/* "$" */,-2 , 3/* ")" */,-2 ),
+      /* State 28 */ new Array( 20/* "$" */,-9 , 13/* "," */,-9 , 12/* "+" */,-9 , 14/* "-" */,-9 , 15/* "*" */,-9 , 16/* "/" */,-9 , 17/* "^" */,-9 , 3/* ")" */,-9 ),
+      /* State 29 */ new Array( 17/* "^" */,13 , 16/* "/" */,14 , 15/* "*" */,15 , 14/* "-" */,-14 , 12/* "+" */,-14 , 13/* "," */,-14 , 20/* "$" */,-14 , 3/* ")" */,-14 )
   );
 
   /* Goto-Table */
   var goto_tab = new Array(
-      /* State 0 */ new Array( 18/* p */,1 , 17/* e */,2 ),
+      /* State 0 */ new Array( 19/* p */,1 , 18/* e */,2 ),
       /* State 1 */ new Array( ),
       /* State 2 */ new Array( ),
-      /* State 3 */ new Array( 17/* e */,18 ),
-      /* State 4 */ new Array( 17/* e */,19 ),
+      /* State 3 */ new Array( 18/* e */,19 ),
+      /* State 4 */ new Array( 18/* e */,20 ),
       /* State 5 */ new Array( ),
       /* State 6 */ new Array( ),
       /* State 7 */ new Array( ),
@@ -549,23 +603,24 @@ this.ggbParse = function(board, exp, element) {
       /* State 9 */ new Array( ),
       /* State 10 */ new Array( ),
       /* State 11 */ new Array( ),
-      /* State 12 */ new Array( 17/* e */,21 ),
-      /* State 13 */ new Array( 17/* e */,22 ),
-      /* State 14 */ new Array( 17/* e */,23 ),
-      /* State 15 */ new Array( 17/* e */,24 ),
-      /* State 16 */ new Array( 17/* e */,25 ),
-      /* State 17 */ new Array( 17/* e */,26 ),
-      /* State 18 */ new Array( ),
+      /* State 12 */ new Array( ),
+      /* State 13 */ new Array( 18/* e */,22 ),
+      /* State 14 */ new Array( 18/* e */,23 ),
+      /* State 15 */ new Array( 18/* e */,24 ),
+      /* State 16 */ new Array( 18/* e */,25 ),
+      /* State 17 */ new Array( 18/* e */,26 ),
+      /* State 18 */ new Array( 18/* e */,27 ),
       /* State 19 */ new Array( ),
-      /* State 20 */ new Array( 17/* e */,28 ),
-      /* State 21 */ new Array( ),
+      /* State 20 */ new Array( ),
+      /* State 21 */ new Array( 18/* e */,29 ),
       /* State 22 */ new Array( ),
       /* State 23 */ new Array( ),
       /* State 24 */ new Array( ),
       /* State 25 */ new Array( ),
       /* State 26 */ new Array( ),
       /* State 27 */ new Array( ),
-      /* State 28 */ new Array( )
+      /* State 28 */ new Array( ),
+      /* State 29 */ new Array( )
   );
 
 
@@ -580,6 +635,7 @@ this.ggbParse = function(board, exp, element) {
       "FLOAT" /* Terminal symbol */,
       "X" /* Terminal symbol */,
       "Y" /* Terminal symbol */,
+      "SIN" /* Terminal symbol */,
       "HTML" /* Terminal symbol */,
       "VAR" /* Terminal symbol */,
       "STRING" /* Terminal symbol */,
@@ -595,24 +651,24 @@ this.ggbParse = function(board, exp, element) {
   );
 
 
-
+    
       info.offset = 0;
       info.src = src;
       info.att = new String();
-
+    
       if( !err_off )
           err_off    = new Array();
       if( !err_la )
       err_la = new Array();
-
+    
       sstack.push( 0 );
       vstack.push( 0 );
-
+    
       la = __lex( info );
 
       while( true )
       {
-          act = 30;
+          act = 31;
           for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
           {
               if( act_tab[sstack[sstack.length-1]][i] == la )
@@ -632,20 +688,20 @@ this.ggbParse = function(board, exp, element) {
                               "\tStack: " + sstack.join() + "\n" +
                               "\tValue stack: " + vstack.join() + "\n" );
           }
-
-
+        
+            
           //Panic-mode: Try recovery when parse-error occurs!
-          if( act == 30 )
+          if( act == 31 )
           {
               if( _dbg_withtrace )
                   __dbg_print( "Error detected: There is no reduce or shift on the symbol " + labels[la] );
-
+            
               err_cnt++;
               err_off.push( info.offset - info.att.length );            
               err_la.push( new Array() );
               for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
                   err_la[err_la.length-1].push( labels[act_tab[sstack[sstack.length-1]][i]] );
-
+            
               //Remember the original stack!
               var rsstack = new Array();
               var rvstack = new Array();
@@ -654,8 +710,8 @@ this.ggbParse = function(board, exp, element) {
                   rsstack[i] = sstack[i];
                   rvstack[i] = vstack[i];
               }
-
-              while( act == 30 && la != 19 )
+            
+              while( act == 31 && la != 20 )
               {
                   if( _dbg_withtrace )
                       __dbg_print( "\tError recovery\n" +
@@ -663,16 +719,16 @@ this.ggbParse = function(board, exp, element) {
                                       "Action: " + act + "\n\n" );
                   if( la == -1 )
                       info.offset++;
-
-                  while( act == 30 && sstack.length > 0 )
+                    
+                  while( act == 31 && sstack.length > 0 )
                   {
                       sstack.pop();
                       vstack.pop();
-
+                    
                       if( sstack.length == 0 )
                           break;
-
-                      act = 30;
+                        
+                      act = 31;
                       for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
                       {
                           if( act_tab[sstack[sstack.length-1]][i] == la )
@@ -682,20 +738,20 @@ this.ggbParse = function(board, exp, element) {
                           }
                       }
                   }
-
-                  if( act != 30 )
+                
+                  if( act != 31 )
                       break;
-
+                
                   for( var i = 0; i < rsstack.length; i++ )
                   {
                       sstack.push( rsstack[i] );
                       vstack.push( rvstack[i] );
                   }
-
+                
                   la = __lex( info );
               }
-
-              if( act == 30 )
+            
+              if( act == 31 )
               {
                   if( _dbg_withtrace )
                       __dbg_print( "\tError recovery failed, terminating parse process..." );
@@ -706,24 +762,24 @@ this.ggbParse = function(board, exp, element) {
               if( _dbg_withtrace )
                   __dbg_print( "\tError recovery succeeded, continuing" );
           }
-
+        
           /*
-          if( act == 30 )
+          if( act == 31 )
               break;
           */
-
-
+        
+        
           //Shift
           if( act > 0 )
           {            
               if( _dbg_withtrace )
                   __dbg_print( "Shifting symbol: " + labels[la] + " (" + info.att + ")" );
-
+        
               sstack.push( act );
               vstack.push( info.att );
-
+            
               la = __lex( info );
-
+            
               if( _dbg_withtrace )
                   __dbg_print( "\tNew lookahead symbol: " + labels[la] + " (" + info.att + ")" );
           }
@@ -731,15 +787,15 @@ this.ggbParse = function(board, exp, element) {
           else
           {        
               act *= -1;
-
+            
               if( _dbg_withtrace )
                   __dbg_print( "Reducing by producution: " + act );
-
+            
               rval = void(0);
-
+            
               if( _dbg_withtrace )
                   __dbg_print( "\tPerforming semantic action..." );
-
+            
   switch( act )
   {
       case 0:
@@ -804,30 +860,35 @@ this.ggbParse = function(board, exp, element) {
       break;
       case 12:
       {
-           rval = JXG.GeogebraReader.ggbAct('var', vstack[ vstack.length - 1 ]);
+           rval = JXG.GeogebraReader.ggbAct('sin', vstack[ vstack.length - 1 ]);
       }
       break;
       case 13:
       {
-           rval = JXG.GeogebraReader.ggbAct('string', vstack[ vstack.length - 3 ]);
+           rval = JXG.GeogebraReader.ggbAct('var', vstack[ vstack.length - 1 ]);
       }
       break;
       case 14:
       {
-           rval = JXG.GeogebraReader.ggbAct('int', vstack[ vstack.length - 1 ]);
+           rval = JXG.GeogebraReader.ggbAct('string', vstack[ vstack.length - 3 ]);
       }
       break;
       case 15:
       {
-           rval = JXG.GeogebraReader.ggbAct('float', vstack[ vstack.length - 1 ]);
+           rval = JXG.GeogebraReader.ggbAct('int', vstack[ vstack.length - 1 ]);
       }
       break;
       case 16:
       {
-           rval = JXG.GeogebraReader.ggbAct('html', vstack[ vstack.length - 1 ]);
+           rval = JXG.GeogebraReader.ggbAct('float', vstack[ vstack.length - 1 ]);
       }
       break;
       case 17:
+      {
+           rval = JXG.GeogebraReader.ggbAct('html', vstack[ vstack.length - 1 ]);
+      }
+      break;
+      case 18:
       {
            rval = JXG.GeogebraReader.ggbAct('string', vstack[ vstack.length - 1 ]);
       }
@@ -838,13 +899,13 @@ this.ggbParse = function(board, exp, element) {
 
               if( _dbg_withtrace )
                   __dbg_print( "\tPopping " + pop_tab[act][1] + " off the stack..." );
-
+                
               for( var i = 0; i < pop_tab[act][1]; i++ )
               {
                   sstack.pop();
                   vstack.pop();
               }
-
+                                    
               go = -1;
               for( var i = 0; i < goto_tab[sstack[sstack.length-1]].length; i+=2 )
               {
@@ -854,17 +915,17 @@ this.ggbParse = function(board, exp, element) {
                       break;
                   }
               }
-
+            
               if( act == 0 )
                   break;
-
+                
               if( _dbg_withtrace )
                   __dbg_print( "\tPushing non-terminal " + labels[ pop_tab[act][0] ] );
-
+                
               sstack.push( go );
               vstack.push( rval );            
           }
-
+        
           if( _dbg_withtrace )
           {        
               JXG.GeogebraReader.debug( _dbg_string );
@@ -877,9 +938,10 @@ this.ggbParse = function(board, exp, element) {
           __dbg_print( "\nParse complete." );
           JXG.GeogebraReader.debug( _dbg_string );
       }
-
+    
       return err_cnt;
   }
+/***** end replace *****/
   
   var error_offsets = new Array();
   var error_lookaheads = new Array();
@@ -994,57 +1056,24 @@ this.getElement = function(name, expr) {
  * @return {String} correct expression with fixed function and multiplication
  */
 this.functionParse = function(exp) {
-JXG.GeogebraReader.debug('* in (format: '+ JXG.GeogebraReader.format +'): '+ exp);
-    if(JXG.GeogebraReader.format <= 3.01) {
-      // prepare string: "solve" multiplications 'a b' to 'a*b'
-      var s = exp.split(' ');
-      var o = '';
-      for(var i=0; i<s.length; i++) {
-        if(s.length != i+1)
-          if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
-            if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
-              s[i] = s[i] + "*";
-        o += s[i];
-      };
-    } else {
-      var o = exp;
-    };
-
-    // parse workaround:
-    // var tmp = '';
-    // // x(A)
-    // o = (tmp = o.match(/x\(\S{2}/) ) ?
-    //       o.replace(/x\(\S{2}/, "JXG.getReference(board, '"+ String(tmp)[2] +"').X()") : o;
-    // 
-    // o = (o.match(/sin/)) ? o.replace(/sin/, "Math.sin") : o;
-    // o = (o.match(/\u00B2/)) ? o.replace(/\u00B2/, '^2') : o;
-    // o = (o.match(/\u00B2/)) ? o.replace(/\u00B3/, '^3') : o;
-
-    o = (o.match(/x\(/)) ? o.replace(/x\(/, 'X(') : o;
-    o = (o.match(/y\(/)) ? o.replace(/y\(/, 'Y(') : o;
-
     // search for function params
-    if(o.match(/[a-zA-Z0-9]+\([a-zA-Z0-9]+[a-zA-Z0-9,\ ]*\)[\ ]*[=][\ ]*[a-zA-Z0-9\+\-\*\/]+/)) {
-      var input = o.split('(')[1].split(')')[0];
+    if(exp.match(/[a-zA-Z0-9]+\([a-zA-Z0-9]+[a-zA-Z0-9,\ ]*\)[\ ]*[=][\ ]*[a-zA-Z0-9\+\-\*\/]+/)) {
+      var input = exp.split('(')[1].split(')')[0];
       var vars = input.split(', ');
 
       var output = [];
       for(var i=0; i<vars.length; i++)
         output.push("__"+vars[i]);
 
-      var expr = o.split('=')[1];
+      var expr = exp.split('=')[1];
       for(var i=0; i<vars.length; i++)
         expr = expr.replace(eval('/'+vars[i]+'/g'), '__'+vars[i]);
 
-//TODO expr replace hierher verlagern
-// oder parser updaten
-
-      // expr = JXG.GeogebraReader.ggbParse(board, false, expr);
       output.push(expr);
       JXG.GeogebraReader.debug("* out: "+ output.toString());
       return output;
     } else {
-      return o;
+      return exp;
     }
 };
 
