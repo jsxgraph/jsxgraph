@@ -1627,8 +1627,12 @@ JXG.Board.prototype.applyZoom = function() {
  * Zooms into the board.
  */
 JXG.Board.prototype.zoomIn = function() {
+    var oX, oY;
     this.zoomX *= this.options.zoom.factor;
     this.zoomY *= this.options.zoom.factor;
+    oX = this.origin.scrCoords[1]*this.options.zoom.factor;
+    oY = this.origin.scrCoords[2]*this.options.zoom.factor;
+    this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
     this.applyZoom();
@@ -1639,8 +1643,13 @@ JXG.Board.prototype.zoomIn = function() {
  * Zooms out of the board.
  */
 JXG.Board.prototype.zoomOut = function() {
+    var oX, oY;
     this.zoomX /= this.options.zoom.factor;
     this.zoomY /= this.options.zoom.factor;
+    oX = this.origin.scrCoords[1]/this.options.zoom.factor;
+    oY = this.origin.scrCoords[2]/this.options.zoom.factor;
+    this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
+    
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
     this.applyZoom();
@@ -1651,8 +1660,17 @@ JXG.Board.prototype.zoomOut = function() {
  * Resets zoom factor zu 1.
  */
 JXG.Board.prototype.zoom100 = function() {
+    var oX, oY, zX, zY;
+    
+    zX = this.zoomX;
+    zY = this.zoomY;
     this.zoomX = 1.0;
     this.zoomY = 1.0;
+
+    oX = this.origin.scrCoords[1]/zX;
+    oY = this.origin.scrCoords[2]/zY;
+    this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
+
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
     this.applyZoom();
