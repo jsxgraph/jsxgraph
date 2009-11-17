@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">	
+		<!--
+			JS/CC: A LALR(1) Compiler-Compiler written in JavaScript
+			Copyright (C) 2007, 2008 by J.M.K S.F. Software Technologies, Jan Max Meyer
+			http://www.jmksf.com ++ jscc<-AT->jmksf.com
+			
+			File:	jscc.html
+			Author:	Jan Max Meyer
+			Usage:	Web Environment Module
+			
+			You may use, modify and distribute this software under the terms and conditions
+			of the Artistic License. Please see ARTISTIC for more information.
+		-->
+		<title>JS/CC Web Environment</title>
+		
+		<meta http-equiv="Content-Script-Type" content="text/javascript">
+		
+		<link rel="stylesheet" href="jscc/jscc.css" type="text/css">
+		<script type="text/javascript" src="jscc/jscc.js"></script>
+		<script type="text/javascript" src="jscc/driver.js"></script>
+		<script type="text/javascript" src="jscc/webdriver.js"></script>
+
+		<script type="text/javascript">
+		var html_output = new String();
+		var error_output = new String();
+		var	dfa_table;
+		
+		function _error( msg )
+		{
+			if( show_errors )
+				error_output += "Error: " + msg + "\n";
+
+			errors++;
+		}
+		
+		function _warning( msg )
+		{
+			if( show_warnings )
+				error_output += "Warning: " + msg + "\n";
+
+			warnings++;
+		}
+		
+		function _print( txt )
+		{
+			html_output += txt;
+		}
+		
+		function check_editor_content()
+		{
+			if( document.source.code.value != "" )
+				if( confirm( "Delete current editor content?" ) )
+				{
+					document.source.code.value = "";
+					document.source.code.focus();
+					document.source.run.disabled = true;
+					return true;
+				}
+				else
+					return false;
+
+			return true;
+		}
+		
+		function load_grammar()
+		{
+			if( check_editor_content() )
+			{
+				document.source.code.value = grammars[ document.source.stored.value ];
+				document.source.code.focus();
+				
+				document.source.run.disabled = true;
+			}
+		}
+		
+		function enlarge_content( container )
+		{
+			var closebutton = "<div style=\"width:100%; text-align: center;\"><input type=\"button\" onclick=\"hide_enlarged_content();\" width=\"100%\" value=\"Close\" /></div>";
+			var pop_up = document.getElementById( "popupcontent" );
+			pop_up.style.top = "100px";
+			pop_up.style.left = "200px";
+			pop_up.style.width = "800px";
+			pop_up.style.height = "600px";
+			
+			pop_up.innerHTML = closebutton + "<hr />" +
+				document.getElementById( container ).innerHTML +
+					"<hr />" +  closebutton;
+
+			pop_up.style.visibility = "visible";
+		}
+		
+		function hide_enlarged_content()
+		{
+			var pop_up = document.getElementById("popupcontent");
+			pop_up.style.visibility = "hidden";	
+		}
+		
+		function run_parser()
+		{
+			var driver = new String( driver_t );
+			var webdriver = new String( webdriver_t );
+
+			// if( !code_foot )
+			// 	code_foot = "var error_offsets = new Array(); var error_lookaheads = new Array(); var error_count = 0; var str = prompt( \"Please enter a string to be parsed:\", \"\" ); if( ( error_count = __parse( str, error_offsets, error_lookaheads ) ) > 0 ) { var errstr = new String(); for( var i = 0; i < error_count; i++ ) errstr += \"Parse error in line \" + ( str.substr( 0, error_offsets[i] ).match( /\\n/g ) ? str.substr( 0, error_offsets[i] ).match( /\\n/g ).length : 1 ) + \" near \\\"\" + str.substr( error_offsets[i] ) + \"\\\", expecting \\\"\" + error_lookaheads[i].join() + \"\\\"\\n\" ; alert( errstr );}";
+
+			//driver is for output
+			driver = driver.replace( /##PREFIX##/gi, "" );
+			driver = driver.replace( /##HEADER##/gi, code_head );
+			driver = driver.replace( /##TABLES##/gi, print_parse_tables( MODE_GEN_JS ) );
+			driver = driver.replace( /##DFA##/gi, print_dfa_table( dfa_table ) );
+			driver = driver.replace( /##TERMINAL_ACTIONS##/gi, print_term_actions() );
+			driver = driver.replace( /##LABELS##/gi, print_symbol_labels() );
+			driver = driver.replace( /##ACTIONS##/gi, print_actions() );
+			driver = driver.replace( /##FOOTER##/gi, code_foot );
+			driver = driver.replace( /##ERROR##/gi, get_error_symbol_id() );
+			driver = driver.replace( /##EOF##/gi, get_eof_symbol_id() );
+			driver = driver.replace( /##WHITESPACE##/gi, get_whitespace_symbol_id() );
+			
+			//webdriver is for execution and parse tree generator
+			webdriver = webdriver.replace( /##PREFIX##/gi, "" );
+			webdriver = webdriver.replace( /##HEADER##/gi, code_head );
+			webdriver = webdriver.replace( /##TABLES##/gi, print_parse_tables( MODE_GEN_JS ) );
+			webdriver = webdriver.replace( /##DFA##/gi, print_dfa_table( dfa_table ) );
+			webdriver = webdriver.replace( /##TERMINAL_ACTIONS##/gi, print_term_actions() );
+			webdriver = webdriver.replace( /##LABELS##/gi, print_symbol_labels() );
+			webdriver = webdriver.replace( /##ACTIONS##/gi, print_actions() );
+			webdriver = webdriver.replace( /##FOOTER##/gi, code_foot );
+			webdriver = webdriver.replace( /##ERROR##/gi, get_error_symbol_id() );
+			webdriver = webdriver.replace( /##EOF##/gi, get_eof_symbol_id() );
+			webdriver = webdriver.replace( /##WHITESPACE##/gi, get_whitespace_symbol_id() );			
+			//driver = webdriver;
+			
+			//output the code
+			document.getElementById( "js_code" ).innerHTML = driver.replace( /\n/g, "<br />" ).replace( /\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;" );
+
+			//run the webdriver
+			eval( webdriver );
+		}
+		
+		function build()
+		{
+			var pure_code, out_code, i;
+			
+			html_output = new String();
+			error_output = new String();
+			reset_all( EXEC_WEB );
+			
+			show_warnings = document.source.with_warnings.checked;
+
+			var src = new String( document.source.code.value );
+			parse_grammar( src );
+			
+			if( errors == 0 )
+			{
+				undef();
+				unreachable();
+				
+				if( errors == 0 )
+				{
+					first();
+					print_symbols();
+					print_grammar( MODE_GEN_HTML );
+					
+					html_output += "<hr />";
+					
+					dfa_table = create_subset( nfa_states );
+					dfa_table = minimize_dfa( dfa_table );
+
+					lalr1_parse_table( true );
+					
+					errors = 0;
+					if( errors == 0 )
+						document.getElementById( "output" ).innerHTML = html_output + "<hr />" + print_parse_tables( MODE_GEN_HTML );
+				}
+			}
+
+			if( errors > 0 || warnings > 0 && error_output != "" )
+				alert( error_output );
+			
+			if( errors == 0 )
+				document.source.run.disabled = false;
+		}
+
+		var grammars = new Array();
+		grammars.push( "/~\n    This is a four-function calculator, where precedences\n    are defined via associativity definitions of tokens.\n\n    IMPORTANT: The Warnings coming up when invoking JS/CC\n               are coming from the grammar, and are resolved\n               in order to the precedences and associativity\n               information passed to each token.\n~/\n\n\n/~ --- Token definitions --- ~/\n\n/~ Characters to be ignored ~/\n!   \' |\\t\' ;\n\n/~ Non-associative tokens ~/\n    \'\\(\'\n    \'\\)\'\n    \'[0-9]+\'                        INT   [* %match = parseInt( %match ); *]\n    \'[0-9]+\\.[0-9]*|[0-9]*\\.[0-9]+\' FLOAT [* %match = parseFloat( %match ); *]\n    ;\n\n/~ Left-associative tokens, lowest precedence ~/\n<  \'\\+\'\n   \'\\-\';\n        \n/~ Left-associative tokens, highest precedence ~/\n<  \'\\*\'\n   \'/\';\n\n##\n\n/~ --- Grammar specification --- ~/\n\np:      e              [* alert( %1 ); *]\n        ;\n\ne:      e \'+\' e        [* %% = %1 + %3; *]\n        | e \'-\' e      [* %% = %1 - %3; *]\n        | e \'*\' e      [* %% = %1 * %3; *]\n        | e \'/\' e      [* %% = %1 / %3; *]\n        | \'-\' e &\'*\'   [* %% = %2 * -1; *]\n        | \'(\' e \')\'    [* %% = %2; *]\n        | INT\n        | FLOAT\n        ;" );
+		
+		grammars.push( "/~\n\tXPL - eXample Programming Language v0.3\n\tWritten 2007 by J.M.K S.F. Software Technologies, Jan Max Meyer\n\t\n\tThe complete source of this program is in the Public Domain.\n\t\n\tThis example demonstrates the implementation of XPL, a complete,\n\tinterpretered scripting language, written in JS/CC.\n\t\n\tXPL provides simple input/output operations and can only handle\n\tnumeric values.\n\t\n\tWatch out for the *.xpl-files within the example directory, which\n\tcontain example scripts to be executed using XPL, for example a\n\tcountdown or a calculator.\n~/\n\t\n\t\n[*\n\n//Structs\nfunction NODE()\n{\n\tvar type;\n\tvar value;\n\tvar children;\n}\n\n//Defines\nvar NODE_OP\t= 0;\nvar NODE_VAR\t= 1;\nvar NODE_CONST\t= 2;\n\nvar OP_NONE\t= -1;\nvar OP_ASSIGN\t= 0;\nvar OP_IF\t= 1;\nvar OP_IF_ELSE\t= 2;\nvar OP_WHILE_DO\t= 3;\nvar OP_DO_WHILE\t= 4;\nvar OP_WRITE\t= 5;\nvar OP_READ\t= 6;\nvar OP_SAY\t= 7;\n\nvar OP_EQU\t= 10;\nvar OP_NEQ\t= 11;\nvar OP_GRT\t= 12;\nvar OP_LOT\t= 13;\nvar OP_GRE\t= 14;\nvar OP_LOE\t= 15;\nvar OP_ADD\t= 16;\nvar OP_SUB\t= 17;\nvar OP_DIV\t= 18;\nvar OP_MUL\t= 19;\nvar OP_NEG\t= 20;\n\n//Management functions\nfunction createNode( type, value, childs )\n{\n\tvar n = new NODE();\n\tn.type = type;\n\tn.value = value;\t\n\tn.children = new Array();\n\t\n\tfor( var i = 2; i < arguments.length; i++ )\n\t\tn.children.push( arguments[i] );\n\t\t\n\treturn n;\n}\n\nvar v_names = new Array();\nvar v_values = new Array();\n\n//Interpreting function\nfunction letvar( vname, value )\n{\n\tvar i;\n\tfor( i = 0; i < v_names.length; i++ )\n\t\tif( v_names[i].toString() == vname.toString() )\n\t\t\tbreak;\n\t\t\n\tif( i == v_names.length )\n\t{\n\t\tv_names.push( vname );\n\t\tv_values.push( 0 );\n\t}\n\t\n\tv_values[i] = value;\n}\n\nfunction getvar( vname )\n{\n\tvar i;\n\tfor( i = 0; i < v_names.length; i++ )\n\t\tif( v_names[i].toString() == vname.toString() )\n\t\t\treturn v_values[i];\n\t\t\t\n\treturn 0;\n}\n\nfunction execute( node )\n{\n\tvar ret = 0;\n\t\n\tif( !node )\n\t\treturn 0;\n\t\t\n\tswitch( node.type )\n\t{\n\t\tcase NODE_OP:\n\t\t\tswitch( node.value )\n\t\t\t{\n\t\t\t\tcase OP_NONE:\n\t\t\t\t\tif( node.children[0] )\n\t\t\t\t\t\texecute( node.children[0] );\t\t\t\t\t\n\t\t\t\t\tif( node.children[1] )\n\t\t\t\t\t\tret = execute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_ASSIGN:\n\t\t\t\t\tletvar( node.children[0], execute( node.children[1] ) );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_IF:\n\t\t\t\t\tif( execute( node.children[0] ) )\n\t\t\t\t\t\texecute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_IF_ELSE:\n\t\t\t\t\tif( execute( node.children[0] ) )\n\t\t\t\t\t\texecute( node.children[1] );\n\t\t\t\t\telse\n\t\t\t\t\t\texecute( node.children[2] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_WHILE_DO:\n\t\t\t\t\twhile( execute( node.children[0] ) )\n\t\t\t\t\t\texecute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_DO_WHILE:\n\t\t\t\t\tdo\n\t\t\t\t\t\texecute( node.children[0] )\n\t\t\t\t\twhile( execute( node.children[1] ) );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_WRITE:\n\t\t\t\t\talert( execute( node.children[0] ) );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_READ:\n\t\t\t\t\tletvar( node.children[0].toString(), prompt( \"Please enter a value:\", \"0\"  ) );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_SAY:\n\t\t\t\t\talert( node.children[0] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_EQU:\n\t\t\t\t\tret = execute( node.children[0] ) == execute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_NEQ:\n\t\t\t\t\tret = execute( node.children[0] ) != execute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_GRT:\n\t\t\t\t\tret = execute( node.children[0] ) > execute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_LOT:\n\t\t\t\t\tret = execute( node.children[0] ) < execute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_GRE:\n\t\t\t\t\tret = execute( node.children[0] ) >= execute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_LOE:\n\t\t\t\t\tret = execute( node.children[0] ) <= execute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_ADD:\n\t\t\t\t\tret = execute( node.children[0] ) + execute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_SUB:\n\t\t\t\t\tret = execute( node.children[0] ) - execute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_DIV:\n\t\t\t\t\tret = execute( node.children[0] ) / execute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_MUL:\n\t\t\t\t\tret = execute( node.children[0] ) * execute( node.children[1] );\n\t\t\t\t\tbreak;\n\t\t\t\tcase OP_NEG:\n\t\t\t\t\tret = execute( node.children[0] ) * -1;\n\t\t\t\t\tbreak;\n\t\t\t}\n\t\t\tbreak;\n\t\t\t\n\t\tcase NODE_VAR:\n\t\t\tret = Number( getvar( node.value ) );\n\t\t\tbreak;\n\t\t\t\n\t\tcase NODE_CONST:\n\t\t\tret = Number( node.value );\n\t\t\tbreak;\n\t}\n\t\n\treturn ret;\n}\n\n*]\n\n!\t\' |\\r|\\n|\\t\'\n\n\t\"IF\"\n\t\"ELSE\"\n\t\"WHILE\"\n\t\"DO\"\n\t\"SAY\"\n\t\"WRITE\"\n\t\"READ\"\n\t\'{\'\n\t\'}\'\n\t\';\'\n\t\'=\'\n\t\'==\'\n\t\'!=\'\n\t\'<=\'\n\t\'>=\'\n\t\'>\'\n\t\'<\'\n\t\'\\+\'\n\t\'\\-\'\n\t\'/\'\n\t\'\\*\'\n\t\'\\(\'\n\t\'\\)\'\n\t\'#\'\n\t\'[A-Za-z_][A-Za-z0-9_]*\'\tIdentifier\n\t\'\\\'([^\\\']|\\\'\\\')*\\\'\'\t\tString\t\t[* %match = %match.substr( 1, %match.length - 2 );\n\t\t\t\t\t\t\t\t   %match = %match.replace( /\'\'/g, \"\\\'\" );\t*]\n\t\'[0-9]+\'\t\t\tInteger\n\t\'[0-9]+\\.[0-9]*|[0-9]*\\.[0-9]+\'\tFloat\n\t;\n\n##\n\nProgram:\tProgram Stmt\t\t\t[* execute( %2 ); *]\n\t\t|\n\t\t;\n\nStmt_List:\tStmt_List Stmt\t\t\t[* %% = createNode( NODE_OP, OP_NONE, %1, %2 ); *]\n\t\t|\n\t\t;\n\t\t\t\t\t\t\t\t\nStmt:\t\tIF Expression Stmt \t\t[* %% = createNode( NODE_OP, OP_IF, %2, %3 ); *]\n\t\t| IF Expression Stmt ELSE Stmt\t[* %% = createNode( NODE_OP, OP_IF_ELSE, %2, %3, %5 ); *]\n\t\t| WHILE Expression DO Stmt \t[* %% = createNode( NODE_OP, OP_WHILE_DO, %2, %4 ); *]\n\t\t| DO Stmt WHILE Expression \';\'\t[* %% = createNode( NODE_OP, OP_DO_WHILE, %2, %4 ); *]\n\t\t| SAY String \';\'\t\t[* %% = createNode( NODE_OP, OP_SAY, %2 ); *]\n\t\t| WRITE Expression \';\'\t\t[* %% = createNode( NODE_OP, OP_WRITE, %2 ); *]\n\t\t| READ Identifier \';\'\t\t[* %% = createNode( NODE_OP, OP_READ, %2 ); *]\n\t\t| Identifier \'=\' Expression \';\'\t[* %% = createNode( NODE_OP, OP_ASSIGN, %1, %3 ); *]\n\t\t| \'{\' Stmt_List \'}\'\t\t[* %% = %2; *]\n\t\t| \';\'\t\t\t\t[* %% = createNode( NODE_OP, OP_NONE ); *]\n\t\t;\n\t\t\t\t\nExpression:\tExpression \'==\' AddSubExp\t[* %% = createNode( NODE_OP, OP_EQU, %1, %3 ); *]\n\t\t| Expression \'<\' AddSubExp\t[* %% = createNode( NODE_OP, OP_LOT, %1, %3 ); *]\n\t\t| Expression \'>\' AddSubExp\t[* %% = createNode( NODE_OP, OP_GRT, %1, %3 ); *]\n\t\t| Expression \'<=\' AddSubExp\t[* %% = createNode( NODE_OP, OP_LOE, %1, %3 ); *]\n\t\t| Expression \'>=\' AddSubExp\t[* %% = createNode( NODE_OP, OP_GRE, %1, %3 ); *]\n\t\t| Expression \'!=\' AddSubExp\t[* %% = createNode( NODE_OP, OP_NEQ, %1, %3 ); *]\n\t\t| AddSubExp\n\t\t;\n\nAddSubExp:\tAddSubExp \'-\' MulDivExp\t\t[* %% = createNode( NODE_OP, OP_SUB, %1, %3 ); *]\n\t\t| AddSubExp \'+\' MulDivExp\t[* %% = createNode( NODE_OP, OP_ADD, %1, %3 ); *]\n\t\t| MulDivExp\n\t\t;\n\t\t\t\t\nMulDivExp:\tMulDivExp \'*\' NegExp\t\t[* %% = createNode( NODE_OP, OP_MUL, %1, %3 ); *]\n\t\t| MulDivExp \'/\' NegExp\t\t[* %% = createNode( NODE_OP, OP_DIV, %1, %3 ); *]\n\t\t| NegExp\n\t\t;\n\t\t\t\t\nNegExp:\t\t\'-\' Value\t\t\t[* %% = createNode( NODE_OP, OP_NEG, %2 ); *]\n\t\t| Value\n\t\t;\n\nValue:\t\tInteger\t\t\t\t[* %% = createNode( NODE_CONST, %1 ); *]\n\t\t| Float\t\t\t\t[* %% = createNode( NODE_CONST, %1 ); *]\n\t\t| Identifier\t\t\t[* %% = createNode( NODE_VAR, %1 ); *]\n\t\t| \'(\' Expression \')\'\t\t[* %% = %2; *]\n\t\t;\n\n[*\n\nvar str = prompt( \"Please enter an XPL-script to be executed:\",\n\t\"say \\\'Hello World\\\'; i = 0; do { write i; i = i + 1; } while i < 10;\" );\nvar error_cnt \t= 0;\nvar error_off\t= new Array();\nvar error_la\t= new Array();\n\nif( ( error_cnt = __parse( str, error_off, error_la ) ) > 0 )\n{\n\tfor( i = 0; i < error_cnt; i++ )\n\t\talert( \"Parse error near >\" \n\t\t\t+ str.substr( error_off[i], 30 ) + \"<, expecting \\\"\" + error_la[i].join() + \"\\\"\" );\n}\n*]" );
+
+		</script>
+	</head><body>
+		<table border="0" cellpadding="0" cellspacing="2" width="100%">
+			<tbody><tr>
+				<td colspan="2" id="copyrightinfo">
+					<div id="progname">
+						JS/CC
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" class="elem_title">
+					Grammar Editor
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<form action="" name="source">
+
+						
+						<textarea id="code" name="code" rows="10" cols="255" style="width: 100%;" onchange="document.source.run.disabled = true;"></textarea>
+						<table width="100%">
+						<tbody><tr>
+							<td width="50%">
+								<input value="Build" style="width: 100%;" onclick="build()" type="button">
+							</td>
+							<td width="50%">
+								<input name="run" value="Run" style="width: 100%;" onclick="run_parser()" disabled="disabled" type="button">
+							</td>
+						</tr>
+						</tbody></table>
+
+						<input name="with_warnings" type="checkbox">Show warnings
+					</form>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<div id="js_code">
+					Run your parser to obtain the source code!
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="50%">
+					<div id="output">
+						<!-- Element to output debugging information -->
+						Please load or enter a grammar!
+					</div>
+				</td>
+				<td width="50%">
+					<div id="parsetree">
+						<!-- Element to output generated tables -->
+						Run your parser to construct the parse tree!
+					</div>
+				</td>
+			</tr>				
+		</tbody></table>
+		<div id="popupcontent"></div>
+	</body></html>
