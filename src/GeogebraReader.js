@@ -163,6 +163,7 @@ this.ggbParse = function(board, exp, element) {
   exp = (exp.match(/\u00B2/)) ? exp.replace(/\u00B3/, '^3') : exp;
   exp = (exp.match(/x\(/)) ? exp.replace(/x\(/, 'X(') : exp;
   exp = (exp.match(/y\(/)) ? exp.replace(/y\(/, 'Y(') : exp;
+  exp = (exp.match(/sin\(/)) ? exp.replace(/sin\(/, 'SIN(') : exp;
 
   JXG.GeogebraReader.debug('exp: '+ exp);
 
