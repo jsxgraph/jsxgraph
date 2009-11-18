@@ -81,10 +81,14 @@ JXG.VMLRenderer.prototype.eval = function(val) {
     }
 };
 
-JXG.VMLRenderer.prototype.setShadow = function(element) {
-    var nodeShadow = element.rendNodeShadow;
+JXG.VMLRenderer.prototype.setShadow = function(el) {
+    var nodeShadow = el.rendNodeShadow;
+    
     if (!nodeShadow) return;                          // Added 29.9.09. A.W.
-    if(element.visProp['shadow']) {
+    if (el.visPropOld['shadow']==el.visProp['shadow']) {
+        return;
+    }
+    if(el.visProp['shadow']) {
         this.setAttr(nodeShadow, 'On', 'True');
         this.setAttr(nodeShadow, 'Offset', '3pt,3pt');
         this.setAttr(nodeShadow, 'Opacity', '60%');
@@ -170,7 +174,6 @@ JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     node.appendChild(t);
     this.appendChildPrimitive(node,'images');
 };
-
 JXG.VMLRenderer.prototype.drawInternalText = function(el) {
     var node;
     node = this.createNode('textbox');
@@ -195,7 +198,6 @@ JXG.VMLRenderer.prototype.updateInternalText = function(/** JXG.Text */ el) {
         el.htmlStr = el.plaintextStr;
     }
 };
-
 
 JXG.VMLRenderer.prototype.drawTicks = function(ticks) {
     var ticksNode = this.createPrimitive('path', ticks.id);
@@ -321,9 +323,18 @@ JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, p
     return node2;
 };
 
-
 JXG.VMLRenderer.prototype.drawArc = function(el) { 
     var radius, p = {}, angle1, angle2, node, nodeStroke, node2, p4 = {};
+
+    el.visPropOld['strokeColor']= '';
+    el.visPropOld['strokeOpacity']= '';
+    el.visPropOld['strokeWidth']= '';
+    el.visPropOld['fillColor']= '';
+    el.visPropOld['fillOpacity']= '';
+    el.visPropOld['shadow']= false;
+    el.visPropOld['firstArrow'] = false;
+    el.visPropOld['lastArrow'] = false;
+
     /* some computations */
     radius = el.getRadius();  
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
@@ -397,8 +408,16 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
         angle1, angle2, node, tmp, nodeStroke,
         p1 = {}, p3 = {}, node2;
 
+    el.visPropOld['strokeColor']= '';
+    el.visPropOld['strokeOpacity']= '';
+    el.visPropOld['strokeWidth']= '';
+    el.visPropOld['fillColor']= '';
+    el.visPropOld['fillOpacity']= '';
+    el.visPropOld['shadow']= false;
+    el.visPropOld['firstArrow'] = false;
+    el.visPropOld['lastArrow'] = false;
+    
     /* some computations */
-  
     // um projectToCircle benutzen zu koennen...
     circle.midpoint = el.point2;
     circle.getRadius = function() {
@@ -544,6 +563,10 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
         node, nodeStroke;
 
     o = (o>0)?o:0;
+
+    if (el.visPropOld['strokeColor']==c && el.visPropOld['strokeOpacity']==o) {
+        return;
+    }
     if(el.type == JXG.OBJECT_TYPE_TEXT) {
         el.rendNode.style.color = c;
     }        
@@ -563,8 +586,11 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
         }
         if (o!=undefined) {
             this.setAttr(nodeStroke,'opacity', (o*100)+'%');  
+            
         }
     }
+    el.visPropOld['strokeColor'] = c;
+    el.visPropOld['strokeOpacity'] = o;
 };
 
 JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
@@ -572,6 +598,11 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         o = this.eval(opacity);
 
     o = (o>0)?o:0;
+
+    if (el.visPropOld['fillColor']==c && el.visPropOld['fillOpacity']==o) {
+        return;
+    }
+    
     if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
         if(c == 'none') {
              this.setAttr(el.rendNode2,'filled', 'false');
@@ -596,6 +627,8 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
             }
         }
     }
+    el.visPropOld['fillColor'] = c;
+    el.visPropOld['fillOpacity'] = o;
 };
 
 JXG.VMLRenderer.prototype.remove = function(node) {
@@ -639,20 +672,16 @@ JXG.VMLRenderer.prototype.setObjectStrokeWidth = function(el, width) {
         node;
     //w = (w>0)?w:0;
     
-    if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
-        node = el.rendNode;
-        this.setPropertyPrimitive(node,'stroked', 'true');
-        if (w!=null) { 
-            this.setPropertyPrimitive(node,'stroke-width',w);    
-        }
+    if (el.visPropOld['strokeWidth']==w) {
+        return;
     }
-    else {
-        node = el.rendNode;
-        this.setPropertyPrimitive(node,'stroked', 'true');
-        if (w!=null) { 
-            this.setPropertyPrimitive(node,'stroke-width',w); 
-        }
+    
+    node = el.rendNode;
+    this.setPropertyPrimitive(node,'stroked', 'true');
+    if (w!=null) { 
+        this.setPropertyPrimitive(node,'stroke-width',w); 
     }
+    el.visPropOld['strokeWidth'] = w;
 };
 
 JXG.VMLRenderer.prototype.createPrimitive = function(type, id) {
@@ -710,6 +739,10 @@ JXG.VMLRenderer.prototype.makeArrow = function(node,el,idAppendix) {
 JXG.VMLRenderer.prototype.makeArrows = function(el) {
     var nodeStroke;
     
+    if (el.visPropOld['firstArrow']==el.visProp['firstArrow'] && el.visPropOld['lastArrow']==el.visProp['lastArrow']) {
+        return;
+    }
+
     if(el.visProp['firstArrow']) {
         nodeStroke = el.rendNodeStroke;
         this.setAttr(nodeStroke, 'startarrow', 'block');

@@ -156,6 +156,12 @@ JXG.AbstractRenderer.prototype.changePointStyle = function(/** JXG.Point */el) {
         this.remove(node);
     }
     this.drawPoint(el);
+    el.visPropOld['strokeColor']= '';
+    el.visPropOld['strokeOpacity']= '';
+    el.visPropOld['strokeWidth']= '';
+    el.visPropOld['fillColor']= '';
+    el.visPropOld['fillOpacity']= '';
+
     if(!el.visProp['visible']) {
         this.hide(el);
     }
@@ -861,6 +867,12 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";
+        el.visPropOld = {};
+        el.visPropOld['strokeColor']= null;
+        el.visPropOld['strokeOpacity']= null;
+        el.visPropOld['strokeWidth']= null;
+        el.visPropOld['fillColor']= null;
+        el.visPropOld['fillOpacity']= null;
         this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
     }
     else {
@@ -868,6 +880,12 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";        
+        el.visPropOld = {};
+        el.visPropOld['strokeColor']= null;
+        el.visPropOld['strokeOpacity']= null;
+        el.visPropOld['strokeWidth']= null;
+        el.visPropOld['fillColor']= null;
+        el.visPropOld['fillOpacity']= null;
         this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
@@ -882,6 +900,12 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridy";        
+        el.visPropOld = {};
+        el.visPropOld['strokeColor']= null;
+        el.visPropOld['strokeOpacity']= null;
+        el.visPropOld['strokeWidth']= null;
+        el.visPropOld['fillColor']= null;
+        el.visPropOld['fillOpacity']= null;
         this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
     }
     else {
@@ -889,6 +913,12 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridy";        
+        el.visPropOld = {};
+        el.visPropOld['strokeColor']= null;
+        el.visPropOld['strokeOpacity']= null;
+        el.visPropOld['strokeWidth']= null;
+        el.visPropOld['fillColor']= null;
+        el.visPropOld['fillOpacity']= null;
         this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  

@@ -95,6 +95,16 @@ JXG.GeometryElement = function() {
      * @private
      */
     this.visProp = {};
+    
+    this.visPropOld = {};
+    this.visPropOld['strokeColor']= '';
+    this.visPropOld['strokeOpacity']= '';
+    this.visPropOld['strokeWidth']= '';
+    this.visPropOld['fillColor']= '';
+    this.visPropOld['fillOpacity']= '';
+    this.visPropOld['shadow']= false;
+    this.visPropOld['firstArrow'] = false;
+    this.visPropOld['lastArrow'] = false;
 
     /**
      * If element is in two dimensional real space this is true, else false.
