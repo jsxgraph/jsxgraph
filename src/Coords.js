@@ -54,15 +54,16 @@ JXG.Coords = function (method, coordinates, board) {
      * Stores coordinates for user view as homogeneous coordinates.
      * @type Array
      */
-    this.usrCoords = [1,0,0];
+    this.usrCoords = [];
     /**
      * Stores coordinates for screen view as homogeneous coordinates.
      * @type Array
      */
-    this.scrCoords = [1,0,0];
+    this.scrCoords = [];
     
     if(method == JXG.COORDS_BY_USER) {
         if (coordinates.length<=2) {
+            this.usrCoords[0] = 1.0;
             this.usrCoords[1] = coordinates[0];
             this.usrCoords[2] = coordinates[1];
         } else {  // homogeneous coordinates
@@ -73,6 +74,7 @@ JXG.Coords = function (method, coordinates, board) {
         }
         this.usr2screen();
     } else {
+        this.scrCoords[0] = 1.0;
         this.scrCoords[1] = coordinates[0];
         this.scrCoords[2] = coordinates[1];
         this.screen2usr();
