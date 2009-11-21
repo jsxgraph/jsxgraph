@@ -34,6 +34,7 @@ JXG.Options = {
     showCopyright : true,
     showNavigation : true,
     takeSizeFromFile : true, // If true, the construction - when read from a file or string - the size of the div can be changed.
+    renderer: 'svg',
 
     /* grid options */
     grid : {
@@ -78,32 +79,32 @@ JXG.Options = {
             strokeWidth : '1px'
         }
     },
-    
+
     /* special point options */
     point : {
         style : 5, //1;
         fillColor : '#ff0000',
         highlightFillColor : '#EEEEEE',
-        strokeColor : '#0000ff',         
-        highlightStrokeColor : '#C3D9FF' 
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF'
     },
 
     /* special line options */
-    line : {    
+    line : {
         firstArrow : false,
         lastArrow : false,
         straightFirst : true,
         straightLast : true,
-        fillColor : '#000000',            
-        highlightFillColor : 'none',      
-        strokeColor : '#0000ff',          
-        highlightStrokeColor : '#888888', 
+        fillColor : '#000000',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#888888',
         /* line ticks options */
         ticks : {
             drawLabels : true,
             drawZero : false,
             insertTicks : false,
-            minTicksDistance : 50, 
+            minTicksDistance : 50,
             maxTicksDistance : 300,
             minorHeight : 4,
             majorHeight : 10,
@@ -111,13 +112,13 @@ JXG.Options = {
             defaultDistance : 1
         }
     },
-    
+
     /*special circle options */
     circle : {
-        fillColor : 'none',              
-        highlightFillColor : 'none',     
-        strokeColor : '#0000ff',         
-        highlightStrokeColor : '#C3D9FF' 
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF'
     },
 
     /* special angle options */
@@ -134,12 +135,12 @@ JXG.Options = {
     arc : {
         firstArrow : false,
         lastArrow : false,
-        fillColor : 'none',               
-        highlightFillColor : 'none',      
-        strokeColor : '#0000ff',          
-        highlightStrokeColor : '#C3D9FF'  
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF'
     },
-    
+
     /* special polygon options */
     polygon : {
         fillColor : '#00FF00',
@@ -147,7 +148,7 @@ JXG.Options = {
         fillOpacity : 0.3,
         highlightFillOpacity : 0.3
     },
-    
+
     /* special sector options */
     sector : {
         fillColor : '#00FF00',
@@ -155,7 +156,7 @@ JXG.Options = {
         fillOpacity : 0.3,
         highlightFillOpacity : 0.3
     },
-    
+
     /* special text options */
     text : {
         strokeColor : '#000000',
@@ -172,8 +173,8 @@ JXG.Options = {
         numberPointsLow : 400,   // Number of points on curves after mousemove
         doAdvancedPlot : true    // Use the algorithm by Gillam and Hohenwarter
                                  // It is much slower, but the result is better
-    }, 
-    
+    },
+
     /* precision options */
     precision : {
         hasPoint : 4,
@@ -189,7 +190,7 @@ JXG.useStandardOptions = function(board) {
     var o = JXG.Options,
         boardHadGrid = board.hasGrid,
         el, t;
-        
+
     board.hasGrid = o.grid.hasGrid;
     board.gridX = o.grid.gridX;
     board.gridY = o.grid.gridY;

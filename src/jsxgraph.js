@@ -66,13 +66,15 @@ JXG.JSXGraph = new function () {
 
         /* and set the rendererType according to the browser */
         if ((!ie) || (opera)) {
-            this.rendererType = 'svg';
+            //this.rendererType = 'svg';
+            JXG.Options.renderer = 'svg';
         }
         else {
             //if(Silverlight.available)
             //    this.rendererType = 'silverlight';
             //else
-                this.rendererType = 'vml';
+                //this.rendererType = 'vml';
+                JXG.Options.renderer = 'vml';
                 function MouseMove(e) { //Magic!
                   document.body.scrollLeft;
                   document.body.scrollTop;
@@ -86,7 +88,7 @@ JXG.JSXGraph = new function () {
 
     /* Load the source files for the renderer */
     //JXG.rendererFiles[this.rendererType].split(',').each( function(include) { JXG.require(JXG.requirePath+include+'.js'); } );
-    arr = JXG.rendererFiles[this.rendererType].split(',');
+    arr = JXG.rendererFiles[JXG.Options.renderer].split(',');
     for (i=0;i<arr.length;i++) ( function(include) { JXG.require(JXG.requirePath+include+'.js'); } )(arr[i]);
 
 
@@ -145,9 +147,9 @@ JXG.JSXGraph = new function () {
         if (typeof attributes["showcopyright"] != 'undefined') attributes["showCopyright"] = attributes["showcopyright"];
         showCopyright = ( (typeof attributes["showCopyright"]) == 'undefined' ? true : attributes["showCopyright"]);
 
-        if(this.rendererType == 'svg') {
+        if(JXG.Options.renderer == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
-        } else if(this.rendererType == 'vml') {
+        } else if(JXG.Options.renderer == 'vml') {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
         } else {
             renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
@@ -188,7 +190,7 @@ JXG.JSXGraph = new function () {
     this.loadBoardFromFile = function (box, file, format) {
         var renderer, board, dimensions;
 
-        if(this.rendererType == 'svg') {
+        if(JXG.Options.renderer == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
@@ -219,7 +221,7 @@ JXG.JSXGraph = new function () {
     this.loadBoardFromString = function(box, string, format) {
         var renderer, dimensions, board;
 
-        if(this.rendererType == 'svg') {
+        if(JXG.Options.renderer == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else {
             renderer = new JXG.VMLRenderer(document.getElementById(box));

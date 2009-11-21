@@ -15,6 +15,8 @@
    <script type="text/javascript">
    /* <![CDATA[ */
 
+   JXG.Options.renderer = 'vml';
+
         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true, grid: false});
 //        xax = board.createElement('axis', [[0,0],[1,0]]);
 //        yax = board.createElement('axis', [[0,0],[0,1]]);
@@ -57,7 +59,7 @@
 		var moveTo = [1,-5, -7];
 
         t = board.createElement('point', moveTo, {style:2,name:""});
-        
+
 		var ix = 0;
 
 		function onestep() {
