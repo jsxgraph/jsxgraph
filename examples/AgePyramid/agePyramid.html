@@ -4,20 +4,22 @@
    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
    <script type="text/javascript" src="ageV1W1EJ.js"></script>
+   <!--
    <script type="text/javascript" src="ageV2W1EJ.js"></script>
    <script type="text/javascript" src="ageV3W1EJ.js"></script>
+   -->
 </head>
 <body>
 <h2>Age pyramid</h2>
 <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
-<form><select id="years" onChange="changeYear()"></select></form>
+<form><select id="years" onChange="changeYear()"></select>
+<input type="button" id="playbutton" value="play" onClick="player();">
+</form>
 <div id="output2" style="padding:20px; background-color:#bbbbbb; width:500; font-family:Arial,Helvetica">&nbsp; </div>
 <div id="output" style="padding:20px; background-color:#dddddd; width:500; font-family:Arial,Helvetica"> &nbsp;</div>
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
 /* <![CDATA[ */
-deb = document.getElementById('debug');
-//alert(dataArr.length);
 var i, t = '', yearIndex = 0, brd;
 var textout = document.getElementById('output');
 var textout2 = document.getElementById('output2');
@@ -35,7 +37,6 @@ function readFile(dataArr) {
             } else if (i%3==0) {
                 y = dataArr[i][0]*1;
                 male = dataArr[i][3].replace(/ /g,'')*1;
-                //deb.innerHTML += male+'<br>';
                 data.push([y,male,female]);
             } 
             dataArr[i].splice(0,4); // year,'',m/w,no,
@@ -43,14 +44,20 @@ function readFile(dataArr) {
     }
     data.reverse();
     ages = JXG.Math.Matrix.transpose(dataArr);
-    //deb.innerHTML += dataArr.toString()+'<br>';
     return {matrix:ages, total: data};
 };
 
+selectYear = document.getElementById('years');
+var opt;
 for (i=2009;i<=2060;i++) {
-    t += '<option>'+i+'</option>\n';
+    opt = document.createElement('option');
+    opt.text = i;
+    try {
+        selectYear.add(opt,null);
+    } catch(e) {
+        selectYear.add(opt); // IE
+    }
 }
-document.getElementById('years').innerHTML = t;
 
 brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-850,110,850,-10],axis:false});
 function createCurves(stat,brd, c1, c2) {
@@ -109,7 +116,7 @@ function createCurves(stat,brd, c1, c2) {
     return [m,w];
 };
 
-var stat1 = readFile(dataV3W1EJ);
+var stat1 = readFile(dataV1W1EJ);
 brd.suspendUpdate();
 createCurves(stat1,brd,'#658cb2','#b23f8c');
 brd.create('text',[-300,45,'men'],{color:'white',fontSize:20});
@@ -128,7 +135,7 @@ function setText(n) {
         male = ages[n][2*yearIndex]*1,
         female = ages[n][2*yearIndex+1]*1;
     textout.innerHTML = 'age:'+age+
-                        ' born in '+(2009+yearIndex-age)+
+                        ', born in '+(2009+yearIndex-age)+
                         '<br> male:'+male+
                         ', female:'+female+
                         ', together:'+(male+female)+
@@ -144,15 +151,26 @@ function setTextYear() {
                         ' (million)<br> ratio w/m:'+(data[n][2]/data[n][1]).toFixed(3);
 };
 
+var animate = null;
 function animation() {
-    yearIndex = (yearIndex+1); //%53;
+    yearIndex = (yearIndex+1)%52;
     document.getElementById('years').selectedIndex = yearIndex;
     setTextYear();
     brd.update();
-    if (yearIndex<51) setTimeout(animation,500);
+    animate = setTimeout(animation,500);
 };
 
-animation()
+function player(){
+    if (!animate) {
+        document.getElementById('playbutton').value = 'stop';
+        animation();
+    } else {
+        document.getElementById('playbutton').value = 'play';
+        clearTimeout(animate);
+        animate = null;
+    }
+};
+
 /* ]]> */
 </script>
 </body>
