@@ -1,0 +1,159 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="ageV1W1EJ.js"></script>
+   <script type="text/javascript" src="ageV2W1EJ.js"></script>
+   <script type="text/javascript" src="ageV3W1EJ.js"></script>
+</head>
+<body>
+<h2>Age pyramid</h2>
+<div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+<form><select id="years" onChange="changeYear()"></select></form>
+<div id="output2" style="padding:20px; background-color:#bbbbbb; width:500; font-family:Arial,Helvetica">&nbsp; </div>
+<div id="output" style="padding:20px; background-color:#dddddd; width:500; font-family:Arial,Helvetica"> &nbsp;</div>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */
+deb = document.getElementById('debug');
+//alert(dataArr.length);
+var i, t = '', yearIndex = 0, brd;
+var textout = document.getElementById('output');
+var textout2 = document.getElementById('output2');
+
+function readFile(dataArr) {
+    var len = dataArr.length, 
+        i, male, female, y,
+        data = [];
+    for (i=len-1;i>=0;i--) {
+        if (i%3==2) {
+            dataArr.splice(i,1);
+        } else {
+            if (i%3==1) {
+                female = dataArr[i][3].replace(/ /g,'')*1;
+            } else if (i%3==0) {
+                y = dataArr[i][0]*1;
+                male = dataArr[i][3].replace(/ /g,'')*1;
+                //deb.innerHTML += male+'<br>';
+                data.push([y,male,female]);
+            } 
+            dataArr[i].splice(0,4); // year,'',m/w,no,
+        }
+    }
+    data.reverse();
+    ages = JXG.Math.Matrix.transpose(dataArr);
+    //deb.innerHTML += dataArr.toString()+'<br>';
+    return {matrix:ages, total: data};
+};
+
+for (i=2009;i<=2060;i++) {
+    t += '<option>'+i+'</option>\n';
+}
+document.getElementById('years').innerHTML = t;
+
+brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-850,110,850,-10],axis:false});
+function createCurves(stat,brd, c1, c2) {
+    var i, m = [], w = [],
+        op = 1,
+        off = 80,
+        len = stat.matrix.length;
+    for (i=0;i<len;i++) {
+        m[i] = brd.create('curve',[[0],[0]],
+                {fillColor:c1,strokeColor:c1,
+                strokeOpacity:op,fillOpacity:op,
+                strokeWidth:1,
+                highlightFillColor:'yellow',highlightStrokeColor:'yellow'});
+        m[i].updateDataArray = (function(xArr, y) { return function() {
+                this.dataX = [-off,-off-xArr[2*yearIndex]*1,-off-xArr[2*yearIndex]*1,-off,-off];
+                this.dataY = [y,y,y+1,y+1,y];
+            }; })(stat.matrix[i], i);
+        JXG.addEvent(m[i].rendNode, 'mouseover', 
+            (function(g,d){ return function(){
+                                g.highlight(); w[g._number].highlight(); setText(g._number);
+                            };})(m[i]), m[i]);
+        JXG.addEvent(m[i].rendNode, 'mouseout', 
+            (function(g){ return function(){
+                                g.noHighlight(); w[g._number].noHighlight(); 
+                            };})(m[i]), m[i]);
+        m[i].hasPoint = function(){return false;};
+        m[i]._number = i;
+    
+        w[i] = brd.create('curve',[[0],[0]],
+                {fillColor:c2,strokeColor:c2,
+                strokeWidth:1,
+                strokeOpacity:op,fillOpacity:op,
+                highlightFillColor:'yellow',highlightStrokeColor:'yellow'});
+        w[i].updateDataArray = (function(xArr, y) { return function() {
+                this.dataX = [off,off+xArr[2*yearIndex+1]*1,off+xArr[2*yearIndex+1]*1,off,off];
+                this.dataY = [y,y,y+1,y+1,y];
+            }; }    )(stat.matrix[i], i);
+        JXG.addEvent(w[i].rendNode, 'mouseover', 
+            (function(g,d){ return function(){
+                                g.highlight(); m[g._number].highlight(); setText(g._number);
+                            };})(w[i]), w[i]);
+        JXG.addEvent(w[i].rendNode, 'mouseout',  
+            (function(g){ return function(){
+                                g.noHighlight(); m[g._number].noHighlight();
+                            };})(w[i]), w[i]);
+        w[i].hasPoint = function(){return false;};
+        w[i]._number = i;
+        
+    }
+    var t = brd.create('turtle',[],{strokeColor:'#999999', highlightStrokeColor:'#999999'}); t.ht().pu().rt(90);
+    for (i=0;i<=90;i+=10) { 
+        t.moveTo([-750,i]).penDown().forward(750-off+10).penUp();
+        t.moveTo([off-10,i]).penDown().forward(750-off+10).penUp();
+        brd.create('text',[-15,i,i.toFixed(0)]);
+    }
+    return [m,w];
+};
+
+var stat1 = readFile(dataV3W1EJ);
+brd.suspendUpdate();
+createCurves(stat1,brd,'#658cb2','#b23f8c');
+brd.create('text',[-300,45,'men'],{color:'white',fontSize:20});
+brd.create('text',[200,45,'women'],{color:'white',fontSize:20});
+brd.unsuspendUpdate();
+setTextYear();
+
+function changeYear() {
+    yearIndex = document.getElementById('years').selectedIndex;
+    setTextYear();
+    brd.update();
+};
+
+function setText(n) {
+    var age = n,
+        male = ages[n][2*yearIndex]*1,
+        female = ages[n][2*yearIndex+1]*1;
+    textout.innerHTML = 'age:'+age+
+                        ' born in '+(2009+yearIndex-age)+
+                        '<br> male:'+male+
+                        ', female:'+female+
+                        ', together:'+(male+female)+
+                        ' (thousand)<br> ratio w/m:'+(female/male).toFixed(2);
+};
+function setTextYear() {
+    var n = yearIndex,
+        data = stat1.total;
+    textout2.innerHTML = 'Year:'+data[n][0]+
+                        '<br> male:'+data[n][1]+
+                        ', female:'+data[n][2]+
+                        ', together:'+(data[n][1]+data[n][2])+
+                        ' (million)<br> ratio w/m:'+(data[n][2]/data[n][1]).toFixed(3);
+};
+
+function animation() {
+    yearIndex = (yearIndex+1); //%53;
+    document.getElementById('years').selectedIndex = yearIndex;
+    setTextYear();
+    brd.update();
+    if (yearIndex<51) setTimeout(animation,500);
+};
+
+animation()
+/* ]]> */
+</script>
+</body>
+</html>
