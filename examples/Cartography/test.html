@@ -1,0 +1,31 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <!--script type="text/javascript" src="bld.js"></script>-->
+   <!--<script type="text/javascript" src="sta.js"></script>-->
+   <!--<script type="text/javascript" src="rbz.js"></script>-->
+   <script type="text/javascript" src="krs.js"></script>
+</head>
+<body>
+<h2>Cartography</h2>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:800px;"></div>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+var brd, i, len, col, c = [];
+brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:bbox, keepaspectratio:true});
+len = paths.length;
+brd.suspendUpdate();
+for (i=0;i<len;i++) {
+    col = JXG.hsv2rgb(350/len*i,0.4,0.9);
+    hcol = '#ffff00';
+    c[i] = brd.create('curve',paths[i],{fillColor:col,strokeColor:'#000000',highlightFillColor:hcol});
+    JXG.addEvent(c[i].rendNode, 'mouseover', (function(g){ return function(){g.highlight();};})(c[i]), c[i]);
+    JXG.addEvent(c[i].rendNode, 'mouseout', (function(g){ return function(){g.noHighlight();};})(c[i]), c[i]);
+    c[i].hasPoint = function(){return false;};
+}
+brd.unsuspendUpdate();
+</script>
+</body>
+</html>
