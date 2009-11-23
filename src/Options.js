@@ -161,7 +161,7 @@ JXG.Options = {
     text : {
         strokeColor : '#000000',
         useASCIIMathML : false,
-        defaultType : 'html' //'html' or 'internal'
+        defaultDisplay : 'html' //'html' or 'internal'
     },
 
     /* special curve options */

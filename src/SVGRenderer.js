@@ -507,6 +507,7 @@ JXG.SVGRenderer.prototype.removeGrid = function(board) {
  
 JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     var c, o, node;
+
     if(opacity == undefined) {
         opacity = 1;
     }

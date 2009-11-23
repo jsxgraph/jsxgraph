@@ -672,7 +672,7 @@ JXG.AbstractRenderer.prototype.updateArc = function(/** JXG.Arc */ el) { };
  */
 JXG.AbstractRenderer.prototype.drawText = function(/** JXG.Text */ el) { 
     var node;
-    if (el.type=='html') {
+    if (el.display=='html') {
         node = this.container.ownerDocument.createElement('div');
         node.style.position = 'absolute';
         node.style.fontSize = el.board.fontSize + 'px';  
@@ -704,7 +704,7 @@ JXG.AbstractRenderer.prototype.updateText = function(/** JXG.Text */ el) {
     if (el.visProp['visible'] == false) return;
     if (isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) return;
     this.updateTextStyle(el);
-    if (el.type=='html') {
+    if (el.display=='html') {
         el.rendNode.style.left = (el.coords.scrCoords[1])+'px'; 
         el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText)+'px'; 
         el.updateText();

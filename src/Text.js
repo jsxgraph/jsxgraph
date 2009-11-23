@@ -37,7 +37,7 @@
  * @constructor
  * @return A new geometry element Text
  */
-JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLabel, type) {
+JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLabel, display) {
     this.constructor();
 
     this.type = JXG.OBJECT_TYPE_TEXT;
@@ -53,7 +53,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
      * 'internal' is the text element of SVG and the textpath element 
      * of VML.
      */
-    this.type = type || 'html'; 
+    this.display = display || 'html'; 
     
     if((typeof isLabel != 'undefined') && (isLabel != null)) {
         this.isLabel = isLabel;
@@ -323,6 +323,9 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
  *                     x and y are numbers. The position is variable if x or y are functions.
  *                     <p>
  *                     The text to display may be given as string or as function returning a string.
+ *
+ * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' a HTML division tag is created to display
+ * the text. In this case it is also possible to use ASCIIMathML. Incase of 'internal', a SVG or VML text element is used to display the text.
  * @see JXG.Text
  * @example
  * // Create a fixed text at position [0,1].
@@ -351,10 +354,10 @@ JXG.createText = function(board, parentArr, atts) {
     if (atts==null) {
         atts = {};
     }
-    if (typeof atts['type']=='undefined') {
-        atts['type'] = board.options.text.defaultType;  // 'html' or 'internal'
+    if (typeof atts['display']=='undefined') {
+        atts['display'] = board.options.text.defaultDisplay;  // 'html' or 'internal'
     }
-    return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false, atts['type']);
+    return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false, atts['display']);
 };
 
 JXG.JSXGraph.registerElement('text', JXG.createText);

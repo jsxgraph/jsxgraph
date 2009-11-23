@@ -119,8 +119,8 @@ function createCurves(stat,brd, c1, c2) {
 var stat1 = readFile(dataV1W1EJ);
 brd.suspendUpdate();
 createCurves(stat1,brd,'#658cb2','#b23f8c');
-brd.create('text',[-300,45,'men'],{color:'white',fontSize:20});
-brd.create('text',[200,45,'women'],{color:'white',fontSize:20});
+brd.create('text',[-300,45,'men'],{strokeColor:'white',fontSize:20});
+brd.create('text',[200,45,'women'],{strokeColor:'white',fontSize:20});
 brd.unsuspendUpdate();
 setTextYear();
 
