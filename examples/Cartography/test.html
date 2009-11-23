@@ -2,30 +2,73 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../distrib/prototype.js"></script>
    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
-   <!--script type="text/javascript" src="bld.js"></script>-->
-   <!--<script type="text/javascript" src="sta.js"></script>-->
+   <!--<script type="text/javascript" src="bld.js"></script>-->
+   <script type="text/javascript" src="sta.js"></script>
    <!--<script type="text/javascript" src="rbz.js"></script>-->
-   <script type="text/javascript" src="krs.js"></script>
+   <!--<script type="text/javascript" src="krs.js"></script>-->
 </head>
 <body>
 <h2>Cartography</h2>
+<select id="map" onChange="getMap()">
+    <option selected>sta
+    <option>bld
+    <option>rbz
+    <option>krs
+</select>    
 <div id="jxgbox" class="jxgbox" style="width:600px; height:800px;"></div>
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
-var brd, i, len, col, c = [];
+var brd, i, len, col, scol, sw, m, c = [];
 brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:bbox, keepaspectratio:true});
-len = paths.length;
-brd.suspendUpdate();
-for (i=0;i<len;i++) {
-    col = JXG.hsv2rgb(350/len*i,0.4,0.9);
-    hcol = '#ffff00';
-    c[i] = brd.create('curve',paths[i],{fillColor:col,strokeColor:'#000000',highlightFillColor:hcol});
-    JXG.addEvent(c[i].rendNode, 'mouseover', (function(g){ return function(){g.highlight();};})(c[i]), c[i]);
-    JXG.addEvent(c[i].rendNode, 'mouseout', (function(g){ return function(){g.noHighlight();};})(c[i]), c[i]);
-    c[i].hasPoint = function(){return false;};
-}
-brd.unsuspendUpdate();
+
+function plotMap() {
+    c = [];
+    len = paths.length;
+    brd.suspendUpdate();
+    m = document.getElementById('map').value;
+    for (i=0;i<len;i++) {
+        if (m=='sta') {
+            col = '#ffffff';
+            scol = '#000000';
+            sw = 1;
+        } else if (m=='bld') {
+            col = JXG.hsv2rgb(64/len*i,0.4,0.9);
+            scol = '#000000';
+            sw = 2;
+        } else if (m=='rbz') {
+            col = JXG.hsv2rgb(64/len*i+180,0.4,0.9);
+            scol = '#000000';
+            sw = 2;
+        } else if (m=='krs') {
+            col = JXG.hsv2rgb(180/len*i,0.4,0.9);
+            scol = '#999999';
+            sw = 1;
+        }
+        hcol = '#ffff00';
+        c[i] = brd.create('curve',paths[i],{fillColor:col,strokeColor:scol,strokeWidth:sw,highlightFillColor:hcol,fillOpacity:0.4});
+        JXG.addEvent(c[i].rendNode, 'mouseover', (function(g){ return function(){g.highlight();};})(c[i]), c[i]);
+        JXG.addEvent(c[i].rendNode, 'mouseout', (function(g){ return function(){g.noHighlight();};})(c[i]), c[i]);
+        c[i].hasPoint = function(){return false;};
+    }
+    brd.unsuspendUpdate();
+};
+plotMap();
+
+function getMap() {
+    new Ajax.Request('getmap.php', {
+        method:'post',
+        parameters:'file='+escape(document.getElementById('map').value+'.js'),
+        onComplete: function(transport) {
+            if (200 == transport.status) {
+                var t = transport.responseText;
+                eval(t);
+                plotMap();
+            }
+        }});
+};
+
 </script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 import string
 import shapelib as shp
 import math
-   
+
 def simplify_points (pts, tolerance): 
     anchor  = 0
     floater = len(pts) - 1
@@ -63,10 +63,10 @@ def simplify_points (pts, tolerance):
     keep.sort()
     return [pts[i] for i in keep]
 
-f = shp.open('vg2500_bld.shp')
-#f = shp.open('vg2500_sta.dbf')
-#f = shp.open('vg2500_rbz.dbf')
-#f = shp.open('vg2500_krs.dbf')
+f = shp.open('./vg2500_bld.shp')
+#f = shp.open('./vg2500_sta.dbf')
+#f = shp.open('./vg2500_rbz.dbf')
+#f = shp.open('./vg2500_krs.dbf')
 
 fac = 100000.0
 nLaender = f.info()[0]
