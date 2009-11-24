@@ -2,6 +2,64 @@
 import string
 import shapelib as shp
 import math
+import struct, datetime, decimal, itertools
+
+def dbfreader(f):
+    """Returns an iterator over records in a Xbase DBF file.
+
+    The first row returned contains the field names.
+    The second row contains field specs: (type, size, decimal places).
+    Subsequent rows contain the data records.
+    If a record is marked as deleted, it is skipped.
+
+    File should be opened for binary reads.
+
+    """
+    # See DBF format spec at:
+    #     http://www.pgts.com.au/download/public/xbase.htm#DBF_STRUCT
+
+    numrec, lenheader = struct.unpack('<xxxxLH22x', f.read(32))    
+    numfields = (lenheader - 33) // 32
+
+    fields = []
+    for fieldno in xrange(numfields):
+        name, typ, size, deci = struct.unpack('<11sc4xBB14x', f.read(32))
+        name = name.replace('\0', '')       # eliminate NULs from string   
+        fields.append((name, typ, size, deci))
+    yield [field[0] for field in fields]
+    yield [tuple(field[1:]) for field in fields]
+
+    terminator = f.read(1)
+    assert terminator == '\r'
+
+    fields.insert(0, ('DeletionFlag', 'C', 1, 0))
+    fmt = ''.join(['%ds' % fieldinfo[2] for fieldinfo in fields])
+    fmtsiz = struct.calcsize(fmt)
+    for i in xrange(numrec):
+        record = struct.unpack(fmt, f.read(fmtsiz))
+        if record[0] != ' ':
+            continue                        # deleted record
+        result = []
+        for (name, typ, size, deci), value in itertools.izip(fields, record):
+            if name == 'DeletionFlag':
+                continue
+            if typ == "N":
+                value = value.replace('\0', '').lstrip()
+                if value == '':
+                    value = 0
+                elif deci:
+                    pass # value = decimal.Decimal(value)
+                else:
+                    pass #value = int(value)
+            elif typ == 'D':
+                y, m, d = int(value[:4]), int(value[4:6]), int(value[6:8])
+                value = datetime.date(y, m, d)
+            elif typ == 'L':
+                value = (value in 'YyTt' and 'T') or (value in 'NnFf' and 'F') or '?'
+            elif typ == 'F':
+                value = float(value)
+            result.append(value)
+        yield result
 
 def simplify_points (pts, tolerance):
     anchor  = 0
@@ -63,14 +121,15 @@ def simplify_points (pts, tolerance):
     keep.sort()
     return [pts[i] for i in keep]
 
-#f = shp.open('./vg2500_bld.dbf')
-#f = shp.open('./vg2500_sta.dbf')
-#f = shp.open('./vg2500_rbz.dbf')
-f = shp.open('./vg2500_krs.dbf')
-
+filename = "./vg2500_bld.dbf"
+#filename = "./vg2500_sta.dbf"
+#filename = "./vg2500_rbz.dbf"
+#filename = "./vg2500_krs.dbf"
 # for europe.dbf: set fac to 1.0 and comment out call to simplify_points
 
 fac = 100000.0
+
+f = shp.open(filename)
 nLaender = f.info()[0]
 
 minx = f.info()[2][0]/fac
@@ -84,9 +143,20 @@ maxy = f.info()[3][1]/fac
 print "bbox = [%0.2f,%0.2f,%0.2f,%0.2f];" %(minx*0.99,maxy*1.01,maxx*1.01,miny*0.99)
 print "paths = [];";
 for n in xrange(nLaender):
+    id = f.read_object(n).id
     for parts in f.read_object(n).vertices():
         parts = simplify_points(parts, 1000.0)
         print "paths.push(["
         print "\t[",string.join(["%0.2f"%(p[0]/fac) for p in parts],','),'],'
-        print "\t[",string.join(["%0.2f"%(p[1]/fac) for p in parts],','),']'
-        print "]);"
+        print "\t[",string.join(["%0.2f"%(p[1]/fac) for p in parts],','),'],'
+        print "\t", id, "]);"
+
+print "info = []";
+f = open(filename, 'rb')
+db = list(dbfreader(f))
+f.close()
+i = 0
+for record in db:
+    if i>1:
+        print "info.push(", record, ");" 
+    i += 1

@@ -12,7 +12,7 @@
 <body>
 <h2>Cartography</h2>
 <select id="map" onChange="getMap()">
-    <option value="sta" selected>sta
+    <option value="sta selected" >sta
     <option value="bld" >bld
     <option value="rbz" >rbz
     <option value="krs" >krs
@@ -65,8 +65,11 @@ function createCurve(path) {
         sw = 1;
     }
     hcol = '#ffff00';
-    c[i] = brd.create('curve',path,{fillColor:col,strokeColor:scol,strokeWidth:sw,highlightFillColor:hcol,fillOpacity:0.4});
-    JXG.addEvent(c[i].rendNode, 'mouseover', (function(g){ return function(){g.highlight();};})(c[i]), c[i]);
+    c[i] = brd.create('curve',path,
+        {name:info[path[2]][2], 
+         fillColor:col,
+         strokeColor:scol,strokeWidth:sw,highlightFillColor:hcol,fillOpacity:0.4});
+    JXG.addEvent(c[i].rendNode, 'mouseover', (function(g){ return function(){g.highlight(); document.getElementById('debug').innerHTML=g.name;};})(c[i]), c[i]);
     JXG.addEvent(c[i].rendNode, 'mouseout', (function(g){ return function(){g.noHighlight();};})(c[i]), c[i]);
     c[i].hasPoint = function(){return false;};
 };
