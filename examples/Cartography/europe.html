@@ -9,7 +9,7 @@
 <body>
 <h2>Map of Europe</h2>
 
-<div id="jxgbox" class="jxgbox" style="width:600px; height:800px;"></div>
+<div id="jxgbox" class="jxgbox" style="width:800px; height:500px;"></div>
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
 var brd, i, len, col, scol, sw, m, c = [];
@@ -51,11 +51,11 @@ function createCurve(path) {
         col = JXG.hsv2rgb(64/len*i+180,0.4,0.9);
         scol = '#000000';
         sw = 2;
-    } else if (m==3) {
+    } else {
         col = JXG.hsv2rgb(360/len*i,0.4,0.9);
         scol = '#999999';
         sw = 1;
-    }
+    } 
     hcol = '#ffff00';
     c[i] = brd.create('curve',path,{fillColor:col,strokeColor:scol,strokeWidth:sw,highlightFillColor:hcol,fillOpacity:0.4});
     JXG.addEvent(c[i].rendNode, 'mouseover', (function(g){ return function(){g.highlight();};})(c[i]), c[i]);
