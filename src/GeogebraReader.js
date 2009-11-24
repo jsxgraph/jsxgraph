@@ -30,18 +30,21 @@ this.ggbMatch = function(type, att) {
       return function() { return String(att); };
     break;
     case 'x':
-      return function() { return JXG.getReference(JXG.GeogebraReader.board, String(att)[2]).X(); };
+      return function() { return JXG.getReference(JXG.GeogebraReader.board, String(att).split('(')[1].split(')')[0]).X(); };
     break;
     case 'y':
-      return function() { return JXG.getReference(JXG.GeogebraReader.board, String(att)[2]).Y(); };
+      return function() { return JXG.getReference(JXG.GeogebraReader.board, String(att).split('(')[1].split(')')[0]).Y(); };
     break;
     case 'sin':
       var input = att.split('(')[1].split(')')[0];
-      return function() { return Math.sin(input); };
+      // return [input, 'return Math.sin('+input+')'];
+      // return 'return Math.sin('+input+');';
+      return function(__x) { return Math.sin(__x); };
     break;
     case 'func':
       JXG.GeogebraReader.debug('In FUNC(Match): '+ att);
-      return JXG.GeogebraReader.functionParse(att);
+var r = JXG.GeogebraReader.functionParse(att)
+      return r[r.length-1];
     break;
   }
 };
@@ -57,7 +60,7 @@ this.ggbAct = function(type, m, n, p) {
   var v1 = m, v2 = n;
   switch(type.toLowerCase()) {
     case 'error':
-      JXG.GeogebraReader.debug("<b style='color:red'>Fehler:</b> "+ v1);
+      JXG.GeogebraReader.debug("<b style='color:red'>Fehler:</b> v1: "+ v1 +", v2: "+ v2);
     break;
     case 'coord':
       var s1 = (board.ggbElements[v1])
@@ -115,6 +118,7 @@ this.ggbAct = function(type, m, n, p) {
       return v1;
     break;
     case 'sin':
+JXG.GeogebraReader.debug('ggbAct: sin '+ v1);
       return v1;
     break;
     case 'var':
@@ -134,7 +138,8 @@ this.ggbAct = function(type, m, n, p) {
     break;
     case 'func':
       JXG.GeogebraReader.debug('In FUNC(Act): '+ v1);
-JXG.GeogebraReader.debug('function: '+ JXG.GeogebraReader.ggbParse(JXG.GeogebraReader.board, v1[v1.length-1]));
+      v1 = JXG.GeogebraReader.ggbParse(JXG.GeogebraReader.board, v1);
+      JXG.GeogebraReader.debug('function: '+ v1);
       return v1;
     break;
   }
@@ -186,7 +191,7 @@ this.ggbParse = function(board, exp, element) {
 */
 
 /***** begin replace *****/
-	var _dbg_withtrace        = false;
+	var _dbg_withtrace        = true;
 	var _dbg_string            = new String();
 
 	function __dbg_print( text ) {
@@ -228,11 +233,11 @@ this.ggbParse = function(board, exp, element) {
 	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 82 ) || ( info.src.charCodeAt( pos ) >= 84 && info.src.charCodeAt( pos ) <= 87 ) || info.src.charCodeAt( pos ) == 90 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
 	        else if( info.src.charCodeAt( pos ) == 94 ) state = 11;
 	        else if( info.src.charCodeAt( pos ) == 34 ) state = 19;
-	        else if( info.src.charCodeAt( pos ) == 38 ) state = 22;
-	        else if( info.src.charCodeAt( pos ) == 46 ) state = 23;
-	        else if( info.src.charCodeAt( pos ) == 88 ) state = 37;
-	        else if( info.src.charCodeAt( pos ) == 89 ) state = 38;
-	        else if( info.src.charCodeAt( pos ) == 83 ) state = 40;
+	        else if( info.src.charCodeAt( pos ) == 38 ) state = 24;
+	        else if( info.src.charCodeAt( pos ) == 46 ) state = 25;
+	        else if( info.src.charCodeAt( pos ) == 88 ) state = 39;
+	        else if( info.src.charCodeAt( pos ) == 89 ) state = 41;
+	        else if( info.src.charCodeAt( pos ) == 83 ) state = 44;
 	        else state = -1;
 	        break;
 
@@ -295,8 +300,8 @@ this.ggbParse = function(board, exp, element) {
 	    case 10:
 	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
 	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 20;
-	        else if( info.src.charCodeAt( pos ) == 40 ) state = 25;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 26;
+	        else if( info.src.charCodeAt( pos ) == 40 ) state = 27;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 28;
 	        else state = -1;
 	        match = 11;
 	        match_pos = pos;
@@ -328,15 +333,13 @@ this.ggbParse = function(board, exp, element) {
 	        break;
 
 	    case 15:
-	        if( info.src.charCodeAt( pos ) == 61 ) state = 17;
-	        else state = -1;
+	        state = -1;
 	        match = 7;
 	        match_pos = pos;
 	        break;
 
 	    case 16:
-	        if( info.src.charCodeAt( pos ) == 61 ) state = 17;
-	        else state = -1;
+	        state = -1;
 	        match = 8;
 	        match_pos = pos;
 	        break;
@@ -363,147 +366,177 @@ this.ggbParse = function(board, exp, element) {
 
 	    case 20:
 	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 20;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 26;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 28;
 	        else state = -1;
 	        match = 11;
 	        match_pos = pos;
 	        break;
 
 	    case 21:
+	        if( info.src.charCodeAt( pos ) == 61 ) state = 17;
+	        else state = -1;
+	        match = 7;
+	        match_pos = pos;
+	        break;
+
+	    case 22:
+	        if( info.src.charCodeAt( pos ) == 61 ) state = 17;
+	        else state = -1;
+	        match = 8;
+	        match_pos = pos;
+	        break;
+
+	    case 23:
 	        state = -1;
 	        match = 9;
 	        match_pos = pos;
 	        break;
 
-	    case 22:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 24;
-	        else state = -1;
-	        break;
-
-	    case 23:
-	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 13;
-	        else state = -1;
-	        break;
-
 	    case 24:
-	        if( info.src.charCodeAt( pos ) == 59 ) state = 14;
-	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 24;
+	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 26;
 	        else state = -1;
 	        break;
 
 	    case 25:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 27;
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 13;
 	        else state = -1;
 	        break;
 
 	    case 26:
-	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 20;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 26;
+	        if( info.src.charCodeAt( pos ) == 59 ) state = 14;
+	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 26;
 	        else state = -1;
 	        break;
 
 	    case 27:
-	        if( info.src.charCodeAt( pos ) == 44 || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 27;
-	        else if( info.src.charCodeAt( pos ) == 41 ) state = 30;
+	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 30;
 	        else state = -1;
 	        break;
 
 	    case 28:
-	        if( info.src.charCodeAt( pos ) == 41 ) state = 15;
-	        else if( info.src.charCodeAt( pos ) == 44 ) state = 27;
-	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 28;
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 20;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 28;
 	        else state = -1;
 	        break;
 
 	    case 29:
-	        if( info.src.charCodeAt( pos ) == 41 ) state = 16;
-	        else if( info.src.charCodeAt( pos ) == 44 ) state = 27;
-	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 29;
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 31;
+	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 32;
 	        else state = -1;
 	        break;
 
 	    case 30:
-	        if( info.src.charCodeAt( pos ) == 61 ) state = 17;
+	        if( info.src.charCodeAt( pos ) == 44 || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 30;
+	        else if( info.src.charCodeAt( pos ) == 41 ) state = 35;
 	        else state = -1;
 	        break;
 
 	    case 31:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 32;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 33;
+	        if( info.src.charCodeAt( pos ) == 41 ) state = 15;
+	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 31;
 	        else state = -1;
 	        break;
 
 	    case 32:
-	        if( info.src.charCodeAt( pos ) == 41 ) state = 18;
-	        else if( info.src.charCodeAt( pos ) == 44 ) state = 27;
+	        if( info.src.charCodeAt( pos ) == 41 ) state = 21;
+	        else if( info.src.charCodeAt( pos ) == 44 ) state = 30;
+	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 31;
 	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 32;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 33;
 	        else state = -1;
 	        break;
 
 	    case 33:
-	        if( info.src.charCodeAt( pos ) == 41 ) state = 21;
-	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 33;
+	        if( info.src.charCodeAt( pos ) == 41 ) state = 16;
+	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 33;
 	        else state = -1;
 	        break;
 
 	    case 34:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
-	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 20;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 26;
-	        else if( info.src.charCodeAt( pos ) == 40 ) state = 31;
+	        if( info.src.charCodeAt( pos ) == 41 ) state = 22;
+	        else if( info.src.charCodeAt( pos ) == 44 ) state = 30;
+	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 33;
+	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 34;
 	        else state = -1;
-	        match = 11;
-	        match_pos = pos;
 	        break;
 
 	    case 35:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 28;
+	        if( info.src.charCodeAt( pos ) == 61 ) state = 17;
 	        else state = -1;
 	        break;
 
 	    case 36:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 29;
+	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 37;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 38;
 	        else state = -1;
 	        break;
 
 	    case 37:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
-	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 20;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 26;
-	        else if( info.src.charCodeAt( pos ) == 40 ) state = 35;
+	        if( info.src.charCodeAt( pos ) == 41 ) state = 18;
+	        else if( info.src.charCodeAt( pos ) == 44 ) state = 30;
+	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 37;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 38;
 	        else state = -1;
-	        match = 11;
-	        match_pos = pos;
 	        break;
 
 	    case 38:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
-	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 20;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 26;
-	        else if( info.src.charCodeAt( pos ) == 40 ) state = 36;
+	        if( info.src.charCodeAt( pos ) == 41 ) state = 23;
+	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 38;
 	        else state = -1;
-	        match = 11;
-	        match_pos = pos;
 	        break;
 
 	    case 39:
-	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 77 ) || ( info.src.charCodeAt( pos ) >= 79 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
 	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 20;
-	        else if( info.src.charCodeAt( pos ) == 40 ) state = 25;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 26;
-	        else if( info.src.charCodeAt( pos ) == 78 ) state = 34;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 28;
+	        else if( info.src.charCodeAt( pos ) == 40 ) state = 29;
 	        else state = -1;
 	        match = 11;
 	        match_pos = pos;
 	        break;
 
 	    case 40:
+	        if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 33;
+	        else if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 34;
+	        else state = -1;
+	        break;
+
+	    case 41:
+	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 20;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 28;
+	        else if( info.src.charCodeAt( pos ) == 40 ) state = 40;
+	        else state = -1;
+	        match = 11;
+	        match_pos = pos;
+	        break;
+
+	    case 42:
+	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 20;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 28;
+	        else if( info.src.charCodeAt( pos ) == 40 ) state = 36;
+	        else state = -1;
+	        match = 11;
+	        match_pos = pos;
+	        break;
+
+	    case 43:
+	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 77 ) || ( info.src.charCodeAt( pos ) >= 79 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
+	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 20;
+	        else if( info.src.charCodeAt( pos ) == 40 ) state = 27;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 28;
+	        else if( info.src.charCodeAt( pos ) == 78 ) state = 42;
+	        else state = -1;
+	        match = 11;
+	        match_pos = pos;
+	        break;
+
+	    case 44:
 	        if( ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 72 ) || ( info.src.charCodeAt( pos ) >= 74 && info.src.charCodeAt( pos ) <= 90 ) || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 10;
 	        else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 20;
-	        else if( info.src.charCodeAt( pos ) == 40 ) state = 25;
-	        else if( info.src.charCodeAt( pos ) == 95 ) state = 26;
-	        else if( info.src.charCodeAt( pos ) == 73 ) state = 39;
+	        else if( info.src.charCodeAt( pos ) == 40 ) state = 27;
+	        else if( info.src.charCodeAt( pos ) == 95 ) state = 28;
+	        else if( info.src.charCodeAt( pos ) == 73 ) state = 43;
 	        else state = -1;
 	        match = 11;
 	        match_pos = pos;
@@ -632,11 +665,11 @@ this.ggbParse = function(board, exp, element) {
 
 	/* Action-Table */
 	var act_tab = new Array(
-	    /* State 0 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "X" */,5 , 8/* "Y" */,6 , 9/* "SIN" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
+	    /* State 0 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "XCOORD" */,5 , 8/* "YCOORD" */,6 , 9/* "SINUS" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
 	    /* State 1 */ new Array( 21/* "$" */,0 ),
 	    /* State 2 */ new Array( 18/* "^" */,14 , 17/* "/" */,15 , 16/* "*" */,16 , 15/* "-" */,17 , 13/* "+" */,18 , 14/* "," */,19 , 21/* "$" */,-1 ),
-	    /* State 3 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "X" */,5 , 8/* "Y" */,6 , 9/* "SIN" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
-	    /* State 4 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "X" */,5 , 8/* "Y" */,6 , 9/* "SIN" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
+	    /* State 3 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "XCOORD" */,5 , 8/* "YCOORD" */,6 , 9/* "SINUS" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
+	    /* State 4 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "XCOORD" */,5 , 8/* "YCOORD" */,6 , 9/* "SINUS" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
 	    /* State 5 */ new Array( 21/* "$" */,-10 , 14/* "," */,-10 , 13/* "+" */,-10 , 15/* "-" */,-10 , 16/* "*" */,-10 , 17/* "/" */,-10 , 18/* "^" */,-10 , 3/* ")" */,-10 ),
 	    /* State 6 */ new Array( 21/* "$" */,-11 , 14/* "," */,-11 , 13/* "+" */,-11 , 15/* "-" */,-11 , 16/* "*" */,-11 , 17/* "/" */,-11 , 18/* "^" */,-11 , 3/* ")" */,-11 ),
 	    /* State 7 */ new Array( 21/* "$" */,-12 , 14/* "," */,-12 , 13/* "+" */,-12 , 15/* "-" */,-12 , 16/* "*" */,-12 , 17/* "/" */,-12 , 18/* "^" */,-12 , 3/* ")" */,-12 ),
@@ -646,15 +679,15 @@ this.ggbParse = function(board, exp, element) {
 	    /* State 11 */ new Array( 21/* "$" */,-16 , 14/* "," */,-16 , 13/* "+" */,-16 , 15/* "-" */,-16 , 16/* "*" */,-16 , 17/* "/" */,-16 , 18/* "^" */,-16 , 3/* ")" */,-16 ),
 	    /* State 12 */ new Array( 21/* "$" */,-17 , 14/* "," */,-17 , 13/* "+" */,-17 , 15/* "-" */,-17 , 16/* "*" */,-17 , 17/* "/" */,-17 , 18/* "^" */,-17 , 3/* ")" */,-17 ),
 	    /* State 13 */ new Array( 21/* "$" */,-18 , 14/* "," */,-18 , 13/* "+" */,-18 , 15/* "-" */,-18 , 16/* "*" */,-18 , 17/* "/" */,-18 , 18/* "^" */,-18 , 3/* ")" */,-18 ),
-	    /* State 14 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "X" */,5 , 8/* "Y" */,6 , 9/* "SIN" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
-	    /* State 15 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "X" */,5 , 8/* "Y" */,6 , 9/* "SIN" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
-	    /* State 16 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "X" */,5 , 8/* "Y" */,6 , 9/* "SIN" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
-	    /* State 17 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "X" */,5 , 8/* "Y" */,6 , 9/* "SIN" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
-	    /* State 18 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "X" */,5 , 8/* "Y" */,6 , 9/* "SIN" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
-	    /* State 19 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "X" */,5 , 8/* "Y" */,6 , 9/* "SIN" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
+	    /* State 14 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "XCOORD" */,5 , 8/* "YCOORD" */,6 , 9/* "SINUS" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
+	    /* State 15 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "XCOORD" */,5 , 8/* "YCOORD" */,6 , 9/* "SINUS" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
+	    /* State 16 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "XCOORD" */,5 , 8/* "YCOORD" */,6 , 9/* "SINUS" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
+	    /* State 17 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "XCOORD" */,5 , 8/* "YCOORD" */,6 , 9/* "SINUS" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
+	    /* State 18 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "XCOORD" */,5 , 8/* "YCOORD" */,6 , 9/* "SINUS" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
+	    /* State 19 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "XCOORD" */,5 , 8/* "YCOORD" */,6 , 9/* "SINUS" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
 	    /* State 20 */ new Array( 18/* "^" */,14 , 17/* "/" */,-8 , 16/* "*" */,-8 , 15/* "-" */,-8 , 13/* "+" */,-8 , 14/* "," */,-8 , 21/* "$" */,-8 , 3/* ")" */,-8 ),
 	    /* State 21 */ new Array( 18/* "^" */,14 , 17/* "/" */,15 , 16/* "*" */,16 , 15/* "-" */,17 , 13/* "+" */,18 , 14/* "," */,19 , 3/* ")" */,29 ),
-	    /* State 22 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "X" */,5 , 8/* "Y" */,6 , 9/* "SIN" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
+	    /* State 22 */ new Array( 15/* "-" */,3 , 2/* "(" */,4 , 7/* "XCOORD" */,5 , 8/* "YCOORD" */,6 , 9/* "SINUS" */,7 , 10/* "FUNC" */,8 , 11/* "VAR" */,9 , 12/* "STRING" */,10 , 4/* "INT" */,11 , 5/* "FLOAT" */,12 , 6/* "HTML" */,13 ),
 	    /* State 23 */ new Array( 18/* "^" */,-7 , 17/* "/" */,-7 , 16/* "*" */,-7 , 15/* "-" */,-7 , 13/* "+" */,-7 , 14/* "," */,-7 , 21/* "$" */,-7 , 3/* ")" */,-7 ),
 	    /* State 24 */ new Array( 18/* "^" */,14 , 17/* "/" */,-6 , 16/* "*" */,-6 , 15/* "-" */,-6 , 13/* "+" */,-6 , 14/* "," */,-6 , 21/* "$" */,-6 , 3/* ")" */,-6 ),
 	    /* State 25 */ new Array( 18/* "^" */,14 , 17/* "/" */,-5 , 16/* "*" */,-5 , 15/* "-" */,-5 , 13/* "+" */,-5 , 14/* "," */,-5 , 21/* "$" */,-5 , 3/* ")" */,-5 ),
@@ -711,9 +744,9 @@ this.ggbParse = function(board, exp, element) {
 	    "INT" /* Terminal symbol */,
 	    "FLOAT" /* Terminal symbol */,
 	    "HTML" /* Terminal symbol */,
-	    "X" /* Terminal symbol */,
-	    "Y" /* Terminal symbol */,
-	    "SIN" /* Terminal symbol */,
+	    "XCOORD" /* Terminal symbol */,
+	    "YCOORD" /* Terminal symbol */,
+	    "SINUS" /* Terminal symbol */,
 	    "FUNC" /* Terminal symbol */,
 	    "VAR" /* Terminal symbol */,
 	    "STRING" /* Terminal symbol */,
@@ -918,7 +951,7 @@ this.ggbParse = function(board, exp, element) {
 	    break;
 	    case 8:
 	    {
-	         rval = JXG.GeogebraReader.ggbAct('negmult');
+	         rval = JXG.GeogebraReader.ggbAct('negmult', vstack[ vstack.length - 1 ]);
 	    }
 	    break;
 	    case 9:
@@ -1004,7 +1037,8 @@ this.ggbParse = function(board, exp, element) {
 
 	            if( _dbg_withtrace )
 	                __dbg_print( "\tPushing non-terminal " + labels[ pop_tab[act][0] ] );
-
+JXG.GeogebraReader.debug('go: '+ go);
+JXG.GeogebraReader.debug('rval: '+ rval);
 	            sstack.push( go );
 	            vstack.push( rval );            
 	        }
@@ -1036,6 +1070,7 @@ this.ggbParse = function(board, exp, element) {
       errstr += "Parse error in line " + ( str.substr( 0, error_offsets[i] ).match( /\n/g ) ? str.substr( 0, error_offsets[i] ).match( /\n/g ).length : 1 ) + " near \"" + str.substr( error_offsets[i] ) + "\", expecting \"" + error_lookaheads[i].join() + "\"\n" ;
     JXG.GeogebraReader.debug( errstr );
   }
+JXG.GeogebraReader.debug('<b style="color:red">ende</b>: '+ str);
   return str;
 }; //end: ggbParse()
 
@@ -1189,8 +1224,8 @@ this.writeBoard = function(board) {
   var grid = (boardData.getElementsByTagName('evSettings')[0].attributes["grid"].value == "true") ? board.renderer.drawGrid(board) : null;
 
   if(boardData.getElementsByTagName('evSettings')[0].attributes["axes"] && boardData.getElementsByTagName('evSettings')[0].attributes["axes"].value == "true") {
-      board.ggbElements["xAxis"] = board.createElement('axis', [[0, 0], [1, 0]], {strokeColor:'black'});
-      board.ggbElements["yAxis"] = board.createElement('axis', [[0, 0], [0, 1]], {strokeColor:'black'});
+      board.ggbElements["xAxis"] = board.create('axis', [[0, 0], [1, 0]], {strokeColor:'black'});
+      board.ggbElements["yAxis"] = board.create('axis', [[0, 0], [0, 1]], {strokeColor:'black'});
   }
 };
 
@@ -1227,7 +1262,7 @@ this.writeElement = function(board, output, input, cmd) {
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
-          p = board.createElement('point', [gxtEl.x, gxtEl.y], attr);
+          p = board.create('point', [gxtEl.x, gxtEl.y], attr);
           JXG.GeogebraReader.debug("* <b>Point ("+ p.id +"):</b> "+ attr.name + "("+ gxtEl.x +", "+ gxtEl.y +")<br>\n");
           return p;
       } catch(e) {
@@ -1245,7 +1280,7 @@ this.writeElement = function(board, output, input, cmd) {
         JXG.GeogebraReader.debug("* <b>Segment:</b> ("+ attr.name +") First: " + input[0].name + ", Last: " + input[1].name + "<br>\n");
         attr.straightFirst = false;
         attr.straightLast =  false;
-        l = board.createElement('line', input, attr);
+        l = board.create('line', input, attr);
         return l;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Segment " + attr.name +" First: " + input[0].name + ", Last: " + input[1].name + "<br>\n");
@@ -1263,7 +1298,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>Line:</b> ("+ attr.name +") First: " + input[0].id + ", Last: " + input[1].id + "<br>\n");
-        l = board.createElement(type, input, attr);
+        l = board.create(type, input, attr);
         return l;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Line " + attr.label +"<br>\n");
@@ -1278,7 +1313,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>Orthogonalline:</b> First: " + input[0].id + ", Last: " + input[1].id + "<br>\n");
-        l = board.createElement('normal', [input[0], input[1]], attr);
+        l = board.create('normal', [input[0], input[1]], attr);
         return l;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Orthogonalline " + attr.label +"<br>\n");
@@ -1328,7 +1363,7 @@ this.writeElement = function(board, output, input, cmd) {
           points.push(board.ggbElements[el]);
         }
 
-        l = board.createElement('polygon', points, attr);
+        l = board.create('polygon', points, attr);
         return l;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Polygon " + attr.name +"<br>\n");
@@ -1343,7 +1378,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>Intersection:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
-        l = board.createElement('intersection', [input[0], input[1], 0], attr);
+        l = board.create('intersection', [input[0], input[1], 0], attr);
         return l;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Intersection " + attr.name +"<br>\n");
@@ -1358,8 +1393,8 @@ this.writeElement = function(board, output, input, cmd) {
       
       try {
         JXG.GeogebraReader.debug("* <b>Distance:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
-        m = board.createElement('midpoint', input, {visible: 'false'});
-        t = board.createElement('text', [function(){return m.X();}, function(){return m.Y();}, function(){
+        m = board.create('midpoint', input, {visible: 'false'});
+        t = board.create('text', [function(){return m.X();}, function(){return m.Y();}, function(){
               return "<span style='text-decoration: overline'>"+ input[0].name + input[1].name +"</span> = "
                      + JXG.getReference(board, input[0].id).Dist(JXG.getReference(board, input[1].id));
                 }]);
@@ -1377,7 +1412,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>Vector:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
-        v = board.createElement('arrow', input, attr);
+        v = board.create('arrow', input, attr);
         return v;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Vector " + attr.name +"<br>\n");
@@ -1394,8 +1429,8 @@ this.writeElement = function(board, output, input, cmd) {
         JXG.GeogebraReader.debug("* <b>Rotate:</b> First: " + input[0].name + ", Second: " + input[1] + "<br>\n");
         attr.type = 'rotate';
         var d = parseInt(input[1]);
-        r = board.createElement('transform', [d, input[2]], {type:'rotate'});
-        p = board.createElement('point', [input[0], r], attr);
+        r = board.create('transform', [d, input[2]], {type:'rotate'});
+        p = board.create('point', [input[0], r], attr);
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Rotate " + attr.name +"<br>\n");
@@ -1412,10 +1447,10 @@ this.writeElement = function(board, output, input, cmd) {
         JXG.GeogebraReader.debug("* <b>Dilate:</b> First: " + input[0].name + ", Second: " + input[1] + "<br>\n");
         attr.type = 'rotate';
         var d = parseInt(input[1]);
-        d1 = board.createElement('transform', [d, d], {type:'scale'});
-        d2 = board.createElement('transform', [function() { return (1-d) * input[2].X(); },
+        d1 = board.create('transform', [d, d], {type:'scale'});
+        d2 = board.create('transform', [function() { return (1-d) * input[2].X(); },
                                                function() { return (1-d) * input[2].Y(); }], {type:'translate'});
-        p = board.createElement('point', [input[0], [d1, d2]], attr);
+        p = board.create('point', [input[0], [d1, d2]], attr);
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Dilate " + attr.name +"<br>\n");
@@ -1429,9 +1464,9 @@ this.writeElement = function(board, output, input, cmd) {
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
-      t = board.createElement('transform', [function() { return input[1].point2.X()-input[1].point1.X(); },
+      t = board.create('transform', [function() { return input[1].point2.X()-input[1].point1.X(); },
                                             function() { return input[1].point2.Y()-input[1].point1.Y(); }], {type:'translate'});
-      p = board.createElement('point', [input[0], t], attr);        
+      p = board.create('point', [input[0], t], attr);        
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Translate " + attr.name +"<br>\n");
@@ -1449,7 +1484,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>Mirror:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
-        m = board.createElement(type, [input[1], input[0]], attr);
+        m = board.create(type, [input[1], input[0]], attr);
         return m;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Mirror " + attr.name +"<br>\n");
@@ -1464,7 +1499,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>Circle:</b> First: " + input[0].name + ", Second: " + input[1] + "<br>\n");
-        c = board.createElement('circle', input, attr);
+        c = board.create('circle', input, attr);
         return c;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Circle " + attr.name +"<br>\n");
@@ -1479,7 +1514,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>CircleArc:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
-        c = board.createElement('arc', input, attr);
+        c = board.create('arc', input, attr);
         return c;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> CircleArc " + attr.name +"<br>\n");
@@ -1494,7 +1529,7 @@ this.writeElement = function(board, output, input, cmd) {
     // 
     //   try {
     //     JXG.GeogebraReader.debug("* <b>Conic:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
-    //     c = board.createElement('conic', input, attr);
+    //     c = board.create('conic', input, attr);
     //     return c;
     //   } catch(e) {
     //     JXG.GeogebraReader.debug("* <b>Err:</b> Conic " + attr.name +"<br>\n");
@@ -1509,7 +1544,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>CircleSector:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
-        c = board.createElement('sector', input, attr);
+        c = board.create('sector', input, attr);
         return c;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> CircleSector " + attr.name +"<br>\n");
@@ -1527,12 +1562,12 @@ this.writeElement = function(board, output, input, cmd) {
         attr.straightFirst = true;
         attr.straightLast =  true;
 
-        m = board.createElement('midpoint', input, {visible: 'false'});
+        m = board.create('midpoint', input, {visible: 'false'});
         if(JXG.getReference(board, input[0].id).type == 1330925652 && JXG.getReference(board, input[1].id).type == 1330925652) {
-          l = board.createElement('line', input, {visible: 'false'});
-          p = board.createElement('perpendicular', [m, l], attr);
+          l = board.create('line', input, {visible: 'false'});
+          p = board.create('perpendicular', [m, l], attr);
         } else {
-          p = board.createElement('perpendicular', [m, input[0]], attr);
+          p = board.create('perpendicular', [m, input[0]], attr);
         }
         return p[0];
       } catch(e) {
@@ -1550,7 +1585,7 @@ this.writeElement = function(board, output, input, cmd) {
         JXG.GeogebraReader.debug("* <b>Ray:</b> First: " + input[0].name + "<br>\n");
         attr.straightFirst = true;
         attr.straightLast =  false;
-        p = board.createElement('line', [input[1], input[0]], attr);
+        p = board.create('line', [input[1], input[0]], attr);
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Ray " + attr.name +"<br>\n");
@@ -1572,15 +1607,15 @@ this.writeElement = function(board, output, input, cmd) {
                     [-circ.midpoint.Y(),0,1]
                    ];
             };
-        var t = board.createElement('line', [
+        var t = board.create('line', [
                     function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[0]; },
                     function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[1]; },
                     function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[2]; }
                 ], {visible:false});
-        var i1 = board.createElement('intersection', [input[1],t,0],{visible:false});
-        var i2 = board.createElement('intersection', [input[1],t,1],{visible:false});
-        var t1 = board.createElement('line', [input[0],i1]);
-        var t2 = board.createElement('line', [input[0],i2]);
+        var i1 = board.create('intersection', [input[1],t,0],{visible:false});
+        var i2 = board.create('intersection', [input[1],t,1],{visible:false});
+        var t1 = board.create('line', [input[0],i1]);
+        var t2 = board.create('line', [input[0],i2]);
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Tangent " + attr.name +"<br>\n");
         return false;
@@ -1594,7 +1629,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>CircumcircleArc:</b> First: " + input[0].name + "<br>\n");
-        p = board.createElement('circumcircle', input, attr);
+        p = board.create('circumcircle', input, attr);
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> CircumcircleArc " + attr.name +"<br>\n");
@@ -1609,7 +1644,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>CircumcircleSector:</b> First: " + input[0].name + "<br>\n");
-        p = board.createElement('sector', [input[0], input[2], input[1]], attr);
+        p = board.create('sector', [input[0], input[2], input[1]], attr);
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> CircumcircleSector " + attr.name +"<br>\n");
@@ -1624,8 +1659,8 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>Semicircle:</b> First: " + input[0].name + "<br>\n");
-        m = board.createElement('midpoint', input, {visible: 'false'});
-        p = board.createElement('sector', [m, input[0], input[1]], attr);
+        m = board.create('midpoint', input, {visible: 'false'});
+        p = board.create('sector', [m, input[0], input[1]], attr);
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Semicircle " + attr.name +"<br>\n");
@@ -1640,7 +1675,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>Angle:</b> First: " + input[0].name + "<br>\n");
-        p = board.createElement('angle', input, attr);
+        p = board.create('angle', input, attr);
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Angle " + attr.name +"<br>\n");
@@ -1655,7 +1690,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>Angularbisector:</b> First: " + input[0].name + "<br>\n");
-        p = board.createElement('bisector', input, attr);
+        p = board.create('bisector', input, attr);
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Angularbisector " + attr.name +"<br>\n");
@@ -1693,7 +1728,7 @@ this.writeElement = function(board, output, input, cmd) {
 
         try {
           JXG.GeogebraReader.debug("* <b>Numeric:</b> First: " + attr.name + "<br>\n");
-          n = board.createElement('slider', [[sx,sy], [ex,ey], [smin, sip, smax]], attr);
+          n = board.create('slider', [[sx,sy], [ex,ey], [smin, sip, smax]], attr);
           return n;
         } catch(e) {
           JXG.GeogebraReader.debug("* <b>Err:</b> Numeric " + attr.name +"<br>\n");
@@ -1708,7 +1743,7 @@ this.writeElement = function(board, output, input, cmd) {
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
-          p = board.createElement('midpoint', input, attr);
+          p = board.create('midpoint', input, attr);
           JXG.GeogebraReader.debug("* <b>Midpoint ("+ p.id +"):</b> "+ attr.name + "("+ gxtEl.x +", "+ gxtEl.y +")<br>\n");
           return p;
       } catch(e) {
@@ -1722,7 +1757,7 @@ this.writeElement = function(board, output, input, cmd) {
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
       try {
-          p = board.createElement('point', [function() {
+          p = board.create('point', [function() {
                                                   return JXG.getReference(board, input[0].id).midpoint.X();
                                         },  function() {
                                                   return JXG.getReference(board, input[0].id).midpoint.Y();
@@ -1757,20 +1792,28 @@ this.writeElement = function(board, output, input, cmd) {
       }
 
       func = JXG.GeogebraReader.ggbParse(board, func);
+      JXG.GeogebraReader.debug('Function: '+ func);
       var l = func.length - 1;
 
       // func[l] = JXG.GeogebraReader.ggbParse(board, func[l]);
+// fuer sin erwartet: create('functiongraph', [function(x){return Math.sin(x);},interval[0], interval[1]]);
+// in ggbMatch Arry mit Funktionselementen zurückgeben
+// interval korrigieren: Arraydaten übergeben
 
-      func[l] = "return "+func[l]+";";
+      // func[l] = "return "+func[l]+";";
+
+      // var f = board.create('functiongraph', [Function('x', 'return Math.sin(x);') , -3, 3]);
+JXG.GeogebraReader.debug('<b>out</b>:'+ func);
+
       try {
         if (l==1)
-          f = board.createElement('functiongraph', [Function(func[0], func[1]), interval]);
+          f = board.create('functiongraph', [Function(func[0], func[1])]);
         else if (l==2)
-          f = board.createElement('functiongraph', [Function(func[0], func[1], func[2]), interval]);
+          f = board.create('functiongraph', [Function(func[0], func[1], func[2])]);
         else if (l==3)
-          f = board.createElement('functiongraph', [Function(func[0], func[1], func[2], func[3]), interval]);
+          f = board.create('functiongraph', [Function(func[0], func[1], func[2], func[3])]);
         else if (l==4)
-          f = board.createElement('functiongraph', [Function(func[0], func[1], func[2], func[3], func[4]), interval]);
+          f = board.create('functiongraph', [Function(func[0], func[1], func[2], func[3], func[4])]);
 
         JXG.GeogebraReader.debug("Functiongraph "+ attr.name +"("+ func[0] +", ...) = "+ func[l] +"<br/>\n");
         return f;
@@ -1794,7 +1837,7 @@ this.writeElement = function(board, output, input, cmd) {
                     [-circ.midpoint.Y(),0,1]
                    ];
         };
-        var p = board.createElement('line', [
+        var p = board.create('line', [
                     function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[0]; },
                     function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[1]; },
                     function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[2]; }
@@ -1814,12 +1857,12 @@ this.writeElement = function(board, output, input, cmd) {
      //TODO: Farben anpassen und keine durchgehende Normale
      try {
        JXG.GeogebraReader.debug("* <b>Slope:</b> First: " + input[0].name +"<br>\n");
-       var l1 = board.createElement('segment', [input[0].point1, [(1+input[0].point1.X()), input[0].point1.Y()]], {visible: false});
-       var l2 = board.createElement('normal', [l1, l1.point2], {visible: false});
-       var i  = board.createElement('intersection', [input[0], l2, 0], {visible: false});
-       var m  = board.createElement('midpoint', [l1.point2, i], {visible: false});
+       var l1 = board.create('segment', [input[0].point1, [(1+input[0].point1.X()), input[0].point1.Y()]], {visible: false});
+       var l2 = board.create('normal', [l1, l1.point2], {visible: false});
+       var i  = board.create('intersection', [input[0], l2, 0], {visible: false});
+       var m  = board.create('midpoint', [l1.point2, i], {visible: false});
        var slope = function() { return i.Y()-l1.point1.Y();};
-       var t = board.createElement('text', [function(){return m.X();}, function(){return m.Y();},
+       var t = board.create('text', [function(){return m.X();}, function(){return m.Y();},
                       function(){ return "m = "+ function(){ return i.Y()-l1.point1.Y();}(); }]);
        return m;
      } catch(e) {
