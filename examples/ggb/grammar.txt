@@ -44,14 +44,13 @@ e:        e ',' e      [* %% = JXG.GeogebraReader.ggbAct('coord', %1, %3, elemen
         | e '^' e      [* %% = JXG.GeogebraReader.ggbAct('pow', %1, %3); *]
         | '-' e &'*'   [* %% = JXG.GeogebraReader.ggbAct('negmult'); *]
         | '(' e ')'    [* %% = JXG.GeogebraReader.ggbAct('bra', %2); *]
-        | X            [* %% = JXG.GeogebraReader.ggbAct('x', %1); *]
-        | Y            [* %% = JXG.GeogebraReader.ggbAct('y', %1); *]
-        | SIN          [* %% = JXG.GeogebraReader.ggbAct('sin', %1); *]
         | FUNC         [* %% = JXG.GeogebraReader.ggbAct('func', %1); *]
-        | VAR          [* %% = JXG.GeogebraReader.ggbAct('var', %1); *]
         | STRING '+' e [* %% = JXG.GeogebraReader.ggbAct('string', %1); *]
         | INT          [* %% = JXG.GeogebraReader.ggbAct('int', %1); *]
         | FLOAT        [* %% = JXG.GeogebraReader.ggbAct('float', %1); *]
         | HTML         [* %% = JXG.GeogebraReader.ggbAct('html', %1); *]
         | STRING       [* %% = JXG.GeogebraReader.ggbAct('string', %1); *]
+        | VAR '(' e ')'
+        | VAR
+
         ;
