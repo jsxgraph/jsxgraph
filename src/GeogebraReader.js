@@ -1622,36 +1622,33 @@ this.writeElement = function(board, output, input, cmd) {
       JXG.GeogebraReader.debug('Function: '+ func);
 
       // interval with right and/or left borders
-      if(input && input.length == 3) {
-        var interval = input[1] +', '+ input[2];
-      } else if(input && input.length == 2) {
-        var interval = input[1];
+      if(input && input.length == 2) {
+        input[2] = null;
       } else {
-        var interval;
+        var input = [null, null, null];
       }
 
       func = JXG.GeogebraReader.functionParse(func);
       var l = func.length - 1;
 
-      // func = JXG.GeogebraReader.ggbParse(board, func);
       func[l] = JXG.GeogebraReader.ggbParse(board, func[l]);
 
-      JXG.GeogebraReader.debug('Function: '+ func);
-      // func[l] = "return "+func[l]+";";
-
       // var f = board.create('functiongraph', [Function('x', 'return Math.sin(x);') , -3, 3]);
-      func[1] = func[1].replace(/sin/,'Math.sin');
-      return board.create('functiongraph', [Function(func[0], 'return '+func[1]+';'), -3, 3]);
+      func[l] = func[l].replace(/sin/,'Math.sin');
+      func[l] = 'return '+ func[l] +';'
+      // return board.create('functiongraph', [Function(func[0], 'return '+func[1]+';'), -3, 3]);
+
+      JXG.GeogebraReader.debug('Function: '+ func);
       
       try {
         if (l==1)
-          f = board.create('functiongraph', [Function(func[0], func[1])]);
+          f = board.create('functiongraph', [Function(func[0], func[1]), input[1], input[2]]);
         else if (l==2)
-          f = board.create('functiongraph', [Function(func[0], func[1], func[2])]);
+          f = board.create('functiongraph', [Function(func[0], func[1], func[2]), input[1], input[2]]);
         else if (l==3)
-          f = board.create('functiongraph', [Function(func[0], func[1], func[2], func[3])]);
+          f = board.create('functiongraph', [Function(func[0], func[1], func[2], func[3]), input[1], input[2]]);
         else if (l==4)
-          f = board.create('functiongraph', [Function(func[0], func[1], func[2], func[3], func[4])]);
+          f = board.create('functiongraph', [Function(func[0], func[1], func[2], func[3], func[4], input[1], input[2])]);
 
         JXG.GeogebraReader.debug("Functiongraph "+ attr.name +"("+ func[0] +", ...) = "+ func[l] +"<br/>\n");
         return f;
