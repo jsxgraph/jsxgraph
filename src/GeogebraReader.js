@@ -61,7 +61,7 @@ this.ggbMatch = function(type, att) {
  * @return {String} return the object, string or calculated value
  */
 this.ggbAct = function(type, m, n, p) {
-JXG.GeogebraReader.debug('* '+ type);
+JXG.GeogebraReader.debug('* ggbAct-case: '+ type);
   var v1 = m, v2 = n;
   switch(type.toLowerCase()) {
     case 'error':
@@ -75,7 +75,7 @@ JXG.GeogebraReader.debug('* '+ type);
                ? JXG.getReference(JXG.GeogebraReader.board, JXG.GeogebraReader.board.ggbElements[v2].id)
                : v2;
 
-      JXG.GeogebraReader.debug("<br/><b>Aktualisierung des Punktes:</b> <li>x[id: "+ s1.id +" type: "+ typeof s1 +", value: "+ s1 +"]</li><li>y[id: "+ s2.id +" type: "+ typeof s2 +", value: "+ s2 +"]</li>");
+      JXG.GeogebraReader.debug("<br/><b>Aktualisierung des Punktes:</b> <li>x[id: "+ s1.id +" "+ typeof s1 +": "+ s1 +"]</li><li>y[id: "+ s2.id +" "+ typeof s2 +": "+ s2 +"]</li>");
       if(typeof s2 === 'function') {
           // s2 ist eine Funktion, die von dem Slider s1 abhaengt, z.B. s1^2, der entsprechende Wert wird hier eingesetzt
           p.addConstraint([s1, function() { return s2( s1 ); }]);
@@ -83,6 +83,7 @@ JXG.GeogebraReader.debug('* '+ type);
       else {
           p.addConstraint([s1, s2]);
       }
+      return p;
     break;
     case 'add':
       return (JXG.isNumber(v1)) ? v1 : parseInt(v1)
@@ -116,13 +117,11 @@ JXG.GeogebraReader.debug('* '+ type);
     case 'bra':
       return v1;
     break;
-    break;
     case 'var':
       if(v2)
         return function() { return v1(v2); };
       else
         return v1;
-    break;
     break;
     case 'string':
       return v1;

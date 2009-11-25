@@ -8,7 +8,7 @@
     '\)'
     '[0-9]+'                             INT    [* %match = JXG.GeogebraReader.ggbMatch('int', %match); *]
     '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+'      FLOAT  [* %match = JXG.GeogebraReader.ggbMatch('float', %match); *]
-    '\_\_[a-zA-Z0-9]+'                   PARAM
+    '\_\_[a-zA-Z0-9]+'                   PARAM  [* %match = JXG.GeogebraReader.ggbMatch('param', %match); *]
     '\&[a-zA-Z]+\;'                      HTML   [* %match = JXG.GeogebraReader.ggbMatch('html', %match); *]
     '[a-zA-Z]+\([a-zA-Z]+[,a-zA-Z]*\)\=' FUNC   [* %match = JXG.GeogebraReader.ggbMatch('func', %match); *]
     '[a-zA-Z]+(\_*[a-zA-Z0-9]+)*'        VAR    [* %match = JXG.GeogebraReader.ggbMatch('var', %match); *]
