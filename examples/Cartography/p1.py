@@ -155,6 +155,8 @@ print "info = []";
 f = open(filename, 'rb')
 db = list(dbfreader(f))
 f.close()
+
+
 i = 0
 for record in db:
     if i>1:

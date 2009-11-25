@@ -118,9 +118,10 @@ JXG.GeogebraReader.debug('* ggbAct-case: '+ type);
       return v1;
     break;
     case 'var':
-      if(v2)
-        return function() { return v1(v2); };
-      else
+      if(v2) {
+        return v1;
+        //return function() { return v1(v2); };
+      } else
         return v1;
     break;
     case 'string':
@@ -1639,7 +1640,9 @@ this.writeElement = function(board, output, input, cmd) {
       // func[l] = "return "+func[l]+";";
 
       // var f = board.create('functiongraph', [Function('x', 'return Math.sin(x);') , -3, 3]);
-
+      func[1] = func[1].replace(/sin/,'Math.sin');
+      return board.create('functiongraph', [Function(func[0], 'return '+func[1]+';'), -3, 3]);
+      
       try {
         if (l==1)
           f = board.create('functiongraph', [Function(func[0], func[1])]);
