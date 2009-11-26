@@ -734,7 +734,7 @@ JXG.createBisector = function(board, parentArr, atts) {
     /* TODO bisector polynomials */
     if(parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[2].elementClass == JXG.OBJECT_CLASS_POINT) {
 
-        cAtts = {name: null, id: null, fixed: true, visible: false};
+        cAtts = {name: '', id: null, fixed: true, visible: false};
         if(atts) {
             cAtts = JXG.cloneAndCopy(atts, cAtts);
         }
