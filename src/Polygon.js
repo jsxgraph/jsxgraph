@@ -272,3 +272,62 @@ JXG.Polygon.prototype.area = function() {
     area /= 2.0;
     return Math.abs(area);
 };
+
+/**
+ * @class Constructs a regular polygon. It needs two points which define the base line and the number of vertices.
+ * @pseudo
+ * @description Constructs a regular polygon. It needs two points which define the base line and the number of vertices.
+ * @constructor
+ * @name RegularPolygon
+ * @type JXG.Polygon
+ * @augments JXG.Polygon
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point_Number} p1,p2,n The constructed regular polygon has n vertices and the base line defined by p1 and p2.
+ * @example
+ * var p1 = board.createElement('point', [0.0, 2.0]);
+ * var p2 = board.createElement('point', [2.0, 1.0]);
+ *
+ * var pol = board.createElement('regularpolygon', [p1, p2, 5]);
+ * </pre><div id="682069e9-9e2c-4f63-9b73-e26f8a2b2bb1" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var regpol_board = JXG.JSXGraph.initBoard('682069e9-9e2c-4f63-9b73-e26f8a2b2bb1', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false});
+ *   var regpol_p1 = ccmex1_board.createElement('point', [0.0, 2.0]);
+ *   var regpol_p2 = ccmex1_board.createElement('point', [2.0, 1.0]);
+ *   var regpol_cc1 = ccmex1_board.createElement('regularpolygon', [ccmex1_p1, ccmex1_p2, 5]);
+ * </script><pre>
+ */
+JXG.createRegularPolygon = function(board, parents, atts) {
+    var el, i, n, p = [], rot, c;
+
+    if (typeof atts['withLabel']=='undefined') {
+        atts['withLabel'] = false;
+    }    
+    
+    if (parents.length!=3) {
+            throw new Error("JSXGraph: A regular polygon needs two point and a number as input.");
+    }
+
+    n = parents[2];
+    if (!JXG.isNumber(n) || n<3) {
+            throw new Error("JSXGraph: The third parameter has to be number greater than 2.");
+    }
+    
+    // Sind alles Punkte? 
+    for(i=0; i<parents.length-1; i++) {
+        parents[i] = JXG.getReference(board, parents[i]);
+        if(!JXG.isPoint(parents[i]))
+            throw new Error("JSXGraph: Can't create regular polygon if the first two parameters aren't points.");
+    }
+
+    p[0] = parents[0];
+    p[1] = parents[1];
+    for (i=2;i<n;i++) {
+        rot = board.createElement('transform', [Math.PI*(2.0-(n-2)/n),p[i-1]], {type:'rotate'});
+        p[i] = board.createElement('point',[p[i-2],rot],{name:'', withLabel:false,fixed:true,face:'o',size:1});
+    }
+    el = board.createElement('polygon',p,atts);
+
+    return el;
+};
+
+JXG.JSXGraph.registerElement('regularpolygon', JXG.createRegularPolygon);
