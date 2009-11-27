@@ -899,13 +899,8 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el = new Object();
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
-        el.id = "gridy";        
-        el.visPropOld = {};
-        el.visPropOld['strokeColor']= null;
-        el.visPropOld['strokeOpacity']= null;
-        el.visPropOld['strokeWidth']= null;
-        el.visPropOld['fillColor']= null;
-        el.visPropOld['fillOpacity']= null;
+        el.id = "gridy";   
+        el.clearVisPropOld();
         this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
     }
     else {
@@ -913,12 +908,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridy";        
-        el.visPropOld = {};
-        el.visPropOld['strokeColor']= null;
-        el.visPropOld['strokeOpacity']= null;
-        el.visPropOld['strokeWidth']= null;
-        el.visPropOld['fillColor']= null;
-        el.visPropOld['fillOpacity']= null;
+        el.clearVisPropOld();
         this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
@@ -1277,4 +1267,13 @@ JXG.AbstractRenderer.prototype.setShadow = function(element) {
 
 JXG.AbstractRenderer.prototype.updatePathStringPoint = function(el, size, type) {
 };
+
+JXG.AbstractRenderer.prototype.eval = function(val) {
+    if (typeof val=='function') {
+        return val();
+    } else {
+        return val;
+    }
+};
+
 

@@ -95,16 +95,19 @@ JXG.SVGRenderer = function(container) {
 
 JXG.SVGRenderer.prototype = new JXG.AbstractRenderer;
 
-JXG.SVGRenderer.prototype.setShadow = function(element) {
-    if(element.rendNode != null) {
-        if(element.visProp['shadow']) {
-            element.rendNode.setAttributeNS(null,'filter','url(#f1)');
+JXG.SVGRenderer.prototype.setShadow = function(el) {
+    if (el.visPropOld['shadow']==el.visProp['shadow']) {
+        return;
+    }
+    if(el.rendNode != null) {
+        if(el.visProp['shadow']) {
+            el.rendNode.setAttributeNS(null,'filter','url(#f1)');
         }
         else {
-            element.rendNode.removeAttributeNS(null,'filter');
-
+            el.rendNode.removeAttributeNS(null,'filter');
         }    
     }
+    el.visPropOld['shadow']=el.visProp['shadow'];
 }
 
 JXG.SVGRenderer.prototype.setGradient = function(el) {
@@ -277,6 +280,8 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
         pathString, pathString2, node2, node4;
         
     el.rendNode = node;
+
+    el.clearVisPropOld();
     
     radius = el.getRadius();  
     angle = el.board.algebra.trueAngle(el.point2, el.midpoint, el.point3);
@@ -387,6 +392,8 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     var angle = el.board.algebra.trueAngle(el.point1, el.point2, el.point3),
         circle, projectedP1, projectedP3,
         node, node2, pathString;
+    el.clearVisPropOld();
+
     circle = {};  // um projectToCircle benutzen zu koennen...
     circle.midpoint = el.point2;
     circle.getRadius = function() {
@@ -506,21 +513,14 @@ JXG.SVGRenderer.prototype.removeGrid = function(board) {
 };
  
 JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
-    var c, o, node;
+    var c = this.eval(color), 
+        o = this.eval(opacity), 
+        node;
 
-    if(opacity == undefined) {
-        opacity = 1;
-    }
-    if (typeof opacity=='function') {
-        o = opacity();
-    } else {
-        o = opacity;
-    }
     o = (o>0)?o:0;
-    if (typeof color=='function') {
-        c = color();
-    } else {
-        c = color;
+
+    if (el.visPropOld['strokeColor']==c && el.visPropOld['strokeOpacity']==o) {
+        return;
     }
     node = el.rendNode;
     if(el.type == JXG.OBJECT_TYPE_TEXT) {
@@ -564,25 +564,19 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
             el.rendNodeTriangleEnd.setAttributeNS(null, 'fill-opacity', o);    
         }                
     }
+    el.visPropOld['strokeColor'] = c;
+    el.visPropOld['strokeOpacity'] = o;
 };
 
 JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
-    var c, o, node;
-    if(opacity==undefined) {
-        opacity = 1;
-    }
-    if (typeof opacity=='function') {
-        o = opacity();
-    } else {
-        o = opacity;
-    }
+    var c = this.eval(color), 
+        o = this.eval(opacity);
+
     o = (o>0)?o:0;
-    if (typeof color=='function') {
-        c = color();
-    } else {
-        c = color;
+
+    if (el.visPropOld['fillColor']==c && el.visPropOld['fillOpacity']==o) {
+        return;
     }
-    
     if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
         node = el.rendNode2;
         node.setAttributeNS(null, 'fill', c);
@@ -597,6 +591,8 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
     if (el.visProp['gradient']!=null) {
         this.updateGradient(el);
     }
+    el.visPropOld['fillColor'] = c;
+    el.visPropOld['fillOpacity'] = o;
 } ;
 
 /**
@@ -605,13 +601,13 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
  * @param {int} width The new stroke width to be assigned to the element.
  */
 JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
-    var w, node;
-    if (typeof width=='function') {
-        w = width();
-    } else {
-        w = width;
-    }
+    var w = this.eval(width), 
+        node;
     //w = (w>0)?w:0;
+    
+    if (el.visPropOld['strokeWidth']==w) {
+        return;
+    }
     
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
         if(el.type == JXG.OBJECT_TYPE_ANGLE) {
@@ -632,6 +628,7 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
             this.setPropertyPrimitive(node,'stroke-width',w); 
         }
     }
+    el.visPropOld['strokeWidth'] = w;
 };
 
 JXG.SVGRenderer.prototype.hide = function(el) {
@@ -768,6 +765,9 @@ JXG.SVGRenderer.prototype.makeArrow = function(node,el,idAppendix) {
 
 JXG.SVGRenderer.prototype.makeArrows = function(el) {
     var node2;
+    if (el.visPropOld['firstArrow']==el.visProp['firstArrow'] && el.visPropOld['lastArrow']==el.visProp['lastArrow']) {
+        return;
+    }
     if(el.visProp['firstArrow']) {
         node2 = el.rendNodeTriangleStart;
         if(node2 == null) {
@@ -798,6 +798,8 @@ JXG.SVGRenderer.prototype.makeArrows = function(el) {
             this.remove(node2);
         }        
     }
+    el.visPropOld['firstArrow'] = el.visProp['firstArrow'];
+    el.visPropOld['lastArrow'] = el.visProp['lastArrow'];
 };
 
 JXG.SVGRenderer.prototype.updateLinePrimitive = function(node,p1x,p1y,p2x,p2y) {

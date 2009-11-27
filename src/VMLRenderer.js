@@ -73,14 +73,6 @@ JXG.VMLRenderer.prototype.setAttr = function(node, key, val, val2) {
     }
 };
 
-JXG.VMLRenderer.prototype.eval = function(val) {
-    if (typeof val=='function') {
-        return val();
-    } else {
-        return val;
-    }
-};
-
 JXG.VMLRenderer.prototype.setShadow = function(el) {
     var nodeShadow = el.rendNodeShadow;
     
@@ -97,6 +89,7 @@ JXG.VMLRenderer.prototype.setShadow = function(el) {
     else {
         this.setAttr(nodeShadow, 'On', 'False');
     }
+    el.visPropOld['shadow']=el.visProp['shadow'];
 };
 
 JXG.VMLRenderer.prototype.setGradient = function(el) {
@@ -326,14 +319,7 @@ JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, p
 JXG.VMLRenderer.prototype.drawArc = function(el) { 
     var radius, p = {}, angle1, angle2, node, nodeStroke, node2, p4 = {};
 
-    el.visPropOld['strokeColor']= '';
-    el.visPropOld['strokeOpacity']= '';
-    el.visPropOld['strokeWidth']= '';
-    el.visPropOld['fillColor']= '';
-    el.visPropOld['fillOpacity']= '';
-    el.visPropOld['shadow']= false;
-    el.visPropOld['firstArrow'] = false;
-    el.visPropOld['lastArrow'] = false;
+    el.clearVisPropOld();
 
     /* some computations */
     radius = el.getRadius();  
@@ -408,14 +394,7 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
         angle1, angle2, node, tmp, nodeStroke,
         p1 = {}, p3 = {}, node2;
 
-    el.visPropOld['strokeColor']= '';
-    el.visPropOld['strokeOpacity']= '';
-    el.visPropOld['strokeWidth']= '';
-    el.visPropOld['fillColor']= '';
-    el.visPropOld['fillOpacity']= '';
-    el.visPropOld['shadow']= false;
-    el.visPropOld['firstArrow'] = false;
-    el.visPropOld['lastArrow'] = false;
+    el.clearVisPropOld();
     
     /* some computations */
     // um projectToCircle benutzen zu koennen...
@@ -766,6 +745,8 @@ JXG.VMLRenderer.prototype.makeArrows = function(el) {
             this.setAttr(nodeStroke, 'endarrow', 'none');
         }        
     }    
+    el.visPropOld['firstArrow'] = el.visProp['firstArrow'];
+    el.visPropOld['lastArrow'] = el.visProp['lastArrow'];
 };
 
 JXG.VMLRenderer.prototype.updateLinePrimitive = function(node,p1x,p1y,p2x,p2y,board) {

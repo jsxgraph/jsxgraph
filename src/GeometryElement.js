@@ -1185,3 +1185,15 @@ JXG.GeometryElement.prototype.toJSON = function() {
 
     return json;
 };
+
+JXG.GeometryElement.prototype.clearVisPropOld = function() {
+    this.visPropOld = {};
+    this.visPropOld['strokeColor']= '';
+    this.visPropOld['strokeOpacity']= '';
+    this.visPropOld['strokeWidth']= '';
+    this.visPropOld['fillColor']= '';
+    this.visPropOld['fillOpacity']= '';
+    this.visPropOld['shadow']= false;
+    this.visPropOld['firstArrow'] = false;
+    this.visPropOld['lastArrow'] = false;
+};
