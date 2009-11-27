@@ -41,9 +41,9 @@
 % Thanks:
 %  (reference card macros due to Stephen Gildea)
 
-\def\versionnumber{0.2}  % Version of this reference card
+\def\versionnumber{0.79}  % Version of this reference card
 \def\year{2009}
-\def\month{May}
+\def\month{November}
 \def\version{\month\ \year\ v\versionnumber}
 
 \def\shortcopyrightnotice{\vskip .5ex plus 2 fill
@@ -272,7 +272,7 @@ Two files have to be included:
 {\sl -- Attributes of the board}\par
 \metax{boundingbox:}{$[x_1,y_1,x_2,y_2]$ user coordinates of the}
 \metax{}{upper left and bottom right corner}
-\metax{keepaspectratio:true/false}{}
+\metax{keepaspectratio:true/false}{ default: false}
 %\metax{unitX, unitY:}{number of pixels of one unit}
 %\metax{}{in $x$/$y$-axis direction}
 %\metax{originX, originY:}{pixel position of the origin}
@@ -350,7 +350,7 @@ Points may also be specified as array of coordinates.
 \metax{[p1,p2,...]}{The array of points}
 is connected by line segments and the inner area is filled.
 
-%\metax{brd.create(\'regularpolygon\',[p1,p2,n],$\{$attributes$\}$);}{}
+\metax{brd.create(\'regularpolygon\',[p1,p2,n],$\{$attributes$\}$);}{}
 
 \section{Slider}
 \metax{var s = brd.create(\'slider\',[[a,b],[c,d],[e,f,g]],$\{$atts$\}$);}{}
@@ -409,7 +409,7 @@ Defined by the equation $r=f(\phi)$.
 %\metax{var t = brd.create(\'turtle\',[],$\{$attributes$\}$);}{}
 \metax{var t = brd.create(\'turtle\',[parents],$\{$atts$\}$);}{}
 
-\metax{t.X(), t.Y(), t.dir}{position, direction (in degrees) of the turtle}. 
+\metax{t.X(), t.Y(), t.dir}{position, direction (degrees)}. 
 %All angles have to be supplied in degrees.
 
 {\bf Parent elements:}
@@ -486,6 +486,17 @@ Superseded by transformations
 \par{\sl -- sector:} \hfill circle sector defined by 3 points \hfill ???
 \metax{el = brd.create(\'sector\',[A,B,C],$\{$atts$\}$);}{}
 
+\par{\sl -- semi circle:} \hfill defined by 2 points $p_1$ and $p_2$.
+\metax{brd.create(\'semicircle\',[p1,p2],$\{atts\}$);}{}
+
+\par{\sl -- intersection:} \hfill of 2 objects (lines or circles). 
+
+Returns array of length 2 with first and second intersection point (also for line/line intersection).
+
+\metax{brd.create(\'intersection\',[o1,o2,n],$\{atts\}$);}{}
+
+
+
 \section{Text}
 Display static or dynamic texts.\par
 \metax{el = brd.create(\'text\',[x,y,"Hello"]);}{}
@@ -521,6 +532,12 @@ Example for a dynamic text: return the $x$ coordinate of the point $p$.\par
 {\sl Attributes for text elements:}\par
 \metax{display:}{'html', 'internal'}
 
+{\sl Color string:}\par HTML color definition or HSV color scheme:
+\par
+\metax{JXG.hsv2rgb(h,s,v)}{$0\leq h\leq 360$, $0\leq s,v\leq1$}
+\metax{}{returns RGB color string.}
+
+
 \section{Transform}
 Affine transformation of objects.\par
 \metax{t = brd.create(\'transform\',[data,base],$\{$type:\'type\'$\}$);}{}
@@ -536,6 +553,9 @@ Possible types:\par
 \metax{t.bindTo(p)}{the coordinates of $p$ are defined by $t$}
 \metax{t.applyOnce(p)}{apply the transformation once}
 \metax{t.melt(s)}{combine two transformations to one: $ t:= t\cdot s$}
+\metax{p2 = brd.create('point',[p1,t],$\{$fixed:true$\}$);}{}
+\metax{}{Point $p_2$: apply $t$ on point $p_1$}
+
 
 \section{Mathematical functions}
 Functions of the intrinsic JavaScript object {\sl Math}:\par
@@ -559,6 +579,10 @@ Additional mathematical functions are methods of {\tt JXG.Board}.
 \metax{brd.lagrangePolynomial([p1,p2,...])}{}
 \metax{}{returns a polynomial through the given points}
 \metax{brd.neville([p1,p2,...])}{polynomial curve interpolation}
+\metax{c = JXG.Math.Numerics.bezier([p1,p2,...])}{\hfill Bezier curve}
+\metax{}{$p_2,p_3,p_5,p_6,\ldots$ are control points. \kbd{brd.create('curve',c);}}
+\metax{f = JXG.Math.Numerics.regressionPolynomial(n,xArr,yArr)}{}
+\metax{}{Regression pol. of deg. $n$: \kbd{brd.create('functiongraph',f);}}
 \metax{brd.riemannsum(f,n,type,start,end)}{Volume of Riemann}
 \metax{}{sum, see {\sl Curves}}
 
