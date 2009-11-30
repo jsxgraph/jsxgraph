@@ -152,7 +152,7 @@ this.parseImage = function(board,fileNode,level,x,y,w,h,el) {
         return null;
     }
 
-    picStr = this.readImage(fileNode.getElementsByTagName(tag)[0].firstChild);
+    picStr = 'data:image/png;base64,' + this.readImage(fileNode.getElementsByTagName(tag)[0].firstChild);
     if (picStr!='') {
         if (tag=='src') {  // Background image
             x = fileNode.getElementsByTagName('x')[0].firstChild.data;
@@ -160,11 +160,15 @@ this.parseImage = function(board,fileNode,level,x,y,w,h,el) {
             w = fileNode.getElementsByTagName('width')[0].firstChild.data;
             h = fileNode.getElementsByTagName('height')[0].firstChild.data;
         } else {  // Image bound to an element
+            /*
+                Read the original dimensions
+                with the help of a temporary image
+            */
             node = document.createElement('img');
             node.setAttribute('id', 'tmpimg');
             node.style.display = 'none';
             document.getElementsByTagName('body')[0].appendChild(node);
-            node.setAttribute('src','data:image/png;base64,' + picStr);
+            node.setAttribute('src',picStr);
             wOrg = node.width;
             hOrg = node.height;
             wOrg = (wOrg==0)?3:wOrg; // Hack!

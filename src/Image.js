@@ -37,7 +37,7 @@
  * @constructor
  * @return A new geometry element Image
  */
-JXG.Image = function (board, imageBase64String, coordinates, size, displayLevel, id, name, el) {
+JXG.Image = function (board, url, coordinates, size, displayLevel, id, name, el) {
     //this.constructor();
     this.type = JXG.OBJECT_TYPE_IMAGE;
     this.elementClass = JXG.OBJECT_CLASS_OTHER;                
@@ -47,7 +47,8 @@ JXG.Image = function (board, imageBase64String, coordinates, size, displayLevel,
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
     this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
     this.size = [size[0]*board.stretchX,size[1]*board.stretchY];
-    this.imageBase64String = imageBase64String;
+    //this.imageBase64String = url; //imageBase64String;
+    this.url = url;
     this.displayLevel = displayLevel;
     this.parent = el;
     this.visProp['visible'] = true;
@@ -94,9 +95,30 @@ JXG.Image.prototype.addTransform = function (transform) {
     }
 };
 
-JXG.createImage = function(board, parentArr, atts) {
-//    return new JXG.Image(board, atts['imageString'], parentArr[0], parentArr[1], 'images', atts['id'], atts['name']);
-    return new JXG.Image(board, atts['imageString'], parentArr[0], parentArr[1], 'images', false, false, undefined);
+/**
+ * @class Displays an image. 
+ * @pseudo
+ * @description Shows an imgae. The image can be supplied as an URL or an base64 encoded inline image
+ * like "data:image/png;base64, /9j/4AAQSkZJRgA...".
+ * @constructor
+ * @name Image
+ * @type JXG.Image
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {String_Array_Array} url, [position of the top left vertice], [width,height] 
+ * @example
+ * var im = board.create('image', ['http://http://geonext.uni-bayreuth.de/fileadmin/geonext/design/images/logo.gif', [-3,1],[5,5]]);
+ *
+ * </pre><div id="9850cda0-7ea0-4750-981c-68bacf9cca57" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var image_board = JXG.JSXGraph.initBoard('9850cda0-7ea0-4750-981c-68bacf9cca57', {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false});
+ *   var image_im = image_board.create('image', ['http://http://geonext.uni-bayreuth.de/fileadmin/geonext/design/images/logo.gif', [-3,1],[5,5]]);
+ * </script><pre>
+ */
+JXG.createImage = function(board, parents, atts) {
+    var url;
+//    return new JXG.Image(board, atts['imageString'], parents[0], parents[1], 'images', atts['id'], atts['name']);
+    url = atts['imageString'];
+    return new JXG.Image(board, parents[0], parents[1], parents[2], 'images', false, false, undefined);
 };
 
 JXG.JSXGraph.registerElement('image', JXG.createImage);

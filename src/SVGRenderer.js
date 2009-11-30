@@ -465,10 +465,10 @@ JXG.SVGRenderer.prototype.updateAngle = function(el) {
 };
 
 JXG.SVGRenderer.prototype.drawImage = function(el) {
-    var imageBase64 = 'data:image/png;base64,' + el.imageBase64String,    
+    var url = el.url, //'data:image/png;base64,' + el.imageBase64String,    
         node = this.createPrimitive('image',el.id);
 
-    node.setAttributeNS(this.xlinkNamespace, 'xlink:href', imageBase64);
+    node.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
     this.appendChildPrimitive(node,el.displayLevel);
     el.rendNode = node;
     this.updateImage(el);

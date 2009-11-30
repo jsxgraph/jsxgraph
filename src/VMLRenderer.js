@@ -459,15 +459,13 @@ JXG.VMLRenderer.prototype.updateAngle = function(el) {
 
 JXG.VMLRenderer.prototype.drawImage = function(el) {
     // IE 8: Bilder ueber data URIs werden bis 32kB unterstuetzt.
-    var node,imageBase64;
-    
-    imageBase64 = 'data:image/png;base64,' + el.imageBase64String;    
+    var node, url = el.url; //'data:image/png;base64,' + el.imageBase64String;    
     
     node = this.container.ownerDocument.createElement('img');
     node.style.position = 'absolute';
     this.setAttr(node,'id', el.id);
 
-    this.setAttr(node,'src',imageBase64);
+    this.setAttr(node,'src',url);
     this.container.appendChild(node);
     this.appendChildPrimitive(node,el.displayLevel);
     node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
