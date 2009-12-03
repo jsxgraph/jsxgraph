@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+import sys
+import os
 import string
 import shapelib as shp
 import math
 import struct, datetime, decimal, itertools
 
-def dbfreader(f):
-    """Returns an iterator over records in a Xbase DBF file.
+
+'''
+    Returns an iterator over records in a Xbase DBF file.
 
     The first row returned contains the field names.
     The second row contains field specs: (type, size, decimal places).
@@ -14,9 +17,10 @@ def dbfreader(f):
 
     File should be opened for binary reads.
 
-    """
-    # See DBF format spec at:
-    #     http://www.pgts.com.au/download/public/xbase.htm#DBF_STRUCT
+'''
+# See DBF format spec at:
+#     http://www.pgts.com.au/download/public/xbase.htm#DBF_STRUCT
+def dbfreader(f):
 
     numrec, lenheader = struct.unpack('<xxxxLH22x', f.read(32))    
     numfields = (lenheader - 33) // 32
@@ -61,6 +65,9 @@ def dbfreader(f):
             result.append(value)
         yield result
 
+'''
+    Ramen, Douglas, Peuker algorithm
+'''
 def simplify_points (pts, tolerance):
     anchor  = 0
     floater = len(pts) - 1
@@ -121,44 +128,65 @@ def simplify_points (pts, tolerance):
     keep.sort()
     return [pts[i] for i in keep]
 
-filename = "./vg2500_bld.dbf"
-#filename = "./vg2500_sta.dbf"
-#filename = "./vg2500_rbz.dbf"
-#filename = "./vg2500_krs.dbf"
-# for europe.dbf: set fac to 1.0 and comment out call to simplify_points
 
-fac = 100000.0
+if __name__ == '__main__':
+    if len(sys.argv)<2:
+        sys.stderr.write("call: python shp2jsx.py filename [factor] \n")
+        sys.stderr.write("\t file name has to havve the ending dbf.  \n")
+        sys.exit(0) 
+        
+    filename = sys.argv[1]
+    if not os.path.exists(filename):
+        sys.stderr.write("file '%s' not found\n" % filename)
+        sys.exit(0) 
+    f = open(filename, "r")
 
-f = shp.open(filename)
-nLaender = f.info()[0]
+    #filename = "./vg2500_bld.dbf"
+    #filename = "./vg2500_sta.dbf"
+    #filename = "./vg2500_rbz.dbf"
+    #filename = "./vg2500_krs.dbf"
+    # for europe.dbf: set fac to 1.0 and comment out call to simplify_points
 
-minx = f.info()[2][0]/fac
-miny = f.info()[2][1]/fac
+    fac = 100000.0
+    if len(sys.argv)>2:
+        fac = float(sys.argv[2])
+    
+    f = shp.open(filename)
+    nParts = f.info()[0]
 
-maxx = f.info()[3][0]/fac
-maxy = f.info()[3][1]/fac
+    '''
+        extract bounding box
+    '''
+    minx = f.info()[2][0]/fac
+    miny = f.info()[2][1]/fac
+    maxx = f.info()[3][0]/fac
+    maxy = f.info()[3][1]/fac
 
-#print nLaender, minx, maxx, miny, maxy
+    print "bbox = [%0.2f,%0.2f,%0.2f,%0.2f];" %(minx*0.99,maxy*1.01,maxx*1.01,miny*0.99)
+    
+    '''
+        Read the paths information
+    ''' 
+    print "paths = [];";
+    for n in xrange(nParts):
+        id = f.read_object(n).id
+        for parts in f.read_object(n).vertices():
+            parts = simplify_points(parts, 1000.0)
+            print "paths.push(["
+            print "\t[",string.join(["%0.2f"%(p[0]/fac) for p in parts],','),'],'
+            print "\t[",string.join(["%0.2f"%(p[1]/fac) for p in parts],','),'],'
+            print "\t", id, "]);"
 
-print "bbox = [%0.2f,%0.2f,%0.2f,%0.2f];" %(minx*0.99,maxy*1.01,maxx*1.01,miny*0.99)
-print "paths = [];";
-for n in xrange(nLaender):
-    id = f.read_object(n).id
-    for parts in f.read_object(n).vertices():
-        parts = simplify_points(parts, 1000.0)
-        print "paths.push(["
-        print "\t[",string.join(["%0.2f"%(p[0]/fac) for p in parts],','),'],'
-        print "\t[",string.join(["%0.2f"%(p[1]/fac) for p in parts],','),'],'
-        print "\t", id, "]);"
+    '''
+        Extract the text info
+    '''
+    print "info = []";
+    f = open(filename, 'rb')
+    db = list(dbfreader(f))
+    f.close()
 
-print "info = []";
-f = open(filename, 'rb')
-db = list(dbfreader(f))
-f.close()
-
-
-i = 0
-for record in db:
-    if i>1:
-        print "info.push(", record, ");" 
-    i += 1
+    i = 0
+    for record in db:
+        if i>1:
+            print "info.push(", record, ");" 
+        i += 1

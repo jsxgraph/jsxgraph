@@ -30,7 +30,6 @@ import urllib
 import base64
 import zlib
 
-
 if __name__ == '__main__':
     if len(sys.argv)<1:
         sys.stderr.write("call: python compress.py filename\n")
