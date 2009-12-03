@@ -326,8 +326,12 @@ JXG.Point.prototype.update = function (fromParent) {
                 // First, recalculate the new value of this.position
                 // Second, call update(fromParent==true) to make the positioning snappier.
                 if (this.snapWidth!=null && Math.abs(this._smax-this._smin)>=JXG.Math.eps) {
-                    var v = Math.round(this.Value()/this.snapWidth)*this.snapWidth;
-                    this.position = factor*(v-this._smin)/(this._smax-this._smin);
+                    if (this.position<0.0) this.position = 0.0;
+                    if (this.position>1.0) this.position = 1.0;
+                    
+                    var v = this.position*(this._smax-this._smin)+this._smin;
+                        v = Math.round(v/this.snapWidth)*this.snapWidth;
+                    this.position = (v-this._smin)/(this._smax-this._smin);
                     this.update(true);
                 }
             }
