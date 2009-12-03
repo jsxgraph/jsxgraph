@@ -281,7 +281,7 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
         
     el.rendNode = node;
 
-    el.clearVisPropOld();
+    JXG.clearVisPropOld(el);
     
     radius = el.getRadius();  
     angle = el.board.algebra.trueAngle(el.point2, el.midpoint, el.point3);
@@ -392,7 +392,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     var angle = el.board.algebra.trueAngle(el.point1, el.point2, el.point3),
         circle, projectedP1, projectedP3,
         node, node2, pathString;
-    el.clearVisPropOld();
+    JXG.clearVisPropOld(el);
 
     circle = {};  // um projectToCircle benutzen zu koennen...
     circle.midpoint = el.point2;
@@ -604,9 +604,12 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
     var w = this.eval(width), 
         node;
     //w = (w>0)?w:0;
-    
+    try {
     if (el.visPropOld['strokeWidth']==w) {
         return;
+    }
+    } catch (e){
+        alert(el.id);
     }
     
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {

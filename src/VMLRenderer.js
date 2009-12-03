@@ -319,7 +319,7 @@ JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, p
 JXG.VMLRenderer.prototype.drawArc = function(el) { 
     var radius, p = {}, angle1, angle2, node, nodeStroke, node2, p4 = {};
 
-    el.clearVisPropOld();
+    JXG.clearVisPropOld(el);
 
     /* some computations */
     radius = el.getRadius();  
@@ -394,7 +394,7 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
         angle1, angle2, node, tmp, nodeStroke,
         p1 = {}, p3 = {}, node2;
 
-    el.clearVisPropOld();
+    JXG.clearVisPropOld(el);
     
     /* some computations */
     // um projectToCircle benutzen zu koennen...

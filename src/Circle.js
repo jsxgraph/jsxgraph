@@ -503,6 +503,7 @@ JXG.Circle.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     copy.board.stretchY = this.board.stretchY;
 
     copy.visProp = this.visProp;
+    JXG.clearVisPropOld(copy);
     
     this.board.renderer.drawCircle(copy);
     this.traces[copy.id] = document.getElementById(copy.id);

@@ -544,6 +544,7 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.point2 = this.point2;
 
     copy.stdform = this.stdform;
+    JXG.clearVisPropOld(copy);
 
     copy.board = {};
     copy.board.unitX = this.board.unitX;

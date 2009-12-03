@@ -96,15 +96,7 @@ JXG.GeometryElement = function() {
      */
     this.visProp = {};
     
-    this.visPropOld = {};
-    this.visPropOld['strokeColor']= '';
-    this.visPropOld['strokeOpacity']= '';
-    this.visPropOld['strokeWidth']= '';
-    this.visPropOld['fillColor']= '';
-    this.visPropOld['fillOpacity']= '';
-    this.visPropOld['shadow']= false;
-    this.visPropOld['firstArrow'] = false;
-    this.visPropOld['lastArrow'] = false;
+    JXG.clearVisPropOld(this); // create this.visPropOld and set default values
 
     /**
      * If element is in two dimensional real space this is true, else false.
@@ -1186,14 +1178,18 @@ JXG.GeometryElement.prototype.toJSON = function() {
     return json;
 };
 
-JXG.GeometryElement.prototype.clearVisPropOld = function() {
-    this.visPropOld = {};
-    this.visPropOld['strokeColor']= '';
-    this.visPropOld['strokeOpacity']= '';
-    this.visPropOld['strokeWidth']= '';
-    this.visPropOld['fillColor']= '';
-    this.visPropOld['fillOpacity']= '';
-    this.visPropOld['shadow']= false;
-    this.visPropOld['firstArrow'] = false;
-    this.visPropOld['lastArrow'] = false;
+/**
+  * Setting visPropOld is done in an none object oriented version 
+  * since otherwise there would be problems in cloneToBackground
+  */
+JXG.clearVisPropOld = function(el) {
+    el.visPropOld = {};
+    el.visPropOld['strokeColor']= '';
+    el.visPropOld['strokeOpacity']= '';
+    el.visPropOld['strokeWidth']= '';
+    el.visPropOld['fillColor']= '';
+    el.visPropOld['fillOpacity']= '';
+    el.visPropOld['shadow']= false;
+    el.visPropOld['firstArrow'] = false;
+    el.visPropOld['lastArrow'] = false;
 };

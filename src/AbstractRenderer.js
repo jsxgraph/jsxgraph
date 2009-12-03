@@ -71,7 +71,7 @@ JXG.AbstractRenderer = function() {
  */
 JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
     var node,
-    	f = el.visProp['face'];
+        f = el.visProp['face'];
         
     if(f == 'cross' || f == 'x') { // x
         node = this.createPrimitive('path',el.id);
@@ -94,7 +94,6 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
         this.appendNodesToElement(el, 'path');
     }
     el.rendNode = node;
-    
     
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
@@ -156,11 +155,7 @@ JXG.AbstractRenderer.prototype.changePointStyle = function(/** JXG.Point */el) {
         this.remove(node);
     }
     this.drawPoint(el);
-    el.visPropOld['strokeColor']= '';
-    el.visPropOld['strokeOpacity']= '';
-    el.visPropOld['strokeWidth']= '';
-    el.visPropOld['fillColor']= '';
-    el.visPropOld['fillOpacity']= '';
+    JXG.clearVisPropOld(el);
 
     if(!el.visProp['visible']) {
         this.hide(el);
@@ -867,12 +862,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";
-        el.visPropOld = {};
-        el.visPropOld['strokeColor']= null;
-        el.visPropOld['strokeOpacity']= null;
-        el.visPropOld['strokeWidth']= null;
-        el.visPropOld['fillColor']= null;
-        el.visPropOld['fillOpacity']= null;
+        JXG.clearVisPropOld(el);
         this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
     }
     else {
@@ -880,12 +870,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";        
-        el.visPropOld = {};
-        el.visPropOld['strokeColor']= null;
-        el.visPropOld['strokeOpacity']= null;
-        el.visPropOld['strokeWidth']= null;
-        el.visPropOld['fillColor']= null;
-        el.visPropOld['fillOpacity']= null;
+        JXG.clearVisPropOld(el);
         this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
@@ -900,7 +885,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridy";   
-        el.clearVisPropOld();
+        JXG.clearVisPropOld(el);
         this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
     }
     else {
@@ -908,7 +893,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridy";        
-        el.clearVisPropOld();
+        JXG.clearVisPropOld(el);
         this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
     this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  

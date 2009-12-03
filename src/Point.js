@@ -1008,6 +1008,7 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     copy.coords = this.coords;
     copy.visProp = this.visProp;
     copy.elementClass = JXG.OBJECT_CLASS_POINT;
+    JXG.clearVisPropOld(copy);
     
     this.board.renderer.drawPoint(copy);
 
