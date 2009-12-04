@@ -175,7 +175,7 @@ this.ggbAct = function(type, m, n, p) {
             break;
             case 'sin':
                 // return Function(v2, 'return Math.sin('+v2+');');
-                return 'Function("'+ v2 +'", "return Math.sin('+ v2 +');");';
+                return 'new Function("'+ v2 +'", "return Math.sin('+ v2 +');");';
             break;
             default:
             break;
@@ -900,7 +900,7 @@ this.ggbParse = function(board, exp, element) {
 	            act *= -1;
 
 	            if( _dbg_withtrace )
-	                __dbg_print( "Reducing by producution: " + act );
+	                __dbg_print( "Reducing by production: " + act );
 
 	            rval = void(0);
 
@@ -1059,7 +1059,7 @@ this.ggbParse = function(board, exp, element) {
 	            for( var i = 0; i < pop_tab[act][1]; i++ )
 	            {
 	                sstack.pop();
-	                vstack.pop();
+                    str = vstack.pop();
 	            }
 
 	            go = -1;
@@ -1111,7 +1111,7 @@ this.ggbParse = function(board, exp, element) {
                 + " near \"" + str.substr( error_offsets[i] ) + "\", expecting \"" + error_lookaheads[i].join() + "\"\n" ;
     JXG.GeogebraReader.debug( errstr );
   }
-JXG.GeogebraReader.debug('<b style="color:red">ende</b>: '+ str);
+JXG.GeogebraReader.debug('<b style="color:red">ende</b>: '+ str+' : ');
   return str;
 }; //end: ggbParse()
 
@@ -1841,19 +1841,18 @@ this.writeElement = function(board, output, input, cmd) {
       ////func[l] = 'return '+ func[l] +';'
       // return board.create('functiongraph', [Function(func[0], 'return '+func[1]+';'), -3, 3]);
 */
-if(JXG.GeogebraReader.getElement(attr.name, true)) {
-  var func = JXG.GeogebraReader.getElement(attr.name, true).attributes['exp'].value;
-} else {
-  var func = input[0];
-}
-func = JXG.GeogebraReader.functionParse(func);
+    if(JXG.GeogebraReader.getElement(attr.name, true)) {
+        var func = JXG.GeogebraReader.getElement(attr.name, true).attributes['exp'].value;
+    } else {
+        var func = input[0];
+    }
+    func = JXG.GeogebraReader.functionParse(func);
 
       JXG.GeogebraReader.debug('Function: '+ func);
       func[func.length-1] = JXG.GeogebraReader.ggbParse(board, func[func.length-1]);
       // func = JXG.GeogebraReader.ggbParse(board, func);
-      JXG.GeogebraReader.debug('Function: '+ func);
-
-f = board.create('functiongraph', [func[func.length-1]]);
+      JXG.GeogebraReader.debug('Function: '+ func[func.length-1]);
+      f = board.create('functiongraph', [eval(func[func.length-1])]);
 
       try {
         if (l==1)
