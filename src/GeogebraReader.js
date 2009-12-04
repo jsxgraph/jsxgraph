@@ -208,12 +208,14 @@ this.ggbParse = function(board, exp, element) {
   if(element) JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ element.name + "("+ element.id +")");
 
   // prepare parsing:
-  // o = (o.match(/sin/)) ? o.replace(/sin/, "Math.sin") : o; // deprecated
   exp = (exp.match(/\u00B2/)) ? exp.replace(/\u00B2/, '^2') : exp;
   exp = (exp.match(/\u00B2/)) ? exp.replace(/\u00B3/, '^3') : exp;
-  // exp = (exp.match(/x\(/)) ? exp.replace(/x\(/, 'X(') : exp;
-  // exp = (exp.match(/y\(/)) ? exp.replace(/y\(/, 'Y(') : exp;
-  // exp = (exp.match(/sin\(/)) ? exp.replace(/sin\(/, 'SIN(') : exp;
+  exp = (exp.match(/\u225F/)) ? exp.replace(/\u225F/, '==') : exp;
+  exp = (exp.match(/\u2260/)) ? exp.replace(/\u2260/, '!=') : exp;
+  exp = (exp.match(/\u2264/)) ? exp.replace(/\u2264/, '<=') : exp;
+  exp = (exp.match(/\u2265/)) ? exp.replace(/\u2266/, '>=') : exp;
+  exp = (exp.match(/\u2227/)) ? exp.replace(/\u2227/, '&&') : exp;
+  exp = (exp.match(/\u2228/)) ? exp.replace(/\u2228/, '//') : exp;
 
   JXG.GeogebraReader.debug('EXP: '+ exp);
 
