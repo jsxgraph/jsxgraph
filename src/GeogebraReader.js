@@ -108,12 +108,10 @@ this.ggbAct = function(type, m, n, p) {
       return '('+ v1 +'>'+ v2 +')';
     break;
     case 'add':
-      return (JXG.isNumber(v1)) ? v1 : parseInt(v1)
-             +
-             (JXG.isNumber(v2)) ? v2 : parseInt(v2);
+      return v1 +'+'+ v2;
     break;
     case 'sub':
-      return v1 - v2;
+      return v1 +'-'+ v2;
     break;
     case 'neg':
       return '!('+ v1 +')';
@@ -137,10 +135,10 @@ this.ggbAct = function(type, m, n, p) {
       return '('+ v1 +'&&'+ v2 +')';
     break;
     case 'mul':
-      return v1 * v2;
+      return v1 +'*'+ v2;
     break;
     case 'div':
-      return v1 / v2;
+      return v1 +'/'+ v2;
     break;
     case 'negmult':
       return v1 * -1;
@@ -175,7 +173,7 @@ this.ggbAct = function(type, m, n, p) {
             break;
             case 'sin':
                 // return Function(v2, 'return Math.sin('+v2+');');
-                return 'new Function("'+ v2 +'", "return Math.sin('+ v2 +');");';
+                return 'Math.sin('+ v2 +')';
             break;
             default:
             break;
@@ -207,20 +205,6 @@ this.ggbAct = function(type, m, n, p) {
 this.ggbParse = function(board, exp, element) {
   var element = (element) ? JXG.getReference(board, board.ggbElements[element].id) : false;
   if(element) JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ element.name + "("+ element.id +")");
-
-  if(JXG.GeogebraReader.format <= 3.01) {
-    // prepare string: "solve" multiplications 'a b' to 'a*b'
-    var s = exp.split(' ');
-    var o = '';
-    for(var i=0; i<s.length; i++) {
-      if(s.length != i+1)
-        if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
-          if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1)
-            s[i] = s[i] + "*";
-      o += s[i];
-    };
-    exp = o;
-  }
 
   // prepare parsing:
   // o = (o.match(/sin/)) ? o.replace(/sin/, "Math.sin") : o; // deprecated
@@ -1111,7 +1095,6 @@ this.ggbParse = function(board, exp, element) {
                 + " near \"" + str.substr( error_offsets[i] ) + "\", expecting \"" + error_lookaheads[i].join() + "\"\n" ;
     JXG.GeogebraReader.debug( errstr );
   }
-JXG.GeogebraReader.debug('<b style="color:red">ende</b>: '+ str+' : ');
   return str;
 }; //end: ggbParse()
 
@@ -1227,8 +1210,21 @@ this.functionParse = function(exp) {
       for(var i=0; i<vars.length; i++)
         expr = expr.replace(eval('/'+vars[i]+'/g'), '__'+vars[i]);
 
+	  if(JXG.GeogebraReader.format <= 3.01) {
+	    // prepare string: "solve" multiplications 'a b' to 'a*b'
+	    var s = expr.split(' ');
+	    var o = '';
+	    for(var i=0; i<s.length; i++) {
+	      if(s.length != i+1)
+	        if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
+	          if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1 || s[i+1].search(/\_\_[a-zA-Z0-9]+/) > -1)
+	            s[i] = s[i] + "*";
+	      o += s[i];
+	    };
+	    expr = o;
+	  }
+
       output.push(expr);
-      // JXG.GeogebraReader.debug("* out: "+ output.toString());
       return output;
     } else {
       return exp;
@@ -1811,58 +1807,31 @@ this.writeElement = function(board, output, input, cmd) {
       }
     break;
     case 'function':
-/*
       // attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       // attr = JXG.GeogebraReader.colorProperties(element, attr);
       // gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       // attr = JXG.GeogebraReader.visualProperties(element, attr);
-
       if(JXG.GeogebraReader.getElement(attr.name, true)) {
         var func = JXG.GeogebraReader.getElement(attr.name, true).attributes['exp'].value;
       } else {
         var func = input[0];
       }
-      JXG.GeogebraReader.debug('Function: '+ func);
-
-      // interval with right and/or left borders
-      if(input && input.length == 2) {
-        input[2] = null;
-      } else {
-        var input = [null, null, null];
-      }
-
       func = JXG.GeogebraReader.functionParse(func);
-      var l = func.length - 1;
+      var l = func.length;
 
-      func[l] = JXG.GeogebraReader.ggbParse(board, func[l]);
-
-      // var f = board.create('functiongraph', [Function('x', 'return Math.sin(x);') , -3, 3]);
-      ////func[l] = func[l].replace(/sin/,'Math.sin');
-      ////func[l] = 'return '+ func[l] +';'
-      // return board.create('functiongraph', [Function(func[0], 'return '+func[1]+';'), -3, 3]);
-*/
-    if(JXG.GeogebraReader.getElement(attr.name, true)) {
-        var func = JXG.GeogebraReader.getElement(attr.name, true).attributes['exp'].value;
-    } else {
-        var func = input[0];
-    }
-    func = JXG.GeogebraReader.functionParse(func);
-
-      JXG.GeogebraReader.debug('Function: '+ func);
-      func[func.length-1] = JXG.GeogebraReader.ggbParse(board, func[func.length-1]);
-      // func = JXG.GeogebraReader.ggbParse(board, func);
-      JXG.GeogebraReader.debug('Function: '+ func[func.length-1]);
-      f = board.create('functiongraph', [eval(func[func.length-1])]);
+      func[func.length-1] = 'return '+ JXG.GeogebraReader.ggbParse(board, func[func.length-1]) +';';
 
       try {
-        if (l==1)
-          f = board.create('functiongraph', [Function(func[0], func[1]), input[1], input[2]]);
+        if(l == 1)
+          f = board.create('functiongraph', [new Function(func[0])]);
         else if (l==2)
-          f = board.create('functiongraph', [Function(func[0], func[1], func[2]), input[1], input[2]]);
+          f = board.create('functiongraph', [new Function(func[0], func[1])]);
         else if (l==3)
-          f = board.create('functiongraph', [Function(func[0], func[1], func[2], func[3]), input[1], input[2]]);
+          f = board.create('functiongraph', [new Function(func[0], func[1], func[2]), input[1], input[2]]);
         else if (l==4)
-          f = board.create('functiongraph', [Function(func[0], func[1], func[2], func[3], func[4], input[1], input[2])]);
+          f = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3]), input[1], input[2]]);
+        else if (l==5)
+          f = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3], func[4], input[1], input[2])]);
 
         JXG.GeogebraReader.debug("Functiongraph "+ attr.name +"("+ func[0] +", ...) = "+ func[l] +"<br/>\n");
         return f;
@@ -1870,6 +1839,7 @@ this.writeElement = function(board, output, input, cmd) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Functiongraph " + attr.name +"<br>\n");
         return false;
       }
+
      break;
      case 'polar':
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
