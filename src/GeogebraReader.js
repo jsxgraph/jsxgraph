@@ -126,7 +126,8 @@ this.ggbAct = function(type, m, n, p) {
                ? JXG.getReference(JXG.GeogebraReader.board, JXG.GeogebraReader.board.ggbElements[t2].id)
                : t2;
 
-      return function(x) { return Math.pow(x, s21); };
+      // return function(x) { return Math.pow(x, s21); };
+      return 'Math.pow('+ v1 +','+ v2 +')';
     break;
     case 'or':
       return '('+ v1 +'||'+ v2 +')';
@@ -1644,15 +1645,17 @@ this.writeElement = function(board, output, input, cmd) {
                     [-circ.midpoint.Y(),0,1]
                    ];
             };
+
         var t = board.create('line', [
                     function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[0]; },
                     function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[1]; },
                     function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[2]; }
                 ], {visible:false});
-        var i1 = board.create('intersection', [input[1],t,0],{visible:false});
-        var i2 = board.create('intersection', [input[1],t,1],{visible:false});
-        var t1 = board.create('line', [input[0],i1]);
-        var t2 = board.create('line', [input[0],i2]);
+
+        var i1 = board.create('intersection', [input[1], t, 0],{visible: true});
+        var i2 = board.create('intersection', [input[1], t, 1],{visible: true});
+        var t1 = board.create('line', [input[0], i1]);
+        var t2 = board.create('line', [input[0], i2]);
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Tangent " + attr.name +"<br>\n");
         return false;
@@ -1823,17 +1826,15 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         if(l == 1)
-          f = board.create('functiongraph', [new Function(func[0])]);
+          f = board.create('functiongraph', [new Function(func[0])], attr);
         else if (l==2)
-          f = board.create('functiongraph', [new Function(func[0], func[1])]);
+          f = board.create('functiongraph', [new Function(func[0], func[1])], attr);
         else if (l==3)
-          f = board.create('functiongraph', [new Function(func[0], func[1], func[2]), input[1], input[2]]);
+          f = board.create('functiongraph', [new Function(func[0], func[1], func[2])], attr);
         else if (l==4)
-          f = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3]), input[1], input[2]]);
+          f = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3])], attr);
         else if (l==5)
-          f = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3], func[4], input[1], input[2])]);
-
-        JXG.GeogebraReader.debug("Functiongraph "+ attr.name +"("+ func[0] +", ...) = "+ func[l] +"<br/>\n");
+          f = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3], func[4])], attr);
         return f;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Functiongraph " + attr.name +"<br>\n");
