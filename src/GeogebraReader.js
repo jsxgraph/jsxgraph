@@ -186,8 +186,8 @@ this.ggbAct = function(type, m, n, p) {
             JXG.GeogebraReader.debug("regged: "+ v1 +" (id: "+ JXG.GeogebraReader.board.ggbElements[v1].id +")");
         }
         // return function() { return JXG.GeogebraReader.board.ggbElements[v1]; };
-        return 'JXG.GeogebraReader.board.ggbElements["'+v1+'"]';
-        // return '"'+v1+'"'
+        // return 'JXG.GeogebraReader.board.ggbElements["'+v1+'"]';
+        return '"'+v1+'"';
       }
     break;
     case 'func':
