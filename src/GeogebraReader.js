@@ -1222,7 +1222,10 @@ switch(type) {
 	    for(var i=0; i<s.length; i++) {
 	      if(s.length != i+1)
 	        if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
-	          if(s[i+1].search(/^\(/) > -1 || s[i].search(/^[0-9]+/) > -1 || s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1 || s[i+1].search(/\_\_[a-zA-Z0-9]+/) > -1)
+	          if(s[i+1].search(/^\(/) > -1 ||
+                 s[i+1].search(/^[0-9]+/) > -1 ||
+                 s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1 ||
+                 s[i+1].search(/\_\_[a-zA-Z0-9]+/) > -1)
 	            s[i] = s[i] + "*";
 	      o += s[i];
 	    };
