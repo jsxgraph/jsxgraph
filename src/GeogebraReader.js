@@ -170,10 +170,10 @@ this.ggbAct = function(type, m, n, p) {
                 return function() { return JXG.getReference(JXG.GeogebraReader.board, v2).X(); };
             break;
             case 'y':
-                return function() { return JXG.getReference(JXG.GeogebraReader.board, v2).Y(); };
+                // return function() { return JXG.getReference(JXG.GeogebraReader.board, v2).Y(); };
+                return 'JXG.getReference(JXG.GeogebraReader.board, '+ v2 +').Y()';
             break;
             case 'sin':
-                // return Function(v2, 'return Math.sin('+v2+');');
                 return 'Math.sin('+ v2 +')';
             break;
             default:
@@ -185,7 +185,9 @@ this.ggbAct = function(type, m, n, p) {
             JXG.GeogebraReader.board.ggbElements[v1] = JXG.GeogebraReader.writeElement(board, input);
             JXG.GeogebraReader.debug("regged: "+ v1 +" (id: "+ JXG.GeogebraReader.board.ggbElements[v1].id +")");
         }
-        return function() { return JXG.GeogebraReader.board.ggbElements[v1]; };
+        // return function() { return JXG.GeogebraReader.board.ggbElements[v1]; };
+        return 'JXG.GeogebraReader.board.ggbElements["'+v1+'"]';
+        // return '"'+v1+'"'
       }
     break;
     case 'func':
