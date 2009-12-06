@@ -185,7 +185,7 @@ this.ggbAct = function(type, m, n, p) {
             JXG.GeogebraReader.board.ggbElements[v1] = JXG.GeogebraReader.writeElement(board, input);
             JXG.GeogebraReader.debug("regged: "+ v1 +" (id: "+ JXG.GeogebraReader.board.ggbElements[v1].id +")");
         }
-        return JXG.GeogebraReader.board.ggbElements[v1];
+        return function() { return JXG.GeogebraReader.board.ggbElements[v1]; };
       }
     break;
     case 'func':
@@ -1212,8 +1212,16 @@ switch(type) {
         output.push("__"+vars[i]);
 
       var expr = exp.split('=')[1];
-      for(var i=0; i<vars.length; i++)
-        expr = expr.replace(eval('/'+vars[i]+'/g'), '__'+vars[i]);
+
+      // separate and replace function parameters
+      for(var i=0; i<vars.length; i++) {
+        if(vars[i] == 'x')
+          expr = expr.replace(/x(?!\()/g, '__'+vars[i]);
+        else if(vars[i] == 'y')
+          expr = expr.replace(/y(?!\()/g, '__'+vars[i]);
+        else
+          expr = expr.replace( eval('/'+vars[i]+'/g'), '__'+vars[i] );
+      }
 
 	  if(JXG.GeogebraReader.format <= 3.01) {
 	    // prepare string: "solve" multiplications 'a b' to 'a*b'
@@ -1225,8 +1233,9 @@ switch(type) {
 	          if(s[i+1].search(/^\(/) > -1 ||
                  s[i+1].search(/^[0-9]+/) > -1 ||
                  s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1 ||
-                 s[i+1].search(/\_\_[a-zA-Z0-9]+/) > -1)
-	            s[i] = s[i] + "*";
+                 s[i+1].search(/\_\_[a-zA-Z0-9]+/) > -1) {
+	               s[i] = s[i] + "*";
+                 }
 	      o += s[i];
 	    };
 	    expr = o;
@@ -1239,9 +1248,7 @@ switch(type) {
     }
   break;
   case 's':
-    if(exp.match(/x/) && !exp.match(/x\(/)) {
-      exp = exp.replace(/x/, '__x');
-    }
+    exp = exp.replace(/x(?!\()/g, '__x');
     return ['__x', exp];
   break;
 }
@@ -1840,6 +1847,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       var l = func.length;
       func[func.length-1] = 'return '+ JXG.GeogebraReader.ggbParse(board, func[func.length-1]) +';';
+      // func[func.length-1] = 'return Math.sin(function() {return JXG.GeogebraReader.board.ggbElements["a"].Value();}() * __x - function() {return JXG.getReference(JXG.GeogebraReader.board, "A").X();}());';
 
       var range = [(input && input[1]) ? input[1] : null, (input && input[2]) ? input[2] : null];
 
