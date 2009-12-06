@@ -1199,7 +1199,9 @@ this.getElement = function(name, expr) {
  * @param {String} exp Expression to parse and correct
  * @return {String} correct expression with fixed function and multiplication
  */
-this.functionParse = function(exp) {
+this.functionParse = function(type, exp) {
+switch(type) {
+  case 'c':  
     // search for function params
     if(exp.match(/[a-zA-Z0-9]+\([a-zA-Z0-9]+[a-zA-Z0-9,\ ]*\)[\ ]*[=][\ ]*[a-zA-Z0-9\+\-\*\/]+/)) {
       var input = exp.split('(')[1].split(')')[0];
@@ -1232,6 +1234,14 @@ this.functionParse = function(exp) {
     } else {
       return exp;
     }
+  break;
+  case 's':
+    if(exp.match(/x/) && !exp.match(/x\(/)) {
+      exp = exp.replace(/x/, '__x');
+    }
+    return ['__x', exp];
+  break;
+}
 };
 
 /**
@@ -1816,27 +1826,31 @@ this.writeElement = function(board, output, input, cmd) {
       // attr = JXG.GeogebraReader.colorProperties(element, attr);
       // gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       // attr = JXG.GeogebraReader.visualProperties(element, attr);
+
       if(JXG.GeogebraReader.getElement(attr.name, true)) {
         var func = JXG.GeogebraReader.getElement(attr.name, true).attributes['exp'].value;
+        func = JXG.GeogebraReader.functionParse('c', func);
       } else {
         var func = input[0];
+        func = JXG.GeogebraReader.functionParse('s', func);
       }
-      func = JXG.GeogebraReader.functionParse(func);
-      var l = func.length;
 
+      var l = func.length;
       func[func.length-1] = 'return '+ JXG.GeogebraReader.ggbParse(board, func[func.length-1]) +';';
+
+      var range = [(input && input[1]) ? input[1] : null, (input && input[2]) ? input[2] : null];
 
       try {
         if(l == 1)
-          f = board.create('functiongraph', [new Function(func[0])], attr);
+          f = board.create('functiongraph', [new Function(func[0]), range[0], range[1]], attr);
         else if (l==2)
-          f = board.create('functiongraph', [new Function(func[0], func[1])], attr);
+          f = board.create('functiongraph', [new Function(func[0], func[1]), range[0], range[1]], attr);
         else if (l==3)
-          f = board.create('functiongraph', [new Function(func[0], func[1], func[2])], attr);
+          f = board.create('functiongraph', [new Function(func[0], func[1], func[2]), range[0], range[1]], attr);
         else if (l==4)
-          f = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3])], attr);
+          f = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3]), range[0], range[1]], attr);
         else if (l==5)
-          f = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3], func[4])], attr);
+          f = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3], func[4]), range[0], range[1]], attr);
         return f;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Functiongraph " + attr.name +"<br>\n");
