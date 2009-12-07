@@ -105,7 +105,7 @@ this.ggbAct = function(type, m, n, p) {
       } else {
         if(typeof JXG.GeogebraReader.board.ggbElements[v1] == 'undefined' || JXG.GeogebraReader.board.ggbElements[v1] == '') {
             var input = JXG.GeogebraReader.getElement(v1);
-            JXG.GeogebraReader.board.ggbElements[v1] = JXG.GeogebraReader.writeElement(board, input);
+            JXG.GeogebraReader.board.ggbElements[v1] = JXG.GeogebraReader.writeElement(JXG.GeogebraReader.board, input);
             JXG.GeogebraReader.debug("regged: "+ v1 +" (id: "+ JXG.GeogebraReader.board.ggbElements[v1].id +")");
         }
 
@@ -985,10 +985,10 @@ this.debug = function(s) {
  * @return {Object} returning the updated attr-attributes object
  */
 this.colorProperties = function(Data, attr) {
-  var a = (Data.getElementsByTagName("objColor")[0].attributes["alpha"]) ? 1*Data.getElementsByTagName("objColor")[0].attributes["alpha"].value : 0;
-  var r = (Data.getElementsByTagName("objColor")[0].attributes["r"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["r"].value).toString(16) : 0;
-  var g = (Data.getElementsByTagName("objColor")[0].attributes["g"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["g"].value).toString(16) : 0;
-  var b = (Data.getElementsByTagName("objColor")[0].attributes["b"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["b"].value).toString(16) : 0;
+  var a = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["alpha"]) ? 1*Data.getElementsByTagName("objColor")[0].attributes["alpha"].value : 0;
+  var r = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["r"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["r"].value).toString(16) : 0;
+  var g = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["g"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["g"].value).toString(16) : 0;
+  var b = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["b"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["b"].value).toString(16) : 0;
   if (r.length == 1) r = '0' + r;
   if (g.length == 1) g = '0' + g;
   if (b.length == 1) b = '0' + b;
@@ -1051,8 +1051,8 @@ this.coordinates = function(gxtEl, Data) {
  * @return {Object} object with according attributes
  */
 this.visualProperties = function(Data, attr) {
-  (Data.getElementsByTagName("show")[0].attributes["object"]) ? attr.visible = Data.getElementsByTagName("show")[0].attributes["object"].value : false;
-  (Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.visibleLabel = Data.getElementsByTagName("show")[0].attributes["label"].value : false;
+  (Data.getElementsByTagName("show").length > 0 && Data.getElementsByTagName("show")[0].attributes["object"]) ? attr.visible = Data.getElementsByTagName("show")[0].attributes["object"].value : false;
+  (Data.getElementsByTagName("show").length > 0 && Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.visibleLabel = Data.getElementsByTagName("show")[0].attributes["label"].value : false;
   (Data.getElementsByTagName('pointSize')[0]) ? attr.style = Data.getElementsByTagName('pointSize')[0].attributes["val"].value : false;
   (Data.getElementsByTagName("labelOffset")[0]) ? attr.labelX = 1*Data.getElementsByTagName("labelOffset")[0].attributes["x"].value : false;
   (Data.getElementsByTagName("labelOffset")[0]) ? attr.labelY = 1*Data.getElementsByTagName("labelOffset")[0].attributes["y"].value : false;
