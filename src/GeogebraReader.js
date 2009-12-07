@@ -119,15 +119,22 @@ this.ggbAct = function(type, m, n, p) {
     case 'pow':
       var t1 = v1;
       var t2 = v2;
-      var s11 = (board.ggbElements[t1])
-               ? JXG.getReference(JXG.GeogebraReader.board, JXG.GeogebraReader.board.ggbElements[t1].id)
-               : t1;
-      var s21 = (board.ggbElements[t2])
-               ? JXG.getReference(JXG.GeogebraReader.board, JXG.GeogebraReader.board.ggbElements[t2].id)
-               : t2;
-
+      var s11;
+      if (board.ggbElements[t1]) {            // Slider case
+        t1 = JXG.getReference(JXG.GeogebraReader.board, JXG.GeogebraReader.board.ggbElements[t1].id);
+        s11 = function(){ return t1.Value();} 
+      } else {
+        s11 = function(){ return t1;};
+      }
+      if (board.ggbElements[t2]) {            // Slider case
+        t2 = JXG.getReference(JXG.GeogebraReader.board, JXG.GeogebraReader.board.ggbElements[21].id);
+        s21 = function(){ return t2.Value();} 
+      } else {
+        s21 = function(){ return t2;};
+      }
       // return function(x) { return Math.pow(x, s21); };
-      return 'Math.pow('+ v1 +', '+ v2 +')';
+      //return 'Math.pow('+ v1 +', '+ v2 +')';
+      return function() { return Math.pow( s11(), s21() ); };
     break;
     case 'or':
       return '('+ v1 +'||'+ v2 +')';
