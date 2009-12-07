@@ -121,20 +121,20 @@ this.ggbAct = function(type, m, n, p) {
       var t2 = v2;
       var s11;
       if (board.ggbElements[t1]) {            // Slider case
-        t1 = JXG.getReference(JXG.GeogebraReader.board, JXG.GeogebraReader.board.ggbElements[t1].id);
-        s11 = function(){ return t1.Value();} 
+        t1 = JXG.GeogebraReader.board.ggbElements[t1].id;
+        s11 = 'JXG.getReference(JXG.GeogebraReader.board,"'+t1+'").Value()';
       } else {
-        s11 = function(){ return t1;};
+        s11 = t1;
       }
       if (board.ggbElements[t2]) {            // Slider case
-        t2 = JXG.getReference(JXG.GeogebraReader.board, JXG.GeogebraReader.board.ggbElements[21].id);
-        s21 = function(){ return t2.Value();} 
+        t2 = JXG.GeogebraReader.board.ggbElements[t2].id;
+        s21 = 'JXG.getReference(JXG.GeogebraReader.board,"'+t2+'").Value()';
       } else {
-        s21 = function(){ return t2;};
+        s21 = t2;
       }
-      // return function(x) { return Math.pow(x, s21); };
-      //return 'Math.pow('+ v1 +', '+ v2 +')';
-      return function() { return Math.pow( s11(), s21() ); };
+
+        // return function(x) { return Math.pow(x, s21); };
+      return 'Math.pow('+ s11 +', '+ s21 +')';
     break;
     case 'or':
       return '('+ v1 +'||'+ v2 +')';
