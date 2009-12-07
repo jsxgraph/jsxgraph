@@ -10,22 +10,9 @@
     '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+'          FLOAT
     '\_\_[a-zA-Z0-9]+'                       PARAM
     '[a-zA-Z]+(\_*[a-zA-Z0-9]+)*'            VAR
-    '[a-zA-Z]+\(\_\_[a-zA-Z0-9]+\)\ *\='     FUNC
     '\&[a-zA-Z]+\;'                          HTML
     '\"[a-zA-Z0-9\.\ ]*\"'                   STRING
     ;
-/~
-'\('
-'\)'
-'[0-9]+'                                 INT    [* %match = parseInt( %match ); *]
-'[0-9]+\.[0-9]*|[0-9]*\.[0-9]+'          FLOAT  [* %match = parseFloat( %match ); *]
-'\_\_[a-zA-Z0-9]+'                       PARAM  [* %match = 'param: '+ %match +', '; *]
-'[a-zA-Z]+(\_*[a-zA-Z0-9]+)*'            VAR    [* %match = 'var: '+ %match; *]
-'[a-zA-Z]+\(\_\_[a-zA-Z0-9]+\)\ *\='     FUNC   [* %match = 'func: '+ %match; *]
-'\&[a-zA-Z]+\;'                          HTML   [* %match = 'html: '+ %match; *]
-'\"[a-zA-Z0-9\.\ ]*\"'                   STRING [* %match = 'string: '+ %match; *]
-;
-~/
 
 /~ Left-associative tokens, lowest precedence ~/
 <  '='
@@ -56,12 +43,12 @@ p:      e                          [* %% = JXG.GeogebraReader.ggbAct('end', %1);
 
 
 e:        e ',' e                  [* %% = JXG.GeogebraReader.ggbAct('coord', %1, %3, element); *]
-        | e '<=' e                 [* %% = JXG.GeogebraReader.ggbAct('st', %1, %3); *]
-        | e '>=' e                 [* %% = JXG.GeogebraReader.ggbAct('gt', %1, %3); *]
+        | e '<=' e                 [* %% = JXG.GeogebraReader.ggbAct('le', %1, %3); *]
+        | e '>=' e                 [* %% = JXG.GeogebraReader.ggbAct('ge', %1, %3); *]
         | e '==' e                 [* %% = JXG.GeogebraReader.ggbAct('eq', %1, %3); *]
         | e '!=' e                 [* %% = JXG.GeogebraReader.ggbAct('neq', %1, %3); *]
-        | e '<' e                  [* %% = JXG.GeogebraReader.ggbAct('sm', %1, %3); *]
-        | e '>' e                  [* %% = JXG.GeogebraReader.ggbAct('gr', %1, %3); *]
+        | e '<' e                  [* %% = JXG.GeogebraReader.ggbAct('lt', %1, %3); *]
+        | e '>' e                  [* %% = JXG.GeogebraReader.ggbAct('gt', %1, %3); *]
         | e '+' e                  [* %% = JXG.GeogebraReader.ggbAct('add', %1, %3); *]
         | e '-' e                  [* %% = JXG.GeogebraReader.ggbAct('sub', %1, %3); *]
 		| '!' e                    [* %% = JXG.GeogebraReader.ggbAct('neg', %2); *]
@@ -74,11 +61,10 @@ e:        e ',' e                  [* %% = JXG.GeogebraReader.ggbAct('coord', %1
         | '(' e ')'                [* %% = JXG.GeogebraReader.ggbAct('bra', %2); *]
         | STRING '+' e             [* %% = JXG.GeogebraReader.ggbAct('string', %1, %3); *]
         | INT                      [* %% = JXG.GeogebraReader.ggbAct('int', %1); *]
-        | FLOAT                    [* %% = JXG.GeogebraReader.ggbAct('float', %1);; *]
+        | FLOAT                    [* %% = JXG.GeogebraReader.ggbAct('float', %1); *]
         | PARAM                    [* %% = JXG.GeogebraReader.ggbAct('param', %1); *]
-        | HTML                     [* %% = JXG.GeogebraReader.ggbAct('html', %1);; *]
-        | STRING                   [* %% = JXG.GeogebraReader.ggbAct('string');; *]
+        | HTML                     [* %% = JXG.GeogebraReader.ggbAct('html', %1); *]
+        | STRING                   [* %% = JXG.GeogebraReader.ggbAct('string', %1); *]
         | VAR '(' e ')'            [* %% = JXG.GeogebraReader.ggbAct('var', %1, %3); *]
         | VAR                      [* %% = JXG.GeogebraReader.ggbAct('var', %1); *]
-        | FUNC e                   [* %% = JXG.GeogebraReader.ggbAct('func', %1, %2); *]
         ;
