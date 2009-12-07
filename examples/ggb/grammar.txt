@@ -6,12 +6,12 @@
 /~ Non-associative tokens ~/
     '\('
     '\)'
-    '[0-9]+'                                 INT
-    '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+'          FLOAT
-    '\_\_[a-zA-Z0-9]+'                       PARAM
-    '[a-zA-Z]+(\_*[a-zA-Z0-9]+)*'            VAR
-    '\&[a-zA-Z]+\;'                          HTML
-    '\"[a-zA-Z0-9\.\ ]*\"'                   STRING
+    '[0-9]+'                        INT
+    '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+' FLOAT
+    '\_\_[a-zA-Z0-9]+'              PARAM
+    '[a-zA-Z]+(\_*[a-zA-Z0-9]+)*'   VAR
+    '\&[a-zA-Z]+\;'                 HTML
+    '\"[a-zA-Z0-9äüöß\=\.\ ]*\"'    STRING
     ;
 
 /~ Left-associative tokens, lowest precedence ~/
@@ -40,7 +40,6 @@
 
 p:      e                          [* %% = JXG.GeogebraReader.ggbAct('end', %1); *]
         ;
-
 
 e:        e ',' e                  [* %% = JXG.GeogebraReader.ggbAct('coord', %1, %3, element); *]
         | e '<=' e                 [* %% = JXG.GeogebraReader.ggbAct('le', %1, %3); *]

@@ -161,7 +161,7 @@ this.ggbAct = function(type, m, n, p) {
       return v1;
     break;
     case 'string':
-      if(v2) return v1 +'+'+ v2;
+      if(v2) return [v1, v2];
       else   return v1;
     break;
     case 'var':
@@ -221,7 +221,7 @@ this.ggbParse = function(exp, element) {
   exp = (exp.match(/\u225F/)) ? exp.replace(/\u225F/, '==') : exp;
   exp = (exp.match(/\u2260/)) ? exp.replace(/\u2260/, '!=') : exp;
   exp = (exp.match(/\u2264/)) ? exp.replace(/\u2264/, '<=') : exp;
-  exp = (exp.match(/\u2265/)) ? exp.replace(/\u2266/, '>=') : exp;
+  exp = (exp.match(/\u2265/)) ? exp.replace(/\u2265/, '>=') : exp;
   exp = (exp.match(/\u2227/)) ? exp.replace(/\u2227/, '&&') : exp;
   exp = (exp.match(/\u2228/)) ? exp.replace(/\u2228/, '//') : exp;
 
@@ -872,12 +872,12 @@ this.ggbParse = function(exp, element) {
 	    break;
 	    case 3:
 	    {
-	         rval = JXG.GeogebraReader.ggbAct('st', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]);
+	         rval = JXG.GeogebraReader.ggbAct('le', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]);
 	    }
 	    break;
 	    case 4:
 	    {
-	         rval = JXG.GeogebraReader.ggbAct('gt', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]);
+	         rval = JXG.GeogebraReader.ggbAct('ge', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]);
 	    }
 	    break;
 	    case 5:
@@ -892,12 +892,12 @@ this.ggbParse = function(exp, element) {
 	    break;
 	    case 7:
 	    {
-	         rval = JXG.GeogebraReader.ggbAct('sm', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]);
+	         rval = JXG.GeogebraReader.ggbAct('lt', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]);
 	    }
 	    break;
 	    case 8:
 	    {
-	         rval = JXG.GeogebraReader.ggbAct('gr', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]);
+	         rval = JXG.GeogebraReader.ggbAct('gt', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]);
 	    }
 	    break;
 	    case 9:
@@ -1100,9 +1100,31 @@ this.boardProperties = function(gxtEl, Data, attr) {
  * @return {Object} updated element
  */
 this.coordinates = function(gxtEl, Data) {
-  gxtEl.x = (Data.getElementsByTagName("coords")[0]) ? parseFloat(Data.getElementsByTagName("coords")[0].attributes["x"].value) : (Data.getElementsByTagName("startPoint")[0]) ? parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["x"].value) : false;
-  gxtEl.y = (Data.getElementsByTagName("coords")[0]) ? parseFloat(Data.getElementsByTagName("coords")[0].attributes["y"].value) : (Data.getElementsByTagName("startPoint")[0]) ? parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["y"].value) : false;
-  gxtEl.z = (Data.getElementsByTagName("coords")[0]) ? parseFloat(Data.getElementsByTagName("coords")[0].attributes["z"].value) : (Data.getElementsByTagName("startPoint")[0]) ? parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["z"].value) : false;
+  gxtEl.x = (Data.getElementsByTagName("coords")[0]) ?
+      parseFloat(Data.getElementsByTagName("coords")[0].attributes["x"].value)
+      : (Data.getElementsByTagName("startPoint")[0]) ?
+          parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["x"].value)
+          : (Data.getElementsByTagName("absoluteScreenLocation")[0]) ?
+              parseFloat(Data.getElementsByTagName("absoluteScreenLocation")[0].attributes["x"].value)
+              : false;
+
+  gxtEl.y = (Data.getElementsByTagName("coords")[0]) ?
+      parseFloat(Data.getElementsByTagName("coords")[0].attributes["y"].value)
+      : (Data.getElementsByTagName("startPoint")[0]) ?
+          parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["y"].value)
+          : (Data.getElementsByTagName("absoluteScreenLocation")[0]) ?
+              parseFloat(Data.getElementsByTagName("absoluteScreenLocation")[0].attributes["y"].value)
+              : false;
+
+  gxtEl.z = (Data.getElementsByTagName("coords")[0]) ?
+      parseFloat(Data.getElementsByTagName("coords")[0].attributes["z"].value)
+      : (Data.getElementsByTagName("startPoint")[0]) ?
+          parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["z"].value)
+          : false;
+          // : (Data.getElementsByTagName("absoluteScreenLocation")[0]) ?
+          //     parseFloat(Data.getElementsByTagName("absoluteScreenLocation")[0].attributes["z"].value)
+          //     : false;
+
   return gxtEl;
 };
 
@@ -1154,7 +1176,7 @@ this.getElement = function(name, expr) {
  * @return {String} correct expression with fixed function and multiplication
  */
 this.functionParse = function(type, exp) {
-switch(type) {
+ switch(type) {
   case 'c':  
     // search for function params
     if(exp.match(/[a-zA-Z0-9]+\([a-zA-Z0-9]+[a-zA-Z0-9,\ ]*\)[\ ]*[=][\ ]*[a-zA-Z0-9\+\-\*\/]+/)) {
@@ -1205,7 +1227,7 @@ switch(type) {
     exp = exp.replace(/x(?!\()/g, '__x');
     return ['__x', exp];
   break;
-}
+ }
 };
 
 /**
@@ -1882,16 +1904,14 @@ this.writeElement = function(board, output, input, cmd) {
      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
      var text = JXG.GeogebraReader.ggbParse(JXG.GeogebraReader.getElement(attr.name, true).attributes['exp'].value);
+
      try {
        JXG.GeogebraReader.debug("* <b>Text:</b> " + text +"<br>\n");
-       // var l1 = board.create('segment', [input[0].point1, [(1+input[0].point1.X()), input[0].point1.Y()]], {visible: false});
-       // var l2 = board.create('normal', [l1, l1.point2], {visible: false});
-       // var i  = board.create('intersection', [input[0], l2, 0], {visible: false});
-       // var m  = board.create('midpoint', [l1.point2, i], {visible: false});
-       // var slope = function() { return i.Y()-l1.point1.Y();};
-       // var t = board.create('text', [function(){return m.X();}, function(){return m.Y();},
-       //                function(){ return "m = "+ function(){ return i.Y()-l1.point1.Y();}(); }]);
-       // return m;
+       var tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [gxtEl.x, gxtEl.y], JXG.GeogebraReader.board);
+       var sx = tmp.usrCoords[1];
+       var sy = tmp.usrCoords[2];
+       var t = board.create('text', [sx, sy, text[0] +' '+ new Function('return '+ text[1] +';')() ]);
+       return t;
      } catch(e) {
        JXG.GeogebraReader.debug("* <b>Err:</b> Text: " + text +"<br>\n");
        return false;
