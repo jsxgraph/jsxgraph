@@ -127,7 +127,7 @@ this.ggbAct = function(type, m, n, p) {
                : t2;
 
       // return function(x) { return Math.pow(x, s21); };
-      return 'Math.pow('+ v1 +','+ v2 +')';
+      return 'Math.pow('+ v1 +', '+ v2 +')';
     break;
     case 'or':
       return '('+ v1 +'||'+ v2 +')';
@@ -170,8 +170,9 @@ this.ggbAct = function(type, m, n, p) {
                 return function() { return JXG.getReference(JXG.GeogebraReader.board, v2).X(); };
             break;
             case 'y':
-                // return function() { return JXG.getReference(JXG.GeogebraReader.board, v2).Y(); };
-                return 'JXG.getReference(JXG.GeogebraReader.board, '+ v2 +').Y()';
+                // return function(x) { return JXG.getReference(JXG.GeogebraReader.board, x).Y(); }(v2);
+                // return 'JXG.getReference(JXG.GeogebraReader.board, '+ v2 +').Y()';
+                return 'Y('+v2+')';
             break;
             case 'sin':
                 return 'Math.sin('+ v2 +')';
@@ -187,7 +188,7 @@ this.ggbAct = function(type, m, n, p) {
         }
         // return function() { return JXG.GeogebraReader.board.ggbElements[v1]; };
         // return 'JXG.GeogebraReader.board.ggbElements["'+v1+'"]';
-        return '"'+v1+'"';
+        return v1;
       }
     break;
     case 'func':
@@ -1388,19 +1389,20 @@ this.writeElement = function(board, output, input, cmd) {
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-      // to get the corner count and
-      var corner;
-      for(var i=0; i<input.length; i++) if(JXG.isNumber(parseInt(input[i]))) corner = parseInt(input[i]);
-      JXG.GeogebraReader.debug('Ecken: '+ corner);
+      var t;
+      // test if polygon is regular
+      if(input.length == 3 && output.length != 4) {
+        input[2] = parseInt(input[2]);
+        t = 'regular';
+      }
 
-      // TODO fixed points with regular polygons
       try {
         JXG.GeogebraReader.debug("* <b>Polygon:</b> First: " + input[0].name + ", Second: " + input[1].name + ", Third: " + input[2].name + "<br>\n");
 
         var borders = [];
         var length = output.length;
-        if(JXG.isNumber(corner) && corner > 0) length -= (corner - 2); // to avoid appending the constructed polygon corner
-        for(var i=1; i<length; i++) {
+
+        for(var i=1; i<output.length; i++) {
           borders[i-1] = {};
           borders[i-1].id = '';
           borders[i-1].name = output[i].attributes['label'].value;
@@ -1416,16 +1418,10 @@ this.writeElement = function(board, output, input, cmd) {
           }
         }
 
-        for(var i=(output.length - corner + 2); i<output.length; i++) {
-          var el = output[i].attributes['label'].value;
-          // Construct the corner if not yet registered
-          if(typeof board.ggbElements[el] == 'undefined' || board.ggbElements[el] == '') {
-            board.ggbElements[el] = JXG.GeogebraReader.writeElement(board, output[i]);
-          }
-          points.push(board.ggbElements[el]);
-        }
-
-        l = board.create('polygon', points, attr);
+        if(t == 'regular')
+          l = board.create('regularpolygon', input, attr);
+        else
+          l = board.create('polygon', points, attr);
         return l;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Polygon " + attr.name +"<br>\n");
@@ -1661,25 +1657,34 @@ this.writeElement = function(board, output, input, cmd) {
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
-        JXG.GeogebraReader.debug("* <b>Tangent:</b> First: " + input[0].name + ", Sec.: "+ input[1].name +"<br>\n");
-        var m = function(circ) {
-        return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
-                     -circ.midpoint.X(),-circ.midpoint.Y()],
-                    [-circ.midpoint.X(),1,0],
-                    [-circ.midpoint.Y(),0,1]
-                   ];
-            };
+        JXG.GeogebraReader.debug("* <b>Tangent:</b> First: " + input[0].name + ", Sec.: "+ input[1].name +"("+ input[1].type +")<br>\n");
+        switch(input[1].type) {
+          case 1330923344: // graph
+            input[0].makeGlider(input[1]);
+            t = board.create('tangent', [input[0]], attr);
+            return t;
+          break;
+          case 1330922316: // circle
+            var m = function(circ) {
+	        return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
+	                     -circ.midpoint.X(),-circ.midpoint.Y()],
+	                    [-circ.midpoint.X(),1,0],
+	                    [-circ.midpoint.Y(),0,1]
+	                   ];
+	            };
 
-        var t = board.create('line', [
-                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[0]; },
-                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[1]; },
-                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[2]; }
-                ], {visible:false});
+	        var t = board.create('line', [
+	                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[0]; },
+	                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[1]; },
+	                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[2]; }
+	                ], {visible: false});
 
-        var i1 = board.create('intersection', [input[1], t, 0],{visible: true});
-        var i2 = board.create('intersection', [input[1], t, 1],{visible: true});
-        var t1 = board.create('line', [input[0], i1]);
-        var t2 = board.create('line', [input[0], i2]);
+	        var i1 = board.create('intersection', [input[1], t, 0], {visible: false});
+	        var i2 = board.create('intersection', [input[1], t, 1], {visible: false});
+	        var t1 = board.create('line', [input[0], i1]);
+	        var t2 = board.create('line', [input[0], i2]);
+          break;
+        }
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Tangent " + attr.name +"<br>\n");
         return false;
