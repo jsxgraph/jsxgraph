@@ -1211,7 +1211,7 @@ this.writeElement = function(board, output, input, cmd) {
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
-        if(input)
+        if(typeof input != 'undefined')
           p = board.create('glider', [gxtEl.x, gxtEl.y, input], attr);
         else
           p = board.create('point', [gxtEl.x, gxtEl.y], attr);
