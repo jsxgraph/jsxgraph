@@ -111,6 +111,7 @@ this.ggbAct = function(type, m, n, p) {
       return '!('+ v1 +')';
     break;
     case 'pow':
+/*
       var t1 = v1;
       var t2 = v2;
       var s11;
@@ -128,7 +129,8 @@ this.ggbAct = function(type, m, n, p) {
       }
 
         // return function(x) { return Math.pow(x, s21); };
-      return 'Math.pow('+ s11 +', '+ s21 +')';
+*/
+      return 'Math.pow('+ v1 +', '+ v2 +')';
     break;
     case 'or':
       return '('+ v1 +'||'+ v2 +')';
