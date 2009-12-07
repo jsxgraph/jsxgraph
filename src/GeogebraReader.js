@@ -180,11 +180,6 @@ this.ggbAct = function(type, m, n, p) {
             case 'y':
                 return v2 +'.Y()';
             break;
-            /*
-            case 'sin':
-                return 'Math.sin('+ v2 +')';
-            break;
-            */
             default:
                 return 'Math.'+v1.toLowerCase()+'('+ v2 +')';
             break;
@@ -197,18 +192,12 @@ this.ggbAct = function(type, m, n, p) {
         }
         var a = JXG.GeogebraReader.board.ggbElements[v1];
         if (a.type == JXG.OBJECT_TYPE_SLIDER) {
-            return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value()';
+          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value()';
         } else if (a.elementClass == JXG.OBJECT_TYPE_POLYGON) {
-            return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area()';
-        } else if (a.elementClass == JXG.OBJECT_CLASS_POINT) {
-            return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'")';
+          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area()';
+        } else {
+          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'")';
         }
-
-
-
-        // return function() { return JXG.GeogebraReader.board.ggbElements[v1]; };
-        // return 'JXG.GeogebraReader.board.ggbElements["'+v1+'"]';
-        return v1;
       }
     break;
     case 'func':
@@ -1795,9 +1784,9 @@ this.writeElement = function(board, output, input, cmd) {
       if(element.getElementsByTagName('slider').length == 1) { // it's a slider
         var sx = parseFloat(element.getElementsByTagName('slider')[0].attributes['x'].value);
         var sy = parseFloat(element.getElementsByTagName('slider')[0].attributes['y'].value);
-    var tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [sx, sy], board);
-    sx = tmp.usrCoords[1];
-    sy = tmp.usrCoords[2];
+        var tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [sx, sy], board);
+        sx = tmp.usrCoords[1];
+        sy = tmp.usrCoords[2];
     
         if(element.getElementsByTagName('slider')[0].attributes['horizontal'].value == 'true') {
           var len = parseFloat(element.getElementsByTagName('slider')[0].attributes['width'].value)/(board.unitX*board.zoomX);
@@ -1874,7 +1863,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       var l = func.length;
       func[func.length-1] = 'return '+ JXG.GeogebraReader.ggbParse(board, func[func.length-1]) +';';
-      // func[func.length-1] = 'return Math.sin(function() {return JXG.GeogebraReader.board.ggbElements["a"].Value();}() * __x - function() {return JXG.getReference(JXG.GeogebraReader.board, "A").X();}());';
+      // func[func.length-1] = 'return Math.sin(JXG.getReference(JXG.GeogebraReader.board, "gxtBoard1P14").Value() * __x - JXG.getReference(JXG.GeogebraReader.board, "A").X());';
 
       var range = [(input && input[1]) ? input[1] : null, (input && input[2]) ? input[2] : null];
 
