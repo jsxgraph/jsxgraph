@@ -111,6 +111,7 @@ JXG.createSlider = function(board, parentArr, atts) {
                  withLabel:false}); 
                  
     //p3.Value = function() { return this.position*(smax - smin)+smin; };
+    p3.type = JXG.OBJECT_TYPE_SLIDER;
     p3.Value = function() { return this.position*sdiff+smin; };
     p3._smax = smax;
     p3._smin = smin;

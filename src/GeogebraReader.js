@@ -87,12 +87,13 @@ this.ggbAct = function(type, m, n, p) {
       else {
           p.addConstraint([s1, s2]);
       }
+      //   p.addConstraint(new Function(s1), new Function(s2));
       return p;
     break;
-    case 'st': // smaller then
-      return '('+ v1 +'<='+ v2 +')';
+    case 'le': // smaller then
+      return '( ('+ v1 +')<=('+ v2 +') )';
     break;
-    case 'gt': // greater then
+    case 'ge': // greater then
       return '('+ v1 +'>='+ v2 +')';
     break;
     case 'eq': // equal
@@ -101,7 +102,7 @@ this.ggbAct = function(type, m, n, p) {
     case 'neq': // not equal
       return '('+ v1 +'!='+ v2 +')';
     break;
-    case 'sm': // smaller
+    case 'lt': // smaller
       return '('+ v1 +'<'+ v2 +')';
     break;
     case 'gt': // greater
@@ -174,17 +175,18 @@ this.ggbAct = function(type, m, n, p) {
       if(v2) {
         switch(v1.toLowerCase()) {
             case 'x':
-                return function() { return JXG.getReference(JXG.GeogebraReader.board, v2).X(); };
+                return v2 +'.X()';
             break;
             case 'y':
-                // return function(x) { return JXG.getReference(JXG.GeogebraReader.board, x).Y(); }(v2);
-                // return 'JXG.getReference(JXG.GeogebraReader.board, '+ v2 +').Y()';
-                return 'Y('+v2+')';
+                return v2 +'.Y()';
             break;
+            /*
             case 'sin':
                 return 'Math.sin('+ v2 +')';
             break;
+            */
             default:
+                return 'Math.'+v1.toLowerCase()+'('+ v2 +')';
             break;
         }
       } else {
@@ -193,6 +195,17 @@ this.ggbAct = function(type, m, n, p) {
             JXG.GeogebraReader.board.ggbElements[v1] = JXG.GeogebraReader.writeElement(board, input);
             JXG.GeogebraReader.debug("regged: "+ v1 +" (id: "+ JXG.GeogebraReader.board.ggbElements[v1].id +")");
         }
+        var a = JXG.GeogebraReader.board.ggbElements[v1];
+        if (a.type == JXG.OBJECT_TYPE_SLIDER) {
+            return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value()';
+        } else if (a.elementClass == JXG.OBJECT_TYPE_POLYGON) {
+            return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area()';
+        } else if (a.elementClass == JXG.OBJECT_CLASS_POINT) {
+            return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'")';
+        }
+
+
+
         // return function() { return JXG.GeogebraReader.board.ggbElements[v1]; };
         // return 'JXG.GeogebraReader.board.ggbElements["'+v1+'"]';
         return v1;
