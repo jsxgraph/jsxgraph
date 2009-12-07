@@ -191,8 +191,7 @@ this.ggbAct = function(type, m, n, p) {
             JXG.GeogebraReader.debug("regged: "+ v1 +" (id: "+ JXG.GeogebraReader.board.ggbElements[v1].id +")");
         }
         var a = JXG.GeogebraReader.board.ggbElements[v1];
-        //if (a.type == JXG.OBJECT_TYPE_SLIDER) {
-        if (a.Value != 'undefined') {
+        if (a.Value != 'undefined' && a._smin != 'undefined') {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value()';
         } else if (a.elementClass == JXG.OBJECT_TYPE_POLYGON) {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area()';
