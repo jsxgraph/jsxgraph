@@ -1,62 +1,4 @@
 JXG.GeogebraReader = new function() {
-
-/**
- * Identifying non-associative tokens
- * @param {String} type the type of the non-associative token 
- * @param {String} att the value of the token 
- * @return {Function} return the function that returns the correct value 
- */
-/*
-this.ggbMatch = function(type, att) {
-  switch(type.toLowerCase()) {
-    case 'int':
-      return function() { return parseInt(att); };
-    break;
-    case 'float':
-      return function() { return parseFloat(att); };
-    break;
-    case 'html':
-      return function() { return String(att); };
-    break;
-    case 'var':
-      JXG.GeogebraReader.debug("VAR: "+ att);
-      // switch(att.toLowerCase()) {
-      //   case 'x':
-      //     return function() { return v.X(); };
-      //   break;
-      //   case 'y':
-      //     return function() { return v.Y(); };
-      //   break;
-      //   case 'sin':
-      //     return function(v) { return Math.sin(v); };
-      //   break;
-      //   default:
-      //     if(typeof JXG.GeogebraReader.board.ggbElements[att] == 'undefined' || JXG.GeogebraReader.board.ggbElements[att] == '') {
-      //       var input = JXG.GeogebraReader.getElement(att);
-      //       JXG.GeogebraReader.board.ggbElements[att] = JXG.GeogebraReader.writeElement(board, input);
-      //       JXG.GeogebraReader.debug("regged: "+ att +" (id: "+ JXG.GeogebraReader.board.ggbElements[att].id +")");
-      //     }
-      //     return JXG.GeogebraReader.board.ggbElements[att];
-      //   break;
-      // }
-      // return att;
-    break;
-    case 'string':
-      return function() { return String(att); };
-    break;
-
-    case 'func':
-      JXG.GeogebraReader.debug('In FUNC(Match): '+ att);
-      var r = JXG.GeogebraReader.functionParse(att)
-      return r[r.length-1];
-    break;
-    // case 'param':
-    //   return att;
-    // break;
-  }
-};
-*/
-
 /**
  * @param {String} type the type of expression
  * @param {String} m first input value
@@ -111,25 +53,6 @@ this.ggbAct = function(type, m, n, p) {
       return '!('+ v1 +')';
     break;
     case 'pow':
-/*
-      var t1 = v1;
-      var t2 = v2;
-      var s11;
-      if (board.ggbElements[t1]) {            // Slider case
-        t1 = JXG.GeogebraReader.board.ggbElements[t1].id;
-        s11 = 'JXG.getReference(JXG.GeogebraReader.board,"'+t1+'").Value()';
-      } else {
-        s11 = t1;
-      }
-      if (board.ggbElements[t2]) {            // Slider case
-        t2 = JXG.GeogebraReader.board.ggbElements[t2].id;
-        s21 = 'JXG.getReference(JXG.GeogebraReader.board,"'+t2+'").Value()';
-      } else {
-        s21 = t2;
-      }
-
-        // return function(x) { return Math.pow(x, s21); };
-*/
       return 'Math.pow('+ v1 +', '+ v2 +')';
     break;
     case 'or':
@@ -190,20 +113,12 @@ this.ggbAct = function(type, m, n, p) {
         if(typeof a.Value != 'undefined' && typeof a._smin != 'undefined') {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value()';
         } else if (typeof a.area != 'undefined') {
-          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").area()';
+          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area()';
         } else {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'")';
         }
       }
     break;
-/*
-    case 'func':
-      // Functionparse on v1
-      // Interpret v2
-      JXG.GeogebraReader.debug('In FUNC(Act): '+ v1 +', v2: '+ v2);
-      return v1;
-    break;
-*/
   }
 };
 
@@ -1286,10 +1201,6 @@ this.writeElement = function(board, output, input, cmd) {
   var attr = {}; // Attributes of geometric elements
   attr.name  = gxtEl.label;
 
-  // if(typeof cmd !== 'undefined' && gxtEl.type !== cmd) {
-  //   gxtEl.type = cmd;
-  // }
-
   JXG.GeogebraReader.debug("<br><b>Konstruiere</b> "+ attr.name +"("+ gxtEl.type +"):");
 
   switch(gxtEl.type) {
@@ -1300,7 +1211,11 @@ this.writeElement = function(board, output, input, cmd) {
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
+        if(input)
+          p = board.create('glider', [gxtEl.x, gxtEl.y, input], attr);
+        else
           p = board.create('point', [gxtEl.x, gxtEl.y], attr);
+
           JXG.GeogebraReader.debug("* <b>Point ("+ p.id +"):</b> "+ attr.name + "("+ gxtEl.x +", "+ gxtEl.y +")<br>\n");
           return p;
       } catch(e) {
@@ -1920,7 +1835,7 @@ this.writeElement = function(board, output, input, cmd) {
      }
    break;
 
-// noch zu implementieren: .area() als Flaeche
+// noch zu implementieren: .Area() als Flaeche
 
 // case 'transform':
 // break;

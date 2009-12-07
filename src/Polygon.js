@@ -264,7 +264,7 @@ JXG.Polygon.prototype.showElement = function() {
     }
 };
 
-JXG.Polygon.prototype.area = function() {
+JXG.Polygon.prototype.Area = function() {
     //Surveyor's Formula
     var area=0, i;
     for(i=0; i<this.vertices.length-1; i++) {

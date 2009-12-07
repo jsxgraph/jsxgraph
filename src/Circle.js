@@ -591,7 +591,7 @@ JXG.Circle.prototype.maxX = function () {
     return 1.0;
 };
 
-JXG.Circle.prototype.area = function() {
+JXG.Circle.prototype.Area = function() {
     var area = this.getRadius()*this.getRadius()*Math.PI;
     return area;
 };
