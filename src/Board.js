@@ -869,11 +869,6 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
         }
     }
     this.updateQuality = this.BOARD_QUALITY_HIGH;
-/*
-    if (!Event) Event = window.event;
-    Event.cancelBubble = true;
-    if (Event.stopPropagation) Event.stopPropagation();
-*/    
 };
 
 /**
