@@ -190,7 +190,7 @@ JXG.Transformation.prototype.apply = function(p){
 /**
  * Apply a transformation once to a GeometryElement.
  * If it is a free point, then it can be dragged around later
- * and will overwrite the trasnformed coordinates.
+ * and will overwrite the transformed coordinates.
  */
 JXG.Transformation.prototype.applyOnce = function(p){
     var c, len, i;

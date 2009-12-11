@@ -587,56 +587,6 @@ JXG.Math.Numerics.neville = function(p) {
         return num/denom;
     }
     return [xfct, yfct, 0, function(){ return p.length-1;}];
-/*
-    return [function(t) {
-                var i, d, L, s, 
-                    bin = JXG.Math.binomial,
-                    len = p.length,
-                    len1 = len - 1,
-                    num = 0.0, 
-                    denom = 0.0;
-                d = t;
-                s = 1;
-                for (i=0;i<len;i++) {
-                    if (d==0) {
-                        return p[i].X();
-                    } else {
-                        //L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
-                        L = bin(len1,i)*s/d;
-                        s *= (-1);
-                        d -= 1;
-                    }
-                    num   += p[i].X()*L;
-                    denom += L;
-                }
-                return num/denom;
-            },
-            function(t) {
-                var i, d, L, s, 
-                    bin = JXG.Math.binomial,
-                    len = p.length,
-                    len1 = len - 1,
-                    num = 0.0, 
-                    denom = 0.0;
-                d = t;
-                s = 1;
-                for (i=0;i<len;i++) {
-                    if (d==0) {
-                        return p[i].Y();
-                    } else {
-                        //L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
-                        L = bin(len1,i)*s/d;
-                        s *= (-1);
-                        d -= 1;
-                    }
-                    num   += p[i].Y()*L;
-                    denom += L;
-                }
-                return num/denom;
-            },
-            0, function(){ return p.length-1;}
-        ];
-*/        
 };
 
 /**
