@@ -656,9 +656,16 @@ JXG.Point.prototype.addConstraint = function (terms) {
         }
     }
     if (terms.length==1) { // Intersection function
-        this.updateConstraint = function() { this.coords = newfuncs[0](); };
-        if (!this.board.isSuspendedUpdate) { this.update(); }
-        return this;
+        this.updateConstraint = function() { 
+                var c = newfuncs[0](); 
+                if (JXG.isArray(c)) {      // Array
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER,c);
+                } else {                   // Coords object
+                    this.coords = c;
+                }
+            };
+        // if (!this.board.isSuspendedUpdate) { this.update(); }
+        // return this;
     } else if (terms.length==2) { // Euclidean coordinates
         this.XEval = newfuncs[0];
         this.YEval = newfuncs[1];
