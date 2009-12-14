@@ -502,9 +502,9 @@ Returns array of length 2 with first and second intersection point (also for lin
 \section{Text}
 Display static or dynamic texts.\par
 \metax{el = brd.create(\'text\',[x,y,"Hello"]);}{}
-\metax{el = brd.create(\'text\',[x,y,f]);}{}
-Example for a dynamic text: return the $x$ coordinate of the point $p$.\par
+\metax{el = brd.create(\'text\',[x,y,f]);}{where}
 \metax{f = function()$\{$ return p.X(); $\}$}{}
+Example for a dynamic text: $f$ returns the $x$ coordinate of the point $p$.\par
 
 \section{Image}
 Display bitmap image (also as data uri).\par
