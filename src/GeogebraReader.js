@@ -15,6 +15,7 @@ this.ggbAct = function(type, m, n, p) {
       return v1;
     break;
     case 'coord':
+/*
       var s1 = (board.ggbElements[v1]) ? JXG.getReference(JXG.GeogebraReader.board, v1) : v1;
       var s2 = (board.ggbElements[v2]) ? JXG.getReference(JXG.GeogebraReader.board, v2) : v2;
 
@@ -24,6 +25,10 @@ this.ggbAct = function(type, m, n, p) {
           new Function('return '+s2+';')
         ]);
       return p;
+*/
+      var s1 = (JXG.GeogebraReader.board.ggbElements[v1]) ? 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'")' : v1;
+      var s2 = (JXG.GeogebraReader.board.ggbElements[v2]) ? 'JXG.getReference(JXG.GeogebraReader.board, "'+ v2 +'")' : v2;
+      return [s1, s2];
     break;
     case 'le': // smaller then
       return '( ('+ v1 +')<=('+ v2 +') )';
@@ -71,7 +76,7 @@ this.ggbAct = function(type, m, n, p) {
       return v1 * -1;
     break;
     case 'bra':
-      return v1;
+      return '('+ v1 +')';
     break;
     case 'int':
       return v1;
@@ -1014,30 +1019,28 @@ this.boardProperties = function(gxtEl, Data, attr) {
  * @return {Object} updated element
  */
 this.coordinates = function(gxtEl, Data) {
-  gxtEl.x = (Data.getElementsByTagName("coords")[0]) ?
-      parseFloat(Data.getElementsByTagName("coords")[0].attributes["x"].value)
-      : (Data.getElementsByTagName("startPoint")[0]) ?
-          parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["x"].value)
-          : (Data.getElementsByTagName("absoluteScreenLocation")[0]) ?
-              parseFloat(Data.getElementsByTagName("absoluteScreenLocation")[0].attributes["x"].value)
-              : false;
-
-  gxtEl.y = (Data.getElementsByTagName("coords")[0]) ?
-      parseFloat(Data.getElementsByTagName("coords")[0].attributes["y"].value)
-      : (Data.getElementsByTagName("startPoint")[0]) ?
-          parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["y"].value)
-          : (Data.getElementsByTagName("absoluteScreenLocation")[0]) ?
-              parseFloat(Data.getElementsByTagName("absoluteScreenLocation")[0].attributes["y"].value)
-              : false;
-
-  gxtEl.z = (Data.getElementsByTagName("coords")[0]) ?
-      parseFloat(Data.getElementsByTagName("coords")[0].attributes["z"].value)
-      : (Data.getElementsByTagName("startPoint")[0]) ?
-          parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["z"].value)
-          : false;
-          // : (Data.getElementsByTagName("absoluteScreenLocation")[0]) ?
-          //     parseFloat(Data.getElementsByTagName("absoluteScreenLocation")[0].attributes["z"].value)
-          //     : false;
+  if(Data.getElementsByTagName("coords")[0]) {
+    gxtEl.x = parseFloat(Data.getElementsByTagName("coords")[0].attributes["x"].value);
+    gxtEl.y = parseFloat(Data.getElementsByTagName("coords")[0].attributes["y"].value);
+    gxtEl.z = parseFloat(Data.getElementsByTagName("coords")[0].attributes["z"].value);
+  } else if(Data.getElementsByTagName("startPoint")[0]) {
+    if(Data.getElementsByTagName("startPoint")[0].attributes['exp']) {
+      var a = JXG.getReference(JXG.GeogebraReader.board, Data.getElementsByTagName("startPoint")[0].attributes['exp'].value);
+      gxtEl.x = function() {return a.X()};
+      gxtEl.y = function() {return a.Y()};
+      gxtEl.z = false;
+    } else {
+      gxtEl.x = parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["x"].value);
+      gxtEl.y = parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["y"].value);
+      gxtEl.z = parseFloat(Data.getElementsByTagName("startPoint")[0].attributes["z"].value);
+    }
+  } else if(Data.getElementsByTagName("absoluteScreenLocation")[0]) {
+    gxtEl.x = parseFloat(Data.getElementsByTagName("absoluteScreenLocation")[0].attributes["x"].value);
+    gxtEl.y = parseFloat(Data.getElementsByTagName("absoluteScreenLocation")[0].attributes["x"].value);
+    gxtEl.z = false;
+  } else {
+    return false;
+  }
 
   return gxtEl;
 };
@@ -1140,6 +1143,26 @@ this.functionParse = function(type, exp) {
   case 's':
     exp = exp.replace(/x(?!\()/g, '__x');
     return ['__x', exp];
+  break;
+  default:
+    if(JXG.GeogebraReader.format <= 3.01) {
+	  // prepare string: "solve" multiplications 'a b' to 'a*b'
+	  var s = exp.split(' ');
+	  var o = '';
+      for(var i=0; i<s.length; i++) {
+        if(s.length != i+1)
+          if(s[i].search(/\)$/) > -1 || s[i].search(/[0-9]+$/) > -1 || s[i].search(/[a-zA-Z]+(\_*[a-zA-Z0-9]+)*$/) > -1)
+            if(s[i+1].search(/^\(/) > -1 ||
+              s[i+1].search(/^[0-9]+/) > -1 ||
+              s[i+1].search(/^[a-zA-Z]+(\_*[a-zA-Z0-9]+)*/) > -1 ||
+              s[i+1].search(/\_\_[a-zA-Z0-9]+/) > -1) {
+                s[i] = s[i] + "*";
+            }
+	    o += s[i];
+	  };
+	  exp = o;
+	}
+    return exp;
   break;
  }
 };
@@ -1654,6 +1677,15 @@ this.writeElement = function(board, output, input, cmd) {
       }
     break;
     case 'numeric':
+    if(element.getElementsByTagName('auxiliary').length != 0 && element.getElementsByTagName('auxiliary')[0].attributes['val'].value == 'true') {
+      var exp = JXG.GeogebraReader.getElement(element.attributes['label'].value, true).attributes['exp'].value;
+      exp = JXG.GeogebraReader.functionParse('', exp);
+      exp = JXG.GeogebraReader.ggbParse(exp);
+      board.values[attr.name] = new Function('return '+exp +';');
+      JXG.GeogebraReader.debug('value: '+ board.values[attr.name]());
+      board.values[attr.name].val = true;
+      return board.values[attr.name];
+	} else {
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       attr = JXG.GeogebraReader.colorProperties(element, attr);
       // gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
@@ -1694,6 +1726,7 @@ this.writeElement = function(board, output, input, cmd) {
           return false;
         }
       }
+    }
     break;
     case 'midpoint':
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
@@ -1792,7 +1825,7 @@ this.writeElement = function(board, output, input, cmd) {
         return false;
       }
     break;
-   case 'slope':
+    case 'slope':
      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
      attr = JXG.GeogebraReader.colorProperties(element, attr);
      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
@@ -1800,21 +1833,21 @@ this.writeElement = function(board, output, input, cmd) {
 
      //TODO: Farben anpassen und keine durchgehende Normale
      try {
-       JXG.GeogebraReader.debug("* <b>Slope:</b> First: " + input[0].name +"<br>\n");
+       JXG.GeogebraReader.debug("* <b>Slope ("+ attr.name +"):</b> First: " + input[0].name +"<br>\n");
        var l1 = board.create('segment', [input[0].point1, [(1+input[0].point1.X()), input[0].point1.Y()]], {visible: false});
        var l2 = board.create('normal', [l1, l1.point2], {visible: false});
        var i  = board.create('intersection', [input[0], l2, 0], {visible: false});
        var m  = board.create('midpoint', [l1.point2, i], {visible: false});
        var slope = function() { return i.Y()-l1.point1.Y();};
        var t = board.create('text', [function(){return m.X();}, function(){return m.Y();},
-                      function(){ return "m = "+ function(){ return i.Y()-l1.point1.Y();}(); }]);
-       return m;
+                      function(){ return ""+ function(){ return i.Y()-l1.point1.Y();}(); }], attr);
+       return t;
      } catch(e) {
        JXG.GeogebraReader.debug("* <b>Err:</b> Slope " + attr.name +"<br>\n");
        return false;
      }
-   break;
-   case 'text':
+    break;
+    case 'text':
      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
      attr = JXG.GeogebraReader.colorProperties(element, attr);
      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
@@ -1824,16 +1857,18 @@ this.writeElement = function(board, output, input, cmd) {
 
      try {
        JXG.GeogebraReader.debug("* <b>Text:</b> " + text +"<br>\n");
-       var tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [gxtEl.x, gxtEl.y], JXG.GeogebraReader.board);
-       var sx = tmp.usrCoords[1];
-       var sy = tmp.usrCoords[2];
-       var t = board.create('text', [sx, sy, text[0] +' '+ new Function('return '+ text[1] +';')() ]);
+       var t = board.create('text', [gxtEl.x, gxtEl.y, text[0] +' '+ new Function('return '+ text[1] +';')() ]);
        return t;
      } catch(e) {
        JXG.GeogebraReader.debug("* <b>Err:</b> Text: " + text +"<br>\n");
        return false;
      }
-   break;
+    break;
+    case 'root':
+     r = board.root(input[0]);
+     JXG.GeogebraReader.debug('r: '+ r.length);
+     return r;
+    break;
 
 // noch zu implementieren: .Area() als Flaeche
 
@@ -1882,6 +1917,7 @@ this.readGeogebra = function(tree, board) {
   var els = [];
 
   board.ggbElements = [];
+  board.values = [];
   JXG.GeogebraReader.tree = tree;
   JXG.GeogebraReader.board = board;
   JXG.GeogebraReader.format = parseFloat(JXG.GeogebraReader.tree.getElementsByTagName('geogebra')[0].attributes['format'].value);
