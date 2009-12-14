@@ -285,6 +285,7 @@ Two files have to be included:
 \metax{brd.snapToGrid:true/false:}{grid mode}
 \metax{brd.suspendUpdate()}{stop updating (if speed is needed)}
 \metax{brd.unsuspendUpdate()}{restart updating}
+\metax{brd.addChild(brd2)}{Connect board {\tt brd2} to board {\tt brd}}
 
 \section{Basic commands}
 \metax{var el = brd.create(\'type\',[parents],$\{$attributes$\}$);}{}
@@ -498,14 +499,17 @@ Returns array of length 2 with first and second intersection point (also for lin
 
 \metax{brd.create(\'intersection\',[o1,o2,n],$\{atts\}$);}{}
 
-
-
 \section{Text}
 Display static or dynamic texts.\par
 \metax{el = brd.create(\'text\',[x,y,"Hello"]);}{}
 \metax{el = brd.create(\'text\',[x,y,f]);}{}
 Example for a dynamic text: return the $x$ coordinate of the point $p$.\par
 \metax{f = function()$\{$ return p.X(); $\}$}{}
+
+\section{Image}
+Display bitmap image (also as data uri).\par
+\metax{el = brd.create(\'image\',[uri-string,[x,y],[w,h]]);}{}
+\metax{}{Optional: {\tt [x,y]} top-left position, {\tt [w,h]} width, height}
 
 \section{Attributes of geometric elements}
 {\sl Generic attributes:}\par
@@ -597,7 +601,7 @@ the first or second intersection. In case of an intersection with a curve, $i$ a
 which are the start values for the path positions in the Newton method for $el_1$ and $el_2$, resp.
 
 \section{Todo list}
-'axis', 'image', 'integral', 'ticks'.
+'axis', 'integral', 'ticks'.
 
 \section{Chart}
 To do $\ldots$
