@@ -39,7 +39,7 @@
  */
 JXG.JSXGraph = new function () {
     var ie, opera, i, arr;
-    this.licenseText = 'JSXGraph v0.79 Copyright (C) see http://jsxgraph.org';
+    this.licenseText = 'JSXGraph v0.79rc1 Copyright (C) see http://jsxgraph.org';
 
     /**
             * Stores the renderer that is used to draw the board.
@@ -667,6 +667,29 @@ JXG.toJSON = function(obj) {
 JXG.capitalize = function(str) {
     return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
 };
+
+/**
+ * Copyright 2009 Nicholas C. Zakas. All rights reserved.
+ * MIT Licensed
+ * param array items to do
+ * param function function that is applied for everyl array item
+ * param object context meaning of this in function process
+ * param function callback function called after the last array element has been processed.
+**/
+JXG.timedChunk = function(items, process, context, callback) {
+    var todo = items.concat();   //create a clone of the original
+    setTimeout(function(){
+        var start = +new Date();
+        do {
+            process.call(context, todo.shift());
+        } while (todo.length > 0 && (+new Date() - start < 300));
+        if (todo.length > 0){
+            setTimeout(arguments.callee, 1);
+        } else {
+            callback(items);
+        }
+    }, 1);
+}
 
 /*
 JXG.isSilverlightInstalled = function() {

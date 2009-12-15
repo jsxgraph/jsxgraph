@@ -1882,7 +1882,7 @@ this.writeElement = function(board, output, input, cmd) {
        var m  = board.create('midpoint', [l1.point2, i], {visible: false});
        var t = board.create('text', [function(){return m.X();}, function(){return m.Y();},
                       function(){ return ""+ function(){ return i.Y()-l1.point1.Y();}(); }], attr);
-       t.Value = function() { return function(){ return i.Y()-l1.point1.Y();}(); }
+       t.Value = (function() { return function(){ return i.Y()-l1.point1.Y(); }; })();
        return t;
      } catch(e) {
        JXG.GeogebraReader.debug("* <b>Err:</b> Slope " + attr.name +"<br>\n");

@@ -3,6 +3,13 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <style>
+   #my_x1 {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+   }
+   </style>
 </head>
 <body>
 <h2>Yikes 2</h2>
@@ -28,7 +35,7 @@ var plotm = brd.createElement('functiongraph',[m],{strokeColor:'green'});
 var plotn = brd.createElement('functiongraph',[n],{strokeColor:'blue'});
 
 brd.createElement('text',[7,6,function() {return 'x1 =' +
-brd.root(g2,h.Value()-1).toFixed(4);}]);
+brd.root(g2,h.Value()-1).toFixed(4);}], {id:'my_x1'});
 brd.createElement('text',[7,5,function() {return 'x2 =' +
 brd.root(g1,h.Value()-1).toFixed(4);}]);
 brd.createElement('text',[7,4,function() {return 'x3 =' +
