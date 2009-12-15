@@ -143,7 +143,7 @@ this.ggbAct = function(type, m, n, p) {
         }
 
         var a = JXG.GeogebraReader.board.ggbElements[v1];
-        if(typeof a.Value != 'undefined' && typeof a._smin != 'undefined') {
+        if(typeof a.Value != 'undefined') {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value()';
         } else if (typeof a.Area != 'undefined') {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area();';
@@ -1880,9 +1880,9 @@ this.writeElement = function(board, output, input, cmd) {
        var l2 = board.create('normal', [l1, l1.point2], {visible: false});
        var i  = board.create('intersection', [input[0], l2, 0], {visible: false});
        var m  = board.create('midpoint', [l1.point2, i], {visible: false});
-       var slope = function() { return i.Y()-l1.point1.Y();};
        var t = board.create('text', [function(){return m.X();}, function(){return m.Y();},
                       function(){ return ""+ function(){ return i.Y()-l1.point1.Y();}(); }], attr);
+       t.Value = function() { return function(){ return i.Y()-l1.point1.Y();}(); }
        return t;
      } catch(e) {
        JXG.GeogebraReader.debug("* <b>Err:</b> Slope " + attr.name +"<br>\n");
