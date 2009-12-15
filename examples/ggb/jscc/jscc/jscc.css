@@ -11,7 +11,7 @@ hr					{ line-height: 1px; color: black; }
 #output, #js_code,
 	#parsetree		{ height: 200px; border-top: 1px solid #707070 ;
 						border-left: 1px solid #707070 ; padding: 10px; overflow: scroll; }
-#js_code			{ height: 300px;  }
+#js_code			{ height: 300px; width: 100%; }
 .elem_title			{ text-align: center; font-size: 11px; font-weight: bold; 
 						 color: white; height: 15px;
 							background-image: url( "img/back.png" );
