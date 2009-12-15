@@ -50,18 +50,17 @@ this.ggbAct = function(type, m, n, p) {
       }
     break;
     case 'sub':
-      // if((typeof v1 == 'string' && typeof v2 == 'string') && (v1.match(/JXG/) && v2.match(/JXG/))) {
-      //   return [v1+'.X() - '+v2+'.X()', v1+'.Y() - '+v2+'.Y()'];
-      // }	else if(typeof v1 == 'string' && typeof v2 == 'object') {
-      //   return [v1+'.X() - '+v2[0], v1+'.Y() - '+v2[1]];
-      // } else if(typeof v1 == 'object' && typeof v2 == 'string') {
-      //   return [v1[0]+' - '+v2+'.X()', v1[1]+' - '+v2+'.Y()'];
-      // }	else if(typeof v1 == 'object' && typeof v2 == 'object') {
-      //   return [v1[0]+' - '+v2[0], v1[1]+' - '+v2[1]];
-      // } else {
-      //  return v1 +'-'+ v2;
-      // }
-      return v1 +'-'+ v2;
+      if(((typeof v1 == 'string' || typeof v1 == 'number') && (typeof v2 == 'string' || typeof v2 == 'number')) && (v1.match(/JXG/) && v2.match(/JXG/))) {
+        return [v1+'.X() - '+v2+'.X()', v1+'.Y() - '+v2+'.Y()'];
+      }	else if((typeof v1 == 'string' || typeof v1 == 'number') && typeof v2 == 'object') {
+        return [v1+'.X() - '+v2[0], v1+'.Y() - '+v2[1]];
+      } else if(typeof v1 == 'object' && (typeof v2 == 'string' || typeof v2 == 'number')) {
+        return [v1[0]+' - '+v2+'.X()', v1[1]+' - '+v2+'.Y()'];
+      }	else if(typeof v1 == 'object' && typeof v2 == 'object') {
+        return [v1[0]+' - '+v2[0], v1[1]+' - '+v2[1]];
+      } else {
+        return v1 +'-'+ v2;
+      }
     break;
     case 'neg':
       return '!('+ v1 +')';
@@ -76,32 +75,30 @@ this.ggbAct = function(type, m, n, p) {
       return '('+ v1 +'&&'+ v2 +')';
     break;
     case 'mul':
-      // if((typeof v1 == 'string' && typeof v2 == 'string') && (v1.match(/JXG/) && v2.match(/JXG/))) {
-      //   return [v1+'.X() * '+v2+'.X()', v1+'.Y() * '+v2+'.Y()'];
-      // }	else if(typeof v1 == 'string' && typeof v2 == 'object') {
-      //   return [v1+'.X() * '+v2[0], v1+'.Y() * '+v2[1]];
-      // } else if(typeof v1 == 'object' && typeof v2 == 'string') {
-      //   return [v1[0]+' * '+v2+'.X()', v1[1]+' * '+v2+'.Y()'];
-      // }	else if(typeof v1 == 'object' && typeof v2 == 'object') {
-      //   return [v1[0]+' * '+v2[0], v1[1]+' * '+v2[1]];
-      // } else {
-      //  return v1 +'*'+ v2;
-      // }
-      return v1 +'*'+ v2;
+      if(((typeof v1 == 'string' || typeof v1 == 'number') && (typeof v2 == 'string' || typeof v2 == 'number')) && (v1.match(/JXG/) && v2.match(/JXG/))) {
+        return [v1+'.X() * '+v2+'.X()', v1+'.Y() * '+v2+'.Y()'];
+      }	else if((typeof v1 == 'string' || typeof v1 == 'number') && typeof v2 == 'object') {
+        return [v1+'.X() * '+v2[0], v1+'.Y() * '+v2[1]];
+      } else if(typeof v1 == 'object' && (typeof v2 == 'string' || typeof v2 == 'number')) {
+        return [v1[0]+' * '+v2+'.X()', v1[1]+' * '+v2+'.Y()'];
+      }	else if(typeof v1 == 'object' && typeof v2 == 'object') {
+        return [v1[0]+' * '+v2[0], v1[1]+' * '+v2[1]];
+      } else {
+        return v1 +'*'+ v2;
+      }
     break;
     case 'div':
-      // if((typeof v1 == 'string' && typeof v2 == 'string') && (v1.match(/JXG/) && v2.match(/JXG/))) {
-      //   return [v1+'.X() / '+v2+'.X()', v1+'.Y() / '+v2+'.Y()'];
-      // }	else if(typeof v1 == 'string' && typeof v2 == 'object') {
-      //   return [v1+'.X() / '+v2[0], v1+'.Y() / '+v2[1]];
-      // } else if(typeof v1 == 'object' && typeof v2 == 'string') {
-      //   return [v1[0]+' / '+v2+'.X()', v1[1]+' / '+v2+'.Y()'];
-      // }	else if(typeof v1 == 'object' && typeof v2 == 'object') {
-      //   return [v1[0]+' / '+v2[0], v1[1]+' / '+v2[1]];
-      // } else {
-      //  return v1 +'/'+ v2;
-      // }
-      return v1 +'/'+ v2;
+      if(((typeof v1 == 'string' || typeof v1 == 'number') && (typeof v2 == 'string' || typeof v2 == 'number')) && (v1.match(/JXG/) && v2.match(/JXG/))) {
+        return [v1+'.X() / '+v2+'.X()', v1+'.Y() / '+v2+'.Y()'];
+      }	else if((typeof v1 == 'string' || typeof v1 == 'number') && typeof v2 == 'object') {
+        return [v1+'.X() / '+v2[0], v1+'.Y() / '+v2[1]];
+      } else if(typeof v1 == 'object' && (typeof v2 == 'string' || typeof v2 == 'number')) {
+        return [v1[0]+' / '+v2+'.X()', v1[1]+' / '+v2+'.Y()'];
+      }	else if(typeof v1 == 'object' && typeof v2 == 'object') {
+        return [v1[0]+' / '+v2[0], v1[1]+' / '+v2[1]];
+      } else {
+        return v1 +'/'+ v2;
+      }
     break;
     case 'negmult':
       return v1 * -1;
@@ -150,6 +147,8 @@ this.ggbAct = function(type, m, n, p) {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value()';
         } else if (typeof a.Area != 'undefined') {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area();';
+        } else if (typeof a.plaintextStr != 'undefined') {
+          return '1.0*JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").plaintextStr;';
         } else {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'")';
         }
