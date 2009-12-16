@@ -100,7 +100,7 @@ JXG.createSlider = function(board, parentArr, atts) {
     p3 = board.createElement('glider', [startx,starty,l1],
                 {style:6,strokeColor:atts['strokeColor'],
                  fillColor:atts['fillColor'],
-                 showInfobox:false,name:atts['name'],
+                 showInfobox:false,name:atts['name'], withLabel:false,
                  snapWidth:snapWidth});
     
     l2 = board.createElement('line', [p1,p3], 
