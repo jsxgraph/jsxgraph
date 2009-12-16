@@ -146,9 +146,9 @@ this.ggbAct = function(type, m, n, p) {
         if(typeof a.Value != 'undefined') {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value()';
         } else if (typeof a.Area != 'undefined') {
-          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area();';
+          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area()';
         } else if (typeof a.plaintextStr != 'undefined') {
-          return '1.0*JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").plaintextStr;';
+          return '1.0*JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").plaintextStr';
         } else {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'")';
         }
