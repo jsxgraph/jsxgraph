@@ -144,7 +144,7 @@ this.ggbAct = function(type, m, n, p) {
 
         var a = JXG.GeogebraReader.board.ggbElements[v1];
         if(typeof a.Value != 'undefined') {
-          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value()';
+          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value().toFixed('+ JXG.GeogebraReader.decimals +')';
         } else if (typeof a.Area != 'undefined') {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area()';
         } else if (typeof a.plaintextStr != 'undefined') {
@@ -1884,7 +1884,7 @@ this.writeElement = function(board, output, input, cmd) {
        var m  = board.create('midpoint', [l1.point2, i], {visible: false});
 
        var t = board.create('text', [function(){return m.X();}, function(){return m.Y();},
-                      function(){ return ""+ input[0].getSlope(); }], attr);
+                      function(){ return ""+ input[0].getSlope().toFixed(JXG.GeogebraReader.decimals); }], attr);
        t.Value = (function() { return function(){ return input[0].getSlope(); }; })();
        return t;
      } catch(e) {
@@ -1966,7 +1966,7 @@ this.readGeogebra = function(tree, board) {
   JXG.GeogebraReader.tree = tree;
   JXG.GeogebraReader.board = board;
   JXG.GeogebraReader.format = parseFloat(JXG.GeogebraReader.tree.getElementsByTagName('geogebra')[0].attributes['format'].value);
-
+  JXG.GeogebraReader.decimals = parseInt(JXG.GeogebraReader.tree.getElementsByTagName('geogebra')[0].getElementsByTagName('kernel')[0].getElementsByTagName('decimals')[0].attributes['val'].value);
   JXG.GeogebraReader.writeBoard(board);
 
   var constructions = JXG.GeogebraReader.tree.getElementsByTagName("construction");
