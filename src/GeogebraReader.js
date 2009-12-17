@@ -1902,7 +1902,7 @@ this.writeElement = function(board, output, input, cmd) {
 
      try {
        JXG.GeogebraReader.debug("* <b>Text:</b> " + text +"<br>\n");
-       var t = board.create('text', [gxtEl.x, gxtEl.y, new Function('return \''+text[0]+'\' ' + text[1] +';') ]);
+       var t = board.create('text', [gxtEl.x, gxtEl.y, new Function('return '+text[0]+' ' + text[1] +';') ]);
        return t;
      } catch(e) {
        JXG.GeogebraReader.debug("* <b>Err:</b> Text: " + text +"<br>\n");
