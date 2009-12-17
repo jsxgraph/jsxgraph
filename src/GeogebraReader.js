@@ -1736,6 +1736,7 @@ this.writeElement = function(board, output, input, cmd) {
       if(element.getElementsByTagName('slider').length == 1) { // it's a slider
         var sx = parseFloat(element.getElementsByTagName('slider')[0].attributes['x'].value);
         var sy = parseFloat(element.getElementsByTagName('slider')[0].attributes['y'].value);
+        var len = parseFloat(element.getElementsByTagName('slider')[0].attributes['width'].value);
         // are coordinates absolut?
         if(element.getElementsByTagName('slider')[0].attributes['absoluteScreenLocation'] && element.getElementsByTagName('slider')[0].attributes['absoluteScreenLocation'].value == 'true') {
           var tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [sx, sy], board);
@@ -1744,11 +1745,13 @@ this.writeElement = function(board, output, input, cmd) {
         }
     
         if(element.getElementsByTagName('slider')[0].attributes['horizontal'].value == 'true') {
-          var len = parseFloat(element.getElementsByTagName('slider')[0].attributes['width'].value)/(board.unitX*board.zoomX);
+          if(element.getElementsByTagName('slider')[0].attributes['absoluteScreenLocation'] && element.getElementsByTagName('slider')[0].attributes['absoluteScreenLocation'].value == 'true') 
+          len /= (board.unitX*board.zoomX);
           var ex = sx + len;
           var ey = sy;
         } else {
-          var len = parseFloat(element.getElementsByTagName('slider')[0].attributes['width'].value)/(board.unitX*board.zoomX);
+          if(element.getElementsByTagName('slider')[0].attributes['absoluteScreenLocation'] && element.getElementsByTagName('slider')[0].attributes['absoluteScreenLocation'].value == 'true') 
+          len /= (board.unitY*board.zoomY);
           var ex = sx;
           var ey = sy + len;
         }
@@ -1873,16 +1876,11 @@ this.writeElement = function(board, output, input, cmd) {
      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
      attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-     //TODO: Farben anpassen und keine durchgehende Normale
      try {
        JXG.GeogebraReader.debug("* <b>Slope ("+ attr.name +"):</b> First: " + input[0].name +"<br>\n");
-       var l1 = board.create('segment', [input[0].point1, [(1+input[0].point1.X()), input[0].point1.Y()]], {visible: false});
-       var l2 = board.create('normal', [l1, l1.point2], {visible: false});
-       var i  = board.create('intersection', [input[0], l2, 0], {visible: false});
-       var m  = board.create('midpoint', [l1.point2, i], {visible: false});
        var t = board.create('text', [function(){return m.X();}, function(){return m.Y();},
-                      function(){ return ""+ function(){ return i.Y()-l1.point1.Y();}(); }], attr);
-       t.Value = (function() { return function(){ return i.Y()-l1.point1.Y(); }; })();
+                      function(){ return ""+ input.getSlope(); }], attr);
+       t.Value = (function() { return function(){ return input.getSlope(); }; })();
        return t;
      } catch(e) {
        JXG.GeogebraReader.debug("* <b>Err:</b> Slope " + attr.name +"<br>\n");
@@ -1899,7 +1897,7 @@ this.writeElement = function(board, output, input, cmd) {
 
      try {
        JXG.GeogebraReader.debug("* <b>Text:</b> " + text +"<br>\n");
-       var t = board.create('text', [gxtEl.x, gxtEl.y, text[0] +' '+ new Function('return '+ text[1] +';')() ]);
+       var t = board.create('text', [gxtEl.x, gxtEl.y, new Function('return \''+text[0]+'\' ' + text[1] +';') ]);
        return t;
      } catch(e) {
        JXG.GeogebraReader.debug("* <b>Err:</b> Text: " + text +"<br>\n");
