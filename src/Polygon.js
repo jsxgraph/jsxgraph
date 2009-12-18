@@ -40,7 +40,7 @@
  * @extends JXG.GeometryElement
  */
 
-JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel, lineLabels) {
+JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel, lineLabels, layer) {
     /* Call the constructor of GeometryElement */
     this.constructor();
     /**
@@ -52,6 +52,11 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
     this.elementClass = JXG.OBJECT_CLASS_AREA;                
     
     this.init(board, id, name);
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['polygon'];
+    this.layer = layer;
     
     if( (typeof withLines == 'undefined') || (withLines == null) ) {
         withLines = true;
@@ -106,7 +111,7 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
     if(withLines) {
         for(var i=0; i<this.vertices.length-1; i++) {
             /* create the borderlines */
-            l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name, lineLabels); // keine Labels?
+            l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name, lineLabels, this.layer); // keine Labels?
             l.setStraight(false,false); // Strecke
             this.borders[i] = l;
             l.parentPolygon = this;

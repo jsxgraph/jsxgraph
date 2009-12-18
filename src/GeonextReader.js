@@ -152,8 +152,9 @@ this.parseImage = function(board,fileNode,level,x,y,w,h,el) {
         return null;
     }
 
-    picStr = 'data:image/png;base64,' + this.readImage(fileNode.getElementsByTagName(tag)[0].firstChild);
+    picStr = this.readImage(fileNode.getElementsByTagName(tag)[0].firstChild);
     if (picStr!='') {
+        picStr = 'data:image/png;base64,' + picStr;
         if (tag=='src') {  // Background image
             x = fileNode.getElementsByTagName('x')[0].firstChild.data;
             y = fileNode.getElementsByTagName('y')[0].firstChild.data;
@@ -279,7 +280,7 @@ this.readGeonext = function(tree,board) {
     // But it maybe necessary if we construct with JavaScript afterwards
     board.renderer.enhancedRendering = true;
 
-    JXG.GeonextReader.parseImage(board,boardData.getElementsByTagName('file')[0],'images'); // Background image
+    JXG.GeonextReader.parseImage(board,boardData.getElementsByTagName('file')[0],board.options.layer['image']); // Background image
 
     // Eigenschaften der Zeichenflaeche setzen
     // das Grid zeichnen
@@ -358,7 +359,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data'); // x and y
                 gxtEl.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
-                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'points');
+                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],board.options.layer['point']);
                 try {
                     p = new JXG.Point(board, [1*gxtEl.x, 1*gxtEl.y], gxtEl.id, gxtEl.name, true);
                     p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
@@ -389,7 +390,7 @@ this.readGeonext = function(tree,board) {
                 y = l.point1.coords.usrCoords[2];
                 w = l.point1.coords.distance(JXG.COORDS_BY_USER, l.point2.coords);
                 h = 0; // dummy
-                l.image = JXG.GeonextReader.parseImage(board,Data,'lines',x,y,w,h,l);
+                l.image = JXG.GeonextReader.parseImage(board,Data,board.options.layer['line'],x,y,w,h,l);
 
                 gxtEl.straightFirst = (gxtEl.straightFirst=='false') ? false : true;
                 gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;
@@ -408,7 +409,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
                 gxtEl.midpoint = Data.getElementsByTagName('data')[0].getElementsByTagName('midpoint')[0].firstChild.data;
 
-                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'circles');
+                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],board.options.layer['circle']);
                 if(Data.getElementsByTagName('data')[0].getElementsByTagName('radius').length > 0) {
                     gxtEl.radiuspoint = Data.getElementsByTagName('data')[0].getElementsByTagName('radius')[0].firstChild.data;
                     gxtEl.radius = null;
@@ -454,7 +455,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
                 gxtEl.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'animate', 'animate');
-                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'points');
+                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],board.options.layer['point']);
                 try {
                     p = new JXG.Point(board, [1*gxtEl.x, 1*gxtEl.y], gxtEl.id, gxtEl.name, true);
                     gxtEl.parent = JXG.GeonextReader.changeOriginIds(board,gxtEl.parent);
@@ -479,7 +480,7 @@ this.readGeonext = function(tree,board) {
                 //gxtEl.showcoord = Data.getElementsByTagName('showcoord')[0].firstChild.data;
                 gxtEl.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
-                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'points');
+                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],board.options.layer['point']);
                 p = new JXG.Point(board, [1*gxtEl.xval, 1*gxtEl.yval], gxtEl.id, gxtEl.name, true);
                 p.addConstraint([gxtEl.x,gxtEl.y]);
                 p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
@@ -688,7 +689,7 @@ this.readGeonext = function(tree,board) {
                     }
                 }
                 else if(gxtEl.typeName == "SECTOR") {
-                    JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'sectors');
+                    JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],board.options.layer['sector']);
                     for(i=0; i<Data.getElementsByTagName('output').length; i++) {
                         xmlNode = Data.getElementsByTagName('output')[i];
                         defEl[i] = xmlNode.getElementsByTagName('id')[0].firstChild.data;
@@ -1011,7 +1012,7 @@ this.readGeonext = function(tree,board) {
                     gxtEl.border[i].colorLabel = xmlNode.getElementsByTagName('label')[0].firstChild.data;
                     gxtEl.border[i].colorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
                 }
-                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'polygone');
+                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],board.options.layer['polygon']);
                 p = new JXG.Polygon(board, gxtEl.dataVertex, gxtEl.border, gxtEl.id, gxtEl.name, true,true,true);
                 p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
@@ -1038,7 +1039,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
                 gxtEl.funct = Data.getElementsByTagName('data')[0].getElementsByTagName('function')[0].firstChild.data;
-                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'graphs');
+                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],board.options.layer['curve']);
                 c = new JXG.Curve(board, ['x','x',gxtEl.funct], gxtEl.id, gxtEl.name);
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 /*
@@ -1077,7 +1078,7 @@ this.readGeonext = function(tree,board) {
 
                 gxtEl.firstArrow = Data.getElementsByTagName('firstarrow')[0].firstChild.data;
                 gxtEl.lastArrow = Data.getElementsByTagName('lastarrow')[0].firstChild.data;
-                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],'arcs');
+                JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],board.options.layer['arc']);
                 gxtEl.midpoint = JXG.GeonextReader.changeOriginIds(board,gxtEl.midpoint);
                 gxtEl.angle = JXG.GeonextReader.changeOriginIds(board,gxtEl.angle);
                 gxtEl.radius = JXG.GeonextReader.changeOriginIds(board,gxtEl.radius);

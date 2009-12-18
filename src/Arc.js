@@ -46,7 +46,7 @@
  * @constructor
  * @extends JXG.GeometryElement
  */
-JXG.Arc = function (board, p1, p2, p3, id, name, withLabel) {
+JXG.Arc = function (board, p1, p2, p3, id, name, withLabel, layer) {
     /* Call the constructor of GeometryElement */
     this.constructor();
     
@@ -66,6 +66,12 @@ JXG.Arc = function (board, p1, p2, p3, id, name, withLabel) {
 
     /* Call init defined in GeometryElement to set board, id and name property */
     this.init(board, id, name);
+    
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['arc'];
+    this.layer = layer;
 
     /**
      * Midpoint of the arc.

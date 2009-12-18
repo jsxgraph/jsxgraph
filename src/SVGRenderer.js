@@ -24,6 +24,7 @@
 */
 
 JXG.SVGRenderer = function(container) {
+    var i;
     this.constructor();
 
     this.svgRoot = null;
@@ -68,6 +69,7 @@ JXG.SVGRenderer = function(container) {
     this.defs.appendChild(this.filter);    
     
     // um eine passende Reihenfolge herzustellen
+    /*
     this.images = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
     this.svgRoot.appendChild(this.images);
     this.grid = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
@@ -88,6 +90,15 @@ JXG.SVGRenderer = function(container) {
     this.svgRoot.appendChild(this.arcs);
     this.points = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
     this.svgRoot.appendChild(this.points);
+    */
+    /* 
+    * 10 Layers. highest number = highest visibility
+    */
+    this.layer = [];
+    for (i=0;i<10;i++) {
+        this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
+        this.svgRoot.appendChild(this.layer[i]);
+    }
     
     // um Dashes zu realisieren
     this.dashArray = ['2, 2', '5, 5', '10, 10', '20, 20', '20, 10, 10, 10', '20, 5, 10, 5'];
@@ -217,7 +228,7 @@ JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
     node.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:"+fontsize+"px; fill:#356AA0;  opacity:0.3;");
     t = document.createTextNode(str);
     node.appendChild(t);
-    this.appendChildPrimitive(node,'images');
+    this.appendChildPrimitive(node,0);
 };
 
 JXG.SVGRenderer.prototype.drawInternalText = function(el) {
@@ -225,7 +236,7 @@ JXG.SVGRenderer.prototype.drawInternalText = function(el) {
     node.setAttributeNS(null, "class", "JXGtext");
     el.rendNodeText = document.createTextNode('');
     node.appendChild(el.rendNodeText);
-    this.appendChildPrimitive(node,'points');
+    this.appendChildPrimitive(node,9);
     return node;
 };
 
@@ -242,7 +253,7 @@ JXG.SVGRenderer.prototype.updateInternalText = function(/** JXG.Text */ el) {
 JXG.SVGRenderer.prototype.drawTicks = function(axis) {
     var node = this.createPrimitive('path', axis.id);
     node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
-    this.appendChildPrimitive(node,'lines');
+    this.appendChildPrimitive(node,axis.layer);
     this.appendNodesToElement(axis,'path'); 
 };
 
@@ -265,7 +276,7 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     if(node == null) {
         node = this.createPrimitive('path', axis.id);
         node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
-        this.appendChildPrimitive(node,'lines');
+        this.appendChildPrimitive(node,axis.layer);
         this.appendNodesToElement(axis,'path');
     }
     node.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);    
@@ -352,9 +363,12 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     node4.setAttributeNS(null, 'stroke', 'none');
     this.setGradient(el);
     
+    this.appendChildPrimitive(node,el.layer); 
+    this.appendChildPrimitive(node4,2); // hard coded layer
+    /*
     this.arcs.appendChild(node);
-
     this.sectors.appendChild(node4);
+    */
 
     if (el.visProp['draft']) {
         this.setDraft(el);
@@ -444,12 +458,12 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
     node2.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);    
     node2.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);
 
-    this.appendChildPrimitive(node,'angles');
+    this.appendChildPrimitive(node,el.layer);
     el.rendNode = node;
     this.setShadow(el);    
-    this.appendChildPrimitive(node2,'angles');
+    this.appendChildPrimitive(node2,2);  // hard coded layer
     el.rendNode2 = node2;
-   
+
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
 };
 
@@ -469,7 +483,7 @@ JXG.SVGRenderer.prototype.drawImage = function(el) {
         node = this.createPrimitive('image',el.id);
 
     node.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
-    this.appendChildPrimitive(node,el.displayLevel);
+    this.appendChildPrimitive(node,el.layer);
     el.rendNode = node;
     this.updateImage(el);
 };
@@ -912,6 +926,9 @@ JXG.SVGRenderer.prototype.updatePolygonePrimitive = function(node, el) {
 };
 
 JXG.SVGRenderer.prototype.appendChildPrimitive = function(node,level) {
+    if (typeof level=='undefined') level = 0;   // For trace nodes
+    this.layer[level].appendChild(node);
+    /*
     switch (level) {
         case 'images': this.images.appendChild(node); break;
         case 'grid': this.grid.appendChild(node); break;
@@ -924,6 +941,7 @@ JXG.SVGRenderer.prototype.appendChildPrimitive = function(node,level) {
         case 'arcs': this.arcs.appendChild(node); break;
         case 'points': this.points.appendChild(node); break;
     }
+    */
 };
 
 JXG.SVGRenderer.prototype.setPropertyPrimitive = function(node,key,val) {
@@ -960,14 +978,4 @@ JXG.SVGRenderer.prototype.drawHorizontalGrid = function(topLeft, bottomRight, gy
 JXG.SVGRenderer.prototype.appendNodesToElement = function(element, type) {
     element.rendNode = document.getElementById(element.id);
 };
-
-/*
-JXG.SVGRenderer.prototype.cloneSubTree = function(el,id,type) {
-    var n = el.rendNode.cloneNode(true);
-    n.setAttribute('id', id);
-    this.appendChildPrimitive(n,type);
-    return n;
-};
-*/
-
 

@@ -75,22 +75,22 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
         
     if(f == 'cross' || f == 'x') { // x
         node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,'points');
+        this.appendChildPrimitive(node,el.layer);
         this.appendNodesToElement(el, 'path');
     }
     else if(f == 'circle' || f == 'o') { // circle
         node = this.createPrimitive('circle',el.id);
-        this.appendChildPrimitive(node,'points');
+        this.appendChildPrimitive(node,el.layer);
         this.appendNodesToElement(el, 'circle');
     }
     else if(f == 'square' || f == '[]') { // rectangle
         node = this.createPrimitive('rect',el.id);
-        this.appendChildPrimitive(node,'points');
+        this.appendChildPrimitive(node,el.layer);
         this.appendNodesToElement(el, 'rect');
     }
     else if(f == 'plus' || f == '+') { // +
         node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,'points');  
+        this.appendChildPrimitive(node,el.layer);  
         this.appendNodesToElement(el, 'path');
     }
     el.rendNode = node;
@@ -180,7 +180,7 @@ JXG.AbstractRenderer.prototype.changePointStyle = function(/** JXG.Point */el) {
  */
 JXG.AbstractRenderer.prototype.drawLine = function(el) { 
     var node = this.createPrimitive('line',el.id);
-    this.appendChildPrimitive(node,'lines');
+    this.appendChildPrimitive(node,el.layer);
     this.appendNodesToElement(el,'lines');
 
     this.updateLine(el);
@@ -472,7 +472,7 @@ JXG.AbstractRenderer.prototype.drawArrow = function(/** JXG.Line */ el) {
     this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']); // ?
     this.setDashStyle(el,el.visProp); // ?
     this.makeArrow(node,el);
-    this.appendChildPrimitive(node,'lines');
+    this.appendChildPrimitive(node,el.layer);
     this.appendNodesToElement(el,'lines');
 
     this.updateArrow(el);
@@ -516,7 +516,7 @@ JXG.AbstractRenderer.prototype.drawCurve = function(el) {
     var node = this.createPrimitive('path',el.id);
     
     //node.setAttributeNS(null, 'stroke-linejoin', 'round');
-    this.appendChildPrimitive(node,'curves');
+    this.appendChildPrimitive(node,el.layer);
     this.appendNodesToElement(el,'path');
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']); // ?
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']); // ?
@@ -559,7 +559,7 @@ JXG.AbstractRenderer.prototype.updateCurve = function(/** JXG.Curve */ el) {
  */
 JXG.AbstractRenderer.prototype.drawCircle = function(/** JXG.Circle */ el) { 
     var node = this.createPrimitive('ellipse',el.id);
-    this.appendChildPrimitive(node,'circles');
+    this.appendChildPrimitive(node,el.layer);
     this.appendNodesToElement(el,'ellipse'); 
     
     this.updateCircle(el);
@@ -607,7 +607,7 @@ JXG.AbstractRenderer.prototype.drawPolygon = function(/** JXG.Polygon */ el) {
     el.visProp['fillOpacity'] = 0.3;
     //el.visProp['strokeColor'] = 'none';
     //this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
-    this.appendChildPrimitive(node,'polygone');
+    this.appendChildPrimitive(node,el.layer);
     this.appendNodesToElement(el,'polygon');
     this.updatePolygon(el);
 };
@@ -856,7 +856,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
                                  board);
                                      
     node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
-    this.appendChildPrimitive(node2,'grid');
+    this.appendChildPrimitive(node2,1); // Attention layer=1
     if(!board.snapToGrid) {
         el = new Object();
         el.rendNode = node2;
@@ -879,7 +879,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
     }
 
     node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
-    this.appendChildPrimitive(node2,'grid');
+    this.appendChildPrimitive(node2,1); // Attention layer=1
     if(!board.snapToGrid) {
         el = new Object();
         el.rendNode = node2;

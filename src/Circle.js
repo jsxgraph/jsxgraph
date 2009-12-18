@@ -60,7 +60,7 @@
  * @see JXG.Board#generateName
  */            
 
-JXG.Circle = function (board, method, par1, par2, id, name, withLabel) {
+JXG.Circle = function (board, method, par1, par2, id, name, withLabel, layer) {
     /* Call the constructor of GeometryElement */
     this.constructor();
 
@@ -81,6 +81,12 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel) {
     this.elementClass = JXG.OBJECT_CLASS_CIRCLE; 
 
     this.init(board, id, name);
+    
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['circle'];
+    this.layer = layer;
 
     /**
      * Stores the given method.

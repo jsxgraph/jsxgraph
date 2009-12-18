@@ -42,7 +42,7 @@
  * @see JXG.Board#generateName
  * @see JXG.Board#addCurve
   */
-JXG.Curve = function (board, parents, id, name, withLabel) {
+JXG.Curve = function (board, parents, id, name, withLabel, layer) {
     this.constructor();
  
     this.points = []; 
@@ -52,6 +52,11 @@ JXG.Curve = function (board, parents, id, name, withLabel) {
     
     this.init(board, id, name);
 
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['curve'];
+    this.layer = layer;
 
     /** Use the algorithm by Gillam and Hohenwarter for plotting.
       * If false the naive algorithm is used.

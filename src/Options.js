@@ -33,7 +33,7 @@ JXG.Options = {
     fontSize : 12,
     showCopyright : true,
     showNavigation : true,
-    takeSizeFromFile : true, // If true, the construction - when read from a file or string - the size of the div can be changed.
+    takeSizeFromFile : false, // If true, the construction - when read from a file or string - the size of the div can be changed.
     renderer: 'svg',
 
     /* grid options */
@@ -179,6 +179,20 @@ JXG.Options = {
     precision : {
         hasPoint : 4,
         epsilon : 0.0001
+    },
+
+    // Default ordering of the layers
+    layer : {
+        point : 9,
+        arc   : 8,
+        line  : 7,
+        circle: 6, 
+        curve : 5,
+        polygon: 4,
+        sector: 3,
+        angle : 2,
+        grid  : 1,
+        image : 0 
     }
 };
 

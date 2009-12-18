@@ -165,7 +165,7 @@ JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     
     t = document.createTextNode(str);
     node.appendChild(t);
-    this.appendChildPrimitive(node,'images');
+    this.appendChildPrimitive(node,0);
 };
 JXG.VMLRenderer.prototype.drawInternalText = function(el) {
     var node;
@@ -174,11 +174,11 @@ JXG.VMLRenderer.prototype.drawInternalText = function(el) {
     if (document.documentMode==8) {    
         node.setAttribute('class', 'JXGtext');
     } else {
-        node.setAttribute('className', 'JXGtext');
+        node.setAttribute('className', 9);
     }
     el.rendNodeText = document.createTextNode('');
     node.appendChild(el.rendNodeText);
-    this.appendChildPrimitive(node,'points');
+    this.appendChildPrimitive(node,9);
     return node;
 };
 
@@ -194,7 +194,7 @@ JXG.VMLRenderer.prototype.updateInternalText = function(/** JXG.Text */ el) {
 
 JXG.VMLRenderer.prototype.drawTicks = function(ticks) {
     var ticksNode = this.createPrimitive('path', ticks.id);
-    this.appendChildPrimitive(ticksNode,'lines');
+    this.appendChildPrimitive(ticksNode,ticks.layer);
     //ticks.rendNode = ticksNode;
     this.appendNodesToElement(ticks, 'path');
 };
@@ -222,7 +222,7 @@ JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     ticks = document.getElementById(axis.id);
     if(ticks == null) {
         ticks = this.createPrimitive('path', axis.id);
-        this.appendChildPrimitive(ticks,'lines');
+        this.appendChildPrimitive(ticks,axis.layer);
         this.appendNodesToElement(axis,'path');
     } 
     this.setAttr(ticks,'stroked', 'true');
@@ -363,8 +363,8 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     this.setGradient(el);    
     
     /* append nodes */
-    this.appendChildPrimitive(node,'lines'); //arc
-    this.appendChildPrimitive(node2,'angles'); //fill
+    this.appendChildPrimitive(node,el.layer); //arc
+    this.appendChildPrimitive(node2,el.layer); //fill
     
     /* draft mode */
     if(el.visProp['draft']) {
@@ -436,8 +436,8 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
     this.setObjectFillColor(el, el.visProp['fillColor'], el.visProp['fillOpacity']);
     
     /* append nodes */
-    this.appendChildPrimitive(node,'lines'); //arc
-    this.appendChildPrimitive(node2,'angles'); //fill
+    this.appendChildPrimitive(node,el.layer); //arc
+    this.appendChildPrimitive(node2,el.layer); //fill
     
     /* draft mode */
     if(el.visProp['draft']) {
@@ -467,7 +467,7 @@ JXG.VMLRenderer.prototype.drawImage = function(el) {
 
     this.setAttr(node,'src',url);
     this.container.appendChild(node);
-    this.appendChildPrimitive(node,el.displayLevel);
+    this.appendChildPrimitive(node,el.layer);
     node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
     el.rendNode = node;
     this.updateImage(el);
@@ -899,6 +899,9 @@ JXG.VMLRenderer.prototype.updatePolygonePrimitive = function(node,el) {
 };
 
 JXG.VMLRenderer.prototype.appendChildPrimitive = function(node,level) {
+    if (typeof level=='undefined') level = 0;   // For trace nodes    
+    node.style.zIndex = level;
+    /*
     switch (level) {
         case 'images': node.style.zIndex = "1"; break;
         case 'grid': node.style.zIndex = "1"; break;
@@ -911,6 +914,7 @@ JXG.VMLRenderer.prototype.appendChildPrimitive = function(node,level) {
         case 'arcs': node.style.zIndex = "4"; break;
         case 'points': node.style.zIndex = "5"; break;
     }
+    */
     this.container.appendChild(node);
 };
 
@@ -957,10 +961,3 @@ JXG.VMLRenderer.prototype.drawHorizontalGrid = function(topLeft, bottomRight, gy
     this.updatePathPrimitive(node, gridArr, board);
     return node;
 };
-/*
-JXG.VMLRenderer.prototype.cloneSubTree = function(el,id,type) {
-    var node = el.rendNode.cloneNode(true);
-    node.setAttribute('id', id);
-    this.appendChildPrimitive(node,type);
-};
-*/

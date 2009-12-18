@@ -136,7 +136,12 @@ JXG.GeometryElement = function() {
      * @private
      */
     this.hasLabel = false;
-
+    
+    /**
+     * display layer which will conting the element.
+     * Controlled in JXG.Options.
+     */
+    this.layer = 9;
 
     /**
      * Stores all Intersection Objects which in this moment are not real and

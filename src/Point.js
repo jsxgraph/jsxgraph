@@ -63,7 +63,7 @@ JXG.POINT_STYLE_PLUS_BIG     = 12; // a big +
  * @see JXG.Board#generateName
  * @see JXG.Board#addPoint
  */
-JXG.Point = function (board, coordinates, id, name, show, withLabel) {
+JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
     this.constructor();
     
     /**
@@ -94,7 +94,13 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel) {
      */
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
     this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
-    
+
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['point'];
+    this.layer = layer;
+
     /**
      * If true, the infobox is shown on mouse over, else not.
      * @type boolean

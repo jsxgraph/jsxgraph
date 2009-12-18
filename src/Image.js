@@ -37,7 +37,7 @@
  * @constructor
  * @return A new geometry element Image
  */
-JXG.Image = function (board, url, coordinates, size, displayLevel, id, name, el) {
+JXG.Image = function (board, url, coordinates, size, layer, id, name, el) {
     //this.constructor();
     this.type = JXG.OBJECT_TYPE_IMAGE;
     this.elementClass = JXG.OBJECT_CLASS_OTHER;                
@@ -49,7 +49,11 @@ JXG.Image = function (board, url, coordinates, size, displayLevel, id, name, el)
     this.size = [size[0]*board.stretchX,size[1]*board.stretchY];
     //this.imageBase64String = url; //imageBase64String;
     this.url = url;
-    this.displayLevel = displayLevel;
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['image'];
+    this.layer = layer;
     this.parent = el;
     this.visProp['visible'] = true;
     //this.show = true; // noch noetig? BV
@@ -116,9 +120,8 @@ JXG.Image.prototype.addTransform = function (transform) {
  */
 JXG.createImage = function(board, parents, atts) {
     var url;
-//    return new JXG.Image(board, atts['imageString'], parents[0], parents[1], 'images', atts['id'], atts['name']);
     url = atts['imageString'];
-    return new JXG.Image(board, parents[0], parents[1], parents[2], 'images', false, false, undefined);
+    return new JXG.Image(board, parents[0], parents[1], parents[2], 0, false, false, undefined);
 };
 
 JXG.JSXGraph.registerElement('image', JXG.createImage);

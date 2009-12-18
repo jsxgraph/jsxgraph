@@ -46,7 +46,7 @@
  * @constructor
  * @extends JXG.GeometryElement
  */
-JXG.Angle = function (board, p1, p2, p3, radius, text, id, name, withLabel) {
+JXG.Angle = function (board, p1, p2, p3, radius, text, id, name, withLabel, layer) {
     /* Call the constructor of GeometryElement */
     this.constructor();
     /**
@@ -64,7 +64,13 @@ JXG.Angle = function (board, p1, p2, p3, radius, text, id, name, withLabel) {
     this.elementClass = JXG.OBJECT_CLASS_AREA;
     
     this.init(board, id, name);
-    
+
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['angle'];
+    this.layer = layer;
+
     /**
      * First point A defining the angle ABC. Do no set this property directly as it
      * will break JSXGraph's dependency tree.

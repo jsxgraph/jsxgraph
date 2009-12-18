@@ -45,7 +45,7 @@
  */
 
  /* Sector legt nur die benoetigten Unterelemente an und verwaltet diese als Kinder, wird nicht mehr direkt gezeichnet */
-JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
+JXG.Sector = function (board, p1, p2, p3, ids, names, id, layer) {
     /* Call the constructor of GeometryElement */
     this.constructor();
     /**
@@ -57,6 +57,11 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id) {
     this.elementClass = JXG.OBJECT_CLASS_AREA;                
 
     this.init(board, id, '');
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['sector'];
+    this.layer = layer;
     
     if(!JXG.isArray(ids)) {
         ids = [null, null, null, null];
