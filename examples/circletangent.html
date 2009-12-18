@@ -7,7 +7,7 @@
 </head>
 <body>
 <div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
-<div id="debug" style="display:block;"></div>
+<div id="debug" style="display:none; /*position:absolute;*/"></div>
 <script type="text/javascript">
 /* <![CDATA[ */
 var board = JXG.JSXGraph.initBoard('box', {boundingbox:[-4,4,12,-4], keepaspectratio:true,axis:true});
@@ -18,7 +18,16 @@ var c = board.createElement('circle', [p1,p2] , {name:'c',strokeColor:'red'});
 var p3 = board.createElement('point', [0,-1] , {name:'C',fillColor:'red',strokeColor:'red'});
 
 var t2 = board.createElement('tangent', [c,p2]);
-
+/*
+deb = document.getElementById('debug');
+t2.highlight = function(){
+deb.innerHTML = 'TTT';
+deb 
+}
+t2.noHighlight = function(){
+deb.innerHTML = '';
+}
+*/
 var m = function(circ){
     return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
              -circ.midpoint.X(),-circ.midpoint.Y()],

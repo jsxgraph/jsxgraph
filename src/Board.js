@@ -793,29 +793,29 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
  * @private
  */
 JXG.Board.prototype.mouseMoveListener = function (Event) {
-    var el, pEl, cPos, absPos, dx, dy, newPos;
+    var el, pEl, cPos, absPos, newPos, dx, dy;
 
     cPos = this.getRelativeMouseCoordinates(Event);
 
     // position of mouse cursor relative to containers position of container
     absPos = JXG.getPosition(Event);
-    x = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
-    y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
+    dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
+    dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
 
     this.updateQuality = this.BOARD_QUALITY_LOW;
 
-    this.dehighlightAll(x,y);
+    this.dehighlightAll(dx,dy);
     if(this.mode != this.BOARD_MODE_DRAG) {
         this.renderer.hide(this.infobox);
     }
 
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
-        this.origin.scrCoords[1] = x - this.drag_dx;
-        this.origin.scrCoords[2] = y - this.drag_dy;
+        this.origin.scrCoords[1] = dx - this.drag_dx;
+        this.origin.scrCoords[2] = dy - this.drag_dy;
         this.moveOrigin();
     }
     else if(this.mode == this.BOARD_MODE_DRAG) {
-        newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x,y), this);
+        newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(dx,dy), this);
         if (this.drag_obj.type == JXG.OBJECT_TYPE_POINT
             || this.drag_obj.type == JXG.OBJECT_TYPE_LINE
             || this.drag_obj.type == JXG.OBJECT_TYPE_CIRCLE
@@ -856,7 +856,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
         // Elements  below the mouse pointer which are not highlighted are highlighted.
         for(el in this.objects) {
             pEl = this.objects[el];
-            if( pEl.hasPoint!=undefined && pEl.visProp['visible']==true && pEl.hasPoint(x, y)) {
+            if( pEl.hasPoint!=undefined && pEl.visProp['visible']==true && pEl.hasPoint(dx, dy)) {
                 //this.renderer.highlight(pEl);
 
                 // this is required in any case because otherwise the box won't be shown until the point is dragged
@@ -878,7 +878,10 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
  */
 JXG.Board.prototype.updateInfobox = function(el) {
     var x, y, xc, yc;
-    if((el.elementClass == JXG.OBJECT_CLASS_POINT) && el.showInfobox) {
+    if (!el.showInfobox) {
+        return this;
+    }
+    if (el.elementClass == JXG.OBJECT_CLASS_POINT) {
         xc = el.coords.usrCoords[1]*1;
         yc = el.coords.usrCoords[2]*1;
         this.infobox.setCoords(xc+this.infobox.distanceX/(this.stretchX),
@@ -904,8 +907,6 @@ JXG.Board.prototype.updateInfobox = function(el) {
             y = yc;
         }
 
-        //this.infobox.nameHTML = '<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>';
-        //this.infobox.nameHTML = '(' + el.coords.usrCoords[1] + ', ' + el.coords.usrCoords[2] + ')';
         this.highlightInfobox(x,y,el);
         this.renderer.show(this.infobox);
         this.renderer.updateText(this.infobox);
