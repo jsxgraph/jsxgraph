@@ -425,6 +425,18 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @private
     */
    this.drag_dy = 0;
+   
+   /**
+     * Absolute position of the mouse pointer in screen pixel from the top left corner
+     * of the HTML window.
+     */
+   this.mousePosAbs = [0,0];
+
+    /**
+     * Relative position of the mouse pointer in screen pixel from the top left corner
+     * of the JSXGraph canvas (the div element contining the board)-
+     */
+   this.mousePosRel = [0,0];
 
    /**
     * A reference to the object that is dragged on the board.
@@ -741,6 +753,8 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     absPos = JXG.getPosition(Evt);
     dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
     dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
+    this.mousePosAbs = absPos; // Save the mouse position
+    this.mousePosRel = [dx,dy];
 
     if(Evt.shiftKey) {
         this.drag_dx = dx - this.origin.scrCoords[1];
@@ -796,11 +810,13 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
     var el, pEl, cPos, absPos, newPos, dx, dy;
 
     cPos = this.getRelativeMouseCoordinates(Event);
-
     // position of mouse cursor relative to containers position of container
     absPos = JXG.getPosition(Event);
     dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
     dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
+
+    this.mousePosAbs = absPos; // Save the mouse position
+    this.mousePosRel = [dx,dy];
 
     this.updateQuality = this.BOARD_QUALITY_LOW;
 

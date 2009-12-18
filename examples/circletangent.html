@@ -6,8 +6,23 @@
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
-<div id="debug" style="display:none; /*position:absolute;*/"></div>
+<div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden;"></div>
+<div id="debug" style="display:block;"></div>
+
+<div id="myinfobox" 
+    style="
+        display:none;
+        position:absolute; 
+        border-width:2px; border-color:red; border-style:solid;
+        background-color:#ffff88;
+        padding:10px;
+        // Cross-browser opacity:
+        -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=50)'; 
+        filter: alpha(opacity=50);
+        opacity:.5;
+    "
+></div> 
+
 <script type="text/javascript">
 /* <![CDATA[ */
 var board = JXG.JSXGraph.initBoard('box', {boundingbox:[-4,4,12,-4], keepaspectratio:true,axis:true});
@@ -18,16 +33,30 @@ var c = board.createElement('circle', [p1,p2] , {name:'c',strokeColor:'red'});
 var p3 = board.createElement('point', [0,-1] , {name:'C',fillColor:'red',strokeColor:'red'});
 
 var t2 = board.createElement('tangent', [c,p2]);
-/*
-deb = document.getElementById('debug');
-t2.highlight = function(){
-deb.innerHTML = 'TTT';
-deb 
+
+//-----------------------------------
+var infobox = document.getElementById('myinfobox');
+JXG.Line.prototype.highlight = function(){
+    infobox.innerHTML = this.name;
+    infobox.style.left = this.board.mousePosAbs[0]+20;
+    infobox.style.top = this.board.mousePosAbs[1]-20;
+    infobox.style.display = 'block';
 }
-t2.noHighlight = function(){
-deb.innerHTML = '';
+JXG.Line.prototype.noHighlight = function(){
+    infobox.style.display = 'none';
 }
-*/
+c.highlight = function(){
+    infobox.innerHTML = 'circle '+this.name;
+    infobox.style.left = this.board.mousePosAbs[0]+20;
+    infobox.style.top = this.board.mousePosAbs[1]-20;
+    infobox.style.display = 'block';
+}
+c.noHighlight = function(){
+    infobox.style.display = 'none';
+}
+//-----------------------------------
+
+
 var m = function(circ){
     return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
              -circ.midpoint.X(),-circ.midpoint.Y()],
