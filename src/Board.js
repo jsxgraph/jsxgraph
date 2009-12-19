@@ -779,10 +779,10 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
                     && (!pEl.fixed)
                     && (pEl.hasPoint(dx, dy))
                     ) {
-                this.drag_obj = this.objects[el];
                 // Points are preferred:
                 if ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)) {
-                    break;
+                    this.drag_obj = this.objects[el];
+                    if (this.options.takeFirst) break;
                 }
             }
         }
@@ -2211,7 +2211,7 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     if (keepaspectratio) {
         this.unitX = w/(bbox[2]-bbox[0]);
         this.unitY = h/(-bbox[3]+bbox[1]);
-        if (this.unitX>this.unitY) {
+        if (this.unitX<this.unitY) {
             this.unitY = this.unitX;
         } else {
             this.unitX = this.unitY;

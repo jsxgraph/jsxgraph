@@ -39,7 +39,7 @@
  */
 JXG.JSXGraph = new function () {
     var ie, opera, i, arr;
-    this.licenseText = 'JSXGraph v0.79rc3 Copyright (C) see http://jsxgraph.org';
+    this.licenseText = 'JSXGraph v0.79rc4 Copyright (C) see http://jsxgraph.org';
 
     /**
             * Stores the renderer that is used to draw the board.
@@ -123,7 +123,7 @@ JXG.JSXGraph = new function () {
                                 */
                 unitX = w/(bbox[2]-bbox[0]);
                 unitY = h/(-bbox[3]+bbox[1]);
-                if (unitX>unitY) {
+                if (unitX<unitY) {
                     unitY = unitX;
                 } else {
                     unitX = unitY;
