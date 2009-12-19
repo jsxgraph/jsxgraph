@@ -246,10 +246,13 @@ JXG.createAngle = function(board, parents, attributes) {
     if(attributes['text'] == null || typeof attributes['text'] == 'text') {
         attributes['text'] = '';
     }    
+    if (typeof atts['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
     
     // Alles 3 Punkte?
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
-        el = new JXG.Angle(board, parents[0], parents[1], parents[2], attributes['radius'], attributes['text'], attributes['id'], attributes['name'],attributes['withLabel']);
+        el = new JXG.Angle(board, parents[0], parents[1], parents[2], attributes['radius'], attributes['text'], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
         throw new Error("JSXGraph: Can't create angle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");

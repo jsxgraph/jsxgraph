@@ -15,14 +15,12 @@
 /* <![CDATA[ */
 var board = JXG.JSXGraph.initBoard('box', {boundingbox:[-7,5,7,-5], grid:true,axis:true,keepaspectratio:true});
 var p1 = board.createElement('point',[1,1], {name:'A',style:6});
-
 var p2 = board.createElement('point',[5,2], {name:'B',style:6});
 var p3 = board.createElement('point',[0,-1], {name:'C',style:6});
 var p4 = board.createElement('point',[5,3], {name:'D',style:6});
-
 var f = board.createElement('functiongraph', [function(x){return Math.cos(x);},0,Math.PI*2]);
 var circ = board.createElement('circle', [p1,p2], {dash:1,fillOpacity:0.8});
-var ac = board.createElement('glider', [4,0,circ],{name:'glide'} );
+var ac = board.createElement('glider', [0,2,circ],{name:'S'} );
 var t = board.createElement('normal',[ac], {dash:3,strokeColor:'black'});
 var t = board.createElement('normal',[p2,circ], {dash:3,strokeColor:'black'});
 

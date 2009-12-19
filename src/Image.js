@@ -120,8 +120,15 @@ JXG.Image.prototype.addTransform = function (transform) {
  */
 JXG.createImage = function(board, parents, atts) {
     var url;
-    url = atts['imageString'];
-    return new JXG.Image(board, parents[0], parents[1], parents[2], 0, false, false, undefined);
+    if (atts==null) {
+        atts = {};
+    } else if (atts['imageString']!=null) {
+        url = atts['imageString'];
+    }
+    if (typeof atts['layer'] == 'undefined') {
+        atts['layer'] = null;
+    }
+    return new JXG.Image(board, parents[0], parents[1], parents[2], atts['layer'], false, false, undefined);
 };
 
 JXG.JSXGraph.registerElement('image', JXG.createImage);

@@ -95,7 +95,7 @@ JXG.SVGRenderer = function(container) {
     * 10 Layers. highest number = highest visibility
     */
     this.layer = [];
-    for (i=0;i<10;i++) {
+    for (i=0;i<JXG.Options.layer.numlayers;i++) {
         this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
         this.svgRoot.appendChild(this.layer[i]);
     }
@@ -926,7 +926,11 @@ JXG.SVGRenderer.prototype.updatePolygonePrimitive = function(node, el) {
 };
 
 JXG.SVGRenderer.prototype.appendChildPrimitive = function(node,level) {
-    if (typeof level=='undefined') level = 0;   // For trace nodes
+    if (typeof level=='undefined') { // trace nodes have level not set
+        level = 0;                         
+    } else if (level>=JXG.Options.layer.numlayers) { 
+        level = JXG.Options.layer.numlayers-1;
+    }
     this.layer[level].appendChild(node);
     /*
     switch (level) {

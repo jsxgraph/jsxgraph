@@ -643,6 +643,9 @@ JXG.createCircle = function(board, parentArr, atts) {
     if (typeof atts['withLabel']=='undefined') {
         atts['withLabel'] = false;
     }
+    if (typeof atts['layer'] == 'undefined') {
+        atts['layer'] = null;
+    }
     
     p = [];
     for (i=0;i<parentArr.length;i++) {
@@ -656,25 +659,25 @@ JXG.createCircle = function(board, parentArr, atts) {
     }
     if( parentArr.length==2 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) ) {
         // Point/Point
-        el = new JXG.Circle(board, 'twoPoints', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'twoPoints', p[0], p[1], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( ( JXG.isNumber(p[0]) || JXG.isFunction(p[0]) || JXG.isString(p[0])) && JXG.isPoint(p[1]) ) {
         // Number/Point
-        el = new JXG.Circle(board, 'pointRadius', p[1], p[0], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointRadius', p[1], p[0], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( ( JXG.isNumber(p[1]) || JXG.isFunction(p[1]) || JXG.isString(p[1])) && JXG.isPoint(p[0]) ) {
         // Point/Number
-        el = new JXG.Circle(board, 'pointRadius', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointRadius', p[0], p[1], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( (p[0].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.isPoint(p[1]) ) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointCircle', p[1], p[0], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointCircle', p[1], p[0], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( (p[1].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.isPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointCircle', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointCircle', p[0], p[1], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( (p[0].type == JXG.OBJECT_TYPE_LINE) && JXG.isPoint(p[1])) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointLine', p[1], p[0], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointLine', p[1], p[0], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( (p[1].type == JXG.OBJECT_TYPE_LINE) && JXG.isPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointLine', p[0], p[1], atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Circle(board, 'pointLine', p[0], p[1], atts['id'], atts['name'],atts['withLabel'],atts['layer']);
     } else if( parentArr.length==3 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) && JXG.isPoint(p[2])) {
         // Circle through three points
         var arr = JXG.createCircumcircle(board, p, atts); // returns [center, circle]

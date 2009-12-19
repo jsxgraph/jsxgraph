@@ -308,9 +308,12 @@ JXG.createArc = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     }    
+    if (typeof attributes['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
     // Alles 3 Punkte?
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
-        el = new JXG.Arc(board, parents[0], parents[1], parents[2], attributes['id'], attributes['name'],attributes['withLabel']);
+        el = new JXG.Arc(board, parents[0], parents[1], parents[2], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
         throw new Error("JSXGraph: Can't create Arc with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
@@ -334,13 +337,16 @@ JXG.createSemicircle = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     }    
+    if (typeof attributes['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
     if(attributes['id'] != null) {
         idmp = attributes['id']+'_mp';
     }
     // Alles 2 Punkte?
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) ) {
         mp = board.createElement('midpoint', [parents[0], parents[1]], {id:idmp, withLabel:false, visible:false});
-        el = new JXG.Arc(board, mp, parents[1], parents[0], attributes['id'], attributes['name'],attributes['withLabel']);
+        el = new JXG.Arc(board, mp, parents[1], parents[0], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
         throw new Error("JSXGraph: Can't create Semicircle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
@@ -364,6 +370,9 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     }    
+    if (typeof attributes['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
     if(attributes['id'] != null) {
         idmp = attributes['id']+'_mp';
     }
@@ -374,10 +383,10 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
         det = (parents[0].coords.usrCoords[1]-parents[2].coords.usrCoords[1])*(parents[0].coords.usrCoords[2]-parents[1].coords.usrCoords[2]) -
               (parents[0].coords.usrCoords[2]-parents[2].coords.usrCoords[2])*(parents[0].coords.usrCoords[1]-parents[1].coords.usrCoords[1]);
         if(det < 0) {
-            el = new JXG.Arc(board, mp, parents[0], parents[2], attributes['id'], attributes['name'],attributes['withLabel']);
+            el = new JXG.Arc(board, mp, parents[0], parents[2], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
         }
         else {
-            el = new JXG.Arc(board, mp, parents[2], parents[0], attributes['id'], attributes['name'],attributes['withLabel']);         
+            el = new JXG.Arc(board, mp, parents[2], parents[0], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);         
         }
         
         el.update = function() {

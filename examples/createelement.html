@@ -12,7 +12,7 @@
   <div id="box" class="jxgbox" style="width:700px; height:500px;"></div>
   <div id="debug" style="display:block;"></div>
    <form>
-      <input type='button' value='SW-Modus' onclick="board.options.useBlackWhiteOptions(board);" />  
+      <input type='button' value='SW-Modus' onclick="JXG.useBlackWhiteOptions(board);" />  
    </form>
    <script type="text/javascript">
     /* <![CDATA[ */
@@ -62,7 +62,7 @@
         board.options.grid.gridColor = '#FF0000';
         board.options.sector.fillColor = 'red';
         board.options.polygon.fillColor = 'blue';
-        board.options.useStandardOptions(board);  
+        JXG.useStandardOptions(board);  
         
   /* ]]> */
   </script>

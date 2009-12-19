@@ -201,9 +201,15 @@ JXG.Sector.prototype.getRadius = function() {
 
 JXG.createSector = function(board, parentArr, atts) {
     var el;
+    if (atts==null) {
+        atts = {};
+    }
+    if (typeof atts['layer'] == 'undefined') {
+        atts['layer'] = null;
+    }
     // Alles 3 Punkte?
     if ( (JXG.isPoint(parentArr[0])) && (JXG.isPoint(parentArr[1])) && (JXG.isPoint(parentArr[2]))) {
-        el = new JXG.Sector(board, parentArr[0], parentArr[1], parentArr[2], atts["ids"], atts["names"], atts['id']);
+        el = new JXG.Sector(board, parentArr[0], parentArr[1], parentArr[2], atts["ids"], atts["names"], atts['id'], atts['layer']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
         throw new Error("JSXGraph: Can't create sector with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");
@@ -224,6 +230,9 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
  JXG.createCircumcircleSector = function(board, parents, attributes) {
     var el, mp, idmp, det;
     
+    if (attributes==null) {
+        attributes = {};
+    }
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     }    
@@ -237,10 +246,10 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
         det = (parents[0].coords.usrCoords[1]-parents[2].coords.usrCoords[1])*(parents[0].coords.usrCoords[2]-parents[1].coords.usrCoords[2]) -
               (parents[0].coords.usrCoords[2]-parents[2].coords.usrCoords[2])*(parents[0].coords.usrCoords[1]-parents[1].coords.usrCoords[1]);
         if(det < 0) {
-            el = new JXG.Sector(board, mp, parents[0], parents[2], attributes['id'], attributes['name'],attributes['withLabel']);
+            el = new JXG.Sector(board, mp, parents[0], parents[2], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
         }
         else {
-            el = new JXG.Sector(board, mp, parents[2], parents[0], attributes['id'], attributes['name'],attributes['withLabel']);         
+            el = new JXG.Sector(board, mp, parents[2], parents[0], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);         
         }
         
         el.arc.update = function() {

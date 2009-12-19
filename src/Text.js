@@ -37,7 +37,7 @@
  * @constructor
  * @return A new geometry element Text
  */
-JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLabel, display) {
+JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLabel, display, layer) {
     this.constructor();
 
     this.type = JXG.OBJECT_TYPE_TEXT;
@@ -47,6 +47,12 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
 
     this.contentStr = contentStr;
     this.plaintextStr = '';
+
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['text'];
+    this.layer = layer;
 
     /**
      * There is choice between 'html' and 'internal'
@@ -79,7 +85,6 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
      * @name JXG.Text#fontSize
      * @default {@link JXG.Options.fontSize}
      */
-
 
     this.visProp['visible'] = true;
     //this.show = true; // noch noetig? BV
@@ -357,7 +362,10 @@ JXG.createText = function(board, parentArr, atts) {
     if (typeof atts['display']=='undefined') {
         atts['display'] = board.options.text.defaultDisplay;  // 'html' or 'internal'
     }
-    return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false, atts['display']);
+    if (typeof atts['layer'] == 'undefined') {
+        atts['layer'] = null;
+    }
+    return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false, atts['display'],atts['layer']);
 };
 
 JXG.JSXGraph.registerElement('text', JXG.createText);

@@ -1107,6 +1107,9 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
     if (typeof atts['withLabel'] == 'undefined') {
         atts['withLabel'] = true;
     }
+    if (typeof atts['layer'] == 'undefined') {
+        atts['layer'] = null;
+    }
         
     var isConstrained = false;
     for (var i=0;i<parents.length;i++) {
@@ -1116,21 +1119,21 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
     }
     if (!isConstrained) {
         if ( (JXG.isNumber(parents[0])) && (JXG.isNumber(parents[1])) ) {
-            el = new JXG.Point(board, parents, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);
+            el = new JXG.Point(board, parents, atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel'], atts['layer']);
             if ( atts["slideObject"] != null ) {
                 el.makeGlider(atts["slideObject"]);
             } else {
                 el.baseElement = el; // Free point
             }
         } else if ( (typeof parents[0]=='object') && (typeof parents[1]=='object') ) { // Transformation
-            el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);   
+            el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel'], atts['layer']);   
             el.addTransform(parents[0],parents[1]);
         }
         else {// Failure
             throw new Error("JSXGraph: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         }
     } else {
-        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel']);
+        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || board.algebra.str2Bool(atts['visible']), atts['withLabel'], atts['layer']);
         el.addConstraint(parents);
     }
     return el;

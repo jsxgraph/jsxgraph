@@ -828,6 +828,9 @@ JXG.createLine = function(board, parents, atts) {
     if(atts['withLabel'] == null || typeof atts['withLabel'] == 'undefined') {
         atts['withLabel'] = false;
     }
+    if (typeof atts['layer'] == 'undefined') {
+        atts['layer'] = null;
+    }
 
     var constrained = false;
     if (parents.length == 2) { // The line is defined by two points (or coordinates of two points)
@@ -850,7 +853,7 @@ JXG.createLine = function(board, parents, atts) {
             constrained = true;
         } else
             throw new Error("JSXGraph: Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
-        el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel'],atts['layer']);
         if(constrained) {
         	el.constrained = true;
         	el.funp1 = parents[0];
@@ -884,7 +887,7 @@ JXG.createLine = function(board, parents, atts) {
     else if ((parents.length==1) && (typeof parents[0] == 'function') && (parents[0]().length == 2) &&
     		 (parents[0]()[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parents[0]()[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
     	var ps = parents[0]();
-        el = new JXG.Line(board, ps[0].id, ps[1].id, atts['id'], atts['name'],atts['withLabel']);
+        el = new JXG.Line(board, ps[0].id, ps[1].id, atts['id'], atts['name'],atts['withLabel'],atts['layer']);
         el.constrained = true;
         el.funps = parents[0];
     } else

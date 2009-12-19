@@ -222,9 +222,15 @@ JXG.Polygon.prototype.cloneToBackground = function(addToTrace) {
 JXG.createPolygon = function(board, parents, atts) {
     var el;
 
+    if (atts==null) {
+        atts = {};
+    } 
     if (typeof atts['withLabel']=='undefined') {
         atts['withLabel'] = false;
     }    
+    if (typeof atts['layer'] == 'undefined') {
+        atts['layer'] = null;
+    }
     
     // Sind alles Punkte?
     for(var i=0; i<parents.length; i++) {
@@ -233,7 +239,7 @@ JXG.createPolygon = function(board, parents, atts) {
             throw new Error("JSXGraph: Can't create polygon with parent types other than 'point'.");
     }
     
-    el = new JXG.Polygon(board, parents, atts["borders"], atts["id"], atts["name"], atts["withLines"],atts['withLabel'],atts['lineLabels']);
+    el = new JXG.Polygon(board, parents, atts["borders"], atts["id"], atts["name"], atts["withLines"],atts['withLabel'],atts['lineLabels'],atts['layer']);
 
     return el;
 };
@@ -305,6 +311,9 @@ JXG.Polygon.prototype.Area = function() {
 JXG.createRegularPolygon = function(board, parents, atts) {
     var el, i, n, p = [], rot, c;
 
+    if (atts==null) {
+        atts = {};
+    }
     if (typeof atts['withLabel']=='undefined') {
         atts['withLabel'] = false;
     }    

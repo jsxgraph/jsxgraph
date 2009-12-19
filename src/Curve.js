@@ -769,7 +769,10 @@ JXG.createCurve = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     } 
-    return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name'], attributes['withLabel']);
+    if (typeof attributes['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
+    return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name'], attributes['withLabel'],attributes['layer']);
 };
 
 JXG.JSXGraph.registerElement('curve', JXG.createCurve);
@@ -822,8 +825,11 @@ JXG.createFunctiongraph = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     } 
+    if (typeof attributes['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
     attributes.curveType = 'functiongraph';
-    return new JXG.Curve(board, par, attributes['id'], attributes['name'],attributes['withLabel']);
+    return new JXG.Curve(board, par, attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
 };
 
 JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
@@ -845,6 +851,9 @@ JXG.createSpline = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     } 
+    if (typeof attributes['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
     
     F = function() {
         var D, x=[], y=[];
@@ -897,9 +906,7 @@ JXG.createSpline = function(board, parents, attributes) {
         };
         return fct;
     };
-    
-    
-    return new JXG.Curve(board, ["x","x", F()], attributes["id"], attributes["name"], attributes['withLabel']);
+    return new JXG.Curve(board, ["x","x", F()], attributes["id"], attributes["name"], attributes['withLabel'],attributes['layer']);
 };
 
 /**
@@ -955,6 +962,9 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     if (typeof attributes['withLabel'] == 'undefined') {
         attributes['withLabel'] = false;
     }     
+    if (typeof attributes['layer'] == 'undefined') {
+        attributes['layer'] = null;
+    }
     attributes.fillOpacity   = attributes.fillOpacity || 0.3;
     attributes.fillColor = attributes.fillColor || '#ffff00';
     attributes.curveType = 'plot';
@@ -973,7 +983,7 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     /**
      * @private
      */
-    c = new JXG.Curve(board, par, attributes['id'], attributes['name'], attributes['withLabel']);
+    c = new JXG.Curve(board, par, attributes['id'], attributes['name'], attributes['withLabel'],attributes['layer']);
     /**
      * @private
      */

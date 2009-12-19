@@ -33,11 +33,8 @@ JXG.Options = {
     fontSize : 12,
     showCopyright : true,
     showNavigation : true,
-    takeSizeFromFile : true, // If true, the construction - when read from a file or string - the size of the div can be changed.
+    takeSizeFromFile : false, // If true, the construction - when read from a file or string - the size of the div can be changed.
     renderer: 'svg',
-    takeFirst: false, // If true take the first element in the object list where hasPoint() returns true (mouseDownListener).
-                     // Otherwise take the element which has been constructed last ("lays above").
-                     // takeFirst is faster, if there is a huge list of elements.
 
     /* grid options */
     grid : {
@@ -186,6 +183,8 @@ JXG.Options = {
 
     // Default ordering of the layers
     layer : {
+        numlayers:20, // only important in SVG
+        text  : 9,
         point : 9,
         arc   : 8,
         line  : 7,
