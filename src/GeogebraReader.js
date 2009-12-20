@@ -19,47 +19,81 @@ this.ggbAct = function(type, m, n, p) {
       return [s1, s2];
     break;
     case 'le': // smaller then
-      return '( ('+ v1 +')<=('+ v2 +') )';
+      return '( ('+ v1 +') <= ('+ v2 +') )';
     break;
     case 'ge': // greater then
-      return '('+ v1 +'>='+ v2 +')';
+      return '( ('+ v1 +') >= ('+ v2 +') )';
     break;
     case 'eq': // equal
-      return '('+ v1 +'=='+ v2 +')';
+      return '( ('+ v1 +') == ('+ v2 +') )';
     break;
     case 'neq': // not equal
-      return '('+ v1 +'!='+ v2 +')';
+      return '( ('+ v1 +') != ('+ v2 +') )';
     break;
     case 'lt': // smaller
-      return '('+ v1 +'<'+ v2 +')';
+      return '( ('+ v1 +') < ('+ v2 +') )';
     break;
     case 'gt': // greater
-      return '('+ v1 +'>'+ v2 +')';
+      return '( ('+ v1 +') > ('+ v2 +') )';
     break;
     case 'add':
-      if(((typeof v1 == 'string' || typeof v1 == 'number') && (typeof v2 == 'string' || typeof v2 == 'number')) && (v1.match(/JXG/) && v2.match(/JXG/))) {
-        return [v1+'.X() + '+v2+'.X()', v1+'.Y() + '+v2+'.Y()'];
-      }	else if((typeof v1 == 'string' || typeof v1 == 'number') && typeof v2 == 'object') {
-        return [v1+'.X() + '+v2[0], v1+'.Y() + '+v2[1]];
-      } else if(typeof v1 == 'object' && (typeof v2 == 'string' || typeof v2 == 'number')) {
-        return [v1[0]+' + '+v2+'.X()', v1[1]+' + '+v2+'.Y()'];
-      }	else if(typeof v1 == 'object' && typeof v2 == 'object') {
-        return [v1[0]+' + '+v2[0], v1[1]+' + '+v2[1]];
+      var s1, s2;
+      if( JXG.isString(v1) && v1.match(/JXG.getReference/) && !v1.match(/\(\)/) ) {
+        s1 = [v1+'.X()', v1+'.Y()'];
       } else {
-        return v1 +'+'+ v2;
+        s1 = v1;
+      }
+
+      if( JXG.isString(v2) && v2.match(/JXG.getReference/) && !v2.match(/\(\)/) ) {
+        s2 = [v2+'.X()', v2+'.Y()'];
+      } else {
+        s2 = v2;
+      }
+
+      if( JXG.isArray(s1) && JXG.isArray(s2) ) {
+        return [ s1[0] +' + '+ s2[0], s1[1] +' + '+ s2[1] ];
+      }
+      else if( (JXG.isNumber(s1) || JXG.isString(s1)) && (JXG.isNumber(s2) || JXG.isString(s2)) ) {
+        return s1 +' + '+ s2;
+      }
+      else if( (JXG.isNumber(s1) || JXG.isString(s1)) && JXG.isArray(s2) ) {
+        return [ s1 +' + '+ s2[0], s1 +' + '+ s2[1] ];
+      }
+      else if( JXG.isArray(s1) && (JXG.isNumber(s2) || JXG.isString(s2)) ) {
+        return [ s1[0] +' + '+ s2, s1[1] +' + '+ s2 ];
+      }
+      else {
+        return s1 +' + '+ s2;
       }
     break;
     case 'sub':
-      if(((typeof v1 == 'string' || typeof v1 == 'number') && (typeof v2 == 'string' || typeof v2 == 'number')) && (v1.match(/JXG/) && v2.match(/JXG/))) {
-        return [v1+'.X() - '+v2+'.X()', v1+'.Y() - '+v2+'.Y()'];
-      }	else if((typeof v1 == 'string' || typeof v1 == 'number') && typeof v2 == 'object') {
-        return [v1+'.X() - '+v2[0], v1+'.Y() - '+v2[1]];
-      } else if(typeof v1 == 'object' && (typeof v2 == 'string' || typeof v2 == 'number')) {
-        return [v1[0]+' - '+v2+'.X()', v1[1]+' - '+v2+'.Y()'];
-      }	else if(typeof v1 == 'object' && typeof v2 == 'object') {
-        return [v1[0]+' - '+v2[0], v1[1]+' - '+v2[1]];
+      var s1, s2;
+      if( JXG.isString(v1) && v1.match(/JXG.getReference/) && !v1.match(/\(\)/) ) {
+        s1 = [v1+'.X()', v1+'.Y()'];
       } else {
-        return v1 +'-'+ v2;
+        s1 = v1;
+      }
+
+      if( JXG.isString(v2) && v2.match(/JXG.getReference/) && !v2.match(/\(\)/) ) {
+        s2 = [v2+'.X()', v2+'.Y()'];
+      } else {
+        s2 = v2;
+      }
+
+      if( JXG.isArray(s1) && JXG.isArray(s2) ) {
+        return [ s1[0] +' - '+ s2[0], s1[1] +' - '+ s2[1] ];
+      }
+      else if( (JXG.isNumber(s1) || JXG.isString(s1)) && (JXG.isNumber(s2) || JXG.isString(s2)) ) {
+        return s1 +' - '+ s2;
+      }
+      else if( (JXG.isNumber(s1) || JXG.isString(s1)) && JXG.isArray(s2) ) {
+        return [ s1 +' - '+ s2[0], s1 +' - '+ s2[1] ];
+      }
+      else if( JXG.isArray(s1) && (JXG.isNumber(s2) || JXG.isString(s2)) ) {
+        return [ s1[0] +' - '+ s2, s1[1] +' - '+ s2 ];
+      }
+      else {
+        return s1 +' - '+ s2;
       }
     break;
     case 'neg':
@@ -75,29 +109,63 @@ this.ggbAct = function(type, m, n, p) {
       return '('+ v1 +'&&'+ v2 +')';
     break;
     case 'mul':
-      if(((typeof v1 == 'string' || typeof v1 == 'number') && (typeof v2 == 'string' || typeof v2 == 'number')) && (v1.match(/JXG/) && v2.match(/JXG/))) {
-        return [v1+'.X() * '+v2+'.X()', v1+'.Y() * '+v2+'.Y()'];
-      }	else if((typeof v1 == 'string' || typeof v1 == 'number') && typeof v2 == 'object') {
-        return [v1+'.X() * '+v2[0], v1+'.Y() * '+v2[1]];
-      } else if(typeof v1 == 'object' && (typeof v2 == 'string' || typeof v2 == 'number')) {
-        return [v1[0]+' * '+v2+'.X()', v1[1]+' * '+v2+'.Y()'];
-      }	else if(typeof v1 == 'object' && typeof v2 == 'object') {
-        return [v1[0]+' * '+v2[0], v1[1]+' * '+v2[1]];
+      var s1, s2;
+      if( JXG.isString(v1) && v1.match(/JXG.getReference/) && !v1.match(/\(\)/) ) {
+        s1 = [v1+'.X()', v1+'.Y()'];
       } else {
-        return v1 +'*'+ v2;
+        s1 = v1;
+      }
+
+      if( JXG.isString(v2) && v2.match(/JXG.getReference/) && !v2.match(/\(\)/) ) {
+        s2 = [v2+'.X()', v2+'.Y()'];
+      } else {
+        s2 = v2;
+      }
+
+      if( JXG.isArray(s1) && JXG.isArray(s2) ) {
+        return [ s1[0] +' * '+ s2[0], s1[1] +' * '+ s2[1] ];
+      }
+      else if( (JXG.isNumber(s1) || JXG.isString(s1)) && (JXG.isNumber(s2) || JXG.isString(s2)) ) {
+        return s1 +' * '+ s2;
+      }
+      else if( (JXG.isNumber(s1) || JXG.isString(s1)) && JXG.isArray(s2) ) {
+        return [ s1 +' * '+ s2[0], s1 +' * '+ s2[1] ];
+      }
+      else if( JXG.isArray(s1) && (JXG.isNumber(s2) || JXG.isString(s2)) ) {
+        return [ s1[0] +' * '+ s2, s1[1] +' * '+ s2 ];
+      }
+      else {
+        return s1 +' * '+ s2;
       }
     break;
     case 'div':
-      if(((typeof v1 == 'string' || typeof v1 == 'number') && (typeof v2 == 'string' || typeof v2 == 'number')) && (v1.match(/JXG/) && v2.match(/JXG/))) {
-        return [v1+'.X() / '+v2+'.X()', v1+'.Y() / '+v2+'.Y()'];
-      }	else if((typeof v1 == 'string' || typeof v1 == 'number') && typeof v2 == 'object') {
-        return [v1+'.X() / '+v2[0], v1+'.Y() / '+v2[1]];
-      } else if(typeof v1 == 'object' && (typeof v2 == 'string' || typeof v2 == 'number')) {
-        return [v1[0]+' / '+v2+'.X()', v1[1]+' / '+v2+'.Y()'];
-      }	else if(typeof v1 == 'object' && typeof v2 == 'object') {
-        return [v1[0]+' / '+v2[0], v1[1]+' / '+v2[1]];
+      var s1, s2;
+      if( JXG.isString(v1) && v1.match(/JXG.getReference/) && !v1.match(/\(\)/) ) {
+        s1 = [v1+'.X()', v1+'.Y()'];
       } else {
-        return v1 +'/'+ v2;
+        s1 = v1;
+      }
+
+      if( JXG.isString(v2) && v2.match(/JXG.getReference/) && !v2.match(/\(\)/) ) {
+        s2 = [v2+'.X()', v2+'.Y()'];
+      } else {
+        s2 = v2;
+      }
+
+      if( JXG.isArray(s1) && JXG.isArray(s2) ) {
+        return [ s1[0] +' / '+ s2[0], s1[1] +' / '+ s2[1] ];
+      }
+      else if( (JXG.isNumber(s1) || JXG.isString(s1)) && (JXG.isNumber(s2) || JXG.isString(s2)) ) {
+        return s1 +' / '+ s2;
+      }
+      else if( (JXG.isNumber(s1) || JXG.isString(s1)) && JXG.isArray(s2) ) {
+        return [ s1 +' / '+ s2[0], s1 +' / '+ s2[1] ];
+      }
+      else if( JXG.isArray(s1) && (JXG.isNumber(s2) || JXG.isString(s2)) ) {
+        return [ s1[0] +' / '+ s2, s1[1] +' / '+ s2 ];
+      }
+      else {
+        return s1 +' / '+ s2;
       }
     break;
     case 'negmult':
@@ -107,10 +175,10 @@ this.ggbAct = function(type, m, n, p) {
       return '('+ v1 +')';
     break;
     case 'int':
-      return v1;
+      return parseInt(v1);
     break;
     case 'float':
-      return v1;
+      return parseFloat(v1);
     break;
     case 'param':
       return v1;
@@ -143,8 +211,10 @@ this.ggbAct = function(type, m, n, p) {
         }
 
         var a = JXG.GeogebraReader.board.ggbElements[v1];
-        if(typeof a.Value != 'undefined') {
-          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value().toFixed('+ JXG.GeogebraReader.decimals +')';
+        if(typeof JXG.GeogebraReader.board.ggb[v1] != 'undefined') {
+          return 'JXG.GeogebraReader.board.ggb["'+ v1 +'"]()';
+        } else if(typeof a.Value != 'undefined') {
+          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value()';
         } else if (typeof a.Area != 'undefined') {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area()';
         } else if (typeof a.plaintextStr != 'undefined') {
@@ -1267,7 +1337,6 @@ this.writeElement = function(board, output, input, cmd) {
         var coord = JXG.GeogebraReader.ggbParse(exp);
         gxtEl.x = new Function('return '+ coord[0] +';');
         gxtEl.y = new Function('return '+ coord[1] +';');
-        JXG.GeogebraReader.debug('coord: '+ exp);
       } else {
         gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       }
@@ -1328,7 +1397,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>Orthogonalline:</b> First: " + input[0].id + ", Last: " + input[1].id + "<br>\n");
-        l = board.create('normal', [input[0], input[1]], attr);
+        l = board.create('normal', input, attr);
         return l;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Orthogonalline " + attr.label +"<br>\n");
@@ -1420,9 +1489,21 @@ this.writeElement = function(board, output, input, cmd) {
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
+      if(element.getElementsByTagName("startPoint").length != 0) {
+        var sx = parseFloat(element.getElementsByTagName("startPoint")[0].attributes["x"].value);
+        var sy = parseFloat(element.getElementsByTagName("startPoint")[0].attributes["y"].value);
+        var ex = parseFloat(element.getElementsByTagName("coords")[0].attributes["x"].value);
+        var ey = parseFloat(element.getElementsByTagName("coords")[0].attributes["y"].value);
+      } else {
+        var exp = JXG.GeogebraReader.getElement(element.attributes['label'].value, true).attributes['exp'].value;
+        exp = JXG.GeogebraReader.functionParse('', exp);
+        exp = JXG.GeogebraReader.ggbParse(exp);
+        JXG.GeogebraReader.debug('exp: '+exp);
+      }
+
       try {
-        JXG.GeogebraReader.debug("* <b>Vector:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
-        v = board.create('arrow', input, attr);
+        JXG.GeogebraReader.debug("* <b>Vector:</b> First: " + attr.name);
+        v = board.create('arrow', [[sx,sy], [ex,ey]], attr);
         return v;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Vector " + attr.name +"<br>\n");
@@ -1723,10 +1804,9 @@ this.writeElement = function(board, output, input, cmd) {
       var exp = JXG.GeogebraReader.getElement(element.attributes['label'].value, true).attributes['exp'].value;
       exp = JXG.GeogebraReader.functionParse('', exp);
       exp = JXG.GeogebraReader.ggbParse(exp);
-      board.values[attr.name] = new Function('return '+exp +';');
-      JXG.GeogebraReader.debug('value: '+ board.values[attr.name]());
-      board.values[attr.name].val = true;
-      return board.values[attr.name];
+      board.ggb[attr.name] = new Function('return '+ exp +';');
+      JXG.GeogebraReader.debug('value: '+ board.ggb[attr.name]());
+      return board.ggb[attr.name];
 	} else {
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       attr = JXG.GeogebraReader.colorProperties(element, attr);
@@ -1915,8 +1995,6 @@ this.writeElement = function(board, output, input, cmd) {
      return r;
     break;
 
-// noch zu implementieren: .Area() als Flaeche
-
 // case 'transform':
 // break;
 //    case 'radius':
@@ -1962,7 +2040,7 @@ this.readGeogebra = function(tree, board) {
   var els = [];
 
   board.ggbElements = [];
-  board.values = [];
+  board.ggb = {};
   JXG.GeogebraReader.tree = tree;
   JXG.GeogebraReader.board = board;
   JXG.GeogebraReader.format = parseFloat(JXG.GeogebraReader.tree.getElementsByTagName('geogebra')[0].attributes['format'].value);
