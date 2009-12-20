@@ -110,7 +110,7 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
  * @see #changePointStyle
  */
 JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
-    var size = el.visProp['size'],
+    var size = el.visProp['size']*(el.board.options.point.zoom?Math.sqrt(el.board.zoomX*el.board.zoomY):1.0),
     	f = el.visProp['face'];
     if (isNaN(el.coords.scrCoords[2]) || isNaN(el.coords.scrCoords[1])) return;
     
@@ -856,7 +856,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
                                  board);
                                      
     node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
-    this.appendChildPrimitive(node2,1); // Attention layer=1
+    this.appendChildPrimitive(node2, board.options.layer['grid']);
     if(!board.snapToGrid) {
         el = new Object();
         el.rendNode = node2;
@@ -879,7 +879,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
     }
 
     node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
-    this.appendChildPrimitive(node2,1); // Attention layer=1
+    this.appendChildPrimitive(node2, board.options.layer['grid']); // Attention layer=1
     if(!board.snapToGrid) {
         el = new Object();
         el.rendNode = node2;
@@ -908,7 +908,23 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
  * @param board Board from which the grid is removed.
  * @see #drawGrid
  */
-JXG.AbstractRenderer.prototype.removeGrid = function(/** JXG.Board */ board) { };
+JXG.AbstractRenderer.prototype.removeGrid = function(/** JXG.Board */ board) {
+    var c = document.getElementById('gridx');
+    this.remove(c);
+
+    c = document.getElementById('gridy');
+    this.remove(c);
+
+    board.hasGrid = false;
+/*
+    var c = this.layer[board.options.layer['grid']];
+    board.hasGrid = false;
+    while (c.childNodes.length>0) {
+        c.removeChild(c.firstChild);
+    }
+ */
+};
+ 
 
 
 /* ************************** 

@@ -518,13 +518,15 @@ JXG.SVGRenderer.prototype.transformImageParent = function(el,m) {
     el.rendNode.setAttributeNS(null, 'transform', str);
 };
   
+/*
 JXG.SVGRenderer.prototype.removeGrid = function(board) { 
-    var c = this.grid;
+    var c = this.layer[board.options.layer['grid']];
     board.hasGrid = false;
     while (c.childNodes.length>0) {
         c.removeChild(c.firstChild);
     }
 };
+*/
  
 JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     var c = this.eval(color), 

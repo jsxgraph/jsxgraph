@@ -498,6 +498,7 @@ JXG.VMLRenderer.prototype.joinTransforms = function(el,t) {
 
 JXG.VMLRenderer.prototype.transformImageParent = function(el,m) {};
 
+/*
 JXG.VMLRenderer.prototype.removeGrid = function(board) { 
     var c = document.getElementById('gridx');
     this.remove(c);
@@ -507,6 +508,7 @@ JXG.VMLRenderer.prototype.removeGrid = function(board) {
 
     board.hasGrid = false;
 };
+*/
 
 JXG.VMLRenderer.prototype.hide = function(el) {
     var node = el.rendNode;
