@@ -237,18 +237,6 @@ this.ggbParse = function(exp, element) {
   var element = (element) ? JXG.getReference(JXG.GeogebraReader.board, JXG.GeogebraReader.board.ggbElements[element].id) : false;
   if(element) JXG.GeogebraReader.debug("Zu aktualisierendes Element: "+ element.name + "("+ element.id +")");
 
-  // prepare parsing:
-  exp = (exp.match(/\u00B2/)) ? exp.replace(/\u00B2/, '^2') : exp;
-  exp = (exp.match(/\u00B3/)) ? exp.replace(/\u00B3/, '^3') : exp;
-  exp = (exp.match(/\u225F/)) ? exp.replace(/\u225F/, '==') : exp;
-  exp = (exp.match(/\u2260/)) ? exp.replace(/\u2260/, '!=') : exp;
-  exp = (exp.match(/\u2264/)) ? exp.replace(/\u2264/, '<=') : exp;
-  exp = (exp.match(/\u2265/)) ? exp.replace(/\u2265/, '>=') : exp;
-  exp = (exp.match(/\u2227/)) ? exp.replace(/\u2227/, '&&') : exp;
-  exp = (exp.match(/\u2228/)) ? exp.replace(/\u2228/, '//') : exp;
-
-  JXG.GeogebraReader.debug('EXP: '+ exp);
-
 /*
     This parser was generated with: The LALR(1) parser and lexical analyzer generator for JavaScript, written in JavaScript
     In the version 0.30 on http://jscc.jmksf.com/
@@ -2120,34 +2108,21 @@ this.readGeogebra = function(tree, board) {
 };
 
 /**
- * Decoding string into utf-8
- * @param {String} string to decode
- * @return {String} utf8 decoded string
+ * Clean the utf8-symbols in a Geogebra expression in JavaScript syntax
+ * @param {String} string to clean
+ * @return {String} replaced string
  */
-this.utf8 = function (utftext) {
-  var string = [];
-  var i = 0;
-  var c = 0, c1 = 0, c2 = 0;
-
-  while ( i < utftext.length ) {
-    c = utftext.charCodeAt(i);
-
-    if (c < 128) {
-      string.push(String.fromCharCode(c));
-      i++;
-    } else if((c > 191) && (c < 224)) {
-      c2 = utftext.charCodeAt(i+1);
-      string.push(String.fromCharCode(((c & 31) << 6) | (c2 & 63)));
-      i += 2;
-    } else {
-      c2 = utftext.charCodeAt(i+1);
-      c3 = utftext.charCodeAt(i+2);
-      string.push(String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63)));
-      i += 3;
-    }
-  };
-  return string.join('');
-};
+this.utf8replace = function(exp) {
+  exp = (exp.match(/\u00B2/)) ? exp.replace(/\u00B2/, '^2') : exp;
+  exp = (exp.match(/\u00B3/)) ? exp.replace(/\u00B3/, '^3') : exp;
+  exp = (exp.match(/\u225F/)) ? exp.replace(/\u225F/, '==') : exp;
+  exp = (exp.match(/\u2260/)) ? exp.replace(/\u2260/, '!=') : exp;
+  exp = (exp.match(/\u2264/)) ? exp.replace(/\u2264/, '<=') : exp;
+  exp = (exp.match(/\u2265/)) ? exp.replace(/\u2265/, '>=') : exp;
+  exp = (exp.match(/\u2227/)) ? exp.replace(/\u2227/, '&&') : exp;
+  exp = (exp.match(/\u2228/)) ? exp.replace(/\u2228/, '//') : exp;
+  return exp;
+}
 
 /**
  * Extracting the packed geogebra file in order to return the "blank" xml-tree for further parsing.
@@ -2163,6 +2138,7 @@ this.prepareString = function(fileStr) {
     fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");
   }
   fileStr = JXG.GeogebraReader.utf8(fileStr);
+  fileStr = JXG.GeogebraReader.utf8replace(fileStr);
   return fileStr;
 };
 }; // end: GeogebraReader()

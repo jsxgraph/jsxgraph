@@ -1124,3 +1124,33 @@ JXG.Util.asciiCharCodeAt = function(str,i){
 	}
 	return c;
 };
+
+/**
+ * Decoding string into utf-8
+ * @param {String} string to decode
+ * @return {String} utf8 decoded string
+ */
+JXG.Util.utf8Decode = function(utftext) {
+  var string = [];
+  var i = 0;
+  var c = 0, c1 = 0, c2 = 0;
+
+  while ( i < utftext.length ) {
+    c = utftext.charCodeAt(i);
+
+    if (c < 128) {
+      string.push(String.fromCharCode(c));
+      i++;
+    } else if((c > 191) && (c < 224)) {
+      c2 = utftext.charCodeAt(i+1);
+      string.push(String.fromCharCode(((c & 31) << 6) | (c2 & 63)));
+      i += 2;
+    } else {
+      c2 = utftext.charCodeAt(i+1);
+      c3 = utftext.charCodeAt(i+2);
+      string.push(String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63)));
+      i += 3;
+    }
+  };
+  return string.join('');
+};
