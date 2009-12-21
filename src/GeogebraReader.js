@@ -1953,8 +1953,8 @@ this.writeElement = function(board, output, input, cmd) {
 
      try {
        JXG.GeogebraReader.debug("* <b>Slope ("+ attr.name +"):</b> First: " + input[0].name +"<br>\n");
-       var l1 = board.create('segment', [input[0].point1, [(1+input[0].point1.X()), input[0].point1.Y()]], {visible: false});
-       var l2 = board.create('normal', [l1, l1.point2], {visible: false});
+       var l1 = board.create('segment', [input[0].point1, [(1+input[0].point1.X()), input[0].point1.Y()]], {visible: false}); // visible: attr.visible
+       var l2 = board.create('normal', [l1, l1.point2], {visible: false}); // visible attr.visible
        var i  = board.create('intersection', [input[0], l2, 0], {visible: false});
        var m  = board.create('midpoint', [l1.point2, i], {visible: false});
 
