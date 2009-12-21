@@ -787,7 +787,7 @@ JXG.AbstractRenderer.prototype.updateImage = function(/** JXG.Image */ el) {
     } else {
         this.transformImageParent(el); // Transforms are cleared
     }
-    this.transformImage(el,el.transformations);
+    this.transformImage(el,el.transformations);    
 };
 
 

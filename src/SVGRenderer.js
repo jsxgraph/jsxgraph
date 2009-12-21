@@ -483,6 +483,7 @@ JXG.SVGRenderer.prototype.drawImage = function(el) {
         node = this.createPrimitive('image',el.id);
 
     node.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
+    node.setAttributeNS(null, 'preserveAspectRatio', 'none');
     this.appendChildPrimitive(node,el.layer);
     el.rendNode = node;
     this.updateImage(el);

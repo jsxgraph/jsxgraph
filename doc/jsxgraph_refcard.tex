@@ -311,6 +311,7 @@ Two files have to be included:
 \metax{p.X(),p.Y()}{$x$-coordinate, $y$-coordinate}
 \metax{p.Z()}{(Homogeneous) $z$-coordinate}
 \metax{p.Dist(q)}{Distance from $p$ to point $q$}
+%\metax{p.setPosition(JXG.COORDS\_BY\_USER,x,y)}{move point}
 
 
 \section{Glider}
@@ -509,7 +510,7 @@ Example for a dynamic text: $f$ returns the $x$ coordinate of the point $p$.\par
 \section{Image}
 Display bitmap image (also as data uri).\par
 \metax{el = brd.create(\'image\',[uri-string,[x,y],[w,h]]);}{}
-\metax{}{Optional: {\tt [x,y]} top-left position, {\tt [w,h]} width, height}
+\metax{}{{\tt [x,y]:} position of lower left corner, {\tt [w,h]:} width, height}
 
 \section{Attributes of geometric elements}
 {\sl Generic attributes:}\par
