@@ -596,7 +596,8 @@ JXG.Point.prototype.setPositionByTransform = function (method, x, y) {
  * @param {number} y y coordinate in screen/user units
  */
 JXG.Point.prototype.setPosition = function (method, x, y) { 
-    this.setPositionByTransform(method, x, y);
+    //this.setPositionByTransform(method, x, y);
+    this.setPositionByDirectly(method, x, y);
     return this;
 };
 
