@@ -8,13 +8,23 @@
 <h1>Playground</h1>
 <form><input type="text"></form>
 <!-- Drawing area -->
-<div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
+<div id="jxgbox" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
 <!-- Drawing area -->
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
 /* <![CDATA[ */
+//JXG.Options.showCopyright = false; //don't work :)
+JXG.Options.showNavigation = false;
+JXG.Options.takeFirst = true;
+var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250,originY: 250, unitX: 10, unitY: 10, axis:true, showCopyright:true});
+var p_1 = board.createElement('point',[-1,0],{name:'Circle1',style:10});
+var el_1 = board.createElement('circle',[p_1,3.0], {fillColor:'#aa0000', strokeColor:'#00ff00',strokeWidth:1});
+var p_2 = board.createElement('point',[0,0], {name:'Circle2',style:10});
+var el_2 = board.createElement('circle',[p_2,3.0],{fillColor:'#aa0000', strokeColor:'#00ff00',strokeWidth:1}); 
+/*
+
 JXG.Options.point.zoom=true;
-var board = JXG.JSXGraph.initBoard('box', {boundingbox:[-7,5,7,-5], grid:true,axis:true,keepaspectratio:true});
+var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-7,5,7,-5], grid:true,axis:true,keepaspectratio:true});
 var p1 = board.createElement('point',[1,1], {name:'A',style:6});
 var p2 = board.createElement('point',[5,2], {name:'B',face:'[]'});
 var p3 = board.createElement('point',[0,-1], {name:'C',face:'x'});
@@ -24,7 +34,7 @@ var circ = board.createElement('circle', [p1,p2], {dash:1,fillColor:'yellow',fil
 var ac = board.createElement('glider', [0,2,circ],{name:'S'} );
 var t = board.createElement('normal',[ac], {dash:3,strokeColor:'black'});
 var t = board.createElement('normal',[p2,circ], {dash:3,strokeColor:'black'});
-
+*/
 /*
     
     var f = function(t){return p2.Y()*t*Math.sin(t);};
