@@ -2137,7 +2137,7 @@ this.prepareString = function(fileStr) {
     // Unzip
     fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");
   }
-  fileStr = JXG.GeogebraReader.utf8(fileStr);
+  fileStr = JXG.Util.utf8Decode(fileStr);
   fileStr = JXG.GeogebraReader.utf8replace(fileStr);
   return fileStr;
 };
