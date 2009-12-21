@@ -3,10 +3,9 @@ JXG.GeogebraReader = new function() {
  * @param {String} type the type of expression
  * @param {String} m first input value
  * @param {String} n second input value
- * @param {Object} p point or object to update 
  * @return {String} return the object, string or calculated value
  */
-this.ggbAct = function(type, m, n, p) {
+this.ggbAct = function(type, m, n) {
   var v1 = m, v2 = n;
   switch(type.toLowerCase()) {
     case 'end':
@@ -204,13 +203,8 @@ this.ggbAct = function(type, m, n, p) {
             break;
         }
       } else {
-        if(typeof JXG.GeogebraReader.board.ggbElements[v1] == 'undefined' || JXG.GeogebraReader.board.ggbElements[v1] == '') {
-            var input = JXG.GeogebraReader.getElement(v1);
-            JXG.GeogebraReader.board.ggbElements[v1] = JXG.GeogebraReader.writeElement(JXG.GeogebraReader.board, input);
-            JXG.GeogebraReader.debug("regged: "+ v1 +" (id: "+ JXG.GeogebraReader.board.ggbElements[v1].id +")");
-        }
 
-        var a = JXG.GeogebraReader.board.ggbElements[v1];
+        var a = JXG.GeogebraReader.checkElement(v1);
         if(typeof JXG.GeogebraReader.board.ggb[v1] != 'undefined') {
           return 'JXG.GeogebraReader.board.ggb["'+ v1 +'"]()';
         } else if(typeof a.Value != 'undefined') {
@@ -1179,6 +1173,19 @@ this.getElement = function(name, expr) {
 };
 
 /**
+ * Check if an element is already registered in the temporary ggbElements register. If not, create and register the element.
+ * @param {String} the name of the element to check
+ * @return {Object} newly created element
+ */
+this.checkElement = function(name) {
+  if(typeof JXG.GeogebraReader.board.ggbElements[name] == 'undefined' || JXG.GeogebraReader.board.ggbElements[name] == '') {
+    var input = JXG.GeogebraReader.getElement(name);
+    JXG.GeogebraReader.board.ggbElements[name] = JXG.GeogebraReader.writeElement(JXG.GeogebraReader.board, input);
+  }
+  return JXG.GeogebraReader.board.ggbElements[name];
+};
+
+/**
  * Prepare expression for this.ggbParse with solving multiplications and replacing mathematical functions.
  * @param {String} exp Expression to parse and correct
  * @return {String} correct expression with fixed function and multiplication
@@ -2048,12 +2055,12 @@ this.readGeogebra = function(tree, board) {
         if(el.match(/°/) || !el.match(/\D/) || el.match(/Circle/) || Data.attributes['name'].value == 'Function') {
           input[i] = el;
         } else {
-          if(typeof board.ggbElements[el] == 'undefined' || board.ggbElements[el] == '') {
-            var elnode = JXG.GeogebraReader.getElement(el);
-            board.ggbElements[el] = JXG.GeogebraReader.writeElement(board, elnode);
-            JXG.GeogebraReader.debug("regged: "+ board.ggbElements[el] +"<br/>");
-          }
-          input[i] = board.ggbElements[el];
+          // if(typeof board.ggbElements[el] == 'undefined' || board.ggbElements[el] == '') {
+          //   var elnode = JXG.GeogebraReader.getElement(el);
+          //   board.ggbElements[el] = JXG.GeogebraReader.writeElement(board, elnode);
+          //   JXG.GeogebraReader.debug("regged: "+ board.ggbElements[el] +"<br/>");
+          // }
+          input[i] = JXG.GeogebraReader.checkElement(el);
         }
       };
 
@@ -2073,7 +2080,6 @@ this.readGeogebra = function(tree, board) {
             JXG.GeogebraReader.debug(i+") regged: "+board.ggbElements[elname].borders[i].name+"("+ board.ggbElements[board.ggbElements[elname].borders[i].name].id +")<br/>");
           };
       }
-
     };
 
     // create "single" elements which do not depend on any other
@@ -2083,7 +2089,6 @@ this.readGeogebra = function(tree, board) {
       var el = Data.attributes['label'].value;
 
       if(typeof board.ggbElements[el] == 'undefined' || board.ggbElements[el] == '') {
-        JXG.GeogebraReader.debug("Betrachte Rest: "+ el);
         board.ggbElements[el] = JXG.GeogebraReader.writeElement(board, Data);
 
         if(expr = JXG.GeogebraReader.getElement(el, true)) {
@@ -2122,7 +2127,7 @@ this.utf8replace = function(exp) {
   exp = (exp.match(/\u2227/)) ? exp.replace(/\u2227/, '&&') : exp;
   exp = (exp.match(/\u2228/)) ? exp.replace(/\u2228/, '//') : exp;
   return exp;
-}
+};
 
 /**
  * Extracting the packed geogebra file in order to return the "blank" xml-tree for further parsing.
