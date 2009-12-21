@@ -1484,21 +1484,27 @@ this.writeElement = function(board, output, input, cmd) {
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-      if(element.getElementsByTagName("startPoint").length != 0) {
+      if(element.getElementsByTagName("startPoint")[0].attributes['x']) {
         var sx = parseFloat(element.getElementsByTagName("startPoint")[0].attributes["x"].value);
         var sy = parseFloat(element.getElementsByTagName("startPoint")[0].attributes["y"].value);
         var ex = parseFloat(element.getElementsByTagName("coords")[0].attributes["x"].value);
         var ey = parseFloat(element.getElementsByTagName("coords")[0].attributes["y"].value);
+        var s = [sx, sy];
+        var e = [ex, ey];
+      } else if(input.length != 0) {
+        var s = input[0];
+        var e = input[1];
       } else {
         var exp = JXG.GeogebraReader.getElement(element.attributes['label'].value, true).attributes['exp'].value;
         exp = JXG.GeogebraReader.functionParse('', exp);
         exp = JXG.GeogebraReader.ggbParse(exp);
         JXG.GeogebraReader.debug('exp: '+exp);
+        // priorization of expression like 't*a' --> a := startPoint
       }
 
       try {
         JXG.GeogebraReader.debug("* <b>Vector:</b> First: " + attr.name);
-        v = board.create('arrow', [[sx,sy], [ex,ey]], attr);
+        v = board.create('arrow', [s, e], attr);
         return v;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Vector " + attr.name +"<br>\n");
