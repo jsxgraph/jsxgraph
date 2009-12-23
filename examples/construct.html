@@ -6,21 +6,26 @@
 </head>
 <body>
 <h1>Playground</h1>
-<form><input type="text"></form>
 <!-- Drawing area -->
-<div id="jxgbox" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; overflow:hidden;"></div>
 <!-- Drawing area -->
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
 /* <![CDATA[ */
-//JXG.Options.showCopyright = false; //don't work :)
+JXG.Options.showCopyright = false; //don't work :)
 JXG.Options.showNavigation = false;
 JXG.Options.takeFirst = true;
-var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250,originY: 250, unitX: 10, unitY: 10, axis:true, showCopyright:true});
-var p_1 = board.createElement('point',[-1,0],{name:'Circle1',style:10});
-var el_1 = board.createElement('circle',[p_1,3.0], {fillColor:'#aa0000', strokeColor:'#00ff00',strokeWidth:1});
-var p_2 = board.createElement('point',[0,0], {name:'Circle2',style:10});
-var el_2 = board.createElement('circle',[p_2,3.0],{fillColor:'#aa0000', strokeColor:'#00ff00',strokeWidth:1}); 
+var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 400,originY: 400, unitX: 10, unitY: 10, axis:true, showCopyright:true});
+var img = board.create('image',['http://www.ari.uni-heidelberg.de/gaia/gallery/GR/gr0283-01.artistic-Gaia-Galaxy-large.jpg',[-40,-40],[80,80]]);
+img.needsRegularUpdate = false;
+var p_1 = board.create('point',[-1,0],{name:'Circle1',style:10});
+var el_1 = board.create('circle',[p_1,3.0], {fillColor:'#aa0000', strokeColor:'#00ff00',strokeWidth:1,fillOpacity:0.5});
+var p_2 = board.create('point',[0,0], {name:'Circle2',style:10});
+var el_2 = board.create('circle',[p_2,3.0],{fillColor:'#aa0000', strokeColor:'#00ff00',strokeWidth:1,fillOpacity:0.5}); 
+
+p_1.moveTo([8,8]);
+//p_1.setPosition(JXG.COORDS_BY_USER,8,8);
+
 /*
 
 JXG.Options.point.zoom=true;

@@ -597,7 +597,7 @@ JXG.Point.prototype.setPositionByTransform = function (method, x, y) {
  */
 JXG.Point.prototype.setPosition = function (method, x, y) { 
     //this.setPositionByTransform(method, x, y);
-    this.setPositionByDirectly(method, x, y);
+    this.setPositionDirectly(method, x, y);
     return this;
 };
 
@@ -766,9 +766,15 @@ JXG.Point.prototype.stopAnimation = function() {
  * Starts an animated point movement towards the given coordinates <tt>where</tt>. The animation is done after <tt>time</tt> milliseconds.
  * @param {Array} where Array containing the x and y coordinate of the target location.
  * @param {int} time Number of milliseconds the animation should last.
+ * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition.
  * @see #animate
  */
 JXG.Point.prototype.moveTo = function(where, time) {
+    if (typeof time == 'undefined' || time == 0) {
+        this.setPosition(JXG.COORDS_BY_USER, where[0], where[1]);
+        this.board.update(this);
+        return this;
+    }
 	var delay = 35,
 	    steps = Math.ceil(time/(delay * 1.0)),
 		coords = new Array(steps+1),
@@ -777,7 +783,7 @@ JXG.Point.prototype.moveTo = function(where, time) {
 		dX = (where[0] - X),
 		dY = (where[1] - Y),
 	    i;
-
+    
     if(Math.abs(dX) < JXG.Math.eps && Math.abs(dY) < JXG.Math.eps)
         return this;
 	
