@@ -234,7 +234,7 @@ JXG.JSXGraph = new function () {
         board.initInfobox();
         board.beforeLoad();
 
-        JXG.FileReader.parseString(string, board, format);
+        JXG.FileReader.parseString(string, board, format, true);
         if (board.options.showNavigation) {
             board.renderer.drawZoomBar(board);
         }

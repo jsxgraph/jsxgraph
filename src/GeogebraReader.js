@@ -2140,14 +2140,17 @@ this.utf8replace = function(exp) {
  * @param {String} archive containing geogebra.xml-file or raw input string (eg. xml-tree)
  * @return {String} content of geogebra.xml-file if archive was passed in
  */
-this.prepareString = function(fileStr) {
-  if (fileStr.indexOf('<') != 0) {
-    bA = [];
-    for (i=0;i<fileStr.length;i++)
-      bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
-    // Unzip
-    fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");
-  }
+this.prepareString = function(fileStr, isString) {
+  if(isString)
+    fileStr = JXG.Util.Base64.decode(fileStr, true);
+  else
+    if (fileStr.indexOf('<') != 0) {
+      bA = [];
+      for (i=0;i<fileStr.length;i++)
+        bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
+      // Unzip
+      fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");
+    }
   fileStr = JXG.Util.utf8Decode(fileStr);
   fileStr = JXG.GeogebraReader.utf8replace(fileStr);
   return fileStr;

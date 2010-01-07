@@ -107,13 +107,13 @@ this.stringToXMLTree = function(fileStr) {
     return tree;
 };
 
-this.parseString = function(fileStr, board, format, url) {
+this.parseString = function(fileStr, board, format, isString) {
     // fileStr is a string containing the XML code of the construction
     if (format.toLowerCase()=='geonext') { 
         fileStr = JXG.GeonextReader.prepareString(fileStr);
     }
     if (format.toLowerCase()=='geogebra') {
-    	fileStr = JXG.GeogebraReader.prepareString(fileStr);
+    	fileStr = JXG.GeogebraReader.prepareString(fileStr, isString);
     }
     if (format.toLowerCase()=='intergeo') {
     	fileStr = JXG.IntergeoReader.prepareString(fileStr);
@@ -138,9 +138,7 @@ this.readElements = function(tree, board, format) {
         board.unsuspendUpdate();
     }
     else if(tree.getElementsByTagName('geogebra').length != 0) {
-        //board.suspendUpdate();
         JXG.GeogebraReader.readGeogebra(tree, board);
-        //board.unsuspendUpdate();
     }
     else if(format.toLowerCase()=='intergeo') {
          JXG.IntergeoReader.readIntergeo(tree, board);
