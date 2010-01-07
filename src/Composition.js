@@ -180,7 +180,7 @@ JXG.createPerpendicularPoint = function(board, parentArr, atts) {
  * </script><pre>
  */
 JXG.createPerpendicular = function(board, parentArr, atts) {
-    var p, l, pd, t;
+    var p, l, pd, t, ret;
 
     parentArr[0] = JXG.getReference(board, parentArr[0]);
     parentArr[1] = JXG.getReference(board, parentArr[1]);
@@ -208,7 +208,12 @@ JXG.createPerpendicular = function(board, parentArr, atts) {
     t = JXG.createPerpendicularPoint(board, [l, p], {fixed: true, name: atts['name'][1], id: atts['id'][1], visible: false});
     pd = JXG.createSegment(board, [function () { return (board.algebra.perpendicular(l, p)[1] ? [t, p] : [p, t]); }], {name: atts['name'][0], id: atts['id'][0]});
 
-    return [pd, t];
+    ret = [pd, t];
+    ret.line = pd;
+    ret.point = t;
+    ret.multipleElements = true;
+
+    return ret;
 };
 
 /**
@@ -766,12 +771,14 @@ JXG.createBisector = function(board, parentArr, atts) {
  * @private
  */
 JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
-    var l1 = JXG.getReference(board,parents[0]);
-    var l2 = JXG.getReference(board,parents[1]);
-    var id1 = '';
-    var id2 = '';
-    var n1 = '';
-    var n2 = '';
+    var l1 = JXG.getReference(board,parents[0]),
+        l2 = JXG.getReference(board,parents[1]),
+        id1 = '',
+        id2 = '',
+        n1 = '',
+        n2 = '',
+        ret;
+
     if (attributes==null) attributes = {};
     if (attributes['id']!=null) {
         if (JXG.isArray(attributes['id'])) {
@@ -830,7 +837,15 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
             return l1.stdform[2]/d1+l2.stdform[2]/d2;
         }
     ], attributes);
-    return [g1,g2];
+
+    ret = [g1, g2];
+    ret.lines = [g1, g2];
+    ret.line1 = g1;
+    ret.line2 = g2;
+
+    ret.multipleElements = true;
+
+    return ret;
 };
 
 /**
@@ -908,7 +923,7 @@ JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
  * </script><pre>
  */
 JXG.createCircumcircle = function(board, parentArr, atts) {
-    var p, c, cAtts;
+    var p, c, cAtts, ret;
 
     cAtts = JXG.clone(atts);
     if(atts['name'] && JXG.isArray(atts['name'])) {
@@ -927,7 +942,14 @@ JXG.createCircumcircle = function(board, parentArr, atts) {
         throw new Error("JSXGraph: Can't create circumcircle with parent types '" + (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");
     }
 
-    return [p, c];
+    ret = [p, c];
+
+    ret.point = p;
+    ret.circle = c;
+
+    ret.multipleElements = true;
+
+    return ret;
 };
 
 /**

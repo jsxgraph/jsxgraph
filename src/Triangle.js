@@ -46,9 +46,12 @@
  */
 JXG.createTriangle = function(board, parents, attributes) {
 
+    var p1, p2, p3, l1, l2, l3, ret, i;
+
     if(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2])) {
-        var p1 = parents[0], p2 = parents[1], p3 = parents[2];
-        var l1, l2, l3;
+        p1 = parents[0];
+        p2 = parents[1];
+        p3 = parents[2];
 
         if((attributes == null) || (typeof attribues == undefined))
             attributes = new Object();
@@ -63,7 +66,21 @@ JXG.createTriangle = function(board, parents, attributes) {
         var g = board.createElement('group', [p1, p2, p3]);
 //        g.addPoints([p1, p2, p3]);
 
-        return {A: p1, B: p2, C: p3, a: l2, b: l3, c: l1, G: g, multipleElements: true};
+        ret = [p1, p2, p3, l1, l2, l3, g];
+        ret.points = [p1, p2, p3];
+        ret.lines = [l1, l2, l3];
+        ret.group = g;
+        for(i=1; i<=3; i++) {
+            ret['point'+i] = ret.points[i-1];
+            ret['line'+i] = ret.lines[i-1];
+        }
+        ret.multipleElements = true;
+
+        // special treatment for triangle because of backwards compatibility:
+        ret.A = p1; ret.B = p2; ret.C = p3;
+        ret.a = l2; ret.b = l3; ret.c = l1;
+
+        return ret;
     } else {
         throw new Error("JSXGraph: Can't create triangle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
     }
