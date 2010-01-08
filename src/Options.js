@@ -114,6 +114,12 @@ JXG.Options = {
         }
     },
 
+    /* special axis options */
+    axis : {
+        strokeColor : '#666666',
+        highlightStrokeColor : '#888888'
+    },
+    
     /*special circle options */
     circle : {
         fillColor : 'none',

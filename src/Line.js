@@ -1043,7 +1043,8 @@ JXG.createAxis = function(board, parents, attributes) {
         attributes.straightLast = attributes.straightLast || true;
         attributes.strokeWidth = attributes.strokeWidth || 1;
         attributes.withLabel = attributes.withLabel || false;
-        attributes.highlightStrokeColor = attributes.highlightStrokeColor || attributes.strokeColor || board.options.line.strokeColor;
+        attributes.highlightStrokeColor = attributes.highlightStrokeColor || attributes.strokeColor || board.options.axis.highlightStrokeColor;
+        attributes.strokeColor = attributes.strokeColor || board.options.axis.strokeColor;
 
         line = board.createElement('line', [point1, point2], attributes);
         line.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
