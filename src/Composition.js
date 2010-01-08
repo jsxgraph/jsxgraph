@@ -626,8 +626,8 @@ JXG.createNormal = function(board, parents, attributes) {
     }
     else if(c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         /*
-        var Dg = function(t){ return -c.getRadius()*Math.sin(t); };
-        var Df = function(t){ return c.getRadius()*Math.cos(t); };
+        var Dg = function(t){ return -c.Radius()*Math.sin(t); };
+        var Df = function(t){ return c.Radius()*Math.cos(t); };
         return board.createElement('line', [
                     function(){ return -p.X()*Dg(p.position)-p.Y()*Df(p.position);},
                     function(){ return Dg(p.position);},

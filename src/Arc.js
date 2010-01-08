@@ -129,7 +129,7 @@ JXG.Arc.prototype.hasPoint = function (x, y) {
     var genauigkeit = this.r/(this.board.stretchX);
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
-    var r = this.getRadius();
+    var r = this.Radius();
     
     var dist = Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-checkPoint.usrCoords[1],2) + 
                          Math.pow(this.midpoint.coords.usrCoords[2]-checkPoint.usrCoords[2],2));
@@ -173,7 +173,7 @@ JXG.Arc.prototype.hasPointSector = function (x, y) {
     var genauigkeit = this.r/(this.board.stretchX);
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
-    var r = this.getRadius();
+    var r = this.Radius();
     
     var dist = Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-checkPoint.usrCoords[1],2) + 
                          Math.pow(this.midpoint.coords.usrCoords[2]-checkPoint.usrCoords[2],2));
@@ -212,8 +212,15 @@ JXG.Arc.prototype.hasPointSector = function (x, y) {
  * @type float
  * @return The arcs radius
  */
-JXG.Arc.prototype.getRadius = function() {
+JXG.Arc.prototype.Radius = function() {
     return(Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-this.point2.coords.usrCoords[1],2) + Math.pow(this.midpoint.coords.usrCoords[2]-this.point2.coords.usrCoords[2],2)));
+};
+
+/**
+  * @deprecated
+  */
+JXG.Arc.prototype.getRadius = function() {
+    this.Radius();
 };
 
 /**

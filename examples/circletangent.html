@@ -58,7 +58,7 @@ c.noHighlight = function(){
 
 
 var m = function(circ){
-    return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
+    return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.Radius()*circ.Radius(),
              -circ.midpoint.X(),-circ.midpoint.Y()],
             [-circ.midpoint.X(),1,0],
             [-circ.midpoint.Y(),0,1]

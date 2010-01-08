@@ -1700,7 +1700,7 @@ this.writeElement = function(board, output, input, cmd) {
           break;
           case 1330922316: // circle
             var m = function(circ) {
-	        return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
+	        return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.Radius()*circ.Radius(),
 	                     -circ.midpoint.X(),-circ.midpoint.Y()],
 	                    [-circ.midpoint.X(),1,0],
 	                    [-circ.midpoint.Y(),0,1]
@@ -1934,7 +1934,7 @@ this.writeElement = function(board, output, input, cmd) {
       try {
         JXG.GeogebraReader.debug("* <b>Polar:</b> First: " + input[0].name + ", Sec.: "+ input[1].name +"<br>\n");
         var m = function(circ) {
-          return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.getRadius()*circ.getRadius(),
+          return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.Radius()*circ.Radius(),
                      -circ.midpoint.X(),-circ.midpoint.Y()],
                     [-circ.midpoint.X(),1,0],
                     [-circ.midpoint.Y(),0,1]

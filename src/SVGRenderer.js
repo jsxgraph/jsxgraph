@@ -294,13 +294,19 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
 
     JXG.clearVisPropOld(el);
     
-    radius = el.getRadius();  
+    radius = el.Radius();  
     angle = el.board.algebra.trueAngle(el.point2, el.midpoint, el.point3);
     circle = {}; // um projectToCircle benutzen zu koennen...
     circle.midpoint = el.midpoint;
+    circle.Radius = function() {
+        return radius;
+    };
+    //-------------------
+    // deprecated
     circle.getRadius = function() {
         return radius;
     };
+    //-------------------
     point3 = el.board.algebra.projectPointToCircle(el.point3,circle);
 
     pathString = 'M '+ el.point2.coords.scrCoords[1] +' '+ el.point2.coords.scrCoords[2] +' A '; // Startpunkt
@@ -410,9 +416,15 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
 
     circle = {};  // um projectToCircle benutzen zu koennen...
     circle.midpoint = el.point2;
+    circle.Radius = function() {
+        return el.radius;
+    };
+    //-------------------
+    // deprecated
     circle.getRadius = function() {
         return el.radius;
     };
+    //-------------------
     projectedP1 = el.board.algebra.projectPointToCircle(el.point1,circle);
     projectedP3 = el.board.algebra.projectPointToCircle(el.point3,circle);
 

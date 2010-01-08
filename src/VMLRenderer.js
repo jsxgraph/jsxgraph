@@ -322,7 +322,7 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
     JXG.clearVisPropOld(el);
 
     /* some computations */
-    radius = el.getRadius();  
+    radius = el.Radius();  
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.midpoint.coords.usrCoords[1], el.board.origin.scrCoords[2]/el.board.stretchY],
                           el.board);
@@ -399,9 +399,15 @@ JXG.VMLRenderer.prototype.drawAngle = function(el) {
     /* some computations */
     // um projectToCircle benutzen zu koennen...
     circle.midpoint = el.point2;
+    circle.Radius = function() {
+        return el.radius;
+    };
+    //-----------------
+    // deprecated:
     circle.getRadius = function() {
         return el.radius;
     };
+    //-----------------
     projectedP1 = el.board.algebra.projectPointToCircle(el.point1,circle);
     projectedP3 = el.board.algebra.projectPointToCircle(el.point3,circle);  
     

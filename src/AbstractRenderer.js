@@ -586,7 +586,7 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
         }
     }
     // Radius umrechnen:
-    var radius = el.getRadius();
+    var radius = el.Radius();
     if (radius>0.0 && !isNaN(el.midpoint.coords.scrCoords[1]+el.midpoint.coords.scrCoords[2]) ) {
         this.updateEllipsePrimitive(el.rendNode,el.midpoint.coords.scrCoords[1],el.midpoint.coords.scrCoords[2],
             (radius * el.board.stretchX),(radius * el.board.stretchY));

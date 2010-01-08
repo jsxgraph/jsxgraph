@@ -462,7 +462,7 @@ JXG.Algebra.prototype.intersectCircleLine = function(circle, line) {
         w = (w < 0) ? 0 : w;
         h = Math.sqrt(w);
         
-        r = circle.getRadius();
+        r = circle.Radius();
         n1 = Math.sqrt((r * r) - h*h);
         dx = eB[1] - eA[1];
         dy = eB[2] - eA[2];
@@ -498,8 +498,8 @@ JXG.Algebra.prototype.intersectCircleLine = function(circle, line) {
  */
 JXG.Algebra.prototype.intersectCircleCircle = function(circle1, circle2) { 
     var intersection = {},
-        r1 = circle1.getRadius(),
-        r2 = circle2.getRadius(),
+        r1 = circle1.Radius(),
+        r2 = circle2.Radius(),
         M1 = circle1.midpoint.coords.usrCoords,
         M2 = circle2.midpoint.coords.usrCoords,
         rSum, rDiff, s, 
@@ -556,7 +556,7 @@ JXG.Algebra.prototype.projectPointToCircle = function(point,circle) {
     if(Math.abs(dist) < this.eps) {
         dist = this.eps;
     }
-    factor = circle.getRadius() / dist;
+    factor = circle.Radius() / dist;
     x = M[1] + factor*(P[1] - M[1]);
     y = M[2] + factor*(P[2] - M[2]);
     

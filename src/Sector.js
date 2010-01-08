@@ -99,10 +99,16 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id, layer) {
 
     var circle = {}; // um projectToCircle benutzen zu koennen
     circle.midpoint = this.point1;
-    var radius = this.getRadius();
+    var radius = this.Radius();
+    circle.Radius = function() {
+        return radius;
+    };
+    //-----------------
+    // deprecated:
     circle.getRadius = function() {
         return radius;
     };
+    //-----------------
     var p4coords = this.board.algebra.projectPointToCircle(this.point3,circle);
     
     var p = new JXG.Point(board, [p4coords.usrCoords[1], p4coords.usrCoords[2]], ids[1], names[1], true);
@@ -113,9 +119,15 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id, layer) {
         circle.midpoint = JXG.getReference(this.board, p1);
         var radius = (Math.sqrt(Math.pow(JXG.getReference(this.board, p1).coords.usrCoords[1]-JXG.getReference(this.board, p2).coords.usrCoords[1],2) + Math.pow(JXG.getReference(this.board, p1).coords.usrCoords[2]-JXG.getReference(this.board, p2).coords.usrCoords[2],2)));
 
+        circle.Radius = function() {
+            return radius;
+        };
+        //-------------------
+        // deprecated
         circle.getRadius = function() {
             return radius;
         };
+        //-------------------
         p4coords = this.board.algebra.projectPointToCircle(JXG.getReference(this.board, p3),circle);
         this.coords = p4coords;
         this.board.renderer.updatePoint(this);
@@ -188,8 +200,15 @@ JXG.Sector.prototype.hasPoint = function (x, y) {
  * @type float
  * @return The sectors radius
  */
-JXG.Sector.prototype.getRadius = function() {
+JXG.Sector.prototype.Radius = function() {
     return(Math.sqrt(Math.pow(this.point1.coords.usrCoords[1]-this.point2.coords.usrCoords[1],2) + Math.pow(this.point1.coords.usrCoords[2]-this.point2.coords.usrCoords[2],2)));
+};
+
+/**
+ *@deprecated
+ */
+JXG.Sector.prototype.getRadius = function() {
+    return this.Radius();
 };
 
 /**

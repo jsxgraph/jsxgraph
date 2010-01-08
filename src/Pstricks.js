@@ -166,7 +166,7 @@ JXG.PsTricks.addLine = function(el) {
 };
 
 JXG.PsTricks.addCircle = function(el) {
-    var radius = el.getRadius();
+    var radius = el.Radius();
     this.psTricksString += "\\pscircle";
     this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) +", linewidth=" +el.visProp['strokeWidth']+"px";
     if(el.visProp['fillColor'] != 'none' && el.visProp['fillOpacity'] != 0) {
@@ -186,7 +186,7 @@ JXG.PsTricks.addPolygon = function(el) {
 };
 
 JXG.PsTricks.addArc = function(el) {
-    var radius = el.getRadius();  
+    var radius = el.Radius();  
     var p = {};
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.board.canvasWidth/(el.board.stretchY), el.midpoint.coords.usrCoords[2]],
@@ -214,7 +214,7 @@ JXG.PsTricks.addArc = function(el) {
 };
 
 JXG.PsTricks.addSector = function(el) {
-    var radius = el.getRadius();  
+    var radius = el.Radius();  
     var p = {};
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.board.canvasWidth/(el.board.stretchY), el.midpoint.coords.usrCoords[2]],

@@ -899,7 +899,7 @@ JXG.Point.prototype._anim = function(direction, stepCount) {
             alpha = (stepCount - this.intervalCount)/stepCount * 2*Math.PI;
         }
 
-        var radius = this.slideObject.getRadius();
+        var radius = this.slideObject.Radius();
 
         this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.coords.usrCoords[1] + radius*Math.cos(alpha), this.slideObject.midpoint.coords.usrCoords[2] + radius*Math.sin(alpha)]);
     }

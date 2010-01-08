@@ -123,11 +123,11 @@ Then r<sub>A</sub> + r<sub>B</sub> + r<sub>C</sub> = r<sub>M</sub>.
 
     // Hook-Funktion definieren, die die Tabelleninhalte updatet
     function print_table(board) {
-        $('rA').innerHTML = c32[1].getRadius().toFixed(4);
-        $('rB').innerHTML = c22[1].getRadius().toFixed(4);
-        $('rC').innerHTML = c12[1].getRadius().toFixed(4);
-        $('rM').innerHTML = c2[1].getRadius().toFixed(4);
-        $('rABC').innerHTML = (c32[1].getRadius()+c22[1].getRadius()+c12[1].getRadius()).toFixed(4);
+        $('rA').innerHTML = c32[1].Radius().toFixed(4);
+        $('rB').innerHTML = c22[1].Radius().toFixed(4);
+        $('rC').innerHTML = c12[1].Radius().toFixed(4);
+        $('rM').innerHTML = c2[1].Radius().toFixed(4);
+        $('rABC').innerHTML = (c32[1].Radius()+c22[1].Radius()+c12[1].Radius()).toFixed(4);
     }
 
     // und beim board registrieren.
