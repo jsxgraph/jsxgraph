@@ -1931,9 +1931,7 @@ JXG.Board.prototype.updateElements = function(drag) {
   */
 JXG.Board.prototype.updateRenderer = function(drag) {
     var el, pEl;
-
     drag = JXG.getReference(this, drag);
-
     for(el in this.objects) {
         pEl = this.objects[el];
         if (!this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
@@ -2211,7 +2209,7 @@ JXG.Board.prototype.unsuspendUpdate = function() {
  */
 JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     if (!JXG.isArray(bbox)) return;
-    var h,w;
+    var h,w,oX,oY;
     w = this.canvasWidth;
     h = this.canvasHeight;
     if (keepaspectratio) {
@@ -2226,8 +2224,9 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
         this.unitX = w/(bbox[2]-bbox[0]);
         this.unitY = h/(-bbox[3]+bbox[1]);
     }
-    this.originX = -this.unitX*bbox[0];
-    this.originY = this.unitY*bbox[1];
+    oX = -this.unitX*bbox[0]*this.zoomX;
+    oY = this.unitY*bbox[1]*this.zoomY;
+    this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
 
