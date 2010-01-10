@@ -1282,7 +1282,7 @@ this.writeBoard = function(board) {
   board.stretchX = board.zoomX*board.unitX;
   board.stretchY = board.zoomY*board.unitY;
   
-  board.fontSize = 1*JXG.GeogebraReader.tree.getElementsByTagName("gui")[0].getElementsByTagName("font")[0].attributes["size"].value;
+  board.fontSize = (JXG.GeogebraReader.tree.getElementsByTagName("gui")[0] && JXG.GeogebraReader.tree.getElementsByTagName("gui")[0].getElementsByTagName("font")[0]) ? 1*JXG.GeogebraReader.tree.getElementsByTagName("gui")[0].getElementsByTagName("font")[0].attributes["size"].value : '12px';
 
   JXG.JSXGraph.boards[board.id] = board;
 
