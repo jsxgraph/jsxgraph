@@ -113,6 +113,7 @@ this.parseString = function(fileStr, board, format, isString) {
         fileStr = JXG.GeonextReader.prepareString(fileStr);
     }
     if (format.toLowerCase()=='geogebra') {
+        // if isString is true, fileStr is a base64 encoded string, otherwise it's the zipped file
     	fileStr = JXG.GeogebraReader.prepareString(fileStr, isString);
     }
     if (format.toLowerCase()=='intergeo') {

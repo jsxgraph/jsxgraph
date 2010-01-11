@@ -2141,6 +2141,7 @@ this.utf8replace = function(exp) {
  * @return {String} content of geogebra.xml-file if archive was passed in
  */
 this.prepareString = function(fileStr, isString) {
+  // if isString is true, fileStr is a base64 encoded string, otherwise it's the zipped file
   if(isString)
     fileStr = JXG.Util.Base64.decode(fileStr, true);
   else
