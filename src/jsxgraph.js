@@ -552,10 +552,12 @@ JXG.unescapeHTML = function(str) {
 };
 
 /**
- * Outputs a copy of an existing object and not only a flat copy.
- * @param {Object} obj Object to be copied.
+ * This outputs an object with a base class reference to the given object. This is useful if
+ * you need a copy of an e.g. attributes object and want to overwrite some of the attributes
+ * without changing the original object.
+ * @param {Object} obj Object to be embedded.
  * @type Object
- * @return Copy of given object.
+ * @return An object with a base class reference to <tt>obj</tt>.
  */
 JXG.clone = function(obj) {
     var cObj = {};
@@ -622,7 +624,8 @@ JXG.deepCopy = function(obj) {
 };
 
 /**
- * Outputs a copy of an existing object just like {@link #clone} and copies the contents of the second object to the new one.
+ * Embeds an existing object into another one just like {@link #clone} and copies the contents of the second object
+ * to the new one. Warning: The copied properties of obj2 are just flat copies.
  * @param {Object} obj Object to be copied.
  * @param {Object} obj2 Object with data that is to be copied to the new one as well.
  * @type Object

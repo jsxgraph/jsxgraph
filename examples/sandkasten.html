@@ -15,15 +15,19 @@
    <script type="text/javascript">
    /* <![CDATA[ */
 
-    JXG.Server.loadModule('geoloci');
-alert('success?');
+//    JXG.Server.loadModule('geoloci');
+//alert('success?');
 
         b = JXG._board('jxgbox', {boundingbox: [-2, 16, 22, -2], axis: false, grid: false});
         xax = b._axis([[0,0],[1,0]]);
         yax = b._axis([[0,0],[0,1]]);
 
+        var c = b._functiongraph([function (x) { return Math.sin(x); }]);
 
-        var p = [];
+        var i = b._integral([[-2, 10], c]);
+
+
+/*        var p = [];
         p.push(b._point([5, 4], {face: '+', size: 5}));
         p.push(b._point([6, 2], {face: 'x', size: 5}));
         p.push(b._point([7, 5], {face: '[]', size: 5}));
@@ -41,7 +45,7 @@ alert('success?');
         c2 = b._circle([p[2], function () { return p[0].coords.distance(JXG.COORDS_BY_USER, p[1].coords); } ]);
 
         i1 = b._intersection([c1, c2, 0]);
-        i2 = b._intersection([c1, c2, 1]);
+        i2 = b._intersection([c1, c2, 1]);*/
 
 //		b._chart([data], {chartStyle: 'point,line', withHeaders: true});
 //        var l = b._line([p[1], p[2]]);
