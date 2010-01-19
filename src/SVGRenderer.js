@@ -252,7 +252,7 @@ JXG.SVGRenderer.prototype.updateInternalText = function(/** JXG.Text */ el) {
 
 JXG.SVGRenderer.prototype.drawTicks = function(axis) {
     var node = this.createPrimitive('path', axis.id);
-    node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
+    //node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
     this.appendChildPrimitive(node,axis.layer);
     this.appendNodesToElement(axis,'path'); 
 };
@@ -275,7 +275,7 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     node = document.getElementById(axis.id);
     if(node == null) {
         node = this.createPrimitive('path', axis.id);
-        node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
+        //node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
         this.appendChildPrimitive(node,axis.layer);
         this.appendNodesToElement(axis,'path');
     }
