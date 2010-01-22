@@ -214,7 +214,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
      * @type number
      * @private
      */
-    this.r = this.board.options.precision.hasPoint;
+    //this.r = this.board.options.precision.hasPoint;
     
     /*
      * The visprop properties are documented in JXG.GeometryElement
@@ -262,8 +262,8 @@ JXG.Point.prototype = new JXG.GeometryElement();
 JXG.Point.prototype.hasPoint = function (x,y) {
     var coordsScr = this.coords.scrCoords, r;
     r = this.visProp['size'];
-    if(r < this.r) {
-        r = this.r;
+    if(r < this.board.options.precision.hasPoint) {
+        r = this.board.options.precision.hasPoint;
     }
     return ((Math.abs(coordsScr[1]-x) < r+2) && (Math.abs(coordsScr[2]-y)) < r+2);
 };
@@ -384,7 +384,7 @@ JXG.Point.prototype.update = function (fromParent) {
             if(this.onPolygon) {
                 var p1 = this.slideObject.point1.coords;
                 var p2 = this.slideObject.point2.coords;
-                if(Math.abs(this.coords.scrCoords[1]-p1.scrCoords[1])<this.r && Math.abs(this.coords.scrCoords[2]-p1.scrCoords[2])<this.r) {
+                if(Math.abs(this.coords.scrCoords[1]-p1.scrCoords[1])<this.board.options.precision.hasPoint && Math.abs(this.coords.scrCoords[2]-p1.scrCoords[2])<this.board.options.precision.hasPoint) {
                     var poly = this.slideObject.parentPolygon;
                     for(var i=0; i<poly.borders.length; i++) {
                         if(this.slideObject == poly.borders[i]) {
@@ -393,7 +393,7 @@ JXG.Point.prototype.update = function (fromParent) {
                         }
                     }
                 }
-                else if(Math.abs(this.coords.scrCoords[1]-p2.scrCoords[1])<this.r && Math.abs(this.coords.scrCoords[2]-p2.scrCoords[2])<this.r) {
+                else if(Math.abs(this.coords.scrCoords[1]-p2.scrCoords[1])<this.board.options.precision.hasPoint && Math.abs(this.coords.scrCoords[2]-p2.scrCoords[2])<this.board.options.precision.hasPoint) {
                     var poly = this.slideObject.parentPolygon;
                     for(var i=0; i<poly.borders.length; i++) {
                         if(this.slideObject == poly.borders[i]) {

@@ -505,6 +505,16 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
 
    JXG.addEvent(document,'mousedown', this.mouseDownListener, this);
    JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+
+   
+   /**
+	* iPhone-Events
+	*/
+	 
+   //JXG.addEvent(document,'touchstart', this.touchStartListener, this);
+   JXG.addEvent(this.containerObj,'touchstart', this.touchStartListener, this);
+   JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+   JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
 };
 
 /**
@@ -713,6 +723,32 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
     this.moveOrigin();
     return this;
 };
+
+
+/**
+ * iPhone-Events
+ */
+ 
+JXG.Board.prototype.touchStartListener = function (evt) {
+	var e = document.createEvent("MouseEvents");   
+    this.options.precision.hasPoint = this.options.precision.touch;
+	e.initMouseEvent('mousedown', true, false, this.containerObj, 0, evt.targetTouches[0].screenX, evt.targetTouches[0].screenY, evt.targetTouches[0].clientX, evt.targetTouches[0].clientY, false, false, evt.targetTouches.length == 1 ? false: true, false, 0, null);
+	this.mouseDownListener(e);
+}
+
+JXG.Board.prototype.touchMoveListener = function (evt) {
+	evt.preventDefault();	
+	var e = document.createEvent("MouseEvents");   
+	e.initMouseEvent('mousemove', true, false, this.containerObj, 0, evt.targetTouches[0].screenX, evt.targetTouches[0].screenY, evt.targetTouches[0].clientX, evt.targetTouches[0].clientY, false, false, evt.targetTouches.length == 1 ? false: true, false, 0, null);
+	this.mouseMoveListener(e);
+}
+
+JXG.Board.prototype.touchEndListener = function (evt) {
+	var e = document.createEvent("MouseEvents");   
+	e.initMouseEvent('mouseup', true, false, this.containerObj, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	this.mouseUpListener(e);
+    this.options.precision.hasPoint = this.options.precision.mouse;
+}
 
 /**
  * This method is called by the browser when the left mouse button is released.

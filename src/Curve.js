@@ -93,7 +93,7 @@ JXG.Curve = function (board, parents, id, name, withLabel, layer) {
      * This is just for the hasPoint() method.
      * @type int
      */
-    this.r = this.board.options.precision.hasPoint;
+    //this.r = this.board.options.precision.hasPoint;
     
     /**
      * The curveType is set in @see generateTerm and used in 
@@ -175,7 +175,7 @@ JXG.Curve.prototype.hasPoint = function (x,y) {
         lbda, x0, y0, x1, y1, xy, den,
         steps = this.numberPointsLow, 
         d = (this.maxX()-this.minX())/steps,
-        prec = this.r/(this.board.unitX*this.board.zoomX),
+        prec = this.board.options.precision.hasPoint/(this.board.unitX*this.board.zoomX),
         checkPoint, len,
         suspendUpdate = true;
 

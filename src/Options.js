@@ -184,8 +184,10 @@ JXG.Options = {
 
     /* precision options */
     precision : {
-        hasPoint : 4,
-        epsilon : 0.0001
+        touch    : 20,
+        mouse    : 4,
+        epsilon  : 0.0001,
+        hasPoint : 4
     },
 
     // Default ordering of the layers

@@ -93,7 +93,7 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id, layer) {
      * This is just for the hasPoint() method. Precision for highlighting.
      * @type int
      */    
-    this.r = this.board.options.precision.hasPoint;
+    //this.r = this.board.options.precision.hasPoint;
   
     this.visProp['visible'] = true;
 

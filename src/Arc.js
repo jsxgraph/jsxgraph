@@ -93,7 +93,7 @@ JXG.Arc = function (board, p1, p2, p3, id, name, withLabel, layer) {
      * This is just for the hasPoint() method. Precision for highlighting.
      * @type int
      */
-    this.r = this.board.options.precision.hasPoint;
+    //this.r = this.board.options.precision.hasPoint;
 
     this.visProp['visible'] = true;
     
@@ -126,7 +126,7 @@ JXG.Arc.prototype = new JXG.GeometryElement;
  * @return {bool} True if (x,y) is near the arc, False otherwise.
  */
 JXG.Arc.prototype.hasPoint = function (x, y) { 
-    var genauigkeit = this.r/(this.board.stretchX);
+    var genauigkeit = this.board.options.precision.hasPoint/(this.board.stretchX);
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     var r = this.Radius();
@@ -170,7 +170,7 @@ JXG.Arc.prototype.hasPoint = function (x, y) {
  * @return {bool} True if (x,y) is within the sector defined by the arc, False otherwise.
  */
 JXG.Arc.prototype.hasPointSector = function (x, y) { 
-    var genauigkeit = this.r/(this.board.stretchX);
+    var genauigkeit = this.board.options.precision.hasPoint/(this.board.stretchX);
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
     var r = this.Radius();

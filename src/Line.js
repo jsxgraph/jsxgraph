@@ -111,7 +111,7 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
      * @type int
      * @private
      */
-    this.r = this.board.options.precision.hasPoint;
+    //this.r = this.board.options.precision.hasPoint;
 
     /* Wurde in GeometryElement schon dokumentiert. */
     this.visProp['fillColor'] = this.board.options.line.fillColor;
@@ -232,8 +232,8 @@ JXG.Line.prototype = new JXG.GeometryElement;
 
     // The point is too far away from the line
     // dist(v,vnew)^2 projective
-    //if (this.board.algebra.distance(v,vnew)>this.r) {
-    if ((v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2])>this.r*this.r) {
+    //if (this.board.algebra.distance(v,vnew)>this.board.options.precision.hasPoint) {
+    if ((v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2])>this.board.options.precision.hasPoint*this.board.options.precision.hasPoint) {
         return false;
     }
 
