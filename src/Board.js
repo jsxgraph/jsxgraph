@@ -2175,7 +2175,8 @@ JXG.Board.prototype.animate = function() {
             if(typeof newCoords  == 'undefined') {
                 delete(o.animationPath);
             } else {
-                o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
+                //o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
+                o.setPositionDirectly(JXG.COORDS_BY_USER, newCoords[0], newCoords[1]);
             }
         }
         if(o.animationData) {
