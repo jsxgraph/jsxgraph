@@ -2,7 +2,7 @@
  #!/usr/bin/python
     
 license = """/*
-    Copyright 2008,2009
+    Copyright 2008-2010
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
