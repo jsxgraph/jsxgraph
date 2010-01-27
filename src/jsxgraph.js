@@ -27,7 +27,7 @@
  * @fileoverview Class Geonext is defined in this file. Geonext controls all boards.
  * It has methods to create, save, load and free boards.
  * @author graphjs
- * @version 0.79
+ * @version 0.81
  */
 
 /**
@@ -39,7 +39,7 @@
  */
 JXG.JSXGraph = new function () {
     var ie, opera, i, arr;
-    this.licenseText = 'JSXGraph v0.80 Copyright (C) see http://jsxgraph.org';
+    this.licenseText = 'JSXGraph v0.81 Copyright (C) see http://jsxgraph.org';
 
     /**
             * Stores the renderer that is used to draw the board.
