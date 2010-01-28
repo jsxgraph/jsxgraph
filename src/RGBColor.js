@@ -352,12 +352,12 @@ JXG.hsv2rgb = function(H,S,V) {
  * @return Hashmap containing h,s, and v field.
  */
 JXG.rgb2hsv = function() {
-    var r, g, b;
+    var r, g, b, fr, fg, fb, fmax, fmin, h, s, v, max, min, stx;
     r = JXG.rgbParser.apply(JXG.rgbParser, arguments);
     g = r[1];
     b = r[2];
     r = r[0];
-    var h, s, v, max, min, stx=new JXG.MathStatistics();
+    stx=new JXG.MathStatistics();
     fr = r/255.;
     fg = g/255.;
     fb = b/255.;
@@ -391,4 +391,102 @@ JXG.rgb2hsv = function() {
         h = 0.;
 
     return [h, s, v];
+};
+
+
+/**
+ * Convert RGB color information to LMS color space.
+ * @param {number} r Amount of red in color. Number between 0 and 255.
+ * @param {number} g Amount of green. Number between 0 and 255.
+ * @param {number} b Amount of blue. Number between 0 and 255.
+ * @type Object
+ * @return Hashmap containing the L, M, S cone values.
+ */
+JXG.rgb2LMS = function() {
+    var r, g, b, l, m, s, ret
+        // constants
+        matrix = [[0.05059983, 0.08585369, 0.00952420], [0.01893033, 0.08925308, 0.01370054], [0.00292202, 0.00975732, 0.07145979]];
+
+    r = JXG.rgbParser.apply(JXG.rgbParser, arguments);
+    g = r[1];
+    b = r[2];
+    r = r[0];
+
+    // de-gamma
+    // Maybe this can be made faster by using a cache
+    r = Math.pow(r, 0.476190476);
+    g = Math.pow(g, 0.476190476);
+    b = Math.pow(b, 0.476190476);
+
+    l = r * matrix[0][0] + g * matrix[0][1] + b * matrix[0][2];
+    m = r * matrix[1][0] + g * matrix[1][1] + b * matrix[1][2];
+    s = r * matrix[2][0] + g * matrix[2][1] + b * matrix[2][2];
+
+    ret = [l, m, s];
+    ret.l = l;
+    ret.m = m;
+    ret.s = s;
+
+    return ret;
+};
+/**
+ * Convert color information from LMS to RGB color space.
+ * @param {number} l Amount of l value.
+ * @param {number} m Amount of m value.
+ * @param {number} s Amount of s value.
+ * @type Object
+ * @return Hashmap containing the r, g, b values.
+ */
+JXG.LMS2rgb = function(l, m, s) {
+    var r, g, b, ret
+        // constants
+        matrix = [[30.830854, -29.832659, 1.610474], [-6.481468, 17.715578, -2.532642], [-0.375690, -1.199062, 14.273846]];
+
+    // transform back to rgb
+    r = l * matrix[0][0] + m * matrix[0][1] + s * matrix[0][2];
+    g = l * matrix[1][0] + m * matrix[1][1] + s * matrix[1][2];
+    b = l * matrix[2][0] + m * matrix[2][1] + s * matrix[2][2];
+
+    // re-gamma, inspired by GIMP modules/display-filter-color-blind.c:
+    // Copyright (C) 2002-2003 Michael Natterer <mitch@gimp.org>,
+    //                         Sven Neumann <sven@gimp.org>,
+    //                         Robert Dougherty <bob@vischeck.com> and
+    //                         Alex Wade <alex@vischeck.com>
+    // This code is an implementation of an algorithm described by Hans Brettel,
+    // Francoise Vienot and John Mollon in the Journal of the Optical Society of
+    // America V14(10), pg 2647. (See http://vischeck.com/ for more info.)
+    lut_lookup = function (value) {
+        var offset = 127, step = 64;
+
+        while (step > 0) {
+            if (Math.pow(offset, 0.476190476) > value) {
+                offset -= step;
+            } else {
+                if (Math.pow(offset+1, 0.476190476) > value)
+                    return offset;
+
+                offset += step;
+            }
+
+            step /= 2;
+        }
+
+        /*  the algorithm above can't reach 255  */
+        if (offset == 254 && 13.994955247 < value)
+            return 255;
+
+        return offset;
+    };
+
+
+    r = lut_lookup(r);
+    g = lut_lookup(g);
+    b = lut_lookup(b);
+
+    ret = [r, g, b];
+    ret.r = r;
+    ret.g = g;
+    ret.b = b;
+
+    return ret;
 };

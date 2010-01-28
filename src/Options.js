@@ -353,6 +353,151 @@ JXG.rgb2bw = function(color) {
 };
 
 /**
+ * Converts the colors of the elements to how a color blind person would approximately see it. Possible
+ * options are <i>protanopia</i>, <i>deuteranopia</i>, and <i>tritanopia</i>.
+ * @param {JXG.Board} board The board to which objects the options will be applied.
+ * @param {string} deficiency The type of deficiency which will be simulated.
+ * @see #useStandardOptions
+ */
+JXG.simulateColorBlindness = function(board, deficiency) {
+    o = JXG.Options;
+    o.point.fillColor = JXG.rgb2cb(o.point.fillColor, deficiency);
+    o.point.highlightFillColor = JXG.rgb2cb(o.point.highlightFillColor, deficiency);
+    o.point.strokeColor = JXG.rgb2cb(o.point.strokeColor, deficiency);
+    o.point.highlightStrokeColor = JXG.rgb2cb(o.point.highlightStrokeColor, deficiency);
+
+    o.line.fillColor = JXG.rgb2cb(o.line.fillColor, deficiency);
+    o.line.highlightFillColor = JXG.rgb2cb(o.line.highlightFillColor, deficiency);
+    o.line.strokeColor = JXG.rgb2cb(o.line.strokeColor, deficiency);
+    o.line.highlightStrokeColor = JXG.rgb2cb(o.line.highlightStrokeColor, deficiency);
+
+    o.circle.fillColor = JXG.rgb2cb(o.circle.fillColor, deficiency);
+    o.circle.highlightFillColor = JXG.rgb2cb(o.circle.highlightFillColor, deficiency);
+    o.circle.strokeColor = JXG.rgb2cb(o.circle.strokeColor, deficiency);
+    o.circle.highlightStrokeColor = JXG.rgb2cb(o.circle.highlightStrokeColor, deficiency);
+
+    o.arc.fillColor = JXG.rgb2cb(o.arc.fillColor, deficiency);
+    o.arc.highlightFillColor = JXG.rgb2cb(o.arc.highlightFillColor, deficiency);
+    o.arc.strokeColor = JXG.rgb2cb(o.arc.strokeColor, deficiency);
+    o.arc.highlightStrokeColor = JXG.rgb2cb(o.arc.highlightStrokeColor, deficiency);
+
+    o.polygon.fillColor = JXG.rgb2cb(o.polygon.fillColor, deficiency);
+    o.polygon.highlightFillColor  = JXG.rgb2cb(o.polygon.highlightFillColor, deficiency);
+
+    o.sector.fillColor = JXG.rgb2cb(o.sector.fillColor, deficiency);
+    o.sector.highlightFillColor  = JXG.rgb2cb(o.sector.highlightFillColor, deficiency);
+
+    o.curve.strokeColor = JXG.rgb2cb(o.curve.strokeColor, deficiency);
+    o.grid.gridColor = JXG.rgb2cb(o.grid.gridColor, deficiency);
+
+    JXG.useStandardOptions(board);
+};
+
+/**
+ * Decolorizes the given color.
+ * @param {String} color HTML string containing the HTML color code.
+ * @param {String} deficiency The type of color blindness. Possible
+ * options are <i>protanopia</i>, <i>deuteranopia</i>, and <i>tritanopia</i>.
+ * @type String
+ * @return Returns a HTML color string
+ */
+JXG.rgb2cb = function(color, deficiency) {
+    if(color == 'none') {
+        return color;
+    }
+
+    var rgb, l, m, s, lms, tmp,
+        a1, b1, c1, a2, b2, c2;
+//        anchor = new Array(12), anchor_e = new Array(3);
+/*
+ has been required to calculate the constants for a1, ..., c2, and inflection.
+
+    anchor[0] = 0.08008;  anchor[1]  = 0.1579;    anchor[2]  = 0.5897;
+    anchor[3] = 0.1284;   anchor[4]  = 0.2237;    anchor[5]  = 0.3636;
+    anchor[6] = 0.9856;   anchor[7]  = 0.7325;    anchor[8]  = 0.001079;
+    anchor[9] = 0.0914;   anchor[10] = 0.007009;  anchor[11] = 0.0;
+
+    anchor_e[0] = 0.14597772;
+    anchor_e[1] = 0.12188395;
+    anchor_e[2] = 0.08413913;
+
+
+    a1 = anchor_e[1] * anchor[11] - anchor_e[2] * anchor[10];
+    b1 = anchor_e[2] * anchor[9]  - anchor_e[0] * anchor[11];
+    c1 = anchor_e[0] * anchor[10] - anchor_e[1] * anchor[9];
+    a2 = anchor_e[1] * anchor[5]  - anchor_e[2] * anchor[4];
+    b2 = anchor_e[2] * anchor[3]  - anchor_e[0] * anchor[5];
+    c2 = anchor_e[0] * anchor[4]  - anchor_e[1] * anchor[3];
+    inflection = (anchor_e[1] / anchor_e[0]);
+
+    document.getElementById('debug').innerHTML = 'a1 = ' + a1 + '<br/>' + 'b1 = ' + b1 + '<br/>' + 'c1 = ' + c1 + '<br/>' + 'a2 = ' + a2 + '<br/>' + 'b2 = ' + b2 + '<br/>' + 'c2 = ' + c2 + '<br/>' + 'inflection = ' + inflection;    
+*/
+    lms = JXG.rgb2LMS(color);
+    l = lms.l; m = lms.m; s = lms.s;
+
+    deficiency = deficiency.toLowerCase();
+
+    switch(deficiency) {
+        case "protanopia":
+            a1 = -0.06150039994295001;
+            b1 = 0.08277001656812001;
+            c1 = -0.013200141220000003;
+            a2 = 0.05858939668799999;
+            b2 = -0.07934519995360001;
+            c2 = 0.013289415272000003;
+            inflection = 0.6903216543277437;
+
+            tmp = s/m;
+            if (tmp < inflection)
+                l = -(b1 * m + c1 * s) / a1;
+            else
+                l = -(b2 * m + c2 * s) / a2;
+            break;
+        case "tritanopia":
+            a1 = -0.00058973116217;
+            b1 = 0.007690316482;
+            c1 = -0.01011703519052;
+            a2 = 0.025495080838999994;
+            b2 = -0.0422740347;
+            c2 = 0.017005316784;
+            inflection = 0.8349489908460004;
+
+            tmp = m / l;
+            if (tmp < inflection)
+              s = -(a1 * l + b1 * m) / c1;
+            else
+              s = -(a2 * l + b2 * m) / c2;
+            break;
+        default:
+            a1 = -0.06150039994295001;
+            b1 = 0.08277001656812001;
+            c1 = -0.013200141220000003;
+            a2 = 0.05858939668799999;
+            b2 = -0.07934519995360001;
+            c2 = 0.013289415272000003;
+            inflection = 0.5763833686400911;
+
+            tmp = s/l;
+            if(tmp < inflection)
+                m = -(a1 * l + c1 * s) / b1;
+            else
+                m = -(a2 * l + c2 * s) / b2;
+            break;
+    }
+
+    rgb = JXG.LMS2rgb(l, m, s);
+
+    var HexChars="0123456789ABCDEF";
+    tmp = HexChars.charAt((rgb.r>>4)&0xf)+HexChars.charAt(rgb.r&0xf);
+    color = "#" + tmp;
+    tmp = HexChars.charAt((rgb.g>>4)&0xf)+HexChars.charAt(rgb.g&0xf);
+    color = color + tmp;
+    tmp = HexChars.charAt((rgb.b>>4)&0xf)+HexChars.charAt(rgb.b&0xf);
+    color = color + tmp;
+    return color;
+};
+
+/**
  * Load options from a file using FileReader
  * @param fileurl {String} URL to .json-file containing style information
  * @param apply {bool} <tt>true</tt> when options in file should be applied to board after being loaded.
