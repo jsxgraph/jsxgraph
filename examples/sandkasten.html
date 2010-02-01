@@ -33,7 +33,7 @@ brd.suspendUpdate();
 A = brd.createElement('point',[1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
 B = brd.createElement('point',[-1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
 C = brd.createElement('point',[0.2,1.5],{strokeColor:'#901B77',fillColor:'#CA147A'});
-pol = brd.createElement('polygon',[A,B,C], {fillColor:'#FFFF0050'});
+pol = brd.createElement('polygon',[A,B,C], {fillColor:'none'});//'#FFFF0050'});
 for(i=0;i<=2;i++) {
     pol.borders[i].setProperty('strokeColor:#009256');
 }
@@ -66,7 +66,18 @@ euler = brd.createElement('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
 brd.unsuspendUpdate();
 
 
-    JXG.simulateColorBlindness(brd, "tritanopia");
+function makeColorBlind(deficiency) {
+    var e, o;
+brd.suspendUpdate();
+    for(e in brd.objects) {
+        o = brd.objects[e];
+        o.setProperty({strokeColor: JXG.rgb2cb(o.visProp.strokeColor, deficiency), fillColor: JXG.rgb2cb(o.visProp.fillColor, deficiency),
+                       highlightStrokeColor: JXG.rgb2cb(o.visProp.highlightStrokeColor, deficiency), highlightFillColor: JXG.rgb2cb(o.visProp.highlightFillColor, deficiency)});
+    }
+brd.unsuspendUpdate();
+}
+
+
 
 
 /*        var p = [];
@@ -110,7 +121,9 @@ brd.unsuspendUpdate();
   /* ]]> */
   </script>
 <form>
-<input type="text" value="5" id="prec"/><input type="button" value="Set precision" onclick="b.options.precision.hasPoint = parseInt(document.getElementById('prec').value);"/>
+<input type="text" value="5" id="prec"/><input type="button" value="Set precision" onclick="brd.options.precision.hasPoint = parseInt(document.getElementById('prec').value);"/>
+
+<input type="button" value="Sim color blindness" onclick="makeColorBlind('deuteranopia');"/>
 </form>
 </body>
 </html>

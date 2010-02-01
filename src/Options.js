@@ -411,7 +411,8 @@ JXG.rgb2cb = function(color, deficiency) {
 //        anchor = new Array(12), anchor_e = new Array(3);
 /*
  has been required to calculate the constants for a1, ..., c2, and inflection.
-
+*/
+/* old stuff. just here for debugging purposes
     anchor[0] = 0.08008;  anchor[1]  = 0.1579;    anchor[2]  = 0.5897;
     anchor[3] = 0.1284;   anchor[4]  = 0.2237;    anchor[5]  = 0.3636;
     anchor[6] = 0.9856;   anchor[7]  = 0.7325;    anchor[8]  = 0.001079;
@@ -422,15 +423,40 @@ JXG.rgb2cb = function(color, deficiency) {
     anchor_e[2] = 0.08413913;
 
 
-    a1 = anchor_e[1] * anchor[11] - anchor_e[2] * anchor[10];
-    b1 = anchor_e[2] * anchor[9]  - anchor_e[0] * anchor[11];
-    c1 = anchor_e[0] * anchor[10] - anchor_e[1] * anchor[9];
-    a2 = anchor_e[1] * anchor[5]  - anchor_e[2] * anchor[4];
-    b2 = anchor_e[2] * anchor[3]  - anchor_e[0] * anchor[5];
-    c2 = anchor_e[0] * anchor[4]  - anchor_e[1] * anchor[3];
-    inflection = (anchor_e[1] / anchor_e[0]);
+    document.getElementById('debug').innerHTML += 'color: ' + color;
 
-    document.getElementById('debug').innerHTML = 'a1 = ' + a1 + '<br/>' + 'b1 = ' + b1 + '<br/>' + 'c1 = ' + c1 + '<br/>' + 'a2 = ' + a2 + '<br/>' + 'b2 = ' + b2 + '<br/>' + 'c2 = ' + c2 + '<br/>' + 'inflection = ' + inflection;    
+//    document.getElementById('debug').innerHTML += 'deuteranopia<br/><br/>';    
+      // find a,b,c for lam=575nm and lam=475 
+      a1 = anchor_e[1] * anchor[8] - anchor_e[2] * anchor[7];
+      b1 = anchor_e[2] * anchor[6] - anchor_e[0] * anchor[8];
+      c1 = anchor_e[0] * anchor[7] - anchor_e[1] * anchor[6];
+      a2 = anchor_e[1] * anchor[2] - anchor_e[2] * anchor[1];
+      b2 = anchor_e[2] * anchor[0] - anchor_e[0] * anchor[2];
+      c2 = anchor_e[0] * anchor[1] - anchor_e[1] * anchor[0];
+      inflection = (anchor_e[2] / anchor_e[0]);
+
+//    document.getElementById('debug').innerHTML += 'a1 = ' + a1 + '<br/>' + 'b1 = ' + b1 + '<br/>' + 'c1 = ' + c1 + '<br/>' + 'a2 = ' + a2 + '<br/>' + 'b2 = ' + b2 + '<br/>' + 'c2 = ' + c2 + '<br/>' + 'inflection = ' + inflection + '<br/><br/>protanopia<br/><br/>';
+      // find a,b,c for lam=575nm and lam=475 
+      a1 = anchor_e[1] * anchor[8] - anchor_e[2] * anchor[7];
+      b1 = anchor_e[2] * anchor[6] - anchor_e[0] * anchor[8];
+      c1 = anchor_e[0] * anchor[7] - anchor_e[1] * anchor[6];
+      a2 = anchor_e[1] * anchor[2] - anchor_e[2] * anchor[1];
+      b2 = anchor_e[2] * anchor[0] - anchor_e[0] * anchor[2];
+      c2 = anchor_e[0] * anchor[1] - anchor_e[1] * anchor[0];
+      inflection = (anchor_e[2] / anchor_e[1]);
+
+//    document.getElementById('debug').innerHTML += 'a1 = ' + a1 + '<br/>' + 'b1 = ' + b1 + '<br/>' + 'c1 = ' + c1 + '<br/>' + 'a2 = ' + a2 + '<br/>' + 'b2 = ' + b2 + '<br/>' + 'c2 = ' + c2 + '<br/>' + 'inflection = ' + inflection + '<br/><br/>tritanopia<br/><br/>';
+      // Set 1: regions where lambda_a=575, set 2: lambda_a=475
+      a1 = anchor_e[1] * anchor[11] - anchor_e[2] * anchor[10];
+      b1 = anchor_e[2] * anchor[9]  - anchor_e[0] * anchor[11];
+      c1 = anchor_e[0] * anchor[10] - anchor_e[1] * anchor[9];
+      a2 = anchor_e[1] * anchor[5]  - anchor_e[2] * anchor[4];
+      b2 = anchor_e[2] * anchor[3]  - anchor_e[0] * anchor[5];
+      c2 = anchor_e[0] * anchor[4]  - anchor_e[1] * anchor[3];
+      inflection = (anchor_e[1] / anchor_e[0]);
+
+
+//    document.getElementById('debug').innerHTML += 'a1 = ' + a1 + '<br/>' + 'b1 = ' + b1 + '<br/>' + 'c1 = ' + c1 + '<br/>' + 'a2 = ' + a2 + '<br/>' + 'b2 = ' + b2 + '<br/>' + 'c2 = ' + c2 + '<br/>' + 'inflection = ' + inflection;    
 */
     lms = JXG.rgb2LMS(color);
     l = lms.l; m = lms.m; s = lms.s;
@@ -491,9 +517,10 @@ JXG.rgb2cb = function(color, deficiency) {
     tmp = HexChars.charAt((rgb.r>>4)&0xf)+HexChars.charAt(rgb.r&0xf);
     color = "#" + tmp;
     tmp = HexChars.charAt((rgb.g>>4)&0xf)+HexChars.charAt(rgb.g&0xf);
-    color = color + tmp;
+    color += tmp;
     tmp = HexChars.charAt((rgb.b>>4)&0xf)+HexChars.charAt(rgb.b&0xf);
-    color = color + tmp;
+    color += tmp;
+
     return color;
 };
 
