@@ -116,15 +116,17 @@ JXG.createSlider = function(board, parentArr, atts) {
     p3._smax = smax;
     p3._smin = smin;
 
-    if (atts['name'] && atts['name']!='') {
-        n = atts['name'] + ' = ';
-    } else {
-        n = '';
-    }
-    t = board.createElement('text', [((pos1[0]-pos0[0])*.05+pos1[0]), 
+    if (typeof atts['withLabel']=='undefined' || atts['withLabel']==true) {
+        if (atts['name'] && atts['name']!='') {
+            n = atts['name'] + ' = ';
+        } else {
+            n = '';
+        }
+        t = board.createElement('text', [((pos1[0]-pos0[0])*.05+pos1[0]), 
                                      ((pos1[1]-pos0[1])*.05+pos1[1]), 
                                      function(){return n+(p3.Value()).toFixed(2);}],
                                      {name:''}); 
+    }                                     
     return p3;
 };    
 

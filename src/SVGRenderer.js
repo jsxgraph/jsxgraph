@@ -634,11 +634,11 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
         node;
     //w = (w>0)?w:0;
     try {
-    if (el.visPropOld['strokeWidth']==w) {
-        return;
-    }
+        if (el.visPropOld['strokeWidth']==w) {
+            return;
+        }
     } catch (e){
-        alert(el.id);
+        //alert(el.id);
     }
     
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {

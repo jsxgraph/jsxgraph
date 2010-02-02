@@ -3,7 +3,6 @@
    <title>JSXGraph example</title>
    <meta http-equiv="X-UA-Compatible" content="chrome=1">
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -21,7 +20,7 @@
 
         var A = board.createElement('point', [-2,1], {style:6,name:'A'});
         var B = board.createElement('point', [2,-3], {style:6,name:'B'});
-        var s = board.createElement('slider',[[0,-5],[5,-5],[1.5,8,10]],{name:'a'});
+        var s = board.createElement('slider',[[0,-5],[5,-5],[1.5,8,10]],{name:'a',withLabel:true});
 
         // Conic construction from foci: ellipse or hyperbola
         function  Conic(board,F1,F2,a,atts) {
@@ -83,7 +82,6 @@
                      function(phi) {return conicCoords(phi,-1)[2];},-2.01*Math.PI,2.01*Math.PI],atts)];
             }
         };
-
         var E = Conic(board,A,B,s,{type:'ellipse',strokewidth:3, fillColor:'#00ff0023'});
         var H = Conic(board,A,B,s,{type:'hyperbola',strokewidth:3, fillColor:'#ffff0033'});
 
@@ -91,7 +89,6 @@
         var a = board.createElement('line', [A,S], {straightFirst:false, straightLast:false});
         var b = board.createElement('line', [B,S], {straightFirst:false, straightLast:false});
         var c = board.createElement('line', [A,B], {straightFirst:false, straightLast:false});
-
         board.update();
   /* ]]> */
 </script>
