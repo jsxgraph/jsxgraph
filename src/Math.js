@@ -216,12 +216,16 @@ JXG.Math.matVecMult = function(/** array */ mat1, /** array */ vec) /** array */
         n = vec.length,
         res = [],
         i, s, k;
-    for (i=0;i<m;i++) {
-        s = 0;
-        for (k=0;k<n;k++) {
-            s += mat1[i][k]*vec[k];
+    if (n==3) {
+        for (i=0;i<m;i++) {
+            res[i] = mat1[i][0]*vec[0] + mat1[i][1]*vec[1] + mat1[i][2]*vec[2];
         }
-        res[i] = s;
+    } else {
+        for (i=0;i<m;i++) {
+            s = 0;
+            for (k=0;k<n;k++) { s += mat1[i][k]*vec[k]; }
+            res[i] = s;
+        }
     }
     return res;
 };
