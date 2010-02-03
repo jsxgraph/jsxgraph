@@ -66,7 +66,7 @@ JXG.createEllipse = function(board, parents, atts) {
             return m;
         };
 
-    var conicCoords = function(phi,leave) {
+    var polarForm = function(phi,leave) {
                 var a = majorAxis(),
                     e = F2.Dist(F1)*0.5,
                     b = Math.sqrt(a*a-e*e);
@@ -74,22 +74,8 @@ JXG.createEllipse = function(board, parents, atts) {
         };
            
     var curve = board.create('curve', 
-                    [function(phi) {return conicCoords(phi)[1];},
-                     function(phi) {return conicCoords(phi)[2];},0,2.001*Math.PI],atts);        
-                     
-                     
-/*    
-    var f = board.create('curve', 
-        [function(phi) {
-            var a = majorAxis(),
-            e = F2.coords.distance(JXG.COORDS_BY_USER, F1.coords)*0.5,
-            b = Math.sqrt(a*a-e*e),
-            eps = e/a; 
-            return b/(1+eps*Math.cos(phi)); }, 
-            [function(){return M.X();},function(){return M.Y();}], 0,2*Math.PI],      
-            {curveType:'polar', strokewidth:2, strokeColor:'#CA7291'}
-        );        
-*/                     
+                    [function(phi) {return polarForm(phi)[1];},
+                     function(phi) {return polarForm(phi)[2];},0,2.001*Math.PI],atts);        
     return curve;
 };
 
@@ -102,7 +88,7 @@ JXG.createHyperbola = function(board, parents, atts) {
     
     var majorAxis;
     if (JXG.isPoint(parents[2])) {
-        majorAxis = function(){ return 0.5*(parents[2].Dist(F1)+parents[2].Dist(F2));};
+        majorAxis = function(){ return 0.5*(parents[2].Dist(F1)-parents[2].Dist(F2));};
     } else {
         majorAxis = JXG.createFunction(parents[2],board);
     }
@@ -132,34 +118,19 @@ JXG.createHyperbola = function(board, parents, atts) {
                     ];
             return m;
         };
-/*
-    var conicCoords = function(phi,leave) {
-                var a = majorAxis(),
-                    e = F2.coords.distance(JXG.COORDS_BY_USER, F1.coords)*0.5,
-                    b = Math.sqrt(a*a-e*e);
-                return JXG.Math.matVecMult(transformFunc(),[1,leave*a*board.cosh(phi),leave*b*board.sinh(phi)]);
-            };
-           
-    var curves = [board.create('curve', 
-                    [function(phi) {return conicCoords(phi,1)[1];},
-                     function(phi) {return conicCoords(phi,1)[2];},-2.001*Math.PI,2.001*Math.PI],atts),
-                  board.create('curve', 
-                    [function(phi) {return conicCoords(phi,-1)[1];},
-                     function(phi) {return conicCoords(phi,-1)[2];},-2.001*Math.PI,2.001*Math.PI],atts)];
 
-*/
     /*
           * Hyperbola is defined by (a*sec(t),b*tan(t)) and sec(t) = 1/cos(t)
           */
-    var conicCoords = function(phi,leave) {
+    var polarForm = function(phi) {
                 var a = majorAxis(),
                     e = F2.Dist(F1)*0.5,
-                    b = Math.sqrt(a*a-e*e);
+                    b = Math.sqrt(-a*a+e*e);
                 return JXG.Math.matVecMult(transformFunc(),[1,a/Math.cos(phi),b*Math.tan(phi)]);
         };
     var curve = board.create('curve', 
-                    [function(phi) {return conicCoords(phi)[1];},
-                     function(phi) {return conicCoords(phi)[2];},0,2.001*Math.PI],atts);        
+                    [function(phi) {return polarForm(phi)[1];},
+                     function(phi) {return polarForm(phi)[2];},0,2.001*Math.PI],atts);        
                      
     return curve;
 };
