@@ -27,6 +27,8 @@
  * @fileoverview In this file the conic sections defined.
  */
 JXG.createEllipse = function(board, parents, atts) {
+    var rotationMatrix;
+
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
@@ -35,7 +37,7 @@ JXG.createEllipse = function(board, parents, atts) {
         
     var majorAxis;
     if (JXG.isPoint(parents[2])) {
-        majorAxis = function(){ return 0.5*(parents[2].Dist(F1)+parents[2].Dist(F2));};
+        majorAxis = function(){ return parents[2].Dist(F1)+parents[2].Dist(F2);};
     } else {
         majorAxis = JXG.createFunction(parents[2],board);
     }
@@ -46,11 +48,12 @@ JXG.createEllipse = function(board, parents, atts) {
             ],{visible:false, name:'', withLabel:false});
     
     var transformFunc = function() {
-            var ax = F1.X();
-            var ay = F1.Y();
-            var bx = F2.X();
-            var by = F2.Y();
-            var beta; 
+            var ax = F1.X(),
+                ay = F1.Y(),
+                bx = F2.X(),
+                by = F2.Y(),
+                beta; 
+            
             // Rotate by the slope of the line [F1,F2]
             var sgn = (bx-ax>0)?1:-1;
             if (Math.abs(bx-ax)>0.0000001) {
@@ -66,20 +69,25 @@ JXG.createEllipse = function(board, parents, atts) {
             return m;
         };
 
-    var polarForm = function(phi,leave) {
-                var a = majorAxis(),
+    var polarForm = function(phi,suspendUpdate) {
+                var a = majorAxis()*0.5,
                     e = F2.Dist(F1)*0.5,
                     b = Math.sqrt(a*a-e*e);
-                return JXG.Math.matVecMult(transformFunc(),[1,a*Math.cos(phi),b*Math.sin(phi)]);
+                if (!suspendUpdate) {
+                    rotationMatrix = transformFunc();
+                }
+                return JXG.Math.matVecMult(rotationMatrix,[1,a*Math.cos(phi),b*Math.sin(phi)]);
         };
            
     var curve = board.create('curve', 
-                    [function(phi) {return polarForm(phi)[1];},
-                     function(phi) {return polarForm(phi)[2];},0,2.001*Math.PI],atts);        
+                    [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
+                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},0,2.001*Math.PI],atts);        
     return curve;
 };
 
 JXG.createHyperbola = function(board, parents, atts) {
+    var rotationMatrix;
+
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
@@ -88,7 +96,7 @@ JXG.createHyperbola = function(board, parents, atts) {
     
     var majorAxis;
     if (JXG.isPoint(parents[2])) {
-        majorAxis = function(){ return 0.5*(parents[2].Dist(F1)-parents[2].Dist(F2));};
+        majorAxis = function(){ return parents[2].Dist(F1)-parents[2].Dist(F2);};
     } else {
         majorAxis = JXG.createFunction(parents[2],board);
     }
@@ -99,11 +107,11 @@ JXG.createHyperbola = function(board, parents, atts) {
             ],{visible:false, name:'', withLabel:false});
 
     var transformFunc = function() {
-            var ax = F1.X();
-            var ay = F1.Y();
-            var bx = F2.X();
-            var by = F2.Y();
-            var beta; 
+            var ax = F1.X(),
+                ay = F1.Y(),
+                bx = F2.X(),
+                by = F2.Y(),
+                beta;
             // Rotate by the slope of the line [F1,F2]
             var sgn = (bx-ax>0)?1:-1;
             if (Math.abs(bx-ax)>0.0000001) {
@@ -122,15 +130,18 @@ JXG.createHyperbola = function(board, parents, atts) {
     /*
           * Hyperbola is defined by (a*sec(t),b*tan(t)) and sec(t) = 1/cos(t)
           */
-    var polarForm = function(phi) {
-                var a = majorAxis(),
+    var polarForm = function(phi,suspendUpdate) {
+                var a = majorAxis()*0.5,
                     e = F2.Dist(F1)*0.5,
                     b = Math.sqrt(-a*a+e*e);
-                return JXG.Math.matVecMult(transformFunc(),[1,a/Math.cos(phi),b*Math.tan(phi)]);
+                if (!suspendUpdate) {
+                    rotationMatrix = transformFunc();
+                }
+                return JXG.Math.matVecMult(rotationMatrix,[1,a/Math.cos(phi),b*Math.tan(phi)]);
         };
     var curve = board.create('curve', 
-                    [function(phi) {return polarForm(phi)[1];},
-                     function(phi) {return polarForm(phi)[2];},0,2.001*Math.PI],atts);        
+                    [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
+                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},0,2.001*Math.PI],atts);        
                      
     return curve;
 };
