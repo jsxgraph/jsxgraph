@@ -587,12 +587,18 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
     return new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);       
 */
     // Homogeneous version
+/*    
     var mu = this.innerProduct(point.coords.usrCoords,line.stdform,3)/this.innerProduct(line.stdform,line.stdform,3),
         i, v = [];
     for (i=0;i<3;i++) {
         v[i] = point.coords.usrCoords[i] - mu*line.stdform[i];
     }
-    return new JXG.Coords(JXG.COORDS_BY_USER, v, this.board);       
+*/
+    var v = [0,line.stdform[1],line.stdform[2]];
+    v = this.crossProduct(v,point.coords.usrCoords);
+    return board.algebra.meetLineLine(v,line.stdform,0);
+
+    //return new JXG.Coords(JXG.COORDS_BY_USER, v, this.board);       
 };
 
 /**

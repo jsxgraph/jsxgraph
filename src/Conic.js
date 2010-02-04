@@ -146,63 +146,49 @@ JXG.createHyperbola = function(board, parents, atts) {
     return curve;
 };
 
-/*
 JXG.createParabola = function(board, parents, atts) {
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
     var F1 = parents[0],
         l = parents[1];
-    
-    var majorAxis;
-    if (JXG.isPoint(parents[2])) {
-        majorAxis = function(){ return parents[2].Dist(F1)-parents[2].Dist(F2);};
-    } else {
-        majorAxis = JXG.createFunction(parents[2],board);
-    }
-        
-    var M = board.create('point', [
-                function(){return (F1.X()+F2.X())*0.5;},
-                function(){return (F1.Y()+F2.Y())*0.5;}
-            ],{visible:false, name:'', withLabel:false});
+            
+    var M = board.create('point', [  
+                function() {
+                    var v = [0,l.stdform[1],l.stdform[2]];
+                    v = board.algebra.crossProduct(v,F1.coords.usrCoords);
+                    return board.algebra.meetLineLine(v,l.stdform,0).usrCoords;
+                }
+            ],{visible:true, name:'', withLabel:false});
 
     var transformFunc = function() {
-            var ax = F1.X(),
-                ay = F1.Y(),
-                bx = F2.X(),
-                by = F2.Y(),
-                beta;
-            // Rotate by the slope of the line [F1,F2]
-            var sgn = (bx-ax>0)?1:-1;
-            if (Math.abs(bx-ax)>0.0000001) {
-                beta = Math.atan((by-ay)/(bx-ax))+ ((sgn<0)?Math.PI:0);  
-            } else {
-                beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
-            }
+            var beta = board.algebra.rad(
+                    [l.point2.coords.usrCoords[1],l.point1.coords.usrCoords[2]],
+                    l.point1,
+                    l.point2);
+            // Rotate by the slope of the line l (Leitlinie)
             var m = [
                         [1,    0,             0],
-                        [M.X(),Math.cos(beta),-Math.sin(beta)],
-                        [M.Y(),Math.sin(beta), Math.cos(beta)]
+                        [M.X()*(1-Math.cos(beta))+M.Y()*Math.sin(beta),Math.cos(beta),-Math.sin(beta)],
+                        [M.Y()*(1-Math.cos(beta))-M.X()*Math.sin(beta),Math.sin(beta), Math.cos(beta)]
                     ];
             return m;
         };
-
-    var polarForm = function(phi,suspendUpdate) {
-                var a = majorAxis()*0.5,
-                    e = F2.Dist(F1)*0.5,
-                    b = Math.sqrt(-a*a+e*e);
+        
+    var polarForm = function(t,suspendUpdate) {
+                var e = M.Dist(F1)*0.5;
+                    //b = Math.sqrt(-a*a+e*e);
                 if (!suspendUpdate) {
                     rotationMatrix = transformFunc();
                 }
-                return JXG.Math.matVecMult(rotationMatrix,[1,a/Math.cos(phi),b*Math.tan(phi)]);
+                return JXG.Math.matVecMult(rotationMatrix,[1,2*t+(M.X()+F1.X())*0.5,t*t+(M.Y()+F1.Y())*0.5]);
         };
     var curve = board.create('curve', 
-                    [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
-                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},0,2.001*Math.PI],atts);        
+                    [function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[1];},
+                     function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[2];},-Math.PI,Math.PI],atts);        
                      
     return curve;
 };
-*/
 
 JXG.JSXGraph.registerElement('ellipse', JXG.createEllipse);
 JXG.JSXGraph.registerElement('hyperbola', JXG.createHyperbola);
