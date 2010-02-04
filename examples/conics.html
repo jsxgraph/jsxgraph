@@ -19,6 +19,8 @@ var B = board.create('point', [2,-3], {style:6,name:'B'});
 var C = board.create('point', [5,2], {style:6,name:'C'});
 var s = board.create('slider',[[0,-5],[5,-5],[1.5,5,10]],{name:'a',withLabel:true});
 
+var l = board.create('line', [A,B], {strokeColor:'black', dash:2});
+
 var c = board.create('hyperbola',[A,B,function(){return s.Value();}], 
             {strokeColor:'green',strokeWidth:5,strokeOpacity:0.5});
 var ell = board.create('ellipse',[A,B,function(){return s.Value();}],{strokeColor:'red',strokeWidth:5,strokeOpacity:0.5});
