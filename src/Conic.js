@@ -165,12 +165,15 @@ JXG.createParabola = function(board, parents, atts) {
             var beta = board.algebra.rad(
                     [l.point2.coords.usrCoords[1],l.point1.coords.usrCoords[2]],
                     l.point1,
-                    l.point2);
+                    l.point2),
+                x = (M.X()+F1.X())*0.5,
+                y = (M.Y()+F1.Y())*0.5;
+                
             // Rotate by the slope of the line l (Leitlinie)
             var m = [
                         [1,    0,             0],
-                        [M.X()*(1-Math.cos(beta))+M.Y()*Math.sin(beta),Math.cos(beta),-Math.sin(beta)],
-                        [M.Y()*(1-Math.cos(beta))-M.X()*Math.sin(beta),Math.sin(beta), Math.cos(beta)]
+                        [x*(1-Math.cos(beta))+y*Math.sin(beta),Math.cos(beta),-Math.sin(beta)],
+                        [y*(1-Math.cos(beta))-x*Math.sin(beta),Math.sin(beta), Math.cos(beta)]
                     ];
             return m;
         };
@@ -181,7 +184,7 @@ JXG.createParabola = function(board, parents, atts) {
                 if (!suspendUpdate) {
                     rotationMatrix = transformFunc();
                 }
-                return JXG.Math.matVecMult(rotationMatrix,[1,2*t+(M.X()+F1.X())*0.5,t*t+(M.Y()+F1.Y())*0.5]);
+                return JXG.Math.matVecMult(rotationMatrix,[1,2*t+(M.X()+F1.X())*0.5,t*t+(M.Y()+F1.Y())*0.5]); //board.sgn(M.Y()+F1.Y())*
         };
     var curve = board.create('curve', 
                     [function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[1];},
