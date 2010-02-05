@@ -32,8 +32,8 @@ JXG.createEllipse = function(board, parents, atts) {
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
-    var F1 = parents[0], 
-        F2 = parents[1];
+    var F1 = parents[0],  // focus 1
+        F2 = parents[1];  // focus 2
         
     var majorAxis;
     if (JXG.isPoint(parents[2])) {
@@ -91,8 +91,8 @@ JXG.createHyperbola = function(board, parents, atts) {
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
-    var F1 = parents[0],
-        F2 = parents[1];
+    var F1 = parents[0], // focus 1
+        F2 = parents[1]; // focus 2
     
     var majorAxis;
     if (JXG.isPoint(parents[2])) {
@@ -150,8 +150,8 @@ JXG.createParabola = function(board, parents, atts) {
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
-    var F1 = parents[0],
-        l = parents[1];
+    var F1 = parents[0], // focus
+        l = parents[1];  // directrix
             
     var M = board.create('point', [  
                 function() {
@@ -159,15 +159,15 @@ JXG.createParabola = function(board, parents, atts) {
                     v = board.algebra.crossProduct(v,F1.coords.usrCoords);
                     return board.algebra.meetLineLine(v,l.stdform,0).usrCoords;
                 }
-            ],{visible:true, name:'M', withLabel:true});
+            ],{visible:false, name:'', withLabel:false});
 
     var transformFunc = function() {
             var beta = Math.atan(l.getSlope()),
                 x = (M.X()+F1.X())*0.5,
                 y = (M.Y()+F1.Y())*0.5;
-            beta += (F1.Y()-M.Y()<=0) ? Math.PI : 0;
+            beta += (F1.Y()-M.Y()<0 || (F1.Y()==M.Y() && F1.X()>M.X()) ) ? Math.PI : 0;
 
-            // Rotate by the slope of the line l (Leitlinie)
+            // Rotate by the slope of the line l (Leitlinie = directrix)
             var m = [
                         [1,    0,             0],
                         [x*(1-Math.cos(beta))+y*Math.sin(beta),Math.cos(beta),-Math.sin(beta)],
@@ -181,11 +181,11 @@ JXG.createParabola = function(board, parents, atts) {
                 if (!suspendUpdate) {
                     rotationMatrix = transformFunc();
                 }
-                return JXG.Math.matVecMult(rotationMatrix,[1,2*t+(M.X()+F1.X())*0.5,t*t+(M.Y()+F1.Y())*0.5]);
+                return JXG.Math.matVecMult(rotationMatrix,[1,t+(M.X()+F1.X())*0.5,t*t/(e*4)+(M.Y()+F1.Y())*0.5]);
         };
     var curve = board.create('curve', 
                     [function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[1];},
-                     function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[2];},-Math.PI,Math.PI],atts);        
+                     function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[2];},-10,10],atts);        
                      
     return curve;
 };
