@@ -26,6 +26,10 @@
 /** 
  * @fileoverview In this file the conic sections defined.
  */
+
+/** 
+ * a4d7fb6f-8708-4e45-87f2-2379ae2bd2c0
+ */
 JXG.createEllipse = function(board, parents, atts) {
     var rotationMatrix;
 
@@ -85,6 +89,9 @@ JXG.createEllipse = function(board, parents, atts) {
     return curve;
 };
 
+/** 
+ * cf99049d-a3fe-407f-b936-27d76550f8c4
+ */
 JXG.createHyperbola = function(board, parents, atts) {
     var rotationMatrix;
 
@@ -146,6 +153,9 @@ JXG.createHyperbola = function(board, parents, atts) {
     return curve;
 };
 
+/** 
+ * 524d1aae-217d-44d4-ac58-a19c7ab1de36
+ */
 JXG.createParabola = function(board, parents, atts) {
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';

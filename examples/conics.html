@@ -28,16 +28,14 @@ var c = board.create('hyperbola',[A,B,function(){return s.Value();}],
 var ell = board.create('ellipse',[A,B,function(){return s.Value();}],{strokeColor:'red',strokeWidth:5,strokeOpacity:0.5});
 */
 p = board.create('parabola',[C,l]);
-q = board.create('glider',[1,1,p]);
-qq = board.create('perpendicularpoint',[q,l]);
-t = board.create('text',[4,4,function(){ return (q.Dist(C)-q.Dist(qq)).toFixed(3);}]);
+//q = board.create('glider',[1,1,p]);
+//qq = board.create('perpendicularpoint',[q,l]);
+//t = board.create('text',[4,4,function(){ return (q.Dist(C)-q.Dist(qq)).toFixed(3);}]);
 
 
-
-/*
 c = board.create('hyperbola',[A,B,C]);
 ell = board.create('ellipse',[A,B,C]);
-*/
+
   /* ]]> */
 </script>
 </body>
