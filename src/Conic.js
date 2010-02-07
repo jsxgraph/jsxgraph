@@ -31,15 +31,17 @@
  * a4d7fb6f-8708-4e45-87f2-2379ae2bd2c0
  */
 JXG.createEllipse = function(board, parents, atts) {
-    var rotationMatrix;
-
+    var F1 = parents[0],  // focus 1
+        F2 = parents[1],  // focus 2        
+        majorAxis,
+        rotationMatrix;
+    
+    if (typeof parents[4]=='undefined') parents[4] = 1.0001*Math.PI;   // to
+    if (typeof parents[3]=='undefined') parents[3] = -1.0001*Math.PI;  // from
+    
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
-    var F1 = parents[0],  // focus 1
-        F2 = parents[1];  // focus 2
-        
-    var majorAxis;
     if (JXG.isPoint(parents[2])) {
         majorAxis = function(){ return parents[2].Dist(F1)+parents[2].Dist(F2);};
     } else {
@@ -85,7 +87,7 @@ JXG.createEllipse = function(board, parents, atts) {
            
     var curve = board.create('curve', 
                     [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
-                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},0,2.001*Math.PI],atts);        
+                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},parents[3],parents[4]],atts);        
     return curve;
 };
 
@@ -93,15 +95,17 @@ JXG.createEllipse = function(board, parents, atts) {
  * cf99049d-a3fe-407f-b936-27d76550f8c4
  */
 JXG.createHyperbola = function(board, parents, atts) {
-    var rotationMatrix;
-
+    var F1 = parents[0], // focus 1
+        F2 = parents[1], // focus 2
+        majorAxis,
+        rotationMatrix;
+    
+    if (typeof parents[4]=='undefined') parents[4] = 1.0001*Math.PI;   // to
+    if (typeof parents[3]=='undefined') parents[3] = -1.0001*Math.PI;  // from
+    
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
-    var F1 = parents[0], // focus 1
-        F2 = parents[1]; // focus 2
-    
-    var majorAxis;
     if (JXG.isPoint(parents[2])) {
         majorAxis = function(){ return parents[2].Dist(F1)-parents[2].Dist(F2);};
     } else {
@@ -148,7 +152,7 @@ JXG.createHyperbola = function(board, parents, atts) {
         };
     var curve = board.create('curve', 
                     [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
-                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},0,2.001*Math.PI],atts);        
+                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},parents[3],parents[4]],atts);        
                      
     return curve;
 };
@@ -157,12 +161,16 @@ JXG.createHyperbola = function(board, parents, atts) {
  * 524d1aae-217d-44d4-ac58-a19c7ab1de36
  */
 JXG.createParabola = function(board, parents, atts) {
+    var F1 = parents[0], // focus
+        l = parents[1],  // directrix
+        rotationMatrix;
+    
+    if (typeof parents[3]=='undefined') parents[3] = 10.0;   // to
+    if (typeof parents[2]=='undefined') parents[2] = -10.0;  // from
+            
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
-    var F1 = parents[0], // focus
-        l = parents[1];  // directrix
-            
     var M = board.create('point', [  
                 function() {
                     var v = [0,l.stdform[1],l.stdform[2]];
@@ -195,7 +203,8 @@ JXG.createParabola = function(board, parents, atts) {
         };
     var curve = board.create('curve', 
                     [function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[1];},
-                     function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[2];},-10,10],atts);        
+                     function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[2];},
+                     parents[2],parents[3]],atts);        
                      
     return curve;
 };
