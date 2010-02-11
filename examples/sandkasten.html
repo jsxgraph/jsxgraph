@@ -28,7 +28,10 @@
 
 
 brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1.5, 2, 1.5, -1], keepaspectratio:true});
- 
+
+punkt = brd.create('point', [0, 0], {name: 'TEST'});
+punkt.setProperty(' visible: false  ')
+
 brd.suspendUpdate();
 A = brd.createElement('point',[1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
 B = brd.createElement('point',[-1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
@@ -37,7 +40,7 @@ pol = brd.createElement('polygon',[A,B,C], {fillColor:'none'});//'#FFFF0050'});
 for(i=0;i<=2;i++) {
     pol.borders[i].setProperty('strokeColor:#009256');
 }
- 
+
 pABC = brd.createElement('perpendicular',[pol.borders[0],C],{strokeWidth:1,dash:2, name:['','H_c']});
 pBCA = brd.createElement('perpendicular',[pol.borders[1],A],{strokeWidth:1,dash:2, name:['','H_a']});
 pCAB = brd.createElement('perpendicular',[pol.borders[2],B],{strokeWidth:1,dash:2, name:['','H_b']});
@@ -48,7 +51,7 @@ i1 = brd.createElement('intersection',[pABC[0],pCAB[0],0],{strokeColor:'#009256'
 pABC[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
 pBCA[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
 pCAB[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
- 
+
 mAB = brd.createElement('midpoint',[A,B],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_c'});
 mBC = brd.createElement('midpoint',[B,C],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_a'});
 mCA = brd.createElement('midpoint',[C,A],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_b'});
@@ -56,12 +59,12 @@ ma = brd.createElement('line',[mBC,A],{straightFirst:false,straightLast:false,st
 mb = brd.createElement('line',[mCA,B],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
 mc = brd.createElement('line',[mAB,C],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
 i2 = brd.createElement('intersection',[ma,mc,0],{strokeColor:'#009256',fillColor:'#65B72E',name:'S'});
- 
+
 i3 = brd.createElement('circumcirclemidpoint',[A,B,C],{strokeColor:'#009256',fillColor:'#65B72E',name:'U'});
 c = brd.createElement('circumcircle',[A,B,C],{strokeColor:'#000000',dash:3,strokeWidth:1});
-c[0].setProperty('visible:false');
+c[0].setProperty('visible:true');
 c[1].setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
- 
+
 euler = brd.createElement('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
 brd.unsuspendUpdate();
 

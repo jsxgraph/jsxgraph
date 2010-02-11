@@ -95,7 +95,7 @@ JXG.GeometryElement = function() {
      * @private
      */
     this.visProp = {};
-    
+
     JXG.clearVisPropOld(this); // create this.visPropOld and set default values
 
     /**
@@ -136,7 +136,7 @@ JXG.GeometryElement = function() {
      * @private
      */
     this.hasLabel = false;
-    
+
     /**
      * display layer which will conting the element.
      * Controlled in JXG.Options.
@@ -669,6 +669,9 @@ JXG.GeometryElement.prototype.setProperty = function () {
         pairRaw = arguments[i];
         if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
             pair = pairRaw.split(':');
+            // trim pair[0] and pair[1]
+            pair[0] = pair[0].replace (/^\s+/, '').replace (/\s+$/, '');
+            pair[1] = pair[1].replace (/^\s+/, '').replace (/\s+$/, '');
         } else if (!JXG.isArray(pairRaw)) {    // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
             /*
             for (var i=0; i<Object.keys(pairRaw).length;i++) {  // Here, the prototype lib is used (Object.keys, Object.isArray)
@@ -1184,7 +1187,7 @@ JXG.GeometryElement.prototype.toJSON = function() {
 };
 
 /**
-  * Setting visPropOld is done in an none object oriented version 
+  * Setting visPropOld is done in an none object oriented version
   * since otherwise there would be problems in cloneToBackground
   */
 JXG.clearVisPropOld = function(el) {
