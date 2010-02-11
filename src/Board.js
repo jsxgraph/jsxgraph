@@ -2002,7 +2002,11 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     }
 
     if(JXG.JSXGraph.elements[elementType] != null) {
-        el = JXG.JSXGraph.elements[elementType](this, parents, attributes);
+	if(typeof JXG.JSXGraph.elements[elementType] == 'function') {
+            el = JXG.JSXGraph.elements[elementType](this, parents, attributes);
+        } else {
+            el = JXG.JSXGraph.elements[elementType].creator(this, parents, attributes);
+        }
     } else {
         throw new Error("JSXGraph: JXG.createElement: Unknown element type given: "+elementType);
     }

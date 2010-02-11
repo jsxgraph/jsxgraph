@@ -202,7 +202,7 @@ this.readConditions = function(node,board) {
 };
 
 this.printDebugMessage = function(outputEl,gxtEl,nodetyp,success) {
-    //$(outputEl).innerHTML += "* " + success + ":  " + nodetyp + " " + gxtEl.name + " " + gxtEl.id + "<br>\n";
+    $(outputEl).innerHTML += "* " + success + ":  " + nodetyp + " " + gxtEl.name + " " + gxtEl.id + "<br>\n";
 };
 
 /**

@@ -1327,7 +1327,26 @@ JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
 };
 
 
-JXG.JSXGraph.registerElement('point', JXG.createPoint);
+JXG.JSXGraph.registerElement('point', {
+    icon:           'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAqCAIAAACofUV1AAAAu0lEQVR42u2Y2w7EIAhEYeL//zL7ttntRakyhjTw2MhwYDSaqplJgoDkiAAOFV0XaSGFD19MjMjh7/u70g8E6vBV1JmIQK2VHhp7A/5KdWxKf24Dh+HRxDaIvnJiX3jD6OhjM8RdlRfdc/Ece0y5rFW+FEdxFMerOCbe+9NxqFW+9Dn2WHOuAs8iNkT6/cEbyZ0yniYwIBL50ob4IY/F4XThkVj0yJOOQK2VHtpEW0OnuP+lqEep7rn/+AD75zNf8mTQTQAAAABJRU5ErkJggg%3D%3D',
+    label:          'Free point',
+    alttext:        'Constructs a free point',
+    category:       'basic/points',
+    description:    'Click on the board to place a free point or enter a pair of coordinates in the textbox.',
+    showCoordsBox:  true,
+    showInputbox:   false,
+    checkInput:     function (draft, input) {
+                       if(draft && input[input.length-1].usrCoords)
+                           return true;
+
+                       if(!draft && input.length == 1) {
+                           return board.create('point', input[0].usrCoords.slice(1));
+                       }
+
+                       return false;
+                    },
+    creator:        JXG.createPoint
+});
 JXG.JSXGraph.registerElement('glider', JXG.createGlider);
 JXG.JSXGraph.registerElement('intersection', JXG.createIntersectionPoint);
 JXG.JSXGraph.registerElement('otherintersection', JXG.createOtherIntersectionPoint);
