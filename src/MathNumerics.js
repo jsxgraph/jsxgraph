@@ -195,6 +195,80 @@ JXG.Math.Numerics.QR = function(A, b) {
 };
 
 /**
+ * 
+ * @param {JXG.Math.Matrix} Ain A symmetric matrix.
+ * @type Object
+ * @throws {Exception} If A's rank is not full.
+ * @return [A,V] the matrices A and V. The diagonal of A contains the Eigenvalues,
+ * V contains the Eigenvectors.
+ */
+JXG.Math.Numerics.Jacobi = function(Ain) {
+    var i,j,k,ih,aa,si,co,tt,
+        sum = 0.0,
+        ssum, amax,
+        n = Ain.length,
+        V = [[0,0,0],[0,0,0],[0,0,0]],
+        A = [[0,0,0],[0,0,0],[0,0,0]];
+    
+    // Initialization. Set initial Eigenvectors.
+    for (i=0;i<n;i++) {
+        for (j=0;j<n;j++) { 
+            V[i][j] = 0.0;
+            A[i][j] = Ain[i][j];
+            sum += Math.abs(A[i][j]);
+        }
+        V[i][i] = 1.0;
+    }
+    // Trivial problems
+    if (n==1) { return [A,V]; }
+    if (sum<=0.0) { return [A,V]; }
+    
+    sum /= (n*n);
+
+    // Reduce matrix to diagonal
+    do {
+        ssum = 0.0;
+        amax = 0.0;
+        for (j=1;j<n;j++) {
+            for (i=0;i<j;i++) {
+                // Check if A[i][j] is to be reduced
+                aa = Math.abs(A[i][j]);
+                if (aa>amax) { amax = aa; }
+                ssum += aa;
+                if (aa<0.1*amax) {
+                    continue;
+                } else {
+                    // calculate rotation angle
+                    aa = Math.atan2(2.0*A[i][j],A[i][i]-A[j][j])*0.5;
+                    si = Math.sin(aa);
+                    co = Math.cos(aa);
+                    // Modify 'i' and 'j' columns
+                    for (k=0;k<n;k++) {
+                        tt = A[k][i];
+                        A[k][i] =  co*tt+si*A[k][j];
+                        A[k][j] = -si*tt+co*A[k][j];
+                        tt = V[k][i];
+                        V[k][i] =  co*tt+si*V[k][j];
+                        V[k][j] = -si*tt+co*V[k][j];
+                    }
+                    // Modify diagonal terms
+                    A[i][i] =  co*A[i][i]+si*A[j][i];
+                    A[j][j] = -si*A[i][j]+co*A[j][j];
+                    A[i][j] = 0.0;
+                    // Make 'A' matrix symmetrical
+                    for (k=0;k<n;k++) {
+                        A[i][k] = A[k][i];
+                        A[j][k] = A[k][j];
+                    }
+                    // A[i][j] made zero by rotation
+                }
+            }
+        }
+    } while(Math.abs(ssum)/sum>JXG.Math.eps);
+    return [A,V];
+};
+
+/**
  * Calculates the integral of function f over interval using Newton-Cotes-algorithm.
  * @param interval The integration interval, e.g. [0, 3]. 
  * @param f A function which takes one argument of type number and returns a number.
@@ -422,6 +496,7 @@ JXG.Math.Numerics.generatePolynomialTerm = function(coeffs,deg,varname,prec) {
     }
     return t;
 }
+
 /**
  * Computes the polynomial through a given set of coordinates in Lagrange form.
  * Returns the Lagrange polynomials, see
@@ -820,7 +895,6 @@ JXG.Math.Numerics.cosh = function(/** number */ x) /** number */ {
 JXG.Math.Numerics.sinh = function(/** number */ x) /** number */ {
     return (Math.exp(x)-Math.exp(-x))*0.5;
 };
-
 
 /**
  * Hlper function to create curve which displays Riemann sums.

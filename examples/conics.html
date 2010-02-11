@@ -37,6 +37,13 @@ p = board.create('parabola',[C,l,function(){return -s.Value();},function(){retur
 c = board.create('hyperbola',[A,B,C,function(){return -s.Value();},function(){return s.Value();}]);
 ell = board.create('ellipse',[A,B,C,function(){return -s.Value();},function(){return s.Value();}]);
 
+
+var res = JXG.Math.Numerics.Jacobi(
+[[5,3,2],
+ [3,4,1],
+ [2,1,1]]);
+document.getElementById('debug').innerHTML += '<p>'+res[0].toString(); 
+document.getElementById('debug').innerHTML += '<p>'+res[1].toString(); 
   /* ]]> */
 </script>
 </body>
