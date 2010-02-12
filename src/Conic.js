@@ -174,7 +174,7 @@ JXG.createParabola = function(board, parents, atts) {
     var M = board.create('point', [  
                 function() {
                     var v = [0,l.stdform[1],l.stdform[2]];
-                    v = board.algebra.crossProduct(v,F1.coords.usrCoords);
+                    v = JXG.Math.crossProduct(v,F1.coords.usrCoords);
                     return board.algebra.meetLineLine(v,l.stdform,0).usrCoords;
                 }
             ],{visible:false, name:'', withLabel:false});
@@ -209,7 +209,94 @@ JXG.createParabola = function(board, parents, atts) {
     return curve;
 };
 
+/**
+ * Conic through five points
+ */
+JXG.createConic = function(board, parents, atts) {
+    // sym(A) = A + A^t
+    // Manipulates A in place.
+    var sym = function(A) {
+            var i, j;
+            for (i=0;i<3;i++) {
+                for (j=i;j<3;j++) {
+                    A[i][j] += A[j][i];
+                }
+            }
+            for (i=0;i<3;i++) {
+                for (j=0;j<i;j++) {
+                    A[i][j] = A[j][i];
+                }
+            }
+            return A;
+        };
+    
+    // degconic(v,w) = sym(v*w^t)
+    var degconic = function(v,w) {
+            var i, j, mat = [[0,0,0],[0,0,0],[0,0,0]];
+            for (i=0;i<3;i++) {
+                for (j=0;j<3;j++) {
+                    mat[i][j] = v[i]*w[j];
+                }
+            }
+            return sym(mat);
+        };
+    
+    // (p^t*B*p)*A-(p^t*A*p)*B
+    var fitConic = function(A,B,p)  {
+            var pBp, pAp, Mv, M = [[0,0,0],[0,0,0],[0,0,0]], i, j;
+            Mv = JXG.Math.matVecMult(B,p);
+            pBp = JXG.Math.innerProduct(p,Mv);
+            Mv = JXG.Math.matVecMult(A,p);
+            pAp = JXG.Math.innerProduct(p,Mv);
+            for (i=0;i<3;i++) {
+                for (j=0;j<3;j++) {
+                    M[i][j] = pBp*A[i][j]-pAp*B[i][j];
+                }
+            }
+            return M;
+        };
+        
+    var p = [], i;
+    for (i=0;i<5;i++) {
+        p[i] = parents[i].coords.usrCoords;
+    }
+    
+    var c1 = degconic(JXG.Math.crossProduct(p[0],p[1]),JXG.Math.crossProduct(p[2],p[3]));
+    var c2 = degconic(JXG.Math.crossProduct(p[0],p[2]),JXG.Math.crossProduct(p[1],p[3]));
+    var M = fitConic(c1,c2,p[4]);
+    
+//document.getElementById('debug').innerHTML += c1.toString()+'<br>';
+//document.getElementById('debug').innerHTML += c2.toString()+'<br>';
+for (i=0;i<3;i++) {
+    for (var j=0;j<3;j++) {
+        document.getElementById('debug').innerHTML += M[i][j]+' ';
+    }
+    document.getElementById('debug').innerHTML += '<br>';
+}
+document.getElementById('debug').innerHTML += '<p>determinant:'+(M[1][1]*M[2][2]-M[2][1]*M[1][2])+'<br>';
+    var r = JXG.Math.Numerics.Jacobi(M);
+document.getElementById('debug').innerHTML += '<p>'+r[0].toString(); 
+document.getElementById('debug').innerHTML += '<p>'+r[1].toString(); 
+
+    var polarForm = function(phi,suspendUpdate) {
+                var a = Math.sqrt(-r[0][1][1]/r[0][0][0]),
+                    b = Math.sqrt(-r[0][2][2]/r[0][0][0]);
+                if (!suspendUpdate) {
+                    rotationMatrix = r[1];//transformFunc();
+                }
+                return JXG.Math.matVecMult(rotationMatrix,[1,Math.cos(phi)/a,Math.sin(phi)/b]);
+        };
+           
+    var curve = board.create('curve', 
+                    [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
+                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];}],atts);        
+
+
+
+};
+
 JXG.JSXGraph.registerElement('ellipse', JXG.createEllipse);
 JXG.JSXGraph.registerElement('hyperbola', JXG.createHyperbola);
 JXG.JSXGraph.registerElement('parabola', JXG.createParabola);
+JXG.JSXGraph.registerElement('conic', JXG.createConic);
 

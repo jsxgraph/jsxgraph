@@ -265,7 +265,6 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type Algebra
      */
     this.algebra = new JXG.Algebra(this);
-    this.mathStatistics = new JXG.MathStatistics();
 
     /* If the given id is not valid, generate an unique id */
     if((id != '') && (id != null) && (typeof document.getElementById(id) != 'undefined'))

@@ -587,15 +587,8 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
     return new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);       
 */
     // Homogeneous version
-/*    
-    var mu = this.innerProduct(point.coords.usrCoords,line.stdform,3)/this.innerProduct(line.stdform,line.stdform,3),
-        i, v = [];
-    for (i=0;i<3;i++) {
-        v[i] = point.coords.usrCoords[i] - mu*line.stdform[i];
-    }
-*/
     var v = [0,line.stdform[1],line.stdform[2]];
-    v = this.crossProduct(v,point.coords.usrCoords);
+    v = JXG.Math.crossProduct(v,point.coords.usrCoords);
     return board.algebra.meetLineLine(v,line.stdform,0);
 
     //return new JXG.Coords(JXG.COORDS_BY_USER, v, this.board);       
@@ -1285,42 +1278,6 @@ JXG.Algebra.prototype.pow = function(/** number */ a, /** number */ b) /** numbe
 };
 
 /**
-  * Calculates the crossproducts of two vectors
-  * of length three.
-  * In case of homogeneous coordinates this is either
-  * - the intersection of two lines
-  * - the line through two points.
-  * @param {Array} c1 homogeneous coordinates of line (point) 1
-  * @param {Array} c2 homogeneous coordinates of line (point) 2
-  * @type Array
-  * @return vector of length 3:  homogeneous coordinates
-  *   of the resulting line / point.
-  */
-JXG.Algebra.prototype.crossProduct = function(c1,c2) {
-    return [c1[1]*c2[2]-c1[2]*c2[1],
-            c1[2]*c2[0]-c1[0]*c2[2],
-            c1[0]*c2[1]-c1[1]*c2[0]];
-};
-
-/**
- * Inner product of two vectors a, b. n is the length of the vectors.
- * @param a Vector
- * @param b Vector
- * @param [n] Length of the Vectors. If not given the length of the first vector is taken.
- * @return The inner product of a and b.
- */JXG.Algebra.prototype.innerProduct = function(a, b, n) {    
-    var i, s = 0;
-    
-    if(typeof n == 'undefined')
-    	n = a.length;
-    
-    for (i=0;i<n;i++) {
-        s += a[i]*b[i];
-    }
-    return s;
-};
-
-/**
  * 
  * @private
  * Computes the intersection of a pair of lines, circles or both.
@@ -1357,7 +1314,7 @@ JXG.Algebra.prototype.meet = function(el1, el2, /** number */ i) /** JXG.Coords 
   * @return Coordinates of the intersection point.
   */
 JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
-    var s = this.crossProduct(l1,l2);
+    var s = JXG.Math.crossProduct(l1,l2);
     if (Math.abs(s[0])>this.eps) {
         s[1] /= s[0];
         s[2] /= s[0];

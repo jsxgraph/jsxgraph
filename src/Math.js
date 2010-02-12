@@ -281,6 +281,45 @@ JXG.Math.Matrix.transpose = function(/** Array */ M) /** Array*/  {
 }
 
 /**
+  * Calculates the crossproducts of two vectors
+  * of length three.
+  * In case of homogeneous coordinates this is either
+  * - the intersection of two lines
+  * - the line through two points.
+  * @param {Array} c1 homogeneous coordinates of line (point) 1
+  * @param {Array} c2 homogeneous coordinates of line (point) 2
+  * @type Array
+  * @return vector of length 3:  homogeneous coordinates
+  *   of the resulting line / point.
+  */
+JXG.Math.crossProduct = function(c1,c2) {
+    return [c1[1]*c2[2]-c1[2]*c2[1],
+            c1[2]*c2[0]-c1[0]*c2[2],
+            c1[0]*c2[1]-c1[1]*c2[0]];
+};
+
+/**
+ * Inner product of two vectors a, b. n is the length of the vectors.
+ * @param a Vector
+ * @param b Vector
+ * @param [n] Length of the Vectors. If not given the length of the first vector is taken.
+ * @return The inner product of a and b.
+ */
+JXG.Math.innerProduct = function(a, b, n) {    
+    var i, s = 0;
+    
+    if(typeof n == 'undefined')
+        n = a.length;
+    
+    for (i=0;i<n;i++) {
+        s += a[i]*b[i];
+    }
+    return s;
+};
+
+
+
+/**
 * Dynamic programming approach for recursive functions.
 * From "Speed up your JavaScript, Part 3" by Nicholas C. Zakas.
 * @see JXG.Math.factorial

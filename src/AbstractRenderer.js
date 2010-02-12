@@ -256,7 +256,7 @@ JXG.AbstractRenderer.prototype.calcStraight = function(/** JXG.Line */ el, /** J
     var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast, 
         b, c, s, i, j, p1, p2;
     
-    b = el.board.algebra;
+    //b = el.board.algebra;
     straightFirst = el.visProp['straightFirst'];
     straightLast  = el.visProp['straightLast'];
 
@@ -268,10 +268,10 @@ JXG.AbstractRenderer.prototype.calcStraight = function(/** JXG.Line */ el, /** J
 */    
     // If one of the point is an ideal point in homogeneous coordinates
     // drawing of line segments or rays are not possible. 
-    if (Math.abs(point1.scrCoords[0])<b.eps) {
+    if (Math.abs(point1.scrCoords[0])<JXG.Math.eps) {
         straightFirst = true;
     }
-    if (Math.abs(point2.scrCoords[0])<b.eps) {
+    if (Math.abs(point2.scrCoords[0])<JXG.Math.eps) {
         straightLast  = true;
     }
 
@@ -291,14 +291,14 @@ JXG.AbstractRenderer.prototype.calcStraight = function(/** JXG.Line */ el, /** J
     
     // Intersect the line with the four borders of the board.
     s = [];
-    s[0] = b.crossProduct(c,[0,0,1]);  // top
-    s[1] = b.crossProduct(c,[0,1,0]);  // left
-    s[2] = b.crossProduct(c,[-el.board.canvasHeight,0,1]);  // bottom
-    s[3] = b.crossProduct(c,[-el.board.canvasWidth,1,0]);   // right
+    s[0] = JXG.Math.crossProduct(c,[0,0,1]);  // top
+    s[1] = JXG.Math.crossProduct(c,[0,1,0]);  // left
+    s[2] = JXG.Math.crossProduct(c,[-el.board.canvasHeight,0,1]);  // bottom
+    s[3] = JXG.Math.crossProduct(c,[-el.board.canvasWidth,1,0]);   // right
 
     // Normalize the intersections 
     for (i=0;i<4;i++) {
-        if (Math.abs(s[i][0])>b.eps) {
+        if (Math.abs(s[i][0])>JXG.Math.eps) {
             for (j=2;j>0;j--) {
                 s[i][j] /= s[i][0];
             }
@@ -319,10 +319,10 @@ JXG.AbstractRenderer.prototype.calcStraight = function(/** JXG.Line */ el, /** J
         takePoint2 = true;
     }
 
-    if (Math.abs(s[1][0])<b.eps) {                  // line is parallel to "left", take "top" and "bottom"
+    if (Math.abs(s[1][0])<JXG.Math.eps) {                  // line is parallel to "left", take "top" and "bottom"
         intersect1 = s[0];                          // top
         intersect2 = s[2];                          // bottom
-    } else if (Math.abs(s[0][0])<b.eps) {           // line is parallel to "top", take "left" and "right"
+    } else if (Math.abs(s[0][0])<JXG.Math.eps) {           // line is parallel to "top", take "left" and "right"
         intersect1 = s[1];                          // left
         intersect2 = s[3];                          // right
     } else if (s[1][2]<0) {                         // left intersection out of board (above)

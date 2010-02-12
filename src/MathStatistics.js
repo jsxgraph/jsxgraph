@@ -30,9 +30,9 @@
   * for (i=0;i<a1.length;i++) c[i] = a1[i]*a2[i];
   *
  **/
-JXG.MathStatistics = function(){};
+JXG.Math.Statistics = {};
 
-JXG.MathStatistics.prototype.sum = function(arr) {
+JXG.Math.Statistics.sum = function(arr) {
     var i, len, res = 0;
     
     for(i=0, len=arr.length; i<len; i++) { 
@@ -41,7 +41,7 @@ JXG.MathStatistics.prototype.sum = function(arr) {
     return res;
 };
 
-JXG.MathStatistics.prototype.prod = function(arr) {
+JXG.Math.Statistics.prod = function(arr) {
     var i, len, res = 1;
     
     for(i=0, len=arr.length; i<len; i++) { 
@@ -50,7 +50,7 @@ JXG.MathStatistics.prototype.prod = function(arr) {
     return res;
 };
 
-JXG.MathStatistics.prototype.mean = function(arr) {
+JXG.Math.Statistics.mean = function(arr) {
     if (arr.length>0) {
         return this.sum(arr)/arr.length;
     } else {
@@ -58,7 +58,7 @@ JXG.MathStatistics.prototype.mean = function(arr) {
     }
 };
 
-JXG.MathStatistics.prototype.median = function(arr) {
+JXG.Math.Statistics.median = function(arr) {
     var tmp, len;
     
     if (arr.length>0) {
@@ -78,7 +78,7 @@ JXG.MathStatistics.prototype.median = function(arr) {
 /**
  * bias-corrected sample variance
  */
-JXG.MathStatistics.prototype.variance = function(arr) {
+JXG.Math.Statistics.variance = function(arr) {
     var m, res, i, len;
     
     if (arr.length>1) {
@@ -93,11 +93,11 @@ JXG.MathStatistics.prototype.variance = function(arr) {
     }
 };
 
-JXG.MathStatistics.prototype.sd = function(arr) {
+JXG.Math.Statistics.sd = function(arr) {
     return Math.sqrt(this.variance(arr));
 };
 
-JXG.MathStatistics.prototype.weightedMean = function(arr,w) {
+JXG.Math.Statistics.weightedMean = function(arr,w) {
     if (arr.length!=w.length) { return; }
     if (arr.length>0) {
         return this.mean(this.multiply(arr,w));
@@ -106,7 +106,7 @@ JXG.MathStatistics.prototype.weightedMean = function(arr,w) {
     }
 };
 
-JXG.MathStatistics.prototype.max = function(arr) {
+JXG.Math.Statistics.max = function(arr) {
     var res, i, len;
     
     if (arr.length==0) { return NaN; }
@@ -117,7 +117,7 @@ JXG.MathStatistics.prototype.max = function(arr) {
     return res;
 };
 
-JXG.MathStatistics.prototype.min = function(arr) {
+JXG.Math.Statistics.min = function(arr) {
     var res, i, len;
 
     if (arr.length==0) { return NaN; }
@@ -131,15 +131,15 @@ JXG.MathStatistics.prototype.min = function(arr) {
 /**
  * R-style functions
  */
-JXG.MathStatistics.prototype.range = function(arr) {
+JXG.Math.Statistics.range = function(arr) {
     return [this.min(arr),this.max(arr)];
 };
 
-JXG.MathStatistics.prototype.diff = function(arr) { // ?????
+JXG.Math.Statistics.diff = function(arr) { // ?????
     return arr;
 };
 
-JXG.MathStatistics.prototype.min = function(arr) {
+JXG.Math.Statistics.min = function(arr) {
     var res, i, len;
     
     if (arr.length==0) { return NaN; }
@@ -150,7 +150,7 @@ JXG.MathStatistics.prototype.min = function(arr) {
     return res;
 };
 
-JXG.MathStatistics.prototype.abs = function(arr) {  // This can be generalized with Prototype.js and should be done for all Math. methods
+JXG.Math.Statistics.abs = function(arr) {  // This can be generalized with Prototype.js and should be done for all Math. methods
     var i, len, res = [];
     if (typeof JXG.isArray(arr1)) {
         for (i=0, len=arr.length;i<len;i++) { res[i] = Math.abs(arr[i]); }
@@ -162,7 +162,7 @@ JXG.MathStatistics.prototype.abs = function(arr) {  // This can be generalized w
     return res;
 };
 
-JXG.MathStatistics.prototype.add = function(arr1,arr2) {
+JXG.Math.Statistics.add = function(arr1,arr2) {
     var i, len, res = [];
     
     if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
@@ -179,7 +179,7 @@ JXG.MathStatistics.prototype.add = function(arr1,arr2) {
     return res;
 };
 
-JXG.MathStatistics.prototype.divide = function(arr1,arr2) {
+JXG.Math.Statistics.divide = function(arr1,arr2) {
     var i, len, res = [];
     
     if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
@@ -196,7 +196,7 @@ JXG.MathStatistics.prototype.divide = function(arr1,arr2) {
     return res;
 };
 
-JXG.MathStatistics.prototype.mod = function(arr1,arr2) {
+JXG.Math.Statistics.mod = function(arr1,arr2) {
     var i, len, res = [];
     
     if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
@@ -213,7 +213,7 @@ JXG.MathStatistics.prototype.mod = function(arr1,arr2) {
     return res;
 };
 
-JXG.MathStatistics.prototype.multiply = function(arr1,arr2) {
+JXG.Math.Statistics.multiply = function(arr1,arr2) {
     var i, len, res = [];
     
     if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
@@ -230,7 +230,7 @@ JXG.MathStatistics.prototype.multiply = function(arr1,arr2) {
     return res;
 };
 
-JXG.MathStatistics.prototype.subtract = function(arr1,arr2) {
+JXG.Math.Statistics.subtract = function(arr1,arr2) {
     var i, len, res = [];
     
     if (typeof JXG.isArray(arr1) && typeof arr2=='number') {

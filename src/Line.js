@@ -219,23 +219,26 @@ JXG.Line.prototype = new JXG.GeometryElement;
     c[1] = this.stdform[1]/this.board.stretchX;
     c[2] = this.stdform[2]/(-this.board.stretchY);
 
-    // Project the point orthogonally onto the line (Gram-Schmidt)
-    mu = this.board.algebra.innerProduct(v,c,3)/this.board.algebra.innerProduct(c,c,3);
-    for (i=0;i<3;i++) {
-        vnew[i] = v[i] - mu*c[i];
-    }
+
+    // Project the point orthogonally onto the line 
+    var vnew = [0,c[1],c[2]];
+    vnew = JXG.Math.crossProduct(vnew,v); // Orthogonal line to c through v
+    vnew = JXG.Math.crossProduct(vnew,c); // Intersect orthogonal line with line
 
     // Normalize the projected point
     vnew[1] /= vnew[0];
     vnew[2] /= vnew[0];
     vnew[0] = 1.0;
-
+    
     // The point is too far away from the line
     // dist(v,vnew)^2 projective
     //if (this.board.algebra.distance(v,vnew)>this.board.options.precision.hasPoint) {
     if ((v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2])>this.board.options.precision.hasPoint*this.board.options.precision.hasPoint) {
         return false;
     }
+    
+
+
 
     if(this.visProp['straightFirst'] && this.visProp['straightLast']) {
         return true;
@@ -317,7 +320,7 @@ JXG.Line.prototype.updateStdform = function() {
     this.stdform[1] = nx;
     this.stdform[2] = ny;
     */
-    var v = this.board.algebra.crossProduct(this.point1.coords.usrCoords,this.point2.coords.usrCoords);
+    var v = JXG.Math.crossProduct(this.point1.coords.usrCoords,this.point2.coords.usrCoords);
     this.stdform[0] = v[0];
     this.stdform[1] = v[1];
     this.stdform[2] = v[2];
