@@ -213,6 +213,8 @@ JXG.createParabola = function(board, parents, atts) {
  * Conic through five points
  */
 JXG.createConic = function(board, parents, atts) {
+    var r, a, b, M, c1, c2, sign;
+
     // sym(A) = A + A^t
     // Manipulates A in place.
     var sym = function(A) {
@@ -260,31 +262,65 @@ JXG.createConic = function(board, parents, atts) {
     for (i=0;i<5;i++) {
         p[i] = parents[i].coords.usrCoords;
     }
-    
-    var c1 = degconic(JXG.Math.crossProduct(p[0],p[1]),JXG.Math.crossProduct(p[2],p[3]));
-    var c2 = degconic(JXG.Math.crossProduct(p[0],p[2]),JXG.Math.crossProduct(p[1],p[3]));
-    var M = fitConic(c1,c2,p[4]);
-    
+        
 //document.getElementById('debug').innerHTML += c1.toString()+'<br>';
 //document.getElementById('debug').innerHTML += c2.toString()+'<br>';
-for (i=0;i<3;i++) {
-    for (var j=0;j<3;j++) {
-        document.getElementById('debug').innerHTML += M[i][j]+' ';
-    }
-    document.getElementById('debug').innerHTML += '<br>';
-}
-document.getElementById('debug').innerHTML += '<p>determinant:'+(M[1][1]*M[2][2]-M[2][1]*M[1][2])+'<br>';
-    var r = JXG.Math.Numerics.Jacobi(M);
-document.getElementById('debug').innerHTML += '<p>'+r[0].toString(); 
-document.getElementById('debug').innerHTML += '<p>'+r[1].toString(); 
-
     var polarForm = function(phi,suspendUpdate) {
-                var a = Math.sqrt(-r[0][1][1]/r[0][0][0]),
-                    b = Math.sqrt(-r[0][2][2]/r[0][0][0]);
+                var i, j, len, v;
                 if (!suspendUpdate) {
+                    for (i=0;i<5;i++) {
+                        p[i] = parents[i].coords.usrCoords;
+                    }
+                    c1 = degconic(JXG.Math.crossProduct(p[0],p[1]),JXG.Math.crossProduct(p[2],p[3]));
+                    c2 = degconic(JXG.Math.crossProduct(p[0],p[2]),JXG.Math.crossProduct(p[1],p[3]));
+                    M = fitConic(c1,c2,p[4]);
+                    //document.getElementById('debug').innerHTML = '';
+                    //document.getElementById('debug').innerHTML = '<p>determinant:'+(M[1][1]*M[2][2]-M[2][1]*M[1][2])+'<br>';
+                    r = JXG.Math.Numerics.Jacobi(M);
+                    for (i=0;i<3;i++) {
+                        len = 0.0;
+                        for (j=0;j<3;j++) {
+                            len += r[1][i][j]*r[1][i][j];
+                        }
+                        len = Math.sqrt(len);
+                        for (j=0;j<3;j++) {
+                            r[1][i][j] /= len;
+                        }
+                    }
+
+                    if (r[0][1][1]*r[0][2][2]>0) {      // Ellipse
+                        sign = 1;              
+                    } else if (r[0][1][1]*r[0][2][2]<0) { // Hyperbola
+                        sign = -1;
+                    } else {                              // Parabola
+                        sign = 0;
+                    }
+                    /*
+                    document.getElementById('debug').innerHTML = '<p>'+r[0][0][0].toFixed(4)+' '; 
+                    document.getElementById('debug').innerHTML += ''+r[0][1][1].toFixed(4)+' '; 
+                    document.getElementById('debug').innerHTML += ''+r[0][2][2].toFixed(4)+'<p>'; 
+                    //document.getElementById('debug').innerHTML += '<p>'+r[1].toString(); 
+                    */
                     rotationMatrix = r[1];//transformFunc();
+                    a = Math.sqrt(Math.abs(r[0][1][1]/r[0][0][0]));
+                    b = Math.sqrt(Math.abs(r[0][2][2]/r[0][0][0]));
                 }
-                return JXG.Math.matVecMult(rotationMatrix,[1,Math.cos(phi)/a,Math.sin(phi)/b]);
+                v = JXG.Math.matVecMult(rotationMatrix,[1,Math.cos(phi)/a,Math.sin(phi)/b]);
+                //v = JXG.Math.matVecMult(rotationMatrix,[1,1/Math.cos(phi)/a,Math.tan(phi)/b]);
+/*                
+                if (sign>0) {
+                    v = JXG.Math.matVecMult(rotationMatrix,[1,Math.cos(phi)/a,Math.sin(phi)/b]);
+                } else if (sign<-1) {
+                    v = JXG.Math.matVecMult(rotationMatrix,[1,1/Math.cos(phi)/a,Math.tan(phi)/b]);
+                } else {
+                    v = JXG.Math.matVecMult(rotationMatrix,[1,Math.cos(phi)/a,Math.sin(phi)/b]);
+                } 
+                */
+                //if (!suspendUpdate)  document.getElementById('debug').innerHTML += a+' '+b; 
+                v[1] /= v[0];
+                v[2] /= v[0];
+                v[0] = 1.0;
+                return v;
         };
            
     var curve = board.create('curve', 
