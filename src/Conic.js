@@ -23,22 +23,22 @@
     along with JSXGraph. If not, see <http://www.gnu.org/licenses/>.
 */
 
-/** 
+/**
  * @fileoverview In this file the conic sections defined.
  */
 
-/** 
+/**
  * a4d7fb6f-8708-4e45-87f2-2379ae2bd2c0
  */
 JXG.createEllipse = function(board, parents, atts) {
     var F1 = parents[0],  // focus 1
-        F2 = parents[1],  // focus 2        
+        F2 = parents[1],  // focus 2
         majorAxis,
         rotationMatrix;
-    
+
     if (typeof parents[4]=='undefined') parents[4] = 1.0001*Math.PI;   // to
     if (typeof parents[3]=='undefined') parents[3] = -1.0001*Math.PI;  // from
-    
+
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
@@ -47,23 +47,23 @@ JXG.createEllipse = function(board, parents, atts) {
     } else {
         majorAxis = JXG.createFunction(parents[2],board);
     }
-        
+
     var M = board.create('point', [
                 function(){return (F1.X()+F2.X())*0.5;},
                 function(){return (F1.Y()+F2.Y())*0.5;}
             ],{visible:false, name:'', withLabel:false});
-    
+
     var transformFunc = function() {
             var ax = F1.X(),
                 ay = F1.Y(),
                 bx = F2.X(),
                 by = F2.Y(),
-                beta; 
-            
+                beta;
+
             // Rotate by the slope of the line [F1,F2]
             var sgn = (bx-ax>0)?1:-1;
             if (Math.abs(bx-ax)>0.0000001) {
-                beta = Math.atan((by-ay)/(bx-ax))+ ((sgn<0)?Math.PI:0);  
+                beta = Math.atan((by-ay)/(bx-ax))+ ((sgn<0)?Math.PI:0);
             } else {
                 beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
             }
@@ -84,14 +84,14 @@ JXG.createEllipse = function(board, parents, atts) {
                 }
                 return JXG.Math.matVecMult(rotationMatrix,[1,a*Math.cos(phi),b*Math.sin(phi)]);
         };
-           
-    var curve = board.create('curve', 
+
+    var curve = board.create('curve',
                     [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
-                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},parents[3],parents[4]],atts);        
+                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},parents[3],parents[4]],atts);
     return curve;
 };
 
-/** 
+/**
  * cf99049d-a3fe-407f-b936-27d76550f8c4
  */
 JXG.createHyperbola = function(board, parents, atts) {
@@ -99,10 +99,10 @@ JXG.createHyperbola = function(board, parents, atts) {
         F2 = parents[1], // focus 2
         majorAxis,
         rotationMatrix;
-    
+
     if (typeof parents[4]=='undefined') parents[4] = 1.0001*Math.PI;   // to
     if (typeof parents[3]=='undefined') parents[3] = -1.0001*Math.PI;  // from
-    
+
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
@@ -111,7 +111,7 @@ JXG.createHyperbola = function(board, parents, atts) {
     } else {
         majorAxis = JXG.createFunction(parents[2],board);
     }
-        
+
     var M = board.create('point', [
                 function(){return (F1.X()+F2.X())*0.5;},
                 function(){return (F1.Y()+F2.Y())*0.5;}
@@ -126,7 +126,7 @@ JXG.createHyperbola = function(board, parents, atts) {
             // Rotate by the slope of the line [F1,F2]
             var sgn = (bx-ax>0)?1:-1;
             if (Math.abs(bx-ax)>0.0000001) {
-                beta = Math.atan((by-ay)/(bx-ax))+ ((sgn<0)?Math.PI:0);  
+                beta = Math.atan((by-ay)/(bx-ax))+ ((sgn<0)?Math.PI:0);
             } else {
                 beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
             }
@@ -150,28 +150,28 @@ JXG.createHyperbola = function(board, parents, atts) {
                 }
                 return JXG.Math.matVecMult(rotationMatrix,[1,a/Math.cos(phi),b*Math.tan(phi)]);
         };
-    var curve = board.create('curve', 
+    var curve = board.create('curve',
                     [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
-                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},parents[3],parents[4]],atts);        
-                     
+                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},parents[3],parents[4]],atts);
+
     return curve;
 };
 
-/** 
+/**
  * 524d1aae-217d-44d4-ac58-a19c7ab1de36
  */
 JXG.createParabola = function(board, parents, atts) {
     var F1 = parents[0], // focus
         l = parents[1],  // directrix
         rotationMatrix;
-    
+
     if (typeof parents[3]=='undefined') parents[3] = 10.0;   // to
     if (typeof parents[2]=='undefined') parents[2] = -10.0;  // from
-            
+
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
-    var M = board.create('point', [  
+    var M = board.create('point', [
                 function() {
                     var v = [0,l.stdform[1],l.stdform[2]];
                     v = JXG.Math.crossProduct(v,F1.coords.usrCoords);
@@ -193,7 +193,7 @@ JXG.createParabola = function(board, parents, atts) {
                     ];
             return m;
         };
-        
+
     var polarForm = function(t,suspendUpdate) {
                 var e = M.Dist(F1)*0.5;
                 if (!suspendUpdate) {
@@ -201,11 +201,11 @@ JXG.createParabola = function(board, parents, atts) {
                 }
                 return JXG.Math.matVecMult(rotationMatrix,[1,t+(M.X()+F1.X())*0.5,t*t/(e*4)+(M.Y()+F1.Y())*0.5]);
         };
-    var curve = board.create('curve', 
+    var curve = board.create('curve',
                     [function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[1];},
                      function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[2];},
-                     parents[2],parents[3]],atts);        
-                     
+                     parents[2],parents[3]],atts);
+
     return curve;
 };
 
@@ -213,122 +213,100 @@ JXG.createParabola = function(board, parents, atts) {
  * Conic through five points
  */
 JXG.createConic = function(board, parents, atts) {
-    var r, a, b, M, c1, c2, sign;
+    var rotationMatrix, eigen, a, b, c, M, c1, c2, p = [];
 
-    // sym(A) = A + A^t
-    // Manipulates A in place.
+    // sym(A) = A + A^t . Manipulates A in place.
     var sym = function(A) {
-            var i, j;
-            for (i=0;i<3;i++) {
-                for (j=i;j<3;j++) {
-                    A[i][j] += A[j][i];
-                }
+        var i, j;
+        for (i=0;i<3;i++) {
+            for (j=i;j<3;j++) {
+                A[i][j] += A[j][i];
             }
-            for (i=0;i<3;i++) {
-                for (j=0;j<i;j++) {
-                    A[i][j] = A[j][i];
-                }
+        }
+        for (i=0;i<3;i++) {
+            for (j=0;j<i;j++) {
+                A[i][j] = A[j][i];
             }
-            return A;
-        };
-    
+        }
+        return A;
+    };
+
     // degconic(v,w) = sym(v*w^t)
     var degconic = function(v,w) {
-            var i, j, mat = [[0,0,0],[0,0,0],[0,0,0]];
-            for (i=0;i<3;i++) {
-                for (j=0;j<3;j++) {
-                    mat[i][j] = v[i]*w[j];
-                }
+        var i, j, mat = [[0,0,0],[0,0,0],[0,0,0]];
+        for (i=0;i<3;i++) {
+            for (j=0;j<3;j++) {
+                mat[i][j] = v[i]*w[j];
             }
-            return sym(mat);
-        };
-    
+        }
+        return sym(mat);
+    };
+
     // (p^t*B*p)*A-(p^t*A*p)*B
     var fitConic = function(A,B,p)  {
-            var pBp, pAp, Mv, M = [[0,0,0],[0,0,0],[0,0,0]], i, j;
-            Mv = JXG.Math.matVecMult(B,p);
-            pBp = JXG.Math.innerProduct(p,Mv);
-            Mv = JXG.Math.matVecMult(A,p);
-            pAp = JXG.Math.innerProduct(p,Mv);
+        var pBp, pAp, Mv, M = [[0,0,0],[0,0,0],[0,0,0]], i, j;
+        Mv = JXG.Math.matVecMult(B,p);
+        pBp = JXG.Math.innerProduct(p,Mv);
+        Mv = JXG.Math.matVecMult(A,p);
+        pAp = JXG.Math.innerProduct(p,Mv);
+        for (i=0;i<3;i++) {
+            for (j=0;j<3;j++) {
+                M[i][j] = pBp*A[i][j]-pAp*B[i][j];
+            }
+        }
+        return M;
+    };
+
+    var polarForm = function(phi,suspendUpdate) {
+        var i, j, len, v;
+        if (!suspendUpdate) {
+            // Copy the point coordinate vectors
+            for (i=0;i<5;i++) { p[i] = parents[i].coords.usrCoords; }
+            // Compute the quadratic form
+            c1 = degconic(JXG.Math.crossProduct(p[0],p[1]),JXG.Math.crossProduct(p[2],p[3]));
+            c2 = degconic(JXG.Math.crossProduct(p[0],p[2]),JXG.Math.crossProduct(p[1],p[3]));
+            M = fitConic(c1,c2,p[4]);
+            // Compute Eigenvalues and Eigenvectors
+            eigen = JXG.Math.Numerics.Jacobi(M);
+            // Scale the Eigenvalues such that the first Eigenvalue is positive
+            if (eigen[0][0][0]<0) {
+                eigen[0][0][0] *= (-1);
+                eigen[0][1][1] *= (-1);
+                eigen[0][2][2] *= (-1);
+            }
+            // Normalize the Eigenvectors
             for (i=0;i<3;i++) {
+                len = 0.0;
                 for (j=0;j<3;j++) {
-                    M[i][j] = pBp*A[i][j]-pAp*B[i][j];
+                    len += eigen[1][j][i]*eigen[1][j][i];
+                }
+                len = Math.sqrt(len);
+                for (j=0;j<3;j++) {
+                    eigen[1][j][i] /= len;
                 }
             }
-            return M;
-        };
-        
-    var p = [], i;
-    for (i=0;i<5;i++) {
-        p[i] = parents[i].coords.usrCoords;
-    }
-        
-//document.getElementById('debug').innerHTML += c1.toString()+'<br>';
-//document.getElementById('debug').innerHTML += c2.toString()+'<br>';
-    var polarForm = function(phi,suspendUpdate) {
-                var i, j, len, v;
-                if (!suspendUpdate) {
-                    for (i=0;i<5;i++) {
-                        p[i] = parents[i].coords.usrCoords;
-                    }
-                    c1 = degconic(JXG.Math.crossProduct(p[0],p[1]),JXG.Math.crossProduct(p[2],p[3]));
-                    c2 = degconic(JXG.Math.crossProduct(p[0],p[2]),JXG.Math.crossProduct(p[1],p[3]));
-                    M = fitConic(c1,c2,p[4]);
-                    //document.getElementById('debug').innerHTML = '';
-                    //document.getElementById('debug').innerHTML = '<p>determinant:'+(M[1][1]*M[2][2]-M[2][1]*M[1][2])+'<br>';
-                    r = JXG.Math.Numerics.Jacobi(M);
-                    for (i=0;i<3;i++) {
-                        len = 0.0;
-                        for (j=0;j<3;j++) {
-                            len += r[1][i][j]*r[1][i][j];
-                        }
-                        len = Math.sqrt(len);
-                        for (j=0;j<3;j++) {
-                            r[1][i][j] /= len;
-                        }
-                    }
+            rotationMatrix = eigen[1];
+            c = Math.sqrt(Math.abs(eigen[0][0][0]));
+            a = Math.sqrt(Math.abs(eigen[0][1][1]));
+            b = Math.sqrt(Math.abs(eigen[0][2][2]));
+        }
+        if (eigen[0][1][1]<0.0) {
+            v = JXG.Math.matVecMult(rotationMatrix,[1/c,Math.cos(phi)/a,Math.sin(phi)/b]);
+        } else if (eigen[0][2][2]<0.0) {
+            v = JXG.Math.matVecMult(rotationMatrix,[Math.sin(phi)/c,Math.cos(phi)/a,1/b]);
+        } 
+        // Normalize
+        v[1] /= v[0];
+        v[2] /= v[0];
+        v[0] = 1.0;
+        return v;
+    };
 
-                    if (r[0][1][1]*r[0][2][2]>0) {      // Ellipse
-                        sign = 1;              
-                    } else if (r[0][1][1]*r[0][2][2]<0) { // Hyperbola
-                        sign = -1;
-                    } else {                              // Parabola
-                        sign = 0;
-                    }
-                    /*
-                    document.getElementById('debug').innerHTML = '<p>'+r[0][0][0].toFixed(4)+' '; 
-                    document.getElementById('debug').innerHTML += ''+r[0][1][1].toFixed(4)+' '; 
-                    document.getElementById('debug').innerHTML += ''+r[0][2][2].toFixed(4)+'<p>'; 
-                    //document.getElementById('debug').innerHTML += '<p>'+r[1].toString(); 
-                    */
-                    rotationMatrix = r[1];//transformFunc();
-                    a = Math.sqrt(Math.abs(r[0][1][1]/r[0][0][0]));
-                    b = Math.sqrt(Math.abs(r[0][2][2]/r[0][0][0]));
-                }
-                v = JXG.Math.matVecMult(rotationMatrix,[1,Math.cos(phi)/a,Math.sin(phi)/b]);
-                //v = JXG.Math.matVecMult(rotationMatrix,[1,1/Math.cos(phi)/a,Math.tan(phi)/b]);
-/*                
-                if (sign>0) {
-                    v = JXG.Math.matVecMult(rotationMatrix,[1,Math.cos(phi)/a,Math.sin(phi)/b]);
-                } else if (sign<-1) {
-                    v = JXG.Math.matVecMult(rotationMatrix,[1,1/Math.cos(phi)/a,Math.tan(phi)/b]);
-                } else {
-                    v = JXG.Math.matVecMult(rotationMatrix,[1,Math.cos(phi)/a,Math.sin(phi)/b]);
-                } 
-                */
-                //if (!suspendUpdate)  document.getElementById('debug').innerHTML += a+' '+b; 
-                v[1] /= v[0];
-                v[2] /= v[0];
-                v[0] = 1.0;
-                return v;
-        };
-           
-    var curve = board.create('curve', 
-                    [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
-                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];}],atts);        
-
-
-
+    var curve = board.create('curve',
+            [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
+             function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},
+             -Math.PI,Math.PI],atts);
+    return curve;
 };
 
 JXG.JSXGraph.registerElement('ellipse', JXG.createEllipse);
