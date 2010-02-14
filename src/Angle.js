@@ -246,7 +246,7 @@ JXG.createAngle = function(board, parents, attributes) {
     if(attributes['text'] == null || typeof attributes['text'] == 'text') {
         attributes['text'] = '';
     }    
-    if (typeof atts['layer'] == 'undefined') {
+    if (typeof attributes['layer'] == 'undefined') {
         attributes['layer'] = null;
     }
     
