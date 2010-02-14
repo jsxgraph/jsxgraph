@@ -92,7 +92,7 @@ JXG.Algebra.prototype.angle = function(A, B, C) {
     v = a[1] - b[1];
     s = c[0] - b[0];
     t = c[1] - b[1];
-    return Math.atan((u*t - v*s)/(u*s + v*t));    
+    return Math.atan2(u*t-v*s,u*s+v*t);    
 };
 
 /**

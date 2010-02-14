@@ -427,7 +427,7 @@ JXG.Turtle.prototype.lookTo = function(target) {
         // Rotate by the slope of the line [this.pos, target]
         var sgn = (bx-ax>0)?1:-1;
         if (Math.abs(bx-ax)>0.0000001) {
-            beta = Math.atan((by-ay)/(bx-ax))+((sgn<0)?Math.PI:0);  
+            beta = Math.atan2(by-ay,bx-ax)+((sgn<0)?Math.PI:0);  
         } else {
             beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
         }
