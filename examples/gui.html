@@ -66,6 +66,50 @@ Eine Tooltip-Box, die beim mouse over angezeigt wird. Funktioniert natuerlich ni
 
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+
+  <script type="text/javascript">
+  /* <![CDATA[ */
+
+    function findkeyup() {
+      var results = document.getElementById('searchresults'),
+          searchbox = document.getElementById('element'),
+          s = searchbox.value.toLowerCase(),
+          i;
+
+      if(s=='') return;
+
+      results.innerHTML = '';
+      results.style.display = 'block';
+//      results.style.top = parseInt(searchbox.style.top) + 60;
+
+      for(i in JXG.JSXGraph.elements) {
+        if(i.indexOf(s) > -1) {
+          var b = i.indexOf(s),
+              text = i.slice(0, b) + '<b>' + searchbox.value + '</b>' + i.slice(b+s.length);
+          results.innerHTML += '<a href="javascript:" onclick="focuselement(\'' + i + '\');">' + text + '</a><br>';
+        }
+      }
+    }
+
+    function cancelsearch() {
+      document.getElementById('searchresults').style.display = 'none';
+    }
+
+    function focuselement(el) {
+      document.getElementById('nowconstructing').innerHTML = "You're now constructing a " + el;
+      document.getElementById('searchresults').style.display = 'none';
+      document.getElementById('element').value = '';
+    }
+
+  /* ]]> */
+  </script>
+
+  <div id="searchresults" style="position: absolute; top: 135px; left: 690px; display: none; background-color: #eee; border: 1px solid #aaa;"></div>
+  <form>
+    <label for="element">Element:</label>
+    <input type="text" id="element" value="" onkeyup="findkeyup();" onfocus="findkeyup();" onblur="setTimeout(cancelsearch, 500);" size="10" />
+  </form>
+  <div id="nowconstructing"></div>
 </div>
 <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
@@ -76,10 +120,5 @@ Eine Tooltip-Box, die beim mouse over angezeigt wird. Funktioniert natuerlich ni
 
   /* ]]> */
   </script>
-<form>
-<input type="text" value="5" id="prec"/><input type="button" value="Set precision" onclick="brd.options.precision.hasPoint = parseInt(document.getElementById('prec').value);"/>
-
-<input type="button" value="Sim color blindness" onclick="makeColorBlind('deuteranopia');"/>
-</form>
 </body>
 </html>
