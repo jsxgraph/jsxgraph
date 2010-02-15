@@ -7,9 +7,11 @@
 	</head>
 	<body class="jsxgraph_body">
         <form><input type="button" value="Solve it!" onClick="solve()"></form>
-		<div id="box" style="position:relative; /* for IE 7 */;	width:680px; height:580px; overflow:hidden; order-width:1px;></div>
+		<div id="box" style="position:relative; /* for IE 7 */;	width:680px; height:580px; overflow:hidden; order-width:1px;"></div>
 		<!-- Drawing area -->
-		<!---<div id="debug" style="display:none;"></div>-->
+        <!-- 
+            <div id="debug" style="display:none;"></div> 
+        -->
 		<script type="text/javascript">
     /* <![CDATA[ */
     
@@ -22,7 +24,7 @@
             f5.setProperty('shadow:false');
             f6.setProperty('shadow:false');
             f7.setProperty('shadow:false');
-            board.suspendUpdate();
+            //board.suspendUpdate();
             p11.moveTo([16,5],t);
             p21.moveTo([16,5],t);
             p22.moveTo([13.5,7.5],t);
@@ -35,7 +37,7 @@
             p61.moveTo([16,5],t);
             p62.moveTo([18.5,7.5],t);
             p71.moveTo([18.5,7.5],t);
-            board.unsuspendUpdate();
+            //board.unsuspendUpdate();
             window.setTimeout('hidePoints()',1000); 
         }
         
@@ -84,6 +86,7 @@
         var p21 = board.createElement('point',[11,16],{face:'circle',fillColor:'blue',strokeColor:'blue',withLabel:false,visible:true});
         var c21 = board.createElement('circle',[p21,5/2.0*Math.sqrt(2)],{visible:false});
         var p22 = board.createElement('glider',[11.0+5/2.0*Math.sqrt(2),16,c21],{face:'plus',strokeColor:'blue',withLabel:false,visible:true});
+        
         var p23 = board.createElement('point',[function() {return -p22.Y()+p21.Y()+p22.X()},function() {return -p21.X()+p22.X()+p22.Y()}],{face:'circle',fillColor:'blue',withLabel:false,visible:false});
         var f2 = board.createElement('polygon',[p21,p22,p23],{fillcolor:'#0099CC',visible:true,shadow:true});
         for(i=0; i<f2.borders.length; i++) {
