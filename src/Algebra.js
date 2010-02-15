@@ -589,7 +589,7 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
     // Homogeneous version
     var v = [0,line.stdform[1],line.stdform[2]];
     v = JXG.Math.crossProduct(v,point.coords.usrCoords);
-    return board.algebra.meetLineLine(v,line.stdform,0);
+    return this.meetLineLine(v,line.stdform,0);
 
     //return new JXG.Coords(JXG.COORDS_BY_USER, v, this.board);       
 };

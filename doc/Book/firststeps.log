@@ -1,236 +1,332 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2009.4.24)  3 JUL 2009 17:01
+This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=latex 2009.4.19)  15 FEB 2010 10:07
 entering extended mode
  %&-line parsing enabled.
 **firststeps
 (./firststeps.tex
 LaTeX2e <2005/12/01>
-Babel <v3.8h> and hyphenation patterns for english, usenglishmax, dumylang, noh
-yphenation, arabic, farsi, croatian, ukrainian, russian, bulgarian, czech, slov
-ak, danish, dutch, finnish, basque, french, german, ngerman, ibycus, greek, mon
-ogreek, ancientgreek, hungarian, italian, latin, mongolian, norsk, icelandic, i
-nterlingua, turkish, coptic, romanian, welsh, serbian, slovenian, estonian, esp
-eranto, uppersorbian, indonesian, polish, portuguese, spanish, catalan, galicia
-n, swedish, ukenglish, pinyin, loaded.
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, german-x-2008-06-18, ngerman-x-2008-06-18, ancientgreek, ibycus, ar
+abic, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danish, dutc
+h, esperanto, estonian, farsi, finnish, french, galician, german, ngerman, mono
+greek, greek, hungarian, icelandic, indonesian, interlingua, irish, italian, la
+tin, lithuanian, mongolian, mongolian2a, bokmal, nynorsk, polish, portuguese, r
+omanian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, turki
+sh, ukenglish, ukrainian, uppersorbian, welsh, loaded.
 (./tufte-book.cls
-Document Class: tufte-book 2009/05/17 v3.0.0 Tufte-book class
-Package tufte-book Info: Passing a4paper to `book' class on input line 13.
-(/usr/share/texmf-texlive/tex/latex/base/book.cls
-Document Class: book 2005/09/16 v1.4f Standard LaTeX document class
-(/usr/share/texmf-texlive/tex/latex/base/bk10.clo
-File: bk10.clo 2005/09/16 v1.4f Standard LaTeX file (size option)
-)
-\c@part=\count79
-\c@chapter=\count80
-\c@section=\count81
-\c@subsection=\count82
-\c@subsubsection=\count83
-\c@paragraph=\count84
-\c@subparagraph=\count85
-\c@figure=\count86
-\c@table=\count87
-\abovecaptionskip=\skip41
-\belowcaptionskip=\skip42
-\bibindent=\dimen102
-) (./tufte-common.sty
-Package: tufte-common 2009/05/17 v3.0.0 Common code for the Tufte-LaTeX styles
+Document Class: tufte-book 2009/12/11 v3.5.0 Tufte-book class
+(./tufte-common.def
+File: tufte-common.def 2009/12/11 v3.5.0 Common code for the Tufte-LaTeX styles
 
-(/usr/share/texmf-texlive/tex/latex/xifthen/xifthen.sty
-Package: xifthen 2006/03/25 v1.1.1.1 Extended ifthen features
 
-(/usr/share/texmf-texlive/tex/latex/etex/etex.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+Package: xkeyval 2008/08/13 v2.6a package option processing (HA)
+
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+\XKV@toks=\toks14
+\XKV@tempa@toks=\toks15
+\XKV@depth=\count79
+File: xkeyval.tex 2008/08/13 v2.6a key=value parser (HA)
+
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/xkeyval/keyval.tex)))
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/xifthen/xifthen.sty
+Package: xifthen 2009/04/17 v1.3 Extended ifthen features
+
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/etex-pkg/etex.sty
 Package: etex 1998/03/26 v2.0 eTeX basic definition package (PEB)
-\et@xins=\count88
+\et@xins=\count80
 )
-(/usr/share/texmf-texlive/tex/latex/tools/calc.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/tools/calc.sty
 Package: calc 2005/08/06 v4.2 Infix arithmetic (KKT,FJ)
-\calc@Acount=\count89
-\calc@Bcount=\count90
-\calc@Adimen=\dimen103
-\calc@Bdimen=\dimen104
-\calc@Askip=\skip43
-\calc@Bskip=\skip44
+\calc@Acount=\count81
+\calc@Bcount=\count82
+\calc@Adimen=\dimen102
+\calc@Bdimen=\dimen103
+\calc@Askip=\skip41
+\calc@Bskip=\skip42
 LaTeX Info: Redefining \setlength on input line 75.
 LaTeX Info: Redefining \addtolength on input line 76.
-\calc@Ccount=\count91
-\calc@Cskip=\skip45
+\calc@Ccount=\count83
+\calc@Cskip=\skip43
 )
-(/usr/share/texmf-texlive/tex/latex/base/ifthen.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/base/ifthen.sty
 Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
 )
-(/usr/share/texmf-texlive/tex/latex/ltxmisc/ifmtarg.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/ltxmisc/ifmtarg.sty
 Package: ifmtarg 2000/03/24 v1.2 check for an empty argument
 ))
-(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty
-Package: ifpdf 2006/02/20 v1.4 Provides the ifpdf switch (HO)
-Package ifpdf Info: pdfTeX in pdf mode detected.
-)
-(/usr/share/texmf-texlive/tex/generic/ifxetex/ifxetex.sty
-Package: ifxetex 2006/08/21 v0.3 Provides ifxetex conditional
-)
-(/usr/share/texmf-texlive/tex/latex/hyperref/hyperref.sty
-Package: hyperref 2007/02/07 v6.75r Hypertext links for LaTeX
+Class tufte-book Info: Loading the base class `book'.
 
-(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
-Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
-\KV@toks@=\toks14
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2005/09/16 v1.4f Standard LaTeX document class
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/base/bk10.clo
+File: bk10.clo 2005/09/16 v1.4f Standard LaTeX file (size option)
 )
-\@linkdim=\dimen105
-\Hy@linkcounter=\count92
-\Hy@pagecounter=\count93
+\c@part=\count84
+\c@chapter=\count85
+\c@section=\count86
+\c@subsection=\count87
+\c@subsubsection=\count88
+\c@paragraph=\count89
+\c@subparagraph=\count90
+\c@figure=\count91
+\c@table=\count92
+\abovecaptionskip=\skip44
+\belowcaptionskip=\skip45
+\bibindent=\dimen104
+)
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2009/04/10 v2.0 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in pdf mode not detected.
+)
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2009/01/23 v0.5 Provides ifxetex conditional
+)
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/titlesec/titlesec.sty
+Package: titlesec 2007/08/12 v2.8 Sectioning titles
+\ttl@box=\box26
+\beforetitleunit=\skip46
+\aftertitleunit=\skip47
+\ttl@plus=\dimen105
+\ttl@minus=\dimen106
+\ttl@toksa=\toks16
+\titlewidth=\dimen107
+\titlewidthlast=\dimen108
+\titlewidthfirst=\dimen109
+)
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/titlesec/titletoc.sty
+Package: titletoc 2007/08/12 v1.6 TOC entries
+\ttl@leftsep=\dimen110
+)
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2009/05/01 v6.78r Hypertext links for LaTeX
 
-(/usr/share/texmf-texlive/tex/latex/hyperref/pd1enc.def
-File: pd1enc.def 2007/02/07 v6.75r Hyperref: PDFDocEncoding definition (HO)
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2008/11/04 v1.4 Switches for detecting VTeX and its modes (HO)
+Package ifvtex Info: VTeX not detected.
 )
-(/etc/texmf/tex/latex/config/hyperref.cfg
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/oberdiek/hycolor.sty
+Package: hycolor 2008/09/08 v1.4 Code for color options of hyperref/bookmark (H
+O)
+
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/oberdiek/xcolor-patch.sty
+Package: xcolor-patch 2008/09/08 xcolor patch
+))
+\@linkdim=\dimen111
+\Hy@linkcounter=\count93
+\Hy@pagecounter=\count94
+
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2009/05/01 v6.78r Hyperref: PDFDocEncoding definition (HO)
+)
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2007/12/12 v1.2 Prefix for e-TeX command names (HO)
+
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2007/09/09 v1.2 Providing info/warning/message (HO)
+)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)
+(c:/Programme/texlive/2008/texmf/tex/latex/config/hyperref.cfg
 File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
 )
-(/usr/share/texmf-texlive/tex/latex/oberdiek/kvoptions.sty
-Package: kvoptions 2006/08/22 v2.4 Connects package keyval with LaTeX options (
-HO)
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2009/04/10 v3.1 Keyval support for LaTeX options (HO)
 )
-Package hyperref Info: Option `hyperfootnotes' set `false' on input line 2238.
-Package hyperref Info: Hyper figures OFF on input line 2288.
-Package hyperref Info: Link nesting OFF on input line 2293.
-Package hyperref Info: Hyper index ON on input line 2296.
-Package hyperref Info: Plain pages OFF on input line 2303.
-Package hyperref Info: Backreferencing OFF on input line 2308.
+Package hyperref Info: Option `unicode' set `true' on input line 2842.
+
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2009/05/01 v6.78r Hyperref: PDF Unicode definition (HO)
+)
+Package hyperref Info: Option `hyperfootnotes' set `false' on input line 2842.
+Package hyperref Info: Hyper figures OFF on input line 2953.
+Package hyperref Info: Link nesting OFF on input line 2958.
+Package hyperref Info: Hyper index ON on input line 2961.
+Package hyperref Info: Plain pages OFF on input line 2968.
+Package hyperref Info: Backreferencing OFF on input line 2973.
 
 Implicit mode ON; LaTeX internals redefined
-Package hyperref Info: Bookmarks ON on input line 2444.
-(/usr/share/texmf-texlive/tex/latex/ltxmisc/url.sty
+Package hyperref Info: Bookmarks ON on input line 3163.
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/ltxmisc/url.sty
 \Urlmuskip=\muskip10
-Package: url 2005/06/27  ver 3.2  Verb mode for urls, etc.
+Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
 )
-LaTeX Info: Redefining \url on input line 2599.
-\Fld@menulength=\count94
-\Field@Width=\dimen106
-\Fld@charsize=\dimen107
-\Choice@toks=\toks15
-\Field@toks=\toks16
-Package hyperref Info: Hyper figures OFF on input line 3102.
-Package hyperref Info: Link nesting OFF on input line 3107.
-Package hyperref Info: Hyper index ON on input line 3110.
-Package hyperref Info: backreferencing OFF on input line 3117.
-Package hyperref Info: Link coloring OFF on input line 3122.
-\Hy@abspage=\count95
-\c@Item=\count96
+LaTeX Info: Redefining \url on input line 3400.
+
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/oberdiek/bitset.sty
+Package: bitset 2007/09/28 v1.0 Data type bit set (HO)
+
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/oberdiek/intcalc.sty
+Package: intcalc 2007/09/27 v1.1 Expandable integer calculations (HO)
 )
-*hyperref using default driver hpdftex*
-(/usr/share/texmf-texlive/tex/latex/hyperref/hpdftex.def
-File: hpdftex.def 2007/02/07 v6.75r Hyperref driver for pdfTeX
-\Fld@listcount=\count97
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/oberdiek/bigintcalc.sty
+Package: bigintcalc 2007/11/11 v1.1 Expandable big integer calculations (HO)
+
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2009/04/10 v0.4 LuaTeX support for pdfTeX utility functions
+ (HO)
+
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2009/04/10 v1.1 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
 )
-(/usr/share/texmf-texlive/tex/latex/ragged2e/ragged2e.sty
+Package pdftexcmds Info: LuaTeX not detected on input line 145.
+)))
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2007/09/29 v1.3 Key value parser with default handler suppor
+t (HO)
+)
+\Fld@menulength=\count95
+\Field@Width=\dimen112
+\Fld@charsize=\dimen113
+\Field@toks=\toks17
+Package hyperref Info: Hyper figures OFF on input line 4317.
+Package hyperref Info: Link nesting OFF on input line 4322.
+Package hyperref Info: Hyper index ON on input line 4325.
+Package hyperref Info: backreferencing OFF on input line 4332.
+Package hyperref Info: Link coloring OFF on input line 4337.
+Package hyperref Info: Link coloring with OCG OFF on input line 4342.
+Package hyperref Info: PDF/A mode OFF on input line 4347.
+
+(c:/Programme/texlive/2008/texmf-dist/tex/generic/oberdiek/atbegshi.sty
+Package: atbegshi 2008/07/31 v1.9 At begin shipout hook (HO)
+)
+\Hy@abspage=\count96
+\c@Item=\count97
+)
+*hyperref using default driver hdvips*
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/hyperref/hdvips.def
+File: hdvips.def 2009/05/01 v6.78r Hyperref driver for dvips
+
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/hyperref/pdfmark.def
+File: pdfmark.def 2009/05/01 v6.78r Hyperref definitions for pdfmark specials
+\pdf@docset=\toks18
+\pdf@box=\box27
+\pdf@toks=\toks19
+\pdf@defaulttoks=\toks20
+\Fld@listcount=\count98
+))
+
+Package hyperref Warning: Option `pagecolor' is not available anymore.
+
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/ms/ragged2e.sty
 Package: ragged2e 2003/03/25 v2.04 ragged2e Package (MS)
 
-(/usr/share/texmf-texlive/tex/latex/everysel/everysel.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/ms/everysel.sty
 Package: everysel 1999/06/08 v1.03 EverySelectfont Package (MS)
 )
-\CenteringLeftskip=\skip46
-\RaggedLeftLeftskip=\skip47
-\RaggedRightLeftskip=\skip48
-\CenteringRightskip=\skip49
-\RaggedLeftRightskip=\skip50
-\RaggedRightRightskip=\skip51
-\CenteringParfillskip=\skip52
-\RaggedLeftParfillskip=\skip53
-\RaggedRightParfillskip=\skip54
-\JustifyingParfillskip=\skip55
-\CenteringParindent=\skip56
-\RaggedLeftParindent=\skip57
-\RaggedRightParindent=\skip58
-\JustifyingParindent=\skip59
+\CenteringLeftskip=\skip48
+\RaggedLeftLeftskip=\skip49
+\RaggedRightLeftskip=\skip50
+\CenteringRightskip=\skip51
+\RaggedLeftRightskip=\skip52
+\RaggedRightRightskip=\skip53
+\CenteringParfillskip=\skip54
+\RaggedLeftParfillskip=\skip55
+\RaggedRightParfillskip=\skip56
+\JustifyingParfillskip=\skip57
+\CenteringParindent=\skip58
+\RaggedLeftParindent=\skip59
+\RaggedRightParindent=\skip60
+\JustifyingParindent=\skip61
 )
-(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
-Package: geometry 2002/07/08 v3.2 Page Geometry
-\Gm@cnth=\count98
-\Gm@cntv=\count99
-\c@Gm@tempcnt=\count100
-\Gm@bindingoffset=\dimen108
-\Gm@wd@mp=\dimen109
-\Gm@odd@mp=\dimen110
-\Gm@even@mp=\dimen111
-\Gm@dimlist=\toks17
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2008/12/21 v4.2 Page Geometry
+\Gm@cnth=\count99
+\Gm@cntv=\count100
+\c@Gm@tempcnt=\count101
+\Gm@bindingoffset=\dimen114
+\Gm@wd@mp=\dimen115
+\Gm@odd@mp=\dimen116
+\Gm@even@mp=\dimen117
+\Gm@dimlist=\toks21
 
-(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
-Package tufte-book Info: Found chngpage.sty on input line 294.
-
-(/usr/share/texmf-texlive/tex/latex/ltxmisc/chngpage.sty
-Package: chngpage 2003/08/10 v1.2 change page layout
-\c@cp@cnt=\count101
-\c@cp@tempcnt=\count102
+(c:/Programme/texlive/2008/texmf-dist/tex/xelatex/xetexconfig/geometry.cfg))
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/changepage/changepage.sty
+Package: changepage 2008/08/15 v1.0a check page and change page layout
+\c@cp@cntr=\count102
+\cp@tempcnt=\count103
 )
-\@tufte@overhang=\skip60
-\@tufte@fullwidth=\skip61
-\@tufte@caption@fill=\skip62
+\@tufte@overhang=\skip62
+\@tufte@fullwidth=\skip63
+\@tufte@caption@fill=\skip64
 
-(/usr/share/texmf-texlive/tex/latex/paralist/paralist.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/paralist/paralist.sty
 Package: paralist 2002/03/18 v2.3b Extended list environments (BS)
-\pltopsep=\skip63
-\plpartopsep=\skip64
-\plitemsep=\skip65
-\plparsep=\skip66
-\pl@lab=\toks18
+\pltopsep=\skip65
+\plpartopsep=\skip66
+\plitemsep=\skip67
+\plparsep=\skip68
+\pl@lab=\toks22
 )
-(/usr/share/texmf-texlive/tex/latex/textcase/textcase.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/textcase/textcase.sty
 Package: textcase 2004/10/07 v0.07 Text only upper/lower case changing (DPC)
 )
-Package tufte-book Info: ifpdf = true on input line 451.
-Package tufte-book Info: ifxetex = false on input line 455.
-Package tufte-book Info: Modern version of pdfTeX detected. Using `letterspace'
- package. on input line 498.
-
-(/usr/share/texmf-texlive/tex/latex/microtype/letterspace.sty
-Package: letterspace 2007/01/21 v1.0 Robust letterspacing (RS)
-LaTeX Info: Redefining \lsstyle on input line 135.
-LaTeX Info: Redefining \lslig on input line 166.
-LaTeX Info: Redefining \textls on input line 180.
-\MT@lskern=\dimen112
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/soul/soul.sty
+Package: soul 2003/11/17 v2.4 letterspacing/underlining (mf)
+\SOUL@word=\toks23
+\SOUL@lasttoken=\toks24
+\SOUL@cmds=\toks25
+\SOUL@buffer=\toks26
+\SOUL@token=\toks27
+\SOUL@spaceskip=\skip69
+\SOUL@ttwidth=\dimen118
+\SOUL@uldp=\dimen119
+\SOUL@ulht=\dimen120
 )
-(/usr/share/texmf-texlive/tex/latex/setspace/setspace.sty
+LaTeX Info: Redefining \allcapsspacing on input line 697.
+LaTeX Info: Redefining \smallcapsspacing on input line 697.
+
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/setspace/setspace.sty
 Package: setspace 2000/12/01 6.7 Contributed and Supported LaTeX2e package
 
 Package: `setspace' 6.7 <2000/12/01>
-) (/usr/share/texmf-texlive/tex/latex/natbib/natbib.sty
-Package: natbib 2007/02/05 8.0 (PWD)
-\bibhang=\skip67
-\bibsep=\skip68
-LaTeX Info: Redefining \cite on input line 602.
-\c@NAT@ctr=\count103
+) (c:/Programme/texlive/2008/texmf-dist/tex/latex/natbib/natbib.sty
+Package: natbib 2009/02/02 8.3 (PWD, AO)
+\bibhang=\skip70
+\bibsep=\skip71
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count104
 )
-(/usr/share/texmf-texlive/tex/latex/natbib/bibentry.sty
-Package: bibentry 2000/06/20 1.4 (PWD)
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/natbib/bibentry.sty
+Package: bibentry 2007/10/30 1.5 (PWD)
 )
 No file firststeps.bbl.
-\c@@tufte@num@bibkeys=\count104
-(/usr/share/texmf-texlive/tex/latex/sauerj/optparams.sty
+\c@@tufte@num@bibkeys=\count105
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/sauerj/optparams.sty
 Package: optparams 2004/08/14 v0.9 multiple optional parameters in macros
 )
-(/usr/share/texmf-texlive/tex/latex/placeins/placeins.sty
+\@tufte@sidenote@vertical@offset=\skip72
+
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/placeins/placeins.sty
 Package: placeins 2005/04/18  v 2.2
 )
-\@tufte@margin@floatbox=\box26
-\@tufte@figure@box=\box27
-\@tufte@caption@box=\box28
+\@tufte@margin@floatbox=\box28
+\@tufte@figure@box=\box29
+\@tufte@caption@box=\box30
+\@tufte@caption@vertical@offset=\skip73
+\@tufte@float@contents@width=\skip74
 
-(/usr/share/texmf-texlive/tex/latex/psnfss/mathpazo.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/psnfss/mathpazo.sty
 Package: mathpazo 2005/04/12 PSNFSS-v9.2a Palatino w/ Pazo Math (D.Puga, WaS) 
 \symupright=\mathgroup4
 )
-(/usr/share/texmf-texlive/tex/latex/psnfss/helvet.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/psnfss/helvet.sty
 Package: helvet 2005/04/12 PSNFSS-v9.2a (WaS) 
 )
-(/usr/share/texmf-texlive/tex/latex/bera/beramono.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/bera/beramono.sty
 Package: beramono 2004/01/31 (WaS)
 )
-(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
 
-(/usr/share/texmf-texlive/tex/latex/base/t1enc.def
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/base/t1enc.def
 File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
 LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
 ))
-(/usr/share/texmf-texlive/tex/latex/base/textcomp.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/base/textcomp.sty
 Package: textcomp 2005/09/27 v1.99g Standard LaTeX package
 Package textcomp Info: Sub-encoding information:
 (textcomp)               5 = only ISO-Adobe without \textcurrency
@@ -245,7 +341,7 @@ Package textcomp Info: Sub-encoding information:
 (textcomp)             See the documentation for details.
 Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 71.
 
-(/usr/share/texmf-texlive/tex/latex/base/ts1enc.def
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/base/ts1enc.def
 File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
 )
 LaTeX Info: Redefining \oldstylenums on input line 266.
@@ -297,32 +393,30 @@ Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 324.
 Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 325.
 Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 326.
 )
-(/usr/share/texmf-texlive/tex/latex/fancyhdr/fancyhdr.sty
-\fancy@headwidth=\skip69
-\f@ncyO@elh=\skip70
-\f@ncyO@erh=\skip71
-\f@ncyO@olh=\skip72
-\f@ncyO@orh=\skip73
-\f@ncyO@elf=\skip74
-\f@ncyO@erf=\skip75
-\f@ncyO@olf=\skip76
-\f@ncyO@orf=\skip77
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+\fancy@headwidth=\skip75
+\f@ncyO@elh=\skip76
+\f@ncyO@erh=\skip77
+\f@ncyO@olh=\skip78
+\f@ncyO@orh=\skip79
+\f@ncyO@elf=\skip80
+\f@ncyO@erf=\skip81
+\f@ncyO@olf=\skip82
+\f@ncyO@orf=\skip83
 )
-(/usr/share/texmf/tex/latex/xcolor/xcolor.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/xcolor/xcolor.sty
 Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
 
-(/etc/texmf/tex/latex/config/color.cfg
+(c:/Programme/texlive/2008/texmf/tex/latex/config/color.cfg
 File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package xcolor Info: Package option `usenames' ignored on input line 216.
-Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Driver file: dvips.def on input line 225.
 
-(/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
-File: pdftex.def 2007/01/08 v0.04d Graphics/color for pdfTeX
-\Gread@gobject=\count105
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/graphics/dvips.def
+File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
 )
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1337.
-Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1341.
 Package xcolor Info: Model `RGB' extended on input line 1353.
 Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1355.
 Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1356.
@@ -331,51 +425,36 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
 
-(/usr/share/texmf-texlive/tex/latex/graphics/dvipsnam.def
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/graphics/dvipsnam.def
 File: dvipsnam.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
 )
-(/usr/share/texmf/tex/latex/xcolor/svgnam.def
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/xcolor/svgnam.def
 File: svgnam.def 2007/01/21 v2.11 Predefined colors according to SVG 1.1 (UK)
 ))
-(/usr/share/texmf-texlive/tex/latex/titlesec/titlesec.sty
-Package: titlesec 2005/01/22 v2.6 Sectioning titles
-\ttl@box=\box29
-\beforetitleunit=\skip78
-\aftertitleunit=\skip79
-\ttl@plus=\dimen113
-\ttl@minus=\dimen114
-\titlewidth=\dimen115
-\titlewidthlast=\dimen116
-\titlewidthfirst=\dimen117
-)
-(/usr/share/texmf-texlive/tex/latex/titlesec/titletoc.sty
-Package: titletoc 2005/01/22 v1.5 TOC entries
-)
-\langwohyphens=\language48
+\langwohyphens=\language55
 
-(/usr/share/texmf-texlive/tex/latex/tools/multicol.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/tools/multicol.sty
 Package: multicol 2006/05/18 v1.6g multicolumn formatting (FMi)
 \c@tracingmulticols=\count106
-\mult@box=\box30
-\multicol@leftmargin=\dimen118
+\mult@box=\box31
+\multicol@leftmargin=\dimen121
 \c@unbalance=\count107
 \c@collectmore=\count108
 \doublecol@number=\count109
 \multicoltolerance=\count110
 \multicolpretolerance=\count111
-\full@width=\dimen119
-\page@free=\dimen120
-\premulticols=\dimen121
-\postmulticols=\dimen122
-\multicolsep=\skip80
-\multicolbaselineskip=\skip81
-\partial@page=\box31
-\last@line=\box32
-\mult@rightbox=\box33
-\mult@grightbox=\box34
-\mult@gfirstbox=\box35
-\mult@firstbox=\box36
-\@tempa=\box37
+\full@width=\dimen122
+\page@free=\dimen123
+\premulticols=\dimen124
+\postmulticols=\dimen125
+\multicolsep=\skip84
+\multicolbaselineskip=\skip85
+\partial@page=\box32
+\last@line=\box33
+\mult@rightbox=\box34
+\mult@grightbox=\box35
+\mult@gfirstbox=\box36
+\mult@firstbox=\box37
 \@tempa=\box38
 \@tempa=\box39
 \@tempa=\box40
@@ -392,94 +471,109 @@ Package: multicol 2006/05/18 v1.6g multicolumn formatting (FMi)
 \@tempa=\box51
 \@tempa=\box52
 \@tempa=\box53
+\@tempa=\box54
 \c@columnbadness=\count112
 \c@finalcolumnbadness=\count113
-\last@try=\dimen123
-\multicolovershoot=\dimen124
-\multicolundershoot=\dimen125
-\mult@nat@firstbox=\box54
-\colbreak@box=\box55
+\last@try=\dimen126
+\multicolovershoot=\dimen127
+\multicolundershoot=\dimen128
+\mult@nat@firstbox=\box55
+\colbreak@box=\box56
 )))
-(/usr/share/texmf-texlive/tex/latex/lipsum/lipsum.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/lipsum/lipsum.sty
 Package: lipsum 2005/01/26 v1.0 150 paragraphs of Lorem Ipsum dummy text
 File: lipsum.dtx 2005/01/26 v1.0 150 paragraphs of Lorem Ipsum dummy text
 \c@lips@count=\count114
 )
-(/usr/share/texmf-texlive/tex/latex/booktabs/booktabs.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2005/04/14 v1.61803 publication quality tables
-\heavyrulewidth=\dimen126
-\lightrulewidth=\dimen127
-\cmidrulewidth=\dimen128
-\belowrulesep=\dimen129
-\belowbottomsep=\dimen130
-\aboverulesep=\dimen131
-\abovetopsep=\dimen132
-\cmidrulesep=\dimen133
-\cmidrulekern=\dimen134
-\defaultaddspace=\dimen135
+\heavyrulewidth=\dimen129
+\lightrulewidth=\dimen130
+\cmidrulewidth=\dimen131
+\belowrulesep=\dimen132
+\belowbottomsep=\dimen133
+\aboverulesep=\dimen134
+\abovetopsep=\dimen135
+\cmidrulesep=\dimen136
+\cmidrulekern=\dimen137
+\defaultaddspace=\dimen138
 \@cmidla=\count115
 \@cmidlb=\count116
-\@aboverulesep=\dimen136
-\@belowrulesep=\dimen137
+\@aboverulesep=\dimen139
+\@belowrulesep=\dimen140
 \@thisruleclass=\count117
 \@lastruleclass=\count118
-\@thisrulewidth=\dimen138
+\@thisrulewidth=\dimen141
 )
-(/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2006/02/20 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
-(/etc/texmf/tex/latex/config/graphics.cfg
+(c:/Programme/texlive/2008/texmf/tex/latex/config/graphics.cfg
 File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
 )
-Package graphics Info: Driver file: pdftex.def on input line 90.
+Package graphics Info: Driver file: dvips.def on input line 90.
 )
-\Gin@req@height=\dimen139
-\Gin@req@width=\dimen140
+\Gin@req@height=\dimen142
+\Gin@req@width=\dimen143
 )
-(/usr/share/texmf-texlive/tex/latex/microtype/microtype.sty
-Package: microtype 2007/01/21 v2.0 Micro-typography with pdfTeX (RS)
-\MT@toks=\toks19
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/microtype/microtype.sty
+Package: microtype 2009/03/27 v2.3d Micro-typography with pdfTeX (RS)
+\MT@toks=\toks28
 \MT@count=\count119
-LaTeX Info: Redefining \lsstyle on input line 1370.
-LaTeX Info: Redefining \lslig on input line 1370.
-LaTeX Info: Redefining \textls on input line 1371.
-\MT@lskern=\dimen141
+LaTeX Info: Redefining \lsstyle on input line 1608.
+LaTeX Info: Redefining \lslig on input line 1608.
+\MT@outer@space=\skip86
+LaTeX Info: Redefining \textls on input line 1616.
+\MT@outer@kern=\dimen144
+LaTeX Info: Redefining \textmicrotypecontext on input line 2167.
 Package microtype Info: Loading configuration file microtype.cfg.
 
-(/usr/share/texmf-texlive/tex/latex/microtype/microtype.cfg
-File: microtype.cfg 2007/01/14 v2.0 microtype main configuration file (RS)
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/microtype/microtype.cfg
+File: microtype.cfg 2009/03/27 v2.3d microtype main configuration file (RS)
 ))
-(/usr/share/texmf-texlive/tex/latex/fancyvrb/fancyvrb.sty
-Package: fancyvrb 1998/07/17
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2008/02/07
 
-Style option: `fancyvrb' v2.6, with DG/SPQR fixes <1998/07/17> (tvz)
+Style option: `fancyvrb' v2.7a, with DG/SPQR fixes, and firstline=lastline fix 
+<2008/02/07> (tvz)
 \FV@CodeLineNo=\count120
 \FV@InFile=\read1
-\FV@TabBox=\box56
+\FV@TabBox=\box57
 \c@FancyVerbLine=\count121
 \FV@StepNumber=\count122
 \FV@OutFile=\write3
-
-No file fancyvrb.cfg.
-) (/usr/share/texmf-texlive/tex/latex/tools/xspace.sty
+)
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/tools/xspace.sty
 Package: xspace 2006/05/08 v1.12 Space after command names (DPC,MH)
 )
-(/usr/share/texmf-texlive/tex/latex/units/units.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/units/units.sty
 Package: units 1998/08/04 v0.9b Typesetting units
 
-(/usr/share/texmf-texlive/tex/latex/units/nicefrac.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/units/nicefrac.sty
 Package: nicefrac 1998/08/04 v0.9b Nice fractions
-\L@UnitsRaiseDisplaystyle=\skip82
-\L@UnitsRaiseTextstyle=\skip83
-\L@UnitsRaiseScriptstyle=\skip84
+\L@UnitsRaiseDisplaystyle=\skip87
+\L@UnitsRaiseTextstyle=\skip88
+\L@UnitsRaiseScriptstyle=\skip89
 ))
-(/usr/share/texmf-texlive/tex/latex/base/makeidx.sty
+
+! LaTeX Error: Command \hl already defined.
+               Or name \end... illegal, see p.192 of the manual.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.101 \newcommand{\hl}[1]{\textcolor{Maroon}{#1}}
+                                                 % prints in red
+? s
+OK, entering \scrollmode...
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/base/makeidx.sty
 Package: makeidx 2000/03/29 v1.0m Standard LaTeX package
 )
 \@indexfile=\write4
@@ -487,38 +581,35 @@ Package: makeidx 2000/03/29 v1.0m Standard LaTeX package
 
 
 Writing index file firststeps.idx
-(/usr/share/texmf-texlive/tex/latex/listings/listings.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/listings/listings.sty
 \lst@mode=\count123
-\lst@gtempboxa=\box57
-\lst@token=\toks20
+\lst@gtempboxa=\box58
+\lst@token=\toks29
 \lst@length=\count124
-\lst@currlwidth=\dimen142
+\lst@currlwidth=\dimen145
 \lst@column=\count125
 \lst@pos=\count126
-\lst@lostspace=\dimen143
-\lst@width=\dimen144
+\lst@lostspace=\dimen146
+\lst@width=\dimen147
 \lst@newlines=\count127
 \lst@lineno=\count128
-\c@lstlisting=\count129
-\lst@maxwidth=\dimen145
+\lst@maxwidth=\dimen148
 
-(/usr/share/texmf-texlive/tex/latex/listings/lstpatch.sty
-File: lstpatch.sty 2004/10/17 1.3b (Carsten Heinz)
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
+\c@lstnumber=\count129
+\lst@skipnumbers=\count130
+\lst@framebox=\box59
 )
-(/usr/share/texmf-texlive/tex/latex/listings/lstmisc.sty
-File: lstmisc.sty 2004/09/07 1.3 (Carsten Heinz)
-\c@lstnumber=\count130
-\lst@skipnumbers=\count131
-\lst@framebox=\box58
-)
-(/usr/share/texmf-texlive/tex/latex/listings/listings.cfg
-File: listings.cfg 2004/09/05 1.3 listings configuration
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2007/02/22 1.4 listings configuration
 ))
-Package: listings 2004/10/17 1.3b (Carsten Heinz)
+Package: listings 2007/02/22 1.4 (Carsten Heinz)
 
-(/usr/share/texmf-texlive/tex/latex/listings/lstlang1.sty
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2004/09/05 1.3 listings language file
-) (./firststeps.aux)
+)
+(./firststeps.aux)
 \openout1 = `firststeps.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 135.
@@ -535,38 +626,44 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 135.
 LaTeX Font Info:    ... okay on input line 135.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 135.
 LaTeX Font Info:    ... okay on input line 135.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 135.
+LaTeX Font Info:    ... okay on input line 135.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 135.
 LaTeX Font Info:    Try loading font information for TS1+cmr on input line 135.
 
 
-(/usr/share/texmf-texlive/tex/latex/base/ts1cmr.fd
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    ... okay on input line 135.
 LaTeX Font Info:    Try loading font information for T1+pplj on input line 135.
 
 
-(/usr/share/texmf-texlive/tex/latex/psnfss/t1pplj.fd
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/psnfss/t1pplj.fd
 File: t1pplj.fd 2004/09/06 font definitions for T1/pplj.
 )
 Package hyperref Info: Link coloring OFF on input line 135.
 
-(/usr/share/texmf-texlive/tex/latex/hyperref/nameref.sty
-Package: nameref 2006/12/27 v2.28 Cross-referencing by name of section
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
 
-(/usr/share/texmf-texlive/tex/latex/oberdiek/refcount.sty
-Package: refcount 2006/02/20 v3.0 Data extraction from references (HO)
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/oberdiek/refcount.sty
+Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
 )
-\c@section@level=\count132
+\c@section@level=\count131
 )
 LaTeX Info: Redefining \ref on input line 135.
 LaTeX Info: Redefining \pageref on input line 135.
- (./firststeps.out)
-(./firststeps.out)
+
+(./firststeps.out) (./firststeps.out)
 \@outlinefile=\write5
 \openout5 = `firststeps.out'.
 
+\AtBeginShipoutBox=\box60
 LaTeX Info: Redefining \selectfont on input line 135.
+
+*geometry auto-detecting driver*
+*geometry detected driver: dvips*
 -------------------- Geometry parameters
 paper: a4paper
 landscape: --
@@ -584,7 +681,7 @@ truedimen: --
 includehead: --
 includefoot: --
 includemp: --
-driver: pdftex
+driver: dvips
 -------------------- Page layout dimensions and switches
 \paperwidth  597.50787pt
 \paperheight 845.04684pt
@@ -606,34 +703,22 @@ driver: pdftex
 \@twosidetrue 
 (1in=72.27pt, 1cm=28.45pt)
 -----------------------
-Package microtype Info: Generating PDF output.
+\big@size=\dimen149
+LaTeX Info: Redefining \microtypecontext on input line 135.
+Package microtype Info: Generating DVI output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
-Package microtype Info: Automatic font expansion enabled (level 2),
-(microtype)             stretch: 20, shrink: 20, step: 4, non-selected.
-Package microtype Info: Using default expansion set `basictext'.
+Package microtype Info: No font expansion.
 Package microtype Info: No tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
-\big@size=\dimen146
- (/usr/share/texmf/tex/context/base/supp-pdf.tex
-[Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count133
-\scratchdimen=\dimen147
-\scratchbox=\box59
-\nofMPsegments=\count134
-\nofMParguments=\count135
-\everyMPshowfont=\toks21
-\MPscratchCnt=\count136
-\MPscratchDim=\dimen148
-\MPnumerator=\count137
-\everyMPtoPDFconversion=\toks22
-) (/usr/share/texmf-texlive/tex/latex/microtype/mt-ppl.cfg
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/microtype/mt-ppl.cfg
 File: mt-ppl.cfg 2005/11/16 v1.6 microtype config. file: Palatino (RS)
 )
+\c@lstlisting=\count132
 LaTeX Font Info:    Try loading font information for T1+phv on input line 142.
 
-(/usr/share/texmf-texlive/tex/latex/psnfss/t1phv.fd
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/psnfss/t1phv.fd
 File: t1phv.fd 2001/06/04 scalable font definitions for T1/phv.
 )
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
@@ -641,8 +726,193 @@ LaTeX Font Info:    Font shape `T1/phv/m/n' will be
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
 (Font)              scaled to size 9.85492pt on input line 142.
 
-pdfTeX warning (font expansion): font should be expanded before its first use
-[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+! Argument of \MakeTextUppercase has an extra }.
+<inserted text> 
+                \par 
+l.142 JavaScript }{}
+                    
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextUppercase was complete.
+<to be read again> 
+                   \par 
+l.142 JavaScript }{}
+                    
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.142 JavaScript }{}
+                    
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.142 JavaScript }{}
+                    
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.142 JavaScript }{}
+                    
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Use of \protect doesn't match its definition.
+\GenericError ->\protect \GenericError  
+                                        
+l.142 JavaScript }{}
+                    
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+! Argument of \MakeTextUppercase has an extra }.
+<inserted text> 
+                \par 
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextUppercase was complete.
+<to be read again> 
+                   \par 
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Use of \protect doesn't match its definition.
+\GenericError ->\protect \GenericError  
+                                        
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+! Argument of \MakeTextUppercase has an extra }.
+<inserted text> 
+                \par 
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextUppercase was complete.
+<to be read again> 
+                   \par 
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Use of \protect doesn't match its definition.
+\GenericError ->\protect \GenericError  
+                                        
+l.145 ...rogramming Language''}{Douglas Crockford}
+                                                  
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+[1
 
 
 ] [2
@@ -650,24 +920,402 @@ pdfTeX warning (font expansion): font should be expanded before its first use
 ]
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
 (Font)              scaled to size 16.19989pt on input line 147.
+
+! Argument of \MakeTextUppercase has an extra }.
+<inserted text> 
+                \par 
+l.147 \maketitle
+                
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextUppercase was complete.
+<to be read again> 
+                   \par 
+l.147 \maketitle
+                
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.147 \maketitle
+                
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.147 \maketitle
+                
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.147 \maketitle
+                
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Use of \protect doesn't match its definition.
+\GenericError ->\protect \GenericError  
+                                        
+l.147 \maketitle
+                
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
 (Font)              scaled to size 32.39978pt on input line 147.
+
+Overfull \hbox (18.6794pt too wide) in paragraph at lines 147--147
+\T1/phv/m/n/18 point. See page 4 of the man-ual.
+I'm leav-ing a black square 
+ []
+
+! Argument of \MakeTextUppercase has an extra }.
+<inserted text> 
+                \par 
+l.147 \maketitle
+                
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextUppercase was complete.
+<to be read again> 
+                   \par 
+l.147 \maketitle
+                
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.147 \maketitle
+                
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.147 \maketitle
+                
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.147 \maketitle
+                
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Use of \protect doesn't match its definition.
+\GenericError ->\protect \GenericError  
+                                        
+l.147 \maketitle
+                
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+
+Overfull \hbox (62.37169pt too wide) in paragraph at lines 147--147
+[] \T1/phv/m/n/36 JSXGraph|(soul)                Pack- 
+ []
+
+
+Overfull \hbox (8.97543pt too wide) in paragraph at lines 147--147
+\T1/phv/m/n/36 age soul Er-ror: Re-con-struc-tion 
+ []
+
+
+Overfull \hbox (33.92424pt too wide) in paragraph at lines 147--147
+\T1/phv/m/n/36 failed-See the soul pack-age doc- 
+ []
+
+
+Overfull \hbox (53.9139pt too wide) in paragraph at lines 147--147
+\T1/phv/m/n/36 u-men-ta-tion for ex-pla-na-tion.I came 
+ []
+
+
+Overfull \hbox (31.26813pt too wide) in paragraph at lines 147--147
+\T1/phv/m/n/36 en-closed in group braces,
+which 
+ []
+
+
+Overfull \hbox (16.81589pt too wide) in paragraph at lines 147--147
+\T1/phv/m/n/36 I can't han-dle. Ei-ther drop the 
+ []
+
+
+Overfull \hbox (169.3539pt too wide) in paragraph at lines 147--147
+\T1/phv/m/n/36 braces or make the ma-te-rial
+unbreakable 
+ []
+
+
+Overfull \hbox (27.60571pt too wide) in paragraph at lines 147--147
+\T1/phv/m/n/36 pos-si-ble hy-phen-ation point. See 
+ []
+
+
+Overfull \hbox (32.1739pt too wide) in paragraph at lines 147--147
+\T1/phv/m/n/36 page 4 of the man-ual.
+I'm leav- 
+ []
+
+
+Overfull \hbox (32.46667pt too wide) in paragraph at lines 147--147
+\T1/phv/m/n/36 ing a black square so that you 
+ []
+
+
+Overfull \hbox (39.62616pt too wide) in paragraph at lines 147--147
+\T1/phv/m/n/36 can see where I am right now.- 
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [3]
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
 (Font)              scaled to size 12.59991pt on input line 147.
- [3]
+
+! Argument of \MakeTextUppercase has an extra }.
+<inserted text> 
+                \par 
+l.147 \maketitle
+                
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextUppercase was complete.
+<to be read again> 
+                   \par 
+l.147 \maketitle
+                
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.147 \maketitle
+                
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.147 \maketitle
+                
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.147 \maketitle
+                
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Use of \protect doesn't match its definition.
+\GenericError ->\protect \GenericError  
+                                        
+l.147 \maketitle
+                
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+[4]
 LaTeX Font Info:    Try loading font information for TS1+pplj on input line 156
 .
-
-(/usr/share/texmf-texlive/tex/latex/psnfss/ts1pplj.fd
+ (c:/Programme/texlive/2008/texmf-dist/tex/latex/psnfss/ts1pplj.fd
 File: ts1pplj.fd 2004/09/06 font definitions for TS1/pplj.
 )
-Package microtype Info: Character `029' is missing in font
-(microtype)             `T1/pplj/m/sc/10'. Ignoring protrusion settings
-(microtype)             for this character.
+Package microtype Info: Character `029' is missing
+(microtype)             in font `T1/pplj/m/sc/10'.
+(microtype)             Ignoring protrusion settings for this character.
 
-pdfTeX warning (font expansion): font should be expanded before its first use
+! Argument of \MakeTextLowercase has an extra }.
+<inserted text> 
+                \par 
+l.158 ...allcaps{Published by \thanklesspublisher}
+                                                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextLowercase was complete.
+<to be read again> 
+                   \par 
+l.158 ...allcaps{Published by \thanklesspublisher}
+                                                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.158 ...allcaps{Published by \thanklesspublisher}
+                                                  
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.158 ...allcaps{Published by \thanklesspublisher}
+                                                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.158 ...allcaps{Published by \thanklesspublisher}
+                                                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Use of \protect doesn't match its definition.
+\GenericError ->\protect \GenericError  
+                                        
+l.158 ...allcaps{Published by \thanklesspublisher}
+                                                  
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+! Argument of \MakeTextLowercase has an extra }.
+<inserted text> 
+                \par 
+l.160 \par\smallcaps{jsxgraph.org}
+                                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextLowercase was complete.
+<to be read again> 
+                   \par 
+l.160 \par\smallcaps{jsxgraph.org}
+                                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.160 \par\smallcaps{jsxgraph.org}
+                                  
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.160 \par\smallcaps{jsxgraph.org}
+                                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.160 \par\smallcaps{jsxgraph.org}
+                                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Use of \protect doesn't match its definition.
+\GenericError ->\protect \GenericError  
+                                        
+l.160 \par\smallcaps{jsxgraph.org}
+                                  
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
 LaTeX Font Info:    Try loading font information for T1+fvm on input line 164.
-(/usr/share/texmf-texlive/tex/latex/bera/t1fvm.fd
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/bera/t1fvm.fd
 File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
 )
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
@@ -675,205 +1323,959 @@ LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
 LaTeX Font Info:    Try loading font information for OT1+pplx on input line 164
 .
 
-(/usr/share/texmf-texlive/tex/latex/psnfss/ot1pplx.fd
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/psnfss/ot1pplx.fd
 File: ot1pplx.fd 2004/09/06 font definitions for OT1/pplx.
 )
 LaTeX Font Info:    Try loading font information for OML+zplm on input line 164
 .
 
-(/usr/share/texmf-texlive/tex/latex/psnfss/omlzplm.fd
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/psnfss/omlzplm.fd
 File: omlzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OML/zplm.
 )
 LaTeX Font Info:    Try loading font information for OMS+zplm on input line 164
 .
 
-(/usr/share/texmf-texlive/tex/latex/psnfss/omszplm.fd
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/psnfss/omszplm.fd
 File: omszplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMS/zplm.
 )
 LaTeX Font Info:    Try loading font information for OMX+zplm on input line 164
 .
 
-(/usr/share/texmf-texlive/tex/latex/psnfss/omxzplm.fd
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/psnfss/omxzplm.fd
 File: omxzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMX/zplm.
 )
 LaTeX Font Info:    Try loading font information for OT1+zplm on input line 164
 .
 
-(/usr/share/texmf-texlive/tex/latex/psnfss/ot1zplm.fd
+(c:/Programme/texlive/2008/texmf-dist/tex/latex/psnfss/ot1zplm.fd
 File: ot1zplm.fd 2002/09/08 Fontinst v1.914 font definitions for OT1/zplm.
 )
-Overfull \hbox (0.32791pt too wide) in paragraph at lines 162--170
-\T1/pplj/m/n/10 (-8) compliance with the License. You may obtain a copy of the 
-License at []$\T1/fvm/m/n/10 http : / / www . apache . org / licenses / 
+! Argument of \MakeTextLowercase has an extra }.
+<inserted text> 
+                \par 
+l.167 WARRANTIES OR CONDITIONS OF ANY KIND}
+                                           , either express or implied. See the
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextLowercase was complete.
+<to be read again> 
+                   \par 
+l.167 WARRANTIES OR CONDITIONS OF ANY KIND}
+                                           , either express or implied. See the
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.167 WARRANTIES OR CONDITIONS OF ANY KIND}
+                                           , either express or implied. See the
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.167 WARRANTIES OR CONDITIONS OF ANY KIND}
+                                           , either express or implied. See the
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.167 WARRANTIES OR CONDITIONS OF ANY KIND}
+                                           , either express or implied. See the
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Use of \protect doesn't match its definition.
+\GenericError ->\protect \GenericError  
+                                        
+l.167 WARRANTIES OR CONDITIONS OF ANY KIND}
+                                           , either express or implied. See the
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+
+Overfull \hbox (42.053pt too wide) in paragraph at lines 162--170
+\T1/pplj/m/n/10 pli-ance with the Li-cense. You may ob-tain a copy of the Li-ce
+nse at [][][][]. 
  []
 
-[4
+[5
+
+] [6
 
 ] (./firststeps.toc)
 \tf@toc=\write6
 \openout6 = `firststeps.toc'.
 
- [5
-
-] [6
+ [7] [8
 
 ]
 Overfull \hbox (21.46352pt too wide) in paragraph at lines 181--184
 []\T1/pplj/m/it/18 Dedicated to those who appreciate JavaScript  
  []
 
-[7] [8
+[9] [10
 
-] [9
-
-] [10
-
-]
-
-LaTeX Warning: Marginpar on page 11 moved.
-
-
-Overfull \hbox (0.1816pt too wide) in paragraph at lines 204--206
-\T1/pplj/m/n/10 (+8) JSX-Graph is easy to em-bed and has a small foot-print: on
-ly about 70 
- []
-
-
-Overfull \hbox (0.39142pt too wide) in paragraph at lines 209--210
-[]\T1/pplj/m/n/10 (+8) JSXGraph is developed at the Lehrstuhl für Mathematik un
-d ihre 
- []
-
-
-LaTeX Warning: Marginpar on page 11 moved.
-
-[11
+] [11
 
 ] [12
 
 ]
 
-Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 234.
+LaTeX Warning: Marginpar on page 13 moved.
 
 
-Overfull \hbox (0.11761pt too wide) in paragraph at lines 241--243
-\T1/pplj/m/n/10 (-16) you can use the online version. Then, the beginning of th
-e HTML file 
- []
+LaTeX Warning: Marginpar on page 13 moved.
 
-(/usr/share/texmf-texlive/tex/latex/listings/lstlang1.sty
+[13
+
+] [14
+
+] (c:/Programme/texlive/2008/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2004/09/05 1.3 listings language file
-)
-(/usr/share/texmf-texlive/tex/latex/listings/lstmisc.sty
-File: lstmisc.sty 2004/09/07 1.3 (Carsten Heinz)
+) (c:/Programme/texlive/2008/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
 )
 LaTeX Font Info:    Font shape `T1/pplj/bx/n' in size <8> not available
 (Font)              Font shape `T1/pplj/b/n' tried instead on input line 244.
 
 Overfull \hbox (21.27267pt too wide) in paragraph at lines 259--260
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
-][][][] 
+][][][][][] 
  []
 
 
 Overfull \hbox (11.67258pt too wide) in paragraph at lines 260--261
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
-
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][] 
  []
 
 
 Overfull \hbox (26.07272pt too wide) in paragraph at lines 261--262
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
-
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][] 
  []
 
 
-Overfull \hbox (0.45378pt too wide) in paragraph at lines 268--270
-\T1/pplj/m/n/10 (+12) Alternatively, the framework jQuery from http://jquery.co
-m can be 
- []
+LaTeX Warning: Marginpar on page 15 moved.
+
+[15]
+
+! LaTeX Error: Cannot determine size of graphic in images/b2.png (no BoundingBo
+x).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.297 ...hics[width=0.4\linewidth]{images/b2.png}}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/b2.png Graphic file (type eps)
+<images/b2.png>
+! Argument of \MakeTextLowercase has an extra }.
+<inserted text> 
+                \par 
+l.325 \end{lstlisting}
+                      
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextLowercase was complete.
+<to be read again> 
+                   \par 
+l.325 \end{lstlisting}
+                      
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.325 \end{lstlisting}
+                      
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.325 \end{lstlisting}
+                      
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.325 \end{lstlisting}
+                      
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Undefined control sequence.
+\newlinetospace  #1->\let \@tufte@orig@cr 
+                                          \\\def \\{\@tufte@newlinetospace }...
+l.325 \end{lstlisting}
+                      
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Use of \SOUL@n doesn't match its definition.
+\\... {\string \MakeTextLowercase }\edef \SOUL@n {
+                                                  \string #2}\ifx \SOUL@x \S...
+l.325 \end{lstlisting}
+                      
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+! Use of \protect doesn't match its definition.
+\@tufte@newlinetospace ...\@tufte@newlinetospace  
+                                                  
+l.325 \end{lstlisting}
+                      
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
 
 
-LaTeX Warning: Marginpar on page 13 moved.
+! Package soul Error: Reconstruction failed.
+
+See the soul package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.325 \end{lstlisting}
+                      
+I came across hyphenatable material enclosed in group braces,
+which I can't handle. Either drop the braces or make the material
+unbreakable using an \mbox (\hbox). Note that a space
+also counts as possible hyphenation point. See page 4 of the manual.
+I'm leaving a black square so that you can see where I am right now.
+
+! Undefined control sequence.
+\SOUL@postamble ...obal \skip@ =\SOUL@soouterskip 
+                                                  \aftergroup \SOUL@socheck 
+l.325 \end{lstlisting}
+                      
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Missing number, treated as zero.
+<to be read again> 
+                   \aftergroup 
+l.325 \end{lstlisting}
+                      
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \aftergroup 
+l.325 \end{lstlisting}
+                      
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Extra }, or forgotten \endgroup.
+\SOUL@n ...rave \z@ \SOUL@do {#1}\SOUL@postamble }
+                                                  
+l.325 \end{lstlisting}
+                      
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+[16]
+! Argument of \MakeTextLowercase has an extra }.
+<inserted text> 
+                \par 
+l.344 \chapter
+              {Creating geometric elements}
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextLowercase was complete.
+<to be read again> 
+                   \par 
+l.344 \chapter
+              {Creating geometric elements}
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.344 \chapter
+              {Creating geometric elements}
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.344 \chapter
+              {Creating geometric elements}
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.344 \chapter
+              {Creating geometric elements}
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Undefined control sequence.
+\newlinetospace  #1->\let \@tufte@orig@cr 
+                                          \\\def \\{\@tufte@newlinetospace }...
+l.344 \chapter
+              {Creating geometric elements}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Use of \SOUL@n doesn't match its definition.
+\\... {\string \MakeTextLowercase }\edef \SOUL@n {
+                                                  \string #2}\ifx \SOUL@x \S...
+l.344 \chapter
+              {Creating geometric elements}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+! Use of \protect doesn't match its definition.
+\@tufte@newlinetospace ...\@tufte@newlinetospace  
+                                                  
+l.344 \chapter
+              {Creating geometric elements}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
 
 
-Overfull \hbox (0.48877pt too wide) in paragraph at lines 284--285
-\T1/pplj/m/n/10 (+12) The geometric construction which is displayed by JSXGraph
- resides 
- []
+! Package soul Error: Reconstruction failed.
 
+See the soul package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.344 \chapter
+              {Creating geometric elements}
+I came across hyphenatable material enclosed in group braces,
+which I can't handle. Either drop the braces or make the material
+unbreakable using an \mbox (\hbox). Note that a space
+also counts as possible hyphenation point. See page 4 of the manual.
+I'm leaving a black square so that you can see where I am right now.
 
-Overfull \hbox (0.3206pt too wide) in paragraph at lines 284--285
-\T1/pplj/m/n/10 (+12) needs an ID. Using this ID, we declare this element to be
- a drawing 
- []
+! Undefined control sequence.
+\SOUL@postamble ...obal \skip@ =\SOUL@soouterskip 
+                                                  \aftergroup \SOUL@socheck 
+l.344 \chapter
+              {Creating geometric elements}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
 
-[13] <images/b2.png, id=128, 395.54225pt x 388.73653pt>
-File: images/b2.png Graphic file (type png)
- <use images/b2.png>
-[14 <./images/b2.png (PNG copy)>] [15] [16
+! Missing number, treated as zero.
+<to be read again> 
+                   \aftergroup 
+l.344 \chapter
+              {Creating geometric elements}
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \aftergroup 
+l.344 \chapter
+              {Creating geometric elements}
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Extra }, or forgotten \endgroup.
+\SOUL@n ...rave \z@ \SOUL@do {#1}\SOUL@postamble }
+                                                  
+l.344 \chapter
+              {Creating geometric elements}
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+[17] [18
 
 ]
 LaTeX Font Info:    Font shape `T1/pplj/bx/n' in size <10> not available
 (Font)              Font shape `T1/pplj/b/n' tried instead on input line 373.
 
-Overfull \hbox (0.16328pt too wide) in paragraph at lines 376--378
-\T1/pplj/m/n/10 (-12) element. This can be parent elements like two points whic
-h define 
- []
+
+LaTeX Warning: Marginpar on page 19 moved.
 
 
-LaTeX Warning: Marginpar on page 17 moved.
+! LaTeX Error: Cannot determine size of graphic in images/b3.png (no BoundingBo
+x).
 
-<images/b3.png, id=166, 362.12709pt x 121.7179pt>
-File: images/b3.png Graphic file (type png)
- <use images/b3.png>
-Overfull \hbox (0.28578pt too wide) in paragraph at lines 384--390
-\T1/pplj/m/n/10 (-16) This example in Figure []2[] shows how to construct a sim
-ple, draggable 
- []
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.386 ...hics[width=0.4\linewidth]{images/b3.png}}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
-[17]
+File: images/b3.png Graphic file (type eps)
+<images/b3.png> [19]
 LaTeX Font Info:    Font shape `T1/pplj/m/sl' in size <10> not available
 (Font)              Font shape `T1/pplj/m/it' tried instead on input line 400.
- <images/b4.png, id=184, 382.33162pt x 132.36821pt>
-File: images/b4.png Graphic file (type png)
- <use images/b4.png>
-Overfull \hbox (0.32262pt too wide) in paragraph at lines 416--418
-[] []\T1/pplj/m/it/10 Point styles[] \T1/pplj/m/n/10 (+4) The layout of a point
- can be influenced by the property 
- []
 
-[18 <./images/b3.png (PNG copy)> <./images/b4.png (PNG copy)>]
-<images/b5.png, id=203, 477.13742pt x 123.23936pt>
-File: images/b5.png Graphic file (type png)
- <use images/b5.png> [19 <./images/b5.png (PNG copy)>]
+
+! LaTeX Error: Cannot determine size of graphic in images/b4.png (no BoundingBo
+x).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.411 ...hics[width=0.4\linewidth]{images/b4.png}}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/b4.png Graphic file (type eps)
+<images/b4.png>
+! Argument of \MakeTextLowercase has an extra }.
+<inserted text> 
+                \par 
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextLowercase was complete.
+<to be read again> 
+                   \par 
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Undefined control sequence.
+\newlinetospace  #1->\let \@tufte@orig@cr 
+                                          \\\def \\{\@tufte@newlinetospace }...
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Use of \SOUL@n doesn't match its definition.
+\\... {\string \MakeTextLowercase }\edef \SOUL@n {
+                                                  \string #2}\ifx \SOUL@x \S...
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+! Use of \protect doesn't match its definition.
+\@tufte@newlinetospace ...\@tufte@newlinetospace  
+                                                  
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+
+! Package soul Error: Reconstruction failed.
+
+See the soul package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+
+I came across hyphenatable material enclosed in group braces,
+which I can't handle. Either drop the braces or make the material
+unbreakable using an \mbox (\hbox). Note that a space
+also counts as possible hyphenation point. See page 4 of the manual.
+I'm leaving a black square so that you can see where I am right now.
+
+! Undefined control sequence.
+\SOUL@postamble ...obal \skip@ =\SOUL@soouterskip 
+                                                  \aftergroup \SOUL@socheck 
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Missing number, treated as zero.
+<to be read again> 
+                   \aftergroup 
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \aftergroup 
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Extra }, or forgotten \endgroup.
+\SOUL@n ...rave \z@ \SOUL@do {#1}\SOUL@postamble }
+                                                  
+l.416 T
+       he layout of a point can be influenced by the property \lstinline|typ...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+[20]
+
+! LaTeX Error: Cannot determine size of graphic in images/b5.png (no BoundingBo
+x).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.452 ...hics[width=0.4\linewidth]{images/b5.png}}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/b5.png Graphic file (type eps)
+<images/b5.png>
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+! Argument of \MakeTextLowercase has an extra }.
+<inserted text> 
+                \par 
+l.479 \end{center}
+                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+! Paragraph ended before \MakeTextLowercase was complete.
+<to be read again> 
+                   \par 
+l.479 \end{center}
+                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.479 \end{center}
+                  
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.479 \end{center}
+                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.479 \end{center}
+                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Undefined control sequence.
+\newlinetospace  #1->\let \@tufte@orig@cr 
+                                          \\\def \\{\@tufte@newlinetospace }...
+l.479 \end{center}
+                  
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Use of \SOUL@n doesn't match its definition.
+\\... {\string \MakeTextLowercase }\edef \SOUL@n {
+                                                  \string #2}\ifx \SOUL@x \S...
+l.479 \end{center}
+                  
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+! Use of \protect doesn't match its definition.
+\@tufte@newlinetospace ...\@tufte@newlinetospace  
+                                                  
+l.479 \end{center}
+                  
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+
+! Package soul Error: Reconstruction failed.
+
+See the soul package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.479 \end{center}
+                  
+I came across hyphenatable material enclosed in group braces,
+which I can't handle. Either drop the braces or make the material
+unbreakable using an \mbox (\hbox). Note that a space
+also counts as possible hyphenation point. See page 4 of the manual.
+I'm leaving a black square so that you can see where I am right now.
+
+! Undefined control sequence.
+\SOUL@postamble ...obal \skip@ =\SOUL@soouterskip 
+                                                  \aftergroup \SOUL@socheck 
+l.479 \end{center}
+                  
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Missing number, treated as zero.
+<to be read again> 
+                   \aftergroup 
+l.479 \end{center}
+                  
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \aftergroup 
+l.479 \end{center}
+                  
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Extra }, or forgotten \endgroup.
+\SOUL@n ...rave \z@ \SOUL@do {#1}\SOUL@postamble }
+                                                  
+l.479 \end{center}
+                  
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+[21]
 
 Package bibentry Warning: You have used \nobibliography* 
 (bibentry)                without a following \bibliography.
 (bibentry)                You may not be able to run BibTeX.
 
-(./firststeps.aux) ) 
-Here is how much of TeX's memory you used:
- 9967 strings out of 94074
- 143465 string characters out of 1165153
- 343624 words of memory out of 1500000
- 12753 multiletter control sequences out of 10000+50000
- 96550 words of font info for 196 fonts, out of 1200000 for 2000
- 645 hyphenation exceptions out of 8191
- 40i,14n,51p,307b,1812s stack positions out of 5000i,500n,6000p,200000b,5000s
-{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}</usr
-/share/texmf-texlive/fonts/type1/bluesky/cm/cmr10.pfb></usr/share/texmf-texlive
-/fonts/type1/bluesky/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public
-/fpl/fplrc8a.pfb></usr/share/texmf-texlive/fonts/type1/public/fpl/fplrij8a.pfb>
-</usr/share/texmf-texlive/fonts/type1/public/bera/fvmr8a.pfb></usr/share/texmf-
-texlive/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/share/texmf-texlive/fonts/typ
-e1/urw/palatino/uplb8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/palatino/u
-plr8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on firststeps.pdf (19 pages, 149625 bytes).
-PDF statistics:
- 276 PDF objects out of 1000 (max. 8388607)
- 113 named destinations out of 1000 (max. 131072)
- 63053 words of extra memory for PDF output out of 74296 (max. 10000000)
+! Argument of \MakeTextLowercase has an extra }.
+<inserted text> 
+                \par 
+l.490 \end{document}
+                    
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
 
+Runaway argument?
+! Paragraph ended before \MakeTextLowercase was complete.
+<to be read again> 
+                   \par 
+l.490 \end{document}
+                    
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! You can't use `math shift character $' after \the.
+\@uclcnotmath ...dgroup \noexpand \@skipmath #3#4$
+                                                  \valign $}\reserved@a 
+l.490 \end{document}
+                    
+I'm forgetting what you said and using zero instead.
+
+! Argument of \@skipmath has an extra }.
+<inserted text> 
+                \par 
+l.490 \end{document}
+                    
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\SOUL@token 
+! Paragraph ended before \@skipmath was complete.
+<to be read again> 
+                   \par 
+l.490 \end{document}
+                    
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Undefined control sequence.
+\newlinetospace  #1->\let \@tufte@orig@cr 
+                                          \\\def \\{\@tufte@newlinetospace }...
+l.490 \end{document}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Use of \SOUL@n doesn't match its definition.
+\\... {\string \MakeTextLowercase }\edef \SOUL@n {
+                                                  \string #2}\ifx \SOUL@x \S...
+l.490 \end{document}
+                    
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+! Use of \protect doesn't match its definition.
+\@tufte@newlinetospace ...\@tufte@newlinetospace  
+                                                  
+l.490 \end{document}
+                    
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+
+
+! Package soul Error: Reconstruction failed.
+
+See the soul package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.490 \end{document}
+                    
+I came across hyphenatable material enclosed in group braces,
+which I can't handle. Either drop the braces or make the material
+unbreakable using an \mbox (\hbox). Note that a space
+also counts as possible hyphenation point. See page 4 of the manual.
+I'm leaving a black square so that you can see where I am right now.
+
+! Undefined control sequence.
+\SOUL@postamble ...obal \skip@ =\SOUL@soouterskip 
+                                                  \aftergroup \SOUL@socheck 
+l.490 \end{document}
+                    
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Missing number, treated as zero.
+<to be read again> 
+                   \aftergroup 
+l.490 \end{document}
+                    
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \aftergroup 
+l.490 \end{document}
+                    
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Extra }, or forgotten \endgroup.
+\SOUL@n ...rave \z@ \SOUL@do {#1}\SOUL@postamble }
+                                                  
+l.490 \end{document}
+                    
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+[22] (./firststeps.aux) ) 
+Here is how much of TeX's memory you used:
+ 12492 strings out of 493877
+ 182869 string characters out of 1149896
+ 428837 words of memory out of 3000000
+ 15509 multiletter control sequences out of 10000+50000
+ 55533 words of font info for 68 fonts, out of 3000000 for 5000
+ 714 hyphenation exceptions out of 8191
+ 47i,14n,72p,881b,1763s stack positions out of 5000i,500n,10000p,200000b,50000s
+
+Output written on firststeps.dvi (22 pages, 66432 bytes).

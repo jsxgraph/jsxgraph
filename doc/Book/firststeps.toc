@@ -1,11 +1,11 @@
-\contentsline {chapter}{JSXGraph --- what?}{11}{chapter*.3}
-\contentsline {paragraph}{Features}{11}{chapter*.3}
-\contentsline {paragraph}{License}{11}{chapter*.3}
-\contentsline {chapter}{Include JSXGraph into web pages}{13}{chapter*.4}
-\contentsline {section}{Additional files}{13}{section*.5}
-\contentsline {section}{The drawing panel}{14}{lstnumber.-3.5}
-\contentsline {chapter}{Creating geometric elements}{17}{chapter*.6}
-\contentsline {subsection}{Construction of a free point}{17}{lstnumber.-9.1}
-\contentsline {subsection}{Attributes of a point}{18}{lstnumber.-10.7}
-\contentsline {paragraph}{Point styles}{18}{lstnumber.-11.3}
+\contentsline {chapter}{JSXGraph --- what?}{13}{chapter*.3}
+\contentsline {paragraph}{Features}{13}{paragraph*.4}
+\contentsline {paragraph}{License}{13}{paragraph*.5}
+\contentsline {chapter}{Include JSXGraph into web pages}{15}{chapter*.6}
+\contentsline {section}{Additional files}{15}{section*.7}
+\contentsline {section}{The drawing panel}{16}{section*.8}
+\contentsline {chapter}{Creating geometric elements}{19}{chapter*.9}
+\contentsline {subsection}{Construction of a free point}{19}{subsection*.10}
+\contentsline {subsection}{Attributes of a point}{20}{subsection*.11}
+\contentsline {paragraph}{Point styles}{21}{paragraph*.12}
 \contentsfinish 

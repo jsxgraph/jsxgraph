@@ -1,19 +1,15 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
 
-\ProvidesClass{tufte-book}[2009/05/17 v3.0.0 Tufte-book class]
+\ProvidesClass{tufte-book}[2009/12/11 v3.5.0 Tufte-book class]
 
+%%
+% Declare we're tufte-book
+\newcommand{\@tufte@class}{book}% the base LaTeX class (defaults to the article/handout style)
+\newcommand{\@tufte@pkgname}{tufte-book}% the name of the package (defaults to tufte-handout)
 
-\PassOptionsToPackage{book}{tufte-common}
-\DeclareOption*{% pass options to tufte-common package and the article class
-  \PassOptionsToPackage{\CurrentOption}{tufte-common}
-  \PassOptionsToClass{\CurrentOption}{book}
-  \PackageInfo{tufte-book}{Passing \CurrentOption\space to `book' class}
-}
-\ProcessOptions
-
-\LoadClass{book}
-
-\RequirePackage{tufte-common}
+%%
+% Load the common style elements
+\input{tufte-common.def}
 
 
 %%
@@ -46,11 +42,11 @@
   \ifthenelse{\boolean{@tufte@twoside}}%
     {% two-side
       \renewcommand{\chaptermark}[1]{\markboth{##1}{}}%
-      \fancyhead[LE]{\thepage\quad\smallcaps{\plaintitle}}% book title
-      \fancyhead[RO]{\smallcaps{\leftmark}\quad\thepage}% chapter title
+      \fancyhead[LE]{\thepage\quad\smallcaps{\newlinetospace{\plaintitle}}}% book title
+      \fancyhead[RO]{\smallcaps{\newlinetospace{\leftmark}}\quad\thepage}% chapter title
     }%
     {% one-side
-      \fancyhead[RE,RO]{\smallcaps{\plaintitle}\quad\thepage}% book title
+      \fancyhead[RE,RO]{\smallcaps{\newlinetospace{\plaintitle}}\quad\thepage}% book title
     }%
 }
 
@@ -75,7 +71,8 @@
 % If there is a `tufte-book-local.sty' file, load it.
 
 \IfFileExists{tufte-book-local.tex}
-  {\input{tufte-book-local}}
+  {\input{tufte-book-local}
+   \TufteInfoNL{Loading tufte-book-local.tex}}
   {}
 
 %%

@@ -202,7 +202,7 @@ This booklet shows how to use the open-source library JSXGraph (http://jsxgraph.
 \marginnote{Interactive Geometry, plotting, visualization}
 
 JSXGraph is a cross-browser library for interactive geometry, function plotting, graphs, and data visualization in a web browser. It is implemented completely in JavaScript and uses SVG and VML.
-JSXGraph is easy to embed and has a small footprint: only about 70 kByte if embedded in a web page. No plug-ins are required! 
+JSXGraph is easy to embed and has a small footprint: only about 80 kByte if embedded in a web page. No plug-ins are required! 
 
 JSXGraph uses the JavaScript libraries/frameworks Prototype or jQuery.
 
@@ -232,19 +232,17 @@ JSXGraph is released under the LGPL - Lesser GNU General Public License. So, eve
 \label{ch:include}
 
 \section{Additional files}
-For including JSXGraph into HTML, three files are necessary:
+For including JSXGraph into HTML, two files are necessary:
 \begin{itemize}
-    \item prototype.js from http://www.prototypejs.org 
     \item jsxgraphcore.js
     \item jsxgraph.css
 \end{itemize}
-You can either download these three files and use the local copy or you can use the online version.
+You can either download these two files and use the local copy or you can use the online version.
 Then, the beginning of the HTML file should start like this:
 \begin{fullwidth}\begin{lstlisting}[language=HTML]
 <html>
 <head>
  <link rel="stylesheet" type="text/css" href="jsxgraph.css" />
- <script type="text/javascript" src="prototype.js"></script>
  <script type="text/javascript" src="jsxgraphcore.js"></script>
 </head>
 <body>
@@ -257,7 +255,6 @@ If you want to include the online of JSXGraph in your HTML file then you have to
 <html>
 <head>
  <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
- <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/prototype.js"></script>
  <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
 </head>
 <body>
@@ -265,19 +262,6 @@ If you want to include the online of JSXGraph in your HTML file then you have to
 </body>
 </html>
 \end{lstlisting}\end{fullwidth}
-Alternatively, the framework jQuery from http://jquery.com can be used.
-The following text has to be included in the head part of the HTML file.
-\begin{fullwidth}\begin{lstlisting}[language=HTML]
-<head>
- <link rel="stylesheet" type="text/css" href="jsxgraph.css" />
- <script type="text/javascript" src="jquery.min.js"></script>
- <script type="text/javascript" src="jsxgraphcore.js"></script>
-</head>
-\end{lstlisting}\end{fullwidth}
-\marginnote{What to use? prototype.js or jquery.js? 
-
-The choice completely depends on you. JSXGraph works with both packages equally good. 
-Choose the package you're most familiar with.}
 
 \section{The drawing panel}
 
@@ -303,7 +287,6 @@ The complete HTML file then looks like this:
 <html>
 <head>
  <link rel="stylesheet" type="text/css" href="jsxgraph.css" />
- <script type="text/javascript" src="prototype.js"></script>
  <script type="text/javascript" src="jsxgraphcore.js"></script>
 </head>
 <body>

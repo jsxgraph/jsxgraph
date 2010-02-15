@@ -274,7 +274,6 @@ JXG.Point.prototype.hasPoint = function (x,y) {
 */
 JXG.Point.prototype.updateConstraint = function() { return this; };
 
-
 /**
  * Updates the position of the point.
  */
