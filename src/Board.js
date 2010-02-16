@@ -723,7 +723,6 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
     return this;
 };
 
-
 /**
  * iPhone-Events
  */
@@ -899,6 +898,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
             } else if (this.drag_obj.slideObject.type == JXG.OBJECT_TYPE_LINE) {
                 this.drag_obj.coords = this.algebra.projectPointToLine(this.drag_obj, this.drag_obj.slideObject);
             }
+            // Now, we have to adjust the other group elements again.
             if(this.drag_obj.group.length != 0) {
                 this.drag_obj.group[this.drag_obj.group.length-1].dX = this.drag_obj.coords.scrCoords[1] - oldCoords.scrCoords[1];
                 this.drag_obj.group[this.drag_obj.group.length-1].dY = this.drag_obj.coords.scrCoords[2] - oldCoords.scrCoords[2];
