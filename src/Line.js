@@ -207,18 +207,16 @@ JXG.Line.prototype = new JXG.GeometryElement;
  */
  JXG.Line.prototype.hasPoint = function (x, y) {
     // Compute the stdform of the line in screen coordinates.
-    var c = [],
+    var c = [], s,
         v = [1,x,y],
         vnew = [],
         mu, i, coords, p1Scr, p2Scr, distP1P, distP2P, distP1P2;
-
 
     c[0] = this.stdform[0] -
                 this.stdform[1]*this.board.origin.scrCoords[1]/this.board.stretchX+
                 this.stdform[2]*this.board.origin.scrCoords[2]/this.board.stretchY;
     c[1] = this.stdform[1]/this.board.stretchX;
     c[2] = this.stdform[2]/(-this.board.stretchY);
-
 
     // Project the point orthogonally onto the line 
     var vnew = [0,c[1],c[2]];
@@ -233,12 +231,10 @@ JXG.Line.prototype = new JXG.GeometryElement;
     // The point is too far away from the line
     // dist(v,vnew)^2 projective
     //if (this.board.algebra.distance(v,vnew)>this.board.options.precision.hasPoint) {
-    if ((v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2])>this.board.options.precision.hasPoint*this.board.options.precision.hasPoint) {
+    s = (v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2]);
+    if (isNaN(s) || s>this.board.options.precision.hasPoint*this.board.options.precision.hasPoint) {
         return false;
     }
-    
-
-
 
     if(this.visProp['straightFirst'] && this.visProp['straightLast']) {
         return true;
