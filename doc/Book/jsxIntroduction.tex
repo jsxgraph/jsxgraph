@@ -1,17 +1,23 @@
 \chapter*{Introduction}
-This booklet shows how to use the open-source library JSXGraph (http://jsxgraph.org).
+This booklet shows how to use the JavaScript library JSXGraph for dynamic mathematics 
+(\url{http://jsxgraph.org}).
+JSXGraph runs on every modern browser, and on most systems from desktop computers to mobile phones.
+The claim of JSXGraph is to be the fastest and the most dynamic library for this purpose.
 
-\marginnote{Interactive Geometry, plotting, visualization}
 
-JSXGraph is a cross-browser library for interactive geometry, function plotting, graphs, and data visualization in a web browser. It is implemented completely in JavaScript and uses SVG and VML.
-JSXGraph is easy to embed and has a small footprint: only about 80 kByte if embedded in a web page. No plug-ins are required! 
+\marginnote{Dynamic Mathematics, plotting, visualization}
 
-JSXGraph uses the JavaScript libraries/frameworks Prototype or jQuery.
+JSXGraph is a cross-browser library for interactive geometry, function plotting, charting, and data visualization in a web browser. 
+It is implemented completely in JavaScript, does not rely on any other library, and uses SVG and VML. 
+JSXGraph is easy to embed and has a small footprint: 
+less than 100 KByte if embedded in a web page. No plug-ins are required! Special care has been taken to optimize the performance. 
+Starting with version 0.80 JSXGraph supports multitouch devices like the Apple iPhone and devices running 
+Opera mini or Mozilla Fennec.
 
 JSXGraph is developed at the Lehrstuhl f\"ur Mathematik und ihre Didaktik, University of Bayreuth, Germany.
 
 
-\paragraph{Features}\marginnote{Available at http://jsxgraph.org}
+\paragraph{Features}\marginnote{Available at \url{http://jsxgraph.org}}
 \begin{itemize}
     \item Euclidean Geometry: Points, lines, circles, intersections, perpendicular lines, angles
     \item  Curve plotting: Graphs, parametric curves, polar curves, data plots
@@ -24,6 +30,13 @@ JSXGraph is developed at the Lehrstuhl f\"ur Mathematik und ihre Didaktik, Unive
     \item  Charts
     \item  Vectors
 \end{itemize}
+
+\paragraph{Technical details}
+On all browsers except the Internet Explorer JSXGraph uses the vector graphic language SVG. On the Internet Explorer
+the vector graphics language VML is used. JSXGraph is highly optimized to run smoothly on all types of browsers. This is true even 
+for devices with less computing power like mobile phones.\marginnote{SVG: Scalable Vector Graphics, VML: Vector Markup Language}
+
+
 
 \paragraph{License}
 
