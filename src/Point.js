@@ -547,14 +547,37 @@ JXG.Point.prototype.Dist = function(point2) {
  * @param {number} y y coordinate in screen/user units
  */
 JXG.Point.prototype.setPositionDirectly = function (method, x, y) {
-    var oldCoords = this.coords;
-    this.coords = new JXG.Coords(method, [x,y], this.board);
+    var i, dx, dy, el, p,
+        oldCoords = this.coords;
+        
     
+    this.coords = new JXG.Coords(method, [x,y], this.board);
+
     if(this.group.length != 0) {
+        // Update the initial coordinates. This is needed for free points
+        // that have a transformation bound to it.
+        dx = this.coords.usrCoords[1]-oldCoords.usrCoords[1];
+        dy = this.coords.usrCoords[2]-oldCoords.usrCoords[2];
+        for (i=0;i<this.group.length;i++) {
+            for (el in this.group[i].objects) {
+                p = this.group[i].objects[el];
+                p.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                    [p.initialCoords.usrCoords[1]+dx,p.initialCoords.usrCoords[2]+dy], 
+                    this.board);
+            }
+        }
+
         this.group[this.group.length-1].dX = this.coords.scrCoords[1] - oldCoords.scrCoords[1];
         this.group[this.group.length-1].dY = this.coords.scrCoords[2] - oldCoords.scrCoords[2];
         this.group[this.group.length-1].update(this);
     } else {
+        // Update the initial coordinates. This is needed for free points
+        // that have a transformation bound to it.
+        for (i=this.transformations.length-1;i>=0;i--) {
+            this.initialCoords = new JXG.Coords(method, 
+                JXG.Math.matVecMult(JXG.Math.Numerics.Inverse(this.transformations[i].matrix),[1,x,y]), 
+                this.board);      
+        }
         this.update();
     }
     return this;
@@ -696,15 +719,16 @@ JXG.Point.prototype.updateTransform = function () {
     if (this.transformations.length==0 || this.baseElement==null) {
         return;
     }
-    if (this===this.baseElement) {
-        var c = this.transformations[0].apply(this.baseElement,'self');
-    } else {
-        var c = this.transformations[0].apply(this.baseElement);
+    var c, i;
+
+    if (this===this.baseElement) {      // case of bindTo
+        c = this.transformations[0].apply(this.baseElement,'self');
+    } else {                           // case of board.create('point',[baseElement,transform]);
+        c = this.transformations[0].apply(this.baseElement);
     }
-    this.coords.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
-    for (var i=1;i<this.transformations.length;i++) {
-        c = this.transformations[i].apply(this);
-        this.coords.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
+    this.coords.setCoordinates(JXG.COORDS_BY_USER,c);
+    for (i=1;i<this.transformations.length;i++) {
+        this.coords.setCoordinates(JXG.COORDS_BY_USER,this.transformations[i].apply(this));
     }
     return this;
 };

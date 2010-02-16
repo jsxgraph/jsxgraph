@@ -183,6 +183,64 @@ JXG.Math.Numerics.Gauss = function(/** JXG.Math.Matrix */ A, /** JXG.Math.Vector
 };
 
 /**
+ * Compute the inverse of an nxn matrix with Gauss elimination.
+ * @param {JXG.Math.Matrix} Ain
+ */
+JXG.Math.Numerics.Inverse = function(Ain) {
+    var i,j,k,s,ma,r,swp,
+        n = Ain.length,
+        A = [],
+        p = [],
+        hv = [];
+        
+    for (i=0;i<n;i++) {
+        A[i] = [];
+        for (j=0;j<n;j++) { A[i][j] = Ain[i][j]; }
+        p[i] = i;
+    }
+    
+    for (j=0;j<n;j++) {
+        // pivot search:
+        ma = Math.abs(A[j][j]);
+        r = j;
+        for (i=j+1;i<n;i++) {
+            if (Math.abs(A[i][j])>ma) {
+                ma = Math.abs(A[i][j]);
+                r = i;
+            }
+        }
+        if (ma<=JXG.Math.eps) { // Singular matrix
+            return false;  
+        }
+        // swap rows:
+        if (r>j) {
+            for (k=0;k<n;k++) { 
+                swp = A[j][k]; A[j][k] = A[r][k]; A[r][k] = swp;
+            }
+            swp = p[j]; p[j] = p[r]; p[r] = swp;
+        }
+        // transformation:
+        s = 1.0/A[j][j];
+        for (i=0;i<n;i++) {
+            A[i][j] *= s;
+        }
+        A[j][j] = s;
+        for (k=0;k<n;k++) if (k!=j) {
+            for (i=0;i<n;i++) if (i!=j) {
+                A[i][k] -= A[i][j]*A[j][k];
+            }
+            A[j][k] = -s*A[j][k];
+        }
+    }
+    // swap columns:
+    for (i=0;i<n;i++) {
+        for (k=0;k<n;k++) { hv[p[k]] = A[i][k]; }
+        for (k=0;k<n;k++) { A[i][k] = hv[k]; }
+    }
+    return A;
+};
+
+/**
  * NEEDS IMPLEMENTATION. TODO Decomposites the matrix A in an orthogonal matrix Q and a right triangular matrix R. 
  * @param {JXG.Math.Matrix} A A matrix.
  * @type Object
@@ -195,8 +253,8 @@ JXG.Math.Numerics.QR = function(A, b) {
 };
 
 /**
- * 
- * @param {JXG.Math.Matrix} Ain A symmetric matrix.
+ * Compute the Eigenvalues and Eigenvectors of a symmetric 3x3 matrix with the Jacobi method
+ * @param {JXG.Math.Matrix} Ain A symmetric 3x3 matrix.
  * @type Object
  * @throws {Exception} If A's rank is not full.
  * @return [A,V] the matrices A and V. The diagonal of A contains the Eigenvalues,
@@ -876,24 +934,6 @@ JXG.Math.Numerics.newton = function(/** function */ f, /** number */ x, /** obje
  */
 JXG.Math.Numerics.root = function(/** function */ f, /** number */ x, /** object */ obj) /** number */ {
     return this.newton(f,x,obj);
-};
-
-/**
- * Cosine hyperbolicus of x.
- * @param {float} x The number the cosine hyperbolicus will be calculated of.
- * @return {float} Cosine hyperbolicus of the given value.
- */
-JXG.Math.Numerics.cosh = function(/** number */ x) /** number */ {
-    return (Math.exp(x)+Math.exp(-x))*0.5;
-};
-
-/**
- * Sine hyperbolicus of x.
- * @param {number} x The number the sine hyperbolicus will be calculated of.
- * @return {number} Sine hyperbolicus of the given value.
- */
-JXG.Math.Numerics.sinh = function(/** number */ x) /** number */ {
-    return (Math.exp(x)-Math.exp(-x))*0.5;
 };
 
 /**

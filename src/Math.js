@@ -409,3 +409,22 @@ JXG.Math.round = function(num, n) {
     t = parseInt(num.toString());
     return t+z;
 };
+
+/**
+ * Cosine hyperbolicus of x.
+ * @param {float} x The number the cosine hyperbolicus will be calculated of.
+ * @return {float} Cosine hyperbolicus of the given value.
+ */
+JXG.Math.cosh = function(/** number */ x) /** number */ {
+    return (Math.exp(x)+Math.exp(-x))*0.5;
+};
+
+/**
+ * Sine hyperbolicus of x.
+ * @param {number} x The number the sine hyperbolicus will be calculated of.
+ * @return {number} Sine hyperbolicus of the given value.
+ */
+JXG.Math.sinh = function(/** number */ x) /** number */ {
+    return (Math.exp(x)-Math.exp(-x))*0.5;
+};
+

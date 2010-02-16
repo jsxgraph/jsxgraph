@@ -223,18 +223,6 @@ JXG.Transformation.prototype.bindTo = function(p){
     }
 };
 
-/**
- * Matrix-vector-multiplication.
- * @param {Array} mat1 In - Two dimensional array of numbers
- * @param {Array} vec In - Array of numbers
- * @type Array
- * @return Array of numbers containing result
- */
-/* 
-JXG.Transformation.prototype.matVecMult = function(mat1,vec) {
-    return JXG.Math.matVecMult(mat1,vec);
-};
-*/
 JXG.Transformation.prototype.setProperty = function(term) {};
 
 /**
