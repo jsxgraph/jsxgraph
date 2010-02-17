@@ -45,6 +45,57 @@ where
     \lstinline|{key1:value1, key2:value2, ...}|, called the ``literal object'' form.
 \end{itemize}
 
+
+
+Through the variable \lstinline|board| new geometry elements can be added to the board. All elements are added with the method \lstinline|board.create()|: 
+\begin{lstlisting}
+board.create('point', [1,3], {name:'A', strokecolor:'red'});
+\end{lstlisting}
+
+Another example: 
+\begin{lstlisting}
+board.create('point', [function(){return s.X();},function(){return t.X()}], {trace:true});
+\end{lstlisting}
+
+The parameters of \lstinline|board.create()| are: 
+\begin{lstlisting}
+board.create(elementType, parentElements, attributes);
+\end{lstlisting}
+
+\begin{lstlisting}
+{key1:value1, key2:value2, ...}
+\end{lstlisting}
+
+Point is an easy example.
+
+    * Properties of a point:
+          o style
+          o strokeColor
+          o strokeWidth
+          o fillColor
+          o highlightStrokeColor
+          o highlightFillColor
+          o labelColor
+          o visible
+          o fixed
+          o draft
+          o trace 
+    * Additional properties of a line:
+          o straightFirst
+          o straightLast 
+
+There are no additional properties of a circle
+
+    * Additional properties for an element:
+          o needsRegularUpdate = [true]/false (eg axis are set to needsRegularUpdate=false) These elements are updated only, if the origin of the board is moved or after zooming 
+    * Possible parameters: 
+
+\begin{lstlisting}
+el.setProperty('key1:value1','key2:value2',...);
+el.setProperty([key1:value1],[key2:value2],...);
+el.setProperty({key1:value1, key2:value2},...);
+\end{lstlisting}
+
 \subsection{Construction of a free point}
 This example in Figure~\ref{fig:2} shows how to construct a simple, draggable point. 
 \begin{figure*}[htb]
