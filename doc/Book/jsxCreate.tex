@@ -1,8 +1,15 @@
 \chapter{Creating geometric elements}
 \label{ch:create}
+After having initialized the drawing panel as described in the previous Chapter, %~\ref{ch:start},
+the next step is to create geometric elements in the drawing panel.
 
-The next step is to create geometric elements in the drawing panel which can be 
-dragged around.
+Remember, we have initialized the drawing panel similar to the following code.
+\begin{lstlisting}[language=HTML]
+<script type="text/javascript">
+ var board = JXG.JSXGraph.initBoard('box', 
+            {boundingbox:[-5,5,5,-5], axis:true});
+</script>
+\end{lstlisting}
 Through the JavaScript variable \lstinline|board| in the above listing we have access to the drawing panel 
 and can place objects there. New geometry elements can be added to the board. 
 All elements are added with the method \lstinline|board.create()|. One example:
@@ -41,17 +48,18 @@ where
 \subsection{Construction of a free point}
 This example in Figure~\ref{fig:2} shows how to construct a simple, draggable point. 
 \begin{figure*}[htb]
-\centerline{\includegraphics[width=0.4\linewidth]{images/b3.png}}
+\includegraphics[width=0.4\linewidth]{images/b3.png}
 \caption{The first JSXGraph point.}\label{fig:2}
 \end{figure*}
-It is produced by the following commands:
+
+\noindent It is produced by the following commands:
 \begin{lstlisting}[language=html]
 <div id="box" class="jxgbox" 
     style="width:200px; height:200px;"></div>
 <script type="text/javascript">
  var board = JXG.JSXGraph.initBoard('box', 
                 {boundingbox:[-2,2,2,-2]});
- var p = board.create('point',[1,1]);
+ var p = board.create('point',[0,1]);
 </script>
 \end{lstlisting}
 
@@ -62,11 +70,11 @@ Several attributes can be given to change the properties of a point, for example
 \begin{lstlisting}
  var board = JXG.JSXGraph.initBoard('box', 
                 {boundingbox:[-2,2,2,-2]});
- var p = board.create('point',[1,1],{name:'X',style:5});
+ var p = board.create('point',[0,1],{name:'X',face:'[]',size:4});
 \end{lstlisting}
-The resulting point in Figure~\ref{fig:3} is now labeled with ``X''.
+The resulting point in Figure~\ref{fig:3} is now labeled with ``X'' and is display as square with side length 4 pixel.
 \begin{figure*}[htb]
-\centerline{\includegraphics[width=0.4\linewidth]{images/b4.png}}
+\includegraphics[width=0.4\linewidth]{images/b4.png}
 \caption{The JSXGraph point ``X''.}\label{fig:3}
 \end{figure*}
 
@@ -107,7 +115,7 @@ for (var i=0;i<13;i++) {
 }
 \end{lstlisting}
 \begin{figure*}[h]
-\centerline{\includegraphics[width=0.4\linewidth]{images/b5.png}}
+\includegraphics[width=0.4\linewidth]{images/b5.png}
 \caption{All possible point styles.}\label{fig:4}
 \end{figure*}
 Other attributes of a point are

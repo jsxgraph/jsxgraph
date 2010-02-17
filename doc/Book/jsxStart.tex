@@ -1,6 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Include JSXGraph into web pages}
-\label{ch:start}
+\chapter{Include JSXGraph into web pages}\label{ch:start}
 
 \section{Additional files}
 For including JSXGraph into HTML, two files are necessary:
@@ -21,12 +20,14 @@ Then, the beginning of the HTML file should start like this:
 </body>
 </html>
 \end{lstlisting}\end{fullwidth}
-If you want to include the online of JSXGraph in your HTML file then you have to write the following lines into the document head:
+If you want to include the online version of JSXGraph in your HTML file then you have to write the following lines into the document head:
 \begin{fullwidth}\begin{lstlisting}[language=HTML]
 <html>
 <head>
- <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
- <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+ <link rel="stylesheet" type="text/css" 
+  href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+ <script type="text/javascript" 
+  src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
 </head>
 <body>
 ...
@@ -36,7 +37,7 @@ If you want to include the online of JSXGraph in your HTML file then you have to
 
 \section{The drawing panel}
 
-The geometric construction which is displayed by JSXGraph resides in an HTML element. Usually, a div-element is taken. This division needs an ID. Using this ID, we declare this element to be a drawing panel of JSXGraph.
+The geometric construction which is displayed by JSXGraph resides in an HTML element. Usually, a div-element is taken. This division needs a unique ID. This ID will connect the HTML element with our JavaScript code.
 
 The following code has to be placed into the body part of an HTML file:
 \begin{fullwidth}\begin{lstlisting}[language=HTML]
@@ -45,14 +46,19 @@ The following code has to be placed into the body part of an HTML file:
  var board = JXG.JSXGraph.initBoard('box', {boundingbox:[-5,5,5,-5], axis:true});
 </script>
 \end{lstlisting}\end{fullwidth}
-We can use as many different drawing panels as we like in one HTML file. The class jxgbox sets ``position:relative'' which seems to be mandatory for the Internet Explorer 7. 
+The division gets the ID 'box'. The JSXGraph board is initialized with the method
+\lstinline|JXG.JSXGraph.initBoard()|. \lstinline|JXG| is a global object defined in jsxgraphcore.js. All JSXGraph objects
+are subobject of \lstinline|JXG|, i.e. it defines the JSXGraph namespace.
+
+We can use as many different drawing panels as we like in one HTML file. The class jxgbox sets the CSS property ``position:relative'' which seems to be mandatory for the Internet Explorer 7. 
 
 Then, the web browser should display an element like the one shown in Figure~\ref{fig:1}.
 \begin{figure*}[htb]
-\centerline{\includegraphics[width=0.4\linewidth]{images/b2.png}}
+\includegraphics[width=0.4\linewidth]{images/b2.png}
 \caption{The first JSXGraph construction.}\label{fig:1}
 \end{figure*}
 
+\noindent
 The complete HTML file then looks like this:
 \begin{fullwidth}\begin{lstlisting}[language=HTML]
 <html>
@@ -68,29 +74,20 @@ The complete HTML file then looks like this:
 </body>
 </html>
 \end{lstlisting}\end{fullwidth}
-Connect JSXGraph with the HTML div tag (usually at the end of the document body) and call 
-the method \lstinline|initBoard()| of the global object \lstinline|JXG|
 
-\begin{lstlisting}[language=HTML]
-<script type="text/javascript">
- var board = JXG.JSXGraph.initBoard('box', 
-            {boundingbox:[-5,5,5,-5], axis:true});
-</script>
-\end{lstlisting}
-The method \lstinline|initBoard()| may have two arguments:
-\begin{itemize}
-    \item Parameter 1: the \lstinline|id| of the div tag in the HTML page which will contain the JSXGraph construction.
-    \item (optional) Parameter 2: additional properties of the board. 
-\end{itemize}
+\noindent
+The method \lstinline|initBoard()| has two parameters: the first parameter is the ID of the HTML element
+that will contain our construction, e.g. 'box'. The second, optional parameter is a JavaScript object -- enclosed
+in curly brackets \lstinline|{}| -- containing options to control the display of the board. These options are
+separated by kommas.
 The possible optional properties of the board are:
-
-    * originX, originY (in pixel)
-    * unitX, unitY (in pixel)
-    * zoomX, zoomY
-    * Bounding box
-    * axis (true/false)
-    * grid (true/false)
-    * showNavigation (true/false)
-    * showCopyright (true/false) 
-
-More than one boards can be initialised simultaneously in one HTML file. 
+\begin{itemize}
+    \item boundingbox
+    \item axis (true/false)
+    \item grid (true/false)
+    \item showNavigation (true/false)
+    \item showCopyright (true/false) 
+    \item zoomX, zoomY
+    \item originX, originY (in pixel)
+    \item unitX, unitY (in pixel)
+\end{itemize}
