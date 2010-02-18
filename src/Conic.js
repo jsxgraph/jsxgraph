@@ -28,13 +28,71 @@
  */
 
 /**
- * a4d7fb6f-8708-4e45-87f2-2379ae2bd2c0
+ * @class This element is used to provide a constructor for an ellipse. An ellipse is given by two points (the foci) and a third point on the the ellipse or 
+ * the length of the major axis.
+ * @pseudo
+ * @description
+ * @name Ellipse
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Curve
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point,array_JXG.Point,array_JXG.Point,array} point1,point2,point3 Parent elements can be three elements either of type {@link JXG.Point} or array of
+ * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
+ * @param {JXG.Point,array_JXG.Point,array_number,function} point1,point2,number Parent elements can be two elements either of type {@link JXG.Point} or array of
+ * numbers describing the coordinates of a point. The third parameter is a number/function which defines the length of the major axis
+ * Optional parameters four and five are numbers which define the curve length (e.g. start/end). Default values are -pi and pi.
+ * @example
+ * // Create an Ellipse by three points
+ * var A = board.create('point', [-1,4]);
+ * var B = board.create('point', [-1,-4);
+ * var C = board.create('point', [1,1]);
+ * var el = board.create('ellipse',[A,B,C]);
+ * </pre><div id="a4d7fb6f-8708-4e45-87f2-2379ae2bd2c0" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var glex1_board = JXG.JSXGraph.initBoard('a4d7fb6f-8708-4e45-87f2-2379ae2bd2c0', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
+ *   var A = glex1_board.create('point', [-1,4]);
+ *   var B = glex1_board.create('point', [-1,-4);
+ *   var C = glex1_board.create('point', [1,1]);
+ *   var el = glex1_board.create('ellipse',[A,B,C]);
+ * </script><pre>
  */
 JXG.createEllipse = function(board, parents, atts) {
-    var F1 = parents[0],  // focus 1
-        F2 = parents[1],  // focus 2
+    var F = [],  // focus 1 and focus 2
+        C, 
         majorAxis,
+        i,
         rotationMatrix;
+
+    // The foci and the third point are either points or coordinate arrays.
+    for (i=0;i<2;i++) {
+        if (parents[i].length>1) { // focus i given by coordinates
+            F[i] = board.createElement('point', parents[i], {visible:false,fixed:true});
+        } else if (JXG.isPoint(parents[i])) { // focus i given by point
+            F[i] = JXG.getReference(board,parents[i]);
+        } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
+            F[i] = parents[i]();
+        } else if (JXG.isString(parents[i])) { // focus i given by point name
+            F[i] = JXG.getReference(board,parents[i]);
+        } else
+            throw new Error("JSXGraph: Can't create Ellipse with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+    }
+    if (JXG.isNumber(parents[2])) { // length of major axis
+        majorAxis = JXG.createFunction(parents[2],board);
+    } else {
+        if (JXG.isPoint(parents[2])) {                                               // point on ellipse
+            C = JXG.getReference(board,parents[2]);
+        } else if (parents[2].length>1) {                                            // point on ellipse given by coordinates
+            C = board.createElement('point', parents[2], {visible:false,fixed:true});
+        } else if ((typeof parents[2] == 'function') && (parents[2]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
+            C = parents[2]();
+        } else if (JXG.isString(parents[2])) {                                      // focus i given by point name
+            C = JXG.getReference(board,parents[2]);
+        } else {
+            throw new Error("JSXGraph: Can't create Ellipse with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) +"'.");
+        }
+        majorAxis = function(){ return C.Dist(F[0])+C.Dist(F[1]);};
+    }
 
     if (typeof parents[4]=='undefined') parents[4] = 1.0001*Math.PI;   // to
     if (typeof parents[3]=='undefined') parents[3] = -1.0001*Math.PI;  // from
@@ -42,25 +100,19 @@ JXG.createEllipse = function(board, parents, atts) {
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
-    if (JXG.isPoint(parents[2])) {
-        majorAxis = function(){ return parents[2].Dist(F1)+parents[2].Dist(F2);};
-    } else {
-        majorAxis = JXG.createFunction(parents[2],board);
-    }
-
     var M = board.create('point', [
-                function(){return (F1.X()+F2.X())*0.5;},
-                function(){return (F1.Y()+F2.Y())*0.5;}
+                function(){return (F[0].X()+F[1].X())*0.5;},
+                function(){return (F[0].Y()+F[1].Y())*0.5;}
             ],{visible:false, name:'', withLabel:false});
 
     var transformFunc = function() {
-            var ax = F1.X(),
-                ay = F1.Y(),
-                bx = F2.X(),
-                by = F2.Y(),
+            var ax = F[0].X(),
+                ay = F[0].Y(),
+                bx = F[1].X(),
+                by = F[1].Y(),
                 beta;
 
-            // Rotate by the slope of the line [F1,F2]
+            // Rotate by the slope of the line [F[0],F[1]]
             var sgn = (bx-ax>0)?1:-1;
             if (Math.abs(bx-ax)>0.0000001) {
                 beta = Math.atan2(by-ay,bx-ax)+ ((sgn<0)?Math.PI:0);
@@ -77,7 +129,7 @@ JXG.createEllipse = function(board, parents, atts) {
 
     var polarForm = function(phi,suspendUpdate) {
                 var a = majorAxis()*0.5,
-                    e = F2.Dist(F1)*0.5,
+                    e = F[1].Dist(F[0])*0.5,
                     b = Math.sqrt(a*a-e*e);
                 if (!suspendUpdate) {
                     rotationMatrix = transformFunc();
@@ -92,13 +144,71 @@ JXG.createEllipse = function(board, parents, atts) {
 };
 
 /**
- * cf99049d-a3fe-407f-b936-27d76550f8c4
+ * @class This element is used to provide a constructor for an hyperbola. An hyperbola is given by two points (the foci) and a third point on the the hyperbola or 
+ * the length of the major axis.
+ * @pseudo
+ * @description
+ * @name Hyperbola
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Curve
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point,array_JXG.Point,array_JXG.Point,array} point1,point2,point3 Parent elements can be three elements either of type {@link JXG.Point} or array of
+ * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
+ * @param {JXG.Point,array_JXG.Point,array_number,function} point1,point2,number Parent elements can be two elements either of type {@link JXG.Point} or array of
+ * numbers describing the coordinates of a point. The third parameter is a number/function which defines the length of the major axis
+ * Optional parameters four and five are numbers which define the curve length (e.g. start/end). Default values are -pi and pi.
+ * @example
+ * // Create an Hyperbola by three points
+ * var A = board.create('point', [-1,4]);
+ * var B = board.create('point', [-1,-4);
+ * var C = board.create('point', [1,1]);
+ * var el = board.create('hyperbola',[A,B,C]);
+ * </pre><div id="cf99049d-a3fe-407f-b936-27d76550f8c4" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var glex1_board = JXG.JSXGraph.initBoard('cf99049d-a3fe-407f-b936-27d76550f8c4', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
+ *   var A = glex1_board.create('point', [-1,4]);
+ *   var B = glex1_board.create('point', [-1,-4);
+ *   var C = glex1_board.create('point', [1,1]);
+ *   var el = glex1_board.create('hyperbola',[A,B,C]);
+ * </script><pre>
  */
 JXG.createHyperbola = function(board, parents, atts) {
-    var F1 = parents[0], // focus 1
-        F2 = parents[1], // focus 2
+    var F = [],  // focus 1 and focus 2
+        C, 
         majorAxis,
+        i,
         rotationMatrix;
+
+    // The foci and the third point are either points or coordinate arrays.
+    for (i=0;i<2;i++) {
+        if (parents[i].length>1) { // focus i given by coordinates
+            F[i] = board.createElement('point', parents[i], {visible:false,fixed:true});
+        } else if (JXG.isPoint(parents[i])) { // focus i given by point
+            F[i] = JXG.getReference(board,parents[i]);
+        } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
+            F[i] = parents[i]();
+        } else if (JXG.isString(parents[i])) { // focus i given by point name
+            F[i] = JXG.getReference(board,parents[i]);
+        } else
+            throw new Error("JSXGraph: Can't create Hyperbola with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+    }
+    if (JXG.isNumber(parents[2])) { // length of major axis
+        majorAxis = JXG.createFunction(parents[2],board);
+    } else {
+        if (JXG.isPoint(parents[2])) {                                               // point on ellipse
+            C = JXG.getReference(board,parents[2]);
+        } else if (parents[2].length>1) {                                            // point on ellipse given by coordinates
+            C = board.createElement('point', parents[2], {visible:false,fixed:true});
+        } else if ((typeof parents[2] == 'function') && (parents[2]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
+            C = parents[2]();
+        } else if (JXG.isString(parents[2])) {                                      // focus i given by point name
+            C = JXG.getReference(board,parents[2]);
+        } else {
+            throw new Error("JSXGraph: Can't create Hyperbola with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) +"'.");
+        }
+        majorAxis = function(){ return C.Dist(F[0])-C.Dist(F[1]);};
+    }
 
     if (typeof parents[4]=='undefined') parents[4] = 1.0001*Math.PI;   // to
     if (typeof parents[3]=='undefined') parents[3] = -1.0001*Math.PI;  // from
@@ -106,24 +216,19 @@ JXG.createHyperbola = function(board, parents, atts) {
     if (atts==null) { atts = {}; };
     atts['curveType'] = 'parameter';
 
-    if (JXG.isPoint(parents[2])) {
-        majorAxis = function(){ return parents[2].Dist(F1)-parents[2].Dist(F2);};
-    } else {
-        majorAxis = JXG.createFunction(parents[2],board);
-    }
-
     var M = board.create('point', [
-                function(){return (F1.X()+F2.X())*0.5;},
-                function(){return (F1.Y()+F2.Y())*0.5;}
+                function(){return (F[0].X()+F[1].X())*0.5;},
+                function(){return (F[0].Y()+F[1].Y())*0.5;}
             ],{visible:false, name:'', withLabel:false});
 
     var transformFunc = function() {
-            var ax = F1.X(),
-                ay = F1.Y(),
-                bx = F2.X(),
-                by = F2.Y(),
+            var ax = F[0].X(),
+                ay = F[0].Y(),
+                bx = F[1].X(),
+                by = F[1].Y(),
                 beta;
-            // Rotate by the slope of the line [F1,F2]
+
+            // Rotate by the slope of the line [F[0],F[1]]
             var sgn = (bx-ax>0)?1:-1;
             if (Math.abs(bx-ax)>0.0000001) {
                 beta = Math.atan2(by-ay,bx-ax)+ ((sgn<0)?Math.PI:0);
@@ -143,7 +248,7 @@ JXG.createHyperbola = function(board, parents, atts) {
           */
     var polarForm = function(phi,suspendUpdate) {
                 var a = majorAxis()*0.5,
-                    e = F2.Dist(F1)*0.5,
+                    e = F[1].Dist(F[0])*0.5,
                     b = Math.sqrt(-a*a+e*e);
                 if (!suspendUpdate) {
                     rotationMatrix = transformFunc();
@@ -158,12 +263,48 @@ JXG.createHyperbola = function(board, parents, atts) {
 };
 
 /**
- * 524d1aae-217d-44d4-ac58-a19c7ab1de36
+ * @class This element is used to provide a constructor for a parabola. A parabola is given by one point (the focus) and a line (the directrix).
+ * @pseudo
+ * @description
+ * @name Parabola
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Curve
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point,array_JXG.Line} point,line Parent elements are a point and a line.
+ * Optional parameters three and four are numbers which define the curve length (e.g. start/end). Default values are -pi and pi.
+ * @example
+ * // Create a parabola by a point C and a line l.
+ * var A = board.create('point', [-1,4]);
+ * var B = board.create('point', [-1,-4);
+ * var l = board.create('line', [A,B]);
+ * var C = board.create('point', [1,1]);
+ * var el = board.create('parabola',[C,l]);
+ * </pre><div id="524d1aae-217d-44d4-ac58-a19c7ab1de36" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var glex1_board = JXG.JSXGraph.initBoard('524d1aae-217d-44d4-ac58-a19c7ab1de36', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
+ *   var A = glex1_board.create('point', [-1,4]);
+ *   var B = glex1_board.create('point', [-1,-4);
+ *   var l = glex1_board.create('line', [A,B]);
+ *   var C = glex1_board.create('point', [1,1]);
+ *   var el = glex1_board.create('parabola',[C,l]);
+ * </script><pre>
  */
 JXG.createParabola = function(board, parents, atts) {
     var F1 = parents[0], // focus
         l = parents[1],  // directrix
         rotationMatrix;
+
+    if (parents[0].length>1) { // focus 1 given by coordinates
+        F1 = board.createElement('point', parents[0], {visible:false,fixed:true});
+    } else if (JXG.isPoint(parents[0])) { // focus i given by point
+        F1 = JXG.getReference(board,parents[0]);
+    } else if ((typeof parents[0] == 'function') && (parents[0]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
+        F1 = parents[0]();
+    } else if (JXG.isString(parents[0])) { // focus i given by point name
+        F1 = JXG.getReference(board,parents[0]);
+    } else
+        throw new Error("JSXGraph: Can't create Parabola with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
 
     if (typeof parents[3]=='undefined') parents[3] = 10.0;   // to
     if (typeof parents[2]=='undefined') parents[2] = -10.0;  // from
@@ -210,10 +351,52 @@ JXG.createParabola = function(board, parents, atts) {
 };
 
 /**
- * Conic through five points
+ * 
+ * @class This element is used to provide a constructor for a generic conic section uniquely defined by five points.
+ * @pseudo
+ * @description
+ * @name Conic
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Conic
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point,array_JXG.Point,array_JXG.Point,array_JXG.Point,array_JXG.Point,array_} point,point,point,point,point Parent elements are five points.
+ * @example
+ * // Create a conic section through the points A, B, C, D, and E.
+ *  var A = board.create('point', [1,5]);
+ *  var B = board.create('point', [1,2]);
+ *  var C = board.create('point', [2,0]);
+ *  var D = board.create('point', [0,0]);
+ *  var E = board.create('point', [-1,5]);
+ *  var conic = board.create('conic',[A,B,C,D,E]);
+ * </pre><div id="2d79bd6a-db9b-423c-9cba-2497f0b06320" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var glex1_board = JXG.JSXGraph.initBoard('2d79bd6a-db9b-423c-9cba-2497f0b06320', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
+ *   var A = glex1_board.create('point', [1,5]);
+ *   var B = glex1_board.create('point', [1,2]);
+ *   var C = glex1_board.create('point', [2,0]);
+ *   var D = glex1_board.create('point', [0,0]);
+ *   var E = glex1_board.create('point', [-1,5]);
+ *   var conic = glex1_board.create('conic',[A,B,C,D,E]);
+ * </script><pre>
  */
 JXG.createConic = function(board, parents, atts) {
-    var rotationMatrix, eigen, a, b, c, M, c1, c2, p = [];
+    var rotationMatrix, eigen, a, b, c, M, c1, c2, 
+        points = [], i,
+        p = [];
+
+    for (i=0;i<5;i++) {
+        if (parents[i].length>1) { // point i given by coordinates
+            points[i] = board.createElement('point', parents[i], {visible:false,fixed:true});
+        } else if (JXG.isPoint(parents[i])) { // point i given by point
+            points[i] = JXG.getReference(board,parents[i]);
+        } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
+            points[i] = parents[i]();
+        } else if (JXG.isString(parents[i])) { // point i given by point name
+            points[i] = JXG.getReference(board,parents[i]);
+        } else
+            throw new Error("JSXGraph: Can't create Conic section with parent types '" + (typeof parents[i]) + "'.");
+    }
 
     // sym(A) = A + A^t . Manipulates A in place.
     var sym = function(A) {
@@ -261,7 +444,9 @@ JXG.createConic = function(board, parents, atts) {
         var i, j, len, v;
         if (!suspendUpdate) {
             // Copy the point coordinate vectors
-            for (i=0;i<5;i++) { p[i] = parents[i].coords.usrCoords; }
+            for (i=0;i<5;i++) { 
+                p[i] = points[i].coords.usrCoords; 
+            }
             // Compute the quadratic form
             c1 = degconic(JXG.Math.crossProduct(p[0],p[1]),JXG.Math.crossProduct(p[2],p[3]));
             c2 = degconic(JXG.Math.crossProduct(p[0],p[2]),JXG.Math.crossProduct(p[1],p[3]));

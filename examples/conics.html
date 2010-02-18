@@ -12,7 +12,7 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true});
+board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], keepaspectratio:true, axis:true});
 
 var A = board.create('point', [-1,4], {style:6,name:'A'});
 var B = board.create('point', [-1,-4], {style:6,name:'B'});
