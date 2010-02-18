@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>Figures</title>
+<link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+<script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Figures</h2>
+<div id="debug" style="display:block;"></div>
+<!--<div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>-->
+<div id="figures">
+</div>
+<script type="text/javascript">
+var divCount = 0;
+function createBoard(width,height,atts){
+    div = document.createElement('div');
+    divCount++;
+    var id = 'jxgbox'+divCount;
+    div.id = id;
+    div.style.width = width+'px';
+    div.style.height = height+'px';
+    div.className = "jxgbox";
+    div.style.marginBottom = 20+'px';
+    div.style.marginLeft = 20+'px';
+    document.getElementById('figures').appendChild(div);
+    return JXG.JSXGraph.initBoard(id, atts);
+};
+
+//createBoard(647,400,{showCopyright:false});
+//createBoard(485,300,{showCopyright:false});
+//createBoard(323,200,{showCopyright:false});
+
+(function(){
+ var board = createBoard(400,400,{boundingbox:[-5,5,5,-5], axis:true, showCopyright:false});
+})();
+
+(function(){
+ var board = createBoard(323,200,{boundingbox:[-2,2,2,-2], axis:false, showCopyright:false});
+ var p = board.create('point',[0,1]); 
+})();
+
+(function(){
+ var board = createBoard(323,200,{boundingbox:[-2,2,2,-2], axis:false, showCopyright:false});
+ var p = board.create('point',[0,1],{name:'X',face:'[]',size:4});
+})();
+
+
+/*
+*/
+/* ]]> */
+</script>
+</body>
+</html>
