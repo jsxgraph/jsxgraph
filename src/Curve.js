@@ -764,15 +764,9 @@ JXG.Curve.prototype.getLabelAnchor = function() {
  * </script><pre>
  */
 JXG.createCurve = function(board, parents, attributes) {
-    if(attributes == null) 
-        attributes = {};
-    if (typeof attributes['withLabel'] == 'undefined') {
-        attributes['withLabel'] = false;
-    } 
-    if (typeof attributes['layer'] == 'undefined') {
-        attributes['layer'] = null;
-    }
-    return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name'], attributes['withLabel'],attributes['layer']);
+    attributes = JXG.checkAttributes(attributes,{withLabel:false, layer:null});
+    return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name'],   
+                         attributes['withLabel'],attributes['layer']);
 };
 
 JXG.JSXGraph.registerElement('curve', JXG.createCurve);
@@ -820,15 +814,8 @@ JXG.JSXGraph.registerElement('curve', JXG.createCurve);
  */
 JXG.createFunctiongraph = function(board, parents, attributes) {
     var par = ["x","x"].concat(parents);
-    if(attributes == null) 
-        attributes = {};
-    if (typeof attributes['withLabel'] == 'undefined') {
-        attributes['withLabel'] = false;
-    } 
-    if (typeof attributes['layer'] == 'undefined') {
-        attributes['layer'] = null;
-    }
-    attributes.curveType = 'functiongraph';
+    attributes = JXG.checkAttributes(attributes,{withLabel:false, layer:null});
+    attributes['curveType'] = 'functiongraph';
     return new JXG.Curve(board, par, attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
 };
 
@@ -846,15 +833,7 @@ JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
  */
 JXG.createSpline = function(board, parents, attributes) {
     var F;
-    if(attributes == null) 
-        attributes = {};
-    if (typeof attributes['withLabel'] == 'undefined') {
-        attributes['withLabel'] = false;
-    } 
-    if (typeof attributes['layer'] == 'undefined') {
-        attributes['layer'] = null;
-    }
-    
+    attributes = JXG.checkAttributes(attributes,{withLabel:false, layer:null});
     F = function() {
         var D, x=[], y=[];
         
@@ -906,7 +885,8 @@ JXG.createSpline = function(board, parents, attributes) {
         };
         return fct;
     };
-    return new JXG.Curve(board, ["x","x", F()], attributes["id"], attributes["name"], attributes['withLabel'],attributes['layer']);
+    return new JXG.Curve(board, ["x","x", F()], attributes["id"], attributes["name"],
+                        attributes['withLabel'],attributes['layer']);
 };
 
 /**
@@ -957,17 +937,8 @@ JXG.JSXGraph.registerElement('spline', JXG.createSpline);
 JXG.createRiemannsum = function(board, parents, attributes) {
     var n, type, f, par, c;
     
-    if(attributes == null) 
-        attributes = {};
-    if (typeof attributes['withLabel'] == 'undefined') {
-        attributes['withLabel'] = false;
-    }     
-    if (typeof attributes['layer'] == 'undefined') {
-        attributes['layer'] = null;
-    }
-    attributes.fillOpacity   = attributes.fillOpacity || 0.3;
-    attributes.fillColor = attributes.fillColor || '#ffff00';
-    attributes.curveType = 'plot';
+    attributes = JXG.checkAttributes(attributes,
+                    {withLabel:false,layer:null,fillOpacity:0.3,fillColor:'#ffff00', curveType:'plot'});
 
     f = parents[0]; 
     n = JXG.createFunction(parents[1],board,'');

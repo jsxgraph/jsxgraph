@@ -648,9 +648,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
  */
 JXG.createTicks = function(board, parents, attributes) {
     var el;
-    if (typeof attributes['layer'] == 'undefined') {
-        attributes['layer'] = null;
-    }
+    attributes = JXG.checkAttributes(attributes,{layer:null});
     if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.isFunction(parents[1]) || JXG.isArray(parents[1]) || JXG.isNumber(parents[1]))) {
         el = new JXG.Ticks(parents[0], parents[1], attributes['minorTicks'], attributes['majHeight'], attributes['minHeight'], attributes['id'], attributes['name'], attributes['layer']);
     } else

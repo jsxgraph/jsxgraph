@@ -821,15 +821,8 @@ JXG.Line.prototype.removeTicks = function(tick) {
 JXG.createLine = function(board, parents, atts) {
     var el, p1, p2, i,
         c = [];
-    if (atts==null) {
-        atts = {};
-    }
-    if(atts['withLabel'] == null || typeof atts['withLabel'] == 'undefined') {
-        atts['withLabel'] = false;
-    }
-    if (typeof atts['layer'] == 'undefined') {
-        atts['layer'] = null;
-    }
+        
+    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
 
     var constrained = false;
     if (parents.length == 2) { // The line is defined by two points (or coordinates of two points)
@@ -927,13 +920,9 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  JXG.createSegment = function(board, parents, atts) {
     var el;
 
-    if(atts == null)
-        atts = new Object();
-    if(atts['withLabel'] == null || typeof atts['withLabel'] == 'undefined') {
-        atts['withLabel'] = false;
-    }
-    atts.straightFirst = false;
-    atts.straightLast = false;
+    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
+    atts['straightFirst'] = false;
+    atts['straightLast'] = false;
     el = board.createElement('line', parents, atts);
 
     return el;

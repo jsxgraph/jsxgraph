@@ -67,7 +67,7 @@ JXG.createEllipse = function(board, parents, atts) {
     // The foci and the third point are either points or coordinate arrays.
     for (i=0;i<2;i++) {
         if (parents[i].length>1) { // focus i given by coordinates
-            F[i] = board.createElement('point', parents[i], {visible:false,fixed:true});
+            F[i] = board.create('point', parents[i], {visible:false,fixed:true});
         } else if (JXG.isPoint(parents[i])) { // focus i given by point
             F[i] = JXG.getReference(board,parents[i]);
         } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
@@ -83,7 +83,7 @@ JXG.createEllipse = function(board, parents, atts) {
         if (JXG.isPoint(parents[2])) {                                               // point on ellipse
             C = JXG.getReference(board,parents[2]);
         } else if (parents[2].length>1) {                                            // point on ellipse given by coordinates
-            C = board.createElement('point', parents[2], {visible:false,fixed:true});
+            C = board.create('point', parents[2], {visible:false,fixed:true});
         } else if ((typeof parents[2] == 'function') && (parents[2]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
             C = parents[2]();
         } else if (JXG.isString(parents[2])) {                                      // focus i given by point name
@@ -97,8 +97,7 @@ JXG.createEllipse = function(board, parents, atts) {
     if (typeof parents[4]=='undefined') parents[4] = 1.0001*Math.PI;   // to
     if (typeof parents[3]=='undefined') parents[3] = -1.0001*Math.PI;  // from
 
-    if (atts==null) { atts = {}; };
-    atts['curveType'] = 'parameter';
+    atts = JXG.checkAttributes(atts,{curveType:'parameter'});
 
     var M = board.create('point', [
                 function(){return (F[0].X()+F[1].X())*0.5;},
@@ -183,7 +182,7 @@ JXG.createHyperbola = function(board, parents, atts) {
     // The foci and the third point are either points or coordinate arrays.
     for (i=0;i<2;i++) {
         if (parents[i].length>1) { // focus i given by coordinates
-            F[i] = board.createElement('point', parents[i], {visible:false,fixed:true});
+            F[i] = board.create('point', parents[i], {visible:false,fixed:true});
         } else if (JXG.isPoint(parents[i])) { // focus i given by point
             F[i] = JXG.getReference(board,parents[i]);
         } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
@@ -199,7 +198,7 @@ JXG.createHyperbola = function(board, parents, atts) {
         if (JXG.isPoint(parents[2])) {                                               // point on ellipse
             C = JXG.getReference(board,parents[2]);
         } else if (parents[2].length>1) {                                            // point on ellipse given by coordinates
-            C = board.createElement('point', parents[2], {visible:false,fixed:true});
+            C = board.create('point', parents[2], {visible:false,fixed:true});
         } else if ((typeof parents[2] == 'function') && (parents[2]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
             C = parents[2]();
         } else if (JXG.isString(parents[2])) {                                      // focus i given by point name
@@ -213,8 +212,7 @@ JXG.createHyperbola = function(board, parents, atts) {
     if (typeof parents[4]=='undefined') parents[4] = 1.0001*Math.PI;   // to
     if (typeof parents[3]=='undefined') parents[3] = -1.0001*Math.PI;  // from
 
-    if (atts==null) { atts = {}; };
-    atts['curveType'] = 'parameter';
+    atts = JXG.checkAttributes(atts,{curveType:'parameter'});
 
     var M = board.create('point', [
                 function(){return (F[0].X()+F[1].X())*0.5;},
@@ -296,7 +294,7 @@ JXG.createParabola = function(board, parents, atts) {
         rotationMatrix;
 
     if (parents[0].length>1) { // focus 1 given by coordinates
-        F1 = board.createElement('point', parents[0], {visible:false,fixed:true});
+        F1 = board.create('point', parents[0], {visible:false,fixed:true});
     } else if (JXG.isPoint(parents[0])) { // focus i given by point
         F1 = JXG.getReference(board,parents[0]);
     } else if ((typeof parents[0] == 'function') && (parents[0]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
@@ -309,8 +307,7 @@ JXG.createParabola = function(board, parents, atts) {
     if (typeof parents[3]=='undefined') parents[3] = 10.0;   // to
     if (typeof parents[2]=='undefined') parents[2] = -10.0;  // from
 
-    if (atts==null) { atts = {}; };
-    atts['curveType'] = 'parameter';
+    atts = JXG.checkAttributes(atts,{curveType:'parameter'});
 
     var M = board.create('point', [
                 function() {
@@ -387,7 +384,7 @@ JXG.createConic = function(board, parents, atts) {
 
     for (i=0;i<5;i++) {
         if (parents[i].length>1) { // point i given by coordinates
-            points[i] = board.createElement('point', parents[i], {visible:false,fixed:true});
+            points[i] = board.create('point', parents[i], {visible:false,fixed:true});
         } else if (JXG.isPoint(parents[i])) { // point i given by point
             points[i] = JXG.getReference(board,parents[i]);
         } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function

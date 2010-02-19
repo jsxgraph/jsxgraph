@@ -779,7 +779,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
         n2 = '',
         ret;
 
-    if (attributes==null) attributes = {};
+    attributes = JXG.checkAttributes(attributes,{});
     if (attributes['id']!=null) {
         if (JXG.isArray(attributes['id'])) {
             id1 = attributes['id'][0];

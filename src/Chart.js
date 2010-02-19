@@ -354,7 +354,8 @@ JXG.createChart = function(board, parents, attributes) {
             originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len;
         if(typeof table != 'undefined') {
             // extract the data
-            if(attributes['withHeader']) {} else attributes['withHeader'] = true;
+            attributes = JXG.checkAttributes(attributes,{withHeader:true});
+            
             table = (new JXG.DataSource()).loadFromTable(parents[0], attributes['withHeader'], attributes['withHeader']);
             data = table.data;
             col = table.columnHeader;

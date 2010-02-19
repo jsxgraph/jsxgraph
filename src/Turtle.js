@@ -49,14 +49,9 @@ JXG.Turtle = function (board, parents, attributes) {
     this.type = JXG.OBJECT_TYPE_TURTLE;
     this.turtleIsHidden = false;
     this.board = board;
-    if (attributes==null) {
-        this.attributes = {};
-    } else {
-        this.attributes = attributes;
-    }
+    this.attributes = JXG.checkAttributes(attributes,{withLabel:false,layer:null});
     this.attributes.straightFirst = false;
     this.attributes.straightLast = false;
-    this.attributes.withLabel = false;
     x = 0;
     y = 0;
     dir = 90;

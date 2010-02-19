@@ -222,16 +222,7 @@ JXG.Polygon.prototype.cloneToBackground = function(addToTrace) {
 JXG.createPolygon = function(board, parents, atts) {
     var el;
 
-    if (atts==null) {
-        atts = {};
-    } 
-    if (typeof atts['withLabel']=='undefined') {
-        atts['withLabel'] = false;
-    }    
-    if (typeof atts['layer'] == 'undefined') {
-        atts['layer'] = null;
-    }
-    
+    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
     // Sind alles Punkte?
     for(var i=0; i<parents.length; i++) {
         parents[i] = JXG.getReference(board, parents[i]);
@@ -239,7 +230,8 @@ JXG.createPolygon = function(board, parents, atts) {
             throw new Error("JSXGraph: Can't create polygon with parent types other than 'point'.");
     }
     
-    el = new JXG.Polygon(board, parents, atts["borders"], atts["id"], atts["name"], atts["withLines"],atts['withLabel'],atts['lineLabels'],atts['layer']);
+    el = new JXG.Polygon(board, parents, atts["borders"], atts["id"],atts["name"],atts["withLines"],
+                        atts['withLabel'],atts['lineLabels'],atts['layer']);
 
     return el;
 };
@@ -311,20 +303,14 @@ JXG.Polygon.prototype.Area = function() {
 JXG.createRegularPolygon = function(board, parents, atts) {
     var el, i, n, p = [], rot, c;
 
-    if (atts==null) {
-        atts = {};
-    }
-    if (typeof atts['withLabel']=='undefined') {
-        atts['withLabel'] = false;
-    }    
-    
+    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
     if (parents.length!=3) {
-            throw new Error("JSXGraph: A regular polygon needs two point and a number as input.");
+        throw new Error("JSXGraph: A regular polygon needs two point and a number as input.");
     }
 
     n = parents[2];
     if (!JXG.isNumber(n) || n<3) {
-            throw new Error("JSXGraph: The third parameter has to be number greater than 2.");
+        throw new Error("JSXGraph: The third parameter has to be number greater than 2.");
     }
     
     // Sind alles Punkte? 

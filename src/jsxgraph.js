@@ -394,6 +394,58 @@ JXG.createFunction = function(term,board,variableName,evalGeonext) {
     return null;
 };
 
+/*
+JXG.checkParameter = function(board, parameter, input, output) {
+    var r;
+    if (input=='point') {
+        if (JXG.isPoint(input) && output=='point') { return parameter; }
+        if (JXG.isString(input) && output=='point') { 
+            r = JXG.getReference(board,parameter);
+            if (JXG.isString(r)) { return false; } else { return r; }
+        }
+    } else if (input=='array') {
+        if (JXG.isArray(input) && output=='point') { 
+            return = board.create('point', parameter, {visible:false,fixed:true});
+        }
+    } else if (input=='line') {
+...    
+    }
+}
+
+JXG.readParameter = function(board, parameter, input, output) {
+    var i, j, lenOut = output.length, 
+        len, result;
+
+    if (lenOut==1) {
+        len = input.length;
+        for (j=0;j<len;j++) {
+            result = JXG.checkParameter(board, parameter, input[j], output[0]);
+            if (result!=false) return result;
+        }
+    } else {
+        for (i=0;i<lenOut;i++) {
+            len = input[i].length;
+            for (j=0;j<len;j++) {
+                result = JXG.checkParameter(board, parameter, input[i][j], output[i]);
+                if (result!=false) return result;
+            }
+        }
+    }
+    return false;
+};
+*/
+
+JXG.checkAttributes = function(atts, keyvaluepairs) {
+    var key;
+    if (atts==null) { atts = {}; }
+    for (key in keyvaluepairs) {
+        if(atts[key] == null || typeof atts[key] == 'undefined') {
+            atts[key] = keyvaluepairs[key];
+        }
+    }
+    return atts;
+}
+
 JXG.getDimensions = function(elementId) {
     var element, display, els, originalVisibility, originalPosition,
         originalDisplay, originalWidth, originalHeight;

@@ -356,15 +356,7 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
  * </script><pre>
  */
 JXG.createText = function(board, parentArr, atts) {
-    if (atts==null) {
-        atts = {};
-    }
-    if (typeof atts['display']=='undefined') {
-        atts['display'] = board.options.text.defaultDisplay;  // 'html' or 'internal'
-    }
-    if (typeof atts['layer'] == 'undefined') {
-        atts['layer'] = null;
-    }
+    atts = JXG.checkAttributes(atts,{layer:null,display:board.options.text.defaultDisplay});  // 'html' or 'internal'
     return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false, atts['display'],atts['layer']);
 };
 

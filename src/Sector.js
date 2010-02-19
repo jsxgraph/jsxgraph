@@ -249,12 +249,7 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
  JXG.createCircumcircleSector = function(board, parents, attributes) {
     var el, mp, idmp, det;
     
-    if (attributes==null) {
-        attributes = {};
-    }
-    if (typeof attributes['withLabel'] == 'undefined') {
-        attributes['withLabel'] = false;
-    }    
+    attributes = JXG.checkAttributes(attributes,{withLabel:false, layer:null});
     if(attributes['id'] != null) {
         idmp = attributes['id']+'_mp';
     }

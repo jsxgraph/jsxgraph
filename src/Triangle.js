@@ -53,9 +53,7 @@ JXG.createTriangle = function(board, parents, attributes) {
         p2 = parents[1];
         p3 = parents[2];
 
-        if((attributes == null) || (typeof attribues == undefined))
-            attributes = new Object();
-
+        attributes = JXG.checkAttributes(attributes,{});
         attributes.straightFirst = false;
         attributes.straightLast = false;
 

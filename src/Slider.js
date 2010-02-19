@@ -65,14 +65,7 @@ JXG.createSlider = function(board, parentArr, atts) {
     smax = parentArr[2][2];
     sdiff = smax -smin;
     
-    if(atts == null) 
-        atts = {};
-    if(atts['strokeColor'] == null || typeof atts['strokeColor'] == 'undefined') {
-        atts['strokeColor'] = '#000000'; //'#0080c0';
-    }
-    if(atts['fillColor'] == null || typeof atts['fillColor'] == 'undefined') {
-        atts['fillColor'] = '#ffffff'; //'#0080c0';
-    }    
+    atts = JXG.checkAttributes(atts,{strokeColor:'#000000', fillColor:'#ffffff'});
 
     p1 = board.createElement('point', pos0, {visible:false, fixed:true, name:'',withLabel:false}); 
     p2 = board.createElement('point', pos1, {visible:false, fixed:true, name:'',withLabel:false}); 
