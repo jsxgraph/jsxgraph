@@ -12,11 +12,39 @@
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
 /* <![CDATA[ */
-JXG.Options.showCopyright = false; //don't work :)
-JXG.Options.showNavigation = false;
-JXG.Options.takeFirst = true;
-var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 400,originY: 400, unitX: 10, unitY: 10, axis:true, showCopyright:true});
+JXG.Options.showCopyright = true; //don't work :)
+JXG.Options.showNavigation = true;
+//JXG.Options.takeFirst = true;
+var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 400,originY: 400, unitX: 10, unitY: 10, axis:true});
+var A=board.create('point',[10,0]);
+var B=board.create('point',[0,0]);
+var C=board.create('point',[0,10]);
 
+var c = board.create('curve',[[0],[0]]);
+c.updateDataArray = function() {
+    var i, n = 100, beta, co, si, matrix,
+        phi = this.board.algebra.rad(A,B,C)/n,
+        x = B.X(),
+        y = B.Y(),
+        v;
+    this.dataX = [A.X()];
+    this.dataY = [A.Y()];
+    for (i=1;i<=n;i++) {
+        beta = i*phi;
+        co = Math.cos(beta); 
+        si = Math.sin(beta); 
+        matrix = [
+            [1,0,0],
+            [x*(1-co)+y*si,co,-si],
+            [y*(1-co)-x*si,si,co]];    
+        v = JXG.Math.matVecMult(matrix,A.coords.usrCoords);
+        this.dataX.push(v[1]/v[0]);
+        this.dataY.push(v[2]/v[0]);
+    }
+};
+board.update();
+
+/*
 var img = board.create('image',['http://www.ari.uni-heidelberg.de/gaia/gallery/GR/gr0283-01.artistic-Gaia-Galaxy-large.jpg',[-40,-40],[80,80]]);
 img.needsRegularUpdate = false;
 var p_1 = board.create('point',[-1,0],{name:'Circle1',style:10});
@@ -24,7 +52,7 @@ var el_1 = board.create('circle',[p_1,3.0], {fillColor:'#aa0000', strokeColor:'#
 var p_2 = board.create('point',[0,0], {name:'Circle2',style:10});
 var el_2 = board.create('circle',[p_2,3.0],{fillColor:'#aa0000', strokeColor:'#00ff00',strokeWidth:1,fillOpacity:0.5}); 
 p_1.moveTo([8,8]);
-
+*/
 
 
 /*
