@@ -10,7 +10,8 @@
 <div style="width:960px">
 <div id="jxgbox" class="jxgbox" style="width:600px; height:400px; float:left; "></div>
 <p style="float:right">
-  <input type="text" id="eingabe" value="Math.tan(x)*s1.Value()"><br />
+  Input in GEONExT-Syntax:<br> 
+  <input type="text" id="eingabe" size=50 value="sin(x * V(S_1))*s2.Value()"><br />
   <input type="button" value="set" onClick="doIt()" style='margin:1em'> <br />
   <input type='button' value='Zoom In' onclick='board.zoomIn()' style='margin:1em'><br />
   <input type='button' value='Zoom Out' onclick='board.zoomOut()' style='margin:1em'><br />
@@ -66,7 +67,9 @@
         t = board.createElement('text', [function(){return p2.X()+1.1;},function(){return p2.Y()+(p3.Y()-p4.Y())/2;},function(){ return "m="+(board.round(p3.Y()-p4.Y(),2));}]); 
         */
         function doIt(){
-        	eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
+            var s = board.algebra.geonext2JS(document.getElementById("eingabe").value);
+            document.getElementById("debug").innerHTML = s;
+        	eval("function f(x){ return "+s+";}");
         	graph.yterm = function(x){ return f(x); };  // usually: e.g. "x^2"
             graph.Y = graph.yterm;
     		graph.updateCurve();

@@ -1126,9 +1126,10 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
  * </script><pre>
  */
 JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** object */ atts) {
-    var el, isConstrained = false, i;
+    var el, isConstrained = false, i, show;
     atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
-        
+    show = (typeof atts['visible']=='undefined') || JXG.str2Bool(atts['visible']);
+    
     for (i=0;i<parents.length;i++) {
         if (typeof parents[i]=='function' || typeof parents[i]=='string') {
             isConstrained = true;
@@ -1136,21 +1137,21 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
     }
     if (!isConstrained) {
         if ( (JXG.isNumber(parents[0])) && (JXG.isNumber(parents[1])) ) {
-            el = new JXG.Point(board, parents, atts['id'], atts['name'], (atts['visible']==undefined) || JXG.str2Bool(atts['visible']), atts['withLabel'], atts['layer']);
+            el = new JXG.Point(board, parents, atts['id'], atts['name'], show, atts['withLabel'], atts['layer']);
             if ( atts["slideObject"] != null ) {
                 el.makeGlider(atts["slideObject"]);
             } else {
                 el.baseElement = el; // Free point
             }
         } else if ( (typeof parents[0]=='object') && (typeof parents[1]=='object') ) { // Transformation
-            el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || JXG.str2Bool(atts['visible']), atts['withLabel'], atts['layer']);   
+            el = new JXG.Point(board, [0,0], atts['id'], atts['name'], show, atts['withLabel'], atts['layer']);   
             el.addTransform(parents[0],parents[1]);
         }
         else {// Failure
             throw new Error("JSXGraph: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         }
     } else {
-        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || JXG.str2Bool(atts['visible']), atts['withLabel'], atts['layer']);
+        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], show, atts['withLabel'], atts['layer']);
         el.addConstraint(parents);
     }
     return el;
@@ -1196,12 +1197,13 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
  * </script><pre>
  */
 JXG.createGlider = function(board, parents, atts) {
-    var el;
+    var el, show;
     atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
+    show = (typeof atts['visible']=='undefined') || JXG.str2Bool(atts['visible']);
+    
     if (parents.length==1) {
-      el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || JXG.str2Bool(atts['visible']), atts['withLabel']);
+      el = new JXG.Point(board, [0,0], atts['id'], atts['name'], show, atts['withLabel']);
     } else {
-      //el = new JXG.Point(board, parents.slice(0,-1), atts['id'], atts['name'], (atts['visible']==undefined) || JXG.str2Bool(atts['visible']));
       el = board.create('point',parents.slice(0,-1), atts);
     }
     el.makeGlider(parents[parents.length-1]);

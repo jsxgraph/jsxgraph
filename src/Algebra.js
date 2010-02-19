@@ -910,49 +910,24 @@ JXG.Algebra.prototype.replaceSup = function(te) {
  * @return The same string with names replaced by ids.
  **/
 JXG.Algebra.prototype.replaceNameById = function(/** string */ term) /** string */ {
-    var pos = 0, end, elName, el;
+    var pos = 0, end, elName, el, i,
+        funcs = ['X','Y','L','V'];
     
-    pos = term.indexOf('X(');
-    while (pos>=0) {
-        if (pos>=0) {
-            end = term.indexOf(')',pos+2);
-            if (end>=0) {
-                elName = term.slice(pos+2,end);
-                elName = elName.replace(/\\(['"])?/g,"$1");
-                el = this.board.elementsByName[elName];
-                term = term.slice(0,pos+2) + el.id +  term.slice(end);
+    for (i=0;i<funcs.length;i++) {
+        pos = term.indexOf(funcs[i]+'(');
+        while (pos>=0) {
+            if (pos>=0) {
+                end = term.indexOf(')',pos+2);
+                if (end>=0) {
+                    elName = term.slice(pos+2,end);
+                    elName = elName.replace(/\\(['"])?/g,"$1");
+                    el = this.board.elementsByName[elName];
+                    term = term.slice(0,pos+2) + el.id +  term.slice(end);
+                }
             }
-        }
-        end = term.indexOf(')',pos+2);
-        pos = term.indexOf('X(',end);
-    }
-    pos = term.indexOf('Y(');
-    while (pos>=0) {
-        if (pos>=0) {
             end = term.indexOf(')',pos+2);
-            if (end>=0) {
-                elName = term.slice(pos+2,end);
-                elName = elName.replace(/\\(['"])?/g,"$1"); 
-                el = this.board.elementsByName[elName];
-                term = term.slice(0,pos+2) + el.id +  term.slice(end);
-            }
+            pos = term.indexOf(funcs[i]+'(',end);
         }
-        end = term.indexOf(')',pos+2);
-        pos = term.indexOf('Y(',end);
-    }
-    pos = term.indexOf('L(');
-    while (pos>=0) {
-        if (pos>=0) {
-            end = term.indexOf(')',pos+2);
-            if (end>=0) {
-                elName = term.slice(pos+2,end);
-                elName = elName.replace(/\\(['"])?/g,"$1");
-                el = this.board.elementsByName[elName];
-                term = term.slice(0,pos+2) + el.id +  term.slice(end);
-            }
-        }
-        end = term.indexOf(')',pos+2);
-        pos = term.indexOf('L(',end);
     }
 
     pos = term.indexOf('Dist(');
@@ -979,72 +954,41 @@ JXG.Algebra.prototype.replaceNameById = function(/** string */ term) /** string 
         pos = term.indexOf('Dist(',end);
     }
 
-    pos = term.indexOf('Deg(');
-    while (pos>=0) {
-        if (pos>=0) {
+    funcs = ['Deg','Rad'];
+    for (i=0;i<funcs.length;i++) {
+        pos = term.indexOf(funcs[i]+'(');
+        while (pos>=0) {
+            if (pos>=0) {
+                end = term.indexOf(',',pos+4);
+                if (end>=0) {
+                    elName = term.slice(pos+4,end);
+                    elName = elName.replace(/\\(['"])?/g,"$1");
+                    el = this.board.elementsByName[elName];
+                    term = term.slice(0,pos+4) + el.id +  term.slice(end);
+                }
+            }
             end = term.indexOf(',',pos+4);
+            pos = term.indexOf(',',end);
+            end = term.indexOf(',',pos+1);
             if (end>=0) {
-                elName = term.slice(pos+4,end);
+                elName = term.slice(pos+1,end);
                 elName = elName.replace(/\\(['"])?/g,"$1");
                 el = this.board.elementsByName[elName];
-                term = term.slice(0,pos+4) + el.id +  term.slice(end);
+                term = term.slice(0,pos+1) + el.id +  term.slice(end);
             }
-        }
-        end = term.indexOf(',',pos+4);
-        pos = term.indexOf(',',end);
-        end = term.indexOf(',',pos+1);
-        if (end>=0) {
-            elName = term.slice(pos+1,end);
-            elName = elName.replace(/\\(['"])?/g,"$1");
-            el = this.board.elementsByName[elName];
-            term = term.slice(0,pos+1) + el.id +  term.slice(end);
-        }
-        end = term.indexOf(',',pos+1);
-        pos = term.indexOf(',',end);
-        end = term.indexOf(')',pos+1);
-        if (end>=0) {
-            elName = term.slice(pos+1,end);
-            elName = elName.replace(/\\(['"])?/g,"$1");
-            el = this.board.elementsByName[elName];
-            term = term.slice(0,pos+1) + el.id +  term.slice(end);
-        }
-        end = term.indexOf(')',pos+1);
-        pos = term.indexOf('Deg(',end);
-    }
-
-    pos = term.indexOf('Rad(');
-    while (pos>=0) {
-        if (pos>=0) {
-            end = term.indexOf(',',pos+4);
+            end = term.indexOf(',',pos+1);
+            pos = term.indexOf(',',end);
+            end = term.indexOf(')',pos+1);
             if (end>=0) {
-                elName = term.slice(pos+4,end);
+                elName = term.slice(pos+1,end);
                 elName = elName.replace(/\\(['"])?/g,"$1");
                 el = this.board.elementsByName[elName];
-                term = term.slice(0,pos+4) + el.id +  term.slice(end);
+                term = term.slice(0,pos+1) + el.id +  term.slice(end);
             }
+            end = term.indexOf(')',pos+1);
+            pos = term.indexOf(funcs[i]+'(',end);
         }
-        end = term.indexOf(',',pos+4);
-        pos = term.indexOf(',',end);
-        end = term.indexOf(',',pos+1);
-        if (end>=0) {
-            elName = term.slice(pos+1,end);
-            elName = elName.replace(/\\(['"])?/g,"$1");
-            el = this.board.elementsByName[elName];
-            term = term.slice(0,pos+1) + el.id +  term.slice(end);
-        }
-        end = term.indexOf(',',pos+1);
-        pos = term.indexOf(',',end);
-        end = term.indexOf(')',pos+1);
-        if (end>=0) {
-            elName = term.slice(pos+1,end);
-            elName = elName.replace(/\\(['"])?/g,"$1");
-            el = this.board.elementsByName[elName];
-            term = term.slice(0,pos+1) + el.id +  term.slice(end);
-        }
-        end = term.indexOf(')',pos+1);
-        pos = term.indexOf('Rad(',end);
     }
-
     return term;
 };
 
@@ -1056,6 +1000,9 @@ JXG.Algebra.prototype.replaceNameById = function(/** string */ term) /** string 
 JXG.Algebra.prototype.replaceIdByObj = function(/** string */ term) /** string */ {
     var expr = /(X|Y|L)\(([\w_]+)\)/g;  // Suche "X(gi23)" oder "Y(gi23A)" und wandle in objects['gi23'].X() um.
     term = term.replace(expr,"this.board.objects[\"$2\"].$1()");
+    
+    expr = /(V)\(([\w_]+)\)/g;  // Suche "X(gi23)" oder "Y(gi23A)" und wandle in objects['gi23'].X() um.
+    term = term.replace(expr,"this.board.objects[\"$2\"].Value()");
 
     expr = /(Dist)\(([\w_]+),([\w_]+)\)/g;  // 
     term = term.replace(expr,'this.board.objects[\"$2\"].Dist(this.board.objects[\"$3\"])');
@@ -1076,9 +1023,10 @@ JXG.Algebra.prototype.replaceIdByObj = function(/** string */ term) /** string *
  */
 JXG.Algebra.prototype.geonext2JS = function(term) {
     var expr, newterm, i,
-        from = ['Abs','ACos','ASin','ATan','Ceil','Cos','Exp','Floor','Log','Max','Min','Pow','Random','Round','Sin','Sqrt','Tan','Trunc'], 
-        to = ['Math.abs', 'Math.acos', 'Math.asin', 'Math.atan', 'Math.ceil', 'Math.cos', 'Math.exp', 'Math.floor', 'Math.log', 'Math.max', 'Math.min', 'Math.pow', 'Math.random', 'this.board.round', 'Math.sin', 'Math.sqrt', 'Math.tan', 'Math.ceil'];
-        
+        from = ['Abs', 'ACos', 'ASin', 'ATan','Ceil','Cos','Exp','Floor','Log','Max','Min','Random','Round','Sin','Sqrt','Tan','Trunc'], 
+        to =   ['Math.abs', 'Math.acos', 'Math.asin', 'Math.atan', 'Math.ceil', 'Math.cos', 'Math.exp', 'Math.floor', 'Math.log', 'Math.max', 'Math.min', 'Math.random', 'this.board.round', 'Math.sin', 'Math.sqrt', 'Math.tan', 'Math.ceil'];
+    // removed: 'Pow'  -> Math.pow
+    
     //term = JXG.unescapeHTML(term);  // This replaces &gt; by >, &lt; by < and &amp; by &.ist aber zu allgemein
     term = term.replace(/&lt;/g,'<'); // Hacks, to enable not well formed XML, @see GeonextReader#replaceLessThan
     term = term.replace(/&gt;/g,'>'); 
@@ -1093,7 +1041,7 @@ JXG.Algebra.prototype.geonext2JS = function(term) {
     newterm = this.replaceIdByObj(newterm);
     
     for (i=0; i<from.length; i++) {
-        expr = new RegExp(from[i],"g");
+        expr = new RegExp(from[i],"ig");
         newterm = newterm.replace(expr,to[i]);
     }    
 
