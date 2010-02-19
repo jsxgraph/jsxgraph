@@ -69,16 +69,14 @@ JXG.createSlider = function(board, parentArr, atts) {
 
     p1 = board.create('point', pos0, {visible:false, fixed:true, name:'',withLabel:false}); 
     p2 = board.create('point', pos1, {visible:false, fixed:true, name:'',withLabel:false}); 
-    l1 = board.create('line', [p1,p2], 
-                {straightFirst:false, 
-                straightLast:false, 
-                strokewidth:1, 
+    l1 = board.create('segment', [p1,p2], 
+                {strokewidth:1, 
                 name:'',
                 withLabel:false,
                 strokeColor:atts['strokeColor']});
     ticks  = 2;
     ti = board.create('ticks', [l1, p2.Dist(p1)/ticks],
-                {insertTicks:true, drawLabels:false, drawZero:true}); 
+                {insertTicks:true, minorTicks:0, drawLabels:false, drawZero:true}); 
 
     p1.needsRegularUpdate = false;
     p2.needsRegularUpdate = false;

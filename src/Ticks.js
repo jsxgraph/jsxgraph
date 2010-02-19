@@ -115,7 +115,7 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, la
      * minorTicks is the number of minor ticks between two major ticks.
      * @type int
      */
-    this.minorTicks = ( (minor == null) || (minor == 0) ? this.board.options.line.ticks.minorTicks : minor);
+    this.minorTicks = ( (minor == null)? this.board.options.line.ticks.minorTicks : minor);
     if(this.minorTicks < 0)
         this.minorTicks = -this.minorTicks;
 
@@ -626,7 +626,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
  * Uses the boards renderer to update the arc.
  * update() is not needed for arc.
  */
- JXG.Ticks.prototype.updateRenderer = function () {
+JXG.Ticks.prototype.updateRenderer = function () {
     if (this.needsUpdate) {
         this.calculateTicksCoordinates();
         this.needsUpdate = false;
