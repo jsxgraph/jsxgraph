@@ -342,6 +342,25 @@ JXG.isPoint = function(p) {
     return false;
 };
 
+/**
+ * Converts a string containing either <strong>true</strong> or <strong>false</strong> into a boolean value.
+ * @param s String containing either <strong>true</strong> or <strong>false</strong>.
+ * @return String typed boolean value converted to boolean.
+ */
+JXG.str2Bool = function(/** string */ s) /** boolean */ {
+    if (s==undefined || s==null) {
+        return true;
+    }
+    if (typeof s == 'boolean') { 
+        return s;
+    }
+    if (s.toLowerCase()!='true') {
+        return false;
+    } else {
+        return true;
+    }
+};
+
 JXG._board = function(box, attributes) {
 	return JXG.JSXGraph.initBoard(box, attributes);
 };

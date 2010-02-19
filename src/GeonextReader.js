@@ -290,7 +290,7 @@ this.readGeonext = function(tree,board) {
     gridY = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data) ? board.gridY = boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data*1 : null;
     board.calculateSnapSizes();
     gridDash = boardData.getElementsByTagName('grid')[1].getElementsByTagName('dash')[0].firstChild.data;
-    board.gridDash = board.algebra.str2Bool(gridDash);
+    board.gridDash = JXG.str2Bool(gridDash);
     gridColor = boardData.getElementsByTagName('grid')[1].getElementsByTagName('color')[0].firstChild.data;
     if (gridColor.length=='9' && gridColor.substr(0,1)=='#') {
         gridOpacity = gridColor.substr(7,2);
@@ -464,7 +464,7 @@ this.readGeonext = function(tree,board) {
                                   'fillColor:'+gxtEl.colorStroke,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                                   'highlightFillColor:'+gxtEl.highlightStrokeColor,'visible:'+gxtEl.visible,
                                   'fixed:'+gxtEl.fixed,'labelColor:'+gxtEl.colorLabel,'draft:'+gxtEl.draft);
-                    p.onPolygon = board.algebra.str2Bool(gxtEl.onpolygon);
+                    p.onPolygon = JXG.str2Bool(gxtEl.onpolygon);
                     p.traced = (gxtEl.trace=='false') ? false : true;
                     p.setStyle(1*gxtEl.style);
                     JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
