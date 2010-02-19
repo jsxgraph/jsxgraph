@@ -928,13 +928,13 @@ JXG.SVGRenderer.prototype.updatePathStringPoint = function(el, size, type) {
 
 JXG.SVGRenderer.prototype.updatePolygonePrimitive = function(node, el) {
     var pStr = '', 
-        screenCoords, i,
+        scrCoords, i,
         len = el.vertices.length;
         
     node.setAttributeNS(null, 'stroke', 'none');
     for(i=0; i<len-1; i++) {
-        screenCoords = el.vertices[i].coords.scrCoords;
-        pStr = pStr + screenCoords[1] + "," + screenCoords[2];
+        scrCoords = el.vertices[i].coords.scrCoords;
+        pStr = pStr + scrCoords[1] + "," + scrCoords[2];
         if(i<len-2) { pStr += " "; }
     }
     node.setAttributeNS(null, 'points', pStr);
@@ -947,20 +947,6 @@ JXG.SVGRenderer.prototype.appendChildPrimitive = function(node,level) {
         level = JXG.Options.layer.numlayers-1;
     }
     this.layer[level].appendChild(node);
-    /*
-    switch (level) {
-        case 'images': this.images.appendChild(node); break;
-        case 'grid': this.grid.appendChild(node); break;
-        case 'angles': this.angles.appendChild(node); break;
-        case 'sectors': this.sectors.appendChild(node); break;
-        case 'polygone': this.polygone.appendChild(node); break;
-        case 'curves': this.curves.appendChild(node); break; //this.lines.appendChild(node); break;
-        case 'circles': this.circles.appendChild(node); break; // this.lines.appendChild(node); break; //
-        case 'lines': this.lines.appendChild(node); break;
-        case 'arcs': this.arcs.appendChild(node); break;
-        case 'points': this.points.appendChild(node); break;
-    }
-    */
 };
 
 JXG.SVGRenderer.prototype.setPropertyPrimitive = function(node,key,val) {
