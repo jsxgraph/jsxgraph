@@ -57,11 +57,11 @@ JXG.createTriangle = function(board, parents, attributes) {
         attributes.straightFirst = false;
         attributes.straightLast = false;
 
-        l1 = board.createElement('line', [p1, p2], attributes);
-        l2 = board.createElement('line', [p2, p3], attributes);
-        l3 = board.createElement('line', [p3, p1], attributes);
+        l1 = board.create('line', [p1, p2], attributes);
+        l2 = board.create('line', [p2, p3], attributes);
+        l3 = board.create('line', [p3, p1], attributes);
 
-        var g = board.createElement('group', [p1, p2, p3]);
+        var g = board.create('group', [p1, p2, p3]);
 //        g.addPoints([p1, p2, p3]);
 
         ret = [p1, p2, p3, l1, l2, l3, g];

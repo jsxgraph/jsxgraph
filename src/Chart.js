@@ -129,7 +129,7 @@ JXG.Chart.prototype.drawLine = function(board, parents, attributes) {
     attributes['fillColor'] = 'none';
     attributes['highlightFillColor'] = 'none';
 
-    var c = board.createElement('curve', [_x, _y], attributes);
+    var c = board.create('curve', [_x, _y], attributes);
     this.rendNode = c.rendNode;  // This is needed in setProperty
     return c;
 };
@@ -143,7 +143,7 @@ JXG.Chart.prototype.drawSpline = function(board, parents, attributes) {
     attributes['fillColor'] = 'none';
     attributes['highlightFillColor'] = 'none';
 
-    var c = board.createElement('spline', [x, y], attributes);
+    var c = board.create('spline', [x, y], attributes);
     this.rendNode = c.rendNode;  // This is needed in setProperty
     return c;
 };
@@ -158,7 +158,7 @@ JXG.Chart.prototype.drawFit = function(board, parents, attributes) {
     attributes['highlightFillColor'] = 'none';
 
     var regression = JXG.Math.Numerics.regressionPolynomial(deg, x, y);
-    var c = board.createElement('functiongraph', [regression], attributes);
+    var c = board.create('functiongraph', [regression], attributes);
     this.rendNode = c.rendNode;  // This is needed in setProperty
     return c;
 };
@@ -204,20 +204,20 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
         yp = y[i];
        
         if (attributes['dir']=='horizontal') {  // horizontal bars
-            p[0] = board.createElement('point',[0,xp0], {name:'',fixed:true,visible:false});
-            p[1] = board.createElement('point',[yp,xp0], {name:'',fixed:true,visible:false});
-            p[2] = board.createElement('point',[yp,xp2], {name:'',fixed:true,visible:false});
-            p[3] = board.createElement('point',[0,xp2], {name:'',fixed:true,visible:false});
+            p[0] = board.create('point',[0,xp0], {name:'',fixed:true,visible:false});
+            p[1] = board.create('point',[yp,xp0], {name:'',fixed:true,visible:false});
+            p[2] = board.create('point',[yp,xp2], {name:'',fixed:true,visible:false});
+            p[3] = board.create('point',[0,xp2], {name:'',fixed:true,visible:false});
             if (attributes['labels'] && attributes['labels'][i]) {
-                board.createElement('text',[yp,xp2,attributes['labels'][i]],attributes);
+                board.create('text',[yp,xp2,attributes['labels'][i]],attributes);
             }
         } else { // vertical bars
-            p[0] = board.createElement('point',[xp0,0], {name:'',fixed:true,visible:false});
-            p[1] = board.createElement('point',[xp0,yp], {name:'',fixed:true,visible:false});
-            p[2] = board.createElement('point',[xp2,yp], {name:'',fixed:true,visible:false});
-            p[3] = board.createElement('point',[xp2,0], {name:'',fixed:true,visible:false});
+            p[0] = board.create('point',[xp0,0], {name:'',fixed:true,visible:false});
+            p[1] = board.create('point',[xp0,yp], {name:'',fixed:true,visible:false});
+            p[2] = board.create('point',[xp2,yp], {name:'',fixed:true,visible:false});
+            p[3] = board.create('point',[xp2,0], {name:'',fixed:true,visible:false});
             if (attributes['labels'] && attributes['labels'][i]) {
-                board.createElement('text',[xp2,yp,attributes['labels'][i]],attributes);
+                board.create('text',[xp2,yp,attributes['labels'][i]],attributes);
             }
         }
         attributes['withLines'] = false;
@@ -226,7 +226,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
             colorArray = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
             attributes['fillColor'] = colorArray[i%colorArray.length];
         }
-        pols[i] = board.createElement('polygon',p,attributes);
+        pols[i] = board.create('polygon',p,attributes);
     }
     this.rendNode = pols[0].rendNode;  // This is needed in setProperty
 
@@ -242,7 +242,7 @@ JXG.Chart.prototype.drawPoints = function(board, parents, attributes) {
     var y = parents[1];
     
     for (i=0;i<x.length;i++) {
-        points[i] = board.createElement('point',[x[i],y[i]], attributes);
+        points[i] = board.create('point',[x[i],y[i]], attributes);
     }
     this.rendNode = points[0].rendNode;
     return points; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
@@ -286,15 +286,15 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
     var xc = cent[0];
     var yc = cent[1];
 
-    var center = board.createElement('point',[xc,yc], {name:'',fixed:true,visible:false});
-    p[0] = board.createElement('point',[radius+xc,0+yc], {name:'',fixed:true,visible:false});
+    var center = board.create('point',[xc,yc], {name:'',fixed:true,visible:false});
+    p[0] = board.create('point',[radius+xc,0+yc], {name:'',fixed:true,visible:false});
     var rad = 0.0;
     for (i=0;i<y.length;i++) {
         rad += (s!=0)?(2*Math.PI*y[i]/s):0;
         var xcoord = radius*Math.cos(rad)+xc;
         var ycoord = radius*Math.sin(rad)+yc;
-        p[i+1] = board.createElement('point',[xcoord,ycoord], {name:'',fixed:true,visible:false,withLabel:false});
-        line[i] = board.createElement('line',[center,p[i]], 
+        p[i+1] = board.create('point',[xcoord,ycoord], {name:'',fixed:true,visible:false,withLabel:false});
+        line[i] = board.create('line',[center,p[i]], 
             {strokeColor:myAtts['strokeColor'], straightFirst:false, straightLast:false, strokeWidth:myAtts['strokeWidth'], strokeOpacity:1.0,withLabel:false,highlightStrokeColor:myAtts['highlightStrokeColor']});
         myAtts['fillColor'] = colorArray[i%colorArray.length];
         myAtts['name'] = labelArray[i];
@@ -306,7 +306,7 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         }
         myAtts['labelColor'] = colorArray[i%colorArray.length];
         myAtts['highlightfillColor'] = highlightColorArray[i%highlightColorArray.length];
-        arc[i] = board.createElement('arc',[center,p[i],p[i+1]], myAtts);
+        arc[i] = board.create('arc',[center,p[i],p[i+1]], myAtts);
         
         if(attributes['highlightOnSector']) {
             arc[i].hasPoint = arc[i].hasPointSector; // overwrite hasPoint so that the whole sector is used for highlighting

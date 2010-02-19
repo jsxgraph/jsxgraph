@@ -41,7 +41,7 @@
  * The return value is an invisible point, whos X() or Y() value
  * returns the position between max and min,
  * Further, there is a method Value() returning the same value.
- * @class Creates a new basic slider object. Do not use this constructor to create a slider. Use {@link JXG.Board#createElement} with
+ * @class Creates a new basic slider object. Do not use this constructor to create a slider. Use {@link JXG.Board#create} with
  * type {@link Line}, {@link Arrow}, or {@link Axis} instead.  
  * @constructor
  * @augments JXG.GeometryElement
@@ -67,9 +67,9 @@ JXG.createSlider = function(board, parentArr, atts) {
     
     atts = JXG.checkAttributes(atts,{strokeColor:'#000000', fillColor:'#ffffff'});
 
-    p1 = board.createElement('point', pos0, {visible:false, fixed:true, name:'',withLabel:false}); 
-    p2 = board.createElement('point', pos1, {visible:false, fixed:true, name:'',withLabel:false}); 
-    l1 = board.createElement('line', [p1,p2], 
+    p1 = board.create('point', pos0, {visible:false, fixed:true, name:'',withLabel:false}); 
+    p2 = board.create('point', pos1, {visible:false, fixed:true, name:'',withLabel:false}); 
+    l1 = board.create('line', [p1,p2], 
                 {straightFirst:false, 
                 straightLast:false, 
                 strokewidth:1, 
@@ -77,7 +77,7 @@ JXG.createSlider = function(board, parentArr, atts) {
                 withLabel:false,
                 strokeColor:atts['strokeColor']});
     ticks  = 2;
-    ti = board.createElement('ticks', [l1, p2.Dist(p1)/ticks],
+    ti = board.create('ticks', [l1, p2.Dist(p1)/ticks],
                 {insertTicks:true, drawLabels:false, drawZero:true}); 
 
     p1.needsRegularUpdate = false;
@@ -90,13 +90,13 @@ JXG.createSlider = function(board, parentArr, atts) {
     if (atts['snapWidth']!=null) snapWidth = atts['snapWidth'];
     if (atts['snapwidth']!=null) snapWidth = atts['snapwidth'];
     
-    p3 = board.createElement('glider', [startx,starty,l1],
+    p3 = board.create('glider', [startx,starty,l1],
                 {style:6,strokeColor:atts['strokeColor'],
                  fillColor:atts['fillColor'],
                  showInfobox:false,name:atts['name'], withLabel:false,
                  snapWidth:snapWidth});
     
-    l2 = board.createElement('line', [p1,p3], 
+    l2 = board.create('line', [p1,p3], 
                 {straightFirst:false, 
                  straightLast:false, strokewidth:3, 
                  strokeColor:atts['strokeColor'],
@@ -115,7 +115,7 @@ JXG.createSlider = function(board, parentArr, atts) {
         } else {
             n = '';
         }
-        t = board.createElement('text', [((pos1[0]-pos0[0])*.05+pos1[0]), 
+        t = board.create('text', [((pos1[0]-pos0[0])*.05+pos1[0]), 
                                      ((pos1[1]-pos0[1])*.05+pos1[1]), 
                                      function(){return n+(p3.Value()).toFixed(2);}],
                                      {name:''}); 

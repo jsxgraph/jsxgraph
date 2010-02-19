@@ -334,16 +334,16 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
  * @see JXG.Text
  * @example
  * // Create a fixed text at position [0,1].
- *   var t1 = board.createElement('text',[0,1,"Hello World"]); 
+ *   var t1 = board.create('text',[0,1,"Hello World"]); 
  * </pre><div id="896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var t1_board = JXG.JSXGraph.initBoard('896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var t1 = t1_board.createElement('text',[0,1,"Hello World"]);
+ *   var t1 = t1_board.create('text',[0,1,"Hello World"]);
  * </script><pre>
  * @example
  * // Create a variable text at a variable position.
- *   var s = board.createElement('slider',[[0,4],[3,4],[-2,0,2]]);
- *   var graph = board.createElement('text', 
+ *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var graph = board.create('text', 
  *                        [function(x){ return s.Value();}, 1,
  *                         function(){return "The value of s is"+s.Value().toFixed(2);}
  *                        ]
@@ -351,8 +351,8 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
  * </pre><div id="5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var t2_board = JXG.JSXGraph.initBoard('5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var s = t2_board.createElement('slider',[[0,4],[3,4],[-2,0,2]]);
- *   var t2 = t2_board.createElement('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+s.Value().toFixed(2);}]);
+ *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+s.Value().toFixed(2);}]);
  * </script><pre>
  */
 JXG.createText = function(board, parentArr, atts) {

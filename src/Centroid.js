@@ -43,7 +43,7 @@ JXG.createCentroid = function(board, parents, attributes) {
         if((attributes == null) || (typeof attribues == undefined))
             attributes = new Object();
             
-        var cent = board.createElement('point', [function () {return (p1.X() + p2.X() + p3.X())/3;}, function () {return (p1.Y() + p2.Y() + p3.Y())/3;}], attributes);
+        var cent = board.create('point', [function () {return (p1.X() + p2.X() + p3.X())/3;}, function () {return (p1.Y() + p2.Y() + p3.Y())/3;}], attributes);
         p1.addChild(cent);
         p2.addChild(cent);
         p3.addChild(cent);

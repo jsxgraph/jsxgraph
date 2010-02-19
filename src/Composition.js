@@ -54,20 +54,20 @@
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Line_JXG.Point} p,l The constructed point is the orthogonal projection of p onto l.
  * @example
- * var p1 = board.createElement('point', [0.0, 4.0]);
- * var p2 = board.createElement('point', [6.0, 1.0]);
- * var l1 = board.createElement('line', [p1, p2]);
- * var p3 = board.createElement('point', [3.0, 3.0]);
+ * var p1 = board.create('point', [0.0, 4.0]);
+ * var p2 = board.create('point', [6.0, 1.0]);
+ * var l1 = board.create('line', [p1, p2]);
+ * var p3 = board.create('point', [3.0, 3.0]);
  *
- * var pp1 = board.createElement('perpendicularpoint', [p3, l1]);
+ * var pp1 = board.create('perpendicularpoint', [p3, l1]);
  * </pre><div id="ded148c9-3536-44c0-ab81-1bb8fa48f3f4" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var ppex1_board = JXG.JSXGraph.initBoard('ded148c9-3536-44c0-ab81-1bb8fa48f3f4', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var ppex1_p1 = ppex1_board.createElement('point', [0.0, 4.0]);
- *   var ppex1_p2 = ppex1_board.createElement('point', [6.0, 1.0]);
- *   var ppex1_l1 = ppex1_board.createElement('line', [ppex1_p1, ppex1_p2]);
- *   var ppex1_p3 = ppex1_board.createElement('point', [3.0, 3.0]);
- *   var ppex1_pp1 = ppex1_board.createElement('perpendicularpoint', [ppex1_p3, ppex1_l1]);
+ *   var ppex1_p1 = ppex1_board.create('point', [0.0, 4.0]);
+ *   var ppex1_p2 = ppex1_board.create('point', [6.0, 1.0]);
+ *   var ppex1_l1 = ppex1_board.create('line', [ppex1_p1, ppex1_p2]);
+ *   var ppex1_p3 = ppex1_board.create('point', [3.0, 3.0]);
+ *   var ppex1_pp1 = ppex1_board.create('perpendicularpoint', [ppex1_p3, ppex1_l1]);
  * </script><pre>
  */
 JXG.createPerpendicularPoint = function(board, parentArr, atts) {
@@ -85,7 +85,7 @@ JXG.createPerpendicularPoint = function(board, parentArr, atts) {
         throw new Error("JSXGraph: Can't create perpendicular point with parent types '" + (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'.");
     }
 
-    // no need to call createElement, the properties will be set through the createElement('perpendicular') call
+    // no need to call create, the properties will be set through the create('perpendicular') call
     t = JXG.createPoint(board, [function () { return board.algebra.perpendicular(l, p)[0]; }], {fixed: true, name: atts['name'], id: atts['id']});
     p.addChild(t); // notwendig, um auch den Punkt upzudaten
     l.addChild(t);
@@ -163,20 +163,20 @@ JXG.createPerpendicularPoint = function(board, parentArr, atts) {
  * will contain p. The perpendicular point is the intersection point of the two lines.
  * @example
  * // Create a perpendicular
- * var p1 = board.createElement('point', [0.0, 2.0]);
- * var p2 = board.createElement('point', [2.0, 1.0]);
- * var l1 = board.createElement('line', [p1, p2]);
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 1.0]);
+ * var l1 = board.create('line', [p1, p2]);
  *
- * var p3 = board.createElement('point', [3.0, 3.0]);
- * var perp1 = board.createElement('perpendicular', [l1, p3]);
+ * var p3 = board.create('point', [3.0, 3.0]);
+ * var perp1 = board.create('perpendicular', [l1, p3]);
  * </pre><div id="037a6eb2-781d-4b71-b286-763619a63f22" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var pex1_board = JXG.JSXGraph.initBoard('037a6eb2-781d-4b71-b286-763619a63f22', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var pex1_p1 = pex1_board.createElement('point', [0.0, 2.0]);
- *   var pex1_p2 = pex1_board.createElement('point', [2.0, 1.0]);
- *   var pex1_l1 = pex1_board.createElement('line', [pex1_p1, pex1_p2]);
- *   var pex1_p3 = pex1_board.createElement('point', [3.0, 3.0]);
- *   var pex1_perp1 = pex1_board.createElement('perpendicular', [pex1_l1, pex1_p3]);
+ *   var pex1_p1 = pex1_board.create('point', [0.0, 2.0]);
+ *   var pex1_p2 = pex1_board.create('point', [2.0, 1.0]);
+ *   var pex1_l1 = pex1_board.create('line', [pex1_p1, pex1_p2]);
+ *   var pex1_p3 = pex1_board.create('point', [3.0, 3.0]);
+ *   var pex1_perp1 = pex1_board.create('perpendicular', [pex1_l1, pex1_p3]);
  * </script><pre>
  */
 JXG.createPerpendicular = function(board, parentArr, atts) {
@@ -204,7 +204,7 @@ JXG.createPerpendicular = function(board, parentArr, atts) {
         atts['name'] = ['',''];
     }
 
-    // no need to call createElement, the properties will be set through the createElement('perpendicular') call
+    // no need to call create, the properties will be set through the create('perpendicular') call
     t = JXG.createPerpendicularPoint(board, [l, p], {fixed: true, name: atts['name'][1], id: atts['id'][1], visible: false});
     pd = JXG.createSegment(board, [function () { return (board.algebra.perpendicular(l, p)[1] ? [t, p] : [p, t]); }], {name: atts['name'][0], id: atts['id'][0]});
 
@@ -231,20 +231,20 @@ JXG.createPerpendicular = function(board, parentArr, atts) {
  * the given line l.
  * @example
  * // Create base elements: 2 points and 1 line
- * var p1 = board.createElement('point', [0.0, 2.0]);
- * var p2 = board.createElement('point', [2.0, 1.0]);
- * var l1 = board.createElement('segment', [[0.0, 3.0], [3.0, 3.0]]);
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 1.0]);
+ * var l1 = board.create('segment', [[0.0, 3.0], [3.0, 3.0]]);
  *
- * var mp1 = board.createElement('midpoint', [p1, p2]);
- * var mp2 = board.createElement('midpoint', [l1]);
+ * var mp1 = board.create('midpoint', [p1, p2]);
+ * var mp2 = board.create('midpoint', [l1]);
  * </pre><div id="7927ef86-24ae-40cc-afb0-91ff61dd0de7" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var mpex1_board = JXG.JSXGraph.initBoard('7927ef86-24ae-40cc-afb0-91ff61dd0de7', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var mpex1_p1 = mpex1_board.createElement('point', [0.0, 2.0]);
- *   var mpex1_p2 = mpex1_board.createElement('point', [2.0, 1.0]);
- *   var mpex1_l1 = mpex1_board.createElement('segment', [[0.0, 3.0], [3.0, 3.0]]);
- *   var mpex1_mp1 = mpex1_board.createElement('midpoint', [mpex1_p1, mpex1_p2]);
- *   var mpex1_mp2 = mpex1_board.createElement('midpoint', [mpex1_l1]);
+ *   var mpex1_p1 = mpex1_board.create('point', [0.0, 2.0]);
+ *   var mpex1_p2 = mpex1_board.create('point', [2.0, 1.0]);
+ *   var mpex1_l1 = mpex1_board.create('segment', [[0.0, 3.0], [3.0, 3.0]]);
+ *   var mpex1_mp1 = mpex1_board.create('midpoint', [mpex1_p1, mpex1_p2]);
+ *   var mpex1_mp2 = mpex1_board.create('midpoint', [mpex1_l1]);
  * </script><pre>
  */
 JXG.createMidpoint = function(board, parentArr, atts) {
@@ -267,7 +267,7 @@ JXG.createMidpoint = function(board, parentArr, atts) {
     	atts = {fixed: true};
     }
 
-    t = board.createElement('point', [function () { return (a.coords.usrCoords[1] + b.coords.usrCoords[1])/2.; },
+    t = board.create('point', [function () { return (a.coords.usrCoords[1] + b.coords.usrCoords[1])/2.; },
                                       function () { return (a.coords.usrCoords[2] + b.coords.usrCoords[2])/2.; }], atts);
     a.addChild(t);
     b.addChild(t);
@@ -345,18 +345,18 @@ JXG.createMidpoint = function(board, parentArr, atts) {
  * <tt>p4 = p3+v</tt>
  * @param {JXG.Line_JXG.Point} l,p The resulting point will together with p specify a line which is parallel to l.
  * @example
- * var p1 = board.createElement('point', [0.0, 2.0]);
- * var p2 = board.createElement('point', [2.0, 1.0]);
- * var p3 = board.createElement('point', [3.0, 3.0]);
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 1.0]);
+ * var p3 = board.create('point', [3.0, 3.0]);
  *
- * var pp1 = board.createElement('parallelpoint', [p1, p2, p3]);
+ * var pp1 = board.create('parallelpoint', [p1, p2, p3]);
  * </pre><div id="488c4be9-274f-40f0-a469-c5f70abe1f0e" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var ppex1_board = JXG.JSXGraph.initBoard('488c4be9-274f-40f0-a469-c5f70abe1f0e', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var ppex1_p1 = ppex1_board.createElement('point', [0.0, 2.0]);
- *   var ppex1_p2 = ppex1_board.createElement('point', [2.0, 1.0]);
- *   var ppex1_p3 = ppex1_board.createElement('point', [3.0, 3.0]);
- *   var ppex1_pp1 = ppex1_board.createElement('parallelpoint', [ppex1_p1, ppex1_p2, ppex1_p3]);
+ *   var ppex1_p1 = ppex1_board.create('point', [0.0, 2.0]);
+ *   var ppex1_p2 = ppex1_board.create('point', [2.0, 1.0]);
+ *   var ppex1_p3 = ppex1_board.create('point', [3.0, 3.0]);
+ *   var ppex1_pp1 = ppex1_board.create('parallelpoint', [ppex1_p1, ppex1_p2, ppex1_p3]);
  * </script><pre>
  */
 JXG.createParallelPoint = function(board, parentArr, atts) {
@@ -379,7 +379,7 @@ JXG.createParallelPoint = function(board, parentArr, atts) {
         throw new Error("JSXGraph: Can't create parallel point with parent types '" + (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'.");
     }
 
-    p = board.createElement('point', [function () { return c.coords.usrCoords[1] + b.coords.usrCoords[1] - a.coords.usrCoords[1]; }, function () { return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2]; }], atts);
+    p = board.create('point', [function () { return c.coords.usrCoords[1] + b.coords.usrCoords[1] - a.coords.usrCoords[1]; }, function () { return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2]; }], atts);
 //    p1.addChild(p); // required for algorithms requiring dependencies between elements
 //    p2.addChild(p);
     c.addChild(p);
@@ -454,20 +454,20 @@ JXG.createParallelPoint = function(board, parentArr, atts) {
  * @param {JXG.Line_JXG.Point} l,p The constructed line contains p and has the same slope as l.
  * @example
  * // Create a parallel
- * var p1 = board.createElement('point', [0.0, 2.0]);
- * var p2 = board.createElement('point', [2.0, 1.0]);
- * var l1 = board.createElement('line', [p1, p2]);
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 1.0]);
+ * var l1 = board.create('line', [p1, p2]);
  *
- * var p3 = board.createElement('point', [3.0, 3.0]);
- * var pl1 = board.createElement('parallel', [l1, p3]);
+ * var p3 = board.create('point', [3.0, 3.0]);
+ * var pl1 = board.create('parallel', [l1, p3]);
  * </pre><div id="24e54f9e-5c4e-4afb-9228-0ef27a59d627" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var plex1_board = JXG.JSXGraph.initBoard('24e54f9e-5c4e-4afb-9228-0ef27a59d627', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var plex1_p1 = plex1_board.createElement('point', [0.0, 2.0]);
- *   var plex1_p2 = plex1_board.createElement('point', [2.0, 1.0]);
- *   var plex1_l1 = plex1_board.createElement('line', [plex1_p1, plex1_p2]);
- *   var plex1_p3 = plex1_board.createElement('point', [3.0, 3.0]);
- *   var plex1_pl1 = plex1_board.createElement('parallel', [plex1_l1, plex1_p3]);
+ *   var plex1_p1 = plex1_board.create('point', [0.0, 2.0]);
+ *   var plex1_p2 = plex1_board.create('point', [2.0, 1.0]);
+ *   var plex1_l1 = plex1_board.create('line', [plex1_p1, plex1_p2]);
+ *   var plex1_p3 = plex1_board.create('point', [3.0, 3.0]);
+ *   var plex1_pl1 = plex1_board.create('parallel', [plex1_l1, plex1_p3]);
  * </script><pre>
  */
 JXG.createParallel = function(board, parents, atts) {
@@ -505,7 +505,7 @@ JXG.createParallel = function(board, parents, atts) {
     else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT)
         p = parents[1];
 
-    pl = board.createElement('line', [p, pp], atts);
+    pl = board.create('line', [p, pp], atts);
 
     return pl;
 };
@@ -526,20 +526,20 @@ JXG.createParallel = function(board, parents, atts) {
  * @param {Arrow_JXG.Point} a,p The constructed arrow contains p and has the same slope as a.
  * @example
  * // Create a parallel
- * var p1 = board.createElement('point', [0.0, 2.0]);
- * var p2 = board.createElement('point', [2.0, 1.0]);
- * var l1 = board.createElement('line', [p1, p2]);
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 1.0]);
+ * var l1 = board.create('line', [p1, p2]);
  *
- * var p3 = board.createElement('point', [3.0, 3.0]);
- * var pl1 = board.createElement('parallel', [l1, p3]);
+ * var p3 = board.create('point', [3.0, 3.0]);
+ * var pl1 = board.create('parallel', [l1, p3]);
  * </pre><div id="qwe" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var plex1_board = JXG.JSXGraph.initBoard('asd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var plex1_p1 = plex1_board.createElement('point', [0.0, 2.0]);
- *   var plex1_p2 = plex1_board.createElement('point', [2.0, 1.0]);
- *   var plex1_l1 = plex1_board.createElement('line', [plex1_p1, plex1_p2]);
- *   var plex1_p3 = plex1_board.createElement('point', [3.0, 3.0]);
- *   var plex1_pl1 = plex1_board.createElement('parallel', [plex1_l1, plex1_p3]);
+ *   var plex1_p1 = plex1_board.create('point', [0.0, 2.0]);
+ *   var plex1_p2 = plex1_board.create('point', [2.0, 1.0]);
+ *   var plex1_l1 = plex1_board.create('line', [plex1_p1, plex1_p2]);
+ *   var plex1_p3 = plex1_board.create('point', [3.0, 3.0]);
+ *   var plex1_pl1 = plex1_board.create('parallel', [plex1_l1, plex1_p3]);
  * </script><pre>
  */
 JXG.createArrowParallel = function(board, parents, atts) {
@@ -547,7 +547,7 @@ JXG.createArrowParallel = function(board, parents, atts) {
 
     /* parallel arrow point polynomials are done in createParallelPoint */
     try {
-        // we don't have to get onto that whole createElement stack here
+        // we don't have to get onto that whole create stack here
         // because that'll be run for the line l right after leaving that function.
         l = JXG.createParallel(board, parents, atts);
     } catch (e) {
@@ -575,20 +575,20 @@ JXG.createArrowParallel = function(board, parents, atts) {
  * @param {Glider} p Works like above, however the object is given by {@link Glider#slideObject}.
  * @example
  * // Create a normal to a circle.
- * var p1 = board.createElement('point', [2.0, 2.0]);
- * var p2 = board.createElement('point', [3.0, 2.0]);
- * var c1 = board.createElement('circle', [p1, p2]);
+ * var p1 = board.create('point', [2.0, 2.0]);
+ * var p2 = board.create('point', [3.0, 2.0]);
+ * var c1 = board.create('circle', [p1, p2]);
  *
- * var norm1 = board.createElement('normal', [c1, p2]);
+ * var norm1 = board.create('normal', [c1, p2]);
  * </pre><div id="4154753d-3d29-40fb-a860-0b08aa4f3743" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var nlex1_board = JXG.JSXGraph.initBoard('4154753d-3d29-40fb-a860-0b08aa4f3743', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var nlex1_p1 = nlex1_board.createElement('point', [2.0, 2.0]);
- *   var nlex1_p2 = nlex1_board.createElement('point', [3.0, 2.0]);
- *   var nlex1_c1 = nlex1_board.createElement('circle', [nlex1_p1, nlex1_p2]);
+ *   var nlex1_p1 = nlex1_board.create('point', [2.0, 2.0]);
+ *   var nlex1_p2 = nlex1_board.create('point', [3.0, 2.0]);
+ *   var nlex1_c1 = nlex1_board.create('circle', [nlex1_p1, nlex1_p2]);
  *
- *   // var nlex1_p3 = nlex1_board.createElement('point', [1.0, 2.0]);
- *   var nlex1_norm1 = nlex1_board.createElement('normal', [nlex1_c1, nlex1_p2]);
+ *   // var nlex1_p3 = nlex1_board.create('point', [1.0, 2.0]);
+ *   var nlex1_norm1 = nlex1_board.create('normal', [nlex1_c1, nlex1_p2]);
  * </script><pre>
  */
 JXG.createNormal = function(board, parents, attributes) {
@@ -618,7 +618,7 @@ JXG.createNormal = function(board, parents, attributes) {
 
         // Homogeneous version:
         // orthogonal(l,p) = (F^\delta\cdot l)\times p
-        return board.createElement('line', [
+        return board.create('line', [
                     function(){ return c.stdform[1]*p.Y()-c.stdform[2]*p.X();},
                     function(){ return c.stdform[2]*p.Z();},
                     function(){ return -c.stdform[1]*p.Z();}
@@ -628,24 +628,24 @@ JXG.createNormal = function(board, parents, attributes) {
         /*
         var Dg = function(t){ return -c.Radius()*Math.sin(t); };
         var Df = function(t){ return c.Radius()*Math.cos(t); };
-        return board.createElement('line', [
+        return board.create('line', [
                     function(){ return -p.X()*Dg(p.position)-p.Y()*Df(p.position);},
                     function(){ return Dg(p.position);},
                     function(){ return Df(p.position);}
                     ], attributes );
         */
-        return board.createElement('line', [c.midpoint,p], attributes);
+        return board.create('line', [c.midpoint,p], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
         if (c.curveType!='plot') {
             var g = c.X;
             var f = c.Y;
-            return board.createElement('line', [
+            return board.create('line', [
                     function(){ return -p.X()*board.D(g)(p.position)-p.Y()*board.D(f)(p.position);},
                     function(){ return board.D(g)(p.position);},
                     function(){ return board.D(f)(p.position);}
                     ], attributes );
         } else {                         // curveType 'plot'
-            return board.createElement('line', [
+            return board.create('line', [
                     function(){ var i=Math.floor(p.position);
                                 var lbda = p.position-i;
                                 if (i==c.numberPoints-1) {i--; lbda=1; }
@@ -662,7 +662,7 @@ JXG.createNormal = function(board, parents, attributes) {
                     ], attributes );
         }
     } else if (c.type == JXG.OBJECT_TYPE_TURTLE) {
-            return board.createElement('line', [
+            return board.create('line', [
                     function(){ var i=Math.floor(p.position);
                                 var lbda = p.position-i;
                                 var el,j;
@@ -720,18 +720,18 @@ JXG.createNormal = function(board, parents, attributes) {
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The angle described by p3 will be divided into two equal angles.
  * @example
  * // Create a normal to a circle.
- * var p1 = board.createElement('point', [6.0, 4.0]);
- * var p2 = board.createElement('point', [3.0, 2.0]);
- * var p3 = board.createElement('point', [1.0, 7.0]);
+ * var p1 = board.create('point', [6.0, 4.0]);
+ * var p2 = board.create('point', [3.0, 2.0]);
+ * var p3 = board.create('point', [1.0, 7.0]);
  *
- * var bi1 = board.createElement('bisector', [p1, p2, p3]);
+ * var bi1 = board.create('bisector', [p1, p2, p3]);
  * </pre><div id="0d58cea8-b06a-407c-b27c-0908f508f5a4" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var biex1_board = JXG.JSXGraph.initBoard('0d58cea8-b06a-407c-b27c-0908f508f5a4', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var biex1_p1 = biex1_board.createElement('point', [6.0, 4.0]);
- *   var biex1_p2 = biex1_board.createElement('point', [3.0, 2.0]);
- *   var biex1_p3 = biex1_board.createElement('point', [1.0, 7.0]);
- *   var biex1_bi1 = biex1_board.createElement('bisector', [biex1_p1, biex1_p2, biex1_p3]);
+ *   var biex1_p1 = biex1_board.create('point', [6.0, 4.0]);
+ *   var biex1_p2 = biex1_board.create('point', [3.0, 2.0]);
+ *   var biex1_p3 = biex1_board.create('point', [1.0, 7.0]);
+ *   var biex1_bi1 = biex1_board.create('bisector', [biex1_p1, biex1_p2, biex1_p3]);
  * </script><pre>
  */
 JXG.createBisector = function(board, parentArr, atts) {
@@ -745,7 +745,7 @@ JXG.createBisector = function(board, parentArr, atts) {
         }
 
         // hidden and fixed helper
-        p = board.createElement('point', [function () { return board.algebra.angleBisector(parentArr[0], parentArr[1], parentArr[2]); }], cAtts);
+        p = board.create('point', [function () { return board.algebra.angleBisector(parentArr[0], parentArr[1], parentArr[2]); }], cAtts);
 
         for(i=0; i<3; i++)
             parentArr[i].addChild(p); // required for algorithm requiring dependencies between elements
@@ -754,7 +754,7 @@ JXG.createBisector = function(board, parentArr, atts) {
             atts['straightFirst'] = false;
         if(typeof atts['straightLast'] == 'undefined')
             atts['straightLast'] = true;
-        // no need to fire up the createElement stack because only attributes need to be set and they
+        // no need to fire up the create stack because only attributes need to be set and they
         // will be set for l after returning.
         l = JXG.createLine(board, [parentArr[1], p], atts);
         return l;
@@ -801,7 +801,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
 
     attributes['id'] = id1;
     attributes['name'] = n1;
-    var g1 = board.createElement('line',[
+    var g1 = board.create('line',[
         function(){
             var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
             var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
@@ -820,7 +820,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
     ], attributes);
     attributes['id'] = id2;
     attributes['name'] = n2;
-    var g2 = board.createElement('line',[
+    var g2 = board.create('line',[
         function(){
             var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
             var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
@@ -862,18 +862,18 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the midpoint of the circle determined
  * by p1, p2, and p3.
  * @example
- * var p1 = board.createElement('point', [0.0, 2.0]);
- * var p2 = board.createElement('point', [2.0, 1.0]);
- * var p3 = board.createElement('point', [3.0, 3.0]);
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 1.0]);
+ * var p3 = board.create('point', [3.0, 3.0]);
  *
- * var cc1 = board.createElement('circumcirclemidpoint', [p1, p2, p3]);
+ * var cc1 = board.create('circumcirclemidpoint', [p1, p2, p3]);
  * </pre><div id="e8a40f95-bf30-4eb4-88a8-f4d5495261fd" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var ccmex1_board = JXG.JSXGraph.initBoard('e8a40f95-bf30-4eb4-88a8-f4d5495261fd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var ccmex1_p1 = ccmex1_board.createElement('point', [0.0, 2.0]);
- *   var ccmex1_p2 = ccmex1_board.createElement('point', [6.0, 1.0]);
- *   var ccmex1_p3 = ccmex1_board.createElement('point', [3.0, 7.0]);
- *   var ccmex1_cc1 = ccmex1_board.createElement('circumcirclemidpoint', [ccmex1_p1, ccmex1_p2, ccmex1_p3]);
+ *   var ccmex1_p1 = ccmex1_board.create('point', [0.0, 2.0]);
+ *   var ccmex1_p2 = ccmex1_board.create('point', [6.0, 1.0]);
+ *   var ccmex1_p3 = ccmex1_board.create('point', [3.0, 7.0]);
+ *   var ccmex1_cc1 = ccmex1_board.create('circumcirclemidpoint', [ccmex1_p1, ccmex1_p2, ccmex1_p3]);
  * </script><pre>
  */
 JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
@@ -908,18 +908,18 @@ JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the midpoint of the circle determined
  * by p1, p2, and p3.
  * @example
- * var p1 = board.createElement('point', [0.0, 2.0]);
- * var p2 = board.createElement('point', [2.0, 1.0]);
- * var p3 = board.createElement('point', [3.0, 3.0]);
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 1.0]);
+ * var p3 = board.create('point', [3.0, 3.0]);
  *
- * var cc1 = board.createElement('circumcircle', [p1, p2, p3]);
+ * var cc1 = board.create('circumcircle', [p1, p2, p3]);
  * </pre><div id="e65c9861-0bf0-402d-af57-3ab11962f5ac" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var ccex1_board = JXG.JSXGraph.initBoard('e65c9861-0bf0-402d-af57-3ab11962f5ac', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var ccex1_p1 = ccex1_board.createElement('point', [0.0, 2.0]);
- *   var ccex1_p2 = ccex1_board.createElement('point', [6.0, 1.0]);
- *   var ccex1_p3 = ccex1_board.createElement('point', [3.0, 7.0]);
- *   var ccex1_cc1 = ccex1_board.createElement('circumcircle', [ccex1_p1, ccex1_p2, ccex1_p3]);
+ *   var ccex1_p1 = ccex1_board.create('point', [0.0, 2.0]);
+ *   var ccex1_p2 = ccex1_board.create('point', [6.0, 1.0]);
+ *   var ccex1_p3 = ccex1_board.create('point', [3.0, 7.0]);
+ *   var ccex1_cc1 = ccex1_board.create('circumcircle', [ccex1_p1, ccex1_p2, ccex1_p3]);
  * </script><pre>
  */
 JXG.createCircumcircle = function(board, parentArr, atts) {
@@ -964,20 +964,20 @@ JXG.createCircumcircle = function(board, parentArr, atts) {
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Line} p,l The reflection point is the reflection of p against l.
  * @example
- * var p1 = board.createElement('point', [0.0, 4.0]);
- * var p2 = board.createElement('point', [6.0, 1.0]);
- * var l1 = board.createElement('line', [p1, p2]);
- * var p3 = board.createElement('point', [3.0, 3.0]);
+ * var p1 = board.create('point', [0.0, 4.0]);
+ * var p2 = board.create('point', [6.0, 1.0]);
+ * var l1 = board.create('line', [p1, p2]);
+ * var p3 = board.create('point', [3.0, 3.0]);
  *
- * var rp1 = board.createElement('reflection', [p3, l1]);
+ * var rp1 = board.create('reflection', [p3, l1]);
  * </pre><div id="087a798e-a36a-4f52-a2b4-29a23a69393b" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var rpex1_board = JXG.JSXGraph.initBoard('087a798e-a36a-4f52-a2b4-29a23a69393b', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var rpex1_p1 = rpex1_board.createElement('point', [0.0, 4.0]);
- *   var rpex1_p2 = rpex1_board.createElement('point', [6.0, 1.0]);
- *   var rpex1_l1 = rpex1_board.createElement('line', [rpex1_p1, rpex1_p2]);
- *   var rpex1_p3 = rpex1_board.createElement('point', [3.0, 3.0]);
- *   var rpex1_rp1 = rpex1_board.createElement('reflection', [rpex1_p3, rpex1_l1]);
+ *   var rpex1_p1 = rpex1_board.create('point', [0.0, 4.0]);
+ *   var rpex1_p2 = rpex1_board.create('point', [6.0, 1.0]);
+ *   var rpex1_l1 = rpex1_board.create('line', [rpex1_p1, rpex1_p2]);
+ *   var rpex1_p3 = rpex1_board.create('point', [3.0, 3.0]);
+ *   var rpex1_rp1 = rpex1_board.create('reflection', [rpex1_p3, rpex1_l1]);
  * </script><pre>
  */
 JXG.createReflection = function(board, parentArr, atts) {
@@ -1020,16 +1020,16 @@ JXG.createReflection = function(board, parentArr, atts) {
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point} p1,p2 The constructed point is the reflection of p2 against p1.
  * @example
- * var p1 = board.createElement('point', [3.0, 3.0]);
- * var p2 = board.createElement('point', [6.0, 1.0]);
+ * var p1 = board.create('point', [3.0, 3.0]);
+ * var p2 = board.create('point', [6.0, 1.0]);
  *
- * var mp1 = board.createElement('mirrorpoint', [p1, p2]);
+ * var mp1 = board.create('mirrorpoint', [p1, p2]);
  * </pre><div id="7eb2a814-6c4b-4caa-8cfa-4183a948d25b" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var mpex1_board = JXG.JSXGraph.initBoard('7eb2a814-6c4b-4caa-8cfa-4183a948d25b', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var mpex1_p1 = mpex1_board.createElement('point', [3.0, 3.0]);
- *   var mpex1_p2 = mpex1_board.createElement('point', [6.0, 1.0]);
- *   var mpex1_mp1 = mpex1_board.createElement('mirrorpoint', [mpex1_p1, mpex1_p2]);
+ *   var mpex1_p1 = mpex1_board.create('point', [3.0, 3.0]);
+ *   var mpex1_p2 = mpex1_board.create('point', [6.0, 1.0]);
+ *   var mpex1_mp1 = mpex1_board.create('mirrorpoint', [mpex1_p1, mpex1_p2]);
  * </script><pre>
  */
 JXG.createMirrorPoint = function(board, parentArr, atts) {
@@ -1065,13 +1065,13 @@ JXG.createMirrorPoint = function(board, parentArr, atts) {
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {array_JXG.Curve} p,l The constructed point is the orthogonal projection of p onto l.
  * @example
- * var c1 = board.createElement('functiongraph', [function (t) { return t*t*t; }]);
- * var i1 = board.createElement('integral', [[-1.0, 4.0], c1]);
+ * var c1 = board.create('functiongraph', [function (t) { return t*t*t; }]);
+ * var i1 = board.create('integral', [[-1.0, 4.0], c1]);
  * </pre><div id="d45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var intex1_board = JXG.JSXGraph.initBoard('d45d7188-6624-4d6e-bebb-1efa2a305c8a', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
- *   var intex1_c1 = intex1_board.createElement('functiongraph', [function (t) { return t*t*t; }]);
- *   var intex1_i1 = intex1_board.createElement('integral', [[-2.0, 2.0], intex1_c1]);
+ *   var intex1_c1 = intex1_board.create('functiongraph', [function (t) { return t*t*t; }]);
+ *   var intex1_i1 = intex1_board.create('integral', [[-2.0, 2.0], intex1_c1]);
  * </script><pre>
  */
 JXG.createIntegral = function(board, parents, attributes) {
@@ -1111,29 +1111,29 @@ JXG.createIntegral = function(board, parents, attributes) {
     else
         end = curve.points[curve.points.length-1].usrCoords[1];
 
-    pa_on_curve = board.createElement('glider', [start, curve.yterm(start), curve], attribs);
+    pa_on_curve = board.create('glider', [start, curve.yterm(start), curve], attribs);
 
     attribs.name = attributes.name[1];
     attribs.id = attributes.id[1];
     attribs.visible = false;
-    pa_on_axis = board.createElement('point', [function () { return pa_on_curve.X(); }, 0], attribs);
+    pa_on_axis = board.create('point', [function () { return pa_on_curve.X(); }, 0], attribs);
 
     pa_on_curve.addChild(pa_on_axis);
 
     attribs.name = attributes.name[2];
     attribs.id = attributes.id[2];
     attribs.visible = attributes.visible || true;
-    pb_on_curve = board.createElement('glider', [end, curve.yterm(end), curve], attribs);
+    pb_on_curve = board.create('glider', [end, curve.yterm(end), curve], attribs);
 
     attribs.name = attributes.name[3];
     attribs.id = attributes.id[3];
     attribs.visible = false;
-    pb_on_axis = board.createElement('point', [function () { return pb_on_curve.X(); }, 0], attribs);
+    pb_on_axis = board.create('point', [function () { return pb_on_curve.X(); }, 0], attribs);
 
     pb_on_curve.addChild(pb_on_axis);
 
     Int = JXG.Math.Numerics.I([start, end], curve.yterm);
-    t = board.createElement('text', [
+    t = board.create('text', [
         function () { return pb_on_curve.X() + 0.2; },
         function () { return pb_on_curve.Y() - 0.8; },
         function () {
@@ -1152,7 +1152,7 @@ JXG.createIntegral = function(board, parents, attributes) {
     attribs.strokeWidth = 0;
     attribs.strokeOpacity = 0;
 
-    p = board.createElement('curve', [[0],[0]], attribs);
+    p = board.create('curve', [[0],[0]], attribs);
     p.updateDataArray = function() {
         var x = [pa_on_axis.coords.usrCoords[1], pa_on_curve.coords.usrCoords[1]],
             y = [pa_on_axis.coords.usrCoords[2], pa_on_curve.coords.usrCoords[2]],
@@ -1196,27 +1196,27 @@ JXG.createIntegral = function(board, parents, attributes) {
  * @param {JXG.Point} p The constructed curve is the geometric locus of the given point.
  * @example
  *  // This examples needs JXG.Server up and running, otherwise it won't work.
- *  p1 = board.createElement('point', [0, 0]);
- *  p2 = board.createElement('point', [6, -1]);
- *  c1 = board.createElement('circle', [p1, 2]);
- *  c2 = board.createElement('circle', [p2, 1.5]);
- *  g1 = board.createElement('glider', [6, 3, c1]);
- *  c3 = board.createElement('circle', [g1, 4]);
- *  g2 = board.createElement('intersection', [c2,c3,0]);
- *  m1 = board.createElement('midpoint', [g1,g2]);
- *  loc = board.createElement('locus', [m1], {strokeColor: 'red'});
+ *  p1 = board.create('point', [0, 0]);
+ *  p2 = board.create('point', [6, -1]);
+ *  c1 = board.create('circle', [p1, 2]);
+ *  c2 = board.create('circle', [p2, 1.5]);
+ *  g1 = board.create('glider', [6, 3, c1]);
+ *  c3 = board.create('circle', [g1, 4]);
+ *  g2 = board.create('intersection', [c2,c3,0]);
+ *  m1 = board.create('midpoint', [g1,g2]);
+ *  loc = board.create('locus', [m1], {strokeColor: 'red'});
  * </pre><div id="d45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *  lcex_board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 10, -6], axis: true, grid: false, keepaspectratio: true});
- *  lcex_p1 = lcex_board.createElement('point', [0, 0]);
- *  lcex_p2 = lcex_board.createElement('point', [6, -1]);
- *  lcex_c1 = lcex_board.createElement('circle', [lcex_p1, 2]);
- *  lcex_c2 = lcex_board.createElement('circle', [lcex_p2, 1.5]);
- *  lcex_g1 = lcex_board.createElement('glider', [6, 3, lcex_c1]);
- *  lcex_c3 = lcex_board.createElement('circle', [lcex_g1, 4]);
- *  lcex_g2 = lcex_board.createElement('intersection', [lcex_c2,lcex_c3,0]);
- *  lcex_m1 = lcex_board.createElement('midpoint', [lcex_g1,lcex_g2]);
- *  lcex_loc = board.createElement('locus', [lcex_m1], {strokeColor: 'red'});
+ *  lcex_p1 = lcex_board.create('point', [0, 0]);
+ *  lcex_p2 = lcex_board.create('point', [6, -1]);
+ *  lcex_c1 = lcex_board.create('circle', [lcex_p1, 2]);
+ *  lcex_c2 = lcex_board.create('circle', [lcex_p2, 1.5]);
+ *  lcex_g1 = lcex_board.create('glider', [6, 3, lcex_c1]);
+ *  lcex_c3 = lcex_board.create('circle', [lcex_g1, 4]);
+ *  lcex_g2 = lcex_board.create('intersection', [lcex_c2,lcex_c3,0]);
+ *  lcex_m1 = lcex_board.create('midpoint', [lcex_g1,lcex_g2]);
+ *  lcex_loc = board.create('locus', [lcex_m1], {strokeColor: 'red'});
  * </script><pre>
  */
 JXG.createLocus = function(board, parents, attributes) {
@@ -1228,7 +1228,7 @@ JXG.createLocus = function(board, parents, attributes) {
         throw new Error("JSXGraph: Can't create locus with parent of type other than point.");
     }
 
-    c = board.createElement('curve', [[null], [null]], attributes);
+    c = board.create('curve', [[null], [null]], attributes);
     c.dontCallServer = false;
 
     c.updateDataArray = function () {

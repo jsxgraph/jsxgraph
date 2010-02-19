@@ -146,7 +146,7 @@ JXG.IntergeoReader = new function() {
             return; 
         }
 
-        el = this.board.createElement('point', parents, attributes);
+        el = this.board.create('point', parents, attributes);
         this.objects[node.getAttribute('id')] = el;
     };
 
@@ -217,7 +217,7 @@ JXG.IntergeoReader = new function() {
         this.objects[node.getAttribute('id')].coords = parents;
         this.objects[node.getAttribute('id')].id = node.getAttribute('id');
         this.objects[node.getAttribute('id')].exists = false;
-        //el = this.board.createElement('point', parents, attributes);
+        //el = this.board.create('point', parents, attributes);
         //this.objects[node.getAttribute('id')] = el;
     };
 
@@ -264,7 +264,7 @@ JXG.IntergeoReader = new function() {
             el;
             
         for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
-        el = this.board.createElement('line',[c[2],c[0],c[1]],{name:id, strokeColor:'black', withLabel:true});
+        el = this.board.create('line',[c[2],c[0],c[1]],{name:id, strokeColor:'black', withLabel:true});
         this.objects[id] = el;
     };
 
@@ -440,7 +440,7 @@ JXG.IntergeoReader = new function() {
     this.addPoint = function(p) {
         if (!p.exists) {
             p.exists = true;
-            p = this.board.createElement('point',p.coords,{name:p.id});
+            p = this.board.create('point',p.coords,{name:p.id});
             p.setProperty({strokecolor:'red',fillColor:'red'});
 
             //this.setAttributes(p);
@@ -463,7 +463,7 @@ JXG.IntergeoReader = new function() {
             
         el1 = this.addPoint(this.objects[param[1]]);
         el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.createElement('line', [el1.id,el2.id], {name:param[0],withLabel:true});
+        el = this.board.create('line', [el1.id,el2.id], {name:param[0],withLabel:true});
         this.objects[param[0]] = el;
         this.objects[param[0]].exists = true;
     };
@@ -476,7 +476,7 @@ JXG.IntergeoReader = new function() {
             el;
         
         for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
-        el = this.board.createElement('line',[
+        el = this.board.create('line',[
                     function() { return c[2]-c[0]*p.X()-c[1]*p.Y()-c[2]*p.Z(); }, c[0], c[1]
                 ],{name:param[0], strokeColor:'black', withLabel:true});
         this.objects[param[0]] = el;
@@ -489,7 +489,7 @@ JXG.IntergeoReader = new function() {
 
         el1 = this.addPoint(this.objects[param[1]]);
         el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.createElement('parallel',[el1.id,el2.id], {name:param[0],withLabel:true});
+        el = this.board.create('parallel',[el1.id,el2.id], {name:param[0],withLabel:true});
         this.objects[param[0]] = el;
         this.objects[param[0]].exists = true;
     };
@@ -500,7 +500,7 @@ JXG.IntergeoReader = new function() {
         
         el1 = this.addPoint(this.objects[param[1]]);
         el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.createElement('perpendicular',[el1.id,el2.id],
+        el = this.board.create('perpendicular',[el1.id,el2.id],
                                 {name:[param[0],param[0]+'foot'],id:[param[0],param[0]+'foot'],withLabel:true});
         el[0].setProperty("straightFirst:true","straightLast:true"); // line
         el[1].setProperty("visible:false");                          // point
@@ -514,7 +514,7 @@ JXG.IntergeoReader = new function() {
 
         el1 = this.addPoint(this.objects[param[1]]);
         el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.createElement('line',[el1.id,el2.id], 
+        el = this.board.create('line',[el1.id,el2.id], 
                         {name:param[0],
                             straightFirst:false, straightLast:false,
                             strokeColor:'black',
@@ -528,7 +528,7 @@ JXG.IntergeoReader = new function() {
             l1 = this.objects[param[1]],
             l2 = this.objects[param[2]];
         
-        this.objects[param[0]] = this.board.createElement('intersection',[l1,l2,0], {name:param[0],id:param[0], withLabel:true});
+        this.objects[param[0]] = this.board.create('intersection',[l1,l2,0], {name:param[0],id:param[0], withLabel:true});
         this.setAttributes(this.objects[param[0]]);
         this.objects[param[0]].exists = true;
     };
@@ -538,7 +538,7 @@ JXG.IntergeoReader = new function() {
             a = this.objects[param[0]].coords[0],
             b = this.objects[param[0]].coords[1],
             c = this.objects[param[0]].coords[2];
-            el = this.board.createElement('line',[c,a,b],{name:param[0],id:param[0],withLabel:true});
+            el = this.board.create('line',[c,a,b],{name:param[0],id:param[0],withLabel:true});
         this.objects[param[0]] = el;
         this.objects[param[0]].exists = true;
     };
@@ -547,7 +547,7 @@ JXG.IntergeoReader = new function() {
         var param = JXG.IntergeoReader.readParams(node),
             l = JXG.getReference(this.board,param[1]),
             el;
-        el = this.board.createElement('glider',[0,0,l],{name:param[0],id:param[0],withLabel:true});
+        el = this.board.create('glider',[0,0,l],{name:param[0],id:param[0],withLabel:true});
         //this.setAttributes(p);
         this.objects[param[0]].exists = true;
     };
@@ -557,7 +557,7 @@ JXG.IntergeoReader = new function() {
             c = JXG.getReference(this.board,param[1]),
             el;
         c.update();
-        el = this.board.createElement('glider',[this.objects[param[0]].coords[1],this.objects[param[0]].coords[2],c],
+        el = this.board.create('glider',[this.objects[param[0]].coords[1],this.objects[param[0]].coords[2],c],
                     {name:param[0],id:param[0],withLabel:true});
         //this.setAttributes(p);
         this.objects[param[0]].exists = true;
@@ -590,7 +590,7 @@ JXG.IntergeoReader = new function() {
         el1 = this.addPoint(this.objects[param[1]]);
         el2 = this.addPoint(this.objects[param[2]]);
         el3 = this.addPoint(this.objects[param[3]]);
-        el = this.board.createElement('bisector',[el1.id,el2.id,el3.id],
+        el = this.board.create('bisector',[el1.id,el2.id,el3.id],
                                 {name:[param[0]+'_1',param[0]+'_2'], id:[param[0]+'_1',param[0]+'_2'], withLabel:true});
         el.setProperty({straightFirst:false,straightLast:true,strokeColor:'#000000'});
         this.objects[param[0]] = el;
@@ -603,7 +603,7 @@ JXG.IntergeoReader = new function() {
 
         el1 = this.addPoint(this.objects[param[1]]);
         el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.createElement('midpoint',[el1.id,el2.id],{name:param[0]});
+        el = this.board.create('midpoint',[el1.id,el2.id],{name:param[0]});
         this.setAttributes(el);
         this.objects[param[0]].exists = true;
     };
@@ -611,7 +611,7 @@ JXG.IntergeoReader = new function() {
     this.addMidpointOfLineSegment = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
             l = JXG.getReference(this.board,param[1]);
-        el = this.board.createElement('midpoint',[l.point1,l.point2],{name:param[0]});
+        el = this.board.create('midpoint',[l.point1,l.point2],{name:param[0]});
         this.setAttributes(el);
         this.objects[param[0]].exists = true;
     };
@@ -622,7 +622,7 @@ JXG.IntergeoReader = new function() {
         for (i=0;i<3;i++) {
           p[i] = this.addPoint(this.objects[param[i+1]]); //JXG.getReference(this.board,param[i+1]);
         }
-        ar = this.board.createElement('circumcircle',p, {name:[param[0]+'c',param[0]], id:[param[0]+'c',param[0]],withLabel:true});
+        ar = this.board.create('circumcircle',p, {name:[param[0]+'c',param[0]], id:[param[0]+'c',param[0]],withLabel:true});
         ar[0].setProperty({visible:false}); // center should be invisible
         ar[1].setProperty({withLabel:true}); // label of circle does not work yet
         this.objects[param[0]].exists = true;
@@ -631,7 +631,7 @@ JXG.IntergeoReader = new function() {
     this.addCenterOfCircle = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
             c = JXG.getReference(this.board,param[1]),
-            el = this.board.createElement('point',[function(){return c.midpoint.X();},function(){return c.midpoint.Y();}],
+            el = this.board.create('point',[function(){return c.midpoint.X();},function(){return c.midpoint.Y();}],
                     {name:param[0], id:param[0],withLabel:true});
         this.setAttributes(el);
         this.objects[param[0]].exists = true;
@@ -645,18 +645,18 @@ JXG.IntergeoReader = new function() {
             //t2 = this.objects[param[1]];
             m, polar, i1, i2, t1, t2;
         
-        polar = this.board.createElement('line', [
+        polar = this.board.create('line', [
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[0]; },
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[1]; },
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[2]; }
                 ] , {visible:false});     
 
-        i1 = this.board.createElement('intersection', [c,polar,0],{visible:false});
-        i2 = this.board.createElement('intersection', [c,polar,1],{visible:false});
-        //t1 = this.board.createElement('line', [p,i1]);
-        //t2 = this.board.createElement('line', [p,i2]);
-        t1 = this.board.createElement('tangent', [i1,c]);
-        t2 = this.board.createElement('tangent', [i2,c]);
+        i1 = this.board.create('intersection', [c,polar,0],{visible:false});
+        i2 = this.board.create('intersection', [c,polar,1],{visible:false});
+        //t1 = this.board.create('line', [p,i1]);
+        //t2 = this.board.create('line', [p,i2]);
+        t1 = this.board.create('tangent', [i1,c]);
+        t2 = this.board.create('tangent', [i2,c]);
         this.objects[param[0]] = t1;
         this.objects[param[1]] = t2;
         this.objects[param[0]].exists = true;
@@ -672,8 +672,8 @@ JXG.IntergeoReader = new function() {
             //p2 = this.objects[param[1]];
         //p1.addConstraint([this.board.intersection(c1,c2,0)]);
         //p2.addConstraint([this.board.intersection(c1,c2,1)]);
-        p1 = this.board.createElement('intersection',[c1,c2,0], {name:param[0], id:param[0],withLabel:true});
-        p2 = this.board.createElement('intersection',[c1,c2,1], {name:param[1], id:param[1],withLabel:true});
+        p1 = this.board.create('intersection',[c1,c2,0], {name:param[0], id:param[0],withLabel:true});
+        p2 = this.board.create('intersection',[c1,c2,1], {name:param[1], id:param[1],withLabel:true});
         this.setAttributes(p1);
         this.setAttributes(p2);
         this.objects[param[0]].exists = true;
@@ -688,8 +688,8 @@ JXG.IntergeoReader = new function() {
             //p1 = this.objects[param[0]],
             //p2 = this.objects[param[1]];
         
-        p1 = this.board.createElement('intersection',[c1,c2,0], {name:param[0], id:param[0],withLabel:true});
-        p2 = this.board.createElement('intersection',[c1,c2,1], {name:param[1], id:param[1],withLabel:true});
+        p1 = this.board.create('intersection',[c1,c2,0], {name:param[0], id:param[0],withLabel:true});
+        p2 = this.board.create('intersection',[c1,c2,1], {name:param[1], id:param[1],withLabel:true});
         this.setAttributes(p1);
         this.setAttributes(p2);
         this.objects[param[0]].exists = true;
@@ -701,7 +701,7 @@ JXG.IntergeoReader = new function() {
             el1 = this.addPoint(this.objects[param[1]]),
             el2 = this.addPoint(this.objects[param[2]]);
             
-        el = this.board.createElement('circle',
+        el = this.board.create('circle',
             [el1.id,el2.id],
             {name:param[0],id:param[0],withLabel:true});
         this.objects[param[0]].exists = true;
@@ -717,7 +717,7 @@ JXG.IntergeoReader = new function() {
             //p2  = this.objects[param[0]]; // output
 
         //p2.addConstraint([this.board.otherIntersection(c1,c2,p1)]);
-        p2 = this.board.createElement('otherintersection',[c1,c2,p1], {name:param[0], id:param[0],withLabel:true});
+        p2 = this.board.create('otherintersection',[c1,c2,p1], {name:param[0], id:param[0],withLabel:true});
         this.setAttributes(p2);
         this.objects[param[0]].exists = true;
     };
@@ -736,7 +736,7 @@ JXG.IntergeoReader = new function() {
             l2 = this.objects[param[3]],
 	    ar;
 
-        ar = this.board.createElement('bisectorlines',
+        ar = this.board.create('bisectorlines',
             [l1,l2],
             {name:[param[0],param[1]], id:[param[0],param[1]],
             straightFirst:true, straightLast:true, strokeColor:'#ff0000', withLabel:true});

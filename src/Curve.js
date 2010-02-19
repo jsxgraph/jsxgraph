@@ -29,7 +29,7 @@
 
 /**
  * Curves are the common object for function graphs, parametric curves, polar curves, adn data plots.
- * @class Creates a new curve object. Do not use this constructor to create a curve. Use {@link JXG.Board#createElement} with
+ * @class Creates a new curve object. Do not use this constructor to create a curve. Use {@link JXG.Board#create} with
  * type {@link Curve}, or {@link Functiongraph} instead.  
  * @augments JXG.GeometryElement
  * @param {string,JXG.Board} board The board the new curve is drawn on.
@@ -564,7 +564,7 @@ JXG.Curve.prototype.setPosition = function (method, x, y) {
     //if(this.group.length != 0) {
     // AW: Do we need this for lines?
     //} else {
-    var t = this.board.createElement('transform',[x,y],{type:'translate'});
+    var t = this.board.create('transform',[x,y],{type:'translate'});
     if (this.transformations.length>0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
         this.transformations[this.transformations.length-1].melt(t);
     } else {
@@ -721,7 +721,7 @@ JXG.Curve.prototype.getLabelAnchor = function() {
  * // Parametric curve
  * // Create a curve of the form (t-sin(t), 1-cos(t), i.e.
  * // the cycloid curve.
- *   var graph = board.createElement('curve', 
+ *   var graph = board.create('curve', 
  *                        [function(t){ return t-Math.sin(t);}, 
  *                         function(t){ return 1-Math.cos(t);},
  *                         0, 2*Math.PI]
@@ -729,7 +729,7 @@ JXG.Curve.prototype.getLabelAnchor = function() {
  * </pre><div id="af9f818b-f3b6-4c4d-8c4c-e4a4078b726d" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var c1_board = JXG.JSXGraph.initBoard('af9f818b-f3b6-4c4d-8c4c-e4a4078b726d', {boundingbox: [-1, 5, 7, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var graph1 = c1_board.createElement('curve', [function(t){ return t-Math.sin(t);},function(t){ return 1-Math.cos(t);},0, 2*Math.PI]);
+ *   var graph1 = c1_board.create('curve', [function(t){ return t-Math.sin(t);},function(t){ return 1-Math.cos(t);},0, 2*Math.PI]);
  * </script><pre>
  * @example
  * // Data plots
@@ -738,20 +738,20 @@ JXG.Curve.prototype.getLabelAnchor = function() {
  * // arrays.
  *   var x = [0,1,2,3,4,5,6,7,8,9];
  *   var y = [9.2,1.3,7.2,-1.2,4.0,5.3,0.2,6.5,1.1,0.0];
- *   var graph = board.createElement('curve', [x,y], {dash:2});
+ *   var graph = board.create('curve', [x,y], {dash:2});
  * </pre><div id="7dcbb00e-b6ff-481d-b4a8-887f5d8c6a83" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var c3_board = JXG.JSXGraph.initBoard('7dcbb00e-b6ff-481d-b4a8-887f5d8c6a83', {boundingbox: [-1,10,10,-1], axis: true, showcopyright: false, shownavigation: false});
  *   var x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
  *   var y = [9.2, 1.3, 7.2, -1.2, 4.0, 5.3, 0.2, 6.5, 1.1, 0.0];
- *   var graph3 = c3_board.createElement('curve', [x,y], {dash:2});
+ *   var graph3 = c3_board.create('curve', [x,y], {dash:2});
  * </script><pre>
  * @example
  * // Polar plot
  * // Create a curve with the equation r(phi)= a*(1+phi), i.e.
  * // a cardioid.
- *   var a = board.createElement('slider',[[0,2],[2,2],[0,1,2]]);
- *   var graph = board.createElement('curve', 
+ *   var a = board.create('slider',[[0,2],[2,2],[0,1,2]]);
+ *   var graph = board.create('curve', 
  *                        [function(phi){ return a.Value()*(1-Math.cos(phi));}, 
  *                         [1,0], 
  *                         0, 2*Math.PI]
@@ -759,8 +759,8 @@ JXG.Curve.prototype.getLabelAnchor = function() {
  * </pre><div id="d0bc7a2a-8124-45ca-a6e7-142321a8f8c2" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var c2_board = JXG.JSXGraph.initBoard('d0bc7a2a-8124-45ca-a6e7-142321a8f8c2', {boundingbox: [-3,3,3,-3], axis: true, showcopyright: false, shownavigation: false});
- *   var a = c2_board.createElement('slider',[[0,2],[2,2],[0,1,2]]);
- *   var graph2 = c2_board.createElement('curve', [function(phi){ return a.Value()*(1-Math.cos(phi));}, [1,0], 0, 2*Math.PI]);
+ *   var a = c2_board.create('slider',[[0,2],[2,2],[0,1,2]]);
+ *   var graph2 = c2_board.create('curve', [function(phi){ return a.Value()*(1-Math.cos(phi));}, [1,0], 0, 2*Math.PI]);
  * </script><pre>
  */
 JXG.createCurve = function(board, parents, attributes) {
@@ -789,18 +789,18 @@ JXG.JSXGraph.registerElement('curve', JXG.createCurve);
  * @see JXG.Curve
  * @example
  * // Create a function graph for f(x) = 0.5*x*x-2*x
- *   var graph = board.createElement('functiongraph', 
+ *   var graph = board.create('functiongraph', 
  *                        [function(x){ return 0.5*x*x-2*x;}, -2, 4]
  *                     );
  * </pre><div id="efd432b5-23a3-4846-ac5b-b471e668b437" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var alex1_board = JXG.JSXGraph.initBoard('efd432b5-23a3-4846-ac5b-b471e668b437', {boundingbox: [-3, 7, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var graph = alex1_board.createElement('functiongraph', [function(x){ return 0.5*x*x-2*x;}, -2, 4]);
+ *   var graph = alex1_board.create('functiongraph', [function(x){ return 0.5*x*x-2*x;}, -2, 4]);
  * </script><pre>
  * @example
  * // Create a function graph for f(x) = 0.5*x*x-2*x with variable interval
- *   var s = board.createElement('slider',[[0,4],[3,4],[-2,4,5]]);
- *   var graph = board.createElement('functiongraph', 
+ *   var s = board.create('slider',[[0,4],[3,4],[-2,4,5]]);
+ *   var graph = board.create('functiongraph', 
  *                        [function(x){ return 0.5*x*x-2*x;}, 
  *                         -2, 
  *                         function(){return s.Value();}]
@@ -808,8 +808,8 @@ JXG.JSXGraph.registerElement('curve', JXG.createCurve);
  * </pre><div id="4a203a84-bde5-4371-ad56-44619690bb50" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var alex2_board = JXG.JSXGraph.initBoard('4a203a84-bde5-4371-ad56-44619690bb50', {boundingbox: [-3, 7, 5, -3], axis: true, showcopyright: false, shownavigation: false});
- *   var s = alex2_board.createElement('slider',[[0,4],[3,4],[-2,4,5]]);
- *   var graph = alex2_board.createElement('functiongraph', [function(x){ return 0.5*x*x-2*x;}, -2, function(){return s.Value();}]);
+ *   var s = alex2_board.create('slider',[[0,4],[3,4],[-2,4,5]]);
+ *   var graph = alex2_board.create('functiongraph', [function(x){ return 0.5*x*x-2*x;}, -2, function(){return s.Value();}]);
  * </script><pre>
  */
 JXG.createFunctiongraph = function(board, parents, attributes) {
@@ -918,20 +918,20 @@ JXG.JSXGraph.registerElement('spline', JXG.createSpline);
  * @see JXG.Curve
  * @example
  * // Create Riemann sums for f(x) = 0.5*x*x-2*x.
- *   var s = board.createElement('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
+ *   var s = board.create('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
  *   var f = function(x) { return 0.5*x*x-2*x; };
- *   var r = board.createElement('riemannsum', 
+ *   var r = board.create('riemannsum', 
  *               [f, function(){return s.Value();}, 'upper', -2, 5],
  *               {fillOpacity:0.4}
  *               );
- *   var g = board.createElement('functiongraph',[f, -2, 5]);
+ *   var g = board.create('functiongraph',[f, -2, 5]);
  * </pre><div id="940f40cc-2015-420d-9191-c5d83de988cf" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var rs1_board = JXG.JSXGraph.initBoard('940f40cc-2015-420d-9191-c5d83de988cf', {boundingbox: [-3, 7, 5, -3], axis: true, showcopyright: false, shownavigation: false});
  *   var f = function(x) { return 0.5*x*x-2*x; };
- *   var s = rs1_board.createElement('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
- *   var r = rs1_board.createElement('riemannsum', [f, function(){return s.Value();}, 'upper', -2, 5], {fillOpacity:0.4});
- *   var g = rs1_board.createElement('functiongraph', [f, -2, 5]);
+ *   var s = rs1_board.create('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
+ *   var r = rs1_board.create('riemannsum', [f, function(){return s.Value();}, 'upper', -2, 5], {fillOpacity:0.4});
+ *   var g = rs1_board.create('functiongraph', [f, -2, 5]);
  * </script><pre>
  */
 JXG.createRiemannsum = function(board, parents, attributes) {

@@ -342,7 +342,7 @@ JXG.createSemicircle = function(board, parents, attributes) {
     }
     // Alles 2 Punkte?
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) ) {
-        mp = board.createElement('midpoint', [parents[0], parents[1]], {id:idmp, withLabel:false, visible:false});
+        mp = board.create('midpoint', [parents[0], parents[1]], {id:idmp, withLabel:false, visible:false});
         el = new JXG.Arc(board, mp, parents[1], parents[0], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
     } // Ansonsten eine fette Exception um die Ohren hauen
     else
@@ -371,7 +371,7 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
     
     // Alles 3 Punkte?
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
-        mp = board.createElement('circumcirclemidpoint',[parents[0], parents[1], parents[2]], {id:idmp, withLabel:false, visible:false});
+        mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], {id:idmp, withLabel:false, visible:false});
         det = (parents[0].coords.usrCoords[1]-parents[2].coords.usrCoords[1])*(parents[0].coords.usrCoords[2]-parents[1].coords.usrCoords[2]) -
               (parents[0].coords.usrCoords[2]-parents[2].coords.usrCoords[2])*(parents[0].coords.usrCoords[1]-parents[1].coords.usrCoords[1]);
         if(det < 0) {

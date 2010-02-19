@@ -31,13 +31,13 @@ JXG.createSquare = function(board, parentArr, atts) {
         p1 = parentArr[0];
         p2 = parentArr[1];
         
-        p3 = board.createElement('point', [function () { return (-p1.Y() + (p1.X() + p2.X())/2 + (p1.Y() + p2.Y())/2); }, function () { return (p1.X() - (p1.X() + p2.X())/2 + (p1.Y() + p2.Y())/2);}]);
-        p4 = board.createElement('point', [function () { return (-p2.Y() + (p1.X() + p2.X())/2 + (p1.Y() + p2.Y())/2); }, function () { return (p2.X() - (p1.X() + p2.X())/2 + (p1.Y() + p2.Y())/2);}]);
+        p3 = board.create('point', [function () { return (-p1.Y() + (p1.X() + p2.X())/2 + (p1.Y() + p2.Y())/2); }, function () { return (p1.X() - (p1.X() + p2.X())/2 + (p1.Y() + p2.Y())/2);}]);
+        p4 = board.create('point', [function () { return (-p2.Y() + (p1.X() + p2.X())/2 + (p1.Y() + p2.Y())/2); }, function () { return (p2.X() - (p1.X() + p2.X())/2 + (p1.Y() + p2.Y())/2);}]);
         
-        l1 = board.createElement('line', [p1, p3], {straightFirst: false, straightLast: false});
-        l2 = board.createElement('line', [p1, p4], {straightFirst: false, straightLast: false});
-        l3 = board.createElement('line', [p2, p3], {straightFirst: false, straightLast: false});
-        l4 = board.createElement('line', [p2, p4], {straightFirst: false, straightLast: false}); 
+        l1 = board.create('line', [p1, p3], {straightFirst: false, straightLast: false});
+        l2 = board.create('line', [p1, p4], {straightFirst: false, straightLast: false});
+        l3 = board.create('line', [p2, p3], {straightFirst: false, straightLast: false});
+        l4 = board.create('line', [p2, p4], {straightFirst: false, straightLast: false}); 
         
         ret = [p1, p2, p3, p4, l1, l2, l3, l4];
         ret.points = [p1, p2, p3, p4];

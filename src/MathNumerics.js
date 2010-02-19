@@ -1152,7 +1152,7 @@ JXG.Math.Numerics.predefinedButcher.Euler = {
  *     dataX[i] = i*h;
  *     dataY[i] = data[i][0];
  * }
- * var g = board.createElement('curve', [dataX, dataY], {strokeWidth:'2px'});
+ * var g = board.create('curve', [dataX, dataY], {strokeWidth:'2px'});
  * </pre><div id="d2432d04-4ef7-4159-a90b-a2eb8d38c4f6" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * var board = JXG.JSXGraph.initBoard('d2432d04-4ef7-4159-a90b-a2eb8d38c4f6', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
@@ -1169,7 +1169,7 @@ JXG.Math.Numerics.predefinedButcher.Euler = {
  *     dataX[i] = i*h;
  *     dataY[i] = data[i][0];
  * }
- * var g = board.createElement('curve', [dataX, dataY], {strokeColor:'red', strokeWidth:'2px'});
+ * var g = board.create('curve', [dataX, dataY], {strokeColor:'red', strokeWidth:'2px'});
  * </script><pre>
  */
 JXG.Math.Numerics.rungeKutta = function(/** JXG.Math.Numerics.Butcher */ butcher, /** array */ x0,

@@ -36,7 +36,7 @@
  * A circle consists of all points with a given distance from one point. This point is called midpoint, the distance is called radius.
  * A circle can be constructed by providing a midpoint and a point on the circle or a midpoint and a radius (given as a number, function,
  * line, or circle). 
- * @class Creates a new circle object. Do not use this constructor to create a circle. Use {@link JXG.Board#createElement} with
+ * @class Creates a new circle object. Do not use this constructor to create a circle. Use {@link JXG.Board#create} with
  * type {@link Circle} instead.  
  * @constructor
  * @augments JXG.GeometryElement
@@ -558,7 +558,7 @@ JXG.Circle.prototype.setPosition = function (method, x, y) {
     //if(this.group.length != 0) {
     // AW: Do we need this for lines?
     //} else {
-    var t = this.board.createElement('transform',[x,y],{type:'translate'});
+    var t = this.board.create('transform',[x,y],{type:'translate'});
     this.addTransform(t);
         //this.update();
     //}
@@ -628,21 +628,21 @@ JXG.Circle.prototype.Area = function() {
  * line will determine the radius), or another {@link JXG.Circle}.
  * @example
  * // Create a circle providing two points
- * var p1 = board.createElement('point', [2.0, 2.0]);
- * var p2 = board.createElement('point', [2.0, 0.0]);
- * var c1 = board.createElement('circle', [p1, p2]);
+ * var p1 = board.create('point', [2.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 0.0]);
+ * var c1 = board.create('circle', [p1, p2]);
  * 
  * // Create another circle using the above circle
- * var p3 = board.createElement('point', [3.0, 2.0]);
- * var c2 = board.createElement('circle', [p3, c1]);
+ * var p3 = board.create('point', [3.0, 2.0]);
+ * var c2 = board.create('circle', [p3, c1]);
  * </pre><div id="5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var cex1_board = JXG.JSXGraph.initBoard('5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var cex1_p1 = cex1_board.createElement('point', [2.0, 2.0]);
- *   var cex1_p2 = cex1_board.createElement('point', [2.0, 0.0]);
- *   var cex1_c1 = cex1_board.createElement('circle', [cex1_p1, cex1_p2]);
- *   var cex1_p3 = cex1_board.createElement('point', [3.0, 2.0]);
- *   var cex1_c2 = cex1_board.createElement('circle', [cex1_p3, cex1_c1]);
+ *   var cex1_p1 = cex1_board.create('point', [2.0, 2.0]);
+ *   var cex1_p2 = cex1_board.create('point', [2.0, 0.0]);
+ *   var cex1_c1 = cex1_board.create('circle', [cex1_p1, cex1_p2]);
+ *   var cex1_p3 = cex1_board.create('point', [3.0, 2.0]);
+ *   var cex1_c2 = cex1_board.create('circle', [cex1_p3, cex1_c1]);
  * </script><pre>
  */
 JXG.createCircle = function(board, parentArr, atts) {
@@ -654,7 +654,7 @@ JXG.createCircle = function(board, parentArr, atts) {
         if (JXG.isPoint(parentArr[i])) {
             p[i] = parentArr[i];              // Point
         } else if (parentArr[i].length>1) {
-            p[i] = board.createElement('point', parentArr[i], {visible:false,fixed:true});  // Coordinates
+            p[i] = board.create('point', parentArr[i], {visible:false,fixed:true});  // Coordinates
         } else {
             p[i] = parentArr[i];              // Something else (number, function, string)
         }

@@ -162,8 +162,8 @@ JXG.JSXGraph = new function () {
 
         if((typeof attributes["axis"] != 'undefined') && attributes["axis"]) {
         	board.defaultAxes = {};
-            board.defaultAxes.x = board.createElement('axis', [[0,0], [1,0]], {});
-            board.defaultAxes.y = board.createElement('axis', [[0,0], [0,1]], {});
+            board.defaultAxes.x = board.create('axis', [[0,0], [1,0]], {});
+            board.defaultAxes.y = board.create('axis', [[0,0], [0,1]], {});
         }
 
         if ((typeof attributes["grid"] != 'undefined') && attributes["grid"]) {
@@ -287,7 +287,7 @@ JXG.JSXGraph = new function () {
         if(JXG.Board.prototype['_' + element])
         	throw new Error("JSXGraph: Can't create wrapper method in JXG.Board because member '_" + element + "' already exists'");
         JXG.Board.prototype['_' + element] = function (parents, attributes) {
-        	return this.createElement(element, parents, attributes);
+        	return this.create(element, parents, attributes);
         };
 
     };

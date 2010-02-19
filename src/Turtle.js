@@ -94,18 +94,18 @@ JXG.Turtle.prototype.init = function(x,y,dir) {
     this.stack = [];
     this.objects = [];
     this.attributes.curveType = 'plot';
-    this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
     this.objects.push(this.curve);
 
-    this.turtle = this.board.createElement('point',this.pos,{fixed:true,name:' ',visible:false,withLabel:false});
+    this.turtle = this.board.create('point',this.pos,{fixed:true,name:' ',visible:false,withLabel:false});
     this.objects.push(this.turtle);
     
-    this.turtle2 = this.board.createElement('point',[this.pos[0],this.pos[1]+this.arrowLen],
+    this.turtle2 = this.board.create('point',[this.pos[0],this.pos[1]+this.arrowLen],
             {fixed:true,name:' ',visible:false,withLabel:false});
     this.objects.push(this.turtle2);
     
     var w = this.attributes.strokeWidth || this.attributes.strokewidth || 2;  // Attention; should be moved to Options.js
-    this.arrow = this.board.createElement('line',[this.turtle,this.turtle2],
+    this.arrow = this.board.create('line',[this.turtle,this.turtle2],
             {lastArrow:true,strokeColor:'#ff0000',straightFirst:false,straightLast:false,strokeWidth:w,withLabel:false});
     this.objects.push(this.arrow);
 
@@ -124,12 +124,12 @@ JXG.Turtle.prototype.forward = function(len) {
     var dx = len*Math.cos(this.dir*Math.PI/180.0);
     var dy = len*Math.sin(this.dir*Math.PI/180.0);
     if (!this.turtleIsHidden) {
-        var t = this.board.createElement('transform', [dx,dy], {type:'translate'});
+        var t = this.board.create('transform', [dx,dy], {type:'translate'});
         t.applyOnce(this.turtle);
         t.applyOnce(this.turtle2);
     }
     if (this.isPenDown) if (this.curve.dataX.length>=8192) { // IE workaround
-        this.curve = this.board.createElement('curve',
+        this.curve = this.board.create('curve',
                [[this.pos[0]],[this.pos[1]]],this.attributes);
         this.objects.push(this.curve);
     }
@@ -163,7 +163,7 @@ JXG.Turtle.prototype.right = function(angle) {
     this.dir -= angle;
     this.dir %= 360.0;
     if (!this.turtleIsHidden) {
-        var t = this.board.createElement('transform', [-angle*Math.PI/180.0,this.turtle], {type:'rotate'});
+        var t = this.board.create('transform', [-angle*Math.PI/180.0,this.turtle], {type:'rotate'});
         t.applyOnce(this.turtle2);
     }
     this.board.update();
@@ -197,7 +197,7 @@ JXG.Turtle.prototype.penUp = function() {
 */
 JXG.Turtle.prototype.penDown = function() {
     this.isPenDown = true;
-    this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
     this.objects.push(this.curve);
             
     return this;
@@ -216,7 +216,7 @@ JXG.Turtle.prototype.clean = function() {
             this.objects.splice(i,1);
         }
     }
-    this.curve = this.board.createElement('curve',
+    this.curve = this.board.create('curve',
               [[this.pos[0]],[this.pos[1]]],this.attributes);
     this.objects.push(this.curve);
     this.board.update();
@@ -253,11 +253,11 @@ JXG.Turtle.prototype.setPos = function(x,y) {
     if (!this.turtleIsHidden) {
         this.turtle.setPositionDirectly(JXG.COORDS_BY_USER,x,y);
         this.turtle2.setPositionDirectly(JXG.COORDS_BY_USER,x,y+this.arrowLen);
-        var t = this.board.createElement('transform', 
+        var t = this.board.create('transform', 
                 [-(this.dir-90)*Math.PI/180.0,this.turtle], {type:'rotate'});
         t.applyOnce(this.turtle2);
     }
-    this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
     this.objects.push(this.curve);
     this.board.update();
     return this;
@@ -271,7 +271,7 @@ JXG.Turtle.prototype.setPos = function(x,y) {
 */
 JXG.Turtle.prototype.setPenSize = function(size) { 
     this.attributes.strokeWidth = size; 
-    this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
     this.objects.push(this.curve);
     return this;
 };
@@ -284,7 +284,7 @@ JXG.Turtle.prototype.setPenSize = function(size) {
 */
 JXG.Turtle.prototype.setPenColor = function(colStr) { 
     this.attributes.strokeColor = colStr; 
-    this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
     this.objects.push(this.curve);
     return this;
 };
@@ -297,7 +297,7 @@ JXG.Turtle.prototype.setPenColor = function(colStr) {
 */
 JXG.Turtle.prototype.setHighlightPenColor = function(colStr) { 
     this.attributes.highlightStrokeColor = colStr; 
-    this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
     this.objects.push(this.curve);
     return this;
 };
@@ -335,7 +335,7 @@ JXG.Turtle.prototype.setProperty = function() {
             el.setProperty(this.attributes);
         }
     }
-    //this.curve = this.board.createElement('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
+    //this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]],this.attributes);
     //this.objects.push(this.curve);
     return this;
 };
@@ -446,12 +446,12 @@ JXG.Turtle.prototype.moveTo = function(target) {
         var dx = target[0]-this.pos[0];
         var dy = target[1]-this.pos[1];
         if (!this.turtleIsHidden) {
-            var t = this.board.createElement('transform', [dx,dy], {type:'translate'});
+            var t = this.board.create('transform', [dx,dy], {type:'translate'});
             t.applyOnce(this.turtle);
             t.applyOnce(this.turtle2);
         }
         if (this.isPenDown) if (this.curve.dataX.length>=8192) { // IE workaround
-            this.curve = this.board.createElement('curve',
+            this.curve = this.board.create('curve',
                [[this.pos[0]],[this.pos[1]]],this.attributes);
             this.objects.push(this.curve);
         }

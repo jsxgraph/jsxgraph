@@ -308,13 +308,13 @@ this.readGeonext = function(tree,board) {
 //        var p1coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board);
 //        var p2coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
 
-//        var axisX = board.createElement('axis', [[p1coords.usrCoords[1], 0], [p2coords.usrCoords[1], 0]]);
-        axisX = board.createElement('axis', [[0, 0], [1, 0]]);
+//        var axisX = board.create('axis', [[p1coords.usrCoords[1], 0], [p2coords.usrCoords[1], 0]]);
+        axisX = board.create('axis', [[0, 0], [1, 0]]);
         axisX.setProperty('strokeColor:'+axisX.visProp['strokeColor'],'strokeWidth:'+axisX.visProp['strokeWidth'],
                           'fillColor:none','highlightStrokeColor:'+axisX.visProp['highlightStrokeColor'],
                           'highlightFillColor:none', 'visible:true');
-//        var axisY = board.createElement('axis', [[0, p2coords.usrCoords[2]], [0, p1coords.usrCoords[2]]]);
-        axisY = board.createElement('axis', [[0, 0], [0, 1]]);
+//        var axisY = board.create('axis', [[0, p2coords.usrCoords[2]], [0, p1coords.usrCoords[2]]]);
+        axisY = board.create('axis', [[0, 0], [0, 1]]);
         axisY.setProperty('strokeColor:'+axisY.visProp['strokeColor'],'strokeWidth:'+axisY.visProp['strokeWidth'],
                           'fillColor:none','highlightStrokeColor:'+axisY.visProp['highlightStrokeColor'],
                           'highlightFillColor:none', 'visible:true');
@@ -649,43 +649,43 @@ this.readGeonext = function(tree,board) {
                 gxtEl.defEl[2] = JXG.GeonextReader.changeOriginIds(board,gxtEl.defEl[2]);
                 if(gxtEl.typeName == "MIDPOINT") {
                     if (numberDefEls==2) {  // Midpoint of two points
-                    	board.createElement('midpoint', [gxtEl.defEl[0], gxtEl.defEl[1]], {name: gxtEl.outputName, id: gxtEl.outputId});
+                    	board.create('midpoint', [gxtEl.defEl[0], gxtEl.defEl[1]], {name: gxtEl.outputName, id: gxtEl.outputId});
                     } else if (numberDefEls==1) { // Midpoint of a line
-                    	board.createElement('midpoint', [gxtEl.defEl[0]], {name: gxtEl.outputName, id: gxtEl.outputId});
+                    	board.create('midpoint', [gxtEl.defEl[0]], {name: gxtEl.outputName, id: gxtEl.outputId});
                     }
                 }
                 else if(gxtEl.typeName == "NORMAL") {
                     board.addNormal(gxtEl.defEl[1], gxtEl.defEl[0], gxtEl.outputId, gxtEl.outputName);
-//TODO                    board.createElement('normal', [gxtEl.defEl[1], gxtEl.defEl[0]], {'id': gxtEl.outputId, name: gxtEl.outputName});
+//TODO                    board.create('normal', [gxtEl.defEl[1], gxtEl.defEl[0]], {'id': gxtEl.outputId, name: gxtEl.outputName});
                 }
                 else if(gxtEl.typeName == "PARALLEL") {
-                    board.createElement('parallel', [gxtEl.defEl[1], gxtEl.defEl[0]], {'id': gxtEl.outputId, name: gxtEl.outputName});
+                    board.create('parallel', [gxtEl.defEl[1], gxtEl.defEl[0]], {'id': gxtEl.outputId, name: gxtEl.outputName});
                 }
                 else if(gxtEl.typeName == "CIRCUMCIRCLE") {
                     umkreisId = Data.getElementsByTagName('output')[1].getElementsByTagName('id')[0].firstChild.data;
                     umkreisName = Data.getElementsByTagName('output')[1].getElementsByTagName('name')[0].firstChild.data;
-                    board.createElement('circumcircle', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], {name: [gxtEl.outputName, umkreisName], id: [gxtEl.outputId, umkreisId]});
+                    board.create('circumcircle', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], {name: [gxtEl.outputName, umkreisName], id: [gxtEl.outputId, umkreisId]});
                 }
                 else if(gxtEl.typeName == "CIRCUMCIRCLE_CENTER") {
-                    board.createElement('circumcirclemidpoint', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], {id: gxtEl.outputId, name: gxtEl.outputName});
+                    board.create('circumcirclemidpoint', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], {id: gxtEl.outputId, name: gxtEl.outputName});
                 }
                 else if(gxtEl.typeName == "BISECTOR") {
-                    board.createElement('bisector', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], {id: gxtEl.outputId, name: gxtEl.outputName});
+                    board.create('bisector', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], {id: gxtEl.outputId, name: gxtEl.outputName});
                 }
                 else if(gxtEl.typeName == "MIRROR_LINE") {
-                    board.createElement('reflection', [gxtEl.defEl[1], gxtEl.defEl[0]], {id: gxtEl.outputId, name: gxtEl.outputName});
+                    board.create('reflection', [gxtEl.defEl[1], gxtEl.defEl[0]], {id: gxtEl.outputId, name: gxtEl.outputName});
                 }
                 else if(gxtEl.typeName == "MIRROR_POINT") {
                     // Spaeter: Rotation --> Winkel statt Math.PI
-                    board.createElement('mirrorpoint', [gxtEl.defEl[0], gxtEl.defEl[1]], {name: gxtEl.outputName, id: gxtEl.outputId});
+                    board.create('mirrorpoint', [gxtEl.defEl[0], gxtEl.defEl[1]], {name: gxtEl.outputName, id: gxtEl.outputId});
                 }
                 else if(gxtEl.typeName == "PARALLELOGRAM_POINT") {
                     if (gxtEl.defEl.length==2) { // line, point
-                        board.createElement('parallelpoint', [JXG.getReference(gxtEl.defEl[0]).point1,
+                        board.create('parallelpoint', [JXG.getReference(gxtEl.defEl[0]).point1,
                                                JXG.getReference(gxtEl.defEl[0]).point2,
                                                gxtEl.defEl[1]], {id: gxtEl.outputId, name: gxtEl.outputName});
                     } else {  // point, point, point
-                        board.createElement('parallelpoint', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], {id: gxtEl.outputId, name: gxtEl.outputName});
+                        board.create('parallelpoint', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], {id: gxtEl.outputId, name: gxtEl.outputName});
                     }
                 }
                 else if(gxtEl.typeName == "SECTOR") {
@@ -807,7 +807,7 @@ this.readGeonext = function(tree,board) {
                     gxtEl.outputFixed = Data.getElementsByTagName('output')[0].getElementsByTagName('fix')[0].firstChild.data;
                     gxtEl.outputStyle = Data.getElementsByTagName('output')[0].getElementsByTagName('style')[0].firstChild.data;
 
-                    board.createElement('perpendicular', [gxtEl.defEl[1], gxtEl.defEl[0]],
+                    board.create('perpendicular', [gxtEl.defEl[1], gxtEl.defEl[0]],
                                         {name: [defElN[1].firstChild.data, defElN[0].firstChild.data],
                                          id:[defEl[1], defEl[0]]});
                     /* Eigenschaften des Lotfusspunkts */
@@ -857,7 +857,7 @@ this.readGeonext = function(tree,board) {
                     gxtEl.outputFixed = Data.getElementsByTagName('output')[1].getElementsByTagName('fix')[0].firstChild.data;
                     gxtEl.outputStyle = Data.getElementsByTagName('output')[1].getElementsByTagName('style')[0].firstChild.data;
 
-                    board.createElement('arrowparallel', [gxtEl.defEl[1], gxtEl.defEl[0]], {id: [defEl[0], defEl[1]], name: [defElN[0].firstChild.data, defElN[1].firstChild.data]});
+                    board.create('arrowparallel', [gxtEl.defEl[1], gxtEl.defEl[0]], {id: [defEl[0], defEl[1]], name: [defElN[0].firstChild.data, defElN[1].firstChild.data]});
 
                     /* Eigenschaften des erzeugten Arrows */
                     aid = defEl[0];
@@ -887,7 +887,7 @@ this.readGeonext = function(tree,board) {
                     board.objects[pid].traced = (defElT[1]=='false') ? false : true;
                 }
                 else if(gxtEl.typeName == "PERPENDICULAR_POINT") {
-                    board.createElement('perpendicularpoint', [gxtEl.defEl[1], gxtEl.defEl[0]], {name: gxtEl.outputName, id: gxtEl.outputId});
+                    board.create('perpendicularpoint', [gxtEl.defEl[1], gxtEl.defEl[0]], {name: gxtEl.outputName, id: gxtEl.outputId});
                 }
                 else {
                     throw new Error("JSXGraph: GEONExT-Element " + gxtEl.typeName + ' not yet implemented');
