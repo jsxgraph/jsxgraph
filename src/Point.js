@@ -864,17 +864,18 @@ JXG.Point.prototype.visit = function(where, time, repeat) {
  * @private
  */
 JXG.Point.prototype._anim = function(direction, stepCount) {
+    var distance, slope, dX, dY, alpha, startPoint,
+        factor = 1, newX, radius;
+    
     this.intervalCount++;
     if(this.intervalCount > stepCount)
         this.intervalCount = 0;
     
     if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
-        var distance = this.slideObject.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.slideObject.point2.coords);
-        var slope = this.slideObject.getSlope();
-        var dX;
-        var dY;
+        distance = this.slideObject.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.slideObject.point2.coords);
+        slope = this.slideObject.getSlope();
         if(slope != 'INF') {
-            var alpha = Math.atan(slope);
+            alpha = Math.atan(slope);
             dX = Math.round((this.intervalCount/stepCount) * distance*Math.cos(alpha));
             dY = Math.round((this.intervalCount/stepCount) * distance*Math.sin(alpha));
         } else {
@@ -882,8 +883,6 @@ JXG.Point.prototype._anim = function(direction, stepCount) {
             dY = Math.round((this.intervalCount/stepCount) * distance);
         }
         
-        var startPoint;
-        var factor = 1;
         if(direction < 0) {
             startPoint = this.slideObject.point2;
             if(this.slideObject.point2.coords.scrCoords[1] - this.slideObject.point1.coords.scrCoords[1] > 0)
@@ -904,8 +903,6 @@ JXG.Point.prototype._anim = function(direction, stepCount) {
         
         this.coords.setCoordinates(JXG.COORDS_BY_SCREEN, [startPoint.coords.scrCoords[1] + factor*dX, startPoint.coords.scrCoords[2] + factor*dY]);
     } else if(this.slideObject.type == JXG.OBJECT_TYPE_CURVE) {
-        var newX;
-
         if(direction > 0) {
             newX = Math.round(this.intervalCount/stepCount * this.board.canvasWidth);
         } else {
@@ -915,14 +912,13 @@ JXG.Point.prototype._anim = function(direction, stepCount) {
         this.coords.setCoordinates(JXG.COORDS_BY_SCREEN, [newX, 0]);
         this.coords = this.board.algebra.projectPointToCurve(this, this.slideObject);
     } else if(this.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
-        var alpha;
         if(direction < 0) {
             alpha = this.intervalCount/stepCount * 2*Math.PI;
         } else {
             alpha = (stepCount - this.intervalCount)/stepCount * 2*Math.PI;
         }
 
-        var radius = this.slideObject.Radius();
+        radius = this.slideObject.Radius();
 
         this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.coords.usrCoords[1] + radius*Math.cos(alpha), this.slideObject.midpoint.coords.usrCoords[2] + radius*Math.sin(alpha)]);
     }
@@ -1130,19 +1126,10 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
  * </script><pre>
  */
 JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** object */ atts) {
-    var el;
-    if (atts==null) {
-        atts = {};
-    }
-    if (typeof atts['withLabel'] == 'undefined') {
-        atts['withLabel'] = true;
-    }
-    if (typeof atts['layer'] == 'undefined') {
-        atts['layer'] = null;
-    }
+    var el, isConstrained = false, i;
+    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
         
-    var isConstrained = false;
-    for (var i=0;i<parents.length;i++) {
+    for (i=0;i<parents.length;i++) {
         if (typeof parents[i]=='function' || typeof parents[i]=='string') {
             isConstrained = true;
         }
@@ -1210,12 +1197,7 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
  */
 JXG.createGlider = function(board, parents, atts) {
     var el;
-    if (atts==null) {
-        atts = {};
-    }
-    if (typeof atts['withLabel'] == 'undefined') {
-        atts['withLabel'] = true;
-    }
+    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
     if (parents.length==1) {
       el = new JXG.Point(board, [0,0], atts['id'], atts['name'], (atts['visible']==undefined) || JXG.str2Bool(atts['visible']), atts['withLabel']);
     } else {
