@@ -59,17 +59,17 @@ JXG.Options = {
     elements : {
         /* color options */
         color : {
-            strokeOpacity : 1,
-            highlightStrokeOpacity : 1,
-            fillOpacity : 1,
-            highlightFillOpacity : 1,
+            strokeColor: '#0000ff',
+            highlightStrokeColor: '#C3D9FF',
+            fillColor: 'none',
+            highlightFillColor: 'none',
 
-            strokeColor : '#0000ff',
-            highlightStrokeColor : '#C3D9FF',
-            fillColor : 'none',
-            highlightFillColor : 'none'
+            strokeOpacity: 1,
+            highlightStrokeOpacity: 1,
+            fillOpacity: 1,
+            highlightFillOpacity: 1
         },
-        strokeWidth : '2px',
+        strokeWidth: '2px',
 
         /*draft options */
         draft : {
@@ -158,10 +158,10 @@ JXG.Options = {
 
     /* special sector options */
     sector : {
-        fillColor : '#00FF00',
-        highlightFillColor : '#00FF00',
-        fillOpacity : 0.3,
-        highlightFillOpacity : 0.3
+        fillColor: '#00FF00',
+        highlightFillColor: '#00FF00',
+        fillOpacity: 0.3,
+        highlightFillOpacity: 0.3
     },
 
     /* special text options */

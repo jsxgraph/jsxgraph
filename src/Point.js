@@ -1127,7 +1127,7 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
  */
 JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** object */ atts) {
     var el, isConstrained = false, i, show;
-    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
+    atts = JXG.checkAttributes(atts,{withLabel:true, layer:null});
     show = (typeof atts['visible']=='undefined') || JXG.str2Bool(atts['visible']);
     
     for (i=0;i<parents.length;i++) {
