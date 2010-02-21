@@ -1065,7 +1065,6 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     return this;
 };
 
-
 /* old description of the following createPoint method.
  * There are several methods to construct a point.
  * The input parameter "parentArr" determines the point:
@@ -1157,7 +1156,6 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
     }
     return el;
 };
-
 
 /**
  * @class This element is used to provide a constructor for a glider point. 

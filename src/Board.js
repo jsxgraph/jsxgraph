@@ -2168,6 +2168,7 @@ JXG.Board.prototype.animate = function() {
         el, o, newCoords, r, p, c, 
         obj=null;
 
+    //this.suspendUpdate();
     for(el in this.animationObjects) {
         if(this.animationObjects[el] == null)
             continue;
@@ -2184,6 +2185,7 @@ JXG.Board.prototype.animate = function() {
                 //this.update(o);  // May slow down the animation, but is important 
                                  // for dependent glider objects (see tangram.html).
                                  // Otherwise the intended projection may be incorrect.
+                o.prepareUpdate().update().updateRenderer();
                 obj = o;
             }
         }
@@ -2207,6 +2209,7 @@ JXG.Board.prototype.animate = function() {
             delete(this.animationObjects[el]);
         }
     }
+    //this.unsuspendUpdate();
 
     if(count == 0) {
         window.clearInterval(this.animationIntervalCode);
