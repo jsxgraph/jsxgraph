@@ -2165,7 +2165,8 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
  */
 JXG.Board.prototype.animate = function() {
     var count = 0,
-        el, o, newCoords, r, p, c;
+        el, o, newCoords, r, p, c, 
+        obj=null;
 
     for(el in this.animationObjects) {
         if(this.animationObjects[el] == null)
@@ -2180,8 +2181,10 @@ JXG.Board.prototype.animate = function() {
             } else {
                 //o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
                 o.setPositionDirectly(JXG.COORDS_BY_USER, newCoords[0], newCoords[1]);
-                this.update(o);  // May slow down the animation, but is important 
-                                 // for dependent objects like circles and gliders (see tangram.html)
+                //this.update(o);  // May slow down the animation, but is important 
+                                 // for dependent glider objects (see tangram.html).
+                                 // Otherwise the intended projection may be incorrect.
+                obj = o;
             }
         }
         if(o.animationData) {
@@ -2209,7 +2212,7 @@ JXG.Board.prototype.animate = function() {
         window.clearInterval(this.animationIntervalCode);
         delete(this.animationIntervalCode);
     } else {
-        this.update();
+        this.update(obj);
 //	window.setTimeout('JXG.JSXGraph.boards[\'' + this.id + '\'].animate();', 35);
     }
 };

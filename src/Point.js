@@ -287,8 +287,7 @@ JXG.Point.prototype.update = function (fromParent) {
     if(this.traced) {
         this.cloneToBackground(true);
     }
-
-    /*
+ /*
      * We need to calculate the new coordinates no matter of the points visibility because
      * a child could be visible and depend on the coordinates of the point (e.g. perpendicular).
      * 
@@ -298,6 +297,7 @@ JXG.Point.prototype.update = function (fromParent) {
      */
     if(this.type == JXG.OBJECT_TYPE_GLIDER) {
         if(this.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
+//fromParent = false;        
             if (fromParent) {
                 this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.X()+Math.cos(this.position),this.slideObject.midpoint.Y()+Math.sin(this.position)]);
                 this.coords  = this.board.algebra.projectPointToCircle(this, this.slideObject);
@@ -550,7 +550,6 @@ JXG.Point.prototype.setPositionDirectly = function (method, x, y) {
     var i, dx, dy, el, p,
         oldCoords = this.coords;
         
-    
     this.coords = new JXG.Coords(method, [x,y], this.board);
 
     if(this.group.length != 0) {
@@ -739,16 +738,17 @@ JXG.Point.prototype.updateTransform = function () {
  * @param transform TODO
  */
 JXG.Point.prototype.addTransform = function (el, transform) {
+    var list, i, len;
     if (this.transformations.length==0) { // There is only one baseElement possible
         this.baseElement = el;
     }
-    var list;
     if (JXG.isArray(transform)) {
         list = transform;
     } else {
         list = [transform];
     }
-    for (var i=0;i<list.length;i++) {
+    len = list.length;
+    for (i=0;i<len;i++) {
         this.transformations.push(list[i]);
     }
     return this;
@@ -795,6 +795,7 @@ JXG.Point.prototype.stopAnimation = function() {
 JXG.Point.prototype.moveTo = function(where, time) {
     if (typeof time == 'undefined' || time == 0) {
         this.setPosition(JXG.COORDS_BY_USER, where[0], where[1]);
+        //this.prepareUpdate().update().updateRenderer();
         this.board.update(this);
         return this;
     }
@@ -1198,7 +1199,7 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
  */
 JXG.createGlider = function(board, parents, atts) {
     var el, show;
-    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
+    atts = JXG.checkAttributes(atts,{withLabel:true, layer:null});
     show = (typeof atts['visible']=='undefined') || JXG.str2Bool(atts['visible']);
     
     if (parents.length==1) {
