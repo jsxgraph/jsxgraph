@@ -2039,11 +2039,14 @@ this.writeElement = function(board, output, input, cmd) {
        var m  = board.create('midpoint', [l1.point2, i], {visible: false});
        
        var t = board.create('text', [function(){return m.X();}, function(){return m.Y();},
-                      function(){ return "" + (slopeWidth > 1 ? slopeWidth.toString() : "") + " " + attr.name + " = " + (slopeWidth * input[0].getSlope()).toFixed(JXG.GeogebraReader.decimals); }], attr);
+                      function(){ return "&nbsp;&nbsp;" + (slopeWidth > 1 ? slopeWidth.toString() : "") + " " + this.name + " = " + JXG.trimNumber((slopeWidth * input[0].getSlope()).toFixed(JXG.GeogebraReader.decimals)); }], attr);
+       attr.name = "";
+       var t2 = board.create('text', [function(){return (p1.X() + p2.X())/2.;}, function(){return p1.Y();},
+                                     function(){ return "<br/>" + slopeWidth; }], attr);
        t.Value = (function() { return function(){ return input[0].getSlope(); }; })();
        var poly = board.create('polygon',[p1,p2,i], attr);
-       poly.borders[0].setProperty(attr);
-       poly.borders[1].setProperty(attr);
+//       poly.borders[0].setProperty(attr);
+//       poly.borders[1].setProperty(attr);
        poly.borders[2].setProperty({visible: false});
        return t;
      } catch(e) {

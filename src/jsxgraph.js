@@ -769,7 +769,24 @@ JXG.timedChunk = function(items, process, context, callback) {
             callback(items);
         }
     }, 1);
-}
+};
+
+JXG.trimNumber = function(str) {
+	str = str.replace(/^0+/, "");
+	str = str.replace(/0+$/, "");
+	if(str[str.length-1] == '.' || str[str.length-1] == ',') {
+		str = str.slice(0, -1);
+	}
+	
+	return str;
+};
+
+JXG.trim = function(str) {
+	str = str.replace(/^w+/, "");
+	str = str.replace(/w+$/, "");
+	
+	return str;
+};
 
 /*
 JXG.isSilverlightInstalled = function() {
