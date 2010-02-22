@@ -1072,7 +1072,7 @@ this.debug = function(s) {
  * @return {Object} board oject
  */
 this.setDefaultOptions = function(board){
-  board.options.elements.strokeWidth = '1px';
+  board.options.elements.strokeWidth = '1px'; // TODO: board.options.line.strokeWidth
 
   board.options.point.face = 'circle';
   board.options.point.size = 3;
@@ -1477,11 +1477,19 @@ this.writeElement = function(board, output, input, cmd) {
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-      if(JXG.getReference(board, input[1].id).type == 1330925652) var type = 'line'; // Punkt -> Gerade
-      else if(JXG.getReference(board, input[1].id).type == 1330924622) var type = 'parallel'; // Parallele durch Punkt
+      if(!input) {
+        var type = 'line';
+        var input = [ parseFloat(element.getElementsByTagName('coords')[0].attributes['z'].value),
+                      parseFloat(element.getElementsByTagName('coords')[0].attributes['x'].value),
+                      parseFloat(element.getElementsByTagName('coords')[0].attributes['y'].value)
+                    ];
+      } else if(JXG.getReference(board, input[1].id).type == 1330925652) {
+         var type = 'line'; // Punkt -> Gerade
+      } else if(JXG.getReference(board, input[1].id).type == 1330924622) {
+         var type = 'parallel'; // Parallele durch Punkt
+      }
 
       try {
-        JXG.GeogebraReader.debug("* <b>Line:</b> ("+ attr.name +") First: " + input[0].id + ", Last: " + input[1].id + "<br>\n");
         l = board.create(type, input, attr);
         return l;
       } catch(e) {
@@ -1756,7 +1764,19 @@ this.writeElement = function(board, output, input, cmd) {
       attr = JXG.GeogebraReader.visualProperties(element, attr);
     
       try {
-        if(input.length == 5) {
+        // is there an expression named like the conic?
+        var exp = JXG.GeogebraReader.getElement(attr.name, true);
+
+        // then get the function parameteres
+        if(exp.attributes['exp']){
+          // exp = JXG.GeogebraReader.functionParse(exp.attributes['exp'].value);
+          // exp = JXG.GeogebraReader.ggbParse(exp.attributes['exp'].value);
+
+          
+
+          // (exp.getElementsByTagName('value')) ? exp = parseFloat(exp.getElementsByTagName('value')[0].attributes['val'].value) : false;
+
+        } else if(input && input.length == 5) {
           c = board.create('conic', input, attr);
         } else if(element.getElementsByTagName('matrix')) {
           var matrix = [];
@@ -2287,6 +2307,7 @@ this.readGeogebra = function(tree, board) {
  * @return {String} replaced string
  */
 this.utf8replace = function(exp) {
+  exp = (exp.match(/²/)) ? exp.replace(/²/, '^2') : exp;
   exp = (exp.match(/\u00B2/)) ? exp.replace(/\u00B2/, '^2') : exp;
   exp = (exp.match(/\u00B3/)) ? exp.replace(/\u00B3/, '^3') : exp;
   exp = (exp.match(/\u225F/)) ? exp.replace(/\u225F/, '==') : exp;
