@@ -209,10 +209,12 @@ this.ggbAct = function(type, m, n) {
           return 'JXG.GeogebraReader.board.ggb["'+ v1 +'"]()';
         } else if(typeof a.Value != 'undefined') {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Value()';
-        } else if (typeof a.Area != 'undefined') {
+        } else if(typeof a.Area != 'undefined') {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").Area()';
-        } else if (typeof a.plaintextStr != 'undefined') {
+        } else if(typeof a.plaintextStr != 'undefined') {
           return '1.0*JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").plaintextStr';
+        } else if(a.className == JXG.OBJECT_CLASS_LINE) {
+          return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").point1.Dist(JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'").point2)';
         } else {
           return 'JXG.getReference(JXG.GeogebraReader.board, "'+ v1 +'")';
         }
@@ -1516,9 +1518,9 @@ this.writeElement = function(board, output, input, cmd) {
         JXG.GeogebraReader.debug("* <b>Polygon:</b> First: " + input[0].name + ", Second: " + input[1].name + ", Third: " + input[2].name + "<br>\n");
 
         var borders = [];
-        var length = output.length;
+        var length = (t == 'regular') ? output.length-input[2]+2 : output.length;
 
-        for(var i=1; i<output.length; i++) {
+        for(var i=1; i<length; i++) {
           borders[i-1] = {};
           borders[i-1].id = '';
           borders[i-1].name = output[i].attributes['label'].value;
@@ -1528,12 +1530,17 @@ this.writeElement = function(board, output, input, cmd) {
 
         var points = [];
         if(t == 'regular') {
+          points.push(input[0]);
+          points.push(input[1]);
+
           for(var i=input[2]+1; i<output.length; i++){
-            // if(typeof output[i] === 'object')
-            //   points.push(output[i]);
-            // else
-              points.push(board.create('point', [0,0], a));
-            JXG.GeogebraReader.debug("input-queue: added "+ output[i].name);
+            if(typeof output[i] === 'object' && output[i].name) {
+              points.push(output[i]);
+            } else {
+              var p = board.create('point', [0,0], {'name': output[i].attributes['label'].value});
+              points.push(p);
+              board.ggbElements[p.name] = p;
+            }
           }
         } else {
           for(var i=0; i<input.length; i++) {
@@ -1545,7 +1552,7 @@ this.writeElement = function(board, output, input, cmd) {
         }
 
         if(t == 'regular')
-          l = board.create('regularpolygon', input, attr);
+          l = board.create('regularpolygon', points, attr);
         else
           l = board.create('polygon', points, attr);
         return l;
@@ -1723,21 +1730,45 @@ this.writeElement = function(board, output, input, cmd) {
         return false;
       }
     break;
-    // case 'conic':
-    //   attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-    //   attr = JXG.GeogebraReader.colorProperties(element, attr);
-    //   gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
-    //   attr = JXG.GeogebraReader.visualProperties(element, attr);
-    // 
-    //   try {
-    //     JXG.GeogebraReader.debug("* <b>Conic:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
-    //     c = board.create('conic', input, attr);
-    //     return c;
-    //   } catch(e) {
-    //     JXG.GeogebraReader.debug("* <b>Err:</b> Conic " + attr.name +"<br>\n");
-    //     return false;
-    //   }
-    // break;
+    case 'ellipse':
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
+      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
+    
+      try {
+        JXG.GeogebraReader.debug("* <b>Ellipse:</b> First: " + input[0].name + ", Second: " + input[1].name + ", Third: "+ input[2] +"<br>\n");
+        input[2] = parseInt(input[2]*2); // Geogebra delivers the half major axis
+        c = board.create('ellipse', input, attr);
+        return c;
+      } catch(e) {
+        JXG.GeogebraReader.debug("* <b>Err:</b> Ellipse " + attr.name +"<br>\n");
+        return false;
+      }
+    break;
+    case 'conic':
+      attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+      attr = JXG.GeogebraReader.colorProperties(element, attr);
+      gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+      attr = JXG.GeogebraReader.visualProperties(element, attr);
+    
+      try {
+        if(input.length == 5) {
+          c = board.create('conic', input, attr);
+        } else if(element.getElementsByTagName('matrix')) {
+          var matrix = [];
+          for(var i=0; i<element.getElementsByTagName('matrix')[0].attributes.length; i++) {
+            matrix[i] = parseFloat(element.getElementsByTagName('matrix')[0].attributes[i].value);
+          }
+          c = board.create('conic', matrix, attr);
+        }
+
+        return c;
+      } catch(e) {
+        JXG.GeogebraReader.debug("* <b>Err:</b> Conic " + attr.name +"<br>\n");
+        return false;
+      }
+    break;
     case 'circlesector':
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
       attr = JXG.GeogebraReader.colorProperties(element, attr);
