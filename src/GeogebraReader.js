@@ -1216,7 +1216,7 @@ this.visualProperties = function(Data, attr) {
       attr.fillOpacity = 1;      
    }   
   (Data.getElementsByTagName('slopeTriangleSize')[0]) ? attr.slopeWidth = Data.getElementsByTagName('slopeTriangleSize')[0].attributes["val"].value : false;
-  (Data.getElementsByTagName('lineStyle')[0]) ? attr.strokeWidth = Data.getElementsByTagName('lineStyle')[0].attributes["thickness"].value : false; 
+  (Data.getElementsByTagName('lineStyle')[0]) ? attr.strokeWidth = Data.getElementsByTagName('lineStyle')[0].attributes["thickness"].value/2. : false; 
   (Data.getElementsByTagName('lineStyle')[0]) ? attr.dashGGB = Data.getElementsByTagName('lineStyle')[0].attributes["type"].value : false;
 
    if(attr.dashGGB == 0) {
