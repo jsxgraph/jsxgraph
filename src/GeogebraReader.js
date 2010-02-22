@@ -1488,10 +1488,18 @@ this.writeElement = function(board, output, input, cmd) {
         attr.borders = borders;
 
         var points = [];
-        for(var i=0; i<input.length; i++) {
-          if(typeof input[i] === 'object') {
-            points.push(input[i]);
-            JXG.GeogebraReader.debug("input-queue: added "+ input[i].name);
+        if(t == 'regular') {
+          for(var i=input[2]+3; i<output.length; i++){
+
+            points.push(board.create('point', [0,0], a));
+            JXG.GeogebraReader.debug("input-queue: added "+ output[i].name);
+          }
+        } else {
+          for(var i=0; i<input.length; i++) {
+            if(typeof input[i] === 'object') {
+              points.push(input[i]);
+              JXG.GeogebraReader.debug("input-queue: added "+ input[i].name);
+            }
           }
         }
 
@@ -1552,7 +1560,7 @@ this.writeElement = function(board, output, input, cmd) {
         var ey = parseFloat(element.getElementsByTagName("coords")[0].attributes["y"].value);
         var s = [sx, sy];
         var e = [ex, ey];
-      } else if(input.length != 0) {
+      } else if(input && input.length != 0) {
         var s = input[0];
         var e = input[1];
       } else {
