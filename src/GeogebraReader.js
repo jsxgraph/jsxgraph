@@ -1063,6 +1063,33 @@ this.debug = function(s) {
   document.getElementById('debug').innerHTML += s +"<br/>";
 };
 
+
+/**
+ * Override JSxGraph defaults with Geogebra settings
+ * @param {Object} board object
+ * @return {Object} board oject
+ */
+this.setDefaultOptions = function(board){
+  board.options.elements.strokeWidth = '1px';
+
+  board.options.point.face = 'circle';
+  board.options.point.size = 3;
+  board.options.point.fillColor = '#000000';
+  board.options.point.strokeColor = '#000000';
+
+  board.options.line.strokeColor = '#000000';
+
+  board.options.polygon.fillColor = JXG.rgb2hex(153, 51, 0);
+  board.options.polygon.fillOpacity = 0.1;
+  board.options.polygon.highlightFillOpacity = 0.1;
+
+  board.options.angle.fillColor = JXG.rgb2hex(0, 100, 0);
+  board.options.angle.fillOpacity = 0.1;
+  board.options.angle.highlightFillOpacity = 0.1;
+
+  return board;
+};
+
 /**
  * Set color properties of a geogebra element.
  * Set stroke, fill, lighting, label and draft color attributes.
@@ -1136,7 +1163,7 @@ this.coordinates = function(gxtEl, Data) {
  */
 this.visualProperties = function(Data, attr) {
   (Data.getElementsByTagName("show").length > 0 && Data.getElementsByTagName("show")[0].attributes["object"]) ? attr.visible = Data.getElementsByTagName("show")[0].attributes["object"].value : false;
-  (Data.getElementsByTagName("show").length > 0 && Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.visibleLabel = Data.getElementsByTagName("show")[0].attributes["label"].value : false;
+  (Data.getElementsByTagName("show").length > 0 && Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.withLabel = Data.getElementsByTagName("show")[0].attributes["label"].value : true;
   (Data.getElementsByTagName('pointSize')[0]) ? attr.style = Data.getElementsByTagName('pointSize')[0].attributes["val"].value : false;
   (Data.getElementsByTagName("labelOffset")[0]) ? attr.labelX = 1*Data.getElementsByTagName("labelOffset")[0].attributes["x"].value : false;
   (Data.getElementsByTagName("labelOffset")[0]) ? attr.labelY = 1*Data.getElementsByTagName("labelOffset")[0].attributes["y"].value : false;
@@ -2046,6 +2073,7 @@ this.readGeogebra = function(tree, board) {
   JXG.GeogebraReader.format = parseFloat(JXG.GeogebraReader.tree.getElementsByTagName('geogebra')[0].attributes['format'].value);
   JXG.GeogebraReader.decimals = parseInt(JXG.GeogebraReader.tree.getElementsByTagName('geogebra')[0].getElementsByTagName('kernel')[0].getElementsByTagName('decimals')[0].attributes['val'].value);
   JXG.GeogebraReader.writeBoard(board);
+  board = JXG.GeogebraReader.setDefaultOptions(board);
 
   var constructions = JXG.GeogebraReader.tree.getElementsByTagName("construction");
   for (var t=0; t<constructions.length; t++) {
