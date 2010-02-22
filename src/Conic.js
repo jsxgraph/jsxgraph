@@ -361,6 +361,7 @@ JXG.createParabola = function(board, parents, atts) {
  * @type JXG.Conic
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Point,array_JXG.Point,array_JXG.Point,array_JXG.Point,array_} point,point,point,point,point Parent elements are five points.
+ * @param {number_number_number_number_number_number} 6 numbers (a_00,a_11,a_22,a_01,a_12,a_22)
  * @example
  * // Create a conic section through the points A, B, C, D, and E.
  *  var A = board.create('point', [1,5]);
@@ -382,21 +383,37 @@ JXG.createParabola = function(board, parents, atts) {
  */
 JXG.createConic = function(board, parents, atts) {
     var rotationMatrix, eigen, a, b, c, M, c1, c2, 
-        points = [], i,
+        points = [], i, 
+        givenByPoints = (parents.length==5)?true:false, 
         p = [];
 
     atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'conic','withLabel'), layer:null});
-    for (i=0;i<5;i++) {
-        if (parents[i].length>1) { // point i given by coordinates
-            points[i] = board.create('point', parents[i], {visible:false,fixed:true});
-        } else if (JXG.isPoint(parents[i])) { // point i given by point
-            points[i] = JXG.getReference(board,parents[i]);
-        } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
-            points[i] = parents[i]();
-        } else if (JXG.isString(parents[i])) { // point i given by point name
-            points[i] = JXG.getReference(board,parents[i]);
-        } else
-            throw new Error("JSXGraph: Can't create Conic section with parent types '" + (typeof parents[i]) + "'.");
+    if (givenByPoints) {
+        for (i=0;i<5;i++) {
+            if (parents[i].length>1) { // point i given by coordinates
+                points[i] = board.create('point', parents[i], {visible:false,fixed:true});
+            } else if (JXG.isPoint(parents[i])) { // point i given by point
+                points[i] = JXG.getReference(board,parents[i]);
+            } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
+                points[i] = parents[i]();
+            } else if (JXG.isString(parents[i])) { // point i given by point name
+                points[i] = JXG.getReference(board,parents[i]);
+            } else
+                throw new Error("JSXGraph: Can't create Conic section with parent types '" + (typeof parents[i]) + "'.");
+        }
+    } else {
+        /* Usual notation (x,y,z):
+         *  [[A0,A3,A5],
+         *   [A3,A1,A4],
+         *   [A5,A4,A2]]. 
+         * Our notation (z,x,y): 
+         *  [[A2,A5,A4],
+         *   [A5,A0,A3],
+         *   [A4,A3,A1]] 
+        */
+        M = [[parents[2],parents[5],parents[4]],
+             [parents[5],parents[0],parents[3]],
+             [parents[4],parents[3],parents[1]]];
     }
 
     // sym(A) = A + A^t . Manipulates A in place.
@@ -444,14 +461,16 @@ JXG.createConic = function(board, parents, atts) {
     var polarForm = function(phi,suspendUpdate) {
         var i, j, len, v;
         if (!suspendUpdate) {
-            // Copy the point coordinate vectors
-            for (i=0;i<5;i++) { 
-                p[i] = points[i].coords.usrCoords; 
+            if (givenByPoints) {
+                // Copy the point coordinate vectors
+                for (i=0;i<5;i++) { 
+                    p[i] = points[i].coords.usrCoords; 
+                }
+                // Compute the quadratic form
+                c1 = degconic(JXG.Math.crossProduct(p[0],p[1]),JXG.Math.crossProduct(p[2],p[3]));
+                c2 = degconic(JXG.Math.crossProduct(p[0],p[2]),JXG.Math.crossProduct(p[1],p[3]));
+                M = fitConic(c1,c2,p[4]);
             }
-            // Compute the quadratic form
-            c1 = degconic(JXG.Math.crossProduct(p[0],p[1]),JXG.Math.crossProduct(p[2],p[3]));
-            c2 = degconic(JXG.Math.crossProduct(p[0],p[2]),JXG.Math.crossProduct(p[1],p[3]));
-            M = fitConic(c1,c2,p[4]);
             // Compute Eigenvalues and Eigenvectors
             eigen = JXG.Math.Numerics.Jacobi(M);
             // Scale the Eigenvalues such that the first Eigenvalue is positive

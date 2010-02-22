@@ -14,8 +14,11 @@ var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-22,22,22,-22]});
 
 var a = brd.create('point', [-5,0]);
 var b = brd.create('point', [5,0]);
+var c = brd.create('point', [0,0]);
+
 
 brd.create('regularpolygon',[a,b,5]);
+brd.create('regularpolygon',[a,b,c]);
 /* ]]> */
   </script>
 </body>
