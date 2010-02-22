@@ -777,6 +777,9 @@ JXG.trimNumber = function(str) {
 	if(str[str.length-1] == '.' || str[str.length-1] == ',') {
 		str = str.slice(0, -1);
 	}
+    if(str[0] == '.' || str[0] == ',') {
+        str = "0" + str;
+    }
 	
 	return str;
 };
