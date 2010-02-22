@@ -1119,14 +1119,16 @@ JXG.createTangent = function(board, parents, attributes) {
         if (c.curveType!='plot') {
             g = c.X;
             f = c.Y;
-            return board.create('line', [
+            tangent = board.create('line', [
                     function(){ return -p.X()*board.D(f)(p.position)+p.Y()*board.D(g)(p.position);},
                     function(){ return board.D(f)(p.position);},
                     function(){ return -board.D(g)(p.position);}
-                    ], attributes ).addChild(p);
+                    ], attributes );
+            p.addChild(tangent);
+            return tangent;
         } else {  // curveType 'plot'
             // equation of the line segment: 0 = y*(x1-x2) + x*(y2-y1) + y1*x2-x1*y2
-            return board.create('line', [
+            tangent = board.create('line', [
                     function(){ i=Math.floor(p.position);
                                 if (i==c.numberPoints-1) i--;
                                 if (i<0) return 1.0;
@@ -1139,10 +1141,12 @@ JXG.createTangent = function(board, parents, attributes) {
                                 if (i==c.numberPoints-1) i--;
                                 if (i<0) return 0.0;
                                 return c.X(i)-c.X(i+1);}
-                    ], attributes ).addChild(p);
+                    ], attributes );
+            p.addChild(tangent);
+            return tangent;
         }
     } else if (c.type == JXG.OBJECT_TYPE_TURTLE) {
-            return board.create('line', [
+            tangent = board.create('line', [
                     function(){ i=Math.floor(p.position);
                                 for(j=0;j<c.objects.length;j++) {  // run through all curves of this turtle
                                     el = c.objects[j];
@@ -1176,7 +1180,9 @@ JXG.createTangent = function(board, parents, attributes) {
                                 if (i==el.numberPoints-1) i--;
                                 if (i<0) return 0.0;
                                 return el.X(i)-el.X(i+1);}
-                    ], attributes ).addChild(p);
+                    ], attributes );
+            p.addChild(tangent);
+            return tangent;
     } else if (c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         /*
         Dg = function(t){ return -c.Radius()*Math.sin(t); };
@@ -1188,11 +1194,13 @@ JXG.createTangent = function(board, parents, attributes) {
                     ], attributes );
         */
         // This construction should work on conics, too. p has to lie on c.
-        return board.create('line', [
+        board.create('line', [
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[0]; },
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[1]; },
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[2]; }
-                ] , attributes).addChild(p);
+                ] , attributes);
+        p.addChild(tangent);
+        return tangent;
 
     }
 };
