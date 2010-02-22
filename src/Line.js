@@ -1090,7 +1090,7 @@ JXG.JSXGraph.registerElement('axis', JXG.createAxis);
 JXG.createTangent = function(board, parents, attributes) {
     var p,
         c,
-        g, f, i, j, el, Dg, Df;
+        g, f, i, j, el, Dg, Df, tangent;
 
     if (parents.length==1) { // One arguments: glider on line, circle or curve
         p = parents[0];
@@ -1123,7 +1123,7 @@ JXG.createTangent = function(board, parents, attributes) {
                     function(){ return -p.X()*board.D(f)(p.position)+p.Y()*board.D(g)(p.position);},
                     function(){ return board.D(f)(p.position);},
                     function(){ return -board.D(g)(p.position);}
-                    ], attributes );
+                    ], attributes ).addChild(p);
         } else {  // curveType 'plot'
             // equation of the line segment: 0 = y*(x1-x2) + x*(y2-y1) + y1*x2-x1*y2
             return board.create('line', [
@@ -1139,7 +1139,7 @@ JXG.createTangent = function(board, parents, attributes) {
                                 if (i==c.numberPoints-1) i--;
                                 if (i<0) return 0.0;
                                 return c.X(i)-c.X(i+1);}
-                    ], attributes );
+                    ], attributes ).addChild(p);
         }
     } else if (c.type == JXG.OBJECT_TYPE_TURTLE) {
             return board.create('line', [
@@ -1176,7 +1176,7 @@ JXG.createTangent = function(board, parents, attributes) {
                                 if (i==el.numberPoints-1) i--;
                                 if (i<0) return 0.0;
                                 return el.X(i)-el.X(i+1);}
-                    ], attributes );
+                    ], attributes ).addChild(p);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         /*
         Dg = function(t){ return -c.Radius()*Math.sin(t); };
@@ -1192,7 +1192,7 @@ JXG.createTangent = function(board, parents, attributes) {
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[0]; },
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[1]; },
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[2]; }
-                ] , attributes);
+                ] , attributes).addChild(p);
 
     }
 };
