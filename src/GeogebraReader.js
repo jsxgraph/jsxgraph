@@ -1987,9 +1987,9 @@ this.writeElement = function(board, output, input, cmd) {
 
      try {
        JXG.GeogebraReader.debug("* <b>Slope ("+ attr.name +"):</b> First: " + input[0].name +"<br>\n");
-       var slopeWidth = attr.slopeWidth || 1.0;
+       var slopeWidth = parseFloat(attr.slopeWidth) || 1.0;
        var p1 = input[0].glider || input[0].point1;
-       var p2 = board.create('point',[function(){return (slopeWidth+p1.X());}, function(){slopeWidth * return p1.Y();}], {visible: false});
+       var p2 = board.create('point',[function(){return (slopeWidth+p1.X());}, function(){return p1.Y();}], {visible: false});
        var l1 = board.create('segment', [p1, p2], {visible: false}); // visible: attr.visible
        var l2 = board.create('normal', [l1, l1.point2], {visible: false}); // visible attr.visible
        var i  = board.create('intersection', [input[0], l2, 0], {visible: false});
