@@ -68,7 +68,7 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id, layer) {
     }
     
     if(!JXG.isArray(names)) {
-        names = [null, null, null, null];
+     //   names = [null, null, null, null];
     }
 
     /**
@@ -260,10 +260,10 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
         det = (parents[0].coords.usrCoords[1]-parents[2].coords.usrCoords[1])*(parents[0].coords.usrCoords[2]-parents[1].coords.usrCoords[2]) -
               (parents[0].coords.usrCoords[2]-parents[2].coords.usrCoords[2])*(parents[0].coords.usrCoords[1]-parents[1].coords.usrCoords[1]);
         if(det < 0) {
-            el = new JXG.Sector(board, mp, parents[0], parents[2], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
+            el = new JXG.Sector(board, mp, parents[0], parents[2], attributes['id'], [attributes['name'],'','',''],attributes['withLabel'],attributes['layer']);
         }
         else {
-            el = new JXG.Sector(board, mp, parents[2], parents[0], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);         
+            el = new JXG.Sector(board, mp, parents[2], parents[0], attributes['id'], [attributes['name'],'','',''],attributes['withLabel'],attributes['layer']);         
         }
         
         el.arc.update = function() {
