@@ -324,7 +324,7 @@ JXG.createRegularPolygon = function(board, parents, atts) {
     var el, i, n, p = [], rot, c, len, pointsExist;
 
     atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'polygon','withLabel'), layer:null});
-    if (parents.length!=3) {
+    if (JXG.isNumber(parents[parents.length-1]) && parents.length!=3) {
         throw new Error("JSXGraph: A regular polygon needs two point and a number as input.");
     }
 
