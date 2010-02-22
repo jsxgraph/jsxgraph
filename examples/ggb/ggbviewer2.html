@@ -8,7 +8,7 @@
 </head>
 <body>
 <div id="box" class='jxgbox' style="width:500px; height:400px; float:left"></div>
-<div id="ggb" class='jxgbox' style="width:500px; height:400px; float:left;margin-left:20px;"></div>
+<div id="ggb" class='jxgbox' style="width:650px; height:400px; float:left;margin-left:20px;"></div>
 
 <div style="clear:both;">
 
@@ -26,6 +26,7 @@
 		<option value='./elements/geradedurchzweipunkte.ggb'>[X] geradedurchzweipunkte</option>
 		<option value='./elements/geradenspiegelung.ggb'>[X] geradenspiegelung</option>
 		<option value='./elements/halbkreisdurchzweipunkte.ggb'>[X] halbkreisdurchzweipunkte (semicircle)</option><!-- noch mit Fehler, wird aber richtig angezeigt, Konstr. ueber sector -->
+		<option value='./elements/kegelschnittdurchfuenfpunkte.ggb'>[X] kegelschnittdurchfuenfpunkte (conic)</option>	
 		<option value='./elements/kreisbogenmitmittelpunktundzweipunkte.ggb'>[X] kreisbogenmitmittelpunktundzweipunkte</option>
 		<option value='./elements/kreisdurchdreipunkte.ggb'>[X] kreisdurchdreipunkte</option>
 		<option value='./elements/kreismitmittelpunktdurchpunkt.ggb'>[X] kreismitmittelpunktdurchpunkt</option>
@@ -60,9 +61,8 @@
 		<option value='./elements/winkelhalbierende.ggb'>[X] winkelhalbierende</option>
 		<option value='./elements/winkelmitfestergroesse.ggb'>[X] winkelmitfestergroesse</option>
 		<option>?????????????????</option>
-		<option value='./elements/kegelschnittdurchfuenfpunkte.ggb'>kegelschnittdurchfuenfpunkte (conic)</option>
-		<option value='./elements/flaeche.ggb'>flaeche</option><!-- Textpol1 mit Flaechenangabe implementieren -->
-		<option value='./elements/kurvendiskussion.ggb'>kurvendiskussion (x^3 + 3 x^2 + 1)</option>
+		<option value='./elements/flaeche.ggb'>[ ] flaeche</option><!-- Textpol1 mit Flaechenangabe implementieren -->
+		<option value='./elements/kurvendiskussion.ggb'>[ ] kurvendiskussion (x^3 + 3 x^2 + 1)</option>
 		<option>-----------------</option>
 		<option value='./worksheets/exp01_worksheet.ggb'>[ ] exp01_worksheet</option>
 		<option value='./worksheets/exp02_worksheet.ggb'>[ ] exp02_worksheet</option>
@@ -70,28 +70,27 @@
 		<option value='./worksheets/gegenvektor_worksheet.ggb'>[ ] gegenvektor_worksheet</option>
 		<option value='./worksheets/glockenkurve.ggb'>[ ] glockenkurve</option>
 		<option value='./worksheets/GS_Konstruktion_worksheet.ggb'>[X] GS_Konstruktion_worksheet</option>
-		<option value='./worksheets/GeradenSpiegelung_worksheet.ggb'>GeradenSpiegelung_worksheet</option>
-		<option value='./worksheets/PunktSpiegelung_worksheet.ggb'>PunktSpiegelung_worksheet</option>
-		<option value='./worksheets/Streckung_worksheet.ggb'>Streckung_worksheet</option>
-		<option value='./worksheets/addition_worksheet.ggb'>addition_worksheet</option>
-		<option value='./worksheets/baumdiagramm3.ggb'>baumdiagramm3</option>
-		<option value='./worksheets/baumdiagramm3b.ggb'>baumdiagramm3b</option>
-		<option value='./worksheets/betrag_worksheet.ggb'>betrag_worksheet</option>
-		<option value='./worksheets/dynagraph.ggb'>dynagraph</option>
-		<option value='./worksheets/dynagraph_worksheet.ggb'>dynagraph_worksheet</option>
-		<option value='./worksheets/einheitsvektor_worksheet.ggb'>einheitsvektor_worksheet</option>
-		<option value='./worksheets/euler_gerade1.ggb'>euler_gerade1</option>
-		<option value='./worksheets/euler_gerade2.ggb'>euler_gerade2</option>
-		<option value='./worksheets/Feuerbachkreis.ggb'>Feuerbachkreis</option>
-		<option value='./worksheets/funktion_steigung1.ggb' selected>funktion_steigung1</option>
-		<option value='./worksheets/funktion_steigung1b.ggb'>funktion_steigung1b</option>
-		<option value='./worksheets/funktion_steigung2.ggb'>funktion_steigung2</option>
-		<option value='./worksheets/funktion_steigung2b.ggb'>funktion_steigung2b</option>
-		<option value='./worksheets/geogebra.ggb'>geogebra</option>
-		<option value='./worksheets/glasscheibe1.ggb'>glasscheibe1</option>
-		<option value='./worksheets/glasscheibe2.ggb'>glasscheibe2</option>
-
-		<option value='./worksheets/hoehenschnittpunkt.ggb'>hoehenschnittpunkt</option>
+		<option value='./worksheets/GeradenSpiegelung_worksheet.ggb'>[ ] GeradenSpiegelung_worksheet</option>
+		<option value='./worksheets/PunktSpiegelung_worksheet.ggb'>[ ] PunktSpiegelung_worksheet</option>
+		<option value='./worksheets/Streckung_worksheet.ggb'>[ ] Streckung_worksheet</option>
+		<option value='./worksheets/addition_worksheet.ggb'>vaddition_worksheet</option>
+		<option value='./worksheets/baumdiagramm3.ggb'>[ ] baumdiagramm3</option>
+		<option value='./worksheets/baumdiagramm3b.ggb'>[ ] baumdiagramm3b</option>
+		<option value='./worksheets/betrag_worksheet.ggb'>[ ] betrag_worksheet</option>
+		<option value='./worksheets/dynagraph.ggb'>[ ] dynagraph</option>
+		<option value='./worksheets/dynagraph_worksheet.ggb'>[ ] dynagraph_worksheet</option>
+		<option value='./worksheets/einheitsvektor_worksheet.ggb'>[ ] einheitsvektor_worksheet</option>
+		<option value='./worksheets/euler_gerade1.ggb'>[ ] euler_gerade1</option>
+		<option value='./worksheets/euler_gerade2.ggb'>[ ] euler_gerade2</option>
+		<option value='./worksheets/Feuerbachkreis.ggb'>[ ] Feuerbachkreis</option>
+		<option value='./worksheets/funktion_steigung1.ggb' selected>[ ] funktion_steigung1</option>
+		<option value='./worksheets/funktion_steigung1b.ggb'>[ ] funktion_steigung1b</option>
+		<option value='./worksheets/funktion_steigung2.ggb'>[ ] funktion_steigung2</option>
+		<option value='./worksheets/funktion_steigung2b.ggb'>[ ] funktion_steigung2b</option>
+		<option value='./worksheets/geogebra.ggb'>[ ] geogebra</option>
+		<option value='./worksheets/glasscheibe1.ggb'>[ ] glasscheibe1</option>
+		<option value='./worksheets/glasscheibe2.ggb'>[ ] glasscheibe2</option>
+		<option value='./worksheets/hoehenschnittpunkt.ggb'>[ ] hoehenschnittpunkt</option>
 		<option value='./worksheets/huehner_worksheet.ggb'>[ ] huehner_worksheet</option>
 		<option value='./worksheets/kreis_gleichung.ggb'>[ ] kreis_gleichung</option>
 		<option value='./worksheets/kreis_tangente.ggb'>[ ] kreis_tangente</option>
@@ -103,18 +102,18 @@
 		<option value='./worksheets/normalverteilung.ggb'>[ ] normalverteilung</option>
 		<option value='./worksheets/parabel_abstand.ggb'>[ ] parabel_abstand</option>
 		<option value='./worksheets/parabel_scheitel.ggb'>[ ] parabel_scheitel</option>
-		<option value='./worksheets/pascal01.ggb'>pascal01</option>
-		<option value='./worksheets/pascal02.ggb'>pascal02</option>
+		<option value='./worksheets/pascal01.ggb'>[ ] pascal01</option>
+		<option value='./worksheets/pascal02.ggb'>[ ] pascal02</option>
 		<option value='./worksheets/polare_hauptsatz_worksheet.ggb'>[ ] polare_hauptsatz_worksheet</option>
 		<option value='./worksheets/polare_kegelschnitt_worksheet.ggb'>[ ] polare_kegelschnitt_worksheet</option>
 		<option value='./worksheets/polare_kreis_worksheet.ggb'>[ ] polare_kreis_worksheet</option>
-		<option value='./worksheets/poly2_1.ggb'>poly2_1</option>
-		<option value='./worksheets/poly2_2.ggb'>poly2_2</option>
-		<option value='./worksheets/poly2_3.ggb'>poly2_3</option>
-		<option value='./worksheets/poly3_1.ggb'>poly3_1</option>
-		<option value='./worksheets/poly3_2.ggb'>poly3_2</option>
-		<option value='./worksheets/poly3_3.ggb'>poly3_3</option>
-		<option value='./worksheets/poly3_4.ggb'>poly3_4</option>
+		<option value='./worksheets/poly2_1.ggb'>[ ] poly2_1</option>
+		<option value='./worksheets/poly2_2.ggb'>[ ] poly2_2</option>
+		<option value='./worksheets/poly2_3.ggb'>[ ] poly2_3</option>
+		<option value='./worksheets/poly3_1.ggb'>[ ] poly3_1</option>
+		<option value='./worksheets/poly3_2.ggb'>[ ] poly3_2</option>
+		<option value='./worksheets/poly3_3.ggb'>[ ] poly3_3</option>
+		<option value='./worksheets/poly3_4.ggb'>[ ] poly3_4</option>
 		<option value='./worksheets/pythagoras_worksheet.ggb'>[ ] pythagoras_worksheet</option>
 		<option value='./worksheets/rechteck_flaeche.ggb'>[ ] rechteck_flaeche</option>
 		<option value='./worksheets/see_grundstueck.ggb'>[ ] see_grundstueck</option>
@@ -124,12 +123,12 @@
 		<option value='./worksheets/streckeabtragen_worksheet.ggb'>[ ] streckeabtragen_worksheet</option>
 		<option value='./worksheets/streckenteilung_worksheet.ggb'>[ ] streckenteilung_worksheet</option>
 		<option value='./worksheets/subtraktion_worksheet.ggb'>[ ] subtraktion_worksheet</option>
-		<option value='./worksheets/thales.ggb'>thales</option>
-		<option value='./worksheets/thales_beweis.ggb'>thales_beweis</option>
-		<option value='./worksheets/trigonometrisch1.ggb'>trigonometrisch1</option>
-		<option value='./worksheets/trigonometrisch2.ggb'>trigonometrisch2</option>
-		<option value='./worksheets/trigonometrisch3.ggb'>trigonometrisch3</option>
-		<option value='./worksheets/trigonometrisch4.ggb'>trigonometrisch4</option>
+		<option value='./worksheets/thales.ggb'>[ ] thales</option>
+		<option value='./worksheets/thales_beweis.ggb'>[ ] thales_beweis</option>
+		<option value='./worksheets/trigonometrisch1.ggb'>[ ] trigonometrisch1</option>
+		<option value='./worksheets/trigonometrisch2.ggb'>[ ] trigonometrisch2</option>
+		<option value='./worksheets/trigonometrisch3.ggb'>[ ] trigonometrisch3</option>
+		<option value='./worksheets/trigonometrisch4.ggb'>[ ] trigonometrisch4</option>
 		<option value='./worksheets/umfangswinkel_worksheet.ggb'>[ ] umfangswinkel_worksheet</option>
 		<option value='./worksheets/unterobersumme.ggb'>[ ] unterobersumme</option>
 		<option value='./worksheets/vektor_worksheet.ggb'>vektor_worksheet</option>
@@ -164,7 +163,7 @@
     if(typeof board != 'undefined') JXG.JSXGraph.freeBoard(board);
 
     board = JXG.JSXGraph.loadBoardFromFile('box',value, format);
-    document.getElementById('ggb').innerHTML = '<applet code="geogebra.GeoGebraApplet" archive="http://www.geogebra.org/webstart/geogebra.jar" width="500" height="400"><param name="filename" value="'+value+'"/><param name="framePossible" value="false"/></applet>';
+    document.getElementById('ggb').innerHTML = '<applet code="geogebra.GeoGebraApplet" archive="http://www.geogebra.org/webstart/geogebra.jar" width="650" height="400"><param name="filename" value="'+value+'"/><param name="framePossible" value="false"/></applet>';
   }
 </script>
 </body>
