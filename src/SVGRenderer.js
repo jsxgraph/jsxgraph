@@ -927,7 +927,27 @@ JXG.SVGRenderer.prototype.updatePathStringPoint = function(el, size, type) {
         s = 'M ' + (el.coords.scrCoords[1]-size) + ' ' + (el.coords.scrCoords[2]) + ' L ' + 
         (el.coords.scrCoords[1]) + ' ' + (el.coords.scrCoords[2]+size) + ' L ' + 
         (el.coords.scrCoords[1]+size) + ' ' + (el.coords.scrCoords[2]) + ' L ' +
-        (el.coords.scrCoords[1]) + ' ' + (el.coords.scrCoords[2]-size) + 'Z';
+        (el.coords.scrCoords[1]) + ' ' + (el.coords.scrCoords[2]-size) + ' Z ';
+    }
+    else if(type == 'A') {
+        s = 'M ' + (el.coords.scrCoords[1]) + ' ' + (el.coords.scrCoords[2]-size) + ' L ' + 
+        (el.coords.scrCoords[1]-size*Math.sqrt(3)/2) + ' ' + (el.coords.scrCoords[2]+size/2) + ' L ' + 
+        (el.coords.scrCoords[1]+size*Math.sqrt(3)/2) + ' ' + (el.coords.scrCoords[2]+size/2) + ' Z ';
+    } 
+    else if(type == 'v') {
+        s = 'M ' + (el.coords.scrCoords[1]) + ' ' + (el.coords.scrCoords[2]+size) + ' L ' + 
+        (el.coords.scrCoords[1]-size*Math.sqrt(3)/2) + ' ' + (el.coords.scrCoords[2]-size/2) + ' L ' + 
+        (el.coords.scrCoords[1]+size*Math.sqrt(3)/2) + ' ' + (el.coords.scrCoords[2]-size/2) + ' Z ';
+    }   
+    else if(type == '>') {
+        s = 'M ' + (el.coords.scrCoords[1]+size) + ' ' + (el.coords.scrCoords[2]) + ' L ' + 
+        (el.coords.scrCoords[1]-size/2) + ' ' + (el.coords.scrCoords[2]-size*Math.sqrt(3)/2) + ' L ' + 
+        (el.coords.scrCoords[1]-size/2) + ' ' + (el.coords.scrCoords[2]+size*Math.sqrt(3)/2) + ' Z ';
+    }
+    else if(type == '<') {
+        s = 'M ' + (el.coords.scrCoords[1]-size) + ' ' + (el.coords.scrCoords[2]) + ' L ' + 
+        (el.coords.scrCoords[1]+size/2) + ' ' + (el.coords.scrCoords[2]-size*Math.sqrt(3)/2) + ' L ' + 
+        (el.coords.scrCoords[1]+size/2) + ' ' + (el.coords.scrCoords[2]+size*Math.sqrt(3)/2) + ' Z ';
     }
     return s;
 }

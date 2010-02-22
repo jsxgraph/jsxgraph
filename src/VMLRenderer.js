@@ -839,7 +839,7 @@ JXG.VMLRenderer.prototype.updatePathStringPoint = function(el, size, type) {
     var s = [],
         scr = el.coords.scrCoords,
         r = this.resolution;
-    
+
     if(type == 'x') {
         s.push(['m ',(r*(scr[1]-size)),', ',(r*(scr[2]-size)),' l ',
         (r*(scr[1]+size)),', ',(r*(scr[2]+size)),' m ',
@@ -856,9 +856,35 @@ JXG.VMLRenderer.prototype.updatePathStringPoint = function(el, size, type) {
         s.push(['m ',(r*(scr[1]-size)),', ',(r*(scr[2])),' l ',
         (r*(scr[1])),', ',(r*(scr[2]+size)),' l ',
         (r*(scr[1]+size)),', ',(r*(scr[2])),' l ',
-        (r*(scr[1])),', ',(r*(scr[2]-size)),' x e ',
+        (r*(scr[1])),', ',(r*(scr[2]-size)),' x e '
         ].join(''));   
     }
+    else if(type == 'A') {
+        s.push(['m ',(r*(scr[1])),', ',(r*(scr[2]-size)),' l ',
+        Math.round(r*(scr[1]-size*Math.sqrt(3)/2)),', ',(r*(scr[2]+size/2)),' l ',
+        Math.round(r*(scr[1]+size*Math.sqrt(3)/2)),', ',(r*(scr[2]+size/2)),' x e '
+        ].join(''));           
+    } 
+    else if(type == 'v') {
+        s.push(['m ',(r*(scr[1])),', ',(r*(scr[2]+size)),' l ',
+        Math.round(r*(scr[1]-size*Math.sqrt(3)/2)),', ',(r*(scr[2]-size/2)),' l ',
+        Math.round(r*(scr[1]+size*Math.sqrt(3)/2)),', ',(r*(scr[2]-size/2)),' x e '
+        ].join(''));       
+    }   
+    else if(type == '>') {
+        s.push(['m ',(r*(scr[1]+size)),', ',(r*(scr[2])),' l ',
+        (r*(scr[1]-size/2)),', ',Math.round(r*(scr[2]-size*Math.sqrt(3)/2)),' l ',
+        (r*(scr[1]-size/2)),', ',Math.round(r*(scr[2]+size*Math.sqrt(3)/2)),
+        //' x e '
+        ' l ',(r*(scr[1]+size)),', ',(r*(scr[2])) 
+        ].join(''));        
+    }
+    else if(type == '<') {
+        s.push(['m ',(r*(scr[1]-size)),', ',(r*(scr[2])),' l ',
+        (r*(scr[1]+size/2)),', ',Math.round(r*(scr[2]-size*Math.sqrt(3)/2)),' l ',
+        (r*(scr[1]+size/2)),', ',Math.round(r*(scr[2]+size*Math.sqrt(3)/2)),' x e '
+        ].join(''));    
+    }    
     return s;
 }
 

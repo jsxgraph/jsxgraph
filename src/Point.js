@@ -191,6 +191,10 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
      * <tr><td>square</td></tr>
      * <tr><td>plus</td></tr>
      * <tr><td>diamond</td></tr>
+     * <tr><td>triangleUp</td></tr>
+     * <tr><td>triangleDown</td></tr>
+     * <tr><td>triangleLeft</td></tr>
+     * <tr><td>triangleRight</td></tr>
      * </table>
      * @type string
      * @see #setStyle
@@ -1002,7 +1006,8 @@ JXG.Point.prototype.setStyle = function(i) {
 JXG.Point.prototype.setFace = function(s) {
     s = s.toLowerCase();
     if(s == 'cross' || s == 'x' || s == 'plus' || s == '+' || s == 'circle' || s == 'o' || s == 'square' || s == '[]' 
-       || s == 'diamond' || s == '<>') {
+       || s == 'diamond' || s == '<>' || s == 'triangleup' || s == 'a' || s == 'triangledown' || s == 'v' || 
+       s == 'triangleleft' || s == '<' || s == 'triangleright' || s == '>') {
         this.visProp['face'] = s;
     }
     else {

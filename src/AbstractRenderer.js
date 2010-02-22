@@ -98,6 +98,26 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
         this.appendChildPrimitive(node,el.layer);  
         this.appendNodesToElement(el, 'path');
     }
+    else if(f == 'triangleup' || f == 'a') {
+        node = this.createPrimitive('path',el.id);
+        this.appendChildPrimitive(node,el.layer);  
+        this.appendNodesToElement(el, 'path');    
+    }
+    else if(f == 'triangledown' || f == 'v') {
+        node = this.createPrimitive('path',el.id);
+        this.appendChildPrimitive(node,el.layer);  
+        this.appendNodesToElement(el, 'path');
+    }        
+    else if(f == 'triangleleft' || f == '<') {
+        node = this.createPrimitive('path',el.id);
+        this.appendChildPrimitive(node,el.layer);  
+        this.appendNodesToElement(el, 'path');    
+    }
+    else if(f == 'triangleright' || f == '>') {
+        node = this.createPrimitive('path',el.id);
+        this.appendChildPrimitive(node,el.layer);  
+        this.appendNodesToElement(el, 'path');    
+    }
     el.rendNode = node;
     
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
@@ -144,9 +164,21 @@ JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
     else if(f == 'plus' || f == '+') { // +
         this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'+'), el.board); 
     }
-    else if(f == 'diamond') { // diamond
+    else if(f == 'diamond' || f == '<>') { // diamond
         this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'diamond'), el.board); 
-    }    
+    }  
+    else if(f == 'triangleup' || f == 'a') { // triangleUp
+        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'A'), el.board); 
+    } 
+    else if(f == 'triangledown' || f == 'v') { // triangleDown
+        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'v'), el.board); 
+    } 
+    else if(f == 'triangleleft' || f == '<') { // triangleLeft
+        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'<'), el.board); 
+    }  
+    else if(f == 'triangleright' || f == '>') { // triangleRight
+        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'>'), el.board); 
+    }        
     this.setShadow(el);
 };
 

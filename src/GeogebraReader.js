@@ -1166,23 +1166,59 @@ this.visualProperties = function(Data, attr) {
   (Data.getElementsByTagName("show").length != 0 && Data.getElementsByTagName("show")[0].attributes["object"]) ? attr.visible = Data.getElementsByTagName("show")[0].attributes["object"].value : false;
   (Data.getElementsByTagName("show").length != 0 && Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.withLabel = Data.getElementsByTagName("show")[0].attributes["label"].value : true;
   (Data.getElementsByTagName('pointSize')[0]) ? attr.size = Data.getElementsByTagName('pointSize')[0].attributes["val"].value : false;
-  (Data.getElementsByTagName('pointStyle')[0]) ? attr.styleGGB = Data.getElementsByTagName('pointStyle')[0].attributes["val"].value : 0;
+  (Data.getElementsByTagName('pointStyle')[0]) ? attr.styleGGB = Data.getElementsByTagName('pointStyle')[0].attributes["val"].value : attr.styleGGB = 0;
    if(attr.styleGGB == 0 || attr.styleGGB == 2) {
       attr.face = 'circle';
+      if(attr.styleGGB == 0) {
+        attr.fillColor = attr.strokeColor;
+        attr.fillOpacity = 1;        
+        attr.strokeColor = 'black'
+      }
+      else if(attr.styleGGB == 2) {
+        attr.fillColor = 'none';
+      }
    }
    else if(attr.styleGGB == 1) {
       attr.face = 'x';
    }   
    else if(attr.styleGGB == 3) {
       attr.face = '+';
+      attr.strokeOpacity = 1;
    }     
    else if(attr.styleGGB == 4 || attr.styleGGB == 5) {
       attr.face = 'diamond';
+      if(attr.styleGGB == 4) {
+         attr.fillColor = attr.strokeColor;
+         attr.fillOpacity = 1;   
+      }
+      else if(attr.styleGGB == 5) {
+        attr.fillColor = 'none';
+      }      
    }    
-   else {
-      attr.face = 'circle';
+   else if(attr.styleGGB == 6) {
+      attr.face = 'triangleUp';
+      attr.fillColor = attr.strokeColor;
+      attr.fillOpacity = 1;
    }
+<<<<<<< .mine
+   else if(attr.styleGGB == 7) {
+      attr.face = 'triangleDown';
+      attr.fillColor = attr.strokeColor;
+      attr.fillOpacity = 1;      
+   }
+   else if(attr.styleGGB == 8) {
+      attr.face = 'triangleRight';
+      attr.fillColor = attr.strokeColor;
+      attr.fillOpacity = 1;      
+   }
+   else if(attr.styleGGB == 9) {
+      attr.face = 'triangleLeft';
+      attr.fillColor = attr.strokeColor;
+      attr.fillOpacity = 1;      
+   }   
+=======
   (Data.getElementsByTagName('slopeTriangleSize')[0]) ? attr.slopeWidth = Data.getElementsByTagName('slopeTriangleSize')[0].attributes["val"].value : false;
+>>>>>>> .r1209
   (Data.getElementsByTagName('lineStyle')[0]) ? attr.strokeWidth = Data.getElementsByTagName('lineStyle')[0].attributes["thickness"].value : false; 
   (Data.getElementsByTagName('lineStyle')[0]) ? attr.dashGGB = Data.getElementsByTagName('lineStyle')[0].attributes["type"].value : false;
 
@@ -1404,7 +1440,7 @@ this.writeElement = function(board, output, input, cmd) {
           p = board.create('glider', [gxtEl.x, gxtEl.y, input[0]], attr);
         else 
           p = board.create('point', [gxtEl.x, gxtEl.y], attr);
-          JXG.GeogebraReader.debug("* <b>Point ("+ p.id +"):</b> "+ attr.name + "("+ gxtEl.x +", "+ gxtEl.y +")<br>\n");
+          JXG.GeogebraReader.debug("* <b>Point ("+ p.id +"):</b> "+ attr.name + ' '+ attr.face + ' '+ attr.size + "("+ gxtEl.x +", "+ gxtEl.y +")<br>\n");
           return p;
       } catch(e) {
           JXG.GeogebraReader.debug("* <b>Err:</b> Point " + attr.name +"<br>\n");

@@ -15,7 +15,7 @@
     /* <![CDATA[ */
 
         board = JXG.JSXGraph.initBoard('jxgbox', {grid:true,originX: 250, originY: 300, unitX: 50, unitY: 50, axis:true});
-        
+ /*       
         p1 = board.createElement('point', [0, 0], {face:'circle',size:6,name:"A",fillColor:'red',strokeColor:'yellow',id:'pp1'}); 
         p2 = board.createElement('point', [1, 1], {face:'cross',size:3,name:"B",strokeColor:'green'});
         
@@ -29,15 +29,15 @@
         c1 = board.createElement('circle',[p1,p2], {strokeColor:'yellow',fillColor:'#00FFFF55',visible:true, shadow:true, gradient:'linear'});
         
         p3 = board.createElement('point', [2, 2], {face:'diamond',size:10,strokeColor:'blue',fillColor:'green'});
-        a1 = board.createElement('semicircle',[p3,p2], {strokeColor:'red',dash:1});
+        a1 = board.createElement('semicircle',[p3,p2], {strokeColor:'red',dash:1});*/
         
-        p4 = board.createElement('point', [-2, 2],{face:'square',size:7,shadow:true,name:'EE'});
-        p5 = board.createElement('point', [-2, 3],{face:'square',size:5,name:'EF'});
-        p6 = board.createElement('point', [-3, 4],{face:'square',size:6,name:'EG'});
-        p7 = board.createElement('point', [-4, 3],{face:'plus',size:4,strokeWidth:'3pt',shadow:true,name:'EH'});
-        p8 = board.createElement('point', [-4, 2],{face:'plus',size:4,strokeWidth:'3pt',shadow:true,name:'EI'});
-        p9 = board.createElement('point', [-5, 1],{face:'plus',size:4,strokeWidth:'3pt',shadow:true,name:'EJ'});
-        
+        p4 = board.createElement('point', [-2, 2],{face:'<',size:9,shadow:true,name:'EE'});
+        p5 = board.createElement('point', [-2, 3],{face:'>',size:15,name:'EF'});
+       p6 = board.createElement('point', [-3, 4],{face:'A',size:8,name:'EG'});
+        p7 = board.createElement('point', [-4, 3],{face:'v',size:7,strokeWidth:'3pt',shadow:true,name:'EH'});
+        p8 = board.createElement('point', [-4, 2],{face:'diamond',size:14,strokeWidth:'3pt',shadow:true,name:'EI'});
+        p9 = board.createElement('point', [-5, 1],{face:'plus',size:6,strokeWidth:'3pt',shadow:true,name:'EJ'});
+     /*   
         c2 = board.createElement('circle',[p4,p6], {strokeColor:'yellow',fillColor:'#FFFF0055',visible:true, shadow:true, gradient:'radial',id:'ci23'});
         
         pply1 = board.createElement('polygon',[p4,p5,p6,p7,p8,p9],{fillColor:'yellow',gradient:'linear'});
@@ -52,7 +52,7 @@
         
         
         //s1 = board.createElement('sector',[p5,p4,p3]);
-        //s1.arc.setProperty('fillColor:#FF00FF55');
+        //s1.arc.setProperty('fillColor:#FF00FF55');*/
   /* ]]> */
   </script>
 </body>
