@@ -280,7 +280,7 @@ JXG.Polygon.prototype.Area = function() {
 /**
  * @class Constructs a regular polygon. It needs two points which define the base line and the number of vertices.
  * @pseudo
- * @description Constructs a regular polygon. It needs two points which define the base line and the number of vertices.
+ * @description Constructs a regular polygon. It needs two points which define the base line and the number of vertices, or a set of points.
  * @constructor
  * @name RegularPolygon
  * @type JXG.Polygon
@@ -294,10 +294,24 @@ JXG.Polygon.prototype.Area = function() {
  * var pol = board.create('regularpolygon', [p1, p2, 5]);
  * </pre><div id="682069e9-9e2c-4f63-9b73-e26f8a2b2bb1" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var regpol_board = JXG.JSXGraph.initBoard('682069e9-9e2c-4f63-9b73-e26f8a2b2bb1', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false});
+ *   var ccmex1_board = JXG.JSXGraph.initBoard('682069e9-9e2c-4f63-9b73-e26f8a2b2bb1', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false});
  *   var regpol_p1 = ccmex1_board.create('point', [0.0, 2.0]);
  *   var regpol_p2 = ccmex1_board.create('point', [2.0, 1.0]);
  *   var regpol_cc1 = ccmex1_board.create('regularpolygon', [ccmex1_p1, ccmex1_p2, 5]);
+ * </script><pre>
+ * @example
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [0.0,-2.0]);
+ * var p3 = board.create('point', [-2.0,0.0]);
+ *
+ * var pol = board.create('regularpolygon', [p1, p2, p3]);
+ * </pre><div id="096a78b3-bd50-4bac-b958-3be5e7df17ed" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var ccmex2_board = JXG.JSXGraph.initBoard('096a78b3-bd50-4bac-b958-3be5e7df17ed', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false});
+ *   var ccmex2_p1 = ccmex2_board.create('point', [0.0, 2.0]);
+ *   var ccmex2_p2 = ccmex2_board.create('point', [0.0, -2.0]);
+ *   var ccmex2_p3 = ccmex2_board.create('point', [-2.0,0.0]);
+ *   var ccmex2_cc1 = ccmex2_board.create('regularpolygon', [ccmex2_p1, ccmex2_p2, ccmex2_p3]);
  * </script><pre>
  */
 JXG.createRegularPolygon = function(board, parents, atts) {
