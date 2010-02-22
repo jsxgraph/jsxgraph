@@ -1165,7 +1165,23 @@ this.coordinates = function(gxtEl, Data) {
 this.visualProperties = function(Data, attr) {
   (Data.getElementsByTagName("show").length != 0 && Data.getElementsByTagName("show")[0].attributes["object"]) ? attr.visible = Data.getElementsByTagName("show")[0].attributes["object"].value : false;
   (Data.getElementsByTagName("show").length != 0 && Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.withLabel = Data.getElementsByTagName("show")[0].attributes["label"].value : true;
-  (Data.getElementsByTagName('pointSize')[0]) ? attr.style = Data.getElementsByTagName('pointSize')[0].attributes["val"].value : false;
+  (Data.getElementsByTagName('pointSize')[0]) ? attr.size = Data.getElementsByTagName('pointSize')[0].attributes["val"].value : false;
+  (Data.getElementsByTagName('pointStyle')[0]) ? attr.styleGGB = Data.getElementsByTagName('pointStyle')[0].attributes["val"].value : 0;
+   if(attr.styleGGB == 0 || attr.styleGGB == 2) {
+      attr.face = 'circle';
+   }
+   else if(attr.styleGGB == 1) {
+      attr.face = 'x';
+   }   
+   else if(attr.styleGGB == 3) {
+      attr.face = '+';
+   }     
+   else if(attr.styleGGB == 4 || attr.styleGGB == 5) {
+      attr.face = 'diamond';
+   }    
+   else {
+      attr.face = 'circle';
+   }
   (Data.getElementsByTagName('lineStyle')[0]) ? attr.strokeWidth = Data.getElementsByTagName('lineStyle')[0].attributes["thickness"].value : false; 
   (Data.getElementsByTagName('lineStyle')[0]) ? attr.dashGGB = Data.getElementsByTagName('lineStyle')[0].attributes["type"].value : false;
 
@@ -1385,9 +1401,8 @@ this.writeElement = function(board, output, input, cmd) {
       try {
         if(typeof input != 'undefined')
           p = board.create('glider', [gxtEl.x, gxtEl.y, input[0]], attr);
-        else
+        else 
           p = board.create('point', [gxtEl.x, gxtEl.y], attr);
-
           JXG.GeogebraReader.debug("* <b>Point ("+ p.id +"):</b> "+ attr.name + "("+ gxtEl.x +", "+ gxtEl.y +")<br>\n");
           return p;
       } catch(e) {
