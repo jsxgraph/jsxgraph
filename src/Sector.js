@@ -182,6 +182,8 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id, layer) {
     this.point1.addChild(this);
     this.point2.addChild(this);
     this.point3.addChild(this);
+    
+    return this;
 };   
 JXG.Sector.prototype = new JXG.GeometryElement;
 

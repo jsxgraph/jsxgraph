@@ -1774,11 +1774,17 @@ this.writeElement = function(board, output, input, cmd) {
       attr = JXG.GeogebraReader.colorProperties(element, attr);
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
-
+      attr.names = [attr.name,'','',''];
+      attr2 = {};
+      attr2.names = attr.names;
       try {
-        JXG.GeogebraReader.debug("* <b>CircleSector:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
-        c = board.create('sector', input, attr);
-        return c;
+        JXG.GeogebraReader.debug("* <b>CircleSector:</b> First: " + input[0].name + ", Second: " + input[1].name + ", Third: " + input[2].name + "<br>\n");
+        sec = board.create('sector', [input[0],input[1],input[2]], attr2);
+        sec.point4.hideElement();
+        sec.arc.setProperty(attr);
+        sec.lines[0].setProperty(attr);
+        sec.lines[1].setProperty(attr);
+        return sec;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> CircleSector " + attr.name +"<br>\n");
         return false;
@@ -1888,8 +1894,11 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>CircumcircleSector:</b> First: " + input[0].name + "<br>\n");
-        p = board.create('circumcirclesector', [input[0], input[1], input[2]], attr);
-        return p;
+        sec = board.create('circumcirclesector', [input[0], input[1], input[2]], {name:attr['name']});
+        sec.arc.setProperty(attr);
+        sec.lines[0].setProperty(attr);
+        sec.lines[1].setProperty(attr);        
+        return sec;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> CircumcircleSector " + attr.name +"<br>\n");
         return false;
