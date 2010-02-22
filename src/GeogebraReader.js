@@ -1598,7 +1598,7 @@ this.writeElement = function(board, output, input, cmd) {
         m = board.create('midpoint', input, {visible: 'false'});
         t = board.create('text', [function(){return m.X();}, function(){return m.Y();}, function(){
               return "<span style='text-decoration: overline'>"+ input[0].name + input[1].name +"</span> = "
-                     + JXG.getReference(board, input[0].id).Dist(JXG.getReference(board, input[1].id));
+                     + JXG.getReference(board, input[0].id).Dist(JXG.getReference(board, input[1].id)).toFixed(JXG.GeogebraReader.decimals);
                 }], attr);
         return t;
       } catch(e) {
