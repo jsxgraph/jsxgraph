@@ -382,8 +382,9 @@ JXG.createParabola = function(board, parents, atts) {
  * </script><pre>
  */
 JXG.createConic = function(board, parents, atts) {
-    var rotationMatrix, eigen, a, b, c, M, c1, c2, 
-        points = [], i, 
+    var rotationMatrix, eigen, a, b, c, M,
+        c1, c2, 
+        points = [], i, definingMat, 
         givenByPoints = (parents.length==5)?true:false, 
         p = [];
 
@@ -407,13 +408,15 @@ JXG.createConic = function(board, parents, atts) {
          *   [A3,A1,A4],
          *   [A5,A4,A2]]. 
          * Our notation (z,x,y): 
-         *  [[A2,A5,A4],
-         *   [A5,A0,A3],
-         *   [A4,A3,A1]] 
+         *  [[-A2   , A5*2.0, A4*0.5],
+         *   [A5*2.0,    -A0, A3*0.5],
+         *   [A4*0.5, A3*0.5,    -A1]] 
         */
-        M = [[parents[2],parents[5],parents[4]],
-             [parents[5],parents[0],parents[3]],
-             [parents[4],parents[3],parents[1]]];
+        //definingMat = [[0,0,0],[0,0,0],[0,0,0]];
+        //definingMat[0][0] = (JXG.isFunction(parent[0])) ? 
+        M = [[-parents[2],parents[5]*2.0,parents[4]*0.5],
+             [parents[5]*2.0,-parents[0],parents[3]*0.5],
+             [parents[4]*0.5,parents[3]*0.5,-parents[1]]];
     }
 
     // sym(A) = A + A^t . Manipulates A in place.
