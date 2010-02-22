@@ -301,20 +301,28 @@ JXG.Polygon.prototype.Area = function() {
  * </script><pre>
  */
 JXG.createRegularPolygon = function(board, parents, atts) {
-    var el, i, n, p = [], rot, c;
+    var el, i, n, p = [], rot, c, len, pointsExist;
 
     atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'polygon','withLabel'), layer:null});
     if (parents.length!=3) {
         throw new Error("JSXGraph: A regular polygon needs two point and a number as input.");
     }
 
-    n = parents[2];
-    if (!JXG.isNumber(n) || n<3) {
-        throw new Error("JSXGraph: The third parameter has to be number greater than 2.");
+    len = parents.length;
+    n = parents[len-1];
+    if ((!JXG.isNumber(n) && !JXG.isPoint(JXG.getReference(board, n))) || n<3) {
+        throw new Error("JSXGraph: The third parameter has to be number greater than 2 or a point.");
     }
     
+    if (JXG.isPoint(JXG.getReference(board, n))) {  // Regular polygon given by n points
+        n = len;
+        pointsExist = true;
+    } else {
+        len--;
+        pointsExist = false;
+    }
     // Sind alles Punkte? 
-    for(i=0; i<parents.length-1; i++) {
+    for(i=0; i<len; i++) {
         parents[i] = JXG.getReference(board, parents[i]);
         if(!JXG.isPoint(parents[i]))
             throw new Error("JSXGraph: Can't create regular polygon if the first two parameters aren't points.");
@@ -324,7 +332,12 @@ JXG.createRegularPolygon = function(board, parents, atts) {
     p[1] = parents[1];
     for (i=2;i<n;i++) {
         rot = board.create('transform', [Math.PI*(2.0-(n-2)/n),p[i-1]], {type:'rotate'});
-        p[i] = board.create('point',[p[i-2],rot],{name:'', withLabel:false,fixed:true,face:'o',size:1});
+        if (pointsExist) {
+            p[i] = parents[i];
+            p[i].addTransform(parents[i-2],rot);
+        } else {
+            p[i] = board.create('point',[p[i-2],rot],{name:'', withLabel:false,fixed:true,face:'o',size:1});
+        }
     }
     el = board.create('polygon',p,atts);
 
