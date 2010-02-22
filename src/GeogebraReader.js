@@ -1165,6 +1165,23 @@ this.visualProperties = function(Data, attr) {
   (Data.getElementsByTagName("show").length > 0 && Data.getElementsByTagName("show")[0].attributes["object"]) ? attr.visible = Data.getElementsByTagName("show")[0].attributes["object"].value : false;
   (Data.getElementsByTagName("show").length > 0 && Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.withLabel = Data.getElementsByTagName("show")[0].attributes["label"].value : true;
   (Data.getElementsByTagName('pointSize')[0]) ? attr.style = Data.getElementsByTagName('pointSize')[0].attributes["val"].value : false;
+  (Data.getElementsByTagName('lineStyle')[0]) ? attr.strokeWidth = Data.getElementsByTagName('lineStyle')[0].attributes["thickness"].value : false; 
+  (Data.getElementsByTagName('lineStyle')[0]) ? attr.dashGGB = Data.getElementsByTagName('lineStyle')[0].attributes["type"].value : false;
+   if(attr.dashGGB == 0) {
+      attr.dash = 0;
+   }
+   else if(attr.dashGGB == 10) {
+      attr.dash = 2;
+   }
+   else if(attr.dashGGB == 15) {
+      attr.dash = 3;
+   }
+   else if(attr.dashGGB == 20) {
+      attr.dash = 1;
+   }   
+   else if(attr.dashGGB == 30) {
+      attr.dash = 6;
+   }    
   (Data.getElementsByTagName("labelOffset")[0]) ? attr.labelX = 1*Data.getElementsByTagName("labelOffset")[0].attributes["x"].value : false;
   (Data.getElementsByTagName("labelOffset")[0]) ? attr.labelY = 1*Data.getElementsByTagName("labelOffset")[0].attributes["y"].value : false;
   (Data.getElementsByTagName("trace")[0]) ? attr.trace = Data.getElementsByTagName("trace")[0].attributes["val"].value : false;
