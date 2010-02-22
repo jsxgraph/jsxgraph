@@ -1182,6 +1182,7 @@ this.visualProperties = function(Data, attr) {
    else {
       attr.face = 'circle';
    }
+  (Data.getElementsByTagName('slopeTriangleSize')[0]) ? attr.slopeWidth = Data.getElementsByTagName('slopeTriangleSize')[0].attributes["val"].value : false;
   (Data.getElementsByTagName('lineStyle')[0]) ? attr.strokeWidth = Data.getElementsByTagName('lineStyle')[0].attributes["thickness"].value : false; 
   (Data.getElementsByTagName('lineStyle')[0]) ? attr.dashGGB = Data.getElementsByTagName('lineStyle')[0].attributes["type"].value : false;
 
@@ -2029,7 +2030,7 @@ this.writeElement = function(board, output, input, cmd) {
 
      try {
        JXG.GeogebraReader.debug("* <b>Slope ("+ attr.name +"):</b> First: " + input[0].name +"<br>\n");
-       var slopeWidth = parseFloat(attr.slopeWidth) || 1.0;
+       var slopeWidth = parseInt(attr.slopeWidth) || 1.0;
        var p1 = input[0].glider || input[0].point1;
        var p2 = board.create('point',[function(){return (slopeWidth+p1.X());}, function(){return p1.Y();}], {visible: false});
        var l1 = board.create('segment', [p1, p2], {visible: false}); // visible: attr.visible
@@ -2038,9 +2039,12 @@ this.writeElement = function(board, output, input, cmd) {
        var m  = board.create('midpoint', [l1.point2, i], {visible: false});
        
        var t = board.create('text', [function(){return m.X();}, function(){return m.Y();},
-                      function(){ return ""+ input[0].getSlope().toFixed(JXG.GeogebraReader.decimals); }], attr);
+                      function(){ return "" + (slopeWidth > 1 ? slopeWidth.toString() : "") + " " + attr.name + " = " + (slopeWidth * input[0].getSlope()).toFixed(JXG.GeogebraReader.decimals); }], attr);
        t.Value = (function() { return function(){ return input[0].getSlope(); }; })();
-       var poly = board.create('polygon',[p1,p2,i]);
+       var poly = board.create('polygon',[p1,p2,i], attr);
+       poly.borders[0].setProperty(attr);
+       poly.borders[1].setProperty(attr);
+       poly.borders[2].setProperty({visible: false});
        return t;
      } catch(e) {
        JXG.GeogebraReader.debug("* <b>Err:</b> Slope " + attr.name +"<br>\n");
