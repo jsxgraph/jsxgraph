@@ -1166,7 +1166,7 @@ this.visualProperties = function(Data, attr) {
   (Data.getElementsByTagName("show").length != 0 && Data.getElementsByTagName("show")[0].attributes["object"]) ? attr.visible = Data.getElementsByTagName("show")[0].attributes["object"].value : false;
   (Data.getElementsByTagName("show").length != 0 && Data.getElementsByTagName("show")[0].attributes["label"]) ? attr.withLabel = Data.getElementsByTagName("show")[0].attributes["label"].value : true;
   (Data.getElementsByTagName('pointSize')[0]) ? attr.size = Data.getElementsByTagName('pointSize')[0].attributes["val"].value : false;
-  (Data.getElementsByTagName('pointStyle')[0]) ? attr.styleGGB = Data.getElementsByTagName('pointStyle')[0].attributes["val"].value : attr.styleGGB = 0;
+  (Data.getElementsByTagName('pointStyle')[0]) ? attr.styleGGB = Data.getElementsByTagName('pointStyle')[0].attributes["val"].value : false;
    if(attr.styleGGB == 0 || attr.styleGGB == 2) {
       attr.face = 'circle';
       if(attr.styleGGB == 0) {
@@ -1431,7 +1431,12 @@ this.writeElement = function(board, output, input, cmd) {
       } else {
         gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       }
-
+      if(attr.styleGGB == undefined) {
+         attr.face = 'circle';
+         attr.fillColor = attr.strokeColor;
+         attr.fillOpacity = 1;        
+         attr.strokeColor = 'black'
+      }
       try {
         if(typeof input != 'undefined')
           p = board.create('glider', [gxtEl.x, gxtEl.y, input[0]], attr);
