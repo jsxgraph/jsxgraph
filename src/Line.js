@@ -1113,8 +1113,9 @@ JXG.createTangent = function(board, parents, attributes) {
         attributes = {};
     if (attributes.withLabel == null)
         attributes.withLabel = false;
+    
     if (c.elementClass == JXG.OBJECT_CLASS_LINE) {
-        return board.create('line', [c.point1,c.point2], attributes);
+        tangent = board.create('line', [c.point1,c.point2], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
         if (c.curveType!='plot') {
             g = c.X;
@@ -1125,7 +1126,8 @@ JXG.createTangent = function(board, parents, attributes) {
                     function(){ return -board.D(g)(p.position);}
                     ], attributes );
             p.addChild(tangent);
-            return tangent;
+            // this is required for the geogebra reader to display a slope
+            tangent.glider = p;
         } else {  // curveType 'plot'
             // equation of the line segment: 0 = y*(x1-x2) + x*(y2-y1) + y1*x2-x1*y2
             tangent = board.create('line', [
@@ -1143,7 +1145,8 @@ JXG.createTangent = function(board, parents, attributes) {
                                 return c.X(i)-c.X(i+1);}
                     ], attributes );
             p.addChild(tangent);
-            return tangent;
+            // this is required for the geogebra reader to display a slope
+            tangent.glider = p;
         }
     } else if (c.type == JXG.OBJECT_TYPE_TURTLE) {
             tangent = board.create('line', [
@@ -1182,7 +1185,8 @@ JXG.createTangent = function(board, parents, attributes) {
                                 return el.X(i)-el.X(i+1);}
                     ], attributes );
             p.addChild(tangent);
-            return tangent;
+            // this is required for the geogebra reader to display a slope
+            tangent.glider = p;
     } else if (c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         /*
         Dg = function(t){ return -c.Radius()*Math.sin(t); };
@@ -1200,9 +1204,11 @@ JXG.createTangent = function(board, parents, attributes) {
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[2]; }
                 ] , attributes);
         p.addChild(tangent);
-        return tangent;
-
+        // this is required for the geogebra reader to display a slope
+        tangent.glider = p;
     }
+    
+    return tangent;
 };
 
 /**
