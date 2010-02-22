@@ -85,6 +85,7 @@ JXG.Options = {
         style : 5, //1;
         fillColor : '#ff0000',
         highlightFillColor : '#EEEEEE',
+        strokeWidth: '2px',
         strokeColor : '#ff0000', //'#0000ff',
         highlightStrokeColor : '#C3D9FF',
         zoom: false             // Change the point size on zoom

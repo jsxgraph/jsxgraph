@@ -1078,6 +1078,7 @@ this.setDefaultOptions = function(board){
   board.options.point.size = 3;
   board.options.point.fillColor = 'blue';
   board.options.point.strokeColor = 'black';
+  board.options.point.strokeWidth = '2px';
 
   board.options.line.strokeWidth = '1px';
   board.options.line.strokeColor = '#000000';
@@ -1174,7 +1175,8 @@ this.visualProperties = function(Data, attr) {
       if(attr.styleGGB == 0) {
         attr.fillColor = attr.strokeColor;
         attr.fillOpacity = 1;        
-        attr.strokeColor = 'black'
+        attr.strokeColor = 'black';
+        attr.strokeWidth = '1px';
       }
       else if(attr.styleGGB == 2) {
         attr.fillColor = 'none';
@@ -1437,7 +1439,8 @@ this.writeElement = function(board, output, input, cmd) {
          attr.face = 'circle';
          attr.fillColor = attr.strokeColor;
          attr.fillOpacity = 1;        
-         attr.strokeColor = 'black'
+         attr.strokeColor = 'black';
+         attr.strokeWidth = '1px';
       }
       try {
         if(typeof input != 'undefined')
