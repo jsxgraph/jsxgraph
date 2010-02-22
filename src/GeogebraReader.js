@@ -1070,7 +1070,7 @@ this.debug = function(s) {
  * @return {Object} board oject
  */
 this.setDefaultOptions = function(board){
-
+  board.options.elements.strokeWidth = '1px';
 
   board.options.point.face = 'circle';
   board.options.point.size = 3;
@@ -1109,8 +1109,7 @@ this.colorProperties = function(Data, attr) {
 
   attr.fillColor = '#'+ r + g + b;
   attr.strokeColor = attr.fillColor;
-  if(a == 0.0) attr.fillOpacity = 1;
-  else         attr.fillOpacity = a;
+  attr.fillOpacity = a;
 
   return attr;
 }; 
