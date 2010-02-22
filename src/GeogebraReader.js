@@ -1070,13 +1070,14 @@ this.debug = function(s) {
  * @return {Object} board oject
  */
 this.setDefaultOptions = function(board){
-  board.options.elements.strokeWidth = '1px';
+
 
   board.options.point.face = 'circle';
   board.options.point.size = 3;
-  board.options.point.fillColor = '#000000';
-  board.options.point.strokeColor = '#000000';
+  board.options.point.fillColor = 'blue';
+  board.options.point.strokeColor = 'black';
 
+  board.options.line.strokeWidth = '1px';
   board.options.line.strokeColor = '#000000';
 
   board.options.polygon.fillColor = JXG.rgb2hex(153, 51, 0);
@@ -1098,17 +1099,18 @@ this.setDefaultOptions = function(board){
  * @return {Object} returning the updated attr-attributes object
  */
 this.colorProperties = function(Data, attr) {
-  var a = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["alpha"]) ? 1*Data.getElementsByTagName("objColor")[0].attributes["alpha"].value : 0;
-  var r = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["r"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["r"].value).toString(16) : 0;
-  var g = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["g"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["g"].value).toString(16) : 0;
-  var b = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["b"]) ? (1*Data.getElementsByTagName("objColor")[0].attributes["b"].value).toString(16) : 0;
+  var a = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["alpha"]) ? parseFloat(Data.getElementsByTagName("objColor")[0].attributes["alpha"].value) : 0;
+  var r = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["r"]) ? parseInt(Data.getElementsByTagName("objColor")[0].attributes["r"].value).toString(16) : 0;
+  var g = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["g"]) ? parseInt(Data.getElementsByTagName("objColor")[0].attributes["g"].value).toString(16) : 0;
+  var b = (Data.getElementsByTagName("objColor").length > 0 && Data.getElementsByTagName("objColor")[0].attributes["b"]) ? parseInt(Data.getElementsByTagName("objColor")[0].attributes["b"].value).toString(16) : 0;
   if (r.length == 1) r = '0' + r;
   if (g.length == 1) g = '0' + g;
   if (b.length == 1) b = '0' + b;
 
   attr.fillColor = '#'+ r + g + b;
   attr.strokeColor = attr.fillColor;
-  attr.fillOpacity = a;
+  if(a == 0.0) attr.fillOpacity = 1;
+  else         attr.fillOpacity = a;
 
   return attr;
 }; 
