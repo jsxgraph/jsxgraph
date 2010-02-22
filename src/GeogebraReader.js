@@ -2004,8 +2004,9 @@ this.writeElement = function(board, output, input, cmd) {
 
      try {
        JXG.GeogebraReader.debug("* <b>Slope ("+ attr.name +"):</b> First: " + input[0].name +"<br>\n");
-       var p = board.create('point',[function(){return (1+input[0].glider.X());}, function(){return input[0].glider.Y();}], {visible: false});
-       var l1 = board.create('segment', [input[0].glider, p], {visible: false}); // visible: attr.visible
+       var p1 = input[0].glider || input[0].point1;
+       var p2 = board.create('point',[function(){return (1+p1.X());}, function(){return p1.Y();}], {visible: false});
+       var l1 = board.create('segment', [p1, p2], {visible: false}); // visible: attr.visible
        var l2 = board.create('normal', [l1, l1.point2], {visible: false}); // visible attr.visible
        var i  = board.create('intersection', [input[0], l2, 0], {visible: false});
        var m  = board.create('midpoint', [l1.point2, i], {visible: false});
@@ -2013,7 +2014,7 @@ this.writeElement = function(board, output, input, cmd) {
        var t = board.create('text', [function(){return m.X();}, function(){return m.Y();},
                       function(){ return ""+ input[0].getSlope().toFixed(JXG.GeogebraReader.decimals); }], attr);
        t.Value = (function() { return function(){ return input[0].getSlope(); }; })();
-       var poly = board.create('polygon',[input[0].glider,p,i]);
+       var poly = board.create('polygon',[p1,p2,i]);
        return t;
      } catch(e) {
        JXG.GeogebraReader.debug("* <b>Err:</b> Slope " + attr.name +"<br>\n");
