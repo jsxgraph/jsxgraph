@@ -1200,7 +1200,6 @@ this.visualProperties = function(Data, attr) {
       attr.fillColor = attr.strokeColor;
       attr.fillOpacity = 1;
    }
-<<<<<<< .mine
    else if(attr.styleGGB == 7) {
       attr.face = 'triangleDown';
       attr.fillColor = attr.strokeColor;
@@ -1216,9 +1215,7 @@ this.visualProperties = function(Data, attr) {
       attr.fillColor = attr.strokeColor;
       attr.fillOpacity = 1;      
    }   
-=======
   (Data.getElementsByTagName('slopeTriangleSize')[0]) ? attr.slopeWidth = Data.getElementsByTagName('slopeTriangleSize')[0].attributes["val"].value : false;
->>>>>>> .r1209
   (Data.getElementsByTagName('lineStyle')[0]) ? attr.strokeWidth = Data.getElementsByTagName('lineStyle')[0].attributes["thickness"].value : false; 
   (Data.getElementsByTagName('lineStyle')[0]) ? attr.dashGGB = Data.getElementsByTagName('lineStyle')[0].attributes["type"].value : false;
 
