@@ -1489,9 +1489,11 @@ this.writeElement = function(board, output, input, cmd) {
 
         var points = [];
         if(t == 'regular') {
-          for(var i=input[2]+3; i<output.length; i++){
-
-            points.push(board.create('point', [0,0], a));
+          for(var i=input[2]+1; i<output.length; i++){
+            // if(typeof output[i] === 'object')
+            //   points.push(output[i]);
+            // else
+              points.push(board.create('point', [0,0], a));
             JXG.GeogebraReader.debug("input-queue: added "+ output[i].name);
           }
         } else {
@@ -1553,7 +1555,7 @@ this.writeElement = function(board, output, input, cmd) {
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-      if(element.getElementsByTagName("startPoint")[0].attributes['x']) {
+      if(element.getElementsByTagName("startPoint") && element.getElementsByTagName("startPoint")[0].attributes['x']) {
         var sx = parseFloat(element.getElementsByTagName("startPoint")[0].attributes["x"].value);
         var sy = parseFloat(element.getElementsByTagName("startPoint")[0].attributes["y"].value);
         var ex = parseFloat(element.getElementsByTagName("coords")[0].attributes["x"].value);
