@@ -240,7 +240,7 @@ JXG.Angle.prototype.getLabelAnchor = function() {
 JXG.createAngle = function(board, parents, attributes) {
     var el;
     
-    attributes = JXG.checkAttributes(attributes,{withLabel:true, text:'', layer:null});
+    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'angle','withLabel'), text:'', layer:null});
     
     // Alles 3 Punkte?
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {

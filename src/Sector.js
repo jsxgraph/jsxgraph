@@ -220,12 +220,7 @@ JXG.Sector.prototype.getRadius = function() {
 
 JXG.createSector = function(board, parentArr, atts) {
     var el;
-    if (atts==null) {
-        atts = {};
-    }
-    if (typeof atts['layer'] == 'undefined') {
-        atts['layer'] = null;
-    }
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'sector','withLabel'), layer:null});
     // Alles 3 Punkte?
     if ( (JXG.isPoint(parentArr[0])) && (JXG.isPoint(parentArr[1])) && (JXG.isPoint(parentArr[2]))) {
         el = new JXG.Sector(board, parentArr[0], parentArr[1], parentArr[2], atts["ids"], atts["names"], atts['id'], atts['layer']);
@@ -249,7 +244,7 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
  JXG.createCircumcircleSector = function(board, parents, attributes) {
     var el, mp, idmp, det;
     
-    attributes = JXG.checkAttributes(attributes,{withLabel:false, layer:null});
+    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'sector','withLabel'), layer:null});
     if(attributes['id'] != null) {
         idmp = attributes['id']+'_mp';
     }

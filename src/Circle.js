@@ -647,7 +647,7 @@ JXG.Circle.prototype.Area = function() {
  */
 JXG.createCircle = function(board, parentArr, atts) {
     var el, p, i;
-    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'circle','withLabel'), layer:null});
     
     p = [];
     for (i=0;i<parentArr.length;i++) {

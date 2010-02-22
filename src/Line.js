@@ -822,7 +822,7 @@ JXG.createLine = function(board, parents, atts) {
     var el, p1, p2, i,
         c = [];
         
-    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'line','withLabel'), layer:null});
 
     var constrained = false;
     if (parents.length == 2) { // The line is defined by two points (or coordinates of two points)
@@ -920,7 +920,7 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  JXG.createSegment = function(board, parents, atts) {
     var el;
 
-    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'line','withLabel'), layer:null});
     atts['straightFirst'] = false;
     atts['straightLast'] = false;
     el = board.create('line', parents, atts);
@@ -961,12 +961,7 @@ JXG.JSXGraph.registerElement('segment', JXG.createSegment);
 JXG.createArrow = function(board, parents, attributes) {
     var el;
 
-    if (attributes==null) {
-        attributes = {};
-    }
-    if(attributes['withLabel'] == null || typeof attributes['withLabel'] == 'undefined') {
-        attributes['withLabel'] = false;
-    }
+    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'line','withLabel'), layer:null});
     //if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) ) { // The constructability decision is delkegated to the line object
         el = board.create('line',parents,attributes);
         //el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name'],attributes['withLabel']);
@@ -1109,10 +1104,7 @@ JXG.createTangent = function(board, parents, attributes) {
         throw new Error("JSXGraph: Can't create normal with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     }
 
-    if (attributes == null)
-        attributes = {};
-    if (attributes.withLabel == null)
-        attributes.withLabel = false;
+    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'line','withLabel'), layer:null});
     
     if (c.elementClass == JXG.OBJECT_CLASS_LINE) {
         tangent = board.create('line', [c.point1,c.point2], attributes);

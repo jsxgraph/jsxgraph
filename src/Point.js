@@ -1127,7 +1127,7 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
  */
 JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** object */ atts) {
     var el, isConstrained = false, i, show;
-    atts = JXG.checkAttributes(atts,{withLabel:true, layer:null});
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'point','withLabel'), layer:null});
     show = (typeof atts['visible']=='undefined') || JXG.str2Bool(atts['visible']);
     
     for (i=0;i<parents.length;i++) {
@@ -1197,7 +1197,7 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
  */
 JXG.createGlider = function(board, parents, atts) {
     var el, show;
-    atts = JXG.checkAttributes(atts,{withLabel:true, layer:null});
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'point','withLabel'), layer:null});
     show = (typeof atts['visible']=='undefined') || JXG.str2Bool(atts['visible']);
     
     if (parents.length==1) {

@@ -310,7 +310,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @see #highlightStrokeOpacity
      * @default {@link JXG.Options.elements.color#strokeColor}
      */
-    this.visProp.strokeColor = this.board.options.elements.color.strokeColor; //'#36393D';
+    this.visProp.strokeColor = this.board.options.elements.strokeColor; //'#36393D';
 
     /**
      * The stroke color of the given geometry element when the user moves the mouse over it.
@@ -322,7 +322,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @see #highlightStrokeOpacity
      * @default {@link JXG.Options.elements.color#highlightStrokeColor}
      */
-    this.visProp.highlightStrokeColor = this.board.options.elements.color.highlightStrokeColor;
+    this.visProp.highlightStrokeColor = this.board.options.elements.highlightStrokeColor;
 
     /**
      * The fill color of this geometry element.
@@ -333,7 +333,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @see #highlightFillOpacity
      * @default {@link JXG.Options.elements.color#fillColor}
      */
-    this.visProp.fillColor = this.board.options.elements.color.fillColor;
+    this.visProp.fillColor = this.board.options.elements.fillColor;
 
     /**
      * The fill color of the given geometry element when the mouse is pointed over it.
@@ -344,7 +344,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @see #highlightFillOpacity
      * @default {@link JXG.Options.elements.color#highlightFillColor}
      */
-    this.visProp.highlightFillColor = this.board.options.elements.color.highlightFillColor;
+    this.visProp.highlightFillColor = this.board.options.elements.highlightFillColor;
 
     /**
      * Width of the element's stroke.
@@ -368,7 +368,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @see #highlightStrokeOpacity
      * @default {@link JXG.Options.elements#strokeOpacity}
      */
-    this.visProp.strokeOpacity = this.board.options.elements.color.strokeOpacity;
+    this.visProp.strokeOpacity = this.board.options.elements.strokeOpacity;
 
     /**
      * Opacity for stroke color when the object is highlighted.
@@ -380,7 +380,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @see #strokeOpacity
      * @default {@link JXG.Options.elements#highlightStrokeOpacity}
      */
-    this.visProp.highlightStrokeOpacity = this.board.options.elements.color.highlightStrokeOpacity;
+    this.visProp.highlightStrokeOpacity = this.board.options.elements.highlightStrokeOpacity;
 
     /**
      * Opacity for fill color.
@@ -391,7 +391,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @see #highlightFillOpacity
      * @default {@link JXG.Options.elements.color#fillOpacity}
      */
-    this.visProp.fillOpacity = this.board.options.elements.color.fillOpacity;
+    this.visProp.fillOpacity = this.board.options.elements.fillOpacity;
 
     /**
      * Opacity for fill color when the object is highlighted.
@@ -402,7 +402,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @see #fillOpacity
      * @default {@link JXG.Options.elements.color#highlightFillOpacity}
      */
-    this.visProp.highlightFillOpacity = this.board.options.elements.color.highlightFillOpacity;
+    this.visProp.highlightFillOpacity = this.board.options.elements.highlightFillOpacity;
 
     /**
      * If true the element will be drawn in grey scale colors to visualize that it's only a draft.

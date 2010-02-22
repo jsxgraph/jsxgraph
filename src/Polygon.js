@@ -222,7 +222,7 @@ JXG.Polygon.prototype.cloneToBackground = function(addToTrace) {
 JXG.createPolygon = function(board, parents, atts) {
     var el;
 
-    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'polygon','withLabel'), layer:null});
     // Sind alles Punkte?
     for(var i=0; i<parents.length; i++) {
         parents[i] = JXG.getReference(board, parents[i]);
@@ -303,7 +303,7 @@ JXG.Polygon.prototype.Area = function() {
 JXG.createRegularPolygon = function(board, parents, atts) {
     var el, i, n, p = [], rot, c;
 
-    atts = JXG.checkAttributes(atts,{withLabel:false, layer:null});
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'polygon','withLabel'), layer:null});
     if (parents.length!=3) {
         throw new Error("JSXGraph: A regular polygon needs two point and a number as input.");
     }

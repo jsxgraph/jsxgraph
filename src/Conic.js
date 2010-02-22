@@ -64,6 +64,7 @@ JXG.createEllipse = function(board, parents, atts) {
         i,
         rotationMatrix;
 
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'conic','withLabel'), layer:null});
     // The foci and the third point are either points or coordinate arrays.
     for (i=0;i<2;i++) {
         if (parents[i].length>1) { // focus i given by coordinates
@@ -179,6 +180,7 @@ JXG.createHyperbola = function(board, parents, atts) {
         i,
         rotationMatrix;
 
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'conic','withLabel'), layer:null});
     // The foci and the third point are either points or coordinate arrays.
     for (i=0;i<2;i++) {
         if (parents[i].length>1) { // focus i given by coordinates
@@ -293,6 +295,7 @@ JXG.createParabola = function(board, parents, atts) {
         l = parents[1],  // directrix
         rotationMatrix;
 
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'conic','withLabel'), layer:null});
     if (parents[0].length>1) { // focus 1 given by coordinates
         F1 = board.create('point', parents[0], {visible:false,fixed:true});
     } else if (JXG.isPoint(parents[0])) { // focus i given by point
@@ -382,6 +385,7 @@ JXG.createConic = function(board, parents, atts) {
         points = [], i,
         p = [];
 
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'conic','withLabel'), layer:null});
     for (i=0;i<5;i++) {
         if (parents[i].length>1) { // point i given by coordinates
             points[i] = board.create('point', parents[i], {visible:false,fixed:true});

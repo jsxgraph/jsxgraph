@@ -454,6 +454,12 @@ JXG.readParameter = function(board, parameter, input, output) {
 };
 */
 
+JXG.readOption = function(options, eltype, key) {
+    var val = options.elements[key];
+    if (typeof options[eltype][key]!='undefined') val = options[eltype][key];
+    return val;
+};
+
 JXG.checkAttributes = function(atts, keyvaluepairs) {
     var key;
     if (atts==null) { atts = {}; }
@@ -463,7 +469,7 @@ JXG.checkAttributes = function(atts, keyvaluepairs) {
         }
     }
     return atts;
-}
+};
 
 JXG.getDimensions = function(elementId) {
     var element, display, els, originalVisibility, originalPosition,

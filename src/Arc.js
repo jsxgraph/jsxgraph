@@ -312,7 +312,7 @@ JXG.Arc.prototype.setArrow = function (firstArrow, lastArrow) {
 JXG.createArc = function(board, parents, attributes) {
     var el;
     
-    attributes = JXG.checkAttributes(attributes,{withLabel:false, layer:null});
+    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'arc','withLabel'), layer:null});
     // Alles 3 Punkte?
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
         el = new JXG.Arc(board, parents[0], parents[1], parents[2], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
@@ -336,7 +336,7 @@ JXG.JSXGraph.registerElement('arc', JXG.createArc);
 JXG.createSemicircle = function(board, parents, attributes) {
     var el, mp, idmp;
     
-    attributes = JXG.checkAttributes(attributes,{withLabel:false, layer:null});
+    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'arc','withLabel'), layer:null});
     if(attributes['id'] != null) {
         idmp = attributes['id']+'_mp';
     }
@@ -364,7 +364,7 @@ JXG.JSXGraph.registerElement('semicircle', JXG.createSemicircle);
 JXG.createCircumcircleArc = function(board, parents, attributes) {
     var el, mp, idmp, det;
     
-    attributes = JXG.checkAttributes(attributes,{withLabel:false, layer:null});
+    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'arc','withLabel'), layer:null});
     if(attributes['id'] != null) {
         idmp = attributes['id']+'_mp';
     }

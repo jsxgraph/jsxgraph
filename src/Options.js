@@ -58,18 +58,17 @@ JXG.Options = {
     /* geometry element options */
     elements : {
         /* color options */
-        color : {
-            strokeColor: '#0000ff',
-            highlightStrokeColor: '#C3D9FF',
-            fillColor: 'none',
-            highlightFillColor: 'none',
+        strokeColor: '#0000ff',
+        highlightStrokeColor: '#C3D9FF',
+        fillColor: 'none',
+        highlightFillColor: 'none',
 
-            strokeOpacity: 1,
-            highlightStrokeOpacity: 1,
-            fillOpacity: 1,
-            highlightFillOpacity: 1
-        },
+        strokeOpacity: 1,
+        highlightStrokeOpacity: 1,
+        fillOpacity: 1,
+        highlightFillOpacity: 1,
         strokeWidth: '2px',
+	    withLabel: false,
 
         /*draft options */
         draft : {
@@ -82,6 +81,7 @@ JXG.Options = {
 
     /* special point options */
     point : {
+    	withLabel: true,
         style : 5, //1;
         fillColor : '#ff0000',
         highlightFillColor : '#EEEEEE',
@@ -128,8 +128,17 @@ JXG.Options = {
         highlightStrokeColor : '#C3D9FF'
     },
 
+    /* special conic options */
+    conic : {
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF'
+    },
+
     /* special angle options */
     angle : {
+	    withLabel:true,
         radius : 1.0,
         fillColor : '#FF7F00',
         highlightFillColor : '#FF7F00',

@@ -764,7 +764,7 @@ JXG.Curve.prototype.getLabelAnchor = function() {
  * </script><pre>
  */
 JXG.createCurve = function(board, parents, attributes) {
-    attributes = JXG.checkAttributes(attributes,{withLabel:false, layer:null});
+    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'curve','withLabel'), layer:null});
     return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name'],   
                          attributes['withLabel'],attributes['layer']);
 };
@@ -814,7 +814,7 @@ JXG.JSXGraph.registerElement('curve', JXG.createCurve);
  */
 JXG.createFunctiongraph = function(board, parents, attributes) {
     var par = ["x","x"].concat(parents);
-    attributes = JXG.checkAttributes(attributes,{withLabel:false, layer:null});
+    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'curve','withLabel'), layer:null});
     attributes['curveType'] = 'functiongraph';
     return new JXG.Curve(board, par, attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
 };
@@ -833,7 +833,7 @@ JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
  */
 JXG.createSpline = function(board, parents, attributes) {
     var F;
-    attributes = JXG.checkAttributes(attributes,{withLabel:false, layer:null});
+    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'curve','withLabel'), layer:null});
     F = function() {
         var D, x=[], y=[];
         
@@ -938,7 +938,7 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     var n, type, f, par, c;
     
     attributes = JXG.checkAttributes(attributes,
-                    {withLabel:false,layer:null,fillOpacity:0.3,fillColor:'#ffff00', curveType:'plot'});
+                    {withLabel:JXG.readOption(board.options,'curve','withLabel'),layer:null,fillOpacity:0.3,fillColor:'#ffff00', curveType:'plot'});
 
     f = parents[0]; 
     n = JXG.createFunction(parents[1],board,'');
