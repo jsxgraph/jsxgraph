@@ -93,6 +93,11 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
         this.appendChildPrimitive(node,el.layer);  
         this.appendNodesToElement(el, 'path');
     }
+    else if(f == 'diamond' || f == '<>') {
+        node = this.createPrimitive('path',el.id);
+        this.appendChildPrimitive(node,el.layer);  
+        this.appendNodesToElement(el, 'path');
+    }
     el.rendNode = node;
     
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
@@ -139,6 +144,9 @@ JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
     else if(f == 'plus' || f == '+') { // +
         this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'+'), el.board); 
     }
+    else if(f == 'diamond') { // diamond
+        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'diamond'), el.board); 
+    }    
     this.setShadow(el);
 };
 

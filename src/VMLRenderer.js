@@ -852,6 +852,13 @@ JXG.VMLRenderer.prototype.updatePathStringPoint = function(el, size, type) {
         (r*(scr[1])),', ',(r*(scr[2]-size)),' l ',
         (r*(scr[1])),', ',(r*(scr[2]+size))].join(''));    
     }
+    else if(type == 'diamond') {
+        s.push(['m ',(r*(scr[1]-size)),', ',(r*(scr[2])),' l ',
+        (r*(scr[1])),', ',(r*(scr[2]+size)),' l ',
+        (r*(scr[1]+size)),', ',(r*(scr[2])),' l ',
+        (r*(scr[1])),', ',(r*(scr[2]-size)),' x e ',
+        ].join(''));   
+    }
     return s;
 }
 

@@ -923,6 +923,12 @@ JXG.SVGRenderer.prototype.updatePathStringPoint = function(el, size, type) {
         (el.coords.scrCoords[1]) + ' ' + (el.coords.scrCoords[2]-size) + ' L ' +
         (el.coords.scrCoords[1]) + ' ' + (el.coords.scrCoords[2]+size);    
     }
+    else if(type == 'diamond') {
+        s = 'M ' + (el.coords.scrCoords[1]-size) + ' ' + (el.coords.scrCoords[2]) + ' L ' + 
+        (el.coords.scrCoords[1]) + ' ' + (el.coords.scrCoords[2]+size) + ' L ' + 
+        (el.coords.scrCoords[1]+size) + ' ' + (el.coords.scrCoords[2]) + ' L ' +
+        (el.coords.scrCoords[1]) + ' ' + (el.coords.scrCoords[2]-size) + 'Z';
+    }
     return s;
 }
 
