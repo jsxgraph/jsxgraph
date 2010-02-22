@@ -1318,8 +1318,8 @@ this.writeBoard = function(board) {
   // Update of properties during update() is not necessary in GEONExT files
   board.renderer.enhancedRendering = true;
 
-  // snap to grid
-  var snap = (boardData.getElementsByTagName('evSettings')[0].attributes["pointCapturing"].value == "true") ? board.snapToGrid = true : null;
+  // snap to grid //pointCapturing is something like snap to points
+  //var snap = (boardData.getElementsByTagName('evSettings')[0].attributes["pointCapturing"].value == "true") ? board.snapToGrid = true : null;
 
   var grid = (boardData.getElementsByTagName('evSettings')[0].attributes["grid"].value == "true") ? board.renderer.drawGrid(board) : null;
 
