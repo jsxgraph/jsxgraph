@@ -137,19 +137,22 @@
 		<option value='./worksheets/verzinsung_worksheet.ggb'>[ ] verzinsung_worksheet</option>
     </select>
     <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" />
+    <br/>
+    <input type='text' value='./elements/punkt.ggb' id="beispiele_ggb" />
+    <input type='button' value='Read Geogebra' onclick="loadFile('beispiele_ggb','Geogebra',true)" />
 </form>
 </div>
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
   var board;
-  function loadFile(bspname, format) {
+  function loadFile(bspname, format, text) {
     document.getElementById('box').innerHTML = '';
-    var value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value;
+    if(text) var value = document.getElementById(bspname).value;
+    else     var value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value;
     document.getElementById('debug').innerHTML = "<b>Debug (lade "+ value +" ...):</b>";
 
     if(typeof board != 'undefined') JXG.JSXGraph.freeBoard(board);
 
-    document.title = "JSXGraph example: "+ document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
     board = JXG.JSXGraph.loadBoardFromFile('box',value, format);
     document.getElementById('ggb').innerHTML = '<applet code="geogebra.GeoGebraApplet" archive="http://www.geogebra.org/webstart/geogebra.jar" width="500" height="400"><param name="filename" value="'+value+'"/><param name="framePossible" value="false"/></applet>';
   }
