@@ -1732,7 +1732,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>CircumcircleArc:</b> First: " + input[0].name + "<br>\n");
-        p = board.create('circumcircle', input, attr);
+        p = board.create('circumcirclearc', input, attr);
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> CircumcircleArc " + attr.name +"<br>\n");
@@ -1747,7 +1747,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>CircumcircleSector:</b> First: " + input[0].name + "<br>\n");
-        p = board.create('sector', [input[0], input[2], input[1]], attr);
+        p = board.create('circumcirclesector', [input[0], input[1], input[2]], attr);
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> CircumcircleSector " + attr.name +"<br>\n");
@@ -1762,8 +1762,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.GeogebraReader.debug("* <b>Semicircle:</b> First: " + input[0].name + "<br>\n");
-        m = board.create('midpoint', input, {visible: 'false'});
-        p = board.create('sector', [m, input[0], input[1]], attr);
+        p = board.create('semicircle', [input[0], input[1]], attr);
         return p;
       } catch(e) {
         JXG.GeogebraReader.debug("* <b>Err:</b> Semicircle " + attr.name +"<br>\n");
