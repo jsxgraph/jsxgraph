@@ -1,0 +1,56 @@
+<html>
+<head>
+   <title>Intergeo test cases in JSXGraph</title>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/prototype.js"></script>
+   <!--type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>-->
+   <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/branches/0.80/src/loadjsxgraph.js"></script>-->
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script></head>
+   <script type="text/javascript" src="../../src/IntergeoReader.js"></script></head>
+<body>
+  <h2>Intergeo test cases in JSXGraph</h2>
+  <form><input type='button' value='Show XML' onclick='board.showXML()'></form>
+  <div id="jxgbox" class="jxgbox" style="width:800px; height:500px;"></div>
+  <div id="debug" style="display:block; margin-top:20px"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+        fname = 'linesegment.xml';
+//-------- good ----------
+//fname = 'all.i2g';      // ok (GEONExT example)
+//fname = 'center_of_three_points.xml';
+//fname = 'endpoints_of_line_segment.xml'; //fname = 'linesegment.xml';
+//fname = 'midpoint_of_line_segment.xml';
+//fname = 'line_segment_by_points.xml';
+//fname = 'line_through_two_points.xml';
+//fname = 'midpoint_of_two_points.xml';
+//fname = 'parallel_perpendicular_through.xml';
+//fname = 'tangents_to_circle.xml';
+//fname = 'intersections_circles_line.xml';
+//fname = 'other_intersections.xml';
+
+//fname = 'locus_parabola.xml';
+//fname = 'locus_shadow.xml';
+//fname = 'locus_frequency_duplicator.xml';
+//fname = 'locus_cardioid.xml';
+
+//fname = 'point.xml';
+//fname = 'free_point.xml';
+//-------  not good ---------
+
+//-------  open ---------
+
+fname = 'rotating_circle.xml';  // wrong XML?
+
+//fname = 'locus_pacman.xml';
+//fname = 'line.xml';
+//fname = 'circle.xml';
+
+//fname = 'conic.xml';
+//fname = 'Points.i2g';
+//fname = 'all.xml';
+        $('debug').innerHTML = fname+'<br>';
+        board = JXG.JSXGraph.loadBoardFromFile('jxgbox', fname , 'Intergeo');
+  /* ]]> */
+  </script>
+</body>
+</html>

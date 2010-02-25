@@ -12,7 +12,7 @@
 <div id="debug" style="display:block;"></div>
 <script language="JavaScript">
 // Board
-board1 = JXG.JSXGraph.initBoard('jxgbox1', {originX: 200, originY: 150, unitX: 25, unitY: 25});
+board1 = JXG.JSXGraph.initBoard('jxgbox1', {originX: 200, originY: 150, unitX: 5, unitY: 5});
 
 board1.suspendUpdate();
 // Axes and Properties
@@ -21,17 +21,14 @@ board1.createElement('axis', [[0,0], [0,1]], {});
 board1.snapToGrid = true;
 //
 board1.createElement('functiongraph', [function(t){ return Math.sin(t); }, -10, 10],{strokeColor: "#cccccc"});
-var s = board1.createElement('slider', [[2,-4],[7,-4],[0,1,10]], {name:'S'});
+var s = board1.createElement('slider', [[2,-4],[7,-4],[0,1,10]], {name:'S',snapWidth:1});
 
 board1.createElement('curve', [
     function(t){ return t; }, 
     function(t) {
         var val = 0;
-        for(var i = 0; i < Math.floor(s.X()) + 1; i++) {
-            var f = board1.factorial(2*i+1);
-            //var f = 1;
-            //var n = 1;
-            //while (n <= 2 * i + 1) { f = f * n++; }
+        for(var i = 0; i < s.Value() + 1; i++) {
+            var f = board1.factorial(2*i+1);  // sin
             val += Math.pow(-1, i) * Math.pow(t, 2 * i + 1) / f;
         }
         return val;
@@ -39,6 +36,7 @@ board1.createElement('curve', [
 -10, 10], {strokeColor: "#bb0000"});
 board1.unsuspendUpdate();
 </script> 
+
 <h2>Power Series for Cosine</h2>
 <div id="jxgbox2" class="jxgbox" style="width:600px; height:300px;"></div>
 <script language="JavaScript">
@@ -51,13 +49,13 @@ board2.createElement('axis', [[0,0], [0,1]], {});
 board2.snapToGrid = true;
 //
 board2.createElement('functiongraph', [function(t){ return Math.cos(t); }, -10, 10],{strokeColor: "#cccccc"});
-var s2 = board2.createElement('slider', [[2,-4],[7,-4],[0,0,10]], {name:'S2'});
+var s2 = board2.createElement('slider', [[2,-4],[7,-4],[0,0,10]], {name:'S2',snapWidth:1});
 
 board2.createElement('curve', [
     function(t){ return t; }, 
     function(t) {
         var val = 0;
-        for(var i = 0; i < Math.floor(s2.X()) + 1; i++) {
+        for(var i = 0; i < s2.Value() + 1; i++) {
             //var f = 1;
             //var n = 1;
             //while (n <= 2 * i) { f = f * n++; }
@@ -77,8 +75,8 @@ board3 = JXG.JSXGraph.initBoard('jxgbox3', {originX: 300, originY: 150, unitX: 2
 board3.suspendUpdate();
 board3.snapToGrid = true;
 //
-var s3 = board3.createElement('slider', [[2,-4],[7,-4],[0,0,10]], {name:'S2'});
-board3.createElement('functiongraph', [function(t){ return board3.pow(1+t,Math.round(s3.Value())); }, -10, 10],{strokeColor: "#cccccc"});
+var s3 = board3.createElement('slider', [[2,-4],[7,-4],[0,0,10]], {name:'S3',snapWidth:1});
+board3.createElement('functiongraph', [function(t){ return board3.pow(1+t,s3.Value()); }, -10, 10],{strokeColor: "#cccccc"});
 
 board3.createElement('functiongraph', [
     function(x) {

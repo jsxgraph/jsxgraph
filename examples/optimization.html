@@ -35,17 +35,19 @@
          
         board2 = JXG.JSXGraph.initBoard('box2', {originX: 100, originY: 250, unitX: 50, unitY: 50});
         // Tracing the area
-        b2p1 = board2.createElement('point', [function(){ return JXG.GetReferenceFromParameter(board1, 'A').Dist(JXG.GetReferenceFromParameter(board1, 'D')); }, function() { return JXG.GetReferenceFromParameter(board1, 'A').Dist(JXG.GetReferenceFromParameter(board1, 'D'))*JXG.GetReferenceFromParameter(board1, 'D').Dist(JXG.GetReferenceFromParameter(board1, 'M')); }], {fixed: true, trace: true, strokeColor: '#ff0000', name: 'S'});
+        b2p1 = board2.createElement('point', [function(){ return JXG.getReference(board1, 'A').Dist(JXG.getReference(board1, 'D')); }, function() { return JXG.getReference(board1, 'A').Dist(JXG.getReference(board1, 'D'))*JXG.getReference(board1, 'D').Dist(JXG.getReference(board1, 'M')); }], {fixed: true, trace: true, strokeColor: '#ff0000', name: 'S'});
 		
         b2axisx = board2.createElement('axis', [[0,0], [1,0]], {});
         b2axisy = board2.createElement('axis', [[0,0], [0,1]], {});
         
+        
+        board1.addChild(board2);
 		//defining the hook
 		function print_table(board) {
-                $('print_fencelength').innerHTML = board.round(JXG.GetReferenceFromParameter(board, 'A').Dist(JXG.GetReferenceFromParameter(board, 'B')),2);
-        	$('print_sidelength1').innerHTML = board.round(JXG.GetReferenceFromParameter(board, 'A').Dist(JXG.GetReferenceFromParameter(board, 'D')),2);
-        	$('print_sidelength2').innerHTML = board.round(JXG.GetReferenceFromParameter(board, 'M').Dist(JXG.GetReferenceFromParameter(board, 'D')),2);
-        	$('print_area').innerHTML = board.round(JXG.GetReferenceFromParameter(board, 'A').Dist(JXG.GetReferenceFromParameter(board, 'D')) * JXG.GetReferenceFromParameter(board, 'M').Dist(JXG.GetReferenceFromParameter(board, 'D')),2);
+                $('print_fencelength').innerHTML = board.round(JXG.getReference(board, 'A').Dist(JXG.getReference(board, 'B')),2);
+        	$('print_sidelength1').innerHTML = board.round(JXG.getReference(board, 'A').Dist(JXG.getReference(board, 'D')),2);
+        	$('print_sidelength2').innerHTML = board.round(JXG.getReference(board, 'M').Dist(JXG.getReference(board, 'D')),2);
+        	$('print_area').innerHTML = board.round(JXG.getReference(board, 'A').Dist(JXG.getReference(board, 'D')) * JXG.getReference(board, 'M').Dist(JXG.getReference(board, 'D')),2);
 			
 			
         }

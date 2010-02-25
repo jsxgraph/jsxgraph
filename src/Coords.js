@@ -54,15 +54,16 @@ JXG.Coords = function (method, coordinates, board) {
      * Stores coordinates for user view as homogeneous coordinates.
      * @type Array
      */
-    this.usrCoords = [1,0,0];
+    this.usrCoords = [];
     /**
      * Stores coordinates for screen view as homogeneous coordinates.
      * @type Array
      */
-    this.scrCoords = [1,0,0];
+    this.scrCoords = [];
     
     if(method == JXG.COORDS_BY_USER) {
         if (coordinates.length<=2) {
+            this.usrCoords[0] = 1.0;
             this.usrCoords[1] = coordinates[0];
             this.usrCoords[2] = coordinates[1];
         } else {  // homogeneous coordinates
@@ -73,6 +74,7 @@ JXG.Coords = function (method, coordinates, board) {
         }
         this.usr2screen();
     } else {
+        this.scrCoords[0] = 1.0;
         this.scrCoords[1] = coordinates[0];
         this.scrCoords[2] = coordinates[1];
         this.screen2usr();
@@ -96,10 +98,21 @@ JXG.Coords.prototype.normalizeUsrCoords = function() {
  * Compute screen coordinates out of given user coordinates.
  * @private
  */
-JXG.Coords.prototype.usr2screen = function() {
-    this.scrCoords[0] = Math.round(this.usrCoords[0]);
-    this.scrCoords[1] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[1] + this.usrCoords[1]*this.board.unitX*this.board.zoomX);
-    this.scrCoords[2] = Math.round(this.usrCoords[0]*this.board.origin.scrCoords[2] - this.usrCoords[2]*this.board.unitY*this.board.zoomY);
+JXG.Coords.prototype.usr2screen = function(doRound) {
+    var mround = Math.round,  // Is faster on IE, maybe slower with JIT compilers
+        b = this.board,
+        uc = this.usrCoords,
+        oc = this.board.origin.scrCoords;
+        
+    if (doRound==null || doRound) {
+        this.scrCoords[0] = mround(uc[0]);
+        this.scrCoords[1] = mround(uc[0]*oc[1] + uc[1]*b.stretchX);
+        this.scrCoords[2] = mround(uc[0]*oc[2] - uc[2]*b.stretchY);
+    } else {
+        this.scrCoords[0] = uc[0];
+        this.scrCoords[1] = uc[0]*oc[1] + uc[1]*b.stretchX;
+        this.scrCoords[2] = uc[0]*oc[2] - uc[2]*b.stretchY;
+    }
 };
 
 /**
@@ -107,34 +120,64 @@ JXG.Coords.prototype.usr2screen = function() {
  * @private
  */
 JXG.Coords.prototype.screen2usr = function() {
+    var o = this.board.origin.scrCoords,
+        sc = this.scrCoords,
+        b = this.board;
     this.usrCoords[0] =  1.0;
-    this.usrCoords[1] = (this.scrCoords[1] - this.board.origin.scrCoords[1])/(this.board.unitX*this.board.zoomX);
-    this.usrCoords[2] = (this.board.origin.scrCoords[2] - this.scrCoords[2])/(this.board.unitY*this.board.zoomY);
+    this.usrCoords[1] = (sc[1] - o[1])/b.stretchX;
+    this.usrCoords[2] = (o[2] - sc[2])/b.stretchY;
 };
 
 /**
  * Calculate distance of one point to another.
- * @param {int} method The type of coordinates used here. Possible values are <b>COORDS_BY_USER</b> and <b>COORDS_BY_SCREEN</b>.
+ * @param {int} method The type of coordinates used here. Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
  * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
  */
-JXG.Coords.prototype.distance = function(method, coordinates) {
-    var sum = 0;
-    if(method == JXG.COORDS_BY_USER) {
+JXG.Coords.prototype.distance = function(meth, crd) {
+    var sum = 0,
+        c,
+        ucr = this.usrCoords,
+        scr = this.scrCoords,
+        f;
+        
+    if (meth == JXG.COORDS_BY_USER) {
+        c = crd.usrCoords;
+        f = ucr[0]-c[0];
+        sum = f*f;
+        f = ucr[1]-c[1];
+        sum += f*f;
+        f = ucr[2]-c[2];
+        sum += f*f;
+    } else {
+        c = crd.scrCoords;
+        f = scr[0]-c[0];
+        sum = f*f;
+        f = scr[1]-c[1];
+        sum += f*f;
+        f = scr[2]-c[2];
+        sum += f*f;
+    }
+
+    /*
+    if (meth == JXG.COORDS_BY_USER) {
 //        if (Math.abs(this.usrCoords[0]+coordinates.usrCoords[0])>eps) {
 //            return Infinity;
 //        }
-        for(var i=0; i<=this.board.dimension; i++) {
-            sum += (this.usrCoords[i] - coordinates.usrCoords[i])*(this.usrCoords[i] - coordinates.usrCoords[i]);
+        for (i=0; i<=this.board.dimension; i++) {
+            f = this.usrCoords[i] - coordinates.usrCoords[i];
+            sum += f*f;
         }
     } else {
 //        if (Math.abs(this.scrCoords[0]+coordinates.scrCoords[0])>eps) {
 //            return Infinity;
 //        }
-        for(var i=0; i<=this.board.dimension; i++) {
-            sum += (this.scrCoords[i] - coordinates.scrCoords[i])*(this.scrCoords[i] - coordinates.scrCoords[i]);
+        for (i=0; i<=this.board.dimension; i++) {
+            f = this.scrCoords[i] - coordinates.scrCoords[i];
+            sum += f*f;
         }
     }
-
+    */
+    
     return Math.sqrt(sum);
 };
 
@@ -142,29 +185,28 @@ JXG.Coords.prototype.distance = function(method, coordinates) {
  * Set coordinates by method
  * @param {int} method The type of coordinates used here. Possible values are <b>COORDS_BY_USER</b> and <b>COORDS_BY_SCREEN</b>.
  * @param {Array} coordinates An array of affine coordinates the Coords object is set to.
+ * @param {boolean} optional flag If true or null round the coordinates in usr2screen. This is used in smooth curve plotting.
+ * The IE needs rounded coordinates. Id doRound==false we have to round in updatePathString.
  */
-JXG.Coords.prototype.setCoordinates = function(method, coordinates) {
-    if(method == JXG.COORDS_BY_USER) {
-/*        for(var i=1; i<this.board.dimension+1; i++) {
-            this.usrCoords[i] = coordinates[i-1];
-        }*/
-        if (coordinates.length==2) { // Euclidean coordinates
-            this.usrCoords[0] = 1.0;
-            this.usrCoords[1] = coordinates[0];
-            this.usrCoords[2] = coordinates[1];
+JXG.Coords.prototype.setCoordinates = function(method, crd, doRound) {
+    var uc = this.usrCoords,
+        sc = this.scrCoords;
+        
+    if (method == JXG.COORDS_BY_USER) {
+        if (crd.length==2) { // Euclidean coordinates
+            uc[0] = 1.0;
+            uc[1] = crd[0];
+            uc[2] = crd[1];
         } else { // Homogeneous coordinates (normalized)
-            this.usrCoords[0] = coordinates[0];
-            this.usrCoords[1] = coordinates[1];
-            this.usrCoords[2] = coordinates[2];
+            uc[0] = crd[0];
+            uc[1] = crd[1];
+            uc[2] = crd[2];
             this.normalizeUsrCoords();
         }
-        this.usr2screen();
+        this.usr2screen(doRound);
     } else {
-/*        for(var i=1; i<this.board.dimension+1; i++) {
-            this.scrCoords[i] = coordinates[i-1];
-        }*/
-        this.scrCoords[1] = coordinates[0];
-        this.scrCoords[2] = coordinates[1];
+        sc[1] = crd[0];
+        sc[2] = crd[1];
         this.screen2usr();
     }
 };

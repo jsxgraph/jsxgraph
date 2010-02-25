@@ -1,0 +1,131 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+        <script type="text/javascript" src="distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+    </head>
+    <body class="jsxgraph_body">
+        <div id="box" class="jxgbox jsxgraph_present"></div>
+        <!-- Drawing area -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+        var b = JXG.JSXGraph.initBoard('box', {originX: 20, originY: 20, unitX: 5, unitY: 5});
+        var UP = 0;
+        var LEFT = 1;
+        var DOWN = 2;
+        var RIGHT = 3;
+        var pos = [0,0];
+        var step = 1;
+        var pointsX = [0];
+        var pointsY = [0];
+
+        move = function(dir)  {
+                switch (dir) {
+                    case LEFT:
+                        pos[0] -= step;
+                        break;
+                    case RIGHT:
+                        pos[0] += step;
+                        break;
+                    case UP:
+                        pos[1] += step;
+                        break;
+                    case DOWN:
+                        pos[1] -= step;
+                        break;
+                } 
+                pointsX[pointsX.length] = pos[0];
+                pointsY[pointsY.length] = pos[1];
+        };
+
+        hilbert = function(level,dir) {
+            if (level<=1) {
+                switch (dir) {
+                    case LEFT:
+                        move(RIGHT);     
+                        move(DOWN);      
+                        move(LEFT);
+                        break;
+                    case RIGHT:
+                        move(LEFT);
+                        move(UP);
+                        move(RIGHT);
+                        break;
+                    case UP:
+                        move(DOWN);
+                        move(RIGHT);
+                        move(UP);
+                        break;
+                    case DOWN:
+                        move(UP);
+                        move(LEFT);
+                        move(DOWN);
+                        break;
+                } 
+            } else {
+                switch (dir) {
+                    case LEFT:
+                        hilbert(level-1,UP);
+                        move(RIGHT);
+                        hilbert(level-1,LEFT);
+                        move(DOWN);
+                        hilbert(level-1,LEFT);
+                        move(LEFT);
+                        hilbert(level-1,DOWN);
+                        break;
+                    case RIGHT:
+                        hilbert(level-1,DOWN);
+                        move(LEFT);
+                        hilbert(level-1,RIGHT);
+                        move(UP);
+                        hilbert(level-1,RIGHT);
+                        move(RIGHT);
+                        hilbert(level-1,UP);
+                        break;
+                    case UP:
+                        hilbert(level-1,LEFT);
+                        move(DOWN);
+                        hilbert(level-1,UP);
+                        move(RIGHT);
+                        hilbert(level-1,UP);
+                        move(UP);
+                        hilbert(level-1,RIGHT);
+                        break;
+                    case DOWN:
+                        hilbert(level-1,RIGHT);
+                        move(UP);
+                        hilbert(level-1,DOWN);
+                        move(LEFT);
+                        hilbert(level-1,DOWN);
+                        move(DOWN);
+                        hilbert(level-1,LEFT);
+                        break;
+                } 
+            }
+        };
+
+        var s = b.createElement('slider', [[0,-110],[70,-110],[1,1,7]], {name:'S',snapWidth:1});
+        var curve = b.createElement('curve',[pointsX,pointsY],{curveType:'plot'});
+
+        var oldlev = -1;
+        curve.updateDataArray = function() {
+            maxlev = Math.round(s.Value());
+            if (oldlev==maxlev) {
+                return;
+            }
+            pos = [0,0];
+            pointsX = [0];
+            pointsY = [0];
+            step = 50/(Math.pow(2,maxlev-1));
+            hilbert(maxlev,LEFT);
+            this.dataX = pointsX;
+            this.dataY = pointsY;
+            oldlev=maxlev;
+        };
+        
+        b.update();
+            /* ]]> */
+        </script>
+    </body>
+</html>

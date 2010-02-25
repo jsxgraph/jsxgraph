@@ -1,0 +1,140 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="germany.js"></script>
+</head>
+<body>
+<h2>Curve Test</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    var wahlkreise = [];
+    var points = [];
+    var bundesland = [];
+for(i=0;i<data.length;i++) {
+    if(i%6==1) {
+        wahlkreise.push(data[i]);
+    }
+    else if(i%6 == 3) {
+        bundesland.push(data[i]);
+    }
+    else if(i%6 == 5) {
+        points.push(data[i]);
+    }
+}
+    var wahlkreiseBY = [];
+    var pointsBY = [];
+for(i=0;i<points.length;i++) {
+    if(bundesland[i]=='Bayern') {
+        wahlkreiseBY.push(wahlkreise[i]);
+        pointsBY.push(points[i]);
+    }
+}
+    
+    var minXArr =[];
+var minYArr = [];
+var maxXArr = [];
+var maxYArr = [];
+var xArr = [];
+var yArr = [];
+
+var anz = pointsBY.length;
+for(j=0;j<anz;j++) {
+    var xy = pointsBY[j].split(',');
+    var x = [];
+    var y = [];
+    for(var i=0;i<xy.length;i++) {
+        var a = xy[i].split(' ');
+        x.push(1*(1*a[0]).toFixed(1));
+        y.push(1*(1*a[1]).toFixed(1));
+    }
+        
+
+    var minX = 10000000000000000;
+    var maxX = -100000000000000;
+    var minY = 200000000000000000;
+    var maxY = -10000000000000;
+    for(var i=0;i<x.length;i++) {
+        if(x[i] < minX) {
+            minX = x[i];
+        }
+        if(x[i] > maxX) {
+            maxX = x[i];
+        }
+
+        if(y[i] < minY) {
+            minY = y[i];
+        }
+        if(y[i] > maxY) {
+            maxY = y[i];
+        }
+    }
+    minXArr.push(minX);
+    minYArr.push(minY);
+    maxXArr.push(maxX);
+    maxYArr.push(maxY);
+    xArr.push(x);
+    yArr.push(y);
+}
+
+var minX = 10000000000000000;
+var maxX = -100000000000000;
+var minY = 200000000000000000;
+var maxY = -10000000000000;
+for(i=0;i<xArr.length;i++) {
+    if(minXArr[i] < minX) {
+        minX = minXArr[i];
+    }
+    if(maxXArr[i] > maxX) {
+        maxX = maxXArr[i];
+    }
+
+    if(minYArr[i] < minY) {
+        minY = minYArr[i];
+    }
+    if(maxYArr[i] > maxY) {
+        maxY = maxYArr[i];
+    }
+}
+
+    var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-5000,maxY+5000,maxX+5000,minY-5000]});
+    brd.suspendUpdate();
+for(i=0;i<xArr.length;i++) {
+    var graph;
+    if(i%3==0) {
+        graph = brd.createElement('curve', [xArr[i],yArr[i]], {strokeColor:'black',fillColor:'#32CD32',highlightFillColor:'#90EE90',name:wahlkreiseBY[i]});
+    }
+    else if(i%3==1) {
+        graph = brd.createElement('curve', [xArr[i],yArr[i]], {strokeColor:'black',fillColor:'#FFA500',highlightFillColor:'#EEEE00',name:wahlkreiseBY[i]}); 
+    }
+    else {
+        graph = brd.createElement('curve', [xArr[i],yArr[i]], {strokeColor:'black',fillColor:'#CD0000',highlightFillColor:'#FF6347',name:wahlkreiseBY[i]}); 
+    }
+    
+    graph.hasPoint = function(x,y){ // see: http://local.wasp.uwa.edu.au/~pbourke/geometry/insidepoly/
+        var k, j, c = false , xx, yy;
+        checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+        xx = checkPoint.usrCoords[1];
+        yy = checkPoint.usrCoords[2];    
+        for (k = 0, j = this.dataX.length-1; k < this.dataX.length; j = k++) {
+            if ((((this.dataY[k] <= yy) && (yy < this.dataY[j])) ||
+                ((this.dataY[j] <= yy) && (yy < this.dataY[k]))) &&
+                (xx < (this.dataX[j] - this.dataX[k]) * (yy - this.dataY[k]) / (this.dataY[j] - this.dataY[k]) + this.dataX[k])) {
+                    c = !c;
+                }
+        }
+        //document.getElementById('debug').innerHTML += (this.name+':'+c+';');        
+        return c;
+    }
+}
+brd.unsuspendUpdate();
+          /* ]]> */
+  </script>
+</body>
+</html>

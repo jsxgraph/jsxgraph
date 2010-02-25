@@ -53,6 +53,7 @@
         b1axisy = board.createElement('axis', [[0,0], [1,0]], {});
 		
         board2 = JXG.JSXGraph.initBoard('box2', {originX: 100, originY: 250, unitX: 50, unitY: 50});
+        board2.addChild(board);
         
 		b2p01 = board2.createElement('point', [0,0] , {visible:false});
 		b2p02 = board2.createElement('point', [4,0] , {visible:false});

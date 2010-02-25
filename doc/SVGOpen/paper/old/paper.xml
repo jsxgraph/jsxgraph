@@ -1,0 +1,422 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V5.0b5//EN"
+               "docbook_5.0b5.dtd" [
+<!ENTITY chapter_introduction SYSTEM "chapter_introduction.xml" >
+<!ENTITY chapter_server SYSTEM "chapter_server.xml" >
+<!ENTITY chapter_plugins SYSTEM "chapter_plugins.xml" >
+<!ENTITY chapter_implementation SYSTEM "chapter_implementation.xml" >
+]>
+<?oxygen RNGSchema="http://www.docbook.org/xml/5.0/rng/docbook.rng" type="xml"?>
+
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+    <info>
+        <title>Interactive SVG with JSXGraph</title>
+        <subtitle>JSXGraph</subtitle>
+        <keywordset>
+            <keyword>JSXGraph</keyword>
+            <keyword>Dynamic geometry</keyword>
+            <keyword>Interactive drawings</keyword>
+        </keywordset>
+        <authorgroup>
+            <author>
+                <personname>
+                    <firstname>Bianca</firstname>
+                    <surname>Valentin</surname>
+                </personname>
+                <email>bianca.valentin@uni-bayreuth.de</email>
+                <personblurb><para>Bianca Valentin is a PhD student at the Department of Mathematics at the University of Bayreuth with research interests in coding theory, discrete mathematics, and applications of JSXGraph.</para></personblurb>
+                <affiliation>
+                    <jobtitle>PhD student</jobtitle>
+                    <org>
+                        <orgname>University of Bayreuth</orgname>
+                        <orgdiv>Department of Mathematics</orgdiv>
+                        <address>
+                            <city>Bayreuth</city>
+                            <street>Universit&#228;tsstr. 30</street>
+                            <postcode>95440</postcode>
+                            <country>Germany</country>
+                            <phone>+49-921 55 3389</phone>
+                        </address>   
+                    </org>
+                </affiliation>
+            </author>
+            <author>
+                <personname>
+                    <firstname>Michael</firstname>
+                    <surname>Gerh&#228;user</surname>
+                </personname>
+                <email>michael.gerhaeuser@gmail.com</email>
+                <personblurb><para>Michael Gerh&#228;user is currently graduating at the Department of Mathematics at University of Bayreuth. His research focus is computing geometric loci in JSXGraph.</para></personblurb>
+                <affiliation>
+                    <jobtitle>Student</jobtitle>
+                    <org>
+                        <orgname>University of Bayreuth</orgname>
+                        <orgdiv>Department of Mathematics</orgdiv>
+                        <address>
+                            <city>Bayreuth</city>
+                            <street>Universit&#228;tsstr. 30</street>
+                            <postcode>95440</postcode>
+                            <country>Germany</country>
+                            <phone></phone>
+                        </address>   
+                    </org>
+                </affiliation>
+            </author>            
+        </authorgroup>
+        <!-- If you have several authors, you could nest all authors within an authorgroup element -->
+        <abstract>
+            <para>JSXGraph is a open-source client-side web library for displaying interactive mathematics and drawings in a web browser. This article demonstrates what can be done with JSXGraph and explains how these things are implemented. The latter focuses on SVG and VML.</para>
+        </abstract>
+    </info>
+    
+    &chapter_introduction;        
+
+    <section>
+        <title>Mathematics</title>
+        <para>The originally intended purpose of JSXGraph was having a JavaScript library for displaying geometric constructions in a web browser. So it is possible to visualize geometric elements that are taught in schools and universities like points, lines, circles, arcs, and angles, as well as predefined composition elements like orthogonal lines, midpoints, and triangles. JSXGraph not only provides tools for displaying geometric constructions but also for doing calculus like plotting curves starting from function graphs with tangents up to parametric and polar curves, cubic splines or other interpolation methods. </para>
+        <section>
+            <title>JSXGraph as a web viewer for dynamic geometry software</title>
+            <para>Dynamic geometry software (DGS) are computer programs which allow one to create and then manipulate geometric constructions, primarily in plane geometry. In most DGS, one starts a construction by putting a few points and using them to define new objects such as lines, circles or other points e.g. intersections of lines and circles. After some construction is done, one can move the points one started with and see how the construction changes.</para>
+            <para>
+            There are lots of different available software packages to play around dynamically with geometry. Most of them are written in Java, such as GeoGebra, Cinderella<xref linkend="CDY"/>, Compass and Ruler<xref linkend="CaR"/> or GEONExT, others like The Geometer's Sketchpad<xref linkend="TGS"/> or Cabri<xref linkend="CABRI"/> offer a Java based web viewer. If you want to integrate a construction that was created with one of these DGS in a web page, it takes some time to load the corresponding Java applet before you can use it. There are moreover big doubts about the future of Java in web browsers because Java applets are vanishing more and more from the internet and are actually not supported in browsers on modern mobile internet devices. As a result, the idea of JSXGraph was to read GEONExT Files and display them in the browser using JavaScript to manage the DOM elements of SVG or VML, depending on what browser is used. JavaScript is furthermore used to realize the dynamic part in DGS by capturing the browser's mouse events. </para>
+        </section>
+        <section>
+            <title>Currently supported file formats</title>
+            <para>Since JSXGraph has evolved from the GEONExT project, the support of its file format is almost complete. 
+Other file formats are under development. For example JSXGraph is involved in the European Intergeo project which unites several dynamic geometry systems (GeoGebra, Cabri, GEONExT, Cinderella) to agree on a standardized file format that can be opened and edited in any of the participating DGS. Such files can be displayed within a browser using JSXGraph's Intergeo reader. Support for reading GeoGebra files directly is under development in cooperation with the GeoGebra developer team.
+            </para>
+            <example>
+                <title>Loading a GEONExT construction from a file named geonextConstruction.gxt</title>
+<programlisting><![CDATA[<div id="box" class="jxgbox" style="width:500px; height:500px;"></div>
+<script type="text/javascript">
+   var b2 = JXG.JSXGraph.loadBoardFromFile('box', 'geonextConstruction.gxt', 'Geonext');
+</script>]]></programlisting>
+            </example>
+        </section>
+        <section>
+            <title>Constructing from scratch</title>
+            <para>The JSXGraph API used in the readers for the different file formats can also be used to create a construction from scratch or to manipulate a construction loaded from a given file. JSXGraph contains functions for compass and ruler constructions in euclidean geometry basing on points, lines, circles, arcs, and angles. Those can be intersected or combined in predefined ways. For example one can construct a line that is parallel to another one or a point that is the midpoint between two other points by using integrated JSXGraph methods. Additionally, one can easily implement own composition elements with JavaScript and the above-mentioned functions. 
+            </para>
+            <example>
+                    <title>Constructing the euler line of a triangle from scratch</title>
+<programlisting><![CDATA[/* triangle */
+A = brd.createElement('point',[1,0]);
+B = brd.createElement('point',[-1,0]);
+C = brd.createElement('point',[0.2,1.5]);
+triangle = brd.createElement('polygon',[A,B,C]);
+
+/* heights */ 
+hc = brd.createElement('perpendicular',[pol.borders[0],C],{name:['','H_c']});
+ha = brd.createElement('perpendicular',[pol.borders[1],A],{name:['','H_a']});
+hb = brd.createElement('perpendicular',[pol.borders[2],B],{name:['','H_b']});
+h = brd.createElement('intersection',[hc[0],hb[0],0],{name:'H'});
+
+/* median lines */ 
+mc = brd.createElement('midpoint',[A,B],{name:'M_c'});
+ma = brd.createElement('midpoint',[B,C],{name:'M_a'});
+mb = brd.createElement('midpoint',[C,A],{name:'M_b'});
+sa = brd.createElement('segment',[ma,A]);
+sb = brd.createElement('segment',[mb,B]);
+sc = brd.createElement('segment',[mc,C]);
+/* centroid */
+s = brd.createElement('intersection',[sa,sc,0],{name:'S'});
+ 
+/* circumcircle */
+[cPoint,cCirc] = brd.createElement('circumcircle',[A,B,C],{name:['U','']});
+cCirc.setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
+ 
+eulerLine = brd.createElement('line',[s,cPoint],{strokeWidth:2,strokeColor:'#901B77'});]]></programlisting>
+            </example>
+                <figure xml:id="euler">
+                    <title>The Euler Line <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Euler_line_II">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Euler_line_II</ulink></para></footnote></title>
+                    <mediaobject>
+                        <imageobject>
+                            <!--<imagedata fileref="nikolaus.svg" format="svg" width="60%"/>-->
+                            <imagedata fileref="euler.png" format="PNG"/>
+                        </imageobject>
+                    </mediaobject>
+                </figure>
+        </section>
+        <section>
+            <title>Calculus</title>
+            <para>Beyond the capabilities of JSXGraph with regard to geometric constructions, one is also able to visualize calculus.
+            The possibilities start from plotting simple function graphs to displaying more complex graphs like parametric and polar curves which can be analyzed using the implemented methods for tangents, integrals or spline interpolation. 
+            </para>
+            <example>
+            <title>Sourcecode to the construction shown in <xref linkend="calculus"/></title>
+            <programlisting><![CDATA[var brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 400, originY: 200, grid:true, unitX: 50, unitY: 50});
+brd.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
+brd.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});         
+var b = brd.createElement('slider',[[1,3.5],[5,3.5],[0,1,3]],{name:'a', strokeColor:'black', fillColor:'white'});
+var f = function(x){ return b.Value()*Math.sin(x); }
+var plot = brd.createElement('functiongraph',[f,-7,7], {strokeColor:'#32CD32', strokeWidth:'4px'});
+var g = brd.D(f);
+var plot2 = brd.createElement('functiongraph',[g,-7,7], {strokeColor:'#9370DB', strokeWidth:'2px'});
+var os = brd.createElement('riemannsum',[f, 35, 'middle', -7, 7], {fillColor:'#B22222', fillOpacity:0.3, strokeColor:'#8B1A1A', strokeWidth:'2px'});]]></programlisting>
+            </example>
+              <figure xml:id="calculus">
+                    <title>Sine with it's derivative and riemann sum. <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Riemann_sum_II">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Riemann_sum_II</ulink></para></footnote></title>
+                    <mediaobject>
+                        <imageobject>
+                           <imagedata fileref="calculus.png" format="PNG"/>
+                        </imageobject>
+                    </mediaobject>
+                </figure>
+            <para>With an implementation of the explicit Runge-Kutta method, JSXGraph can also be used to solve ordinary differential equations numerically on the fly with the possibility to change the parameters on runtime and watch the results.
+            </para>
+        </section>
+    </section>
+    <section>
+        <title>Turtle graphics</title>
+        <para>Turtle graphics as a method of drawing offer a wide variety of applications. So JSXGraph provides an easy-to-use interface to them.</para>
+        <section>
+            <title>Turtle graphics in mathematical modelling</title>
+            <para>Mathematical modelling with differential equations can also be done using turtle graphics. Exponential population growth models can be simulated easily by using the discrete analogue of the corresponding differential equation and computing the movement of the turtle in equidistant small time intervals. </para>
+                <example>
+                    <title>Simulating exponential population growth using turtle graphics <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Population_growth_models">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Population_growth_models</ulink></para></footnote></title>
+<programlisting><![CDATA[var board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
+var t = board.createElement('turtle',[4,3,70]);
+...
+var dy = alpha*t.Y()*dx;   // Exponential growth
+t.moveTo([dx+t.X(),dy+t.Y()]);]]></programlisting>
+                </example>
+            <para>In a similar way, logistic or autocatalytic population growth processes can be modelled. A further application which can be simulated with turtle graphics is epidemiology where a set of differential equations is given to predict the immediate consequences of a epidemic like the Hong Kong flu or the swine flu. With only a few lines of code the chronological sequence of the rate of susceptible, infected and recovered population can be studied.
+            </para>
+        </section>
+        <section>
+            <title>Drawing with turtle graphics</title>
+            <para>An advantage of using turtle graphics is the easy way to draw. The basic commands are &quot;Go forward a given number of units&quot; and &quot;Rotate left resp. right a given angle&quot;. The following programm listing draws &#34;SVG&#34; shown in the picture below.</para>
+                <example xml:id="svgturtlesource">
+                    <title>Drawing &#34;SVG&#34; using a turtle.</title>
+                    <para>The rt(), lt(), fd(), and bk() methods are abbreviations for right(), left(), forward(), and back(). A full list of commands can be found in the JSXGraph wiki<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands">http://jsxgraph.uni-bayreuth.de/wiki/index.php/List_of_available_commands</ulink></para></footnote></para>.
+<programlisting><![CDATA[var t = board.createElement('turtle');
+// Draw the S,
+t.rt(90); t.fd(100); t.lt(90); t.fd(100); t.lt(90); t.fd(100); t.rt(90); t.fd(100); t.rt(90); t.fd(100);
+// the V, and
+t.rt(70); t.fd(210); t.lt(140); t.fd(210);
+// the G
+t.rt(70); t.fd(100); t.bk(100); t.rt(90); t.fd(200); t.lt(90); t.fd(100); t.lt(90); t.fd(100); t.lt(90); t.fd(40);]]></programlisting>
+                </example>
+                <figure xml:id="nikolaus">
+                    <title>SVG written by a turtle. Result of <xref linkend="svgturtlesource"/> <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Programming_turtle_graphics">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Programming_turtle_graphics</ulink></para></footnote></title>
+                    <mediaobject>
+                        <imageobject>
+                            <imagedata fileref="svgturtle.png" format="PNG"/>
+                        </imageobject>
+                    </mediaobject>
+                </figure>
+            <para>This approach can be used to easily produce beautiful Lindenmayer systems like plants or penrose tilings which are known from chaos theory . Similarly, well-known fractals like the sierpinski triangle or the Koch snowflake can be drawn. Other applications can be found in statistics where one can visualize random walks with turtles.
+            </para>
+                <figure xml:id="koch">
+                    <title>The Koch curve with recursion level 7 <footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Koch_curve">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Koch_curve</ulink></para></footnote></title>
+                    <mediaobject>
+                        <imageobject>
+                            <imagedata fileref="koch.png" format="PNG"/>
+                        </imageobject>
+                    </mediaobject>
+                </figure>            
+        </section>
+    </section>
+    
+    <section>
+        <title>Charts</title>
+        <para>After implementing all the geometric objects and calculus in JSXGraph it was not difficult to extend the library to support charts. For example line charts and cubic spline interpolated charts are made of function graphs,
+        sectors are used to display pie charts, and horizontal resp. vertical bar charts are based on polygons. Of course all of the visual options from the geometric elements like fill and stroke colors, fill gradients, line styles, shadows or special highlighting effects are passed on to the charts. But also the dynamics is still available, so even interactive charts can be done with JSXGraph which is useful for forecasts with varying parameters to model different scenarios.</para>
+                <example>
+                    <title>Drawing an interactive bar chart</title>
+<programlisting><![CDATA[board = JXG.JSXGraph.initBoard('box', {originX: 50, originY: 450, unitX: 50, unitY: 50, axis:false});
+board.suspendUpdate();
+board.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
+board.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});            
+
+var s = board.createElement('slider', [[8,7],[11,7],[1,1,1.5]], {name:'S',strokeColor:'black',fillColor:'white'});
+var f = [function(){return this.board.round(s.Value()*4.5,2);},
+         function(){return this.board.round(s.Value()*(-1),2);},
+        /* add other bars similarly */
+         function(){return this.board.round(s.Value()*(-1.25),2);}
+         ];
+var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
+/* ...
+   set additional style properties
+   ...*/]]></programlisting>
+        </example>
+                <figure xml:id="chart">
+                    <title>A pie chart on the left hand side<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Pie_chart">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Pie_chart</ulink></para></footnote> and an interactive bar chart together with a static line chart on the right hand side<footnote><para><ulink url="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Dynamic_bar_chart">http://jsxgraph.uni-bayreuth.de/wiki/index.php/Dynamic_bar_chart</ulink></para></footnote>.</title>
+                    <mediaobject>
+                        <imageobject>
+                            <imagedata fileref="charts.png" format="PNG"/>
+                        </imageobject>
+                    </mediaobject>
+                </figure>        
+    </section>
+    
+    &chapter_server;
+
+    &chapter_plugins;
+    
+    &chapter_implementation;    
+    
+    
+    <bibliography xmlns="http://docbook.org/ns/docbook"><title>References</title>
+        <bibliodiv>
+            <biblioentry xml:id="Crockford2008">
+                <abbrev>Crockford2008</abbrev>
+                <authorgroup>
+                    <author><personname>
+                        <firstname>Douglas.</firstname><surname>Crockford</surname>
+                    </personname></author>
+                </authorgroup>
+                <biblioid class="isbn">978-0-596-51774-8</biblioid>
+                <publisher>
+                    <publishername>O'Reilly</publishername>
+                </publisher>
+                <title>JavaScript: The Good Parts</title>
+            </biblioentry>
+
+            <biblioentry xml:id="VML98">
+                <abbrev>VML1998</abbrev>
+                <authorgroup>
+                    <author><personname><firstname>John</firstname><surname>Bowler</surname></personname></author>
+                    <author><personname><firstname>Howard</firstname><surname>Cooperstein</surname></personname></author>
+                    <author><personname><firstname>Brian</firstname><surname>Dister</surname></personname></author>
+                    <author><personname><firstname>Ajay</firstname><surname>Jindal</surname></personname></author>
+                    <author><personname><firstname>Daniel</firstname><surname>Lee</surname></personname></author>
+                    <author><personname><firstname>Brian</firstname><surname>Mathews</surname></personname></author>
+                    <author><personname><firstname>Tuan</firstname><surname>Nguyen</surname></personname></author>
+                    <author><personname><firstname>Troy</firstname><surname>Sandal</surname></personname></author>
+                    <author><personname><firstname>Peter</firstname><surname>Wu</surname></personname></author>
+                </authorgroup>
+                <copyright><year>1998</year>
+                    <holder>W3C</holder></copyright>
+                <biblioid class="isbn"></biblioid>
+                <publisher>
+                    <publishername>http://www.w3.org/TR/1998/NOTE-VML-19980513</publishername>
+                </publisher>
+                <title>Vector Markup Language (VML)</title>
+            </biblioentry>
+            
+            
+            <biblioentry xml:id="SVG09">
+                <abbrev>SVG2009</abbrev>
+                <authorgroup>
+                  <author><personname><firstname>Ola</firstname><surname>Andersson</surname></personname></author>
+                  <author><personname><firstname>Phil</firstname><surname>Armstrong</surname></personname></author>
+                  <author><personname><firstname>Henric</firstname><surname>Axelsson</surname></personname></author>
+                  <author><personname><firstname>Robin</firstname><surname>Berjon</surname></personname></author>
+                  <author><personname><firstname>Beno&#238;t</firstname><surname>B&#233;zaire</surname></personname></author>
+                  <author><personname><firstname>John</firstname><surname>Bowler</surname></personname></author>
+                  <author><personname><firstname>Craig</firstname><surname>Brown</surname></personname></author>
+                  <author><personname><firstname>Mike</firstname><surname>Bultrowicz</surname></personname></author>
+                  <author><personname><firstname>Tolga</firstname><surname>Capin</surname></personname></author>
+                  <author><personname><firstname>Milt</firstname><surname>Capsimalis</surname></personname></author>
+                  <author><personname><firstname>Mathias Larsson</firstname><surname>Carlander</surname></personname></author>
+                  <author><personname><firstname>Jakob</firstname><surname>Cederquist</surname></personname></author>
+                  <author><personname><firstname>Charilaos</firstname><surname>Christopoulos</surname></personname></author>
+                  <author><personname><firstname>Richard</firstname><surname>Cohn</surname></personname></author>
+                  <author><personname><firstname>Lee</firstname><surname>Cole</surname></personname></author>
+                  <author><personname><firstname>Don</firstname><surname>Cone</surname></personname></author>
+                  <author><personname><firstname>Alex</firstname><surname>Danilo</surname></personname></author>
+                  <author><personname><firstname>Thomas</firstname><surname>DeWeese</surname></personname></author>
+                  <author><personname><firstname>David</firstname><surname>Dodds</surname></personname></author>
+                  <author><personname><firstname>Andrew</firstname><surname>Donoho</surname></personname></author>
+                  <author><personname><firstname>David</firstname><surname>Duce</surname></personname></author>
+                  <author><personname><firstname>Jerry</firstname><surname>Evans</surname></personname></author>
+                  <author><personname><firstname>Jon</firstname><surname>Ferraiolo</surname></personname></author>
+                  <author><personname><firstname>Darryl</firstname><surname>Fuller</surname></personname></author>
+                  <author><personname><surname>&#34276;&#27810;</surname><firstname>&#28147;</firstname></personname></author>
+                  <author><personname><firstname>Scott</firstname><surname>Furman</surname></personname></author>
+                  <author><personname><firstname>Brent</firstname><surname>Getlin</surname></personname></author>
+                  <author><personname><firstname>Peter</firstname><surname>Graffagnino</surname></personname></author>
+                  <author><personname><firstname>Rick</firstname><surname>Graham</surname></personname></author>
+                  <author><personname><firstname>Vincent</firstname><surname>Hardy</surname></personname></author>
+                  <author><personname><surname>&#31471;&#23665;</surname><firstname>&#36020;&#20063;</firstname></personname></author>
+                  <author><personname><firstname>Lofton</firstname><surname>Henderson</surname></personname></author>
+                  <author><personname><firstname>Jan Christian</firstname><surname>Herlitz</surname></personname></author>
+                  <author><personname><firstname>Alan</firstname><surname>Hester</surname></personname></author>
+                  <author><personname><firstname>Bob</firstname><surname>Hopgood</surname></personname></author>
+                  <author><personname><surname>&#30707;&#24029;</surname><firstname>&#38597;&#24247;</firstname></personname></author>
+                  <author><personname><firstname>Dean</firstname><surname>Jackson</surname></personname></author>
+                  <author><personname><firstname>Christophe</firstname><surname>Jolif</surname></personname></author>
+                  <author><personname><firstname>Lee</firstname><surname>Klosterman</surname></personname></author>
+                  <author><personname><surname>&#23567;&#26519;</surname><firstname>&#20124;&#20196;</firstname></personname></author>
+                  <author><personname><firstname>Thierry</firstname><surname>Kormann</surname></personname></author>
+                  <author><personname><firstname>Yuri</firstname><surname>Khramov</surname></personname></author>
+                  <author><personname><firstname>Kelvin</firstname><surname>Lawrence</surname></personname></author>
+                  <author><personname><firstname>H&#229;kon</firstname><surname>Lie</surname></personname></author>
+                  <author><personname><firstname>Chris</firstname><surname>Lilley</surname></personname></author>
+                  <author><personname><firstname>Philip</firstname><surname>Mansfield</surname></personname></author>
+                  <author><personname><firstname>Kevin</firstname><surname>McCluskey</surname></personname></author>
+                  <author><personname><surname>&#27700;&#21475;</surname><firstname>&#20805;</firstname></personname></author>
+                  <author><personname><firstname>Luc</firstname><surname>Minnebo</surname></personname></author>
+                  <author><personname><firstname>Tuan</firstname><surname>Nguyen</surname></personname></author>
+                  <author><personname><surname>&#23567;&#37326;</surname><firstname>&#20462;&#19968;&#37070;</firstname></personname></author>
+                  <author><personname><firstname>Antoine</firstname><surname>Quint</surname></personname></author>
+                  <author><personname><surname>&#30456;&#33391;</surname><firstname>&#27589;</firstname></personname></author>
+                  <author><personname><firstname>Troy</firstname><surname>Sandal</surname></personname></author>
+                  <author><personname><firstname>Peter</firstname><surname>Santangeli</surname></personname></author>
+                  <author><personname><firstname>Haroon</firstname><surname>Sheikh</surname></personname></author>
+                  <author><personname><firstname>Brad</firstname><surname>Sipes</surname></personname></author>
+                  <author><personname><firstname>Peter</firstname><surname>Sorotokin</surname></personname></author>
+                  <author><personname><firstname>Gavriel</firstname><surname>State</surname></personname></author>
+                  <author><personname><firstname>Robert</firstname><surname>Stevahn</surname></personname></author>
+                  <author><personname><firstname>Timothy</firstname><surname>Thompson</surname></personname></author>
+                  <author><personname><surname>&#19978;&#30000;</surname><firstname>&#23439;&#39640;</firstname></personname></author>
+                  <author><personname><firstname>Rick</firstname><surname>Yardumian</surname></personname></author>
+                  <author><personname><firstname>Charles</firstname><surname>Ying</surname></personname></author>
+                  <author><personname><firstname>Shenxue</firstname><surname>Zhou</surname></personname></author>
+                </authorgroup>
+                <copyright><year>2009</year>
+                    <holder>W3C</holder></copyright>
+                <biblioid class="isbn"></biblioid>
+                <publisher>
+                    <publishername>http://www.w3.org/TR/SVG11/</publishername>
+                </publisher>
+                <title>Scalable Vector Graphics (SVG) 1.1 Specification</title>
+            </biblioentry>
+        </bibliodiv>
+        
+        
+        <bibliodiv><title>Websites</title>
+          <biblioentry xml:id="GXT">
+            <abbrev>GXT</abbrev>
+             <title>http://www.geonext.de/</title>
+          </biblioentry>
+          
+          <biblioentry xml:id="GGB">
+            <abbrev>GGB</abbrev>
+             <title>http://www.geogebra.org/</title>
+          </biblioentry>
+
+          <biblioentry xml:id="CaR">
+            <abbrev>CaR</abbrev>
+             <title>http://zirkel.sourceforge.net/</title>
+          </biblioentry>
+          
+          <biblioentry xml:id="CABRI">
+            <abbrev>CABRI</abbrev>
+             <title>http://cabri.com</title>
+          </biblioentry>
+          
+          <biblioentry xml:id="TGS">
+            <abbrev>TGS</abbrev>
+             <title>http://www.dynamicgeometry.com/</title>
+          </biblioentry>
+          
+          <biblioentry xml:id="I2GEO">
+            <abbrev>I2GEO</abbrev>
+            <title>http://i2geo.net</title>
+         </biblioentry>
+         
+          <biblioentry xml:id="CDY">
+            <abbrev>CDY</abbrev>
+            <title>http://cinderella.de</title>
+         </biblioentry>
+         
+          <biblioentry xml:id="R">
+            <abbrev>R</abbrev>
+            <title>http://r-project.org</title>
+         </biblioentry>
+        
+        </bibliodiv>
+    </bibliography>
+</article>

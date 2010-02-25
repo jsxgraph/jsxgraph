@@ -89,14 +89,14 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
      * @type JXG.GeometryElement
      * @see #intersect2
      */
-    this.intersect1 = JXG.GetReferenceFromParameter(this.board, Intersect1);
+    this.intersect1 = JXG.getReference(this.board, Intersect1);
 
     /**
      * Geometry element that is intersected with intersect1.
      * @type JXG.GeometryElement
      * @see #intersect1
      */
-    this.intersect2 = JXG.GetReferenceFromParameter(this.board, Intersect2);
+    this.intersect2 = JXG.getReference(this.board, Intersect2);
 
     /**
      * Type of this object. For internal use only.
@@ -141,7 +141,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
                 //this.p.update();
                 this.needsUpdate = false;
             }
-        }
+        };
         
         /*
          * Hides the element, generated dynamically.
@@ -149,7 +149,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         this.hideElement = function() {
             this.visProp['visible'] = false;
             this.p.hideElement();
-        }
+        };
         
         /*
          * Shows the element, generated dynamically.
@@ -157,7 +157,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         this.showElement = function() {
             this.visProp['visible'] = true;
             this.p.showElement();
-        }
+        };
         
         /*
          * Hides the element and his children. This is called from parents which became invisible or unreal
@@ -169,12 +169,20 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
 
             for(var el in this.descendants) {    
                 if(this.descendants[el].visProp['visible'] && this.descendants[el].type != JXG.OBJECT_TYPE_INTERSECTION) {
-                    this.descendants[el].hideElement();
-                    this.descendants[el].visProp['visible'] = true;
+                    if(this.descendants[el].type != JXG.OBJECT_TYPE_TEXT) {
+                        this.descendants[el].hideElement();
+                        this.descendants[el].visProp['visible'] = true;
+                    }
+                    else {
+                        if(!this.descendants[el].isLabel) {
+                            this.descendants[el].hideElement();
+                            this.descendants[el].visProp['visible'] = true;
+                        }
+                    }
                 }      
                 this.descendants[el].notExistingParents[id] = this.board.objects[id];
             }            
-        }
+        };
 
         /*
          * Shows the element and his children. This is called from parents which became visible or real
@@ -190,17 +198,17 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
                     }
                 }
             }
-        }        
+        };
     }
     else if( ((Intersect1.type == Intersect2.type) && (Intersect1.type == JXG.OBJECT_TYPE_CIRCLE || Intersect1.type == JXG.OBJECT_TYPE_ARC)) ||
               (Intersect1.type == JXG.OBJECT_TYPE_CIRCLE && Intersect2.type == JXG.OBJECT_TYPE_ARC) ||
               (Intersect2.type == JXG.OBJECT_TYPE_CIRCLE && Intersect1.type == JXG.OBJECT_TYPE_ARC) ) { // Circle <-> Circle, Arc <-> Arc, Arc <-> Circle,
         this.p1 = new JXG.Point(this.board, [0, 0], InterId1, InterName1, false);
         this.p1.fixed = true;
-        this.p1.label.show = true;
+        this.p1.label.content.visProp['visible'] = true;
         this.p2 = new JXG.Point(this.board, [0, 0], InterId2, InterName2, false);
         this.p2.fixed = true;
-        this.p2.label.show = true;
+        this.p2.label.content.visProp['visible'] = true;
         this.addChild(this.p1);
         this.addChild(this.p2);
 
@@ -241,31 +249,39 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
                 }
             }
             this.needsUpdate = false;
-        }
+        };
         
         this.hideElement = function() {
             this.visProp['visible'] = false;
             this.p1.hideElement();
             this.p2.hideElement();
-        }
+        };
         
         this.showElement = function() {
             this.visProp['visible'] = true;
             this.p1.showElement();
             this.p2.showElement();
-        }
+        };
 
         this.hideChild = function(id) {
             this.notExistingParents[id] = this.board.objects[id];
 
             for(var el in this.descendants) {    
                 if(this.descendants[el].visProp['visible'] && this.descendants[el].type != JXG.OBJECT_TYPE_INTERSECTION) {
-                    this.descendants[el].hideElement();
-                    this.descendants[el].visProp['visible'] = true;
+                    if(this.descendants[el].type != JXG.OBJECT_TYPE_TEXT) {
+                        this.descendants[el].hideElement();
+                        this.descendants[el].visProp['visible'] = true;
+                    }
+                    else {
+                        if(!this.descendants[el].isLabel) {
+                            this.descendants[el].hideElement();
+                            this.descendants[el].visProp['visible'] = true;
+                        }
+                    }
                 }      
                 this.descendants[el].notExistingParents[id] = this.board.objects[id];
             }                
-        }
+        };
 
         this.showChild = function(id) {            
             for(el in this.board.objects) {        
@@ -276,15 +292,15 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
                     }
                 }        
             }            
-        }         
+        };
     }
     else { // Circle <-> Line, Arc <-> Line, Circle <-> Arrow, Arc <-> Arrow
         this.p1 = new JXG.Point(this.board, [0, 0], InterId1, InterName1, false);
         this.p1.fixed = true;
-        this.p1.label.show = true;        
+        this.p1.label.content.visProp['visible'] = true;        
         this.p2 = new JXG.Point(this.board, [0, 0], InterId2, InterName2, false);
         this.p2.fixed = true;
-        this.p2.label.show = true;
+        this.p2.label.content.visProp['visible'] = true;
         this.addChild(this.p1);
         this.addChild(this.p2);        
         
@@ -340,31 +356,39 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
                 }
             }
             this.needsUpdate = false;
-        }
+        };
         
         this.hideElement = function() {
             this.visProp['visible'] = false;
             this.p1.hideElement();
             this.p2.hideElement();
-        }
+        };
         
         this.showElement = function() {
             this.visProp['visible'] = true;
             this.p1.showElement();
             this.p2.showElement();
-        }
+        };
 
         this.hideChild = function(id) {
             this.notExistingParents[id] = this.board.objects[id];
 
             for(var el in this.descendants) {    
                 if(this.descendants[el].visProp['visible'] && this.descendants[el].type != JXG.OBJECT_TYPE_INTERSECTION) {
-                    this.descendants[el].hideElement();
-                    this.descendants[el].visProp['visible'] = true;
+                    if(this.descendants[el].type != JXG.OBJECT_TYPE_TEXT) {
+                        this.descendants[el].hideElement();
+                        this.descendants[el].visProp['visible'] = true;
+                    }
+                    else {
+                        if(!this.descendants[el].isLabel) {
+                            this.descendants[el].hideElement();
+                            this.descendants[el].visProp['visible'] = true;
+                        }
+                    }
                 }      
                 this.descendants[el].notExistingParents[id] = this.board.objects[id];
             }                
-        }
+        };
 
         this.showChild = function(id) {
             for(el in this.board.objects) {            
@@ -375,7 +399,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
                     }
                 }            
             }            
-        }         
+        };
     }
 
     this.id = this.board.addIntersection(this);

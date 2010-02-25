@@ -31,17 +31,19 @@
 						
 
 				board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 50, unitY: 50});
+                board2.addChild(board);
+                
 				// Axes
 				b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
 				b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
 
-				curve = board.createElement('curve', [function(t){ return t; }, function(t){ return JXG.GetReferenceFromParameter(board2, 'A').X()*t*t+JXG.GetReferenceFromParameter(board2, 'B').X()*t+JXG.GetReferenceFromParameter(board2, 'C').X(); }, -10, 10]);						
+				curve = board.createElement('curve', [function(t){ return t; }, function(t){ return JXG.getReference(board2, 'A').X()*t*t+JXG.getReference(board2, 'B').X()*t+JXG.getReference(board2, 'C').X(); }, -10, 10]);						
 			
 				function print_table(board) {
 					if (hook){
-						$('print_a').value = board.round(JXG.GetReferenceFromParameter(board, 'A').X(),2);
-						$('print_b').value = board.round(JXG.GetReferenceFromParameter(board, 'B').X(),2);
-						$('print_c').value = board.round(JXG.GetReferenceFromParameter(board, 'C').X(),2);
+						$('print_a').value = board.round(JXG.getReference(board, 'A').X(),2);
+						$('print_b').value = board.round(JXG.getReference(board, 'B').X(),2);
+						$('print_c').value = board.round(JXG.getReference(board, 'C').X(),2);
 					}
 				};
 				

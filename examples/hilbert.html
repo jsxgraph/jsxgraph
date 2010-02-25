@@ -33,7 +33,7 @@ If it is set to level=9 the curve is defined by
   </form>
 </div>
 <br clear=all>
-<div id="debug" style="display:none;"></div>
+<div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
 
@@ -67,7 +67,7 @@ If it is set to level=9 the curve is defined by
         };
 
         hilbert = function(level,dir) {
-            if (level==1) {
+            if (level<=1) {
                 switch (dir) {
                     case LEFT:
                         move(RIGHT);     
@@ -132,9 +132,9 @@ If it is set to level=9 the curve is defined by
             }
         };
 
+        var s = b.createElement('slider', [[0,-110],[50,-110],[1,2,7]], {name:'S',snapWidth:1});
         var curve = b.createElement('curve',[pointsX,pointsY],{curveType:'plot'});
-        //var s = b.createElement('slider', [0.75,-110,50,1.5,7,1], {name:'S'});
-        var s = b.createElement('slider', [[0,-110],[50,-110],[1,2,7]], {name:'S'});
+
 
         function doIt(){
             pos = [0,0];
@@ -150,7 +150,7 @@ If it is set to level=9 the curve is defined by
 
         var oldlev = -1;
         curve.updateDataArray = function() {
-            maxlev = Math.round(s.X());
+            maxlev = s.Value();
             if (oldlev==maxlev) {
                 return;
             }

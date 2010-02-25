@@ -1,0 +1,203 @@
+﻿    <section>
+        <title>Implementation details</title>
+        <para>
+            The main focus of JSXGraph lies on interactivity. The JSXGraph user should experience an immediate feedback to the dragging of points
+            with the mouse. So, special attention has to be paid to fast reactions to mouse move and mouse up events. On the other hand
+            we want to exploit the superb output quality of vector graphics as offered by SVG. These two controversial goals - 
+            speed versus quality - have to be balanced. 
+        </para> 
+        <section>
+            <title>Cross-browser development</title>
+            <para>
+            JSXGraph works on every major browser. The cross-browser issues are handled by an external library, where
+            the web developer who uses JSXGraph can choose between
+            either the Prototype JavaScript library 
+            or the
+            jQuery library.
+            JSXGraph can be used with either of these two libraries equally good. 
+            Only very few features of these libraries are used and the access is capsuled in some lines in the
+            source code file jsxgraph.js. Mainly the cross-browser handling of events is delegated to the external libraries.
+            Everything else in JSXGraph is built up from scratch and does not rely on any third-party library.
+            So, it should be easy to port JSXGraph to a further framework, if necessary.
+        </para>
+        </section>
+        <section>
+            <title>SVG vs. VML</title>
+            <para>
+                The Microsoft Internet Explorer has still the largest market share of all browsers. 
+                Since we do not want to exclude the users of the Internet Explorer 
+                we have to adapt JSXGraph to this browser as well. The Internet Explorer can not display SVG, but since 1998 
+                Microsoft<xref  linkend="VML98"/>
+                supports VML 
+                - vector markup language - as vector graphic language in the Internet Explorer. 
+                Early in the development process of JSXGraph we decided to implement SVG and VML drawing separately, without using one of the
+                existing abstraction layers. The reason for that decision was performance, the existing layers were too slow at that time.
+            </para>
+            <para>
+                SVG and VML are similar in many aspects, but different in many details. In order to realize visual properties VML heavily makes use of
+                subnodes of XML nodes. SVG however mostly uses attributes for the same visual properties.
+                Therefore, the JSXGraph source contains the two files SVGRenderer.js and VMLRenderer.js which control
+                the different graphics languages. The user working with JSXGraph should not get aware of this separation at all because all methods for accessing the drawing layer are encapsulated by JSXGraph.
+            </para>
+                <figure xml:id="jsxrenderer">
+                    <title>Scheme showing the renderer split in JSXGraph</title>
+                    <mediaobject>
+                        <imageobject>
+                            <imagedata fileref="JSXRenderer.png" format="PNG"/>
+                        </imageobject>
+                    </mediaobject>
+                </figure>
+            <para>
+                For SVG drawing JSXGraph rarely uses formatting through CSS.  The reason is that in the beginning of the development process
+                the use of CSS styles consumed to much computing resources, especially setting the opacity in Firefox. 
+                So, nearly all visual properties are realized by setting attributes and applying filters. Even if filters in SVG are still not 
+                implemented satisfactorily in all browsers, JSXGraph supports shadows and gradients via filters since version 0.76. 
+                At the time of writing shadows slow down the Firefox browser considerably. Further, there seems to be a bug for
+                horizontal and vertical lines. In these cases neither the line nor its shadow is visible.
+                In Webkit based browsers like Chrome and Safari these filters are not implemented, yet. In Opera it looks ugly.
+                On the other hand, VML realizes shadows as a subnode. There, no noticable speed reduction is observable.
+            </para>
+        </section> 
+        <section>
+            <title>HTML elements</title>
+            <para>
+                For the display of text, like labels of points or results of computations, JSXGraph does not use the text element of SVG.
+                Instead, div tags in HTML are used. That means the browsers display the text as HTML elements above the SVG image. 
+                In order to update the text the innerHTML property of HTML is used. This is slow, but since many texts are never changed,
+                it is used scarcely.
+                We decided to use HTML elements for SVG, because 
+                at that time HTML tags and HTML entities in texts were not supported in the Firefox implementation. 
+            </para>
+        </section>  
+        <section>
+            <title>Speed improvements</title>
+            <para>
+                In order to enable fast reactions to user interactions like mouse moves, JSXGraph contains many 
+                tricks to speed up the computations. Even if the
+                JavaScript interpreters, respectively Just-in-time-compilers, have made huge progress since the development of JSXGraph 
+                has been started, special care about implementation details is still necessary.
+                Here, we list a few of the tricks, which proved to be useful for our implementation. Of course, the benefits 
+                of most of these tricks depend on the browser implementations and may change with new versions of the browsers.
+            </para>
+            <section>
+                <title>Avoid DOM accesses with getElementById()</title>
+                <para>When a new SVG node is created, JSXGraph keeps an internal reference to this DOM node. 
+                    Later on, access to this node is realized via this pointer variable, exclusively.
+                    Using getElementById() or the $() operator of Prototype or jQuery proved to be much too slow.
+                 </para>
+            </section>
+            <section>
+                <title>Suspend the update of SVG nodes</title>
+                <para>
+                        Before a construction update is triggered by a mouse move or mouse up event, the redrawing 
+                        of the SVG nodes is suspended, until the position of all elements has been recalculated.
+                        Then, the redrawing of the SVG nodes is forced.
+                <programlisting><![CDATA[this.suspendHandle = this.svgRoot.suspendRedraw(10000);
+// Expensive recalculations ...
+this.svgRoot.unsuspendRedraw(this.suspendHandle);
+this.svgRoot.forceRedraw();]]></programlisting>
+                        This seems to speed up at least the linux version of Firefox considerably.                 
+                </para>
+            </section>
+            <section>
+                <title>Use memoizers</title>
+                <para>
+                        Common functions like binomial() and factorial() are realized with memoizer techniques, 
+                        as descripted in <xref  linkend="Crockford2008"/>, page 44.
+                        Thus, the expensive computation of each value of these functions is done only once.
+                 </para>
+            </section>
+            <section>
+                <title>Distinguish mouse move and mouse up events</title>
+                <para>
+                    For curves in JSXGraph there are two update modes, resulting in different output resolutions. During the update following a
+                    mouse move event, curves are plotted evaluating only few data points. The default value here is to use 400 points.
+                    In the update following a mouse up event curves are plotted with much more points. The default value
+                    now is to use 2000 points. These values can be adapted in Options.js.                 
+                </para>
+            </section>
+            <section>
+                <title>Reduce the download and initialization time</title>
+                <para>
+                    The JavaScript source code of 
+                    JSXGraph version 0.76 consists of 20 individual files, which add up to about 980 kBytes including comments.
+                    These 20 files are bundled together in one big file which is subsequently compressed by the 
+                    YUI compressor<footnote><para><ulink url="http://developer.yahoo.com/yui/compressor/">http://developer.yahoo.com/yui/compressor/</ulink></para>
+                    </footnote> from Yahoo!. 
+                    During this process comments and superfluous whitespaces are removed. The resulting file jsxgraphcore.js
+                    only consists of 380 kBytes. If the web server delivering jsxgraphcore.js has DEFLATE enabled, which means it
+                    compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
+                    In many cases this is still less than delivering the same construction as a non-interactive PNG image.
+                </para>
+            </section>
+            <section>
+                <title>Use closures</title>
+                <para>
+                Sometimes function graphs are expensive to compute. One example is a regression polynomial through 
+                a given set of points. On update the position of all points has to be determined, the resulting linear system of
+                equations has to solved. Its solutions give the coefficients of the polynomial.
+                We certainly do not want to do this computation for determining every single function value, since during every update
+                of the function graph we have to compute more than a thousand values of that function.
+                </para>
+                <para>
+                We apply the following strategy: When the function graph is updated, we compute the coefficients of the polynomial only once.
+                Then we use these coefficients for the computation of all function values.
+                But where to store the coefficients? Using the "this" keyword does not give the desired results in a function.
+                But fortunately, we can use the function invocation pattern, see <xref  linkend="Crockford2008"/>, page 28.
+                In the example below, the function which is returned by the call of "generateFunction()" still has access to the 
+                variable "coeffs". This is based on the powerful concept of closures, which is part of JavaScript and comes from 
+                functional programming languages.
+                So, we can compute many function values very fast, and we do not have to do the bookkeeping, where these
+                coefficients are stored.
+                <example>
+                <title>Use of the function invocation pattern</title>
+                <programlisting><![CDATA[generateFunction = function(degree,dataX,dataY) { 
+    var coeffs = [];                 
+    var fct = function(x,suspendedUpdate){
+            var i, j, M, MT, y, B, c, s,
+                len = dataX.length;                       
+                
+            if (!suspendedUpdate) {  // Recomputation of the cooefficents: expensive
+                M = [];
+                for (j=0;j<len;j++) {
+                    M.push([1]);
+                }
+                for (i=1;i<=degree;i++) {
+                    for (j=0;j<len;j++) {
+                        M[j][i] = M[j][i-1]*datax[j];  
+                    }
+                }
+                y = dataY;                       
+                MT = JXG.Math.Matrix.transpose(M);
+
+                B = JXG.Math.matMatMult(MT,M);
+                c = JXG.Math.matVecMult(MT,y);
+                coeffs = JXG.Math.Numerics.Gauss(B, c);
+            }
+            
+            // Horner's scheme to evaluate polynomial: cheap
+            s = coeffs[degree];
+            for (i=degree-1;i>=0;i--) {
+                s = (s*x+coeffs[i]);
+            }
+            return s;
+        };
+        return fct;};]]></programlisting>
+                </example>
+                </para>
+            </section>
+            <section>
+                <title>An Internet Explorer trick</title>
+                <para>
+                    A very special, but decisive speed improvement has been done for the Internet Explorer versions 6 and 7.  
+                     With the following piece of code which is executed at initialization time the update speed of the Internet Explorer has been improved by an order of magnitude.
+                <programlisting><![CDATA[function MouseMove(e) {
+        document.body.scrollLeft;
+        document.body.scrollTop;
+    }
+    document.onmousemove = MouseMove;]]></programlisting>
+                    We are not aware that this trick has been mentioned before anywhere else.
+                </para>
+            </section>
+        </section>  
+    </section>    

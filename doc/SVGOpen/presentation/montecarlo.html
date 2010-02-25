@@ -1,0 +1,72 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+        <script type="text/javascript" src="distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+    </head>
+    <body class="jsxgraph_body">
+        <div id="resulttext"></div><br /><br />
+        <div id="jxgbox" class="jxgbox" style="position: relative; width: 380px; height: 380px; overflow: hidden;" onmousemove="board2.update()"></div>
+        <!-- Drawing area -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+            board2 = JXG.JSXGraph.initBoard('jxgbox', {showNavigation:false, showCopyright:false, boundingbox: [-1.2, 1.2, 1.2, -1.2], keepaspectratio:true, axis:true});  
+            var c = board2.createElement('circle', [[0,0], 1],{strokeColor:'#541972',fillColor:'#E9E0EC',highlightFillColor:'#E9E0EC'});
+            var point1 = board2.createElement('point',[1,1],{visible:false});
+            var point3 = board2.createElement('point',[-1,-1],{visible:false});
+            var point2 = board2.createElement('point',[-1,1],{visible:false});
+            var point4 = board2.createElement('point',[1,-1],{visible:false});
+            var poly = board2.createElement('polygon',[point1,point2,point3,point4,point1],{fillColor:'#DCF0ED',highlightFillColor:'#DCF0ED'});
+            for(i=0;i<poly.borders.length;i++) {
+                poly.borders[i].setProperty('strokeColor:#245399');
+            }
+            board2.suspendUpdate();
+            var p2 = [];
+            for (var i=0;i<10;i++) {
+                p2[i] = board2.createElement('point',
+                       [function(){return 2*Math.random()-1;},function(){ return 2*Math.random()-1;}],
+                       {style:5,name:' ',withLabel:false, strokeColor:'#245399',fillColor:'#FDFBFD'});
+            }
+            board2.unsuspendUpdate();
+ 
+            var tin = 0;
+            var tout = 0;
+            var count = 0;
+ 
+            function updText() {
+                count++;
+                var text = '';
+
+                var inp = 0;
+                var outp = 0;
+
+                for(var i=0; i<p2.length;i++) {
+                    var x = p2[i].X();
+                    var y = p2[i].Y();
+
+                    if(x*x+y*y <= 1) {
+                        inp++;
+                    }
+                    else {
+                        outp++;
+                    }
+                }
+
+                tin += inp;
+                tout += outp;
+
+                text += '<!--b><u>Current</u></b><br/>In: ' + inp + ', out: ' + outp + ', total: ' + (inp+outp) + '; ratio: ' 
+                        + (inp/(inp+outp)).toString().slice(0,5) + ', ratio*4: ' + (4*inp/(inp+outp)).toString().slice(0,5) 
+                        + '.<br /><br /><b><u>Total</u></b> (//-->' + count + ' updates in total. Do another' 
+                        + ' <a href="#" onclick="for(var i=0;i<100;i++) board2.update();">100 Updates</a>.<!--)--><br/>In: ' + tin + ', out: ' 
+                        + tout + ', total: ' + (tin+tout) + '; ratio: ' + (tin/(tin+tout)).toString().slice(0,5) + ', ratio*4: ' 
+                        + (4*tin/(tin+tout)).toString().slice(0,8);
+                document.getElementById('resulttext').innerHTML = text;
+            }
+ 
+            var hookid = board2.addHook(updText);
+        /* ]]> */
+        </script>
+    </body>
+</html>

@@ -1,0 +1,91 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Spline chart with special highlighted points</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:800px; height:600px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+            board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 550, unitX: 50, unitY: 1});
+            board.suspendUpdate();
+            //var s = board.createElement('slider', [[1,9],[4,9],[1,1,1.5]], {name:'S',strokeColor:'black',fillColor:'white'});
+            var dataArr = [[1,2,3,4,5,6,7,8,9,10,11,12], [232,94,312,278,432,341,159,201,496,143,48,281]];        
+            var axisx = board.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
+            var axisy = board.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});
+            var chart = board.createElement('chart', dataArr, {chartStyle:'spline,point',labels:dataArr});
+            chart[0].setProperty({strokeColor:'#008B45',highlightStrokeColor:'#008B45',strokeWidth:'4px',shadow:true});
+            board.unsuspendUpdate();
+board.updateInfobox(chart[1][1]);            
+            var i;
+            for(i=0; i<chart[1].length; i++) {
+                chart[1][i].setProperty({face:'square',size:6,fillColor:'#008B45',strokeColor:'#3F1771',strokeWidth:'4px',shadow:true,showInfobox:true});
+                chart[1][i].highlight = function() {   
+                    var ms = 350, toR = 12, fromR = 6, toC = 1, fromC = 0.55, differenceR, differenceC, el = this, start = new Date, animate;
+                    differenceR = (toR-fromR)/ms;
+                    differenceC = (toC-fromC)/ms;
+                    
+                    function step() {
+                        var time = new Date - start, currentR, currentC;
+                        if(time < ms) {            
+                            currentR = fromR + time * differenceR;
+                            currentC = fromC + time * differenceC;
+                            el.visProp['size'] = currentR;
+                            el.visProp['fillColor'] = JXG.hsv2rgb(150,1,currentC);
+                            el.board.renderer.updatePoint(el);
+                            animate = setTimeout(step,35);
+                        }
+                        else {
+                            el.visProp['size'] = toR;
+                            el.visProp['fillColor'] = JXG.hsv2rgb(150,1,toC);
+                            el.board.renderer.updatePoint(el);
+                            clearTimeout(animate);
+                        }
+                    }
+                    animate = setTimeout(step,1);
+                }
+                chart[1][i].noHighlight = function() {   
+                    var ms = 350, toR = 6, fromR = 12, toC = 0.55, fromC = 1, differenceR, differenceC, el = this, start = new Date, animate;
+                    differenceR = (toR-fromR)/ms;
+                    differenceC = (toC-fromC)/ms;
+                    
+                    function step() {
+                        var time = new Date - start, currentR, currentC;
+                        if(time < ms) {            
+                            currentR = fromR + time * differenceR;
+                            currentC = fromC + time * differenceC;
+                            el.visProp['size'] = currentR;
+                            el.visProp['fillColor'] = JXG.hsv2rgb(150,1,currentC);
+                            el.board.renderer.updatePoint(el);
+                            animate = setTimeout(step,35);
+                        }
+                        else {
+                            el.visProp['size'] = toR;
+                            el.visProp['fillColor'] = JXG.hsv2rgb(150,1,toC);
+                            el.board.renderer.updatePoint(el);
+                            clearTimeout(animate);
+                        }
+                    }
+                    animate = setTimeout(step,1);
+                }                 
+            } 
+            
+            board.infobox.distanceX = 25;
+            board.highlightInfobox = function(x,y,el) {
+                var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                this.infobox.setText('<span style="color:black;font-weight:bold">' + months[x-1] + ': ' + Math.abs(y) + ' Clicks</span>');
+                this.infobox.rendNode.style.border = "groove #3F1771 8px";
+                this.infobox.rendNode.style.padding = "10px";
+                this.infobox.rendNode.style.backgroundColor = JXG.hsv2rgb(150,0.5,1);
+            }            
+      
+          /* ]]> */
+  </script>
+</body>
+</html>

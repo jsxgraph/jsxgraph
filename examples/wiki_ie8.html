@@ -1,14 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 <head>
+<!--<meta http-equiv="X-UA-Compatible" content="IE=7" />-->
 </head>
 <body>
-<link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
-<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/prototype.js"></script>
-<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/branches/0.70/src/loadjsxgraph.js"></script>
+<link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/prototype.js"></script>-->
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 <div id="jsxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+<div id="debug"></div>
 <script language="JavaScript">          
- board = JXG.JSXGraph.initBoard('jsxgbox', {originX: 250, originY: 250, unitX: 25, unitY: 25});
+ board = JXG.JSXGraph.initBoard('jsxgbox', {grid:true, originX: 250, originY: 250, unitX: 25, unitY: 25});
  var a = board.createElement('slider', [[1,8],[5,8],[0,1,4]]);
  var b = board.createElement('slider', [[1,9],[5,9],[0,0.25,4]]);
  var c = board.createElement('curve', [function(phi){return a.Value()+b.Value()*phi; }, [0, 0],0, 8*Math.PI],

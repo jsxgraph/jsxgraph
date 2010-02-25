@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+        <script type="text/javascript" src="distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+    </head>
+    <body class="jsxgraph_body">
+    <form> <input type="button" value="run" onClick="run()">
+    <input type="button" value="clear" onClick="clearturtle()">
+    </form>
+        <div id="box" class="jxgbox jsxgraph_present"></div>
+        <!-- Drawing area -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
+var t = brd.createElement('turtle',[4,3,70]);
+var s = brd.createElement('slider', [[0,-5], [10,-5],[-5,0.5,5]], {name:'s'});
+var alpha = brd.createElement('slider', [[0,-6], [10,-6],[-1,0.2,2]], {name:'&alpha;'});
+var e = brd.createElement('functiongraph', [function(x){return s.Value()*Math.exp(alpha.Value()*x);}],{strokeColor:'red'});
+t.hideTurtle();
+ 
+A = 5;
+tau = 0.3;
+ 
+function clearturtle() {
+  t.cs();
+  t.ht();
+}
+ 
+function run() {
+  t.setPos(0,s.Value());
+  t.setPenSize(4);
+  dx = 0.1; // global
+  x = 0.0;  // global
+  loop();
+}
+ 
+function loop() {
+  var dy = alpha.Value()*t.Y()*dx;   // Exponential growth
+  t.moveTo([dx+t.X(),dy+t.Y()]);
+  x += dx;
+  if (x<20.0) {
+     setTimeout(loop,10);
+  }
+}
+           /* ]]> */
+        </script>
+    </body>
+</html>

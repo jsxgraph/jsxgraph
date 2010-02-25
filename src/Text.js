@@ -25,8 +25,6 @@
 
 /**
  * @fileoverview In this file the Text element is defined.
- * @author graphjs
- * @version 0.1
  */
 
 
@@ -39,7 +37,7 @@
  * @constructor
  * @return A new geometry element Text
  */
-JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
+JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLabel, display, layer) {
     this.constructor();
 
     this.type = JXG.OBJECT_TYPE_TEXT;
@@ -50,8 +48,43 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
     this.contentStr = contentStr;
     this.plaintextStr = '';
 
-    // stroke Color = text Color
+    /**
+     * Set the display layer.
+     */
+    if (layer == null) layer = board.options.layer['text'];
+    this.layer = layer;
+
+    /**
+     * There is choice between 'html' and 'internal'
+     * 'internal' is the text element of SVG and the textpath element 
+     * of VML.
+     */
+    this.display = display || 'html'; 
+    
+    if((typeof isLabel != 'undefined') && (isLabel != null)) {
+        this.isLabel = isLabel;
+    }
+    else {
+        this.isLabel = false;
+    }
+    
+    /**
+     * The text color of the given text.
+     * @type {string}
+     * @name JXG.Text#strokeColor
+     */
     this.visProp['strokeColor'] = this.board.options.text.strokeColor;
+    /**
+     * The text opacity of the given text.
+     * @type {string}
+     * @name JXG.Text#strokeOpacity
+     */
+     /**
+     * The font size of the given text.
+     * @type {string}
+     * @name JXG.Text#fontSize
+     * @default {@link JXG.Options.fontSize}
+     */
 
     this.visProp['visible'] = true;
     //this.show = true; // noch noetig? BV
@@ -64,34 +97,23 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
 
     /**
      * Coordinates of the text.
+     * @ private
      * @type JXG.Coords
      */
     if ((this.element = this.board.objects[element])){
-        var anchor = this.element.getTextAnchor();
+        var anchor;
+        this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [parseFloat(coords[0]),parseFloat(coords[1])],this.board);     
+        if(!this.isLabel) {
+            anchor = this.element.getTextAnchor();
+        }
+        else {
+            anchor = this.element.getLabelAnchor();
+        }      
         this.element.addChild(this);
-        this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [parseFloat(coords[0]),parseFloat(coords[1])],this.board);
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.relativeCoords.usrCoords[1]+anchor.usrCoords[1],this.relativeCoords.usrCoords[2]+anchor.usrCoords[2]], this.board);
     } else {
-        var xterm = coords[0];
-        if (typeof xterm=='string') {
-            // Convert GEONExT syntax into  JavaScript syntax
-            var newxterm = this.board.algebra.geonext2JS(xterm);
-            this.X = new Function('','return ' + newxterm + ';');
-        } else if (typeof xterm=='function') {
-            this.X = xterm;
-        } else if (typeof xterm=='number') {
-            this.X = function() { return xterm; };
-        }
-        var yterm = coords[1];
-        if (typeof yterm=='string') {
-            // Convert GEONExT syntax into  JavaScript syntax
-            var newyterm = this.board.algebra.geonext2JS(yterm);
-            this.Y = new Function('','return ' + newyterm + ';');
-        } else if (typeof yterm=='function') {
-            this.Y = yterm;
-        } else if (typeof yterm=='number') {
-            this.Y = function() { return yterm; };
-        }
+        this.X = JXG.createFunction(coords[0],this.board,'');
+        this.Y = JXG.createFunction(coords[1],this.board,'');
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
         var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.X(),this.Y()]);';
         this.updateCoords = new Function('',fs);
@@ -104,18 +126,26 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits) {
         if (typeof this.contentStr=='number') {
             plaintext = (this.contentStr).toFixed(this.digits);  
         } else {
-            plaintext = this.generateTerm(this.contentStr);   // Converts GEONExT syntax into JavaScript string
+            if (this.board.options.text.useASCIIMathML) {
+                plaintext = "'"+this.contentStr+"'";              // Convert via ASCIIMathML
+            } else {
+                plaintext = this.generateTerm(this.contentStr);   // Converts GEONExT syntax into JavaScript string
+            }
         }
         this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
     }
-
-    this.updateText();                    // First evaluation of the string
-    this.id = this.board.addText(this);
-    this.notifyParents(this.contentStr);
+    //this.updateText();                    // First evaluation of the string    
+    if(!this.isLabel) {
+        this.id = this.board.addText(this);
+    }
+    if (typeof this.contentStr=='string') {
+        this.notifyParents(this.contentStr);
+    }
 };
 JXG.Text.prototype = new JXG.GeometryElement();
 
 /**
+ * @private
  * Empty function (for the moment). It is needed for highlighting
  * @param {int} x
  * @param {int} y Find closest point on the text to (xy)
@@ -126,6 +156,36 @@ JXG.Text.prototype.hasPoint = function (x,y) {
 };
 
 /**
+ * Overwrite the text.
+ * @param {string,function} str
+ * @return {object} reference to the text object.
+ */
+JXG.Text.prototype.setText = function(text) {
+    var plaintext;
+    if (typeof text=='number') {
+        plaintext = (text).toFixed(this.digits);  
+    } else {
+        plaintext = this.generateTerm(text);   // Converts GEONExT syntax into JavaScript string
+    }
+    this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
+    this.updateText();
+    return this;
+};
+
+/**
+ * Set the text to new, fixed coordinates.
+ * @param {number} x
+ * @param {number} y
+ * @return {object} reference to the text object.
+ */
+JXG.Text.prototype.setCoords = function (x,y) {
+    this.X = function() { return x; };
+    this.Y = function() { return y; };
+    this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+    return this;
+};
+
+/**
  * Evaluates the text.
  * Then, the update function of the renderer
  * is called. 
@@ -133,31 +193,40 @@ JXG.Text.prototype.hasPoint = function (x,y) {
 JXG.Text.prototype.update = function () {
     if (this.needsUpdate) {
         if (this.relativeCoords){
-            var anchor = this.element.getTextAnchor();
+            var anchor;
+            if(!this.isLabel) {
+                anchor = this.element.getTextAnchor();
+            }
+            else {
+                anchor = this.element.getLabelAnchor();
+            }
             this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.relativeCoords.usrCoords[1]+anchor.usrCoords[1],this.relativeCoords.usrCoords[2]+anchor.usrCoords[2]]);
         } else {
             this.updateCoords();
         }
         this.updateText();
-    }
+    }   
+    return this;
 };
 
 /**
- * Evaluates the text.
- * Then, the update function of the renderer
+ * The update function of the renderer
  * is called. 
+ * @private
  */
 JXG.Text.prototype.updateRenderer = function () {
     if (this.needsUpdate) {
         this.board.renderer.updateText(this);
         this.needsUpdate = false;
     }
+    return this;
 };
 
 /**
  * Converts the GEONExT syntax of the <value> terms into JavaScript.
  * Also, all Objects whose name appears in the term are searched and
  * the text is added as child to these objects.
+ * @private
  * @see Algebra
  * @see #geonext2JS.
  */
@@ -165,6 +234,8 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
     var res = null;
     var elements = this.board.elementsByName;
     var plaintext = '""';
+    contentStr = contentStr.replace(/\r/g,''); 
+    contentStr = contentStr.replace(/\n/g,''); 
     contentStr = contentStr.replace(/\"/g,'\\"'); 
     contentStr = contentStr.replace(/\'/g,"\\'"); 
     contentStr = contentStr.replace(/&amp;arc;/g,'&ang;'); 
@@ -217,7 +288,6 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
     }
 */
     plaintext = plaintext.replace(/&amp;/g,'&'); // This should replace &amp;pi; by &pi;
-//alert(plaintext);
     return plaintext;
 };
 
@@ -225,6 +295,7 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
  * Finds dependencies in a given term and notifies the parents by adding the
  * dependent object to the found objects child elements.
  * @param {String} term String containing dependencies for the given object.
+ * @private
  */
 JXG.Text.prototype.notifyParents = function (contentStr) {
     var res = null;
@@ -239,13 +310,54 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
             contentStr = contentStr.replace(search,'');
         }
     } while (res!=null);
+    return this;
 };
 
 /**
- * The text to display has to be the last entrie in parentArr.
- **/
+ * @class This element is used to provide a constructor for text, which is just a wrapper for element {@link Text}. 
+ * @pseudo
+ * @description
+ * @name Text
+ * @augments JXG.GeometryElement
+ * @constructor
+ * @type JXG.Text
+ *
+ * @param {number,function_number,function_String,function} x,y,str Parent elements for text elements.
+ *                     <p>
+ *                     x and y are the coordinates of the lower left corner of the text box. The position of the text is fixed, 
+ *                     x and y are numbers. The position is variable if x or y are functions.
+ *                     <p>
+ *                     The text to display may be given as string or as function returning a string.
+ *
+ * There is the attribute 'display' which takes the values 'html' or 'internal'. In case of 'html' a HTML division tag is created to display
+ * the text. In this case it is also possible to use ASCIIMathML. Incase of 'internal', a SVG or VML text element is used to display the text.
+ * @see JXG.Text
+ * @example
+ * // Create a fixed text at position [0,1].
+ *   var t1 = board.create('text',[0,1,"Hello World"]); 
+ * </pre><div id="896013aa-f24e-4e83-ad50-7bc7df23f6b7" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var t1_board = JXG.JSXGraph.initBoard('896013aa-f24e-4e83-ad50-7bc7df23f6b7', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var t1 = t1_board.create('text',[0,1,"Hello World"]);
+ * </script><pre>
+ * @example
+ * // Create a variable text at a variable position.
+ *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var graph = board.create('text', 
+ *                        [function(x){ return s.Value();}, 1,
+ *                         function(){return "The value of s is"+s.Value().toFixed(2);}
+ *                        ]
+ *                     );
+ * </pre><div id="5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var t2_board = JXG.JSXGraph.initBoard('5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+ *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
+ *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+s.Value().toFixed(2);}]);
+ * </script><pre>
+ */
 JXG.createText = function(board, parentArr, atts) {
-    return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits']);
+    atts = JXG.checkAttributes(atts,{layer:null,display:board.options.text.defaultDisplay});  // 'html' or 'internal'
+    return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false, atts['display'],atts['layer']);
 };
 
 JXG.JSXGraph.registerElement('text', JXG.createText);

@@ -51,24 +51,28 @@ this.parseFileContent = function(url, board, format) {
     }
     this.request.open("GET", url, true);
     if(format.toLowerCase()=='raw') {
-       this.cbp = function() {
-          var request = this.request;
-          if (request.readyState == 4) {
-            board(request.responseText);
-          }
-       }; //).bind(this);        
+        this.cbp = function() {
+            var request = this.request;
+            if (request.readyState == 4) {
+                board(request.responseText);
+            }
+        }; //).bind(this);        
     } else {
-       this.cbp = function() {
-          var request = this.request;
-          if (request.readyState == 4) {
-             this.parseString(request.responseText, board, format);
-          }
-       }; //).bind(this);
+        this.cbp = function() {
+            var request = this.request;
+            if (request.readyState == 4) {
+                this.parseString(request.responseText, board, format, false);
+            }
+        }; //).bind(this);
     }
     this.cb = JXG.bind(this.cbp,this);
     this.request.onreadystatechange = this.cb;
 
-    this.request.send(null);
+    try {
+        this.request.send(null);
+    } catch (e) {
+        throw new Error("JSXGraph: problems opening " + url + " !");
+    }
 }; // end: this.parseFileContent
 
 this.cleanWhitespace = function(el) {
@@ -94,7 +98,7 @@ this.stringToXMLTree = function(fileStr) {
              d.loadXML(str);
              return d;
           } 
-       }
+       };
     }
     var parser=new DOMParser();
     
@@ -103,10 +107,17 @@ this.stringToXMLTree = function(fileStr) {
     return tree;
 };
 
-this.parseString = function(fileStr, board, format) {
+this.parseString = function(fileStr, board, format, isString) {
     // fileStr is a string containing the XML code of the construction
     if (format.toLowerCase()=='geonext') { 
         fileStr = JXG.GeonextReader.prepareString(fileStr);
+    }
+    if (format.toLowerCase()=='geogebra') {
+        // if isString is true, fileStr is a base64 encoded string, otherwise it's the zipped file
+    	fileStr = JXG.GeogebraReader.prepareString(fileStr, isString);
+    }
+    if (format.toLowerCase()=='intergeo') {
+    	fileStr = JXG.IntergeoReader.prepareString(fileStr);
     }
     board.xmlString = fileStr;
     var tree = this.stringToXMLTree(fileStr);
@@ -120,11 +131,12 @@ this.parseString = function(fileStr, board, format) {
  * @param {Object} board board object
  */
 this.readElements = function(tree, board, format) {
-    board.suspendUpdate();
     if (format.toLowerCase()=='geonext') { 
+        board.suspendUpdate();
         if(tree.getElementsByTagName('GEONEXT').length != 0) {
             JXG.GeonextReader.readGeonext(tree, board);
         }
+        board.unsuspendUpdate();
     }
     else if(tree.getElementsByTagName('geogebra').length != 0) {
         JXG.GeogebraReader.readGeogebra(tree, board);
@@ -132,7 +144,6 @@ this.readElements = function(tree, board, format) {
     else if(format.toLowerCase()=='intergeo') {
          JXG.IntergeoReader.readIntergeo(tree, board);
     }
-    board.unsuspendUpdate();
     board.afterLoad();    
 }; // end: this.readElements()
 

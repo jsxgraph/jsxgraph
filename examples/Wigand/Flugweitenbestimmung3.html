@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+	<head>
+      <meta http-equiv="X-UA-Compatible" content="IE=7">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="generator" content="MediaWiki 1.13.1" />
+		<meta name="keywords" content="Matrix multiplication" />
+		<link rel="shortcut icon" href="favicon.ico" />
+		<title>LNdW	</title>
+		<style type="text/css" media="screen, projection">
+		</style>
+		<link rel="stylesheet" type="text/css" media="print" href="commonPrint.css?164" />
+		<!--[if lt IE 5.5000]><style type="text/css">@import "/wiki/skins/monobook/IE50Fixes.css?164";</style><![endif]-->
+		<!--[if IE 5.5000]><style type="text/css">@import "/wiki/skins/monobook/IE55Fixes.css?164";</style><![endif]-->
+		<!--[if IE 6]><style type="text/css">@import "/wiki/skins/monobook/IE60Fixes.css?164";</style><![endif]-->
+		<!--[if IE 7]><style type="text/css">@import "/wiki/skins/monobook/IE70Fixes.css?164";</style><![endif]-->
+		<!--[if lt IE 7]><script type="text/javascript" src="/wiki/skins/common/IEFixes.js?164"></script>
+		<meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+		<!--<script type="text/javascript" src="/wiki/skins/common/ajax.js?164"></script>-->
+		
+	</head>
+<link rel="stylesheet" type="text/css" href="index2.css" media="all">
+<!--<link rel="stylesheet" type="text/css" href="jsxgraph.css" />-->
+<script type="text/javascript" src="prototype.js"></script> 
+<!--script type="text/javascript" src="jquery.min.js"></script>-->
+<script type="text/javascript" src="jsxgraphcore.js"></script>
+	
+<body class="mediawiki ns-0 ltr page-Matrix_multiplication">
+<div id="globalWrapper">
+	<div id="column-content">
+	<div id="content">
+		<a name="top" id="top"></a>
+		<h1 class="firstHeading">LNdW</h1>
+		<div id="bodyContent">
+			<h3 id="siteSub">From JSXGraph Wiki</h3>
+			<p>
+
+<table>
+ <colgroup>
+    <col width="200">
+    <col width="500">
+    <col width="200">
+  </colgroup>
+  <tr>	
+	  <td></td>
+	<td>
+
+  <br>		
+  
+
+		<div id="jxgbox" class="jxgbox" style="width:800px; height:500px; "></div>
+	Dieses Beispiel basiert auf <a href="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Power_Series_for_sine_and_cosine"> 
+               Wiki zu JSXGraph</a></td>
+	  <td> 
+  </tr>
+</table>
+
+<table>
+ <colgroup>
+    <col width=300>
+    <col width=300>
+    <col width=300>
+  </colgroup>
+  <tr>	
+	  <td>
+
+</td><td>
+
+
+</td><td>
+
+</td>
+</tr>
+</table>
+
+<br clear="all">
+<center>
+
+
+<!-- JSXGraph MediaWiki extension 0.3 -->
+<!--
+<link rel='stylesheet' type='text/css' href='http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css' />
+<script src='http://jsxgraph.uni-bayreuth.de/distrib/prototype.js' type='text/javascript'></script>
+<script src='http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js' type='text/javascript'></script>
+<div id='box' class='jxgbox' style='width:800px; height:400px;'></div>i
+-->
+<script type='text/javascript'>
+board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, originX: 0, originY: 400, unitX: 50, unitY: 50});
+    board.suspendUpdate();
+    var Dx= [], Dy=[];
+    var nPoints;
+    var p = []; 
+    var t = [];
+    var xDat = []; 
+    var yDat = []; 
+    var z = []; 
+    var xSplineOnly;
+    var graph;
+    // Daten Flugbahn
+xDat[0]=2.4929   ;yDat[0]=3.8822  ;
+xDat[1]=1.7687  ;yDat[1]=3.8470 ;
+xDat[2]=2.3088  ;yDat[2]=3.9586 ;
+xDat[3]=3.2511  ;yDat[3]=3.9545 ;
+xDat[4]=3.9901  ;yDat[4]=3.9475 ;
+xDat[5]=3.9881  ;yDat[5]=3.9355 ;
+xDat[6]=4.5839  ;yDat[6]=4.0116 ;
+xDat[7]=5.0027  ;yDat[7]=3.9542 ;
+xDat[8]=5.9883  ;yDat[8]=4.0746 ;
+xDat[9]=5.9995  ;yDat[9]=4.0793 ;
+xDat[10]=7.0255  ;yDat[10]=4.2378 ;
+xDat[11]=7.0092  ;yDat[11]=4.2282 ;
+xDat[12]=7.9665  ;yDat[12]=4.6242 ;
+xDat[13]=7.9527  ;yDat[13]=4.6043 ;
+xDat[14]=8.7058  ;yDat[14]=5.2813 ;
+xDat[15]=8.7152  ;yDat[15]=5.2867 ;
+xDat[16]=9.7732  ;yDat[16]=5.5814 ;
+xDat[17]=10.0000 ;yDat[17]=5.3609 ;
+xDat[18]=9.3367  ;yDat[18]=5.2108 ;
+xDat[19]=8.4259  ;yDat[19]=4.7019 ;
+xDat[20]=8.4333  ;yDat[20]=4.7048 ;
+xDat[21]=7.2882  ;yDat[21]=4.5051 ;
+xDat[22]=6.0790  ;yDat[22]=4.2610 ;
+xDat[23]=5.0338  ;yDat[23]=4.5065 ;
+xDat[24]=4.6244  ;yDat[24]=4.5438 ;
+xDat[25]=4.2360  ;yDat[25]=4.6460 ;
+xDat[26]=4.2226  ;yDat[26]=4.6468 ;
+xDat[27]=3.4888  ;yDat[27]=4.9250 ;
+xDat[28]=3.5283  ;yDat[28]=4.9003 ;
+xDat[29]=2.8036  ;yDat[29]=5.3158 ;
+xDat[30]=2.8140  ;yDat[30]=5.2809 ;
+xDat[31]=2.0871  ;yDat[31]=5.7670 ;
+xDat[32]=2.0798  ;yDat[32]=5.7790 ;
+xDat[33]=1.8003  ;yDat[33]=6.4352 ;
+xDat[34]=1.8124  ;yDat[34]=6.3808 ;
+xDat[35]=1.1750  ;yDat[35]=6.2368 ;
+xDat[36]=1.1621  ;yDat[36]= 6.2397; 
+xDat[37]=4.178   ;yDat[37]=6.4694 ;
+xDat[38]=0.0023  ;yDat[38]=6.6017 ;
+xDat[39]=0.4416  ;yDat[39]=6.4994 ;
+xDat[40]=1.5541  ;yDat[40]=6.5571 ;
+
+
+    // Erzeugen der Flugbahn als parametrisierten Spline
+
+    p=[]; // Punkte fuer Koordinaten der Flugbahn
+    t=[]; // Kurvenparemeter der Flugbahn
+    i=0;
+    nPoints=xDat.length;
+
+    //p[0] = board.createElement('point', [xDat[0],yDat[0]], {style:4,name:i.toFixed(0)});
+    t[0] = 0;
+    for (i=1;i<nPoints;i++){
+//	   p[i] = board.createElement('point', [xDat[i],yDat[i]], {style:4,name:i.toFixed(0)});
+//	   t[i]=t[i-1]+p[i].Dist(p[i-1]);
+	   t[i] = t[i-1] + Math.sqrt( Math.pow((xDat[i]-xDat[i-1]),2) + Math.pow(yDat[i]-yDat[i-1],2) );
+    }
+
+   // Array der zweiten Ableitungen fuer die x-Koordinate
+   Dx = JXG.Math.Numerics.splineDef(t, xDat);
+   // Array der zweiten Ableitungen fuer die y-Koordinate
+   Dy = JXG.Math.Numerics.splineDef(t, yDat);
+
+   // create x-Spline
+   Fx = function(tloc) {
+      return JXG.Math.Numerics.splineEval(tloc, t, xDat, Dx);
+   }
+
+   // create y-Spline
+   Fy = function(tloc) {
+      return JXG.Math.Numerics.splineEval(tloc, t, yDat, Dy);
+   }
+
+    // initialisier xSpline only
+    xSplineOnly = false;
+
+
+    if (true) {
+        // Simple  plot-Loesung
+        x = [];
+        y = [];
+        delta = (t[nPoints-1]-t[0])/2000;
+        for (i=0;i<=2000;i++) {
+            x[i] = Fx(t[0]+i*delta);
+            y[i] = Fy(t[0]+i*delta);
+        }   
+        graph = board.createElement('curve', [x,y],{strokeWidth:5,strokeOpacity:0.5});
+    } else {
+        if (xSplineOnly == true) {
+        // Test graph 1: Spline der x-Koordinaten ueber t
+            graph = board.createElement('functiongraph', [Fy,t[0],t[nPoints-1]],{strokeWidth:5,strokeOpacity:0.5});
+        } else {
+        // Eigentlicher Graph, auf dem der Glieder positioniert werden soll: Parametrischer Spline
+            graph = board.createElement('curve', [Fx,Fy,t[0],t[nPoints-1]],{strokeWidth:5,strokeOpacity:0.5});
+        }
+    }
+
+    // Testgraph 2: Sinus: Nur Sinus allein: Da funktionert Test-Glider [1]
+    //graph2 = board.createElement('functiongraph', [Math.sin,0,4],{strokeWidth:5,strokeOpacity:0.5});
+
+
+    // Testkurve: Neville-Kurve (auf der auch der Glider 1 gleitet)
+    //	graph = board.createElement('curve', board.neville(p),{strokeWidth:5,strokeOpacity:0.5});
+   
+    gliders = [];
+    // Erster Glider auf Spline, funktioniert nicht auf Parametrischen Spline, aber auf Neville-Kurve
+    gliders[0] = board.createElement('glider', [0,2,graph],{style:6});
+    //gliders[0] = board.createElement('glider', [xDat[17],yDat[17],graph],{style:6});
+    
+    // Debug glider on Sinuns
+    // gliders[1] = board.createElement('glider', [1.57,1,graph2],{style:6});
+
+    // Gleider die auch auf dem Spline positioniert werden sollen
+    gliders[1] = board.createElement('glider', [xDat[2],yDat[2],graph],{style:6});
+    gliders[2] = board.createElement('glider', [xDat[8],yDat[8],graph],{style:6});
+    gliders[3] = board.createElement('glider', [xDat[15],yDat[15],graph],{style:6});
+    gliders[4] = board.createElement('glider', [xDat[20],yDat[20],graph],{style:6});
+ 
+    // Polygon zum Ausrechen der Flugstrecke fuer die Wertung
+    //board.createElement('polygon',gliders,{strokeColor:'red'});
+    //board.createElement('polygon',p,{strokeColor:'red'});
+    polyLine = []
+      polyLine[0] = board.createElement('line',["A","B"], {straightFirst:false, straightLast:false, strokeWidth:2, dash:2});
+      polyLine[1] = board.createElement('line',["B","C"], {straightFirst:false, straightLast:false, strokeWidth:2, dash:2});
+      polyLine[2] = board.createElement('line',["C","D"], {straightFirst:false, straightLast:false, strokeWidth:2, dash:2});
+      polyLine[3] = board.createElement('line',["D","E"], {straightFirst:false, straightLast:false, strokeWidth:2, dash:2});
+
+    
+    // Funktion, damit die Glider nicht an einander vorbeiziehen, von A. Wassermann
+    board.updateConditions = function() {
+        var i;
+        for (i=1;i<gliders.length;i++) {
+            if (gliders[i].position<gliders[i-1].position) {
+                gliders[i].coords = new JXG.Coords(JXG.COORDS_BY_USER, gliders[i-1].coords.usrCoords, board); 
+                gliders[i].update();
+            }
+        };
+    }
+
+// lenght of 
+
+    function lineLength() {
+      lenPolyLine = 0;
+      for (i=1;i<gliders.length;i++){
+         	lenPolyLine = lenPolyLine + gliders[i-1].Dist(gliders[i]);
+      }
+      return "Länge:" + lenPolyLine.toFixed(2);
+   }
+
+   //textEl = board.createElement('text',[4,3,"L�nge: " lenPolyLine])
+   textEl = board.createElement('text',[4,3,lineLength]);
+   
+   //function toggle Spline-Graph
+
+    board.unsuspendUpdate();
+
+</script>
+</p>
+</center>
+
+</p>
+
+
+
+</div> <!--bodyContent -->
+</div><!--Content -->
+</div><!--columnContent -->
+
+
+</div><!--GlobalWrapper -->
+
+
+</body></html>

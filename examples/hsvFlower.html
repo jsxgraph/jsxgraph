@@ -1,0 +1,54 @@
+﻿<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/AM3.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2 id="XXX">HSV Color Scheme II</h2>
+<div style="margin:50px;">
+<div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+</div>
+<form><input type="button" value="Export SVG" 
+    onClick="writeSVG(XMLSerializer().serializeToString(brd.renderer.svgRoot));"
+></form>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    
+    JXG.Options.text.useASCIIMathML = true;
+    
+        function writeSVG(t) {
+            w = window.open();
+            w.document.open();
+            t = t.replace(/</g,'&lt;');
+            t = t.replace(/>/g,'&gt;\n');
+            w.document.write(t);
+            w.document.close();
+        }
+        var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4]});
+        var H = brd.createElement('slider',[[-3,3.5],[2,3.5],[0,1,360]], {name:'H',fillColor:'black',strokeColor:'black'});
+        var S = brd.createElement('slider',[[-3,3],[2,3],[0,1,1]], {name:'S',fillColor:'black',strokeColor:'black'});
+        var V = brd.createElement('slider',[[-3,2.5],[2,2.5],[0,1,1]], {name:'V',fillColor:'black',strokeColor:'black'});
+        
+        var c = brd.createElement('curve', [function(phi){return 2.5*Math.cos(2*phi); }, [0, -1],0, function(){return 2*Math.PI;}],
+                {curveType:'polar', 
+                 strokewidth:2,
+                 strokeColor:'black',
+                 fillcolor:function(){ return JXG.hsv2rgb(H.Value(),S.Value(),V.Value()); }
+                });     
+        
+        var p = brd.createElement('point',[0,-1],{visible:false});
+        var ci = brd.createElement('circle',[p,0.75], 
+                {fillcolor:function(){ return JXG.hsv2rgb(180+H.Value(),S.Value(),V.Value()); },
+                 strokewidth:2,
+                 strokeColor:'black'
+                });             
+                
+        brd.createElement('text',[2,-2.2,'SVG Text: \u03B1 檔案'],{type:'internal'});
+        brd.createElement('text',[2,-2.8,'ASCIIMath: `sum_(i=1)^n (x^i)`'],{type:'html'});
+          /* ]]> */
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<html>
+	<head>
+   		<title>JSXGraph example</title>
+		<link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+		<script type="text/javascript" src="distrib/jquery.min.js"></script>
+		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+	</head>
+	<body class="jsxgraph_body">
+		<div id="box" class="jxgbox jsxgraph_present"></div>
+		<!-- Drawing area -->
+		<div id="debug" style="display:none;"></div>
+		<script type="text/javascript">
+    /* <![CDATA[ */
+
+    board = JXG.JSXGraph.initBoard('box', {boundingbox: [-7, 12, 7, -7], axis: true, grid: false});
+
+    var p = board.createElement('point', [3, 3], {name: 'Drag me',strokeColor:'red'});
+
+    var f = board.createElement('functiongraph', [function (x) {return Math.floor(Math.tan(x)*p.X());}, -4, 6], {strokeWidth: '2px'});
+
+  /* ]]> */
+  </script>
+<div id="debug" style="display:block;"></div>
+</body>
+</html>

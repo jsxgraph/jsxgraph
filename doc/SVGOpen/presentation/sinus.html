@@ -1,0 +1,27 @@
+<html>
+	<head>
+   		<title>JSXGraph example</title>
+		<link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+		<script type="text/javascript" src="distrib/jquery.min.js"></script>
+		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+	</head>
+	<body class="jsxgraph_body">
+		<div id="box" class="jxgbox jsxgraph_present_big"></div>
+		<!-- Drawing area -->
+		<div id="debug" style="display:none;"></div>
+		<script type="text/javascript">
+    /* <![CDATA[ */
+        var brd = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 400, originY: 300, grid:true, unitX: 50, unitY: 50, axis:true});        
+        var b = brd.createElement('slider',[[0.5,3.5],[4.5,3.5],[0,1,3]],{name:'a', strokeColor:'black', fillColor:'white'});
+        var f = function(x){ return b.Value()*Math.sin(x); }
+        var plot = brd.createElement('functiongraph',[f,-7,7], {strokeColor:'#32CD32', strokeWidth:'4px'});
+        var g = brd.D(f);
+        var plot2 = brd.createElement('functiongraph',[g,-7,7], {strokeColor:'#9370DB', strokeWidth:'2px'});
+        var os = brd.createElement('riemannsum',[f, 35, 'middle', 1.5, 7], {fillColor:'#B2222255', highlightFillColor:'#B2222255', strokeColor:'#8B1A1A', highlightStrokeColor:'#8B1A1A', strokeWidth:'2px'});
+        var i = brd.createElement('integral',[[-7, -6.5], plot], {fillColor:'#B2222255', strokeWidth:'2px', strokeColor:'#8B1A1A', face:'[]', labelColor:'#B22222'});
+        var t1 = brd.createElement('text',[-7,2,"(a*sin(x))'"],{strokeColor:'#9370DB'});
+        var t2 = brd.createElement('text',[-7,-1.5,"a*sin(x)"],{strokeColor:'#32CD32'}); 
+  /* ]]> */
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Chart examples</h2>
+  <div id="jxgbox" class="jxgbox" style="width:900px; height:600px;"></div>
+  <br clear=all>
+  <div id="debug" style="display:block;"></div>
+  <script type="text/javascript">
+    /* <![CDATA[ */
+
+    var dataArr = [30,16,12,8,8,8,6,4,4,2];
+    var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 450, unitX: 50, unitY: 50});
+    board.containerObj.style.backgroundColor = 'black';
+    
+    board.suspendUpdate();
+    var a = board.createElement('chart', dataArr, 
+        {chartStyle:'pie', colorArray:['#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE','#0F408D','#6F1B75','#CA147A'],
+         fillOpacity:0.9,center:[5,2],strokeColor:'white',highlightStrokeColor:'white',strokeWidth:4,
+         labelArray:['Ruby','JavaScript', 'Shell','Python', 'PHP', 'C','Perl', 'C++', 'Java', 'Flash'],
+         highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
+         highlightOnSector:true,
+         gradient:'linear'}
+    );
+    board.unsuspendUpdate();
+  /* ]]> */
+  </script>
+</body>
+</html>

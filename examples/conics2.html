@@ -1,0 +1,30 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <meta http-equiv="X-UA-Compatible" content="chrome=1">
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Conics II</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true});
+
+var A = board.create('point', [1,5], {style:6});
+var B = board.create('point', [1,2], {style:6});
+var C = board.create('point', [2,0], {style:6});
+var D = board.create('point', [0,0], {style:6});
+var E = board.create('point', [-1,5], {style:6});
+
+board.create('conic',[A,B,C,D,E]);
+board.create('conic',[-1,0,3,0,-1,0.5],{strokeColor:'red'});
+board.create('conic',[1,1,-25,0,0,0],{strokeColor:'red'});
+
+  /* ]]> */
+</script>
+</body>
+</html>

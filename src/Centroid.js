@@ -37,17 +37,27 @@
  */
 JXG.createCentroid = function(board, parents, attributes) {
     
-    if(JXG.IsPoint(parents[0]) && JXG.IsPoint(parents[1]) && JXG.IsPoint(parents[2])) {
+    if(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2])) {
         var p1 = parents[0], p2 = parents[1], p3 = parents[2];
         
         if((attributes == null) || (typeof attribues == undefined))
             attributes = new Object();
             
-        var cent = board.createElement('point', [function () {return (p1.X() + p2.X() + p3.X())/3;}, function () {return (p1.Y() + p2.Y() + p3.Y())/3;}], attributes);
+        var cent = board.create('point', [function () {return (p1.X() + p2.X() + p3.X())/3;}, function () {return (p1.Y() + p2.Y() + p3.Y())/3;}], attributes);
+        p1.addChild(cent);
+        p2.addChild(cent);
+        p3.addChild(cent);
+        cent.p1 = p1;
+        cent.p2 = p2;
+        cent.p3 = p3;
+
+        cent.generatePolynom = function() {
+            /* TODO generate polynom*/
+        };
         
         return cent;
     } else {
-        throw ("Can't create centroid with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");    
+        throw new Error("JSXGraph: Can't create centroid with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");    
     }
 };
 

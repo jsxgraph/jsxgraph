@@ -1,12 +1,47 @@
 /**
- * A class to parse color values
- * @author Stoyan Stefanov <sstoo@gmail.com>
- * @link   http://www.phpied.com/rgb-color-parser-in-javascript/
- * @license Use it if you like it
+ * Functions for color conversions. Based on a class to parse color values by Stoyan Stefanov <sstoo@gmail.com>
+ * @see http://www.phpied.com/rgb-color-parser-in-javascript/
  */
 
-JXG.RGBColor = function(color_string) {
-    this.ok = false;
+/**
+ * Converts a valid HTML/CSS color string into a rgb value array. This is the base
+ * function for the following wrapper functions which only adjust the output to
+ * different flavors like an object, string or hex values.
+ * @parameter {string} color_string A valid HTML or CSS styled color value, e.g. #12ab21, #abc, black, or rgb(12, 132, 233) <strong>or</string>
+ * @parameter {array} color_array Array containing three color values either from 0.0 to 1.0 or from 0 to 255. They will be interpreted as red, green, and blue values <strong>OR</strong>
+ * @parameter {number} r,g,b Three color values r, g, and b like those in the array variant.
+ * @type array
+ * @return RGB color values as an array [r, g, b] which component's are between 0 and 255.
+ */
+JXG.rgbParser = function() {
+
+    if(arguments.length == 0)
+        return;
+
+    if(arguments.length >= 3) {
+        arguments[0] = [arguments[0], arguments[1], arguments[2]];
+        arguments.length = 1;
+    }
+
+    var color_string = arguments[0];
+    if(JXG.isArray(color_string)) {
+        var testFloat = false, i;
+        for(i=0; i<3; i++)
+            testFloat |= /\./.test(arguments[0][i].toString());
+        for(i=0; i<3; i++)
+            testFloat &= (arguments[0][i] >= 0.0) & (arguments[0][i] <= 1.0);
+
+        if(testFloat)
+            return [Math.ceil(arguments[0][0] * 255), Math.ceil(arguments[0][1] * 255), Math.ceil(arguments[0][2] * 255)];
+        else {
+            arguments[0].length = 3;
+            return arguments[0];
+        }
+    } else if(typeof arguments[0] == 'string') {
+        color_string = arguments[0];
+    }
+
+    var r, g, b;
 
     // strip any leading #
     if (color_string.charAt(0) == '#') { // remove # if any
@@ -214,33 +249,244 @@ JXG.RGBColor = function(color_string) {
         var bits = re.exec(color_string);
         if (bits) {
             channels = processor(bits);
-            this.r = channels[0];
-            this.g = channels[1];
-            this.b = channels[2];
-            this.ok = true;
+            r = channels[0];
+            g = channels[1];
+            b = channels[2];
         }
 
     }
 
     // validate/cleanup values
-    this.r = (this.r < 0 || isNaN(this.r)) ? 0 : ((this.r > 255) ? 255 : this.r);
-    this.g = (this.g < 0 || isNaN(this.g)) ? 0 : ((this.g > 255) ? 255 : this.g);
-    this.b = (this.b < 0 || isNaN(this.b)) ? 0 : ((this.b > 255) ? 255 : this.b);
+    r = (r < 0 || isNaN(r)) ? 0 : ((r > 255) ? 255 : r);
+    g = (g < 0 || isNaN(g)) ? 0 : ((g > 255) ? 255 : g);
+    b = (b < 0 || isNaN(b)) ? 0 : ((b > 255) ? 255 : b);
 
-}
+    return [r, g, b];
+};
 
-// some getters
-JXG.RGBColor.prototype.toRGB = function () {
-    return 'rgb(' + this.r + ', ' + this.g + ', ' + this.b + ')';
-}
+/**
+ * Returns output of JXG.rgbParser as a CSS styled rgb() string.
+ */
+JXG.rgb2css = function () {
+    var r, g, b;
+    r = JXG.rgbParser.apply(JXG.rgbParser, arguments);
+    g = r[1];
+    b = r[2];
+    r = r[0];
+    return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+};
 
-JXG.RGBColor.prototype.toHex = function () {
-    var r = this.r.toString(16);
-    var g = this.g.toString(16);
-    var b = this.b.toString(16);
+/**
+ * Returns array returned by JXG.rgbParser as a HTML rgb string.
+ */
+JXG.rgb2hex = function () {
+    var r, g, b;
+    r = JXG.rgbParser.apply(JXG.rgbParser, arguments);
+    g = r[1];
+    b = r[2];
+    r = r[0];
+    r = r.toString(16);
+    g = g.toString(16);
+    b = b.toString(16);
     if (r.length == 1) r = '0' + r;
     if (g.length == 1) g = '0' + g;
     if (b.length == 1) b = '0' + b;
     return '#' + r + g + b;
-}
+};
 
+/**
+* Converts HSV color to RGB color.
+* Based on C Code in "Computer Graphics -- Principles and Practice,"
+* Foley et al, 1996, p. 593.
+* See also http://www.efg2.com/Lab/Graphics/Colors/HSV.htm  
+* @param {float} H value between 0 and 360
+* @param {float} S value between 0.0 (shade of gray) to 1.0 (pure color)
+* @param {float} V value between 0.0 (black) to 1.0 (white)
+* @return {string} RGB color string
+*/
+JXG.hsv2rgb = function(H,S,V) {
+    var R,G,B, f,i,hTemp, p,q,t;
+    H = ((H%360.0)+360.0)%360;
+    if (S==0) {
+        if (isNaN(H) || H < JXG.Math.eps) {
+            R = V;
+            G = V;
+            B = V;
+        } else {
+            return '#ffffff';
+        }
+    } else {
+        if (H>=360) {
+            hTemp = 0.0;
+        } else {
+            hTemp = H;
+        }
+        hTemp = hTemp / 60;     // h is now IN [0,6)
+        i = Math.floor(hTemp);        // largest integer <= h
+        f = hTemp - i;                  // fractional part of h
+        p = V * (1.0 - S);
+        q = V * (1.0 - (S * f));
+        t = V * (1.0 - (S * (1.0 - f)));
+        switch (i) {
+            case 0: R = V; G = t;  B = p; break;
+            case 1: R = q; G = V;  B = p; break;
+            case 2: R = p; G = V;  B = t; break;
+            case 3: R = p; G = q;  B = V; break;
+            case 4: R = t; G = p;  B = V; break;
+            case 5: R = V; G = p;  B = q; break;
+        }
+    }
+    R = Math.round(R*255).toString(16); R = (R.length==2)?R:((R.length==1)?'0'+R:'00');
+    G = Math.round(G*255).toString(16); G = (G.length==2)?G:((G.length==1)?'0'+G:'00');
+    B = Math.round(B*255).toString(16); B = (B.length==2)?B:((B.length==1)?'0'+B:'00');
+    return ['#',R,G,B].join(''); 
+};
+
+/**
+ * Converts r, g, b color to h, s, v.
+ * See http://zach.in.tu-clausthal.de/teaching/cg1_0708/folien/13_color_3_4up.pdf for more information.
+ * @param {number} r Amount of red in color. Number between 0 and 255.
+ * @param {number} g Amount of green. Number between 0 and 255.
+ * @param {number} b Amount of blue. Number between 0 and 255.
+ * @type Object
+ * @return Hashmap containing h,s, and v field.
+ */
+JXG.rgb2hsv = function() {
+    var r, g, b, fr, fg, fb, fmax, fmin, h, s, v, max, min, stx;
+    r = JXG.rgbParser.apply(JXG.rgbParser, arguments);
+    g = r[1];
+    b = r[2];
+    r = r[0];
+    stx = JXG.Math.Statistics;
+    fr = r/255.;
+    fg = g/255.;
+    fb = b/255.;
+    max = stx.max([r, g, b]);
+    min = stx.min([r, g, b]);
+    fmax = max/255.;
+    fmin = min/255.;
+
+    v = fmax;
+
+    s = 0.;
+    if(v>0) {
+        s = (v-fmin)/(v*1.);
+    }
+
+    h = 1./(fmax-fmin);
+    if(s > 0) {
+        if(max==r)
+            h = (fg-fb)*h;
+        else if(max==g)
+            h = 2 + (fb-fr)*h;
+        else
+            h = 4 + (fr-fg)*h;
+    }
+
+    h *= 60;
+    if(h < 0)
+        h += 360;
+
+    if(max==min)
+        h = 0.;
+
+    return [h, s, v];
+};
+
+
+/**
+ * Convert RGB color information to LMS color space.
+ * @param {number} r Amount of red in color. Number between 0 and 255.
+ * @param {number} g Amount of green. Number between 0 and 255.
+ * @param {number} b Amount of blue. Number between 0 and 255.
+ * @type Object
+ * @return Hashmap containing the L, M, S cone values.
+ */
+JXG.rgb2LMS = function() {
+    var r, g, b, l, m, s, ret
+        // constants
+        matrix = [[0.05059983, 0.08585369, 0.00952420], [0.01893033, 0.08925308, 0.01370054], [0.00292202, 0.00975732, 0.07145979]];
+
+    r = JXG.rgbParser.apply(JXG.rgbParser, arguments);
+    g = r[1];
+    b = r[2];
+    r = r[0];
+
+    // de-gamma
+    // Maybe this can be made faster by using a cache
+    r = Math.pow(r, 0.476190476);
+    g = Math.pow(g, 0.476190476);
+    b = Math.pow(b, 0.476190476);
+
+    l = r * matrix[0][0] + g * matrix[0][1] + b * matrix[0][2];
+    m = r * matrix[1][0] + g * matrix[1][1] + b * matrix[1][2];
+    s = r * matrix[2][0] + g * matrix[2][1] + b * matrix[2][2];
+
+    ret = [l, m, s];
+    ret.l = l;
+    ret.m = m;
+    ret.s = s;
+
+    return ret;
+};
+/**
+ * Convert color information from LMS to RGB color space.
+ * @param {number} l Amount of l value.
+ * @param {number} m Amount of m value.
+ * @param {number} s Amount of s value.
+ * @type Object
+ * @return Hashmap containing the r, g, b values.
+ */
+JXG.LMS2rgb = function(l, m, s) {
+    var r, g, b, ret
+        // constants
+        matrix = [[30.830854, -29.832659, 1.610474], [-6.481468, 17.715578, -2.532642], [-0.375690, -1.199062, 14.273846]];
+
+    // transform back to rgb
+    r = l * matrix[0][0] + m * matrix[0][1] + s * matrix[0][2];
+    g = l * matrix[1][0] + m * matrix[1][1] + s * matrix[1][2];
+    b = l * matrix[2][0] + m * matrix[2][1] + s * matrix[2][2];
+
+    // re-gamma, inspired by GIMP modules/display-filter-color-blind.c:
+    // Copyright (C) 2002-2003 Michael Natterer <mitch@gimp.org>,
+    //                         Sven Neumann <sven@gimp.org>,
+    //                         Robert Dougherty <bob@vischeck.com> and
+    //                         Alex Wade <alex@vischeck.com>
+    // This code is an implementation of an algorithm described by Hans Brettel,
+    // Francoise Vienot and John Mollon in the Journal of the Optical Society of
+    // America V14(10), pg 2647. (See http://vischeck.com/ for more info.)
+    lut_lookup = function (value) {
+        var offset = 127, step = 64;
+
+        while (step > 0) {
+            if (Math.pow(offset, 0.476190476) > value) {
+                offset -= step;
+            } else {
+                if (Math.pow(offset+1, 0.476190476) > value)
+                    return offset;
+
+                offset += step;
+            }
+
+            step /= 2;
+        }
+
+        /*  the algorithm above can't reach 255  */
+        if (offset == 254 && 13.994955247 < value)
+            return 255;
+
+        return offset;
+    };
+
+
+    r = lut_lookup(r);
+    g = lut_lookup(g);
+    b = lut_lookup(b);
+
+    ret = [r, g, b];
+    ret.r = r;
+    ret.g = g;
+    ret.b = b;
+
+    return ret;
+};

@@ -1,0 +1,58 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="polygone2.js"></script>
+</head>
+<body>
+<h2>Curve Test</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+var x = [];
+var y = [];
+var minX = 100;
+var maxX = 0;
+var minY = 20;
+var maxY = 0;
+for(var i=0;i<xy.length;i++) {
+    if(i%2 == 0) {
+        x.push(xy[i]);
+        if(xy[i] < minX) {
+            minX = xy[i];
+        }
+        if(xy[i] > maxX) {
+            maxX = xy[i];
+        }
+    }
+    else {
+        y.push(xy[i]);
+        if(xy[i] < minY) {
+            minY = xy[i];
+        }
+        if(xy[i] > maxY) {
+            maxY = xy[i];
+        }
+    }
+}
+
+
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-0.1,maxY+0.1,maxX+0.1,minY-0.1]});
+        
+
+//var x = [53.987002,53.988014,53.988269,53.98878,53.9894128,53.989429,53.98969,53.989694,53.989837,53.990218,53.990854, 53.991878,53.991998,53.992243,53.9925409,53.992489, 53.992487,53.992226,53.991322,53.990551,53.989524,53.988755, 53.98696,53.985681,53.984916,53.983385,53.983773,53.984672,53.986209,53.986342,53.986344,53.986389,53.986226, 53.9859458,53.984706,53.984072,53.983817,53.982422,53.981279,53.981154,53.981666,53.981921,53.982301,53.983065, 53.983704,53.984215,53.984848,53.985486,53.986116,53.986623,53.987002];
+
+//var y = [8.639084,8.634945,8.634508,8.634069,8.6351447,8.63689,8.638626,8.63993,8.64471,8.643838,8.64231,8.642085,8.639476,8.635996 ,8.634257,8.632516,8.631646,8.630345,8.627745,8.626882,8.626238,8.625811,8.625392,8.625838,8.627149,8.629119,8.630419,8.630846, 8.630833,8.63257,8.633439,8.635028,8.636483,8.6385515,8.642146,8.644325,8.644762,8.649336,8.65304,8.653911,8.653688,8.653252, 8.652163,8.650418,8.64976,8.649539,8.646926,8.646051,8.642569,8.640826,8.639084];
+
+
+var graph = brd.createElement('curve', [x,y], {});
+
+          /* ]]> */
+  </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<html>
+	<head>
+   		<title>JSXGraph example</title>
+		<link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+		<script type="text/javascript" src="distrib/jquery.min.js"></script>
+		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+	</head>
+	<body class="jsxgraph_body">
+<form><input type="button" value="clear and run a simulation of 200 days" onClick="t1.setProperty('visible:true');t2.setProperty('visible:true');t3.setProperty('visible:true');clearturtle();run()">
+<input type="button" value="stop" onClick="stop()">
+<input type="button" value="continue" onClick="goOn()"></form>
+		<div id="box" class="jxgbox jsxgraph_present"></div>
+		<!-- Drawing area -->
+		<div id="debug" style="display:none;"></div>
+		<script type="text/javascript">
+    /* <![CDATA[ */
+        var brd = JXG.JSXGraph.initBoard('box', {showNavigation:false, showCopyright:false, originX: 20, originY: 300, unitX: 3, unitY: 250, axis:true});
+         
+        var S = brd.createElement('turtle',[],{strokeColor:'blue',highlightStrokeColor:'blue',strokeWidth:3});
+        var I = brd.createElement('turtle',[],{strokeColor:'red',highlightStrokeColor:'red',strokeWidth:3});
+        var R = brd.createElement('turtle',[],{strokeColor:'green',highlightStrokeColor:'green',strokeWidth:3});
+         
+        var s = brd.createElement('slider', [[0,-0.3], [60,-0.3],[0,1E-6,1]], {name:'s'});
+        var beta = brd.createElement('slider', [[0,-0.4], [60,-0.4],[0,0.2857,1]], {name:'&beta;'});
+        var gamma = brd.createElement('slider', [[0,-0.5], [60,-0.5],[0,0.1428,0.5]], {name:'&gamma;'});
+        var mort = brd.createElement('slider', [[0,-0.6], [60,-0.6],[0,0.4,10.0]], {name:'% mortality'});
+        brd.createElement('text', [90,-0.3, "initially infected population rate"]);
+        brd.createElement('text', [90,-0.4, function(){ return "&beta;: infection rate, R<sub>0</sub>="+(beta.Value()/gamma.Value()).toFixed(2);}]);
+        brd.createElement('text', [90,-0.5, function(){ return "&gamma;: recovery rate = 1/(days of infection), days of infection= "+(1/gamma.Value()).toFixed(1);}]);
+         
+        var t = 0; // global
+         
+        brd.createElement('text', [100,-0.2, 
+                function() {return "Day "+t+
+                                   ": infected="+(1000000*I.Y()).toFixed(1)+
+                                   " recovered="+(1000000*R.Y()).toFixed(1)+
+                                   " dead="+(1000000*R.Y()*mort.Value()*0.01).toFixed(0);}]);
+        t1 = brd.createElement('text', [5,0.9,"Rate of susceptible population"], {strokeColor:'blue',visible:false});
+        t2 = brd.createElement('text', [5,0.8,"Rate of infected population"], {strokeColor:'red',visible:false});
+        t3 = brd.createElement('text', [5,0.7,"Rate of recovered population"], {strokeColor:'green',visible:false});
+         
+        S.hideTurtle();
+        I.hideTurtle();
+        R.hideTurtle();
+         
+        function clearturtle() {
+          S.cs();
+          I.cs();
+          R.cs();
+         
+          S.hideTurtle();
+          I.hideTurtle();
+          R.hideTurtle();
+        }
+         
+        function run() {
+          S.setPos(0,1.0-s.Value());
+          R.setPos(0,0);
+          I.setPos(0,s.Value());
+         
+          delta = 1; // global
+          t = 0;  // global
+          loop();
+        }
+         
+        function turtleMove(turtle,dx,dy) {
+          turtle.moveTo([dx+turtle.X(),dy+turtle.Y()]);
+        }
+         
+        function loop() {
+          var dS = -beta.Value()*S.Y()*I.Y();
+          var dR = gamma.Value()*I.Y();
+          var dI = -(dS+dR);
+          turtleMove(S,delta,dS);
+          turtleMove(R,delta,dR);
+          turtleMove(I,delta,dI);
+         
+          t += delta;
+          if (t<200.0) {
+            active = setTimeout(loop,10);
+          }
+        }
+        function stop() {
+          if (active) clearTimeout(active);
+          active = null;
+        }
+        function goOn() {
+           if (t>0) {
+             if (active==null) {
+               active = setTimeout(loop,10);
+             }
+           } else {
+             run();
+           }
+         
+        }   
+          /* ]]> */
+  </script>
+</body>
+</html>

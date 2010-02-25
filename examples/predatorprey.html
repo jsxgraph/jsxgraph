@@ -1,0 +1,112 @@
+<html>
+	<head>
+   		<title>JSXGraph example: Basic construction</title>
+		<link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+		<script type="text/javascript" src="distrib/jquery.min.js"></script>
+		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+	</head>
+	<body class="jsxgraph_body">
+	<div id="box1" class="jxgbox jsxgraph_present" style="width: 680px!, height: 480!"></div>
+	<div id="box2" class="jxgbox jsxgraph_present" style="width: 680px!, height: 100!"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    b = JXG._board('box1', {boundingbox: [-2, 28, 28, -2], axis: true, grid: false});
+    s = b._slider([[20.0,26.0],[25.0,26.0],[0.0,0.3,1.0]],{name:'&epsilon;<sub>1</sub>'});
+    st = b._text([20,25, "Birth rate predators"]);
+    u = b._slider([[20.0,24.0],[25.0,24.0],[0.0,0.7,1.0]],{name:'&epsilon;<sub>2</sub>'});
+    ut = b._text([20,23, "Death rate predators"]);
+
+    o = b._slider([[10.0,26.0],[15.0,26.0],[0.0,0.1,1.0]],{name:'&gamma;<sub>1</sub>'});
+    ot = b._text([10,25, "Death rate preys/per predator"]);
+    p = b._slider([[10.0,24.0],[15.0,24.0],[0.0,0.3,1.0]],{name:'&gamma;<sub>2</sub>'});
+    pt = b._text([10,23, "Reproduction rate pred./per prey"]);
+
+
+alert(b.defaultAxes.x);
+    
+    scp1 = b._glider([12, 0, b.defaultAxes.x], {name: "", showinfobox: false});
+    scp2 = b._point([function() { return scp1.X(); }, 22], {visible: false});
+    scl = b._segment([scp1, scp2], {strokeWidth: '1px'});
+
+
+    startpred = b._glider([0, 10, b.defaultAxes.y], {name:'Preys'});
+    startprey = b._glider([0, 5, b.defaultAxes.y], {name:'Predators'});
+
+    var g3 = null;
+
+    function ode() {
+        var I = [0, 25];
+        var N = 1000;
+
+        var f = function(t, x) {
+            var bpred = s.Value();//0.3;
+            var bprey = u.Value();//0.7;
+            var dpred = o.Value();//0.1;
+            var dprey = p.Value();//0.3;
+
+            var y = [];
+            y[0] = x[0]*(bpred - dpred*x[1]);
+            y[1] = -x[1]*(bprey - dprey*x[0]);
+
+            return y;
+        }
+
+        var x0 = [startpred.Y(), startprey.Y()];
+
+        var data = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Euler, x0, I, N, f);
+
+        var t = [];
+        var q = I[0];
+        var h = (I[1]-I[0])/N;
+        for(var i=0; i<data.length; i++) {
+            data[i].push(q);
+            q += h;
+        }
+
+        return data;
+    }
+    
+    function createCurve() {
+        var data = ode();
+        var t = [];
+        var dataprey = [];
+        var datapred = [];
+        for(var i=0; i<data.length; i++) {
+            t[i] = data[i][2];
+            datapred[i] = data[i][0];
+            dataprey[i] = data[i][1];
+        }
+        
+        g3 = b._curve([t, datapred], {strokeColor:'red', strokeWidth:'2px'});
+
+        g4 = b._curve([t, dataprey], {strokeColor:'blue', strokeWidth:'2px'});
+        g4.updateDataArray = function() {
+            var data = ode();
+            this.dataX = [];
+            g3.dataY = [];
+            this.dataY = [];
+            for(var i=0; i<data.length; i++) {
+                this.dataX[i] = t[i];
+                g3.dataY[i] = data[i][0];
+                this.dataY[i] = data[i][1];
+            }
+        }
+    }
+    
+    createCurve();
+
+    var b2 = JXG.JSXGraph.initBoard('box2', {boundingbox: [-0.1, 3, 25, -0.1], axis: false, grid: false});
+    var xax2 = b2._axis([[0, 0], [1, 0]]);
+    b.addChild(b2);
+
+    var dirtytrickdata = 0;
+    var data = [function () { var x = scp1.X(); for(var i=1; i<g3.dataX.length; i++) { if((x >= g3.dataX[i-1]) && (x <= g3.dataX[i])) { dirtytrickdata = g4.dataY[i]; return g3.dataY[i]; } }; },
+                function () { return dirtytrickdata; }];
+    var bar = b2._chart([data], {chartStyle:'bar',labels:['Predator<img src="http://byfiles.storage.live.com/y1pmHk6c8i1Uf1e5ubQsm%5f9MzCFylipabgLKUzmux8-4mruwl413qYrMbM40bwRWNnGWWcbA4tZaYE" />', 'Prey<img src="http://www.barflaedle.de/WebRoot/Store15/Shops/61964125/49F0/14A5/28D7/3F6C/0B74/C0A8/28BC/E0AA/schaf%5f500.jpg" />'],width:0.8,dir:'horizontal'});
+
+
+  /* ]]> */
+  </script>
+</body>
+</html>

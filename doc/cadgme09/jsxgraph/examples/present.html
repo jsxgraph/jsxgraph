@@ -1,0 +1,311 @@
+<html>
+	<head>
+		<script type="text/javascript" src="../distrib/jquery.min.js"></script>
+		<script type="text/javascript" src="../distrib/present.js"></script>
+	 <link href="../distrib/jsxgraph.present.css" rel="stylesheet" type="text/css">
+	</head>
+	<body class="content_body">
+ 		<p>
+		<div class="center_div">
+			<div class="border_div">
+				<div class="content_nav"><img src="images/go-previous.png" class="content_nav_left"><img src="images/go-next.png" class="content_nav_right"></div>
+				<div class="content_head">jsxgraph.org</div>			
+				<div class="content_text">
+					<div class="content_text_head"></div>
+					<div class="content_text_text"></div>
+				</div>			
+				<div class="content_div"><iframe class="content_iframe" id="ix" src="" scrolling="no"></iframe></div>
+				<div class="content_logo"><img src="images/ubt.gif"></div>
+			</div>
+		</div>
+<!-- Inhalte -->
+
+        <div class="pages">
+            <div class="files">p0</div>
+            <div class="titles">JSXGraph</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">p1</div>
+            <div class="titles">Future trends?</div>
+        </div>
+        <div class="pages">
+            <div class="files">p1a</div>
+            <div class="titles">Future trends?</div>
+            <ul><li> Java plugin?<li> Flash plugin?<li> HTML 5?</ul>
+        </div>
+        <div class="pages">
+            <div class="files">p1aa</div>
+            <div class="titles">Future trends?</div>
+            Which technology to use?
+        </div>
+        <div class="pages">
+            <div class="files">p1b</div>
+            <div class="titles">Future trends?</div>
+            <ul><li> Vector graphics<li> JavaScript</ul>
+        </div>
+        <div class="pages">
+            <div class="files">p2</div>
+            <div class="titles">JavaScript</div>
+            <p>
+            - All major browsers come with JavaScript
+            <p>
+            - JavaScript is fast
+        </div>
+        <div class="pages">
+            <div class="files">p3a</div>
+            <div class="titles">JSXGraph</div>
+        </div>
+        <div class="pages">
+            <div class="files">p3</div>
+            <div class="titles">JSXGraph</div>
+            Open source <b>library</b> for interactive Geometry / Mathematics in the web browser
+        </div>
+        <div class="pages">
+            <div class="files">p5</div>
+            <div class="titles">Features</div>
+        </div>
+        <div class="pages">
+            <div class="files">p4</div>
+            <div class="titles">Features</div>
+        </div>
+        
+        <div class="pages">
+            <div class="files">p6</div>
+            <div class="titles">Free point</div>
+        </div>
+        <div class="pages">
+            <div class="files">p7</div>
+            <div class="titles">Dependent point</div>
+             B = A + (0,1)
+        </div>
+        <div class="pages">
+            <div class="files">p10</div>
+            <div class="titles">Curves</div>
+            Space filling Hilbert curve:
+            <p>
+            Who said JavaScript is slow...?
+        </div>
+        <div class="pages">
+            <div class="files">p11</div>
+            <div class="titles">Turtle graphics</div>
+            <pre style="font-size:60%">
+t = brd.createElement('turtle');
+function koch(x,level) {
+    if (level<1) t.fd(x);
+    else {
+        koch(x/3,level-1);
+        t.lt(60);
+        koch(x/3,level-1);
+        t.rt(120);
+        koch(x/3,level-1);
+        t.lt(60);
+        koch(x/3,level-1);
+    }
+}
+t.setPos(-250,0);
+t.rt(90);
+koch(400,7);
+            </pre>
+16385 data points            
+        </div>
+        
+        <div class="pages">
+            <div class="files">p27</div>
+            <div class="titles"></div>
+        </div>
+        <div class="pages">
+            <div class="files">p32</div>
+            <div class="titles">Geometry</div>
+            Point<br>Line<br>Ray<br>Segment<br>Circle<br>Perpendicular<br>Intersection<br>Angle<br>...
+        </div>
+        <div class="pages">
+            <div class="files">p9</div>
+            <div class="titles">Geometry</div>
+            Scripting with JavaScript enables recursive constructions
+        </div>
+
+        <div class="pages">
+            <div class="files">p28</div>
+            <div class="titles"></div>
+        </div>
+        
+        <div class="pages">
+            <div class="files">p13</div>
+            <div class="titles">Turtle graphics</div>
+            Interaction
+<pre>
+t.forward(100);
+t.right(90);
+t.left(90);
+t.back(30);
+...
+</pre>
+        </div>
+
+        <div class="pages">
+            <div class="files">p14</div>
+            <div class="titles">Turtle graphics</div>          
+            <h3>Lindenmayer systems</h3>
+            Axioms + Rewriting rules + Turtle:<br>            
+            <ul>
+            <li style='margin:1em'>Space filling curves,</li>
+            <li style='margin:1em'>Plants,</li>
+            <li style='margin:1em'>Penrose tilings,</li>
+            <li style='margin:1em'>...</li>
+            </ul>
+        </div>
+        <div class="pages">
+            <div class="files">p15</div>
+            <div class="titles">Turtle graphics</div>
+            Simulate differential equations
+            <p>
+            y<sub>0</sub> = s
+            <p>
+            &Delta;y = &alpha;&sdot; y&sdot; &Delta;t 
+            <pre style="font-size:60%">
+dy = alpha.Value()*t.Y()*dt;
+t.moveTo([dt+t.X(),dy+t.Y()]);
+            </pre>
+        </div>
+
+        <div class="pages">
+            <div class="files">p29</div>
+            <div class="titles"></div>
+        </div>
+        <div class="pages">
+            <div class="files">p25</div>
+            <div class="titles">Calculus</div>
+            <p>Numerical on-the-fly-evaluation of ordinary differential equations (explicit Runge-Kutta).<p>
+            <p><img src="images/predator_prey_ode.png" /></p>
+        </div>
+        <div class="pages">
+            <div class="files">p16</div>
+            <div class="titles">Calculus</div>
+            Archimedes' approximation of &pi;
+        </div>
+        <div class="pages">
+            <div class="files">p17</div>
+            <div class="titles">Calculus</div>
+            Power series
+            <br>
+            <br>
+            <br>
+            <img src="sine.gif" />
+        </div>
+
+        <div class="pages">
+            <div class="files">p18</div>
+            <div class="titles">Calculus</div>
+            <ul>
+            <li>Lagrange interpolation
+            <li>Cubic spline interpolation
+            <li>Polynomial curve interpolation
+            </ul>
+        </div>
+        <div class="pages">
+            <div class="files">p33</div>
+            <div class="titles">Charts</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">p23</div>
+            <div class="titles">Advanced interaction</div>
+            Controlling JSXGraph from the "outside".
+            <p>
+            There is no "inside" or "outside" of the construction
+            anymore.
+        </div>
+
+        <div class="pages">
+            <div class="files">p26</div>
+            <div class="titles">Hooks</div>
+            Not only controlling JSXGraph from the "outside" is possible.
+            <p>
+            Hooks are functions called by JSXGraph on every update.
+            <p>
+            With this it is possible to access and display information from "inside" the construction
+            anywhere on the HTML page.
+        </div>
+
+        <!-- Automatic proves -->
+        <div class="pages">
+            <div class="files">p30</div>
+            <div class="titles"></div>
+        </div>
+		<div class="pages">
+			<div class="files">p20</div>
+			<div class="titles">Interactive way</div>
+			<p>With JSXGraph elements like points can leave a trace.</p>
+			<p>This is useful to determine geometric loci.</p>
+            <!--<p>But for this in some cases two points are required because of how JSXGraph distinguishes the two intersection points.</p>-->
+		</div>
+		<div class="pages">
+			<div class="files">p12</div>
+			<div class="titles">Client/server model</div>
+			<p>Example for how to extend JSXGraph server side using AJAX: 
+            <p>Determination of geometric loci with CoCoA and matplotlib.
+		</div>
+		<div class="pages">
+			<div class="files">p19</div>
+			<div class="titles">CAS way</div>
+            <div id="debug" style="padding: 0px; margin: 0px; font-size: 14px; left: -20px"></div>
+		</div>
+
+        <div class="pages">
+            <div class="files">p31</div>
+            <div class="titles"></div>
+        </div>
+        <div class="pages">
+            <div class="files">p24</div>
+            <div class="titles">Supported file formats</div>
+            GEONE<sub>x</Sub>T:
+            <pre style="font-size:60%">
+JXG.JSXGraph.loadBoardFromFile(
+    'box', 
+    'cube.gxt', 
+    'Geonext'
+    );            
+</pre>
+&rarr; GEONE<sub>x</Sub>T<sup>2</sup>
+        </div>
+
+        <div class="pages">
+            <div class="files">p21</div>
+            <div class="titles">Supported file formats</div>
+            Intergeo:
+            <pre style="font-size:60%">
+JXG.JSXGraph.loadBoardFromFile(
+    'box', 
+    'intergeo2.i2g', 
+    'Intergeo'
+    );            
+</pre>
+JSXGraph has (the first?) JavaScript implementations of gunzip and unzip
+        </div>
+
+        <div class="pages">
+            <div class="files">p34</div>
+            <div class="titles">Supported file formats</div>
+            GeoGebra
+        <div class="pages">
+            <div class="files">p35</div>
+            <div class="titles">Supported file formats</div>
+            GeoGebra:
+            <pre style="font-size:60%">
+JXG.JSXGraph.loadBoardFromFile(
+    'box', 
+    'feuerbach.ggb', 
+    'Geogebra'
+    );            
+</pre>
+        </div>
+
+        <div class="pages">
+            <div class="files">p22</div>
+            <div class="titles"></div>
+            More examples: http://jsxgraph.org
+        </div>
+
+	</body>
+</html>

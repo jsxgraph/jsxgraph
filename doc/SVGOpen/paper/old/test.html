@@ -1,0 +1,360 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Interactive SVG with JSXGraph</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2" /><meta name="description" content="JSXGraph is a open-source client-side web library for displaying interactive mathematics and drawings in a web browser. This article demonstrates what can be done with JSXGraph and explains how these things are implemented. The latter focuses more on SVG and VML." /><meta name="keywords" content="JSXGraph, Dynamic geometry, Interactive drawings" /></head><body><div class="article" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id3912220"></a>Interactive SVG with JSXGraph</h2></div><div><h3 class="subtitle"><i>JSXGraph</i></h3></div><div><div class="authorgroup"><div class="author"><h3 class="author"><span class="firstname">Bianca</span> <span class="surname">Valentin</span></h3><div class="affiliation"><span class="jobtitle">PhD student<br /></span><span class="org">
+                        <span class="orgname">University of Bayreuth</span>
+                        <span class="orgdiv">Department of mathematics</span>
+                        <div class="address"><p><br />
+                            <span class="city">Bayreuth</span><br />
+                            <span class="street">Universitätsstr. 30</span><br />
+                            <span class="postcode">95440</span><br />
+                            <span class="country">Germany</span><br />
+                            <span class="phone">+49-921 55 3389</span><br />
+                        </p></div>   
+                    </span></div><code class="email">&lt;<a class="email" href="mailto:bianca.valentin@uni-bayreuth.de">bianca.valentin@uni-bayreuth.de</a>&gt;</code></div><div class="author"><h3 class="author"><span class="firstname">Michael</span> <span class="surname">Gerhäuser</span></h3><div class="affiliation"><span class="jobtitle">Student<br /></span><span class="org">
+                        <span class="orgname">University of Bayreuth</span>
+                        <span class="orgdiv">Department of mathematics</span>
+                        <div class="address"><p><br />
+                            <span class="city">Bayreuth</span><br />
+                            <span class="street">Universitätsstr. 30</span><br />
+                            <span class="postcode">95440</span><br />
+                            <span class="country">Germany</span><br />
+                            <span class="phone"></span><br />
+                        </p></div>   
+                    </span></div><code class="email">&lt;<a class="email" href="mailto:michael.gerhaeuser@gmail.com">michael.gerhaeuser@gmail.com</a>&gt;</code></div></div></div><div><div class="abstract"><p class="title"><b>Abstract</b></p><p>JSXGraph is a open-source client-side web library for displaying interactive mathematics and drawings in a web browser. This article demonstrates what can be done with JSXGraph and explains how these things are implemented. The latter focuses more on SVG and VML.</p></div></div></div><hr /></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#id3912399">Introduction</a></span></dt><dt><span class="section"><a href="#id3912775">Mathematics</a></span></dt><dd><dl><dt><span class="section"><a href="#id3912794">JSXGraph as a web viewer for dynamic geometry software</a></span></dt><dt><span class="section"><a href="#id3912850">Currently supported file formats</a></span></dt><dt><span class="section"><a href="#id3912887">Constructing from scratch</a></span></dt><dt><span class="section"><a href="#id3912975">Calculus</a></span></dt></dl></dd><dt><span class="section"><a href="#id3913056">Turtle graphics</a></span></dt><dd><dl><dt><span class="section"><a href="#id3913067">Turtle graphics in mathematical modelling</a></span></dt><dt><span class="section"><a href="#id3913102">Drawing with turtle graphics</a></span></dt></dl></dd><dt><span class="section"><a href="#id3913217">Charts</a></span></dt><dt><span class="section"><a href="#id3913292">JSXGraph as a front end to server side applications</a></span></dt><dd><dl><dt><span class="section"><a href="#id3913326">Just AJAX</a></span></dt><dt><span class="section"><a href="#id3913386">JXG.Server</a></span></dt></dl></dd><dt><span class="section"><a href="#id3913442">Plugins for integration in other web applications</a></span></dt><dt><span class="section"><a href="#id3913509">Implementation details</a></span></dt><dd><dl><dt><span class="section"><a href="#id3913520">Cross-browser development</a></span></dt><dt><span class="section"><a href="#id3913552">SVG vs. VML</a></span></dt><dt><span class="section"><a href="#id3913642">HTML elements</a></span></dt><dt><span class="section"><a href="#id3913663">Speed improvements</a></span></dt></dl></dd><dt><span class="bibliography"><a href="#id3913913">References</a></span></dt></dl></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id3912399"></a>Introduction</h2></div></div></div><p>JSXGraph<sup>[<a id="id3912654" href="#ftn.id3912654" class="footnote">1</a>]</sup>  
+            is a client-side web application/library for advanced vector graphics in a web browser. Its range of applications starts from
+            the display of simple bar charts and pie charts up to the interactive display of function graphs and 
+            geometric constructions used in schools and universities.
+            Even more advanced features of JSXGraph are the on-the-fly solving of Differential Equation Systems, the display of 
+            Lindenmayer systems<sup>[<a id="id3912642" href="#ftn.id3912642" class="footnote">2</a>]</sup>, which are of importance in Biology, and dynamic computation of regression polynomials.
+        </p><p>
+            JSXGraph is a library which may be used in various situations. The main application is to serve as a client-side viewer for
+            educational Mathematics materials for schools and universities. 
+            Usually, these constructions, especially from Euclidean Geometry, are available in different proprietary XML based file formats, and are 
+            intended to be displayed by their associated Java applet. 
+            In order to compensate the slow demise of Java applets in the web browsers, JSXGraph may prove to be
+            valuable. 
+            At the moment JSXGraph supports the file format of 
+            GEONExT<a class="xref" href="#GXT" title="http://www.geonext.de/">[<abbr class="abbrev">GXT</abbr>]</a>, 
+            Intergeo<a class="xref" href="#I2GEO" title="http://i2geo.net">[<abbr class="abbrev">I2GEO</abbr>]</a>, 
+            and - at least partially - 
+            GeoGebra<a class="xref" href="#GGB" title="http://www.geogebra.org/">[<abbr class="abbrev">GGB</abbr>]</a>.
+            Since JSXGraph comes with its own implementation of unzip and gunzip, 
+            it should be easy to adapt JSXGraph to a whole varity of even more file formats.
+        </p><p>
+            Beside using it as a viewer of existing material, the JSXGraph library may be used as an API for advanced special purpose visualizations.
+            JSXGraph enables interactive experiments with sophisticated mathematical problems in the web browser. One example is the simulation
+            of the epidemiology model for the swine flu<sup>[<a id="id3912724" href="#ftn.id3912724" class="footnote">3</a>]</sup>.
+            The possibilities of JSXGraph in this respect exceed by far the options offered by software which is common in schools today.
+        </p><p>
+            Another possible application of JSXGraph is to use it as a front end for server based applications. 
+            One example is the widely-spread free statistics software R<a class="xref" href="#R" title="http://r-project.org">[<abbr class="abbrev">R</abbr>]</a>. 
+            After the mouse up event is fired in this application, the coordinates of the points
+            are sent via AJAX to the R interface on server side. After doing some R computations on the server side, the 
+            web server sends the results back to the browser. There the display is updated by JSXGraph. 
+            A more simple application of JSXGraph can be the creation of charts on server side.
+            For example PHP could be used to generate JSXGraph charts which are sent to the web
+            browser. Hence the high quality of the vector graphics display can be fully exploited.
+            The additional overhead of downloading JSXGraph is less than 100 kByte, which is smaller than most bitmap images.
+        </p><p>
+            From a technical point of view, JSXGraph is implemented in JavaScript. It generates SVG output on Mozilla-, Webkit-, and Presto-based 
+            browsers, and VML on the Internet Explorer. 
+            Therefore, JSXGraph runs on every modern browser. 
+        </p><p>
+            JSXGraph is open source software, released under the Lesser GNU General Public License (LGPL). The source code
+            is hosted by sourceforge.
+        </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id3912775"></a>Mathematics</h2></div></div></div><p>The originally intended purpose of JSXGraph was having a JavaScript library for displaying geometric constructions in a web browser. So it is possible to visualize geometric elements that are taught in schools and universities like points, lines, circles, arcs, and angles, as well as predefined composition elements. JSXGraph not only provides tools for displaying geometric constructions but also for doing calculus like plotting curves starting from function graphs with tangents up to parametric and polar curves, splines or other interpolation methods. </p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3912794"></a>JSXGraph as a web viewer for dynamic geometry software</h3></div></div></div><p>Dynamic geometry software (DGS) are computer programs which allow one to create and then manipulate geometric constructions, primarily in plane geometry. In most DGS, one starts a construction by putting a few points and using them to define new objects such as lines, circles or other points. After some construction is done, one can move the points one started with and see how the construction changes.</p><p>
+            There are lots of different available software packages to play around dynamically with geometry at schools and universities. Most of them are written in Java, such as GeoGebra, Cinderella<a class="xref" href="#CDY" title="http://cinderella.de">[<abbr class="abbrev">CDY</abbr>]</a>, Compass and Ruler<a class="xref" href="#CaR" title="http://zirkel.sourceforge.net/">[<abbr class="abbrev">CaR</abbr>]</a> or GEONExT, others like The Geometer's Sketchpad<a class="xref" href="#TGS" title="http://www.dynamicgeometry.com/">[<abbr class="abbrev">TGS</abbr>]</a> or Cabri<a class="xref" href="#CABRI" title="http://cabri.com">[<abbr class="abbrev">CABRI</abbr>]</a> offer a Java based web viewer. So if you want to integrate a construction that was created with one of these DGS in a web page, it takes some time to load the corresponding Java applet before you can use it. There are moreover big doubts about the future of Java in a web browser because Java applets are vanishing more and more from the internet and are actually not supported in browsers on modern mobile internet devices. As a result, the idea of JSXGraph was to read GEONExT Files and display them in the browser using JavaScript to manage the corresponding DOM elements of SVG or VML, depending on what browser is used. JavaScript is furthermore used to realize the dynamic part in DGS by capturing the browser's mouse events. </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3912850"></a>Currently supported file formats</h3></div></div></div><p>Since JSXGraph has evolved from the GEONExT project, the support of its file format is almost complete. 
+Other file formats are under development. For example JSXGraph is involved in the European Intergeo project which unites several dynamic geometry systems (GeoGebra, Cabri, GEONExT, Cinderella, etc.) with a common file format that can be displayed within a browser using the Intergeo reader of JSXGraph. Support for reading GeoGebra files directly is under development in cooperation with the GeoGebra developer team.
+            </p><div class="example"><a id="id3912869"></a><p class="title"><b>Example 1. Loading a GEONExT construction from a file named geonextConstruction.gxt</b></p><div class="example-contents"><pre class="programlisting">&lt;div id="box" class="jxgbox" style="width:500px; height:500px;"&gt;&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+   var b2 = JXG.JSXGraph.loadBoardFromFile('box', 'geonextConstruction.gxt', 'Geonext');
+&lt;/script&gt;</pre></div></div><br class="example-break" /></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3912887"></a>Constructing from scratch</h3></div></div></div><p>The JSXGraph API used in the readers for the different file formats can also be used to create a construction from scratch or to manipulate a construction loaded from a given file. JSXGraph contains functions for compass and ruler constructions in euclidean geometry basing on points, lines, circles, arcs, and angles. Those can be intersected or combined in predefined ways. For example one can construct a line that is parallel to another one or a point that is the midpoint between two other points by using integrated JSXGraph methods. Additionally, one can easily implement own composition elements with JavaScript and the above-mentioned functions. 
+            </p><div class="example"><a id="id3912908"></a><p class="title"><b>Example 2. Constructing the euler line of a triangle from scratch</b></p><div class="example-contents"><pre class="programlisting">/* triangle */
+A = brd.createElement('point',[1,0]);
+B = brd.createElement('point',[-1,0]);
+C = brd.createElement('point',[0.2,1.5]);
+triangle = brd.createElement('polygon',[A,B,C]);
+
+/* heights */ 
+hc = brd.createElement('perpendicular',[pol.borders[0],C],{name:['','H_c']});
+ha = brd.createElement('perpendicular',[pol.borders[1],A],{name:['','H_a']});
+hb = brd.createElement('perpendicular',[pol.borders[2],B],{name:['','H_b']});
+h = brd.createElement('intersection',[hc[0],hb[0],0],{name:'H'});
+
+/* median lines */ 
+mc = brd.createElement('midpoint',[A,B],{name:'M_c'});
+ma = brd.createElement('midpoint',[B,C],{name:'M_a'});
+mb = brd.createElement('midpoint',[C,A],{name:'M_b'});
+sa = brd.createElement('segment',[ma,A]);
+sb = brd.createElement('segment',[mb,B]);
+sc = brd.createElement('segment',[mc,C]);
+/* centroid */
+s = brd.createElement('intersection',[sa,sc,0],{name:'S'});
+ 
+/* circumcircle */
+[cPoint,cCirc] = brd.createElement('circumcircle',[A,B,C],{name:['U','']});
+cCirc.setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
+ 
+eulerLine = brd.createElement('line',[s,cPoint],{strokeWidth:2,strokeColor:'#901B77'});</pre></div></div><br class="example-break" /><div class="figure"><a id="euler"></a><p class="title"><b>Figure 1. The Euler Line</b></p><div class="figure-contents"><div class="mediaobject"><img src="euler.png" alt="The Euler Line" /></div></div></div><br class="figure-break" /></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3912975"></a>Calculus</h3></div></div></div><p>Beyond the capabilities of JSXGraph with regard to geometric constructions, one is also able to visualize calculus.
+            The possibilities start from plotting simple function graphs to displaying more complex graphs like parametric and polar curves which can be analyzed using the implemented methods for tangents, integrals or spline interpolation. 
+            </p><div class="example"><a id="id3912992"></a><p class="title"><b>Example 3. Sourcecode to construction shown in <a class="xref" href="#calculus" title="Figure 2. Sine with it's derivative and riemann sum.">Figure 2, “Sine with it's derivative and riemann sum.”</a></b></p><div class="example-contents"><pre class="programlisting">var brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 400, originY: 200, grid:true, unitX: 50, unitY: 50});
+brd.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
+brd.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});         
+var b = brd.createElement('slider',[[1,3.5],[5,3.5],[0,1,3]],{name:'a', strokeColor:'black', fillColor:'white'});
+var f = function(x){ return b.Value()*Math.sin(x); }
+var plot = brd.createElement('functiongraph',[f,-7,7], {strokeColor:'#32CD32', strokeWidth:'4px'});
+var g = brd.D(f);
+var plot2 = brd.createElement('functiongraph',[g,-7,7], {strokeColor:'#9370DB', strokeWidth:'2px'});
+var os = brd.createElement('riemannsum',[f, 35, 'middle', -7, 7], {fillColor:'#B22222', fillOpacity:0.3, strokeColor:'#8B1A1A', strokeWidth:'2px'});</pre></div></div><br class="example-break" /><div class="figure"><a id="calculus"></a><p class="title"><b>Figure 2. Sine with it's derivative and riemann sum.</b></p><div class="figure-contents"><div class="mediaobject"><img src="calculus.png" alt="Sine with it's derivative and riemann sum." /></div></div></div><br class="figure-break" /><p>With an implementation of an explicit Runge-Kutta process, JSXGraph can also be used to solve ordinary differential equations on the fly with the possibility to change the parameters on runtime and watch the results.
+            </p></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id3913056"></a>Turtle graphics</h2></div></div></div><p>Turtle graphics as a method of drawing offer a huge variety of applications. So JSXGraph provides an easy-to-use interface to them.</p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3913067"></a>Turtle graphics in mathematical modelling</h3></div></div></div><p>Mathematic modelling with differential equations can also be done by using turtle graphics. Exponential population growth model can be simulated easily by using the discrete analogue of the corresponding differential equation and computing the movement of the turtle in equidistant small time intervals. </p><div class="example"><a id="id3913082"></a><p class="title"><b>Example 4. Simulating exponential population growth using turtle graphics</b></p><div class="example-contents"><pre class="programlisting">var board = JXG.JSXGraph.initBoard('box', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
+var t = board.createElement('turtle',[4,3,70]);
+...
+var dy = alpha*t.Y()*dx;   // Exponential growth
+t.moveTo([dx+t.X(),dy+t.Y()]);</pre></div></div><br class="example-break" /><p>In a similar way, logistic or autocatalytic population growth processes can be modelled. A further application which can be simulated with turtle graphics is epidemiology where a set of differential equations is given to predict the immediate consequences of a epidemic like the Hong Kong flu or the swine flu. With only a few lines of programm code in JSXGraph one can study the chronological sequence of the rate of susceptible, infected and recovered population.
+            </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3913102"></a>Drawing with turtle graphics</h3></div></div></div><p>An advantage of using turtle graphics is the easy way to draw. The standard commands are going forward for a given numer of units and turning left or right in a given angle. The following programm listing draws "SVG" shown in the picture below.</p><div class="example"><a id="svgturtlesource"></a><p class="title"><b>Example 5. Drawing "SVG" using a turtle.</b></p><div class="example-contents"><pre class="programlisting">var t = board.createElement('turtle');
+// Draw the S,
+t.rt(90); t.fd(100); t.lt(90); t.fd(100); t.lt(90); t.fd(100); t.rt(90); t.fd(100); t.rt(90); t.fd(100);
+// the V, and
+t.rt(70); t.fd(210); t.lt(140); t.fd(210);
+// the G
+t.rt(70); t.fd(100); t.bk(100); t.rt(90); t.fd(200); t.lt(90); t.fd(100); t.lt(90); t.fd(100); t.lt(90); t.fd(40);</pre></div></div><br class="example-break" /><div class="figure"><a id="nikolaus"></a><p class="title"><b>Figure 3. SVG written by a turtle. Result of <a class="xref" href="#svgturtlesource" title="Example 5. Drawing &quot;SVG&quot; using a turtle.">Example 5, “Drawing "SVG" using a turtle.”</a></b></p><div class="figure-contents"><div class="mediaobject"><img src="svgturtle.png" alt="SVG written by a turtle. Result of" /></div></div></div><br class="figure-break" /><p>This approach can be used to easily produce beautiful Lindenmayer systems known from chaos theory like plants or penrose tilings. Similarly, well-known fractals like the Sierpinski triangle or the Koch curve can be drawn. Other applications can be found in statistics where one can simulate random walks with turtles.
+            </p><div class="figure"><a id="koch"></a><p class="title"><b>Figure 4. The Koch curve with recursion level 7</b></p><div class="figure-contents"><div class="mediaobject"><img src="koch.png" alt="The Koch curve with recursion level 7" /></div></div></div><br class="figure-break" /></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id3913217"></a>Charts</h2></div></div></div><p>After implementing all the geometric objects and calculus in JSXGraph it was not difficult to extend JSXGraph to support charts. For example line charts and cubic spline interpolated charts are made of function graphs,
+        sectors are used to display pie charts, and horizontal resp. vertical bar charts are based on polygons. Of course all of the visual options from the geometric elements like fill and stroke colors, fill gradients, line styles, shadows or special highlighting effects are passed on to the charts. But also the dynamics is still available, so even interactive charts can be done with JSXGraph which is useful for forecasts with varying parameters.</p><div class="example"><a id="id3913236"></a><p class="title"><b>Example 6. Drawing an interactive bar chart</b></p><div class="example-contents"><pre class="programlisting">board = JXG.JSXGraph.initBoard('box', {originX: 50, originY: 450, unitX: 50, unitY: 50, axis:false});
+board.suspendUpdate();
+board.createElement('axis', [[0,0], [1,0]], {strokeColor:'black'});
+board.createElement('axis', [[0,0], [0,1]], {strokeColor:'black'});            
+
+var s = board.createElement('slider', [[8,7],[11,7],[1,1,1.5]], {name:'S',strokeColor:'black',fillColor:'white'});
+var f = [function(){return this.board.round(s.Value()*4.5,2);},
+         function(){return this.board.round(s.Value()*(-1),2);},
+        ...
+         function(){return this.board.round(s.Value()*(-1.25),2);}
+         ];
+var chart = board.createElement('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
+/* ...
+   setting additional style properties
+   ...
+*/</pre></div></div><br class="example-break" /><div class="figure"><a id="chart"></a><p class="title"><b>Figure 5. A pie chart one the left hand side and an interactive bar chart together with a static line chart on the right hand side.</b></p><div class="figure-contents"><div class="mediaobject"><img src="charts.png" alt="A pie chart one the left hand side and an interactive bar chart together with a static line chart on the right hand side." /></div></div></div><br class="figure-break" /></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id3913292"></a>JSXGraph as a front end to server side applications</h2></div></div></div><p>JavaScript enables us to use the XmlHTTPRequest object to interact with server side applications. Currently one can use our AJAX wrapper JXG.FileReader or the one
+        provided by Prototype<sup>[<a id="id3913305" href="#ftn.id3913305" class="footnote">4</a>]</sup> or jQuery<sup>[<a id="id3913315" href="#ftn.id3913315" class="footnote">5</a>]</sup>.
+        So JSXGraph can be used to visualize the output of server side calculations but provides new input for server applications, too.
+        </p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3913326"></a>Just AJAX</h3></div></div></div><p>
+            For example you can fetch share prices from a web site like Yahoo finance. To do this a script on your own webserver is required because of security restrictions concerning the XmlHTTPRequest object which
+            cannot be used in conjunction with a url that is not on the same server as the web site starting the request. After starting the script from JavaScript it sends back the data from Yahoo which then is parsed by
+            the JavaScript and visualized using a curve.
+            </p><div class="example"><a id="id3913259"></a><p class="title"><b>Example 7. JavaScript invoking a PHP script using AJAX</b></p><div class="example-contents"><pre class="programlisting">var hi, lo, brd, periodical, 
+    brd, g, txt, val,
+    x = [],
+    y = [];
+  
+fetchData = function() {
+    new Ajax.Request('/ajax/stockquotes.php', {
+        onComplete: function(transport) {
+            var t, a;
+            if (200 == transport.status) {
+                t = transport.responseText;
+                a = t.split(',');
+                x.push(x.length+1);
+                y.push(a[1]);
+                val = a[1];  // set the text
+                if (!g) { 
+                    g = brd.createElement('curve', [x,y],{strokeWidth:3, strokeColor:'green',shadow:true}); 
+                    txt = brd.createElement('text', [3,(hi+lo)*0.5,function(){return 'GDAXI = '+val;}],{fontSize:'14px'}); 
+                } else {
+                    g.dataX = x;                    
+                    g.dataY = y;
+                }
+                brd.update();
+            };
+    }});
+};
+ 
+// Fetch max and min, and start the periodical update.
+new Ajax.Request('/ajax/stockquotes.php', {
+        onComplete: function(transport) {
+            var a, t;
+            if (200 == transport.status) {
+                t = transport.responseText;
+                a = t.split(',');
+                hi = a[6]*1.001;
+                lo = a[7]*0.999;
+                brd = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[0,hi,200,lo]});
+                brd.createElement('axis',[[0,lo],[1,lo]]);
+            };
+    }});
+ 
+periodical = setInterval(fetchData,1000);  // Start the periodical update</pre><pre class="programlisting">&lt;?php
+  $fp = fopen ("http://finance.yahoo.com/d/quotes.csv?s=^gdaxi&amp;f=sl1d1t1c1ohgv&amp;e=.csv","r");
+  echo fgets ($fp, 1024);
+  fclose ($fp);
+?&gt;       </pre></div></div><br class="example-break" /></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3913386"></a>JXG.Server</h3></div></div></div><p>
+      For quick'n'dirty solutions the AJAX interface is nice. But if you want to implement an interface to a server side program and want to use it with other worksheets or share it with other people, you'd better take
+      a look at JXG.Server. This is a frontend to a python based plugin system. These plugins are called modules and can be loaded easily with just one function call. After initializing the functionality is avaiable through
+      a JavaScript interface in the browser and all the AJAX stuff like parameter handling and return data parsing is done by the module.
+    </p><div class="example"><a id="id3913404"></a><p class="title"><b>Example 8. 
+        Python module on the server which multiplies a given number by 3
+      </b></p><div class="example-contents"><p>
+      </p><pre class="programlisting">from JXGServerModule import JXGServerModule
+import JXG
+
+class JXGModuleMultiply(JXGServerModule):
+
+    def init(self, resp):
+        resp.addHandler(self.mult, 'function(data) { alert(data.y); }')
+        return
+
+    def mult(self, resp, x):
+        resp.addData('y', 3*x)
+        return</pre><p>
+      This module is in a file called jxgmodulemultiply.py and can be loaded with JXG.Server through
+      </p><pre class="programlisting"> JXG.Server.loadModule('jxgmodulemultiply'); </pre><p>
+      After the module has been loaded the python function can be accessed with
+      </p><pre class="programlisting"> JXG.Server.modules.jxgmodulemultiply.mult(5); </pre><p>
+      which will result in an alert notification window displaying "15".</p></div></div><br class="example-break" /></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id3913442"></a>Plugins for integration in other web applications</h2></div></div></div><p>To ease the integration of JSXGraph into other web applications we provide some plugins for a couple of existing web applications. That are the blogging software Wordpress<sup>[<a id="id3913454" href="#ftn.id3913454" class="footnote">6</a>]</sup>, 
+        the basis software for Wikipedia called MediaWiki<sup>[<a id="id3913466" href="#ftn.id3913466" class="footnote">7</a>]</sup>, and the course management system Moodle<sup>[<a id="id3913475" href="#ftn.id3913475" class="footnote">8</a>]</sup>. The latter one ist still experimental. The user only has to provide a few options for the drawing panel
+        and the JavaScript construction code or a url to a file in a format supported by JSXGraph. The rest is done by the plugin, like loading the necessary files, initializing the division element containing the
+        drawing panel and finally loading the file or the javascript construction code.</p><div class="example"><a id="id3913491"></a><p class="title"><b>Example 9. Include a JSXGraph construction on a MedaWiki page using the MediaWiki plugin</b></p><div class="example-contents"><pre class="programlisting">[... wiki page content ...]
+&lt;jsxgraph height="500" width="600" board="board"  box="box1"&gt;
+brd = JXG.JSXGraph.initBoard('box1', {originX: 10, originY: 250, unitX: 40, unitY: 20, axis:true});
+var t = brd.createElement('point',[4,3]);
+&lt;/jsxgraph&gt;
+[... wiki page content ...] </pre></div></div><br class="example-break" /></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="id3913509"></a>Implementation details</h2></div></div></div><p>
+            The main focus of JSXGraph lies on interactivity. The JSXGraph user should experience an immediate feedback to the dragging of points
+            with the mouse. So, special attention has to be paid to fast reacting to the mouse move and mouse up events. On the other hand
+            we want to exploit the superb output quality of vector graphics as offered by SVG. These two controversial goals - 
+            speed versus quality - have to be balanced. 
+        </p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3913520"></a>Cross-browser development</h3></div></div></div><p>
+            JSXGraph works on every major browser. In JSXGraph the cross-browser issues are handled by an external library, where
+            the web developer who uses JSXGraph can choose between
+            either the Prototype JavaScript library 
+            or the
+            jQuery library.
+            JSXGraph can be used with either of these two libraries equally good. 
+            Only very few features of these libraries are used and the access is capsuled in some lines in the
+            source code file jsxgraph.js. Mainly the cross-browser handling of events is delegated to the external libraries.
+            Everything else in JSXGraph is built up from scratch and does not rely on any third-party library.
+            So, it should be easy to port JSXGraph to a further framework, if necessary.
+        </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3913552"></a>SVG vs. VML</h3></div></div></div><p>
+                The Microsoft Internet Explorer has still the largest market share of all browsers. 
+                Since we do not want to exclude the users of the Internet Explorer 
+                we have to adapt JSXGraph to this browser as well. The Internet Explorer can not display SVG, but since the year 1998 
+                Microsoft<a class="xref" href="#VML98" title="Vector Markup Language (VML)">[<abbr class="abbrev">VML1998</abbr>]</a>
+                supports VML 
+                - vector markup language - as vector graphic language in the Internet Explorer. 
+                Early in the development process of JSXGraph we decided to implement SVG and VML drawing separately, without using one of the
+                existing abstraction layers. The reason for that decision was performance, the existing layers were too slow at that time.
+            </p><p>
+                SVG and VML are similar in many aspects, but different in many details. In order to realize visual properties VML heavily makes use of
+                subnodes of XML nodes. SVG however mostly uses attributes for the same visual properties.
+                Therefore, the JSXGraph source contains the two files SVGRenderer.js and VMLRenderer.js which control
+                the different graphics languages. The user working with JSXGraph should not get aware of this separation at all because all methods for accessing the drawing layer are encapsulated by JSXGraph.
+            </p><div class="figure"><a id="jsxrenderer"></a><p class="title"><b>Figure 6. Scheme showing the renderer split and encapsulation in JSXGraph</b></p><div class="figure-contents"><div class="mediaobject"><img src="JSXRenderer.png" alt="Scheme showing the renderer split and encapsulation in JSXGraph" /></div></div></div><br class="figure-break" /><p>
+                For SVG drawing JSXGraph rarely uses formatting through CSS.  The reason is that in the beginning of the development process
+                the use of CSS styles consumed to much computing resources, especially setting the opacity with Firefox. 
+                So, nearly all visual properties are realized by setting attributes and applying filters. Even if filters in SVG are still not 
+                implemented satisfactorily in all browsers, JSXGraph supports shadows and gradients via filters since version 0.76. 
+                At the time of writing shadows slow down the Firefox browser considerably. Further, there seems to be a bug for
+                horizontal and vertical lines. In these cases neither the line nor its shadow is visible.
+                In Webkit based browsers like Chrome and Safari these filters are not implemented, yet. In Opera it looks ugly.
+                On the other hand, VML realizes shadows as a subnode. There, no noticable speed reduction is observable.
+            </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3913642"></a>HTML elements</h3></div></div></div><p>
+                For the display of text, like labels of points or results of computations, JSXGraph does not use the text element of SVG.
+                Instead, div tags in HTML are used. That means the browsers display the text as HTML elements above the SVG image. 
+                In order to update the text the innerHTML property of HTML is used. This is slow, but since many texts are never changed,
+                it is used scarcely.
+                We decided to use HTML elements for SVG, because 
+                at that time HTML tags and HTML entities in texts were not supported in the Firefox implementation. 
+            </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="id3913663"></a>Speed improvements</h3></div></div></div><p>
+                In order to make a fast enough reaction to user interactions like mouse moves possible, JSXGraph contains many 
+                tricks to speed up the computations. Even if the
+                JavaScript interpreters, respectively Just-in-time-compilers, have made huge progress since the development of JSXGraph 
+                has been started, special care about implementation details is still necessary.
+                Here, we list a few of the tricks, which proved to be useful for our implementation. Of course, the benefits 
+                of most of these tricks depend on the browser implementations and may change with new versions of the browsers.
+            </p><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="id3913684"></a>Avoid DOM accesses with getElementById()</h4></div></div></div><p>When a new SVG node is created, JSXGraph keeps an internal reference to this DOM node. 
+                    Later on, access to this node is realized via this pointer variable, exclusively.
+                    Using getElementById() or the $() operator of prototype.js or jquery.js proved to be much too slow.
+                 </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="id3913697"></a>Suspend the update of SVG nodes</h4></div></div></div><p>
+                        Before a construction is updated, triggered by mouse move or mouse up events, the redrawing 
+                        of the SVG nodes is suspended, until the position of all elements has been recalculated.
+                        Then, the redrawing of the SVG nodes is forced.
+                </p><pre class="programlisting">this.suspendHandle = this.svgRoot.suspendRedraw(10000);
+    // Expensive recalculations ...
+    this.svgRoot.unsuspendRedraw(this.suspendHandle);
+    this.svgRoot.forceRedraw();</pre><p>
+                        This seems to speed up at least the linux version of Firefox considerably.                 
+                </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="id3913731"></a>Use memoizers</h4></div></div></div><p>
+                        Common functions like binomial() and factorial() are realized with memoizer techniques, 
+                        as descripted in <a class="xref" href="#Crockford2008" title="JavaScript: The Good Parts">[<abbr class="abbrev">Crockford2008</abbr>]</a>, page 44.
+                        Thus, the expensive computation of each value of these functions is done only once.
+                 </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="id3913753"></a>Distinguish mouse move and mouse up events</h4></div></div></div><p>
+                    For curves in JSXGraph there are two update modes, resulting in different output resolutions. During the update following a
+                    mouse move event, curves are plotted evaluating only few data points. The default value here is to use 400 points.
+                    In the update following a mouse up event curves are plotted with much more points. The default value
+                    now is to use 2000 points. These values can be adapted in Options.js.                 
+                </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="id3913772"></a>Reduce the download and initialization time</h4></div></div></div><p>
+                    The JavaScript source code of 
+                    JSXGraph version 0.76 consists of 20 individual files, which add up to about 980 kBytes including comments.
+                    These 20 files are bundled together in one big file which is subsequently compressed by the 
+                    YUI compressor<sup>[<a id="id3913789" href="#ftn.id3913789" class="footnote">9</a>]</sup> from Yahoo!. 
+                    During this process comments and superfluous whitespaces are removed. The resulting file jsxgraphcore.js
+                    only consists of 380 kBytes. If the web server which delivers jsxgraphcore.js has DEFLATE enabled, which means it
+                    compresses its output additionally with gzip, the web browser has to download about 80 kByte. 
+                    In most cases, this is still less than delivering the same construction as a non-interactive PNG image.
+                </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="id3913810"></a>Use closures</h4></div></div></div><p>
+                Sometimes function graphs are expensive to compute. One example is a regression polynomial through 
+                a given set of points. On update the position of all points has to be determined, the resulting linear system of
+                equations has to solved. Its solutions gives the coefficients of the polynomial.
+                We certainly do not want to do this computation for determining every single function value, since during every update
+                of the function graph we have to compute more than a thousand values of that function.
+                </p><p>
+                We apply the following strategy: When the function graph is updated, we compute the coefficients of the polynomial only once.
+                Then we use these coefficients for the computation of all function values.
+                But where to store the coefficients? Using the "this" keyword does not give the desired results in a function.
+                But fortunately, we can use the function invocation pattern, see <a class="xref" href="#Crockford2008" title="JavaScript: The Good Parts">[<abbr class="abbrev">Crockford2008</abbr>]</a>, page 28.
+                In the example below, the function which is returned by the call of "generateFunction()" still has access to the 
+                variable "coeffs". This is based on the powerful concept of closures, which is part of JavaScript and comes from 
+                functional programming languages.
+                So, we can compute many function values very fast, and we do not have to do the bookkeeping, where these
+                coefficients are stored.
+                </p><div class="example"><a id="id3913846"></a><p class="title"><b>Example 10. Use of the function invocation pattern</b></p><div class="example-contents"><pre class="programlisting">generateFunction = function(degree,dataX,dataY) { 
+    var coeffs = [];                 
+    var fct = function(x,suspendedUpdate){
+            var i, j, M, MT, y, B, c, s,
+                len = dataX.length;                       
+                
+            if (!suspendedUpdate) {  // Recomputation of the cooefficents: expensive
+                M = [];
+                for (j=0;j&lt;len;j++) {
+                    M.push([1]);
+                }
+                for (i=1;i&lt;=degree;i++) {
+                    for (j=0;j&lt;len;j++) {
+                        M[j][i] = M[j][i-1]*datax[j];  
+                    }
+                }
+                y = dataY;                       
+                MT = JXG.Math.Matrix.transpose(M);
+
+                B = JXG.Math.matMatMult(MT,M);
+                c = JXG.Math.matVecMult(MT,y);
+                coeffs = JXG.Math.Numerics.Gauss(B, c);
+            }
+            
+            // Horner's scheme to evaluate polynomial: cheap
+            s = coeffs[degree];
+            for (i=degree-1;i&gt;=0;i--) {
+                s = (s*x+coeffs[i]);
+            }
+            return s;
+        };
+        return fct;};</pre></div></div><p><br class="example-break" />
+                </p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="id3913887"></a>An Internet Explorer trick</h4></div></div></div><p>
+                    A very special, but decisive speed improvement has been done for the Internet Explorer version 6 and 7.  
+                     With the following piece of code which is executed at initialization time the update speed of the Internet Explorer has been improved by an order of magnitude.
+                </p><pre class="programlisting">function MouseMove(e) {
+        document.body.scrollLeft;
+        document.body.scrollTop;
+    }
+    document.onmousemove = MouseMove;</pre><p>
+                    We are not aware that this trick has been mentioned before anywhere else.
+                </p></div></div></div><div class="bibliography"><div class="titlepage"><div><div><h2 class="title"><a id="id3913913"></a>References</h2></div></div></div><div class="bibliolist"><div class="biblioentry"><a id="Crockford2008"></a><p>[<abbr class="abbrev">Crockford2008</abbr>] <span class="authorgroup"><span class="firstname">Douglas.</span> <span class="surname">Crockford</span>. </span><span class="biblioid">978-0-596-51774-8. </span><span class="publisher"><span class="publishername">O'Reilly. </span></span><span class="title"><i>JavaScript: The Good Parts</i>. </span></p></div><div class="biblioentry"><a id="VML98"></a><p>[<abbr class="abbrev">VML1998</abbr>] <span class="authorgroup"><span class="firstname">John</span> <span class="surname">Bowler</span>, <span class="firstname">Howard</span> <span class="surname">Cooperstein</span>, <span class="firstname">Brian</span> <span class="surname">Dister</span>, <span class="firstname">Ajay</span> <span class="surname">Jindal</span>, <span class="firstname">Daniel</span> <span class="surname">Lee</span>, <span class="firstname">Brian</span> <span class="surname">Mathews</span>, <span class="firstname">Tuan</span> <span class="surname">Nguyen</span>, <span class="firstname">Troy</span> <span class="surname">Sandal</span>, and <span class="firstname">Peter</span> <span class="surname">Wu</span>. </span><span class="copyright">Copyright © 1998 W3C. </span><span class="biblioid">. </span><span class="publisher"><span class="publishername">http://www.w3.org/TR/1998/NOTE-VML-19980513. </span></span><span class="title"><i>Vector Markup Language (VML)</i>. </span></p></div><div class="biblioentry"><a id="SVG09"></a><p>[<abbr class="abbrev">SVG2009</abbr>] <span class="authorgroup"><span class="firstname">Ola</span> <span class="surname">Andersson</span>, <span class="firstname">Phil</span> <span class="surname">Armstrong</span>, <span class="firstname">Henric</span> <span class="surname">Axelsson</span>, <span class="firstname">Robin</span> <span class="surname">Berjon</span>, <span class="firstname">Benoît</span> <span class="surname">Bézaire</span>, <span class="firstname">John</span> <span class="surname">Bowler</span>, <span class="firstname">Craig</span> <span class="surname">Brown</span>, <span class="firstname">Mike</span> <span class="surname">Bultrowicz</span>, <span class="firstname">Tolga</span> <span class="surname">Capin</span>, <span class="firstname">Milt</span> <span class="surname">Capsimalis</span>, <span class="firstname">Mathias Larsson</span> <span class="surname">Carlander</span>, <span class="firstname">Jakob</span> <span class="surname">Cederquist</span>, <span class="firstname">Charilaos</span> <span class="surname">Christopoulos</span>, <span class="firstname">Richard</span> <span class="surname">Cohn</span>, <span class="firstname">Lee</span> <span class="surname">Cole</span>, <span class="firstname">Don</span> <span class="surname">Cone</span>, <span class="firstname">Alex</span> <span class="surname">Danilo</span>, <span class="firstname">Thomas</span> <span class="surname">DeWeese</span>, <span class="firstname">David</span> <span class="surname">Dodds</span>, <span class="firstname">Andrew</span> <span class="surname">Donoho</span>, <span class="firstname">David</span> <span class="surname">Duce</span>, <span class="firstname">Jerry</span> <span class="surname">Evans</span>, <span class="firstname">Jon</span> <span class="surname">Ferraiolo</span>, <span class="firstname">Darryl</span> <span class="surname">Fuller</span>, <span class="firstname">淳</span> <span class="surname">藤沢</span>, <span class="firstname">Scott</span> <span class="surname">Furman</span>, <span class="firstname">Brent</span> <span class="surname">Getlin</span>, <span class="firstname">Peter</span> <span class="surname">Graffagnino</span>, <span class="firstname">Rick</span> <span class="surname">Graham</span>, <span class="firstname">Vincent</span> <span class="surname">Hardy</span>, <span class="firstname">貴也</span> <span class="surname">端山</span>, <span class="firstname">Lofton</span> <span class="surname">Henderson</span>, <span class="firstname">Jan Christian</span> <span class="surname">Herlitz</span>, <span class="firstname">Alan</span> <span class="surname">Hester</span>, <span class="firstname">Bob</span> <span class="surname">Hopgood</span>, <span class="firstname">雅康</span> <span class="surname">石川</span>, <span class="firstname">Dean</span> <span class="surname">Jackson</span>, <span class="firstname">Christophe</span> <span class="surname">Jolif</span>, <span class="firstname">Lee</span> <span class="surname">Klosterman</span>, <span class="firstname">亜令</span> <span class="surname">小林</span>, <span class="firstname">Thierry</span> <span class="surname">Kormann</span>, <span class="firstname">Yuri</span> <span class="surname">Khramov</span>, <span class="firstname">Kelvin</span> <span class="surname">Lawrence</span>, <span class="firstname">Håkon</span> <span class="surname">Lie</span>, <span class="firstname">Chris</span> <span class="surname">Lilley</span>, <span class="firstname">Philip</span> <span class="surname">Mansfield</span>, <span class="firstname">Kevin</span> <span class="surname">McCluskey</span>, <span class="firstname">充</span> <span class="surname">水口</span>, <span class="firstname">Luc</span> <span class="surname">Minnebo</span>, <span class="firstname">Tuan</span> <span class="surname">Nguyen</span>, <span class="firstname">修一郎</span> <span class="surname">小野</span>, <span class="firstname">Antoine</span> <span class="surname">Quint</span>, <span class="firstname">毅</span> <span class="surname">相良</span>, <span class="firstname">Troy</span> <span class="surname">Sandal</span>, <span class="firstname">Peter</span> <span class="surname">Santangeli</span>, <span class="firstname">Haroon</span> <span class="surname">Sheikh</span>, <span class="firstname">Brad</span> <span class="surname">Sipes</span>, <span class="firstname">Peter</span> <span class="surname">Sorotokin</span>, <span class="firstname">Gavriel</span> <span class="surname">State</span>, <span class="firstname">Robert</span> <span class="surname">Stevahn</span>, <span class="firstname">Timothy</span> <span class="surname">Thompson</span>, <span class="firstname">宏高</span> <span class="surname">上田</span>, <span class="firstname">Rick</span> <span class="surname">Yardumian</span>, <span class="firstname">Charles</span> <span class="surname">Ying</span>, and <span class="firstname">Shenxue</span> <span class="surname">Zhou</span>. </span><span class="copyright">Copyright © 2009 W3C. </span><span class="biblioid">. </span><span class="publisher"><span class="publishername">http://www.w3.org/TR/SVG11/. </span></span><span class="title"><i>Scalable Vector Graphics (SVG) 1.1 Specification</i>. </span></p></div></div><div class="bibliodiv"><h3 class="title">Websites</h3><div class="biblioentry"><a id="GXT"></a><p>[<abbr class="abbrev">GXT</abbr>] <span class="title"><i>http://www.geonext.de/</i>. </span></p></div><div class="biblioentry"><a id="GGB"></a><p>[<abbr class="abbrev">GGB</abbr>] <span class="title"><i>http://www.geogebra.org/</i>. </span></p></div><div class="biblioentry"><a id="CaR"></a><p>[<abbr class="abbrev">CaR</abbr>] <span class="title"><i>http://zirkel.sourceforge.net/</i>. </span></p></div><div class="biblioentry"><a id="CABRI"></a><p>[<abbr class="abbrev">CABRI</abbr>] <span class="title"><i>http://cabri.com</i>. </span></p></div><div class="biblioentry"><a id="TGS"></a><p>[<abbr class="abbrev">TGS</abbr>] <span class="title"><i>http://www.dynamicgeometry.com/</i>. </span></p></div><div class="biblioentry"><a id="I2GEO"></a><p>[<abbr class="abbrev">I2GEO</abbr>] <span class="title"><i>http://i2geo.net</i>. </span></p></div><div class="biblioentry"><a id="CDY"></a><p>[<abbr class="abbrev">CDY</abbr>] <span class="title"><i>http://cinderella.de</i>. </span></p></div><div class="biblioentry"><a id="R"></a><p>[<abbr class="abbrev">R</abbr>] <span class="title"><i>http://r-project.org</i>. </span></p></div></div></div><div class="footnotes"><br /><hr width="100" align="left" /><div class="footnote"><p><sup>[<a id="ftn.id3912654" href="#id3912654" class="para">1</a>] </sup><a class="ulink" href="http://jsxgraph.org" target="_top">http://jsxgraph.org</a></p></div><div class="footnote"><p><sup>[<a id="ftn.id3912642" href="#id3912642" class="para">2</a>] </sup>Inspired by the work of Sam Ruby: 
+            <a class="ulink" href="http://intertwingly.net/blog/2006/07/06/Penrose-Tiling" target="_top">http://intertwingly.net/blog/2006/07/06/Penrose-Tiling</a></p></div><div class="footnote"><p><sup>[<a id="ftn.id3912724" href="#id3912724" class="para">3</a>] </sup><a class="ulink" href="http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu" target="_top">http://jsxgraph.uni-bayreuth.de/wiki/index.php/SIR_model:_swine_flu</a></p></div><div class="footnote"><p><sup>[<a id="ftn.id3913305" href="#id3913305" class="para">4</a>] </sup><a class="ulink" href="http://prototype.org" target="_top">http://prototype.org</a></p></div><div class="footnote"><p><sup>[<a id="ftn.id3913315" href="#id3913315" class="para">5</a>] </sup><a class="ulink" href="http://jquery.org" target="_top">http://jquery.org</a></p></div><div class="footnote"><p><sup>[<a id="ftn.id3913454" href="#id3913454" class="para">6</a>] </sup><a class="ulink" href="http://wordpress.com" target="_top">http://wordpress.com</a></p></div><div class="footnote"><p><sup>[<a id="ftn.id3913466" href="#id3913466" class="para">7</a>] </sup><a class="ulink" href="http://mediawiki.org" target="_top">http://mediawiki.org</a></p></div><div class="footnote"><p><sup>[<a id="ftn.id3913475" href="#id3913475" class="para">8</a>] </sup><a class="ulink" href="http://moodle.org" target="_top">http://moodle.org</a></p></div><div class="footnote"><p><sup>[<a id="ftn.id3913789" href="#id3913789" class="para">9</a>] </sup><a class="ulink" href="http://developer.yahoo.com/yui/compressor/" target="_top">http://developer.yahoo.com/yui/compressor/</a></p></div></div></div></body></html>

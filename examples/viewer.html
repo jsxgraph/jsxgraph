@@ -1,10 +1,12 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+<!--<html>-->
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 <script type="text/javascript" src="../distrib/prototype.js"></script>
-<!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/GeonextReader.js"></script>
 </head>
 <body>
 <body id="body">
@@ -59,12 +61,16 @@
 </td>
 <td>
 	<select id="beispiele_gxt">
+        <option> quad.gxt </option>
+        <option> bmw.gxt </option>
+        <option> bmw_fib.gxt </option>
         <option> bushaltestelle.gxt </option>
         <option> ende_streckenverbote.gxt </option>
         <option> gegenverkehr_vorrang.gxt </option>
         <option> hier_rechts.gxt </option>
         <option> kreisbewegung-2.gxt </option>
         <option> kreisbewegung-2-2.gxt </option>
+        <option> mercedes_blau.gxt </option>
         <option> mesolabium.gxt </option>
         <option> newton.gxt </option>
         <option> parabel-scheitelform-allgemein.gxt </option>
@@ -186,11 +192,16 @@
         <option value='intergeo/intergeo1.xml'> intergeo1.xml </option>
         <option value='intergeo/intergeo2.xml'> intergeo2.xml </option>
         <option value='intergeo/intergeo3.xml'> intergeo3.xml </option>
+        <option value='intergeo/intergeo2.i2g'> intergeo2.i2g </option>
+        <option value='intergeo/linear-004.i2g'> linear-004.i2g </option>
+        <option value='intergeo/geonext/all.i2g'> all.i2g (GEONExT) </option>
+		
     </select>
     <input type='button' value='Read InterGeo file' onclick="loadFile('beispiele_i2g','Intergeo')" /> 
     <p>
-    Geogebra examples: <br>
+    <!-- Geogebra examples: <br>
     <select id="beispiele_geo">
+    	<option value='ggb/geogebra.ggb'>komprimiertes File</option>
         <option value='ggb/GS_Konstruktion_worksheet.xml'>GS_Konstruktion_worksheet</option>
         <option value='ggb/GeradenSpiegelung_worksheet.xml'>GeradenSpiegelung_worksheet</option>
         <option value='ggb/PunktSpiegelung_worksheet.xml'>PunktSpiegelung_worksheet</option>
@@ -263,12 +274,13 @@
         <option value='ggb/geogebra2.xml'> geogebra2.xml </option>
         <option value='ggb/geogebra3.xml'> geogebra3.xml </option>
     </select>
-    <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" />
+    <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" /> -->
          </form>
    <div id="debug" style="overflow:scroll;"></div>
    
 <script>
    var board;
+   
    function loadFile(bspname,format) {
         document.getElementById('box').innerHTML = '';
         //document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";

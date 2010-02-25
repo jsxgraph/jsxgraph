@@ -1,0 +1,189 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Animate a free point</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+  <div id="jxgbox2" class="jxgbox" style="width:600px; height:450px;"></div>
+  <div id="jxgbox3" class="jxgbox" style="width:300px; height:300px;"></div>
+</div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+   JXG.Options.renderer = 'svg';
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true, grid: false});
+//        xax = board.createElement('axis', [[0,0],[1,0]]);
+//        yax = board.createElement('axis', [[0,0],[0,1]]);
+
+        JXG.GeometryElement.prototype.hover = function() {
+            var s = this.visProp.highlightStrokeColor,
+                f = this.visProp.highlightFillColor;
+            this.visProp.highlightStrokeColor = this.visProp.strokeColor;
+            this.visProp.highlightFillColor = this.visProp.fillColor;
+            this.animate({strokeColor: s, fillColor: f}, 200);
+        };
+//        hover = JXG.bind(hover, JXG.GeometryElement.prototype);
+
+//        JXG.GeometryElement.prototype.highlight = JXG.GeometryElement.prototype.hover;
+//        JXG.GeometryElement.prototype.noHighlight = JXG.GeometryElement.prototype.hover;
+
+        p1 = board.createElement('point', [7, 5], {name:"A", strokeWidth: 2, size: 10, strokeColor: '#ccc'});
+        p2 = board.createElement('point', [1, 3], {name:"B", face: '[]'});
+        p3 = board.createElement('point', [-2, -3], {name:"C", face: 'x'});
+        p4 = board.createElement('point', [4, -1], {name:"D", size: 5});
+
+//        l1 = board._line([p1, p3]);
+//        l2 = board._perpendicular([l1, p2]);
+
+//        c1 = board._circle([p2, p4]);/*
+
+        p1.highlight = function () {
+//            p1.setProperty({strokeColor: 'orange'});
+//            p1.animate({strokeWidth: 5.}, 500);
+            p1.animate({strokeWidth: 7., strokeColor: 'orange'}, 500);
+        }
+
+        p1.noHighlight = function () {
+//            p1.setProperty({strokeColor: '#ccc'});
+            p1.animate({strokeWidth: 2., strokeColor: '#ccc'}, 500);
+        }
+
+		var steps = 30.;
+		var delay = 35;
+		var moveTo = [1,-5, -7];
+
+        t = board.createElement('point', moveTo, {style:2,name:""});
+
+		var ix = 0;
+
+		function onestep() {
+			p1.setPositionByTransform(JXG.COORDS_BY_USER, p1.animDX, p1.animDY);
+			board.update();
+			if(board.algebra.affineDistance([1, p1.X() + p1.animDX, p1.Y() + p1.animDY], moveTo) > board.algebra.affineDistance(p1.coords.usrCoords, moveTo)) {
+				window.clearInterval(p1.intervalcode);
+				delete(p1.intervalcode);
+				alert('done');
+			}
+			p1.animOldDist = board.algebra.affineDistance(p1.coords.usrCoords, moveTo);
+		}
+
+		function start() {
+			p1.animDistance = board.algebra.affineDistance(p1.coords.usrCoords, moveTo);
+			p1.animOldDistance = p1.animDistance;
+			p1.animDX = (moveTo[1] - p1.coords.usrCoords[1])/steps;
+			p1.animDY = (moveTo[2] - p1.coords.usrCoords[2])/steps;
+			p1.intervalcode = window.setInterval('onestep()', delay);
+		}
+
+		//alternative animation using animation path
+		function onestep2() {
+			var newCoords = p1.animationPath.pop();
+			if(typeof newCoords  == 'undefined') {
+				window.clearInterval(p1.intervalcode);
+				delete(p1.intervalcode);
+				delete(p1.animationPath);
+			} else {
+				p1.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - p1.coords.usrCoords[1], newCoords[1] - p1.coords.usrCoords[2]);
+				board.update();
+			}
+		}
+
+		function start2(p, milliseconds) {
+			var delay = 35;
+			var steps = Math.ceil(milliseconds/(delay * 1.0));
+			var coords = new Array(steps+1);
+			var X = p.X();
+			var Y = p.Y();
+			var dX = (moveTo[1] - X);
+			var dY = (moveTo[2] - Y);
+			var i;
+			for(i=steps; i>=0; i--) {
+				coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y + dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
+			}
+			p.animationPath = coords;
+			p.intervalcode = window.setInterval('onestep2()', delay);
+		}
+
+
+        board2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-1, 4, 5, -1], keepaspectratio: true, axis: false, grid: false});
+        xax2 = board2.createElement('axis', [[0,0],[1,0]]);
+        yax2 = board2.createElement('axis', [[0,0],[0,1]]);
+
+		var someData = [[1, 3, 2, 2.5],
+		         		[3, 2, 1, 3.6],
+		         		[1.5, 2, 0.5, 1],
+			         	[0.5, 3, 1, 2]];
+
+        var p = [board2.createElement('point', [0, 1], {name:"A", visible: false}),
+				 board2.createElement('point', [0, 3], {name:"B", visible: false}),
+        		 board2.createElement('point', [0, 2], {name:"C", visible: false}),
+        		 board2.createElement('point', [0, 2.5], {name:"D", visible: false})];
+
+        var chartData = [function() { return p[0].Y(); },
+                         function() { return p[1].Y(); },
+                         function() { return p[2].Y(); },
+                         function() { return p[3].Y(); }];
+
+		var chart = board2.createElement('chart', [chartData], {chartStyle:'bar',labels:['animierte', 'charts', 'sind', 'toll'],width:0.8, fillOpacity: 0.6});
+
+        // animate fillOpacity on mouse over
+        for(var i=0; i<4; i++) {
+            chart[0][i].setProperty({fillOpacity: 0.6});
+            $(chart[0][i].rendNode).mouseover((function (_i) { return function () { chart[0][_i].animate({fillOpacity: 1.0}, 500); } })(i));
+            $(chart[0][i].rendNode).mouseout((function (_i) { return function () { chart[0][_i].animate({fillOpacity: 0.6}, 500); } })(i));
+        }
+		var choose = board2.createElement('text', [3, 3.5, '<select id="choose" onchange="changebars();"><option value="0">Januar</option><option value="1">Februar</option><option value="2">Maerz</option><option value="3">April</option></select>']);
+
+		function changebars() {
+            function GetRandom( min, max ) {
+                if( min > max ) {
+                   return( -1 );
+                }
+                if( min == max ) {
+                   return( min );
+                }
+                return( min + parseInt( Math.random() * ( max-min+1 ) ) );
+            }
+
+
+			var ix = document.getElementById('choose').value,
+				i;
+			for(i=0; i<4; i++) {
+				p[i].moveTo([p[i].X(), someData[ix][i]], 1000);
+                chart[0][i].animate({fillColor: '#' + GetRandom(0, 255) + '' + GetRandom(0, 255) + '' + GetRandom(0, 255), fillOpacity: GetRandom(0, 100)/100.}, 1000);
+			}
+		}
+
+// browser event handler test:
+
+        b3 = JXG.JSXGraph.initBoard('jxgbox3', {boundingbox: [-10, 10, 10, -10], axis: false, grid: false});
+
+        var i, numPoints = 150, evp = new Array(numPoints);
+
+        indicator = b3._point([0,0], {size: 5, strokeColor: 'green', highlightStrokeColor: 'blue', fillColor: 'green', highlightFillColor: 'blue'});
+
+        board.suspendUpdate();
+        for(i=0; i<numPoints; i++) {
+            evp[i] = b3._point([-10+Math.random()*20, -10+Math.random()*20], {name:"A", withLabel:false});
+            $(evp[i].rendNode).mouseover(function () { indicator.highlight(); });
+            $(evp[i].rendNode).mouseout(function () { indicator.noHighlight(); });
+        }
+        board.unsuspendUpdate();
+
+  /* ]]> */
+  </script>
+<a href="#" onclick="start();">Start animation</a><br />
+<a href="#" onclick="start2(p1, 2000);">Start animation v2</a><br />
+<a href="#" onclick="p1.moveTo([-5, 2], 800);">Built-in animation (should match animation v2)</a><br />
+<a href="#" onclick="p1.animate({fillColor: '#00ff00'}, 1500);">Built-in color animation</a><br />
+<a href="#" onclick="p1.moveTo([-5, -6], 1500); p1.animate({fillColor: '#00ff00', strokeColor: '#00ff00'}, 1500);">Built-in color & movement animation</a><br />
+<a href="#" onclick="p1.visit([-5, 2], 2200, 2);">Built-in animation &quot;visit&quot;</a><br />
+<div id="debug" style="display:block;"></div>
+</body>
+</html>

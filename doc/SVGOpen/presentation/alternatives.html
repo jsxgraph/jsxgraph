@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+        <script type="text/javascript" src="distrib/jquery.min.js"></script>
+  <script>
+  $(document).ready(function(){
+    $(document.body).click(function () {
+      $("li:hidden:first").fadeIn("slow");
+    });
+
+  });
+  </script>
+    </head>
+<body class="jsxgraph_body">
+
+<h2>How can we do graphics in the web browser without Java and Flash?</h2>
+<ul>
+<li> Vector graphics for the display: 
+    <ul>
+        <li>SVG (Firefox 2.0+, Chrome, Safari 3+, Opera, iPhone 2.1+)
+        <li>VML (IE 5+)   
+    </ul>
+</li>
+<li> JavaScript for the programming: 
+    <ul>
+        <li> <i>GeometryEditor (former GeoSVG, http://wme.cs.kent.edu/geosvg), </i>
+        <li> <i>JSXGraph (http://jsxgraph.org)</i>
+    </ul>
+    </li>
+</ul>
+
+</body>
+</html>

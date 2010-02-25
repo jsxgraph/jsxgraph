@@ -1,0 +1,74 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <style>
+   #my_x1 {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+   }
+   </style>
+</head>
+<body>
+<h2>Yikes 2</h2>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:600px; "></div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-3,15,10,-5], axis:true});
+var a =
+brd.createElement('slider',[[0.5,-1.5],[4,-1.5],[-5,2,5]],{name:'a',snapWidth:1});
+var h =
+brd.createElement('slider',[[0.5,-2.5],[4,-2.5],[1,1,5]],{name:'h',snapWidth:1});
+var k =
+brd.createElement('slider',[[0.5,-3.5],[4,-3.5],[-5,0.5,5]],{name:'k',snapWidth:0.5});
+var f = function(x) { return a.Value()*(x - h.Value())*(x - h.Value()) + k.Value();};
+var m = function(x) {return x;};
+var n = function(x) {return 2*x;};
+var g1 = function(x) {return (a.Value()*(x - h.Value())*(x - h.Value()) + k.Value() - x);};
+var g2 = function(x) {return (a.Value()*(x - h.Value())*(x - h.Value()) + k.Value() - 2*x);};
+
+var plotf = brd.createElement('functiongraph',[f],{strokeColor:'red'});
+var plotm = brd.createElement('functiongraph',[m],{strokeColor:'green'});
+var plotn = brd.createElement('functiongraph',[n],{strokeColor:'blue'});
+
+brd.createElement('text',[7,6,function() {return 'x1 =' +
+brd.root(g2,h.Value()-1).toFixed(4);}], {id:'my_x1'});
+brd.createElement('text',[7,5,function() {return 'x2 =' +
+brd.root(g1,h.Value()-1).toFixed(4);}]);
+brd.createElement('text',[7,4,function() {return 'x3 =' +
+brd.root(g1,h.Value()+1).toFixed(4);}]);
+brd.createElement('text',[7,3,function() {return 'x4 =' +
+brd.root(g2,h.Value()+1).toFixed(4);}]);
+
+brd.createElement('text',[7,1,function() {return 'D =' +
+    (brd.root(g2,h.Value()-1)+brd.root(g2,h.Value()+1)
+    -brd.root(g1,h.Value()-1)-brd.root(g1,h.Value()+1)).toFixed(4)}]);
+
+var point1 = brd.createElement('point',
+    [function() {
+        var rt = brd.root(g2,h.Value()-1);
+        return [ rt, 2*rt]; 
+     }], {name:"A",style:3});
+     
+/*     
+var point2 = brd.createElement('point', [
+    function() {return brd.root(g1,h.Value()-1);},
+    function() {var v = brd.root(g1,h.Value()-1); if(Math.abs(g1(v))<0.00001) {this.setProperty('visible:true');} else {this.setProperty('visible:false')};return v;}],
+    {name:"B",style:3});
+var point3 = brd.createElement('point',
+    [
+        function() {return brd.root(g1,h.Value()+1);},function() {var v = brd.root(g1,h.Value()+1); if(Math.abs(g1(v))<0.00001) {this.setProperty('visible:true');} else {this.setProperty('visible:false')};return v;}],
+    {name:"C",style:3});
+    
+var point4 = brd.createElement('point', 
+    [function() {return brd.root(g2,h.Value()+1);},
+     function() {return 2*brd.root(g2,h.Value()+1);}],
+    {name:"D",style:3});
+*/    
+/* ]]> */
+</script>
+</body>
+</html>

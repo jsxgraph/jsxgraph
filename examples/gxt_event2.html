@@ -9,9 +9,11 @@
 <html>
 <head>
    <title>GEONExT SVG+VML</title>
-   <link rel="stylesheet" type="text/css" href="css/geonext2.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/GeonextReader.js"></script>
+
 </head>
 <body>
    <!-- 
@@ -27,11 +29,11 @@
     /* <![CDATA[ */
 
         // Das Objekt geonext ist global und wird in Geonext.js initialisiert
-        board = JXG.JSXGraph.initBoard('box');
-
-        var newCasPoint = function() {
+        //board = JXG.JSXGraph.initBoard('box');
+board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb81.nc.gxt','Geonext');
+  /*      var newCasPoint = function() {
             var p = new JXG.Point(board, [0,0], '', '', true);
-            p.makeCas($('xterm').value,$('yterm').value);
+            p.makeCas(document.getElementById('xterm').value,document.getElementById('yterm').value);
             p.traced = true;
             return p;
         }
@@ -42,7 +44,7 @@
         p6 = board.addCircumcenter(p1,p2,p3,'gCM','CM','','');
 
         p4 = new JXG.Point(board, [4.4,0], '', 'D', true);
-        p5 = new JXG.Point(board, [4,-5], '', 'X', true);
+        p5 = new JXG.Point(board, [4,-5], '', 'X', true);*/
 //        p6 = new JXG.Point(board, [4,-5], '', '', true);
                 
 //        g1 = new JXG.Group(board, '', '', [p1, p2]);
@@ -52,7 +54,7 @@
 
 //        mid = board.objects[board.addMidpoint(p1.id,p2.id,'mid','M')];
         
-        line1 = new JXG.Line(board, p2.id, p1.id, 'gerade1','');
+    //    line1 = new JXG.Line(board, p2.id, p1.id, 'gerade1','');
 //        line1.setStraight(true, false);
 //        line2 = new JXG.Line(board, p3.id, p4.id, 'gerade2','');
 
@@ -68,7 +70,7 @@
 //    ay = new JXG.Axis(board, [0,1],[0,0],'','');
 
 //        board.addAngleBisector(p5.id, p2.id, p6.id, 'wink');        
-    p6 = board.addParallelPoint(line1.point1, line1.point2, p4,'12345','ABCD');
+   // p6 = board.addParallelPoint(line1.point1, line1.point2, p4,'12345','ABCD');
     //line1 = new JXG.Line(board, p1.id, p6.id, '','');
         
       //  board.addPerpendicular(line1.id, p2.id, '', '');
@@ -116,10 +118,10 @@
         x=<input type="text" size="10" id="xterm" value="X(A)"><br>
         y=<input type="text" size="10" id="yterm" value="Sin(X(A))*2"> <input type='button' value='Neuer CAS-Punkt' onclick='cas = newCasPoint()'>
       <br>
-      <input type='button' value='Geonext-File einlesen' onclick="JXG.JSXGraph.freeBoard(board); board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb'+$('blubb').value+'.nc.gxt','Geonext');" />
+      <input type='button' value='Geonext-File einlesen' onclick="JXG.JSXGraph.freeBoard(board);board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb'+document.getElementById('blubb').value+'.nc.gxt','Geonext');" />
       <input type='text' id='blubb' value="3" size="3">
       <br>
-      <input type='button' value='Geonext-File einlesen' onclick="JXG.JSXGraph.freeBoard(board); board = JXG.JSXGraph.loadBoardFromFile('box','gxt/'+$('blubb_gxt').options[$('blubb_gxt').selectedIndex].value+'.nc.gxt','Geonext');" />
+      <input type='button' value='Geonext-File einlesen' onclick="JXG.JSXGraph.freeBoard(board); board = JXG.JSXGraph.loadBoardFromFile('box','gxt/'+document.getElementById('blubb_gxt').options[document.getElementById('blubb_gxt').selectedIndex].value+'.nc.gxt','Geonext');" />
           <select id="blubb_gxt">
 
         
@@ -159,10 +161,12 @@
         <option value='blubb74'>Linien mit Labels</option>
         <option value='blubb75'>Linien mit Labels</option>
         <option value='blubb76'>Curves</option>
+        <option value='blubb00'>Beispiel fuer notwendigkeit von Perpendicular.change</option>
         </select>
       <br>
-      <input type='button' value='Show Elements of board' onclick='$("debug").innerHTML = ""; for(var Elements in board.objects) $("debug").innerHTML += Elements + ": " + board.objects[Elements] + "<br/>";'>
+      <input type='button' value='Show Elements of board' onclick='document.getElementById("debug").innerHTML = ""; for(var Elements in board.objects) document.getElementById("debug").innerHTML += Elements + ": " + board.objects[Elements] + "<br/>";'>
       <input type='button' value='Clear All Traces' onclick='board.clearTraces();'>
+      <input type='button' value='Do PSTricks' onclick='board.pstricks.givePsTricksToDiv("debug",board);'>
    </form>
    <div id="debug" style="position:relative; width:600px; height:100px; border:1px dashed black; background-color:white;">
    Test

@@ -1,0 +1,37 @@
+<!--
+  $Date: 2007-12-11 17:26:38 +0100 (Di, 11 Dez 2007) $
+  $Revision: 50 $
+  $Author: graphjs $
+  $HeadURL: svn://btmdx1.mat.uni-bayreuth.de/graphjs/gxt_event.html $
+  $Id: gxt_event.html 50 2007-12-11 16:26:38Z graphjs $
+
+-->
+<html>
+<head>
+   <title>GEONExT SVG+VML</title>
+   <link rel="stylesheet" type="text/css" href="css/geonext2.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+   <!-- 
+      Drawing area 
+   -->
+   <div id="box" style="width:800px; height:500px; overflow:hidden; border:1px dashed black; background-color:wheat; clip:rect(0px, 800px, 500px, 0px);">
+   </div>
+   <!-- 
+      Drawing area 
+   -->
+
+   <script type="text/javascript">
+        board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb81.nc.gxt','Geonext');
+   </script>
+   <form>
+      <input type='button' value='Do PSTricks' onclick='board.pstricks.givePsTricksToDiv("pstricks",board);'>
+   </form>
+   <b>Pstricks-Output:</b>
+   <div id="pstricks" style="position:relative; width:600px; height:200px; border:1px dashed black; background-color:white;">
+   </div>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<html>
+	<head>
+		<script type="text/javascript" src="distrib/jquery.min.js"></script>
+		<script type="text/javascript" src="distrib/present.js"></script>
+	 <link href="distrib/jsxgraph.present.css" rel="stylesheet" type="text/css">
+	</head>
+	<body class="content_body">
+ 		<p>
+		<div class="center_div">
+			<div class="border_div">
+				<div class="content_nav"><img src="images/go-previous.png" class="content_nav_left"><img src="images/go-next.png" class="content_nav_right"></div>
+				<div class="content_text_head">jsxgraph.org</div>			
+				<!--div class="content_text">
+					<div class="content_text_head"></div>
+					<div class="content_text_text"></div>
+				</div//-->			
+				<div class="content_div"><iframe class="content_iframe" id="ix" src="" scrolling="no"></iframe></div>
+				<div class="content_logo"><img src="images/ubt.gif"></div>
+			</div>
+		</div>
+<!-- Inhalte -->
+
+        <div class="pages">
+            <div class="files">title</div>
+            <div class="titles"></div>
+        </div>
+
+        <div class="pages">
+            <div class="files">who</div>
+            <div class="titles">Who we are</div>
+        </div>
+        
+        <div class="pages">
+            <div class="files">original_objectives</div>
+            <div class="titles">Original objectives</div>
+        </div>
+        
+        <div class="pages">
+            <div class="files">whynotjava</div>
+            <div class="titles">Why not Java or Flash? I</div>
+        </div>
+        
+        <div class="pages">
+            <div class="files">whynotflash</div>
+            <div class="titles">Why not Java or Flash? II</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">alternatives</div>
+            <div class="titles">Future trends?</div>
+            <ul><li> Vector graphics<li> JavaScript</ul>
+        </div>
+
+        <div class="pages">
+            <div class="files">jsxgraph</div>
+            <div class="titles">JSXGraph</div>
+            Open source <b>library</b> for interactive mathematics and interactive data displaying in the web browser
+        </div>
+        
+        <div class="pages">
+            <div class="files">technicalfeatures</div>
+            <div class="titles">Some data</div>
+        </div>
+        <div class="pages">
+            <div class="files">features</div>
+            <div class="titles">Features</div>
+        </div>
+        
+        <!-- Geometry -->
+        <div class="pages">
+            <div class="files">load_file</div>
+            <div class="titles">Load file</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">basicconstruction</div>
+            <div class="titles">Basic construction</div>
+        </div>
+        
+        <div class="pages">
+            <div class="files">euler</div>
+            <div class="titles">Euler line</div>
+        </div>    
+        
+        <div class="pages">
+            <div class="files">tangram</div>
+            <div class="titles">Tangram</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">polygon</div>
+            <div class="titles">Gradient polygon</div>
+        </div>
+
+        <!-- Recursion and Turtles -->
+        <div class="pages">
+            <div class="files">apollonian</div>
+            <div class="titles">Apollonian circle packing</div>
+        </div>
+        
+        <div class="pages">
+            <div class="files">koch</div>
+            <div class="titles">Koch snowflake</div>
+            <pre style="font-size:60%">
+t = brd.createElement('turtle');
+function koch(x,level) {
+    if (level<1) t.fd(x);
+    else {
+        koch(x/3,level-1);
+        t.lt(60);
+        koch(x/3,level-1);
+        t.rt(120);
+        koch(x/3,level-1);
+        t.lt(60);
+        koch(x/3,level-1);
+    }
+}
+t.setPos(-250,0);
+t.rt(90);
+koch(400,7);
+            </pre>
+16385 data points            
+        </div>
+        
+        <div class="pages">
+            <div class="files">sierpinski</div>
+            <div class="titles">Sierpinski triangle</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">randomwalk</div>
+            <div class="titles">Random walk</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">swineflu</div>
+            <div class="titles">SIR Model: Swine flu</div>
+        </div>        
+        
+        <!-- Calculus -->
+        <div class="pages">
+            <div class="files">predatorprey</div>
+            <div class="titles">Predator Prey</div>
+        </div>
+        
+        <div class="pages">
+            <div class="files">sinus</div>
+            <div class="titles">Sinus</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">floortan</div>
+            <div class="titles">Discontinuous function</div>
+        </div>
+        
+        <!-- Charts -->
+        <div class="pages">
+            <div class="files">linechart</div>
+            <div class="titles">Line chart</div>
+        </div>
+        
+        <div class="pages">
+            <div class="files">barchart</div>
+            <div class="titles">Bar chart</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">piechart</div>
+            <div class="titles">Pie chart</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">bundestag_elections</div>
+            <div class="titles">Bundestag elections</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">client_server_general</div>
+            <div class="titles">Server dia</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">shareprice</div>
+            <div class="titles">Stock Quotes</div>
+        </div>
+
+        <!-- Interaction JSXGraph with JQuery, HTML, Server -->
+        <div class="pages">
+            <div class="files">hsvFlower</div>
+            <div class="titles">HSV flower</div>
+            Scripting with JavaScript enables recursive constructions
+        </div>
+
+        <div class="pages">
+            <div class="files">montecarlo</div>
+            <div class="titles">Monte carlo pi</div>
+        </div>
+
+        <div class="pages">
+            <div class="files">bye</div>
+            <div class="titles">Last slide</div>
+            More examples: http://jsxgraph.org
+        </div>
+
+	</body>
+</html>

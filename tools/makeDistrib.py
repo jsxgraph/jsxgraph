@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
  #!/usr/bin/python
     
 license = """/*
-    Copyright 2008,2009
+    Copyright 2008-2010
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -74,6 +75,7 @@ if __name__ == '__main__':
         jstxt += '\n';
 
     tmpfilename = tempfile.mktemp()
+    #tmpfilename = 'xxx.js'
     fout = open(tmpfilename,'w')
     fout.write(jstxt)
     fout.close()

@@ -1,0 +1,76 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+        <script type="text/javascript" src="distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+    </head>
+    <body class="jsxgraph_body">
+        <div id="box" class="jxgbox jsxgraph_present"></div>
+        <!-- Drawing area -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+    var board = JXG.JSXGraph.initBoard('box', {boundingbox:[-1,4,11,-4], keepaspectratio:true,axis:false});
+    
+    board.suspendUpdate();
+    var p1 = board.createElement('point', [0.5,-1.5] , {name:'A',fillColor:'red',strokeColor:'red'});
+    var p2 = board.createElement('point', [7.5,0.5] , {name:'B',fillColor:'red',strokeColor:'red'});
+    var p3 = board.createElement('point', [2,3] , {name:'C',fillColor:'red',strokeColor:'red'});
+    
+    var b1 = board.createElement('line',['A','B'],{name:'',straightFirst:false,straightLast:false});
+    var b2 = board.createElement('line',['A','C'],{name:'',straightFirst:false,straightLast:false});
+    var b3 = board.createElement('line',['C','B'],{name:'',straightFirst:false,straightLast:false});
+    
+    var c1 = board.createElement('circumcircle',['A','B','C'],{name:''});
+    c1[1].setProperty('strokeColor:#AAAAAA');
+    c1[0].hideElement();
+    
+    var l1 = board.createElement('bisector',['B','A','C'],{name:'',visible:false}); // alpha
+    var l2 = board.createElement('bisector',['C','B','A'],{name:'',visible:false}); // beta
+    
+    var i1 = board.createElement('intersection',[l1,l2,0],{name:'',visible:false});
+    var pp1 = board.createElement('perpendicularpoint',[i1,b1],{name:"C'",fillColor:'blue'});
+    var pp2 = board.createElement('perpendicularpoint',[i1,b2],{name:"B'",fillColor:'blue'});
+    var pp3 = board.createElement('perpendicularpoint',[i1,b3],{name:"A'",fillColor:'blue'});
+    
+    var c2 = board.createElement('circumcircle',[pp1,pp2,pp3],{name:''});
+    c2[1].setProperty('strokeColor:#3CB371');
+    c2[0].hideElement();
+    
+    var c3 = board.createElement('circumcircle',[p3,pp2,pp3],{name:''});
+    c3[1].setProperty('strokeColor:#FF8C00');
+    c3[0].hideElement();
+    var c4 = board.createElement('circumcircle',[p2,pp1,pp3],{name:''});
+    c4[1].setProperty('strokeColor:#FF8C00');
+    c4[0].hideElement();
+    var c5 = board.createElement('circumcircle',[p1,pp2,pp1],{name:''});
+    c5[1].setProperty('strokeColor:#FF8C00');
+    c5[0].hideElement();
+    
+    var i2 = board.createElement('intersection',[c3[1],c1[1],0],{name:"C''",fillColor:'blue'});
+    if(i2.coords.distance(JXG.COORDS_BY_USER, p3.coords) < 0.01) {
+        i2.hideElement();
+        i2 = board.createElement('intersection',[c3[1],c1[1],1],{name:"C''",fillColor:'blue'});
+    } 
+    var i3 = board.createElement('intersection',[c4[1],c1[1],0],{name:"B''",fillColor:'blue'});
+    if(i3.coords.distance(JXG.COORDS_BY_USER, p2.coords) < 0.01) {
+        i3.hideElement();
+        i3 = board.createElement('intersection',[c4[1],c1[1],1],{name:"B''",fillColor:'blue'});
+    }      
+    var i4 = board.createElement('intersection',[c5[1],c1[1],0],{name:"A''",fillColor:'blue'}); 
+    if(i4.coords.distance(JXG.COORDS_BY_USER, p1.coords) < 0.01) {
+        i4.hideElement();
+        i4 = board.createElement('intersection',[c5[1],c1[1],1],{name:"A''",fillColor:'blue'});
+    }  
+    
+    var ll1 = board.createElement('line',[i2,pp1],{name:'',straightFirst:false,straightLast:false,strokeColor:'#FF6347'});
+    var ll2 = board.createElement('line',[i3,pp2],{name:'',straightFirst:false,straightLast:false,strokeColor:'#FF6347'});
+    var ll3 = board.createElement('line',[i4,pp3],{name:'',straightFirst:false,straightLast:false,strokeColor:'#FF6347'});
+    
+    var i5 = board.createElement('intersection',[ll1,ll2,0],{name:"P",fillColor:'#9932CC',strokeColor:'#9932CC'});
+    board.unsuspendUpdate();
+    
+            /* ]]> */
+        </script>
+    </body>
+</html>

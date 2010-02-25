@@ -1,0 +1,1427 @@
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+
+\ProvidesPackage{tufte-common}[2009/05/17 v3.0.0 Common code for the Tufte-LaTeX styles]
+
+%%
+% We use the `xifthen' package to handle our package option switches
+\RequirePackage{xifthen}
+
+
+%%
+% `debug' option -- provides more information in the .log file for use in
+% troubleshooting problems
+\newboolean{@tufte@debug}
+\DeclareOption{debug}{\setboolean{@tufte@debug}{true}}
+
+%%
+% `nofonts' option -- doesn't load any fonts
+% `fonts' option -- tries to load fonts
+\newboolean{@tufte@loadfonts}\setboolean{@tufte@loadfonts}{true}
+\DeclareOption{fonts}{\setboolean{@tufte@loadfonts}{true}}
+\DeclareOption{nofonts}{\setboolean{@tufte@loadfonts}{false}}
+
+%%
+% `nols' option -- doesn't configure letterspacing
+% `ls' option -- configures letterspacing
+\newboolean{@tufte@letterspace}\setboolean{@tufte@letterspace}{true}
+\DeclareOption{ls}{\setboolean{@tufte@letterspace}{true}}
+\DeclareOption{nols}{\setboolean{@tufte@letterspace}{false}}
+
+%%
+% `book' and `handout' options
+\newcommand{\@tufte@class}{article}% the base LaTeX class (defaults to the article/handout style)
+\newcommand{\@tufte@pkgname}{tufte-handout}% the name of the package (defaults to tufte-handout)
+\DeclareOption{book}{%
+  \renewcommand{\@tufte@class}{book}
+  \renewcommand{\@tufte@pkgname}{tufte-book}
+  \setboolean{@tufte@titlepage}{true}
+}
+\DeclareOption{handout}{%
+  \renewcommand{\@tufte@class}{article}
+  \renewcommand{\@tufte@pkgname}{tufte-handout}
+  \setboolean{@tufte@titlepage}{false}
+}
+\DeclareOption{article}{% `article' is just an alias for `handout'
+  \renewcommand{\@tufte@class}{article}
+  \renewcommand{\@tufte@pkgname}{tufte-handout}
+  \setboolean{@tufte@titlepage}{false}
+}
+
+%%
+% `titlepage' option -- creates a full title page with \maketitle
+
+\newboolean{@tufte@titlepage}
+\DeclareOption{titlepage}{\setboolean{@tufte@titlepage}{true}}
+\DeclareOption{notitlepage}{\setboolean{@tufte@titlepage}{false}}
+
+%%
+% `a4paper' option
+
+\newboolean{@tufte@afourpaper}
+\DeclareOption{a4paper}{\setboolean{@tufte@afourpaper}{true}}
+
+%%
+% `sfsidenotes' option -- typesets sidenotes in sans serif typeface
+
+\newboolean{@tufte@sfsidenotes}
+\DeclareOption{sfsidenotes}{\setboolean{@tufte@sfsidenotes}{true}}
+
+%%
+% `symmetric' option -- puts marginpar space to the outside edge of the page
+%   Note: this option forces the twoside option (see the .cls files)
+
+\newboolean{@tufte@symmetric}
+\DeclareOption{symmetric}{
+  \setboolean{@tufte@symmetric}{true}
+  \PackageInfo{\@tufte@pkgname}{The `symmetric' option implies `twoside'}
+  %\ExecuteOptions{twoside}
+}
+
+%%
+% `twoside' option -- alternates running heads
+
+\newboolean{@tufte@twoside}
+\DeclareOption{twoside}{\setboolean{@tufte@twoside}{true}}
+
+%%
+% `notoc' option -- suppresses the Tufte-style table of contents
+
+\newboolean{@tufte@toc}
+\setboolean{@tufte@toc}{true}
+\DeclareOption{notoc}{\setboolean{@tufte@toc}{false}}
+\DeclareOption{toc}{\setboolean{@tufte@toc}{true}}
+
+%%
+% `justified' option -- uses fully justified text (flush left and flush
+% right) instead of ragged right.
+
+\newboolean{@tufte@justified}
+\DeclareOption{justified}{\setboolean{@tufte@justified}{true}}
+
+%%
+% `bidi' option -- loads the bidi package for bi-directional text
+
+\newboolean{@tufte@loadbidi}
+\DeclareOption{bidi}{\setboolean{@tufte@loadbidi}{true}}
+\DeclareOption{nobidi}{\setboolean{@tufte@loadbibi}{false}}
+
+% FIXME: should probably specify options not supported like Mittelbach's aipproc.cls
+
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{\@tufte@class}}
+\ProcessOptions
+
+%%
+% Detect whether we're in two-side mode or not.  (Used to set up running
+% heads later.)
+
+\ifthenelse{\boolean{@twoside}}
+  {\setboolean{@tufte@twoside}{true}}
+  {}
+
+
+
+%%
+% Detect if we're using pdfLaTeX
+
+\newboolean{@tufte@pdf}
+\IfFileExists{ifpdf.sty}{%
+  \RequirePackage{ifpdf}
+  \ifthenelse{\boolean{pdf}}
+    {\setboolean{@tufte@pdf}{true}}
+    {\setboolean{@tufte@pdf}{false}}
+}{% assume we're not using pdfTex?
+  \setboolean{@tufte@pdf}{false}
+}
+
+%%
+% Detect if we're using XeLaTeX
+
+\newboolean{@tufte@xetex}
+\IfFileExists{ifxetex.sty}{%
+  \RequirePackage{ifxetex}
+  \ifthenelse{\boolean{xetex}}
+    {\setboolean{@tufte@xetex}{true}}
+    {\setboolean{@tufte@xetex}{false}}
+}{% not using xelatex
+  \setboolean{@tufte@xetex}{false}
+}
+
+%%
+% Load the `hyperref' package.  We will set more options later.
+% TODO Set nice defaults for hyperref options
+\ifthenelse{\boolean{@tufte@xetex}}
+  {\RequirePackage[hyperfootnotes=false,xetex]{hyperref}}
+  {\RequirePackage[hyperfootnotes=false]{hyperref}}
+
+\hypersetup{%
+  pdfborder = {0 0 0},
+  bookmarksdepth = section,
+}
+
+%%
+% Set the font sizes and baselines to match Tufte's books
+\renewcommand\normalsize{%
+   \@setfontsize\normalsize\@xpt{14}%
+   \abovedisplayskip 10\p@ \@plus2\p@ \@minus5\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
+   \belowdisplayskip \abovedisplayskip
+   \let\@listi\@listI}
+\normalbaselineskip=14pt
+\normalsize
+\renewcommand\small{%
+   \@setfontsize\small\@ixpt{12}%
+   \abovedisplayskip 8.5\p@ \@plus3\p@ \@minus4\p@
+   \abovedisplayshortskip \z@ \@plus2\p@
+   \belowdisplayshortskip 4\p@ \@plus2\p@ \@minus2\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 4\p@ \@plus2\p@ \@minus2\p@
+               \parsep 2\p@ \@plus\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip
+}
+\renewcommand\footnotesize{%
+   \@setfontsize\footnotesize\@viiipt{10}%
+   \abovedisplayskip 6\p@ \@plus2\p@ \@minus4\p@
+   \abovedisplayshortskip \z@ \@plus\p@
+   \belowdisplayshortskip 3\p@ \@plus\p@ \@minus2\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 3\p@ \@plus\p@ \@minus\p@
+               \parsep 2\p@ \@plus\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip
+}
+\renewcommand\scriptsize{\@setfontsize\scriptsize\@viipt\@viiipt}
+\renewcommand\tiny{\@setfontsize\tiny\@vpt\@vipt}
+\renewcommand\large{\@setfontsize\large\@xipt{15}}
+\renewcommand\Large{\@setfontsize\Large\@xiipt{16}}
+\renewcommand\LARGE{\@setfontsize\LARGE\@xivpt{18}}
+\renewcommand\huge{\@setfontsize\huge\@xxpt{30}}
+\renewcommand\Huge{\@setfontsize\Huge\@xxivpt{36}}
+
+\setlength\leftmargini   {1pc}
+\setlength\leftmarginii  {1pc}
+\setlength\leftmarginiii {1pc}
+\setlength\leftmarginiv  {1pc}
+\setlength\leftmarginv   {1pc}
+\setlength\leftmarginvi  {1pc}
+\setlength\labelsep      {.5pc}
+\setlength\labelwidth    {\leftmargini}
+\addtolength\labelwidth{-\labelsep}
+
+%%
+% \RaggedRight allows hyphenation
+
+\RequirePackage{ragged2e}
+\setlength{\RaggedRightRightskip}{\z@ plus 0.08\hsize}
+\setlength{\RaggedRightParindent}{1pc}
+
+% Paragraph indentation and separation for normal text
+\newcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{1.0pc}%
+  \setlength{\parindent}{1pc}%
+  \setlength{\parskip}{0pt}%
+}
+\@tufte@reset@par
+
+% Paragraph indentation and separation for marginal text
+\newcommand{\@tufte@margin@par}{%
+  \setlength{\RaggedRightParindent}{0.5pc}%
+  \setlength{\parindent}{0.5pc}%
+  \setlength{\parskip}{0pt}%
+}
+
+
+%%
+% Set page layout geometry
+
+\RequirePackage[letterpaper,left=1in,top=1in,headsep=2\baselineskip,textwidth=26pc,marginparsep=2pc,marginparwidth=12pc,textheight=44\baselineskip,headheight=\baselineskip]{geometry}
+
+\ifthenelse{\boolean{@tufte@afourpaper}}
+  {\geometry{a4paper,left=24.8mm,top=27.4mm,headsep=2\baselineskip,textwidth=107mm,marginparsep=8.2mm,marginparwidth=49.4mm,textheight=49\baselineskip,headheight=\baselineskip}}
+  {}
+
+\ifthenelse{\boolean{@tufte@symmetric}}
+  {}
+  {\geometry{asymmetric}}% forces internal LaTeX `twoside'
+
+
+%%
+% Separation marginpars by a line's worth of space.
+
+\setlength\marginparpush{10pt}
+
+%%
+% Font for margin items
+
+\ifthenelse{\boolean{@tufte@sfsidenotes}}
+  {\newcommand{\@tufte@marginfont}{\normalfont\footnotesize\sffamily}}
+  {\newcommand{\@tufte@marginfont}{\normalfont\footnotesize}}
+
+
+%%
+% Set the justification baesed on the `justified' class option
+
+\newcommand{\@tufte@justification}{%
+  \ifthenelse{\boolean{@tufte@justified}}%
+    {\justifying}%
+    {\RaggedRight}%
+}
+
+%%
+% Turn off section numbering
+
+\setcounter{secnumdepth}{-1}
+
+%%
+% Tighten up space between displays (e.g., a figure or table) and make symmetric
+
+\setlength\abovedisplayskip{6pt plus 2pt minus 4pt}
+\setlength\belowdisplayskip{6pt plus 2pt minus 4pt}
+
+%%
+% To implement full-width display environments
+
+\newboolean{@tufte@changepage}
+\IfFileExists{changepage.sty}{%
+  \PackageInfo{\@tufte@pkgname}{Found changepage.sty}
+  \RequirePackage[strict]{changepage}
+  \setboolean{@tufte@changepage}{true}
+}{%
+  \PackageInfo{\@tufte@pkgname}{Found chngpage.sty}
+  \RequirePackage[strict]{chngpage}
+  \setboolean{@tufte@changepage}{false}
+}
+
+% Write our own aliases for the \checkoddpage and \ifoddpage or \ifcpoddpage commands
+\newboolean{@tufte@odd@page}
+\setboolean{@tufte@odd@page}{true}
+\newcommand*{\@tufte@checkoddpage}{%
+  \checkoddpage%
+  \ifthenelse{\boolean{@tufte@changepage}}{%
+    \ifoddpage%
+      \setboolean{@tufte@odd@page}{true}%
+    \else%
+      \setboolean{@tufte@odd@page}{false}%
+    \fi%
+  }{%
+    \ifcpoddpage%
+      \setboolean{@tufte@odd@page}{true}%
+    \else%
+      \setboolean{@tufte@odd@page}{false}%
+    \fi
+  }%
+}
+
+
+% Compute lengths used for full-width displays
+
+\newlength{\@tufte@overhang}
+\setlength{\@tufte@overhang}{\marginparwidth}
+\addtolength{\@tufte@overhang}{\marginparsep}
+
+\newlength{\@tufte@fullwidth}
+\setlength{\@tufte@fullwidth}{\textwidth}
+\addtolength{\@tufte@fullwidth}{\marginparsep}
+\addtolength{\@tufte@fullwidth}{\marginparwidth}
+
+\newlength{\@tufte@caption@fill}
+\setlength{\@tufte@caption@fill}{\textwidth}
+\addtolength{\@tufte@caption@fill}{\marginparsep}
+
+
+%%
+% Modified \title, \author, and \date commands.  These store the
+% (footnote-less) values in \plaintitle, \plainauthor, and \thedate, respectively.
+
+\newcommand{\plaintitle}{}%     plain-text-only title
+\newcommand{\plainauthor}{}%    plain-text-only author
+\newcommand{\plainpublisher}{}% plain-text-only publisher
+
+\newcommand{\thanklesstitle}{}%     full title text minus \thanks{}
+\newcommand{\thanklessauthor}{}%    full author text minus \thanks{}
+\newcommand{\thanklesspublisher}{}% full publisher minus \thanks{}
+
+\newcommand{\@publisher}{}% full publisher with \thanks{}
+\newcommand{\thedate}{\today}
+
+% TODO Fix it so that \thanks is not spaced out (with `soul') and can be
+% used in \maketitle when the `sfsidenotes' option is provided.
+\renewcommand{\thanks}[1]{\NoCaseChange{\footnote{#1}}}
+
+\renewcommand{\title}[2][]{%
+  \gdef\@title{#2}%
+  \begingroup%
+    % TODO store contents of \thanks command
+    \renewcommand{\thanks}[1]{}% swallow \thanks contents
+    \protected@xdef\thanklesstitle{#2}%
+  \endgroup%
+  \ifthenelse{\isempty{#1}}%
+    {\renewcommand{\plaintitle}{\thanklesstitle}}% use thankless title
+    {\renewcommand{\plaintitle}{#1}}% use provided plain-text title
+  \hypersetup{pdftitle={\plaintitle}}% set the PDF metadata title
+}
+
+\def\@author{}% default author is empty (suppresses LaTeX's ``no author'' warning)
+\renewcommand*{\author}[2][]{%
+  \gdef\@author{#2}%
+  \begingroup%
+    % TODO store contents of \thanks command
+    \renewcommand{\thanks}[1]{}% swallow \thanks contents
+    \protected@xdef\thanklessauthor{#2}%
+  \endgroup%
+  \ifthenelse{\isempty{#1}}
+    {\renewcommand{\plainauthor}{\thanklessauthor}}% use thankless author
+    {\renewcommand{\plainauthor}{#1}}% use provided plain-text author
+  \hypersetup{pdfauthor={\plainauthor}}% set the PDF metadata author
+}
+
+\renewcommand*{\date}[1]{%
+  \gdef\@date{#1}%
+  \begingroup%
+    % TODO store contents of \thanks command
+    \renewcommand{\thanks}[1]{}% swallow \thanks contents
+    \protected@xdef\thedate{#1}%
+  \endgroup%
+}
+
+%%
+% Provides a \publisher command to set the publisher
+
+\newcommand{\publisher}[2][]{%
+  \gdef\@publisher{#2}%
+  \begingroup%
+    \renewcommand{\thanks}[1]{}% swallow \thanks contents
+    \protected@xdef\thanklesspublisher{#2}%
+  \endgroup%
+  \ifthenelse{\isempty{#1}}
+    {\renewcommand{\plainpublisher}{\thanklesspublisher}}% use thankless publisher
+    {\renewcommand{\plainpublisher}{#1}}% use provided plain-text publisher
+}
+
+% TODO: Test \hypersetup{pdfauthor,pdftitle} with DVI and XeTeX
+
+%%
+% Require paralist package for tighter lists
+
+\RequirePackage{paralist}
+
+% Add rightmargin to compactenum
+
+\def\@compactenum@{%
+  \expandafter\list\csname label\@enumctr\endcsname{%
+    \usecounter{\@enumctr}%
+    \rightmargin=2em% added this
+    \parsep\plparsep
+    \itemsep\plitemsep
+    \topsep\pltopsep
+    \partopsep\plpartopsep
+    \def\makelabel##1{\hss\llap{##1}}}}
+
+%%
+% Improved letterspacing of small caps and all-caps text.
+%
+% First, try to use the `microtype' package, if it's available. 
+% Failing that, try to use the `soul' package, if it's available.
+% Failing that, well, I give up.
+
+\RequirePackage{textcase} % provides \MakeTextUppercase and \MakeTextLowercase
+\def\allcapsspacing{\relax}
+\def\smallcapsspacing{\relax}
+\newcommand{\allcaps}[1]{\MakeTextUppercase{\allcapsspacing{#1}}}
+\newcommand{\smallcaps}[1]{\MakeTextLowercase{\textsc{#1}}}
+
+\newcommand{\@tufte@loadsoul}{%
+  \IfFileExists{soul.sty}{%
+    \RequirePackage{soul}
+    \sodef\allcapsspacing{\upshape}{0.15em}{0.65em}{0.6em}
+    \sodef\smallcapsspacing{\scshape}{0.075em}{0.5em}{0.6em}
+  }{
+    \PackageWarningNoLine{\@tufte@pkgname}{Couldn't locate `soul' package.}
+  }% soul not installed... giving up.
+}
+
+% If we're using pdfLaTeX v1.40+, use the letterspace package. 
+% If we're using pdfLaTex < v1.40, use the soul package.
+% If we're using XeLaTeX, use XeLaTeX letterspacing options.
+% Otherwise fall back on the soul package.
+
+\ifthenelse{\boolean{@tufte@pdf}}
+  {\PackageInfo{\@tufte@pkgname}{ifpdf = true}}
+  {\PackageInfo{\@tufte@pkgname}{ifpdf = false}}
+
+\ifthenelse{\boolean{@tufte@xetex}}
+  {\PackageInfo{\@tufte@pkgname}{ifxetex = true}}
+  {\PackageInfo{\@tufte@pkgname}{ifxetex = false}}
+
+% Check pdfLaTeX version
+\def\@tufte@pdftexversion{0}
+\ifx\normalpdftexversion\@undefined \else
+  \let\pdftexversion \normalpdftexversion
+  \let\pdftexrevision\normalpdftexrevision
+  \let\pdfoutput     \normalpdfoutput
+\fi
+\ifx\pdftexversion\@undefined \else
+  \ifx\pdftexversion\relax \else
+    \def\@tufte@pdftexversion{6}
+    \ifnum\pdftexversion < 140
+      \def\@tufte@pdftexversion{5}
+    \fi
+  \fi
+\fi
+
+\ifthenelse{\boolean{@tufte@letterspace}}
+  {%
+  \ifnum\@tufte@pdftexversion<6
+    % pdfLaTeX version is too old or not using pdfLaTeX
+    \ifthenelse{\boolean{@tufte@xetex}}
+      {% TODO use xetex letterspacing
+      \PackageInfo{\@tufte@pkgname}{XeTeX detected. Reverting to `soul' package for letterspacing.}
+      \@tufte@loadsoul}
+      {% use `soul' package for letterspacing
+      \PackageInfo{\@tufte@pkgname}{Old version of pdfTeX detected.  Reverting to `soul' package for letterspacing.}
+      \@tufte@loadsoul}
+  \else
+    \IfFileExists{letterspace.sty}{% 
+      \PackageInfo{\@tufte@pkgname}{Modern version of pdfTeX detected.  Using `letterspace' package.}
+      \RequirePackage{letterspace}
+      % Set up letterspacing (using microtype package) -- requires pdfTeX v1.40+
+      \renewcommand{\allcapsspacing}[1]{\textls[200]{##1}}
+      \renewcommand{\smallcapsspacing}[1]{\textls[50]{##1}}
+      \renewcommand{\allcaps}[1]{\textls[200]{\MakeTextUppercase{##1}}}
+      \renewcommand{\smallcaps}[1]{\textsc{\MakeTextLowercase{##1}}}
+    }{% microtype failed, check for soul
+      \PackageInfo{\@tufte@pkgname}{Modern version of pdfTeX detected, but `letterspace' package not installed.  Reverting to  `soul' package for letterspacing.}
+      \@tufte@loadsoul
+    }
+  \fi}
+  {}
+
+
+\DeclareTextFontCommand{\textsmallcaps}{\scshape}
+\renewcommand{\textsc}[1]{\textsmallcaps{\smallcapsspacing{#1}}}
+
+
+%%
+% An environment for paragraph-style section
+
+\providecommand\newthought[1]{%
+   \addvspace{1.0\baselineskip plus 0.5ex minus 0.2ex}%
+   \noindent\textsc{#1}%
+}
+
+%%
+% Redefine the display environments (quote, quotation, etc.)
+
+\renewenvironment{verse}
+               {\let\\\@centercr
+                \list{}{\itemsep      \z@
+                        \itemindent   -1pc%
+                        \listparindent\itemindent
+                        \rightmargin  \leftmargin
+                        \advance\leftmargin 1pc}%
+                \small%
+                \item\relax}
+               {\endlist}
+\renewenvironment{quotation}
+               {\list{}{\listparindent 1pc%
+                        \itemindent    \listparindent
+                        \rightmargin   \leftmargin
+                        \parsep        \z@ \@plus\p@}%
+                \small%
+                \item\relax\noindent\ignorespaces}
+               {\endlist}
+\renewenvironment{quote}
+               {\list{}{\rightmargin\leftmargin}%
+                \small%
+                \item\relax}
+               {\endlist}
+
+
+%%
+% Used for doublespacing, and other linespacing
+
+\RequirePackage{setspace}
+
+%%
+% Load the bidi package if instructed to do so.  This package must be loaded
+% prior to our redefining the \footnote and \cite commands.
+
+\ifthenelse{\boolean{@tufte@loadbidi}}{\RequirePackage{bidi}}{}
+
+
+%%
+% A function that removes leading and trailling spaces from the supplied macro.
+% Based on code written by Michael Downes (See ``Around the Bend'', #15.)
+% Executing \@tufte@trim@spaces\xyzzy will result in the contents of \xyzzy
+% being trimmed of leading and trailing white space.
+
+\catcode`\Q=3
+\def\@tufte@trim@spaces#1{%
+  % Use grouping to emulate a multi-token afterassignment queue
+  \begingroup%
+  % Put `\toks 0 {' into the afterassignment queue
+  \aftergroup\toks\aftergroup0\aftergroup{% 
+  % Apply \trimb to the replacement text of #1, adding a leading
+  % \noexpand to prevent brace stripping and to serve another purpose
+  % later.
+  \expandafter\@tufte@trim@b\expandafter\noexpand#1Q Q}%
+  % Transfer the trimmed text back into #1.
+  \edef#1{\the\toks0}%
+}
+
+% \trimb removes a trailing space if present, then calls \@tufte@trim@c to
+% clean up any leftover bizarre Qs, and trim a leading space. In
+% order for \trimc to work properly we need to put back a Q first.
+\def\@tufte@trim@b#1 Q{\@tufte@trim@c#1Q}
+
+% Execute \vfuzz assignment to remove leading space; the \noexpand
+% will now prevent unwanted expansion of a macro or other expandable
+% token at the beginning of the trimmed text. The \endgroup will feed
+% in the \aftergroup tokens after the \vfuzz assignment is completed.
+\def\@tufte@trim@c#1Q#2{\afterassignment\endgroup \vfuzz\the\vfuzz#1}
+\catcode`\Q=11
+
+%%
+% Citations should go in the margin as sidenotes
+
+\RequirePackage[numbers]{natbib}
+\RequirePackage{bibentry}        % allows bibitems to be typeset outside thebibliography environment
+% Redefine the \BR@b@bibitem command to fix a bug with bibentry+chicago style
+\renewcommand\BR@b@bibitem[2][]{%
+  \ifthenelse{\isempty{#1}}%
+    {\BR@bibitem{#2}}%
+    {\BR@bibitem[#1]{#2}}%
+  \BR@c@bibitem{#2}%
+}
+\nobibliography*                % pre-loads the bibliography keys
+\providecommand{\doi}[1]{\textsc{doi:} #1}% pre-defining this so it may be used before the \bibliography command it issued
+
+%%
+% Normal \cite behavior
+\newcounter{@tufte@num@bibkeys}%
+\newcommand{\@tufte@normal@cite}[2][0pt]{%
+  % Snag the last bibentry in the list for later comparison
+  \let\@temp@last@bibkey\@empty%
+  \@for\@temp@bibkey:=#2\do{\let\@temp@last@bibkey\@temp@bibkey}%
+  \sidenote[][#1]{%
+    % Loop through all the bibentries, separating them with semicolons and spaces
+    \setcounter{@tufte@num@bibkeys}{0}%
+    \@for\@temp@bibkeyx:=#2\do{%
+      \ifthenelse{\equal{\@temp@last@bibkey}{\@temp@bibkeyx}}%
+        {\ifthenelse{\equal{\value{@tufte@num@bibkeys}}{0}}{}{and\ }%
+         \@tufte@trim@spaces\@temp@bibkeyx% trim spaces around bibkey
+         \bibentry{\@temp@bibkeyx}}%
+        {\@tufte@trim@spaces\@temp@bibkeyx% trim spaces around bibkey
+         \bibentry{\@temp@bibkeyx};\ }%
+      \stepcounter{@tufte@num@bibkeys}%
+    }%
+  }%
+}
+
+
+%%
+% Macros for holding the list of cite keys until after the \sidenote
+
+\gdef\@tufte@citations{}% list of cite keys
+\newcommand\@tufte@add@citation[1]{\relax% adds a new bibkey to the list of cite keys
+  \ifx\@tufte@citations\@empty\else
+    \g@addto@macro\@tufte@citations{,}% separate by commas
+  \fi
+  \g@addto@macro\@tufte@citations{#1}
+}
+
+\newcommand{\@tufte@print@citations}[1][0pt]{% puts the citations in a margin note
+  % Snag the last bibentry in the list for later comparison
+  \let\@temp@last@bibkey\@empty%
+  \@for\@temp@bibkey:=\@tufte@citations\do{\let\@temp@last@bibkey\@temp@bibkey}%
+  \marginpar{%
+    \hbox{}\vspace*{#1}%
+    \@tufte@marginfont%
+    \@tufte@justification%
+    \@tufte@margin@par% use parindent and parskip settings for marginal text
+    \vspace*{-1\baselineskip}%
+    % Loop through all the bibentries, separating them with semicolons and spaces
+    \setcounter{@tufte@num@bibkeys}{0}%
+    \@for\@temp@bibkeyx:=\@tufte@citations\do{%
+      \ifthenelse{\equal{\@temp@last@bibkey}{\@temp@bibkeyx}}%
+        {\ifthenelse{\equal{\value{@tufte@num@bibkeys}}{0}}{}{and\ }%
+         \@tufte@trim@spaces\@temp@bibkeyx% trim spaces around bibkey
+         \bibentry{\@temp@bibkeyx}}%
+        {\@tufte@trim@spaces\@temp@bibkeyx% trim spaces around bibkey
+         \bibentry{\@temp@bibkeyx};\ }%
+      \stepcounter{@tufte@num@bibkeys}%
+    }%
+    \@tufte@reset@par% use parindent and parskip settings for body text
+  }%
+}
+
+%%
+% \cite behavior when executed within a sidenote
+
+\newcommand{\@tufte@sidenote@citations}{}% contains list of \cites in sidenote
+\newcommand{\@tufte@infootnote@cite}[1]{%
+  \@tufte@add@citation{#1}
+}
+
+%%
+% Set the default \cite style.  This is set and reset by the \sidenote command.
+
+\let\cite\@tufte@normal@cite
+
+%%
+% Transform existing \footnotes into \sidenotes
+% Sidenote: ``Where God meant footnotes to go.'' ---Tufte
+
+\RequirePackage{optparams}% for our new sidenote commands -- provides multiple optional arguments for commands
+
+\providecommand*{\footnotelayout}{\@tufte@marginfont\@tufte@justification}
+\renewcommand{\footnotelayout}{\@tufte@marginfont\@tufte@justification}
+
+% Override footmisc's definition to set the sidenote marks (numbers) inside the
+% sidenote's text block.
+\long\def\@makefntext#1{\@textsuperscript{\@tufte@marginfont\tiny\@thefnmark}\,\footnotelayout#1}
+
+% Set the in-text footnote mark in the same typeface as the body text itself.
+\def\@makefnmark{\hbox{\@textsuperscript{\normalfont\footnotesize\@thefnmark}}}
+
+\providecommand*{\multiplefootnotemarker}{3sp}
+\providecommand*{\multfootsep}{,}
+
+\renewcommand*\@footnotemark{%
+  \leavevmode%
+  \ifhmode%
+    \edef\@x@sf{\the\spacefactor}%
+    \@tufte@check@multiple@sidenotes%
+    \nobreak%
+  \fi%
+  \@makefnmark%
+  \ifhmode\spacefactor\@x@sf\fi%
+  \relax%
+}
+
+\newcommand{\@tufte@check@multiple@sidenotes}{%
+  \ifdim\lastkern=\multiplefootnotemarker\relax%
+    \edef\@x@sf{\the\spacefactor}%
+    \unkern%
+    \textsuperscript{\multfootsep}%
+    \spacefactor\@x@sf\relax%
+  \fi
+}
+
+\renewcommand\@footnotetext[2][0pt]{%
+  \marginpar{%
+    \hbox{}\vspace*{#1}%
+    \def\baselinestretch {\setspace@singlespace}%
+    \ifthenelse{\boolean{@tufte@loadbidi}}{\if@rl@footnote\@rltrue\else\@rlfalse\fi}{}%
+    \reset@font\footnotesize%
+    \@tufte@margin@par% use parindent and parskip settings for marginal text
+    \vspace*{-1\baselineskip}\noindent%
+    \protected@edef\@currentlabel{%
+       \csname p@footnote\endcsname\@thefnmark%
+    }%
+    \color@begingroup%
+       \@makefntext{%
+         \ignorespaces#2%
+       }%
+    \color@endgroup%
+  }%
+  \@tufte@reset@par% use parindent and parskip settings for body text
+}%
+
+%
+% Define \sidenote command.  Can handle \cite.
+
+\newcommand{\@tufte@sidenote@vertical@offset}{0pt}
+
+% #1 = footnote num, #2 = vertical offset, #3 = footnote text
+\long\def\@tufte@sidenote[#1][#2]#3{%
+  \let\cite\@tufte@infootnote@cite%   use the in-sidenote \cite command
+  \gdef\@tufte@citations{}%           clear out any old citations
+  \ifthenelse{\NOT\isempty{#2}}{\renewcommand{\@tufte@sidenote@vertical@offset}{#2}}{}%
+  \ifthenelse{\isempty{#1}}{%
+    % no specific footnote number provided
+    \stepcounter\@mpfn%
+    \protected@xdef\@thefnmark{\thempfn}%
+    \@footnotemark\@footnotetext[\@tufte@sidenote@vertical@offset]{#3}%
+  }{%
+    % specific footnote number provided
+    \begingroup%
+      \csname c@\@mpfn\endcsname #1\relax%
+      \unrestored@protected@xdef\@thefnmark{\thempfn}%
+    \endgroup%
+    \@footnotemark\@footnotetext[\@tufte@sidenote@vertical@offset]{#3}%
+  }%
+  \@tufte@print@citations%            print any citations
+  \let\cite\@tufte@normal@cite%       go back to using normal in-text \cite command
+  \unskip\ignorespaces%               remove extra white space
+  \kern-\multiplefootnotemarker%      remove \kern left behind by sidenote
+  \kern\multiplefootnotemarker\relax% add new \kern here to replace the one we yanked
+}
+
+\newcommand*{\sidenote}{\optparams{\@tufte@sidenote}{[][0pt]}}
+\renewcommand*{\footnote}{\optparams{\@tufte@sidenote}{[][0pt]}}
+
+%%
+% Sidenote without the footnote mark
+
+\newcommand\marginnote[2][0pt]{%
+  \let\cite\@tufte@infootnote@cite%   use the in-sidenote \cite command
+  \gdef\@tufte@citations{}%           clear out any old citations
+  \@tufte@margin@par%                 use parindent and parskip settings for marginal text
+  \marginpar{\hbox{}\vspace*{#1}\@tufte@marginfont\@tufte@justification\vspace*{-1\baselineskip}\noindent #2}%
+  \@tufte@reset@par%                  use parindent and parskip settings for body text
+  \@tufte@print@citations%            print any citations
+  \let\cite\@tufte@normal@cite%       go back to using normal in-text \cite command
+}
+
+
+%%
+% The placeins package provides the \FloatBarrier command.  This forces
+% LaTeX to place all of the floats before proceeding.  We'll use this to
+% keep the float (figure and table) numbers in sequence.
+\RequirePackage{placeins}
+
+%%
+% Margin float environment
+
+\newsavebox{\@tufte@margin@floatbox}
+\newenvironment{@tufte@margin@float}[2][-1.2ex]%
+  {\FloatBarrier% process all floats before this point so the figure/table numbers stay in order.
+  \begin{lrbox}{\@tufte@margin@floatbox}%
+  \begin{minipage}{\marginparwidth}%
+    \@tufte@marginfont%
+    \def\@captype{#2}%
+    \hbox{}\vspace*{#1}%
+    \@tufte@justification%
+    \@tufte@margin@par%
+    \noindent%
+  }
+  {\end{minipage}%
+  \end{lrbox}%
+  \marginpar{\usebox{\@tufte@margin@floatbox}}%
+  \@tufte@reset@par%
+  }
+
+
+%%
+% Margin figure environment
+
+\newenvironment{marginfigure}[1][-1.2ex]%
+  {\begin{@tufte@margin@float}[#1]{figure}}
+  {\end{@tufte@margin@float}}
+
+
+%%
+% Margin table environment
+\newenvironment{margintable}[1][-1.2ex]%
+  {\begin{@tufte@margin@float}[#1]{table}}
+  {\end{@tufte@margin@float}}
+
+
+%%
+% A collection of macros to be used with the new Tufte-style float environments
+
+\newcommand{\floatalignment}{x}% holds the current float alignment (t, b, h, p)
+\newcommand{\setfloatalignment}[1]{\renewcommand{\floatalignment}{#1}}% manually sets the float alignment
+
+% Boxes to temporarily store our float and caption
+\newsavebox{\@tufte@figure@box}
+\newsavebox{\@tufte@caption@box}
+
+% Save original LaTeX float environment
+\let\@tufte@orig@float\@float
+\let\@tufte@orig@endfloat\end@float
+
+% Save original LaTeX \caption and \label commands
+\AtBeginDocument{%
+  \let\@tufte@orig@caption\caption%
+  \let\@tufte@orig@label\label%
+}
+
+% Store the caption and label contents
+\newcommand{\@tufte@stored@shortcaption}{}
+\newcommand{\@tufte@stored@caption}{}
+\newcommand{\@tufte@stored@label}{}
+
+\newcommand{\@tufte@caption}[2][]{%
+  \ifthenelse{\isempty{#1}}
+    {\gdef\@tufte@stored@shortcaption{#2}}%
+    {\gdef\@tufte@stored@shortcaption{#1}}%
+  \gdef\@tufte@stored@caption{#2}%
+}
+
+\newcommand{\@tufte@label}[1]{%
+  \gdef\@tufte@stored@label{#1}%
+}
+
+\newcommand{\@tufte@fps}{}
+
+% TODO make sure new caption and figure code can handle [p] and [h] placements well
+% TODO handle the symmetric class option (move caption to other side of verso pages)
+
+%%
+% Define a float environment to place the captions in the margin space
+
+\newenvironment{@tufte@float}[2][htbp]
+  {% If the float placement specifier is 'b' and only 'b', then bottom-align the mini-pages, otherwise top-align them.
+    \renewcommand{\@tufte@fps}{#1}%
+    \ifthenelse{\equal{#1}{b}\OR\equal{#1}{B}}%
+      {\renewcommand{\floatalignment}{b}}%
+      {\renewcommand{\floatalignment}{t}}%
+    \renewcommand{\caption}[2][]{\@tufte@caption[##1]{##2}}%
+    \renewcommand{\label}[1]{\@tufte@label{##1}}%
+    \@tufte@orig@float{#2}[#1]%
+    \begin{lrbox}{\@tufte@figure@box}%
+      \begin{minipage}[\floatalignment]{\textwidth}\hbox{}%
+  }
+  {% end @tufte@float
+        \par\hbox{}\vspace{-\baselineskip}\ifthenelse{\prevdepth>0}{\vspace{-\prevdepth}}{}% align baselines of boxes
+      \end{minipage}%
+    \end{lrbox}%
+    % build the caption box
+    \begin{lrbox}{\@tufte@caption@box}%
+      \begin{minipage}[\floatalignment]{\marginparwidth}\hbox{}%
+        \ifthenelse{\NOT\equal{\@tufte@stored@caption}{}}{\@tufte@orig@caption[\@tufte@stored@shortcaption]{\@tufte@stored@caption}}{}%
+        \ifthenelse{\NOT\equal{\@tufte@stored@label}{}}{\@tufte@orig@label{\@tufte@stored@label}}{}%
+        \par\vspace{-\prevdepth}%% TODO: DOUBLE-CHECK FOR SAFETY
+      \end{minipage}%
+    \end{lrbox}%
+    % now typeset the stored boxes
+    \begin{fullwidth}%
+      \begin{minipage}[\floatalignment]{\linewidth}%
+        \@tufte@checkoddpage%
+        \ifthenelse{\NOT\boolean{@tufte@symmetric}\OR\boolean{@tufte@odd@page}}{%
+          % asymmetric or page is odd, so caption is on the right
+          \usebox{\@tufte@figure@box}%
+          \hspace{\marginparsep}%
+          \smash{\usebox{\@tufte@caption@box}}%
+        }{%
+          % symmetric pages and page is even, so caption is on the left
+	  \strut\smash{\usebox{\@tufte@caption@box}}%
+          \hspace{\marginparsep}%
+	  \usebox{\@tufte@figure@box}%
+        }%
+      \end{minipage}%
+    \end{fullwidth}%
+    \@tufte@orig@endfloat%
+    % reset commands and temp boxes and captions
+    \let\caption\@tufte@orig@caption%
+    \let\label\@tufte@orig@label%
+    \begin{lrbox}{\@tufte@figure@box}\hbox{}\end{lrbox}%
+    \begin{lrbox}{\@tufte@caption@box}\hbox{}\end{lrbox}%
+    \gdef\@tufte@stored@shortcaption{}%
+    \gdef\@tufte@stored@caption{}%
+  }
+
+%%
+% Redefine the figure environment to place the captions in the margin space
+
+\renewenvironment{figure}[1][htbp]
+  {\begin{@tufte@float}[#1]{figure}}
+  {\end{@tufte@float}}
+
+
+%%
+% Redefine the table environment to place the captions in the margin space
+
+\renewenvironment{table}[1][htbp]
+  {\begin{@tufte@float}[#1]{table}}
+  {\end{@tufte@float}}
+
+
+%%
+% Full-width figures and tables
+
+\newenvironment{@tufte@float@star}[2][htbp]%
+  {% begin
+    % If the float placement specifier is 'b' and only 'b', then place the caption above the figure, else place the caption below the figure.
+    \renewcommand{\@tufte@fps}{#1}%
+    \ifthenelse{\equal{#1}{b}\OR\equal{#1}{B}}%
+      {\renewcommand{\floatalignment}{b}}%
+      {\renewcommand{\floatalignment}{t}}%
+    \renewcommand{\caption}[2][]{\@tufte@caption[##1]{##2}}%
+    \renewcommand{\label}[1]{\@tufte@label{##1}}%
+    \@tufte@orig@float{#2}[#1]%
+    \begin{lrbox}{\@tufte@figure@box}%
+      \begin{minipage}[\floatalignment]{\textwidth}\hbox{}%
+        \begin{fullwidth}
+  }%
+  {% end figure*
+          \par\hbox{}\vspace{-\baselineskip}\ifthenelse{\prevdepth>0}{\vspace{-\prevdepth}}{}% align baselines of boxes
+        \end{fullwidth}%
+      \end{minipage}%
+    \end{lrbox}%
+    % build the caption box
+    % TODO use \captionaboveskip and \captionbelowskip for spacing between caption and figure boxes
+    \begin{lrbox}{\@tufte@caption@box}%
+      \begin{minipage}[\floatalignment]{\marginparwidth}\hbox{}%
+        \ifthenelse{\NOT\equal{\@tufte@stored@caption}{}}{\@tufte@orig@caption[\@tufte@stored@shortcaption]{\@tufte@stored@caption}}{}%
+        \ifthenelse{\NOT\equal{\@tufte@stored@label}{}}{\@tufte@orig@label{\@tufte@stored@label}}{}%
+        \par\vspace{-\prevdepth}%% TODO: DOUBLE-CHECK FOR SAFETY
+      \end{minipage}%
+    \end{lrbox}%
+    % now typeset the stored boxes
+    \@tufte@checkoddpage%
+    \begin{fullwidth}%
+      \begin{minipage}[\floatalignment]{\linewidth}%
+        \ifthenelse{\equal{\floatalignment}{b}}
+          {% place caption above figure
+            \ifthenelse{\NOT\boolean{@tufte@symmetric}\OR\boolean{@tufte@odd@page}}
+              {% caption on the right
+                \hfill\smash{\usebox{\@tufte@caption@box}}%
+		\par\usebox{\@tufte@figure@box}%
+              }{% caption on the left
+                \smash{\usebox{\@tufte@caption@box}}\hfill\null%
+		\par\hspace{\@tufte@overhang}\usebox{\@tufte@figure@box}%
+              }%
+          }
+          {% place caption below figure
+            \ifthenelse{\NOT\boolean{@tufte@symmetric}\OR\boolean{@tufte@odd@page}}
+              {% caption on the right
+                \usebox{\@tufte@figure@box}\par%
+                \hspace{\@tufte@caption@fill}\smash{\usebox{\@tufte@caption@box}}%
+              }{% caption on the left
+                \null\hspace{\@tufte@overhang}\usebox{\@tufte@figure@box}\par%
+                \smash{\usebox{\@tufte@caption@box}}\hfill%
+              }%
+          }
+      \end{minipage}%
+    \end{fullwidth}%
+    \@tufte@orig@endfloat%
+    % reset commands and temp boxes and captions
+    \let\caption\@tufte@orig@caption%
+    \let\label\@tufte@orig@label%
+    \begin{lrbox}{\@tufte@figure@box}\hbox{}\end{lrbox}
+    \begin{lrbox}{\@tufte@caption@box}\hbox{}\end{lrbox}
+    \gdef\@tufte@stored@shortcaption{}
+    \gdef\@tufte@stored@caption{}
+  }
+
+
+%%
+% Full-width figure
+
+\renewenvironment{figure*}[1][htbp]%
+  {\begin{@tufte@float@star}[#1]{figure}}
+  {\end{@tufte@float@star}}
+
+
+%%
+% Full-width table
+
+\renewenvironment{table*}[1][htbp]%
+  {\begin{@tufte@float@star}[#1]{table}}
+  {\end{@tufte@float@star}}
+
+
+%%
+% Full-page-width area
+
+\newenvironment{fullwidth}
+  {\ifthenelse{\boolean{@tufte@symmetric}}
+     {\ifthenelse{\boolean{@tufte@changepage}}{\begin{adjustwidth*}{}{-\@tufte@overhang}}{\begin{adjustwidth}[]{}{-\@tufte@overhang}}}
+     {\begin{adjustwidth}{}{-\@tufte@overhang}}%
+  }
+  {\ifthenelse{\boolean{@tufte@symmetric}}
+    {\ifthenelse{\boolean{@tufte@changepage}}{\end{adjustwidth*}}{\end{adjustwidth}}}
+    {\end{adjustwidth}}
+  }
+
+%%
+% Format the captions in a style similar to the sidenotes
+
+\long\def\@caption#1[#2]#3{%
+  \par%
+  \addcontentsline{\csname ext@#1\endcsname}{#1}%
+    {\protect\numberline{\csname the#1\endcsname}{\ignorespaces #2}}%
+  \begingroup
+    \@parboxrestore
+    \if@minipage
+      \@setminipage
+    \fi
+    \@tufte@marginfont\@tufte@justification%
+    \noindent\csname fnum@#1\endcsname: \ignorespaces#3\par
+    %\@makecaption{\csname fnum@#1\endcsname}{\ignorespaces #3}\par
+  \endgroup}
+
+%%
+% If we're NOT using XeLaTeX and the `nofonts' class option was NOT provided,
+% we should load the Palatino, Helvetica, and Bera Mono fonts (if they are
+% installed.)
+
+\ifthenelse{\boolean{@tufte@loadfonts}\AND\NOT\boolean{@tufte@xetex}}{%
+  \IfFileExists{mathpazo.sty}{\RequirePackage[osf,sc]{mathpazo}}{}
+  \IfFileExists{helvet.sty}{\RequirePackage[scaled=0.90]{helvet}}{}
+  \IfFileExists{beramono.sty}{\RequirePackage[scaled=0.85]{beramono}}{}
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage{textcomp}
+}{}
+
+
+%%
+% Turns newlines into spaces.  Based on code from the `titlesec' package.
+
+\DeclareRobustCommand{\@tufte@newlinetospace}{%
+  \@ifstar{\@tufte@newlinetospace@i}{\@tufte@newlinetospace@i}%
+}
+
+\def\@tufte@newlinetospace@i{%
+  \ifdim\lastskip>\z@\else\space\fi
+  \ignorespaces%
+}
+
+\DeclareRobustCommand{\newlinetospace}[1]{%
+  \let\@tufte@orig@cr\\% save the original meaning of \\
+  \def\\{\@tufte@newlinetospace}% turn \\ and \\* into \space
+  \let\newline\\% turn \newline into \space
+  #1%
+  \let\\\@tufte@orig@cr% revert to original meaning of \\
+}
+
+
+%%
+% Sets up the running heads and folios.
+
+\RequirePackage{fancyhdr}
+
+% Set the default page style to 'fancy'
+\pagestyle{fancy}
+
+% Set the header/footer width to be the body text block plus the margin
+% note area.
+\ifthenelse{\boolean{@tufte@symmetric}}
+  {\fancyhfoffset[LE,RO]{\@tufte@overhang}}
+  {\fancyhfoffset[RE,RO]{\@tufte@overhang}}
+
+% The running heads/feet don't have rules
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% The 'fancy' page style is the default style for all pages.
+\fancyhf{} % clear header and footer fields
+\ifthenelse{\boolean{@tufte@twoside}}
+  {\fancyhead[LE]{\thepage\quad\smallcaps{\newlinetospace{\plainauthor}}}%
+    \fancyhead[RO]{\smallcaps{\newlinetospace{\plaintitle}}\quad\thepage}}
+  {\fancyhead[RE,RO]{\smallcaps{\newlinetospace{\plaintitle}}\quad\thepage}}
+
+
+% The `plain' page style is used on chapter opening pages.
+% In Tufte's /Beautiful Evidence/ he never puts page numbers at the
+% bottom of pages -- the folios are unexpressed.
+\fancypagestyle{plain}{
+  \fancyhf{} % clear header and footer fields
+  % Uncomment the following five lines of code if you want the opening page
+  % of the chapter to express the folio in the lower outside corner.
+  %\ifthenelse{\boolean{@tufte@twoside}}
+  %  {\fancyfoot[LE,RO]{\thepage}}
+  %  {\fancyfoot[RE,RO]{\thepage}}
+}
+
+% The `empty' page style suppresses all headers and footers.
+% It's used on title pages and `intentionally blank' pages.
+\fancypagestyle{empty}{
+  \fancyhf{} % clear header and footer fields
+}
+
+
+%%
+% Set raggedright and paragraph indentation for document
+
+\AtBeginDocument{\@tufte@justification}
+
+
+%%
+% Prints the list of class options and their states.
+
+\newcommand{\typeoutbool}[2]{%
+  \ifthenelse{\boolean{#2}}
+    {\typeout{\space\space#1: true}}
+    {\typeout{\space\space#1: false}}
+}
+
+\newcommand{\typeoutstr}[2]{%
+  \typeout{\space\space#1: #2}
+}
+
+\newcommand{\PrintTufteSettings}{%
+  \typeout{-------------------- Tufte-LaTeX settings ----------}
+  \typeout{Class: \@tufte@pkgname}
+  \typeout{}
+  \typeout{Class options:}
+  \typeoutbool{a4paper}{@tufte@afourpaper}
+  \typeoutbool{load fonts}{@tufte@loadfonts}
+  \typeoutbool{fully-justified}{@tufte@justified}
+  \typeoutbool{letterspacing}{@tufte@letterspace}
+  \typeoutbool{sans-serif sidenotes}{@tufte@sfsidenotes}
+  \typeoutbool{symmetric margins}{@tufte@symmetric}
+  \typeoutbool{titlepage}{@tufte@titlepage}
+  \typeoutbool{twoside}{@tufte@twoside}
+  \typeoutbool{debug}{@tufte@debug}
+  \typeout{}
+  \typeout{Internal variables:}
+  \typeoutbool{[twoside]}{@twoside}
+  \typeoutbool{pdflatex}{@tufte@pdf}
+  \typeoutbool{xelatex}{@tufte@xetex}
+  \typeout{----------------------------------------------------}
+}
+
+
+
+%%
+% Color
+\RequirePackage[usenames,dvipsnames,svgnames]{xcolor}
+
+%%
+% Produces a full title page
+
+\newcommand{\maketitlepage}[0]{%
+  \cleardoublepage%
+  {%
+  \sffamily%
+  \begin{fullwidth}%
+  \fontsize{18}{20}\selectfont\par\noindent\textcolor{darkgray}{\allcaps{\thanklessauthor}}%
+  \vspace{11.5pc}%
+  \fontsize{36}{40}\selectfont\par\noindent\textcolor{darkgray}{\allcaps{\thanklesstitle}}%
+  \vfill%
+  \fontsize{14}{16}\selectfont\par\noindent\allcaps{\thanklesspublisher}%
+  \end{fullwidth}%
+  }
+  \thispagestyle{empty}%
+  \clearpage%
+}
+
+%%
+% Title block
+
+\renewcommand{\maketitle}{%
+  \newpage
+  \global\@topnum\z@% prevent floats from being placed at the top of the page
+  \begingroup
+  \setlength{\parindent}{0pt}
+  \setlength{\parskip}{4pt}
+  \ifthenelse{\boolean{@tufte@sfsidenotes}}
+    {\begingroup
+      % FIXME fails with \thanks
+      \sffamily
+      \par{\LARGE\allcaps{\@title}}
+      \ifthenelse{\equal{\@author}{}}{}{\par{\Large\allcaps{\@author}}}
+      \ifthenelse{\equal{\@date}{}}{}{\par{\Large\allcaps{\@date}}}
+    \endgroup}
+    {\begingroup
+      \par{\LARGE\textit{\@title}}
+      \ifthenelse{\equal{\@author}{}}{}{\par{\Large\textit{\@author}}}
+      \ifthenelse{\equal{\@date}{}}{}{\par{\Large\textit{\@date}}}
+    \endgroup}
+  \par
+  \endgroup
+  \thispagestyle{plain}% suppress the running head
+}
+
+
+%%
+% Title page (if the `titlepage' option was passed to the tufte-handout
+% class.)
+
+\ifthenelse{\boolean{@tufte@titlepage}}
+  {\renewcommand{\maketitle}{\maketitlepage}}
+  {}
+
+%%
+% When \cleardoublepage is called, produce a blank (empty) page -- i.e.,
+% without headers and footers
+\def\cleardoublepage{\clearpage\if@twoside\ifodd\c@page\else
+  \hbox{}
+  %\vspace*{\fill}
+  %\begin{center}
+  %  This page intentionally contains only this sentence.
+  %\end{center}
+  %\vspace{\fill}
+  \thispagestyle{empty}
+  \newpage
+  \if@twocolumn\hbox{}\newpage\fi\fi\fi}
+
+%%
+% Make Tuftian-style section headings and TOC formatting
+
+\RequirePackage{titlesec,titletoc}
+
+\titleformat{\chapter}%
+  [display]% shape
+  {\relax\ifthenelse{\NOT\boolean{@tufte@symmetric}}{\begin{fullwidth}}{}}% format applied to label+text
+  {\itshape\huge\thechapter}% label
+  {0pt}% horizontal separation between label and title body
+  {\huge\rm\itshape}% before the title body
+  [\ifthenelse{\NOT\boolean{@tufte@symmetric}}{\end{fullwidth}}{}]% after the title body
+
+\titleformat{\section}%
+  [hang]% shape
+  {\normalfont\Large\itshape}% format applied to label+text
+  {\thesection}% label
+  {1em}% horizontal separation between label and title body
+  {}% before the title body
+  []% after the title body
+
+\titleformat{\subsection}%
+  [hang]% shape
+  {\normalfont\large\itshape}% format applied to label+text
+  {\thesubsection}% label
+  {1em}% horizontal separation between label and title body
+  {}% before the title body
+  []% after the title body
+
+\titleformat{\paragraph}%
+  [runin]% shape
+  {\normalfont\itshape}% format applied to label+text
+  {\theparagraph}% label
+  {1em}% horizontal separation between label and title body
+  {}% before the title body
+  []% after the title body
+
+
+\titlespacing*{\chapter}{0pt}{50pt}{40pt}
+\titlespacing*{\section}{0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus.2ex}
+  
+% Subsubsection and following section headings shouldn't be used.
+% See Bringhurst's _The Elements of Typography_, section 4.2.2.
+\renewcommand\subsubsection{%
+  \PackageError{\@tufte@pkgname}{\noexpand\subsubsection is undefined by this class.%
+    \MessageBreak See Robert Bringhurst's _The Elements of 
+    \MessageBreak Typographic Style_, section 4.2.2.
+    \MessageBreak \noexpand\subsubsection was used}
+    {From Bringhurst's _The Elements of Typographic Style_, section 4.2.2: Use as 
+    \MessageBreak many levels of headings as you need, no more and no fewer.  Also see the many 
+    \MessageBreak related threads on Ask E.T. at http://www.edwardtufte.com/.}
+}
+
+%\renewcommand\paragraph{%
+%  \PackageError{\@tufte@pkgname}{\noexpand\paragraph is undefined by this class.%
+%    \MessageBreak See Robert Bringhurst's _The Elements of 
+%    \MessageBreak Typographic Style_, section 4.2.2.
+%    \MessageBreak \noexpand\paragraph was used}
+%    {From Bringhurst's _The Elements of Typographic Style_, section 4.2.2: Use as 
+%    \MessageBreak many levels of headings as you need, no more and no fewer.  Also see the many 
+%    \MessageBreak related threads on Ask E.T. at http://www.edwardtufte.com/.}
+%}
+
+\renewcommand\subparagraph{%
+  \PackageError{\@tufte@pkgname}{\noexpand\subparagraph is undefined by this class.%
+    \MessageBreak See Robert Bringhurst's _The Elements of 
+    \MessageBreak Typographic Style_, section 4.2.2.
+    \MessageBreak \noexpand\subparagraph was used}
+    {From Bringhurst's _The Elements of Typographic Style_, section 4.2.2: Use as 
+    \MessageBreak many levels of headings as you need, no more and no fewer.  Also see the many 
+    \MessageBreak related threads on Ask E.T. at http://www.edwardtufte.com/.}
+}
+
+
+% Formatting for main TOC (printed in front matter)
+% {section} [left] {above} {before w/label} {before w/o label} {filler + page} [after]
+\ifthenelse{\boolean{@tufte@toc}}
+  {\titlecontents{chapter}%
+    [0em] % distance from left margin
+    {\begin{fullwidth}\fontsize{13pt}{18pt}\selectfont} % above (global formatting of entry)
+    {\contentslabel{2em}\rm\itshape} % before w/label (label = ``Chapter 1'')
+    {\rm\itshape} % before w/o label
+    {\rm\qquad\thecontentspage} % filler + page (leaders and page num)
+    [\vspace{1.5\baselineskip}\end{fullwidth}] % after
+  }
+  {}
+
+%\titlecontents{chapter}%
+%        [0em]% distance from left margin
+%        {\fontsize{12pt}{18pt}\selectfont}% above (global formatting of entry)
+%        {\textit}% before w/ label (label = ``Chapter 1'')
+%        {\textit}% before w/o label
+%        {\qquad\thecontentspage}% filler and page (leaders and page num)
+%        [\vspace{1.5\baselineskip}]% after
+
+
+
+%%
+% A handy command to disable hyphenation for short bits of text.
+% Borrowed from Peter Wilson's `hyphenat' package.
+
+\newlanguage\langwohyphens% define a language without hyphenation rules
+\newcommand{\nohyphens}[1]{{\language\langwohyphens #1}}% used for short bits of text
+\newcommand{\nohyphenation}{\language\langwohyphens}% can be used inside environments for longer text
+
+%%
+% The bibliography environment
+
+\setlength\bibindent{1.5em}
+\renewenvironment{thebibliography}[1]
+  {%
+    \ifthenelse{\equal{\@tufte@class}{book}}%
+      {\chapter{\bibname}}%
+      {\section*{\refname}}%
+%   \@mkboth{\MakeUppercase\bibname}{\MakeUppercase\bibname}%
+    \list{\@biblabel{\@arabic\c@enumiv}}%
+         {\settowidth\labelwidth{\@biblabel{#1}}%
+          \leftmargin\labelwidth
+          \advance\leftmargin\labelsep
+          \@openbib@code
+          \usecounter{enumiv}%
+          \let\p@enumiv\@empty
+          \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+    \sloppy
+    \clubpenalty4000
+    \@clubpenalty \clubpenalty
+    \widowpenalty4000%
+    \sfcode`\.\@m%
+  }
+  {%
+    \def\@noitemerr
+    {\@latex@warning{Empty `thebibliography' environment}}%
+    \endlist%
+  }
+\renewcommand\newblock{\hskip .11em\@plus.33em\@minus.07em}
+
+
+%%
+% An index environment to mimic Tufte's indexes
+
+\RequirePackage{multicol}
+\renewenvironment{theindex}
+  {\begin{fullwidth}%
+    \small%
+    \ifthenelse{\equal{\@tufte@class}{book}}%
+      {\chapter{\indexname}}%
+      {\section*{\indexname}}%
+    \parskip0pt%
+    \parindent0pt%
+    \let\item\@idxitem%
+    \begin{multicols}{3}%
+  }
+  {\end{multicols}%
+    \end{fullwidth}%
+  }
+\renewcommand\@idxitem{\par\hangindent 2em}
+\renewcommand\subitem{\par\hangindent 3em\hspace*{1em}}
+\renewcommand\subsubitem{\par\hangindent 4em\hspace*{2em}}
+\renewcommand\indexspace{\par\addvspace{1.0\baselineskip plus 0.5ex minus 0.2ex}\relax}%
+\newcommand{\lettergroup}[1]{}% swallow the letter heading in the index
+
+
+%%
+% If debugging is enabled, print the Tufte-LaTeX options and the list of
+% files.
+
+\ifthenelse{\boolean{@tufte@debug}}
+  {\PrintTufteSettings\listfiles}
+  {}
+
+
+%%
+% If there is a `tufte-common-local.tex' file, load it up.
+
+\IfFileExists{tufte-common-local.tex}
+  {\input{tufte-common-local}}
+  {}
+
+
+%%
+% End of file
+\endinput
+

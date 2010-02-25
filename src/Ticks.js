@@ -46,7 +46,7 @@
  * @constructor
  * @extends JXG.GeometryElement
  */
-JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name) {
+JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, layer) {
     /* Call the constructor of GeometryElement */
     this.constructor();
 
@@ -62,7 +62,13 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name) {
      * @final
      * @type int
      */
-    this.elementClass = JXG.OBJECT_CLASS_LINE;
+    this.elementClass = JXG.OBJECT_CLASS_OTHER;
+
+    /**
+     * Set the display layer.
+     */
+    //if (layer == null) layer = board.options.layer['line']; // no board available
+    //this.layer = layer;
 
     /**
      * The line the ticks belong to.
@@ -94,9 +100,9 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name) {
      */
     this.equidistant = false;
 
-    if(JXG.IsFunction(ticks))
+    if(JXG.isFunction(ticks))
         this.ticksFunction = ticks;
-    else if(JXG.IsArray(ticks))
+    else if(JXG.isArray(ticks))
         this.fixedTicks = ticks;
     else {
         if(Math.abs(ticks) < JXG.Math.eps)
@@ -109,7 +115,7 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name) {
      * minorTicks is the number of minor ticks between two major ticks.
      * @type int
      */
-    this.minorTicks = ( (minor == null) || (minor == 0) ? this.board.options.line.ticks.minorTicks : minor);
+    this.minorTicks = ( (minor == null)? this.board.options.line.ticks.minorTicks : minor);
     if(this.minorTicks < 0)
         this.minorTicks = -this.minorTicks;
 
@@ -165,6 +171,14 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name) {
      */
     this.drawLabels = this.board.options.line.ticks.drawLabels;
 
+    /**
+     * Array where the labels are saved. There is an array element for every tick,
+     * even for minor ticks which don't have labels. In this case the array element
+     * contains just <tt>null</tt>.
+     * @type array
+     */
+    this.labels = [];
+
     /* Call init defined in GeometryElement to set board, id and name property */
     this.init(this.board, id, name);
 
@@ -206,9 +220,10 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
     var dx = start.usrCoords[1]-end.usrCoords[1]; // delta x
     var dy = start.usrCoords[2]-end.usrCoords[2]; // delta y
 
-    // the current distance between two ticks
+    // the distance between two ticks
     var ticksDelta = 0;
-    // the length of the axis between c1 and p1
+
+    // the length of the axis between start and end
     var total_length = Math.sqrt(dx*dx + dy*dy);
 
     if (total_length<=JXG.Math.eps)
@@ -240,16 +255,39 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
         
         var zero = new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this.board);
         var tmpCoords = new JXG.Coords(JXG.COORDS_BY_USER, [deltaX, deltaY], this.board);
-        dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
+        dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + 
+               (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
 
+        ticksDelta = Math.pow(10,Math.floor(Math.log(ticksDelta)/Math.LN10));
+        deltaX = (ticksDelta * dx) / (total_length);
+        deltaY = (ticksDelta * dy) / (total_length);
 
-        while(dist < this.minTicksDistance*this.minTicksDistance) {
-            deltaX += deltaX_original;
-            deltaY += deltaY_original;
-            ticksDelta += ticksDelta_original;
+        // If necessary, reduce ticksDelta
+        while(dist > 8*this.minTicksDistance*this.minTicksDistance) {
+            ticksDelta /= 10;
+            deltaX = (ticksDelta * dx) / (total_length);
+            deltaY = (ticksDelta * dy) / (total_length);
 
             tmpCoords = new JXG.Coords(JXG.COORDS_BY_USER, [deltaX, deltaY], this.board);
-            dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
+            dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + 
+                   (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
+        }
+
+        // If necessary, enlarge ticksDelta
+        var factor = 5;
+        while(dist < this.minTicksDistance*this.minTicksDistance) {
+            ticksDelta *= factor;
+            if (factor==5) { 
+                factor = 2;
+            } else {
+                factor = 5;
+            }
+            deltaX = (ticksDelta * dx) / (total_length);
+            deltaY = (ticksDelta * dy) / (total_length);
+
+            tmpCoords = new JXG.Coords(JXG.COORDS_BY_USER, [deltaX, deltaY], this.board);
+            dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + 
+                   (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
         }
     }
 
@@ -277,10 +315,14 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
     var lastX = x;
     var lastY = y;
 
-
     // loop abort criteria is:
     // our next tick is completely out of sight.
-    while( first || (((this.board.sgn(deltaX)*(x-over*deltaX) >= this.board.sgn(deltaX)*end.usrCoords[1]) && (this.board.sgn(deltaY)*(y-over*deltaY) >= this.board.sgn(deltaY)*end.usrCoords[2]))) ) {
+    while( first || 
+           (
+             this.board.sgn(deltaX)*(x-over*deltaX) >= this.board.sgn(deltaX)*end.usrCoords[1] && 
+             this.board.sgn(deltaY)*(y-over*deltaY) >= this.board.sgn(deltaY)*end.usrCoords[2]
+            ) 
+         ) {
         // we're in it, so we have at least one tick and the deltaX/Y correction
         // for equidistant ticks.
         first = false;
@@ -305,13 +347,14 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
             // dist is indeed the distance squared. repeat this, until we fall below the maxTicksDistance limit
             while (dist > this.maxTicksDistance*this.maxTicksDistance) {
                 // half the distance
-                deltaX = deltaX/2;
-                deltaY = deltaY/2;
-                // move back towards the zeropoint
-                x = x + deltaX;
-                y = y + deltaY;
+                deltaX *= 0.5;
+                deltaY *= 0.5;
+                ticksDelta *= 0.5;
 
-                ticksDelta = ticksDelta/2;
+                // move back towards the zeropoint
+                x += deltaX;
+                y += deltaY;
+
                 position = position - direction*ticksDelta;
 
                 // recalculate newTick coordinates and distance
@@ -338,13 +381,23 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
             labelText = position.toString();
             if(labelText.length > 5)
                 labelText = position.toPrecision(3).toString();
-            label = new JXG.Label(this.board, labelText, newTick, this.id+i+"Label");
+            label = new JXG.Text(this.board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], this.id+i+"Label", null, null, true, this.board.options.text.defaultType);
             label.distanceX = 0;
             label.distanceY = -10;
-            label.setCoordinates(newTick);
-            if (this.drawLabels) label.show = true; else label.show = false;
+            //label.setCoordinates(newTick);
+            /*label.coords = new JXG.Coords(JXG.COORDS_BY_USER,
+                                    [newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX),
+                                     newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY)],
+                                    this.board);*/
+            label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX), 
+                            newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY));
+            if (this.drawLabels) {
+                label.visProp['visible'] = true; 
+            }
+            else {
+                label.visProp['visible'] = false;
+            }
             this.labels.push(label);
-
             // store the old coordinates
             lastX = x;
             lastY = y;
@@ -368,7 +421,7 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
             deltaY = (ticksDelta * dy) / (total_length);
         }
     }
-}
+};
 
 /**
  * (Re-)calculates the ticks coordinates.
@@ -417,12 +470,12 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     if(this.ticks != null) {
         for(var j=0; j<this.ticks.length; j++) {
             if(this.labels[j] != null) {
-                if (this.labels[j].show) this.board.renderer.remove(this.labels[j].rendNode);
+                if (this.labels[j].visProp['visible']) this.board.renderer.remove(this.labels[j].rendNode);
             }
         }
     }
 
-    // initialise storage arrays
+    // initialize storage arrays
     // ticks stores the ticks coordinates
     this.ticks = new Array();
     // labels stores the text to display beside the ticks
@@ -438,8 +491,14 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         if(this.drawZero) {
             newTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.usrCoords[1], p1.usrCoords[2]], this.board);
             this.ticks.push(newTick);
-            label = new JXG.Label(this.board, "0", newTick, this.id+"0Label");
-            if (this.drawLabels) label.show = true; else label.show = false;
+            //label = new JXG.Label(this.board, "0", newTick, this.id+"0Label");
+            label = new JXG.Text(this.board, "0", null, [p1.usrCoords[1], p1.usrCoords[2]], this.id+"0Label", null, null, true, this.board.options.text.defaultType);
+            if (this.drawLabels) {
+                label.visProp['visible'] = true; 
+            }
+            else {
+                label.visProp['visible'] = false;
+            }
             this.labels.push(label);
 
             this.ticks[0].major = true;
@@ -494,11 +553,22 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                 labelText = this.fixedTicks[i].toString();
                 if(labelText.length > 5)
                     labelText = this.fixedTicks[i].toFixed(3).toString();
-                label = new JXG.Label(this.board, labelText, newTick, this.id+i+"Label");
+                //label = new JXG.Label(this.board, labelText, newTick, this.id+i+"Label");
+                label = new JXG.Text(this.board, labelText, null, [p1.usrCoords[1] + nx, p1.usrCoords[2] + ny], this.id+i+"Label", null, null, true, this.board.options.text.defaultType);
                 label.distanceX = 0;
                 label.distanceY = -10;
-                label.setCoordinates(newTick);
-                if (this.drawLabels) label.show = true; else label.show = false;
+                //label.setCoordinates(newTick);
+                /*label.coords = new JXG.Coords(JXG.COORDS_BY_USER,
+                             [newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX),
+                              newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY)],
+                             this.board);*/    
+                label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX), 
+                                newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY));
+                if (this.drawLabels) {
+                    label.visProp['visible'] = true; 
+                } else {
+                    label.visProp['visible'] = false;
+                }
                 this.labels.push(label);
             }
         }
@@ -506,6 +576,11 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 
     // this piece of code was in AbstractRenderer.updateAxisTicksInnerLoop
     // and has been moved in here to clean up the code.
+    //
+    // The code above only calculates the position of the ticks. The following code parts
+    // calculate the dx and dy values which make ticks out of this positions, i.e. from the
+    // position (p_x, p_y) calculated above we have to draw a line from
+    // (p_x - dx, py - dy) to (p_x + dx, p_y + dy) to get a tick.
     var eps = JXG.Math.eps;
     var slope = -this.line.getSlope();
 
@@ -539,10 +614,10 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         //     dx*dx + dy*dy = dist*dist             (II)
         //
         // dissolving (I) by dy and applying that to equation (II) we get the following formulas for dx and dy
-        dxMaj = distMaj/Math.sqrt(1/(slope*slope) + 1);
-        dyMaj = -dxMaj/slope;
-        dxMin = distMin/Math.sqrt(1/(slope*slope) + 1);
-        dyMin = -dxMin/slope;
+        dxMaj = -distMaj/Math.sqrt(1/(slope*slope) + 1);
+        dyMaj = dxMaj/slope;
+        dxMin = -distMin/Math.sqrt(1/(slope*slope) + 1);
+        dyMin = dxMin/slope;
     }
     this.board.renderer.updateTicks(this,dxMaj,dyMaj,dxMin,dyMin);
 };
@@ -551,7 +626,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
  * Uses the boards renderer to update the arc.
  * update() is not needed for arc.
  */
- JXG.Ticks.prototype.updateRenderer = function () {
+JXG.Ticks.prototype.updateRenderer = function () {
     if (this.needsUpdate) {
         this.calculateTicksCoordinates();
         this.needsUpdate = false;
@@ -573,10 +648,11 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
  */
 JXG.createTicks = function(board, parents, attributes) {
     var el;
-    if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.IsFunction(parents[1]) || JXG.IsArray(parents[1]) || JXG.IsNumber(parents[1]))) {
-        el = new JXG.Ticks(parents[0], parents[1], attributes['minorTicks'], attributes['majHeight'], attributes['minHeight'], attributes['id'], attributes['name']);
+    attributes = JXG.checkAttributes(attributes,{layer:null});
+    if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.isFunction(parents[1]) || JXG.isArray(parents[1]) || JXG.isNumber(parents[1]))) {
+        el = new JXG.Ticks(parents[0], parents[1], attributes['minorTicks'], attributes['majHeight'], attributes['minHeight'], attributes['id'], attributes['name'], attributes['layer']);
     } else
-        throw ("Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
+        throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
 
     return el;
 };

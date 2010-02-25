@@ -1,0 +1,69 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Test</h2>
+  <div id="mydiv"></div>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+
+JXG.Line.prototype.highlight = function(){
+    document.getElementById("mydiv").innerHTML=this.name;
+    this.board.renderer.highlight(this); // highlight the line
+}
+
+JXG.Line.prototype.noHighlight = function(){
+    document.getElementById("mydiv").innerHTML=this.name;
+    this.board.renderer.noHighlight(this); // dehighlight the line
+}
+
+JXG.Point.prototype.highlight = function(){
+    document.getElementById("mydiv").innerHTML=this.name;
+    this.board.renderer.highlight(this); // highlight the line
+}
+
+JXG.Point.prototype.noHighlight = function(){
+    document.getElementById("mydiv").innerHTML=this.name;
+    this.board.renderer.noHighlight(this); // dehighlight the line
+}
+
+brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-0.2,1.2,1.2,-0.5], keepaspectratio:true});
+p = [];
+len = 100;
+for (i=0;i<len;i++) {
+    p[i] = brd.createElement('point',[Math.random(),Math.random()],
+            {face:'o', size:10, strokeColor:'red', fillColor:'red', fillOpacity:0.4, strokeOpacity:0.4, withLabel:false});
+}
+for (i=0;i<len;i++) {
+    brd.createElement('segment',[p[i%len],p[(i+1)%len]],
+            {name:"line"+i,face:'o', size:10, strokeColor:'red', fillColor:'red', fillOpacity:0.4, strokeOpacity:0.4, withLabel:false});
+}
+setInterval(function(){
+    var i, j;
+    for (i=0;i<p.length;i++) {
+        p[i].moveTo([Math.random(),Math.random()],1000);
+    }
+},2000);
+
+
+
+//var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[0,25,25,0], keepaspectratio:true});
+//var p1 = brd.create('point',[1+5*Math.sqrt(2),13.5]);
+//var p1 = brd.create('point',[11,15]);
+//var c = brd.create('circle',[p1,5*Math.sqrt(2)]);
+//var g = brd.create('glider',[1,13.5,c]);
+//p1.moveTo([11,15],400);
+//g.moveTo([16,10],0);
+
+/* ]]> */
+</script>
+<h2 onClick="g.moveTo([16,10],200);">Click here to move B in 200 msec</h2>
+<h2 onClick="g.moveTo([16,10],0);">Click here to move B in 0 msec</h2>
+</body>
+</html>

@@ -2,63 +2,162 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-<!--<script type="text/javascript" src="../distrib/jquery.min.js"></script>-->
-<script type="text/javascript" src="../distrib/prototype.js"></script>
-<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
 <h1>Playground</h1>
-
-<form><input type="text"></form>
 <!-- Drawing area -->
-<div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; overflow:hidden;"></div>
 <!-- Drawing area -->
 <div id="debug" style="display:block;"></div>
-
 <script type="text/javascript">
 /* <![CDATA[ */
-var board = JXG.JSXGraph.initBoard('box', {originX: 100, originY: 200, grid:true, unitX: 50, unitY: 50});
-/*
-    var p1 = board.createElement('point', [1,3,1] , {name:'A'});
-    var p2 = board.createElement('point', [1,1,0] );
-    var l1 = board.createElement('line', [p1,p2],{name:'bingo',straightFirst:true,straightLast:true} );
-*/
+JXG.Options.showCopyright = true; //don't work :)
+JXG.Options.showNavigation = true;
+//JXG.Options.takeFirst = true;
+var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 400,originY: 400, unitX: 10, unitY: 10, axis:true});
+var A=board.create('point',[10,0]);
+var B=board.create('point',[0,0]);
+var C=board.create('point',[0,10]);
 
-//board.snapToGrid = true;
-var p1 = board.createElement('point',[1,1], {name:'A',style:6});
-var p2 = board.createElement('point',[5,1], {name:'B',style:6});
-var p3 = board.createElement('point',[0,-1], {name:'C',style:6});
-var p4 = board.createElement('point',[5,3], {name:'D',style:6});
-var l1 = board.createElement('line',["A","B"],{name:'L1',strokeColor:'#00ff00',strokeWidth:2,straightFirst:false});
-var l2 = board.createElement('line',["C","D"],{name:'L2',strokeColor:'#00ff00',strokeWidth:2,straightFirst:false});
-p5 = board.createElement('point',[board.intersection("L1","L2")],{name:'M',style:6});
+var D=board.create('point',[-5,10]);
+var E=board.create('point',[-5,-5]);
 
-    /*
-    function testmakro(board,el1, el2) {
-    	var l = board.createElement('line', [el1,el2], { strokeWidth:3 });
-    }
-    */
+var createArc = function(board,parents,attributes) {
+    var A = parents[0],
+        B = parents[1],
+        C = parents[2],
+        defaults, att, options,
+        c;
+        
+    // Read the default values from Options and use them in case they are not set by the user
+    // in attributes
+    defaults = {withLabel:false, layer:null};
+    defaults['strokeWidth'] =  board.options.elements['strokeWidth'];
 /*    
-    var board = JXG.JSXGraph.initBoard('box',{unitX:80, unitY:80,originY:160,originX:80});
-    var a1 = board.createElement('axis',[[0,0],[1,0]]);
-    var p1 = board.createElement('point', [1,3,1] , {name:'A'});
-    var p2 = board.createElement('point', [1,1,1] );
-    var ac = board.createElement('glider', [4,0,a1],{name:'glide'} );
-
-    var circ = board.createElement('circle', [p1,p2], {dash:1} );
-*/    
-/*
-    var l1 = board.createElement('line', [1,-0.2,1],{name:'x'} );
-    //var l1 = board.createElement('line', [p1,p2],{name:'x'} );
-    board.suspendUpdate();
-    for (var i=.0;i<1.0;i+=0.02) {
-        board.createElement('point', [l1.Z(i),l1.X(i),l1.Y(i)],{name:' '});
-        board.createElement('point', [1,circ.X(i),circ.Y(i)] , {name:' '});
+    options = board.options.elements.color;
+    for (att in options) {
+        defaults[att] = options[att];
     }
-    board.unsuspendUpdate();
+*/
+    options = board.options.arc;
+    for (att in options) {
+        defaults[att] = options[att];
+    }
+    
+    attributes = JXG.checkAttributes(attributes, defaults);
+        
+    c = board.create('curve',[[0],[0]],attributes);
+    c.updateDataArray = function() {
+        var beta, co, si, matrix,
+            phi = this.board.algebra.rad(A,B,C),
+            n = 100, i,
+            delta = phi/n, //Math.PI/90.0,
+            x = B.X(),
+            y = B.Y(),
+            v;
+        this.dataX = [A.X()];
+        this.dataY = [A.Y()];
+        
+        for (beta=delta,i=1; i<=n; i++, beta+=delta) {
+            co = Math.cos(beta); 
+            si = Math.sin(beta); 
+            matrix = [[1,            0,   0],
+                      [x*(1-co)+y*si,co,-si],
+                      [y*(1-co)-x*si,si, co]];    
+            v = JXG.Math.matVecMult(matrix,A.coords.usrCoords);
+            this.dataX.push(v[1]/v[0]);
+            this.dataY.push(v[2]/v[0]);
+        }
+    };
+    board.update(c);
+    return c;
+};
+
+var createSector = function(board,parents,attributes) {
+    var A = parents[0],
+        B = parents[1],
+        C = parents[2], 
+        defaults, att, options,
+        c;
+    
+    // Read the default values from Options and use them in case they are not set by the user
+    // in attributes
+    defaults = {withLabel:false, layer:null};
+    defaults['strokeWidth'] =  board.options.elements['strokeWidth'];
+/*
+    options = board.options.elements.color;
+    for (att in options) {
+        defaults[att] = options[att];
+    }
+*/    
+    options = board.options.sector;
+    for (att in options) {
+        defaults[att] = options[att];
+    }
+    
+    attributes = JXG.checkAttributes(attributes, defaults);
+        
+    c = board.create('curve',[[0],[0]],attributes);
+    c.updateDataArray = function() {
+        var beta, co, si, matrix,
+            phi = this.board.algebra.rad(A,B,C),
+            n = 100, i,
+            delta = phi/n, //Math.PI/90.0,
+            x = B.X(),
+            y = B.Y(),
+            v;
+        this.dataX = [B.X(),A.X()];
+        this.dataY = [B.Y(),A.Y()];
+        
+        for (beta=delta,i=1; i<=n; i++, beta+=delta) {
+            co = Math.cos(beta); 
+            si = Math.sin(beta); 
+            matrix = [[1,            0,   0],
+                      [x*(1-co)+y*si,co,-si],
+                      [y*(1-co)-x*si,si, co]];    
+            v = JXG.Math.matVecMult(matrix,A.coords.usrCoords);
+            this.dataX.push(v[1]/v[0]);
+            this.dataY.push(v[2]/v[0]);
+        }
+        this.dataX.push(B.X());
+        this.dataY.push(B.Y());
+    };
+    board.update(c);
+    return c;
+};
+
+
+createArc(board,[A,B,C]);
+
+createSector(board,[D,B,E]);
+
+/*
+var img = board.create('image',['http://www.ari.uni-heidelberg.de/gaia/gallery/GR/gr0283-01.artistic-Gaia-Galaxy-large.jpg',[-40,-40],[80,80]]);
+img.needsRegularUpdate = false;
+var p_1 = board.create('point',[-1,0],{name:'Circle1',style:10});
+var el_1 = board.create('circle',[p_1,3.0], {fillColor:'#aa0000', strokeColor:'#00ff00',strokeWidth:1,fillOpacity:0.5});
+var p_2 = board.create('point',[0,0], {name:'Circle2',style:10});
+var el_2 = board.create('circle',[p_2,3.0],{fillColor:'#aa0000', strokeColor:'#00ff00',strokeWidth:1,fillOpacity:0.5}); 
+p_1.moveTo([8,8]);
+*/
+
+
+/*
+
+JXG.Options.point.zoom=true;
+var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-7,5,7,-5], grid:true,axis:true,keepaspectratio:true});
+var p1 = board.createElement('point',[1,1], {name:'A',style:6});
+var p2 = board.createElement('point',[5,2], {name:'B',face:'[]'});
+var p3 = board.createElement('point',[0,-1], {name:'C',face:'x'});
+var p4 = board.createElement('point',[5,3], {name:'D',style:6, trace:true});
+var f = board.createElement('functiongraph', [function(x){return Math.cos(x);},0,Math.PI*2]);
+var circ = board.createElement('circle', [p1,p2], {dash:1,fillColor:'yellow',fillOpacity:1.0});
+var ac = board.createElement('glider', [0,2,circ],{name:'S'} );
+var t = board.createElement('normal',[ac], {dash:3,strokeColor:'black'});
+var t = board.createElement('normal',[p2,circ], {dash:3,strokeColor:'black'});
 */
 /*
-    board.createElement('functiongraph', [function(x){return Math.cos(x);},0,Math.PI*2]);
     
     var f = function(t){return p2.Y()*t*Math.sin(t);};
     var g = function(t){return t;};

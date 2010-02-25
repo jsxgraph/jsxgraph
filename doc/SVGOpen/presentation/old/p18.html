@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+        <script type="text/javascript" src="distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+    </head>
+    <body class="jsxgraph_body">
+        <form><input type="button" value="Add random points" onClick="addPoints()"></form>
+        <div id="box" class="jxgbox jsxgraph_present"></div>
+        <!-- Drawing area -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+        var board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 50, unitY: 25, axis:true});
+        board.suspendUpdate();
+        var p = [];
+        p[0] = board.createElement('point', [-1,2], {style:6});
+        p[1] = board.createElement('point', [3,-1], {style:6});
+
+        var p2 = [];
+        p2[0] = board.createElement('point', [-1,-2], {style:6});
+        p2[1] = board.createElement('point', [0,-5], {style:6});
+        p2[2] = board.createElement('point', [3,-4], {style:6});
+        
+        var f = board.lagrangePolynomial(p);
+        graph = board.createElement('functiongraph',  [f, -10, 10], {strokeWidth:3});
+        d1 = board.createElement('functiongraph', [board.D(f), -10, 10], {dash:1});
+
+        graph2 = board.createElement('curve',  board.neville(p2), {strokeWidth:3, strokeColor:'red', strokeOpacity:0.7});
+        g = board.createElement('glider', [-1,-4,graph2], {name:'Glider'});
+        t = board.createElement('tangent', [g],{dash:1,strokeColor:'green'});
+        board.unsuspendUpdate();
+
+
+        function addPoints() {
+          p.push(board.createElement('point',[(Math.random()-0.5)*10,(Math.random()-0.5)*3],{style:6}));
+          p2.push(board.createElement('point',[(Math.random()-0.5)*10,(Math.random()-0.5)*3],{style:6}));
+          board.update();
+        }
+
+        /* ]]> */
+        </script>
+    </body>
+</html>

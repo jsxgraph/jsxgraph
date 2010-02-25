@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008-2010,
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -23,31 +23,32 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-/**
- @namespace Holds all JSXGraph objects, variables and functions.
-*/
 
 /**
- * JSXGraph namespace.
+ * JSXGraph namespace. Holds all classes, objects, functions and variables belonging to JSXGraph
+ * to reduce the risc of interfering with other JavaScript code.
+ * @namespace
  */
 var JXG = {};
 
-// Minified-Modus: ja, nein
-JXG.useMinify = false;
+(function(){ // Hide the initialization in an anonymous function
+    var i, s, n, arr;
 
-JXG.countDrawings = 0;
-JXG.countTime = 0;
-JXG.require = function(libraryName) {
-    document.write('<script type="text/javascript" src="' + libraryName + '"><\/script>');
-}
-JXG.baseFiles;
+    // Minified-Modus: ja, nein
+    JXG.useMinify = false;
 
-if (!JXG.useMinify) {
-    JXG.baseFiles ='Math,MathNumerics,MathStatistics,AbstractRenderer,FileReader,GeonextReader,GeogebraReader,IntergeoReader,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Polygon,Curve,Arc,Sector,Angle,Label,Algebra,Intersection,Composition,Text,Image,Slider,Chart,Base64,Gunzip,Transformation,Turtle,RGBColor,Board,Options,Wrappers,Ticks';
-} else {
-    JXG.baseFiles = 'jxg';
-}
-JXG.rendererFiles = [];
+    JXG.countDrawings = 0;
+    JXG.countTime = 0;
+    JXG.require = function(libraryName) {
+        document.write('<script type="text/javascript" src="' + libraryName + '"><\/script>');
+    };
+/*IntergeoReader,GeonextReader*/
+    if (!JXG.useMinify) {
+        JXG.baseFiles ='Math,MathNumerics,MathStatistics,MathSymbolic,Complex,AbstractRenderer,FileReader,Board,Options,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Conic,Polygon,Curve,Arc,Sector,Angle,Algebra,Intersection,Composition,Text,Image,Slider,Chart,Transformation,Turtle,RGBColor,Wrappers,Ticks,Util,Pstricks,Server,DataSource';
+    } else {
+        JXG.baseFiles = 'jxg';
+    }
+    JXG.rendererFiles = [];
     if (JXG.useMinify) {
         JXG.rendererFiles['svg'] = 'SVGRendererMinify';
     } else {
@@ -59,16 +60,19 @@ JXG.rendererFiles = [];
         JXG.rendererFiles['vml'] = 'VMLRenderer';
     }
     //JXG.rendererFiles['silverlight'] = 'Silverlight,createSilverlight,SilverlightRenderer';
-JXG.requirePath = '';
+    JXG.requirePath = '';
 
-for (var i=0;i<document.getElementsByTagName("script").length;i++) {
-    var s = document.getElementsByTagName("script")[i];
-    if (s.src && s.src.match(/loadjsxgraph\.js(\?.*)?$/)) {
-        JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/,'');
-        var arr = JXG.baseFiles.split(',');
-        for (var n=0;n<arr.length;n++) 
-            (function(include) { JXG.require(JXG.requirePath+include+'.js')})(arr[n]);
+    for (i=0;i<document.getElementsByTagName("script").length;i++) {
+        s = document.getElementsByTagName("script")[i];
+        if (s.src && s.src.match(/loadjsxgraph\.js(\?.*)?$/)) {
+            JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/,'');
+            arr = JXG.baseFiles.split(',');
+            for (n=0;n<arr.length;n++) {
+                (function(include) { JXG.require(JXG.requirePath+include+'.js');})(arr[n]);
+            }
+        }
     }
-}
 
-JXG.baseFiles = null;
+    JXG.baseFiles = null;
+    JXG.serverBase = JXG.requirePath + 'server/';
+})();
