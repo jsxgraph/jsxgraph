@@ -43,6 +43,7 @@
  * Further, there is a method Value() returning the same value.
  * @class Creates a new basic slider object. Do not use this constructor to create a slider. Use {@link JXG.Board#create} with
  * type {@link Line}, {@link Arrow}, or {@link Axis} instead.  
+ * Attributes: withTicks;
  * @constructor
  * @augments JXG.GeometryElement
  * @param {String,JXG.Board} board The board the new line is drawn on.
@@ -65,7 +66,7 @@ JXG.createSlider = function(board, parentArr, atts) {
     smax = parentArr[2][2];
     sdiff = smax -smin;
     
-    atts = JXG.checkAttributes(atts,{strokeColor:'#000000', fillColor:'#ffffff'});
+    atts = JXG.checkAttributes(atts,{strokeColor:'#000000', fillColor:'#ffffff', withTicks:true});
 
     p1 = board.create('point', pos0, {visible:false, fixed:true, name:'',withLabel:false}); 
     p2 = board.create('point', pos1, {visible:false, fixed:true, name:'',withLabel:false}); 
@@ -74,9 +75,11 @@ JXG.createSlider = function(board, parentArr, atts) {
                 name:'',
                 withLabel:false,
                 strokeColor:atts['strokeColor']});
-    ticks  = 2;
-    ti = board.create('ticks', [l1, p2.Dist(p1)/ticks],
-                {insertTicks:true, minorTicks:0, drawLabels:false, drawZero:true}); 
+    if (atts['withTicks']) {
+        ticks  = 2;
+        ti = board.create('ticks', [l1, p2.Dist(p1)/ticks],
+                    {insertTicks:true, minorTicks:0, drawLabels:false, drawZero:true}); 
+    }
 
     p1.needsRegularUpdate = false;
     p2.needsRegularUpdate = false;

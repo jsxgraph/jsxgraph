@@ -27,6 +27,7 @@ JXG.OBJECT_TYPE_ARROW  = 0x4F544157;                 // Hex fuer OTAW = Object T
 JXG.OBJECT_TYPE_AXIS  = 0x4F544158;                 // Hex fuer OTAX = Object Type AXis
 JXG.OBJECT_TYPE_TICKS  = 0x4F545458;                 // Hex fuer OTTX = Object Type TiX
 JXG.OBJECT_TYPE_CIRCLE  = 0x4F54434C;                 // Hex fuer OTCC = Object Type CirCle
+JXG.OBJECT_TYPE_CONIC  = 0x4F54434F;                 // Hex fuer OTCC = Object Type COnic
 JXG.OBJECT_TYPE_CURVE  = 0x4F544750;                 // Hex fuer OTGP = Object Type GraphPlot
 JXG.OBJECT_TYPE_GLIDER  = 0x4F54474C;                 // Hex fuer OTGL = Object Type GLider
 JXG.OBJECT_TYPE_IMAGE  = 0x4F54524D;                 // Hex fuer OTIM = Object Type IMage
@@ -40,6 +41,7 @@ JXG.OBJECT_TYPE_TEXT  = 0x4F545445;                 // Hex fuer OTTE = Object Ty
 JXG.OBJECT_TYPE_ANGLE = 0x4F544147;                 // Hex fuer OTAG = Object Type AnGle
 JXG.OBJECT_TYPE_INTERSECTION = 0x4F54524E;          // Hex fuer OTIN = Object Type INtersection
 JXG.OBJECT_TYPE_TURTLE = 0x4F5455;                 // Hex fuer OTTU = Object Type TUrtle
+JXG.OBJECT_TYPE_VECTOR = 0x4F545654; 				//Hex fuer OTVT 0 Object Type VecTor
 
 JXG.OBJECT_CLASS_POINT = 1;
 JXG.OBJECT_CLASS_LINE = 2;
@@ -358,6 +360,19 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      */
     this.visProp.strokeWidth = this.board.options.elements.strokeWidth;
 
+    /**
+     * Width of the element's stroke when the mouse is pointed over it.
+     * @type number
+     * @name JXG.GeometryElement#highlightStrokeWidth
+     * @see #strokeColor
+     * @see #highlightStrokeColor
+     * @see #strokeOpacity
+     * @see #highlightStrokeOpacity
+     * @see #highlightFillColor
+     * @default {@#strokeWidth}
+     */
+    this.visProp.highlightStrokeWidth = this.visProp.strokeWidth;    
+    
     /**
      * Opacity for element's stroke color.
      * @type number
@@ -690,6 +705,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
         switch(pair[0].replace(/\s+/g).toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
             case 'strokewidth':
                 this.visProp['strokeWidth'] = pair[1];
+                this.visProp['highlightStrokeWidth'] = pair[1];
                 this.board.renderer.setObjectStrokeWidth(this, this.visProp['strokeWidth']);
                 break;
             case 'strokecolor':
@@ -718,6 +734,9 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 this.visProp['fillOpacity'] = parseInt(opacity.toUpperCase(),16)/255;
                 this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);
                 break;
+            case 'highlightstrokewidth':
+                this.visProp['highlightStrokeWidth'] = pair[1];
+                break;                
             case 'highlightstrokecolor':
                 color = pair[1];
                 if (color.length=='9' && color.substr(0,1)=='#') {
@@ -966,6 +985,28 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 if(this.type == JXG.OBJECT_TYPE_GLIDER) {
                     this.snapWidth = pair[1];
                 }
+                break;
+            case 'withlabel':
+                if(!pair[1]) {
+                    if (this.label!=null && this.hasLabel) {
+                        this.label.content.hideElement();
+                    }
+                } 
+                else {
+                    if (this.label!=null && this.hasLabel) {
+                        if(this.visProp['visible']) {
+                            this.label.content.showElement();
+                        }
+                        
+                    }
+                    else {
+                        this.addLabelToElement();
+                        if(!this.visProp['visible']) {
+                            this.label.content.hideElement();
+                        }                        
+                    }
+                }
+                this.hasLabel = pair[1];
         }
     }
     return this;

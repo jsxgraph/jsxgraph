@@ -84,6 +84,7 @@ JXG.Curve = function (board, parents, id, name, withLabel, layer) {
     this.numberPoints = this.numberPointsHigh; 
 
     this.visProp['strokeWidth'] = this.board.options.curve.strokeWidth;
+    this.visProp['highlightStrokeWidth'] = this.visProp['strokeWidth'];
 
     this.visProp['visible'] = true;
     this.dataX = null;

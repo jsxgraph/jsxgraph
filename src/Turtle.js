@@ -557,9 +557,7 @@ JXG.Turtle.prototype.hasPoint = function (x,y) {
  * @return Reference to the created turtle object.
  */
 JXG.createTurtle = function(board, parents, attributes) {
-    if (parents==null) {
-        var parents = [];
-    }
+    if (parents==null) { parents = []; }
     return new JXG.Turtle(board,parents,attributes);
 };
 

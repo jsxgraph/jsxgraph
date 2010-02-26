@@ -216,7 +216,8 @@ this.readGeonext = function(tree,board) {
         xmlNode,
         axisX, axisY, bgcolor, opacity,
         elChildNodes,
-        s, Data;
+        s, Data,
+        strFir, strLas;
 
     boardData = tree.getElementsByTagName('board')[0];
     boardTmp.ident = "board";
@@ -836,6 +837,14 @@ this.readGeonext = function(tree,board) {
                                                                           'dash:'+defElD[1],
                                                                           'draft:'+defElDr[1]);
                     board.objects[lid].traced = (defElT[1]=='false') ? false : true;
+                    xmlNode = Data.getElementsByTagName('output')[1].getElementsByTagName('straight')[0];
+                    strFir = xmlNode.getElementsByTagName('first')[0].firstChild.data;
+                    strLas = xmlNode.getElementsByTagName('last')[0].firstChild.data;                  
+                    strFir = (strFir=='false') ? false : true;
+                    strLas = (strLas=='false') ? false : true;
+                    board.objects[lid].setStraight(strFir, strLas);                                                                          
+                    board.objects[pid].setStyle(1*gxtEl.outputStyle);
+                    board.objects[pid].traced = (defElT[1]=='false') ? false : true;                    
                 }
                 else if(gxtEl.typeName == "ARROW_PARALLEL") {
                     for(i=0; i<Data.getElementsByTagName('output').length; i++) {
@@ -883,8 +892,6 @@ this.readGeonext = function(tree,board) {
                                                                           'fixed:'+gxtEl.outputFixed,
                                                                           'labelColor:'+defElColL[1],
                                                                           'draft:'+defElDr[1]);
-                    board.objects[pid].setStyle(1*gxtEl.outputStyle);
-                    board.objects[pid].traced = (defElT[1]=='false') ? false : true;
                 }
                 else if(gxtEl.typeName == "PERPENDICULAR_POINT") {
                     board.create('perpendicularpoint', [gxtEl.defEl[1], gxtEl.defEl[0]], {name: gxtEl.outputName, id: gxtEl.outputId});

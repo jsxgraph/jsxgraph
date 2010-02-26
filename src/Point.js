@@ -408,12 +408,12 @@ JXG.Point.prototype.update = function (fromParent) {
                     }
                 }
             }
-        } else if(this.slideObject.type == JXG.OBJECT_TYPE_CURVE) {
-            this.updateConstraint(); // In case, the point is a constrained glider.
-            this.coords  = this.board.algebra.projectPointToCurve(this, this.slideObject);
         } else if(this.slideObject.type == JXG.OBJECT_TYPE_TURTLE) {
             this.updateConstraint(); // In case, the point is a constrained glider.
             this.coords  = this.board.algebra.projectPointToTurtle(this, this.slideObject);
+        } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CURVE) {
+            this.updateConstraint(); // In case, the point is a constrained glider.
+            this.coords  = this.board.algebra.projectPointToCurve(this, this.slideObject);
         }
     }
     
@@ -878,7 +878,7 @@ JXG.Point.prototype._anim = function(direction, stepCount) {
     if(this.intervalCount > stepCount)
         this.intervalCount = 0;
     
-    if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
+    if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
         distance = this.slideObject.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.slideObject.point2.coords);
         slope = this.slideObject.getSlope();
         if(slope != 'INF') {
@@ -909,7 +909,7 @@ JXG.Point.prototype._anim = function(direction, stepCount) {
         }
         
         this.coords.setCoordinates(JXG.COORDS_BY_SCREEN, [startPoint.coords.scrCoords[1] + factor*dX, startPoint.coords.scrCoords[2] + factor*dY]);
-    } else if(this.slideObject.type == JXG.OBJECT_TYPE_CURVE) {
+    } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CURVE) {
         if(direction > 0) {
             newX = Math.round(this.intervalCount/stepCount * this.board.canvasWidth);
         } else {
@@ -918,7 +918,7 @@ JXG.Point.prototype._anim = function(direction, stepCount) {
   
         this.coords.setCoordinates(JXG.COORDS_BY_SCREEN, [newX, 0]);
         this.coords = this.board.algebra.projectPointToCurve(this, this.slideObject);
-    } else if(this.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
+    } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         if(direction < 0) {
             alpha = this.intervalCount/stepCount * 2*Math.PI;
         } else {

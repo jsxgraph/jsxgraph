@@ -280,6 +280,12 @@ JXG.useStandardOptions = function(board) {
             p.visProp['fillOpacity'] = o.polygon.fillOpacity;
             p.visProp['highlightFillOpacity'] = o.polygon.highlightFillOpacity;
         }
+        else if(p.type == JXG.OBJECT_TYPE_CONIC) {
+            p.visProp['fillColor'] = o.conic.fillColor;
+            p.visProp['highlightFillColor'] = o.conic.highlightFillColor;
+            p.visProp['strokeColor'] = o.conic.strokeColor;
+            p.visProp['highlightStrokeColor'] = o.conic.highlightStrokeColor;
+        }
         else if(p.type == JXG.OBJECT_TYPE_CURVE) {
             p.visProp['strokeColor'] = o.curve.strokeColor;
         }

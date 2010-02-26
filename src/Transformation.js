@@ -132,11 +132,11 @@ JXG.Transformation.prototype.setMatrix = function(board,type,params) {
             } 
         }
         this.update = function() {
-            var beta = this.evalParam(0), x, y;
-            this.matrix[1][1] = Math.cos(beta); 
-            this.matrix[1][2] = -Math.sin(beta);  
-            this.matrix[2][1] = Math.sin(beta); 
-            this.matrix[2][2] = Math.cos(beta); 
+            var beta = this.evalParam(0), x, y, co = Math.cos(beta), si = Math.sin(beta);
+            this.matrix[1][1] =  co; 
+            this.matrix[1][2] = -si;  
+            this.matrix[2][1] =  si; 
+            this.matrix[2][2] =  co; 
             if (params.length>1) {  // rotate around [x,y] otherwise rotate around [0,0]
                 if (params.length==3) {
                     x = this.evalParam(1);
@@ -145,8 +145,8 @@ JXG.Transformation.prototype.setMatrix = function(board,type,params) {
                     x = params[1].X();
                     y = params[1].Y();
                 }
-                this.matrix[1][0] = x*(1-Math.cos(beta))+y*Math.sin(beta);
-                this.matrix[2][0] = y*(1-Math.cos(beta))-x*Math.sin(beta);
+                this.matrix[1][0] = x*(1-co)+y*si;
+                this.matrix[2][0] = y*(1-co)-x*si;
             }
         };
     } else if (type=='shear') {

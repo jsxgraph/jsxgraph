@@ -606,7 +606,7 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
 JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
     var x = point.X(),
         y = point.Y(),
-        t = point.position || 0.0,
+        t = point.position || 0.0, //(curve.minX()+curve.maxX())*0.5,
         result = this.projectCoordsToCurve(x,y,t,curve);
     point.position = result[1];      // side effect !
     return result[0];
@@ -626,14 +626,32 @@ JXG.Algebra.prototype.projectPointToCurve = function(point,curve) {
  * the position on the curve.
  */
 JXG.Algebra.prototype.projectCoordsToCurve = function(x,y,t,curve) {
-    var newCoords, x0, y0, x1, y1, den, i, mindist, dist, lbda,
-        infty = 1000000.0;
+    var newCoords, x0, y0, x1, y1, den, i, mindist, dist, lbda, j,
+        infty = 1000000.0, minfunc, tnew, fnew, fold, delta, steps;
         
     if (curve.curveType=='parameter' || curve.curveType=='polar') { 
-        t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(function(t){ return (x-curve.X(t))*(x-curve.X(t))+(y-curve.Y(t))*(y-curve.Y(t));}), t);
-        //if (t<curve.minX()) { t = curve.minX(); }
-        //if (t>curve.maxX()) { t = curve.maxX(); }
-        if (t<curve.minX()) { t = curve.maxX()+t-curve.minX(); }
+        // Function to minimize
+        minfunc = function(t){ 
+                    var dx = x-curve.X(t),
+                        dy = y-curve.Y(t);
+                    return dx*dx+dy*dy;
+                };
+        //t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(minfunc),t);
+        fold = minfunc(t);
+        steps = 20;
+        delta = (curve.maxX()-curve.minX())/steps;
+        tnew = curve.minX();
+        for (j=0;j<steps;j++) {
+            fnew = minfunc(tnew);
+            if (fnew<fold) {
+                t = tnew;
+                fold = fnew;
+            }
+            tnew += delta;
+        }
+        t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(minfunc),t);
+
+        if (t<curve.minX()) { t = curve.maxX()+t-curve.minX(); } // Cyclically
         if (t>curve.maxX()) { t = curve.minX()+t-curve.maxX(); }
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t),curve.Y(t)], this.board);
     } else if (curve.curveType == 'plot') {
@@ -700,7 +718,7 @@ JXG.Algebra.prototype.projectPointToTurtle = function(point,turtle) {
     
     for(i=0;i<len;i++) {  // run through all curves of this turtle
         el = turtle.objects[i];
-        if (el.type==JXG.OBJECT_TYPE_CURVE) {
+        if (el.elementClass==JXG.OBJECT_CLASS_CURVE) {
             newCoords = this.projectPointToCurve(point,el);
             dist = this.distance(newCoords.usrCoords,point.coords.usrCoords);
             if (dist<mindist) {
@@ -1342,7 +1360,7 @@ JXG.Algebra.prototype.normalize = function(stdform) {
  * a = c1_x'(t1)
  * b = -c2_x'(t2)
  * c = c1_y'(t1)
- * d = c2_y'(t2)
+ * d = -c2_y'(t2)
  *
  * The inverse J^(-1) of J is equal to
  *  (d, -b)/
@@ -1377,10 +1395,12 @@ JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
         t1 = t1ini;
         t2 = t2ini;
     }
+/*
     if (t1>c1.maxX()) { t1 = c1.maxX(); }
     if (t1<c1.minX()) { t1 = c1.minX(); }
     if (t2>c2.maxX()) { t2 = c2.maxX(); }
     if (t2<c2.minX()) { t2 = c2.minX(); }
+*/
     e = c1.X(t1)-c2.X(t2);
     f = c1.Y(t1)-c2.Y(t2);
     F = e*e+f*f;
@@ -1389,7 +1409,6 @@ JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
     D01 = c2.board.D(c2.X,c2);
     D10 = c1.board.D(c1.Y,c1);
     D11 = c2.board.D(c2.Y,c2);
-//$('debug').innerHTML = t1+' '+t2+'<br>\n';
     
     while (F>JXG.Math.eps && count<10) {
         a =  D00(t1);
@@ -1403,16 +1422,70 @@ JXG.Algebra.prototype.meetCurveCurve = function(c1,c2,t1ini,t2ini) {
         f = c1.Y(t1)-c2.Y(t2);
         F = e*e+f*f;
         count++;
-//$('debug').innerHTML += [a,b,c,d].join(':')+'['+disc+'], '+t1+' '+t2+ ' '+count+'<br>\n ';
     }
+//console.log(t1+' '+t2);
 
     arguments.callee.t1memo = t1;
     arguments.callee.t2memo = t2;
-//    $('debug').innerHTML = arguments.callee.t1memo+' '+arguments.callee.t1memo+ ' '+count;
+
     //return (new JXG.Coords(JXG.COORDS_BY_USER, [2,2], this.board));
     if (Math.abs(t1)<Math.abs(t2)) {
         return (new JXG.Coords(JXG.COORDS_BY_USER, [c1.X(t1),c1.Y(t1)], this.board));
     } else {
         return (new JXG.Coords(JXG.COORDS_BY_USER, [c2.X(t2),c2.Y(t2)], this.board));
     }
+};
+
+/**
+* order of input does not matter for el1 and el2.
+*/
+JXG.Algebra.prototype.meetCurveLine = function(el1,el2,nr) {
+    var t, t2, i, cu, li, func, z,
+        tnew, steps, delta, tstart, cux, cuy;
+    
+    for (i=0;i<arguments.length-1;i++) {
+        if (arguments[i].elementClass==JXG.OBJECT_CLASS_CURVE) { cu = arguments[i]; }
+        else if (arguments[i].elementClass==JXG.OBJECT_CLASS_LINE) { li = arguments[i]; }
+        else 
+            throw new Error("JSXGraph: Can't call meetCurveLine with parent class '" + (arguments[i].elementClass) + ".");
+    }
+    
+    func = function(t) {
+        return li.stdform[0]*1.0 + li.stdform[1]*cu.X(t) + li.stdform[2]*cu.Y(t);
+    };
+    
+    if (arguments.callee.t1memo) {
+        tstart = arguments.callee.t1memo;
+    } else {
+        tstart = cu.minX();
+    }
+    t = JXG.Math.Numerics.root(func, tstart);
+    arguments.callee.t1memo = t;
+    cux = cu.X(t);
+    cuy = cu.Y(t);
+    
+    if (nr==1) {  
+        if (arguments.callee.t2memo) {
+            tstart = arguments.callee.t2memo;
+            t2 = JXG.Math.Numerics.root(func, tstart);
+        } 
+        if (!(Math.abs(t2-t)>0.1 && Math.abs(cux-cu.X(t2))>0.1 && Math.abs(cuy-cu.Y(t2))>0.1)) {
+            steps = 20;
+            delta = (cu.maxX()-cu.minX())/steps;
+            tnew = cu.minX();
+            for (i=0;i<steps;i++) {
+                t2 = JXG.Math.Numerics.root(func, tnew);
+                if (Math.abs(t2-t)>0.1 && Math.abs(cux-cu.X(t2))>0.1 && Math.abs(cuy-cu.Y(t2))>0.1) {
+                    break;
+                }
+                tnew += delta;
+            }
+        }
+        t = t2;
+        arguments.callee.t2memo = t;
+    }
+
+    if (Math.abs(func(t))>JXG.Math.eps) z = 0.0;
+    else z = 1.0;
+    return (new JXG.Coords(JXG.COORDS_BY_USER, [z, cu.X(t),cu.Y(t)], this.board));
 };

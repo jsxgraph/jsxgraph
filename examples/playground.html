@@ -37,6 +37,10 @@
         p7 = board.createElement('point', [-4, 3],{face:'v',size:7,strokeWidth:'3pt',shadow:true,name:'EH'});
         p8 = board.createElement('point', [-4, 2],{face:'diamond',size:14,strokeWidth:'3pt',shadow:true,name:'EI'});
         p9 = board.createElement('point', [-5, 1],{face:'plus',size:6,strokeWidth:'3pt',shadow:true,name:'EJ'});
+        
+        l1 = board.createElement('line',[p4,p7],{name:'a',withLabel:true});
+        l2 = board.createElement('normal',[l1,p9],{name:'b',withLabel:true});
+        l3 = board.createElement('parallel',[l2,p8],{name:'c',withLabel:true});
      /*   
         c2 = board.createElement('circle',[p4,p6], {strokeColor:'yellow',fillColor:'#FFFF0055',visible:true, shadow:true, gradient:'radial',id:'ci23'});
         

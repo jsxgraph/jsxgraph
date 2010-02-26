@@ -808,7 +808,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
                     && ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)
                         /*|| (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_LINE)  // not yet
                         || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CIRCLE)
-                        || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CURVE)*/ )
+                        || (!this.geonextCompatibilityMode && pEl.elementClass == JXG.OBJECT_CLASS_CURVE)*/ )
                     && (pEl.visProp['visible'])
                     && (!pEl.fixed)
                     && (pEl.hasPoint(dx, dy))
@@ -869,7 +869,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
         if (this.drag_obj.type == JXG.OBJECT_TYPE_POINT
             || this.drag_obj.type == JXG.OBJECT_TYPE_LINE
             || this.drag_obj.type == JXG.OBJECT_TYPE_CIRCLE
-            || this.drag_obj.type == JXG.OBJECT_TYPE_CURVE) {
+            || this.drag_obj.elementClass == JXG.OBJECT_CLASS_CURVE) {
 
 /*
             // Do not use setPositionByTransform at the moment!
@@ -1091,10 +1091,10 @@ JXG.Board.prototype.setBoardMode = function (mode) {
 JXG.Board.prototype.moveOrigin = function () {
     for(var Element in this.objects) {
         if( (this.objects[Element].elementClass == JXG.OBJECT_CLASS_POINT) ||
-            (this.objects[Element].type == JXG.OBJECT_TYPE_CURVE) ||
+            (this.objects[Element].elementClass == JXG.OBJECT_CLASS_CURVE) ||
             (this.objects[Element].type == JXG.OBJECT_TYPE_AXIS) ||
             (this.objects[Element].type == JXG.OBJECT_TYPE_TEXT) ) {
-            if((this.objects[Element].type != JXG.OBJECT_TYPE_CURVE) && (this.objects[Element].type != JXG.OBJECT_TYPE_AXIS))
+            if((this.objects[Element].elementClass != JXG.OBJECT_CLASS_CURVE) && (this.objects[Element].type != JXG.OBJECT_TYPE_AXIS))
                 this.objects[Element].coords.usr2screen();
         }
     }
@@ -1452,6 +1452,7 @@ JXG.Board.prototype.addConditions = function (str) {
                 break;
             case 'strokewidth':
                 plaintext += 'el.strokeWidth = ' + (right) +';\n';   // wird auch bei Punkten verwendet, was nicht realisiert ist.
+                //plaintext += 'el.highlightStrokeWidth = ' + (right) +';\n'; // TODO ?(BV)
                 break;
             case 'label':
                 //plaintext += 'var color = ' + (right) +';\n';
@@ -1548,10 +1549,10 @@ JXG.Board.prototype.applyZoom = function() {
 
     for(el in this.objects) {
         if( (this.objects[el].elementClass == JXG.OBJECT_CLASS_POINT) ||
-            (this.objects[el].type == JXG.OBJECT_TYPE_CURVE) ||
+            (this.objects[el].elementClass == JXG.OBJECT_CLASS_CURVE) ||
             (this.objects[el].type == JXG.OBJECT_TYPE_AXIS) ||
             (this.objects[el].type == JXG.OBJECT_TYPE_TEXT) ) {
-            if((this.objects[el].type != JXG.OBJECT_TYPE_CURVE) && (this.objects[el].type != JXG.OBJECT_TYPE_AXIS))
+            if((this.objects[el].elementClass != JXG.OBJECT_CLASS_CURVE) && (this.objects[el].type != JXG.OBJECT_TYPE_AXIS))
                 this.objects[el].coords.usr2screen();
         }
     }

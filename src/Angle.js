@@ -174,7 +174,7 @@ JXG.Angle = function (board, p1, p2, p3, radius, text, id, name, withLabel, laye
     
     this.id = this.board.addAngle(this);
     
-    /* Add sector as child to defining points */
+    /* Add angle as child to defining points */
     this.point1.addChild(this);
     this.point2.addChild(this);
     this.point3.addChild(this);    

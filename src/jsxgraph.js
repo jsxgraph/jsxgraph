@@ -317,6 +317,8 @@ JXG.getReference = function(board, object) {
     return object;
 };
 
+JXG.getRef = JXG.getReference;
+
 JXG.isString = function(obj) {
     return typeof obj == "string";
 };
@@ -789,6 +791,16 @@ JXG.trim = function(str) {
 	str = str.replace(/w+$/, "");
 	
 	return str;
+};
+
+
+JXG.debug = function(s) {
+  if(typeof console!='undefined' && console.log){
+    if(typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "")
+    console.log(s);
+  } else if(document.getElementById('debug')) {
+    document.getElementById('debug').innerHTML += s +"<br/>";
+  }
 };
 
 /*

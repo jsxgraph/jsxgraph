@@ -56,7 +56,7 @@ c.noHighlight = function(){
 }
 //-----------------------------------
 
-
+/*
 var m = function(circ){
     return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.Radius()*circ.Radius(),
              -circ.midpoint.X(),-circ.midpoint.Y()],
@@ -70,9 +70,10 @@ var t = board.createElement('line', [
     function(){ return JXG.Math.matVecMult(m(c),p3.coords.usrCoords)[1]; },
     function(){ return JXG.Math.matVecMult(m(c),p3.coords.usrCoords)[2]; }
 ] , {visible:false});     
-
-var i1 = board.createElement('intersection', [c,t,0],{visible:false});
-var i2 = board.createElement('intersection', [c,t,1],{visible:false});
+*/
+var pol = board.create('polar',[c,p3]);
+var i1 = board.createElement('intersection', [c,pol,0],{visible:false});
+var i2 = board.createElement('intersection', [c,pol,1],{visible:false});
 //var t1 = board.createElement('line', [p3,i1]);
 //var t2 = board.createElement('line', [p3,i2]);
 var t1 = board.createElement('tangent', [c,i1]);

@@ -194,7 +194,7 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
     /* Add arrow as child to defining points */
     this.point1.addChild(this);
     this.point2.addChild(this);
-    this.update();
+    this.needsUpdate = true; this.update();
 };
 
 JXG.Line.prototype = new JXG.GeometryElement;
@@ -865,10 +865,17 @@ JXG.createLine = function(board, parents, atts) {
             }
         }
         // point 1: (0,c,-b)
+        /*
         p1 = board.create('point',[
                 function() { return 0.0;},
                 function() { return c[2]();},
                 function() { return -c[1]();}],{visible:false,name:' '});
+        */
+        // New version: point1 is the midpoint between (0,c,-b) and point 2. => point1 is finite.
+        p1 = board.create('point',[
+                function() { return (0.0 + c[2]()*c[2]()+c[1]()*c[1]())*0.5;},
+                function() { return (c[2]() - c[1]()*c[0]()+c[2]())*0.5;},
+                function() { return (-c[1]() - c[2]()*c[0]()-c[1]())*0.5;}],{visible:false,name:' '});
         // point 2: (b^2+c^2,-ba+c,-ca-b)
         p2 = board.create('point',[
                 function() { return c[2]()*c[2]()+c[1]()*c[1]();},
@@ -967,6 +974,7 @@ JXG.createArrow = function(board, parents, attributes) {
         //el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name'],attributes['withLabel']);
         el.setStraight(false,false);
         el.setArrow(false,true);
+        el.type = JXG.OBJECT_TYPE_VECTOR;
     //} // Ansonsten eine fette Exception um die Ohren hauen
     //else
     //    throw new Error("JSXGraph: Can't create arrow with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
@@ -1020,20 +1028,17 @@ JXG.createAxis = function(board, parents, attributes) {
         point1.fixed = true;
         point2.fixed = true;
 
-        attributes = attributes || {};
-        attributes.lastArrow = attributes.lastArrow || true;
-        attributes.straightFirst = attributes.lastArrow || true;
-        attributes.straightLast = attributes.straightLast || true;
-        attributes.strokeWidth = attributes.strokeWidth || 1;
-        attributes.withLabel = attributes.withLabel || false;
+        attributes = JXG.checkAttributes(attributes,
+            {'lastArrow':true, 'straightFirst':true, 'straightLast':true,
+             'strokeWidth':1, 'withLabel':false,
+             'strokeColor':board.options.axis.strokeColor});
+
         attributes.highlightStrokeColor = attributes.highlightStrokeColor || attributes.strokeColor || board.options.axis.highlightStrokeColor;
-        attributes.strokeColor = attributes.strokeColor || board.options.axis.strokeColor;
 
         line = board.create('line', [point1, point2], attributes);
         line.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
 
-        attributes.minorTicks = attributes.minorTicks || 4;
-        attributes.insertTicks = attributes.insertTicks || 'true';
+        attributes = JXG.checkAttributes(attributes,{'minorTicks':4, 'insertTicks': true});
 
         if(attributes.ticksDistance != 'undefined' && attributes.ticksDistance != null) {
             dist = attributes.ticksDistance;
@@ -1090,8 +1095,8 @@ JXG.createTangent = function(board, parents, attributes) {
     if (parents.length==1) { // One arguments: glider on line, circle or curve
         p = parents[0];
         c = p.slideObject;
-    } else if (parents.length==2) { // Two arguments: (point,line|curve|circle) or (line|curve|circle,point). // Not yet: curve!
-        if (JXG.isPoint(parents[0])) {
+    } else if (parents.length==2) {     // Two arguments: (point,line|curve|circle|conic) or (line|curve|circle|conic,point). // Not yet: curve!
+        if (JXG.isPoint(parents[0])) {  // In fact, for circles and conics it is the polar.
             p = parents[0];
             c = parents[1];
         } else if (JXG.isPoint(parents[1])) {
@@ -1108,7 +1113,7 @@ JXG.createTangent = function(board, parents, attributes) {
     
     if (c.elementClass == JXG.OBJECT_CLASS_LINE) {
         tangent = board.create('line', [c.point1,c.point2], attributes);
-    } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
+    } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE && !(c.type == JXG.OBJECT_TYPE_CONIC)) {
         if (c.curveType!='plot') {
             g = c.X;
             f = c.Y;
@@ -1179,7 +1184,7 @@ JXG.createTangent = function(board, parents, attributes) {
             p.addChild(tangent);
             // this is required for the geogebra reader to display a slope
             tangent.glider = p;
-    } else if (c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+    } else if (c.elementClass == JXG.OBJECT_CLASS_CIRCLE || c.type == JXG.OBJECT_TYPE_CONIC) {
         /*
         Dg = function(t){ return -c.Radius()*Math.sin(t); };
         Df = function(t){ return c.Radius()*Math.cos(t); };
@@ -1189,12 +1194,15 @@ JXG.createTangent = function(board, parents, attributes) {
                     function(){ return -Dg(p.position);}
                     ], attributes );
         */
+
+        // If p is not on c, the tangent is the polar.
         // This construction should work on conics, too. p has to lie on c.
-        board.create('line', [
+        tangent = board.create('line', [
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[0]; },
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[1]; },
                     function(){ return JXG.Math.matVecMult(c.quadraticform,p.coords.usrCoords)[2]; }
                 ] , attributes);
+
         p.addChild(tangent);
         // this is required for the geogebra reader to display a slope
         tangent.glider = p;
@@ -1208,3 +1216,4 @@ JXG.createTangent = function(board, parents, attributes) {
  * @private
  */
 JXG.JSXGraph.registerElement('tangent', JXG.createTangent);
+JXG.JSXGraph.registerElement('polar', JXG.createTangent);

@@ -61,6 +61,7 @@ this.parseFileContent = function(url, board, format) {
         this.cbp = function() {
             var request = this.request;
             if (request.readyState == 4) {
+            	alert(request.responseText);
                 this.parseString(request.responseText, board, format, false);
             }
         }; //).bind(this);

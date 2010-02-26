@@ -59,9 +59,7 @@
  */
 JXG.createEllipse = function(board, parents, atts) {
     var F = [],  // focus 1 and focus 2
-        C, 
-        majorAxis,
-        i,
+        C, majorAxis, i,
         rotationMatrix;
 
     atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'conic','withLabel'), layer:null});
@@ -110,7 +108,7 @@ JXG.createEllipse = function(board, parents, atts) {
                 ay = F[0].Y(),
                 bx = F[1].X(),
                 by = F[1].Y(),
-                beta;
+                beta, co, si;
 
             // Rotate by the slope of the line [F[0],F[1]]
             var sgn = (bx-ax>0)?1:-1;
@@ -119,27 +117,50 @@ JXG.createEllipse = function(board, parents, atts) {
             } else {
                 beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
             }
+            co = Math.cos(beta);
+            si = Math.sin(beta);
             var m = [
-                        [1,    0,             0],
-                        [M.X(),Math.cos(beta),-Math.sin(beta)],
-                        [M.Y(),Math.sin(beta), Math.cos(beta)]
+                        [1,     0,  0],
+                        [M.X(),co,-si],
+                        [M.Y(),si, co]
                     ];
             return m;
         };
 
+    var curve = board.create('curve',[function(x) {return 0;},function(x) {return 0;},parents[3],parents[4]],atts);
+
     var polarForm = function(phi,suspendUpdate) {
                 var a = majorAxis()*0.5,
                     e = F[1].Dist(F[0])*0.5,
-                    b = Math.sqrt(a*a-e*e);
+                    b = Math.sqrt(a*a-e*e), transformMat = [[1,0,0],[0,1,0],[0,0,1]];
+                    
                 if (!suspendUpdate) {
                     rotationMatrix = transformFunc();
+                    transformMat[0][0] = rotationMatrix[0][0];
+                    transformMat[0][1] = 0.0;
+                    transformMat[0][2] = 0.0;
+                    transformMat[1][0] = M.X()*(1-rotationMatrix[1][1])+M.Y()*rotationMatrix[1][2];
+                    transformMat[1][1] = rotationMatrix[1][1];
+                    transformMat[1][2] = rotationMatrix[2][1];
+                    transformMat[2][0] = M.Y()*(1-rotationMatrix[1][1])-M.X()*rotationMatrix[1][2];
+                    transformMat[2][1] = rotationMatrix[1][2];
+                    transformMat[2][2] = rotationMatrix[2][2];
+                    curve.quadraticform = 
+                        JXG.Math.matMatMult(JXG.Math.Matrix.transpose(transformMat),
+                        JXG.Math.matMatMult(
+                            [
+                                [-1+M.X()*M.X()/(a*a)+M.Y()*M.Y()/(b*b), -M.X()/(a*a) , -M.Y()/(b*b)],
+                                [-M.X()/(a*a)                          ,      1/(a*a) ,  0          ],
+                                [-M.Y()/(b*b)                          ,            0 ,  1/(b*b)]
+                            ],
+                        transformMat)); 
                 }
                 return JXG.Math.matVecMult(rotationMatrix,[1,a*Math.cos(phi),b*Math.sin(phi)]);
         };
 
-    var curve = board.create('curve',
-                    [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
-                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},parents[3],parents[4]],atts);
+    curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
+    curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
+    curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };
 
@@ -243,22 +264,42 @@ JXG.createHyperbola = function(board, parents, atts) {
             return m;
         };
 
+    var curve = board.create('curve',[function(x) {return 0;},function(x) {return 0;},parents[3],parents[4]],atts);
     /*
-          * Hyperbola is defined by (a*sec(t),b*tan(t)) and sec(t) = 1/cos(t)
-          */
+    * Hyperbola is defined by (a*sec(t),b*tan(t)) and sec(t) = 1/cos(t)
+    */
     var polarForm = function(phi,suspendUpdate) {
                 var a = majorAxis()*0.5,
                     e = F[1].Dist(F[0])*0.5,
-                    b = Math.sqrt(-a*a+e*e);
+                    b = Math.sqrt(-a*a+e*e), transformMat = [[1,0,0],[0,1,0],[0,0,1]];
+                    
                 if (!suspendUpdate) {
                     rotationMatrix = transformFunc();
+                    transformMat[0][0] = rotationMatrix[0][0];
+                    transformMat[0][1] = 0.0;
+                    transformMat[0][2] = 0.0;
+                    transformMat[1][0] = M.X()*(1-rotationMatrix[1][1])+M.Y()*rotationMatrix[1][2];
+                    transformMat[1][1] = rotationMatrix[1][1];
+                    transformMat[1][2] = rotationMatrix[2][1];
+                    transformMat[2][0] = M.Y()*(1-rotationMatrix[1][1])-M.X()*rotationMatrix[1][2];
+                    transformMat[2][1] = rotationMatrix[1][2];
+                    transformMat[2][2] = rotationMatrix[2][2];
+                    curve.quadraticform = 
+                        JXG.Math.matMatMult(JXG.Math.Matrix.transpose(transformMat),
+                        JXG.Math.matMatMult(
+                            [
+                                [-1+M.X()*M.X()/(a*a)+M.Y()*M.Y()/(b*b), -M.X()/(a*a) , M.Y()/(b*b)],
+                                [-M.X()/(a*a)                          ,      1/(a*a) ,  0          ],
+                                [M.Y()/(b*b)                          ,            0 ,  -1/(b*b)   ]
+                            ],
+                        transformMat)); 
                 }
                 return JXG.Math.matVecMult(rotationMatrix,[1,a/Math.cos(phi),b*Math.tan(phi)]);
         };
-    var curve = board.create('curve',
-                    [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
-                     function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},parents[3],parents[4]],atts);
 
+    curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
+    curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
+    curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };
 
@@ -335,18 +376,40 @@ JXG.createParabola = function(board, parents, atts) {
             return m;
         };
 
+    var curve = board.create('curve',[function(x) {return 0;},function(x) {return 0;},parents[2],parents[3]],atts);
+
     var polarForm = function(t,suspendUpdate) {
-                var e = M.Dist(F1)*0.5;
+                var e = M.Dist(F1)*0.5,
+                    transformMat = [[1,0,0],[0,1,0],[0,0,1]],
+                    a = (M.X()+F1.X())*0.5, 
+                    b = (M.Y()+F1.Y())*0.5;
+                
                 if (!suspendUpdate) {
                     rotationMatrix = transformFunc();
+                    transformMat[0][0] = rotationMatrix[0][0];
+                    transformMat[0][1] = 0.0;
+                    transformMat[0][2] = 0.0;
+                    transformMat[1][0] = a*(1-rotationMatrix[1][1])+b*rotationMatrix[1][2];
+                    transformMat[1][1] = rotationMatrix[1][1];
+                    transformMat[1][2] = rotationMatrix[2][1];
+                    transformMat[2][0] = b*(1-rotationMatrix[1][1])-a*rotationMatrix[1][2];
+                    transformMat[2][1] = rotationMatrix[1][2];
+                    transformMat[2][2] = rotationMatrix[2][2];
+                    curve.quadraticform = 
+                        JXG.Math.matMatMult(JXG.Math.Matrix.transpose(transformMat),
+                        JXG.Math.matMatMult(
+                            [
+                                [-b*4*e-a*a, a, 2*e],
+                                [a,       -1, 0],
+                                [2*e,      0, 0]
+                            ],
+                        transformMat)); 
                 }
-                return JXG.Math.matVecMult(rotationMatrix,[1,t+(M.X()+F1.X())*0.5,t*t/(e*4)+(M.Y()+F1.Y())*0.5]);
+                return JXG.Math.matVecMult(rotationMatrix,[1,t+a,t*t/(e*4)+b]);
         };
-    var curve = board.create('curve',
-                    [function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[1];},
-                     function(t,suspendUpdate) {return polarForm(t,suspendUpdate)[2];},
-                     parents[2],parents[3]],atts);
-
+    curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
+    curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
+    curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };
 
@@ -382,11 +445,17 @@ JXG.createParabola = function(board, parents, atts) {
  * </script><pre>
  */
 JXG.createConic = function(board, parents, atts) {
-    var rotationMatrix, eigen, a, b, c, M,
-        c1, c2, 
-        points = [], i, definingMat, 
-        givenByPoints = (parents.length==5)?true:false, 
+    var rotationMatrix, eigen, a, b, c, M = [[1,0,0],[0,1,0],[0,0,1]],
+        c1, c2, points = [], i, definingMat, 
+        givenByPoints, 
         p = [];
+
+    if (parents.length==5) {
+        givenByPoints = true;
+    } else if (parents.length==6) {
+        givenByPoints = false;
+    } else 
+        throw new Error("JSXGraph: Can't create generic Conic with " + parent.length + " parameters.");  
 
     atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'conic','withLabel'), layer:null});
     if (givenByPoints) {
@@ -404,19 +473,25 @@ JXG.createConic = function(board, parents, atts) {
         }
     } else {
         /* Usual notation (x,y,z):
-         *  [[A0,A3,A5],
-         *   [A3,A1,A4],
-         *   [A5,A4,A2]]. 
+         *  [[A0,A3,A4],
+         *   [A3,A1,A5],
+         *   [A4,A5,A2]]. 
          * Our notation (z,x,y): 
-         *  [[-A2   , A5*2.0, A4*0.5],
-         *   [A5*2.0,    -A0, A3*0.5],
-         *   [A4*0.5, A3*0.5,    -A1]] 
+         *  [[-A2   , A4*2.0, A5*0.5],
+         *   [A4*2.0,    -A0, A3*0.5],
+         *   [A5*0.5, A3*0.5,    -A1]] 
+         * New: (z,x,y): 
+         *  [[A2, A4, A5],
+         *   [A4, A0, A3],
+         *   [A5, A3, A1]] 
         */
-        //definingMat = [[0,0,0],[0,0,0],[0,0,0]];
-        //definingMat[0][0] = (JXG.isFunction(parent[0])) ? 
-        M = [[-parents[2],parents[5]*2.0,parents[4]*0.5],
-             [parents[5]*2.0,-parents[0],parents[3]*0.5],
-             [parents[4]*0.5,parents[3]*0.5,-parents[1]]];
+        definingMat = [[0,0,0],[0,0,0],[0,0,0]];
+        definingMat[0][0] = (JXG.isFunction(parents[2])) ? function(){ return    parents[2]();} : function(){ return    parents[2];};
+        definingMat[0][1] = (JXG.isFunction(parents[4])) ? function(){ return    parents[4]();} : function(){ return    parents[4];};
+        definingMat[0][2] = (JXG.isFunction(parents[5])) ? function(){ return    parents[5]();} : function(){ return    parents[5];};
+        definingMat[1][1] = (JXG.isFunction(parents[0])) ? function(){ return    parents[0]();} : function(){ return    parents[0];};
+        definingMat[1][2] = (JXG.isFunction(parents[3])) ? function(){ return    parents[3]();} : function(){ return    parents[3];};
+        definingMat[2][2] = (JXG.isFunction(parents[1])) ? function(){ return    parents[1]();} : function(){ return    parents[1];};
     }
 
     // sym(A) = A + A^t . Manipulates A in place.
@@ -448,18 +523,22 @@ JXG.createConic = function(board, parents, atts) {
 
     // (p^t*B*p)*A-(p^t*A*p)*B
     var fitConic = function(A,B,p)  {
-        var pBp, pAp, Mv, M = [[0,0,0],[0,0,0],[0,0,0]], i, j;
+        var pBp, pAp, Mv, mat = [[0,0,0],[0,0,0],[0,0,0]], i, j;
         Mv = JXG.Math.matVecMult(B,p);
         pBp = JXG.Math.innerProduct(p,Mv);
         Mv = JXG.Math.matVecMult(A,p);
         pAp = JXG.Math.innerProduct(p,Mv);
         for (i=0;i<3;i++) {
             for (j=0;j<3;j++) {
-                M[i][j] = pBp*A[i][j]-pAp*B[i][j];
+                mat[i][j] = pBp*A[i][j]-pAp*B[i][j];
             }
         }
-        return M;
+        return mat;
     };
+ 
+    // Here, the defining functions for the curve are just dummy functions.
+    // In polarForm there is a reference to curve.quadraticform.
+    var curve = board.create('curve',[function(x) {return 0;},function(x) {return 0;},0,2*Math.PI],atts);
 
     var polarForm = function(phi,suspendUpdate) {
         var i, j, len, v;
@@ -473,7 +552,16 @@ JXG.createConic = function(board, parents, atts) {
                 c1 = degconic(JXG.Math.crossProduct(p[0],p[1]),JXG.Math.crossProduct(p[2],p[3]));
                 c2 = degconic(JXG.Math.crossProduct(p[0],p[2]),JXG.Math.crossProduct(p[1],p[3]));
                 M = fitConic(c1,c2,p[4]);
+            } else {
+                for (i=0;i<3;i++) {
+                    for (j=i;j<3;j++) {
+                        M[i][j] = definingMat[i][j]();
+                        if (j>i) M[j][i] = M[i][j];     
+                    }
+                }
             }
+            curve.quadraticform = M;    // Here is the reference back to the curve.
+            
             // Compute Eigenvalues and Eigenvectors
             eigen = JXG.Math.Numerics.Jacobi(M);
             // Scale the Eigenvalues such that the first Eigenvalue is positive
@@ -497,6 +585,7 @@ JXG.createConic = function(board, parents, atts) {
             c = Math.sqrt(Math.abs(eigen[0][0][0]));
             a = Math.sqrt(Math.abs(eigen[0][1][1]));
             b = Math.sqrt(Math.abs(eigen[0][2][2]));
+
         }
         if (eigen[0][1][1]<0.0) {
             v = JXG.Math.matVecMult(rotationMatrix,[1/c,Math.cos(phi)/a,Math.sin(phi)/b]);
@@ -510,10 +599,9 @@ JXG.createConic = function(board, parents, atts) {
         return v;
     };
 
-    var curve = board.create('curve',
-            [function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];},
-             function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];},
-             -Math.PI,Math.PI],atts);
+    curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
+    curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
+    curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };
 

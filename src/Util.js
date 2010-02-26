@@ -131,11 +131,10 @@ JXG.Util.Unzip = function (barray){
     fileout;
     
     function readByte(){
-        var len = bA.length;
         bits+=8;
-        if (bytepos<len){
-            if (debug)
-                document.write(bytepos+": "+bA[bytepos]+"<br>");
+        if (bytepos<bA.length){
+            //if (debug)
+            //    document.write(bytepos+": "+bA[bytepos]+"<br>");
             return bA[bytepos++];
         } else
             return -1;

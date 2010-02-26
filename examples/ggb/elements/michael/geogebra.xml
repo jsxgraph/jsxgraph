@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.4">
+<gui>
+	<show algebraView="false" auxiliaryObjects="true"/>
+	<splitDivider loc="168" locVertical="400" horizontal="true"/>
+	<font  size="14"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="332.0" yZero="291.0" scale="30.0"/>
+	<evSettings axes="true" grid="false" pointCapturing="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="Exponentialfunktionen" author="" date="">
+<element type="point" label="B">
+	<show object="false" label="true"/>
+	<objColor r="0" g="0" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<fixed val="false"/>
+	<coords x="10.0" y="-2.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Point">
+	<input a0="yAxis"/>
+	<output a0="A"/>
+</command>
+<element type="point" label="A">
+	<show object="false" label="true"/>
+	<objColor r="125" g="125" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<coords x="0.0" y="-2.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Segment">
+	<input a0="A" a1="B"/>
+	<output a0="b"/>
+</command>
+<element type="segment" label="b">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<coords x="0.0" y="10.0" z="20.0"/>
+	<lineStyle thickness="2" type="10"/>
+	<eqnStyle style="implicit"/>
+</element>
+<command name="Point">
+	<input a0="b"/>
+	<output a0="C"/>
+</command>
+<element type="point" label="C">
+	<show object="true" label="false"/>
+	<objColor r="125" g="125" b="255" alpha="0.0"/>
+	<animation step="0.1"/>
+	<coords x="1.7" y="-2.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Distance">
+	<input a0="A" a1="C"/>
+	<output a0="a"/>
+</command>
+<element type="numeric" label="a">
+	<value val="1.7"/>
+</element>
+<expression label="f" exp="f(x) = a^x" />
+<element type="function" label="f">
+	<show object="true" label="false"/>
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<lineStyle thickness="3" type="0"/>
+</element><expression label="g" exp="g(x) = (1 / a)^x" />
+<element type="function" label="g">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<lineStyle thickness="3" type="0"/>
+</element><expression label="T1" exp="&quot;a = &quot; + a" />
+<element type="text" label="T1">
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<startPoint exp="C"/>
+	<labelOffset x="-14" y="22"/>
+</element>
+<expression label="T2" exp="&quot;f(x) = a^x = &quot; + a" />
+<element type="text" label="T2">
+	<objColor r="204" g="0" b="0" alpha="0.0"/>
+	<fixed val="true"/>
+	<isLaTeX val="true"/>
+	<startPoint  x="-10.166666666666664" y="9.1" z="1.0"/>
+</element>
+<expression label="T3" exp="&quot;g(x) = \left(\frac{1}{a}\right)^x = \left(\frac{1}{&quot; + a" />
+<element type="text" label="T3">
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<fixed val="true"/>
+	<isLaTeX val="true"/>
+	<startPoint  x="4.6000000000000005" y="9.366666666666665" z="1.0"/>
+</element>
+</construction>
+</geogebra>

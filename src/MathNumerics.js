@@ -261,7 +261,7 @@ JXG.Math.Numerics.QR = function(A, b) {
  * V contains the Eigenvectors.
  */
 JXG.Math.Numerics.Jacobi = function(Ain) {
-    var i,j,k,ih,aa,si,co,tt,
+    var i,j,k,ih,aa,si,co,tt,eps=Math.sqrt(JXG.Math.eps),
         sum = 0.0,
         ssum, amax,
         n = Ain.length,
@@ -322,7 +322,7 @@ JXG.Math.Numerics.Jacobi = function(Ain) {
                 }
             }
         }
-    } while(Math.abs(ssum)/sum>JXG.Math.eps);
+    } while(Math.abs(ssum)/sum>eps);
     return [A,V];
 };
 
@@ -910,7 +910,6 @@ JXG.Math.Numerics.newton = function(/** function */ f, /** number */ x, /** obje
         h = 0.000001,
         newf = f.apply(obj,[x]), // set "this" to "obj" in f 
         df;
-        
     while (i<50 && Math.abs(newf)>h) {
         df = this.D(f,obj)(x);
         if (Math.abs(df)>h) {

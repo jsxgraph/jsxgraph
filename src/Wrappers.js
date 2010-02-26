@@ -76,8 +76,11 @@ JXG.Board.prototype.intersectionOptions = ['point',[[JXG.OBJECT_CLASS_LINE,JXG.O
 JXG.Board.prototype.intersection = function(el1,el2,i,j){ 
     el1 = JXG.getReference(this,el1);
     el2 = JXG.getReference(this,el2);
-    if (el1.elementClass==JXG.OBJECT_CLASS_CURVE || el2.elementClass==JXG.OBJECT_CLASS_CURVE) {
+    if (el1.elementClass==JXG.OBJECT_CLASS_CURVE && el2.elementClass==JXG.OBJECT_CLASS_CURVE) {
         return function(){return el1.board.algebra.meetCurveCurve(el1,el2,i,j); };
+    } else if ((el1.elementClass==JXG.OBJECT_CLASS_CURVE && el2.elementClass==JXG.OBJECT_CLASS_LINE)||
+               (el2.elementClass==JXG.OBJECT_CLASS_CURVE && el1.elementClass==JXG.OBJECT_CLASS_LINE)) {
+        return function(){return el1.board.algebra.meetCurveLine(el1,el2,i); };
     } else {
         return function(){return el1.board.algebra.meet(el1.stdform,el2.stdform,i); };
     }

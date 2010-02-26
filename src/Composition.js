@@ -487,12 +487,8 @@ JXG.createParallel = function(board, parents, atts) {
     } else
         cAtts['id'] = atts['id'] + 'p2';
 
-    if(atts) {
-        cAtts = JXG.cloneAndCopy(atts, cAtts);
-    }
-
     try {
-        pp = JXG.createParallelPoint(board, parents, cAtts);
+        pp = JXG.createParallelPoint(board, parents, cAtts); // non-visible point
     } catch (e) {
         throw new Error("JSXGraph: Can't create parallel with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     }
@@ -1076,7 +1072,7 @@ JXG.createMirrorPoint = function(board, parentArr, atts) {
  */
 JXG.createIntegral = function(board, parents, attributes) {
     var interval, curve, attribs = {},
-        start = 0, end = 0,
+        start = 0, end = 0, startx, starty, endx, endy, factor = 1,
         pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis,
         Int, t, p;
 
@@ -1087,10 +1083,10 @@ JXG.createIntegral = function(board, parents, attributes) {
        attributes['name'] = ['','','','',''];
     }
 
-    if(JXG.isArray(parents[0]) && parents[1].type == JXG.OBJECT_TYPE_CURVE) {
+    if(JXG.isArray(parents[0]) && parents[1].elementClass == JXG.OBJECT_CLASS_CURVE) {
         interval = parents[0];
         curve = parents[1];
-    } else if(JXG.isArray(parents[1]) && parents[0].type == JXG.OBJECT_TYPE_CURVE) {
+    } else if(JXG.isArray(parents[1]) && parents[0].elementClass == JXG.OBJECT_CLASS_CURVE) {
         interval = parents[1];
         curve = parents[0];
     } else {
@@ -1100,37 +1096,55 @@ JXG.createIntegral = function(board, parents, attributes) {
     if( (typeof attributes != 'undefined') && (attributes != null))
         attribs = JXG.cloneAndCopy(attributes, {name: attributes.name[0], id: attributes.id[0]});
 
-    // Correct the interval if necessary
-    if(interval[0] > curve.points[0].usrCoords[1])
-        start = interval[0];
-    else
-        start = curve.points[0].usrCoords[1];
+    // Correct the interval if necessary - NOT ANYMORE, GGB's fault
+    start = interval[0];
+    end = interval[1];
 
-    if(interval[1] < curve.points[curve.points.length-1].usrCoords[1])
-        end = interval[1];
-    else
-        end = curve.points[curve.points.length-1].usrCoords[1];
+    if(JXG.isFunction(start)) {
+        startx = start;
+        starty = function () { return curve.yterm(startx()); };
+        start = startx();
+    } else {
+        startx = start;
+        starty = curve.yterm(start);
+    }
+    
+    if(JXG.isFunction(start)) {
+        endx = end;
+        endy = function () { return curve.yterm(endx()); };
+        end = endx();
+    } else {
+        endx = end;
+        endy = curve.yterm(end);
+    }
+    
+    if(end < start)
+        factor = -1;
 
-    pa_on_curve = board.create('glider', [start, curve.yterm(start), curve], attribs);
+    pa_on_curve = board.create('glider', [startx, starty, curve], attribs);
+    if(JXG.isFunction(startx))
+        pa_on_curve.hideElement();
 
     attribs.name = attributes.name[1];
     attribs.id = attributes.id[1];
     attribs.visible = false;
     pa_on_axis = board.create('point', [function () { return pa_on_curve.X(); }, 0], attribs);
 
-    pa_on_curve.addChild(pa_on_axis);
+    //pa_on_curve.addChild(pa_on_axis);
 
     attribs.name = attributes.name[2];
     attribs.id = attributes.id[2];
     attribs.visible = attributes.visible || true;
-    pb_on_curve = board.create('glider', [end, curve.yterm(end), curve], attribs);
+    pb_on_curve = board.create('glider', [endx, endy, curve], attribs);
+    if(JXG.isFunction(endx))
+        pb_on_curve.hideElement();
 
     attribs.name = attributes.name[3];
     attribs.id = attributes.id[3];
     attribs.visible = false;
     pb_on_axis = board.create('point', [function () { return pb_on_curve.X(); }, 0], attribs);
 
-    pb_on_curve.addChild(pb_on_axis);
+    //pb_on_curve.addChild(pb_on_axis);
 
     Int = JXG.Math.Numerics.I([start, end], curve.yterm);
     t = board.create('text', [
@@ -1150,27 +1164,38 @@ JXG.createIntegral = function(board, parents, attributes) {
     attribs.fillOpacity = attribs.fillOpacity || board.options.polygon.fillOpacity;
     attribs.highlightFillOpacity = attribs.highlightFillOpacity || board.options.polygon.highlightFillOpacity;
     attribs.strokeWidth = 0;
+    attribs.highlightStrokeWidth = 0;
     attribs.strokeOpacity = 0;
 
     p = board.create('curve', [[0],[0]], attribs);
     p.updateDataArray = function() {
-        var x = [pa_on_axis.coords.usrCoords[1], pa_on_curve.coords.usrCoords[1]],
-            y = [pa_on_axis.coords.usrCoords[2], pa_on_curve.coords.usrCoords[2]],
-            i;
+        var x, y,
+            i, left, right;
 
+        if(pa_on_axis.X() < pb_on_axis.X()) {
+            left = pa_on_axis.X();
+            right = pb_on_axis.X();
+        } else {
+            left = pb_on_axis.X();
+            right = pa_on_axis.X();
+        }
+        
+        x = [left, left];
+        y = [0, curve.yterm(left)];
+        
         for(i=0; i < curve.numberPoints; i++) {
-            if( (pa_on_axis.X() <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= pb_on_axis.X()) ) {
+            if( (left <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= right) ) {
                 x.push(curve.points[i].usrCoords[1]);
                 y.push(curve.points[i].usrCoords[2]);
             }
         }
-        x.push(pb_on_curve.coords.usrCoords[1]);
-        y.push(pb_on_curve.coords.usrCoords[2]);
-        x.push(pb_on_axis.coords.usrCoords[1]);
-        y.push(pb_on_axis.coords.usrCoords[2]);
+        x.push(right);
+        y.push(curve.yterm(right));
+        x.push(right);
+        y.push(0);
 
-        x.push(pa_on_axis.coords.usrCoords[1]); // close the curve
-        y.push(pa_on_axis.coords.usrCoords[2]);
+        x.push(left); // close the curve
+        y.push(0);
 
         this.dataX = x;
         this.dataY = y;

@@ -1075,6 +1075,9 @@ JXG.AbstractRenderer.prototype.highlight = function(/** JXG.GeometryElement */ o
             this.setObjectStrokeColor(obj, obj.visProp['highlightStrokeColor'], obj.visProp['highlightStrokeOpacity']);
             this.setObjectFillColor(obj, obj.visProp['highlightFillColor'], obj.visProp['highlightFillOpacity']);    
         }
+        if(obj.visProp['highlightStrokeWidth']) {
+            this.setObjectStrokeWidth(obj, obj.visProp['highlightStrokeWidth']);
+        }
     }
 };
 
@@ -1100,6 +1103,7 @@ JXG.AbstractRenderer.prototype.noHighlight = function(/** JXG.GeometryElement */
             this.setObjectStrokeColor(obj, obj.visProp['strokeColor'], obj.visProp['strokeOpacity']);
             this.setObjectFillColor(obj, obj.visProp['fillColor'], obj.visProp['fillOpacity']); 
         }
+        this.setObjectStrokeWidth(obj, obj.visProp['strokeWidth']);
     }
 };
 
