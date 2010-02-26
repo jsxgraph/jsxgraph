@@ -29,7 +29,8 @@ this.parseFileContent = function(url, board, format) {
     this.request = false;
     var e;
     try {
-        this.request = new XMLHttpRequest();
+        this.request = new ActiveXObject("Msxml2.XMLHTTP");
+        //this.request = new XMLHttpRequest();
         if(format.toLowerCase()=='raw')
             this.request.overrideMimeType('text/plain; charset=iso-8859-1');
         else
@@ -61,8 +62,12 @@ this.parseFileContent = function(url, board, format) {
         this.cbp = function() {
             var request = this.request;
             if (request.readyState == 4) {
-            	alert(request.responseText);
-                this.parseString(request.responseText, board, format, false);
+                var text = '';
+                if (typeof request.responseBody!='undefined') { 
+                } else {
+                    text = request.responseText;
+                }
+                this.parseString(text, board, format, false);
             }
         }; //).bind(this);
     }
