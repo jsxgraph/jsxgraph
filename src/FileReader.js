@@ -29,8 +29,8 @@ this.parseFileContent = function(url, board, format) {
     this.request = false;
     var e;
     try {
-        this.request = new ActiveXObject("Msxml2.XMLHTTP");
-        //this.request = new XMLHttpRequest();
+        //this.request = new ActiveXObject("Msxml2.XMLHTTP");
+        this.request = new XMLHttpRequest();
         if(format.toLowerCase()=='raw')
             this.request.overrideMimeType('text/plain; charset=iso-8859-1');
         else
@@ -64,6 +64,7 @@ this.parseFileContent = function(url, board, format) {
             if (request.readyState == 4) {
                 var text = '';
                 if (typeof request.responseBody!='undefined') { 
+                //document.getElementById('bild').src = request.responseBody;
                 } else {
                     text = request.responseText;
                 }
