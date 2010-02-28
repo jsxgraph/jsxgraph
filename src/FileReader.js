@@ -1,5 +1,5 @@
 /*
-    Copyright 2008, 
+    Copyright 2008,
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -57,14 +57,17 @@ this.parseFileContent = function(url, board, format) {
             if (request.readyState == 4) {
                 board(request.responseText);
             }
-        }; //).bind(this);        
+        }; //).bind(this);
     } else {
         this.cbp = function() {
             var request = this.request;
             if (request.readyState == 4) {
                 var text = '';
-                if (typeof request.responseBody!='undefined') { 
-                //document.getElementById('bild').src = request.responseBody;
+
+                if (typeof request.responseStream!='undefined' && request.responseText.slice(0,2) == "PK") {
+                    JXG.debug(BinFileReader(this.request));
+                    text = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(BinFileReader(this.request)))).unzip();
+                    text = text[0][0];
                 } else {
                     text = request.responseText;
                 }
@@ -90,13 +93,13 @@ this.cleanWhitespace = function(el) {
         } else if ( cur.nodeType == 1 ) {
             this.cleanWhitespace( cur );
         }
-        cur = cur.nextSibling; 
+        cur = cur.nextSibling;
     }
 };
 
 this.stringToXMLTree = function(fileStr) {
     // The string "fileStr" is converted into a XML tree.
-    if(typeof DOMParser == "undefined") { 
+    if(typeof DOMParser == "undefined") {
        // IE workaround, since there is no DOMParser
        DOMParser = function () {};
        DOMParser.prototype.parseFromString = function (str, contentType) {
@@ -104,11 +107,11 @@ this.stringToXMLTree = function(fileStr) {
              var d = new ActiveXObject("MSXML.DomDocument");
              d.loadXML(str);
              return d;
-          } 
+          }
        };
     }
     var parser=new DOMParser();
-    
+
     var tree = parser.parseFromString(fileStr,"text/xml");
     this.cleanWhitespace(tree);
     return tree;
@@ -116,7 +119,7 @@ this.stringToXMLTree = function(fileStr) {
 
 this.parseString = function(fileStr, board, format, isString) {
     // fileStr is a string containing the XML code of the construction
-    if (format.toLowerCase()=='geonext') { 
+    if (format.toLowerCase()=='geonext') {
         fileStr = JXG.GeonextReader.prepareString(fileStr);
     }
     if (format.toLowerCase()=='geogebra') {
@@ -138,7 +141,7 @@ this.parseString = function(fileStr, board, format, isString) {
  * @param {Object} board board object
  */
 this.readElements = function(tree, board, format) {
-    if (format.toLowerCase()=='geonext') { 
+    if (format.toLowerCase()=='geonext') {
         board.suspendUpdate();
         if(tree.getElementsByTagName('GEONEXT').length != 0) {
             JXG.GeonextReader.readGeonext(tree, board);
@@ -151,7 +154,7 @@ this.readElements = function(tree, board, format) {
     else if(format.toLowerCase()=='intergeo') {
          JXG.IntergeoReader.readIntergeo(tree, board);
     }
-    board.afterLoad();    
+    board.afterLoad();
 }; // end: this.readElements()
 
 }; // end: FileReader()

@@ -5,6 +5,71 @@
   <!--<script type="text/javascript" src="../../distrib/prototype.js"></script>-->
   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
   <script type="text/javascript" src="../../src/GeogebraReader.js"></script>
+<script type="text/vbscript">
+Function Base64Encode(inData)
+  'rfc1521
+  '2001 Antonin Foller, Motobit Software, http://Motobit.cz
+  Const Base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+  Dim cOut, sOut, I
+
+  'For each group of 3 bytes
+  For I = 1 To LenB(inData) Step 3
+    Dim nGroup, pOut, sGroup
+
+    'Create one long from this 3 bytes.
+    nGroup = &H10000 * AscB(MidB(inData, I, 1)) + _
+      &H100 * MyASC(MidB(inData, I + 1, 1)) + MyASC(MidB(inData, I + 2, 1))
+
+    'Oct splits the long To 8 groups with 3 bits
+    nGroup = Oct(nGroup)
+
+    'Add leading zeros
+    nGroup = String(8 - Len(nGroup), "0") & nGroup
+
+    'Convert To base64
+    pOut = Mid(Base64, CLng("&o" & Mid(nGroup, 1, 2)) + 1, 1) + _
+      Mid(Base64, CLng("&o" & Mid(nGroup, 3, 2)) + 1, 1) + _
+      Mid(Base64, CLng("&o" & Mid(nGroup, 5, 2)) + 1, 1) + _
+      Mid(Base64, CLng("&o" & Mid(nGroup, 7, 2)) + 1, 1)
+
+    'Add the part To OutPut string
+    sOut = sOut + pOut
+
+    'Add a new line For Each 76 chars In dest (76*3/4 = 57)
+    'If (I + 2) Mod 57 = 0 Then sOut = sOut + vbCrLf
+  Next
+  Select Case LenB(inData) Mod 3
+    Case 1: '8 bit final
+      sOut = Left(sOut, Len(sOut) - 2) + "=="
+    Case 2: '16 bit final
+      sOut = Left(sOut, Len(sOut) - 1) + "="
+  End Select
+  Base64Encode = sOut
+End Function
+
+Function MyASC(OneChar)
+  If OneChar = "" Then MyASC = 0 Else MyASC = AscB(OneChar)
+End Function
+
+Function BinFileReader(xhr)
+	Dim byteString
+	Dim b64String
+	Dim i
+
+	byteString = xhr.responseBody
+
+	ReDim byteArray(LenB(byteString))
+
+	For i = 1 To LenB(byteString)
+		byteArray(i-1) = AscB(MidB(byteString, i, 1))
+	Next
+
+	b64String = Base64Encode(byteString)
+
+	BinFileReader = b64String
+End Function
+
+</script
 </head>
 <body>
 <body id="body">
@@ -32,7 +97,7 @@
 		<option value='./elements/parallelegerade.ggb'>[X] parallelegerade</option>
 		<option value='./elements/polareoderkonguierterdurchmesser.ggb'>[X] polareoderkonguierterdurchmesser (polar)</option>
 		<option value='./elements/punkt.ggb'>[X] punkt</option>
-		<option value='./elements/punkt-ya.ggb'>[X] Punkt: y(A)</option>		
+		<option value='./elements/punkt-ya.ggb'>[X] Punkt: y(A)</option>
 		<option value='./elements/punktspiegelung.ggb'>[X] punktspiegelung</option>
 		<option value='./elements/schieberegler.ggb'>[X] schieberegler (slider + abhaengiger Punkt)</option>
 		<option value='./elements/schieberegler-pow.ggb'>[X] schieberegler pow</option>
