@@ -65,7 +65,6 @@ this.parseFileContent = function(url, board, format) {
                 var text = '';
 
                 if (typeof request.responseStream!='undefined' && request.responseText.slice(0,2) == "PK") {
-                    JXG.debug(BinFileReader(this.request));
                     text = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(BinFileReader(this.request)))).unzip();
                     text = text[0][0];
                 } else {
