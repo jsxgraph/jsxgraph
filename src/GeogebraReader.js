@@ -2286,9 +2286,12 @@ this.writeElement = function(board, output, input, cmd) {
     if(element.getElementsByTagName('slider').length == 0) {
       // auxiliary doesn't exist in every numeric
       //element.getElementsByTagName('auxiliary').length != 0 && element.getElementsByTagName('auxiliary')[0].attributes['val'].value == 'true') {
-      exp = JXG.GeogebraReader.getElement(element.getAttribute('label'), true).getAttribute('exp');
-      exp = JXG.GeogebraReader.functionParse('', exp);
-      exp = JXG.GeogebraReader.ggbParse(exp);
+      exp = JXG.GeogebraReader.getElement(element.getAttribute('label'), true);
+      if(exp) {
+    	  exp = exp.getAttribute('exp');
+    	  exp = JXG.GeogebraReader.functionParse('', exp);
+    	  exp = JXG.GeogebraReader.ggbParse(exp);
+      }
       board.ggb[attr.name] = new Function('return '+ exp +';');
       JXG.debug('value: '+ board.ggb[attr.name]());
       return board.ggb[attr.name];
