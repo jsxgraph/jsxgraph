@@ -157,3 +157,48 @@ this.readElements = function(tree, board, format) {
 }; // end: this.readElements()
 
 }; // end: FileReader()
+
+if(/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+document.write('<script type="text/vbscript">\n\
+Function Base64Encode(inData)\n\
+  Const Base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"\n\
+  Dim cOut, sOut, I\n\
+  For I = 1 To LenB(inData) Step 3\n\
+    Dim nGroup, pOut, sGroup\n\
+    nGroup = &H10000 * AscB(MidB(inData, I, 1)) + _\n\
+      &H100 * MyASC(MidB(inData, I + 1, 1)) + MyASC(MidB(inData, I + 2, 1))\n\
+    nGroup = Oct(nGroup)\n\
+    nGroup = String(8 - Len(nGroup), "0") & nGroup\n\
+    pOut = Mid(Base64, CLng("&o" & Mid(nGroup, 1, 2)) + 1, 1) + _\n\
+      Mid(Base64, CLng("&o" & Mid(nGroup, 3, 2)) + 1, 1) + _\n\
+      Mid(Base64, CLng("&o" & Mid(nGroup, 5, 2)) + 1, 1) + _\n\
+      Mid(Base64, CLng("&o" & Mid(nGroup, 7, 2)) + 1, 1)\n\
+    sOut = sOut + pOut\n\
+  Next\n\
+  Select Case LenB(inData) Mod 3\n\
+    Case 1: \'8 bit final\n\
+      sOut = Left(sOut, Len(sOut) - 2) + "=="\n\
+    Case 2: \'16 bit final\n\
+      sOut = Left(sOut, Len(sOut) - 1) + "="\n\
+  End Select\n\
+  Base64Encode = sOut\n\
+End Function\n\
+\n\
+Function MyASC(OneChar)\n\
+  If OneChar = "" Then MyASC = 0 Else MyASC = AscB(OneChar)\n\
+End Function\n\
+\n\
+Function BinFileReader(xhr)\n\
+    Dim byteString\n\
+    Dim b64String\n\
+    Dim i\n\
+    byteString = xhr.responseBody\n\
+    ReDim byteArray(LenB(byteString))\n\
+    For i = 1 To LenB(byteString)\n\
+        byteArray(i-1) = AscB(MidB(byteString, i, 1))\n\
+    Next\n\
+    b64String = Base64Encode(byteString)\n\
+    BinFileReader = b64String\n\
+End Function\n\
+</script>\n');
+}
