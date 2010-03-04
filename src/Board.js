@@ -1933,7 +1933,7 @@ JXG.Board.prototype.removeChild = function(board) {
   * @param {Object,String} drag Element that caused the update.
   */
 JXG.Board.prototype.update = function(drag) {
-    var i, len, boardId;
+    var i, len, boardId, b;
 
     if (this.isSuspendedUpdate) { return this; }
     this.prepareUpdate(drag).updateElements(drag).updateConditions();
@@ -1947,13 +1947,14 @@ JXG.Board.prototype.update = function(drag) {
     len = this.dependentBoards.length;
     for (i=0; i<len; i++) {
         boardId = this.dependentBoards[i].id;
-        if(JXG.JSXGraph.boards[boardId] != this) {
-            JXG.JSXGraph.boards[boardId].updateQuality = this.updateQuality;
-            JXG.JSXGraph.boards[boardId].prepareUpdate(drag).updateElements(drag).updateConditions();
-            JXG.JSXGraph.boards[boardId].renderer.suspendRedraw();
-            JXG.JSXGraph.boards[boardId].updateRenderer(drag);
-            JXG.JSXGraph.boards[boardId].renderer.unsuspendRedraw();
-            JXG.JSXGraph.boards[boardId].updateHooks();
+        b = JXG.JSXGraph.boards[boardId];
+        if( b != this) {
+            b.updateQuality = this.updateQuality;
+            b.prepareUpdate(drag).updateElements(drag).updateConditions();
+            b.renderer.suspendRedraw();
+            b.updateRenderer(drag);
+            b.renderer.unsuspendRedraw();
+            b.updateHooks();
         }
 
     }
