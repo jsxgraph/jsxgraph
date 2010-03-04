@@ -1207,9 +1207,11 @@ JXG.Board.prototype.addArc = function(obj) {
  * @return Element id of the object.
  * @private
  */
+/* 
 JXG.Board.prototype.addSector = function(obj) {
     return this.setId(obj,'Sc');
 };
+*/
 
 /**
  * Registers an angle at the board and adds it to the renderer.
@@ -1218,12 +1220,14 @@ JXG.Board.prototype.addSector = function(obj) {
  * @return Element id of the object.
  * @private
  */
+/*
 JXG.Board.prototype.addAngle = function (obj) {
     var id = this.setId(obj,'Ag');
     this.renderer.drawAngle(obj);
     this.finalizeAdding(obj);
     return id;
 };
+*/
 
 /**
  * Registers a curve at the board and adds it to the renderer.
