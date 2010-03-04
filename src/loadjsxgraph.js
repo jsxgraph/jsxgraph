@@ -43,8 +43,9 @@ var JXG = {};
         document.write('<script type="text/javascript" src="' + libraryName + '"><\/script>');
     };
 /*IntergeoReader,GeonextReader*/
+/* Angle */
     if (!JXG.useMinify) {
-        JXG.baseFiles ='Math,MathNumerics,MathStatistics,MathSymbolic,Complex,AbstractRenderer,FileReader,Board,Options,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Conic,Polygon,Curve,Arc,Sector,Angle,Algebra,Intersection,Composition,Text,Image,Slider,Chart,Transformation,Turtle,RGBColor,Wrappers,Ticks,Util,Pstricks,Server,DataSource';
+        JXG.baseFiles ='Math,MathNumerics,MathStatistics,MathSymbolic,Complex,AbstractRenderer,FileReader,Board,Options,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Conic,Polygon,Curve,Arc,Sector,Algebra,Intersection,Composition,Text,Image,Slider,Chart,Transformation,Turtle,RGBColor,Wrappers,Ticks,Util,Pstricks,Server,DataSource';
     } else {
         JXG.baseFiles = 'jxg';
     }

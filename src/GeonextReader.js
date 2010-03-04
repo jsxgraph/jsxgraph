@@ -1128,7 +1128,8 @@ this.readGeonext = function(tree,board) {
                 } catch (e) {
                     gxtEl.txt = '';
                 }
-                c = new JXG.Angle(board, gxtEl.first, gxtEl.middle, gxtEl.last, gxtEl.radius, gxtEl.txt, gxtEl.id, gxtEl.name);
+                //c = new JXG.Angle(board, gxtEl.first, gxtEl.middle, gxtEl.last, gxtEl.radius, gxtEl.txt, gxtEl.id, gxtEl.name);
+                c = board.create('angle',[gxtEl.first, gxtEl.middle, gxtEl.last],{radius:gxtEl.radius, text:gxtEl.txt, id:gxtEl.id, name:gxtEl.name});
                 c.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
                               'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
                               'highlightFillColor:'+gxtEl.colorFill,'labelColor:'+gxtEl.colorLabel,

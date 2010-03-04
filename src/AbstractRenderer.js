@@ -791,7 +791,7 @@ JXG.AbstractRenderer.prototype.updateTextStyle = function(/** JXG.Text */ el) {
  * @see JXG.Angle
  * @see #updateAngle
  */
-JXG.AbstractRenderer.prototype.drawAngle = function(/** JXG.Angle */ angle) { };
+//JXG.AbstractRenderer.prototype.drawAngle = function(/** JXG.Angle */ angle) { };
 
 /**
  * Update method draft for updating the properties of an angle.
@@ -799,7 +799,7 @@ JXG.AbstractRenderer.prototype.drawAngle = function(/** JXG.Angle */ angle) { };
  * @see JXG.Angle
  * @see #drawAngle
  */
-JXG.AbstractRenderer.prototype.updateAngle = function(/** JXG.Angle */ angle) { };
+//JXG.AbstractRenderer.prototype.updateAngle = function(/** JXG.Angle */ angle) { };
 
 
 /* ************************** 

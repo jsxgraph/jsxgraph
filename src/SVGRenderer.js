@@ -123,10 +123,11 @@ JXG.SVGRenderer.prototype.setShadow = function(el) {
 
 JXG.SVGRenderer.prototype.setGradient = function(el) {
     var fillNode = el.rendNode, col, op;
-    
+    /*
     if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
         fillNode = el.rendNode2;
-    } 
+    }
+    */
     if (typeof el.visProp['fillOpacity']=='function') {
         op = el.visProp['fillOpacity']();
     } else {
@@ -409,7 +410,7 @@ JXG.SVGRenderer.prototype.updateArc = function(el) {
     return;
 };
 */
-
+/*
 JXG.SVGRenderer.prototype.drawAngle = function(el) {
     var angle = el.board.algebra.trueAngle(el.point1, el.point2, el.point3),
         circle, projectedP1, projectedP3,
@@ -482,7 +483,7 @@ JXG.SVGRenderer.prototype.drawAngle = function(el) {
 };
 
 JXG.SVGRenderer.prototype.updateAngle = function(el) {
-    /* erstmal nur der brutale Weg... */
+    // erstmal nur der brutale Weg... 
     this.remove(el.rendNode);
     this.remove(el.rendNode2);    
     this.drawAngle(el);
@@ -491,6 +492,7 @@ JXG.SVGRenderer.prototype.updateAngle = function(el) {
     }
     return;
 };
+*/
 
 JXG.SVGRenderer.prototype.drawImage = function(el) {
     var url = el.url, //'data:image/png;base64,' + el.imageBase64String,    
@@ -611,16 +613,18 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
     if (el.visPropOld['fillColor']==c && el.visPropOld['fillOpacity']==o) {
         return;
     }
-    if(/*el.type == JXG.OBJECT_TYPE_ARC ||*/ el.type == JXG.OBJECT_TYPE_ANGLE) {
+    /*
+    if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
         node = el.rendNode2;
         node.setAttributeNS(null, 'fill', c);
         node.setAttributeNS(null, 'fill-opacity', o);        
     }    
     else {
+    */
         node = el.rendNode;
         node.setAttributeNS(null, 'fill', c);           
         node.setAttributeNS(null, 'fill-opacity', o);                   
-    }
+    //}
     
     if (el.visProp['gradient']!=null) {
         this.updateGradient(el);
@@ -647,12 +651,13 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
     }
     
     if(el.elementClass != JXG.OBJECT_CLASS_POINT) {
-        if(el.type == JXG.OBJECT_TYPE_ANGLE) {
+        /*if(el.type == JXG.OBJECT_TYPE_ANGLE) {
             node = el.rendNode2;
         }
         else {
+        */
             node = el.rendNode;
-        }
+        //}
         this.setPropertyPrimitive(node,'stroked', 'true');
         if (w!=null) { 
             this.setPropertyPrimitive(node,'stroke-width',w);    
@@ -671,6 +676,7 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
 JXG.SVGRenderer.prototype.hide = function(el) {
     var node;
     if (el==null) return;
+    /*
     if(el.type == JXG.OBJECT_TYPE_ARC) {
         node = el.rendNode;
         node.setAttributeNS(null, 'display', 'none');
@@ -688,10 +694,11 @@ JXG.SVGRenderer.prototype.hide = function(el) {
         node.style.visibility = "hidden";         
     }   
     else {
+    */
         node = el.rendNode;
         node.setAttributeNS(null, 'display', 'none');
         node.style.visibility = "hidden";     
-    }
+    //}
 };
 
 JXG.SVGRenderer.prototype.show = function(el) {
@@ -706,6 +713,7 @@ JXG.SVGRenderer.prototype.show = function(el) {
         node.style.visibility = "inherit";     
     }
     else */
+    /*
     if(el.type == JXG.OBJECT_TYPE_ANGLE) {
         node = el.rendNode;
         node.setAttributeNS(null, 'display', 'inline');
@@ -713,12 +721,13 @@ JXG.SVGRenderer.prototype.show = function(el) {
         node = el.rendNode2;
         node.setAttributeNS(null, 'display', 'inline');
         node.style.visibility = "inherit";         
-    }    
-    else {
+    } 
+    */
+    //else {
         node = el.rendNode;
         node.setAttributeNS(null, 'display', 'inline');
         node.style.visibility = "inherit"; 
-    }
+    //}
 };
 
 JXG.SVGRenderer.prototype.remove = function(shape) {

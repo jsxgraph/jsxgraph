@@ -540,7 +540,6 @@ JXG.Board.prototype.generateName = function(object) {
                                   'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
     }
 
-
     // how long the name can be at most
     var maxNameLength = 3;
     var pre = '';
