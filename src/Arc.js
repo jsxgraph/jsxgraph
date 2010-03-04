@@ -47,6 +47,8 @@
  * @extends JXG.GeometryElement
  */
 JXG.Arc = function (board, p1, p2, p3, id, name, withLabel, layer) {
+    var key;
+    
     /* Call the constructor of GeometryElement */
     this.constructor();
     
@@ -97,6 +99,10 @@ JXG.Arc = function (board, p1, p2, p3, id, name, withLabel, layer) {
 
     this.visProp['visible'] = true;
     
+    for (key in this.board.options.arc) {
+        this.visProp[key] = this.board.options.arc[key];
+    }
+    /*
     this.visProp['firstArrow'] = this.board.options.arc.firstArrow;
     this.visProp['lastArrow'] = this.board.options.arc.lastArrow;
     
@@ -104,7 +110,8 @@ JXG.Arc = function (board, p1, p2, p3, id, name, withLabel, layer) {
     this.visProp['highlightFillColor'] = this.board.options.arc.highlightFillColor;
     this.visProp['strokeColor'] = this.board.options.arc.strokeColor;
     this.visProp['highlightStrokeColor'] = this.board.options.arc.highlightStrokeColor;     
-
+    */
+    
     // create Label
     this.createLabel(withLabel,[0,0]);
     
@@ -126,16 +133,18 @@ JXG.Arc.prototype = new JXG.GeometryElement;
  * @return {bool} True if (x,y) is near the arc, False otherwise.
  */
 JXG.Arc.prototype.hasPoint = function (x, y) { 
-    var genauigkeit = this.board.options.precision.hasPoint/(this.board.stretchX);
-    
-    var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
-    var r = this.Radius();
-    
-    var dist = Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-checkPoint.usrCoords[1],2) + 
-                         Math.pow(this.midpoint.coords.usrCoords[2]-checkPoint.usrCoords[2],2));
-   
-    var has = (Math.abs(dist-r) < genauigkeit);
+    var prec = this.board.options.precision.hasPoint/(this.board.stretchX),
+        checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
+        r = this.Radius(),
+        dist = this.midpoint.coords.distance(JXG.COORDS_BY_USER,checkPoint),
+        has = (Math.abs(dist-r) < prec),
+        angle;
+        
     if(has) {
+        angle = this.board.algebra.rad(this.point2,this.midpoint,checkPoint.usrCoords.slice(1));
+        if (angle>this.board.algebra.rad(this.point2,this.midpoint,this.point3)) { has = false; }
+            
+/*    
         var p = {};
         p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                               [this.midpoint.coords.usrCoords[1], 
@@ -159,6 +168,7 @@ JXG.Arc.prototype.hasPoint = function (x, y) {
                 }
             }
         }
+*/        
     }
     return has;    
 };
@@ -170,6 +180,19 @@ JXG.Arc.prototype.hasPoint = function (x, y) {
  * @return {bool} True if (x,y) is within the sector defined by the arc, False otherwise.
  */
 JXG.Arc.prototype.hasPointSector = function (x, y) { 
+    var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
+        r = this.Radius(),
+        dist = this.midpoint.coords.distance(JXG.COORDS_BY_USER,checkPoint),
+        has = (dist<r),
+        angle;
+        
+    if(has) {
+        angle = this.board.algebra.rad(this.point2,this.midpoint,checkPoint.usrCoords.slice(1));
+        if (angle>this.board.algebra.rad(this.point2,this.midpoint,this.point3)) { has = false; }
+    }
+    return has;    
+        
+    /*
     var genauigkeit = this.board.options.precision.hasPoint/(this.board.stretchX);
     
     var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
@@ -205,6 +228,7 @@ JXG.Arc.prototype.hasPointSector = function (x, y) {
         }
     }
     return has;    
+    */
 };
 
 /**
@@ -213,7 +237,10 @@ JXG.Arc.prototype.hasPointSector = function (x, y) {
  * @return The arcs radius
  */
 JXG.Arc.prototype.Radius = function() {
+    return this.point2.Dist(this.midpoint);
+    /*
     return(Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-this.point2.coords.usrCoords[1],2) + Math.pow(this.midpoint.coords.usrCoords[2]-this.point2.coords.usrCoords[2],2)));
+    */
 };
 
 /**

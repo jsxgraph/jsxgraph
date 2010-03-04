@@ -46,6 +46,7 @@
 
  /* Sector legt nur die benoetigten Unterelemente an und verwaltet diese als Kinder, wird nicht mehr direkt gezeichnet */
 JXG.Sector = function (board, p1, p2, p3, ids, names, id, layer) {
+    var key;
     /* Call the constructor of GeometryElement */
     this.constructor();
     /**
@@ -150,10 +151,15 @@ JXG.Sector = function (board, p1, p2, p3, ids, names, id, layer) {
     l2.setStraight(false,false);
    
     var a = new JXG.Arc(board, p1, p2, p3, ids[0], names[0]);
+    for (key in this.board.options.arc) {
+        a.visProp[key] = this.board.options.sector[key];
+    }
+    /*
     a.visProp['fillColor'] = this.board.options.sector.fillColor;
     a.visProp['highlightFillColor'] = this.board.options.sector.highlightFillColor;
     a.visProp['fillOpacity'] = this.board.options.sector.fillOpacity;
     a.visProp['highlightFillOpacity'] = this.board.options.sector.highlightFillOpacity;
+    */
     
     /**
      * Endpoint of the derived arc.
@@ -203,7 +209,10 @@ JXG.Sector.prototype.hasPoint = function (x, y) {
  * @return The sectors radius
  */
 JXG.Sector.prototype.Radius = function() {
+    return this.point2.Dist(this.point1);
+    /*
     return(Math.sqrt(Math.pow(this.point1.coords.usrCoords[1]-this.point2.coords.usrCoords[1],2) + Math.pow(this.point1.coords.usrCoords[2]-this.point2.coords.usrCoords[2],2)));
+    */
 };
 
 /**
