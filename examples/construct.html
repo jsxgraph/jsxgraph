@@ -23,6 +23,7 @@ var C=board.create('point',[0,10]);
 var D=board.create('point',[-5,10]);
 var E=board.create('point',[-5,-5]);
 
+/*
 var createArc = function(board,parents,attributes) {
     var A = parents[0],
         B = parents[1],
@@ -34,12 +35,6 @@ var createArc = function(board,parents,attributes) {
     // in attributes
     defaults = {withLabel:false, layer:null};
     defaults['strokeWidth'] =  board.options.elements['strokeWidth'];
-/*    
-    options = board.options.elements.color;
-    for (att in options) {
-        defaults[att] = options[att];
-    }
-*/
     options = board.options.arc;
     for (att in options) {
         defaults[att] = options[att];
@@ -85,12 +80,6 @@ var createSector = function(board,parents,attributes) {
     // in attributes
     defaults = {withLabel:false, layer:null};
     defaults['strokeWidth'] =  board.options.elements['strokeWidth'];
-/*
-    options = board.options.elements.color;
-    for (att in options) {
-        defaults[att] = options[att];
-    }
-*/    
     options = board.options.sector;
     for (att in options) {
         defaults[att] = options[att];
@@ -126,11 +115,13 @@ var createSector = function(board,parents,attributes) {
     board.update(c);
     return c;
 };
+*/
 
-
-createArc(board,[A,B,C]);
-
-createSector(board,[D,B,E]);
+board.create('arc',[B,A,C],{withLabel:true,name:'Arc',lastArrow:true});
+//board.create('circle',[B,A],{strokeColor:'red'});
+//board.create('sector',[B,D,E],{});
+//board.create('semicircle',[D,E],{withLabel:true,name:'Semicircle'});
+board.create('circumcirclesector',[B,C,E],{withLabel:true,name:'circumcircle'});
 
 /*
 var img = board.create('image',['http://www.ari.uni-heidelberg.de/gaia/gallery/GR/gr0283-01.artistic-Gaia-Galaxy-large.jpg',[-40,-40],[80,80]]);

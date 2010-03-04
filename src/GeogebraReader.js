@@ -2030,6 +2030,7 @@ this.writeElement = function(board, output, input, cmd) {
       try {
         JXG.debug("* <b>CircleSector:</b> First: " + input[0].name + ", Second: " + input[1].name + ", Third: " + input[2].name + "<br>\n");
         p = board.create('sector', [input[0],input[1],input[2]], attr2);
+        /*
         p.point4.hideElement();
         p.arc.setProperty(attr);
         p.arc.visProp['highlightStrokeWidth'] = (1*p.arc.visProp['strokeWidth'].substr(0,p.arc.visProp['strokeWidth'].length-2)+1)+'px';
@@ -2068,6 +2069,7 @@ this.writeElement = function(board, output, input, cmd) {
             this.board.renderer.noHighlight(el.arc);
             this.board.renderer.noHighlight(el.lines[0]);
         };})(p);
+        */
         return p;
       } catch(e) {
         JXG.debug("* <b>Err:</b> CircleSector " + attr.name +"<br>\n");
@@ -2192,6 +2194,7 @@ this.writeElement = function(board, output, input, cmd) {
       try {
         JXG.debug("* <b>CircumcircleSector:</b> First: " + input[0].name + "<br>\n");
         p = board.create('circumcirclesector', [input[0], input[1], input[2]], {name:attr['name']});
+        /*
         p.arc.setProperty(attr);
         p.lines[0].setProperty(attr);
         p.lines[1].setProperty(attr);
@@ -2229,6 +2232,7 @@ this.writeElement = function(board, output, input, cmd) {
             this.board.renderer.noHighlight(el.arc);
             this.board.renderer.noHighlight(el.lines[0]);
         };})(p);
+        */
         return p;
       } catch(e) {
         JXG.debug("* <b>Err:</b> CircumcircleSector " + attr.name +"<br>\n");

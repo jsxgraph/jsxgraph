@@ -316,12 +316,14 @@ JXG.VMLRenderer.prototype.drawArcFill = function(id, radius, midpoint, point2, p
     return node2;
 };
 
+
+/*
 JXG.VMLRenderer.prototype.drawArc = function(el) { 
     var radius, p = {}, angle1, angle2, node, nodeStroke, node2, p4 = {};
 
     JXG.clearVisPropOld(el);
 
-    /* some computations */
+    // some computations 
     radius = el.Radius();  
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.midpoint.coords.usrCoords[1], el.board.origin.scrCoords[2]/el.board.stretchY],
@@ -332,10 +334,10 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
         angle1 -= 360;
     }
     
-    /* arc line */
+    // arc line 
     node = this.drawArcLine(el.id, radius, angle1, angle2, el.midpoint, el.board, el);
     
-    /* arrows at the ends of the arc line */
+    // arrows at the ends of the arc line 
     nodeStroke = el.rendNodeStroke;
     if(el.visProp['lastArrow']) {        
         this.setAttr(nodeStroke,'endarrow', 'block');
@@ -346,27 +348,27 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
         this.setAttr(nodeStroke,'startarrowlength', 'long');
     }
     
-    /* stroke color and width */
+    // stroke color and width
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     
-    /* dashstyle and shadow */
+    // dashstyle and shadow 
     this.setDashStyle(el,el.visProp);  
     this.setShadow(el); 
    
-    /* arc fill */
+    // arc fill 
     p4.coords = el.board.algebra.projectPointToCircle(el.point3,el);      
     node2 = this.drawArcFill(el.id, radius, el.midpoint, el.point2, p4, el.board, el);
     
-    /* fill props */
+    // fill props 
     this.setObjectFillColor(el, el.visProp['fillColor'], el.visProp['fillOpacity']);
     this.setGradient(el);    
     
-    /* append nodes */
+    // append nodes 
     this.appendChildPrimitive(node,el.layer); //arc
     this.appendChildPrimitive(node2,el.layer); //fill
     
-    /* draft mode */
+    // draft mode 
     if(el.visProp['draft']) {
        this.setDraft(el);
     }
@@ -374,6 +376,7 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
         el.hideElement(el);
     }
 };
+*/
 
 /**
  * Updates properties of an arc that already exists.
@@ -381,6 +384,7 @@ JXG.VMLRenderer.prototype.drawArc = function(el) {
  * @see JXG.Arc
  * @see #drawArc
  */
+/* 
 JXG.AbstractRenderer.prototype.updateArc = function(el) { 
     // AW: brutaler fix der update-Methode...
     this.remove(el.rendNode);     
@@ -388,7 +392,7 @@ JXG.AbstractRenderer.prototype.updateArc = function(el) {
     this.drawArc(el);
     return;
 };
-
+*/
 JXG.VMLRenderer.prototype.drawAngle = function(el) {
     var circle  = {}, projectedP1, projectedP3, p = {}, 
         angle1, angle2, node, tmp, nodeStroke,

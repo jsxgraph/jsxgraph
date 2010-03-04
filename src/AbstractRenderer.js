@@ -560,6 +560,7 @@ JXG.AbstractRenderer.prototype.drawCurve = function(el) {
     //node.setAttributeNS(null, 'stroke-linejoin', 'round');
     this.appendChildPrimitive(node,el.layer);
     this.appendNodesToElement(el,'path');
+    
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']); // ?
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']); // ?
     this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']); // ?
@@ -586,6 +587,7 @@ JXG.AbstractRenderer.prototype.updateCurve = function(/** JXG.Curve */ el) {
         }
     }
     this.updatePathPrimitive(el.rendNode,this.updatePathStringPrimitive(el),el.board);
+    this.makeArrows(el);    
 };
 
 
@@ -685,7 +687,7 @@ JXG.AbstractRenderer.prototype.updatePolygon = function(/** JXG.Polygon */ el) {
  * @see JXG.Arc
  * @see #updateArc
  */
-JXG.AbstractRenderer.prototype.drawArc = function(/** JXG.Arc */ arc) { };
+//JXG.AbstractRenderer.prototype.drawArc = function(/** JXG.Arc */ arc) { };
 
 /**
  * Updates properties of an arc; This method is a stub and has to be implemented by the special renderers.
@@ -693,7 +695,7 @@ JXG.AbstractRenderer.prototype.drawArc = function(/** JXG.Arc */ arc) { };
  * @see JXG.Arc
  * @see #drawArc
  */
-JXG.AbstractRenderer.prototype.updateArc = function(/** JXG.Arc */ el) { };
+//JXG.AbstractRenderer.prototype.updateArc = function(/** JXG.Arc */ el) { };
 
 
 /* ************************** 
@@ -901,6 +903,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
     this.appendChildPrimitive(node2, board.options.layer['grid']);
     if(!board.snapToGrid) {
         el = new Object();
+        el.visProp = {};
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";
@@ -909,6 +912,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
     }
     else {
         el = new Object();
+        el.visProp = {};
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";        
@@ -924,6 +928,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
     this.appendChildPrimitive(node2, board.options.layer['grid']); // Attention layer=1
     if(!board.snapToGrid) {
         el = new Object();
+        el.visProp = {};
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridy";   
@@ -932,6 +937,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
     }
     else {
         el = new Object();
+        el.visProp = {};
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridy";        

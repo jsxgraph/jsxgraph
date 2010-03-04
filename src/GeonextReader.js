@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009
+    Copyright 2008,2009, 2010
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -708,6 +708,7 @@ this.readGeonext = function(tree,board) {
                         defElColF[i] = xmlNode.getElementsByTagName('fill')[0].firstChild.data;
                         defElColL[i] = xmlNode.getElementsByTagName('label')[0].firstChild.data;
                     }
+                    /*
                     el = new JXG.Sector(board, gxtEl.defEl[0],
                                            gxtEl.defEl[1], gxtEl.defEl[2],
                                            [defEl[0], defEl[1], defEl[2], defEl[3]],
@@ -716,6 +717,9 @@ this.readGeonext = function(tree,board) {
                                            gxtEl.id);
                     // Sector hat keine eigenen Eigenschaften
                     //el.setProperty('fillColor:'+defElColF[0],'highlightFillColor:'+defElColF[0], 'strokeColor:none');
+                    */
+                    el = board.create('sector', [gxtEl.defEl[0],gxtEl.defEl[1],gxtEl.defEl[2]], 
+                                            {id:defEl[0], name: defElN[0].firstChild.data});
                     /* Eigenschaften des Kreisbogens */
                     arcId = defEl[0];
                     board.objects[arcId].setProperty('strokeColor:'+defElColStr[0],
@@ -735,7 +739,7 @@ this.readGeonext = function(tree,board) {
                     gxtEl.lastArrow = (gxtEl.lastArrow=='false') ? false : true;
                     board.objects[arcId].setArrow(gxtEl.firstArrow,gxtEl.lastArrow);
                     /* Eigenschaften des Endpunkts */
-                    pointId = defEl[1];
+                    pointId = board.objects[gxtEl.defEl[1]].id; //defEl[1];
                     gxtEl.fixed = Data.getElementsByTagName('output')[1].getElementsByTagName('fix')[0].firstChild.data;
                     board.objects[pointId].setProperty('strokeColor:'+defElColStr[1],
                                                        'strokeWidth:'+defElSW[1],
@@ -752,6 +756,7 @@ this.readGeonext = function(tree,board) {
                     board.objects[pointId].setStyle(1*gxtEl.style);
                     board.objects[pointId].traced = (defElT[1]=='false') ? false : true;
                     /* Eigenschaften der ersten Linie */
+                    /*
                     line1Id = defEl[2];
 
                     xmlNode = Data.getElementsByTagName('output')[2].getElementsByTagName('straight')[0];
@@ -769,8 +774,9 @@ this.readGeonext = function(tree,board) {
                                                        'dash:'+defElD[2],
                                                        'draft:'+defElDr[2]);
                     board.objects[line1Id].traced = (defElT[2]=='false') ? false : true;
+                    */
                     /* Eigenschaften der zweiten Linie */
-
+                    /*
                     line2Id = defEl[3];
                     xmlNode = Data.getElementsByTagName('output')[3].getElementsByTagName('straight')[0];
                     gxtEl.straightFirst = xmlNode.getElementsByTagName('first')[0].firstChild.data;
@@ -787,6 +793,7 @@ this.readGeonext = function(tree,board) {
                                                        'dash:'+defElD[3],
                                                        'draft:'+defElDr[3]);
                     board.objects[line2Id].traced = (defElT[3]=='false') ? false : true;
+                    */
                 }
                 else if(gxtEl.typeName == "PERPENDICULAR") {
                     for(i=0; i<Data.getElementsByTagName('output').length; i++) {
@@ -1089,6 +1096,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl.midpoint = JXG.GeonextReader.changeOriginIds(board,gxtEl.midpoint);
                 gxtEl.angle = JXG.GeonextReader.changeOriginIds(board,gxtEl.angle);
                 gxtEl.radius = JXG.GeonextReader.changeOriginIds(board,gxtEl.radius);
+                /*
                 c = new JXG.Arc(board, gxtEl.midpoint, gxtEl.radius, gxtEl.angle,
                                 gxtEl.id, gxtEl.name);
                 c.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
@@ -1099,6 +1107,13 @@ this.readGeonext = function(tree,board) {
                 gxtEl.firstArrow = (gxtEl.firstArrow=='false') ? false : true;
                 gxtEl.lastArrow = (gxtEl.lastArrow=='false') ? false : true;
                 c.setArrow(gxtEl.firstArrow,gxtEl.lastArrow);
+                */
+                c = board.create('arc', [gxtEl.midpoint, gxtEl.radius, gxtEl.angle], {id:gxtEl.id, name:gxtEl.name});
+                c.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
+                              'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
+                              'highlightFillColor:'+gxtEl.colorFill,'labelColor:'+gxtEl.colorLabel,
+                              'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash, 'draft:'+gxtEl.draft,
+                              'trace:'+gxtEl.trace, 'firstArrow:'+gxtEl.firstArrow, 'lastArrow:'+gxtEl.lastArrow);
                 JXG.GeonextReader.printDebugMessage('debug',c,Data.nodeName,'OK');
                 break;
             case "angle":

@@ -285,6 +285,7 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     this.updatePathPrimitive(node, tickStr, axis.board);
 };
 
+/*
 JXG.SVGRenderer.prototype.drawArc = function(el) {  
     var node = this.createPrimitive('path',el.id),
         radius, angle, circle, point3,
@@ -371,10 +372,9 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
     
     this.appendChildPrimitive(node,el.layer); 
     this.appendChildPrimitive(node4,2); // hard coded layer
-    /*
-    this.arcs.appendChild(node);
-    this.sectors.appendChild(node4);
-    */
+    
+    //this.arcs.appendChild(node);
+    //this.sectors.appendChild(node4);
 
     if (el.visProp['draft']) {
         this.setDraft(el);
@@ -383,13 +383,14 @@ JXG.SVGRenderer.prototype.drawArc = function(el) {
         el.hideElement();
     }
 };
-
+*/
 /**
  * Updates properties of an arc that already exists.
  * @param {JXG.Arc} arc Reference to an arc object, that has to be updated.
  * @see JXG.Arc
  * @see #drawArc
  */
+/* 
 JXG.SVGRenderer.prototype.updateArc = function(el) { 
     // brutaler Fix der update-Methode...
     var node;
@@ -407,6 +408,7 @@ JXG.SVGRenderer.prototype.updateArc = function(el) {
     this.drawArc(el);
     return;
 };
+*/
 
 JXG.SVGRenderer.prototype.drawAngle = function(el) {
     var angle = el.board.algebra.trueAngle(el.point1, el.point2, el.point3),
@@ -565,7 +567,8 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
          el.rendNodeTriangle.setAttributeNS(null, 'fill', c);
          el.rendNodeTriangle.setAttributeNS(null, 'fill-opacity', o);             
     }
-    if(el.type == JXG.OBJECT_TYPE_ARC) {
+    //if(el.type == JXG.OBJECT_TYPE_ARC) {
+    if(el.elementClass == JXG.OBJECT_CLASS_CURVE || el.elementClass == JXG.OBJECT_CLASS_LINE) {
         if(el.visProp['firstArrow']) {
             el.rendNodeTriangleStart.setAttributeNS(null, 'stroke', c);
             el.rendNodeTriangleStart.setAttributeNS(null, 'stroke-opacity', o);                
@@ -579,6 +582,7 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
             el.rendNodeTriangleEnd.setAttributeNS(null, 'fill-opacity', o);    
         }                
     }     
+/*    
     else if(el.type == JXG.OBJECT_TYPE_LINE) {
         if(el.visProp['firstArrow']) {
             el.rendNodeTriangleStart.setAttributeNS(null, 'stroke', c);
@@ -593,6 +597,7 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
             el.rendNodeTriangleEnd.setAttributeNS(null, 'fill-opacity', o);    
         }                
     }
+*/    
     el.visPropOld['strokeColor'] = c;
     el.visPropOld['strokeOpacity'] = o;
 };
@@ -606,7 +611,7 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
     if (el.visPropOld['fillColor']==c && el.visPropOld['fillOpacity']==o) {
         return;
     }
-    if(el.type == JXG.OBJECT_TYPE_ARC || el.type == JXG.OBJECT_TYPE_ANGLE) {
+    if(/*el.type == JXG.OBJECT_TYPE_ARC ||*/ el.type == JXG.OBJECT_TYPE_ANGLE) {
         node = el.rendNode2;
         node.setAttributeNS(null, 'fill', c);
         node.setAttributeNS(null, 'fill-opacity', o);        
@@ -691,6 +696,7 @@ JXG.SVGRenderer.prototype.hide = function(el) {
 
 JXG.SVGRenderer.prototype.show = function(el) {
     var node;
+    /*
     if(el.type == JXG.OBJECT_TYPE_ARC) {
         node = el.rendNode;
         node.setAttributeNS(null, 'display', 'inline');
@@ -699,7 +705,8 @@ JXG.SVGRenderer.prototype.show = function(el) {
         node.setAttributeNS(null, 'display', 'inline');
         node.style.visibility = "inherit";     
     }
-    else if(el.type == JXG.OBJECT_TYPE_ANGLE) {
+    else */
+    if(el.type == JXG.OBJECT_TYPE_ANGLE) {
         node = el.rendNode;
         node.setAttributeNS(null, 'display', 'inline');
         node.style.visibility = "inherit"; 

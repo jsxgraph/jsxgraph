@@ -46,7 +46,7 @@
                         return t1*t1*(t1*p[z].Y()+3*t0*p[z+1].Y())+(3*t1*p[z+2].Y()+t0*p[z+3].Y())*t0*t0;
                     }, 0, function() {return Math.floor(p.length/3);}];
 */                    
-        var c = board.createElement('curve', JXG.Math.Numerics.bezier(p),{strokecolor:'blue', strokeWidth:2}); 
+        var c = board.createElement('curve', JXG.Math.Numerics.bezier(p),{strokecolor:'blue', strokeWidth:2, lastArrow:true}); 
         
   /* ]]> */
   </script>

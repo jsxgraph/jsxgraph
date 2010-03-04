@@ -1192,12 +1192,14 @@ JXG.Board.prototype.addPolygon = function(obj) {
  * @return Element id of the object.
  * @private
  */
+/* 
 JXG.Board.prototype.addArc = function(obj) {
     var id = this.setId(obj,'Ac');
     this.renderer.drawArc(obj);
     this.finalizeAdding(obj);
     return id;
 };
+*/
 
 /**
  * Registers a sector at the board and adds it to the renderer.
