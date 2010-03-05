@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009
+    Copyright 2008-2010
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -105,8 +105,10 @@ JXG.createArc = function(board, parents, attributes) {
             C = this.point3,
             beta, co, si, matrix,
             phi = this.board.algebra.rad(A,B,C),
-            n = 100, i,
-            delta = phi/n, //Math.PI/90.0,
+            i,
+            //n = 100, 
+            n = Math.ceil(phi/Math.PI*90)+1,
+            delta = phi/n, //Math.PI/90.0, 
             x = B.X(),
             y = B.Y(),
             v, 
@@ -158,7 +160,6 @@ JXG.createArc = function(board, parents, attributes) {
     el.getRadius = function() {
         return this.Radius();
     };
-
 
     /**
     * Checks whether (x,y) is near the arc.
@@ -241,55 +242,10 @@ JXG.createArc = function(board, parents, attributes) {
     };
 
     el.prepareUpdate().update();
-    
     return el;
 };
 
 JXG.JSXGraph.registerElement('arc', JXG.createArc);
-
-
-/**
- * Uses the boards renderer to update the arc.
- * update() is not needed for arc.
- */
-/* 
-JXG.Arc.prototype.updateRenderer = function () {
-    if (this.needsUpdate) { 
-        this.board.renderer.updateArc(this);
-        this.needsUpdate = false;
-    }
-    
-    // Update the label if visible. 
-    if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
-        //this.label.setCoordinates(this.coords);
-        this.label.content.update();
-        //this.board.renderer.updateLabel(this.label);
-        this.board.renderer.updateText(this.label.content);
-    }      
-};
-*/
-
-/**
- * Determines whether the arc has arrows at start or end of the arc.
- * @param {bool} firstArrow True if there is an arrow at the start of the arc, false otherwise.
- * @param {bool} lastArrow True if there is an arrow at the end of the arc, false otherwise.
- * Is stored at visProp['firstArrow'] and visProp['lastArrow']
- */
-/* 
-JXG.Arc.prototype.setArrow = function (firstArrow, lastArrow) {
-    this.visProp['firstArrow'] = firstArrow;
-    this.visProp['lastArrow'] = lastArrow;
-     
-    this.board.renderer.updateArc(this);
-    
-    if(this.hasLabel && this.label.content.visProp['visible']) {
-        //this.label.setCoordinates(this.coords);
-        this.label.content.update();
-        //this.board.renderer.updateLabel(this.label);
-        this.board.renderer.updateText(this.label.content);
-    }     
-};
-*/
 
 /**
  * Creates a new semicircle. The semicircle is drawn clock-wise between the first and the second defining point.
