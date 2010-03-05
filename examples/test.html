@@ -10,6 +10,11 @@
   <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
+
+var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [2009, 500, 2050, 1]});
+var a = board.createElement('axis', [[0, 250], [1,250]], {});
+
+/*    
 var brd2 = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true});
 var p1 = brd2.create('point', [0,0], {style:6, name:'p1'});
 var s = brd2.create('slider', [[-1,-1],[2,-1],[0,Math.PI/2,2*Math.PI]], {name:'angle'});
@@ -28,6 +33,7 @@ brd2.create('group',[p1].concat(sq));
 var p2 = brd2.create('point', [2,0], {name:'p2', style:7,trace:false});
 rot.bindTo(p2);
 brd2.update();  // why update? 
+*/
 
 /* ]]> */
 </script>

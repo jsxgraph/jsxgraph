@@ -317,6 +317,7 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
 
     // loop abort criteria is:
     // our next tick is completely out of sight.
+
     while( first || 
            (
              this.board.sgn(deltaX)*(x-over*deltaX) >= this.board.sgn(deltaX)*end.usrCoords[1] && 
@@ -346,6 +347,7 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
         if(this.insertTicks && this.equidistant && (dist > this.maxTicksDistance*this.maxTicksDistance)) {
             // dist is indeed the distance squared. repeat this, until we fall below the maxTicksDistance limit
             while (dist > this.maxTicksDistance*this.maxTicksDistance) {
+
                 // half the distance
                 deltaX *= 0.5;
                 deltaY *= 0.5;
@@ -381,7 +383,7 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
             labelText = position.toString();
             if(labelText.length > 5)
                 labelText = position.toPrecision(3).toString();
-            label = new JXG.Text(this.board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], this.id+i+"Label", null, null, true, this.board.options.text.defaultDisplay);
+            label = new JXG.Text(this.board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], this.id+i+"Label", '', null, true, this.board.options.text.defaultDisplay);
             label.distanceX = 0;
             label.distanceY = -10;
             //label.setCoordinates(newTick);
