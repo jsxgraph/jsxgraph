@@ -253,10 +253,8 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
     if (y.length<=0) { return; }
     if (typeof y[0] == 'function') { return; } // functions not yet possible
 
-    
     var i;
     var p = [];
-    var line = [];
     var arc = [];
     var s = JXG.Math.Statistics.sum(y);
     var colorArray = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
@@ -294,8 +292,6 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         var xcoord = radius*Math.cos(rad)+xc;
         var ycoord = radius*Math.sin(rad)+yc;
         p[i+1] = board.create('point',[xcoord,ycoord], {name:'',fixed:true,visible:false,withLabel:false});
-        line[i] = board.create('line',[center,p[i]], 
-            {strokeColor:myAtts['strokeColor'], straightFirst:false, straightLast:false, strokeWidth:myAtts['strokeWidth'], strokeOpacity:1.0,withLabel:false,highlightStrokeColor:myAtts['highlightStrokeColor']});
         myAtts['fillColor'] = colorArray[i%colorArray.length];
         myAtts['name'] = labelArray[i];
         if(myAtts['name'] != '') {
@@ -306,18 +302,15 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         }
         myAtts['labelColor'] = colorArray[i%colorArray.length];
         myAtts['highlightfillColor'] = highlightColorArray[i%highlightColorArray.length];
-        arc[i] = board.create('arc',[center,p[i],p[i+1]], myAtts);
+        arc[i] = board.create('sector',[center,p[i],p[i+1]], myAtts);
         
         if(attributes['highlightOnSector']) {
             arc[i].hasPoint = arc[i].hasPointSector; // overwrite hasPoint so that the whole sector is used for highlighting
         }
 
     }
-    for (i=0;i<y.length;i++) {    
-        arc[i].additionalLines = [line[i],line[(i+1)%y.length]];
-    }
     this.rendNode = arc[0].rendNode;
-    return {arcs:arc, lines:line, points:p, midpoint:center}; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
+    return {arcs:arc, points:p, midpoint:center}; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
 };
 
 /**
