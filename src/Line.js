@@ -442,12 +442,14 @@ JXG.Line.prototype.getSlope = function () {
  * @param {boolean} lastArrow True if there is an arrow at the end of the line, false otherwise.
  * @private
  */
+/*
 JXG.Line.prototype.setArrow = function (firstArrow, lastArrow) {
      this.visProp['firstArrow'] = firstArrow;
      this.visProp['lastArrow'] = lastArrow;
 
      this.board.renderer.updateLine(this);
 };
+*/
 
 /**
  * Calculates TextAnchor. DESCRIPTION

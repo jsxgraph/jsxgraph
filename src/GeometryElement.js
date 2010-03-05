@@ -1103,11 +1103,24 @@ JXG.GeometryElement.prototype.setStraight = function(x,y) {
 };
 
 /**
- * TODO
- * Dito setStraight. Das gilt doch eh nur fuer lines, also wozu hier reinstellen? --michael
- * @private
- */
-JXG.GeometryElement.prototype.setArrow = function(firstArrow,lastArrow) {
+   * Determines whether the arc has arrows at start or end of the arc.
+   * @param {bool} firstArrow True if there is an arrow at the start of the arc, false otherwise.
+   * @param {bool} lastArrow True if there is an arrow at the end of the arc, false otherwise.
+   * Is stored at visProp['firstArrow'] and visProp['lastArrow']
+   */
+JXG.GeometryElement.prototype.setArrow = function (firstArrow, lastArrow) {
+    this.visProp['firstArrow'] = firstArrow;
+    this.visProp['lastArrow'] = lastArrow;
+    this.prepareUpdate().update();
+    
+    /*
+    if(this.hasLabel && this.label.content.visProp['visible']) {
+        //this.label.setCoordinates(this.coords);
+        this.label.content.update();
+        //this.board.renderer.updateLabel(this.label);
+        this.board.renderer.updateText(this.label.content);
+    }     
+        */
     return this;
 };
 
@@ -1185,27 +1198,6 @@ JXG.GeometryElement.prototype.clearTrace = function() {
     }
     this.numTraces = 0;
     return this;
-};
-
-/**
-   * Determines whether the arc has arrows at start or end of the arc.
-   * @param {bool} firstArrow True if there is an arrow at the start of the arc, false otherwise.
-   * @param {bool} lastArrow True if there is an arrow at the end of the arc, false otherwise.
-   * Is stored at visProp['firstArrow'] and visProp['lastArrow']
-   */
-JXG.GeometryElement.prototype.setArrow = function (firstArrow, lastArrow) {
-    this.visProp['firstArrow'] = firstArrow;
-    this.visProp['lastArrow'] = lastArrow;
-    this.prepareUpdate().update();
-    
-    /*
-    if(this.hasLabel && this.label.content.visProp['visible']) {
-        //this.label.setCoordinates(this.coords);
-        this.label.content.update();
-        //this.board.renderer.updateLabel(this.label);
-        this.board.renderer.updateText(this.label.content);
-    }     
-        */
 };
 
 /**
