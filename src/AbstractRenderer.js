@@ -74,48 +74,48 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
         f = el.visProp['face'];
         
     if(f == 'cross' || f == 'x') { // x
-        node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,el.layer);
+        node = this.createPrim('path',el.id);
+        this.appendChildPrim(node,el.layer);
         this.appendNodesToElement(el, 'path');
     }
     else if(f == 'circle' || f == 'o') { // circle
-        node = this.createPrimitive('circle',el.id);
-        this.appendChildPrimitive(node,el.layer);
+        node = this.createPrim('circle',el.id);
+        this.appendChildPrim(node,el.layer);
         this.appendNodesToElement(el, 'circle');
     }
     else if(f == 'square' || f == '[]') { // rectangle
-        node = this.createPrimitive('rect',el.id);
-        this.appendChildPrimitive(node,el.layer);
+        node = this.createPrim('rect',el.id);
+        this.appendChildPrim(node,el.layer);
         this.appendNodesToElement(el, 'rect');
     }
     else if(f == 'plus' || f == '+') { // +
-        node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,el.layer);  
+        node = this.createPrim('path',el.id);
+        this.appendChildPrim(node,el.layer);  
         this.appendNodesToElement(el, 'path');
     }
     else if(f == 'diamond' || f == '<>') {
-        node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,el.layer);  
+        node = this.createPrim('path',el.id);
+        this.appendChildPrim(node,el.layer);  
         this.appendNodesToElement(el, 'path');
     }
     else if(f == 'triangleup' || f == 'a') {
-        node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,el.layer);  
+        node = this.createPrim('path',el.id);
+        this.appendChildPrim(node,el.layer);  
         this.appendNodesToElement(el, 'path');    
     }
     else if(f == 'triangledown' || f == 'v') {
-        node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,el.layer);  
+        node = this.createPrim('path',el.id);
+        this.appendChildPrim(node,el.layer);  
         this.appendNodesToElement(el, 'path');
     }        
     else if(f == 'triangleleft' || f == '<') {
-        node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,el.layer);  
+        node = this.createPrim('path',el.id);
+        this.appendChildPrim(node,el.layer);  
         this.appendNodesToElement(el, 'path');    
     }
     else if(f == 'triangleright' || f == '>') {
-        node = this.createPrimitive('path',el.id);
-        this.appendChildPrimitive(node,el.layer);  
+        node = this.createPrim('path',el.id);
+        this.appendChildPrim(node,el.layer);  
         this.appendNodesToElement(el, 'path');    
     }
     el.rendNode = node;
@@ -152,32 +152,32 @@ JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
     size *= ((!el.board || !el.board.options.point.zoom)?1.0:Math.sqrt(el.board.zoomX*el.board.zoomY));
     
     if(f == 'cross' || f == 'x') { // x
-        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el, size,'x'), el.board); 
+        this.updatePathPrim(el.rendNode, this.updatePathStringPoint(el, size,'x'), el.board); 
     }
     else if(f == 'circle' || f == 'o') { // circle
-        this.updateCirclePrimitive(el.rendNode,el.coords.scrCoords[1], el.coords.scrCoords[2], size+1);            
+        this.updateCirclePrim(el.rendNode,el.coords.scrCoords[1], el.coords.scrCoords[2], size+1);            
     }
     else if(f == 'square' || f == '[]') { // rectangle
-        this.updateRectPrimitive(el.rendNode,
+        this.updateRectPrim(el.rendNode,
                 el.coords.scrCoords[1]-size, el.coords.scrCoords[2]-size, size*2, size*2);
     }
     else if(f == 'plus' || f == '+') { // +
-        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'+'), el.board); 
+        this.updatePathPrim(el.rendNode, this.updatePathStringPoint(el,size,'+'), el.board); 
     }
     else if(f == 'diamond' || f == '<>') { // diamond
-        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'diamond'), el.board); 
+        this.updatePathPrim(el.rendNode, this.updatePathStringPoint(el,size,'diamond'), el.board); 
     }  
     else if(f == 'triangleup' || f == 'a') { // triangleUp
-        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'A'), el.board); 
+        this.updatePathPrim(el.rendNode, this.updatePathStringPoint(el,size,'A'), el.board); 
     } 
     else if(f == 'triangledown' || f == 'v') { // triangleDown
-        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'v'), el.board); 
+        this.updatePathPrim(el.rendNode, this.updatePathStringPoint(el,size,'v'), el.board); 
     } 
     else if(f == 'triangleleft' || f == '<') { // triangleLeft
-        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'<'), el.board); 
+        this.updatePathPrim(el.rendNode, this.updatePathStringPoint(el,size,'<'), el.board); 
     }  
     else if(f == 'triangleright' || f == '>') { // triangleRight
-        this.updatePathPrimitive(el.rendNode, this.updatePathStringPoint(el,size,'>'), el.board); 
+        this.updatePathPrim(el.rendNode, this.updatePathStringPoint(el,size,'>'), el.board); 
     }        
     this.setShadow(el);
 };
@@ -221,8 +221,8 @@ JXG.AbstractRenderer.prototype.changePointStyle = function(/** JXG.Point */el) {
  * @see #calcStraight
  */
 JXG.AbstractRenderer.prototype.drawLine = function(el) { 
-    var node = this.createPrimitive('line',el.id);
-    this.appendChildPrimitive(node,el.layer);
+    var node = this.createPrim('line',el.id);
+    this.appendChildPrim(node,el.layer);
     this.appendNodesToElement(el,'lines');
 
     this.updateLine(el);
@@ -243,7 +243,7 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
     //if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
        this.calcStraight(el,screenCoords1,screenCoords2); 
     //} 
-    this.updateLinePrimitive(el.rendNode,screenCoords1.scrCoords[1],screenCoords1.scrCoords[2],
+    this.updateLinePrim(el.rendNode,screenCoords1.scrCoords[1],screenCoords1.scrCoords[2],
             screenCoords2.scrCoords[1],screenCoords2.scrCoords[2],el.board);
 
     // Update the image which is connected to the line:
@@ -508,13 +508,13 @@ JXG.AbstractRenderer.prototype.removeTicks = function(/** JXG.Line */ axis) {
  * @see #updateArrow
  */
 JXG.AbstractRenderer.prototype.drawArrow = function(/** JXG.Line */ el) {
-    var node = this.createPrimitive('line',el.id);
+    var node = this.createPrim('line',el.id);
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']); // ?
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']); // ?
     this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']); // ?
     this.setDashStyle(el,el.visProp); // ?
     this.makeArrow(node,el);
-    this.appendChildPrimitive(node,el.layer);
+    this.appendChildPrim(node,el.layer);
     this.appendNodesToElement(el,'lines');
 
     this.updateArrow(el);
@@ -539,7 +539,7 @@ JXG.AbstractRenderer.prototype.updateArrow = function(/** JXG.Line */ el) {
             this.setDraft(el);
         }
     }
-    this.updateLinePrimitive(el.rendNode,el.point1.coords.scrCoords[1],el.point1.coords.scrCoords[2],
+    this.updateLinePrim(el.rendNode,el.point1.coords.scrCoords[1],el.point1.coords.scrCoords[2],
         el.point2.coords.scrCoords[1],el.point2.coords.scrCoords[2],el.board);
 };
 
@@ -555,10 +555,10 @@ JXG.AbstractRenderer.prototype.updateArrow = function(/** JXG.Line */ el) {
  * @see #updateCurve
  */
 JXG.AbstractRenderer.prototype.drawCurve = function(el) { 
-    var node = this.createPrimitive('path',el.id);
+    var node = this.createPrim('path',el.id);
     
     //node.setAttributeNS(null, 'stroke-linejoin', 'round');
-    this.appendChildPrimitive(node,el.layer);
+    this.appendChildPrim(node,el.layer);
     this.appendNodesToElement(el,'path');
     
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']); // ?
@@ -586,7 +586,7 @@ JXG.AbstractRenderer.prototype.updateCurve = function(/** JXG.Curve */ el) {
             this.setDraft(el);
         }
     }
-    this.updatePathPrimitive(el.rendNode,this.updatePathStringPrimitive(el),el.board);
+    this.updatePathPrim(el.rendNode,this.updatePathStringPrim(el),el.board);
     this.makeArrows(el);    
 };
 
@@ -602,8 +602,8 @@ JXG.AbstractRenderer.prototype.updateCurve = function(/** JXG.Curve */ el) {
  * @see #updateCircle
  */
 JXG.AbstractRenderer.prototype.drawCircle = function(/** JXG.Circle */ el) { 
-    var node = this.createPrimitive('ellipse',el.id);
-    this.appendChildPrimitive(node,el.layer);
+    var node = this.createPrim('ellipse',el.id);
+    this.appendChildPrim(node,el.layer);
     this.appendNodesToElement(el,'ellipse'); 
     
     this.updateCircle(el);
@@ -630,7 +630,7 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
     // Radius umrechnen:
     var radius = el.Radius();
     if (radius>0.0 && !isNaN(el.midpoint.coords.scrCoords[1]+el.midpoint.coords.scrCoords[2]) ) {
-        this.updateEllipsePrimitive(el.rendNode,el.midpoint.coords.scrCoords[1],el.midpoint.coords.scrCoords[2],
+        this.updateEllipsePrim(el.rendNode,el.midpoint.coords.scrCoords[1],el.midpoint.coords.scrCoords[2],
             (radius * el.board.stretchX),(radius * el.board.stretchY));
     }
 };
@@ -647,11 +647,11 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
  * @see #updatePolygon
  */
 JXG.AbstractRenderer.prototype.drawPolygon = function(/** JXG.Polygon */ el) { 
-    var node = this.createPrimitive('polygon',el.id);
+    var node = this.createPrim('polygon',el.id);
     el.visProp['fillOpacity'] = 0.3;
     //el.visProp['strokeColor'] = 'none';
     //this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
-    this.appendChildPrimitive(node,el.layer);
+    this.appendChildPrim(node,el.layer);
     this.appendNodesToElement(el,'polygon');
     this.updatePolygon(el);
 };
@@ -673,7 +673,7 @@ JXG.AbstractRenderer.prototype.updatePolygon = function(/** JXG.Polygon */ el) {
         }
     }
 
-    this.updatePolygonePrimitive(el.rendNode,el);
+    this.updatePolygonePrim(el.rendNode,el);
 };
 
 
@@ -821,7 +821,7 @@ JXG.AbstractRenderer.prototype.drawImage = function(/** JXG.Image */ image) { };
  * @see #drawImage
  */
 JXG.AbstractRenderer.prototype.updateImage = function(/** JXG.Image */ el) { 
-    this.updateRectPrimitive(el.rendNode,el.coords.scrCoords[1],el.coords.scrCoords[2]-el.size[1],
+    this.updateRectPrim(el.rendNode,el.coords.scrCoords[1],el.coords.scrCoords[2]-el.size[1],
         el.size[0],el.size[1]);
         
     if (el.parent != null) {
@@ -900,7 +900,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
                                  board);
                                      
     node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
-    this.appendChildPrimitive(node2, board.options.layer['grid']);
+    this.appendChildPrim(node2, board.options.layer['grid']);
     if(!board.snapToGrid) {
         el = new Object();
         el.visProp = {};
@@ -919,13 +919,13 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         JXG.clearVisPropOld(el);
         this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
-    this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
+    this.setPropertyPrim(node2,'stroke-width', '0.4px');  
     if(board.gridDash) {
         this.setGridDash("gridx"); 
     }
 
     node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
-    this.appendChildPrimitive(node2, board.options.layer['grid']); // Attention layer=1
+    this.appendChildPrim(node2, board.options.layer['grid']); // Attention layer=1
     if(!board.snapToGrid) {
         el = new Object();
         el.visProp = {};
@@ -944,7 +944,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         JXG.clearVisPropOld(el);
         this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
-    this.setPropertyPrimitive(node2,'stroke-width', '0.4px');  
+    this.setPropertyPrim(node2,'stroke-width', '0.4px');  
     if(board.gridDash) {
         this.setGridDash("gridy"); 
     }

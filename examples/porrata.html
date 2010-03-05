@@ -52,9 +52,9 @@ body { background-color:#434343; }
                        
                         }
                         
-                        var m = brd.mathStatistics.mean(y);
-                        var sd = brd.mathStatistics.sd(y);
-                        var med = brd.mathStatistics.median(y);
+                        var m = JXG.Math.Statistics.mean(y);
+                        var sd = JXG.Math.Statistics.sd(y);
+                        var med = JXG.Math.Statistics.median(y);
                         brd.suspendUpdate();
                         if (!graph1) { 
                             //graph1 = brd.createElement('curve', [x,y],{strokeWidth:1,strokeColor:'yellow'}); 
