@@ -374,7 +374,7 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
 };
 
 JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
-    var c = this.eval(color), 
+    var node, c = this.eval(color), 
         o = this.eval(opacity);
 
     o = (o>0)?o:0;
