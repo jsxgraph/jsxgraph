@@ -111,8 +111,8 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
         this.element.addChild(this);
         this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [parseFloat(coords[0]),parseFloat(coords[1])],this.board);     
         this.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, 
-            [parseFloat(coords[0])+anchor.scrCoords[1],
-             parseFloat(coords[1])+anchor.scrCoords[2]], this.board);
+            [this.relativeCoords.scrCoords[1]+anchor.scrCoords[1],
+             this.relativeCoords.scrCoords[2]+anchor.scrCoords[2]], this.board);
     } else {
         this.X = JXG.createFunction(coords[0],this.board,'');
         this.Y = JXG.createFunction(coords[1],this.board,'');
