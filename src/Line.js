@@ -533,7 +533,7 @@ JXG.Line.prototype.getLabelAnchor = function() {
                     relCoords = [-10,-10];
                 }
             }
-            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [relCoords[0]/this.board.stretchX,relCoords[1]/this.board.stretchY],this.board);
+            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [relCoords[0],-relCoords[1]],this.board);
         }
         return coords;
     }

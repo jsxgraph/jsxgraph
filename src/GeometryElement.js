@@ -1136,7 +1136,7 @@ JXG.GeometryElement.prototype.createLabel = function(withLabel,coords) {
         }
         this.label.relativeCoords = coords;
         this.label.content = new JXG.Text(this.board, this.nameHTML, this.id,
-            [this.label.relativeCoords[0]/(this.board.stretchX),this.label.relativeCoords[1]/(this.board.stretchY)], this.id+"Label", "", null, true, this.board.options.text.defaultType);
+            [this.label.relativeCoords[0],-this.label.relativeCoords[1]], this.id+"Label", "", null, true, this.board.options.text.defaultType);
         if (isTmpId) delete(this.board.objects[this.id]);
         this.label.color = '#000000';
         if(!this.visProp['visible']) {

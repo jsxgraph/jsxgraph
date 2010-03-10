@@ -194,7 +194,7 @@ JXG.createSector = function(board, parents, attributes) {
             coords, vecx, vecy, len;
 
         if(this.label.content != null) {                          
-            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [0/(this.board.stretchX),0/(this.board.stretchY)],this.board);                      
+            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0],this.board);                      
         }  
 
         coords = new JXG.Coords(JXG.COORDS_BY_USER, 
@@ -352,7 +352,7 @@ JXG.createAngle = function(board, parents, attributes) {
             coords, vecx, vecy, len;
 
         if(this.label.content != null) {                          
-            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [0/(this.board.stretchX),0/(this.board.stretchY)],this.board);                      
+            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0],this.board);                      
         }  
 
         coords = new JXG.Coords(JXG.COORDS_BY_USER, 

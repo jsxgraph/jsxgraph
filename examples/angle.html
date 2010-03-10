@@ -15,7 +15,7 @@
     /* <![CDATA[ */
 
         var p1, p2, l1;
-        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 50, originY: 300, unitX: 50, unitY: 50});
+        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 50, originY: 300, unitX: 50, unitY: 50, axis:true});
         
         p1 = board.createElement('point', [0, 0], {style:5,name:"A",fillColor:'blue'}); 
         p2 = board.createElement('point', [0, 4], {style:5,name:"B",fillColor:'blue'});
@@ -27,6 +27,7 @@
         l4 = board.createElement('line', [p1, p3], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'blue',withLabel:true});        
 
         a1 = board.createElement('angle', [p3,p1,p2], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
+/*        
         a2 = board.createElement('angle', [p1,p2,p3], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
         a3 = board.createElement('angle', [p2,p3,p1], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FFFF0050'});
         a4 = board.createElement('angle', [p4,p3,p1], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
@@ -35,7 +36,7 @@
         a7 = board.createElement('angle', [p2,p5,p1], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
         a8 = board.createElement('angle', [p2,p1,p4], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
         a9 = board.createElement('angle', [p5,p2,p1], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
-        
+*/        
         var c1 = board.createElement('circumcircle',['A','B','C'],{name:['P','k_a']});
   /* ]]> */
   </script>
