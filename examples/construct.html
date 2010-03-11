@@ -16,7 +16,7 @@ JXG.Options.showCopyright = true; //don't work :)
 JXG.Options.showNavigation = true;
 //JXG.Options.takeFirst = true;
 var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 400,originY: 400, unitX: 10, unitY: 10, axis:true});
-var A=board.create('point',[10,0]);
+var A=board.create('point',[10,0],{frozen:true});
 var B=board.create('point',[0,0]);
 var C=board.create('point',[0,10]);
 
@@ -118,8 +118,8 @@ var createSector = function(board,parents,attributes) {
 */
 
 board.create('arc',[B,A,C],{withLabel:true,name:'Arc'}).setProperty({firstArrow:true});
-
-//board.create('circle',[B,A],{strokeColor:'red'});
+var s = board.create('slider',[[-20,-20],[10,-20],[0,2,10]],{name:'s',fixed:false});
+board.create('circle',[B,function(){return s.Value();}],{strokeColor:'red'});
 //board.create('sector',[B,D,E],{});
 //board.create('semicircle',[D,E],{withLabel:true,name:'Semicircle'});
 board.create('circumcirclesector',[B,C,E],{withLabel:true,name:'circumcircle'});

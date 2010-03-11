@@ -193,7 +193,7 @@ JXG.Text.prototype.setCoords = function (x,y) {
  * is called. 
  */
 JXG.Text.prototype.update = function () {
-    if (this.needsUpdate) {
+    if (this.needsUpdate && !this.frozen) {
         if (this.relativeCoords){
             var anchor;
             if(!this.isLabel) {
@@ -208,8 +208,10 @@ JXG.Text.prototype.update = function () {
         } else {
             this.updateCoords();
         }
-        this.updateText();
     }   
+    if (this.needsUpdate) {
+        this.updateText();
+    }
     return this;
 };
 

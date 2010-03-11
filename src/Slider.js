@@ -55,21 +55,25 @@
  * empty string is given, an unique name will be generated.
  * @see JXG.Board#generateName
  */
-JXG.createSlider = function(board, parentArr, atts) {
+JXG.createSlider = function(board, parents, atts) {
     var pos0, pos1, smin, start, smax, sdiff, p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t,
-        snapWidth;
+        snapWidth, fixed;
         
-    pos0 = parentArr[0];
-    pos1 = parentArr[1];
-    smin = parentArr[2][0];
-    start = parentArr[2][1];
-    smax = parentArr[2][2];
+    pos0 = parents[0];
+    pos1 = parents[1];
+    smin = parents[2][0];
+    start = parents[2][1];
+    smax = parents[2][2];
     sdiff = smax -smin;
     
     atts = JXG.checkAttributes(atts,{strokeColor:'#000000', fillColor:'#ffffff', withTicks:true});
 
-    p1 = board.create('point', pos0, {visible:false, fixed:true, name:'',withLabel:false}); 
-    p2 = board.create('point', pos1, {visible:false, fixed:true, name:'',withLabel:false}); 
+    fixed = JXG.str2Bool(atts['fixed']);
+    p1 = board.create('point', pos0, 
+        {visible:!fixed, fixed:fixed, name:'',withLabel:false,face:'<>', size:5, strokeColor:'#000000', fillColor:'#ffffff'}); 
+    p2 = board.create('point', pos1, 
+        {visible:!fixed, fixed:fixed, name:'',withLabel:false,face:'<>', size:5, strokeColor:'#000000', fillColor:'#ffffff'}); 
+    board.create('group',[p1,p2]);
     l1 = board.create('segment', [p1,p2], 
                 {strokewidth:1, 
                 name:'',
@@ -81,9 +85,11 @@ JXG.createSlider = function(board, parentArr, atts) {
                     {insertTicks:true, minorTicks:0, drawLabels:false, drawZero:true}); 
     }
 
-    p1.needsRegularUpdate = false;
-    p2.needsRegularUpdate = false;
-    l1.needsRegularUpdate = false;
+    if (fixed) {
+        p1.needsRegularUpdate = false;
+        p2.needsRegularUpdate = false;
+        l1.needsRegularUpdate = false;
+    }
     
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
@@ -116,9 +122,9 @@ JXG.createSlider = function(board, parentArr, atts) {
         } else {
             n = '';
         }
-        t = board.create('text', [((pos1[0]-pos0[0])*.05+pos1[0]), 
-                                     ((pos1[1]-pos0[1])*.05+pos1[1]), 
-                                     function(){return n+(p3.Value()).toFixed(2);}],
+        t = board.create('text', [function(){return (p2.X()-p1.X())*0.05+p2.X();},
+                                  function(){return (p2.Y()-p1.Y())*0.05+p2.Y();},
+                                  function(){return n+(p3.Value()).toFixed(2);}],
                                      {name:''}); 
     }                                     
     return p3;

@@ -166,6 +166,25 @@ JXG.GeometryElement = function() {
     this.traced = false;
 
     /**
+     * If true the element is fixed and can not be dragged around. The element 
+     * will be repositioned on zoom and moveOrigin events.
+     * @type boolean
+     * @default false
+     * @name JXG.GeometryElement#fixed
+     */
+    this.fixed = false;
+
+    /**
+     * If true the element is fixed and can not be dragged around. The element 
+     * will even stay at its position on zoom and moveOrigin events.
+     * Only free elements like points, texts, curves can be frozen.
+     * @type boolean
+     * @default false
+     * @name JXG.GeometryElement#fixed
+     */
+    this.frozen = false;
+
+    /**
      * Keeps track of all objects drawn as part of the trace of the element.
      * @see #traced
      * @see #clearTrace
@@ -651,6 +670,7 @@ JXG.GeometryElement.prototype.showElement = function() {
 *<li>trace</li>
 *<li>style <i>(Point)</i></li>
 *<li>fixed</li>
+*<li>frozen</li>
 *<li>draft</li>
 *<li>showInfobox</li>
 *<li>straightFirst <i>(Line)</i></li>
@@ -842,6 +862,9 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 break;
             case 'fixed':
                 this.fixed = ((pair[1]=='false') || (pair[1]==false)) ? false : true;
+                break;
+            case 'frozen':
+                this.frozen = ((pair[1]=='false') || (pair[1]==false)) ? false : true;
                 break;
             case 'shadow':
                 if(pair[1] == 'false' || pair[1] == false) {

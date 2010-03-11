@@ -809,7 +809,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
                         || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CIRCLE)
                         || (!this.geonextCompatibilityMode && pEl.elementClass == JXG.OBJECT_CLASS_CURVE)*/ )
                     && (pEl.visProp['visible'])
-                    && (!pEl.fixed)
+                    && (!pEl.fixed) && (!pEl.frozen)
                     && (pEl.hasPoint(dx, dy))
                     ) {
                 // Points are preferred:
@@ -1088,13 +1088,15 @@ JXG.Board.prototype.setBoardMode = function (mode) {
  * @private
  */
 JXG.Board.prototype.moveOrigin = function () {
-    for(var Element in this.objects) {
-        if( (this.objects[Element].elementClass == JXG.OBJECT_CLASS_POINT) ||
-            (this.objects[Element].elementClass == JXG.OBJECT_CLASS_CURVE) ||
-            (this.objects[Element].type == JXG.OBJECT_TYPE_AXIS) ||
-            (this.objects[Element].type == JXG.OBJECT_TYPE_TEXT) ) {
-            if((this.objects[Element].elementClass != JXG.OBJECT_CLASS_CURVE) && (this.objects[Element].type != JXG.OBJECT_TYPE_AXIS))
-                this.objects[Element].coords.usr2screen();
+    var el, ob;
+    for (ob in this.objects) {
+        el = this.objects[ob];
+        if (!el.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
+            el.elementClass==JXG.OBJECT_CLASS_CURVE ||
+            el.type==JXG.OBJECT_TYPE_AXIS ||
+            el.type==JXG.OBJECT_TYPE_TEXT)) {
+            if (el.elementClass!=JXG.OBJECT_CLASS_CURVE && el.type!=JXG.OBJECT_TYPE_AXIS)
+                el.coords.usr2screen();
         }
     }
 
@@ -1550,15 +1552,15 @@ JXG.Board.prototype.calculateSnapSizes = function() {
  * @private
  */
 JXG.Board.prototype.applyZoom = function() {
-    var el;
-
-    for(el in this.objects) {
-        if( (this.objects[el].elementClass == JXG.OBJECT_CLASS_POINT) ||
-            (this.objects[el].elementClass == JXG.OBJECT_CLASS_CURVE) ||
-            (this.objects[el].type == JXG.OBJECT_TYPE_AXIS) ||
-            (this.objects[el].type == JXG.OBJECT_TYPE_TEXT) ) {
-            if((this.objects[el].elementClass != JXG.OBJECT_CLASS_CURVE) && (this.objects[el].type != JXG.OBJECT_TYPE_AXIS))
-                this.objects[el].coords.usr2screen();
+    var el, ob;
+    for(ob in this.objects) {
+        el = this.objects[ob];
+        if(!el.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
+            el.elementClass==JXG.OBJECT_CLASS_CURVE ||
+            el.type==JXG.OBJECT_TYPE_AXIS ||
+            el.type==JXG.OBJECT_TYPE_TEXT)) {
+            if(el.elementClass!=JXG.OBJECT_CLASS_CURVE && el.type!=JXG.OBJECT_TYPE_AXIS)
+                el.coords.usr2screen();
         }
     }
     this.calculateSnapSizes();
