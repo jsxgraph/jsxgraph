@@ -106,7 +106,7 @@ JXG.Turtle.prototype.init = function(x,y,dir) {
     
     var w = this.attributes.strokeWidth || this.attributes.strokewidth || 2;  // Attention; should be moved to Options.js
     this.arrow = this.board.create('line',[this.turtle,this.turtle2],
-            {lastArrow:true,strokeColor:'#ff0000',straightFirst:false,straightLast:false,strokeWidth:w,withLabel:false});
+            {strokeColor:'#ff0000',straightFirst:false,straightLast:false,strokeWidth:w,withLabel:false,lastArrow:true});
     this.objects.push(this.arrow);
 
     this.right(90-dir);
