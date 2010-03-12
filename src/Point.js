@@ -119,7 +119,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
     if (typeof withLabel=='undefined' || withLabel==true) {
         this.board.objects[this.id] = this;
         this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, 
-            this.label.relativeCoords, this.id+"Label", '', null, true, this.board.options.text.defaultType);
+            this.label.relativeCoords, this.id+"Label", '', null, true, this.board.options.text.defaultDisplay);
         delete(this.board.objects[this.id]);
 
         this.label.color = '#000000';
