@@ -30,7 +30,6 @@
  */
 JXG.Options = {
     /* Options that are used directly within the board class */
-    fontSize : 12,
     showCopyright : true,
     showNavigation : true,
     takeSizeFromFile : false, // If true, the construction - when read from a file or string - the size of the div can be changed.
@@ -82,7 +81,9 @@ JXG.Options = {
     /* special point options */
     point : {
     	withLabel: true,
-        style : 5, //1;
+        style : 5, // deprecated
+        face : 'o', 
+        size : 3, 
         fillColor : '#ff0000',
         highlightFillColor : '#EEEEEE',
         strokeWidth: '2px',
@@ -176,6 +177,7 @@ JXG.Options = {
 
     /* special text options */
     text : {
+        fontSize : 12,
         strokeColor : '#000000',
         useASCIIMathML : false,
         defaultDisplay : 'html' //'html' or 'internal'

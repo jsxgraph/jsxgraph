@@ -201,7 +201,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
      * @default circle
      * @name JXG.Point#face
      */
-    this.visProp['face'] = 'circle';
+    this.visProp['face'] = this.board.options.point.face;
     /**
     * Determines the size of a point.
     * Means radius resp. half the width of a point (depending on the face).
@@ -211,7 +211,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
      * @default 3     
      * @name JXG.Point#size
      */    
-    this.visProp['size'] = 3;
+    this.visProp['size'] = this.board.options.point.size;
 
     /**
      * Size of the point. This is just for the renderer and the hasPoint() method

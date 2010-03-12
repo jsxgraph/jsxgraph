@@ -256,7 +256,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * Default font size for labels and texts.
      * @type int
      */
-    this.fontSize = this.options.fontSize;
+    this.fontSize = this.options.text.fontSize;
 
     /**
      * A reference to an object of class Algebra.
@@ -458,7 +458,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * Display the licence text, @see JSXGraph
     */
     if ( (showCopyright!=null && showCopyright) || (showCopyright==null && this.options.showCopyright) ) {
-        this.renderer.displayCopyright(JXG.JSXGraph.licenseText,this.options.fontSize);
+        this.renderer.displayCopyright(JXG.JSXGraph.licenseText,this.fontSize);
     }
 
    /**

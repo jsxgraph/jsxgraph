@@ -85,6 +85,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
      * @name JXG.Text#fontSize
      * @default {@link JXG.Options.fontSize}
      */
+    //this.visProp['fontSize'] = this.board.options.text.fontSize;
 
     this.visProp['visible'] = true;
     //this.show = true; // noch noetig? BV
@@ -129,7 +130,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
             plaintext = (this.contentStr).toFixed(this.digits);  
         } else {
             if (this.board.options.text.useASCIIMathML) {
-                plaintext = "'"+this.contentStr+"'";              // Convert via ASCIIMathML
+                plaintext = "'`"+this.contentStr+"`'";              // Convert via ASCIIMathML
             } else {
                 plaintext = this.generateTerm(this.contentStr);   // Converts GEONExT syntax into JavaScript string
             }
