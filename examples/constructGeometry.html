@@ -6,7 +6,7 @@
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h2>Angles</h2>
+<h2>Short Construction</h2>
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
 </div>
@@ -14,7 +14,10 @@
    <script type="text/javascript">
     /* <![CDATA[ */
         function construction(board,string) {
-            var splitted, i, sFirst, sLast, first, last, rest,j, rest2 = {};
+            var splitted, i, sFirst, sLast, first, last, rest,j, rest2 = {}, output = {}, act;
+            output.lines = [];
+            output.circles = [];
+            output.points = [];
             splitted = string.split(';');
             for(i=0; i< splitted.length; i++) {
                 // trim
@@ -33,9 +36,9 @@
                         else {
                             sLast = false;
                         }
-                        board.createElement('line',
+                        output.lines.push(board.createElement('line',
                                             [JXG.getReference(board,splitted[i][1]),JXG.getReference(board,splitted[i][2])],
-                                            {straightFirst:sFirst,straightLast:sLast});
+                                            {straightFirst:sFirst,straightLast:sLast}));
                     }
                     else if(splitted[i][0] == 'k') { // Kreis!                
                         rest = splitted[i].slice(1);
@@ -56,27 +59,35 @@
                                 rest[j] = 1.0*rest[j]; // Radius
                             }
                         }
-                        board.createElement('circle',[JXG.getReference(board,rest[0]),JXG.getReference(board,rest[1])]);
+                        output.circles.push(board.createElement('circle',[JXG.getReference(board,rest[0]),JXG.getReference(board,rest[1])]));
                     }
                     else if(splitted[i][0].toLowerCase() != splitted[i][0]) { // Punkt, startet mit einem Grossbuchstaben!
                         first = splitted[i].slice(0,length-1).split('(');
                         last = first[1];
                         first = first[0]; // Name
                         last = last.split(',');
-                        board.createElement('point',[1.0*last[0],1.0*last[1]],{name:first});
+                        output.points.push(board.createElement('point',[1.0*last[0],1.0*last[1]],{name:first}));
+                        output[first] = output.points[output.points.length-1];
                     }
                     else {
                         alert('nichts gefunden');
                     }
                 }
             }
+            return output;
         }
 
-        var p1, p2, l1;
+        // Konstruktion
+        var cons1, cons2;
         board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 50, originY: 300, unitX: 50, unitY: 50, axis:true});
         
-        construction(board,"A(1,1);B(2,2.5);C(1,3);k(A,[BC]);k(B,[AC]);G(5,3);H(6,4);[GH];k(G,1);AB(5,-1);X(6,-1);Y(7,-2);k(Y,X)");
-        construction(board,"J(7,4);[GJ[;K(8,4);]GK[");
+        cons1 = construction(board,"A(1,1);B(2,2.5);C(1,3);k(A,[BC]);k(B,[AC]);G(5,3);H(6,4);[GH];k(G,1);AB(5,-1);X(6,-1);Y(7,-2);k(Y,X)");
+        cons2 = construction(board,"J(7,4);[GJ[;K(8,4);]GK[");
+        
+        cons1.points[0].setProperty({face:'diamond',size:7,strokeColor:'#8B2252',fillColor:'#8B2252'});
+        cons1.circles[1].setProperty({strokeColor:'#BA55D3'});
+        cons2.J.setProperty({face:'triangleUp',size:8,strokeColor:'black',fillColor:'#EE82EE'});
+        cons2.lines[1].setProperty({strokeColor:'#32CD32',shadow:true});
   /* ]]> */
   
     
