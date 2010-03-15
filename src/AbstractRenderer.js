@@ -714,7 +714,6 @@ JXG.AbstractRenderer.prototype.drawText = function(/** JXG.Text */ el) {
     if (el.display=='html') {
         node = this.container.ownerDocument.createElement('div');
         node.style.position = 'absolute';
-        node.style.fontSize = el.board.fontSize + 'px';  
         node.style.color = el.visProp['strokeColor'];
         node.className = 'JXGtext';
         node.style.zIndex = '10';      
@@ -723,6 +722,7 @@ JXG.AbstractRenderer.prototype.drawText = function(/** JXG.Text */ el) {
     } else {
         node = this.drawInternalText(el);
     }
+    node.style.fontSize = el.board.options.text.fontSize + 'px';  
     el.rendNode = node;
     el.htmlStr = '';
     this.updateText(el);

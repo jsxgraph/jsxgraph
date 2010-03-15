@@ -42,6 +42,9 @@ JXG.SVGRenderer = function(container) {
     }
     
     this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
+    this.svgRoot.style.overflow = 'hidden';
+    this.svgRoot.style.width = this.container.style.width;
+    this.svgRoot.style.height = this.container.style.height;
     this.container.appendChild(this.svgRoot);
 
     this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace,'defs');
@@ -232,6 +235,8 @@ JXG.SVGRenderer.prototype.displayCopyright = function(str,fontsize) {
 JXG.SVGRenderer.prototype.drawInternalText = function(el) {
     var node = this.createPrim('text',el.id);
     node.setAttributeNS(null, "class", "JXGtext");
+    //node.setAttributeNS(null, "style", "fill:"+ el.visProp['strokeColor']); not available at that time
+    node.setAttributeNS(null, "style", "'alignment-baseline:middle;"); 
     el.rendNodeText = document.createTextNode('');
     node.appendChild(el.rendNodeText);
     this.appendChildPrim(node,9);
@@ -240,7 +245,7 @@ JXG.SVGRenderer.prototype.drawInternalText = function(el) {
 
 JXG.SVGRenderer.prototype.updateInternalText = function(/** JXG.Text */ el) { 
     el.rendNode.setAttributeNS(null, 'x', (el.coords.scrCoords[1])+'px'); 
-    el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] - this.vOffsetText)+'px'); 
+    el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2])+'px'); 
     el.updateText();
     if (el.htmlStr!= el.plaintextStr) {
         el.rendNodeText.data = el.plaintextStr;
@@ -353,7 +358,11 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     }
     node = el.rendNode;
     if(el.type == JXG.OBJECT_TYPE_TEXT) {
-        node.style.color = c; // Schriftfarbe
+        if (el.display=='html') {
+            node.style.color = c; // Schriftfarbe
+        } else {
+            node.setAttributeNS(null, "style", "fill:"+ c); 
+        }
     }
     else {
         node.setAttributeNS(null, 'stroke', c);

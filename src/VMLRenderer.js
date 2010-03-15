@@ -196,23 +196,23 @@ JXG.VMLRenderer.prototype.drawTicks = function(ticks) {
 };
 
 JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
-    var tickArr = [], i, len, c, ticks, r = this.resolution, scr = c.scrCoords;
+    var tickArr = [], i, len, c, ticks, r = this.resolution;
     
     len = axis.ticks.length;
     for (i=0; i<len; i++) {
-        c = axis.ticks[i];
+        c = axis.ticks[i].scrCoords;
         if(c.major) {
             if (axis.labels[i].visProp['visible']) this.drawText(axis.labels[i]);        
-            tickArr.push(' m ' + Math.round(r*(scr[1]+dxMaj)) + 
-                         ', ' + Math.round(r*(scr[2]-dyMaj)) + 
-                         ' l ' + Math.round(r*(scr[1]-dxMaj)) + 
-                         ', ' + Math.round(r*(scr[2]+dyMaj))+' ');
+            tickArr.push(' m ' + Math.round(r*(c[1]+dxMaj)) + 
+                         ', ' + Math.round(r*(c[2]-dyMaj)) + 
+                         ' l ' + Math.round(r*(c[1]-dxMaj)) + 
+                         ', ' + Math.round(r*(c[2]+dyMaj))+' ');
         }
         else
-            tickArr.push(' m ' + Math.round(r*(scr[1]+dxMin)) + 
-                         ', ' + Math.round(r*(scr[2]-dyMin)) + 
-                         ' l ' + Math.round(r*(scr[1]-dxMin)) + 
-                         ', ' + Math.round(r*(scr[2]+dyMin))+' ');
+            tickArr.push(' m ' + Math.round(r*(c[1]+dxMin)) + 
+                         ', ' + Math.round(r*(c[2]-dyMin)) + 
+                         ' l ' + Math.round(r*(c[1]-dxMin)) + 
+                         ', ' + Math.round(r*(c[2]+dyMin))+' ');
     }
 
     ticks = document.getElementById(axis.id);
