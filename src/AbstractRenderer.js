@@ -294,7 +294,9 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
  */
 JXG.AbstractRenderer.prototype.calcStraight = function(/** JXG.Line */ el, /** JXG.Coords */ point1, /** JXG.Coords */ point2) {
     var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast, 
-        b, c, s, i, j, p1, p2;
+        //b, 
+        c, s, i, j, 
+        p1, p2;
     
     //b = el.board.algebra;
     straightFirst = el.visProp['straightFirst'];
@@ -359,7 +361,7 @@ JXG.AbstractRenderer.prototype.calcStraight = function(/** JXG.Line */ el, /** J
         takePoint2 = true;
     }
 
-    if (Math.abs(s[1][0])<JXG.Math.eps) {                  // line is parallel to "left", take "top" and "bottom"
+    if (Math.abs(s[1][0])<JXG.Math.eps) {           // line is parallel to "left", take "top" and "bottom"
         intersect1 = s[0];                          // top
         intersect2 = s[2];                          // bottom
     } else if (Math.abs(s[0][0])<JXG.Math.eps) {           // line is parallel to "top", take "left" and "right"
@@ -393,6 +395,16 @@ JXG.AbstractRenderer.prototype.calcStraight = function(/** JXG.Line */ el, /** J
     intersect1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect1.slice(1), el.board);
     intersect2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect2.slice(1), el.board);
  
+    if (!takePoint1 && !takePoint2) {              // If both points are outside and the complete ray is outside we do nothing
+        if (!straightFirst && straightLast &&      // Ray starting at point 1
+            !this.isSameDirection(point1, point2, intersect1) && !this.isSameDirection(point1, point2, intersect2)) {
+            return;
+        } else if (straightFirst && !straightLast &&  // Ray starting at point 2
+            !this.isSameDirection(point2, point1, intersect1) && !this.isSameDirection(point2, point1, intersect2)) {
+            return;
+        }
+    }
+    
     if (!takePoint1) {
         if (!takePoint2) {                // Two border intersection points are used
             if (this.isSameDirection(point1, point2, intersect1)) {

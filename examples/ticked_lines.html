@@ -21,7 +21,7 @@
         p1 = board.createElement('point', [3, 0], {style:1,name:"P_{1}"}); // Angabe fester Koordinaten
         p2 = board.createElement('point', [8, 0], {style:2,name:"P_{2}"}); // Angabe fester Koordinaten
         
-        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast: false});
+        l1 = board.createElement('line', [p2, p1], {straightFirst: true, straightLast: false});
         board.createElement('ticks', [l1,2]); //l1.enableTicks();
 
         c = board.createElement('circle', [p1, 2], {name:"KK",withLabel:false});
