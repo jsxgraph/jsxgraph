@@ -158,26 +158,6 @@ JXG.Coords.prototype.distance = function(meth, crd) {
         sum += f*f;
     }
 
-    /*
-    if (meth == JXG.COORDS_BY_USER) {
-//        if (Math.abs(this.usrCoords[0]+coordinates.usrCoords[0])>eps) {
-//            return Infinity;
-//        }
-        for (i=0; i<=this.board.dimension; i++) {
-            f = this.usrCoords[i] - coordinates.usrCoords[i];
-            sum += f*f;
-        }
-    } else {
-//        if (Math.abs(this.scrCoords[0]+coordinates.scrCoords[0])>eps) {
-//            return Infinity;
-//        }
-        for (i=0; i<=this.board.dimension; i++) {
-            f = this.scrCoords[i] - coordinates.scrCoords[i];
-            sum += f*f;
-        }
-    }
-    */
-    
     return Math.sqrt(sum);
 };
 

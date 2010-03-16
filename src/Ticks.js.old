@@ -214,8 +214,9 @@ JXG.Ticks.prototype.hasPoint = function (x, y) {
  * @param {int} direction This determines the labels signum.
  * @param {int} over This should be 1 if we aren't allowed to draw ticks beyond the end point (if the line's a segment)
  * and should be zero if ticks should be drawn until the end of drawing area (if the line's a straight line).
+ * @param {int} offset The number of ticks that should be omitted.
  */
-JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
+JXG.Ticks.prototype.makeTicks = function(start, end, direction, over, offset) {
     // distance between start and end points
     var dx = start.usrCoords[1]-end.usrCoords[1]; // delta x
     var dy = start.usrCoords[2]-end.usrCoords[2]; // delta y
@@ -429,129 +430,6 @@ JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
  * (Re-)calculates the ticks coordinates.
  */
 JXG.Ticks.prototype.calculateTicksCoordinates = function() {
-	
-	    // Point 1 of the line
-	var p1 = this.line.point1,
-		// Point 2 of the line
-		p2 = this.line.point2,
-		// Distance between the two points from above
-		distP1P2 = p1.coords.distance(JXG.COORDS_BY_USER, p2.coords),
-		// Distance of X coordinates of two major ticks
-		// Initialized with the distance of Point 1 to a point between Point 1 and Point 2 on the line and with distance 1
-		deltaX = (p2.coords.usrCoords[1] - p1.coords.usrCoords[1])/distP1P2,
-		// The same thing for Y coordinates
-		deltaY = (p2.coords.usrCoords[2] - p1.coords.usrCoords[2])/distP1P2,
-		// Distance of p1 to the unit point in screen coordinates
-		distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board)),
-		// Distance between two major ticks in user coordinates
-		ticksDelta = 1.,
-		// This factor is for enlarging ticksDelta and it switches between 5 and 2
-		// Hence, if two major ticks are too close together they'll be expanded to a distance of 5
-		// if they're still too close together, they'll be expanded to a distance of 10 etc
-		factor = 5,
-		// Edge points: This is where the display of the line starts and ends, e.g. the intersection points
-		// of the line with the edges of the viewing area if the line is a straight.
-		e1, e2,
-		
-		// the following variables are used later on to define ticks height and slope
-	    eps = JXG.Math.eps,
-	    slope = -this.line.getSlope(),
-	    distMaj = this.majorHeight/2,
-	    distMin = this.minorHeight/2,
-	    dxMaj = 0, dyMaj = 0,
-	    dxMin = 0, dyMin = 0;
-
-	// adjust distances
-    while(distScr > 4*this.minTicksDistance) {
-        ticksDelta /= 10;
-        deltaX /= 10;
-        deltaY /= 10;
-
-        distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
-    }
-
-    // If necessary, enlarge ticksDelta
-    while(distScr < this.minTicksDistance) {
-        ticksDelta *= factor;
-        deltaX *= factor;
-        deltaY *= factor;
-
-        factor = (factor == 5 ? 2 : 5);
-        distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
-    }
-
-    // calculate start (e1) and end (e2) points
-    // for that first copy existing lines point coordinates...
-    e1 = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1], p1.coords.usrCoords[2]], this.board);
-    e2 = new JXG.Coords(JXG.COORDS_BY_USER, [p2.coords.usrCoords[1], p2.coords.usrCoords[2]], this.board);
-	
-	// ... and calculate the drawn start and end point
-    this.board.renderer.calcStraight(this.line, e1, e2);
-
-    // p1 is outside the visible area
-    if(this.board.renderer.isSameDirection(p1.coords, e1, e2)) {
-    	
-    }
-    
-	
-    JXG.debug(e1);
-    JXG.debug(e2);
-    
-    
-    // this piece of code used to be in AbstractRenderer.updateAxisTicksInnerLoop
-    // and has been moved in here to clean up the renderers code.
-    //
-    // The code above only calculates the position of the ticks. The following code parts
-    // calculate the dx and dy values which make ticks out of this positions, i.e. from the
-    // position (p_x, p_y) calculated above we have to draw a line from
-    // (p_x - dx, py - dy) to (p_x + dx, p_y + dy) to get a tick.
-
-    if(Math.abs(slope) < eps) {
-        // if the slope of the line is (almost) 0, we can set dx and dy directly
-        dxMaj = 0;
-        dyMaj = distMaj;
-        dxMin = 0;
-        dyMin = distMin;
-    } else if((Math.abs(slope) > 1/eps) || (isNaN(slope))) {
-        // if the slope of the line is (theoretically) infinite, we can set dx and dy directly
-        dxMaj = distMaj;
-        dyMaj = 0;
-        dxMin = distMin;
-        dyMin = 0;
-    } else {
-        // here we have to calculate dx and dy depending on the slope and the length of the tick (dist)
-        // if slope is the line's slope, the tick's slope is given by
-        //
-        //            1          dy
-        //     -   -------  =   ----                 (I)
-        //          slope        dx
-        //
-        // when dist is the length of the tick, using the pythagorean theorem we get
-        //
-        //     dx*dx + dy*dy = dist*dist             (II)
-        //
-        // dissolving (I) by dy and applying that to equation (II) we get the following formulas for dx and dy
-        dxMaj = -distMaj/Math.sqrt(1/(slope*slope) + 1);
-        dyMaj = dxMaj/slope;
-        dxMin = -distMin/Math.sqrt(1/(slope*slope) + 1);
-        dyMin = dxMin/slope;
-    }
-    
-
-    JXG.debug('--');
-//    this.board.renderer.updateTicks(this,dxMaj,dyMaj,dxMin,dyMin);
-    
-    
-    
-    
-//	JXG.debug(this.id + ", deltaX: " + deltaX);
-//	JXG.debug(this.id + ", deltaY: " + deltaY);
-//	JXG.debug(this.id + ", Screen Distance: " + distScr);
-	
-	
-	
-	return;
-	
     // in which direction do we have to go?
     // DIR_PLUS is from line.p1 to line.p2, DIR_MINUS
     // is the other direction.
@@ -576,12 +454,20 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     if(this.board.renderer.isSameDirection(p1, c1, c2)) {
         if(this.board.renderer.isSameDirection(p1, this.line.point2.coords, c1)) {
             required = DIR_PLUS;
-            if(p1.distance(JXG.COORDS_BY_USER, c1) > p1.distance(JXG.COORDS_BY_USER, c2))
+            if(p1.distance(JXG.COORDS_BY_USER, c1) > p1.distance(JXG.COORDS_BY_USER, c2)) {
                 c2 = c1;
+                // calculate diff dist between p1 and c2, use it as an offset for the ticks
+                // and calculate the coordinates of the nearest "integer point" left of c2 and
+                // use those coords for p1
+            }
         } else {
             required = DIR_MINUS;
-            if(p1.distance(JXG.COORDS_BY_USER, c1) < p1.distance(JXG.COORDS_BY_USER, c2))
+            if(p1.distance(JXG.COORDS_BY_USER, c1) < p1.distance(JXG.COORDS_BY_USER, c2)) {
                 c1 = c2;
+                // calculate diff dist between p1 and c1, use it as an offset for the ticks
+                // and calculate the coordinates of the nearest "integer point" right of c1 and
+                // use those coords for p1
+            }
         }
     } else /* p1 can be seen on the drawing area */ {
         // make sure, point2 is on that part of the line with positive tick markers on it
