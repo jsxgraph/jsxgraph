@@ -2228,3 +2228,65 @@ JXG.Board.prototype.animate = function() {
 //	window.setTimeout('JXG.JSXGraph.boards[\'' + this.id + '\'].animate();', 35);
     }
 };
+
+JXG.Board.prototype.construct = function(string) {
+    var splitted, i, sFirst, sLast, first, last, rest,j, rest2 = {}, output = {}, act;
+    output.lines = [];
+    output.circles = [];
+    output.points = [];
+    splitted = string.split(';');
+    for(i=0; i< splitted.length; i++) {
+        // trim
+        splitted[i] = splitted[i].replace (/^\s+/, '').replace (/\s+$/, ''); 
+        if(splitted[i].length > 0) {
+            if(splitted[i][0] == '[' || splitted[i][0] == ']') { // Gerade !
+                if(splitted[i][0] == '[') {
+                    sFirst = false;
+                }
+                else {
+                    sFirst = true;
+                }
+                if(splitted[i][splitted[i].length-1] == '[') {
+                    sLast = true;
+                }
+                else {
+                    sLast = false;
+                }
+                output.lines.push(this.createElement('line',
+                                    [JXG.getReference(this,splitted[i][1]),JXG.getReference(this,splitted[i][2])],
+                                    {straightFirst:sFirst,straightLast:sLast}));
+            }
+            else if(splitted[i][0] == 'k') { // Kreis!                
+                rest = splitted[i].slice(1);
+                rest = rest.replace(/\(/,'').replace(/\)/,'');
+                rest = rest.split(',');
+                for(j=0; j<=1; j++) {
+                    if(rest[j].search(/[\[\]]/) != -1) { // Linie dabei
+                        rest[j] = rest[j].replace(/\[/,'').replace(/\]/,'');
+                        rest[j] = (function(el, board) { return function() { 
+                                                    return JXG.getReference(board,el[0]).Dist(JXG.getReference(board,el[1])); // was ist this hier?
+                                               }}
+                                  )(rest[j], this);
+                    }
+                    else if(rest[j][0].toLowerCase() != rest[j][0]){
+                       rest[j] = JXG.getReference(this,rest[j]);
+                    }
+                    else {
+                        rest[j] = 1.0*rest[j]; // Radius
+                    }
+                }                
+                output.circles.push(this.createElement('circle',[JXG.getReference(this,rest[0]),JXG.getReference(this,rest[1])]));
+            }
+            else if(splitted[i][0].toLowerCase() != splitted[i][0]) { // Punkt, startet mit einem Grossbuchstaben!
+                first = splitted[i].slice(0,length-1).split('(');
+                last = first[1];
+                first = first[0]; // Name
+                last = last.split(',');
+                output.points.push(this.createElement('point',[1.0*last[0],1.0*last[1]],{name:first}));
+                output[first] = output.points[output.points.length-1];
+            }
+
+        }
+    }
+    return output;
+};
