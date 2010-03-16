@@ -2269,6 +2269,7 @@ JXG.Board.prototype.construct = function(string) {
                     output.lines.push(this.createElement('line',
                                         [JXG.getReference(this,splitted[i][1]),JXG.getReference(this,splitted[i][2])],
                                         {straightFirst:sFirst,straightLast:sLast, name:nameBeforeEqual, withLabel:true}));
+                    output[nameBeforeEqual] = output.lines[output.lines.length-1];
                 }
             }
             else if(splitted[i][0] == 'k') { // Kreis!  
@@ -2296,6 +2297,7 @@ JXG.Board.prototype.construct = function(string) {
                 else {
                     output.circles.push(this.createElement('circle',[JXG.getReference(this,rest[0]),JXG.getReference(this,rest[1])],
                                                            {name:nameBeforeEqual, withLabel:true}));
+                    output[nameBeforeEqual] = output.circles[output.circles.length-1];
                 }
             }
             else if(splitted[i][0].toLowerCase() != splitted[i][0]) { // Punkt, startet mit einem Grossbuchstaben!
