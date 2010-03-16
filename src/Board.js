@@ -2230,7 +2230,7 @@ JXG.Board.prototype.animate = function() {
 };
 
 JXG.Board.prototype.construct = function(string) {
-    var splitted, i, sFirst, sLast, first, last, rest,j, rest2 = {}, output = {}, act;
+    var splitted, i, sFirst, sLast, first, last, rest,j, rest2 = {}, output = {}, act, nameBeforeEqual;
     output.lines = [];
     output.circles = [];
     output.points = [];
@@ -2239,6 +2239,14 @@ JXG.Board.prototype.construct = function(string) {
         // trim
         splitted[i] = splitted[i].replace (/^\s+/, '').replace (/\s+$/, ''); 
         if(splitted[i].length > 0) {
+            if(splitted[i].search(/=/) != -1) {
+                nameBeforeEqual = splitted[i].split('=');
+                splitted[i] = nameBeforeEqual[1];
+                nameBeforeEqual = nameBeforeEqual[0];
+            }
+            else {
+                nameBeforeEqual = '';
+            }
             if(splitted[i][0] == '[' || splitted[i][0] == ']') { // Gerade !
                 if(splitted[i][0] == '[') {
                     sFirst = false;
@@ -2252,11 +2260,18 @@ JXG.Board.prototype.construct = function(string) {
                 else {
                     sLast = false;
                 }
-                output.lines.push(this.createElement('line',
-                                    [JXG.getReference(this,splitted[i][1]),JXG.getReference(this,splitted[i][2])],
-                                    {straightFirst:sFirst,straightLast:sLast}));
+                if(nameBeforeEqual == '') {
+                    output.lines.push(this.createElement('line',
+                                        [JXG.getReference(this,splitted[i][1]),JXG.getReference(this,splitted[i][2])],
+                                        {straightFirst:sFirst,straightLast:sLast}));
+                }
+                else {
+                    output.lines.push(this.createElement('line',
+                                        [JXG.getReference(this,splitted[i][1]),JXG.getReference(this,splitted[i][2])],
+                                        {straightFirst:sFirst,straightLast:sLast, name:nameBeforeEqual, withLabel:true}));
+                }
             }
-            else if(splitted[i][0] == 'k') { // Kreis!                
+            else if(splitted[i][0] == 'k') { // Kreis!  
                 rest = splitted[i].slice(1);
                 rest = rest.replace(/\(/,'').replace(/\)/,'');
                 rest = rest.split(',');
@@ -2274,14 +2289,25 @@ JXG.Board.prototype.construct = function(string) {
                     else {
                         rest[j] = 1.0*rest[j]; // Radius
                     }
-                }                
-                output.circles.push(this.createElement('circle',[JXG.getReference(this,rest[0]),JXG.getReference(this,rest[1])]));
+                }
+                if(nameBeforeEqual == '') {                
+                    output.circles.push(this.createElement('circle',[JXG.getReference(this,rest[0]),JXG.getReference(this,rest[1])],{}));
+                }
+                else {
+                    output.circles.push(this.createElement('circle',[JXG.getReference(this,rest[0]),JXG.getReference(this,rest[1])],
+                                                           {name:nameBeforeEqual, withLabel:true}));
+                }
             }
             else if(splitted[i][0].toLowerCase() != splitted[i][0]) { // Punkt, startet mit einem Grossbuchstaben!
                 first = splitted[i].slice(0,length-1).split('(');
                 last = first[1];
                 first = first[0]; // Name
-                last = last.split(',');
+                if(last.search(/,/) != -1) {
+                    last = last.split(',');
+                }
+                else {
+                    last = last.split('|');
+                }
                 output.points.push(this.createElement('point',[1.0*last[0],1.0*last[1]],{name:first}));
                 output[first] = output.points[output.points.length-1];
             }
