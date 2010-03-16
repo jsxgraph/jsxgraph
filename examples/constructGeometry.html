@@ -18,13 +18,22 @@
         board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 50, originY: 300, unitX: 50, unitY: 50, axis:true});
         
         cons1 = board.construct("A(1,1);B(2,2.5);C(1,3);G(5,3);H(6,4);[GH];k(G,1);AB(5,-1);X(6,-1);Y(7,-2);k(Y,X);k(A,[BC]);k(B,[AC]);");
-        cons2 = board.construct("J(7,4);[GJ[;K(8,4);]GK[;L(2.4|5);f=[AC];k1=k(C,0.5)");
+        cons2 = board.construct("J(7,4);[GJ[;K(8,4);]GK[;L(2.4|5);f=[AC];k1=k(C,0.5);C_1(4|4);l_2=[BC]");
         
         cons1.points[0].setProperty({face:'diamond',size:7,strokeColor:'#8B2252',fillColor:'#8B2252'});
         cons1.circles[1].setProperty({strokeColor:'#BA55D3'});
         cons2.J.setProperty({face:'triangleUp',size:8,strokeColor:'black',fillColor:'#EE82EE'});
         cons2.lines[1].setProperty({strokeColor:'#32CD32',shadow:true});
-        cons2.k1.setProperty({strokeColor:'#3A5FCD'});
+        
+        cons1.X.strokeColor('black');
+        cons1.X.fillColor('#FFB90F');
+        cons1.X.shadow(true);
+        cons1.Y.visible(false);
+        cons2.l_2.strokeWidth(4);
+        cons1.X.face('>');
+        cons1.X.size(8);
+        cons1.X.labelColor('#FFB90F');
+        cons2.k1.dash(2);
   /* ]]> */
   
     

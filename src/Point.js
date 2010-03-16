@@ -1049,6 +1049,24 @@ JXG.Point.prototype.getLabelAnchor = function() {
 };
 
 /**
+ * Set the face of a point element
+ * @param {string} f String which determines the face of the point. See {@link JXG.GeometryElement#face} for a list of available faces.
+ * @see JXG.GeometryElement#face
+ */
+JXG.Point.prototype.face = function(f) {
+    this.setProperty({face:f});
+};
+
+/**
+ * Set the size of a point element
+ * @param {int} s Integer which determines the size of the point.
+ * @see JXG.GeometryElement#size
+ */
+JXG.Point.prototype.size = function(s) {
+    this.setProperty({size:s});
+};
+
+/**
  * Copy the element to the background.
  * @param addToTrace If true the clone will be added to trace control and can be removed using {@link JXG.GeometryElement#clearTrace}.
  * Currently not used, and always true.

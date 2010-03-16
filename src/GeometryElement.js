@@ -1255,6 +1255,89 @@ JXG.GeometryElement.prototype.toJSON = function() {
 };
 
 /**
+ * Set the highlightStrokeColor of an element
+ * @param {String} sColor String which determines the stroke color of an object when its highlighted.
+ * @see JXG.GeometryElement#highlightStrokeColor
+ */
+JXG.GeometryElement.prototype.highlightStrokeColor = function(sColor) {
+    this.setProperty({highlightStrokeColor:sColor});
+};
+
+/**
+ * Set the strokeColor of an element
+ * @param {String} sColor String which determines the stroke color of an object.
+ * @see JXG.GeometryElement#strokeColor
+ */
+JXG.GeometryElement.prototype.strokeColor = function(sColor) {
+    this.setProperty({strokeColor:sColor});
+};
+
+/**
+ * Set the strokeWidth of an element
+ * @param {Integer} width Integer which determines the stroke width of an outline.
+ * @see JXG.GeometryElement#strokeWidth
+ */
+JXG.GeometryElement.prototype.strokeWidth = function(width) {
+    this.setProperty({strokeWidth:width});
+};
+
+
+/**
+ * Set the fillColor of an element
+ * @param {String} fColor String which determines the fill color of an object.
+ * @see JXG.GeometryElement#fillColod
+ */
+JXG.GeometryElement.prototype.fillColor = function(fColor) {
+    this.setProperty({fillColor:fColor});
+};
+
+/**
+ * Set the highlightFillColor of an element
+ * @param {String} fColor String which determines the fill color of an object when its highlighted.
+ * @see JXG.GeometryElement#highlightFillColor
+ */
+JXG.GeometryElement.prototype.highlightFillColor = function(fColor) {
+    this.setProperty({highlightFillColor:fColor});
+};
+
+/**
+ * Set the labelColor of an element
+ * @param {String} lColor String which determines the text color of an object's label.
+ * @see JXG.GeometryElement#labelColor
+ */
+JXG.GeometryElement.prototype.labelColor = function(lColor) {
+    this.setProperty({labelColor:lColor});
+};
+
+/**
+ * Set the dash type of an element
+ * @param {Int} d Integer which determines the way of dashing an element's outline.
+ * @see JXG.GeometryElement#dash
+ */
+JXG.GeometryElement.prototype.dash = function(d) {
+    this.setProperty({dash:d});
+};
+
+/**
+ * Set the visibility of an element
+ * @param {Boolean} v Boolean which determines whether the element is drawn.
+ * @see JXG.GeometryElement#visible
+ */
+JXG.GeometryElement.prototype.visible = function(v) {
+    this.setProperty({visible:v});
+};
+
+/**
+ * Set the shadow of an element
+ * @param {Boolean} v Boolean which determines whether the element has a shadow.
+ * @see JXG.GeometryElement#shadow
+ */
+JXG.GeometryElement.prototype.shadow = function(s) {
+    this.setProperty({shadow:s});
+};
+
+
+/**
   * Setting visPropOld is done in an none object oriented version
   * since otherwise there would be problems in cloneToBackground
   */
