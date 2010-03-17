@@ -12,10 +12,11 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-/*
-var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [2009, 500, 2050, 1]});
-var a = board.createElement('axis', [[0, 250], [1,250]], {});
-*/
+
+JXG.Options.text.defaultDsiplay = 'internal';
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [2009, 500, 2050, 1]});
+var a = brd.createElement('axis', [[0, 250], [1,250]], {});
+
 /*    
 var brd2 = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true});
 var p1 = brd2.create('point', [0,0], {style:6, name:'p1'});
@@ -36,7 +37,7 @@ var p2 = brd2.create('point', [2,0], {name:'p2', style:7,trace:false});
 rot.bindTo(p2);
 brd2.update();  // why update? 
 */
-
+/*
 JXG.Options.text.useASCIIMathML = true;
 JXG.Options.point.face = '<>';
 JXG.Options.point.size = 10;
@@ -46,9 +47,15 @@ var dataArr = [4,1,3,2,5,7,1.5,2];
 //var a = board.createElement('chart', dataArr, {chartStyle:'bar',width:0.6,labels:dataArr});
 var t = board.createElement('point',[7,1]);
 var t2 = board.createElement('text',[1,1,'sum_(i=1)^n (x^i)']);
-
+*/
 
 /* ]]> */
 </script>
+<form><input type="button" value="Export SVG" onClick="document.getElementById('out').value = XMLSerializer().serializeToString(brd.renderer.svgRoot);"> 
+<br>
+<textarea id="out" rows=30 cols=60>
+</textarea>
+</form>
+
 </body>
 </html>
