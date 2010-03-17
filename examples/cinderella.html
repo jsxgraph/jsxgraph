@@ -26,6 +26,12 @@
         <option value='MidpointAndCircumcircle'>Mittelpunkt und Umkreis</option>
         <option value='parallelAndPerpendicular'>Parallele und Senkrechte</option>
         <option value='parallelAndPerpendicular2'>Parallele und Senkrechte mit Eigenschaften</option>
+        <option>---------------------------------------------------</option>
+        <option value='conic1'>Kegelschnitt durch fuenf Punkte</option>
+        <option value='conic2'>Kegelschnitt durch fuenf Punkte mit Eigenschaften</option>
+        <option value='conic3'>Ellipse durch drei Punkte</option>
+        <option value='conic4'>Hyperbel durch drei Punkte</option>
+        <option value='conic5'>Parabel durch einen Punkte und eine Gerade</option>
     </select>
     <input type='button' onclick="JXG.CinderellaReader.readFile('../examples/cdy/unzipped/'+ document.getElementById('filenames').options[document.getElementById('filenames').selectedIndex].value);" value='Datei lesen'/>
     <input type='button' onclick="JXG.CinderellaReader.parseData(board)" value='Datei parsen'/>
@@ -37,6 +43,8 @@
     <script type="text/javascript">
     //<![CDATA[
         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-9,9,18,-5], axis:true, keepaspectratio:true}); // zum Testen
+        //erg = board.construct('A(1,1);B(2,3);C(3,4)');
+        //board.createElement('ellipse',[erg.A,erg.B, erg.C]);
     //]]>
     </script>    
 </body>

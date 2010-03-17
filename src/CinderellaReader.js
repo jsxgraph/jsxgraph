@@ -62,8 +62,8 @@ JXG.CinderellaReader = new function() {
     this.datenAusg = JXG.bind(this.datenAusgeben,this);
     
     this.parseData = function(board) {
-        var dataLines, i, j, k, pCoords, defName, objName, objApperance, border, defPoints, segment, 
-            dashing, defRadius, filling, fillop, circle, erg;
+        var dataLines, i, j, k, pCoords, defName, objName, defPoints, segment, 
+            defRadius, circle, erg;
         dataLines = this.data.split('\n');
         for(i=0; i<dataLines.length; i++) {
             if(dataLines[i].search(/FreePoint.+/) != -1) { // freier Punkt
@@ -75,11 +75,9 @@ JXG.CinderellaReader = new function() {
                 objName = dataLines[i].match(/"[A-Za-z]*"/);
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readPointProperties(dataLines,i);
-                objAppearance = erg[0];
                 i = erg[1];
-                border = erg[2];
                 board.createElement('point',[pCoords[0]/pCoords[2],-1*pCoords[1]/pCoords[2]],
-                                    {name:objName, size:objAppearance[1], fillColor:objAppearance[0], strokeColor:border, labelColor:erg[3]});
+                                    {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
                 
             }
             else if(dataLines[i].search(/Join\(.+/) != -1 || dataLines[i].search(/Segment\(.+/) != -1) { // Gerade oder Strecke
@@ -100,12 +98,10 @@ JXG.CinderellaReader = new function() {
                 objName = dataLines[i].match(/"[A-Za-z]*"/);
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readLineProperties(dataLines,i);
-                objAppearance = erg[0];
-                dashing = erg[1];
                 i = erg[2];
                 board.createElement('line',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
                                     {straightFirst:!segment, straightLast:!segment, name:objName, withLabel:true, 
-                                     strokeColor:objAppearance[0], strokeWidth:objAppearance[2], dash:dashing});
+                                     strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
             }
             else if(dataLines[i].search(/CircleMP.+/) != -1) { // Kreis, durch zwei Punkte definiert
                 defPoints = dataLines[i].slice(dataLines[i].search(/CircleMP.+/)+9);
@@ -118,13 +114,10 @@ JXG.CinderellaReader = new function() {
                 objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
                 objName = objName[0].slice(1, objName[0].length-1); 
                 erg = this.readCircleProperties(dataLines,i);
-                objAppearance = erg[0];
-                filling = erg[1];
-                fillop = erg[2]; 
                 i = erg[3];
                 board.createElement('circle',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
-                                    {name:objName, strokeColor:objAppearance[0], fillColor:filling, fillOpacity:fillop,
-                                     strokeWidth:objAppearance[2]});
+                                    {name:objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
+                                     strokeWidth:erg[0][2]});
             }
             else if(dataLines[i].search(/CircleByFixedRadius.+/) != -1 || dataLines[i].search(/CircleByRadius.+/) != -1) { // Kreis, mit Radius
                 if(dataLines[i].search(/CircleByFixedRadius.+/) != -1) {
@@ -140,13 +133,10 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 defRadius = defPoints[1].slice(0,defPoints[1].search(/\+i\*/));
                 erg = this.readCircleProperties(dataLines,i);
-                objAppearance = erg[0];
-                filling = erg[1];
-                fillop = erg[2]; 
                 i = erg[3];
                 board.createElement('circle',[JXG.getReference(board,defName),Math.sqrt(1*defRadius)],
-                                    {name:objName, strokeColor:objAppearance[0], fillColor:filling, fillOpacity:fillop,
-                                     strokeWidth:objAppearance[2]});
+                                    {name:objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
+                                     strokeWidth:erg[0][2]});
             }
             else if(dataLines[i].search(/PointOnCircle.+/) != -1) { // Gleiter auf Kreis
                 defPoints = dataLines[i].split(':=');
@@ -166,13 +156,11 @@ JXG.CinderellaReader = new function() {
                     defPoints[1] = -1*defPoints[1];
                 }
                 erg = this.readPointProperties(dataLines,i);
-                objAppearance = erg[0];
                 i = erg[1];
-                border = erg[2];
                 circle = JXG.getReference(board,defName);
                 board.createElement('glider',
                         [circle.midpoint.coords.usrCoords[1]+defPoints[0],circle.midpoint.coords.usrCoords[2]-defPoints[1],circle],
-                                {name:objName, size:objAppearance[1], fillColor:objAppearance[0], strokeColor:border, labelColor:erg[3]});
+                                {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
             }
             else if(dataLines[i].search(/PointOnLine.+/) != -1) { // Gleiter auf Geade
                 defPoints = dataLines[i].split(':=');
@@ -187,12 +175,10 @@ JXG.CinderellaReader = new function() {
                     pCoords[j] = 1*(pCoords[j].slice(0,pCoords[j].search(/\+i\*/)));
                 }            
                 erg = this.readPointProperties(dataLines,i);
-                objAppearance = erg[0];
                 i = erg[1];
-                border = erg[2]; 
                 board.createElement('glider',
                         [pCoords[0]/pCoords[2],-1*pCoords[1]/pCoords[2],JXG.getReference(board,defName)],
-                        {name:objName, size:objAppearance[1], fillColor:objAppearance[0], strokeColor:border, labelColor:erg[3]});  
+                        {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});  
             }
             else if(dataLines[i].search(/Mid\(.+/) != -1) { // Mittelpunkt
                 defPoints = dataLines[i].slice(dataLines[i].search(/Mid.+/)+4);
@@ -205,12 +191,10 @@ JXG.CinderellaReader = new function() {
                 objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
                 objName = objName[0].slice(1, objName[0].length-1); 
                 erg = this.readPointProperties(dataLines,i);
-                objAppearance = erg[0];
                 i = erg[1];
-                border = erg[2];
                 board.createElement('midpoint',
                         [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
-                        {name:objName, size:objAppearance[1], fillColor:objAppearance[0], strokeColor:border, labelColor:erg[3]});
+                        {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
             }
             else if(dataLines[i].search(/CircleBy3\(.+/) != -1) { // Umkreis
                 defPoints = dataLines[i].slice(dataLines[i].search(/CircleBy3.+/)+10);
@@ -247,7 +231,7 @@ JXG.CinderellaReader = new function() {
                         [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
                         {name:objName, withLabel:true, strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
             }
-            else if(dataLines[i].search(/Orthogonal\(.+/) != -1) { // Parallele
+            else if(dataLines[i].search(/Orthogonal\(.+/) != -1) { // Normale
                 defPoints = dataLines[i].slice(dataLines[i].search(/Parallel.+/)+11);
                 defPoints = defPoints.split(',');
                 defName = [];
@@ -262,7 +246,65 @@ JXG.CinderellaReader = new function() {
                 board.createElement('normal',
                         [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
                         {name:objName, withLabel:true, strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});                
-            }            
+            }
+            else if(dataLines[i].search(/ConicBy5\(.+/) != -1) { // Kegelschnitt durch 5 Punkte
+                defPoints = dataLines[i].slice(dataLines[i].search(/ConicBy5.+/)+9);
+                defPoints = defPoints.split(',');
+                defName = [];
+                for(j=0; j<defPoints.length; j++) {
+                    defName[j] = defPoints[j].match(/"[A-Za-z]*"/)[0];
+                    defName[j] = defName[j].slice(1,defName[j].length-1);
+                }
+                objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
+                objName = objName[0].slice(1, objName[0].length-1); 
+                erg = this.readCircleProperties(dataLines,i);
+                i = erg[3];
+                board.createElement('conic',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
+                                             JXG.getReference(board,defName[2]),JXG.getReference(board,defName[3]),
+                                             JXG.getReference(board,defName[4])],
+                                    {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
+                                     strokeWidth:erg[0][2]});
+            }
+            else if(dataLines[i].search(/ConicFoci\(.+/) != -1 || dataLines[i].search(/ConicFociH\(.+/) != -1) { // Ellipse mit Brennpunkten und Punkt auf Ellipse resp. eine solche Hyperbel (ConicFociH)
+                defPoints = dataLines[i].split(':=');
+                objName = defPoints[0].match(/"[A-Za-z0-9]*"/)[0];
+                objName = objName.slice(1, objName.length-1);
+                defName = defPoints[1].match(/"[A-Za-z0-9]*"/g);
+                for(j=0; j<defName.length; j++) {
+                    defName[j] = defName[j].slice(1,defName[j].length-1);
+                }
+                erg = this.readCircleProperties(dataLines,i);
+                if(dataLines[i].search(/ConicFociH\(.+/) != -1) {
+                    board.createElement('hyperbola',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
+                                                JXG.getReference(board,defName[2])],
+                                        {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
+                                         strokeWidth:erg[0][2]});
+                }
+                else {
+                    board.createElement('ellipse',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
+                                                JXG.getReference(board,defName[2])],
+                                        {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
+                                         strokeWidth:erg[0][2]});                
+                }
+                i = erg[3];
+            }
+            else if(dataLines[i].search(/ConicParabolaPL\(.+/) != -1) { // Parabel mit Brennpunkt und Leitlinie
+                defPoints = dataLines[i].slice(dataLines[i].search(/ConicParabolaPL.+/)+16);
+                defPoints = defPoints.split(',');
+                defName = [];
+                for(j=0; j<defPoints.length; j++) {
+                    defName[j] = defPoints[j].match(/"[A-Za-z]*"/)[0];
+                    defName[j] = defName[j].slice(1,defName[j].length-1);
+                }
+                objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
+                objName = objName[0].slice(1, objName[0].length-1);
+                erg = this.readCircleProperties(dataLines,i);
+                i = erg[3];                
+                board.createElement('parabola',
+                        [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
+                                        {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
+                                         strokeWidth:erg[0][2]});                 
+            }
         }
         
         return board;
