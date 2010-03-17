@@ -25,9 +25,12 @@
         z = board.create('point', [-7, 2]);
         z = board.create('point', [-2, 2]);
         
-        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast: false});
+        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast: true});
         board.createElement('ticks', [l1,2]); //l1.enableTicks();
 
+        board.createElement('ticks', [l1,[2.5, 7.5]]);
+
+        
         c = board.createElement('circle', [p1, 2], {name:"KK",withLabel:false});
         
         //alert("Adding a label to Circle KK");

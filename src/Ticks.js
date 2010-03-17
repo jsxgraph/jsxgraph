@@ -100,9 +100,10 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, la
      */
     this.equidistant = false;
 
-    if(JXG.isFunction(ticks))
+    if(JXG.isFunction(ticks)) {
         this.ticksFunction = ticks;
-    else if(JXG.isArray(ticks))
+    	throw new Error("Function arguments are no longer supported.");
+    } else if(JXG.isArray(ticks))
         this.fixedTicks = ticks;
     else {
         if(Math.abs(ticks) < JXG.Math.eps)
@@ -207,228 +208,18 @@ JXG.Ticks.prototype.hasPoint = function (x, y) {
 };
 
 /**
- * This function acutally calculates the tick for one direction.
- * @param {JXG.Point} start Determines the start point from where the ticks are drawn.
- * This point is equal to the zero point of the line.
- * @param {JXG.Point} end Point to which the ticks are drawn.
- * @param {int} direction This determines the labels signum.
- * @param {int} over This should be 1 if we aren't allowed to draw ticks beyond the end point (if the line's a segment)
- * and should be zero if ticks should be drawn until the end of drawing area (if the line's a straight line).
- */
-JXG.Ticks.prototype.makeTicks = function(start, end, direction, over) {
-    // distance between start and end points
-    var dx = start.usrCoords[1]-end.usrCoords[1]; // delta x
-    var dy = start.usrCoords[2]-end.usrCoords[2]; // delta y
-
-    // the distance between two ticks
-    var ticksDelta = 0;
-
-    // the length of the axis between start and end
-    var total_length = Math.sqrt(dx*dx + dy*dy);
-
-    if (total_length<=JXG.Math.eps)
-        return;
-
-    // x and y store the coordinates of the current tick to add
-    var x = start.usrCoords[1];
-    var y = start.usrCoords[2];
-
-    // i is the amount of ticks drawn until now.
-    var i = direction/Math.abs(direction);
-    ticksDelta = Math.abs(this.ticksFunction(i));
-
-    // this calculates the difference between the last and the current tick in
-    // x and y direction in user coordinates
-    var deltaX = (ticksDelta * dx) / (total_length);
-    var deltaY = (ticksDelta * dy) / (total_length);
-    
-    // the current distance between two ticks in SCREEN coordinates
-    // this is used to omit ticks, if they are too close to each other
-    // and to add new ticks, if they are too far away from each other.
-    var dist = 0;
-
-    // if we have equidistant ticks do some delta-correction before we enter the main loop
-    if(this.equidistant) {
-        var deltaX_original = deltaX;
-        var deltaY_original = deltaY;
-        var ticksDelta_original = ticksDelta;
-        
-        var zero = new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this.board);
-        var tmpCoords = new JXG.Coords(JXG.COORDS_BY_USER, [deltaX, deltaY], this.board);
-        dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + 
-               (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
-
-        ticksDelta = Math.pow(10,Math.floor(Math.log(ticksDelta)/Math.LN10));
-        deltaX = (ticksDelta * dx) / (total_length);
-        deltaY = (ticksDelta * dy) / (total_length);
-
-        // If necessary, reduce ticksDelta
-        while(dist > 8*this.minTicksDistance*this.minTicksDistance) {
-            ticksDelta /= 10;
-            deltaX = (ticksDelta * dx) / (total_length);
-            deltaY = (ticksDelta * dy) / (total_length);
-
-            tmpCoords = new JXG.Coords(JXG.COORDS_BY_USER, [deltaX, deltaY], this.board);
-            dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + 
-                   (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
-        }
-
-        // If necessary, enlarge ticksDelta
-        var factor = 5;
-        while(dist < this.minTicksDistance*this.minTicksDistance) {
-            ticksDelta *= factor;
-            if (factor==5) { 
-                factor = 2;
-            } else {
-                factor = 5;
-            }
-            deltaX = (ticksDelta * dx) / (total_length);
-            deltaY = (ticksDelta * dy) / (total_length);
-
-            tmpCoords = new JXG.Coords(JXG.COORDS_BY_USER, [deltaX, deltaY], this.board);
-            dist = (tmpCoords.scrCoords[1]-zero.scrCoords[1])*(tmpCoords.scrCoords[1]-zero.scrCoords[1]) + 
-                   (tmpCoords.scrCoords[2]-zero.scrCoords[2])*(tmpCoords.scrCoords[2]-zero.scrCoords[2]);
-        }
-    }
-
-    // position is the current position on the axis
-    var position = direction*ticksDelta;
-
-    // reference to the last added tick coordinates object
-    var lastTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-
-    var newTick = null;
-
-    // minor ticks
-    var minTick = null;
-
-    var labelText = '';
-
-    // temporary label object to create labels for ticks
-    var label = null;
-
-    // run the loop at least one time
-    var first = true;
-
-    // we also need access to the last ticks coordinates
-    // store the old coordinates
-    var lastX = x;
-    var lastY = y;
-
-    // loop abort criteria is:
-    // our next tick is completely out of sight.
-
-    while( first || 
-           (
-             this.board.sgn(deltaX)*(x-over*deltaX) >= this.board.sgn(deltaX)*end.usrCoords[1] && 
-             this.board.sgn(deltaY)*(y-over*deltaY) >= this.board.sgn(deltaY)*end.usrCoords[2]
-            ) 
-         ) {
-        // we're in it, so we have at least one tick and the deltaX/Y correction
-        // for equidistant ticks.
-        first = false;
-
-        // calculate the new ticks coordinates
-        x = x - deltaX;
-        y = y - deltaY;
-
-        // and put them into a coords object
-        newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-
-        // we need to calculate the distance. if we're in equidistant mode, we only need
-        // to calculate it once, otherwise on every walk through the loop.
-        if(!this.equidistant) {
-            dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
-                   (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
-        }
-
-        // if we're in equidistant mode and want to insert additional ticks automatically, whenever
-        // the distance between two ticks is too big, we need to calculate the new deltaX and deltaY.
-        if(this.insertTicks && this.equidistant && (dist > this.maxTicksDistance*this.maxTicksDistance)) {
-            // dist is indeed the distance squared. repeat this, until we fall below the maxTicksDistance limit
-            while (dist > this.maxTicksDistance*this.maxTicksDistance) {
-
-                // half the distance
-                deltaX *= 0.5;
-                deltaY *= 0.5;
-                ticksDelta *= 0.5;
-
-                // move back towards the zeropoint
-                x += deltaX;
-                y += deltaY;
-
-                position = position - direction*ticksDelta;
-
-                // recalculate newTick coordinates and distance
-                newTick = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-                dist = (lastTick.scrCoords[1]-newTick.scrCoords[1])*(lastTick.scrCoords[1]-newTick.scrCoords[1]) +
-                       (lastTick.scrCoords[2]-newTick.scrCoords[2])*(lastTick.scrCoords[2]-newTick.scrCoords[2]);
-            }
-        }
-
-        if(this.equidistant) {
-            for(var z=1; z<this.minorTicks+1; z++) {
-                minTick = new JXG.Coords(JXG.COORDS_BY_USER, [lastX - (deltaX*z)/(this.minorTicks+1) ,lastY - (deltaY*z)/(this.minorTicks+1)], this.board);
-                minTick.major=false;
-                this.ticks.push(minTick);
-                this.labels.push(null);
-            }
-        }
-
-        // if we're not below the minimum distance between two ticks, add the tick to our list
-        if(this.equidistant || (dist > this.minTicksDistance*this.minTicksDistance)) {
-            newTick.major = true;
-
-            this.ticks.push(newTick);
-            labelText = position.toString();
-            if(labelText.length > 5)
-                labelText = position.toPrecision(3).toString();
-            label = new JXG.Text(this.board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], this.id+i+"Label", '', null, true, this.board.options.text.defaultDisplay);
-            label.distanceX = 0;
-            label.distanceY = -10;
-            //label.setCoordinates(newTick);
-            /*label.coords = new JXG.Coords(JXG.COORDS_BY_USER,
-                                    [newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX),
-                                     newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY)],
-                                    this.board);*/
-            label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX), 
-                            newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY));
-            if (this.drawLabels) {
-                label.visProp['visible'] = true; 
-            }
-            else {
-                label.visProp['visible'] = false;
-            }
-            this.labels.push(label);
-            // store the old coordinates
-            lastX = x;
-            lastY = y;
-
-            lastTick = newTick;
-        }
-
-        i = i + direction*1;
-        
-        // if not equidistant, calculate the distance to the next tick
-        if(!this.equidistant) {
-            ticksDelta = Math.abs(this.ticksFunction(i));
-        }
-        
-        // calculate the ticks label text data
-        position = position + direction*ticksDelta;
-
-        // recalculate new delta* only if needed
-        if(!this.equidistant) {
-            deltaX = (ticksDelta * dx) / (total_length);
-            deltaY = (ticksDelta * dy) / (total_length);
-        }
-    }
-};
-
-/**
  * (Re-)calculates the ticks coordinates.
  */
 JXG.Ticks.prototype.calculateTicksCoordinates = function() {
+	
+	/*
+	 * 
+	 * It's all new in here but works pretty well.
+	 * Known bugs:
+	 *   * Special ticks behave oddly. See example ticked_lines.html and drag P2 around P1.
+	 * 
+	 */
+	
 	
 	    // Point 1 of the line
 	var p1 = this.line.point1,
@@ -444,7 +235,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 		// Distance of p1 to the unit point in screen coordinates
 		distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board)),
 		// Distance between two major ticks in user coordinates
-		ticksDelta = 1.,
+		ticksDelta = (this.equidistant ? this.ticksFunction(1) : 1),
 		// This factor is for enlarging ticksDelta and it switches between 5 and 2
 		// Hence, if two major ticks are too close together they'll be expanded to a distance of 5
 		// if they're still too close together, they'll be expanded to a distance of 10 etc
@@ -462,130 +253,46 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 		startTick,
 		// a counter
 		i,
+		// the distance of the tick to p1. Is displayed on the board using a label
+		// for majorTicks
+		tickPosition,
+		// creates a label
+		makeLabel = function(pos, newTick, board, drawLabels, id) {
+			var labelText, label;
+			
+        	labelText = pos.toString();
+        	if(labelText.length > 5)
+            	labelText = pos.toPrecision(3).toString();
+        	
+        	label = new JXG.Text(board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], id+i+"Label", '', null, true, board.options.text.defaultDisplay);
+        	label.distanceX = 0;
+        	label.distanceY = -10;
+        	label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(board.stretchX), 
+                        	newTick.usrCoords[2]*1+label.distanceY/(board.stretchY));
+        	
+        	if (drawLabels) {
+            	label.visProp['visible'] = true; 
+        	} else {
+            	label.visProp['visible'] = false;
+        	}
+        	return label;
+		},
 		
 		respDelta = function(val) {
 			return Math.floor(val) - (Math.floor(val) % ticksDelta);
 		},
 		
-		// the following variables are used later on to define ticks height and slope
+		// the following variables are used to define ticks height and slope
 	    eps = JXG.Math.eps,
 	    slope = -this.line.getSlope(),
 	    distMaj = this.majorHeight/2,
 	    distMin = this.minorHeight/2,
 	    dxMaj = 0, dyMaj = 0,
 	    dxMin = 0, dyMin = 0;
+		
+	// END OF variable declaration
+		
 
-	// adjust distances
-    while(distScr > 4*this.minTicksDistance) {
-        ticksDelta /= 10;
-        deltaX /= 10;
-        deltaY /= 10;
-
-        distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
-    }
-
-    // If necessary, enlarge ticksDelta
-    while(distScr < this.minTicksDistance) {
-        ticksDelta *= factor;
-        deltaX *= factor;
-        deltaY *= factor;
-
-        factor = (factor == 5 ? 2 : 5);
-        distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
-    }
-
-    // calculate start (e1) and end (e2) points
-    // for that first copy existing lines point coordinates...
-    e1 = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1], p1.coords.usrCoords[2]], this.board);
-    e2 = new JXG.Coords(JXG.COORDS_BY_USER, [p2.coords.usrCoords[1], p2.coords.usrCoords[2]], this.board);
-	
-	// ... and calculate the drawn start and end point
-    this.board.renderer.calcStraight(this.line, e1, e2);
-    
-    /*
-     * In the following code comments are sometimes talking about "respect ticksDelta". this could be done
-     * by calculating the modulus of the distance wrt to ticksDelta and add resp. subtract a ticksDelta from that.
-     */
-
-    // p1 is outside the visible area
-    if(this.board.renderer.isSameDirection(p1.coords, e1, e2)) {
-    	// TODO: somehwere in this case there's a bug... :( i'll fix it tomorrow
-    	// Determine the visible direction: Plus or Minus and calculate start and end points
-
-		begin = -respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1)) - 2*ticksDelta;
-		end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
-    	
-    	if(!this.board.renderer.isSameDirection(p1.coords, e1, p2.coords)) {
-    		// Direction: MINUS
-    		dir = -1;
-
-    		begin *= -1;
-    		end *= -1;
-    	}
-    	
-    	// TODO: We should check here if the line is visible at all. If it's not visible but
-    	// close to the viewport there may be drawn some ticks without a line visible.
-    	
-    } else {
-    	// p1 is inside the visible area and direction is PLUS
-
-    	// now we have to calculate the index of the first tick
-        if(!this.line.visProp.straightFirst) {
-        	begin = 0; 
-        } else {
-        	begin = -respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1)) - 2*ticksDelta;
-        }
-        
-        if(!this.line.visProp.straightLast) {
-        	end = distP1P2;
-        } else {
-        	end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
-        }
-    }
-    
-    // initialize storage arrays
-    // ticks stores the ticks coordinates
-    this.ticks = new Array();
-    // labels stores the text to display beside the ticks
-    this.labels = new Array();
-    
-    startTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX/ticksDelta, p1.coords.usrCoords[2] + begin*deltaY/ticksDelta], this.board);
-    tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX/ticksDelta, p1.coords.usrCoords[2] + begin*deltaY/ticksDelta], this.board);
-    
-// TODO: Major and minor ticks seem to work, small bugs here and there. tomorrow: labels and special ticks
-    deltaX /= this.minorTicks+1;
-    deltaY /= this.minorTicks+1;
-    
-    JXG.debug(' tickCoords: ' + tickCoords.usrCoords[1] + ', ' + tickCoords.usrCoords[2]);
-    i = 0;
-    while(startTick.distance(JXG.COORDS_BY_USER, tickCoords) < Math.abs(end - begin) + JXG.Math.eps) {
-    	if(i % (this.minorTicks+1) == 0) {
-    		tickCoords.major = true;
-    	} else {
-    		tickCoords.major = false;
-    	}
-    	
-    	i++;
-
-    	this.ticks.push(tickCoords);
-    	this.labels.push({visProp: {visible: false}});
-    	tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [tickCoords.usrCoords[1] + deltaX, tickCoords.usrCoords[2] + deltaY], this.board);
-    	if(!this.drawZero && tickCoords.distance(JXG.COORDS_BY_USER, p1.coords) <= JXG.Math.eps) {
-    		// zero point is always a major tick. hence, we have to set i = 0;
-    		i++;
-        	tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [tickCoords.usrCoords[1] + deltaX, tickCoords.usrCoords[2] + deltaY], this.board);
-    	}
-    }
-    
-    
-    JXG.debug('test: ' + (-(p1.coords.distance(JXG.COORDS_BY_USER, e1))));
-    JXG.debug('begin: ' + begin);
-    JXG.debug(' tickCoords: ' + tickCoords.usrCoords[1] + ', ' + tickCoords.usrCoords[2]);
-	
-    JXG.debug(' e1: ' + e1.usrCoords[1] + ', ' + e1.usrCoords[2]);
-    JXG.debug(' e2: ' + e2.usrCoords[1] + ', ' + e2.usrCoords[2]);
-    
-    
     // this piece of code used to be in AbstractRenderer.updateAxisTicksInnerLoop
     // and has been moved in here to clean up the renderers code.
     //
@@ -624,59 +331,9 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         dxMin = -distMin/Math.sqrt(1/(slope*slope) + 1);
         dyMin = dxMin/slope;
     }
-    
 
-    JXG.debug('--');
-    this.board.renderer.updateTicks(this, dxMaj, dyMaj, dxMin, dyMin);
-    
-//	JXG.debug(this.id + ", deltaX: " + deltaX);
-//	JXG.debug(this.id + ", deltaY: " + deltaY);
-//	JXG.debug(this.id + ", Screen Distance: " + distScr);
-	
-	
-	
-	return;
-	
-    // in which direction do we have to go?
-    // DIR_PLUS is from line.p1 to line.p2, DIR_MINUS
-    // is the other direction.
-    var DIR_MINUS = 1;
-    var DIR_PLUS = 2;
-    var required = DIR_MINUS + DIR_PLUS;
-
-    // calculate start (c1) and end (c2) points
-    // copy existing lines point coordinates
-    var c1 = new JXG.Coords(JXG.COORDS_BY_USER, [this.line.point1.coords.usrCoords[1], this.line.point1.coords.usrCoords[2]], this.board);
-    var c2 = new JXG.Coords(JXG.COORDS_BY_USER, [this.line.point2.coords.usrCoords[1], this.line.point2.coords.usrCoords[2]], this.board);
-
-    // now let the renderer calculate start and end point of the line on the board, i.e.
-    // intersection points of line with the boards edges in the case that the line is a straight.
-    this.board.renderer.calcStraight(this.line, c1, c2);
-    
-    // point1 is our reference point (where zero lies on the axis)
-    var p1 = this.line.point1.coords;
-
-    // first we have to look at some special cases, i.e. if our zero point on line
-    // is outside the viewable area, there are some ticks we don't need to look at.
-    if(this.board.renderer.isSameDirection(p1, c1, c2)) {
-        if(this.board.renderer.isSameDirection(p1, this.line.point2.coords, c1)) {
-            required = DIR_PLUS;
-            if(p1.distance(JXG.COORDS_BY_USER, c1) > p1.distance(JXG.COORDS_BY_USER, c2))
-                c2 = c1;
-        } else {
-            required = DIR_MINUS;
-            if(p1.distance(JXG.COORDS_BY_USER, c1) < p1.distance(JXG.COORDS_BY_USER, c2))
-                c1 = c2;
-        }
-    } else /* p1 can be seen on the drawing area */ {
-        // make sure, point2 is on that part of the line with positive tick markers on it
-        if(this.board.renderer.isSameDirection(p1, this.line.point2.coords, c1)) {
-            var ct = c1;
-            c1 = c2;
-            c2 = ct;
-        }
-    }
-    
+    // BEGIN: clean up the mess we left from our last run through this function
+    // remove existing ticks
     if(this.ticks != null) {
         for(var j=0; j<this.ticks.length; j++) {
             if(this.labels[j] != null) {
@@ -688,58 +345,27 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     // initialize storage arrays
     // ticks stores the ticks coordinates
     this.ticks = new Array();
+    
     // labels stores the text to display beside the ticks
     this.labels = new Array();
-
-    var label = null;
-    var labelText = '';
-
-    // reference to the newly added tick coordinates object
-    var newTick = null;
-    if(this.ticksFunction != null) {
-        // add tick at p1?
-        if(this.drawZero) {
-            newTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.usrCoords[1], p1.usrCoords[2]], this.board);
-            this.ticks.push(newTick);
-            //label = new JXG.Label(this.board, "0", newTick, this.id+"0Label");
-            label = new JXG.Text(this.board, "0", null, [p1.usrCoords[1], p1.usrCoords[2]], this.id+"0Label", null, null, true, this.board.options.text.defaultDisplay);
-            if (this.drawLabels) {
-                label.visProp['visible'] = true; 
-            }
-            else {
-                label.visProp['visible'] = false;
-            }
-            this.labels.push(label);
-
-            this.ticks[0].major = true;
-        }
-
-        if(DIR_MINUS == (required & DIR_MINUS)) {
-            if(this.line.visProp['straightFirst'])
-                this.makeTicks(p1, c1, -1, 0);
-// the negative part even doesn't exist on this line...
-//            else
-//                this.makeTicks(p1, c1, -1, 1);
-        }
-        if(DIR_PLUS == (required & DIR_PLUS)) {
-            if(this.line.visProp['straightLast'])
-                this.makeTicks(p1, c2, +1, 0);
-            else {
-                this.makeTicks(p1, this.line.point2.coords, +1, 1);
-            }
-        }
-    } else {
+    // END cleanup
+    
+	// calculate start (e1) and end (e2) points
+    // for that first copy existing lines point coordinates...
+    e1 = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1], p1.coords.usrCoords[2]], this.board);
+    e2 = new JXG.Coords(JXG.COORDS_BY_USER, [p2.coords.usrCoords[1], p2.coords.usrCoords[2]], this.board);
+		
+	// ... and calculate the drawn start and end point
+    this.board.renderer.calcStraight(this.line, e1, e2);
+	    
+	if(!this.equidistant) {
         // we have an array of fixed ticks we have to draw
-        if(!this.line.visProp['straightFirst'])
-            c1 = p1;
-        var dx_minus = p1.usrCoords[1]-c1.usrCoords[1];
-        var dy_minus = p1.usrCoords[2]-c1.usrCoords[2];
+        var dx_minus = p1.coords.usrCoords[1]-e1.usrCoords[1];
+        var dy_minus = p1.coords.usrCoords[2]-e1.usrCoords[2];
         var length_minus = Math.sqrt(dx_minus*dx_minus + dy_minus*dy_minus);
 
-        if(!this.line.visProp['straightLast'])
-            c2 = this.line.point2.coords;
-        var dx_plus = p1.usrCoords[1]-c2.usrCoords[1];
-        var dy_plus = p1.usrCoords[2]-c2.usrCoords[2];
+        var dx_plus = p1.coords.usrCoords[1]-e2.usrCoords[1];
+        var dy_plus = p1.coords.usrCoords[2]-e2.usrCoords[2];
         var length_plus = Math.sqrt(dx_plus*dx_plus + dy_plus*dy_plus);
 
         // new ticks coordinates
@@ -757,79 +383,102 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                     ny = Math.abs(dy_plus) * this.fixedTicks[i]/length_plus;
                 }
 
-                newTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.usrCoords[1] + nx, p1.usrCoords[2] + ny], this.board);
-                this.ticks.push(newTick);
+                tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + nx, p1.coords.usrCoords[2] + ny], this.board);
+                this.ticks.push(tickCoords);
                 this.ticks[this.ticks.length-1].major = true;
-                labelText = this.fixedTicks[i].toString();
-                if(labelText.length > 5)
-                    labelText = this.fixedTicks[i].toFixed(3).toString();
-                //label = new JXG.Label(this.board, labelText, newTick, this.id+i+"Label");
-                label = new JXG.Text(this.board, labelText, null, [p1.usrCoords[1] + nx, p1.usrCoords[2] + ny], this.id+i+"Label", null, null, true, this.board.options.text.defaultDisplay);
-                label.distanceX = 0;
-                label.distanceY = -10;
-                //label.setCoordinates(newTick);
-                /*label.coords = new JXG.Coords(JXG.COORDS_BY_USER,
-                             [newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX),
-                              newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY)],
-                             this.board);*/    
-                label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(this.board.stretchX), 
-                                newTick.usrCoords[2]*1+label.distanceY/(this.board.stretchY));
-                if (this.drawLabels) {
-                    label.visProp['visible'] = true; 
-                } else {
-                    label.visProp['visible'] = false;
-                }
-                this.labels.push(label);
+                
+        		this.labels.push(makeLabel(this.fixedTicks[i], tickCoords, this.board, this.drawLabels, this.id));
             }
         }
+        
+        this.board.renderer.updateTicks(this, dxMaj, dyMaj, dxMin, dyMin);
+    	return;
+	} // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
+	
+	// adjust distances
+    while(distScr > 4*this.minTicksDistance) {
+        ticksDelta /= 10;
+        deltaX /= 10;
+        deltaY /= 10;
+
+        distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
     }
 
-    // this piece of code was in AbstractRenderer.updateAxisTicksInnerLoop
-    // and has been moved in here to clean up the code.
-    //
-    // The code above only calculates the position of the ticks. The following code parts
-    // calculate the dx and dy values which make ticks out of this positions, i.e. from the
-    // position (p_x, p_y) calculated above we have to draw a line from
-    // (p_x - dx, py - dy) to (p_x + dx, p_y + dy) to get a tick.
-    var eps = JXG.Math.eps;
-    var slope = -this.line.getSlope();
+    // If necessary, enlarge ticksDelta
+    while(distScr < this.minTicksDistance) {
+        ticksDelta *= factor;
+        deltaX *= factor;
+        deltaY *= factor;
 
-    var distMaj = this.majorHeight/2;
-    var distMin = this.minorHeight/2;
-    var dxMaj = 0; var dyMaj = 0;
-    var dxMin = 0; var dyMin = 0;
+        factor = (factor == 5 ? 2 : 5);
+        distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
+    }
 
-    if(Math.abs(slope) < eps) {
-        // if the slope of the line is (almost) 0, we can set dx and dy directly
-        dxMaj = 0;
-        dyMaj = distMaj;
-        dxMin = 0;
-        dyMin = distMin;
-    } else if((Math.abs(slope) > 1/eps) || (isNaN(slope))) {
-        // if the slope of the line is (theoretically) infinite, we can set dx and dy directly
-        dxMaj = distMaj;
-        dyMaj = 0;
-        dxMin = distMin;
-        dyMin = 0;
+    /*
+     * In the following code comments are sometimes talking about "respect ticksDelta". this could be done
+     * by calculating the modulus of the distance wrt to ticksDelta and add resp. subtract a ticksDelta from that.
+     */
+
+    // p1 is outside the visible area
+    if(this.board.renderer.isSameDirection(p1.coords, e1, e2)) {
+    	// calculate start and end points
+		begin = -respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1)) - 2*ticksDelta;
+		end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
+    	
+    	// TODO: We should check here if the line is visible at all. If it's not visible but
+    	// close to the viewport there may be drawn some ticks without a line visible.
+    	
     } else {
-        // here we have to calculate dx and dy depending on the slope and the length of the tick (dist)
-        // if slope is the line's slope, the tick's slope is given by
-        //
-        //            1          dy
-        //     -   -------  =   ----                 (I)
-        //          slope        dx
-        //
-        // when dist is the length of the tick, using the pythagorean theorem we get
-        //
-        //     dx*dx + dy*dy = dist*dist             (II)
-        //
-        // dissolving (I) by dy and applying that to equation (II) we get the following formulas for dx and dy
-        dxMaj = -distMaj/Math.sqrt(1/(slope*slope) + 1);
-        dyMaj = dxMaj/slope;
-        dxMin = -distMin/Math.sqrt(1/(slope*slope) + 1);
-        dyMin = dxMin/slope;
+    	// p1 is inside the visible area and direction is PLUS
+
+    	// now we have to calculate the index of the first tick
+        if(!this.line.visProp.straightFirst) {
+        	begin = 0; 
+        } else {
+        	begin = -respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1)) - 2*ticksDelta;
+        }
+        
+        if(!this.line.visProp.straightLast) {
+        	end = distP1P2;
+        } else {
+        	end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
+        }
     }
-    this.board.renderer.updateTicks(this,dxMaj,dyMaj,dxMin,dyMin);
+    
+    startTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX/ticksDelta, p1.coords.usrCoords[2] + begin*deltaY/ticksDelta], this.board);
+    tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX/ticksDelta, p1.coords.usrCoords[2] + begin*deltaY/ticksDelta], this.board);
+    
+    deltaX /= this.minorTicks+1;
+    deltaY /= this.minorTicks+1;
+    
+    
+    // After all the precalculations from above here finally comes the tick-production:
+    i = 0;
+    tickPosition = begin;
+    while(startTick.distance(JXG.COORDS_BY_USER, tickCoords) < Math.abs(end - begin) + JXG.Math.eps) {
+    	if(i % (this.minorTicks+1) == 0) {
+    		tickCoords.major = true;
+    		this.labels.push(makeLabel(tickPosition, tickCoords, this.board, this.drawLabels, this.id));
+    		tickPosition += ticksDelta;
+    	} else {
+    		tickCoords.major = false;
+    		this.labels.push(null);
+    	}
+    	
+    	i++;
+
+    	this.ticks.push(tickCoords);
+    	tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [tickCoords.usrCoords[1] + deltaX, tickCoords.usrCoords[2] + deltaY], this.board);
+    	if(!this.drawZero && tickCoords.distance(JXG.COORDS_BY_USER, p1.coords) <= JXG.Math.eps) {
+    		// zero point is always a major tick. hence, we have to set i = 0;
+    		i++;
+    		tickPosition += ticksDelta;
+        	tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [tickCoords.usrCoords[1] + deltaX, tickCoords.usrCoords[2] + deltaY], this.board);
+    	}
+    }
+
+    this.board.renderer.updateTicks(this, dxMaj, dyMaj, dxMin, dyMin);
+	return;
 };
 
 /**
