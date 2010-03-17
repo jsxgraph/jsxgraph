@@ -305,6 +305,43 @@ JXG.CinderellaReader = new function() {
                                         {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
                                          strokeWidth:erg[0][2]});                 
             }
+            else if(dataLines[i].search(/Poly\(.+/) != -1) { // Polygon
+                defPoints = dataLines[i].slice(dataLines[i].search(/Poly.+/)+5);
+                defPoints = defPoints.split(',');
+                defName = [];
+                for(j=0; j<defPoints.length; j++) {
+                    defName[j] = defPoints[j].match(/"[A-Za-z]*"/)[0];
+                    defName[j] = defName[j].slice(1,defName[j].length-1);
+                    defName[j] = JXG.getReference(board,defName[j])
+                }
+                objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
+                objName = objName[0].slice(1, objName[0].length-1);
+                erg = this.readCircleProperties(dataLines,i);
+                i = erg[3];                     
+                poly = board.createElement('polygon', defName,
+                                        {name: objName}); 
+                poly.setProperty({fillColor:erg[1], fillOpacity:erg[2]});
+                for(j=0; j<poly.borders.length; j++) {
+                    poly.borders[j].setProperty({strokeColor:erg[0][0],strokeWidth:erg[0][2]});
+                }
+            } 
+            else if(dataLines[i].search(/Arc\(.+/) != -1) { // Polygon
+                defPoints = dataLines[i].slice(dataLines[i].search(/Arc.+/)+4);
+                defPoints = defPoints.split(',');
+                defName = [];
+                for(j=0; j<defPoints.length; j++) {
+                    defName[j] = defPoints[j].match(/"[A-Za-z]*"/)[0];
+                    defName[j] = defName[j].slice(1,defName[j].length-1);
+                }
+                objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
+                objName = objName[0].slice(1, objName[0].length-1);
+                erg = this.readCircleProperties(dataLines,i);
+                i = erg[3];                     
+                poly = board.createElement('circumcirclearc', [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
+                                                   JXG.getReference(board,defName[2])],
+                                        {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
+                                         strokeWidth:erg[0][2]});
+            } 
         }
         
         return board;
@@ -370,14 +407,14 @@ JXG.CinderellaReader = new function() {
         objAppearance[0] = this.calculateColor(objAppearance[0]); 
         do {
             i = i+1;
-        } while(dataLines[i].search(/colorfill/) == -1);               
-        filling = dataLines[i].match(/"[0-9]"/)[0];
+        } while(dataLines[i].search(/colorfill/) == -1);          
+        filling = dataLines[i].match(/"[0-9]*"/)[0];
         filling = filling.slice(1,filling.length-1);
         filling = this.calculateColor(filling);
         do {
             i = i+1;
         } while(dataLines[i].search(/visibilityfill/) == -1); 
-        fillop = dataLines[i].match(/"[0-9]"/)[0];
+        fillop = dataLines[i].match(/"[0-9]*"/)[0];
         fillop = fillop.slice(1,fillop.length-1);
         fillop = 1*fillop/10;  
         return [objAppearance,filling, fillop,i];

@@ -111,7 +111,9 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
     if(withLines) {
         for(var i=0; i<this.vertices.length-1; i++) {
             /* create the borderlines */
-            l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name, lineLabels, this.layer); // keine Labels?
+            l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name, lineLabels, this.layer+1); // keine Labels?
+                                                                                                                        // Layer +1, da sonst die Linien  teils
+                                                                                                                        // hinter dem Polygon verschwinden
             l.setStraight(false,false); // Strecke
             this.borders[i] = l;
             l.parentPolygon = this;
