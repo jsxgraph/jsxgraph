@@ -422,8 +422,17 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     // p1 is outside the visible area
     if(this.board.renderer.isSameDirection(p1.coords, e1, e2)) {
     	// calculate start and end points
-		begin = -respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1)) - 2*ticksDelta;
+		begin = respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1));
 		end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
+		
+		if(this.board.renderer.isSameDirection(p1.coords, p2.coords, e1)) {
+			begin -=  2*ticksDelta;
+			JXG.debug('this case');
+		} else {
+			JXG.debug('that case');
+			end = -1*end;
+			begin = -1*begin - 2*ticksDelta;
+		}
     	
     	// TODO: We should check here if the line is visible at all. If it's not visible but
     	// close to the viewport there may be drawn some ticks without a line visible.
@@ -450,6 +459,9 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     
     deltaX /= this.minorTicks+1;
     deltaY /= this.minorTicks+1;
+    
+//    JXG.debug('begin: ' + begin + '; e1: ' + e1.usrCoords[1] + ', ' + e1.usrCoords[2]);
+//    JXG.debug('end: ' + end + '; e2: ' + e2.usrCoords[1] + ', ' + e2.usrCoords[2]);
     
     
     // After all the precalculations from above here finally comes the tick-production:
