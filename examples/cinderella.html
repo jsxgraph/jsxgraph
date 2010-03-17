@@ -1,0 +1,44 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/CinderellaReader.js"></script>
+</head>
+<body>
+    <select id="filenames">
+        <option value='justPoints'>Punkte</option>
+        <option>---------------------------------------------------</option>
+        <option value='justLines'>Geraden und Segmente</option>
+        <option value='linesWithProperties'>Geraden mit Eigenschaften</option>
+        <option value='gliderOnLine'>Geradengleiter</option>
+        <option>---------------------------------------------------</option>
+        <option value='circles1'>Kreise, definiert durch Mittelpunkt und weiteren Punkt</option>
+        <option value='circles2'>Kreise, definiert durch Mittelpunkt und Radius</option>
+        <option value='circles3'>Kreise, definiert durch Mittelpunkt und festen Radius</option>
+        <option value='justCircles'>verschiedene Kreise</option>
+        <option value='circlesWithPropertiesAndGlider'>Kreise mit Eigenschaften + Glider</option>
+        <option value='gliderOnCircle'>Kreisgleiter</option>
+        <option value='gliderOnCircle2'>Kreisgleiter mit Eigenschaften</option>
+        <option value='gliderOnCircle3'>Kreisgleiter mit Eigenschaften (2)</option>
+        <option>---------------------------------------------------</option>
+        <option value='MidpointAndCircumcircle'>Mittelpunkt und Umkreis</option>
+        <option value='parallelAndPerpendicular'>Parallele und Senkrechte</option>
+        <option value='parallelAndPerpendicular2'>Parallele und Senkrechte mit Eigenschaften</option>
+    </select>
+    <input type='button' onclick="JXG.CinderellaReader.readFile('../examples/cdy/unzipped/'+ document.getElementById('filenames').options[document.getElementById('filenames').selectedIndex].value);" value='Datei lesen'/>
+    <input type='button' onclick="JXG.CinderellaReader.parseData(board)" value='Datei parsen'/>
+    <h2>Reading Cinderella Files</h2>
+    <div style="width:800px">
+        <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+    </div>
+    <div id="debug" style="display:block;"></div>   
+    <script type="text/javascript">
+    //<![CDATA[
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-9,9,18,-5], axis:true, keepaspectratio:true}); // zum Testen
+    //]]>
+    </script>    
+</body>
+</html>
+
