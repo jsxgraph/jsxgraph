@@ -427,9 +427,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 		
 		if(this.board.renderer.isSameDirection(p1.coords, p2.coords, e1)) {
 			begin -=  2*ticksDelta;
-			JXG.debug('this case');
 		} else {
-			JXG.debug('that case');
 			end = -1*end;
 			begin = -1*begin - 2*ticksDelta;
 		}
