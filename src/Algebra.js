@@ -148,6 +148,8 @@ JXG.Algebra.prototype.rad = function(A,B,C) {
     abx = ax - bx;
     aby = ay - by;
     
+    return Math.atan2(cby-aby,cbx-abx);
+/*
     sp = cbx*abx + cby*aby;               // scalar product of c-b and a-b
     cp = abx*cby - aby*cbx;               // cross product of a-b c-b
     l1 = Math.sqrt(abx*abx + aby*aby);    // length of a-b
@@ -159,6 +161,7 @@ JXG.Algebra.prototype.rad = function(A,B,C) {
         phiacos = -1;
     }
     phicos = Math.acos(phiacos); // calculate the angle
+*/    
         /*
          * The calculated angle may not be the right angle because of the calculation of acos 
         real     | quadrant  | quadrant | algebraic sign 
@@ -179,12 +182,14 @@ JXG.Algebra.prototype.rad = function(A,B,C) {
            4.    |   1.      |   +            |   - 
          So always the negative angle of phicos has to be taken if the product is negative.
          */
+/*         
     if ((Math.sin(phicos) * cp) < 0) {
         phi = 6.2831853071795862 - phicos; // 2 * Math.PI - phicos;
     } else {
         phi = phicos;
     }
     return phi;
+*/    
 };
 
 /**

@@ -253,12 +253,15 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
         bx = screenCoords2.scrCoords[1];
         by = screenCoords2.scrCoords[2];
         //beta;                                              // ???
+        /*
         sgn = (bx-ax>=0)?1:-1;
         if (Math.abs(bx-ax)>0.0000001) {
             beta = Math.atan2(by-ay,bx-ax)+ ((sgn<0)?Math.PI:0);  
         } else {
             beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
         }
+        */
+        beta = Math.atan2(by-ay,bx-ax);
         x = 250; //ax;
         y = 256; //ay;//+el.image.size[1]*0.5;
         m = [

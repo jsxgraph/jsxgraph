@@ -420,12 +420,15 @@ JXG.Turtle.prototype.lookTo = function(target) {
         var by = target[1];
         var beta; 
         // Rotate by the slope of the line [this.pos, target]
+        /*
         var sgn = (bx-ax>0)?1:-1;
         if (Math.abs(bx-ax)>0.0000001) {
             beta = Math.atan2(by-ay,bx-ax)+((sgn<0)?Math.PI:0);  
         } else {
             beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
         }
+        */
+        beta = Math.atan2(by-ay,bx-ax);
         this.right(this.dir-(beta*180/Math.PI));
     } else if (JXG.isNumber(target)) {
         this.right(this.dir-(target));

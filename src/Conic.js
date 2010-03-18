@@ -374,7 +374,7 @@ JXG.createParabola = function(board, parents, atts) {
             ],{visible:false, name:'', withLabel:false});
 
     var transformFunc = function() {
-            var beta = Math.atan(l.getSlope()),
+            var beta = Math.atan(l.getSlope()),                
                 x = (M.X()+F1.X())*0.5,
                 y = (M.Y()+F1.Y())*0.5;
             beta += (F1.Y()-M.Y()<0 || (F1.Y()==M.Y() && F1.X()>M.X()) ) ? Math.PI : 0;
