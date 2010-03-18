@@ -63,7 +63,7 @@ JXG.CinderellaReader = new function() {
     
     this.parseData = function(board) {
         var dataLines, i, j, k, pCoords, defName, objName, defPoints, segment, 
-            defRadius, circle, erg, poly, point, objName2, erg2, lines;
+            defRadius, circle, erg, poly, point, objName2, erg2, lines, point2;
         dataLines = this.data.split('\n');
         for(i=0; i<dataLines.length; i++) {
             if(dataLines[i].search(/FreePoint.+/) != -1) { // freier Punkt
@@ -361,6 +361,27 @@ JXG.CinderellaReader = new function() {
                 i = erg[2];
                 board.createElement('line',[j,point],
                                     {name:objName, withLabel:true, strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
+            }
+            else if(dataLines[i].search(/:=Compass\(.+/) != -1) { // mit Zirkel definierter Kreis
+                defPoints = dataLines[i].slice(dataLines[i].search(/Compass.+/)+8);
+                defPoints = defPoints.split(',');
+                defName = [];
+                for(j=0; j<defPoints.length; j++) {
+                    defName[j] = defPoints[j].match(/"[A-Za-z]*"/)[0];
+                    defName[j] = defName[j].slice(1,defName[j].length-1);
+                }
+                objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
+                objName = objName[0].slice(1, objName[0].length-1);
+                erg = this.readCircleProperties(dataLines,i);
+                i = erg[3];   
+                defRadius = (function(el, b) { return function() { 
+                                            return JXG.getReference(b,el[0]).Dist(JXG.getReference(b,el[1])); 
+                                       }}
+                          )(defName, board);                
+                board.createElement('circle',
+                                    [JXG.getReference(board,defName[2]), defRadius],
+                                    {name:objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
+                                     strokeWidth:erg[0][2]});
             }
             else if(dataLines[i].search(/AngularBisector\(.+/) != -1) { // Winkelhalbierende
                 defPoints = dataLines[i].split(":=");
