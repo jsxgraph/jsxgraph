@@ -23,7 +23,7 @@ var l = board.create('line', [A,B], {strokeColor:'black', dash:2});
 c = board.create('parabola',[C,l,function(){return -s.Value();},function(){return s.Value();}]);
 
 //c = board.create('hyperbola',[A,B,C,function(){return -s.Value();},function(){return s.Value();}]);
-//c = board.create('ellipse',[A,B,C,function(){return -s.Value();},function(){return s.Value();}]);
+c = board.create('ellipse',[A,B,C,function(){return -s.Value();},function(){return s.Value();}]);
 var po = board.create('point', [2,1], {style:6});
 var t = board.create('polar',[c,po]);
 

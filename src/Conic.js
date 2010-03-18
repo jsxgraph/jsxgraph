@@ -131,27 +131,33 @@ JXG.createEllipse = function(board, parents, atts) {
 
     var polarForm = function(phi,suspendUpdate) {
                 var a = majorAxis()*0.5,
+                    aa = a*a,
                     e = F[1].Dist(F[0])*0.5,
-                    b = Math.sqrt(a*a-e*e), transformMat = [[1,0,0],[0,1,0],[0,0,1]];
+                    bb = aa-e*e,
+                    b = Math.sqrt(bb), 
+                    transformMat = [[1,0,0],[0,1,0],[0,0,1]],
+                    mx, my;
                     
                 if (!suspendUpdate) {
                     rotationMatrix = transformFunc();
+                    mx = M.X();
+                    my = M.Y();
                     transformMat[0][0] = rotationMatrix[0][0];
                     transformMat[0][1] = 0.0;
                     transformMat[0][2] = 0.0;
-                    transformMat[1][0] = M.X()*(1-rotationMatrix[1][1])+M.Y()*rotationMatrix[1][2];
+                    transformMat[1][0] = mx*(1-rotationMatrix[1][1])+my*rotationMatrix[1][2];
                     transformMat[1][1] = rotationMatrix[1][1];
                     transformMat[1][2] = rotationMatrix[2][1];
-                    transformMat[2][0] = M.Y()*(1-rotationMatrix[1][1])-M.X()*rotationMatrix[1][2];
+                    transformMat[2][0] = my*(1-rotationMatrix[1][1])-mx*rotationMatrix[1][2];
                     transformMat[2][1] = rotationMatrix[1][2];
                     transformMat[2][2] = rotationMatrix[2][2];
                     curve.quadraticform = 
                         JXG.Math.matMatMult(JXG.Math.Matrix.transpose(transformMat),
                         JXG.Math.matMatMult(
                             [
-                                [-1+M.X()*M.X()/(a*a)+M.Y()*M.Y()/(b*b), -M.X()/(a*a) , -M.Y()/(b*b)],
-                                [-M.X()/(a*a)                          ,      1/(a*a) ,  0          ],
-                                [-M.Y()/(b*b)                          ,            0 ,  1/(b*b)]
+                                [-1+mx*mx/(a*a)+my*my/bb, -mx/aa , -mx/bb],
+                                [-mx/aa                 ,   1/aa ,  0    ],
+                                [-my/bb                 ,      0 ,  1/bb ]
                             ],
                         transformMat)); 
                 }
@@ -270,27 +276,33 @@ JXG.createHyperbola = function(board, parents, atts) {
     */
     var polarForm = function(phi,suspendUpdate) {
                 var a = majorAxis()*0.5,
+                    aa = a*a,
                     e = F[1].Dist(F[0])*0.5,
-                    b = Math.sqrt(-a*a+e*e), transformMat = [[1,0,0],[0,1,0],[0,0,1]];
+                    b = Math.sqrt(-a*a+e*e), 
+                    bb = b*b,
+                    transformMat = [[1,0,0],[0,1,0],[0,0,1]],
+                    mx, my;
                     
                 if (!suspendUpdate) {
                     rotationMatrix = transformFunc();
+                    mx = M.X();
+                    my = M.Y();
                     transformMat[0][0] = rotationMatrix[0][0];
                     transformMat[0][1] = 0.0;
                     transformMat[0][2] = 0.0;
-                    transformMat[1][0] = M.X()*(1-rotationMatrix[1][1])+M.Y()*rotationMatrix[1][2];
+                    transformMat[1][0] = mx*(1-rotationMatrix[1][1])+my*rotationMatrix[1][2];
                     transformMat[1][1] = rotationMatrix[1][1];
                     transformMat[1][2] = rotationMatrix[2][1];
-                    transformMat[2][0] = M.Y()*(1-rotationMatrix[1][1])-M.X()*rotationMatrix[1][2];
+                    transformMat[2][0] = my*(1-rotationMatrix[1][1])-mx*rotationMatrix[1][2];
                     transformMat[2][1] = rotationMatrix[1][2];
                     transformMat[2][2] = rotationMatrix[2][2];
                     curve.quadraticform = 
                         JXG.Math.matMatMult(JXG.Math.Matrix.transpose(transformMat),
                         JXG.Math.matMatMult(
                             [
-                                [-1+M.X()*M.X()/(a*a)+M.Y()*M.Y()/(b*b), -M.X()/(a*a) , M.Y()/(b*b)],
-                                [-M.X()/(a*a)                          ,      1/(a*a) ,  0          ],
-                                [M.Y()/(b*b)                          ,            0 ,  -1/(b*b)   ]
+                                [-1+mx*mx/aa+my*my/bb, -mx/aa , my/bb],
+                                [-mx/aa              ,    1/aa,  0   ],
+                                [my/bb               ,      0 , -1/bb]
                             ],
                         transformMat)); 
                 }
