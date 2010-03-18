@@ -63,7 +63,7 @@ JXG.CinderellaReader = new function() {
     
     this.parseData = function(board) {
         var dataLines, i, j, k, pCoords, defName, objName, defPoints, segment, 
-            defRadius, circle, erg, poly, point;
+            defRadius, circle, erg, poly, point, objName2, erg2, lines;
         dataLines = this.data.split('\n');
         for(i=0; i<dataLines.length; i++) {
             if(dataLines[i].search(/FreePoint.+/) != -1) { // freier Punkt
@@ -361,6 +361,50 @@ JXG.CinderellaReader = new function() {
                 i = erg[2];
                 board.createElement('line',[j,point],
                                     {name:objName, withLabel:true, strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
+            }
+            else if(dataLines[i].search(/AngularBisector\(.+/) != -1) { // Winkelhalbierende
+                defPoints = dataLines[i].split(":=");
+                defPoints[0] = defPoints[0].split(',');
+                if(defPoints[0][0] == '{null') {
+                    objName = '';
+                }
+                else {
+                    objName = defPoints[0][0].slice(2,defPoints[0][0].length-1); // { muss mit weg
+                }
+                if(defPoints[0][1] == 'null') {
+                    objName2 = '';
+                }
+                else {
+                    objName2 = defPoints[0][1].slice(1,defPoints[0][1].length-1);
+                }
+                defPoints[1] = defPoints[1].match(/"[A-Za-z0-9]*"/g);
+                defName = [];
+                defName[0] = defPoints[1][0].slice(1,defPoints[1][0].length-1);
+                defName[1] = defPoints[1][1].slice(1,defPoints[1][1].length-1);
+                erg = this.readLineProperties(dataLines,i);
+                i = erg[2];
+                if(!(objName == '' || objName2 == '')) {
+                    erg2 = this.readLineProperties(dataLines,i);
+                    i = erg[2];
+                }
+                lines = board.createElement('bisectorlines',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
+                                           {name:[objName2,objName], withLabel:true})
+                if(objName == '') {
+                    lines.line2.setProperty({visible:false});
+                    lines.line1.setProperty({strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
+                }
+                else {
+                    if(objName2 == '') {
+                        lines.line1.setProperty({visible:false});
+                        lines.line2.setProperty({strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
+                    }
+                    else {
+                        lines.line1.setProperty({strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
+                        lines.line2.setProperty({strokeColor:erg2[0][0], strokeWidth:erg2[0][2], dash:erg2[1]});
+                    }                
+                    
+                }
+
             }
         }
         

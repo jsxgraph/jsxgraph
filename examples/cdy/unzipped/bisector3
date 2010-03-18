@@ -1,5 +1,5 @@
 //Cindy-2.0.17 build 779 (2007/02/14 21:22)DEMO
-//Created on: 18.03.2010 11:31:26
+//Created on: 18.03.2010 15:08:05
 //For: ausstellung
 //DO NOT EDIT --- MACHINE GENERATED CODE
 Geometry:=Euclidean;
@@ -78,8 +78,8 @@ Geometry:=Euclidean;
 "b".setAttribute("lineborder","false");
 "b".setLabelPos(3,3,1,false,0.0,0.2,1);
 {"c",null,[1.0+i*0.0,0.0+i*0.0,0.0+i*0.0]}:=AngularBisector("a","b","B");
-"c".setAppearance(3,5,1,0,0,9,true,false);
-"c".setAttribute("color","3");
+"c".setAppearance(12,5,2,0,0,9,true,false);
+"c".setAttribute("color","12");
 "c".setAttribute("visibility","9");
 "c".setAttribute("drawtrace","false");
 "c".setAttribute("tracelength","100");
@@ -87,10 +87,10 @@ Geometry:=Euclidean;
 "c".setAttribute("tracedim","1.0");
 "c".setAttribute("render","false");
 "c".setAttribute("labeled","true");
-"c".setAttribute("linesize","1");
+"c".setAttribute("linesize","2");
 "c".setAttribute("overlap","0");
 "c".setAttribute("clipline","0");
-"c".setAttribute("linedashing","false");
+"c".setAttribute("linedashing","true");
 "c".setAttribute("lineborder","false");
 "c".setLabelPos(3,3,1,false,0.0,0.2,1);
 Geometry:=Euclidean;
