@@ -63,7 +63,7 @@ JXG.CinderellaReader = new function() {
     
     this.parseData = function(board) {
         var dataLines, i, j, k, pCoords, defName, objName, defPoints, segment, 
-            defRadius, circle, erg;
+            defRadius, circle, erg, poly, point;
         dataLines = this.data.split('\n');
         for(i=0; i<dataLines.length; i++) {
             if(dataLines[i].search(/FreePoint.+/) != -1) { // freier Punkt
@@ -342,6 +342,26 @@ JXG.CinderellaReader = new function() {
                                         {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
                                          strokeWidth:erg[0][2]});
             } 
+            else if(dataLines[i].search(/Through\(.+/) != -1) { // durch einen Punkt definierte Gerade
+                defPoints = dataLines[i].slice(dataLines[i].search(/Through.+/)+8);
+                defName = defPoints.match(/"[A-Za-z]*"/)[0];
+                defName = defName.slice(1,defName.length-1);
+                pCoords = defPoints.match(/\[.*\]/)[0];
+                pCoords = pCoords.split(',');
+                pCoords[0] = 1*(pCoords[0].slice(1,pCoords[0].search(/\+i\*/))); // Klammer mit wegschneiden
+                for(j=1; j<pCoords.length; j++) {
+                    pCoords[j] = 1*(pCoords[j].slice(0,pCoords[j].search(/\+i\*/)));
+                } 
+                objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
+                objName = objName[0].slice(1, objName[0].length-1);
+                
+                j = JXG.getReference(board,defName);
+                point = board.createElement('point',[j.coords.usrCoords[1]+1*pCoords[0],j.coords.usrCoords[2]+1*pCoords[1]],{visible:false});
+                erg = this.readLineProperties(dataLines,i);
+                i = erg[2];
+                board.createElement('line',[j,point],
+                                    {name:objName, withLabel:true, strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
+            }
         }
         
         return board;
