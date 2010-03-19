@@ -118,6 +118,11 @@ this.stringToXMLTree = function(fileStr) {
 
 this.parseString = function(fileStr, board, format, isString) {
     var tree;
+    if (format.toLowerCase()=='cdy') {
+        fileStr = JXG.CinderellaReader.readCinderella(fileStr, board);
+        board.afterLoad();
+        return;
+    }
     
     // fileStr is a string containing the XML code of the construction
     if (format.toLowerCase()=='geonext') {
@@ -129,11 +134,6 @@ this.parseString = function(fileStr, board, format, isString) {
     }
     if (format.toLowerCase()=='intergeo') {
     	fileStr = JXG.IntergeoReader.prepareString(fileStr);
-    }
-    if (format.toLowerCase()=='cdy') {
-        fileStr = JXG.CinderellaReader.readCinderella(fileStr, board);
-        board.afterLoad();
-        return;
     }
     board.xmlString = fileStr;
     var tree = this.stringToXMLTree(fileStr);
@@ -147,23 +147,20 @@ this.parseString = function(fileStr, board, format, isString) {
  * @param {Object} board board object
  */
 this.readElements = function(tree, board, format) {
-    if (format.toLowerCase()=='cinderella') {
-         JXG.CinderellaReader.readCinderella(board);
-    } else {
-        if (format.toLowerCase()=='geonext') {
-            board.suspendUpdate();
-            if(tree.getElementsByTagName('GEONEXT').length != 0) {
-                JXG.GeonextReader.readGeonext(tree, board);
-            }
-            board.unsuspendUpdate();
+    if (format.toLowerCase()=='geonext') {
+        board.suspendUpdate();
+        if(tree.getElementsByTagName('GEONEXT').length != 0) {
+            JXG.GeonextReader.readGeonext(tree, board);
         }
-        else if(tree.getElementsByTagName('geogebra').length != 0) {
-            JXG.GeogebraReader.readGeogebra(tree, board);
-        }
-        else if(format.toLowerCase()=='intergeo') {
-            JXG.IntergeoReader.readIntergeo(tree, board);
-        }
+        board.unsuspendUpdate();
     }
+    else if(tree.getElementsByTagName('geogebra').length != 0) {
+        JXG.GeogebraReader.readGeogebra(tree, board);
+    }
+    else if(format.toLowerCase()=='intergeo') {
+        JXG.IntergeoReader.readIntergeo(tree, board);
+    }
+    // cdy is already parsed in parseString()
     board.afterLoad();
 }; // end: this.readElements()
 

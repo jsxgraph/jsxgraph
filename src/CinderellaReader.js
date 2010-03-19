@@ -589,9 +589,10 @@ JXG.CinderellaReader = new function() {
     }
     
 	this.prepareString = function(fileStr) {
+        var i, bA = [], len;
   		if (fileStr.indexOf('<') != 0) {
-			var bA = [];
-		    for (i=0;i<fileStr.length;i++)
+            len = fileStr.length;
+		    for (i=0;i<len;i++)
 		    	bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
 		      	// Unzip
 		      	fileStr = (new JXG.Util.Unzip(bA)).unzip()[0][0];	   
@@ -603,7 +604,9 @@ JXG.CinderellaReader = new function() {
 	
 	this.readCinderella = function(fileStr, board){
 		this.data = this.prepareString(fileStr);
+        board.suspendUpdate();
 		this.parseData(board);
+        board.unsuspendUpdate();
 	}
 
 };

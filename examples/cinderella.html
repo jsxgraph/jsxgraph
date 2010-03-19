@@ -53,18 +53,29 @@
         <option value='circleCircleIntersection2'>Schnitte von Kreisen II</option>
     </select>
     <input type='button' onclick="JXG.CinderellaReader.readFile('../examples/cdy/unzipped/'+ document.getElementById('filenames').options[document.getElementById('filenames').selectedIndex].value);" value='Datei lesen'/>
-    <input type='button' onclick="JXG.JSXGraph.loadBoardFromFile('jxgbox','../examples/cdy/'+ document.getElementById('filenames').options[document.getElementById('filenames').selectedIndex].value+'.cdy','cdy');" value='komprimierte Datei lesen'/>
     <input type='button' onclick="JXG.CinderellaReader.parseData(board)" value='Datei parsen'/>
+    <input type='button' onclick="loadFile('filenames','cdy');" value='komprimierte Datei lesen'/>
     <h2>Reading Cinderella Files</h2>
-    <div style="width:800px">
-        <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
-    </div>
+    <div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
     <div id="debug" style="display:block;"></div>   
     <script type="text/javascript">
     //<![CDATA[
-        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-9,9,18,-5], axis:true, keepaspectratio:true}); // zum Testen
+        //board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-9,9,18,-5], axis:true, keepaspectratio:true}); // zum Testen
         //erg = board.construct('A(1,1);B(2,3);C(3,4)');
         //board.createElement('ellipse',[erg.A,erg.B, erg.C]);
+  var board;
+  function loadFile(bspname, format) {
+    document.getElementById('jxgbox').innerHTML = '';
+    var value = 'cdy/'+document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value+'.cdy';
+    document.getElementById('debug').innerHTML = "<b>Debug (lade "+ value +" ...):</b>";
+
+    if(typeof board != 'undefined') JXG.JSXGraph.freeBoard(board);
+
+    document.title = "JSXGraph example: "+ document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
+    board = JXG.JSXGraph.loadBoardFromFile('jxgbox',value, format);
+    board.setBoundingBox([-9,9,18,-5],true);
+    
+  }     
     //]]>
     </script>    
 </body>
