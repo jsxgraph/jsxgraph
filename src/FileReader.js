@@ -128,6 +128,11 @@ this.parseString = function(fileStr, board, format, isString) {
     if (format.toLowerCase()=='intergeo') {
     	fileStr = JXG.IntergeoReader.prepareString(fileStr);
     }
+    if (format.toLowerCase()=='cdy') {
+        fileStr = JXG.CinderellaReader.readCinderella(fileStr, board);
+        board.afterLoad();
+        return;
+    }
     board.xmlString = fileStr;
     var tree = this.stringToXMLTree(fileStr);
     // Now, we can walk through the tree

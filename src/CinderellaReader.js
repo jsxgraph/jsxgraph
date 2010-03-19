@@ -587,4 +587,23 @@ JXG.CinderellaReader = new function() {
         }
         return [objAppearance,dashing,i];
     }
+    
+	this.prepareString = function(fileStr) {
+  		if (fileStr.indexOf('<') != 0) {
+			var bA = [];
+		    for (i=0;i<fileStr.length;i++)
+		    	bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
+		      	// Unzip
+		      	fileStr = (new JXG.Util.Unzip(bA)).unzip()[0][0];	   
+		}
+		//fileStr = JXG.Util.utf8Decode(fileStr);
+		//fileStr = JXG.GeogebraReader.utf8replace(fileStr);
+		return fileStr;
+	};
+	
+	this.readCinderella = function(fileStr, board){
+		this.data = this.prepareString(fileStr);
+		this.parseData(board);
+	}
+
 };
