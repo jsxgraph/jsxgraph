@@ -53,6 +53,7 @@
         <option value='circleCircleIntersection2'>Schnitte von Kreisen II</option>
     </select>
     <input type='button' onclick="JXG.CinderellaReader.readFile('../examples/cdy/unzipped/'+ document.getElementById('filenames').options[document.getElementById('filenames').selectedIndex].value);" value='Datei lesen'/>
+    <input type='button' onclick="JXG.JSXGraph.loadBoardFromFile('jxgbox','../examples/cdy/'+ document.getElementById('filenames').options[document.getElementById('filenames').selectedIndex].value+'.cdy','cdy');" value='komprimierte Datei lesen'/>
     <input type='button' onclick="JXG.CinderellaReader.parseData(board)" value='Datei parsen'/>
     <h2>Reading Cinderella Files</h2>
     <div style="width:800px">
