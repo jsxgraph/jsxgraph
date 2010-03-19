@@ -2698,20 +2698,21 @@ this.utf8replace = function(exp) {
  * @return {String} content of geogebra.xml-file if archive was passed in
  */
 this.prepareString = function(fileStr, isString) {
-  // if isString is true, fileStr is a base64 encoded string, otherwise it's the zipped file
-  if(isString)
-    fileStr = JXG.Util.Base64.decode(fileStr, true);
-  else
-    if (fileStr.indexOf('<') != 0) {
-      var bA = [];
-      for (i=0;i<fileStr.length;i++)
-        bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
-      // Unzip
-      fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");
+    var i, bA, len;
+    // if isString is true, fileStr is a base64 encoded string, otherwise it's the zipped file
+    if(isString)
+        fileStr = JXG.Util.Base64.decode(fileStr, true);
+    else if (fileStr.indexOf('<') != 0) {
+        bA = [];
+        len = fileStr.length;
+        for (i=0;i<len;i++)
+            bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
+        // Unzip
+        fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");
     }
-  fileStr = JXG.Util.utf8Decode(fileStr);
-  fileStr = JXG.GeogebraReader.utf8replace(fileStr);
-  return fileStr;
+    fileStr = JXG.Util.utf8Decode(fileStr);
+    fileStr = JXG.GeogebraReader.utf8replace(fileStr);
+    return fileStr;
 };
 
 /**

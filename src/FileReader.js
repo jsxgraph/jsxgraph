@@ -117,6 +117,8 @@ this.stringToXMLTree = function(fileStr) {
 };
 
 this.parseString = function(fileStr, board, format, isString) {
+    var tree;
+    
     // fileStr is a string containing the XML code of the construction
     if (format.toLowerCase()=='geonext') {
         fileStr = JXG.GeonextReader.prepareString(fileStr);
@@ -145,18 +147,22 @@ this.parseString = function(fileStr, board, format, isString) {
  * @param {Object} board board object
  */
 this.readElements = function(tree, board, format) {
-    if (format.toLowerCase()=='geonext') {
-        board.suspendUpdate();
-        if(tree.getElementsByTagName('GEONEXT').length != 0) {
-            JXG.GeonextReader.readGeonext(tree, board);
+    if (format.toLowerCase()=='cinderella') {
+         JXG.CinderellaReader.readCinderella(board);
+    } else {
+        if (format.toLowerCase()=='geonext') {
+            board.suspendUpdate();
+            if(tree.getElementsByTagName('GEONEXT').length != 0) {
+                JXG.GeonextReader.readGeonext(tree, board);
+            }
+            board.unsuspendUpdate();
         }
-        board.unsuspendUpdate();
-    }
-    else if(tree.getElementsByTagName('geogebra').length != 0) {
-        JXG.GeogebraReader.readGeogebra(tree, board);
-    }
-    else if(format.toLowerCase()=='intergeo') {
-         JXG.IntergeoReader.readIntergeo(tree, board);
+        else if(tree.getElementsByTagName('geogebra').length != 0) {
+            JXG.GeogebraReader.readGeogebra(tree, board);
+        }
+        else if(format.toLowerCase()=='intergeo') {
+            JXG.IntergeoReader.readIntergeo(tree, board);
+        }
     }
     board.afterLoad();
 }; // end: this.readElements()
