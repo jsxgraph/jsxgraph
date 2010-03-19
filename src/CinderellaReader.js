@@ -422,10 +422,73 @@ JXG.CinderellaReader = new function() {
                     else {
                         lines.line1.setProperty({strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
                         lines.line2.setProperty({strokeColor:erg2[0][0], strokeWidth:erg2[0][2], dash:erg2[1]});
-                    }                
-                    
+                    }
                 }
-
+            }
+            else if(dataLines[i].search(/Meet\(.+/) != -1) { // Schnitt zweier Geraden
+                defPoints = dataLines[i].slice(dataLines[i].search(/Meet.+/)+5);
+                defPoints = defPoints.split(',');
+                defName = [];
+                for(j=0; j<defPoints.length; j++) {
+                    defName[j] = defPoints[j].match(/"[A-Za-z]*"/)[0];
+                    defName[j] = defName[j].slice(1,defName[j].length-1);
+                }
+                objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
+                objName = objName[0].slice(1, objName[0].length-1);
+                erg = this.readPointProperties(dataLines,i);
+                i = erg[1];                  
+                board.createElement('intersection',
+                                    [JXG.getReference(board,defName[0]), JXG.getReference(board,defName[1]),0],
+                                    {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
+            } 
+            else if(dataLines[i].search(/IntersectionConicLine\(.+/) != -1 || dataLines[i].search(/IntersectionCircleCircle\(.+/) != -1) { // Schnitt Kreis/Gerade oder Schnitt Kreis/Kreis
+                if(dataLines[i].search(/IntersectionConicLine\(.+/) != -1) {
+                    k = 0;
+                    j = 1;
+                }
+                else {
+                    k = 1;
+                    j = 0;
+                }
+                defPoints = dataLines[i].split(":=");
+                defPoints[0] = defPoints[0].split(',');
+                if(defPoints[0][0] == '{null') {
+                    objName = '';
+                }
+                else {
+                    objName = defPoints[0][0].slice(2,defPoints[0][0].length-1); // { muss mit weg
+                }
+                if(defPoints[0][1] == 'null') {
+                    objName2 = '';
+                }
+                else {
+                    objName2 = defPoints[0][1].slice(1,defPoints[0][1].length-1);
+                }
+                defPoints[1] = defPoints[1].match(/"[A-Za-z0-9]*"/g);
+                defName = [];
+                defName[0] = defPoints[1][0].slice(1,defPoints[1][0].length-1);
+                defName[1] = defPoints[1][1].slice(1,defPoints[1][1].length-1);
+                erg = this.readPointProperties(dataLines,i);
+                i = erg[1];
+                if(!(objName == '' || objName2 == '')) {
+                    erg2 = this.readPointProperties(dataLines,i);
+                    i = erg[1];
+                }
+                if(objName2 != '') {
+                    point = board.createElement('intersection',
+                                                [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),j],
+                                                {name:objName2, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
+                    if(objName != '') {
+                        point2 = board.create('otherintersection', 
+                                              [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]), point], 
+                                              {name:objName, size:erg2[0][1], fillColor:erg2[0][0], strokeColor:erg2[2], labelColor:erg2[3]});
+                    }
+                }
+                else {
+                    point = board.createElement('intersection',
+                                                [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),k],
+                                                {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
+                }
             }
         }
         
