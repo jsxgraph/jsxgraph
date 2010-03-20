@@ -419,17 +419,20 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
      * by calculating the modulus of the distance wrt to ticksDelta and add resp. subtract a ticksDelta from that.
      */
 
-    // p1 is outside the visible area
+    // p1 is outside the visible area or the line is a segment
     if(this.board.renderer.isSameDirection(p1.coords, e1, e2)) {
     	// calculate start and end points
 		begin = respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1));
 		end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
 		
 		if(this.board.renderer.isSameDirection(p1.coords, p2.coords, e1)) {
-			begin -=  2*ticksDelta;
+            if(this.line.visProp.straightFirst)
+    			begin -=  2*ticksDelta;
 		} else {
 			end = -1*end;
-			begin = -1*begin - 2*ticksDelta;
+			begin = -1*begin;
+            if(this.line.visProp.straightFirst)
+                begin -= 2*ticksDelta
 		}
     	
     	// TODO: We should check here if the line is visible at all. If it's not visible but
@@ -451,7 +454,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         	end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
         }
     }
-    
+
     startTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX/ticksDelta, p1.coords.usrCoords[2] + begin*deltaY/ticksDelta], this.board);
     tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX/ticksDelta, p1.coords.usrCoords[2] + begin*deltaY/ticksDelta], this.board);
     
