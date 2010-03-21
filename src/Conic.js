@@ -78,6 +78,8 @@ JXG.createEllipse = function(board, parents, atts) {
     }
     if (JXG.isNumber(parents[2])) { // length of major axis
         majorAxis = JXG.createFunction(parents[2],board);
+    } else if ((typeof parents[2] == 'function') && (JXG.isNumber(parents[2]()))){
+        majorAxis = parents[2];
     } else {
         if (JXG.isPoint(parents[2])) {                                               // point on ellipse
             C = JXG.getReference(board,parents[2]);
@@ -223,6 +225,8 @@ JXG.createHyperbola = function(board, parents, atts) {
     }
     if (JXG.isNumber(parents[2])) { // length of major axis
         majorAxis = JXG.createFunction(parents[2],board);
+    } else if ((typeof parents[2] == 'function') && (JXG.isNumber(parents[2]()))){
+        majorAxis = parents[2];
     } else {
         if (JXG.isPoint(parents[2])) {                                               // point on ellipse
             C = JXG.getReference(board,parents[2]);
