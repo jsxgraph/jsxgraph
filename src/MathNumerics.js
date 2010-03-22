@@ -254,6 +254,7 @@ JXG.Math.Numerics.QR = function(A, b) {
 
 /**
  * Compute the Eigenvalues and Eigenvectors of a symmetric 3x3 matrix with the Jacobi method
+ * Adaption of a FORTRAN program by Ed Wilson, Dec. 25, 1990
  * @param {JXG.Math.Matrix} Ain A symmetric 3x3 matrix.
  * @type Object
  * @throws {Exception} If A's rank is not full.

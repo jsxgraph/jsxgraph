@@ -675,6 +675,18 @@ JXG.Util.Unzip.prototype.unzip = function() {
     	unzipped[files][1] = "geonext.gxt";
     	files++;
 	}
+	if (tmp[0] == parseInt("1f",16) && tmp[1] == parseInt("8b",16)){ //GZIP
+		if (debug)
+			alert("GZIP");
+		//DeflateLoop();
+		skipdir();
+		if (debug)
+			alert(outputArr.join(''));
+		unzipped[files] = new Array(2);
+    	unzipped[files][0] = outputArr.join('');
+    	unzipped[files][1] = "file";
+    	files++;
+	}
 	if (tmp[0] == parseInt("50",16) && tmp[1] == parseInt("4b",16)){ //ZIP
 		modeZIP = true;
 		tmp[2] = readByte();
@@ -881,7 +893,8 @@ function skipdir(){
 	size |= (readByte()<<16);
 	size |= (readByte()<<24);
 	
-	nextFile();
+	if (modeZIP)
+		nextFile();
 	
 };
 

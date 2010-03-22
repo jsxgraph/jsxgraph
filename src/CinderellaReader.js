@@ -63,7 +63,7 @@ JXG.CinderellaReader = new function() {
     
     this.parseData = function(board) {
         var dataLines, i, j, k, pCoords, defName, objName, defPoints, segment, 
-            defRadius, circle, erg;
+            defRadius, circle, erg, poly, point, objName2, erg2, lines, point2;
         dataLines = this.data.split('\n');
         for(i=0; i<dataLines.length; i++) {
             if(dataLines[i].search(/FreePoint.+/) != -1) { // freier Punkt
@@ -342,6 +342,154 @@ JXG.CinderellaReader = new function() {
                                         {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
                                          strokeWidth:erg[0][2]});
             } 
+            else if(dataLines[i].search(/Through\(.+/) != -1) { // durch einen Punkt definierte Gerade
+                defPoints = dataLines[i].slice(dataLines[i].search(/Through.+/)+8);
+                defName = defPoints.match(/"[A-Za-z]*"/)[0];
+                defName = defName.slice(1,defName.length-1);
+                pCoords = defPoints.match(/\[.*\]/)[0];
+                pCoords = pCoords.split(',');
+                pCoords[0] = 1*(pCoords[0].slice(1,pCoords[0].search(/\+i\*/))); // Klammer mit wegschneiden
+                for(j=1; j<pCoords.length; j++) {
+                    pCoords[j] = 1*(pCoords[j].slice(0,pCoords[j].search(/\+i\*/)));
+                } 
+                objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
+                objName = objName[0].slice(1, objName[0].length-1);
+                
+                j = JXG.getReference(board,defName);
+                point = board.createElement('point',[j.coords.usrCoords[1]+1*pCoords[0],j.coords.usrCoords[2]+1*pCoords[1]],{visible:false});
+                erg = this.readLineProperties(dataLines,i);
+                i = erg[2];
+                board.createElement('line',[j,point],
+                                    {name:objName, withLabel:true, strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
+            }
+            else if(dataLines[i].search(/:=Compass\(.+/) != -1) { // mit Zirkel definierter Kreis
+                defPoints = dataLines[i].slice(dataLines[i].search(/Compass.+/)+8);
+                defPoints = defPoints.split(',');
+                defName = [];
+                for(j=0; j<defPoints.length; j++) {
+                    defName[j] = defPoints[j].match(/"[A-Za-z]*"/)[0];
+                    defName[j] = defName[j].slice(1,defName[j].length-1);
+                }
+                objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
+                objName = objName[0].slice(1, objName[0].length-1);
+                erg = this.readCircleProperties(dataLines,i);
+                i = erg[3];   
+                defRadius = (function(el, b) { return function() { 
+                                            return JXG.getReference(b,el[0]).Dist(JXG.getReference(b,el[1])); 
+                                       }}
+                          )(defName, board);                
+                board.createElement('circle',
+                                    [JXG.getReference(board,defName[2]), defRadius],
+                                    {name:objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
+                                     strokeWidth:erg[0][2]});
+            }
+            else if(dataLines[i].search(/AngularBisector\(.+/) != -1) { // Winkelhalbierende
+                defPoints = dataLines[i].split(":=");
+                defPoints[0] = defPoints[0].split(',');
+                if(defPoints[0][0] == '{null') {
+                    objName = '';
+                }
+                else {
+                    objName = defPoints[0][0].slice(2,defPoints[0][0].length-1); // { muss mit weg
+                }
+                if(defPoints[0][1] == 'null') {
+                    objName2 = '';
+                }
+                else {
+                    objName2 = defPoints[0][1].slice(1,defPoints[0][1].length-1);
+                }
+                defPoints[1] = defPoints[1].match(/"[A-Za-z0-9]*"/g);
+                defName = [];
+                defName[0] = defPoints[1][0].slice(1,defPoints[1][0].length-1);
+                defName[1] = defPoints[1][1].slice(1,defPoints[1][1].length-1);
+                erg = this.readLineProperties(dataLines,i);
+                i = erg[2];
+                if(!(objName == '' || objName2 == '')) {
+                    erg2 = this.readLineProperties(dataLines,i);
+                    i = erg[2];
+                }
+                lines = board.createElement('bisectorlines',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
+                                           {name:[objName2,objName], withLabel:true})
+                if(objName == '') {
+                    lines.line2.setProperty({visible:false});
+                    lines.line1.setProperty({strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
+                }
+                else {
+                    if(objName2 == '') {
+                        lines.line1.setProperty({visible:false});
+                        lines.line2.setProperty({strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
+                    }
+                    else {
+                        lines.line1.setProperty({strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
+                        lines.line2.setProperty({strokeColor:erg2[0][0], strokeWidth:erg2[0][2], dash:erg2[1]});
+                    }
+                }
+            }
+            else if(dataLines[i].search(/Meet\(.+/) != -1) { // Schnitt zweier Geraden
+                defPoints = dataLines[i].slice(dataLines[i].search(/Meet.+/)+5);
+                defPoints = defPoints.split(',');
+                defName = [];
+                for(j=0; j<defPoints.length; j++) {
+                    defName[j] = defPoints[j].match(/"[A-Za-z]*"/)[0];
+                    defName[j] = defName[j].slice(1,defName[j].length-1);
+                }
+                objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
+                objName = objName[0].slice(1, objName[0].length-1);
+                erg = this.readPointProperties(dataLines,i);
+                i = erg[1];                  
+                board.createElement('intersection',
+                                    [JXG.getReference(board,defName[0]), JXG.getReference(board,defName[1]),0],
+                                    {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
+            } 
+            else if(dataLines[i].search(/IntersectionConicLine\(.+/) != -1 || dataLines[i].search(/IntersectionCircleCircle\(.+/) != -1) { // Schnitt Kreis/Gerade oder Schnitt Kreis/Kreis
+                if(dataLines[i].search(/IntersectionConicLine\(.+/) != -1) {
+                    k = 0;
+                    j = 1;
+                }
+                else {
+                    k = 1;
+                    j = 0;
+                }
+                defPoints = dataLines[i].split(":=");
+                defPoints[0] = defPoints[0].split(',');
+                if(defPoints[0][0] == '{null') {
+                    objName = '';
+                }
+                else {
+                    objName = defPoints[0][0].slice(2,defPoints[0][0].length-1); // { muss mit weg
+                }
+                if(defPoints[0][1] == 'null') {
+                    objName2 = '';
+                }
+                else {
+                    objName2 = defPoints[0][1].slice(1,defPoints[0][1].length-1);
+                }
+                defPoints[1] = defPoints[1].match(/"[A-Za-z0-9]*"/g);
+                defName = [];
+                defName[0] = defPoints[1][0].slice(1,defPoints[1][0].length-1);
+                defName[1] = defPoints[1][1].slice(1,defPoints[1][1].length-1);
+                erg = this.readPointProperties(dataLines,i);
+                i = erg[1];
+                if(!(objName == '' || objName2 == '')) {
+                    erg2 = this.readPointProperties(dataLines,i);
+                    i = erg[1];
+                }
+                if(objName2 != '') {
+                    point = board.createElement('intersection',
+                                                [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),j],
+                                                {name:objName2, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
+                    if(objName != '') {
+                        point2 = board.create('otherintersection', 
+                                              [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]), point], 
+                                              {name:objName, size:erg2[0][1], fillColor:erg2[0][0], strokeColor:erg2[2], labelColor:erg2[3]});
+                    }
+                }
+                else {
+                    point = board.createElement('intersection',
+                                                [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),k],
+                                                {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
+                }
+            }
         }
         
         return board;
@@ -439,4 +587,26 @@ JXG.CinderellaReader = new function() {
         }
         return [objAppearance,dashing,i];
     }
+    
+	this.prepareString = function(fileStr) {
+        var i, bA = [], len;
+  		if (fileStr.indexOf('<') != 0) {
+            len = fileStr.length;
+		    for (i=0;i<len;i++)
+		    	bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
+		      	// Unzip
+		      	fileStr = (new JXG.Util.Unzip(bA)).unzip()[0][0];	   
+		}
+		//fileStr = JXG.Util.utf8Decode(fileStr);
+		//fileStr = JXG.GeogebraReader.utf8replace(fileStr);
+		return fileStr;
+	};
+	
+	this.readCinderella = function(fileStr, board){
+		this.data = this.prepareString(fileStr);
+        board.suspendUpdate();
+		this.parseData(board);
+        board.unsuspendUpdate();
+	}
+
 };

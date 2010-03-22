@@ -117,6 +117,13 @@ this.stringToXMLTree = function(fileStr) {
 };
 
 this.parseString = function(fileStr, board, format, isString) {
+    var tree;
+    if (format.toLowerCase()=='cdy') {
+        fileStr = JXG.CinderellaReader.readCinderella(fileStr, board);
+        board.afterLoad();
+        return;
+    }
+    
     // fileStr is a string containing the XML code of the construction
     if (format.toLowerCase()=='geonext') {
         fileStr = JXG.GeonextReader.prepareString(fileStr);
@@ -151,8 +158,9 @@ this.readElements = function(tree, board, format) {
         JXG.GeogebraReader.readGeogebra(tree, board);
     }
     else if(format.toLowerCase()=='intergeo') {
-         JXG.IntergeoReader.readIntergeo(tree, board);
+        JXG.IntergeoReader.readIntergeo(tree, board);
     }
+    // cdy is already parsed in parseString()
     board.afterLoad();
 }; // end: this.readElements()
 
