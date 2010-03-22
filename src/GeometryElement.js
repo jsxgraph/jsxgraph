@@ -1352,3 +1352,4 @@ JXG.clearVisPropOld = function(el) {
     el.visPropOld['firstArrow'] = false;
     el.visPropOld['lastArrow'] = false;
 };
+// vim: et ts=4
