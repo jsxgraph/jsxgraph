@@ -2386,7 +2386,7 @@ JXG.Board.prototype.construct = function(string) {
                                                           JXG.getReference(this,defElements[2])],
                                                          {text:objName, withLabel:true}));
                     if(type == 'greek') {
-                        objName = objName.slice(1,objName.length-1);
+                        objName = objName.slice(1,objName.length-1); // & und ; wieder entfernen
                     }
                     output[objName] = output.lines[output.lines.length-1]; 
                 }  
