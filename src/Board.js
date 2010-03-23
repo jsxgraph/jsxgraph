@@ -2230,7 +2230,7 @@ JXG.Board.prototype.animate = function() {
 };
 
 JXG.Board.prototype.construct = function(string) {
-    var splitted, i, first, last, rest,j, rest2 = {}, output = {}, act, objName, defElements, obj;
+    var splitted, i, first, last, j, output = {}, objName, defElements, obj, type;
     output.lines = [];
     output.circles = [];
     output.points = [];
@@ -2332,7 +2332,28 @@ JXG.Board.prototype.construct = function(string) {
                     obj = this.createElement('intersection',[defElements[0],defElements[1],1],{});
                     output.intersections.push(obj);
                 }
-                
+            }
+            else if(splitted[i].search(/\|[\|_]\s*\(/) != -1) { // Parallele oder Senkrechte
+                splitted[i].match(/\|([\|_])\s*\(\s*(\S*)\s*,\s*(\S*)\s*\)/);
+                type = RegExp.$1;
+                if(type == '|') {
+                    type = 'parallel';
+                }
+                else {
+                    type = 'normal';
+                }
+                defElements[0] = RegExp.$2;
+                defElements[1] = RegExp.$3;
+                if(objName == '') {
+                    output.lines.push(this.createElement(type,
+                                                        [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],{}));
+                }
+                else {
+                    output.lines.push(this.createElement(type,
+                                                         [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
+                                                         {name:objName, withLabel:true}));
+                    output[objName] = output.lines[output.lines.length-1];
+                }               
             }
         }
     }
