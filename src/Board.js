@@ -2230,10 +2230,11 @@ JXG.Board.prototype.animate = function() {
 };
 
 JXG.Board.prototype.construct = function(string) {
-    var splitted, i, first, last, rest,j, rest2 = {}, output = {}, act, objName, defElements;
+    var splitted, i, first, last, rest,j, rest2 = {}, output = {}, act, objName, defElements, obj;
     output.lines = [];
     output.circles = [];
     output.points = [];
+    output.intersections = [];
     splitted = string.split(';');
     for(i=0; i< splitted.length; i++) {
         // Leerzeichen am Anfang und am Ende entfernen
@@ -2312,7 +2313,25 @@ JXG.Board.prototype.construct = function(string) {
                 output.points.push(this.createElement('point',[1.0*RegExp.$2,1.0*RegExp.$3],{name:objName}));
                 output[objName] = output.points[output.points.length-1];
             }
-
+            else if(splitted[i].search(/&/) != -1) { // Schnittpunkt
+                splitted[i].match(/(.*)&(.*)/);
+                defElements = [];
+                defElements[0] = RegExp.$1.replace (/\s+$/, ''); // Leerzeichen am Ende entfernen
+                defElements[1] = RegExp.$2.replace (/^\s+/, ''); // Leerzeichen am Anfang entfernen
+                defElements[0] = JXG.getReference(this,defElements[0]);
+                defElements[1] = JXG.getReference(this,defElements[1]);
+                if (defElements[0].elementClass==JXG.OBJECT_CLASS_LINE && defElements[1].elementClass==JXG.OBJECT_CLASS_LINE) {
+                    obj = this.createElement('intersection',[defElements[0],defElements[1],0],{});
+                    output.intersections.push(obj);
+                }
+                else {
+                    obj = this.createElement('intersection',[defElements[0],defElements[1],0],{});
+                    output.intersections.push(obj);
+                    obj = this.createElement('intersection',[defElements[0],defElements[1],1],{});
+                    output.intersections.push(obj);
+                }
+                
+            }
         }
     }
     return output;
