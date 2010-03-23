@@ -1,0 +1,32 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Short Construction</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+        // Konstruktion
+        var cons1, cons2;
+        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 50, originY: 300, unitX: 50, unitY: 50, axis:true});
+        
+        //cons1 = board.construct("AA(0,0);A(1,1) ; B(2,2.5);g_1 = ]AB] ;C(3,3); [BC] ;AB(4|4);[C  AB];k(A,C)");
+        //cons1 = board.construct("AA(1,1);BB(2.5,2.5);C(3,3);k(AA,[BB C])");
+        //cons1 = board.construct("AA(1,1);BB(2.5,2.5);C(3,3);x = [  BB   C  ]; k (AA,   x )");
+        cons1 = board.construct("AA(1,1);BB(2.5,2.5);C(3,3);   k   (   AA   ,   1.75   )   ");
+        
+        cons1.AA.setProperty({face:'diamond',size:7,strokeColor:'#8B2252',fillColor:'#8B2252'});
+        
+  /* ]]> */
+  
+    
+  </script>
+</body>
+</html>
