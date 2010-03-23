@@ -2230,7 +2230,7 @@ JXG.Board.prototype.animate = function() {
 };
 
 JXG.Board.prototype.construct = function(string) {
-    var splitted, i, first, last, j, output = {}, objName, defElements, obj, type;
+    var splitted, i, first, last, j, output = {}, objName, defElements, obj, type, possibleNames;
     output.lines = [];
     output.circles = [];
     output.points = [];
@@ -2307,7 +2307,7 @@ JXG.Board.prototype.construct = function(string) {
                     output[objName] = output.circles[output.circles.length-1];
                 }
             }
-            else if(splitted[i].search(/[A-Z]+.*\(.*[,\|].*\)/) != -1) { // Punkt, startet mit einem Grossbuchstaben!
+            else if(splitted[i].search(/[A-Z]+.*\(.*[,\|].*\)/) != -1) { // Punkt, startet mit einem Grossbuchstaben! (definiert durch Koordinaten)
                 splitted[i].match(/^([A-Z]+\S*)\s*\(\s*(.*)\s*[,\|]\s*(.*)\s*\)$/);
                 objName = RegExp.$1; // Name
                 output.points.push(this.createElement('point',[1.0*RegExp.$2,1.0*RegExp.$3],{name:objName}));
@@ -2339,9 +2339,10 @@ JXG.Board.prototype.construct = function(string) {
                 if(type == '|') {
                     type = 'parallel';
                 }
-                else {
+                else { // type == '_'
                     type = 'normal';
                 }
+                defElements = [];
                 defElements[0] = RegExp.$2;
                 defElements[1] = RegExp.$3;
                 if(objName == '') {
@@ -2354,6 +2355,41 @@ JXG.Board.prototype.construct = function(string) {
                                                          {name:objName, withLabel:true}));
                     output[objName] = output.lines[output.lines.length-1];
                 }               
+            }
+            else if(splitted[i].search(/^</) != -1) { // Winkel
+                splitted[i].match(/<\s*\(\s*(\S*)\s*,\s*(\S*)\s*,\s*(\S*)\s*\)/);
+                defElements = [];
+                defElements[0] = RegExp.$1;
+                defElements[1] = RegExp.$2;
+                defElements[2] = RegExp.$3;
+                if(objName == '') {
+                    output.lines.push(this.createElement('angle',
+                                                        [JXG.getReference(this,defElements[0]),
+                                                         JXG.getReference(this,defElements[1]),
+                                                         JXG.getReference(this,defElements[2])],{}));
+                }
+                else {
+                    possibleNames = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta',
+                                'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 
+                                'sigmaf', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega'];
+                    type = '';
+                    for(j=0; j<possibleNames.length;j++) {
+                        if(objName == possibleNames[j]) {
+                            objName = '&'+objName+';';
+                            type = 'greek';
+                            break;
+                        }
+                    }
+                    output.lines.push(this.createElement('angle',
+                                                         [JXG.getReference(this,defElements[0]),
+                                                          JXG.getReference(this,defElements[1]),
+                                                          JXG.getReference(this,defElements[2])],
+                                                         {text:objName, withLabel:true}));
+                    if(type == 'greek') {
+                        objName = objName.slice(1,objName.length-1);
+                    }
+                    output[objName] = output.lines[output.lines.length-1]; 
+                }  
             }
         }
     }
