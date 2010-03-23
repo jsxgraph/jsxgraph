@@ -329,7 +329,7 @@ JXG.createAngle = function(board, parents, attributes) {
                 var A = parents[0], B = parents[1],
                     r = attributes.radius,
                     d = B.Dist(A);
-                    return [B.X()+(A.X()-B.X())*r/d,B.Y()+(A.Y()-B.X())*r/d];
+                    return [B.X()+(A.X()-B.X())*r/d,B.Y()+(A.Y()-B.Y())*r/d];
             }], {withLabel:false, visible:false});
             
         attributes.name = text;
