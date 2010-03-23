@@ -2316,8 +2316,10 @@ JXG.Board.prototype.construct = function(string) {
             else if(splitted[i].search(/&/) != -1) { // Schnittpunkt
                 splitted[i].match(/(.*)&(.*)/);
                 defElements = [];
-                defElements[0] = RegExp.$1.replace (/\s+$/, ''); // Leerzeichen am Ende entfernen
-                defElements[1] = RegExp.$2.replace (/^\s+/, ''); // Leerzeichen am Anfang entfernen
+                defElements[0] = RegExp.$1;
+                defElements[1] = RegExp.$2;
+                defElements[0] = defElements[0].replace(/\s+$/, ''); // Leerzeichen am Ende entfernen
+                defElements[1] = defElements[1].replace (/^\s+/, ''); // Leerzeichen am Anfang entfernen
                 defElements[0] = JXG.getReference(this,defElements[0]);
                 defElements[1] = JXG.getReference(this,defElements[1]);
                 if (defElements[0].elementClass==JXG.OBJECT_CLASS_LINE && defElements[1].elementClass==JXG.OBJECT_CLASS_LINE) {
