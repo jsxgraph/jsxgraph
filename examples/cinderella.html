@@ -51,9 +51,9 @@
         <option value='lineCircleIntersection4'>Schnitte Kreis/Gerade IV</option>
         <option value='circleCircleIntersection1'>Schnitte von Kreisen I</option>
         <option value='circleCircleIntersection2'>Schnitte von Kreisen II</option>
+        <option>---------------------------------------------------</option>
+        <option value='construct1'>Konstruktion mit lizensiertem Cinderella 2.1</option>
     </select>
-    <input type='button' onclick="JXG.CinderellaReader.readFile('../examples/cdy/unzipped/'+ document.getElementById('filenames').options[document.getElementById('filenames').selectedIndex].value);" value='Datei lesen'/>
-    <input type='button' onclick="JXG.CinderellaReader.parseData(board)" value='Datei parsen'/>
     <input type='button' onclick="loadFile('filenames','cdy');" value='komprimierte Datei lesen'/>
     <h2>Reading Cinderella Files</h2>
     <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; background-color:#b5bcca;"></div>

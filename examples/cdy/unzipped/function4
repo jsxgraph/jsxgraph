@@ -1,0 +1,138 @@
+//Cindy-2.1 build 1192 (2010/03/09 08:32)
+//Created on: 24.03.2010 15:37:22
+//For: ausstellung
+//DO NOT EDIT --- MACHINE GENERATED CODE
+Geometry:=Euclidean;
+("Text0"):=Calculation();
+"Text0".setAppearance(1,5,1,0,0,10,false,false);
+"Text0".setAttribute("color","1");
+"Text0".setAttribute("alpha","1.0");
+"Text0".setAttribute("drawtrace","false");
+"Text0".setAttribute("tracelength","100");
+"Text0".setAttribute("traceskip","1");
+"Text0".setAttribute("tracedim","1.0");
+"Text0".setAttribute("render","false");
+"Text0".setAttribute("isvisible","true");
+"Text0".setAttribute("text.fontfamily","SansSerif");
+"Text0".setAttribute("plane","0");
+"Text0".setAttribute("colorfill","0");
+"Text0".setAttribute("fillalpha","0.0");
+"Text0".setAttribute("linkvisibility","false");
+"Text0".setAttribute("textborder","false");
+"Text0".setAttribute("text.minwidth","0");
+"Text0".setAttribute("textbutton","false");
+"Text0".setAttribute("button.script","");
+"Text0".setAttribute("texttoggle","false");
+"Text0".setAttribute("text.text","3x-2");
+"Text0".setAttribute("textsize","12.0");
+"Text0".setAttribute("textbold","false");
+"Text0".setAttribute("textitalics","false");
+"Text0".setText("3x-2");
+"Text0".setType(5);
+"Text0".setFloating([-2.25+i*-0.0,4.0+i*0.0,-0.8928571428571428+i*-0.0]);
+("Text1"):=Calculation();
+"Text1".setAppearance(1,5,1,0,0,10,false,false);
+"Text1".setAttribute("color","1");
+"Text1".setAttribute("alpha","1.0");
+"Text1".setAttribute("drawtrace","false");
+"Text1".setAttribute("tracelength","100");
+"Text1".setAttribute("traceskip","1");
+"Text1".setAttribute("tracedim","1.0");
+"Text1".setAttribute("render","false");
+"Text1".setAttribute("isvisible","true");
+"Text1".setAttribute("text.fontfamily","SansSerif");
+"Text1".setAttribute("plane","0");
+"Text1".setAttribute("colorfill","0");
+"Text1".setAttribute("fillalpha","0.0");
+"Text1".setAttribute("linkvisibility","false");
+"Text1".setAttribute("textborder","false");
+"Text1".setAttribute("text.minwidth","0");
+"Text1".setAttribute("textbutton","false");
+"Text1".setAttribute("button.script","");
+"Text1".setAttribute("texttoggle","false");
+"Text1".setAttribute("text.text","4x^2-5");
+"Text1".setAttribute("textsize","12.0");
+"Text1".setAttribute("textbold","false");
+"Text1".setAttribute("textitalics","false");
+"Text1".setText("4x^2-5");
+"Text1".setType(5);
+"Text1".setFloating([4.0+i*0.0,-2.325925925925926+i*0.0,0.37037037037037035+i*0.0]);
+Geometry:=Euclidean;
+//
+//Exercise Information
+exercise {
+  input {
+    setElements(());
+    addMode("de.cinderella.modes.Move()");
+    addMode("de.cinderella.modes.SingleAdd()");
+    addMode("de.cinderella.modes.MultiAdd(de.cinderella.algorithms.Join)");
+    addMode("de.cinderella.modes.DefineCompass()");
+    addMode("de.cinderella.actions.Undo()");
+    addMode("de.cinderella.actions.GiveHint()");
+    addMode("de.cinderella.actions.Restart()");
+   setAttribute("exercise.name","Exercise");
+   setAttribute("exercise.message","");
+  }
+}
+behavior {Environment();
+          setParams(1.0,0.0,0.0);
+          addToLevel(1);
+         }
+behavior {Motor();
+          setParams(1.0,0.1,0.0);
+          addToLevel(1);
+         }
+kernel.setAcc(2);
+kernel.setFrames(1);
+kernel.setSpeed(1.0);
+//Start Scripts
+//End Scripts
+//Start portinfo
+kernel.setAttribute("prefs.locale","locale.de_DE");
+kernel.setAttribute("prefs.menu","default.name");
+kernel.setAttribute("altmodes.rightclick","de.cinderella.modes.PopupMenuMode.name");
+kernel.setAttribute("altmodes.middleclick","de.cinderella.modes.Move.name");
+kernel.setAttribute("visage.graphalgorithm","");
+kernel.setAttribute("multiselect.enabled","true");
+kernel.setAttribute("drm.owner","Alfred Wassermann");
+kernel.setAttribute("drm.copyright","©2010 Alfred Wassermann");
+kernel.setAttribute("drm.protected","false");
+kernel.setAttribute("drm.protect.scripts","false");
+kernel.setAttribute("drm.commercial","false");
+kernel.setAttribute("drm.changeflag","drm.change.unlimited");
+kernel.setAttribute("drm.showinapplet","false");
+kernel.setBackgroundColor(168,176,192);
+kernel.setBlackColor(0,0,0);
+kernel.setHighlightColor(255,255,255);
+port EuclideanPort() {
+   setAttribute("imagescalemode","scalemode.center");
+   setAttribute("imagealpha","1.0");
+   setAttribute("port.background.media","");
+   setAttribute("show.adjacencymatrix","1");
+   setAttribute("precision.measure","precision.2");
+   setAttribute("precision.measure.int","2");
+   setAttribute("precision.angle","precision.1");
+   setAttribute("precision.angle.int","1");
+   setAttribute("anglemodulo","modulo.0");
+   setAttribute("printscale","1:1");
+   setAttribute("printscale.int","1:1");
+   setAttribute("darkenDependent","true");
+   setAttribute("mesh.rectangular","false");
+   setAttribute("mesh.triangular","false");
+   setAttribute("axes.show","true");
+   setAttribute("snap","false");
+   setAttribute("mesh.density","0");
+   setAttribute("euclideanport.scale","25.0");
+   setAttribute("euclideanport.origin.x","226.0");
+   setAttribute("euclideanport.origin.y","233.0");
+   setPolar(false);
+   setPortWidth(680);
+   setPortHeight(336);
+   setScale(25.0);
+   setOriginY(226.0);
+   setOriginX(233.0);
+   setMesh(false);
+   setAxes(true);
+   setSnap(false);
+}
+//End portinfo
