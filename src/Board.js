@@ -2235,6 +2235,7 @@ JXG.Board.prototype.construct = function(string) {
     output.circles = [];
     output.points = [];
     output.intersections = [];
+    output.angles = [];
     splitted = string.split(';');
     for(i=0; i< splitted.length; i++) {
         // Leerzeichen am Anfang und am Ende entfernen
@@ -2307,11 +2308,36 @@ JXG.Board.prototype.construct = function(string) {
                     output[objName] = output.circles[output.circles.length-1];
                 }
             }
-            else if(splitted[i].search(/[A-Z]+.*\(.*[,\|].*\)/) != -1) { // Punkt, startet mit einem Grossbuchstaben! (definiert durch Koordinaten)
+            else if(splitted[i].search(/[A-Z]+.*\(\s*[0-9\.\-]+\s*[,\|]\s*[0-9\.\-]+\s*\)/) != -1) { // Punkt, startet mit einem Grossbuchstaben! (definiert durch Koordinaten)
                 splitted[i].match(/^([A-Z]+\S*)\s*\(\s*(.*)\s*[,\|]\s*(.*)\s*\)$/);
                 objName = RegExp.$1; // Name
                 output.points.push(this.createElement('point',[1.0*RegExp.$2,1.0*RegExp.$3],{name:objName}));
                 output[objName] = output.points[output.points.length-1];
+            }
+            else if(splitted[i].search(/[A-Z]+.*\(.+(([,\|]\s*[0-9\.\-]+\s*){2})?/) != -1) { // Gleiter, mit oder ohne Koordinaten
+                splitted[i].match(/([A-Z]+.*)\((.*)\)/);
+                objName = RegExp.$1;
+                defElements = RegExp.$2;
+                objName = objName.replace (/^\s+/, '').replace (/\s+$/, '');
+                defElements = defElements.replace (/^\s+/, '').replace (/\s+$/, '');
+                if(defElements.search(/[,\|]/) != -1) { // Koordinaten angegeben
+                    defElements.match(/(\S*)\s*[,\|]\s*([0-9\.]+)\s*[,\|]\s*([0-9\.]+)\s*/);
+                    defElements = [];
+                    defElements[0] = RegExp.$1;
+                    defElements[1] = 1.0*RegExp.$2;
+                    defElements[2] = 1.0*RegExp.$3;
+                }
+                else { // keine Koordinaten
+                    obj = defElements;
+                    defElements = [];
+                    defElements[0] = obj; // Name des definierenden Elements
+                    defElements[1] = 0; // (0,0) als Gleiterkoordinaten vorgeben...
+                    defElements[2] = 0;
+                }
+                output.points.push(this.createElement('glider',
+                                                      [defElements[1],defElements[2],JXG.getReference(this,defElements[0])],
+                                                      {name:objName}));
+                output[objName] = output.points[output.points.length-1];                
             }
             else if(splitted[i].search(/&/) != -1) { // Schnittpunkt
                 splitted[i].match(/(.*)&(.*)/);
@@ -2380,7 +2406,7 @@ JXG.Board.prototype.construct = function(string) {
                             break;
                         }
                     }
-                    output.lines.push(this.createElement('angle',
+                    output.angles.push(this.createElement('angle',
                                                          [JXG.getReference(this,defElements[0]),
                                                           JXG.getReference(this,defElements[1]),
                                                           JXG.getReference(this,defElements[2])],
