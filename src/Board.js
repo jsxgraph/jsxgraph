@@ -2249,10 +2249,19 @@ JXG.Board.prototype.construct = function(string) {
             else {
                 objName = '';
             }
+            attributes = {};
+            if(splitted[i].search(/(\S*)\s*draft$/) != -1) {
+                attributes.draft = true;
+                splitted[i] = RegExp.$1;
+            }
+            if(splitted[i].search(/(.*)\s*invisible$/) != -1) {
+                attributes.visible = false;
+                splitted[i] = RegExp.$1;
+            }
             if(splitted[i].search(/^[\[\]].*[\[\]]$/) != -1) { // Gerade, Halbgerade oder Segment
                 splitted[i].match(/([\[\]])(.*)([\[\]])/);
-                first = (RegExp.$1 != '[');
-                last = (RegExp.$3 == '[');
+                attributes.straightFirst = (RegExp.$1 != '[');
+                attributes.straightLast = (RegExp.$3 == '[');
                 defElements = (RegExp.$2).replace (/^\s+/, '').replace (/\s+$/, '');
                 if(defElements.search(/ /) != -1) {
                     defElements.match(/(\S*) +(\S*)/);
@@ -2260,15 +2269,14 @@ JXG.Board.prototype.construct = function(string) {
                     defElements[0] = RegExp.$1;
                     defElements[1] = RegExp.$2;
                 } // sonst wird die Gerade durch zwei Punkte definiert, die einen Namen haben, der aus nur jeweils einem Buchstaben besteht
-                if(objName == '') {
-                    output.lines.push(this.createElement('line',
-                                        [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
-                                        {straightFirst:first,straightLast:last}));
+                if(objName != '') {
+                    attributes.withLabel = true;
+                    attributes.name = objName;
                 }
-                else {
-                    output.lines.push(this.createElement('line',
+                output.lines.push(this.createElement('line',
                                         [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
-                                        {straightFirst:first,straightLast:last, name:objName, withLabel:true}));
+                                        attributes));
+                if(objName != '') {
                     output[objName] = output.lines[output.lines.length-1];
                 }
             }
@@ -2299,19 +2307,20 @@ JXG.Board.prototype.construct = function(string) {
                         defElements[j] = JXG.getReference(this,defElements[j]);
                     }
                 }
-                if(objName == '') {                
-                    output.circles.push(this.createElement('circle',[defElements[0],defElements[1]],{}));
+                if(objName != '') {
+                    attributes.withLabel = true;
+                    attributes.name = objName;                
                 }
-                else {
-                    output.circles.push(this.createElement('circle',[defElements[0],defElements[1]],
-                                                           {name:objName, withLabel:true}));
+                output.circles.push(this.createElement('circle',[defElements[0],defElements[1]],attributes));
+                if(objName != '') {
                     output[objName] = output.circles[output.circles.length-1];
                 }
             }
             else if(splitted[i].search(/[A-Z]+.*\(\s*[0-9\.\-]+\s*[,\|]\s*[0-9\.\-]+\s*\)/) != -1) { // Punkt, startet mit einem Grossbuchstaben! (definiert durch Koordinaten)
                 splitted[i].match(/^([A-Z]+\S*)\s*\(\s*(.*)\s*[,\|]\s*(.*)\s*\)$/);
                 objName = RegExp.$1; // Name
-                output.points.push(this.createElement('point',[1.0*RegExp.$2,1.0*RegExp.$3],{name:objName}));
+                attributes.name = objName;
+                output.points.push(this.createElement('point',[1.0*RegExp.$2,1.0*RegExp.$3],attributes));
                 output[objName] = output.points[output.points.length-1];
             }
             else if(splitted[i].search(/[A-Z]+.*\(.+(([,\|]\s*[0-9\.\-]+\s*){2})?/) != -1) { // Gleiter, mit oder ohne Koordinaten
@@ -2334,9 +2343,10 @@ JXG.Board.prototype.construct = function(string) {
                     defElements[1] = 0; // (0,0) als Gleiterkoordinaten vorgeben...
                     defElements[2] = 0;
                 }
+                attributes.name = objName;  
                 output.points.push(this.createElement('glider',
                                                       [defElements[1],defElements[2],JXG.getReference(this,defElements[0])],
-                                                      {name:objName}));
+                                                      attributes));
                 output[objName] = output.points[output.points.length-1];                
             }
             else if(splitted[i].search(/&/) != -1) { // Schnittpunkt
@@ -2349,13 +2359,22 @@ JXG.Board.prototype.construct = function(string) {
                 defElements[0] = JXG.getReference(this,defElements[0]);
                 defElements[1] = JXG.getReference(this,defElements[1]);
                 if (defElements[0].elementClass==JXG.OBJECT_CLASS_LINE && defElements[1].elementClass==JXG.OBJECT_CLASS_LINE) {
-                    obj = this.createElement('intersection',[defElements[0],defElements[1],0],{});
+                    if(objName != '') {
+                        attributes.name = objName;
+                    }
+                    obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
                     output.intersections.push(obj);
                 }
                 else {
-                    obj = this.createElement('intersection',[defElements[0],defElements[1],0],{});
+                    if(objName != '') {
+                        attributes.name = objName+"_1";
+                    }                
+                    obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
                     output.intersections.push(obj);
-                    obj = this.createElement('intersection',[defElements[0],defElements[1],1],{});
+                    if(objName != '') {
+                        attributes.name = objName+"_2";
+                    }                    
+                    obj = this.createElement('intersection',[defElements[0],defElements[1],1],attributes);
                     output.intersections.push(obj);
                 }
             }
@@ -2371,14 +2390,14 @@ JXG.Board.prototype.construct = function(string) {
                 defElements = [];
                 defElements[0] = RegExp.$2;
                 defElements[1] = RegExp.$3;
-                if(objName == '') {
-                    output.lines.push(this.createElement(type,
-                                                        [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],{}));
+                if(objName != '') {
+                    attributes.name = objName;
+                    attributes.withLabel = true;
                 }
-                else {
-                    output.lines.push(this.createElement(type,
-                                                         [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
-                                                         {name:objName, withLabel:true}));
+                output.lines.push(this.createElement(type,
+                                                     [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
+                                                     attributes));
+                if(objName != '') {
                     output[objName] = output.lines[output.lines.length-1];
                 }               
             }
@@ -2392,7 +2411,8 @@ JXG.Board.prototype.construct = function(string) {
                     output.lines.push(this.createElement('angle',
                                                         [JXG.getReference(this,defElements[0]),
                                                          JXG.getReference(this,defElements[1]),
-                                                         JXG.getReference(this,defElements[2])],{}));
+                                                         JXG.getReference(this,defElements[2])],
+                                                         attributes));
                 }
                 else {
                     possibleNames = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta',
@@ -2401,20 +2421,23 @@ JXG.Board.prototype.construct = function(string) {
                     type = '';
                     for(j=0; j<possibleNames.length;j++) {
                         if(objName == possibleNames[j]) {
-                            objName = '&'+objName+';';
+                            attributes.name = '&'+objName+';';
                             type = 'greek';
                             break;
                         }
+                        else {
+                            if(j == possibleNames.length -1) {
+                                attributes.name = objName;
+                            }
+                        }
                     }
+                    attributes.withLabel = true;
                     output.angles.push(this.createElement('angle',
                                                          [JXG.getReference(this,defElements[0]),
                                                           JXG.getReference(this,defElements[1]),
                                                           JXG.getReference(this,defElements[2])],
-                                                         {text:objName, withLabel:true}));
-                    if(type == 'greek') {
-                        objName = objName.slice(1,objName.length-1); // & und ; wieder entfernen
-                    }
-                    output[objName] = output.lines[output.lines.length-1]; 
+                                                         attributes));
+                    output[objName] = output.angles[output.angles.length-1]; 
                 }  
             }
             else if(splitted[i].search(/([0-9]+)\/([0-9]+)\(\s*(\S*)\s*,\s*(\S*)\s*\)/) != -1) { // Punkt mit Teilverhaeltnis, z.B. Mittelpunkt
@@ -2431,11 +2454,11 @@ JXG.Board.prototype.construct = function(string) {
                                                               return (1-el[0])*el[1].coords.usrCoords[2]+el[0]*el[2].coords.usrCoords[2]; 
                                                }}
                                   )(defElements, this);
-                if(objName == '') {                                  
-                    output.points.push(board.createElement('point',[obj[0],obj[1]],{}));
+                if(objName != '') {                                  
+                    attributes.name = objName;
                 }
-                else {
-                    output.points.push(board.createElement('point',[obj[0],obj[1]],{name:objName}));
+                output.points.push(board.createElement('point',[obj[0],obj[1]],attributes));
+                if(objName != '') { 
                     output[objName] = output.points[output.points.length-1]; 
                 }
             }
