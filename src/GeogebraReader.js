@@ -1569,12 +1569,9 @@ this.writeElement = function(board, output, input, cmd) {
         if(typeof input != 'undefined') {
           if (ma.length==3) {
             // from Circle[A, 5] take "A" and "5", stored in ma[1] and ma[2]
-            var q = JXG.getReference(board, ma[1]);
-            if (JXG.isString(q)) {
-                q = board.create('point', [0,0], {name:ma[1]}); // Construct 'A'
-            }
-            var c = board.create('circle', [q, parseFloat(ma[2])], {fillColor:'none',visible:true,name:''});
-            p = board.create('glider', [xtEl.x, gxtEl.y, c], attr);
+            var q = JXG.GeogebraReader.checkElement(ma[1])
+            var c = board.create('circle', [q, parseFloat(ma[2])], {fillColor:'none',visible:false,name:''});
+            p = board.create('glider', [gxtEl.x, gxtEl.y, c], attr);
           } else if(JXG.isArray(input)) {
             p = board.create('glider', [gxtEl.x, gxtEl.y, input[0]], attr);
           } else {
