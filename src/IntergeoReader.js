@@ -71,7 +71,10 @@ JXG.IntergeoReader = new function() {
                 JXG.IntergeoReader.storeLine(node);
             } 
             else if (node.nodeName=='circle') {
-                JXG.IntergeoReader.storeCircle(node);
+                JXG.IntergeoReader.storeConic(node);
+            } 
+            else if (node.nodeName=='conic') {
+                JXG.IntergeoReader.storeConic(node);
             } 
             else {
                 document.getElementById('debug').innerHTML += 'Not implemented: '+node.nodeName + ' ' + node.getAttribute('id') + '<br>';
@@ -219,6 +222,7 @@ JXG.IntergeoReader = new function() {
         this.objects[node.getAttribute('id')].exists = false;
         //el = this.board.create('point', parents, attributes);
         //this.objects[node.getAttribute('id')] = el;
+        this.objects[node.getAttribute('id')].i2geoType = 'point';
     };
 
     /**
@@ -250,26 +254,13 @@ JXG.IntergeoReader = new function() {
             this.objects[node.getAttribute('id')].coords = c;
             this.objects[node.getAttribute('id')].id = node.getAttribute('id');
             this.objects[node.getAttribute('id')].exists = false;
+            this.objects[node.getAttribute('id')].i2geoType = 'line';
        }
         //this.addLine(node.getAttribute('id'));
     };
     
-    /** 
-     * Direct construction of a line 
-     * in read elements
-     **/
-    this.addLine = function(id) {    
-        var j,
-            c = this.objects[id].coords,
-            el;
-            
-        for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
-        el = this.board.create('line',[c[2],c[0],c[1]],{name:id, strokeColor:'black', withLabel:true});
-        this.objects[id] = el;
-    };
-
     /**
-     * Circle data is stored in an array
+     * Circle / conic data is stored in an array
      * for further access during the reading of constraints.
      * There, id and name are needed.
      * Concretely, the circle   (x-1)^2 + (y-3)^2 = 4   has matrix
@@ -288,7 +279,7 @@ JXG.IntergeoReader = new function() {
      *  My = E/C
      *  r = A*Mx^2+B*My^2-F
      **/
-    this.storeCircle = function(node) {
+    this.storeConic = function(node) {
         var i, j, p, c;
         
         this.objects[node.getAttribute('id')] = {'id':node.getAttribute('id'), 'coords':null};
@@ -312,6 +303,7 @@ JXG.IntergeoReader = new function() {
             this.objects[node.getAttribute('id')].coords = c;
             this.objects[node.getAttribute('id')].id = node.getAttribute('id');
             this.objects[node.getAttribute('id')].exists = false;
+            this.objects[node.getAttribute('id')].i2geoType = 'conic';
         }
     };
 
@@ -418,7 +410,7 @@ JXG.IntergeoReader = new function() {
             } 
             else {
                 param = JXG.IntergeoReader.readParams(node);
-                $('debug').innerHTML += 'readConstraints: not implemented: ' + node.nodeName + ': ' + param[0]+'<br>';
+                document.getElementById('debug').innerHTML += 'readConstraints: not implemented: ' + node.nodeName + ': ' + param[0]+'<br>';
             }
         })(s);
     };
@@ -448,11 +440,46 @@ JXG.IntergeoReader = new function() {
         return p;
     };
 
+    /** 
+     * Direct construction of a line 
+     * in read elements
+     **/
+    this.addLine = function(id) {    
+        var j,
+            c = this.objects[id].coords,
+            el;
+            
+        for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
+        el = this.board.create('line',[c[2],c[0],c[1]],{name:id, strokeColor:'black', withLabel:true});
+        this.objects[id] = el;
+    };
+
+    this.addConic = function(p) {
+        var c;
+        if (!p.exists) {
+            c = p.coords;
+            // (a_00,a_11,a_22,a_01,a_12,a_22)
+            p = this.board.create('conic',[c[0],c[4],c[8],c[1],c[5],c[2]],{name:p.id});
+            //p.setProperty({strokecolor:'blue',fillColor:'none'});
+            //this.setAttributes(p);
+            p.exists = true;
+        }
+        return p;
+    };
+
     this.cleanUp = function() {
         var p;
         for (p in this.objects) {
             if (this.objects[p].exists==false) {
-                this.addPoint(this.objects[p]);
+                if (this.objects[p].i2geoType=='point') {
+                    this.addPoint(this.objects[p]); 
+                } else if (this.objects[p].i2geoType=='line') {
+                    this.addLine(this.objects[p]); 
+                } else if (this.objects[p].i2geoType=='conic') {
+                    this.addConic(this.objects[p]); 
+                } else {
+                    document.getElementById('debug').innerHTML += "forgotten: "+ this.objects[p].id +" of type " + this.objects[p].i2geoType+"<br>\n";
+                }
             }
         }
     };
@@ -778,7 +805,6 @@ JXG.IntergeoReader = new function() {
         this.setAttributes(el);
     };
         
-    
     /**
      * Extract the xml-code as String from the zipped Intergeo archive.
      * @return {string} xml code
