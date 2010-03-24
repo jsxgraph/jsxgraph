@@ -18,7 +18,7 @@
         board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 200, originY: 200, unitX: 50, unitY: 50, axis:true});
         
         cons = board.construct("A(-3,-3);B(5.5,-2);C(3,2.5);c=[AB];a=[BC];b=[AC];alpha=<(B,A,C);beta=<(C,B,A);gamma=<(A,C,B);");
-        cons2 = board.construct("D ( a | 4.272 , 1.2 );E(b)");//D(x|2|3)")   D(x,1,1)
+        cons2 = board.construct("D ( a | 4.272 , 1.2 );E(b)");
         
         cons.A.setProperty({face:'diamond',size:7,strokeColor:'#8B2252',fillColor:'#8B2252'});
         
