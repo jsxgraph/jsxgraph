@@ -2288,7 +2288,7 @@ JXG.Board.prototype.construct = function(string) {
                             defElements[j][1] = RegExp.$2;
                         } // sonst wird die Gerade durch zwei Punkte definiert, die einen Namen haben, der aus nur jeweils einem Buchstaben besteht
                         defElements[j] = (function(el, board) { return function() { 
-                                                    return JXG.getReference(board,el[0]).Dist(JXG.getReference(board,el[1])); // was ist this hier?
+                                                    return JXG.getReference(board,el[0]).Dist(JXG.getReference(board,el[1])); 
                                                }}
                                   )(defElements[j], this);
                     }
@@ -2416,6 +2416,28 @@ JXG.Board.prototype.construct = function(string) {
                     }
                     output[objName] = output.lines[output.lines.length-1]; 
                 }  
+            }
+            else if(splitted[i].search(/([0-9]+)\/([0-9]+)\(\s*(\S*)\s*,\s*(\S*)\s*\)/) != -1) { // Punkt mit Teilverhaeltnis, z.B. Mittelpunkt
+                defElements = [];
+                defElements[0] = 1.0*(RegExp.$1)/(1.0*(RegExp.$2));
+                defElements[1] = JXG.getReference(this,RegExp.$3);
+                defElements[2] = JXG.getReference(this,RegExp.$4);
+                obj = [];
+                obj[0] = (function(el, board) { return function() { 
+                                                              return (1-el[0])*el[1].coords.usrCoords[1]+el[0]*el[2].coords.usrCoords[1]; 
+                                               }}
+                                  )(defElements, this);
+                obj[1] = (function(el, board) { return function() { 
+                                                              return (1-el[0])*el[1].coords.usrCoords[2]+el[0]*el[2].coords.usrCoords[2]; 
+                                               }}
+                                  )(defElements, this);
+                if(objName == '') {                                  
+                    output.points.push(board.createElement('point',[obj[0],obj[1]],{}));
+                }
+                else {
+                    output.points.push(board.createElement('point',[obj[0],obj[1]],{name:objName}));
+                    output[objName] = output.points[output.points.length-1]; 
+                }
             }
         }
     }
