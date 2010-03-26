@@ -168,6 +168,7 @@ JXG.createEllipse = function(board, parents, atts) {
 
     curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
+    curve.midpoint = M;
     curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };
@@ -315,6 +316,7 @@ JXG.createHyperbola = function(board, parents, atts) {
 
     curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
+    curve.midpoint = M;
     curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };
@@ -461,7 +463,8 @@ JXG.createParabola = function(board, parents, atts) {
  * </script><pre>
  */
 JXG.createConic = function(board, parents, atts) {
-    var rotationMatrix, eigen, a, b, c, M = [[1,0,0],[0,1,0],[0,0,1]],
+    var rotationMatrix = [[1,0,0],[0,1,0],[0,0,1]], 
+        eigen, a, b, c, M = [[1,0,0],[0,1,0],[0,0,1]],
         c1, c2, points = [], i, definingMat, 
         givenByPoints, 
         p = [];
@@ -617,6 +620,13 @@ JXG.createConic = function(board, parents, atts) {
 
     curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
+    curve.midpoint = board.create('point',
+        [function(){ var v = JXG.Math.matVecMult(rotationMatrix,[1,0,0]); return v[0];  },
+        function(){  var v = JXG.Math.matVecMult(rotationMatrix,[1,0,0]); return v[1]; },
+        function(){  var v = JXG.Math.matVecMult(rotationMatrix,[1,0,0]); return v[2]; }
+        ],
+        {name:'mid'});
+            
     curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };
