@@ -625,31 +625,21 @@ JXG.createConic = function(board, parents, atts) {
 
     curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
-/*    
+
+
+    // Center coordinates see http://en.wikipedia.org/wiki/Matrix_representation_of_conic_sections
     curve.midpoint = board.create('point',
         [
         function(){ 
-            var m = rotationMatrix;
-            return [-1,m[1][0],m[2][0]];
+            var m = curve.quadraticform;
+            return [
+                m[1][1]*m[2][2]-m[1][2]*m[1][2],
+                m[1][2]*m[0][2]-m[2][2]*m[0][1],
+                m[0][1]*m[1][2]-m[1][1]*m[0][2]
+            ];
         }
-        ],{name:'m0'});
- */       
-/*        
-    curve.midpoint = board.create('point',
-        [
-        function(){ 
-            var m = rotationMatrix;
-            return [m[0][1],m[1][1],m[2][1]];
-        }
-        ],{name:'m1'});
-    curve.midpoint = board.create('point',
-        [
-        function(){ 
-            var m = rotationMatrix;
-            return [m[0][2],m[1][2],m[2][2]];
-        }
-        ],{name:'m2'});
-*/        
+        ],{name:'',visible:false});
+
     curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };
