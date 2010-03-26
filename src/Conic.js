@@ -623,16 +623,11 @@ JXG.createConic = function(board, parents, atts) {
     curve.midpoint = board.create('point',
         [
         function(){ 
-            //console.log(rotationMatrix);
-            var m = [
-                        [rotationMatrix[0][0],rotationMatrix[1][0],rotationMatrix[2][0]],
-                        [rotationMatrix[1][0],1,0],
-                        [rotationMatrix[2][0],0,1]
-                    ]
-        return JXG.Math.matVecMult(m,[1,0,0]);}
+            var m = curve.quadraticform;
+            return [rotationMatrix[0][0],rotationMatrix[1][0],rotationMatrix[2][0]];
+        }
         ],
         {name:'mid'});
-            
     curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };
