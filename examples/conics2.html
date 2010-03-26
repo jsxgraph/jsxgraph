@@ -20,26 +20,26 @@ board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 30,
 //board.create('conic',[function(){return s.Value();},1,-25,0,0,0],{strokeColor:'red'});
 //var co = board.create('conic',[1,1,-4,0,0,0],{strokeColor:'red'});
 
+var xoff = 2;
+var yoff = 2;
+var A = board.create('point', [-2+xoff, 2+yoff], {style:6});
+var B = board.create('point', [ 2+xoff, 2+yoff], {style:6});
+var C = board.create('point', [-2+xoff,-2+yoff], {style:6});
+var D = board.create('point', [ 2+xoff,-2+yoff], {style:6});
+var E = board.create('point', [ 5+xoff, 0+yoff], {style:6});
+
+var co = board.create('conic',[A,B,C,D,E]);
+
+//var co = board.create('conic',[-4474.795854518521,-10708.67264414814,-140057.7731090854,1214.4391809876574,17555.684477833744,39461.56286168883]);
+
 /*
-var A = board.create('point', [1,5], {style:6});
-var B = board.create('point', [5,2], {style:6});
-var C = board.create('point', [2,0], {style:6});
-var D = board.create('point', [0,0], {style:6});
-var E = board.create('point', [-1,5], {style:6});
-*/
-//var co = board.create('conic',[A,B,C,D,E]);
-
-var co = board.create('conic',[-4474.795854518521,-10708.67264414814,-140057.7731090854,1214.4391809876574,17555.684477833744,39461.56286168883]);
-
-
 var po = board.create('point', [10,0], {style:6});
 var t = board.create('polar',[co,po]); 
-
 var i1 = board.createElement('intersection', [co,t,0],{visible:true});
 var i2 = board.createElement('intersection', [co,t,1],{visible:true});
 var t1 = board.createElement('line', [po,i1]);
 var t2 = board.createElement('line', [po,i2]);
-
+*/
 
 //var F = board.create('glider', [1,1,co], {style:6});
 //var t2 = board.create('tangent',[F]);

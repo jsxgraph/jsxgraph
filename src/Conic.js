@@ -597,17 +597,22 @@ JXG.createConic = function(board, parents, atts) {
                 }
                 len = Math.sqrt(len);
                 for (j=0;j<3;j++) {
-                    eigen[1][j][i] /= len;
+                    //eigen[1][j][i] /= len;
                 }
             }
             rotationMatrix = eigen[1];
+            //console.log(rotationMatrix);
+            //console.log(eigen[0]);
+            //console.log(c+' '+a+' '+b);
             c = Math.sqrt(Math.abs(eigen[0][0][0]));
             a = Math.sqrt(Math.abs(eigen[0][1][1]));
             b = Math.sqrt(Math.abs(eigen[0][2][2]));
 
         }
-        if (eigen[0][1][1]<0.0) {
+        if (eigen[0][1][1]<0.0 && eigen[0][2][2]<0.0) {
             v = JXG.Math.matVecMult(rotationMatrix,[1/c,Math.cos(phi)/a,Math.sin(phi)/b]);
+        } else if (eigen[0][1][1]<0.0 && eigen[0][2][2]>0.0) {
+            v = JXG.Math.matVecMult(rotationMatrix,[Math.cos(phi)/c,1/a,Math.sin(phi)/b]);
         } else if (eigen[0][2][2]<0.0) {
             v = JXG.Math.matVecMult(rotationMatrix,[Math.sin(phi)/c,Math.cos(phi)/a,1/b]);
         } 
@@ -620,14 +625,31 @@ JXG.createConic = function(board, parents, atts) {
 
     curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
+/*    
     curve.midpoint = board.create('point',
         [
         function(){ 
-            var m = curve.quadraticform;
-            return [rotationMatrix[0][0],rotationMatrix[1][0],rotationMatrix[2][0]];
+            var m = rotationMatrix;
+            return [-1,m[1][0],m[2][0]];
         }
-        ],
-        {name:'mid'});
+        ],{name:'m0'});
+ */       
+/*        
+    curve.midpoint = board.create('point',
+        [
+        function(){ 
+            var m = rotationMatrix;
+            return [m[0][1],m[1][1],m[2][1]];
+        }
+        ],{name:'m1'});
+    curve.midpoint = board.create('point',
+        [
+        function(){ 
+            var m = rotationMatrix;
+            return [m[0][2],m[1][2],m[2][2]];
+        }
+        ],{name:'m2'});
+*/        
     curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };

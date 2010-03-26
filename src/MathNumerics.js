@@ -262,7 +262,7 @@ JXG.Math.Numerics.QR = function(A, b) {
  * V contains the Eigenvectors.
  */
 JXG.Math.Numerics.Jacobi = function(Ain) {
-    var i,j,k,ih,aa,si,co,tt,eps=Math.sqrt(JXG.Math.eps),
+    var i,j,k,ih,aa,si,co,tt,eps=JXG.Math.eps, //Math.sqrt(JXG.Math.eps),
         sum = 0.0,
         ssum, amax,
         n = Ain.length,
@@ -294,7 +294,7 @@ JXG.Math.Numerics.Jacobi = function(Ain) {
                 aa = Math.abs(A[i][j]);
                 if (aa>amax) { amax = aa; }
                 ssum += aa;
-                if (aa<0.1*amax) {
+                if (aa<eps/*0.1*amax*/) {
                     continue;
                 } else {
                     // calculate rotation angle
