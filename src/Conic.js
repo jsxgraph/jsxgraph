@@ -621,9 +621,14 @@ JXG.createConic = function(board, parents, atts) {
     curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
     curve.midpoint = board.create('point',
-        [function(){ var v = JXG.Math.matVecMult(rotationMatrix,[1,0,0]); return v[0];  },
-        function(){  var v = JXG.Math.matVecMult(rotationMatrix,[1,0,0]); return v[1]; },
-        function(){  var v = JXG.Math.matVecMult(rotationMatrix,[1,0,0]); return v[2]; }
+        [
+        function(){ 
+            var m = [
+                        [rotationMatrix[0][0],rotationMatrix[0][1],rotationMatrix[0][1]],
+                        [rotationMatrix[1][0],1,0],
+                        [rotationMatrix[1][0],0,1]
+                    ]
+        return JXG.Math.matVecMult(m,[1,0,0]);}
         ],
         {name:'mid'});
             
