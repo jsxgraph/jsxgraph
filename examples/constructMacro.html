@@ -21,7 +21,10 @@
        // board.addMacro("xxx = Macro(D,E,F) { P(1|1);x=[PD];y=[PE];H(4|5);k(H,F); }");
         //board.addMacro("xxx = Macro(D,E) { P(-1|1.5);[DP];[EP]; }");
         board.addMacro("xxx = Macro(D,E,F) { [DP];[EP];k(P,F) }");
-        cons2 = board.construct("xyz=xxx(A,B,AA)");
+        board.addMacro("mittel = Macro(D,E) { u=k(D,1) draft;v=k(E,1) draft;X=u&v draft;]X_1 X_2[ }");
+        board.addMacro("test = Macro(D,E,F) { k(D,[EF]);}")
+        cons2 = board.construct("xyz=mittel(A,B)");
+        cons3 = board.construct("xxyz=test(AB,B,C)");
         
         //cons1.AA.setProperty({face:'diamond',size:7,strokeColor:'#8B2252',fillColor:'#8B2252'});
         

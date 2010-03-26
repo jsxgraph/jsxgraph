@@ -2276,6 +2276,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                             tmp[i] = RegExp.$1;
                         }
                         this.construct(this.definedMacros.macros[j][2],'macro',this.definedMacros.macros[j][1], tmp);
+                        break; // Macro gefunden, also muss die for-Schleife eigentlich nicht weiter durchlaufen werden.
                     }
                 }
             }
@@ -2329,6 +2330,16 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                                 defElements[j][0] = RegExp.$1;
                                 defElements[j][1] = RegExp.$2;
                             } // sonst wird die Gerade durch zwei Punkte definiert, die einen Namen haben, der aus nur jeweils einem Buchstaben besteht
+                            if(mode == 'macro') {
+                                for(k=0; k<params.length; k++) {
+                                    if(defElements[j][0] == params[k]) {
+                                        defElements[j] = [paraIn[k], defElements[j][1]];
+                                    }
+                                    if(defElements[j][1] == params[k]) {
+                                        defElements[j] = [defElements[j][0], paraIn[k]];
+                                    }                                    
+                                }
+                            }  
                             defElements[j] = (function(el, board) { return function() { 
                                                         return JXG.getReference(board,el[0]).Dist(JXG.getReference(board,el[1])); // TODO
                                                    }}
