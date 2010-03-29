@@ -12,11 +12,12 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 50, unitY: 50});
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 50, unitY: 50,axis:true});
         g1 = board.createElement('point', [1, -1], {style:6});
         g2 = board.createElement('point', [2.5, -2], {style:6});
         g3 = board.createElement('point', [1, -3], {style:5});
         g4 = board.createElement('point', [2.5, -4], {style:5});
+/*        
         c1 = board.createElement('curve', [
             function(t){ return (g1.X()-g2.X())*Math.cos(t)+g3.X()*Math.cos(t*(g1.X()-g2.X())/g2.X()); },
             function(t){ return (g1.X()-g2.X())*Math.sin(t)+g3.X()*Math.sin(t*(g1.X()-g2.X())/g2.X()); },
@@ -24,13 +25,20 @@
             {curveType:'parameter'} );          
         // Gleiter auf Parameterkurve. Dazu muss explizit curveType:'parameter' eingestellt sein.
         p = board.createElement('glider', [0,0,c1], {style:6, fillcolor:'red'});
-
+*/
+/*
         // Gleiter auf Kurve in Polarform
         var f = board.createElement('curve', 
             [function(phi) { return g1.X()/(1-g2.X()*Math.cos(phi)); }, [0,0], 0,2.0*Math.PI],      
             {curveType:'polar', strokewidth:1, strokecolor:'red'}
         );        
-        q = board.createElement('point', [0,0], {slideObject:f, style:6, fillcolor:'red'});
+*/        
+        var f = board.createElement('functiongraph', 
+            [function(x) { return x*x; }],      
+            {strokewidth:1, strokecolor:'red'}
+        );        
+        //q = board.createElement('point', [0,0], {slideObject:f, style:6, fillcolor:'red'});
+        q = board.createElement('glider', [0,0,f], {style:6, fillcolor:'red'});
 
   /* ]]> */
   </script>
