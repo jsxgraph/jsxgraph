@@ -2242,6 +2242,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
     output.points = [];
     output.intersections = [];
     output.angles = [];
+    output.macros = [];
     splitted = string.split(';');
     for(i=0; i< splitted.length; i++) {
         // Leerzeichen am Anfang und am Ende entfernen
@@ -2279,7 +2280,8 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             tmp[k].match(/\s*(\S*)\s*/);
                             tmp[k] = RegExp.$1;
                         }
-                        this.construct(this.definedMacros.macros[j][2],'macro',this.definedMacros.macros[j][1], tmp, objName);
+                        output[objName] = this.construct(this.definedMacros.macros[j][2],'macro',this.definedMacros.macros[j][1], tmp, objName);
+                        output.macros.push(output[objName]);
                         j=this.definedMacros.macros.length; // Macro gefunden, also muss die for-Schleife eigentlich nicht weiter durchlaufen werden.
                     }
                 }
