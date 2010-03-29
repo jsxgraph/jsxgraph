@@ -2243,6 +2243,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
     output.intersections = [];
     output.angles = [];
     output.macros = [];
+    output.functions = [];
     splitted = string.split(';');
     for(i=0; i< splitted.length; i++) {
         // Leerzeichen am Anfang und am Ende entfernen
@@ -2684,6 +2685,14 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     if(objName != '') { 
                         output[objName] = output.points[output.points.length-1]; 
                     }
+                }
+                else if(splitted[i].search(/(\S*)\s*:\s*(.*)/) != -1) { // Funktionsgraph
+                    objName = RegExp.$1;
+                    tmp = this.algebra.geonext2JS(RegExp.$2);
+                    defElements = [new Function('x','var y = '+tmp+'; return y;')];
+                    attributes.name = objName;
+                    output.functions.push(board.create('functiongraph',defElements,attributes));
+                    output[objName] = output.functions[output.functions.length-1]; 
                 }
             }
         }
