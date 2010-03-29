@@ -2275,12 +2275,12 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         splitted[i].match(/\((.*)\)/);
                         tmp = RegExp.$1;                        
                         tmp = tmp.split(',');
-                        for(i=0; i < tmp.length; i++) {
-                            tmp[i].match(/\s*(\S*)\s*/);
-                            tmp[i] = RegExp.$1;
+                        for(k=0; k < tmp.length; k++) {
+                            tmp[k].match(/\s*(\S*)\s*/);
+                            tmp[k] = RegExp.$1;
                         }
                         this.construct(this.definedMacros.macros[j][2],'macro',this.definedMacros.macros[j][1], tmp, objName);
-                        break; // Macro gefunden, also muss die for-Schleife eigentlich nicht weiter durchlaufen werden.
+                        j=this.definedMacros.macros.length; // Macro gefunden, also muss die for-Schleife eigentlich nicht weiter durchlaufen werden.
                     }
                 }
             }
@@ -2475,6 +2475,22 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     defElements[1] = RegExp.$2;
                     defElements[0] = defElements[0].replace(/\s+$/, ''); // Leerzeichen am Ende entfernen
                     defElements[1] = defElements[1].replace (/^\s+/, ''); // Leerzeichen am Anfang entfernen
+                    if(mode == 'macro') {
+                        for(j=0; j<=1; j++) {
+                            if(macroName != '') {
+                                for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                    if(defElements[j] == createdNames[k]) {
+                                        defElements[j] = macroName+"."+defElements[k];
+                                    }                            
+                                }
+                            }                            
+                            for(k=0; k<params.length; k++) {
+                                if(defElements[j] == params[k]) {
+                                    defElements[j] = paraIn[k];
+                                }
+                            }
+                        }
+                    }
                     defElements[0] = JXG.getReference(this,defElements[0]);
                     defElements[1] = JXG.getReference(this,defElements[1]);
                     if (defElements[0].elementClass==JXG.OBJECT_CLASS_LINE && defElements[1].elementClass==JXG.OBJECT_CLASS_LINE) {
@@ -2527,6 +2543,22 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     defElements = [];
                     defElements[0] = RegExp.$2;
                     defElements[1] = RegExp.$3;
+                    if(mode == 'macro') {
+                        for(j=0; j<=1; j++) {
+                            if(macroName != '') {
+                                for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                    if(defElements[j] == createdNames[k]) {
+                                        defElements[j] = macroName+"."+defElements[k];
+                                    }                            
+                                }
+                            }                            
+                            for(k=0; k<params.length; k++) {
+                                if(defElements[j] == params[k]) {
+                                    defElements[j] = paraIn[k];
+                                }
+                            }
+                        }
+                    }                    
                     if(objName != '') {
                         attributes.name = objName;
                         attributes.withLabel = true;
@@ -2550,6 +2582,22 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     defElements[0] = RegExp.$1;
                     defElements[1] = RegExp.$2;
                     defElements[2] = RegExp.$3;
+                    if(mode == 'macro') {
+                        for(j=0; j<=2; j++) {
+                            if(macroName != '') {
+                                for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                    if(defElements[j] == createdNames[k]) {
+                                        defElements[j] = macroName+"."+defElements[k];
+                                    }                            
+                                }
+                            }                            
+                            for(k=0; k<params.length; k++) {
+                                if(defElements[j] == params[k]) {
+                                    defElements[j] = paraIn[k];
+                                }
+                            }
+                        }
+                    }                    
                     if(objName == '') {
                         output.lines.push(this.createElement('angle',
                                                             [JXG.getReference(this,defElements[0]),
@@ -2592,6 +2640,24 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                 else if(splitted[i].search(/([0-9]+)\/([0-9]+)\(\s*(\S*)\s*,\s*(\S*)\s*\)/) != -1) { // Punkt mit Teilverhaeltnis, z.B. Mittelpunkt
                     defElements = [];
                     defElements[0] = 1.0*(RegExp.$1)/(1.0*(RegExp.$2));
+                    defElements[1] = RegExp.$3;
+                    defElements[2] = RegExp.$4;                    
+                    if(mode == 'macro') {
+                        for(j=1; j<=2; j++) {
+                            if(macroName != '') {
+                                for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                    if(defElements[j] == createdNames[k]) {
+                                        defElements[j] = macroName+"."+defElements[k];
+                                    }                            
+                                }
+                            }                            
+                            for(k=0; k<params.length; k++) {
+                                if(defElements[j] == params[k]) {
+                                    defElements[j] = paraIn[k];
+                                }
+                            }
+                        }
+                    }                    
                     defElements[1] = JXG.getReference(this,RegExp.$3);
                     defElements[2] = JXG.getReference(this,RegExp.$4);
                     obj = [];
