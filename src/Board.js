@@ -2229,10 +2229,13 @@ JXG.Board.prototype.animate = function() {
     }
 };
 
-JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
-    var splitted, i, first, last, j, output = {}, objName, defElements, obj, type, possibleNames, tmp, noMacro, k;
+JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName) {
+    var splitted, i, first, last, j, output = {}, objName, defElements, obj, type, possibleNames, tmp, noMacro, k, pattern, createdNames;
     if(typeof(mode) == "undefined") {
         mode = "normal";
+    }
+    else { // mode = 'macro'
+        createdNames = [];
     }
     output.lines = [];
     output.circles = [];
@@ -2264,7 +2267,8 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
             noMacro = true;
             if(this.definedMacros) {
                 for(j=0; j<this.definedMacros.macros.length; j++) {
-                    if(splitted[i].search(this.definedMacros.macros[j][0]) != -1) { // noch nicht gut. muss genau (!) passen // TODO (z.B. Name xxx und xxxy)
+                    pattern = new RegExp("^"+this.definedMacros.macros[j][0]+"\\s*\\(");
+                    if(splitted[i].search(pattern) != -1) { // TODO: testen, was mit den Macros xxx und yxxx passiert
                         alert("MACRO!"+splitted[i]+"_"+this.definedMacros.macros[j][2]);
                         noMacro = false;
                         // Parameter aufdroeseln 
@@ -2275,7 +2279,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                             tmp[i].match(/\s*(\S*)\s*/);
                             tmp[i] = RegExp.$1;
                         }
-                        this.construct(this.definedMacros.macros[j][2],'macro',this.definedMacros.macros[j][1], tmp);
+                        this.construct(this.definedMacros.macros[j][2],'macro',this.definedMacros.macros[j][1], tmp, objName);
                         break; // Macro gefunden, also muss die for-Schleife eigentlich nicht weiter durchlaufen werden.
                     }
                 }
@@ -2295,8 +2299,21 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                     if(objName != '') {
                         attributes.withLabel = true;
                         attributes.name = objName;
+                        if(mode == 'macro') {
+                            createdNames.push(objName);
+                        }
                     }
                     if(mode == 'macro') {
+                        if(macroName != '') {
+                            for(j=0; j<createdNames.length; j++) { // vorher oder nachher?
+                                if(defElements[0] == createdNames[j]) {
+                                    defElements[0] = macroName+"."+defElements[0];
+                                }
+                                if(defElements[1] == createdNames[j]) {
+                                    defElements[1] = macroName+"."+defElements[1];
+                                }                                
+                            }
+                        }
                         for(j=0; j<params.length; j++) {
                             if(defElements[0] == params[j]) {
                                 defElements = [paraIn[j], defElements[1]];
@@ -2304,6 +2321,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                             if(defElements[1] == params[j]) {
                                 defElements = [defElements[0], paraIn[j]];
                             }
+                        }
+                        if(macroName != '') {
+                            attributes.id = macroName+"."+objName;
                         }
                     }
                     defElements = [JXG.getReference(this,defElements[0]), JXG.getReference(this,defElements[1])];
@@ -2321,7 +2341,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                     defElements[0] = RegExp.$1;
                     defElements[1] = RegExp.$2;
                     for(j=0; j<=1; j++) {
-                        if(defElements[j].search(/[\[\]]/) != -1) { // Linie, definiert durch [P_1 P_2] dabei
+                        if(defElements[j].search(/[\[\]]/) != -1) { // Linie, definiert durch [P_1 P_2] , ist bei den Parametern dabei
                             defElements[j].match(/^[\[\]]\s*(\S.*\S)\s*[\[\]]$/);
                             defElements[j] = RegExp.$1;
                             if(defElements[j].search(/ /) != -1) {
@@ -2331,6 +2351,16 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                                 defElements[j][1] = RegExp.$2;
                             } // sonst wird die Gerade durch zwei Punkte definiert, die einen Namen haben, der aus nur jeweils einem Buchstaben besteht
                             if(mode == 'macro') {
+                                if(macroName != '') {
+                                    for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                        if(defElements[j][0] == createdNames[k]) {
+                                            defElements[j][0] = macroName+"."+defElements[j][0];
+                                        }
+                                        if(defElements[j][1] == createdNames[k]) {
+                                            defElements[j][1] = macroName+"."+defElements[j][1];
+                                        }                                
+                                    }
+                                }                            
                                 for(k=0; k<params.length; k++) {
                                     if(defElements[j][0] == params[k]) {
                                         defElements[j] = [paraIn[k], defElements[j][1]];
@@ -2338,7 +2368,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                                     if(defElements[j][1] == params[k]) {
                                         defElements[j] = [defElements[j][0], paraIn[k]];
                                     }                                    
-                                }
+                                }                               
                             }  
                             defElements[j] = (function(el, board) { return function() { 
                                                         return JXG.getReference(board,el[0]).Dist(JXG.getReference(board,el[1])); // TODO
@@ -2350,6 +2380,13 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                         }
                         else { // Element mit Name
                             if(mode == 'macro') {
+                                if(macroName != '') {
+                                    for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                        if(defElements[j] == createdNames[k]) {
+                                            defElements[j] = macroName+"."+defElements[k];
+                                        }                            
+                                    }
+                                }                            
                                 for(k=0; k<params.length; k++) {
                                     if(defElements[j] == params[k]) {
                                         defElements[j] = paraIn[k];
@@ -2361,7 +2398,13 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                     }
                     if(objName != '') {
                         attributes.withLabel = true;
-                        attributes.name = objName;                
+                        attributes.name = objName; 
+                        if(mode == 'macro') {
+                            if(macroName != '') {
+                                attributes.id = macroName+"."+objName;
+                            } 
+                            createdNames.push(objName);
+                        }
                     }
                     output.circles.push(this.createElement('circle',defElements,attributes));
                     if(objName != '') {
@@ -2372,6 +2415,12 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                     splitted[i].match(/^([A-Z]+\S*)\s*\(\s*(.*)\s*[,\|]\s*(.*)\s*\)$/);
                     objName = RegExp.$1; // Name
                     attributes.name = objName;
+                    if(mode == 'macro') {
+                        if(macroName != '') {
+                            attributes.id = macroName+"."+objName;
+                        } 
+                        createdNames.push(objName);
+                    }                        
                     output.points.push(this.createElement('point',[1.0*RegExp.$2,1.0*RegExp.$3],attributes));
                     output[objName] = output.points[output.points.length-1];
                 }
@@ -2395,7 +2444,13 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                         defElements[1] = 0; // (0,0) als Gleiterkoordinaten vorgeben...
                         defElements[2] = 0;
                     }
-                    attributes.name = objName;  
+                    attributes.name = objName;
+                    if(mode == 'macro') {
+                        if(macroName != '') {
+                            attributes.id = macroName+"."+objName;
+                        } 
+                        createdNames.push(objName);
+                    }                     
                     output.points.push(this.createElement('glider',
                                                           [defElements[1],defElements[2],JXG.getReference(this,defElements[0])],
                                                           attributes));
@@ -2413,6 +2468,12 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                     if (defElements[0].elementClass==JXG.OBJECT_CLASS_LINE && defElements[1].elementClass==JXG.OBJECT_CLASS_LINE) {
                         if(objName != '') {
                             attributes.name = objName;
+                            if(mode == 'macro') {
+                                if(macroName != '') {
+                                    attributes.id = macroName+"."+objName;
+                                } 
+                                createdNames.push(objName);
+                            } 
                         }
                         obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
                         output.intersections.push(obj);
@@ -2420,11 +2481,23 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                     else {
                         if(objName != '') {
                             attributes.name = objName+"_1";
+                            if(mode == 'macro') {
+                                if(macroName != '') {
+                                    attributes.id = macroName+"."+objName+"_1";
+                                } 
+                                createdNames.push(objName+"_1");
+                            }                            
                         }                
                         obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
                         output.intersections.push(obj);
                         if(objName != '') {
                             attributes.name = objName+"_2";
+                            if(mode == 'macro') {
+                                if(macroName != '') {
+                                    attributes.id = macroName+"."+objName+"_2";
+                                } 
+                                createdNames.push(objName+"_2");
+                            }                              
                         }                    
                         obj = this.createElement('intersection',[defElements[0],defElements[1],1],attributes);
                         output.intersections.push(obj);
@@ -2445,6 +2518,12 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                     if(objName != '') {
                         attributes.name = objName;
                         attributes.withLabel = true;
+                        if(mode == 'macro') {
+                            if(macroName != '') {
+                                attributes.id = macroName+"."+objName;
+                            } 
+                            createdNames.push(objName);
+                        }                         
                     }
                     output.lines.push(this.createElement(type,
                                                          [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
@@ -2484,6 +2563,12 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                             }
                         }
                         attributes.withLabel = true;
+                        if(mode == 'macro') {
+                            if(macroName != '') {
+                                attributes.id = macroName+"."+objName;
+                            } 
+                            createdNames.push(objName);
+                        }                        
                         output.angles.push(this.createElement('angle',
                                                              [JXG.getReference(this,defElements[0]),
                                                               JXG.getReference(this,defElements[1]),
@@ -2508,6 +2593,12 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn) {
                                       )(defElements, this);
                     if(objName != '') {                                  
                         attributes.name = objName;
+                        if(mode == 'macro') {
+                            if(macroName != '') {
+                                attributes.id = macroName+"."+objName;
+                            } 
+                            createdNames.push(objName);
+                        }                         
                     }
                     output.points.push(board.createElement('point',[obj[0],obj[1]],attributes));
                     if(objName != '') { 

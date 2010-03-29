@@ -17,14 +17,15 @@
         var cons1, cons2;
         board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 150, originY: 300, unitX: 50, unitY: 50, axis:true});
         
-        cons1 = board.construct("AA(0,0);A(1,1) ; B(2,2.5);g_1 = ]AB] ;C(3,3); [BC] ;AB(4|4);[C  AB];k(A,C);P(-1|1.5);");
+        cons1 = board.construct("AA(0,0);A(1,1) ; B(2,2.5);g = ]AB] ;C(3,3); [BC] ;AB(4|4);z=[C  AB];k(A,C);P(-1|1.5);");
        // board.addMacro("xxx = Macro(D,E,F) { P(1|1);x=[PD];y=[PE];H(4|5);k(H,F); }");
         //board.addMacro("xxx = Macro(D,E) { P(-1|1.5);[DP];[EP]; }");
         board.addMacro("xxx = Macro(D,E,F) { [DP];[EP];k(P,F) }");
-        board.addMacro("mittel = Macro(D,E) { u=k(D,1) draft;v=k(E,1) draft;X=u&v draft;]X_1 X_2[ }");
+        board.addMacro("mittel = Macro(D,E) { u=k(D,1) draft;v=k(E,1) draft;X=u&v draft;r=]X_1 X_2[ }"); 
         board.addMacro("test = Macro(D,E,F) { k(D,[EF]);}")
         cons2 = board.construct("xyz=mittel(A,B)");
         cons3 = board.construct("xxyz=test(AB,B,C)");
+        cons4 = board.construct("G=xyz.r & g;")
         
         //cons1.AA.setProperty({face:'diamond',size:7,strokeColor:'#8B2252',fillColor:'#8B2252'});
         
