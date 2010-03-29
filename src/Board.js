@@ -2230,7 +2230,7 @@ JXG.Board.prototype.animate = function() {
 };
 
 JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName) {
-    var splitted, i, first, last, j, output = {}, objName, defElements, obj, type, possibleNames, tmp, noMacro, k, pattern, createdNames;
+    var splitted, i, first, last, j, output = {}, objName, defElements, obj, type, possibleNames, tmp, noMacro, k, pattern, createdNames, found;
     if(typeof(mode) == "undefined") {
         mode = "normal";
     }
@@ -2258,13 +2258,26 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                 objName = '';
             }
             attributes = {};
-            if(splitted[i].search(/(\S*)\s*draft$/) != -1) {
-                attributes.draft = true;
-                splitted[i] = RegExp.$1;
-            }
-            if(splitted[i].search(/(.*)\s*invisible$/) != -1) {
-                attributes.visible = false;
-                splitted[i] = RegExp.$1;
+            found = true;
+            while(found) {
+                if(splitted[i].search(/(.*)draft$/) != -1) {
+                    attributes.draft = true;
+                    splitted[i] = RegExp.$1;
+                    splitted[i] = splitted[i].replace (/\s+$/, ''); // Leerzeichen am Ende entfernen
+                }
+                if(splitted[i].search(/(.*)invisible$/) != -1) {
+                    attributes.visible = false;
+                    splitted[i] = RegExp.$1;
+                    splitted[i] = splitted[i].replace (/\s+$/, ''); // Leerzeichen am Ende entfernen
+                }
+                if(splitted[i].search(/(.*)nolabel$/) != -1) {
+                    attributes.withLabel = false;
+                    splitted[i] = RegExp.$1;
+                    splitted[i] = splitted[i].replace (/\s+$/, ''); // Leerzeichen am Ende entfernen
+                }
+                if(splitted[i].search(/nolabel|invisible|draft/) == -1) {
+                    found = false;
+                }
             }
             noMacro = true;
             if(this.definedMacros) {
@@ -2300,7 +2313,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         defElements[1] = RegExp.$2;
                     } // sonst wird die Gerade durch zwei Punkte definiert, die einen Namen haben, der aus nur jeweils einem Buchstaben besteht
                     if(objName != '') {
-                        attributes.withLabel = true;
+                        if(attributes.withLabel == undefined) {
+                            attributes.withLabel = true;
+                        }
                         attributes.name = objName;
                         if(mode == 'macro') {
                             createdNames.push(objName);
@@ -2400,7 +2415,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         }
                     }
                     if(objName != '') {
-                        attributes.withLabel = true;
+                        if(attributes.withLabel == undefined) {
+                            attributes.withLabel = true;
+                        }
                         attributes.name = objName; 
                         if(mode == 'macro') {
                             if(macroName != '') {
@@ -2564,7 +2581,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     }                    
                     if(objName != '') {
                         attributes.name = objName;
-                        attributes.withLabel = true;
+                        if(attributes.withLabel == undefined) {
+                            attributes.withLabel = true;
+                        }
                         if(mode == 'macro') {
                             if(macroName != '') {
                                 attributes.id = macroName+"."+objName;
@@ -2625,7 +2644,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 }
                             }
                         }
-                        attributes.withLabel = true;
+                        if(attributes.withLabel == undefined) {
+                            attributes.withLabel = true;
+                        }
                         if(mode == 'macro') {
                             if(macroName != '') {
                                 attributes.id = macroName+"."+objName;

@@ -18,9 +18,10 @@
         board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 150, originY: 300, unitX: 50, unitY: 50, axis:true});
         
         cons1 = board.construct("A(0,0);B(1,1.5);C(3|2);");
-        board.addMacro("mittel = Macro(D,E) { u=k(D,1.5) draft;v=k(E,1.5) draft;X=u&v draft;r=]X_1 X_2[ }"); 
+        board.addMacro("mittel = Macro(D,E) { u=k(D,1.5) draft;v=k(E,1.5) nolabel draft;X=u&v draft;r=]X_1 X_2[ }"); 
         cons2 = board.construct("xxx=mittel(A,B);yyy=mittel(B,C);");
         cons4 = board.construct("G=xxx.r & yyy.r;");
+        cons5 = board.construct("gamma=<(A,B,C) nolabel");
         
         cons2.xxx.r.setProperty({strokeColor: 'green'});
         //cons1.AA.setProperty({face:'diamond',size:7,strokeColor:'#8B2252',fillColor:'#8B2252'});
