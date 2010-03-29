@@ -2447,6 +2447,18 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     attributes.name = objName;
                     if(mode == 'macro') {
                         if(macroName != '') {
+                            for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                if(defElements[0] == createdNames[k]) {
+                                    defElements[0] = macroName+"."+defElements[k];
+                                }                            
+                            }
+                        }                            
+                        for(k=0; k<params.length; k++) {
+                            if(defElements[0] == params[k]) {
+                                defElements[0] = paraIn[k];
+                            }
+                        }  
+                        if(macroName != '') {
                             attributes.id = macroName+"."+objName;
                         } 
                         createdNames.push(objName);

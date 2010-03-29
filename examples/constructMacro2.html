@@ -1,0 +1,33 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Short Construction</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+        // Konstruktion
+        var cons1, cons2;
+        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 150, originY: 300, unitX: 50, unitY: 50, axis:true});
+        
+        cons1 = board.construct("A(0,0);B(1,1.5);C(3|2);");
+        board.addMacro("mittel = Macro(D,E) { u=k(D,1.5) draft;v=k(E,1.5) draft;X=u&v draft;r=]X_1 X_2[ }"); 
+        cons2 = board.construct("xxx=mittel(A,B);");
+        cons3 = board.construct("yyy=mittel(B,C);");
+        cons4 = board.construct("G=xxx.r & yyy.r;");
+        
+        //cons1.AA.setProperty({face:'diamond',size:7,strokeColor:'#8B2252',fillColor:'#8B2252'});
+        
+  /* ]]> */
+  
+    
+  </script>
+</body>
+</html>
