@@ -818,6 +818,12 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], 1);
                 }
                 break;
+            case 'infoboxtext':
+                if(typeof(pair[1]) == 'string') {
+                    this.infoboxText = pair[1];
+                }
+                else this.infoboxText = false;
+                break;
             case 'showinfobox':
                 if(pair[1] == 'false' || pair[1] == false) {
                     this.showInfobox = false;
@@ -1180,7 +1186,7 @@ JXG.GeometryElement.prototype.addLabelToElement = function() {
     this.board.addText(this.label.content);
     this.board.renderer.drawText(this.label.content);
     if(!this.label.content.visProp['visible']) {
-        board.renderer.hide(this.label.content);
+        this.board.renderer.hide(this.label.content);
     }
     return this;
 };
@@ -1352,3 +1358,4 @@ JXG.clearVisPropOld = function(el) {
     el.visPropOld['firstArrow'] = false;
     el.visPropOld['lastArrow'] = false;
 };
+// vim: et ts=4

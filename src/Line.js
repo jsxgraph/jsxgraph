@@ -185,6 +185,17 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
     */
     this.parentPolygon = null;
 
+    /**
+    * Label offsets from label anchor
+    * @type array
+     * @default JXG.Options.line#labelOffsets
+    * @private
+    */
+    this.labelOffsets = [].concat(this.board.options.line.labelOffsets);
+    //make sure we have absolute values
+    this.labelOffsets[0] = Math.abs(this.labelOffsets[0]);
+    this.labelOffsets[1] = Math.abs(this.labelOffsets[1]);
+
     // create Label
     this.createLabel(withLabel);
 
@@ -462,6 +473,14 @@ JXG.Line.prototype.getTextAnchor = function() {
 };
 
 /**
+ * Adjusts Label coords relative to Anchor. DESCRIPTION
+ * @private
+ */
+JXG.Line.prototype.setLabelRelativeCoords = function(relCoords) {
+    this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [relCoords[0],-relCoords[1]],this.board);
+}
+
+/**
  * Calculates LabelAnchor. DESCRIPTION
  * @type JXG.Coords
  * @return Text anchor coordinates as JXG.Coords object.
@@ -469,9 +488,10 @@ JXG.Line.prototype.getTextAnchor = function() {
  */
 JXG.Line.prototype.getLabelAnchor = function() {
     var coords,screenCoords1,screenCoords2,
-        relCoords, slope;
+        relCoords, slope, xoffset = this.labelOffsets[0], yoffset = this.labelOffsets[1];
 
     if(!this.visProp['straightFirst'] && !this.visProp['straightLast']) {
+        this.setLabelRelativeCoords(this.labelOffsets);
         return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X()-0.5*(this.point2.X() - this.point1.X()),this.point2.Y()-0.5*(this.point2.Y() - this.point1.Y())],this.board);
     }
     else {
@@ -491,49 +511,49 @@ JXG.Line.prototype.getLabelAnchor = function() {
             slope = this.getSlope();
             if(coords.scrCoords[2]==0) {
                 if(slope == Infinity) {
-                    relCoords = [10,-10];
+                    relCoords = [xoffset,-yoffset];
                 }
                 else if(slope >= 0) {
-                    relCoords = [10,-10];
+                    relCoords = [xoffset,-yoffset];
                 }
                 else {
-                    relCoords = [-10,-10];
+                    relCoords = [-xoffset,-yoffset];
                 }
             }
             else if(coords.scrCoords[2]==this.board.canvasHeight) {
                 if(slope == Infinity) {
-                    relCoords = [10,10];
+                    relCoords = [xoffset,yoffset];
                 }
                 else if(slope >= 0) {
-                    relCoords = [-10,10];
+                    relCoords = [-xoffset,yoffset];
                 }
                 else {
-                    relCoords = [10,10];
+                    relCoords = [xoffset,yoffset];
                 }
             }
             if(coords.scrCoords[1]==0) {
                 if(slope == Infinity) {
-                    relCoords = [10,10]; // ??
+                    relCoords = [xoffset,yoffset]; // ??
                 }
                 else if(slope >= 0) {
-                    relCoords = [10,-10];
+                    relCoords = [xoffset,-yoffset];
                 }
                 else {
-                    relCoords = [10,10];
+                    relCoords = [xoffset,yoffset];
                 }
             }
             else if(coords.scrCoords[1]==this.board.canvasWidth) {
                 if(slope == Infinity) {
-                    relCoords = [-10,10]; // ??
+                    relCoords = [-xoffset,yoffset]; // ??
                 }
                 else if(slope >= 0) {
-                    relCoords = [-10,10];
+                    relCoords = [-xoffset,yoffset];
                 }
                 else {
-                    relCoords = [-10,-10];
+                    relCoords = [-xoffset,-yoffset];
                 }
             }
-            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [relCoords[0],-relCoords[1]],this.board);
+            this.setLabelRelativeCoords(relCoords);
         }
         return coords;
     }
@@ -824,7 +844,11 @@ JXG.createLine = function(board, parents, atts) {
     var el, p1, p2, i,
         c = [];
         
-    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'line','withLabel'), layer:null});
+    atts = JXG.checkAttributes(atts,{
+        withLabel:JXG.readOption(board.options,'line','withLabel'),
+        layer:null,
+        labelOffsets:JXG.readOption(board.options,'line','labelOffsets'),
+    });
 
     var constrained = false;
     if (parents.length == 2) { // The line is defined by two points (or coordinates of two points)
@@ -893,6 +917,8 @@ JXG.createLine = function(board, parents, atts) {
         el.funps = parents[0];
     } else
         throw new Error("JSXGraph: Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+
+    el.labelOffsets = atts['labelOffsets'];
     return el;
 };
 
@@ -1044,6 +1070,8 @@ JXG.createAxis = function(board, parents, attributes) {
 
         if(attributes.ticksDistance != 'undefined' && attributes.ticksDistance != null) {
             dist = attributes.ticksDistance;
+        } else if(JXG.isArray(attributes.ticks)) {
+            dist = attributes.ticks;
         } else {
             c1 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point1.coords.usrCoords.slice(1)],board);
             c2 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point2.coords.usrCoords.slice(1)],board);
@@ -1219,3 +1247,4 @@ JXG.createTangent = function(board, parents, attributes) {
  */
 JXG.JSXGraph.registerElement('tangent', JXG.createTangent);
 JXG.JSXGraph.registerElement('polar', JXG.createTangent);
+// vim: et ts=4

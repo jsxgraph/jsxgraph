@@ -942,36 +942,46 @@ JXG.Board.prototype.updateInfobox = function(el) {
         yc = el.coords.usrCoords[2]*1;
         this.infobox.setCoords(xc+this.infobox.distanceX/(this.stretchX),
                                yc+this.infobox.distanceY/(this.stretchY));
-        x = Math.abs(xc);
-        if (x>0.1) {
-            x = xc.toFixed(2);
-        } else if (x>=0.01) {
-            x = xc.toFixed(4);
-        } else if (x>=0.0001) {
-            x = xc.toFixed(6);
-        } else {
-            x = xc;
-        }
-        y = Math.abs(yc);
-        if (y>0.1) {
-            y = yc.toFixed(2);
-        } else if (y>=0.01) {
-            y = yc.toFixed(4);
-        } else if (y>=0.0001) {
-            y = yc.toFixed(6);
-        } else {
-            y = yc;
-        }
+        if (typeof(el.infoboxText)!="string") {
+            x = Math.abs(xc);
+            if (x>0.1) {
+                x = xc.toFixed(2);
+            } else if (x>=0.01) {
+                x = xc.toFixed(4);
+            } else if (x>=0.0001) {
+                x = xc.toFixed(6);
+            } else {
+                x = xc;
+            }
+            y = Math.abs(yc);
+            if (y>0.1) {
+                y = yc.toFixed(2);
+            } else if (y>=0.01) {
+                y = yc.toFixed(4);
+            } else if (y>=0.0001) {
+                y = yc.toFixed(6);
+            } else {
+                y = yc;
+            }
 
-        this.highlightInfobox(x,y,el);
+            this.highlightInfobox(x,y,el);
+        }
+        else
+            this.highlightCustomInfobox(el.infoboxText,el);
+
         this.renderer.show(this.infobox);
         this.renderer.updateText(this.infobox);
     }
     return this;
 };
 
+JXG.Board.prototype.highlightCustomInfobox = function(text,el) {
+    this.infobox.setText('<span style="color:#bbbbbb;">' + text + '</span>');
+    return this;
+};
+
 JXG.Board.prototype.highlightInfobox = function(x,y,el) {
-    this.infobox.setText('<span style="color:#bbbbbb;">(' + x + ', ' + y + ')</span>');
+    this.highlightCustomInfobox('(' + x + ', ' + y + ')');
     return this;
 };
 
@@ -2785,5 +2795,6 @@ JXG.Board.prototype.addMacro = function(string) {
     if(defName != '') {
         this.definedMacros.defName = this.definedMacros.macros[this.definedMacros.macros.length-1];
     }
-    
-}
+};
+
+// vim: et ts=4

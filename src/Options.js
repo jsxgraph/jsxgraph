@@ -113,7 +113,9 @@ JXG.Options = {
             majorHeight : 10,
             minorTicks : 4,
             defaultDistance : 1
-        }
+        },
+        /* absolute label offset from anchor */
+        labelOffsets: [10,10],
     },
 
     /* special axis options */
@@ -594,3 +596,4 @@ JXG.parseOptionsString = function(text, applyTo, board) {
        JXG.useStandardOptions(board);
    }
 };
+// vim: et ts=4

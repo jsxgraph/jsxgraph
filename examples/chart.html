@@ -17,6 +17,8 @@
     <input type="button" value="Horizontal bars" onClick="horizontalBarChart()" style='margin:1em'><br>
     <input type="button" value="Dynamic bars" onClick="dynamicBarChart()" style='margin:1em'><br>
     <input type="button" value="Pie chart" onClick="pieChart()" style='margin:1em'><br>
+    <input type="button" value="Radar chart" onClick="radarChart()" style='margin:1em'><br>
+    <input type="button" value="Custom infobox and axis ticks" onClick="infoboxChart()" style='margin:1em'><br>
   </p>
   <br clear=all>
   <div id="debug" style="display:block;"></div>
@@ -118,6 +120,97 @@
             var a = board.createElement('chart', dataArr, 
                 {chartStyle:'pie', colorArray:['#B02B2C','#3F4C6B','#C79810','#D15600'],fillOpacity:0.9,center:[5,2],strokeColor:'#ffffff',strokeWidth:6}
             );
+            board.unsuspendUpdate();
+        }
+
+        // Radar chart
+        function radarChart() {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-12, 12, 20, -12], keepaspectratio: true});
+            board.suspendUpdate();
+            // See labelArray and paramArray
+            var dataArr = [[23, 14, 15.0], [60, 8, 25.0], [0, 11.0, 25.0], [10, 15, 20.0]];
+
+            var a = board.createElement('chart', dataArr, {
+                chartStyle:'radar',
+                colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
+                //fillOpacity:0.5,
+                //strokeColor:'black',
+                //strokeWidth:1,
+                //polyStrokeWidth:1,
+                paramArray:['Speed','Flexibility', 'Costs'],
+                labelArray:['Ruby','JavaScript', 'PHP', 'Python'],
+                //startAngle:Math.PI/4,
+                legendPosition:'right',
+                //"startShiftRatio": 0.1,
+                //endShiftRatio:0.1,
+                //startShiftArray:[0,0,0],
+                //endShiftArray:[0.5,0.5,0.5],
+                start:0,
+                //end:70,
+                //startArray:[0,0,0],
+                //endArray:[7,7,7],
+                //radius:3,
+                //showCircles:true,
+                //circleLabelArray:[1,2,3,4,5],
+                //highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
+            });
+            board.unsuspendUpdate();
+        }
+
+        // Custom infobox chart
+        function infoboxChart() {
+            var paramArr = [4,8,6,4,5,7,4.5,2];
+            var timeArr = [
+                [2008,12],
+                [2009,2],
+                [2009,3],
+                [2009,6],
+                [2009,8],
+                [2009,9],
+                [2010,1],
+                [2010,3],
+            ];
+            function time2human(time, index) {
+                var months = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+                ];
+                return '(' + months[time[1]-1] + ' ' + time[0] + ', ' + paramArr[index] + ')';
+            };
+            function time2float(time) {
+                return time[0] + (time[1]-1)/12;
+            };
+
+            var xArr = [];
+            var yArr = [];
+            var dataArr = [xArr, yArr];
+            var infoArray = [];
+            for(var i=0; i<paramArr.length;i++) {
+                xArr.push(time2float(timeArr[i]));
+                yArr.push(paramArr[i]);
+                infoArray.push(time2human(timeArr[i], i));
+            }
+
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [2007.9,10, 2011, 0]});
+            board.suspendUpdate();
+            var x_axis = board.createElement('axis', [[0,2],[1,2]], {ticks: [2008, 2009, 2010]});
+            var y_axis = board.createElement('axis', [[2008,0],[2008,1]]);
+            var a = board.createElement('chart', dataArr, {
+                chartStyle:'point,line',strokeWidth:1,strokeColor:'#0000ff',
+                infoboxArray: infoArray,
+            });
             board.unsuspendUpdate();
         }
   /* ]]> */

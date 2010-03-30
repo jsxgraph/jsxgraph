@@ -95,6 +95,9 @@ JXG.Chart = function(board, parents, attributes) {
             case 'point':
                 c = this.drawPoints(board,[x,y],attributes);
                 break;
+            case 'radar':
+                c = this.drawRadar(board,parents,attributes);
+                break;
         };
         this.elements.push(c);
     };
@@ -222,7 +225,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
         }
         attributes['withLines'] = false;
 
-        if(typeof fill == 'undefined' && fill == null) {
+        if(!fill) {
             colorArray = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
             attributes['fillColor'] = colorArray[i%colorArray.length];
         }
@@ -238,10 +241,12 @@ JXG.Chart.prototype.drawPoints = function(board, parents, attributes) {
     var points = [];
     attributes['fixed'] = true;
     attributes['name'] = '';
+    var infoboxArray = JXG.isArray(attributes['infoboxArray']) ? attributes['infoboxArray'] || false : false;
     var x = parents[0];
     var y = parents[1];
     
     for (i=0;i<x.length;i++) {
+        attributes['infoboxtext'] = infoboxArray ? infoboxArray[i%infoboxArray.length] : false;
         points[i] = board.create('point',[x[i],y[i]], attributes);
     }
     this.rendNode = points[0].rendNode;
@@ -311,6 +316,230 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
     }
     this.rendNode = arc[0].rendNode;
     return {arcs:arc, points:p, midpoint:center}; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
+};
+
+/*
+ * labelArray=[ row1, row2, row3 ]
+ * paramArray=[ paramx, paramy, paramz ]
+ * parents=[[x1, y1, z1], [x2, y2, z2], [x3, y3, z3]]
+ */
+JXG.Chart.prototype.drawRadar = function(board, parents, attributes) { 
+    if (parents.length<=0) { alert("No data"); return; } 
+    // labels for axes
+    var paramArray = attributes['paramArray'];
+    if (paramArray == undefined){ alert("Need paramArray attribute"); return; }
+    var numofparams=paramArray.length;
+    if (numofparams<=1) { alert("Need more than 1 param"); return; }
+
+    var i,j;
+    for(i=0; i<parents.length; i++) {
+        if (numofparams!=parents[i].length) { alert("Use data length equal to number of params (" + parents[i].length + " != " + numofparams + ")"); return; }
+    }
+    maxes=new Array(numofparams);
+    mins=new Array(numofparams);
+    for(j=0; j<numofparams; j++) {
+        maxes[j] = parents[0][j];
+        mins[j] = maxes[j];
+    }
+    for(i=1; i<parents.length; i++) {
+        for(j=0;j<numofparams; j++) {
+            if (parents[i][j]>maxes[j])
+                maxes[j] = parents[i][j];
+            if (parents[i][j]<mins[j])
+                mins[j] = parents[i][j];
+        }
+    }
+    //alert("maxes " + maxes + ", mins " + mins);
+    var la = new Array(parents.length);
+    var pdata = new Array(parents.length);
+    for(i=0; i<parents.length; i++) {
+        la[i] = '';
+        pdata[i] = [];
+    }
+
+    var ssa = new Array(numofparams);
+    var esa = new Array(numofparams);
+    // 0 <= Offset from chart center <=1
+    var ssratio = attributes['startShiftRatio'] || 0.0;
+    // 0 <= Offset from chart radius <=1
+    var esratio = attributes['endShiftRatio'] || 0.0;
+    for(i=0; i<numofparams; i++) {
+        ssa[i] = (maxes[i]-mins[i])*ssratio;
+        esa[i] = (maxes[i]-mins[i])*esratio;
+    }
+    // Adjust offsets per each axis
+    var sshifts = attributes['startShiftArray'] || ssa;
+    var eshifts = attributes['endShiftArray'] || esa;
+    // Values for inner circle, minimums by default
+    var starts = attributes['startArray'] || mins;
+    if (attributes['start'] != undefined)
+        for(var i=0;i<numofparams; i++) starts[i] = attributes['start'];
+    // Values for outer circle, maximums by default
+    var ends = attributes['endArray'] || maxes;
+    if (attributes['end'] != undefined)
+        for(var i=0;i<numofparams; i++) ends[i] = attributes['end'];
+
+    if(sshifts.length != numofparams) { alert("Start shifts length is not equal to number of parameters"); return; }
+    if(eshifts.length != numofparams) { alert("End shifts length is not equal to number of parameters"); return; }
+    if(starts.length != numofparams) { alert("Starts length is not equal to number of parameters"); return; }
+    if(ends.length != numofparams) { alert("Ends length is not equal to number of parameters"); return; }
+
+    //for(i=0; i<numofparams; i++) {
+        //starts[i]-=sshifts[i];
+        //ends[i]+=eshifts[i];
+    //}
+    //alert(starts + ' ' + ends);
+    // labels for legend
+    var labelArray = attributes['labelArray'] || la;
+    var colorArray = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
+    var highlightColorArray = attributes['highlightColorArray'] || ['#FF7400'];
+    var radius = attributes['radius'] || 10;
+    var myAtts = {};
+    if (typeof attributes['highlightOnSector']  =='undefined') {
+        attributes['highlightOnSector'] = false;
+    }    
+    myAtts['name'] = attributes['name'];
+    myAtts['id'] = attributes['id'];
+    myAtts['strokeWidth'] = attributes['strokeWidth'] || 1;
+    myAtts['polyStrokeWidth'] = attributes['polyStrokeWidth'] || 2*myAtts['strokeWidth'];
+    myAtts['strokeColor'] = attributes['strokeColor'] || 'black';
+    myAtts['straightFirst'] = false;
+    myAtts['straightLast'] = false;
+    myAtts['fillColor'] = attributes['fillColor'] || '#FFFF88';
+    myAtts['fillOpacity'] = attributes['fillOpacity'] || 0.4;
+    myAtts['highlightFillColor'] = attributes['highlightFillColor'] || '#FF7400';
+    myAtts['highlightStrokeColor'] = attributes['highlightStrokeColor'] || 'black';
+    myAtts['gradient'] = attributes['gradient'] || 'none';
+
+    var cent = attributes['center'] || [0,0];
+    var xc = cent[0];
+    var yc = cent[1];
+
+    var center = board.createElement('point',[xc,yc], {name:'',fixed:true, withlabel:false,visible:false});
+    var start_angle = Math.PI/2 - Math.PI/numofparams;
+    if(attributes['startAngle'] || attributes['startAngle'] === 0) start_angle = attributes['startAngle'];
+    var rad = start_angle;
+    var p = [];
+    var line = [];
+    var get_anchor =  function() {
+        var x1,x2,y1,y2,relCoords = [].concat(this.labelOffsets);
+        x1 = this.point1.X();
+        x2 = this.point2.X();
+        y1 = this.point1.Y();
+        y2 = this.point2.Y();
+        if(x2<x1)
+            relCoords[0] = -relCoords[0];
+        if(y2<y1)
+            relCoords[1] = -relCoords[1];
+
+        this.setLabelRelativeCoords(relCoords);
+        return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X(),this.point2.Y()],this.board);
+    }
+
+    var get_transform = function(angle,i) {
+        var t;
+        var tscale;
+        var trot;
+        t = board.createElement('transform', [-(starts[i]-sshifts[i]), 0],{type:'translate'}); 
+        tscale = board.createElement('transform', [radius/((ends[i]+eshifts[i])-(starts[i]-sshifts[i])), 1],{type:'scale'}); 
+        t.melt(tscale);
+        trot = board.createElement('transform', [angle],{type:'rotate'}); 
+        t.melt(trot);
+        return t;
+    }
+    var t;
+    for (i=0;i<numofparams;i++) {
+        rad += 2*Math.PI/numofparams;
+        var xcoord = radius*Math.cos(rad)+xc;
+        var ycoord = radius*Math.sin(rad)+yc;
+
+        p[i] = board.createElement('point',[xcoord,ycoord], {name:'',fixed:true,withlabel:false,visible:false});
+        line[i] = board.createElement('line',[center,p[i]], 
+            {name:paramArray[i], 
+            strokeColor:myAtts['strokeColor'], strokeWidth:myAtts['strokeWidth'], strokeOpacity:1.0,
+            straightFirst:false, straightLast:false, withLabel:true,
+            highlightStrokeColor:myAtts['highlightStrokeColor'],
+        });
+        line[i].getLabelAnchor = get_anchor;
+        t = get_transform(rad,i);
+
+        for(j=0; j<parents.length; j++) {
+            var data=parents[j][i];
+            pdata[j][i] = board.createElement('point',[data,0], {name:'',fixed:true,withlabel:false,visible:false});
+            pdata[j][i].addTransform(pdata[j][i], t);
+        }
+        //board.unsuspendUpdate();
+        //alert('');
+        /*
+        if(myAtts['name'] != '') {
+            myAtts['withLabel'] = true;
+        }
+        else {
+            myAtts['withLabel'] = false;
+        }
+        */
+
+    }
+    var polygons = new Array(parents.length);
+    for(i=0;i<parents.length;i++) {
+        myAtts['labelColor'] = colorArray[i%colorArray.length];
+        myAtts['strokeColor'] = colorArray[i%colorArray.length];
+        myAtts['fillColor'] = colorArray[i%colorArray.length];
+        polygons[i] = board.createElement('polygon',pdata[i], 
+                {withLines:true,
+                withLabel:false,
+                fillColor:myAtts['fillColor'],
+                fillOpacity:myAtts['fillOpacity'],
+                });
+        for(j=0;j<numofparams;j++) {
+            polygons[i].borders[j].setProperty('strokeColor:' + colorArray[i%colorArray.length]);
+            polygons[i].borders[j].setProperty('strokeWidth:' + myAtts['polyStrokeWidth']);
+        }
+    }
+
+    var legend_position = attributes['legendPosition'] || 'none';
+    switch(legend_position) {
+        case 'right':
+        var lxoff = attributes['legendLeftOffset'] || 2;
+            var lyoff = attributes['legendTopOffset'] || 1;
+            this.legend = board.createElement('legend', [xc+radius+lxoff,yc+radius-lyoff],
+            {labelArray:labelArray,
+            colorArray: colorArray,
+            });
+            break;
+        case 'none':
+            break;
+        default:
+            alert('Unknown legend position');
+    }
+
+    var circles = [];
+    if (attributes['showCircles'] != false) {
+        var cla = [];
+        for(i=0;i<6;i++)
+            cla[i]=20*i;
+        cla[0] = "0";
+        var clabelArray = attributes['circleLabelArray'] || cla;
+        var ncircles = clabelArray.length;
+        if (ncircles<2) {alert("Too less circles"); return; }
+        var pcircles = [];
+        var angle=start_angle + Math.PI/numofparams
+        t = get_transform(angle,0);
+        myAtts['fillColor'] = 'none';
+        myAtts['highlightFillColor'] = 'none';
+        myAtts['strokeColor'] = attributes['strokeColor'] || 'black';
+        myAtts['strokeWidth'] = attributes['circleStrokeWidth'] || 0.5;
+        // we have ncircles-1 intervals between ncircles circles
+        var dr = (ends[0]-starts[0])/(ncircles-1);
+        for(i=0;i<ncircles;i++) {
+            pcircles[i] = board.createElement('point', [starts[0]+i*dr,0],{name:clabelArray[i], size:0,withLabel:true, visible:true});
+            pcircles[i].addTransform(pcircles[i],t);
+            circles[i] = board.createElement('circle', [center,pcircles[i]], myAtts);
+        }
+
+    }
+    this.rendNode = polygons[0].rendNode;
+    return {circles:circles, lines:line, points:pdata, midpoint:center,polygons:polygons}; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
 };
 
 /**
@@ -436,3 +665,67 @@ JXG.createChart = function(board, parents, attributes) {
 };    
 
 JXG.JSXGraph.registerElement('chart', JXG.createChart);
+
+/**
+ * Legend for chart
+ * 
+ **/
+JXG.Legend = function(board, coords, attributes) {
+    /* Call the constructor of GeometryElement */
+    this.constructor();
+    this.board = board;
+    this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coords, this.board);
+    this.myAtts = {};
+    this.label_array = attributes['labelArray'] || ['1','2','3','4','5','6','7','8'];
+    this.color_array = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
+    var i;
+    this.lines = [];
+    this.myAtts['strokeWidth'] = attributes['strokeWidth'] || 5;
+    this.myAtts['straightFirst'] = false;
+    this.myAtts['straightLast'] = false;
+    this.myAtts['withLabel'] = true;
+    this.style = attributes['legendStyle'] || 'vertical';
+
+    switch(this.style) {
+        case 'vertical':
+            this.drawVerticalLegend(attributes); 
+            break;
+        default:
+            alert('Unknown legend style' + this.style);
+            break;
+    }
+}
+JXG.Legend.prototype = new JXG.GeometryElement;
+
+JXG.Legend.prototype.drawVerticalLegend = function(attributes) {
+    var line_length = attributes['lineLength'] || 1;
+    var offy = (attributes['rowHeight'] || 20)/this.board.stretchY;
+
+    for(i=0;i<this.label_array.length;i++) {
+        this.myAtts['strokeColor'] = this.color_array[i];
+        this.myAtts['highlightStrokeColor'] = this.color_array[i];
+        this.myAtts['name'] = this.label_array[i];
+        this.myAtts['labelOffsets'] = [10, 0];
+        this.lines[i] = board.createElement('line', 
+                [[this.coords.usrCoords[1],this.coords.usrCoords[2] - i*offy],
+                [this.coords.usrCoords[1] + line_length,this.coords.usrCoords[2] - i*offy]],
+                this.myAtts
+                );
+        this.lines[i].getLabelAnchor = function() {
+            this.setLabelRelativeCoords(this.labelOffsets);
+            return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X(),this.point2.Y()],this.board);
+        }
+    }
+}
+
+JXG.createLegend = function(board, parents, attributes) {
+    //parents are coords of left top point of the legend
+    var start_from = [0,0];
+    if(parents != undefined)
+        if(parents.length == 2) {
+            start_from = parents;
+        }
+    return new JXG.Legend(board, start_from, attributes);
+}
+JXG.JSXGraph.registerElement('legend', JXG.createLegend);
+// vim: et ts=4
