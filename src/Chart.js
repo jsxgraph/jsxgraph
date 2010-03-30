@@ -222,7 +222,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
         }
         attributes['withLines'] = false;
 
-        if(typeof fill == 'undefined' && fill == null) {
+        if(!fill) {
             colorArray = attributes['colorArray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
             attributes['fillColor'] = colorArray[i%colorArray.length];
         }
