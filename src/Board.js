@@ -2244,6 +2244,8 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
     output.angles = [];
     output.macros = [];
     output.functions = [];
+    output.texts = [];
+    output.polygons = [];
     splitted = string.split(';');
     for(i=0; i< splitted.length; i++) {
         // Leerzeichen am Anfang und am Ende entfernen
@@ -2431,7 +2433,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         output[objName] = output.circles[output.circles.length-1];
                     }
                 }
-                else if(splitted[i].search(/[A-Z]+.*\(\s*[0-9\.\-]+\s*[,\|]\s*[0-9\.\-]+\s*\)/) != -1) { // Punkt, startet mit einem Grossbuchstaben! (definiert durch Koordinaten)
+                else if(splitted[i].search(/^[A-Z]+.*\(\s*[0-9\.\-]+\s*[,\|]\s*[0-9\.\-]+\s*\)/) != -1) { // Punkt, startet mit einem Grossbuchstaben! (definiert durch Koordinaten)
                     splitted[i].match(/^([A-Z]+\S*)\s*\(\s*(.*)\s*[,\|]\s*(.*)\s*\)$/);
                     objName = RegExp.$1; // Name
                     attributes.name = objName;
@@ -2444,7 +2446,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     output.points.push(this.createElement('point',[1.0*RegExp.$2,1.0*RegExp.$3],attributes));
                     output[objName] = output.points[output.points.length-1];
                 }
-                else if(splitted[i].search(/[A-Z]+.*\(.+(([,\|]\s*[0-9\.\-]+\s*){2})?/) != -1) { // Gleiter, mit oder ohne Koordinaten
+                else if(splitted[i].search(/^[A-Z]+.*\(.+(([,\|]\s*[0-9\.\-]+\s*){2})?/) != -1) { // Gleiter, mit oder ohne Koordinaten
                     splitted[i].match(/([A-Z]+.*)\((.*)\)/);
                     objName = RegExp.$1;
                     defElements = RegExp.$2;
@@ -2714,6 +2716,42 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     attributes.name = objName;
                     output.functions.push(board.create('functiongraph',defElements,attributes));
                     output[objName] = output.functions[output.functions.length-1]; 
+                }
+                else if(splitted[i].search(/#(.*)\(\s*([0-9])\s*[,|]\s*([0-9])\s*\)/) != -1) { // Text element
+                    defElements = []; // [0-9\.\-]+
+                    defElements[0] = RegExp.$1;
+                    defElements[1] = 1.0*RegExp.$2;
+                    defElements[2] = 1.0*RegExp.$3;
+                    defElements[0] = defElements[0].replace (/^\s+/, '').replace (/\s+$/, ''); // trim
+                    output.texts.push(board.createElement('text',[defElements[1],defElements[2],defElements[0]], attributes)); 
+                }
+                else if(splitted[i].search(/(\S*)\s*\[(.*)\]/) != -1) { // Polygon
+                    attributes.name = RegExp.$1;
+                    if(attributes.withLabel == undefined) {
+                        attributes.withLabel = true;
+                    }                    
+                    defElements = RegExp.$2;
+                    defElements = defElements.split(',');
+                    for(j=0; j<defElements.length; j++) {
+                        defElements[j] = defElements[j].replace (/^\s+/, '').replace (/\s+$/, ''); // trim
+                        if(mode == 'macro') {
+                            if(macroName != '') {
+                                for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                    if(defElements[j] == createdNames[k]) {
+                                        defElements[j] = macroName+"."+defElements[k];
+                                    }                            
+                                }
+                            }                            
+                            for(k=0; k<params.length; k++) {
+                                if(defElements[j] == params[k]) {
+                                    defElements[j] = paraIn[k];
+                                }
+                            }
+                        }
+                        defElements[j] = JXG.getReference(this,defElements[j]);
+                        console.log(defElements[j].name);
+                    }
+                    output.polygons.push(board.createElement('polygon',defElements,attributes));
                 }
             }
         }

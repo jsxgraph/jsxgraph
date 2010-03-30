@@ -18,6 +18,7 @@
         board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 300, originY: 300, unitX: 50, unitY: 50, axis:true});
         
         cons = board.construct("f:x^2;g:x^3+3*x^2+2*x+1;P(g);Q(f)");
+        cons1 = board.construct("A(-2,-2);B(-1,-1.5);C(-3|-1);p[A,B,C] nolabel;");
         
         cons.f.strokeColor('green');
         cons.g.strokeColor('red');
