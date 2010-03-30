@@ -371,7 +371,6 @@ is connected by line segments and the inner area is filled.
 Invisible grouping of points. If one point is moved, the others are
 transformed accordingly.
 
-
 \section{Curve}
 -- \metax{brd.create(\'functiongraph\',[parents],$\{$atts$\}$);}{}
 \metax{}{\sl Function graph, $x\mapsto f(x)$}
@@ -446,6 +445,57 @@ Defined by the equation $r=f(\phi)$.
 \metax{t.setPenSize(size);}{{\tt size}: number}
 \metax{t.showTurtle(); or t.st();}{}
 
+\section{Conic sections}
+\par{\sl -- ellipse, hyperbola:}\hfill defined by the two foci points
+and a point on the conic section or the length of the major axis.
+\metax{brd.create(\'ellipse\',[p1,p2,p3],$\{$attributes$\}$);}{}
+\metax{brd.create(\'ellipse\',[p1,p2,a],$\{$attributes$\}$);}{}
+\metax{brd.create(\'hyperbola\',[p1,p2,p3],$\{$attributes$\}$);}{}
+\metax{brd.create(\'hyperbola\',[p1,p2,a],$\{$attributes$\}$);}{}
+\par{\sl -- parabola:}\hfill defined by the focus and the directrix (line). 
+\metax{brd.create(\'parabola\',[p1,line],$\{$attributes$\}$);}{}
+\par{\sl -- conic section:}\hfill defined by $5$ points or
+by the (symmetric) quadratic form
+$$
+(x,y,z)
+\pmatrix{a_{00}&a_{01}&a_{02}\cr
+a_{01}&a_{11}&a_{12}\cr
+a_{02}&a_{12}&a_{22}\cr}
+(x,y,z)^\top
+$$
+\metax{brd.create(\'conic\',[p1,$\ldots$,p5],$\{$atts$\}$);}{}
+\metax{brd.create(\'conic\',[$a_{00}$,$a_{11}$,$a_{22}$,$a_{01}$,$a_{02}$,$a_{12}$],$\{$atts$\}$);}{}
+
+\section{Text}
+Display static or dynamic texts.\par
+\metax{el = brd.create(\'text\',[x,y,"Hello"]);}{}
+\metax{el = brd.create(\'text\',[x,y,f]);}{where}
+\metax{f = function()$\{$ return p.X(); $\}$}{}
+Example for a dynamic text: $f$ returns the $x$ coordinate of the point $p$.\par
+
+\section{Image}
+Display bitmap image (also as data uri).\par
+\metax{el = brd.create(\'image\',[uri-string,[x,y],[w,h]]);}{}
+\metax{}{{\tt [x,y]:} position of lower left corner, {\tt [w,h]:} width, height}
+
+\section{Transform}
+Affine transformation of objects.\par
+\metax{t = brd.create(\'transform\',[data,base],$\{$type:\'type\'$\}$);}{}
+{\tt base}: the transformation is applied to the coordinates of this object.\par
+Possible types:\par
+-- translate: {\tt data}$=${\tt [x,y]}\par
+-- scale: {\tt data}$=${\tt [x,y]}\par
+-- reflect: {\tt data}$=${\tt [line]} or {\tt [x1,y1,x2,y2]}\par
+-- rotate: {\tt data}$=${\tt [angle,point]} or {\tt [angle,x,y]}\par
+-- shear: {\tt data}$=${\tt [angle]} \par
+-- generic: {\tt data}$=${\tt [v11,v12,v13,v21,$\ldots$,v33]} $3\times 3$ matrix\par
+{\bf Methods:}\par
+\metax{t.bindTo(p)}{the coordinates of $p$ are defined by $t$}
+\metax{t.applyOnce(p)}{apply the transformation once}
+\metax{t.melt(s)}{combine two transformations to one: $ t:= t\cdot s$}
+\metax{p2 = brd.create('point',[p1,t],$\{$fixed:true$\}$);}{}
+\metax{}{Point $p_2$: apply $t$ on point $p_1$}
+
 \section{Other geometric elements}
 {\sl -- angle:} \hfill filled area defined by 3 points
 \metax{el = brd.create(\'angle\',[A,B,C],$\{$attributes$\}$);}{}
@@ -500,18 +550,6 @@ Returns array of length 2 with first and second intersection point (also for lin
 
 \metax{brd.create(\'intersection\',[o1,o2,n],$\{atts\}$);}{}
 
-\section{Text}
-Display static or dynamic texts.\par
-\metax{el = brd.create(\'text\',[x,y,"Hello"]);}{}
-\metax{el = brd.create(\'text\',[x,y,f]);}{where}
-\metax{f = function()$\{$ return p.X(); $\}$}{}
-Example for a dynamic text: $f$ returns the $x$ coordinate of the point $p$.\par
-
-\section{Image}
-Display bitmap image (also as data uri).\par
-\metax{el = brd.create(\'image\',[uri-string,[x,y],[w,h]]);}{}
-\metax{}{{\tt [x,y]:} position of lower left corner, {\tt [w,h]:} width, height}
-
 \section{Attributes of geometric elements}
 {\sl Generic attributes:}\par
 \metax{strokeWidth:}{number}
@@ -521,6 +559,7 @@ Display bitmap image (also as data uri).\par
 \metax{highlightStrokeOpacity:}{value between 0 and 1}
 \metax{visible,trace,draft:}{true, false}
 \metax{dash:}{dash style for lines: $0, 1, \ldots, 6$}
+\metax{infoboxtext:}{string}
 
 {\sl Attributes for point elements:}\par
 %\metax{style:}{point style: $0, 1, \ldots, 12$}
@@ -544,26 +583,6 @@ Display bitmap image (also as data uri).\par
 \par
 \metax{JXG.hsv2rgb(h,s,v)}{$0\leq h\leq 360$, $0\leq s,v\leq1$}
 \metax{}{returns RGB color string.}
-
-
-\section{Transform}
-Affine transformation of objects.\par
-\metax{t = brd.create(\'transform\',[data,base],$\{$type:\'type\'$\}$);}{}
-{\tt base}: the transformation is applied to the coordinates of this object.\par
-Possible types:\par
--- translate: {\tt data}$=${\tt [x,y]}\par
--- scale: {\tt data}$=${\tt [x,y]}\par
--- reflect: {\tt data}$=${\tt [line]} or {\tt [x1,y1,x2,y2]}\par
--- rotate: {\tt data}$=${\tt [angle,point]} or {\tt [angle,x,y]}\par
--- shear: {\tt data}$=${\tt [angle]} \par
--- generic: {\tt data}$=${\tt [v11,v12,v13,v21,$\ldots$,v33]} $3\times 3$ matrix\par
-{\bf Methods:}\par
-\metax{t.bindTo(p)}{the coordinates of $p$ are defined by $t$}
-\metax{t.applyOnce(p)}{apply the transformation once}
-\metax{t.melt(s)}{combine two transformations to one: $ t:= t\cdot s$}
-\metax{p2 = brd.create('point',[p1,t],$\{$fixed:true$\}$);}{}
-\metax{}{Point $p_2$: apply $t$ on point $p_1$}
-
 
 \section{Mathematical functions}
 Functions of the intrinsic JavaScript object {\sl Math}:\par
