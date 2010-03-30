@@ -238,10 +238,12 @@ JXG.Chart.prototype.drawPoints = function(board, parents, attributes) {
     var points = [];
     attributes['fixed'] = true;
     attributes['name'] = '';
+    var infoboxArray = JXG.isArray(attributes['infoboxArray']) ? attributes['infoboxArray'] || false : false;
     var x = parents[0];
     var y = parents[1];
     
     for (i=0;i<x.length;i++) {
+        attributes['infoboxtext'] = infoboxArray ? infoboxArray[i%infoboxArray.length] : false;
         points[i] = board.create('point',[x[i],y[i]], attributes);
     }
     this.rendNode = points[0].rendNode;
@@ -436,3 +438,4 @@ JXG.createChart = function(board, parents, attributes) {
 };    
 
 JXG.JSXGraph.registerElement('chart', JXG.createChart);
+// vim: et ts=4
