@@ -776,7 +776,7 @@ JXG.Algebra.prototype.replacePow = function(te) {
                 leftop = leftop.replace(/([\(\)\+\*\%\^\-\/\]\[])/g,"\\$1");
             }
         } else {
-            leftop = '\\w+';
+            leftop = '[\\w\\.]+';
         }
         right = te.slice(i+1);
         if (right.match(/^([\w\.]*\()/)) {
