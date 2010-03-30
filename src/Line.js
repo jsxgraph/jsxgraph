@@ -1044,6 +1044,8 @@ JXG.createAxis = function(board, parents, attributes) {
 
         if(attributes.ticksDistance != 'undefined' && attributes.ticksDistance != null) {
             dist = attributes.ticksDistance;
+        } else if(JXG.isArray(attributes.ticks)) {
+            dist = attributes.ticks;
         } else {
             c1 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point1.coords.usrCoords.slice(1)],board);
             c2 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point2.coords.usrCoords.slice(1)],board);
