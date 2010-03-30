@@ -2749,7 +2749,6 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             }
                         }
                         defElements[j] = JXG.getReference(this,defElements[j]);
-                        console.log(defElements[j].name);
                     }
                     output.polygons.push(board.createElement('polygon',defElements,attributes));
                 }
