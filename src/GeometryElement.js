@@ -1186,7 +1186,7 @@ JXG.GeometryElement.prototype.addLabelToElement = function() {
     this.board.addText(this.label.content);
     this.board.renderer.drawText(this.label.content);
     if(!this.label.content.visProp['visible']) {
-        board.renderer.hide(this.label.content);
+        this.board.renderer.hide(this.label.content);
     }
     return this;
 };
