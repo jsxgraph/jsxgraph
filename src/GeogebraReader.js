@@ -1565,11 +1565,18 @@ this.writeElement = function(board, output, input, cmd) {
       JXG.debug(input);
 
       try {
+        var ma = /Circle\[\s*(\w+)\s*,\s*([\d\.]+)\s*\]/.exec(input);
         if(typeof input != 'undefined') {
-          if(JXG.isArray(input))
+          if (ma!=null && ma.length==3) {
+            // from Circle[A, 5] take "A" and "5", stored in ma[1] and ma[2]
+            var q = JXG.GeogebraReader.checkElement(ma[1])
+            var c = board.create('circle', [q, parseFloat(ma[2])], {fillColor:'none',visible:false,name:''});
+            p = board.create('glider', [gxtEl.x, gxtEl.y, c], attr);
+          } else if(JXG.isArray(input)) {
             p = board.create('glider', [gxtEl.x, gxtEl.y, input[0]], attr);
-          else
+          } else {
             p = board.create('glider', [gxtEl.x, gxtEl.y, input], attr);
+          }
         } else {
           p = board.create('point', [gxtEl.x, gxtEl.y], attr);
         }
@@ -2595,7 +2602,7 @@ this.readGeogebra = function(tree, board) {
   board = JXG.GeogebraReader.setDefaultOptions(board);
 
   // speeding up the drawing process
-  board.suspendUpdate();
+  //board.suspendUpdate();
 
   var constructions = JXG.GeogebraReader.tree.getElementsByTagName("construction");
   for (var t=0; t<constructions.length; t++) {

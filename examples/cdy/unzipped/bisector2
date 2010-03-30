@@ -1,0 +1,160 @@
+//Cindy-2.0.17 build 779 (2007/02/14 21:22)DEMO
+//Created on: 18.03.2010 15:07:47
+//For: ausstellung
+//DO NOT EDIT --- MACHINE GENERATED CODE
+Geometry:=Euclidean;
+("A"):=FreePoint([-1.8205128205128203+i*-0.0,4.0+i*0.0,-0.641025641025641+i*-0.0]);
+"A".setAppearance(2,5,1,0,0,9,true,false);
+"A".setAttribute("color","2");
+"A".setAttribute("visibility","9");
+"A".setAttribute("drawtrace","false");
+"A".setAttribute("tracelength","100");
+"A".setAttribute("traceskip","1");
+"A".setAttribute("tracedim","1.0");
+"A".setAttribute("render","false");
+"A".setAttribute("pinning","false");
+"A".setAttribute("labeled","true");
+"A".setAttribute("ptsize","5");
+"A".setAttribute("pointborder","true");
+"A".setLabelPos(3,3,1,false,0.0,0.2,1);
+("B"):=FreePoint([1.530864197530864+i*0.0,4.0+i*0.0,-1.2345679012345678+i*-0.0]);
+"B".setAppearance(2,5,1,0,0,9,true,false);
+"B".setAttribute("color","2");
+"B".setAttribute("visibility","9");
+"B".setAttribute("drawtrace","false");
+"B".setAttribute("tracelength","100");
+"B".setAttribute("traceskip","1");
+"B".setAttribute("tracedim","1.0");
+"B".setAttribute("render","false");
+"B".setAttribute("pinning","false");
+"B".setAttribute("labeled","true");
+"B".setAttribute("ptsize","5");
+"B".setAttribute("pointborder","true");
+"B".setLabelPos(3,3,1,false,0.0,0.2,1);
+("a"):=Join("A","B");
+"a".setAppearance(3,5,1,0,0,9,true,false);
+"a".setAttribute("color","3");
+"a".setAttribute("visibility","9");
+"a".setAttribute("drawtrace","false");
+"a".setAttribute("tracelength","100");
+"a".setAttribute("traceskip","1");
+"a".setAttribute("tracedim","1.0");
+"a".setAttribute("render","false");
+"a".setAttribute("labeled","true");
+"a".setAttribute("linesize","1");
+"a".setAttribute("overlap","0");
+"a".setAttribute("clipline","0");
+"a".setAttribute("linedashing","false");
+"a".setAttribute("lineborder","false");
+"a".setLabelPos(3,3,1,false,0.0,0.2,1);
+("C"):=FreePoint([4.0+i*0.0,-0.9491525423728815+i*0.0,0.8474576271186441+i*0.0]);
+"C".setAppearance(2,5,1,0,0,9,true,false);
+"C".setAttribute("color","2");
+"C".setAttribute("visibility","9");
+"C".setAttribute("drawtrace","false");
+"C".setAttribute("tracelength","100");
+"C".setAttribute("traceskip","1");
+"C".setAttribute("tracedim","1.0");
+"C".setAttribute("render","false");
+"C".setAttribute("pinning","false");
+"C".setAttribute("labeled","true");
+"C".setAttribute("ptsize","5");
+"C".setAttribute("pointborder","true");
+"C".setLabelPos(3,3,1,false,0.0,0.2,1);
+("b"):=Join("B","C");
+"b".setAppearance(3,5,1,0,0,9,true,false);
+"b".setAttribute("color","3");
+"b".setAttribute("visibility","9");
+"b".setAttribute("drawtrace","false");
+"b".setAttribute("tracelength","100");
+"b".setAttribute("traceskip","1");
+"b".setAttribute("tracedim","1.0");
+"b".setAttribute("render","false");
+"b".setAttribute("labeled","true");
+"b".setAttribute("linesize","1");
+"b".setAttribute("overlap","0");
+"b".setAttribute("clipline","0");
+"b".setAttribute("linedashing","false");
+"b".setAttribute("lineborder","false");
+"b".setLabelPos(3,3,1,false,0.0,0.2,1);
+{null,"c",[1.0+i*0.0,0.0+i*0.0,0.0+i*0.0]}:=AngularBisector("a","b","B");
+"c".setAppearance(14,5,3,0,0,9,true,false);
+"c".setAttribute("color","14");
+"c".setAttribute("visibility","9");
+"c".setAttribute("drawtrace","false");
+"c".setAttribute("tracelength","100");
+"c".setAttribute("traceskip","1");
+"c".setAttribute("tracedim","1.0");
+"c".setAttribute("render","false");
+"c".setAttribute("labeled","true");
+"c".setAttribute("linesize","3");
+"c".setAttribute("overlap","0");
+"c".setAttribute("clipline","0");
+"c".setAttribute("linedashing","true");
+"c".setAttribute("lineborder","false");
+"c".setLabelPos(3,3,1,false,0.0,0.2,1);
+Geometry:=Euclidean;
+//
+//Exercise Information
+exercise {
+  input {
+    setElements(());
+    addMode("de.cinderella.modes.Move()");
+    addMode("de.cinderella.modes.SingleAdd()");
+    addMode("de.cinderella.modes.MultiAdd(de.cinderella.algorithms.Join)");
+    addMode("de.cinderella.modes.DefineCompass()");
+    addMode("de.cinderella.actions.Undo()");
+    addMode("de.cinderella.actions.GiveHint()");
+    addMode("de.cinderella.actions.Restart()");
+   setAttribute("exercise.name","Exercise");
+   setAttribute("exercise.message","");
+  }
+  arrows {
+  }
+}
+behavior {Environment();
+          setParams(1.0,0.0,0.0);
+          addToLevel(1);
+         }
+behavior {Motor();
+          setParams(1.0,0.1,0.0);
+          addToLevel(1);
+         }
+kernel.setAcc(2);
+kernel.setFrames(1);
+kernel.setSpeed(1.0);
+//Start portinfo
+kernel.setBackgroundColor(168,176,192);
+kernel.setBlackColor(0,0,0);
+kernel.setHighlightColor(255,255,255);
+port EuclideanPort() {
+   setAttribute("imagescalemode","scalemode.center");
+   setAttribute("imagealpha","1.0");
+   setAttribute("image.filename","");
+   setAttribute("show.adjacencymatrix","1");
+   setAttribute("show.vertexqueue","");
+   setAttribute("antialiasing","false");
+   setAttribute("precision.measure","precision.4");
+   setAttribute("precision.measure.int","4");
+   setAttribute("precision.angle","precision.1");
+   setAttribute("precision.angle.int","1");
+   setAttribute("anglemodulo","modulo.0");
+   setAttribute("printscale","1:1");
+   setAttribute("printscale.int","1:1");
+   setAttribute("darkenDependent","true");
+   setAttribute("mesh.rectangular","false");
+   setAttribute("mesh.triangular","false");
+   setAttribute("axes.show","false");
+   setAttribute("snap","false");
+   setAttribute("mesh.density","0");
+   setPolar(false);
+   setPortWidth(680);
+   setPortHeight(350);
+   setScale(25.0);
+   setOriginY(226);
+   setOriginX(233);
+   setMesh(false);
+   setAxes(false);
+   setSnap(false);
+}
+//End portinfo

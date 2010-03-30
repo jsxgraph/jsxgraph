@@ -1,0 +1,29 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Short Construction</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+        // Konstruktion
+        var cons1, cons2;
+        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 200, originY: 200, unitX: 50, unitY: 50, axis:true});
+        
+        cons = board.construct("A(-3,-3) draft;B(5.5,-2);C(3,2.5);c=[AB];a=[BC] draft;b=[AC];alpha=<(B,A,C);beta=<(C,B,A);gamma=<(A,C,B);");
+        cons2 = board.construct("D ( a | 4.272 , 1.2 );E(b) invisible");
+        cons3 = board.construct("H=1/4(A,B);J=1/3(A,B)         draft;");
+        
+  /* ]]> */
+  
+    
+  </script>
+</body>
+</html>

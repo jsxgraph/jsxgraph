@@ -2239,12 +2239,21 @@ JXG.Board.prototype.animate = function() {
     }
 };
 
-JXG.Board.prototype.construct = function(string) {
-    var splitted, i, first, last, j, output = {}, objName, defElements, obj, type, possibleNames;
+JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName) {
+    var splitted, i, first, last, j, output = {}, objName, defElements, obj, type, possibleNames, tmp, noMacro, k, pattern, createdNames, found;
+    if(typeof(mode) == "undefined") {
+        mode = "normal";
+    }
+    else { // mode = 'macro'
+        createdNames = [];
+    }
     output.lines = [];
     output.circles = [];
     output.points = [];
     output.intersections = [];
+    output.angles = [];
+    output.macros = [];
+    output.functions = [];
     splitted = string.split(';');
     for(i=0; i< splitted.length; i++) {
         // Leerzeichen am Anfang und am Ende entfernen
@@ -2258,151 +2267,498 @@ JXG.Board.prototype.construct = function(string) {
             else {
                 objName = '';
             }
-            if(splitted[i].search(/^[\[\]].*[\[\]]$/) != -1) { // Gerade, Halbgerade oder Segment
-                splitted[i].match(/([\[\]])(.*)([\[\]])/);
-                first = (RegExp.$1 != '[');
-                last = (RegExp.$3 == '[');
-                defElements = (RegExp.$2).replace (/^\s+/, '').replace (/\s+$/, '');
-                if(defElements.search(/ /) != -1) {
-                    defElements.match(/(\S*) +(\S*)/);
+            attributes = {};
+            found = true;
+            while(found) {
+                if(splitted[i].search(/(.*)draft$/) != -1) {
+                    attributes.draft = true;
+                    splitted[i] = RegExp.$1;
+                    splitted[i] = splitted[i].replace (/\s+$/, ''); // Leerzeichen am Ende entfernen
+                }
+                if(splitted[i].search(/(.*)invisible$/) != -1) {
+                    attributes.visible = false;
+                    splitted[i] = RegExp.$1;
+                    splitted[i] = splitted[i].replace (/\s+$/, ''); // Leerzeichen am Ende entfernen
+                }
+                if(splitted[i].search(/(.*)nolabel$/) != -1) {
+                    attributes.withLabel = false;
+                    splitted[i] = RegExp.$1;
+                    splitted[i] = splitted[i].replace (/\s+$/, ''); // Leerzeichen am Ende entfernen
+                }
+                if(splitted[i].search(/nolabel|invisible|draft/) == -1) {
+                    found = false;
+                }
+            }
+            noMacro = true;
+            if(this.definedMacros) {
+                for(j=0; j<this.definedMacros.macros.length; j++) {
+                    pattern = new RegExp("^"+this.definedMacros.macros[j][0]+"\\s*\\(");
+                    if(splitted[i].search(pattern) != -1) { // TODO: testen, was mit den Macros xxx und yxxx passiert
+                        alert("MACRO!"+splitted[i]+"_"+this.definedMacros.macros[j][2]);
+                        noMacro = false;
+                        // Parameter aufdroeseln 
+                        splitted[i].match(/\((.*)\)/);
+                        tmp = RegExp.$1;                        
+                        tmp = tmp.split(',');
+                        for(k=0; k < tmp.length; k++) {
+                            tmp[k].match(/\s*(\S*)\s*/);
+                            tmp[k] = RegExp.$1;
+                        }
+                        output[objName] = this.construct(this.definedMacros.macros[j][2],'macro',this.definedMacros.macros[j][1], tmp, objName);
+                        output.macros.push(output[objName]);
+                        j=this.definedMacros.macros.length; // Macro gefunden, also muss die for-Schleife eigentlich nicht weiter durchlaufen werden.
+                    }
+                }
+            }
+            if(noMacro) { // splitted[i] war kein Macro-Aufruf
+                if(splitted[i].search(/^[\[\]].*[\[\]]$/) != -1) { // Gerade, Halbgerade oder Segment
+                    splitted[i].match(/([\[\]])(.*)([\[\]])/);
+                    attributes.straightFirst = (RegExp.$1 != '[');
+                    attributes.straightLast = (RegExp.$3 == '[');
+                    defElements = (RegExp.$2).replace (/^\s+/, '').replace (/\s+$/, '');
+                    if(defElements.search(/ /) != -1) {
+                        defElements.match(/(\S*) +(\S*)/);
+                        defElements = [];
+                        defElements[0] = RegExp.$1;
+                        defElements[1] = RegExp.$2;
+                    } // sonst wird die Gerade durch zwei Punkte definiert, die einen Namen haben, der aus nur jeweils einem Buchstaben besteht
+                    if(objName != '') {
+                        if(attributes.withLabel == undefined) {
+                            attributes.withLabel = true;
+                        }
+                        attributes.name = objName;
+                        if(mode == 'macro') {
+                            createdNames.push(objName);
+                        }
+                    }
+                    if(mode == 'macro') {
+                        if(macroName != '') {
+                            for(j=0; j<createdNames.length; j++) { // vorher oder nachher?
+                                if(defElements[0] == createdNames[j]) {
+                                    defElements[0] = macroName+"."+defElements[0];
+                                }
+                                if(defElements[1] == createdNames[j]) {
+                                    defElements[1] = macroName+"."+defElements[1];
+                                }                                
+                            }
+                        }
+                        for(j=0; j<params.length; j++) {
+                            if(defElements[0] == params[j]) {
+                                defElements = [paraIn[j], defElements[1]];
+                            }
+                            if(defElements[1] == params[j]) {
+                                defElements = [defElements[0], paraIn[j]];
+                            }
+                        }
+                        if(macroName != '') {
+                            attributes.id = macroName+"."+objName;
+                        }
+                    }
+                    defElements = [JXG.getReference(this,defElements[0]), JXG.getReference(this,defElements[1])];
+                    
+                    output.lines.push(this.createElement('line',
+                                            defElements,
+                                            attributes));
+                    if(objName != '') {
+                        output[objName] = output.lines[output.lines.length-1];
+                    }
+                }
+                else if(splitted[i].search(/k\s*\(.*/) != -1) { // Kreis
+                    splitted[i].match(/k\s*\(\s*(\S.*\S|\S)\s*,\s*(\S.*\S|\S)\s*\)/);
                     defElements = [];
                     defElements[0] = RegExp.$1;
                     defElements[1] = RegExp.$2;
-                } // sonst wird die Gerade durch zwei Punkte definiert, die einen Namen haben, der aus nur jeweils einem Buchstaben besteht
-                if(objName == '') {
-                    output.lines.push(this.createElement('line',
-                                        [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
-                                        {straightFirst:first,straightLast:last}));
-                }
-                else {
-                    output.lines.push(this.createElement('line',
-                                        [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
-                                        {straightFirst:first,straightLast:last, name:objName, withLabel:true}));
-                    output[objName] = output.lines[output.lines.length-1];
-                }
-            }
-            else if(splitted[i].search(/k\s*\(.*/) != -1) { // Kreis
-                splitted[i].match(/k\s*\(\s*(\S.*\S|\S)\s*,\s*(\S.*\S|\S)\s*\)/);
-                defElements = [];
-                defElements[0] = RegExp.$1;
-                defElements[1] = RegExp.$2;
-                for(j=0; j<=1; j++) {
-                    if(defElements[j].search(/[\[\]]/) != -1) { // Linie, definiert durch [P_1 P_2] dabei
-                        defElements[j].match(/^[\[\]]\s*(\S.*\S)\s*[\[\]]$/);
-                        defElements[j] = RegExp.$1;
-                        if(defElements[j].search(/ /) != -1) {
-                            defElements[j].match(/(\S*) +(\S*)/);
-                            defElements[j] = [];
-                            defElements[j][0] = RegExp.$1;
-                            defElements[j][1] = RegExp.$2;
-                        } // sonst wird die Gerade durch zwei Punkte definiert, die einen Namen haben, der aus nur jeweils einem Buchstaben besteht
-                        defElements[j] = (function(el, board) { return function() { 
-                                                    return JXG.getReference(board,el[0]).Dist(JXG.getReference(board,el[1])); // was ist this hier?
-                                               }}
-                                  )(defElements[j], this);
-                    }
-                    else if(defElements[j].search(/[0-9\.\s]+/) != -1){ // Radius als Zahl
-                        defElements[j] = 1.0*defElements[j]; 
-                    }
-                    else { // Element mit Name
-                        defElements[j] = JXG.getReference(this,defElements[j]);
-                    }
-                }
-                if(objName == '') {                
-                    output.circles.push(this.createElement('circle',[defElements[0],defElements[1]],{}));
-                }
-                else {
-                    output.circles.push(this.createElement('circle',[defElements[0],defElements[1]],
-                                                           {name:objName, withLabel:true}));
-                    output[objName] = output.circles[output.circles.length-1];
-                }
-            }
-            else if(splitted[i].search(/[A-Z]+.*\(.*[,\|].*\)/) != -1) { // Punkt, startet mit einem Grossbuchstaben! (definiert durch Koordinaten)
-                splitted[i].match(/^([A-Z]+\S*)\s*\(\s*(.*)\s*[,\|]\s*(.*)\s*\)$/);
-                objName = RegExp.$1; // Name
-                output.points.push(this.createElement('point',[1.0*RegExp.$2,1.0*RegExp.$3],{name:objName}));
-                output[objName] = output.points[output.points.length-1];
-            }
-            else if(splitted[i].search(/&/) != -1) { // Schnittpunkt
-                splitted[i].match(/(.*)&(.*)/);
-                defElements = [];
-                defElements[0] = RegExp.$1;
-                defElements[1] = RegExp.$2;
-                defElements[0] = defElements[0].replace(/\s+$/, ''); // Leerzeichen am Ende entfernen
-                defElements[1] = defElements[1].replace (/^\s+/, ''); // Leerzeichen am Anfang entfernen
-                defElements[0] = JXG.getReference(this,defElements[0]);
-                defElements[1] = JXG.getReference(this,defElements[1]);
-                if (defElements[0].elementClass==JXG.OBJECT_CLASS_LINE && defElements[1].elementClass==JXG.OBJECT_CLASS_LINE) {
-                    obj = this.createElement('intersection',[defElements[0],defElements[1],0],{});
-                    output.intersections.push(obj);
-                }
-                else {
-                    obj = this.createElement('intersection',[defElements[0],defElements[1],0],{});
-                    output.intersections.push(obj);
-                    obj = this.createElement('intersection',[defElements[0],defElements[1],1],{});
-                    output.intersections.push(obj);
-                }
-            }
-            else if(splitted[i].search(/\|[\|_]\s*\(/) != -1) { // Parallele oder Senkrechte
-                splitted[i].match(/\|([\|_])\s*\(\s*(\S*)\s*,\s*(\S*)\s*\)/);
-                type = RegExp.$1;
-                if(type == '|') {
-                    type = 'parallel';
-                }
-                else { // type == '_'
-                    type = 'normal';
-                }
-                defElements = [];
-                defElements[0] = RegExp.$2;
-                defElements[1] = RegExp.$3;
-                if(objName == '') {
-                    output.lines.push(this.createElement(type,
-                                                        [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],{}));
-                }
-                else {
-                    output.lines.push(this.createElement(type,
-                                                         [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
-                                                         {name:objName, withLabel:true}));
-                    output[objName] = output.lines[output.lines.length-1];
-                }               
-            }
-            else if(splitted[i].search(/^</) != -1) { // Winkel
-                splitted[i].match(/<\s*\(\s*(\S*)\s*,\s*(\S*)\s*,\s*(\S*)\s*\)/);
-                defElements = [];
-                defElements[0] = RegExp.$1;
-                defElements[1] = RegExp.$2;
-                defElements[2] = RegExp.$3;
-                if(objName == '') {
-                    output.lines.push(this.createElement('angle',
-                                                        [JXG.getReference(this,defElements[0]),
-                                                         JXG.getReference(this,defElements[1]),
-                                                         JXG.getReference(this,defElements[2])],{}));
-                }
-                else {
-                    possibleNames = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta',
-                                'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 
-                                'sigmaf', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega'];
-                    type = '';
-                    for(j=0; j<possibleNames.length;j++) {
-                        if(objName == possibleNames[j]) {
-                            objName = '&'+objName+';';
-                            type = 'greek';
-                            break;
+                    for(j=0; j<=1; j++) {
+                        if(defElements[j].search(/[\[\]]/) != -1) { // Linie, definiert durch [P_1 P_2] , ist bei den Parametern dabei
+                            defElements[j].match(/^[\[\]]\s*(\S.*\S)\s*[\[\]]$/);
+                            defElements[j] = RegExp.$1;
+                            if(defElements[j].search(/ /) != -1) {
+                                defElements[j].match(/(\S*) +(\S*)/);
+                                defElements[j] = [];
+                                defElements[j][0] = RegExp.$1;
+                                defElements[j][1] = RegExp.$2;
+                            } // sonst wird die Gerade durch zwei Punkte definiert, die einen Namen haben, der aus nur jeweils einem Buchstaben besteht
+                            if(mode == 'macro') {
+                                if(macroName != '') {
+                                    for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                        if(defElements[j][0] == createdNames[k]) {
+                                            defElements[j][0] = macroName+"."+defElements[j][0];
+                                        }
+                                        if(defElements[j][1] == createdNames[k]) {
+                                            defElements[j][1] = macroName+"."+defElements[j][1];
+                                        }                                
+                                    }
+                                }                            
+                                for(k=0; k<params.length; k++) {
+                                    if(defElements[j][0] == params[k]) {
+                                        defElements[j] = [paraIn[k], defElements[j][1]];
+                                    }
+                                    if(defElements[j][1] == params[k]) {
+                                        defElements[j] = [defElements[j][0], paraIn[k]];
+                                    }                                    
+                                }                               
+                            }  
+                            defElements[j] = (function(el, board) { return function() { 
+                                                        return JXG.getReference(board,el[0]).Dist(JXG.getReference(board,el[1])); // TODO
+                                                   }}
+                                      )(defElements[j], this);
+                        }
+                        else if(defElements[j].search(/[0-9\.\s]+/) != -1){ // Radius als Zahl
+                            defElements[j] = 1.0*defElements[j]; 
+                        }
+                        else { // Element mit Name
+                            if(mode == 'macro') {
+                                if(macroName != '') {
+                                    for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                        if(defElements[j] == createdNames[k]) {
+                                            defElements[j] = macroName+"."+defElements[k];
+                                        }                            
+                                    }
+                                }                            
+                                for(k=0; k<params.length; k++) {
+                                    if(defElements[j] == params[k]) {
+                                        defElements[j] = paraIn[k];
+                                    }
+                                }
+                            }                        
+                            defElements[j] = JXG.getReference(this,defElements[j]);
                         }
                     }
-                    output.lines.push(this.createElement('angle',
-                                                         [JXG.getReference(this,defElements[0]),
-                                                          JXG.getReference(this,defElements[1]),
-                                                          JXG.getReference(this,defElements[2])],
-                                                         {text:objName, withLabel:true}));
-                    if(type == 'greek') {
-                        objName = objName.slice(1,objName.length-1); // & und ; wieder entfernen
+                    if(objName != '') {
+                        if(attributes.withLabel == undefined) {
+                            attributes.withLabel = true;
+                        }
+                        attributes.name = objName; 
+                        if(mode == 'macro') {
+                            if(macroName != '') {
+                                attributes.id = macroName+"."+objName;
+                            } 
+                            createdNames.push(objName);
+                        }
                     }
-                    output[objName] = output.lines[output.lines.length-1]; 
-                }  
+                    output.circles.push(this.createElement('circle',defElements,attributes));
+                    if(objName != '') {
+                        output[objName] = output.circles[output.circles.length-1];
+                    }
+                }
+                else if(splitted[i].search(/[A-Z]+.*\(\s*[0-9\.\-]+\s*[,\|]\s*[0-9\.\-]+\s*\)/) != -1) { // Punkt, startet mit einem Grossbuchstaben! (definiert durch Koordinaten)
+                    splitted[i].match(/^([A-Z]+\S*)\s*\(\s*(.*)\s*[,\|]\s*(.*)\s*\)$/);
+                    objName = RegExp.$1; // Name
+                    attributes.name = objName;
+                    if(mode == 'macro') {
+                        if(macroName != '') {
+                            attributes.id = macroName+"."+objName;
+                        } 
+                        createdNames.push(objName);
+                    }                        
+                    output.points.push(this.createElement('point',[1.0*RegExp.$2,1.0*RegExp.$3],attributes));
+                    output[objName] = output.points[output.points.length-1];
+                }
+                else if(splitted[i].search(/[A-Z]+.*\(.+(([,\|]\s*[0-9\.\-]+\s*){2})?/) != -1) { // Gleiter, mit oder ohne Koordinaten
+                    splitted[i].match(/([A-Z]+.*)\((.*)\)/);
+                    objName = RegExp.$1;
+                    defElements = RegExp.$2;
+                    objName = objName.replace (/^\s+/, '').replace (/\s+$/, '');
+                    defElements = defElements.replace (/^\s+/, '').replace (/\s+$/, '');
+                    if(defElements.search(/[,\|]/) != -1) { // Koordinaten angegeben
+                        defElements.match(/(\S*)\s*[,\|]\s*([0-9\.]+)\s*[,\|]\s*([0-9\.]+)\s*/);
+                        defElements = [];
+                        defElements[0] = RegExp.$1;
+                        defElements[1] = 1.0*RegExp.$2;
+                        defElements[2] = 1.0*RegExp.$3;
+                    }
+                    else { // keine Koordinaten
+                        obj = defElements;
+                        defElements = [];
+                        defElements[0] = obj; // Name des definierenden Elements
+                        defElements[1] = 0; // (0,0) als Gleiterkoordinaten vorgeben...
+                        defElements[2] = 0;
+                    }
+                    attributes.name = objName;
+                    if(mode == 'macro') {
+                        if(macroName != '') {
+                            for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                if(defElements[0] == createdNames[k]) {
+                                    defElements[0] = macroName+"."+defElements[k];
+                                }                            
+                            }
+                        }                            
+                        for(k=0; k<params.length; k++) {
+                            if(defElements[0] == params[k]) {
+                                defElements[0] = paraIn[k];
+                            }
+                        }  
+                        if(macroName != '') {
+                            attributes.id = macroName+"."+objName;
+                        } 
+                        createdNames.push(objName);
+                    }                     
+                    output.points.push(this.createElement('glider',
+                                                          [defElements[1],defElements[2],JXG.getReference(this,defElements[0])],
+                                                          attributes));
+                    output[objName] = output.points[output.points.length-1];                
+                }
+                else if(splitted[i].search(/&/) != -1) { // Schnittpunkt
+                    splitted[i].match(/(.*)&(.*)/);
+                    defElements = [];
+                    defElements[0] = RegExp.$1;
+                    defElements[1] = RegExp.$2;
+                    defElements[0] = defElements[0].replace(/\s+$/, ''); // Leerzeichen am Ende entfernen
+                    defElements[1] = defElements[1].replace (/^\s+/, ''); // Leerzeichen am Anfang entfernen
+                    if(mode == 'macro') {
+                        for(j=0; j<=1; j++) {
+                            if(macroName != '') {
+                                for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                    if(defElements[j] == createdNames[k]) {
+                                        defElements[j] = macroName+"."+defElements[k];
+                                    }                            
+                                }
+                            }                            
+                            for(k=0; k<params.length; k++) {
+                                if(defElements[j] == params[k]) {
+                                    defElements[j] = paraIn[k];
+                                }
+                            }
+                        }
+                    }
+                    defElements[0] = JXG.getReference(this,defElements[0]);
+                    defElements[1] = JXG.getReference(this,defElements[1]);
+                    if (defElements[0].elementClass==JXG.OBJECT_CLASS_LINE && defElements[1].elementClass==JXG.OBJECT_CLASS_LINE) {
+                        if(objName != '') {
+                            attributes.name = objName;
+                            if(mode == 'macro') {
+                                if(macroName != '') {
+                                    attributes.id = macroName+"."+objName;
+                                } 
+                                createdNames.push(objName);
+                            } 
+                        }
+                        obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
+                        output.intersections.push(obj);
+                    }
+                    else {
+                        if(objName != '') {
+                            attributes.name = objName+"_1";
+                            if(mode == 'macro') {
+                                if(macroName != '') {
+                                    attributes.id = macroName+"."+objName+"_1";
+                                } 
+                                createdNames.push(objName+"_1");
+                            }                            
+                        }                
+                        obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
+                        output.intersections.push(obj);
+                        if(objName != '') {
+                            attributes.name = objName+"_2";
+                            if(mode == 'macro') {
+                                if(macroName != '') {
+                                    attributes.id = macroName+"."+objName+"_2";
+                                } 
+                                createdNames.push(objName+"_2");
+                            }                              
+                        }                    
+                        obj = this.createElement('intersection',[defElements[0],defElements[1],1],attributes);
+                        output.intersections.push(obj);
+                    }
+                }
+                else if(splitted[i].search(/\|[\|_]\s*\(/) != -1) { // Parallele oder Senkrechte
+                    splitted[i].match(/\|([\|_])\s*\(\s*(\S*)\s*,\s*(\S*)\s*\)/);
+                    type = RegExp.$1;
+                    if(type == '|') {
+                        type = 'parallel';
+                    }
+                    else { // type == '_'
+                        type = 'normal';
+                    }
+                    defElements = [];
+                    defElements[0] = RegExp.$2;
+                    defElements[1] = RegExp.$3;
+                    if(mode == 'macro') {
+                        for(j=0; j<=1; j++) {
+                            if(macroName != '') {
+                                for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                    if(defElements[j] == createdNames[k]) {
+                                        defElements[j] = macroName+"."+defElements[k];
+                                    }                            
+                                }
+                            }                            
+                            for(k=0; k<params.length; k++) {
+                                if(defElements[j] == params[k]) {
+                                    defElements[j] = paraIn[k];
+                                }
+                            }
+                        }
+                    }                    
+                    if(objName != '') {
+                        attributes.name = objName;
+                        if(attributes.withLabel == undefined) {
+                            attributes.withLabel = true;
+                        }
+                        if(mode == 'macro') {
+                            if(macroName != '') {
+                                attributes.id = macroName+"."+objName;
+                            } 
+                            createdNames.push(objName);
+                        }                         
+                    }
+                    output.lines.push(this.createElement(type,
+                                                         [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
+                                                         attributes));
+                    if(objName != '') {
+                        output[objName] = output.lines[output.lines.length-1];
+                    }               
+                }
+                else if(splitted[i].search(/^</) != -1) { // Winkel
+                    splitted[i].match(/<\s*\(\s*(\S*)\s*,\s*(\S*)\s*,\s*(\S*)\s*\)/);
+                    defElements = [];
+                    defElements[0] = RegExp.$1;
+                    defElements[1] = RegExp.$2;
+                    defElements[2] = RegExp.$3;
+                    if(mode == 'macro') {
+                        for(j=0; j<=2; j++) {
+                            if(macroName != '') {
+                                for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                    if(defElements[j] == createdNames[k]) {
+                                        defElements[j] = macroName+"."+defElements[k];
+                                    }                            
+                                }
+                            }                            
+                            for(k=0; k<params.length; k++) {
+                                if(defElements[j] == params[k]) {
+                                    defElements[j] = paraIn[k];
+                                }
+                            }
+                        }
+                    }                    
+                    if(objName == '') {
+                        output.lines.push(this.createElement('angle',
+                                                            [JXG.getReference(this,defElements[0]),
+                                                             JXG.getReference(this,defElements[1]),
+                                                             JXG.getReference(this,defElements[2])],
+                                                             attributes));
+                    }
+                    else {
+                        possibleNames = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta',
+                                    'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 
+                                    'sigmaf', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega'];
+                        type = '';
+                        for(j=0; j<possibleNames.length;j++) {
+                            if(objName == possibleNames[j]) {
+                                attributes.name = '&'+objName+';';
+                                type = 'greek';
+                                break;
+                            }
+                            else {
+                                if(j == possibleNames.length -1) {
+                                    attributes.name = objName;
+                                }
+                            }
+                        }
+                        if(attributes.withLabel == undefined) {
+                            attributes.withLabel = true;
+                        }
+                        if(mode == 'macro') {
+                            if(macroName != '') {
+                                attributes.id = macroName+"."+objName;
+                            } 
+                            createdNames.push(objName);
+                        }                        
+                        output.angles.push(this.createElement('angle',
+                                                             [JXG.getReference(this,defElements[0]),
+                                                              JXG.getReference(this,defElements[1]),
+                                                              JXG.getReference(this,defElements[2])],
+                                                             attributes));
+                        output[objName] = output.angles[output.angles.length-1]; 
+                    }  
+                }
+                else if(splitted[i].search(/([0-9]+)\/([0-9]+)\(\s*(\S*)\s*,\s*(\S*)\s*\)/) != -1) { // Punkt mit Teilverhaeltnis, z.B. Mittelpunkt
+                    defElements = [];
+                    defElements[0] = 1.0*(RegExp.$1)/(1.0*(RegExp.$2));
+                    defElements[1] = RegExp.$3;
+                    defElements[2] = RegExp.$4;                    
+                    if(mode == 'macro') {
+                        for(j=1; j<=2; j++) {
+                            if(macroName != '') {
+                                for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
+                                    if(defElements[j] == createdNames[k]) {
+                                        defElements[j] = macroName+"."+defElements[k];
+                                    }                            
+                                }
+                            }                            
+                            for(k=0; k<params.length; k++) {
+                                if(defElements[j] == params[k]) {
+                                    defElements[j] = paraIn[k];
+                                }
+                            }
+                        }
+                    }                    
+                    defElements[1] = JXG.getReference(this,RegExp.$3);
+                    defElements[2] = JXG.getReference(this,RegExp.$4);
+                    obj = [];
+                    obj[0] = (function(el, board) { return function() { 
+                                                                  return (1-el[0])*el[1].coords.usrCoords[1]+el[0]*el[2].coords.usrCoords[1]; 
+                                                   }}
+                                      )(defElements, this);
+                    obj[1] = (function(el, board) { return function() { 
+                                                                  return (1-el[0])*el[1].coords.usrCoords[2]+el[0]*el[2].coords.usrCoords[2]; 
+                                                   }}
+                                      )(defElements, this);
+                    if(objName != '') {                                  
+                        attributes.name = objName;
+                        if(mode == 'macro') {
+                            if(macroName != '') {
+                                attributes.id = macroName+"."+objName;
+                            } 
+                            createdNames.push(objName);
+                        }                         
+                    }
+                    output.points.push(board.createElement('point',[obj[0],obj[1]],attributes));
+                    if(objName != '') { 
+                        output[objName] = output.points[output.points.length-1]; 
+                    }
+                }
+                else if(splitted[i].search(/(\S*)\s*:\s*(.*)/) != -1) { // Funktionsgraph
+                    objName = RegExp.$1;
+                    tmp = this.algebra.geonext2JS(RegExp.$2);
+                    defElements = [new Function('x','var y = '+tmp+'; return y;')];
+                    attributes.name = objName;
+                    output.functions.push(board.create('functiongraph',defElements,attributes));
+                    output[objName] = output.functions[output.functions.length-1]; 
+                }
             }
         }
     }
     return output;
 };
+
+JXG.Board.prototype.addMacro = function(string) {
+    var defHead, defBody, defName = '', i;
+    string.match(/(.*)\{(.*)\}/);
+    defHead = RegExp.$1;
+    defBody = RegExp.$2;
+    if(defHead.search(/=/) != -1) {
+        defHead.match(/\s*(\S*)\s*=.*/);
+        defName = RegExp.$1;
+        defHead = (defHead.split('='))[1];
+    }
+    defHead.match(/Macro\((.*)\)/);
+    defHead = RegExp.$1;
+    defHead = defHead.split(',');
+    for(i=0; i < defHead.length; i++) {
+        defHead[i].match(/\s*(\S*)\s*/);
+        defHead[i] = RegExp.$1;
+    }
+    
+    if(this.definedMacros == null) {
+        this.definedMacros = {};
+        this.definedMacros.macros = [];
+    }
+
+    this.definedMacros.macros.push([defName, defHead, defBody]);
+    if(defName != '') {
+        this.definedMacros.defName = this.definedMacros.macros[this.definedMacros.macros.length-1];
+    }
+    
+};
+
 // vim: et ts=4

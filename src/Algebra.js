@@ -1156,8 +1156,12 @@ JXG.Algebra.prototype.affineDistance = function(array1, array2) {
  * @return a to the power of b.
  */
 JXG.Algebra.prototype.pow = function(/** number */ a, /** number */ b) /** number */ {
-    if (a==0 || b==0) { 
-        return 1;
+    if (a==0) {
+        if (b==0) { 
+            return 1;
+        } else { 
+            return 0.0;
+        }
     }
     if (Math.floor(b)==b) {// b is integer
         return Math.pow(a,b);

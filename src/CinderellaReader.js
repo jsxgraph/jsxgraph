@@ -561,8 +561,8 @@ JXG.CinderellaReader = new function() {
         filling = this.calculateColor(filling);
         do {
             i = i+1;
-        } while(dataLines[i].search(/visibilityfill/) == -1); 
-        fillop = dataLines[i].match(/"[0-9]*"/)[0];
+        } while(dataLines[i].search(/visibilityfill|fillalpha/) == -1); 
+        fillop = dataLines[i].match(/"[0-9\.]*"/)[0];
         fillop = fillop.slice(1,fillop.length-1);
         fillop = 1*fillop/10;  
         return [objAppearance,filling, fillop,i];

@@ -1359,6 +1359,9 @@ JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
 };
 
 
+JXG.JSXGraph.registerElement('point',JXG.createPoint);
+/*
+// Post-poned (A.W.)
 JXG.JSXGraph.registerElement('point', {
     icon:           'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAqCAIAAACofUV1AAAAu0lEQVR42u2Y2w7EIAhEYeL//zL7ttntRakyhjTw2MhwYDSaqplJgoDkiAAOFV0XaSGFD19MjMjh7/u70g8E6vBV1JmIQK2VHhp7A/5KdWxKf24Dh+HRxDaIvnJiX3jD6OhjM8RdlRfdc/Ece0y5rFW+FEdxFMerOCbe+9NxqFW+9Dn2WHOuAs8iNkT6/cEbyZ0yniYwIBL50ob4IY/F4XThkVj0yJOOQK2VHtpEW0OnuP+lqEep7rn/+AD75zNf8mTQTQAAAABJRU5ErkJggg%3D%3D',
     label:          'Free point',
@@ -1379,6 +1382,7 @@ JXG.JSXGraph.registerElement('point', {
                     },
     creator:        JXG.createPoint
 });
+*/
 JXG.JSXGraph.registerElement('glider', JXG.createGlider);
 JXG.JSXGraph.registerElement('intersection', JXG.createIntersectionPoint);
 JXG.JSXGraph.registerElement('otherintersection', JXG.createOtherIntersectionPoint);

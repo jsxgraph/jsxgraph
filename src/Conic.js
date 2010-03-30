@@ -168,6 +168,7 @@ JXG.createEllipse = function(board, parents, atts) {
 
     curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
+    curve.midpoint = M;
     curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };
@@ -315,6 +316,7 @@ JXG.createHyperbola = function(board, parents, atts) {
 
     curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
+    curve.midpoint = M;
     curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };
@@ -461,7 +463,8 @@ JXG.createParabola = function(board, parents, atts) {
  * </script><pre>
  */
 JXG.createConic = function(board, parents, atts) {
-    var rotationMatrix, eigen, a, b, c, M = [[1,0,0],[0,1,0],[0,0,1]],
+    var rotationMatrix = [[1,0,0],[0,1,0],[0,0,1]], 
+        eigen, a, b, c, M = [[1,0,0],[0,1,0],[0,0,1]],
         c1, c2, points = [], i, definingMat, 
         givenByPoints, 
         p = [];
@@ -594,17 +597,22 @@ JXG.createConic = function(board, parents, atts) {
                 }
                 len = Math.sqrt(len);
                 for (j=0;j<3;j++) {
-                    eigen[1][j][i] /= len;
+                    //eigen[1][j][i] /= len;
                 }
             }
             rotationMatrix = eigen[1];
+            //console.log(rotationMatrix);
+            //console.log(eigen[0]);
+            //console.log(c+' '+a+' '+b);
             c = Math.sqrt(Math.abs(eigen[0][0][0]));
             a = Math.sqrt(Math.abs(eigen[0][1][1]));
             b = Math.sqrt(Math.abs(eigen[0][2][2]));
 
         }
-        if (eigen[0][1][1]<0.0) {
+        if (eigen[0][1][1]<0.0 && eigen[0][2][2]<0.0) {
             v = JXG.Math.matVecMult(rotationMatrix,[1/c,Math.cos(phi)/a,Math.sin(phi)/b]);
+        } else if (eigen[0][1][1]<0.0 && eigen[0][2][2]>0.0) {
+            v = JXG.Math.matVecMult(rotationMatrix,[Math.cos(phi)/c,1/a,Math.sin(phi)/b]);
         } else if (eigen[0][2][2]<0.0) {
             v = JXG.Math.matVecMult(rotationMatrix,[Math.sin(phi)/c,Math.cos(phi)/a,1/b]);
         } 
@@ -617,6 +625,21 @@ JXG.createConic = function(board, parents, atts) {
 
     curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
+
+
+    // Center coordinates see http://en.wikipedia.org/wiki/Matrix_representation_of_conic_sections
+    curve.midpoint = board.create('point',
+        [
+        function(){ 
+            var m = curve.quadraticform;
+            return [
+                m[1][1]*m[2][2]-m[1][2]*m[1][2],
+                m[1][2]*m[0][2]-m[2][2]*m[0][1],
+                m[0][1]*m[1][2]-m[1][1]*m[0][2]
+            ];
+        }
+        ],{name:'',visible:false});
+
     curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;
 };

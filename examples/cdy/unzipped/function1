@@ -1,0 +1,91 @@
+//Cindy-2.0.17 build 779 (2007/02/14 21:22)DEMO
+//Created on: 18.03.2010 11:25:20
+//For: ausstellung
+//DO NOT EDIT --- MACHINE GENERATED CODE
+Geometry:=Euclidean;
+("Text0"):=Calculation();
+"Text0".setAppearance(1,5,1,0,0,9,false,false);
+"Text0".setAttribute("color","1");
+"Text0".setAttribute("visibility","9");
+"Text0".setAttribute("drawtrace","false");
+"Text0".setAttribute("tracelength","100");
+"Text0".setAttribute("traceskip","1");
+"Text0".setAttribute("tracedim","1.0");
+"Text0".setAttribute("render","false");
+"Text0".setAttribute("colorfill","0");
+"Text0".setAttribute("visibilityfill","0");
+"Text0".setAttribute("linkvisibility","false");
+"Text0".setAttribute("textborder","false");
+"Text0".setAttribute("text.minwidth","0");
+"Text0".setAttribute("textbutton","false");
+"Text0".setAttribute("button.script","");
+"Text0".setAttribute("texttoggle","false");
+"Text0".setAttribute("text.text","x^2+1");
+"Text0".setText("x^2+1");
+"Text0".setType(5);
+"Text0".setFloating([1.4488188976377954+i*0.0,4.0+i*0.0,-0.7874015748031497+i*-0.0]);
+Geometry:=Euclidean;
+//
+//Exercise Information
+exercise {
+  input {
+    setElements(());
+    addMode("de.cinderella.modes.Move()");
+    addMode("de.cinderella.modes.SingleAdd()");
+    addMode("de.cinderella.modes.MultiAdd(de.cinderella.algorithms.Join)");
+    addMode("de.cinderella.modes.DefineCompass()");
+    addMode("de.cinderella.actions.Undo()");
+    addMode("de.cinderella.actions.GiveHint()");
+    addMode("de.cinderella.actions.Restart()");
+   setAttribute("exercise.name","Exercise");
+   setAttribute("exercise.message","");
+  }
+  arrows {
+  }
+}
+behavior {Environment();
+          setParams(1.0,0.0,0.0);
+          addToLevel(1);
+         }
+behavior {Motor();
+          setParams(1.0,0.1,0.0);
+          addToLevel(1);
+         }
+kernel.setAcc(2);
+kernel.setFrames(1);
+kernel.setSpeed(1.0);
+//Start portinfo
+kernel.setBackgroundColor(168,176,192);
+kernel.setBlackColor(0,0,0);
+kernel.setHighlightColor(255,255,255);
+port EuclideanPort() {
+   setAttribute("imagescalemode","scalemode.center");
+   setAttribute("imagealpha","1.0");
+   setAttribute("image.filename","");
+   setAttribute("show.adjacencymatrix","1");
+   setAttribute("show.vertexqueue","");
+   setAttribute("antialiasing","false");
+   setAttribute("precision.measure","precision.4");
+   setAttribute("precision.measure.int","4");
+   setAttribute("precision.angle","precision.1");
+   setAttribute("precision.angle.int","1");
+   setAttribute("anglemodulo","modulo.0");
+   setAttribute("printscale","1:1");
+   setAttribute("printscale.int","1:1");
+   setAttribute("darkenDependent","true");
+   setAttribute("mesh.rectangular","false");
+   setAttribute("mesh.triangular","false");
+   setAttribute("axes.show","true");
+   setAttribute("snap","false");
+   setAttribute("mesh.density","0");
+   setPolar(false);
+   setPortWidth(680);
+   setPortHeight(350);
+   setScale(25.0);
+   setOriginY(226);
+   setOriginX(233);
+   setMesh(false);
+   setAxes(true);
+   setSnap(false);
+}
+//End portinfo
