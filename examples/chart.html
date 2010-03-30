@@ -18,6 +18,7 @@
     <input type="button" value="Dynamic bars" onClick="dynamicBarChart()" style='margin:1em'><br>
     <input type="button" value="Pie chart" onClick="pieChart()" style='margin:1em'><br>
     <input type="button" value="Radar chart" onClick="radarChart()" style='margin:1em'><br>
+    <input type="button" value="Custom infobox and axis ticks" onClick="infoboxChart()" style='margin:1em'><br>
   </p>
   <br clear=all>
   <div id="debug" style="display:block;"></div>
@@ -153,6 +154,62 @@
                 //showCircles:true,
                 //circleLabelArray:[1,2,3,4,5],
                 //highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
+            });
+            board.unsuspendUpdate();
+        }
+
+        // Custom infobox chart
+        function infoboxChart() {
+            var paramArr = [4,8,6,4,5,7,4.5,2];
+            var timeArr = [
+                [2008,12],
+                [2009,2],
+                [2009,3],
+                [2009,6],
+                [2009,8],
+                [2009,9],
+                [2010,1],
+                [2010,3],
+            ];
+            function time2human(time, index) {
+                var months = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+                ];
+                return '(' + months[time[1]-1] + ' ' + time[0] + ', ' + paramArr[index] + ')';
+            };
+            function time2float(time) {
+                return time[0] + (time[1]-1)/12;
+            };
+
+            var xArr = [];
+            var yArr = [];
+            var dataArr = [xArr, yArr];
+            var infoArray = [];
+            for(var i=0; i<paramArr.length;i++) {
+                xArr.push(time2float(timeArr[i]));
+                yArr.push(paramArr[i]);
+                infoArray.push(time2human(timeArr[i], i));
+            }
+
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [2007.9,10, 2011, 0]});
+            board.suspendUpdate();
+            var x_axis = board.createElement('axis', [[0,2],[1,2]], {ticks: [2008, 2009, 2010]});
+            var y_axis = board.createElement('axis', [[2008,0],[2008,1]]);
+            var a = board.createElement('chart', dataArr, {
+                chartStyle:'point,line',strokeWidth:1,strokeColor:'#0000ff',
+                infoboxArray: infoArray,
             });
             board.unsuspendUpdate();
         }
