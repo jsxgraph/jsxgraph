@@ -115,7 +115,7 @@ JXG.Options = {
             defaultDistance : 1
         },
         /* absolute label offset from anchor */
-        labelOffsets: [10,10],
+        labelOffsets: [10,10]
     },
 
     /* special axis options */

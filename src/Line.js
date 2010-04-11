@@ -191,6 +191,7 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
      * @default JXG.Options.line#labelOffsets
     * @private
     */
+    //this.labelOffsets = [].concat(this.board.options.line.labelOffsets);
     this.labelOffsets = [].concat(this.board.options.line.labelOffsets);
     //make sure we have absolute values
     this.labelOffsets[0] = Math.abs(this.labelOffsets[0]);
@@ -847,7 +848,7 @@ JXG.createLine = function(board, parents, atts) {
     atts = JXG.checkAttributes(atts,{
         withLabel:JXG.readOption(board.options,'line','withLabel'),
         layer:null,
-        labelOffsets:JXG.readOption(board.options,'line','labelOffsets'),
+        labelOffsets:JXG.readOption(board.options,'line','labelOffsets')
     });
 
     var constrained = false;

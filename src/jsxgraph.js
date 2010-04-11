@@ -83,7 +83,8 @@ JXG.JSXGraph = new function () {
         }
     } else {
         /* the user has chosen a specific renderer */
-        this.rendererType = forceRenderer;
+        //this.rendererType = forceRenderer;
+        JXG.Options.renderer = forceRenderer;
     }
 
     /* Load the source files for the renderer */

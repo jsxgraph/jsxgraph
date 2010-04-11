@@ -458,7 +458,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
             {name:paramArray[i], 
             strokeColor:myAtts['strokeColor'], strokeWidth:myAtts['strokeWidth'], strokeOpacity:1.0,
             straightFirst:false, straightLast:false, withLabel:true,
-            highlightStrokeColor:myAtts['highlightStrokeColor'],
+            highlightStrokeColor:myAtts['highlightStrokeColor']
         });
         line[i].getLabelAnchor = get_anchor;
         t = get_transform(rad,i);
@@ -489,7 +489,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
                 {withLines:true,
                 withLabel:false,
                 fillColor:myAtts['fillColor'],
-                fillOpacity:myAtts['fillOpacity'],
+                fillOpacity:myAtts['fillOpacity']
                 });
         for(j=0;j<numofparams;j++) {
             polygons[i].borders[j].setProperty('strokeColor:' + colorArray[i%colorArray.length]);
@@ -504,7 +504,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
             var lyoff = attributes['legendTopOffset'] || 1;
             this.legend = board.createElement('legend', [xc+radius+lxoff,yc+radius-lyoff],
             {labelArray:labelArray,
-            colorArray: colorArray,
+            colorArray: colorArray
             });
             break;
         case 'none':

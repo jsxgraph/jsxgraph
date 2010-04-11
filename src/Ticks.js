@@ -477,7 +477,6 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     		tickCoords.major = false;
     		this.labels.push(null);
     	}
-    	
     	i++;
 
     	this.ticks.push(tickCoords);
