@@ -14,7 +14,15 @@
 /* <![CDATA[ */
 JXG.Options.showCopyright = true; //don't work :)
 JXG.Options.showNavigation = true;
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-1.5,1.5,1.5,-1.5], keepaspectratio:true, axis:true});
+var p = brd.create('point',[0,1],{face:'o', size:5, strokeColor:'red', fillOpacity:0.3, strokeOpacity: 0.3});
+brd.create('arrow',[[0,0],p],{strokeWidth:5, strokeOpacity:0.7, strokeColor:'blue'});
+
+var i = -1;
+setInterval(function(){p.moveTo([Math.sin(i*Math.PI*2/12),Math.cos(i*Math.PI*2/12)],800); i++; },1000);
+
 //JXG.Options.takeFirst = true;
+/*
 var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 400,originY: 400, unitX: 10, unitY: 10, axis:true});
 var A=board.create('point',[10,0],{frozen:true});
 var B=board.create('point',[0,0]);
@@ -22,7 +30,7 @@ var C=board.create('point',[0,10]);
 
 var D=board.create('point',[-5,10]);
 var E=board.create('point',[-5,-5]);
-
+*/
 /*
 var createArc = function(board,parents,attributes) {
     var A = parents[0],
@@ -116,7 +124,7 @@ var createSector = function(board,parents,attributes) {
     return c;
 };
 */
-
+/*
 board.create('arc',[B,A,C],{withLabel:true,name:'Arc'}).setProperty({firstArrow:true});
 var s = board.create('slider',[[-20,-20],[10,-20],[0,2,10]],{name:'s',fixed:false});
 board.create('circle',[B,function(){return s.Value();}],{strokeColor:'red'});
@@ -124,7 +132,7 @@ board.create('circle',[B,function(){return s.Value();}],{strokeColor:'red'});
 //board.create('semicircle',[D,E],{withLabel:true,name:'Semicircle'});
 board.create('circumcirclesector',[B,C,E],{withLabel:true,name:'circumcircle'});
 ;
-
+*/
 /*
 var img = board.create('image',['http://www.ari.uni-heidelberg.de/gaia/gallery/GR/gr0283-01.artistic-Gaia-Galaxy-large.jpg',[-40,-40],[80,80]]);
 img.needsRegularUpdate = false;

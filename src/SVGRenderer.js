@@ -340,6 +340,7 @@ JXG.SVGRenderer.prototype.removeGrid = function(board) {
 */
 
 JXG.SVGRenderer.prototype.setArrowAtts = function(node, c, o) {
+    if (!node) return;
     node.setAttributeNS(null, 'stroke', c);
     node.setAttributeNS(null, 'stroke-opacity', o);
     node.setAttributeNS(null, 'fill', c);
