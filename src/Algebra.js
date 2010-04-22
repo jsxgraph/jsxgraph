@@ -1060,12 +1060,10 @@ JXG.Algebra.prototype.geonext2JS = function(term) {
     // Exponentiations-Problem x^y -> Math(exp(x,y).
     newterm = this.replacePow(newterm);
     newterm = this.replaceIdByObj(newterm);
-    
     for (i=0; i<from.length; i++) {
         expr = new RegExp(from[i],"ig");
         newterm = newterm.replace(expr,to[i]);
     }    
-
     newterm = newterm.replace(/True/g,'true');
     newterm = newterm.replace(/False/g,'false');
     newterm = newterm.replace(/fasle/g,'false');
