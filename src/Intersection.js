@@ -284,6 +284,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         };
 
         this.showChild = function(id) {            
+            var el;
             for(el in this.board.objects) {        
                 delete(this.board.objects[el].notExistingParents[id]);
                 if(this.board.objects[el].visProp['visible'] && JXG.keys(this.board.objects[el].notExistingParents).length == 0) {
@@ -391,6 +392,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         };
 
         this.showChild = function(id) {
+            var el;
             for(el in this.board.objects) {            
                 delete(this.board.objects[el].notExistingParents[id]);
                 if(this.board.objects[el].visProp['visible'] && JXG.keys(this.board.objects[el].notExistingParents).length == 0) {

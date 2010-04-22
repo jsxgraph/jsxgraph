@@ -281,7 +281,6 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
     plaintext = plaintext.replace(/<\/overline>/g,'</span>');
     plaintext = plaintext.replace(/<arrow>/g,'<span style=text-decoration:overline>');
     plaintext = plaintext.replace(/<\/arrow>/g,'</span>');
-
 /*    i = plaintext.indexOf('<name>');
     j = plaintext.indexOf('</name>');
     while (i>=0) {
