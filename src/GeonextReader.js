@@ -216,7 +216,7 @@ this.readGeonext = function(tree,board) {
         xmlNode,
         axisX, axisY, bgcolor, opacity,
         elChildNodes,
-        s, Data,
+        s, Data, inter, boardData, el,
         strFir, strLas;
 
     boardData = tree.getElementsByTagName('board')[0];
