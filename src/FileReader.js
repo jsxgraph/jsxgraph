@@ -118,8 +118,13 @@ this.stringToXMLTree = function(fileStr) {
 
 this.parseString = function(fileStr, board, format, isString) {
     var tree;
+    
     if (format.toLowerCase()=='cdy') {
+    	// if isString is true, fileStr is the base64 encoded zip file, otherwise it's just the zip file
+    	if(isString)
+    		fileStr = JXG.Util.Base64.decode(fileStr);
         fileStr = JXG.CinderellaReader.readCinderella(fileStr, board);
+        board.xmlString = fileStr;
         board.afterLoad();
         return;
     }

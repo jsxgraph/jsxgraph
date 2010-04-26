@@ -23,44 +23,6 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 JXG.CinderellaReader = new function() {
-    this.httpReq = function() {
-        this.XMLHTTP = null;
-        if (window.XMLHttpRequest) {
-            this.XMLHTTP = new XMLHttpRequest();
-        } 
-        else if (window.ActiveXObject) {
-            try {
-                this.XMLHTTP =
-                    new ActiveXObject("Msxml2.XMLHTTP");
-            } 
-            catch (ex) {
-                try {
-                    this.XMLHTTP = new ActiveXObject("Microsoft.XMLHTTP");
-                } 
-                catch (ex) {
-                }
-            }
-        }
-        return this.XMLHTTP;
-    }
-    this.httpReq();
-    
-    this.readFile = function(filename) {
-        this.XMLHTTP.open("GET", filename);
-        this.XMLHTTP.onreadystatechange = this.datenAusg;
-        this.XMLHTTP.send(null);
-    }
-    
-    this.datenAusgeben = function() {
-        if (this.XMLHTTP.readyState == 4)  {
-            var d = document.getElementById("Daten");
-            var s = document.getElementById("Status");
-            this.data = this.XMLHTTP.responseText;
-        }
-    }  
-
-    this.datenAusg = JXG.bind(this.datenAusgeben,this);
-    
     this.parseData = function(board) {
         var dataLines, i, j, k, pCoords, defName, objName, defPoints, segment, 
             defRadius, circle, erg, poly, point, objName2, erg2, lines, point2;
@@ -312,7 +274,7 @@ JXG.CinderellaReader = new function() {
                 for(j=0; j<defPoints.length; j++) {
                     defName[j] = defPoints[j].match(/"[A-Za-z]*"/)[0];
                     defName[j] = defName[j].slice(1,defName[j].length-1);
-                    defName[j] = JXG.getReference(board,defName[j])
+                    defName[j] = JXG.getReference(board,defName[j]);
                 }
                 objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
                 objName = objName[0].slice(1, objName[0].length-1);
@@ -374,10 +336,11 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readCircleProperties(dataLines,i);
                 i = erg[3];   
-                defRadius = (function(el, b) { return function() { 
+                defRadius = (function(el, b) {
+                				return function() { 
                                             return JXG.getReference(b,el[0]).Dist(JXG.getReference(b,el[1])); 
-                                       }}
-                          )(defName, board);                
+                                       };
+                                })(defName, board);                
                 board.createElement('circle',
                                     [JXG.getReference(board,defName[2]), defRadius],
                                     {name:objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
@@ -409,7 +372,7 @@ JXG.CinderellaReader = new function() {
                     i = erg[2];
                 }
                 lines = board.createElement('bisectorlines',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
-                                           {name:[objName2,objName], withLabel:true})
+                                           {name:[objName2,objName], withLabel:true});
                 if(objName == '') {
                     lines.line2.setProperty({visible:false});
                     lines.line1.setProperty({strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
@@ -493,7 +456,7 @@ JXG.CinderellaReader = new function() {
         }
         
         return board;
-    }
+    };
     
     this.calculateColor = function(colNr) {
         colNr = parseInt(colNr);
@@ -521,7 +484,7 @@ JXG.CinderellaReader = new function() {
             case 20: return '#d4a3ff';
             case 21: return '#ffbd77';            
         }
-    }
+    };
     
     this.readPointProperties = function(dataLines,i) {
         var objAppearance,border, labelcolor;
@@ -543,7 +506,7 @@ JXG.CinderellaReader = new function() {
             labelcolor = 'black';
         } 
         return [objAppearance,i,border,labelcolor];       
-    }
+    };
     
     this.readCircleProperties = function(dataLines,i) {
         var objAppearance,filling, fillop;
@@ -566,7 +529,7 @@ JXG.CinderellaReader = new function() {
         fillop = fillop.slice(1,fillop.length-1);
         fillop = 1*fillop/10;  
         return [objAppearance,filling, fillop,i];
-    }
+    };
     
     this.readLineProperties = function(dataLines,i) {
         var objAppearance,dashing;
@@ -586,7 +549,7 @@ JXG.CinderellaReader = new function() {
             dashing = 3;
         }
         return [objAppearance,dashing,i];
-    }
+    };
     
 	this.prepareString = function(fileStr) {
         var i, bA = [], len;
@@ -594,8 +557,8 @@ JXG.CinderellaReader = new function() {
             len = fileStr.length;
 		    for (i=0;i<len;i++)
 		    	bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
-		      	// Unzip
-		      	fileStr = (new JXG.Util.Unzip(bA)).unzip()[0][0];	   
+		    // Unzip
+		    fileStr = (new JXG.Util.Unzip(bA)).unzip()[0][0];
 		}
 		//fileStr = JXG.Util.utf8Decode(fileStr);
 		//fileStr = JXG.GeogebraReader.utf8replace(fileStr);
@@ -607,6 +570,6 @@ JXG.CinderellaReader = new function() {
         board.suspendUpdate();
 		this.parseData(board);
         board.unsuspendUpdate();
-	}
+	};
 
 };
