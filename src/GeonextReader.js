@@ -219,6 +219,8 @@ this.readGeonext = function(tree,board) {
         s, Data, inter, boardData, el,
         strFir, strLas;
 
+    board.options.layer.sector = board.options.layer.angle;
+    board.options.layer.circle = board.options.layer.angle;
     boardData = tree.getElementsByTagName('board')[0];
     boardTmp.ident = "board";
     boardTmp.id = boardData.getElementsByTagName('id')[0].firstChild.data;
@@ -725,10 +727,8 @@ this.readGeonext = function(tree,board) {
                     board.objects[arcId].setProperty('strokeColor:'+defElColStr[0],
                                                      'strokeWidth:'+defElSW[0],
                                                      'fillColor:'+defElColF[0],
-                                                     //'fillColor:none',
                                                      'highlightStrokeColor:'+defElHColStr[0],
                                                      'highlightFillColor:'+defElColF[0],
-                                                     //'highlightFillColor:none',
                                                      'visible:'+defElV[0],
                                                      'dash:'+defElD[0],
                                                      'draft:'+defElDr[0]);
@@ -739,6 +739,7 @@ this.readGeonext = function(tree,board) {
                     gxtEl.lastArrow = (gxtEl.lastArrow=='false') ? false : true;
                     board.objects[arcId].setArrow(gxtEl.firstArrow,gxtEl.lastArrow);
                     /* Eigenschaften des Endpunkts */
+                    /*
                     pointId = board.objects[gxtEl.defEl[1]].id; //defEl[1];
                     gxtEl.fixed = Data.getElementsByTagName('output')[1].getElementsByTagName('fix')[0].firstChild.data;
                     board.objects[pointId].setProperty('strokeColor:'+defElColStr[1],
@@ -755,6 +756,7 @@ this.readGeonext = function(tree,board) {
                     gxtEl.style = Data.getElementsByTagName('output')[1].getElementsByTagName('style')[0].firstChild.data;
                     board.objects[pointId].setStyle(1*gxtEl.style);
                     board.objects[pointId].traced = (defElT[1]=='false') ? false : true;
+                    */
                     /* Eigenschaften der ersten Linie */
                     /*
                     line1Id = defEl[2];
