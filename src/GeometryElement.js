@@ -1080,9 +1080,9 @@ JXG.GeometryElement.prototype.prepareUpdate = function() {
  * Removes the element from the construction.
  */
 JXG.GeometryElement.prototype.remove = function() {
-    this.board.renderer.remove(document.getElementById(this.id));
+    this.board.renderer.remove(this.board.renderer.getElementById(this.id));
     if (this.hasLabel) {
-        this.board.renderer.remove(document.getElementById(this.label.content.id));
+        this.board.renderer.remove(this.board.renderer.getElementById(this.label.content.id));
     }
     return this;
 };

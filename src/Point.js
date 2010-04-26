@@ -1023,9 +1023,9 @@ JXG.Point.prototype.setFace = function(s) {
  */
 JXG.Point.prototype.remove = function() {    
     if (this.hasLabel) {
-        this.board.renderer.remove(document.getElementById(this.label.content.id));
+        this.board.renderer.remove(this.board.renderer.getElementById(this.label.content.id));
     }
-    this.board.renderer.remove(document.getElementById(this.id));
+    this.board.renderer.remove(this.board.renderer.getElementById(this.id));
 };
 
 /**

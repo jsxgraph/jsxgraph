@@ -50,7 +50,7 @@ JXG.SVGRenderer = function(container) {
     this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace,'defs');
     this.svgRoot.appendChild(this.defs);
     this.filter = this.container.ownerDocument.createElementNS(this.svgNamespace,'filter');
-    this.filter.setAttributeNS(null, 'id', 'f1');
+    this.filter.setAttributeNS(null, 'id', this.container.id+'_'+'f1');
     this.filter.setAttributeNS(null, 'width', '300%');
     this.filter.setAttributeNS(null, 'height', '300%');
     this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace,'feOffset');
@@ -275,7 +275,7 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
             tickStr += "M " + (c[1]+dxMin) + " " + (c[2]-dyMin) + " L " + (c[1]-dxMin) + " " + (c[2]+dyMin) + " ";
     }
     
-    node = document.getElementById(axis.id);
+    node = this.getElementById(axis.id);
     if(node == null) {
         node = this.createPrim('path', axis.id);
         //node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
@@ -472,13 +472,13 @@ JXG.SVGRenderer.prototype.setDashStyle = function(el,visProp) {
 };
 
 JXG.SVGRenderer.prototype.setGridDash = function(id) {
-    var node = document.getElementById(id);
+    var node = this.getElementById(id);
     this.setPropertyPrim(node,'stroke-dasharray', '5, 5'); 
 };
 
 JXG.SVGRenderer.prototype.createPrim = function(type,id) {
     var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
-    node.setAttributeNS(null, 'id', id);
+    node.setAttributeNS(null, 'id', this.container.id+'_'+id);
     node.style.position = 'absolute';
     if (type=='path') {
         node.setAttributeNS(null, 'stroke-linecap', 'butt');
@@ -739,6 +739,6 @@ JXG.SVGRenderer.prototype.drawHorizontalGrid = function(topLeft, bottomRight, gy
 };
 
 JXG.SVGRenderer.prototype.appendNodesToElement = function(element, type) {
-    element.rendNode = document.getElementById(element.id);
+    element.rendNode = this.getElementById(element.id);
 };
 

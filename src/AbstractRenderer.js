@@ -118,7 +118,7 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
         this.appendChildPrim(node,el.layer);  
         this.appendNodesToElement(el, 'path');    
     }
-    el.rendNode = node;
+    //el.rendNode = node;
     
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
@@ -972,10 +972,10 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
  * @see #drawGrid
  */
 JXG.AbstractRenderer.prototype.removeGrid = function(/** JXG.Board */ board) {
-    var c = document.getElementById('gridx');
+    var c = this.getElementById('gridx');
     this.remove(c);
 
-    c = document.getElementById('gridy');
+    c = this.getElementById('gridy');
     this.remove(c);
 
     board.hasGrid = false;
@@ -1227,7 +1227,7 @@ JXG.AbstractRenderer.prototype.drawZoomBar = function(board) {
  * @return Reference to an JavaScript object. In case of SVG/VMLRenderer it's a reference to an SVG/VML node.
  */
 JXG.AbstractRenderer.prototype.getElementById = function(/** string */ id) /** object */ {
-    return document.getElementById(id);
+    return document.getElementById(this.container.id+'_'+id);
 };
 
 /**

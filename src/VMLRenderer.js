@@ -149,7 +149,7 @@ JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     //node = this.container.ownerDocument.createElement('v:textbox');
     node = this.createNode('textbox');
     node.style.position = 'absolute';
-    this.setAttr(node,'id', 'licenseText');
+    this.setAttr(node,'id', this.container.id+'_'+'licenseText');
     
     node.style.left = 20;
     node.style.top = (2);
@@ -215,7 +215,7 @@ JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
                          ', ' + Math.round(r*(c[2]+dyMin))+' ');
     }
 
-    ticks = document.getElementById(axis.id);
+    ticks = this.getElementById(axis.id);
     if(ticks == null) {
         ticks = this.createPrim('path', axis.id);
         this.appendChildPrim(ticks,axis.layer);
@@ -234,7 +234,7 @@ JXG.VMLRenderer.prototype.drawImage = function(el) {
     
     node = this.container.ownerDocument.createElement('img');
     node.style.position = 'absolute';
-    this.setAttr(node,'id', el.id);
+    this.setAttr(node,'id', this.container.id+'_'+el.id);
 
     this.setAttr(node,'src',url);
     this.container.appendChild(node);
@@ -271,10 +271,10 @@ JXG.VMLRenderer.prototype.transformImageParent = function(el,m) {};
 
 /*
 JXG.VMLRenderer.prototype.removeGrid = function(board) { 
-    var c = document.getElementById('gridx');
+    var c = this.getElementById('gridx');
     this.remove(c);
 
-    c = document.getElementById('gridy');
+    c = this.getElementById('gridy');
     this.remove(c);
 
     board.hasGrid = false;
@@ -316,10 +316,10 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
         this.setAttr(node,'strokecolor', c);
         
         if(el.id == 'gridx') {
-            nodeStroke = document.getElementById('gridx_stroke')
+            nodeStroke = this.getElementById('gridx_stroke');
         }
         else if(el.id == 'gridy') {
-            nodeStroke = document.getElementById('gridy_stroke')
+            nodeStroke = this.getElementById('gridy_stroke');
         }
         else {
             nodeStroke = el.rendNodeStroke;
@@ -383,7 +383,7 @@ JXG.VMLRenderer.prototype.setAttributes = function(node,props,vmlprops,visProp) 
 };
 
 JXG.VMLRenderer.prototype.setGridDash = function(id, node) {
-    var node = document.getElementById(id+'_stroke');
+    var node = this.getElementById(id+'_stroke');
     this.setAttr(node,'dashstyle', 'Dash');
 };
 
@@ -416,9 +416,9 @@ JXG.VMLRenderer.prototype.createPrim = function(type, id) {
         shadowNode = this.createNode('shadow'), 
         pathNode;
     
-    this.setAttr(fillNode, 'id', id+'_fill');
-    this.setAttr(strokeNode, 'id', id+'_stroke');
-    this.setAttr(shadowNode, 'id', id+'_shadow');
+    this.setAttr(fillNode, 'id', this.container.id+'_'+id+'_fill');
+    this.setAttr(strokeNode, 'id', this.container.id+'_'+id+'_stroke');
+    this.setAttr(shadowNode, 'id', this.container.id+'_'+id+'_shadow');
     
     if (type=='circle' || type=='ellipse' ) {
         node = this.createNode('oval');
@@ -431,7 +431,7 @@ JXG.VMLRenderer.prototype.createPrim = function(type, id) {
         node.appendChild(strokeNode);
         node.appendChild(shadowNode);   
         pathNode = this.createNode('path');
-        this.setAttr(pathNode, 'id', id+'_path');        
+        this.setAttr(pathNode, 'id', this.container.id+'_'+id+'_path');        
         node.appendChild(pathNode);
     } else {
         node = this.createNode(type);
@@ -440,19 +440,19 @@ JXG.VMLRenderer.prototype.createPrim = function(type, id) {
         node.appendChild(shadowNode);
     }
     node.style.position = 'absolute';
-    this.setAttr(node, 'id', id);
+    this.setAttr(node, 'id', this.container.id+'_'+id);
     
     return node;
 };
 
 JXG.VMLRenderer.prototype.appendNodesToElement = function(element, type) {
     if(type == 'shape' || type == 'path' || type == 'polygon') {
-        element.rendNodePath = document.getElementById(element.id+'_path');
+        element.rendNodePath = this.getElementById(element.id+'_path');
     }
-    element.rendNodeFill = document.getElementById(element.id+'_fill');
-    element.rendNodeStroke = document.getElementById(element.id+'_stroke');
-    element.rendNodeShadow = document.getElementById(element.id+'_shadow');
-    element.rendNode = document.getElementById(element.id);
+    element.rendNodeFill = this.getElementById(element.id+'_fill');
+    element.rendNodeStroke = this.getElementById(element.id+'_stroke');
+    element.rendNodeShadow = this.getElementById(element.id+'_shadow');
+    element.rendNode = this.getElementById(element.id);
 };
 
 JXG.VMLRenderer.prototype.makeArrow = function(node,el,idAppendix) {
@@ -481,7 +481,7 @@ JXG.VMLRenderer.prototype.makeArrows = function(el) {
     }
     if(el.visProp['lastArrow']) {
         nodeStroke = el.rendNodeStroke;
-        this.setAttr(nodeStroke, 'id', el.id+"stroke");
+        this.setAttr(nodeStroke, 'id', this.container.id+'_'+el.id+"stroke");
         this.setAttr(nodeStroke, 'endarrow', 'block');
         this.setAttr(nodeStroke, 'endarrowlength', 'long');            
     }
