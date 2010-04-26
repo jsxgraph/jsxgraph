@@ -346,7 +346,7 @@ this.readGeonext = function(tree,board) {
             defElHColStr = [],
             defElColF = [],
             defElColL = [],
-            el,  arcId, pointId, line1Id, line2Id, pid, lid, aid, cid, p;
+            el,  arcId, pointId, line1Id, line2Id, pid, lid, aid, cid, p, inter;
 
         Data = elChildNodes[s];
         gxtEl = JXG.GeonextReader.defProperties(gxtEl, Data);

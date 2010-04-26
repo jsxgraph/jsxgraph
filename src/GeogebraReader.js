@@ -2590,7 +2590,7 @@ this.writeElement = function(board, output, input, cmd) {
  * @param {Object} board board object
  */
 this.readGeogebra = function(tree, board) {
-  var el, Data, i, els = [];
+  var el, Data, i, els = [], expr;
 
   board.ggbElements = [];
   board.ggb = {};
