@@ -1,0 +1,29 @@
+<html>
+<head>
+   <title>example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/GeonextReader.js"></script>
+
+</head>
+<body>
+   <div id="box1" style="width:800px; height:500px; overflow:hidden; border:1px dashed black; background-color:wheat; clip:rect(0px, 800px, 500px, 0px);">
+   </div>
+   <div id="box2" style="width:800px; height:500px; overflow:hidden; border:1px dashed black; background-color:wheat; clip:rect(0px, 800px, 500px, 0px);">
+   </div>
+   <div id="box3" style="width:800px; height:500px; overflow:hidden; border:1px dashed black; background-color:wheat; clip:rect(0px, 800px, 500px, 0px);">
+   </div>
+   <div id="box4" style="width:800px; height:500px; overflow:hidden; border:1px dashed black; background-color:wheat; clip:rect(0px, 800px, 500px, 0px);">
+   </div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+        board1 = JXG.JSXGraph.loadBoardFromFile('box1','gxt/blubb1.nc.gxt','Geonext');
+        board2 = JXG.JSXGraph.loadBoardFromFile('box2','gxt/blubb2.nc.gxt','Geonext');
+        board3 = JXG.JSXGraph.loadBoardFromFile('box3','gxt/blubb3.nc.gxt','Geonext');
+        board4 = JXG.JSXGraph.loadBoardFromFile('box4','gxt/blubb81.nc.gxt','Geonext');
+    /* ]]> */
+   </script>
+   <div id="debug" style="position:relative; width:600px; height:100px; border:1px dashed black; background-color:white;">
+   </div>
+</body>
+</html>
