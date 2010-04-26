@@ -17,10 +17,27 @@
    </div>
    <script type="text/javascript">
     /* <![CDATA[ */
+    
+        var files = ['gxt/blubb1.nc.gxt', 'gxt/blubb2.nc.gxt', 'gxt/blubb3.nc.gxt', 'gxt/blubb81.nc.gxt'],
+            boards = [];
+    
+        function loadingChain(step) {
+            if(step >= files.length)
+                return;
+
+            boards[step] = JXG.JSXGraph.loadBoardFromFile('box'+(step+1), files[step], 'Geonext');
+
+            window.setTimeout('loadingChain('+(step+1)+');', 4000);
+        }
+
+        loadingChain(0);
+        
+/*
         board1 = JXG.JSXGraph.loadBoardFromFile('box1','gxt/blubb1.nc.gxt','Geonext');
         board2 = JXG.JSXGraph.loadBoardFromFile('box2','gxt/blubb2.nc.gxt','Geonext');
         board3 = JXG.JSXGraph.loadBoardFromFile('box3','gxt/blubb3.nc.gxt','Geonext');
         board4 = JXG.JSXGraph.loadBoardFromFile('box4','gxt/blubb81.nc.gxt','Geonext');
+*/
     /* ]]> */
    </script>
    <div id="debug" style="position:relative; width:600px; height:100px; border:1px dashed black; background-color:white;">
