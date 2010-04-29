@@ -754,7 +754,7 @@ JXG.AbstractRenderer.prototype.drawInternalText = function(el) {};
  * @see #updateTextStyle
  */
 JXG.AbstractRenderer.prototype.updateText = function(/** JXG.Text */ el) { 
-    // Update onky objects that are visible.
+    // Update only objects that are visible.
     if (el.visProp['visible'] == false) return;
     if (isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) return;
     this.updateTextStyle(el);

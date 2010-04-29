@@ -678,6 +678,7 @@ JXG.GeometryElement.prototype.showElement = function() {
 *<li>firstArrow <i>(Line,Arc)</li>
 *<li>lastArrow <i>(Line,Arc)</li>
 *<li>withTicks <i>(Line)</li>
+*<li>fontSize</li>
 *</ul>*/
 
 /**

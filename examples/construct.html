@@ -14,23 +14,23 @@
 /* <![CDATA[ */
 JXG.Options.showCopyright = true; //don't work :)
 JXG.Options.showNavigation = true;
-var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-1.5,1.5,1.5,-1.5], keepaspectratio:true, axis:true});
-var p = brd.create('point',[0,1],{face:'o', size:5, strokeColor:'red', fillOpacity:0.3, strokeOpacity: 0.3});
-brd.create('arrow',[[0,0],p],{strokeWidth:5, strokeOpacity:0.7, strokeColor:'blue'});
 
-var i = -1;
-setInterval(function(){p.moveTo([Math.sin(i*Math.PI*2/12),Math.cos(i*Math.PI*2/12)],800); i++; },1000);
-
+JXG.Options.text.defaultDisplay = 'html';
+JXG.Options.text.fontSize = 20;
+var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-6,11,11,-6], keepaspectratio:true, axis:true});
 //JXG.Options.takeFirst = true;
-/*
-var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 400,originY: 400, unitX: 10, unitY: 10, axis:true});
+
 var A=board.create('point',[10,0],{frozen:true});
 var B=board.create('point',[0,0]);
 var C=board.create('point',[0,10]);
 
 var D=board.create('point',[-5,10]);
 var E=board.create('point',[-5,-5]);
-*/
+var t=board.create('text',[2,2,"Hallo"]);
+t.setProperty({fontSize:60});
+E.label.content.setProperty({fontSize:60});
+board.update();
+
 /*
 var createArc = function(board,parents,attributes) {
     var A = parents[0],
