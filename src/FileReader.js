@@ -138,6 +138,8 @@ this.parseString = function(fileStr, board, format, isString) {
     	fileStr = JXG.GeogebraReader.prepareString(fileStr, isString);
     }
     if (format.toLowerCase()=='intergeo') {
+        if(isString)
+            fileStr = JXG.Util.Base64.decode(fileStr);
     	fileStr = JXG.IntergeoReader.prepareString(fileStr);
     }
     board.xmlString = fileStr;
