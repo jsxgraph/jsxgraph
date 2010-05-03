@@ -195,7 +195,7 @@ JXG.IntergeoReader = new function() {
                 document.getElementById('debug').innerHTML += 'type not supported, yet <br>';  // <complex>
                 return;
             }
-        } else if (p.nodeName == 'euclidean_coordinates') {
+        } else if (p.nodeName == 'euclidean_coordinates' || p.nodeName == 'euclidian_coordinates') { // the latter one is a workaround for faulty i2g construction exported by DynaGeo
             for (j=0;j<p.childNodes.length;j++) {
                 if (p.childNodes[j].nodeType==1) {
                     c.push(p.childNodes[j].firstChild.data);  // content of <double>...</double>
@@ -215,7 +215,7 @@ JXG.IntergeoReader = new function() {
             document.getElementById('debug').innerHTML += "This coordinate type is not yet implemented: " +p.nodeName+'<br>';
             return; 
         }
-        
+
         this.objects[node.getAttribute('id')] = {'id':node.getAttribute('id'), 'coords':null};
         this.objects[node.getAttribute('id')].coords = parents;
         this.objects[node.getAttribute('id')].id = node.getAttribute('id');
@@ -821,6 +821,7 @@ JXG.IntergeoReader = new function() {
                                                                                         // Extract "construction/intergeo.xml" from
                                                                                         // the zip-archive in bA.
         }
+
         return fileStr;
     };
 };
