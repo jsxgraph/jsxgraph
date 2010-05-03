@@ -1,0 +1,32 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Short Construction</h2>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+        // Konstruktion
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-3, 12, 12, -2], keepaspectratio:true, shownavigation:false, 
+                                           showcopyright:false,axis:true}); 
+var a = brd.create('point', [3,3], {name:'A'}); 
+var b = brd.create('point', [6,2], {name:'B'}); 
+var c = brd.create('point', [1,8], {name:'C', strokeColor:'black', fillColor:'green', highlightFillColor:'black', size:8}); 
+var l = brd.create('line', [b, c], {name:'g'}); 
+var d = brd.create('point', [8,7], {name:'D'}); 
+var e = brd.create('point', [10.5,5], {name:'E'}); 
+var cr = brd.create('circle', [d, e], {name:'k_1'}); 
+var i1 = brd.create('intersection', [cr, l, 0], {face:'square'}); 
+var i2 = brd.create('intersection', [cr, l, 1], {face:'[]', size:7}); 
+    
+  </script>
+</body>
+</html>

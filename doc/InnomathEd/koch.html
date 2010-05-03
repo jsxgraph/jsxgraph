@@ -1,0 +1,51 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<form><textarea id="inputtext" rows=10 cols=35 wrap="off" style="width:600px;">
+function koch(x,level) {
+    if (level<1) {
+        t.fd(x);
+    } else {
+        koch(x/3,level-1);
+        t.lt(60);
+        koch(x/3,level-1);
+        t.rt(120);
+        koch(x/3,level-1);
+        t.lt(60);
+        koch(x/3,level-1);
+    }
+}
+
+t.cs();
+t.setPenColor('#32CD32');
+t.hideTurtle();
+t.setPos(-250,0);
+t.rt(90);
+koch(400,7);
+        
+</textarea><br />
+<input type="button" value="run" onClick="run()">
+<input type="button" value="clear" onClick="clearturtle()">
+</form>
+<div id="box" class="jxgbox" style="width:600px; height:400px;"></div>
+<script language="JavaScript">
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, unitX: 1, unitY: 1});
+var t = brd.createElement('turtle');
+function run() {
+  brd.suspendUpdate();
+  var code = document.getElementById('inputtext').value;
+  if (code=='') { return; }
+  eval(code);
+  brd.unsuspendUpdate();
+}
+function clearturtle() {
+  t.cs();
+}
+run();
+</script>
+</html>
