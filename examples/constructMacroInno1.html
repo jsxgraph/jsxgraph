@@ -1,0 +1,40 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Short Construction</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+        // Konstruktion
+        var cons1, cons2;
+        JXG.Options.line.strokeColor = 'black';
+        JXG.Options.point.face = 'v';
+        JXG.Options.point.size = 6;
+        JXG.Options.point.strokeColor = 'black';
+        JXG.Options.point.fillColor = '#32CD32';
+        JXG.Options.polygon.fillColor = '#87CEFA';
+        JXG.Options.polygon.fillOpacity = 0.4;
+        JXG.Options.polygon.highlightFillColor = '#87CEFA';
+        JXG.Options.polygon.highlightFillOpacity = 0.4;
+        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 150, originY: 300, unitX: 50, unitY: 50, axis:true});
+        
+        cons1 = board.construct("A(0.5,1.25);B(3,3.5);C(4.25|1);c=[AB];b=[AC];a=[BC]");
+        board.addMacro("quadrat = Macro(D,E) { k1=k(E,D) nolabel invisible;x=[DE] nolabel invisible;v=|_(x,E) invisible;X=k1&v nolabel;z=||(x,X_1) invisible;z2=|_(x,D) invisible;Y=z2&z nolabel; P[X_1,Y,D,E] nolabel;}"); 
+        cons2 = board.construct("q1=quadrat(A,B);q2=quadrat(B,C);q3=quadrat(C,A)");
+        cons2.q1.X_2.visible('false');
+        cons2.q2.X_2.visible('false');
+        cons2.q3.X_2.visible('false');       
+  /* ]]> */
+  
+    
+  </script>
+</body>
+</html>

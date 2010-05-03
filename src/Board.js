@@ -2296,7 +2296,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                 for(j=0; j<this.definedMacros.macros.length; j++) {
                     pattern = new RegExp("^"+this.definedMacros.macros[j][0]+"\\s*\\(");
                     if(splitted[i].search(pattern) != -1) { // TODO: testen, was mit den Macros xxx und yxxx passiert
-                        alert("MACRO!"+splitted[i]+"_"+this.definedMacros.macros[j][2]);
+                        //alert("MACRO!"+splitted[i]+"_"+this.definedMacros.macros[j][2]);
                         noMacro = false;
                         // Parameter aufdroeseln 
                         splitted[i].match(/\((.*)\)/);
@@ -2357,7 +2357,6 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         }
                     }
                     defElements = [JXG.getReference(this,defElements[0]), JXG.getReference(this,defElements[1])];
-                    
                     output.lines.push(this.createElement('line',
                                             defElements,
                                             attributes));
@@ -2413,7 +2412,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 if(macroName != '') {
                                     for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                         if(defElements[j] == createdNames[k]) {
-                                            defElements[j] = macroName+"."+defElements[k];
+                                            defElements[j] = macroName+"."+createdNames[k];
                                         }                            
                                     }
                                 }                            
@@ -2481,7 +2480,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         if(macroName != '') {
                             for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                 if(defElements[0] == createdNames[k]) {
-                                    defElements[0] = macroName+"."+defElements[k];
+                                    defElements[0] = macroName+"."+createdNames[k];
                                 }                            
                             }
                         }                            
@@ -2512,7 +2511,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             if(macroName != '') {
                                 for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                     if(defElements[j] == createdNames[k]) {
-                                        defElements[j] = macroName+"."+defElements[k];
+                                        defElements[j] = macroName+"."+createdNames[k];
                                     }                            
                                 }
                             }                            
@@ -2525,7 +2524,8 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     }
                     defElements[0] = JXG.getReference(this,defElements[0]);
                     defElements[1] = JXG.getReference(this,defElements[1]);
-                    if (defElements[0].elementClass==JXG.OBJECT_CLASS_LINE && defElements[1].elementClass==JXG.OBJECT_CLASS_LINE) {
+                    if ((defElements[0].elementClass==JXG.OBJECT_CLASS_LINE || defElements[0].elementClass==JXG.OBJECT_CLASS_CURVE) && 
+                        (defElements[0].elementClass==JXG.OBJECT_CLASS_LINE ||defElements[1].elementClass==JXG.OBJECT_CLASS_LINE)) {
                         if(objName != '') {
                             attributes.name = objName;
                             if(mode == 'macro') {
@@ -2537,6 +2537,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         }
                         obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
                         output.intersections.push(obj);
+                        if(objName != '') {
+                            output[attributes.name] = obj;
+                        }                          
                     }
                     else {
                         if(objName != '') {
@@ -2551,6 +2554,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
                         output.intersections.push(obj);
                         if(objName != '') {
+                            output[attributes.name] = obj;
+                        }                          
+                        if(objName != '') {
                             attributes.name = objName+"_2";
                             if(mode == 'macro') {
                                 if(macroName != '') {
@@ -2561,6 +2567,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         }                    
                         obj = this.createElement('intersection',[defElements[0],defElements[1],1],attributes);
                         output.intersections.push(obj);
+                        if(objName != '') {
+                            output[attributes.name] = obj;
+                        }                         
                     }
                 }
                 else if(splitted[i].search(/\|[\|_]\s*\(/) != -1) { // Parallele oder Senkrechte
@@ -2580,7 +2589,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             if(macroName != '') {
                                 for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                     if(defElements[j] == createdNames[k]) {
-                                        defElements[j] = macroName+"."+defElements[k];
+                                        defElements[j] = macroName+"."+createdNames[k];
                                     }                            
                                 }
                             }                            
@@ -2606,6 +2615,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     output.lines.push(this.createElement(type,
                                                          [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
                                                          attributes));
+                                                         
                     if(objName != '') {
                         output[objName] = output.lines[output.lines.length-1];
                     }               
@@ -2621,7 +2631,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             if(macroName != '') {
                                 for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                     if(defElements[j] == createdNames[k]) {
-                                        defElements[j] = macroName+"."+defElements[k];
+                                        defElements[j] = macroName+"."+createdNames[k];
                                     }                            
                                 }
                             }                            
@@ -2683,7 +2693,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             if(macroName != '') {
                                 for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                     if(defElements[j] == createdNames[k]) {
-                                        defElements[j] = macroName+"."+defElements[k];
+                                        defElements[j] = macroName+"."+createdNames[k];
                                     }                            
                                 }
                             }                            
@@ -2748,7 +2758,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             if(macroName != '') {
                                 for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                     if(defElements[j] == createdNames[k]) {
-                                        defElements[j] = macroName+"."+defElements[k];
+                                        defElements[j] = macroName+"."+createdNames[k];
                                     }                            
                                 }
                             }                            
@@ -2761,6 +2771,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         defElements[j] = JXG.getReference(this,defElements[j]);
                     }
                     output.polygons.push(board.createElement('polygon',defElements,attributes));
+                    output[attributes.name] = output.polygons[output.polygons.length-1];
                 }
             }
         }

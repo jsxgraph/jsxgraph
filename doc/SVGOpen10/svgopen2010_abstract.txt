@@ -1,0 +1,22 @@
+Lightning fast data plotting and graphics with JSXGraph
+
+<html>
+The JavaScript based library <a href=http://jsxgraph.org>JSXGraph</a> enables a wide range of interactive data visualizations from complex mathematical content like geometry constructions or curve plotting to online charts and maps. Thereto it does not rely on any other library but uses SVG for drawing on most browsers and VML on the Internet Explorer. JSXGraph is easy to embed and has a small footprint: less than 100 KByte if embedded in a web page. Special care has been taken to optimize the performance. JSXGraph is developed at the Lehrstuhl für Mathematik und ihre Didaktik, University of Bayreuth, Germany.
+<br><br> 
+JSXGraph was originally developed for educational purposes. Dynamic geometry systems are used more and more widely in schools to visualize geometry and calculus interactively. It is possible to create a geometric construction or a function graph, drag them around with the mouse, and observe the dependencies between the objects. With the accelerating speed of JavaScript in web browsers and the diminishing importance of Java in web there was need to have a tool for viewing mathematical content without a slow Java plug-in. So it is able to run also on small multimedia devices where Java based systems are not supported that most other dynamic geometry systems are using. Starting with version 0.80 JSXGraph also supports multitouch devices like the Apple iPhone and devices running Opera mini or Mozilla Fennec.
+<br>
+JSXGraph can read several file formats that are used by the most popular dynamic geometry systems as well as the European standard Intergeo format. As it is completely written in JavaScript it is also possible to script an own construction using JavaScript with few commands. A new development is the opportunity of parsing geometric constructions and do function plots from a well known and very easy and short mathematical syntax so that even very complex constructions can be done within one line.
+<br>
+With having all the mathematical objects and the possibility of dragging them around and influencing them interactively, it is easy to use JSXGraph as a charting tool. One application is to have interactive charts or charts in connection with a server that provides data at certain points of time that has to be visualized simultaneously. An example is a stock chart that shall be displayed together with its regression line to visualize the trend of data. JSXGraph provides a server module that eases such applications.
+<br>
+A further new application of JSXGraph is displaying maps that are given in the ArcView shape format. 
+It is possible to reduced the size of the transmitted data considerably by suitable rounding
+and thining out data points with the Ramen-Douglas-Peukert algorithm, i.e. those data points defining a border can be removed that nearly lie on the same straight line as its neighbours.
+<br><br> 
+The wiki pages of the project (<a href=http://jsxgraph.uni-bayreuth.de/wiki/>JSXGraph wiki</a>) contain many examples and showcases, e.g.
+<ul>
+<li><a href=http://jsxgraph.uni-bayreuth.de/wiki/index.php/Construct_with_math_syntax>Constructing with math syntax</a></li>
+<li><a href=http://jsxgraph.uni-bayreuth.de/wiki/index.php/Display_stock_quotes_from_Yahoo!>Stock chart</a></li>
+<li><a href=http://jsxgraph.uni-bayreuth.de/wiki/index.php/German_election_2009>Map data of German elections</a></li>
+</ul>
+</html>
