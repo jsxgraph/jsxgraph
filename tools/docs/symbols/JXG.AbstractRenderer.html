@@ -1,0 +1,3255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+         <link rel="stylesheet" type="text/css" href="../static/jsxgraph.css" />
+         <script type="text/javascript" src="../static/jquery.min.js"></script>
+         <script type="text/javascript" src="../static/jsxgraphcore.js"></script>
+		
+		<title>JsDoc Reference - JXG.AbstractRenderer</title>
+
+		<style type="text/css">
+			/* default.css */
+body
+{
+	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
+	width: 800px;
+}
+
+.header
+{
+	clear: both;
+	background-color: #ccc;
+	padding: 8px;
+}
+
+h1
+{
+	font-size: 150%;
+	font-weight: bold;
+	padding: 0;
+	margin: 1em 0 0 .3em;
+}
+
+hr
+{
+	border: none 0;
+	border-top: 1px solid #7F8FB1;
+	height: 1px;
+}
+
+pre.code
+{
+	display: block;
+	padding: 8px;
+	border: 1px dashed #ccc;
+}
+
+#index
+{
+	margin-top: 24px;
+	float: left;
+	width: 220px;
+	position: absolute;
+	left: 8px;
+	background-color: #F3F3F3;
+	padding: 8px;
+}
+
+#content
+{
+	margin-left: 250px;
+	width: 600px;
+}
+
+.classList
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 0 0 0 8px;
+	font-family: arial, sans-serif;
+	font-size: 1em;
+	overflow: auto;
+}
+
+.classList li
+{
+	padding: 0;
+	margin: 0 0 8px 0;
+}
+
+.summaryTable { width: 100%; }
+
+h1.classTitle
+{
+	font-size:170%;
+	line-height:130%;
+}
+
+h2 { font-size: 110%; }
+caption, div.sectionTitle
+{
+	background-color: #7F8FB1;
+	color: #fff;
+	font-size:130%;
+	text-align: left;
+	padding: 2px 6px 2px 6px;
+	border: 1px #7F8FB1 solid;
+}
+
+div.sectionTitle { margin-bottom: 8px; }
+.summaryTable thead { display: none; }
+
+.summaryTable td
+{
+	vertical-align: top;
+	padding: 4px;
+	border-bottom: 1px #7F8FB1 solid;
+	border-right: 1px #7F8FB1 solid;
+}
+
+/*col#summaryAttributes {}*/
+.summaryTable td.attributes
+{
+	border-left: 1px #7F8FB1 solid;
+	width: 140px;
+	text-align: right;
+}
+
+td.attributes, .fixedFont
+{
+	line-height: 15px;
+	color: #002EBE;
+	font-family: "Courier New",Courier,monospace;
+	font-size: 13px;
+}
+
+.summaryTable td.nameDescription
+{
+	text-align: left;
+	font-size: 13px;
+	line-height: 15px;
+}
+
+.summaryTable td.nameDescription, .description
+{
+	line-height: 15px;
+	padding: 4px;
+	padding-left: 4px;
+}
+
+.summaryTable { margin-bottom: 8px; }
+
+ul.inheritsList
+{
+	list-style: square;
+	margin-left: 20px;
+	padding-left: 0;
+}
+
+.detailList {
+	margin-left: 20px; 
+	line-height: 15px;
+}
+.detailList dt { margin-left: 20px; }
+
+.detailList .heading
+{
+	font-weight: bold;
+	padding-bottom: 6px;
+	margin-left: 0;
+}
+
+.light, td.attributes, .light a:link, .light a:visited
+{
+	color: #777;
+	font-style: italic;
+}
+
+.fineprint
+{
+	text-align: right;
+	font-size: 10px;
+}
+		</style>
+	</head>
+
+	<body>
+<!-- ============================== header ================================= -->	
+		<!-- begin static/header.html -->
+		<div id="header">
+<h1 style="font-size: 2.5em"><img src="static/logo.gif" />JSXGraph Reference</h1>
+</div>
+<div id="jsdeactivated_hint" style="background-color: #fcc; border: solid 1px red; padding: 3px">
+<h2>JavaScript must be enabled in order for you to use JSXGraph and JSXGraph reference.
+However, it seems JavaScript is either disabled or not supported by your browser.</h2>
+</div>
+<script type="text/javascript">
+ /* <![CDATA[ */
+   document.getElementById("jsdeactivated_hint").style.display = 'none';
+ /* ]]> */
+</script>
+		<!-- end static/header.html -->
+
+<!-- ============================== classes index ============================ -->
+		<div id="index">
+			<!-- begin publish.classesIndex -->
+			<div align="center"><a href="../index.html">Class Index</a>
+| <a href="../files.html">File Index</a></div>
+<hr />
+<h2 onclick="switchList('myElList');" style="cursor: pointer"><img src="static/expandable.gif"/> Elements</h2>
+<ul class="classList" id="myElList" style="display: block;">
+	
+	<li><a href="../symbols/Arrow.html">Arrow</a></li>
+	
+	<li><a href="../symbols/Axis.html">Axis</a></li>
+	
+	<li><a href="../symbols/Bisector.html">Bisector</a></li>
+	
+	<li><a href="../symbols/Circle.html">Circle</a></li>
+	
+	<li><a href="../symbols/Circumcircle.html">Circumcircle</a></li>
+	
+	<li><a href="../symbols/Circumcirclemidpoint.html">Circumcirclemidpoint</a></li>
+	
+	<li><a href="../symbols/Conic.html">Conic</a></li>
+	
+	<li><a href="../symbols/Curve.html">Curve</a></li>
+	
+	<li><a href="../symbols/Ellipse.html">Ellipse</a></li>
+	
+	<li><a href="../symbols/Functiongraph.html">Functiongraph</a></li>
+	
+	<li><a href="../symbols/Glider.html">Glider</a></li>
+	
+	<li><a href="../symbols/Hyperbola.html">Hyperbola</a></li>
+	
+	<li><a href="../symbols/Image.html">Image</a></li>
+	
+	<li><a href="../symbols/Integral.html">Integral</a></li>
+	
+	<li><a href="../symbols/Intersection.html">Intersection</a></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li><a href="../symbols/Line.html">Line</a></li>
+	
+	<li><a href="../symbols/Locus.html">Locus</a></li>
+	
+	<li><a href="../symbols/Midpoint.html">Midpoint</a></li>
+	
+	<li><a href="../symbols/Mirrorpoint.html">Mirrorpoint</a></li>
+	
+	<li><a href="../symbols/Normal.html">Normal</a></li>
+	
+	<li><a href="../symbols/OtherIntersection.html">OtherIntersection</a></li>
+	
+	<li><a href="../symbols/Parabola.html">Parabola</a></li>
+	
+	<li><a href="../symbols/Parallel.html">Parallel</a></li>
+	
+	<li><a href="../symbols/Parallelpoint.html">Parallelpoint</a></li>
+	
+	<li><a href="../symbols/Perpendicular.html">Perpendicular</a></li>
+	
+	<li><a href="../symbols/Perpendicularpoint.html">Perpendicularpoint</a></li>
+	
+	<li><a href="../symbols/Point.html">Point</a></li>
+	
+	<li><a href="../symbols/Reflection.html">Reflection</a></li>
+	
+	<li><a href="../symbols/RegularPolygon.html">RegularPolygon</a></li>
+	
+	<li><a href="../symbols/Riemannsum.html">Riemannsum</a></li>
+	
+	<li><a href="../symbols/Segment.html">Segment</a></li>
+	
+	<li><a href="../symbols/Tangent.html">Tangent</a></li>
+	
+	<li><a href="../symbols/Text.html">Text</a></li>
+	
+</ul>
+<h2 onclick="switchList('myClList');" style="cursor: pointer"><img src="static/expandable.gif"/> Classes</h2>
+<ul class="classList" id="myClList" style="display: block;">
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li><a href="../symbols/JXG.html">JXG</a></li>
+	
+	<li><a href="../symbols/JXG.AbstractRenderer.html">JXG.AbstractRenderer</a></li>
+	
+	<li><a href="../symbols/JXG.Algebra.html">JXG.Algebra</a></li>
+	
+	<li><a href="../symbols/JXG.Board.html">JXG.Board</a></li>
+	
+	<li><a href="../symbols/JXG.C.html">JXG.C</a></li>
+	
+	<li><a href="../symbols/JXG.Circle.html">JXG.Circle</a></li>
+	
+	<li><a href="../symbols/JXG.Complex.html">JXG.Complex</a></li>
+	
+	<li><a href="../symbols/JXG.Coords.html">JXG.Coords</a></li>
+	
+	<li><a href="../symbols/JXG.createSector.html">JXG.createSector</a></li>
+	
+	<li><a href="../symbols/JXG.createSlider.html">JXG.createSlider</a></li>
+	
+	<li><a href="../symbols/JXG.Curve.html">JXG.Curve</a></li>
+	
+	<li><a href="../symbols/JXG.DimensionMismatchException.html">JXG.DimensionMismatchException</a></li>
+	
+	<li><a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a></li>
+	
+	<li><a href="../symbols/JXG.Group.html">JXG.Group</a></li>
+	
+	<li><a href="../symbols/JXG.Image.html">JXG.Image</a></li>
+	
+	<li><a href="../symbols/JXG.Intersection.html">JXG.Intersection</a></li>
+	
+	<li><a href="../symbols/JXG.JSXGraph.html">JXG.JSXGraph</a></li>
+	
+	<li><a href="../symbols/JXG.Line.html">JXG.Line</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Matrix.html">JXG.Math.Matrix</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.html">JXG.Math.Numerics</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.Butcher.html">JXG.Math.Numerics.Butcher</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.predefinedButcher.html">JXG.Math.Numerics.predefinedButcher</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Vector.html">JXG.Math.Vector</a></li>
+	
+	<li><a href="../symbols/JXG.Options.html">JXG.Options</a></li>
+	
+	<li><a href="../symbols/JXG.Point.html">JXG.Point</a></li>
+	
+	<li><a href="../symbols/JXG.Polygon.html">JXG.Polygon</a></li>
+	
+	<li><a href="../symbols/JXG.Server.html">JXG.Server</a></li>
+	
+	<li><a href="../symbols/JXG.Server.modules.html">JXG.Server.modules</a></li>
+	
+	<li><a href="../symbols/JXG.SingularMatrixException.html">JXG.SingularMatrixException</a></li>
+	
+	<li><a href="../symbols/JXG.Text.html">JXG.Text</a></li>
+	
+	<li><a href="../symbols/JXG.Ticks.html">JXG.Ticks</a></li>
+	
+	<li><a href="../symbols/JXG.Turtle.html">JXG.Turtle</a></li>
+	
+	<li><a href="../symbols/JXG.Util.html">JXG.Util</a></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+</ul>
+<hr />
+
+<script type="text/javascript">
+  /* <![CDATA[ */
+   	function switchList(id) {
+      document.getElementById(id).style.display = ( document.getElementById(id).style.display == 'block' ? 'none' : 'block' );
+      document.cookie = id.toLowerCase() + 'status=' + document.getElementById(id).style.display + ';';
+  	};
+  	
+	function initList(id) {
+      var cookieList = document.cookie.split(';');
+      for(var c=0; c<cookieList.length; c++) {
+        if(cookieList[c].indexOf(id.toLowerCase() + 'status') != -1) {
+          document.getElementById(id).style.display = cookieList[c].split('=')[1];
+        }
+      }
+  	};
+  	
+  	initList('myElList');
+    initList('myClList');
+  /* ]]> */
+</script>
+			<!-- end publish.classesIndex -->
+		</div>
+		
+		<div id="content">
+<!-- ============================== class title ============================ -->
+			<h1 class="classTitle">
+				
+				Class JXG.AbstractRenderer
+			</h1>
+
+<!-- ============================== class summary ========================== -->			
+			<p class="description">
+				
+			
+				The AbstractRenderer is a base class that should be considered what in other languages
+is called an abstract class, even though no such thing really exists in JavaScript. All members
+essential for a renderer are defined here.
+				
+				
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_AbstractRenderer.js.html">AbstractRenderer.js</a>.
+				
+			</p>
+
+<!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class JXG.AbstractRenderer.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/JXG.AbstractRenderer.html#constructor">JXG.AbstractRenderer</a></b>()
+							</div>
+							<div class="description">Constructs a new AbstractRenderer object.</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+
+<!-- ============================== properties summary ===================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class JXG.AbstractRenderer.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.AbstractRenderer.html#enhancedRendering">enhancedRendering</a></b>
+								</div>
+								<div class="description">If this property is set to <tt>true</tt> the visual properties of the elements are updated
+on every update.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.AbstractRenderer.html#vOffsetText">vOffsetText</a></b>
+								</div>
+								<div class="description">The vertical offset for <a href="../symbols/Text.html">Text</a> elements.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
+
+<!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class JXG.AbstractRenderer.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#calcStraight">calcStraight</a></b>(el, point1, point2)
+								</div>
+								<div class="description">Calculates drawing start and end point for a line.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#changePointStyle">changePointStyle</a></b>(el)
+								</div>
+								<div class="description">Changes the style of a <a href="../symbols/Point.html">Point</a> that already exists on the canvas.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawArrow">drawArrow</a></b>(el)
+								</div>
+								<div class="description">Creates a rendering node for an <a href="../symbols/Arrow.html">Arrow</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawCircle">drawCircle</a></b>(el)
+								</div>
+								<div class="description">Draws a <a href="../symbols/Circle.html">Circle</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawCurve">drawCurve</a></b>(el)
+								</div>
+								<div class="description">Draws a <a href="../symbols/Curve.html">Curve</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawGrid">drawGrid</a></b>(board)
+								</div>
+								<div class="description">Creates a grid on the board, i.e.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawImage">drawImage</a></b>(el)
+								</div>
+								<div class="description">Draws an <a href="../symbols/Image.html">Image</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>; This is just a template, has to be implemented by special renderers.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawInternalText">drawInternalText</a></b>(el)
+								</div>
+								<div class="description">An internal text is a <a href="../symbols/Text.html">Text</a> element which is drawn using only
+the given renderer but no HTML.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawLine">drawLine</a></b>(el)
+								</div>
+								<div class="description">Draws a line on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawPoint">drawPoint</a></b>(el)
+								</div>
+								<div class="description">Draws a point on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawPolygon">drawPolygon</a></b>(el)
+								</div>
+								<div class="description">Draws a Polygon on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawText">drawText</a></b>(el)
+								</div>
+								<div class="description">Displays a <a href="../symbols/Text.html">Text</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a> by putting a HTML div over it.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawZoomBar">drawZoomBar</a></b>(board)
+								</div>
+								<div class="description">The tiny zoom bar shown on the bottom of a board (if JXG.Board#showNavigation is true).</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#eval">eval</a></b>(val)
+								</div>
+								<div class="description">If <tt>val</tt> is a function, it will be evaluated without giving any parameters, else the input value is just returned.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#findSplit">findSplit</a></b>(pts, i, j)
+								</div>
+								<div class="description">findSplit() is a subroutine for <a href="#RamenDouglasPeuker">#RamenDouglasPeuker</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#getElementById">getElementById</a></b>(id)
+								</div>
+								<div class="description">Wrapper for getElementById for maybe other renderers which elements are not directly accessible by DOM methods like document.getElementById().</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#hide">hide</a></b>(obj)
+								</div>
+								<div class="description">Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#highlight">highlight</a></b>(obj)
+								</div>
+								<div class="description">Highlights an object, i.e.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#isSameDirection">isSameDirection</a></b>(start, p, s)
+								</div>
+								<div class="description">If you're looking from point "start" towards point "s" and can see the point "p", true is returned.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#noHighlight">noHighlight</a></b>(obj)
+								</div>
+								<div class="description">Uses the "normal" colors of an object, i.e.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#RamenDouglasPeuker">RamenDouglasPeuker</a></b>(pts, eps)
+								</div>
+								<div class="description">Ramen-Douglas-Peuker algorithm.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#RDP">RDP</a></b>(pts, i, j, eps, newPts)
+								</div>
+								<div class="description">RDB() is a subroutine for <a href="#RamenDouglasPeuker">#RamenDouglasPeuker</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#remove">remove</a></b>(node)
+								</div>
+								<div class="description">Removes an HTML-Element from Canvas.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#removeDraft">removeDraft</a></b>(obj)
+								</div>
+								<div class="description">Puts an object from draft mode back into normal mode.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#removeGrid">removeGrid</a></b>(board)
+								</div>
+								<div class="description">Remove the grid from the given board.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#removeTicks">removeTicks</a></b>(axis)
+								</div>
+								<div class="description">Removes all ticks from an <a href="../symbols/Axis.html">Axis</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#setDraft">setDraft</a></b>(obj)
+								</div>
+								<div class="description">Puts an object into draft mode, i.e.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#setObjectFillColor">setObjectFillColor</a></b>(obj, color, opacity)
+								</div>
+								<div class="description">Sets an objects fill color.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#setObjectStrokeColor">setObjectStrokeColor</a></b>(obj, color, opacity)
+								</div>
+								<div class="description">Changes an objects stroke color to the given color.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#setObjectStrokeWidth">setObjectStrokeWidth</a></b>(el, width)
+								</div>
+								<div class="description">Sets an element's stroke width.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#setShadow">setShadow</a></b>(element)
+								</div>
+								<div class="description">Sets the shadow properties to a geometry element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#show">show</a></b>(obj)
+								</div>
+								<div class="description">Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#suspendRedraw">suspendRedraw</a></b>()
+								</div>
+								<div class="description">Stop redraw.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#unsuspendRedraw">unsuspendRedraw</a></b>()
+								</div>
+								<div class="description">Restart redraw.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updateArrow">updateArrow</a></b>(el)
+								</div>
+								<div class="description">Updates properties of an <a href="../symbols/Arrow.html">Arrow</a> that already exists on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updateCircle">updateCircle</a></b>(el)
+								</div>
+								<div class="description">Updates visual appearance of a given <a href="../symbols/Circle.html">Circle</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updateCurve">updateCurve</a></b>(el)
+								</div>
+								<div class="description">Updates visual appearance of the renderer element assigned to the given <a href="../symbols/Curve.html">Curve</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updateImage">updateImage</a></b>(el)
+								</div>
+								<div class="description">Updates the properties of an <a href="../symbols/Image.html">Image</a> element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updateInternalText">updateInternalText</a></b>(el)
+								</div>
+								<div class="description">Updates visual properties of an already existing <a href="../symbols/Text.html">Text</a> element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updateLine">updateLine</a></b>(el)
+								</div>
+								<div class="description">Updates visual appearance of the renderer element assigned to the given <a href="../symbols/Line.html">Line</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updatePoint">updatePoint</a></b>(el)
+								</div>
+								<div class="description">Updates visual appearance of the renderer element assigned to the given <a href="../symbols/Point.html">Point</a>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updatePolygon">updatePolygon</a></b>(el)
+								</div>
+								<div class="description">Updates properties of a Polygon's rendering node.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updateText">updateText</a></b>(el)
+								</div>
+								<div class="description">Updates visual properties of an already existing <a href="../symbols/Text.html">Text</a> element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updateTextStyle">updateTextStyle</a></b>(el)
+								</div>
+								<div class="description">Updates CSS style properties of a <a href="../symbols/Text.html">Text</a> node.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updateTicks">updateTicks</a></b>(axis, dxMaj, dyMaj, dxMin, dyMin)
+								</div>
+								<div class="description">Update Ticks on a <a href="../symbols/Line.html">Line</a>.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
+<!-- ============================== events summary ======================== -->
+			
+
+<!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>JXG.AbstractRenderer</b>()
+				</div>
+				
+				<div class="description">
+					Constructs a new AbstractRenderer object.
+					
+				</div>
+				
+				
+					
+					
+					
+					
+					
+					
+					
+						<dl class="detailList">
+						<dt class="heading">See:</dt>
+						
+							<dd>JXG.SVGRenderer</dd>
+						
+							<dd>JXG.VMLRenderer</dd>
+						
+						</dl>
+					
+
+				
+				
+
+			</div>
+			
+
+<!-- ============================== field details ========================== -->		
+			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="enhancedRendering"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>enhancedRendering</b>
+					
+					</div>
+					<div class="description">
+						If this property is set to <tt>true</tt> the visual properties of the elements are updated
+on every update. Visual properties means: All the stuff stored in the
+GeometryElement#visProp property won't be set if enhancedRendering is <tt>false</tt>
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								true
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name="vOffsetText"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>vOffsetText</b>
+					
+					</div>
+					<div class="description">
+						The vertical offset for <a href="../symbols/Text.html">Text</a> elements. Every <a href="../symbols/Text.html">Text</a> element will
+be placed this amount of pixels below the user given coordinates.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								8
+							</dd>
+							</dl>
+						
+
+					
+				
+			
+
+<!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="calcStraight"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>calcStraight</b>(el, point1, point2)
+					
+					</div>
+					<div class="description">
+						Calculates drawing start and end point for a line. A segment is only drawn from start to end point, a straight line
+is drawn until it meets the boards boundaries.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Line.html">Line</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a line object, that needs calculation of start and end point.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.Coords.html">JXG.Coords</a>}</span> <b>point1</b>
+									
+								</dt>
+								<dd>Coordinates of the point where line drawing begins. This value is calculated and set by this method.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.Coords.html">JXG.Coords</a>}</span> <b>point2</b>
+									
+								</dt>
+								<dd>Coordinates of the point where line drawing ends. This value is calculated and set by this method.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Line.html">Line</a></dd>
+							
+								<dd><a href="../symbols/JXG.Line.html">JXG.Line</a></dd>
+							
+								<dd><a href="#drawLine">#drawLine</a></dd>
+							
+								<dd><a href="#updateLine">#updateLine</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="changePointStyle"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>changePointStyle</b>(el)
+					
+					</div>
+					<div class="description">
+						Changes the style of a <a href="../symbols/Point.html">Point</a> that already exists on the canvas. This is required because
+the point styles differ in what elements have to be drawn, e.g. if the point is marked by
+a "x" or a "+" two lines are drawn, if it's marked by spot a circle is drawn. This method removes
+the old renderer element(s) and creates the new one(s).
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Point.html">Point</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a <a href="../symbols/Point.html">Point</a> object, that's style is changed.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Point.html">Point</a></dd>
+							
+								<dd><a href="../symbols/JXG.Point.html">JXG.Point</a></dd>
+							
+								<dd><a href="#updatePoint">#updatePoint</a></dd>
+							
+								<dd><a href="#drawPoint">#drawPoint</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="drawArrow"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawArrow</b>(el)
+					
+					</div>
+					<div class="description">
+						Creates a rendering node for an <a href="../symbols/Arrow.html">Arrow</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Line.html">Line</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a <a href="../symbols/Line.html">Line</a> object, that has to be drawn.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Arrow.html">Arrow</a></dd>
+							
+								<dd><a href="../symbols/Line.html">Line</a></dd>
+							
+								<dd><a href="../symbols/JXG.Line.html">JXG.Line</a></dd>
+							
+								<dd><a href="#updateArrow">#updateArrow</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="drawCircle"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawCircle</b>(el)
+					
+					</div>
+					<div class="description">
+						Draws a <a href="../symbols/Circle.html">Circle</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Circle.html">Circle</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a <a href="../symbols/Circle.html">Circle</a> object, that has to be drawn.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Circle.html">Circle</a></dd>
+							
+								<dd><a href="../symbols/JXG.Circle.html">JXG.Circle</a></dd>
+							
+								<dd><a href="#updateCircle">#updateCircle</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="drawCurve"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawCurve</b>(el)
+					
+					</div>
+					<div class="description">
+						Draws a <a href="../symbols/Curve.html">Curve</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Curve.html">Curve</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a graph object, that has to be plotted.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Curve.html">Curve</a></dd>
+							
+								<dd><a href="../symbols/JXG.Curve.html">JXG.Curve</a></dd>
+							
+								<dd><a href="#updateCurve">#updateCurve</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="drawGrid"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawGrid</b>(board)
+					
+					</div>
+					<div class="description">
+						Creates a grid on the board, i.e. light helper lines to support the user on creating and manipulating a construction.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.Board.html">JXG.Board</a>}</span> <b>board</b>
+									
+								</dt>
+								<dd>Board on which the grid is drawn.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="#removeGrid">#removeGrid</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="drawImage"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawImage</b>(el)
+					
+					</div>
+					<div class="description">
+						Draws an <a href="../symbols/Image.html">Image</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>; This is just a template, has to be implemented by special renderers.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Image.html">Image</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to an image object, that has to be drawn.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Image.html">Image</a></dd>
+							
+								<dd><a href="../symbols/JXG.Image.html">JXG.Image</a></dd>
+							
+								<dd><a href="#updateImage">#updateImage</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="drawInternalText"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawInternalText</b>(el)
+					
+					</div>
+					<div class="description">
+						An internal text is a <a href="../symbols/Text.html">Text</a> element which is drawn using only
+the given renderer but no HTML. This method is only a stub, the drawing
+is done in the special renderers.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Text.html">Text</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a <a href="../symbols/Text.html">Text</a> object</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Text.html">Text</a></dd>
+							
+								<dd><a href="../symbols/JXG.Text.html">JXG.Text</a></dd>
+							
+								<dd><a href="#updateInternalText">#updateInternalText</a></dd>
+							
+								<dd><a href="#drawText">#drawText</a></dd>
+							
+								<dd><a href="#updateText">#updateText</a></dd>
+							
+								<dd><a href="#updateTextStyle">#updateTextStyle</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="drawLine"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawLine</b>(el)
+					
+					</div>
+					<div class="description">
+						Draws a line on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.Line.html">JXG.Line</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a line object, that has to be drawn.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Line.html">Line</a></dd>
+							
+								<dd><a href="../symbols/JXG.Line.html">JXG.Line</a></dd>
+							
+								<dd><a href="#updateLine">#updateLine</a></dd>
+							
+								<dd><a href="#calcStraight">#calcStraight</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="drawPoint"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawPoint</b>(el)
+					
+					</div>
+					<div class="description">
+						Draws a point on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Point.html">Point</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a <a href="../symbols/Point.html">Point</a> object, that has to be drawn.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Point.html">Point</a></dd>
+							
+								<dd><a href="../symbols/JXG.Point.html">JXG.Point</a></dd>
+							
+								<dd><a href="#updatePoint">#updatePoint</a></dd>
+							
+								<dd><a href="#changePointStyle">#changePointStyle</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="drawPolygon"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawPolygon</b>(el)
+					
+					</div>
+					<div class="description">
+						Draws a Polygon on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Polygon}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a Polygon object, that is to be drawn.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd>Polygon</dd>
+							
+								<dd><a href="../symbols/JXG.Polygon.html">JXG.Polygon</a></dd>
+							
+								<dd><a href="#updatePolygon">#updatePolygon</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="drawText"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawText</b>(el)
+					
+					</div>
+					<div class="description">
+						Displays a <a href="../symbols/Text.html">Text</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a> by putting a HTML div over it.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Text.html">Text</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to an <a href="../symbols/Text.html">Text</a> object, that has to be displayed</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Text.html">Text</a></dd>
+							
+								<dd><a href="../symbols/JXG.Text.html">JXG.Text</a></dd>
+							
+								<dd><a href="#drawInternalText">#drawInternalText</a></dd>
+							
+								<dd><a href="#updateText">#updateText</a></dd>
+							
+								<dd><a href="#updateInternalText">#updateInternalText</a></dd>
+							
+								<dd><a href="#updateTextStyle">#updateTextStyle</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="drawZoomBar"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawZoomBar</b>(board)
+					
+					</div>
+					<div class="description">
+						The tiny zoom bar shown on the bottom of a board (if JXG.Board#showNavigation is true).
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>board</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="#updateText">#updateText</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="eval"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>eval</b>(val)
+					
+					</div>
+					<div class="description">
+						If <tt>val</tt> is a function, it will be evaluated without giving any parameters, else the input value is just returned.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{mixed}</span> <b>val</b>
+									
+								</dt>
+								<dd>Could be anything.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="findSplit"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>findSplit</b>(pts, i, j)
+					
+					</div>
+					<div class="description">
+						findSplit() is a subroutine for <a href="#RamenDouglasPeuker">#RamenDouglasPeuker</a>.
+It searches for the point between index i and j which 
+has the largest distance from the line petween the points i and j.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{array}</span> <b>pts</b>
+									
+								</dt>
+								<dd>Array of <a href="../symbols/Point.html">Point</a>s</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>i</b>
+									
+								</dt>
+								<dd>Index of a point in pts</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>j</b>
+									
+								</dt>
+								<dd>Index of a point in pts</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="getElementById"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{object}</span>
+					<b>getElementById</b>(id)
+					
+					</div>
+					<div class="description">
+						Wrapper for getElementById for maybe other renderers which elements are not directly accessible by DOM methods like document.getElementById().
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>id</b>
+									
+								</dt>
+								<dd>Unique identifier for element.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>Reference to a JavaScript object. In case of SVG/VMLRenderer it's a reference to a SVG/VML node.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="hide"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>hide</b>(obj)
+					
+					</div>
+					<div class="description">
+						Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span> <b>obj</b>
+									
+								</dt>
+								<dd>Reference to the geometry element that has to disappear.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="#show">#show</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="highlight"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>highlight</b>(obj)
+					
+					</div>
+					<div class="description">
+						Highlights an object, i.e. changes the current colors of the object to its highlighting colors
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span> <b>obj</b>
+									
+								</dt>
+								<dd>Reference of the object that will be highlighted.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="isSameDirection"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>isSameDirection</b>(start, p, s)
+					
+					</div>
+					<div class="description">
+						If you're looking from point "start" towards point "s" and can see the point "p", true is returned. Otherwise false.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.Coords.html">JXG.Coords</a>}</span> <b>start</b>
+									
+								</dt>
+								<dd>The point you're standing on.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.Coords.html">JXG.Coords</a>}</span> <b>p</b>
+									
+								</dt>
+								<dd>The point in which direction you're looking.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.Coords.html">JXG.Coords</a>}</span> <b>s</b>
+									
+								</dt>
+								<dd>The point that should be visible.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>True, if from start the point p is in the same direction as s is, that means s-start = k*(p-start) with k>=0.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="noHighlight"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>noHighlight</b>(obj)
+					
+					</div>
+					<div class="description">
+						Uses the "normal" colors of an object, i.e. the opposite of <a href="#highlight">#highlight</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span> <b>obj</b>
+									
+								</dt>
+								<dd>Reference of the object that will get its normal colors.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="RamenDouglasPeuker"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{array}</span>
+					<b>RamenDouglasPeuker</b>(pts, eps)
+					
+					</div>
+					<div class="description">
+						Ramen-Douglas-Peuker algorithm.
+It discards points which are not necessary from the polygonal line defined by the point array
+pts. The computation is done in screen coordinates.
+Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{array}</span> <b>pts</b>
+									
+								</dt>
+								<dd>Array of <a href="../symbols/Point.html">Point</a>s</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>eps</b>
+									
+								</dt>
+								<dd>If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>An array containing points which represent an apparently identical curve as the points of pts do, but contains fewer points.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="RDP"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>RDP</b>(pts, i, j, eps, newPts)
+					
+					</div>
+					<div class="description">
+						RDB() is a subroutine for <a href="#RamenDouglasPeuker">#RamenDouglasPeuker</a>.
+It runs recursively through the point set and searches the
+point which has the largest distance from the line between the first point and
+the last point. If the distance from the line is greater than eps, this point is 
+included in our new point set otherwise it is discarded.
+If it is taken, we recursively apply the subroutine to the point set before
+and after the chosen point.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{array}</span> <b>pts</b>
+									
+								</dt>
+								<dd>Array of <a href="../symbols/Point.html">Point</a>s</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>i</b>
+									
+								</dt>
+								<dd>Index of an element of pts</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>j</b>
+									
+								</dt>
+								<dd>Index of an element of pts</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>eps</b>
+									
+								</dt>
+								<dd>If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{array}</span> <b>newPts</b>
+									
+								</dt>
+								<dd>Array of <a href="../symbols/Point.html">Point</a>s</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="remove"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>remove</b>(node)
+					
+					</div>
+					<div class="description">
+						Removes an HTML-Element from Canvas. Just a stub.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{HTMLElement}</span> <b>node</b>
+									
+								</dt>
+								<dd>The HTMLElement that shall be removed.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="removeDraft"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeDraft</b>(obj)
+					
+					</div>
+					<div class="description">
+						Puts an object from draft mode back into normal mode.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span> <b>obj</b>
+									
+								</dt>
+								<dd>Reference of the object that no longer is in draft mode.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="removeGrid"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeGrid</b>(board)
+					
+					</div>
+					<div class="description">
+						Remove the grid from the given board.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.Board.html">JXG.Board</a>}</span> <b>board</b>
+									
+								</dt>
+								<dd>Board from which the grid is removed.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="#drawGrid">#drawGrid</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="removeTicks"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeTicks</b>(axis)
+					
+					</div>
+					<div class="description">
+						Removes all ticks from an <a href="../symbols/Axis.html">Axis</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Line.html">Line</a>}</span> <b>axis</b>
+									
+								</dt>
+								<dd>Reference of an <a href="../symbols/Line.html">Line</a> object, that's ticks have to be removed.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Line.html">Line</a></dd>
+							
+								<dd>Ticks</dd>
+							
+								<dd><a href="../symbols/JXG.Line.html">JXG.Line</a></dd>
+							
+								<dd><a href="../symbols/JXG.Ticks.html">JXG.Ticks</a></dd>
+							
+								<dd><a href="#upateTicks">#upateTicks</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="setDraft"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setDraft</b>(obj)
+					
+					</div>
+					<div class="description">
+						Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards compatibility.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span> <b>obj</b>
+									
+								</dt>
+								<dd>Reference of the object that is in draft mode.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="setObjectFillColor"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setObjectFillColor</b>(obj, color, opacity)
+					
+					</div>
+					<div class="description">
+						Sets an objects fill color.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span> <b>obj</b>
+									
+								</dt>
+								<dd>Reference of the object that wants a new fill color.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>color</b>
+									
+								</dt>
+								<dd>Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose 'none'.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>opacity</b>
+									
+								</dt>
+								<dd>Opacity of the fill color. Must be between 0 and 1.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="setObjectStrokeColor"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setObjectStrokeColor</b>(obj, color, opacity)
+					
+					</div>
+					<div class="description">
+						Changes an objects stroke color to the given color.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span> <b>obj</b>
+									
+								</dt>
+								<dd>Reference of the <a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a> that gets a new stroke color.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>color</b>
+									
+								</dt>
+								<dd>Color in a HTML/CSS compatible format, e.g. <strong>#00ff00</strong> or <strong>green</strong> for green.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>opacity</b>
+									
+								</dt>
+								<dd>Opacity of the fill color. Must be between 0 and 1.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="setObjectStrokeWidth"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setObjectStrokeWidth</b>(el, width)
+					
+					</div>
+					<div class="description">
+						Sets an element's stroke width.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to the geometry element.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>width</b>
+									
+								</dt>
+								<dd>The new stroke width to be assigned to the element.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="setShadow"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setShadow</b>(element)
+					
+					</div>
+					<div class="description">
+						Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual renderers.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span> <b>element</b>
+									
+								</dt>
+								<dd>Reference to a geometry object, that should get a shadow</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="show"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>show</b>(obj)
+					
+					</div>
+					<div class="description">
+						Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span> <b>obj</b>
+									
+								</dt>
+								<dd>Reference to the object that has to appear.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="#hide">#hide</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="suspendRedraw"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>suspendRedraw</b>()
+					
+					</div>
+					<div class="description">
+						Stop redraw. This method is called before every update, so a non-vector-graphics based renderer
+can delete the contents of the drawing panel.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="#unsuspendRedraw">#unsuspendRedraw</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="unsuspendRedraw"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unsuspendRedraw</b>()
+					
+					</div>
+					<div class="description">
+						Restart redraw. This method is called after updating all the rendering node attributes.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="#suspendRedraw">#suspendRedraw</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="updateArrow"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateArrow</b>(el)
+					
+					</div>
+					<div class="description">
+						Updates properties of an <a href="../symbols/Arrow.html">Arrow</a> that already exists on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Line.html">Line</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to an <a href="../symbols/Line.html">Line</a> object, that has to be updated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Arrow.html">Arrow</a></dd>
+							
+								<dd><a href="../symbols/Line.html">Line</a></dd>
+							
+								<dd><a href="../symbols/JXG.Line.html">JXG.Line</a></dd>
+							
+								<dd><a href="#drawArrow">#drawArrow</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="updateCircle"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateCircle</b>(el)
+					
+					</div>
+					<div class="description">
+						Updates visual appearance of a given <a href="../symbols/Circle.html">Circle</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Circle.html">Circle</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a <a href="../symbols/Circle.html">Circle</a> object, that has to be updated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Circle.html">Circle</a></dd>
+							
+								<dd><a href="../symbols/JXG.Circle.html">JXG.Circle</a></dd>
+							
+								<dd><a href="#drawCircle">#drawCircle</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="updateCurve"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateCurve</b>(el)
+					
+					</div>
+					<div class="description">
+						Updates visual appearance of the renderer element assigned to the given <a href="../symbols/Curve.html">Curve</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Curve.html">Curve</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a <a href="../symbols/Curve.html">Curve</a> object, that has to be updated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Curve.html">Curve</a></dd>
+							
+								<dd><a href="../symbols/JXG.Curve.html">JXG.Curve</a></dd>
+							
+								<dd><a href="#drawCurve">#drawCurve</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="updateImage"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateImage</b>(el)
+					
+					</div>
+					<div class="description">
+						Updates the properties of an <a href="../symbols/Image.html">Image</a> element.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Image.html">Image</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to an {image object, that has to be updated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/JXG.Image.html">JXG.Image</a></dd>
+							
+								<dd><a href="#drawImage">#drawImage</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="updateInternalText"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateInternalText</b>(el)
+					
+					</div>
+					<div class="description">
+						Updates visual properties of an already existing <a href="../symbols/Text.html">Text</a> element.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Text.html">Text</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to an <a href="../symbols/Text.html">Text</a> object, that has to be updated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Text.html">Text</a></dd>
+							
+								<dd><a href="../symbols/JXG.Text.html">JXG.Text</a></dd>
+							
+								<dd><a href="#drawInternalText">#drawInternalText</a></dd>
+							
+								<dd><a href="#drawText">#drawText</a></dd>
+							
+								<dd><a href="#updateText">#updateText</a></dd>
+							
+								<dd><a href="#updateTextStyle">#updateTextStyle</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="updateLine"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateLine</b>(el)
+					
+					</div>
+					<div class="description">
+						Updates visual appearance of the renderer element assigned to the given <a href="../symbols/Line.html">Line</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Line.html">Line</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to the <a href="../symbols/Line.html">Line</a> object that has to be updated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Line.html">Line</a></dd>
+							
+								<dd><a href="../symbols/JXG.Line.html">JXG.Line</a></dd>
+							
+								<dd><a href="#drawLine">#drawLine</a></dd>
+							
+								<dd><a href="#calcStraight">#calcStraight</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="updatePoint"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updatePoint</b>(el)
+					
+					</div>
+					<div class="description">
+						Updates visual appearance of the renderer element assigned to the given <a href="../symbols/Point.html">Point</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Point.html">Point</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a <a href="../symbols/Point.html">Point</a> object, that has to be updated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Point.html">Point</a></dd>
+							
+								<dd><a href="../symbols/JXG.Point.html">JXG.Point</a></dd>
+							
+								<dd><a href="#drawPoint">#drawPoint</a></dd>
+							
+								<dd><a href="#changePointStyle">#changePointStyle</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="updatePolygon"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updatePolygon</b>(el)
+					
+					</div>
+					<div class="description">
+						Updates properties of a Polygon's rendering node.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Polygon}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to a Polygon object, that has to be updated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd>Polygon</dd>
+							
+								<dd><a href="../symbols/JXG.Polygon.html">JXG.Polygon</a></dd>
+							
+								<dd><a href="#drawPolygon">#drawPolygon</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="updateText"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateText</b>(el)
+					
+					</div>
+					<div class="description">
+						Updates visual properties of an already existing <a href="../symbols/Text.html">Text</a> element.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.Text.html">JXG.Text</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to an <a href="../symbols/Text.html">Text</a> object, that has to be updated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Text.html">Text</a></dd>
+							
+								<dd><a href="../symbols/JXG.Text.html">JXG.Text</a></dd>
+							
+								<dd><a href="#drawText">#drawText</a></dd>
+							
+								<dd><a href="#drawInternalText">#drawInternalText</a></dd>
+							
+								<dd><a href="#updateInternalText">#updateInternalText</a></dd>
+							
+								<dd><a href="#updateTextStyle">#updateTextStyle</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="updateTextStyle"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateTextStyle</b>(el)
+					
+					</div>
+					<div class="description">
+						Updates CSS style properties of a <a href="../symbols/Text.html">Text</a> node.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Text.html">Text</a>}</span> <b>el</b>
+									
+								</dt>
+								<dd>Reference to the <a href="../symbols/Text.html">Text</a> object, that has to be updated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Text.html">Text</a></dd>
+							
+								<dd><a href="../symbols/JXG.Text.html">JXG.Text</a></dd>
+							
+								<dd><a href="#drawText">#drawText</a></dd>
+							
+								<dd><a href="#drawInternalText">#drawInternalText</a></dd>
+							
+								<dd><a href="#updateText">#updateText</a></dd>
+							
+								<dd><a href="#updateInternalText">#updateInternalText</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="updateTicks"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateTicks</b>(axis, dxMaj, dyMaj, dxMin, dyMin)
+					
+					</div>
+					<div class="description">
+						Update Ticks on a <a href="../symbols/Line.html">Line</a>. This method is only a stub and is implemented only in the special renderers.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Line.html">Line</a>}</span> <b>axis</b>
+									
+								</dt>
+								<dd>Reference of an line object, thats ticks have to be updated.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>dxMaj</b>
+									
+								</dt>
+								<dd>Number of pixels a major tick counts in x direction.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>dyMaj</b>
+									
+								</dt>
+								<dd>Number of pixels a major tick counts in y direction.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>dxMin</b>
+									
+								</dt>
+								<dd>Number of pixels a minor tick counts in x direction.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>dyMin</b>
+									
+								</dt>
+								<dd>Number of pixels a minor tick counts in y direction.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Line.html">Line</a></dd>
+							
+								<dd>Ticks</dd>
+							
+								<dd><a href="../symbols/JXG.Line.html">JXG.Line</a></dd>
+							
+								<dd><a href="../symbols/JXG.Ticks.html">JXG.Ticks</a></dd>
+							
+								<dd><a href="#removeTicks">#removeTicks</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					
+				
+			
+			
+<!-- ============================== event details ========================= -->		
+			
+			
+			<hr />
+		</div>
+
+		
+<!-- ============================== footer ================================= -->
+		<div class="fineprint" style="clear:both">
+			
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Mon May 03 2010 16:49:03 GMT+0200 (MESZ)
+		</div>
+	</body>
+</html>

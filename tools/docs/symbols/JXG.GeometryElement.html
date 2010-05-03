@@ -1,0 +1,2417 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+         <link rel="stylesheet" type="text/css" href="../static/jsxgraph.css" />
+         <script type="text/javascript" src="../static/jquery.min.js"></script>
+         <script type="text/javascript" src="../static/jsxgraphcore.js"></script>
+		
+		<title>JsDoc Reference - JXG.GeometryElement</title>
+
+		<style type="text/css">
+			/* default.css */
+body
+{
+	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
+	width: 800px;
+}
+
+.header
+{
+	clear: both;
+	background-color: #ccc;
+	padding: 8px;
+}
+
+h1
+{
+	font-size: 150%;
+	font-weight: bold;
+	padding: 0;
+	margin: 1em 0 0 .3em;
+}
+
+hr
+{
+	border: none 0;
+	border-top: 1px solid #7F8FB1;
+	height: 1px;
+}
+
+pre.code
+{
+	display: block;
+	padding: 8px;
+	border: 1px dashed #ccc;
+}
+
+#index
+{
+	margin-top: 24px;
+	float: left;
+	width: 220px;
+	position: absolute;
+	left: 8px;
+	background-color: #F3F3F3;
+	padding: 8px;
+}
+
+#content
+{
+	margin-left: 250px;
+	width: 600px;
+}
+
+.classList
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 0 0 0 8px;
+	font-family: arial, sans-serif;
+	font-size: 1em;
+	overflow: auto;
+}
+
+.classList li
+{
+	padding: 0;
+	margin: 0 0 8px 0;
+}
+
+.summaryTable { width: 100%; }
+
+h1.classTitle
+{
+	font-size:170%;
+	line-height:130%;
+}
+
+h2 { font-size: 110%; }
+caption, div.sectionTitle
+{
+	background-color: #7F8FB1;
+	color: #fff;
+	font-size:130%;
+	text-align: left;
+	padding: 2px 6px 2px 6px;
+	border: 1px #7F8FB1 solid;
+}
+
+div.sectionTitle { margin-bottom: 8px; }
+.summaryTable thead { display: none; }
+
+.summaryTable td
+{
+	vertical-align: top;
+	padding: 4px;
+	border-bottom: 1px #7F8FB1 solid;
+	border-right: 1px #7F8FB1 solid;
+}
+
+/*col#summaryAttributes {}*/
+.summaryTable td.attributes
+{
+	border-left: 1px #7F8FB1 solid;
+	width: 140px;
+	text-align: right;
+}
+
+td.attributes, .fixedFont
+{
+	line-height: 15px;
+	color: #002EBE;
+	font-family: "Courier New",Courier,monospace;
+	font-size: 13px;
+}
+
+.summaryTable td.nameDescription
+{
+	text-align: left;
+	font-size: 13px;
+	line-height: 15px;
+}
+
+.summaryTable td.nameDescription, .description
+{
+	line-height: 15px;
+	padding: 4px;
+	padding-left: 4px;
+}
+
+.summaryTable { margin-bottom: 8px; }
+
+ul.inheritsList
+{
+	list-style: square;
+	margin-left: 20px;
+	padding-left: 0;
+}
+
+.detailList {
+	margin-left: 20px; 
+	line-height: 15px;
+}
+.detailList dt { margin-left: 20px; }
+
+.detailList .heading
+{
+	font-weight: bold;
+	padding-bottom: 6px;
+	margin-left: 0;
+}
+
+.light, td.attributes, .light a:link, .light a:visited
+{
+	color: #777;
+	font-style: italic;
+}
+
+.fineprint
+{
+	text-align: right;
+	font-size: 10px;
+}
+		</style>
+	</head>
+
+	<body>
+<!-- ============================== header ================================= -->	
+		<!-- begin static/header.html -->
+		<div id="header">
+<h1 style="font-size: 2.5em"><img src="static/logo.gif" />JSXGraph Reference</h1>
+</div>
+<div id="jsdeactivated_hint" style="background-color: #fcc; border: solid 1px red; padding: 3px">
+<h2>JavaScript must be enabled in order for you to use JSXGraph and JSXGraph reference.
+However, it seems JavaScript is either disabled or not supported by your browser.</h2>
+</div>
+<script type="text/javascript">
+ /* <![CDATA[ */
+   document.getElementById("jsdeactivated_hint").style.display = 'none';
+ /* ]]> */
+</script>
+		<!-- end static/header.html -->
+
+<!-- ============================== classes index ============================ -->
+		<div id="index">
+			<!-- begin publish.classesIndex -->
+			<div align="center"><a href="../index.html">Class Index</a>
+| <a href="../files.html">File Index</a></div>
+<hr />
+<h2 onclick="switchList('myElList');" style="cursor: pointer"><img src="static/expandable.gif"/> Elements</h2>
+<ul class="classList" id="myElList" style="display: block;">
+	
+	<li><a href="../symbols/Arrow.html">Arrow</a></li>
+	
+	<li><a href="../symbols/Axis.html">Axis</a></li>
+	
+	<li><a href="../symbols/Bisector.html">Bisector</a></li>
+	
+	<li><a href="../symbols/Circle.html">Circle</a></li>
+	
+	<li><a href="../symbols/Circumcircle.html">Circumcircle</a></li>
+	
+	<li><a href="../symbols/Circumcirclemidpoint.html">Circumcirclemidpoint</a></li>
+	
+	<li><a href="../symbols/Conic.html">Conic</a></li>
+	
+	<li><a href="../symbols/Curve.html">Curve</a></li>
+	
+	<li><a href="../symbols/Ellipse.html">Ellipse</a></li>
+	
+	<li><a href="../symbols/Functiongraph.html">Functiongraph</a></li>
+	
+	<li><a href="../symbols/Glider.html">Glider</a></li>
+	
+	<li><a href="../symbols/Hyperbola.html">Hyperbola</a></li>
+	
+	<li><a href="../symbols/Image.html">Image</a></li>
+	
+	<li><a href="../symbols/Integral.html">Integral</a></li>
+	
+	<li><a href="../symbols/Intersection.html">Intersection</a></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li><a href="../symbols/Line.html">Line</a></li>
+	
+	<li><a href="../symbols/Locus.html">Locus</a></li>
+	
+	<li><a href="../symbols/Midpoint.html">Midpoint</a></li>
+	
+	<li><a href="../symbols/Mirrorpoint.html">Mirrorpoint</a></li>
+	
+	<li><a href="../symbols/Normal.html">Normal</a></li>
+	
+	<li><a href="../symbols/OtherIntersection.html">OtherIntersection</a></li>
+	
+	<li><a href="../symbols/Parabola.html">Parabola</a></li>
+	
+	<li><a href="../symbols/Parallel.html">Parallel</a></li>
+	
+	<li><a href="../symbols/Parallelpoint.html">Parallelpoint</a></li>
+	
+	<li><a href="../symbols/Perpendicular.html">Perpendicular</a></li>
+	
+	<li><a href="../symbols/Perpendicularpoint.html">Perpendicularpoint</a></li>
+	
+	<li><a href="../symbols/Point.html">Point</a></li>
+	
+	<li><a href="../symbols/Reflection.html">Reflection</a></li>
+	
+	<li><a href="../symbols/RegularPolygon.html">RegularPolygon</a></li>
+	
+	<li><a href="../symbols/Riemannsum.html">Riemannsum</a></li>
+	
+	<li><a href="../symbols/Segment.html">Segment</a></li>
+	
+	<li><a href="../symbols/Tangent.html">Tangent</a></li>
+	
+	<li><a href="../symbols/Text.html">Text</a></li>
+	
+</ul>
+<h2 onclick="switchList('myClList');" style="cursor: pointer"><img src="static/expandable.gif"/> Classes</h2>
+<ul class="classList" id="myClList" style="display: block;">
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li><a href="../symbols/JXG.html">JXG</a></li>
+	
+	<li><a href="../symbols/JXG.AbstractRenderer.html">JXG.AbstractRenderer</a></li>
+	
+	<li><a href="../symbols/JXG.Algebra.html">JXG.Algebra</a></li>
+	
+	<li><a href="../symbols/JXG.Board.html">JXG.Board</a></li>
+	
+	<li><a href="../symbols/JXG.C.html">JXG.C</a></li>
+	
+	<li><a href="../symbols/JXG.Circle.html">JXG.Circle</a></li>
+	
+	<li><a href="../symbols/JXG.Complex.html">JXG.Complex</a></li>
+	
+	<li><a href="../symbols/JXG.Coords.html">JXG.Coords</a></li>
+	
+	<li><a href="../symbols/JXG.createSector.html">JXG.createSector</a></li>
+	
+	<li><a href="../symbols/JXG.createSlider.html">JXG.createSlider</a></li>
+	
+	<li><a href="../symbols/JXG.Curve.html">JXG.Curve</a></li>
+	
+	<li><a href="../symbols/JXG.DimensionMismatchException.html">JXG.DimensionMismatchException</a></li>
+	
+	<li><a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a></li>
+	
+	<li><a href="../symbols/JXG.Group.html">JXG.Group</a></li>
+	
+	<li><a href="../symbols/JXG.Image.html">JXG.Image</a></li>
+	
+	<li><a href="../symbols/JXG.Intersection.html">JXG.Intersection</a></li>
+	
+	<li><a href="../symbols/JXG.JSXGraph.html">JXG.JSXGraph</a></li>
+	
+	<li><a href="../symbols/JXG.Line.html">JXG.Line</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Matrix.html">JXG.Math.Matrix</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.html">JXG.Math.Numerics</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.Butcher.html">JXG.Math.Numerics.Butcher</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.predefinedButcher.html">JXG.Math.Numerics.predefinedButcher</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Vector.html">JXG.Math.Vector</a></li>
+	
+	<li><a href="../symbols/JXG.Options.html">JXG.Options</a></li>
+	
+	<li><a href="../symbols/JXG.Point.html">JXG.Point</a></li>
+	
+	<li><a href="../symbols/JXG.Polygon.html">JXG.Polygon</a></li>
+	
+	<li><a href="../symbols/JXG.Server.html">JXG.Server</a></li>
+	
+	<li><a href="../symbols/JXG.Server.modules.html">JXG.Server.modules</a></li>
+	
+	<li><a href="../symbols/JXG.SingularMatrixException.html">JXG.SingularMatrixException</a></li>
+	
+	<li><a href="../symbols/JXG.Text.html">JXG.Text</a></li>
+	
+	<li><a href="../symbols/JXG.Ticks.html">JXG.Ticks</a></li>
+	
+	<li><a href="../symbols/JXG.Turtle.html">JXG.Turtle</a></li>
+	
+	<li><a href="../symbols/JXG.Util.html">JXG.Util</a></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+</ul>
+<hr />
+
+<script type="text/javascript">
+  /* <![CDATA[ */
+   	function switchList(id) {
+      document.getElementById(id).style.display = ( document.getElementById(id).style.display == 'block' ? 'none' : 'block' );
+      document.cookie = id.toLowerCase() + 'status=' + document.getElementById(id).style.display + ';';
+  	};
+  	
+	function initList(id) {
+      var cookieList = document.cookie.split(';');
+      for(var c=0; c<cookieList.length; c++) {
+        if(cookieList[c].indexOf(id.toLowerCase() + 'status') != -1) {
+          document.getElementById(id).style.display = cookieList[c].split('=')[1];
+        }
+      }
+  	};
+  	
+  	initList('myElList');
+    initList('myClList');
+  /* ]]> */
+</script>
+			<!-- end publish.classesIndex -->
+		</div>
+		
+		<div id="content">
+<!-- ============================== class title ============================ -->
+			<h1 class="classTitle">
+				
+				Class JXG.GeometryElement
+			</h1>
+
+<!-- ============================== class summary ========================== -->			
+			<p class="description">
+				
+			
+				This is the basic class for geometry elements like points, circles and lines.
+				
+				
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_GeometryElement.js.html">GeometryElement.js</a>.
+				
+			</p>
+
+<!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class JXG.GeometryElement.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#constructor">JXG.GeometryElement</a></b>()
+							</div>
+							<div class="description">Constructs a new GeometryElement object.</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+
+<!-- ============================== properties summary ===================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class JXG.GeometryElement.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#dash">dash</a></b>
+								</div>
+								<div class="description">Determines the elements border-style.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#draft">draft</a></b>
+								</div>
+								<div class="description">If true the element will be drawn in grey scale colors to visualize that it's only a draft.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#fillColor">fillColor</a></b>
+								</div>
+								<div class="description">The fill color of this geometry element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#fillOpacity">fillOpacity</a></b>
+								</div>
+								<div class="description">Opacity for fill color.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#fixed">fixed</a></b>
+								</div>
+								<div class="description">If true the element is fixed and can not be dragged around.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#highlightFillColor">highlightFillColor</a></b>
+								</div>
+								<div class="description">The fill color of the given geometry element when the mouse is pointed over it.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#highlightFillOpacity">highlightFillOpacity</a></b>
+								</div>
+								<div class="description">Opacity for fill color when the object is highlighted.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#highlightStrokeColor">highlightStrokeColor</a></b>
+								</div>
+								<div class="description">The stroke color of the given geometry element when the user moves the mouse over it.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#highlightStrokeOpacity">highlightStrokeOpacity</a></b>
+								</div>
+								<div class="description">Opacity for stroke color when the object is highlighted.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#highlightStrokeWidth">highlightStrokeWidth</a></b>
+								</div>
+								<div class="description">Width of the element's stroke when the mouse is pointed over it.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#layer">layer</a></b>
+								</div>
+								<div class="description">display layer which will conting the element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#name">name</a></b>
+								</div>
+								<div class="description">Not necessarily unique name for the element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#quadraticform">quadraticform</a></b>
+								</div>
+								<div class="description">Quadratic form representation of circles (and conics)</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#shadow">shadow</a></b>
+								</div>
+								<div class="description">If true the element will get a shadow.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#strokeColor">strokeColor</a></b>
+								</div>
+								<div class="description">The stroke color of the given geometry element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#strokeOpacity">strokeOpacity</a></b>
+								</div>
+								<div class="description">Opacity for element's stroke color.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#strokeWidth">strokeWidth</a></b>
+								</div>
+								<div class="description">Width of the element's stroke.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#trace">trace</a></b>
+								</div>
+								<div class="description">If true the element will be traced, i.e.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.GeometryElement.html#visible">visible</a></b>
+								</div>
+								<div class="description">If false the element won't be visible on the board, otherwise it is shown.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
+
+<!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class JXG.GeometryElement.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#addChild">addChild</a></b>(obj)
+								</div>
+								<div class="description">Add an element as a child to the current element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#addLabelToElement">addLabelToElement</a></b>()
+								</div>
+								<div class="description">Adds a label to the element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#animate">animate</a></b>(hash, time)
+								</div>
+								<div class="description">Animates properties for that object like stroke or fill color, opacity and maybe
+even more later.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#clearTrace">clearTrace</a></b>()
+								</div>
+								<div class="description">Removes all objects generated by the trace function.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#dash">dash</a></b>(d)
+								</div>
+								<div class="description">Set the dash type of an element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#fillColor">fillColor</a></b>(fColor)
+								</div>
+								<div class="description">Set the fillColor of an element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#hideElement">hideElement</a></b>()
+								</div>
+								<div class="description">Hide the element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#highlight">highlight</a></b>()
+								</div>
+								<div class="description">Highlights the element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#highlightFillColor">highlightFillColor</a></b>(fColor)
+								</div>
+								<div class="description">Set the highlightFillColor of an element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#highlightStrokeColor">highlightStrokeColor</a></b>(sColor)
+								</div>
+								<div class="description">Set the highlightStrokeColor of an element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#labelColor">labelColor</a></b>(lColor)
+								</div>
+								<div class="description">Set the labelColor of an element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#noHighlight">noHighlight</a></b>()
+								</div>
+								<div class="description">Uses the "normal" properties of the element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#remove">remove</a></b>()
+								</div>
+								<div class="description">Removes the element from the construction.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#setArrow">setArrow</a></b>(firstArrow, lastArrow)
+								</div>
+								<div class="description">Determines whether the arc has arrows at start or end of the arc.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#setProperty">setProperty</a></b>(%)
+								</div>
+								<div class="description">Sets an arbitrary number of properties.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#shadow">shadow</a></b>(v)
+								</div>
+								<div class="description">Set the shadow of an element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#showElement">showElement</a></b>()
+								</div>
+								<div class="description">Make the element visible.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#strokeColor">strokeColor</a></b>(sColor)
+								</div>
+								<div class="description">Set the strokeColor of an element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#strokeWidth">strokeWidth</a></b>(width)
+								</div>
+								<div class="description">Set the strokeWidth of an element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#update">update</a></b>()
+								</div>
+								<div class="description">General update method.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.GeometryElement.html#visible">visible</a></b>(v)
+								</div>
+								<div class="description">Set the visibility of an element</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
+<!-- ============================== events summary ======================== -->
+			
+
+<!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>JXG.GeometryElement</b>()
+				</div>
+				
+				<div class="description">
+					Constructs a new GeometryElement object.
+					
+				</div>
+				
+				
+					
+					
+					
+					
+					
+					
+					
+
+				
+				
+
+			</div>
+			
+
+<!-- ============================== field details ========================== -->		
+			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="dash"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>dash</b>
+					
+					</div>
+					<div class="description">
+						Determines the elements border-style.
+Possible values are:
+<ul><li>0 for a solid line</li>
+<li>1 for a dotted line</li>
+<li>2 for a line with small dashes</li>
+<li>3 for a line with medium dashes</li>
+<li>4 for a line with big dashes</li>
+<li>5 for a line with alternating medium and big dashes and large gaps</li>
+<li>6 for a line with alternating medium and big dashes and small gaps</li></ul>
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								0
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name="draft"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>draft</b>
+					
+					</div>
+					<div class="description">
+						If true the element will be drawn in grey scale colors to visualize that it's only a draft.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="fillColor"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{string}</span>
+					<b>fillColor</b>
+					
+					</div>
+					<div class="description">
+						The fill color of this geometry element.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#highlightFillColor">#highlightFillColor</a></dd>
+							
+							<dd><a href="#fillOpacity">#fillOpacity</a></dd>
+							
+							<dd><a href="#highlightFillOpacity">#highlightFillOpacity</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
+					<a name="fillOpacity"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>fillOpacity</b>
+					
+					</div>
+					<div class="description">
+						Opacity for fill color.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#fillColor">#fillColor</a></dd>
+							
+							<dd><a href="#highlightFillColor">#highlightFillColor</a></dd>
+							
+							<dd><a href="#highlightFillOpacity">#highlightFillOpacity</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
+					<a name="fixed"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>fixed</b>
+					
+					</div>
+					<div class="description">
+						If true the element is fixed and can not be dragged around. The element 
+will even stay at its position on zoom and moveOrigin events.
+Only free elements like points, texts, curves can be frozen.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								false
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name="highlightFillColor"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{string}</span>
+					<b>highlightFillColor</b>
+					
+					</div>
+					<div class="description">
+						The fill color of the given geometry element when the mouse is pointed over it.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#fillColor">#fillColor</a></dd>
+							
+							<dd><a href="#fillOpacity">#fillOpacity</a></dd>
+							
+							<dd><a href="#highlightFillOpacity">#highlightFillOpacity</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
+					<a name="highlightFillOpacity"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>highlightFillOpacity</b>
+					
+					</div>
+					<div class="description">
+						Opacity for fill color when the object is highlighted.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#fillColor">#fillColor</a></dd>
+							
+							<dd><a href="#highlightFillColor">#highlightFillColor</a></dd>
+							
+							<dd><a href="#fillOpacity">#fillOpacity</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
+					<a name="highlightStrokeColor"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{string}</span>
+					<b>highlightStrokeColor</b>
+					
+					</div>
+					<div class="description">
+						The stroke color of the given geometry element when the user moves the mouse over it.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#sstrokeColor">#sstrokeColor</a></dd>
+							
+							<dd><a href="#strokeWidth">#strokeWidth</a></dd>
+							
+							<dd><a href="#strokeOpacity">#strokeOpacity</a></dd>
+							
+							<dd><a href="#highlightStrokeOpacity">#highlightStrokeOpacity</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
+					<a name="highlightStrokeOpacity"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>highlightStrokeOpacity</b>
+					
+					</div>
+					<div class="description">
+						Opacity for stroke color when the object is highlighted.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#strokeColor">#strokeColor</a></dd>
+							
+							<dd><a href="#highlightStrokeColor">#highlightStrokeColor</a></dd>
+							
+							<dd><a href="#strokeWidth">#strokeWidth</a></dd>
+							
+							<dd><a href="#strokeOpacity">#strokeOpacity</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
+					<a name="highlightStrokeWidth"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>highlightStrokeWidth</b>
+					
+					</div>
+					<div class="description">
+						Width of the element's stroke when the mouse is pointed over it.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#strokeColor">#strokeColor</a></dd>
+							
+							<dd><a href="#highlightStrokeColor">#highlightStrokeColor</a></dd>
+							
+							<dd><a href="#strokeOpacity">#strokeOpacity</a></dd>
+							
+							<dd><a href="#highlightStrokeOpacity">#highlightStrokeOpacity</a></dd>
+							
+							<dd><a href="#highlightFillColor">#highlightFillColor</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
+					<a name="layer"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>layer</b>
+					
+					</div>
+					<div class="description">
+						display layer which will conting the element.
+Controlled in JXG.Options.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="name"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>name</b>
+					
+					</div>
+					<div class="description">
+						Not necessarily unique name for the element.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd>JXG.Board#generateName</dd>
+							
+							</dl>
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								Name generated by JXG.Board#generateName.
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name="quadraticform"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>quadraticform</b>
+					
+					</div>
+					<div class="description">
+						Quadratic form representation of circles (and conics)
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="shadow"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>shadow</b>
+					
+					</div>
+					<div class="description">
+						If true the element will get a shadow.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								false
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name="strokeColor"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{string}</span>
+					<b>strokeColor</b>
+					
+					</div>
+					<div class="description">
+						The stroke color of the given geometry element.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#highlightStrokeColor">#highlightStrokeColor</a></dd>
+							
+							<dd><a href="#strokeWidth">#strokeWidth</a></dd>
+							
+							<dd><a href="#strokeOpacity">#strokeOpacity</a></dd>
+							
+							<dd><a href="#highlightStrokeOpacity">#highlightStrokeOpacity</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
+					<a name="strokeOpacity"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>strokeOpacity</b>
+					
+					</div>
+					<div class="description">
+						Opacity for element's stroke color.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#strokeColor">#strokeColor</a></dd>
+							
+							<dd><a href="#highlightStrokeColor">#highlightStrokeColor</a></dd>
+							
+							<dd><a href="#strokeWidth">#strokeWidth</a></dd>
+							
+							<dd><a href="#highlightStrokeOpacity">#highlightStrokeOpacity</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
+					<a name="strokeWidth"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>strokeWidth</b>
+					
+					</div>
+					<div class="description">
+						Width of the element's stroke.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#strokeColor">#strokeColor</a></dd>
+							
+							<dd><a href="#highlightStrokeColor">#highlightStrokeColor</a></dd>
+							
+							<dd><a href="#strokeOpacity">#strokeOpacity</a></dd>
+							
+							<dd><a href="#highlightStrokeOpacity">#highlightStrokeOpacity</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
+					<a name="trace"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>trace</b>
+					
+					</div>
+					<div class="description">
+						If true the element will be traced, i.e. on every movement the element will be copied
+to the background. Use <a href="#clearTrace">#clearTrace</a> to delete the trace elements.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#clearTrace">#clearTrace</a></dd>
+							
+							<dd><a href="#traces">#traces</a></dd>
+							
+							<dd><a href="#numTraces">#numTraces</a></dd>
+							
+							</dl>
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								false
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name="visible"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>visible</b>
+					
+					</div>
+					<div class="description">
+						If false the element won't be visible on the board, otherwise it is shown.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#hideElement">#hideElement</a></dd>
+							
+							<dd><a href="#showElement">#showElement</a></dd>
+							
+							</dl>
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								true
+							</dd>
+							</dl>
+						
+
+					
+				
+			
+
+<!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="addChild"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addChild</b>(obj)
+					
+					</div>
+					<div class="description">
+						Add an element as a child to the current element. Can be used to model dependencies between geometry elements.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span> <b>obj</b>
+									
+								</dt>
+								<dd>The dependent object.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="addLabelToElement"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addLabelToElement</b>()
+					
+					</div>
+					<div class="description">
+						Adds a label to the element.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="animate"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>}</span>
+					<b>animate</b>(hash, time)
+					
+					</div>
+					<div class="description">
+						Animates properties for that object like stroke or fill color, opacity and maybe
+even more later.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>hash</b>
+									
+								</dt>
+								<dd>Object containing propiertes with target values for the animation.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>time</b>
+									
+								</dt>
+								<dd>Number of milliseconds to complete the animation.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>A reference to the object</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="clearTrace"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>clearTrace</b>()
+					
+					</div>
+					<div class="description">
+						Removes all objects generated by the trace function.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="dash"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>dash</b>(d)
+					
+					</div>
+					<div class="description">
+						Set the dash type of an element
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Int}</span> <b>d</b>
+									
+								</dt>
+								<dd>Integer which determines the way of dashing an element's outline.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/JXG.GeometryElement.html#dash">JXG.GeometryElement#dash</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="fillColor"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>fillColor</b>(fColor)
+					
+					</div>
+					<div class="description">
+						Set the fillColor of an element
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>fColor</b>
+									
+								</dt>
+								<dd>String which determines the fill color of an object.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd>JXG.GeometryElement#fillColod</dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="hideElement"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>hideElement</b>()
+					
+					</div>
+					<div class="description">
+						Hide the element. It will still exist but not visible on the board.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="highlight"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>highlight</b>()
+					
+					</div>
+					<div class="description">
+						Highlights the element.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="highlightFillColor"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>highlightFillColor</b>(fColor)
+					
+					</div>
+					<div class="description">
+						Set the highlightFillColor of an element
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>fColor</b>
+									
+								</dt>
+								<dd>String which determines the fill color of an object when its highlighted.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/JXG.GeometryElement.html#highlightFillColor">JXG.GeometryElement#highlightFillColor</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="highlightStrokeColor"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>highlightStrokeColor</b>(sColor)
+					
+					</div>
+					<div class="description">
+						Set the highlightStrokeColor of an element
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>sColor</b>
+									
+								</dt>
+								<dd>String which determines the stroke color of an object when its highlighted.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/JXG.GeometryElement.html#highlightStrokeColor">JXG.GeometryElement#highlightStrokeColor</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="labelColor"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>labelColor</b>(lColor)
+					
+					</div>
+					<div class="description">
+						Set the labelColor of an element
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>lColor</b>
+									
+								</dt>
+								<dd>String which determines the text color of an object's label.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/JXG.GeometryElement.html#labelColor">JXG.GeometryElement#labelColor</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="noHighlight"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>noHighlight</b>()
+					
+					</div>
+					<div class="description">
+						Uses the "normal" properties of the element.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="remove"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>remove</b>()
+					
+					</div>
+					<div class="description">
+						Removes the element from the construction.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="setArrow"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setArrow</b>(firstArrow, lastArrow)
+					
+					</div>
+					<div class="description">
+						Determines whether the arc has arrows at start or end of the arc.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{bool}</span> <b>firstArrow</b>
+									
+								</dt>
+								<dd>True if there is an arrow at the start of the arc, false otherwise.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{bool}</span> <b>lastArrow</b>
+									
+								</dt>
+								<dd>True if there is an arrow at the end of the arc, false otherwise.
+Is stored at visProp['firstArrow'] and visProp['lastArrow']</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="setProperty"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setProperty</b>(%)
+					
+					</div>
+					<div class="description">
+						Sets an arbitrary number of properties.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>%</b>
+									
+								</dt>
+								<dd>Arbitrary number of strings, containing "key:value" pairs.
+The possible key values are the element and class fields in this documentation.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					<dl class="detailList">
+					<dt class="heading">Examples:</dt>
+					
+					<pre class="code">// Set property directly on creation of an element using the attributes object parameter
+var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, 1]};
+var p = board.createElement('point', [2, 2], {visible: false});
+
+// Now make this point visible and fixed:
+p.setProperty('fixed:true', 'visible:true');
+
+// Alternatively you can use #hideElement resp. #showElement:
+p.hideElement();</pre>
+					
+					</dl>
+					
+					
+					<hr />
+				
+					<a name="shadow"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>shadow</b>(v)
+					
+					</div>
+					<div class="description">
+						Set the shadow of an element
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Boolean}</span> <b>v</b>
+									
+								</dt>
+								<dd>Boolean which determines whether the element has a shadow.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/JXG.GeometryElement.html#shadow">JXG.GeometryElement#shadow</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="showElement"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showElement</b>()
+					
+					</div>
+					<div class="description">
+						Make the element visible.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="strokeColor"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>strokeColor</b>(sColor)
+					
+					</div>
+					<div class="description">
+						Set the strokeColor of an element
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>sColor</b>
+									
+								</dt>
+								<dd>String which determines the stroke color of an object.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/JXG.GeometryElement.html#strokeColor">JXG.GeometryElement#strokeColor</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="strokeWidth"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>strokeWidth</b>(width)
+					
+					</div>
+					<div class="description">
+						Set the strokeWidth of an element
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Integer}</span> <b>width</b>
+									
+								</dt>
+								<dd>Integer which determines the stroke width of an outline.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/JXG.GeometryElement.html#strokeWidth">JXG.GeometryElement#strokeWidth</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="update"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>update</b>()
+					
+					</div>
+					<div class="description">
+						General update method. Should be overwritten by the element itself.
+Can be used sometimes to commit changes to the object.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="visible"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>visible</b>(v)
+					
+					</div>
+					<div class="description">
+						Set the visibility of an element
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Boolean}</span> <b>v</b>
+									
+								</dt>
+								<dd>Boolean which determines whether the element is drawn.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/JXG.GeometryElement.html#visible">JXG.GeometryElement#visible</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					
+				
+			
+			
+<!-- ============================== event details ========================= -->		
+			
+			
+			<hr />
+		</div>
+
+		
+<!-- ============================== footer ================================= -->
+		<div class="fineprint" style="clear:both">
+			
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Mon May 03 2010 16:49:03 GMT+0200 (MESZ)
+		</div>
+	</body>
+</html>

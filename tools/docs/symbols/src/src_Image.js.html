@@ -1,0 +1,142 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/*
+<span class='line'>  2</span>     Copyright 2008,2009
+<span class='line'>  3</span>         Matthias Ehmann,
+<span class='line'>  4</span>         Michael Gerhaeuser,
+<span class='line'>  5</span>         Carsten Miller,
+<span class='line'>  6</span>         Bianca Valentin,
+<span class='line'>  7</span>         Alfred Wassermann,
+<span class='line'>  8</span>         Peter Wilfahrt
+<span class='line'>  9</span> 
+<span class='line'> 10</span>     This file is part of JSXGraph.
+<span class='line'> 11</span> 
+<span class='line'> 12</span>     JSXGraph is free software: you can redistribute it and/or modify
+<span class='line'> 13</span>     it under the terms of the GNU Lesser General Public License as published by
+<span class='line'> 14</span>     the Free Software Foundation, either version 3 of the License, or
+<span class='line'> 15</span>     (at your option) any later version.
+<span class='line'> 16</span> 
+<span class='line'> 17</span>     JSXGraph is distributed in the hope that it will be useful,
+<span class='line'> 18</span>     but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class='line'> 19</span>     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class='line'> 20</span>     GNU Lesser General Public License for more details.
+<span class='line'> 21</span> 
+<span class='line'> 22</span>     You should have received a copy of the GNU Lesser General Public License
+<span class='line'> 23</span>     along with JSXGraph.  If not, see &lt;http://www.gnu.org/licenses/>.
+<span class='line'> 24</span> 
+<span class='line'> 25</span> */</span><span class="WHIT">
+<span class='line'> 26</span> 
+<span class='line'> 27</span> </span><span class="COMM">/**
+<span class='line'> 28</span>  * @fileoverview In this file the geometry element Image is defined.
+<span class='line'> 29</span>  * @author graphjs
+<span class='line'> 30</span>  * @version 0.1
+<span class='line'> 31</span>  */</span><span class="WHIT">
+<span class='line'> 32</span> 
+<span class='line'> 33</span> </span><span class="COMM">/**
+<span class='line'> 34</span>  * Construct and handle images
+<span class='line'> 35</span>  * @class Image:
+<span class='line'> 36</span>  * It inherits from @see GeometryElement.
+<span class='line'> 37</span>  * @constructor
+<span class='line'> 38</span>  * @return A new geometry element Image
+<span class='line'> 39</span>  */</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="NAME">JXG.Image</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">board</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">url</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">coordinates</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">size</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">layer</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">el</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 41</span> </span><span class="WHIT">    </span><span class="COMM">//this.constructor();</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">    </span><span class="NAME">this.type</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.OBJECT_TYPE_IMAGE</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">    </span><span class="NAME">this.elementClass</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.OBJECT_CLASS_OTHER</span><span class="PUNC">;</span><span class="WHIT">                </span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">    </span><span class="NAME">this.transformations</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 45</span> 
+<span class='line'> 46</span> </span><span class="WHIT">    </span><span class="NAME">this.init</span><span class="PUNC">(</span><span class="NAME">board</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">name</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="WHIT">    </span><span class="NAME">this.coords</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">JXG.Coords</span><span class="PUNC">(</span><span class="NAME">JXG.COORDS_BY_USER</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">coordinates</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.board</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="WHIT">    </span><span class="NAME">this.initialCoords</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">JXG.Coords</span><span class="PUNC">(</span><span class="NAME">JXG.COORDS_BY_USER</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">coordinates</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.board</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">    </span><span class="NAME">this.size</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="NAME">size</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">board.stretchX</span><span class="PUNC">,</span><span class="NAME">size</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">board.stretchY</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">    </span><span class="COMM">//this.imageBase64String = url; //imageBase64String;</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">    </span><span class="NAME">this.url</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">url</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 53</span>      * Set the display layer.
+<span class='line'> 54</span>      */</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">layer</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">layer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">board.options.layer</span><span class="PUNC">[</span><span class="STRN">'image'</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">    </span><span class="NAME">this.layer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">layer</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="WHIT">    </span><span class="NAME">this.parent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">el</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="WHIT">    </span><span class="NAME">this.visProp</span><span class="PUNC">[</span><span class="STRN">'visible'</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="WHIT">    </span><span class="COMM">//this.show = true; // noch noetig? BV</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">    </span><span class="NAME">this.id</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.board.addImage</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 62</span> 
+<span class='line'> 63</span> </span><span class="NAME">JXG.Image.prototype</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">JXG.GeometryElement</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 64</span> 
+<span class='line'> 65</span> </span><span class="COMM">/**
+<span class='line'> 66</span>  * Empty function (for the moment). It is needed for highlighting, a feature not used for images right now.
+<span class='line'> 67</span>  * @param {int} x Coordinate in x direction, screen coordinates.
+<span class='line'> 68</span>  * @param {int} y Coordinate in y direction, screen coordinates.
+<span class='line'> 69</span>  * @return Always returns false
+<span class='line'> 70</span>  */</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="NAME">JXG.Image.prototype.hasPoint</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">x</span><span class="PUNC">,</span><span class="NAME">y</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 74</span> 
+<span class='line'> 75</span> </span><span class="COMM">/**
+<span class='line'> 76</span>  * Send an update request to the renderer.
+<span class='line'> 77</span>  */</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="NAME">JXG.Image.prototype.updateRenderer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="WHIT">    </span><span class="NAME">this.updateTransform</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">    </span><span class="NAME">this.board.renderer.updateImage</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 81</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 82</span> 
+<span class='line'> 83</span> </span><span class="NAME">JXG.Image.prototype.updateTransform</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.transformations.length</span><span class="PUNC">==</span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">    </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">this.transformations.length</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="WHIT">        </span><span class="NAME">this.transformations</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">update</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 91</span> 
+<span class='line'> 92</span> </span><span class="NAME">JXG.Image.prototype.addTransform</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">transform</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">JXG.isArray</span><span class="PUNC">(</span><span class="NAME">transform</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">transform.length</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="WHIT">            </span><span class="NAME">this.transformations.push</span><span class="PUNC">(</span><span class="NAME">transform</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">        </span><span class="NAME">this.transformations.push</span><span class="PUNC">(</span><span class="NAME">transform</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>101</span> 
+<span class='line'>102</span> </span><span class="COMM">/**
+<span class='line'>103</span>  * @class Displays an image. 
+<span class='line'>104</span>  * @pseudo
+<span class='line'>105</span>  * @description Shows an imgae. The image can be supplied as an URL or an base64 encoded inline image
+<span class='line'>106</span>  * like "data:image/png;base64, /9j/4AAQSkZJRgA...".
+<span class='line'>107</span>  * @constructor
+<span class='line'>108</span>  * @name Image
+<span class='line'>109</span>  * @type JXG.Image
+<span class='line'>110</span>  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+<span class='line'>111</span>  * @param {String_Array_Array} url, [position of the top left vertice], [width,height] 
+<span class='line'>112</span>  * @example
+<span class='line'>113</span>  * var im = board.create('image', ['http://geonext.uni-bayreuth.de/fileadmin/geonext/design/images/logo.gif', [-3,1],[5,5]]);
+<span class='line'>114</span>  *
+<span class='line'>115</span>  * &lt;/pre>&lt;div id="9850cda0-7ea0-4750-981c-68bacf9cca57" style="width: 400px; height: 400px;">&lt;/div>
+<span class='line'>116</span>  * &lt;script type="text/javascript">
+<span class='line'>117</span>  *   var image_board = JXG.JSXGraph.initBoard('9850cda0-7ea0-4750-981c-68bacf9cca57', {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false});
+<span class='line'>118</span>  *   var image_im = image_board.create('image', ['http://geonext.uni-bayreuth.de/fileadmin/geonext/design/images/logo.gif', [-3,1],[5,5]]);
+<span class='line'>119</span>  * &lt;/script>&lt;pre>
+<span class='line'>120</span>  */</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="NAME">JXG.createImage</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">board</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">parents</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">atts</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">url</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">atts</span><span class="PUNC">==</span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>124</span> </span><span class="WHIT">        </span><span class="NAME">atts</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>125</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">atts</span><span class="PUNC">[</span><span class="STRN">'imageString'</span><span class="PUNC">]</span><span class="PUNC">!=</span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">atts</span><span class="PUNC">[</span><span class="STRN">'imageString'</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">atts</span><span class="PUNC">[</span><span class="STRN">'layer'</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'undefined'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">        </span><span class="NAME">atts</span><span class="PUNC">[</span><span class="STRN">'layer'</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">JXG.Image</span><span class="PUNC">(</span><span class="NAME">board</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">parents</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">parents</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">parents</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">atts</span><span class="PUNC">[</span><span class="STRN">'layer'</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>133</span> 
+<span class='line'>134</span> </span><span class="NAME">JXG.JSXGraph.registerElement</span><span class="PUNC">(</span><span class="STRN">'image'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">JXG.createImage</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>135</span> </span></pre></body></html>

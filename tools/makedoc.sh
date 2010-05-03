@@ -1,4 +1,6 @@
-ROOT=~/public_html/jsxgraph/jsdoc-toolkit
+#!/bin/bash
+
+ROOT=~/Downloads/jsdoc_toolkit-2.3.2/jsdoc-toolkit
 #
 # Update our own jsdoc template
 #

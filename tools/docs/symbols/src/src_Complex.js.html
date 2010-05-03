@@ -1,0 +1,249 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/*
+<span class='line'>  2</span>     Copyright 2008,2009
+<span class='line'>  3</span>         Matthias Ehmann,
+<span class='line'>  4</span>         Michael Gerhaeuser,
+<span class='line'>  5</span>         Carsten Miller,
+<span class='line'>  6</span>         Bianca Valentin,
+<span class='line'>  7</span>         Alfred Wassermann,
+<span class='line'>  8</span>         Peter Wilfahrt
+<span class='line'>  9</span> 
+<span class='line'> 10</span>     This file is part of JSXGraph.
+<span class='line'> 11</span> 
+<span class='line'> 12</span>     JSXGraph is free software: you can redistribute it and/or modify
+<span class='line'> 13</span>     it under the terms of the GNU Lesser General Public License as published by
+<span class='line'> 14</span>     the Free Software Foundation, either version 3 of the License, or
+<span class='line'> 15</span>     (at your option) any later version.
+<span class='line'> 16</span> 
+<span class='line'> 17</span>     JSXGraph is distributed in the hope that it will be useful,
+<span class='line'> 18</span>     but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class='line'> 19</span>     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class='line'> 20</span>     GNU Lesser General Public License for more details.
+<span class='line'> 21</span> 
+<span class='line'> 22</span>     You should have received a copy of the GNU Lesser General Public License
+<span class='line'> 23</span>     along with JSXGraph.  If not, see &lt;http://www.gnu.org/licenses/>.
+<span class='line'> 24</span> */</span><span class="WHIT">
+<span class='line'> 25</span> 
+<span class='line'> 26</span> 
+<span class='line'> 27</span> </span><span class="COMM">/**
+<span class='line'> 28</span>  * @fileoverview A class for complex arithmetics JXG.Complex is defined in this
+<span class='line'> 29</span>  * file. Also a namespace JXG.C is included to provide instance-independent
+<span class='line'> 30</span>  * arithmetic functions.
+<span class='line'> 31</span>  * @author graphjs
+<span class='line'> 32</span>  */</span><span class="WHIT">
+<span class='line'> 33</span> 
+<span class='line'> 34</span> </span><span class="COMM">/**
+<span class='line'> 35</span>  * Creates a new complex number.
+<span class='line'> 36</span>  * @class This class is for calculating with complex numbers.
+<span class='line'> 37</span>  * @param [x=0] Real part of the resulting complex number.
+<span class='line'> 38</span>  * @param [y=0] Imaginary part of the resulting complex number.
+<span class='line'> 39</span>  * @returns An object representing the complex number &lt;tt>x + iy&lt;/tt>.
+<span class='line'> 40</span>  */</span><span class="WHIT">
+<span class='line'> 41</span> </span><span class="NAME">JXG.Complex</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** number */</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/** number */</span><span class="WHIT"> </span><span class="NAME">y</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 43</span> 	 * This property is only to signalize that this object is of type JXG.Complex. Only
+<span class='line'> 44</span> 	 * used internally to distinguish between normal JavaScript numbers and JXG.Complex numbers.
+<span class='line'> 45</span> 	 * @type boolean
+<span class='line'> 46</span> 	 * @default true
+<span class='line'> 47</span> 	 * @private
+<span class='line'> 48</span> 	 */</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">    </span><span class="NAME">this.isComplex</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">    </span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'undefined'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">        </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'undefined'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">        </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 57</span> 
+<span class='line'> 58</span> </span><span class="WHIT">    </span><span class="COMM">/* is the first argument a complex number? if it is,
+<span class='line'> 59</span>      * extract real and imaginary part. */</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">x.isComplex</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">        </span><span class="NAME">y</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">x.imaginary</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">        </span><span class="NAME">x</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">x.real</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 64</span> 
+<span class='line'> 65</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 66</span>      * Real part of the complex number.
+<span class='line'> 67</span>      * @type number
+<span class='line'> 68</span>      * @default 0
+<span class='line'> 69</span>      */</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">    </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 71</span> 
+<span class='line'> 72</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 73</span>      * Imaginary part of the complex number.
+<span class='line'> 74</span>      * @type number
+<span class='line'> 75</span>      * @default 0
+<span class='line'> 76</span>      */</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">    </span><span class="NAME">this.imaginary</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">y</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 78</span> 
+<span class='line'> 79</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 80</span>      * Absolute value in the polar form of the complex number. Currently unused.
+<span class='line'> 81</span>      * @type number
+<span class='line'> 82</span>      */</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="WHIT">    </span><span class="NAME">this.absval</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 84</span> 
+<span class='line'> 85</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 86</span>      * Angle value in the polar form of the complex number. Currently unused.
+<span class='line'> 87</span>      * @type number
+<span class='line'> 88</span>      */</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="WHIT">    </span><span class="NAME">this.angle</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 91</span> 
+<span class='line'> 92</span> </span><span class="COMM">/**
+<span class='line'> 93</span>  * Converts a complex number into a string.
+<span class='line'> 94</span>  * @return Formatted string containing the complex number in human readable form (algebraic form).
+<span class='line'> 95</span>  */</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="NAME">JXG.Complex.prototype.toString</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** string */</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="STRN">''</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">' + '</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.imaginary</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'i'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 99</span> 
+<span class='line'>100</span> </span><span class="COMM">/**
+<span class='line'>101</span>  * Add another complex number to this complex number.
+<span class='line'>102</span>  * @param c A JavaScript number or a JXG.Complex object to be added to the current object.
+<span class='line'>103</span>  */</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="NAME">JXG.Complex.prototype.add</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">c</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** undefined */</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">c</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'number'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="WHIT">        </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">c</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="WHIT">        </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">c.real</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">        </span><span class="NAME">this.imaginary</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">c.imaginary</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>112</span> 
+<span class='line'>113</span> </span><span class="COMM">/**
+<span class='line'>114</span>  * Subtract another complex number from this complex number.
+<span class='line'>115</span>  * @param c A JavaScript number or a JXG.Complex object to subtract from the current object.
+<span class='line'>116</span>  */</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="NAME">JXG.Complex.prototype.sub</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">c</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** undefined */</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">c</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'number'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">        </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">c</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">        </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">c.real</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">        </span><span class="NAME">this.imaginary</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">c.imaginary</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>124</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>125</span> 
+<span class='line'>126</span> </span><span class="COMM">/**
+<span class='line'>127</span>  * Multiply another complex number to this complex number.
+<span class='line'>128</span>  * @param c A JavaScript number or a JXG.Complex object to
+<span class='line'>129</span>  * multiply with the current object.
+<span class='line'>130</span>  */</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="NAME">JXG.Complex.prototype.mult</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">c</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** undefined */</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">c</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'number'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">        </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">c</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">        </span><span class="NAME">this.imaginary</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">c</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT">        </span><span class="COMM">//  (a+ib)(x+iy) = ax-by + i(xb+ay)</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">        </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.real</span><span class="PUNC">*</span><span class="NAME">c.real</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">this.imaginary</span><span class="PUNC">*</span><span class="NAME">c.imaginary</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">        </span><span class="NAME">this.imaginary</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.real</span><span class="PUNC">*</span><span class="NAME">c.imaginary</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.imaginary</span><span class="PUNC">*</span><span class="NAME">c.real</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>141</span> 
+<span class='line'>142</span> 
+<span class='line'>143</span> </span><span class="COMM">/**
+<span class='line'>144</span>  * Divide this complex number by the given complex number.
+<span class='line'>145</span>  * @param c A JavaScript number or a JXG.Complex object to
+<span class='line'>146</span>  * divide the current object by.
+<span class='line'>147</span>  */</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="NAME">JXG.Complex.prototype.div</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">c</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** undefined */</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">denom</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>150</span> 
+<span class='line'>151</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">c</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'number'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>152</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">Math.abs</span><span class="PUNC">(</span><span class="NAME">c</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">Math.eps</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>153</span> </span><span class="WHIT">            </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Infinity</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="WHIT">            </span><span class="NAME">this.imaginary</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Infinity</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="WHIT">            </span><span class="WHIT">
+<span class='line'>156</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>157</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>158</span> </span><span class="WHIT">        </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">c</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>159</span> </span><span class="WHIT">        </span><span class="NAME">this.imaginary</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">c</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>160</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="WHIT">        </span><span class="COMM">//  (a+ib)(x+iy) = ax-by + i(xb+ay)</span><span class="WHIT">
+<span class='line'>162</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">Math.abs</span><span class="PUNC">(</span><span class="NAME">c.real</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">Math.eps</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">Math.abs</span><span class="PUNC">(</span><span class="NAME">c.imaginary</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">Math.eps</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">            </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Infinity</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>164</span> </span><span class="WHIT">            </span><span class="NAME">this.imaginary</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Infinity</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>165</span> 
+<span class='line'>166</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>168</span> 
+<span class='line'>169</span> </span><span class="WHIT">        </span><span class="NAME">denom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">c.real</span><span class="PUNC">*</span><span class="NAME">c.real</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">c.imaginary</span><span class="PUNC">*</span><span class="NAME">c.imaginary</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>170</span> 
+<span class='line'>171</span> </span><span class="WHIT">        </span><span class="NAME">this.real</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.real</span><span class="PUNC">*</span><span class="NAME">c.real</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.imaginary</span><span class="PUNC">*</span><span class="NAME">c.imaginary</span><span class="PUNC">)</span><span class="PUNC">/</span><span class="NAME">denom</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="WHIT">        </span><span class="NAME">this.imaginary</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.imaginary</span><span class="PUNC">*</span><span class="NAME">c.real</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">this.real</span><span class="PUNC">*</span><span class="NAME">c.imaginary</span><span class="PUNC">)</span><span class="PUNC">/</span><span class="NAME">denom</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>175</span> 
+<span class='line'>176</span> 
+<span class='line'>177</span> </span><span class="COMM">/**
+<span class='line'>178</span>  * @description
+<span class='line'>179</span>  * JXG.C is the complex number (name)space. It provides functions to calculate with
+<span class='line'>180</span>  * complex numbers (defined in {@link JXG.Complex}). With this namespace you don't have to modify
+<span class='line'>181</span>  * your existing complex numbers, e.g. to add two complex numbers:
+<span class='line'>182</span>  * &lt;pre class="code">   var z1 = new JXG.Complex(1, 0);
+<span class='line'>183</span>  *    var z2 = new JXG.Complex(0, 1);
+<span class='line'>184</span>  *    z = JXG.C.add(z1, z1);&lt;/pre>
+<span class='line'>185</span>  * z1 and z2 here remain unmodified. With the object oriented approach above this
+<span class='line'>186</span>  * section the code would look like:
+<span class='line'>187</span>  * &lt;pre class="code">   var z1 = new JXG.Complex(1, 0);
+<span class='line'>188</span>  *    var z2 = new JXG.Complex(0, 1);
+<span class='line'>189</span>  *    var z = new JXG.Complex(z1);
+<span class='line'>190</span>  *    z.add(z2);&lt;/pre>
+<span class='line'>191</span>  * @namespace Namespace for the complex number arithmetic functions.
+<span class='line'>192</span>  */</span><span class="WHIT">
+<span class='line'>193</span> </span><span class="NAME">JXG.C</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>194</span> 
+<span class='line'>195</span> </span><span class="COMM">/**
+<span class='line'>196</span>  * Add two (complex) numbers z1 and z2 and return the result as a (complex) number.
+<span class='line'>197</span>  * @param z1 Summand
+<span class='line'>198</span>  * @param z2 Summand
+<span class='line'>199</span>  * @return A complex number equal to the sum of the given parameters.
+<span class='line'>200</span>  */</span><span class="WHIT">
+<span class='line'>201</span> </span><span class="NAME">JXG.C.add</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">z1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">z2</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** JXG.Complex */</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>202</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">z</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">JXG.Complex</span><span class="PUNC">(</span><span class="NAME">z1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="WHIT">    </span><span class="NAME">z.add</span><span class="PUNC">(</span><span class="NAME">z2</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">z</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>206</span> 
+<span class='line'>207</span> </span><span class="COMM">/**
+<span class='line'>208</span>  * Subtract two (complex) numbers z1 and z2 and return the result as a (complex) number.
+<span class='line'>209</span>  * @param z1 Minuend
+<span class='line'>210</span>  * @param z2 Subtrahend
+<span class='line'>211</span>  * @return A complex number equal to the difference of the given parameters.
+<span class='line'>212</span>  */</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="NAME">JXG.C.sub</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">z1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">z2</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** JXG.Complex */</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">z</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">JXG.Complex</span><span class="PUNC">(</span><span class="NAME">z1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>215</span> </span><span class="WHIT">    </span><span class="NAME">z.sub</span><span class="PUNC">(</span><span class="NAME">z2</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>216</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">z</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>217</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>218</span> 
+<span class='line'>219</span> </span><span class="COMM">/**
+<span class='line'>220</span>  * Multiply two (complex) numbers z1 and z2 and return the result as a (complex) number.
+<span class='line'>221</span>  * @param z1 Factor
+<span class='line'>222</span>  * @param z2 Factor
+<span class='line'>223</span>  * @return A complex number equal to the product of the given parameters.
+<span class='line'>224</span>  */</span><span class="WHIT">
+<span class='line'>225</span> </span><span class="NAME">JXG.C.mult</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">z1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">z2</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** JXG.Complex */</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">z</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">JXG.Complex</span><span class="PUNC">(</span><span class="NAME">z1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="WHIT">    </span><span class="NAME">z.mult</span><span class="PUNC">(</span><span class="NAME">z2</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>228</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">z</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>229</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>230</span> 
+<span class='line'>231</span> </span><span class="COMM">/**
+<span class='line'>232</span>  * Divide two (complex) numbers z1 and z2 and return the result as a (complex) number.
+<span class='line'>233</span>  * @param z1 Dividend
+<span class='line'>234</span>  * @param z2 Divisor
+<span class='line'>235</span>  * @return A complex number equal to the quotient of the given parameters.
+<span class='line'>236</span>  */</span><span class="WHIT">
+<span class='line'>237</span> </span><span class="NAME">JXG.C.div</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">z1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/** JXG.Complex,number */</span><span class="WHIT"> </span><span class="NAME">z2</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** JXG.Complex */</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>238</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">z</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">JXG.Complex</span><span class="PUNC">(</span><span class="NAME">z1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="WHIT">    </span><span class="NAME">z.div</span><span class="PUNC">(</span><span class="NAME">z2</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">z</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>242</span> </span></pre></body></html>

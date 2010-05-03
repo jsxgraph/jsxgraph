@@ -1,0 +1,1882 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+         <link rel="stylesheet" type="text/css" href="../static/jsxgraph.css" />
+         <script type="text/javascript" src="../static/jquery.min.js"></script>
+         <script type="text/javascript" src="../static/jsxgraphcore.js"></script>
+		
+		<title>JsDoc Reference - JXG.Point</title>
+
+		<style type="text/css">
+			/* default.css */
+body
+{
+	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
+	width: 800px;
+}
+
+.header
+{
+	clear: both;
+	background-color: #ccc;
+	padding: 8px;
+}
+
+h1
+{
+	font-size: 150%;
+	font-weight: bold;
+	padding: 0;
+	margin: 1em 0 0 .3em;
+}
+
+hr
+{
+	border: none 0;
+	border-top: 1px solid #7F8FB1;
+	height: 1px;
+}
+
+pre.code
+{
+	display: block;
+	padding: 8px;
+	border: 1px dashed #ccc;
+}
+
+#index
+{
+	margin-top: 24px;
+	float: left;
+	width: 220px;
+	position: absolute;
+	left: 8px;
+	background-color: #F3F3F3;
+	padding: 8px;
+}
+
+#content
+{
+	margin-left: 250px;
+	width: 600px;
+}
+
+.classList
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 0 0 0 8px;
+	font-family: arial, sans-serif;
+	font-size: 1em;
+	overflow: auto;
+}
+
+.classList li
+{
+	padding: 0;
+	margin: 0 0 8px 0;
+}
+
+.summaryTable { width: 100%; }
+
+h1.classTitle
+{
+	font-size:170%;
+	line-height:130%;
+}
+
+h2 { font-size: 110%; }
+caption, div.sectionTitle
+{
+	background-color: #7F8FB1;
+	color: #fff;
+	font-size:130%;
+	text-align: left;
+	padding: 2px 6px 2px 6px;
+	border: 1px #7F8FB1 solid;
+}
+
+div.sectionTitle { margin-bottom: 8px; }
+.summaryTable thead { display: none; }
+
+.summaryTable td
+{
+	vertical-align: top;
+	padding: 4px;
+	border-bottom: 1px #7F8FB1 solid;
+	border-right: 1px #7F8FB1 solid;
+}
+
+/*col#summaryAttributes {}*/
+.summaryTable td.attributes
+{
+	border-left: 1px #7F8FB1 solid;
+	width: 140px;
+	text-align: right;
+}
+
+td.attributes, .fixedFont
+{
+	line-height: 15px;
+	color: #002EBE;
+	font-family: "Courier New",Courier,monospace;
+	font-size: 13px;
+}
+
+.summaryTable td.nameDescription
+{
+	text-align: left;
+	font-size: 13px;
+	line-height: 15px;
+}
+
+.summaryTable td.nameDescription, .description
+{
+	line-height: 15px;
+	padding: 4px;
+	padding-left: 4px;
+}
+
+.summaryTable { margin-bottom: 8px; }
+
+ul.inheritsList
+{
+	list-style: square;
+	margin-left: 20px;
+	padding-left: 0;
+}
+
+.detailList {
+	margin-left: 20px; 
+	line-height: 15px;
+}
+.detailList dt { margin-left: 20px; }
+
+.detailList .heading
+{
+	font-weight: bold;
+	padding-bottom: 6px;
+	margin-left: 0;
+}
+
+.light, td.attributes, .light a:link, .light a:visited
+{
+	color: #777;
+	font-style: italic;
+}
+
+.fineprint
+{
+	text-align: right;
+	font-size: 10px;
+}
+		</style>
+	</head>
+
+	<body>
+<!-- ============================== header ================================= -->	
+		<!-- begin static/header.html -->
+		<div id="header">
+<h1 style="font-size: 2.5em"><img src="static/logo.gif" />JSXGraph Reference</h1>
+</div>
+<div id="jsdeactivated_hint" style="background-color: #fcc; border: solid 1px red; padding: 3px">
+<h2>JavaScript must be enabled in order for you to use JSXGraph and JSXGraph reference.
+However, it seems JavaScript is either disabled or not supported by your browser.</h2>
+</div>
+<script type="text/javascript">
+ /* <![CDATA[ */
+   document.getElementById("jsdeactivated_hint").style.display = 'none';
+ /* ]]> */
+</script>
+		<!-- end static/header.html -->
+
+<!-- ============================== classes index ============================ -->
+		<div id="index">
+			<!-- begin publish.classesIndex -->
+			<div align="center"><a href="../index.html">Class Index</a>
+| <a href="../files.html">File Index</a></div>
+<hr />
+<h2 onclick="switchList('myElList');" style="cursor: pointer"><img src="static/expandable.gif"/> Elements</h2>
+<ul class="classList" id="myElList" style="display: block;">
+	
+	<li><a href="../symbols/Arrow.html">Arrow</a></li>
+	
+	<li><a href="../symbols/Axis.html">Axis</a></li>
+	
+	<li><a href="../symbols/Bisector.html">Bisector</a></li>
+	
+	<li><a href="../symbols/Circle.html">Circle</a></li>
+	
+	<li><a href="../symbols/Circumcircle.html">Circumcircle</a></li>
+	
+	<li><a href="../symbols/Circumcirclemidpoint.html">Circumcirclemidpoint</a></li>
+	
+	<li><a href="../symbols/Conic.html">Conic</a></li>
+	
+	<li><a href="../symbols/Curve.html">Curve</a></li>
+	
+	<li><a href="../symbols/Ellipse.html">Ellipse</a></li>
+	
+	<li><a href="../symbols/Functiongraph.html">Functiongraph</a></li>
+	
+	<li><a href="../symbols/Glider.html">Glider</a></li>
+	
+	<li><a href="../symbols/Hyperbola.html">Hyperbola</a></li>
+	
+	<li><a href="../symbols/Image.html">Image</a></li>
+	
+	<li><a href="../symbols/Integral.html">Integral</a></li>
+	
+	<li><a href="../symbols/Intersection.html">Intersection</a></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li><a href="../symbols/Line.html">Line</a></li>
+	
+	<li><a href="../symbols/Locus.html">Locus</a></li>
+	
+	<li><a href="../symbols/Midpoint.html">Midpoint</a></li>
+	
+	<li><a href="../symbols/Mirrorpoint.html">Mirrorpoint</a></li>
+	
+	<li><a href="../symbols/Normal.html">Normal</a></li>
+	
+	<li><a href="../symbols/OtherIntersection.html">OtherIntersection</a></li>
+	
+	<li><a href="../symbols/Parabola.html">Parabola</a></li>
+	
+	<li><a href="../symbols/Parallel.html">Parallel</a></li>
+	
+	<li><a href="../symbols/Parallelpoint.html">Parallelpoint</a></li>
+	
+	<li><a href="../symbols/Perpendicular.html">Perpendicular</a></li>
+	
+	<li><a href="../symbols/Perpendicularpoint.html">Perpendicularpoint</a></li>
+	
+	<li><a href="../symbols/Point.html">Point</a></li>
+	
+	<li><a href="../symbols/Reflection.html">Reflection</a></li>
+	
+	<li><a href="../symbols/RegularPolygon.html">RegularPolygon</a></li>
+	
+	<li><a href="../symbols/Riemannsum.html">Riemannsum</a></li>
+	
+	<li><a href="../symbols/Segment.html">Segment</a></li>
+	
+	<li><a href="../symbols/Tangent.html">Tangent</a></li>
+	
+	<li><a href="../symbols/Text.html">Text</a></li>
+	
+</ul>
+<h2 onclick="switchList('myClList');" style="cursor: pointer"><img src="static/expandable.gif"/> Classes</h2>
+<ul class="classList" id="myClList" style="display: block;">
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li><a href="../symbols/JXG.html">JXG</a></li>
+	
+	<li><a href="../symbols/JXG.AbstractRenderer.html">JXG.AbstractRenderer</a></li>
+	
+	<li><a href="../symbols/JXG.Algebra.html">JXG.Algebra</a></li>
+	
+	<li><a href="../symbols/JXG.Board.html">JXG.Board</a></li>
+	
+	<li><a href="../symbols/JXG.C.html">JXG.C</a></li>
+	
+	<li><a href="../symbols/JXG.Circle.html">JXG.Circle</a></li>
+	
+	<li><a href="../symbols/JXG.Complex.html">JXG.Complex</a></li>
+	
+	<li><a href="../symbols/JXG.Coords.html">JXG.Coords</a></li>
+	
+	<li><a href="../symbols/JXG.createSector.html">JXG.createSector</a></li>
+	
+	<li><a href="../symbols/JXG.createSlider.html">JXG.createSlider</a></li>
+	
+	<li><a href="../symbols/JXG.Curve.html">JXG.Curve</a></li>
+	
+	<li><a href="../symbols/JXG.DimensionMismatchException.html">JXG.DimensionMismatchException</a></li>
+	
+	<li><a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a></li>
+	
+	<li><a href="../symbols/JXG.Group.html">JXG.Group</a></li>
+	
+	<li><a href="../symbols/JXG.Image.html">JXG.Image</a></li>
+	
+	<li><a href="../symbols/JXG.Intersection.html">JXG.Intersection</a></li>
+	
+	<li><a href="../symbols/JXG.JSXGraph.html">JXG.JSXGraph</a></li>
+	
+	<li><a href="../symbols/JXG.Line.html">JXG.Line</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Matrix.html">JXG.Math.Matrix</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.html">JXG.Math.Numerics</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.Butcher.html">JXG.Math.Numerics.Butcher</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.predefinedButcher.html">JXG.Math.Numerics.predefinedButcher</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Vector.html">JXG.Math.Vector</a></li>
+	
+	<li><a href="../symbols/JXG.Options.html">JXG.Options</a></li>
+	
+	<li><a href="../symbols/JXG.Point.html">JXG.Point</a></li>
+	
+	<li><a href="../symbols/JXG.Polygon.html">JXG.Polygon</a></li>
+	
+	<li><a href="../symbols/JXG.Server.html">JXG.Server</a></li>
+	
+	<li><a href="../symbols/JXG.Server.modules.html">JXG.Server.modules</a></li>
+	
+	<li><a href="../symbols/JXG.SingularMatrixException.html">JXG.SingularMatrixException</a></li>
+	
+	<li><a href="../symbols/JXG.Text.html">JXG.Text</a></li>
+	
+	<li><a href="../symbols/JXG.Ticks.html">JXG.Ticks</a></li>
+	
+	<li><a href="../symbols/JXG.Turtle.html">JXG.Turtle</a></li>
+	
+	<li><a href="../symbols/JXG.Util.html">JXG.Util</a></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+</ul>
+<hr />
+
+<script type="text/javascript">
+  /* <![CDATA[ */
+   	function switchList(id) {
+      document.getElementById(id).style.display = ( document.getElementById(id).style.display == 'block' ? 'none' : 'block' );
+      document.cookie = id.toLowerCase() + 'status=' + document.getElementById(id).style.display + ';';
+  	};
+  	
+	function initList(id) {
+      var cookieList = document.cookie.split(';');
+      for(var c=0; c<cookieList.length; c++) {
+        if(cookieList[c].indexOf(id.toLowerCase() + 'status') != -1) {
+          document.getElementById(id).style.display = cookieList[c].split('=')[1];
+        }
+      }
+  	};
+  	
+  	initList('myElList');
+    initList('myClList');
+  /* ]]> */
+</script>
+			<!-- end publish.classesIndex -->
+		</div>
+		
+		<div id="content">
+<!-- ============================== class title ============================ -->
+			<h1 class="classTitle">
+				
+				Class JXG.Point
+			</h1>
+
+<!-- ============================== class summary ========================== -->			
+			<p class="description">
+				<br />Extends
+					<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>.<br />
+				
+			
+				Creates a new point object. Do not use this constructor to create a point. Use <a href="../symbols/JXG.Board.html#create">JXG.Board#create</a> with
+type <a href="../symbols/Point.html">Point</a>, <a href="../symbols/Glider.html">Glider</a>, or <a href="../symbols/Intersection.html">Intersection</a> instead.
+				
+				
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Point.js.html">Point.js</a>.
+				
+			</p>
+
+<!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class JXG.Point.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/JXG.Point.html#constructor">JXG.Point</a></b>(board, coordinates, id, name, show, withLabel, layer)
+							</div>
+							<div class="description">A point is the basic geometric element.</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+
+<!-- ============================== properties summary ===================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class JXG.Point.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Point.html#face">face</a></b>
+								</div>
+								<div class="description">There are different point styles which differ in appearance.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Point.html#fixed">fixed</a></b>
+								</div>
+								<div class="description">False: Point can be moved, True: Point can't be moved with the mouse.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Point.html#showInfobox">showInfobox</a></b>
+								</div>
+								<div class="description">If true, the infobox is shown on mouse over, else not.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Point.html#size">size</a></b>
+								</div>
+								<div class="description">Determines the size of a point.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Point.html#style">style</a></b>
+								</div>
+								<div class="description">There are different point styles which differ in appearance and size.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+				<dl class="inheritsList">
+				<dt>Fields borrowed from class <a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>: </dt><dd><a href="../symbols/JXG.GeometryElement.html#draft">draft</a>, <a href="../symbols/JXG.GeometryElement.html#fillOpacity">fillOpacity</a>, <a href="../symbols/JXG.GeometryElement.html#highlightFillOpacity">highlightFillOpacity</a>, <a href="../symbols/JXG.GeometryElement.html#highlightStrokeOpacity">highlightStrokeOpacity</a>, <a href="../symbols/JXG.GeometryElement.html#highlightStrokeWidth">highlightStrokeWidth</a>, <a href="../symbols/JXG.GeometryElement.html#layer">layer</a>, <a href="../symbols/JXG.GeometryElement.html#name">name</a>, <a href="../symbols/JXG.GeometryElement.html#quadraticform">quadraticform</a>, <a href="../symbols/JXG.GeometryElement.html#strokeOpacity">strokeOpacity</a>, <a href="../symbols/JXG.GeometryElement.html#trace">trace</a></dd>
+				</dl>
+				
+			
+
+<!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class JXG.Point.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#addConstraint">addConstraint</a></b>(terms)
+								</div>
+								<div class="description">Convert the point to CAS point and call update().</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#addTransform">addTransform</a></b>(el, transform)
+								</div>
+								<div class="description">TODO</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#cloneToBackground">cloneToBackground</a></b>(addToTrace)
+								</div>
+								<div class="description">Copy the element to the background.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#Dist">Dist</a></b>(point2)
+								</div>
+								<div class="description">Getter method for the distance to a second point, this is required for CAS-elements.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#face">face</a></b>(f)
+								</div>
+								<div class="description">Set the face of a point element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#makeGlider">makeGlider</a></b>(glideObject)
+								</div>
+								<div class="description">Convert the point to glider and update the construction.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#moveTo">moveTo</a></b>(where, time)
+								</div>
+								<div class="description">Starts an animated point movement towards the given coordinates <tt>where</tt>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#remove">remove</a></b>()
+								</div>
+								<div class="description">Remove the point from the drawing.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#setPosition">setPosition</a></b>(method, x, y)
+								</div>
+								<div class="description">Sets x and y coordinate and calls the point's update() method.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#setPositionByTransform">setPositionByTransform</a></b>(method, x, y)
+								</div>
+								<div class="description">TODO</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#setPositionDirectly">setPositionDirectly</a></b>(method, x, y)
+								</div>
+								<div class="description">Sets x and y coordinate and calls the point's update() method.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#size">size</a></b>(s)
+								</div>
+								<div class="description">Set the size of a point element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#update">update</a></b>(fromParent)
+								</div>
+								<div class="description">Updates the position of the point.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#updateTransform">updateTransform</a></b>()
+								</div>
+								<div class="description">TODO</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#visit">visit</a></b>(where, time, repeat)
+								</div>
+								<div class="description">Starts an animated point movement towards the given coordinates <tt>where</tt>.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#X">X</a></b>()
+								</div>
+								<div class="description">Getter method for x, this is used by for CAS-points to access point coordinates.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#Y">Y</a></b>()
+								</div>
+								<div class="description">Getter method for y, this is used by CAS-points to access point coordinates.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Point.html#Z">Z</a></b>()
+								</div>
+								<div class="description">Getter method for z, this is used by CAS-points to access point coordinates.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+				<dl class="inheritsList">
+				<dt>Methods borrowed from class <a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>: </dt><dd><a href="../symbols/JXG.GeometryElement.html#addChild">addChild</a>, <a href="../symbols/JXG.GeometryElement.html#addLabelToElement">addLabelToElement</a>, <a href="../symbols/JXG.GeometryElement.html#animate">animate</a>, <a href="../symbols/JXG.GeometryElement.html#clearTrace">clearTrace</a>, <a href="../symbols/JXG.GeometryElement.html#dash">dash</a>, <a href="../symbols/JXG.GeometryElement.html#fillColor">fillColor</a>, <a href="../symbols/JXG.GeometryElement.html#hideElement">hideElement</a>, <a href="../symbols/JXG.GeometryElement.html#highlight">highlight</a>, <a href="../symbols/JXG.GeometryElement.html#highlightFillColor">highlightFillColor</a>, <a href="../symbols/JXG.GeometryElement.html#highlightStrokeColor">highlightStrokeColor</a>, <a href="../symbols/JXG.GeometryElement.html#labelColor">labelColor</a>, <a href="../symbols/JXG.GeometryElement.html#noHighlight">noHighlight</a>, <a href="../symbols/JXG.GeometryElement.html#setArrow">setArrow</a>, <a href="../symbols/JXG.GeometryElement.html#setProperty">setProperty</a>, <a href="../symbols/JXG.GeometryElement.html#shadow">shadow</a>, <a href="../symbols/JXG.GeometryElement.html#showElement">showElement</a>, <a href="../symbols/JXG.GeometryElement.html#strokeColor">strokeColor</a>, <a href="../symbols/JXG.GeometryElement.html#strokeWidth">strokeWidth</a>, <a href="../symbols/JXG.GeometryElement.html#visible">visible</a></dd>
+				</dl>
+				
+			
+<!-- ============================== events summary ======================== -->
+			
+
+<!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>JXG.Point</b>(board, coordinates, id, name, show, withLabel, layer)
+				</div>
+				
+				<div class="description">
+					A point is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
+which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
+all kind of points like free points, gliders, and intersection points.
+					
+				</div>
+				
+				
+					
+						<dl class="detailList">
+                        
+                        
+    						<dt class="heading">Parameters:</dt>
+                        
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{string|<a href="../symbols/JXG.Board.html">JXG.Board</a>}</span>  <b>board</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>The board the new point is drawn on.</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{Array}</span>  <b>coordinates</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>An array with the affine user coordinates of the point.</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{String}</span>  <b>id</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>Unique identifier for the point. If null or an empty string is given,
+ an unique id will be generated by Board</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{String}</span>  <b>name</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>Not necessarily unique name for the point. If null or an
+ empty string is given, an unique name will be generated</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{boolean}</span>  <b>show</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>False if the point is invisible, True otherwise</dd><br /><br />
+						
+							<dt>
+                                
+    								 <b>withLabel</b>
+	    							
+                                
+                                
+							</dt>
+								<dd></dd><br /><br />
+						
+							<dt>
+                                
+    								 <b>layer</b>
+	    							
+                                
+                                
+							</dt>
+								<dd></dd><br /><br />
+						
+						</dl>
+					
+					
+					
+					
+					
+					
+					
+						<dl class="detailList">
+						<dt class="heading">See:</dt>
+						
+							<dd>JXG.Board#generateName</dd>
+						
+							<dd>JXG.Board#addPoint</dd>
+						
+						</dl>
+					
+
+				
+				
+
+			</div>
+			
+
+<!-- ============================== field details ========================== -->		
+			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="face"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{string}</span>
+					<b>face</b>
+					
+					</div>
+					<div class="description">
+						There are different point styles which differ in appearance.
+Posssible values are
+<table><tr><th>Value</th></tr>
+<tr><td>cross</td></tr>
+<tr><td>circle</td></tr>
+<tr><td>square</td></tr>
+<tr><td>plus</td></tr>
+<tr><td>diamond</td></tr>
+<tr><td>triangleUp</td></tr>
+<tr><td>triangleDown</td></tr>
+<tr><td>triangleLeft</td></tr>
+<tr><td>triangleRight</td></tr>
+</table>
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="#setStyle">#setStyle</a></dd>
+							
+							</dl>
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								circle
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name="fixed"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>fixed</b>
+					
+					</div>
+					<div class="description">
+						False: Point can be moved, True: Point can't be moved with the mouse.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								false
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name="showInfobox"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>showInfobox</b>
+					
+					</div>
+					<div class="description">
+						If true, the infobox is shown on mouse over, else not.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								true
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name="size"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>size</b>
+					
+					</div>
+					<div class="description">
+						Determines the size of a point.
+Means radius resp. half the width of a point (depending on the face).
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="../symbols/JXG.Point.html#face">JXG.Point#face</a></dd>
+							
+							<dd><a href="#setStyle">#setStyle</a></dd>
+							
+							</dl>
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								3
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name="style"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>style</b>
+					
+					</div>
+					<div class="description">
+						There are different point styles which differ in appearance and size.
+Possible values are
+<table><tr><th>Constant name</th><th>Value</th><th>Meaning</th><th>face</th><th>size</th></tr>
+<tr><td>JXG.POINT_STYLE_X_SMALL</td><td>0</td><td>small sized x</td><td>cross or x</td><td>2</td></tr>
+<tr><td>JXG.POINT_STYLE_X</td><td>1</td><td>medium sized x</td><td>cross or x</td><td>3</td></tr>
+<tr><td>JXG.POINT_STYLE_X_BIG</td><td>2</td><td>big sized x</td><td>cross or x</td><td>4</td></tr>
+<tr><td>JXG.POINT_STYLE_CIRCLE_TINY</td><td>3</td><td>tiny circle</td><td>circle or o</td><td>1</td></tr>
+<tr><td>JXG.POINT_STYLE_CIRCLE_SMALL</td><td>4</td><td>small circle</td><td>circle or o</td><td>2</td></tr>
+<tr><td>JXG.POINT_STYLE_CIRCLE</td><td>5</td><td>medium circle</td><td>circle or o</td><td>3</td></tr>
+<tr><td>JXG.POINT_STYLE_CIRCLE_BIG</td><td>6</td><td>big circle</td><td>circle or o</td><td>4</td></tr>
+<tr><td>JXG.POINT_STYLE_SQUARE_SMALL</td><td>7</td><td>small rectangle</td><td>square or []</td><td>2</td></tr>
+<tr><td>JXG.POINT_STYLE_SQUARE</td><td>8</td><td>medium rectangle</td><td>square or []</td><td>3</td></tr>
+<tr><td>JXG.POINT_STYLE_SQUARE_BIG</td><td>9</td><td>big rectangle</td><td>square or []</td><td>4</td></tr>
+<tr><td>JXG.POINT_STYLE_PLUS_SMALL</td><td>10</td><td>small +</td><td>plus or +</td><td>2</td></tr>
+<tr><td>JXG.POINT_STYLE_PLUS</td><td>11</td><td>medium +</td><td>plus or +</td><td>3</td></tr>
+<tr><td>JXG.POINT_STYLE_PLUS_BIG</td><td>12</td><td>big +</td><td>plus or +</td><td>4</td></tr></table>
+<b>Hint:</b> This attribute is internally replaced by face and size, whose opportunities are wider, , as given in the table above.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="../symbols/JXG.Point.html#face">JXG.Point#face</a></dd>
+							
+							<dd><a href="../symbols/JXG.Point.html#size">JXG.Point#size</a></dd>
+							
+							<dd><a href="#setStyle">#setStyle</a></dd>
+							
+							</dl>
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								JXG.Options.point#style
+							</dd>
+							</dl>
+						
+
+					
+				
+			
+
+<!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="addConstraint"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addConstraint</b>(terms)
+					
+					</div>
+					<div class="description">
+						Convert the point to CAS point and call update().
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{array}</span> <b>terms</b>
+									
+								</dt>
+								<dd>[[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
+The z-coordinate is optional and it is used for homogeneaous coordinates.
+The coordinates may be either <ul>
+  <li>a JavaScript function,</li>
+  <li>a string containing GEONExT syntax. This string will be converted into a JavaScript 
+    function here,</li>
+  <li>a number</li>
+  <li>a pointer to a slider object. This will be converted into a call of the Value()-method 
+    of this slider.</li>
+  </ul></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/JXG.Algebra.html#geonext2JS">JXG.Algebra#geonext2JS</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="addTransform"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addTransform</b>(el, transform)
+					
+					</div>
+					<div class="description">
+						TODO
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>el</b>
+									
+								</dt>
+								<dd>TODO</dd>
+							
+								<dt>
+									<b>transform</b>
+									
+								</dt>
+								<dd>TODO</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="cloneToBackground"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>cloneToBackground</b>(addToTrace)
+					
+					</div>
+					<div class="description">
+						Copy the element to the background.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>addToTrace</b>
+									
+								</dt>
+								<dd>If true the clone will be added to trace control and can be removed using <a href="../symbols/JXG.GeometryElement.html#clearTrace">JXG.GeometryElement#clearTrace</a>.
+Currently not used, and always true.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="Dist"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>Dist</b>(point2)
+					
+					</div>
+					<div class="description">
+						Getter method for the distance to a second point, this is required for CAS-elements.
+Here, function inlining seems to be worthwile  (for plotting).
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/JXG.Point.html">JXG.Point</a>}</span> <b>point2</b>
+									
+								</dt>
+								<dd>The point to which the distance shall be calculated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>Distance in user coordinate to the given point</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="face"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>face</b>(f)
+					
+					</div>
+					<div class="description">
+						Set the face of a point element
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>f</b>
+									
+								</dt>
+								<dd>String which determines the face of the point. See JXG.GeometryElement#face for a list of available faces.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd>JXG.GeometryElement#face</dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="makeGlider"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>makeGlider</b>(glideObject)
+					
+					</div>
+					<div class="description">
+						Convert the point to glider and update the construction.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String|Object}</span> <b>glideObject</b>
+									
+								</dt>
+								<dd>The Object the point will be bound to.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="moveTo"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>moveTo</b>(where, time)
+					
+					</div>
+					<div class="description">
+						Starts an animated point movement towards the given coordinates <tt>where</tt>. The animation is done after <tt>time</tt> milliseconds.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>where</b>
+									
+								</dt>
+								<dd>Array containing the x and y coordinate of the target location.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>time</b>
+									
+								</dt>
+								<dd>Number of milliseconds the animation should last.
+If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="#animate">#animate</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="remove"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>remove</b>()
+					
+					</div>
+					<div class="description">
+						Remove the point from the drawing.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="setPosition"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setPosition</b>(method, x, y)
+					
+					</div>
+					<div class="description">
+						Sets x and y coordinate and calls the point's update() method.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>method</b>
+									
+								</dt>
+								<dd>The type of coordinates used here. Possible values are JXG.COORDS_BY_USER and JXG.COORDS_BY_SCREEN.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>x</b>
+									
+								</dt>
+								<dd>x coordinate in screen/user units</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>y</b>
+									
+								</dt>
+								<dd>y coordinate in screen/user units</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="setPositionByTransform"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setPositionByTransform</b>(method, x, y)
+					
+					</div>
+					<div class="description">
+						TODO
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>method</b>
+									
+								</dt>
+								<dd>The type of coordinates used here. Possible values are JXG.COORDS_BY_USER and JXG.COORDS_BY_SCREEN.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>x</b>
+									
+								</dt>
+								<dd>x coordinate in screen/user units</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>y</b>
+									
+								</dt>
+								<dd>y coordinate in screen/user units</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="setPositionDirectly"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setPositionDirectly</b>(method, x, y)
+					
+					</div>
+					<div class="description">
+						Sets x and y coordinate and calls the point's update() method.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>method</b>
+									
+								</dt>
+								<dd>The type of coordinates used here. Possible values are JXG.COORDS_BY_USER and JXG.COORDS_BY_SCREEN.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>x</b>
+									
+								</dt>
+								<dd>x coordinate in screen/user units</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>y</b>
+									
+								</dt>
+								<dd>y coordinate in screen/user units</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="size"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>size</b>(s)
+					
+					</div>
+					<div class="description">
+						Set the size of a point element
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>s</b>
+									
+								</dt>
+								<dd>Integer which determines the size of the point.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd>JXG.GeometryElement#size</dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="update"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>update</b>(fromParent)
+					
+					</div>
+					<div class="description">
+						Updates the position of the point.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>fromParent</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="updateTransform"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateTransform</b>()
+					
+					</div>
+					<div class="description">
+						TODO
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="visit"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>visit</b>(where, time, repeat)
+					
+					</div>
+					<div class="description">
+						Starts an animated point movement towards the given coordinates <tt>where</tt>. After arriving at <tt>where</tt> the point moves back to where it started.
+The animation is done after <tt>time</tt> milliseconds.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>where</b>
+									
+								</dt>
+								<dd>Array containing the x and y coordinate of the target location.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>time</b>
+									
+								</dt>
+								<dd>Number of milliseconds the animation should last.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>repeat</b>
+									
+								</dt>
+								<dd>Optional: How often the animation should be repeated. The time value is then taken for one repeat.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="#animate">#animate</a></dd>
+							
+							</dl>
+						
+
+					
+					
+					<hr />
+				
+					<a name="X"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>X</b>()
+					
+					</div>
+					<div class="description">
+						Getter method for x, this is used by for CAS-points to access point coordinates.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>User coordinate of point in x direction.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="Y"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>Y</b>()
+					
+					</div>
+					<div class="description">
+						Getter method for y, this is used by CAS-points to access point coordinates.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>User coordinate of point in y direction.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="Z"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>Z</b>()
+					
+					</div>
+					<div class="description">
+						Getter method for z, this is used by CAS-points to access point coordinates.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>User coordinate of point in z direction.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					
+				
+			
+			
+<!-- ============================== event details ========================= -->		
+			
+			
+			<hr />
+		</div>
+
+		
+<!-- ============================== footer ================================= -->
+		<div class="fineprint" style="clear:both">
+			
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Mon May 03 2010 16:49:03 GMT+0200 (MESZ)
+		</div>
+	</body>
+</html>

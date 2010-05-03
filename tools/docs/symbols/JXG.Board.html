@@ -1,0 +1,2669 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+         <link rel="stylesheet" type="text/css" href="../static/jsxgraph.css" />
+         <script type="text/javascript" src="../static/jquery.min.js"></script>
+         <script type="text/javascript" src="../static/jsxgraphcore.js"></script>
+		
+		<title>JsDoc Reference - JXG.Board</title>
+
+		<style type="text/css">
+			/* default.css */
+body
+{
+	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
+	width: 800px;
+}
+
+.header
+{
+	clear: both;
+	background-color: #ccc;
+	padding: 8px;
+}
+
+h1
+{
+	font-size: 150%;
+	font-weight: bold;
+	padding: 0;
+	margin: 1em 0 0 .3em;
+}
+
+hr
+{
+	border: none 0;
+	border-top: 1px solid #7F8FB1;
+	height: 1px;
+}
+
+pre.code
+{
+	display: block;
+	padding: 8px;
+	border: 1px dashed #ccc;
+}
+
+#index
+{
+	margin-top: 24px;
+	float: left;
+	width: 220px;
+	position: absolute;
+	left: 8px;
+	background-color: #F3F3F3;
+	padding: 8px;
+}
+
+#content
+{
+	margin-left: 250px;
+	width: 600px;
+}
+
+.classList
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 0 0 0 8px;
+	font-family: arial, sans-serif;
+	font-size: 1em;
+	overflow: auto;
+}
+
+.classList li
+{
+	padding: 0;
+	margin: 0 0 8px 0;
+}
+
+.summaryTable { width: 100%; }
+
+h1.classTitle
+{
+	font-size:170%;
+	line-height:130%;
+}
+
+h2 { font-size: 110%; }
+caption, div.sectionTitle
+{
+	background-color: #7F8FB1;
+	color: #fff;
+	font-size:130%;
+	text-align: left;
+	padding: 2px 6px 2px 6px;
+	border: 1px #7F8FB1 solid;
+}
+
+div.sectionTitle { margin-bottom: 8px; }
+.summaryTable thead { display: none; }
+
+.summaryTable td
+{
+	vertical-align: top;
+	padding: 4px;
+	border-bottom: 1px #7F8FB1 solid;
+	border-right: 1px #7F8FB1 solid;
+}
+
+/*col#summaryAttributes {}*/
+.summaryTable td.attributes
+{
+	border-left: 1px #7F8FB1 solid;
+	width: 140px;
+	text-align: right;
+}
+
+td.attributes, .fixedFont
+{
+	line-height: 15px;
+	color: #002EBE;
+	font-family: "Courier New",Courier,monospace;
+	font-size: 13px;
+}
+
+.summaryTable td.nameDescription
+{
+	text-align: left;
+	font-size: 13px;
+	line-height: 15px;
+}
+
+.summaryTable td.nameDescription, .description
+{
+	line-height: 15px;
+	padding: 4px;
+	padding-left: 4px;
+}
+
+.summaryTable { margin-bottom: 8px; }
+
+ul.inheritsList
+{
+	list-style: square;
+	margin-left: 20px;
+	padding-left: 0;
+}
+
+.detailList {
+	margin-left: 20px; 
+	line-height: 15px;
+}
+.detailList dt { margin-left: 20px; }
+
+.detailList .heading
+{
+	font-weight: bold;
+	padding-bottom: 6px;
+	margin-left: 0;
+}
+
+.light, td.attributes, .light a:link, .light a:visited
+{
+	color: #777;
+	font-style: italic;
+}
+
+.fineprint
+{
+	text-align: right;
+	font-size: 10px;
+}
+		</style>
+	</head>
+
+	<body>
+<!-- ============================== header ================================= -->	
+		<!-- begin static/header.html -->
+		<div id="header">
+<h1 style="font-size: 2.5em"><img src="static/logo.gif" />JSXGraph Reference</h1>
+</div>
+<div id="jsdeactivated_hint" style="background-color: #fcc; border: solid 1px red; padding: 3px">
+<h2>JavaScript must be enabled in order for you to use JSXGraph and JSXGraph reference.
+However, it seems JavaScript is either disabled or not supported by your browser.</h2>
+</div>
+<script type="text/javascript">
+ /* <![CDATA[ */
+   document.getElementById("jsdeactivated_hint").style.display = 'none';
+ /* ]]> */
+</script>
+		<!-- end static/header.html -->
+
+<!-- ============================== classes index ============================ -->
+		<div id="index">
+			<!-- begin publish.classesIndex -->
+			<div align="center"><a href="../index.html">Class Index</a>
+| <a href="../files.html">File Index</a></div>
+<hr />
+<h2 onclick="switchList('myElList');" style="cursor: pointer"><img src="static/expandable.gif"/> Elements</h2>
+<ul class="classList" id="myElList" style="display: block;">
+	
+	<li><a href="../symbols/Arrow.html">Arrow</a></li>
+	
+	<li><a href="../symbols/Axis.html">Axis</a></li>
+	
+	<li><a href="../symbols/Bisector.html">Bisector</a></li>
+	
+	<li><a href="../symbols/Circle.html">Circle</a></li>
+	
+	<li><a href="../symbols/Circumcircle.html">Circumcircle</a></li>
+	
+	<li><a href="../symbols/Circumcirclemidpoint.html">Circumcirclemidpoint</a></li>
+	
+	<li><a href="../symbols/Conic.html">Conic</a></li>
+	
+	<li><a href="../symbols/Curve.html">Curve</a></li>
+	
+	<li><a href="../symbols/Ellipse.html">Ellipse</a></li>
+	
+	<li><a href="../symbols/Functiongraph.html">Functiongraph</a></li>
+	
+	<li><a href="../symbols/Glider.html">Glider</a></li>
+	
+	<li><a href="../symbols/Hyperbola.html">Hyperbola</a></li>
+	
+	<li><a href="../symbols/Image.html">Image</a></li>
+	
+	<li><a href="../symbols/Integral.html">Integral</a></li>
+	
+	<li><a href="../symbols/Intersection.html">Intersection</a></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li><a href="../symbols/Line.html">Line</a></li>
+	
+	<li><a href="../symbols/Locus.html">Locus</a></li>
+	
+	<li><a href="../symbols/Midpoint.html">Midpoint</a></li>
+	
+	<li><a href="../symbols/Mirrorpoint.html">Mirrorpoint</a></li>
+	
+	<li><a href="../symbols/Normal.html">Normal</a></li>
+	
+	<li><a href="../symbols/OtherIntersection.html">OtherIntersection</a></li>
+	
+	<li><a href="../symbols/Parabola.html">Parabola</a></li>
+	
+	<li><a href="../symbols/Parallel.html">Parallel</a></li>
+	
+	<li><a href="../symbols/Parallelpoint.html">Parallelpoint</a></li>
+	
+	<li><a href="../symbols/Perpendicular.html">Perpendicular</a></li>
+	
+	<li><a href="../symbols/Perpendicularpoint.html">Perpendicularpoint</a></li>
+	
+	<li><a href="../symbols/Point.html">Point</a></li>
+	
+	<li><a href="../symbols/Reflection.html">Reflection</a></li>
+	
+	<li><a href="../symbols/RegularPolygon.html">RegularPolygon</a></li>
+	
+	<li><a href="../symbols/Riemannsum.html">Riemannsum</a></li>
+	
+	<li><a href="../symbols/Segment.html">Segment</a></li>
+	
+	<li><a href="../symbols/Tangent.html">Tangent</a></li>
+	
+	<li><a href="../symbols/Text.html">Text</a></li>
+	
+</ul>
+<h2 onclick="switchList('myClList');" style="cursor: pointer"><img src="static/expandable.gif"/> Classes</h2>
+<ul class="classList" id="myClList" style="display: block;">
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li><a href="../symbols/JXG.html">JXG</a></li>
+	
+	<li><a href="../symbols/JXG.AbstractRenderer.html">JXG.AbstractRenderer</a></li>
+	
+	<li><a href="../symbols/JXG.Algebra.html">JXG.Algebra</a></li>
+	
+	<li><a href="../symbols/JXG.Board.html">JXG.Board</a></li>
+	
+	<li><a href="../symbols/JXG.C.html">JXG.C</a></li>
+	
+	<li><a href="../symbols/JXG.Circle.html">JXG.Circle</a></li>
+	
+	<li><a href="../symbols/JXG.Complex.html">JXG.Complex</a></li>
+	
+	<li><a href="../symbols/JXG.Coords.html">JXG.Coords</a></li>
+	
+	<li><a href="../symbols/JXG.createSector.html">JXG.createSector</a></li>
+	
+	<li><a href="../symbols/JXG.createSlider.html">JXG.createSlider</a></li>
+	
+	<li><a href="../symbols/JXG.Curve.html">JXG.Curve</a></li>
+	
+	<li><a href="../symbols/JXG.DimensionMismatchException.html">JXG.DimensionMismatchException</a></li>
+	
+	<li><a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a></li>
+	
+	<li><a href="../symbols/JXG.Group.html">JXG.Group</a></li>
+	
+	<li><a href="../symbols/JXG.Image.html">JXG.Image</a></li>
+	
+	<li><a href="../symbols/JXG.Intersection.html">JXG.Intersection</a></li>
+	
+	<li><a href="../symbols/JXG.JSXGraph.html">JXG.JSXGraph</a></li>
+	
+	<li><a href="../symbols/JXG.Line.html">JXG.Line</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Matrix.html">JXG.Math.Matrix</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.html">JXG.Math.Numerics</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.Butcher.html">JXG.Math.Numerics.Butcher</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Numerics.predefinedButcher.html">JXG.Math.Numerics.predefinedButcher</a></li>
+	
+	<li><a href="../symbols/JXG.Math.Vector.html">JXG.Math.Vector</a></li>
+	
+	<li><a href="../symbols/JXG.Options.html">JXG.Options</a></li>
+	
+	<li><a href="../symbols/JXG.Point.html">JXG.Point</a></li>
+	
+	<li><a href="../symbols/JXG.Polygon.html">JXG.Polygon</a></li>
+	
+	<li><a href="../symbols/JXG.Server.html">JXG.Server</a></li>
+	
+	<li><a href="../symbols/JXG.Server.modules.html">JXG.Server.modules</a></li>
+	
+	<li><a href="../symbols/JXG.SingularMatrixException.html">JXG.SingularMatrixException</a></li>
+	
+	<li><a href="../symbols/JXG.Text.html">JXG.Text</a></li>
+	
+	<li><a href="../symbols/JXG.Ticks.html">JXG.Ticks</a></li>
+	
+	<li><a href="../symbols/JXG.Turtle.html">JXG.Turtle</a></li>
+	
+	<li><a href="../symbols/JXG.Util.html">JXG.Util</a></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+	<li></li>
+	
+</ul>
+<hr />
+
+<script type="text/javascript">
+  /* <![CDATA[ */
+   	function switchList(id) {
+      document.getElementById(id).style.display = ( document.getElementById(id).style.display == 'block' ? 'none' : 'block' );
+      document.cookie = id.toLowerCase() + 'status=' + document.getElementById(id).style.display + ';';
+  	};
+  	
+	function initList(id) {
+      var cookieList = document.cookie.split(';');
+      for(var c=0; c<cookieList.length; c++) {
+        if(cookieList[c].indexOf(id.toLowerCase() + 'status') != -1) {
+          document.getElementById(id).style.display = cookieList[c].split('=')[1];
+        }
+      }
+  	};
+  	
+  	initList('myElList');
+    initList('myClList');
+  /* ]]> */
+</script>
+			<!-- end publish.classesIndex -->
+		</div>
+		
+		<div id="content">
+<!-- ============================== class title ============================ -->
+			<h1 class="classTitle">
+				
+				Class JXG.Board
+			</h1>
+
+<!-- ============================== class summary ========================== -->			
+			<p class="description">
+				
+			
+				This is the Board class. It stores all methods and properties required
+to manage a geonext board like adding geometric elements, removing them, managing
+mouse over, drag & drop of geometric objects etc.
+				
+				
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Board.js.html">Board.js</a>.
+				
+			</p>
+
+<!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class JXG.Board.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#constructor">JXG.Board</a></b>(container, renderer, id, origin, zoomX, zoomY, unitX, unitY, canvasWidth, canvasHeight, showCopyright)
+							</div>
+							<div class="description">Constructs a new Board object.</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+
+<!-- ============================== properties summary ===================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class JXG.Board.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#canvasHeight">canvasHeight</a></b>
+								</div>
+								<div class="description">Canvas Width</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#canvasWidth">canvasWidth</a></b>
+								</div>
+								<div class="description">Canvas Width</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#container">container</a></b>
+								</div>
+								<div class="description">The html-id of the html element containing the board.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#containerObj">containerObj</a></b>
+								</div>
+								<div class="description">Pointer to the html element containing the board.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#create">create</a></b>
+								</div>
+								<div class="description">Wrapper for <a href="#createElement">#createElement</a>().</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#dragObjCoords">dragObjCoords</a></b>
+								</div>
+								<div class="description">New mouse position in screen coordinates.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#elementsByName">elementsByName</a></b>
+								</div>
+								<div class="description">An associative array to store the objects of the board by name.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#fontSize">fontSize</a></b>
+								</div>
+								<div class="description">Default font size for labels and texts.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#gridColor">gridColor</a></b>
+								</div>
+								<div class="description">Color of the grid.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#gridDash">gridDash</a></b>
+								</div>
+								<div class="description">Determines whether the grid is dashed or not.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#gridOpacity">gridOpacity</a></b>
+								</div>
+								<div class="description">Opacity of the grid color, between 0 and 1.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#gridX">gridX</a></b>
+								</div>
+								<div class="description">The amount of grid points plus one that fit in one unit of user coordinates in x direction.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#gridY">gridY</a></b>
+								</div>
+								<div class="description">The amount of grid points plus one that fit in one unit of user coordinates in y direction.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#hooks">hooks</a></b>
+								</div>
+								<div class="description">An array containing all hooked functions.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#intersectionOptions">intersectionOptions</a></b>
+								</div>
+								<div class="description">GUI interface</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#mousePosAbs">mousePosAbs</a></b>
+								</div>
+								<div class="description">Absolute position of the mouse pointer in screen pixel from the top left corner
+of the HTML window.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#mousePosRel">mousePosRel</a></b>
+								</div>
+								<div class="description">Relative position of the mouse pointer in screen pixel from the top left corner
+of the JSXGraph canvas (the div element contining the board)-</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#options">options</a></b>
+								</div>
+								<div class="description">Some standard options</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#origin">origin</a></b>
+								</div>
+								<div class="description">Coordinates of the boards origin</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#snapSizeX">snapSizeX</a></b>
+								</div>
+								<div class="description">The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in x direction.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#snapSizeY">snapSizeY</a></b>
+								</div>
+								<div class="description">The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in y direction.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#snapToGrid">snapToGrid</a></b>
+								</div>
+								<div class="description">The way objects can be dragged.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#unitX">unitX</a></b>
+								</div>
+								<div class="description">This means the number of pixel which represents
+one unit in user-coordinates in x direction.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#unitY">unitY</a></b>
+								</div>
+								<div class="description">This means the number of pixel which represents
+one unit in user-coordinates in y direction.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#zoomX">zoomX</a></b>
+								</div>
+								<div class="description">Zoom factor in X direction</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#zoomY">zoomY</a></b>
+								</div>
+								<div class="description">Zoom factor in Y direction</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
+
+<!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class JXG.Board.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#addChild">addChild</a></b>(A)
+								</div>
+								<div class="description">Adds a dependent board to this board.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#addConditions">addConditions</a></b>(str)
+								</div>
+								<div class="description">Add conditional updates to the elements.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#addHook">addHook</a></b>(hook)
+								</div>
+								<div class="description">Adds a hook to this board.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#animate">animate</a></b>()
+								</div>
+								<div class="description">General purpose animation function, currently only supporting moving points from one place to another.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#clearTraces">clearTraces</a></b>()
+								</div>
+								<div class="description">Delete the elements drawn as part of a trace of an element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#createElement">createElement</a></b>(elementType, parents, attributes)
+								</div>
+								<div class="description">Creates a new geometric element of type elementType.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#fullUpdate">fullUpdate</a></b>()
+								</div>
+								<div class="description">Runs through all elements and calls their
+update() method and update the conditions.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#getScrCoordsOfMouse">getScrCoordsOfMouse</a></b>(x, y)
+								</div>
+								<div class="description">In case of snapToGrid activated this method caclulates the screen coords of mouse "snapped to grid".</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#getUsrCoordsOfMouse">getUsrCoordsOfMouse</a></b>(Evt)
+								</div>
+								<div class="description">In case of snapToGrid activated this method caclulates the user coords of mouse "snapped to grid".</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#otherIntersection">otherIntersection</a></b>(el1, el2, el)
+								</div>
+								<div class="description">Intersectionof  circles and line</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#removeChild">removeChild</a></b>(board)
+								</div>
+								<div class="description">Deletes a board from the list of dependent boards.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#removeHook">removeHook</a></b>(id)
+								</div>
+								<div class="description">Deletes a hook from this board.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#removeObject">removeObject</a></b>(object)
+								</div>
+								<div class="description">Removes object from board and renderer.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#resizeContainer">resizeContainer</a></b>(canvasWidth, canvasHeight)
+								</div>
+								<div class="description">Change the height and width of the board's container.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#setBoundingBox">setBoundingBox</a></b>(New, keepaspectratio:)
+								</div>
+								<div class="description">Set the bounding box of the board.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#showDependencies">showDependencies</a></b>()
+								</div>
+								<div class="description">Lists the dependencies graph in a new HTML-window.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#showXML">showXML</a></b>()
+								</div>
+								<div class="description">Lists the XML code of the construction in a new HTML-window.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#suspendUpdate">suspendUpdate</a></b>()
+								</div>
+								<div class="description">Stop updates of the board.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#touchStartListener">touchStartListener</a></b>(evt)
+								</div>
+								<div class="description">iPhone-Events</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#unsuspendUpdate">unsuspendUpdate</a></b>()
+								</div>
+								<div class="description">Enable updates of the board again.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#update">update</a></b>(drag)
+								</div>
+								<div class="description">Runs through most elements and calls their
+update() method and update the conditions.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#zoom100">zoom100</a></b>()
+								</div>
+								<div class="description">Resets zoom factor zu 1.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#zoomAllPoints">zoomAllPoints</a></b>()
+								</div>
+								<div class="description">Zooms the board so every visible point is shown.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#zoomIn">zoomIn</a></b>()
+								</div>
+								<div class="description">Zooms into the board.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#zoomOut">zoomOut</a></b>()
+								</div>
+								<div class="description">Zooms out of the board.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
+<!-- ============================== events summary ======================== -->
+			
+
+<!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>JXG.Board</b>(container, renderer, id, origin, zoomX, zoomY, unitX, unitY, canvasWidth, canvasHeight, showCopyright)
+				</div>
+				
+				<div class="description">
+					Constructs a new Board object.
+					
+				</div>
+				
+				
+					
+						<dl class="detailList">
+                        
+                        
+    						<dt class="heading">Parameters:</dt>
+                        
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{String|Object}</span>  <b>container</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>The id or reference of the html-element the board is drawn in.</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{<a href="../symbols/JXG.AbstractRenderer.html">JXG.AbstractRenderer</a>}</span>  <b>renderer</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>The reference of a geonext renderer.</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{String}</span>  <b>id</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>Unique identifier for the board, may be an empty string or null or even undefined.</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{<a href="../symbols/JXG.Coords.html">JXG.Coords</a>}</span>  <b>origin</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>The coordinates where the origin is placed, in user coordinates.</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{float}</span>  <b>zoomX</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>Zoom factor in x-axis direction</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{float}</span>  <b>zoomY</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>Zoom factor in y-axis direction</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{int}</span>  <b>unitX</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>Units in x-axis direction</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{int}</span>  <b>unitY</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>Units in y-axis direction</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{int}</span>  <b>canvasWidth</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>The width of canvas</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{int}</span>  <b>canvasHeight</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>The height of canvas</dd><br /><br />
+						
+							<dt>
+                                
+    								<span class="light fixedFont">{bool}</span>  <b>showCopyright</b>
+	    							
+                                
+                                
+							</dt>
+								<dd>Display the copyright text</dd><br /><br />
+						
+						</dl>
+					
+					
+					
+					
+					
+					
+					
+
+				
+				
+
+			</div>
+			
+
+<!-- ============================== field details ========================== -->		
+			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="canvasHeight"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>canvasHeight</b>
+					
+					</div>
+					<div class="description">
+						Canvas Width
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="canvasWidth"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>canvasWidth</b>
+					
+					</div>
+					<div class="description">
+						Canvas Width
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="container"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>container</b>
+					
+					</div>
+					<div class="description">
+						The html-id of the html element containing the board.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="containerObj"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Object}</span>
+					<b>containerObj</b>
+					
+					</div>
+					<div class="description">
+						Pointer to the html element containing the board.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="create"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>create</b>
+					
+					</div>
+					<div class="description">
+						Wrapper for <a href="#createElement">#createElement</a>().
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="dragObjCoords"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>dragObjCoords</b>
+					
+					</div>
+					<div class="description">
+						New mouse position in screen coordinates.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="elementsByName"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Object}</span>
+					<b>elementsByName</b>
+					
+					</div>
+					<div class="description">
+						An associative array to store the objects of the board by name. the name of the object is the key and value is a reference to the object.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="fontSize"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>fontSize</b>
+					
+					</div>
+					<div class="description">
+						Default font size for labels and texts.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="gridColor"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{string}</span>
+					<b>gridColor</b>
+					
+					</div>
+					<div class="description">
+						Color of the grid.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="gridDash"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{bool}</span>
+					<b>gridDash</b>
+					
+					</div>
+					<div class="description">
+						Determines whether the grid is dashed or not.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="gridOpacity"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{float}</span>
+					<b>gridOpacity</b>
+					
+					</div>
+					<div class="description">
+						Opacity of the grid color, between 0 and 1.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="gridX"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>gridX</b>
+					
+					</div>
+					<div class="description">
+						The amount of grid points plus one that fit in one unit of user coordinates in x direction.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="gridY"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>gridY</b>
+					
+					</div>
+					<div class="description">
+						The amount of grid points plus one that fit in one unit of user coordinates in y direction.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="hooks"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Array}</span>
+					<b>hooks</b>
+					
+					</div>
+					<div class="description">
+						An array containing all hooked functions.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="intersectionOptions"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>intersectionOptions</b>
+					
+					</div>
+					<div class="description">
+						GUI interface
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Wrappers.js.html">Wrappers.js</a>.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="mousePosAbs"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>mousePosAbs</b>
+					
+					</div>
+					<div class="description">
+						Absolute position of the mouse pointer in screen pixel from the top left corner
+of the HTML window.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="mousePosRel"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>mousePosRel</b>
+					
+					</div>
+					<div class="description">
+						Relative position of the mouse pointer in screen pixel from the top left corner
+of the JSXGraph canvas (the div element contining the board)-
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="options"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Options}</span>
+					<b>options</b>
+					
+					</div>
+					<div class="description">
+						Some standard options
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="origin"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Coords}</span>
+					<b>origin</b>
+					
+					</div>
+					<div class="description">
+						Coordinates of the boards origin
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="snapSizeX"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>snapSizeX</b>
+					
+					</div>
+					<div class="description">
+						The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in x direction.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="snapSizeY"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>snapSizeY</b>
+					
+					</div>
+					<div class="description">
+						The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in y direction.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="snapToGrid"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{bool}</span>
+					<b>snapToGrid</b>
+					
+					</div>
+					<div class="description">
+						The way objects can be dragged. If true, objects can only moved on a predefined grid, if false objects can be moved smoothly almost everywhere.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="unitX"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>unitX</b>
+					
+					</div>
+					<div class="description">
+						This means the number of pixel which represents
+one unit in user-coordinates in x direction.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="unitY"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>unitY</b>
+					
+					</div>
+					<div class="description">
+						This means the number of pixel which represents
+one unit in user-coordinates in y direction.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="zoomX"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>zoomX</b>
+					
+					</div>
+					<div class="description">
+						Zoom factor in X direction
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="zoomY"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>zoomY</b>
+					
+					</div>
+					<div class="description">
+						Zoom factor in Y direction
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
+
+<!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="addChild"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addChild</b>(A)
+					
+					</div>
+					<div class="description">
+						Adds a dependent board to this board.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{object}</span> <b>A</b>
+									
+								</dt>
+								<dd>reference to board which will be updated after an update of this board occured.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="addConditions"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addConditions</b>(str)
+					
+					</div>
+					<div class="description">
+						Add conditional updates to the elements.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>str</b>
+									
+								</dt>
+								<dd>String containing coniditional update in geonext syntax</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="addHook"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{int}</span>
+					<b>addHook</b>(hook)
+					
+					</div>
+					<div class="description">
+						Adds a hook to this board.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>hook</b>
+									
+								</dt>
+								<dd>A function to be called by the board after an update occured.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>Id of the hook, required to remove the hook from the board.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="animate"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>animate</b>()
+					
+					</div>
+					<div class="description">
+						General purpose animation function, currently only supporting moving points from one place to another. Is faster than
+managing the animation per point, especially if there is more than one animated point at the same time.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="clearTraces"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>clearTraces</b>()
+					
+					</div>
+					<div class="description">
+						Delete the elements drawn as part of a trace of an element.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="createElement"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Object}</span>
+					<b>createElement</b>(elementType, parents, attributes)
+					
+					</div>
+					<div class="description">
+						Creates a new geometric element of type elementType.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>elementType</b>
+									
+								</dt>
+								<dd>Type of the element to be constructed given as a string e.g. 'point' or 'circle'.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>parents</b>
+									
+								</dt>
+								<dd>Array of parent elements needed to construct the element e.g. coordinates for a point or two
+points to construct a line. This highly depends on the elementType that is constructed. See the corresponding JXG.create*
+methods for a list of possible parameters.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>attributes</b>
+									
+								</dt>
+								<dd>An object containing the attributes to be set. This also depends on the elementType.
+Common attributes are name, visible, strokeColor. @see GeometryElement#setProperty</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>Reference to the created element.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="fullUpdate"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>fullUpdate</b>()
+					
+					</div>
+					<div class="description">
+						Runs through all elements and calls their
+update() method and update the conditions.
+This is necessary after zooming and changing the bounding box.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="getScrCoordsOfMouse"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getScrCoordsOfMouse</b>(x, y)
+					
+					</div>
+					<div class="description">
+						In case of snapToGrid activated this method caclulates the screen coords of mouse "snapped to grid".
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>x</b>
+									
+								</dt>
+								<dd>X coordinate in screen coordinates</dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>y</b>
+									
+								</dt>
+								<dd>Y coordinate in screen coordinates</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="getUsrCoordsOfMouse"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getUsrCoordsOfMouse</b>(Evt)
+					
+					</div>
+					<div class="description">
+						In case of snapToGrid activated this method caclulates the user coords of mouse "snapped to grid".
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Event}</span> <b>Evt</b>
+									
+								</dt>
+								<dd>Event object containing the mouse coordinates.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="otherIntersection"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>otherIntersection</b>(el1, el2, el)
+					
+					</div>
+					<div class="description">
+						Intersectionof  circles and line
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Wrappers.js.html">Wrappers.js</a>.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>el1</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>el2</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>el</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="removeChild"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeChild</b>(board)
+					
+					</div>
+					<div class="description">
+						Deletes a board from the list of dependent boards.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{object}</span> <b>board</b>
+									
+								</dt>
+								<dd>Reference to the board which will be removed.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="removeHook"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeHook</b>(id)
+					
+					</div>
+					<div class="description">
+						Deletes a hook from this board.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>id</b>
+									
+								</dt>
+								<dd>Id for the hook, required to delete the hook.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="removeObject"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeObject</b>(object)
+					
+					</div>
+					<div class="description">
+						Removes object from board and renderer.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{GeometryElement}</span> <b>object</b>
+									
+								</dt>
+								<dd>The object to remove.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="resizeContainer"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>resizeContainer</b>(canvasWidth, canvasHeight)
+					
+					</div>
+					<div class="description">
+						Change the height and width of the board's container.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>canvasWidth</b>
+									
+								</dt>
+								<dd>New width of the container.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>canvasHeight</b>
+									
+								</dt>
+								<dd>New height of the container.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="setBoundingBox"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setBoundingBox</b>(New, keepaspectratio:)
+					
+					</div>
+					<div class="description">
+						Set the bounding box of the board.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>New</b>
+									
+								</dt>
+								<dd>bounding box [x1,y1,x2,y2]</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Bool}</span> <b>keepaspectratio:</b>
+									
+								</dt>
+								<dd>optional flag</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="showDependencies"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showDependencies</b>()
+					
+					</div>
+					<div class="description">
+						Lists the dependencies graph in a new HTML-window.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="showXML"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showXML</b>()
+					
+					</div>
+					<div class="description">
+						Lists the XML code of the construction in a new HTML-window.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="suspendUpdate"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>suspendUpdate</b>()
+					
+					</div>
+					<div class="description">
+						Stop updates of the board.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="touchStartListener"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>touchStartListener</b>(evt)
+					
+					</div>
+					<div class="description">
+						iPhone-Events
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>evt</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="unsuspendUpdate"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unsuspendUpdate</b>()
+					
+					</div>
+					<div class="description">
+						Enable updates of the board again.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="update"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>update</b>(drag)
+					
+					</div>
+					<div class="description">
+						Runs through most elements and calls their
+update() method and update the conditions.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object|String}</span> <b>drag</b>
+									
+								</dt>
+								<dd>Element that caused the update.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="zoom100"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>zoom100</b>()
+					
+					</div>
+					<div class="description">
+						Resets zoom factor zu 1.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="zoomAllPoints"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>zoomAllPoints</b>()
+					
+					</div>
+					<div class="description">
+						Zooms the board so every visible point is shown. Keeps aspect ratio.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="zoomIn"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>zoomIn</b>()
+					
+					</div>
+					<div class="description">
+						Zooms into the board.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name="zoomOut"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>zoomOut</b>()
+					
+					</div>
+					<div class="description">
+						Zooms out of the board.
+						
+						
+					</div>
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+					
+					
+				
+			
+			
+<!-- ============================== event details ========================= -->		
+			
+			
+			<hr />
+		</div>
+
+		
+<!-- ============================== footer ================================= -->
+		<div class="fineprint" style="clear:both">
+			
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Mon May 03 2010 16:49:03 GMT+0200 (MESZ)
+		</div>
+	</body>
+</html>

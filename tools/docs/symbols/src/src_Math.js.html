@@ -1,0 +1,438 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/*
+<span class='line'>  2</span>     Copyright 2008,2009
+<span class='line'>  3</span>         Matthias Ehmann,
+<span class='line'>  4</span>         Michael Gerhaeuser,
+<span class='line'>  5</span>         Carsten Miller,
+<span class='line'>  6</span>         Bianca Valentin,
+<span class='line'>  7</span>         Alfred Wassermann,
+<span class='line'>  8</span>         Peter Wilfahrt
+<span class='line'>  9</span> 
+<span class='line'> 10</span>     This file is part of JSXGraph.
+<span class='line'> 11</span> 
+<span class='line'> 12</span>     JSXGraph is free software: you can redistribute it and/or modify
+<span class='line'> 13</span>     it under the terms of the GNU Lesser General Public License as published by
+<span class='line'> 14</span>     the Free Software Foundation, either version 3 of the License, or
+<span class='line'> 15</span>     (at your option) any later version.
+<span class='line'> 16</span> 
+<span class='line'> 17</span>     JSXGraph is distributed in the hope that it will be useful,
+<span class='line'> 18</span>     but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class='line'> 19</span>     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class='line'> 20</span>     GNU Lesser General Public License for more details.
+<span class='line'> 21</span> 
+<span class='line'> 22</span>     You should have received a copy of the GNU Lesser General Public License
+<span class='line'> 23</span>     along with JSXGraph. If not, see &lt;http://www.gnu.org/licenses/>.
+<span class='line'> 24</span> */</span><span class="WHIT">
+<span class='line'> 25</span> 
+<span class='line'> 26</span> </span><span class="COMM">/** 
+<span class='line'> 27</span>  * @fileoverview In this file the namespace JXG.Math is defined, which is the base namespace
+<span class='line'> 28</span>  * for namespaces like Math.Numerics, Math.Algebra, Math.Statistics etc.
+<span class='line'> 29</span>  * @author graphjs
+<span class='line'> 30</span>  */</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT"> 
+<span class='line'> 32</span>  </span><span class="COMM">/**
+<span class='line'> 33</span>   * Math namespace.
+<span class='line'> 34</span>   */</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="NAME">JXG.Math</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Object</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 36</span> 
+<span class='line'> 37</span> </span><span class="COMM">/* Math constants */</span><span class="WHIT">
+<span class='line'> 38</span> </span><span class="NAME">JXG.Math.eps</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0.000001</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 39</span> 
+<span class='line'> 40</span> </span><span class="COMM">/**
+<span class='line'> 41</span>  * Represents a vector.
+<span class='line'> 42</span>  * @constructor
+<span class='line'> 43</span>  * @param {Array} elements An array of numerical values containing the coefficients to be put into the vector.
+<span class='line'> 44</span>  * @return JXG.Math.Vector
+<span class='line'> 45</span>  */</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="NAME">JXG.Math.Vector</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">elements</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="WHIT">    </span><span class="NAME">this.length</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">    
+<span class='line'> 50</span>     </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">elements</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">elements</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">elements.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">            </span><span class="NAME">this.push</span><span class="PUNC">(</span><span class="NAME">elements</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> 
+<span class='line'> 57</span> </span><span class="COMM">/*
+<span class='line'> 58</span>  * The base class for Vector is just an array.
+<span class='line'> 59</span>  */</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="NAME">JXG.Math.Vector.prototype</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 61</span> 
+<span class='line'> 62</span> </span><span class="COMM">/**
+<span class='line'> 63</span>  * Returns the dimension of the vector.
+<span class='line'> 64</span>  * @type int
+<span class='line'> 65</span>  */</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="NAME">JXG.Math.Vector.prototype.n</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 69</span> 
+<span class='line'> 70</span> </span><span class="COMM">/**
+<span class='line'> 71</span>  * Exchanges two elements of the vector.
+<span class='line'> 72</span>  * @param {int} i The first element that is to be exchanged.
+<span class='line'> 73</span>  * @param {int} j The second element that is to be exchanged.
+<span class='line'> 74</span>  */</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="NAME">JXG.Math.Vector.prototype.exchange</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">j</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">temp</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">    
+<span class='line'> 78</span>     </span><span class="KEYW">this</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">[</span><span class="NAME">j</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="WHIT">    </span><span class="KEYW">this</span><span class="PUNC">[</span><span class="NAME">j</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">temp</span><span class="PUNC">;</span><span class="WHIT"> 
+<span class='line'> 80</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 81</span> 
+<span class='line'> 82</span> </span><span class="COMM">/**
+<span class='line'> 83</span>  * Represents a matrix.
+<span class='line'> 84</span>  * @constructor
+<span class='line'> 85</span>  * @param {Array} elements An 2-dimensional array of numerical values containing the coefficients to be put into the vector.
+<span class='line'> 86</span>  * @throws {JXG.DimensionMismatchException} If the rows of the matrix don't have all the same length.
+<span class='line'> 87</span>  * @return JXG.Math.Vector
+<span class='line'> 88</span>  */</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="NAME">JXG.Math.Matrix</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">elements</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">oldLength</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 91</span> </span><span class="WHIT">        </span><span class="NAME">testLength</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 92</span> </span><span class="WHIT">        </span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">j</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">len</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">leni</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="WHIT">    
+<span class='line'> 94</span>     </span><span class="NAME">this.length</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="WHIT">    
+<span class='line'> 96</span>     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">elements</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">elements</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">        </span><span class="NAME">len</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">elements.length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">len</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">            </span><span class="NAME">leni</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">elements</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">            </span><span class="NAME">this.push</span><span class="PUNC">(</span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">          
+<span class='line'>102</span>             </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">testLength</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">oldLength</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">leni</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="WHIT">                    </span><span class="NAME">this.length</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="WHIT">                    </span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">JXG.DimensionMismatchException</span><span class="PUNC">(</span><span class="STRN">"Your array contains arrays with different lengths."</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="WHIT">                
+<span class='line'>109</span>             </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">j</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">j</span><span class="PUNC">&lt;</span><span class="NAME">leni</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">j</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="WHIT">                </span><span class="KEYW">this</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">push</span><span class="PUNC">(</span><span class="NAME">elements</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">[</span><span class="NAME">j</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">          
+<span class='line'>113</span>             </span><span class="NAME">oldLength</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">leni</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">            </span><span class="NAME">testLength</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>116</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>118</span> 
+<span class='line'>119</span> </span><span class="COMM">/*
+<span class='line'>120</span>  * The base class for Matrix is also just an array.
+<span class='line'>121</span>  */</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="NAME">JXG.Math.Matrix.prototype</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>123</span> 
+<span class='line'>124</span> </span><span class="COMM">/**
+<span class='line'>125</span>  * Returns the amount of rows of the matrix.
+<span class='line'>126</span>  * @type int
+<span class='line'>127</span>  */</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="NAME">JXG.Math.Matrix.prototype.m</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>131</span> 
+<span class='line'>132</span> </span><span class="COMM">/**
+<span class='line'>133</span>  * Returns the amount of columns of the matrix.
+<span class='line'>134</span>  * @type int
+<span class='line'>135</span>  */</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="NAME">JXG.Math.Matrix.prototype.n</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.length</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="WHIT">    </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>141</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>142</span> 
+<span class='line'>143</span> </span><span class="COMM">/**
+<span class='line'>144</span>  * Exchanges two rows of the matrix.
+<span class='line'>145</span>  * @param {int} i The first row that is to be exchanged.
+<span class='line'>146</span>  * @param {int} j The second row that is to be exchanged.
+<span class='line'>147</span>  */</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="NAME">JXG.Math.Matrix.prototype.exchangeRows</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">j</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">   </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">temp</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">    
+<span class='line'>151</span>    </span><span class="KEYW">this</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">[</span><span class="NAME">j</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>152</span> </span><span class="WHIT">   </span><span class="KEYW">this</span><span class="PUNC">[</span><span class="NAME">j</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">temp</span><span class="PUNC">;</span><span class="WHIT"> 
+<span class='line'>153</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>154</span> 
+<span class='line'>155</span> </span><span class="COMM">/**
+<span class='line'>156</span>  * Exception signaling inconsistent dimension conditions.
+<span class='line'>157</span>  * @constructor
+<span class='line'>158</span>  * @param {string} message A message which explains what went wrong-
+<span class='line'>159</span>  */</span><span class="WHIT">
+<span class='line'>160</span> </span><span class="NAME">JXG.DimensionMismatchException</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">message</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">message</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>162</span> </span><span class="WHIT">        </span><span class="NAME">this.message</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">message</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">    </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>164</span> </span><span class="WHIT">        </span><span class="NAME">this.message</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>165</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>166</span> 
+<span class='line'>167</span> </span><span class="COMM">/**
+<span class='line'>168</span>  * Returns a string explaining, what exactly went wrong.
+<span class='line'>169</span>  * @type string
+<span class='line'>170</span>  * @return A string explaining why this exception was raised.
+<span class='line'>171</span>  */</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="NAME">JXG.DimensionMismatchException.prototype.what</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">default_msg</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"Matrix has incorrect dimensions"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">   
+<span class='line'>175</span>     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.message</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">default_msg</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">": "</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.message</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"."</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="WHIT">    </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">default_msg</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"."</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>179</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>180</span> 
+<span class='line'>181</span> </span><span class="COMM">/**
+<span class='line'>182</span>  * Exception signaling an singular matrix.
+<span class='line'>183</span>  * @constructor
+<span class='line'>184</span>  * @param {string} message A message which explains what exactly went wrong-
+<span class='line'>185</span>  */</span><span class="WHIT">
+<span class='line'>186</span> </span><span class="NAME">JXG.SingularMatrixException</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>187</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">message</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">message</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="WHIT">        </span><span class="NAME">this.message</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">message</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">    </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>190</span> </span><span class="WHIT">        </span><span class="NAME">this.message</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>191</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>192</span> 
+<span class='line'>193</span> </span><span class="COMM">/**
+<span class='line'>194</span>  * Returns a string explaining, what exactly went wrong.
+<span class='line'>195</span>  * @type string
+<span class='line'>196</span>  * @return A string explaining why this exception was raised.
+<span class='line'>197</span>  */</span><span class="WHIT">
+<span class='line'>198</span> </span><span class="NAME">JXG.SingularMatrixException.prototype.what</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>199</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">default_msg</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"Matrix is singular"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>200</span> </span><span class="WHIT">   
+<span class='line'>201</span>     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.message</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>202</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">default_msg</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">": "</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.message</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"."</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="WHIT">    </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">default_msg</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"."</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>206</span> 
+<span class='line'>207</span> 
+<span class='line'>208</span> </span><span class="COMM">/**
+<span class='line'>209</span>  * Matrix-vector multiplication.
+<span class='line'>210</span>  * @param {Array} mat1 Two dimensional array of numbers
+<span class='line'>211</span>  * @param {Array} vec Array of numbers
+<span class='line'>212</span>  * @return {Array} Array of numbers containing result
+<span class='line'>213</span>  */</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="NAME">JXG.Math.matVecMult</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** array */</span><span class="WHIT"> </span><span class="NAME">mat1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/** array */</span><span class="WHIT"> </span><span class="NAME">vec</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** array */</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>215</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">m</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mat1.length</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>216</span> </span><span class="WHIT">        </span><span class="NAME">n</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">vec.length</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>217</span> </span><span class="WHIT">        </span><span class="NAME">res</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>218</span> </span><span class="WHIT">        </span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">s</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">k</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>219</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">n</span><span class="PUNC">==</span><span class="NUMB">3</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>220</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">m</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>221</span> </span><span class="WHIT">            </span><span class="NAME">res</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mat1</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">vec</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">mat1</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">vec</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">mat1</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">vec</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>222</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>223</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>224</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">m</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>225</span> </span><span class="WHIT">            </span><span class="NAME">s</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">            </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">k</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">k</span><span class="PUNC">&lt;</span><span class="NAME">n</span><span class="PUNC">;</span><span class="NAME">k</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> </span><span class="NAME">s</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mat1</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">[</span><span class="NAME">k</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">vec</span><span class="PUNC">[</span><span class="NAME">k</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="WHIT">            </span><span class="NAME">res</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">s</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>228</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>229</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>230</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">res</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>231</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>232</span> 
+<span class='line'>233</span> </span><span class="COMM">/**
+<span class='line'>234</span>  * Matrix-matrix multiplication.
+<span class='line'>235</span>  * @param {Array} mat1 Two dimensional array of numbers
+<span class='line'>236</span>  * @param {Array} mat2 Two dimensional array of numbers
+<span class='line'>237</span>  * @return {Array} Two dimensional Array of numbers containing result
+<span class='line'>238</span>  */</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="NAME">JXG.Math.matMatMult</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** array */</span><span class="WHIT"> </span><span class="NAME">mat1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/** array */</span><span class="WHIT"> </span><span class="NAME">mat2</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** array */</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">m</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mat1.length</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="WHIT">        </span><span class="NAME">n</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mat2</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">length</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>242</span> </span><span class="WHIT">        </span><span class="NAME">m2</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mat2.length</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>243</span> </span><span class="WHIT">        </span><span class="NAME">res</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>244</span>         </span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">j</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">s</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">k</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>245</span> </span><span class="WHIT">        
+<span class='line'>246</span>     </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">m</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>247</span> </span><span class="WHIT">        </span><span class="NAME">res</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>248</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>249</span> 
+<span class='line'>250</span> </span><span class="WHIT">    </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">m</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>251</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">j</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">j</span><span class="PUNC">&lt;</span><span class="NAME">n</span><span class="PUNC">;</span><span class="NAME">j</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>252</span> </span><span class="WHIT">            </span><span class="NAME">s</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>253</span> </span><span class="WHIT">            </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">k</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">k</span><span class="PUNC">&lt;</span><span class="NAME">m2</span><span class="PUNC">;</span><span class="NAME">k</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>254</span> </span><span class="WHIT">                </span><span class="NAME">s</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mat1</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">[</span><span class="NAME">k</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">mat2</span><span class="PUNC">[</span><span class="NAME">k</span><span class="PUNC">]</span><span class="PUNC">[</span><span class="NAME">j</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>255</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>256</span> </span><span class="WHIT">            </span><span class="NAME">res</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">[</span><span class="NAME">j</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">s</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>257</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>258</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>259</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">res</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>260</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>261</span> 
+<span class='line'>262</span> </span><span class="COMM">/**
+<span class='line'>263</span>  * Transpose a matrix which is of type array of arrays.
+<span class='line'>264</span>  * @param {Array} M 
+<span class='line'>265</span>  * @return {Array} transpose of M
+<span class='line'>266</span>  */</span><span class="WHIT">
+<span class='line'>267</span> </span><span class="NAME">JXG.Math.Matrix.transpose</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** Array */</span><span class="WHIT"> </span><span class="NAME">M</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** Array*/</span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">MT</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">j</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>269</span>         </span><span class="NAME">m</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">n</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>270</span> </span><span class="WHIT">    
+<span class='line'>271</span>     </span><span class="NAME">m</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">M.length</span><span class="PUNC">;</span><span class="WHIT">                   </span><span class="COMM">// number of rows of M</span><span class="WHIT">
+<span class='line'>272</span> </span><span class="WHIT">    </span><span class="NAME">n</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">M.length</span><span class="PUNC">></span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">?</span><span class="NAME">M</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">length</span><span class="PUNC">:</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// number of columns of M</span><span class="WHIT">
+<span class='line'>273</span> 
+<span class='line'>274</span> </span><span class="WHIT">    </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">n</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>275</span> </span><span class="WHIT">        </span><span class="NAME">MT.push</span><span class="PUNC">(</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">j</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">j</span><span class="PUNC">&lt;</span><span class="NAME">m</span><span class="PUNC">;</span><span class="NAME">j</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>277</span> </span><span class="WHIT">            </span><span class="NAME">MT</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">push</span><span class="PUNC">(</span><span class="NAME">M</span><span class="PUNC">[</span><span class="NAME">j</span><span class="PUNC">]</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>278</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>279</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>280</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">MT</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>281</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>282</span> 
+<span class='line'>283</span> </span><span class="COMM">/**
+<span class='line'>284</span>   * Calculates the crossproducts of two vectors
+<span class='line'>285</span>   * of length three.
+<span class='line'>286</span>   * In case of homogeneous coordinates this is either
+<span class='line'>287</span>   * - the intersection of two lines
+<span class='line'>288</span>   * - the line through two points.
+<span class='line'>289</span>   * @param {Array} c1 homogeneous coordinates of line (point) 1
+<span class='line'>290</span>   * @param {Array} c2 homogeneous coordinates of line (point) 2
+<span class='line'>291</span>   * @type Array
+<span class='line'>292</span>   * @return vector of length 3:  homogeneous coordinates
+<span class='line'>293</span>   *   of the resulting line / point.
+<span class='line'>294</span>   */</span><span class="WHIT">
+<span class='line'>295</span> </span><span class="NAME">JXG.Math.crossProduct</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">c1</span><span class="PUNC">,</span><span class="NAME">c2</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>296</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="NAME">c1</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">c2</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">-</span><span class="NAME">c1</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">c2</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>297</span> </span><span class="WHIT">            </span><span class="NAME">c1</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">c2</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">-</span><span class="NAME">c1</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">c2</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>298</span> </span><span class="WHIT">            </span><span class="NAME">c1</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">c2</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">-</span><span class="NAME">c1</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">c2</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>299</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>300</span> 
+<span class='line'>301</span> </span><span class="COMM">/**
+<span class='line'>302</span>  * Inner product of two vectors a, b. n is the length of the vectors.
+<span class='line'>303</span>  * @param a Vector
+<span class='line'>304</span>  * @param b Vector
+<span class='line'>305</span>  * @param [n] Length of the Vectors. If not given the length of the first vector is taken.
+<span class='line'>306</span>  * @return The inner product of a and b.
+<span class='line'>307</span>  */</span><span class="WHIT">
+<span class='line'>308</span> </span><span class="NAME">JXG.Math.innerProduct</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">a</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">b</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">n</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">    
+<span class='line'>309</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">s</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>310</span> </span><span class="WHIT">    
+<span class='line'>311</span>     </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">n</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'undefined'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>312</span> </span><span class="WHIT">        </span><span class="NAME">n</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">a.length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>313</span> </span><span class="WHIT">    
+<span class='line'>314</span>     </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">n</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>315</span> </span><span class="WHIT">        </span><span class="NAME">s</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">a</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">*</span><span class="NAME">b</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>316</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>317</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">s</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>318</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>319</span> 
+<span class='line'>320</span> 
+<span class='line'>321</span> 
+<span class='line'>322</span> </span><span class="COMM">/**
+<span class='line'>323</span> * Dynamic programming approach for recursive functions.
+<span class='line'>324</span> * From "Speed up your JavaScript, Part 3" by Nicholas C. Zakas.
+<span class='line'>325</span> * @see JXG.Math.factorial
+<span class='line'>326</span> * http://blog.thejit.org/2008/09/05/memoization-in-javascript/
+<span class='line'>327</span> */</span><span class="WHIT">
+<span class='line'>328</span> </span><span class="NAME">JXG.memoizer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">f</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>329</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cache</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">join</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>330</span> </span><span class="WHIT">    
+<span class='line'>331</span>     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">f.memo</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>332</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">f.memo</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>333</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>334</span> </span><span class="WHIT">    </span><span class="NAME">cache</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>335</span> </span><span class="WHIT">    </span><span class="NAME">join</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Array.prototype.join</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>336</span> 
+<span class='line'>337</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">f.memo</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>338</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">key</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">join.call</span><span class="PUNC">(</span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>339</span> </span><span class="WHIT">        </span><span class="COMM">//return (key in cache)</span><span class="WHIT">
+<span class='line'>340</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">cache</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">!=</span><span class="STRN">'undefined'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">// Seems to be a bit faster than "if (a in b)"</span><span class="WHIT">
+<span class='line'>341</span> </span><span class="WHIT">            </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NAME">cache</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>342</span> </span><span class="WHIT">            </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">cache</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">f.apply</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>343</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>344</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>345</span> 
+<span class='line'>346</span> </span><span class="COMM">/**
+<span class='line'>347</span> * Compute the factorial of a positive integer.
+<span class='line'>348</span> * @param {integer n}
+<span class='line'>349</span> * @return {return n*(n-1)...2*1}
+<span class='line'>350</span> */</span><span class="WHIT">
+<span class='line'>351</span> </span><span class="NAME">JXG.Math.factorial</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.memoizer</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">n</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>352</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">n</span><span class="PUNC">&lt;</span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">NaN</span><span class="PUNC">;</span><span class="WHIT"> 
+<span class='line'>353</span>         </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">n</span><span class="PUNC">==</span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">n</span><span class="PUNC">==</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>354</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">n</span><span class="PUNC">*</span><span class="NAME">arguments.callee</span><span class="PUNC">(</span><span class="NAME">n</span><span class="PUNC">-</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>355</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>356</span> 
+<span class='line'>357</span> </span><span class="COMM">/**
+<span class='line'>358</span> * Comupte the binomial coefficient.
+<span class='line'>359</span> * @param {integer n}
+<span class='line'>360</span> * @param {integer k}
+<span class='line'>361</span> * 
+<span class='line'>362</span> * @return {n\choose k}
+<span class='line'>363</span> */</span><span class="WHIT">
+<span class='line'>364</span> </span><span class="NAME">JXG.Math.binomial</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.memoizer</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">n</span><span class="PUNC">,</span><span class="NAME">k</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>365</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">b</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>366</span> </span><span class="WHIT">    
+<span class='line'>367</span>     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">k</span><span class="PUNC">></span><span class="NAME">n</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">k</span><span class="PUNC">&lt;</span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>368</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">k</span><span class="PUNC">==</span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">k</span><span class="PUNC">==</span><span class="NAME">n</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>369</span> </span><span class="WHIT">    
+<span class='line'>370</span>     </span><span class="NAME">b</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>371</span> </span><span class="WHIT">    </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">k</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>372</span> </span><span class="WHIT">        </span><span class="NAME">b</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">n</span><span class="PUNC">-</span><span class="NAME">i</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>373</span> </span><span class="WHIT">        </span><span class="NAME">b</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">+</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>374</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>375</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">b</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>376</span> </span><span class="WHIT">    </span><span class="COMM">//return arguments.callee(n-1,k-1)+arguments.callee(n-1,k);</span><span class="WHIT">
+<span class='line'>377</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>378</span> 
+<span class='line'>379</span> </span><span class="COMM">/*
+<span class='line'>380</span>     // Just for test purposes;
+<span class='line'>381</span>     
+<span class='line'>382</span> JXG.Math.Numerics.prototype.fibonacci = JXG.memoizer(function (n) {
+<span class='line'>383</span>         if(n &lt; 2) return 1; else return arguments.callee(n-2) + arguments.callee(n-1);  
+<span class='line'>384</span>     });
+<span class='line'>385</span> */</span><span class="WHIT">    
+<span class='line'>386</span> 
+<span class='line'>387</span> </span><span class="COMM">/**
+<span class='line'>388</span> * Round a decimal number to n decimal places
+<span class='line'>389</span> * @deprecated Use (number).toFixed(n) instead.
+<span class='line'>390</span> * @param {float num} Number to round
+<span class='line'>391</span> * @param {integer n} number of digits after the point to leave
+<span class='line'>392</span> * 
+<span class='line'>393</span> * @return {rounded num}
+<span class='line'>394</span> */</span><span class="WHIT">
+<span class='line'>395</span> </span><span class="NAME">JXG.Math.round</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">num</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">n</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>396</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">z</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">s</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>397</span> </span><span class="WHIT">    </span><span class="COMM">//return Math.round(num*Math.pow(10,n))/Math.pow(10,n);</span><span class="WHIT">
+<span class='line'>398</span> </span><span class="WHIT">    </span><span class="COMM">//var z = num.toFixed(n);</span><span class="WHIT">
+<span class='line'>399</span> </span><span class="WHIT">    
+<span class='line'>400</span>     </span><span class="NAME">z</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">num</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">Math.ceil</span><span class="PUNC">(</span><span class="NAME">num</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>401</span> </span><span class="WHIT">    </span><span class="NAME">s</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">z.toString</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>402</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">z</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>403</span> </span><span class="WHIT">        </span><span class="NAME">s</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">s.substr</span><span class="PUNC">(</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="NAME">n</span><span class="PUNC">+</span><span class="NUMB">3</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>404</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>405</span> </span><span class="WHIT">    </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>406</span> </span><span class="WHIT">        </span><span class="NAME">s</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">s.substr</span><span class="PUNC">(</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="NAME">n</span><span class="PUNC">+</span><span class="NUMB">2</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>407</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>408</span> </span><span class="WHIT">    </span><span class="NAME">z</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">parseFloat</span><span class="PUNC">(</span><span class="NAME">s</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>409</span> </span><span class="WHIT">    </span><span class="NAME">t</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">parseInt</span><span class="PUNC">(</span><span class="NAME">num.toString</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>410</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">t</span><span class="PUNC">+</span><span class="NAME">z</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>411</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>412</span> 
+<span class='line'>413</span> </span><span class="COMM">/**
+<span class='line'>414</span>  * Cosine hyperbolicus of x.
+<span class='line'>415</span>  * @param {float} x The number the cosine hyperbolicus will be calculated of.
+<span class='line'>416</span>  * @return {float} Cosine hyperbolicus of the given value.
+<span class='line'>417</span>  */</span><span class="WHIT">
+<span class='line'>418</span> </span><span class="NAME">JXG.Math.cosh</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** number */</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** number */</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>419</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">Math.exp</span><span class="PUNC">(</span><span class="NAME">x</span><span class="PUNC">)</span><span class="PUNC">+</span><span class="NAME">Math.exp</span><span class="PUNC">(</span><span class="PUNC">-</span><span class="NAME">x</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">*</span><span class="NUMB">0.5</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>420</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>421</span> 
+<span class='line'>422</span> </span><span class="COMM">/**
+<span class='line'>423</span>  * Sine hyperbolicus of x.
+<span class='line'>424</span>  * @param {number} x The number the sine hyperbolicus will be calculated of.
+<span class='line'>425</span>  * @return {number} Sine hyperbolicus of the given value.
+<span class='line'>426</span>  */</span><span class="WHIT">
+<span class='line'>427</span> </span><span class="NAME">JXG.Math.sinh</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/** number */</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="COMM">/** number */</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>428</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">Math.exp</span><span class="PUNC">(</span><span class="NAME">x</span><span class="PUNC">)</span><span class="PUNC">-</span><span class="NAME">Math.exp</span><span class="PUNC">(</span><span class="PUNC">-</span><span class="NAME">x</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">*</span><span class="NUMB">0.5</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>429</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>430</span> 
+<span class='line'>431</span> </span></pre></body></html>

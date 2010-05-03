@@ -39,19 +39,20 @@
  * @constructor
  * @see JXG.SVGRenderer
  * @see JXG.VMLRenderer
- * @private
  */
 JXG.AbstractRenderer = function() {
 	/**
-	 * TODO Needs description
+	 * The vertical offset for {@link Text} elements. Every {@link Text} element will
+	 * be placed this amount of pixels below the user given coordinates.
 	 * @type number
 	 * @default 8
-	 * @private
 	 */
     this.vOffsetText = 8;
     
     /**
-     * If true the visual properties of the elements are updated on every update.
+     * If this property is set to <tt>true</tt> the visual properties of the elements are updated
+     * on every update. Visual properties means: All the stuff stored in the
+     * {@link GeometryElement#visProp} property won't be set if enhancedRendering is <tt>false</tt>
      * @type boolean
      * @default true 
      */
@@ -59,20 +60,23 @@ JXG.AbstractRenderer = function() {
 };
 
 
-/* ************************** 
- *    Point related stuff
- * **************************/
+/* ******************************** *
+ *    Point drawing and updating    *
+ * ******************************** */
 
 /**
- * Draws a point on the canvas.
- * @param el Reference to a point object, that has to be drawn.
+ * Draws a point on the {@link JXG.Board}.
+ * @param el Reference to a {@link Point} object, that has to be drawn.
+ * @see Point
  * @see JXG.Point
  * @see #updatePoint
+ * @see #changePointStyle
  */
-JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
+JXG.AbstractRenderer.prototype.drawPoint = function(/** Point */ el) {
     var node,
         f = el.visProp['face'];
-        
+
+    // determine how the point looks like
     if(f == 'cross' || f == 'x') { // x
         node = this.createPrim('path',el.id);
         this.appendChildPrim(node,el.layer);
@@ -98,7 +102,7 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
         this.appendChildPrim(node,el.layer);  
         this.appendNodesToElement(el, 'path');
     }
-    else if(f == 'triangleup' || f == 'a') {
+    else if(f == 'triangleup' || f == 'a' || f == '^') {
         node = this.createPrim('path',el.id);
         this.appendChildPrim(node,el.layer);  
         this.appendNodesToElement(el, 'path');    
@@ -118,23 +122,26 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** JXG.Point */ el) {
         this.appendChildPrim(node,el.layer);  
         this.appendNodesToElement(el, 'path');    
     }
-    //el.rendNode = node;
     
+    // adjust visual propertys
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
-    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);	
+    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
 
+    // By now we only created the xml nodes and set some styles, in updatePoint
+    // the attributes are filled with data.
     this.updatePoint(el);
 };
    
 /**
- * Updates visual appearance of the renderer element assigned to the given line.
- * @param el Reference to a point object, that has to be updated.
+ * Updates visual appearance of the renderer element assigned to the given {@link Point}.
+ * @param el Reference to a {@link Point} object, that has to be updated.
+ * @see Point
  * @see JXG.Point
  * @see #drawPoint
  * @see #changePointStyle
  */
-JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
+JXG.AbstractRenderer.prototype.updatePoint = function(/** Point */ el) {
     var size = el.visProp['size'],
     	f = el.visProp['face'];
     if (isNaN(el.coords.scrCoords[2]) || isNaN(el.coords.scrCoords[1])) return;
@@ -183,15 +190,17 @@ JXG.AbstractRenderer.prototype.updatePoint = function(/** JXG.Point */ el) {
 };
 
 /**
- * Changes the style of a point that already exists on the canvas. This is required because
+ * Changes the style of a {@link Point} that already exists on the canvas. This is required because
  * the point styles differ in what elements have to be drawn, e.g. if the point is marked by
- * a x or a + two lines are drawn, if it's marked by spot a circle is drawn. This method removes
+ * a "x" or a "+" two lines are drawn, if it's marked by spot a circle is drawn. This method removes
  * the old renderer element(s) and creates the new one(s).
- * @param el Reference to a point object, that has to be updated.
+ * @param el Reference to a {@link Point} object, that's style is changed.
+ * @see Point
  * @see JXG.Point
  * @see #updatePoint
+ * @see #drawPoint
  */
-JXG.AbstractRenderer.prototype.changePointStyle = function(/** JXG.Point */el) {
+JXG.AbstractRenderer.prototype.changePointStyle = function(/** Point */el) {
     var node = this.getElementById(el.id);
     if(node != null) {
         this.remove(node);
@@ -208,19 +217,20 @@ JXG.AbstractRenderer.prototype.changePointStyle = function(/** JXG.Point */el) {
 };
 
 
-/* ************************** 
- *    Line related stuff
- * **************************/
+/* ******************************** *
+ *           Lines                  *
+ * ******************************** */
 
 
 /**
- * Draws a line on the canvas.
+ * Draws a line on the {@link JXG.Board}.
  * @param {JXG.Line} el Reference to a line object, that has to be drawn.
+ * @see Line
  * @see JXG.Line
  * @see #updateLine
  * @see #calcStraight
  */
-JXG.AbstractRenderer.prototype.drawLine = function(el) { 
+JXG.AbstractRenderer.prototype.drawLine = function(/** Line */ el) { 
     var node = this.createPrim('line',el.id);
     this.appendChildPrim(node,el.layer);
     this.appendNodesToElement(el,'lines');
@@ -229,22 +239,21 @@ JXG.AbstractRenderer.prototype.drawLine = function(el) {
 };
 
 /**
- * Updates visual appearance of the renderer element assigned to the given line.
- * @param el Reference to the line object that has to be updated.
+ * Updates visual appearance of the renderer element assigned to the given {@link Line}.
+ * @param el Reference to the {@link Line} object that has to be updated.
+ * @see Line
  * @see JXG.Line
  * @see #drawLine
  * @see #calcStraight
  */
-JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
+JXG.AbstractRenderer.prototype.updateLine = function(/** Line */ el) {
     var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
         screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
         ax, ay, bx, by, beta, sgn, x, y, m;
         
-    //if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
-       this.calcStraight(el,screenCoords1,screenCoords2); 
-    //} 
+    this.calcStraight(el,screenCoords1,screenCoords2); 
     this.updateLinePrim(el.rendNode,screenCoords1.scrCoords[1],screenCoords1.scrCoords[2],
-            screenCoords2.scrCoords[1],screenCoords2.scrCoords[2],el.board);
+                        screenCoords2.scrCoords[1],screenCoords2.scrCoords[2],el.board);
 
     // Update the image which is connected to the line:
     if (el.image!=null) {
@@ -252,15 +261,7 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
         ay = screenCoords1.scrCoords[2];
         bx = screenCoords2.scrCoords[1];
         by = screenCoords2.scrCoords[2];
-        //beta;                                              // ???
-        /*
-        sgn = (bx-ax>=0)?1:-1;
-        if (Math.abs(bx-ax)>0.0000001) {
-            beta = Math.atan2(by-ay,bx-ax)+ ((sgn<0)?Math.PI:0);  
-        } else {
-            beta = ((by-ay>0)?0.5:-0.5)*Math.PI;
-        }
-        */
+
         beta = Math.atan2(by-ay,bx-ax);
         x = 250; //ax;
         y = 256; //ay;//+el.image.size[1]*0.5;
@@ -268,9 +269,11 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
                  [1,                                    0,             0],
                  [x*(1-Math.cos(beta))+y*Math.sin(beta),Math.cos(beta),-Math.sin(beta)],
                  [y*(1-Math.cos(beta))-x*Math.sin(beta),Math.sin(beta), Math.cos(beta)]
-                ];
+            ];
         el.imageTransformMatrix = m;
     }
+    
+    // if this line has arrows attached, update them, too.
     this.makeArrows(el);
     
     if (this.enhancedRendering) {
@@ -289,13 +292,14 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** JXG.Line */ el) {
  * Calculates drawing start and end point for a line. A segment is only drawn from start to end point, a straight line
  * is drawn until it meets the boards boundaries.
  * @param el Reference to a line object, that needs calculation of start and end point.
- * @param point1 Coordinates of the point where line drawing begins.
- * @param point2 Coordinates of the point where line drawing ends.
+ * @param point1 Coordinates of the point where line drawing begins. This value is calculated and set by this method.
+ * @param point2 Coordinates of the point where line drawing ends. This value is calculated and set by this method.
+ * @see Line
  * @see JXG.Line
  * @see #drawLine
  * @see #updateLine
  */
-JXG.AbstractRenderer.prototype.calcStraight = function(/** JXG.Line */ el, /** JXG.Coords */ point1, /** JXG.Coords */ point2) {
+JXG.AbstractRenderer.prototype.calcStraight = function(/** Line */ el, /** JXG.Coords */ point1, /** JXG.Coords */ point2) {
     var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast, 
         //b, 
         c, s, i, j, 
@@ -459,13 +463,12 @@ JXG.AbstractRenderer.prototype.calcStraight = function(/** JXG.Line */ el, /** J
 };
 
 /**
-* If you're looking from point "start" towards point "s" and can see the point "p", true is returned. Otherwise false.
-* @param start The point you're standing on.
-* @param p The point in which direction you're looking.
-* @param s The point that should be visible.
-* @return True, if from start the point p is in the same direction as s is, that means s-start = k*(p-start) with k>=0.
-* @private
-*/
+ * If you're looking from point "start" towards point "s" and can see the point "p", true is returned. Otherwise false.
+ * @param start The point you're standing on.
+ * @param p The point in which direction you're looking.
+ * @param s The point that should be visible.
+ * @return True, if from start the point p is in the same direction as s is, that means s-start = k*(p-start) with k>=0.
+ */
 JXG.AbstractRenderer.prototype.isSameDirection = function(/** JXG.Coords */ start, /** JXG.Coords */ p, /** JXG.Coords */ s) /** boolean */ {
     var dx, dy, sx, sy;
     
@@ -490,40 +493,50 @@ JXG.AbstractRenderer.prototype.isSameDirection = function(/** JXG.Coords */ star
 };
 
 /**
- * Update ticks on a line. This method is only a stub and is by now implemented only in the special renderers.
+ * Update {@link Ticks} on a {@link Line}. This method is only a stub and is implemented only in the special renderers.
  * @param axis Reference of an line object, thats ticks have to be updated.
  * @param dxMaj Number of pixels a major tick counts in x direction.
  * @param dyMaj Number of pixels a major tick counts in y direction.
  * @param dxMin Number of pixels a minor tick counts in x direction.
  * @param dyMin Number of pixels a minor tick counts in y direction.
+ * @see Line
+ * @see Ticks
  * @see JXG.Line
+ * @see JXG.Ticks
+ * @see #removeTicks
  */
-JXG.AbstractRenderer.prototype.updateTicks = function(/** JXG.Line */ axis, /** number */ dxMaj,
+JXG.AbstractRenderer.prototype.updateTicks = function(/** Line */ axis, /** number */ dxMaj,
                                                       /** number */ dyMaj, /** number */ dxMin, /** number */ dyMin)
 { };
 
 /**
- * Removes all ticks from an axis.
- * @param axis Reference of an line object, that's ticks have to be removed.
+ * Removes all ticks from an {@link Axis}.
+ * @param axis Reference of an {@link Line} object, that's ticks have to be removed.
  * @deprecated
+ * @see Line
+ * @see Ticks
  * @see JXG.Line
+ * @see JXG.Ticks
  * @see #upateTicks
  */
-JXG.AbstractRenderer.prototype.removeTicks = function(/** JXG.Line */ axis) {
+JXG.AbstractRenderer.prototype.removeTicks = function(/** Line */ axis) {
     var ticks = this.getElementById(axis.id+'_ticks');
+    
     this.remove(ticks);
 };
 
 
 /**
- * Creates a rendering node for an arrow on the board.
- * @param el Reference to an arrow object, that has to be drawn.
+ * Creates a rendering node for an {@link Arrow} on the {@link JXG.Board}.
+ * @param el Reference to a {@link Line} object, that has to be drawn.
  * @see Arrow
+ * @see Line
  * @see JXG.Line
  * @see #updateArrow
  */
-JXG.AbstractRenderer.prototype.drawArrow = function(/** JXG.Line */ el) {
+JXG.AbstractRenderer.prototype.drawArrow = function(/** Line */ el) {
     var node = this.createPrim('line',el.id);
+    
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']); // ?
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']); // ?
     this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']); // ?
@@ -536,13 +549,14 @@ JXG.AbstractRenderer.prototype.drawArrow = function(/** JXG.Line */ el) {
 };
 
 /**
- * Updates properties of an arrow that already exists on the canvas.
- * @param el Reference to an arrow object, that has to be updated.
+ * Updates properties of an {@link Arrow} that already exists on the {@link JXG.Board}.
+ * @param el Reference to an {@link Line} object, that has to be updated.
  * @see Arrow
+ * @see Line
  * @see JXG.Line
  * @see #drawArrow
  */
-JXG.AbstractRenderer.prototype.updateArrow = function(/** JXG.Line */ el) {
+JXG.AbstractRenderer.prototype.updateArrow = function(/** Line */ el) {
     if (this.enhancedRendering) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
@@ -560,16 +574,17 @@ JXG.AbstractRenderer.prototype.updateArrow = function(/** JXG.Line */ el) {
 
 
 /* ************************** 
- *    Curve related stuff
+ *    Curves
  * **************************/
 
 /**
- * Draws a graph on the canvas.
- * @param {JXG.Curve} el Reference to a graph object, that has to be plotted.
+ * Draws a {@link Curve} on the {@link JXG.Board}.
+ * @param el Reference to a graph object, that has to be plotted.
+ * @see Curve
  * @see JXG.Curve
  * @see #updateCurve
  */
-JXG.AbstractRenderer.prototype.drawCurve = function(el) { 
+JXG.AbstractRenderer.prototype.drawCurve = function(/** Curve */ el) { 
     var node = this.createPrim('path',el.id);
     
     //node.setAttributeNS(null, 'stroke-linejoin', 'round');
@@ -584,12 +599,13 @@ JXG.AbstractRenderer.prototype.drawCurve = function(el) {
 };
 
 /**
- * Updates visual appearance of the renderer element assigned to the given curve.
- * @param el Reference to a curve object, that has to be updated.
+ * Updates visual appearance of the renderer element assigned to the given {@link Curve}.
+ * @param el Reference to a {@link Curve} object, that has to be updated.
+ * @see Curve
  * @see JXG.Curve
  * @see #drawCurve
  */
-JXG.AbstractRenderer.prototype.updateCurve = function(/** JXG.Curve */ el) {
+JXG.AbstractRenderer.prototype.updateCurve = function(/** Curve */ el) {
     if (this.enhancedRendering) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
@@ -611,12 +627,13 @@ JXG.AbstractRenderer.prototype.updateCurve = function(/** JXG.Curve */ el) {
  * **************************/
 
 /**
- * Draws a circle on the canvas.
- * @param el Reference to a circle object, that has to be drawn.
+ * Draws a {@link Circle} on the {@link JXG.Board}.
+ * @param el Reference to a {@link Circle} object, that has to be drawn.
+ * @see Circle
  * @see JXG.Circle
  * @see #updateCircle
  */
-JXG.AbstractRenderer.prototype.drawCircle = function(/** JXG.Circle */ el) { 
+JXG.AbstractRenderer.prototype.drawCircle = function(/** Circle */ el) { 
     var node = this.createPrim('ellipse',el.id);
     this.appendChildPrim(node,el.layer);
     this.appendNodesToElement(el,'ellipse'); 
@@ -625,12 +642,13 @@ JXG.AbstractRenderer.prototype.drawCircle = function(/** JXG.Circle */ el) {
 };
 
 /**
- * Updates visual appearance of a given circle on the board.
- * @param {JXG.Circle} el Reference to a circle object, that has to be updated.
+ * Updates visual appearance of a given {@link Circle} on the {@link JXG.Board}.
+ * @param el Reference to a {@link Circle} object, that has to be updated.
+ * @see Circle
  * @see JXG.Circle
  * @see #drawCircle
  */
-JXG.AbstractRenderer.prototype.updateCircle = function(el) {
+JXG.AbstractRenderer.prototype.updateCircle = function(/** Circle */ el) {
     if (this.enhancedRendering) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
@@ -656,12 +674,13 @@ JXG.AbstractRenderer.prototype.updateCircle = function(el) {
  * **************************/
 
 /**
- * Draws a polygon on the canvas.
+ * Draws a {@link Polygon} on the {@link JXG.Board}.
  * @param el Reference to a Polygon object, that is to be drawn.
+ * @see Polygon
  * @see JXG.Polygon
  * @see #updatePolygon
  */
-JXG.AbstractRenderer.prototype.drawPolygon = function(/** JXG.Polygon */ el) { 
+JXG.AbstractRenderer.prototype.drawPolygon = function(/** Polygon */ el) { 
     var node = this.createPrim('polygon',el.id);
     el.visProp['fillOpacity'] = 0.3;
     //el.visProp['strokeColor'] = 'none';
@@ -672,12 +691,13 @@ JXG.AbstractRenderer.prototype.drawPolygon = function(/** JXG.Polygon */ el) {
 };
     
 /**
- * Updates properties of a polygon's rendering node.
- * @param {} el Reference to a polygon object, that has to be updated.
+ * Updates properties of a {@link Polygon}'s rendering node.
+ * @param el Reference to a {@link Polygon} object, that has to be updated.
+ * @see Polygon
  * @see JXG.Polygon
  * @see #drawPolygon
  */
-JXG.AbstractRenderer.prototype.updatePolygon = function(/** JXG.Polygon */ el) { 
+JXG.AbstractRenderer.prototype.updatePolygon = function(/** Polygon */ el) { 
     if (this.enhancedRendering) {
         if (!el.visProp['draft']) {
             this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
@@ -691,40 +711,21 @@ JXG.AbstractRenderer.prototype.updatePolygon = function(/** JXG.Polygon */ el) {
     this.updatePolygonePrim(el.rendNode,el);
 };
 
-
-/* ************************** 
- *    Arc related stuff
- * **************************/
-
-/**
- * Draws an arc on the canvas; This method is a stub and has to be implemented by the special renderers.
- * @param arc Reference to an arc object, that has to be drawn.
- * @see JXG.Arc
- * @see #updateArc
- */
-//JXG.AbstractRenderer.prototype.drawArc = function(/** JXG.Arc */ arc) { };
-
-/**
- * Updates properties of an arc; This method is a stub and has to be implemented by the special renderers.
- * @param arc Reference to an arc object, that has to be updated.
- * @see JXG.Arc
- * @see #drawArc
- */
-//JXG.AbstractRenderer.prototype.updateArc = function(/** JXG.Arc */ el) { };
-
-
 /* ************************** 
  *    Text related stuff
  * **************************/
 
 /**
- * Puts a text node onto the board.
- * @param text Reference to an text object, that has to be drawn
+ * Displays a {@link Text} on the {@link JXG.Board} by putting a HTML div over it.
+ * @param el Reference to an {@link Text} object, that has to be displayed
+ * @see Text
  * @see JXG.Text
+ * @see #drawInternalText
  * @see #updateText
+ * @see #updateInternalText
  * @see #updateTextStyle
  */
-JXG.AbstractRenderer.prototype.drawText = function(/** JXG.Text */ el) { 
+JXG.AbstractRenderer.prototype.drawText = function(/** Text */ el) { 
     var node;
     if (el.display=='html') {
         node = this.container.ownerDocument.createElement('div');
@@ -743,14 +744,29 @@ JXG.AbstractRenderer.prototype.drawText = function(/** JXG.Text */ el) {
     this.updateText(el);
 };
 
-JXG.AbstractRenderer.prototype.drawInternalText = function(el) {};
+/**
+ * An internal text is a {@link Text} element which is drawn using only
+ * the given renderer but no HTML. This method is only a stub, the drawing
+ * is done in the special renderers.
+ * @param el Reference to a {@link Text} object
+ * @see Text
+ * @see JXG.Text
+ * @see #updateInternalText
+ * @see #drawText
+ * @see #updateText
+ * @see #updateTextStyle
+ */
+JXG.AbstractRenderer.prototype.drawInternalText = function(/** Text */ el) {};
 
 
 /**
- * Updates GeometryElement properties of an already existing text element.
- * @param el Reference to an text object, that has to be updated.
+ * Updates visual properties of an already existing {@link Text} element.
+ * @param el Reference to an {@link Text} object, that has to be updated.
+ * @see Text
  * @see JXG.Text
  * @see #drawText
+ * @see #drawInternalText
+ * @see #updateInternalText
  * @see #updateTextStyle
  */
 JXG.AbstractRenderer.prototype.updateText = function(/** JXG.Text */ el) { 
@@ -774,16 +790,29 @@ JXG.AbstractRenderer.prototype.updateText = function(/** JXG.Text */ el) {
     }
 };
 
-JXG.AbstractRenderer.prototype.updateInternalText = function(el) {};
-
 /**
- * Updates CSS style properties of a text node.
- * @param el Reference to the text object, that has to be updated.
+ * Updates visual properties of an already existing {@link Text} element.
+ * @param el Reference to an {@link Text} object, that has to be updated.
+ * @see Text
  * @see JXG.Text
+ * @see #drawInternalText
  * @see #drawText
  * @see #updateText
+ * @see #updateTextStyle
  */
-JXG.AbstractRenderer.prototype.updateTextStyle = function(/** JXG.Text */ el) { 
+JXG.AbstractRenderer.prototype.updateInternalText = function(/** Text */el) {};
+
+/**
+ * Updates CSS style properties of a {@link Text} node.
+ * @param el Reference to the {@link Text} object, that has to be updated.
+ * @see Text
+ * @see JXG.Text
+ * @see #drawText
+ * @see #drawInternalText
+ * @see #updateText
+ * @see #updateInternalText
+ */
+JXG.AbstractRenderer.prototype.updateTextStyle = function(/** Text */ el) { 
     var fs;
     if (el.visProp['fontSize']) {
         if (typeof el.visProp['fontSize'] == 'function') {
@@ -795,9 +824,41 @@ JXG.AbstractRenderer.prototype.updateTextStyle = function(/** JXG.Text */ el) {
     }
 };
 
+/* ************************** 
+ *    Image related stuff
+ * **************************/
+
+/**
+ * Draws an {@link Image} on the {@link JXG.Board}; This is just a template, has to be implemented by special renderers.
+ * @param el Reference to an image object, that has to be drawn.
+ * @see Image
+ * @see JXG.Image
+ * @see #updateImage
+ */
+JXG.AbstractRenderer.prototype.drawImage = function(/** Image */ el) { };
+
+/**
+ * Updates the properties of an {@link Image} element.
+ * @param el Reference to an {{@link image} object, that has to be updated.
+ * @see JXG.Image
+ * @see #drawImage
+ */
+JXG.AbstractRenderer.prototype.updateImage = function(/** Image */ el) { 
+    this.updateRectPrim(el.rendNode,el.coords.scrCoords[1],el.coords.scrCoords[2]-el.size[1],
+        el.size[0],el.size[1]);
+        
+    if (el.parent != null) {
+        this.transformImageParent(el,el.parent.imageTransformMatrix);
+    } else {
+        this.transformImageParent(el); // Transforms are cleared
+    }
+    this.transformImage(el,el.transformations);    
+};
+
+
 
 /* ************************** 
- *    Angle related stuff
+ *    Angle related stuff - DEPRECATED
  * **************************/
 
 /**
@@ -818,34 +879,25 @@ JXG.AbstractRenderer.prototype.updateTextStyle = function(/** JXG.Text */ el) {
 
 
 /* ************************** 
- *    Image related stuff
+ *    Arc related stuff - DEPRECATED
  * **************************/
 
 /**
- * Draws an image on the canvas; This is just a template, has to be implemented by special renderers.
- * @param image Reference to an image object, that has to be drawn.
- * @see JXG.Image
- * @see #updateImage
+ * Draws an arc on the canvas; This method is a stub and has to be implemented by the special renderers.
+ * @param arc Reference to an arc object, that has to be drawn.
+ * @see JXG.Arc
+ * @see #updateArc
  */
-JXG.AbstractRenderer.prototype.drawImage = function(/** JXG.Image */ image) { };
+//JXG.AbstractRenderer.prototype.drawArc = function(/** JXG.Arc */ arc) { };
 
 /**
- * Updates the properties of an Image element.
- * @param el Reference to an image object, that has to be updated.
- * @see JXG.Image
- * @see #drawImage
+ * Updates properties of an arc; This method is a stub and has to be implemented by the special renderers.
+ * @param arc Reference to an arc object, that has to be updated.
+ * @see JXG.Arc
+ * @see #drawArc
  */
-JXG.AbstractRenderer.prototype.updateImage = function(/** JXG.Image */ el) { 
-    this.updateRectPrim(el.rendNode,el.coords.scrCoords[1],el.coords.scrCoords[2]-el.size[1],
-        el.size[0],el.size[1]);
-        
-    if (el.parent != null) {
-        this.transformImageParent(el,el.parent.imageTransformMatrix);
-    } else {
-        this.transformImageParent(el); // Transforms are cleared
-    }
-    this.transformImage(el,el.transformations);    
-};
+//JXG.AbstractRenderer.prototype.updateArc = function(/** JXG.Arc */ el) { };
+
 
 
 /* ************************** 
@@ -967,7 +1019,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
 };
 
 /**
- * Remove the grid from the given board; This is a template that has to be implemented by the renderer itself.
+ * Remove the grid from the given board.
  * @param board Board from which the grid is removed.
  * @see #drawGrid
  */
@@ -979,13 +1031,6 @@ JXG.AbstractRenderer.prototype.removeGrid = function(/** JXG.Board */ board) {
     this.remove(c);
 
     board.hasGrid = false;
-/*
-    var c = this.layer[board.options.layer['grid']];
-    board.hasGrid = false;
-    while (c.childNodes.length>0) {
-        c.removeChild(c.firstChild);
-    }
- */
 };
  
 
@@ -1033,7 +1078,7 @@ JXG.AbstractRenderer.prototype.setObjectFillColor = function(/** JXG.GeometryEle
 
 /**
  * Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards compatibility. 
- * @param obj Reference of the object that shall be in draft mode.
+ * @param obj Reference of the object that is in draft mode.
  */
 JXG.AbstractRenderer.prototype.setDraft = function (/** JXG.GeometryElement */ obj) {
     if (!obj.visProp['draft']) {
@@ -1059,7 +1104,7 @@ JXG.AbstractRenderer.prototype.setDraft = function (/** JXG.GeometryElement */ o
 
 /**
  * Puts an object from draft mode back into normal mode.
- * @param obj Reference of the object that shall no longer be in draft mode.
+ * @param obj Reference of the object that no longer is in draft mode.
  */
 JXG.AbstractRenderer.prototype.removeDraft = function (/** JXG.GeometryElement */ obj) {
     if(obj.type == JXG.OBJECT_TYPE_POLYGON) {
@@ -1075,8 +1120,7 @@ JXG.AbstractRenderer.prototype.removeDraft = function (/** JXG.GeometryElement *
 };
 
 /**
- * Highlights an object,
- * i.e. uses the respective highlighting properties of an object.
+ * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
  * @param obj Reference of the object that will be highlighted.
  */
 JXG.AbstractRenderer.prototype.highlight = function(/** JXG.GeometryElement */ obj) {
@@ -1103,8 +1147,7 @@ JXG.AbstractRenderer.prototype.highlight = function(/** JXG.GeometryElement */ o
 };
 
 /**
- * Uses the "normal" colors of an object,
- * i.e. the contrasting function to {@link #highlight}.
+ * Uses the "normal" colors of an object, i.e. the opposite of {@link #highlight}.
  * @param obj Reference of the object that will get its normal colors.
  */
 JXG.AbstractRenderer.prototype.noHighlight = function(/** JXG.GeometryElement */ obj) {
@@ -1224,7 +1267,7 @@ JXG.AbstractRenderer.prototype.drawZoomBar = function(board) {
 /**
  * Wrapper for getElementById for maybe other renderers which elements are not directly accessible by DOM methods like document.getElementById().
  * @param id Unique identifier for element.
- * @return Reference to an JavaScript object. In case of SVG/VMLRenderer it's a reference to an SVG/VML node.
+ * @return Reference to a JavaScript object. In case of SVG/VMLRenderer it's a reference to a SVG/VML node.
  */
 JXG.AbstractRenderer.prototype.getElementById = function(/** string */ id) /** object */ {
     return document.getElementById(this.container.id+'_'+id);
@@ -1233,9 +1276,12 @@ JXG.AbstractRenderer.prototype.getElementById = function(/** string */ id) /** o
 /**
  * findSplit() is a subroutine for {@link #RamenDouglasPeuker}.
  * It searches for the point between index i and j which 
- * has the largest distance from the line petween poin_i and point_j.
+ * has the largest distance from the line petween the points i and j.
+ * @param pts Array of {@link Point}s
+ * @param i Index of a point in pts
+ * @param j Index of a point in pts
  **/
-JXG.AbstractRenderer.prototype.findSplit = function(pts, i, j) {
+JXG.AbstractRenderer.prototype.findSplit = function(/** array */ pts, /** number */ i, /** number */ j) {
     var dist = 0, 
         f = i, 
         d, k, ci, cj, ck,
@@ -1285,8 +1331,13 @@ JXG.AbstractRenderer.prototype.findSplit = function(pts, i, j) {
  * included in our new point set otherwise it is discarded.
  * If it is taken, we recursively apply the subroutine to the point set before
  * and after the chosen point.
+ * @param pts Array of {@link Point}s
+ * @param i Index of an element of pts
+ * @param j Index of an element of pts
+ * @param eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+ * @param newPts Array of {@link Point}s
  */
-JXG.AbstractRenderer.prototype.RDP = function(pts,i,j,eps,newPts) {
+JXG.AbstractRenderer.prototype.RDP = function(/** array */ pts, /** number */ i, /** number */ j, /** number */ eps, /** array */ newPts) {
     var result = this.findSplit(pts,i,j);
     if (result[0]>eps) {
         this.RDP(pts, i,result[1], eps,newPts);
@@ -1297,14 +1348,16 @@ JXG.AbstractRenderer.prototype.RDP = function(pts,i,j,eps,newPts) {
 };
 
 /**
-  * Ramen-Douglas-Peuker algorithm.
-  * It discards points which are not necessary from the polygonal line defined by the point array
-  * pts. The computation is done in screen coordinates.
-  * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
-  */
-JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(pts,eps) {
+ * Ramen-Douglas-Peuker algorithm.
+ * It discards points which are not necessary from the polygonal line defined by the point array
+ * pts. The computation is done in screen coordinates.
+ * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
+ * @param pts Array of {@link Point}s
+ * @param eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+ * @return An array containing points which represent an apparently identical curve as the points of pts do, but contains fewer points.
+ */
+JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(/** array */ pts, /** number */ eps) /** array */ {
     var newPts = [], i, k, len;
-    //return pts;
 
     len = pts.length;
     
@@ -1321,22 +1374,27 @@ JXG.AbstractRenderer.prototype.RamenDouglasPeuker = function(pts,eps) {
     newPts[0] = pts[i];
     this.RDP(pts,i,k,eps,newPts);
     //this.RDP(pts,0,pts.length-1,eps,newPts);
-    //$('debug').innerHTML = newPts.length;
     return newPts;
 };
 
 /**
- * Sets the shadow properties to a geometry element.
- * @param {JXG.GeometyElement} element Reference to a geometry object, that should get a shadow
+ * Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual renderers.
+ * @param element Reference to a geometry object, that should get a shadow
  */
-JXG.AbstractRenderer.prototype.setShadow = function(element) {
-};
+JXG.AbstractRenderer.prototype.setShadow = function(/** JXG.GeometryElement */ element) { };
 
 
-JXG.AbstractRenderer.prototype.updatePathStringPoint = function(el, size, type) {
-};
+/**
+ * @TODO Description of parameters
+ * Updates a path element.
+ */
+JXG.AbstractRenderer.prototype.updatePathStringPoint = function(el, size, type) { };
 
-JXG.AbstractRenderer.prototype.eval = function(val) {
+/**
+ * If <tt>val</tt> is a function, it will be evaluated without giving any parameters, else the input value is just returned.
+ * @param val Could be anything.
+ */
+JXG.AbstractRenderer.prototype.eval = function(/** mixed */ val) {
     if (typeof val=='function') {
         return val();
     } else {
