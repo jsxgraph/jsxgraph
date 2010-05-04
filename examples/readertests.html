@@ -1,0 +1,57 @@
+<html>
+<head>
+    <title>JSXGraph example</title>
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../src/GeonextReader.js"></script>
+    <script type="text/javascript" src="../src/GeogebraReader.js"></script>
+    <script type="text/javascript" src="../src/CinderellaReader.js"></script>
+    <script type="text/javascript" src="../src/IntergeoReader.js"></script>
+    <script type="text/javascript">
+    /* <![CDATA[ */
+        var board = null;
+        loadFile = function(filename) {
+            var file, type;
+
+            if(board != null)
+                JXG.JSXGraph.freeBoard(board);
+
+            file = filename;
+            filename = filename.split('.');
+            filename = filename[filename.length-1];
+
+            if(filename=='gxt')
+              type = 'geonext'
+            else if(filename=='ggb')
+              type = 'geogebra'
+            else if(filename=='cdy')
+              type = 'cdy'
+            else if(filename=='i2g')
+              type = 'intergeo';
+
+            board = JXG.JSXGraph.loadBoardFromFile('jxgbox', file, type);
+        }
+    /* ]]> */
+    </script>
+</head>
+<body>
+<h2>Short Construction</h2>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+
+<form>
+    <select id="filelist">
+        <option value='files/points.gxt'>Points</option>
+        <option value="files/lines.i2g">Lines</option>
+        <option value="files/circles.ggb">Circles</option>
+        <option value="files/intersections.cdy">Intersections</option>
+    </select>
+ <input type='button' value='Datei laden' onclick="loadFile(document.getElementById('filelist').value);" />
+</form>
+</body>
+</html>
+
