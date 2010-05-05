@@ -17,7 +17,7 @@
         // Konstruktion
 var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-3, 12, 12, -2], keepaspectratio:true, shownavigation:false, 
                                            showcopyright:false,axis:true}); 
-//brd.suspendUpdate();
+brd.suspendUpdate();
 var a = brd.create('point', [3,3], {name:'A'}); 
 var b = brd.create('point', [6,2], {name:'B'}); 
 var c = brd.create('point', [1,8], {name:'C', strokeColor:'black', fillColor:'green', highlightFillColor:'black', size:8}); 
@@ -28,7 +28,7 @@ var cr = brd.create('circle', [d, e], {name:'k_1'});
 var i1 = brd.create('intersection', [cr, l, 0], {face:'square'}); 
 var i2 = brd.create('intersection', [cr, l, 1], {face:'[]', size:7}); 
 //[i1.label.content, i2.label.content].each(brd.renderer.hide);
-//brd.unsuspendUpdate();
+brd.unsuspendUpdate();
   </script>
 </body>
 </html>
