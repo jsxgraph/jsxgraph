@@ -55,6 +55,12 @@ def findFilenames(filename):
 if __name__ == '__main__':
     jstxt = ''
 
+    # Search for the version
+    # and print it before the license text.
+    expr = re.compile("JSXGraph v(.*) Copyright")
+    r = expr.search(open("../src/jsxgraph.js").read())
+    license = ("/* Version %s */\n" % r.group(1)) + license
+
     # Take the source files and write them into jstxt
     loader = ['loadjsxgraphInOneFile']
     for f in loader:
