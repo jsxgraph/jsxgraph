@@ -1,7 +1,7 @@
 /*
 */
 .jxgbox {
-    position:relative; /* for IE 7*/
+    position:relative; /* for IE 7 */
     overflow:hidden;
     background-color:#ffffff;
     border-style:solid;
@@ -18,7 +18,6 @@
 .JXGtext {
     background-color:transparent;
     font-family: Arial, Helvetica, Geneva;
-    font-size:11px;
     padding:0px;
     margin:0px;
     /*border-style:dotted;*/

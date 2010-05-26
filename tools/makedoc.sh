@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOT=~/Downloads/jsdoc_toolkit-2.3.2/jsdoc-toolkit
+ROOT=~/public_html/jsxgraph/jsdoc_toolkit-2.3.2/jsdoc-toolkit
 #
 # Update our own jsdoc template
 #
@@ -21,4 +21,5 @@ FILELIST=$(cat ../src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk
 java -jar $ROOT/jsrun.jar $ROOT/app/run.js -a -v -t=$ROOT/templates/jsdoc -d=docs ../src/loadjsxgraph.js ../src/$FILELIST.js ../src/SVGRenderer.js ../src/VMLRenderer.js
 #java -jar $ROOT/jsrun.jar $ROOT/app/run.js -a -v -t=$ROOT/templates/jsdoc -d=docs ../src/*.js 
 zip -r docs.zip docs/
+
 
