@@ -91,7 +91,7 @@ function jsxgraphSetup() {
 }
  
 $markerList = array();
-function jsxgraphOutput($input, $args, &$parser) {
+function jsxgraphOutput($input, $args, $parser) {
   global $wgServer; // URL of the WIKI's server
   global $jsxgraph_version; // see line 9 of this file
   global $markerList;
@@ -159,7 +159,7 @@ function jsxgraphOutput($input, $args, &$parser) {
   return $marker;
 }
 
-function jsxgraphParserAfterTidy(&$parser, &$text) {
+function jsxgraphParserAfterTidy($parser, $text) {
     // find markers in $text
     // replace markers with actual output
     global $markerList;
