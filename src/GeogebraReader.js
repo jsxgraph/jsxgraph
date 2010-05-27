@@ -2495,7 +2495,7 @@ this.writeElement = function(board, output, input, cmd) {
 
      //try {
        if(element.getElementsByTagName('isLaTeX')[0] && element.getElementsByTagName('isLaTeX')[0].getAttribute('val') == 'true') {
-         JXG.Options.text.useASCIIMathML = true;
+         JXG.GeogebraReader.board.options.text.useASCIIMathML = true;
          t = JXG.GeogebraReader.getElement(attr.name, true).getAttribute('exp');
 
          // here we're searching for patterns like
