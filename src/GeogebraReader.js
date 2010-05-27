@@ -1756,7 +1756,7 @@ this.writeElement = function(board, output, input, cmd) {
       try {
         JXG.debug("* <b>Distance:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
 
-      if(output[0].getAtribute('type') && output[0].getAttribute('type') == 'numeric') {
+      if(false && output[0].getAtribute('type') && output[0].getAttribute('type') == 'numeric') {
         input[1].Value = function(){ return this.X(); }
         p = input[1];
         board.elementsByName[attr.name] = p;
@@ -1773,7 +1773,7 @@ this.writeElement = function(board, output, input, cmd) {
 }
         return p;
       } catch(e) {
-        JXG.debug("* <b>Err:</b> Intersection " + attr.name +"<br>\n");
+        JXG.debug("* <b>Err:</b> Distance " + attr.name +"<br>\n");
         return false;
       }
     break;
@@ -2493,7 +2493,7 @@ this.writeElement = function(board, output, input, cmd) {
      attr = JXG.GeogebraReader.visualProperties(element, attr);
      var rx, res = '';
 
-     try {
+     //try {
        if(element.getElementsByTagName('isLaTeX')[0] && element.getElementsByTagName('isLaTeX')[0].getAttribute('val') == 'true') {
          JXG.Options.text.useASCIIMathML = true;
          t = JXG.GeogebraReader.getElement(attr.name, true).getAttribute('exp');
@@ -2502,7 +2502,12 @@ this.writeElement = function(board, output, input, cmd) {
          //    " + ... + "
          // ... will be sent to the ggbParser and a calculated text element is built from this.
          while(rx = t.match(/(.*?)" \+ (.+) \+ "(.*)/)) {
-             res = res + RegExp.$1 + '" + JXG.trimNumber((' + JXG.GeogebraReader.ggbParse(RegExp.$2) + ').toFixed(JXG.GeogebraReader.decimals)) + "';
+            var re2 = JXG.GeogebraReader.ggbParse(RegExp.$2);
+             if (typeof re2 == 'string') {
+               res = res + RegExp.$1 + re2;
+             } else {
+               res = res + RegExp.$1 + '" + JXG.trimNumber((' + re2 + ').toFixed(JXG.GeogebraReader.decimals)) + "';
+             }
              t = RegExp.$3;
          }
          // we have to look, if the string's ending with a string-part or a formula part:
@@ -2511,7 +2516,7 @@ this.writeElement = function(board, output, input, cmd) {
          } else
              res = res + t;
 
-         JXG.debug(res);
+         JXG.debug("Text: "+res);
 
          p = board.create('text', [gxtEl.x, gxtEl.y, new Function('return ' + res + ';')], attr);
        } else {
@@ -2522,10 +2527,10 @@ this.writeElement = function(board, output, input, cmd) {
        }
        JXG.debug("* <b>Text:</b> " + t  +"<br>\n");
        return p;
-     } catch(e) {
-       JXG.debug("* <b>Err:</b> Text: " + t +"<br>\n");
-       return false;
-     }
+     //} catch(e) {
+     //  JXG.debug("* <b>Err:</b> Text: " + t +"<br>\n");
+     //  return false;
+     //}
     break;
     case 'root':
         JXG.debug(input);
