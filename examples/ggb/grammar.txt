@@ -12,6 +12,7 @@
     '[a-zA-Z]+(\_*[a-zA-Z0-9]+)*'   VAR
     '\&[a-zA-Z]+\;'                 HTML
     '\"[a-zA-Z0-9äüöß\=\.\ ]*\"'    STRING
+    '[a-zA-Z]+\[[a-zA-Z]+\]'        COMMAND
     ;
 
 /~ Left-associative tokens, from lowest to highest precedence ~/
@@ -67,6 +68,7 @@ e:        '(' e ',' e ')'          [* %% = JXG.GeogebraReader.ggbAct('coord', %2
         | PARAM                    [* %% = JXG.GeogebraReader.ggbAct('param', %1); *]
         | HTML                     [* %% = JXG.GeogebraReader.ggbAct('html', %1); *]
         | STRING                   [* %% = JXG.GeogebraReader.ggbAct('string', %1); *]
+        | COMMAND                  [* %% = JXG.GeogebraReader.ggbAct('command', %1); *]
         | VAR '(' e ')'            [* %% = JXG.GeogebraReader.ggbAct('var', %1, %3); *]
         | VAR                      [* %% = JXG.GeogebraReader.ggbAct('var', %1); *]
         ;
