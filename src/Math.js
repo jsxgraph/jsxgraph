@@ -376,14 +376,6 @@ JXG.Math.binomial = JXG.memoizer(function(n,k) {
     //return arguments.callee(n-1,k-1)+arguments.callee(n-1,k);
 });
 
-/*
-    // Just for test purposes;
-    
-JXG.Math.Numerics.prototype.fibonacci = JXG.memoizer(function (n) {
-        if(n < 2) return 1; else return arguments.callee(n-2) + arguments.callee(n-1);  
-    });
-*/    
-
 /**
 * Round a decimal number to n decimal places
 * @deprecated Use (number).toFixed(n) instead.
@@ -428,3 +420,66 @@ JXG.Math.sinh = function(/** number */ x) /** number */ {
     return (Math.exp(x)-Math.exp(-x))*0.5;
 };
 
+/**
+ * Compute power a^b
+ * @param a Base.
+ * @param b Exponent.
+ * @return a to the power of b.
+ */
+JXG.Math.pow = function(/** number */ a, /** number */ b) /** number */ {
+    if (a==0) {
+        if (b==0) { 
+            return 1;
+        } else { 
+            return 0.0;
+        }
+    }
+    if (Math.floor(b)==b) {// b is integer
+        return Math.pow(a,b);
+    } else { // b is not integer
+        if (a>0) {
+            return Math.exp(b*Math.log(Math.abs(a)));
+        } else {
+            return NaN;
+        }
+    }
+};
+
+/**
+  * @private
+  *
+  * Normalize the stdform [c,b0,b1,a,k,r,q0,q1].
+  * @param {Array} stdform to be normalized.
+  * @type {Array}
+  * @return The normalized stdform.
+  */
+JXG.Math.normalize = function(stdform) {
+    var a2 = 2*stdform[3],
+        r = stdform[4]/(a2),  // k/(2a)
+        n, signr; 
+    stdform[5] = r;
+    stdform[6] = -stdform[1]/a2;
+    stdform[7] = -stdform[2]/a2;
+    if (r==Infinity || isNaN(r)) {
+        n = Math.sqrt(stdform[1]*stdform[1]+stdform[2]*stdform[2]);
+        stdform[0] /= n;
+        stdform[1] /= n;
+        stdform[2] /= n;
+        stdform[3] = 0;
+        stdform[4] = 1;
+    } else if (Math.abs(r)>=1) {
+        stdform[0] = (stdform[6]*stdform[6]+stdform[7]*stdform[7]-r*r)/(2*r);
+        stdform[1] = -stdform[6]/r;
+        stdform[2] = -stdform[7]/r;
+        stdform[3] = 1/(2*r);
+        stdform[4] = 1;
+    } else {
+        signr = (r<=0)?(-1):(1/*(r==0)?0:1*/);
+        stdform[0] = signr*(stdform[6]*stdform[6]+stdform[7]*stdform[7]-r*r)*0.5;
+        stdform[1] = -signr*stdform[6];
+        stdform[2] = -signr*stdform[7];
+        stdform[3] = signr/2;
+        stdform[4] = signr*r;
+    }
+    return stdform;
+};

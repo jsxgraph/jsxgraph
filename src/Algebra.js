@@ -24,14 +24,14 @@
 */
 
 /** 
- * @fileoverview This file contains the class Algebra, a class for calculating algebraic/geometric
- * stuff like intersection points, angles, midpoint, and so on.
+ * @fileoverview This file contains the class Algebra, a wrapper for all kind of calculations. It's only here for
+ * backward compatibility reasons.
  */
  
 /**
  * Creates a new instance of Algebra.
- * @class A class for algebraic computations like determining intersection points, angles, midpoints, ...
- * @param board The board the algebra object is associated with.
+ * @class This class is just for backward compatibility and may be removed in future versions of JSXGraph. Hence,
+ * please DO NOT USE ANY OF THESE METHODS but the given alternative.
  * @constructor
  */
 JXG.Algebra = function (/** JXG.Board */ board) {
@@ -51,494 +51,80 @@ JXG.Algebra = function (/** JXG.Board */ board) {
 };
 
 /**
- * Calculates the angle defined by the points A, B, C.
- * @param {JXG.Point,array} A A point  or [x,y] array.
- * @param {JXG.Point,array} B Another point or [x,y] array.
- * @param {JXG.Point,array} C A circle - no, of course the third point or [x,y] array.
- * @type number
- * @return The angle in radian measure.
- * @deprecated Use {@link JXG.Algebra#rad} instead.
- * @see #rad
- * @see #trueAngle
+ * @deprecated Use {@link JXG.Math.Geometry#rad} instead.
  */
 JXG.Algebra.prototype.angle = function(A, B, C) {   
-    var a = [],
-        b = [],
-        c = [],
-        u, v, s, t;
-        
-    if (A.coords == null) {
-        a[0] = A[0];
-        a[1] = A[1];
-    } else {
-        a[0] = A.coords.usrCoords[1];
-        a[1] = A.coords.usrCoords[2];
-    }
-    if (B.coords == null) {
-        b[0] = B[0];
-        b[1] = B[1];
-    } else {
-        b[0] = B.coords.usrCoords[1];
-        b[1] = B.coords.usrCoords[2];
-    }
-    if (C.coords == null) {
-        c[0] = C[0];
-        c[1] = C[1];
-    } else {
-        c[0] = C.coords.usrCoords[1];
-        c[1] = C.coords.usrCoords[2];
-    }
-    u = a[0] - b[0];
-    v = a[1] - b[1];
-    s = c[0] - b[0];
-    t = c[1] - b[1];
-    return Math.atan2(u*t-v*s,u*s+v*t);    
+    return JXG.Math.Geometry.angle(A, B, C);
 };
 
 /**
- * Calculates the angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
- * @param A Point or [x,y] array
- * @param B Point or [x,y] array
- * @param C Point or [x,y] array
- * @return The angle in degrees.
- * @see #rad
+ * @deprecated Use {@link JXG.Math.Geometry#trueAngle} instead.
  */
-JXG.Algebra.prototype.trueAngle = function(/** JXG.Point */ A, /** JXG.Point */ B, /** JXG.Point */ C) /** number */ {
-    return this.rad(A,B,C)*57.295779513082323; // *180.0/Math.PI;
+JXG.Algebra.prototype.trueAngle = function(A, B, C) {
+    return this.rad(A,B,C)*57.295779513082323;
 };
 
 /**
- * Calculates the internal angle defined by the three points A, B, C if you're going from A to C around B counterclockwise.
- * @param {JXG.Point} A Point or [x,y] array
- * @param {JXG.Point} B Point or [x,y] array
- * @param {JXG.Point} C Point or [x,y] array
- * @type number
- * @see #trueAngle
- * @return Angle in radians.
+ * @deprecated Use {@link JXG.Math.Geometry#rad} instead.
  */
 JXG.Algebra.prototype.rad = function(A,B,C) {
-    var ax, ay, bx, by, cx, cy,
-        abx, aby, cbx, cby,
-        cp, l1, l2, phiacos, phicos, sp, 
-        phi = 0;
-        
-    if (A.coords == null) {
-        ax = A[0];
-        ay = A[1];
-    } else {
-        ax = A.coords.usrCoords[1];
-        ay = A.coords.usrCoords[2];
-    }
-    if (B.coords == null) {
-        bx = B[0];
-        by = B[1];
-    } else {
-        bx = B.coords.usrCoords[1];
-        by = B.coords.usrCoords[2];
-    }
-    if (C.coords == null) {
-        cx = C[0];
-        cy = C[1];
-    } else {
-        cx = C.coords.usrCoords[1];
-        cy = C.coords.usrCoords[2];
-    }
-    cbx = cx - bx;
-    cby = cy - by;
-    abx = ax - bx;
-    aby = ay - by;
-    
-    //return Math.atan2(cby-aby,cbx-abx);
-
-    sp = cbx*abx + cby*aby;               // scalar product of c-b and a-b
-    cp = abx*cby - aby*cbx;               // cross product of a-b c-b
-    l1 = Math.sqrt(abx*abx + aby*aby);    // length of a-b
-    l2 = Math.sqrt(cbx*cbx + cby*cby);    // length of c-b
-    phiacos = sp / (l1 * l2);             // calculate the angle as cosine from scalar product
-    if (phiacos > 1) { // these things should not happen, but can happen because of numerical inaccurracy
-        phiacos = 1;
-    } else if (phiacos < -1) {
-        phiacos = -1;
-    }
-    phicos = Math.acos(phiacos); // calculate the angle
-    
-        /*
-         * The calculated angle may not be the right angle because of the calculation of acos 
-        real     | quadrant  | quadrant | algebraic sign 
-        quadrant | by cosine | by sine  | of sine 
-           1.    |   1.      |   1.     |   +
-           2.    |   2.      |   1.     |   +
-           3.    |   2.      |   3.     |   -
-           4.    |   1.      |   3.     |   - 
-         So only for the first quadrant the calculated angle is ok. 
-         But we can use the sine, which is connected with the cross product to select the right angle. 
-         Calculate the sine of the calculated angle and multiply it with the cross product's value.
-         
-        real     | quadrant  | algebraic sign | algebraic sign of 
-        quadrant | by cosine | of sin(phicos) | cross product
-           1.    |   1.      |   +            |   +
-           2.    |   2.      |   +            |   +
-           3.    |   2.      |   +            |   -
-           4.    |   1.      |   +            |   - 
-         So always the negative angle of phicos has to be taken if the product is negative.
-         */
-    if ((Math.sin(phicos) * cp) < 0) {
-        phi = 6.2831853071795862 - phicos; // 2 * Math.PI - phicos;
-    } else {
-        phi = phicos;
-    }
-    return phi;
+    return JXG.Math.Geometry.rad(A, B, C);
 };
 
 /**
- * Calculates the bisection between the three points A, B, C. The bisection is defined by two points:
- * Parameter B and a point with the coordinates calculated in this function.
- * @param A Point
- * @param B Point
- * @param C Point
- * @return Coordinates of the second point defining the bisection.
+ * @deprecated Use {@link JXG.Math.Geometry#angleBisector} instead.
  */
 JXG.Algebra.prototype.angleBisector = function(/** JXG.Point */ A, /** JXG.Point */ B, /** JXG.Point */ C) /** JXG.Coords */ {
-    /* First point */
-    var Ac = A.coords.usrCoords,
-        Bc = B.coords.usrCoords, 
-        Cc = C.coords.usrCoords,
-        x = Ac[1]-Bc[1],
-        y = Ac[2]-Bc[2],
-        d = Math.sqrt(x*x+y*y),
-        phiA, phiC, phi;
-    x /= d;
-    y /= d;
-    
-    phiA = Math.acos(x);
-    if (y<0) { phiA *= -1; }
-    if (phiA<0) { phiA += 2*Math.PI; } 
-    
-    /* Second point */
-    x = Cc[1]-Bc[1];
-    y = Cc[2]-Bc[2];
-    d = Math.sqrt(x*x+y*y);
-    x /= d;
-    y /= d;
-    
-    phiC = Math.acos(x);
-    if (y<0) { phiC *= -1; }
-    if (phiC<0) { phiC += 2*Math.PI; } 
- 
-    phi=(phiA+phiC)*0.5;
-    if (phiA>phiC) { 
-        phi+=Math.PI;
-    }
-
-    x = Math.cos(phi)+Bc[1];
-    y = Math.sin(phi)+Bc[2];
-    
-    return new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-};
-    
-/**
- @private
- @deprecated
- OBSOLETE
- * Calculates the midpoint between two points A and B.
- * @param {JXG.Point} A Point
- * @param {JXG.Point} B Point
- * @type JXG.Coords
- * @return Coordinates of the point right in the middle of two given points.
- */
-JXG.Algebra.prototype.midpoint = function(A, B) {   
-    return new JXG.Coords(JXG.COORDS_BY_USER, 
-                      [(A.coords.usrCoords[0] + B.coords.usrCoords[0])*0.5, 
-                       (A.coords.usrCoords[1] + B.coords.usrCoords[1])*0.5, 
-                       (A.coords.usrCoords[2] + B.coords.usrCoords[2])*0.5], 
-                      this.board);
+    return JXG.Math.Geometry.angleBisector(A, B, C, this.board);
 };
 
 /**
- @private
- @deprecated
- OBSOLETE
- * Calculates the coordinates of a point on the parallel through the given point to the given line through point1 and point2.
- * @param {JXG.Point} point1 First point lying on the given line.
- * @param {JXG.Point} point2 Second point lying on the given line.
- * @param {JXG.Point} point Point through which the parallel is drawn.
- * @type JXG.Coords
- * @return Coordinates of a point defining the parallel together with the given point.
- */
-JXG.Algebra.prototype.parallel = function(point1, point2, point) {
-    var factor = 1,
-        pc = point.coords.usrCoords,
-        p1c = point1.coords.usrCoords,
-        p2c = point2.coords.usrCoords,
-        x = pc[1] + factor*(p2c[1] - p1c[1]),
-        y = pc[2] + factor*(p2c[2] - p1c[2]);
-    
-    return new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-};
-
-/**
- * Reflects the point along the line.
- * @param {JXG.Line} line Axis of reflection.
- * @param {JXG.Point} point Point to reflect.
- * @type JXG.Coords
- * @return Coordinates of the reflected point.
+ * @deprecated Use {@link JXG.Math.Geometry#reflection} instead.
  */  
 JXG.Algebra.prototype.reflection = function(line,point) {
-    /* (v,w) defines the slope of the line */    
-    var pc = point.coords.usrCoords,
-        p1c = line.point1.coords.usrCoords,
-        p2c = line.point2.coords.usrCoords,
-        x0, y0, x1, y1, v, w, mu;
-        
-    v = p2c[1]-p1c[1];
-    w = p2c[2]-p1c[2];
-    
-    x0 = pc[1]-p1c[1];
-    y0 = pc[2]-p1c[2];
-    
-    mu = (v*y0-w*x0)/(v*v+w*w);
-    
-    /* point + mu*(-y,x) waere Lotpunkt */
-    x1 = pc[1] + 2*mu*w;
-    y1 = pc[2] - 2*mu*v;
-    
-    return new JXG.Coords(JXG.COORDS_BY_USER, [x1,y1], this.board);
+    return JXG.Math.Geometry.reflection(line, point, this.board);
 };
 
 /**
- * Computes the new position of a point which is rotated 
- * around a second point (called rotpoint) by the angle phi.
- * @param {JXG.Point} rotpoint Center of the rotation
- * @param {JXG.Point} point point to be rotated
- * @param {number} phi rotation angle in arc length
- * @type JXG.Coords
- * @return Coordinates of the new position.
+ * @deprecated Use {@link JXG.Math.Geometry#rotation} instad.
  */
 JXG.Algebra.prototype.rotation = function(rotpoint, point, phi) {
-    // 180 degrees:
-    //var x0 = 2*rotpoint.coords.usrCoords[1]-point.coords.usrCoords[1];
-    //var y0 = 2*rotpoint.coords.usrCoords[2]-point.coords.usrCoords[2];
-    var pc = point.coords.usrCoords,
-        rotpc = rotpoint.coords.usrCoords,
-        x0, y0, c, s, x1, y1;
-        
-    x0 = pc[1]-rotpc[1];
-    y0 = pc[2]-rotpc[2];
-    
-    c = Math.cos(phi);
-    s = Math.sin(phi);
-    
-    x1 = x0*c-y0*s + rotpc[1];
-    y1 = x0*s+y0*c + rotpc[2];
-    
-    return new JXG.Coords(JXG.COORDS_BY_USER, [x1,y1], this.board);
+    return JXG.Math.Geometry.rotation(rotpoint, point, phi, this.board);
 };
 
 /**
- * Calculates the coordinates of a point on the perpendicular to the given line through
- * the given point.
- * @param {JXG.Line} line A line.
- * @param {JXG.Point} point Intersection point of line to perpendicular.
- * @type JXG.Coords
- * @return Coordinates of a point on the perpendicular to the given line through the given point.
+ * @deprecated Use {@link JXG.Math.Geometry#perpendicular} instead.
  */
 JXG.Algebra.prototype.perpendicular = function(line, point) {
-    var A = line.point1.coords.usrCoords,
-        B = line.point2.coords.usrCoords,
-        C = point.coords.usrCoords,
-        x, y, change,
-        fmd, emc, d0, d1, den;
-    
-    if(point == line.point1) { // Punkt ist erster Punkt der Linie
-        x = A[1] + B[2] - A[2];
-        y = A[2] - B[1] + A[1];
-        change = true;
-    }
-    else if(point == line.point2) {  // Punkt ist zweiter Punkt der Linie    
-        x = B[1] + A[2] - B[2];
-        y = B[2] - A[1] + B[1];
-        change = false;
-    }
-    else if( ((Math.abs(A[1] - B[1]) > this.eps) && 
-             (Math.abs(C[2] - (A[2] - B[2])*(C[1]-A[1])/(A[1] - B[1])-A[2]) < this.eps)) ||
-             ((Math.abs(A[1] - B[1]) <= this.eps) && (Math.abs(A[1] - C[1]) < this.eps)) ) { // Punkt liegt auf der Linie
-        x = C[1] + B[2] - C[2];
-        y = C[2] - B[1] + C[1]; 
-        change = true;
-        if(Math.abs(x - C[1]) < this.eps && Math.abs(y - C[2]) < this.eps) {
-            x = C[1] + A[2] - C[2];
-            y = C[2] - A[1] + C[1];
-            change = false;
-        }
-    }
-    else { // Punkt liegt nicht auf der Linie -> als zweiter Punkt wird der Lotfusspunkt gewaehlt
-        fmd = A[2] - B[2];
-        emc = A[1] - B[1];
-        d0 = B[1]*fmd - B[2]*emc;
-        d1 = C[1]*emc + C[2]*fmd;
-        den = fmd*fmd + emc*emc;
-        if(Math.abs(den)<this.eps) {
-            den = this.eps;
-        }
-        x = (d0*fmd + d1*emc) / den;
-        y = (d1*fmd - d0*emc) /den;
-        change = true;
-    }                            
-    return [new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board),change];             
+    return JXG.Math.Geometry.perpendicular(line, point, this.board);           
 };
 
 /**
- * Calculates the midpoint of the circumcircle of the three given points.
- * @param {JXG.Point} point1 Point
- * @param {JXG.Point} point2 Point
- * @param {JXG.Point} point3 Point
- * @type JXG.Coords
- * @return Coordinates of the midpoint of the circumcircle of the given points.
+ * @deprecated Use {@link JXG.Math.Geometry#circumcenterMidpoint} instead.
  */
 JXG.Algebra.prototype.circumcenterMidpoint = function(point1, point2, point3) {
-    var A = point1.coords.usrCoords,
-        B = point2.coords.usrCoords,
-        C = point3.coords.usrCoords,
-        u, v, den, x, y;
-
-    u = ((A[1]-B[1])*(A[1]+B[1]) + (A[2]-B[2])*(A[2]+B[2])) * 0.5;
-    v = ((B[1]-C[1])*(B[1]+C[1]) + (B[2]-C[2])*(B[2]+C[2])) * 0.5;
-    den = (A[1]-B[1])*(B[2]-C[2]) - (B[1]-C[1])*(A[2]-B[2]);
-              
-    if (Math.abs(den) < this.eps) {
-        den = this.eps;
-    }
-    
-    x = (u * (B[2]-C[2]) - v*(A[2]-B[2])) / den;
-    y = (v * (A[1]-B[1]) - u*(B[1]-C[1])) / den;
-    
-    return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
+    return JXG.Math.Geometry.circumcenterMidpoint(point1, point2, point3, this.board);
 };
 
 /**
- * Calculates the coordinates of the intersection of the given lines.
- * @param {JXG.Line} line1 Line.
- * @param {JXG.Line} line2 Line.
- * @type JXG.Coords
- * @return Coordinates of the intersection point of the given lines.
+ * @deprecated Use {@link JXG.Math.Geometry#intersectLineLine} instead.
  */
 JXG.Algebra.prototype.intersectLineLine = function(line1, line2) {
-    var A = line1.point1.coords.usrCoords,
-        B = line1.point2.coords.usrCoords,
-        C = line2.point1.coords.usrCoords,
-        D = line2.point2.coords.usrCoords,
-        d0, d1, den, x, y;
-           
-    d0 = A[1]*B[2] - A[2]*B[1];
-    d1 = C[1]*D[2] - C[2]*D[1];
-    den = (B[2]-A[2])*(C[1]-D[1]) - (A[1]-B[1])*(D[2]-C[2]);
-                 
-    if(Math.abs(den) < this.eps) {
-         den = this.eps; 
-    }
-    x = (d0*(C[1]-D[1]) - d1*(A[1]-B[1])) / den;
-    y = (d1*(B[2]-A[2]) - d0*(D[2]-C[2])) / den;
-
-    return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
+    return JXG.Math.Geometry.intersectLineLine(line1, line2, this.board);
 };
 
 /**
- * Calculates the coordinates of the intersection of the given line and circle.
- * @param {JXG.Circle} circle Circle.
- * @param {JXG.Line} line Line.
- * @type array
- * @return Array of the Coordinates of the intersection points of the given circle with the given line and
- * the amount of intersection points in the first component of the array.
+ * @deprecated Use {@link JXG.Math.Geometry#intersectCircleLine} instead.
  */
 JXG.Algebra.prototype.intersectCircleLine = function(circle, line) {
-    var eA = line.point1.coords.usrCoords,
-        eB = line.point2.coords.usrCoords,
-        fM = circle.midpoint.coords.usrCoords,
-        s, d0, d1, b, w, h, r, n1, dx, dy, firstPointX, firstPointY, l, x, y, n1s, firstPoint, secondPoint, d;
-
-    s = line.point1.Dist(line.point2);
-    if (s > 0) {
-        d0 = circle.midpoint.Dist(line.point1);
-        d1 = circle.midpoint.Dist(line.point2);
-        b = ((d0 * d0) + (s * s) - (d1 * d1)) / (2 * s);
-        w = (d0 * d0) - (b * b);
-        w = (w < 0) ? 0 : w;
-        h = Math.sqrt(w);
-        
-        r = circle.Radius();
-        n1 = Math.sqrt((r * r) - h*h);
-        dx = eB[1] - eA[1];
-        dy = eB[2] - eA[2];
-        firstPointX = fM[1] + (h / s) * dy;
-        firstPointY = fM[2] - (h / s) * dx;
-        d0 = (eB[1] * dy) - (eB[2] * dx);
-        d1 = (firstPointX * dx) + (firstPointY * dy);
-        l = (dy * dy) + (dx * dx);
-        if (Math.abs(l) < this.eps) { l = this.eps; }
-        x = ((d0 * dy) + (d1 * dx)) / l;
-        y = ((d1 * dy) - (d0 * dx)) / l;
-        n1s = n1/s;
-        firstPoint =  new JXG.Coords(JXG.COORDS_BY_USER, [x + n1s * dx, y + n1s * dy], this.board);
-        secondPoint = new JXG.Coords(JXG.COORDS_BY_USER, [x - n1s * dx, y - n1s * dy], this.board);
-        d = circle.midpoint.coords.distance(JXG.COORDS_BY_USER, firstPoint);
-      
-        if ((r < (d - 1)) || isNaN(d)) {
-            return [0];
-        } else {
-            return [2,firstPoint,secondPoint];       
-        }
-    }
-    return [0];
+    return JXG.Math.Geometry.intersectCircleLine(circle, line, this.board);
 };
 
 /**
- * Calculates the coordinates of the intersection of the given circles.
- * @param {JXG.Circle} circle1 Circle.
- * @param {JXG.Circle} circle2 Circle.
- * @type array
- * @return Array of the Coordinates of the intersection points of the given circles and the
- * amount of intersection points in the first component of the array.
+ * @deprecated Use {@link JXG.Math.Geometry#intersectCircleCircle} instead.
  */
 JXG.Algebra.prototype.intersectCircleCircle = function(circle1, circle2) { 
-    var intersection = {},
-        r1 = circle1.Radius(),
-        r2 = circle2.Radius(),
-        M1 = circle1.midpoint.coords.usrCoords,
-        M2 = circle2.midpoint.coords.usrCoords,
-        rSum, rDiff, s, 
-        dx, dy, a, h;
-        
-    rSum = r1 + r2;
-    rDiff = Math.abs(r1 - r2);    
-    // Abstand der Mittelpunkte der beiden Kreise
-    s = circle1.midpoint.coords.distance(JXG.COORDS_BY_USER, circle2.midpoint.coords);
-    if (s > rSum) {
-        return [0]; // Kreise schneiden sich nicht, liegen nebeneinander
-    } 
-    else if (s < rDiff) {
-        return [0]; // Kreise schneiden sich nicht, liegen ineinander
-    } 
-    else {
-        if (s != 0) {
-            intersection[0] = 1; // es gibt einen Schnitt        
-            dx = M2[1] - M1[1];
-            dy = M2[2] - M1[2];
-            a = (s * s - r2 * r2 + r1 * r1) / (2 * s);
-            h = Math.sqrt(r1 * r1 - a * a);
-            intersection[1] = new JXG.Coords(JXG.COORDS_BY_USER, 
-                                             [M1[1] + (a / s) * dx + (h / s) * dy, 
-                                              M1[2] + (a / s) * dy - (h / s) * dx], 
-                                             this.board);
-            intersection[2] = new JXG.Coords(JXG.COORDS_BY_USER, 
-                                             [M1[1] + (a / s) * dx - (h / s) * dy, 
-                                              M1[2] + (a / s) * dy + (h / s) * dx], 
-                                             this.board);    
-        }
-        else {
-            return [0]; // vorsichtshalber... 
-        }                                     
-        return intersection;
-    }
+    return JXG.Math.Geometry.intersectCircleCircle(circle1, circle2, this.board);
 };
 
 /**
@@ -556,8 +142,8 @@ JXG.Algebra.prototype.projectPointToCircle = function(point,circle) {
         M = circle.midpoint.coords.usrCoords,
         x, y, factor;
         
-    if(Math.abs(dist) < this.eps) {
-        dist = this.eps;
+    if(Math.abs(dist) < JXG.Math.eps) {
+        dist = JXG.Math.eps;
     }
     factor = circle.Radius() / dist;
     x = M[1] + factor*(P[1] - M[1]);
@@ -582,8 +168,8 @@ JXG.Algebra.prototype.projectPointToLine = function(point, line) {
     var d0 = line.point2.coords.usrCoords[1]*fmd - line.point2.coords.usrCoords[2] *emc;
     var d1 = point.coords.usrCoords[1]*emc + point.coords.usrCoords[2]*fmd;
     var den = fmd*fmd + emc*emc;
-    if(Math.abs(den)<this.eps) {
-        den = this.eps;
+    if(Math.abs(den)<JXG.Math.eps) {
+        den = JXG.Math.eps;
     }
     var x = (d0*fmd + d1*emc) / den;
     var y = (d1*fmd - d0*emc) /den;
@@ -1107,69 +693,24 @@ JXG.Algebra.prototype.findDependencies = function(me, term) {
 };
 
 /**
- * Calculates euclidean norm for two given arrays of the same length.
- * @param {array} array1 Array of float or integer.
- * @param {array} array2 Array of float or integer.
- * @type number
- * @return Euclidean distance of the given vectors.
+ * @deprecated Use {@link JXG.Math.Geometry#distance} instead.
  */
 JXG.Algebra.prototype.distance = function(array1, array2) {
-    var sum = 0, 
-        i, len;
-        
-    if(array1.length != array2.length) { return; }
-    len = array1.length;
-    for(i=0; i<len; i++) {
-        sum += (array1[i] - array2[i])*(array1[i] - array2[i]);
-    }
-    return Math.sqrt(sum);
+    return JXG.Math.Geometry.distance(array1, array2);
 };
 
 /**
- * Calculates euclidean distance for two given arrays of the same length.
- * If one of the arrays contains a zero in the first coordinate, and the euclidean distance
- * is different from zero it is a point at infinity and we return Infinity.
- * @param {array} array1 Array containing elements of number.
- * @param {array} array2 Array containing elements of type number.
- * @type number
- * @return Euclidean (affine) distance of the given vectors.
+ * @deprecated Use {@link JXG.Math.Geometry#affineDistance} instead.
  */
 JXG.Algebra.prototype.affineDistance = function(array1, array2) {
-    var d;
-    if(array1.length != array2.length) { 
-        return; 
-    }
-    d = this.distance(array1, array2);
-    if (d>this.eps && (Math.abs(array1[0])<this.eps || Math.abs(array2[0])<this.eps)) {
-        return Infinity;
-    } else {
-        return d;
-    }
+    return JXG.Math.Geometry.affineDistance(array1, array2);
 };
 
 /**
- * Compute power a^b
- * @param a Base.
- * @param b Exponent.
- * @return a to the power of b.
+ * @deprecated Use {@link JXG.Math#pow} instead.
  */
 JXG.Algebra.prototype.pow = function(/** number */ a, /** number */ b) /** number */ {
-    if (a==0) {
-        if (b==0) { 
-            return 1;
-        } else { 
-            return 0.0;
-        }
-    }
-    if (Math.floor(b)==b) {// b is integer
-        return Math.pow(a,b);
-    } else { // b is not integer
-        if (a>0) {
-            return Math.exp(b*Math.log(Math.abs(a)));
-        } else {
-            return NaN;
-        }
-    }
+    return JXG.Math.pow(a, b);
 };
 
 /**
@@ -1185,7 +726,7 @@ JXG.Algebra.prototype.pow = function(/** number */ a, /** number */ b) /** numbe
  * Which point will be returned is determined by i.
  */
 JXG.Algebra.prototype.meet = function(el1, el2, /** number */ i) /** JXG.Coords */ {
-    var eps = this.eps; //    var eps = 0.000001;
+    var eps = JXG.Math.eps; //    var eps = 0.000001;
 
     if (Math.abs(el1[3])<eps && Math.abs(el2[3])<eps) { // line line
         return this.meetLineLine(el1,el2,i);
@@ -1210,7 +751,7 @@ JXG.Algebra.prototype.meet = function(el1, el2, /** number */ i) /** JXG.Coords 
   */
 JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
     var s = JXG.Math.crossProduct(l1,l2);
-    if (Math.abs(s[0])>this.eps) {
+    if (Math.abs(s[0])>JXG.Math.eps) {
         s[1] /= s[0];
         s[2] /= s[0];
         s[0] = 1.0;
@@ -1234,7 +775,7 @@ JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
  JXG.Algebra.prototype.meetLineCircle = function(lin,circ,i) {    
     var a,b,c,d,n, A,B,C, k,t;
 
-    if (circ[4]<this.eps) { // Radius is zero, return center of circle
+    if (circ[4]<JXG.Math.eps) { // Radius is zero, return center of circle
         return new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(1,3), this.board);
     }
     c = circ[0];
@@ -1287,14 +828,14 @@ JXG.Algebra.prototype.meetLineLine = function(l1,l2,i) {
   */
 JXG.Algebra.prototype.meetCircleCircle = function(circ1,circ2,i) {
     var radicalAxis;
-    if (circ1[4]<this.eps) { // Radius are zero, return center of circle, if on other circle
+    if (circ1[4]<JXG.Math.eps) { // Radius are zero, return center of circle, if on other circle
         if (this.distance(circ1.slice(1,3),circ2.slice(1,3))==circ2[4]) {
             return new JXG.Coords(JXG.COORDS_BY_USER, circ1.slice(1,3), this.board);
         } else {
             return new JXG.Coords(JXG.COORDS_BY_USER, [NaN,NaN], this.board);
         }
     }
-    if (circ2[4]<this.eps) { // Radius are zero, return center of circle, if on other circle
+    if (circ2[4]<JXG.Math.eps) { // Radius are zero, return center of circle, if on other circle
         if (this.distance(circ2.slice(1,3),circ1.slice(1,3))==circ1[4]) {
             return new JXG.Coords(JXG.COORDS_BY_USER, circ2.slice(1,3), this.board);
         } else {
@@ -1312,41 +853,10 @@ JXG.Algebra.prototype.meetCircleCircle = function(circ1,circ2,i) {
 
 /**
   * @private
-  *
-  * Normalize the stdform [c,b0,b1,a,k,r,q0,q1].
-  * @param {Array} stdform to be normalized.
-  * @type {Array}
-  * @return The normalized stdform.
+  * @deprecated Use {@link JXG.Math#normalize} instead.
   */
 JXG.Algebra.prototype.normalize = function(stdform) {
-    var a2 = 2*stdform[3],
-        r = stdform[4]/(a2),  // k/(2a)
-        n, signr; 
-    stdform[5] = r;
-    stdform[6] = -stdform[1]/a2;
-    stdform[7] = -stdform[2]/a2;
-    if (r==Infinity || isNaN(r)) {
-        n = Math.sqrt(stdform[1]*stdform[1]+stdform[2]*stdform[2]);
-        stdform[0] /= n;
-        stdform[1] /= n;
-        stdform[2] /= n;
-        stdform[3] = 0;
-        stdform[4] = 1;
-    } else if (Math.abs(r)>=1) {
-        stdform[0] = (stdform[6]*stdform[6]+stdform[7]*stdform[7]-r*r)/(2*r);
-        stdform[1] = -stdform[6]/r;
-        stdform[2] = -stdform[7]/r;
-        stdform[3] = 1/(2*r);
-        stdform[4] = 1;
-    } else {
-        signr = (r<=0)?(-1):(1/*(r==0)?0:1*/);
-        stdform[0] = signr*(stdform[6]*stdform[6]+stdform[7]*stdform[7]-r*r)*0.5;
-        stdform[1] = -signr*stdform[6];
-        stdform[2] = -signr*stdform[7];
-        stdform[3] = signr/2;
-        stdform[4] = signr*r;
-    }
-    return stdform;
+    return JXG.Math.normalize(stdform);
 };
 
 /**
