@@ -564,8 +564,308 @@ JXG.Math.Geometry.intersectCircleCircle = function(circle1, circle2, board) {
     }
 };
 
+/**
+ * @private
+ * Computes the intersection of a pair of lines, circles or both.
+ * It uses the internal data array stdform of these elements.
+ * @param {Array} el1 stdform of the first element (line or circle)
+ * @param {Array} el2 stdform of the second element (line or circle)
+ * @param {number} i Index of the intersection point that should be returned.
+ * @param board Reference to the board.
+ * @type JXG.Coords
+ * @return Coordinates of one of the possible two or more intersection points. 
+ * Which point will be returned is determined by i.
+ */
+JXG.Math.Geometry.meet = function(el1, el2, /** number */ i, /** JXG.Board */ board) /** JXG.Coords */ {
+    var eps = JXG.Math.eps; //    var eps = 0.000001;
 
+    if (Math.abs(el1[3])<eps && Math.abs(el2[3])<eps) { // line line
+        return this.meetLineLine(el1,el2,i,board);
+    } else if (Math.abs(el1[3])>=eps && Math.abs(el2[3])<eps) { // circle line
+        return this.meetLineCircle(el2,el1,i,board);
+    } else if (Math.abs(el1[3])<eps && Math.abs(el2[3])>=eps) { // line circle
+        return this.meetLineCircle(el1,el2,i,board);
+    } else {  // circle circle
+        return this.meetCircleCircle(el1,el2,i,board);
+    }
+};
 
+/**
+  * @private
+  * Intersection of two lines using the stdform.
+  * @param {Array} l1 stdform of the first line
+  * @param {Array} l2 stdform of the second line
+  * @param {number} i unused
+  * @param {JXG.Board} board Reference to the board.
+  * @type JXG.Coords
+  * @return Coordinates of the intersection point.
+  */
+JXG.Math.Geometry.meetLineLine = function(l1,l2,i,board) {
+    var s = JXG.Math.crossProduct(l1,l2);
+    if (Math.abs(s[0])>JXG.Math.eps) {
+        s[1] /= s[0];
+        s[2] /= s[0];
+        s[0] = 1.0;
+    }
+    return new JXG.Coords(JXG.COORDS_BY_USER, s, board);
+};
+
+/**
+  * @private
+  * 
+  * Intersection of line and circle using the stdform.
+  * 
+  * @param {Array} lin stdform of the line
+  * @param {Array} circ stdform of the circle
+  * @param {number} i number of the returned intersection point. 
+  *   i==0: use the positive square root, 
+  *   i==1: use the negative square root.
+  * @param {JXG.Board} board Reference to a board.
+  * @type JXG.Coords
+  * @return Coordinates of the intersection point
+  */
+ JXG.Math.Geometry.meetLineCircle = function(lin,circ,i,board) {
+    var a,b,c,d,n, A,B,C, k,t;
+
+    if (circ[4]<JXG.Math.eps) { // Radius is zero, return center of circle
+        return new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(1,3), board);
+    }
+    c = circ[0];
+    b = circ.slice(1,3);
+    a = circ[3];
+    d = lin[0];
+    n = lin.slice(1,3);
+
+    // Line is normalized, therefore nn==1 and we can skip some operations:
+    /*
+    var nn = n[0]*n[0]+n[1]*n[1];
+    A = a*nn;
+    B = (b[0]*n[1]-b[1]*n[0])*nn;
+    C = a*d*d - (b[0]*n[0]+b[1]*n[1])*d + c*nn;
+    */
+    A = a;
+    B = (b[0]*n[1]-b[1]*n[0]);
+    C = a*d*d - (b[0]*n[0]+b[1]*n[1])*d + c;
+
+    k = B*B-4*A*C;
+    if (k>=0) {
+        k = Math.sqrt(k);
+        t = [(-B+k)/(2*A),(-B-k)/(2*A)];
+        return ((i==0)
+            ? new JXG.Coords(JXG.COORDS_BY_USER, [-t[0]*(-n[1])-d*n[0],-t[0]*n[0]-d*n[1]], board)
+            : new JXG.Coords(JXG.COORDS_BY_USER, [-t[1]*(-n[1])-d*n[0],-t[1]*n[0]-d*n[1]], board)
+            );
+/*
+            new JXG.Coords(JXG.COORDS_BY_USER, [-t[0]*(-n[1])-d*n[0]/nn,-t[0]*n[0]-d*n[1]/nn], this.board),
+            new JXG.Coords(JXG.COORDS_BY_USER, [-t[1]*(-n[1])-d*n[0]/nn,-t[1]*n[0]-d*n[1]/nn], this.board)
+*/
+    } else {
+        return new JXG.Coords(JXG.COORDS_BY_USER, [NaN,NaN], board);
+    }
+    // Returns do not work with homogeneous coordinates, yet
+};
+
+/**
+  * @private
+  * 
+  * Intersection of two circles using the stdform.
+  * 
+  * @param {Array} circ1 stdform of the first circle
+  * @param {Array} circ2 stdform of the second circle
+  * @param {number} i number of the returned intersection point. 
+  *   i==0: use the positive square root, 
+  *   i==1: use the negative square root.
+  * @param {JXG.Board} board Reference to the board.
+  * @type JXG.Coords
+  * @return Coordinates of the intersection point
+  */
+JXG.Math.Geometry.meetCircleCircle = function(circ1,circ2,i,board) {
+    var radicalAxis;
+    if (circ1[4]<JXG.Math.eps) { // Radius are zero, return center of circle, if on other circle
+        if (this.distance(circ1.slice(1,3),circ2.slice(1,3))==circ2[4]) {
+            return new JXG.Coords(JXG.COORDS_BY_USER, circ1.slice(1,3), board);
+        } else {
+            return new JXG.Coords(JXG.COORDS_BY_USER, [NaN,NaN], board);
+        }
+    }
+    if (circ2[4]<JXG.Math.eps) { // Radius are zero, return center of circle, if on other circle
+        if (this.distance(circ2.slice(1,3),circ1.slice(1,3))==circ1[4]) {
+            return new JXG.Coords(JXG.COORDS_BY_USER, circ2.slice(1,3), board);
+        } else {
+            return new JXG.Coords(JXG.COORDS_BY_USER, [NaN,NaN], board);
+        }
+    }
+    radicalAxis = [circ2[3]*circ1[0]-circ1[3]*circ2[0],
+                   circ2[3]*circ1[1]-circ1[3]*circ2[1],
+                   circ2[3]*circ1[2]-circ1[3]*circ2[2],
+                   0,1,Infinity, Infinity, Infinity];
+    radicalAxis = JXG.Math.normalize(radicalAxis);
+    return this.meetLineCircle(radicalAxis,circ1,i,board);
+    // Returns do not work with homogeneous coordinates, yet
+};
+
+/**
+ * Compute an intersection of the curves c1 and c2
+ * with a generalized Newton method.
+ * We want to find values t1, t2 such that
+ * c1(t1) = c2(t2), i.e.
+ * (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2)) = (0,0).
+ * We set
+ * (e,f) := (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2))
+ *
+ * The Jacobian J is defined by
+ * J = (a, b)
+ *     (c, d)
+ * where
+ * a = c1_x'(t1)
+ * b = -c2_x'(t2)
+ * c = c1_y'(t1)
+ * d = -c2_y'(t2)
+ *
+ * The inverse J^(-1) of J is equal to
+ *  (d, -b)/
+ *  (-c, a) / (ad-bc)
+ *
+ * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
+ * If the function meetCurveCurve possesses the properties
+ * t1memo and t2memo then these are taken as start values
+ * for the Newton algorithm.
+ * After stopping of the Newton algorithm the values of t1 and t2 are stored in
+ * t1memo and t2memo.
+ * 
+ * @param {JXG.Curve} c1 Curve, Line or Circle
+ * @param {JXG.Curve} c2 Curve, Line or Circle
+ * @param {float} t1ini start value for t1
+ * @param {float} t2ini start value for t2
+ * @param {JXG.Board} [board=c1.board] Reference to a board object.
+ * @type {JXG.Coords}
+ * @return coordinate object for the intersection point
+ **/
+JXG.Math.Geometry.meetCurveCurve = function(c1,c2,t1ini,t2ini,board) {
+    var count = 0,
+        t1, t2,
+        a, b, c, d, disc,
+        e, f, F, 
+        D00, D01, 
+        D10, D11;
+    
+    if(typeof board == 'undefined')
+        board = c1.board;
+        
+    if (arguments.callee.t1memo) {
+        t1 = arguments.callee.t1memo;
+        t2 = arguments.callee.t2memo;
+    } else {
+        t1 = t1ini;
+        t2 = t2ini;
+    }
+/*
+    if (t1>c1.maxX()) { t1 = c1.maxX(); }
+    if (t1<c1.minX()) { t1 = c1.minX(); }
+    if (t2>c2.maxX()) { t2 = c2.maxX(); }
+    if (t2<c2.minX()) { t2 = c2.minX(); }
+*/
+    e = c1.X(t1)-c2.X(t2);
+    f = c1.Y(t1)-c2.Y(t2);
+    F = e*e+f*f;
+    
+    D00 = c1.board.D(c1.X,c1);
+    D01 = c2.board.D(c2.X,c2);
+    D10 = c1.board.D(c1.Y,c1);
+    D11 = c2.board.D(c2.Y,c2);
+    
+    while (F>JXG.Math.eps && count<10) {
+        a =  D00(t1);
+        b = -D01(t2);
+        c =  D10(t1);
+        d = -D11(t2);
+        disc = a*d-b*c;
+        t1 -= (d*e-b*f)/disc;
+        t2 -= (a*f-c*e)/disc;
+        e = c1.X(t1)-c2.X(t2);
+        f = c1.Y(t1)-c2.Y(t2);
+        F = e*e+f*f;
+        count++;
+    }
+//console.log(t1+' '+t2);
+
+    arguments.callee.t1memo = t1;
+    arguments.callee.t2memo = t2;
+
+    //return (new JXG.Coords(JXG.COORDS_BY_USER, [2,2], this.board));
+    if (Math.abs(t1)<Math.abs(t2)) {
+        return (new JXG.Coords(JXG.COORDS_BY_USER, [c1.X(t1),c1.Y(t1)], board));
+    } else {
+        return (new JXG.Coords(JXG.COORDS_BY_USER, [c2.X(t2),c2.Y(t2)], board));
+    }
+};
+
+/**
+ * order of input does not matter for el1 and el2.
+ * @param {JXG.Curve,JXG.Line} el1 Curve or Line
+ * @param {JXG.Curve,JXG.Line} el2 Curve or Line
+ * @param {?} nr
+ * @param {JXG.Board} [board=el1.board] Reference to a board object.
+ * @type {JXG.Coords}
+ * @return coordinate object for the intersection point
+ */
+JXG.Math.Geometry.meetCurveLine = function(el1,el2,nr,board) {
+    var t, t2, i, cu, li, func, z,
+        tnew, steps, delta, tstart, cux, cuy;
+    
+    if(typeof board == 'undefined')
+        board = el1.board;
+    
+    
+    for (i=0;i<arguments.length-1;i++) {
+        if (arguments[i].elementClass==JXG.OBJECT_CLASS_CURVE) { cu = arguments[i]; }
+        else if (arguments[i].elementClass==JXG.OBJECT_CLASS_LINE) { li = arguments[i]; }
+        else 
+            throw new Error("JSXGraph: Can't call meetCurveLine with parent class '" + (arguments[i].elementClass) + ".");
+    }
+    
+    func = function(t) {
+        return li.stdform[0]*1.0 + li.stdform[1]*cu.X(t) + li.stdform[2]*cu.Y(t);
+    };
+    
+    if (arguments.callee.t1memo) {
+        tstart = arguments.callee.t1memo;
+    } else {
+        tstart = cu.minX();
+    }
+    t = JXG.Math.Numerics.root(func, tstart);
+    arguments.callee.t1memo = t;
+    cux = cu.X(t);
+    cuy = cu.Y(t);
+    
+    if (nr==1) {  
+        if (arguments.callee.t2memo) {
+            tstart = arguments.callee.t2memo;
+            t2 = JXG.Math.Numerics.root(func, tstart);
+        } 
+        if (!(Math.abs(t2-t)>0.1 && Math.abs(cux-cu.X(t2))>0.1 && Math.abs(cuy-cu.Y(t2))>0.1)) {
+            steps = 20;
+            delta = (cu.maxX()-cu.minX())/steps;
+            tnew = cu.minX();
+            for (i=0;i<steps;i++) {
+                t2 = JXG.Math.Numerics.root(func, tnew);
+                if (Math.abs(t2-t)>0.1 && Math.abs(cux-cu.X(t2))>0.1 && Math.abs(cuy-cu.Y(t2))>0.1) {
+                    break;
+                }
+                tnew += delta;
+            }
+        }
+        t = t2;
+        arguments.callee.t2memo = t;
+    }
+
+    if (Math.abs(func(t))>JXG.Math.eps)
+        z = 0.0;
+    else
+        z = 1.0;
+    
+    return (new JXG.Coords(JXG.COORDS_BY_USER, [z, cu.X(t),cu.Y(t)], board));
+};
 
 
 
@@ -573,9 +873,225 @@ JXG.Math.Geometry.intersectCircleCircle = function(circle1, circle2, board) {
 /****           PROJECTIONS          ****/
 /****************************************/
 
+/**
+ * Calculates the coordinates of the projection of a given point on a given circle. I.o.w. the
+ * nearest one of the two intersection points of the line through the given point and the circles
+ * midpoint.
+ * @param {JXG.Point} point Point to project.
+ * @param {JXG.Circle} circle Circle on that the point is projected.
+ * @param {JXG.Board} [board=point.board] Reference to the board
+ * @type JXG.Coords
+ * @return The coordinates of the projection of the given point on the given circle.
+ */
+JXG.Math.Geometry.projectPointToCircle = function(point,circle,board) {
+    var dist = point.coords.distance(JXG.COORDS_BY_USER, circle.midpoint.coords),
+        P = point.coords.usrCoords,
+        M = circle.midpoint.coords.usrCoords,
+        x, y, factor;
 
+    if(typeof board == 'undefined')
+        board = point.board;
 
+    if(Math.abs(dist) < JXG.Math.eps) {
+        dist = JXG.Math.eps;
+    }
+    factor = circle.Radius() / dist;
+    x = M[1] + factor*(P[1] - M[1]);
+    y = M[2] + factor*(P[2] - M[2]);
+    
+    return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], board);
+};
 
+/**
+ * Calculates the coordinates of the projection of a given point on a given line. I.o.w. the
+ * intersection point of the given line and its perpendicular through the given point.
+ * @param {JXG.Point} point Point to project.
+ * @param {JXG.Line} line Line on that the point is projected.
+ * @param {JXG.Board} [board=point.board] Reference to a board.
+ * @type JXG.Coords
+ * @return The coordinates of the projection of the given point on the given line.
+ */
+JXG.Math.Geometry.projectPointToLine = function(point, line, board) {
+/*
+    // Euclidean version
+    var fmd = line.point1.coords.usrCoords[2] - line.point2.coords.usrCoords[2];
+    var emc = line.point1.coords.usrCoords[1] - line.point2.coords.usrCoords[1];
+    var d0 = line.point2.coords.usrCoords[1]*fmd - line.point2.coords.usrCoords[2] *emc;
+    var d1 = point.coords.usrCoords[1]*emc + point.coords.usrCoords[2]*fmd;
+    var den = fmd*fmd + emc*emc;
+    if(Math.abs(den)<JXG.Math.eps) {
+        den = JXG.Math.eps;
+    }
+    var x = (d0*fmd + d1*emc) / den;
+    var y = (d1*fmd - d0*emc) /den;
+    return new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);       
+*/
+    // Homogeneous version
+    var v = [0,line.stdform[1],line.stdform[2]];
+    
+    if(typeof board=='undefined')
+        board=point.board;
+    
+    v = JXG.Math.crossProduct(v,point.coords.usrCoords);
+    return this.meetLineLine(v,line.stdform,0,board);
 
+    //return new JXG.Coords(JXG.COORDS_BY_USER, v, this.board);       
+};
+
+/**
+ * Calculates the coordinates of the projection of a given point on a given curve. 
+ * Uses {@link #projectCoordsToCurve}.
+ * @param {JXG.Point} point Point to project.
+ * @param {JXG.Curve} graph Curve on that the point is projected.
+ * @param {JXG.Board} [board=point.board] Reference to a board.
+ * @type JXG.Coords
+ * @see #projectCoordsToCurve
+ * @return The coordinates of the projection of the given point on the given graph.
+ */
+JXG.Math.Geometry.projectPointToCurve = function(point,curve,board) {
+    if(typeof board=='undefined')
+        board = point.board;
+        
+    var x = point.X(),
+        y = point.Y(),
+        t = point.position || 0.0, //(curve.minX()+curve.maxX())*0.5,
+        result = this.projectCoordsToCurve(x,y,t,curve,board);
+        
+    point.position = result[1];      // side effect !
+    return result[0];
+};
+
+/**
+ * Calculates the coordinates of the projection of a coordinates pair on a given curve. In case of
+ * function graphs this is the
+ * intersection point of the curve and the parallel to y-axis through the given point.
+ * @param {float} x coordinate to project.
+ * @param {float} y coordinate to project.
+ * @param {float} start value for newtons method
+ * @param {JXG.Curve} graph Curve on that the point is projected.
+ * @param {JXG.Board} [board=curve.board] Reference to a board.
+ * @type JXG.Coords
+ * @see #projectPointToCurve
+ * @return Array containing the coordinates of the projection of the given point on the given graph and 
+ * the position on the curve.
+ */
+JXG.Math.Geometry.projectCoordsToCurve = function(x,y,t,curve,board) {
+    var newCoords, x0, y0, x1, y1, den, i, mindist, dist, lbda, j,
+        infty = 1000000.0, minfunc, tnew, fnew, fold, delta, steps;
+        
+    if(typeof board=='undefined')
+        board = curve.board;
+        
+    if (curve.curveType=='parameter' || curve.curveType=='polar') { 
+        // Function to minimize
+        minfunc = function(t){ 
+                    var dx = x-curve.X(t),
+                        dy = y-curve.Y(t);
+                    return dx*dx+dy*dy;
+                };
+        //t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(minfunc),t);
+        fold = minfunc(t);
+        steps = 20;
+        delta = (curve.maxX()-curve.minX())/steps;
+        tnew = curve.minX();
+        for (j=0;j<steps;j++) {
+            fnew = minfunc(tnew);
+            if (fnew<fold) {
+                t = tnew;
+                fold = fnew;
+            }
+            tnew += delta;
+        }
+        t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(minfunc),t);
+
+        if (t<curve.minX()) { t = curve.maxX()+t-curve.minX(); } // Cyclically
+        if (t>curve.maxX()) { t = curve.minX()+t-curve.maxX(); }
+        newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t),curve.Y(t)], board);
+    } else if (curve.curveType == 'plot') {
+        mindist = infty;
+        for (i=0;i<curve.numberPoints;i++) {
+            x0 = x-curve.X(i);
+            y0 = y-curve.Y(i);
+            dist = Math.sqrt(x0*x0+y0*y0);
+            if (dist<mindist) {
+                mindist = dist;
+                t = i;
+            }
+            if (i==curve.numberPoints-1) { continue; }
+
+            x1 = curve.X(i+1)-curve.X(i);
+            y1 = curve.Y(i+1)-curve.Y(i);
+            den = x1*x1+y1*y1;
+            if (den>=JXG.Math.eps) {
+                lbda = (x0*x1+y0*y1)/den;
+                dist = Math.sqrt( x0*x0+y0*y0 - lbda*(x0*x1+y0*y1) );
+            } else {
+                lbda = 0.0;
+                dist = Math.sqrt(x0*x0+y0*y0);
+            }
+            if (lbda>=0.0 && lbda<=1.0 && dist<mindist) { 
+                t = i+lbda;
+                mindist = dist;
+            } 
+        }
+        i = Math.floor(t);
+        lbda = t-i;
+        if (i<curve.numberPoints-1) {
+            x = lbda*curve.X(i+1)+(1.0-lbda)*curve.X(i);
+            y = lbda*curve.Y(i+1)+(1.0-lbda)*curve.Y(i);
+        } else {
+            x = curve.X(i);
+            y = curve.Y(i);
+        }
+        newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], board); 
+    } else {             // functiongraph
+        t = x;
+        x = t; //curve.X(t);
+        y = curve.Y(t);
+        newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], board); 
+    }
+    return [curve.updateTransform(newCoords),t];
+};
+
+/**
+ * Calculates the coordinates of the projection of a given point on a given turtle. A turtle consists of
+ * one or more curves of curveType 'plot'. Uses {@link #projectPointToCurve}.
+ * @param {JXG.Point} point Point to project.
+ * @param {JXG.Turtle} turtle on that the point is projected.
+ * @param {JXG.Board} [board=point.board] Reference to a board.
+ * @type JXG.Coords
+ * @return The coordinates of the projection of the given point on the given turtle.
+ */
+JXG.Math.Geometry.projectPointToTurtle = function(point,turtle,board) {
+    var newCoords, t, x, y, i,
+        np = 0, 
+        npmin = 0,
+        mindist = 1000000.0, 
+        dist, el, minEl, 
+        len = turtle.objects.length;
+        
+    if(typeof board == 'undefined')
+        board = point.board;
+    
+    for(i=0;i<len;i++) {  // run through all curves of this turtle
+        el = turtle.objects[i];
+        if (el.elementClass==JXG.OBJECT_CLASS_CURVE) {
+            newCoords = this.projectPointToCurve(point,el);
+            dist = this.distance(newCoords.usrCoords,point.coords.usrCoords);
+            if (dist<mindist) {
+                x = newCoords.usrCoords[1];
+                y = newCoords.usrCoords[2];
+                t = point.position;
+                mindist = dist;
+                minEl = el;
+                npmin = np;
+            }
+            np += el.numberPoints;
+        }
+    }
+    newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], board);
+    point.position = t+npmin;
+    return minEl.updateTransform(newCoords);
+};
 
 
