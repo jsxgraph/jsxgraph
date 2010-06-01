@@ -260,9 +260,8 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
 
     /**
      * A reference to an object of class Algebra.
-     * @see Algebra
+     * @deprecated Use {@link JXG.Math.Geometry} and {@link JXG.GeonextParser} instead.
      * @private
-     * @type Algebra
      */
 //    this.algebra = new JXG.Algebra(this);
 
@@ -2239,6 +2238,15 @@ JXG.Board.prototype.animate = function() {
     }
 };
 
+/**
+ * @param {String} string A string containing construction(s) in JSXGraph Construction Syntax.
+ * @param {String} mode Possible values seem to be "normal" or "macro"
+ * @param {?} params
+ * @param {?} paraIn
+ * @param {String} macroName Clear when constructing using a macro, not so clear when construction a jsxgraph element directly.
+ * @type object
+ * @return An object consisting of several arrays (lines, circles, points, angles, ...) where the created elements are stored.
+ */
 JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName) {
     var splitted, i, first, last, j, output = {}, objName, defElements, obj, type, possibleNames, tmp, noMacro, k, pattern, createdNames, found;
     if(typeof(mode) == "undefined") {
@@ -2308,7 +2316,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         }
                         output[objName] = this.construct(this.definedMacros.macros[j][2],'macro',this.definedMacros.macros[j][1], tmp, objName);
                         output.macros.push(output[objName]);
-                        j=this.definedMacros.macros.length; // Macro gefunden, also muss die for-Schleife eigentlich nicht weiter durchlaufen werden.
+                        break;
                     }
                 }
             }
@@ -2779,6 +2787,13 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
     return output;
 };
 
+/**
+ * Parses a string like<br />
+ * <tt>&lt;macro-name&gt; = Macro(A, B, C) { <Command in JSXGraph Construction syntax>; ...<Command in JXG-Construct syntax>; }</tt><br />
+ * and adds it as a macro so it can be used in the JSXGraph Construction Syntax.
+ * @param {String} string A string like the one in the methods description.
+ * @see #construct
+ */
 JXG.Board.prototype.addMacro = function(string) {
     var defHead, defBody, defName = '', i;
     string.match(/(.*)\{(.*)\}/);
