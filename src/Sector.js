@@ -95,7 +95,7 @@ JXG.createSector = function(board, parents, attributes) {
             B = this.point1,
             C = this.point3,
             beta, co, si, matrix,
-            phi = this.board.algebra.rad(A,B,C),
+            phi = JXG.Math.Geometry.rad(A,B,C),
             i,
             //n = 100, 
             n = Math.ceil(phi/Math.PI*90)+1,
@@ -167,8 +167,8 @@ JXG.createSector = function(board, parents, attributes) {
             angle;
         
         if(has) {
-            angle = this.board.algebra.rad(this.point2,this.point1,checkPoint.usrCoords.slice(1));
-            if (angle>this.board.algebra.rad(this.point2,this.point1,this.point3)) { has = false; }
+            angle = JXG.Math.Geometry.rad(this.point2,this.point1,checkPoint.usrCoords.slice(1));
+            if (angle>JXG.Math.Geometry.rad(this.point2,this.point1,this.point3)) { has = false; }
         }
         return has;    
     };
@@ -184,7 +184,7 @@ JXG.createSector = function(board, parents, attributes) {
     * return LabelAnchor
     */
     el.getLabelAnchor = function() {
-        var angle = this.board.algebra.rad(this.point2, this.point1, this.point3),
+        var angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
             dx = 10/(this.board.stretchX),
             dy = 10/(this.board.stretchY),
             p2c = this.point2.coords.usrCoords,
@@ -342,7 +342,7 @@ JXG.createAngle = function(board, parents, attributes) {
     * return LabelAnchor
     */
     el.getLabelAnchor = function() {
-        var angle = this.board.algebra.rad(this.point2, this.point1, this.point3),
+        var angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
             dx = 10/(this.board.stretchX),
             dy = 10/(this.board.stretchY),
             p2c = this.point2.coords.usrCoords,

@@ -115,7 +115,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
      */
     this.label = {};
     this.label.relativeCoords = [10,-10];
-    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name)); //?
+    this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name)); //?
     if (typeof withLabel=='undefined' || withLabel==true) {
         this.board.objects[this.id] = this;
         this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, 
@@ -306,13 +306,13 @@ JXG.Point.prototype.update = function (fromParent) {
 //fromParent = false;        
             if (fromParent) {
                 this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.X()+Math.cos(this.position),this.slideObject.midpoint.Y()+Math.sin(this.position)]);
-                this.coords  = this.board.algebra.projectPointToCircle(this, this.slideObject);
+                this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
             } else {
-                this.coords  = this.board.algebra.projectPointToCircle(this, this.slideObject);
-                this.position = this.board.algebra.rad([this.slideObject.midpoint.X()+1.0,this.slideObject.midpoint.Y()],this.slideObject.midpoint,this);
+                this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
+                this.position = JXG.Math.Geometry.rad([this.slideObject.midpoint.X()+1.0,this.slideObject.midpoint.Y()],this.slideObject.midpoint,this);
             }
         } else if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
-            this.coords  = this.board.algebra.projectPointToLine(this, this.slideObject);
+            this.coords  = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
             
             var p1coords = this.slideObject.point1.coords;
             var p2coords = this.slideObject.point2.coords;
@@ -410,10 +410,10 @@ JXG.Point.prototype.update = function (fromParent) {
             }
         } else if(this.slideObject.type == JXG.OBJECT_TYPE_TURTLE) {
             this.updateConstraint(); // In case, the point is a constrained glider.
-            this.coords  = this.board.algebra.projectPointToTurtle(this, this.slideObject);
+            this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, this.slideObject, this.board);
         } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CURVE) {
             this.updateConstraint(); // In case, the point is a constrained glider.
-            this.coords  = this.board.algebra.projectPointToCurve(this, this.slideObject);
+            this.coords  = JXG.Math.Geometry.projectPointToCurve(this, this.slideObject, this.board);
         }
     }
     
@@ -438,7 +438,7 @@ JXG.Point.prototype.updateRenderer = function () {
     if(this.visProp['visible']) {
         var wasReal = this.isReal;
         this.isReal = (isNaN(this.coords.usrCoords[1]+this.coords.usrCoords[2]))?false:true;
-        this.isReal = (Math.abs(this.coords.usrCoords[0])>this.board.algebra.eps)?this.isReal:false;  //Homogeneous coords: ideal point
+        this.isReal = (Math.abs(this.coords.usrCoords[0])>JXG.Math.eps)?this.isReal:false;  //Homogeneous coords: ideal point
         if (this.isReal) {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.show(this); 
@@ -667,7 +667,7 @@ JXG.Point.prototype.makeGlider = function (glideObject) {
  *   <li>a pointer to a slider object. This will be converted into a call of the Value()-method 
  *     of this slider.</li>
  *   </ul>
- * @see JXG.Algebra#geonext2JS
+ * @see JXG.GeonextParser#geonext2JS
  */
 JXG.Point.prototype.addConstraint = function (terms) {
     this.type = JXG.OBJECT_TYPE_CAS;
@@ -679,7 +679,7 @@ JXG.Point.prototype.addConstraint = function (terms) {
         var v = terms[i];
         if (typeof v=='string') {
             // Convert GEONExT syntax into  JavaScript syntax
-            var t  = this.board.algebra.geonext2JS(v);
+            var t  = JXG.GeonextParser.geonext2JS(v);
             newfuncs[i] = new Function('','return ' + t + ';');
         } else if (typeof v=='function') {
             newfuncs[i] = v;
@@ -917,7 +917,7 @@ JXG.Point.prototype._anim = function(direction, stepCount) {
         }
   
         this.coords.setCoordinates(JXG.COORDS_BY_SCREEN, [newX, 0]);
-        this.coords = this.board.algebra.projectPointToCurve(this, this.slideObject);
+        this.coords = JXG.Math.Geometry.projectPointToCurve(this, this.slideObject, this.board);
     } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         if(direction < 0) {
             alpha = this.intervalCount/stepCount * 2*Math.PI;

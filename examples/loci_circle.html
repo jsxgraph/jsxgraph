@@ -82,7 +82,7 @@
                     $('debug').innerHTML += ', ';
             } else {
                 poly[i] = poly[i].replace(/\^(\d+)/g,'<sup>$1</sup>');
-                poly[i] = board.algebra.replaceSub(poly[i]);
+                poly[i] = JXG.GeonextParser.replaceSub(poly[i]);
                 poly[i] = poly[i].replace(/\*/g,'');
                 $('debug').innerHTML += '<li>' + poly[i] + '</li>';
             }

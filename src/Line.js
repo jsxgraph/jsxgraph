@@ -242,7 +242,7 @@ JXG.Line.prototype = new JXG.GeometryElement;
     
     // The point is too far away from the line
     // dist(v,vnew)^2 projective
-    //if (this.board.algebra.distance(v,vnew)>this.board.options.precision.hasPoint) {
+    //if (JXG.Math.Geometry.distance(v,vnew)>this.board.options.precision.hasPoint) {
     s = (v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2]);
     if (isNaN(s) || s>this.board.options.precision.hasPoint*this.board.options.precision.hasPoint) {
         return false;
@@ -687,7 +687,7 @@ JXG.Line.prototype.X = function (phi) {
     sq = Math.sqrt(A*A+B*B);
     sinTheta = -B/sq;
     cosTheta = A/sq;
-    if (Math.abs(cosTheta)<this.board.algebra.eps) { cosTheta = 1.0; }
+    if (Math.abs(cosTheta)<JXG.Math.eps) { cosTheta = 1.0; }
     return sinTheta*Math.cos(phi)/cosTheta;
 };
 
@@ -707,7 +707,7 @@ JXG.Line.prototype.Y = function (phi) {
     sq = Math.sqrt(A*A+B*B);
     sinTheta = -B/sq;
     cosTheta = A/sq;
-    if (Math.abs(cosTheta)<this.board.algebra.eps) { cosTheta = 1.0; }
+    if (Math.abs(cosTheta)<JXG.Math.eps) { cosTheta = 1.0; }
     return sinTheta*Math.sin(phi)/cosTheta;
 };
 
@@ -726,7 +726,7 @@ JXG.Line.prototype.Z = function (phi) {
     B = c;
     sq = Math.sqrt(A*A+B*B);
     cosTheta = A/sq;
-    if (Math.abs(cosTheta)>=this.board.algebra.eps) {
+    if (Math.abs(cosTheta)>=JXG.Math.eps) {
         return 1.0;
     } else {
         return 0.0;

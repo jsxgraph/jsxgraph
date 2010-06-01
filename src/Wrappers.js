@@ -23,10 +23,10 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-JXG.Board.prototype.angle = function(A, B, C){ return this.algebra.angle(A,B,C); };
-JXG.Board.prototype.rad = function(A, B, C){ return this.algebra.rad(A,B,C); };
-JXG.Board.prototype.distance = function(arr1, arr2){ return this.algebra.distance(arr1,arr2); };
-JXG.Board.prototype.pow = function(a, b){ return this.algebra.pow(a,b); };
+JXG.Board.prototype.angle = function(A, B, C){ return JXG.Math.Geometry.angle(A,B,C); };
+JXG.Board.prototype.rad = function(A, B, C){ return JXG.Math.Geometry.rad(A,B,C); };
+JXG.Board.prototype.distance = function(arr1, arr2){ return JXG.Math.Geometry.distance(arr1,arr2); };
+JXG.Board.prototype.pow = function(a, b){ return JXG.Math.pow(a,b); };
 JXG.Board.prototype.round = function(x, n){ return (x).toFixed(n); };
 JXG.Board.prototype.cosh = function(x){ return JXG.Math.cosh(x); };
 JXG.Board.prototype.sinh = function(x){ return JXG.Math.sinh(x); };
@@ -77,12 +77,12 @@ JXG.Board.prototype.intersection = function(el1,el2,i,j){
     el1 = JXG.getReference(this,el1);
     el2 = JXG.getReference(this,el2);
     if (el1.elementClass==JXG.OBJECT_CLASS_CURVE && el2.elementClass==JXG.OBJECT_CLASS_CURVE) {
-        return function(){return el1.board.algebra.meetCurveCurve(el1,el2,i,j); };
+        return function(){return JXG.Math.Geometry.meetCurveCurve(el1,el2,i,j,el1.board); };
     } else if ((el1.elementClass==JXG.OBJECT_CLASS_CURVE && el2.elementClass==JXG.OBJECT_CLASS_LINE)||
                (el2.elementClass==JXG.OBJECT_CLASS_CURVE && el1.elementClass==JXG.OBJECT_CLASS_LINE)) {
-        return function(){return el1.board.algebra.meetCurveLine(el1,el2,i); };
+        return function(){return JXG.Math.Geometry.meetCurveLine(el1,el2,i,el1.board); };
     } else {
-        return function(){return el1.board.algebra.meet(el1.stdform,el2.stdform,i); };
+        return function(){return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board); };
     }
 }; //returns a single point of intersection
 JXG.Board.prototype.intersectionFunc = function(el1,el2,i,j){ return this.intersection(el1,el2,i,j); }; 
@@ -94,13 +94,13 @@ JXG.Board.prototype.otherIntersection = function(el1,el2,el){
     el1 = JXG.getReference(this,el1);
     el2 = JXG.getReference(this,el2);
     return function(){
-        var c = el1.board.algebra.meet(el1.stdform,el2.stdform,0);
+        var c = JXG.Math.Geometry.meet(el1.stdform,el2.stdform,0,el1.board);
         if (Math.abs(el.X()-c.usrCoords[1])>JXG.Math.eps ||
             Math.abs(el.Y()-c.usrCoords[2])>JXG.Math.eps ||
             Math.abs(el.Z()-c.usrCoords[0])>JXG.Math.eps) {
             return c;
         } else {
-            return el1.board.algebra.meet(el1.stdform,el2.stdform,1);
+            return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,1,el1.board);
         }
     };
 }; //returns a single point of intersection

@@ -656,7 +656,7 @@ JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
 JXG.Curve.prototype.notifyParents = function (contentStr) {
     //var res = null;
     //var elements = this.board.elementsByName;
-    this.board.algebra.findDependencies(this,contentStr);
+    JXG.GeonextParser.findDependencies(this,contentStr,this.board);
 };
 
 /**
@@ -666,7 +666,7 @@ JXG.Curve.prototype.notifyParents = function (contentStr) {
  */
 JXG.Curve.prototype.getLabelAnchor = function() {
     var c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, this.board.canvasHeight*0.5], this.board);
-    c = this.board.algebra.projectCoordsToCurve(c.usrCoords[1],c.usrCoords[2],0.0,this)[0];
+    c = JXG.Math.Geometry.projectCoordsToCurve(c.usrCoords[1],c.usrCoords[2],0.0,this,this.board)[0];
     return c;
 };
 

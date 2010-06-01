@@ -426,7 +426,7 @@ JXG.Circle.prototype.generateTerm = function (term) {
     if (typeof term=='string') {
          var elements = this.board.elementsByName;
          // Convert GEONExT syntax into  JavaScript syntax
-         var newTerm = this.board.algebra.geonext2JS(term+'');
+         var newTerm = JXG.GeonextParser.geonext2JS(term+'');
          this.updateRadius = new Function('return ' + newTerm + ';');
     } else if (typeof term=='number') {
         this.updateRadius = function() { return term; };
@@ -445,7 +445,7 @@ JXG.Circle.prototype.notifyParents = function (contentStr) {
     var elements = this.board.elementsByName;
     
     if (typeof contentStr == 'string') 
-        this.board.algebra.findDependencies(this,contentStr+'');
+        JXG.GeonextParser.findDependencies(this,contentStr+'',this.board);
 };
 
 /**

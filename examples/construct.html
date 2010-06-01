@@ -51,7 +51,7 @@ var createArc = function(board,parents,attributes) {
     c = board.create('curve',[[0],[0]],attributes);
     c.updateDataArray = function() {
         var beta, co, si, matrix,
-            phi = this.board.algebra.rad(A,B,C),
+            phi = JXG.Math.Geometry.rad(A,B,C),
             n = 100, i,
             delta = phi/n, //Math.PI/90.0,
             x = B.X(),

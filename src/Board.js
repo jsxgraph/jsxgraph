@@ -264,7 +264,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @private
      * @type Algebra
      */
-    this.algebra = new JXG.Algebra(this);
+//    this.algebra = new JXG.Algebra(this);
 
     /* If the given id is not valid, generate an unique id */
     if((id != '') && (id != null) && (typeof document.getElementById(id) != 'undefined'))
@@ -893,9 +893,9 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
             this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
             // Then, from this position we compute the projection to the object the glider on which the glider lives.
             if(this.drag_obj.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
-                this.drag_obj.coords = this.algebra.projectPointToCircle(this.drag_obj, this.drag_obj.slideObject);
+                this.drag_obj.coords = JXG.Math.Geometry.projectPointToCircle(this.drag_obj, this.drag_obj.slideObject, this);
             } else if (this.drag_obj.slideObject.type == JXG.OBJECT_TYPE_LINE) {
-                this.drag_obj.coords = this.algebra.projectPointToLine(this.drag_obj, this.drag_obj.slideObject);
+                this.drag_obj.coords = JXG.Math.Geometry.projectPointToLine(this.drag_obj, this.drag_obj.slideObject, this);
             }
             // Now, we have to adjust the other group elements again.
             if(this.drag_obj.group.length != 0) {
@@ -1316,7 +1316,7 @@ JXG.Board.prototype.addNormal = function(l, p, id, name) {
     }
 
     // versteckter Hilfs-Punkt
-    var erg = this.algebra.perpendicular(line, point);
+    var erg = JXG.Math.Geometry.perpendicular(line, point, this);
     var p2coords = erg[0].usrCoords.slice(1);
     var point2 = new JXG.Point(this, p2coords, id+"P2", '', false);
     point2.fixed = true;
@@ -1336,7 +1336,7 @@ JXG.Board.prototype.addNormal = function(l, p, id, name) {
 
     perpendicular.update = function() {
         if (this.needsUpdate) {
-            var erg = this.board.algebra.perpendicular(line, point);
+            var erg = JXG.Math.Geometry.perpendicular(line, point, this);
             point2.coords = erg[0];
             if(this.changed != erg[1]) {
                 var tmp = this.point1;
@@ -1434,7 +1434,7 @@ JXG.Board.prototype.addConditions = function (str) {
         var el = this.elementsByName[JXG.unescapeHTML(name)];
 
         var property = left.slice(m+1).replace(/\s+/g,'').toLowerCase(); // remove whitespace in property
-        right = this.algebra.geonext2JS(right);
+        right = JXG.GeonextParser.geonext2JS(right);
         right = right.replace(/this\.board\./g,'this.');
 
         // Debug
@@ -2731,7 +2731,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                 }
                 else if(splitted[i].search(/(\S*)\s*:\s*(.*)/) != -1) { // Funktionsgraph
                     objName = RegExp.$1;
-                    tmp = this.algebra.geonext2JS(RegExp.$2);
+                    tmp = JXG.GeonextParser.geonext2JS(RegExp.$2);
                     defElements = [new Function('x','var y = '+tmp+'; return y;')];
                     attributes.name = objName;
                     output.functions.push(board.create('functiongraph',defElements,attributes));

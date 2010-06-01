@@ -119,7 +119,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
          || ((this.intersect2.type == JXG.OBJECT_TYPE_LINE) && (this.intersect1.type == JXG.OBJECT_TYPE_ARROW)) ) {
         /* Intersect two elements of type line or arrow */
         
-        var coords = this.board.algebra.intersectLineLine(this.intersect1, this.intersect2).usrCoords.slice(1);
+        var coords = JXG.Math.Geometry.intersectLineLine(this.intersect1, this.intersect2, this.board).usrCoords.slice(1);
 
         /* Create intersection point */
         this.p = new JXG.Point(this.board, coords, InterId1, InterName1, true);
@@ -136,7 +136,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         this.update = function () {
             /* Calculate the coordinates of the intersection point in dependance of the intersected elements */
             if (this.needsUpdate) {
-                this.p.coords = this.board.algebra.intersectLineLine(this.intersect1, this.intersect2);
+                this.p.coords = JXG.Math.Geometry.intersectLineLine(this.intersect1, this.intersect2, this.board);
                 /* Update the point */
                 //this.p.update();
                 this.needsUpdate = false;
@@ -212,7 +212,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         this.addChild(this.p1);
         this.addChild(this.p2);
 
-        var coordinates = this.board.algebra.intersectCircleCircle(this.intersect1, this.intersect2);
+        var coordinates = JXG.Math.Geometry.intersectCircleCircle(this.intersect1, this.intersect2, this.board);
         if(coordinates[0] == 1) {
             this.p1.coords = coordinates[1];
             this.p1.showElement();
@@ -230,7 +230,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
 
         this.update = function () {    
             if (!this.needsUpdate) { return; }
-            var coordinates = this.board.algebra.intersectCircleCircle(this.intersect1, this.intersect2);
+            var coordinates = JXG.Math.Geometry.intersectCircleCircle(this.intersect1, this.intersect2, this.board);
             var p1show = this.p1.visProp['visible'];
             var p2show = this.p2.visProp['visible'];         
             if(coordinates[0] == 0) {  
@@ -311,7 +311,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
             this.intersect2 = swap;
         }
         
-        var coordinates = this.board.algebra.intersectCircleLine(this.intersect1, this.intersect2);
+        var coordinates = JXG.Math.Geometry.intersectCircleLine(this.intersect1, this.intersect2, this.board);
         if(coordinates[0] == 1) { // not really implemented
             this.p1.coords = coordinates[1];
             this.p1.showElement();
@@ -337,7 +337,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
 
         this.update = function () {
             if (!this.needsUpdate) { return; }
-            var coordinates = this.board.algebra.intersectCircleLine(this.intersect1, this.intersect2);
+            var coordinates = JXG.Math.Geometry.intersectCircleLine(this.intersect1, this.intersect2, this.board);
             var show1 = this.p1.visProp['visible'];
             var show2 = this.p2.visProp['visible'];
             

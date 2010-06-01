@@ -301,11 +301,9 @@ JXG.AbstractRenderer.prototype.updateLine = function(/** Line */ el) {
  */
 JXG.AbstractRenderer.prototype.calcStraight = function(/** Line */ el, /** JXG.Coords */ point1, /** JXG.Coords */ point2) {
     var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast, 
-        //b, 
         c, s, i, j, 
         p1, p2;
     
-    //b = el.board.algebra;
     straightFirst = el.visProp['straightFirst'];
     straightLast  = el.visProp['straightLast'];
 
@@ -419,7 +417,7 @@ JXG.AbstractRenderer.prototype.calcStraight = function(/** Line */ el, /** JXG.C
                     p2 = intersect1;
                     p1 = intersect2;
                 } else {
-                    if (el.board.algebra.affineDistance(point2.usrCoords,intersect1.usrCoords)<el.board.algebra.affineDistance(point2.usrCoords,intersect2.usrCoords)) {
+                    if (JXG.Math.Geometry.affineDistance(point2.usrCoords,intersect1.usrCoords)<JXG.Math.Geometry.affineDistance(point2.usrCoords,intersect2.usrCoords)) {
                         p1 = intersect1;
                         p2 = intersect2;
                     } else {
@@ -432,7 +430,7 @@ JXG.AbstractRenderer.prototype.calcStraight = function(/** Line */ el, /** JXG.C
                     p1 = intersect1;
                     p2 = intersect2;
                 } else {
-                    if (el.board.algebra.affineDistance(point2.usrCoords,intersect1.usrCoords)<el.board.algebra.affineDistance(point2.usrCoords,intersect2.usrCoords)) {
+                    if (JXG.Math.Geometry.affineDistance(point2.usrCoords,intersect1.usrCoords)<JXG.Math.Geometry.affineDistance(point2.usrCoords,intersect2.usrCoords)) {
                         p2 = intersect1;
                         p1 = intersect2;
                     } else {

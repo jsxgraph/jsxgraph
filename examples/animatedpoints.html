@@ -65,16 +65,16 @@
 		function onestep() {
 			p1.setPositionByTransform(JXG.COORDS_BY_USER, p1.animDX, p1.animDY);
 			board.update();
-			if(board.algebra.affineDistance([1, p1.X() + p1.animDX, p1.Y() + p1.animDY], moveTo) > board.algebra.affineDistance(p1.coords.usrCoords, moveTo)) {
+			if(JXG.Math.Geometry.affineDistance([1, p1.X() + p1.animDX, p1.Y() + p1.animDY], moveTo) > JXG.Math.Geometry.affineDistance(p1.coords.usrCoords, moveTo)) {
 				window.clearInterval(p1.intervalcode);
 				delete(p1.intervalcode);
 				alert('done');
 			}
-			p1.animOldDist = board.algebra.affineDistance(p1.coords.usrCoords, moveTo);
+			p1.animOldDist = JXG.Math.Geometry.affineDistance(p1.coords.usrCoords, moveTo);
 		}
 
 		function start() {
-			p1.animDistance = board.algebra.affineDistance(p1.coords.usrCoords, moveTo);
+			p1.animDistance = JXG.Math.Geometry.affineDistance(p1.coords.usrCoords, moveTo);
 			p1.animOldDistance = p1.animDistance;
 			p1.animDX = (moveTo[1] - p1.coords.usrCoords[1])/steps;
 			p1.animDY = (moveTo[2] - p1.coords.usrCoords[2])/steps;

@@ -86,7 +86,7 @@ JXG.createPerpendicularPoint = function(board, parentArr, atts) {
     }
 
     // no need to call create, the properties will be set through the create('perpendicular') call
-    t = JXG.createPoint(board, [function () { return board.algebra.perpendicular(l, p)[0]; }], {fixed: true, name: atts['name'], id: atts['id']});
+    t = JXG.createPoint(board, [function () { return JXG.Math.Geometry.perpendicular(l, p, board)[0]; }], {fixed: true, name: atts['name'], id: atts['id']});
     p.addChild(t); // notwendig, um auch den Punkt upzudaten
     l.addChild(t);
 
@@ -206,7 +206,7 @@ JXG.createPerpendicular = function(board, parentArr, atts) {
 
     // no need to call create, the properties will be set through the create('perpendicular') call
     t = JXG.createPerpendicularPoint(board, [l, p], {fixed: true, name: atts['name'][1], id: atts['id'][1], visible: false});
-    pd = JXG.createSegment(board, [function () { return (board.algebra.perpendicular(l, p)[1] ? [t, p] : [p, t]); }], {name: atts['name'][0], id: atts['id'][0]});
+    pd = JXG.createSegment(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], {name: atts['name'][0], id: atts['id'][0]});
 
     ret = [pd, t];
     ret.line = pd;
@@ -268,7 +268,7 @@ JXG.createMidpoint = function(board, parentArr, atts) {
     }
 
     t = board.create('point', [function () { return (a.coords.usrCoords[1] + b.coords.usrCoords[1])/2.; },
-                                      function () { return (a.coords.usrCoords[2] + b.coords.usrCoords[2])/2.; }], atts);
+                               function () { return (a.coords.usrCoords[2] + b.coords.usrCoords[2])/2.; }], atts);
     a.addChild(t);
     b.addChild(t);
 
@@ -610,7 +610,7 @@ JXG.createNormal = function(board, parents, attributes) {
 
     if(c.elementClass==JXG.OBJECT_CLASS_LINE) {
         // return board.addNormal(c,p, attributes['id'], attributes['name']); // GEONExT-Style: problems with ideal point
-        // If not needed, then board.addNormal and maybe board.algebra.perpendicular can be removed.
+        // If not needed, then board.addNormal and maybe JXG.Math.Geometry.perpendicular can be removed.
 
         // Homogeneous version:
         // orthogonal(l,p) = (F^\delta\cdot l)\times p
@@ -741,7 +741,7 @@ JXG.createBisector = function(board, parentArr, atts) {
         }
 
         // hidden and fixed helper
-        p = board.create('point', [function () { return board.algebra.angleBisector(parentArr[0], parentArr[1], parentArr[2]); }], cAtts);
+        p = board.create('point', [function () { return JXG.Math.Geometry.angleBisector(parentArr[0], parentArr[1], parentArr[2], board); }], cAtts);
 
         for(i=0; i<3; i++)
             parentArr[i].addChild(p); // required for algorithm requiring dependencies between elements
@@ -879,7 +879,7 @@ JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
 
     if(parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[2].elementClass == JXG.OBJECT_CLASS_POINT) {
         atts['fixed'] = atts['fixed'] || true;
-        p = JXG.createPoint(board, [function () { return board.algebra.circumcenterMidpoint(parentArr[0], parentArr[1], parentArr[2]); }], atts);
+        p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.circumcenterMidpoint(parentArr[0], parentArr[1], parentArr[2], board); }], atts);
 
         for(i=0; i<3; i++)
             parentArr[i].addChild(p);
@@ -994,7 +994,7 @@ JXG.createReflection = function(board, parentArr, atts) {
 
     // force a fixed point
     atts['fixed'] = true;
-    r = JXG.createPoint(board, [function () { return board.algebra.reflection(l, p); }], atts);
+    r = JXG.createPoint(board, [function () { return JXG.Math.Geometry.reflection(l, p, board); }], atts);
     p.addChild(r);
     l.addChild(r);
 
@@ -1034,7 +1034,7 @@ JXG.createMirrorPoint = function(board, parentArr, atts) {
     /* TODO mirror polynomials */
     if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1])) {
         atts['fixed'] = atts['fixed'] || true;
-        p = JXG.createPoint(board, [function () { return board.algebra.rotation(parentArr[0], parentArr[1], Math.PI); }], atts);
+        p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.rotation(parentArr[0], parentArr[1], Math.PI, board); }], atts);
 
         for(i=0; i<2; i++)
             parentArr[i].addChild(p);

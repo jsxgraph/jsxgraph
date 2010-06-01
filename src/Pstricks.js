@@ -191,8 +191,8 @@ JXG.PsTricks.addArc = function(el) {
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.board.canvasWidth/(el.board.stretchY), el.midpoint.coords.usrCoords[2]],
                           el.board);
-    var angle2 = JXG.Math.round(el.board.algebra.trueAngle(p, el.midpoint, el.point2),4);
-    var angle1 = JXG.Math.round(el.board.algebra.trueAngle(p, el.midpoint, el.point3),4);
+    var angle2 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point2),4);
+    var angle1 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3),4);
     
     this.psTricksString += "\\psarc";
     this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) + ", linewidth=" +el.visProp['strokeWidth']+"px";
@@ -219,8 +219,8 @@ JXG.PsTricks.addSector = function(el) {
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.board.canvasWidth/(el.board.stretchY), el.midpoint.coords.usrCoords[2]],
                           el.board);
-    var angle2 = JXG.Math.round(el.board.algebra.trueAngle(p, el.midpoint, el.point2),4);
-    var angle1 = JXG.Math.round(el.board.algebra.trueAngle(p, el.midpoint, el.point3),4);
+    var angle2 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point2),4);
+    var angle1 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3),4);
 
     if(el.visProp['fillColor'] != 'none' && el.visProp['fillOpacity'] != 0) {
         this.psTricksString += "\\pswedge";
@@ -235,8 +235,8 @@ JXG.PsTricks.addAngle = function(el) {
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.board.canvasWidth/(el.board.stretchY), el.point2.coords.usrCoords[2]],
                           el.board);
-    var angle2 = JXG.Math.round(el.board.algebra.trueAngle(p, el.point2, el.point1),4);
-    var angle1 = JXG.Math.round(el.board.algebra.trueAngle(p, el.point2, el.point3),4);
+    var angle2 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.point2, el.point1),4);
+    var angle1 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.point2, el.point3),4);
 
     if(el.visProp['fillColor'] != 'none' && el.visProp['fillOpacity'] != 0) {
         this.psTricksString += "\\pswedge";

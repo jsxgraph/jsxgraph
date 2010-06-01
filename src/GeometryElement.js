@@ -1157,7 +1157,7 @@ JXG.GeometryElement.prototype.createLabel = function(withLabel,coords) {
     if (typeof coords=='undefined' || coords==null) {
         coords = [10,10];
     }
-    this.nameHTML = this.board.algebra.replaceSup(this.board.algebra.replaceSub(this.name));
+    this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));
     this.label = {};
     if (typeof withLabel=='undefined' || withLabel==true) {
         if (this.board.objects[this.id]==null) {
@@ -1235,7 +1235,7 @@ JXG.GeometryElement.prototype.cloneToBackground = function(addToTrace) {
  * @private
  */
 JXG.GeometryElement.prototype.normalize = function() {
-    this.stdform = this.board.algebra.normalize(this.stdform);
+    this.stdform = JXG.Math.normalize(this.stdform);
     return this;
 };
 

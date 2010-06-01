@@ -67,7 +67,7 @@
         t = board.createElement('text', [function(){return p2.X()+1.1;},function(){return p2.Y()+(p3.Y()-p4.Y())/2;},function(){ return "m="+(board.round(p3.Y()-p4.Y(),2));}]); 
         */
         function doIt(){
-            var s = board.algebra.geonext2JS(document.getElementById("eingabe").value);
+            var s = JXG.GeonextParser.geonext2JS(document.getElementById("eingabe").value);
             document.getElementById("debug").innerHTML = s;
         	eval("function f(x){ return "+s+";}");
         	graph.yterm = function(x){ return f(x); };  // usually: e.g. "x^2"

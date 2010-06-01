@@ -375,7 +375,7 @@ JXG.createParabola = function(board, parents, atts) {
                 function() {
                     var v = [0,l.stdform[1],l.stdform[2]];
                     v = JXG.Math.crossProduct(v,F1.coords.usrCoords);
-                    return board.algebra.meetLineLine(v,l.stdform,0).usrCoords;
+                    return JXG.Math.Geometry.meetLineLine(v,l.stdform,0,board).usrCoords;
                 }
             ],{visible:false, name:'', withLabel:false});
 

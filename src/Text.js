@@ -260,9 +260,9 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
     var j = contentStr.indexOf('</value>');
     if (i>=0) {
         while (i>=0) {
-            plaintext += ' + "'+ this.board.algebra.replaceSub(this.board.algebra.replaceSup(contentStr.slice(0,i))) + '"';
+            plaintext += ' + "'+ JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr.slice(0,i))) + '"';
             var term = contentStr.slice(i+7,j);
-            var res = this.board.algebra.geonext2JS(term); 
+            var res = JXG.GeonextParser.geonext2JS(term); 
             res = res.replace(/\\"/g,'"');
             res = res.replace(/\\'/g,"'");
             if (res.indexOf('toFixed')<0) {  // GEONExT-Hack: apply rounding once only.  
@@ -275,7 +275,7 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
             j = contentStr.indexOf('</value>');
         }
     } //else {
-    plaintext += ' + "' + this.board.algebra.replaceSub(this.board.algebra.replaceSup(contentStr)) + '"';
+    plaintext += ' + "' + JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr)) + '"';
     //}
     plaintext = plaintext.replace(/<overline>/g,'<span style=text-decoration:overline>');
     plaintext = plaintext.replace(/<\/overline>/g,'</span>');
@@ -287,7 +287,7 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
         var head = plaintext.slice(0,i+6);
         var mid = plaintext.slice(i+6,j);
         var tail = plaintext.slice(j);
-        mid = this.board.algebra.replaceSub(this.board.algebra.replaceSup(mid));
+        mid = JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(mid));
         plaintext = head + mid + tail;
         i = plaintext.indexOf('<name>',i+7);
         j = plaintext.indexOf('</name>',i+7);
@@ -311,7 +311,7 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
         var search = /<value>([\w\s\*\/\^\-\+\(\)\[\],<>=!]+)<\/value>/;
         res = search.exec(contentStr);
         if (res!=null) {
-            this.board.algebra.findDependencies(this,res[1]);
+            JXG.GeonextParser.findDependencies(this,res[1],this.board);
             contentStr = contentStr.substr(res.index);
             contentStr = contentStr.replace(search,'');
         }
