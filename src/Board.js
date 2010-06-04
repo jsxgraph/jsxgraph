@@ -174,7 +174,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      */
     this.containerObj = document.getElementById(this.container);
     if (this.containerObj==null) {
-        throw new Error("\nJSXGraph: HTML container element '" + (box) + "' not found.");
+        throw new Error("\nJSXGraph: HTML container element '" + (container) + "' not found.");
     }
     //this.containerObj.undoPositioned;  //???
 
@@ -220,24 +220,28 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.zoomY = zoomY;
 
     /**
-     * This means the number of pixel which represents
+     * The number of pixels which represent
      * one unit in user-coordinates in x direction.
      * @type int
      */
     this.unitX = unitX;
 
     /**
-     * This means the number of pixel which represents
+     * The number of pixels which represent
      * one unit in user-coordinates in y direction.
      * @type int
      */
     this.unitY = unitY;
 
     /**
-      * Saving some multiplications
-      * @private
-      */
+     * Saving some multiplications
+     * @private
+     */
     this.stretchX = this.zoomX*this.unitX;
+    /**
+     * Saving some multiplications
+     * @private
+     */
     this.stretchY = this.zoomY*this.unitY;
 
     /**
@@ -247,7 +251,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.canvasWidth = canvasWidth;
 
     /**
-     * Canvas Width
+     * Canvas Height
      * @type int
      */
     this.canvasHeight = canvasHeight;
@@ -272,7 +276,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
         this.id = this.generateId();
 
     /**
-     * An array containing all hooked functions.
+     * An array containing all hook-functions.
      * @type Array
      */
     this.hooks = [];
