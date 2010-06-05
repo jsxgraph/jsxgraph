@@ -74,7 +74,8 @@ JXG.createEllipse = function(board, parents, atts) {
         } else if (JXG.isString(parents[i])) { // focus i given by point name
             F[i] = JXG.getReference(board,parents[i]);
         } else
-            throw new Error("JSXGraph: Can't create Ellipse with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create Ellipse with parent types '" + 
+                            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     }
     if (JXG.isNumber(parents[2])) { // length of major axis
         majorAxis = JXG.createFunction(parents[2],board);
@@ -90,7 +91,9 @@ JXG.createEllipse = function(board, parents, atts) {
         } else if (JXG.isString(parents[2])) {                                      // focus i given by point name
             C = JXG.getReference(board,parents[2]);
         } else {
-            throw new Error("JSXGraph: Can't create Ellipse with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) +"'.");
+            throw new Error("JSXGraph: Can't create Ellipse with parent types '" + 
+                            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) +"'." +
+                            "\nPossible parent types: []");
         }
         majorAxis = function(){ return C.Dist(F[0])+C.Dist(F[1]);};
     }
