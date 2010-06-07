@@ -861,7 +861,9 @@ JXG.createLine = function(board, parents, atts) {
             p1 = parents[0]();
             constrained = true;
         } else
-            throw new Error("JSXGraph: Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create line with parent types '" + 
+                            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                            "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
 
         if (parents[1].length>1) { // point 2 given by coordinates
             p2 = board.create('point', parents[1], {visible:false,fixed:true});
@@ -871,7 +873,9 @@ JXG.createLine = function(board, parents, atts) {
             p2 = parents[1]();
             constrained = true;
         } else
-            throw new Error("JSXGraph: Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create line with parent types '" + 
+                            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                            "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
         el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel'],atts['layer']);
         if(constrained) {
         	el.constrained = true;
@@ -887,7 +891,9 @@ JXG.createLine = function(board, parents, atts) {
             } else if (typeof parents[i]=='function') {
                 c[i] = parents[i];
             } else {
-                throw new Error("JSXGraph: Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2])+ "'.");
+                throw new Error("JSXGraph: Can't create line with parent types '" + 
+                                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2])+ "'." +
+                                "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
                 return;
             }
         }
@@ -917,7 +923,9 @@ JXG.createLine = function(board, parents, atts) {
         el.constrained = true;
         el.funps = parents[0];
     } else
-        throw new Error("JSXGraph: Can't create line with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+        throw new Error("JSXGraph: Can't create line with parent types '" + 
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                        "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
 
     el.labelOffsets = atts['labelOffsets'];
     return el;
@@ -1087,7 +1095,9 @@ JXG.createAxis = function(board, parents, attributes) {
         line.defaultTicks = defTicks;
     }
     else
-        throw new Error("JSXGraph: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+        throw new Error("JSXGraph: Can't create point with parent types '" + 
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                        "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]");
 
     return line;
 };
@@ -1134,10 +1144,14 @@ JXG.createTangent = function(board, parents, attributes) {
             c = parents[0];
             p = parents[1];
         } else {
-            throw new Error("JSXGraph: Can't create normal with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create tangent with parent types '" + 
+                            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                            "\nPossible parent types: [glider], [point,line|curve|circle|conic]");
         }
     } else {
-        throw new Error("JSXGraph: Can't create normal with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+        throw new Error("JSXGraph: Can't create tangent with parent types '" + 
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                        "\nPossible parent types: [glider], [point,line|curve|circle|conic]");
     }
 
     attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'line','withLabel'), layer:null});

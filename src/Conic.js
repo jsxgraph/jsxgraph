@@ -75,7 +75,8 @@ JXG.createEllipse = function(board, parents, atts) {
             F[i] = JXG.getReference(board,parents[i]);
         } else
             throw new Error("JSXGraph: Can't create Ellipse with parent types '" + 
-                            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+                            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                            "\nPossible parent types: [point,point,point], [point,point,number|function]");
     }
     if (JXG.isNumber(parents[2])) { // length of major axis
         majorAxis = JXG.createFunction(parents[2],board);
@@ -93,7 +94,7 @@ JXG.createEllipse = function(board, parents, atts) {
         } else {
             throw new Error("JSXGraph: Can't create Ellipse with parent types '" + 
                             (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) +"'." +
-                            "\nPossible parent types: []");
+                            "\nPossible parent types: [point,point,point], [point,point,number|function]");
         }
         majorAxis = function(){ return C.Dist(F[0])+C.Dist(F[1]);};
     }
@@ -225,7 +226,9 @@ JXG.createHyperbola = function(board, parents, atts) {
         } else if (JXG.isString(parents[i])) { // focus i given by point name
             F[i] = JXG.getReference(board,parents[i]);
         } else
-            throw new Error("JSXGraph: Can't create Hyperbola with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create Hyperbola with parent types '" + 
+                            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                            "\nPossible parent types: [point,point,point], [point,point,number|function]");
     }
     if (JXG.isNumber(parents[2])) { // length of major axis
         majorAxis = JXG.createFunction(parents[2],board);
@@ -241,7 +244,9 @@ JXG.createHyperbola = function(board, parents, atts) {
         } else if (JXG.isString(parents[2])) {                                      // focus i given by point name
             C = JXG.getReference(board,parents[2]);
         } else {
-            throw new Error("JSXGraph: Can't create Hyperbola with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) +"'.");
+            throw new Error("JSXGraph: Can't create Hyperbola with parent types '" + 
+                            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) +"'." +
+                            "\nPossible parent types: [point,point,point], [point,point,number|function]");
         }
         majorAxis = function(){ return C.Dist(F[0])-C.Dist(F[1]);};
     }
@@ -367,7 +372,9 @@ JXG.createParabola = function(board, parents, atts) {
     } else if (JXG.isString(parents[0])) { // focus i given by point name
         F1 = JXG.getReference(board,parents[0]);
     } else
-        throw new Error("JSXGraph: Can't create Parabola with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+        throw new Error("JSXGraph: Can't create Parabola with parent types '" + 
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                        "\nPossible parent types: [point,line]");
 
     if (typeof parents[3]=='undefined') parents[3] = 10.0;   // to
     if (typeof parents[2]=='undefined') parents[2] = -10.0;  // from
@@ -491,7 +498,8 @@ JXG.createConic = function(board, parents, atts) {
             } else if (JXG.isString(parents[i])) { // point i given by point name
                 points[i] = JXG.getReference(board,parents[i]);
             } else
-                throw new Error("JSXGraph: Can't create Conic section with parent types '" + (typeof parents[i]) + "'.");
+                throw new Error("JSXGraph: Can't create Conic section with parent types '" + (typeof parents[i]) + "'." +
+                                "\nPossible parent types: [point,point,point,point,point], [a00,a11,a22,a01,a02,a12]");
         }
     } else {
         /* Usual notation (x,y,z):

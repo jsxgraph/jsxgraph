@@ -944,11 +944,13 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     f = parents[0]; 
     n = JXG.createFunction(parents[1],board,'');
     if (n==null) {
-        throw new Error("JSXGraph: JXG.createRiemannsum: argument '2' n has to be number or function.");
+        throw new Error("JSXGraph: JXG.createRiemannsum: argument '2' n has to be number or function." +
+                        "\nPossible parent types: [function,n:number|function,type,start:number|function,end:number|function]");
     }
     type = JXG.createFunction(parents[2],board,'',false);
     if (type==null) {
-        throw new Error("JSXGraph: JXG.createRiemannsum: argument 3 'type' has to be string or function.");
+        throw new Error("JSXGraph: JXG.createRiemannsum: argument 3 'type' has to be string or function." +
+                        "\nPossible parent types: [function,n:number|function,type,start:number|function,end:number|function]");
     }
 
     par = ['x', [0], [0]].concat(parents.slice(3));

@@ -1174,7 +1174,9 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
             el.addTransform(parents[0],parents[1]);
         }
         else {// Failure
-            throw new Error("JSXGraph: Can't create point with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create point with parent types '" + 
+                            (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                            "\nPossible parent types: [x,y], [z,x,y], [point,transformation]");
         }
     } else {
         el = new JXG.Point(board, [0,0], atts['id'], atts['name'], show, atts['withLabel'], atts['layer']);
@@ -1326,7 +1328,7 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
  *   var ipex2_p3 = ipex1_board.create('point', [5.0, 3.0]);
  *   var ipex2_l1 = ipex1_board.create('line', [ipex2_p2, ipex2_p3]);
  *   var ipex2_i = ipex1_board.create('intersection', [ipex2_c1, ipex2_l1, 0]);
- *   var ipex2_j = ipex1_board.create('intersection', [ipex2_c1, ipex2_l1, ipex2_i]);
+ *   var ipex2_j = ipex1_board.create('otherintersection', [ipex2_c1, ipex2_l1, ipex2_i]);
  * </script><pre>
  */
 JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
@@ -1336,7 +1338,9 @@ JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
         (parents[0].elementClass != JXG.OBJECT_CLASS_LINE && parents[0].elementClass != JXG.OBJECT_CLASS_CIRCLE) ||
         (parents[1].elementClass != JXG.OBJECT_CLASS_LINE && parents[1].elementClass != JXG.OBJECT_CLASS_CIRCLE) ) {
         // Failure
-        throw new Error("JSXGraph: Can't create 'other intersection point' with parent types '" + (typeof parents[0]) + "',  '" + (typeof parents[1])+ "'and  '" + (typeof parents[2]) + "'.");
+        throw new Error("JSXGraph: Can't create 'other intersection point' with parent types '" + 
+                        (typeof parents[0]) + "',  '" + (typeof parents[1])+ "'and  '" + (typeof parents[2]) + "'." +
+                        "\nPossible parent types: [circle|line,circle|line,point]");
     }
     else {
         el = board.create('point', [board.otherIntersection(parents[0], parents[1], parents[2])], attributes);
