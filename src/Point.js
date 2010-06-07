@@ -679,7 +679,7 @@ JXG.Point.prototype.addConstraint = function (terms) {
         var v = terms[i];
         if (typeof v=='string') {
             // Convert GEONExT syntax into  JavaScript syntax
-            var t  = JXG.GeonextParser.geonext2JS(v);
+            var t  = JXG.GeonextParser.geonext2JS(v, this.board);
             newfuncs[i] = new Function('','return ' + t + ';');
         } else if (typeof v=='function') {
             newfuncs[i] = v;

@@ -1437,12 +1437,13 @@ JXG.Board.prototype.addConditions = function (str) {
         var el = this.elementsByName[JXG.unescapeHTML(name)];
 
         var property = left.slice(m+1).replace(/\s+/g,'').toLowerCase(); // remove whitespace in property
-        right = JXG.GeonextParser.geonext2JS(right);
+        right = JXG.GeonextParser.geonext2JS(right, this);
         right = right.replace(/this\.board\./g,'this.');
 
         // Debug
         if (typeof this.elementsByName[name]=='undefined'){
             alert("debug conditions: |"+name+"| undefined");
+            return;
         }
         plaintext += "el = this.objects[\"" + el.id + "\"];\n";
         //plaintext += "if (el==undefined) { $('debug').value = \"" + name + "\"; } else {\n";
@@ -2766,7 +2767,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     }
                     else if(splitted[i].search(/(\S*)\s*:\s*(.*)/) != -1) { // Funktionsgraph
                         objName = RegExp.$1;
-                        tmp = JXG.GeonextParser.geonext2JS(RegExp.$2);
+                        tmp = JXG.GeonextParser.geonext2JS(RegExp.$2, this);
                         defElements = [new Function('x','var y = '+tmp+'; return y;')];
                         attributes.name = objName;
                         output.functions.push(board.create('functiongraph',defElements,attributes));

@@ -262,7 +262,7 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
         while (i>=0) {
             plaintext += ' + "'+ JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr.slice(0,i))) + '"';
             var term = contentStr.slice(i+7,j);
-            var res = JXG.GeonextParser.geonext2JS(term); 
+            var res = JXG.GeonextParser.geonext2JS(term, this.board); 
             res = res.replace(/\\"/g,'"');
             res = res.replace(/\\'/g,"'");
             if (res.indexOf('toFixed')<0) {  // GEONExT-Hack: apply rounding once only.  

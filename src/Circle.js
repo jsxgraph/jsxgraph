@@ -426,7 +426,7 @@ JXG.Circle.prototype.generateTerm = function (term) {
     if (typeof term=='string') {
          var elements = this.board.elementsByName;
          // Convert GEONExT syntax into  JavaScript syntax
-         var newTerm = JXG.GeonextParser.geonext2JS(term+'');
+         var newTerm = JXG.GeonextParser.geonext2JS(term+'', this.board);
          this.updateRadius = new Function('return ' + newTerm + ';');
     } else if (typeof term=='number') {
         this.updateRadius = function() { return term; };

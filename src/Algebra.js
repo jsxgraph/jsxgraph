@@ -208,7 +208,7 @@ JXG.Algebra.prototype.replaceIdByObj = function(/** string */ term) /** string *
  * @deprecated Use {@link JXG.GeonextParser#geonext2JS} instead.
  */
 JXG.Algebra.prototype.geonext2JS = function(term) {
-    return JXG.GeonextParser.geonext2JS(term);
+    return JXG.GeonextParser.geonext2JS(term, this.board);
 };
 
 /**

@@ -87,7 +87,7 @@ JXG.GeonextParser.replacePow = function(te) {
             rightop = '[\\w\\.]+';  // ^b 
         }
         expr = new RegExp('(' + leftop + ')\\^(' + rightop + ')');
-        te = te.replace(expr,"this.board.algebra.pow($1,$2)");
+        te = te.replace(expr,"JXG.Math.pow($1,$2)");
         i = te.indexOf('^');
     }
     return te;
@@ -334,7 +334,7 @@ JXG.GeonextParser.replaceIdByObj = function(/** string */ term) /** string */ {
  * @type String
  * @return Given expression translated to JavaScript.
  */
-JXG.GeonextParser.geonext2JS = function(term) {
+JXG.GeonextParser.geonext2JS = function(term, board) {
     var expr, newterm, i,
         from = ['Abs', 'ACos', 'ASin', 'ATan','Ceil','Cos','Exp','Floor','Log','Max','Min','Random','Round','Sin','Sqrt','Tan','Trunc'], 
         to =   ['Math.abs', 'Math.acos', 'Math.asin', 'Math.atan', 'Math.ceil', 'Math.cos', 'Math.exp', 'Math.floor', 'Math.log', 'Math.max', 'Math.min', 'Math.random', 'this.board.round', 'Math.sin', 'Math.sqrt', 'Math.tan', 'Math.ceil'];
@@ -347,7 +347,7 @@ JXG.GeonextParser.geonext2JS = function(term) {
     
     // Umwandeln der GEONExT-Syntax in JavaScript-Syntax
     newterm = term;
-    newterm = this.replaceNameById(newterm);
+    newterm = this.replaceNameById(newterm, board);
     newterm = this.replaceIf(newterm);
     // Exponentiations-Problem x^y -> Math(exp(x,y).
     newterm = this.replacePow(newterm);

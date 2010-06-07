@@ -378,7 +378,7 @@ JXG.createEvalFunction = function(board,param,n) {
 
     for (i=0;i<n;i++) {
         if (typeof param[i] == 'string') {
-            str = JXG.GeonextParser.geonext2JS(param[i]);
+            str = JXG.GeonextParser.geonext2JS(param[i],board);
             str = str.replace(/this\.board\./g,'board.');
             f[i] = new Function('','return ' + (str) + ';');
         }
@@ -404,7 +404,7 @@ JXG.createFunction = function(term,board,variableName,evalGeonext) {
 
     if ((evalGeonext==null || evalGeonext==true) && JXG.isString(term)) {
         // Convert GEONExT syntax into  JavaScript syntax
-        newTerm = JXG.GeonextParser.geonext2JS(term);
+        newTerm = JXG.GeonextParser.geonext2JS(term, board);
         return new Function(variableName,'return ' + newTerm + ';');
     } else if (JXG.isFunction(term)) {
         return term;
