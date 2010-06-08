@@ -35,19 +35,20 @@
  * Constructs a new Board object.
  * @class This is the Board class. It stores all methods and properties required
  * to manage a geonext board like adding geometric elements, removing them, managing
- * mouse over, drag & drop of geometric objects etc.
+ * mouse over, drag & drop of geometric objects etc. You should never create a board by calling this constructor.
+ * Please use {@link JXG.JSXGraph#initBoard} instead.
  * @constructor
  * @param {String,Object} container The id or reference of the html-element the board is drawn in.
  * @param {JXG.AbstractRenderer} renderer The reference of a geonext renderer.
  * @param {String} id Unique identifier for the board, may be an empty string or null or even undefined.
  * @param {JXG.Coords} origin The coordinates where the origin is placed, in user coordinates.
- * @param {float} zoomX Zoom factor in x-axis direction
- * @param {float} zoomY Zoom factor in y-axis direction
+ * @param {Number} zoomX Zoom factor in x-axis direction
+ * @param {Number} zoomY Zoom factor in y-axis direction
  * @param {int} unitX Units in x-axis direction
  * @param {int} unitY Units in y-axis direction
  * @param {int} canvasWidth  The width of canvas
  * @param {int} canvasHeight The height of canvas
- * @param {bool} showCopyright Display the copyright text
+ * @param {Boolean} showCopyright Display the copyright text
  */
 JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY, canvasWidth, canvasHeight, showCopyright) {
     /**
@@ -63,7 +64,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * Board is in drag mode, objects aren't highlighted on mouse over and the object referenced in
      * drag_obj is updated on mouse movement.
      * @type int
-     * @see #drag_obj
+     * @see JXG.Board#drag_obj
      * @private
      * @final
      */
@@ -73,7 +74,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * Board is in construction mode, objects are highlighted on mouse over and the behaviour of the board
      * is determined by the construction type stored in the field constructionType.
      * @type int
-     * @see #constructionType
+     * @see JXG.Board#constructionType
      * @private
      * @final
      */
@@ -90,7 +91,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     /**
      * Updating is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
      * @type int
-     * @see #updateQuality
+     * @see JXG.Board#updateQuality
      * @private
      * @final
      */
@@ -99,7 +100,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     /**
      * Updating is made with high quality, e.g. graphs are evaluated at much more points.
      * @type int
-     * @see #updateQuality
+     * @see JXG.Board#updateQuality
      * @private
      * @final
      */
@@ -181,27 +182,28 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     /**
      * A reference to this boards renderer.
      * @private
-     * @type AbstractRenderer
+     * @type JXG.AbstractRenderer
      */
     this.renderer = renderer;
 
     /**
     * Some standard options
-    * @type Options
+    * @type JXG.Options
     */
-    //this.options = new JXG.Options();
     this.options = JXG.deepCopy(JXG.Options);
-    
+
     /**
      * Dimension of the board.
      * @private
+     * @default 2
      * @type int
      */
     this.dimension = 2;
 
     /**
-     * Coordinates of the boards origin
-     * @type Coords
+     * Coordinates of the boards origin.
+     * @default [0, 0]
+     * @type JXG.Coords
      */
     this.origin = {};
     this.origin.usrCoords = [1, 0, 0];
@@ -235,11 +237,13 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
 
     /**
      * Saving some multiplications
+     * @type int
      * @private
      */
     this.stretchX = this.zoomX*this.unitX;
     /**
      * Saving some multiplications
+     * @type int
      * @private
      */
     this.stretchY = this.zoomY*this.unitY;
@@ -261,13 +265,6 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @type int
      */
     this.fontSize = this.options.text.fontSize;
-
-    /**
-     * A reference to an object of class Algebra.
-     * @deprecated Use {@link JXG.Math.Geometry} and {@link JXG.GeonextParser} instead.
-     * @private
-     */
-//    this.algebra = new JXG.Algebra(this);
 
     /* If the given id is not valid, generate an unique id */
     if((id != '') && (id != null) && (typeof document.getElementById(id) != 'undefined'))
@@ -298,6 +295,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     /**
      * This is used for general purpose animations. Stores all the objects that are currently running an animation.
      * @private
+     * @type Object
      */
     this.animationObjects = {};
 
@@ -324,9 +322,10 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     /**
      * The board mode the board is currently in. Possible values are
      * <ul>
-     * <li>Board.BOARD_MODE_NONE</li>
-     * <li>Board.BOARD_MODE_DRAG</li>
-     * <li>Board.BOARD_MODE_CONSTRUCT</li>
+     * <li>JXG.Board.BOARD_MODE_NONE</li>
+     * <li>JXG.Board.BOARD_MODE_DRAG</li>
+     * <li>JXG.Board.BOARD_MODE_CONSTRUCT</li>
+     * <li>JXG.Board.BOARD_MODE_MOVE_ORIGIN</li>
      * </ul>
      * @private
      * @type int
@@ -334,13 +333,13 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.mode = this.BOARD_MODE_NONE;
 
     /**
-     * The update quality of the board. In most cases this is set to Board.BOARD_QUALITY_HIGH when mode is not Board.BOARD_MODE_DRAG
-     * and Board.QUALITY_HIGH otherwise. Possible values are
+     * The update quality of the board. In most cases this is set to {@link JXG.Board#BOARD_QUALITY_HIGH}. If {@link JXG.Board#mode} equals {@link JXG.Board#BOARD_MODE_DRAG}
+     * this is set to {@link JXG.Board#BOARD_QUALITY_LOW} to speed up the update process by e.g. reducing the number of evaluation points when plotting functions. Possible values are
      * <ul>
      * <li>BOARD_QUALITY_LOW</li>
      * <li>BOARD_QUALITY_HIGH</li>
      * </ul>
-     * @see #mode
+     * @see JXG.Board#mode
      * @private
      * @type int
      */
@@ -349,72 +348,81 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    /**
     * If true updates are skipped
      * @private
-    * @type bool
+    * @type Boolean
     */
    this.isSuspendedRedraw = false;
 
    /**
     * The way objects can be dragged. If true, objects can only moved on a predefined grid, if false objects can be moved smoothly almost everywhere.
-    * @type bool
+    * @type Boolean
+    * @default JXG.Options.grid#snapToGrid
     */
    this.snapToGrid = this.options.grid.snapToGrid;
 
    /**
     * The amount of grid points plus one that fit in one unit of user coordinates in x direction.
     * @type int
+    * @default JXG.Options.grid#gridX
     */
    this.gridX = this.options.grid.gridX;
 
    /**
     * The amount of grid points plus one that fit in one unit of user coordinates in y direction.
     * @type int
+    * @default JXG.Options.grid#gridY
     */
    this.gridY = this.options.grid.gridY;
 
    /**
     * Color of the grid.
-    * @type string
+    * @type String
+    * @default JXG.Options.grid#gridColor
     */
    this.gridColor = this.options.grid.gridColor;
 
    /**
     * Opacity of the grid color, between 0 and 1.
-    * @type float
+    * @type Number
+    * @default JXG.Options.grid#gridOpacity
     */
    this.gridOpacity = this.options.grid.gridOpacity;
 
    /**
     * Determines whether the grid is dashed or not.
-    * @type bool
+    * @type Number
+    * @default JXG.Options.grid#gridDash
     */
    this.gridDash = this.options.grid.gridDash;
 
    /**
     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in x direction.
     * @type int
+    * @default JXG.Options.grid#snapSizeX
     */
    this.snapSizeX = this.options.grid.snapSizeX;
 
    /**
     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in y direction.
     * @type int
+    * @default JXG.Options.grid#snapSizeY
     */
    this.snapSizeY = this.options.grid.snapSizeY;
 
    this.calculateSnapSizes();
-
+    
    /**
-    * Visibility of the boards grid.
+    * Visibility of the boards grid. If hasGrid is true, a grid will be shown.
     * @private
-    * @type bool
+    * @type Boolean
+    * @default JXG.Options.grid#hasGrid
     */
    this.hasGrid = this.options.grid.hasGrid;
 
    /**
     * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
     * @type int
-    * @see drag_dy
-    * @see #drag_obj
+    * @see JXG.Board#drag_dy
+    * @see JXG.Board#drag_obj
     * @private
     */
    this.drag_dx = 0;
@@ -422,43 +430,46 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    /**
     * The distance from the mouse to the dragged object in y direction when the user clicked the mouse button.
     * @type int
-    * @see drag_dx
-    * @see #drag_obj
+    * @see JXG.Board#drag_dx
+    * @see JXG.Board#drag_obj
     * @private
     */
    this.drag_dy = 0;
-   
+
    /**
      * Absolute position of the mouse pointer in screen pixel from the top left corner
      * of the HTML window.
+    * @type Array
      */
    this.mousePosAbs = [0,0];
 
     /**
      * Relative position of the mouse pointer in screen pixel from the top left corner
-     * of the JSXGraph canvas (the div element contining the board)-
+     * of the JSXGraph canvas (the div element contining the board).
+     * @type Array
      */
    this.mousePosRel = [0,0];
 
    /**
-    * A reference to the object that is dragged on the board.
+    * A reference to the object that is dragged on the board. Usually this is an object of the class {@link JXG.Point}.
     * @private
     * @type Object
     */
    this.drag_obj = null;
 
    /**
-    * string containing the XML text of the construction.
-    * it is set in @see FileReader.parseString.
-    * Only useful if a construction from GEONExT, Intergeo, ...
-    * is read.
-    * @type string
+    * A string containing the XML text of the construction.
+    * This is set in {@link JXG.FileReader#parseString}.
+    * Only useful if a construction is read from a GEONExT-, Intergeo-, Geogebra-, or Cinderella-File.
+    * @type String
     * @private
     */
    this.xmlString = '';
 
-    /*
-    * Display the licence text, @see JSXGraph
+    /**
+    * Display the licence text.
+    * @see JXG.JSXGraph#licenseText
+    * @see JXG.JSXGraph#initBoard
     */
     if ( (showCopyright!=null && showCopyright) || (showCopyright==null && this.options.showCopyright) ) {
         this.renderer.displayCopyright(JXG.JSXGraph.licenseText,this.fontSize);
@@ -468,26 +479,29 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * Full updates are needed after zoom and axis translates.
     * This saves some time during update
     * @private
-    * @type bool
+    * @default false
+    * @type Boolean
     */
    this.needsFullUpdate = false;
 
    /**
     * if {reducedUpdate} is set to true, then only the dragged element and few (i.e. 2) following
-    * elements are updated during mouse move. On muose up the whole construction is
-    * updated. This enables JSXGraph even on very slow devices.
+    * elements are updated during mouse move. On mouse up the whole construction is
+    * updated. This enables us to be fast even on very slow devices.
     * @private
-    * @type bool
+    * @type Boolean
+    * @default false
     */
     this.reducedUpdate = false;
 
    /**
-    * If GEONExT constructions are displayed,
-    * then this property should be set to true.
-    * Then no stdform updates and no dragging
-    * of lines, circles and curves is possible.
+    * If GEONExT constructions are displayed, then this property should be set to true.
+    * Then no stdform updates and no dragging of lines, circles and curves is possible.
+    * This is set in {@link JXG.GeonextReader#readGeonext}.
     * @private
-    * @type bool
+    * @type Boolean
+    * @default false
+    * @see JXG.GeonextReader@readGeonext
     */
     this.geonextCompatibilityMode = false;
 
@@ -498,38 +512,35 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
             this.options.text.useASCIIMathML = false;
         }
     }
-   
-   /* Event needs to know which methods to call when mouse is moved or clicked */
-   // // Event.observe(this.container, 'mousedown', this.mouseDownListener.bind(this));
-   //// Event.observe(this.container, 'mousemove', this.mouseMoveListener.bind(this));
-   //Event.observe(document, 'mousedown', this.mouseDownListener.bind(this));
-   //Event.observe(this.containerObj, 'mousemove', this.mouseMoveListener.bind(this));
 
-   JXG.addEvent(document,'mousedown', this.mouseDownListener, this);
+    /**
+     * Introduce our event handlers to the browser
+     */
+   JXG.addEvent(document, 'mousedown', this.mouseDownListener, this);
    JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
 
-   
-   /**
-	* iPhone-Events
-	*/
-	 
-   //JXG.addEvent(document,'touchstart', this.touchStartListener, this);
-   JXG.addEvent(this.containerObj,'touchstart', this.touchStartListener, this);
+
+    /**
+     * To run JSXGraph on an iPhone/iPod/iPad we need these event listeners.
+     */
+   JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
    JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
    JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
 };
 
 /**
- * @private
- * Generates unique name for the given object. The result depends on object.type, if the object is a point, just capital characters are used, if it is
- * a line just lower case characters. If object is of type Polygon, lower case prefixed with P_ is used and if it's of type circle, lower case characters
- * prefixed with k_ is used. In any other case, lower case chars prefixed with s_ is used.
+ * Generates an unique name for the given object. The result depends on object.type, if the object is a {@link JXG.Point}, capital characters are used, if it is
+ * of type {@link JXG.Line} only lower case characters are used. If object is of type {@link JXG.Polygon}, a bunch of lower case characters prefixed
+ * with P_ are used. If object is of type {@link JXG.Circle} the name is generated using lower case characters. prefixed with k_ is used. In any
+ * other case, lower case chars prefixed with s_ is used.
  * @param {String,Object} object Reference or id or name of an geometry object that is to be named.
- * @return {String} Unique name for the object.
+ * @returns {String} Unique name for the object.
+ * @private
  */
 JXG.Board.prototype.generateName = function(object) {
-    if(object.type == JXG.OBJECT_TYPE_TICKS)
-        return;
+    if(object.type == JXG.OBJECT_TYPE_TICKS) {
+        return '';
+    }
 
     var possibleNames;
     if(object.elementClass == JXG.OBJECT_CLASS_POINT) {
@@ -543,7 +554,7 @@ JXG.Board.prototype.generateName = function(object) {
                                   'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
     }
 
-    // how long the name can be at most
+    // maximum length of a name
     var maxNameLength = 3;
     var pre = '';
     var nameBase = '';
@@ -607,7 +618,7 @@ JXG.Board.prototype.generateName = function(object) {
 
 /**
  * Generates unique id for a board. The result is randomly generated and prefixed with 'gxtBoard'.
- * @return {String} Unique id for a board.
+ * @returns {String} Unique id for a board.
  * @private
  */
 JXG.Board.prototype.generateId = function () {
@@ -622,13 +633,11 @@ JXG.Board.prototype.generateId = function () {
 };
 
 /**
- * Composes the unique id for a board. If the ID is empty ('' or null)
- * a new ID is generated, depending on the object type.
- * Additionally, the id of the label is set.
- * As side effect this.numObjects is updated.
- * @param {Object} object Reference of an geometry object that is to be named.
- * @param {int} object Type of the object.
- * @return {String} Unique id for a board.
+ * Composes the unique id for a board. If the ID is empty ('' or null) a new ID is generated, depending on the object type.
+ * Additionally, the id of the label is set. As a side effect {@link JXG.Board#numObjects} is updated.
+ * @param {Object} obj Reference of an geometry object that is to be named.
+ * @param {int} type Type of the object.
+ * @returns {String} Unique id for a board.
  * @private
  */
 JXG.Board.prototype.setId = function (obj, type) {
@@ -653,15 +662,14 @@ JXG.Board.prototype.setId = function (obj, type) {
 };
 
 /**
- * @private
  * Calculates mouse coordinates relative to the boards container.
- * @param {Event} Evt The browsers event object.
- * @type Array
- * @return Array of coordinates relative the boards container top left corner.
+ * @param {Event} Event The browsers event object.
+ * @return {Array} Array of coordinates relative the boards container top left corner.
+ * @private
  */
-JXG.Board.prototype.getRelativeMouseCoordinates = function (Evt) {
+JXG.Board.prototype.getRelativeMouseCoordinates = function (Event) {
     var pCont = this.containerObj,
-        cPos = JXG.getOffset(pCont), 
+        cPos = JXG.getOffset(pCont),
         n; //Element.cumulativeOffset(pCont);
 
     // add border width
@@ -728,31 +736,31 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
 /**
  * iPhone-Events
  */
- 
+
 JXG.Board.prototype.touchStartListener = function (evt) {
-	var e = document.createEvent("MouseEvents");   
+	var e = document.createEvent("MouseEvents");
     this.options.precision.hasPoint = this.options.precision.touch;
-	e.initMouseEvent('mousedown', true, false, this.containerObj, 0, evt.targetTouches[0].screenX, evt.targetTouches[0].screenY, evt.targetTouches[0].clientX, evt.targetTouches[0].clientY, false, false, evt.targetTouches.length == 1 ? false: true, false, 0, null);
+	e.initMouseEvent('mousedown', true, false, this.containerObj, 0, evt.targetTouches[0].screenX, evt.targetTouches[0].screenY, evt.targetTouches[0].clientX, evt.targetTouches[0].clientY, false, false, evt.targetTouches.length != 1, false, 0, null);
 	this.mouseDownListener(e);
-}
+};
 
 JXG.Board.prototype.touchMoveListener = function (evt) {
-	evt.preventDefault();	
-	var e = document.createEvent("MouseEvents");   
-	e.initMouseEvent('mousemove', true, false, this.containerObj, 0, evt.targetTouches[0].screenX, evt.targetTouches[0].screenY, evt.targetTouches[0].clientX, evt.targetTouches[0].clientY, false, false, evt.targetTouches.length == 1 ? false: true, false, 0, null);
-	this.mouseMoveListener(e);
-}
+    evt.preventDefault();
+    var e = document.createEvent("MouseEvents");
+    e.initMouseEvent('mousemove', true, false, this.containerObj, 0, evt.targetTouches[0].screenX, evt.targetTouches[0].screenY, evt.targetTouches[0].clientX, evt.targetTouches[0].clientY, false, false, evt.targetTouches.length != 1, false, 0, null);
+    this.mouseMoveListener(e);
+};
 
 JXG.Board.prototype.touchEndListener = function (evt) {
-	var e = document.createEvent("MouseEvents");   
+	var e = document.createEvent("MouseEvents");
 	e.initMouseEvent('mouseup', true, false, this.containerObj, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 	this.mouseUpListener(e);
     this.options.precision.hasPoint = this.options.precision.mouse;
-}
+};
 
 /**
  * This method is called by the browser when the left mouse button is released.
- * @param {Event} Event The browsers event object.
+ * @param {Event}  evt The browsers event object.
  * @private
  */
 JXG.Board.prototype.mouseUpListener = function (evt) {
@@ -876,7 +884,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
 /*
             // Do not use setPositionByTransform at the moment!
             // This concept still has to be worked out.
-            
+
             if ((this.geonextCompatibilityMode && this.drag_obj.type==JXG.OBJECT_TYPE_POINT) || this.drag_obj.group.length != 0) {
                 // This is for performance reasons with GEONExT files and for groups (transformations do not work yet with groups)
                 this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
@@ -887,7 +895,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
                 // Save new mouse position in screen coordinates.
                 this.dragObjCoords = newPos;
             }
-*/            
+*/
             this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
             this.update(this.drag_obj);
         } else if(this.drag_obj.type == JXG.OBJECT_TYPE_GLIDER) {
@@ -915,7 +923,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
         // Elements  below the mouse pointer which are not highlighted are highlighted.
         for(el in this.objects) {
             pEl = this.objects[el];
-            if( pEl.hasPoint!=undefined && pEl.visProp['visible']==true && pEl.hasPoint(dx, dy)) {
+            if( pEl.hasPoint!=undefined && pEl.visProp['visible'] && pEl.hasPoint(dx, dy)) {
                 //this.renderer.highlight(pEl);
 
                 // this is required in any case because otherwise the box won't be shown until the point is dragged
@@ -1000,7 +1008,7 @@ JXG.Board.prototype.dehighlightAll = function(x,y) {
         pEl = this.highlightedObjects[el];
         if((pEl.hasPoint == undefined) ||
            (!pEl.hasPoint(x, y)) ||
-           (pEl.visProp['visible'] == false)) { // dehighlight only if necessary
+           (!pEl.visProp['visible'])) { // dehighlight only if necessary
                 pEl.noHighlight();
                 delete(this.highlightedObjects[el]);
         }
@@ -1200,51 +1208,6 @@ JXG.Board.prototype.addPolygon = function(obj) {
 };
 
 /**
- * Registers a arc at the board and adds it to the renderer.
- * @param {JXG.Arc} obj The arc to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-/* 
-JXG.Board.prototype.addArc = function(obj) {
-    var id = this.setId(obj,'Ac');
-    this.renderer.drawArc(obj);
-    this.finalizeAdding(obj);
-    return id;
-};
-*/
-
-/**
- * Registers a sector at the board and adds it to the renderer.
- * @param {JXG.Sector} obj The sector to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-/* 
-JXG.Board.prototype.addSector = function(obj) {
-    return this.setId(obj,'Sc');
-};
-*/
-
-/**
- * Registers an angle at the board and adds it to the renderer.
- * @param {JXG.Angle} obj The angle to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-/*
-JXG.Board.prototype.addAngle = function (obj) {
-    var id = this.setId(obj,'Ag');
-    this.renderer.drawAngle(obj);
-    this.finalizeAdding(obj);
-    return id;
-};
-*/
-
-/**
  * Registers a curve at the board and adds it to the renderer.
  * @param {JXG.Curve} obj The curve to add.
  * @type String
@@ -1271,7 +1234,7 @@ JXG.Board.prototype.addChart = function (obj) {
 
 /**
  * Registers a arrow at the board and adds it to the renderer.
- * @param {JXG.Arrow} obj The arrow to add.
+ * @param {JXG.Line} obj The arrow to add.
  * @type String
  * @return Element id of the object.
  * @private
@@ -1437,13 +1400,12 @@ JXG.Board.prototype.addConditions = function (str) {
         var el = this.elementsByName[JXG.unescapeHTML(name)];
 
         var property = left.slice(m+1).replace(/\s+/g,'').toLowerCase(); // remove whitespace in property
-        right = JXG.GeonextParser.geonext2JS(right, this);
+        right = JXG.GeonextParser.geonext2JS(right);
         right = right.replace(/this\.board\./g,'this.');
 
         // Debug
         if (typeof this.elementsByName[name]=='undefined'){
             alert("debug conditions: |"+name+"| undefined");
-            return;
         }
         plaintext += "el = this.objects[\"" + el.id + "\"];\n";
         //plaintext += "if (el==undefined) { $('debug').value = \"" + name + "\"; } else {\n";
@@ -1615,7 +1577,7 @@ JXG.Board.prototype.zoomOut = function() {
     oX = this.origin.scrCoords[1]/this.options.zoom.factor;
     oY = this.origin.scrCoords[2]/this.options.zoom.factor;
     this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
-    
+
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
     this.applyZoom();
@@ -1627,7 +1589,7 @@ JXG.Board.prototype.zoomOut = function() {
  */
 JXG.Board.prototype.zoom100 = function() {
     var oX, oY, zX, zY;
-    
+
     zX = this.zoomX;
     zY = this.zoomY;
     this.zoomX = 1.0;
@@ -2033,9 +1995,9 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         throw new Error("JSXGraph: JXG.createElement: Unknown element type given: "+elementType);
     }
 
-    if (el==undefined) {
+    if (typeof el == 'undefined') {
         //throw new Error("JSXGraph: JXG.createElement: failure creating "+elementType);
-        return;
+        return el;
     };
 
     if(JXG.isArray(attributes)) {
@@ -2188,7 +2150,7 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
  */
 JXG.Board.prototype.animate = function() {
     var count = 0,
-        el, o, newCoords, r, p, c, 
+        el, o, newCoords, r, p, c,
         obj=null;
 
     //this.suspendUpdate();
@@ -2205,7 +2167,7 @@ JXG.Board.prototype.animate = function() {
             } else {
                 //o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
                 o.setPositionDirectly(JXG.COORDS_BY_USER, newCoords[0], newCoords[1]);
-                //this.update(o);  // May slow down the animation, but is important 
+                //this.update(o);  // May slow down the animation, but is important
                                  // for dependent glider objects (see tangram.html).
                                  // Otherwise the intended projection may be incorrect.
                 o.prepareUpdate().update().updateRenderer();
@@ -2286,10 +2248,10 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
     splitted = string.split(';');
     for(i=0; i< splitted.length; i++) {
         // Leerzeichen am Anfang und am Ende entfernen
-        splitted[i] = splitted[i].replace (/^\s+/, '').replace (/\s+$/, '');      
+        splitted[i] = splitted[i].replace (/^\s+/, '').replace (/\s+$/, '');
         if(splitted[i].search(/\{/) != -1) {
             splitted[i] = splitted[i].replace(/\?/g,';');
-        }          
+        }
         if(splitted[i].search(/Macro/) != -1) {
             this.addMacro(splitted[i]);
         }
@@ -2332,9 +2294,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         if(splitted[i].search(pattern) != -1) { // TODO: testen, was mit den Macros xxx und yxxx passiert
                             //alert("MACRO!"+splitted[i]+"_"+this.definedMacros.macros[j][2]);
                             noMacro = false;
-                            // Parameter aufdroeseln 
+                            // Parameter aufdroeseln
                             splitted[i].match(/\((.*)\)/);
-                            tmp = RegExp.$1;                        
+                            tmp = RegExp.$1;
                             tmp = tmp.split(',');
                             for(k=0; k < tmp.length; k++) {
                                 tmp[k].match(/\s*(\S*)\s*/);
@@ -2375,7 +2337,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     }
                                     if(defElements[1] == createdNames[j]) {
                                         defElements[1] = macroName+"."+defElements[1];
-                                    }                                
+                                    }
                                 }
                             }
                             for(j=0; j<params.length; j++) {
@@ -2421,25 +2383,25 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                             }
                                             if(defElements[j][1] == createdNames[k]) {
                                                 defElements[j][1] = macroName+"."+defElements[j][1];
-                                            }                                
+                                            }
                                         }
-                                    }                            
+                                    }
                                     for(k=0; k<params.length; k++) {
                                         if(defElements[j][0] == params[k]) {
                                             defElements[j] = [paraIn[k], defElements[j][1]];
                                         }
                                         if(defElements[j][1] == params[k]) {
                                             defElements[j] = [defElements[j][0], paraIn[k]];
-                                        }                                    
-                                    }                               
-                                }  
-                                defElements[j] = (function(el, board) { return function() { 
+                                        }
+                                    }
+                                }
+                                defElements[j] = (function(el, board) { return function() {
                                                             return JXG.getReference(board,el[0]).Dist(JXG.getReference(board,el[1])); // TODO
                                                        }}
                                           )(defElements[j], this);
                             }
                             else if(defElements[j].search(/[0-9\.\s]+/) != -1){ // Radius als Zahl
-                                defElements[j] = 1.0*defElements[j]; 
+                                defElements[j] = 1.0*defElements[j];
                             }
                             else { // Element mit Name
                                 if(mode == 'macro') {
@@ -2447,15 +2409,15 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                         for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                             if(defElements[j] == createdNames[k]) {
                                                 defElements[j] = macroName+"."+createdNames[k];
-                                            }                            
+                                            }
                                         }
-                                    }                            
+                                    }
                                     for(k=0; k<params.length; k++) {
                                         if(defElements[j] == params[k]) {
                                             defElements[j] = paraIn[k];
                                         }
                                     }
-                                }                        
+                                }
                                 defElements[j] = JXG.getReference(this,defElements[j]);
                             }
                         }
@@ -2463,11 +2425,11 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             if(attributes.withLabel == undefined) {
                                 attributes.withLabel = true;
                             }
-                            attributes.name = objName; 
+                            attributes.name = objName;
                             if(mode == 'macro') {
                                 if(macroName != '') {
                                     attributes.id = macroName+"."+objName;
-                                } 
+                                }
                                 createdNames.push(objName);
                             }
                         }
@@ -2476,7 +2438,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             output[objName] = output.circles[output.circles.length-1];
                         }
                     }
-                    else if(splitted[i].search(/^[A-Z]+.*\(\s*[0-9\.\-]+\s*[,\|]\s*[0-9\.\-]+\s*\)/) != -1 
+                    else if(splitted[i].search(/^[A-Z]+.*\(\s*[0-9\.\-]+\s*[,\|]\s*[0-9\.\-]+\s*\)/) != -1
                             && splitted[i].search(/Macro\((.*)\)/) == -1) { // Punkt, startet mit einem Grossbuchstaben! (definiert durch Koordinaten)
                         splitted[i].match(/^([A-Z]+\S*)\s*\(\s*(.*)\s*[,\|]\s*(.*)\s*\)$/);
                         objName = RegExp.$1; // Name
@@ -2484,9 +2446,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         if(mode == 'macro') {
                             if(macroName != '') {
                                 attributes.id = macroName+"."+objName;
-                            } 
+                            }
                             createdNames.push(objName);
-                        }                        
+                        }
                         output.points.push(this.createElement('point',[1.0*RegExp.$2,1.0*RegExp.$3],attributes));
                         output[objName] = output.points[output.points.length-1];
                     }
@@ -2517,23 +2479,23 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                     if(defElements[0] == createdNames[k]) {
                                         defElements[0] = macroName+"."+createdNames[k];
-                                    }                            
+                                    }
                                 }
-                            }                            
+                            }
                             for(k=0; k<params.length; k++) {
                                 if(defElements[0] == params[k]) {
                                     defElements[0] = paraIn[k];
                                 }
-                            }  
+                            }
                             if(macroName != '') {
                                 attributes.id = macroName+"."+objName;
-                            } 
+                            }
                             createdNames.push(objName);
-                        }                     
+                        }
                         output.points.push(this.createElement('glider',
                                                               [defElements[1],defElements[2],JXG.getReference(this,defElements[0])],
                                                               attributes));
-                        output[objName] = output.points[output.points.length-1];                
+                        output[objName] = output.points[output.points.length-1];
                     }
                     else if(splitted[i].search(/&/) != -1) { // Schnittpunkt
                         splitted[i].match(/(.*)&(.*)/);
@@ -2548,9 +2510,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                         if(defElements[j] == createdNames[k]) {
                                             defElements[j] = macroName+"."+createdNames[k];
-                                        }                            
+                                        }
                                     }
-                                }                            
+                                }
                                 for(k=0; k<params.length; k++) {
                                     if(defElements[j] == params[k]) {
                                         defElements[j] = paraIn[k];
@@ -2560,22 +2522,22 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         }
                         defElements[0] = JXG.getReference(this,defElements[0]);
                         defElements[1] = JXG.getReference(this,defElements[1]);
-                        if ((defElements[0].elementClass==JXG.OBJECT_CLASS_LINE || defElements[0].elementClass==JXG.OBJECT_CLASS_CURVE) && 
+                        if ((defElements[0].elementClass==JXG.OBJECT_CLASS_LINE || defElements[0].elementClass==JXG.OBJECT_CLASS_CURVE) &&
                             (defElements[0].elementClass==JXG.OBJECT_CLASS_LINE ||defElements[1].elementClass==JXG.OBJECT_CLASS_LINE)) {
                             if(objName != '') {
                                 attributes.name = objName;
                                 if(mode == 'macro') {
                                     if(macroName != '') {
                                         attributes.id = macroName+"."+objName;
-                                    } 
+                                    }
                                     createdNames.push(objName);
-                                } 
+                                }
                             }
                             obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
                             output.intersections.push(obj);
                             if(objName != '') {
                                 output[attributes.name] = obj;
-                            }                          
+                            }
                         }
                         else {
                             if(objName != '') {
@@ -2583,29 +2545,29 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 if(mode == 'macro') {
                                     if(macroName != '') {
                                         attributes.id = macroName+"."+objName+"_1";
-                                    } 
+                                    }
                                     createdNames.push(objName+"_1");
-                                }                            
-                            }                
+                                }
+                            }
                             obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
                             output.intersections.push(obj);
                             if(objName != '') {
                                 output[attributes.name] = obj;
-                            }                          
+                            }
                             if(objName != '') {
                                 attributes.name = objName+"_2";
                                 if(mode == 'macro') {
                                     if(macroName != '') {
                                         attributes.id = macroName+"."+objName+"_2";
-                                    } 
+                                    }
                                     createdNames.push(objName+"_2");
-                                }                              
-                            }                    
+                                }
+                            }
                             obj = this.createElement('intersection',[defElements[0],defElements[1],1],attributes);
                             output.intersections.push(obj);
                             if(objName != '') {
                                 output[attributes.name] = obj;
-                            }                         
+                            }
                         }
                     }
                     else if(splitted[i].search(/\|[\|_]\s*\(/) != -1) { // Parallele oder Senkrechte
@@ -2626,16 +2588,16 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                         if(defElements[j] == createdNames[k]) {
                                             defElements[j] = macroName+"."+createdNames[k];
-                                        }                            
+                                        }
                                     }
-                                }                            
+                                }
                                 for(k=0; k<params.length; k++) {
                                     if(defElements[j] == params[k]) {
                                         defElements[j] = paraIn[k];
                                     }
                                 }
                             }
-                        }                    
+                        }
                         if(objName != '') {
                             attributes.name = objName;
                             if(attributes.withLabel == undefined) {
@@ -2644,17 +2606,17 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             if(mode == 'macro') {
                                 if(macroName != '') {
                                     attributes.id = macroName+"."+objName;
-                                } 
+                                }
                                 createdNames.push(objName);
-                            }                         
+                            }
                         }
                         output.lines.push(this.createElement(type,
                                                              [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
                                                              attributes));
-                                                             
+
                         if(objName != '') {
                             output[objName] = output.lines[output.lines.length-1];
-                        }               
+                        }
                     }
                     else if(splitted[i].search(/^</) != -1) { // Winkel
                         splitted[i].match(/<\s*\(\s*(\S*)\s*,\s*(\S*)\s*,\s*(\S*)\s*\)/);
@@ -2668,16 +2630,16 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                         if(defElements[j] == createdNames[k]) {
                                             defElements[j] = macroName+"."+createdNames[k];
-                                        }                            
+                                        }
                                     }
-                                }                            
+                                }
                                 for(k=0; k<params.length; k++) {
                                     if(defElements[j] == params[k]) {
                                         defElements[j] = paraIn[k];
                                     }
                                 }
                             }
-                        }                    
+                        }
                         if(objName == '') {
                             output.lines.push(this.createElement('angle',
                                                                 [JXG.getReference(this,defElements[0]),
@@ -2687,7 +2649,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         }
                         else {
                             possibleNames = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta',
-                                        'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 
+                                        'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho',
                                         'sigmaf', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega'];
                             type = '';
                             for(j=0; j<possibleNames.length;j++) {
@@ -2708,70 +2670,70 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             if(mode == 'macro') {
                                 if(macroName != '') {
                                     attributes.id = macroName+"."+objName;
-                                } 
+                                }
                                 createdNames.push(objName);
-                            }                        
+                            }
                             output.angles.push(this.createElement('angle',
                                                                  [JXG.getReference(this,defElements[0]),
                                                                   JXG.getReference(this,defElements[1]),
                                                                   JXG.getReference(this,defElements[2])],
                                                                  attributes));
-                            output[objName] = output.angles[output.angles.length-1]; 
-                        }  
+                            output[objName] = output.angles[output.angles.length-1];
+                        }
                     }
                     else if(splitted[i].search(/([0-9]+)\/([0-9]+)\(\s*(\S*)\s*,\s*(\S*)\s*\)/) != -1) { // Punkt mit Teilverhaeltnis, z.B. Mittelpunkt
                         defElements = [];
                         defElements[0] = 1.0*(RegExp.$1)/(1.0*(RegExp.$2));
                         defElements[1] = RegExp.$3;
-                        defElements[2] = RegExp.$4;                    
+                        defElements[2] = RegExp.$4;
                         if(mode == 'macro') {
                             for(j=1; j<=2; j++) {
                                 if(macroName != '') {
                                     for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                         if(defElements[j] == createdNames[k]) {
                                             defElements[j] = macroName+"."+createdNames[k];
-                                        }                            
+                                        }
                                     }
-                                }                            
+                                }
                                 for(k=0; k<params.length; k++) {
                                     if(defElements[j] == params[k]) {
                                         defElements[j] = paraIn[k];
                                     }
                                 }
                             }
-                        }                    
+                        }
                         defElements[1] = JXG.getReference(this,RegExp.$3);
                         defElements[2] = JXG.getReference(this,RegExp.$4);
                         obj = [];
-                        obj[0] = (function(el, board) { return function() { 
-                                                                      return (1-el[0])*el[1].coords.usrCoords[1]+el[0]*el[2].coords.usrCoords[1]; 
+                        obj[0] = (function(el, board) { return function() {
+                                                                      return (1-el[0])*el[1].coords.usrCoords[1]+el[0]*el[2].coords.usrCoords[1];
                                                        }}
                                           )(defElements, this);
-                        obj[1] = (function(el, board) { return function() { 
-                                                                      return (1-el[0])*el[1].coords.usrCoords[2]+el[0]*el[2].coords.usrCoords[2]; 
+                        obj[1] = (function(el, board) { return function() {
+                                                                      return (1-el[0])*el[1].coords.usrCoords[2]+el[0]*el[2].coords.usrCoords[2];
                                                        }}
                                           )(defElements, this);
-                        if(objName != '') {                                  
+                        if(objName != '') {
                             attributes.name = objName;
                             if(mode == 'macro') {
                                 if(macroName != '') {
                                     attributes.id = macroName+"."+objName;
-                                } 
+                                }
                                 createdNames.push(objName);
-                            }                         
+                            }
                         }
                         output.points.push(board.createElement('point',[obj[0],obj[1]],attributes));
-                        if(objName != '') { 
-                            output[objName] = output.points[output.points.length-1]; 
+                        if(objName != '') {
+                            output[objName] = output.points[output.points.length-1];
                         }
                     }
                     else if(splitted[i].search(/(\S*)\s*:\s*(.*)/) != -1) { // Funktionsgraph
                         objName = RegExp.$1;
-                        tmp = JXG.GeonextParser.geonext2JS(RegExp.$2, this);
+                        tmp = JXG.GeonextParser.geonext2JS(RegExp.$2);
                         defElements = [new Function('x','var y = '+tmp+'; return y;')];
                         attributes.name = objName;
                         output.functions.push(board.create('functiongraph',defElements,attributes));
-                        output[objName] = output.functions[output.functions.length-1]; 
+                        output[objName] = output.functions[output.functions.length-1];
                     }
                     else if(splitted[i].search(/#(.*)\(\s*([0-9])\s*[,|]\s*([0-9])\s*\)/) != -1) { // Text element
                         defElements = []; // [0-9\.\-]+
@@ -2779,13 +2741,13 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         defElements[1] = 1.0*RegExp.$2;
                         defElements[2] = 1.0*RegExp.$3;
                         defElements[0] = defElements[0].replace (/^\s+/, '').replace (/\s+$/, ''); // trim
-                        output.texts.push(board.createElement('text',[defElements[1],defElements[2],defElements[0]], attributes)); 
+                        output.texts.push(board.createElement('text',[defElements[1],defElements[2],defElements[0]], attributes));
                     }
                     else if(splitted[i].search(/(\S*)\s*\[(.*)\]/) != -1) { // Polygon
                         attributes.name = RegExp.$1;
                         if(attributes.withLabel == undefined) {
                             attributes.withLabel = true;
-                        }                    
+                        }
                         defElements = RegExp.$2;
                         defElements = defElements.split(',');
                         for(j=0; j<defElements.length; j++) {
@@ -2795,9 +2757,9 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     for(k=0; k<createdNames.length; k++) { // vorher oder nachher?
                                         if(defElements[j] == createdNames[k]) {
                                             defElements[j] = macroName+"."+createdNames[k];
-                                        }                            
+                                        }
                                     }
-                                }                            
+                                }
                                 for(k=0; k<params.length; k++) {
                                     if(defElements[j] == params[k]) {
                                         defElements[j] = paraIn[k];
@@ -2840,7 +2802,7 @@ JXG.Board.prototype.addMacro = function(string) {
         defHead[i].match(/\s*(\S*)\s*/);
         defHead[i] = RegExp.$1;
     }
-    
+
     if(this.definedMacros == null) {
         this.definedMacros = {};
         this.definedMacros.macros = [];
