@@ -362,8 +362,9 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
  * </script><pre>
  */
 JXG.createText = function(board, parentArr, atts) {
-    atts = JXG.checkAttributes(atts,{layer:null,display:board.options.text.defaultDisplay});  // 'html' or 'internal'
-    return new JXG.Text(board, parentArr[parentArr.length-1], null, parentArr, atts['id'], atts['name'], atts['digits'], false, atts['display'],atts['layer']);
+    atts = JXG.checkAttributes(atts,{layer:null,display:board.options.text.defaultDisplay,parent:null});  // 'html' or 'internal'
+    if(atts['parent'] != null) { atts['parent'] = atts['parent'].id;}
+    return new JXG.Text(board, parentArr[parentArr.length-1], atts['parent'], parentArr, atts['id'], atts['name'], atts['digits'], false, atts['display'],atts['layer']);
 };
 
 JXG.JSXGraph.registerElement('text', JXG.createText);

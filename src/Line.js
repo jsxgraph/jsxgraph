@@ -470,7 +470,7 @@ JXG.Line.prototype.setArrow = function (firstArrow, lastArrow) {
  * @private
  */
 JXG.Line.prototype.getTextAnchor = function() {
-    return new JXG.Coords(JXG.COORDS_BY_USER, [0.5*(this.point2.X() - this.point1.X()),0.5*(this.point2.Y() - this.point1.Y())],this.board);
+    return new JXG.Coords(JXG.COORDS_BY_USER, [this.point1.X()+0.5*(this.point2.X() - this.point1.X()),this.point1.Y() +0.5*(this.point2.Y() - this.point1.Y())],this.board);
 };
 
 /**

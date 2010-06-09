@@ -1,0 +1,62 @@
+<html>
+<head>
+   <title>JSXGraph Konstruktionstemplate</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+
+  board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 10, 10, 8], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: false});
+
+								 
+	var ps=board.createElement('point',[4,7],{name:'s'});
+	var pA=board.createElement('point',[7,5],{name:'A'});
+	var pB=board.createElement('point',[4,5],{name:'B'});
+	var pD=board.createElement('point',[5,3],{name:'D'});
+	var pE=board.createElement('point',[7,3],{name:'E'});
+	var pG=board.createElement('point',[3,2],{name:'G'});
+	var pK=board.createElement('point',[6,1],{name:'K'});
+	var pN=board.createElement('point',[1,1],{name:'N'});
+	
+	
+	var KantesB=board.createElement('segment',[ps,pB]);
+	var KantesA=board.createElement('segment',[ps,pA]);
+	var KanteBA=board.createElement('segment',[pB,pA]);
+	var KanteBN=board.createElement('segment',[pB,pN]);
+	var KanteBD=board.createElement('segment',[pB,pD]);
+	var KanteAE=board.createElement('segment',[pA,pE]);
+	var KanteDE=board.createElement('segment',[pD,pE]);
+	var KanteDG=board.createElement('segment',[pD,pG]);
+	var KanteDK=board.createElement('segment',[pD,pK]);
+	var KanteEK=board.createElement('segment',[pE,pK]);
+	var KanteGK=board.createElement('segment',[pG,pK]);
+    
+    var text1 = board.createElement('text',[-1,8,'blubb']);
+    var text2 = board.createElement('text',[0,0,'blubber'],{parent:KanteGK});
+    
+    var A= new Array();
+    var y= [0,2,1,Number.MAX_VALUE];
+    A.push(y);
+    y= [2,0,5,4];
+    A.push(y);
+    y= [1,5,0,3];
+    A.push(y);
+    y= [Number.MAX_VALUE,4,3,0];
+    A.push(y); 
+    //alert(1/0);
+    
+    alert(A);
+
+    
+    
+							  /* ]]> */
+  </script>
+
+</body>
+</html>
