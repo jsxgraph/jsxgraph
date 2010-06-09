@@ -101,8 +101,8 @@ JXG.Coords.prototype.normalizeUsrCoords = function() {
 JXG.Coords.prototype.usr2screen = function(doRound) {
     var mround = Math.round,  // Is faster on IE, maybe slower with JIT compilers
         b = this.board,
-        uc = this.usrCoords,
-        oc = this.board.origin.scrCoords;
+        uc = this.usrCoords;
+        oc = b.origin.scrCoords;
         
     if (doRound==null || doRound) {
         this.scrCoords[0] = mround(uc[0]);

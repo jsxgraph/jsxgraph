@@ -282,7 +282,6 @@ this.readGeonext = function(tree,board) {
     // Update of properties during update() is not necessary in GEONExT files
     // But it maybe necessary if we construct with JavaScript afterwards
     board.renderer.enhancedRendering = true;
-
     JXG.GeonextReader.parseImage(board,boardData.getElementsByTagName('file')[0],board.options.layer['image']); // Background image
 
     // Eigenschaften der Zeichenflaeche setzen
@@ -658,8 +657,8 @@ this.readGeonext = function(tree,board) {
                     }
                 }
                 else if(gxtEl.typeName == "NORMAL") {
-                    board.addNormal(gxtEl.defEl[1], gxtEl.defEl[0], gxtEl.outputId, gxtEl.outputName);
-//TODO                    board.create('normal', [gxtEl.defEl[1], gxtEl.defEl[0]], {'id': gxtEl.outputId, name: gxtEl.outputName});
+                    //board.addNormal(gxtEl.defEl[1], gxtEl.defEl[0], gxtEl.outputId, gxtEl.outputName);
+                    board.create('normal', [gxtEl.defEl[1], gxtEl.defEl[0]], {'id': gxtEl.outputId, name: gxtEl.outputName});
                 }
                 else if(gxtEl.typeName == "PARALLEL") {
                     board.create('parallel', [gxtEl.defEl[1], gxtEl.defEl[0]], {'id': gxtEl.outputId, name: gxtEl.outputName});
@@ -1202,6 +1201,7 @@ this.readGeonext = function(tree,board) {
         delete(gxtEl);
     })(s);
     board.addConditions(boardTmp.conditions);
+
 };
 
 this.decodeString = function(str) {

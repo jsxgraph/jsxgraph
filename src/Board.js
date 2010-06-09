@@ -1260,6 +1260,7 @@ JXG.Board.prototype.addArrow = function(obj) {
 };
 
 /**
+ * @dprecated: replaced by createNormal
  * Adds a line to the board and renderer which is orthogonal to the given line and contains point.
  * @param {JXG.Line} l A line.
  * @param {JXG.Point} p A Point.
@@ -1271,6 +1272,7 @@ JXG.Board.prototype.addArrow = function(obj) {
  * @return Element id of the object.
  * @private
  */
+ /*
 JXG.Board.prototype.addNormal = function(l, p, id, name) {
     var point = JXG.getReference(this, p);
     var line = JXG.getReference(this, l);
@@ -1317,6 +1319,7 @@ JXG.Board.prototype.addNormal = function(l, p, id, name) {
     };
     return perpendicular;
 };
+*/
 
 /**
  * Registers an intersection at the board and adds it to the renderer.
@@ -1400,7 +1403,7 @@ JXG.Board.prototype.addConditions = function (str) {
         var el = this.elementsByName[JXG.unescapeHTML(name)];
 
         var property = left.slice(m+1).replace(/\s+/g,'').toLowerCase(); // remove whitespace in property
-        right = JXG.GeonextParser.geonext2JS(right);
+        right = JXG.GeonextParser.geonext2JS(right, this);
         right = right.replace(/this\.board\./g,'this.');
 
         // Debug
@@ -1442,7 +1445,7 @@ JXG.Board.prototype.addConditions = function (str) {
                 //plaintext += 'el.setProperty("labelColor:color");\n';
                 break;
             default:
-                alert("property '" + property + "' in conditions not implemented:" + right);
+                alert("property '" + property + "' in conditions not yet implemented:" + right);
                 break;
         }
         //plaintext += "}\n";
@@ -2729,7 +2732,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     }
                     else if(splitted[i].search(/(\S*)\s*:\s*(.*)/) != -1) { // Funktionsgraph
                         objName = RegExp.$1;
-                        tmp = JXG.GeonextParser.geonext2JS(RegExp.$2);
+                        tmp = JXG.GeonextParser.geonext2JS(RegExp.$2, this);
                         defElements = [new Function('x','var y = '+tmp+'; return y;')];
                         attributes.name = objName;
                         output.functions.push(board.create('functiongraph',defElements,attributes));

@@ -44,7 +44,6 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
     this.elementClass = JXG.OBJECT_CLASS_OTHER;                
 
     this.init(board, id, name);
-
     this.contentStr = contentStr;
     this.plaintextStr = '';
 

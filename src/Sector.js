@@ -242,8 +242,10 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
         attributes.useDirection = true;
         el = board.create('sector', [mp,parents[0],parents[2],parents[1]], attributes);
     } // Ansonsten eine fette Exception um die Ohren hauen
-    else
-        throw new Error("JSXGraph: Can't create circumcircle sector with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
+    else {
+        throw new Error("JSXGraph: Can't create circumcircle sector with parent types '" + 
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
+    }
 
     return el;
 };
@@ -323,7 +325,6 @@ JXG.createAngle = function(board, parents, attributes) {
                 }
             }
         }
-
         p = board.create('point', [
             function(){
                 var A = parents[0], B = parents[1],
@@ -332,7 +333,7 @@ JXG.createAngle = function(board, parents, attributes) {
                     return [B.X()+(A.X()-B.X())*r/d,B.Y()+(A.Y()-B.Y())*r/d];
             }], {withLabel:false, visible:false});
             
-        attributes.name = text;
+        if (!attributes.name) attributes.name = text;
         el = board.create('sector', [parents[1],p,parents[2]],attributes);
         el.type = JXG.OBJECT_TYPE_ANGLE;
         el.text = text;
@@ -371,8 +372,10 @@ JXG.createAngle = function(board, parents, attributes) {
     };
 
     } // Ansonsten eine fette Exception um die Ohren hauen
-    else
-        throw new Error("JSXGraph: Can't create angle with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
+    else {
+        throw new Error("JSXGraph: Can't create angle with parent types '" + 
+                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
+    }
 
     return el;
 };
