@@ -34,7 +34,7 @@ JXG.GraphReader = new function() {
         for(i=0; i<boundingBox.length; i++) {
             boundingBox[i] = parseInt(boundingBox[i]);
         }
-        console.log(boundingBox);
+        //console.log(boundingBox);
         board.setBoundingBox(boundingBox,true);
         splitted.shift();
         n = parseInt(splitted[0]);
@@ -72,14 +72,14 @@ JXG.GraphReader = new function() {
     this.drawGraph = function(graph,board) {
         var n = graph.n, nodes = graph.nodes, adjMatrix = graph.adjMatrix, i,j,s;
         for(i=0; i<n; i++) {
-            console.log(nodes[i].name,[nodes[i].coords[0],nodes[i].coords[1]]);
+            //console.log(nodes[i].name,[nodes[i].coords[0],nodes[i].coords[1]]);
             board.create('point',[nodes[i].coords[0],nodes[i].coords[1]], {name:nodes[i].name});
             
         }
         for(i=0; i<n; i++) {
             for(j=i+1; j<n; j++) {
                 if(adjMatrix[i][j] < Number.MAX_VALUE) {
-                    console.log([nodes[i].name, nodes[j].name]);
+                    //console.log([nodes[i].name, nodes[j].name]);
                     s = board.create('segment',[nodes[i].name, nodes[j].name]);
                     board.create('text',[0,0,adjMatrix[i][j]],{parent:s});
                 }
