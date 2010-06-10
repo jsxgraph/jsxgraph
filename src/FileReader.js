@@ -130,7 +130,8 @@ this.parseString = function(fileStr, board, format, isString) {
     }
     if (format.toLowerCase()=='graph') {
         //if(isString)
-            fileStr = JXG.GraphReader.readGraph(fileStr,board);
+        fileStr = JXG.GraphReader.readGraph(fileStr,board);
+        board.afterLoad();
         return;
     }     
     

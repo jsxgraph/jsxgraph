@@ -30,10 +30,17 @@ JXG.GraphReader = new function() {
         for(i=0; i<splitted.length;i++) {
             splitted[i] = splitted[i].replace (/^\s+/, '').replace (/\s+$/, '');
         }
-        n = 1*splitted[0];
+        boundingBox = splitted[0].split(' ');
+        for(i=0; i<boundingBox.length; i++) {
+            boundingBox[i] = parseInt(boundingBox[i]);
+        }
+        console.log(boundingBox);
+        board.setBoundingBox(boundingBox,true);
+        splitted.shift();
+        n = parseInt(splitted[0]);
         for(i=1; i <= n; i++) {
             tmp = splitted[i].split(' ');
-            nodes.push({name:tmp[0],coords:[1*tmp[1],1*tmp[2]]});
+            nodes.push({name:tmp[0],coords:[parseInt(tmp[1]),parseInt(tmp[2])]});
         }
         for(i=n+1; i < 2*n; i++) {
             tmp = splitted[i].split(' ');
@@ -42,12 +49,14 @@ JXG.GraphReader = new function() {
                     tmp[j] = Number.MAX_VALUE;
                 }
                 else {
-                    tmp[j] = tmp[j]*1;
+                    tmp[j] = parseInt(tmp[j]);
                 }
             }        
             adjMatrix.push(tmp);
         }
-        return {n:n,nodes:nodes,adjMatrix:adjMatrix};
+        board.addedGraph = {n:n,nodes:nodes,adjMatrix:adjMatrix};
+        return board.addedGraph;
+        
     };
     
 
@@ -56,13 +65,12 @@ JXG.GraphReader = new function() {
         this.data = fileStr;
         board.suspendUpdate();
 		graph = this.parseData(board);
-        //alert(graph);
         this.drawGraph(graph, board);
         board.unsuspendUpdate();
 	};
     
     this.drawGraph = function(graph,board) {
-        var n = graph.n, nodes = graph.nodes, adjMatrix = graph.adjMatrix, i,j;
+        var n = graph.n, nodes = graph.nodes, adjMatrix = graph.adjMatrix, i,j,s;
         for(i=0; i<n; i++) {
             console.log(nodes[i].name,[nodes[i].coords[0],nodes[i].coords[1]]);
             board.create('point',[nodes[i].coords[0],nodes[i].coords[1]], {name:nodes[i].name});
@@ -72,7 +80,8 @@ JXG.GraphReader = new function() {
             for(j=i+1; j<n; j++) {
                 if(adjMatrix[i][j] < Number.MAX_VALUE) {
                     console.log([nodes[i].name, nodes[j].name]);
-                    board.create('segment',[nodes[i].name, nodes[j].name]);
+                    s = board.create('segment',[nodes[i].name, nodes[j].name]);
+                    board.create('text',[0,0,adjMatrix[i][j]],{parent:s});
                 }
             }
         }
