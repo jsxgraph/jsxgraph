@@ -1,9 +1,8 @@
 <html>
 <head>
    <title>JSXGraph Konstruktionstemplate</title>
-   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/trunk/distrib/loadjsxgraph.js"></script>
 </head>
 <body>
 
@@ -23,6 +22,12 @@
 	var pG=board.createElement('point',[3,2],{name:'G'});
 	var pK=board.createElement('point',[6,1],{name:'K'});
 	var pN=board.createElement('point',[1,1],{name:'N'});
+    
+    t = board.create('transform', [45*Math.PI/180, pB], {type:'rotate'});
+    p = board.create('point', [ps, t], {name:'X'});
+    board.create('angle',[ps,pB,p]);
+   
+    alert(board.angle(ps,pB,p)/Math.PI*180);
 	
 	
 	var KantesB=board.createElement('segment',[ps,pB]);

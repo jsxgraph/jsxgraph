@@ -1,0 +1,23 @@
+<html>
+<head>
+   <title>JSXGraph Konstruktionstemplate</title>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../src/GraphReader.js"></script>
+</head>
+<body>
+
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 10, 10, 8], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: false});
+                                 
+    board.create('point',[3,2],{name:'X',labelColor:'blue'});                             
+    board = JXG.JSXGraph.loadBoardFromFile('jxgbox','graphs/graph1.txt', 'graph');
+    
+							  /* ]]> */
+  </script>
+
+</body>
+</html>

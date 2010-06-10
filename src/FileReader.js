@@ -117,7 +117,7 @@ this.stringToXMLTree = function(fileStr) {
 };
 
 this.parseString = function(fileStr, board, format, isString) {
-    var tree;
+    var tree, graph;
     
     if (format.toLowerCase()=='cdy') {
     	// if isString is true, fileStr is the base64 encoded zip file, otherwise it's just the zip file
@@ -128,6 +128,11 @@ this.parseString = function(fileStr, board, format, isString) {
         board.afterLoad();
         return;
     }
+    if (format.toLowerCase()=='graph') {
+        //if(isString)
+            fileStr = JXG.GraphReader.readGraph(fileStr,board);
+        return;
+    }     
     
     // fileStr is a string containing the XML code of the construction
     if (format.toLowerCase()=='geonext') {
@@ -142,6 +147,7 @@ this.parseString = function(fileStr, board, format, isString) {
             fileStr = JXG.Util.Base64.decode(fileStr);
     	fileStr = JXG.IntergeoReader.prepareString(fileStr);
     }
+   
     board.xmlString = fileStr;
     var tree = this.stringToXMLTree(fileStr);
     // Now, we can walk through the tree
