@@ -17,39 +17,7 @@
 
   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-50, 50, 50, -50], axis: true, grid: false,
                                  keepaspectratio: true, showcopyright: false}); 
-/*var x = 3
-var y = 2
-var z = 2
-var p1 = board.createElement('point',[
-          function { return ((z-4)/(2-x));},
-		  function { return ((y-3)/(2-x));}
-		  ]);
-		  
-var nx = 4
-var ny = 1
-var nz = 3
-var alpha = function { return (Math.atan(nz/ny));}
-var beta = function { return (Math.atan(nx/nz));}
-var gamma = function { return (Math.atan(ny/nx));}
 
-
- 
-var kx = 1
-var ky = 1
-var kz = 1
-
-var dx = function { return (Math.cos(beta)*(Math.cos(gamma)*(x-kx)-Math.sin(gamma)*(y-ky))+Math.sin(beta)*(z-kz));}
-var dy = function { return (Math.sin(alpha)*(Math.sin(beta)*(Math.cos(gamma)*(x-kx)-Math.sin(gamma)*(y-ky))-Math.cos(beta)*(z-kz))+Math.cos(alpha)*(Math.sin(gamma)*(x-kx)+Math.cos(gamma)*(y-ky)));}
-var dz = function { return (Math.sin(alpha)*(Math.sin(gamma)*(x-kx)+Math.cos(gamma)*(y-ky))+Math.cos(alpha)*(Math.sin(beta)*(Math.sin(gamma)*(y-ky)-Math.cos(gamma)*(x-kx))+Math.cos(beta)*(z-kz)));}		  
-//alert(dx);
-//alert(dx+"   "+dy+"   "+dz);
-alert(((Math.sqrt(nx*nx+ny*ny+nz*nz))/dz*dx));
-
-var p2 = board.createElement('point',[
-          function { return ((Math.sqrt(nx*nx+ny*ny+nz*nz))/dz*dx);},
-          function { return ((Math.sqrt(nx*nx+ny*ny+nz*nz))/dz*dy);}
-		  ]);
-*/	
 
 	  
 JXG.Point3D = function (coordinates, camera_coordinates, normal_coordinates) {
@@ -65,161 +33,49 @@ JXG.Point3D = function (coordinates, camera_coordinates, normal_coordinates) {
     if (this.normal_coordinates==null) {
         this.normal_coordinates=[0,0,0];
     }
+    this.point = board.createElement("point",this.proj(),{visible: false});
 }
 
 //JXG.Point3D.prototype = new JXG.GeometryElement();
 
 JXG.Point3D.prototype.proj = function () {
-	var p = this; 
+	var p = this;
+	var alpha, beta, gamma, dx, dy, dz;
+	var coordinates_now = [0,0,0];
+	var camera_coordinates_now = [0,0,0];
+	var normal_coordinates_now = [0,0,0];
 	
-	/*if (isNaN(Number(this.coordinates[0])))
-		var x = this.coordinates[0]();
-	else
-		var x = this.coordinates[0];
-	if (isNaN(Number(this.coordinates[1])))
-		var y = this.coordinates[1]();
-	else
-		var y = this.coordinates[1];
-	if (isNaN(Number(this.coordinates[2])))
-		var z = this.coordinates[2]();
-	else
-		var z = this.coordinates[2];
-		
-	if (isNaN(Number(this.normal_coordinates[0])))
-		var nx = this.normal_coordinates[0]();
-	else
-		var nx = this.normal_coordinates[0];
-	if (isNaN(Number(this.normal_coordinates[1])))
-		var ny = this.normal_coordinates[1]();
-	else
-		var ny = this.normal_coordinates[1];
-	if (isNaN(Number(this.normal_coordinates[2])))
-		var nz = this.normal_coordinates[2]();
-	else
-		var nz = this.normal_coordinates[2];
-		
-	if (isNaN(Number(this.camera_coordinates[0])))
-		var kx = this.camera_coordinates[0]();
-	else
-		var kx = this.camera_coordinates[0];
-	if (isNaN(Number(this.camera_coordinates[1])))
-		var ky = this.camera_coordinates[1]();
-	else
-		var ky = this.camera_coordinates[1];
-	if (isNaN(Number(this.camera_coordinates[2])))
-		var kz = this.camera_coordinates[2]();
-	else
-		var kz = this.camera_coordinates[2];
-	
-	
-	var alpha = Math.atan(nz/ny);
-	var beta = Math.atan(nx/nz);
-	var gamma = Math.atan(ny/nx);
-	var dx = (Math.cos(beta)*(Math.cos(gamma)*(x-kx)-Math.sin(gamma)*(y-ky))+Math.sin(beta)*(z-kz));
-	var dy = (Math.sin(alpha)*(Math.sin(beta)*(Math.cos(gamma)*(x-kx)-Math.sin(gamma)*(y-ky))-Math.cos(beta)*(z-kz))+Math.cos(alpha)*(Math.sin(gamma)*(x-kx)+Math.cos(gamma)*(y-ky)));
-	var dz = (Math.sin(alpha)*(Math.sin(gamma)*(x-kx)+Math.cos(gamma)*(y-ky))+Math.cos(alpha)*(Math.sin(beta)*(Math.sin(gamma)*(y-ky)-Math.cos(gamma)*(x-kx))+Math.cos(beta)*(z-kz)));
-	return [((Math.sqrt(nx*nx+ny*ny+nz*nz))/dz*dx), ((Math.sqrt(nx*nx+ny*ny+nz*nz))/dz*dy)];		 */
+	var adaptParameter = function(a, b){
+    		for (var i=0; i<a.length; i++){
+		    	if (isNaN(Number(a[i]))){
+					b[i] = a[i]();
+				}
+				else
+					b[i] = a[i];
+    		}
+    };
+    var update = function(){
+    	adaptParameter(p.coordinates, coordinates_now);
+    	adaptParameter(p.camera_coordinates, camera_coordinates_now);
+    	adaptParameter(p.normal_coordinates, normal_coordinates_now);
+    	alpha = Math.atan(normal_coordinates_now[2]/normal_coordinates_now[1]);
+		beta = Math.atan(normal_coordinates_now[0]/normal_coordinates_now[2]);
+		gamma = Math.atan(normal_coordinates_now[1]/normal_coordinates_now[0]);
+		dx = (Math.cos(beta)*(Math.cos(gamma)*(coordinates_now[0]-camera_coordinates_now[0])-Math.sin(gamma)*(coordinates_now[1]-camera_coordinates_now[1]))+Math.sin(beta)*(coordinates_now[2]-camera_coordinates_now[2]));
+		dy = (Math.sin(alpha)*(Math.sin(beta)*(Math.cos(gamma)*(coordinates_now[0]-camera_coordinates_now[0])-Math.sin(gamma)*(coordinates_now[1]-camera_coordinates_now[1]))-Math.cos(beta)*(coordinates_now[2]-camera_coordinates_now[2]))+Math.cos(alpha)*(Math.sin(gamma)*(coordinates_now[0]-camera_coordinates_now[0])+Math.cos(gamma)*(coordinates_now[1]-camera_coordinates_now[1])));
+		dz = (Math.sin(alpha)*(Math.sin(gamma)*(coordinates_now[0]-camera_coordinates_now[0])+Math.cos(gamma)*(coordinates_now[1]-camera_coordinates_now[1]))+Math.cos(alpha)*(Math.sin(beta)*(Math.sin(gamma)*(coordinates_now[1]-camera_coordinates_now[1])-Math.cos(gamma)*(coordinates_now[0]-camera_coordinates_now[0]))+Math.cos(beta)*(coordinates_now[2]-camera_coordinates_now[2])));
+    }
+    
 	var fx = function(){
-		if (isNaN(Number(p.coordinates[0])))
-			var x = p.coordinates[0]();
-		else
-			var x = p.coordinates[0];
-		if (isNaN(Number(p.coordinates[1])))
-			var y = p.coordinates[1]();
-		else
-			var y = p.coordinates[1];
-		if (isNaN(Number(p.coordinates[2])))
-			var z = p.coordinates[2]();
-		else
-			var z = p.coordinates[2];
-			
-		if (isNaN(Number(p.normal_coordinates[0])))
-			var nx = p.normal_coordinates[0]();
-		else
-			var nx = p.normal_coordinates[0];
-		if (isNaN(Number(p.normal_coordinates[1])))
-			var ny = p.normal_coordinates[1]();
-		else
-			var ny = p.normal_coordinates[1];
-		if (isNaN(Number(p.normal_coordinates[2])))
-			var nz = p.normal_coordinates[2]();
-		else
-			var nz = p.normal_coordinates[2];
-			
-		if (isNaN(Number(p.camera_coordinates[0])))
-			var kx = p.camera_coordinates[0]();
-		else
-			var kx = p.camera_coordinates[0];
-		if (isNaN(Number(p.camera_coordinates[1])))
-			var ky = p.camera_coordinates[1]();
-		else
-			var ky = p.camera_coordinates[1];
-		if (isNaN(Number(p.camera_coordinates[2])))
-			var kz = p.camera_coordinates[2]();
-		else
-			var kz = p.camera_coordinates[2];
-		
-		
-		var alpha = Math.atan(nz/ny);
-		var beta = Math.atan(nx/nz);
-		var gamma = Math.atan(ny/nx);
-		var dx = (Math.cos(beta)*(Math.cos(gamma)*(x-kx)-Math.sin(gamma)*(y-ky))+Math.sin(beta)*(z-kz));
-		var dy = (Math.sin(alpha)*(Math.sin(beta)*(Math.cos(gamma)*(x-kx)-Math.sin(gamma)*(y-ky))-Math.cos(beta)*(z-kz))+Math.cos(alpha)*(Math.sin(gamma)*(x-kx)+Math.cos(gamma)*(y-ky)));
-		var dz = (Math.sin(alpha)*(Math.sin(gamma)*(x-kx)+Math.cos(gamma)*(y-ky))+Math.cos(alpha)*(Math.sin(beta)*(Math.sin(gamma)*(y-ky)-Math.cos(gamma)*(x-kx))+Math.cos(beta)*(z-kz)));
-		return ((Math.sqrt(nx*nx+ny*ny+nz*nz))/dz*dx);
-		};
-		var fy = function(){
-		if (isNaN(Number(p.coordinates[0])))
-			var x = p.coordinates[0]();
-		else
-			var x = p.coordinates[0];
-		if (isNaN(Number(p.coordinates[1])))
-			var y = p.coordinates[1]();
-		else
-			var y = p.coordinates[1];
-		if (isNaN(Number(p.coordinates[2])))
-			var z = p.coordinates[2]();
-		else
-			var z = p.coordinates[2];
-			
-		if (isNaN(Number(p.normal_coordinates[0])))
-			var nx = p.normal_coordinates[0]();
-		else
-			var nx = p.normal_coordinates[0];
-		if (isNaN(Number(p.normal_coordinates[1])))
-			var ny = p.normal_coordinates[1]();
-		else
-			var ny = p.normal_coordinates[1];
-		if (isNaN(Number(p.normal_coordinates[2])))
-			var nz = p.normal_coordinates[2]();
-		else
-			var nz = p.normal_coordinates[2];
-			
-		if (isNaN(Number(p.camera_coordinates[0])))
-			var kx = p.camera_coordinates[0]();
-		else
-			var kx = p.camera_coordinates[0];
-		if (isNaN(Number(p.camera_coordinates[1])))
-			var ky = p.camera_coordinates[1]();
-		else
-			var ky = p.camera_coordinates[1];
-		if (isNaN(Number(p.camera_coordinates[2])))
-			var kz = p.camera_coordinates[2]();
-		else
-			var kz = p.camera_coordinates[2];
-		
-		
-		var alpha = Math.atan(nz/ny);
-		var beta = Math.atan(nx/nz);
-		var gamma = Math.atan(ny/nx);
-		var dx = (Math.cos(beta)*(Math.cos(gamma)*(x-kx)-Math.sin(gamma)*(y-ky))+Math.sin(beta)*(z-kz));
-		var dy = (Math.sin(alpha)*(Math.sin(beta)*(Math.cos(gamma)*(x-kx)-Math.sin(gamma)*(y-ky))-Math.cos(beta)*(z-kz))+Math.cos(alpha)*(Math.sin(gamma)*(x-kx)+Math.cos(gamma)*(y-ky)));
-		var dz = (Math.sin(alpha)*(Math.sin(gamma)*(x-kx)+Math.cos(gamma)*(y-ky))+Math.cos(alpha)*(Math.sin(beta)*(Math.sin(gamma)*(y-ky)-Math.cos(gamma)*(x-kx))+Math.cos(beta)*(z-kz)));
-		return((Math.sqrt(nx*nx+ny*ny+nz*nz))/dz*dy)
-		};
-		return [fx , fy];
-		
-};
+		update();
+		return ((Math.sqrt(normal_coordinates_now[0]*normal_coordinates_now[0]+normal_coordinates_now[1]*normal_coordinates_now[1]+normal_coordinates_now[2]*normal_coordinates_now[2]))/dz*dx);
+	};
+	var fy = function(){
+		//update(); //this update needs to be calles separately, if fy is called without fx being called (ME) 
+		return((Math.sqrt(normal_coordinates_now[0]*normal_coordinates_now[0]+normal_coordinates_now[1]*normal_coordinates_now[1]+normal_coordinates_now[2]*normal_coordinates_now[2]))/dz*dy)
+	};
+    return [fx,fy];
+}
     
 	  
 	  
@@ -253,24 +109,9 @@ function projektion(punkt, kpunkt, n){
 }
 
 
-
-/*var xkam = board.create('slider',[[-5,0],[5,0],[-5,1,5]],{});
-var ykam = board.create('slider',[[-5,-1],[5,-1],[-5,1,5]],{});
-var zkam = board.create('slider',[[-5,-2],[5,-2],[-5,1,5]],{});
-*/
 board.createElement("circle",[[-30,30],10]);
 cam = board.createElement("point",[-30,30]);
 
-
-/*a = new JXG.Point3D([3,2,2],[function(){return xkam.Value();},function(){return ykam.Value();},function(){return zkam.Value();}],[4,1,3]);
-board.createElement("point",a.proj());*/
-
-
-/*projektion([1,1,-1],[1,1,1],[4,1,3]);
-projektion([1,-1,-1],[1,1,1],[4,1,3]);
-projektion([-1,-1,-1],[1,1,1],[4,1,3]);
-projektion([-1,1,-1],[1,1,1],[4,1,3]);
-*/
 
 newYcam = function (){
 	return Math.sqrt(100-((cam.X()+30)*(cam.X()+30)+(cam.Y()-30)*(cam.Y()-30)));
@@ -282,28 +123,21 @@ newZcam = function (){
 	return cam.Y()-30;
 }  
 a = new JXG.Point3D([1,1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
-//a = new JXG.Point3D([1,1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
-a2 = board.createElement("point",a.proj(),{visible: false});
 b = new JXG.Point3D([1,-1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
-b2 = board.createElement("point",b.proj(),{visible: false});
 c = new JXG.Point3D([-1,-1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
-c2 = board.createElement("point",c.proj(),{visible: false});
 d = new JXG.Point3D([-1,1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
-d2 = board.createElement("point",d.proj(),{visible: false});
-/*e = new JXG.Point3D([-1,-1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
-e2 = board.createElement("point",e.proj());
-f = new JXG.Point3D([-1,-1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
-f2 = board.createElement("point",f.proj());
-g = new JXG.Point3D([1,1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
-g2 = board.createElement("point",g.proj());
-h = new JXG.Point3D([1,-1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
-h2 = board.createElement("point",h.proj());*/
-board.createElement('polygon',[a2,b2,c2,d2]);
-/*board.createElement('polygon',[e2,f2,g2,h2]);
-board.createElement('line',[a2,e2],{straightFirst:false, straightLast:false});
-board.createElement('line',[b2,f2],{straightFirst:false, straightLast:false});
-board.createElement('line',[c2,g2],{straightFirst:false, straightLast:false});
-board.createElement('line',[d2,h2],{straightFirst:false, straightLast:false});*/
+
+e = new JXG.Point3D([1,1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
+f = new JXG.Point3D([1,-1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
+g = new JXG.Point3D([-1,-1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
+h = new JXG.Point3D([-1,1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],[4,1,3]);
+
+board.createElement('polygon',[a.point,b.point,c.point,d.point]);
+board.createElement('polygon',[e.point,f.point,g.point,h.point]);
+board.createElement('line',[a.point,e.point],{straightFirst:false, straightLast:false});
+board.createElement('line',[b.point,f.point],{straightFirst:false, straightLast:false});
+board.createElement('line',[c.point,g.point],{straightFirst:false, straightLast:false});
+board.createElement('line',[d.point,h.point],{straightFirst:false, straightLast:false});
 
 
  
