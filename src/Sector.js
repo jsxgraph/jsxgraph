@@ -266,7 +266,7 @@ JXG.createAngle = function(board, parents, attributes) {
         possibleNames = ['&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta', '&theta;',
                                 '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
                                 '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'],
-        i = 0,
+        i = 0, tmp,
         j, x, pre, post, found;
 
 
@@ -332,44 +332,45 @@ JXG.createAngle = function(board, parents, attributes) {
                     d = B.Dist(A);
                     return [B.X()+(A.X()-B.X())*r/d,B.Y()+(A.Y()-B.Y())*r/d];
             }], {withLabel:false, visible:false});
-            
-        if (!attributes.name) attributes.name = text;
+        for (i=0;i<3;i++) {
+            JXG.getReference(board,parents[i]).addChild(p);
+        }
         el = board.create('sector', [parents[1],p,parents[2]],attributes);
         el.type = JXG.OBJECT_TYPE_ANGLE;
-        el.text = text;
-        parents[0].addChild(el);
+        el.label.content.setText(text);
+        JXG.getReference(board,parents[0]).addChild(el);
         
-    /**
-    * return LabelAnchor
-    */
-    el.getLabelAnchor = function() {
-        var angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
-            dx = 10/(this.board.stretchX),
-            dy = 10/(this.board.stretchY),
-            p2c = this.point2.coords.usrCoords,
-            pmc = this.point1.coords.usrCoords,
-            bxminusax = p2c[1] - pmc[1],
-            byminusay = p2c[2] - pmc[2],
-            coords, vecx, vecy, len;
+        /**
+        * return LabelAnchor
+        */
+        el.getLabelAnchor = function() {
+            var angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
+                dx = 10/(this.board.stretchX),
+                dy = 10/(this.board.stretchY),
+                p2c = this.point2.coords.usrCoords,
+                pmc = this.point1.coords.usrCoords,
+                bxminusax = p2c[1] - pmc[1],
+                byminusay = p2c[2] - pmc[2],
+                coords, vecx, vecy, len;
 
-        if(this.label.content != null) {                          
-            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0],this.board);                      
-        }  
+            if(this.label.content != null) {                          
+                this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0],this.board);                      
+            }  
 
-        coords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                        [pmc[1]+ Math.cos(angle*0.5*1.125)*bxminusax - Math.sin(angle*0.5*1.125)*byminusay, 
-                        pmc[2]+ Math.sin(angle*0.5*1.125)*bxminusax + Math.cos(angle*0.5*1.125)*byminusay], 
-                        this.board);
-
-        vecx = coords.usrCoords[1] - pmc[1];
-        vecy = coords.usrCoords[2] - pmc[2];
+            coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                            [pmc[1]+ Math.cos(angle*0.5*1.125)*bxminusax - Math.sin(angle*0.5*1.125)*byminusay, 
+                            pmc[2]+ Math.sin(angle*0.5*1.125)*bxminusax + Math.cos(angle*0.5*1.125)*byminusay], 
+                            this.board);
     
-        len = Math.sqrt(vecx*vecx+vecy*vecy);
-        vecx = vecx*(len+dx)/len;
-        vecy = vecy*(len+dy)/len;
+            vecx = coords.usrCoords[1] - pmc[1];
+            vecy = coords.usrCoords[2] - pmc[2];
+        
+            len = Math.sqrt(vecx*vecx+vecy*vecy);
+            vecx = vecx*(len+dx)/len;
+            vecy = vecy*(len+dy)/len;
 
-        return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx,pmc[2]+vecy],this.board);
-    };
+            return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx,pmc[2]+vecy],this.board);
+        };
 
     } // Ansonsten eine fette Exception um die Ohren hauen
     else {

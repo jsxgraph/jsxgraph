@@ -147,6 +147,7 @@ JXG.Options = {
         fillColor : '#FF7F00',
         highlightFillColor : '#FF7F00',
         strokeColor : '#FF7F00',
+        textColor : '#0000FF',
         fillOpacity : 0.3,
         highlightFillOpacity : 0.3
     },
@@ -215,7 +216,7 @@ JXG.Options = {
         curve : 5,
         polygon: 4,
         sector: 3,
-        angle : 2,
+        angle : 3,
         grid  : 1,
         image : 0 
     }
