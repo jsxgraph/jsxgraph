@@ -1436,6 +1436,9 @@ JXG.Board.prototype.addConditions = function (str) {
             case 'stroke':
                 plaintext += 'el.strokeColor = ' + (right) +';\n';
                 break;
+            case 'style':
+                plaintext += 'el.setStyle(' + (right) +');\n';
+                break;
             case 'strokewidth':
                 plaintext += 'el.strokeWidth = ' + (right) +';\n';   // wird auch bei Punkten verwendet, was nicht realisiert ist.
                 //plaintext += 'el.highlightStrokeWidth = ' + (right) +';\n'; // TODO ?(BV)
