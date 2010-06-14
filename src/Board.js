@@ -2108,6 +2108,7 @@ JXG.Board.prototype.afterLoad = function() {
  */
 JXG.Board.prototype.suspendUpdate = function() {
     this.isSuspendedUpdate = true;
+    return this;
 };
 
 /**
@@ -2116,6 +2117,7 @@ JXG.Board.prototype.suspendUpdate = function() {
 JXG.Board.prototype.unsuspendUpdate = function() {
     this.isSuspendedUpdate = false;
     this.update();
+    return this;
 };
 
 /**

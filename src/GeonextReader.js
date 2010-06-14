@@ -991,6 +991,7 @@ this.readGeonext = function(tree,board) {
                                                                           'draft:'+defElDr[1]);
                     board.objects[cid].traced = (defElT[1]=='false') ? false : true;
                 }
+                board.unsuspendUpdate().suspendUpdate();
                 // "PERPENDICULAR" und "SECTOR" werden direkt im oberen if erledigt
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 break;
