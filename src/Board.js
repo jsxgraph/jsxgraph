@@ -1718,9 +1718,9 @@ JXG.Board.prototype.initGeonextBoard = function() {
     p2.fixed = true;
     p3 = new JXG.Point(this, [0,1],this.id + 'gYOe0','Punkt_0_1',false);
     p3.fixed = true;
-    l1 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gXOe0', this.id + 'gXLe0','X-Achse');
+    l1 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gXOe0', this.id + 'gXLe0','X-Achse', false);
     l1.hideElement();
-    l2 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gYOe0', this.id + 'gYLe0','Y-Achse');
+    l2 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gYOe0', this.id + 'gYLe0','Y-Achse', false);
     l2.hideElement();
     return this;
 };
