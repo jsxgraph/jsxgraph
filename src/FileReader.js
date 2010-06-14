@@ -162,7 +162,7 @@ this.parseString = function(fileStr, board, format, isString) {
  */
 this.readElements = function(tree, board, format) {
     if (format.toLowerCase()=='geonext') {
-        board.suspendUpdate();
+        //board.suspendUpdate();
         if(tree.getElementsByTagName('GEONEXT').length != 0) {
             JXG.GeonextReader.readGeonext(tree, board);
         }
