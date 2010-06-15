@@ -150,7 +150,7 @@ this.parseString = function(fileStr, board, format, isString) {
     }
    
     board.xmlString = fileStr;
-    var tree = this.stringToXMLTree(fileStr);
+    tree = this.stringToXMLTree(fileStr);
     // Now, we can walk through the tree
     this.readElements(tree, board, format);
 }; // end this.parse

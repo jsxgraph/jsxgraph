@@ -421,21 +421,21 @@ JXG.checkParameter = function(board, parameter, input, output) {
     var r;
     if (input=='point') {
         if (JXG.isPoint(input) && output=='point') { return parameter; }
-        if (JXG.isString(input) && output=='point') { 
+        if (JXG.isString(input) && output=='point') {
             r = JXG.getReference(board,parameter);
             if (JXG.isString(r)) { return false; } else { return r; }
         }
     } else if (input=='array') {
-        if (JXG.isArray(input) && output=='point') { 
+        if (JXG.isArray(input) && output=='point') {
             return = board.create('point', parameter, {visible:false,fixed:true});
         }
     } else if (input=='line') {
-...    
+...
     }
 }
 
 JXG.readParameter = function(board, parameter, input, output) {
-    var i, j, lenOut = output.length, 
+    var i, j, lenOut = output.length,
         len, result;
 
     if (lenOut==1) {
@@ -803,6 +803,28 @@ JXG.debug = function(s) {
     document.getElementById('debug').innerHTML += s +"<br/>";
   }
 };
+
+
+/**
+ * JessieScript startup
+ */
+
+JXG.addEvent(window, 'load', function (evt) {
+    var scripts = document.getElementsByTagName('script'),
+        i, div, board;
+    for(i=0;i<scripts.length;i++) {
+        if(scripts[i].getAttribute('type', 'none') == 'text/jessiescript') {
+            div = document.createElement('div');
+            div.setAttribute('id', 'jessiescript_autgen_jxg_'+i);
+            div.setAttribute('style', 'width:500px; height:500px; float:left');
+            div.setAttribute('class', 'jxgbox');
+            document.body.insertBefore(div, scripts[i]);
+
+            board = JXG.JSXGraph.initBoard('jessiescript_autgen_jxg_'+i, {boundingbox: [-5, 5, 5, -5], keepaspectratio:true});
+            board.construct(scripts[i].innerHTML);
+        }
+    }
+}, window);
 
 /*
 JXG.isSilverlightInstalled = function() {
