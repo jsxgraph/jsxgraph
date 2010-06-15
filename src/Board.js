@@ -2140,7 +2140,11 @@ JXG.Board.prototype.unsuspendUpdate = function() {
  */
 JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     if (!JXG.isArray(bbox)) return;
-    var h,w,oX,oY;
+    var h,w,oX,oY, dim;
+    dim = JXG.getDimensions(this.container);
+
+    this.canvasWidth = parseInt(dim.width);
+    this.canvasHeight = parseInt(dim.height);
     w = this.canvasWidth;
     h = this.canvasHeight;
     if (keepaspectratio) {
