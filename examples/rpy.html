@@ -1,0 +1,84 @@
+<html>
+<head>
+   <title>JSXGraph example: YahooFinance server module</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Use R as a JXGServerModule</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */
+
+    var l = [], g = [], board, mean, sd, median, mad, hook;
+
+    JXG.Server.loadModule('RStats');
+
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 10, 12, -10], axis: true, grid: false});
+    l[0] = board.create('segment', [[1, -8], [1, 8]], {visible: false});
+    l[1] = board.create('segment', [[3, -8], [3, 8]], {visible: false});
+    l[2] = board.create('segment', [[5, -8], [5, 8]], {visible: false});
+    l[3] = board.create('segment', [[7, -8], [7, 8]], {visible: false});
+    l[4] = board.create('segment', [[9, -8], [9, 8]], {visible: false});
+    g[0] = board.create('glider', [1, -5, l[0]], {name: 'A'});
+    g[1] = board.create('glider', [3, 3, l[1]], {name: 'B'});
+    g[2] = board.create('glider', [5, -2, l[2]], {name: 'C'});
+    g[3] = board.create('glider', [7, -4, l[3]], {name: 'D'});
+    g[4] = board.create('glider', [9, 7, l[4]], {name: 'E'});
+
+    mean = board.create('line', [[0, 0], [1, 0]], {name: 'mean', strokeColor: 'red'});
+    sd = board.create('line', [[0, 0], [1, 0]], {name: 'sd', strokeColor: 'green'});
+    median = board.create('line', [[0, 0], [1, 0]], {name: 'median', strokeColor: 'blue'});
+    mad = board.create('line', [[0, 0], [1, 0]], {name: 'mad', strokeColor: 'black'});
+
+    var cb = function (data) {
+        try {
+            if(data.mean) {
+                mean.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.mean);
+                mean.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.mean);
+            }
+            if(data.sd) {
+                sd.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.sd);
+                sd.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.sd);
+            }
+            if(data.median) {
+                median.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.median);
+                median.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.median);
+            }
+            if(data.mad) {
+                mad.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.mad);
+                mad.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.mad);
+            }
+        } catch (e) { $('#debug').html(e); }
+        board.update();
+    }
+
+    updatedata = function () {
+        var data = [g[0].Y(), g[1].Y(), g[2].Y(), g[3].Y(), g[4].Y()];
+        JXG.Server.modules.RStats.all(data, cb, false);
+
+        mean.setProperty({strokeColor: 'red'});
+        sd.setProperty({strokeColor: 'green'});
+        median.setProperty({strokeColor: 'blue'});
+        mad.setProperty({strokeColor: 'black'});
+    };
+    board.addHook(updatedata, 'mouseup');
+
+    preupdate = function () {
+        mean.setProperty({strokeColor: 'grey'});
+        sd.setProperty({strokeColor: 'grey'});
+        median.setProperty({strokeColor: 'grey'});
+        mad.setProperty({strokeColor: 'grey'});
+    };
+    board.addHook(preupdate, 'mousedown');
+
+    updatedata();
+
+  /* ]]> */
+  </script>
+</body>
+</html>

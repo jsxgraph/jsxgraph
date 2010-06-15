@@ -106,7 +106,7 @@ JXG.Server.callServer = function(action, callback, data, sync) {
         if(typeof str != 'string')
             return;
 
-		data =  eval("(" + str + ")");
+		data = eval("(" + str + ")");
 
 		if(data.type == 'error') {
 			this.handleError(data);
@@ -136,10 +136,10 @@ JXG.Server.callServer = function(action, callback, data, sync) {
 				inject += 'JXG.Server.modules.' + this.runningCalls[id].module + '.' + tmp.name + '_cb = ' + tmp.callback + ';';
 
 				// insert handler as JXG.Server.modules.<module name>.<handler name>
-				inject += 'JXG.Server.modules.' + this.runningCalls[id].module + '.' + tmp.name + ' = function (' + tmp.parameters.join(',') + ', __JXGSERVER_CB__) {' +
+				inject += 'JXG.Server.modules.' + this.runningCalls[id].module + '.' + tmp.name + ' = function (' + tmp.parameters.join(',') + ', __JXGSERVER_CB__, __JXGSERVER_SYNC) {' +
 				'if(typeof __JXGSERVER_CB__ == "undefined") __JXGSERVER_CB__ = JXG.Server.modules.' + this.runningCalls[id].module + '.' + tmp.name + '_cb;' +
 				'var __JXGSERVER_PAR__ = {' + paramlist.join(',') + ', "module": "' + this.runningCalls[id].module + '", "handler": "' + tmp.name + '" };' +
-				'JXG.Server.callServer("exec", __JXGSERVER_CB__, __JXGSERVER_PAR__);' +
+				'JXG.Server.callServer("exec", __JXGSERVER_CB__, __JXGSERVER_PAR__, __JXGSERVER_SYNC);' +
 				'};';
 				eval(inject);
 			}
@@ -174,8 +174,8 @@ JXG.Server.callServer = function(action, callback, data, sync) {
                 switch(AJAX.readyState) {
                     // server is ready for take-off
                     case 4:
-                        if(AJAX.status != 200)
-                            alert("Fehler:" + AJAX.status);
+                        if(AJAX.status != 200) { }
+                            //alert("Fehler:" + AJAX.status);
                         else  // grab it and call the server callback to debase64, unzip, and parse the data
                             cb(AJAX.responseText);
                     break;

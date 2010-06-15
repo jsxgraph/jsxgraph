@@ -782,6 +782,8 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
 
     // release dragged object
     this.drag_obj = null;
+
+    this.updateHooks('mouseup');
 };
 
 /**
@@ -837,6 +839,8 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         this.mode = this.BOARD_MODE_NONE;
         return;
     }
+
+    this.updateHooks('mousedown');
 
     /**
       * New mouse position in screen coordinates.
@@ -1859,13 +1863,18 @@ JXG.Board.prototype.updateRenderer = function(drag) {
 /**
   * Adds a hook to this board.
   * @param {function} hook A function to be called by the board after an update occured.
+ * @param {string} m When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
   * @type int
   * @return Id of the hook, required to remove the hook from the board.
   */
-JXG.Board.prototype.addHook = function(hook) {
-    this.hooks.push(hook);
+JXG.Board.prototype.addHook = function(hook, m) {
+    if(typeof m == 'undefined')
+        m = 'update';
 
-    hook(this);
+    this.hooks.push({fn: hook, mode: m});
+
+    if(m=='update')
+        hook(this);
 
     return (this.hooks.length-1);
 };
@@ -1883,11 +1892,15 @@ JXG.Board.prototype.removeHook = function(id) {
   * Runs through all hooked functions and calls them.
   * @private
   */
-JXG.Board.prototype.updateHooks = function() {
+JXG.Board.prototype.updateHooks = function(m) {
     var i;
+
+    if(typeof m == 'undefined')
+        m = 'update';
+
     for(i=0; i<this.hooks.length; i++) {
-        if(this.hooks[i] != null)
-            this.hooks[i](this);
+        if((this.hooks[i] != null) && (this.hooks[i].mode == m))
+            this.hooks[i].fn(this);
     }
     return this;
 };
