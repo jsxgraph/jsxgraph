@@ -35,7 +35,7 @@ class JXGGeoLociModule(JXGServerModule):
         ############################
 
         # Command to start cocoa
-        self.cmd_cocoa = "cocoa"
+        self.cmd_cocoa = "/share8/opt/cocoa/cocoa"
         # If you're using Windows
         #cmd_cocoa = r"C:\cocoa\cocoa.bat"
 
