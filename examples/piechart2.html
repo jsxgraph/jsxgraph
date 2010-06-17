@@ -1,0 +1,75 @@
+<html>
+	<head>
+   		<title>JSXGraph example</title>
+		<link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+		<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+	</head>
+	<body>
+        <div id="jxgbox" class="jxgbox" style="width:900px; height:600px;"></div>
+		<!-- Drawing area -->
+		<div id="debug" style="display:none;"></div>
+		<script type="text/javascript">
+    /* <![CDATA[ */
+   
+
+    var dataArr = [30,16,14,10,10,8,6,6,4,4];
+    var board = JXG.JSXGraph.initBoard('jxgbox', {showNavigation:false, showCopyright:false, originX: 120, originY: 400, unitX: 50, unitY: 50});
+    board.containerObj.style.backgroundColor = 'black';
+    board.suspendUpdate();
+
+    var a = board.createElement('chart', dataArr, 
+        {chartStyle:'pie',  
+         colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
+         fillOpacity:0.9, center:[5,2], strokeColor:'black', highlightStrokeColor:'black', strokeWidth:4,
+         labelArray:['JSXGraph','GeoneXt', 'Geonet','GeoGebra', 'Cinderella', 'Cabri','Geometer\'s Sketchpad', 'Z.u.L.', 'DynaGeo', 'Others'],
+         highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
+         highlightOnSector:true,
+         gradient:'linear'}
+    );
+
+    for(var i=0; i< a[0].arcs.length; i++) {
+        a[0].arcs[i].highlight = function() {
+            this.board.renderer.highlight(this);
+            if(this.label.content != null) {
+                this.label.content.rendNode.style.fontSize = (2*this.board.fontSize) + 'px';
+            }
+            
+            var dx = - this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
+            var dy = - this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+            
+            var ddx = 20/(this.board.stretchX);
+            var ddy = 20/(this.board.stretchY);
+            var z = Math.sqrt(dx*dx+dy*dy);
+            
+            this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx*(z+ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy*(z+ddy)/z],
+                                                this.board);
+            this.prepareUpdate().update().updateRenderer();      
+        };
+          
+        a[0].arcs[i].noHighlight = function() {
+            this.board.renderer.noHighlight(this);
+            if(this.label.content != null) {
+                this.label.content.rendNode.style.fontSize = (this.board.fontSize) + 'px';
+            }
+            
+            var dx = -this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
+            var dy = -this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+            
+            var ddx = 20/(this.board.stretchX);
+            var ddy = 20/(this.board.stretchY);
+            var z = Math.sqrt(dx*dx+dy*dy);
+            
+            this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx*(z-ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy*(z-ddy)/z],
+                                                this.board);
+            this.prepareUpdate().update().updateRenderer();      
+        }; 
+    }
+    board.unsuspendUpdate();
+  /* ]]> */
+  </script>
+</body>
+</html>

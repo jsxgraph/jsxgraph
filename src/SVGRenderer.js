@@ -126,7 +126,7 @@ JXG.SVGRenderer.prototype.setShadow = function(el) {
 
 JXG.SVGRenderer.prototype.setGradient = function(el) {
     var fillNode = el.rendNode, col, op,
-        node,node,node3,x1,x2,y1,y2;
+        node, node2, node3, x1, x2, y1, y2;
     
     if (typeof el.visProp['fillOpacity']=='function') {
         op = el.visProp['fillOpacity']();
@@ -141,7 +141,7 @@ JXG.SVGRenderer.prototype.setGradient = function(el) {
     }
 
     if(el.visProp['gradient'] == 'linear') {
-        node = this.createPrim('linearGradient',el.id+'_gradient');
+        node = this.createPrim('linearGradient', el.id+'_gradient');
         x1 = '0%'; // TODO: get x1,x2,y1,y2 from el.visProp['angle']
         x2 = '100%';
         y1 = '0%';
@@ -160,7 +160,7 @@ JXG.SVGRenderer.prototype.setGradient = function(el) {
         node.appendChild(node2);
         node.appendChild(node3);     
         this.defs.appendChild(node);
-        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+el.id+'_gradient)');      
+        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+this.container.id+'_'+el.id+'_gradient)');      
         el.gradNode1 = node2;
         el.gradNode2 = node3;
     }
@@ -183,7 +183,7 @@ JXG.SVGRenderer.prototype.setGradient = function(el) {
         node.appendChild(node2);
         node.appendChild(node3);     
         this.defs.appendChild(node);
-        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+el.id+'_gradient)'); 
+        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+this.container.id+el.id+'_gradient)'); 
         el.gradNode1 = node2;
         el.gradNode2 = node3;
     }

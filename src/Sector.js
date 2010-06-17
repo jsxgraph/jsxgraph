@@ -73,6 +73,7 @@ JXG.createSector = function(board, parents, attributes) {
      * @type JXG.Point
      */
     el.point1 = JXG.getReference(board, parents[0]);
+    el.midpoint = el.point1;
     /**
      * Point defining the arcs circle.
      * @type JXG.Point
