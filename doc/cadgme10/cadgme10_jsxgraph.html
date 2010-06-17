@@ -29,8 +29,9 @@
     <title>JSXGraph - Dynamic Mathematics running on (nearly) every device</title>
     
     <!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>-->
-    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
     <link rel='stylesheet' type='text/css' href='./jsxgraph.css' />    
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../distrib/AM3.js"></script>
     <!-- <link type="text/css" href="./src/scrollbar.css" rel="stylesheet"> -->
     
     <style>
@@ -447,8 +448,10 @@
           <section class="center">
                 <div  id="jxgbox" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:none"></div>
                 <script type="text/JavaScript">
-        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-1.5,2,8,-3], keepaspectratio:true, axis:true});
-        var p = board.create('point',[1,1]);
+                (function() {
+                    var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-1.5,2,8,-3], keepaspectratio:true, axis:true});
+                    var p = brd.create('point',[1,1]);
+                 })();
             </script>
           </section>
         </div>
@@ -540,7 +543,7 @@
             <ul class="summary">
               <li> Bezier curves
               </li><li> Conic sections
-              </li><li> L<sub>A</sub>T<sub>E</sub>X sysntax for labels and texts
+              </li><li> L<sub>A</sub>T<sub>E</sub>X syntax for labels and texts
                     <ul>
                         <li> ASCIIMathML (falls back to Google chart API)
                         </li><li> MathJax
@@ -551,6 +554,34 @@
           </section>
         </div>
         
+        <div class="slide">
+          <header>JSXGraph + ASCIIMathML</header>
+          <section class="center">
+                <div  id="jxgbox2" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:none"></div>
+                <script type="text/JavaScript">
+                (function() {
+                    var brd = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox:[-1.5,2,2,-2], keepaspectratio:true});
+                    var p = brd.create('point',[1,1],{name:'`\sqrt 2`'});
+                    var t = brd.create('text',[1,0, '\int \sqrt{1-x^2}dx']);
+                 })();
+            </script>
+          </section>
+        </div>
+
+        <div class="slide">
+          <header>JSXGraph + MathJax</header>
+          <section class="center">
+                <div  id="jxgbox2" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:none"></div>
+                <script type="text/JavaScript">
+                (function() {
+                    var brd = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox:[-1.5,2,2,-2], keepaspectratio:true});
+                    var p = brd.create('point',[1,1],{name:'`\sqrt 2`'});
+                    var t = brd.create('text',[1,0, '\int \sqrt{1-x^2}dx']);
+                 })();
+            </script>
+          </section>
+        </div>
+
         <div class="slide">
           <header>JessieScript</header>
           <section class="summary">
