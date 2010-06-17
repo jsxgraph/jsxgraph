@@ -202,6 +202,8 @@ However, it seems JavaScript is either disabled or not supported by your browser
 <h2 onclick="switchList('myElList');" style="cursor: pointer"><img src="static/expandable.gif"/> Elements</h2>
 <ul class="classList" id="myElList" style="display: block;">
 	
+	<li><a href="../symbols/Arc.html">Arc</a></li>
+	
 	<li><a href="../symbols/Arrow.html">Arrow</a></li>
 	
 	<li><a href="../symbols/Axis.html">Axis</a></li>
@@ -337,6 +339,8 @@ However, it seems JavaScript is either disabled or not supported by your browser
 </ul>
 <h2 onclick="switchList('myClList');" style="cursor: pointer"><img src="static/expandable.gif"/> Classes</h2>
 <ul class="classList" id="myClList" style="display: block;">
+	
+	<li></li>
 	
 	<li></li>
 	
@@ -509,7 +513,8 @@ However, it seems JavaScript is either disabled or not supported by your browser
 			
 				This is the Board class. It stores all methods and properties required
 to manage a geonext board like adding geometric elements, removing them, managing
-mouse over, drag & drop of geometric objects etc.
+mouse over, drag & drop of geometric objects etc. You should never create a board by calling this constructor.
+Please use JXG.JSXGraph#initBoard instead.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_Board.js.html">Board.js</a>.
@@ -560,7 +565,7 @@ mouse over, drag & drop of geometric objects etc.
 								<div class="fixedFont">
 								<b><a href="../symbols/JXG.Board.html#canvasHeight">canvasHeight</a></b>
 								</div>
-								<div class="description">Canvas Width</div>
+								<div class="description">Canvas Height</div>
 							</td>
 						</tr>
 					
@@ -690,7 +695,7 @@ mouse over, drag & drop of geometric objects etc.
 								<div class="fixedFont">
 								<b><a href="../symbols/JXG.Board.html#hooks">hooks</a></b>
 								</div>
-								<div class="description">An array containing all hooked functions.</div>
+								<div class="description">An array containing all hook-functions.</div>
 							</td>
 						</tr>
 					
@@ -722,7 +727,7 @@ of the HTML window.</div>
 								<b><a href="../symbols/JXG.Board.html#mousePosRel">mousePosRel</a></b>
 								</div>
 								<div class="description">Relative position of the mouse pointer in screen pixel from the top left corner
-of the JSXGraph canvas (the div element contining the board)-</div>
+of the JSXGraph canvas (the div element contining the board).</div>
 							</td>
 						</tr>
 					
@@ -742,7 +747,7 @@ of the JSXGraph canvas (the div element contining the board)-</div>
 								<div class="fixedFont">
 								<b><a href="../symbols/JXG.Board.html#origin">origin</a></b>
 								</div>
-								<div class="description">Coordinates of the boards origin</div>
+								<div class="description">Coordinates of the boards origin.</div>
 							</td>
 						</tr>
 					
@@ -782,7 +787,7 @@ of the JSXGraph canvas (the div element contining the board)-</div>
 								<div class="fixedFont">
 								<b><a href="../symbols/JXG.Board.html#unitX">unitX</a></b>
 								</div>
-								<div class="description">This means the number of pixel which represents
+								<div class="description">The number of pixels which represent
 one unit in user-coordinates in x direction.</div>
 							</td>
 						</tr>
@@ -793,7 +798,7 @@ one unit in user-coordinates in x direction.</div>
 								<div class="fixedFont">
 								<b><a href="../symbols/JXG.Board.html#unitY">unitY</a></b>
 								</div>
-								<div class="description">This means the number of pixel which represents
+								<div class="description">The number of pixels which represent
 one unit in user-coordinates in y direction.</div>
 							</td>
 						</tr>
@@ -860,9 +865,19 @@ one unit in user-coordinates in y direction.</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#addHook">addHook</a></b>(hook)
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#addHook">addHook</a></b>(hook, m)
 								</div>
 								<div class="description">Adds a hook to this board.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/JXG.Board.html#addMacro">addMacro</a></b>(string)
+								</div>
+								<div class="description">Parses a string like<br />
+<tt>&lt;macro-name&gt; = Macro(A, B, C) { <Command in JSXGraph Construction syntax>; .</div>
 							</td>
 						</tr>
 					
@@ -1137,7 +1152,7 @@ update() method and update the conditions.</div>
 						
 							<dt>
                                 
-    								<span class="light fixedFont">{float}</span>  <b>zoomX</b>
+    								<span class="light fixedFont">{Number}</span>  <b>zoomX</b>
 	    							
                                 
                                 
@@ -1146,7 +1161,7 @@ update() method and update the conditions.</div>
 						
 							<dt>
                                 
-    								<span class="light fixedFont">{float}</span>  <b>zoomY</b>
+    								<span class="light fixedFont">{Number}</span>  <b>zoomY</b>
 	    							
                                 
                                 
@@ -1191,7 +1206,7 @@ update() method and update the conditions.</div>
 						
 							<dt>
                                 
-    								<span class="light fixedFont">{bool}</span>  <b>showCopyright</b>
+    								<span class="light fixedFont">{Boolean}</span>  <b>showCopyright</b>
 	    							
                                 
                                 
@@ -1227,7 +1242,7 @@ update() method and update the conditions.</div>
 					
 					</div>
 					<div class="description">
-						Canvas Width
+						Canvas Height
 						
 						
 					</div>
@@ -1398,7 +1413,7 @@ update() method and update the conditions.</div>
 					<a name="gridColor"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{string}</span>
+					<span class="light">{String}</span>
 					<b>gridColor</b>
 					
 					</div>
@@ -1414,13 +1429,20 @@ update() method and update the conditions.</div>
 						
 						
 						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								JXG.Options.grid#gridColor
+							</dd>
+							</dl>
+						
 
 					<hr />
 				
 					<a name="gridDash"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{bool}</span>
+					<span class="light">{Number}</span>
 					<b>gridDash</b>
 					
 					</div>
@@ -1436,13 +1458,20 @@ update() method and update the conditions.</div>
 						
 						
 						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								JXG.Options.grid#gridDash
+							</dd>
+							</dl>
+						
 
 					<hr />
 				
 					<a name="gridOpacity"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{float}</span>
+					<span class="light">{Number}</span>
 					<b>gridOpacity</b>
 					
 					</div>
@@ -1457,6 +1486,13 @@ update() method and update the conditions.</div>
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								JXG.Options.grid#gridOpacity
+							</dd>
+							</dl>
 						
 
 					<hr />
@@ -1480,6 +1516,13 @@ update() method and update the conditions.</div>
 						
 						
 						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								JXG.Options.grid#gridX
+							</dd>
+							</dl>
+						
 
 					<hr />
 				
@@ -1502,6 +1545,13 @@ update() method and update the conditions.</div>
 						
 						
 						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								JXG.Options.grid#gridY
+							</dd>
+							</dl>
+						
 
 					<hr />
 				
@@ -1513,7 +1563,7 @@ update() method and update the conditions.</div>
 					
 					</div>
 					<div class="description">
-						An array containing all hooked functions.
+						An array containing all hook-functions.
 						
 						
 					</div>
@@ -1555,7 +1605,7 @@ update() method and update the conditions.</div>
 					<a name="mousePosAbs"> </a>
 					<div class="fixedFont">
 					
-					
+					<span class="light">{Array}</span>
 					<b>mousePosAbs</b>
 					
 					</div>
@@ -1578,13 +1628,13 @@ of the HTML window.
 					<a name="mousePosRel"> </a>
 					<div class="fixedFont">
 					
-					
+					<span class="light">{Array}</span>
 					<b>mousePosRel</b>
 					
 					</div>
 					<div class="description">
 						Relative position of the mouse pointer in screen pixel from the top left corner
-of the JSXGraph canvas (the div element contining the board)-
+of the JSXGraph canvas (the div element contining the board).
 						
 						
 					</div>
@@ -1601,7 +1651,7 @@ of the JSXGraph canvas (the div element contining the board)-
 					<a name="options"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Options}</span>
+					<span class="light">{<a href="../symbols/JXG.Options.html">JXG.Options</a>}</span>
 					<b>options</b>
 					
 					</div>
@@ -1623,12 +1673,12 @@ of the JSXGraph canvas (the div element contining the board)-
 					<a name="origin"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Coords}</span>
+					<span class="light">{<a href="../symbols/JXG.Coords.html">JXG.Coords</a>}</span>
 					<b>origin</b>
 					
 					</div>
 					<div class="description">
-						Coordinates of the boards origin
+						Coordinates of the boards origin.
 						
 						
 					</div>
@@ -1638,6 +1688,13 @@ of the JSXGraph canvas (the div element contining the board)-
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								[0, 0]
+							</dd>
+							</dl>
 						
 
 					<hr />
@@ -1661,6 +1718,13 @@ of the JSXGraph canvas (the div element contining the board)-
 						
 						
 						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								JXG.Options.grid#snapSizeX
+							</dd>
+							</dl>
+						
 
 					<hr />
 				
@@ -1683,13 +1747,20 @@ of the JSXGraph canvas (the div element contining the board)-
 						
 						
 						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								JXG.Options.grid#snapSizeY
+							</dd>
+							</dl>
+						
 
 					<hr />
 				
 					<a name="snapToGrid"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{bool}</span>
+					<span class="light">{Boolean}</span>
 					<b>snapToGrid</b>
 					
 					</div>
@@ -1705,6 +1776,13 @@ of the JSXGraph canvas (the div element contining the board)-
 						
 						
 						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								JXG.Options.grid#snapToGrid
+							</dd>
+							</dl>
+						
 
 					<hr />
 				
@@ -1716,7 +1794,7 @@ of the JSXGraph canvas (the div element contining the board)-
 					
 					</div>
 					<div class="description">
-						This means the number of pixel which represents
+						The number of pixels which represent
 one unit in user-coordinates in x direction.
 						
 						
@@ -1739,7 +1817,7 @@ one unit in user-coordinates in x direction.
 					
 					</div>
 					<div class="description">
-						This means the number of pixel which represents
+						The number of pixels which represent
 one unit in user-coordinates in y direction.
 						
 						
@@ -1882,7 +1960,7 @@ one unit in user-coordinates in y direction.
 					<div class="fixedFont">
 					
 					<span class="light">{int}</span>
-					<b>addHook</b>(hook)
+					<b>addHook</b>(hook, m)
 					
 					</div>
 					<div class="description">
@@ -1901,6 +1979,12 @@ one unit in user-coordinates in y direction.
 								</dt>
 								<dd>A function to be called by the board after an update occured.</dd>
 							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>m</b>
+									
+								</dt>
+								<dd>When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.</dd>
+							
 							</dl>
 						
 						
@@ -1915,6 +1999,51 @@ one unit in user-coordinates in y direction.
 							</dl>
 						
 						
+						
+
+					
+					
+					<hr />
+				
+					<a name="addMacro"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addMacro</b>(string)
+					
+					</div>
+					<div class="description">
+						Parses a string like<br />
+<tt>&lt;macro-name&gt; = Macro(A, B, C) { <Command in JSXGraph Construction syntax>; ...<Command in JXG-Construct syntax>; }</tt><br />
+and adds it as a macro so it can be used in the JSXGraph Construction Syntax.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>string</b>
+									
+								</dt>
+								<dd>A string like the one in the methods description.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="#construct">#construct</a></dd>
+							
+							</dl>
 						
 
 					
@@ -2663,7 +2792,7 @@ update() method and update the conditions.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Wed May 26 2010 18:47:05 GMT+0200 (MESZ)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Jun 17 2010 15:45:02 GMT+0200 (MESZ)
 		</div>
 	</body>
 </html>

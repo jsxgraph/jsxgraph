@@ -124,7 +124,7 @@
 <span class='line'>117</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>118</span> 
 <span class='line'>119</span> </span><span class="NAME">this.parseString</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">format</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">isString</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>120</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">tree</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">tree</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">graph</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>121</span> </span><span class="WHIT">    </span><span class="WHIT">
 <span class='line'>122</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'cdy'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>123</span> </span><span class="WHIT">    	</span><span class="COMM">// if isString is true, fileStr is the base64 encoded zip file, otherwise it's just the zip file</span><span class="WHIT">
@@ -135,93 +135,100 @@
 <span class='line'>128</span> </span><span class="WHIT">        </span><span class="NAME">board.afterLoad</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>129</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>130</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>131</span> </span><span class="WHIT">    </span><span class="WHIT">
-<span class='line'>132</span> </span><span class="WHIT">    </span><span class="COMM">// fileStr is a string containing the XML code of the construction</span><span class="WHIT">
-<span class='line'>133</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'geonext'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>134</span> </span><span class="WHIT">        </span><span class="NAME">fileStr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.GeonextReader.prepareString</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>135</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>136</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'geogebra'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>137</span> </span><span class="WHIT">        </span><span class="COMM">// if isString is true, fileStr is a base64 encoded string, otherwise it's the zipped file</span><span class="WHIT">
-<span class='line'>138</span> </span><span class="WHIT">    	</span><span class="NAME">fileStr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.GeogebraReader.prepareString</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">isString</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>139</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>140</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'intergeo'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>141</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">isString</span><span class="PUNC">)</span><span class="WHIT">
-<span class='line'>142</span> </span><span class="WHIT">            </span><span class="NAME">fileStr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.Util.Base64.decode</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>143</span> </span><span class="WHIT">    	</span><span class="NAME">fileStr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.IntergeoReader.prepareString</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>144</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>145</span> </span><span class="WHIT">    </span><span class="NAME">board.xmlString</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">fileStr</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>146</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">tree</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.stringToXMLTree</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>147</span> </span><span class="WHIT">    </span><span class="COMM">// Now, we can walk through the tree</span><span class="WHIT">
-<span class='line'>148</span> </span><span class="WHIT">    </span><span class="NAME">this.readElements</span><span class="PUNC">(</span><span class="NAME">tree</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">format</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>149</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// end this.parse</span><span class="WHIT">
-<span class='line'>150</span> 
-<span class='line'>151</span> </span><span class="COMM">/**
-<span class='line'>152</span>  * Reading the elements of a geonext or geogebra file
-<span class='line'>153</span>  * @param {} tree expects the content of the parsed geonext file returned by function parseFromString
-<span class='line'>154</span>  * @param {Object} board board object
-<span class='line'>155</span>  */</span><span class="WHIT">
-<span class='line'>156</span> </span><span class="NAME">this.readElements</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">tree</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">format</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>157</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'geonext'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>158</span> </span><span class="WHIT">        </span><span class="NAME">board.suspendUpdate</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>159</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">tree.getElementsByTagName</span><span class="PUNC">(</span><span class="STRN">'GEONEXT'</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">length</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>160</span> </span><span class="WHIT">            </span><span class="NAME">JXG.GeonextReader.readGeonext</span><span class="PUNC">(</span><span class="NAME">tree</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>161</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>162</span> </span><span class="WHIT">        </span><span class="NAME">board.unsuspendUpdate</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>163</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>164</span> </span><span class="WHIT">    </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">tree.getElementsByTagName</span><span class="PUNC">(</span><span class="STRN">'geogebra'</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">length</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>165</span> </span><span class="WHIT">        </span><span class="NAME">JXG.GeogebraReader.readGeogebra</span><span class="PUNC">(</span><span class="NAME">tree</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>166</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>167</span> </span><span class="WHIT">    </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'intergeo'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>168</span> </span><span class="WHIT">        </span><span class="NAME">JXG.IntergeoReader.readIntergeo</span><span class="PUNC">(</span><span class="NAME">tree</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>169</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>170</span> </span><span class="WHIT">    </span><span class="COMM">// cdy is already parsed in parseString()</span><span class="WHIT">
-<span class='line'>171</span> </span><span class="WHIT">    </span><span class="NAME">board.afterLoad</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>172</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// end: this.readElements()</span><span class="WHIT">
-<span class='line'>173</span> 
-<span class='line'>174</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// end: FileReader()</span><span class="WHIT">
-<span class='line'>175</span> 
-<span class='line'>176</span> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="REGX">/msie/i</span><span class="PUNC">.</span><span class="NAME">test</span><span class="PUNC">(</span><span class="NAME">navigator.userAgent</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">!</span><span class="REGX">/opera/i</span><span class="PUNC">.</span><span class="NAME">test</span><span class="PUNC">(</span><span class="NAME">navigator.userAgent</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>177</span> </span><span class="NAME">document.write</span><span class="PUNC">(</span><span class="STRN">'&lt;script type="text/vbscript">\n\
-<span class='line'>178</span> Function Base64Encode(inData)\n\
-<span class='line'>179</span>   Const Base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"\n\
-<span class='line'>180</span>   Dim cOut, sOut, I\n\
-<span class='line'>181</span>   For I = 1 To LenB(inData) Step 3\n\
-<span class='line'>182</span>     Dim nGroup, pOut, sGroup\n\
-<span class='line'>183</span>     nGroup = &H10000 * AscB(MidB(inData, I, 1)) + _\n\
-<span class='line'>184</span>       &H100 * MyASC(MidB(inData, I + 1, 1)) + MyASC(MidB(inData, I + 2, 1))\n\
-<span class='line'>185</span>     nGroup = Oct(nGroup)\n\
-<span class='line'>186</span>     nGroup = String(8 - Len(nGroup), "0") & nGroup\n\
-<span class='line'>187</span>     pOut = Mid(Base64, CLng("&o" & Mid(nGroup, 1, 2)) + 1, 1) + _\n\
-<span class='line'>188</span>       Mid(Base64, CLng("&o" & Mid(nGroup, 3, 2)) + 1, 1) + _\n\
-<span class='line'>189</span>       Mid(Base64, CLng("&o" & Mid(nGroup, 5, 2)) + 1, 1) + _\n\
-<span class='line'>190</span>       Mid(Base64, CLng("&o" & Mid(nGroup, 7, 2)) + 1, 1)\n\
-<span class='line'>191</span>     sOut = sOut + pOut\n\
-<span class='line'>192</span>   Next\n\
-<span class='line'>193</span>   Select Case LenB(inData) Mod 3\n\
-<span class='line'>194</span>     Case 1: \'8 bit final\n\
-<span class='line'>195</span>       sOut = Left(sOut, Len(sOut) - 2) + "=="\n\
-<span class='line'>196</span>     Case 2: \'16 bit final\n\
-<span class='line'>197</span>       sOut = Left(sOut, Len(sOut) - 1) + "="\n\
-<span class='line'>198</span>   End Select\n\
-<span class='line'>199</span>   Base64Encode = sOut\n\
-<span class='line'>200</span> End Function\n\
-<span class='line'>201</span> \n\
-<span class='line'>202</span> Function MyASC(OneChar)\n\
-<span class='line'>203</span>   If OneChar = "" Then MyASC = 0 Else MyASC = AscB(OneChar)\n\
-<span class='line'>204</span> End Function\n\
-<span class='line'>205</span> \n\
-<span class='line'>206</span> Function BinFileReader(xhr)\n\
-<span class='line'>207</span>     Dim byteString\n\
-<span class='line'>208</span>     Dim b64String\n\
-<span class='line'>209</span>     Dim i\n\
-<span class='line'>210</span>     byteString = xhr.responseBody\n\
-<span class='line'>211</span>     ReDim byteArray(LenB(byteString))\n\
-<span class='line'>212</span>     For i = 1 To LenB(byteString)\n\
-<span class='line'>213</span>         byteArray(i-1) = AscB(MidB(byteString, i, 1))\n\
-<span class='line'>214</span>     Next\n\
-<span class='line'>215</span>     b64String = Base64Encode(byteString)\n\
-<span class='line'>216</span>     BinFileReader = b64String\n\
-<span class='line'>217</span> End Function\n\
-<span class='line'>218</span> &lt;/script>\n'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>219</span> </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>220</span> </span></pre></body></html>
+<span class='line'>131</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'graph'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="WHIT">        </span><span class="COMM">//if(isString)</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">        </span><span class="NAME">fileStr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.GraphReader.readGraph</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">,</span><span class="NAME">board</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">        </span><span class="NAME">board.afterLoad</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">     </span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">    </span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">    </span><span class="COMM">// fileStr is a string containing the XML code of the construction</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'geonext'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="WHIT">        </span><span class="NAME">fileStr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.GeonextReader.prepareString</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>141</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>142</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'geogebra'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>143</span> </span><span class="WHIT">        </span><span class="COMM">// if isString is true, fileStr is a base64 encoded string, otherwise it's the zipped file</span><span class="WHIT">
+<span class='line'>144</span> </span><span class="WHIT">    	</span><span class="NAME">fileStr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.GeogebraReader.prepareString</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">isString</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>145</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>146</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'intergeo'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>147</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">isString</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="WHIT">            </span><span class="NAME">fileStr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.Util.Base64.decode</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">    	</span><span class="NAME">fileStr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.IntergeoReader.prepareString</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>151</span> </span><span class="WHIT">   </span><span class="WHIT">
+<span class='line'>152</span> </span><span class="WHIT">    </span><span class="NAME">board.xmlString</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">fileStr</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>153</span> </span><span class="WHIT">    </span><span class="NAME">tree</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.stringToXMLTree</span><span class="PUNC">(</span><span class="NAME">fileStr</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="WHIT">    </span><span class="COMM">// Now, we can walk through the tree</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="WHIT">    </span><span class="NAME">this.readElements</span><span class="PUNC">(</span><span class="NAME">tree</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">format</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>156</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// end this.parse</span><span class="WHIT">
+<span class='line'>157</span> 
+<span class='line'>158</span> </span><span class="COMM">/**
+<span class='line'>159</span>  * Reading the elements of a geonext or geogebra file
+<span class='line'>160</span>  * @param {} tree expects the content of the parsed geonext file returned by function parseFromString
+<span class='line'>161</span>  * @param {Object} board board object
+<span class='line'>162</span>  */</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="NAME">this.readElements</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">tree</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">format</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>164</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'geonext'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>165</span> </span><span class="WHIT">        </span><span class="NAME">board.suspendUpdate</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>166</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">tree.getElementsByTagName</span><span class="PUNC">(</span><span class="STRN">'GEONEXT'</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">length</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="WHIT">            </span><span class="NAME">JXG.GeonextReader.readGeonext</span><span class="PUNC">(</span><span class="NAME">tree</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="WHIT">        </span><span class="NAME">board.unsuspendUpdate</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>170</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="WHIT">    </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">tree.getElementsByTagName</span><span class="PUNC">(</span><span class="STRN">'geogebra'</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">length</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="WHIT">        </span><span class="NAME">JXG.GeogebraReader.readGeogebra</span><span class="PUNC">(</span><span class="NAME">tree</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">    </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">format.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'intergeo'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="WHIT">        </span><span class="NAME">JXG.IntergeoReader.readIntergeo</span><span class="PUNC">(</span><span class="NAME">tree</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="WHIT">    </span><span class="COMM">// cdy is already parsed in parseString()</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="WHIT">    </span><span class="NAME">board.afterLoad</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>179</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// end: this.readElements()</span><span class="WHIT">
+<span class='line'>180</span> 
+<span class='line'>181</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// end: FileReader()</span><span class="WHIT">
+<span class='line'>182</span> 
+<span class='line'>183</span> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="REGX">/msie/i</span><span class="PUNC">.</span><span class="NAME">test</span><span class="PUNC">(</span><span class="NAME">navigator.userAgent</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">!</span><span class="REGX">/opera/i</span><span class="PUNC">.</span><span class="NAME">test</span><span class="PUNC">(</span><span class="NAME">navigator.userAgent</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>184</span> </span><span class="NAME">document.write</span><span class="PUNC">(</span><span class="STRN">'&lt;script type="text/vbscript">\n\
+<span class='line'>185</span> Function Base64Encode(inData)\n\
+<span class='line'>186</span>   Const Base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"\n\
+<span class='line'>187</span>   Dim cOut, sOut, I\n\
+<span class='line'>188</span>   For I = 1 To LenB(inData) Step 3\n\
+<span class='line'>189</span>     Dim nGroup, pOut, sGroup\n\
+<span class='line'>190</span>     nGroup = &H10000 * AscB(MidB(inData, I, 1)) + _\n\
+<span class='line'>191</span>       &H100 * MyASC(MidB(inData, I + 1, 1)) + MyASC(MidB(inData, I + 2, 1))\n\
+<span class='line'>192</span>     nGroup = Oct(nGroup)\n\
+<span class='line'>193</span>     nGroup = String(8 - Len(nGroup), "0") & nGroup\n\
+<span class='line'>194</span>     pOut = Mid(Base64, CLng("&o" & Mid(nGroup, 1, 2)) + 1, 1) + _\n\
+<span class='line'>195</span>       Mid(Base64, CLng("&o" & Mid(nGroup, 3, 2)) + 1, 1) + _\n\
+<span class='line'>196</span>       Mid(Base64, CLng("&o" & Mid(nGroup, 5, 2)) + 1, 1) + _\n\
+<span class='line'>197</span>       Mid(Base64, CLng("&o" & Mid(nGroup, 7, 2)) + 1, 1)\n\
+<span class='line'>198</span>     sOut = sOut + pOut\n\
+<span class='line'>199</span>   Next\n\
+<span class='line'>200</span>   Select Case LenB(inData) Mod 3\n\
+<span class='line'>201</span>     Case 1: \'8 bit final\n\
+<span class='line'>202</span>       sOut = Left(sOut, Len(sOut) - 2) + "=="\n\
+<span class='line'>203</span>     Case 2: \'16 bit final\n\
+<span class='line'>204</span>       sOut = Left(sOut, Len(sOut) - 1) + "="\n\
+<span class='line'>205</span>   End Select\n\
+<span class='line'>206</span>   Base64Encode = sOut\n\
+<span class='line'>207</span> End Function\n\
+<span class='line'>208</span> \n\
+<span class='line'>209</span> Function MyASC(OneChar)\n\
+<span class='line'>210</span>   If OneChar = "" Then MyASC = 0 Else MyASC = AscB(OneChar)\n\
+<span class='line'>211</span> End Function\n\
+<span class='line'>212</span> \n\
+<span class='line'>213</span> Function BinFileReader(xhr)\n\
+<span class='line'>214</span>     Dim byteString\n\
+<span class='line'>215</span>     Dim b64String\n\
+<span class='line'>216</span>     Dim i\n\
+<span class='line'>217</span>     byteString = xhr.responseBody\n\
+<span class='line'>218</span>     ReDim byteArray(LenB(byteString))\n\
+<span class='line'>219</span>     For i = 1 To LenB(byteString)\n\
+<span class='line'>220</span>         byteArray(i-1) = AscB(MidB(byteString, i, 1))\n\
+<span class='line'>221</span>     Next\n\
+<span class='line'>222</span>     b64String = Base64Encode(byteString)\n\
+<span class='line'>223</span>     BinFileReader = b64String\n\
+<span class='line'>224</span> End Function\n\
+<span class='line'>225</span> &lt;/script>\n'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>227</span> </span></pre></body></html>

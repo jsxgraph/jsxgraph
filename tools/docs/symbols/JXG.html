@@ -202,6 +202,8 @@ However, it seems JavaScript is either disabled or not supported by your browser
 <h2 onclick="switchList('myElList');" style="cursor: pointer"><img src="static/expandable.gif"/> Elements</h2>
 <ul class="classList" id="myElList" style="display: block;">
 	
+	<li><a href="../symbols/Arc.html">Arc</a></li>
+	
 	<li><a href="../symbols/Arrow.html">Arrow</a></li>
 	
 	<li><a href="../symbols/Axis.html">Axis</a></li>
@@ -337,6 +339,8 @@ However, it seems JavaScript is either disabled or not supported by your browser
 </ul>
 <h2 onclick="switchList('myClList');" style="cursor: pointer"><img src="static/expandable.gif"/> Classes</h2>
 <ul class="classList" id="myClList" style="display: block;">
+	
+	<li></li>
 	
 	<li></li>
 	
@@ -566,6 +570,16 @@ However, it seems JavaScript is either disabled or not supported by your browser
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
+								JXG.<b><a href="../symbols/JXG.html#.GeonextParser">GeonextParser</a></b>
+								</div>
+								<div class="description">Parser helper routines.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
 								JXG.<b><a href="../symbols/JXG.html#.Math">Math</a></b>
 								</div>
 								<div class="description">Math namespace.</div>
@@ -652,16 +666,7 @@ to the new one.</div>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">JXG.<b><a href="../symbols/JXG.html#.createArc">createArc</a></b>(board, parents, attributs)
-								</div>
-								<div class="description">Creates a new arc.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">JXG.<b><a href="../symbols/JXG.html#.createCircumcircleArc">createCircumcircleArc</a></b>(board, parents, attributs)
+								<div class="fixedFont">JXG.<b><a href="../symbols/JXG.html#.createCircumcircleArc">createCircumcircleArc</a></b>(board, parents, attributes)
 								</div>
 								<div class="description">Creates a new circumcircle arc through three defining points.</div>
 							</td>
@@ -706,9 +711,9 @@ to the new one.</div>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">JXG.<b><a href="../symbols/JXG.html#.createSemicircle">createSemicircle</a></b>(board, parents, attributs)
+								<div class="fixedFont">JXG.<b><a href="../symbols/JXG.html#.createSemicircle">createSemicircle</a></b>(board, parents, attributes)
 								</div>
-								<div class="description">Creates a new semicircle.</div>
+								<div class="description">TODO: Documentation of those two elements below are to be written like the one above for ARC.</div>
 							</td>
 						</tr>
 					
@@ -1016,6 +1021,31 @@ to reduce the risc of interfering with other JavaScript code.
 						
 							<br />
 							<i>Defined in: </i> <a href="../symbols/src/src_Chart.js.html">Chart.js</a>.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".GeonextParser"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">JXG.</span><b>GeonextParser</b>
+					
+					</div>
+					<div class="description">
+						Parser helper routines. The methods in here are for parsing expressions in Geonext Syntax.
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_GeonextParser.js.html">GeonextParser.js</a>.
 						
 						
 					</div>
@@ -1369,69 +1399,11 @@ to the new one. Warning: The copied properties of obj2 are just flat copies.
 					
 					<hr />
 				
-					<a name=".createArc"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{JXG.Arc}</span>
-					<span class="light">JXG.</span><b>createArc</b>(board, parents, attributs)
-					
-					</div>
-					<div class="description">
-						Creates a new arc.
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/src_Arc.js.html">Arc.js</a>.
-						
-						
-					</div>
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/JXG.Board.html">JXG.Board</a>}</span> <b>board</b>
-									
-								</dt>
-								<dd>The board the arc is put on.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Array}</span> <b>parents</b>
-									
-								</dt>
-								<dd>Array of three points defining the arc.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>attributs</b>
-									
-								</dt>
-								<dd>Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>Reference to the created arc object.</dd>
-							
-							</dl>
-						
-						
-						
-
-					
-					
-					<hr />
-				
 					<a name=".createCircumcircleArc"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					<span class="light">{JXG.Arc}</span>
-					<span class="light">JXG.</span><b>createCircumcircleArc</b>(board, parents, attributs)
+					<span class="light">JXG.</span><b>createCircumcircleArc</b>(board, parents, attributes)
 					
 					</div>
 					<div class="description">
@@ -1460,7 +1432,7 @@ to the new one. Warning: The copied properties of obj2 are just flat copies.
 								<dd>Array of three points defining the circumcircle arc.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>attributs</b>
+									<span class="light fixedFont">{Object}</span> <b>attributes</b>
 									
 								</dt>
 								<dd>Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty</dd>
@@ -1714,11 +1686,12 @@ This method is used in Transformation.js
 					<div class="fixedFont">&lt;static&gt; 
 					
 					<span class="light">{JXG.Arc}</span>
-					<span class="light">JXG.</span><b>createSemicircle</b>(board, parents, attributs)
+					<span class="light">JXG.</span><b>createSemicircle</b>(board, parents, attributes)
 					
 					</div>
 					<div class="description">
-						Creates a new semicircle. The semicircle is drawn clock-wise between the first and the second defining point.
+						TODO: Documentation of those two elements below are to be written like the one above for ARC.
+/**Creates a new semicircle. The semicircle is drawn clock-wise between the first and the second defining point.
 						
 							<br />
 							<i>Defined in: </i> <a href="../symbols/src/src_Arc.js.html">Arc.js</a>.
@@ -1743,7 +1716,7 @@ This method is used in Transformation.js
 								<dd>Array of two opposite points defining the semicircle.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>attributs</b>
+									<span class="light fixedFont">{Object}</span> <b>attributes</b>
 									
 								</dt>
 								<dd>Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty</dd>
@@ -3101,7 +3074,7 @@ param function callback function called after the last array element has been pr
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Wed May 26 2010 18:47:04 GMT+0200 (MESZ)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Jun 17 2010 15:45:01 GMT+0200 (MESZ)
 		</div>
 	</body>
 </html>

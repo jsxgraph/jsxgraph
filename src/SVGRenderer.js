@@ -183,7 +183,7 @@ JXG.SVGRenderer.prototype.setGradient = function(el) {
         node.appendChild(node2);
         node.appendChild(node3);     
         this.defs.appendChild(node);
-        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+this.container.id+el.id+'_gradient)'); 
+        fillNode.setAttributeNS(null, 'style', 'fill:url(#'+this.container.id+'_'+el.id+'_gradient)'); 
         el.gradNode1 = node2;
         el.gradNode2 = node3;
     }

@@ -194,6 +194,8 @@ However, it seems JavaScript is either disabled or not supported by your browser
 <h2 onclick="switchList('myElList');" style="cursor: pointer"><img src="static/expandable.gif"/> Elements</h2>
 <ul class="classList" id="myElList" style="display: block;">
 	
+	<li><a href="symbols/Arc.html">Arc</a></li>
+	
 	<li><a href="symbols/Arrow.html">Arrow</a></li>
 	
 	<li><a href="symbols/Axis.html">Axis</a></li>
@@ -360,6 +362,8 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	
 	<li></li>
 	
+	<li></li>
+	
 	<li><a href="symbols/JXG.html">JXG</a></li>
 	
 	<li><a href="symbols/JXG.AbstractRenderer.html">JXG.AbstractRenderer</a></li>
@@ -492,6 +496,86 @@ However, it seems JavaScript is either disabled or not supported by your browser
 			
 			
 			<div>
+				<h2><a href="symbols/src/src_Coords.js.html">Coords.js</a></h2>
+				
+In this file the Coords object is defined, a class to manage all
+properties and methods coordinates usually have.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd>graphjs</dd>
+					
+					
+						<dt class="heading">Version:</dt>
+							<dd>0.1</dd>
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/src_Slider.js.html">Slider.js</a></h2>
+				
+The geometry object Line is defined in this file. Line stores allstyle and functional properties that are required to draw and move a line ona board.
+				<dl>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/src_Turtle.js.html">Turtle.js</a></h2>
+				
+The JSXGraph object Turtle is defined. It acts like
+"turtle graphics".
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd>A.W.</dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/src_AbstractRenderer.js.html">AbstractRenderer.js</a></h2>
+				
+AbstractRenderer is the base class for all renderers. This class is subject
+to change the next time that only a few methods are strictly required for a special
+renderer derived from this class to have a working special renderer. Of course other
+methods may be overwritten for performance reasons, too.
+				<dl>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/src_DataSource.js.html">DataSource.js</a></h2>
+				
+The JXG.DataSource is a helper class for data organization. Currently supported data sources are
+javascript arrays and HTML tables.
+				<dl>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
 				<h2><a href="symbols/src/src_Transformation.js.html">Transformation.js</a></h2>
 				
 This file contains code for transformations of geometrical objects.
@@ -529,19 +613,40 @@ Translation matrix:
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/src_Point.js.html">Point.js</a></h2>
+				<h2><a href="symbols/src/src_Server.js.html">Server.js</a></h2>
 				
-The geometry object Point is defined in this file. Point stores all
-style and functional properties that are required to draw and move a point on
+The JXG.Server is a wrapper for a smoother integration of server side calculations. on the
+server side a python plugin system is used.
+				<dl>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/src_Util.js.html">Util.js</a></h2>
+				
+Utilities for uncompressing and base64 decoding
+				<dl>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/src_Line.js.html">Line.js</a></h2>
+				
+The geometry object Line is defined in this file. Line stores all
+style and functional properties that are required to draw and move a line on
 a board.
 				<dl>
 					
-						<dt class="heading">Author:</dt>
-						<dd>graphjs</dd>
-					
-					
-						<dt class="heading">Version:</dt>
-							<dd>0.1</dd>
 					
 					
 					
@@ -550,23 +655,11 @@ a board.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/src_Curve.js.html">Curve.js</a></h2>
+				<h2><a href="symbols/src/src_Board.js.html">Board.js</a></h2>
 				
-In this file the geometry element Curve is defined.
-				<dl>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/src_Group.js.html">Group.js</a></h2>
-				
-In this file the class Group is defined, a class for
-managing grouping of points.
+The Board object is defined in this file. Board controls all properties and methods
+used to manage a geonext board like adding geometric elements, removing them, managing
+mouse over, drag & drop of geometric objects etc.
 				<dl>
 					
 						<dt class="heading">Author:</dt>
@@ -600,14 +693,33 @@ algorithms for solving linear equations etc.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/src_Turtle.js.html">Turtle.js</a></h2>
+				<h2><a href="symbols/src/src_jsxgraph.js.html">jsxgraph.js</a></h2>
 				
-The JSXGraph object Turtle is defined. It acts like
-"turtle graphics".
+Class Geonext is defined in this file. Geonext controls all boards.
+It has methods to create, save, load and free boards.
 				<dl>
 					
 						<dt class="heading">Author:</dt>
-						<dd>A.W.</dd>
+						<dd>graphjs</dd>
+					
+					
+						<dt class="heading">Version:</dt>
+							<dd>0.81</dd>
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/src_Complex.js.html">Complex.js</a></h2>
+				
+A class for complex arithmetics JXG.Complex is defined in thisfile. Also a namespace JXG.C is included to provide instance-independentarithmetic functions.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd>graphjs</dd>
 					
 					
 					
@@ -636,138 +748,10 @@ In this file the geometry object Ticks is defined. Ticks providesmethods for cr
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/src_Server.js.html">Server.js</a></h2>
+				<h2><a href="symbols/src/src_Point.js.html">Point.js</a></h2>
 				
-The JXG.Server is a wrapper for a smoother integration of server side calculations. on the
-server side a python plugin system is used.
-				<dl>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/src_Board.js.html">Board.js</a></h2>
-				
-The Board object is defined in this file. Board controls all properties and methods
-used to manage a geonext board like adding geometric elements, removing them, managing
-mouse over, drag & drop of geometric objects etc.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd>graphjs</dd>
-					
-					
-						<dt class="heading">Version:</dt>
-							<dd>0.1</dd>
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/src_Util.js.html">Util.js</a></h2>
-				
-Utilities for uncompressing and base64 decoding
-				<dl>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/src_Complex.js.html">Complex.js</a></h2>
-				
-A class for complex arithmetics JXG.Complex is defined in thisfile. Also a namespace JXG.C is included to provide instance-independentarithmetic functions.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd>graphjs</dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/src_Coords.js.html">Coords.js</a></h2>
-				
-In this file the Coords object is defined, a class to manage all
-properties and methods coordinates usually have.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd>graphjs</dd>
-					
-					
-						<dt class="heading">Version:</dt>
-							<dd>0.1</dd>
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/src_AbstractRenderer.js.html">AbstractRenderer.js</a></h2>
-				
-AbstractRenderer is the base class for all renderers. This class is subject
-to change the next time that only a few methods are strictly required for a special
-renderer derived from this class to have a working special renderer. Of course other
-methods may be overwritten for performance reasons, too.
-				<dl>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/src_Line.js.html">Line.js</a></h2>
-				
-The geometry object Line is defined in this file. Line stores all
-style and functional properties that are required to draw and move a line on
-a board.
-				<dl>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/src_Conic.js.html">Conic.js</a></h2>
-				
-In this file the conic sections defined.
-				<dl>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/src_Circle.js.html">Circle.js</a></h2>
-				
-The geometry object Circle is defined in this file. Circle stores all
-style and functional properties that are required to draw and move a circle on
+The geometry object Point is defined in this file. Point stores all
+style and functional properties that are required to draw and move a point on
 a board.
 				<dl>
 					
@@ -802,10 +786,29 @@ for namespaces like Math.Numerics, Math.Algebra, Math.Statistics etc.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/src_DataSource.js.html">DataSource.js</a></h2>
+				<h2><a href="symbols/src/src_Group.js.html">Group.js</a></h2>
 				
-The JXG.DataSource is a helper class for data organization. Currently supported data sources are
-javascript arrays and HTML tables.
+In this file the class Group is defined, a class for
+managing grouping of points.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd>graphjs</dd>
+					
+					
+						<dt class="heading">Version:</dt>
+							<dd>0.1</dd>
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/src_Conic.js.html">Conic.js</a></h2>
+				
+In this file the conic sections defined.
 				<dl>
 					
 					
@@ -833,6 +836,40 @@ and algorithms for symbolic computations.
 			<hr />
 			
 			<div>
+				<h2><a href="symbols/src/src_Circle.js.html">Circle.js</a></h2>
+				
+The geometry object Circle is defined in this file. Circle stores all
+style and functional properties that are required to draw and move a circle on
+a board.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd>graphjs</dd>
+					
+					
+						<dt class="heading">Version:</dt>
+							<dd>0.1</dd>
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/src_Curve.js.html">Curve.js</a></h2>
+				
+In this file the geometry element Curve is defined.
+				<dl>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
 				<h2><a href="symbols/src/src_Arc.js.html">Arc.js</a></h2>
 				
 In this file the geometry object Arc is defined. Arc stores allstyle and functional properties that are required to draw an arc on a board.
@@ -846,18 +883,12 @@ In this file the geometry object Arc is defined. Arc stores allstyle and functi
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/src_jsxgraph.js.html">jsxgraph.js</a></h2>
+				<h2><a href="symbols/src/src_MathGeometry.js.html">MathGeometry.js</a></h2>
 				
-Class Geonext is defined in this file. Geonext controls all boards.
-It has methods to create, save, load and free boards.
+This file contains the Math.Geometry namespace for calculating algebraic/geometric
+stuff like intersection points, angles, midpoint, and so on.
 				<dl>
 					
-						<dt class="heading">Author:</dt>
-						<dd>graphjs</dd>
-					
-					
-						<dt class="heading">Version:</dt>
-							<dd>0.81</dd>
 					
 					
 					
@@ -868,7 +899,7 @@ It has methods to create, save, load and free boards.
 			<div>
 				<h2><a href="symbols/src/src_Algebra.js.html">Algebra.js</a></h2>
 				
-This file contains the class Algebra, a class for calculating algebraic/geometricstuff like intersection points, angles, midpoint, and so on.
+This file contains the class Algebra, a wrapper for all kind of calculations. It's only here forbackward compatibility reasons.
 				<dl>
 					
 					
@@ -945,19 +976,6 @@ In this file the geometry element Image is defined.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/src_Slider.js.html">Slider.js</a></h2>
-				
-The geometry object Line is defined in this file. Line stores allstyle and functional properties that are required to draw and move a line ona board.
-				<dl>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
 				<h2><a href="symbols/src/src_Chart.js.html">../src/Chart.js</a></h2>
 				
 				<dl>
@@ -983,6 +1001,18 @@ The geometry object Line is defined in this file. Line stores allstyle and func
 			
 			<div>
 				<h2><a href="symbols/src/src_GeometryElement.js.html">../src/GeometryElement.js</a></h2>
+				
+				<dl>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/src_GeonextParser.js.html">../src/GeonextParser.js</a></h2>
 				
 				<dl>
 					
@@ -1117,7 +1147,7 @@ The geometry object Line is defined in this file. Line stores allstyle and func
 		</div>
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blankt">JsDoc Toolkit</a> 2.3.2 on Wed May 26 2010 18:47:08 GMT+0200 (MESZ)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blankt">JsDoc Toolkit</a> 2.3.2 on Thu Jun 17 2010 15:45:05 GMT+0200 (MESZ)
 		</div>
 	</body>
 </html>

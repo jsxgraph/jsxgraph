@@ -46,7 +46,7 @@
 <span class='line'> 39</span>  */</span><span class="WHIT">
 <span class='line'> 40</span> </span><span class="NAME">JXG.JSXGraph</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 41</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ie</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">opera</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">arr</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 42</span> </span><span class="WHIT">    </span><span class="NAME">this.licenseText</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'JSXGraph v0.81 Copyright (C) see http://jsxgraph.org'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">    </span><span class="NAME">this.licenseText</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'JSXGraph v0.82rc1 Copyright (C) see http://jsxgraph.org'</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 43</span> 
 <span class='line'> 44</span> </span><span class="WHIT">    </span><span class="COMM">/**
 <span class='line'> 45</span>             * Stores the renderer that is used to draw the board.
@@ -165,7 +165,7 @@
 <span class='line'>158</span> 
 <span class='line'>159</span> </span><span class="WHIT">        </span><span class="NAME">board</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">JXG.Board</span><span class="PUNC">(</span><span class="NAME">box</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">renderer</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">''</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="NAME">originX</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">originY</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1.0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1.0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">unitX</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">unitY</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">dimensions.width</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">dimensions.height</span><span class="PUNC">,</span><span class="NAME">showCopyright</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>160</span> </span><span class="WHIT">        </span><span class="NAME">this.boards</span><span class="PUNC">[</span><span class="NAME">board.id</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>161</span> </span><span class="WHIT">        </span><span class="COMM">// board.initGeonextBoard();  // Contsruct "Ursprung" and other elements.</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="WHIT">        </span><span class="COMM">// board.initGeonextBoard();  // Construct "Ursprung" and other elements.</span><span class="WHIT">
 <span class='line'>162</span> </span><span class="WHIT">        </span><span class="NAME">board.initInfobox</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>163</span> 
 <span class='line'>164</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">attributes</span><span class="PUNC">[</span><span class="STRN">"axis"</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="STRN">'undefined'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">attributes</span><span class="PUNC">[</span><span class="STRN">"axis"</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -385,7 +385,7 @@
 <span class='line'>378</span> 
 <span class='line'>379</span> </span><span class="WHIT">    </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">n</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>380</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">param</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'string'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>381</span> </span><span class="WHIT">            </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">board.algebra.geonext2JS</span><span class="PUNC">(</span><span class="NAME">param</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>381</span> </span><span class="WHIT">            </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.GeonextParser.geonext2JS</span><span class="PUNC">(</span><span class="NAME">param</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="NAME">board</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>382</span> </span><span class="WHIT">            </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">str.replace</span><span class="PUNC">(</span><span class="REGX">/this\.board\./g</span><span class="PUNC">,</span><span class="STRN">'board.'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>383</span> </span><span class="WHIT">            </span><span class="NAME">f</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Function</span><span class="PUNC">(</span><span class="STRN">''</span><span class="PUNC">,</span><span class="STRN">'return '</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">str</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">';'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>384</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
@@ -411,7 +411,7 @@
 <span class='line'>404</span> 
 <span class='line'>405</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">(</span><span class="NAME">evalGeonext</span><span class="PUNC">==</span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">evalGeonext</span><span class="PUNC">==</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">JXG.isString</span><span class="PUNC">(</span><span class="NAME">term</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>406</span> </span><span class="WHIT">        </span><span class="COMM">// Convert GEONExT syntax into  JavaScript syntax</span><span class="WHIT">
-<span class='line'>407</span> </span><span class="WHIT">        </span><span class="NAME">newTerm</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">board.algebra.geonext2JS</span><span class="PUNC">(</span><span class="NAME">term</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>407</span> </span><span class="WHIT">        </span><span class="NAME">newTerm</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.GeonextParser.geonext2JS</span><span class="PUNC">(</span><span class="NAME">term</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>408</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Function</span><span class="PUNC">(</span><span class="NAME">variableName</span><span class="PUNC">,</span><span class="STRN">'return '</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">newTerm</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">';'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>409</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">JXG.isFunction</span><span class="PUNC">(</span><span class="NAME">term</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>410</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">term</span><span class="PUNC">;</span><span class="WHIT">
@@ -428,21 +428,21 @@
 <span class='line'>421</span>     var r;
 <span class='line'>422</span>     if (input=='point') {
 <span class='line'>423</span>         if (JXG.isPoint(input) && output=='point') { return parameter; }
-<span class='line'>424</span>         if (JXG.isString(input) && output=='point') { 
+<span class='line'>424</span>         if (JXG.isString(input) && output=='point') {
 <span class='line'>425</span>             r = JXG.getReference(board,parameter);
 <span class='line'>426</span>             if (JXG.isString(r)) { return false; } else { return r; }
 <span class='line'>427</span>         }
 <span class='line'>428</span>     } else if (input=='array') {
-<span class='line'>429</span>         if (JXG.isArray(input) && output=='point') { 
+<span class='line'>429</span>         if (JXG.isArray(input) && output=='point') {
 <span class='line'>430</span>             return = board.create('point', parameter, {visible:false,fixed:true});
 <span class='line'>431</span>         }
 <span class='line'>432</span>     } else if (input=='line') {
-<span class='line'>433</span> ...    
+<span class='line'>433</span> ...
 <span class='line'>434</span>     }
 <span class='line'>435</span> }
 <span class='line'>436</span> 
 <span class='line'>437</span> JXG.readParameter = function(board, parameter, input, output) {
-<span class='line'>438</span>     var i, j, lenOut = output.length, 
+<span class='line'>438</span>     var i, j, lenOut = output.length,
 <span class='line'>439</span>         len, result;
 <span class='line'>440</span> 
 <span class='line'>441</span>     if (lenOut==1) {
@@ -811,48 +811,70 @@
 <span class='line'>804</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>805</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>806</span> 
-<span class='line'>807</span> </span><span class="COMM">/*
-<span class='line'>808</span> JXG.isSilverlightInstalled = function() {
-<span class='line'>809</span>     var isInstalled = false,
-<span class='line'>810</span>         activeX, tryOtherBrowsers, slPlugin;
+<span class='line'>807</span> 
+<span class='line'>808</span> </span><span class="COMM">/**
+<span class='line'>809</span>  * JessieScript startup
+<span class='line'>810</span>  */</span><span class="WHIT">
 <span class='line'>811</span> 
-<span class='line'>812</span>     try
-<span class='line'>813</span>     {
-<span class='line'>814</span>         activeX = null;
-<span class='line'>815</span>         tryOtherBrowsers = false;
-<span class='line'>816</span> 
-<span class='line'>817</span>         if (window.ActiveXObject)
-<span class='line'>818</span>         {
-<span class='line'>819</span>             try
-<span class='line'>820</span>             {
-<span class='line'>821</span>                 activeX = new ActiveXObject('AgControl.AgControl');
-<span class='line'>822</span>                 isInstalled = true;
-<span class='line'>823</span>                 activeX = null;
-<span class='line'>824</span>             }
-<span class='line'>825</span>             catch (e)
-<span class='line'>826</span>             {
-<span class='line'>827</span>                 tryOtherBrowsers = true;
-<span class='line'>828</span>             }
-<span class='line'>829</span>         }
-<span class='line'>830</span>         else
-<span class='line'>831</span>         {
-<span class='line'>832</span>             tryOtherBrowsers = true;
-<span class='line'>833</span>         }
-<span class='line'>834</span>         if (tryOtherBrowsers)
-<span class='line'>835</span>         {
-<span class='line'>836</span>             slPlugin = navigator.plugins["Silverlight Plug-In"];
-<span class='line'>837</span>             if (slPlugin)
-<span class='line'>838</span>             {
-<span class='line'>839</span>                     isInstalled = true;
-<span class='line'>840</span>             }
-<span class='line'>841</span>         }
-<span class='line'>842</span>     }
-<span class='line'>843</span>     catch (e)
-<span class='line'>844</span>     {
-<span class='line'>845</span>         isInstalled = false;
-<span class='line'>846</span>     }
-<span class='line'>847</span> 
-<span class='line'>848</span>     return isInstalled;
-<span class='line'>849</span> };
-<span class='line'>850</span> */</span><span class="WHIT">
-<span class='line'>851</span> </span></pre></body></html>
+<span class='line'>812</span> </span><span class="NAME">JXG.addEvent</span><span class="PUNC">(</span><span class="NAME">window</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'load'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">evt</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>813</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">scripts</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">document.getElementsByTagName</span><span class="PUNC">(</span><span class="STRN">'script'</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>814</span> </span><span class="WHIT">        </span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">div</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">board</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>815</span> </span><span class="WHIT">    </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">scripts.length</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>816</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">scripts</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">getAttribute</span><span class="PUNC">(</span><span class="STRN">'type'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'none'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'text/jessiescript'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>817</span> </span><span class="WHIT">            </span><span class="NAME">div</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">document.createElement</span><span class="PUNC">(</span><span class="STRN">'div'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>818</span> </span><span class="WHIT">            </span><span class="NAME">div.setAttribute</span><span class="PUNC">(</span><span class="STRN">'id'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'jessiescript_autgen_jxg_'</span><span class="PUNC">+</span><span class="NAME">i</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>819</span> </span><span class="WHIT">            </span><span class="NAME">div.setAttribute</span><span class="PUNC">(</span><span class="STRN">'style'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'width:500px; height:500px; float:left'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>820</span> </span><span class="WHIT">            </span><span class="NAME">div.setAttribute</span><span class="PUNC">(</span><span class="STRN">'class'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'jxgbox'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>821</span> </span><span class="WHIT">            </span><span class="NAME">document.body.insertBefore</span><span class="PUNC">(</span><span class="NAME">div</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">scripts</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>822</span> 
+<span class='line'>823</span> </span><span class="WHIT">            </span><span class="NAME">board</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JXG.JSXGraph.initBoard</span><span class="PUNC">(</span><span class="STRN">'jessiescript_autgen_jxg_'</span><span class="PUNC">+</span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="NAME">boundingbox</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">-</span><span class="NUMB">5</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">5</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">5</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="NUMB">5</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">keepaspectratio</span><span class="PUNC">:</span><span class="KEYW">true</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>824</span> </span><span class="WHIT">            </span><span class="NAME">board.construct</span><span class="PUNC">(</span><span class="NAME">scripts</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">innerHTML</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>825</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>826</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>827</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">window</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>828</span> 
+<span class='line'>829</span> </span><span class="COMM">/*
+<span class='line'>830</span> JXG.isSilverlightInstalled = function() {
+<span class='line'>831</span>     var isInstalled = false,
+<span class='line'>832</span>         activeX, tryOtherBrowsers, slPlugin;
+<span class='line'>833</span> 
+<span class='line'>834</span>     try
+<span class='line'>835</span>     {
+<span class='line'>836</span>         activeX = null;
+<span class='line'>837</span>         tryOtherBrowsers = false;
+<span class='line'>838</span> 
+<span class='line'>839</span>         if (window.ActiveXObject)
+<span class='line'>840</span>         {
+<span class='line'>841</span>             try
+<span class='line'>842</span>             {
+<span class='line'>843</span>                 activeX = new ActiveXObject('AgControl.AgControl');
+<span class='line'>844</span>                 isInstalled = true;
+<span class='line'>845</span>                 activeX = null;
+<span class='line'>846</span>             }
+<span class='line'>847</span>             catch (e)
+<span class='line'>848</span>             {
+<span class='line'>849</span>                 tryOtherBrowsers = true;
+<span class='line'>850</span>             }
+<span class='line'>851</span>         }
+<span class='line'>852</span>         else
+<span class='line'>853</span>         {
+<span class='line'>854</span>             tryOtherBrowsers = true;
+<span class='line'>855</span>         }
+<span class='line'>856</span>         if (tryOtherBrowsers)
+<span class='line'>857</span>         {
+<span class='line'>858</span>             slPlugin = navigator.plugins["Silverlight Plug-In"];
+<span class='line'>859</span>             if (slPlugin)
+<span class='line'>860</span>             {
+<span class='line'>861</span>                     isInstalled = true;
+<span class='line'>862</span>             }
+<span class='line'>863</span>         }
+<span class='line'>864</span>     }
+<span class='line'>865</span>     catch (e)
+<span class='line'>866</span>     {
+<span class='line'>867</span>         isInstalled = false;
+<span class='line'>868</span>     }
+<span class='line'>869</span> 
+<span class='line'>870</span>     return isInstalled;
+<span class='line'>871</span> };
+<span class='line'>872</span> */</span><span class="WHIT">
+<span class='line'>873</span> </span></pre></body></html>
