@@ -2377,7 +2377,12 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 attributes.id = macroName+"."+objName;
                             }
                         }
-                        defElements = [JXG.getReference(this,defElements[0]), JXG.getReference(this,defElements[1])];
+                        if(typeof defElements == 'string') {
+                            defElements = [JXG.getReference(this,defElements.charAt(0)), JXG.getReference(this,defElements.charAt(1))];
+                        }
+                        else {
+                            defElements = [JXG.getReference(this,defElements[0]), JXG.getReference(this,defElements[1])];
+                        }
                         output.lines.push(this.createElement('line',
                                                 defElements,
                                                 attributes));
@@ -2420,10 +2425,19 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                         }
                                     }
                                 }
-                                defElements[j] = (function(el, board) { return function() {
-                                                            return JXG.getReference(board,el[0]).Dist(JXG.getReference(board,el[1])); // TODO
-                                                       }}
-                                          )(defElements[j], this);
+                                if(typeof defElements[j] == 'string') {
+                                    defElements[j] = (function(el, board) { return function() {
+                                                                return JXG.getReference(board,el.charAt(0)).Dist(JXG.getReference(board,el.charAt(1))); // TODO
+                                                           }}
+                                              )(defElements[j], this);
+                                }
+                                else {
+                                    defElements[j] = (function(el, board) { return function() {
+                                                                return JXG.getReference(board,el[0]).Dist(JXG.getReference(board,el[1])); // TODO
+                                                           }}
+                                              )(defElements[j], this);
+                                }
+                                
                             }
                             else if(defElements[j].search(/[0-9\.\s]+/) != -1){ // Radius als Zahl
                                 defElements[j] = 1.0*defElements[j];
