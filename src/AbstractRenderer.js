@@ -732,7 +732,7 @@ JXG.AbstractRenderer.prototype.drawText = function(/** Text */ el) {
         node.className = 'JXGtext';
         node.style.zIndex = '10';      
         this.container.appendChild(node);
-        node.setAttribute('id', el.id);
+        node.setAttribute('id', this.container.id+'_'+el.id);
     } else {
         node = this.drawInternalText(el);
     }

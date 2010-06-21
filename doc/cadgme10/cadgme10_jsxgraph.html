@@ -32,6 +32,7 @@
     <link rel='stylesheet' type='text/css' href='./jsxgraph.css' />    
     <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
     <script type="text/javascript" src="../../distrib/AM3.js"></script>
+    <script type="text/javascript" src="../../distrib/prototype.js"></script>
     <!-- <link type="text/css" href="./src/scrollbar.css" rel="stylesheet"> -->
     
     <style>
@@ -442,7 +443,6 @@
           </section>
         </div>      
 
-
         <div class="slide">
           <header>JSXGraph in action</header>
           <section class="center">
@@ -460,7 +460,8 @@
           <header>What is it?</header>
           <section class="summary">
             <ul class="summary">
-              <li> Dynamic Mathematics
+              <li> JavaScript library, requires no plug-ins
+              </li><li> Dynamic Mathematics
                             <ul> 
                             <li> interactive geometry, 
                             </li><li> interactive curve plotting, 
@@ -468,12 +469,22 @@
                             </li><li> charts
                             </li>
                             </ul>
-              </li><li> JavaScript library, requires no plug-ins
-              </li><li> size: 80 kByte
+              </li><li> Size: 80 kByte
+              </li><li> License: LGPL
             </li></ul>
           </section>
         </div>
         
+        <div class="slide">
+          <header>Who should use it?</header>
+          <section class="summary">
+            <ul class="summary">
+              <li> DGS implementors: HTML5 compatibility
+              </li><li> Publishers: Web content
+              </li><li> Teachers: JessieScript
+            </li></ul>
+          </section>
+        </div>
         
         <div class="slide">
           <header>Supported hardware</header>
@@ -492,7 +503,7 @@
           <section class="summary">
             <ul class="summary">
               </li><li>iPhone<br />
-                <object style="margin-left:25%"  width="425" height="344"><param name="movie" value="http://www.youtube.com/v/athhV7oBHBE&hl=de_DE&fs=1&rel=0&color1=0x3a3a3a&color2=0x999999"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/athhV7oBHBE&hl=de_DE&fs=1&rel=0&color1=0x3a3a3a&color2=0x999999" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>
+                <object style="margin-left:25%"  width="425" height="344"><param name="movie" value="http://www.youtube.com/v/athhV7oBHBE&hl=de_DE&fs=1&rel=0&color1=0x3a3a3a&color2=0x999999&start=42"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/athhV7oBHBE&hl=de_DE&fs=1&rel=0&color1=0x3a3a3a&color2=0x999999&start=42" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>
               </li><li>Upcoming multi touch tablets (iPad), see talk by Carsten Miller
             </li></ul>
           </section>
@@ -536,7 +547,7 @@
             </li></ul>
           </section>
         </div>
-        
+
         <div class="slide">
           <header>New features since CADGME'09</header>
           <section class="summary">
@@ -554,6 +565,151 @@
           </section>
         </div>
         
+        <div class="slide">
+          <header>Server connection via AJAX</header>
+          <section class="center">
+                <form>
+                    <input type="button" value="start" onclick="startAjax()">
+                    <input type="button" value="stop" onclick="stopAjax()">
+                </form>
+                <div  id="jxgbox1" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:black"></div>
+                <script type="text/JavaScript">
+                (function() {
+                    var brd, g, w = 30,
+                    x = [], y = [], turt, i;
+                    brd = JXG.JSXGraph.initBoard('jxgbox1', {axis:true, boundingbox:[0,20,w,-2]});
+ 
+                    // Draw the additional lines
+                    turt = brd.create('turtle',[],{strokecolor:'#999999'}).hideTurtle().right(90);
+                    for (i=5;i<=15;i+=5) { turt.penUp().moveTo([0,i]).penDown().forward(w); }
+ 
+                    g = brd.create('curve', [x,y],{strokeWidth:3, strokeColor:'yellow'}); 
+ 
+                    fetchData = function() {   // global!
+                        new Ajax.Request('/ajax/fakesensor.php', {
+                                onComplete: function(transport) {
+                                var t, a;
+                                if (200 == transport.status) {
+                                    t = transport.responseText;
+                                    a = parseFloat(t);
+                                    if (x.length<w) {          
+                                        x.push(x.length); // add data to the x-coordinates, if the right border has not been reached, yet
+                                    } else {
+                                        y.splice(0,1);        // remove the oldest entry of the y-coordinates, to make the graph move.
+                                    }
+                                    y.push(a);
+                                    brd.update();
+                                };
+                        }});
+                    };
+                    //setInterval(fetchData,1000);  // Start the periodical update                 
+                })();
+                startAjax = function() {
+                    timeout = setInterval(fetchData,500);
+                }
+                stopAjax = function() {
+                    clearInterval(timeout);
+                }
+            </script>
+          </section>
+        </div>
+
+
+        <div class="slide">
+          <header>Server connection via AJAX</header>
+          <section class="summary">
+          <p>
+          <pre>
+var brd, g, w = 30,
+x = [], y = [];
+brd = JXG.JSXGraph.initBoard('jxgbox1', {axis:true, boundingbox:[0,20,w,-2]});
+g = brd.create('curve', [x,y],{strokeWidth:3, strokeColor:'yellow'}); 
+
+fetchData = function() { 
+    new Ajax.Request('/ajax/fakesensor.php', {
+            onComplete: function(data) {
+                var t, a;
+                if (200 == data.status) {
+                    t = data.responseText;
+                    a = parseFloat(t);
+                    if (x.length&lt;w) {          
+                        x.push(x.length);
+                    } else {
+                        y.splice(0,1);
+                    }
+                    y.push(a);
+                    brd.update();
+                };
+            }
+        });
+};
+setInterval(fetchData,500);
+          </pre>
+          </p>
+          </section>
+        </div>
+        
+
+        <div class="slide">
+          <header>Bezier curves</header>
+          <section class="center">
+                <form>
+                    <input type="button" value="Add segment" onClick="addSegment();">
+                    <input type="button" value="Remove last segment" onClick="removeSegment();">
+                </form>
+                <div  id="jxgbox3" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:none"></div>
+                <script type="text/JavaScript">
+                (function() {
+                    brd = JXG.JSXGraph.initBoard('jxgbox3',{boundingbox:[-4,4,4,-4],keepaspectratio:true,axis:true});
+                    p = []; // global
+ 
+                    col = 'red'; 
+                    p.push(brd.create('point',[2,1],{strokeColor:col,fillColor:col}));        // data point
+                    col = 'blue'; 
+                    p.push(brd.create('point',[0.75,2.5],{strokeColor:col,fillColor:col}));   // control point
+                    p.push(brd.create('point',[-0.3,0.3],{strokeColor:col,fillColor:col}));   // control point
+ 
+                    col = 'red'; 
+                    p.push(brd.create('point',[-3,1],{strokeColor:col,fillColor:col}));       // data point
+                    col = 'blue'; 
+                    p.push(brd.create('point',[-0.75,-2.5],{strokeColor:col,fillColor:col})); // control point
+                    p.push(brd.create('point',[1.5,-2.8],{strokeColor:col,fillColor:col}));   // control point
+ 
+                    col = 'red'; 
+                    p.push(brd.create('point',[2,-0.5],{strokeColor:col,fillColor:col}));     // data point
+ 
+                    var c = brd.create('curve', JXG.Math.Numerics.bezier(p), 
+                        {strokecolor:'blue', strokeOpacity:0.6, strokeWidth:5}); 
+                })();
+ 
+var addSegment = function() {
+   brd.suspendUpdate();
+   col = 'blue'; 
+   p.push(brd.create('point',[Math.random()*8-4,Math.random()*8-4],
+           {strokeColor:col,fillColor:col})); // control point
+   p.push(brd.create('point',[Math.random()*8-4,Math.random()*8-4],
+           {strokeColor:col,fillColor:col}));   // control point
+   col = 'red'; 
+   p.push(brd.create('point',[Math.random()*8-4,Math.random()*8-4],
+           {strokeColor:col,fillColor:col}));     // data point
+   brd.unsuspendUpdate();
+};
+ 
+var removeSegment = function() {
+   brd.suspendUpdate();
+ 
+   if (p.length>4) {
+       brd.removeObject(p[p.length-1]);
+       brd.removeObject(p[p.length-2]);
+       brd.removeObject(p[p.length-3]);
+       p.splice(p.length-3,3);
+   }
+   brd.unsuspendUpdate();
+};                 
+            </script>
+          </section>
+        </div>
+
         <div class="slide">
           <header>JSXGraph + ASCIIMathML</header>
           <section class="center">

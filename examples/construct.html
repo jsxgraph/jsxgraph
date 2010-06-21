@@ -8,7 +8,8 @@
 <h1>Playground</h1>
 <!-- Drawing area -->
 <div id="jxgbox" class="jxgbox" style="width:600px; height:600px; overflow:hidden;"></div>
-<p onclick="li.moveTo([[3,1],[5,5]],500);" >Click me</p>
+<!--<p onclick="li.moveTo([[3,1],[5,5]],500);" >Click me</p>-->
+<p onclick="board.removeObject(B);" >Click me</p>
 <!-- Drawing area -->
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
@@ -16,11 +17,12 @@
 JXG.Options.showCopyright = true; //don't work :)
 JXG.Options.showNavigation = true;
 
-JXG.Options.text.defaultDisplay = 'html';
+//JXG.Options.text.defaultDisplay = 'html';
 JXG.Options.text.fontSize = 20;
-var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-6,11,11,-6], keepaspectratio:true, axis:true});
-var A=board.create('point',[10,0],{frozen:true});
+var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-6,11,11,-6], keepaspectratio:true, axis:false});
+//var A=board.create('point',[10,0],{frozen:true});
 var B=board.create('point',[0,0]);
+/*
 var C=board.create('point',[0,10]);
 var D=board.create('point',[-5,10]);
 var E=board.create('point',[-5,-5]);
@@ -28,6 +30,7 @@ var t=board.create('text',[2,2,"Hallo"]);
 t.setProperty({fontSize:60});
 E.label.content.setProperty({fontSize:60});
 board.update();
+*/
 
 /*
 var createArc = function(board,parents,attributes) {
