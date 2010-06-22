@@ -235,11 +235,11 @@ JXG.createPolygon = function(board, parents, atts) {
     el = new JXG.Polygon(board, parents, atts["borders"], atts["id"],atts["name"],atts["withLines"],
                         atts['withLabel'],atts['lineLabels'],atts['layer']);
     
-    if(atts["withLines"] || true) {
+    /*if(atts["withLines"] || true) {
     	for(i=0; i<el.borders.length; i++) {
     		el.borders[i].setProperty(atts);
     	}
-    }
+    }*/
 
     return el;
 };

@@ -2562,7 +2562,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         defElements[0] = JXG.getReference(this,defElements[0]);
                         defElements[1] = JXG.getReference(this,defElements[1]);
                         if ((defElements[0].elementClass==JXG.OBJECT_CLASS_LINE || defElements[0].elementClass==JXG.OBJECT_CLASS_CURVE) &&
-                            (defElements[0].elementClass==JXG.OBJECT_CLASS_LINE ||defElements[1].elementClass==JXG.OBJECT_CLASS_LINE)) {
+                            (defElements[1].elementClass==JXG.OBJECT_CLASS_LINE || defElements[1].elementClass==JXG.OBJECT_CLASS_CURVE)) {
                             if(objName != '') {
                                 attributes.name = objName;
                                 if(mode == 'macro') {
@@ -2693,12 +2693,14 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             type = '';
                             for(j=0; j<possibleNames.length;j++) {
                                 if(objName == possibleNames[j]) {
+                                    attributes.text = '&'+objName+';';
                                     attributes.name = '&'+objName+';';
                                     type = 'greek';
                                     break;
                                 }
                                 else {
                                     if(j == possibleNames.length -1) {
+                                        attributes.text = objName;
                                         attributes.name = objName;
                                     }
                                 }
