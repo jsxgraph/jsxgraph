@@ -18,7 +18,7 @@
 <!-- Drawing area -->
 <div id="jxgbox" class="jxgbox" style="width:600px; height:420px;position:absolute;top:190px;left:10px;overflow:hidden;border-color:#575757;"></div>
 <img src="http://www.bitkrieger.de/bitkriegerDE/pfeilL.gif" style="position:absolute;top:400px;left:630px;width:60px;" onclick="uselog()"/>
-<div id="log" class="own" style="width:300px; height:395px;position:absolute;top:190px;left:700px;"><span style="font-weight:bolder;font-size:16pt">Log:</span><br><br></div>
+<div id="log" class="own" style="width:300px; height:395px;position:absolute;top:190px;left:700px;"><span style="font-weight:bolder;font-size:16pt">Log:</span><br><br><p id="logdata"></p></div>
 <img src="http://www.100partnerprogramme.de/images/kreuz-rot.gif" style="position:absolute;top:200px;left:980px;width:30px;" onclick="clearlog()"/>
 <img src="http://www.tm-strahltechnik.ch/images/pfeil_links.gif" style="position:absolute;top:100px;left:800px;width:60px;" onclick="moveLogToInput()"/>
 
@@ -29,18 +29,18 @@
 function run(t) {
     board.suspendUpdate();
     construction.push(board.construct(t));
-    document.getElementById('log').innerHTML += t+'\n';
+    document.getElementById('logdata').innerHTML += t+'\n';
     document.getElementById('inputtext').value = '';    
     board.unsuspendUpdate();
 }
 
 function uselog() {
-  run(document.getElementById('log').innerHTML.slice(71));
+  run(document.getElementById('logdata').innerHTML);
   clearlog();
 }
 
 function moveLogToInput() {
-  document.getElementById('inputtext').value = document.getElementById('log').innerHTML.slice(71);
+  document.getElementById('inputtext').value = document.getElementById('logdata').innerHTML;
   clearlog();
 }
 
