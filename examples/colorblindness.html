@@ -65,10 +65,13 @@ function makeColorBlind(deficiency) {
     brd.unsuspendUpdate();
 }
 
+//   brd.simulateColorblindness('tritanopia');
+
   /* ]]> */
   </script>
 <form>
-<input type="button" value="Sim color blindness" onclick="makeColorBlind('deuteranopia');"/>
+<input type="button" value="Sim color blindness" onclick="brd.simulateColorblindness('deuteranopia');"/>
+<input type="button" value="Sim color blindness" onclick="brd.simulateColorblindness('none');"/>
 </form>
 </body>
 </html>

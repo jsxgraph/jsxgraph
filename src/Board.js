@@ -279,6 +279,13 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.hooks = [];
 
     /**
+     * Hook id for the color blindness simulation hook. If this equals -1, no color blindness simulation is active.
+     * @type int
+     * @private
+     */
+    this.cbHook = -1;
+
+    /**
      * An array containing all other boards that are updated after this board has been updated.
      * @private
      * @type Array
@@ -2227,6 +2234,34 @@ JXG.Board.prototype.animate = function() {
     } else {
         this.update(obj);
 //	window.setTimeout('JXG.JSXGraph.boards[\'' + this.id + '\'].animate();', 35);
+    }
+};
+
+/**
+ * @todo This doesn't work by now. Intention is, to just overwrite the color values for the rendering nodes, but not to call setProperty. Advantage
+ * of the change-rendering-node approach would be that this could be reversed and after the user changing the color the new color would be
+ * converted by the color blindness simulator, too.
+ * Initializes color blindness simulation.
+ * @param deficiency Describes the color blindness deficiency which is simulated. Accepted values are protanopia, deuteranopia, and tritanopia.
+ * @private
+ */
+JXG.Board.prototype.simulateColorblindness = function(deficiency) {
+    var e, o;
+
+    if(this.cbHook != -1) {
+        this.removeHook(this.cbHook);
+//        this.fullUpdate();
+        this.cbHook = -1;
+    }
+
+    if((typeof deficiency != 'undefined') && (deficiency != 'none')) {
+        this.cbHook = this.addHook(function () {
+            for(e in brd.objects) {
+                o = brd.objects[e];
+//                o.setProperty({strokeColor: JXG.rgb2cb(o.visProp.strokeColor, deficiency), fillColor: JXG.rgb2cb(o.visProp.fillColor, deficiency),
+//                               highlightStrokeColor: JXG.rgb2cb(o.visProp.highlightStrokeColor, deficiency), highlightFillColor: JXG.rgb2cb(o.visProp.highlightFillColor, deficiency)});
+            }
+        }, 'update');
     }
 };
 
