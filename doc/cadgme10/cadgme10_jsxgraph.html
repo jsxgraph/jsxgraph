@@ -450,10 +450,11 @@
                 <script type="text/JavaScript">
                 (function() {
         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-1.5,3,8,-2], keepaspectratio:true, axis:true});
-        var N = board.createElement('slider', [[0,1.5],[3,1.5],[1,3,40]], {name:'n',snapWidth:1});
-        var circ = board.createElement('circle',[[4,-1.5],1],{strokeWidth:1, strokecolor:'black', strokeWidth:2, fillColor:'#0055ff13'});
+        board.suspendUpdate();
+        var N = board.create('slider', [[0,1.5],[3,1.5],[1,3,40]], {name:'n',snapWidth:1});
+        var circ = board.create('circle',[[4,-1.5],1],{strokeWidth:1, strokecolor:'black', strokeWidth:2, fillColor:'#0055ff13'});
  
-        var c = board.createElement('curve', [[0],[0]],{strokecolor:'red', strokeWidth:2}); 
+        var c = board.create('curve', [[0],[0]],{strokecolor:'red', strokeWidth:2}); 
         c.updateDataArray = function() {
                 var r = 1, n = Math.floor(N.Value()), 
                     x = [0], y = [0],
@@ -481,7 +482,7 @@
                 this.dataY = y;
             }
  
-        var c2 = board.createElement('curve', [[0],[0]],{strokecolor:'red', strokeWidth:1}); 
+        var c2 = board.create('curve', [[0],[0]],{strokecolor:'red', strokeWidth:1}); 
         c2.updateDataArray = function() {
                 var r = 1, n = Math.floor(N.Value()), 
                     px = circ.midpoint.X(), py = circ.midpoint.Y(),  
@@ -506,7 +507,8 @@
                 this.dataX = x;
                 this.dataY = y;
             }
-            board.update();
+            board.unsuspendUpdate();
+            
                  })();
             </script>
           </section>
@@ -583,7 +585,7 @@
           <section class="summary">
             <ul class="summary">
               <li> <a href="jsx_gxt.html" target="_blank">GEONE<sub>X</sub>T</a>
-              </li><li> Intergeo i2geo
+              </li><li> <a href="http://i2geo.net/xwiki/bin/view/I2GFormat/" target="_blank">Intergeo file format i2geo</a>
               </li><li> <a href="jsx_ggb.html" target="_blank">GeoGebra</a>
               </li><li> <a href="jsx_cdy.html" target="_blank">Cinderella (alpha quality)</a>
               </li><li> <a href="http://jsxgraph.uni-bayreuth.de/wiki/index.php/German_election_2009" target="_blank">Arcview</a> (server based)
@@ -612,10 +614,11 @@
               </li><li> L<sub>A</sub>T<sub>E</sub>X syntax for labels and texts
                     <ul>
                         <li> ASCIIMathML (falls back to Google chart API)
-                        </li><li> MathJax
+                        </li><li> MathJax (http://www.mathjax.org)
                         </li>
                     </ul>
               </li><li> Flexible layer system
+              </li><li> . . .
             </li></ul>
           </section>
         </div>
@@ -633,7 +636,8 @@
                     var brd, g, w = 30,
                     x = [], y = [], turt, i;
                     brd = JXG.JSXGraph.initBoard('jxgbox1', {axis:true, boundingbox:[0,20,w,-2]});
- 
+                    brd.suspendUpdate();
+
                     // Draw the additional lines
                     turt = brd.create('turtle',[],{strokecolor:'#999999'}).hideTurtle().right(90);
                     for (i=5;i<=15;i+=5) { turt.penUp().moveTo([0,i]).penDown().forward(w); }
@@ -641,7 +645,7 @@
                     g = brd.create('curve', [x,y],{strokeWidth:3, strokeColor:'yellow'}); 
  
                     fetchData = function() {   // global!
-                        new Ajax.Request('/ajax/fakesensor.php', {
+                        new Ajax.Request('fakesensor.php', {
                                 onComplete: function(transport) {
                                 var t, a;
                                 if (200 == transport.status) {
@@ -658,6 +662,7 @@
                         }});
                     };
                     //setInterval(fetchData,1000);  // Start the periodical update                 
+                    brd.unsuspendUpdate();
                 })();
                 startAjax = function() {
                     timeout = setInterval(fetchData,500);
@@ -712,12 +717,13 @@ setInterval(fetchData,500);
                     <input type="button" value="Add segment" onClick="addSegment();">
                     <input type="button" value="Remove last segment" onClick="removeSegment();">
                 </form>
-                <div  id="jxgbox3" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:none"></div>
+                <div  id="jxgbox4" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:none"></div>
                 <script type="text/JavaScript">
                 (function() {
-                    brd = JXG.JSXGraph.initBoard('jxgbox3',{boundingbox:[-4,4,4,-4],keepaspectratio:true,axis:true});
+                    brd = JXG.JSXGraph.initBoard('jxgbox4',{boundingbox:[-4,4,4,-4],keepaspectratio:true,axis:true});
                     p = []; // global
- 
+                    brd.suspendUpdate();
+
                     col = 'red'; 
                     p.push(brd.create('point',[2,1],{strokeColor:col,fillColor:col}));        // data point
                     col = 'blue'; 
@@ -735,6 +741,7 @@ setInterval(fetchData,500);
  
                     var c = brd.create('curve', JXG.Math.Numerics.bezier(p), 
                         {strokecolor:'blue', strokeOpacity:0.6, strokeWidth:5}); 
+                    brd.unsuspendUpdate();
                 })();
  
 var addSegment = function() {
@@ -771,25 +778,136 @@ var removeSegment = function() {
                 <div  id="jxgbox2" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:none"></div>
                 <script type="text/JavaScript">
                 (function() {
-                    var brd = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox:[-1.5,2,2,-2], keepaspectratio:true});
-                    var p = brd.create('point',[1,1],{name:'`\sqrt 2`'});
-                    var t = brd.create('text',[1,0, '\int \sqrt{1-x^2}dx']);
+                    var f = function(x){ return x*x-1.5*x-1;};
+                    var brd = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox:[-1.5,4,3.5,-2], keepaspectratio:true, axis:true});
+                    brd.suspendUpdate();
+                    var a = brd.create('point',[-1,f(-1)],{name:'(a,f(a))', fixed:true, fillcolor:'black', strokeColor:'black'});
+                    var b = brd.create('point',[3, f(3)],{name:'(b,f(b))', fixed:true, fillcolor:'black', strokeColor:'black'});
+                    brd.create('functiongraph',[f,-1,3],{name:'f', strokeColor:'black', dash:2});
+                    var s = brd.create('segment',[a,b]);
+                    var q = brd.create('glider',[0,1,s],{name:'glider'});
+                    brd.create('text',[1,2.2,'`(f(b)-f(a))/(b-a)`']);
+                    brd.unsuspendUpdate();
                  })();
             </script>
           </section>
         </div>
 
         <div class="slide">
-          <header>JSXGraph + MathJax</header>
+          <header>Animation</header>
           <section class="center">
-                <div  id="jxgbox2" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:none"></div>
+                <form>
+                    <input type="button" value="start" onclick="startAnimation()">
+                    <input type="button" value="stop" onclick="stopAnimation()">
+                </form>
+                <div  id="jxgbox5" class="jxgbox" style="margin-left:90px; width:500px; height:500px; background-color:none"></div>
                 <script type="text/JavaScript">
-                (function() {
-                    var brd = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox:[-1.5,2,2,-2], keepaspectratio:true});
-                    var p = brd.create('point',[1,1],{name:'`\sqrt 2`'});
-                    var t = brd.create('text',[1,0, '\int \sqrt{1-x^2}dx']);
+                var pAnimation = (function() {
+                    var brd = JXG.JSXGraph.initBoard('jxgbox5',{boundingbox:[-0.2,1.2,1.2,-0.5], keepaspectratio:true});
+                    var p = [];
+                    var len = 25;
+                    var i;
+                    for (i=0;i<len;i++) {
+                        var strokey = '#'+Math.floor(Math.random()*16777215).toString(16);
+                        if(strokey.length ==6) {strokey = strokey+'f';}
+                        if(strokey.length ==5) {strokey = strokey+'ff';}    
+                        var filly = '#'+Math.floor(Math.random()*16777215).toString(16);
+                        if(filly.length ==6) {filly = filly+'f';}
+                        if(filly.length ==5) {filly = filly+'ff';}  
+                        p[i] = brd.createElement('point',[Math.random(),Math.random()],
+                            {face:'o', size:10, strokeColor:strokey, fillColor:filly, fillOpacity:0.4, strokeOpacity:0.4, withLabel:false});
+                    }
+                    return p;
                  })();
+                startAnimation = function() {
+                    animGlobal = setInterval(function(){
+                        var i, j;
+                        for (i=0;i<pAnimation.length;i++) {
+                            pAnimation[i].moveTo([Math.random(),Math.random()],1000);
+                        }
+                        i = 0;
+                    },2000);
+                }
+                stopAnimation = function() {
+                 clearInterval(animGlobal);
+                }
             </script>
+          </section>
+        </div>
+
+        <div class="slide">
+          <header>Charts</header>
+          <section class="center">
+                <div  id="jxgbox6" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:none"></div>
+                <script type="text/JavaScript">
+                (function(){
+    var dataArr = [30,16,14,10,10,8,6,6,4,4];
+    var board = JXG.JSXGraph.initBoard('jxgbox6', {showNavigation:false, showCopyright:true, originX: 120, originY: 350, unitX: 50, unitY: 50});
+    board.containerObj.style.backgroundColor = '#778';
+    board.suspendUpdate();
+
+    var a = board.createElement('chart', dataArr, 
+        {chartStyle:'pie',  
+         colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
+         fillOpacity:0.9, center:[5,2], strokeColor:'#778', highlightStrokeColor:'#778', strokeWidth:4,
+         labelArray:['Ruby','JavaScript', 'Shell','Python', 'PHP', 'C','Perl', 'C++', 'Java', 'Flash'],
+         highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
+         highlightOnSector:true,
+         gradient:'linear'}
+    );
+
+    for(var i=0; i< a[0].arcs.length; i++) {
+        a[0].arcs[i].highlight = function() {
+            this.board.renderer.highlight(this);
+            if(this.label.content != null) {
+                this.label.content.rendNode.style.fontSize = (2*this.board.fontSize) + 'px';
+            }
+            
+            var dx = - this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
+            var dy = - this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+            
+            var ddx = 20/(this.board.stretchX);
+            var ddy = 20/(this.board.stretchY);
+            var z = Math.sqrt(dx*dx+dy*dy);
+            
+            this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx*(z+ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy*(z+ddy)/z],
+                                                this.board);
+            this.prepareUpdate().update().updateRenderer();
+        };
+          
+        a[0].arcs[i].noHighlight = function() {
+            this.board.renderer.noHighlight(this);
+            if(this.label.content != null) {
+                this.label.content.rendNode.style.fontSize = (this.board.fontSize) + 'px';
+            }
+            
+            var dx = -this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
+            var dy = -this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+            
+            var ddx = 20/(this.board.stretchX);
+            var ddy = 20/(this.board.stretchY);
+            var z = Math.sqrt(dx*dx+dy*dy);
+            
+            this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx*(z-ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy*(z-ddy)/z],
+                                                this.board);
+            this.prepareUpdate().update().updateRenderer();
+        }; 
+    }
+    board.unsuspendUpdate();                })();
+                </script>
+         </section>
+        </div>
+        
+        <div class="slide">
+          <header>More Charts</header>
+          <section class="summary">
+            <ul class="summary">
+              <li> <a href="http://jsxgraph.uni-bayreuth.de/wiki/index.php/Charts_from_HTML_tables" target="_blank">Charts from HTML tables</a>
+            </li></ul>
           </section>
         </div>
 
@@ -817,6 +935,7 @@ var removeSegment = function() {
               </li><li> i2geo
               </li><li> GeoGebra
               </li><li> Cinderella
+              </li><li> JessieScript
             </li></ul>
             and create a webpage from it with simple navigation, questions, hints.
           </section>
@@ -827,55 +946,12 @@ var removeSegment = function() {
           
           <section>
             <ul class="bullets">
-              <li>Modern Browsers
-              </li><li>Mobile Browsers
-              </li><li>Chrome extensions/Firefox Jetpack
+              <li> <a href="http://jsxgraph.org/">http://jsxgraph.org</a>
+              </li><li> <a href="http://jsxgraph.uni-bayreuth.de/xwc2/">http://jsxgraph.uni-bayreuth.de/xwc2</a>
               </li></ul>
           </section>
         </div>
 
-        <div class="slide">
-          <header><h1>Chrome Frame</h1></header>
-
-          <style>
-            span.space {
-              padding: 0 5px;
-            }
-          </style>
-          
-          <section>
-            <ul class="bullets">
-              <li>Minimal effort for bringing IE6, 7 and 8 up to the latest HTML5 technologies
-              </li>
-      	      <li>Two ways to get your websites ready for Chrome Frame:
-      	      </li>
-					  
-        		</ul>
-      			<p>Client side: <pre>&lt;meta http-equiv="X-UA-Compatible" content="chrome=1"></pre></p>
-      			<p>Server side: <pre>X-UA-Compatible: chrome=1</pre></p>
-      			<p style="font-size: 30px">
-              Try to load this presentation in IE!
-            </p>            
-          </section>
-        </div>
-
-
-        <div class="slide">
-          <section class="center">
-            HTML5 ~=
-            <span class="html">HTML</span>
-            +
-            <span class="css">CSS</span>
-            +
-            <span class="js">JS APIs</span>
-            <p style="font-size: 20px">
-              HTML5 <em class="stroke">=</em> Next Generation Features for Modern Web Development
-            </p>            
-          </section>
-        </div>
-
-      </div> <!-- slides -->
-       
     </div> <!-- presentation -->
     
     <script>
