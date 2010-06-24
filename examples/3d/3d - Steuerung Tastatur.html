@@ -1,0 +1,229 @@
+<html>
+<head>
+   <title>JSXGraph Konstruktionstemplate</title>
+   
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+   <!--
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   -->
+</head>
+<body>
+
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+  <script type="text/javascript">
+  
+
+	function TasteGedrueckt (Ereignis) {
+	  if (!Ereignis)
+		Ereignis = window.event;
+	  if (Ereignis.which) {
+		Tastencode = Ereignis.which;
+	  } else if (Ereignis.keyCode) {
+		Tastencode = Ereignis.keyCode;
+	  }
+	  var delta = 0.1;
+	  switch (Tastencode){ 
+		case 38: // Pfeil hoch
+		cam[1] += delta;
+		break;
+		case 40: // Pfeil runter
+		cam[1] -= delta;
+		break;
+		case 37: // Pfeil links
+		cam[0] -= delta;
+		break;
+		case 39: // Pfeil rechts
+		cam[0] += delta;
+		break;
+		case 33: // Bild hoch
+		cam[2] += delta;
+		break;
+		case 34: // Bild runter
+		cam[2] -= delta;
+		break;
+	  }
+	  document.formular.ausgabe.value = "Kamera: ["+cam[0]+", "+cam[1]+", "+cam[2]+"]";
+	  board.update();
+
+	  //alert("Taste mit Dezimalwert " + Tastencode + " gedrückt");
+	}
+	function TasteLosgelassen (Ereignis) {
+	  if (!Ereignis)
+		Ereignis = window.event;
+	  if (Ereignis.which) {
+		Tastencode = Ereignis.which;
+	  } else if (Ereignis.keyCode) {
+		Tastencode = Ereignis.keyCode;
+	  }
+	  alert("Taste mit Dezimalwert " + Tastencode + " losgelassen");
+	}
+
+	document.onkeydown = TasteGedrueckt;
+	//document.onkeyup = TasteLosgelassen;
+
+  /* <![CDATA[ */
+
+ var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-50, 50, 50, -50], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: false}); 
+
+								 
+
+	  
+JXG.Point3D = function (board, coordinates, camera_coordinates, normal_coordinates, visprop) {
+	this.board = board;
+	this.coordinates = coordinates;    
+    if (this.coordinates==null) {
+        this.coordinates=[0,0,0];
+    }	  
+    this.camera_coordinates = camera_coordinates;
+    if (this.camera_coordinates==null) {
+        this.camera_coordinates=[0,0,0];
+    }
+    this.normal_coordinates = normal_coordinates;
+    if (this.normal_coordinates==null) {
+        this.normal_coordinates=[0,0,0];
+    }
+    //this.point = board.createElement("point",this.proj(),{visible: false, style: 3, name: ''});
+	this.point = board.createElement("point",this.proj(),visprop);
+}
+
+//JXG.Point3D.prototype = new JXG.GeometryElement();
+
+JXG.Point3D.prototype.proj = function () {
+	var p = this;
+	var alpha, beta, gamma, dx, dy, dz;
+	var coordinates_now = [0,0,0];
+	var camera_coordinates_now = [0,0,0];
+	var normal_coordinates_now = [0,0,0];
+	
+	var adaptParameter = function(a, b){
+    		for (var i=0; i<a.length; i++){
+		    	if (isNaN(Number(a[i]))){
+					b[i] = a[i]();
+				}
+				else
+					b[i] = a[i];
+    		}
+    };
+	
+    var update = function(){
+    	adaptParameter(p.coordinates, coordinates_now);
+    	adaptParameter(p.camera_coordinates, camera_coordinates_now);
+    	adaptParameter(p.normal_coordinates, normal_coordinates_now);
+    	//Fallunterscheidungen für Winkel nötig
+		var alpha, beta, gamma;
+		
+		if (normal_coordinates_now[1]==0 && normal_coordinates_now[2]==0) alpha = 0;
+		else if (normal_coordinates_now[1]>0 && normal_coordinates_now[2]>=0) alpha = Math.atan(normal_coordinates_now[2]/normal_coordinates_now[1]); 
+		else if (normal_coordinates_now[1]==0 && normal_coordinates_now[2]>0) alpha = 0.5*Math.PI;
+		else if(normal_coordinates_now[1]<0 && normal_coordinates_now[2]>=0) alpha = Math.PI-Math.atan(-normal_coordinates_now[2]/normal_coordinates_now[1]);
+		else if(normal_coordinates_now[1]<0 && normal_coordinates_now[2]<0) alpha = Math.PI+Math.atan(normal_coordinates_now[2]/normal_coordinates_now[1]);
+		else if(normal_coordinates_now[1]==0 && normal_coordinates_now[2]<0) alpha = 1.5*Math.PI;
+		else alpha = 2*Math.PI-Math.atan(-normal_coordinates_now[2]/normal_coordinates_now[1]);
+		
+		if (normal_coordinates_now[2]==0 && normal_coordinates_now[0]==0) beta = 0;
+		else if(normal_coordinates_now[2]>0 && normal_coordinates_now[0]>=0) beta = Math.atan(normal_coordinates_now[0]/normal_coordinates_now[2]);
+		else if(normal_coordinates_now[2]==0 && normal_coordinates_now[0]>0) beta = 0.5*Math.PI;
+		else if(normal_coordinates_now[2]<0 && normal_coordinates_now[0]>=0) beta = Math.PI-Math.atan(-normal_coordinates_now[0]/normal_coordinates_now[2]);
+		else if(normal_coordinates_now[2]<0 && normal_coordinates_now[0]<0) beta = Math.PI+Math.atan(normal_coordinates_now[0]/normal_coordinates_now[2]);
+		else if(normal_coordinates_now[2]==0 && normal_coordinates_now[0]<0) beta = 1.5*Math.PI;
+		else beta = 2*Math.PI-Math.atan(-normal_coordinates_now[0]/normal_coordinates_now[2]);
+		
+		if(normal_coordinates_now[0]==0 && normal_coordinates_now[1]==0) gamma = 0
+		if(normal_coordinates_now[0]>0 && normal_coordinates_now[1]>=0) gamma = Math.atan(normal_coordinates_now[1]/normal_coordinates_now[0]);
+		if(normal_coordinates_now[0]==0 && normal_coordinates_now[1]>0) gamma = 0.5*Math.PI;
+		if(normal_coordinates_now[0]<0 && normal_coordinates_now[1]>=0) gamma = Math.PI-Math.atan(-normal_coordinates_now[1]/normal_coordinates_now[0]);
+		if(normal_coordinates_now[0]<0 && normal_coordinates_now[1]<0) gamma = Math.PI+Math.atan(normal_coordinates_now[1]/normal_coordinates_now[0]);
+		if(normal_coordinates_now[0]==0 && normal_coordinates_now[1]<0) gamma = 1.5*Math.PI;
+		else gamma = 2*Math.PI-Math.atan(-normal_coordinates_now[1]/normal_coordinates_now[0]);
+		
+		
+		dx = (Math.cos(beta)*(Math.cos(gamma)*(coordinates_now[0]-camera_coordinates_now[0])-Math.sin(gamma)*(coordinates_now[1]-camera_coordinates_now[1]))+Math.sin(beta)*(coordinates_now[2]-camera_coordinates_now[2]));
+		dy = (Math.sin(alpha)*(Math.sin(beta)*(Math.cos(gamma)*(coordinates_now[0]-camera_coordinates_now[0])-Math.sin(gamma)*(coordinates_now[1]-camera_coordinates_now[1]))-Math.cos(beta)*(coordinates_now[2]-camera_coordinates_now[2]))+Math.cos(alpha)*(Math.sin(gamma)*(coordinates_now[0]-camera_coordinates_now[0])+Math.cos(gamma)*(coordinates_now[1]-camera_coordinates_now[1])));
+		dz = (Math.sin(alpha)*(Math.sin(gamma)*(coordinates_now[0]-camera_coordinates_now[0])+Math.cos(gamma)*(coordinates_now[1]-camera_coordinates_now[1]))+Math.cos(alpha)*(Math.sin(beta)*(Math.sin(gamma)*(coordinates_now[1]-camera_coordinates_now[1])-Math.cos(gamma)*(coordinates_now[0]-camera_coordinates_now[0]))+Math.cos(beta)*(coordinates_now[2]-camera_coordinates_now[2])));
+    }
+    
+	var fx = function(){
+		update();
+		return ((Math.sqrt(normal_coordinates_now[0]*normal_coordinates_now[0]+normal_coordinates_now[1]*normal_coordinates_now[1]+normal_coordinates_now[2]*normal_coordinates_now[2]))/dz*dx);
+	};
+	var fy = function(){
+		//update(); //this update needs to be calles separately, if fy is called without fx being called (ME) 
+		return((Math.sqrt(normal_coordinates_now[0]*normal_coordinates_now[0]+normal_coordinates_now[1]*normal_coordinates_now[1]+normal_coordinates_now[2]*normal_coordinates_now[2]))/dz*dy)
+	};
+    return [fx,fy];
+}
+    
+	  
+
+// hier geht's los
+
+cam = [0,0,0];
+
+//Punkt vom Kreis auf die Halbsphäre projizieren (x- und z-Koodirnaten bleiben Erhalten, y so, dass (newXcam, newYcam, newZcam) auf Kugel mit Radius 10 liegt)
+newYcam = function (){
+	return cam[1];
+}
+newXcam = function (){
+	return cam[0];
+} 
+newZcam = function (){
+	return cam[2];
+}
+
+/* Beispiel: 
+//Würfel 3D-Koordinaten sind fest, Kamera in Abhängigkeit vom Punkt auf dem Kreis (Kugel), Normalenvektor fest
+//
+*/
+/* Ein neuer 3D-Punkt wird ezeugt mit new JXG.Point3D(Board, Punkt, Kamera, Normalenvektor)
+// Der projezierte Punkt wird automatisch erstellt:
+// Zum im Anschluss erzeugten Punkt, der in der Variable a abgelegt wird, ist der zugehörige angezeigte Punkt über a.point erreichbar.
+*/   
+var normal_vector = [4,1,1];
+var a = new JXG.Point3D(board, [1,1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+var b = new JXG.Point3D(board, [1,-1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+var c = new JXG.Point3D(board, [-1,-1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+var d = new JXG.Point3D(board, [-1,1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+
+var e = new JXG.Point3D(board, [1,1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+var f = new JXG.Point3D(board, [1,-1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+var g = new JXG.Point3D(board, [-1,-1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+var h = new JXG.Point3D(board, [-1,1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+
+var c0 = new JXG.Point3D(board, [0,0,0],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+var x = new JXG.Point3D(board, normal_vector,[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+var y = new JXG.Point3D(board, [0,1,0],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+var z = new JXG.Point3D(board, [0,0,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+board.createElement('line',[c0.point,x.point]);
+board.createElement('line',[c0.point,y.point]);
+board.createElement('line',[c0.point,z.point]);
+
+
+//Zugriff auf die 2D-Punkte, um zwei Würfelflächen zu zeichnen
+board.createElement('polygon',[a.point,b.point,c.point,d.point]);
+board.createElement('polygon',[e.point,f.point,g.point,h.point]);
+
+board.createElement('line',[a.point,e.point],{straightFirst:false, straightLast:false});
+board.createElement('line',[b.point,f.point],{straightFirst:false, straightLast:false});
+board.createElement('line',[c.point,g.point],{straightFirst:false, straightLast:false});
+board.createElement('line',[d.point,h.point],{straightFirst:false, straightLast:false});
+
+
+ 
+/* ]]> */
+  
+
+</script>
+<form action="" name="formular">
+<p><input type="text" name="ausgabe" readonly="readonly" size="50"></p>
+</form>
+<script language="javascript">
+
+document.formular.ausgabe.value = "Kamera: ["+cam[0]+", "+cam[1]+", "+cam[2]+"]";
+</script>
+
+</body>
+</html>
