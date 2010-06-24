@@ -25,7 +25,7 @@
 JXG.CinderellaReader = new function() {
     this.parseData = function(board) {
         var dataLines, i, j, k, pCoords, defName, objName, defPoints, segment, 
-            defRadius, circle, erg, poly, point, objName2, erg2, lines, point2;
+            defRadius, circle, erg, poly, point, objName2, erg2, lines, point2, oX, oY, scale;
         dataLines = this.data.split('\n');
         for(i=0; i<dataLines.length; i++) {
             if(dataLines[i].search(/FreePoint.+/) != -1) { // freier Punkt
@@ -279,7 +279,7 @@ JXG.CinderellaReader = new function() {
                 objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readCircleProperties(dataLines,i);
-                i = erg[3];                     
+                i = erg[3];                  
                 poly = board.createElement('polygon', defName,
                                         {name: objName}); 
                 poly.setProperty({fillColor:erg[1], fillOpacity:erg[2]});
@@ -453,8 +453,31 @@ JXG.CinderellaReader = new function() {
                                                 {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
                 }
             }
+            else if(dataLines[i].search(/setOriginX\(([0-9.]*)\)/) != -1) {
+                //alert("X= "+RegExp.$1);
+                oX = RegExp.$1;
+            }              
+            else if(dataLines[i].search(/setOriginY\(([0-9.]*)\)/) != -1) {
+                //alert(RegExp.$1);
+                oY = RegExp.$1;
+                //alert("_"+oY+"_");
+            }
+            else if(dataLines[i].search(/setScale\(([0-9.]*)\)/) != -1) {
+                //alert(RegExp.$1);
+                scale = 1*RegExp.$1/25.0;
+                //alert(scale);
+            }
+               //setScale(25.0);
+          
         }
-        
+        board.zoomX *= scale/2.4;
+        board.zoomY *= scale/2.4;
+        oX = board.origin.scrCoords[1]*board.options.zoom.factor;
+        oY = board.origin.scrCoords[2]*board.options.zoom.factor;
+        board.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX-150, oY+50],board);
+        board.stretchX = board.zoomX*board.unitX;
+        board.stretchY = board.zoomY*board.unitY;        
+        board.applyZoom();
         return board;
     };
     
@@ -527,7 +550,12 @@ JXG.CinderellaReader = new function() {
         } while(dataLines[i].search(/visibilityfill|fillalpha/) == -1); 
         fillop = dataLines[i].match(/"[0-9\.]*"/)[0];
         fillop = fillop.slice(1,fillop.length-1);
-        fillop = 1*fillop/10;  
+        if(dataLines[i].match(/visibilityfill/)) {
+            fillop = 1*fillop/10;  
+        }
+        else {
+            fillop = 1*fillop;
+        }
         return [objAppearance,filling, fillop,i];
     };
     
