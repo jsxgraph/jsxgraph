@@ -2258,6 +2258,8 @@ JXG.Board.prototype.simulateColorblindness = function(deficiency) {
         this.cbHook = this.addHook(function () {
             for(e in brd.objects) {
                 o = brd.objects[e];
+                brd.renderer.setObjectFillColor(o, JXG.rgb2cb(o.visProp.fillColor, deficiency), o.visProp.opacity);
+                brd.renderer.setObjectStrokeColor(o, JXG.rgb2cb(o.visProp.strokeColor, deficiency), o.visProp.opacity);
 //                o.setProperty({strokeColor: JXG.rgb2cb(o.visProp.strokeColor, deficiency), fillColor: JXG.rgb2cb(o.visProp.fillColor, deficiency),
 //                               highlightStrokeColor: JXG.rgb2cb(o.visProp.highlightStrokeColor, deficiency), highlightFillColor: JXG.rgb2cb(o.visProp.highlightFillColor, deficiency)});
             }
