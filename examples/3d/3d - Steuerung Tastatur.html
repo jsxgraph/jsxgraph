@@ -66,7 +66,7 @@
 
   /* <![CDATA[ */
 
- var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-50, 50, 50, -50], axis: true, grid: false,
+ var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-50, 50, 50, -50], axis: false, grid: false,
                                  keepaspectratio: true, showcopyright: false}); 
 
 								 
@@ -161,7 +161,7 @@ JXG.Point3D.prototype.proj = function () {
 
 // hier geht's los
 
-cam = [0,0,0];
+cam = [-1.2,-0.6,-4.4];
 
 //Punkt vom Kreis auf die Halbsphäre projizieren (x- und z-Koodirnaten bleiben Erhalten, y so, dass (newXcam, newYcam, newZcam) auf Kugel mit Radius 10 liegt)
 newYcam = function (){
@@ -182,7 +182,7 @@ newZcam = function (){
 // Der projezierte Punkt wird automatisch erstellt:
 // Zum im Anschluss erzeugten Punkt, der in der Variable a abgelegt wird, ist der zugehörige angezeigte Punkt über a.point erreichbar.
 */   
-var normal_vector = [4,1,1];
+var normal_vector = [1,0,0];
 var a = new JXG.Point3D(board, [1,1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
 var b = new JXG.Point3D(board, [1,-1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
 var c = new JXG.Point3D(board, [-1,-1,-1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
