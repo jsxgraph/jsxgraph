@@ -449,8 +449,64 @@
                 <div  id="jxgbox" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:none"></div>
                 <script type="text/JavaScript">
                 (function() {
-                    var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-1.5,2,8,-3], keepaspectratio:true, axis:true});
-                    var p = brd.create('point',[1,1]);
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-1.5,3,8,-2], keepaspectratio:true, axis:true});
+        var N = board.createElement('slider', [[0,1.5],[3,1.5],[1,3,40]], {name:'n',snapWidth:1});
+        var circ = board.createElement('circle',[[4,-1.5],1],{strokeWidth:1, strokecolor:'black', strokeWidth:2, fillColor:'#0055ff13'});
+ 
+        var c = board.createElement('curve', [[0],[0]],{strokecolor:'red', strokeWidth:2}); 
+        c.updateDataArray = function() {
+                var r = 1, n = Math.floor(N.Value()), 
+                    x = [0], y = [0],
+                    phi = Math.PI/n,
+                    h = r*Math.cos(phi),
+                    s = r*Math.sin(phi),
+                    i, j, 
+                    px = 0, py = 0, sgn = 1, 
+                    d = 16, 
+                    dt = phi/d, 
+                    pt;
+ 
+                for (i=0;i<n;i++) {
+                    for (j=-d;j<=d;j++) {
+                        pt = dt*j;
+                        x.push(px+r*Math.sin(pt));
+                        y.push(sgn*r*Math.cos(pt)-(sgn-1)*h*0.5);
+                    }
+                    px += s;
+                    sgn *= (-1);
+                }
+                x.push((n-1)*s);
+                y.push(h+(sgn-1)*h*0.5);
+                this.dataX = x;
+                this.dataY = y;
+            }
+ 
+        var c2 = board.createElement('curve', [[0],[0]],{strokecolor:'red', strokeWidth:1}); 
+        c2.updateDataArray = function() {
+                var r = 1, n = Math.floor(N.Value()), 
+                    px = circ.midpoint.X(), py = circ.midpoint.Y(),  
+                    x = [px], y = [py],
+                    phi = Math.PI/n,
+                    s = r*Math.sin(phi),
+                    i, j, 
+                    d = 16, 
+                    dt = phi/d, 
+                    pt = Math.PI*0.5+phi;
+ 
+                for (i=0;i<n;i++) {
+                    for (j=-d;j<=d;j++) {
+                        x.push(px+r*Math.cos(pt));
+                        y.push(py+r*Math.sin(pt));
+                        pt -= dt;
+                    }
+                    x.push(px);
+                    y.push(py);
+                    pt += dt;
+                }
+                this.dataX = x;
+                this.dataY = y;
+            }
+            board.update();
                  })();
             </script>
           </section>
@@ -463,8 +519,8 @@
               <li> JavaScript library, requires no plug-ins
               </li><li> Dynamic Mathematics
                             <ul> 
-                            <li> interactive geometry, 
-                            </li><li> interactive curve plotting, 
+                            <li> interactive geometry
+                            </li><li> interactive curve plotting
                             </li><li> turtle graphics
                             </li><li> charts
                             </li>
@@ -481,7 +537,7 @@
             <ul class="summary">
               <li> DGS implementors: HTML5 compatibility
               </li><li> Publishers: Web content
-              </li><li> Teachers: JessieScript
+              </li><li> Teachers, students: JessieScript
             </li></ul>
           </section>
         </div>
@@ -504,7 +560,7 @@
             <ul class="summary">
               </li><li>iPhone<br />
                 <object style="margin-left:25%"  width="425" height="344"><param name="movie" value="http://www.youtube.com/v/athhV7oBHBE&hl=de_DE&fs=1&rel=0&color1=0x3a3a3a&color2=0x999999&start=42"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/athhV7oBHBE&hl=de_DE&fs=1&rel=0&color1=0x3a3a3a&color2=0x999999&start=42" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>
-              </li><li>Upcoming multi touch tablets (iPad), see talk by Carsten Miller
+                </li><li>multi touch tablets (e.g. iPad), see talk by Carsten Miller, Thursday, 9:20.
             </li></ul>
           </section>
         </div>
@@ -522,16 +578,15 @@
           </section>
         </div>
 
-
         <div class="slide">
           <header>File format imports</header>
           <section class="summary">
             <ul class="summary">
-              <li> GEONE<sub>X</sub>T
+              <li> <a href="jsx_gxt.html" target="_blank">GEONE<sub>X</sub>T</a>
               </li><li> Intergeo i2geo
-              </li><li> GeoGebra
-              </li><li> Cinderella (alpha quality)
-              </li><li> Arcview (server based)
+              </li><li> <a href="jsx_ggb.html" target="_blank">GeoGebra</a>
+              </li><li> <a href="jsx_cdy.html" target="_blank">Cinderella (alpha quality)</a>
+              </li><li> <a href="http://jsxgraph.uni-bayreuth.de/wiki/index.php/German_election_2009" target="_blank">Arcview</a> (server based)
             </li></ul>
           </section>
         </div>
