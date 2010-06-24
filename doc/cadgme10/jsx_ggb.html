@@ -1,0 +1,41 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <title>JSXGraph - Dynamic Mathematics running on (nearly) every device</title>
+    
+    <!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>-->
+    <link rel='stylesheet' type='text/css' href='./jsxgraph.css' />    
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../src/GeogebraReader.js"></script>
+    <style>
+      body {
+        background: #778;
+        padding: 0;
+        margin: 20px;
+        overflow: hidden;
+        /*font: 14px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;*/
+        font-family: 'Junction';
+        font-weight: normal;
+        font-size: 20px;
+        letter-spacing: -.05em;
+        color: white;        
+        color: black;
+        text-shadow: rgba(0, 0, 0, 0.2) 0 2px 5px;  
+      }
+</style>    
+</head>
+<body>
+<div>
+<h1 style="color:white; padding:50px">Loading Geogebra files with JSXGraph</h1>
+</div>
+<div id="jsx" class='jxgbox' style="width:460px; height:400px; float:left"></div>
+<div id="ggb" class='jxgbox' style="width:460px; height:400px;margin-left:20px;"></div>
+<script type="text/javascript">
+    var value = "constr/funktion_steigung1.ggb";
+    board = JXG.JSXGraph.loadBoardFromFile('jsx',value, 'geogebra');
+    document.getElementById('ggb').innerHTML = '<applet code="geogebra.GeoGebraApplet" archive="http://www.geogebra.org/webstart/geogebra.jar" width="650" height="400"><param name="filename" value="'+value+'"/><param name="framePossible" value="false"/></applet>';
+</script>
+</body>
+</html>
