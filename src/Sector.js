@@ -338,7 +338,9 @@ JXG.createAngle = function(board, parents, attributes) {
         }
         el = board.create('sector', [parents[1],p,parents[2]],attributes);
         el.type = JXG.OBJECT_TYPE_ANGLE;
-        el.label.content.setText(text);
+        if (el.withLabel) {
+            el.label.content.setText(text);
+        }
         JXG.getReference(board,parents[0]).addChild(el);
         
         /**
