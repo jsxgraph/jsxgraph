@@ -163,6 +163,7 @@ JXG.Point3D.prototype.proj = function () {
 
 cam = [1,0.2,1];
 cam = [7,7,7];
+var normal_vector = [1,1,1];
 
 //Punkt vom Kreis auf die Halbsph�re projizieren (x- und z-Koodirnaten bleiben Erhalten, y so, dass (newXcam, newYcam, newZcam) auf Kugel mit Radius 10 liegt)
 newYcam = function (){
@@ -183,7 +184,6 @@ newZcam = function (){
 // Der projezierte Punkt wird automatisch erstellt:
 // Zum im Anschluss erzeugten Punkt, der in der Variable a abgelegt wird, ist der zugeh�rige angezeigte Punkt �ber a.point erreichbar.
 */   
-var normal_vector = [1,1,1];
 //var f = function(x,y) { return Math.sin(x)*Math.cos(y); };
 var f = function(x,y) { return (x*x+y*y)/5; };
 var xBereich = [-4,4];
