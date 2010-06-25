@@ -48,7 +48,7 @@
 	  document.formular.ausgabe.value = "Kamera: ["+cam[0]+", "+cam[1]+", "+cam[2]+"]";
 	  board.update();
 
-	  //alert("Taste mit Dezimalwert " + Tastencode + " gedrückt");
+	  //alert("Taste mit Dezimalwert " + Tastencode + " gedrï¿½ckt");
 	}
 	function TasteLosgelassen (Ereignis) {
 	  if (!Ereignis)
@@ -113,7 +113,7 @@ JXG.Point3D.prototype.proj = function () {
     	adaptParameter(p.coordinates, coordinates_now);
     	adaptParameter(p.camera_coordinates, camera_coordinates_now);
     	adaptParameter(p.normal_coordinates, normal_coordinates_now);
-    	//Fallunterscheidungen für Winkel nötig
+    	//Fallunterscheidungen fï¿½r Winkel nï¿½tig
 		var alpha, beta, gamma;
 		
 		if (normal_coordinates_now[1]==0 && normal_coordinates_now[2]==0) alpha = 0;
@@ -122,7 +122,7 @@ JXG.Point3D.prototype.proj = function () {
 		else if(normal_coordinates_now[1]<0 && normal_coordinates_now[2]>=0) alpha = Math.PI-Math.atan(-normal_coordinates_now[2]/normal_coordinates_now[1]);
 		else if(normal_coordinates_now[1]<0 && normal_coordinates_now[2]<0) alpha = Math.PI+Math.atan(normal_coordinates_now[2]/normal_coordinates_now[1]);
 		else if(normal_coordinates_now[1]==0 && normal_coordinates_now[2]<0) alpha = 1.5*Math.PI;
-		else alpha = 2*Math.PI-Math.atan(-normal_coordinates_now[2]/normal_coordinates_now[1]);
+		else alpha = 2*Math.PI-Math.atan2(-normal_coordinates_now[2],normal_coordinates_now[1]);
 		
 		if (normal_coordinates_now[2]==0 && normal_coordinates_now[0]==0) beta = 0;
 		else if(normal_coordinates_now[2]>0 && normal_coordinates_now[0]>=0) beta = Math.atan(normal_coordinates_now[0]/normal_coordinates_now[2]);
@@ -130,7 +130,7 @@ JXG.Point3D.prototype.proj = function () {
 		else if(normal_coordinates_now[2]<0 && normal_coordinates_now[0]>=0) beta = Math.PI-Math.atan(-normal_coordinates_now[0]/normal_coordinates_now[2]);
 		else if(normal_coordinates_now[2]<0 && normal_coordinates_now[0]<0) beta = Math.PI+Math.atan(normal_coordinates_now[0]/normal_coordinates_now[2]);
 		else if(normal_coordinates_now[2]==0 && normal_coordinates_now[0]<0) beta = 1.5*Math.PI;
-		else beta = 2*Math.PI-Math.atan(-normal_coordinates_now[0]/normal_coordinates_now[2]);
+		else beta = 2*Math.PI-Math.atan2(-normal_coordinates_now[0],normal_coordinates_now[2]);
 		
 		if(normal_coordinates_now[0]==0 && normal_coordinates_now[1]==0) gamma = 0
 		if(normal_coordinates_now[0]>0 && normal_coordinates_now[1]>=0) gamma = Math.atan(normal_coordinates_now[1]/normal_coordinates_now[0]);
@@ -138,7 +138,7 @@ JXG.Point3D.prototype.proj = function () {
 		if(normal_coordinates_now[0]<0 && normal_coordinates_now[1]>=0) gamma = Math.PI-Math.atan(-normal_coordinates_now[1]/normal_coordinates_now[0]);
 		if(normal_coordinates_now[0]<0 && normal_coordinates_now[1]<0) gamma = Math.PI+Math.atan(normal_coordinates_now[1]/normal_coordinates_now[0]);
 		if(normal_coordinates_now[0]==0 && normal_coordinates_now[1]<0) gamma = 1.5*Math.PI;
-		else gamma = 2*Math.PI-Math.atan(-normal_coordinates_now[1]/normal_coordinates_now[0]);
+		else gamma = 2*Math.PI-Math.atan2(-normal_coordinates_now[1],normal_coordinates_now[0]);
 		
 		
 		dx = (Math.cos(beta)*(Math.cos(gamma)*(coordinates_now[0]-camera_coordinates_now[0])-Math.sin(gamma)*(coordinates_now[1]-camera_coordinates_now[1]))+Math.sin(beta)*(coordinates_now[2]-camera_coordinates_now[2]));
@@ -162,8 +162,9 @@ JXG.Point3D.prototype.proj = function () {
 // hier geht's los
 
 cam = [1,0.2,1];
+cam = [7,7,7];
 
-//Punkt vom Kreis auf die Halbsphäre projizieren (x- und z-Koodirnaten bleiben Erhalten, y so, dass (newXcam, newYcam, newZcam) auf Kugel mit Radius 10 liegt)
+//Punkt vom Kreis auf die Halbsphï¿½re projizieren (x- und z-Koodirnaten bleiben Erhalten, y so, dass (newXcam, newYcam, newZcam) auf Kugel mit Radius 10 liegt)
 newYcam = function (){
 	return cam[1];
 }
@@ -175,14 +176,14 @@ newZcam = function (){
 }
 
 /* Beispiel: 
-//Würfel 3D-Koordinaten sind fest, Kamera in Abhängigkeit vom Punkt auf dem Kreis (Kugel), Normalenvektor fest
+//Wï¿½rfel 3D-Koordinaten sind fest, Kamera in Abhï¿½ngigkeit vom Punkt auf dem Kreis (Kugel), Normalenvektor fest
 //
 */
 /* Ein neuer 3D-Punkt wird ezeugt mit new JXG.Point3D(Board, Punkt, Kamera, Normalenvektor)
 // Der projezierte Punkt wird automatisch erstellt:
-// Zum im Anschluss erzeugten Punkt, der in der Variable a abgelegt wird, ist der zugehörige angezeigte Punkt über a.point erreichbar.
+// Zum im Anschluss erzeugten Punkt, der in der Variable a abgelegt wird, ist der zugehï¿½rige angezeigte Punkt ï¿½ber a.point erreichbar.
 */   
-var normal_vector = [1,0,0];
+var normal_vector = [1,1,1];
 //var f = function(x,y) { return Math.sin(x)*Math.cos(y); };
 var f = function(x,y) { return (x*x+y*y)/5; };
 var xBereich = [-4,4];
