@@ -1425,18 +1425,18 @@ JXG.Board.prototype.addConditions = function (str) {
         //plaintext += "if (el==undefined) { $('debug').value = \"" + name + "\"; } else {\n";
         switch (property) {
             case 'x':
-                plaintext += 'y=el.coords.usrCoords[2];\n';  // y stays
+                plaintext += 'var y=el.coords.usrCoords[2];\n';  // y stays
                 //plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,['+(right) +',y],this);\n';
                 plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,'+(right) +',y);\n';
                 plaintext += 'el.update();\n';
                 break;
             case 'y':
-                plaintext += 'x=el.coords.usrCoords[1];\n';  // x stays
+                plaintext += 'var x=el.coords.usrCoords[1];\n';  // x stays
                 plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
                 //plaintext += 'el.update();\n';
                 break;
             case 'visible':
-                plaintext += 'c='+(right)+';\n';
+                plaintext += 'var c='+(right)+';\n';
                 plaintext += 'if (c) {el.showElement();} else {el.hideElement();}\n';
                 break;
             case 'position':
@@ -1453,6 +1453,10 @@ JXG.Board.prototype.addConditions = function (str) {
             case 'strokewidth':
                 plaintext += 'el.strokeWidth = ' + (right) +';\n';   // wird auch bei Punkten verwendet, was nicht realisiert ist.
                 //plaintext += 'el.highlightStrokeWidth = ' + (right) +';\n'; // TODO ?(BV)
+                break;
+            case 'fill':
+                plaintext += 'var f='+(right)+';\n';
+                plaintext += 'el.setProperty({fillColor:f})\n';
                 break;
             case 'label':
                 //plaintext += 'var color = ' + (right) +';\n';
