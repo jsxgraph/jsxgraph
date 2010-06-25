@@ -194,12 +194,12 @@ var g = new JXG.Point3D(board, [-1,-1,1],[function(){return newXcam();},function
 var h = new JXG.Point3D(board, [-1,1,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
 
 var c0 = new JXG.Point3D(board, [0,0,0],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
-var x = new JXG.Point3D(board, normal_vector,[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
+var x = new JXG.Point3D(board, [1,0,0],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
 var y = new JXG.Point3D(board, [0,1,0],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
 var z = new JXG.Point3D(board, [0,0,1],[function(){return newXcam();},function(){return newYcam();},function(){return newZcam();}],normal_vector,{visible: false, style: 3, name: ''});
-board.createElement('line',[c0.point,x.point]);
-board.createElement('line',[c0.point,y.point]);
-board.createElement('line',[c0.point,z.point]);
+board.createElement('line',[x.point,c0.point],{strokeColor:'#999999', firstArrow:true, name:'x', withLabel:true});
+board.createElement('line',[y.point,c0.point],{strokeColor:'#999999', firstArrow:true, name:'y', withLabel:true});
+board.createElement('line',[z.point,c0.point],{strokeColor:'#999999', firstArrow:true, name:'z', withLabel:true});
 
 
 //Zugriff auf die 2D-Punkte, um zwei Würfelflächen zu zeichnen
