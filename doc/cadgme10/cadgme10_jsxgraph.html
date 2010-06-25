@@ -534,12 +534,12 @@
         </div>
         
         <div class="slide">
-          <header>Who should use it?</header>
+          <header>JavaScript</header>
           <section class="summary">
             <ul class="summary">
-              <li> DGS implementors: HTML5 compatibility
-              </li><li> Publishers: Web content
-              </li><li> Teachers, students: JessieScript
+              <li> JSXGraph is implemented in JavaScript
+              </li><li> No Java 
+              </li><li> No Flash 
             </li></ul>
           </section>
         </div>
@@ -581,6 +581,17 @@
         </div>
 
         <div class="slide">
+          <header>Who should use it?</header>
+          <section class="summary">
+            <ul class="summary">
+              <li> DGS implementors: HTML5 compatibility
+              </li><li> Publishers: ebooks
+              </li><li> Teachers, students: JessieScript
+            </li></ul>
+          </section>
+        </div>
+        
+        <div class="slide">
           <header>File format imports</header>
           <section class="summary">
             <ul class="summary">
@@ -600,13 +611,20 @@
               <li> moodle
               </li><li> wordpress
               </li><li> mediawiki
+              <pre>
+&lt;jsxgraph width="500" height="500"&gt;
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-2,2,2,-2]});
+var p = brd.create('point',[1.5,1.5],{face:'o', size:8});
+brd.create('segment',[[0,0],p],{dash:3});
+&lt;/jsxgraph&gt;
+              </pre>
               </li><li> drupal
             </li></ul>
           </section>
         </div>
 
         <div class="slide">
-          <header>New features since CADGME'09</header>
+          <header>Some new features since CADGME'09</header>
           <section class="summary">
             <ul class="summary">
               <li> Bezier curves
@@ -618,7 +636,6 @@
                         </li>
                     </ul>
               </li><li> Flexible layer system
-              </li><li> . . .
             </li></ul>
           </section>
         </div>
