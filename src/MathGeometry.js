@@ -817,11 +817,12 @@ JXG.Math.Geometry.meetCurveLine = function(el1,el2,nr,board) {
         board = el1.board;
     
     
-    for (i=0;i<arguments.length-1;i++) {
+    //for (i=0;i<arguments.length-1;i++) {
+    for (i=0;i<=1;i++) {
         if (arguments[i].elementClass==JXG.OBJECT_CLASS_CURVE) { cu = arguments[i]; }
         else if (arguments[i].elementClass==JXG.OBJECT_CLASS_LINE) { li = arguments[i]; }
         else 
-            throw new Error("JSXGraph: Can't call meetCurveLine with parent class '" + (arguments[i].elementClass) + ".");
+            throw new Error("JSXGraph: Can't call meetCurveLine with parent class " + (arguments[i].elementClass) + ".");
     }
     
     func = function(t) {

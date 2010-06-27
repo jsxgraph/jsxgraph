@@ -428,7 +428,7 @@
             <p style="font-size: 25px">Having issues seeing the presentation? Read the <a href="disclaimer.html">disclaimer</a></p>
           </section>
         </div>
-                
+        
         <div class="slide">
           <section class="center intro">
             <hgroup>
@@ -860,13 +860,13 @@ var removeSegment = function() {
                 (function(){
     var dataArr = [30,16,14,10,10,8,6,6,4,4];
     var board = JXG.JSXGraph.initBoard('jxgbox6', {showNavigation:false, showCopyright:true, originX: 120, originY: 350, unitX: 50, unitY: 50});
-    board.containerObj.style.backgroundColor = '#778';
+    board.containerObj.style.backgroundColor = 'black';
     board.suspendUpdate();
 
     var a = board.createElement('chart', dataArr, 
         {chartStyle:'pie',  
          colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
-         fillOpacity:0.9, center:[5,2], strokeColor:'#778', highlightStrokeColor:'#778', strokeWidth:4,
+         fillOpacity:1, center:[5,2], strokeColor:'black', highlightStrokeColor:'black', strokeWidth:4,
          labelArray:['Ruby','JavaScript', 'Shell','Python', 'PHP', 'C','Perl', 'C++', 'Java', 'Flash'],
          highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
          highlightOnSector:true,
@@ -927,21 +927,89 @@ var removeSegment = function() {
             </li></ul>
           </section>
         </div>
-
+        
         <div class="slide">
           <header>JessieScript</header>
           <section class="summary">
             <ul class="summary">
-              <li> 
-              </li><li> 
-              </li><li> 
-              </li><li> 
-              </li><li> 
+              <li> Having to program everything with JavaScript to display math with JSXGraph is a hurdle for 
+              using it in classroom with students.
+              </li>
+              <li> Alternative: JessieScript</li>
+              <li> JessieScript is a syntax similar to what is taught in schools and can be parsed by JSXGraph.
+              </li><li>Examples: P(1,1); Q(-2,2); g=[PQ]; k(P,2); M=1/2(P,Q); ||(g,M);
+              </li><li> Easy to learn and use
+              </li><li> Fosters algorithmic thinking
             </li></ul>
           </section>
         </div>
         
+        <div class="slide">
+          <header>Constructing with JessieScript</header>
+         <section class="center"><br>
+         <textarea id='inputtext' cols='73' rows='4' style="border-style:dashed;border-color:#575757;">A(1,2);</textarea>
+<input type="button" value="Send" onClick="runJessieScript(document.getElementById('inputtext').value)">
+<input type="button" value="Clear board" onClick="clearAll()">
+                <div  id="jxgbox16" class="jxgbox" style="margin-left:90px; width:700px; height:400px; background-color:none"></div>
+                <script type="text/JavaScript">
+function runJessieScript(t) {
+    board123.suspendUpdate();
+    construction.push(board123.construct(t));
+    board123.unsuspendUpdate();
+}
 
+function clearAll() {
+    JXG.JSXGraph.freeBoard(board123);
+    board123 = JXG.JSXGraph.initBoard('jxgbox16', {grid:true, boundingbox:[-6,11,11,-6], keepaspectratio:true, axis:true});
+}
+
+var construction = [];
+var board123 = JXG.JSXGraph.initBoard('jxgbox16',{boundingbox:[-6,11,11,-6], keepaspectratio:true, axis:true});
+                </script>
+         </section>
+        </div>
+        
+        <div class="slide">
+          <header>Macros with JessieScript</header>
+         <section class="center">
+<pre style='line-height: 100%; margin-left:90px; margin-right:100px;'>         
+Square = Macro(D,E) { 
+     k1=k(E,D) nolabel draft; x=[DE] nolabel draft; v=|_(x,E) draft; X=k1&v nolabel; 
+     z=||(x,X_1) draft; z2=|_(x,D) draft; Y=z2&z nolabel; P[X_1,Y,D,E] nolabel; 
+}
+</pre>
+                <div  id="jxgbox26" class="jxgbox" style="margin-left:90px;margin-right:30px; width:350px; height:300px; background-color:none; float:left"></div>
+                <div  id="jxgbox27" class="jxgbox" style="margin-left:60px; width:350px; height:300px; background-color:none"></div>
+                <script type="text/JavaScript">
+        var cons1, cons2, cons4;
+        JXG.Options.line.strokeColor = 'black';
+        JXG.Options.point.face = 'v';
+        JXG.Options.point.size = 6;
+        JXG.Options.point.strokeColor = 'black';
+        JXG.Options.point.fillColor = '#32CD32';
+        JXG.Options.polygon.fillColor = '#87CEFA';
+        JXG.Options.polygon.fillOpacity = 0.4;
+        JXG.Options.polygon.highlightFillColor = '#87CEFA';
+        JXG.Options.polygon.highlightFillOpacity = 0.4;
+        var board = JXG.JSXGraph.initBoard('jxgbox26', {grid:true, originX: 90, originY: 190, unitX: 30, unitY: 30, axis:true});
+        
+        cons1 = board.construct("A(0.5,1.25);B(3,3.5);C(4.25|1);c=[AB];b=[AC];a=[BC]");
+        board.addMacro("quadrat = Macro(D,E) { k1=k(E,D) nolabel invisible;x=[DE] nolabel invisible;v=|_(x,E) invisible;X=k1&v nolabel;z=||(x,X_1) invisible;z2=|_(x,D) invisible;Y=z2&z nolabel; P[X_1,Y,D,E] nolabel;}"); 
+        cons2 = board.construct("q1=quadrat(A,B);q2=quadrat(B,C);q3=quadrat(C,A)");
+        cons2.q1.X_2.visible('false');
+        cons2.q2.X_2.visible('false');
+        cons2.q3.X_2.visible('false');  
+        
+        var board2 = JXG.JSXGraph.initBoard('jxgbox27', {grid:true, originX: 150, originY: 250, unitX: 20, unitY: 20, axis:true});
+        
+        cons4 = board2.construct("A(0,0);B1(3,0) invisible;xAx=]A B1[ invisible;B(xAx,3,0);f:x^2;");
+        board2.addMacro("quadrat = Macro(D,E) { k1=k(E,D) nolabel invisible;x=[DE] nolabel invisible;v=|_(x,E) invisible;X=k1&v nolabel;z=||(x,X_1) invisible;z2=|_(x,D) invisible;Y=z2&z nolabel; P[X_1,Y,D,E] nolabel;}"); 
+        cons4 = board2.construct("q1=quadrat(A,B);g=[B q1.X_1[ nolabel;X=g&f;");
+        cons4.q1.X_2.visible('false');         
+                </script>
+         </section>
+        </div>        
+        
         <div class="slide">
           <header>XWC2</header>
           <section class="summary">

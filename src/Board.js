@@ -2612,7 +2612,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     }
                                     createdNames.push(objName);
                                 }
-                            }
+                            }                          
                             obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
                             output.intersections.push(obj);
                             if(objName != '') {
@@ -2804,7 +2804,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 createdNames.push(objName);
                             }
                         }
-                        output.points.push(board.createElement('point',[obj[0],obj[1]],attributes));
+                        output.points.push(this.createElement('point',[obj[0],obj[1]],attributes));
                         if(objName != '') {
                             output[objName] = output.points[output.points.length-1];
                         }
@@ -2814,7 +2814,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         tmp = JXG.GeonextParser.geonext2JS(RegExp.$2, this);
                         defElements = [new Function('x','var y = '+tmp+'; return y;')];
                         attributes.name = objName;
-                        output.functions.push(board.create('functiongraph',defElements,attributes));
+                        output.functions.push(this.create('functiongraph',defElements,attributes));
                         output[objName] = output.functions[output.functions.length-1];
                     }
                     else if(splitted[i].search(/#(.*)\(\s*([0-9])\s*[,|]\s*([0-9])\s*\)/) != -1) { // Text element
@@ -2823,7 +2823,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         defElements[1] = 1.0*RegExp.$2;
                         defElements[2] = 1.0*RegExp.$3;
                         defElements[0] = defElements[0].replace (/^\s+/, '').replace (/\s+$/, ''); // trim
-                        output.texts.push(board.createElement('text',[defElements[1],defElements[2],defElements[0]], attributes));
+                        output.texts.push(this.createElement('text',[defElements[1],defElements[2],defElements[0]], attributes));
                     }
                     else if(splitted[i].search(/(\S*)\s*\[(.*)\]/) != -1) { // Polygon
                         attributes.name = RegExp.$1;
@@ -2850,7 +2850,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             }
                             defElements[j] = JXG.getReference(this,defElements[j]);
                         }
-                        output.polygons.push(board.createElement('polygon',defElements,attributes));
+                        output.polygons.push(this.createElement('polygon',defElements,attributes));
                         output[attributes.name] = output.polygons[output.polygons.length-1];
                     }
                 }
