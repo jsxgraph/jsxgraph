@@ -1296,6 +1296,7 @@ JXG.createLocus = function(board, parents, attributes) {
         cb = function(x, y, eq) {
             c.dataX = x;
             c.dataY = y;
+            c.eq = eq;
             board.update();
         };
 

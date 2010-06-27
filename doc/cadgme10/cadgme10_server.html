@@ -26,10 +26,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
 
-<title>JSXGraph - Dynamic Mathematics running on (nearly) every device</title>
+<title>Visualize server side calculations using JSXGraph</title>
 
 <!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>-->
 <link rel='stylesheet' type='text/css' href='./jsxgraph.css'/>
+<script type="text/javascript" src="../../distrib/jquery.min.js"></script>
 <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
 <script type="text/javascript" src="../../distrib/AM3.js"></script>
 <!-- <link type="text/css" href="./src/scrollbar.css" rel="stylesheet"> -->
@@ -466,15 +467,135 @@ info {
         </div>
 
         <div class="slide">
-            <section class="center">
+			<header>How to connect...</header>
+            <section class="center" style="font-size: 18pt;">
+				<div style="float: left; padding-left: 100px; width: 200px; text-align: left;">Matlab<br />Maple<br />CoCoA<br />R<br />Maxima<br />...</div>
+				<div style="font-size: 30pt;float: left; padding-left: 30px; vertical-align: middle; text-align: center; width: 250px;">&larr; ? &rarr;</div>
+				<div style="font-size: 20pt; text-align: right; padding-right: 100px; width: 200px; float: right">JSXGraph</div>
             </section>
         </div>
 
         <div class="slide">
-            <section class="center">
+			<header>How to connect...</header>
+            <section class="center" style="font-size: 18pt;">
+				<div style="float: left; padding-left: 100px; width: 200px; text-align: left;">Matlab<br />Maple<br />CoCoA<br />R<br />Maxima<br />...</div>
+				<div style="font-size: 30pt;float: left; padding-left: 30px; vertical-align: middle; text-align: center; width: 250px;">&larr; AJAX! &rarr;</div>
+				<div style="font-size: 20pt; text-align: right; padding-right: 100px; width: 200px; float: right">JSXGraph</div>
             </section>
         </div>
 
+        <div class="slide">
+			<header>AJAX?</header>
+            <section class="center" style="font-size: 26pt">
+				<ul>
+					<li><strong>A</strong>synchronous <strong>J</strong>avaScript <strong>A</strong>nd <strong>X</strong>ML</li>
+					<li>(A)synchronous HTTP requests initiated with JavaScript</li>
+					<li>Response can be XML, Text or even binary data</li>
+				</ul>
+            </section>
+        </div>
+        
+        <div class="slide">
+			<header>Example</header>
+            <section class="center" style="font-size: 26pt">
+				<select id="stock" style="display: none;"><option value="^GDAXI">DAX</option><option value="^DJI">Dow Jones</option></select> 
+<a href="#" onclick="change();">Load DAX stock quote</a>
+				<center><div id="jxgbox2" class="jxgbox" style="width:600px; height:450px;"></div></center>
+				<script type="text/javascript"> 
+				/* <![CDATA[ */
+ 
+					var x = [], y = [], g2, board, val, hi, lo, share, timer, restart = true;
+ 
+					var init_stock = function (data) {
+						console.log(data);
+						hi = data.max*1.00002;
+						lo = data.min*0.99998;
+						board = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [0, hi, 200, lo], axis: true, grid: false});
+						board.createElement('axis',[[0,lo],[1,lo]]);
+					};
+ 
+					var cb = function (data) {
+						try {
+							x.push(x.length+1);
+							y.push(data.price);
+							val = data.price;
+							if (restart) {
+								restart = false
+								g2 = board.create('curve', [x,y],{strokeWidth:3, strokeColor:'green',shadow:false}); 
+								txt = board.create('text', [3,(hi+lo)*0.5,function(){return share + ' = '+val;}],{fontSize:'14px'}); 
+								reg = board.create('functiongraph',[JXG.Math.Numerics.regressionPolynomial(1,g2.dataX,g2.dataY)],{strokecolor:'red',dash:3});
+							} else {
+								g2.dataX = x;                    
+								g2.dataY = y;
+							}
+							board.update();
+						} catch (e) { $('#debug').html(e); }
+					};
+ 
+				function change() {
+					JXG.Server.loadModule('YahooFinance');
+ 
+					// clean up
+					if(board) {
+						board.removeObject([g2, txt, reg]);
+						JXG.JSXGraph.freeBoard(board);
+						delete g;
+						delete txt;
+						delete reg;
+						delete board;
+					}
+					if(timer)
+						window.clearInterval(timer);
+ 
+					share = $('#stock').val();
+ 
+					restart = true;
+					x = [];
+					y = [];
+ 
+					JXG.Server.modules.YahooFinance.getMinMax(share, init_stock);
+					timer = window.setInterval('JXG.Server.modules.YahooFinance.getCurrentSharePrice("' + share + '", cb);', 1300);
+				}
+ 
+				/* ]]> */
+				</script> 
+             </section>
+        </div>
+
+        <div class="slide">
+			<header>Example</header>
+			<section class="center">
+				<center>
+				<a href="javascript:loc = start_limacon();">Start</a>
+				<div id="jxgbox" class="jxgbox" style="width: 500px; height: 500px;"></div>
+				</center>
+				<script type="text/javascript">
+					var loc;
+					
+					function start_limacon() {
+						var loc;
+						board1 = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: false});
+
+						p3 = board1.createElement('point', [8, 3]);
+						p4 = board1.createElement('point', [8, 8]);
+						c1 = board1.createElement('circle', [p4, 4]);
+
+						p6 = board1.createElement('glider', [0, 0, c1], {name:"D"});
+						g = board1.createElement('line', [p3, p6]);
+
+						c2 = board1.createElement('circle', [p6, 3]);
+
+						p14_1 = board1.createElement('intersection', [c2,g,0], {name: "T"});
+						p14_2 = board1.createElement('intersection', [c2,g,1]);
+
+						loc = board1.createElement('locus', [p14_1], {strokeColor: 'red', strokeWidth: '1px'});
+						return loc;
+					}
+				</script>
+			</section>
+        </div>
+ 
     </div>
     <!-- slides -->
 
