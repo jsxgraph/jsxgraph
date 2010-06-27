@@ -496,6 +496,61 @@ info {
         </div>
         
         <div class="slide">
+			<header>Simple AJAX example</header>
+			<section style="font-size: 24pt;">
+				JavaScript
+				<pre>&lt;script type="text/javascript"&gt;
+var xhr = false;
+
+if(navigator.appName == "Microsoft Internet Explorer") {
+  xhr = new ActiveXObject("Microsoft.XMLHTTP");
+} else {
+  xhr = new <strong>XMLHttpRequest</strong>();
+} 
+
+function load_test() {
+  xhr.open("<strong>GET</strong>", "<strong>test.txt</strong>", true);
+  xhr.onreadystatechange = <i>function() {
+    if(xhr.readyState == 4) {
+      document.getElementById('foo').innerHTML = xhr.responseText;
+    }</i>
+  }
+  xhr.send(null);
+}
+&lt;/script&gt;</pre>
+				test.txt
+				<pre>Hello, World!</pre>
+			</section>
+        </div>
+        
+        <div class="slide">
+			<header>Simple AJAX example</header>
+			<section class="center" style="font-size: 22pt">
+				<div id="foo">This text will be replaced.</div><br />
+				<a href="javascript:load_test();">Replace text</a>
+				<script type="text/javascript">
+					var xhr = false;
+
+					if(navigator.appName == "Microsoft Internet Explorer") {
+						xhr = new ActiveXObject("Microsoft.XMLHTTP");
+					} else {
+						xhr = new XMLHttpRequest();
+					} 
+
+					function load_test() {
+						xhr.open("GET", "test.txt", true);
+						xhr.onreadystatechange = function() {
+							if(xhr.readyState == 4) {
+								document.getElementById('foo').innerHTML = xhr.responseText;
+							}
+						}
+						xhr.send(null);
+					}
+				</script>
+			</section>
+        </div>
+        
+        <div class="slide">
 			<header>Example</header>
             <section class="center" style="font-size: 26pt">
 				<select id="stock" style="display: none;"><option value="^GDAXI">DAX</option><option value="^DJI">Dow Jones</option></select> 
