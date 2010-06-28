@@ -32,7 +32,7 @@
 <link rel='stylesheet' type='text/css' href='./jsxgraph.css'/>
 <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
 <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
-<script type="text/javascript" src="../../distrib/AM3.js"></script>
+<script type="text/javascript" src="../../src/Triangle.js"></script>
 <!-- <link type="text/css" href="./src/scrollbar.css" rel="stylesheet"> -->
 
 <style>
@@ -549,9 +549,241 @@ function load_test() {
 				</script>
 			</section>
         </div>
+
+        <div class="slide">
+            <header>How to integrate math software</header>
+            <section>
+                <ul>
+                    <li>AJAX is for data transfer only</li>
+                    <li>CGI wrapper is required</li>
+                    <li>Sometimes parsing the results in JavaScript is required</li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="slide">
+            <header>CGI Wrapper</header>
+            <section>
+                <ul>
+                    <li>Take parameters from JSXGraph</li>
+                    <li>Execute math software and hand JSXGraph to it</li>
+                    <li>Collect results from math software</li>
+                    <li>Format results, optionally compress it to save bandwidth</li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="slide">
+            <header>Simple example: R &amp; PHP</header>
+            <section style="font-size: 22pt;">
+                <i>rserv.php</i>
+                <pre>&lt;?php
+$input = $_POST["input"];
+if (!get_magic_quotes_gpc()) {
+    $input = addslashes($input);
+}
+$cmd = "/usr/bin/Rscript LokSkala.R '" . $input ."'";
+passthru($cmd);
+?&gt;</pre>
+                <br />
+                <i>LocScale.R</i>
+                <pre>x <- commandArgs(TRUE)
+x <- as.numeric(unlist(strsplit(x, ";")))
+
+MW <- mean(x)
+SD <- sd(x)
+Med <- median(x)
+Mad <- mad(x)
+
+paste(round(c(MW, SD, Med, Mad), 3), collapse = ";")</pre>
+            </section>
+        </div>
         
         <div class="slide">
-			<header>Example</header>
+            <header>Simple example: JavaScript (shortened)</header>
+            <section style="font-size: 22pt;">
+                <i>JavaScript</i>
+                <pre>    var t = '';
+    for (var i=0;i&lt;p.length;i++) {
+        t += p[i].Y() + ';';
+    }
+                    
+    new Ajax.Request('rserv.php', {
+        method:'post',
+        parameters:'input='+escape(t),
+        onComplete: function(transport) {
+            if (200 == transport.status) {
+                var t = transport.responseText,
+                    res = t.match(/"(.*)"/gi),
+                    = RegExp.$1,
+                    a = res.split(";"),
+                    m = a[0]*1.0,
+                    sd = a[1]*1.0,
+                    med = a[2]*1.0,
+                    mad = a[3]*1.0;
+
+                    // Update JSXGraph
+            };
+        }
+    });</pre>
+            </section>
+        </div>
+
+        <div class="slide">
+            <header>JSXGraph's JXG.Server</header>
+            <section>
+                <ul>
+                    <li>Python based</li>
+                    <li>Takes care of all data transfers</li>
+                    <li>Parses results sent by server</li>
+                    <li>Integrates server modules smoothly into JSXGraph</li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="slide">
+            <header>JSXGraph's JXG.Server: R Example</header>
+            <section style="font-size: 16pt;">
+                <i>RStats.py</i>
+                <pre>from JXGServerModule import JXGServerModule
+from rpy import r
+import JXG, StringIO, gzip, datetime, math, random
+
+class RStats(JXGServerModule):
+    def __init__(self):
+        JXGServerModule.__init__(self)
+    def init(self, resp):
+        resp.addHandler(self.all, 'function(data) { }')
+        return
+    def all(self, resp, x):
+        y = r.mean(x);
+        resp.addData('mean', y)
+        y = r.sd(x);
+        resp.addData('sd', y)
+        y = r.median(x);
+        resp.addData('median', y)
+        y = r.mad(x);
+        resp.addData('mad', y)
+        return</pre>
+                <i>JavaScript</i>
+                <pre>    JXG.Server.loadModule('RStats');
+    var data = [g[0].Y(), g[1].Y(), g[2].Y(), g[3].Y(), g[4].Y()];
+    JXG.Server.modules.RStats.all(data, function() {
+        alert('mean: ' + data.mean + ', median: ' + data.median + ', ...'); 
+    });</pre>
+            </section>
+        </div>
+
+        <div class="slide">
+            <header>JSXGraph's JXG.Server: R Example</header>
+            <section style="font-size: 22pt;" class="center">
+                <a href="javascript:start_rex()">Start</a>
+                <center><div id="jxgbox4" class="jxgbox" style="width:600px; height:450px;"></div></center>
+        <script type="text/javascript">
+            /* <![CDATA[ */
+
+            function start_rex() {
+                var l = [], g = [], board, mean, sd, median, mad, hook;
+
+                JXG.Server.loadModule('RStats');
+
+                board = JXG.JSXGraph.initBoard('jxgbox4', {boundingbox: [-2, 10, 12, -10], axis: true, grid: false});
+                l[0] = board.create('segment', [
+                    [1, -8],
+                    [1, 8]
+                ], {visible: false});
+                l[1] = board.create('segment', [
+                    [3, -8],
+                    [3, 8]
+                ], {visible: false});
+                l[2] = board.create('segment', [
+                    [5, -8],
+                    [5, 8]
+                ], {visible: false});
+                l[3] = board.create('segment', [
+                    [7, -8],
+                    [7, 8]
+                ], {visible: false});
+                l[4] = board.create('segment', [
+                    [9, -8],
+                    [9, 8]
+                ], {visible: false});
+                g[0] = board.create('glider', [1, -5, l[0]], {name: 'A'});
+                g[1] = board.create('glider', [3, 3, l[1]], {name: 'B'});
+                g[2] = board.create('glider', [5, -2, l[2]], {name: 'C'});
+                g[3] = board.create('glider', [7, -4, l[3]], {name: 'D'});
+                g[4] = board.create('glider', [9, 7, l[4]], {name: 'E'});
+
+                mean = board.create('line', [
+                    [0, 0],
+                    [1, 0]
+                ], {name: 'mean', strokeColor: 'red', withLabel: true});
+                sd = board.create('line', [
+                    [0, 0],
+                    [1, 0]
+                ], {name: 'sd', strokeColor: 'green', withLabel: true});
+                median = board.create('line', [
+                    [0, 0],
+                    [1, 0]
+                ], {name: 'median', strokeColor: 'blue', withLabel: true});
+                mad = board.create('line', [
+                    [0, 0],
+                    [1, 0]
+                ], {name: 'mad', strokeColor: 'black', withLabel: true});
+
+                var cb = function (data) {
+                    try {
+                        if (data.mean) {
+                            mean.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.mean);
+                            mean.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.mean);
+                        }
+                        if (data.sd) {
+                            sd.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.sd);
+                            sd.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.sd);
+                        }
+                        if (data.median) {
+                            median.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.median);
+                            median.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.median);
+                        }
+                        if (data.mad) {
+                            mad.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.mad);
+                            mad.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.mad);
+                        }
+                    } catch (e) {
+                        $('#debug').html(e);
+                    }
+                    board.update();
+                };
+
+                var updatedata = function () {
+                    var data = [g[0].Y(), g[1].Y(), g[2].Y(), g[3].Y(), g[4].Y()];
+                    JXG.Server.modules.RStats.all(data, cb, false);
+
+                    mean.setProperty({strokeColor: 'red'});
+                    sd.setProperty({strokeColor: 'green'});
+                    median.setProperty({strokeColor: 'blue'});
+                    mad.setProperty({strokeColor: 'black'});
+                };
+                board.addHook(updatedata, 'mouseup');
+
+                var preupdate = function () {
+                    mean.setProperty({strokeColor: 'grey'});
+                    sd.setProperty({strokeColor: 'grey'});
+                    median.setProperty({strokeColor: 'grey'});
+                    mad.setProperty({strokeColor: 'grey'});
+                };
+                board.addHook(preupdate, 'mousedown');
+
+                updatedata();
+            }
+
+            /* ]]> */
+        </script>
+        </section>
+    </div>
+
+        <div class="slide">
+			<header>Example: Stock quotes</header>
             <section class="center" style="font-size: 26pt">
 				<select id="stock" style="display: none;"><option value="^GDAXI">DAX</option><option value="^DJI">Dow Jones</option></select> 
 <a href="#" onclick="change();">Load DAX stock quote</a>
@@ -562,7 +794,6 @@ function load_test() {
 					var x = [], y = [], g2, board, val, hi, lo, share, timer, restart = true;
  
 					var init_stock = function (data) {
-						console.log(data);
 						hi = data.max*1.00002;
 						lo = data.min*0.99998;
 						board = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [0, hi, 200, lo], axis: true, grid: false});
@@ -618,7 +849,7 @@ function load_test() {
         </div>
 
         <div class="slide">
-			<header>Example</header>
+			<header>Example: Loci</header>
 			<section class="center">
 				<center>
 				<a href="javascript:loc = start_limacon();">Start</a>
@@ -649,6 +880,99 @@ function load_test() {
 					}
 				</script>
 			</section>
+        </div>
+
+        <div class="slide">
+			<header>Example: Loci</header>
+			<section class="center">
+				<center>
+				<a href="javascript:loc = start_simson();">Start</a>
+				<div id="jxgbox3" class="jxgbox" style="width: 500px; height: 500px;"></div>
+				</center>
+                <script type="text/javascript">
+                    var loc2;
+
+                    function start_simson() {
+                        var loc;
+
+                        var p1_2, b2_p2, p3_2, t1, m1, l1, l2, l3, board2, t2;
+
+                        board2 = JXG.JSXGraph.initBoard('jxgbox3', {boundingbox:[-4, 6, 8, -4], axis: true, grid: false,
+                            keepaspectratio: true, showcopyright: false});
+                        p1_2 = board2.createElement('point', [0, 0]);
+                        b2_p2 = board2.createElement('point', [6, 0]);
+                        p3 = board2.createElement('point', [4, 4]);
+
+                        t1 = board2.createElement('triangle', [p1_2, b2_p2, p3], {strokeWidth: '1px'});
+
+                        m1 = board2.createElement('point', [4, 1.5], {style:2,name:"X"});
+
+                        l1 = board2.createElement('perpendicularpoint', [m1, t1.c]);
+                        l2 = board2.createElement('perpendicularpoint', [m1, t1.a]);
+                        l3 = board2.createElement('perpendicularpoint', [m1, t1.b]);
+
+                        t2 = board2.createElement('triangle', [l1, l2, l3], {strokeWidth: '1px'});
+
+                        // Get area of triangle given by the three points A, B, C
+                        getTriangleArea = function(A, B, C, square) {
+                            var a = B.coords.distance(JXG.COORDS_BY_USER, C.coords),
+                                    b = A.coords.distance(JXG.COORDS_BY_USER, C.coords),
+                                    c = B.coords.distance(JXG.COORDS_BY_USER, A.coords),
+                                    s = (typeof square == 'undefined' ? true : square);
+
+                            if (s)
+                                return (4 * a * a * c * c - (a * a + c * c - b * b) * (a * a + c * c - b * b));
+                            else
+                                return Math.sqrt((4 * a * a * c * c - (a * a + c * c - b * b) * (a * a + c * c - b * b)) / 16.);
+                        };
+
+                        te = board2.createElement('text', [-3.8, 5.5, function () {
+                            return ("Fl&auml;che des Dreiecks EDF: " + getTriangleArea(l1, l2, l3, false));
+                        }]);
+
+                        // dependency and polynomial generation hacking
+                        m1.ancestors[l1.id] = l1;
+                        m1.ancestors[l2.id] = l2;
+                        m1.ancestors[l3.id] = l3;
+                        m1.ancestors[p1_2.id] = p1_2;
+                        m1.ancestors[b2_p2.id] = b2_p2;
+                        m1.ancestors[p3.id] = p3;
+
+                        m1.generatePolynomial = function () {
+                            var as16 = getTriangleArea(l1, l2, l3),
+                                    as = '(((' + l2.symbolic.x + ')-(' + l3.symbolic.x + '))^2+((' + l2.symbolic.y + ')-(' + l3.symbolic.y + '))^2)',
+                                    bs = '(((' + l1.symbolic.x + ')-(' + l3.symbolic.x + '))^2+((' + l1.symbolic.y + ')-(' + l3.symbolic.y + '))^2)',
+                                    cs = '(((' + l2.symbolic.x + ')-(' + l1.symbolic.x + '))^2+((' + l2.symbolic.y + ')-(' + l1.symbolic.y + '))^2)',
+                                    poly = '4*' + as + '*' + cs + '-(' + as + '+' + cs + '-' + bs + ')*(' + as + '+' + cs + '-' + bs + ')-(' + as16 + ')';
+
+                            return ['4*' + as + '*' + cs + '-(' + as + '+' + cs + '-' + bs + ')*(' + as + '+' + cs + '-' + bs + ')-(' + as16 + ')'];
+                        };
+
+                        loc = board2.createElement('locus', [m1], {strokeColor: 'red', strokeWidth: '1px'});
+
+                        createControlElements = function () {
+                            var glider, lg1, lg2, lg2, lg3, tecontrol;
+                            glider = board2.createElement('glider', [0, 5, loc]);
+                            lg1 = board2.createElement('perpendicularpoint', [glider, t1.a]);
+                            lg2 = board2.createElement('perpendicularpoint', [glider, t1.b]);
+                            lg3 = board2.createElement('perpendicularpoint', [glider, t1.c]);
+
+                            tecontrol = board2.createElement('text', [-3.8, 5, function () {
+                                return ("Fl&auml;che des Dreiecks HIJ: " + getTriangleArea(lg1, lg2, lg3, false));
+                            }]);
+                        }
+                        return loc;
+                    }
+                </script>
+            </section>
+        </div>
+
+        <div class="slide">
+            <header></header>
+            <section class="center">
+                <a href="http://jsxgraph.uni-bayreuth.de">http://jsxgraph.uni-bayreuth.de</a>
+                <a href="http://jsxgraph.uni-bayreuth.de/wiki">http://jsxgraph.uni-bayreuth.de/wiki</a>
+            </section>
         </div>
  
     </div>
