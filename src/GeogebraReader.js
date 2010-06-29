@@ -2526,6 +2526,8 @@ this.writeElement = function(board, output, input, cmd) {
        var poly = board.create('polygon',[p1,p2,i], attr);
 
        poly.borders[2].setProperty({visible: false});
+       poly.borders[0].setProperty({strokeColor: attr.fillColor, strokeWidth: attr.strokeWidth, highlightStrokeColor: attr.fillColor, dash:attr.dash});
+       poly.borders[1].setProperty({strokeColor: attr.fillColor, strokeWidth: attr.strokeWidth, highlightStrokeColor: attr.fillColor, dash:attr.dash});       
        return t;
      } catch(e) {
        JXG.debug("* <b>Err:</b> Slope " + attr.name +"<br>\n");
