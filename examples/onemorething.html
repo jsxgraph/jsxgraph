@@ -1,0 +1,25 @@
+<html>
+<head>
+   <title>... one more thing ...</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>... one more thing ...</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+  <p style="float:right">
+    <input type="button" value="add point" onClick="addPoint()"><br><br>
+  </p>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 20});
+        function addPoint() {
+                board.createElement('point', [10*Math.random(), 10*Math.random()], {style:6, size:20, name:" "});
+        }
+  /* ]]> */
+  </script>
+</body>
+</html>
