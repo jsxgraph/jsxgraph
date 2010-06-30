@@ -89,7 +89,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.BOARD_MODE_MOVE_ORIGIN = 0x0002;
 
     /**
-     * Updating is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
+     /* Updating is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
      * @type int
      * @see JXG.Board#updateQuality
      * @private
@@ -462,7 +462,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @private
     * @type Object
     */
-   this.drag_obj = null;
+   this.drag_obj = [];
 
    /**
     * A string containing the XML text of the construction.
@@ -745,23 +745,41 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
  */
 
 JXG.Board.prototype.touchStartListener = function (evt) {
-	var e = document.createEvent("MouseEvents");
-    this.options.precision.hasPoint = this.options.precision.touch;
-	e.initMouseEvent('mousedown', true, false, this.containerObj, 0, evt.targetTouches[0].screenX, evt.targetTouches[0].screenY, evt.targetTouches[0].clientX, evt.targetTouches[0].clientY, false, false, evt.targetTouches.length != 1, false, 0, null);
-	this.mouseDownListener(e);
+	evt.preventDefault();
+	var e = document.createEvent("MouseEvents"), i;
+	this.drag_obj = [];
+//document.getElementById('debug').innerHTML += 'touch start <br />';
+//for(i=0;i<evt.touches.length;i++) {
+//	document.getElementById('debug').innerHTML += i + ': '+evt.touches[i] + '; ' + evt.touches[i].pageX + ', ' + evt.touches[i].pageY + '<br />';	
+//}
+//for(i=0;i<evt.targetTouches.length;i++)
+//	document.getElementById('debug').innerHTML += evt.targetTouches[i] + '<br />';
+	this.options.precision.hasPoint = this.options.precision.touch;
+	for(i=0; i<evt.targetTouches.length; i++) {
+		e.initMouseEvent('mousedown', true, false, this.containerObj, 0, evt.targetTouches[i].screenX, evt.targetTouches[i].screenY, evt.targetTouches[i].clientX, evt.targetTouches[i].clientY, false, false, false /*shift*/, false, 0, null);
+		this.mouseDownListener(e);
+	}
+//	this.mouseDownListener(e);
 };
 
 JXG.Board.prototype.touchMoveListener = function (evt) {
-    evt.preventDefault();
-    var e = document.createEvent("MouseEvents");
-    e.initMouseEvent('mousemove', true, false, this.containerObj, 0, evt.targetTouches[0].screenX, evt.targetTouches[0].screenY, evt.targetTouches[0].clientX, evt.targetTouches[0].clientY, false, false, evt.targetTouches.length != 1, false, 0, null);
-    this.mouseMoveListener(e);
+	evt.preventDefault();
+	var e = document.createEvent("MouseEvents"), i, myEvent;
+	for(i=0; i<evt.targetTouches.length; i++) {
+		myEvent = {pageX: evt.targetTouches[i].pageX, pageY: evt.targetTouches[i].pageY, clientX: evt.targetTouches[i].clientX, clientY: evt.targetTouches[i].clientY};
+		this.mouseMoveListener(myEvent, i);
+//		e.initMouseEvent('mousemove', true, false, this.containerObj, 0, evt.targetTouches[i].screenX, evt.targetTouches[i].screenY, evt.targetTouches[i].clientX, evt.targetTouches[i].clientY, false, false, false /*shift*/, false, 0, null);
+	}
+//	this.mouseMoveListener(e);
 };
 
 JXG.Board.prototype.touchEndListener = function (evt) {
-	var e = document.createEvent("MouseEvents");
-	e.initMouseEvent('mouseup', true, false, this.containerObj, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-	this.mouseUpListener(e);
+	var e = document.createEvent("MouseEvents"), i;
+//document.getElementById('debug').innerHTML += 'touch end<br />';
+	for(i=0;i<evt.targetTouches.length;i++) {
+		e.initMouseEvent('mouseup', true, false, this.containerObj, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+		this.mouseUpListener(e);
+	}
     this.options.precision.hasPoint = this.options.precision.mouse;
 };
 
@@ -788,7 +806,7 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
     }
 
     // release dragged object
-    this.drag_obj = null;
+    this.drag_obj = [];
 
     this.updateHooks('mouseup');
 };
@@ -834,7 +852,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
                     ) {
                 // Points are preferred:
                 if ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)) {
-                    this.drag_obj = this.objects[el];
+                    this.drag_obj.push(this.objects[el]);
                     if (this.options.takeFirst) break;
                 }
             }
@@ -861,8 +879,13 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
  * @param {Event} Event The browsers event object.
  * @private
  */
-JXG.Board.prototype.mouseMoveListener = function (Event) {
-    var el, pEl, cPos, absPos, newPos, dx, dy;
+JXG.Board.prototype.mouseMoveListener = function (Event, i) {
+    var el, pEl, cPos, absPos, newPos, dx, dy, fromTouch = false;
+
+    if(typeof i == 'undefined') {
+	i = 0;
+	fromTouch = true;
+    }
 
     cPos = this.getRelativeMouseCoordinates(Event);
     // position of mouse cursor relative to containers position of container
@@ -887,14 +910,17 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
     }
     else if(this.mode == this.BOARD_MODE_DRAG) {
         newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(dx,dy), this);
-        if (this.drag_obj.type == JXG.OBJECT_TYPE_POINT
-            || this.drag_obj.type == JXG.OBJECT_TYPE_LINE
-            || this.drag_obj.type == JXG.OBJECT_TYPE_CIRCLE
-            || this.drag_obj.elementClass == JXG.OBJECT_CLASS_CURVE) {
+//	for(i=0; i<this.drag_obj.length; i++) {
+
+        if (this.drag_obj[i].type == JXG.OBJECT_TYPE_POINT
+            || this.drag_obj[i].type == JXG.OBJECT_TYPE_LINE
+            || this.drag_obj[i].type == JXG.OBJECT_TYPE_CIRCLE
+            || this.drag_obj[i].elementClass == JXG.OBJECT_CLASS_CURVE) {
 
 /*
             // Do not use setPositionByTransform at the moment!
             // This concept still has to be worked out.
+	   // If you want to use the commented code you have to remember that this.drag_obj is an array now!
 
             if ((this.geonextCompatibilityMode && this.drag_obj.type==JXG.OBJECT_TYPE_POINT) || this.drag_obj.group.length != 0) {
                 // This is for performance reasons with GEONExT files and for groups (transformations do not work yet with groups)
@@ -907,28 +933,29 @@ JXG.Board.prototype.mouseMoveListener = function (Event) {
                 this.dragObjCoords = newPos;
             }
 */
-            this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
-            this.update(this.drag_obj);
-        } else if(this.drag_obj.type == JXG.OBJECT_TYPE_GLIDER) {
-            var oldCoords = this.drag_obj.coords;
+            this.drag_obj[i].setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
+            this.update(this.drag_obj[i]);
+        } else if(this.drag_obj[i].type == JXG.OBJECT_TYPE_GLIDER) {
+            var oldCoords = this.drag_obj[i].coords;
             // First the new position of the glider is set to the new mouse position
-            this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
+            this.drag_obj[i].setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
             // Then, from this position we compute the projection to the object the glider on which the glider lives.
-            if(this.drag_obj.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
-                this.drag_obj.coords = JXG.Math.Geometry.projectPointToCircle(this.drag_obj, this.drag_obj.slideObject, this);
-            } else if (this.drag_obj.slideObject.type == JXG.OBJECT_TYPE_LINE) {
-                this.drag_obj.coords = JXG.Math.Geometry.projectPointToLine(this.drag_obj, this.drag_obj.slideObject, this);
+            if(this.drag_obj[i].slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
+                this.drag_obj[i].coords = JXG.Math.Geometry.projectPointToCircle(this.drag_obj[i], this.drag_obj[i].slideObject, this);
+            } else if (this.drag_obj[i].slideObject.type == JXG.OBJECT_TYPE_LINE) {
+                this.drag_obj[i].coords = JXG.Math.Geometry.projectPointToLine(this.drag_obj[i], this.drag_obj[i].slideObject, this);
             }
             // Now, we have to adjust the other group elements again.
-            if(this.drag_obj.group.length != 0) {
-                this.drag_obj.group[this.drag_obj.group.length-1].dX = this.drag_obj.coords.scrCoords[1] - oldCoords.scrCoords[1];
-                this.drag_obj.group[this.drag_obj.group.length-1].dY = this.drag_obj.coords.scrCoords[2] - oldCoords.scrCoords[2];
-                this.drag_obj.group[this.drag_obj.group.length-1].update(this);
+            if(this.drag_obj[i].group.length != 0) {
+                this.drag_obj[i].group[this.drag_obj[i].group.length-1].dX = this.drag_obj[i].coords.scrCoords[1] - oldCoords.scrCoords[1];
+                this.drag_obj[i].group[this.drag_obj[i].group.length-1].dY = this.drag_obj[i].coords.scrCoords[2] - oldCoords.scrCoords[2];
+                this.drag_obj[i].group[this.drag_obj[i].group.length-1].update(this);
             } else {
-                this.update(this.drag_obj);
+                this.update(this.drag_obj[i]);
             }
         }
-        this.updateInfobox(this.drag_obj);
+        this.updateInfobox(this.drag_obj[i]);
+//	}
     }
     else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
         // Elements  below the mouse pointer which are not highlighted are highlighted.

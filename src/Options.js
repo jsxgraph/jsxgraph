@@ -199,7 +199,7 @@ JXG.Options = {
 
     /* precision options */
     precision : {
-        touch    : 20,
+        touch    : 30,
         mouse    : 4,
         epsilon  : 0.0001,
         hasPoint : 4
