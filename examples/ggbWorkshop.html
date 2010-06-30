@@ -17,13 +17,13 @@
 
     
         var board, cons, p = [], t=[], f;
-        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 300, originY: 350, unitX: 50, unitY: 50, axis:true});
+        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 300, originY: 400, unitX: 50, unitY: 50, axis:true});
         board.suspendUpdate();
         var j=0;
         f= board.create('functiongraph', [function(x){ return x*x;}, -4, 4], {strokeColor:'black', strokeWidth:'2pt'});
         for(i=-3; i<=3; i=i+0.25) {
             p.push(board.create('glider',[i,i*i,f],{strokeColor:'black', fillColor:JXG.hsv2rgb(j*360/25,1,1)}));
-            t.push(board.create('tangent', [p[p.length-1]], { strokeColor:JXG.hsv2rgb(j*360/13,1,1) }));
+            t.push(board.create('tangent', [p[p.length-1]], { strokeColor:JXG.hsv2rgb(j*360/25,1,1) }));
             j++;
         }
         board.unsuspendUpdate();
