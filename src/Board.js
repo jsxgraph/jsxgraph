@@ -746,20 +746,24 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
 
 JXG.Board.prototype.touchStartListener = function (evt) {
 	evt.preventDefault();
-	var e = document.createEvent("MouseEvents"), i;
+
+	// variable initialization
+	var e = document.createEvent("MouseEvents"), i, shift = false;
 	this.drag_obj = [];
-//document.getElementById('debug').innerHTML += 'touch start <br />';
-//for(i=0;i<evt.touches.length;i++) {
-//	document.getElementById('debug').innerHTML += i + ': '+evt.touches[i] + '; ' + evt.touches[i].pageX + ', ' + evt.touches[i].pageY + '<br />';	
-//}
-//for(i=0;i<evt.targetTouches.length;i++)
-//	document.getElementById('debug').innerHTML += evt.targetTouches[i] + '<br />';
+
+	// special gestures
+//	document.getElementById('debug').innerHTML = JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY]);
+	if((evt.targetTouches.length==2) && (JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY])<80)) {
+	    evt.targetTouches.length = 1;
+	    shift = true;
+	}
+
+	// multitouch
 	this.options.precision.hasPoint = this.options.precision.touch;
 	for(i=0; i<evt.targetTouches.length; i++) {
-		e.initMouseEvent('mousedown', true, false, this.containerObj, 0, evt.targetTouches[i].screenX, evt.targetTouches[i].screenY, evt.targetTouches[i].clientX, evt.targetTouches[i].clientY, false, false, false /*shift*/, false, 0, null);
+		e.initMouseEvent('mousedown', true, false, this.containerObj, 0, evt.targetTouches[i].screenX, evt.targetTouches[i].screenY, evt.targetTouches[i].clientX, evt.targetTouches[i].clientY, false, false, shift, false, 0, null);
 		this.mouseDownListener(e);
 	}
-//	this.mouseDownListener(e);
 };
 
 JXG.Board.prototype.touchMoveListener = function (evt) {
