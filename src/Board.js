@@ -864,7 +864,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     }
 
     // if no draggable object can be found, get outta here immediately
-    if(this.drag_obj == null) {
+    if(this.drag_obj.length == 0) {
         this.mode = this.BOARD_MODE_NONE;
         return;
     }
