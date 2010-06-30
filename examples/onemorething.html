@@ -9,16 +9,23 @@
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
   <p style="float:right">
-    <input type="button" value="add point" onClick="addPoint()"><br><br>
+    <form>
+      <input type="button" value="add point" onClick="board.createElement('point', [10*Math.random(), 10*Math.random()], {style:6, size:10, name:' '})"><br><br>
+      <textarea name="jessie" onblur="board.construct(this.value)" rows="10" cols="40" style="text-align:center;">A(1,1);
+C(2,3);
+B(4,2);
+c=[AB];
+a=[BC];
+b=[CA];
+</textarea>
+    </form>
   </p>
 </div>
 <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
-        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 20});
-        function addPoint() {
-                board.createElement('point', [10*Math.random(), 10*Math.random()], {style:6, size:20, name:" "});
-        }
+    JXG.Options.point.size = 10;
+    board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 20});
   /* ]]> */
   </script>
 </body>
