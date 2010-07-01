@@ -1,0 +1,26 @@
+/*
+*/
+.jxgbox {
+    position:relative; /* for IE 7 */
+    overflow:hidden;
+    background-color:#ffffff;
+    border-style:solid;
+    border-width:1px;
+    border-color:#356AA0;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    /*
+        -moz-box-shadow:black 2px 2px 2px -2px, #151A10 4px 4px;
+        -webkit-box-shadow:4px 4px 3px #151A10;
+        */
+}
+
+.JXGtext {
+    background-color:transparent;
+    font-family: Arial, Helvetica, Geneva;
+    padding:0px;
+    margin:0px;
+    line-height:100%;
+    /*border-style:dotted;*/
+    /*border-width:0.4px;*/
+}

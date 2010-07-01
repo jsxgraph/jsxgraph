@@ -1,0 +1,36 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="jsxgraph.css" />
+	<script type="text/javascript" src="jsxgraphcore.js"></script>
+	<title>JXG Title</title>
+	<meta name="viewport" content="width=default-width; user-scalable=no" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+</head>
+<body>
+	<h1>even simpler function plotter</h1>
+	<input type="text" id="input" value="sin(x)*x" />
+	<input type="button" value="plot" onClick="plotter()" />
+	<input type="button" value="clear all" onClick="clearAll()" />
+	<br/><br/>
+	<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
+	<div id="jxgbox" class="jxgbox" style="width:710px; height:750px;"></div>
+	<div id="debug" style="display:block"></div>
+	<script type="text/javascript">
+	try {
+		var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
+		function plotter() {
+			var t = JXG.GeonextParser.geonext2JS(document.getElementById('input').value);
+			var f = new Function('x','var y = '+t+'; return y;');
+			board.create('functiongraph',[f]);
+		}
+	
+		function clearAll(board) {
+			JXG.JSXGraph.freeBoard(board);
+			board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
+		}
+	} catch(e){
+		document.getElementById("debug").innerHTML += e;
+	}
+	</script>
+</body>
+</html>
