@@ -478,7 +478,9 @@ JXG.Line.prototype.getTextAnchor = function() {
  * @private
  */
 JXG.Line.prototype.setLabelRelativeCoords = function(relCoords) {
-    this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [relCoords[0],-relCoords[1]],this.board);
+    if (typeof this.label.content!='undefined') { 
+        this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [relCoords[0],-relCoords[1]],this.board);
+    }
 }
 
 /**
