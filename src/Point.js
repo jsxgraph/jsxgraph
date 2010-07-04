@@ -639,15 +639,9 @@ JXG.Point.prototype.makeGlider = function (glideObject) {
     
     this.slideObject.addChild(this);
 
-    if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
-        this.generatePolynomial = function() {
-            return this.slideObject.generatePolynomial(this);
-        };
-    } else if (this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
-        this.generatePolynomial = function() {
-            return this.slideObject.generatePolynomial(this);
-        };
-    }
+    this.generatePolynomial = function() {
+        return this.slideObject.generatePolynomial(this);
+    };
 
     //this.position = 0;
     this.needsUpdate = true;

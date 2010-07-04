@@ -1297,8 +1297,25 @@ JXG.createLocus = function(board, parents, attributes) {
             c.dataX = x;
             c.dataY = y;
             c.eq = eq;
-            board.update();
+
+            // convert equation and use it to build a generatePolynomial-method
+            c.generatePolynomial = (function(equation) {
+                return function(point) {
+                    var x = '(' + point.symbolic.x + ')',
+                            y = '(' + point.symbolic.y + ')';
+
+                    return [equation.replace(/\*\*/g, '^').replace(/x/g, x).replace(/y/g, y)];
+                }
+            })(eq[0]);
+
+            c.needsUpdate = true;
+            c.update();
+            c.updateRenderer();
         };
+
+        p.needsUpdate = true;
+        p.update();
+        p.updateRenderer();
 
         if(board.mode == board.BOARD_MODE_NONE && !this.dontCallServer) {
             JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);

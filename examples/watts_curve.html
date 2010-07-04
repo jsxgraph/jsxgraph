@@ -23,11 +23,14 @@
     g2 = board.createElement('intersection', [c2,c3,0], {name: "I"});
     m1 = board.createElement('midpoint', [g1,g2], {name:"T",trace:false});
 
-    loc = board.createElement('locus', [m1], {strokeColor: 'red', strokeWidth: '1px'});
+    loc = board.createElement('locus', [m1], {strokeColor: 'red', strokeWidth: '3px'});
 
   /* ]]> */
   </script>
 <br/><br/>
+<form>
+    <input type="button" onclick="lg = board.create('glider', [loc]); board.create('locus', [lg], {strokeColor: 'black', strokeWidth: '1px'});" value="Create glider & new locus"/>
+</form>
 <div id="src_disp" style="display:block;">
 <h2><a href="#" name="src"></a>Quelltext der Konstruktion</h2>
 <pre style="border: black solid 1px; padding: 4px"><tt>  board <font color="#990000">=</font> JXG<font color="#990000">.</font>JSXGraph<font color="#990000">.</font><b><font color="#000000">initBoard</font></b><font color="#990000">(</font><font color="#FF0000">'jxgbox'</font><font color="#990000">,</font> <font color="#FF0000">{</font>boundingbox<font color="#990000">:[-</font><font color="#993399">4</font><font color="#990000">,</font> <font color="#993399">6</font><font color="#990000">,</font> <font color="#993399">10</font><font color="#990000">,</font> <font color="#990000">-</font><font color="#993399">4</font><font color="#990000">],</font> axis<font color="#990000">:</font> <b><font color="#0000FF">true</font></b><font color="#990000">,</font> grid<font color="#990000">:</font> <b><font color="#0000FF">false</font></b><font color="#990000">,</font>
