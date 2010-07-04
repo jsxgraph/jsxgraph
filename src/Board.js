@@ -279,13 +279,6 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.hooks = [];
 
     /**
-     * Hook id for the color blindness simulation hook. If this equals -1, no color blindness simulation is active.
-     * @type int
-     * @private
-     */
-    this.cbHook = -1;
-
-    /**
      * An array containing all other boards that are updated after this board has been updated.
      * @private
      * @type Array
@@ -500,6 +493,12 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @default false
     */
     this.reducedUpdate = false;
+
+    /**
+     * The current color blindness deficiency is stored in this property. If color blindness is not emulated
+     * at the moment, it's value is <tt>none</tt>.
+     */
+    this.currentCBDef = 'none';
 
    /**
     * If GEONExT constructions are displayed, then this property should be set to true.
@@ -2280,26 +2279,29 @@ JXG.Board.prototype.animate = function() {
  * @param deficiency Describes the color blindness deficiency which is simulated. Accepted values are protanopia, deuteranopia, and tritanopia.
  * @private
  */
-JXG.Board.prototype.simulateColorblindness = function(deficiency) {
+JXG.Board.prototype.emulateColorblindness = function(deficiency) {
     var e, o;
 
-    if(this.cbHook != -1) {
-        this.removeHook(this.cbHook);
-//        this.fullUpdate();
-        this.cbHook = -1;
-    }
+    if(typeof deficiency == 'undefined')
+        deficiency = 'none';
 
-    if((typeof deficiency != 'undefined') && (deficiency != 'none')) {
-        this.cbHook = this.addHook(function () {
-            for(e in brd.objects) {
-                o = brd.objects[e];
-                brd.renderer.setObjectFillColor(o, JXG.rgb2cb(o.visProp.fillColor, deficiency), o.visProp.opacity);
-                brd.renderer.setObjectStrokeColor(o, JXG.rgb2cb(o.visProp.strokeColor, deficiency), o.visProp.opacity);
-//                o.setProperty({strokeColor: JXG.rgb2cb(o.visProp.strokeColor, deficiency), fillColor: JXG.rgb2cb(o.visProp.fillColor, deficiency),
-//                               highlightStrokeColor: JXG.rgb2cb(o.visProp.highlightStrokeColor, deficiency), highlightFillColor: JXG.rgb2cb(o.visProp.highlightFillColor, deficiency)});
-            }
-        }, 'update');
+    if(this.currentCBDef == deficiency)
+        return;
+
+    for(e in brd.objects) {
+        o = brd.objects[e];
+        if(deficiency != 'none') {
+            if(this.currentCBDef == 'none')
+                o.visPropOriginal = JXG.deepCopy(o.visProp);
+            o.setProperty({strokeColor: JXG.rgb2cb(o.visPropOriginal.strokeColor, deficiency), fillColor: JXG.rgb2cb(o.visPropOriginal.fillColor, deficiency),
+                           highlightStrokeColor: JXG.rgb2cb(o.visPropOriginal.highlightStrokeColor, deficiency), highlightFillColor: JXG.rgb2cb(o.visPropOriginal.highlightFillColor, deficiency)});
+        } else if(typeof o.visPropOriginal != 'undefined') {
+            o.visProp = JXG.deepCopy(o.visPropOriginal);
+        }
     }
+    this.currentCBDef = deficiency;
+
+    this.update();
 };
 
 /**
