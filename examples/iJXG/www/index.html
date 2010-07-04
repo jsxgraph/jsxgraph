@@ -1,22 +1,46 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<link rel="stylesheet" type="text/css" href="jsxgraph.css" />
-	<script type="text/javascript" src="jsxgraphcore.js"></script>
-	<title>JXG Title</title>
-	<meta name="viewport" content="width=default-width; user-scalable=no" />
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+
+<link rel="stylesheet" media="screen" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="css/jsxgraph.css" />
+<script type="text/javascript" src="js/jsxgraphcore.js"></script>
+<title>even simpler function plotter</title>
+
+<!-- orientation and size of board -->
+<!--
+<link rel="stylesheet" media="all and (orientation:portrait)" href="css/portrait.css">
+<link rel="stylesheet" media="all and (orientation:landscape)" href="css/landscape.css">
+-->
+
+<!-- to edit: -->
+<meta content="keyword1,keyword2,keyword3" name="keywords" />
+<meta content="Description of your page" name="description" />
 </head>
+
 <body>
-	<h1>even simpler function plotter</h1>
-	<input type="text" id="input" value="sin(x)*x" />
-	<input type="button" value="plot" onClick="plotter()" />
-	<input type="button" value="clear all" onClick="clearAll()" />
-	<br/><br/>
+
+<div id="topbar">
+	<div id="title">even simpler function plotter</div>
+</div>
+<div id="tributton">
+	<div class="links">
+		<input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="index.html">refresh	</a>
+	</div>
+</div>
+<div id="content" align="center">
 	<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
-	<div id="jxgbox" class="jxgbox" style="width:710px; height:750px;"></div>
+	<div id="jxgbox" class="jxgbox"></div>
 	<div id="debug" style="display:block"></div>
 	<script type="text/javascript">
+	//alert(window.innerHeight);
 	try {
+        document.getElementById('jxgbox').style.width = window.innerWidth - 8 +"px";
+		document.getElementById('jxgbox').style.height = window.innerHeight - 120 +"px";
+
 		var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
 		function plotter() {
 			var t = JXG.GeonextParser.geonext2JS(document.getElementById('input').value);
@@ -32,5 +56,10 @@
 		document.getElementById("debug").innerHTML += e;
 	}
 	</script>
+</div>
+<div id="footer">
+	<a class="noeffect" href="http://www.jsxgraph.org/">Powered by JSXGraph</a>
+</div>
+
 </body>
 </html>

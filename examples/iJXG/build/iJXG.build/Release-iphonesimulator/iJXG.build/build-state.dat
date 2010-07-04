@@ -1,7 +1,7 @@
 TiJXG
 v7
 r0
-t299670153.680621
+t299970876.456999
 cCheck dependencies
 cProcessInfoPlistFile /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/Info.plist iJXG-Info.plist
 cCompileXIB /Users/pw/Uni/JSXGraph/iJXG/iPhone/MainWindow_Phone.xib
@@ -153,7 +153,7 @@ s361
 i<UIKit/UIKit.h>
 
 N/Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app
-t1277976261
+t1278278076
 s272
 
 N/Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app.dSYM
@@ -165,8 +165,8 @@ t1277974804
 s889
 
 N/Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/MainWindow_Pad.nib
-t1277974806
-s1905
+t1278276682
+s1171
 
 N/Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/MainWindow_Phone.nib
 t1277974806
@@ -181,7 +181,7 @@ t1277976260
 s15400
 
 N/Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/www
-t1277976259
+t1278278076
 s170
 
 N/Users/pw/Uni/JSXGraph/iJXG/build/iJXG.build/Release-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Pad.o
@@ -221,9 +221,9 @@ s733
 i"AppDelegate_Pad.h"
 
 N/Users/pw/Uni/JSXGraph/iJXG/iPad/MainWindow_Pad.xib
-c000000004C2C51930000000000006102
-t1277972883
-s24834
+c000000004C30F4460000000000004544
+t1278276678
+s17732
 
 N/Users/pw/Uni/JSXGraph/iJXG/iPhone/AppDelegate_Phone.h
 c000000004C2C54320000000000000110
@@ -243,8 +243,8 @@ t1277973338
 s24573
 
 N/Users/pw/Uni/JSXGraph/iJXG/www
-c000000004C2C5EA600000000000000CC
-t1277976230
+c000000004C30F9DB00000000000000CC
+t1278278107
 s204
 
 N/Users/pw/Uni/JSXGraph/trunk/examples/app/iJXG/Shared/main.m
@@ -367,7 +367,7 @@ s1383
 
 CCheck dependencies
 r0
-lSLF07#2@18"Check dependencies299670153#299670153#0(0"0(0#1#0"7947009927035180032#0"0#
+lSLF07#2@18"Check dependencies299970876#299970876#0(0"0(0#1#0"4300911832#0"0#
 
 CCompileC build/iJXG.build/Release-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Pad.o /Users/pw/Downloads/iJXG/iPad/AppDelegate_Pad.m normal i386 objective-c com.apple.compilers.gcc.4_2
 s299667607.685198
@@ -509,7 +509,12 @@ x/Users/pw/Downloads/iJXG/iPhone/MainWindow_Phone.xib
 lSLF07#2@38"CompileXIB iPhone/MainWindow_Phone.xib299667604#299667606#0(0"0(0#0#52"/Users/pw/Downloads/iJXG/iPhone/MainWindow_Phone.xib4300911832#456"    cd /Users/pw/Downloads/iJXG    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 3.1    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/pw/Downloads/iJXG/build/Release-iphonesimulator/iJXG.app/MainWindow_Phone.nib /Users/pw/Downloads/iJXG/iPhone/MainWindow_Phone.xib0#
 
 CCompileXIB /Users/pw/Uni/JSXGraph/iJXG/iPad/MainWindow_Pad.xib
-r0
+s299969481.825149
+e299969482.267979
+r1
+xCompileXIB
+x/Users/pw/Uni/JSXGraph/iJXG/iPad/MainWindow_Pad.xib
+lSLF07#2@34"CompileXIB iPad/MainWindow_Pad.xib299969481#299969482#0(0"0(0#0#51"/Users/pw/Uni/JSXGraph/iJXG/iPad/MainWindow_Pad.xib4300911832#459"    cd /Users/pw/Uni/JSXGraph/iJXG    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 3.1    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/MainWindow_Pad.nib /Users/pw/Uni/JSXGraph/iJXG/iPad/MainWindow_Pad.xib0#
 
 CCompileXIB /Users/pw/Uni/JSXGraph/iJXG/iPhone/MainWindow_Phone.xib
 r0
@@ -521,13 +526,13 @@ CCompileXIB /Users/pw/Uni/JSXGraph/trunk/examples/app/iJXG/iPhone/MainWindow_Pho
 r0
 
 CCpResource build/Release-iphonesimulator/iJXG.app/www www
-s299669059.492872
-e299669059.516539
+s299970876.406960
+e299970876.451273
 r1
 xCpResource
 xbuild/Release-iphonesimulator/iJXG.app/www
 xwww
-lSLF07#2@8"Copy www299669059#299669059#0(0"0(0#0#31"/Users/pw/Uni/JSXGraph/iJXG/www13229813538947188#434"    cd /Users/pw/Uni/JSXGraph/iJXG    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp -exclude .DS_Store -exclude CVS -exclude .svn -strip-debug-symbols -resolve-src-symlinks /Users/pw/Uni/JSXGraph/iJXG/www /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app0#
+lSLF07#2@8"Copy www299970876#299970876#0(0"0(0#0#31"/Users/pw/Uni/JSXGraph/iJXG/www4300911832#434"    cd /Users/pw/Uni/JSXGraph/iJXG    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp -exclude .DS_Store -exclude CVS -exclude .svn -strip-debug-symbols -resolve-src-symlinks /Users/pw/Uni/JSXGraph/iJXG/www /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app0#
 
 CGenerateDSYMFile /Users/pw/Downloads/iJXG/build/Release-iphonesimulator/iJXG.app.dSYM /Users/pw/Downloads/iJXG/build/Release-iphonesimulator/iJXG.app/iJXG
 s299667607.809453
@@ -649,12 +654,12 @@ x/Users/pw/Downloads/iJXG/build/Release-iphonesimulator/iJXG.app
 lSLF07#2@69"Touch /Users/pw/Downloads/iJXG/build/Release-iphonesimulator/iJXG.app299667805#299667805#0(0"0(0#0#0"4300911832#249"    cd /Users/pw/Downloads/iJXG    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/pw/Downloads/iJXG/build/Release-iphonesimulator/iJXG.app0#
 
 CTouch /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app
-s299669061.012034
-e299669061.015855
+s299970876.452123
+e299970876.456935
 r1
 xTouch
 x/Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app
-lSLF07#2@72"Touch /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app299669061#299669061#0(0"0(0#0#0"4300911832#255"    cd /Users/pw/Uni/JSXGraph/iJXG    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app0#
+lSLF07#2@72"Touch /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app299970876#299970876#0(0"0(0#0#0"4300911832#255"    cd /Users/pw/Uni/JSXGraph/iJXG    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app0#
 
 CTouch /Users/pw/Uni/JSXGraph/trunk/examples/app/iJXG/build/Release-iphonesimulator/iJXG.app
 s299668118.613376
