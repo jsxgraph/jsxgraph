@@ -46,7 +46,7 @@ JXG.GraphReader = new function() {
             tmp = splitted[i].split(' ');
             for(j=0; j<tmp.length; j++) {
                 if(tmp[j] == 'INF') {
-                    tmp[j] = Number.MAX_VALUE;
+                    tmp[j] = 321;
                 }
                 else {
                     tmp[j] = parseInt(tmp[j]);
