@@ -131,9 +131,6 @@ JXG.Math.Symbolic.generatePolynomials = function(board, element, generateCoords)
         }
     }
 
-    JXG.debug(element.name);
-    JXG.debug(result);
-
     if(generateCoords)
         this.clearSymbolicCoordinates(board);
 

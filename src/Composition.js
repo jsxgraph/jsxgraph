@@ -1312,10 +1312,7 @@ JXG.createLocus = function(board, parents, attributes) {
                 })(eq[0]);
             },
             data = JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
-        JXG.debug('result start');
-        JXG.debug(p.name);
-        JXG.debug(data.polynomial);
-        JXG.debug('result end');
+
         cb(data.datax, data.datay, data.polynomial);
     };
     return c;
