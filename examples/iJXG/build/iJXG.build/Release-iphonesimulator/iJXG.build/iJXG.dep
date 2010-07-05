@@ -1,4 +1,4 @@
-424354b5a3d72b2505fe4bd7687ce92d 03067ee79f78b104fca8136e12bd1211 ffffffffffffffffffffffffffffffff 272 /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app
+424354b5a3cb8dca05fe4bd7687cf34e 03067ee79f78b104fca8136e12bd1211 ffffffffffffffffffffffffffffffff 272 /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app
 00000000000000000000000000000000 00000000000000000000000000000000 ffffffffffffffffffffffffffffffff 170 /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/www
 e2d8746b58c0f20d38d27b7bf440a832 617f02ff078862a9e1b36efbbc16011a ffffffffffffffffffffffffffffffff 16708 /Users/pw/Uni/JSXGraph/iJXG/build/iJXG.build/Release-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Pad.o
 e2d8746b58c0ef4938d27b7bf440a812 488e4987b2d75ef62d72ce5ca4782557 ffffffffffffffffffffffffffffffff 16752 /Users/pw/Uni/JSXGraph/iJXG/build/iJXG.build/Release-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Phone.o
@@ -6,8 +6,8 @@ e2d8746b14eca73b38d27b7bf440aa8b a93e75641e3f208b867f4391669e9c39 ffffffffffffff
 00000000000000000000000000000000 5cb35441abd3658eee3ce5624a560b88 ffffffffffffffffffffffffffffffff 102 /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app.dSYM
 62174a77b83e22ee726c984d88aa9bcf c486dc75830143a4b547927d4c09e7ce ffffffffffffffffffffffffffffffff 15400 /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/iJXG
 000000004c1599e40000000000001a6b e2d8746b5f73baed38d27b7bf440b806 ffffffffffffffffffffffffffffffff 13510544 /var/folders/6H/6HnshW6WF68B0yU8kPYrrE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/iJXG_Prefix-ghcimqdbidkfkkghthqlkinxbyzl/iJXG_Prefix.pch.gch
-000000004c30f4460000000000004544 3da146493605aaa74c0245dc2a28b3e7 ffffffffffffffffffffffffffffffff 1171 /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/MainWindow_Pad.nib
-ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 1854 /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/MainWindow_Phone.nib
+000000004c31c71e00000000000045d8 3da146493605aaa74c0245dc2a28b3e7 ffffffffffffffffffffffffffffffff 1198 /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/MainWindow_Pad.nib
+000000004c31c6ed0000000000004502 9edf109453afb8b2eec47153e74d64a2 ffffffffffffffffffffffffffffffff 1161 /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/MainWindow_Phone.nib
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 8 /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/PkgInfo
 ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 889 /Users/pw/Uni/JSXGraph/iJXG/build/Release-iphonesimulator/iJXG.app/Info.plist
 2a95e795267178c157af9b4a6f014dd1 dbca37f785bf3672479d2b95592db23d ffffffffffffffffffffffffffffffff 16744 /Users/pw/Uni/JSXGraph/trunk/examples/app/iJXG/build/iJXG.build/Release-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Pad.o

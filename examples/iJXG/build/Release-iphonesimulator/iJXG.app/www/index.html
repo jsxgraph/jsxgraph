@@ -3,54 +3,106 @@
 <head>
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width, user-scalable=no" />
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" />
 
-<link rel="stylesheet" media="screen" type="text/css" href="css/style.css" />
-<link rel="stylesheet" type="text/css" href="css/jsxgraph.css" />
+<!-- Icons -->
+<link rel="apple-touch-icon" href="./apple-touch-icon.png" /><!-- ihpone: 57x57 .png-file; ipad: 72x72px -->
+<link rel="apple-touch-startup-image" href="./startup.png" /><!-- iphone: 320x460 .png-file; ipad: 1004x768px -->
+
+
+<link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
+<!-- <link rel="stylesheet" type="text/css" media="screen" href="css/jsxgraph.css" /> -->
 <script type="text/javascript" src="js/jsxgraphcore.js"></script>
 <title>even simpler function plotter</title>
+
+<!-- orientation and size of board -->
+<!--
+<link rel="stylesheet" media="all and (orientation:portrait)" href="css/portrait.css">
+<link rel="stylesheet" media="all and (orientation:landscape)" href="css/landscape.css">
+-->
 
 <!-- to edit: -->
 <meta content="keyword1,keyword2,keyword3" name="keywords" />
 <meta content="Description of your page" name="description" />
+
+<style type="text/css">
+<!--
+.jxgbox {
+	background-color : rgb(250, 200, 200);
+}
+-->
+</style>
+
+<script type="text/javascript">
+var rstat = false;
+var board;
+
+function deviceRotation() {
+	document.getElementById('jxgbox').style.backgroundColor = (rstat++%2 ? 'red':'green');
+}
+
+function updateOrientation() {
+	
+	switch(window.orientation) {
+		case 0:		// Portrait
+			document.getElementById('jxgbox').style.width  = '760px';
+			document.getElementById('jxgbox').style.height = '835px';
+		break;
+		case -90:	// Landscape (right, screen turned clockwise)
+			document.getElementById('jxgbox').style.width  = '996px';
+			document.getElementById('jxgbox').style.height = '598px';
+		break;
+		case 90:	// Landscape (left, screen turned counterclockwise)
+			document.getElementById('jxgbox').style.width  = '996px';
+			document.getElementById('jxgbox').style.height = '598px';
+		break;
+		case 180:	// Portrait (upside-down portrait)
+			document.getElementById('jxgbox').style.width  = '760px';
+			document.getElementById('jxgbox').style.height = '835px';
+		break;
+	}
+}
+
+function init() {
+	document.getElementById('jxgbox').style.width  = '760px'; //document.width;
+	document.getElementById('jxgbox').style.height = '835px'; //document.height;
+	board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, grid:true, boundingbox:[-2,2,2,-2]});
+}
+
+function plotter() {
+	var t = JXG.GeonextParser.geonext2JS(document.getElementById('input').value);
+	var f = new Function('x','var y = '+t+'; return y;');
+	board.create('functiongraph',[f]);
+}
+	
+function clearAll(board) {
+	JXG.JSXGraph.freeBoard(board);
+	board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
+}
+
+// window.onorientationchange = updateOrientation();
+
+</script>
 </head>
 
-<body>
+<body onorientationchange="updateOrientation();deviceRotation();" onload="init();">
 
 <div id="topbar">
 	<div id="title">even simpler function plotter</div>
 </div>
+
 <div id="tributton">
 	<div class="links">
 		<input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="index.html">refresh	</a>
 	</div>
 </div>
+
 <div id="content" align="center">
 	<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
 	<div id="jxgbox" class="jxgbox"></div>
 	<div id="debug" style="display:block"></div>
-	<script type="text/javascript">
-	//alert(window.innerHeight);
-	try {
-        document.getElementById('jxgbox').style.width = window.innerWidth - 8 +"px";
-		document.getElementById('jxgbox').style.height = window.innerHeight - 120 +"px";
-
-		var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
-		function plotter() {
-			var t = JXG.GeonextParser.geonext2JS(document.getElementById('input').value);
-			var f = new Function('x','var y = '+t+'; return y;');
-			board.create('functiongraph',[f]);
-		}
-	
-		function clearAll(board) {
-			JXG.JSXGraph.freeBoard(board);
-			board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
-		}
-	} catch(e){
-		document.getElementById("debug").innerHTML += e;
-	}
-	</script>
 </div>
+
 <div id="footer">
 	<a class="noeffect" href="http://www.jsxgraph.org/">Powered by JSXGraph</a>
 </div>

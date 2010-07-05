@@ -27,47 +27,47 @@
 
 <style type="text/css">
 <!--
-.jsxPage {
-	background-color	:	rgb(200, 0, 0);
-}
-
 .jxgbox {
-	background-color	:	rgb(250, 200, 200);
+	background-color : rgb(250, 200, 200);
 }
 -->
 </style>
 
 <script type="text/javascript">
-var rstat = 0;
+var rstat = false;
 var board;
 
 function deviceRotation() {
 	document.getElementById('jxgbox').style.backgroundColor = (rstat++%2 ? 'red':'green');
-	updateOrientation();
 }
 
 function updateOrientation() {
 	
 	switch(window.orientation) {
+		// Sizes for Safari Browser on iPad - not for use in the iJXG-App
 		case 0:		// Portrait
-			document.getElementById('topbar').getElementById('title').innerHTML += ' in: '+window.orientation;
+			document.getElementById('jxgbox').style.width  = '760px';
+			document.getElementById('jxgbox').style.height = '835px';
 		break;
 		case -90:	// Landscape (right, screen turned clockwise)
-			document.getElementById('topbar').getElementById('title').innerHTML += ' in: '+window.orientation;
+			document.getElementById('jxgbox').style.width  = '996px';
+			document.getElementById('jxgbox').style.height = '598px';
 		break;
 		case 90:	// Landscape (left, screen turned counterclockwise)
-			document.getElementById('topbar').getElementById('title').innerHTML += ' in: '+window.orientation;
+			document.getElementById('jxgbox').style.width  = '996px';
+			document.getElementById('jxgbox').style.height = '598px';
 		break;
 		case 180:	// Portrait (upside-down portrait)
-			document.getElementById('topbar').getElementById('title').innerHTML += ' in: '+window.orientation;
+			document.getElementById('jxgbox').style.width  = '760px';
+			document.getElementById('jxgbox').style.height = '835px';
 		break;
 	}
 }
 
 function init() {
 	document.getElementById('jxgbox').style.width  = '760px'; //document.width;
-	document.getElementById('jxgbox').style.height = '880px'; //document.height;
-	board = JXG.JSXGraph.initBoard('jxgbox',{axis:true, grid:true, boundingbox:[-2,2,2,-2]});
+	document.getElementById('jxgbox').style.height = '835px'; //document.height;
+	board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, grid:true, boundingbox:[-2,2,2,-2]});
 }
 
 function plotter() {
@@ -81,12 +81,12 @@ function clearAll(board) {
 	board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
 }
 
-// window.onorientationchange = deviceRotation();
+// window.onorientationchange = updateOrientation();
 
 </script>
 </head>
 
-<body class="jsxPage" onorientationchange="updateOrientation(); deviceRotation();" onload="init();">
+<body onorientationchange="updateOrientation();deviceRotation();" onload="init();">
 
 <div id="topbar">
 	<div id="title">even simpler function plotter</div>

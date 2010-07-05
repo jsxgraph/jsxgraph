@@ -206,6 +206,111 @@ c000000004C2C580D00000000000000CC
 t1277974541
 s204
 
+N/Users/pw/Uni/JSXGraph/iJXG/Shared/main.m
+c000000004C2C4EDE0000000000000169
+t1277972190
+s361
+i<UIKit/UIKit.h>
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app
+t1277976234
+s272
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app.dSYM
+t1277976234
+s102
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app/Info.plist
+t1277974194
+s889
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app/MainWindow_Pad.nib
+t1277973354
+s1905
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app/MainWindow_Phone.nib
+t1277973354
+s1854
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app/PkgInfo
+t1277974194
+s8
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app/iJXG
+t1277974194
+s19472
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app/www
+t1277976238
+s170
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Pad.o
+t1277974194
+s16844
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Phone.o
+t1277974194
+s16884
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/iJXG.LinkFileList
+c000000004C2C536A000000000000014A
+t1277973354
+s330
+
+N/Users/pw/Uni/JSXGraph/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/main.o
+t1277974194
+s5928
+
+N/Users/pw/Uni/JSXGraph/iJXG/iJXG_Prefix.pch
+c000000004C2C4EDE00000000000000B1
+t1277972190
+s177
+i<Foundation/Foundation.h>
+i<UIKit/UIKit.h>
+
+N/Users/pw/Uni/JSXGraph/iJXG/iPad/AppDelegate_Pad.h
+c000000004C2C5436000000000000010D
+t1277973558
+s269
+i<UIKit/UIKit.h>
+
+N/Users/pw/Uni/JSXGraph/iJXG/iPad/AppDelegate_Pad.m
+c000000004C2C4FDE00000000000002DD
+t1277972446
+s733
+i"AppDelegate_Pad.h"
+
+N/Users/pw/Uni/JSXGraph/iJXG/iPad/MainWindow_Pad.xib
+c000000004C30F4460000000000004544
+t1278276678
+s17732
+
+N/Users/pw/Uni/JSXGraph/iJXG/iPhone/AppDelegate_Phone.h
+c000000004C2C54320000000000000110
+t1277973554
+s272
+i<UIKit/UIKit.h>
+
+N/Users/pw/Uni/JSXGraph/iJXG/iPhone/AppDelegate_Phone.m
+c000000004C2C529E00000000000002E0
+t1277973150
+s736
+i"AppDelegate_Phone.h"
+
+N/Users/pw/Uni/JSXGraph/iJXG/iPhone/MainWindow_Phone.xib
+c000000004C2C535A0000000000005FFD
+t1277973338
+s24573
+
+N/Users/pw/Uni/JSXGraph/iJXG/www
+c000000004C31B9B000000000000000CC
+t1278327216
+s204
+
+N/var/folders/6H/6HnshW6WF68B0yU8kPYrrE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/iJXG_Prefix-bggkhyiazsdlmoezjbhepzlaniki/iJXG_Prefix.pch.gch
+t2
+s0
+
 N/var/folders/6H/6HnshW6WF68B0yU8kPYrrE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/iJXG_Prefix-bvlvvlktiuqdfbgxpsvnxevsxrzq/iJXG_Prefix.pch.gch
 t1277973356
 s13805456
@@ -241,6 +346,9 @@ xcom.apple.compilers.gcc.4_2
 o/Users/pw/Downloads/iJXG/iPad/AppDelegate_Pad.m:32: warning: '@end' missing in implementation context
 lSLF07#2@55"Compile /Users/pw/Downloads/iJXG/iPad/AppDelegate_Pad.m299666994#299666994#0(102"/Users/pw/Downloads/iJXG/iPad/AppDelegate_Pad.m:32: warning: '@end' missing in implementation context1(22@40"'@end' missing in implementation context299666994#0#102#0(6@47"/Users/pw/Downloads/iJXG/iPad/AppDelegate_Pad.m299665246#32#0#32#0#40"'@end' missing in implementation context0(0#0#47"/Users/pw/Downloads/iJXG/iPad/AppDelegate_Pad.m4300911832#1670"    cd /Users/pw/Downloads/iJXG    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30200 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-generated-files.hmap -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-own-target-headers.hmap -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-all-target-headers.hmap -iquote /Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-project-headers.hmap -F/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator -I/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/include -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/DerivedSources/i386 -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/DerivedSources -include /var/folders/6H/6HnshW6WF68B0yU8kPYrrE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/iJXG_Prefix-bvlvvlktiuqdfbgxpsvnxevsxrzq/iJXG_Prefix.pch -c /Users/pw/Downloads/iJXG/iPad/AppDelegate_Pad.m -o /Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Pad.o0#
 
+CCompileC build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Pad.o /Users/pw/Uni/JSXGraph/iJXG/iPad/AppDelegate_Pad.m normal i386 objective-c com.apple.compilers.gcc.4_2
+r0
+
 CCompileC build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Phone.o /Users/pw/Downloads/iJXG/iPhone/AppDelegate_Phone.m normal i386 objective-c com.apple.compilers.gcc.4_2
 s299666994.444701
 e299666994.561485
@@ -255,6 +363,9 @@ xcom.apple.compilers.gcc.4_2
 o/Users/pw/Downloads/iJXG/iPhone/AppDelegate_Phone.m:32: warning: '@end' missing in implementation context
 lSLF07#2@59"Compile /Users/pw/Downloads/iJXG/iPhone/AppDelegate_Phone.m299666994#299666994#0(106"/Users/pw/Downloads/iJXG/iPhone/AppDelegate_Phone.m:32: warning: '@end' missing in implementation context1(22@40"'@end' missing in implementation context299666994#0#106#0(6@51"/Users/pw/Downloads/iJXG/iPhone/AppDelegate_Phone.m299665950#32#0#32#0#40"'@end' missing in implementation context0(0#0#51"/Users/pw/Downloads/iJXG/iPhone/AppDelegate_Phone.m4300911832#1676"    cd /Users/pw/Downloads/iJXG    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30200 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-generated-files.hmap -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-own-target-headers.hmap -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-all-target-headers.hmap -iquote /Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-project-headers.hmap -F/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator -I/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/include -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/DerivedSources/i386 -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/DerivedSources -include /var/folders/6H/6HnshW6WF68B0yU8kPYrrE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/iJXG_Prefix-bvlvvlktiuqdfbgxpsvnxevsxrzq/iJXG_Prefix.pch -c /Users/pw/Downloads/iJXG/iPhone/AppDelegate_Phone.m -o /Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Phone.o0#
 
+CCompileC build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/AppDelegate_Phone.o /Users/pw/Uni/JSXGraph/iJXG/iPhone/AppDelegate_Phone.m normal i386 objective-c com.apple.compilers.gcc.4_2
+r0
+
 CCompileC build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/main.o /Users/pw/Downloads/iJXG/Shared/main.m normal i386 objective-c com.apple.compilers.gcc.4_2
 s299666994.443265
 e299666994.540253
@@ -267,6 +378,9 @@ xi386
 xobjective-c
 xcom.apple.compilers.gcc.4_2
 lSLF07#2@46"Compile /Users/pw/Downloads/iJXG/Shared/main.m299666994#299666994#0(0"0(0#0#38"/Users/pw/Downloads/iJXG/Shared/main.m4300911832#1650"    cd /Users/pw/Downloads/iJXG    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -x objective-c -arch i386 -fmessage-length=0 -pipe -std=c99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -D__IPHONE_OS_VERSION_MIN_REQUIRED=30200 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -fvisibility=hidden -mmacosx-version-min=10.5 -gdwarf-2 -iquote /Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-generated-files.hmap -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-own-target-headers.hmap -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-all-target-headers.hmap -iquote /Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/iJXG-project-headers.hmap -F/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator -I/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/include -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/DerivedSources/i386 -I/Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/DerivedSources -include /var/folders/6H/6HnshW6WF68B0yU8kPYrrE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/iJXG_Prefix-bvlvvlktiuqdfbgxpsvnxevsxrzq/iJXG_Prefix.pch -c /Users/pw/Downloads/iJXG/Shared/main.m -o /Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/main.o0#
+
+CCompileC build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/main.o /Users/pw/Uni/JSXGraph/iJXG/Shared/main.m normal i386 objective-c com.apple.compilers.gcc.4_2
+r0
 
 CCompileXIB /Users/pw/Downloads/iJXG/iPad/MainWindow_Pad.xib
 s299666154.338351
@@ -283,6 +397,12 @@ r1
 xCompileXIB
 x/Users/pw/Downloads/iJXG/iPhone/MainWindow_Phone.xib
 lSLF07#2@38"CompileXIB iPhone/MainWindow_Phone.xib299666154#299666154#0(0"0(0#0#52"/Users/pw/Downloads/iJXG/iPhone/MainWindow_Phone.xib4300911832#454"    cd /Users/pw/Downloads/iJXG    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 3.1    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app/MainWindow_Phone.nib /Users/pw/Downloads/iJXG/iPhone/MainWindow_Phone.xib0#
+
+CCompileXIB /Users/pw/Uni/JSXGraph/iJXG/iPad/MainWindow_Pad.xib
+r0
+
+CCompileXIB /Users/pw/Uni/JSXGraph/iJXG/iPhone/MainWindow_Phone.xib
+r0
 
 CCpResource build/Debug-iphonesimulator/iJXG.app/www www
 s299667342.533694
@@ -302,6 +422,9 @@ x/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app.dSYM
 x/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app/iJXG
 lSLF07#2@100"GenerateDSYMFile build/Debug-iphonesimulator/iJXG.app.dSYM build/Debug-iphonesimulator/iJXG.app/iJXG299666994#299666994#0(0"0(0#0#66"/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app/iJXG4300911832#332"    cd /Users/pw/Downloads/iJXG    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app/iJXG -o /Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app.dSYM0#
 
+CGenerateDSYMFile /Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app.dSYM /Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app/iJXG
+r0
+
 CLd /Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app/iJXG normal i386
 s299666994.633935
 e299666994.662397
@@ -312,6 +435,9 @@ xnormal
 xi386
 lSLF07#2@71"Link /Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app/iJXG299666994#299666994#0(0"0(0#0#0"4300911832#777"    cd /Users/pw/Downloads/iJXG    setenv MACOSX_DEPLOYMENT_TARGET 10.5    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.2 -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk -L/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator -F/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator -filelist /Users/pw/Downloads/iJXG/build/iJXG.build/Debug-iphonesimulator/iJXG.build/Objects-normal/i386/iJXG.LinkFileList -mmacosx-version-min=10.5 -framework Foundation -framework UIKit -framework CoreGraphics -o /Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app/iJXG0#
 
+CLd /Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app/iJXG normal i386
+r0
+
 CProcessInfoPlistFile /Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app/Info.plist iJXG-Info.plist
 s299666994.413016
 e299666994.442748
@@ -320,6 +446,12 @@ xProcessInfoPlistFile
 x/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app/Info.plist
 xiJXG-Info.plist
 lSLF07#2@23"Process iJXG-Info.plist299666994#299666994#0(0"0(0#0#40"/Users/pw/Downloads/iJXG/iJXG-Info.plist4300911832#428"    cd /Users/pw/Downloads/iJXG    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    builtin-infoPlistUtility iJXG-Info.plist -genpkginfo /Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -o /Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app/Info.plist0#
+
+CProcessInfoPlistFile /Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app/Info.plist iJXG-Info.plist
+r0
+
+CProcessPCH /var/folders/6H/6HnshW6WF68B0yU8kPYrrE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/iJXG_Prefix-bggkhyiazsdlmoezjbhepzlaniki/iJXG_Prefix.pch.gch iJXG_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
+r0
 
 CProcessPCH /var/folders/6H/6HnshW6WF68B0yU8kPYrrE+++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/iJXG_Prefix-bvlvvlktiuqdfbgxpsvnxevsxrzq/iJXG_Prefix.pch.gch iJXG_Prefix.pch normal i386 objective-c com.apple.compilers.gcc.4_2
 s299666155.141941
@@ -367,4 +499,7 @@ r1
 xTouch
 x/Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app
 lSLF07#2@67"Touch /Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app299667342#299667342#0(0"0(0#0#0"4300911832#247"    cd /Users/pw/Downloads/iJXG    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/pw/Downloads/iJXG/build/Debug-iphonesimulator/iJXG.app0#
+
+CTouch /Users/pw/Uni/JSXGraph/iJXG/build/Debug-iphonesimulator/iJXG.app
+r0
 
