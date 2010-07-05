@@ -42,11 +42,11 @@ JXG.GraphReader = new function() {
             tmp = splitted[i].split(' ');
             nodes.push({name:tmp[0],coords:[parseInt(tmp[1]),parseInt(tmp[2])]});
         }
-        for(i=n+1; i < 2*n; i++) {
+        for(i=n+1; i <= 2*n; i++) {
             tmp = splitted[i].split(' ');
             for(j=0; j<tmp.length; j++) {
                 if(tmp[j] == 'INF') {
-                    tmp[j] = 321;
+                    tmp[j] = Number.MAX_VALUE;
                 }
                 else {
                     tmp[j] = parseInt(tmp[j]);
