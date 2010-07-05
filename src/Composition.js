@@ -1293,38 +1293,30 @@ JXG.createLocus = function(board, parents, attributes) {
     c.dontCallServer = false;
 
     c.updateDataArray = function () {
-        cb = function(x, y, eq) {
-            c.dataX = x;
-            c.dataY = y;
-            c.eq = eq;
+        if(c.board.mode > 0)
+            return;
 
-            // convert equation and use it to build a generatePolynomial-method
-            c.generatePolynomial = (function(equation) {
-                return function(point) {
-                    var x = '(' + point.symbolic.x + ')',
-                            y = '(' + point.symbolic.y + ')';
+        var cb = function(x, y, eq) {
+                c.dataX = x;
+                c.dataY = y;
+                c.eq = eq;
 
-                    return [equation.replace(/\*\*/g, '^').replace(/x/g, x).replace(/y/g, y)];
-                }
-            })(eq[0]);
+                // convert equation and use it to build a generatePolynomial-method
+                c.generatePolynomial = (function(equation) {
+                    return function(point) {
+                        var x = '(' + point.symbolic.x + ')',
+                                y = '(' + point.symbolic.y + ')';
 
-            c.needsUpdate = true;
-            c.update();
-            c.updateRenderer();
-        };
-
-        p.needsUpdate = true;
-        p.update();
-        p.updateRenderer();
-
-        if(board.mode == board.BOARD_MODE_NONE && !this.dontCallServer) {
-            JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
-            // don't bother the server on the next update, because it's fired
-            // to plot the datapoints received by the server.
-            this.dontCallServer = true;
-        } else {
-            this.dontCallServer = false;
-        }
+                        return [equation.replace(/\*\*/g, '^').replace(/x/g, x).replace(/y/g, y)];
+                    }
+                })(eq[0]);
+            },
+            data = JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
+        JXG.debug('result start');
+        JXG.debug(p.name);
+        JXG.debug(data.polynomial);
+        JXG.debug('result end');
+        cb(data.datax, data.datay, data.polynomial);
     };
     return c;
 };

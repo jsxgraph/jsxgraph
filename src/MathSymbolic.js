@@ -131,6 +131,9 @@ JXG.Math.Symbolic.generatePolynomials = function(board, element, generateCoords)
         }
     }
 
+    JXG.debug(element.name);
+    JXG.debug(result);
+
     if(generateCoords)
         this.clearSymbolicCoordinates(board);
 
@@ -148,11 +151,11 @@ JXG.Math.Symbolic.generatePolynomials = function(board, element, generateCoords)
  */
 JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback) {
     var numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace'),
-        poly = this.generatePolynomials(board, point);
-    var polyStr = poly.join(','),
+        poly = this.generatePolynomials(board, point),
+        polyStr = poly.join(','),
+        result,
         xsye = new JXG.Coords(JXG.COORDS_BY_USR, [0,0], board),
-        xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board),
-        fileurl;
+        xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board);
 
     if(typeof JXG.Server.modules.geoloci == 'undefined')
         JXG.Server.loadModule('geoloci')
@@ -162,12 +165,15 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
 
     this.cbp = function(data) {
         //alert(data.exectime);
-        callback(data.datax, data.datay, data.polynomial);
+        //callback(data.datax, data.datay, data.polynomial);
+        result = data;
     };
 
     this.cb = JXG.bind(this.cbp, this);
 
-    JXG.Server.modules.geoloci.lociCoCoA(xsye.usrCoords[1], xeys.usrCoords[1], xeys.usrCoords[2], xsye.usrCoords[2], numDependent, polyStr, this.cb, false);
+    JXG.Server.modules.geoloci.lociCoCoA(xsye.usrCoords[1], xeys.usrCoords[1], xeys.usrCoords[2], xsye.usrCoords[2], numDependent, polyStr, this.cb, true);
 
     this.clearSymbolicCoordinates(board);
+    
+    return result;
 };

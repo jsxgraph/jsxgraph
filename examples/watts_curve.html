@@ -25,11 +25,20 @@
 
     loc = board.createElement('locus', [m1], {strokeColor: 'red', strokeWidth: '3px'});
 
+    p3 = board.create('point', [3, -3]);
+
+    lg = board.create('glider', [loc]);
+    lm = board.create('midpoint', [lg, p3]);
+    lc = board.create('circle', [lm, 2]);
+    li = board.create('intersection', [lc, c2, 0]);
+    lt = board.create('midpoint', [li, p3]);
+    board.create('locus', [lt], {strokeColor: 'black', strokeWidth: '1px'});
+
   /* ]]> */
   </script>
 <br/><br/>
 <form>
-    <input type="button" onclick="lg = board.create('glider', [loc]); board.create('locus', [lg], {strokeColor: 'black', strokeWidth: '1px'});" value="Create glider & new locus"/>
+    <input type="button" onclick="lg = board.create('glider', [loc]); lm = board.create('midpoint', [lg, p1]); board.create('locus', [lm], {strokeColor: 'black', strokeWidth: '1px'});" value="Create glider & new locus"/>
 </form>
 <div id="src_disp" style="display:block;">
 <h2><a href="#" name="src"></a>Quelltext der Konstruktion</h2>
