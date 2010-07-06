@@ -39,6 +39,7 @@ var JXG = {};
     JXG.rendererFiles = [];
     JXG.rendererFiles['svg'] = 'SVGRenderer';
     JXG.rendererFiles['vml'] = 'VMLRenderer';
+    JXG.rendererFiles['canvas'] = 'CanvasRenderer';
     JXG.baseFiles = null;
     // this maybe required by additional software/extensions and/or future renderers
     JXG.requirePath = '';

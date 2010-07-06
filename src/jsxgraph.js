@@ -152,8 +152,10 @@ JXG.JSXGraph = new function () {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else if(JXG.Options.renderer == 'vml') {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
-        } else {
+        } else if(JXG.Options.renderer == 'silverlight') {
             renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
+        } else {
+            renderer = new JXG.CanvasRenderer(document.getElementById(box));
         }
 
         board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height,showCopyright);

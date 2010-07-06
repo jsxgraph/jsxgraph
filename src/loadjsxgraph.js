@@ -52,14 +52,12 @@ var JXG = {};
     JXG.rendererFiles = [];
     if (JXG.useMinify) {
         JXG.rendererFiles['svg'] = 'SVGRendererMinify';
-    } else {
-        JXG.rendererFiles['svg'] = 'SVGRenderer';
-    }
-    if (JXG.useMinify) {
         JXG.rendererFiles['vml'] = 'VMLRendererMinify';
     } else {
+        JXG.rendererFiles['svg'] = 'SVGRenderer';
         JXG.rendererFiles['vml'] = 'VMLRenderer';
     }
+    JXG.rendererFiles['canvas'] = 'CanvasRenderer';
     //JXG.rendererFiles['silverlight'] = 'Silverlight,createSilverlight,SilverlightRenderer';
     JXG.requirePath = '';
 

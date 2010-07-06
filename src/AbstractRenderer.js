@@ -144,19 +144,8 @@ JXG.AbstractRenderer.prototype.drawPoint = function(/** Point */ el) {
 JXG.AbstractRenderer.prototype.updatePoint = function(/** Point */ el) {
     var size = el.visProp['size'],
     	f = el.visProp['face'];
+
     if (isNaN(el.coords.scrCoords[2]) || isNaN(el.coords.scrCoords[1])) return;
-    
-    if (this.enhancedRendering) {
-        if (!el.visProp['draft']) {
-            this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-            this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
-            this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
-        } else {
-            this.setDraft(el);
-        }
-    }
-    // Zoom does not work for traces.
-    size *= ((!el.board || !el.board.options.point.zoom)?1.0:Math.sqrt(el.board.zoomX*el.board.zoomY));
     
     if(f == 'cross' || f == 'x') { // x
         this.updatePathPrim(el.rendNode, this.updatePathStringPoint(el, size,'x'), el.board); 
@@ -522,54 +511,6 @@ JXG.AbstractRenderer.prototype.removeTicks = function(/** Line */ axis) {
     
     this.remove(ticks);
 };
-
-
-/**
- * Creates a rendering node for an {@link Arrow} on the {@link JXG.Board}.
- * @param el Reference to a {@link Line} object, that has to be drawn.
- * @see Arrow
- * @see Line
- * @see JXG.Line
- * @see #updateArrow
- */
-JXG.AbstractRenderer.prototype.drawArrow = function(/** Line */ el) {
-    var node = this.createPrim('line',el.id);
-    
-    this.setObjectStrokeWidth(el,el.visProp['strokeWidth']); // ?
-    this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']); // ?
-    this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']); // ?
-    this.setDashStyle(el,el.visProp); // ?
-    this.makeArrow(node,el);
-    this.appendChildPrim(node,el.layer);
-    this.appendNodesToElement(el,'lines');
-
-    this.updateArrow(el);
-};
-
-/**
- * Updates properties of an {@link Arrow} that already exists on the {@link JXG.Board}.
- * @param el Reference to an {@link Line} object, that has to be updated.
- * @see Arrow
- * @see Line
- * @see JXG.Line
- * @see #drawArrow
- */
-JXG.AbstractRenderer.prototype.updateArrow = function(/** Line */ el) {
-    if (this.enhancedRendering) {
-        if (!el.visProp['draft']) {
-            this.setObjectStrokeWidth(el,el.visProp['strokeWidth']);
-            this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']);
-            this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
-            this.setShadow(el);
-            this.setDashStyle(el,el.visProp);
-        } else {
-            this.setDraft(el);
-        }
-    }
-    this.updateLinePrim(el.rendNode,el.point1.coords.scrCoords[1],el.point1.coords.scrCoords[2],
-        el.point2.coords.scrCoords[1],el.point2.coords.scrCoords[2],el.board);
-};
-
 
 /* ************************** 
  *    Curves

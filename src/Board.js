@@ -33,13 +33,13 @@
 
 /**
  * Constructs a new Board object.
- * @class This is the Board class. It stores all methods and properties required
- * to manage a geonext board like adding geometric elements, removing them, managing
- * mouse over, drag & drop of geometric objects etc. You should never create a board by calling this constructor.
+ * @class The Board class stores all methods and properties required
+ * to manage a JSXGraph board like adding geometric elements, removing them, managing
+ * mouse over, drag & drop of geometric objects etc. You should never create a board using this constructor.
  * Please use {@link JXG.JSXGraph#initBoard} instead.
  * @constructor
- * @param {String,Object} container The id or reference of the html-element the board is drawn in.
- * @param {JXG.AbstractRenderer} renderer The reference of a geonext renderer.
+ * @param {String,Object} container The id or reference of the html-element the board is drawn in. This is usually a HTML div.
+ * @param {JXG.AbstractRenderer} renderer The reference of a renderer.
  * @param {String} id Unique identifier for the board, may be an empty string or null or even undefined.
  * @param {JXG.Coords} origin The coordinates where the origin is placed, in user coordinates.
  * @param {Number} zoomX Zoom factor in x-axis direction
@@ -1271,33 +1271,6 @@ JXG.Board.prototype.addCurve = function (obj) {
  */
 JXG.Board.prototype.addChart = function (obj) {
     return this.setId(obj,'Chart');
-};
-
-/**
- * Registers a arrow at the board and adds it to the renderer.
- * @param {JXG.Line} obj The arrow to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-JXG.Board.prototype.addArrow = function(obj) {
-    var num = this.numObjects, elId;
-    this.numObjects++;
-
-    // Falls Id nicht vorgegeben, eine Neue generieren:
-    elId = obj.id;
-    if((elId == '') || (elId == null)) {
-        elId = this.id + 'A' + num;
-    }
-
-    // Objekt in das assoziative Array einfuegen
-    this.objects[elId] = obj;
-
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elId;
-    this.renderer.drawArrow(obj);
-
-    return elId;
 };
 
 /**
