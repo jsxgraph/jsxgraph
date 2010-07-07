@@ -54,6 +54,8 @@ JXG.CanvasRenderer = function(container) {
 
 JXG.CanvasRenderer.prototype = new JXG.AbstractRenderer;
 
+JXG.CanvasRenderer.updateStencil
+
 JXG.CanvasRenderer.prototype.setShadow = function(el) {
     if (el.visPropOld['shadow']==el.visProp['shadow']) {
         return;
@@ -602,7 +604,7 @@ JXG.CanvasRenderer.prototype.updateText = function(/** JXG.Text */ el) {
     }
 };
 
-JXG.AbstractRenderer.prototype.drawLine = function(/** Line */ el) {
+JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
     var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
         screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
         ax, ay, bx, by, beta, sgn, x, y, m;
@@ -640,24 +642,23 @@ JXG.AbstractRenderer.prototype.drawLine = function(/** Line */ el) {
     this.makeArrows(el);
 };
 
-JXG.AbstractRenderer.prototype.updateLine = function(/** Line */ el) {
+JXG.CanvasRenderer.prototype.updateLine = function(/** Line */ el) {
     this.drawLine(el);
 };
 
-JXG.AbstractRenderer.prototype.drawCurve = function(/** Curve */ el) {
+JXG.CanvasRenderer.prototype.drawCurve = function(/** Curve */ el) {
     this.updatePathStringPrim(el);
 };
 
-JXG.AbstractRenderer.prototype.updateCurve = function(/** Curve */ el) {
+JXG.CanvasRenderer.prototype.updateCurve = function(/** Curve */ el) {
     this.drawCurve(el);
 };
 
-JXG.AbstractRenderer.prototype.drawCircle = function(/** Circle */ el) {
-    var radius = 2*el.Radius(),
-        aWidth = radius*el.board.stretchX,
-        aHeight = radius*el.board.stretchY,
-        aX = el.midpoint.coords.scrCoords[1] - aWidth/2,
-        aY = el.midpoint.coords.scrCoords[2] - aHeight/2,
+JXG.CanvasRenderer.prototype.drawEllipse = function(el, m1, m2, sX, sY, rX, rY) {
+    var aWidth = rX*sX,
+        aHeight = rY*sY,
+        aX = m1 - aWidth/2,
+        aY = m2 - aHeight/2,
         hB = (aWidth / 2) * .5522848,
         vB = (aHeight / 2) * .5522848,
         eX = aX + aWidth,
@@ -669,7 +670,7 @@ JXG.AbstractRenderer.prototype.drawCircle = function(/** Circle */ el) {
     this.context.fillStyle = el.visProp.fillColor;
     this.context.lineWidth = parseFloat(el.visProp.strokeWidth);
 
-    if (radius>0.0 && !isNaN(el.midpoint.coords.scrCoords[1]+el.midpoint.coords.scrCoords[2]) ) {
+    if (rX>0.0 && rY>0.0 && !isNaN(m1+m2) ) {
         this.context.moveTo(aX, mY);
         this.context.bezierCurveTo(aX, mY - vB, mX - hB, aY, mX, aY);
         this.context.bezierCurveTo(mX + hB, aY, eX, mY - vB, eX, mY);
@@ -680,6 +681,10 @@ JXG.AbstractRenderer.prototype.drawCircle = function(/** Circle */ el) {
     }
 };
 
-JXG.AbstractRenderer.prototype.updateCircle = function(/** Circle */ el) {
+JXG.CanvasRenderer.prototype.drawCircle = function(/** Circle */ el) {
+    this.drawEllipse(el, el.midpoint.coords.scrCoords[1], el.midpoint.coords.scrCoords[2], el.board.stretchX, el.board.stretchY, 2*el.Radius(), 2*el.Radius());
+};
+
+JXG.CanvasRenderer.prototype.updateCircle = function(/** Circle */ el) {
     this.drawCircle(el);
 };

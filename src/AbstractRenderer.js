@@ -794,52 +794,7 @@ JXG.AbstractRenderer.prototype.updateImage = function(/** Image */ el) {
     this.transformImage(el,el.transformations);    
 };
 
-
-
-/* ************************** 
- *    Angle related stuff - DEPRECATED
- * **************************/
-
-/**
- * Draft method for special renderers to draw an angle.
- * @param angle Reference to an angle object, that has to be drawn.
- * @see JXG.Angle
- * @see #updateAngle
- */
-//JXG.AbstractRenderer.prototype.drawAngle = function(/** JXG.Angle */ angle) { };
-
-/**
- * Update method draft for updating the properties of an angle.
- * @param angle Reference to an angle object.
- * @see JXG.Angle
- * @see #drawAngle
- */
-//JXG.AbstractRenderer.prototype.updateAngle = function(/** JXG.Angle */ angle) { };
-
-
-/* ************************** 
- *    Arc related stuff - DEPRECATED
- * **************************/
-
-/**
- * Draws an arc on the canvas; This method is a stub and has to be implemented by the special renderers.
- * @param arc Reference to an arc object, that has to be drawn.
- * @see JXG.Arc
- * @see #updateArc
- */
-//JXG.AbstractRenderer.prototype.drawArc = function(/** JXG.Arc */ arc) { };
-
-/**
- * Updates properties of an arc; This method is a stub and has to be implemented by the special renderers.
- * @param arc Reference to an arc object, that has to be updated.
- * @see JXG.Arc
- * @see #drawArc
- */
-//JXG.AbstractRenderer.prototype.updateArc = function(/** JXG.Arc */ el) { };
-
-
-
-/* ************************** 
+/* **************************
  *    Grid stuff
  * **************************/
 

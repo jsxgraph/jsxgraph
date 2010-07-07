@@ -28,6 +28,11 @@
 
    f = brd.create('functiongraph', [function (x) { return p1.X()*x*x;}]);
 
+   brd.addHook(function () {
+       if($('copy') != null)
+            $('copy').src = $(brd.renderer.canvasId).toDataURL();
+   });
+
   /* ]]> */
   </script>
 
