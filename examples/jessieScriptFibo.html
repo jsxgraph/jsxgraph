@@ -45,7 +45,7 @@ function uselog() {
 }
 
 function moveLogToInput() {
-  document.getElementById('inputtext').value = document.getElementById('logdata').innerHTML.replace(/&amp;/g,'&');
+  document.getElementById('inputtext').value = document.getElementById('logdata').innerHTML.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
   clearlog();
 }
 
