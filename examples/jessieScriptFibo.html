@@ -29,6 +29,10 @@
 function run(t) {
     board.suspendUpdate();
     construction.push(board.construct(t));
+    t = t.replace (/^\s+/, '').replace (/\s+$/, '');
+    if(t.charAt(t.length-1) != ';') {
+        t = t+";";
+    }
     document.getElementById('logdata').innerHTML += t+'\n';
     document.getElementById('inputtext').value = '';    
     board.unsuspendUpdate();
@@ -40,7 +44,7 @@ function uselog() {
 }
 
 function moveLogToInput() {
-  document.getElementById('inputtext').value = document.getElementById('logdata').innerHTML;
+  document.getElementById('inputtext').value = document.getElementById('logdata').innerHTML.replace(/&amp;/g,'&');
   clearlog();
 }
 
