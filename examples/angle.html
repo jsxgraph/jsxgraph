@@ -17,14 +17,14 @@
         var p1, p2, l1;
         board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 50, originY: 300, unitX: 50, unitY: 50, axis:true});
         
-        p1 = board.createElement('point', [0, 0], {style:5,name:"A",fillColor:'blue'}); 
-        p2 = board.createElement('point', [0, 4], {style:5,name:"B",fillColor:'blue'});
-        p3 = board.createElement('point', [4, 0], {style:5,name:"C",fillColor:'blue'});
-        p4 = board.createElement('point', [2, 2], {style:5,name:"D",fillColor:'blue'});
-        p5 = board.createElement('point', [4, 4], {style:5,name:"E",fillColor:'blue'});        
+        p1 = board.createElement('point', [0, 0], {face:'+',name:"A",fillColor:'blue'}); 
+        p2 = board.createElement('point', [0, 4], {style:4,name:"B",fillColor:'blue'});
+        p3 = board.createElement('point', [4, 0], {style:9,name:"C",fillColor:'blue'});
+        p4 = board.createElement('point', [2, 2], {style:10,name:"D",fillColor:'blue'});
+        p5 = board.createElement('point', [4, 4], {style:11,name:"E",fillColor:'blue'});        
         
         l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'green',withLabel:true});
-        l4 = board.createElement('line', [p1, p3], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'blue',withLabel:true});        
+        l4 = board.createElement('arrow', [p1, p3], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'blue',withLabel:true});        
 
         a1 = board.createElement('angle', [p3,p1,p2], 
             {strokeColor:'red',visible:true, strokeWidth:'2px',fillColor:'#FF000050',text:'&alpha;', fontSize:30}

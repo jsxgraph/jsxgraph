@@ -36,6 +36,7 @@ function run(t) {
     document.getElementById('logdata').innerHTML += t+'\n';
     document.getElementById('inputtext').value = '';    
     board.unsuspendUpdate();
+    board.update();
 }
 
 function uselog() {

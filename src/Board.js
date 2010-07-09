@@ -2276,15 +2276,24 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     propValue = propValue.replace (/^\s+/, '').replace (/\s+$/, '');
                     if(objName[0].search(/\./) != -1) {
                         prop = true;
+                    
+                        objName = objName[0].split('.');
+                        propName = objName[objName.length-1];
+                        propName = propName.replace (/^\s+/, '').replace (/\s+$/, '');
+                        objName.pop();
+                        objName = objName.join(".");
+                        if(mode == 'macro') {
+                            for(j=0; j<params.length; j++) {
+                                if(objName == params[j]) {
+                                    objName = paraIn[j];
+                                }
+                            }
+                        }                    
+                        //alert("_"+objName+"_"+propName+"_"+propValue+"_");
+                        //alert(JXG.getReference(this,objName).name);
+                        JXG.getReference(this,objName).setProperty(propName+":"+propValue);
+                        
                     }
-                    objName = objName[0].split('.');
-                    propName = objName[objName.length-1];
-                    propName = propName.replace (/^\s+/, '').replace (/\s+$/, '');
-                    objName.pop();
-                    objName = objName.join(".");
-                    //alert("_"+objName+"_"+propName+"_"+propValue+"_");
-                    //alert(JXG.getReference(this,objName).name);
-                    JXG.getReference(this,objName).setProperty(propName+":"+propValue);
                 }
                 if(!prop) { // nicht nur eine Eigenschaft setzen, sondern neues Element konstruieren
                     if(splitted[i].search(/=/) != -1) {
@@ -2822,6 +2831,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
             }
         }
     }
+    this.update();
     return output;
 };
 

@@ -180,4 +180,19 @@ unten: \verb+triangledown+ oder \verb+v+ \\ & Dreieck nach rechts:
 \verb+triangleleft+ oder \verb+<+
 \\ \hline
 \end{tabular}
+
+\section{Makros}
+Zusätzlich können Makros definiert werden. Schlüsselwort ist
+\verb+Macro+, die Parameter werden, durch Komma getrennt, in
+runden Klammern übergeben, der Inhalt innerhalb von geschweiften
+Klammern. Links vom Zuweisungsoperator kann ein beliebiger Name
+für das Makro übergeben werden. \\ Die entsprechende Syntax ist
+also
+\begin{verbatim}
+     macroName = Macro(param1, param2, param3, ...) { Befehl1; Befehl2; Befehl3; ... };
+\end{verbatim}
+Aufgerufen wird das Makro dann mit
+\begin{verbatim}
+     ergebnis = macroName(x1,x2,x3,...);
+\end{verbatim}
 \end{document}
