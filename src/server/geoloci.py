@@ -165,7 +165,7 @@ class JXGGeoLociModule(JXGServerModule):
                 continue
     
             polynomialsReturn.append(polynomials[i])
-            x, y = numpy.meshgrid(numpy.linspace(xs, xe, 200), numpy.linspace(ys, ye, 200))
+            x, y = numpy.meshgrid(numpy.linspace(xs, xe, 500), numpy.linspace(ys, ye, 500))
         
             z = eval(polynomials[i])
             C = contour(x, y, z, [0])

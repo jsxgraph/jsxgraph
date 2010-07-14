@@ -15,19 +15,31 @@
     board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: true, grid: false,
                                    keepaspectratio: true, showcopyright: false});
 
+//    board.suspendUpdate();
     p3 = board.createElement('point', [8, 3]);
     p4 = board.createElement('point', [8, 8]);
-    c1 = board.createElement('circle', [p4, 4]);
+    c1 = board.createElement('circle', [p4, 4]);//, {strokeOpacity: 0.3});
 
     p6 = board.createElement('glider', [0, 0, c1], {name:"D"});
-    g = board.createElement('line', [p3, p6]);
+    g = board.createElement('line', [p3, p6]);//, {strokeOpacity: 0.3});
 
-    c2 = board.createElement('circle', [p6, 3]);
+    c2 = board.createElement('circle', [p6, 3]);//, {strokeOpacity: 0.3});
 
     p14_1 = board.createElement('intersection', [c2,g,0], {name: "T"});
-    p14_2 = board.createElement('intersection', [c2,g,1]);
+//    p14_2 = board.createElement('intersection', [c2,g,1]);
 
-    loc = board.createElement('locus', [p14_1], {strokeColor: 'red', strokeWidth: '1px'});
+//    loc = board.createElement('locus', [p14_1], {strokeColor: 'red', strokeWidth: '1px', strokeOpacity: 0.3});
+
+//    tg = board.create('glider', [loc]);
+    //tg = p14_1;
+
+//    tc = board.create('circle', [tg, 3], {strokeOpacity: 0.3});
+//    ti = board.create('intersection', [tc, c1, 0]);
+//    tm = board.create('midpoint', [tg, ti]);
+
+//    board.unsuspendUpdate();
+
+//    tl = board.create('locus', [tm], {strokeWidth: '3px', strokeOpacity: 0.9, strokeColor: 'black'});
 
   /* ]]> */
   </script>

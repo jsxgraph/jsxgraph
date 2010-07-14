@@ -1302,14 +1302,18 @@ JXG.createLocus = function(board, parents, attributes) {
                 c.eq = eq;
 
                 // convert equation and use it to build a generatePolynomial-method
-                c.generatePolynomial = (function(equation) {
+                c.generatePolynomial = (function(equations) {
                     return function(point) {
                         var x = '(' + point.symbolic.x + ')',
-                                y = '(' + point.symbolic.y + ')';
+                            y = '(' + point.symbolic.y + ')',
+                            res = [], i;
 
-                        return [equation.replace(/\*\*/g, '^').replace(/x/g, x).replace(/y/g, y)];
+                        for(i=0; i<equations.length; i++)
+                            res[i] = equations[i].replace(/\*\*/g, '^').replace(/x/g, x).replace(/y/g, y);
+
+                        return res;
                     }
-                })(eq[0]);
+                })(eq);
             },
             data = JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
 

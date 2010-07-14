@@ -46,6 +46,9 @@ JXG.Math.eps = 0.000001;
 JXG.Math.Vector = function(elements) {
     var i;
     this.length = 0;
+
+    if(JXG.isString(elements))
+        return this;
     
     if((typeof elements != undefined) && (elements != null)) {
         for(i=0; i<elements.length; i++) {
@@ -71,12 +74,16 @@ JXG.Math.Vector.prototype.n = function() {
  * Exchanges two elements of the vector.
  * @param {int} i The first element that is to be exchanged.
  * @param {int} j The second element that is to be exchanged.
+ * @type JXG.Math.Vector
+ * @return A reference to the Vector object to allow chaining.
  */
 JXG.Math.Vector.prototype.exchange = function(i, j) {
     var temp = this[i];
     
     this[i] = this[j];
-    this[j] = temp; 
+    this[j] = temp;
+
+    return this;
 };
 
 /**

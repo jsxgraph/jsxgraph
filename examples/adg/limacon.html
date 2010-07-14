@@ -1,0 +1,91 @@
+<html>
+<head>
+   <title>Lima&ccedil;on | JSXGraph Example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Lima&ccedil;on</h2>
+<div id="debug" style="display: none"></div>
+<center>
+<div style="width: 1000px;">
+    <div style="width:500px; height: 510px;">
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px; text-align: left; float: left;"></div>
+  <div id="polynomials" style="display: none; width: 500px; height: 500px; margin-left: 10px; text-align: left; padding-left: -200px;"></div>
+  </div>
+
+    <div style="width: 800px; margin-top: 10px;">
+  <form>
+      <input type="button" onclick="chooseCoordinateSystem();" value="Choose coordinate system" />
+      <input type="button" onclick="generatePolynomials();" value="Generate system of polynomial equations" />
+  </form>
+  </div>
+</div>
+</center>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: true, grid: false,
+                                   keepaspectratio: true, showcopyright: false});
+
+//    board.suspendUpdate();
+    p3 = board.createElement('point', [8, 3]);
+    p4 = board.createElement('point', [8, 8]);
+    c1 = board.createElement('circle', [p4, 4]);//, {strokeOpacity: 0.3});
+
+    p6 = board.createElement('glider', [0, 0, c1], {name:"D"});
+    g = board.createElement('line', [p3, p6]);//, {strokeOpacity: 0.3});
+
+    c2 = board.createElement('circle', [p6, 3]);//, {strokeOpacity: 0.3});
+
+    p14_1 = board.createElement('intersection', [c2,g,0], {name: "T"});
+    
+//    p14_2 = board.createElement('intersection', [c2,g,1]);
+
+//    loc = board.createElement('locus', [p14_1], {strokeColor: 'red', strokeWidth: '1px', strokeOpacity: 0.3});
+
+//    tg = board.create('glider', [loc]);
+    //tg = p14_1;
+
+//    tc = board.create('circle', [tg, 3], {strokeOpacity: 0.3});
+//    ti = board.create('intersection', [tc, c1, 0]);
+//    tm = board.create('midpoint', [tg, ti]);
+
+//    board.unsuspendUpdate();
+
+//    tl = board.create('locus', [tm], {strokeWidth: '3px', strokeOpacity: 0.9, strokeColor: 'black'});
+
+    function chooseCoordinateSystem() {
+        var k, o;
+        document.getElementById('polynomials').style.display = 'none';
+        document.getElementById('jxgbox').style.display = 'block';
+        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p14_1, 'u', 'brace');
+
+        for(k in board.objects) {
+            o = board.objects[k];
+            if(o.elementClass == JXG.OBJECT_CLASS_POINT) {
+                o.label.content.setText(o.name + ' (' + o.symbolic.x + ', ' + o.symbolic.y + ')');
+            }
+        }
+
+        board.update();
+        JXG.Math.Symbolic.clearSymbolicCoordinates(board);
+    }
+
+    function generatePolynomials() {
+        var res = JXG.Math.Symbolic.generatePolynomials(board, p14_1, true),
+            i, out = document.getElementById('polynomials');;
+
+        out.innerHTML = '<ul>';
+        for(i=0; i<res.length; i++)
+            out.innerHTML += '<li>' + res[i] + ' = 0</li>';
+        out.innerHTML += '</ul>';
+        out.style.display = 'block';
+        document.getElementById('jxgbox').style.display = 'none';
+    }
+
+  /* ]]> */
+  </script>
+<br/>
+</body>
+</html>

@@ -171,6 +171,6 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
     JXG.Server.modules.geoloci.lociCoCoA(xsye.usrCoords[1], xeys.usrCoords[1], xeys.usrCoords[2], xsye.usrCoords[2], numDependent, polyStr, this.cb, true);
 
     this.clearSymbolicCoordinates(board);
-    
+
     return result;
 };
