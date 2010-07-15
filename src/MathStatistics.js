@@ -62,7 +62,7 @@ JXG.Math.Statistics.median = function(arr) {
     var tmp, len;
     
     if (arr.length>0) {
-        tmp = arr.clone();
+        tmp = arr.slice(0,arr.length);
         tmp.sort(function(a,b){return a-b;});
         len = tmp.length;
         if (len%2==1) {
