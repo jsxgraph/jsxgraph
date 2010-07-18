@@ -39,10 +39,15 @@
     c2 = board.createElement('circle', [p6, 3]);//, {strokeOpacity: 0.3});
 
     p14_1 = board.createElement('intersection', [c2,g,0], {name: "T"});
-    
+
+    board.options.locus.translateToOrigin = true;
+    board.options.locus.toOrigin = p3;
+//    board.options.locus.translateTo10 = true;
+//    board.options.locus.to10 = p4;
+
 //    p14_2 = board.createElement('intersection', [c2,g,1]);
 
-//    loc = board.createElement('locus', [p14_1], {strokeColor: 'red', strokeWidth: '1px', strokeOpacity: 0.3});
+    loc = board.createElement('locus', [p14_1], {strokeColor: 'red', strokeWidth: '1px', strokeOpacity: 0.3});
 
 //    tg = board.create('glider', [loc]);
     //tg = p14_1;

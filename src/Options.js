@@ -82,8 +82,8 @@ JXG.Options = {
     point : {
     	withLabel: true,
         style : 5, // deprecated
-        face : 'o', 
-        size : 3, 
+        face : 'o',
+        size : 3,
         fillColor : '#ff0000',
         highlightFillColor : '#EEEEEE',
         strokeWidth: '2px',
@@ -123,7 +123,7 @@ JXG.Options = {
         strokeColor : '#666666',
         highlightStrokeColor : '#888888'
     },
-    
+
     /*special circle options */
     circle : {
         fillColor : 'none',
@@ -212,13 +212,21 @@ JXG.Options = {
         point : 9,
         arc   : 8,
         line  : 7,
-        circle: 6, 
+        circle: 6,
         curve : 5,
         polygon: 4,
         sector: 3,
         angle : 3,
         grid  : 1,
-        image : 0 
+        image : 0
+    },
+
+    locus : {
+    	translateToOrigin: false,
+    	translateTo10: false,
+    	dilate: false,
+    	toOrigin: null,
+    	to10: null
     }
 };
 
@@ -446,8 +454,8 @@ JXG.rgb2cb = function(color, deficiency) {
 
     document.getElementById('debug').innerHTML += 'color: ' + color;
 
-//    document.getElementById('debug').innerHTML += 'deuteranopia<br/><br/>';    
-      // find a,b,c for lam=575nm and lam=475 
+//    document.getElementById('debug').innerHTML += 'deuteranopia<br/><br/>';
+      // find a,b,c for lam=575nm and lam=475
       a1 = anchor_e[1] * anchor[8] - anchor_e[2] * anchor[7];
       b1 = anchor_e[2] * anchor[6] - anchor_e[0] * anchor[8];
       c1 = anchor_e[0] * anchor[7] - anchor_e[1] * anchor[6];
@@ -457,7 +465,7 @@ JXG.rgb2cb = function(color, deficiency) {
       inflection = (anchor_e[2] / anchor_e[0]);
 
 //    document.getElementById('debug').innerHTML += 'a1 = ' + a1 + '<br/>' + 'b1 = ' + b1 + '<br/>' + 'c1 = ' + c1 + '<br/>' + 'a2 = ' + a2 + '<br/>' + 'b2 = ' + b2 + '<br/>' + 'c2 = ' + c2 + '<br/>' + 'inflection = ' + inflection + '<br/><br/>protanopia<br/><br/>';
-      // find a,b,c for lam=575nm and lam=475 
+      // find a,b,c for lam=575nm and lam=475
       a1 = anchor_e[1] * anchor[8] - anchor_e[2] * anchor[7];
       b1 = anchor_e[2] * anchor[6] - anchor_e[0] * anchor[8];
       c1 = anchor_e[0] * anchor[7] - anchor_e[1] * anchor[6];
@@ -477,7 +485,7 @@ JXG.rgb2cb = function(color, deficiency) {
       inflection = (anchor_e[1] / anchor_e[0]);
 
 
-//    document.getElementById('debug').innerHTML += 'a1 = ' + a1 + '<br/>' + 'b1 = ' + b1 + '<br/>' + 'c1 = ' + c1 + '<br/>' + 'a2 = ' + a2 + '<br/>' + 'b2 = ' + b2 + '<br/>' + 'c2 = ' + c2 + '<br/>' + 'inflection = ' + inflection;    
+//    document.getElementById('debug').innerHTML += 'a1 = ' + a1 + '<br/>' + 'b1 = ' + b1 + '<br/>' + 'c1 = ' + c1 + '<br/>' + 'a2 = ' + a2 + '<br/>' + 'b2 = ' + b2 + '<br/>' + 'c2 = ' + c2 + '<br/>' + 'inflection = ' + inflection;
 */
     lms = JXG.rgb2LMS(color);
     l = lms.l; m = lms.m; s = lms.s;

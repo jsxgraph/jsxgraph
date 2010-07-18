@@ -54,7 +54,7 @@ class JXGGeoLociModule(JXGServerModule):
         resp.addHandler(self.lociCoCoA, 'function(data) { }')
         return
 
-    def lociCoCoA(self, resp, xs, xe, ys, ye, number, polys):
+    def lociCoCoA(self, resp, xs, xe, ys, ye, number, polys, cmf, rot, transx, transy):
         self.output = ''
         self.cococa_process = None
         cinput = ""
@@ -89,7 +89,7 @@ class JXGGeoLociModule(JXGServerModule):
         cinput += "    EndFor;\n"
         cinput += "EndFor;\n"
         cinput += "Print \"resultsend\", NewLine;"
-    
+
         if self.debug:
             print >>self.debugOutput, "Starting CoCoA with input<br />"
             print >>self.debugOutput, cinput + '<br />'
@@ -97,7 +97,7 @@ class JXGGeoLociModule(JXGServerModule):
         # The suicide pill for the CoCoA process:
         # If not done within the following amount
         # of seconds, the subprocess will be terminated
-    
+
         time_left = 20
 
         class TimeoutException(Exception): pass
@@ -107,10 +107,10 @@ class JXGGeoLociModule(JXGServerModule):
                 raise TimeoutException, "Timed out!"
             signal.signal(signal.SIGALRM, signal_handler)
             signal.alarm(seconds)
-        
+
         #global cocoa_process
         #global output
-        
+
         def callCoCoA():
             # Global variables aren't that nice, but this time they're useful
             #global cocoa_process, output
@@ -137,49 +137,49 @@ class JXGGeoLociModule(JXGServerModule):
 
         calc_time = time.time() - calc_time
         resp.addData('exectime', calc_time)
-        
+
         if self.debug:
             print >>self.debugOutput, "Reading and Parsing CoCoA output" + '<br />'
             print >>self.debugOutput, self.output + '<br />'
-        
+
         # Extract results
         result = re.split('resultsend', re.split('resultsbegin', self.output)[1])[0]
         result = re.split('-------------------------------', re.split('-------------------------------', result)[1])[0]
         result = result.replace("^", "**")
         result = result.replace("\r", "")
         polynomials = re.split('\n', result)
-    
+
         if self.debug:
             print >>self.debugOutput, "Found the following polynomials:" + '<br />'
             for i in range(0,len(polynomials)):
                 print >>self.debugOutput, "Polynomial ", i+1, ": " + polynomials[i] + '<br />'
-        
+
         datax = []
         datay = []
         polynomialsReturn = []
-        
+
         for i in range(0,len(polynomials)):
             if len(polynomials[i]) == 0:
                 continue
             if ((not "x" in polynomials[i]) and (not "y" in polynomials[i])) or ("W" in polynomials[i]):
                 continue
-    
+
             polynomialsReturn.append(polynomials[i])
             x, y = numpy.meshgrid(numpy.linspace(xs, xe, 500), numpy.linspace(ys, ye, 500))
-        
+
             z = eval(polynomials[i])
             C = contour(x, y, z, [0])
-    
+
             if self.debug:
                 savefig('/tmp/test%s.png' % i)
-        
+
             for i in range(0, len(C.collections[0].get_paths())):
                 pa = C.collections[0].get_paths()[i].to_polygons()[0]
 
                 for i in range(0,len(pa)):
                     datax.append(pa[i,0])
                     datay.append(pa[i,1])
-    
+
                 datax.append('null')
                 datay.append('null')
 
@@ -198,4 +198,3 @@ class JXGGeoLociModule(JXGServerModule):
         self.debugOutput.close()
 
         return
-
