@@ -256,7 +256,7 @@ JXG.Chart.prototype.drawPoints = function(board, parents, attributes) {
 JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 array possible as argument 
     var y = parents[0];
     if (y.length<=0) { return; }
-    if (typeof y[0] == 'function') { return; } // functions not yet possible
+    //if (typeof y[0] == 'function') { return; } // functions not yet possible
 
     var i;
     var p = [];
@@ -269,7 +269,13 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         la[i] = '';
     }
     var labelArray = attributes['labelArray'] || la;
-    var radius = attributes['radius'] || 4;
+    var r = attributes['radius'] || 4;
+    var radius;
+    if (!JXG.isFunction(r)) {
+        radius = function(){ return r; }
+    } else {
+        radius = r;
+    }
     var myAtts = {};
     if (typeof attributes['highlightOnSector']  =='undefined') {
         attributes['highlightOnSector'] = false;
@@ -290,13 +296,35 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
     var yc = cent[1];
 
     var center = board.create('point',[xc,yc], {name:'',fixed:true,visible:false});
-    p[0] = board.create('point',[radius+xc,0+yc], {name:'',fixed:true,visible:false});
+    p[0] = board.create('point',[function(){ return radius()+xc;},function(){ return 0+yc;}], {name:'',fixed:true,visible:false});
     var rad = 0.0;
     for (i=0;i<y.length;i++) {
-        rad += (s!=0)?(2*Math.PI*y[i]/s):0;
-        var xcoord = radius*Math.cos(rad)+xc;
-        var ycoord = radius*Math.sin(rad)+yc;
-        p[i+1] = board.create('point',[xcoord,ycoord], {name:'',fixed:true,visible:false,withLabel:false});
+        if (JXG.isFunction(y[i])) {
+            p[i+1] = board.create('point',
+                [(function(j){ return function() {
+                var s = 0.0, t = 0.0, i;
+                for (i=0; i<=j ;i++) { t += parseFloat(y[i]()); }
+                for (i=0; i<y.length ;i++) { s += parseFloat(y[i]()); }
+                var rad = (s!=0)?(2*Math.PI*t/s):0;
+                return radius()*Math.cos(rad)+xc;
+            };})(i),
+                (function(j){ return function() {
+                var s = 0.0, t = 0.0, i;
+                for (i=0; i<=j;i++) { t += parseFloat(y[i]()); }
+                for (i=0; i<y.length ;i++) { s += parseFloat(y[i]()); }
+                var rad = (s!=0)?(2*Math.PI*t/s):0;
+                return radius()*Math.sin(rad)+yc;
+            };})(i)
+                ], 
+                {name:'',fixed:false,visible:false,withLabel:false});
+        } else {
+            rad += (s!=0)?(2*Math.PI*y[i]/s):0;
+            p[i+1] = board.create('point',
+                [function(){ return radius()*Math.cos(rad)+xc;},
+                function(){ return radius()*Math.sin(rad)+xc;}
+                ], {name:'',fixed:false,visible:false,withLabel:false});
+        }
+        
         myAtts['fillColor'] = colorArray[i%colorArray.length];
         myAtts['name'] = labelArray[i];
         if(myAtts['name'] != '') {
