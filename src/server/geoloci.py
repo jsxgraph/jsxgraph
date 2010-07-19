@@ -102,7 +102,7 @@ class JXGGeoLociModule(JXGServerModule):
         # If not done within the following amount
         # of seconds, the subprocess will be terminated
 
-        time_left = 20
+        time_left = 60
 
         class TimeoutException(Exception): pass
 

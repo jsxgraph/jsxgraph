@@ -82,7 +82,7 @@ JXG.createPerpendicularPoint = function(board, parentArr, atts) {
         l = parentArr[0];
     }
     else {
-        throw new Error("JSXGraph: Can't create perpendicular point with parent types '" + 
+        throw new Error("JSXGraph: Can't create perpendicular point with parent types '" +
                         (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'." +
                         "\nPossible parent types: [point,line]");
     }
@@ -196,7 +196,7 @@ JXG.createPerpendicular = function(board, parentArr, atts) {
         p = parentArr[1];
     }
     else {
-        throw new Error("JSXGraph: Can't create perpendicular with parent types '" + 
+        throw new Error("JSXGraph: Can't create perpendicular with parent types '" +
                         (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'." +
                         "\nPossible parent types: [line,point]");
     }
@@ -381,14 +381,15 @@ JXG.createParallelPoint = function(board, parentArr, atts) {
         b = parentArr[0].point2;
     }
     else {
-        throw new Error("JSXGraph: Can't create parallel point with parent types '" + 
+        throw new Error("JSXGraph: Can't create parallel point with parent types '" +
                         (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'." +
                         "\nPossible parent types: [line,point], [point,point,point]");
     }
 
     p = board.create('point', [function () { return c.coords.usrCoords[1] + b.coords.usrCoords[1] - a.coords.usrCoords[1]; }, function () { return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2]; }], atts);
-//    p1.addChild(p); // required for algorithms requiring dependencies between elements
-//    p2.addChild(p);
+	// required for algorithms requiring dependencies between elements
+	a.addChild(p);
+	b.addChild(p);
     c.addChild(p);
 
     // required to set the coordinates because functions are considered as constraints. hence, the coordinates get set first after an update.
@@ -556,7 +557,7 @@ JXG.createArrowParallel = function(board, parents, atts) {
         // because that'll be run for the line l right after leaving that function.
         l = JXG.createParallel(board, parents, atts);
     } catch (e) {
-        throw new Error("JSXGraph: Can't create arrowparallel with parent types '" + 
+        throw new Error("JSXGraph: Can't create arrowparallel with parent types '" +
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [line,point], [point,point,point]");
     }
@@ -613,12 +614,12 @@ JXG.createNormal = function(board, parents, attributes) {
             c = parents[0];
             p = parents[1];
         } else {
-            throw new Error("JSXGraph: Can't create normal with parent types '" + 
+            throw new Error("JSXGraph: Can't create normal with parent types '" +
                             (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                             "\nPossible parent types: [point,line], [point,circle], [glider]");
         }
     } else {
-        throw new Error("JSXGraph: Can't create normal with parent types '" + 
+        throw new Error("JSXGraph: Can't create normal with parent types '" +
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,line], [point,circle], [glider]");
     }
@@ -714,7 +715,7 @@ JXG.createNormal = function(board, parents, attributes) {
                     ], attributes );
     }
     else {
-        throw new Error("JSXGraph: Can't create normal with parent types '" + 
+        throw new Error("JSXGraph: Can't create normal with parent types '" +
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,line], [point,circle], [glider]");
     }
@@ -773,7 +774,7 @@ JXG.createBisector = function(board, parentArr, atts) {
         return l;
     }
     else {
-        throw new Error("JSXGraph: Can't create angle bisector with parent types '" + 
+        throw new Error("JSXGraph: Can't create angle bisector with parent types '" +
                         (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'." +
                         "\nPossible parent types: [point,point,point]");
     }
@@ -795,7 +796,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
         ret;
 
     if(l1.elementClass != JXG.OBJECT_CLASS_LINE || l2.elementClass != JXG.OBJECT_CLASS_LINE) {
-        throw new Error("JSXGraph: Can't create angle bisectors of two lines with parent types '" + 
+        throw new Error("JSXGraph: Can't create angle bisectors of two lines with parent types '" +
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [line,line]");
     }
@@ -870,13 +871,13 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
 };
 
 /**
- * @class Constructs the midpoint of a {@link Circumcircle}. Like the circumcircle the circumcirclemidpoint
+ * @class Constructs the midpoint of a {@link Circumcircle}. Like the circumcircle the circumcenter
  * is constructed by providing three points.
  * @pseudo
- * @description A circumcircle midpoint is given by three points which are all lying on the circle with the
- * constructed circumcircle midpoint as the midpoint.
+ * @description A circumcenter is given by three points which are all lying on the circle with the
+ * constructed circumcenter as the midpoint.
  * @constructor
- * @name Circumcirclemidpoint
+ * @name Circumcenter
  * @type JXG.Point
  * @augments JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -887,14 +888,14 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
  * var p2 = board.create('point', [2.0, 1.0]);
  * var p3 = board.create('point', [3.0, 3.0]);
  *
- * var cc1 = board.create('circumcirclemidpoint', [p1, p2, p3]);
+ * var cc1 = board.create('circumcenter', [p1, p2, p3]);
  * </pre><div id="e8a40f95-bf30-4eb4-88a8-f4d5495261fd" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var ccmex1_board = JXG.JSXGraph.initBoard('e8a40f95-bf30-4eb4-88a8-f4d5495261fd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
  *   var ccmex1_p1 = ccmex1_board.create('point', [0.0, 2.0]);
  *   var ccmex1_p2 = ccmex1_board.create('point', [6.0, 1.0]);
  *   var ccmex1_p3 = ccmex1_board.create('point', [3.0, 7.0]);
- *   var ccmex1_cc1 = ccmex1_board.create('circumcirclemidpoint', [ccmex1_p1, ccmex1_p2, ccmex1_p3]);
+ *   var ccmex1_cc1 = ccmex1_board.create('circumcenter', [ccmex1_p1, ccmex1_p2, ccmex1_p3]);
  * </script><pre>
  */
 JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
@@ -939,7 +940,7 @@ JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
         return p;
     }
     else {
-        throw new Error("JSXGraph: Can't create circumcircle midpoint with parent types '" + 
+        throw new Error("JSXGraph: Can't create circumcircle midpoint with parent types '" +
                         (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'." +
                         "\nPossible parent types: [point,point,point]");
     }
@@ -989,7 +990,7 @@ JXG.createCircumcircle = function(board, parentArr, atts) {
         p = JXG.createCircumcircleMidpoint(board, parentArr, cAtts);
         c = JXG.createCircle(board, [p, parentArr[0]], atts);
     } catch(e) {
-        throw new Error("JSXGraph: Can't create circumcircle with parent types '" + 
+        throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
                         (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'." +
                         "\nPossible parent types: [point,point,point]");
     }
@@ -1035,7 +1036,6 @@ JXG.createCircumcircle = function(board, parentArr, atts) {
 JXG.createReflection = function(board, parentArr, atts) {
     var l, p, r;
 
-    /* TODO reflection polynomials */
     if(parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_LINE) {
         p = parentArr[0];
         l = parentArr[1];
@@ -1045,18 +1045,45 @@ JXG.createReflection = function(board, parentArr, atts) {
         l = parentArr[0];
     }
     else {
-        throw new Error("JSXGraph: Can't create reflection point with parent types '" + 
+        throw new Error("JSXGraph: Can't create reflection point with parent types '" +
                         (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'." +
                         "\nPossible parent types: [line,point]");
     }
 
     // force a fixed point
-    atts['fixed'] = true;
+    //atts['fixed'] = true;
     r = JXG.createPoint(board, [function () { return JXG.Math.Geometry.reflection(l, p, board); }], atts);
     p.addChild(r);
     l.addChild(r);
 
     r.update();
+
+    r.generatePolynomial = function() {
+        /*
+         *  Reflection takes a point R and a line L and creates point P, which is the reflection of R on L.
+         *  L is defined by two points A and B.
+         *
+         * So we have two conditions:
+         *
+         *   (a)   RP  _|_  AB            (orthogonality condition)
+         *   (b)   AR  ==   AP            (distance condition)
+         *
+         */
+
+        var a1 = l.point1.symbolic.x;
+        var a2 = l.point1.symbolic.y;
+        var b1 = l.point2.symbolic.x;
+        var b2 = l.point2.symbolic.y;
+        var p1 = p.symbolic.x;
+        var p2 = p.symbolic.y;
+        var r1 = r.symbolic.x;
+        var r2 = r.symbolic.y;
+
+        var poly1 = ['((',r2,')-(',p2,'))*((',a2,')-(',b2,'))+((',a1,')-(',b1,'))*((',r1,')-(',p1,'))'].join('');
+        var poly2 = ['((',r1,')-(',a1,'))^2+((',r2,')-(',a2,'))^2-((',p1,')-(',a1,'))^2-((',p2,')-(',a2,'))^2'].join('');
+
+        return [poly1, poly2];
+    };
 
     return r;
 };
@@ -1098,7 +1125,7 @@ JXG.createMirrorPoint = function(board, parentArr, atts) {
             parentArr[i].addChild(p);
     }
     else {
-        throw new Error("JSXGraph: Can't create mirror point with parent types '" + 
+        throw new Error("JSXGraph: Can't create mirror point with parent types '" +
                         (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'." +
                         "\nPossible parent types: [point,point]");
     }
@@ -1150,7 +1177,7 @@ JXG.createIntegral = function(board, parents, attributes) {
         interval = parents[1];
         curve = parents[0];
     } else {
-        throw new Error("JSXGraph: Can't create integral with parent types '" + 
+        throw new Error("JSXGraph: Can't create integral with parent types '" +
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [[number|function,number|function],curve]");
     }
@@ -1170,7 +1197,7 @@ JXG.createIntegral = function(board, parents, attributes) {
         startx = start;
         starty = curve.yterm(start);
     }
-    
+
     if(JXG.isFunction(start)) {
         endx = end;
         endy = function () { return curve.yterm(endx()); };
@@ -1179,7 +1206,7 @@ JXG.createIntegral = function(board, parents, attributes) {
         endx = end;
         endy = curve.yterm(end);
     }
-    
+
     if(end < start)
         factor = -1;
 
@@ -1241,10 +1268,10 @@ JXG.createIntegral = function(board, parents, attributes) {
             left = pb_on_axis.X();
             right = pa_on_axis.X();
         }
-        
+
         x = [left, left];
         y = [0, curve.yterm(left)];
-        
+
         for(i=0; i < curve.numberPoints; i++) {
             if( (left <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= right) ) {
                 x.push(curve.points[i].usrCoords[1]);
@@ -1354,6 +1381,7 @@ JXG.JSXGraph.registerElement('bisector', JXG.createBisector);
 JXG.JSXGraph.registerElement('bisectorlines', JXG.createAngularBisectorsOfTwoLines);
 JXG.JSXGraph.registerElement('circumcircle', JXG.createCircumcircle);
 JXG.JSXGraph.registerElement('circumcirclemidpoint', JXG.createCircumcircleMidpoint);
+JXG.JSXGraph.registerElement('circumcenter', JXG.createCircumcircleMidpoint);
 JXG.JSXGraph.registerElement('integral', JXG.createIntegral);
 JXG.JSXGraph.registerElement('midpoint', JXG.createMidpoint);
 JXG.JSXGraph.registerElement('mirrorpoint', JXG.createMirrorPoint);

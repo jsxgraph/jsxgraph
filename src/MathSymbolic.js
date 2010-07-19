@@ -208,8 +208,6 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
 
     // Step 1
     if(bol.translateToOrigin && (board.listOfFreePoints.length > 0)) {
-    JXG.debug('optimize step 1');
-
 		if((typeof bol.toOrigin != 'undefined') && (bol.toOrigin != null) && isIn(bol.toOrigin.id, board.listOfFreePoints)) {
 			P1 = bol.toOrigin;
 		} else {
@@ -226,9 +224,6 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
 
         xs -= transx; xe -= transx;
         ys -= transy; ye -= transy;
-
-        for(i=0; i<board.listOfFreePoints.length; i++)
-            JXG.debug(board.listOfFreePoints[i].name + ': ' + board.listOfFreePoints[i].symbolic.x + ' ' + board.listOfFreePoints[i].symbolic.y);
 
 		// Step 2
 		if(bol.translateTo10 && (board.listOfFreePoints.length > 1)) {
@@ -278,9 +273,6 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
                     }
                 }
 
-                JXG.debug('sf: ' + sf);
-                
-
                 xs /= sf; xe /= sf;
                 ys /= sf; ye /= sf;
 
@@ -309,9 +301,6 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
 
     poly = this.generatePolynomials(board, point);
     polyStr = poly.join(',');
-
-    for(i=0; i<board.listOfFreePoints.length; i++)
-	    JXG.debug(board.listOfFreePoints[i].name + ': ' + board.listOfFreePoints[i].symbolic.x + ' ' + board.listOfFreePoints[i].symbolic.y);
 
     this.cbp = function(data) {
         //alert(data.exectime);
