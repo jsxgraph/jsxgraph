@@ -55,7 +55,7 @@ class JXGGeoLociModule(JXGServerModule):
         resp.addHandler(self.lociCoCoA, 'function(data) { }')
         return
 
-    def lociCoCoA(self, resp, xs, xe, ys, ye, number, polys, cmf, rot, transx, transy):
+    def lociCoCoA(self, resp, xs, xe, ys, ye, number, polys, sf, rot, transx, transy):
         self.output = ''
         self.cococa_process = None
         cinput = ""
@@ -184,8 +184,8 @@ class JXGGeoLociModule(JXGServerModule):
                     tx = pa[i, 0]
                     pa[i, 0] = c*pa[i,0] - s*pa[i,1]
                     pa[i, 1] = s*tx + c*pa[i,1]
-                    datax.append(pa[i,0] + transx)
-                    datay.append(pa[i,1] + transy)
+                    datax.append(sf*pa[i,0] + transx)
+                    datay.append(sf*pa[i,1] + transy)
 
                 datax.append('null')
                 datay.append('null')

@@ -167,12 +167,10 @@ JXG.Math.Symbolic.generatePolynomials = function(board, element, generateCoords)
  */
 JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback) {
     var numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace'),
-        poly,
-        polyStr,
-        result,
+        poly, polyStr, result, oldRadius = {},
         xsye = new JXG.Coords(JXG.COORDS_BY_USR, [0,0], board),
         xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board),
-        P1, P2, i, cmf = 0, transx = 0, transy = 0, rot = 0, c, s, tx,
+        P1, P2, i, sf = 1, transx = 0, transy = 0, rot = 0, c, s, tx,
         xs, xe, ys, ye,
 
         isIn = function(item, array) {
@@ -205,10 +203,8 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
     //   Step 2: Rotate the construction around the new P1, such that another point P2 (board.options.locus.to10 if set
     //     or a random point \neq P1 otherwise) is moved onto the positive x-axis
     //  Step 3: Dilate the construction, such that P2 is moved to (1, 0)
-    //  Step 4: Give the cycle modification factor (cmf), the rotation (rot) and the translation vector (transx, transy) to
+    //  Step 4: Give the scale factor (sf), the rotation (rot) and the translation vector (transx, transy) to
     //    the server, which retransforms the plot (if any).
-
-    // TODO: The radius' of all circles with fixed radius have to be adjusted!
 
     // Step 1
     if(bol.translateToOrigin && (board.listOfFreePoints.length > 0)) {
@@ -267,16 +263,53 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
             ye = s*tx + c*ye;
 
 			// Step 3
-			if(bol.dilate) {
-			}
+			if(bol.stretch && (Math.abs(P2.symbolic.x) > JXG.Math.eps)) {
+                sf = P2.symbolic.x;
+
+ 	    	    for(i=0; i<board.listOfFreePoints.length; i++) {
+  		    	    board.listOfFreePoints[i].symbolic.x /= sf;
+    		        board.listOfFreePoints[i].symbolic.y /= sf;
+   		        }
+
+                for(i in board.objects) {
+                    if((board.objects[i].elementClass == JXG.OBJECT_CLASS_CIRCLE) && (board.objects[i].method == 'pointRadius')) {
+                        oldRadius[i] = board.objects[i].radius;
+                        board.objects[i].radius /= sf;
+                    }
+                }
+
+                JXG.debug('sf: ' + sf);
+                
+
+                xs /= sf; xe /= sf;
+                ys /= sf; ye /= sf;
+
+                // this is now 1
+                P2.symbolic.x = 1;
+            }
 		}
+
+        // make the coordinates "as rational as possible"
+        for(i=0; i<board.listOfFreePoints.length; i++) {
+            tx = board.listOfFreePoints[i].symbolic.x;
+            if(Math.abs(tx) < JXG.Math.eps)
+                board.listOfFreePoints[i].symbolic.x = 0;
+            if(Math.abs(tx - Math.round(tx)) < JXG.Math.eps)
+                board.listOfFreePoints[i].symbolic.x = Math.round(tx);
+
+            tx = board.listOfFreePoints[i].symbolic.y;
+            if(Math.abs(tx) < JXG.Math.eps)
+                board.listOfFreePoints[i].symbolic.y = 0;
+            if(Math.abs(tx - Math.round(tx)) < JXG.Math.eps)
+                board.listOfFreePoints[i].symbolic.y = Math.round(tx);
+        }
     }
 
     // end of optimizations
 
     poly = this.generatePolynomials(board, point);
     polyStr = poly.join(',');
-    JXG.debug(rot);
+
     for(i=0; i<board.listOfFreePoints.length; i++)
 	    JXG.debug(board.listOfFreePoints[i].name + ': ' + board.listOfFreePoints[i].symbolic.x + ' ' + board.listOfFreePoints[i].symbolic.y);
 
@@ -288,9 +321,13 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
 
     this.cb = JXG.bind(this.cbp, this);
 
-    JXG.Server.modules.geoloci.lociCoCoA(xs, xe, ys, ye, numDependent, polyStr, cmf, rot, transx, transy, this.cb, true);
+    JXG.Server.modules.geoloci.lociCoCoA(xs, xe, ys, ye, numDependent, polyStr, sf, rot, transx, transy, this.cb, true);
 
     this.clearSymbolicCoordinates(board);
+
+    for(i in oldRadius) {
+        board.objects[i].radius = oldRadius[i];
+    }
 
     JXG.debug(result);
 

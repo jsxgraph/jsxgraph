@@ -224,7 +224,7 @@ JXG.Options = {
     locus : {
     	translateToOrigin: false,
     	translateTo10: false,
-    	dilate: false,
+    	stretch: false,
     	toOrigin: null,
     	to10: null
     }
