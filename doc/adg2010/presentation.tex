@@ -230,7 +230,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 }
 
 \frame{
-  \frametitle{Implementing this algorithm in JSXGraph}
+  \frametitle{Implementation}
 
   \begin{block}{Problems}
     \begin{itemize}
@@ -242,14 +242,195 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 }
 
 \frame{
-  \frametitle{Implementing this algorithm in JSXGraph}
+  \frametitle{Implementation}
 
-  \begin{block}{Our solution}
+  \begin{block}{AJAX}
     \begin{itemize}
-      \item XMLHttpRequest/AJAX to 
+      \item Transfer data (a)synchronously via HTTP with JavaScript
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{This enables us to}
+    \begin{itemize}
+      \item use a computer algebra system on a (web) server for the expensive Gr\"obner basis calculations
+      \item use a plotting tool/library for implicit plotting
     \end{itemize}
   \end{block}
 }
+
+\frame{
+  \frametitle{Implementation}
+
+\begin{center}
+      \includegraphics[width=10cm]{img/clise_model.png}
+\end{center}
+}
+
+\begin{frame}[fragile]
+  \frametitle{Implementation}
+
+  \begin{block}{Example/Input}
+    \begin{lstlisting}
+<link rel="stylesheet" type="text/css" href="css/jsxgraph.css" />
+<script type="text/javascript" src="js/jsxgraphcore.js"></script>
+[...]
+<div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+<script type="text/javascript">
+  /* <![CDATA[ */
+  board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: true, grid: false, keepaspectratio: true, showcopyright: false});
+  p3 = board.create('point', [8, 3]);
+  p4 = board.create('point', [8, 8]);
+  c1 = board.create('circle', [p4, 4]);
+  p6 = board.create('glider', [0, 0, c1], {name: 'D'});
+  g = board.create('line', [p3, p6]);
+  c2 = board.create('circle', [p6, 3]);
+  p14_1 = board.create('intersection', [c2,g,0], {name: 'T'});
+
+  locus = board.create('locus', [p14_1]);
+  /* ]]> */
+</script>
+    \end{lstlisting}
+  \end{block}
+\end{frame}
+
+\frame{
+  \frametitle{Implementation}
+
+  \begin{block}{Example/Output}
+\begin{center}
+      \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=6.5cm]{img/locus.png}}
+\end{center}
+  \end{block}
+}
+
+\frame{
+  \frametitle{Implementation}
+
+  \begin{block}{Ready-to-use elements}
+    \begin{itemize}
+      \item Glider on circle and line
+      \item Intersection points (circle/circle, circle/line, line/line)
+      \item Midpoint
+      \item Parallel line and point
+      \item Perpendicular line and point
+      \item Circumcircle and circumcenter
+    \end{itemize}
+  \end{block}
+}
+
+
+\frame{
+  \frametitle{Implementation}
+
+  \begin{block}{Easy to extend}
+\begin{center}
+      \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=8cm]{img/simsonsteiner.png}}
+\end{center}
+  \end{block}
+}
+
+
+\begin{frame}[fragile]
+  \frametitle{Implementation}
+
+  \begin{block}{}
+    \begin{lstlisting}
+<link rel="stylesheet" type="text/css" href="css/jsxgraph.css" />
+<script type="text/javascript" src="js/jsxgraphcore.js"></script>
+[...]
+<div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+<script type="text/javascript">
+  /* <![CDATA[ */
+  board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 8, -4], axis: true, grid: false, keepaspectratio: true, showcopyright: false});
+  A = board.createElement('point', [0, 0]);
+  B = board.createElement('point', [6, 0]);
+  C = board.createElement('point', [4, 4]);
+
+  t1 = board.createElement('triangle', [A, B, C], {strokeWidth: '1px'});
+
+  X = board.createElement('point', [4, 1.5], {name:"X"});
+
+  L = board.createElement('perpendicularpoint', [X, t1.c]);
+  M = board.createElement('perpendicularpoint', [X, t1.a]);
+  N = board.createElement('perpendicularpoint', [X, t1.b]);
+
+  t2 = board.createElement('triangle', [L, M, N], {strokeWidth: '1px'});
+
+  [...]
+    \end{lstlisting}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Implementation}
+
+  \begin{block}{}
+    \begin{lstlisting}
+  [...]
+
+  X.ancestors[L.id] = L;
+  X.ancestors[M.id] = M;
+  X.ancestors[N.id] = N;
+  X.ancestors[A.id] = A;
+  X.ancestors[B.id] = B;
+  X.ancestors[C.id] = C;
+
+  X.generatePolynomial = function () {
+    var as16 = getTriangleArea(L, M, N),
+    as = '((('+M.symbolic.x+')-('+N.symbolic.x+'))^2+(('+M.symbolic.y+')-('+N.symbolic.y+'))^2)',
+    bs = '((('+L.symbolic.x+')-('+N.symbolic.x+'))^2+(('+L.symbolic.y+')-('+N.symbolic.y+'))^2)',
+    cs = '((('+M.symbolic.x+')-('+L.symbolic.x+'))^2+(('+M.symbolic.y+')-('+L.symbolic.y+'))^2)',
+
+    return ['4*'+as+'*'+cs+'-('+as+'+'+cs+'-'+bs+')*('+as+'+'+cs+'-'+bs+')-('+as16+')'];
+  };
+
+  locus = board.createElement('locus', [X], {strokeColor: 'red'});
+  /* ]]> */
+</script>
+    \end{lstlisting}
+  \end{block}
+\end{frame}
+
+
+\frame{
+  \frametitle{Implementation}
+
+  \begin{block}{Re-using locus data: Discovered loci can be}
+    \begin{itemize}
+      \item intersected with circles, lines, other curves, ...
+      \item used as a base object for gliding points
+      \item used for the discovery of other loci
+    \end{itemize}
+  \end{block}
+}
+
+\begin{frame}[fragile]
+  \frametitle{Implementation}
+\begin{columns}
+        \column{.40\textwidth}
+	    \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=4.5cm]{img/limacon-ext.png}}
+        \column{.60\textwidth}
+    \begin{lstlisting}
+tg = board.create('glider', [loc]);
+
+tc = board.create('circle', [tg, 3]);
+ti = board.create('intersection', [tc, c1, 0]);
+tm = board.create('midpoint', [tg, ti]);
+    \end{lstlisting}
+\end{columns}
+\end{frame}
+
+
+\frame{
+  \frametitle{Implementation}
+
+\begin{center}
+      \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=7cm]{img/limacon-extloc.png}}
+\end{center}
+}
+
+
 
 \section{Optimizations}
 
@@ -260,12 +441,14 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
   \end{block}
 }
 
-\section{Examples}
-
 \frame{
-  \frametitle{}
+  \frametitle{Last slide}
 
-  \begin{block}{Examples}
+  \begin{block}{Thank You}
+    \begin{itemize}
+      \item \href{http://jsxgraph.org/}{http://jsxgraph.org/}
+      \item \href{http://jsxgraph.uni-bayreuth.de/wiki/}{http://jsxgraph.uni-bayreuth.de/wiki/}
+    \end{itemize}
   \end{block}
 }
 

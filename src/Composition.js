@@ -909,6 +909,33 @@ JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
         for(i=0; i<3; i++)
             parentArr[i].addChild(p);
 
+        p.generatePolynomial = function() {
+                /*
+                     *  CircumcircleMidpoint takes three points A, B and C  and creates point M, which is the circumcenter of A, B, and C.
+                     *
+                     *
+                     * So we have two conditions:
+                     *
+                     *   (a)   CT  ==  AT           (distance condition I)
+                     *   (b)   BT  ==  AT           (distance condition II)
+                     *
+                     */
+
+            var a1 = a.symbolic.x;
+            var a2 = a.symbolic.y;
+            var b1 = b.symbolic.x;
+            var b2 = b.symbolic.y;
+            var c1 = c.symbolic.x;
+            var c2 = c.symbolic.y;
+            var t1 = p.symbolic.x;
+            var t2 = p.symbolic.y;
+
+            var poly1 = ['((',t1,')-(',a1,'))^2+((',t2,')-(',a2,'))^2-((',t1,')-(',b1,'))^2-((',t2,')-(',b2,'))^2'].join('');
+            var poly2 = ['((',t1,')-(',a1,'))^2+((',t2,')-(',a2,'))^2-((',t1,')-(',c1,'))^2-((',t2,')-(',c2,'))^2'].join('');
+
+            return [poly1, poly2];
+        };
+
         return p;
     }
     else {

@@ -23,8 +23,14 @@
       <input type="button" onclick="showLocusEquation();" value="Show locus equation" />
       <input type="button" onclick="showBoard();" value="Show board" />
       <br />
+      <input type="button" onclick="extend();" value="Extend the construction" />      
+      <input type="button" onclick="extendedLocus();" value="Calculate extended locus" />      
+      <br />
+      <input type="text" value="0.2" id="dim" size="3" />
       <input type="button" onclick="dimConstruction();" value="Dim construction" />
       <input type="button" onclick="dimLocus();" value="Dim locus" />
+      <input type="button" onclick="dimExtension();" value="Dim extension" />
+      <input type="button" onclick="dimLocus2();" value="Dim extended locus" />
   </form>
   </div>
 </div>
@@ -48,21 +54,20 @@
     p14_1 = board.createElement('intersection', [c2,g,0], {name: "T"});
 
     loc = null;
+
+    tg=null;
+    tc=null;
+    ti=null;
+    tm=null;
+    loc2 = null;
     
-    board.options.locus.translateToOrigin = true;
+    //board.options.locus.translateToOrigin = true;
     board.options.locus.toOrigin = p3;
-    board.options.locus.translateTo10 = true;
+    //board.options.locus.translateTo10 = true;
     board.options.locus.to10 = p4;
 //    p14_2 = board.createElement('intersection', [c2,g,1]);
 
 //    loc = board.createElement('locus', [p14_1], {strokeColor: 'red', strokeWidth: '1px', strokeOpacity: 0.3});
-
-//    tg = board.create('glider', [loc]);
-    //tg = p14_1;
-
-//    tc = board.create('circle', [tg, 3], {strokeOpacity: 0.3});
-//    ti = board.create('intersection', [tc, c1, 0]);
-//    tm = board.create('midpoint', [tg, ti]);
 
 //    board.unsuspendUpdate();
 
@@ -118,25 +123,70 @@
     }
 
     function dimConstruction() {
-        var c = [p3, p4, c1, g, p6, c2, p14_1], i;
+        var c = [p3, p4, c1, g, p6, c2, p14_1], i, o = getDim();
 
-        if(loc != null)
-            loc.setProperty({strokeOpacity: 1.0});
+        if(p3.visProp['strokeOpacity'] == o)
+            o = 1.0;
+
         for(i=0; i<c.length; i++) {
-            c[i].setProperty({strokeOpacity: 0.4, fillOpacity: 0.4});
+            c[i].setProperty({strokeOpacity: o, fillOpacity: o});
         }
     }
 
     function dimLocus() {
-        var c = [p3, p4, c1, g, p6, c2, p14_1], i;
+        var o = getDim();
 
-        if(loc != null)
-            loc.setProperty({strokeOpacity: 0.4});
-        for(i=0; i<c.length; i++) {
-            c[i].setProperty({strokeOpacity: 1.0, fillOpacity: 1.0});
+        if(loc != null) {
+            if(loc.visProp['strokeOpacity'] == o)
+                o = 1.0;
+            loc.setProperty({strokeOpacity: o});
         }
     }
 
+    function dimLocus2() {
+        var o = getDim();
+
+        if(loc2 != null) {
+            if(loc2.visProp['strokeOpacity'] == o)
+                o = 1.0;
+            loc2.setProperty({strokeOpacity: o});
+        }
+    }
+
+    function extend() {
+        if(loc==null)
+            return;
+
+        board.suspendUpdate();
+        tg = board.create('glider', [loc]);
+
+        tc = board.create('circle', [tg, 3]);
+        ti = board.create('intersection', [tc, c1, 0]);
+        tm = board.create('midpoint', [tg, ti]);
+        board.unsuspendUpdate();
+    }
+
+    function dimExtension() {
+        if(tg == null)
+            return;
+
+        var c = [tg, tc, ti, tm], i, o = getDim();
+
+        if(tg.visProp['strokeOpacity'] == o)
+            o = 1.0;
+
+        for(i=0; i<c.length; i++) {
+            c[i].setProperty({strokeOpacity: o, fillOpacity: o});
+        }
+    }
+
+    function getDim() {
+        return parseFloat(document.getElementById('dim').value);
+    }
+
+    function extendedLocus() {
+        loc2 = board.create('locus', [tm], {strokeColor: 'black', strokeWidth: '2px'});
+    }
   /* ]]> */
   </script>
 <br/>
