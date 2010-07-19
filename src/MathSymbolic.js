@@ -172,10 +172,11 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
         result,
         xsye = new JXG.Coords(JXG.COORDS_BY_USR, [0,0], board),
         xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board),
-        P1, P2, i, cmf = 0, transx = 0, transy = 0, rot = 0,
+        P1, P2, i, cmf = 0, transx = 0, transy = 0, rot = 0, c, s, tx,
+        xs, xe, ys, ye,
 
         isIn = function(item, array) {
-        	var i, is = false;;
+        	var i, is = false;
         	for(i=0; i<array.length; i++) {
         		if(array[i].id == item) {
         			is = true;
@@ -193,6 +194,11 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
     if(typeof JXG.Server.modules.geoloci == 'undefined')
         throw new Error("JSXGraph: Unable to load JXG.Server module 'geoloci.py'.");
 
+    xs = xsye.usrCoords[1];
+    xe = xeys.usrCoords[1];
+    ys = xeys.usrCoords[2];
+    ye = xsye.usrCoords[2];
+
     // Optimizations - but only if the user wants to
     //   Step 1: Translate all related points, such that one point P1 (board.options.locus.toOrigin if set
     //     or a random point otherwise) is moved to (0, 0)
@@ -207,7 +213,7 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
     // Step 1
     if(bol.translateToOrigin && (board.listOfFreePoints.length > 0)) {
     JXG.debug('optimize step 1');
-    JXG.debug(JXG.getReference(bol.toOrigin));
+
 		if((typeof bol.toOrigin != 'undefined') && (bol.toOrigin != null) && isIn(bol.toOrigin.id, board.listOfFreePoints)) {
 			P1 = bol.toOrigin;
 		} else {
@@ -222,16 +228,43 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
 			board.listOfFreePoints[i].symbolic.y -= transy;
 		}
 
+        xs -= transx; xe -= transx;
+        ys -= transy; ye -= transy;
+
+        for(i=0; i<board.listOfFreePoints.length; i++)
+            JXG.debug(board.listOfFreePoints[i].name + ': ' + board.listOfFreePoints[i].symbolic.x + ' ' + board.listOfFreePoints[i].symbolic.y);
+
 		// Step 2
 		if(bol.translateTo10 && (board.listOfFreePoints.length > 1)) {
 			if((typeof bol.to10 != 'undefined') && (bol.to10 != null) && (bol.to10.id != bol.toOrigin.id) && isIn(bol.to10.id, board.listOfFreePoints)) {
 				P2 = bol.to10;
 			} else {
 				if(board.listOfFreePoints[0].id == P1.id)
-					P2 = board.listOfFreePoints[0]
+					P2 = board.listOfFreePoints[1]
 				else
-					P2 = board.listOfFreePoints[1];
+					P2 = board.listOfFreePoints[0];
 			}
+
+            rot = JXG.Math.Geometry.rad([1, 0], [0, 0], [P2.symbolic.x, P2.symbolic.y]);
+            c = Math.cos(-rot);
+            s = Math.sin(-rot);
+
+
+    		for(i=0; i<board.listOfFreePoints.length; i++) {
+                tx = board.listOfFreePoints[i].symbolic.x;
+		    	board.listOfFreePoints[i].symbolic.x = c*board.listOfFreePoints[i].symbolic.x - s*board.listOfFreePoints[i].symbolic.y;
+	    		board.listOfFreePoints[i].symbolic.y = s*tx + c*board.listOfFreePoints[i].symbolic.y;
+    		}
+
+            // thanks to the rotation this is zero
+            P2.symbolic.y = 0;
+
+            tx = xs;
+            xs = c*xs - s*ys;
+            ys = s*tx + c*ys;
+            tx = xe;
+            xe = c*xe - s*ye;
+            ye = s*tx + c*ye;
 
 			// Step 3
 			if(bol.dilate) {
@@ -243,9 +276,9 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
 
     poly = this.generatePolynomials(board, point);
     polyStr = poly.join(',');
-    JXG.debug(poly);
+    JXG.debug(rot);
     for(i=0; i<board.listOfFreePoints.length; i++)
-	    JXG.debug(board.listOfFreePoints[i].symbolic.x + ' ' + board.listOfFreePoints[i].symbolic.y);
+	    JXG.debug(board.listOfFreePoints[i].name + ': ' + board.listOfFreePoints[i].symbolic.x + ' ' + board.listOfFreePoints[i].symbolic.y);
 
     this.cbp = function(data) {
         //alert(data.exectime);
@@ -255,7 +288,7 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
 
     this.cb = JXG.bind(this.cbp, this);
 
-    JXG.Server.modules.geoloci.lociCoCoA(xsye.usrCoords[1], xeys.usrCoords[1], xeys.usrCoords[2], xsye.usrCoords[2], numDependent, polyStr, cmf, rot, transx, transy, this.cb, true);
+    JXG.Server.modules.geoloci.lociCoCoA(xs, xe, ys, ye, numDependent, polyStr, cmf, rot, transx, transy, this.cb, true);
 
     this.clearSymbolicCoordinates(board);
 

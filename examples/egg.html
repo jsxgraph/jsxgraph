@@ -19,6 +19,11 @@
   p2 = board.createElement('point', [1, 3]);
   p3 = board.createElement('point', [8, 1]);
 
+    board.options.locus.translateToOrigin = true;
+    board.options.locus.toOrigin = p1;
+    board.options.locus.translateTo10 = true;
+    board.options.locus.to10 = p3;
+
   l1 = board.createElement('line', [p1, p3]);
   c1 = board.createElement('circle', [p1, p2]);
   g1 = board.createElement('glider', [4, 4, c1], {name:"G"});

@@ -128,7 +128,7 @@ JXG.createImage = function(board, parents, atts) {
     if (typeof atts['layer'] == 'undefined') {
         atts['layer'] = null;
     }
-    return new JXG.Image(board, parents[0], parents[1], parents[2], atts['layer'], false, false, undefined);
+    return new JXG.Image(board, parents[0], parents[1], parents[2], atts['layer'], false, false);
 };
 
 JXG.JSXGraph.registerElement('image', JXG.createImage);

@@ -23,6 +23,7 @@ import zlib
 import base64
 import cStringIO
 import cgi
+import math
 
 class JXGGeoLociModule(JXGServerModule):
 
@@ -58,6 +59,9 @@ class JXGGeoLociModule(JXGServerModule):
         self.output = ''
         self.cococa_process = None
         cinput = ""
+        c = math.cos(rot)
+        s = math.sin(rot)
+        tx = 0;
 
         # Variable code begins here
         # Here indeterminates of polynomial ring have to be adjusted
@@ -177,8 +181,11 @@ class JXGGeoLociModule(JXGServerModule):
                 pa = C.collections[0].get_paths()[i].to_polygons()[0]
 
                 for i in range(0,len(pa)):
-                    datax.append(pa[i,0])
-                    datay.append(pa[i,1])
+                    tx = pa[i, 0]
+                    pa[i, 0] = c*pa[i,0] - s*pa[i,1]
+                    pa[i, 1] = s*tx + c*pa[i,1]
+                    datax.append(pa[i,0] + transx)
+                    datay.append(pa[i,1] + transy)
 
                 datax.append('null')
                 datay.append('null')
