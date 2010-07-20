@@ -124,13 +124,13 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
 <script type="text/javascript">
   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: true, grid: false, keepaspectratio: true});
-  p3 = board.create('point', [8, 3]);
-  p4 = board.create('point', [8, 8]);
-  c1 = board.create('circle', [p4, 4]);
-  p6 = board.create('glider', [0, 0, c1], {name: 'D'});
-  g = board.create('line', [p3, p6]);
-  c2 = board.create('circle', [p6, 3]);
-  p14_1 = board.create('intersection', [c2,g,0], {name: 'T'});
+  A = board.create('point', [8, 3]);
+  B = board.create('point', [8, 8]);
+  c1 = board.create('circle', [B, 4]);
+  D = board.create('glider', [0, 0, c1], {name: 'D'});
+  g = board.create('line', [A, D]);
+  c2 = board.create('circle', [D, 3]);
+  T = board.create('intersection', [c2,g,0], {name: 'T'});
 </script>
     \end{lstlisting}
   \end{block}
@@ -146,6 +146,48 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
   \end{block}
 }
 
+
+\frame{
+  \frametitle{JSXGraph}
+  
+  \begin{block}{Supported file formats}
+    \begin{itemize}
+      \item \GEONEXT{}
+      \item GeoGebra
+      \item Intergeo
+      \item Cinderella (small feature subset)
+    \end{itemize}
+  \end{block}
+}
+
+\begin{frame}[fragile]
+  \frametitle{JSXGraph} 
+  \begin{block}{Example/Input}
+    \begin{lstlisting}
+<link rel="stylesheet" type="text/css" href="css/jsxgraph.css" />
+<script type="text/javascript" src="js/jsxgraphcore.js"></script>
+...
+<div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+<script type="text/javascript">
+  board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'watt.xml', 'intergeo');
+  
+  function computeLocus() {
+    board.create('locus', [JXG.getRef('T')]);
+  }
+</script>
+    \end{lstlisting}
+  \end{block}
+\end{frame}
+
+\frame{
+  \frametitle{JSXGraph}
+
+  \begin{block}{Example/Output}
+\begin{center}
+      \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=5cm]{img/jsx-example.png}}
+\end{center}
+  \end{block}
+}
 
 % Groebner bases stuff
 
@@ -282,15 +324,15 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
 <script type="text/javascript">
   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: true, grid: false, keepaspectratio: true});
-  p3 = board.create('point', [8, 3]);
-  p4 = board.create('point', [8, 8]);
-  c1 = board.create('circle', [p4, 4]);
-  p6 = board.create('glider', [0, 0, c1], {name: 'D'});
-  g = board.create('line', [p3, p6]);
-  c2 = board.create('circle', [p6, 3]);
-  p14_1 = board.create('intersection', [c2,g,0], {name: 'T'});
+  A = board.create('point', [8, 3]);
+  B = board.create('point', [8, 8]);
+  c1 = board.create('circle', [B, 4]);
+  D = board.create('glider', [0, 0, c1], {name: 'D'});
+  g = board.create('line', [A, D]);
+  c2 = board.create('circle', [D, 3]);
+  T = board.create('intersection', [c2,g,0], {name: 'T'});
 
-  locus = board.create('locus', [p14_1]);
+  locus = board.create('locus', [T]);
 </script>
     \end{lstlisting}
   \end{block}
@@ -305,6 +347,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 \end{center}
   \end{block}
 }
+
 
 \frame{
   \frametitle{Implementation}
@@ -440,12 +483,15 @@ F = board.create('midpoint', [C, E]);
   \end{block}
 }
 
-\frame{
-  \frametitle{Optimization}
 
+\begin{frame}[fragile]
+  \frametitle{Optimization}
   \begin{block}{Idea: Divide and conquer}
-\begin{center}
-  \begin{tikzpicture}[node distance=1.3cm,>=stealth',bend angle=45,auto]
+    \begin{columns}
+      \column{.50\textwidth}
+	    \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=5cm]{img/limacon-extconstr.png}}
+      \column{.50\textwidth}
+          \begin{tikzpicture}[scale=0.5,node distance=1cm,>=stealth',bend angle=45,auto]
 
   \tikzstyle{place}=[circle,thick,draw=black!75,fill=black!20,minimum size=6mm]
   \tikzstyle{red place}=[place,draw=red!75,fill=red!20]
@@ -455,27 +501,26 @@ F = board.create('midpoint', [C, E]);
   \tikzstyle{every label}=[black]
 
   \begin{scope}
-    \node [place] (E) [label=right:2] {E};
-    \node [place] (T) [below of=E, xshift=-60, label=left:2] {T}
+    \node [place] (E) [label=right:2, scale=0.75] {E};
+    \node [place] (T) [below of=E, xshift=-45, label=left:2,scale=0.75] {T}
       edge [pre] (E);
-    \node [place] (D) [below of=T, xshift=-40, label=left:1] {D}
+    \node [place] (D) [below of=T, xshift=-30, label=left:1,scale=0.75] {D}
       edge [pre] (T);
-    \node [transition] (A) [below of=T, xshift=40] {A}
+    \node [transition] (A) [below of=T, xshift=30,scale=0.75] {A}
       edge [pre] (T);
       
-    \node [place] (C) [below of=E, xshift=60, label=right:2]  {C}
+    \node [place] (C) [below of=E, xshift=45, label=right:2,scale=0.75]  {C}
       edge [pre] (E)
       edge [post] (T);
-    \node [transition] (B) [below of=C] {B}
+    \node [transition] (B) [below of=C,scale=0.75] {B}
       edge [pre] (C)
       edge [pre,bend left] (D);
   \end{scope}
 
-\end{tikzpicture}
-\end{center}
-
+          \end{tikzpicture}
+    \end{columns}
   \end{block}
-}
+\end{frame}
 
 \frame{
   \frametitle{Optimization}
@@ -508,7 +553,7 @@ F = board.create('midpoint', [C, E]);
   \begin{block}{Thank You}
     \begin{itemize}
       \item \href{http://jsxgraph.org/}{http://jsxgraph.org/}
-      \item \href{http://jsxgraph.uni-bayreuth.de/wiki/}{http://jsxgraph.uni-bayreuth.de/wiki/}
+      \item \href{http://jsxgraph.uni-pdflatebayreuth.de/wiki/}{http://jsxgraph.uni-bayreuth.de/wiki/}
     \end{itemize}
   \end{block}
 }
