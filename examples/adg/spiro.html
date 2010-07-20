@@ -5,7 +5,7 @@
    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h2>Lima&ccedil;on</h2>
+<h2></h2>
 <div id="debug" style="display: none"></div>
 <center>
 <div style="width: 1000px;">
@@ -56,7 +56,7 @@ var M = brd.create('intersection',[k2,g1,0], {name:'M', fillColor:'blue', stroke
 var k3 = brd.create('circle',[M,B],{name:'k'});
 
 var gpar = brd.create('parallel',[O,A,M], {name:"g", strokeColor:'lightgray'});
-var Cprime = brd.create('intersection',[gpar,k3,0], {name:"C'", trace: true, fillColor:'green', strokeColor:'green'});
+var Cprime = brd.create('intersection',[gpar,k3,0], {name:"C'", trace: false, fillColor:'green', strokeColor:'green'});
 
 var p14_1 = Cprime;
 
