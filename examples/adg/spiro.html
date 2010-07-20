@@ -48,14 +48,14 @@ var k = brd.create('circle',[O,A],{name:'k'});
 var B = brd.create('glider',[0.7,1,k],{name:'B drag me'});
 
 var g1 = brd.create('line',[O,B], {strokeColor:'lightgray'});
-var C = brd.create('reflection',[g1,A],{name:'C', fillColor:'blue', strokeColor:'blue'});
+//var C = brd.create('reflection',[g1,A],{name:'C', fillColor:'blue', strokeColor:'blue'});
 
 var k2 = brd.create('circle',[O,O.Dist(A)+1], {strokeColor: 'lightgray'});
 
 var M = brd.create('intersection',[k2,g1,0], {name:'M', fillColor:'blue', strokeColor:'blue'});
 var k3 = brd.create('circle',[M,B],{name:'k'});
 
-var gpar = brd.create('parallel',[O,C,M], {name:"g", strokeColor:'lightgray'});
+var gpar = brd.create('parallel',[O,A,M], {name:"g", strokeColor:'lightgray'});
 var Cprime = brd.create('intersection',[gpar,k3,0], {name:"C'", trace: true, fillColor:'green', strokeColor:'green'});
 
 var p14_1 = Cprime;
@@ -113,7 +113,7 @@ var loc = null;
     }
 
     function dimConstruction() {
-        var c = [O, A, k, B, g1, C, k2, M, k3, gpar, Cprime], i, o = getDim();
+        var c = [O, A, k, B, g1, k2, M, k3, gpar, Cprime/*, C*/], i, o = getDim();
 
         if(O.visProp['strokeOpacity'] == o)
             o = 1.0;
