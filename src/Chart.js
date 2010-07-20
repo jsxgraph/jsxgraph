@@ -299,32 +299,49 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
     p[0] = board.create('point',[function(){ return radius()+xc;},function(){ return 0+yc;}], {name:'',fixed:true,visible:false});
     var rad = 0.0;
     for (i=0;i<y.length;i++) {
-        if (JXG.isFunction(y[i])) {
             p[i+1] = board.create('point',
                 [(function(j){ return function() {
                 var s = 0.0, t = 0.0, i;
-                for (i=0; i<=j ;i++) { t += parseFloat(y[i]()); }
-                for (i=0; i<y.length ;i++) { s += parseFloat(y[i]()); }
+                for (i=0; i<=j ;i++) { 
+                    if  (JXG.isFunction(y[i])) {
+                        t += parseFloat(y[i]()); 
+                    } else {
+                        t += parseFloat(y[i]); 
+                    }
+                }
+                s = t;
+                for (i=j+1; i<y.length ;i++) { 
+                    if  (JXG.isFunction(y[i])) {
+                        s += parseFloat(y[i]()); 
+                    } else {
+                        s += parseFloat(y[i]); 
+                    }
+                }
                 var rad = (s!=0)?(2*Math.PI*t/s):0;
                 return radius()*Math.cos(rad)+xc;
             };})(i),
                 (function(j){ return function() {
                 var s = 0.0, t = 0.0, i;
-                for (i=0; i<=j;i++) { t += parseFloat(y[i]()); }
-                for (i=0; i<y.length ;i++) { s += parseFloat(y[i]()); }
+                for (i=0; i<=j ;i++) { 
+                    if  (JXG.isFunction(y[i])) {
+                        t += parseFloat(y[i]()); 
+                    } else {
+                        t += parseFloat(y[i]); 
+                    }
+                }
+                s = t;
+                for (i=j+1; i<y.length ;i++) { 
+                    if  (JXG.isFunction(y[i])) {
+                        s += parseFloat(y[i]()); 
+                    } else {
+                        s += parseFloat(y[i]); 
+                    }
+                }
                 var rad = (s!=0)?(2*Math.PI*t/s):0;
                 return radius()*Math.sin(rad)+yc;
             };})(i)
                 ], 
                 {name:'',fixed:false,visible:false,withLabel:false});
-        } else {
-            rad += (s!=0)?(2*Math.PI*y[i]/s):0;
-            p[i+1] = board.create('point',
-                [function(){ return radius()*Math.cos(rad)+xc;},
-                function(){ return radius()*Math.sin(rad)+xc;}
-                ], {name:'',fixed:false,visible:false,withLabel:false});
-        }
-        
         myAtts['fillColor'] = colorArray[i%colorArray.length];
         myAtts['name'] = labelArray[i];
         if(myAtts['name'] != '') {
@@ -339,6 +356,47 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         
         if(attributes['highlightOnSector']) {
             arc[i].hasPoint = arc[i].hasPointSector; // overwrite hasPoint so that the whole sector is used for highlighting
+        }
+        if(attributes['highlightBySize']) {
+            arc[i].highlight = function() {
+                this.board.renderer.highlight(this);
+                if(this.label.content != null) {
+                    this.label.content.rendNode.style.fontSize = (2*this.board.fontSize) + 'px';
+                }
+            
+                var dx = - this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
+                var dy = - this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+                /*
+                var ddx = 20/(this.board.stretchX);
+                var ddy = 20/(this.board.stretchY);
+                var z = Math.sqrt(dx*dx+dy*dy);
+                */
+                this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx*1.1, //*(z+ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy*1.1], //(z+ddy)/z],
+                                                this.board);
+                this.prepareUpdate().update().updateRenderer();      
+            };
+          
+            arc[i].noHighlight = function() {
+                this.board.renderer.noHighlight(this);
+                if(this.label.content != null) {
+                    this.label.content.rendNode.style.fontSize = (this.board.fontSize) + 'px';
+                }
+            
+                var dx = -this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
+                var dy = -this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+                /*
+                var ddx = 20/(this.board.stretchX);
+                var ddy = 20/(this.board.stretchY);
+                var z = Math.sqrt(dx*dx+dy*dy);
+                */           
+                this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                                                [this.midpoint.coords.usrCoords[1]+dx/1.1, //*(z-ddx)/z,
+                                                 this.midpoint.coords.usrCoords[2]+dy/1.1], //*(z-ddy)/z],
+                                                this.board);
+                this.prepareUpdate().update().updateRenderer();      
+            }; 
         }
 
     }

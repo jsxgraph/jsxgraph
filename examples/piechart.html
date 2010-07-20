@@ -30,14 +30,19 @@ unitX: 50, unitY: 50, axis:true});
 
     var a = board.createElement('chart', [f],
             {chartStyle:'pie',
-             colorArray:
-['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE','#CA147A'],
-center:[5,2], strokeColor:'black', highlightStrokeColor:'black',
-strokeWidth:4,
-radius:function(){return r.Value();},
-             highlightColorArray:
-['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF','#B0D990'],
-             highlightOnSector:true}
+             colorArray: ['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE','#CA147A'],
+             labelArray: [function(){return f[0]();},
+                          function(){return f[1]();},
+                          function(){return f[2]();},
+                          function(){return f[3]();},
+                          function(){return f[4]();}],
+             center:[5,2], 
+             strokeColor:'white', highlightStrokeColor:'black',
+             strokeWidth:4,
+             radius:function(){return r.Value();},
+             highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF','#B0D990'],
+             highlightOnSector:true, highlightBySize:true
+             }
         );
 
     board.unsuspendUpdate();
