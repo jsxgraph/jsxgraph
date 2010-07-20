@@ -1,0 +1,100 @@
+<!--
+	Intergeo File Format Version 0.1.20080731
+	written by GeoGebra 3.9.29.0 (17 July 2010)
+-->
+<construction>
+	<elements>
+		<point id="A">
+			<homogeneous_coordinates>
+				<double>8.0</double>
+				<double>3.0</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="B">
+			<homogeneous_coordinates>
+				<double>8.0</double>
+				<double>8.0</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="C">
+			<homogeneous_coordinates>
+				<double>8.0</double>
+				<double>12</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</point>
+		<circle id="c">
+		</circle>
+		<point id="D">
+			<homogeneous_coordinates>
+				<double>1.6422184934614272</double>
+				<double>1.1415421235036751</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</point>
+		<circle id="d">
+		</circle>
+        <line id="l">
+        </line>
+
+		<point id="T">
+			<homogeneous_coordinates>
+				<double>3.122851853440392</double>
+				<double>-0.20297446371918249</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="R">
+			<homogeneous_coordinates>
+				<double>3.122851853440392</double>
+				<double>-0.20297446371918249</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</point>
+	</elements>
+	<constraints>
+		<free_point>
+			<point out="true">A</point>
+		</free_point>
+		<free_point>
+			<point out="true">B</point>
+		</free_point>
+		<free_point>
+			<point out="false">C</point>
+		</free_point>
+
+<circle_by_center_and_point>
+<circle out="true">c</circle>
+<point>B</point>
+<point>C</point>
+</circle_by_center_and_point>
+
+<point_on_circle>
+<point out="true">D</point>
+<circle>c</circle>
+</point_on_circle>
+
+<circle_by_center_and_point>
+<circle out="true">d</circle>
+<point>D</point>
+<point>B</point>
+</circle_by_center_and_point>
+
+<line_through_two_points>
+<line out="true">l</line>
+<point>A</point>
+<point>D</point>
+</line_through_two_points>
+
+<intersection_points_of_circle_and_line>
+<point out="true">T</point>
+<point out="false">R</point>
+<circle>d</circle>
+<line>l</line>
+</intersection_points_of_circle_and_line>
+
+
+	</constraints>
+</construction>

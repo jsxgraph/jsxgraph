@@ -6,27 +6,22 @@
 	<elements>
 		<point id="A">
 			<homogeneous_coordinates>
-				<double>8.0</double>
-				<double>3.0</double>
+				<double>0.0</double>
+				<double>0.0</double>
 				<double>1.0</double>
 			</homogeneous_coordinates>
 		</point>
 		<point id="B">
 			<homogeneous_coordinates>
-				<double>8.0</double>
-				<double>8.0</double>
+				<double>6.0</double>
+				<double>-1.0</double>
 				<double>1.0</double>
 			</homogeneous_coordinates>
 		</point>
-		<point id="C">
-			<homogeneous_coordinates>
-				<double>8.0</double>
-				<double>12</double>
-				<double>1.0</double>
-			</homogeneous_coordinates>
-		</point>
-		<circle id="c">
-		</circle>
+		<conic id="c">
+		</conic>
+		<conic id="d">
+		</conic>
 		<point id="D">
 			<homogeneous_coordinates>
 				<double>1.6422184934614272</double>
@@ -34,19 +29,16 @@
 				<double>1.0</double>
 			</homogeneous_coordinates>
 		</point>
-		<circle id="d">
-		</circle>
-        <line id="l">
-        </line>
-
-		<point id="T">
+		<conic id="e">
+		</conic>
+		<point id="I">
 			<homogeneous_coordinates>
-				<double>3.122851853440392</double>
-				<double>-0.20297446371918249</double>
+				<double>4.603485213419357</double>
+				<double>-1.54749105094204</double>
 				<double>1.0</double>
 			</homogeneous_coordinates>
 		</point>
-		<point id="R">
+		<point id="T">
 			<homogeneous_coordinates>
 				<double>3.122851853440392</double>
 				<double>-0.20297446371918249</double>
@@ -61,40 +53,35 @@
 		<free_point>
 			<point out="true">B</point>
 		</free_point>
-		<free_point>
-			<point out="false">C</point>
-		</free_point>
-
-<circle_by_center_and_point>
-<circle out="true">c</circle>
-<point>B</point>
-<point>C</point>
-</circle_by_center_and_point>
-
-<point_on_circle>
-<point out="true">D</point>
-<circle>c</circle>
-</point_on_circle>
-
-<circle_by_center_and_point>
-<circle out="true">d</circle>
-<point>D</point>
-<point>B</point>
-</circle_by_center_and_point>
-
-<line_through_two_points>
-<line out="true">l</line>
-<point>A</point>
-<point>D</point>
-</line_through_two_points>
-
-<intersection_points_of_circle_and_line>
-<point out="true">T</point>
-<point out="false">R</point>
-<circle>d</circle>
-<line>l</line>
-</intersection_points_of_circle_and_line>
-
-
+		<AlgoCirclePointRadius>
+			<conic out="true">c</conic>
+			<point>A</point>
+			<numeric>2.0</numeric>
+		</AlgoCirclePointRadius>
+		<AlgoCirclePointRadius>
+			<conic out="true">d</conic>
+			<point>B</point>
+			<numeric>1.5</numeric>
+		</AlgoCirclePointRadius>
+		<AlgoPointOnPath+GeoConic>
+			<point out="true">D</point>
+			<conic>c</conic>
+		</AlgoPointOnPath+GeoConic>
+		<AlgoCirclePointRadius>
+			<conic out="true">e</conic>
+			<point>D</point>
+			<numeric>4.0</numeric>
+		</AlgoCirclePointRadius>
+		<AlgoIntersectSingle>
+			<point out="true">I</point>
+			<conic>d</conic>
+			<conic>e</conic>
+			<numeric>1.0</numeric>
+		</AlgoIntersectSingle>
+		<AlgoMidpoint>
+			<point out="true">T</point>
+			<point>D</point>
+			<point>I</point>
+		</AlgoMidpoint>
 	</constraints>
 </construction>
