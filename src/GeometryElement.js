@@ -679,6 +679,8 @@ JXG.GeometryElement.prototype.showElement = function() {
 *<li>lastArrow <i>(Line,Arc)</li>
 *<li>withTicks <i>(Line)</li>
 *<li>fontSize</li>
+*<li>color</li>
+*<li>opacity</li>
 *</ul>*/
 
 /**
@@ -724,6 +726,12 @@ JXG.GeometryElement.prototype.setProperty = function () {
         }
         if (pair[1]==null) continue;
         switch(pair[0].replace(/\s+/g).toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
+            case 'color':
+                this.setProperty({strokeColor: pair[1], fillColor: pair[1]});
+                break;
+            case 'opacity':
+                this.setProperty({strokeOpacity: pair[1], fillOpacity: pair[1]});
+                break;
             case 'strokewidth':
                 this.visProp['strokeWidth'] = pair[1];
                 this.visProp['highlightStrokeWidth'] = pair[1];

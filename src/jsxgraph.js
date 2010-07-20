@@ -828,6 +828,10 @@ JXG.addEvent(window, 'load', function (evt) {
     }
 }, window);
 
+(function(undefined) {
+    JXG.undefined = undefined;
+})();
+
 /*
 JXG.isSilverlightInstalled = function() {
     var isInstalled = false,

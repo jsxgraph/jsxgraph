@@ -28,8 +28,6 @@
  * server side a python plugin system is used.
  */
 
-/** TODO: Documentation */
-
 /**
  * @namespace
  * JXG.Server namespace holding functions to load JXG server modules.
@@ -106,7 +104,8 @@ JXG.Server.callServer = function(action, callback, data, sync) {
         if(typeof str != 'string')
             return;
 
-		data = eval("(" + str + ")");
+        data = window.JSON && window.JSON.parse ? window.JSON.parse(str) : (new Function('return ' + str))();
+		//data = eval("(" + str + ")");
 
 		if(data.type == 'error') {
 			this.handleError(data);
@@ -116,8 +115,10 @@ JXG.Server.callServer = function(action, callback, data, sync) {
 			// inject fields
 			for(i=0; i<data.fields.length; i++) {
 				tmp = data.fields[i];
-				inject = tmp.namespace + ( typeof eval(tmp.namespace) == 'object' ? '.' : '.prototype.') + tmp.name + ' = ' + tmp.value;
-				eval(inject);
+				//inject = tmp.namespace + ( typeof eval(tmp.namespace) == 'object' ? '.' : '.prototype.') + tmp.name + ' = ' + tmp.value;
+                inject = tmp.namespace + ( typeof ((new Function('return ' + tmp.namespace))()) == 'object' ? '.' : '.prototype.') + tmp.name + ' = ' + tmp.value;
+				//eval(inject);
+                (new Function(inject))();
 			}
 
 			// inject handlers
@@ -141,7 +142,8 @@ JXG.Server.callServer = function(action, callback, data, sync) {
 				'var __JXGSERVER_PAR__ = {' + paramlist.join(',') + ', "module": "' + this.runningCalls[id].module + '", "handler": "' + tmp.name + '" };' +
 				'JXG.Server.callServer("exec", __JXGSERVER_CB__, __JXGSERVER_PAR__, __JXGSERVER_SYNC);' +
 				'};';
-				eval(inject);
+				//eval(inject);
+                (new Function(inject))();
 			}
 
 			delete this.runningCalls[id];

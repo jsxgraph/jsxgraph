@@ -22,15 +22,26 @@
       <input type="button" onclick="calculateLocus();" value="Calculate locus of T" />
       <input type="button" onclick="showLocusEquation();" value="Show locus equation" />
       <input type="button" onclick="showBoard();" value="Show board" />
+      <input type="button" onclick="showLocusTime(loc)" value="Show locus time" />
       <br />
-      <input type="button" onclick="extend();" value="Extend the construction" />      
-      <input type="button" onclick="extendedLocus();" value="Calculate extended locus" />      
+      <input type="button" onclick="extend();" value="Extend the construction (with glider)" />
+      <input type="button" onclick="extendedLocus();" value="Calculate extended locus (based on glider C)" />
+      <input type="button" onclick="showLocusTime(loc2)" value="Show locus time" />
+      <br />
+      <input type="button" onclick="extend2();" value="Extend the construction" />
+      <input type="button" onclick="extendedLocus2();" value="Calculate extended locus" />
+      <input type="button" onclick="showLocusTime(loc3)" value="Show locus time" />
       <br />
       <input type="text" value="0.2" id="dim" size="3" />
       <input type="button" onclick="dimConstruction();" value="Dim construction" />
       <input type="button" onclick="dimLocus();" value="Dim locus" />
       <input type="button" onclick="dimExtension();" value="Dim extension" />
-      <input type="button" onclick="dimLocus2();" value="Dim extended locus" />
+      <input type="button" onclick="dimExtension2();" value="Dim extension 2" />
+      <input type="button" onclick="dimLocus2();" value="Dim extended loci" />
+      <br />
+      <input type="button" onclick="runComparison();" value="Run comparison">
+      <input type="button" onclick="window.location.href=window.location.href.split('?')[0]" value="Reload" />
+      <input type="button" onclick="toggleOptimize();" id="opt" value="Optimization is off">
   </form>
   </div>
 </div>
@@ -46,12 +57,15 @@
     p4 = board.createElement('point', [8, 8]);
     c1 = board.createElement('circle', [p4, 4]);//, {strokeOpacity: 0.3});
 
+    board.options.locus.toOrigin = p3;
+    board.options.locus.to10 = p4;
+
     p6 = board.createElement('glider', [0, 0, c1], {name:"D"});
     g = board.createElement('line', [p3, p6]);//, {strokeOpacity: 0.3});
 
     c2 = board.createElement('circle', [p6, 3]);//, {strokeOpacity: 0.3});
 
-    p14_1 = board.createElement('intersection', [c2,g,0], {name: "T"});
+    p14_1 = board.createElement('intersection', [c2,g,0], {name: "T", color:'green'});
 
     loc = null;
 
@@ -60,6 +74,13 @@
     ti=null;
     tm=null;
     loc2 = null;
+
+    tc2=null;
+    ti2=null;
+    tm2=null;
+    loc3 = null;
+
+    opt = false;
     
     //board.options.locus.translateToOrigin = true;
     board.options.locus.toOrigin = p3;
@@ -161,8 +182,8 @@
         tg = board.create('glider', [loc]);
 
         tc = board.create('circle', [tg, 3]);
-        ti = board.create('intersection', [tc, c1, 0]);
-        tm = board.create('midpoint', [tg, ti]);
+        ti = board.create('intersection', [tc, c1, 0], {color: 'blue'});
+        tm = board.create('midpoint', [tg, ti], {color: 'green'});
         board.unsuspendUpdate();
     }
 
@@ -185,8 +206,102 @@
     }
 
     function extendedLocus() {
-        loc2 = board.create('locus', [tm], {strokeColor: 'black', strokeWidth: '2px'});
+        loc2 = board.create('locus', [tm], {strokeColor: 'black', strokeWidth: '4px'});
     }
+
+    function extend2() {
+        board.suspendUpdate();
+        tc2 = board.create('circle', [p14_1, 3]);
+        ti2 = board.create('intersection', [tc2, c1, 0], {color: 'blue'});
+        tm2 = board.create('midpoint', [p14_1, ti2], {color: 'green'});
+        board.unsuspendUpdate();
+    }
+
+    function dimExtension2() {
+        if(tg == null)
+            return;
+
+        var c = [tc2, ti2, tm2], i, o = getDim();
+
+        if(tc2.visProp['strokeOpacity'] == o)
+            o = 1.0;
+
+        for(i=0; i<c.length; i++) {
+            c[i].setProperty({strokeOpacity: o, fillOpacity: o});
+        }
+    }
+
+    function extendedLocus2() {
+        loc3 = board.create('locus', [tm2], {strokeColor: 'green', strokeWidth: '2px'});
+    }
+
+    function showLocusTime(l) {
+        document.getElementById('polynomials').style.display = 'block';
+        document.getElementById('jxgbox').style.display = 'none';
+
+        document.getElementById('polynomials').innerHTML = l.ctime;
+    }
+
+    function toggleOptimize() {
+        if(opt) {
+            board.options.locus.translateToOrigin = false;
+            board.options.locus.translateTo10 = false;
+            opt = false;
+            document.getElementById('opt').value = "Optimization is off";
+        } else {
+            board.options.locus.translateToOrigin = true;
+            board.options.locus.translateTo10 = true;
+            opt = true;
+            document.getElementById('opt').value = "Optimization is on";
+        }
+    }
+
+    function runComparison() {
+        calculateLocus();
+        extend();
+        extendedLocus();
+
+        window.location.href = window.location.href+'?time0='+loc.ctime+'&time1='+loc2.ctime;
+    }
+
+    function runComparison2() {
+        extend2();
+        extendedLocus2();
+
+        window.location.href = window.location.href+'&time2='+loc3.ctime;
+    }
+
+(function(window, document, undefined) {
+    var r, time0, time1, time2, i;
+    if(window.location.href.indexOf('time1')>-1) {
+        r = window.location.href.split('?')[1].split('&');
+        for(i=0; i<r.length; i++) {
+            if(r[i].split('=')[0] == 'time0')
+                time0 = r[i].split('=')[1];
+
+            if(r[i].split('=')[0] == 'time1')
+                time1 = r[i].split('=')[1];
+
+            if(r[i].split('=')[0] == 'time2')
+                time2 = r[i].split('=')[1];
+        }
+
+        if(time1 === undefined)
+            return;
+
+        if(time2 === undefined) {
+            runComparison2();
+            return;
+        }
+
+        document.getElementById('polynomials').style.display = 'block';
+        document.getElementById('jxgbox').style.display = 'none';
+
+        document.getElementById('polynomials').innerHTML = 'chaining: ' + (parseFloat(time1)+parseFloat(time0)) + '<br />direct: ' + time2;
+    }
+})(window, document);
+
+    
   /* ]]> */
   </script>
 <br/>

@@ -186,10 +186,10 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
         bol = board.options.locus;
 
 
-    if(typeof JXG.Server.modules.geoloci == 'undefined')
+    if(JXG.Server.modules.geoloci === JXG.undefined)
         JXG.Server.loadModule('geoloci')
 
-    if(typeof JXG.Server.modules.geoloci == 'undefined')
+    if(JXG.Server.modules.geoloci === JXG.undefined)
         throw new Error("JSXGraph: Unable to load JXG.Server module 'geoloci.py'.");
 
     xs = xsye.usrCoords[1];
@@ -208,7 +208,7 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
 
     // Step 1
     if(bol.translateToOrigin && (board.listOfFreePoints.length > 0)) {
-		if((typeof bol.toOrigin != 'undefined') && (bol.toOrigin != null) && isIn(bol.toOrigin.id, board.listOfFreePoints)) {
+		if((bol.toOrigin !== JXG.undefined) && (bol.toOrigin != null) && isIn(bol.toOrigin.id, board.listOfFreePoints)) {
 			P1 = bol.toOrigin;
 		} else {
 			P1 = board.listOfFreePoints[0];
@@ -227,7 +227,7 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
 
 		// Step 2
 		if(bol.translateTo10 && (board.listOfFreePoints.length > 1)) {
-			if((typeof bol.to10 != 'undefined') && (bol.to10 != null) && (bol.to10.id != bol.toOrigin.id) && isIn(bol.to10.id, board.listOfFreePoints)) {
+			if((bol.to10 !== JXG.undefined) && (bol.to10 != null) && (bol.to10.id != bol.toOrigin.id) && isIn(bol.to10.id, board.listOfFreePoints)) {
 				P2 = bol.to10;
 			} else {
 				if(board.listOfFreePoints[0].id == P1.id)
@@ -317,8 +317,6 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
     for(i in oldRadius) {
         board.objects[i].radius = oldRadius[i];
     }
-
-    JXG.debug(result);
 
     return result;
 };

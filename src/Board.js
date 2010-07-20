@@ -2193,7 +2193,7 @@ JXG.Board.prototype.animate = function() {
  * @private
  */
 JXG.Board.prototype.emulateColorblindness = function(deficiency) {
-    var e, o;
+    var e, o, brd=this;
 
     if(typeof deficiency == 'undefined')
         deficiency = 'none';

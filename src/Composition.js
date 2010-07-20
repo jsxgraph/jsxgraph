@@ -1350,10 +1350,11 @@ JXG.createLocus = function(board, parents, attributes) {
         if(c.board.mode > 0)
             return;
 
-        var cb = function(x, y, eq) {
+        var cb = function(x, y, eq, t) {
                 c.dataX = x;
                 c.dataY = y;
                 c.eq = eq;
+                c.ctime = t;
 
                 // convert equation and use it to build a generatePolynomial-method
                 c.generatePolynomial = (function(equations) {
@@ -1371,7 +1372,7 @@ JXG.createLocus = function(board, parents, attributes) {
             },
             data = JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
 
-        cb(data.datax, data.datay, data.polynomial);
+        cb(data.datax, data.datay, data.polynomial, data.exectime);
     };
     return c;
 };

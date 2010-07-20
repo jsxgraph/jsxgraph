@@ -1,5 +1,12 @@
 \documentclass{beamer}
 
+\def\xcolorversion{2.00}
+\def\xkeyvalversion{1.8}
+
+\usepackage[version=0.96]{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,snakes,automata,backgrounds,petri}
+
 \usepackage{hyperref}
 \usepackage{listings}
 
@@ -437,9 +444,71 @@ tm = board.create('midpoint', [tg, ti]);
 \frame{
   \frametitle{}
 
-  \begin{block}{Optimizations}
+  \begin{block}{Optimization}
   \end{block}
 }
+
+\frame{
+  \frametitle{Optimization}
+
+  \begin{block}{Idea: Divide and conquer}
+\begin{center}
+  \begin{tikzpicture}[node distance=1.3cm,>=stealth',bend angle=45,auto]
+
+  \tikzstyle{place}=[circle,thick,draw=black!75,fill=black!20,minimum size=6mm]
+  \tikzstyle{red place}=[place,draw=red!75,fill=red!20]
+  \tikzstyle{transition}=[rectangle,thick,draw=black!75,
+  			  fill=black!20,minimum size=6mm]
+
+  \tikzstyle{every label}=[black]
+
+  \begin{scope}
+    \node [place] (E) [label=right:2] {E};
+    \node [place] (T) [below of=E, xshift=-60, label=left:2] {T}
+      edge [pre] (E);
+    \node [place] (D) [below of=T, xshift=-40, label=left:1] {D}
+      edge [pre] (T);
+    \node [transition] (A) [below of=T, xshift=40] {A}
+      edge [pre] (T);
+      
+    \node [place] (C) [below of=E, xshift=60, label=right:2]  {C}
+      edge [pre] (E)
+      edge [post] (T);
+    \node [transition] (B) [below of=C] {B}
+      edge [pre] (C)
+      edge [pre,bend left] (D);
+  \end{scope}
+
+\end{tikzpicture}
+\end{center}
+
+  \end{block}
+}
+
+\frame{
+  \frametitle{Optimization}
+  
+  \begin{block}{Transformations}
+    \begin{itemize}
+      \item Translate the construction moving one point to $(0, 0)$
+      \item Rotate the construction moving another point onto the x-axis
+      \item After the Gr\"obner basis is calculated, the result is retransformed
+      \item User can choose the two points or
+      \item JSXGraph chooses two points (but sometimes not the best suited ones)
+    \end{itemize}  
+  \end{block}
+
+}
+
+\section{Examples}
+
+\frame{
+  \frametitle{}
+
+  \begin{block}{Examples}
+  \end{block}
+}
+
 
 \frame{
   \frametitle{Last slide}
