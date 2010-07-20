@@ -349,19 +349,19 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 <script type="text/javascript">
   /* <![CDATA[ */
   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 8, -4], axis: true, grid: false, keepaspectratio: true});
-  A = board.createElement('point', [0, 0]);
-  B = board.createElement('point', [6, 0]);
-  C = board.createElement('point', [4, 4]);
+  A = board.create('point', [0, 0]);
+  B = board.create('point', [6, 0]);
+  C = board.create('point', [4, 4]);
 
-  t1 = board.createElement('triangle', [A, B, C], {strokeWidth: '1px'});
+  t1 = board.create('triangle', [A, B, C], {strokeWidth: '1px'});
 
-  X = board.createElement('point', [4, 1.5], {name:"X"});
+  X = board.create('point', [4, 1.5], {name:"X"});
 
-  L = board.createElement('perpendicularpoint', [X, t1.c]);
-  M = board.createElement('perpendicularpoint', [X, t1.a]);
-  N = board.createElement('perpendicularpoint', [X, t1.b]);
+  L = board.create('perpendicularpoint', [X, t1.c]);
+  M = board.create('perpendicularpoint', [X, t1.a]);
+  N = board.create('perpendicularpoint', [X, t1.b]);
 
-  t2 = board.createElement('triangle', [L, M, N], {strokeWidth: '1px'});
+  t2 = board.create('triangle', [L, M, N], {strokeWidth: '1px'});
 
   [...]
     \end{lstlisting}
@@ -392,7 +392,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
     return ['4*'+as+'*'+cs+'-('+as+'+'+cs+'-'+bs+')*('+as+'+'+cs+'-'+bs+')-('+as16+')'];
   };
 
-  locus = board.createElement('locus', [X], {strokeColor: 'red'});
+  locus = board.create('locus', [X], {strokeColor: 'red'});
   /* ]]> */
 </script>
     \end{lstlisting}
