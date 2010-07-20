@@ -120,10 +120,9 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
     \begin{lstlisting}
 <link rel="stylesheet" type="text/css" href="css/jsxgraph.css" />
 <script type="text/javascript" src="js/jsxgraphcore.js"></script>
-[...]
+...
 <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
 <script type="text/javascript">
-  /* <![CDATA[ */
   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: true, grid: false, keepaspectratio: true});
   p3 = board.create('point', [8, 3]);
   p4 = board.create('point', [8, 8]);
@@ -132,7 +131,6 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
   g = board.create('line', [p3, p6]);
   c2 = board.create('circle', [p6, 3]);
   p14_1 = board.create('intersection', [c2,g,0], {name: 'T'});
-  /* ]]> */
 </script>
     \end{lstlisting}
   \end{block}
@@ -280,10 +278,9 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
     \begin{lstlisting}
 <link rel="stylesheet" type="text/css" href="css/jsxgraph.css" />
 <script type="text/javascript" src="js/jsxgraphcore.js"></script>
-[...]
+...
 <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
 <script type="text/javascript">
-  /* <![CDATA[ */
   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: true, grid: false, keepaspectratio: true});
   p3 = board.create('point', [8, 3]);
   p4 = board.create('point', [8, 8]);
@@ -294,7 +291,6 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
   p14_1 = board.create('intersection', [c2,g,0], {name: 'T'});
 
   locus = board.create('locus', [p14_1]);
-  /* ]]> */
 </script>
     \end{lstlisting}
   \end{block}
@@ -344,10 +340,9 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
     \begin{lstlisting}
 <link rel="stylesheet" type="text/css" href="css/jsxgraph.css" />
 <script type="text/javascript" src="js/jsxgraphcore.js"></script>
-[...]
+...
 <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
 <script type="text/javascript">
-  /* <![CDATA[ */
   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 8, -4], axis: true, grid: false, keepaspectratio: true});
   A = board.create('point', [0, 0]);
   B = board.create('point', [6, 0]);
@@ -362,8 +357,6 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
   N = board.create('perpendicularpoint', [X, t1.b]);
 
   t2 = board.create('triangle', [L, M, N], {strokeWidth: '1px'});
-
-  [...]
     \end{lstlisting}
   \end{block}
 \end{frame}
@@ -374,7 +367,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 
   \begin{block}{}
     \begin{lstlisting}
-  [...]
+  ...
 
   X.ancestors[L.id] = L;
   X.ancestors[M.id] = M;
@@ -419,11 +412,11 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 	    \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=4.5cm]{img/limacon-ext.png}}
         \column{.60\textwidth}
     \begin{lstlisting}
-tg = board.create('glider', [loc]);
+C = board.create('glider', [loc]);
 
-tc = board.create('circle', [tg, 3]);
-ti = board.create('intersection', [tc, c1, 0]);
-tm = board.create('midpoint', [tg, ti]);
+c2 = board.create('circle', [C, 3]);
+E = board.create('intersection', [c1, c2, 0]);
+F = board.create('midpoint', [C, E]);
     \end{lstlisting}
 \end{columns}
 \end{frame}
