@@ -10,9 +10,9 @@
 \usepackage{hyperref}
 \usepackage{listings}
 
-\title{Automatic calculation of plane loci using Groebner bases and integration into a Dynamic Geometry System}   
-\author{Michael Gerh\"auser, Alfred Wassermann} 
-\date{July 24, 2010} 
+\title{Automatic calculation of plane loci using Groebner bases and integration into a Dynamic Geometry System}
+\author{Michael Gerh\"auser, Alfred Wassermann}
+\date{July 24, 2010}
 
 \newcommand{\GEONEXT}{GEONE\kern-.06em \lower.5ex\hbox{x}\kern-.215em T}
 \definecolor{GXT}{rgb}{0,0.549019608,0}
@@ -26,11 +26,11 @@
 
 \begin{document}
 
-\frame{\titlepage} 
+\frame{\titlepage}
 
 \frame{\frametitle{Overview}\tableofcontents}
 
-\section{JSXGraph - A short overview} 
+\section{JSXGraph - A short overview}
 
 % JSXGraph
 
@@ -64,7 +64,7 @@
 }
 
 \frame{
-  \frametitle{JSXGraph} 
+  \frametitle{JSXGraph}
   \begin{block}{Supported Hardware}
     \begin{itemize}
       \item PC (Windows, Linux, Mac)
@@ -76,7 +76,7 @@
 }
 
 \frame{
-  \frametitle{JSXGraph} 
+  \frametitle{JSXGraph}
   \begin{block}{Supported Browsers}
     \begin{itemize}
       \item Firefox
@@ -93,7 +93,7 @@ language=Java,                % choose the language of the code
 basicstyle=\tiny,       % the size of the fonts that are used for the code
 numbers=none,                   % where to put the line-numbers
 numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
-stepnumber=1,                   % the step between two line-numbers. If it's 1 each line 
+stepnumber=1,                   % the step between two line-numbers. If it's 1 each line
                                 % will be numbered
 numbersep=5pt,                  % how far the line-numbers are from the code
 backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
@@ -115,7 +115,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 }
 
 \begin{frame}[fragile]
-  \frametitle{JSXGraph} 
+  \frametitle{JSXGraph}
   \begin{block}{Example/Input}
     \begin{lstlisting}
 <link rel="stylesheet" type="text/css" href="css/jsxgraph.css" />
@@ -149,7 +149,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 
 \frame{
   \frametitle{JSXGraph}
-  
+
   \begin{block}{Supported file formats}
     \begin{itemize}
       \item \GEONEXT{}
@@ -161,18 +161,19 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 }
 
 \begin{frame}[fragile]
-  \frametitle{JSXGraph} 
+  \frametitle{JSXGraph}
   \begin{block}{Example/Input}
     \begin{lstlisting}
 <link rel="stylesheet" type="text/css" href="css/jsxgraph.css" />
 <script type="text/javascript" src="js/jsxgraphcore.js"></script>
+<script type="text/javascript" src="js/CinderellaReader.js"></script>
 ...
 <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
 <script type="text/javascript">
-  board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'watt.xml', 'intergeo');
-  
+  board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'watt.cdy', 'cinderella');
+
   function computeLocus() {
-    board.create('locus', [JXG.getRef('T')]);
+    board.create('locus', [JXG.getRef('E')]);
   }
 </script>
     \end{lstlisting}
@@ -184,7 +185,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 
   \begin{block}{Example/Output}
 \begin{center}
-      \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=5cm]{img/jsx-example.png}}
+      \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=5cm]{img/cindy.png}}
 \end{center}
   \end{block}
 }
@@ -209,7 +210,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 \begin{center}
       \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=5cm]{img/limacon-base.png}}
 \end{center}
-    \end{itemize} 
+    \end{itemize}
   \end{block}
 }
 
@@ -222,7 +223,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 \begin{center}
       \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=5cm]{img/limacon-coords.png}}
 \end{center}
-    \end{itemize} 
+    \end{itemize}
   \end{block}
 }
 
@@ -237,7 +238,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
   \item $(x-u[1])^2 + (y-u[2])^2 - 9 = 0$
   \item $3x-3u[1]+yu[1]-8y+8u[2]-xu[2] = 0$
 \end{itemize}
-    \end{itemize} 
+    \end{itemize}
   \end{block}
 }
 
@@ -250,7 +251,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 \begin{itemize}
   \item $x^6+3x^4y^2+3x^2y^4+y^6-48x^5-38x^4y-96x^3y^2-76x^2y^3-48xy^4-38y^5+1047x^4+1216x^3y+1774x^2y^2+1216xy^3+727y^4-13024x^3-16596x^2y-16096xy^2-8404y^3+97395x^2+109888xy+63535y^2-415536x-300806y+790009 = 0$
 \end{itemize}
-    \end{itemize} 
+    \end{itemize}
   \end{block}
 }
 
@@ -263,7 +264,7 @@ morecomment=[s][\itshape\color{gray}]{[.}{.]}
 \begin{center}
       \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=5cm]{img/limacon-locus.png}}
 \end{center}
-    \end{itemize} 
+    \end{itemize}
   \end{block}
 }
 
@@ -508,7 +509,7 @@ F = board.create('midpoint', [C, E]);
       edge [pre] (T);
     \node [transition] (A) [below of=T, xshift=30,scale=0.75] {A}
       edge [pre] (T);
-      
+
     \node [place] (C) [below of=E, xshift=45, label=right:2,scale=0.75]  {C}
       edge [pre] (E)
       edge [post] (T);
@@ -524,7 +525,7 @@ F = board.create('midpoint', [C, E]);
 
 \frame{
   \frametitle{Optimization}
-  
+
   \begin{block}{Transformations}
     \begin{itemize}
       \item Translate the construction moving one point to $(0, 0)$
@@ -532,7 +533,7 @@ F = board.create('midpoint', [C, E]);
       \item After the Gr\"obner basis is calculated, the result is retransformed
       \item User can choose the two points or
       \item JSXGraph chooses two points (but sometimes not the best suited ones)
-    \end{itemize}  
+    \end{itemize}
   \end{block}
 
 }

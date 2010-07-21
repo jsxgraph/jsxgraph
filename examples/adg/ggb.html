@@ -1,12 +1,12 @@
 <html>
 <head>
-   <title>Simson Steiner | JSXGraph Example</title>
+   <title>Watt | JSXGraph Example</title>
    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
-    <script type="text/javascript" src="../../src/IntergeoReader.js"></script>
+    <script type="text/javascript" src="../../src/CinderellaReader.js"></script>
 </head>
 <body>
-<h2>Simson Steiner</h2>
+<h2>Watt // powered by Cinderella</h2>
 <div id="debug" style="display: none"></div>
 <center>
 <div style="width: 1000px;">
@@ -25,10 +25,10 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-  board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'watt.xml', 'intergeo');
+  board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'watt.cdy', 'cinderella');
 
   function computeLocus() {
-    board.create('locus', [JXG.getRef('T')]);
+    board.create('locus', [JXG.getRef(board, 'E')]);
   }
   /* ]]> */
   </script>
