@@ -535,7 +535,11 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
    JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
 
-   JXG.addEvent(this.containerObj, 'contextmenu', function(e) { e.preventDefault(); return false;}, this);
+// This one produces errors on IE
+//   JXG.addEvent(this.containerObj, 'contextmenu', function(e) { e.preventDefault(); return false;}, this);
+// this one works on IE, Firefox and Chromium with default configurations
+// It's possible this doesn't work on some Safari or Opera versions by default, the user then has to allow the deactivation of the context menu.
+   this.containerObj.oncontextmenu = function(e) {if(e !== JXG.undefined) e.preventDefault(); return false; };
 };
 
 /**
