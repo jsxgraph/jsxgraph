@@ -484,7 +484,7 @@ Display bitmap image (also as data uri).\par
 
 \section{Other geometric elements}
 {\sl -- angle:} \hfill filled area defined by 3 points
-\metax{el = brd.create(\'angle\',[A,B,C],$\{$attributes$\}$);}{}
+\metax{el = brd.create(\'angle\',[M,B,C],$\{$attributes$\}$);}{}
 \par{\sl -- arc:} \hfill circular arc defined by 3 points
 \metax{el = brd.create(\'arc\',[A,B,C],$\{$attributes$\}$);}{}
 \par{\sl -- arrow:} \hfill line through 2 points with arrow head
@@ -500,7 +500,11 @@ Display bitmap image (also as data uri).\par
 \metax{el = brd.create(\'circumcircle\',[A,B,C],$\{$atts$\}$);}{}
 \par{\sl -- circumcirclemidpoint:} \hfill center of circle through 3 points
 \metax{el = brd.create(\'circumcirclemidpoint\',[A,B,C]);}{}
+\par{\sl -- circumcircle arc:} \hfill circular arc defined by 3 points
+\metax{el = brd.create(\'circumcirclearc\',[A,B,C],$\{$attributes$\}$);}{}
 \par{\sl -- midpoint:} midpoint between 2 points or the 2 points defined by a line
+\par{\sl -- circumcircle sector:} \hfill circular sector defined by 3 points
+\metax{el = brd.create(\'circumcirclesector\',[A,B,C],$\{$attributes$\}$);}{}
 
 \metax{el = brd.create(\'midpoint\',[A,B],$\{$atts$\}$); or [line]}{}
 %\metax{el = brd.create(\'midpoint\',[line],$\{$atts$\}$);}{}
