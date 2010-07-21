@@ -540,7 +540,6 @@ JXG.AbstractRenderer.prototype.drawCurve = function(/** Curve */ el) {
     //node.setAttributeNS(null, 'stroke-linejoin', 'round');
     this.appendChildPrim(node,el.layer);
     this.appendNodesToElement(el,'path');
-    
     this.setObjectStrokeWidth(el,el.visProp['strokeWidth']); // ?
     this.setObjectStrokeColor(el,el.visProp['strokeColor'],el.visProp['strokeOpacity']); // ?
     this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']); // ?

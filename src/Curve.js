@@ -262,6 +262,9 @@ JXG.Curve.prototype.update = function () {
     if (this.needsUpdate) {
         this.updateCurve();
     }
+    if(this.traced) {
+        this.cloneToBackground(true);
+    }    
     return this;
 };
 
@@ -668,6 +671,50 @@ JXG.Curve.prototype.getLabelAnchor = function() {
     var c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, this.board.canvasHeight*0.5], this.board);
     c = JXG.Math.Geometry.projectCoordsToCurve(c.usrCoords[1],c.usrCoords[2],0.0,this,this.board)[0];
     return c;
+};
+
+/**
+ * Clone curve to the background.
+ * @param addToTrace Not used yet. Always true.
+ */
+JXG.Curve.prototype.cloneToBackground = function(addToTrace) {
+    var copy = {},
+        r, s, i;
+
+    copy.id = this.id + 'T' + this.numTraces;
+    copy.elementClass = JXG.OBJECT_CLASS_CURVE;
+    this.numTraces++;
+    
+    var len = this.numberPoints;
+    copy.points = [];
+    for (i=0;i<len;i++) {
+        copy.points[i] = this.points[i]; 
+    }
+    copy.numberPoints = len;
+    copy.curveType = this.curveType;
+    JXG.clearVisPropOld(copy);
+
+    copy.board = {};
+    copy.board.unitX = this.board.unitX;
+    copy.board.unitY = this.board.unitY;
+    copy.board.zoomX = this.board.zoomX;
+    copy.board.zoomY = this.board.zoomY;
+    copy.board.stretchX = this.board.stretchX;
+    copy.board.stretchY = this.board.stretchY;
+    copy.board.origin = this.board.origin;
+    copy.board.canvasHeight = this.board.canvasHeight;
+    copy.board.canvasWidth = this.board.canvasWidth;
+    copy.board.dimension = this.board.dimension;
+    copy.board.algebra = this.board.algebra;
+    copy.board.options = this.board.options;
+
+    copy.visProp = this.visProp;
+    this.board.renderer.enhancedRendering = true;
+    this.board.renderer.drawCurve(copy);
+    this.board.renderer.enhancedRendering = false;
+    this.traces[copy.id] = this.board.renderer.getElementById(copy.id);
+
+    delete copy;
 };
 
 /**
