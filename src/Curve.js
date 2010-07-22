@@ -685,12 +685,8 @@ JXG.Curve.prototype.cloneToBackground = function(addToTrace) {
     copy.elementClass = JXG.OBJECT_CLASS_CURVE;
     this.numTraces++;
     
-    var len = this.numberPoints;
-    copy.points = [];
-    for (i=0;i<len;i++) {
-        copy.points[i] = this.points[i]; 
-    }
-    copy.numberPoints = len;
+    copy.points = this.points.slice(0); 
+    copy.numberPoints = this.numberPoints;
     copy.curveType = this.curveType;
     JXG.clearVisPropOld(copy);
 
