@@ -1047,6 +1047,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                 this.hasLabel = pair[1];
         }
     }
+    board.update();
     return this;
 };
 
