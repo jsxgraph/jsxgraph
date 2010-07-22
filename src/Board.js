@@ -456,7 +456,17 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     * @type Object
     */
    this.drag_obj = [];
-
+   
+   /**
+    * This property is used to store the latest time the user clicked on the board and the position he clicked.
+    * @type object
+    */
+    this.last_click = {
+		time: 0,
+		posX: 0,
+		posY: 0
+	};
+    
    /**
     * A string containing the XML text of the construction.
     * This is set in {@link JXG.FileReader#parseString}.
@@ -847,6 +857,14 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         return;
     }
     if (this.mode==this.BOARD_MODE_CONSTRUCT) return;
+    
+    if(((new Date()).getTime() - this.last_click.time <500) && (JXG.Math.Geometry.distance(absPos, [this.last_click.posX, this.last_click.posY]) < 30)) {
+		this.zoom100();
+	}
+	
+	this.last_click.time = (new Date()).getTime();
+	this.last_click.posX = absPos[0];
+	this.last_click.posY = absPos[1];
 
     this.mode = this.BOARD_MODE_DRAG;
     if (this.mode==this.BOARD_MODE_DRAG) {
