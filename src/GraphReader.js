@@ -70,21 +70,39 @@ JXG.GraphReader = new function() {
 	};
     
     this.drawGraph = function(graph,board) {
-        var n = graph.n, nodes = graph.nodes, adjMatrix = graph.adjMatrix, i,j,s;
+        var n = graph.n, nodes = graph.nodes, adjMatrix = graph.adjMatrix, i,j,s,t, p;
         for(i=0; i<n; i++) {
             //console.log(nodes[i].name,[nodes[i].coords[0],nodes[i].coords[1]]);
-            board.create('point',[nodes[i].coords[0],nodes[i].coords[1]], {name:nodes[i].name});
-            
+            p = board.create('point',[nodes[i].coords[0],nodes[i].coords[1]], {name:nodes[i].name});
+            nodes[i].reference = p;
         }
+        board.addedGraph.segments = [];
         for(i=0; i<n; i++) {
+            board.addedGraph.segments[i] = [];
+            for(j=0; j<i+1; j++) {
+                if(i==j) {
+                    board.addedGraph.segments[i].push(null);
+                }
+                else if(adjMatrix[i][j] < Number.MAX_VALUE) {
+                    board.addedGraph.segments[i][j] = board.addedGraph.segments[j][i];
+                }
+                else {
+                    board.addedGraph.segments[i].push(null);
+                }
+            }
             for(j=i+1; j<n; j++) {
                 if(adjMatrix[i][j] < Number.MAX_VALUE) {
                     //console.log([nodes[i].name, nodes[j].name]);
                     s = board.create('segment',[nodes[i].name, nodes[j].name]);
-                    board.create('text',[0,0,adjMatrix[i][j]],{parent:s});
+                    t = board.create('text',[0,0,adjMatrix[i][j]],{parent:s});
+                    board.addedGraph.segments[i].push({edge:s,weight:t});
+                }
+                else {
+                    board.addedGraph.segments[i].push(null);
                 }
             }
         }
+        //console.log(board.addedGraph.segments);
     };
 
 };

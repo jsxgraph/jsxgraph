@@ -12,8 +12,12 @@
   /* <![CDATA[ */                    
     board = JXG.JSXGraph.loadBoardFromFile('jxgbox','graphs/graph1.txt', 'graph');
     
-    alert(board.addedGraph.n);
+    alert("warten");
 							  /* ]]> */
+                              
+    board.addedGraph.nodes[2].reference.setProperty({fillColor:'blue',strokeColor:'black',size:7,face:'x'}); // B
+    board.addedGraph.segments[1][2].edge.setProperty({strokeColor:'green',dash:3}); // Kante von A nach B
+    board.addedGraph.segments[1][2].weight.setText('Hallo');
   </script>
 
 </body>
