@@ -6,7 +6,7 @@
     <script type="text/javascript" src="../../src/CinderellaReader.js"></script>
 </head>
 <body>
-<h2>Watt</h2>
+<h2>Watt // powered by Cinderella</h2>
 <div id="debug" style="display: none"></div>
 <center>
 <div style="width: 1000px;">
@@ -25,10 +25,30 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-  board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'watt.cdy', 'cinderella');
+   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 5, 10, -3], axis: true, grid: false,
+                                  keepaspectratio: true, showcopyright: false});
+
+  A = board.create('point', [0,0]);
+  B = board.create('point', [2,0]);
+  C = board.create('point', [3, -3]);
+
+//  k = board.create('circle', [A, B]);
+
+  g = board.create('line', [A, B]);
+  h = board.create('line', [A, C]);
+  D = board.create('glider', [4, 5, g], {name: "D"});
+
+  R = board.create('reflection', [D, h]);
+
+  k = board.create('circle', [R, 4]);
+  i = board.create('intersection', [k, g, 0]);
+
+  m = board.create('midpoint', [i, C]);
+
+  
 
   function computeLocus() {
-    board.create('locus', [JXG.getRef(board, 'E')]);
+    board.create('locus', [m]);
   }
   /* ]]> */
   </script>

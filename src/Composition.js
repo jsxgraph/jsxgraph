@@ -1350,6 +1350,12 @@ JXG.createLocus = function(board, parents, attributes) {
         if(c.board.mode > 0)
             return;
 
+        var spe = JXG.Math.Symbolic.generatePolynomials(board, p, true).join('');
+        if(spe === c.spe)
+                return;
+
+        c.spe = spe;
+
         var cb = function(x, y, eq, t) {
                 c.dataX = x;
                 c.dataY = y;
