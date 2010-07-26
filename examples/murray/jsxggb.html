@@ -10,16 +10,11 @@ content="text/html; charset=utf-8">
 
 <title>Ans 1</title></head>
 
-<body onLoad="if( window.parent && parent != window ) { parent.loadFrame(document.body.innerHTML,0);}">
+<body onLoad="if( window.parent && parent != window ) { parent.loadFrame(document.body.innerHTML,0,'box','3pts-circle-cubic-example.ggb','Geogebra');}">
 
 
 <p>You can zoom in and out in this graph (and move it up-down, left-right) using the small icons at the bottom right. </p>
 <div id="box" class="jxgbox" style="width:500px;height:500px"></div>
-<script type="text/javascript">
-    function loadTheConstruction() {
-        var b2 = JXG.JSXGraph.loadBoardFromFile('box', '3pts-circle-cubic-example.ggb', 'Geogebra');
-    }
-</script>
 
 <p>You'll notice at the <strong>point of inflexion</strong> there is interesting behavior. The circle changes from being below the curve to above (when moving left to right). When we are right on the point of inflexion, what does the circle become?</p>
 
