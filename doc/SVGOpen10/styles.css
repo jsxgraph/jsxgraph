@@ -1,0 +1,317 @@
+/* Stylesheet for db2html output */
+/* general style */
+body {
+  background-color: white;
+  color: black; /* steelblue, rgb(70,130,180); */
+  font-family: sans-serif;
+  margin: 1.5em;
+  margin-top: 0em;
+  margin-right: 1em;
+}
+/* titles, general options */
+h1, h2, h3, h4, h5, h6, caption { 
+  font-family: sans-serif;
+  color:rgb(24,95,153); /* rgb(24,95,153) */
+}
+/* first level title */
+h1 {
+  text-align: center;
+  font-size: 1.6em;
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 2em
+}
+/* second level title */
+h2 {
+  font-size: 1.3em; 
+  margin-top: 1.5em;
+  padding: 2px;
+  color: white;
+  background-color:rgb(24,95,153);
+}
+/* second level sub-title */
+h2.subt {
+  text-align: center;
+  margin-top: -1.8em;
+  margin-bottom: 2em;
+  padding: 0px;
+  color: rgb(24,95,153);
+  background-color: white;
+  font-family: sans-serif;
+}
+/* second level title for abstrac and table of content */
+h2.abstractHeader, h2.tocHeader {
+  text-align: center;
+  color: rgb(24,95,153);
+  background-color: white;
+  margin-top: 0em;
+  margin-bottom: 0em
+}
+/* third level title */
+h3 {
+  font-size: 1.2em;
+  margin-top: 1.3em
+}
+h3 * {background-color:white;}
+/* fourth level title */
+h4 {
+  font-size: 1.1em;
+  margin-top: 1em
+}
+/* fifth level title */
+h5, h3.acknowlTitle {
+  font-size: 1em; 
+  margin-top: 1.5em; 
+  margin-bottom: 0em  
+}
+/* sixth level title */
+h6 {
+  font-size: 0.9em;
+  margin-top: 1em; 
+  margin-bottom: -0.2em  
+}
+h3.acknowlTitle * { background-color: white }
+h6.randlistTitle, h6.seqlistTitle, h6.deflistTitle {
+  color: rgb(70,130,180);
+  font-family: sans-serif;
+  font-size: 1em; 
+  margin-top: 0.75em; 
+  margin-bottom: 0em; 
+  font-weight: bold 
+}
+/* list */
+dl { margin-top: 0.5em }
+dt {
+  margin-top: 0.4em;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 0.95em
+}
+dt.bib {
+  color: red;
+  font-size: 1em
+}
+dd { margin-top: 0.1em }
+dt.termHeading, dd.defHeading { color: red }
+/* code */
+code { font-family: monospace }
+code.sgmltag { font-weight: bold }
+/* unformatted text */
+pre {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  font-family: monospace
+}
+pre.address, pre.literallayout {
+  margin-top: 0em;
+  margin-bottom: 0em;
+  font-family: Times, serif;
+  font-size: 1em
+}
+p, li, pre.literallayout { line-height: 1.1em }
+.authorName {
+  font-weight: bold
+}
+/* styles for paragraph contents */
+p.keyword {
+  color: #000099;
+  background-color: #DDDDDD
+}
+p.sectKeyword { color: #000099 }
+p.author {
+  margin-top: 1.5em;
+  margin-bottom: 0em;
+}
+p.toc { 
+  margin-left: 2em;
+  line-height: 1.5em;
+}
+p.title {
+  text-align: center;
+}
+.lquote p.attribution {
+  margin-right: 4em;
+  text-align: right
+}
+.abstract p, .abstract ul, .abstract ol, .abstract dl {
+  margin-left: 2em;
+  margin-right: 2em
+}
+.componentAbstract {color: #778DA3}
+.figcaption p, .figcaption ul, .figcaption ol, .figcaption dl {
+  font-size: 0.8em;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: justify
+}
+.figureTitle p, .tableHeader p {
+  text-align: center
+}
+ol.ftnote {
+  font-size: 0.8em
+}
+blockquote {
+  margin-left: 2em;
+  margin-right: 2em;
+  background-color: white;
+  font-style: italic;
+}
+blockquote.lquote {
+  font-size: 0.8em
+}
+blockquote.figurePara {
+  margin-left: 4em;
+  margin-right: 4em;
+  text-align: left
+}
+blockquote.figcaption, blockquote.figureTitle {
+  margin-left: 25%;
+  margin-right: 25%
+}
+blockquote.tableHeader {
+  margin-top: 1em;
+  margin-left: 4em;
+  margin-right: 4em;
+  margin-bottom: 2em
+}
+.figure {
+  margin-top: 2em;
+  margin-bottom: 2em;
+  text-align: center;
+}
+/* tables */
+table.note {
+  width: 98%;
+  color: #000099;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #000099
+}
+table.note td { padding: 0.75em }
+.noteHeader {
+  font-family: sans-serif;
+  font-weight: bold
+}
+table.codeBlock {
+  width: 98%;
+  color: #778DA3; 
+  background-color: #EEEEEE;
+  text-align: left
+}
+.imageTable {
+  border-width: 0px;
+  outline-width: 0px;
+  outline-style: none;
+  border-style: hidden;
+  text-align: center;
+}
+table {
+  color: rgb(24,95,153);
+  margin-top: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  empty-cells: show;
+  border-collapse: collapse;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(24,95,153);
+  text-align: center;
+  outline-color: rgb(24,95,153);
+  outline-style: solid;
+  outline-width: 2px;
+}
+table caption {
+  caption-side: top;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: justify;
+  font-size: 0.95em
+}
+table th {
+  font-size: 1em;
+  font-weight: bold;
+  background-color: rgb(24,95,153);
+  color: white;
+  padding: 0.5em;
+  border-style: solid;
+  border-width: 1px;
+  border-color: white;
+}
+table td {
+  padding: 0.5em;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(24,95,153);
+}
+hr {
+  background-color: rgb(24,95,153);
+  border-style: none;
+  height: 2px
+} 
+hr.upperBorder {
+  margin-top: 2em;
+  margin-bottom: 0em
+}
+hr.lowerBorder {
+  margin-top: 0em;
+  margin-bottom: 0em
+}
+cite { font-style: italic }
+:link {
+  background: none transparent scroll repeat 0% 0%;
+  color: black;
+}
+:visited {
+  background: none transparent scroll repeat 0% 0%;
+  color: purple;
+}
+:active {
+  background: none transparent scroll repeat 0% 0%;
+  color: red
+}
+@media screen {
+a[href]:hover { 
+  background-color:rgb(194,227,255);
+}
+}
+a.bibref {
+  font-family: sans-serif;
+}
+acronym { color: #000099 }
+acronym a:link {
+  color: rgb(70,130,180);
+  text-decoration: none
+}
+acronym a:visited {
+  color: rgb(128,0,128);
+  text-decoration: none
+}
+acronym a:active {
+  color: #000099;
+  text-decoration: none
+}
+acronym a:hover {
+  color: #000099;
+  background-color: #D0F0A0;
+  text-decoration: none
+}
+.credits {
+  float: right;
+  font-family: sans-serif;
+  font-size: 0.8em;
+  margin-top: 1em;
+  padding-top: 2px
+}
+.credits small {
+  color: gray;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: gray;
+  padding-top: 2px
+}
+
+.programlisting {
+  padding: 0.5em;
+  font-family: monospace;
+  background-color: #EEEEEE;
+}

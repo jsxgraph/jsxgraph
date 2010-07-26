@@ -1,0 +1,183 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="styles.css"/>
+<title>Here is the title of the presentation</title>
+<meta name="description" content="Abstract of the presentation"/>
+<meta name="keywords" content="conference proceedings, keywords of the presentation"/>
+</head>
+<body>
+<div class="article" lang="en">
+ <div class="titlepage">
+  <div>
+   <div>
+    <h2 class="title"><a id="d4e1"/>Here is the title of the presentation</h2>
+
+   </div>
+   <h3 class="subtitle"><i>Here is the subtitle</i></h3>
+   </div>
+   <div>
+    <div class="authorgroup">
+	 <div class="author"><h3 class="author"><span class="firstname">Firstname1</span> <span class="surname">Surname1</span></h3>
+ 	  <div class="personblurb">
+
+		<p>
+		Here is the area of interests of author1. 
+        </p>
+	  </div>
+	 </div>
+	 <div class="author"><h3 class="author"><span class="firstname">Firstname2</span> <span class="surname">Surname2</span></h3>
+ 	  <div class="personblurb">
+		<p>
+
+		Here is the area of interests of author2. 
+        </p>
+	  </div>
+	 </div>
+	</div>
+   </div>
+   <div>
+    <div class="abstract">
+	<hr/>
+
+	<p class="title"><b>Abstract</b></p>
+	<hr/>
+	<p>
+	Here is the text of the abstract
+	</p>
+	</div>
+   </div>
+  </div><hr/>
+  </div>
+
+  <div class="toc"><p><b>Table of Contents</b></p>
+  <dl>
+  <dt><span class="section"><a href="#L1T1">Level 1 Title 1</a></span></dt>
+  <dt><span class="section"><a href="#L1T2">Level 1 Title 2</a></span></dt>
+  <dd>
+  <dl>
+  <dt><span class="section"><a href="#L2T1">Level 2 Title 1</a></span></dt>
+
+  </dd>
+  <dt><span class="bibliography"><a href="#Biblio">Bibliography</a></span></dt>
+  </dl>
+  </div>
+	
+	<div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="L1T1"/>Title 1 level 1</h2></div></div></div>
+		
+		<p>	paragraph		</p>
+		<p>	Text for presenting the unordered list </p>
+
+		<div class="itemizedlist">
+			<ul type="bullet">	
+				<li style="list-style-type: disc">
+					<p>first item</p></li>
+				<li style="list-style-type: disc">
+					<p>second item</p></li>
+				<li style="list-style-type: disc">
+					<p>third item</p></li>
+
+			</ul>
+		</div>
+		<p>
+		</p>
+	</div>
+	<div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="L1T2"/>Title 2 level 1</h2></div></div></div>
+		
+		<p>paragraph with a reference to an element of the bibliography
+		<a class="xref" href="#BIBLIO1" title="Reference to an element of the bibliography">[REF1]</a> </p>
+
+		<div class="orderedlist">
+			<ol type="1">
+				<li>
+					<p>first item</p></li>
+				<li>
+					<p>second item</p></li>
+				<li>
+					<p>third item</p></li>
+
+				<li>
+					<p>fourth itel</p></li>
+			</ol>
+		</div>
+		<p>
+		paragraph
+		</p>
+		<div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="L2T1"/>Title 1 Level 2</h3></div></div></div>
+
+			
+			<p>
+				paragraph
+				<code class="code">
+					url
+				</code>
+				paragraph
+			</p>
+	<p>
+				text
+				</p>
+				<div class="figure"><a id="course_webpage"/>
+
+				  <div class="figure-contents">
+					
+					<div class="mediaobject"><img src="./image.jpg" alt="file of the figure"/></div>
+				  </div>
+				  <p class="title"><b>Figure 1.Text for the figure 1</b></p>
+				</div>
+				<p><br class="figure-break"/>
+				here is an svg code: no-formatted text. Be careful to the &gt; and &lt; characters
+				</p>
+
+				<pre class="programlisting">
+				
+&lt;?xml version="1.0" ?>
+&lt;svg   baseProfile="full"   xmlns="http://www.w3.org/2000/svg"   xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:ev="http://www.w3.org/2001/xml-events" width="160" height="160">
+&lt;title> Chat&lt;/title>
+&lt;desc>Dessin d'un chat&lt;/desc>
+
+&lt;!-- tete et yeux -->
+&lt;circle cx="70" cy="95" r="50" style="stroke: black; fill: none"/>
+&lt;circle cx="55" cy="80" r="5" stroke="black" fill="#339933"/>
+&lt;circle cx="85" cy="80" r="5" stroke="black" fill="#339933"/>
+
+&lt;!-- moustaches -->
+&lt;g id="moustaches" >
+  &lt;line x1="75" y1="95" x2="135" y2="105" style="stroke: black;" />
+  &lt;line x1="75" y1="95" x2="135" y2="85" style="stroke: black;" />
+
+&lt;/g>
+&lt;use xlink:href="#moustaches" transform="scale(-1 1) translate(-140 0)" />
+
+&lt;!-- oreilles du chat -->
+&lt;defs>
+  &lt;g id="oreilles" >
+    &lt;polyline points="108 62, 90 10, 70 45" stroke="blue" fill="none" />
+  &lt;/g>
+&lt;/defs>
+
+&lt;use xlink:href="#oreilles"  />
+&lt;use xlink:href="#oreilles" transform="translate(140 0) scale(-1 1) " />
+
+&lt;!-- sourire du chat -->
+&lt;polyline  id="levres" points="35 110, 45 120, 95 120,105 110" stroke="red" fill="none" />
+&lt;use xlink:href="#levres" transform="translate(0 2)" />
+&lt;/svg>
+		</pre><p>
+			</p>
+
+		</div>
+	<div class="bibliography"><div class="titlepage"><div><div><h2 class="title"><a id="Biblio"/>Bibliography</h2></div></div></div>
+		<div class="biblioentry"><a id="BIBLIO1"/><p>[<abbr class="abbrev">REF1</abbr>] 
+			
+			<span class="author"><span class="firstname">author-1-firstname</span> <span class="surname">author-1-surname</span>. </span>
+			<span class="author"><span class="firstname">author-2-firstname</span> <span class="surname">author-2-surname</span>. </span>
+
+			<span class="editor"><span class="firstname">editor-1-firstname</span> <span class="surname">editor-1-surname</span>. </span>
+			<span class="title"><i>Title of the reference</i>. </span>
+			<span class="publisher">
+				<span class="publishername">Publisher name. </span>
+			</span>
+
+		</p></div>
+	</div>
+</div></body></html>
