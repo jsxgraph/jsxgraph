@@ -5,7 +5,7 @@ function writeDivs() {
     }
     i++;
 }
-function loadFrame(newData, oNum, container, file, format) {
+function loadFrame(newData, oNum, code) {
     if (document.getElementById('output' + oNum).parentNode.style.visibility == 'visible') {
         document.getElementById('output' + oNum).parentNode.style.display = 'none';
         document.getElementById('output' + oNum).parentNode.style.visibility = 'hidden';
@@ -13,6 +13,6 @@ function loadFrame(newData, oNum, container, file, format) {
         document.getElementById('output' + oNum).parentNode.style.visibility = 'visible';
         document.getElementById('output' + oNum).parentNode.style.display = 'block';
         document.getElementById('output' + oNum).innerHTML = newData;
-        JXG.JSXGraph.loadBoardFromFile(container, file, format);        
+        (new Function(document.getElementById(code).innerHTML))();
     }
 }
