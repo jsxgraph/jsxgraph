@@ -130,10 +130,16 @@ this.parseString = function(fileStr, board, format, isString) {
     }
     if (format.toLowerCase()=='graph') {
         //if(isString)
-        fileStr = JXG.GraphReader.readGraph(fileStr,board);
+        fileStr = JXG.GraphReader.readGraph(fileStr, board, false);
         board.afterLoad();
         return;
     }
+    if (format.toLowerCase()=='digraph') {
+        //if(isString)
+        fileStr = JXG.GraphReader.readGraph(fileStr, board, true);
+        board.afterLoad();
+        return;
+    }    
 
     // fileStr is a string containing the XML code of the construction
     if (format.toLowerCase()=='geonext') {

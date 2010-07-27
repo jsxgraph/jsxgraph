@@ -23,57 +23,100 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 JXG.GraphReader = new function() {
-    this.parseData = function(board) {
-        var splitted, n, nodes = [], adjMatrix = [], i, tmp;
+    this.parseData = function(board, directed) {
+        var splitted, n, nodes = [], adjMatrix = [], i, tmp, nodenumbers = {}, tmp2, weighted = false;
         splitted = this.data.split('\n');
-        // Leerzeichen am Anfang und am Ende entfernen
+        // remove whitespaces
         for(i=0; i<splitted.length;i++) {
             splitted[i] = splitted[i].replace (/^\s+/, '').replace (/\s+$/, '');
         }
+        
+        // first line: bounding box
         boundingBox = splitted[0].split(' ');
         for(i=0; i<boundingBox.length; i++) {
             boundingBox[i] = parseInt(boundingBox[i]);
         }
-        //console.log(boundingBox);
+
         board.setBoundingBox(boundingBox,true);
         splitted.shift();
+        
+        // second line: number of nodes
         n = parseInt(splitted[0]);
+        
+        // nodes
         for(i=1; i <= n; i++) {
-            tmp = splitted[i].split(' ');
-            nodes.push({name:tmp[0],coords:[parseInt(tmp[1]),parseInt(tmp[2])]});
+            if(splitted[i].search(/ /) != -1) {
+                tmp = splitted[i].split(' ');
+                nodes.push({name:tmp[0],coords:[parseInt(tmp[1]),parseInt(tmp[2])]});
+                nodenumbers[tmp[0]] = i-1;
+            }
+            else { // keine Koordinaten vorgegeben 
+                tmp = splitted[i];
+                nodes.push({name:tmp,coords:[null,null]});
+                nodenumbers[tmp] = i-1;
+            }
         }
-        for(i=n+1; i <= 2*n; i++) {
+        
+        // edges
+        for(i=0; i<n; i++) {
+            adjMatrix[i] = [];
+            for(j=0; j<n; j++) {
+                adjMatrix[i][j] = 0;
+            }
+        }
+        for(i=n+1; i < splitted.length; i++) {
             tmp = splitted[i].split(' ');
-            for(j=0; j<tmp.length; j++) {
-                if(tmp[j] == 'INF') {
-                    tmp[j] = Number.MAX_VALUE;
+            if(tmp.length > 2) { // weights
+                weighted = true;
+                if(tmp[2] == 'INF') {
+                    tmp2 = Number.MAX_VALUE;
                 }
                 else {
-                    tmp[j] = parseInt(tmp[j]);
+                    tmp2 = parseInt(tmp[2]);
                 }
-            }        
-            adjMatrix.push(tmp);
+            }
+            else {
+                tmp2 = 1; // no weights
+            }
+            adjMatrix[nodenumbers[tmp[0]]][nodenumbers[tmp[1]]] = tmp2;
+            if(!directed) {
+                adjMatrix[nodenumbers[tmp[1]]][nodenumbers[tmp[0]]] = tmp2;
+            }
         }
-        board.addedGraph = {n:n,nodes:nodes,adjMatrix:adjMatrix};
+        board.addedGraph = {n:n, nodes:nodes, adjMatrix:adjMatrix, nodenumbers: nodenumbers, weighted: weighted, directed: directed};
+        //console.log(adjMatrix);
         return board.addedGraph;
         
     };
     
 
-	this.readGraph = function(fileStr, board) { 
+	this.readGraph = function(fileStr, board, directed) { 
         var graph;
         this.data = fileStr;
         board.suspendUpdate();
-		graph = this.parseData(board);
+		graph = this.parseData(board, directed);
         this.drawGraph(graph, board);
         board.unsuspendUpdate();
 	};
     
     this.drawGraph = function(graph,board) {
-        var n = graph.n, nodes = graph.nodes, adjMatrix = graph.adjMatrix, i,j,s,t, p;
+        var n = graph.n, nodes = graph.nodes, adjMatrix = graph.adjMatrix, i,j,s,t, p, x,y;
         for(i=0; i<n; i++) {
             //console.log(nodes[i].name,[nodes[i].coords[0],nodes[i].coords[1]]);
-            p = board.create('point',[nodes[i].coords[0],nodes[i].coords[1]], {name:nodes[i].name});
+            if(nodes[i].coords[0] == null) {
+                x = Math.random()*(board.canvasWidth)/board.stretchX-board.origin.scrCoords[1]/board.stretchX;
+                //console.log(x);
+            }
+            else {
+                x = nodes[i].coords[0];
+            }
+            if(nodes[i].coords[1] == null) {
+                y = Math.random()*(board.canvasWidth)/board.stretchY-board.origin.scrCoords[2]/board.stretchY;;
+            }
+            else {
+                y = nodes[i].coords[1];
+            }
+            p = board.create('point',[x,y], {name:nodes[i].name});
             nodes[i].reference = p;
         }
         board.addedGraph.segments = [];
@@ -83,7 +126,7 @@ JXG.GraphReader = new function() {
                 if(i==j) {
                     board.addedGraph.segments[i].push(null);
                 }
-                else if(adjMatrix[i][j] < Number.MAX_VALUE) {
+                else if(adjMatrix[i][j] < Number.MAX_VALUE && adjMatrix[i][j] != 0) {
                     board.addedGraph.segments[i][j] = board.addedGraph.segments[j][i];
                 }
                 else {
@@ -91,11 +134,19 @@ JXG.GraphReader = new function() {
                 }
             }
             for(j=i+1; j<n; j++) {
-                if(adjMatrix[i][j] < Number.MAX_VALUE) {
+                if(adjMatrix[i][j] < Number.MAX_VALUE && adjMatrix[i][j] != 0) {
                     //console.log([nodes[i].name, nodes[j].name]);
                     s = board.create('segment',[nodes[i].name, nodes[j].name]);
-                    t = board.create('text',[0,0,adjMatrix[i][j]],{parent:s});
-                    board.addedGraph.segments[i].push({edge:s,weight:t});
+                    if(graph.directed) {
+                        s.setProperty({lastArrow:true});
+                    }
+                    if(graph.weighted) {
+                        t = board.create('text',[0,0,adjMatrix[i][j]],{parent:s});
+                        board.addedGraph.segments[i].push({edge:s,weight:t});
+                    }
+                    else {
+                        board.addedGraph.segments[i].push({edge:s,weight:1});
+                    }
                 }
                 else {
                     board.addedGraph.segments[i].push(null);
