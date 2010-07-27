@@ -78,113 +78,121 @@ JXG.Math.Numerics.number_of_nodes = 28;
 JXG.Math.Numerics.integration_type = JXG.INT_MILNE;
 
 /**
+ * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
+ * The algorithm runs in-place. I.e. the entries of A and b are changed.
+ * @param {Array} A Square matrix represented by an array of rows, containing the coefficients of the lineare equation system.
+ * @param {Array} b A vector containing the linear equation system's right hand side.
+ * @throws {Error} If a non-square-matrix is given or if b has not the right length or A's rank is not full.
+ * @returns {Array} A vector that solves the linear equation system.
+ */
+JXG.Math.Numerics.Gauss = function(A, b) {
+    var eps = JXG.Math.eps,
+        // number of columns of A
+        n = A.length>0 ? A[0].length : 0,
+        // copy the matrix to prevent changes in the original
+        Acopy,
+        // solution vector, to prevent changing b
+        x,
+        i, j, k,
+        // little helper to swap array elements
+        swap = function(i, j) {
+            var temp = this[i];
+
+            this[i] = this[j];
+            this[j] = temp;
+        };
+
+    if((n !== b.length) || (n !== A.length))
+        throw new Error("JXG.Math.Numerics.Gauss(): Dimensions don't match. A must be a square matrix and b must be of the same length as A.");
+
+    x = new Array(n);
+    
+    Acopy = A;
+    A = new Array(n);
+    
+    // initialize solution vector and pivot tracking vector P 
+    for (i=0; i<n; i++) {
+        x[i] = b[i];
+
+        // copy A
+        A[i] = new Array(n);
+        for(j=0; j<n; j++) {
+            A[i][j] = Acopy[i][j];
+        }
+    }
+
+    // Gauss-Jordan-elimination
+    for (j=0; j < n; j++)
+    {
+        for (i = n-1; i > j; i--) {
+            // Is the element which is to eliminate greater than zero?
+            if (Math.abs(A[i][j]) > eps) {
+                // Equals pivot element zero?
+                if (Math.abs(A[j][j]) < eps) {
+                    // At least numerically, so we have to exchange the rows
+                    swap.apply(A, [i, j]);
+                    swap.apply(x, [i, j]);
+                } else {
+                    // Saves the L matrix of the LR-decomposition. unnecessary.
+                    A[i][j] /= A[j][j];
+                    // Transform right-hand-side b
+                    x[i] -= A[i][j] * b[j];
+                    // subtract the multiple of A[i][j] / A[j][j] of the j-th row from the i-th.
+                    for (k = j + 1; k < n; k ++) {
+                        A[i][k] -= A[i][j] * A[j][k];
+                    }
+                }
+            }
+        }
+        if (Math.abs(A[j][j]) < eps) { // The absolute values of all coefficients below the j-th row in the j-th column are smaller than JXG.Math.eps.
+            throw new Error("JXG.Math.Numerics.Gauss(): The given matrix seems to be singular.");
+        }
+    }
+
+    JXG.Math.Numerics.backwardSolve(A, x, true); // return Array
+
+    A = Acopy;
+
+    return x;
+};
+
+/**
  * Solves a system of linear equations given by the right triangular matrix R and vector b.
- * @param R Right triangular matrix. All entries a_(i,j) with i < j are ignored.
- * @param b Right hand side of the linear equation system.
- * @return A vector that solves the system of linear equations.
- * @private
- */ 
-JXG.Math.Numerics.backwardSolve = function(/** JXG.Math.Matrix */ R, /** JXG.Math.Vector */ b) /** JXG.Math.Vector */ {
-    var x = b,
-        m, n,
-        i, j;
+ * @param {Array} R Right triangular matrix represented by an array of rows. All entries a_(i,j) with i &lt; j are ignored.
+ * @param {Array} b Right hand side of the linear equation system.
+ * @param {Boolean} [canModify=false] If true, the right hand side vector is allowed to be changed by this method.
+ * @returns {Array} An array representing a vector that solves the system of linear equations.
+ */
+JXG.Math.Numerics.backwardSolve = function(R, b, canModify) {
+    var x, m, n, i, j;
+
+    if(canModify) {
+        x = b;
+    } else {
+        x = new Array(b.length);
+        for(i = 0; i<b.length; i++) {
+            x[i] = b[i];
+        }
+    }
 
     // m: number of rows of R
     // n: number of columns of R
-    // Relaxation: R may be of type JXG.Math.Matrix or Array
-    //             b may be of type JXG.Math.Vector or Array
-    if (R.m) { // R is of type JXG.Math.Matrix
-        m = R.m();
-        n = R.n();
-    } else {   // R is of type array
-        m = R.length;
-        n = (R.length>0)?R[0].length:0;
-    }
+    m = R.length;
+    n = R.length>0 ? R[0].length : 0;
+    
     for (i = m-1; i >= 0; i--) {
         for (j = n-1; j > i; j--) {
             x[i] -= R[i][j] * x[j];
         }
         x[i] /= R[i][i];
     }
-   
+
     return x;
 };
 
 /**
- * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
- * The algorithm runs in-place. I.e. the entries of A and b are changed.
- * @param A Square matrix containing the coefficients of the lineare equation system.
- * @param b A vector containing the linear equation system's right hand side. 
- * @throws {JXG.DimensionMismatchException} If a non-square-matrix is given or the b has not the right length.
- * @throws {JXG.SingularMatrixException} If A's rank is not full.
- * @return A vector that solves the linear equation system.
- */
-JXG.Math.Numerics.Gauss = function(/** JXG.Math.Matrix */ A, /** JXG.Math.Vector */ b) /** JXG.Math.Vector */ {
-    var eps = JXG.Math.eps,
-        n,                 
-        i, j, k, P,
-        x, y;
-    
-    // n: number of columns of A
-    // Relaxation: A may be of type JXG.Math.Matrix or Array
-    //             b may be of type JXG.Math.Vector or Array
-    if (A.n) { // A is of type JXG.Math.Matrix
-        n = A.n();
-    } else {   // A is of type array
-        n = (A.length>0)?A[0].length:0;
-    }
-    
-    /* vector to keep track of permutations caused by pivotion */
-    P = new JXG.Math.Vector();
-    for (i = 0; i < n; i++) {
-        P.push(i);
-    }
-    
-   /* Gauss-Jordan-elimination */
-    for (j=0; j < n; j++)
-    {
-        for (i = n-1; i > j; i--) {
-            /* Is the element which is to eliminate greater than zero? */
-            if (Math.abs(A[i][j]) > JXG.Math.eps) {
-                /* Equals pivot element zero? */
-                if (Math.abs(A[j][j]) < JXG.Math.eps) {
-                    /* Yeah, so we have to exchange the rows */
-                    A.exchangeRows(i, j);
-                    b.exchange(i, j);
-                    P.exchange(i, j);
-                }
-                else {
-                    /* Saves the L matrix of the LR-decomposition. unneeded. */
-                    A[i][j] /= A[j][j];
-                    /* Transform right-hand-side b */
-                    b[i] -= A[i][j] * b[j];
-                    /* subtract the multiple of A[i][j] / A[j][j] of the j-th row from the i-th. */
-                    for (k = j + 1; k < n; k ++) {
-                        A[i][k] -= A[i][j] * A[j][k];
-                    }
-                }
-            }
-            if (Math.abs(A[j][j]) < JXG.Math.eps) { // The absolute values of all coefficients below the j-th row in the j-th column are smaller than JXG.Math.eps.
-                throw new SingularMatrixException();
-            }
-        }
-    }
-   
-    return JXG.Math.Numerics.backwardSolve(A, b); // return Array
-    /* 
-    y = JXG.Math.Numerics.backwardSolve(A, b);
-    x = new JXG.Math.Vector();
-    for (i = 0; i < n ; i++) { // y.n()
-        x.push(y[P[i]]);
-    }
-   
-    return x; // return JXG.Math.Vector
-    */
-};
-
-/**
  * Compute the inverse of an nxn matrix with Gauss elimination.
- * @param {JXG.Math.Matrix} Ain
+ * @param {Array} Ain
  */
 JXG.Math.Numerics.Inverse = function(Ain) {
     var i,j,k,s,ma,r,swp,
@@ -242,7 +250,7 @@ JXG.Math.Numerics.Inverse = function(Ain) {
 
 /**
  * NEEDS IMPLEMENTATION. TODO Decomposites the matrix A in an orthogonal matrix Q and a right triangular matrix R. 
- * @param {JXG.Math.Matrix} A A matrix.
+ * @param {Array} A A matrix.
  * @type Object
  * @throws {Exception} If A's rank is not full.
  * @return The matrices Q and R.
@@ -255,7 +263,7 @@ JXG.Math.Numerics.QR = function(A, b) {
 /**
  * Compute the Eigenvalues and Eigenvectors of a symmetric 3x3 matrix with the Jacobi method
  * Adaption of a FORTRAN program by Ed Wilson, Dec. 25, 1990
- * @param {JXG.Math.Matrix} Ain A symmetric 3x3 matrix.
+ * @param {Array} Ain A symmetric 3x3 matrix.
  * @type Object
  * @throws {Exception} If A's rank is not full.
  * @return [A,V] the matrices A and V. The diagonal of A contains the Eigenvalues,
@@ -416,11 +424,12 @@ JXG.Math.Numerics.NewtonCotes = function(/** array */ interval, /** function */ 
 
 /**
  * Calculates second derivatives at the knots.
- * @param x x values of knots
- * @param y y values of knots
- * @return Second derivatives of interpolated function at the knots.
+ * @param {Array} x x values of knots
+ * @param {Array} y y values of knots
+ * @returns {Array} Second derivatives of the interpolated function at the knots.
+ * @see #splineEval
  */
-JXG.Math.Numerics.splineDef = function(/** JXG.Math.Vector */ x, /** JXG.Math.Vector */ y) /** JXG.Math.Vector */ {
+JXG.Math.Numerics.splineDef = function(x, y) {
     var n = x.length,
         pair, i, diag, z, l,
         data = new Array(),
@@ -475,18 +484,16 @@ JXG.Math.Numerics.splineDef = function(/** JXG.Math.Vector */ x, /** JXG.Math.Ve
     F[0] = 0;
     F[n-1] = 0;
     return F;
-    //return new JXG.Math.Vector(F);
 };
 
 /**
  * Evaluate points on spline.
  * @param {float,Array} x0 A single float value or an array of values to evaluate
- * @param {JXG.Math.Vector} x x values of knots
- * @param {JXG.Math.Vector} y y values of knots
- * @param {JXG.Math.Vector} F Second derivatives at knots, calculated by #splineDef
- * @see splineDef
- * @type float,Array
- * @return A single value
+ * @param {Array} x x values of knots
+ * @param {Array} y y values of knots
+ * @param {Array} F Second derivatives at knots, calculated by {@link #splineDef}
+ * @see #splineDef
+ * @returns {float,Array} A single value or an array, depending on what is given as x0.
  */
 JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
     var n = x.length,
@@ -510,10 +517,8 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
         // is x0 in defining interval?
         if( (x0[i] < x[0]) || (x[i] > x[n-1]))
             return 'NaN';
-//            throw new Error("JSXGraph: Error in JXG.Math.Numerics.splineEval: Evaluation point outside spline interval.");
         
         // determine part of spline in which x0 lies
-        j;
         for (j=1; j<n; j++) {
             if (x0[i] <= x[j])
                 break;
@@ -554,17 +559,15 @@ JXG.Math.Numerics.generatePolynomialTerm = function(coeffs,deg,varname,prec) {
         else if (i==1) { t+='*'+varname+' + '; }
     }
     return t;
-}
+};
 
 /**
  * Computes the polynomial through a given set of coordinates in Lagrange form.
  * Returns the Lagrange polynomials, see
  * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
  * SIAM Review, Vol 46, No 3, (2004) 501-517.
- * @param {array} p Array of JXG.Points
- * @type {function}
- * @return {function} A function of one parameter which returns the value of the polynomial,
- * whose graph runs through the given points.
+ * @param {Array} p Array of JXG.Points
+ * @returns {function} A function of one parameter which returns the value of the polynomial, whose graph runs through the given points.
  */
 JXG.Math.Numerics.lagrangePolynomial = function(p) {  
     var w = [];
@@ -595,7 +598,7 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
                     }
                 }
                 y = curve.dataY;                           // input data
-                MT = JXG.Math.Matrix.transpose(M);
+                MT = JXG.Math.matTranspose(M);
 
                 B = JXG.Math.matMatMult(MT,M);
                 c = JXG.Math.matVecMult(MT,y);
@@ -626,27 +629,6 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
     };
     
     return fct;
-
-/*
-    return function(x) {
-        var i,k,t,
-            len = p.length,
-            y = 0.0,
-            xc = [];
-        
-        for (i=0;i<len;i++) {
-            xc[i] = p[i].X();
-        }
-        for (i=0;i<len;i++) {
-            t = p[i].Y();
-            for (k=0;k<len;k++) if (k!=i) {
-                t *= (x-xc[k])/(xc[i]-xc[k]);
-            }
-            y += t;
-        }
-        return y;
-    };
-*/    
 };
 
 /**
@@ -654,9 +636,8 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
  * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
  * SIAM Review, Vol 46, No 3, (2004) 501-517.
  * The graph of the parametric curve [f(t),g(t)] runs through the given points.
- * @param {Array} p Artray of JXG.Points
- * @type {Array function, function value, value]}
- * @return {array} [f(t),g(t),0,p.length-1],
+ * @param {Array} p Array of JXG.Points
+ * @returns {Array} [f(t),g(t),0,p.length-1],
  */
 JXG.Math.Numerics.neville = function(p) {
     var w = [];
@@ -689,7 +670,7 @@ JXG.Math.Numerics.neville = function(p) {
             }
         }
         return num/denom;
-    }
+    };
     var yfct = function(t, suspendedUpdate) {
         var i, d, L, s, 
             bin = JXG.Math.binomial,
@@ -719,7 +700,7 @@ JXG.Math.Numerics.neville = function(p) {
             }
         }
         return num/denom;
-    }
+    };
     return [xfct, yfct, 0, function(){ return p.length-1;}];
 };
 
@@ -732,8 +713,7 @@ JXG.Math.Numerics.neville = function(p) {
  * @param dataY array containing the y-coordinates of the data set, 
  * or
  * @param data array consisting of JXG.Points.
- * @type {function}
- * @return {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
+ * @returns {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
  * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
  */
 JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) { 
@@ -806,7 +786,7 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
                 }
                 
                 y = dY;                                 // input data
-                MT = JXG.Math.Matrix.transpose(M);
+                MT = JXG.Math.matTranspose(M);
                 B = JXG.Math.matMatMult(MT,M);
                 c = JXG.Math.matVecMult(MT,y);
                 coeffs = JXG.Math.Numerics.Gauss(B, c);

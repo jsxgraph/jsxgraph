@@ -158,7 +158,7 @@ JXG.createEllipse = function(board, parents, atts) {
                     transformMat[2][1] = rotationMatrix[1][2];
                     transformMat[2][2] = rotationMatrix[2][2];
                     curve.quadraticform = 
-                        JXG.Math.matMatMult(JXG.Math.Matrix.transpose(transformMat),
+                        JXG.Math.matMatMult(JXG.Math.matTranspose(transformMat),
                         JXG.Math.matMatMult(
                             [
                                 [-1+mx*mx/(a*a)+my*my/bb, -mx/aa , -mx/bb],
@@ -310,7 +310,7 @@ JXG.createHyperbola = function(board, parents, atts) {
                     transformMat[2][1] = rotationMatrix[1][2];
                     transformMat[2][2] = rotationMatrix[2][2];
                     curve.quadraticform = 
-                        JXG.Math.matMatMult(JXG.Math.Matrix.transpose(transformMat),
+                        JXG.Math.matMatMult(JXG.Math.matTranspose(transformMat),
                         JXG.Math.matMatMult(
                             [
                                 [-1+mx*mx/aa+my*my/bb, -mx/aa , my/bb],
@@ -424,7 +424,7 @@ JXG.createParabola = function(board, parents, atts) {
                     transformMat[2][1] = rotationMatrix[1][2];
                     transformMat[2][2] = rotationMatrix[2][2];
                     curve.quadraticform = 
-                        JXG.Math.matMatMult(JXG.Math.Matrix.transpose(transformMat),
+                        JXG.Math.matMatMult(JXG.Math.matTranspose(transformMat),
                         JXG.Math.matMatMult(
                             [
                                 [-b*4*e-a*a, a, 2*e],

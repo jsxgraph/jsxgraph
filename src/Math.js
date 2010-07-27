@@ -32,209 +32,37 @@
  /**
   * Math namespace.
   */
-JXG.Math = new Object();
+JXG.Math = {
+    /**
+     * eps defines the closeness to zero. If the absolute value of a given number is smaller than eps, it is considered to be equal to zero.
+     * @type number
+     */
+    eps: 0.000001,
 
-/* Math constants */
-JXG.Math.eps = 0.000001;
-
-/**
- * Represents a vector.
- * @constructor
- * @param {Array} elements An array of numerical values containing the coefficients to be put into the vector.
- * @return JXG.Math.Vector
- */
-JXG.Math.Vector = function(elements) {
-    var i;
-    this.length = 0;
-
-    if(JXG.isString(elements))
-        return this;
-    
-    if((typeof elements != undefined) && (elements != null)) {
-        for(i=0; i<elements.length; i++) {
-            this.push(elements[i]);
-        }
-    }
-};
-
-/*
- * The base class for Vector is just an array.
- */
-JXG.Math.Vector.prototype = new Array();
-
-/**
- * Returns the dimension of the vector.
- * @type int
- */
-JXG.Math.Vector.prototype.n = function() {
-    return this.length;
-};
-
-/**
- * Exchanges two elements of the vector.
- * @param {int} i The first element that is to be exchanged.
- * @param {int} j The second element that is to be exchanged.
- * @type JXG.Math.Vector
- * @return A reference to the Vector object to allow chaining.
- */
-JXG.Math.Vector.prototype.exchange = function(i, j) {
-    var temp = this[i];
-    
-    this[i] = this[j];
-    this[j] = temp;
-
-    return this;
-};
-
-/**
- * Represents a matrix.
- * @constructor
- * @param {Array} elements An 2-dimensional array of numerical values containing the coefficients to be put into the vector.
- * @throws {JXG.DimensionMismatchException} If the rows of the matrix don't have all the same length.
- * @return JXG.Math.Vector
- */
-JXG.Math.Matrix = function(elements) {
-    var oldLength = 0,
-        testLength = false,
-        i, j, len, leni;
-    
-    this.length = 0;
-    
-    if ((typeof elements != undefined) && (elements != null)) {
-        len = elements.length;
-        for (i=0; i<len; i++) {
-            leni = elements[i].length;
-            this.push(new Array());
-          
-            if (testLength) {
-                if (oldLength != leni) {
-                    this.length = 0;
-                    throw new JXG.DimensionMismatchException("Your array contains arrays with different lengths.");
-                }
+    /**
+     * Multiplies a vector to a matrix.
+     * @param {Array} mat Two dimensional array of numbers. The inner arrays describe the columns, the outer ones the matrix' rows.
+     * @param {Array} vec Array of numbers
+     * @returns {Array} Array of numbers containing result
+     */
+    matVecMult: function(mat, vec) {
+        var m = mat.length,
+            n = vec.length,
+            res = [],
+            i, s, k;
+        if (n==3) {
+            for (i=0;i<m;i++) {
+                res[i] = mat[i][0]*vec[0] + mat[i][1]*vec[1] + mat[i][2]*vec[2];
             }
-                
-            for (j=0; j<leni; j++) {
-                this[i].push(elements[i][j]);
+        } else {
+            for (i=0;i<m;i++) {
+                s = 0;
+                for (k=0;k<n;k++) { s += mat[i][k]*vec[k]; }
+                res[i] = s;
             }
-          
-            oldLength = leni;
-            testLength = true;
         }
+        return res;
     }
-};
-
-/*
- * The base class for Matrix is also just an array.
- */
-JXG.Math.Matrix.prototype = new Array();
-
-/**
- * Returns the amount of rows of the matrix.
- * @type int
- */
-JXG.Math.Matrix.prototype.m = function() {
-    return this.length;
-};
-
-/**
- * Returns the amount of columns of the matrix.
- * @type int
- */
-JXG.Math.Matrix.prototype.n = function() {
-    if(this.length > 0)
-        return this[0].length;
-    else
-        return 0;
-};
-
-/**
- * Exchanges two rows of the matrix.
- * @param {int} i The first row that is to be exchanged.
- * @param {int} j The second row that is to be exchanged.
- */
-JXG.Math.Matrix.prototype.exchangeRows = function(i, j) {
-   var temp = this[i];
-    
-   this[i] = this[j];
-   this[j] = temp; 
-};
-
-/**
- * Exception signaling inconsistent dimension conditions.
- * @constructor
- * @param {string} message A message which explains what went wrong-
- */
-JXG.DimensionMismatchException = function(message) {
-    if ((typeof message != undefined) && (message != null))
-        this.message = message;
-    else
-        this.message = null;
-};
-
-/**
- * Returns a string explaining, what exactly went wrong.
- * @type string
- * @return A string explaining why this exception was raised.
- */
-JXG.DimensionMismatchException.prototype.what = function() {
-    var default_msg = "Matrix has incorrect dimensions";
-   
-    if (this.message != null)
-        return default_msg + ": " + this.message + ".";
-    else
-        return default_msg + ".";
-};
-
-/**
- * Exception signaling an singular matrix.
- * @constructor
- * @param {string} message A message which explains what exactly went wrong-
- */
-JXG.SingularMatrixException = function(message) {
-    if ((typeof message != undefined) && (message != null))
-        this.message = message;
-    else
-        this.message = null;
-};
-
-/**
- * Returns a string explaining, what exactly went wrong.
- * @type string
- * @return A string explaining why this exception was raised.
- */
-JXG.SingularMatrixException.prototype.what = function() {
-    var default_msg = "Matrix is singular";
-   
-    if (this.message != null)
-        return default_msg + ": " + this.message + ".";
-    else
-        return default_msg + ".";
-};
-
-
-/**
- * Matrix-vector multiplication.
- * @param {Array} mat1 Two dimensional array of numbers
- * @param {Array} vec Array of numbers
- * @return {Array} Array of numbers containing result
- */
-JXG.Math.matVecMult = function(/** array */ mat1, /** array */ vec) /** array */ {
-    var m = mat1.length,
-        n = vec.length,
-        res = [],
-        i, s, k;
-    if (n==3) {
-        for (i=0;i<m;i++) {
-            res[i] = mat1[i][0]*vec[0] + mat1[i][1]*vec[1] + mat1[i][2]*vec[2];
-        }
-    } else {
-        for (i=0;i<m;i++) {
-            s = 0;
-            for (k=0;k<n;k++) { s += mat1[i][k]*vec[k]; }
-            res[i] = s;
-        }
-    }
-    return res;
 };
 
 /**
@@ -271,7 +99,7 @@ JXG.Math.matMatMult = function(/** array */ mat1, /** array */ mat2) /** array *
  * @param {Array} M 
  * @return {Array} transpose of M
  */
-JXG.Math.Matrix.transpose = function(/** Array */ M) /** Array*/  {
+JXG.Math.matTranspose = function(/** Array */ M) /** Array*/  {
     var MT = [], i, j, 
         m, n;
     
@@ -285,7 +113,7 @@ JXG.Math.Matrix.transpose = function(/** Array */ M) /** Array*/  {
         }
     }
     return MT;
-}
+};
 
 /**
   * Calculates the crossproducts of two vectors
