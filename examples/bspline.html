@@ -15,7 +15,7 @@
         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, axis:true});
         //board.options.curve.doAdvancedPlot = false;
         p = [];
-        for (i=0;i<8;i++) {
+        for (i=0;i<6;i++) {
             if (i%1==0) {
                 col = 'red';
             } else {
@@ -23,58 +23,72 @@
             }
             p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4],{strokeColor:col,fillColor:col}));
         }
+        
+        var knotVector = function(n,k){
+                var j, t = [];
+                for (j=0;j<n+k+1;j++) {
+                    if (j<k) {
+                        t[j] = 0.0;
+                    } else if (j<=n) {
+                        t[j] = j-k+1;
+                    } else {
+                        t[j] = n-k+2;
+                    }
+                }
+                return t;
+            };
+        
+        var evalBasisFuncs = function(x,t,n,k,s) {
+                var i,j,s,a,b,den,
+                    N = [];
+                    
+                if (t[s]<=x && x<t[s+1]) {
+                    N[s]=1; 
+                } else {
+                    N[s]=0; 
+                }
+                for (i=2;i<=k;i++) {
+                    for (j=s-i+1;j<=s;j++) {
+                        if (j<=s-i+1||j<0) {
+                            a = 0.0;
+                        } else {
+                            a = N[j];
+                        }
+                        if (j>=s) {
+                            b = 0.0;
+                        } else {
+                            b = N[j+1];
+                        }
+                        den = t[j+i-1]-t[j];
+                        if (den==0) {
+                            N[j] = 0;
+                        } else {
+                            N[j] = (x-t[j])/den*a;
+                        }
+                        den = t[j+i]-t[j+1];
+                        if (den!=0) {
+                            N[j] += (t[j+i]-x)/den*b;
+                        }
+                    }
+                }    
+                return N;
+            };
+        
         var bspline = [function(x) {
-                        var len = p.length,
-                            y,
-                            i, j, s, a, b,
+                        var len = p.length, 
+                            y,i, j, s, a, b,t,N,
                             n = len-1,
-                            k = 4,
-                            t = [],
-                            N = [];
+                            k = 4;
+                            
                         if (n<=0) return NaN;
                         if (n+2<=k) k = n+1;
-
                         if (x<=0) return p[0].X(); 
                         if (x>=n-k+2) return p[n].X();
-                        
-                        for (j=0;j<n+k+1;j++) {
-                            if (j<k) {
-                                t[j] = 0.0;
-                            } else if (j<=n) {
-                                t[j] = j-k+1;
-                            } else {
-                                t[j] = n-k+2;
-                            }
-                        }
+
+                        t = knotVector(n,k);
                         s = Math.floor(x)+k-1;
+                        N = evalBasisFuncs(x,t,n,k,s);
                         
-                        if (t[s]<=x && x<t[s+1]) {
-                            N[s]=1; 
-                        } else {
-                            N[s]=0; 
-                        }
-                        for (i=2;i<=k;i++) {
-                            for (j=s-i+1;j<=s;j++) {
-                                if (j<=s-i+1||j<0) {
-                                    a = 0.0;
-                                } else {
-                                    a = N[j];
-                                }
-                                if (j>=s) {
-                                    b = 0.0;
-                                } else {
-                                    b = N[j+1];
-                                }
-                                if (t[j+i-1]-t[j]==0) {
-                                    N[j] = 0;
-                                } else {
-                                    N[j] = (x-t[j])/(t[j+i-1]-t[j])*a;
-                                }
-                                if (t[j+i]-t[j+1]!=0) {
-                                    N[j] += (t[j+i]-x)/(t[j+i]-t[j+1])*b;
-                                }
-                            }
-                        }    
                         y = 0.0;
                         for (j=s-k+1;j<=s;j++) {
                             if (j<len && j>=0) y += p[j].X()*N[j];
@@ -82,56 +96,20 @@
                         return y;
                     },
                     function(x) {
-                        var len = p.length,
-                            y,
-                            i, j, s, a, b,
+                        var len = p.length, 
+                            y,i, j, s, a, b,t,N,
                             n = len-1,
-                            k = 4,
-                            t = [],
-                            N = [];
+                            k = 4;
+
                         if (n<=0) return NaN;
                         if (n+2<=k) k = n+1;
                         if (x<=0) return p[0].Y();
                         if (x>=n-k+2) return p[n].Y();
                         
-                        for (j=0;j<n+k+1;j++) {
-                            if (j<k) {
-                                t[j] = 0.0;
-                            } else if (j<=n) {
-                                t[j] = j-k+1;
-                            } else {
-                                t[j] = n-k+2;
-                            }
-                        }
-                        
+                        t = knotVector(n,k);
                         s = Math.floor(x)+k-1;
-                        if (t[s]<=x && x<t[s+1]) {
-                            N[s]=1; 
-                        } else {
-                            N[s]=0; 
-                        }
-                        for (i=2;i<=k;i++) {
-                            for (j=s-i+1;j<=s;j++) {
-                                if (j<=s-i+1||j<0) {
-                                    a = 0.0;
-                                } else {
-                                    a = N[j];
-                                }
-                                if (j>=s) {
-                                    b = 0.0;
-                                } else {
-                                    b = N[j+1];
-                                }
-                                if (t[j+i-1]-t[j]==0) {
-                                    N[j] = 0;
-                                } else {
-                                    N[j] = (x-t[j])/(t[j+i-1]-t[j])*a;
-                                }
-                                if (t[j+i]-t[j+1]!=0) {
-                                    N[j] += (t[j+i]-x)/(t[j+i]-t[j+1])*b;
-                                }
-                            }
-                        }    
+                        N = evalBasisFuncs(x,t,n,k,s);
+
                         y = 0.0;
                         for (j=s-k+1;j<=s;j++) {
                             if (j<len && j>=0) y += p[j].Y()*N[j];

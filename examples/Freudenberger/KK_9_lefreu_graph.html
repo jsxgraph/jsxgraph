@@ -1,0 +1,138 @@
+<html>
+<head>
+   <title>JSXGraph Konstruktionstemplate</title>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+  
+  
+
+<form action="input_text.htm">
+
+	<p>Anzahl der Knoten<br><input type="text" id="eingabe" maxlength="2" value="7"></p>
+	<p><input type="button" value="set" onClick="doIt();
+					v = setV(n,L0);
+					a = setA(n,v,L0);
+					var p = [];
+					for (var l=0; l<n; l++) {
+						p[l] = board.create('point', [v[l][0],v[l][1]], {name:'v'+ l})};								
+					for(var r=0; r<n; r++){
+						for(var s=0; s<n; s++){
+							if(a[r][s]==1){board.create('segment', [p[r],p[s]]);
+							}
+						}
+					};"></p>
+</form>
+  
+<!-- Scramble-Button: Erst Knoten verschieben, dann ordnen
+<form action="input_button.htm">
+	<p>
+		<input type="button" name="Scramble" value="Scramble"
+			onclick="for(x=0; x<n; x++){ 
+				v[x][0] = 10 + (L0-20)*Math.random();
+				v[x][1] = 10 + (L0-20)*Math.random();  
+				p[x].moveTo([v[x][0],v[x][1]]);
+			}; 		
+				Wdh_Scramble(k,l,v,n);"
+		>-->
+  
+<!-- Reload-Button: Neuer Graph; Übergebe Wert "n" an JavaScript-Teil
+		<input type="button" name="Neuer Graph" value="Neuer Graph"
+			onclick="v = setV(n,L0);
+					a = setGraph(n,v,L0);
+					var p = [];
+					for (var l=0; l<n; l++) {
+						p[l] = board.create('point', [v[l][0],v[l][1]], {name:'v'+ l})};
+								
+					for(var r=0; r<n; r++){
+						for(var s=0; s<n; s++){
+							if(a[r][s]==1){board.create('segment', [p[r],p[s]]);
+							}
+						}
+					};"
+		>-->
+	</p>
+</form>
+
+<script type="text/javascript">
+  /* <![CDATA[ */
+
+
+
+board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 16,16, -2], axis: false, grid: true,
+                                 keepaspectratio: true, showcopyright: false});
+								 
+								 
+				
+//1) Anfangslayout
+//Definiere Adjazenzmatrix für diesen Spezialfall
+var L0=10 //
+//var K = 10000; 	//Konstante
+//var n = 7;
+//var stopp= 0.01;  // Stopp-Wert der Wiederholungsphase
+
+
+function doIt(){
+  n= eval(document.getElementById("eingabe").value);
+ return n;
+};
+
+
+//Berechnung der Koordinaten + Speichern in v 
+function setV(n, L0){
+	var vv = [];
+	for (var i=0;i<n;i++) { vv[i] = [] };
+	for (var j=0; j<n; j++){vv[j][0] = ((Math.sin((j/n)*(2*Math.PI))*(L0/2))+7)};
+	for (var k=0; k<n; k++){vv[k][1] = ((Math.cos((k/n)*(2*Math.PI))*(L0/2))+7)};
+	return vv;
+};
+
+
+//Zufallsadjazenzmatrix
+function setA(n,v,L0){
+	var aa = [];
+	for(var j=0; j<n; j++){aa[j] =[]};	//Konstruiere Zeile
+	for(var j=0; j<n; j++){
+		for(var i=0;i<n;i++) {			// Konstruiere Spalte
+			aa[j][i] = []
+		} 
+	};   
+
+	for(var j=0; j<n; j++){					
+		for(var i=0;i<n; i++){
+			if(i==j){aa[j][i] =1}
+			else{aa[j][i] = Math.round(Math.random()); //Konstruiere mit bestimmter Wahrscheinlichkeit Verbindungslinien 
+				aa[i][j] = aa[j][i]}
+		}
+	};
+	return aa;
+};
+
+
+board.unsuspendUpdate();
+
+	
+
+
+
+
+
+
+ 
+
+  /* ]]> */
+  </script>
+  
+  
+
+
+
+
+
+
+
+</body>
+</html>

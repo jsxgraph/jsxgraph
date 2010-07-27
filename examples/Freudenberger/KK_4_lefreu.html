@@ -1,0 +1,241 @@
+<html>
+<head>
+   <title>JSXGraph Konstruktionstemplate</title>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+
+var L0=16 //
+
+board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, L0,L0, -2], axis: true, grid: true,
+                                 keepaspectratio: true, showcopyright: false});
+//1) Anfangslayout
+
+
+//Definiere Adjazenzmatrix f�r diesen Spezialfall
+
+var K =1 							//Konstante
+
+var a = [[1,1,0,0,1,0],
+		 [1,1,0,1,1,0],
+		 [0,0,1,1,0,1],
+		 [0,1,1,1,0,1],
+		 [1,1,0,0,1,0],
+		 [0,0,1,1,0,1]];
+		 
+var n = a.length
+
+//Berechnung der Koordinaten + Speichern in v 
+
+
+var v = [];
+for (var i=0;i<n;i++) { v[i] = [] };
+
+v[0][0] = 7 ;
+v[0][1] = 15;
+
+
+for (var j=1; j<n; j++){v[j][0] = ((Math.sin((j/n)*(2*Math.PI))*8)+7)};
+for (var k=1; k<n; k++){v[k][1] = ((Math.cos((k/n)*(2*Math.PI))*8)+7)};
+
+
+
+/* Zeichnung der Knoten */
+
+var p = [];
+for (var l=0; l<n; l++) {
+    p[l] = board.create('point', [v[l][0],v[l][1]], {name:'v'+ l})};
+	
+/*Zeichnen der Kanten */
+for(var r=0; r<n; r++){
+    for(var s=0; s<n; s++){
+	    if(a[r][s]==1){board.create('segment', [p[r],p[s]]);
+ }}};
+
+ 
+ 
+ 
+ 
+//2) Benutze Floyd-Algorithmus um k�rzeste Wege zwischen allen Knoten zu berechnen; vgl. R. Sedgewick "Algorithmen" (1992), Seite 541*/
+// Verwandle Adjazenzmatrix a in Distanzmatrix:
+
+for(var x= 0; x<n; x++){ 								//laufe durch Zeilen der Distanzmatrix
+	for (var y=0; y<n; y++){							//laufe durch Spalten der Distanzmatrix
+		if(a[x][y] > 0){	  							// falls Verbindung zwischen Punkt x und y besteht
+			for(var j=0; j<n; j++){						//gehe alle m�glichen Zwischenknoten j durch
+				if(a[y][j] >0){							//falls Verbindung zwischen Zwischenknoten j und Endpunkt x existiert
+				    if(a[x][j]==0 || a[x][y]+a[y][j]< a[x][j]){  		//falls keine Verbindung zwischen x und j existiert ODER falls Summe der Verbindungen kleiner ist als bereits gegebene Verbindung
+					a[x][j] = a[x][y]+a[y][j];							//�bernehme neu gefundenen k�rzesten Weg in Matrix
+					a[j][x]=a[x][j];
+					}
+				}
+			}
+		}
+	}
+};
+					
+//alert(a);
+
+	
+		
+
+
+//3) Bestimmte Richtwert L der Kantenl�nge 
+
+function maxEle(a){var x, y, n = a.length ,m;
+	for(var x=0; x<n; x++){ 					//laufe durch Zeilen der Distanzmatrix
+	    for (var y=0; y<n; y++){				//laufe durch Spalten der Distanzmatrix		
+		m = Math.max(a[x][y])
+		}   							 		//suche gr��ten Eintrag in Matrix a
+return(m);
+	}
+};
+				
+var L = L0/ maxEle(a);
+ 
+ //alert(L);
+ 
+ 
+ 
+
+// Bestimme Matrix k f�r Federh�rten 
+
+//K ist Konstante, wird zu Beginn (Zeile 21) festgelegt
+
+ 
+function strength(a,K){var x, y, n = a.length, f=[];
+    for(x=0; x<n; x++){     							//laufe durch Zeilen der Distanzmatrix
+    f[x] = [];
+        for (y=0; y<n; y++){  							//laufe durch Spalten der Distanzmatrix 
+        f[x][y] = K/(a[x][y] * a[x][y]);
+        }
+    }
+return f;
+};
+
+		
+var k= strength(a,K);
+
+
+//alert(k);
+
+
+// Bestimme Matrix l: Ausgangsl�ngen der Federn 
+
+function lenl(a,L,n){var x, y, w=[];
+    for(x=0; x<n; x++){    							 //laufe durch Zeilen der Distanzmatrix
+		w[x] = [];
+			for (y=0; y<n; y++){  						//laufe durch Spalten der Distanzmatrix 
+				w[x][y] = L* a[x][y];
+			}
+	}
+return w;
+};
+
+
+	
+var l= lenl(a,L,n);
+
+//alert(l);
+
+
+
+
+
+// 4) Lokale Minimierung der Gesamtenergie basierend auf dem Newton-Raphson Verfahren nach KK 
+// Ableitungen der Energie nach x und y Wert der Einzelnen Punkte
+
+
+function derivateX(m,k,l,v) {var dx,i;
+    for(i=0; i<n; i++){									//Summiere �ber alle i
+	    while(i != m){									//Solange i ungleich m
+			dx += k[m][i]*((v[m][0] - v[i][0]) - (l[m][i]*(v[m][0]-v[i][0]))/  							 //dx ist Ergebnis der Summe
+				Math.sqrt(((v[m][0]-v[i][0])*(v[m][0]-v[i][0]))+((v[m][1]-v[i][1])*(v[m][1]-v[i][1]))));
+return dx;
+		}
+	}
+};
+
+
+var DX =[];							//Matrix f�r Ableitungen nach X
+for(m=0; m<n; m++){					//Berechne Ableitung f�r alle Knoten
+	DX[m] = derivateX(m,k,l,v); 				//Speichere Ergebnis der Ableitung der Energie nach X in Matrix DX
+};
+
+
+
+alert(DX);
+
+
+
+function derivateY(m,k,l,v) {var dy, i;
+	for(i=0; i<n; i++){									//Summiere �ber alle i
+		while(i != m){ 									//Summiere �ber alle i ungleich m
+			dy += k[m][i]*((v[m][1] - v[i][1]) - (l[m][i]*(v[m][1]-v[i][1]))/ 							//dy ist Ergebnis der Summe
+				Math.sqrt(((v[m][0]-v[i][0])*(v[m][0]-v[i][0]))+((v[m][1]-v[i][1])*(v[m][1]-v[i][1]))));
+return dy;
+		}
+	}
+};
+																		
+
+var DY=[];							// Matrix f�r Ableitungen nach Y
+for(m=0; m<n; m++){					//Berechne Ableitung f�r alle Knoten
+	DY[m] = derivateY(m,k,l,v);					//Speichere Ergebnis der Ableitung der Energie nach Y in Matrix DY
+};
+						
+								
+
+
+//alert(DY);
+
+
+
+// Berechnung von delta(m): Suche Knoten, der bei Verschiebung den gr��ten Vorteil verspricht
+
+function delta(m,DX,DY){var d;
+	d = Math.sqrt((DX[m]*DX[m]) + (DY[m]*DY[m]));
+return d;
+};
+
+var D=[];					// Matrix f�r Ergebnisse aus delta
+for(m=0; m<n; m++){			//Berechne delta f�r alle Knoten
+	D[m] = delta(m);					// Speichere Ergebnisse in Matrix D 
+};
+
+
+
+
+//alert(D);
+
+// Suche den Knoten m, der gr��tes delta(m) hat
+
+var schubV;
+for (m=0; m<n; m++){
+	schubV=Math.max(D[m])
+};
+
+//alert(schubV);
+
+
+
+
+board.unsuspendUpdate();		
+
+
+
+
+
+
+ 
+
+  /* ]]> */
+  </script>
+
+</body>
+</html>
