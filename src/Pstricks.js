@@ -170,7 +170,7 @@ JXG.PsTricks.addCircle = function(el) {
     this.psTricksString += "\\pscircle";
     this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) +", linewidth=" +el.visProp['strokeWidth']+"px";
     if(el.visProp['fillColor'] != 'none' && el.visProp['fillOpacity'] != 0) {
-        this.psTricksString += ", fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+JXG.Math.round(el.visProp['fillOpacity'],5);
+        this.psTricksString += ", fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+el.visProp['fillOpacity'].toFixed(5);
     }
     this.psTricksString += "]";
     this.psTricksString += "("+el.midpoint.coords.usrCoords[1]+","+el.midpoint.coords.usrCoords[2]+"){"+radius+"}\n";
@@ -178,7 +178,7 @@ JXG.PsTricks.addCircle = function(el) {
 
 JXG.PsTricks.addPolygon = function(el) {
     this.psTricksString += "\\pspolygon";
-    this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+JXG.Math.round(el.visProp['fillOpacity'],5)+"]";
+    this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+el.visProp['fillOpacity'].toFixed(5)+"]";
     for(var i=0; i < el.vertices.length; i++) {
         this.psTricksString += "("+el.vertices[i].coords.usrCoords[1]+","+el.vertices[i].coords.usrCoords[2]+")";
     }
@@ -191,8 +191,8 @@ JXG.PsTricks.addArc = function(el) {
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.board.canvasWidth/(el.board.stretchY), el.midpoint.coords.usrCoords[2]],
                           el.board);
-    var angle2 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point2),4);
-    var angle1 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3),4);
+    var angle2 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point2).toFixed(4);
+    var angle1 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3).toFixed(4);
     
     this.psTricksString += "\\psarc";
     this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) + ", linewidth=" +el.visProp['strokeWidth']+"px";
@@ -219,12 +219,12 @@ JXG.PsTricks.addSector = function(el) {
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.board.canvasWidth/(el.board.stretchY), el.midpoint.coords.usrCoords[2]],
                           el.board);
-    var angle2 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point2),4);
-    var angle1 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3),4);
+    var angle2 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point2).toFixed(4);
+    var angle1 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3).toFixed(4);
 
     if(el.visProp['fillColor'] != 'none' && el.visProp['fillOpacity'] != 0) {
         this.psTricksString += "\\pswedge";
-        this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+JXG.Math.round(el.visProp['fillOpacity'],5)+"]";
+        this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+el.visProp['fillOpacity'].toFixed(5)+"]";
         this.psTricksString += "("+el.midpoint.coords.usrCoords[1]+","+el.midpoint.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";    
     }
 };
@@ -235,12 +235,12 @@ JXG.PsTricks.addAngle = function(el) {
     p.coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                           [el.board.canvasWidth/(el.board.stretchY), el.point2.coords.usrCoords[2]],
                           el.board);
-    var angle2 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.point2, el.point1),4);
-    var angle1 = JXG.Math.round(JXG.Math.Geometry.trueAngle(p, el.point2, el.point3),4);
+    var angle2 = JXG.Math.Geometry.trueAngle(p, el.point2, el.point1).toFixed(4);
+    var angle1 = JXG.Math.Geometry.trueAngle(p, el.point2, el.point3).toFixed(4);
 
     if(el.visProp['fillColor'] != 'none' && el.visProp['fillOpacity'] != 0) {
         this.psTricksString += "\\pswedge";
-        this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+JXG.Math.round(el.visProp['fillOpacity'],5)+"]";
+        this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+el.visProp['fillOpacity'].toFixed(5)+"]";
         this.psTricksString += "("+el.point2.coords.usrCoords[1]+","+el.point2.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";    
     }
     this.psTricksString += "\\psarc";

@@ -68,6 +68,43 @@
         assertArrayEquals("JXG.Math.matTranspose, incorrect result non-square matrix", A, JXG.Math.matTranspose(JXG.Math.matTranspose(A)));
     }
 
+    function testInnerProduct() {
+        var b = [2, 1, 1],
+            c = [1, 2, 1];
+
+        assertEquals("JXG.Math.innerProduct, incorrect result", 5, JXG.Math.innerProduct(b, c));
+        assertEquals("JXG.Math.innerProduct ignores length parameter n", 4, JXG.Math.innerProduct(b, c, 2));
+    }
+
+    function testCrossProduct() {
+        var b = [2, 1, 1],
+            c = [1, 2, 1];
+
+        assertArrayEquals("JXG.Math.crossProduct, incorrect result", [-1,-1,3], JXG.Math.crossProduct(b, c));
+    }
+
+    function testFactorial() {
+        assertEquals("JXG.Math.factorial, incorrect result", 24, JXG.Math.factorial(4));
+        assertEquals("JXG.Math.factorial doesn't ignore fractions", 24, JXG.Math.factorial(4.312));
+        assertEquals("JXG.Math.factorial doesn't ignore fractions", 120, JXG.Math.factorial(5));
+        assertNaN("JXG.Math.factorial doesn't ignore negative values", JXG.Math.factorial(-2));
+    }
+
+    function testBinomial() {
+        assertEquals("JXG.Math.binomial, incorrect result", 10, JXG.Math.binomial(5,3));
+        assertEquals("JXG.Math.binomial doesn't ignore fractions", 10, JXG.Math.binomial(5.1,3.14152));
+        assertNaN("JXG.Math.binomial doesn't ignore negative values", JXG.Math.binomial(2, -2));
+    }
+
+    function testPow() {
+        assertEquals("JXG.Math.pow, incorrect result", 32, JXG.Math.pow(4, 2.5));
+        assertEquals("JXG.Math.pow, incorrect result", 16, JXG.Math.pow(4, 2));
+    }
+
+    function testNormalize() {
+        assertArrayEquals("JXG.Math.normalize, incorrect result", [0,0.5,0,0.5,0.5,0.5,-0.5,0], JXG.Math.normalize([1, 1, 0, 1, 1, 0, 1, 1]));
+    }
+
 </script>
 </head>
 
