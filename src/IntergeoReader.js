@@ -64,10 +64,11 @@ JXG.IntergeoReader = new function() {
             if (node.nodeName=='point') {
                 JXG.IntergeoReader.storePoint(node); //addPoint(node);
             } 
-            else if (node.nodeName=='line') {
-                JXG.IntergeoReader.storeLine(node);
-            } 
-            else if (node.nodeName=='line_segment') {
+            else if (node.nodeName=='line' 
+                     || node.nodeName=='line_segment'
+                     || node.nodeName=='ray'
+                     || node.nodeName=='vector'
+                    ) {
                 JXG.IntergeoReader.storeLine(node);
             } 
             else if (node.nodeName=='circle') {
@@ -75,6 +76,9 @@ JXG.IntergeoReader = new function() {
             } 
             else if (node.nodeName=='conic') {
                 JXG.IntergeoReader.storeConic(node);
+            } 
+            else if (node.nodeName=='polygon') {
+                // ignore, see this.addPolygonByVertices
             } 
             else {
                 document.getElementById('debug').innerHTML += 'Not implemented: '+node.nodeName + ' ' + node.getAttribute('id') + '<br>';
@@ -319,19 +323,28 @@ JXG.IntergeoReader = new function() {
             node = tree[0].childNodes[s];
             if (node.nodeType>1) { return; } // not an element node
             if (node.nodeName=='line_through_two_points') {
-                JXG.IntergeoReader.addLineThroughTwoPoints(node);
+                JXG.IntergeoReader.addLineThroughTwoPoints(node, false);
             } 
+            if (node.nodeName=='ray_from_point_through_point') {
+                JXG.IntergeoReader.addLineThroughTwoPoints(node, true);
+            }
             else if (node.nodeName=='line_through_point') {
                 JXG.IntergeoReader.addLineThroughPoint(node);
             } 
             else if (node.nodeName=='line_parallel_to_line_through_point') {
-                JXG.IntergeoReader.addLineParallelToLineThroughPoint(node);
+                JXG.IntergeoReader.addLineParallelToLineThroughPoint(node, false);
+            } 
+            if (node.nodeName=='ray_from_point_and_vector') {
+                JXG.IntergeoReader.addLineParallelToLineThroughPoint(node, true);
             } 
             else if (node.nodeName=='line_perpendicular_to_line_through_point') {
                 JXG.IntergeoReader.addLinePerpendicularToLineThroughPoint(node);
             } 
             else if (node.nodeName=='line_segment_by_points') {
                 JXG.IntergeoReader.addLineSegmentByTwoPoints(node);
+            } 
+            else if (node.nodeName=='vector_from_point_to_point') {
+                JXG.IntergeoReader.addVectorFromPointToPoint(node);
             } 
             else if (node.nodeName=='endpoints_of_line_segment') {
                 JXG.IntergeoReader.addEndpointsOfLineSegment(node);
@@ -352,10 +365,16 @@ JXG.IntergeoReader = new function() {
                 JXG.IntergeoReader.addPointOnCircle(node);
             } 
             else if (node.nodeName=='angular_bisector_of_three_points') {
-                JXG.IntergeoReader.addAngularBisectorOfThreePoints(node);
+                JXG.IntergeoReader.addAngularBisectorOfThreePoints(node, false);
             } 
             else if (node.nodeName=='angular_bisectors_of_two_lines') {
-                JXG.IntergeoReader.addAngularBisectorsOfTwoLines(node);
+                JXG.IntergeoReader.addAngularBisectorsOfTwoLines(node, false);
+            } 
+            else if (node.nodeName=='line_angular_bisector_of_three_points') {
+                JXG.IntergeoReader.addAngularBisectorOfThreePoints(node, true);
+            } 
+            else if (node.nodeName=='line_angular_bisectors_of_two_lines') {
+                JXG.IntergeoReader.addAngularBisectorsOfTwoLines(node, true);
             } 
             else if (node.nodeName=='midpoint_of_two_points') {
                 JXG.IntergeoReader.addMidpointOfTwoPoints(node);
@@ -407,6 +426,9 @@ JXG.IntergeoReader = new function() {
             } 
             else if (node.nodeName=='circle_tangent_lines_by_point') {
                 JXG.IntergeoReader.addCircleTangentLinesByPoint(node);
+            } 
+            else if (node.nodeName=='polygon_by_vertices') {
+                JXG.IntergeoReader.addPolygonByVertices(node);
             } 
             else {
                 param = JXG.IntergeoReader.readParams(node);
@@ -484,13 +506,13 @@ JXG.IntergeoReader = new function() {
         }
     };
     
-    this.addLineThroughTwoPoints = function(node) {
+    this.addLineThroughTwoPoints = function(node, isRay) {
         var param = JXG.IntergeoReader.readParams(node),
             el1, el2, el;
             
         el1 = this.addPoint(this.objects[param[1]]);
         el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.create('line', [el1.id,el2.id], {name:param[0],withLabel:true});
+        el = this.board.create('line', [el1.id,el2.id], {name:param[0],withLabel:true, straightFirst:!isRay, straightLast:true});
         this.objects[param[0]] = el;
         this.objects[param[0]].exists = true;
     };
@@ -510,13 +532,13 @@ JXG.IntergeoReader = new function() {
         this.objects[param[0]].exists = true;
     };
 
-    this.addLineParallelToLineThroughPoint = function(node) {
+    this.addLineParallelToLineThroughPoint = function(node, isRay) {
         var param = JXG.IntergeoReader.readParams(node), 
             el1, el2, el;
 
         el1 = this.addPoint(this.objects[param[1]]);
         el2 = this.addPoint(this.objects[param[2]]);
-        el = this.board.create('parallel',[el1.id,el2.id], {name:param[0],withLabel:true});
+        el = this.board.create('parallel',[el1.id,el2.id], {name:param[0],withLabel:true, straightFirst:!isRay, straightLast:true});
         this.objects[param[0]] = el;
         this.objects[param[0]].exists = true;
     };
@@ -610,7 +632,7 @@ JXG.IntergeoReader = new function() {
         this.setAttributes(q);
     };
     
-    this.addAngularBisectorOfThreePoints = function(node) {
+    this.addAngularBisectorOfThreePoints = function(node, isLine) {
         var param = JXG.IntergeoReader.readParams(node),
             el1, el2, el3, el;
             
@@ -618,8 +640,9 @@ JXG.IntergeoReader = new function() {
         el2 = this.addPoint(this.objects[param[2]]);
         el3 = this.addPoint(this.objects[param[3]]);
         el = this.board.create('bisector',[el1.id,el2.id,el3.id],
-                                {name:[param[0]+'_1',param[0]+'_2'], id:[param[0]+'_1',param[0]+'_2'], withLabel:true});
-        el.setProperty({straightFirst:false,straightLast:true,strokeColor:'#000000'});
+                                {name:param[0], id:param[0], withLabel:true});
+                                //{name:[param[0]+'_1',param[0]+'_2'], id:[param[0]+'_1',param[0]+'_2'], withLabel:false});
+        el.setProperty({straightFirst:isLine,straightLast:true,strokeColor:'#000000'});
         this.objects[param[0]] = el;
         this.objects[param[0]].exists = true;
     };
@@ -757,11 +780,11 @@ JXG.IntergeoReader = new function() {
      * The angular bisectors of two line [c1,a1,b1] and [c2,a2,b2] are determined by the equation:
      * (a1*x+b1*y+c1*z)/sqrt(a1^2+b1^2) = +/- (a2*x+b2*y+c2*z)/sqrt(a2^2+b2^2)
      */
-    this.addAngularBisectorsOfTwoLines = function(node) {
+    this.addAngularBisectorsOfTwoLines = function(node, isLine) {
         var param = JXG.IntergeoReader.readParams(node),
             l1 = this.objects[param[2]],
             l2 = this.objects[param[3]],
-	    ar;
+            ar;
 
         ar = this.board.create('bisectorlines',
             [l1,l2],
@@ -769,6 +792,38 @@ JXG.IntergeoReader = new function() {
             straightFirst:true, straightLast:true, strokeColor:'#ff0000', withLabel:true});
         this.objects[param[0]].exists = true;
         this.objects[param[1]].exists = true;
+    };
+    
+    this.addPolygonByVertices = function(node) {
+        var j, n, param2 = [], p = [], el,
+            param = JXG.IntergeoReader.readParams(node);
+
+        for (j=0;j<node.childNodes.length;j++) {
+            if (node.childNodes[j].nodeType==1) {
+                if (node.childNodes[j].nodeName=='list_of_vertices') {
+                    n = node.childNodes[j];
+                    param2 = JXG.IntergeoReader.readParams(n);
+                    break;
+                }
+            }
+        }
+        for (j=0;j<param2.length;j++) {
+            p.push(this.addPoint(this.objects[param2[j]]));
+        }
+            
+        el = this.board.create('polygon', p, {name:param[0],id:param[0],withLabel:true});
+        this.objects[param[0]].exists = true;
+    };
+
+    this.addVectorFromPointToPoint = function(node) {
+        var param = JXG.IntergeoReader.readParams(node),
+            el1, el2;
+
+        el1 = this.addPoint(this.objects[param[1]]);
+        el2 = this.addPoint(this.objects[param[2]]);
+        el = this.board.create('arrow',[el1.id,el2.id],{name:param[0]});
+        this.setAttributes(el);
+        this.objects[param[0]].exists = true;
     };
 
 // ----------------------------------------------------------------------------------------------------

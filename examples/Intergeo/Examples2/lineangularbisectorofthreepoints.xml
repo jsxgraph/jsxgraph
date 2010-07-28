@@ -1,0 +1,51 @@
+<!-- This file is to illustrate the use of the constraint line_angular_bisector_of_three_points .
+     It still has not been run on any DGS, so it may contain bugs. -->
+<construction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xml/intergeo.xsd">
+	<elements>
+		<point id="P">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="Q">
+			<homogeneous_coordinates>
+				<double>1</double>
+				<double>1</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="R">
+			<homogeneous_coordinates>
+				<double>1</double>
+				<double>-1</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<line id="l">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>1</double>
+				<double>0</double>
+			</homogeneous_coordinates>
+		</line>
+	</elements>
+	<constraints>
+		<free_point>
+			<point out="true">P</point>
+		</free_point>
+		<free_point>
+			<point out="true">Q</point>
+		</free_point>
+		<free_point>
+			<point out="true">R</point>
+		</free_point>
+		<line_angular_bisector_of_three_points>
+			<line out="true">l</line>
+			<point>P</point>
+			<point>Q</point>
+			<point>R</point>
+		</line_angular_bisector_of_three_points>
+	</constraints>
+</construction>
