@@ -2760,22 +2760,18 @@ this.utf8replace = function(exp) {
 this.prepareString = function(fileStr, isString) {
     var i, bA, len;
     // if isString is true, fileStr is a base64 encoded string, otherwise it's the zipped file
+    
     if(isString)
         fileStr = JXG.Util.Base64.decode(fileStr, true);
 
-    console.log(fileStr);
-
     if (fileStr.indexOf('<') != 0) {
-        console.log(fileStr.length);
         bA = [];
         len = fileStr.length;
         for (i=0;i<len;i++)
             bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
         // Unzip
         fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");
-        console.log(fileStr);
     }
-    console.log(fileStr);
     fileStr = JXG.Util.utf8Decode(fileStr);
     fileStr = JXG.GeogebraReader.utf8replace(fileStr);
     return fileStr;

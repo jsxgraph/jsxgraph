@@ -64,9 +64,14 @@ this.parseFileContent = function(url, board, format) {
             if (request.readyState == 4) {
                 var text = '';
 
-                if (typeof request.responseStream!='undefined' && request.responseText.slice(0,2) == "PK") {
-                    text = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(BinFileReader(this.request)))).unzip();
-                    text = text[0][0];
+            if (typeof request.responseStream!='undefined' && 
+                    (request.responseText.slice(0,2) == "PK"                            // ZIP -> Geogebra
+                    || JXG.Util.asciiCharCodeAt(request.responseText.slice(0,1),0)==31) // gzip -> Cinderella
+                   ) {
+                    //text = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(BinFileReader(request)))).unzip();
+                    //text = text[0][0];
+                    //text = BinFileReader(request);  
+                    text = JXG.Util.Base64.decode(BinFileReader(request)); // After this, text contains the base64 encoded, zip-compressed string
                 } else {
                     text = request.responseText;
                 }
