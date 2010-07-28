@@ -58,25 +58,38 @@ JXG.GraphReader = new function() {
         }
         
         // edges
-        for(i=0; i<n; i++) {
-            adjMatrix[i] = [];
-            for(j=0; j<n; j++) {
-                adjMatrix[i][j] = 0;
-            }
-        }
+        // check whether the graph is weighted or not
         for(i=n+1; i < splitted.length; i++) {
             tmp = splitted[i].split(' ');
             if(tmp.length > 2) { // weights
                 weighted = true;
-                if(tmp[2] == 'INF') {
-                    tmp2 = Number.MAX_VALUE;
+                break;
+            }
+        }
+        // initialize entries of the adjacency matrix
+        for(i=0; i<n; i++) {
+            adjMatrix[i] = [];
+            for(j=0; j<n; j++) {
+                if(!weighted) {
+                    adjMatrix[i][j] = 0;
                 }
                 else {
-                    tmp2 = parseInt(tmp[2]);
+                    adjMatrix[i][j] = Infinity;
                 }
             }
+        }
+        if(weighted) { // zeros for diagonal - way from node to itself
+            for(i=0; i<n; i++) {
+                adjMatrix[i][i] = 0;
+            }        
+        }
+        for(i=n+1; i < splitted.length; i++) {
+            tmp = splitted[i].split(' ');
+            if(tmp.length > 2) { // weights
+                tmp2 = parseInt(tmp[2]);
+            }
             else {
-                tmp2 = 1; // no weights
+                tmp2 = 1; // no weight given
             }
             adjMatrix[nodenumbers[tmp[0]]][nodenumbers[tmp[1]]] = tmp2;
             if(!directed) {
@@ -104,18 +117,19 @@ JXG.GraphReader = new function() {
         for(i=0; i<n; i++) {
             //console.log(nodes[i].name,[nodes[i].coords[0],nodes[i].coords[1]]);
             if(nodes[i].coords[0] == null) {
-                x = Math.random()*(board.canvasWidth)/board.stretchX-board.origin.scrCoords[1]/board.stretchX;
+                x = Math.random()*board.canvasWidth/(board.stretchX*1.1)-board.origin.scrCoords[1]/(board.stretchX*1.1);
                 //console.log(x);
             }
             else {
                 x = nodes[i].coords[0];
             }
             if(nodes[i].coords[1] == null) {
-                y = Math.random()*(board.canvasWidth)/board.stretchY-board.origin.scrCoords[2]/board.stretchY;;
+                y = Math.random()*board.canvasHeight/(board.stretchY*1.1)-(board.canvasHeight-board.origin.scrCoords[2])/(board.stretchY*1.1);
             }
             else {
                 y = nodes[i].coords[1];
             }
+           // console.log(x,y);
             p = board.create('point',[x,y], {name:nodes[i].name});
             nodes[i].reference = p;
         }
