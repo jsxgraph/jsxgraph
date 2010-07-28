@@ -323,7 +323,7 @@ JXG.Math = (function(JXG, Math, undefined) {
 
         /**
          * A square & multiply algorithm to compute base to the power of exponent.
-         * Implementation bei 
+         * Implementated by Wolfgang Riedl. 
          * @param {Number} base
          * @param {Number} exponent
          * @returns {Number} Base to the power of exponent
