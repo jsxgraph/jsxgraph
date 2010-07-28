@@ -32,7 +32,7 @@
  /**
   * Math namespace.
   */
-JXG.Math = (function() {
+JXG.Math = (function(JXG, Math, undefined) {
 
     /*
      * Dynamic programming approach for recursive functions.
@@ -56,7 +56,7 @@ JXG.Math = (function() {
         return (f.memo = function() {
             var key = join.call(arguments);
 
-            return (cache[key] !== JXG.undefined) // Seems to be a bit faster than "if (a in b)"
+            return (cache[key] !== undefined) // Seems to be a bit faster than "if (a in b)"
                     ? cache[key]
                     : cache[key] = f.apply(this, arguments);
         });
@@ -106,7 +106,7 @@ JXG.Math = (function() {
         identity: function(n, m) {
             var r, i;
 
-            if((m === JXG.undefined) && (typeof m !== 'number')) {
+            if((m === undefined) && (typeof m !== 'number')) {
                 r = new Array(Math.ceil(n));
                 for(i=0; i<n; i++) { r[i] = 1; }
                 return r;
@@ -210,7 +210,7 @@ JXG.Math = (function() {
         innerProduct: function(a, b, n) {
             var i, s = 0;
 
-            if((n === JXG.undefined) || (typeof n !== 'number')) {
+            if((n === undefined) || (typeof n !== 'number')) {
                 n = a.length;
             }
 
@@ -296,28 +296,57 @@ JXG.Math = (function() {
         },
 
         /**
-         * Compute x to the power of a.
-         * @param {Number} x Base
-         * @param {Number} a Exponent
-         * @returns {Number} x to the power of a.
+         * Compute base to the power of exponent.
+         * @param {Number} base
+         * @param {Number} exponent
+         * @returns {Number} base to the power of exponent.
          */
-        pow: function(x, a) {
-            if (x===0) {
-                if (a===0) {
+        pow: function(base, exponent) {
+            if (base===0) {
+                if (exponent===0) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
 
-            if (Math.floor(a)===a) {// a is an integer
-                return Math.pow(x,a);
+            if (Math.floor(exponent)===exponent) {// a is an integer
+                return Math.pow(base,exponent);
             } else { // a is not an integer
-                if (x>0) {
-                    return Math.exp(a*Math.log(Math.abs(x)));
+                if (base>0) {
+                    return Math.exp(exponent*Math.log(Math.abs(base)));
                 } else {
                     return NaN;
                 }
+            }
+        },
+
+        /**
+         * A square & multiply algorithm to compute base to the power of exponent.
+         * Implementation bei 
+         * @param {Number} base
+         * @param {Number} exponent
+         * @returns {Number} Base to the power of exponent
+         */
+        squampow: function(base, exponent) {
+            var result;
+
+            if (Math.floor(exponent)===exponent) { // exponent is integer (could be zero)
+                result = 1;
+                if(exponent < 0) {
+                    // invert: base
+                    base = 1.0 / base;
+                    exponent *= -1;
+                }
+                while(exponent != 0) {
+                    if(exponent & 1)
+                        result *= base;
+                    exponent >>= 1;
+                    base *= base;
+                }
+                return result;
+            } else {
+                return JXG.Math.pow(base, exponent);
             }
         },
 
@@ -358,10 +387,4 @@ JXG.Math = (function() {
             return stdform;
         }
     }; // JXG.Math
-})();
-
-
-
-
-
-
+})(JXG, Math);
