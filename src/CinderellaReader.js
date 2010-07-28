@@ -581,7 +581,6 @@ JXG.CinderellaReader = new function() {
     
 	this.prepareString = function(fileStr) {
         var i, bA = [], len;
-        JXG.debug(fileStr);
   		if (fileStr.indexOf('<') != 0) {
             len = fileStr.length;
 		    for (i=0;i<len;i++)
