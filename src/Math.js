@@ -40,16 +40,25 @@ JXG.Math = {
     eps: 0.000001,
 
     /**
-     * Multiplies a vector to a matrix.
+     * Multiplies a vector vec to a matrix mat: mat * vec. The matrix is interpreted by this function as an array of rows. Please note: This
+     * function does not check if the dimensions match.
      * @param {Array} mat Two dimensional array of numbers. The inner arrays describe the columns, the outer ones the matrix' rows.
      * @param {Array} vec Array of numbers
-     * @returns {Array} Array of numbers containing result
+     * @returns {Array} Array of numbers containing the result
+     * @example
+     * var A = [[2, 1],
+     *              [1, 3]],
+     *     b = [4, 5],
+     *     c;
+     * c = JXG.Math.matVecMult(A, b)
+     * // c === [13, 19];
      */
     matVecMult: function(mat, vec) {
         var m = mat.length,
             n = vec.length,
             res = [],
             i, s, k;
+
         if (n==3) {
             for (i=0;i<m;i++) {
                 res[i] = mat[i][0]*vec[0] + mat[i][1]*vec[1] + mat[i][2]*vec[2];
@@ -62,57 +71,102 @@ JXG.Math = {
             }
         }
         return res;
-    }
-};
+    },
 
-/**
- * Matrix-matrix multiplication.
- * @param {Array} mat1 Two dimensional array of numbers
- * @param {Array} mat2 Two dimensional array of numbers
- * @return {Array} Two dimensional Array of numbers containing result
- */
-JXG.Math.matMatMult = function(/** array */ mat1, /** array */ mat2) /** array */ {
-    var m = mat1.length,
-        n = mat2[0].length,
-        m2 = mat2.length,
-        res = [], 
-        i, j, s, k;
-        
-    for (i=0;i<m;i++) {
-        res[i] = [];
-    }
+    /**
+     * Initializes a matrix as an array of rows with the given value.
+     * @param {Number} n Number of rows
+     * @param {Number} m Number of columns
+     * @param {Number} [init=0] Initial value for each coefficient
+     * @returns {Array} A <tt>n</tt> times <tt>m</tt>-matrix represented by a two-dimensional array. The inner arrays hold the columns, the outer array holds the rows.
+     */
+    matrix: function(n, m, init) {
+        var r, i, j;
 
-    for (i=0;i<m;i++) {
-        for (j=0;j<n;j++) {
-            s = 0;
-            for (k=0;k<m2;k++) {
-                s += mat1[i][k]*mat2[k][j];
+        init = init || 0;
+
+        r = new Array(Math.ceil(n));
+        for(i=0; i<n; i++) {
+            r[i] = new Array(Math.ceil(m));
+            for(j=0; j<m; j++) {
+                r[i][j] = init;
             }
-            res[i][j] = s;
         }
-    }
-    return res;
-};
 
-/**
- * Transpose a matrix which is of type array of arrays.
- * @param {Array} M 
- * @return {Array} transpose of M
- */
-JXG.Math.matTranspose = function(/** Array */ M) /** Array*/  {
-    var MT = [], i, j, 
-        m, n;
-    
-    m = M.length;                   // number of rows of M
-    n = (M.length>0)?M[0].length:0; // number of columns of M
+        return r;
+    },
 
-    for (i=0;i<n;i++) {
-        MT.push([]);
-        for (j=0;j<m;j++) {
-            MT[i].push(M[j][i]);
+    /**
+     * Generates an identity vector or an identity matrix, based on what is given. If n is a number and m is undefined or not a number, a vector is generated,
+     * if n and m are both numbers, an identity matrix is generated.
+     * @param {Number} n Size of the resulting vector or the number of rows
+     * @param {Number} [m] Number of columns
+     * @returns {Array} A vector of length <tt>n</tt> with all coefficients equal to 1, if <tt>m</tt> is undefined or not a number
+     * or a <tt>n</tt> times <tt>m</tt>-matrix with a_(i,j) = 0 and a_(i,i) = 1 if m is a number.
+     */
+    identity: function(n, m) {
+        var r, i;
+
+        if((m === JXG.undefined) && (typeof m !== 'number')) {
+            r = new Array(Math.ceil(n));
+            for(i=0; i<n; i++) { r[i] = 1; }
+            return r;
         }
+
+        r = JXG.Math.matrix(n, m);
+        for(i=0; i<Math.min(n, m); i++) {
+            r[i][i] = 1;
+        }
+
+        return r;
+    },
+
+    /**
+     * Computes the product of the two matrices mat1*mat2.
+     * @param {Array} mat1 Two dimensional array of numbers
+     * @param {Array} mat2 Two dimensional array of numbers
+     * @returns {Array} Two dimensional Array of numbers containing result
+     */
+    matMatMult: function(mat1, mat2) {
+        var m = mat1.length,
+            n = m>0 ? mat2[0].length : 0,
+            m2 = mat2.length,
+            res = JXG.Math.matrix(m,n),
+            i, j, s, k;
+
+        for (i=0;i<m;i++) {
+            for (j=0;j<n;j++) {
+                s = 0;
+                for (k=0;k<m2;k++) {
+                    s += mat1[i][k]*mat2[k][j];
+                }
+                res[i][j] = s;
+            }
+        }
+        return res;
+    },
+
+    /**
+     * Transposes a matrix given as a two dimensional array.
+     * @param {Array} M The matrix to be transposed
+     * @returns {Array} The transpose of M
+     */
+    matTranspose: function(M) {
+        var MT, i, j,
+            m, n;
+
+        m = M.length;                     // number of rows of M
+        n = M.length>0 ? M[0].length : 0; // number of columns of M
+        MT = JXG.Math.matrix(n,m);
+
+        for (i=0; i<n; i++) {
+            for (j=0;j<m;j++) {
+                MT[i][j] = M[j][i];
+            }
+        }
+        return MT;
     }
-    return MT;
+
 };
 
 /**

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>JXG.Math Tests</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../css/jsUnitStyle.css">
+<script type="text/javascript" src="../app/jsUnitCore.js"></script>
+<script type="text/javascript" src="../../../src/loadjsxgraph.js"></script>
+<script type="text/javascript">
+
+    function testEpsilon() {
+        if(JXG.Math.eps > 0.00001 && JXG.Math.eps < 0.001) {
+            warn("JXG.Math.eps should be smaller", JXG.Math.eps);
+        } else if (JXG.Math.eps <= 0.00001 && JXG.Math.eps > 0.00000001) {
+            info("JXG.Math.eps ok", JXG.Math.eps);
+        } else if (JXG.Math.eps <= 0.00000001) {
+            fail("JXG.Math.eps too small", JXG.Math.eps);
+        } else
+            fail("JXG.Math.eps too big", JXG.Math.eps);
+    }
+
+    function testMatVecMult() {
+        var A = [[2, 1],
+                 [1, 3]],
+            b = [4, 5];
+
+        assertArrayEquals("JXG.Math.matVecMult: Incorrect result", [13, 19], JXG.Math.matVecMult(A ,b));
+
+        try {
+            assertNaN("JXG.Math.matVecMult should not fail on mismatching dimension", JXG.Math.matVecMult([[1, 1], [1]], [2, 2])[1]);
+        } catch(e) {
+            fail("JXG.Math.matVecMult should not fail on mismatching dimension");
+        }
+    }
+
+    function testMatrix() {
+        assertArrayEquals("JXG.Math.matrix doesn't generate a zero matrix", [[0,0,0],[0,0,0],[0,0,0]], JXG.Math.matrix(3,3));
+        assertArrayEquals("JXG.Math.matrix ignores initial value", [[1,1,1],[1,1,1]], JXG.Math.matrix(2,3,1));
+    }
+
+    function testIdentity() {
+        assertArrayEquals("JXG.Math.identity, vector case", [1,1,1], JXG.Math.identity(3));
+        assertArrayEquals("JXG.Math.identity, square matrix case", [[1,0,0],[0,1,0],[0,0,1]], JXG.Math.identity(3,3));
+        assertArrayEquals("JXG.Math.identity, non-square matrix case", [[1,0,0],[0,1,0]], JXG.Math.identity(2,3));
+    }
+
+    function testMatMatMult() {
+        var A = [[1,2,3],
+                 [4,5,6],
+                 [7,8,9]];
+
+        assertArrayEquals("JXG.Math.matMatMult, incorrect result", [[30,36,42],[66,81,96],[102,126,150]], JXG.Math.matMatMult(A, A));
+        try {
+            JXG.Math.matMatMult(A, [[30,36,42],[66,81,96]]);
+        } catch(e) {
+            fail("JXG.Math.matMatMult should not throw an exception on mismatching dimensions");
+        }
+    }
+
+    function testMatTranspose() {
+        var A = [[1,2,3],
+                 [4,5,6],
+                 [7,8,9]];
+
+        assertArrayEquals("JXG.Math.matTranspose, incorrect result square matrix", A, JXG.Math.matTranspose(JXG.Math.matTranspose(A)));
+        
+        A.splice(2,1);
+        assertArrayEquals("JXG.Math.matTranspose, incorrect result non-square matrix", A, JXG.Math.matTranspose(JXG.Math.matTranspose(A)));
+    }
+
+</script>
+</head>
+
+<body>
+<h1>JXG.Math Tests</h1>
+
+<p>This page contains tests for the JSXGraph JXG.Math functions. To see them, take a look at the source.</p>
+</body>
+</html>
