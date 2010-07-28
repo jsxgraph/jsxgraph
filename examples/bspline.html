@@ -25,10 +25,7 @@
             }
             p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4],{/*id:'p'+i,*/strokeColor:col,fillColor:col}));
         }
-    JXG.addEvent(p[0].rendNode, 'mouseover', function(){alert('Hallo');}, p[0]);
-    JXG.addEvent(p[0].rendNode, 'mouseout', function(){}, p[0]);
-    p[0].hasPoint = function(){return false; };
-
+    
 JXG.Math.Numerics.bspline = function(points, order) {
     var knots = [], N = [];
     
