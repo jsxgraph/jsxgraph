@@ -364,9 +364,57 @@ JXG.Math.Numerics = (function(JXG, Math, undefined) {
          */
         root: function(f, x, object) {
             return this.Newton(f,x,object);
-        }
+        },
 
-    };
+        /**
+         * Returns the Lagrange polynomials for curves with equidistant nodes, see
+         * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
+         * SIAM Review, Vol 46, No 3, (2004) 501-517.
+         * The graph of the parametric curve [f(t),g(t)] runs through the given points.
+         * @param {Array} p Array of JXG.Points
+         * @returns {Array} [f(t), g(t), 0, p.length-1],
+         */
+        Neville: function(p) {
+            var w = [],
+                makeFct = function(fun) {
+                    return function(t, suspendedUpdate) {
+                        var i, d, s,
+                                bin = JXG.Math.binomial,
+                                len = p.length,
+                                len1 = len-1,
+                                num = 0.0,
+                                denom = 0.0;
+
+                        if (!suspendedUpdate) {
+                            s = 1;
+                            for (i=0;i<len;i++) {
+                                w[i] = bin(len1,i)*s;
+                                s *= (-1);
+                            }
+                        }
+
+                        d = t;
+                        for (i=0;i<len;i++) {
+                            if (d===0) {
+                                return p[i][fun]();
+                            } else {
+                                s = w[i]/d;
+                                d--;
+                                num   += p[i][fun]()*s;
+                                denom += s;
+                            }
+                        }
+                        return num/denom;
+                    };
+                },
+            
+                xfct = makeFct('X'),
+                yfct = makeFct('Y');
+
+        return [xfct, yfct, 0, function(){ return p.length-1; }];
+    }
+
+};
 })(JXG, Math);
 
 
@@ -562,79 +610,6 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
     };
     
     return fct;
-};
-
-/**
- * Returns the Lagrange polynomials for curves with equidistant nodes, see
- * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
- * SIAM Review, Vol 46, No 3, (2004) 501-517.
- * The graph of the parametric curve [f(t),g(t)] runs through the given points.
- * @param {Array} p Array of JXG.Points
- * @returns {Array} [f(t),g(t),0,p.length-1],
- */
-JXG.Math.Numerics.Neville = function(p) {
-    var w = [];
-    
-    var xfct = function(t, suspendedUpdate) {
-        var i, d, s,
-            bin = JXG.Math.binomial,
-            len = p.length,
-            len1 = len - 1,
-            num = 0.0, 
-            denom = 0.0;
-            
-        if (!suspendedUpdate) {
-            s = 1;
-            for (i=0;i<len;i++) {
-                w[i] = bin(len1,i)*s;
-                s *= (-1);
-            }
-        }
-
-        d = t;
-        for (i=0;i<len;i++) {
-            if (d==0) {
-                return p[i].X();
-            } else {
-                s = w[i]/d;
-                d--;
-                num   += p[i].X()*s;
-                denom += s;
-            }
-        }
-        return num/denom;
-    };
-    var yfct = function(t, suspendedUpdate) {
-        var i, d, s,
-            bin = JXG.Math.binomial,
-            len = p.length,
-            len1 = len - 1,
-            num = 0.0, 
-            denom = 0.0;
-            
-        if (!suspendedUpdate) {
-            //L = JXG.Math.binomial(len-1,i)*((i%2==0)?1:(-1))/d;
-            s = 1;
-            for (i=0;i<len;i++) {
-                w[i] = bin(len1,i)*s;
-                s *= (-1);
-            }
-        }
-
-        d = t;
-        for (i=0;i<len;i++) {
-            if (d==0) {
-                return p[i].Y();
-            } else {
-                s = w[i]/d;
-                d--;
-                num   += p[i].Y()*s;
-                denom += s;
-            }
-        }
-        return num/denom;
-    };
-    return [xfct, yfct, 0, function(){ return p.length-1;}];
 };
 
 /**

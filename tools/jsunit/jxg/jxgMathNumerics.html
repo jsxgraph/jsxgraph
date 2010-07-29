@@ -78,7 +78,26 @@
     }
 
     function testNeville() {
+        // This will be a little bit strange. We need points, but all we need in Neville() from those points
+        // is the X() and Y() method. Hence, we're faking some points.
+        var p = [], P = [[1,1],[2,3],[3,2]], i, neville,
+            makeFakeFunction = function(i, j) {
+                return function() {
+                    return P[i][j];
+                };
+	    };
 
+        for(i=0; i<P.length; i++) {
+            p[i] = {
+                X: makeFakeFunction(i, 0),
+                Y: makeFakeFunction(i, 1)
+            };
+        }
+
+        neville = JXG.Math.Numerics.Neville(p);
+        assertEquals("JXG.Math.Numerics.Neville, incorrect result from xfct", 1, neville[0](0, true));
+        assertEquals("JXG.Math.Numerics.Neville, incorrect result from xfct", 1, neville[0](0, false));
+        assertEquals("JXG.Math.Numerics.Neville, incorrect result from yfct", 1, neville[1](0, true));
     }
 
     function testRegressionPolynomial() {
