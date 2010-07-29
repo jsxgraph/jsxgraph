@@ -4,7 +4,7 @@
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript">
-       forceRenderer = 'canvas';
+       forceRenderer = 'svg';
    </script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
@@ -19,7 +19,37 @@
    /* <![CDATA[ */
 
    //JXG.Options.text.defaultDisplay = 'internal';
-   brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-8, 8, 8, -8], keepaspectratio:true, axis: false, grid: false});
+    var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1/1000, 2, 1/18, -2], keepaspectratio:false, axis: true, grid: false});
+//   brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-8, 8, 8, -8], keepaspectratio:true, axis: false, grid: false});
+
+
+    var x = [],
+        y = [];
+    for(var i=0; i<8000; i++) {
+        x[i] = i;
+        y[i] = Math.sin(440*2*Math.PI*i/8000)*(Math.random()*0.8+0.6);
+    }
+
+   //document.writeln('x = ['+x.join(',')+'];<br />');
+   document.writeln('y = ['+y.join(',')+'];<br />');
+
+    var bratwurst = [],
+        sauerkraut = [];
+
+   for(var i = 0; i<400; i++) {
+       bratwurst[i] = x[i]/8000;
+       sauerkraut[i] = y[i];
+   }
+
+
+    for(var i=0;i<400; i++) {
+        t = Math.random()*0.8+0.6;
+       document.writeln(t+'<br/>');
+//        sauerkraut[i] *= t;
+    }
+
+   var sin = brd.create('curve', [bratwurst, sauerkraut]);
+   /*
    p1 = brd.create('point', [0, 0]);
    p2 = brd.create('point', [2, 1]);
 
@@ -32,7 +62,7 @@
        if($('copy') != null)
             $('copy').src = $(brd.renderer.canvasId).toDataURL();
    });
-
+*/
   /* ]]> */
   </script>
 

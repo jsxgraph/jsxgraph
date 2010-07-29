@@ -338,7 +338,7 @@ JXG.Math.Numerics = (function(JXG, Math, undefined) {
          */
         Newton: function(f, x, object) {
             var i = 0,
-                h = 0.000001,
+                h = JXG.Math.eps,
                 newf = f.apply(object,[x]), // set "this" to "object" in f
                 df;
             while (i<50 && Math.abs(newf)>h) {
@@ -494,17 +494,20 @@ JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
 /**
   * Generate a string containing the function term of a polynomial.
   * @param {Array} coeffs Coefficients of the polynomial. The position i belongs to x^i.
-  * @param {int} deg Degree of the polynomial
+  * @param {Number} deg Degree of the polynomial
   * @param {String} varname Name of the variable (usually 'x')
-  * @param {int} prec Precision
-  * @return {String} String containg the function term of the polynomial.
+  * @param {Number} prec Precision
+  * @returns {String} A string containg the function term of the polynomial.
   */
 JXG.Math.Numerics.generatePolynomialTerm = function(coeffs,deg,varname,prec) {
     var t = '', i;
     for (i=deg;i>=0;i--) {
         t += '('+coeffs[i].toPrecision(prec)+')';
-        if (i>1) { t+='*'+varname+'<sup>'+i+'</sup> + '; }
-        else if (i==1) { t+='*'+varname+' + '; }
+        if (i>1) {
+            t+='*'+varname+'<sup>'+i+'</sup> + ';
+        } else if (i===1) {
+            t+='*'+varname+' + ';
+        }
     }
     return t;
 };
@@ -522,7 +525,8 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
     var term = '';
     var fct = function(x,suspendedUpdate)  {
         var i, k, len, xi, s,
-            num = 0, denom = 0;
+            num = 0, denom = 0,
+            M, j;
         
         len = p.length;
         if (!suspendedUpdate) {
@@ -539,39 +543,20 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
             for (j=0;j<len;j++) {
                 M.push([1]);
             }
-                /* // Function term not yet
-                for (i=1;i<len;i++) {
-                    for (j=0;j<len;j++) {
-                        M[j][i] = M[j][i-1]*datax[j];      // input data
-                    }
-                }
-                y = curve.dataY;                           // input data
-                MT = JXG.Math.transpose(M);
-
-                B = JXG.Math.matMatMult(MT,M);
-                c = JXG.Math.matVecMult(MT,y);
-                container = JXG.Math.Numerics.Gauss(B, c);
-                
-                for (i=degree, term='';i>=0;i--) {
-                    term += '('+container[i].toPrecision(3)+')';
-                    if (i>1) { term+='*x<sup>'+i+'</sup> + '; }
-                    else if (i==1) { term+='*x + '; }
-                }
-                */
         }
         
         for (i=0;i<len;i++) {
             xi = p[i].X();
-            if (x==xi) { 
+            if (x===xi) {
                 return p[i].Y(); 
             } else {
-                s = w[i]/(x-xi)
+                s = w[i]/(x-xi);
                 denom += s;
                 num += s*p[i].Y();
             }
         }
         return num/denom;
-    }
+    };
     fct.getTerm = function() {
         return term;
     };
@@ -587,11 +572,11 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
  * @param {Array} p Array of JXG.Points
  * @returns {Array} [f(t),g(t),0,p.length-1],
  */
-JXG.Math.Numerics.neville = function(p) {
+JXG.Math.Numerics.Neville = function(p) {
     var w = [];
     
     var xfct = function(t, suspendedUpdate) {
-        var i, d, L, s, 
+        var i, d, s,
             bin = JXG.Math.binomial,
             len = p.length,
             len1 = len - 1,
@@ -620,7 +605,7 @@ JXG.Math.Numerics.neville = function(p) {
         return num/denom;
     };
     var yfct = function(t, suspendedUpdate) {
-        var i, d, L, s, 
+        var i, d, s,
             bin = JXG.Math.binomial,
             len = p.length,
             len1 = len - 1,

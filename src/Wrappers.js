@@ -35,7 +35,7 @@ JXG.Board.prototype.D = function(f,obj){ return JXG.Math.Numerics.D(f,obj); };
 JXG.Board.prototype.I = function(interval,f){ return JXG.Math.Numerics.I(interval,f); };
 JXG.Board.prototype.root = function(f,x,obj){ return JXG.Math.Numerics.root(f,x,obj); };
 JXG.Board.prototype.lagrangePolynomial = function(p){ return JXG.Math.Numerics.lagrangePolynomial(p); };
-JXG.Board.prototype.neville = function(p){ return JXG.Math.Numerics.neville(p); };
+JXG.Board.prototype.neville = function(p){ return JXG.Math.Numerics.Neville(p); };
 JXG.Board.prototype.riemannsum = function(f,n,type,start,end){ return JXG.Math.Numerics.riemannsum(f,n,type,start,end); };
 
 JXG.Board.prototype.abs = Math.abs;
