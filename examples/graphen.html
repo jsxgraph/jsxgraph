@@ -10,7 +10,7 @@
   <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
   <script type="text/javascript">
   /* <![CDATA[ */                    
-    board = JXG.JSXGraph.loadBoardFromFile('jxgbox','graphs/graph2.txt', 'digraph');
+    board = JXG.JSXGraph.loadBoardFromFile('jxgbox','graphs/graph3.txt', 'digraph');
    // board = JXG.JSXGraph.loadBoardFromFile('jxgbox','graphs/graph1neu.txt', 'graph');
 							  /* ]]> */
                               
@@ -29,7 +29,7 @@
     function doSomething() {      
         board.addedGraph.nodes[2].reference.setProperty({fillColor:'blue',strokeColor:'black',size:7,face:'[]'}); // B
         board.addedGraph.segments[1][2].edge.setProperty({strokeColor:'green',dash:3}); // Kante von A nach B
-        //board.addedGraph.segments[1][2].weight.setText('Hallo');
+        board.addedGraph.segments[1][2].weight.setText('Hallo');
 
         JXG.debug(board.addedGraph.adjMatrix);
     }
