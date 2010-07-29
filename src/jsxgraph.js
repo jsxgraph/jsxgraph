@@ -802,7 +802,7 @@ JXG.debug = function(s) {
     if(typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "")
     console.log(s);
   } else if(document.getElementById('debug')) {
-    document.getElementById('debug').innerHTML += s.toString() +"<br/>";
+    document.getElementById('debug').innerHTML += s +"<br/>";
   }
 };
 
