@@ -34,393 +34,341 @@
  * Math.Numerics namespace holds numerical algorithms, constants, and variables.
  * @namespace
  */
-JXG.Math.Numerics = {}; 
+JXG.Math.Numerics = (function(JXG, Math, undefined) {
 
-/**
- * A constant representing the trapez rule for numerical integration. Is used in conjunction with {@link JXG.Math.Numerics.integration_type}
- * and {@link JXG.Math.Numerics.NewtonCotes}.
- * @type number
- * @constant
- */
-JXG.Math.Numerics.INT_TRAPEZ  = 0x00001;
+    /** @lends JXG.Math.Numerics */
+    return {
 
-/**
- * A constant representing the simpson rule for numerical integration. Is used in conjunction with {@link JXG.Math.Numerics.integration_type}
- * and {@link JXG.Math.Numerics.NewtonCotes}.
- * @type number
- * @constant
- */
-JXG.Math.Numerics.INT_SIMPSON = 0x00002;
+        /**
+         * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
+         * The algorithm runs in-place. I.e. the entries of A and b are changed.
+         * @param {Array} A Square matrix represented by an array of rows, containing the coefficients of the lineare equation system.
+         * @param {Array} b A vector containing the linear equation system's right hand side.
+         * @throws {Error} If a non-square-matrix is given or if b has not the right length or A's rank is not full.
+         * @returns {Array} A vector that solves the linear equation system.
+         */
+        Gauss: function(A, b) {
+            var eps = JXG.Math.eps,
+                // number of columns of A
+                n = A.length>0 ? A[0].length : 0,
+                // copy the matrix to prevent changes in the original
+                Acopy,
+                // solution vector, to prevent changing b
+                x,
+                i, j, k,
+                // little helper to swap array elements
+                swap = function(i, j) {
+                    var temp = this[i];
 
-/**
- * A constant representing the milne rule for numerical integration. Is used in conjunction with {@link JXG.Math.Numerics.integration_type}
- * and {@link JXG.Math.Numerics.NewtonCotes}.
- * @type number
- * @constant
- */
-JXG.Math.Numerics.INT_MILNE   = 0x00003;
-  
-/**
- * Number of nodes for evaluation, used for integration algorithms.
- * @type number
- */
-JXG.Math.Numerics.number_of_nodes = 28;
+                    this[i] = this[j];
+                    this[j] = temp;
+                };
 
-/**
- * Type of integration algorithm, possible values are:
- * <ul>
- *   <li>{@link JXG.Math.Numerics.INT_TRAPEZ}</li>
- *   <li>{@link JXG.Math.Numerics.INT_SIMPSON}</li>
- *   <li>{@link JXG.Math.Numerics.INT_MILNE}</li>
- * </ul>
- * @type number
- */
-JXG.Math.Numerics.integration_type = JXG.INT_MILNE;
+            if((n !== b.length) || (n !== A.length))
+                throw new Error("JXG.Math.Numerics.Gauss: Dimensions don't match. A must be a square matrix and b must be of the same length as A.");
 
-/**
- * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
- * The algorithm runs in-place. I.e. the entries of A and b are changed.
- * @param {Array} A Square matrix represented by an array of rows, containing the coefficients of the lineare equation system.
- * @param {Array} b A vector containing the linear equation system's right hand side.
- * @throws {Error} If a non-square-matrix is given or if b has not the right length or A's rank is not full.
- * @returns {Array} A vector that solves the linear equation system.
- */
-JXG.Math.Numerics.Gauss = function(A, b) {
-    var eps = JXG.Math.eps,
-        // number of columns of A
-        n = A.length>0 ? A[0].length : 0,
-        // copy the matrix to prevent changes in the original
-        Acopy,
-        // solution vector, to prevent changing b
-        x,
-        i, j, k,
-        // little helper to swap array elements
-        swap = function(i, j) {
-            var temp = this[i];
+            x = new Array(n);
 
-            this[i] = this[j];
-            this[j] = temp;
-        };
+            Acopy = A;
+            A = JXG.Math.matrix(n, n);
 
-    if((n !== b.length) || (n !== A.length))
-        throw new Error("JXG.Math.Numerics.Gauss(): Dimensions don't match. A must be a square matrix and b must be of the same length as A.");
+            // initialize solution vector
+            for (i=0; i<n; i++) {
+                x[i] = b[i];
 
-    x = new Array(n);
-    
-    Acopy = A;
-    A = new Array(n);
-    
-    // initialize solution vector and pivot tracking vector P 
-    for (i=0; i<n; i++) {
-        x[i] = b[i];
-
-        // copy A
-        A[i] = new Array(n);
-        for(j=0; j<n; j++) {
-            A[i][j] = Acopy[i][j];
-        }
-    }
-
-    // Gauss-Jordan-elimination
-    for (j=0; j < n; j++)
-    {
-        for (i = n-1; i > j; i--) {
-            // Is the element which is to eliminate greater than zero?
-            if (Math.abs(A[i][j]) > eps) {
-                // Equals pivot element zero?
-                if (Math.abs(A[j][j]) < eps) {
-                    // At least numerically, so we have to exchange the rows
-                    swap.apply(A, [i, j]);
-                    swap.apply(x, [i, j]);
-                } else {
-                    // Saves the L matrix of the LR-decomposition. unnecessary.
-                    A[i][j] /= A[j][j];
-                    // Transform right-hand-side b
-                    x[i] -= A[i][j] * b[j];
-                    // subtract the multiple of A[i][j] / A[j][j] of the j-th row from the i-th.
-                    for (k = j + 1; k < n; k ++) {
-                        A[i][k] -= A[i][j] * A[j][k];
-                    }
+                // copy A
+                for(j=0; j<n; j++) {
+                    A[i][j] = Acopy[i][j];
                 }
             }
-        }
-        if (Math.abs(A[j][j]) < eps) { // The absolute values of all coefficients below the j-th row in the j-th column are smaller than JXG.Math.eps.
-            throw new Error("JXG.Math.Numerics.Gauss(): The given matrix seems to be singular.");
-        }
-    }
 
-    JXG.Math.Numerics.backwardSolve(A, x, true); // return Array
-
-    A = Acopy;
-
-    return x;
-};
-
-/**
- * Solves a system of linear equations given by the right triangular matrix R and vector b.
- * @param {Array} R Right triangular matrix represented by an array of rows. All entries a_(i,j) with i &lt; j are ignored.
- * @param {Array} b Right hand side of the linear equation system.
- * @param {Boolean} [canModify=false] If true, the right hand side vector is allowed to be changed by this method.
- * @returns {Array} An array representing a vector that solves the system of linear equations.
- */
-JXG.Math.Numerics.backwardSolve = function(R, b, canModify) {
-    var x, m, n, i, j;
-
-    if(canModify) {
-        x = b;
-    } else {
-        x = new Array(b.length);
-        for(i = 0; i<b.length; i++) {
-            x[i] = b[i];
-        }
-    }
-
-    // m: number of rows of R
-    // n: number of columns of R
-    m = R.length;
-    n = R.length>0 ? R[0].length : 0;
-    
-    for (i = m-1; i >= 0; i--) {
-        for (j = n-1; j > i; j--) {
-            x[i] -= R[i][j] * x[j];
-        }
-        x[i] /= R[i][i];
-    }
-
-    return x;
-};
-
-/**
- * Compute the inverse of an nxn matrix with Gauss elimination.
- * @param {Array} Ain
- */
-JXG.Math.Numerics.Inverse = function(Ain) {
-    var i,j,k,s,ma,r,swp,
-        n = Ain.length,
-        A = [],
-        p = [],
-        hv = [];
-        
-    for (i=0;i<n;i++) {
-        A[i] = [];
-        for (j=0;j<n;j++) { A[i][j] = Ain[i][j]; }
-        p[i] = i;
-    }
-    
-    for (j=0;j<n;j++) {
-        // pivot search:
-        ma = Math.abs(A[j][j]);
-        r = j;
-        for (i=j+1;i<n;i++) {
-            if (Math.abs(A[i][j])>ma) {
-                ma = Math.abs(A[i][j]);
-                r = i;
+            // Gauss-Jordan-elimination
+            for (j=0; j < n; j++)
+            {
+                for (i = n-1; i > j; i--) {
+                    // Is the element which is to eliminate greater than zero?
+                    if (Math.abs(A[i][j]) > eps) {
+                        // Equals pivot element zero?
+                        if (Math.abs(A[j][j]) < eps) {
+                            // At least numerically, so we have to exchange the rows
+                            swap.apply(A, [i, j]);
+                            swap.apply(x, [i, j]);
+                        } else {
+                            // Saves the L matrix of the LR-decomposition. unnecessary.
+                            A[i][j] /= A[j][j];
+                            // Transform right-hand-side b
+                            x[i] -= A[i][j] * b[j];
+                            // subtract the multiple of A[i][j] / A[j][j] of the j-th row from the i-th.
+                            for (k = j + 1; k < n; k ++) {
+                                A[i][k] -= A[i][j] * A[j][k];
+                            }
+                        }
+                    }
+                }
+                if (Math.abs(A[j][j]) < eps) { // The absolute values of all coefficients below the j-th row in the j-th column are smaller than JXG.Math.eps.
+                    throw new Error("JXG.Math.Numerics.Gauss(): The given matrix seems to be singular.");
+                }
             }
-        }
-        if (ma<=JXG.Math.eps) { // Singular matrix
-            return false;  
-        }
-        // swap rows:
-        if (r>j) {
-            for (k=0;k<n;k++) { 
-                swp = A[j][k]; A[j][k] = A[r][k]; A[r][k] = swp;
+
+            this.backwardSolve(A, x, true); // return Array
+
+            A = Acopy;
+
+            return x;
+        },
+
+        /**
+         * Solves a system of linear equations given by the right triangular matrix R and vector b.
+         * @param {Array} R Right triangular matrix represented by an array of rows. All entries a_(i,j) with i &lt; j are ignored.
+         * @param {Array} b Right hand side of the linear equation system.
+         * @param {Boolean} [canModify=false] If true, the right hand side vector is allowed to be changed by this method.
+         * @returns {Array} An array representing a vector that solves the system of linear equations.
+         */
+        backwardSolve: function(R, b, canModify) {
+            var x, m, n, i, j;
+
+            if(canModify) {
+                x = b;
+            } else {
+                x = new Array(b.length);
+                for(i = 0; i<b.length; i++) {
+                    x[i] = b[i];
+                }
             }
-            swp = p[j]; p[j] = p[r]; p[r] = swp;
-        }
-        // transformation:
-        s = 1.0/A[j][j];
+
+            // m: number of rows of R
+            // n: number of columns of R
+            m = R.length;
+            n = R.length>0 ? R[0].length : 0;
+
+            for (i = m-1; i >= 0; i--) {
+                for (j = n-1; j > i; j--) {
+                    x[i] -= R[i][j] * x[j];
+                }
+                x[i] /= R[i][i];
+            }
+
+            return x;
+        },
+
+        /**
+         * Compute the Eigenvalues and Eigenvectors of a symmetric 3x3 matrix with the Jacobi method
+         * Adaption of a FORTRAN program by Ed Wilson, Dec. 25, 1990
+         * @param {Array} Ain A symmetric 3x3 matrix.
+         * @returns {Array} [A,V] the matrices A and V. The diagonal of A contains the Eigenvalues, V contains the Eigenvectors.
+         */
+        Jacobi: function(Ain) {
+        var i,j,k,aa,si,co,tt,eps=JXG.Math.eps,
+            sum = 0.0,
+            ssum, amax,
+            n = Ain.length,
+            V = [[0,0,0],[0,0,0],[0,0,0]],
+            A = [[0,0,0],[0,0,0],[0,0,0]];
+
+        // Initialization. Set initial Eigenvectors.
         for (i=0;i<n;i++) {
-            A[i][j] *= s;
-        }
-        A[j][j] = s;
-        for (k=0;k<n;k++) if (k!=j) {
-            for (i=0;i<n;i++) if (i!=j) {
-                A[i][k] -= A[i][j]*A[j][k];
+            for (j=0;j<n;j++) {
+                V[i][j] = 0.0;
+                A[i][j] = Ain[i][j];
+                sum += Math.abs(A[i][j]);
             }
-            A[j][k] = -s*A[j][k];
+            V[i][i] = 1.0;
         }
-    }
-    // swap columns:
-    for (i=0;i<n;i++) {
-        for (k=0;k<n;k++) { hv[p[k]] = A[i][k]; }
-        for (k=0;k<n;k++) { A[i][k] = hv[k]; }
-    }
-    return A;
-};
+        // Trivial problems
+        if (n==1) { return [A,V]; }
+        if (sum<=0.0) { return [A,V]; }
 
-/**
- * NEEDS IMPLEMENTATION. TODO Decomposites the matrix A in an orthogonal matrix Q and a right triangular matrix R. 
- * @param {Array} A A matrix.
- * @type Object
- * @throws {Exception} If A's rank is not full.
- * @return The matrices Q and R.
- * @private
- */
-JXG.Math.Numerics.QR = function(A, b) {
-    // TODO needs implementation
-};
+        sum /= (n*n);
 
-/**
- * Compute the Eigenvalues and Eigenvectors of a symmetric 3x3 matrix with the Jacobi method
- * Adaption of a FORTRAN program by Ed Wilson, Dec. 25, 1990
- * @param {Array} Ain A symmetric 3x3 matrix.
- * @type Object
- * @throws {Exception} If A's rank is not full.
- * @return [A,V] the matrices A and V. The diagonal of A contains the Eigenvalues,
- * V contains the Eigenvectors.
- */
-JXG.Math.Numerics.Jacobi = function(Ain) {
-    var i,j,k,ih,aa,si,co,tt,eps=JXG.Math.eps, //Math.sqrt(JXG.Math.eps),
-        sum = 0.0,
-        ssum, amax,
-        n = Ain.length,
-        V = [[0,0,0],[0,0,0],[0,0,0]],
-        A = [[0,0,0],[0,0,0],[0,0,0]];
-    
-    // Initialization. Set initial Eigenvectors.
-    for (i=0;i<n;i++) {
-        for (j=0;j<n;j++) { 
-            V[i][j] = 0.0;
-            A[i][j] = Ain[i][j];
-            sum += Math.abs(A[i][j]);
-        }
-        V[i][i] = 1.0;
-    }
-    // Trivial problems
-    if (n==1) { return [A,V]; }
-    if (sum<=0.0) { return [A,V]; }
-    
-    sum /= (n*n);
-
-    // Reduce matrix to diagonal
-    do {
-        ssum = 0.0;
-        amax = 0.0;
-        for (j=1;j<n;j++) {
-            for (i=0;i<j;i++) {
-                // Check if A[i][j] is to be reduced
-                aa = Math.abs(A[i][j]);
-                if (aa>amax) { amax = aa; }
-                ssum += aa;
-                if (aa<eps/*0.1*amax*/) {
-                    continue;
-                } else {
-                    // calculate rotation angle
-                    aa = Math.atan2(2.0*A[i][j],A[i][i]-A[j][j])*0.5;
-                    si = Math.sin(aa);
-                    co = Math.cos(aa);
-                    // Modify 'i' and 'j' columns
-                    for (k=0;k<n;k++) {
-                        tt = A[k][i];
-                        A[k][i] =  co*tt+si*A[k][j];
-                        A[k][j] = -si*tt+co*A[k][j];
-                        tt = V[k][i];
-                        V[k][i] =  co*tt+si*V[k][j];
-                        V[k][j] = -si*tt+co*V[k][j];
+        // Reduce matrix to diagonal
+        do {
+            ssum = 0.0;
+            amax = 0.0;
+            for (j=1;j<n;j++) {
+                for (i=0;i<j;i++) {
+                    // Check if A[i][j] is to be reduced
+                    aa = Math.abs(A[i][j]);
+                    if (aa > amax) {
+                        amax = aa;
                     }
-                    // Modify diagonal terms
-                    A[i][i] =  co*A[i][i]+si*A[j][i];
-                    A[j][j] = -si*A[i][j]+co*A[j][j];
-                    A[i][j] = 0.0;
-                    // Make 'A' matrix symmetrical
-                    for (k=0;k<n;k++) {
-                        A[i][k] = A[k][i];
-                        A[j][k] = A[k][j];
+                    ssum += aa;
+                    if (aa >= eps) {
+                        // calculate rotation angle
+                        aa = Math.atan2(2.0 * A[i][j], A[i][i] - A[j][j]) * 0.5;
+                        si = Math.sin(aa);
+                        co = Math.cos(aa);
+                        // Modify 'i' and 'j' columns
+                        for (k = 0; k < n; k++) {
+                            tt = A[k][i];
+                            A[k][i] = co * tt + si * A[k][j];
+                            A[k][j] = -si * tt + co * A[k][j];
+                            tt = V[k][i];
+                            V[k][i] = co * tt + si * V[k][j];
+                            V[k][j] = -si * tt + co * V[k][j];
+                        }
+                        // Modify diagonal terms
+                        A[i][i] = co * A[i][i] + si * A[j][i];
+                        A[j][j] = -si * A[i][j] + co * A[j][j];
+                        A[i][j] = 0.0;
+                        // Make 'A' matrix symmetrical
+                        for (k = 0; k < n; k++) {
+                            A[i][k] = A[k][i];
+                            A[j][k] = A[k][j];
+                        }
+                        // A[i][j] made zero by rotation
                     }
-                    // A[i][j] made zero by rotation
                 }
             }
+        } while(Math.abs(ssum)/sum>eps);
+        return [A,V];
+    },
+
+        /**
+         * Calculates the integral of function f over interval using Newton-Cotes-algorithm.
+         * @param {Array} interval The integration interval, e.g. [0, 3].
+         * @param {function} f A function which takes one argument of type number and returns a number.
+         * @param {object} [config={number_of_nodes:28,integration_type:'milne'}] The algorithm setup. Accepted properties are number_of_nodes of type number and integration_type
+         * with value being either 'trapez', 'simpson', or 'milne'.
+         * @returns {Number} Integral value of f over interval
+         * @throws {Error} If config.number_of_nodes doesn't match config.integration_type an exception is thrown. If you want to use
+         * simpson rule respectively milne rule config.number_of_nodes must be dividable by 2 respectively 4.
+         * @example
+         * function f(x) {
+         *   return x*x;
+         * }
+         *
+         * // calculates integral of <tt>f</tt> from 0 to 2.
+         * var area1 = JXG.Math.Numerics.NewtonCotes([0, 2], f);
+         *
+         * // the same with an anonymous function
+         * var area2 = JXG.Math.Numerics.NewtonCotes([0, 2], function (x) { return x*x; });
+         *
+         * // use trapez rule with 16 nodes
+         * var area3 = JXG.Math.Numerics.NewtonCotes([0, 2], f,
+         *                                   {number_of_nodes: 16, intergration_type: 'trapez'});
+         */
+        NewtonCotes: function(interval, f, config) {
+            var integral_value = 0.0,
+                number_of_nodes = config && typeof config.number_of_nodes === 'number' ? config.number_of_nodes : 28,
+                available_types = {trapez: true, simpson: true, milne: true},
+                integration_type = config && config.integration_type && available_types.hasOwnProperty(config.integration_type) && available_types[config.integration_type] ? config.integration_type : 'milne',
+                step_size = (interval[1] - interval[0]) / number_of_nodes,
+                evaluation_point, i, number_of_intervals;
+
+            switch(integration_type) {
+                case 'trapez':
+                    integral_value = (f(interval[0]) + f(interval[1])) * 0.5;
+
+                    evaluation_point = interval[0];
+                    for (i = 0; i < number_of_nodes - 1; i++)
+                    {
+                        evaluation_point += step_size;
+                        integral_value   += f(evaluation_point);
+                    }
+                    integral_value *= step_size;
+
+                    break;
+                case 'simpson':
+                    if (number_of_nodes%2 > 0) {
+                        throw new Error("JSXGraph:  INT_SIMPSON requires config.number_of_nodes dividable by 2.");
+                    }
+                    number_of_intervals = number_of_nodes / 2.0;
+                    integral_value = f(interval[0]) + f(interval[1]);
+                    evaluation_point = interval[0];
+                    for (i = 0; i < number_of_intervals - 1; i++)
+                    {
+                        evaluation_point += 2.0 * step_size;
+                        integral_value   += 2.0 * f(evaluation_point);
+                    }
+                    evaluation_point = interval[0] - step_size;
+                    for (i = 0; i < number_of_intervals; i++)
+                    {
+                        evaluation_point += 2.0 * step_size;
+                        integral_value   += 4.0 * f(evaluation_point);
+                    }
+                    integral_value *= step_size / 3.0;
+                    break;
+                default:
+                    if (number_of_nodes%4 > 0) {
+                        throw new Error("JSXGraph: Error in INT_MILNE: config.number_of_nodes must be a multiple of 4");
+                    }
+                    number_of_intervals = number_of_nodes * 0.25;
+                    integral_value = 7.0 * (f(interval[0]) + f(interval[1]));
+                    evaluation_point = interval[0];
+                    for (i = 0; i < number_of_intervals - 1; i++)
+                    {
+                        evaluation_point += 4.0 * step_size;
+                        integral_value   += 14.0 * f(evaluation_point);
+                    }
+                    evaluation_point = interval[0] - 3.0 * step_size;
+                    for (i = 0; i < number_of_intervals; i++)
+                    {
+                        evaluation_point += 4.0 * step_size;
+                        integral_value   += 32.0 * (f(evaluation_point) + f(evaluation_point + 2 * step_size));
+                    }
+                    evaluation_point = interval[0] - 2.0 * step_size;
+                    for (i = 0; i < number_of_intervals; i++)
+                    {
+                        evaluation_point += 4.0 * step_size;
+                        integral_value   += 12.0 * f(evaluation_point);
+                    }
+                    integral_value *= 2.0 * step_size / 45.0;
+            }
+            return integral_value;
+        },
+
+        /**
+         * Integral of function f over interval.
+         * @param {Array} interval The integration interval, e.g. [0, 3].
+         * @param {function} f A function which takes one argument of type number and returns a number.
+         * @returns {Number} The value of the integral of f over interval
+         * @see JXG.Math.Numerics.NewtonCotes
+         */
+        I: function(interval, f) {
+            return this.NewtonCotes(interval, f, {number_of_nodes: 16, integration_type: 'milne'});
+        },
+
+        /**
+         * Newton's method to find roots of a funtion in one variable.
+         * @param {function} f We search for a solution of f(x)=0.
+         * @param {Number} x initial guess for the root, i.e. staring value.
+         * @param {object} object optional object that is treated as "this" in the function body. This is useful, if the function is a
+         *                 method of an object and contains a reference to its parent object via "this".
+         * @returns {Number} A root of the function f.
+         */
+        Newton: function(f, x, object) {
+            var i = 0,
+                h = 0.000001,
+                newf = f.apply(object,[x]), // set "this" to "object" in f
+                df;
+            while (i<50 && Math.abs(newf)>h) {
+                df = this.D(f,object)(x);
+                if (Math.abs(df)>h) {
+                    x -= newf/df;
+                } else {
+                    x += (Math.random()*0.2-1.0);
+                }
+                newf = f.apply(object,[x]);
+                i++;
+            }
+            return x;
+        },
+
+        /**
+         * Abstract method to find roots of univariate functions.
+         * @param {function} f We search for a solution of f(x)=0.
+         * @param {Number} x initial guess for the root, i.e. staring value.
+         * @param {object} object optional object that is treated as "this" in the function body. This is useful, if the function is a
+         *                 method of an object and contains a reference to its parent object via "this".
+         * @returns {Number} A root of the function f.
+         */
+        root: function(f, x, object) {
+            return this.Newton(f,x,object);
         }
-    } while(Math.abs(ssum)/sum>eps);
-    return [A,V];
-};
 
-/**
- * Calculates the integral of function f over interval using Newton-Cotes-algorithm.
- * @param interval The integration interval, e.g. [0, 3]. 
- * @param f A function which takes one argument of type number and returns a number.
- * @return Integral value of f over interval interval
- * @throws {Exception} If {@link JXG.Math.Numerics.number_of_nodes} doesn't match
- * {@link JXG.Math.Numerics.integration_type} an exception is thrown. If you want to use
- * simpson rule respectively milne rule {@link JXG.Math.Numerics.number_of_nodes} must be dividable by
- * 2 respectively 4.
- * @example
- * function f(x) {
- *   return x*x;
- * }
- * 
- * // calculates integral of <tt>f</tt> from 0 to 2.
- * var area1 = JXG.Math.Numerics.NewtonCotes([0, 2], f);
- * 
- * // the same with anonymous function
- * var area2 = JXG.Math.Numerics.NewtonCotes([0, 2], function (x) { return x*x; });
- */
-JXG.Math.Numerics.NewtonCotes = function(/** array */ interval, /** function */ f) /** float */ {
-    var integral_value = 0.0,
-        step_size = (interval[1] - interval[0]) / this.number_of_nodes,
-        evaluation_point, i, number_of_intervals;
+    };
+})(JXG, Math);
 
-    switch(this.integration_type) {
-        case JXG.INT_TRAPEZ:
-            integral_value = (f(interval[0]) + f(interval[1])) * 0.5;
-    
-            evaluation_point = interval[0];
-            for (i = 0; i < this.number_of_nodes - 1; i++)
-            {
-                evaluation_point += step_size;
-                integral_value   += f(evaluation_point);
-            }
-            integral_value *= step_size;
-
-            break;
-        case JXG.INT_SIMPSON:
-            if (this.number_of_nodes%2 > 0) {
-                throw new Error("JSXGraph:  INT_SIMPSON requires JXG.Math.Numerics.number_of_nodes dividable by 2.");
-            }
-            number_of_intervals = this.number_of_nodes / 2.0;
-            integral_value = f(interval[0]) + f(interval[1]);
-            evaluation_point = interval[0];
-            for (i = 0; i < number_of_intervals - 1; i++)
-            {
-                evaluation_point += 2.0 * step_size;
-                integral_value   += 2.0 * f(evaluation_point);
-            }
-            evaluation_point = interval[0] - step_size;
-            for (i = 0; i < number_of_intervals; i++)
-            {
-                evaluation_point += 2.0 * step_size;
-                integral_value   += 4.0 * f(evaluation_point);
-            }
-            integral_value *= step_size / 3.0;
-            break;
-        default:
-            if (this.number_of_nodes%4 > 0) {
-                throw new Error("JSXGraph: Error in INT_MILNE: JXG.Math.Numerics.number_of_nodes must be a multiple of 4");
-            }
-            number_of_intervals = this.number_of_nodes * 0.25;
-            integral_value = 7.0 * (f(interval[0]) + f(interval[1]));
-            evaluation_point = interval[0];
-            for (i = 0; i < number_of_intervals - 1; i++)
-            {
-                evaluation_point += 4.0 * step_size;
-                integral_value   += 14.0 * f(evaluation_point);
-            }
-            evaluation_point = interval[0] - 3.0 * step_size;
-            for (i = 0; i < number_of_intervals; i++)
-            {
-                evaluation_point += 4.0 * step_size;
-                integral_value   += 32.0 * (f(evaluation_point) + f(evaluation_point + 2 * step_size));
-            }
-            evaluation_point = interval[0] - 2.0 * step_size;
-            for (i = 0; i < number_of_intervals; i++)
-            {
-                evaluation_point += 4.0 * step_size;
-                integral_value   += 12.0 * f(evaluation_point);
-            }
-            integral_value *= 2.0 * step_size / 45.0; /* todo */
-    }
-    return integral_value;
-};
 
 /**
  * Calculates second derivatives at the knots.
@@ -433,13 +381,13 @@ JXG.Math.Numerics.splineDef = function(x, y) {
     var n = x.length,
         pair, i, diag, z, l,
         data = new Array(),
-        dx = [], 
+        dx = [],
         delta = [],
         F;
-        
-    if (x.length != y.length)
+
+    if (n != y.length)
         throw new Error("JSXGraph: Error in JXG.Math.Numerics.splineDef: Input vector dimensions do not match.");
-    
+
     for (i=0; i<n; i++) {
         pair = {X: x[i], Y: y[i]};
         data.push(pair);
@@ -449,7 +397,7 @@ JXG.Math.Numerics.splineDef = function(x, y) {
         x[i] = data[i].X;
         y[i] = data[i].Y;
     }
-    
+
     for (i=0; i<n-1; i++) {
         dx.push(x[i+1] - x[i]);
     }
@@ -475,11 +423,11 @@ JXG.Math.Numerics.splineDef = function(x, y) {
     for(i=n-4; i>=0; i--) {
         F[i] = (z[i] - (dx[i+1]*F[i+1]))/diag[i];
     }
-    
+
     // Generate f''-Vector
     for(i=n-3; i>=0; i--)
         F[i+1] = F[i];
-    
+
     // natural cubic spline
     F[0] = 0;
     F[n-1] = 0;
@@ -488,12 +436,12 @@ JXG.Math.Numerics.splineDef = function(x, y) {
 
 /**
  * Evaluate points on spline.
- * @param {float,Array} x0 A single float value or an array of values to evaluate
+ * @param {Number,Array} x0 A single float value or an array of values to evaluate
  * @param {Array} x x values of knots
  * @param {Array} y y values of knots
  * @param {Array} F Second derivatives at knots, calculated by {@link #splineDef}
  * @see #splineDef
- * @returns {float,Array} A single value or an array, depending on what is given as x0.
+ * @returns {Number,Array} A single value or an array, depending on what is given as x0.
  */
 JXG.Math.Numerics.splineEval = function(x0, x, y, F) {
     var n = x.length,
@@ -598,7 +546,7 @@ JXG.Math.Numerics.lagrangePolynomial = function(p) {
                     }
                 }
                 y = curve.dataY;                           // input data
-                MT = JXG.Math.matTranspose(M);
+                MT = JXG.Math.transpose(M);
 
                 B = JXG.Math.matMatMult(MT,M);
                 c = JXG.Math.matVecMult(MT,y);
@@ -786,7 +734,7 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
                 }
                 
                 y = dY;                                 // input data
-                MT = JXG.Math.matTranspose(M);
+                MT = JXG.Math.transpose(M);
                 B = JXG.Math.matMatMult(MT,M);
                 c = JXG.Math.matVecMult(MT,y);
                 coeffs = JXG.Math.Numerics.Gauss(B, c);
@@ -805,7 +753,7 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
         return term;
     };
     return fct;
-}
+};
     
 /**
  * Computes the cubic Bezier curve through a given set of points.
@@ -978,53 +926,6 @@ JXG.Math.Numerics.D = function(/** function */ f, /** object */ obj) /* function
 };
 
 /**
- * Integral of function f over interval.
- * @deprecated Use {@link JXG.Math.Numerics.NewtonCotes} instead.
- * @see JXG.Math.Numerics.NewtonCotes
- */
-JXG.Math.Numerics.I = function(/** array */ interval, /** function */ f) {
-    return JXG.Math.Numerics.NewtonCotes(interval, f);
-};
-
-/**
- * Newton's method to find roots of a funtion in one variable.
- * @param {function} f We search for a solution of f(x)=0.
- * @param {float} x initial guess for the root, i.e. staring value.
- * @param {object} obj optional object that is treated as "this" in the function body. This is useful, if the function is a 
- *                 method of an object and contains a reference to its parent object via "this".
- * @return {float} root of the function f.
- */
-JXG.Math.Numerics.newton = function(/** function */ f, /** number */ x, /** object */ obj) /** number */ {
-    var i = 0,
-        h = 0.000001,
-        newf = f.apply(obj,[x]), // set "this" to "obj" in f 
-        df;
-    while (i<50 && Math.abs(newf)>h) {
-        df = this.D(f,obj)(x);
-        if (Math.abs(df)>h) {
-            x -= newf/df;
-        } else {
-            x += (Math.random()*0.2-1.0);
-        }
-        newf = f.apply(obj,[x]);
-        i++;
-    }
-    return x;
-};
-
-/**
- * Abstract method to find roots of univariate functions.
- * @param {function} f We search for a solution of f(x)=0.
- * @param {float} x initial guess for the root, i.e. staring value.
- * @param {object} obj optional object that is treated as "this" in the function body. This is useful, if the function is a 
- *                 method of an object and contains a reference to its parent object via "this".
- * @return {float} root of the function f.
- */
-JXG.Math.Numerics.root = function(/** function */ f, /** number */ x, /** object */ obj) /** number */ {
-    return this.newton(f,x,obj);
-};
-
-/**
  * Hlper function to create curve which displays Riemann sums.
  * Compute coordinates for the rectangles showing the Riemann sum.
  * @param {function} f Function f, whose integral is approximated by the Riemann sum.
@@ -1060,13 +961,13 @@ JXG.Math.Numerics.riemann = function(/** function */ f, /** type */ n,  /** type
                 y = f(x);
                 for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
                     y1 = f(x1);
-                    if (y1<y) { y = y1; };
+                    if (y1<y) { y = y1; }
                 }
             } else { // (type=='upper')
                 y = f(x);
                 for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
                     y1 = f(x1);
-                    if (y1>y) { y = y1; };
+                    if (y1>y) { y = y1; }
                 }
             }
             
@@ -1116,13 +1017,13 @@ JXG.Math.Numerics.riemannsum = function(/** function */ f, /** type */ n,  /** t
                 y = f(x);
                 for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
                     y1 = f(x1);
-                    if (y1<y) { y = y1; };
+                    if (y1<y) { y = y1; }
                 }
             } else { // (type=='upper')
                 y = f(x);
                 for (x1=x+delta1;x1<=x+delta;x1+=delta1) {
                     y1 = f(x1);
-                    if (y1>y) { y = y1; };
+                    if (y1>y) { y = y1; }
                 }
             }
             sum += delta*y;
@@ -1148,21 +1049,21 @@ JXG.Math.Numerics.Butcher = function () {
     /**
      * 2-dimensional array containing the butcher tableau matrix.
      * See <a href="http://en.wikipedia.org/wiki/Runge-Kutta_methods">http://en.wikipedia.org/wiki/Runge-Kutta_methods</a>.
-     * @type array
+     * @type Array
      */
     this.A = [];
 
     /**
      * Array containing the coefficients below the butcher tableau matrix.
      * See <a href="http://en.wikipedia.org/wiki/Runge-Kutta_methods">http://en.wikipedia.org/wiki/Runge-Kutta_methods</a>.
-     * @type array
+     * @type Array
      */
     this.b = [];
 
     /**
      * Array containing the coefficients to the left of the butcher tableau matrix.
      * See <a href="http://en.wikipedia.org/wiki/Runge-Kutta_methods">http://en.wikipedia.org/wiki/Runge-Kutta_methods</a>.
-     * @type array
+     * @type Array
      */
     this.c = [];
 };

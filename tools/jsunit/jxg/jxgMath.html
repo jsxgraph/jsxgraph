@@ -33,14 +33,19 @@
         }
     }
 
+    function testVector() {
+        assertArrayEquals("JXG.Math.vector doesn't generate a zero vector by default", [0,0,0], JXG.Math.vector(3));
+        assertArrayEquals("JXG.Math.vector ignores initial value", [1,1], JXG.Math.vector(2,1));
+    }
+
     function testMatrix() {
+        assertArrayEquals("JXG.Math.matrix doesn't generate a square matrix if only one parameter is given", [[0,0],[0,0]], JXG.Math.matrix(2));
         assertArrayEquals("JXG.Math.matrix doesn't generate a zero matrix", [[0,0,0],[0,0,0],[0,0,0]], JXG.Math.matrix(3,3));
         assertArrayEquals("JXG.Math.matrix ignores initial value", [[1,1,1],[1,1,1]], JXG.Math.matrix(2,3,1));
     }
 
     function testIdentity() {
-        assertArrayEquals("JXG.Math.identity, vector case", [1,1,1], JXG.Math.identity(3));
-        assertArrayEquals("JXG.Math.identity, square matrix case", [[1,0,0],[0,1,0],[0,0,1]], JXG.Math.identity(3,3));
+        assertArrayEquals("JXG.Math.identity, square matrix case", [[1,0,0],[0,1,0],[0,0,1]], JXG.Math.identity(3));
         assertArrayEquals("JXG.Math.identity, non-square matrix case", [[1,0,0],[0,1,0]], JXG.Math.identity(2,3));
     }
 
@@ -57,15 +62,15 @@
         }
     }
 
-    function testMatTranspose() {
+    function testTranspose() {
         var A = [[1,2,3],
                  [4,5,6],
                  [7,8,9]];
 
-        assertArrayEquals("JXG.Math.matTranspose, incorrect result square matrix", A, JXG.Math.matTranspose(JXG.Math.matTranspose(A)));
+        assertArrayEquals("JXG.Math.transpose, incorrect result square matrix", A, JXG.Math.transpose(JXG.Math.transpose(A)));
         
         A.splice(2,1);
-        assertArrayEquals("JXG.Math.matTranspose, incorrect result non-square matrix", A, JXG.Math.matTranspose(JXG.Math.matTranspose(A)));
+        assertArrayEquals("JXG.Math.transpose, incorrect result non-square matrix", A, JXG.Math.transpose(JXG.Math.transpose(A)));
     }
 
     function testInnerProduct() {
@@ -103,6 +108,11 @@
 
     function testNormalize() {
         assertArrayEquals("JXG.Math.normalize, incorrect result", [0,0.5,0,0.5,0.5,0.5,-0.5,0], JXG.Math.normalize([1, 1, 0, 1, 1, 0, 1, 1]));
+    }
+
+    function testInverse() {
+        var A = [[2, 0, 0],[0,4,0],[0,0,8]];
+        assertArrayEquals("JXG.Math.inverse, incorrect result", [[0.5,0,0],[0,0.25,0],[0,0,0.125]], JXG.Math.inverse(A));
     }
 
 </script>

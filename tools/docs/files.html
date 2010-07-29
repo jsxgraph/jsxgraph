@@ -204,9 +204,9 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	
 	<li><a href="symbols/Circle.html">Circle</a></li>
 	
-	<li><a href="symbols/Circumcircle.html">Circumcircle</a></li>
+	<li><a href="symbols/Circumcenter.html">Circumcenter</a></li>
 	
-	<li><a href="symbols/Circumcirclemidpoint.html">Circumcirclemidpoint</a></li>
+	<li><a href="symbols/Circumcircle.html">Circumcircle</a></li>
 	
 	<li><a href="symbols/Conic.html">Conic</a></li>
 	
@@ -225,12 +225,6 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	<li><a href="symbols/Integral.html">Integral</a></li>
 	
 	<li><a href="symbols/Intersection.html">Intersection</a></li>
-	
-	<li></li>
-	
-	<li></li>
-	
-	<li></li>
 	
 	<li></li>
 	
@@ -386,8 +380,6 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	
 	<li><a href="symbols/JXG.Curve.html">JXG.Curve</a></li>
 	
-	<li><a href="symbols/JXG.DimensionMismatchException.html">JXG.DimensionMismatchException</a></li>
-	
 	<li><a href="symbols/JXG.GeometryElement.html">JXG.GeometryElement</a></li>
 	
 	<li><a href="symbols/JXG.Group.html">JXG.Group</a></li>
@@ -400,15 +392,13 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	
 	<li><a href="symbols/JXG.Line.html">JXG.Line</a></li>
 	
-	<li><a href="symbols/JXG.Math.Matrix.html">JXG.Math.Matrix</a></li>
+	<li><a href="symbols/JXG.Math.html">JXG.Math</a></li>
 	
 	<li><a href="symbols/JXG.Math.Numerics.html">JXG.Math.Numerics</a></li>
 	
 	<li><a href="symbols/JXG.Math.Numerics.Butcher.html">JXG.Math.Numerics.Butcher</a></li>
 	
 	<li><a href="symbols/JXG.Math.Numerics.predefinedButcher.html">JXG.Math.Numerics.predefinedButcher</a></li>
-	
-	<li><a href="symbols/JXG.Math.Vector.html">JXG.Math.Vector</a></li>
 	
 	<li><a href="symbols/JXG.Options.html">JXG.Options</a></li>
 	
@@ -419,8 +409,6 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	<li><a href="symbols/JXG.Server.html">JXG.Server</a></li>
 	
 	<li><a href="symbols/JXG.Server.modules.html">JXG.Server.modules</a></li>
-	
-	<li><a href="symbols/JXG.SingularMatrixException.html">JXG.SingularMatrixException</a></li>
 	
 	<li><a href="symbols/JXG.Text.html">JXG.Text</a></li>
 	
@@ -704,7 +692,7 @@ It has methods to create, save, load and free boards.
 					
 					
 						<dt class="heading">Version:</dt>
-							<dd>0.81</dd>
+							<dd>0.82</dd>
 					
 					
 					
@@ -933,7 +921,7 @@ each other and draws the intersection points.
 			<div>
 				<h2><a href="symbols/src/src_Composition.js.html">Composition.js</a></h2>
 				
-This file contains our composition elements, i.e. these elements are mostly put togetherfrom one or more <a href="symbols/JXG.GeometryElement.html">JXG.GeometryElement</a> but with a special meaning. E.g. the midpoint element is contained hereand this is just a <a href="symbols/JXG.Point.html">JXG.Point</a> with coordinates dependent from two other points. Currently in this file thefollowing compositions can be found: <ul>  <li>Arrowparallel (currently private)</li>  <li><a href="symbols/Bisector.html">Bisector</a></li>  <li><a href="symbols/Circumcircle.html">Circumcircle</a></li>  <li><a href="symbols/Circumcirclemidpoint.html">Circumcirclemidpoint</a></li>  <li><a href="symbols/Integral.html">Integral</a></li>  <li><a href="symbols/Midpoint.html">Midpoint</a></li>  <li><a href="symbols/Mirrorpoint.html">Mirrorpoint</a></li>  <li><a href="symbols/Normal.html">Normal</a></li>  <li><a href="symbols/Parallel.html">Parallel</a></li>  <li><a href="symbols/Perpendicular.html">Perpendicular</a></li>  <li><a href="symbols/Perpendicularpoint.html">Perpendicularpoint</a></li>  <li><a href="symbols/Reflection.html">Reflection</a></li></ul>
+This file contains our composition elements, i.e. these elements are mostly put togetherfrom one or more <a href="symbols/JXG.GeometryElement.html">JXG.GeometryElement</a> but with a special meaning. E.g. the midpoint element is contained hereand this is just a <a href="symbols/JXG.Point.html">JXG.Point</a> with coordinates dependent from two other points. Currently in this file thefollowing compositions can be found: <ul>  <li>Arrowparallel (currently private)</li>  <li><a href="symbols/Bisector.html">Bisector</a></li>  <li><a href="symbols/Circumcircle.html">Circumcircle</a></li>  <li>Circumcirclemidpoint</li>  <li><a href="symbols/Integral.html">Integral</a></li>  <li><a href="symbols/Midpoint.html">Midpoint</a></li>  <li><a href="symbols/Mirrorpoint.html">Mirrorpoint</a></li>  <li><a href="symbols/Normal.html">Normal</a></li>  <li><a href="symbols/Parallel.html">Parallel</a></li>  <li><a href="symbols/Perpendicular.html">Perpendicular</a></li>  <li><a href="symbols/Perpendicularpoint.html">Perpendicularpoint</a></li>  <li><a href="symbols/Reflection.html">Reflection</a></li></ul>
 				<dl>
 					
 					
@@ -1147,7 +1135,7 @@ In this file the geometry element Image is defined.
 		</div>
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blankt">JsDoc Toolkit</a> 2.3.2 on Thu Jun 17 2010 15:45:05 GMT+0200 (MESZ)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blankt">JsDoc Toolkit</a> 2.3.2 on Thu Jul 29 2010 15:31:23 GMT+0200 (MESZ)
 		</div>
 	</body>
 </html>

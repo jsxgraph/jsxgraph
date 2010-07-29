@@ -212,9 +212,9 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	
 	<li><a href="../symbols/Circle.html">Circle</a></li>
 	
-	<li><a href="../symbols/Circumcircle.html">Circumcircle</a></li>
+	<li><a href="../symbols/Circumcenter.html">Circumcenter</a></li>
 	
-	<li><a href="../symbols/Circumcirclemidpoint.html">Circumcirclemidpoint</a></li>
+	<li><a href="../symbols/Circumcircle.html">Circumcircle</a></li>
 	
 	<li><a href="../symbols/Conic.html">Conic</a></li>
 	
@@ -233,12 +233,6 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	<li><a href="../symbols/Integral.html">Integral</a></li>
 	
 	<li><a href="../symbols/Intersection.html">Intersection</a></li>
-	
-	<li></li>
-	
-	<li></li>
-	
-	<li></li>
 	
 	<li></li>
 	
@@ -394,8 +388,6 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	
 	<li><a href="../symbols/JXG.Curve.html">JXG.Curve</a></li>
 	
-	<li><a href="../symbols/JXG.DimensionMismatchException.html">JXG.DimensionMismatchException</a></li>
-	
 	<li><a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a></li>
 	
 	<li><a href="../symbols/JXG.Group.html">JXG.Group</a></li>
@@ -408,15 +400,13 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	
 	<li><a href="../symbols/JXG.Line.html">JXG.Line</a></li>
 	
-	<li><a href="../symbols/JXG.Math.Matrix.html">JXG.Math.Matrix</a></li>
+	<li><a href="../symbols/JXG.Math.html">JXG.Math</a></li>
 	
 	<li><a href="../symbols/JXG.Math.Numerics.html">JXG.Math.Numerics</a></li>
 	
 	<li><a href="../symbols/JXG.Math.Numerics.Butcher.html">JXG.Math.Numerics.Butcher</a></li>
 	
 	<li><a href="../symbols/JXG.Math.Numerics.predefinedButcher.html">JXG.Math.Numerics.predefinedButcher</a></li>
-	
-	<li><a href="../symbols/JXG.Math.Vector.html">JXG.Math.Vector</a></li>
 	
 	<li><a href="../symbols/JXG.Options.html">JXG.Options</a></li>
 	
@@ -427,8 +417,6 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	<li><a href="../symbols/JXG.Server.html">JXG.Server</a></li>
 	
 	<li><a href="../symbols/JXG.Server.modules.html">JXG.Server.modules</a></li>
-	
-	<li><a href="../symbols/JXG.SingularMatrixException.html">JXG.SingularMatrixException</a></li>
 	
 	<li><a href="../symbols/JXG.Text.html">JXG.Text</a></li>
 	
@@ -615,15 +603,6 @@ on every update.</div>
 								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#changePointStyle">changePointStyle</a></b>(el)
 								</div>
 								<div class="description">Changes the style of a <a href="../symbols/Point.html">Point</a> that already exists on the canvas.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#drawArrow">drawArrow</a></b>(el)
-								</div>
-								<div class="description">Creates a rendering node for an <a href="../symbols/Arrow.html">Arrow</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.</div>
 							</td>
 						</tr>
 					
@@ -904,15 +883,6 @@ the given renderer but no HTML.</div>
 								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#unsuspendRedraw">unsuspendRedraw</a></b>()
 								</div>
 								<div class="description">Restart redraw.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.AbstractRenderer.html#updateArrow">updateArrow</a></b>(el)
-								</div>
-								<div class="description">Updates properties of an <a href="../symbols/Arrow.html">Arrow</a> that already exists on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.</div>
 							</td>
 						</tr>
 					
@@ -1236,55 +1206,6 @@ the old renderer element(s) and creates the new one(s).
 								<dd><a href="#updatePoint">#updatePoint</a></dd>
 							
 								<dd><a href="#drawPoint">#drawPoint</a></dd>
-							
-							</dl>
-						
-
-					
-					
-					<hr />
-				
-					<a name="drawArrow"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>drawArrow</b>(el)
-					
-					</div>
-					<div class="description">
-						Creates a rendering node for an <a href="../symbols/Arrow.html">Arrow</a> on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.
-						
-						
-					</div>
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/Line.html">Line</a>}</span> <b>el</b>
-									
-								</dt>
-								<dd>Reference to a <a href="../symbols/Line.html">Line</a> object, that has to be drawn.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-								<dd><a href="../symbols/Arrow.html">Arrow</a></dd>
-							
-								<dd><a href="../symbols/Line.html">Line</a></dd>
-							
-								<dd><a href="../symbols/JXG.Line.html">JXG.Line</a></dd>
-							
-								<dd><a href="#updateArrow">#updateArrow</a></dd>
 							
 							</dl>
 						
@@ -2674,55 +2595,6 @@ can delete the contents of the drawing panel.
 					
 					<hr />
 				
-					<a name="updateArrow"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>updateArrow</b>(el)
-					
-					</div>
-					<div class="description">
-						Updates properties of an <a href="../symbols/Arrow.html">Arrow</a> that already exists on the <a href="../symbols/JXG.Board.html">JXG.Board</a>.
-						
-						
-					</div>
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/Line.html">Line</a>}</span> <b>el</b>
-									
-								</dt>
-								<dd>Reference to an <a href="../symbols/Line.html">Line</a> object, that has to be updated.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-								<dd><a href="../symbols/Arrow.html">Arrow</a></dd>
-							
-								<dd><a href="../symbols/Line.html">Line</a></dd>
-							
-								<dd><a href="../symbols/JXG.Line.html">JXG.Line</a></dd>
-							
-								<dd><a href="#drawArrow">#drawArrow</a></dd>
-							
-							</dl>
-						
-
-					
-					
-					<hr />
-				
 					<a name="updateCircle"> </a>
 					<div class="fixedFont">
 					
@@ -3253,7 +3125,7 @@ can delete the contents of the drawing panel.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Jun 17 2010 15:45:01 GMT+0200 (MESZ)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Jul 29 2010 15:31:22 GMT+0200 (MESZ)
 		</div>
 	</body>
 </html>

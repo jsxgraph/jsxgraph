@@ -580,7 +580,7 @@ JXG.Point.prototype.setPositionDirectly = function (method, x, y) {
         // that have a transformation bound to it.
         for (i=this.transformations.length-1;i>=0;i--) {
             this.initialCoords = new JXG.Coords(method, 
-                JXG.Math.matVecMult(JXG.Math.Numerics.Inverse(this.transformations[i].matrix),[1,x,y]), 
+                JXG.Math.matVecMult(JXG.Math.inverse(this.transformations[i].matrix),[1,x,y]), 
                 this.board);      
         }
         this.update();

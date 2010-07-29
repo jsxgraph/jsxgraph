@@ -212,9 +212,9 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	
 	<li><a href="../symbols/Circle.html">Circle</a></li>
 	
-	<li><a href="../symbols/Circumcircle.html">Circumcircle</a></li>
+	<li><a href="../symbols/Circumcenter.html">Circumcenter</a></li>
 	
-	<li><a href="../symbols/Circumcirclemidpoint.html">Circumcirclemidpoint</a></li>
+	<li><a href="../symbols/Circumcircle.html">Circumcircle</a></li>
 	
 	<li><a href="../symbols/Conic.html">Conic</a></li>
 	
@@ -233,12 +233,6 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	<li><a href="../symbols/Integral.html">Integral</a></li>
 	
 	<li><a href="../symbols/Intersection.html">Intersection</a></li>
-	
-	<li></li>
-	
-	<li></li>
-	
-	<li></li>
 	
 	<li></li>
 	
@@ -394,8 +388,6 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	
 	<li><a href="../symbols/JXG.Curve.html">JXG.Curve</a></li>
 	
-	<li><a href="../symbols/JXG.DimensionMismatchException.html">JXG.DimensionMismatchException</a></li>
-	
 	<li><a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a></li>
 	
 	<li><a href="../symbols/JXG.Group.html">JXG.Group</a></li>
@@ -408,15 +400,13 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	
 	<li><a href="../symbols/JXG.Line.html">JXG.Line</a></li>
 	
-	<li><a href="../symbols/JXG.Math.Matrix.html">JXG.Math.Matrix</a></li>
+	<li><a href="../symbols/JXG.Math.html">JXG.Math</a></li>
 	
 	<li><a href="../symbols/JXG.Math.Numerics.html">JXG.Math.Numerics</a></li>
 	
 	<li><a href="../symbols/JXG.Math.Numerics.Butcher.html">JXG.Math.Numerics.Butcher</a></li>
 	
 	<li><a href="../symbols/JXG.Math.Numerics.predefinedButcher.html">JXG.Math.Numerics.predefinedButcher</a></li>
-	
-	<li><a href="../symbols/JXG.Math.Vector.html">JXG.Math.Vector</a></li>
 	
 	<li><a href="../symbols/JXG.Options.html">JXG.Options</a></li>
 	
@@ -427,8 +417,6 @@ However, it seems JavaScript is either disabled or not supported by your browser
 	<li><a href="../symbols/JXG.Server.html">JXG.Server</a></li>
 	
 	<li><a href="../symbols/JXG.Server.modules.html">JXG.Server.modules</a></li>
-	
-	<li><a href="../symbols/JXG.SingularMatrixException.html">JXG.SingularMatrixException</a></li>
 	
 	<li><a href="../symbols/JXG.Text.html">JXG.Text</a></li>
 	
@@ -511,9 +499,9 @@ However, it seems JavaScript is either disabled or not supported by your browser
 			<p class="description">
 				
 			
-				This is the Board class. It stores all methods and properties required
-to manage a geonext board like adding geometric elements, removing them, managing
-mouse over, drag & drop of geometric objects etc. You should never create a board by calling this constructor.
+				The Board class stores all methods and properties required
+to manage a JSXGraph board like adding geometric elements, removing them, managing
+mouse over, drag & drop of geometric objects etc. You should never create a board using this constructor.
 Please use JXG.JSXGraph#initBoard instead.
 				
 				
@@ -606,6 +594,16 @@ Please use JXG.JSXGraph#initBoard instead.
 								<b><a href="../symbols/JXG.Board.html#create">create</a></b>
 								</div>
 								<div class="description">Wrapper for <a href="#createElement">#createElement</a>().</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#currentCBDef">currentCBDef</a></b>
+								</div>
+								<div class="description">The current color blindness deficiency is stored in this property.</div>
 							</td>
 						</tr>
 					
@@ -713,6 +711,16 @@ Please use JXG.JSXGraph#initBoard instead.
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#last_click">last_click</a></b>
+								</div>
+								<div class="description">This property is used to store the latest time the user clicked on the board and the position he clicked.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
 								<b><a href="../symbols/JXG.Board.html#mousePosAbs">mousePosAbs</a></b>
 								</div>
 								<div class="description">Absolute position of the mouse pointer in screen pixel from the top left corner
@@ -748,6 +756,16 @@ of the JSXGraph canvas (the div element contining the board).</div>
 								<b><a href="../symbols/JXG.Board.html#origin">origin</a></b>
 								</div>
 								<div class="description">Coordinates of the boards origin.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/JXG.Board.html#showCopyright">showCopyright</a></b>
+								</div>
+								<div class="description">Display the licence text.</div>
 							</td>
 						</tr>
 					
@@ -1121,7 +1139,7 @@ update() method and update the conditions.</div>
                                 
                                 
 							</dt>
-								<dd>The id or reference of the html-element the board is drawn in.</dd><br /><br />
+								<dd>The id or reference of the html-element the board is drawn in. This is usually a HTML div.</dd><br /><br />
 						
 							<dt>
                                 
@@ -1130,7 +1148,7 @@ update() method and update the conditions.</div>
                                 
                                 
 							</dt>
-								<dd>The reference of a geonext renderer.</dd><br /><br />
+								<dd>The reference of a renderer.</dd><br /><br />
 						
 							<dt>
                                 
@@ -1331,6 +1349,29 @@ update() method and update the conditions.</div>
 					</div>
 					<div class="description">
 						Wrapper for <a href="#createElement">#createElement</a>().
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="currentCBDef"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>currentCBDef</b>
+					
+					</div>
+					<div class="description">
+						The current color blindness deficiency is stored in this property. If color blindness is not emulated
+at the moment, it's value is <tt>none</tt>.
 						
 						
 					</div>
@@ -1602,6 +1643,28 @@ update() method and update the conditions.</div>
 
 					<hr />
 				
+					<a name="last_click"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{object}</span>
+					<b>last_click</b>
+					
+					</div>
+					<div class="description">
+						This property is used to store the latest time the user clicked on the board and the position he clicked.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="mousePosAbs"> </a>
 					<div class="fixedFont">
 					
@@ -1695,6 +1758,37 @@ of the JSXGraph canvas (the div element contining the board).
 								[0, 0]
 							</dd>
 							</dl>
+						
+
+					<hr />
+				
+					<a name="showCopyright"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showCopyright</b>
+					
+					</div>
+					<div class="description">
+						Display the licence text.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd>JXG.JSXGraph#licenseText</dd>
+							
+							<dd>JXG.JSXGraph#initBoard</dd>
+							
+							</dl>
+						
 						
 
 					<hr />
@@ -2792,7 +2886,7 @@ update() method and update the conditions.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Jun 17 2010 15:45:02 GMT+0200 (MESZ)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Jul 29 2010 15:31:22 GMT+0200 (MESZ)
 		</div>
 	</body>
 </html>

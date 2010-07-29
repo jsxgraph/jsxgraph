@@ -23,14 +23,15 @@
     along with JSXGraph. If not, see <http://www.gnu.org/licenses/>.
 */
 
-/** 
+/**
  * @fileoverview In this file the namespace JXG.Math is defined, which is the base namespace
  * for namespaces like Math.Numerics, Math.Algebra, Math.Statistics etc.
  * @author graphjs
  */
- 
+
  /**
   * Math namespace.
+  * @namespace
   */
 JXG.Math = (function(JXG, Math, undefined) {
 
@@ -72,9 +73,29 @@ JXG.Math = (function(JXG, Math, undefined) {
         eps: 0.000001,
 
         /**
+         * Initializes a vector as an array with the coefficients set to the given value resp. zero.
+         * @param {Number} n Length of the vector
+         * @param {Number} [init=0] Initial value for each coefficient
+         * @returns {Array} A <tt>n</tt> times <tt>m</tt>-matrix represented by a
+         * two-dimensional array. The inner arrays hold the columns, the outer array holds the rows.
+         */
+        vector: function(n, init) {
+            var r, i;
+
+            init = init || 0;
+
+            r = new Array(Math.ceil(n));
+            for(i=0; i<n; i++) {
+                r[i] = init;
+            }
+
+            return r;
+        },
+
+        /**
          * Initializes a matrix as an array of rows with the given value.
          * @param {Number} n Number of rows
-         * @param {Number} m Number of columns
+         * @param {Number} [m=n] Number of columns
          * @param {Number} [init=0] Initial value for each coefficient
          * @returns {Array} A <tt>n</tt> times <tt>m</tt>-matrix represented by a
          * two-dimensional array. The inner arrays hold the columns, the outer array holds the rows.
@@ -83,6 +104,7 @@ JXG.Math = (function(JXG, Math, undefined) {
             var r, i, j;
 
             init = init || 0;
+            m = m || n;
 
             r = new Array(Math.ceil(n));
             for(i=0; i<n; i++) {
@@ -96,23 +118,21 @@ JXG.Math = (function(JXG, Math, undefined) {
         },
 
         /**
-         * Generates an identity vector or an identity matrix, based on what is given. If n is a number and m is undefined or not a number, a vector is generated,
-         * if n and m are both numbers, an identity matrix is generated.
-         * @param {Number} n Size of the resulting vector or the number of rows
-         * @param {Number} [m] Number of columns
-         * @returns {Array} A vector of length <tt>n</tt> with all coefficients equal to 1, if <tt>m</tt> is undefined or not a number
+         * Generates an identity matrix. If n is a number and m is undefined or not a number, a square matrix is generated,
+         * if n and m are both numbers, an nxm matrix is generated.
+         * @param {Number} n Number of rows
+         * @param {Number} [m=n] Number of columns
+         * @returns {Array} A square matrix of length <tt>n</tt> with all coefficients equal to 0 except a_(i,i), i out of (1, ..., n), if <tt>m</tt> is undefined or not a number
          * or a <tt>n</tt> times <tt>m</tt>-matrix with a_(i,j) = 0 and a_(i,i) = 1 if m is a number.
          */
         identity: function(n, m) {
             var r, i;
 
             if((m === undefined) && (typeof m !== 'number')) {
-                r = new Array(Math.ceil(n));
-                for(i=0; i<n; i++) { r[i] = 1; }
-                return r;
+                m = n;
             }
 
-            r = JXG.Math.matrix(n, m);
+            r = this.matrix(n, m);
             for(i=0; i<Math.min(n, m); i++) {
                 r[i][i] = 1;
             }
@@ -128,7 +148,7 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @returns {Array} Array of numbers containing the result
          * @example
          * var A = [[2, 1],
-         *              [1, 3]],
+         *          [1, 3]],
          *     b = [4, 5],
          *     c;
          * c = JXG.Math.matVecMult(A, b)
@@ -164,7 +184,7 @@ JXG.Math = (function(JXG, Math, undefined) {
             var m = mat1.length,
                     n = m>0 ? mat2[0].length : 0,
                     m2 = mat2.length,
-                    res = JXG.Math.matrix(m,n),
+                    res = this.matrix(m,n),
                     i, j, s, k;
 
             for (i=0;i<m;i++) {
@@ -184,13 +204,13 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Array} M The matrix to be transposed
          * @returns {Array} The transpose of M
          */
-        matTranspose: function(M) {
+        transpose: function(M) {
             var MT, i, j,
                     m, n;
 
             m = M.length;                     // number of rows of M
             n = M.length>0 ? M[0].length : 0; // number of columns of M
-            MT = JXG.Math.matrix(n,m);
+            MT = this.matrix(n,m);
 
             for (i=0; i<n; i++) {
                 for (j=0;j<m;j++) {
@@ -198,6 +218,65 @@ JXG.Math = (function(JXG, Math, undefined) {
                 }
             }
             return MT;
+        },
+
+        /**
+         * Compute the inverse of an nxn matrix with Gauss elimination.
+         * @param {Array} Ain
+         * @returns {Array} Inverse matrix of Ain
+         */
+        inverse: function(Ain) {
+            var i,j,k,s,ma,r,swp,
+                n = Ain.length,
+                A = [],
+                p = [],
+                hv = [];
+
+            for (i=0;i<n;i++) {
+                A[i] = [];
+                for (j=0;j<n;j++) { A[i][j] = Ain[i][j]; }
+                p[i] = i;
+            }
+
+            for (j=0;j<n;j++) {
+                // pivot search:
+                ma = Math.abs(A[j][j]);
+                r = j;
+                for (i=j+1;i<n;i++) {
+                    if (Math.abs(A[i][j])>ma) {
+                        ma = Math.abs(A[i][j]);
+                        r = i;
+                    }
+                }
+                if (ma<=JXG.Math.eps) { // Singular matrix
+                    return false;
+                }
+                // swap rows:
+                if (r>j) {
+                    for (k=0;k<n;k++) {
+                        swp = A[j][k]; A[j][k] = A[r][k]; A[r][k] = swp;
+                    }
+                    swp = p[j]; p[j] = p[r]; p[r] = swp;
+                }
+                // transformation:
+                s = 1.0/A[j][j];
+                for (i=0;i<n;i++) {
+                    A[i][j] *= s;
+                }
+                A[j][j] = s;
+                for (k=0;k<n;k++) if (k!=j) {
+                    for (i=0;i<n;i++) if (i!=j) {
+                        A[i][k] -= A[i][j]*A[j][k];
+                    }
+                    A[j][k] = -s*A[j][k];
+                }
+            }
+            // swap columns:
+            for (i=0;i<n;i++) {
+                for (k=0;k<n;k++) { hv[p[k]] = A[i][k]; }
+                for (k=0;k<n;k++) { A[i][k] = hv[k]; }
+            }
+            return A;
         },
 
         /**
@@ -217,7 +296,7 @@ JXG.Math = (function(JXG, Math, undefined) {
             for (i=0; i<n; i++) {
                 s += a[i]*b[i];
             }
-            
+
             return s;
         },
 
@@ -323,7 +402,7 @@ JXG.Math = (function(JXG, Math, undefined) {
 
         /**
          * A square & multiply algorithm to compute base to the power of exponent.
-         * Implementated by Wolfgang Riedl. 
+         * Implementated by Wolfgang Riedl.
          * @param {Number} base
          * @param {Number} exponent
          * @returns {Number} Base to the power of exponent
@@ -346,7 +425,7 @@ JXG.Math = (function(JXG, Math, undefined) {
                 }
                 return result;
             } else {
-                return JXG.Math.pow(base, exponent);
+                return this.pow(base, exponent);
             }
         },
 

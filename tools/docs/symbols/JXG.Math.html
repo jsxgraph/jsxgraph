@@ -8,7 +8,7 @@
          <script type="text/javascript" src="../static/jquery.min.js"></script>
          <script type="text/javascript" src="../static/jsxgraphcore.js"></script>
 		
-		<title>JsDoc Reference - JXG.Line</title>
+		<title>JsDoc Reference - JXG.Math</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -492,27 +492,24 @@ However, it seems JavaScript is either disabled or not supported by your browser
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class JXG.Line
+				Namespace JXG.Math
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
-				<br />Extends
-					<a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>.<br />
 				
 			
-				Creates a new basic line object. Do not use this constructor to create a line. Use <a href="../symbols/JXG.Board.html#create">JXG.Board#create</a> with
-type <a href="../symbols/Line.html">Line</a>, <a href="../symbols/Arrow.html">Arrow</a>, or <a href="../symbols/Axis.html">Axis</a> instead.
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Line.js.html">Line.js</a>.
+				
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Math.js.html">Math.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class JXG.Line.">
-				<caption>Class Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class JXG.Math.">
+				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -524,9 +521,9 @@ type <a href="../symbols/Line.html">Line</a>, <a href="../symbols/Arrow.html">Ar
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/JXG.Line.html#constructor">JXG.Line</a></b>(board, p1, p2, id, name, withLabel, layer)
+								<b><a href="../symbols/JXG.Math.html#constructor">JXG.Math</a></b>
 							</div>
-							<div class="description">The Line class is a basic class for all kind of line objects, e.g.</div>
+							<div class="description">Math namespace.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -537,7 +534,7 @@ type <a href="../symbols/Line.html">Line</a>, <a href="../symbols/Arrow.html">Ar
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class JXG.Line.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class JXG.Math.">
 					<caption>Field Summary</caption>
 					<thead>
 						<tr>
@@ -548,82 +545,45 @@ type <a href="../symbols/Line.html">Line</a>, <a href="../symbols/Arrow.html">Ar
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/JXG.Line.html#defaultTicks">defaultTicks</a></b>
+								JXG.Math.<b><a href="../symbols/JXG.Math.html#.eps">eps</a></b>
 								</div>
-								<div class="description">Reference of the ticks created automatically when constructing an axis.</div>
+								<div class="description">eps defines the closeness to zero.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/JXG.Line.html#firstArrow">firstArrow</a></b>
+								JXG.Math.<b><a href="../symbols/JXG.Math.html#.Geometry">Geometry</a></b>
 								</div>
-								<div class="description">Determines if a line has an arrow at <a href="#point1">#point1</a>.</div>
+								<div class="description">Math.Geometry namespace definition</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/JXG.Line.html#lastArrow">lastArrow</a></b>
+								JXG.Math.<b><a href="../symbols/JXG.Math.html#.Statistics">Statistics</a></b>
 								</div>
-								<div class="description">Determines if a line has an arrow at <a href="#point1">#point1</a>.</div>
+								<div class="description">Functions for mathematical statistics
+Most functions are R-like:
+For example prod(a1,a2) computes an array c such that
+for (i=0;i<a1.length;i++) c[i] = a1[i]*a2[i];</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/JXG.Line.html#point1">point1</a></b>
+								JXG.Math.<b><a href="../symbols/JXG.Math.html#.Symbolic">Symbolic</a></b>
 								</div>
-								<div class="description">Startpoint of the line.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/JXG.Line.html#point2">point2</a></b>
-								</div>
-								<div class="description">Endpoint of the line.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/JXG.Line.html#straightFirst">straightFirst</a></b>
-								</div>
-								<div class="description">Determines if a line is drawn beyond <a href="#point1">#point1</a>.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/JXG.Line.html#straightLast">straightLast</a></b>
-								</div>
-								<div class="description">Determines if a line is drawn beyond <a href="#point2">#point2</a>.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/JXG.Line.html#ticks">ticks</a></b>
-								</div>
-								<div class="description">Array of ticks storing all the ticks on this line.</div>
+								<div class="description">Math.Symbolic</div>
 							</td>
 						</tr>
 					
@@ -632,17 +592,13 @@ type <a href="../symbols/Line.html">Line</a>, <a href="../symbols/Arrow.html">Ar
 				
 				
 				
-				<dl class="inheritsList">
-				<dt>Fields borrowed from class <a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>: </dt><dd><a href="../symbols/JXG.GeometryElement.html#draft">draft</a>, <a href="../symbols/JXG.GeometryElement.html#fillOpacity">fillOpacity</a>, <a href="../symbols/JXG.GeometryElement.html#fixed">fixed</a>, <a href="../symbols/JXG.GeometryElement.html#highlightFillOpacity">highlightFillOpacity</a>, <a href="../symbols/JXG.GeometryElement.html#highlightStrokeOpacity">highlightStrokeOpacity</a>, <a href="../symbols/JXG.GeometryElement.html#highlightStrokeWidth">highlightStrokeWidth</a>, <a href="../symbols/JXG.GeometryElement.html#layer">layer</a>, <a href="../symbols/JXG.GeometryElement.html#name">name</a>, <a href="../symbols/JXG.GeometryElement.html#quadraticform">quadraticform</a>, <a href="../symbols/JXG.GeometryElement.html#strokeOpacity">strokeOpacity</a>, <a href="../symbols/JXG.GeometryElement.html#trace">trace</a></dd>
-				</dl>
-				
 			
 
 <!-- ============================== methods summary ======================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class JXG.Line.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class JXG.Math.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -653,110 +609,137 @@ type <a href="../symbols/Line.html">Line</a>, <a href="../symbols/Arrow.html">Ar
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#addTicks">addTicks</a></b>(ticks)
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.binomial">binomial</a></b>(n, k)
 								</div>
-								<div class="description">Adds ticks to this line.</div>
+								<div class="description">Computes the binomial coefficient n over k.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#addTransform">addTransform</a></b>(transform)
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.cosh">cosh</a></b>(x)
 								</div>
-								<div class="description">DESCRIPTION</div>
+								<div class="description">Calculates the cosine hyperbolicus of x.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#cloneToBackground">cloneToBackground</a></b>(addToTrace)
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.crossProduct">crossProduct</a></b>(c1, c2)
 								</div>
-								<div class="description">Clone the element to the background to leave a trail of it on the board.</div>
+								<div class="description">Calculates the cross product of two vectors both of length three.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#getRise">getRise</a></b>()
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.factorial">factorial</a></b>(n)
 								</div>
-								<div class="description">Calculates the rise of the line.</div>
+								<div class="description">Compute the factorial of a positive integer.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#getSlope">getSlope</a></b>()
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.identity">identity</a></b>(n, m)
 								</div>
-								<div class="description">Calculates the slope of the line.</div>
+								<div class="description">Generates an identity matrix.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#hasPoint">hasPoint</a></b>(x, y)
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.innerProduct">innerProduct</a></b>(a, b, n)
 								</div>
-								<div class="description">Checks whether (x,y) is near the line.</div>
+								<div class="description">Inner product of two vectors a and b.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#removeAllTicks">removeAllTicks</a></b>()
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.inverse">inverse</a></b>(Ain)
 								</div>
-								<div class="description">Removes all ticks from a line.</div>
+								<div class="description">Compute the inverse of an nxn matrix with Gauss elimination.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#removeTicks">removeTicks</a></b>(tick)
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.matMatMult">matMatMult</a></b>(mat1, mat2)
 								</div>
-								<div class="description">Removes ticks identified by parameter named tick from this line.</div>
+								<div class="description">Computes the product of the two matrices mat1*mat2.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#setPosition">setPosition</a></b>(method, x, y)
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.matrix">matrix</a></b>(n, m, init)
 								</div>
-								<div class="description">TODO DESCRIPTION.</div>
+								<div class="description">Initializes a matrix as an array of rows with the given value.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#X">X</a></b>(phi)
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.matVecMult">matVecMult</a></b>(mat, vec)
 								</div>
-								<div class="description">Treat the line as parametric curve in homogeneuous coordinates.</div>
+								<div class="description">Multiplies a vector vec to a matrix mat: mat * vec.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#Y">Y</a></b>(phi)
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.pow">pow</a></b>(base, exponent)
 								</div>
-								<div class="description">Treat the line as parametric curve in homogeneous coordinates.</div>
+								<div class="description">Compute base to the power of exponent.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/JXG.Line.html#Z">Z</a></b>(phi)
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.sinh">sinh</a></b>(x)
 								</div>
-								<div class="description">Treat the line as parametric curve in homogeneous coordinates.</div>
+								<div class="description">Sine hyperbolicus of x.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.squampow">squampow</a></b>(base, exponent)
+								</div>
+								<div class="description">A square & multiply algorithm to compute base to the power of exponent.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.transpose">transpose</a></b>(M)
+								</div>
+								<div class="description">Transposes a matrix given as a two dimensional array.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">JXG.Math.<b><a href="../symbols/JXG.Math.html#.vector">vector</a></b>(n, init)
+								</div>
+								<div class="description">Initializes a vector as an array with the coefficients set to the given value resp.</div>
 							</td>
 						</tr>
 					
@@ -764,10 +747,6 @@ type <a href="../symbols/Line.html">Line</a>, <a href="../symbols/Arrow.html">Ar
 				</table>
 				
 				
-				
-				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/JXG.GeometryElement.html">JXG.GeometryElement</a>: </dt><dd><a href="../symbols/JXG.GeometryElement.html#addChild">addChild</a>, <a href="../symbols/JXG.GeometryElement.html#addLabelToElement">addLabelToElement</a>, <a href="../symbols/JXG.GeometryElement.html#animate">animate</a>, <a href="../symbols/JXG.GeometryElement.html#clearTrace">clearTrace</a>, <a href="../symbols/JXG.GeometryElement.html#dash">dash</a>, <a href="../symbols/JXG.GeometryElement.html#fillColor">fillColor</a>, <a href="../symbols/JXG.GeometryElement.html#hideElement">hideElement</a>, <a href="../symbols/JXG.GeometryElement.html#highlight">highlight</a>, <a href="../symbols/JXG.GeometryElement.html#highlightFillColor">highlightFillColor</a>, <a href="../symbols/JXG.GeometryElement.html#highlightStrokeColor">highlightStrokeColor</a>, <a href="../symbols/JXG.GeometryElement.html#labelColor">labelColor</a>, <a href="../symbols/JXG.GeometryElement.html#noHighlight">noHighlight</a>, <a href="../symbols/JXG.GeometryElement.html#remove">remove</a>, <a href="../symbols/JXG.GeometryElement.html#setArrow">setArrow</a>, <a href="../symbols/JXG.GeometryElement.html#setProperty">setProperty</a>, <a href="../symbols/JXG.GeometryElement.html#shadow">shadow</a>, <a href="../symbols/JXG.GeometryElement.html#showElement">showElement</a>, <a href="../symbols/JXG.GeometryElement.html#strokeColor">strokeColor</a>, <a href="../symbols/JXG.GeometryElement.html#strokeWidth">strokeWidth</a>, <a href="../symbols/JXG.GeometryElement.html#update">update</a>, <a href="../symbols/JXG.GeometryElement.html#visible">visible</a></dd>
-				</dl>
 				
 			
 <!-- ============================== events summary ======================== -->
@@ -777,16 +756,15 @@ type <a href="../symbols/Line.html">Line</a>, <a href="../symbols/Arrow.html">Ar
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Class Detail
+					Namespace Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>JXG.Line</b>(board, p1, p2, id, name, withLabel, layer)
+						<b>JXG.Math</b>
 				</div>
 				
 				<div class="description">
-					The Line class is a basic class for all kind of line objects, e.g. line, arrow, and axis. It is usually defined by two points and can
-be intersected with some other geometry elements.
+					Math namespace.
 					
 				</div>
 				
@@ -800,68 +778,30 @@ be intersected with some other geometry elements.
 						
 							<dt>
                                 
-    								<span class="light fixedFont">{String|<a href="../symbols/JXG.Board.html">JXG.Board</a>}</span>  <b>board</b>
+    								 <b>JXG</b>
 	    							
                                 
                                 
 							</dt>
-								<dd>The board the new line is drawn on.</dd><br /><br />
+								<dd></dd><br /><br />
 						
 							<dt>
                                 
-    								<span class="light fixedFont">{<a href="../symbols/Point.html">Point</a>}</span>  <b>p1</b>
+    								 <b>Math</b>
 	    							
                                 
                                 
 							</dt>
-								<dd>Startpoint of the line.</dd><br /><br />
+								<dd></dd><br /><br />
 						
 							<dt>
                                 
-    								<span class="light fixedFont">{<a href="../symbols/Point.html">Point</a>}</span>  <b>p2</b>
+    								 <b>undefined</b>
 	    							
                                 
                                 
 							</dt>
-								<dd>Endpoint of the line.</dd><br /><br />
-						
-							<dt>
-                                
-    								<span class="light fixedFont">{String}</span>  <b>id</b>
-	    							
-                                
-                                
-							</dt>
-								<dd>Unique identifier for this object. If null or an empty string is given,
-an unique id will be generated by Board</dd><br /><br />
-						
-							<dt>
-                                
-    								<span class="light fixedFont">{String}</span>  <b>name</b>
-	    							
-                                
-                                
-							</dt>
-								<dd>Not necessarily unique name. If null or an
-empty string is given, an unique name will be generated.</dd><br /><br />
-						
-							<dt>
-                                
-    								<span class="light fixedFont">{boolean}</span>  <b>withLabel</b>
-	    							
-                                
-                                
-							</dt>
-								<dd>construct label, yes/no</dd><br /><br />
-						
-							<dt>
-                                
-    								<span class="light fixedFont">{integer}</span>  <b>layer</b>
-	    							
-                                
-                                
-							</dt>
-								<dd>display layer [0-9]</dd><br /><br />
+								<dd></dd><br /><br />
 						
 						</dl>
 					
@@ -870,13 +810,6 @@ empty string is given, an unique name will be generated.</dd><br /><br />
 					
 					
 					
-					
-						<dl class="detailList">
-						<dt class="heading">See:</dt>
-						
-							<dd>JXG.Board#generateName</dd>
-						
-						</dl>
 					
 
 				
@@ -891,117 +824,16 @@ empty string is given, an unique name will be generated.</dd><br /><br />
 					Field Detail
 				</div>
 				
-					<a name="defaultTicks"> </a>
-					<div class="fixedFont">
+					<a name=".eps"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{<a href="../symbols/JXG.Ticks.html">JXG.Ticks</a>}</span>
-					<b>defaultTicks</b>
-					
-					</div>
-					<div class="description">
-						Reference of the ticks created automatically when constructing an axis.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-							<dd><a href="../symbols/JXG.Ticks.html">JXG.Ticks</a></dd>
-							
-							</dl>
-						
-						
-
-					<hr />
-				
-					<a name="firstArrow"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{boolean}</span>
-					<b>firstArrow</b>
+					<span class="light">{number}</span>
+					<span class="light">JXG.Math.</span><b>eps</b>
 					
 					</div>
 					<div class="description">
-						Determines if a line has an arrow at <a href="#point1">#point1</a>.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-							<dd><a href="../symbols/JXG.Line.html#lastArrow">JXG.Line#lastArrow</a></dd>
-							
-							</dl>
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Default Value:</dt>
-							<dd>
-								JXG.Options.line#firstArrow
-							</dd>
-							</dl>
-						
-
-					<hr />
-				
-					<a name="lastArrow"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{boolean}</span>
-					<b>lastArrow</b>
-					
-					</div>
-					<div class="description">
-						Determines if a line has an arrow at <a href="#point1">#point1</a>.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-							<dd><a href="../symbols/JXG.Line.html#firstArrow">JXG.Line#firstArrow</a></dd>
-							
-							</dl>
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Default Value:</dt>
-							<dd>
-								JXG.Options.line#lastArrow
-							</dd>
-							</dl>
-						
-
-					<hr />
-				
-					<a name="point1"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{<a href="../symbols/JXG.Point.html">JXG.Point</a>}</span>
-					<b>point1</b>
-					
-					</div>
-					<div class="description">
-						Startpoint of the line. You really should not set this field directly as it may break JSXGraph's
-udpate system so your construction won't be updated properly.
+						eps defines the closeness to zero. If the absolute value of a given number is smaller
+than eps, it is considered to be equal to zero.
 						
 						
 					</div>
@@ -1015,15 +847,18 @@ udpate system so your construction won't be updated properly.
 
 					<hr />
 				
-					<a name="point2"> </a>
-					<div class="fixedFont">
+					<a name=".Geometry"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{<a href="../symbols/JXG.Point.html">JXG.Point</a>}</span>
-					<b>point2</b>
+					
+					<span class="light">JXG.Math.</span><b>Geometry</b>
 					
 					</div>
 					<div class="description">
-						Endpoint of the line. Just like <a href="#point1">#point1</a> you shouldn't write this field directly.
+						Math.Geometry namespace definition
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_MathGeometry.js.html">MathGeometry.js</a>.
 						
 						
 					</div>
@@ -1037,15 +872,21 @@ udpate system so your construction won't be updated properly.
 
 					<hr />
 				
-					<a name="straightFirst"> </a>
-					<div class="fixedFont">
+					<a name=".Statistics"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{boolean}</span>
-					<b>straightFirst</b>
+					
+					<span class="light">JXG.Math.</span><b>Statistics</b>
 					
 					</div>
 					<div class="description">
-						Determines if a line is drawn beyond <a href="#point1">#point1</a>.
+						Functions for mathematical statistics
+Most functions are R-like:
+For example prod(a1,a2) computes an array c such that
+for (i=0;i<a1.length;i++) c[i] = a1[i]*a2[i];
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_MathStatistics.js.html">MathStatistics.js</a>.
 						
 						
 					</div>
@@ -1055,70 +896,22 @@ udpate system so your construction won't be updated properly.
 						
 						
 						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-							<dd><a href="../symbols/JXG.Line.html#straightLast">JXG.Line#straightLast</a></dd>
-							
-							</dl>
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Default Value:</dt>
-							<dd>
-								JXG.Options.line#straightFirst
-							</dd>
-							</dl>
 						
 
 					<hr />
 				
-					<a name="straightLast"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{boolean}</span>
-					<b>straightLast</b>
-					
-					</div>
-					<div class="description">
-						Determines if a line is drawn beyond <a href="#point2">#point2</a>.
-						
-						
-					</div>
+					<a name=".Symbolic"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
 					
-
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-							<dd><a href="../symbols/JXG.Line.html#straightFirst">JXG.Line#straightFirst</a></dd>
-							
-							</dl>
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Default Value:</dt>
-							<dd>
-								JXG.Options.line#straightLast
-							</dd>
-							</dl>
-						
-
-					<hr />
-				
-					<a name="ticks"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{array}</span>
-					<b>ticks</b>
+					<span class="light">JXG.Math.</span><b>Symbolic</b>
 					
 					</div>
 					<div class="description">
-						Array of ticks storing all the ticks on this line. Do not set this field directly and use
-<a href="#addTicks">#addTicks</a> and <a href="#removeTicks">#removeTicks</a> to add and remove ticks to and from the line.
+						Math.Symbolic
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_MathSymbolic.js.html">MathSymbolic.js</a>.
 						
 						
 					</div>
@@ -1127,13 +920,6 @@ udpate system so your construction won't be updated properly.
 
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-							<dd><a href="../symbols/JXG.Ticks.html">JXG.Ticks</a></dd>
-							
-							</dl>
 						
 						
 
@@ -1147,15 +933,15 @@ udpate system so your construction won't be updated properly.
 					Method Detail
 				</div>
 				
-					<a name="addTicks"> </a>
-					<div class="fixedFont">
+					<a name=".binomial"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{String}</span>
-					<b>addTicks</b>(ticks)
+					<span class="light">{Number}</span>
+					<span class="light">JXG.Math.</span><b>binomial</b>(n, k)
 					
 					</div>
 					<div class="description">
-						Adds ticks to this line. Ticks can be added to any kind of line: line, arrow, and axis.
+						Computes the binomial coefficient n over k.
 						
 						
 					</div>
@@ -1165,10 +951,16 @@ udpate system so your construction won't be updated properly.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{<a href="../symbols/JXG.Ticks.html">JXG.Ticks</a>}</span> <b>ticks</b>
+									<span class="light fixedFont">{Number}</span> <b>n</b>
 									
 								</dt>
-								<dd>Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).</dd>
+								<dd>Fraction will be ignored</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>k</b>
+									
+								</dt>
+								<dd>Fraction will be ignored</dd>
 							
 							</dl>
 						
@@ -1179,7 +971,7 @@ udpate system so your construction won't be updated properly.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>Id of the ticks object.</dd>
+								<dd><span class="light fixedFont">{Number}</span> The binomial coefficient n over k</dd>
 							
 							</dl>
 						
@@ -1190,15 +982,15 @@ udpate system so your construction won't be updated properly.
 					
 					<hr />
 				
-					<a name="addTransform"> </a>
-					<div class="fixedFont">
+					<a name=".cosh"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
-					
-					<b>addTransform</b>(transform)
+					<span class="light">{Number}</span>
+					<span class="light">JXG.Math.</span><b>cosh</b>(x)
 					
 					</div>
 					<div class="description">
-						DESCRIPTION
+						Calculates the cosine hyperbolicus of x.
 						
 						
 					</div>
@@ -1208,152 +1000,10 @@ udpate system so your construction won't be updated properly.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{JXG.Transformation|array}</span> <b>transform</b>
+									<span class="light fixedFont">{Number}</span> <b>x</b>
 									
 								</dt>
-								<dd>A <a href="#JXG.Transformation">#JXG.Transformation</a> object or an array of it.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					
-					
-					<hr />
-				
-					<a name="cloneToBackground"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>cloneToBackground</b>(addToTrace)
-					
-					</div>
-					<div class="description">
-						Clone the element to the background to leave a trail of it on the board.
-						
-						
-					</div>
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{boolean}</span> <b>addToTrace</b>
-									
-								</dt>
-								<dd>Not used.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					
-					
-					<hr />
-				
-					<a name="getRise"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{float}</span>
-					<b>getRise</b>()
-					
-					</div>
-					<div class="description">
-						Calculates the rise of the line.
-						
-						
-					</div>
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>The rise of the line.</dd>
-							
-							</dl>
-						
-						
-						
-
-					
-					
-					<hr />
-				
-					<a name="getSlope"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{float}</span>
-					<b>getSlope</b>()
-					
-					</div>
-					<div class="description">
-						Calculates the slope of the line.
-						
-						
-					</div>
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>The slope of the line or Infinity if the line is parallel to the y-axis.</dd>
-							
-							</dl>
-						
-						
-						
-
-					
-					
-					<hr />
-				
-					<a name="hasPoint"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{boolean}</span>
-					<b>hasPoint</b>(x, y)
-					
-					</div>
-					<div class="description">
-						Checks whether (x,y) is near the line.
-						
-						
-					</div>
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>x</b>
-									
-								</dt>
-								<dd>Coordinate in x direction, screen coordinates.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>y</b>
-									
-								</dt>
-								<dd>Coordinate in y direction, screen coordinates.</dd>
+								<dd>The number the cosine hyperbolicus will be calculated of.</dd>
 							
 							</dl>
 						
@@ -1364,7 +1014,7 @@ udpate system so your construction won't be updated properly.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{boolean}</span> True if (x,y) is near the line, False otherwise.</dd>
+								<dd><span class="light fixedFont">{Number}</span> Cosine hyperbolicus of the given value.</dd>
 							
 							</dl>
 						
@@ -1375,40 +1025,20 @@ udpate system so your construction won't be updated properly.
 					
 					<hr />
 				
-					<a name="removeAllTicks"> </a>
-					<div class="fixedFont">
+					<a name=".crossProduct"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
-					
-					<b>removeAllTicks</b>()
-					
-					</div>
-					<div class="description">
-						Removes all ticks from a line.
-						
-						
-					</div>
-					
-						
-						
-						
-						
-						
-						
-						
-
-					
-					
-					<hr />
-				
-					<a name="removeTicks"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>removeTicks</b>(tick)
+					<span class="light">{Array}</span>
+					<span class="light">JXG.Math.</span><b>crossProduct</b>(c1, c2)
 					
 					</div>
 					<div class="description">
-						Removes ticks identified by parameter named tick from this line.
+						Calculates the cross product of two vectors both of length three.
+In case of homogeneous coordinates this is either
+<ul>
+<li>the intersection of two lines</li>
+<li>the line through two points</li>
+</ul>
 						
 						
 					</div>
@@ -1418,10 +1048,16 @@ udpate system so your construction won't be updated properly.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{<a href="../symbols/JXG.Ticks.html">JXG.Ticks</a>}</span> <b>tick</b>
+									<span class="light fixedFont">{Array}</span> <b>c1</b>
 									
 								</dt>
-								<dd>Reference to tick object to remove.</dd>
+								<dd>Homogeneous coordinates of line or point 1</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>c2</b>
+									
+								</dt>
+								<dd>Homogeneous coordinates of line or point 2</dd>
 							
 							</dl>
 						
@@ -1429,84 +1065,30 @@ udpate system so your construction won't be updated properly.
 						
 						
 						
-						
-						
-
-					
-					
-					<hr />
-				
-					<a name="setPosition"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setPosition</b>(method, x, y)
-					
-					</div>
-					<div class="description">
-						TODO DESCRIPTION. What is this method for? -- michael
-						
-						
-					</div>
-					
-						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading">Returns:</dt>
 							
-								<dt>
-									<b>method</b>
-									
-								</dt>
-								<dd>TYPE & DESCRIPTION. UNUSED.</dd>
-							
-								<dt>
-									<b>x</b>
-									
-								</dt>
-								<dd>TYPE & DESCRIPTION</dd>
-							
-								<dt>
-									<b>y</b>
-									
-								</dt>
-								<dd>TYPE & DESCRIPTION</dd>
+								<dd><span class="light fixedFont">{Array}</span> vector of length 3: homogeneous coordinates of the resulting point / line.</dd>
 							
 							</dl>
 						
 						
 						
-						
-						
-						
-						
 
 					
 					
 					<hr />
 				
-					<a name="X"> </a>
-					<div class="fixedFont">
+					<a name=".factorial"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{float}</span>
-					<b>X</b>(phi)
+					<span class="light">{Number}</span>
+					<span class="light">JXG.Math.</span><b>factorial</b>(n)
 					
 					</div>
 					<div class="description">
-						Treat the line as parametric curve in homogeneuous coordinates.
-<pre>x = 1 * sin(theta)*cos(phi)
-y = 1 * sin(theta)*sin(phi)
-z = 1 * sin(theta)</pre>
-and the line is the set of solutions of <tt>a*x+b*y+c*z = 0</tt>.
-It follows:
-<pre>sin(theta)*(a*cos(phi)+b*sin(phi))+c*cos(theta) = 0</pre>
-Define:
-<pre>  A = (a*cos(phi)+b*sin(phi))
-  B = c</pre>
-Then
-<pre>cos(theta) = A/sqrt(A*A+B*B)
-sin(theta) = -B/sqrt(A*A+B*B)</pre>
-and <tt>X(phi) = x</tt> from above.
-phi runs from 0 to 1
+						Compute the factorial of a positive integer. If a non-integer value
+is given, the fraction will be ignored.
 						
 						
 					</div>
@@ -1516,7 +1098,7 @@ phi runs from 0 to 1
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>phi</b>
+									<span class="light fixedFont">{Number}</span> <b>n</b>
 									
 								</dt>
 								<dd></dd>
@@ -1530,7 +1112,7 @@ phi runs from 0 to 1
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>X(phi) TODO description</dd>
+								<dd><span class="light fixedFont">{Number}</span> n! = n*(n-1)*...*2*1</dd>
 							
 							</dl>
 						
@@ -1541,15 +1123,16 @@ phi runs from 0 to 1
 					
 					<hr />
 				
-					<a name="Y"> </a>
-					<div class="fixedFont">
+					<a name=".identity"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{float}</span>
-					<b>Y</b>(phi)
+					<span class="light">{Array}</span>
+					<span class="light">JXG.Math.</span><b>identity</b>(n, m)
 					
 					</div>
 					<div class="description">
-						Treat the line as parametric curve in homogeneous coordinates. See <a href="#X">#X</a> for a detailed description.
+						Generates an identity matrix. If n is a number and m is undefined or not a number, a square matrix is generated,
+if n and m are both numbers, an nxm matrix is generated.
 						
 						
 					</div>
@@ -1559,7 +1142,112 @@ phi runs from 0 to 1
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>phi</b>
+									<span class="light fixedFont">{Number}</span> <b>n</b>
+									
+								</dt>
+								<dd>Number of rows</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>m</b>
+									<i>Optional, Default: n</i>
+								</dt>
+								<dd>Number of columns</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Array}</span> A square matrix of length <tt>n</tt> with all coefficients equal to 0 except a_(i,i), i out of (1, ..., n), if <tt>m</tt> is undefined or not a number
+or a <tt>n</tt> times <tt>m</tt>-matrix with a_(i,j) = 0 and a_(i,i) = 1 if m is a number.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name=".innerProduct"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">JXG.Math.</span><b>innerProduct</b>(a, b, n)
+					
+					</div>
+					<div class="description">
+						Inner product of two vectors a and b. n is the length of the vectors.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>a</b>
+									
+								</dt>
+								<dd>Vector</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>b</b>
+									
+								</dt>
+								<dd>Vector</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>n</b>
+									<i>Optional</i>
+								</dt>
+								<dd>Length of the Vectors. If not given the length of the first vector is taken.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>The inner product of a and b.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name=".inverse"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Array}</span>
+					<span class="light">JXG.Math.</span><b>inverse</b>(Ain)
+					
+					</div>
+					<div class="description">
+						Compute the inverse of an nxn matrix with Gauss elimination.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>Ain</b>
 									
 								</dt>
 								<dd></dd>
@@ -1573,7 +1261,7 @@ phi runs from 0 to 1
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>Y(phi) TODO description</dd>
+								<dd><span class="light fixedFont">{Array}</span> Inverse matrix of Ain</dd>
 							
 							</dl>
 						
@@ -1584,15 +1272,15 @@ phi runs from 0 to 1
 					
 					<hr />
 				
-					<a name="Z"> </a>
-					<div class="fixedFont">
+					<a name=".matMatMult"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{float}</span>
-					<b>Z</b>(phi)
+					<span class="light">{Array}</span>
+					<span class="light">JXG.Math.</span><b>matMatMult</b>(mat1, mat2)
 					
 					</div>
 					<div class="description">
-						Treat the line as parametric curve in homogeneous coordinates. See <a href="#X">#X</a> for a detailed description.
+						Computes the product of the two matrices mat1*mat2.
 						
 						
 					</div>
@@ -1602,7 +1290,180 @@ phi runs from 0 to 1
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>phi</b>
+									<span class="light fixedFont">{Array}</span> <b>mat1</b>
+									
+								</dt>
+								<dd>Two dimensional array of numbers</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>mat2</b>
+									
+								</dt>
+								<dd>Two dimensional array of numbers</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Array}</span> Two dimensional Array of numbers containing result</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name=".matrix"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Array}</span>
+					<span class="light">JXG.Math.</span><b>matrix</b>(n, m, init)
+					
+					</div>
+					<div class="description">
+						Initializes a matrix as an array of rows with the given value.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>n</b>
+									
+								</dt>
+								<dd>Number of rows</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>m</b>
+									<i>Optional, Default: n</i>
+								</dt>
+								<dd>Number of columns</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>init</b>
+									<i>Optional, Default: 0</i>
+								</dt>
+								<dd>Initial value for each coefficient</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Array}</span> A <tt>n</tt> times <tt>m</tt>-matrix represented by a
+two-dimensional array. The inner arrays hold the columns, the outer array holds the rows.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name=".matVecMult"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Array}</span>
+					<span class="light">JXG.Math.</span><b>matVecMult</b>(mat, vec)
+					
+					</div>
+					<div class="description">
+						Multiplies a vector vec to a matrix mat: mat * vec. The matrix is interpreted by this function as an array of rows. Please note: This
+function does not check if the dimensions match.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>mat</b>
+									
+								</dt>
+								<dd>Two dimensional array of numbers. The inner arrays describe the columns, the outer ones the matrix' rows.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>vec</b>
+									
+								</dt>
+								<dd>Array of numbers</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Array}</span> Array of numbers containing the result</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					<dl class="detailList">
+					<dt class="heading">Examples:</dt>
+					
+					<pre class="code">var A = [[2, 1],
+         [1, 3]],
+    b = [4, 5],
+    c;
+c = JXG.Math.matVecMult(A, b)
+// c === [13, 19];</pre>
+					
+					</dl>
+					
+					
+					<hr />
+				
+					<a name=".pow"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Number}</span>
+					<span class="light">JXG.Math.</span><b>pow</b>(base, exponent)
+					
+					</div>
+					<div class="description">
+						Compute base to the power of exponent.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>base</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>exponent</b>
 									
 								</dt>
 								<dd></dd>
@@ -1616,7 +1477,193 @@ phi runs from 0 to 1
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>Z(phi) TODO description</dd>
+								<dd><span class="light fixedFont">{Number}</span> base to the power of exponent.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name=".sinh"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Number}</span>
+					<span class="light">JXG.Math.</span><b>sinh</b>(x)
+					
+					</div>
+					<div class="description">
+						Sine hyperbolicus of x.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>x</b>
+									
+								</dt>
+								<dd>The number the sine hyperbolicus will be calculated of.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Number}</span> Sine hyperbolicus of the given value.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name=".squampow"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Number}</span>
+					<span class="light">JXG.Math.</span><b>squampow</b>(base, exponent)
+					
+					</div>
+					<div class="description">
+						A square & multiply algorithm to compute base to the power of exponent.
+Implementated by Wolfgang Riedl.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>base</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>exponent</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Number}</span> Base to the power of exponent</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name=".transpose"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Array}</span>
+					<span class="light">JXG.Math.</span><b>transpose</b>(M)
+					
+					</div>
+					<div class="description">
+						Transposes a matrix given as a two dimensional array.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>M</b>
+									
+								</dt>
+								<dd>The matrix to be transposed</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Array}</span> The transpose of M</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+					
+					<hr />
+				
+					<a name=".vector"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Array}</span>
+					<span class="light">JXG.Math.</span><b>vector</b>(n, init)
+					
+					</div>
+					<div class="description">
+						Initializes a vector as an array with the coefficients set to the given value resp. zero.
+						
+						
+					</div>
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>n</b>
+									
+								</dt>
+								<dd>Length of the vector</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>init</b>
+									<i>Optional, Default: 0</i>
+								</dt>
+								<dd>Initial value for each coefficient</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Array}</span> A <tt>n</tt> times <tt>m</tt>-matrix represented by a
+two-dimensional array. The inner arrays hold the columns, the outer array holds the rows.</dd>
 							
 							</dl>
 						

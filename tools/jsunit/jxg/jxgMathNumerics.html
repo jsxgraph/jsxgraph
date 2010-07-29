@@ -8,29 +8,102 @@
 <script type="text/javascript" src="../../../src/loadjsxgraph.js"></script>
 <script type="text/javascript">
 
-function testGauss() {
-    var A = [[1, 1, 1], [0,-2,-3], [0,-6,-8]],
-        Atest = [[1, 1, 1], [0,-2,-3], [0,-6,-8]],
-        Apivot = [[0, 1, 0], [1, 0, 0], [0, 0, 1]],
-        Asing = [[0, 0, 0], [0, 1, 0], [0, 0, 1]],
-        b = [0, 1, 3],
-        excep;
+    function testGauss() {
+        var A = [[1, 1, 1], [0,-2,-3], [0,-6,-8]],
+            Atest = [[1, 1, 1], [0,-2,-3], [0,-6,-8]],
+            Apivot = [[0, 1, 0], [1, 0, 0], [0, 0, 1]],
+            Asing = [[0, 0, 0], [0, 1, 0], [0, 0, 1]],
+            b = [0, 1, 3],
+            excep;
 
-    assertArrayEquals("JXG.Math.Numerics.Gauss without pivoting", [0.5, -0.5, 0], JXG.Math.Numerics.Gauss(A, b));
-    assertArrayEquals("JXG.Math.Numerics.Gauss is not allowed to change the given Matrix", Atest, A);
-    assertArrayEquals("JXG.Math.Numerics.Gauss is not allowed to change the given right hand side vector", [0, 1, 3], b);
-    assertArrayEquals("JXG.Math.Numerics.Gauss with pivoting", [1, 0, 3], JXG.Math.Numerics.Gauss(Apivot, b));
+        assertArrayEquals("JXG.Math.Numerics.Gauss without pivoting", [0.5, -0.5, 0], JXG.Math.Numerics.Gauss(A, b));
+        assertArrayEquals("JXG.Math.Numerics.Gauss is not allowed to change the given Matrix", Atest, A);
+        assertArrayEquals("JXG.Math.Numerics.Gauss is not allowed to change the given right hand side vector", [0, 1, 3], b);
+        assertArrayEquals("JXG.Math.Numerics.Gauss with pivoting", [1, 0, 3], JXG.Math.Numerics.Gauss(Apivot, b));
 
-    try {
-        JXG.Math.Numerics.Gauss(Asing, b);
-        fail("JXG.Math.Numerics.Gauss with a singular matrix should throw an Error() exception");
-    } catch (e) {}
+        try {
+            JXG.Math.Numerics.Gauss(Asing, b);
+            fail("JXG.Math.Numerics.Gauss with a singular matrix should throw an Error() exception");
+        } catch (e) {}
 
-    try {
-        JXG.Math.Numerics.Gauss(A, [1, 0]);
-        fail("JXG.Math.Numerics.Gauss should throw an exception if dimensions of the matrix and right hand side differ");
-    } catch (e) {}
-}
+        try {
+            JXG.Math.Numerics.Gauss(A, [1, 0]);
+            fail("JXG.Math.Numerics.Gauss should throw an exception if dimensions of the matrix and right hand side differ");
+        } catch (e) {}
+    }
+
+    function testBackwardSolve() {
+        var A = JXG.Math.identity(3,3),
+            b = [4, 3, 2];
+
+        A[0][0] = 2;
+        A[0][2] = 1;
+        assertArrayEquals("JXG.Math.Numerics.backwardSolve, incorrect result, no input change", [1, 3, 2], JXG.Math.Numerics.backwardSolve(A, b));
+        assertArrayEquals("JXG.Math.Numerics.backwardSolve changed input but it wasn't allowed to", [4,3,2], b);
+
+        assertArrayEquals("JXG.Math.Numerics.backwardSolve, incorrect result, input change allowed", [1, 3, 2], JXG.Math.Numerics.backwardSolve(A, b, true));
+    }
+
+    function testJacobi() {
+        var A = [[2,0,0],[0,4,0],[0,0,8]];
+        assertArrayEquals("JXG.Math.Numerics.Jacobi, incorrect result", [A, JXG.Math.identity(3)], JXG.Math.Numerics.Jacobi(A));
+    }
+
+    function NewtonCotes() {
+        var f = function(x) { return sin(x); },
+            interval = [0, 2*Math.PI];
+
+        assertEquals("JXG.Math.Numerics.NewtonCotes, incorrect result", 0, JXG.Math.Numerics.NewtonCotes(interval, f));
+    }
+
+    function testNewton() {
+        var f = function(x) { return x-2; };
+        assertTrue("JXG.Math.Numerics.Newton, incorrect result", Math.abs(2 - JXG.Math.Numerics.Newton(f, 0)) < JXG.Math.eps);
+    }
+
+    function testSplineDef() {
+
+    }
+
+    function testSplineEval() {
+
+    }
+
+    function testGeneratePolynomialTerm() {
+
+    }
+
+    function testLagrangePolynomial() {
+
+    }
+
+    function testNeville() {
+
+    }
+
+    function testRegressionPolynomial() {
+
+    }
+
+    function testBezier() {
+
+    }
+
+    function testD() {
+
+    }
+
+    function testRiemann() {
+
+    }
+
+    function testRiemannSum() {
+
+    }
+
+    function testRungeKutta() {
+        
+    }
 
 </script>
 </head>
