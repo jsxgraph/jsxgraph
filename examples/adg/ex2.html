@@ -5,7 +5,6 @@
    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h2>Watt // powered by Cinderella</h2>
 <div id="debug" style="display: none"></div>
 <center>
 <div style="width: 1000px;">
@@ -24,8 +23,7 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-12, 12, 12, -12], axis: true, grid: false,
-                                  keepaspectratio: true});
+   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-12, 12, 12, -12], axis: true, grid: false, keepaspectratio: true});
 
   A = board.create('point', [2,0]);
 
@@ -41,9 +39,9 @@
 
   k2 = board.create('circle', [D, 4]);
 
-  I = board.create('intersection', [k1, k2, 0]);
+  I = board.create('intersection', [k1, k2, 0], {color: 'blue'});
 
-  m = board.create('midpoint', [I, D]);
+  m = board.create('midpoint', [I, D], {color: 'green'});
 
 
   function computeLocus() {

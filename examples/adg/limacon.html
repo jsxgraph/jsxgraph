@@ -5,7 +5,6 @@
    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h2>Lima&ccedil;on</h2>
 <div id="debug" style="display: none"></div>
 <center>
 <div style="width: 1000px;">
@@ -66,6 +65,10 @@
     c2 = board.createElement('circle', [p6, 3]);//, {strokeOpacity: 0.3});
 
     p14_1 = board.createElement('intersection', [c2,g,0], {name: "T", color:'green'});
+
+q=board.create('point', [20, 15]);
+w=board.create('point', [22,13]);
+board.create('midpoint', [q, w]);
 
     loc = null;
 

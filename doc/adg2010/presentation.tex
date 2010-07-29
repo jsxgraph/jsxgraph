@@ -249,7 +249,7 @@ Botana, Ab{\'{a}}nades \& Escribano 2007} (in a nutshell)}
 
   \begin{block}{}
     \begin{itemize}
-      \item calculate the Gr\"obner basis of the given ideal,
+      \item calculate the elimination ideal using the Gr\"obner basis of the given ideal,
 \begin{itemize}
   \item $x^6+3x^4y^2+3x^2y^4+y^6-48x^5-38x^4y-96x^3y^2-76x^2y^3-48xy^4-38y^5+1047x^4+1216x^3y+1774x^2y^2+1216xy^3+727y^4-13024x^3-16596x^2y-16096xy^2-8404y^3+97395x^2+109888xy+63535y^2-415536x-300806y+790009 = 0$
 \end{itemize}
@@ -367,6 +367,49 @@ Botana, Ab{\'{a}}nades \& Escribano 2007} (in a nutshell)}
   \end{block}
 }
 
+
+\frame{
+  \frametitle{Implementation}
+
+  \begin{block}{Easy to extend}
+\begin{center}
+      \href{http://localhost/~michael/jxg/examples/adg/limacon.html}{\includegraphics[width=8cm]{img/cubed.png}}
+\end{center}
+  \end{block}
+}
+
+
+\begin{frame}[fragile]
+  \frametitle{Implementation}
+
+  \begin{block}{}
+    \begin{lstlisting}
+<link rel="stylesheet" type="text/css" href="css/jsxgraph.css" />
+<script type="text/javascript" src="js/jsxgraphcore.js"></script>
+...
+<div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+<script type="text/javascript">
+  board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 8, -4], axis: true, grid: false, keepaspectratio: true});
+
+  A = board.create('point', [2,0]);
+  k1 = board.create('circle', [A, 5]);
+  c = board.create('functiongraph', [function (x) { return x*x*x;}]);
+
+  c.generatePolynomial = function(p) {
+    return ['('+p.symbolic.x+')^3 - '+p.symbolic.y];
+  };
+
+  D = board.create('glider', [0,0, c], {name: 'D'});
+  k2 = board.create('circle', [D, 4]);
+  I = board.create('intersection', [k1, k2, 0]);
+
+  C = board.create('midpoint', [I, D]);
+
+  locus = board.create('locus', [C]);
+</script>
+    \end{lstlisting}
+  \end{block}
+\end{frame}
 
 \frame{
   \frametitle{Implementation}
@@ -532,7 +575,7 @@ F = board.create('midpoint', [C, E]);
   \begin{block}{Transformations}
     \begin{itemize}
       \item Translate the construction moving one point to $(0, 0)$
-      \item Rotate the construction moving another point onto the x-axis
+      \item Rotate the construction around the origin, moving another point onto the x-axis
       \item After the Gr\"obner basis is calculated, the result is retransformed
       \item User can choose the two points or
       \item JSXGraph chooses two points (but sometimes not the best suited ones)
@@ -541,14 +584,14 @@ F = board.create('midpoint', [C, E]);
 
 }
 
-\section{Examples}
-
-\frame{
-  \frametitle{}
-
-  \begin{block}{Examples}
-  \end{block}
-}
+%\section{Examples}
+%
+%\frame{
+%  \frametitle{}
+%
+%  \begin{block}{Examples}
+%  \end{block}
+%}
 
 
 \frame{

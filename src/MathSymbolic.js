@@ -318,5 +318,7 @@ JXG.Math.Symbolic.geometricLocusByGroebnerBase = function(board, point, callback
         board.objects[i].radius = oldRadius[i];
     }
 
+    JXG.debug(result);
+
     return result;
 };

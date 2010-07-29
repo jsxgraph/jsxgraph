@@ -93,6 +93,7 @@ class JXGGeoLociModule(JXGServerModule):
         cinput += "    EndFor;\n"
         cinput += "EndFor;\n"
         cinput += "Print \"resultsend\", NewLine;"
+        #cinput =  "Ciao;"
 
         if self.debug:
             print >>self.debugOutput, "Starting CoCoA with input<br />"
@@ -102,7 +103,7 @@ class JXGGeoLociModule(JXGServerModule):
         # If not done within the following amount
         # of seconds, the subprocess will be terminated
 
-        time_left = 60
+        time_left = 30
 
         class TimeoutException(Exception): pass
 
@@ -147,6 +148,8 @@ class JXGGeoLociModule(JXGServerModule):
             print >>self.debugOutput, self.output + '<br />'
 
         # Extract results
+        if re.search('resultsbegin', self.output) is None:
+            return
         result = re.split('resultsend', re.split('resultsbegin', self.output)[1])[0]
         result = re.split('-------------------------------', re.split('-------------------------------', result)[1])[0]
         result = result.replace("^", "**")
