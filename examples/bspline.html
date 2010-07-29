@@ -12,8 +12,9 @@
                onclick="p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4]));board.update();"></form>
    <script type="text/javascript">
     /* <![CDATA[ */
+    var board, p;
     (function(){
-        var board, i, p, col;
+        var i, col;
         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, axis:true});
         //board.options.curve.doAdvancedPlot = false;
         p = [];
@@ -27,7 +28,8 @@
         }
     
         var c = board.createElement('curve', JXG.Math.Numerics.bspline(p,4), {strokecolor:'blue', strokeWidth:2}); 
-        })();
+        return p;
+    })();
         
   /* ]]> */
   </script>
