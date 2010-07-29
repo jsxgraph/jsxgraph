@@ -808,12 +808,12 @@ JXG.Math.Numerics.regressionPolynomial = function(degree, dataX, dataY) {
 }
     
 /**
- * Computes the cubic Bezier curve through a given set of points..
+ * Computes the cubic Bezier curve through a given set of points.
  * @param data array consisting of 3*k+1 JXG.Points.
  * The points at position k with k mod 3 = 0 are the data points,
  * points at position k with k mod 3 = 1 or 2 are the control points.
  * @type {function}
- * @return {function} A function of one parameter which returns the value of the cubic Bezier curve.
+ * @return {function} A function of one parameter t which returns the coordinates of the Bezier curve in t.
  */
 JXG.Math.Numerics.bezier = function(points) {
     var len = 0; 
@@ -847,6 +847,113 @@ JXG.Math.Numerics.bezier = function(points) {
                 return t1*t1*(t1*points[z].Y()+3*t0*points[z+1].Y())+(3*t1*points[z+2].Y()+t0*points[z+3].Y())*t0*t0;
             }, 
             0, function() {return Math.floor(points.length/3);}];
+};
+
+/**
+ * Computes the B-spline curve of order k (order = degree+1) through a given set of points.
+ * @param data array consisting of JXG.Points.
+ * @todo: closed B-spline curves
+ * @type {function}
+ * @return {function} A function of one parameter t which returns the coordinates of the B-spline curve in t.
+ */
+JXG.Math.Numerics.bspline = function(points, order) {
+    var knots = [], N = [];
+    
+    var _knotVector = function(n,k){
+            var j, kn = [];
+            for (j=0;j<n+k+1;j++) {
+                if (j<k) {
+                    kn[j] = 0.0;
+                } else if (j<=n) {
+                    kn[j] = j-k+1;
+                } else {
+                    kn[j] = n-k+2;
+                }
+            }
+            return kn;
+        };
+
+    var _evalBasisFuncs = function(t,kn,n,k,s) {
+            var i,j,s,a,b,den,
+                N = [];
+                
+            if (kn[s]<=t && t<kn[s+1]) {
+                N[s]=1; 
+            } else {
+                N[s]=0; 
+            }
+            for (i=2;i<=k;i++) {
+                for (j=s-i+1;j<=s;j++) {
+                    if (j<=s-i+1||j<0) {
+                        a = 0.0;
+                    } else {
+                        a = N[j];
+                    }
+                    if (j>=s) {
+                        b = 0.0;
+                    } else {
+                        b = N[j+1];
+                    }
+                    den = kn[j+i-1]-kn[j];
+                    if (den==0) {
+                        N[j] = 0;
+                    } else {
+                        N[j] = (t-kn[j])/den*a;
+                    }
+                    den = kn[j+i]-kn[j+1];
+                    if (den!=0) {
+                        N[j] += (kn[j+i]-t)/den*b;
+                    }
+                }
+            }    
+            return N;
+        };
+
+
+    return [function(t,suspendedUpdate) {
+                var len = points.length, 
+                    y, i, j, s, a, b,
+                    n = len-1,
+                    k = order;
+                    
+                if (n<=0) return NaN;
+                if (n+2<=k) k = n+1;
+                if (t<=0) return points[0].X(); 
+                if (t>=n-k+2) return points[n].X();
+                
+                knots = _knotVector(n,k);
+                s = Math.floor(t)+k-1;
+                N = _evalBasisFuncs(t,knots,n,k,s);
+                
+                y = 0.0;
+                for (j=s-k+1;j<=s;j++) {
+                    if (j<len && j>=0) y += points[j].X()*N[j];
+                }
+                return y;
+            },
+            function(t,suspendedUpdate) {
+                var len = points.length, 
+                    y, i, j, s, a, b,
+                    n = len-1,
+                    k = order;
+                    
+                if (n<=0) return NaN;
+                if (n+2<=k) k = n+1;
+                if (t<=0) return points[0].Y(); 
+                if (t>=n-k+2) return points[n].Y();
+
+                knots = _knotVector(n,k);
+                s = Math.floor(t)+k-1;
+                N = _evalBasisFuncs(t,knots,n,k,s);
+                
+                y = 0.0;
+                for (j=s-k+1;j<=s;j++) {
+                    if (j<len && j>=0) y += points[j].Y()*N[j];
+                }
+                return y;
+            }, 
+            0, function() {return points.length-1;}
+           ];
 };
 
 /**

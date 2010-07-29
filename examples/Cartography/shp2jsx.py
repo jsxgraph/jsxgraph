@@ -132,7 +132,7 @@ def simplify_points (pts, tolerance):
 if __name__ == '__main__':
     if len(sys.argv)<2:
         sys.stderr.write("call: python shp2jsx.py filename [factor] \n")
-        sys.stderr.write("\t file name has to havve the ending dbf.  \n")
+        sys.stderr.write("\t file name has to have the ending dbf.  \n")
         sys.exit(0) 
         
     filename = sys.argv[1]
@@ -141,17 +141,11 @@ if __name__ == '__main__':
         sys.exit(0) 
     f = open(filename, "r")
 
-    #filename = "./vg2500_bld.dbf"
-    #filename = "./vg2500_sta.dbf"
-    #filename = "./vg2500_rbz.dbf"
-    #filename = "./vg2500_krs.dbf"
-    # for europe.dbf: set fac to 1.0 and comment out call to simplify_points
-
-    fac = 100000.0
+        fac = 1.0                   #100000.0
     if len(sys.argv)>2:
         fac = float(sys.argv[2])
     
-    f = shp.open(filename)
+    f = shp.open(filename)          #  get handle to the the shape file
     nParts = f.info()[0]
 
     '''
