@@ -852,6 +852,7 @@ JXG.Math.Numerics.bezier = function(points) {
 /**
  * Computes the B-spline curve of order k (order = degree+1) through a given set of points.
  * @param data array consisting of JXG.Points.
+ * @param integer order of the B-spline curve.
  * @todo: closed B-spline curves
  * @type {function}
  * @return {function} A function of one parameter t which returns the coordinates of the B-spline curve in t.
