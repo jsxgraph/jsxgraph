@@ -2,8 +2,8 @@
 <head>
    <title>JSXGraph Konstruktionstemplate</title>
    <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-    <script type="text/javascript" src="../src/GraphReader.js"></script>
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/trunk/src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/trunk/src/GraphReader.js"></script>
 </head>
 <body>
 
@@ -12,8 +12,10 @@
   /* <![CDATA[ */                    
    
     var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,12,-4], keepaspectratio:true,axis:true});    
-    drawRandomGraph(board, 8, 0.3, false, 17);
     
+   // drawRandomGraph(board, 8, 0.3, false, 17); // gewichtet, mit Gewichten zwischen 1 und 17
+   // drawRandomGraph(board, 8, 0.3, false, 1); // ungewichtet
+    drawRandomGraph(board, 8, 0.5, true, 1); // gerichtet, ungewichtet (8 Knoten, Wahrscheinlichkeit 0,3, dass zwischen zwei Knoten eine Kante gezeichnet wird)
     
     function produceRandomGraph(n, p, directed, weighted) { // n is the number of nodes; p is the chance for two given points to get an edge between them
         var i,j, adjMatrix = [], nodes = [], nodenumbers = {}, number;
@@ -21,16 +23,33 @@
             adjMatrix[i] = [];
             if(directed) {
                 for(j=0; j<n; j++) {
-                    if(Math.random()<p) {
-                        if(weighted == 1) {
-                            adjMatrix[i][j] = 1;
-                        }
-                        else {
-                            adjMatrix[i][j] = Math.round(Math.random()*(weighted-1))+1;
+                    if(j<i) {
+                        if(adjMatrix[j][i] != 1) {
+                            if(Math.random()<p) {
+                                if(weighted == 1) {
+                                    adjMatrix[i][j] = 1;
+                                }
+                                else {
+                                    adjMatrix[i][j] = Math.round(Math.random()*(weighted-1))+1;
+                                }
+                            }
+                            else {
+                                adjMatrix[i][j] = 0;
+                            }
                         }
                     }
                     else {
-                        adjMatrix[i][j] = 0;
+                        if(Math.random()<p) {
+                            if(weighted == 1) {
+                                adjMatrix[i][j] = 1;
+                            }
+                            else {
+                                adjMatrix[i][j] = Math.round(Math.random()*(weighted-1))+1;
+                            }
+                        }
+                        else {
+                            adjMatrix[i][j] = 0;
+                        }
                     }
                 }
             }
