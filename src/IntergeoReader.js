@@ -325,7 +325,7 @@ JXG.IntergeoReader = new function() {
             if (node.nodeName=='line_through_two_points') {
                 JXG.IntergeoReader.addLineThroughTwoPoints(node, false);
             } 
-            if (node.nodeName=='ray_from_point_through_point') {
+            else if (node.nodeName=='ray_from_point_through_point') {
                 JXG.IntergeoReader.addLineThroughTwoPoints(node, true);
             }
             else if (node.nodeName=='line_through_point') {
@@ -334,7 +334,7 @@ JXG.IntergeoReader = new function() {
             else if (node.nodeName=='line_parallel_to_line_through_point') {
                 JXG.IntergeoReader.addLineParallelToLineThroughPoint(node, false);
             } 
-            if (node.nodeName=='ray_from_point_and_vector') {
+            else if (node.nodeName=='ray_from_point_and_vector') {
                 JXG.IntergeoReader.addLineParallelToLineThroughPoint(node, true);
             } 
             else if (node.nodeName=='line_perpendicular_to_line_through_point') {
