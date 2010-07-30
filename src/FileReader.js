@@ -152,8 +152,9 @@ this.parseString = function(fileStr, board, format, isString) {
     }
     if (format.toLowerCase()=='geogebra') {
         isString = true;
-        if(fileStr.slice(0,2) == "PK")
+        if(fileStr.slice(0,2) === "PK") {
             isString = false;
+        }
         // if isString is true, fileStr is a base64 encoded string, otherwise it's the zipped file
     	fileStr = JXG.GeogebraReader.prepareString(fileStr, isString);
     }

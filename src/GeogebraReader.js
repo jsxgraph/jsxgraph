@@ -2758,11 +2758,22 @@ this.utf8replace = function(exp) {
  * @return {String} content of geogebra.xml-file if archive was passed in
  */
 this.prepareString = function(fileStr, isString) {
-    var i, bA, len;
-    // if isString is true, fileStr is a base64 encoded string, otherwise it's the zipped file
-    
-    if(isString)
-        fileStr = JXG.Util.Base64.decode(fileStr, true);
+    var i, bA, len, fstr;
+
+    // here we have to deal with two different base64 encoded streams
+    // first one: base64 encoded xml (geogebra's web export)
+    // second one: base64 encoded ggb file, this is our recommendation for an IE & Opera
+    // workaround, which can't deal with binary data transferred via AJAX.
+
+    // first try to decode assuming we got a base64 encoded ggb file
+    if(isString) {
+        fstr = JXG.Util.Base64.decode(fileStr);
+        if(fstr.slice(0,2)!=="PK") {
+            // ooops, that was no ggb file. try again with utf8 parameter set.
+            fstr = JXG.Util.Base64.decode(fileStr, true);
+        }
+        fileStr = fstr;
+    }
 
     if (fileStr.indexOf('<') != 0) {
         bA = [];
