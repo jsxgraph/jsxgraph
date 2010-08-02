@@ -6,123 +6,32 @@
 </head>
 <body>
 <h1>Playground</h1>
-<!-- Drawing area -->
-<div id="jxgbox" class="jxgbox" style="width:600px; height:600px; overflow:hidden;"></div>
-<!--<p onclick="li.moveTo([[3,1],[5,5]],500);" >Click me</p>-->
-<p onclick="board.removeObject(B);" >Click me</p>
-<!-- Drawing area -->
-<div id="debug" style="display:block;"></div>
-<script type="text/javascript">
-/* <![CDATA[ */
-JXG.Options.showCopyright = true; //don't work :)
-JXG.Options.showNavigation = true;
-
-//JXG.Options.text.defaultDisplay = 'html';
-JXG.Options.text.fontSize = 20;
-var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-6,11,11,-6], keepaspectratio:true, axis:false});
-//var A=board.create('point',[10,0],{frozen:true});
-var B=board.create('point',[0,0]);
-/*
-var C=board.create('point',[0,10]);
-var D=board.create('point',[-5,10]);
-var E=board.create('point',[-5,-5]);
-var t=board.create('text',[2,2,"Hallo"]);
-t.setProperty({fontSize:60});
-E.label.content.setProperty({fontSize:60});
-board.update();
-*/
-
-/*
-var createArc = function(board,parents,attributes) {
-    var A = parents[0],
-        B = parents[1],
-        C = parents[2],
-        defaults, att, options,
-        c;
-        
-    // Read the default values from Options and use them in case they are not set by the user
-    // in attributes
-    defaults = {withLabel:false, layer:null};
-    defaults['strokeWidth'] =  board.options.elements['strokeWidth'];
-    options = board.options.arc;
-    for (att in options) {
-        defaults[att] = options[att];
-    }
-    
-    attributes = JXG.checkAttributes(attributes, defaults);
-        
-    c = board.create('curve',[[0],[0]],attributes);
-    c.updateDataArray = function() {
-        var beta, co, si, matrix,
-            phi = JXG.Math.Geometry.rad(A,B,C),
-            n = 100, i,
-            delta = phi/n, //Math.PI/90.0,
-            x = B.X(),
-            y = B.Y(),
-            v;
-        this.dataX = [A.X()];
-        this.dataY = [A.Y()];
-        
-        for (beta=delta,i=1; i<=n; i++, beta+=delta) {
-            co = Math.cos(beta); 
-            si = Math.sin(beta); 
-            matrix = [[1,            0,   0],
-                      [x*(1-co)+y*si,co,-si],
-                      [y*(1-co)-x*si,si, co]];    
-            v = JXG.Math.matVecMult(matrix,A.coords.usrCoords);
-            this.dataX.push(v[1]/v[0]);
-            this.dataY.push(v[2]/v[0]);
-        }
-    };
-    board.update(c);
-    return c;
-};
->>>>>>> .r1358
-
-        dX1 = (where[0][0] - X1),
-        dY1 = (where[0][1] - Y1),
-
-        dX2 = (where[1][0] - X2),
-        dY2 = (where[1][1] - Y2),
-
-        i;
-
-    if( (Math.abs(dX1) < JXG.Math.eps && Math.abs(dY1) < JXG.Math.eps)
-|| (Math.abs(dX2) < JXG.Math.eps && Math.abs(dY2) < JXG.Math.eps) )
-        return this;
-
-    for(i=steps; i>=0; i--) {
-        coords1[steps-i] = [X1 + dX1 * Math.sin((i/
-(steps*1.0))*Math.PI/2.), Y1 + dY1 * Math.sin((i/(steps*1.0))*Math.PI/
-2.)];
-        coords2[steps-i] = [X2 + dX2 * Math.sin((i/
-(steps*1.0))*Math.PI/2.), Y2 + dY2 * Math.sin((i/(steps*1.0))*Math.PI/
-2.)];
-    }
-
-
-    this.point1.animationPath = coords1;
-    this.point2.animationPath = coords2;
-
-    this.board.animationObjects[this.point1.id] = this.point1;
-    this.board.animationObjects[this.point2.id] = this.point2;
-
-    if(typeof this.board.animationIntervalCode == 'undefined') {
-        this.board.animationIntervalCode =
-window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id +
-'\'].animate();', delay);
-    }
-    return this;
-};
-
-
-
-var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-1,10,10,-1], keepaspectratio:true, axis:true});
-var p1 = brd.create('point',[2,1],{face:'o', size:5, strokeColor:'red', fillOpacity:0.3, strokeOpacity: 0.3});
-var p2 = brd.create('point',[4,3],{face:'o', size:5, strokeColor:'red', fillOpacity:0.3, strokeOpacity: 0.3});
-var li = brd.create('line',[p1,p2]);
-     
-/* ]]> */
-</script>
+<div id='box' class='jxgbox' style='width:700px; height:600px;'></div>
+<div>
+        Column 1<input type="text" id="c1"><br/>
+        Column 2<input type="text" id="c2"><br/>
+        Column 3<input type="text" id="c3"><br/>
+</div>
+<script type='text/javascript'>
+        board = JXG.JSXGraph.initBoard('box', {originX: 50, originY: 450,
+unitX: 50, unitY: 50, axis:true});
+        board.suspendUpdate();
+        var s = board.createElement('slider', [[8,7],[11,7],[1,1,1.5]],
+{name:'S',strokeColor:'black',fillColor:'white'});
+        var f2 = [function(){return (s.Value()*4.5+1).toFixed(2);},
+                         function(){return (s.Value()*(-1)+1).toFixed(2);},
+                         function(){return (s.Value()*3+1).toFixed(2);}
+                        ];
+        var chart2 = board.createElement('chart', [f2],
+                        {chartStyle:'bar', width:0.8, labels:f2,
+                         colorArray:['#BE1679','#DC1765','#DA2130']});
+                         
+        board.addHook(function(board) {
+            document.getElementById('c1').value = f2[0]();
+            document.getElementById('c2').value = f2[1]();
+            document.getElementById('c3').value = f2[2]();
+        });
+        board.unsuspendUpdate();
+</script> 
 </body>
 </html>

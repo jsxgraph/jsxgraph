@@ -65,7 +65,7 @@ JXG.JSXGraph = new function () {
         opera = (navigator.userAgent.toLowerCase().indexOf("opera") != -1);
 
         /* and set the rendererType according to the browser */
-        if ((!ie) || (opera)) {
+        if ((!ie) || (opera) || (ie && parseFloat(ie[1])>=9.0) ) {
             //this.rendererType = 'svg';
             JXG.Options.renderer = 'svg';
         }
