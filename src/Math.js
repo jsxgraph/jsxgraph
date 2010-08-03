@@ -186,7 +186,7 @@ JXG.Math = (function(JXG, Math, undefined) {
                     m2 = mat2.length,
                     res = this.matrix(m,n),
                     i, j, s, k;
-
+  
             for (i=0;i<m;i++) {
                 for (j=0;j<n;j++) {
                     s = 0;

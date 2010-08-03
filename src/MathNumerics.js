@@ -54,7 +54,7 @@ JXG.Math.Numerics = (function(JXG, Math, undefined) {
                 // copy the matrix to prevent changes in the original
                 Acopy,
                 // solution vector, to prevent changing b
-                x,
+                x = [],
                 i, j, k,
                 // little helper to swap array elements
                 swap = function(i, j) {
@@ -67,19 +67,11 @@ JXG.Math.Numerics = (function(JXG, Math, undefined) {
             if((n !== b.length) || (n !== A.length))
                 throw new Error("JXG.Math.Numerics.Gauss: Dimensions don't match. A must be a square matrix and b must be of the same length as A.");
 
-            x = new Array(n);
-
-            Acopy = A;
-            A = JXG.Math.matrix(n, n);
-
             // initialize solution vector
+            Acopy = new Array(n);
+            x = b.slice(0,n);
             for (i=0; i<n; i++) {
-                x[i] = b[i];
-
-                // copy A
-                for(j=0; j<n; j++) {
-                    A[i][j] = Acopy[i][j];
-                }
+                Acopy[i] = A[i].slice(0,n);
             }
 
             // Gauss-Jordan-elimination
@@ -87,32 +79,29 @@ JXG.Math.Numerics = (function(JXG, Math, undefined) {
             {
                 for (i = n-1; i > j; i--) {
                     // Is the element which is to eliminate greater than zero?
-                    if (Math.abs(A[i][j]) > eps) {
+                    if (Math.abs(Acopy[i][j]) > eps) {
                         // Equals pivot element zero?
-                        if (Math.abs(A[j][j]) < eps) {
+                        if (Math.abs(Acopy[j][j]) < eps) {
                             // At least numerically, so we have to exchange the rows
-                            swap.apply(A, [i, j]);
+                            swap.apply(Acopy, [i, j]);
                             swap.apply(x, [i, j]);
                         } else {
                             // Saves the L matrix of the LR-decomposition. unnecessary.
-                            A[i][j] /= A[j][j];
+                            Acopy[i][j] /= Acopy[j][j];
                             // Transform right-hand-side b
-                            x[i] -= A[i][j] * b[j];
+                            x[i] -= Acopy[i][j] * x[j];
                             // subtract the multiple of A[i][j] / A[j][j] of the j-th row from the i-th.
                             for (k = j + 1; k < n; k ++) {
-                                A[i][k] -= A[i][j] * A[j][k];
+                                Acopy[i][k] -= Acopy[i][j] * Acopy[j][k];
                             }
                         }
                     }
                 }
-                if (Math.abs(A[j][j]) < eps) { // The absolute values of all coefficients below the j-th row in the j-th column are smaller than JXG.Math.eps.
+                if (Math.abs(Acopy[j][j]) < eps) { // The absolute values of all coefficients below the j-th row in the j-th column are smaller than JXG.Math.eps.
                     throw new Error("JXG.Math.Numerics.Gauss(): The given matrix seems to be singular.");
                 }
             }
-
-            this.backwardSolve(A, x, true); // return Array
-
-            A = Acopy;
+            this.backwardSolve(Acopy, x, true); // return Array
 
             return x;
         },
@@ -130,17 +119,13 @@ JXG.Math.Numerics = (function(JXG, Math, undefined) {
             if(canModify) {
                 x = b;
             } else {
-                x = new Array(b.length);
-                for(i = 0; i<b.length; i++) {
-                    x[i] = b[i];
-                }
+                x = b.slice(0,b.length);
             }
 
             // m: number of rows of R
             // n: number of columns of R
             m = R.length;
             n = R.length>0 ? R[0].length : 0;
-
             for (i = m-1; i >= 0; i--) {
                 for (j = n-1; j > i; j--) {
                     x[i] -= R[i][j] * x[j];

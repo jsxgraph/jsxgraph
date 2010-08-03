@@ -23,7 +23,7 @@
 
 brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 100, data.length+2, -70], grid: false, axis:true});
 s = brd.createElement('slider',[[10,70],[100,70],[0,1,1]]);     
-deg = brd.createElement('slider',[[10,90],[100,90],[1,1,10]],{name:'degree',snapWidth:1});     
+deg = brd.createElement('slider',[[10,90],[100,90],[1,2,10]],{name:'degree',snapWidth:1});     
 curve = brd.createElement('curve',[datax,[]],{strokeColor:'gray',dash:2});     
 curve.updateDataArray = function() {
     var i, len = data.length;
@@ -33,14 +33,16 @@ curve.updateDataArray = function() {
 regressionPolynomial = JXG.Math.Numerics.regressionPolynomial(deg,datax,curve.dataY);  // generateFunction();
 
 reg = brd.createElement('functiongraph',[regressionPolynomial],{strokeColor:'black'});     
-brd.createElement('glider',[100,30,reg],{strokeColor:'black'});     
-regD = brd.createElement('functiongraph',[brd.D(regressionPolynomial)],{strokeColor:'red'});     
 
+//brd.createElement('glider',[100,30,reg],{strokeColor:'black'});     
+//regD = brd.createElement('functiongraph',[brd.D(regressionPolynomial)],{strokeColor:'red'});     
+/*
 t = brd.createElement('text',[20,40,
             function(){ return "r(x) = " + regressionPolynomial.getTerm();}
             ],
             {strokeColor:'black',fontSize:'14px'});     
-
+*/
+/*
 // random coordinates after each update
 brd.suspendUpdate();
 pointlist = [];
@@ -52,7 +54,7 @@ regression2 = JXG.Math.Numerics.regressionPolynomial(deg,pointlist);
 reg2 = brd.createElement('functiongraph',[regression2],{strokeColor:'green'});     
 
 brd.unsuspendUpdate();
-
+*/
   /* ]]> */
   </script>
 </body>
