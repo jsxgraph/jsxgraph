@@ -71,31 +71,8 @@ JXG.SVGRenderer = function(container) {
     this.filter.appendChild(this.feBlend);
     this.defs.appendChild(this.filter);    
     
-    // um eine passende Reihenfolge herzustellen
-    /*
-    this.images = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
-    this.svgRoot.appendChild(this.images);
-    this.grid = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
-    this.svgRoot.appendChild(this.grid);
-    this.angles = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
-    this.svgRoot.appendChild(this.angles);    
-    this.sectors = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
-    this.svgRoot.appendChild(this.sectors);
-    this.polygone = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
-    this.svgRoot.appendChild(this.polygone);
-    this.curves = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
-    this.svgRoot.appendChild(this.curves);
-    this.circles = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
-    this.svgRoot.appendChild(this.circles);
-    this.lines = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
-    this.svgRoot.appendChild(this.lines);
-    this.arcs = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
-    this.svgRoot.appendChild(this.arcs);
-    this.points = this.container.ownerDocument.createElementNS(this.svgNamespace,'g');
-    this.svgRoot.appendChild(this.points);
-    */
     /* 
-    * 10 Layers. highest number = highest visibility
+    * ~ 10 Layers. highest number = highest visibility
     */
     this.layer = [];
     for (i=0;i<JXG.Options.layer.numlayers;i++) {
@@ -115,7 +92,7 @@ JXG.SVGRenderer.prototype.setShadow = function(el) {
     }
     if(el.rendNode != null) {
         if(el.visProp['shadow']) {
-            el.rendNode.setAttributeNS(null,'filter','url(#f1)');
+            el.rendNode.setAttributeNS(null,'filter','url(#'+this.container.id+'_'+'f1)');
         }
         else {
             el.rendNode.removeAttributeNS(null,'filter');
