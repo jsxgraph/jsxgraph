@@ -1,0 +1,59 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>JXGServer modul Test-Areal</h2>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:400px; height:400px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+   JXG.Server.load('fft');
+
+    var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1/1000, 400, 1/5, -2], keepaspectratio:false, axis: true, grid: false});
+
+
+    var x = [],
+        y = [];
+    for(var i=0; i<8000; i++) {
+        x[i] = i;
+        y[i] = Math.sin(440*2*Math.PI*i/8000)*(Math.random()*0.8+0.6);
+    }
+
+   //document.writeln('x = ['+x.join(',')+'];<br />');
+   //document.writeln('y = ['+y.join(',')+'];<br />');
+
+    var bratwurst = [],
+        sauerkraut = [];
+
+   for(var i = 0; i<700; i++) {
+       bratwurst[i] = x[i]/8000;
+       sauerkraut[i] = y[i];
+   }
+
+   var fft;
+
+   function cb(data) {
+       var i;
+       fft = data.fft;
+       sauerkraut = [];
+       for(i=0; i<700; i++) {
+           sauerkraut[i] = fft[i];
+       }
+   }
+
+   JXG.Server.modules.fft.fft(y, cb, true);
+
+   var sin = brd.create('curve', [bratwurst, sauerkraut]);
+  /* ]]> */
+  </script>
+
+</body>
+</html>

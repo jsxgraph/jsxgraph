@@ -217,3 +217,5 @@ JXG.Server.loadModule = function(module) {
 	return JXG.Server.callServer('load', JXG.Server.loadModule_cb, {'module': module}, true);
 };
 
+JXG.Server.load = JXG.Server.loadModule;
+
