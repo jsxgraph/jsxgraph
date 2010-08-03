@@ -34,6 +34,7 @@ JXG.Options = {
     showNavigation : true,
     takeSizeFromFile : false, // If true, the construction - when read from a file or string - the size of the div can be changed.
     renderer: 'svg',
+    takeFirst : false, // if true the first elemtn with hasPoint==true is taken.
 
     /* grid options */
     grid : {
