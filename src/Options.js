@@ -40,8 +40,8 @@ JXG.Options = {
     grid : {
         /* grid styles */
         hasGrid : false,
-        gridX : 2,
-        gridY : 2,
+        gridX : 1,
+        gridY : 1,
         gridColor : '#C0C0C0',
         gridOpacity : '0.5',
         gridDash : true,
