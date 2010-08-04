@@ -1,0 +1,142 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Electronic Journal of Mathematics and Technology (eJMT) %
+% style sheet for LaTeX.  Please do not modify sections   %
+% or commands marked 'eJMT'.                              %
+%                                                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                         %
+% eJMT commands                                           %
+%                                                         %
+\documentclass[12pt,a4paper]{article}%                    %
+\usepackage{times}                                        %
+\usepackage{amsfonts,amsmath,amssymb}                     %
+\usepackage[a4paper]{geometry}                            %
+\usepackage{fancyhdr}                                     %
+\usepackage{color}                                        %
+\usepackage[pdftex]{hyperref} % see note below            %
+\usepackage{graphicx}%                                    %
+\hypersetup{                                              %
+    a4paper,                                              %
+    breaklinks                                            %
+}                                                         %
+%                                                         %
+\newtheorem{theorem}{Theorem}                             %
+\newtheorem{acknowledgement}[theorem]{Acknowledgement}    %
+\newtheorem{algorithm}[theorem]{Algorithm}                %
+\newtheorem{axiom}[theorem]{Axiom}                        %
+\newtheorem{case}[theorem]{Case}                          %
+\newtheorem{claim}[theorem]{Claim}                        %
+\newtheorem{conclusion}[theorem]{Conclusion}              %
+\newtheorem{condition}[theorem]{Condition}                %
+\newtheorem{conjecture}[theorem]{Conjecture}              %
+\newtheorem{corollary}[theorem]{Corollary}                %
+\newtheorem{criterion}[theorem]{Criterion}                %
+\newtheorem{definition}[theorem]{Definition}              %
+\newtheorem{example}[theorem]{Example}                    %
+\newtheorem{exercise}[theorem]{Exercise}                  %
+\newtheorem{lemma}[theorem]{Lemma}                        %
+\newtheorem{notation}[theorem]{Notation}                  %
+\newtheorem{problem}[theorem]{Problem}                    %
+\newtheorem{proposition}[theorem]{Proposition}            %
+\newtheorem{remark}[theorem]{Remark}                      %
+\newtheorem{solution}[theorem]{Solution}                  %
+\newtheorem{summary}[theorem]{Summary}                    %
+\newenvironment{proof}[1][Proof]{\noindent\textbf{#1.} }  %
+{\ \rule{0.5em}{0.5em}}                                   %
+%                                                         %
+% eJMT page dimensions                                    %
+%                                                         %
+\geometry{left=2cm,right=2cm,top=3.2cm,bottom=4cm}        %
+%                                                         %
+% eJMT header & footer                                    %
+%                                                         %
+\newcounter{ejmtFirstpage}                                %
+\setcounter{ejmtFirstpage}{1}                             %
+\pagestyle{empty}                                         %
+\setlength{\headheight}{14pt}                             %
+\geometry{left=2cm,right=2cm,top=3.2cm,bottom=4cm}        %
+\pagestyle{fancyplain}                                    %
+\fancyhf{}                                                %
+\fancyhead[c]{\small The Electronic Journal of Mathematics%
+\ and Technology, Volume 1, Number 1, ISSN 1933-2823}     %
+\cfoot{%                                                  %
+  \ifnum\value{ejmtFirstpage}=0%                          %
+    {\vtop to\hsize{\hrule\vskip .2cm\thepage}}%          %
+  \else\setcounter{ejmtFirstpage}{0}\fi%                  %
+}                                                         %
+%                                                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Please place your own definitions here
+%
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                         %
+% How to use hyperref                                     %
+% -------------------                                     %
+%                                                         %
+% Probably the only way you will need to use the hyperref %
+% package is as follows.  To make some text, say          %
+% "My Text Link", into a link to the URL                  %
+% http://something.somewhere.com/mystuff, use             %
+%                                                         %
+% \href{http://something.somewhere.com/mystuff}{My Text Link}
+%                                                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\begin{document}
+%
+% document title
+%
+\title{JSXGraph}%
+%
+% Single author.  Please supply at least your name,
+% email address, and affiliation here.
+%
+\author{\begin{tabular}{c}
+\textit{Bianca Valentin, Alfred Wassermann} \\
+alfred.wassermann@uni-bayreuth.de\\
+Department of Mathematics\\
+University of Bayreuth\\
+95440 Bayreuth\\
+Germany\end{tabular}
+}%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                         %
+% eJMT commands - do not change these                     %
+%                                                         %
+\date{}                                                   %
+\maketitle                                                %
+%                                                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% abstract
+%
+\begin{abstract}
+%
+JSXGraph\ldots
+Replace this text with the text of your abstract.
+%
+\end{abstract}%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                         %
+% eJMT command                                            %
+%                                                         %
+\thispagestyle{fancy}                                     %
+%                                                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Please use the following to indicate sections, subsections,
+% etc.  Please also use \subsubsection{...}, \paragraph{...}
+% and \subparagraph{...} as necessary.
+%
+\section{Section}
+
+\subsection{Subsection}
+
+\section{Conclusion}
+
+\end{document}
