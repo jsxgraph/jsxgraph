@@ -1806,7 +1806,7 @@ JXG.Board.prototype.updateElements = function(drag) {
         if (drag!=null && pEl.id != drag.id) {
             isBeforeDrag = false;
         }
-        if (!(isBeforeDrag || this.needsFullUpdate || pEl.needsRegularUpdate)) { continue; }
+        if (!isBeforeDrag && !this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
         if (drag==null || pEl.id!=drag.id) {
             //if (this.needsFullUpdate) { pEl.update(true); }
             pEl.update(true);
@@ -1827,7 +1827,7 @@ JXG.Board.prototype.updateRenderer = function(drag) {
     drag = JXG.getReference(this, drag);
     for(el in this.objects) {
         pEl = this.objects[el];
-        if (!this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
+        if (!this.needsFullUpdate && !pEl.needsRegularUpdate && !this.renderer.context==JXG.undefined /* for canvas renderer */ ) { continue; }
         if (drag == null || pEl.id != drag.id) {
             //if (this.needsFullUpdate) { pEl.updateRenderer(); }
             pEl.updateRenderer();

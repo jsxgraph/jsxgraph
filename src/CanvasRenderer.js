@@ -26,7 +26,6 @@
 JXG.CanvasRenderer = function(container) {
     var i;
     this.constructor();
-
     this.canvasRoot = null;
     this.suspendHandle = null;
     this.canvasId = JXG.Util.genUUID();
@@ -58,27 +57,25 @@ JXG.CanvasRenderer.prototype.updateStencilBuffer = function(el) {
     var highlight;
 
     // this highlight thing doesn't work by now ... :/
-
     if(typeof el.board.highlightedObjects[el] != 'undefined' && el.board.highlightedObjects[el] != null) {
-        this.context.strokeStyle = el.visProp.highlightStrokeColor;
-        this.context.fillStyle = el.visProp.highlightFillColor;
-        this.context.lineWidth = parseFloat(el.visProp.highlightStrokeWidth);
+        if (el.visProp.strokeColor!='none') this.context.strokeStyle = el.visProp.highlightStrokeColor;
+        if (el.visProp.fillColor!='none') this.context.fillStyle = el.visProp.highlightFillColor;
+        this.context.lineWidth = parseFloat(el.visProp.strokeWidth);
 
         // we  can only set ONE globalAlpha value in here, so we set it to the elements fill-alpha.
         // but we can use the stroke alpha in the other methods by ourselves.
         this.context.globalAlpha = el.visProp.highlightFillOpacity;
         highlight = true;
     } else {
-        this.context.strokeStyle = el.visProp.strokeColor;
-        this.context.fillStyle = el.visProp.fillColor;
+        if (el.visProp.strokeColor!='none') this.context.strokeStyle = el.visProp.strokeColor;
+        if (el.visProp.fillColor!='none') this.context.fillStyle = el.visProp.fillColor;
         this.context.lineWidth = parseFloat(el.visProp.strokeWidth);
 
         // we  can only set ONE globalAlpha value in here, so we set it to the elements fill-alpha.
         // but we can use the stroke alpha in the other methods by ourselves.
-        this.context.globalAlpha = el.visProp.fillOpacity;
+        //this.context.globalAlpha = el.visProp.fillOpacity;
         highlight = false;
     }
-
     return highlight;
 };
 
@@ -126,20 +123,19 @@ JXG.CanvasRenderer.prototype.updateGradient = function(el) {
     // see drawGradient
 }; 
 
-JXG.CanvasRenderer.prototype.displayCopyright = function(str, fontsize) {
+JXG.CanvasRenderer.prototype.displayCopyright = function(str, fontSize) {
     // this should be called on EVERY update, otherwise it won't be shown after the first update
     this.context.save();
-    this.context.font = fontsize+'px Arial';
+    this.context.font = fontSize+'px Arial';
     this.context.fillStyle = '#aaa';
     this.context.lineWidth = 0.5;
-    this.context.fillText(str, 10, 2+fontsize);
+    this.context.fillText(str, 10, 2+fontSize);
     this.context.restore();
 };
 
 JXG.CanvasRenderer.prototype.drawInternalText = function(el) {
     this.updateStencilBuffer(el);
-    
-    this.context.font = fontsize+'px Arial';
+    this.context.font = el.board.options.text.fontSize+'px Arial';
     this.context.fillText(el.plaintextStr, el.coords.scrCoords[1], el.coords.scrCoords[2]);
 
     return null;
@@ -211,7 +207,8 @@ JXG.CanvasRenderer.prototype.setArrowAtts = function(node, c, o) {
 
 JXG.CanvasRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     // this is not required in a canvas based renderer
-    el.board.updateRenderer();
+    if (el.board!=JXG.undefined)
+        el.board.updateRenderer();
 };
 
 JXG.CanvasRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
@@ -241,7 +238,7 @@ JXG.CanvasRenderer.prototype.show = function(el) {
 
 JXG.CanvasRenderer.prototype.remove = function(shape) {
     // useless
-    el.board.updateRenderer()();
+    //el.board.updateRenderer()();
 };
 
 JXG.CanvasRenderer.prototype.suspendRedraw = function() {
@@ -406,7 +403,7 @@ JXG.CanvasRenderer.prototype.setPropertyPrim = function(node,key,val) {
     if (key=='stroked') {
         return;
     }
-    node.setAttributeNS(null, key, val);
+    //node.setAttributeNS(null, key, val);
 };
 
 JXG.CanvasRenderer.prototype.drawVerticalGrid = function(topLeft, bottomRight, gx, board) {
@@ -562,10 +559,10 @@ JXG.CanvasRenderer.prototype.drawText = function(/** Text */ el) {
         node.style.zIndex = '10';
         this.container.appendChild(node);
         node.setAttribute('id', this.container.id+'_'+el.id);
+        node.style.fontSize = el.board.options.text.fontSize + 'px';
     } else {
         node = this.drawInternalText(el);
     }
-    node.style.fontSize = el.board.options.text.fontSize + 'px';
     el.rendNode = node;
     el.htmlStr = '';
     this.updateText(el);
@@ -606,7 +603,6 @@ JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
     this.context.moveTo(screenCoords1.scrCoords[1],screenCoords1.scrCoords[2]);
     this.context.lineTo(screenCoords2.scrCoords[1],screenCoords2.scrCoords[2]);
     this.context.stroke();
-
     // Update the image which is connected to the line:
     if (el.image!=null) {
         ax = screenCoords1.scrCoords[1];
