@@ -73,7 +73,7 @@ JXG.CanvasRenderer.prototype.updateStencilBuffer = function(el) {
 
         // we  can only set ONE globalAlpha value in here, so we set it to the elements fill-alpha.
         // but we can use the stroke alpha in the other methods by ourselves.
-        //this.context.globalAlpha = el.visProp.fillOpacity;
+        this.context.globalAlpha = el.visProp.fillOpacity;
         highlight = false;
     }
     return highlight;
@@ -207,13 +207,13 @@ JXG.CanvasRenderer.prototype.setArrowAtts = function(node, c, o) {
 
 JXG.CanvasRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     // this is not required in a canvas based renderer
-    if (el.board!=JXG.undefined)
-        el.board.updateRenderer();
+    //if (el.board!=JXG.undefined)
+    //    el.board.updateRenderer();
 };
 
 JXG.CanvasRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
     // useless
-    el.board.updateRenderer();
+    //el.board.updateRenderer();
 };
 
 /**
@@ -223,17 +223,17 @@ JXG.CanvasRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
  */
 JXG.CanvasRenderer.prototype.setObjectStrokeWidth = function(el, width) {
     // useless
-    el.board.updateRenderer();
+    //el.board.updateRenderer();
 };
 
 JXG.CanvasRenderer.prototype.hide = function(el) {
     // useless
-    el.board.updateRenderer();
+    //el.board.updateRenderer();
 };
 
 JXG.CanvasRenderer.prototype.show = function(el) {
     // useless
-    el.board.updateRenderer();
+    //el.board.updateRenderer();
 };
 
 JXG.CanvasRenderer.prototype.remove = function(shape) {
@@ -651,7 +651,8 @@ JXG.CanvasRenderer.prototype.drawEllipse = function(el, m1, m2, sX, sY, rX, rY) 
         mX = aX + aWidth / 2,
         mY = aY + aHeight / 2;
 
-    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
+    //this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
+    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
 
 
     if (rX>0.0 && rY>0.0 && !isNaN(m1+m2) ) {
@@ -661,6 +662,7 @@ JXG.CanvasRenderer.prototype.drawEllipse = function(el, m1, m2, sX, sY, rX, rY) 
         this.context.bezierCurveTo(eX, mY + vB, mX + hB, eY, mX, eY);
         this.context.bezierCurveTo(mX - hB, eY, aX, mY + vB, aX, mY);
         this.context.closePath();
+        this.context.fill();
         this.context.stroke();
     }
 };
@@ -671,4 +673,30 @@ JXG.CanvasRenderer.prototype.drawCircle = function(/** Circle */ el) {
 
 JXG.CanvasRenderer.prototype.updateCircle = function(/** Circle */ el) {
     this.drawCircle(el);
+};
+
+JXG.CanvasRenderer.prototype.drawPolygon = function(/** Polygon */ el) { 
+};
+
+JXG.CanvasRenderer.prototype.updatePolygonePrim = function(node, el) {
+    var pStr = '', 
+        scrCoords, i,
+        len = el.vertices.length;
+        
+    //node.setAttributeNS(null, 'stroke', 'none');
+    //node.setAttributeNS(null, 'points', pStr);
+    if (len<=0) return;
+    
+    //this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
+    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
+    this.context.beginPath();
+    scrCoords = el.vertices[0].coords.scrCoords;
+    this.context.moveTo(scrCoords[1],scrCoords[2]);
+    for (i=1; i<len; i++) {
+            scrCoords = el.vertices[i].coords.scrCoords;
+            this.context.lineTo(scrCoords[1],scrCoords[2]);
+    }
+    this.context.closePath();
+    this.context.fill();
+    this.context.stroke();
 };

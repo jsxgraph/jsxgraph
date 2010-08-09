@@ -341,7 +341,7 @@ JXG.Line.prototype.updateStdform = function() {
  * @private
  */
  JXG.Line.prototype.updateRenderer = function () {
-    var wasReal;
+    var wasReal, i;
 
     if (this.needsUpdate && this.visProp['visible']) {
         wasReal = this.isReal;
@@ -352,6 +352,9 @@ JXG.Line.prototype.updateStdform = function() {
                 if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content);
             }
             this.board.renderer.updateLine(this);
+            
+            for (i=0;i<this.ticks.length;i++)                   // This is necessary for the CanvasRenderer
+                this.ticks[i].prepareUpdate().updateRenderer(); // No idea, why other Renderer work without it.
         } else {
             if (wasReal!=this.isReal) {
                 this.board.renderer.hide(this);
@@ -1091,7 +1094,7 @@ JXG.createAxis = function(board, parents, attributes) {
             //len *= 0.33;
             dist = 1.0; //len;
         }
-
+        
         defTicks = board.create('ticks', [line, dist], attributes);
         defTicks.needsRegularUpdate = false;
         line.defaultTicks = defTicks;
