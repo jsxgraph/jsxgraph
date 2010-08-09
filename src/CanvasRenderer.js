@@ -652,9 +652,6 @@ JXG.CanvasRenderer.prototype.drawEllipse = function(el, m1, m2, sX, sY, rX, rY) 
         mY = aY + aHeight / 2;
 
     //this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
-    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
-
-
     if (rX>0.0 && rY>0.0 && !isNaN(m1+m2) ) {
         this.context.moveTo(aX, mY);
         this.context.bezierCurveTo(aX, mY - vB, mX - hB, aY, mX, aY);
@@ -662,7 +659,12 @@ JXG.CanvasRenderer.prototype.drawEllipse = function(el, m1, m2, sX, sY, rX, rY) 
         this.context.bezierCurveTo(eX, mY + vB, mX + hB, eY, mX, eY);
         this.context.bezierCurveTo(mX - hB, eY, aX, mY + vB, aX, mY);
         this.context.closePath();
+        this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
+        //this.context.fillStyle = el.visProp['fillColor'];
         this.context.fill();
+
+        this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
+        this.context.strokeStyle = el.visProp['strokeColor'];
         this.context.stroke();
     }
 };
@@ -687,8 +689,6 @@ JXG.CanvasRenderer.prototype.updatePolygonePrim = function(node, el) {
     //node.setAttributeNS(null, 'points', pStr);
     if (len<=0) return;
     
-    //this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
-    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
     this.context.beginPath();
     scrCoords = el.vertices[0].coords.scrCoords;
     this.context.moveTo(scrCoords[1],scrCoords[2]);
@@ -697,6 +697,9 @@ JXG.CanvasRenderer.prototype.updatePolygonePrim = function(node, el) {
             this.context.lineTo(scrCoords[1],scrCoords[2]);
     }
     this.context.closePath();
+    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
     this.context.fill();
-    this.context.stroke();
+    // The edges of a polygon are displayed separately (as segments).
+    // this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
+    // this.context.stroke();
 };
