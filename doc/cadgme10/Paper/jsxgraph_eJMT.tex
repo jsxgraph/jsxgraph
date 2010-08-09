@@ -69,7 +69,7 @@
 %
 % Please place your own definitions here
 %
-
+\def\GEONExT{GEONE\kern-.06em \lower.5ex\hbox{x}\kern-.215em T}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                         %
@@ -89,13 +89,13 @@
 %
 % document title
 %
-\title{JSXGraph}%
+\title{JSXGraph -- Dynamic Mathematics Running on (nearly) Every Device}%
 %
 % Single author.  Please supply at least your name,
 % email address, and affiliation here.
 %
 \author{\begin{tabular}{c}
-\textit{Bianca Valentin, Alfred Wassermann} \\
+\textit{Michael Gerh\"auser, Bianca Valentin, Alfred Wassermann} \\
 alfred.wassermann@uni-bayreuth.de\\
 Department of Mathematics\\
 University of Bayreuth\\
@@ -116,8 +116,7 @@ Germany\end{tabular}
 %
 \begin{abstract}
 %
-JSXGraph\ldots
-Replace this text with the text of your abstract.
+Since Java applets seem to be on the retreat in web application, other approaches for displaying interactive mathematics in the web browser are needed. One such alternative could be our open-source project JSXGraph. It is a cross-browser library for displaying interactive geometry, function plotting, graphs, and data visualization in a web browser. It is implemented completely in JavaScript and uses the vector graphics formats SVG and VML. No further plug-ins are required.
 %
 \end{abstract}%
 %
@@ -133,10 +132,67 @@ Replace this text with the text of your abstract.
 % etc.  Please also use \subsubsection{...}, \paragraph{...}
 % and \subparagraph{...} as necessary.
 %
-\section{Section}
+\section{Introduction}
 
-\subsection{Subsection}
+\section{Requirements}
+Hardware: PC running Windows, Linux or Mac OSX,
+smartphone like iPhone, multi-touch tablets like iPad
+
+Software: Browsers supporting SVG, VML, or Canvas,
+Firefox, Chrome, Internet Explorer, Safari, Opera.
+
+\section{Features}
+\subsection{Importing file formats}
+    * \GEONExT{}
+    * Intergeo file format i2geo
+    * GeoGebra
+    * Cinderella (alpha quality)
+    * Arcview (server based) 
+\subsection{Plug-ins}
+    * moodle
+    * wordpress
+    * mediawiki
+\begin{verbatim}
+<jsxgraph width="500" height="500">
+  var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-2,2,2,-2]});
+  var p = brd.create('point',[1.5,1.5],{face:'o', size:8});
+  brd.create('segment',[[0,0],p],{dash:3});
+</jsxgraph>
+\end{verbatim}                    
+    * drupal 
+
+\subsection{New features}
+    * Bezier curves
+    * Conic sections
+    * \LaTeX{} syntax for labels and texts
+          o ASCIIMathML (falls back to Google chart API)
+          o MathJax (http://www.mathjax.org)
+    * Animations
+    * Flexible layer system 
+
+\section{JessieScript}
+    * Having to program everything with JavaScript to display math with JSXGraph is a hurdle for using it in classroom with students.
+    * Alternative: JessieScript
+    * JessieScript is a syntax similar to what is taught in schools and can be parsed by JSXGraph.
+    * Examples: P(1,1); Q(-2,2); g=[PQ]; k(P,2); M=1/2(P,Q); ||(g,M);
+    * Easy to learn and use
+    * Fosters algorithmic thinking 
+
+
+
 
 \section{Conclusion}
+
+\begin{thebibliography}{99}
+    \bibitem{geosvg} GeometryEditor (http://wme.cs.kent.edu/geosvg/), formerly known as GeoSVG.
+    %\bibitem http://sourceforge.net 
+    %\bibitem http://i2geo.net 
+    \bibitem{sketchpad} http://www.dynamicgeometry.com
+    \bibitem{cabri} http://cabri.com 
+    \bibitem{cinderella} http://cinderella.de 
+    \bibitem{geonext} http://geonext.de 
+    \bibitem{geogebra} http://geogebra.org
+    \bibitem{crockford} Crockford D. (2008) JavaScript: The good parts, Sebastopol, CA, O'Reilly.
+\end{thebibliography}
 
 \end{document}
