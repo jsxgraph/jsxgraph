@@ -237,8 +237,11 @@ JXG.CanvasRenderer.prototype.show = function(el) {
 };
 
 JXG.CanvasRenderer.prototype.remove = function(shape) {
-    // useless
+    // useless 
+    // with the exception of HTML texts
     //el.board.updateRenderer()();
+    if(shape!=null && shape.parentNode != null)
+        shape.parentNode.removeChild(shape);
 };
 
 JXG.CanvasRenderer.prototype.suspendRedraw = function() {
@@ -597,7 +600,6 @@ JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
     this.calcStraight(el,screenCoords1,screenCoords2);
 
     this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
-
 
     this.context.beginPath();
     this.context.moveTo(screenCoords1.scrCoords[1],screenCoords1.scrCoords[2]);

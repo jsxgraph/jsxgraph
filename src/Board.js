@@ -1827,7 +1827,10 @@ JXG.Board.prototype.updateRenderer = function(drag) {
     drag = JXG.getReference(this, drag);
     for(el in this.objects) {
         pEl = this.objects[el];
-        if (!this.needsFullUpdate && !pEl.needsRegularUpdate && !this.renderer.context==JXG.undefined /* for canvas renderer */ ) { continue; }
+        if (!this.needsFullUpdate 
+            && !pEl.needsRegularUpdate 
+            && !this.renderer.context==JXG.undefined /* for canvas renderer */ 
+           ) { continue; }
         if (drag == null || pEl.id != drag.id) {
             //if (this.needsFullUpdate) { pEl.updateRenderer(); }
             pEl.updateRenderer();
