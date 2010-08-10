@@ -333,7 +333,7 @@ JXG.CanvasRenderer.prototype.makeArrows = function(el, scr1, scr2) {
             ],            
         x1, y1, x2, y2, ang;
     
-    if (el.visProp['lastArrow']||el.visProp['firstArrow']) {
+    if (el.visProp['strokeColor']!='none' && (el.visProp['lastArrow']||el.visProp['firstArrow'])) {
         if (el.elementClass==JXG.OBJECT_CLASS_LINE) {
             x1 = scr1.scrCoords[1];
             y1 = scr1.scrCoords[2];
@@ -342,12 +342,15 @@ JXG.CanvasRenderer.prototype.makeArrows = function(el, scr1, scr2) {
         } else {
             return;
         }
+        this.context.save();
         this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
+        this.context.fillStyle = el.visProp['strokeColor'];
         var ang = Math.atan2(y2-y1,x2-x1);
         if (el.visProp['lastArrow']) 
             this.drawFilledPolygon(this.translateShape(this.rotateShape(arrowHead,ang),x2,y2));
         if (el.visProp['firstArrow']) 
             this.drawFilledPolygon(this.translateShape(this.rotateShape(arrowTail,ang),x1,y1));
+        this.context.restore();
     }
 };
 
@@ -391,7 +394,6 @@ JXG.CanvasRenderer.prototype.updatePathStringPrim = function(el) {
     }
     len = Math.min(el.points.length,el.numberPoints);
 
-    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
     this.context.beginPath();
 
     for (i=0; i<len; i++) {
@@ -414,9 +416,16 @@ JXG.CanvasRenderer.prototype.updatePathStringPrim = function(el) {
             nextSymb = symbl;
         }
     }
-    this.context.stroke();
+    this.context.save();
     this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
-    this.context.fill();
+    if (el.visProp.strokeColor!='none') this.context.stroke();
+    this.context.restore();
+    
+    this.context.save();
+    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
+    if (el.visProp.fillColor!='none') this.context.fill();
+    this.context.restore();
+    
     return null;
 };
 
@@ -693,19 +702,19 @@ JXG.CanvasRenderer.prototype.drawEllipse = function(el, m1, m2, sX, sY, rX, rY) 
     if (rX>0.0 && rY>0.0 && !isNaN(m1+m2) ) {
         //this.context.strokeStyle = '';
         //this.context.fillStyle = el.visProp['fillColor'];
+        this.context.beginPath();
+        this.context.moveTo(aX, mY);
+        this.context.bezierCurveTo(aX, mY - vB, mX - hB, aY, mX, aY);
+        this.context.bezierCurveTo(mX + hB, aY, eX, mY - vB, eX, mY);
+        this.context.bezierCurveTo(eX, mY + vB, mX + hB, eY, mX, eY);
+        this.context.bezierCurveTo(mX - hB, eY, aX, mY + vB, aX, mY);
+        this.context.closePath();
+        this.context.save();
         this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
-        this.context.beginPath();
-        this.context.moveTo(aX, mY);
-        this.context.bezierCurveTo(aX, mY - vB, mX - hB, aY, mX, aY);
-        this.context.bezierCurveTo(mX + hB, aY, eX, mY - vB, eX, mY);
-        this.context.bezierCurveTo(eX, mY + vB, mX + hB, eY, mX, eY);
-        this.context.bezierCurveTo(mX - hB, eY, aX, mY + vB, aX, mY);
-        this.context.closePath();
-        this.context.fill();
+        if (el.visProp.fillColor!='none') this.context.fill();
+        this.context.restore();
 
-        this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
-        //this.context.strokeStyle = el.visProp['strokeColor'];
-        //this.context.fillStyle = ''; //el.visProp['strokeColor'];
+/*
         this.context.beginPath();
         this.context.moveTo(aX, mY);
         this.context.bezierCurveTo(aX, mY - vB, mX - hB, aY, mX, aY);
@@ -713,7 +722,11 @@ JXG.CanvasRenderer.prototype.drawEllipse = function(el, m1, m2, sX, sY, rX, rY) 
         this.context.bezierCurveTo(eX, mY + vB, mX + hB, eY, mX, eY);
         this.context.bezierCurveTo(mX - hB, eY, aX, mY + vB, aX, mY);
         this.context.closePath();
-        this.context.stroke();
+*/        
+        this.context.save();
+        this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
+        if (el.visProp.strokeColor!='none') this.context.stroke();
+        this.context.restore();
     }
 };
 
@@ -737,7 +750,6 @@ JXG.CanvasRenderer.prototype.updatePolygonePrim = function(node, el) {
     //node.setAttributeNS(null, 'points', pStr);
     if (len<=0) return;
     
-    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
     this.context.beginPath();
     scrCoords = el.vertices[0].coords.scrCoords;
     this.context.moveTo(scrCoords[1],scrCoords[2]);
@@ -745,8 +757,11 @@ JXG.CanvasRenderer.prototype.updatePolygonePrim = function(node, el) {
             scrCoords = el.vertices[i].coords.scrCoords;
             this.context.lineTo(scrCoords[1],scrCoords[2]);
     }
+    this.context.save();
+    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
     this.context.closePath();
     this.context.fill();
+    this.context.restore();
     // The edges of a polygon are displayed separately (as segments).
     // this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
     // this.context.stroke();
