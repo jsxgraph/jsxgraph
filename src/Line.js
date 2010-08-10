@@ -342,7 +342,6 @@ JXG.Line.prototype.updateStdform = function() {
  */
  JXG.Line.prototype.updateRenderer = function () {
     var wasReal, i;
-
     if (this.needsUpdate && this.visProp['visible']) {
         wasReal = this.isReal;
         this.isReal = (isNaN(this.point1.coords.usrCoords[1]+this.point1.coords.usrCoords[2]+this.point2.coords.usrCoords[1]+this.point2.coords.usrCoords[2]))?false:true;

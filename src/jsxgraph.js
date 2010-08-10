@@ -165,8 +165,8 @@ JXG.JSXGraph = new function () {
         board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height,showCopyright);
         this.boards[board.id] = board;
         // board.initGeonextBoard();  // Construct "Ursprung" and other elements.
+        board.suspendUpdate();
         board.initInfobox();
-
         if((typeof attributes["axis"] != 'undefined') && attributes["axis"]) {
         	board.defaultAxes = {};
             board.defaultAxes.x = board.create('axis', [[0,0], [1,0]], {});
@@ -182,6 +182,7 @@ JXG.JSXGraph = new function () {
         if (showNavi) {
             board.renderer.drawZoomBar(board);
         }
+        board.unsuspendUpdate();
 
         return board;
     };

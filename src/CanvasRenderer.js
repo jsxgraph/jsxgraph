@@ -80,49 +80,48 @@ JXG.CanvasRenderer.prototype.updateStencilBuffer = function(el) {
 };
 
 JXG.CanvasRenderer.prototype.fill = function(el) {
-    var doIt = true;
+    var hasColor = true;
     this.context.save();
     if(typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
         if (el.visProp.highlightFillColor!='none') {
             this.context.globalAlpha = el.visProp.highlightFillOpacity;
             this.context.fillStyle = el.visProp.highlightFillColor;
         } else {
-            doIt = false;
+            hasColor = false;
         }
     } else {
         if (el.visProp.fillColor!='none') {
             this.context.globalAlpha = el.visProp.fillOpacity;
             this.context.fillStyle = el.visProp.fillColor;
         } else {
-            doIt = false;
+            hasColor = false;
         }
     }
-    if (doIt) this.context.fill();
+    if (hasColor) this.context.fill();
     this.context.restore();
     return true;
 };
 
 JXG.CanvasRenderer.prototype.stroke = function(el) {
-    var doIt = true;
+    var hasColor = true;
     this.context.save();
     if(typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
-console.log(el.id);    
         if (el.visProp.highlightStrokeColor!='none') {
             this.context.globalAlpha = el.visProp.highlightStrokeOpacity;
             this.context.strokeStyle = el.visProp.highlightStrokeColor;
         } else {
-            doIt = false;
+            hasColor = false;
         }
     } else {
         if (el.visProp.strokeColor!='none') {
             this.context.globalAlpha = el.visProp.strokeOpacity;
             this.context.strokeStyle = el.visProp.strokeColor;
         } else {
-            doIt = false;
+            hasColor = false;
         }
     }
     this.context.lineWidth = parseFloat(el.visProp.strokeWidth);
-    if (doIt) this.context.stroke();
+    if (hasColor) this.context.stroke();
     this.context.restore();
     return true;
 };
@@ -208,7 +207,9 @@ JXG.CanvasRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin
     for (i=0; i<len; i++) {
         c = axis.ticks[i].scrCoords;
         if (axis.ticks[i].major) {
-            if (axis.labels[i].visProp['visible']) this.drawText(axis.labels[i]);
+            if (axis.labels[i].visProp['visible'] && (axis.board.needsFullUpdate || axis.needsRegularUpdate)) {
+                this.drawText(axis.labels[i]);
+            }
             this.context.moveTo(c[1]+dxMaj, c[2]-dyMaj);
             this.context.lineTo(c[1]-dxMaj, c[2]+dyMaj);
         }
@@ -464,7 +465,7 @@ JXG.CanvasRenderer.prototype.updatePathStringPrim = function(el) {
             nextSymb = symbl;
         }
     }
-    this.context.closePath();
+    //this.context.closePath();
     this.fill(el);
     this.stroke(el);
 /*    
@@ -658,7 +659,7 @@ JXG.CanvasRenderer.prototype.updatePoint = function(el) {
     this.drawPoint(el);
 };
 
-JXG.AbstractRenderer.prototype.changePointStyle = function(/** Point */el) {
+JXG.CanvasRenderer.prototype.changePointStyle = function(/** Point */el) {
     this.drawPoint(el);
 };
 
@@ -706,7 +707,6 @@ JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
     var scr1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
         scr2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
         ax, ay, bx, by, beta, sgn, x, y, m;
-
     this.calcStraight(el,scr1,scr2);
 
     //this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
@@ -715,7 +715,7 @@ JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
     this.context.moveTo(scr1.scrCoords[1],scr1.scrCoords[2]);
     this.context.lineTo(scr2.scrCoords[1],scr2.scrCoords[2]);
     //this.context.stroke();
-    this.context.closePath();
+    //this.context.closePath();
     this.stroke(el);
     
     
@@ -738,7 +738,7 @@ JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
     }
 
     // if this line has arrows attached, update them, too.
-    //this.makeArrows(el,scr1,scr2);
+    this.makeArrows(el,scr1,scr2);
 };
 
 JXG.CanvasRenderer.prototype.updateLine = function(/** Line */ el) {
@@ -837,12 +837,17 @@ JXG.CanvasRenderer.prototype.updatePolygonePrim = function(node, el) {
 };
 
 JXG.CanvasRenderer.prototype.highlight = function(/** JXG.GeometryElement */ obj) {
-console.log("high "+obj.id);
+    obj.board.prepareUpdate();
+    obj.board.renderer.suspendRedraw();
     obj.board.updateRenderer();
+    obj.board.renderer.unsuspendRedraw();
     return this;
 };
 
 JXG.CanvasRenderer.prototype.noHighlight = function(/** JXG.GeometryElement */ obj) {
+    obj.board.prepareUpdate();
+    obj.board.renderer.suspendRedraw();
     obj.board.updateRenderer();
+    obj.board.renderer.unsuspendRedraw();
     return this;
 };

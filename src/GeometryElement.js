@@ -703,7 +703,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
         opacity,
         pair;
 
-    for (i=0; i<arguments.length; i++) {
+   for (i=0; i<arguments.length; i++) {
         pairRaw = arguments[i];
         if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
             pair = pairRaw.split(':');

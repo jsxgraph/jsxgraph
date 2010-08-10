@@ -263,7 +263,6 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
             labelText = pos.toString();
             if(labelText.length > 5)
                 labelText = pos.toPrecision(3).toString();
-            
             label = new JXG.Text(board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], id+i+"Label", '', null, true, board.options.text.defaultDisplay);
             label.distanceX = 0;
             label.distanceY = -10;
@@ -335,9 +334,13 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     // BEGIN: clean up the mess we left from our last run through this function
     // remove existing ticks
     if(this.ticks != null) {
-        for(var j=0; j<this.ticks.length; j++) {
-            if(this.labels[j] != null) {
-                if (this.labels[j].visProp['visible']) { this.board.renderer.remove(this.labels[j].rendNode); }
+        if (this.board.needsFullUpdate     // Do not remove labels because of efficiency
+            || this.needsRegularUpdate
+            ) {
+            for(var j=0; j<this.ticks.length; j++) {
+                if(this.labels[j] != null && this.labels[j].visProp['visible']) { 
+                    this.board.renderer.remove(this.labels[j].rendNode); 
+                }
             }
         }
     }

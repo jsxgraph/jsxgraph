@@ -870,7 +870,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     if (this.mode==this.BOARD_MODE_DRAG) {
         for(el in this.objects) {
             pEl = this.objects[el];
-            if( (pEl.hasPoint != undefined)
+            if( (typeof pEl.hasPoint != 'undefined')
                     && ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)
                         /*|| (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_LINE)  // not yet
                         || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CIRCLE)
@@ -1080,7 +1080,12 @@ JXG.Board.prototype.dehighlightAll = function(x,y) {
                 delete(this.highlightedObjects[el]);
         }
     }
-    if (this.options.renderer=='canvas') this.updateRenderer();
+    if (this.options.renderer=='canvas') { 
+        this.prepareUpdate();
+        this.renderer.suspendRedraw();
+        this.updateRenderer();
+        this.renderer.unsuspendRedraw();
+    }
     return this;
 };
 
@@ -1178,6 +1183,7 @@ JXG.Board.prototype.setBoardMode = function (mode) {
  */
 JXG.Board.prototype.moveOrigin = function () {
     var el, ob;
+    
     for (ob in this.objects) {
         el = this.objects[ob];
         if (!el.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
@@ -1188,7 +1194,7 @@ JXG.Board.prototype.moveOrigin = function () {
                 el.coords.usr2screen();
         }
     }
-
+    
     this.clearTraces();
 
     this.fullUpdate();
@@ -1845,7 +1851,7 @@ JXG.Board.prototype.updateRenderer = function(drag) {
 /**
   * Adds a hook to this board.
   * @param {function} hook A function to be called by the board after an update occured.
- * @param {string} m When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
+  * @param {string} m When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
   * @type int
   * @return Id of the hook, required to remove the hook from the board.
   */
@@ -1918,7 +1924,6 @@ JXG.Board.prototype.removeChild = function(board) {
   */
 JXG.Board.prototype.update = function(drag) {
     var i, len, boardId, b;
-
     if (this.isSuspendedUpdate) { return this; }
     this.prepareUpdate(drag).updateElements(drag).updateConditions();
     this.renderer.suspendRedraw();
