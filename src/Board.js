@@ -996,8 +996,8 @@ JXG.Board.prototype.mouseMoveListener = function (Event, i) {
                 // this is required in any case because otherwise the box won't be shown until the point is dragged
                 this.updateInfobox(pEl);
                 if(this.highlightedObjects[el] == null) { // highlight only if not highlighted
-                    pEl.highlight();
                     this.highlightedObjects[el] = pEl;
+                    pEl.highlight();
                 }
             }
         }
@@ -1080,6 +1080,7 @@ JXG.Board.prototype.dehighlightAll = function(x,y) {
                 delete(this.highlightedObjects[el]);
         }
     }
+    if (this.options.renderer=='canvas') this.updateRenderer();
     return this;
 };
 
@@ -1829,7 +1830,7 @@ JXG.Board.prototype.updateRenderer = function(drag) {
         pEl = this.objects[el];
         if (!this.needsFullUpdate 
             && !pEl.needsRegularUpdate 
-            && !this.renderer.context==JXG.undefined /* for canvas renderer */ 
+            && !this.options.renderer=='canvas' /* for canvas renderer */ 
            ) { continue; }
         if (drag == null || pEl.id != drag.id) {
             //if (this.needsFullUpdate) { pEl.updateRenderer(); }

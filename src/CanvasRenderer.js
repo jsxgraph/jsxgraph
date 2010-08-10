@@ -57,7 +57,7 @@ JXG.CanvasRenderer.prototype.updateStencilBuffer = function(el) {
     var highlight;
 
     // this highlight thing doesn't work by now ... :/
-    if(typeof el.board.highlightedObjects[el] != 'undefined' && el.board.highlightedObjects[el] != null) {
+    if(typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
         if (el.visProp.strokeColor!='none') this.context.strokeStyle = el.visProp.highlightStrokeColor;
         if (el.visProp.fillColor!='none') this.context.fillStyle = el.visProp.highlightFillColor;
         this.context.lineWidth = parseFloat(el.visProp.strokeWidth);
@@ -77,6 +77,54 @@ JXG.CanvasRenderer.prototype.updateStencilBuffer = function(el) {
         highlight = false;
     }
     return highlight;
+};
+
+JXG.CanvasRenderer.prototype.fill = function(el) {
+    var doIt = true;
+    this.context.save();
+    if(typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
+        if (el.visProp.highlightFillColor!='none') {
+            this.context.globalAlpha = el.visProp.highlightFillOpacity;
+            this.context.fillStyle = el.visProp.highlightFillColor;
+        } else {
+            doIt = false;
+        }
+    } else {
+        if (el.visProp.fillColor!='none') {
+            this.context.globalAlpha = el.visProp.fillOpacity;
+            this.context.fillStyle = el.visProp.fillColor;
+        } else {
+            doIt = false;
+        }
+    }
+    if (doIt) this.context.fill();
+    this.context.restore();
+    return true;
+};
+
+JXG.CanvasRenderer.prototype.stroke = function(el) {
+    var doIt = true;
+    this.context.save();
+    if(typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
+console.log(el.id);    
+        if (el.visProp.highlightStrokeColor!='none') {
+            this.context.globalAlpha = el.visProp.highlightStrokeOpacity;
+            this.context.strokeStyle = el.visProp.highlightStrokeColor;
+        } else {
+            doIt = false;
+        }
+    } else {
+        if (el.visProp.strokeColor!='none') {
+            this.context.globalAlpha = el.visProp.strokeOpacity;
+            this.context.strokeStyle = el.visProp.strokeColor;
+        } else {
+            doIt = false;
+        }
+    }
+    this.context.lineWidth = parseFloat(el.visProp.strokeWidth);
+    if (doIt) this.context.stroke();
+    this.context.restore();
+    return true;
 };
 
 JXG.CanvasRenderer.prototype.setShadow = function(el) {
@@ -281,7 +329,7 @@ JXG.CanvasRenderer.prototype.makeArrow = function(node,el,idAppendix) {
  * drawFilledPolygon, translateShape, rotateShape 
  * are necessary for drawing arrow heads.
  */
-JXG.CanvasRenderer.prototype.drawFilledPolygon = function(shape) {
+JXG.CanvasRenderer.prototype._drawFilledPolygon = function(shape) {
     var i, len = shape.length;
     if (len<=0) return;
     this.context.beginPath();
@@ -293,7 +341,7 @@ JXG.CanvasRenderer.prototype.drawFilledPolygon = function(shape) {
     this.context.fill();
 };
 
-JXG.CanvasRenderer.prototype.translateShape = function(shape,x,y) {
+JXG.CanvasRenderer.prototype._translateShape = function(shape,x,y) {
     var i, rv = [], len = shape.length;
     if (len<=0) return shape;
     for(i=0;i<len;i++) {
@@ -302,17 +350,17 @@ JXG.CanvasRenderer.prototype.translateShape = function(shape,x,y) {
     return rv;
 };
 
-JXG.CanvasRenderer.prototype.rotateShape = function(shape,ang) {
+JXG.CanvasRenderer.prototype._rotateShape = function(shape,ang) {
     var i, rv = [], len = shape.length;
     if (len<=0) return shape;
     
     for(i=0;i<len;i++) {
-        rv.push(this.rotatePoint(ang,shape[i][0],shape[i][1]));
+        rv.push(this._rotatePoint(ang,shape[i][0],shape[i][1]));
     }
     return rv;
 };
 
-JXG.CanvasRenderer.prototype.rotatePoint = function(ang,x,y) {
+JXG.CanvasRenderer.prototype._rotatePoint = function(ang,x,y) {
     return [
         (x * Math.cos(ang)) - (y * Math.sin(ang)),
         (x * Math.sin(ang)) + (y * Math.cos(ang))
@@ -347,9 +395,9 @@ JXG.CanvasRenderer.prototype.makeArrows = function(el, scr1, scr2) {
         this.context.fillStyle = el.visProp['strokeColor'];
         var ang = Math.atan2(y2-y1,x2-x1);
         if (el.visProp['lastArrow']) 
-            this.drawFilledPolygon(this.translateShape(this.rotateShape(arrowHead,ang),x2,y2));
+            this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowHead,ang),x2,y2));
         if (el.visProp['firstArrow']) 
-            this.drawFilledPolygon(this.translateShape(this.rotateShape(arrowTail,ang),x1,y1));
+            this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowTail,ang),x1,y1));
         this.context.restore();
     }
 };
@@ -416,6 +464,10 @@ JXG.CanvasRenderer.prototype.updatePathStringPrim = function(el) {
             nextSymb = symbl;
         }
     }
+    this.context.closePath();
+    this.fill(el);
+    this.stroke(el);
+/*    
     this.context.save();
     this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
     if (el.visProp.strokeColor!='none') this.context.stroke();
@@ -425,11 +477,12 @@ JXG.CanvasRenderer.prototype.updatePathStringPrim = function(el) {
     this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
     if (el.visProp.fillColor!='none') this.context.fill();
     this.context.restore();
-    
+*/    
     return null;
 };
 
 JXG.CanvasRenderer.prototype.updatePolygonePrim = function(node, el) {
+/*    
     return;
     var pStr = '', 
         scrCoords, i,
@@ -442,6 +495,7 @@ JXG.CanvasRenderer.prototype.updatePolygonePrim = function(node, el) {
         if(i<len-2) { pStr += " "; }
     }
     node.setAttributeNS(null, 'points', pStr);
+*/    
 };
 
 JXG.CanvasRenderer.prototype.appendChildPrim = function(node,level) {
@@ -497,30 +551,38 @@ JXG.CanvasRenderer.prototype.drawPoint = function(/** Point */ el) {
     switch(f) {
         case 'cross':  // x
         case 'x':
-            this.context.globalAlpha = el.visProp[(highlight ? 'highlightS' : 's' ) + 'trokeOpacity'];
+            //this.context.globalAlpha = el.visProp[(highlight ? 'highlightS' : 's' ) + 'trokeOpacity'];
             this.context.beginPath();
             this.context.moveTo(scr[1]-size, scr[2]-size);
             this.context.lineTo(scr[1]+size, scr[2]+size);
             this.context.moveTo(scr[1]+size, scr[2]-size);
             this.context.lineTo(scr[1]-size, scr[2]+size);
-            //this.context.stroke();
+            this.context.closePath();
+            this.stroke(el);
         break;
         case 'circle': // dot
         case 'o':
             if (size<=0) break;
             // draw the circle's stroke
+            /*
             this.context.save();
             this.context.globalAlpha = el.visProp[(highlight ? 'highlightS' : 's' ) + 'trokeOpacity'];
             this.context.fillStyle = el.visProp.strokeColor;
+            */
             this.context.beginPath();
             this.context.arc(scr[1], scr[2], size+1+stroke05, 0, 2*Math.PI, false);
-            this.context.fill();
+            this.context.closePath();
+            //this.context.fill();
+            this.fill(el);
+            this.stroke(el);
 
             // draw the circle's fill
+            /*
             this.context.restore();
             this.context.beginPath();
             this.context.arc(scr[1], scr[2], size-stroke05, 0, 2*Math.PI, false);
             this.context.fill();
+            */
         break;
         case 'square':  // rectangle
         case '[]':
@@ -533,13 +595,14 @@ JXG.CanvasRenderer.prototype.drawPoint = function(/** Point */ el) {
         break;
         case 'plus':  // +
         case '+':
-            this.context.globalAlpha = el.visProp[(highlight ? 'highlightS' : 's' ) + 'trokeOpacity'];
+            //this.context.globalAlpha = el.visProp[(highlight ? 'highlightS' : 's' ) + 'trokeOpacity'];
             this.context.beginPath();
             this.context.moveTo(scr[1]-size, scr[2]);
             this.context.lineTo(scr[1]+size, scr[2]);
             this.context.moveTo(scr[1], scr[2]-size);
             this.context.lineTo(scr[1], scr[2]+size);
-            //this.context.stroke();
+            this.context.closePath();
+            this.stroke(el);
         break;
         case 'diamond':   // <>
         case '<>':
@@ -549,7 +612,7 @@ JXG.CanvasRenderer.prototype.drawPoint = function(/** Point */ el) {
             this.context.lineTo(scr[1]+size, scr[2]);
             this.context.lineTo(scr[1], scr[2]-size);
             this.context.closePath();
-            this.context.fill();
+            this.fill(el);
         break;
         case 'triangleup':
         case 'a':
@@ -559,7 +622,7 @@ JXG.CanvasRenderer.prototype.drawPoint = function(/** Point */ el) {
             this.context.lineTo(scr[1]-sqrt32, scr[2]+s05);
             this.context.lineTo(scr[1]+sqrt32, scr[2]+s05);
             this.context.closePath();
-            this.context.fill();
+            this.fill(el);
         break;
         case 'triangledown':
         case 'v':
@@ -568,7 +631,7 @@ JXG.CanvasRenderer.prototype.drawPoint = function(/** Point */ el) {
             this.context.lineTo(scr[1]-sqrt32, scr[2]-s05);
             this.context.lineTo(scr[1]+sqrt32, scr[2]-s05);
             this.context.closePath();
-            this.context.fill();
+            this.fill(el);
         break;
         case 'triangleleft':
         case '<':
@@ -577,7 +640,7 @@ JXG.CanvasRenderer.prototype.drawPoint = function(/** Point */ el) {
             this.context.lineTo(scr[1]+s05, scr[2]-sqrt32);
             this.context.lineTo(scr[1]+s05, scr[2]+sqrt32);
             this.context.closePath();
-            this.context.fill();
+            this.fill(el);
         break;
         case 'triangleright':
         case '>':
@@ -586,7 +649,7 @@ JXG.CanvasRenderer.prototype.drawPoint = function(/** Point */ el) {
             this.context.lineTo(scr[1]-s05, scr[2]-sqrt32);
             this.context.lineTo(scr[1]-s05, scr[2]+sqrt32);
             this.context.closePath();
-            this.context.fill();
+            this.fill(el);
         break;
     }
 };
@@ -646,12 +709,16 @@ JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
 
     this.calcStraight(el,scr1,scr2);
 
-    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
+    //this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
 
     this.context.beginPath();
     this.context.moveTo(scr1.scrCoords[1],scr1.scrCoords[2]);
     this.context.lineTo(scr2.scrCoords[1],scr2.scrCoords[2]);
-    this.context.stroke();
+    //this.context.stroke();
+    this.context.closePath();
+    this.stroke(el);
+    
+    
     // Update the image which is connected to the line:
     if (el.image!=null) {
         ax = scr1.scrCoords[1];
@@ -671,7 +738,7 @@ JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
     }
 
     // if this line has arrows attached, update them, too.
-    this.makeArrows(el,scr1,scr2);
+    //this.makeArrows(el,scr1,scr2);
 };
 
 JXG.CanvasRenderer.prototype.updateLine = function(/** Line */ el) {
@@ -709,10 +776,12 @@ JXG.CanvasRenderer.prototype.drawEllipse = function(el, m1, m2, sX, sY, rX, rY) 
         this.context.bezierCurveTo(eX, mY + vB, mX + hB, eY, mX, eY);
         this.context.bezierCurveTo(mX - hB, eY, aX, mY + vB, aX, mY);
         this.context.closePath();
-        this.context.save();
-        this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
-        if (el.visProp.fillColor!='none') this.context.fill();
-        this.context.restore();
+        //this.context.save();
+        //this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
+        //if (el.visProp.fillColor!='none') this.context.fill();
+        //this.context.restore();
+
+        this.fill(el);
 
 /*
         this.context.beginPath();
@@ -723,10 +792,11 @@ JXG.CanvasRenderer.prototype.drawEllipse = function(el, m1, m2, sX, sY, rX, rY) 
         this.context.bezierCurveTo(mX - hB, eY, aX, mY + vB, aX, mY);
         this.context.closePath();
 */        
-        this.context.save();
-        this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
-        if (el.visProp.strokeColor!='none') this.context.stroke();
-        this.context.restore();
+        //this.context.save();
+        //this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
+        //if (el.visProp.strokeColor!='none') this.context.stroke();
+        //this.context.restore();
+        this.stroke(el);
     }
 };
 
@@ -757,12 +827,22 @@ JXG.CanvasRenderer.prototype.updatePolygonePrim = function(node, el) {
             scrCoords = el.vertices[i].coords.scrCoords;
             this.context.lineTo(scrCoords[1],scrCoords[2]);
     }
-    this.context.save();
-    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
     this.context.closePath();
-    this.context.fill();
-    this.context.restore();
+    
+    //this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
+    this.fill(el);
     // The edges of a polygon are displayed separately (as segments).
     // this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
     // this.context.stroke();
+};
+
+JXG.CanvasRenderer.prototype.highlight = function(/** JXG.GeometryElement */ obj) {
+console.log("high "+obj.id);
+    obj.board.updateRenderer();
+    return this;
+};
+
+JXG.CanvasRenderer.prototype.noHighlight = function(/** JXG.GeometryElement */ obj) {
+    obj.board.updateRenderer();
+    return this;
 };
