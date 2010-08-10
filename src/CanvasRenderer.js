@@ -415,6 +415,8 @@ JXG.CanvasRenderer.prototype.updatePathStringPrim = function(el) {
         }
     }
     this.context.stroke();
+    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
+    this.context.fill();
     return null;
 };
 
