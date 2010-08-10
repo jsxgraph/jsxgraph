@@ -471,11 +471,24 @@ JXG.SVGRenderer.prototype.createArrowHead = function(el,idAppendix) {
         
     if (idAppendix!=null) { id += idAppendix; }
     node2 = this.createPrim('marker',id);
+/*
     node2.setAttributeNS(null, 'viewBox', '0 0 10 6');
     node2.setAttributeNS(null, 'refY', '3');
-    node2.setAttributeNS(null, 'markerUnits', 'strokeWidth');
     node2.setAttributeNS(null, 'markerHeight', '6');
     node2.setAttributeNS(null, 'markerWidth', '6');
+    if (idAppendix=='End') {
+        node2.setAttributeNS(null, 'refX', '0');
+        node3.setAttributeNS(null, 'd', 'M 0 3 L 10 6 L 10 0 z');
+    } else {
+        node2.setAttributeNS(null, 'refX', '10');
+        node3.setAttributeNS(null, 'd', 'M 0 0 L 10 3 L 0 6 z');
+    }
+*/    
+    node2.setAttributeNS(null, 'viewBox', '0 0 12 8');
+    node2.setAttributeNS(null, 'refY', '4');
+    node2.setAttributeNS(null, 'markerUnits', 'strokeWidth');
+    node2.setAttributeNS(null, 'markerHeight', '8');
+    node2.setAttributeNS(null, 'markerWidth', '12');
     node2.setAttributeNS(null, 'orient', 'auto');
     node2.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);
     node2.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);            
@@ -484,21 +497,24 @@ JXG.SVGRenderer.prototype.createArrowHead = function(el,idAppendix) {
     node3 = this.container.ownerDocument.createElementNS(this.svgNamespace,'path');
     if (idAppendix=='End') {
         node2.setAttributeNS(null, 'refX', '0');
-        node3.setAttributeNS(null, 'd', 'M 0 3 L 10 6 L 10 0 z');
+        node3.setAttributeNS(null, 'd', 'M 0 4 L 12 8 L 12 0 z');
     } else {
-        node2.setAttributeNS(null, 'refX', '10');
-        node3.setAttributeNS(null, 'd', 'M 0 0 L 10 3 L 0 6 z');
+        node2.setAttributeNS(null, 'refX', '12');
+        node3.setAttributeNS(null, 'd', 'M 0 0 L 12 4 L 0 8 z');
     }
     node2.appendChild(node3);
     return node2;
 };
 
+/*
+// seems to be unused
 JXG.SVGRenderer.prototype.makeArrow = function(node,el,idAppendix) {
     var node2 = this.createArrowHead(el,idAppendix);
     this.defs.appendChild(node2);
     node.setAttributeNS(null, 'marker-end', 'url(#'+this.container.id+'_'+el.id+'Triangle)');
     el.rendNodeTriangle = node2;
 };
+*/
 
 JXG.SVGRenderer.prototype.makeArrows = function(el) {
     var node2;

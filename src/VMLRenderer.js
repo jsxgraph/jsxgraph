@@ -455,11 +455,14 @@ JXG.VMLRenderer.prototype.appendNodesToElement = function(element, type) {
     element.rendNode = this.getElementById(element.id);
 };
 
+/*
+// seems to be unused
 JXG.VMLRenderer.prototype.makeArrow = function(node,el,idAppendix) {
     var nodeStroke = el.rendNodeStroke;
     this.setAttr(nodeStroke, 'endarrow', 'block');
     this.setAttr(nodeStroke, 'endarrowlength', 'long');
 };
+*/
 
 JXG.VMLRenderer.prototype.makeArrows = function(el) {
     var nodeStroke;

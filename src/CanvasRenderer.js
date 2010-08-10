@@ -270,50 +270,85 @@ JXG.CanvasRenderer.prototype.createArrowHead = function(el,idAppendix) {
     // we have to draw arrow heads directly in the draw line methods
 };
 
+/*
+// seems to be unused
 JXG.CanvasRenderer.prototype.makeArrow = function(node,el,idAppendix) {
     // we have to draw arrow heads directly in the draw line methods
 };
+*/
 
-JXG.CanvasRenderer.prototype.makeArrows = function(el) {
-    // not done yet
-    return;
+/*
+ * drawFilledPolygon, translateShape, rotateShape 
+ * are necessary for drawing arrow heads.
+ */
+JXG.CanvasRenderer.prototype.drawFilledPolygon = function(shape) {
+    var i, len = shape.length;
+    if (len<=0) return;
+    this.context.beginPath();
+    this.context.moveTo(shape[0][0],shape[0][1]);
+    for(i=0;i<len;i++) {
+        if (i > 0) this.context.lineTo(shape[i][0],shape[i][1]);
+    }
+    this.context.lineTo(shape[0][0],shape[0][1]);
+    this.context.fill();
+};
 
-    var node2;
-    if (el.visPropOld['firstArrow']==el.visProp['firstArrow'] && el.visPropOld['lastArrow']==el.visProp['lastArrow']) {
-        return;
+JXG.CanvasRenderer.prototype.translateShape = function(shape,x,y) {
+    var i, rv = [], len = shape.length;
+    if (len<=0) return shape;
+    for(i=0;i<len;i++) {
+        rv.push([ shape[i][0] + x, shape[i][1] + y ]);
     }
-    if(el.visProp['firstArrow']) {
-        node2 = el.rendNodeTriangleStart;
-        if(node2 == null) {
-            node2 = this.createArrowHead(el,'End');
-            this.defs.appendChild(node2);            
-            el.rendNodeTriangleStart = node2;
-            el.rendNode.setAttributeNS(null, 'marker-start', 'url(#'+this.container.id+'_'+el.id+'TriangleEnd)');    
-        }    
+    return rv;
+};
+
+JXG.CanvasRenderer.prototype.rotateShape = function(shape,ang) {
+    var i, rv = [], len = shape.length;
+    if (len<=0) return shape;
+    
+    for(i=0;i<len;i++) {
+        rv.push(this.rotatePoint(ang,shape[i][0],shape[i][1]));
     }
-    else {
-        node2 = el.rendNodeTriangleStart;
-        if(node2 != null) {
-            this.remove(node2);
+    return rv;
+};
+
+JXG.CanvasRenderer.prototype.rotatePoint = function(ang,x,y) {
+    return [
+        (x * Math.cos(ang)) - (y * Math.sin(ang)),
+        (x * Math.sin(ang)) + (y * Math.cos(ang))
+    ];
+};
+
+JXG.CanvasRenderer.prototype.makeArrows = function(el, scr1, scr2) {
+    // not done yet for curves and arcs.
+    var arrowHead = [
+            [ 2, 0 ],
+            [ -10, -4 ],
+            [ -10, 4]
+            ],
+        arrowTail = [
+            [ -2, 0 ],
+            [ 10, -4 ],
+            [ 10, 4]
+            ],            
+        x1, y1, x2, y2, ang;
+    
+    if (el.visProp['lastArrow']||el.visProp['firstArrow']) {
+        if (el.elementClass==JXG.OBJECT_CLASS_LINE) {
+            x1 = scr1.scrCoords[1];
+            y1 = scr1.scrCoords[2];
+            x2 = scr2.scrCoords[1];
+            y2 = scr2.scrCoords[2];
+        } else {
+            return;
         }
+        this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
+        var ang = Math.atan2(y2-y1,x2-x1);
+        if (el.visProp['lastArrow']) 
+            this.drawFilledPolygon(this.translateShape(this.rotateShape(arrowHead,ang),x2,y2));
+        if (el.visProp['firstArrow']) 
+            this.drawFilledPolygon(this.translateShape(this.rotateShape(arrowTail,ang),x1,y1));
     }
-    if(el.visProp['lastArrow']) {
-        node2 = el.rendNodeTriangleEnd;
-        if(node2 == null) {
-            node2 = this.createArrowHead(el,'Start');
-            this.defs.appendChild(node2);            
-            el.rendNodeTriangleEnd = node2;
-            el.rendNode.setAttributeNS(null, 'marker-end', 'url(#'+this.container.id+'_'+el.id+'TriangleStart)'); 
-        }    
-    }
-    else {
-        node2 = el.rendNodeTriangleEnd;
-        if(node2 != null) {
-            this.remove(node2);
-        }        
-    }
-    el.visPropOld['firstArrow'] = el.visProp['firstArrow'];
-    el.visPropOld['lastArrow'] = el.visProp['lastArrow'];
 };
 
 JXG.CanvasRenderer.prototype.updateLinePrim = function(node,p1x,p1y,p2x,p2y) {
@@ -461,6 +496,7 @@ JXG.CanvasRenderer.prototype.drawPoint = function(/** Point */ el) {
         break;
         case 'circle': // dot
         case 'o':
+            if (size<=0) break;
             // draw the circle's stroke
             this.context.save();
             this.context.globalAlpha = el.visProp[(highlight ? 'highlightS' : 's' ) + 'trokeOpacity'];
@@ -593,24 +629,24 @@ JXG.CanvasRenderer.prototype.updateText = function(/** JXG.Text */ el) {
 };
 
 JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
-    var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
-        screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
+    var scr1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
+        scr2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
         ax, ay, bx, by, beta, sgn, x, y, m;
 
-    this.calcStraight(el,screenCoords1,screenCoords2);
+    this.calcStraight(el,scr1,scr2);
 
     this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
 
     this.context.beginPath();
-    this.context.moveTo(screenCoords1.scrCoords[1],screenCoords1.scrCoords[2]);
-    this.context.lineTo(screenCoords2.scrCoords[1],screenCoords2.scrCoords[2]);
+    this.context.moveTo(scr1.scrCoords[1],scr1.scrCoords[2]);
+    this.context.lineTo(scr2.scrCoords[1],scr2.scrCoords[2]);
     this.context.stroke();
     // Update the image which is connected to the line:
     if (el.image!=null) {
-        ax = screenCoords1.scrCoords[1];
-        ay = screenCoords1.scrCoords[2];
-        bx = screenCoords2.scrCoords[1];
-        by = screenCoords2.scrCoords[2];
+        ax = scr1.scrCoords[1];
+        ay = scr1.scrCoords[2];
+        bx = scr2.scrCoords[1];
+        by = scr2.scrCoords[2];
 
         beta = Math.atan2(by-ay,bx-ax);
         x = 250; //ax;
@@ -624,7 +660,7 @@ JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
     }
 
     // if this line has arrows attached, update them, too.
-    this.makeArrows(el);
+    this.makeArrows(el,scr1,scr2);
 };
 
 JXG.CanvasRenderer.prototype.updateLine = function(/** Line */ el) {
