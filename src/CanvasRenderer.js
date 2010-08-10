@@ -367,7 +367,7 @@ JXG.CanvasRenderer.prototype.updateRectPrim = function(node,x,y,w,h) {
     // not required
 };
 
-JXG.CanvasRenderer.prototype.updatePathPrim = function(node, pointString, board) {  // board not necessary in SVG
+JXG.CanvasRenderer.prototype.updatePathPrim = function(node, pointString, board) { 
     // not required
 };
 
@@ -415,7 +415,7 @@ JXG.CanvasRenderer.prototype.updatePathStringPrim = function(el) {
         }
     }
     this.context.stroke();
-    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightF' : 'f' ) + 'illOpacity'];
+    this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
     this.context.fill();
     return null;
 };

@@ -66,8 +66,12 @@ JXG.JSXGraph = new function () {
 
         /* and set the rendererType according to the browser */
         if ((!ie) || (opera) || (ie && parseFloat(ie[1])>=9.0) ) {
-            //this.rendererType = 'svg';
-            JXG.Options.renderer = 'svg';
+            if (navigator.appVersion.match(/Android.*AppleWebKit/)) {
+                JXG.Options.renderer = 'canvas';
+            } else {
+                //this.rendererType = 'svg';
+                JXG.Options.renderer = 'svg';
+            }
         }
         else {
             //if(Silverlight.available)
@@ -195,9 +199,14 @@ JXG.JSXGraph = new function () {
 
         if(JXG.Options.renderer == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
-        } else {
+        } else if(JXG.Options.renderer == 'vml') {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
+        } else if(JXG.Options.renderer == 'silverlight') {
+            renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
+        } else {
+            renderer = new JXG.CanvasRenderer(document.getElementById(box));
         }
+        
         //var dimensions = document.getElementById(box).getDimensions();
         dimensions = JXG.getDimensions(box);
 
@@ -226,8 +235,12 @@ JXG.JSXGraph = new function () {
 
         if(JXG.Options.renderer == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
-        } else {
+        } else if(JXG.Options.renderer == 'vml') {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
+        } else if(JXG.Options.renderer == 'silverlight') {
+            renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
+        } else {
+            renderer = new JXG.CanvasRenderer(document.getElementById(box));
         }
         //var dimensions = document.getElementById(box).getDimensions();
         dimensions = JXG.getDimensions(box);
