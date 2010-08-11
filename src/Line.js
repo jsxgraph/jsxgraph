@@ -351,9 +351,12 @@ JXG.Line.prototype.updateStdform = function() {
                 if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content);
             }
             this.board.renderer.updateLine(this);
-            
-            for (i=0;i<this.ticks.length;i++)                   // This is necessary for the CanvasRenderer
-                this.ticks[i].prepareUpdate().updateRenderer(); // No idea, why other Renderer work without it.
+/*            
+            if (this.board.options.renderer == 'canvas') { 
+                for (i=0;i<this.ticks.length;i++)                   // This is necessary for the CanvasRenderer
+                    this.ticks[i].prepareUpdate().updateRenderer(); // No idea, why other Renderer work without it.
+            }
+*/            
         } else {
             if (wasReal!=this.isReal) {
                 this.board.renderer.hide(this);
@@ -1094,9 +1097,8 @@ JXG.createAxis = function(board, parents, attributes) {
             dist = 1.0; //len;
         }
         
-        defTicks = board.create('ticks', [line, dist], attributes);
-        defTicks.needsRegularUpdate = false;
-        line.defaultTicks = defTicks;
+        line.defaultTicks = board.create('ticks', [line, dist], attributes);
+        line.defaultTicks.needsRegularUpdate = false;
     }
     else
         throw new Error("JSXGraph: Can't create point with parent types '" + 

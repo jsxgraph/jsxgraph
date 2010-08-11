@@ -1,3 +1,4 @@
+globali=0;
 /*
     Copyright 2008,2009
         Matthias Ehmann,
@@ -219,8 +220,6 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
      *   * Special ticks behave oddly. See example ticked_lines.html and drag P2 around P1.
      * 
      */
-    
-    
         // Point 1 of the line
     var p1 = this.line.point1,
         // Point 2 of the line
@@ -334,14 +333,14 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     // BEGIN: clean up the mess we left from our last run through this function
     // remove existing ticks
     if(this.ticks != null) {
-        if (this.board.needsFullUpdate     // Do not remove labels because of efficiency
-            || this.needsRegularUpdate
-            ) {
+//         if (true || this.board.needsFullUpdate     // Do not remove labels because of efficiency
+//             || this.needsRegularUpdate
+//             ) {
             for(var j=0; j<this.ticks.length; j++) {
                 if(this.labels[j] != null && this.labels[j].visProp['visible']) { 
                     this.board.renderer.remove(this.labels[j].rendNode); 
                 }
-            }
+//             }
         }
     }
 
@@ -497,6 +496,8 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 };
 
 /**
+ * ????????????
+ * Seems not to be used!!!!!!!!!
  * Uses the boards renderer to update the arc.
  * update() is not needed for arc.
  */

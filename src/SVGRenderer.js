@@ -245,7 +245,7 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     for (i=0; i<len; i++) {
         c = axis.ticks[i].scrCoords;
         if (axis.ticks[i].major) {
-            if (axis.labels[i].visProp['visible'] && (axis.board.needsFullUpdate || axis.needsRegularUpdate)) {
+            if (axis.labels[i].visProp['visible']) {
                 this.drawText(axis.labels[i]);
             }
             tickStr += "M " + (c[1]+dxMaj) + " " + (c[2]-dyMaj) + " L " + (c[1]-dxMaj) + " " + (c[2]+dyMaj) + " ";

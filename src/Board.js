@@ -1835,8 +1835,8 @@ JXG.Board.prototype.updateRenderer = function(drag) {
     for(el in this.objects) {
         pEl = this.objects[el];
         if (!this.needsFullUpdate 
-            && !pEl.needsRegularUpdate 
-            && !this.options.renderer=='canvas' /* for canvas renderer */ 
+            && !pEl.needsRegularUpdate
+            && this.options.renderer!='canvas' /* for canvas renderer */ 
            ) { continue; }
         if (drag == null || pEl.id != drag.id) {
             //if (this.needsFullUpdate) { pEl.updateRenderer(); }
