@@ -1,0 +1,58 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Anti-Mean value theorem</h2>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:400px; height:400px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+    (function() {
+        var brd, f, depth = 2, height = 1, points = 100, x = [], y = [];
+
+        brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 2, 2, -1], keepaspectratio:true, axis: true, grid: false});
+
+        f = function(d, inter, h1, h2, y) {
+            var i, h=h1+(h2-h1)/2, x0, x1, x2, x3;
+
+            if(d===0) {
+                for(i=inter[0]; i<inter[1]; i++) {
+                    y[i] = h;
+                }
+                return;
+            }
+
+            x0 = inter[0];
+            x1 = Math.floor(inter[0] + (inter[1]-inter[0])/3);
+            x2 = Math.floor(inter[0] + 2*(inter[1]-inter[0])/3);
+            x3 = inter[1];
+
+            for(i=x1;i<x2;i++) {
+                y[i] = h;
+            }
+
+            f(d-1, [x0, x1], h1, h, y);
+            f(d-1, [x2, x3], h, h2, y);
+            
+        };
+
+        f(depth, [0, points], 0, height, y);
+
+        for(i=0; i<points; i++) {
+            x[i] = i/points;
+        }
+
+        brd.create('curve', [x, y]);
+    })();
+
+  /* ]]> */
+  </script>
+</body>
+</html>

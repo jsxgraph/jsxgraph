@@ -355,9 +355,10 @@ JXG.Math.Numerics = (function(JXG, Math, undefined) {
          * Returns the Lagrange polynomials for curves with equidistant nodes, see
          * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
          * SIAM Review, Vol 46, No 3, (2004) 501-517.
-         * The graph of the parametric curve [f(t),g(t)] runs through the given points.
+         * The graph of the parametric curve [x(t),y(t)] runs through the given points.
          * @param {Array} p Array of JXG.Points
-         * @returns {Array} [f(t), g(t), 0, p.length-1],
+         * @returns {Array} An array consisting of two functions x(t), y(t) which define a parametric curve
+         * f(t) = (x(t), y(t)) and two numbers x1 and x2 defining the curve's domain. x1 always equals zero.
          */
         Neville: function(p) {
             var w = [],

@@ -3,6 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../src/xanvas.js"></script>
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
 </head>
 <body>
@@ -19,7 +20,7 @@ D = b.create('point',[2,2], {withLabel:true, color:'yellow'});
 B = b.create('point',[2,1], {withLabel:true});
 c = b.create('circle',[A,B], {fillColor:'yellow', fillOpacity:0.2});
 d = b.create('circle',[D,B], {fillColor:'blue', fillOpacity:0.2});
-L = b.create('segment',[A,B], {strokeWidth:1, firstArrow:true, lastArrow:true, highlightStrokeColor:'green'});
+L = b.create('segment',[A,B], {strokeWidth:1, firstArrow:true, lastArrow:true, highlightStrokeColor:'green',dash:1});
 f = b.create('functiongraph',[function(x){return x*x;}]);
 
 g = b.create('curve',[[-3,-2,-1,0,1,2,3],[2,3.2,3,2.2,3,3.3,1.8]], {strokeColor:'black'});

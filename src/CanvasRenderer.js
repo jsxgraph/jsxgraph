@@ -48,7 +48,12 @@ JXG.CanvasRenderer = function(container) {
     //this.canvasRoot.style.height = this.container.style.height;
     //this.container.appendChild(this.canvasRoot);
     this.canvasRoot = document.getElementById(this.canvasId);
-    this.context = this.canvasRoot.getContext('2d');
+    if(typeof xanvas !== 'undefined')
+        this.context = xanvas(this.canvasRoot);
+    else
+        this.context =  this.canvasRoot.getContext('2d');
+
+    this.dashArray = [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]];
 };
 
 JXG.CanvasRenderer.prototype = new JXG.AbstractRenderer;
@@ -79,6 +84,7 @@ JXG.CanvasRenderer.prototype.updateStencilBuffer = function(el) {
         this.context.globalAlpha = el.visProp.fillOpacity;
         highlight = false;
     }
+
     return highlight;
 };
 
@@ -140,6 +146,12 @@ JXG.CanvasRenderer.prototype.fill = function(el) {
  */
 JXG.CanvasRenderer.prototype.stroke = function(el) {
     this.context.save();
+    if(el.visProp['dash']>0) {
+// doesnt work by now
+//        this.context.lineDashArray = this.dashArray[el.visProp['dash']-1];
+    } else {
+        this.context.lineDashArray = [];
+    }
     if (this.setColor(el, 'stroke')) this.context.stroke();
     this.context.restore();
 };
@@ -316,7 +328,6 @@ JXG.CanvasRenderer.prototype.unsuspendRedraw = function() {
 };
 
 JXG.CanvasRenderer.prototype.setDashStyle = function(el,visProp) {
-    // useless
 };
 
 JXG.CanvasRenderer.prototype.setGridDash = function(id) {
