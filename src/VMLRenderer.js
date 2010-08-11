@@ -40,10 +40,12 @@ JXG.VMLRenderer = function(container) {
   
     // Add VML includes and namespace
     // Original: IE <=7
-    container.ownerDocument.namespaces.add("jxgvml", "urn:schemas-microsoft-com:vml");
     //container.ownerDocument.createStyleSheet().addRule("v\\:*", "behavior: url(#default#VML);");
-
-    this.container.ownerDocument.createStyleSheet().addRule(".jxgvml", "behavior:url(#default#VML)");
+    if (JXG.vmlStylesheet==null) {
+        container.ownerDocument.namespaces.add("jxgvml", "urn:schemas-microsoft-com:vml");
+        JXG.vmlStylesheet = this.container.ownerDocument.createStyleSheet();
+        JXG.vmlStylesheet.addRule(".jxgvml", "behavior:url(#default#VML)");
+    }
     try {
         !container.ownerDocument.namespaces.jxgvml && container.ownerDocument.namespaces.add("jxgvml", "urn:schemas-microsoft-com:vml");
         this.createNode = function (tagName) {
@@ -54,7 +56,6 @@ JXG.VMLRenderer = function(container) {
             return container.ownerDocument.createElement('<' + tagName + ' xmlns="urn:schemas-microsoft.com:vml" class="jxgvml">');
         };
     }
-        
     // um Dashes zu realisieren
     this.dashArray = ['Solid', '1 1', 'ShortDash', 'Dash', 'LongDash', 'ShortDashDot', 'LongDashDot'];    
 };

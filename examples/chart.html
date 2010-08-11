@@ -25,7 +25,7 @@
   <div id="debug" style="display:block;"></div>
   <script type="text/javascript">
     /* <![CDATA[ */
-JXG.Options.renderer = 'canvas';
+//JXG.Options.renderer = 'canvas';
 
         var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 350, originY: 400, unitX: 50, unitY: 50});
 
@@ -148,7 +148,7 @@ JXG.Options.renderer = 'canvas';
                 //endShiftRatio:0.1,
                 //startShiftArray:[0,0,0],
                 //endShiftArray:[0.5,0.5,0.5],
-                start:0,
+                start:0
                 //end:70,
                 //startArray:[0,0,0],
                 //endArray:[7,7,7],
@@ -211,7 +211,7 @@ JXG.Options.renderer = 'canvas';
             var y_axis = board.createElement('axis', [[2008,0],[2008,1]]);
             var a = board.createElement('chart', dataArr, {
                 chartStyle:'point,line',strokeWidth:1,strokeColor:'#0000ff',
-                infoboxArray: infoArray,
+                infoboxArray: infoArray
             });
             board.unsuspendUpdate();
         }
