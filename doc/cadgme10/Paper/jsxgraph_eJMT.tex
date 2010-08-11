@@ -116,7 +116,13 @@ Germany\end{tabular}
 %
 \begin{abstract}
 %
-Since Java applets seem to be on the retreat in web application, other approaches for displaying interactive mathematics in the web browser are needed. One such alternative could be our open-source project JSXGraph. It is a cross-browser library for displaying interactive geometry, function plotting, graphs, and data visualization in a web browser. It is implemented completely in JavaScript and uses the vector graphics formats SVG and VML. No further plug-ins are required.
+Since Java applets seem to be on the retreat in web application, other 
+approaches for displaying interactive mathematics in the web browser are needed. 
+One such alternative could be our open-source project JSXGraph. It is a 
+cross-browser library for displaying interactive geometry, function plotting, 
+graphs, and data visualization in a web browser. It is implemented completely 
+in JavaScript and uses the vector graphics formats SVG and VML. No further 
+plug-ins are required.
 %
 \end{abstract}%
 %
@@ -133,15 +139,66 @@ Since Java applets seem to be on the retreat in web application, other approache
 % and \subparagraph{...} as necessary.
 %
 \section{Introduction}
+JSXGraph is an open source project, released under the Lesser GNU General Public 
+License (LGPL). The source code is hosted by Sourceforge
+In order to use JSXGraph the developer has to include only two files in the 
+HTML file: the JSXGraph code and a CSS file. The  size 
+of the JSXGraph code is about 380 kByte. If the web server delivering the 
+content has data compression enabled (which should be the default anyhow) the 
+size of the transmitted code is about 80 kByte. To compare it with Java software, 
+for example the size of the \GEONExT{} archive is about 1 Mbyte. JSXGraph does not 
+rely on any other JavaScript library.
+
+JSXGraph is not meant to be programmed directly by the teacher or student. Rather, 
+it is a software library used transparently in a web page to display geometry 
+resources, or to work internally as the mathematical visualization engine in a 
+Web 2.0 application. For example the successor of \GEONExT{} will be based on 
+JSXGraph. Nevertheless, for the dauntless teacher having some experience in 
+JavaScript programming, it should be no problem to create  constructions with 
+JSXGraph.
+
 
 \section{Requirements}
-Hardware: PC running Windows, Linux or Mac OSX,
-smartphone like iPhone, multi-touch tablets like iPad
+JSXGraph runs on every hardware and operating system which has a graphical 
+web browser. The range of supported hardware thus reaches from Desktop PCs 
+down to tablet computers and smartphones.
 
-Software: Browsers supporting SVG, VML, or Canvas,
-Firefox, Chrome, Internet Explorer, Safari, Opera.
+All the mainstream web browser are supported, Firefox $3+$, Internet Explorer
+6+ (including the upcoming version 9), Google Chrome (all versions). 
+Also, the browsers Safari, Opera are supported since at least 2008. 
+
+For smartphones the Opera mini is supported but without interactivity.
+Also Android based devices are supported since the release of the JSXGraph v0.82.
+The default browser on these devices (at least up to Android 2.2) does not provide
+SVG or VML graphics. But in the latest version of JSXGraph 
+the use of the HTML canvas element is enabled. Thus, a new range of devices is 
+able to run JSXgraph.
+
 
 \section{Features}
+\subsection{Geometry}
+Plane geometry with 
+homogeneous or affine coordinates,
+
+
+
+\subsection{Calculus and function plotting}
+Function plotting, parametric curves, polar plots. 
+Differential equation solver.
+
+Interpolation: Lagrange interpolation, 
+cubic splines, B-splines, Bezier curves.
+
+
+
+\subsection{Other topics}
+Projective transformations,
+Turtle graphics, 
+charting.
+Initial attempts to display 3D points.
+
+
+
 \subsection{Importing file formats}
     * \GEONExT{}
     * Intergeo file format i2geo
