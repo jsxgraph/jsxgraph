@@ -43,6 +43,8 @@ JXG.GeonextParser.replacePow = function(te) {
     //te = te.replace(/\s+/g,''); // Loesche allen whitespace
                                 // Achtung: koennte bei Variablennamen mit Leerzeichen
                                 // zu Problemen fuehren.
+                                
+    te = te.replace(/(\s*)\^(\s*)/g,'\^'); // delete all whitespace immediately before and after ^
     i = te.indexOf('^');
     while (i>=0) {
         left = te.slice(0,i);
@@ -67,7 +69,7 @@ JXG.GeonextParser.replacePow = function(te) {
                 leftop = leftop.replace(/([\(\)\+\*\%\^\-\/\]\[])/g,"\\$1");
             }
         } else {
-            leftop = '[\\w\\.]+';
+            leftop = '[\\w\\.\\(\\)\\+\\*\\%\\^\\-\\/\\[\\]]+'; // former: \\w\\.
         }
         right = te.slice(i+1);
         if (right.match(/^([\w\.]*\()/)) {
@@ -84,7 +86,7 @@ JXG.GeonextParser.replacePow = function(te) {
                 rightop = rightop.replace(/([\(\)\+\*\%\^\-\/\[\]])/g,"\\$1");
             }
         } else {
-            rightop = '[\\w\\.]+';  // ^b 
+            rightop = '[\\w\\.\\(\\)\\+\\*\\%\\^\\-\\/\\[\\]]+';  // ^b , see leftop
         }
         expr = new RegExp('(' + leftop + ')\\^(' + rightop + ')');
         te = te.replace(expr,"JXG.Math.pow($1,$2)");
