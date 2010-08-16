@@ -69,8 +69,7 @@ JXG.Server.callServer = function(action, callback, data, sync) {
 	params, id, dataJSONStr,
 	k;
 
-    if(typeof sync == 'undefined' || sync == null)
-        sync = false;
+    sync = sync || false;
 
 	params = '';
 	for(k in data) {
