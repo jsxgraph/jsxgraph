@@ -840,6 +840,12 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
 JXG.Board.prototype.mouseDownListener = function (Evt) {
     var el, pEl, cPos, absPos, dx, dy;
 
+    if (document.selection) {
+        document.selection.empty();
+    } else if (window.getSelection) {
+        window.getSelection().removeAllRanges();
+    }
+
     cPos = this.getRelativeMouseCoordinates(Evt);
     // position of mouse cursor relative to containers position of container
     absPos = JXG.getPosition(Evt);
@@ -891,7 +897,14 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
     // if no draggable object can be found, get outta here immediately
     if(this.drag_obj.length == 0) {
         this.mode = this.BOARD_MODE_NONE;
-        return;
+        return true;
+    }
+
+    if (Evt && Evt.preventDefault) {
+        Evt.preventDefault();
+    }
+    else {
+        window.event.returnValue = false;
     }
 
     this.updateHooks('mousedown');
@@ -901,6 +914,8 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
       */
     this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx,dy], this);
     JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
+
+    return false;
 };
 
 /**
