@@ -36,6 +36,39 @@
  */
 JXG.Math.Numerics = (function(JXG, Math, undefined) {
 
+    // Predefined butcher tableaus for the common Runge-Kutta method (fourth order), Heun method (second order), and Euler method (first order).
+    var predefinedButcher = {
+        RK4: {
+            s: 4,
+            A: [
+                [ 0,  0,  0, 0],
+                [0.5, 0,  0, 0],
+                [ 0, 0.5, 0, 0],
+                [ 0,  0,  1, 0]
+            ],
+            b: [1. / 6., 1. / 3., 1. / 3., 1. / 6.],
+            c: [0, 0.5, 0.5, 1]
+        },
+        Heun: {
+            s: 2,
+            A: [
+                [0, 0],
+                [1, 0]
+            ],
+            b: [0.5, 0.5],
+            c: [0, 1]
+        },
+        Euler: {
+            s: 1,
+            A: [
+                [0]
+            ],
+            b: [1],
+            c: [0]
+        }
+    };
+
+
     /** @lends JXG.Math.Numerics */
     return {
 
@@ -1041,55 +1074,6 @@ JXG.Math.Numerics.Butcher = function () {
      * @type Array
      */
     this.c = [];
-};
-
-/**
- * Predefined butcher tableaus for the common Runge-Kutta method (fourth order), Heun method (second order), and Euler method (first order).
- * @namespace
- */
-JXG.Math.Numerics.predefinedButcher = {};
-
-/**
- * Butcher tableau for common fourth order Runge-Kutta method.
- * @type JXG.Math.Numerics.Butcher
- */
-JXG.Math.Numerics.predefinedButcher.RK4 = {
-    s: 4,
-    A: [
-        [ 0,  0,  0, 0],
-        [0.5, 0,  0, 0],
-        [ 0, 0.5, 0, 0],
-        [ 0,  0,  1, 0]
-    ],
-    b: [1. / 6., 1. / 3., 1. / 3., 1. / 6.],
-    c: [0, 0.5, 0.5, 1]
-};
-
-/**
- * Butcher tableau for heun method.
- * @type JXG.Math.Numerics.Butcher
- */
-JXG.Math.Numerics.predefinedButcher.Heun = {
-    s: 2,
-    A: [
-        [0, 0],
-        [1, 0]
-    ],
-    b: [0.5, 0.5],
-    c: [0, 1]
-};
-
-/**
- * Butcher tableau for euler method.
- * @type JXG.Math.Numerics.Butcher
- */
-JXG.Math.Numerics.predefinedButcher.Euler = {
-    s: 1,
-    A: [
-        [0]
-    ],
-    b: [1],
-    c: [0]
 };
 
 /**
