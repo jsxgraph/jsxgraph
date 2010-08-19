@@ -141,7 +141,21 @@ JXG.GraphReader = new function() {
                     board.addedGraph.segments[i].push(null);
                 }
                 else if(adjMatrix[i][j] < Number.MAX_VALUE && adjMatrix[i][j] != 0) {
-                    board.addedGraph.segments[i][j] = board.addedGraph.segments[j][i];
+                    //console.log(1,[nodes[i].name, nodes[j].name]); 
+                    if(graph.directed) {
+                        s = board.create('segment',[nodes[i].name, nodes[j].name]);
+                        s.setProperty({lastArrow:true});
+                        if(graph.weighted) {
+                            t = board.create('text',[0,0,adjMatrix[i][j]],{parent:s});
+                            board.addedGraph.segments[i].push({edge:s,weight:t});
+                        }
+                        else {
+                            board.addedGraph.segments[i].push({edge:s,weight:1});
+                        }                        
+                    }
+                    else {
+                        board.addedGraph.segments[i][j] = board.addedGraph.segments[j][i];
+                    }
                 }
                 else {
                     board.addedGraph.segments[i].push(null);
@@ -149,7 +163,7 @@ JXG.GraphReader = new function() {
             }
             for(j=i+1; j<n; j++) {
                 if(adjMatrix[i][j] < Number.MAX_VALUE && adjMatrix[i][j] != 0) {
-                    //console.log([nodes[i].name, nodes[j].name]);
+                    //console.log(2,[nodes[i].name, nodes[j].name]);
                     s = board.create('segment',[nodes[i].name, nodes[j].name]);
                     if(graph.directed) {
                         s.setProperty({lastArrow:true});
