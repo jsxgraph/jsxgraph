@@ -31,7 +31,7 @@
 
 
 /**
- * Math.Numerics namespace holds numerical algorithms, constants, and variables.
+ * The JXG.Math.Numerics namespace holds numerical algorithms, constants, and variables.
  * @namespace
  */
 JXG.Math.Numerics = (function(JXG, Math) {
