@@ -15,18 +15,19 @@ JXG.Options.renderer = 'canvas';
 var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, grid:false});
 //L = b.create('line',[[0,1],[1,1]], {strokeWidth:1});
 
-A = b.create('point',[1,1], {style:1,withLabel:true});
-D = b.create('point',[2,2], {withLabel:true, color:'yellow'});
+A = b.create('point',[1,1], {face:'a',size:20, fillColor:'blue', strokeColor:'red', withLabel:true});
+D = b.create('point',[2,2], {face:'<>',size:20, withLabel:true, color:'yellow'});
 B = b.create('point',[2,1], {withLabel:true});
 c = b.create('circle',[A,B], {fillColor:'yellow', fillOpacity:0.2});
 d = b.create('circle',[D,B], {fillColor:'blue', fillOpacity:0.2});
 L = b.create('segment',[A,B], {strokeWidth:1, firstArrow:true, lastArrow:true, highlightStrokeColor:'green',dash:1});
 f = b.create('functiongraph',[function(x){return x*x;}]);
 
-g = b.create('curve',[[-3,-2,-1,0,1,2,3],[2,3.2,3,2.2,3,3.3,1.8]], {strokeColor:'black'});
-h = b.create('functiongraph',[function(x){return A.Y()*Math.sin(x);}], {strokeColor:'green'});
+g = b.create('curve',[[-3,-2,-1,0,1,2,3],[2,3.2,3,2.2,3,3.3,1.8]], {strokeColor:'black', strokeWidth:8, strokeOpacity:0.6});
+h = b.create('functiongraph',[function(x){return A.Y()*Math.sin(x);}], {strokeColor:'green', strokeWidth:8});
 b.create('polygon',[A,B,D], {fillOpacity:0.6});
-
+/*
+*/
 /*
  var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 10, unitX: 5, unitY: 5, grid:true});
  board.suspendUpdate();
