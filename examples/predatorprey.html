@@ -1,9 +1,9 @@
 <html>
 	<head>
    		<title>JSXGraph example: Basic construction</title>
-		<link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
-		<script type="text/javascript" src="distrib/jquery.min.js"></script>
-		<script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+		<link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+		<script type="text/javascript" src="../distrib/jquery.min.js"></script>
+		<script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
 	</head>
 	<body class="jsxgraph_body">
 	<div id="box1" class="jxgbox jsxgraph_present" style="width: 680px!, height: 480!"></div>
@@ -50,11 +50,11 @@ alert(b.defaultAxes.x);
             y[1] = -x[1]*(bprey - dprey*x[0]);
 
             return y;
-        }
+        };
 
         var x0 = [startpred.Y(), startprey.Y()];
 
-        var data = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Euler, x0, I, N, f);
+        var data = JXG.Math.Numerics.rungeKutta('euler', x0, I, N, f);
 
         var t = [];
         var q = I[0];

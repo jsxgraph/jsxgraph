@@ -34,11 +34,11 @@
  * Math.Numerics namespace holds numerical algorithms, constants, and variables.
  * @namespace
  */
-JXG.Math.Numerics = (function(JXG, Math, undefined) {
+JXG.Math.Numerics = (function(JXG, Math) {
 
     // Predefined butcher tableaus for the common Runge-Kutta method (fourth order), Heun method (second order), and Euler method (first order).
     var predefinedButcher = {
-        RK4: {
+        rk4: {
             s: 4,
             A: [
                 [ 0,  0,  0, 0],
@@ -49,7 +49,7 @@ JXG.Math.Numerics = (function(JXG, Math, undefined) {
             b: [1. / 6., 1. / 3., 1. / 3., 1. / 6.],
             c: [0, 0.5, 0.5, 1]
         },
-        Heun: {
+        heun: {
             s: 2,
             A: [
                 [0, 0],
@@ -58,7 +58,7 @@ JXG.Math.Numerics = (function(JXG, Math, undefined) {
             b: [0.5, 0.5],
             c: [0, 1]
         },
-        Euler: {
+        euler: {
             s: 1,
             A: [
                 [0]
@@ -87,7 +87,7 @@ JXG.Math.Numerics = (function(JXG, Math, undefined) {
                 // copy the matrix to prevent changes in the original
                 Acopy,
                 // solution vector, to prevent changing b
-                x = [],
+                x,
                 i, j, k,
                 // little helper to swap array elements
                 swap = function(i, j) {
@@ -778,401 +778,377 @@ JXG.Math.Numerics = (function(JXG, Math, undefined) {
                 function() {
                     return Math.floor(points.length / 3);
                 }];
+        },
+
+        /**
+         * Computes the B-spline curve of order k (order = degree+1) through a given set of points.
+         * @param {Array} points Array consisting of JXG.Points.
+         * @param {Number} order Order of the B-spline curve.
+         * @todo closed B-spline curves
+         * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
+         * which return the x resp. y coordinates of the B-spline curve in t, a zero value, and a function simply
+         * returning the length of the points array minus one.
+         */
+        bspline: function(points, order) {
+            var knots, N = [],
+                _knotVector = function(n, k) {
+                    var j, kn = [];
+                    for (j = 0; j < n + k + 1; j++) {
+                        if (j < k) {
+                            kn[j] = 0.0;
+                        } else if (j <= n) {
+                            kn[j] = j - k + 1;
+                        } else {
+                            kn[j] = n - k + 2;
+                        }
+                    }
+                    return kn;
+                },
+
+                _evalBasisFuncs = function(t, kn, n, k, s) {
+                    var i,j,a,b,den,
+                        N = [];
+
+                    if (kn[s] <= t && t < kn[s + 1]) {
+                        N[s] = 1;
+                    } else {
+                        N[s] = 0;
+                    }
+                    for (i = 2; i <= k; i++) {
+                        for (j = s - i + 1; j <= s; j++) {
+                            if (j <= s - i + 1 || j < 0) {
+                                a = 0.0;
+                            } else {
+                                a = N[j];
+                            }
+                            if (j >= s) {
+                                b = 0.0;
+                            } else {
+                                b = N[j + 1];
+                            }
+                            den = kn[j + i - 1] - kn[j];
+                            if (den == 0) {
+                                N[j] = 0;
+                            } else {
+                                N[j] = (t - kn[j]) / den * a;
+                            }
+                            den = kn[j + i] - kn[j + 1];
+                            if (den != 0) {
+                                N[j] += (kn[j + i] - t) / den * b;
+                            }
+                        }
+                    }
+                    return N;
+                },
+                makeFct = function(which) {
+                    return function(t, suspendedUpdate) {
+                        var len = points.length,
+                            y, j, s,
+                            n = len - 1,
+                            k = order;
+
+                        if (n <= 0) return NaN;
+                        if (n + 2 <= k) k = n + 1;
+                        if (t <= 0) return points[0][which]();
+                        if (t >= n - k + 2) return points[n][which]();
+
+                        knots = _knotVector(n, k);
+                        s = Math.floor(t) + k - 1;
+                        N = _evalBasisFuncs(t, knots, n, k, s);
+
+                        y = 0.0;
+                        for (j = s - k + 1; j <= s; j++) {
+                            if (j < len && j >= 0) y += points[j][which]() * N[j];
+                        }
+                        return y;
+                    };
+                };
+
+            return [makeFct('X'),
+                makeFct('Y'),
+                0,
+                function() {
+                    return points.length - 1;
+                }
+            ];
+        },
+
+        /**
+         * Numerical (symmetric) approximation of derivative. suspendUpdate is piped through, see {@link JXG.Curve#updateCurve}
+         * and {@link JXG.Curve#hasPoint}.
+         * @param {function} f Function in one variable to be differentiated.
+         * @param {object} [obj] Optional object that is treated as "this" in the function body. This is useful, if the function is a
+         * method of an object and contains a reference to its parent object via "this".
+         * @returns {function} Derivative function of a given function f.
+         */
+        D: function(f, obj) {
+            var h = 0.00001,
+                h2 = 1.0 / (h * 2.0);
+
+            if (arguments.length == 1 || (arguments.length > 1 && arguments[1] === JXG.undefined)) {
+                return function(x, suspendUpdate) {
+                    return (f(x + h, suspendUpdate) - f(x - h, suspendUpdate)) * h2;
+                };
+            } else { // set "this" to "obj" in f
+                return function(x, suspendUpdate) {
+                    return (f.apply(obj, [x + h,suspendUpdate]) - f.apply(obj, [x - h,suspendUpdate])) * h2;
+                };
+            }
+        },
+
+        /**
+         * Helper function to create curve which displays Riemann sums.
+         * Compute coordinates for the rectangles showing the Riemann sum.
+         * @param {function} f Function, whose integral is approximated by the Riemann sum.
+         * @param {Number} n number of rectangles.
+         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
+         * @param {Number} start Left border of the approximation interval
+         * @param {Number} end Right border of the approximation interval
+         * @returns {Array} An array of two arrays containing the x and y coordinates for the rectangles showing the Riemann sum. This
+         * array may be used as parent array of a {@link JXG.Curve}.
+         */
+        riemann: function(f, n, type, start, end) {
+            var xarr = [],
+                yarr = [],
+                i, j = 0,
+                delta,
+                x = start, y,
+                x1, y1, delta1;
+
+            n = Math.floor(n);
+            xarr[j] = x;
+            yarr[j] = 0.0;
+
+            if (n > 0) {
+                delta = (end - start) / n;
+                delta1 = delta * 0.01; // for 'lower' and 'upper'
+
+                for (i = 0; i < n; i++) {
+                    if (type === 'right') {
+                        y = f(x + delta);
+                    } else if (type === 'middle') {
+                        y = f(x + delta * 0.5);
+                    } else if ((type === 'left') || (type === 'trapezodial')) {
+                        y = f(x);
+                    } else if (type === 'lower') {
+                        y = f(x);
+                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                            y1 = f(x1);
+                            if (y1 < y) {
+                                y = y1;
+                            }
+                        }
+                    } else { // (type=='upper')
+                        y = f(x);
+                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                            y1 = f(x1);
+                            if (y1 > y) {
+                                y = y1;
+                            }
+                        }
+                    }
+
+                    j++;
+                    xarr[j] = x;
+                    yarr[j] = y;
+                    j++;
+                    x += delta;
+                    if (type === 'trapezodial') {
+                        y = f(x);
+                    }
+                    xarr[j] = x;
+                    yarr[j] = y;
+                    j++;
+                    xarr[j] = x;
+                    yarr[j] = 0.0;
+                }
+            }
+            return [xarr,yarr];
+        },
+
+        /**
+         * Approximate the integral by Riemann sums.
+         * Compute the area described by the riemann sum rectangles.
+         * @param {function} f Function, whose integral is approximated by the Riemann sum.
+         * @param {Number} n number of rectangles.
+         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
+         * @param {Number} start Left border of the approximation interval
+         * @param {Number} end Right border of the approximation interval
+         * @returns {Number} The sum of the areas of the rectangles.
+         */
+        riemannsum: function(f, n, type, start, end) {
+            var sum = .0,
+                i, delta,
+                x = start, y,
+                x1, y1, delta1;
+
+            n = Math.floor(n);
+            if (n > 0) {
+                delta = (end - start) / n;
+                delta1 = delta * 0.01; // for 'lower' and 'upper'
+                for (i = 0; i < n; i++) {
+                    if (type === 'right') {
+                        y = f(x + delta);
+                    } else if (type === 'middle') {
+                        y = f(x + delta * 0.5);
+                    } else if (type === 'trapezodial') {
+                        y = 0.5 * (f(x + delta) + f(x));
+                    } else if (type === 'left') {
+                        y = f(x);
+                    } else if (type === 'lower') {
+                        y = f(x);
+                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                            y1 = f(x1);
+                            if (y1 < y) {
+                                y = y1;
+                            }
+                        }
+                    } else { // (type=='upper')
+                        y = f(x);
+                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                            y1 = f(x1);
+                            if (y1 > y) {
+                                y = y1;
+                            }
+                        }
+                    }
+                    sum += delta * y;
+                    x += delta;
+                }
+            }
+            return sum;
+        },
+
+        /**
+         * Solve initial value problems numerically using Runge-Kutta-methods.
+         * See {@link http://en.wikipedia.org/wiki/Runge-Kutta_methods} for more information on the algorithm.
+         * @param {object,String} butcher Butcher tableau describing the Runge-Kutta method to use. This can be either a string describing
+         * a Runge-Kutta method with a Butcher tableau predefined in JSXGraph like 'euler', 'heun', 'rk4' or an object providing the structure
+         * <pre>
+         * {
+         *     s: &lt;Number&gt;,
+         *     A: &lt;matrix&gt;,
+         *     b: &lt;Array&gt;,
+         *     c: &lt;Array&gt;
+         * }
+         * </pre>
+         * which corresponds to the Butcher tableau structure shown here: http://en.wikipedia.org/w/index.php?title=List_of_Runge%E2%80%93Kutta_methods&oldid=357796696
+         * @param {Array} x0 Initial value vector. If the problem is of one-dimensional, the initial value also has to be given in an array.
+         * @param {Array} I Interval on which to integrate.
+         * @param {Number} N Number of evaluation points.
+         * @param {function} f Function describing the right hand side of the first order ordinary differential equation, i.e. if the ode
+         * is given by the equation <pre>dx/dt = f(t, x(t)).</pre> So f has to take two parameters, a number <tt>t</tt> and a
+         * vector <tt>x</tt>, and has to return a vector of the same dimension as <tt>x</tt> has.
+         * @returns {Array} An array of vectors describing the solution of the ode on the given interval I.
+         * @example
+         * // A very simple autonomous system dx(t)/dt = x(t);
+         * function f(t, x) {
+         *     return x;
+         * }
+         *
+         * // Solve it with initial value x(0) = 1 on the interval [0, 2]
+         * // with 20 evaluation points.
+         * var data = JXG.Math.Numerics.rungeKutta('heun', [1], [0, 2], 20, f);
+         *
+         * // Prepare data for plotting the solution of the ode using a curve.
+         * var dataX = [];
+         * var dataY = [];
+         * var h = 0.1;        // (I[1] - I[0])/N  = (2-0)/20
+         * for(var i=0; i&lt;data.length; i++) {
+         *     dataX[i] = i*h;
+         *     dataY[i] = data[i][0];
+         * }
+         * var g = board.create('curve', [dataX, dataY], {strokeWidth:'2px'});
+         * </pre><div id="d2432d04-4ef7-4159-a90b-a2eb8d38c4f6" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         * var board = JXG.JSXGraph.initBoard('d2432d04-4ef7-4159-a90b-a2eb8d38c4f6', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
+         * function f(t, x) {
+         *     // we have to copy the value.
+         *     // return x; would just return the reference.
+         *     return [x[0]];
+         * }
+         * var data = JXG.Math.Numerics.rungeKutta('heun', [1], [0, 2], 20, f);
+         * var dataX = [];
+         * var dataY = [];
+         * var h = 0.1;
+         * for(var i=0; i<data.length; i++) {
+         *     dataX[i] = i*h;
+         *     dataY[i] = data[i][0];
+         * }
+         * var g = board.create('curve', [dataX, dataY], {strokeColor:'red', strokeWidth:'2px'});
+         * </script><pre>
+         */
+        rungeKutta: function(butcher, x0, I, N, f) {
+            var x = [],
+                y = [],
+                h = (I[1] - I[0]) / N,
+                t = I[0],
+                e, i, j,
+                k, l,
+                dim = x0.length,
+                s,
+                result = [],
+                r = 0;
+
+            if (JXG.isString(butcher)) {
+                butcher = predefinedButcher[butcher] || predefinedButcher.euler;
+            }
+            s = butcher.s;
+
+            // don't change x0, so copy it
+            for (e = 0; e < dim; e++)
+                x[e] = x0[e];
+
+            for (i = 0; i < N; i++) {
+                // Optimization doesn't work for ODEs plotted using time
+                //        if((i % quotient == 0) || (i == N-1)) {
+                result[r] = [];
+                for (e = 0; e < dim; e++)
+                    result[r][e] = x[e];
+                r++;
+                //        }
+                // init k
+                k = [];
+                for (j = 0; j < s; j++) {
+                    // init y = 0
+                    for (e = 0; e < dim; e++)
+                        y[e] = 0.;
+
+                    // Calculate linear combination of former k's and save it in y
+                    for (l = 0; l < j; l++) {
+                        for (e = 0; e < dim; e++) {
+                            y[e] += (butcher.A[j][l]) * h * k[l][e];
+                        }
+                    }
+
+                    // add x(t) to y
+                    for (e = 0; e < dim; e++) {
+                        y[e] += x[e];
+                    }
+
+                    // calculate new k and add it to the k matrix
+                    k.push(f(t + butcher.c[j] * h, y));
+                }
+
+                // init y = 0
+                for (e = 0; e < dim; e++)
+                    y[e] = 0.;
+
+                for (l = 0; l < s; l++) {
+                    for (e = 0; e < dim; e++)
+                        y[e] += butcher.b[l] * k[l][e];
+                }
+
+                for (e = 0; e < dim; e++) {
+                    x[e] = x[e] + h * y[e];
+                }
+
+                t += h;
+            }
+
+            return result;
         }
 
     }
 })(JXG, Math);
 
-
-
-/**
- * Computes the B-spline curve of order k (order = degree+1) through a given set of points.
- * @param {Array} points Array consisting of JXG.Points.
- * @param {Number} order Order of the B-spline curve.
- * @todo closed B-spline curves
- * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
- * which return the x resp. y coordinates of the B-spline curve in t, a zero value, and a function simply
- * returning the length of the points array minus one.
- */
-JXG.Math.Numerics.bspline = function(points, order) {
-    var knots, N = [],
-        _knotVector = function(n, k) {
-            var j, kn = [];
-            for (j = 0; j < n + k + 1; j++) {
-                if (j < k) {
-                    kn[j] = 0.0;
-                } else if (j <= n) {
-                    kn[j] = j - k + 1;
-                } else {
-                    kn[j] = n - k + 2;
-                }
-            }
-            return kn;
-        },
-
-        _evalBasisFuncs = function(t, kn, n, k, s) {
-            var i,j,a,b,den,
-                N = [];
-
-            if (kn[s] <= t && t < kn[s + 1]) {
-                N[s] = 1;
-            } else {
-                N[s] = 0;
-            }
-            for (i = 2; i <= k; i++) {
-                for (j = s - i + 1; j <= s; j++) {
-                    if (j <= s - i + 1 || j < 0) {
-                        a = 0.0;
-                    } else {
-                        a = N[j];
-                    }
-                    if (j >= s) {
-                        b = 0.0;
-                    } else {
-                        b = N[j + 1];
-                    }
-                    den = kn[j + i - 1] - kn[j];
-                    if (den == 0) {
-                        N[j] = 0;
-                    } else {
-                        N[j] = (t - kn[j]) / den * a;
-                    }
-                    den = kn[j + i] - kn[j + 1];
-                    if (den != 0) {
-                        N[j] += (kn[j + i] - t) / den * b;
-                    }
-                }
-            }
-            return N;
-        },
-        makeFct = function(which) {
-            return function(t, suspendedUpdate) {
-                var len = points.length,
-                    y, j, s,
-                    n = len - 1,
-                    k = order;
-        
-                if (n <= 0) return NaN;
-                if (n + 2 <= k) k = n + 1;
-                if (t <= 0) return points[0][which]();
-                if (t >= n - k + 2) return points[n][which]();
-    
-                knots = _knotVector(n, k);
-                s = Math.floor(t) + k - 1;
-                N = _evalBasisFuncs(t, knots, n, k, s);
-    
-                y = 0.0;
-                for (j = s - k + 1; j <= s; j++) {
-                    if (j < len && j >= 0) y += points[j][which]() * N[j];
-                }
-                return y;
-            };
-        };
-
-    return [makeFct('X'),
-            makeFct('Y'),
-            0, 
-            function() {return points.length - 1;}
-        ];
-};
-
-/**
- * Numerical (symmetric) approximation of derivative.
- * @param {function} f Function in one variable to be differentiated.
- * @param {object} obj Optional object that is treated as "this" in the function body. This is useful, if the function is a
- *                 method of an object and contains a reference to its parent object via "this".
- * suspendUpdate is piped through, {@link JXG.Curve#updateCurve} and {@link JXG.Curve#hasPoint}.
- * @type {function}
- * @return {function} Derivative function of a given function f.
- */
-JXG.Math.Numerics.D = function(/** function */ f, /** object */ obj) /* function */ {
-    var h = 0.00001,
-        h2 = 1.0 / (h * 2.0);
-
-    if (arguments.length == 1 || (arguments.length > 1 && typeof arguments[1] == 'undefined')) {
-        return function(x, suspendUpdate) {
-            return (f(x + h, suspendUpdate) - f(x - h, suspendUpdate)) * h2;
-        };
-    } else {                   // set "this" to "obj" in f 
-        return function(x, suspendUpdate) {
-            return (f.apply(obj, [x + h,suspendUpdate]) - f.apply(obj, [x - h,suspendUpdate])) * h2;
-        };
-    }
-};
-
-/**
- * Hlper function to create curve which displays Riemann sums.
- * Compute coordinates for the rectangles showing the Riemann sum.
- * @param {function} f Function f, whose integral is approximated by the Riemann sum.
- * @param {Number} n number of rectangles.
- * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
- * @param {Number} start Left border of the approximation interval
- * @param {Number} end Right border of the approximation interval
- * @return {Array} An array of two arrays containing the x and y coordinates for the rectangles showing the Riemann sum. This array may be used as
- *                 parent array of a JXG.Curve.
- */
-JXG.Math.Numerics.riemann = function(f, n, type, start, end) {
-    var xarr,yarr,i,delta,j,x,y,x1,delta1,y1;
-
-    xarr = [];
-    yarr = [];
-    j = 0;
-    x = start;
-    n = Math.floor(n);
-    xarr[j] = x;
-    yarr[j] = 0.0;
-
-    if (n > 0) {
-        delta = (end - start) / n;
-        delta1 = delta * 0.01; // for 'lower' and 'upper'
-
-        for (i = 0; i < n; i++) {
-            if (type == 'right') {
-                y = f(x + delta);
-            } else if (type == 'middle') {
-                y = f(x + delta * 0.5);
-            } else if ((type == 'left') || (type == 'trapezodial')) {
-                y = f(x);
-            } else if (type == 'lower') {
-                y = f(x);
-                for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                    y1 = f(x1);
-                    if (y1 < y) {
-                        y = y1;
-                    }
-                }
-            } else { // (type=='upper')
-                y = f(x);
-                for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                    y1 = f(x1);
-                    if (y1 > y) {
-                        y = y1;
-                    }
-                }
-            }
-
-            j++;
-            xarr[j] = x;
-            yarr[j] = y;
-            j++;
-            x += delta;
-            if (type == 'trapezodial') {
-                y = f(x);
-            }
-            xarr[j] = x;
-            yarr[j] = y;
-            j++;
-            xarr[j] = x;
-            yarr[j] = 0.0;
-        }
-    }
-    return [xarr,yarr];
-};
-
-/**
- * Approximate the integral by Riemann sums.
- * Compute the area described by the riemann sum rectangles.
- * @param {function} f Function f, whose integral is approximated by the Riemann sum.
- * @param {Number} n number of rectangles.
- * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
- * @param {Number} start Left border of the approximation interval
- * @param {Number} end Right border of the approximation interval
- * @returns {Number} The sum of the areas of the rectangles.
- */
-JXG.Math.Numerics.riemannsum = function(f, n, type, start, end) {
-    var sum,i,delta,x,y,x1,delta1,y1;
-
-    sum = 0.0;
-    x = start;
-    n = Math.floor(n);
-    if (n > 0) {
-        delta = (end - start) / n;
-        delta1 = delta * 0.01; // for 'lower' and 'upper'
-        for (i = 0; i < n; i++) {
-            if (type == 'right') {
-                y = f(x + delta);
-            } else if (type == 'middle') {
-                y = f(x + delta * 0.5);
-            } else if (type == 'trapezodial') {
-                y = 0.5 * (f(x + delta) + f(x));
-            } else if (type == 'left') {
-                y = f(x);
-            } else if (type == 'lower') {
-                y = f(x);
-                for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                    y1 = f(x1);
-                    if (y1 < y) {
-                        y = y1;
-                    }
-                }
-            } else { // (type=='upper')
-                y = f(x);
-                for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                    y1 = f(x1);
-                    if (y1 > y) {
-                        y = y1;
-                    }
-                }
-            }
-            sum += delta * y;
-            x += delta;
-        }
-    }
-    return sum;
-};
-
-/**
- * Object for storing butcher tableaus for Runge-Kutta-methods.
- * @class
- * @description
- * @see JXG.Math.Numerics.rungeKutta
- */
-JXG.Math.Numerics.Butcher = function () {
-    /**
-     * Order of Runge-Kutta-method.
-     * @type number
-     */
-    this.s = 0;
-
-    /**
-     * 2-dimensional array containing the butcher tableau matrix.
-     * See <a href="http://en.wikipedia.org/wiki/Runge-Kutta_methods">http://en.wikipedia.org/wiki/Runge-Kutta_methods</a>.
-     * @type Array
-     */
-    this.A = [];
-
-    /**
-     * Array containing the coefficients below the butcher tableau matrix.
-     * See <a href="http://en.wikipedia.org/wiki/Runge-Kutta_methods">http://en.wikipedia.org/wiki/Runge-Kutta_methods</a>.
-     * @type Array
-     */
-    this.b = [];
-
-    /**
-     * Array containing the coefficients to the left of the butcher tableau matrix.
-     * See <a href="http://en.wikipedia.org/wiki/Runge-Kutta_methods">http://en.wikipedia.org/wiki/Runge-Kutta_methods</a>.
-     * @type Array
-     */
-    this.c = [];
-};
-
-/**
- * Solve initial value problems numerically using Runge-Kutta-methods.
- * See {@link http://en.wikipedia.org/wiki/Runge-Kutta_methods} for more information on the algorithm.
- * @param butcher Butcher tableau describing the Runge-Kutta method to use.
- * @param x0 Initial value vector. If the problem is of one-dimensional, the initial value also has to be given in an array.
- * @param I Interval on which to integrate.
- * @param N Number of evaluation points.
- * @param f Function describing the right hand side of the first order ordinary differential equation, i.e. if the ode
- * is given by the equation <pre>dx/dt = f(t, x(t)).</pre> So f has to take two parameters, a number <tt>t</tt> and a
- * vector <tt>x</tt>, and has to return a vector of the same dimension as <tt>x</tt> has.
- * @return An array of vectors describing the solution of the ode on the given interval I.
- * @example
- * // A very simple autonomous system dx(t)/dt = x(t);
- * function f(t, x) {
- *     return x;
- * }
- *
- * // We want to use the method of heun.
- * var method = JXG.Math.Numerics.predefinedButcher.Heun;
- * // Solve it with initial value x(0) = 1 on the interval [0, 2]
- * // with 20 evaluation points.
- * var data = JXG.Math.Numerics.rungeKutta(method, [1], [0, 2], 20, f);
- *
- * // Prepare data for plotting the solution of the ode using a curve.
- * var dataX = [];
- * var dataY = [];
- * var h = 0.1;        // (I[1] - I[0])/N  = (2-0)/20
- * for(var i=0; i&lt;data.length; i++) {
- *     dataX[i] = i*h;
- *     dataY[i] = data[i][0];
- * }
- * var g = board.create('curve', [dataX, dataY], {strokeWidth:'2px'});
- * </pre><div id="d2432d04-4ef7-4159-a90b-a2eb8d38c4f6" style="width: 300px; height: 300px;"></div>
- * <script type="text/javascript">
- * var board = JXG.JSXGraph.initBoard('d2432d04-4ef7-4159-a90b-a2eb8d38c4f6', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
- * function f(t, x) {
- *     // we have to copy the value.
- *     // return x; would just return the reference.
- *     return [x[0]];
- * }
- * var data = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Heun, [1], [0, 2], 20, f);
- * var dataX = [];
- * var dataY = [];
- * var h = 0.1;
- * for(var i=0; i<data.length; i++) {
- *     dataX[i] = i*h;
- *     dataY[i] = data[i][0];
- * }
- * var g = board.create('curve', [dataX, dataY], {strokeColor:'red', strokeWidth:'2px'});
- * </script><pre>
- */
-JXG.Math.Numerics.rungeKutta = function(/** JXG.Math.Numerics.Butcher */ butcher, /** array */ x0,
-    /** array */ I, /** number */ N, /** function */ f) /** array */ {
-
-    // TODO error/parameter check:
-    // N not too big (warn or give up?) OR adaptive stepsize.
-
-    var x = [],
-        y = [],
-        h = (I[1] - I[0]) / N,
-        t = I[0],
-        e, i, j,
-        k, l,
-        dim = x0.length,
-        s = butcher.s,
-        result = [],
-        r = 0;
-
-    // don't change x0, so copy it
-    for (e = 0; e < dim; e++)
-        x[e] = x0[e];
-    for (i = 0; i < N; i++) {
-        // Optimization doesn't work for ODEs plotted using time
-        //        if((i % quotient == 0) || (i == N-1)) {
-        result[r] = [];
-        for (e = 0; e < dim; e++)
-            result[r][e] = x[e];
-        r++;
-        //        }
-        // init k
-        k = [];
-        for (j = 0; j < s; j++) {
-            // init y = 0
-            for (e = 0; e < dim; e++)
-                y[e] = 0.;
-
-            // Calculate linear combination of former k's and save it in y
-            for (l = 0; l < j; l++) {
-                for (e = 0; e < dim; e++) {
-                    y[e] += (butcher.A[j][l]) * h * k[l][e];
-                }
-            }
-
-            // add x(t) to y
-            for (e = 0; e < dim; e++) {
-                y[e] += x[e];
-            }
-
-            // calculate new k and add it to the k matrix
-            k.push(f(t + butcher.c[j] * h, y));
-        }
-
-        // init y = 0
-        for (e = 0; e < dim; e++)
-            y[e] = 0.;
-
-        for (l = 0; l < s; l++) {
-            for (e = 0; e < dim; e++)
-                y[e] += butcher.b[l] * k[l][e];
-        }
-
-        for (e = 0; e < dim; e++) {
-            x[e] = x[e] + h * y[e];
-        }
-
-        t += h;
-    }
-
-    return result;
-};

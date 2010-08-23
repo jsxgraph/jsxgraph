@@ -1,0 +1,109 @@
+<html>
+<head>
+   <title>JSXGraph Konstruktionstemplate</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+  <div style="width:800px">
+    <div id="jxgbox1" class="jxgbox" style="width:500px; height:600px; float: left;"></div>
+    <div id="jxgbox2" class="jxgbox" style="width:500px; height:600px;"></div>
+  </div>
+  <div class="jxgbox" style="text-align:center; background-color: #000; color: #fff;">Bla text<br/><br/></div>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+
+
+
+  //Statische Implementierung eines Sinus mit 440 Hz
+  // brauchen wir nicht! board1.update() ganz am ende aufzurufen reicht voellig.
+  var x = [];
+  var y = [];
+
+  var xgraph = [];
+  var ygraph = [];
+
+  // ygraph2 sind die daten fuer das zweite board. Das erste soll ja den reinen Sinus
+  // und das zweite den gestoerten darstellen, deshalb brauchen wir fuer das zweite
+  // board extra y-werte. die x-werte sind die gleichen.
+  var ygraph2 = [];
+
+
+  var board1 = JXG.JSXGraph.initBoard('jxgbox1', {boundingbox: [-1 / 160, 2.2, 1 / 18, -2.2], axis: true, grid: false,
+      keepaspectratio: false, showcopyright: false});
+
+
+  var board2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-1 / 160, 2.2, 1 / 18, -2.2], axis: true, grid: false,
+      keepaspectratio: false, showcopyright: false});
+  board2.options.curve.RDPsmoothing = false;
+
+
+  var s = board1.create('slider', [
+      [0,-1.5],
+      [0.04,-1.5],
+      [0,440,1000]
+  ], {snapWidth:5});
+
+  var gra = board1.createElement('curve', [xgraph, ygraph]);
+
+
+  //Einbinden des Sliders s in board1
+  gra.updateDataArray = function () {
+      this.dataX = xgraph;
+      this.dataY = ygraph;
+  };
+
+
+  function Frequenzeinstellung() {
+
+      for (i = 0; i < 4000; i++) {
+          x[i] = i;
+          y[i] = Math.sin(s.Value() * 2 * Math.PI / 4000 * x[i]);
+      }
+      for (i = 0; i < 200; i++) {
+          xgraph[i] = x[i] / 4000;
+          ygraph[i] = y[i];
+      }
+      //board2.update();
+      //Stoerung();
+  }
+
+  board1.addHook(Frequenzeinstellung);
+
+
+  // Ab hier implementiere ich das zweite board
+  var gra2 = board2.createElement('curve', [xgraph, ygraph]);
+  gra2.numberPointsHigh *= 100;
+
+  gra2.updateDataArray = function () {
+      this.dataX = xgraph;
+      this.dataY = ygraph2;
+  };
+
+
+  function Stoerung() {
+      var i;
+      for (i = 0; i < 200; i++) {
+          ygraph2[i] = y[i]*(Math.random()*0.6+0.7);
+      }
+      // damit sorgen wir dafuer, dass das zweite board neu gezeichnet wird.
+      // Stoerung ist kein Hook mehr, daher duerfen wir das hier tun.
+      //board2.update();
+  }
+
+  board2.addHook(Stoerung);
+
+  board1.addChild(board2);
+
+  //Mit diesem Befehl könnte man die "Statische Implementierung eines Sinus mit 440 Hz" auslassen
+  // dann sollten wir das auch tun, aber erst hier
+  board1.update();
+
+
+
+/* ]]> */
+  </script>
+
+</body>
+</html>

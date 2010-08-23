@@ -35,11 +35,11 @@
             y[2]=x[3];
             y[3]=x[2]-2*x[1]-(1-m)*x[2]/D1-m*x[2]/D2;
             return y;
-        }
+        };
 
         var x0 = [0.994, 0, 0, -2.0015851063790825];
 
-        var data = JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.RK4, x0, I, N, f);
+        var data = JXG.Math.Numerics.rungeKutta('rk4', x0, I, N, f);
 
         return data;
     }

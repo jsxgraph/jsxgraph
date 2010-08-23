@@ -157,12 +157,13 @@
         assertRoughlyEquals("JXG.Math.Numerics.regressionPolynomial, Two Arrays, Degree slider, incorrect result", 2.375, regressionArrays(1.5), JXG.Math.eps);
     }
 
-    function testBezier() {
-
-    }
-
     function testD() {
+        var f = function(x) {
+            return x*x;
+        },
+        df = JXG.Math.Numerics.D(f);
 
+        assertRoughlyEquals("JXG.Math.Numerics.D, incorrect result", 2, df(1), JXG.Math.eps);
     }
 
     function testRiemann() {
@@ -175,6 +176,10 @@
 
     function testRungeKutta() {
         
+    }
+
+    function testBezier() {
+
     }
 
 </script>
