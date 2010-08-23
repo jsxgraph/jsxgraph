@@ -162,11 +162,9 @@ JXG.Math.Symbolic = function(JXG, undefined) {
          * Calculate geometric locus of a point given on a board. Invokes python script on server.
          * @param {JXG.Board} board The board on that the point lies.
          * @param {JXG.Point} point The point that will be traced.
-         * @param {function} callback A callback function that is called after the server request is finished.
-         *    Must take an array of strings as the only parameter.
-         * @return {Array} An array of points.
+         * @returns {Array} An array of points.
          */
-        geometricLocusByGroebnerBase: function(board, point, callback) {
+        geometricLocusByGroebnerBase: function(board, point) {
             var numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace'),
                 poly, polyStr, result, oldRadius = {},
                 xsye = new JXG.Coords(JXG.COORDS_BY_USR, [0,0], board),
@@ -187,7 +185,7 @@ JXG.Math.Symbolic = function(JXG, undefined) {
 
 
             if (JXG.Server.modules.geoloci === undefined)
-                JXG.Server.loadModule('geoloci')
+                JXG.Server.loadModule('geoloci');
 
             if (JXG.Server.modules.geoloci === undefined)
                 throw new Error("JSXGraph: Unable to load JXG.Server module 'geoloci.py'.");
@@ -233,7 +231,7 @@ JXG.Math.Symbolic = function(JXG, undefined) {
                         P2 = bol.to10;
                     } else {
                         if (board.listOfFreePoints[0].id == P1.id)
-                            P2 = board.listOfFreePoints[1]
+                            P2 = board.listOfFreePoints[1];
                         else
                             P2 = board.listOfFreePoints[0];
                     }
