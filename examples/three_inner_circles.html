@@ -68,14 +68,14 @@ Then r<sub>A</sub> + r<sub>B</sub> + r<sub>C</sub> = r<sub>M</sub>.
 
     var l3 =  board.createElement('line',[pp1,c2[0]],{name:'',visible:false});
     var i2 = board.createElement('intersection',[l3,c2[1],0],{name:'',visible:false});
-    var l4 = board.createElement('parallel',[b1,i2],{visible:false});
+    var l4 = board.createElement('parallel',[b1,i2],{visible:true});
     var i3 = board.createElement('intersection',[l4,b3,0],{name:'',fillColor:'#9932CC',strokeColor:'#9932CC'});
     var i4 = board.createElement('intersection',[l4,b2,0],{name:'',fillColor:'#9932CC',strokeColor:'#9932CC'});
     var l5 = board.createElement('line',[i3,i4],{name:'',straightFirst:false,straightLast:false});
-    
+
     var l13 =  board.createElement('line',[pp2,c2[0]],{name:'',visible:false});
     var i12 = board.createElement('intersection',[l13,c2[1],0],{name:'',visible:false});
-    var l14 = board.createElement('parallel',[b2,i12],{visible:false});
+    var l14 = board.createElement('parallel',[b2,i12],{visible:true});
     var i13 = board.createElement('intersection',[l14,b3,0],{name:'',fillColor:'#9932CC',strokeColor:'#9932CC'});
     var i14 = board.createElement('intersection',[l14,b1,0],{name:'',fillColor:'#9932CC',strokeColor:'#9932CC'});
     var l15 = board.createElement('line',[i13,i14],{name:'',straightFirst:false,straightLast:false});
@@ -132,7 +132,6 @@ Then r<sub>A</sub> + r<sub>B</sub> + r<sub>C</sub> = r<sub>M</sub>.
 
     // und beim board registrieren.
     print_table_id = board.addHook(print_table);
-     
 /* ]]> */
 </script>
 </body>

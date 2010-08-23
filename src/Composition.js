@@ -386,7 +386,9 @@ JXG.createParallelPoint = function(board, parentArr, atts) {
                         "\nPossible parent types: [line,point], [point,point,point]");
     }
 
-    p = board.create('point', [function () { return c.coords.usrCoords[1] + b.coords.usrCoords[1] - a.coords.usrCoords[1]; }, function () { return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2]; }], atts);
+    p = board.create('point', [function () { return c.coords.usrCoords[1] + b.coords.usrCoords[1] - a.coords.usrCoords[1]; }, 
+                               function () { return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2]; }], 
+                               atts);
 	// required for algorithms requiring dependencies between elements
 	a.addChild(p);
 	b.addChild(p);
@@ -489,10 +491,11 @@ JXG.createParallel = function(board, parents, atts) {
         atts['name'] = atts['name'][0];
     } else
         cAtts['name'] = atts['name'] + 'p2';
+        
     if(JXG.isArray(atts['id']) && atts['id'].length == 2) {
         cAtts['id'] = atts['id'][1];
         atts['id'] = atts['id'][0];
-    } else
+    } else if (atts['id']!=JXG.undefined) 
         cAtts['id'] = atts['id'] + 'p2';
 
     try {
