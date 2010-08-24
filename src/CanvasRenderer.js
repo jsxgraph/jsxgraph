@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009
+    Copyright 2010
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -261,14 +261,8 @@ JXG.CanvasRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin
 };
 
 JXG.CanvasRenderer.prototype.drawImage = function(el) {
-    //var //url = el.url, //'data:image/png;base64,' + el.imageBase64String,    
-    // node = new Image();
-    
-    //node.setAttributeNS(null, 'id', this.container.id+'_'+el.id);
-    // img.src = 'myImage.png';
-    //node.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
-    //node.setAttributeNS(null, 'preserveAspectRatio', 'none');
-    //this.appendChildPrim(node,el.layer);
+    var updateImage = this.updateImage;
+       
     el.rendNode = new Image();
     this.updateImage(el);
 };
@@ -280,29 +274,52 @@ JXG.CanvasRenderer.prototype.updateImageURL = function(el) {
     } else {
         url = el.url;
     }
-    el.rendNode.src = url;
+    if (el.rendNode.src!=url) {
+        el.imgIsLoaded = false;
+        el.rendNode.src = url;  
+        return true;
+    } else {
+        return false;
+    }
 };
 
 JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) { 
-    var ctx = this.context;
-    this.updateImageURL(el);
-    el.rendNode.onload = function(){ 
+    var ctx = this.context,
+        transformParent = this.transformImageParent;
+        transform = this.transformImage,
+        paintImg = function(){ 
+            ctx.save();
+            if (el.parent != null) {
+                transformParent(el,el.parent.imageTransformMatrix,ctx);
+            } else {
+                transformParent(el,null,ctx); // Transforms are cleared
+            }
+            transform(el,el.transformations,ctx);
             ctx.drawImage(el.rendNode, 
                     el.coords.scrCoords[1],
                     el.coords.scrCoords[2]-el.size[1],
                     el.size[0],
                     el.size[1]);
-           };
+            ctx.restore();
+            el.imgIsLoaded = true;
+        };  
+    
+    if (this.updateImageURL(el)) 
+        el.rendNode.onload = paintImg;
+    else {
+        if (el.imgIsLoaded) paintImg();
+    }
+        
 };
 
-JXG.CanvasRenderer.prototype.transformImage = function(el,t) {
-/*
-    var node = el.rendNode,
-        str = node.getAttributeNS(null, 'transform');
+JXG.CanvasRenderer.prototype.transformImage = function(el,t,ctx) {
+    var tm, i,
+        len = t.length;
         
-    str += ' ' + this.joinTransforms(el,t);
-    node.setAttributeNS(null, 'transform', str);
-*/    
+    for (i=0;i<len;i++) {
+        tm = t[i].matrix;
+        ctx.transform(tm[1][1],tm[2][1],tm[1][2],tm[2][2],tm[1][0],tm[2][0]);
+    }
 };
 
 JXG.CanvasRenderer.prototype.joinTransforms = function(el,t) {
@@ -310,10 +327,13 @@ JXG.CanvasRenderer.prototype.joinTransforms = function(el,t) {
     return '';
 };
 
-JXG.CanvasRenderer.prototype.transformImageParent = function(el,m) {
-    // not done yet
+JXG.CanvasRenderer.prototype.transformImageParent = function(el,m,ctx) {
+    if (m!=null) 
+        ctx.setTransform(m[1][1],m[2][1],m[1][2],m[2][2],m[1][0],m[2][0]);
+    else
+        ctx.setTransform(1,0,0,1,0,0);
 };
-  
+
 JXG.CanvasRenderer.prototype.setArrowAtts = function(node, c, o) {
     // this isn't of any use in a canvas based renderer,
     // because the arrows have to be redrawn on every update.
