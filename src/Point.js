@@ -786,6 +786,53 @@ JXG.Point.prototype.stopAnimation = function() {
 };
 
 /**
+ * Starts an animation which moves the point along a given path in given time.
+ * @param {Number} path The path the point is moved on. This is an array of arrays containing x and y values of the points of the path.
+ * @param {Number} time The time in milliseconds in which to finish the animation
+ */
+JXG.Point.prototype.moveAlong = function(path, time) {
+    var interpath = [],
+        delay = 35,
+        makeFakeFunction = function (i, j) {
+            return function() {
+                return path[i][j];
+            };
+        },
+        p = [], i, neville,
+        steps = time/delay;
+
+    for(i=0; i<path.length; i++) {
+        if(JXG.isPoint(path[i])) {
+            p[i] = path[i];
+        } else {
+            p[i] = {
+                elementClass: JXG.OBJECT_CLASS_POINT,
+                X: makeFakeFunction(i, 0),
+                Y: makeFakeFunction(i, 1)
+            };
+        }
+    }
+
+    time = time || 0;
+    if(time === 0) {
+        this.setPosition(JXG.COORDS_BY_USER, p[p.length-1].X(), p[p.length-1].Y());
+        return this.board.update(this);
+    }
+
+    // TODO: Interpolate and extract new path according to time
+    neville = JXG.Math.Numerics.Neville(p);
+    for(i=0; i<steps; i++) {
+        interpath[i] = [];
+        interpath[i][0] = neville[0]((steps-i)/steps*neville[3]());
+        interpath[i][1] = neville[1]((steps-i)/steps*neville[3]());
+    }
+
+    this.animationPath = interpath;
+    this.board.addAnimation(this);
+    return this;
+};
+
+/**
  * Starts an animated point movement towards the given coordinates <tt>where</tt>. The animation is done after <tt>time</tt> milliseconds.
  * @param {Array} where Array containing the x and y coordinate of the target location.
  * @param {int} time Number of milliseconds the animation should last.
@@ -796,8 +843,7 @@ JXG.Point.prototype.moveTo = function(where, time) {
     if (typeof time == 'undefined' || time == 0) {
         this.setPosition(JXG.COORDS_BY_USER, where[0], where[1]);
         //this.prepareUpdate().update().updateRenderer();
-        this.board.update(this);
-        return this;
+        return this.board.update(this);
     }
 	var delay = 35,
 	    steps = Math.ceil(time/(delay * 1.0)),
@@ -815,10 +861,7 @@ JXG.Point.prototype.moveTo = function(where, time) {
 		coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y+ dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
 	}
 	this.animationPath = coords;
-	this.board.animationObjects[this.id] = this;
-	if(typeof this.board.animationIntervalCode == 'undefined') {
-		this.board.animationIntervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].animate();', delay);
-	}
+    this.board.addAnimation(this);
     return this;
 };
 
@@ -849,10 +892,7 @@ JXG.Point.prototype.visit = function(where, time, repeat) {
         }
     }
     this.animationPath = coords;
-    this.board.animationObjects[this.id] = this;
-    if(typeof this.board.animationIntervalCode == 'undefined') {
-        this.board.animationIntervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].animate();', delay);
-    }
+    this.board.addAnimation(this);
     return this;
 };
 

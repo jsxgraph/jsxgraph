@@ -596,11 +596,7 @@ JXG.GeometryElement.prototype.animate = function(hash, time) {
         }
     }
 
-	this.board.animationObjects[this.id] = this;
-	if(typeof this.board.animationIntervalCode == 'undefined') {
-		this.board.animationIntervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.board.id + '\'].animate();', delay);
-	}
-
+    this.board.addAnimation(this);
     return this;
 };
 

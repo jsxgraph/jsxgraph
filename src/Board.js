@@ -2171,6 +2171,15 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     return this;
 };
 
+JXG.Board.prototype.addAnimation = function(element) {
+    this.animationObjects[element.id] = element;
+    if(!this.animationIntervalCode) {
+        this.animationIntervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.id + '\'].animate();', 35);
+    }
+
+    return this;
+};
+
 /**
  * General purpose animation function, currently only supporting moving points from one place to another. Is faster than
  * managing the animation per point, especially if there is more than one animated point at the same time.

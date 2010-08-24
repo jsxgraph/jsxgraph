@@ -1,9 +1,9 @@
 <html>
 <head>
    <title>JSXGraph example</title>
-   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/jquery.min.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
 </head>
 <body>
 <h2>Animate a free point</h2>
@@ -178,12 +178,14 @@
 
   /* ]]> */
   </script>
-<a href="#" onclick="start();">Start animation</a><br />
-<a href="#" onclick="start2(p1, 2000);">Start animation v2</a><br />
-<a href="#" onclick="p1.moveTo([-5, 2], 800);">Built-in animation (should match animation v2)</a><br />
-<a href="#" onclick="p1.animate({fillColor: '#00ff00'}, 1500);">Built-in color animation</a><br />
-<a href="#" onclick="p1.moveTo([-5, -6], 1500); p1.animate({fillColor: '#00ff00', strokeColor: '#00ff00'}, 1500);">Built-in color & movement animation</a><br />
-<a href="#" onclick="p1.visit([-5, 2], 2200, 2);">Built-in animation &quot;visit&quot;</a><br />
+<a href="animatedpoints.html#" onclick="start();">Start animation</a><br />
+<a href="animatedpoints.html#" onclick="start2(p1, 2000);">Start animation v2</a><br />
+<a href="animatedpoints.html#" onclick="p1.moveTo([-5, 2], 800);">Built-in animation (should match animation v2)</a><br />
+<a href="animatedpoints.html#" onclick="p1.moveAlong([p2, p3, p4], 1000);">Move along</a><br />
+<a href="animatedpoints.html#" onclick="board.create('curve', board.neville([p2, p3, p4]));">Show path</a><br />
+<a href="animatedpoints.html#" onclick="p1.animate({fillColor: '#00ff00'}, 1500);">Built-in color animation</a><br />
+<a href="animatedpoints.html#" onclick="p1.moveTo([-5, -6], 1500); p1.animate({fillColor: '#00ff00', strokeColor: '#00ff00'}, 1500);">Built-in color & movement animation</a><br />
+<a href="animatedpoints.html#" onclick="p1.visit([-5, 2], 2200, 2);">Built-in animation &quot;visit&quot;</a><br />
 <div id="debug" style="display:block;"></div>
 </body>
 </html>
