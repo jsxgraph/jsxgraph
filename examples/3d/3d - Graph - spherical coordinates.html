@@ -63,7 +63,7 @@
 	  document.formular.ausgabe.value = "Kamera: ["+cam[0]+", "+cam[1]+", "+cam[2]+"]";
 	  board.update();
 
-	  //alert("Taste mit Dezimalwert " + Tastencode + " gedrückt");
+	  //alert("Taste mit Dezimalwert " + Tastencode + " gedrï¿½ckt");
 	}
 	function TasteLosgelassen (Ereignis) {
 	  if (!Ereignis)
@@ -127,7 +127,7 @@ JXG.Point3D.prototype.proj = function () {
     	adaptParameter(p.coordinates, coordinates_now);
     	adaptParameter(p.camera_coordinates, camera_coordinates_now);
     	adaptParameter(p.normal_coordinates, normal_coordinates_now);
-    	//Fallunterscheidungen für Winkel nötig:
+    	//Fallunterscheidungen fï¿½r Winkel nï¿½tig:
 		var alpha, beta, gamma;
 		
 		if(normal_coordinates_now[0]==0 && normal_coordinates_now[2]>0) alpha = Math.atan(normal_coordinates_now[1]/normal_coordinates_now[2]);
@@ -164,7 +164,6 @@ JXG.Point3D.prototype.proj = function () {
 		if (cam[1] > Math.PI || cam[1]<0)
 			dz= - dz;
     
-	
 	}
     
 	var fx = function(){
@@ -207,7 +206,7 @@ var punkte = [];
 
 
 var normal_vector = new Array(); 
-normal_vector[0] = function (){return (0-newXcam());}
+normal_vector[0] = function (){return (0-newXcam());};
 normal_vector[1] = function (){return (0-newYcam());};
 normal_vector[2] = function (){return (0-newZcam());};
 
@@ -269,7 +268,7 @@ Funktionsterm: <input type="text" id="eingabe" value="Math.sin(x)*Math.cos(y)"><
 Plotbereich x: [<input type="text" id="xMin" value="-4">;<input type="text" id="xMax" value="4">]<br>
 Plotbereich y: [<input type="text" id="yMin" value="-4">;<input type="text" id="yMax" value="4">]<br>
 Genauigkeit: <input type="text" id="abstand" value="1"><br>
-<input type="button" value="ändern" onClick="doIt()">
+<input type="button" value="ï¿½ndern" onClick="doIt()">
 
 
 </form>

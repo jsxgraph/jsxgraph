@@ -233,18 +233,28 @@ JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
 
 JXG.VMLRenderer.prototype.drawImage = function(el) {
     // IE 8: Bilder ueber data URIs werden bis 32kB unterstuetzt.
-    var node, url = el.url; //'data:image/png;base64,' + el.imageBase64String;    
+    var node; // url = el.url(); //'data:image/png;base64,' + el.imageBase64String;    
     
     node = this.container.ownerDocument.createElement('img');
     node.style.position = 'absolute';
     this.setAttr(node,'id', this.container.id+'_'+el.id);
 
-    this.setAttr(node,'src',url);
+    //this.setAttr(node,'src',url);
     this.container.appendChild(node);
     this.appendChildPrim(node,el.layer);
     node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
     el.rendNode = node;
     this.updateImage(el);
+};
+
+JXG.VMLRenderer.prototype.updateImageURL = function(el) {
+    var url;
+    if (JXG.isFunction(el.url)) {
+        url = el.url();
+    } else {
+        url = el.url;
+    }
+    this.setAttr(el.rendNode,'src',url);
 };
 
 JXG.VMLRenderer.prototype.transformImage = function(el,t) {

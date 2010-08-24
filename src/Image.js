@@ -102,8 +102,8 @@ JXG.Image.prototype.addTransform = function (transform) {
 /**
  * @class Displays an image. 
  * @pseudo
- * @description Shows an imgae. The image can be supplied as an URL or an base64 encoded inline image
- * like "data:image/png;base64, /9j/4AAQSkZJRgA...".
+ * @description Shows an image. The image can be supplied as an URL or an base64 encoded inline image 
+ * like "data:image/png;base64, /9j/4AAQSkZJRgA..." or a function returning an URL: function(){ return 'xxx.png; }.
  * @constructor
  * @name Image
  * @type JXG.Image

@@ -261,22 +261,48 @@ JXG.CanvasRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin
 };
 
 JXG.CanvasRenderer.prototype.drawImage = function(el) {
-    var url = el.url, //'data:image/png;base64,' + el.imageBase64String,    
-        node = this.createPrim('image',el.id);
-
-    node.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
-    node.setAttributeNS(null, 'preserveAspectRatio', 'none');
-    this.appendChildPrim(node,el.layer);
-    el.rendNode = node;
+    //var //url = el.url, //'data:image/png;base64,' + el.imageBase64String,    
+    // node = new Image();
+    
+    //node.setAttributeNS(null, 'id', this.container.id+'_'+el.id);
+    // img.src = 'myImage.png';
+    //node.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
+    //node.setAttributeNS(null, 'preserveAspectRatio', 'none');
+    //this.appendChildPrim(node,el.layer);
+    el.rendNode = new Image();
     this.updateImage(el);
 };
 
+JXG.CanvasRenderer.prototype.updateImageURL = function(el) {
+    var url;
+    if (JXG.isFunction(el.url)) {
+        url = el.url();
+    } else {
+        url = el.url;
+    }
+    el.rendNode.src = url;
+};
+
+JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) { 
+    var ctx = this.context;
+    this.updateImageURL(el);
+    el.rendNode.onload = function(){ 
+            ctx.drawImage(el.rendNode, 
+                    el.coords.scrCoords[1],
+                    el.coords.scrCoords[2]-el.size[1],
+                    el.size[0],
+                    el.size[1]);
+           };
+};
+
 JXG.CanvasRenderer.prototype.transformImage = function(el,t) {
+/*
     var node = el.rendNode,
         str = node.getAttributeNS(null, 'transform');
         
     str += ' ' + this.joinTransforms(el,t);
     node.setAttributeNS(null, 'transform', str);
+*/    
 };
 
 JXG.CanvasRenderer.prototype.joinTransforms = function(el,t) {

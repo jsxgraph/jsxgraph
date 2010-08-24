@@ -1,24 +1,34 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-<script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+<script type="text/javascript" src="../src/CanvasRenderer.js"></script>
 </head>
 <body>
 <table border="0">
 <tr><td>
-  <div id="box" class="jxgbox" style="width:400px; height:400px;"></
-div>
+  <div id="box" class="jxgbox" style="width:400px; height:400px;"></div>
 </td></tr></table>
 <input type="button" value=" Animate On/Off" onClick="animate(flipper,
 1,56);"/>
 
 <script language="JavaScript">
-var board = JXG.JSXGraph.initBoard('box', {originX: 200, originY: 200,
-unitX: 40, unitY: 40,showCopyright:false,showNavigation:false});
+JXG.Options.renderer = 'canvas';
+var board = JXG.JSXGraph.initBoard('box', {originX: 200, originY: 200, unitX: 40, unitY: 40,showCopyright:true,showNavigation:true});
 var pic=["http://www.serdaraytekin.com/docs/os/grub/images/debian-gnu.jpg", "http://yves.gnu-darwin.org/art/gnu-darwin_1.png"];
 
 var flipper = board.create('slider',[[-4.5,-4],[-1,-4],[1,35,56]],{snapWidth:1});
-var im = board.create('image',[pic[0],[-4.8,-4.8],[9,9]]);
+var im = board.create('image',[
+        function(){
+            var num;
+            if (flipper.Value()<28) {num = 0; } else {num = 1;}
+            return pic[num];
+        },[-4.8,-4.8],[9,9]]);
+/*
+*/        
+//var im = board.create('image',[pic[0],[-4.8,-4.8],[9,9]]);
+    
+/*        
 var dummypoint = board.create('point',
                 [function(){
                     var num;
@@ -33,7 +43,7 @@ var dummypoint = board.create('point',
                  },0], 
                 {visible:false});
                 
-
+*/
 // Animation
  var animated = false;
  function animate(point, direction, count) {

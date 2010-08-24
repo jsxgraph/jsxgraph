@@ -268,15 +268,26 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
 };
 
 JXG.SVGRenderer.prototype.drawImage = function(el) {
-    var url = el.url, //'data:image/png;base64,' + el.imageBase64String,    
+    var //url = el.url, //'data:image/png;base64,' + el.imageBase64String,    
         node = this.createPrim('image',el.id);
 
-    node.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
+    //node.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
     node.setAttributeNS(null, 'preserveAspectRatio', 'none');
     this.appendChildPrim(node,el.layer);
     el.rendNode = node;
     this.updateImage(el);
 };
+
+JXG.SVGRenderer.prototype.updateImageURL = function(el) {
+    var url;
+    if (JXG.isFunction(el.url)) {
+        url = el.url();
+    } else {
+        url = el.url;
+    }
+    el.rendNode.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
+};
+
 
 JXG.SVGRenderer.prototype.transformImage = function(el,t) {
     var node = el.rendNode,

@@ -787,6 +787,13 @@ JXG.AbstractRenderer.prototype.updateTextStyle = function(/** Text */ el) {
 JXG.AbstractRenderer.prototype.drawImage = function(/** Image */ el) { };
 
 /**
+  * If the URL of the image is proveided by a function, i.e. dynamic URL
+  * the URL has to be updated during updateImage()
+  * @see #updateImage
+  */ 
+JXG.AbstractRenderer.prototype.updateImageURL = function(/** Image */ el) { };
+
+/**
  * Updates the properties of an {@link Image} element.
  * @param el Reference to an {{@link image} object, that has to be updated.
  * @see JXG.Image
@@ -795,7 +802,8 @@ JXG.AbstractRenderer.prototype.drawImage = function(/** Image */ el) { };
 JXG.AbstractRenderer.prototype.updateImage = function(/** Image */ el) { 
     this.updateRectPrim(el.rendNode,el.coords.scrCoords[1],el.coords.scrCoords[2]-el.size[1],
         el.size[0],el.size[1]);
-        
+    
+    this.updateImageURL(el);
     if (el.parent != null) {
         this.transformImageParent(el,el.parent.imageTransformMatrix);
     } else {
