@@ -166,13 +166,13 @@ JXG.Math.Statistics.add = function(arr1,arr2) {
     var i, len, res = [];
     
     if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]+arr2; }
+        for (i=0, len=arr1.length;i<len;i++) { res[i] = arr1[i]+arr2; }
     } else if (typeof arr1=='number' && typeof JXG.isArray(arr2)) {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1+arr2[i]; }
+        for (i=0, len=arr2.length;i<len;i++) { res[i] = arr1+arr2[i]; }
     } else if (typeof JXG.isArray(arr1) && typeof JXG.isArray(arr2)) {
         for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]+arr2[i]; }
     } else if (typeof arr1=='number' && typeof arr2=='number') {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1+arr2; }
+        res = arr1+arr2;
     } else {
         res = null;
     }
@@ -183,13 +183,13 @@ JXG.Math.Statistics.divide = function(arr1,arr2) {
     var i, len, res = [];
     
     if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]/arr2; }
+        for (i=0, len=arr1.length;i<len;i++) { res[i] = arr1[i]/arr2; }
     } else if (typeof arr1=='number' && typeof JXG.isArray(arr2)) {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1/arr2[i]; }
+        for (i=0, len=arr2.length;i<len;i++) { res[i] = arr1/arr2[i]; }
     } else if (typeof JXG.isArray(arr1) && typeof JXG.isArray(arr2)) {
         for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]/arr2[i]; }
     } else if (typeof arr1=='number' && typeof arr2=='number') {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1/arr2; }
+        res = arr1/arr2;
     } else {
         res = null;
     }
@@ -200,13 +200,13 @@ JXG.Math.Statistics.mod = function(arr1,arr2) {
     var i, len, res = [];
     
     if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]%arr2; }
+        for (i=0, len=arr1.length;i<len;i++) { res[i] = arr1[i]%arr2; }
     } else if (typeof arr1=='number' && typeof JXG.isArray(arr2)) {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1%arr2[i]; }
+        for (i=0, len=arr2.length;i<len;i++) { res[i] = arr1%arr2[i]; }
     } else if (typeof JXG.isArray(arr1) && typeof JXG.isArray(arr2)) {
         for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]%arr2[i]; }
     } else if (typeof arr1=='number' && typeof arr2=='number') {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1%arr2; }
+        res = arr1%arr2; 
     } else {
         res = null;
     }
@@ -217,13 +217,13 @@ JXG.Math.Statistics.multiply = function(arr1,arr2) {
     var i, len, res = [];
     
     if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]*arr2; }
+        for (i=0, len=arr1.length;i<len;i++) { res[i] = arr1[i]*arr2; }
     } else if (typeof arr1=='number' && typeof JXG.isArray(arr2)) {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1*arr2[i]; }
+        for (i=0, len=arr2.length;i<len;i++) { res[i] = arr1*arr2[i]; }
     } else if (typeof JXG.isArray(arr1) && typeof JXG.isArray(arr2)) {
         for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]*arr2[i]; }
     } else if (typeof arr1=='number' && typeof arr2=='number') {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1*arr2; }
+        res = arr1*arr2;
     } else {
         res = null;
     }
@@ -234,13 +234,13 @@ JXG.Math.Statistics.subtract = function(arr1,arr2) {
     var i, len, res = [];
     
     if (typeof JXG.isArray(arr1) && typeof arr2=='number') {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]-arr2; }
+        for (i=0, len=arr1.length;i<len;i++) { res[i] = arr1[i]-arr2; }
     } else if (typeof arr1=='number' && typeof JXG.isArray(arr2)) {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1-arr2[i]; }
+        for (i=0, len=arr2.length;i<len;i++) { res[i] = arr1-arr2[i]; }
     } else if (typeof JXG.isArray(arr1) && typeof JXG.isArray(arr2)) {
         for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1[i]-arr2[i]; }
     } else if (typeof arr1=='number' && typeof arr2=='number') {
-        for (i=0, len=Math.min(arr1.length,arr2.length);i<len;i++) { res[i] = arr1-arr2; }
+        res = arr1-arr2; 
     } else {
         res = null;
     }
