@@ -16,13 +16,13 @@
 
     (function() {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], keepaspectratio: true, axis: true, grid: false}),
-            path = [[-8, -7], [-6, 3], [-2, -1], [4, -4], [9, 0]],
             point = board.create('point', [-8, -7]),
-            points = [], i;
+            curve;
 
-        for(i=0; i<path.length; i++)
-            points[i] = board.create('point', path[i], {size: 2});
-        point.moveAlong(path, 4000);
+        curve = board.create('functiongraph', [function(x) { return Math.sin(x); }]);
+        point.moveAlong(function(t) {
+            return [t%3141/500, Math.sin(t/500)];
+        });
     })();
 
 

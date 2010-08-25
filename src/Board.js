@@ -2173,11 +2173,28 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
 
 JXG.Board.prototype.addAnimation = function(element) {
     this.animationObjects[element.id] = element;
+
     if(!this.animationIntervalCode) {
         this.animationIntervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.id + '\'].animate();', 35);
     }
 
     return this;
+};
+
+JXG.Board.prototype.stopAllAnimation = function() {
+    var el;
+
+    //this.suspendUpdate();
+    for(el in this.animationObjects) {
+        if(this.animationObjects[el] === null)
+            continue;
+
+        this.animationObjects[el] = null;
+        delete(this.animationObjects[el]);
+    }
+
+    window.clearInterval(this.animationIntervalCode);
+    delete(this.animationIntervalCode);
 };
 
 /**
@@ -2191,14 +2208,19 @@ JXG.Board.prototype.animate = function() {
 
     //this.suspendUpdate();
     for(el in this.animationObjects) {
-        if(this.animationObjects[el] == null)
+        if(this.animationObjects[el] === null)
             continue;
 
         count++;
         o = this.animationObjects[el];
         if(o.animationPath) {
-            newCoords = o.animationPath.pop();
-            if(typeof newCoords  == 'undefined') {
+            if(JXG.isFunction(o.animationPath)) {
+                newCoords = o.animationPath(new Date().getTime() - o.animationStart);
+            } else {
+                newCoords = o.animationPath.pop();
+            }
+
+            if((newCoords === JXG.undefined) || (!JXG.isArray(newCoords) && isNaN(newCoords))) {
                 delete(o.animationPath);
             } else {
                 //o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
@@ -2927,5 +2949,3 @@ JXG.Board.prototype.addMacro = function(string) {
         this.definedMacros.defName = this.definedMacros.macros[this.definedMacros.macros.length-1];
     }
 };
-
-// vim: et ts=4

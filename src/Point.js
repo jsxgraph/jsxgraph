@@ -787,7 +787,9 @@ JXG.Point.prototype.stopAnimation = function() {
 
 /**
  * Starts an animation which moves the point along a given path in given time.
- * @param {Number} path The path the point is moved on. This is an array of arrays containing x and y values of the points of the path.
+ * @param {Array,function} path The path the point is moved on. This can be either an array of arrays containing x and y values of the points of
+ * the path, or  function taking the amount of elapsed time since the animation has started and returns an array containing a x and a y value or NaN.
+ * In case of NaN the animation stops.
  * @param {Number} time The time in milliseconds in which to finish the animation
  */
 JXG.Point.prototype.moveAlong = function(path, time) {
@@ -801,33 +803,38 @@ JXG.Point.prototype.moveAlong = function(path, time) {
         p = [], i, neville,
         steps = time/delay;
 
-    for(i=0; i<path.length; i++) {
-        if(JXG.isPoint(path[i])) {
-            p[i] = path[i];
-        } else {
-            p[i] = {
-                elementClass: JXG.OBJECT_CLASS_POINT,
-                X: makeFakeFunction(i, 0),
-                Y: makeFakeFunction(i, 1)
-            };
+    if (JXG.isArray(path)) {
+        for (i = 0; i < path.length; i++) {
+            if (JXG.isPoint(path[i])) {
+                p[i] = path[i];
+            } else {
+                p[i] = {
+                    elementClass: JXG.OBJECT_CLASS_POINT,
+                    X: makeFakeFunction(i, 0),
+                    Y: makeFakeFunction(i, 1)
+                };
+            }
         }
+
+        time = time || 0;
+        if (time === 0) {
+            this.setPosition(JXG.COORDS_BY_USER, p[p.length - 1].X(), p[p.length - 1].Y());
+            return this.board.update(this);
+        }
+
+        neville = JXG.Math.Numerics.Neville(p);
+        for (i = 0; i < steps; i++) {
+            interpath[i] = [];
+            interpath[i][0] = neville[0]((steps - i) / steps * neville[3]());
+            interpath[i][1] = neville[1]((steps - i) / steps * neville[3]());
+        }
+
+        this.animationPath = interpath;
+    } else if (JXG.isFunction(path)) {
+        this.animationPath = path;
+        this.animationStart = new Date().getTime();
     }
 
-    time = time || 0;
-    if(time === 0) {
-        this.setPosition(JXG.COORDS_BY_USER, p[p.length-1].X(), p[p.length-1].Y());
-        return this.board.update(this);
-    }
-
-    // TODO: Interpolate and extract new path according to time
-    neville = JXG.Math.Numerics.Neville(p);
-    for(i=0; i<steps; i++) {
-        interpath[i] = [];
-        interpath[i][0] = neville[0]((steps-i)/steps*neville[3]());
-        interpath[i][1] = neville[1]((steps-i)/steps*neville[3]());
-    }
-
-    this.animationPath = interpath;
     this.board.addAnimation(this);
     return this;
 };
