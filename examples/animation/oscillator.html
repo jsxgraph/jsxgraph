@@ -23,9 +23,12 @@
             i, numberOfSpringRings = 10, springRings = [];
 
         for(i=0; i<numberOfSpringRings; i++) {
-            springRings[i] = board.create('point', [0.5-i%2, function(i) { return function() { return springHangup.Y()-(i+1)*Math.abs((springHangup.Y() - point.Y())/(numberOfSpringRings+1))}; }(i)], {withLabel: false, color: 'black', size: 1}); 
+            springRings[i] = board.create('point', [0.5-i%2, function(i) { return function() { return springHangup.Y()-(i+1)*Math.abs((springHangup.Y() - point.Y())/(numberOfSpringRings+1))}; }(i)], {withLabel: false, color: 'black', size: 1});
+            if(i>0)
+                board.create('segment', [springRings[i-1], springRings[i]], {color: 'black', strokeWidth: 1});
         }
-        board.create('curve', JXG.Math.Numerics.bspline(([springHangup].concat(springRings)).concat([point]), 2), {strokeColor: 'black'});
+        board.create('segment', [springHangup, springRings[0]], {color: 'black', strokeWidth: 1});
+        board.create('segment', [springRings[numberOfSpringRings-1], point], {color: 'black', strokeWidth: 1});
 
         function startAnimation(startY) {
             point.moveAlong(function() {
