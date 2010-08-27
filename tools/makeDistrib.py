@@ -74,7 +74,7 @@ if __name__ == '__main__':
         print 'take ', f
         jstxt += open('../src/'+f+'.js','r').read()
         jstxt += '\n';
-    renderer = ['SVGRenderer','VMLRenderer']
+    renderer = ['SVGRenderer','VMLRenderer','CanvasRenderer']
     for f in renderer:
         print 'take ', f
         jstxt += open('../src/'+f+'.js','r').read()
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         open('../distrib/loadjsxgraph.js','w').write(jstxt)
 
         # Minify the renderer
-        renderer = ['VMLRenderer','SVGRenderer']
+        renderer = ['VMLRenderer','SVGRenderer','CanvasRenderer']
         for f in renderer:
             print 'minify ' + f
             fin = open('../src/'+f+'.js','r')

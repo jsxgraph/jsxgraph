@@ -391,7 +391,6 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                 this.labels.push(makeLabel(this.fixedTicks[i], tickCoords, this.board, this.drawLabels, this.id));
             }
         }
-        
         this.board.renderer.updateTicks(this, dxMaj, dyMaj, dxMin, dyMin);
         return;
     } // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
