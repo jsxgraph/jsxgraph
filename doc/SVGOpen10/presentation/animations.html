@@ -1,0 +1,200 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.css" />
+        <script type="text/javascript" src="distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>        
+    </head>
+<body class="jsxgraph_body">
+<!-- Nummer 1-->
+<table><tr>
+<td><div id="jxgbox5" class="jxgbox" style="width:290px; height:290px;padding:0;position:relative"></div></td>
+<!-- Nummer 2-->
+<td><div id="jxgbox6" class="jxgbox" style="width:290px; height:290px;"></div></td>
+<!-- Nummer 3 -->
+<td><div id="jxgbox7" class="jxgbox" style="width:290px; height:290px;padding:0;position:relative"></div></td>
+</tr>
+<tr>
+<!-- Nummer 4-->
+<td><div id="jxgbox8" class="jxgbox" style="width:290px; height:290px;"></div></td>
+<!-- Nummer 5-->
+<td colspan="2"><div id="jxgbox9" class="jxgbox" style="width:580px; height:290px;"></div></td>
+</tr>
+</table>
+
+<!-- Nummer 1-->
+<script type="text/javascript">
+brd = JXG.JSXGraph.initBoard('jxgbox5',{boundingbox:[-0.2,1.2,1.2,-0.2], keepaspectratio:true,showCopyright:false});
+p = [];
+len = 25;
+for (i=0;i<len;i++) {
+	strokey = '#'+Math.floor(Math.random()*16777215).toString(16);
+	if(strokey.length ==6) {strokey = strokey+'f';}
+	if(strokey.length ==5) {strokey = strokey+'ff';}	
+	filly = '#'+Math.floor(Math.random()*16777215).toString(16);
+	if(filly.length ==6) {filly = filly+'f';}
+	if(filly.length ==5) {filly = filly+'ff';}	
+    p[i] = brd.createElement('point',[Math.random(),Math.random()],
+               {face:'o', size:10, strokeColor:strokey, fillColor:filly, fillOpacity:0.4, strokeOpacity:0.4, withLabel:false});
+}
+setInterval(function(){
+   var i, j;
+   for (i=0;i
+<p.length;i++) {
+       p[i].moveTo([Math.random(),Math.random()],1000);
+   }
+   i = 0;
+
+},2000);
+</script>
+
+<!-- Nummer 2-->
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+    (function() {
+        var board = JXG.JSXGraph.initBoard('jxgbox6', {boundingbox: [-10, 10, 10, -10], keepaspectratio: true, axis: true, grid: false,showCopyright:false}),
+            line = board.create('line', [[0,8], [0,-10]], {visible: false, straightFirst: false, straightLast: false}),
+            point = board.create('glider', [-8, -7, line], {name: 'Weight',size:10, gradient:'radial', strokeColor:'none', fillColor:'#00008B',
+            gradientSecondColor:'#B0E0E6'}),
+            isInDragMode = false,
+            springHangup = board.create('point', [0, 9], {color: 'black', name: 'Spring', fixed: true}),
+            i, numberOfSpringRings = 10, springRings = [];
+
+        for(i=0; i<numberOfSpringRings; i++) {
+            springRings[i] = board.create('point', [0.5-i%2, function(i) { return function() { return springHangup.Y()-(i+1)*Math.abs((springHangup.Y() - point.Y())/(numberOfSpringRings+1))}; }(i)], {withLabel: false, color: 'black', size: 1});
+            if(i>0)
+                board.create('segment', [springRings[i-1], springRings[i]], {color: 'black', strokeWidth: 1});
+        }
+        board.create('segment', [springHangup, springRings[0]], {color: 'black', strokeWidth: 1});
+        board.create('segment', [springRings[numberOfSpringRings-1], point], {color: 'black', strokeWidth: 1});
+
+        function startAnimation(startY) {
+            point.moveAlong(function() {
+                var f = function(t, x) {
+                        var c = 0.1, k = 0.5, m = 1;
+                        return [x[1], -c / m * x[1] - k / m * x[0]];
+                    },
+                    area = [0, 200],
+                    numberOfEvaluations = (area[1] - area[0]) * 100,
+                    data = JXG.Math.Numerics.rungeKutta('heun', [startY, 0], area, numberOfEvaluations, f),
+                    duration = 20 * 1e3;
+
+                return function(t) {
+                    if (t >= duration)
+                        return NaN;
+
+                    return [0, data[Math.floor(t / duration * numberOfEvaluations)][0]];
+                }
+            }());
+        }
+
+        function hook() {
+            if(!isInDragMode && board.mode === board.BOARD_MODE_DRAG) {
+                board.stopAllAnimation();
+                isInDragMode = true;
+            }
+
+            if(isInDragMode && board.mode !== board.BOARD_MODE_DRAG) {
+                isInDragMode = false;
+                startAnimation(point.Y());
+            }
+        }
+        board.addHook(hook);
+        startAnimation(-5);
+    })();
+
+
+  /* ]]> */
+  </script>  
+  <!-- Nummer 3-->
+     <script type="text/javascript">
+   /* <![CDATA[ */
+
+        var board3 = JXG.JSXGraph.initBoard('jxgbox7', {boundingbox: [-10, 10, 10, -10], keepaspectratio: true, axis: true, grid: false, showCopyright:false}),
+            path = [[-8, -7], [-6, 3], [-2, -1], [4, -4], [8.5, 0]],
+            point,
+            points = [], i;
+
+        for(i=0; i<path.length; i++)
+            points[i] = board3.create('point', path[i], {size: 2, strokeColor:'#8B2323', fillColor:'#8B2323', face:'[]'});
+        
+        point = board3.create('point', [-8, -7], {strokeColor:'black', fillColor:'blue', shadow:true, face:'A', size:5});
+        point.moveAlong(path, 4000);        
+        setInterval(function(){
+           point.moveAlong(path, 4000);
+        },8000);            
+
+
+  /* ]]> */
+  </script>
+  <!-- Nummer 4-->
+     <script type="text/javascript">
+   /* <![CDATA[ */
+
+        var board4 = JXG.JSXGraph.initBoard('jxgbox8', {boundingbox: [-1, 1, 1, -1], keepaspectratio: true, axis: false, grid: false, showCopyright:false});
+        var p1 = board4.create('point', [0,0], {strokeColor:'black', fillColor:'blue', shadow:true, face:'<', size:60, name:''});
+        
+        p1.animate({fillColor: JXG.hsv2rgb(Math.random()*360,1,1)}, 1500);        
+        setInterval(function(){
+           p1.animate({fillColor: JXG.hsv2rgb(Math.random()*360,1,1)}, 1500);
+        },2000);   
+
+  /* ]]> */
+  </script>  
+  
+  <!-- Nummer 5-->
+     <script type="text/javascript">
+   /* <![CDATA[ */
+         board2 = JXG.JSXGraph.initBoard('jxgbox9', {boundingbox: [-1, 4, 5, -1], keepaspectratio: true, axis: false, grid: false});
+        xax2 = board2.createElement('axis', [[0,0],[1,0]]);
+        yax2 = board2.createElement('axis', [[0,0],[0,1]]);
+
+		var someData = [[1, 3.5, 2, 2.5, 2, 1, 3],
+		         		[3, 2, 1, 3.6, 0.5, 2.5, 1.2],
+		         		[1.5, 2, 0.5, 1, 2.4, 0.2, 2.7],
+			         	[0.5, 3, 1, 2, 3.6, 3.1, 0.4]];
+
+        var p5 = [board2.createElement('point', [0, 1], {name:"A", visible: false}),
+				 board2.createElement('point', [0, 3.5], {name:"B", visible: false}),
+        		 board2.createElement('point', [0, 2], {name:"C", visible: false}),
+        		 board2.createElement('point', [0, 2.5], {name:"D", visible: false}),
+                 board2.createElement('point', [0, 2], {name:"E", visible: false}),
+                 board2.createElement('point', [0, 1], {name:"F", visible: false}),
+                 board2.createElement('point', [0, 3], {name:"G", visible: false})];
+
+        var chartData = [function() { return p5[0].Y(); },
+                         function() { return p5[1].Y(); },
+                         function() { return p5[2].Y(); },
+                         function() { return p5[3].Y(); },
+                         function() { return p5[4].Y(); },
+                         function() { return p5[5].Y(); },
+                         function() { return p5[6].Y(); }];
+
+		var chart = board2.createElement('chart', [chartData], {chartStyle:'bar',width:0.9, fillOpacity: 0.5});
+        
+        // animate fillOpacity on mouse over
+        for(var i=0; i<7; i++) {
+            chart[0][i].setProperty({fillOpacity: 0.5});
+            $(chart[0][i].rendNode).mouseover((function (_i) { return function () { chart[0][_i].animate({fillOpacity: 1.0}, 300); } })(i));
+            $(chart[0][i].rendNode).mouseout((function (_i) { return function () { chart[0][_i].animate({fillOpacity: 0.5}, 300); } })(i));
+        }
+
+        var choose = board2.createElement('text', [7.5, 3.5, '<select id="choose" onchange="changebars();"><option value="0">January</option><option value="1">February</option><option value="2">March</option><option value="3">April</option></select>']);
+
+        function changebars() {
+            var ix = document.getElementById('choose').value,
+                i;
+            for(i=0; i<7; i++) {
+                p5[i].moveTo([p5[i].X(), someData[ix][i]], 1000);
+                chart[0][i].animate({fillColor:  JXG.hsv2rgb(Math.random()*360,1,1), fillOpacity: Math.random()*0.5+0.5}, 1000);
+                chart[0][i].setProperty({fillOpacity: 0.7});
+            }
+        }
+
+
+  /* ]]> */
+  </script>  
+</body>
+</html>

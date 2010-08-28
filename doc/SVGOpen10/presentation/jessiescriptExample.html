@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.css" />
+        <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>         
+    </head>
+<body class="jsxgraph_body">
+                <form>
+         <textarea id='inputtext' cols='73' rows='4' style="border-style:dashed;border-color:#575757;">A(1,2);</textarea>
+<input type="button" value="Send" onClick="runJessieScript(document.getElementById('inputtext').value)">
+<input type="button" value="Clear board" onClick="clearAll()">
+                </form>
+
+                <div  id="jxgbox16" class="jxgbox" style="margin-left:90px; width:700px; height:400px; background-color:none"></div>
+                <script type="text/JavaScript">
+function runJessieScript(t) {
+    board123.suspendUpdate();
+    construction.push(board123.construct(t));
+    board123.unsuspendUpdate();
+}
+
+function clearAll() {
+    JXG.JSXGraph.freeBoard(board123);
+    board123 = JXG.JSXGraph.initBoard('jxgbox16', {grid:true, boundingbox:[-6,11,11,-6], keepaspectratio:true, axis:true});
+}
+
+var construction = [];
+        board123 = JXG.JSXGraph.initBoard('jxgbox16',{boundingbox:[-6,11,11,-6], keepaspectratio:true, axis:true});
+                </script>
+
+</body>
+</html>
