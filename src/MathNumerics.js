@@ -354,7 +354,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
         /**
          * Newton's method to find roots of a funtion in one variable.
          * @param {function} f We search for a solution of f(x)=0.
-         * @param {Number} x initial guess for the root, i.e. staring value.
+         * @param {Number} x initial guess for the root, i.e. start value.
          * @param {object} object optional object that is treated as "this" in the function body. This is useful, if the function is a
          *                 method of an object and contains a reference to its parent object via "this".
          * @returns {Number} A root of the function f.

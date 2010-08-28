@@ -2583,9 +2583,9 @@ this.writeElement = function(board, output, input, cmd) {
     case 'root':
         JXG.debug(input);
         if(JXG.isArray(input))
-            p = board.root(input[0]);
+            p = board.root(input[0],0);
         else
-            p = board.root(input);
+            p = board.root(input,0);
         JXG.debug('r: '+ r.length);
         return p;
     break;
