@@ -291,6 +291,7 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
     myAtts['highlightFillColor'] = attributes['highlightFillColor'] || '#FF7400';
     myAtts['highlightStrokeColor'] = attributes['highlightStrokeColor'] || '#FFFFFF';
     myAtts['gradient'] = attributes['gradient'] || 'none';
+    myAtts['gradientSecondColor'] = attributes['gradientSecondColor'] || 'black';
     var cent = attributes['center'] || [0,0];
     var xc = cent[0];
     var yc = cent[1];

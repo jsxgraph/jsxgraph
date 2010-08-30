@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+       <!-- <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.css" /> -->
+        <script type="text/javascript" src="../../../src/loadjsxgraph.js"></script>         
+    </head>
+<body class="jsxgraph_body">
+
+<div  id="jxgbox25" class="jxgbox" style="width:900px; height:600px; background-color:none"></div>
+<script type="text/javascript">
+    /* <![CDATA[ */
+   
+
+    var dataArr = [30,16,14,10,10,8,6,6,4,4];
+    var board = JXG.JSXGraph.initBoard('jxgbox25', {showNavigation:false, showCopyright:false, originX: 120, originY: 400, unitX: 50, unitY: 50});
+    board.containerObj.style.backgroundColor = 'black';
+    board.suspendUpdate();
+
+    var a = board.createElement('chart', dataArr, 
+        {chartStyle:'pie',  
+         colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
+         fillOpacity:1, center:[5,2], strokeColor:'black', highlightStrokeColor:'black', strokeWidth:4,
+         labelArray:['Firefox 3.6.x','IE 6.0-', 'Firefox 3.5.x','Chrome 4.0.x', 'IE 7.0.x', 'IE 8.0.x', 'Opera', 'Chrome 5.0.x', 'Safari', 'Firefox 3.0-', 'Others'],
+         highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF'],
+         highlightOnSector:true,
+         highlightBySize: true,
+         gradient:'linear', gradientSecondColor:'#EEEEEE'}
+    );
+    
+    board.unsuspendUpdate();
+  /* ]]> */
+  </script>    
+</body>
+</html>
