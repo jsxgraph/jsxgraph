@@ -32,6 +32,7 @@
   <div id="debug" style="display:block;position:absolute;left:500px;width:200px"></div>
   <script type="text/javascript">
     /* <![CDATA[ */
+    var started = false;
     var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 0, originY: 500, unitX: 25, unitY: 25, showCopyright:false, showNavigation:false}); // Spielfeld 10x20
     var board2 = JXG.JSXGraph.initBoard('jxgbox2', {originX: 0, originY: 125, unitX: 25, unitY: 25, showCopyright:false, showNavigation:false});
     var usedPolys = new Array(10);
@@ -229,6 +230,7 @@
     function removeLines() {
         var arr = testLines(),i,j,k, line;
         if(arr.length > 0) {
+            board.suspendUpdate();
             if(arr.length == 1) {
                 score += (level+1)*40;
             }
@@ -259,6 +261,7 @@
                     }
                 }
             }
+            board.unsuspendUpdate();
         }
     }
     
@@ -398,13 +401,16 @@
     var next;
     
     function startTetris() {
-        curShape = drawShape(shape(getRandom()),4,16); 
-        next = getRandom();    
-        drawVorschauShape(shape(next),1,1);
-        
-        document.onkeydown = keyDown;    
-        setTimeout(goDownByTime,timeOutTimes[level]);
-        setTimeout(levelUp,1000*30);
+        if(!started) {
+            started = true;
+            curShape = drawShape(shape(getRandom()),4,16); 
+            next = getRandom();    
+            drawVorschauShape(shape(next),1,1);
+            
+            document.onkeydown = keyDown;    
+            setTimeout(goDownByTime,timeOutTimes[level]);
+            setTimeout(levelUp,1000*30);
+        }
     }
   /* ]]> */
   </script>
