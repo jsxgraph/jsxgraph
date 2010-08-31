@@ -4,7 +4,8 @@
         <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
         <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.css" />
         <script type="text/javascript" src="distrib/jquery.min.js"></script>
-        <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>        
+        <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>   
+        <script type="text/javascript" src="distrib/AM3.js"></script>        
     </head>
 <body class="jsxgraph_body">
 <!-- Nummer 1-->
@@ -54,12 +55,13 @@ setInterval(function(){
    /* <![CDATA[ */
 
     (function() {
+JXG.Options.text.useASCIIMathML = true;    
         var board = JXG.JSXGraph.initBoard('jxgbox6', {boundingbox: [-10, 10, 10, -10], keepaspectratio: true, axis: true, grid: false,showCopyright:false}),
             line = board.create('line', [[0,8], [0,-10]], {visible: false, straightFirst: false, straightLast: false}),
             point = board.create('glider', [-8, -7, line], {name: 'Weight',size:10, gradient:'radial', strokeColor:'none', fillColor:'#00008B',
             gradientSecondColor:'#B0E0E6'}),
             isInDragMode = false,
-            springHangup = board.create('point', [0, 9], {color: 'black', name: 'Spring', fixed: true}),
+            springHangup = board.create('point', [0, 9], {color: 'black', name: '', fixed: true}),
             i, numberOfSpringRings = 10, springRings = [];
 
         for(i=0; i<numberOfSpringRings; i++) {
@@ -101,8 +103,10 @@ setInterval(function(){
                 startAnimation(point.Y());
             }
         }
+              
+        board.create('text',[-9.5,-5,'D=(G*d_D^4)/(8 * d_F^3* n)']);
         board.addHook(hook);
-        startAnimation(-5);
+        startAnimation(-5);   
     })();
 
 
