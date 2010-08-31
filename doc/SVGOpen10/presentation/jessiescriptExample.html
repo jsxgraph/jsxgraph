@@ -7,12 +7,15 @@
     </head>
 <body class="jsxgraph_body">
                 <form>
-         <textarea id='inputtext' cols='73' rows='4' style="border-style:dashed;border-color:#575757;">A(1,2);</textarea>
+         <textarea id='inputtext' cols='45' rows='5' style="border-style:dashed;border-color:#575757;font-size:18pt;margin-left:10px;margin-top:10px;padding-left:15px;padding-top:5px;">A(1,2); 
+k(A,2);
+B(20,5.5); 
+[AB];</textarea>
 <input type="button" value="Send" onClick="runJessieScript(document.getElementById('inputtext').value)">
 <input type="button" value="Clear board" onClick="clearAll()">
                 </form>
 
-                <div  id="jxgbox16" class="jxgbox" style="margin-left:90px; width:700px; height:400px; background-color:none"></div>
+                <div  id="jxgbox16" class="jxgbox" style="margin-left:90px; width:700px; height:350px; background-color:none"></div>
                 <script type="text/JavaScript">
 function runJessieScript(t) {
     board123.suspendUpdate();
