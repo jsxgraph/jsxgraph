@@ -25,6 +25,7 @@ class FFT(JXGServerModule):
         resp.addHandler(self.ifft, 'function(data) { }')
         resp.addHandler(self.cutoutrange, 'function(data) { }')
         resp.addHandler(self.makeAudio, 'function(data) { }')
+        resp.addHandler(self.loadAudio, 'function(data) { }')
         return
 
     def fft(self, resp, x):
@@ -60,6 +61,19 @@ class FFT(JXGServerModule):
         #for i in range(l-e, l-s):
         #    x[i] = 0
         resp.addData('y', x)
+        return
+
+    def loadAudio(self, resp, type, name):
+        pathtowavefiles = '/share8/home/michael/www-store/audio/'
+        fname = pathtowavefiles + os.path.basename(name) + '.wav'
+        fogg = '/tmp/'+str(uuid.uuid4()) + '.ogg'
+        ogg_process = subprocess.Popen(["oggenc", fname, "-Q", "-o", fogg], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+        output = ogg_process.communicate('')[0]
+        f = open(fogg, "r")
+        audio = f.read()
+        audio = "data:audio/ogg;base64," + base64.b64encode(audio)
+        resp.addData('audioB64', audio)
+        os.remove(fogg)
         return
 
     def makeAudio(self, resp, type, samplerate, data):
