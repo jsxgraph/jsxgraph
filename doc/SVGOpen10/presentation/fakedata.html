@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.present.css" />
+   <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>  
+    </head>
+<body class="jsxgraph_body">
+    <form>
+        <input type="button" value="start" onclick="startAjax()">
+        <input type="button" value="stop" onclick="stopAjax()">
+    </form>
+    <div  id="jxgbox1" class="jxgbox" style="margin-left:90px; width:700px; height:500px; background-color:black"></div>
+    <script type="text/JavaScript">
+    (function() {
+        var brd, g, w = 30,
+        x = [], y = [], turt, i;
+        brd = JXG.JSXGraph.initBoard('jxgbox1', {axis:true, boundingbox:[0,20,w,-2]});
+        brd.suspendUpdate();
+
+        // Draw the additional lines
+        turt = brd.create('turtle',[],{strokecolor:'#999999'}).hideTurtle().right(90);
+        for (i=5;i<=15;i+=5) { turt.penUp().moveTo([0,i]).penDown().forward(w); }
+
+        g = brd.create('curve', [x,y],{strokeWidth:3, strokeColor:'yellow'}); 
+
+        fetchData = function() {   // global!
+            new Ajax.Request('fakesensor.php', {
+                    onComplete: function(transport) {
+                    var t, a;
+                    if (200 == transport.status) {
+                        t = transport.responseText;
+                        a = parseFloat(t);
+                        if (x.length<w) {          
+                            x.push(x.length); // add data to the x-coordinates, if the right border has not been reached, yet
+                        } else {
+                            y.splice(0,1);        // remove the oldest entry of the y-coordinates, to make the graph move.
+                        }
+                        y.push(a);
+                        brd.update();
+                    };
+            }});
+        };
+        //setInterval(fetchData,1000);  // Start the periodical update                 
+        brd.unsuspendUpdate();
+    })();
+    startAjax = function() {
+        timeout = setInterval(fetchData,500);
+    }
+    stopAjax = function() {
+        clearInterval(timeout);
+    }
+</script>
+</body>
+</html>
