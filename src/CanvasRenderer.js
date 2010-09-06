@@ -509,8 +509,8 @@ JXG.CanvasRenderer.prototype.updatePathPrim = function(node, pointString, board)
 };
 
 JXG.CanvasRenderer.prototype.updatePathStringPrim = function(el) {
-    var symbm = ' M ',
-        symbl = ' L ',
+    var symbm = 'M',
+        symbl = 'L',
         nextSymb = symbm,
         maxSize = 5000.0,
         pStr = '',

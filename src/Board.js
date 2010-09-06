@@ -537,10 +537,10 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
    JXG.addEvent(document, 'mousedown', this.mouseDownListener, this);
    JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
 
-
     /**
      * To run JSXGraph on an iPhone/iPod/iPad we need these event listeners.
      */
+
    JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
    JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
    JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
@@ -927,8 +927,8 @@ JXG.Board.prototype.mouseMoveListener = function (Event, i) {
     var el, pEl, cPos, absPos, newPos, dx, dy, fromTouch = false;
 
     if(typeof i == 'undefined') {
-	i = 0;
-	fromTouch = true;
+        i = 0;
+        fromTouch = true;
     }
 
     cPos = this.getRelativeMouseCoordinates(Event);
