@@ -1083,7 +1083,7 @@ JXG.Board.prototype.highlightInfobox = function(x,y,el) {
  * @private
  */
 JXG.Board.prototype.dehighlightAll = function(x,y) {
-    var el, pEl;
+    var el, pEl, needsDehighlight = false;
 
     for(el in this.highlightedObjects) {
         //this.renderer.noHighlight(this.highlightedObjects[el]);
@@ -1093,9 +1093,10 @@ JXG.Board.prototype.dehighlightAll = function(x,y) {
            (!pEl.visProp['visible'])) { // dehighlight only if necessary
                 pEl.noHighlight();
                 delete(this.highlightedObjects[el]);
+                needsDehighlight = true;
         }
     }
-    if (this.options.renderer=='canvas') { 
+    if (this.options.renderer=='canvas' && needsDehighlight) { 
         this.prepareUpdate();
         this.renderer.suspendRedraw();
         this.updateRenderer();
@@ -1817,12 +1818,10 @@ JXG.Board.prototype.prepareUpdate = function(drag) {
 JXG.Board.prototype.updateElements = function(drag) {
     var el, pEl,
         isBeforeDrag = true; // If possible, we start the update at the dragged object.
-
     drag = JXG.getReference(this, drag);
     if (drag==null) {
         isBeforeDrag = false;
     }
-
     for(el in this.objects) {
         pEl = this.objects[el];
         if (drag!=null && pEl.id != drag.id) {
