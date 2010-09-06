@@ -2581,13 +2581,24 @@ this.writeElement = function(board, output, input, cmd) {
      }
     break;
     case 'root':
-        JXG.debug(input);
-        if(JXG.isArray(input))
-            p = board.root(input[0],0);
-        else
-            p = board.root(input,0);
-        JXG.debug('r: '+ r.length);
+        attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
+        attr = JXG.GeogebraReader.colorProperties(element, attr);
+        gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
+        attr = JXG.GeogebraReader.visualProperties(element, attr);
+        //JXG.debug(JXG.getReference(board, gxtEl.id));
+        
+        var f;
+        if(JXG.isArray(input)) {
+            f = [input[0].Y, gxtEl.x ,input[0]];
+            //p = board.root(input[0].Y,0,input[0]);
+        } else {
+            f = [input.Y, gxtEl.x ,input];
+            //p = board.root(input.Y,0,input);
+        }
+            
+        var p = board.create('point', [function(){ return board.root(f[0],f[1],f[2]);}, function(){ return 0;}], attr);
         return p;
+        
     break;
   case 'integral':
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
