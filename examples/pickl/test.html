@@ -15,36 +15,22 @@
 <body>
 <h2>JXGServer modul Test-Areal</h2>
 
-<div style="width: 1910px">
-    <table width="1910px">
+<div style="width: 390px">
+    <table width="390px">
         <tr>
-            <td style="width: 380px;">Clear sine</td>
-            <td style="width: 380px;">Disturbed sine</td>
-            <td style="width: 380px;">FFT</td>
-            <td style="width: 380px;">Filter</td>
-            <td style="width: 380px;">iFFT</td>
+            <td style="width: 380px;">Clear sine<br /><div id="box_clearsine" class="jxgbox square"></div><br /><audio id="audioclear" controls="controls" loop="loop" src=""></audio></td>
+        </tr><tr>
+            <td style="width: 380px;">Disturbed sine<br /><div id="box_disturbedsignal" class="jxgbox square"></div><br /><audio id="audiodist" controls="controls" loop="loop" src=""></audio></td>
+        </tr><tr>
+            <td style="width: 380px;">FFT<br /><div id="box_signalfft" class="jxgbox square"></div></td>
+        </tr><tr>
+            <td style="width: 380px;">Filter<br /><div id="box_signalfftfilter" class="jxgbox square"></div></td>
+        </tr><tr>
+            <td style="width: 380px;">iFFT<br /><div id="box_signalcleared" class="jxgbox square"></div><br /><audio id="audiofilter" controls="controls" loop="loop" src=""></audio></td>
         </tr>
     </table>
-</div>
-<div style="width:1910px">
-    <div id="box_clearsine" class="jxgbox square"></div>
-    <div id="box_disturbedsignal" class="jxgbox square"></div>
-    <div id="box_signalfft" class="jxgbox square"></div>
-    <div id="box_signalfftfilter" class="jxgbox square"></div>
-    <div id="box_signalcleared" class="jxgbox square"></div>
 </div>
 
-<div style="width: 1910px">
-    <table width="1910px">
-        <tr>
-            <td style="width: 380px;"><audio id="audioclear" controls="controls" loop="loop" src=""></audio></td>
-            <td style="width: 380px;"><audio id="audiodist" controls="controls" loop="loop" src=""></audio></td>
-            <td style="width: 380px;"></td>
-            <td style="width: 380px;"></td>
-            <td style="width: 380px;"><audio id="audiofilter" controls="controls" loop="loop" src=""></audio></td>
-        </tr>
-    </table>
-</div>
 
 <div id="debug" style="display:none;"></div>
    <script type="text/javascript">
@@ -135,10 +121,10 @@
         JXG.Server.modules.fft.ifft(signals.signalfftfilter, prepare_cb(cb, 'signalcleared'), true);
         boards.signalcleared.create('curve', [x,  signalsplot.signalcleared]);
 
-        //JXG.Server.modules.fft.makeAudio('ogg', samplerate, signals.clearsine, prepare_cb(cb_audio, 'clear'), true);
+        JXG.Server.modules.fft.makeAudio('ogg', samplerate, signals.clearsine, prepare_cb(cb_audio, 'clear'), true);
         JXG.Server.modules.fft.makeAudio('ogg', samplerate, signals.disturbedsignal, prepare_cb(cb_audio, 'dist'), true);
         JXG.Server.modules.fft.makeAudio('ogg', samplerate, signals.signalcleared, prepare_cb(cb_audio, 'filter'), true);
-        JXG.Server.modules.fft.loadAudio('ogg', 'acoustic', prepare_cb(cb_audio, 'clear'), true);
+        //JXG.Server.modules.fft.loadAudio('ogg', 'acoustic', prepare_cb(cb_audio, 'clear'), true);
    })();
 
  /* ]]> */
