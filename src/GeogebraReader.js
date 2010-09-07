@@ -2586,7 +2586,11 @@ this.writeElement = function(board, output, input, cmd) {
         gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
         attr = JXG.GeogebraReader.visualProperties(element, attr);
         //JXG.debug(JXG.getReference(board, gxtEl.id));
-        
+
+        for(var i=0; i<output.length; i++) {
+          output[i] = JXG.GeogebraReader.checkElement(output[i].getAttribute('label'));
+        }
+/*
         var f;
         if(JXG.isArray(input)) {
             f = [input[0].Y, gxtEl.x ,input[0]];
@@ -2595,8 +2599,8 @@ this.writeElement = function(board, output, input, cmd) {
             f = [input.Y, gxtEl.x ,input];
             //p = board.root(input.Y,0,input);
         }
-            
-        var p = board.create('point', [function(){ return board.root(f[0],f[1],f[2]);}, function(){ return 0;}], attr);
+*/
+        var p = board.create('point', [function(){ return board.root(output);}, function(){ return 0;}], attr);
         return p;
         
     break;
