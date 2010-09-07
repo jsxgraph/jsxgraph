@@ -99,7 +99,7 @@ JXG.SVGRenderer.prototype.setShadow = function(el) {
         }    
     }
     el.visPropOld['shadow']=el.visProp['shadow'];
-}
+};
 
 JXG.SVGRenderer.prototype.setGradient = function(el) {
     var fillNode = el.rendNode, col, op,
@@ -144,11 +144,11 @@ JXG.SVGRenderer.prototype.setGradient = function(el) {
     else if (el.visProp['gradient'] == 'radial') {
         node = this.createPrim('radialGradient',el.id+'_gradient');
 
-        node.setAttributeNS(null, 'cx', '50%')
-        node.setAttributeNS(null, 'cy', '50%')
-        node.setAttributeNS(null, 'r', '50%')
-        node.setAttributeNS(null, 'fx', el.visProp['gradientPositionX']*100+'%')
-        node.setAttributeNS(null, 'fy', el.visProp['gradientPositionY']*100+'%')
+        node.setAttributeNS(null, 'cx', '50%');
+        node.setAttributeNS(null, 'cy', '50%');
+        node.setAttributeNS(null, 'r', '50%');
+        node.setAttributeNS(null, 'fx', el.visProp['gradientPositionX']*100+'%');
+        node.setAttributeNS(null, 'fy', el.visProp['gradientPositionY']*100+'%');
 
         node2 = this.createPrim('stop',el.id+'_gradient1');
         node2.setAttributeNS(null,'offset','0%');
@@ -335,7 +335,7 @@ JXG.SVGRenderer.prototype.setArrowAtts = function(node, c, o) {
     node.setAttributeNS(null, 'stroke-opacity', o);
     node.setAttributeNS(null, 'fill', c);
     node.setAttributeNS(null, 'fill-opacity', o);             
-}
+};
 
 JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     var c = this.eval(color), 
@@ -688,7 +688,7 @@ JXG.SVGRenderer.prototype.updatePathStringPoint = function(el, size, type) {
         (scr[1]+s05) + ' ' + (scr[2]+sqrt32) + ' Z ';
     }
     return s;
-}
+};
 
 JXG.SVGRenderer.prototype.updatePolygonePrim = function(node, el) {
     var pStr = '', 
@@ -748,3 +748,10 @@ JXG.SVGRenderer.prototype.appendNodesToElement = function(element, type) {
     element.rendNode = this.getElementById(element.id);
 };
 
+/**
+ * Sets the buffering as recommended by SVGWG. Until now only Opera supports this and will be ignored by other browsers.
+ * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see {@link http://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
+ */
+JXG.SVGRenderer.prototype.setBuffering = function(el, type) {
+    el.rendNode.setAttribute('buffered-rendering', type);
+};

@@ -1314,4 +1314,9 @@ JXG.AbstractRenderer.prototype.eval = function(/** mixed */ val) {
     }
 };
 
-
+/**
+ * This is just a stub. Usage and implementation may differ between the different renderers.
+ */
+JXG.AbstractRenderer.prototype.setBuffering = function() {
+    
+};

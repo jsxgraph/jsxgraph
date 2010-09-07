@@ -1080,7 +1080,7 @@ JXG.createAxis = function(board, parents, attributes) {
         attributes.highlightStrokeColor = attributes.highlightStrokeColor || attributes.strokeColor || board.options.axis.highlightStrokeColor;
 
         line = board.create('line', [point1, point2], attributes);
-        line.needsRegularUpdate = false;  // Axes only updated after zooming and moving of  the origin.
+        line.setProperty({needsRegularUpdate : false});  // Axes only updated after zooming and moving of  the origin.
 
         attributes = JXG.checkAttributes(attributes,{'minorTicks':4, 'insertTicks': true});
 
@@ -1098,7 +1098,7 @@ JXG.createAxis = function(board, parents, attributes) {
         }
         
         line.defaultTicks = board.create('ticks', [line, dist], attributes);
-        line.defaultTicks.needsRegularUpdate = false;
+        line.defaultTicks.setProperty({needsRegularUpdate : false})
     }
     else
         throw new Error("JSXGraph: Can't create point with parent types '" + 

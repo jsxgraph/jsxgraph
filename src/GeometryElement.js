@@ -677,6 +677,7 @@ JXG.GeometryElement.prototype.showElement = function() {
 *<li>fontSize</li>
 *<li>color</li>
 *<li>opacity</li>
+* <li>needsRegularUpdate</li>
 *</ul>*/
 
 /**
@@ -722,6 +723,15 @@ JXG.GeometryElement.prototype.setProperty = function () {
         }
         if (pair[1]==null) continue;
         switch(pair[0].replace(/\s+/g).toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
+            case 'needsregularupdate':
+                if(pair[1] == 'false' || pair[1] == false) {
+                    this.needsRegularUpdate = false;
+                } else {
+                    this.needsRegularUpdate = true;
+                }
+
+                this.board.renderer.setBuffering(this, this.needsRegularUpdate ? 'auto' : 'static');
+                break;
             case 'color':
                 this.setProperty({strokeColor: pair[1], fillColor: pair[1]});
                 break;

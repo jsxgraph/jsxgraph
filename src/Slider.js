@@ -86,9 +86,9 @@ JXG.createSlider = function(board, parents, atts) {
     }
 
     if (fixed) {
-        p1.needsRegularUpdate = false;
-        p2.needsRegularUpdate = false;
-        l1.needsRegularUpdate = false;
+        p1.setProperty({needsRegularUpdate : false});
+        p2.setProperty({needsRegularUpdate : false});
+        l1.setProperty({needsRegularUpdate : false});
     }
     
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
