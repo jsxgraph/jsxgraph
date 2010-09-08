@@ -2593,7 +2593,7 @@ this.writeElement = function(board, output, input, cmd) {
         
         var inp;
         if(JXG.isArray(input)) {
-            inp = input[0]
+            inp = input[0];
         } else {
             inp = input;
         }
@@ -2609,7 +2609,7 @@ this.writeElement = function(board, output, input, cmd) {
                 ]);
         }
         //var p = board.create('point', [function(){ return board.root(output);}, function(){ return 1;}], attr);
-        return output[0]; // What to return here????
+        return output; // What to return here????
     break;
   case 'integral':
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
