@@ -654,13 +654,11 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 term = '';
 
             if (JXG.isPoint(degree) && typeof degree.Value == 'function') {  // Slider
-                deg = degree.Value;
+                deg = function() {return degree.Value();};
             } else if (JXG.isFunction(degree)) {
                 deg = degree;
             } else if (JXG.isNumber(degree)) {
-                deg = function() {
-                    return degree;
-                };
+                deg = function() {return degree;};
             } else {
                 throw new Error("JSXGraph: Can't create regressionPolynomial from degree of type'" + (typeof degree) + "'.");
             }
@@ -718,7 +716,6 @@ JXG.Math.Numerics = (function(JXG, Math) {
                     B = JXG.Math.matMatMult(MT, M);
                     c = JXG.Math.matVecMult(MT, y);
                     coeffs = JXG.Math.Numerics.Gauss(B, c);
-
                     term = JXG.Math.Numerics.generatePolynomialTerm(coeffs, d, 'x', 3);
                 }
 

@@ -39,19 +39,23 @@
             this.dataY[i] = s.Value() * data[i];
         }
     };
-
+    
+dd = new function(){
+    this.d = 3;
+    this.f = function(){ return this.d;  }
+};
+    // If "this" is used
+    regressionPolynomial = JXG.Math.Numerics.regressionPolynomial(dd.f.apply(dd), datax, curve.dataY);  // generateFunction();
     regressionPolynomial = JXG.Math.Numerics.regressionPolynomial(deg, datax, curve.dataY);  // generateFunction();
 
     reg = brd.createElement('functiongraph', [regressionPolynomial], {strokeColor:'black'});
 
     //brd.createElement('glider',[100,30,reg],{strokeColor:'black'});
     //regD = brd.createElement('functiongraph',[brd.D(regressionPolynomial)],{strokeColor:'red'});
-    /*
      t = brd.createElement('text',[20,40,
-     function(){ return "r(x) = " + regressionPolynomial.getTerm();}
+        function(){ return "r(x) = " + regressionPolynomial.getTerm();}
      ],
      {strokeColor:'black',fontSize:'14px'});
-     */
     /*
      // random coordinates after each update
      brd.suspendUpdate();
