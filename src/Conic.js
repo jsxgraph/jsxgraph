@@ -620,9 +620,10 @@ JXG.createConic = function(board, parents, atts) {
             b = Math.sqrt(Math.abs(eigen[0][2][2]));
 
         }
-        if (eigen[0][1][1]<0.0 && eigen[0][2][2]<0.0) {
+        // The degenerate cases with eigen[0][i][i]==0 are not handled correct yet.
+        if (eigen[0][1][1]<=0.0 && eigen[0][2][2]<=0.0) {
             v = JXG.Math.matVecMult(rotationMatrix,[1/c,Math.cos(phi)/a,Math.sin(phi)/b]);
-        } else if (eigen[0][1][1]<0.0 && eigen[0][2][2]>0.0) {
+        } else if (eigen[0][1][1]<=0.0 && eigen[0][2][2]>0.0) {
             v = JXG.Math.matVecMult(rotationMatrix,[Math.cos(phi)/c,1/a,Math.sin(phi)/b]);
         } else if (eigen[0][2][2]<0.0) {
             v = JXG.Math.matVecMult(rotationMatrix,[Math.sin(phi)/c,Math.cos(phi)/a,1/b]);

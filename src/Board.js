@@ -805,40 +805,12 @@ JXG.Board.prototype.touchEndListener = function (evt) {
 };
 
 /**
- * This method is called by the browser when the left mouse button is released.
- * @param {Event}  evt The browsers event object.
- * @private
- */
-JXG.Board.prototype.mouseUpListener = function (evt) {
-    // redraw with high precision
-    this.updateQuality = this.BOARD_QUALITY_HIGH;
-
-    // release mouseup listener
-    JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
-
-    this.mode = this.BOARD_MODE_NONE;
-
-    // if origin was moved update everything
-    if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
-        this.moveOrigin();
-    } else {
-        //this.fullUpdate(); // Full update only needed on moveOrigin? (AW)
-        this.update();
-    }
-
-    // release dragged object
-    this.drag_obj = [];
-
-    this.updateHooks('mouseup');
-};
-
-/**
  * This method is called by the browser when the mouse is moved.
  * @param {Event} Evt The browsers event object.
  * @private
  */
 JXG.Board.prototype.mouseDownListener = function (Evt) {
-    var el, pEl, cPos, absPos, dx, dy;
+    var el, pEl, cPos, absPos, dx, dy, nr;
 
     if (document.selection) {
         document.selection.empty();
@@ -874,6 +846,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
 
     this.mode = this.BOARD_MODE_DRAG;
     if (this.mode==this.BOARD_MODE_DRAG) {
+        nr = 0;
         for(el in this.objects) {
             pEl = this.objects[el];
             if( (typeof pEl.hasPoint != 'undefined')
@@ -887,10 +860,11 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
                     ) {
                 // Points are preferred:
                 if ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)) {
-                    this.drag_obj.push(this.objects[el]);
+                    this.drag_obj.push({obj:this.objects[el],pos:nr}); // add the element and its number in this.object
                     if (this.options.takeFirst) break;
                 }
             }
+            nr++;
         }
     }
 
@@ -919,12 +893,40 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
 };
 
 /**
+ * This method is called by the browser when the left mouse button is released.
+ * @param {Event}  evt The browsers event object.
+ * @private
+ */
+JXG.Board.prototype.mouseUpListener = function (evt) {
+    // redraw with high precision
+    this.updateQuality = this.BOARD_QUALITY_HIGH;
+
+    // release mouseup listener
+    JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+
+    this.mode = this.BOARD_MODE_NONE;
+
+    // if origin was moved update everything
+    if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
+        this.moveOrigin();
+    } else {
+        //this.fullUpdate(); // Full update only needed on moveOrigin? (AW)
+        this.update();
+    }
+
+    // release dragged object
+    this.drag_obj = [];
+
+    this.updateHooks('mouseup');
+};
+
+/**
  * This method is called by the browser when the left mouse button is clicked.
  * @param {Event} Event The browsers event object.
  * @private
  */
 JXG.Board.prototype.mouseMoveListener = function (Event, i) {
-    var el, pEl, cPos, absPos, newPos, dx, dy, fromTouch = false;
+    var el, pEl, cPos, absPos, newPos, dx, dy, fromTouch = false, drag;
 
     if(typeof i == 'undefined') {
         i = 0;
@@ -955,50 +957,50 @@ JXG.Board.prototype.mouseMoveListener = function (Event, i) {
     else if(this.mode == this.BOARD_MODE_DRAG) {
         newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(dx,dy), this);
 //	for(i=0; i<this.drag_obj.length; i++) {
-
-        if (this.drag_obj[i].type == JXG.OBJECT_TYPE_POINT
-            || this.drag_obj[i].type == JXG.OBJECT_TYPE_LINE
-            || this.drag_obj[i].type == JXG.OBJECT_TYPE_CIRCLE
-            || this.drag_obj[i].elementClass == JXG.OBJECT_CLASS_CURVE) {
+        drag = this.drag_obj[i].obj;
+        if (drag.type == JXG.OBJECT_TYPE_POINT
+            || drag.type == JXG.OBJECT_TYPE_LINE
+            || drag.type == JXG.OBJECT_TYPE_CIRCLE
+            || drag.elementClass == JXG.OBJECT_CLASS_CURVE) {
 
 /*
             // Do not use setPositionByTransform at the moment!
             // This concept still has to be worked out.
 	   // If you want to use the commented code you have to remember that this.drag_obj is an array now!
 
-            if ((this.geonextCompatibilityMode && this.drag_obj.type==JXG.OBJECT_TYPE_POINT) || this.drag_obj.group.length != 0) {
+            if ((this.geonextCompatibilityMode && drag.type==JXG.OBJECT_TYPE_POINT) || drag.group.length != 0) {
                 // This is for performance reasons with GEONExT files and for groups (transformations do not work yet with groups)
-                this.drag_obj.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
+                drag.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
             } else {
-                this.drag_obj.setPositionByTransform(JXG.COORDS_BY_USER,
+                drag.setPositionByTransform(JXG.COORDS_BY_USER,
                     newPos.usrCoords[1]-this.dragObjCoords.usrCoords[1],
                     newPos.usrCoords[2]-this.dragObjCoords.usrCoords[2]);
                 // Save new mouse position in screen coordinates.
                 this.dragObjCoords = newPos;
             }
 */
-            this.drag_obj[i].setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
-            this.update(this.drag_obj[i]);
-        } else if(this.drag_obj[i].type == JXG.OBJECT_TYPE_GLIDER) {
-            var oldCoords = this.drag_obj[i].coords;
+            drag.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
+            this.update(drag);
+        } else if(drag.type == JXG.OBJECT_TYPE_GLIDER) {
+            var oldCoords = drag.coords;
             // First the new position of the glider is set to the new mouse position
-            this.drag_obj[i].setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
+            drag.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
             // Then, from this position we compute the projection to the object the glider on which the glider lives.
-            if(this.drag_obj[i].slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
-                this.drag_obj[i].coords = JXG.Math.Geometry.projectPointToCircle(this.drag_obj[i], this.drag_obj[i].slideObject, this);
-            } else if (this.drag_obj[i].slideObject.type == JXG.OBJECT_TYPE_LINE) {
-                this.drag_obj[i].coords = JXG.Math.Geometry.projectPointToLine(this.drag_obj[i], this.drag_obj[i].slideObject, this);
+            if(drag.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
+                drag.coords = JXG.Math.Geometry.projectPointToCircle(drag, drag.slideObject, this);
+            } else if (drag.slideObject.type == JXG.OBJECT_TYPE_LINE) {
+                drag.coords = JXG.Math.Geometry.projectPointToLine(drag, drag.slideObject, this);
             }
             // Now, we have to adjust the other group elements again.
-            if(this.drag_obj[i].group.length != 0) {
-                this.drag_obj[i].group[this.drag_obj[i].group.length-1].dX = this.drag_obj[i].coords.scrCoords[1] - oldCoords.scrCoords[1];
-                this.drag_obj[i].group[this.drag_obj[i].group.length-1].dY = this.drag_obj[i].coords.scrCoords[2] - oldCoords.scrCoords[2];
-                this.drag_obj[i].group[this.drag_obj[i].group.length-1].update(this);
+            if(drag.group.length != 0) {
+                drag.group[drag.group.length-1].dX = drag.coords.scrCoords[1] - oldCoords.scrCoords[1];
+                drag.group[drag.group.length-1].dY = drag.coords.scrCoords[2] - oldCoords.scrCoords[2];
+                drag.group[drag.group.length-1].update(this);
             } else {
-                this.update(this.drag_obj[i]);
+                this.update(drag);
             }
         }
-        this.updateInfobox(this.drag_obj[i]);
+        this.updateInfobox(drag);
 //	}
     }
     else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
@@ -1822,17 +1824,21 @@ JXG.Board.prototype.updateElements = function(drag) {
     if (drag==null) {
         isBeforeDrag = false;
     }
+    
     for(el in this.objects) {
         pEl = this.objects[el];
-        if (drag!=null && pEl.id != drag.id) {
+        if (isBeforeDrag && drag!=null && pEl.id == drag.id) {
             isBeforeDrag = false;
         }
-        if (!isBeforeDrag && !this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
+        if (!this.needsFullUpdate && (isBeforeDrag || !pEl.needsRegularUpdate)) { continue; }
+        
+        // For updates of an element we distinguish if the dragged element is updated or
+        // other elements are updated. 
+        // The difference lies in the treatment of gliders.
         if (drag==null || pEl.id!=drag.id) {
-            //if (this.needsFullUpdate) { pEl.update(true); }
-            pEl.update(true);
+            pEl.update(true);   // an element following the dragged element is updated
         } else {
-            pEl.update(false);
+            pEl.update(false);  // the dragged object itself is updated
         }
     }
     return this;
@@ -1844,20 +1850,28 @@ JXG.Board.prototype.updateElements = function(drag) {
   * @private
   */
 JXG.Board.prototype.updateRenderer = function(drag) {
-    var el, pEl;
+    var el, pEl,
+        isBeforeDrag = true; // If possible, we start the update at the dragged object.
+        
     drag = JXG.getReference(this, drag);
+    if (drag==null) {
+        isBeforeDrag = false;
+    }
     for(el in this.objects) {
         pEl = this.objects[el];
+        if (isBeforeDrag && drag!=null && pEl.id == drag.id) {
+            isBeforeDrag = false;
+        }
         if (!this.needsFullUpdate 
-            && !pEl.needsRegularUpdate
+            && (isBeforeDrag || !pEl.needsRegularUpdate)
             && this.options.renderer!='canvas' /* for canvas renderer */ 
            ) { continue; }
-        if (drag == null || pEl.id != drag.id) {
+        //if (drag == null || pEl.id != drag.id) {
             //if (this.needsFullUpdate) { pEl.updateRenderer(); }
+        //    pEl.updateRenderer();
+        //} else {
             pEl.updateRenderer();
-        } else {
-            pEl.updateRenderer();
-        }
+        //}
     }
     return this;
 };
