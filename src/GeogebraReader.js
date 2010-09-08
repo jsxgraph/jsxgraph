@@ -2590,19 +2590,26 @@ this.writeElement = function(board, output, input, cmd) {
         for(var i=0; i<output.length; i++) {
           output[i] = JXG.GeogebraReader.checkElement(output[i].getAttribute('label'));
         }
-/*
-        var f;
-        if(JXG.isArray(input)) {
-            f = [input[0].Y, gxtEl.x ,input[0]];
-            //p = board.root(input[0].Y,0,input[0]);
-        } else {
-            f = [input.Y, gxtEl.x ,input];
-            //p = board.root(input.Y,0,input);
-        }
-*/
-        var p = board.create('point', [function(){ return board.root(output);}, function(){ return 0;}], attr);
-        return p;
         
+        var inp;
+        if(JXG.isArray(input)) {
+            inp = input[0]
+        } else {
+            inp = input;
+        }
+
+        // At this point, the output points already exist. 
+        // Bind the root function to all output elements.
+        // The start values for all output elements are the x-coordinates as given
+        // in the ggb file.
+        for(i=0; i<output.length; i++) {
+            output[i].addConstraint([
+                    (function(x){ return function(){ return board.root(inp.Y,x,inp);}; })(output[i].X()), 
+                    function(){ return 0;}
+                ]);
+        }
+        //var p = board.create('point', [function(){ return board.root(output);}, function(){ return 1;}], attr);
+        return output[0]; // What to return here????
     break;
   case 'integral':
       attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
