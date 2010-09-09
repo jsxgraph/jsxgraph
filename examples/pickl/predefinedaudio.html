@@ -19,7 +19,7 @@
     <option value="acoustic">Acoustic Guitar</option>
     <option value="bassdrum">Bass drum</option>
     <option value="bass">Bass</option>
-    <option value="chello">Chello</option>
+    <option value="chello">Cello</option>
     <option value="eguitar1">E-Guitar 1</option>
     <option value="eguitar2">E-Guitar 2</option>
     <option value="flute">Flute</option>
@@ -145,7 +145,7 @@
         JXG.Server.modules.fft.loadAudio('ogg', 'acoustic', prepare_cb(cb_audio, 'clear'), true);
 
         document.getElementById('audioselect').onchange = function() {
-            
+            JXG.Server.modules.fft.loadAudio('ogg', document.getElementById('audioselect').value, prepare_cb(cb_audio, 'clear'), true);
         };
    })();
 

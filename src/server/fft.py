@@ -48,18 +48,12 @@ class FFT(JXGServerModule):
 
     # s: 0 < Start < len(x)/2
     # e: 0 < End < len(x)/2
-    def cutoutrange(self, resp, x, s, e):
+    def cutoutrange(self, resp, x, s, e, factor):
         l = len(x)
-        #l2 = math.floor(l/2)
-        #if (s < 0) or (e < 0) or (s > l2) or (e < s):
-        #    resp.addData('y', x)
-        #    return
-        #if e > l2:
-        #    e = l2
-        for i in range(s, e):
-            x[i] = 0
-        #for i in range(l-e, l-s):
-        #    x[i] = 0
+        for i in range(0, s):
+            x[i] = x[i] * factor
+        for i in range(e, l):
+            x[i] = x[i] * factor
         resp.addData('y', x)
         return
 
