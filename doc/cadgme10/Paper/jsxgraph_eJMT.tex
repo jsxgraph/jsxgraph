@@ -139,20 +139,22 @@ plug-ins are required.
 % and \subparagraph{...} as necessary.
 %
 \section{Introduction}
-JSXGraph is a free software library for displaying dynamic, graphical mathematics in a web browser.
-Its feature set covers dynamic Geometry, function graphs, curves, 
-charts, and turtle graphics.
+JSXGraph is a free software library for mathematical visualizations in a web browser.
+Its feature set covers {\sl dynamic Geometry}, plotting of {\sl function graphs}, 
+{\sl curves} of various types, {\sl charts}, and {\sl turtle graphics}.
 
-Usually, JSXGraph is embedded in web pages, for on- or off\/line viewing, the download size is a mere
-80 kByte.
-JSXGraph enhanced web pages can be viewed with all major web browsers on nearly every hardware platform and operating system.
-The supported hardware ranges from smartphones and tablet computers running iOS or Android  to
-Desktop PC running Windows, MacOS X or Linux.
+Usually, JSXGraph is embedded in web pages, for on- or off\/line viewing.
+The download size is a mere 80 kByte, when embedded in web pages.
+JSXGraph enhanced web pages can be viewed with all major web browsers 
+on nearly every hardware platform and operating system.
+The supported hardware ranges from smartphones and tablet computers 
+running iOS or Android  to Desktop PC running Windows, MacOS X or Linux.
 
-At the time of writing, JSXGraph is the only dynamic geometry system that runs  on such a broad range of 
-devices and web browsers---without installation of any plug-in or wathsoever additional software.
-JSXGraph is usable even on devices with limited computing resources, like cheap tablet PCs or
-outdated Desktop PCs running Microsoft Internet Explorer 6.0. 
+At the time of writing, JSXGraph is the only dynamic geometry system that runs  
+on such a broad range of  devices and web browsers---without installation of any plug-in 
+or wathsoever additional software.
+JSXGraph is usable even on devices with limited computing resources, like cheap tablet computers or
+older Desktop PCs running Microsoft Internet Explorer 6.0. 
 
 Thus, this library may prove to be helpful for the
 introduction of technology in mathematical education in developing countries.
@@ -199,10 +201,58 @@ Also Android based devices are supported since the release of the JSXGraph v0.82
 The default browser on these devices (at least up to Android 2.2) does not provide
 SVG or VML graphics. But in the latest version of JSXGraph 
 the use of the HTML canvas element is enabled. Thus, a new range of devices is 
-able to run JSXgraph.
+able to run JSXGraph.
 
 
-\section{Features}
+\section{JSXGraph as DGS viewer}
+JSXGraph is able to read and display the following file formats:
+\begin{itemize} 
+\item \GEONExT{}\footnote{\href{http://geonext.org}{http://geonext.org}} 	
+	\cite{ehmann2003,ehmann2008}
+\item Intergeo\footnote{\href{http://i2geo.eu}{http://i2geo.eu}} \cite{kortenkamp2009}
+\item GeoGebra\footnote{\href{geogebra.org}{http://geogebra.org}} \cite{hohenwarter2005}
+\item Cinderella\footnote{\href{http://cinderella.de}{http://cinderella.de}} \cite{kortenkamp1999}
+\end{itemize}
+The support of the \GEONExT{} file format by JSXGraph is close to 100\%. 
+Only very few \GEONExT{} resources are misinterpreted by JSXGraph. 
+In Figure~\ref{fig:geonext} the construction to the right is the \GEONExT{} Java-applet, to the left is the same file displayed by JSXGraph.
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{geonext.png}\\
+\caption{The right image shows a \GEONExT{} java applet, 
+the left image contains the same construction displayed 
+by JSXGraph.}\label{fig:geonext}
+\end{center}
+\end{figure}
+
+The Intergeo~\cite{kortenkamp2009} format is an upcoming common file format supported by the most European implementors of dynamic geometry systems. JSXGraph possesses one of the most complete  implementiations of the file formats. At the time of writing, the file format just starts to gain popularity. 
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{geogebra.png}\\
+\caption{The right image shows a GeoGebra java applet, 
+the left image contains the same construction displayed 
+by JSXGraph.}\label{fig:geogebra}
+\end{center}
+\end{figure}
+The support for GeoGebra is not complete, but covers many of the most common features of  GeoGebra. In Figure \ref{fig:geogebra} the construction to the right is the GeoGebra Java-applet, to the left is the same file displayed by JSXGraph.
+
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{cindy.png}\\
+\caption{The right image shows a Cinderella java applet, 
+the left image contains the same construction displayed 
+by JSXGraph.}\label{fig:cindy}
+\end{center}
+\end{figure}
+The support of the Cinderella file format \cite{kortenkamp1999} by JSXGraph is in a very early development stage. At the moment it comprises most of the Euclidean Geometry part of Cinderella. In Figure~\ref{fig:cindy} the construction to the right is the Cinderella Java-applet, to the left is the same file displayed by JSXGraph.
+
+
+
+
+
+\section{JSXGraph as Mathlet programming API}
 \subsection{Geometry}
 Plane geometry with 
 homogeneous or affine coordinates,
@@ -226,12 +276,11 @@ Initial attempts to display 3D points.
 
 
 
-\subsection{Importing file formats}
-    * \GEONExT{}
-    * Intergeo file format i2geo
-    * GeoGebra
-    * Cinderella (alpha quality)
-    * Arcview (server based) 
+\section{JSXGraph as construction tool}
+
+
+\section{Features}
+
 \subsection{Plug-ins}
     * moodle
     * wordpress
@@ -313,28 +362,20 @@ C) Geometric construction language
 JSXGraph comes with a simple geometric construction language called JessieScript, which is closely related to the syntax students use in school to describe their construction by compass and ruler. An example is shown in Figure 4, the online version is available at http://jsxgraph.uni-bayreuth.de/jessie . The whole web page consists of three elements: the form for the text input of the construction, the display of the construction and a log window. 
 
 The most important commands are:
-A(1,1) 
-Point with name 'A' at position (1,1) 
-ZY(0.5|1) 
-Point with name 'ZY' at position (0.5,1)
- ]AB[
-straight line through points A and B
-[AB[ 
-ray through points A and B, stopping at A
-]AB]
-ray through points A and B, stopping at B
-[AB]
-segment through points A and B
-g=[AB]
-segment through points A and B, named by 'g'
-k(A,1) 
-circle with midpoint A and radius 1
-k(A,B)
-circle with midpoint A through point B on the circle line
-k(A,[BC]) 
-circle with midpoint A and radius defined by the length of the (not necessarily existing) segement [BC]
-k_1=k(A,1)
-circle with midpoint A and radius 1, named by 'k_1' 
+\begin{description}
+\item{-- \verb+A(1,1)+:} Point with name '\verb|A|' at position $(1,1)$
+\item{-- \verb+ZY(0.5|1)+:} Point with name '\verb|ZY|' at position $(0.5,1)$
+\item{-- \verb|]AB[|:} straight line through points $A$ and $B$
+\item{-- \verb|[AB[|:} ray through points $A$ and $B$, stopping at $A$
+\item{-- \verb|]AB]|:} ray through points $A$ and $B$, stopping at $B$
+\item{-- \verb|[AB]|:} segment through points $A$ and $B$
+\item{-- \verb|g=[AB]|:} segment through points $A$ and $B$, named by '\verb|g|'
+\item{-- \verb|k(A,1)|:} circle with center $A$ and radius $1$
+\item{-- \verb|k(A,B)|:} circle with center $A$ through point $B$ on the circle line
+\item{-- \verb|k(A,[BC])|:} circle with center $A$ and radius defined by the length of the 
+(not necessarily existing) segment \verb|[BC]|
+\item{-- \verb|k_1=k(A,1)|:} circle with center $A$ and radius $1$, named by '\verb|k_1|' 
+\end{description}
 
 The JSXGraph homepage contains the full description of the syntax.
 
@@ -343,12 +384,12 @@ JSXGraph enables the usability of existing mathematical resources on a broad var
 
 \begin{thebibliography}{99}
     \bibitem{crockford} Crockford D. JavaScript: The good parts, Sebastopol, CA, O'Reilly (2008).
-    \bibitem{ehmann2003} Ehmann, M., Miller, C.: ``Dynamic Mathematics with GEONExT.''
+    \bibitem{ehmann2003} Ehmann, M., Miller, C.: ``Dynamic Mathematics with \GEONExT.''
         (Part I: The Interplay between Geometry, Algebra and Calculus)
         in: T. Triandafillidis, K. Hatzikiriakou (Editors): Technology in Mathematics Teaching
         Proceedings of the 6th International Conference, University of Thessaly, Volos - Greece, October 2003, ISBN 9-60923-840-8.    
  
-    \bibitem{ehmann2008} Ehmann, M., Miller, C., Wassermann, A.: ``Dynamic Mathematics with GEONExT: New Concepts''. Book of Abstracts, 4th European Workshop on Mathematical & Scientific e-Contents
+    \bibitem{ehmann2008} Ehmann, M., Miller, C., Wassermann, A.: ``Dynamic Mathematics with GEONExT: New Concepts''. Book of Abstracts, 4th European Workshop on Mathematical \& Scientific e-Contents
     September 2008.   
 
     \bibitem{hohenwarter2005} Hohenwarter, M., Fuchs, K.: ``Combination of Dynamic Geometry, Algebra and Calculus in the Software System GeoGebra''. (2005) In: Computer Algebra Systems and Dynamic Geometry Systems in Mathematics Teaching Conference 2004. Pecs, Hungary 
