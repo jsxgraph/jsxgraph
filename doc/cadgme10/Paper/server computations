@@ -1,0 +1,17 @@
+JSXGraph includes a math library which provides some basic algorithms, e.g. linear equation and ode solvers. For more complex calculations, like
+groebner basis computation or fast fourier transformation, it is also possible to use other math libraries and tools together with JSXGraph. This
+is done by using a JavaScript object named XMLHttpRequest. This object is intended for loading data from a web server (a)synchronously via JavaScript
+without having to reload the whole web page. It can be used to send data to a web server, too.
+
+In conjunction with JSXGraph this means that JSXGraph can be used as a graphical control tool, i.e. the user can choose the input parameters e.g. by
+dragging points. JSXGraph then sends the coordinates to a web server where a CGI script is run which invokes the program which does the calculations.
+The CGI script then grabs the results and sends them back to the users' web browser displaying them using JSXGraph.
+
+Usually this is bound with a bunch of programming work, too. Hence, JSXGraph provides a client/server interface to ease the integration of server side
+calculations.
+
+SIMPLE CODE EXAMPLE
+
+explanation of the example
+
+two more examples: loci calculation, fft
