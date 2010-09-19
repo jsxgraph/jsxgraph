@@ -34,6 +34,7 @@ var s = 3;
 <script type="text/javascript">
 var i;
 var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-3,8,5,-2], axis:true});
+board.suspendUpdate();
 var ax = board.create('axis', [[0,0], [1,0]], {strokeColor: 'black'});
 var ay = board.create('axis', [[0,0], [0,1]], {strokeColor: 'black'});
  
@@ -42,6 +43,7 @@ var x = board.create('glider',[s,0,ax], {name: 'x_{0}', strokeColor: 'magenta', 
  
 newGraph(document.getElementById('graphterm').value);
 newton(x,steps);	
+board.unsuspendUpdate();
 function xval(board) {
     for (i = 0; i < steps; i++)
         document.getElementById('xv' + i).innerHTML = board.round(JXG.getReference(board, 'x_{' + i + '}').X(),14);
