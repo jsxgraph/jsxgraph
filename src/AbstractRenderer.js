@@ -1125,7 +1125,7 @@ JXG.AbstractRenderer.prototype.drawZoomBar = function(board) {
     doc = this.container.ownerDocument;
     node = doc.createElement('div');
     
-    //node.setAttribute('id', el.id);
+    node.setAttribute('id', this.container.id+'_navigationbar');
     node.className = 'JXGtext';
     node.style.color = '#aaaaaa';
     node.style.backgroundColor = '#f5f5f5'; 
