@@ -3,23 +3,25 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-   <script type="text/javascript" src="../distrib/AM3.js"></script>
 </head>
 <body>
 <h2>Test</h2>
 
-  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
-  <div id="debug" style="display:block;"></div>
-   <script type="text/javascript">
+<div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
     /* <![CDATA[ */
 
 
-JXG.Options.text.defaultDisplay = 'internal';
-var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2050, 500, -2009, 1]});
-var a = brd.createElement('axis', [[0, 250], [1,250]], {});
+//JXG.Options.text.defaultDisplay = 'internal';
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true});
+var A = brd.create('point', [1,0], {style:6, name:'A'});
+brd.addHook(function(b) {
+    document.getElementById('debug').innerHTML = JXG.Math.Geometry.rad([1,1],[0,0],A) + ' ' +Math.atan2(A.Y(),A.X());
+    });
+
 
 /*    
-var brd2 = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true});
 var p1 = brd2.create('point', [0,0], {style:6, name:'p1'});
 var s = brd2.create('slider', [[-1,-1],[2,-1],[0,Math.PI/2,2*Math.PI]], {name:'angle'});
 

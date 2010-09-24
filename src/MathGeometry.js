@@ -106,8 +106,8 @@ JXG.Math.Geometry.trueAngle = function(/** JXG.Point */ A, /** JXG.Point */ B, /
  */
 JXG.Math.Geometry.rad = function(A,B,C) {
     var ax, ay, bx, by, cx, cy,
-        abx, aby, cbx, cby,
-        cp, l1, l2, phiacos, phicos, sp, 
+        //abx, aby, cbx, cby,
+        //cp, l1, l2, phiacos, phicos, sp, 
         phi = 0;
         
     if (A.coords == null) {
@@ -131,13 +131,19 @@ JXG.Math.Geometry.rad = function(A,B,C) {
         cx = C.coords.usrCoords[1];
         cy = C.coords.usrCoords[2];
     }
+    /*
     cbx = cx - bx;
     cby = cy - by;
     abx = ax - bx;
     aby = ay - by;
+    */
     
-    //return Math.atan2(cby-aby,cbx-abx);
+    phi = Math.atan2(cy-by,cx-bx)-Math.atan2(ay-by,ax-bx);
+    if (phi<0) phi += 6.2831853071795862;
+    return phi;
 
+    /* 
+    // GEONExT version
     sp = cbx*abx + cby*aby;               // scalar product of c-b and a-b
     cp = abx*cby - aby*cbx;               // cross product of a-b c-b
     l1 = Math.sqrt(abx*abx + aby*aby);    // length of a-b
@@ -149,7 +155,8 @@ JXG.Math.Geometry.rad = function(A,B,C) {
         phiacos = -1;
     }
     phicos = Math.acos(phiacos); // calculate the angle
-    
+    // GEONExT version
+    */
         /*
          * The calculated angle may not be the right angle because of the calculation of acos 
         real     | quadrant  | quadrant | algebraic sign 
@@ -170,12 +177,16 @@ JXG.Math.Geometry.rad = function(A,B,C) {
            4.    |   1.      |   +            |   - 
          So always the negative angle of phicos has to be taken if the product is negative.
          */
+    /* 
+    // GEONExT version
     if ((Math.sin(phicos) * cp) < 0) {
         phi = 6.2831853071795862 - phicos; // 2 * Math.PI - phicos;
     } else {
         phi = phicos;
     }
     return phi;
+    // GEONExT version
+    */
 };
 
 /**
