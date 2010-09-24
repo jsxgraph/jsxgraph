@@ -1,4 +1,4 @@
-<html>
+html>
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
@@ -19,9 +19,21 @@ var l = brd.create('line', [1,0,-1], {});
 var A = brd.create('glider',[1,1,l]);
 var P = brd.create('point',[1,1],{name:'P'});
 var C = brd.create('point',[1,2],{name:'C'});
-var c = brd.create('curve',[function(t){return C.X()+Math.cos(t);},function(t){return C.Y()+Math.sin(t);},0,2*Math.PI-0.2]);
+var c = brd.create('curve',[
+                    function(t){var d = P.Dist(C);
+                                var beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+                                t += beta;
+                                return C.X()+d*Math.cos(t);
+                    },
+                    function(t){var d = P.Dist(C);
+                                var beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+                                t += beta;
+                                return C.Y()+d*Math.sin(t);
+                    },
+                    0,2*Math.PI-0.2]);
 var B = brd.create('glider',[0,2,c],{name:'B'});
-var t = brd.create('transform',[Math.PI/4,C], {type:'rotate'});
+var t = brd.create('transform',[Math.PI/6,C], {type:'rotate'});
+t.applyOnce([P,B]);
 t.applyOnce([P,B]);
 brd.update();
 
