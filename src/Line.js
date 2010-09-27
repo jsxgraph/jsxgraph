@@ -1098,7 +1098,8 @@ JXG.createAxis = function(board, parents, attributes) {
         }
         
         line.defaultTicks = board.create('ticks', [line, dist], attributes);
-        line.defaultTicks.setProperty({needsRegularUpdate : false})
+        line.defaultTicks.setProperty({needsRegularUpdate : false});
+        
     }
     else
         throw new Error("JSXGraph: Can't create point with parent types '" + 

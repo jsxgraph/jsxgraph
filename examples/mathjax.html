@@ -10,6 +10,7 @@
 <div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 <script type='text/javascript'>
     var brd, k;
+    JXG.Options.text.useMathJax = true;
     brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,20,5,-5], axis:true, showNavigation:true, showCopyright:true});
     k = brd.create('slider',[[-4,-2],[3,-2],[-5,1,5]],{name:'n', snapWidth:1});
     brd.create('functiongraph', [function(t) {return brd.pow(Math.E,t*k.Value());}],{strokeColor:'#ff0000'});
@@ -17,13 +18,15 @@
       function() { 
         var temp;
         if (k.Value() == 1) {
-          temp = '<div id="function">'+'\\[f(x) = e^x \\]'+'</div>'; 
+          temp = '\\[f(x) = e^x \\]'; 
+          //temp = '<div id="function">'+'\\[f(x) = e^x \\]'+'</div>'; 
         } else {
-          temp = '<div id="function">'+'\\[f(x) = e^{' + k.Value() + 'x}\\]'+'</div>';
+          temp = '\\[f(x) = e^{' + k.Value() + 'x}\\]';
+          //temp = '<div id="function">'+'\\[f(x) = e^{' + k.Value() + 'x}\\]'+'</div>';
         }
        return temp;
      }], {fontSize:60});
-    brd.create('text',[-3,15,function() { MathJax.Hub.Typeset('function'); return '';}]);
+    //brd.create('text',[-3,15,function() { MathJax.Hub.Typeset('function'); return '';}]);
     brd.update();
 </script> 
 </body>

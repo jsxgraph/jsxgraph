@@ -733,6 +733,9 @@ JXG.AbstractRenderer.prototype.updateText = function(/** JXG.Text */ el) {
                 AMprocessNode(el.rendNode,false);
             }
             el.htmlStr = el.plaintextStr;
+            if (el.board.options.text.useMathJax) {
+                MathJax.Hub.Typeset(el.rendNode);
+            }
         }
     } else {
         this.updateInternalText(el);

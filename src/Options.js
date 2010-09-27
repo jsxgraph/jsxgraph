@@ -184,6 +184,7 @@ JXG.Options = {
         fontSize : 12,
         strokeColor : '#000000',
         useASCIIMathML : false,
+        useMathJax : false,
         defaultDisplay : 'html' //'html' or 'internal'
     },
 
