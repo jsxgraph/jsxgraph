@@ -50,7 +50,7 @@
             <td style="width: 380px;"><audio id="audioclear" controls="controls" loop="loop" src=""></audio></td>
             <td style="width: 380px;"></td>
             <td style="width: 380px;"></td>
-            <td style="width: 380px;"><audio id="audiofilter" controls="controls" loop="loop" src=""></audio></td>
+            <td style="width: 380px;"><audio id="audiosignalcleared" controls="controls" loop="loop" src=""></audio></td>
         </tr>
     </table>
 </div>
@@ -70,7 +70,7 @@
                     'clear':             [-extract*0.01/samplerate,                2, extract*1.05/samplerate, -2],
                     'signalfft':         [-extract*0.01/samplerate, samplerate*1.1/2, extract*1.05/samplerate, -2],
                     'signalfftfilter':   [-extract*0.01/samplerate, samplerate*1.1/2, extract*1.05/samplerate, -2],
-                    'signalcleared':     [-extract*0.01/samplerate,                2, extract*1.05/samplerate, -2]
+                    'signalcleared':     [-extract*0.01/samplerate,                2, 10*extract*1.05/samplerate, -2]
             },
             // boards
             boards = {},
@@ -92,7 +92,15 @@
             },
             cb_audio = function(data, what) {
                 var a = document.getElementById('audio'+what);
+
                 a.src = data.audioB64;
+                if(data.audioData) {
+                    signalsplot[what] = [];
+                    for(var i=0; i<data.audioData.length; i++) {
+                        x[i] = 5*i/data.audioData.length;
+                        signalsplot[what][i] = data.audioData[i];
+                    }
+                }
             },
             prepare_cb = function(f, signal) {
                 return function(data) {
@@ -130,23 +138,24 @@
 
         boards.clear.create('curve', [x, signalsplot.clear]);
 
-        JXG.Server.modules.fft.fft(signals.clear, prepare_cb(cb, 'signalfft'), true);
-        boards.signalfft.create('curve', [x, signalsplot.signalfft]);
+        //JXG.Server.modules.fft.fft(signals.clear, prepare_cb(cb, 'signalfft'), true);
+        //boards.signalfft.create('curve', [x, signalsplot.signalfft]);
 
 
-        JXG.Server.modules.fft.cutoutrange(signals.signalfft, frequency*samples/samplerate+10, Math.floor(samples/2), prepare_cb(cb, 'signalfftfilter'), true);
-        boards.signalfftfilter.create('curve', [x,  signalsplot.signalfftfilter]);
+        //JXG.Server.modules.fft.cutoutrange(signals.signalfft, frequency*samples/samplerate+10, Math.floor(samples/2), prepare_cb(cb, 'signalfftfilter'), true);
+        //boards.signalfftfilter.create('curve', [x,  signalsplot.signalfftfilter]);
 
-        JXG.Server.modules.fft.ifft(signals.signalfftfilter, prepare_cb(cb, 'signalcleared'), true);
-        boards.signalcleared.create('curve', [x,  signalsplot.signalcleared]);
+        //JXG.Server.modules.fft.ifft(signals.signalfftfilter, prepare_cb(cb, 'signalcleared'), true);
+        //boards.signalcleared.create('curve', [x,  signalsplot.signalcleared]);
 
         //JXG.Server.modules.fft.makeAudio('ogg', samplerate, signals.clearsine, prepare_cb(cb_audio, 'clear'), true);
-        JXG.Server.modules.fft.makeAudio('ogg', samplerate, signals.signalcleared, prepare_cb(cb_audio, 'filter'), true);
-        JXG.Server.modules.fft.loadAudio('ogg', 'acoustic', prepare_cb(cb_audio, 'clear'), true);
+        //JXG.Server.modules.fft.makeAudio('ogg', samplerate, signals.signalcleared, prepare_cb(cb_audio, 'filter'), true);
+        JXG.Server.modules.fft.loadAudio('ogg', 'eguitar2', prepare_cb(cb_audio, 'signalcleared'), true);
 
         document.getElementById('audioselect').onchange = function() {
-            JXG.Server.modules.fft.loadAudio('ogg', document.getElementById('audioselect').value, prepare_cb(cb_audio, 'clear'), true);
+            JXG.Server.modules.fft.loadAudio('ogg', document.getElementById('audioselect').value, prepare_cb(cb_audio, 'signalcleared'), true);
         };
+        boards.signalcleared.create('curve', [x,  signalsplot.signalcleared]);
    })();
 
  /* ]]> */

@@ -60,14 +60,20 @@ class FFT(JXGServerModule):
     def loadAudio(self, resp, type, name):
         pathtowavefiles = '/share8/home/michael/www-store/audio/'
         fname = pathtowavefiles + os.path.basename(name) + '.wav'
-        fogg = '/tmp/'+str(uuid.uuid4()) + '.ogg'
-        ogg_process = subprocess.Popen(["oggenc", fname, "-Q", "-o", fogg], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
-        output = ogg_process.communicate('')[0]
+        fogg = pathtowavefiles + os.path.basename(name) + '.ogg'
+        # read ogg
         f = open(fogg, "r")
         audio = f.read()
         audio = "data:audio/ogg;base64," + base64.b64encode(audio)
         resp.addData('audioB64', audio)
-        os.remove(fogg)
+        # read wav
+        w = wave.open(fname, 'r')
+        (nchannels, sampwidth, framerate, nframes, comptype, compname) = w.getparams()
+        frames = w.readframes(nframes*nchannels)
+        out = map(lambda value: value/8192., struct.unpack_from("%dh" % nframes * nchannels, frames))
+        w.close()
+        step = math.floor(len(out)/7500);
+        resp.addData('audioData',  [out[i] for i in range(len(out)) if i % step == 0]);
         return
 
     def makeAudio(self, resp, type, samplerate, data):

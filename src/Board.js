@@ -2032,7 +2032,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     if (typeof el == 'undefined') {
         //throw new Error("JSXGraph: JXG.createElement: failure creating "+elementType);
         return el;
-    };
+    }
 
     if(JXG.isArray(attributes)) {
         attributes = attributes[0];
@@ -2104,21 +2104,7 @@ JXG.Board.prototype.clearTraces = function() {
  * @private
  */
 JXG.Board.prototype.beforeLoad = function() {
-/*    if(document.getElementsByTagName("body").length > 0) {
-        var divNode = document.createElement("div");
-        divNode.setAttribute("id", "JXGPreLoadAnimation");
-        var imgNode = document.createElement("img");
-        imgNode.setAttribute("src", "./css/load.gif");
-        divNode.appendChild(imgNode);
-        divNode.setStyle({
-                    zIndex: 999,
-                    position: 'absolute',
-                    left: parseInt(JXG.getStyle(this.containerObj,"left")) + (this.canvasWidth - 100)/2,
-                    top: parseInt(JXG.getStyle(this.containerObj,"top")) + (this.canvasHeight - 100)/2
-                });
 
-        document.getElementsByTagName("body")[0].appendChild(divNode);
-    }*/
 };
 
 /**
@@ -2126,9 +2112,6 @@ JXG.Board.prototype.beforeLoad = function() {
  * @private
  */
 JXG.Board.prototype.afterLoad = function() {
-  /*  if(document.getElementsByTagName("body").length > 0) {
-        document.getElementsByTagName("body")[0].removeChild(document.getElementById("JXGPreLoadAnimation"));
-    }*/
 };
 
 /**
@@ -2277,12 +2260,8 @@ JXG.Board.prototype.animate = function() {
 };
 
 /**
- * @todo This doesn't work by now. Intention is, to just overwrite the color values for the rendering nodes, but not to call setProperty. Advantage
- * of the change-rendering-node approach would be that this could be reversed and after the user changing the color the new color would be
- * converted by the color blindness simulator, too.
  * Initializes color blindness simulation.
  * @param deficiency Describes the color blindness deficiency which is simulated. Accepted values are protanopia, deuteranopia, and tritanopia.
- * @private
  */
 JXG.Board.prototype.emulateColorblindness = function(deficiency) {
     var e, o, brd=this;
