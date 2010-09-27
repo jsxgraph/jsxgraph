@@ -86,7 +86,7 @@ JXG.IntergeoReader = new function() {
                 // ignore, see this.addPolygonByVertices
             } 
             else {
-                document.getElementById('debug').innerHTML += 'Not implemented: '+node.nodeName + ' ' + node.getAttribute('id') + '<br>';
+                JXG.debug('Not implemented: '+node.nodeName + ' ' + node.getAttribute('id'));
             }
         })(s);
     };
@@ -123,7 +123,7 @@ JXG.IntergeoReader = new function() {
                                 }
                             }
                     } else {
-                        document.getElementById('debug').innerHTML += 'Not implemented: '+ p.childNodes[j].nodeName + '<br>';  // <complex>
+                        JXG.debug('Not implemented: '+ p.childNodes[j].nodeName);  // <complex>
                         return;
                     }
                 }
@@ -134,7 +134,7 @@ JXG.IntergeoReader = new function() {
             } else if (c.length==6 && Math.abs(c[1])<1e-10 && Math.abs(c[3])<1e-10 && Math.abs(c[5])<1e-10) {  // complex, but real
                 parents = [c[4],c[0],c[2]];
             } else {
-                document.getElementById('debug').innerHTML += 'type not supported, yet <br>';  // <complex>
+                JXG.debug('type not supported, yet');  // <complex>
                 return;
             }
         } else if (p.nodeName == 'euclidean_coordinates') {
@@ -154,7 +154,7 @@ JXG.IntergeoReader = new function() {
             for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
             parents = [c[0]*Math.cos(c[1]),c[0]*Math.sin(c[1])];
         } else {
-            document.getElementById('debug').innerHTML += "This coordinate type is not yet implemented: " +p.nodeName+'<br>';
+            JXG.debug('This coordinate type is not yet implemented: ' +p.nodeName);
             return; 
         }
 
@@ -190,7 +190,7 @@ JXG.IntergeoReader = new function() {
                                 }
                             }
                     } else {
-                        document.getElementById('debug').innerHTML += 'Not implemented: '+ p.childNodes[j].nodeName + '<br>';  // <complex>
+                        JXG.debug('Not implemented: '+ p.childNodes[j].nodeName);  // <complex>
                         return;
                     }
                 }
@@ -201,7 +201,7 @@ JXG.IntergeoReader = new function() {
             } else if (c.length==6 && Math.abs(c[1])<1e-10 && Math.abs(c[3])<1e-10 && Math.abs(c[5])<1e-10) {  // complex, but real
                 parents = [c[4],c[0],c[2]];
             } else {
-                document.getElementById('debug').innerHTML += 'type not supported, yet <br>';  // <complex>
+                JXG.debug('type not supported, yet');  // <complex>
                 return;
             }
         } else if (p.nodeName == 'euclidean_coordinates' || p.nodeName == 'euclidian_coordinates') { // the latter one is a workaround for faulty i2g construction exported by DynaGeo
@@ -221,7 +221,7 @@ JXG.IntergeoReader = new function() {
             for (j=0;j<c.length;j++) { c[j] = parseFloat(c[j]); }
             parents = [c[0]*Math.cos(c[1]),c[0]*Math.sin(c[1])];
         } else {
-            document.getElementById('debug').innerHTML += "This coordinate type is not yet implemented: " +p.nodeName+'<br>';
+            JXG.debug('This coordinate type is not yet implemented: ' +p.nodeName);
             return; 
         }
 
@@ -440,7 +440,7 @@ JXG.IntergeoReader = new function() {
             } 
             else {
                 param = JXG.IntergeoReader.readParams(node);
-                document.getElementById('debug').innerHTML += 'readConstraints: not implemented: ' + node.nodeName + ': ' + param[0]+'<br>';
+                JXG.debug('readConstraints: not implemented: ' + node.nodeName + ': ' + param[0]);
             }
         })(s);
     };
@@ -508,7 +508,7 @@ JXG.IntergeoReader = new function() {
                 } else if (this.objects[p].i2geoType=='conic') {
                     this.addConic(this.objects[p]); 
                 } else {
-                    document.getElementById('debug').innerHTML += "forgotten: "+ this.objects[p].id +" of type " + this.objects[p].i2geoType+"<br>\n";
+                    JXG.debug('forgotten: '+ this.objects[p].id +' of type ' + this.objects[p].i2geoType);
                 }
             }
         }
@@ -937,8 +937,11 @@ JXG.IntergeoReader = new function() {
                             } else if (val=='point') {  // Setting size to 1 is missing
                                 val = 'o';            
                             }
-                            // Missing:
-                            // circumference, image
+                            else {
+                                JXG.debug('Display: not implemented' + node.nodeName);
+                                // Missing:
+                                // circumference, image
+                            }
                         }
                         prop[key] = val;
                     }
@@ -946,7 +949,7 @@ JXG.IntergeoReader = new function() {
                 el.setProperty(prop);
             }
             else {
-                document.getElementById('debug').innerHTML += 'Display: ' + node.nodeName + ''+'<br>';
+                JXG.debug('Display: not implemented' + node.nodeName);
             }
         })(s);
     };
