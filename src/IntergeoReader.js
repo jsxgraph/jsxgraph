@@ -53,8 +53,13 @@ JXG.IntergeoReader = new function() {
         this.readConstraints(tree.getElementsByTagName("constraints"));
         this.cleanUp();
         this.board.fullUpdate();
+        this.readDisplay(tree.getElementsByTagName("display"));
+        this.board.fullUpdate();
     };
 
+    /**
+     * Element part
+     */
     this.readElements = function(tree) {
         var s;
         for (var s=0;s<tree[0].childNodes.length;s++) (function(s) {
@@ -311,6 +316,9 @@ JXG.IntergeoReader = new function() {
         }
     };
 
+    /**
+     * Constraint part
+     */
     this.readConstraints = function(tree) {
         var s, param;
         
@@ -879,6 +887,70 @@ JXG.IntergeoReader = new function() {
 
         return fileStr;
     };
+
+    /**
+     * Displpay part
+     */
+    this.readDisplay = function(tree) {
+        var s, j;
+        
+        for (s=0;s<tree[0].childNodes.length;s++) (function(s) {
+            var node, el, prop = {}, key, val;
+            node = tree[0].childNodes[s];
+            if (node.nodeType>1) { return; } // not an element node
+            if (node.nodeName=='background-color') {
+                this.board.containerObj.style.backgroundColor = node.firstChild.data;
+            } 
+            else if (node.nodeName=='style') {
+                el = JXG.getReference(this.board,node.getAttribute('ref'));  // get the element
+                var param = [], j;
+                for (j=0;j<node.childNodes.length;j++) {
+                    if (node.childNodes[j].nodeType==1) {
+                        key = node.childNodes[j].nodeName;
+                        val = node.childNodes[j].firstChild.data;
+                        if (key=='stroke') {
+                            key = 'strokeColor';
+                        } else if (key=='stroke-width' || key=='border-width') {
+                            key = 'strokeWidth';
+                        } else if (key=='fill') {
+                            key = 'fillColor';
+                        } else if (key=='fill-opacity') {
+                            key = 'fillOpacity';
+                        } else if (key=='border-opacity') {
+                            key = 'strokeOpacity';
+                        } else if (key=='point-size') {
+                            key = 'size';
+                        } else if (key=='label') {
+                            key = 'name';
+                        } else if (key=='point-style') {
+                            key = 'face';
+                            if (val=='circle') {
+                                val == 'o';
+                            } else if (val=='cross') {
+                                val = '+';
+                            } else if (val=='x-mark') {
+                                val = 'x';
+                            } else if (val=='square') {
+                                val = '[]';
+                            } else if (val=='triangle') {
+                                val = 'triangleup';
+                            } else if (val=='point') {  // Setting size to 1 is missing
+                                val = 'o';            
+                            }
+                            // Missing:
+                            // circumference, image
+                        }
+                        prop[key] = val;
+                    }
+                }
+                el.setProperty(prop);
+            }
+            else {
+                document.getElementById('debug').innerHTML += 'Display: ' + node.nodeName + ''+'<br>';
+            }
+        })(s);
+    };
+
 };
 
 
