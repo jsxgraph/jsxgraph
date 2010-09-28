@@ -978,7 +978,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     if(pair[1] == 'false' || pair[1] == false) {
                         this.insertTicks = false;
                     }
-                    if(old != this.insertTicks) this.updateRenderer();
+                    if(old != this.insertTicks) this.prepareUpdate().update().updateRenderer();
                 }
                 break;
             case 'drawlabels':
@@ -988,7 +988,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     if(pair[1] == 'false' || pair[1] == false) {
                         this.drawLabels = false;
                     }
-                    if(old != this.drawLabels) this.updateRenderer();
+                    if(old != this.drawLabels) this.prepareUpdate().update().updateRenderer();
                 }
                 break;
             case 'drawzero':
@@ -998,7 +998,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     if(pair[1] == 'false' || pair[1] == false) {
                         this.drawZero = false;
                     }
-                    if(old != this.drawZero) this.updateRenderer();
+                    if(old != this.drawZero) this.prepareUpdate().update().updateRenderer();
                 }
                 break;
             case 'minorticks':
@@ -1006,7 +1006,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     var old = this.minorTicks;
                     if((pair[1] != null) && (pair[1] > 0))
                         this.minorTicks = pair[1];
-                    if(old != this.minorTicks) this.updateRenderer();
+                    if(old != this.minorTicks) this.prepareUpdate().update().updateRenderer();
                 }
                 break;
             case 'majortickheight':
@@ -1014,7 +1014,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     var old = this.majorHeight;
                     if((pair[1] != null) && (pair[1] > 0))
                         this.majorHeight = pair[1];
-                    if(old != this.majorHeight) this.updateRenderer();
+                    if(old != this.majorHeight) this.prepareUpdate().update().updateRenderer();
                 }
                 break;
             case 'minortickheight':
@@ -1022,7 +1022,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
                     var old = this.minorHeight;
                     if((pair[1] != null) && (pair[1] > 0))
                         this.minorHeight = pair[1];
-                    if(old != this.minorHeight) this.updateRenderer();
+                    if(old != this.minorHeight) this.prepareUpdate().update().updateRenderer();
                 }
                 break;
             case 'snapwidth':

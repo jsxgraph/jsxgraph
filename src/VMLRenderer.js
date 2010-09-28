@@ -203,7 +203,7 @@ JXG.VMLRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     for (i=0; i<len; i++) {
         c = axis.ticks[i].scrCoords;
         if(axis.ticks[i].major) {
-            if (axis.labels[i].visProp['visible']) {
+            if ((axis.board.needsFullUpdate||axis.needsRegularUpdate) && axis.labels[i].visProp['visible']) {
                 this.drawText(axis.labels[i]);        
             }
             tickArr.push(' m ' + Math.round(r*(c[1]+dxMaj)) + 

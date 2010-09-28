@@ -136,7 +136,8 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
         }
         this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
     }
-    //this.updateText();                    // First evaluation of the string    
+    this.updateText();                    // First evaluation of the string.
+                                          // Needed for display='internal' and Canvas 
     if(!this.isLabel) {
         this.id = this.board.addText(this);
     }

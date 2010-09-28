@@ -331,20 +331,8 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         dyMin = dxMin/slope;
     }
 
-    // BEGIN: clean up the mess we left from our last run through this function
-    // remove existing ticks
-    if(this.ticks != null) {
-        //if (this.board.needsFullUpdate     // Do not remove labels because of efficiency
-        //    || this.needsRegularUpdate
-        //    ) {
-            for(var j=0; j<this.ticks.length; j++) {
-                if(this.labels[j] != null && this.labels[j].visProp['visible']) { 
-                    this.board.renderer.remove(this.labels[j].rendNode); 
-                }
-            }
-            //console.log("Update label ticks");
-        //}
-    }
+    // Begin cleanup
+    this.removeTickLabels();
 
     // initialize storage arrays
     // ticks stores the ticks coordinates
@@ -505,15 +493,47 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 };
 
 /**
+ * Removes the HTML divs of the tick labels
+ * before repositioning
+ */
+JXG.Ticks.prototype.removeTickLabels = function () {
+    var j;
+    // BEGIN: clean up the mess we left from our last run through this function
+    // remove existing tick labels
+    if(this.ticks != null) {
+        if ((this.board.needsFullUpdate||this.needsRegularUpdate) && 
+            !(this.board.options.renderer=='canvas'&&this.board.options.text.defaultDisplay=='internal')
+           ) {
+            for(j=0; j<this.ticks.length; j++) {
+                if(this.labels[j]!=null && this.labels[j].visProp['visible']) { 
+                    this.board.renderer.remove(this.labels[j].rendNode); 
+                }
+            }
+        }
+    }
+}; 
+
+/**
+ * Recalculate the tick positions and the labels.
+ */
+JXG.Ticks.prototype.update = function () {
+    if (this.needsUpdate) {
+        this.calculateTicksCoordinates();
+    }
+    return this;
+};
+
+/**
  * Uses the boards renderer to update the arc.
- * update() is not needed for arc.
  */
 JXG.Ticks.prototype.updateRenderer = function () {
     if (this.needsUpdate) {
-        this.calculateTicksCoordinates();
-        this.board.renderer.updateTicks(this, this.dxMaj, this.dyMaj, this.dxMin, this.dyMin);
+        if (this.ticks) {
+            this.board.renderer.updateTicks(this, this.dxMaj, this.dyMaj, this.dxMin, this.dyMin);
+        }
         this.needsUpdate = false;
     }
+    return this;
 };
 
 /**
