@@ -191,8 +191,10 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, la
     this.visProp['highlightStrokeColor'] = this.line.visProp['highlightStrokeColor'];
     this.visProp['strokeWidth'] = this.line.visProp['strokeWidth'];
 
-    /* Register ticks at line. */
+    /* Register ticks at line*/
     this.id = this.line.addTicks(this);
+    /* Register ticks at board*/
+    this.board.setId(this,'Ti');
 };
 
 JXG.Ticks.prototype = new JXG.GeometryElement;
@@ -332,15 +334,16 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     // BEGIN: clean up the mess we left from our last run through this function
     // remove existing ticks
     if(this.ticks != null) {
-//         if (true || this.board.needsFullUpdate     // Do not remove labels because of efficiency
-//             || this.needsRegularUpdate
-//             ) {
+        //if (this.board.needsFullUpdate     // Do not remove labels because of efficiency
+        //    || this.needsRegularUpdate
+        //    ) {
             for(var j=0; j<this.ticks.length; j++) {
                 if(this.labels[j] != null && this.labels[j].visProp['visible']) { 
                     this.board.renderer.remove(this.labels[j].rendNode); 
                 }
-//             }
-        }
+            }
+            //console.log("Update label ticks");
+        //}
     }
 
     // initialize storage arrays
@@ -391,7 +394,11 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
                 this.labels.push(makeLabel(this.fixedTicks[i], tickCoords, this.board, this.drawLabels, this.id));
             }
         }
-        this.board.renderer.updateTicks(this, dxMaj, dyMaj, dxMin, dyMin);
+        this.dxMaj = dxMaj;
+        this.dyMaj = dyMaj;
+        this.dxMin = dxMin;
+        this.dyMin = dyMin;
+        //this.board.renderer.updateTicks(this, dxMaj, dyMaj, dxMin, dyMin);
         return;
     } // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
     
@@ -489,19 +496,22 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         }
     }
 
-    this.board.renderer.updateTicks(this, dxMaj, dyMaj, dxMin, dyMin);
+    this.dxMaj = dxMaj;
+    this.dyMaj = dyMaj;
+    this.dxMin = dxMin;
+    this.dyMin = dyMin;
+    //this.board.renderer.updateTicks(this, dxMaj, dyMaj, dxMin, dyMin);
     return;
 };
 
 /**
- * ????????????
- * Seems not to be used!!!!!!!!!
  * Uses the boards renderer to update the arc.
  * update() is not needed for arc.
  */
 JXG.Ticks.prototype.updateRenderer = function () {
     if (this.needsUpdate) {
         this.calculateTicksCoordinates();
+        this.board.renderer.updateTicks(this, this.dxMaj, this.dyMaj, this.dxMin, this.dyMin);
         this.needsUpdate = false;
     }
 };

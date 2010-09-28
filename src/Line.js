@@ -302,12 +302,15 @@ JXG.Line.prototype.update = function() {
         if (true || !this.board.geonextCompatibilityMode) {
             this.updateStdform();
         }
+        /*
+        // This is now done in Ticks.updateRenderer()
         for(i=0; i<this.ticks.length; i++) {
             // i don't know why we need this, but if we don't check it, an error will be reported
             // when the origin is moved. it seems like this.ticks.length is lying.
             if(typeof this.ticks[i] != 'undefined')
                 this.ticks[i].calculateTicksCoordinates();
         }
+        */
     }
     if(this.traced) {
         this.cloneToBackground(true);

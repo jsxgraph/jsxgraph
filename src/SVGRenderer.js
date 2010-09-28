@@ -241,7 +241,7 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
     var tickStr = "",
         i, c, node, 
         len = axis.ticks.length;
-
+        
     for (i=0; i<len; i++) {
         c = axis.ticks[i].scrCoords;
         if (axis.ticks[i].major) {
@@ -252,6 +252,7 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
         }
         else
             tickStr += "M " + (c[1]+dxMin) + " " + (c[2]-dyMin) + " L " + (c[1]-dxMin) + " " + (c[2]+dyMin) + " ";
+
     }
     
     node = this.getElementById(axis.id);
