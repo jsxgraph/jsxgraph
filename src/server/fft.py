@@ -74,6 +74,8 @@ class FFT(JXGServerModule):
         w.close()
         step = math.floor(len(out)/7500);
         resp.addData('audioData',  [out[i] for i in range(len(out)) if i % step == 0]);
+        resp.addData('seconds', (nframes*1.0)/framerate)
+        resp.addData('samplerate', framerate)
         return
 
     def makeAudio(self, resp, type, samplerate, data):
