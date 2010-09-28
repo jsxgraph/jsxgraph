@@ -1967,9 +1967,9 @@ JXG.Board.prototype.update = function(drag) {
         b = JXG.JSXGraph.boards[boardId];
         if( b != this) {
             b.updateQuality = this.updateQuality;
-            b.prepareUpdate(drag).updateElements(drag).updateConditions();
+            b.prepareUpdate().updateElements().updateConditions();
             b.renderer.suspendRedraw();
-            b.updateRenderer(drag);
+            b.updateRenderer();
             b.renderer.unsuspendRedraw();
             b.updateHooks();
         }

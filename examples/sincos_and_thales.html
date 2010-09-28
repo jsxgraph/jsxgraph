@@ -36,42 +36,37 @@
         board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 150, unitY: 150});
         
 		// Einheitskreis
-        b1c1 = board.createElement('circle', [[0,0],[1,0]]);
+        b1c1 = board.create('circle', [[0,0],[1,0]]);
         // Gleiter auf dem Einheitskreis, startet in [1, 0]
-        b1p1 = board.createElement('point', [2, 0], {slideObject: b1c1});
+        b1p1 = board.create('point', [2, 0], {slideObject: b1c1});
 
 		// Achsen erzeugen
-        b1axisx = board.createElement('axis', [[0,0], [0,1]], {});
-        b1axisy = board.createElement('axis', [[0,0], [1,0]], {});
+        b1axisx = board.create('axis', [[0,0], [0,1]], {});
+        b1axisy = board.create('axis', [[0,0], [1,0]], {});
 		
 		// Sekrechten vom Gleiter auf die Achsen zeichnen
-		perp = board.createElement('perpendicular', [b1axisx,b1p1],{strokeColor:['#ff0000',null],visible:[true,false]});
-//		perp = board.createElement('perpendicular', ['X-Achse',b1p1], [{strokeColor: '#ff0000', visible: true}, {visible: false}]);
-		perp2 = board.createElement('perpendicular',[b1axisy,b1p1],{strokeColor:['#0000ff',null],visible:[true,false]});
+		perp = board.create('perpendicular', [b1axisx,b1p1]); //,{strokeColor:['#ff0000',null],visible:[true,false]});
+//		perp = board.create('perpendicular', ['X-Achse',b1p1], [{strokeColor: '#ff0000', visible: true}, {visible: false}]);
+		perp2 = board.create('perpendicular',[b1axisy,b1p1]); //,{strokeColor:['#0000ff',null],visible:[true,false]});
         
         // das zweite board oben rechts initialisieren, Y-Achse ist skaliert
-        board2 = JXG.JSXGraph.initBoard('box2', {originX: 100, originY: 250, unitX: 50, unitY: 150});
+        board2 = JXG.JSXGraph.initBoard('box2', {originX: 100, originY: 250, unitX: 50, unitY: 150, axis:true});
         
         // Punkt der sinus zeichnet
-        b2p1 = board2.createElement('point', [
+        b2p1 = board2.create('point', [
                        function(){ return JXG.Math.Geometry.rad([1,0], [0,0], b1p1); }, 
                        function() { return b1p1.Y() }], 
                        {fixed: true, trace: true, strokeColor: '#ff0000', name: 'S'});
         
         // Punkt, der cosinus zeichnet
-        b2p2 = board2.createElement('point', [
+        b2p2 = board2.create('point', [
                         function(){ return JXG.Math.Geometry.rad([1,0], [0,0], b1p1); }, 
                         function() { return b1p1.X() }], 
                         {fixed: true, trace: true, strokeColor: '#0000ff', name: 'C'});
         
-		// Achsen erzeugen
-        b2axisx = board2.createElement('axis', [[0,0], [1,0]]);
-        b2axisy = board2.createElement('axis', [[0,0], [0,1]]);
-
 		// Die Abhaengigkeiten speichern. Mittlerweile nur noch wichtig, falls b1p1 geloescht werden sollte.
         b1p1.addChild(b2p1);
         b1p1.addChild(b2p2);
-
         board.addChild(board2);
 
         // Deklarationen fuer die Animation 
@@ -120,20 +115,20 @@
         
         // Durchmesserpunkte
 		// Kreis
-		b3p1 = board3.createElement('point', [4, 0], {fixed: true});
-		b3p2 = board3.createElement('point', [-4, 0], {fixed: true});
-        b3c1 = board3.createElement('circle', [[0,0], b3p1]);
+		b3p1 = board3.create('point', [4, 0], {fixed: true});
+		b3p2 = board3.create('point', [-4, 0], {fixed: true});
+        b3c1 = board3.create('circle', [[0,0], b3p1]);
         
         // Gleiter auf dem Kreis, startet in [1, 0]
-        b3s1 = board3.createElement('point', [1, 1], {slideObject: b3c1});
+        b3s1 = board3.create('point', [1, 1], {slideObject: b3c1});
         
         // Die beiden Schenkel des Dreiecks
-        b3l1 = board3.createElement('line', [b3p1, b3s1], {straightFirst: false, straightLast: false});
-        b3l2 = board3.createElement('line', [b3p2, b3s1], {straightFirst: false, straightLast: false});
+        b3l1 = board3.create('line', [b3p1, b3s1], {straightFirst: false, straightLast: false});
+        b3l2 = board3.create('line', [b3p2, b3s1], {straightFirst: false, straightLast: false});
 
 		// Achsen erzeugen
-        b3axisx = board3.createElement('axis', [[0,0], [0,1]], {});
-        b3axisy = board3.createElement('axis', [[0,0], [1,0]], {});
+        b3axisx = board3.create('axis', [[0,0], [0,1]], {});
+        b3axisy = board3.create('axis', [[0,0], [1,0]], {});
                 
    		// Hook anlegen fuer die Ausgabe des Winkels
    		function test(board) {
