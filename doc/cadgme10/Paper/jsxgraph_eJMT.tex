@@ -116,23 +116,18 @@ Germany\end{tabular}
 %
 \begin{abstract}
 %
-JSXGraph is a library for displaying dynamic mathematics, e.g. dynamic geometry, 
-function plotting, turtle graphics, in a web browser. 
+JSXGraph is a stand-alone library for displaying dynamic mathematics, e.g. dynamic geometry, 
+function plotting, turtle graphics, and much more, in a web browser. 
 It is written in JavaScript and runs on a broad variety of devices from 
 desktop computers down to smart-phones and tablet computers. 
-JSXGraph is able to import various file formats like \GEONExT{}, GeoGebra, Intergeo, 
-and---at least partially---Cinderella. 
-At the moment, this seems to be the only possibility to display content from 
-these sources on upcoming small computing devices, which makes them usable 
-in class room.
 
-Since Java applets seem to be on the retreat in web application, other 
-approaches for displaying interactive mathematics in the web browser are needed. 
-One such alternative could be our open-source project JSXGraph. It is a 
-cross-browser library for displaying interactive geometry, function plotting, 
-graphs, and data visualization in a web browser. It is implemented completely 
-in JavaScript and uses the vector graphics formats SVG and VML. No further 
-plug-ins are required.
+JSXGraph is able to import various file formats like \GEONExT{}, GeoGebra, Intergeo, 
+and---at least partially---Cinderella. Further, it provides a proramming
+interface (API) for the development of mathlets, i.e. special
+purpose programs to visualize mathematics.
+At the moment, JSXGraph is the only software for dynamic mathematics, which
+supports the whole range of computers from Desktop computers
+downto tablet computers and smart-phones.
 %
 \end{abstract}%
 %
@@ -387,7 +382,7 @@ JSXGraph is able to read and display the following file formats:
 \item GeoGebra\footnote{\href{geogebra.org}{http://geogebra.org}}
 \item Cinderella\footnote{\href{http://cinderella.de}{http://cinderella.de}}
 \end{itemize}
-The support of the \GEONExT{}~\cite{ehmann2003,ehmann2008} file format by JSXGraph is close to 100\%. 
+The support of the \GEONExT{} file format~\cite{ehmann2003,ehmann2008} by JSXGraph is close to 100\%. 
 Only very few \GEONExT{} resources are misinterpreted by JSXGraph. 
 In Figure~\ref{fig:geonext} the construction to the right is the \GEONExT{} Java applet, to the left is the same file displayed by JSXGraph.
 \begin{figure}[ht]
@@ -411,7 +406,7 @@ by JSXGraph
 (\href{http://jsxgraph.uni-bayreuth.de/talks/cadgme10/talk/jsx_ggb.html}{online version}).}\label{fig:geogebra}
 \end{center}
 \end{figure}
-The support of the GeoGebra~\cite{hohenwarter2005} file format is not complete, 
+The support of the GeoGebra file format~\cite{hohenwarter2005} is not complete, 
 but covers the most common features of GeoGebra. 
 In Figure \ref{fig:geogebra} the construction to the right is the GeoGebra Java applet, 
 to the left is the same file displayed by JSXGraph.
@@ -426,7 +421,7 @@ by JSXGraph
 (\href{http://jsxgraph.uni-bayreuth.de/talks/cadgme10/talk/jsx_cdy.html}{online version}).}\label{fig:cindy}
 \end{center}
 \end{figure}
-The support of the Cinderella~\cite{kortenkamp1999} file format \cite{kortenkamp1999} by JSXGraph is in a very early development stage. At the moment it comprises most of the Euclidean Geometry part of Cinderella. In Figure~\ref{fig:cindy} the construction to the right is the Cinderella Java applet, to the left is the same file displayed by JSXGraph.
+The support of the Cinderella file format \cite{kortenkamp1999} by JSXGraph is in a very early development stage. At the moment it comprises most of the Euclidean Geometry part of Cinderella. In Figure~\ref{fig:cindy} the construction to the right is the Cinderella Java applet, to the left is the same file displayed by JSXGraph.
 
 
 \section{Constructing with JessieScript}
@@ -464,7 +459,7 @@ The \href{http://jsxgraph.uni-bayreuth.de/wiki/index.php/Geometric_constructions
 
 
 \section{Developing Mathlets with JSXGraph}
-With JSXGraph it is possible to create special purpose mathematics visualizations.
+With JSXGraph it is possible to create special purpose programs for mathematics visualizations.
 These are sometimes called {\sl mathlets}\footnote{See for example
 \href{http://math.mit.edu/mathlets/}{http://math.mit.edu/mathlets/}}.
 
