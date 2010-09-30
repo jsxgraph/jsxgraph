@@ -25,6 +25,9 @@ fourier transforms using NumPy\footnote{\href{http://numpy.scipy.org/}{http://nu
 found it is loaded and answers with a list of available methods and data elements which are then integrated in JSXGraph.
 From now on, all the methods provided by the module can be used as if they were JavaScript functions.
 
+Another example of a JSXGraph server module is the \emph{exact loci computation}. This module is based on an algorithm
+developed by 
+
 ---
 
 Notizen:

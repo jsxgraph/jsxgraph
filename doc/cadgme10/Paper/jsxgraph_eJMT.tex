@@ -506,7 +506,41 @@ The plug-in introduces the new tag name \verb|<jsxgraph>| which is an HTML \verb
 containing the JSXGraph construction.
 
 
-\section{Exact loci computations}\label{sec:loci}
+\section{Server side calculations}\label{sec:loci}
+
+JSXGraph also includes a math library which provides an interface to some basic algorithms like linear equation and ode
+solvers. The speed of JavaScript interpreters in modern web browsers is sufficient for small to medium sized problems
+being calculated with pure JavaScript. More complex problems can be handled by JSXGraph by swapping the calculation from
+the web browser to the web server. This way even existing software solutions like computer algebra systems or numerical
+libraries can be used and integrated in JSXGraph.
+
+To accomplish this, a web development technique called AJAX is used. This technique is usually used to exchange data
+with a web server without reloading the whole web page. Unfortunately this comes with a lot of programming overhead
+required for every JSXGraph mathlet which requires server side calculations: AJAX invocation, parsing data from JSXGraph
+on the web server, formatting the output data on the server and back in the browser one has to parse the results. In
+short: a whole communication protocol has to be designed and implemented. To avoid this and save the creators of JSXGraph
+based worksheets this repeating and extra work, JSXGraph provides a simple yet powerful server-client-framework.
+
+This framework is Python\footnote{\href{http://python.org/}{http://python.org/}} based on the server side and is
+organized in modules. A module is loaded by a simple function call:
+
+\begin{verbatim}
+JXG.Server.load('fft');
+\end{verbatim}
+
+This sends a request to the server to load the modules fft.py, which in this case provides some methods to calculate
+fourier transforms using NumPy\footnote{\href{http://numpy.scipy.org/}{http://numpy.scipy.org/}}. If the module can be
+found it is loaded and answers with a list of available methods and data elements which are then integrated in JSXGraph.
+From now on, all the methods provided by the module can be used as if they were JavaScript functions.
+
+Another example of a JSXGraph server module is the \emph{loci computation}. This module is based on an algorithm
+developed by \cite{botana} based on ideas first mentioned in \cite{recio}. It usually takes two points as its input: One
+dependent point which is connected to a \emph{glider} by a geometric construction. A glider is a point that is bound to
+an algebraic curve. First from all points of the construction the points that are required to calculate the locus are
+filtered. Then JSXGraph generates a polynomial ideal and sends the ideal to the server. On the server
+CoCoA\footnote{\href{http://cocoa.dima.unige.it/}{http://cocoa.dima.unige.it/}} is used to calculate the elimination ideal
+which is then analyzed using matplotlib\footnote{\href{http://matplotlib.sourceforge.net/}{http://matplotlib.sourceforge.net/}}.
+In a last step JSXGraph displays the locus based on the data points the server sent.
 
 \section{Conclusion}
 JSXGraph enables the usability of mathematical resources on a broad variety of 
@@ -550,7 +584,15 @@ The goal of JSXGraph is to change this situation.
     %        http://infoworld.com/d/developer-world/watch-out-java-here-comes-javascript-799
     
     \bibitem{netapplications} \href{http://marketshare.hitslink.com/browser-market-share.aspx?qprid=0}{http://marketshare.hitslink.com/browser-market-share.aspx?qprid=0} Online access (2010)
-    
+
+    \bibitem{botana} Botana, F., Valcarce, J. L.:
+        ``A software tool for the investigation of plane loci''.
+        In: \emph{Mathematics and Computers in Simulation, 61(2):139-152} (2003).
+
+    \bibitem{recio} Recio, T., V\'elez, M. P.::
+        ``Automatic Discovery of Theorems in Elementary Geometry''.
+        In: \emph{Journal of Automated Reasoning, 23(1):63–82} (19999).
+
 \end{thebibliography}
 
 \end{document}
