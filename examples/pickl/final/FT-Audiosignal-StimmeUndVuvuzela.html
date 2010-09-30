@@ -296,13 +296,10 @@
     function loadIFFT() {
         var tmp;
 
-        JXG.Server.modules.fft.cutoutrange(fftSignal, Math.floor(g1.X() *  samples/2), Math.floor(g2.X() *  samples/2), s1.Value(), function(data) {
-            tmp = data.y;
-        }, true);
-
-        JXG.Server.modules.fft.ifft(tmp, function(data) {
+        JXG.Server.modules.fft.sampleifft('vuvuzelashort', Math.floor(g1.X() *  samples/2), Math.floor(g2.X() *  samples/2), s1.Value(), function(data) {
             cleanedSignal = data.y;
             cleanedBoard.update();
+            document.getElementById('cleanedaudio').src = data.audioB64;
         }, true);
     }
 
@@ -349,8 +346,7 @@
 	zur&uuml;ckgekehrt werden muss und die Regler anders eingestellt werden m&uuml;ssen.<br />
 	Der Graph ist in Abh&auml;ngigkeit von der Zeit dargestellt.<br />
     <br />
-    <button onclick="loadCleanedAudio();">Anh&ouml;ren</button>
-    <audio src="" id="cleanedaudio" controls="controls" style="display: none;"></audio>
+    <audio src="" id="cleanedaudio" controls="controls"></audio>
 	</div>
 </div>
 

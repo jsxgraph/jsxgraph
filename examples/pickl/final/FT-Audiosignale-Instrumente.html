@@ -86,7 +86,7 @@
         // <![CDATA[
 
         // general variables
-        var samplerate = 4000, xSignal = [], xFFT = [], i, samples = 0, seconds = 0;
+        var samplerate = 4000, xSignal = [], xFFT = [], i, samples = 0, seconds = 0, cursample = '';
 
         JXG.Server.load('fft');
         if(!JXG.Server.modules.fft) {
@@ -111,7 +111,8 @@
         }
 
         function changesample() {
-            JXG.Server.modules.fft.loadAudio('ogg', document.getElementById('audioselect').value, function(data) {
+            cursample = document.getElementById('audioselect').value;
+            JXG.Server.modules.fft.loadAudio('ogg', cursample, function(data) {
                 var a = document.getElementById('clearaudio');
                 a.src = data.audioB64;
                 if(data.audioData) {
@@ -326,13 +327,10 @@
     function loadIFFT() {
         var tmp;
 
-        JXG.Server.modules.fft.cutoutrange(fftSignal, Math.floor(g1.X() *  samples/2), Math.floor(g2.X() *  samples/2), s1.Value(), function(data) {
-            tmp = data.y;
-        }, true);
-
-        JXG.Server.modules.fft.ifft(tmp, function(data) {
+        JXG.Server.modules.fft.sampleifft(cursample, Math.floor(g1.X() *  samples/2), Math.floor(g2.X() *  samples/2), s1.Value(), function(data) {
             cleanedSignal = data.y;
             cleanedBoard.update();
+            document.getElementById('cleanedaudio').src = data.audioB64;
         }, true);
     }
 
@@ -358,7 +356,6 @@
 	Frequenzspektrum das entsprechende Audiosignal generiert und angezeigt.<br />
 	Der Graph ist in Abh&auml;ngigkeit von der Zeit dargestellt.<br />
 	<br />
-	<button onclick="loadCleanedAudio();">Anh&ouml;ren</button>
 	<audio src="" id="cleanedaudio" controls="controls" style="display: none;"></audio>
 	</div>
 </div>

@@ -26,6 +26,7 @@ class FFT(JXGServerModule):
         resp.addHandler(self.cutoutrange, 'function(data) { }')
         resp.addHandler(self.makeAudio, 'function(data) { }')
         resp.addHandler(self.loadAudio, 'function(data) { }')
+        resp.addHandler(self.sampleifft, 'function(data) { }')
         return
 
     def fft(self, resp, x):
@@ -45,6 +46,30 @@ class FFT(JXGServerModule):
 
     def _set0(val):
         return 0
+        
+    def sampleifft(self, resp, name, s, e, factor):
+        # read wav
+        pathtowavefiles = '/share8/home/michael/www-store/audio/'
+        fname = pathtowavefiles + os.path.basename(name) + '.wav'
+        w = wave.open(fname, 'r')
+        (nchannels, sampwidth, framerate, nframes, comptype, compname) = w.getparams()
+        frames = w.readframes(nframes*nchannels)
+        out = map(lambda value: value/8192., struct.unpack_from("%dh" % nframes * nchannels, frames))
+        w.close()
+        # apply fft
+        x = numpy.fft.rfft(out)
+        # filters
+        l = len(x)
+        for i in range(0, s):
+            x[i] = x[i] * factor
+        for i in range(e, l):
+            x[i] = x[i] * factor
+        #ifft
+        y = numpy.fft.irfft(x)
+        y = map(self._real, y);
+        resp.addData('y', y)
+        self.makeAudio(resp, 'ogg', framerate, y)
+        return
 
     # s: 0 < Start < len(x)/2
     # e: 0 < End < len(x)/2
