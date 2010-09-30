@@ -125,8 +125,8 @@ It is written in JavaScript and runs on a broad variety of devices from
 desktop computers down to smartphones and tablet computers. 
 
 JSXGraph is able to import various file formats of Dynamic Geometry Systems like \GEONExT{}, GeoGebra, Intergeo, 
-and---at least partially---Cinderella. Further, it provides a proramming
-interface (API) for the development of mathlets, i.e. special
+and---at least partially---Cinderella. Further, it provides a programming
+interface (API) for the development of mathlets, i.e.~special
 purpose programs to visualize mathematics.
 At the moment, JSXGraph is the only software for dynamic mathematics, which
 supports the whole range of computers from Desktop computers
@@ -192,7 +192,7 @@ JSXGraph is a free software library for mathematical visualizations in a web bro
 Its feature set covers {\sl dynamic Geometry}, plotting of {\sl function graphs} and
 {\sl curves} of various types, {\sl charts}, and {\sl turtle graphics}.
 
-Usually, JSXGraph is embedded in web pages, for on- or off\/line viewing.
+Usually, JSXGraph is embedded in web pages, for on- and off\/line viewing.
 The download size is a mere 80 kByte, when embedded in web pages.
 JSXGraph enhanced web pages can be viewed with all major web browsers 
 on nearly every hardware platform and operating system.
@@ -297,10 +297,11 @@ despite the availability of versions 7 and 8 since several years.
 
 \section{The library JSXGraph for dynamic mathematics}
 The open-source library JSXGraph, developed at the University of Bayreuth, 
-addresses the above problems.
-JSXGraph is a pure JavaScript implementation of dynamic mathematics, it does not rely on any other 
-library. By default, JSXGraph uses the vector graphic format SVG
-for graphical output in a web browser. If SVG is not available it falls
+addresses the compatibility problems described in Section~\ref{sec:3}.
+JSXGraph is a pure JavaScript implementation of dynamic mathematics for the web browser, 
+it does not rely on any other library. 
+By default, JSXGraph uses the vector graphics format SVG
+for graphical output. If SVG is not supported by the web browser it falls
 back to either VML or canvas.
 
 Another pure JavaScript implementation of a Dynamic Geometry System (DGS) is
@@ -310,7 +311,7 @@ formerly known as GeoSVG. But there, the graphical output is restricted to SVG.
 First publicly presented in 2008~\cite{ehmann2008}, JSXGraph offers all 
 functionality of a DGS, including conic sections.
 Meanwhile, the features of JSXGraph go far beyond the possibilities
-of most DGSes.
+of most DGS.
 The following list gives an overview of possibilities of JSXGraph.
 
 \begin{description}
@@ -553,7 +554,7 @@ filtered. Then JSXGraph generates a polynomial ideal and sends the ideal to the 
 CoCoA\footnote{\href{http://cocoa.dima.unige.it/}{http://cocoa.dima.unige.it/}} is used to calculate the elimination ideal
 which is then analyzed using matplotlib\footnote{\href{http://matplotlib.sourceforge.net/}{http://matplotlib.sourceforge.net/}}.
 In a last step, JSXGraph displays the locus based on the data points the server sent. An example of the loci computation can
-be found on our website: \href{http://jsxgraph.uni-bayreuth.de/examples/limacon.html}{http://jsxgraph.uni-bayreuth.de/examples/limacon.html}.
+be found on the authors' website: \href{http://jsxgraph.uni-bayreuth.de/examples/limacon.html}{http://jsxgraph.uni-bayreuth.de/examples/limacon.html}.
 
 \section{Conclusion}
 JSXGraph enables the usability of mathematical resources on a broad variety of 
