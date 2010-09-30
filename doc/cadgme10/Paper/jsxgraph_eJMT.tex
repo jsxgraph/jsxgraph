@@ -484,7 +484,7 @@ Other applications are
 and support for various possibilities to create 
 \href{http://jsxgraph.uni-bayreuth.de/wiki/index.php/Category:Charts}{charts}. 
 Further, communication between JSXGraph and special purpose software on server side is very simple, see 
-Section~\ref{sec:loci} for an advanced example.
+Section~\ref{sec:loci} for advanced examples.
 JSXGraph meanwhile is used in situations that are different 
 from mathematics education, see for example the 
 \href{http://www.rhok.org/2010/06/rhok-1-0-washington-d-c-winning-hack-chasm/}{{\sl landslide prediction}}
@@ -546,11 +546,11 @@ From now on, all the methods provided by the module can be used as if they were 
 Another example of a JSXGraph server module is the \emph{loci computation}. This module is based on an algorithm
 developed by \cite{botana} based on ideas first mentioned in \cite{recio}. It usually takes two points as its input: One
 dependent point which is connected to a \emph{glider} by a geometric construction. A glider is a point that is bound to
-an algebraic curve. First from all points of the construction the points that are required to calculate the locus are
+an algebraic curve. First, from all points of the construction the points that are required to calculate the locus are
 filtered. Then JSXGraph generates a polynomial ideal and sends the ideal to the server. On the server
 CoCoA\footnote{\href{http://cocoa.dima.unige.it/}{http://cocoa.dima.unige.it/}} is used to calculate the elimination ideal
 which is then analyzed using matplotlib\footnote{\href{http://matplotlib.sourceforge.net/}{http://matplotlib.sourceforge.net/}}.
-In a last step JSXGraph displays the locus based on the data points the server sent.
+In a last step, JSXGraph displays the locus based on the data points the server sent.
 
 \section{Conclusion}
 JSXGraph enables the usability of mathematical resources on a broad variety of 
@@ -560,6 +560,10 @@ but up to now there is a lack of good mathematical software, since Java applets 
 The goal of JSXGraph is to change this situation. 
 
 \begin{thebibliography}{99}
+    \bibitem{botana} Botana, F., Valcarce, J. L.:
+        ``A software tool for the investigation of plane loci''.
+        In: \emph{Mathematics and Computers in Simulation, 61(2):139-152} (2003).
+
     \bibitem{crockford} Crockford D., \emph{JavaScript: The good parts}, Sebastopol, CA, O'Reilly (2008).
     
     \bibitem{ehmann2003} Ehmann, M., Miller, C.: ``Dynamic Mathematics with \GEONExT.''
@@ -593,15 +597,11 @@ The goal of JSXGraph is to change this situation.
     %\bibitem{mcallister} Neil McAllister: 
     %        http://infoworld.com/d/developer-world/watch-out-java-here-comes-javascript-799
     
-    \bibitem{netapplications} Online access to \href{http://marketshare.hitslink.com/browser-market-share.aspx?qprid=0}{http://marketshare.hitslink.com/browser-market-share.aspx?qprid=0} (2010)
-
-    \bibitem{botana} Botana, F., Valcarce, J. L.:
-        ``A software tool for the investigation of plane loci''.
-        In: \emph{Mathematics and Computers in Simulation, 61(2):139-152} (2003).
-
     \bibitem{recio} Recio, T., V\'elez, M. P.::
         ``Automatic Discovery of Theorems in Elementary Geometry''.
         In: \emph{Journal of Automated Reasoning, 23(1):63–82} (19999).
+
+    \bibitem{netapplications} Online access to \href{http://marketshare.hitslink.com/browser-market-share.aspx?qprid=0}{http://marketshare.hitslink.com/browser-market-share.aspx?qprid=0} (2010)
 
 \end{thebibliography}
 
