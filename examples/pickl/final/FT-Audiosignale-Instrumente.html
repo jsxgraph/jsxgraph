@@ -196,9 +196,9 @@
 	Verf&uuml;gung, die Sie visualisieren und durch Anwenden der FFT deren Frequenzspektrum
 	anzeigen lassen k&ouml;nnen. Nach Arbeiten mit Filtern k&ouml;nnen Sie durch anschlie&szlig;ende
 	IFFT das entsprechende Audiosignal generieren lassen.<br />
-	Die FFT- und die IFFT-Berechnungen werden durch GNU Octave, einer freien Software
-	zur Berechnung numerischer Probleme ausgef&uuml;hrt, die auf einem Server gespeichert
-	ist. Diese Berechnung kann etwas Zeit in Anspruch nehmen.
+	Die FFT- und die IFFT-Berechnungen werden durch NumPy, einer freien Software 
+	zur Berechnung numerischer Probleme, auf einem Server ausgef&uuml;hrt.
+	Diese Berechnung kann etwas Zeit in Anspruch nehmen.
 
 </div>
 
@@ -232,9 +232,10 @@
 	    <option value="sitar">Sitar</option>
     	<option value="synth">Synthesizer</option>
 	</select>
-	<br />
-	Nach Ausw&auml;hlen eines Instruments wird dessen Audiosignal graphisch dargestellt.
-	<br />
+	<p>
+	Nach Ausw&auml;hlen eines Instruments wird dessen Audiosignal graphisch dargestellt.<br />
+	Der Graph ist in Abh&auml;ngigkeit von der Zeit dargestellt.
+	</p>
 	<audio id="clearaudio" src="" controls="controls"></audio>
 	</div>
 </div>
@@ -301,15 +302,15 @@
 <div class="rechts">
 	<div class="klein">
 	<button onclick="loadFFT();">FFT-Berechnung</button><br />
-	Nach Dr&uuml;cken des Buttons &quot;FFT-Berechnung&quot; wird das Frequenzspektrum des Sinussignals
+	Nach Anklicken des Buttons &quot;FFT-Berechnung&quot; wird das Frequenzspektrum des Sinussignals
 	angezeigt.<br />
 	So ist aus der Zeitfunktion eine Funktion in Abh&auml;ngigkeit von der Frequenz
 	entwickelt worden. Man kann nun die im Signal enthaltenen Frequenzen mit ihren
 	Betr&auml;gen der Fourier-Transformierten ablesen.
 	<p>
 		Durch Bewegen der entsprechenden Regler (rot) k&ouml;nnen die zu filternden
-		Frequenz-bereiche (horizontale Regler) und die Intensit&auml;t (vertikaler Regler)
-		bestimmt werden.
+		Frequenzbereiche (horizontale Regler: Tiefen- bzw. H&ouml;henfilter) und die Intensit&auml;t der 
+		Filterung (vertikaler Regler) bestimmt werden.
 	</p>
 	</div>
 </div>
@@ -354,7 +355,8 @@
 	<div class="klein">
 	<button onclick="loadIFFT();">IFFT-Berechnung</button><br />
 	Durch Bet&auml;tigen des Buttons &quot;IFFT-Berechnung&quot;, wird aus dem gefilterten
-	Frequenzspektrum das entsprechende Audiosignal generiert und angezeigt.
+	Frequenzspektrum das entsprechende Audiosignal generiert und angezeigt.<br />
+	Der Graph ist in Abh&auml;ngigkeit von der Zeit dargestellt.<br />
 	<br />
 	<button onclick="loadCleanedAudio();">Anh&ouml;ren</button>
 	<audio src="" id="cleanedaudio" controls="controls" style="display: none;"></audio>

@@ -72,6 +72,13 @@
 		margin-left: 500px;
 		margin-bottom: 50px;
 		}
+		
+		#Sonderling {
+		width: 400px;
+		height: 180px;
+		margin-top: 20px;
+		padding: 10px;
+		}
 
 		.klein {
 		width: 400px;
@@ -196,7 +203,7 @@
 				</div>
 			</th><th>
 				<a href="FT-Abkuerzungen.html" class="breadcrumbs-link">
-				ABK�RZUNGEN
+				ABK&Uuml;RZUNGEN
 				</a>
 			</th>
 		</tr>
@@ -213,9 +220,9 @@
 	Anwenden der FFT wird das Frequenzspektrum angezeigt, in welchem man mit Filtern
 	arbeiten kann, um das Ausgangssignal nach Anwenden der IFFT zu rekonstruieren.
 	<br />
-	Die FFT- und die IFFT-Berechnungen werden durch GNU Octave, einer freien Software
-	zur Berechnung numerischer Probleme ausgef&uuml;hrt, die auf einem Server gespeichert
-	ist. Diese Berechnung kann etwas Zeit in Anspruch nehmen.
+	Die FFT- und die IFFT-Berechnungen werden durch NumPy, einer freien Software 
+	zur Berechnung numerischer Probleme, auf einem Server ausgef&uuml;hrt. 
+	Diese Berechnung kann etwas Zeit in Anspruch nehmen.
 
 </div>
 
@@ -243,19 +250,23 @@
 </script>
 
 <div class="rechts">
-	<div class="klein">
+	<div id="Sonderling">
 		Diese Graphik zeigt eine Sinusfunktion.<br />
 		Durch Bewegen des Frequenzreglers (rot), kann ein entsprechendes Sinussignal
 		generiert und angeh&ouml;rt werden.<br />
 		Vorgegeben ist der Standardkammerton a' mit der Frequenz<br />
 		&nu; = 440 Hz.<br />
+		Der Graph ist in Abh&auml;ngigkeit von der Zeit dargestellt.<br />
 		<button onclick="loadClearAudio();">Anh&ouml;ren</button>
 		<audio id="clearaudio" src="" controls="controls" style="display: none;"></audio>
 		<p>
 			Anmerkung:
 			<br />
 			 Das Audiosignal ist 2 sec lang zu h&ouml;ren. In der Graphik wird zum Zweck der
-			 &Uuml;bersichtlichkeit nur ein Ausschnitt von 0.05 sec angezeigt.
+			 &Uuml;bersichtlichkeit nur ein Ausschnitt von 0.5 sec angezeigt.<br />
+			 Die Sinusschwingung erscheint irrt&uuml;mlicherweise bei manchen Frequenzen 
+			 etwas ungleichf&ouml;rmig, da aus Geschwindigkeitsgr&uuml;nden nur eine Auswahl an 
+			 bestimmten Datenpunkten dargestellt ist.
 		</p>
 	</div>
 </div>
@@ -307,6 +318,8 @@
 		bewirkt eine St&ouml;rung des Audiosignals, welche sich als Rauschen bemerkbar macht.
 		<br />
 		Man sieht nun auch, dass der Sinus nicht mehr regelm&auml;&szlig;ig ist.<br />
+		Der Graph ist nach wie vor in Abh&auml;ngigkeit von der Zeit dargestellt.<br />
+		<br />
 		<button onclick="loadJitterAudio();">Anh&ouml;ren</button>
 		<audio id="jitteraudio" src="" controls="controls" style="display: none;"></audio>
 	</div>
@@ -374,15 +387,15 @@
 <div class="rechts">
 	<div class="klein">
 		<button onclick="loadFFT();">FFT-Berechnung</button><br />
-		Nach Dr&uuml;cken des Buttons &quot;FFT-Berechnung&quot; wird das Frequenzspektrum des
+		Nach Anklicken des Buttons &quot;FFT-Berechnung&quot; wird das Frequenzspektrum des
 		Sinussignals angezeigt.<br />
 		So ist aus der Zeitfunktion eine Funktion in Abh&auml;ngigkeit von der Frequenz
 		entwickelt worden. Man kann nun die im Signal enthaltenen Frequenzen mit ihren
 		Betr&auml;gen der Fourier-Transformierten ablesen.
 		<p>
 			Durch Bewegen der entsprechenden Regler (rot) k&ouml;nnen die zu filternden
-			Frequenzbereiche (horizontale Regler) und die Intensit&auml;t (vertikaler Regler)
-			bestimmt werden.
+			Frequenzbereiche (horizontale Regler: Tiefen- bzw. H&ouml;henfilter) und die 
+			Intensit&auml;t der Filterung (vertikaler Regler) bestimmt werden.
 		</p>
 	</div>
 </div>
@@ -420,7 +433,8 @@
 		<button onclick="loadIFFT();">IFFT-Berechnung</button><br />
 		Nach dem Filtern kann durch Bet&auml;tigen des Buttons &quot;IFFT-Berechnung&quot; aus dem
 		gefilterten Frequenzspektrum das entsprechende Sinussignal generiert und
-		angezeigt werden.
+		angezeigt werden.<br />
+		Der Graph ist in Abh&auml;ngigkeit von der Zeit dargestellt.
 		<p>
 			Das Ziel sollte sein, das Rauschen zu beseitigen, um das Ausgangssignal
 			m&ouml;glichst genau zu rekonstruieren.
