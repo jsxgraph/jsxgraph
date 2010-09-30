@@ -70,6 +70,7 @@
 % Please place your own definitions here
 %
 \def\GEONExT{GEONE\kern-.06em \lower.5ex\hbox{x}\kern-.215em T}
+\newcommand{\imagedir}{pics}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                         %
@@ -96,7 +97,7 @@
 %
 \author{\begin{tabular}{c}
 \textit{Michael Gerh\"auser, Bianca Valentin, Alfred Wassermann, Peter Wilfahrt} \\
-alfred.wassermann@uni-bayreuth.de\\
+\{michael.gerhaeuser, bianca.valentin, alfred.wassermann, peter.wilfahrt\}\\@uni-bayreuth.de\\
 Department of Mathematics, 
 University of Bayreuth\\
 95440 Bayreuth, 
@@ -119,15 +120,15 @@ Germany\end{tabular}
 JSXGraph is a stand-alone library for displaying dynamic mathematics, e.g. dynamic geometry, 
 function plotting, turtle graphics, and much more, in a web browser. 
 It is written in JavaScript and runs on a broad variety of devices from 
-desktop computers down to smart-phones and tablet computers. 
+desktop computers down to smartphones and tablet computers. 
 
-JSXGraph is able to import various file formats like \GEONExT{}, GeoGebra, Intergeo, 
+JSXGraph is able to import various file formats of Dynamic Geometry Systems like \GEONExT{}, GeoGebra, Intergeo, 
 and---at least partially---Cinderella. Further, it provides a proramming
 interface (API) for the development of mathlets, i.e. special
 purpose programs to visualize mathematics.
 At the moment, JSXGraph is the only software for dynamic mathematics, which
 supports the whole range of computers from Desktop computers
-downto tablet computers and smart-phones.
+downto tablet computers and smartphones.
 %
 \end{abstract}%
 %
@@ -151,42 +152,43 @@ In the late 1990s the availability of graphical web browsers that enabled easy a
 World Wide Web 
 brought many fresh ideas to the class room and to mathematics education. 
 The programming language Java became the dominant tool to raise interactivity in 
-dynamic mathematics to a new level. Countless new Java based \emph{Mathlets} came to existence 
-to visualize many aspects of mathematics with levels varying from Kindergarten to University. 
-Also, powerful software systems were developed that combined geometry and calculus 
+dynamic mathematics to a new level. 
+Countless new Java based \emph{mathlets} came to existence 
+to visualize many aspects of mathematics from Elementary school to University. 
+Also, powerful Java based software systems were developed that combined geometry and calculus 
 under one graphical user interface. The most prominent examples are 
 Cinderella~\cite{kortenkamp1999}, \GEONExT~\cite{ehmann2003} and GeoGebra~\cite{hohenwarter2005} 
 to name a few of them.
-Also, desktop programs are of importance. Examples are
+But also, desktop programs are still of importance. Examples are
 {\sl The Geometer's Sketchpad}\footnote{\href{http://www.dynamicgeometry.com}{http://www.dynamicgeometry.com}} 
-and {\sl Cabri II plus}\footnote{\href{http://cabri.com}{http://cabri.com}}, 
-both available for Windows and MacOS.
+and {\sl Cabri II plus}\footnote{\href{http://cabri.com}{http://cabri.com}}.
+Both are available for Windows and MacOS and their vendors provide Java based web viewers. 
 
 But now a new hardware generation is on the horizon which appears to be better suited 
 for the class room than the old clumsy Personal Computer. 
 The revolution started with the success of small and cheap netbooks and the appearance of 
-powerful smart-phones. 
-Now, these two complementary worlds seem to melt together into tablet computers. 
+powerful smartphones. 
+In the near future these two complementary worlds---phones and computers---seem to melt together into tablet computers. 
 The success of the iPad by Apple confirms this. 
 Probably, very soon many other hardware manufacturer will follow and produce 
 cheaper tablet computers having more features than the iPad.
 
 Now, mathematics education faces the challenge that most of the existing web-based software 
-for dynamic mathematics is implemented in Java and embedded in web pages as so called Java applets.  
-But there will be no Java plug-in available on most of these new machines. 
-Without good software the new hardware is useless for learning mathematics 
-in the class room.
+for dynamic mathematics is implemented in Java.  
+But a Java plug-in will not be available on most of these new machines. 
+Without suitable good software the new hardware is useless for learning mathematics 
+in class room.
 
 With the project JSXGraph\footnote{\href{http://jsxgraph.org}{http://jsxgraph.org}} 
 at the University of Bayreuth we tried to take up 
 this challenge and offer first class dynamic mathematics software that runs on 
-every device including smart-phones, netbooks, tablet computers and Desktop PCs. 
+every device including smartphones, netbooks, tablet computers and Desktop PCs. 
 Moreover, the goal is to provide compatibility for existing resources for 
 mathematics education. 
 
 JSXGraph is a free software library for mathematical visualizations in a web browser.
 Its feature set covers {\sl dynamic Geometry}, plotting of {\sl function graphs} and
-{\sl curves} of various types, {\sl charts}, and {\sl turtle graphics}
+{\sl curves} of various types, {\sl charts}, and {\sl turtle graphics}.
 
 Usually, JSXGraph is embedded in web pages, for on- or off\/line viewing.
 The download size is a mere 80 kByte, when embedded in web pages.
@@ -199,8 +201,7 @@ At the time of writing, JSXGraph is the only dynamic geometry system that runs
 on such a broad range of  devices and web browsers---without installation of any plug-in 
 or wathsoever additional software.
 JSXGraph is usable even on devices with limited computing resources, 
-like older Desktop PCs running Microsoft Internet Explorer 6.0. 
-
+like older Desktop PCs running Microsoft Internet Explorer 6. 
 Thus, this library may prove to be helpful for the
 introduction of technology in mathematical education in developing countries.
 
@@ -208,42 +209,44 @@ introduction of technology in mathematical education in developing countries.
 As of today three types of computers are used by students in class room:
 \begin{itemize}
 \item Desktop PC: high computing power, runs desktop programs and web based software, 
-the web browser contains Java plug-in and Flash plug-in, robust hardware,
-requires computer lab, need power plug, expensive.
+Java plug-in and Flash plug-in are available, robust hardware,
+requires computer lab, needs power plug, medium priced to expensive.
 \item Programmable Desktop Calculator: low computing power, low graphical resolution, runs only
-special purpose software, no web access, no computer lab necessary, long battery life, 
+special purpose software, no web access, no computer lab required, long battery life, 
 very robust hardware, cheap.
-\item Laptop, netbook: medium to high computing power, no computer lab necessary, 
-medium to long battery life, software like Desktop PC, but Java plug-in may not be available, or maybe slow,
-medium priced to expensive, fragile hardware.
+\item Laptop, netbook: medium to high computing power, no computer lab required, 
+medium to long battery life, software like Desktop PC,
+medium priced to expensive, relatively fragile hardware.
 \end{itemize}
 Soon, the new generation of tablet computers will be available and these devices will be
 well suited for the classs room: cheap to medium priced, robust hardware, medium
-computing power, long battery life, running desktop special purpose programs and web based software,
-Java plug-in is not available, Flash plug-in may be available.
+computing power, long battery life, running special purpose desktop programs (so called {\sl apps}) and web based software,
+Java plug-in is not available, Flash plug-in will be sometimes available.
 
 The tablet computers seem to combine the advantages of the Programmable Desktop Calculator 
-and the laptop. 
+and the laptop computer. 
 
-The most notable disadvantages of these devices are that typing is still not as easy 
+The most notable disadvantages of these devices for mathematics education are 
+that typing is still not as easy 
 as with a physical keyboard and that none of the available software for 
 dynamic mathematics is available for these platforms.
 
-The situation for implementors of dynamic mathematics software is difficult because there exists a variety
-of different hardware and software platforms used by these devices. Thus, 
-web-based software seems to be the only managable solution to provide 
+From an implementors view the situation is getting more difficult than before because there 
+will exist a variety of incompatible hardware and software platforms used by these devices. 
+Thus, web-based software seems to be the only managable solution to provide 
 dynamic mathematics software for all platforms simultaneously.
 
 \section{Background on web based visualization}\label{sec:3}
-For implementing dynamic mathematics software for the web browser for all platforms 
+For implementing  web-based dynamic mathematics software running on all platforms 
 the only possible programming language is JavaScript~\cite{crockford}. In the first years of its availability
-JavaScript was running very slow, but recently the browsers come with very advanced
-Just-in-Time compilers for JavaScript. Moreover, the initalisation time of a 
+JavaScript was running very slow, but recently the browsers are equipped with very advanced
+Just-in-Time compilers for JavaScript, ehancing the speed enormously. 
+Moreover, the initalisation time of a 
 JavaScript program is close to zero in contrast to some Java plug-ins, see the online versions of
 Figures~\ref{fig:geonext}, \ref{fig:geogebra}, and \ref{fig:cindy}.
 
 For realizing graphical output in the web browser 
-that can be manipulated by JavaScript there are several possibilities,
+that can be manipulated by JavaScript there exist several possibilities,
 depending on the browser:
 \begin{itemize}
 \item SVG:\footnote{\href{http://www.w3.org/TR/SVG/}{http://www.w3.org/TR/SVG/}}
@@ -255,6 +258,10 @@ bitmap graphics.
 \end{itemize}
 \begin{table}
 \begin{center}
+\caption{Supported graphics formats of the most popular web browsers. The market share data
+is from August 2010, see~\cite{netapplications}.}\label{table:1}
+
+\medskip
 \begin{tabular}{c*{7}{|c}}
     & Firefox 3+ & \multicolumn{2}{c|}{Internet Explorer} & Opera & Safari        & \multicolumn{2}{c}{Chrome} \\
     &            &      4-8         & 9                  &      & incl. iPad & Desktop          & Android $\leq2.2$\\
@@ -265,8 +272,6 @@ Canvas & \checkmark & --            &  \checkmark     &  \checkmark   &  \checkm
 \hline
 market share &  22.93\% & 60.4\%    & --              &  2.37\%       &   5.16\%      &  \multicolumn{2}{c}{7.52\%} \\ 
 \end{tabular}
-\caption{Supported graphics formats of the most popular web browsers. The market share data
-is from August 2010, see~\cite{netapplications}.}\label{table:1}
 \end{center}
 \end{table}
 Table~\ref{table:1} shows that if a software wants to support graphical output on all 
@@ -285,31 +290,31 @@ This seems to be especially the case for schools and public institutions which a
 typically slow on updating their computing infrastructure. 
 The slow adaption rate is also underpinned by the survey~\cite{netapplications} which
 shows that in August 2010 the Internet Explorer 6 still had a market share of 16.18\%
-despite the availability of versions 7 and 8 since some years.
+despite the availability of versions 7 and 8 since several years.
 
 
 \section{The library JSXGraph for dynamic mathematics}
 The open-source library JSXGraph, developed at the University of Bayreuth, 
 addresses the above problems.
-JSXGraph is a pure JavaScript implementation, it does not rely on any other 
+JSXGraph is a pure JavaScript implementation of dynamic mathematics, it does not rely on any other 
 library. By default, JSXGraph uses the vector graphic format SVG
 for graphical output in a web browser. If SVG is not available it falls
 back to either VML or canvas.
 
-Another pure JavaScript implementation of a Dynamic Geometry system is
+Another pure JavaScript implementation of a Dynamic Geometry System (DGS) is
 GeometryEditor\footnote{\href{http://wme.cs.kent.edu/geosvg/}{http://wme.cs.kent.edu/geosvg/}}, 
 formerly known as GeoSVG. But there, the graphical output is restricted to SVG.
 
 First publicly presented in 2008~\cite{ehmann2008}, JSXGraph offers all 
-functionality of Dynamic Geometry System (DGS), including conic sections.
+functionality of a DGS, including conic sections.
 Meanwhile, the features of JSXGraph go far beyond the possibilities
-of most DGS.
+of most DGSes.
 The following list gives an overview of possibilities of JSXGraph.
 
 \begin{description}
 \item[Geometry elements:]
-point, glider, intersection, parallel, perpendicular,
-line, segment, axis, tangent, normal, vector,
+point, glider, intersection, line, segment, parallel, perpendicular,
+axis, tangent, normal, vector, 
 circle, circumcircle, ellipse, hyperbola, parabola, conic defined by five points,
 polygon, regular polygon, 
 midpoint, mirror point, reflection point, 
@@ -321,7 +326,7 @@ function graph, parametric curve, polar plot,
 Lagrange interpolation, cubic spline, B-spline, Bezier curve,
 regression polynomials of arbitrary degree, 
 Riemann sums, 
-numerical differentiation, numerical integrations,
+numerical differentiation, numerical integration,
 numerical solution of systems of ordinary differential equations,
 matrix computions, root finding,
 Eigenvalues, -vectors
@@ -332,16 +337,17 @@ slider, images,
 projective transformation, turtle graphics, various types of animation,
 various R-like statistical functions, Lindenmayer systems
 \item[Display options:]
-HSV color palette, shadows, dynamic texts with \LaTeX{}-support 
-via MathJax\footnote{\href{http://mathjax.org}{http://mathjax.org}}, 
-flexible layers
+HSV color palette, shadows, color gradients, flexible layers,
+dynamic texts with \LaTeX{}-support 
+via MathJax\footnote{\href{http://mathjax.org}{http://mathjax.org}}
+
 \end{description}
 The goal of JSXGraph is to be real dynamic. For example, 
-the degree of a regression 
+it is an easy task to make the degree of a regression 
 polynomial\footnote{\href{http://jsxgraph.uni-bayreuth.de/wiki/index.php/Polynomial_regression_I}{http://jsxgraph.uni-bayreuth.de/wiki/index.php/Polynomial\_regression\_I}} 
 or the fill color of certain 
 elements\footnote{\href{http://jsxgraph.uni-bayreuth.de/wiki/index.php/Infinity}{http://jsxgraph.uni-bayreuth.de/wiki/index.php/Infinity}} 
-may depend on other elements.
+dependent on other elements.
 
 The  size 
 of the JSXGraph code is about 380 kByte. If the web server delivering the 
@@ -387,7 +393,7 @@ Only very few \GEONExT{} resources are misinterpreted by JSXGraph.
 In Figure~\ref{fig:geonext} the construction to the right is the \GEONExT{} Java applet, to the left is the same file displayed by JSXGraph.
 \begin{figure}[ht]
 \begin{center}
-\includegraphics[width=0.8\textwidth]{geonext.png}\\
+\includegraphics[width=0.8\textwidth]{\imagedir/geonext.png}\\
 \caption{The right image shows a \GEONExT{} Java applet, 
 the left image contains the same construction displayed 
 by JSXGraph
@@ -395,11 +401,14 @@ by JSXGraph
 \end{center}
 \end{figure}
 
-The Intergeo~\cite{kortenkamp2009} format is an upcoming common file format supported by the most European implementors of dynamic geometry systems. JSXGraph possesses one of the most complete implementations of the file formats. At the time of writing, the file format just starts to gain popularity. 
+The Intergeo~\cite{kortenkamp2009} format is an upcoming common file format supported 
+by most European implementors of dynamic geometry systems. 
+JSXGraph possesses one of the most complete implementations of the file formats. 
+At the time of writing, the file format just starts to gain popularity. 
 
 \begin{figure}[ht]
 \begin{center}
-\includegraphics[width=0.8\textwidth]{geogebra.png}\\
+\includegraphics[width=0.8\textwidth]{\imagedir/geogebra.png}\\
 \caption{The right image shows a GeoGebra Java applet, 
 the left image contains the same construction displayed 
 by JSXGraph
@@ -414,7 +423,7 @@ to the left is the same file displayed by JSXGraph.
 
 \begin{figure}[ht]
 \begin{center}
-\includegraphics[width=0.8\textwidth]{cindy.png}\\
+\includegraphics[width=0.8\textwidth]{\imagedir/cindy.png}\\
 \caption{The right image shows a Cinderella Java applet, 
 the left image contains the same construction displayed 
 by JSXGraph 
@@ -428,14 +437,15 @@ The support of the Cinderella file format \cite{kortenkamp1999} by JSXGraph is i
 JSXGraph comes with a simple geometric construction language called JessieScript, which is closely related to the syntax students use in school to describe their construction by compass and ruler. An example is shown in Figure~\ref{fig:jessiescript}, the online version is available at 
 \href{http://jsxgraph.uni-bayreuth.de/jessie}{http://jsxgraph.uni-bayreuth.de/jessie}. 
 The whole web page consists of three elements: the form for the text input of the construction, the display of the construction and a log window. 
-Another side effect of JessieScript is security. In the web application of Figure~\ref{fig:jessiescript}
+Another positive side effect of JessieScript regards security issues. 
+In the web application of Figure~\ref{fig:jessiescript}
 input is restricted to 
 JessieScript syntax, all other input is ignored. This makes it difficult to 
 infiltrate malicious JavaScript code.
 \begin{figure}[ht]
 \begin{center}
-\includegraphics[width=0.8\textwidth]{jessiescript.png}\\
-\caption{A simple web page for constructiong with JessieScript 
+\includegraphics[width=0.8\textwidth]{\imagedir/jessiescript.png}\\
+\caption{A simple web page for constructing with JessieScript 
 (\href{http://jsxgraph.uni-bayreuth.de/jessie/}{online version}).}\label{fig:jessiescript}
 \end{center}
 \end{figure}
@@ -473,19 +483,19 @@ Other applications are
 \href{http://jsxgraph.uni-bayreuth.de/wiki/index.php/Programming_turtle_graphics}{turtle graphics}, 
 and support for various possibilities to create 
 \href{http://jsxgraph.uni-bayreuth.de/wiki/index.php/Category:Charts}{charts}. 
-This may be especially interesting for publisher of e-books or provider of e-learning 
-content. 
 Further, communication between JSXGraph and special purpose software on server side is very simple, see 
 Section~\ref{sec:loci} for an advanced example.
-
-
 JSXGraph meanwhile is used in situations that are different 
-from mathematics education, like 
-\href{http://www.rhok.org/2010/06/rhok-1-0-washington-d-c-winning-hack-chasm/}{landslide prediction}. 
+from mathematics education, see for example the 
+\href{http://www.rhok.org/2010/06/rhok-1-0-washington-d-c-winning-hack-chasm/}{{\sl landslide prediction}}
+project.
 
 The \href{http://jsxgraph.uni-bayreuth.de/wiki}{JSXGraph wiki} 
 contains more than 170 examples for dynamic mathematics, 
 covering many areas like charts, function plotting, calculus, geometry, and turtle graphics.
+
+Thus, JSXGraph should be well suited for demands of publishers of e-books or providers of e-learning 
+content to produce really interactive material for inquiry-based learning.
 
 For some wide-spread content management systems there exist plug-ins to ease the integration
 of JSXGraph code. 
@@ -567,8 +577,8 @@ The goal of JSXGraph is to change this situation.
         In: \emph{Computer Algebra Systems and Dynamic Geometry Systems in Mathematics Teaching Conference 2004}, 
         Pecs, Hungary (2005).
 
-    \bibitem{kaipiainen} Samuli Kaipiainen, Matti Paksula: 
-           ``SVG vs. Canvas on Trivial Drawing Application'', \emph{SVG Open} (2009),  
+    \bibitem{kaipiainen} Kaipiainen, S., Paksula, M.: 
+           ``SVG vs. Canvas on Trivial Drawing Application'', \emph{SVG Open} (2009), \\
               \href{http://www.svgopen.org/2009/papers/54-SVG_vs_Canvas_on_Trivial_Drawing_Application/}{http://www.svgopen.org/2009/papers/54-SVG\_vs\_Canvas\_on\_Trivial\_Drawing\_Application/}
 
     \bibitem{kortenkamp2009} Kortenkamp, U., Dohrmann, Ch., Kreis, Y., Dording, C., Libbrecht, P., Mercat, Ch.:
@@ -583,7 +593,7 @@ The goal of JSXGraph is to change this situation.
     %\bibitem{mcallister} Neil McAllister: 
     %        http://infoworld.com/d/developer-world/watch-out-java-here-comes-javascript-799
     
-    \bibitem{netapplications} \href{http://marketshare.hitslink.com/browser-market-share.aspx?qprid=0}{http://marketshare.hitslink.com/browser-market-share.aspx?qprid=0} Online access (2010)
+    \bibitem{netapplications} Online access to \href{http://marketshare.hitslink.com/browser-market-share.aspx?qprid=0}{http://marketshare.hitslink.com/browser-market-share.aspx?qprid=0} (2010)
 
     \bibitem{botana} Botana, F., Valcarce, J. L.:
         ``A software tool for the investigation of plane loci''.
