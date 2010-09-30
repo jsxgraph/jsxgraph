@@ -339,7 +339,7 @@
         g2 = fftBoard.create('glider', [0.9,0,l1],{name:"H&ouml;henfilter"}),
         p2 = fftBoard.create('point', [function(){return g2.X();},2],{visible:false}),
         l3 = fftBoard.create('line', [g2,p2],{strokeColor:"#FF0000", straightFirst:false, straightLast:false}),
-        s1 = fftBoard.create('slider', [[0.05,0],[0.05,500],[0,0,1]],{strokeColor:"#0000FF",fillColor:"#FF0000"});
+        s1 = fftBoard.create('slider', [[0.05,100],[0.05,600],[0,0,1]],{strokeColor:"#0000FF",fillColor:"#FF0000"});
 
     function loadFFT() {
         JXG.Server.modules.fft.fft(jitterSignal, function(data) {
