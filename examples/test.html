@@ -7,18 +7,26 @@
 <body>
 <h2>Test</h2>
 
-<div id="jxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
+<div id="jxgbox" class="jxgbox" style="width:1000px; height:500px;"></div>
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
     /* <![CDATA[ */
 
 
 //JXG.Options.text.defaultDisplay = 'internal';
-var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true});
-var l = brd.create('line', [1,0,-1], {});
-var A = brd.create('glider',[1,1,l]);
-var P = brd.create('point',[1,1],{name:'P'});
-var C = brd.create('point',[1,2],{name:'C'});
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4.5,8,10,-0.5], axis:true, keepaspectratio:true});
+if (true) {
+    var l = brd.create('curve', [function(t) { return t;}, function(t){ return 1;}], {});
+    var A = brd.create('glider',[-4,1,l]);
+    var P = brd.create('point',[-4,1],{name:'P', trace:true});
+    var C = brd.create('point',[-4,2],{name:'C'});
+} else {
+    var l = brd.create('curve', [function(t) { return 4*Math.cos(t);}, function(t){ return 4*Math.sin(t);},0,2*Math.PI], {});
+    //var l = brd.create('curve', [function(t) { return 4;}, function(t){ return t;}], {});
+    var A = brd.create('glider',[4,0,l]);
+    var P = brd.create('point',[4,0],{name:'P'});
+    var C = brd.create('point',[3,0],{name:'C'});
+}
 var c = brd.create('curve',[
                     function(t){var d = P.Dist(C);
                                 var beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
@@ -32,10 +40,43 @@ var c = brd.create('curve',[
                     },
                     0,2*Math.PI-0.2]);
 var B = brd.create('glider',[0,2,c],{name:'B'});
-var t = brd.create('transform',[Math.PI/6,C], {type:'rotate'});
-t.applyOnce([P,B]);
-t.applyOnce([P,B]);
-brd.update();
+var trans = brd.create('transform',[Math.PI/6,C], {type:'rotate'});
+//trans.applyOnce([P,B]);
+//trans.applyOnce([P,B]);
+//brd.update();
+
+var t_c = 0.0;
+var stepsize = 0.1;
+var t = A.position;
+var alpha = 0;
+var rotation = brd.create('transform',[function(){ return alpha;}, 
+                                       function(){ return A.X();},
+                                       function(){ return A.Y();}], {type:'rotate'});
+rollen = function(){
+    var t_new = t+stepsize;
+    var t_c_new = JXG.Math.Numerics.root(
+                    function(tt){ 
+                        var cx = c.X(tt),
+                            cy = c.Y(tt),
+                            lx = l.X(t),
+                            ly = l.Y(t);
+                        return (lx-cx)*(lx-cx)+(ly-cy)*(ly-cy)-stepsize*stepsize;
+                    },
+                    t_c+stepsize);
+    alpha = -JXG.Math.Geometry.rad([l.X(t_new),l.Y(t_new)],
+                                   A,
+                                   [c.X(t_c_new),c.Y(t_c_new)]);
+    rotation.applyOnce([C,P,B]);
+    A.moveTo([l.X(t_new),l.Y(t_new)]);
+    brd.update();
+    t = t_new;
+    t_c = t_c_new;
+//console.log(t, t_c, alpha, c.X(t_c_new),c.Y(t_c_new));
+};
+setInterval(rollen, 100);
+//rollen();
+//rollen();
+
 
 /*    
 var p1 = brd2.create('point', [0,0], {style:6, name:'p1'});
