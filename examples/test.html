@@ -19,20 +19,28 @@
 
 
 //JXG.Options.text.defaultDisplay = 'internal';
-var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4.5,8,40,-5.5], axis:true, keepaspectratio:true});
-if (true) {
+//var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4.5,8,40,-5.5], axis:true, keepaspectratio:true});
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, keepaspectratio:true});
+if (false) {
     //var l = brd.create('curve', [function(t) { return t;}, function(t){ return 1;}], {strokeWidth:6});
     var l = brd.create('curve', [function(t) { return t;}, function(t){ return 0.5*Math.cos(t);}], {strokeWidth:6});
     //var A = brd.create('glider',[-4,1,l]);
     var P = brd.create('point',[0,0.5],{name:'P', trace:true});
     var C = brd.create('point',[0,2],{name:'C'});
-} else {
+} else if (false) {
     var l = brd.create('curve', [function(t) { return 4*Math.cos(t);}, function(t){ return 4*Math.sin(t);},0,2*Math.PI], 
             {strokeWidth:6});
     //var A = brd.create('glider',[4,0,l]);
     var P = brd.create('point',[4,0],{name:'P'});
     var C = brd.create('point',[1.2,0],{name:'C'});
+} else { 
+    var A = brd.create('point',[-2,-2]);
+    var B = brd.create('point',[2,-2]);
+    var pol = brd.create('regularpolygon',[A,B,3], {withLines:false, fillColor:'none', highlightFillColor:'none'});
+    brd.create('curve', JXG.Math.Numerics.reuleauxPolygon(pol.vertices, 3), 
+        {color:'#093083', highlightFillColor:'#093083'});
 }
+/*
 var c = brd.create('curve',[
                     function(t){var d = P.Dist(C);
                                 var beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
@@ -48,65 +56,10 @@ var c = brd.create('curve',[
                     {strokeWidth:6, strokeColor:'green'});
 var B = brd.create('glider',[0,2,c],{name:'B', color:'blue',trace:false});
 brd.create('segment',[C,B],{color:'black'}); 
-/*
-var createRoulette = function(c1, c2, start_c1, stepsize, time, pointlist) {
-    var alpha = 0,
-        t1 = start_c1,
-        t2 = JXG.Math.Numerics.root(
-                function(t) { 
-                    var c1x = c1.X(t1),
-                        c1y = c1.Y(t1),
-                        c2x = c2.X(t),
-                        c2y = c2.Y(t);
-                    return (c1x-c2x)*(c1x-c2x) + (c1y-c2y)*(c1y-c2y);
-                },
-                0),
-        t1_new = 0.0, t2_new = 0.0, 
-        rotation = brd.create('transform',[function(){ return alpha;}, 
-                                           function(){ return c1.X(t1);},
-                                           function(){ return c1.Y(t1);}], 
-                                          {type:'rotate'}),
-        linDist = function(t) {
-                var mx = c1.X(t1),
-                    my = c1.Y(t1),
-                    c1x = mx - c1.X(t1_new),
-                    c1y = my - c1.Y(t1_new),
-                    c2x = mx - c2.X(t),
-                    c2y = my - c2.Y(t);
-                return (c1x*c1x+c1y*c1y) - (c2x*c2x+c2y*c2y);
-            },   
-        interval = null; 
 
-    this.rolling = function(){
-        t1_new = t1+stepsize;
-        t2_new = JXG.Math.Numerics.root(linDist, t2+stepsize);
-        alpha = -JXG.Math.Geometry.rad(
-                    [c1.X(t1_new),c1.Y(t1_new)],
-                    [c1.X(t1),c1.Y(t1)],
-                    [c2.X(t2_new),c2.Y(t2_new)]);
-        rotation.applyOnce(pointlist);
-        brd.update();
-        t1 = t1_new;
-        t2 = t2_new;
-    };
-    
-    this.start = function() {
-        if (time>0) {
-            interval = setInterval(this.rolling, time);
-        }
-        return this;
-    };
-    
-    this.stop = function() {
-        clearInterval(interval);
-        return this;
-    };
-    return this;
-};
-*/
 var rol = JXG.Math.Numerics.createRoulette(l, c, 0, Math.PI/20, 100, [C,P,B]); //.start();
 //rollen();
-
+*/
 /*    
 var p1 = brd2.create('point', [0,0], {style:6, name:'p1'});
 var s = brd2.create('slider', [[-1,-1],[2,-1],[0,Math.PI/2,2*Math.PI]], {name:'angle'});
