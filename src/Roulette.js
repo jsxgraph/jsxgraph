@@ -24,9 +24,10 @@
 */
 
 JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, direction, time, pointlist) {
-    var alpha = 0,
-        t1 = start_c1,
-        t2 = JXG.Math.Numerics.root(
+    return function() {
+        var alpha = 0,
+            t1 = start_c1,
+            t2 = JXG.Math.Numerics.root(
                 function(t) { 
                     var c1x = c1.X(t1),
                         c1y = c1.Y(t1),
@@ -35,12 +36,12 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
                     return (c1x-c2x)*(c1x-c2x) + (c1y-c2y)*(c1y-c2y);
                 },
                 0),
-        t1_new = 0.0, t2_new = 0.0, 
-        rotation = brd.create('transform',[function(){ return alpha;}, 
+            t1_new = 0.0, t2_new = 0.0, 
+            rotation = brd.create('transform',[function(){ return alpha;}, 
                                            function(){ return c1.X(t1);},
                                            function(){ return c1.Y(t1);}], 
                                           {type:'rotate'}),
-        linDist = function(t) {
+            linDist = function(t) {
                 var mx = c1.X(t1),
                     my = c1.Y(t1),
                     c1x = mx - c1.X(t1_new),
@@ -48,34 +49,35 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
                     c2x = mx - c2.X(t),
                     c2y = my - c2.Y(t);
                 return (c1x*c1x+c1y*c1y) - (c2x*c2x+c2y*c2y);
-            },   
-        interval = null; 
+                },   
+            interval = null; 
 
-    this.rolling = function(){
-        t1_new = t1+direction*stepsize;
-        t2_new = JXG.Math.Numerics.root(linDist, t2+direction*stepsize);
-        alpha = -JXG.Math.Geometry.rad(
+        this.rolling = function(){
+            t1_new = t1+direction*stepsize;
+            t2_new = JXG.Math.Numerics.root(linDist, t2+direction*stepsize);
+            alpha = -JXG.Math.Geometry.rad(
                     [c1.X(t1_new),c1.Y(t1_new)],
                     [c1.X(t1),c1.Y(t1)],
                     [c2.X(t2_new),c2.Y(t2_new)]);
-        rotation.applyOnce(pointlist);
-        brd.update();
-        t1 = t1_new;
-        t2 = t2_new;
-    };
+            rotation.applyOnce(pointlist);
+            brd.update();
+            t1 = t1_new;
+            t2 = t2_new;
+        };
     
-    this.start = function() {
-        if (time>0) {
-            interval = setInterval(this.rolling, time);
-        }
+        this.start = function() {
+            if (time>0) {
+                interval = setInterval(this.rolling, time);
+            }
+            return this;
+        };
+    
+        this.stop = function() {
+            clearInterval(interval);
+            return this;
+        };
         return this;
     };
-    
-    this.stop = function() {
-        clearInterval(interval);
-        return this;
-    };
-    return this;
 };
 
 JXG.Math.Numerics.reuleauxPolygon = function(points, nr) {

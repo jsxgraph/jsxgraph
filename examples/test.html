@@ -56,7 +56,7 @@ var c = brd.create('curve',[
 var B = brd.create('glider',[0,2,c],{name:'B', color:'blue',trace:false});
 brd.create('segment',[C,B],{color:'black'}); 
 
-var rol = JXG.Math.Numerics.createRoulette(l, c, 0, Math.PI/20, -1, 100, [C,P,B]); //.start();
+var rol = JXG.Math.Numerics.createRoulette(l, c, 0, Math.PI/20, -1, 100, [C,P,B])(); //.start();
 //rollen();
 /*
 */
