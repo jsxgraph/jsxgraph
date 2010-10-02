@@ -3,6 +3,7 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/Roulette.js"></script>
 </head>
 <body>
 <h2>Roulettes</h2>
@@ -47,7 +48,7 @@ var c = brd.create('curve',[
                     {strokeWidth:6, strokeColor:'green'});
 var B = brd.create('glider',[0,2,c],{name:'B', color:'blue',trace:false});
 brd.create('segment',[C,B],{color:'black'}); 
-
+/*
 var createRoulette = function(c1, c2, start_c1, stepsize, time, pointlist) {
     var alpha = 0,
         t1 = start_c1,
@@ -102,8 +103,8 @@ var createRoulette = function(c1, c2, start_c1, stepsize, time, pointlist) {
     };
     return this;
 };
-
-var rol = createRoulette(l, c, 0, Math.PI/20, 100, [C,P,B]); //.start();
+*/
+var rol = JXG.Math.Numerics.createRoulette(l, c, 0, Math.PI/20, 100, [C,P,B]); //.start();
 //rollen();
 
 /*    
