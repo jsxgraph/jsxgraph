@@ -23,7 +23,7 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, time, pointlist) {
+JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, direction, time, pointlist) {
     var alpha = 0,
         t1 = start_c1,
         t2 = JXG.Math.Numerics.root(
@@ -52,8 +52,8 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, time, po
         interval = null; 
 
     this.rolling = function(){
-        t1_new = t1+stepsize;
-        t2_new = JXG.Math.Numerics.root(linDist, t2+stepsize);
+        t1_new = t1+direction*stepsize;
+        t2_new = JXG.Math.Numerics.root(linDist, t2+direction*stepsize);
         alpha = -JXG.Math.Geometry.rad(
                     [c1.X(t1_new),c1.Y(t1_new)],
                     [c1.X(t1),c1.Y(t1)],

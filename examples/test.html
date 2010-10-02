@@ -21,7 +21,7 @@
 //JXG.Options.text.defaultDisplay = 'internal';
 //var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4.5,8,40,-5.5], axis:true, keepaspectratio:true});
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, keepaspectratio:true});
-if (false) {
+if (true) {
     //var l = brd.create('curve', [function(t) { return t;}, function(t){ return 1;}], {strokeWidth:6});
     var l = brd.create('curve', [function(t) { return t;}, function(t){ return 0.5*Math.cos(t);}], {strokeWidth:6});
     //var A = brd.create('glider',[-4,1,l]);
@@ -40,7 +40,6 @@ if (false) {
     brd.create('curve', JXG.Math.Numerics.reuleauxPolygon(pol.vertices, 3), 
         {color:'#093083', highlightFillColor:'#093083'});
 }
-/*
 var c = brd.create('curve',[
                     function(t){var d = P.Dist(C);
                                 var beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
@@ -57,8 +56,9 @@ var c = brd.create('curve',[
 var B = brd.create('glider',[0,2,c],{name:'B', color:'blue',trace:false});
 brd.create('segment',[C,B],{color:'black'}); 
 
-var rol = JXG.Math.Numerics.createRoulette(l, c, 0, Math.PI/20, 100, [C,P,B]); //.start();
+var rol = JXG.Math.Numerics.createRoulette(l, c, 0, Math.PI/20, -1, 100, [C,P,B]); //.start();
 //rollen();
+/*
 */
 /*    
 var p1 = brd2.create('point', [0,0], {style:6, name:'p1'});
