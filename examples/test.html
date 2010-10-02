@@ -5,8 +5,12 @@
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h2>Test</h2>
-<form><input type="button" value="step" onclick="rollen()"></form>
+<h2>Roulettes</h2>
+<form>
+<input type="button" value="start" onclick="rol.start()">
+<input type="button" value="stop" onclick="rol.stop()">
+<input type="button" value="one step" onclick="rol.rolling()">
+</form>
 <div id="jxgbox" class="jxgbox" style="width:1000px; height:500px;"></div>
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
@@ -14,20 +18,19 @@
 
 
 //JXG.Options.text.defaultDisplay = 'internal';
-var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4.5,8,10,-5.5], axis:true, keepaspectratio:true});
-if (false) {
-    var l = brd.create('curve', [function(t) { return t;}, function(t){ return 1;}], 
-            {strokeWidth:6});
-    var A = brd.create('glider',[-4,1,l]);
-    var P = brd.create('point',[-4,1],{name:'P', trace:true});
-    var C = brd.create('point',[-4,2],{name:'C'});
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4.5,8,40,-5.5], axis:true, keepaspectratio:true});
+if (true) {
+    //var l = brd.create('curve', [function(t) { return t;}, function(t){ return 1;}], {strokeWidth:6});
+    var l = brd.create('curve', [function(t) { return t;}, function(t){ return 0.5*Math.cos(t);}], {strokeWidth:6});
+    //var A = brd.create('glider',[-4,1,l]);
+    var P = brd.create('point',[0,0.5],{name:'P', trace:true});
+    var C = brd.create('point',[0,2],{name:'C'});
 } else {
     var l = brd.create('curve', [function(t) { return 4*Math.cos(t);}, function(t){ return 4*Math.sin(t);},0,2*Math.PI], 
             {strokeWidth:6});
-    //var l = brd.create('curve', [function(t) { return 4;}, function(t){ return t;}], {});
-    var A = brd.create('glider',[4,0,l]);
+    //var A = brd.create('glider',[4,0,l]);
     var P = brd.create('point',[4,0],{name:'P'});
-    var C = brd.create('point',[2,0],{name:'C'});
+    var C = brd.create('point',[1.2,0],{name:'C'});
 }
 var c = brd.create('curve',[
                     function(t){var d = P.Dist(C);
@@ -43,58 +46,65 @@ var c = brd.create('curve',[
                     0,2*Math.PI],
                     {strokeWidth:6, strokeColor:'green'});
 var B = brd.create('glider',[0,2,c],{name:'B', color:'blue',trace:false});
-brd.create('segment',[C,B],{color:'black'});
-var trans = brd.create('transform',[Math.PI/6,C], {type:'rotate'});
-//trans.applyOnce([P,B]);
-//trans.applyOnce([P,B]);
-//brd.update();
+brd.create('segment',[C,B],{color:'black'}); 
 
-var arclen = function(c, t1, t2) {
-    return JXG.Math.Numerics.I([t1,t2],
-                function(t) {
-                    var x = JXG.Math.Numerics.D(c.X)(t),
-                        y = JXG.Math.Numerics.D(c.Y)(t);
-                    return Math.sqrt(x*x+y*y);
-                });
+var createRoulette = function(c1, c2, start_c1, stepsize, time, pointlist) {
+    var alpha = 0,
+        t1 = start_c1,
+        t2 = JXG.Math.Numerics.root(
+                function(t) { 
+                    var c1x = c1.X(t1),
+                        c1y = c1.Y(t1),
+                        c2x = c2.X(t),
+                        c2y = c2.Y(t);
+                    return (c1x-c2x)*(c1x-c2x) + (c1y-c2y)*(c1y-c2y);
+                },
+                0),
+        t1_new = 0.0, t2_new = 0.0, 
+        rotation = brd.create('transform',[function(){ return alpha;}, 
+                                           function(){ return c1.X(t1);},
+                                           function(){ return c1.Y(t1);}], 
+                                          {type:'rotate'}),
+        linDist = function(t) {
+                var mx = c1.X(t1),
+                    my = c1.Y(t1),
+                    c1x = mx - c1.X(t1_new),
+                    c1y = my - c1.Y(t1_new),
+                    c2x = mx - c2.X(t),
+                    c2y = my - c2.Y(t);
+                return (c1x*c1x+c1y*c1y) - (c2x*c2x+c2y*c2y);
+            },   
+        interval = null; 
+
+    this.rolling = function(){
+        t1_new = t1+stepsize;
+        t2_new = JXG.Math.Numerics.root(linDist, t2+stepsize);
+        alpha = -JXG.Math.Geometry.rad(
+                    [c1.X(t1_new),c1.Y(t1_new)],
+                    [c1.X(t1),c1.Y(t1)],
+                    [c2.X(t2_new),c2.Y(t2_new)]);
+        rotation.applyOnce(pointlist);
+        brd.update();
+        t1 = t1_new;
+        t2 = t2_new;
+    };
+    
+    this.start = function() {
+        if (time>0) {
+            interval = setInterval(this.rolling, time);
+        }
+        return this;
+    };
+    
+    this.stop = function() {
+        clearInterval(interval);
+        return this;
+    };
+    return this;
 };
-    
-var t_c = 0.0;
-var stepsize = Math.PI/20;
-var t = A.position;
-var alpha = 0;
-var rotation = brd.create('transform',[function(){ return alpha;}, 
-                                       function(){ return A.X();},
-                                       function(){ return A.Y();}], {type:'rotate'});
-var l1;                                       
-var arcDist =  function(t) { 
-                  var a = arclen(c,t_c,t); 
-                  return (a-l1)*(a-l1);
-               };
-               
-               
-var rollen = function(){
-    var t_new = t+stepsize;
-    
-    l1 = arclen(l,t,t_new);
-    var t_c_new = JXG.Math.Numerics.root(arcDist, t_c+stepsize);
-    
-    //t_c_new = t_c + 4*stepsize;  
-//console.log(arclen(l,t,t_new)/arclen(c,t_c,t_c_new));
-    
-    alpha = -JXG.Math.Geometry.rad([l.X(t_new),l.Y(t_new)],
-                                   A,
-                                   [c.X(t_c_new),c.Y(t_c_new)]);
-    //if (Math.abs(Math.abs(alpha)-Math.PI)<0.2) alpha-=Math.PI;
-    rotation.applyOnce([C,P,B]);
-    A.moveTo([l.X(t_new),l.Y(t_new)]);
-    //B.moveTo([c.X(t_c_new),c.Y(t_c_new)]);
-    brd.update();
-    t = t_new;
-    t_c = t_c_new;
-};
-setInterval(rollen, 50);
+
+var rol = createRoulette(l, c, 0, Math.PI/20, 100, [C,P,B]); //.start();
 //rollen();
-
 
 /*    
 var p1 = brd2.create('point', [0,0], {style:6, name:'p1'});
@@ -131,7 +141,7 @@ var t2 = board.createElement('text',[1,1,'sum_(i=1)^n (x^i)']);
 </script>
 <form><input type="button" value="Export SVG" onClick="document.getElementById('out').value = XMLSerializer().serializeToString(brd.renderer.svgRoot);"> 
 <br>
-<textarea id="out" rows=30 cols=60>
+<textarea id="out" rows=10 cols=60>
 </textarea>
 </form>
 
