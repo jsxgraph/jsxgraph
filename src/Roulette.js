@@ -24,7 +24,7 @@
 */
 
 JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, direction, time, pointlist) {
-    return function() {
+    var Roulette = function() {
         var alpha = 0,
             t1 = start_c1,
             t2 = JXG.Math.Numerics.root(
@@ -78,6 +78,7 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
         };
         return this;
     };
+    return new Roulette();
 };
 
 JXG.Math.Numerics.reuleauxPolygon = function(points, nr) {
