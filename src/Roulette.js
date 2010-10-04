@@ -59,10 +59,18 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
                     [c1.X(t1_new),c1.Y(t1_new)],
                     [c1.X(t1),c1.Y(t1)],
                     [c2.X(t2_new),c2.Y(t2_new)]);
-            rotation.applyOnce(pointlist);
+            if (alpha <-0.17453292519943295 && alpha>-9*0.1745329251994329) { // 10 degrees
+                alpha = -0.17453292519943295;
+                rotation.applyOnce(pointlist);
+            } else if (alpha>-2*Math.PI+0.17453292519943295 && alpha<-2*Math.PI+9*0.17453292519943295) {
+                alpha = -2*Math.PI+0.17453292519943295;
+                rotation.applyOnce(pointlist);
+            } else {
+                rotation.applyOnce(pointlist);
+                t1 = t1_new;
+                t2 = t2_new;
+            }
             brd.update();
-            t1 = t1_new;
-            t2 = t2_new;
         };
     
         this.start = function() {
