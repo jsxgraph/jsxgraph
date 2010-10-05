@@ -37,35 +37,37 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
                 },
                 0),
             t1_new = 0.0, t2_new = 0.0, 
+            mx, my, c1x, c1y, c2x, c2y, c1dist,
             rotation = brd.create('transform',[function(){ return alpha;}, 
                                            function(){ return c1.X(t1);},
                                            function(){ return c1.Y(t1);}], 
                                           {type:'rotate'}),
             linDist = function(t) {
-                var mx = c1.X(t1),
-                    my = c1.Y(t1),
-                    c1x = mx - c1.X(t1_new),
-                    c1y = my - c1.Y(t1_new),
-                    c2x = mx - c2.X(t),
-                    c2y = my - c2.Y(t);
-                return (c1x*c1x+c1y*c1y) - (c2x*c2x+c2y*c2y);
+                c2x = mx - c2.X(t);
+                c2y = my - c2.Y(t);
+                return c1dist - (c2x*c2x+c2y*c2y);
                 },   
+            beta = Math.PI/18.0,
+            beta9 = beta*9,
             interval = null; 
 
         this.rolling = function(){
             t1_new = t1+direction*stepsize;
+            mx = c1.X(t1);
+            my = c1.Y(t1);
+            c1x = mx - c1.X(t1_new);
+            c1y = my - c1.Y(t1_new);
+            c1dist = c1x*c1x+c1y*c1y;  // used in linDist
             t2_new = JXG.Math.Numerics.root(linDist, t2+direction*stepsize);
             alpha = -JXG.Math.Geometry.rad(
                     [c1.X(t1_new),c1.Y(t1_new)],
                     [c1.X(t1),c1.Y(t1)],
                     [c2.X(t2_new),c2.Y(t2_new)]);
-            if (alpha <-0.17453292519943295 && 
-                alpha>-9*0.1745329251994329) { // 10 degrees
-                alpha = -0.17453292519943295;
+            if (alpha <-beta && alpha>-beta9) { // -(10-90) degrees
+                alpha = -beta;
                 rotation.applyOnce(pointlist);
-            } else if (alpha>-2*Math.PI+0.17453292519943295 &&
-                       alpha<-2*Math.PI+9*0.17453292519943295) {
-                alpha = -2*Math.PI+0.17453292519943295;
+            } else if (alpha>-2*Math.PI+beta && alpha<-2*Math.PI+beta9) {
+                alpha = -2*Math.PI+beta;
                 rotation.applyOnce(pointlist);
             } else {
                 rotation.applyOnce(pointlist);

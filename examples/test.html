@@ -8,9 +8,9 @@
 <body>
 <h2>Roulettes</h2>
 <form>
-<input type="button" value="start" onclick="rol.start()">
-<input type="button" value="stop" onclick="rol.stop()">
-<input type="button" value="one step" onclick="rol.rolling()">
+<input type="button" value="start" onclick="rol3.start();rol5.start()">
+<input type="button" value="stop" onclick="rol3.stop();rol5.stop()">
+<input type="button" value="one step" onclick="rol5.rolling()">
 </form>
 <div id="jxgbox" class="jxgbox" style="width:1000px; height:500px;"></div>
 <div id="debug" style="display:block;"></div>
@@ -18,46 +18,32 @@
     /* <![CDATA[ */
 
 
-//JXG.Options.text.defaultDisplay = 'internal';
-//var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4.5,8,40,-5.5], axis:true, keepaspectratio:true});
-var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, keepaspectratio:true});
-if (true) {
-    //var l = brd.create('curve', [function(t) { return t;}, function(t){ return 1;}], {strokeWidth:6});
-    var l = brd.create('curve', [function(t) { return t;}, function(t){ return 0.5*Math.cos(t);}], {strokeWidth:6});
-    //var A = brd.create('glider',[-4,1,l]);
-    var P = brd.create('point',[0,0.5],{name:'P', trace:true});
-    var C = brd.create('point',[0,2],{name:'C'});
-} else if (false) {
-    var l = brd.create('curve', [function(t) { return 4*Math.cos(t);}, function(t){ return 4*Math.sin(t);},0,2*Math.PI], 
-            {strokeWidth:6});
-    //var A = brd.create('glider',[4,0,l]);
-    var P = brd.create('point',[4,0],{name:'P'});
-    var C = brd.create('point',[1.2,0],{name:'C'});
-} else { 
-    var A = brd.create('point',[-2,-2]);
-    var B = brd.create('point',[2,-2]);
-    var pol = brd.create('regularpolygon',[A,B,3], {withLines:false, fillColor:'none', highlightFillColor:'none'});
-    brd.create('curve', JXG.Math.Numerics.reuleauxPolygon(pol.vertices, 3), 
-        {color:'#093083', highlightFillColor:'#093083'});
-}
-var c = brd.create('curve',[
-                    function(t){var d = P.Dist(C);
-                                var beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
-                                t += beta;
-                                return C.X()+d*Math.cos(t);
-                    },
-                    function(t){var d = P.Dist(C);
-                                var beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
-                                t += beta;
-                                return C.Y()+d*Math.sin(t);
-                    },
-                    0,2*Math.PI],
-                    {strokeWidth:6, strokeColor:'green'});
-var B = brd.create('glider',[0,2,c],{name:'B', color:'blue',trace:false});
-brd.create('segment',[C,B],{color:'black'}); 
-
-var rol = JXG.Math.Numerics.createRoulette(l, c, 0, Math.PI/20, -1, 100, [C,P,B])(); //.start();
-//rollen();
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-2,7,20,-3], keepaspectratio:true});
+brd.renderer.container.style.backgroundColor = '#3d1c24';          // background color board
+ 
+brd.suspendUpdate();
+// Pentagon
+var A = brd.create('point',[-2,-2]);
+var B = brd.create('point',[0,0]);
+var pol5 = brd.create('regularpolygon',[A,B,5], {withLines:false, fillColor:'none', highlightFillColor:'none', fillOpacity:0.0});
+for (var i=0;i<5;i++) pol5.vertices[i].setProperty({color:'#3d1c24'});
+ 
+// Triangle
+var C = brd.create('point',[-2,-2]);
+var D = brd.create('point',[C.X()+3/5*(1+Math.sqrt(5))*0.5*A.Dist(B), C.Y()]);
+var pol3 = brd.create('regularpolygon',[C,D,3], {withLines:false, fillColor:'none', highlightFillColor:'none', fillOpacity:0.0});
+for (i=0;i<3;i++) pol3.vertices[i].setProperty({color:'#3d1c24'});
+ 
+var line = brd.create('curve',[function(t){return t;}, function(t){return -2;}], 
+                {strokeWidth:6, strokeColor:'#d66d55', fillColor:'#d6bb55', highlightFillColor:'#d6bb55'});
+var reuleauxPentagon = brd.create('curve', JXG.Math.Numerics.reuleauxPolygon(pol5.vertices, 5), 
+       {strokeWidth:6, strokeColor:'#d66d55', fillColor:'#ad5544', highlightFillColor:'#ad5544'});
+var reuleauxTriangle = brd.create('curve', JXG.Math.Numerics.reuleauxPolygon(pol3.vertices, 3), 
+       {strokeWidth:6, strokeColor:'#d66d55', fillColor:'#703545', highlightFillColor:'#703545'});
+brd.unsuspendUpdate();
+ 
+var rol5 = JXG.Math.Numerics.createRoulette(line, reuleauxPentagon, -2, Math.PI/45, 1, 100, [A,B,C,D]); 
+var rol3 = JXG.Math.Numerics.createRoulette(reuleauxPentagon, reuleauxTriangle, 6*Math.PI/5, Math.PI/45, -1, 40, [C,D]);//rollen();
 /*
 */
 /*    
