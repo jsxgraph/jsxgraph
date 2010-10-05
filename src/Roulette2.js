@@ -59,14 +59,31 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
             exactDist = function(t) {
                 return c1dist - arclen(c2,t2,t);
                 },   
-            beta = Math.PI/18.0,
+            beta = Math.PI/36.0,
             beta9 = beta*9,
             interval = null; 
-
+        var hp = new JXG.Complex(JXG.Math.Numerics.D(c1.X)(t1),JXG.Math.Numerics.D(c1.Y)(t1));
+        var gp = new JXG.Complex(JXG.Math.Numerics.D(c2.X)(t2),JXG.Math.Numerics.D(c2.Y)(t2));
+        var z = JXG.C.div(hp,gp);
+        alpha = -direction*Math.atan2(z.imaginary, z.real);
+        rotationLocal.applyOnce(pointlist);
+        brd.update();
+/*
+        var hp = new JXG.Complex(JXG.Math.Numerics.D(c1.X)(t1),JXG.Math.Numerics.D(c1.Y)(t1));
+        var gp = new JXG.Complex(JXG.Math.Numerics.D(c2.X)(t2),JXG.Math.Numerics.D(c2.Y)(t2));
+        var z = JXG.C.div(hp,gp);
+        alpha = direction*Math.atan2(z.imaginary, z.real);
+        rotationLocal.applyOnce(pointlist);
+        //brd.update();
+console.log(alpha*180/Math.PI);
+*/        
+        
+            
         this.rolling = function(){
             t1_new = t1+direction*stepsize;
             c1dist = arclen(c1,t1,t1_new);
             t2_new = JXG.Math.Numerics.root(exactDist, t2+direction*stepsize);
+            
             var h = new JXG.Complex(c1.X(t1_new),c1.Y(t1_new));    // c1(t) as complex number
             var g = new JXG.Complex(c2.X(t2_new),c2.Y(t2_new));    // c2(t) as complex number
             var hp = new JXG.Complex(JXG.Math.Numerics.D(c1.X)(t1_new),JXG.Math.Numerics.D(c1.Y)(t1_new));
@@ -76,22 +93,30 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
             z.mult(g);
             Tx = h.real-z.real;
             Ty = h.imaginary-z.imaginary;    // T(t) = h(t)-g(t)*h'(t)/g'(t);
-
-            if (alpha <-beta && alpha>-beta9) { // -(10-90) degrees
+console.log(alpha*180/Math.PI);
+/*
+            if (alpha<-beta && alpha>=-2*beta) {
                 alpha = -beta;
                 rotationLocal.applyOnce(pointlist);
+console.log("rot1");
+            } else if (alpha <-beta && alpha>-beta9) { // -(10-90) degrees
+                rotationLocal.applyOnce(pointlist);
+console.log("rot2");
             } else if (alpha>-2*Math.PI+beta && alpha<-2*Math.PI+beta9) {
                 alpha = -2*Math.PI+beta;
                 rotationLocal.applyOnce(pointlist);
             } else {
-console.log(alpha*180/Math.PI);
-console.log(Tx,Ty);
+console.log("roll");
+*/                
                 rotation.applyOnce(pointlist);
+//brd.update();
                 translate.applyOnce(pointlist);
+console.log(Tx,Ty);
+//brd.update();
 
                 t1 = t1_new;
                 t2 = t2_new;
-            }
+//            }
             brd.update();
         };
     
@@ -133,6 +158,6 @@ JXG.Math.Numerics.reuleauxPolygon = function(points, nr) {
             makeFct('X','cos'),
             makeFct('Y','sin'),
             0,
-            Math.PI*2
+            Math.PI*2-0.2
         ];
 };        
