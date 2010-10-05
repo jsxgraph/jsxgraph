@@ -48,7 +48,7 @@ brd.unsuspendUpdate();
 var rol = JXG.Math.Numerics.createRoulette(line, circle, 0, Math.PI/45, 1, 100, [C,P]); 
 */
 // Triangle
-var A = brd.create('point',[-2,-2]);
+var A = brd.create('point',[-1,-2]);
 var B = brd.create('point',[0,0]);
 var pol3 = brd.create('regularpolygon',[A,B,3], {withLines:false, fillColor:'none', highlightFillColor:'none', fillOpacity:0.0});
 for (var i=0;i<3;i++) pol3.vertices[i].setProperty({color:'#3d1c24'});
@@ -64,7 +64,7 @@ var S = brd.create('point', [
             {strokeColor:'#703545', fillColor:'#703545', highlightFillColor:'#703545', name:'S', trace:true});
 */ 
 brd.unsuspendUpdate();
-var rol = JXG.Math.Numerics.createRoulette(line, reuleauxTriangle, -2, Math.PI/90, 1, 50, [A,B]);
+var rol = JXG.Math.Numerics.createRoulette(line, reuleauxTriangle, -1, Math.PI/20, 1, 50, [A,B]);
 /*    
 var p1 = brd2.create('point', [0,0], {style:6, name:'p1'});
 var s = brd2.create('slider', [[-1,-1],[2,-1],[0,Math.PI/2,2*Math.PI]], {name:'angle'});

@@ -39,6 +39,10 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
             t1_new = 0.0, t2_new = 0.0, 
             c1dist,
             rotation = brd.create('transform',[function(){ return alpha;}], {type:'rotate'}),
+            rotationLocal = brd.create('transform',[function(){ return alpha;}, 
+                                           function(){ return c1.X(t1);},
+                                           function(){ return c1.Y(t1);}], 
+                                          {type:'rotate'}),
             translate = brd.create('transform',[function(){ return Tx;}, function(){ return Ty;}], {type:'translate'}),
             
             //
@@ -72,24 +76,22 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
             z.mult(g);
             Tx = h.real-z.real;
             Ty = h.imaginary-z.imaginary;    // T(t) = h(t)-g(t)*h'(t)/g'(t);
-/*
+
             if (alpha <-beta && alpha>-beta9) { // -(10-90) degrees
                 alpha = -beta;
-                rotation.applyOnce(pointlist);
-                translate.applyOnce(pointlist);
+                rotationLocal.applyOnce(pointlist);
             } else if (alpha>-2*Math.PI+beta && alpha<-2*Math.PI+beta9) {
                 alpha = -2*Math.PI+beta;
-                rotation.applyOnce(pointlist);
-                translate.applyOnce(pointlist);
+                rotationLocal.applyOnce(pointlist);
             } else {
-*/            
-//console.log(alpha*180/Math.PI);
+console.log(alpha*180/Math.PI);
+console.log(Tx,Ty);
                 rotation.applyOnce(pointlist);
                 translate.applyOnce(pointlist);
 
                 t1 = t1_new;
                 t2 = t2_new;
-//            }
+            }
             brd.update();
         };
     
