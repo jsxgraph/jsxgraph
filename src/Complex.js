@@ -129,16 +129,18 @@ JXG.Complex.prototype.sub = function(/** JXG.Complex,number */ c) /** undefined 
  * multiply with the current object.
  */
 JXG.Complex.prototype.mult = function(/** JXG.Complex,number */ c) /** undefined */{
+    var re, im;
     if(typeof c == 'number') {
         this.real *= c;
         this.imaginary *= c;
     } else {
+        re = this.real;
+        im = this.imaginary;
         //  (a+ib)(x+iy) = ax-by + i(xb+ay)
-        this.real = this.real*c.real - this.imaginary*c.imaginary;
-        this.imaginary = this.real*c.imaginary + this.imaginary*c.real;
+        this.real = re*c.real - im*c.imaginary;
+        this.imaginary = re*c.imaginary + im*c.real;
     }
 };
-
 
 /**
  * Divide this complex number by the given complex number.
@@ -146,7 +148,7 @@ JXG.Complex.prototype.mult = function(/** JXG.Complex,number */ c) /** undefined
  * divide the current object by.
  */
 JXG.Complex.prototype.div = function(/** JXG.Complex,number */ c) /** undefined */{
-    var denom;
+    var denom, im, re;
 
     if(typeof c == 'number') {
         if(Math.abs(c) < Math.eps) {
@@ -168,11 +170,20 @@ JXG.Complex.prototype.div = function(/** JXG.Complex,number */ c) /** undefined 
 
         denom = c.real*c.real + c.imaginary*c.imaginary;
 
-        this.real = (this.real*c.real + this.imaginary*c.imaginary)/denom;
-        this.imaginary = (this.imaginary*c.real - this.real*c.imaginary)/denom;
+        re = this.real;
+        im = this.imaginary;
+        this.real = (re*c.real + im*c.imaginary)/denom;
+        this.imaginary = (im*c.real - re*c.imaginary)/denom;
     }
 };
 
+/**
+ * Conjugate a complex number in place.
+ * @param c A JavaScript number or a JXG.Complex object 
+ */
+JXG.Complex.prototype.conj = function() /** undefined */ {
+    this.imaginary *= -1;
+};
 
 /**
  * @description
@@ -239,3 +250,27 @@ JXG.C.div = function(/** JXG.Complex,number */ z1, /** JXG.Complex,number */ z2)
     z.div(z2);
     return z;
 };
+
+/**
+ * Conjugate a complex number and return the result.
+ * @param z1 Complex number
+ * @return A complex number equal to the conjugate of the given parameter.
+ */
+JXG.C.conj = function(/** JXG.Complex,number */ z1) /** JXG.Complex */{
+    var z = new JXG.Complex(z1);
+    z.conj();
+    return z;
+};
+
+/**
+ * Absolute value of a complex number.
+ * @param z1 Complex number
+ * @return real number equal to the absolute value of the given parameter.
+ */
+JXG.C.abs = function(/** JXG.Complex,number */ z1) /** JXG.Complex */{
+    var z = new JXG.Complex(z1);
+    z.conj();
+    z.mult(z1);
+    return Math.sqrt(z.real);
+};
+
