@@ -135,7 +135,8 @@ JXG.Math.Numerics.reuleauxPolygon = function(points, nr) {
                     var t1 = (t%pi2 + pi2) % pi2;
                     var j = Math.floor(t1 / pi2_n)%nr;
                     if (isNaN(j)) return j;
-                    t1 = (t1-j*pi2_n)*0.5 + beta+j*pi2_n;
+                    //t1 = (t1-j*pi2_n)*0.5 + beta+j*pi2_n;
+                    t1 = t1*0.5+j*pi2_n*0.5 + beta;
                     return points[j][which]()+d*Math[trig](t1);
                 };
             };
