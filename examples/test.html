@@ -17,7 +17,7 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
-var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-10,5,20,-1], keepaspectratio:true, axis:true});
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-20,5,20,-5], keepaspectratio:true, axis:true});
 brd.suspendUpdate();
 /*
 // Line
@@ -64,7 +64,7 @@ var S = brd.create('point', [
             {strokeColor:'#703545', fillColor:'#703545', highlightFillColor:'#703545', name:'S', trace:true});
 */ 
 brd.unsuspendUpdate();
-var rol = JXG.Math.Numerics.createRoulette(line, reuleauxTriangle, -5, Math.PI/30, 1, 200, [A,B]);
+var rol = JXG.Math.Numerics.createRoulette(line, reuleauxTriangle, -5, Math.PI/20, -1, 100, [A,B]);
 /*    
 var p1 = brd2.create('point', [0,0], {style:6, name:'p1'});
 var s = brd2.create('slider', [[-1,-1],[2,-1],[0,Math.PI/2,2*Math.PI]], {name:'angle'});
