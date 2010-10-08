@@ -182,6 +182,11 @@
 
     }
 
+    function testFzero() {
+        var f = function(x) { return x-2; };
+        assertTrue("JXG.Math.Numerics.fzero, incorrect result", Math.abs(2 - JXG.Math.Numerics.fzero(f, 0)) < JXG.Math.eps);
+    }
+
 </script>
 </head>
 

@@ -363,17 +363,19 @@ JXG.Math.Numerics = (function(JXG, Math) {
             var i = 0,
                 h = JXG.Math.eps,
                 newf = f.apply(object, [x]), // set "this" to "object" in f
+                nfev = 1, 
                 df;
             while (i < 50 && Math.abs(newf) > h) {
-                df = this.D(f, object)(x);
+                df = this.D(f, object)(x);  nfev += 2;
                 if (Math.abs(df) > h) {
                     x -= newf / df;
                 } else {
                     x += (Math.random() * 0.2 - 1.0);
                 }
-                newf = f.apply(object, [x]);
+                newf = f.apply(object, [x]); nfev++;
                 i++;
             }
+            //JXG.debug("N nfev="+nfev);
             return x;
         },
 
@@ -387,6 +389,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
          */
         root: function(f, x, object) {
             return this.Newton(f, x, object);
+            //return this.fzero(f, x, object);
         },
 
         /**
@@ -1144,8 +1147,146 @@ JXG.Math.Numerics = (function(JXG, Math) {
             }
 
             return result;
-        }
+        },
 
+
+        /**
+         *
+         * Find zero of an univariat function f.
+         * Algorithm:
+         *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
+         *  computations. M., Mir, 1980, p.180 of the Russian edition
+         * 
+         * if x0 is an array containing lower and upper bound for the zero
+         * algorithm 748 is applied. Otherwise, if x0 is a number,
+         * the algorithm tries to bracket a zero of f starting from x0.
+         * If this fails, we fall back to Newton's method.
+         *
+         **/
+        fzero: function(f, x0, object) {
+            var tol = JXG.Math.eps,
+                maxiter = 50, niter = 0,
+                nfev = 0,
+                eps = tol,
+                a,b,c, 
+                fa, fb, fc,
+                aa, blist, i, len, u, fu, 
+                prev_step,
+                tol_act,         // Actual tolerance
+                p,               // Interpolation step is calcu-
+                q,               // lated in the form p/q; divi- 
+                                 // sion operations is delayed  
+                                 // until the last moment   
+                new_step,        // Step at this iteration
+                t1, cb, t2;
+
+            if (JXG.isArray(x0)) {
+                if (x0.length<2) 
+                    throw new Error("JXG.Math.Numerics.fzero: length of array x0 has to be at least two.");
+                a = x0[0]; fa = f.apply(object,[a]); nfev++;
+                b = x0[1]; fb = f.apply(object,[b]); nfev++;
+            } else {
+                a = x0;
+                // Try to get b.
+                if (a == 0) {
+                    aa = 1;
+                } else {
+                    aa = a;
+                }
+                blist = [0.9*aa, 1.1*aa, aa-1, aa+1, 0.5*aa, 1.5*aa, -aa, 2*aa, -10*aa, 10*aa];
+                len = blist.length
+                for (i=0;i<len;i++) {
+                    b = blist[i];
+                    fb = f.apply(object,[b]); nfev++;
+                    if (fa*fb<=0) {
+                        break;
+                    }
+                }
+                if (b < a) {
+                    u = a; a = b; b = u;
+                    fu = fa; fa = fb; fb = fu;
+                }
+            }
+
+            if ((fa*fb <= 0)) {
+                // Bracketing not successful, fall back to Newton's method
+                JXG.debug("fzero falls back to Newton");
+                return this.Newton(f, a, object);
+            }
+
+            // OK, we have enclosed a zero of f.
+            // Now we can start Brent's method
+
+            c = a;   
+            fc = fa;
+            while (niter<maxiter) {   // Main iteration loop
+                prev_step = b-a;      // Distance from the last but one
+                                      // to the last approximation 
+
+                if ( Math.abs(fc) < Math.abs(fb) ) {
+                                                // Swap data for b to be the  
+                    a = b;  b = c;  c = a;      // best approximation   
+                    fa=fb;  fb=fc;  fc=fa;
+                }
+                tol_act = 2*eps*Math.abs(b) + tol*0.5;
+                new_step = (c-b)*0.5;
+
+                if ( Math.abs(new_step) <= tol_act || Math.abs(fb) <= eps ) {
+                    JXG.debug("nfev="+nfev);
+                    return b;                           //  Acceptable approx. is found 
+                }
+                    
+                // Decide if the interpolation can be tried 
+                if ( Math.abs(prev_step) >= tol_act     // If prev_step was large enough
+                    && Math.abs(fa) > Math.abs(fb) ) {  // and was in true direction,  
+                                                        // Interpolatiom may be tried  
+                    cb = c-b;
+                    if ( a==c ) {                       // If we have only two distinct 
+                                                        // points linear interpolation 
+                        t1 = fb/fa;                     // can only be applied    
+                        p = cb*t1;
+                        q = 1.0 - t1;
+                    } else {                            // Quadric inverse interpolation
+                        q = fa/fc;  t1 = fb/fc;  t2 = fb/fa;
+                        p = t2 * ( cb*q*(q-t1) - (b-a)*(t1-1.0) );
+                        q = (q-1.0) * (t1-1.0) * (t2-1.0);
+                    }
+                    if ( p>0 ) {                        // p was calculated with the op-
+                        q = -q;                         // posite sign; make p positive 
+                    } else {                            // and assign possible minus to
+                        p = -p;                         // q 
+                    }
+                    
+                    if( p < (0.75*cb*q-Math.abs(tol_act*q)*0.5)     // If b+p/q falls in [b,c]
+                        && p < Math.abs(prev_step*q*0.5) ) {        // and isn't too large 
+                        new_step = p/q;                 // it is accepted   
+                    }                                   // If p/q is too large then the 
+                                                        // bissection procedure can
+                                                        // reduce [b,c] range to more
+                                                        // extent
+                }
+
+                if ( Math.abs(new_step) < tol_act ) {   // Adjust the step to be not less
+                    if ( new_step > 0 ) {               // than tolerance
+                        new_step = tol_act;
+                    } else {
+                        new_step = -tol_act;
+                    }
+                }
+
+                a = b;  fa = fb;                        // Save the previous approx.
+                b += new_step;  
+                fb = f.apply(object,[b]); nfev++;       // Do step to a new approxim.
+                if ( (fb>0 && fc>0) || (fb<0 && fc<0) ) {
+                                                        // Adjust c for it to have a sign
+                    c = a;  fc = fa;                    // opposite to that of b 
+                }
+            }                                           // End while
+            
+            JXG.debug("fzero: maxiter="+maxiter+" reached.");
+            return b;
+                
+        }
     }
 })(JXG, Math);
 

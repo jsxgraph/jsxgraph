@@ -10,7 +10,8 @@
 <div style="width:960px">
     <p>
         <form>
-            <textarea id="eingabe" rows="20" cols="100">
+<!--
+    <textarea id="eingabe" rows="20" cols="100">
 var A = [ [ 1,  1,  1],
           [ 0, -2, -3],
           [ 0, -6, -8] ];
@@ -28,12 +29,21 @@ for(var i=0; i&lt;x.length; i++) {
   alert(s);
 }
             </textarea>
+-->
+   <textarea id="eingabe" rows="20" cols="100">
+   f = function(x) {
+            return x-2;
+       }
+   JXG.debug(
+        JXG.Math.Numerics.fzero(f, [0,4])
+   );
+   </textarea>
             <input type="button" value="run" onClick="doIt()" style='margin:1em'>
         </form>
     </p>
 </div>
 <br clear=all>
-<div id="debug" style="display:none;"></div>
+<div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
 
