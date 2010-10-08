@@ -35,7 +35,7 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
                         c2y = c2.Y(t);
                     return (c1x-c2x)*(c1x-c2x) + (c1y-c2y)*(c1y-c2y);
                 },
-                0),
+                [0,Math.PI*2]),
             t1_new = 0.0, t2_new = 0.0, 
             c1dist,
             rotation = brd.create('transform',[function(){ return alpha;}], {type:'rotate'}),
@@ -74,7 +74,7 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
         this.rolling = function(){
             t1_new = t1+direction*stepsize;
             c1dist = arclen(c1,t1,t1_new);             // arc length between c1(t1) and c1(t1_new)
-            t2_new = JXG.Math.Numerics.root(exactDist, t2+direction*stepsize);
+            t2_new = JXG.Math.Numerics.root(exactDist, t2);
                                                        // find t2_new such that arc length between c2(t2) and c1(t2_new)
                                                        // equals c1dist.
             

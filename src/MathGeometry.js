@@ -822,7 +822,7 @@ JXG.Math.Geometry.meetCurveCurve = function(c1,c2,t1ini,t2ini,board) {
  */
 JXG.Math.Geometry.meetCurveLine = function(el1,el2,nr,board) {
     var t, t2, i, cu, li, func, z,
-        tnew, steps, delta, tstart, cux, cuy;
+        tnew, steps, delta, tstart, tend, cux, cuy;
     
     if(typeof board == 'undefined')
         board = el1.board;
@@ -842,10 +842,12 @@ JXG.Math.Geometry.meetCurveLine = function(el1,el2,nr,board) {
     
     if (arguments.callee.t1memo) {
         tstart = arguments.callee.t1memo;
+        t = JXG.Math.Numerics.root(func, tstart);
     } else {
         tstart = cu.minX();
+        tend = cu.maxX();
+        t = JXG.Math.Numerics.root(func, [tstart,tend]);
     }
-    t = JXG.Math.Numerics.root(func, tstart);
     arguments.callee.t1memo = t;
     cux = cu.X(t);
     cuy = cu.Y(t);
@@ -860,7 +862,7 @@ JXG.Math.Geometry.meetCurveLine = function(el1,el2,nr,board) {
             delta = (cu.maxX()-cu.minX())/steps;
             tnew = cu.minX();
             for (i=0;i<steps;i++) {
-                t2 = JXG.Math.Numerics.root(func, tnew);
+                t2 = JXG.Math.Numerics.root(func, [tnew,tnew+delta]);
                 if (Math.abs(t2-t)>0.1 && Math.abs(cux-cu.X(t2))>0.1 && Math.abs(cuy-cu.Y(t2))>0.1) {
                     break;
                 }
@@ -1002,6 +1004,7 @@ JXG.Math.Geometry.projectCoordsToCurve = function(x,y,t,curve,board) {
                     return dx*dx+dy*dy;
                 };
         //t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(minfunc),t);
+/*        
         fold = minfunc(t);
         steps = 20;
         delta = (curve.maxX()-curve.minX())/steps;
@@ -1014,6 +1017,7 @@ JXG.Math.Geometry.projectCoordsToCurve = function(x,y,t,curve,board) {
             }
             tnew += delta;
         }
+*/        
         t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(minfunc),t);
 
         if (t<curve.minX()) { t = curve.maxX()+t-curve.minX(); } // Cyclically

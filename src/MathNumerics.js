@@ -388,8 +388,8 @@ JXG.Math.Numerics = (function(JXG, Math) {
          * @returns {Number} A root of the function f.
          */
         root: function(f, x, object) {
-            return this.Newton(f, x, object);
-            //return this.fzero(f, x, object);
+            //return this.Newton(f, x, object);
+            return this.fzero(f, x, object);
         },
 
         /**
@@ -1152,7 +1152,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
 
         /**
          *
-         * Find zero of an univariat function f.
+         * Find zero of an univariate function f.
          * Algorithm:
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition
@@ -1186,7 +1186,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 a = x0[0]; fa = f.apply(object,[a]); nfev++;
                 b = x0[1]; fb = f.apply(object,[b]); nfev++;
             } else {
-                a = x0;
+                a = x0; fa = f.apply(object,[a]); nfev++;
                 // Try to get b.
                 if (a == 0) {
                     aa = 1;
@@ -1194,7 +1194,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                     aa = a;
                 }
                 blist = [0.9*aa, 1.1*aa, aa-1, aa+1, 0.5*aa, 1.5*aa, -aa, 2*aa, -10*aa, 10*aa];
-                len = blist.length
+                len = blist.length;
                 for (i=0;i<len;i++) {
                     b = blist[i];
                     fb = f.apply(object,[b]); nfev++;
@@ -1208,10 +1208,15 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 }
             }
 
-            if ((fa*fb <= 0)) {
-                // Bracketing not successful, fall back to Newton's method
-                JXG.debug("fzero falls back to Newton");
-                return this.Newton(f, a, object);
+            if (fa*fb > 0) {
+                // Bracketing not successful, fall back to Newton's method or to fminbr
+                if (JXG.isArray(x0)) {
+                    JXG.debug("fzero falls back to fminbr");
+                    return this.fminbr(f, [a,b], object);
+                } else {
+                    JXG.debug("fzero falls back to Newton");
+                    return this.Newton(f, a, object);
+                }
             }
 
             // OK, we have enclosed a zero of f.
@@ -1232,7 +1237,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 new_step = (c-b)*0.5;
 
                 if ( Math.abs(new_step) <= tol_act || Math.abs(fb) <= eps ) {
-                    JXG.debug("nfev="+nfev);
+                    //JXG.debug("nfev="+nfev);
                     return b;                           //  Acceptable approx. is found 
                 }
                     
@@ -1281,11 +1286,118 @@ JXG.Math.Numerics = (function(JXG, Math) {
                                                         // Adjust c for it to have a sign
                     c = a;  fc = fa;                    // opposite to that of b 
                 }
+                niter++;
             }                                           // End while
             
             JXG.debug("fzero: maxiter="+maxiter+" reached.");
             return b;
+        },
+
+        /**
+         *
+         * Find minimum of an univariate function f.
+         * Algorithm:
+         *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
+         *  computations. M., Mir, 1980, p.180 of the Russian edition
+         **/
+
+        fminbr: function(f, x0, object) {              // An estimate to the min location
+            var a, b, x, v, w,
+                fx, fv, fw,
+                r = (3.-Math.sqrt(5.0))*0.5,            // Golden section ratio   
+                tol = JXG.Math.eps,
+                sqrteps = Math.sqrt(JXG.Math.eps),
+                maxiter = 50, niter = 0,
+                range, middle_range, tol_act, new_step,
+                p, q, t, ft,
+                nfev = 0;
+
+            if (!JXG.isArray(x0) || x0.length<2) {
+                throw new Error("JXG.Math.Numerics.fminbr: length of array x0 has to be at least two.");
+            }
+            
+            a = x0[0];
+            b = x0[1];
+            v = a + r*(b-a);  
+            fv = f.apply(object,[v]); nfev++;           // First step - always gold section
+            x = v;  w = v;
+            fx=fv;  fw=fv;
+
+            while (niter<maxiter) {
+                range = b-a;                            // Range over which the minimum 
+                                                        // is seeked for
+                middle_range = (a+b)*0.5;
+                tol_act = sqrteps*Math.abs(x) + tol/3;  // Actual tolerance  
+                if( Math.abs(x-middle_range) + range*0.5 <= 2*tol_act ) {
+                    //JXG.debug(nfev);
+                    return x;                           // Acceptable approx. is found
+                }
+                                                        // Obtain the golden section step 
+                new_step = r * ( x<middle_range ? b-x : a-x );
+                                                        // Decide if the interpolation can be tried 
+                if ( Math.abs(x-w) >= tol_act  ) {      // If x and w are distinct     
+                                                        // interpolatiom may be tried 
+                    // Interpolation step is calculated as p/q; 
+                    // division operation is delayed until last moment 
+                    t = (x-w) * (fx-fv);
+                    q = (x-v) * (fx-fw);
+                    p = (x-v)*q - (x-w)*t;
+                    q = 2*(q-t);
+
+                    if ( q>0 ) {                        // q was calculated with the op-
+                        p = -p;                         // posite sign; make q positive 
+                    } else {                            // and assign possible minus to
+                        q = -q;                         // p
+                    }
+                    if ( Math.abs(p) < Math.abs(new_step*q) &&      // If x+p/q falls in [a,b]
+                         p > q*(a-x+2*tol_act) &&                   //  not too close to a and
+                         p < q*(b-x-2*tol_act)  ) {                 // b, and isn't too large */
+                         new_step = p/q;                            // it is accepted        
+                    }
+                    // If p/q is too large then the 
+                    // golden section procedure can   
+                    // reduce [a,b] range to more   
+                    // extent           
+                }
+
+                if ( Math.abs(new_step) < tol_act ) {    // Adjust the step to be not less
+                    if( new_step > 0 ) {                 // than tolerance     
+                        new_step = tol_act;
+                    } else {
+                        new_step = -tol_act;
+                    }
+                }
                 
+                // Obtain the next approximation to min 
+                // and reduce the enveloping range
+                t = x + new_step;                       // Tentative point for the min
+                ft = f.apply(object,[t]); nfev++;
+                if ( ft <= fx ) {                       // t is a better approximation 
+                    if ( t < x ) {                      // Reduce the range so that
+                        b = x;                          // t would fall within it 
+                    } else {
+                        a = x;
+                    }
+                    v = w;  w = x;  x = t;              // Assign the best approx to x 
+                    fv=fw;  fw=fx;  fx=ft;
+                } else {                                // x remains the better approx
+                    if ( t < x ) {                      // Reduce the range enclosing x 
+                        a = t;                   
+                    } else {
+                        b = t;
+                    }
+                    if ( ft <= fw || w==x ) {
+                        v = w;  w = t;
+                        fv=fw;  fw=ft;
+                    } else if ( ft<=fv || v==x || v==w ) {
+                        v = t;
+                        fv=ft;
+                    }
+                }
+                niter++;
+            } 
+            JXG.debug("fminbr: maxiter="+maxiter+" reached.");
+            return x;
         }
     }
 })(JXG, Math);

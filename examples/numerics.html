@@ -32,10 +32,12 @@ for(var i=0; i&lt;x.length; i++) {
 -->
    <textarea id="eingabe" rows="20" cols="100">
    f = function(x) {
-            return x-2;
+            return x*x;
        }
    JXG.debug(
-        JXG.Math.Numerics.fzero(f, [0,4])
+        JXG.Math.Numerics.fzero(f, 1) + 
+        ' ### ' +
+        JXG.Math.Numerics.Newton(f, 1)
    );
    </textarea>
             <input type="button" value="run" onClick="doIt()" style='margin:1em'>
