@@ -18,52 +18,32 @@
 
 var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-20,5,20,-5], keepaspectratio:true, axis:true});
 brd.suspendUpdate();
-/*
-// Line
-var line = brd.create('curve', [function(t) { return t;}, function(t){ return 0+1*Math.cos(t);}], {strokeWidth:6});
-
+// Big circle
+var bigCircle = brd.create('curve', [
+            function(t) { return 4*Math.cos(t);}, function(t){ return 4*Math.sin(t);}, 0, 2*Math.PI], 
+            {strokeWidth:6});
 // Circle
-var P = brd.create('point',[0,1],{name:'P', trace:true});
-var C = brd.create('point',[0,1.5],{name:'C'});
+var P = brd.create('point',[4,0],{name:'P', trace:false});
+var C = brd.create('point',[2,0],{name:'C'});
 var circle = brd.create('curve',[
-                    function(t){var d = P.Dist(C);
-                                var beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+                    function(t){var d = P.Dist(C),
+                                    beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
                                 t += beta;
                                 return C.X()+d*Math.cos(t);
                     },
-                    function(t){var d = P.Dist(C);
-                                var beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+                    function(t){var d = P.Dist(C),
+                                    beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
                                 t += beta;
                                 return C.Y()+d*Math.sin(t);
                     },
-                    0,2*Math.PI-0.4],
+                    0,2*Math.PI],
                     {strokeWidth:6, strokeColor:'green'});
 
 // Point on circle
-
-//var B = brd.create('glider',[1,2,circle],{name:'B', color:'blue',trace:false});
-//brd.create('segment',[C,B],{color:'black'}); 
+var B = brd.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
+brd.create('segment',[C,B],{color:'black'}); 
 brd.unsuspendUpdate();
-var rol = JXG.Math.Numerics.createRoulette(line, circle, 0, Math.PI/45, 1, 100, [C,P]); 
-*/
-// Triangle
-var A = brd.create('point',[-5,-5]);
-var B = brd.create('point',[-4,-3]);
-var pol3 = brd.create('regularpolygon',[A,B,3], {withLines:false, fillColor:'none', highlightFillColor:'none', fillOpacity:0.0});
-for (var i=0;i<3;i++) pol3.vertices[i].setProperty({color:'#3d1c24'});
- 
-var line = brd.create('curve',[function(t){return t;}, function(t){return -5;}], 
-                {strokeWidth:6, strokeColor:'#d66d55', fillColor:'#d6bb55', highlightFillColor:'#d6bb55'});
-var reuleauxTriangle = brd.create('curve', JXG.Math.Numerics.reuleauxPolygon(pol3.vertices, 3), 
-       {strokeWidth:6, strokeColor:'#d66d55', fillColor:'#ad5544', highlightFillColor:'#ad5544'});
-/*       
-var S = brd.create('point', [
-            function(){return (pol3.vertices[0].X()+pol3.vertices[1].X()+pol3.vertices[2].X())/3; },
-            function(){return (pol3.vertices[0].Y()+pol3.vertices[1].Y()+pol3.vertices[2].Y())/3; }],
-            {strokeColor:'#703545', fillColor:'#703545', highlightFillColor:'#703545', name:'S', trace:true});
-*/ 
-brd.unsuspendUpdate();
-var rol = JXG.Math.Numerics.createRoulette(line, reuleauxTriangle, -5, Math.PI/20, -1, 100, [A,B]);
+var rol = JXG.Math.Numerics.createRoulette(bigCircle, circle, 0, Math.PI/45, -1, 150, [C,P,B]); 
 /*    
 var p1 = brd2.create('point', [0,0], {style:6, name:'p1'});
 var s = brd2.create('slider', [[-1,-1],[2,-1],[0,Math.PI/2,2*Math.PI]], {name:'angle'});

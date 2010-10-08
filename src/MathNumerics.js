@@ -365,6 +365,9 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 newf = f.apply(object, [x]), // set "this" to "object" in f
                 nfev = 1, 
                 df;
+            if (JXG.isArray(x)) {  // For compatibility
+                x = x[0];
+            }
             while (i < 50 && Math.abs(newf) > h) {
                 df = this.D(f, object)(x);  nfev += 2;
                 if (Math.abs(df) > h) {
@@ -1547,7 +1550,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
         this.rolling = function(){
             t1_new = t1+direction*stepsize;
             c1dist = arclen(c1,t1,t1_new);             // arc length between c1(t1) and c1(t1_new)
-            t2_new = JXG.Math.Numerics.root(exactDist, [t2,t2+2*direction*stepsize]);
+            t2_new = JXG.Math.Numerics.root(exactDist, t2);
                                                        // find t2_new such that arc length between c2(t2) and c1(t2_new)
                                                        // equals c1dist.
             
