@@ -1004,7 +1004,6 @@ JXG.Math.Geometry.projectCoordsToCurve = function(x,y,t,curve,board) {
                     return dx*dx+dy*dy;
                 };
         //t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(minfunc),t);
-/*        
         fold = minfunc(t);
         steps = 20;
         delta = (curve.maxX()-curve.minX())/steps;
@@ -1017,7 +1016,6 @@ JXG.Math.Geometry.projectCoordsToCurve = function(x,y,t,curve,board) {
             }
             tnew += delta;
         }
-*/        
         t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(minfunc),t);
 
         if (t<curve.minX()) { t = curve.maxX()+t-curve.minX(); } // Cyclically

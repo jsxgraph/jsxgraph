@@ -1153,6 +1153,10 @@ JXG.Math.Numerics = (function(JXG, Math) {
         /**
          *
          * Find zero of an univariate function f.
+         * @param {function} f Function, whose root is to be found
+         * @param {array or number} x0  Start value or start interval enclosing the root
+         * @param {object} object Parent object in case f is method of it
+         * @return {number} the approximation of the root
          * Algorithm:
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition
@@ -1211,10 +1215,10 @@ JXG.Math.Numerics = (function(JXG, Math) {
             if (fa*fb > 0) {
                 // Bracketing not successful, fall back to Newton's method or to fminbr
                 if (JXG.isArray(x0)) {
-                    JXG.debug("fzero falls back to fminbr");
+                    //JXG.debug("fzero falls back to fminbr");
                     return this.fminbr(f, [a,b], object);
                 } else {
-                    JXG.debug("fzero falls back to Newton");
+                    //JXG.debug("fzero falls back to Newton");
                     return this.Newton(f, a, object);
                 }
             }
@@ -1296,9 +1300,14 @@ JXG.Math.Numerics = (function(JXG, Math) {
         /**
          *
          * Find minimum of an univariate function f.
+         * @param {function} f Function, whose minimum is to be found
+         * @param {array} x0  Start interval enclosing the minimum
+         * @param {object} object Parent object in case f is method of it
+         * @return {number} the approximation of the minimum
          * Algorithm:
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition
+         * x0 
          **/
 
         fminbr: function(f, x0, object) {              // An estimate to the min location
@@ -1398,7 +1407,246 @@ JXG.Math.Numerics = (function(JXG, Math) {
             } 
             JXG.debug("fminbr: maxiter="+maxiter+" reached.");
             return x;
-        }
+        },
+
+/*
+    Copyright 2010
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+        /**
+         * Function to animate a curve rolling on another curve.
+         * @param {Curve} c1 JSXGraph curve building the floor where c2 rolls 
+         * @param {Curve} c2 JSXGraph curve which rolls on c1.
+         * @param {number} start_c1 The parameter t such that c1(t) touches c2. This is the start position of the 
+         *                          rolling process
+         * @param {Number} stepsize Increase in t in each step for the curve c1
+         * @param {Number} time Delay time for setInterval()
+         * @returns {Array} pointlist Array of points which are rolled in each step. This list should contain
+         *      all points which define c2 and gliders on c2.
+         * 
+         * @example
+         *
+         * // Line which will be the floor to roll upon.
+         * var line = brd.create('curve', [function(t) { return t;}, function(t){ return 1;}], {strokeWidth:6});
+         * // Center of the rolling circle
+         * var C = brd.create('point',[0,2],{name:'C'});
+         * // Starting point of the rolling circle
+         * var P = brd.create('point',[0,1],{name:'P', trace:true});
+         * // Circle defined as a curve. The circle "starts" at P, i.e. circle(0) = P
+         * var circle = brd.create('curve',[
+         *           function(t){var d = P.Dist(C),
+         *                           beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+         *                       t += beta;
+         *                       return C.X()+d*Math.cos(t);
+         *           },
+         *           function(t){var d = P.Dist(C),
+         *                           beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+         *                       t += beta;
+         *                       return C.Y()+d*Math.sin(t);
+         *           },
+         *           0,2*Math.PI],
+         *           {strokeWidth:6, strokeColor:'green'});
+         *
+         * // Point on circle
+         * var B = brd.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
+         * var roll = JXG.Math.Numerics.createRoulette(line, circle, 0, Math.PI/20, 1, 100, [C,P,B]); 
+         * roll.start() // Start the rolling, to be stopped by roll.stop()
+         * 
+         * </pre><div id="e5e1b53c-a036-4a46-9e35-190d196beca5" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         * var brd = JXG.JSXGraph.initBoard('e5e1b53c-a036-4a46-9e35-190d196beca5', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright:false, shownavigation: false});
+         * // Line which will be the floor to roll upon.
+         * var line = brd.create('curve', [function(t) { return t;}, function(t){ return 1;}], {strokeWidth:6});
+         * // Center of the rolling circle
+         * var C = brd.create('point',[0,2],{name:'C'});
+         * // Starting point of the rolling circle
+         * var P = brd.create('point',[0,1],{name:'P', trace:true});
+         * // Circle defined as a curve. The circle "starts" at P, i.e. circle(0) = P
+         * var circle = brd.create('curve',[
+         *           function(t){var d = P.Dist(C),
+         *                           beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+         *                       t += beta;
+         *                       return C.X()+d*Math.cos(t);
+         *           },
+         *           function(t){var d = P.Dist(C),
+         *                           beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
+         *                       t += beta;
+         *                       return C.Y()+d*Math.sin(t);
+         *           },
+         *           0,2*Math.PI],
+         *           {strokeWidth:6, strokeColor:'green'});
+         *
+         * // Point on circle
+         * var B = brd.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
+         * var roll = JXG.Math.Numerics.createRoulette(line, circle, 0, Math.PI/20, 1, 100, [C,P,B]); 
+         * roll.start() // Start the rolling, to be stopped by roll.stop()
+         * </script><pre>
+         * 
+         */
+        createRoulette: function(c1, c2, start_c1, stepsize, direction, time, pointlist) {
+    var Roulette = function() {
+        var alpha = 0, Tx = 0, Ty = 0,
+            t1 = start_c1,
+            t2 = JXG.Math.Numerics.root(
+                function(t) { 
+                    var c1x = c1.X(t1),
+                        c1y = c1.Y(t1),
+                        c2x = c2.X(t),
+                        c2y = c2.Y(t);
+                    return (c1x-c2x)*(c1x-c2x) + (c1y-c2y)*(c1y-c2y);
+                },
+                [0,Math.PI*2]),
+            t1_new = 0.0, t2_new = 0.0, 
+            c1dist,
+            rotation = brd.create('transform',[function(){ return alpha;}], {type:'rotate'}),
+            rotationLocal = brd.create('transform',[function(){ return alpha;}, 
+                                           function(){ return c1.X(t1);},
+                                           function(){ return c1.Y(t1);}], 
+                                          {type:'rotate'}),
+            translate = brd.create('transform',[function(){ return Tx;}, function(){ return Ty;}], {type:'translate'}),
+            
+            //
+            // arc length via Simpson's rule.
+            arclen = function(c,a,b) {
+                var cpxa = JXG.Math.Numerics.D(c.X)(a), cpya = JXG.Math.Numerics.D(c.Y)(a),
+                    cpxb = JXG.Math.Numerics.D(c.X)(b), cpyb = JXG.Math.Numerics.D(c.Y)(b),
+                    cpxab = JXG.Math.Numerics.D(c.X)((a+b)*0.5), cpyab = JXG.Math.Numerics.D(c.Y)((a+b)*0.5),
+                    fa = Math.sqrt(cpxa*cpxa+cpya*cpya),
+                    fb = Math.sqrt(cpxb*cpxb+cpyb*cpyb),
+                    fab = Math.sqrt(cpxab*cpxab+cpyab*cpyab);
+                return (fa+4*fab+fb)*(b-a)/6.0;
+            },
+            exactDist = function(t) {
+                return c1dist - arclen(c2,t2,t);
+                },   
+            beta = Math.PI/18.0,
+            beta9 = beta*9,
+            interval = null; 
+
+        this.rolling = function(){
+            t1_new = t1+direction*stepsize;
+            c1dist = arclen(c1,t1,t1_new);             // arc length between c1(t1) and c1(t1_new)
+            t2_new = JXG.Math.Numerics.root(exactDist, [t2,t2+2*direction*stepsize]);
+                                                       // find t2_new such that arc length between c2(t2) and c1(t2_new)
+                                                       // equals c1dist.
+            
+            var h = new JXG.Complex(c1.X(t1_new),c1.Y(t1_new));    // c1(t) as complex number
+            var g = new JXG.Complex(c2.X(t2_new),c2.Y(t2_new));    // c2(t) as complex number
+            var hp = new JXG.Complex(JXG.Math.Numerics.D(c1.X)(t1_new),JXG.Math.Numerics.D(c1.Y)(t1_new));
+            var gp = new JXG.Complex(JXG.Math.Numerics.D(c2.X)(t2_new),JXG.Math.Numerics.D(c2.Y)(t2_new));
+            var z = JXG.C.div(hp,gp);                  // z is angle between the tangents of  
+                                                       // c1 at t1_new, and c2 at t2_new
+            alpha = Math.atan2(z.imaginary, z.real);
+            z.div(JXG.C.abs(z));                       // Normalizing the quotient
+            z.mult(g);
+            Tx = h.real-z.real;
+            Ty = h.imaginary-z.imaginary;              // T = h(t1_new)-g(t2_new)*h'(t1_new)/g'(t2_new);
+
+            if (alpha <-beta && alpha>-beta9) {        // -(10-90) degrees: make corners roll smoothly
+                alpha = -beta;
+                rotationLocal.applyOnce(pointlist);
+            } else if (alpha>beta && alpha<beta9) {
+                alpha = beta;
+                rotationLocal.applyOnce(pointlist);
+            } else {
+                rotation.applyOnce(pointlist);
+                translate.applyOnce(pointlist);
+                t1 = t1_new;
+                t2 = t2_new;
+            }
+            brd.update();
+        };
+    
+        this.start = function() {
+            if (time>0) {
+                interval = setInterval(this.rolling, time);
+            }
+            return this;
+        };
+    
+        this.stop = function() {
+            clearInterval(interval);
+            return this;
+        };
+        return this;
+    };
+    return new Roulette();
+},
+
+        /**
+         * Helper function to create curve which displays Reuleaux polygons.
+         * @param {array} points Array of points which should be the vertices of the Reuleaux polygon. Typically,
+         *                       these point list is the array vrtices of a regular polygon.
+         * @param {number} nr Number of vertices
+         * @returns {array} An array containing the two functions defining the Reuleaux polygon and the two values
+         * for the start and the end of the paramtric curve.
+         * array may be used as parent array of a {@link JXG.Curve}.
+         *
+         * @example
+         * var A = brd.create('point',[-2,-2]);
+         * var B = brd.create('point',[0,1]);
+         * var pol = brd.create('regularpolygon',[A,B,3], {withLines:false, fillColor:'none', highlightFillColor:'none', fillOpacity:0.0}); 
+         * var reuleauxTriangle = brd.create('curve', JXG.Math.Numerics.reuleauxPolygon(pol.vertices, 3), 
+         *                          {strokeWidth:6, strokeColor:'#d66d55', fillColor:'#ad5544', highlightFillColor:'#ad5544'});
+         *
+         * </pre><div id="2543a843-46a9-4372-abc1-94d9ad2db7ac" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         * var brd = JXG.JSXGraph.initBoard('2543a843-46a9-4372-abc1-94d9ad2db7ac', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright:false, shownavigation: false});
+         * var A = brd.create('point',[-2,-2]);
+         * var B = brd.create('point',[0,1]);
+         * var pol = brd.create('regularpolygon',[A,B,3], {withLines:false, fillColor:'none', highlightFillColor:'none', fillOpacity:0.0}); 
+         * var reuleauxTriangle = brd.create('curve', JXG.Math.Numerics.reuleauxPolygon(pol.vertices, 3), 
+         *                          {strokeWidth:6, strokeColor:'#d66d55', fillColor:'#ad5544', highlightFillColor:'#ad5544'});
+         * </script><pre>
+         */
+        reuleauxPolygon: function(points, nr) {
+    var pi2 = Math.PI*2,
+        pi2_n = pi2/nr,
+        diag = (nr-1)/2,
+        beta, d = 0; 
+        makeFct = function(which, trig) {
+                return function(t, suspendUpdate) {
+                    if (!suspendUpdate) {
+                        d = points[0].Dist(points[diag]);
+                        beta = JXG.Math.Geometry.rad([points[0].X()+1,points[0].Y()],points[0],points[(diag)%nr]);
+                    }
+                    var t1 = (t%pi2 + pi2) % pi2;
+                    var j = Math.floor(t1 / pi2_n)%nr;
+                    if (isNaN(j)) return j;
+                    //t1 = (t1-j*pi2_n)*0.5 + beta+j*pi2_n;
+                    t1 = t1*0.5+j*pi2_n*0.5 + beta;
+                    return points[j][which]()+d*Math[trig](t1);
+                };
+            };
+    return [
+            makeFct('X','cos'),
+            makeFct('Y','sin'),
+            0,
+            Math.PI*2
+        ];
+        }        
+
     }
 })(JXG, Math);
 
