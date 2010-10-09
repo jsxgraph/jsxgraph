@@ -10,19 +10,22 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="style.css" />
 	<script type="text/javascript" src="jsxgraphcore.js"></script>
 	
-	
 	<!-- iPad/iPhone specific css below, add after your main css >
 	<link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />		
 	<link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css" type="text/css" />		
 	-->
 	<!-- script type="text/javascript" charset="utf-8" src="phonegap.js"></script -->
     <script type="text/javascript">
+    JXG.Options.showCopyright = true;
+    colorArray = ['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'];
+    plotNr = 0;
+    
 	function onBodyLoad() {
 		document.addEventListener("deviceready",init,false);
 	}
 
 	function init() {
-		// set board settings dependen on device
+		// set board settings dependent on device
 		if(navigator.userAgent.match(/iPad/i)) {
 			// we are on an iPad
 			document.getElementById('jxgbox').style.width  = '760px';
@@ -42,7 +45,8 @@
 	function plotter() {
 		var t = JXG.GeonextParser.geonext2JS(document.getElementById('input').value);
 		var f = new Function('x','var y = '+t+'; return y;');
-		board.create('functiongraph',[f]);
+        var color = colorArray[plotNr%colorArray.length]; plotNr++;
+		board.create('functiongraph',[f],{strokeColor:color});
 	}
     </script>
   </head>
