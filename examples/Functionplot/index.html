@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+	<!-- Change this if you want to allow scaling -->
+    <meta name="viewport" content="width=default-width; user-scalable=no" />
+
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <title>JSXGraph function plot</title>
+	<link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+	<script type="text/javascript" src="jsxgraphcore.js"></script>
+	
+	
+	<!-- iPad/iPhone specific css below, add after your main css >
+	<link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />		
+	<link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css" type="text/css" />		
+	-->
+	<!-- script type="text/javascript" charset="utf-8" src="phonegap.js"></script -->
+    <script type="text/javascript">
+	function onBodyLoad() {
+		document.addEventListener("deviceready",init,false);
+	}
+
+	function init() {
+		// set board settings dependen on device
+		if(navigator.userAgent.match(/iPad/i)) {
+			// we are on an iPad
+			document.getElementById('jxgbox').style.width  = '760px';
+			document.getElementById('jxgbox').style.height = '835px';
+		} else if(navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i)) {
+			// we are on an iPhone/iPod Touch
+			document.getElementById('jxgbox').style.width  = '312px';
+			document.getElementById('jxgbox').style.height = '291px';
+		} else {
+			// default settings - same like iPhone/iPod
+			document.getElementById('jxgbox').style.width  = '312px';
+			document.getElementById('jxgbox').style.height = '291px';
+		}
+		board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, grid:true, boundingbox:[-2,1.2,2,-1.2]});
+	}
+
+	function plotter() {
+		var t = JXG.GeonextParser.geonext2JS(document.getElementById('input').value);
+		var f = new Function('x','var y = '+t+'; return y;');
+		board.create('functiongraph',[f]);
+	}
+    </script>
+  </head>
+  <body onload="init();">
+  	<div id="topbar">
+		<div id="title">JSXGraph function plot</div>
+	</div>
+
+	<div id="tributton">
+		<div class="links">
+			<input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="index.html">refresh</a>
+		</div>
+	</div>
+
+	<div id="content" align="center">
+		<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
+		<div id="jxgbox" class="jxgbox"></div>
+	</div>
+
+	<div id="footer">
+		<a class="noeffect" href="http://www.jsxgraph.org/">Powered by JSXGraph</a>
+	</div>
+  </body>
+</html>
