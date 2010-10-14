@@ -35,7 +35,6 @@
  * @class This is the Geonext class. It stores all properties required
  * to load, save, create and free a board.
  * @constructor
- * @param {String} forceRenderer If a specific renderer should be chosen. Possible values are 'vml', 'svg', 'silverlight'
  */
 JXG.JSXGraph = new function () {
     var ie, opera, i, arr;
@@ -59,36 +58,25 @@ JXG.JSXGraph = new function () {
             */
     this.elements = {};
 
-    if( (typeof forceRenderer == 'undefined') || (forceRenderer == null) || (forceRenderer == '') ) {
-        /* Determine the users browser */
-        ie = navigator.appVersion.match(/MSIE (\d\.\d)/);
-        opera = (navigator.userAgent.toLowerCase().indexOf("opera") != -1);
+    /* Determine the users browser */
+    ie = navigator.appVersion.match(/MSIE (\d\.\d)/);
+    opera = (navigator.userAgent.toLowerCase().indexOf("opera") != -1);
 
-        /* and set the rendererType according to the browser */
-        if ((!ie) || (opera) || (ie && parseFloat(ie[1])>=9.0) ) {
-            if (navigator.appVersion.match(/Android.*AppleWebKit/)) {
-                JXG.Options.renderer = 'canvas';
-            } else {
-                //this.rendererType = 'svg';
-                JXG.Options.renderer = 'svg';
-            }
-        }
-        else {
-            //if(Silverlight.available)
-            //    this.rendererType = 'silverlight';
-            //else
-                //this.rendererType = 'vml';
-                JXG.Options.renderer = 'vml';
-                function MouseMove(e) { //Magic!
-                  document.body.scrollLeft;
-                  document.body.scrollTop;
-                }
-                document.onmousemove = MouseMove;
+    /* and set the rendererType according to the browser */
+    if ((!ie) || (opera) || (ie && parseFloat(ie[1])>=9.0) ) {
+        if (navigator.appVersion.match(/Android.*AppleWebKit/)) {
+            JXG.Options.renderer = 'canvas';
+        } else {
+            //this.rendererType = 'svg';
+            JXG.Options.renderer = 'svg';
         }
     } else {
-        /* the user has chosen a specific renderer */
-        //this.rendererType = forceRenderer;
-        JXG.Options.renderer = forceRenderer;
+        JXG.Options.renderer = 'vml';
+        function MouseMove(e) { //Magic!
+            document.body.scrollLeft;
+            document.body.scrollTop;
+        }
+        document.onmousemove = MouseMove;
     }
 
     /* Load the source files for the renderer */
@@ -192,7 +180,7 @@ JXG.JSXGraph = new function () {
      * @param {String} box Html-ID to the Html-element in which the board is painted.
      * @param {String} file Url to the geonext-file.
      * @param {String} string containing the file format: 'Geonext' or 'Intergeo'.
-     * @return {JXG.Board} Reference to the created board.
+     * @returns {JXG.Board} Reference to the created board.
      * @see JXG.GeonextReader
      */
     this.loadBoardFromFile = function (box, file, format) {
@@ -228,7 +216,7 @@ JXG.JSXGraph = new function () {
      * @param {String} box Html-ID to the Html-element in which the board is painted.
      * @param {String} string base64 encoded string.
      * @param {String} string containing the file format: 'Geonext' or 'Intergeo'.
-     * @return {JXG.Board} Reference to the created board.
+     * @returns {JXG.Board} Reference to the created board.
      * @see JXG.GeonextReader
      */
     this.loadBoardFromString = function(box, string, format) {
@@ -320,7 +308,7 @@ JXG.JSXGraph = new function () {
  * even the object itself, this function gets a returns to the object. Order: id/object, name.
  * @param {JXG.Board} board Reference to the board the object belongs to.
  * @param {String,Object} object String or reference to the object the reference is needed.
- * @return {Object} Reference to the object given in parameter object
+ * @returns {Object} Reference to the object given in parameter object
  */
 JXG.getReference = function(board, object) {
     if(typeof(object) == 'string') {
@@ -334,25 +322,53 @@ JXG.getReference = function(board, object) {
     return object;
 };
 
+/**
+ * This is just a shortcut to {@link JXG.getReference}.
+ */
 JXG.getRef = JXG.getReference;
 
+/**
+ * Checks if the value of a given variable is of type string.
+ * @param obj
+ * @returns {Boolean} True, if obj is of type string.
+ */
 JXG.isString = function(obj) {
     return typeof obj == "string";
 };
 
+/**
+ * Checks if the value of a given variable is of type number.
+ * @param obj
+ * @returns {Boolean} True, if obj is of type number.
+ */
 JXG.isNumber = function(obj) {
     return typeof obj == "number";
 };
 
+/**
+ * Checks if a given variable references a function.
+ * @param obj
+ * @returns {Boolean} True, if obj is a function.
+ */
 JXG.isFunction = function(obj) {
     return typeof obj == "function";
 };
 
+/**
+ * Checks if a given variable references an array.
+ * @param obj
+ * @returns {Boolean} True, if obj is of type array.
+ */
 JXG.isArray = function(obj) {
     // Borrowed from prototype.js
     return obj != null && typeof obj == "object" && 'splice' in obj && 'join' in obj;
 };
 
+/**
+ * Checks if a given variable is a reference of a JSXGraph Point element.
+ * @param obj
+ * @returns {Boolean} True, if obj is of type JXG.Point.
+ */
 JXG.isPoint = function(p) {
     if(typeof p == 'object') {
         return (p.elementClass == JXG.OBJECT_CLASS_POINT);
@@ -364,31 +380,31 @@ JXG.isPoint = function(p) {
 /**
  * Converts a string containing either <strong>true</strong> or <strong>false</strong> into a boolean value.
  * @param s String containing either <strong>true</strong> or <strong>false</strong>.
- * @return String typed boolean value converted to boolean.
+ * @returns {Boolean} String typed boolean value converted to boolean.
  */
-JXG.str2Bool = function(/** string */ s) /** boolean */ {
+JXG.str2Bool = function(s) {
     if (s==undefined || s==null) {
         return true;
     }
     if (typeof s == 'boolean') { 
         return s;
     }
-    if (s.toLowerCase()!='true') {
-        return false;
-    } else {
-        return true;
-    }
+    return (s.toLowerCase()=='true');
 };
 
+/**
+ * Shortcut for {@link JXG.JSXGraph.initBoard}.
+ */
 JXG._board = function(box, attributes) {
 	return JXG.JSXGraph.initBoard(box, attributes);
 };
 
 /**
-  * Convert String, number or function to function.
-  * This method is used in Transformation.js
-  */
-JXG.createEvalFunction = function(board,param,n) {
+ * TODO: Documentation
+ * Convert String, number or function to function.
+ * This method is used in Transformation.js
+ */
+JXG.createEvalFunction = function(board, param, n) {
     // convert GEONExT syntax into function
     var f = [], i, str;
 
@@ -399,6 +415,7 @@ JXG.createEvalFunction = function(board,param,n) {
             f[i] = new Function('','return ' + (str) + ';');
         }
     }
+
     return function(k) {
         var a = param[k];
         if (typeof a == 'string') {
@@ -430,6 +447,33 @@ JXG.createFunction = function(term,board,variableName,evalGeonext) {
         return function() { return term; };
     }
     return null;
+};
+
+/**
+ * Checks given parents array against expectations.
+ * @param {Array} parents A user given parents array
+ * @param {Array} expects TODO: describe this
+ * @returns {Array} A new parents array prepared for the use within a create* method
+ */
+JXG.checkParents = function(parents, expects) {
+    /*
+        structure of expects, e.g. for midpoint:
+
+        idea 1:
+        [
+            [
+                JXG.OBJECT_CLASS_POINT,
+                JXG.OBJECT_CLASS_POINT
+            ],
+            [
+                JXG.OBJECT_CLASS_LINE
+            ]
+        ]
+
+        this is good for describing what is expected, but this way the parent elements
+        can't be sorted. how is this method supposed to know, that in case of a line it
+        has to return the line's defining points?
+     */
 };
 
 /*
@@ -598,51 +642,48 @@ JXG.getOffset = function (obj) {
     return [l,t];
 };
 
-/*
-JXG.getOffset = function (obj) {
-    var o;
-
-    if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') { // Prototype lib
-        return Element.cumulativeOffset(obj);
-    } else {                         // jQuery
-        o = $(obj).offset();
-        return [o.left,o.top];
-    }
-};
-*/
-
 /**
   * getStyle: Abstraction layer for Prototype.js and jQuery
   * Now independent from Prototype  and jQuery
   */
 JXG.getStyle = function (obj, stylename) {
     return obj.style[stylename];
-/*
-    if (typeof Prototype!='undefined' && typeof Prototype.Browser!='undefined') { // Prototype lib
-        return $(obj).getStyle(stylename);
-    } else {
-        if (typeof $(obj).attr(stylename)!='undefined') {
-            return $(obj).attr(stylename);
-        } else {
-            return $(obj).css(stylename);
-        }
-    }
-*/
 };
 
-JXG.keys = function(object) {
+/**
+ * Extracts the keys of a given object.
+ * @param object The object the keys are to be extracted
+ * @param onlyOwn If true, additionally check hasOwnProperty()
+ * @returns {Array} All keys of the given object.
+ */
+JXG.keys = function(object, onlyOwn) {
     var keys = [], property;
 
     for (property in object) {
-        keys.push(property);
+        if(onlyOwn) {
+            if(object.hasOwnProperty(property)) {
+                keys.push(property);
+            }
+        } else {
+            keys.push(property);
+        }
     }
     return keys;
 };
 
+/**
+ * Replaces all occurences of &amp; by &amp;amp;, &gt; by &amp;gt;, and &lt; by &amp;lt;.
+ * @param str
+ */
 JXG.escapeHTML = function(str) {
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 };
 
+/**
+ * Eliminates all substrings enclosed by &lt; and &gt; and replaces all occurences of
+ * &amp;amp; by &amp;, &amp;gt; by &gt;, and &amp;lt; by &lt;.
+ * @param str
+ */
 JXG.unescapeHTML = function(str) {
     return str.replace(/<\/?[^>]+>/gi, '').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 };
@@ -652,8 +693,7 @@ JXG.unescapeHTML = function(str) {
  * you need a copy of an e.g. attributes object and want to overwrite some of the attributes
  * without changing the original object.
  * @param {Object} obj Object to be embedded.
- * @type Object
- * @return An object with a base class reference to <tt>obj</tt>.
+ * @returns {Object} An object with a base class reference to <tt>obj</tt>.
  */
 JXG.clone = function(obj) {
     var cObj = {};
@@ -664,8 +704,7 @@ JXG.clone = function(obj) {
 /**
  * Outputs a deep copy of an existing object and not only a flat copy.
  * @param {Object} obj Object to be copied.
- * @type Object
- * @return Deep copy of given object.
+ * @returns {Object} Deep copy of given object.
  */
 JXG.deepCopy = function(obj) {
     var c, i, prop, j;
@@ -724,8 +763,7 @@ JXG.deepCopy = function(obj) {
  * to the new one. Warning: The copied properties of obj2 are just flat copies.
  * @param {Object} obj Object to be copied.
  * @param {Object} obj2 Object with data that is to be copied to the new one as well.
- * @type Object
- * @return Copy of given object including some new/overwritten data from obj2.
+ * @returns {Object} Copy of given object including some new/overwritten data from obj2.
  */
 JXG.cloneAndCopy = function(obj, obj2) {
     var cObj = {}, r;
@@ -770,10 +808,10 @@ JXG.capitalize = function(str) {
 /**
  * Copyright 2009 Nicholas C. Zakas. All rights reserved.
  * MIT Licensed
- * param array items to do
- * param function function that is applied for everyl array item
- * param object context meaning of this in function process
- * param function callback function called after the last array element has been processed.
+ * @param {Array} items to do
+ * @param {function} process Function that is applied for every array item
+ * @param {Object} context Meaning of this in function process
+ * @param {function} callback Function called after the last array element has been processed.
 **/
 JXG.timedChunk = function(items, process, context, callback) {
     var todo = items.concat();   //create a clone of the original
