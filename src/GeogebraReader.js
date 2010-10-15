@@ -1539,8 +1539,7 @@ this.writeBoard = function(board) {
   board.origin.scrCoords = [1, 1*boardData.getElementsByTagName("coordSystem")[0].getAttribute("xZero"), 1*boardData.getElementsByTagName("coordSystem")[0].getAttribute("yZero")];
   board.unitX = (boardData.getElementsByTagName("coordSystem")[0].getAttribute("scale")) ? 1*boardData.getElementsByTagName("coordSystem")[0].getAttribute("scale") : 1;
   board.unitY = (boardData.getElementsByTagName("coordSystem")[0].getAttribute("yscale")) ? 1*boardData.getElementsByTagName("coordSystem")[0].getAttribute("yscale") : board.unitX;
-  board.stretchX = board.zoomX*board.unitX;
-  board.stretchY = board.zoomY*board.unitY;
+  board.updateStretch();
 
   board.fontSize = (JXG.GeogebraReader.tree.getElementsByTagName("gui")[0] && JXG.GeogebraReader.tree.getElementsByTagName("gui")[0].getElementsByTagName("font")[0]) ? 1*JXG.GeogebraReader.tree.getElementsByTagName("gui")[0].getElementsByTagName("font")[0].getAttribute("size") : '12px';
 

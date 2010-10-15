@@ -1565,6 +1565,16 @@ JXG.Board.prototype.applyZoom = function() {
 };
 
 /**
+ * Recalculate stretch factors
+ * Needed after zooming or setting the bounding box
+ */
+JXG.Board.prototype.updateStretch = function() {
+    this.stretchX = this.zoomX*this.unitX;
+    this.stretchY = this.zoomY*this.unitY;
+    return this;
+};
+
+/**
  * Zooms into the board.
  */
 JXG.Board.prototype.zoomIn = function() {
@@ -1574,8 +1584,7 @@ JXG.Board.prototype.zoomIn = function() {
     oX = this.origin.scrCoords[1]*this.options.zoom.factor;
     oY = this.origin.scrCoords[2]*this.options.zoom.factor;
     this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
-    this.stretchX = this.zoomX*this.unitX;
-    this.stretchY = this.zoomY*this.unitY;
+    this.updateStretch();
     this.applyZoom();
     return this;
 };
@@ -1590,9 +1599,7 @@ JXG.Board.prototype.zoomOut = function() {
     oX = this.origin.scrCoords[1]/this.options.zoom.factor;
     oY = this.origin.scrCoords[2]/this.options.zoom.factor;
     this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
-
-    this.stretchX = this.zoomX*this.unitX;
-    this.stretchY = this.zoomY*this.unitY;
+    this.updateStretch();
     this.applyZoom();
     return this;
 };
@@ -1611,9 +1618,7 @@ JXG.Board.prototype.zoom100 = function() {
     oX = this.origin.scrCoords[1]/zX;
     oY = this.origin.scrCoords[2]/zY;
     this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
-
-    this.stretchX = this.zoomX*this.unitX;
-    this.stretchY = this.zoomY*this.unitY;
+    this.updateStretch();
     this.applyZoom();
     return this;
 };
@@ -1662,9 +1667,7 @@ JXG.Board.prototype.zoomAllPoints = function() {
     this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [newOriginX, newOriginY], this);
     this.zoomX = newZoomX;
     this.zoomY = newZoomY;
-    this.stretchX = this.zoomX*this.unitX;
-    this.stretchY = this.zoomY*this.unitY;
-
+    this.updateStretch();
     this.applyZoom();
     return this;
 };
@@ -2160,9 +2163,7 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     oX = -this.unitX*bbox[0]*this.zoomX;
     oY = this.unitY*bbox[1]*this.zoomY;
     this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
-    this.stretchX = this.zoomX*this.unitX;
-    this.stretchY = this.zoomY*this.unitY;
-
+    this.updateStretch();
     this.moveOrigin();
     return this;
 };

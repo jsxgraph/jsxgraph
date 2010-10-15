@@ -257,8 +257,7 @@ this.readGeonext = function(tree,board) {
     board.zoomY = 1*boardTmp.zoomY;
     board.unitX = 1*boardTmp.unitX;
     board.unitY = 1*boardTmp.unitY;
-    board.stretchX = board.zoomX*board.unitX;
-    board.stretchY = board.zoomY*board.unitY;
+    board.updateStretch();
 
     if (board.options.takeSizeFromFile) {
         board.resizeContainer(boardTmp.width,boardTmp.height);
