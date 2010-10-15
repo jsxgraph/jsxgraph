@@ -289,12 +289,13 @@ JXG.SVGRenderer.prototype.updateImageURL = function(el) {
     el.rendNode.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
 };
 
-
 JXG.SVGRenderer.prototype.transformImage = function(el,t) {
     var node = el.rendNode,
-        str = node.getAttributeNS(null, 'transform');
+        str = node.getAttributeNS(null, 'transform'),
+        b = el.board;
         
     str += ' ' + this.joinTransforms(el,t);
+//    str += ' matrix(' + b.stretchX + ',' + 0.0 + ',' + 0.0 + ',' + (-b.stretchY) + ',' + b.origin.scrCoords[1] + ',' + b.origin.scrCoords[2] +')';
     node.setAttributeNS(null, 'transform', str);
 };
 
