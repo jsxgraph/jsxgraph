@@ -40,33 +40,38 @@
 			document.getElementById('jxgbox').style.height = '291px';
 		}
 		board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, grid:true, boundingbox:[-2,1.2,2,-1.2]});
-	}
+	};
 
-	function plotter() {
-		var t = JXG.GeonextParser.geonext2JS(document.getElementById('input').value);
-		var f = new Function('x','var y = '+t+'; return y;');
-        var color = colorArray[plotNr%colorArray.length]; plotNr++;
-		board.create('functiongraph',[f],{strokeColor:color});
-	}
-	
-    </script>
+    function save() {
+        // Speichere die Optionen und gehe wieder zurueck
+        alert("save");
+        document.forms[0].submit();
+    };
+    
+  </script>
   </head>
   <body onload="init();">
   	<div id="topbar">
-		<div id="title">JSXGraph function plot</div>
-		<div id="rightbutton"><a href="options.html">options</a></div>
+		<div id="title">JSXGraph function plot - options</div>
 	</div>
 
-	<div id="tributton">
+    <form action="index.html" method="get">
+	<div id="duobutton">
 		<div class="links">
-			<input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="index.html">refresh</a>
+            <a href="javascript:save()">save</a><a href="index.html">cancel</a>
 		</div>
 	</div>
 
 	<div id="content" align="center">
 		<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
-		<div id="jxgbox" class="jxgbox"></div>
+        <ul class="pageitem">
+            <li class="smallfield"><span class="name">Stroke width</span><input
+                placeholder="enter text" type="text" /></li>
+            <li class="checkbox"><span class="name">Show derivative</span><input
+                name="checkbox" type="checkbox" /> </li>   
+		</ul>
 	</div>
+    </form>
 
 	<div id="footer">
 		<a class="noeffect" href="http://jsxgraph.org/">Powered by JSXGraph</a>
