@@ -23,13 +23,13 @@
     function save() {
         // Speichere die Optionen und gehe wieder zurueck
 		localStorage.setItem('strokeWidth', document.forms[0].strokeWidth.value);
-		localStorage.setItem('showDerivative', document.forms[0].showDerivative.value);
+		localStorage.setItem('showDerivative', document.forms[0].showDerivative.checked);
         document.forms[0].submit();
     };
 	function reset() {
 		/*
-		localStorage.setItem('strokeWidth', default.value);//TODO: default value?
-		localStorage.setItem('showDerivative', default.value);//TODO: default value?
+		localStorage.setItem('strokeWidth', default.value);
+		localStorage.setItem('showDerivative', default.value);
 		*/
         document.forms[0].submit();
 	};
