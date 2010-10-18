@@ -19,35 +19,24 @@
     JXG.Options.showCopyright = true;
     colorArray = ['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'];
     plotNr = 0;
-    
-	function onBodyLoad() {
-		document.addEventListener("deviceready",init,false);
-	}
-
-	function init() {
-		// set board settings dependent on device
-		if(navigator.userAgent.match(/iPad/i)) {
-			// we are on an iPad
-			document.getElementById('jxgbox').style.width  = '760px';
-			document.getElementById('jxgbox').style.height = '835px';
-		} else if(navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i)) {
-			// we are on an iPhone/iPod Touch
-			document.getElementById('jxgbox').style.width  = '312px';
-			document.getElementById('jxgbox').style.height = '291px';
-		} else {
-			// default settings - same like iPhone/iPod
-			document.getElementById('jxgbox').style.width  = '312px';
-			document.getElementById('jxgbox').style.height = '291px';
-		}
-		board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, grid:true, boundingbox:[-2,1.2,2,-1.2]});
-	};
 
     function save() {
         // Speichere die Optionen und gehe wieder zurueck
-        alert("save");
+		localStorage.setItem('strokeWidth', document.forms[0].strokeWidth.value);
+		localStorage.setItem('showDerivative', document.forms[0].showDerivative.value);
         document.forms[0].submit();
     };
-    
+	function reset() {
+		/*
+		localStorage.setItem('strokeWidth', default.value);//TODO: default value?
+		localStorage.setItem('showDerivative', default.value);//TODO: default value?
+		*/
+        document.forms[0].submit();
+	};
+    function init() {
+		document.forms[0].strokeWidth.value = localStorage.getItem('strokeWidth');
+		document.forms[0].showDerivative.value = localStorage.getItem('showDerivative');
+	};
   </script>
   </head>
   <body onload="init();">
@@ -56,19 +45,23 @@
 	</div>
 
     <form action="index.html" method="get">
-	<div id="duobutton">
+	<div id="tributton">
 		<div class="links">
-            <a href="javascript:save()">save</a><a href="index.html">cancel</a>
+            <a href="javascript:save()">save</a><a href="index.html">cancel</a><a href="javascript:reset()">reset</a>
 		</div>
 	</div>
 
 	<div id="content" align="center">
 		<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
         <ul class="pageitem">
-            <li class="smallfield"><span class="name">Stroke width</span><input
-                placeholder="enter text" type="text" /></li>
-            <li class="checkbox"><span class="name">Show derivative</span><input
-                name="checkbox" type="checkbox" /> </li>   
+            <li>
+				<span class="name">Stroke width</span>
+				<input placeholder="enter text" name="strokeWidth" type="text" />
+			</li>
+            <li class="checkbox">
+				<span class="name">Show derivative</span>
+				<input name="showDerivative" type="checkbox" />
+			</li>   
 		</ul>
 	</div>
     </form>

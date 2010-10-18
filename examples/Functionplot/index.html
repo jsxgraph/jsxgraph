@@ -22,7 +22,7 @@
     
 	function onBodyLoad() {
 		document.addEventListener("deviceready",init,false);
-	}
+	};
 
 	function init() {
 		// set board settings dependent on device
@@ -39,15 +39,18 @@
 			document.getElementById('jxgbox').style.width  = '312px';
 			document.getElementById('jxgbox').style.height = '291px';
 		}
+		localStorage.getItem('strokeWidth');//TODO: variable in die .getItem geladen werden soll?
+		localStorage.getItem('showDerivative');//TODO: variable in die .getItem geladen werden soll?
+		//alert(localStorage.getItem('strokeWidth') +' '+ localStorage.getItem('showDerivative'));
 		board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, grid:true, boundingbox:[-2,1.2,2,-1.2]});
-	}
+	};
 
 	function plotter() {
 		var t = JXG.GeonextParser.geonext2JS(document.getElementById('input').value);
 		var f = new Function('x','var y = '+t+'; return y;');
         var color = colorArray[plotNr%colorArray.length]; plotNr++;
 		board.create('functiongraph',[f],{strokeColor:color});
-	}
+	};
 	
     </script>
   </head>
