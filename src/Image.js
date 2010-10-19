@@ -73,6 +73,13 @@ JXG.Image.prototype.hasPoint = function (x,y) {
 };
 
 /**
+ * Recalculate the coordinates of lower left corner and the width amd the height.
+ * @private
+ */
+JXG.Image.prototype.update = function () {
+};
+
+/**
  * Send an update request to the renderer.
  */
 JXG.Image.prototype.updateRenderer = function () {

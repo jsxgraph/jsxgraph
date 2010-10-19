@@ -22,11 +22,12 @@
 //    JXG.Options.renderer = 'canvas'; 
     var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 10, unitY: 10, axis:true}); 
     var p_1 = board.createElement('point',[0,0], {name:'off',style: 5}); 
-//    var p_2 = board.createElement('point',[-5,-5], {withLabel:false}); 
-    var img = board.create('image',['http://easyimup.de/uploads/garfield-1069_e254457.gif',[-5,-5],[10,10]]); 
+    var p_2 = board.createElement('point',[-5,-5], {withLabel:false}); 
+    var img = board.create('image',['http://easyimup.de/uploads/garfield-1069_e254457.gif',
+        [function(){ return p_2.X();},function(){ return p_2.Y();}],[10,10]]); 
 //    img = new JXG.Image(board, 'http://easyimup.de/uploads/garfield-1069_e254457.gif',[-5,-5],[10,10], null, false, false, p_2); 
     var t = board.create('transform', ["X(off)","Y(off)"], {type:'translate'}); 
-    t.bindTo(img); 
+    t.bindTo(p_2); 
     p_1.setPositionDirectly(JXG.COORDS_BY_USER, 3,3);
     board.update(); 
 
