@@ -1,9 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-	<!-- Change this if you want to allow scaling -->
     <meta name="viewport" content="width=default-width; user-scalable=no" />
-
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 
     <title>JSXGraph function plot</title>
@@ -19,16 +17,6 @@
     JXG.Options.showCopyright = true;
     colorArray = ['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'];
     plotNr = 0;
-    
-    options = {
-        strokeWidth:1,
-        showDerivative:false,
-        lastPlot:''
-        };
-    
-	function onBodyLoad() {
-		document.addEventListener("deviceready",init,false);
-	};
 
 	function init() {
 		// set board settings dependent on device
@@ -36,54 +24,101 @@
 			// we are on an iPad
 			document.getElementById('jxgbox').style.width  = '760px';
 			document.getElementById('jxgbox').style.height = '835px';
+			document.getElementById('options').style.display  = 'none';
+			document.getElementById('options').style.width  = '760px';
+			document.getElementById('options').style.height = '835px';
 		} else if(navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i)) {
 			// we are on an iPhone/iPod Touch
 			document.getElementById('jxgbox').style.width  = '312px';
 			document.getElementById('jxgbox').style.height = '291px';
+			document.getElementById('options').style.display  = 'none';
+			document.getElementById('options').style.width  = '312px';
+			document.getElementById('options').style.height = '291px';
 		} else {
 			// default settings - same like iPhone/iPod
 			document.getElementById('jxgbox').style.width  = '312px';
 			document.getElementById('jxgbox').style.height = '291px';
+			document.getElementById('options').style.display  = 'none';
+			document.getElementById('options').style.width  = '312px';
+			document.getElementById('options').style.height = '291px';
 		}
-		
-		options.strokeWidth = localStorage.getItem('strokeWidth');
-		options.showDerivative = localStorage.getItem('showDerivative');
-        options.lastPlot = localStorage.getItem('lastPlot');
-        
-        document.getElementById('input').value = options.lastPlot;
-        
-		//alert(localStorage.getItem('strokeWidth') +' '+ localStorage.getItem('showDerivative'));
+		localStorage.getItem('strokeWidth');//TODO: variable in die .getItem geladen werden soll?
+		localStorage.getItem('showDerivative');//TODO: variable in die .getItem geladen werden soll?
+
 		board = JXG.JSXGraph.initBoard('jxgbox', {axis:true, grid:true, boundingbox:[-2,1.2,2,-1.2]});
+		document.forms[0].strokeWidth.value = localStorage.getItem('strokeWidth');
+		document.forms[0].showDerivative.value = localStorage.getItem('showDerivative');
+	};
+	
+	function options() {
+		var opt = document.getElementById('options');
+		if(opt.style.display == 'none') {
+			opt.style.display = 'block';
+		} else {
+			opt.style.display = 'none';
+		}
 	};
 
 	function plotter() {
 		var t = JXG.GeonextParser.geonext2JS(document.getElementById('input').value);
-        localStorage.setItem('lastPlot', document.getElementById('input').value);
-
-        var f = new Function('x','var y = '+t+'; return y;');
+		var f = new Function('x','var y = '+t+'; return y;');
         var color = colorArray[plotNr%colorArray.length]; plotNr++;
-		board.create('functiongraph',[f],{strokeColor:color, strokeWidth:options.strokeWidth});
-		if (options.showDerivative) {
-            board.create('functiongraph',[JXG.Math.Numerics.D(f)],{strokeColor:color, strokeWidth:options.strokeWidth, dash:2});
-        }
+		board.create('functiongraph',[f],{strokeColor:color});
 	};
 	
+	function save() {
+        // Speichere die Optionen und gehe wieder zurueck
+		localStorage.setItem('strokeWidth', document.forms[0].strokeWidth.value);
+		localStorage.setItem('showDerivative', document.forms[0].showDerivative.value);
+        document.forms[0].submit();
+		options();
+    };
+	function reset() {
+		/*
+		localStorage.setItem('strokeWidth', default.value);//TODO: default value?
+		localStorage.setItem('showDerivative', default.value);//TODO: default value?
+		*/
+		options();
+	};
     </script>
   </head>
   <body onload="init();">
   	<div id="topbar">
 		<div id="title">JSXGraph function plot</div>
-		<div id="rightbutton"><a href="options.html">options</a></div>
+		<div id="rightbutton"><a href="javascript:options();">options</a></div>
 	</div>
 
 	<div id="tributton">
 		<div class="links">
-			<input value=""id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="index.html">refresh</a>
+			<input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="index.html">refresh</a>
 		</div>
 	</div>
 
 	<div id="content" align="center">
 		<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
+		<div id="options">
+			<form action="index.html" method="get">
+			<div id="tributton">
+				<div class="links">
+		            <a href="javascript:save()">save</a><a href="javascript:options()">cancel</a><a href="javascript:reset()">reset</a>
+				</div>
+			</div>
+
+			<div id="content" align="center">
+				<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
+		        <ul class="pageitem">
+		            <li>
+						<span class="name">Stroke width</span>
+						<input placeholder="enter text" name="strokeWidth" type="text" />
+					</li>
+		            <li class="checkbox">
+						<span class="name">Show derivative</span>
+						<input name="showDerivative" type="checkbox" />
+					</li>   
+				</ul>
+			</div>
+		    </form>
+		</div>
 		<div id="jxgbox" class="jxgbox"></div>
 	</div>
 
