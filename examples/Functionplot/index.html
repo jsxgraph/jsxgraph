@@ -6,7 +6,8 @@
 
     <title>JSXGraph function plot</title>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
-	<script type="text/javascript" src="jsxgraphcore.js"></script>
+	<!--<script type="text/javascript" src="../../src/loadjsxgraph.js"></script>-->
+    <script type="text/javascript" src="jsxgraphcore.js"></script>
 	
 	<!-- iPad/iPhone specific css below, add after your main css >
 	<link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />		
@@ -15,13 +16,20 @@
 	<!-- script type="text/javascript" charset="utf-8" src="phonegap.js"></script -->
     <script type="text/javascript">
     JXG.Options.showCopyright = true;
-    colorArray = ['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'];
-    plotNr = 0;
-    options = {
-            strokeWidth:2,
-            showDerivative:false
+    
+    var colorArray = ['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'];
+    var plotNr = 0;
+    var options = {
+            'strokeWidth':2,
+            'minX':-5,
+            'maxX':5,
+            'minY':-5,
+            'maxY':5,
+            'showDerivative':false,
+            'lastFunction': 'sin(x)*x'
         };
-
+    var board;
+    
 	function init() {
 		// set board settings dependent on device
 		if(navigator.userAgent.match(/iPad/i)) {
@@ -46,8 +54,12 @@
 			document.getElementById('optionDiv').style.width  = '312px';
 			document.getElementById('optionDiv').style.height = '291px';
 		}
-		board = JXG.JSXGraph.initBoard('jxgboxDiv', {axis:true, grid:true, boundingbox:[-2,1.2,2,-1.2]});
-		restoreOptions();
+        restoreOptions();
+		board = JXG.JSXGraph.initBoard('jxgboxDiv', 
+                {axis:true, grid:true, 
+                 boundingbox:[options.minX,options.maxY, options.maxX, options.minY]});
+        
+        document.getElementById('input').value = options.lastFunction;
 	};
 	
 	function toggleOptionsView() {
@@ -63,26 +75,41 @@
 	};
 	
 	function plotter() {
-		var t = JXG.GeonextParser.geonext2JS(document.getElementById('input').value);
+        var txt = document.getElementById('input').value;
+        options.lastFunction = txt;
+        
+		var t = JXG.GeonextParser.geonext2JS(txt);
 		var f = new Function('x','var y = '+t+'; return y;');
         var color = colorArray[plotNr%colorArray.length]; plotNr++;
 		board.create('functiongraph',[f],{strokeColor:color, strokeWidth:options.strokeWidth});
 		if (options.showDerivative) {
             board.create('functiongraph',[JXG.Math.Numerics.D(f)],{strokeColor:color, strokeWidth:options.strokeWidth, dash:2});
         }
+        localStorage.setItem('JXG_Options', JSON.stringify(options));
 	};
 	
 	/**
 	 * Option handling
+	 * After clicking on save button in Options
+	 * the values are stored in the object 'options'.
+	 * Additionally, the options are stored in localStorage.
 	 */
 	function save() {
         // Speichere die Optionen und gehe wieder zurueck
-        options.strokeWidth = localStorage.getItem('strokeWidth');
-        options.showDerivative = localStorage.getItem('showDerivative');
-		localStorage.setItem('strokeWidth', document.getElementById('strokeWidth').value);
-		localStorage.setItem('showDerivative', document.getElementById('showDerivative').checked);
-		toggleOptionsView();
+        
+        options.strokeWidth = parseInt(document.getElementById('strokeWidth').value); 
+        options.showDerivative = document.getElementById('showDerivative').checked;
+        options.minX = parseFloat(document.getElementById('minX').value);
+        options.maxX = parseFloat(document.getElementById('maxX').value);
+        options.minY = parseFloat(document.getElementById('minY').value);
+        options.maxY = parseFloat(document.getElementById('maxY').value);
+
+        toggleOptionsView();
+        board.setBoundingBox([options.minX,options.maxY, options.maxX, options.minY], false);
+
+        localStorage.setItem('JXG_Options', JSON.stringify(options));
     };
+    
     function cancel() {
         // Speichere die Optionen und gehe wieder zurueck
         restoreOptions();
@@ -97,12 +124,24 @@
 		toggleOptionsView();
 	};
 	
+	/**
+	 * We read from localStorage, during init() and after pressing
+	 * cancel in Options.
+	 */
 	function restoreOptions() {
-        document.forms[0].strokeWidth.value = localStorage.getItem('strokeWidth');
-        document.forms[0].showDerivative.checked = localStorage.getItem('showDerivative');
+        var retrievedObject = localStorage.getItem('JXG_Options');
+        if (retrievedObject!=null) {
+            options = JSON.parse(retrievedObject);
+        }
+        document.getElementById('strokeWidth').value = options.strokeWidth;
+        document.getElementById('showDerivative').checked = options.showDerivative;
+        document.getElementById('minX').value = options.minX;
+        document.getElementById('maxX').value = options.maxX;
+        document.getElementById('minY').value = options.minY;
+        document.getElementById('maxY').value = options.maxY;
 	};
 	
-    </script>
+  </script>
   </head>
   <body onload="init();">
   	<div id="topbar">
@@ -127,10 +166,26 @@
 						<span class="name">Stroke width</span>
 						<input placeholder="" id="strokeWidth" type="text" />
 					</li>
-		            <li class="checkbox">
-						<span class="name">Show derivative</span>
-						<input id="showDerivative" type="checkbox" />
-					</li>   
+                    <li>
+                        <span class="name">min X</span>
+                        <input placeholder="" id="minX" type="text"/>
+                    </li>
+                    <li>
+                        <span class="name">max X</span>
+                        <input placeholder="" id="maxX" type="text" />
+                    </li>
+                    <li>
+                        <span class="name">min Y</span>
+                        <input placeholder="" id="minY" type="text" />
+                    </li>
+                    <li>
+                        <span class="name">max Y</span>
+                        <input placeholder="" id="maxY" type="text" />
+                    </li>
+                    <li class="checkbox">
+                        <span class="name">Show derivative</span>
+                        <input id="showDerivative" type="checkbox" />
+                    </li>   
 				</ul>
 			</div>
 		    </form>
