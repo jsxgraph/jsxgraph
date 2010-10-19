@@ -52,7 +52,7 @@
 	
 	function toggleOptionsView() {
 		var opt = document.getElementById('optionDiv'),
-            jsx = document.getElementById('jxgboxDiv');
+            jsx = document.getElementById('jxgContentDiv');
 		if(opt.style.display == 'none') {
 			opt.style.display = 'block';
             jsx.style.display = 'none';
@@ -110,12 +110,6 @@
 		<div id="rightbutton"><a href="javascript:toggleOptionsView();">options</a></div>
 	</div>
 
-	<div id="tributton">
-		<div class="links">
-			<input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="index.html">clear</a>
-		</div>
-	</div>
-
 	<div id="content" align="center">
 		<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
 		<div id="optionDiv">
@@ -141,7 +135,14 @@
 			</div>
 		    </form>
 		</div>
-		<div id="jxgboxDiv" class="jxgbox"></div>
+		<div id="jxgContentDiv">
+			<div id="tributton">
+				<div class="links">
+					<input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="index.html">clear</a>
+				</div>
+			</div>
+			<div id="jxgboxDiv" class="jxgbox"></div>
+		</div>
 	</div>
 
 	<div id="footer">
