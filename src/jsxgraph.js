@@ -24,74 +24,97 @@
 */
 
 /**
- * @fileoverview Class Geonext is defined in this file. Geonext controls all boards.
- * It has methods to create, save, load and free boards.
+ * @fileoverview The JSXGraph object is defined in this file. JXG.JSXGraph controls all boards.
+ * It has methods to create, save, load and free boards. Additionally some helper functions are
+ * defined in this file directly in the JXG namespace.
  * @author graphjs
  * @version 0.82
  */
 
 /**
- * Constructs a new Geonext singleton object.
- * @class This is the Geonext class. It stores all properties required
+ * Constructs a new JSXGraph singleton object.
+ * @class The JXG.JSXGraph singleton stores all properties required
  * to load, save, create and free a board.
- * @constructor
  */
-JXG.JSXGraph = new function () {
-    var ie, opera, i, arr;
-    this.licenseText = 'JSXGraph v0.82rc14 Copyright (C) see http://jsxgraph.org';
+JXG.JSXGraph = {
 
     /**
-            * Stores the renderer that is used to draw the board.
-            * @type String
-            */
-    this.rendererType = '';
+     * The small gray version indicator in the top left corner of every JSXGraph board (if
+     * showCopyright is not set to false on board creation).
+     * @type String
+     */
+    licenseText: 'JSXGraph v0.82rc14 Copyright (C) see http://jsxgraph.org',
 
     /**
-            * Associative array that keeps all boards.
-            * @type Object
-            */
-    this.boards = {};
+     * Associative array that keeps references to all boards.
+     * @type Object
+     */
+    boards: {},
 
     /**
-            * Associative array that keeps all registered geometry elements
-            * @type Object
-            */
-    this.elements = {};
+     * Associative array that keeps track of all constructable elements registered
+     * via {@link JXG.JSXGraph.registerElement}.
+     * @type Object
+     */
+    elements: {},
 
-    /* Determine the users browser */
-    ie = navigator.appVersion.match(/MSIE (\d\.\d)/);
-    opera = (navigator.userAgent.toLowerCase().indexOf("opera") != -1);
+    /**
+     * Stores the renderer that is used to draw the boards.
+     * @type String
+     */
+    rendererType: (function() {
+        var ie, opera, i, arr;
 
-    /* and set the rendererType according to the browser */
-    if ((!ie) || (opera) || (ie && parseFloat(ie[1])>=9.0) ) {
-        if (navigator.appVersion.match(/Android.*AppleWebKit/)) {
-            JXG.Options.renderer = 'canvas';
+        /* Determine the users browser */
+        ie = navigator.appVersion.match(/MSIE (\d\.\d)/);
+        opera = (navigator.userAgent.toLowerCase().indexOf("opera") != -1);
+
+        // set the rendererType according to the browser
+        if ((!ie) || (opera) || (ie && parseFloat(ie[1]) >= 9.0)) {
+            // we're NOT in IE
+            if (navigator.appVersion.match(/Android.*AppleWebKit/)) {
+                // we're using canvas on android and iphone/pod/pad
+                JXG.Options.renderer = 'canvas';
+            } else {
+                // let's hope the user's browser supports svg...
+                JXG.Options.renderer = 'svg';
+            }
         } else {
-            //this.rendererType = 'svg';
-            JXG.Options.renderer = 'svg';
-        }
-    } else {
-        JXG.Options.renderer = 'vml';
-        function MouseMove(e) { //Magic!
-            document.body.scrollLeft;
-            document.body.scrollTop;
-        }
-        document.onmousemove = MouseMove;
-    }
+            // IE
+            JXG.Options.renderer = 'vml';
 
-    /* Load the source files for the renderer */
-    //JXG.rendererFiles[this.rendererType].split(',').each( function(include) { JXG.require(JXG.requirePath+include+'.js'); } );
-    arr = JXG.rendererFiles[JXG.Options.renderer].split(',');
-    for (i=0;i<arr.length;i++) ( function(include) { JXG.require(JXG.requirePath+include+'.js'); } )(arr[i]);
+            // Ok, this is some real magic going on here. IE/VML always was so
+            // terribly slow, except in one place: Examples placed in a moodle course
+            // was almost as fast as in other browsers. So i grabbed all the css and
+            // js scripts from our moodle, added them to a jsxgraph example and it
+            // worked. next step was to strip all the css/js code which didn't affect
+            // the VML update speed. The following five lines are what was left after
+            // the last step and yes - it basically does nothing but reads two
+            // properties of document.body on every mouse move. why? we don't know. if
+            // you know, please let us know.
+            function MouseMove() {
+                document.body.scrollLeft;
+                document.body.scrollTop;
+            }
 
+            document.onmousemove = MouseMove;
+        }
+
+        // Load the source files for the renderer
+        arr = JXG.rendererFiles[JXG.Options.renderer].split(',');
+        for (i = 0; i < arr.length; i++) ( function(include) {
+            JXG.require(JXG.requirePath + include + '.js');
+        } )(arr[i]);
+
+        return JXG.Options.renderer;
+    })(),
 
     /**
-            * Initialise a new board.
-            * @param {String} box Html-ID to the Html-element in which the board is painted.
-            * @return {JXG.Board} Reference to the created board.
-            */
-    this.initBoard = function (box, attributes) {
-        // Create a new renderer
+     * Initialise a new board.
+     * @param {String} box Html-ID to the Html-element in which the board is painted.
+     * @returns {JXG.Board} Reference to the created board.
+     */
+    initBoard: function (box, attributes) {
         var renderer,
             originX, originY, unitX, unitY,
             w, h, dimensions,
@@ -101,19 +124,23 @@ JXG.JSXGraph = new function () {
             board;
 
         dimensions = JXG.getDimensions(box);
+
+        // parse attributes
         if (typeof attributes == 'undefined') {
             attributes = {};
         }
+
         if (typeof attributes["boundingbox"] != 'undefined') {
             bbox = attributes["boundingbox"];
             w = parseInt(dimensions.width);
             h = parseInt(dimensions.height);
+
             if (attributes["keepaspectratio"]) {
-            /**
-                                * If the boundingbox attribute is given and the ratio of height and width of the sides defined by the bounding box and
-                                * the ratio of the dimensions of the div tag which contains the board do not coincide,
-                                * then the smaller side is chosen.
-                                */
+                /*
+                 * If the boundingbox attribute is given and the ratio of height and width of the sides defined by the bounding box and
+                 * the ratio of the dimensions of the div tag which contains the board do not coincide,
+                 * then the smaller side is chosen.
+                 */
                 unitX = w/(bbox[2]-bbox[0]);
                 unitY = h/(-bbox[3]+bbox[1]);
                 if (unitX<unitY) {
@@ -137,9 +164,9 @@ JXG.JSXGraph = new function () {
         zoomX = zoomfactor*( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
         zoomY = zoomfactor*( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
 
-        // ??? if (typeof attributes["showcopyright"] != 'undefined') attributes["showCopyright"] = attributes["showcopyright"];
         showCopyright = ( (typeof attributes["showCopyright"]) == 'undefined' ? JXG.Options.showCopyright : attributes["showCopyright"]);
 
+        // create the renderer
         if(JXG.Options.renderer == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
         } else if(JXG.Options.renderer == 'vml') {
@@ -150,18 +177,22 @@ JXG.JSXGraph = new function () {
             renderer = new JXG.CanvasRenderer(document.getElementById(box));
         }
 
+        // create the board
         board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height,showCopyright);
         this.boards[board.id] = board;
-        // board.initGeonextBoard();  // Construct "Ursprung" and other elements.
+
+        // create elements like axes, grid, navigation, ...
         board.suspendUpdate();
+
         board.initInfobox();
-        if((typeof attributes["axis"] != 'undefined') && attributes["axis"]) {
+        
+        if(attributes["axis"]) {
         	board.defaultAxes = {};
             board.defaultAxes.x = board.create('axis', [[0,0], [1,0]], {});
             board.defaultAxes.y = board.create('axis', [[0,0], [0,1]], {});
         }
 
-        if ((typeof attributes["grid"] != 'undefined') && attributes["grid"]) {
+        if(attributes["grid"]) {
             board.renderer.drawGrid(board);
         }
 
@@ -170,20 +201,27 @@ JXG.JSXGraph = new function () {
         if (showNavi) {
             board.renderer.drawZoomBar(board);
         }
+
         board.unsuspendUpdate();
 
         return board;
-    };
+    },
 
     /**
-     * Load a board from a file of format GEONExT or Intergeo.
-     * @param {String} box Html-ID to the Html-element in which the board is painted.
-     * @param {String} file Url to the geonext-file.
-     * @param {String} string containing the file format: 'Geonext' or 'Intergeo'.
+     * Load a board from a file containing a construction made with either GEONExT,
+     * Intergeo, Geogebra, or Cinderella.
+     * @param {String} box HTML-ID to the HTML-element in which the board is painted.
+     * @param {String} file base64 encoded string.
+     * @param {String} format containing the file format: 'Geonext' or 'Intergeo'.
      * @returns {JXG.Board} Reference to the created board.
+     *
+     * @see JXG.FileReader
      * @see JXG.GeonextReader
+     * @see JXG.GeogebraReader
+     * @see JXG.IntergeoReader
+     * @see JXG.CinderellaReader
      */
-    this.loadBoardFromFile = function (box, file, format) {
+    loadBoardFromFile: function (box, file, format) {
         var renderer, board, dimensions;
 
         if(JXG.Options.renderer == 'svg') {
@@ -209,17 +247,23 @@ JXG.JSXGraph = new function () {
         }
         this.boards[board.id] = board;
         return board;
-    };
+    },
 
     /**
-     * Load a board from a base64 encoded string containing a GEONExT or Intergeo construction.
-     * @param {String} box Html-ID to the Html-element in which the board is painted.
+     * Load a board from a base64 encoded string containing a construction made with either GEONExT,
+     * Intergeo, Geogebra, or Cinderella.
+     * @param {String} box HTML-ID to the HTML-element in which the board is painted.
      * @param {String} string base64 encoded string.
-     * @param {String} string containing the file format: 'Geonext' or 'Intergeo'.
+     * @param {String} format containing the file format: 'Geonext' or 'Intergeo'.
      * @returns {JXG.Board} Reference to the created board.
+     *
+     * @see JXG.FileReader
      * @see JXG.GeonextReader
+     * @see JXG.GeogebraReader
+     * @see JXG.IntergeoReader
+     * @see JXG.CinderellaReader
      */
-    this.loadBoardFromString = function(box, string, format) {
+    loadBoardFromString: function(box, string, format) {
         var renderer, dimensions, board;
 
         if(JXG.Options.renderer == 'svg') {
@@ -246,13 +290,13 @@ JXG.JSXGraph = new function () {
 
         this.boards[board.id] = board;
         return board;
-    };
+    },
 
     /**
-     * Free a board.
-     * @param {String} box Html-ID to the Html-element in which the board was painted.
+     * Delete a board and all its contents.
+     * @param {String} board HTML-ID to the DOM-element in which the board is drawn.
      */
-    this.freeBoard = function (board) {
+    freeBoard: function (board) {
         var el;
 
         if(typeof(board) == 'string') {
@@ -283,9 +327,18 @@ JXG.JSXGraph = new function () {
 
         // Finally remove the board itself from the boards array
         delete(this.boards[board.id]);
-    };
+    },
 
-    this.registerElement = function (element, creator) {
+    /**
+     * This registers a new construction element to JSXGraph for the construction via the {@link JXG.Board.create}
+     * interface.
+     * @param {String} element The elements name. This is case-insensitive, existing elements with the same name
+     * will be overwritten.
+     * @param {function} creator A reference to a function taking three parameters: First the board, the element is
+     * to be created on, a parent element array, and an attributes object. See {@link JXG.createPoint} or any other
+     * <tt>JXG.create...</tt> function for an example.
+     */
+    registerElement: function (element, creator) {
         element = element.toLowerCase();
         this.elements[element] = creator;
 
@@ -295,12 +348,17 @@ JXG.JSXGraph = new function () {
         	return this.create(element, parents, attributes);
         };
 
-    };
+    },
 
-    this.unregisterElement = function (element) {
+    /**
+     * The opposite of {@link JXG.JSXGraph.registerElement}, it removes a given element from
+     * the element list. You probably don't need this.
+     * @param {String} element The name of the element which is to be removed from the element list.
+     */
+    unregisterElement: function (element) {
         delete (this.elements[element.toLowerCase()]);
         delete (JXG.Board.prototype['_' + element.toLowerCase()]);
-    };
+    }
 };
 
 /**
@@ -329,49 +387,49 @@ JXG.getRef = JXG.getReference;
 
 /**
  * Checks if the value of a given variable is of type string.
- * @param obj
+ * @param v
  * @returns {Boolean} True, if obj is of type string.
  */
-JXG.isString = function(obj) {
-    return typeof obj == "string";
+JXG.isString = function(v) {
+    return typeof v == "string";
 };
 
 /**
  * Checks if the value of a given variable is of type number.
- * @param obj
+ * @param v
  * @returns {Boolean} True, if obj is of type number.
  */
-JXG.isNumber = function(obj) {
-    return typeof obj == "number";
+JXG.isNumber = function(v) {
+    return typeof v == "number";
 };
 
 /**
  * Checks if a given variable references a function.
- * @param obj
+ * @param v
  * @returns {Boolean} True, if obj is a function.
  */
-JXG.isFunction = function(obj) {
-    return typeof obj == "function";
+JXG.isFunction = function(v) {
+    return typeof v == "function";
 };
 
 /**
  * Checks if a given variable references an array.
- * @param obj
+ * @param v
  * @returns {Boolean} True, if obj is of type array.
  */
-JXG.isArray = function(obj) {
+JXG.isArray = function(v) {
     // Borrowed from prototype.js
-    return obj != null && typeof obj == "object" && 'splice' in obj && 'join' in obj;
+    return v != null && typeof v == "object" && 'splice' in v && 'join' in v;
 };
 
 /**
  * Checks if a given variable is a reference of a JSXGraph Point element.
- * @param obj
+ * @param v
  * @returns {Boolean} True, if obj is of type JXG.Point.
  */
-JXG.isPoint = function(p) {
-    if(typeof p == 'object') {
-        return (p.elementClass == JXG.OBJECT_CLASS_POINT);
+JXG.isPoint = function(v) {
+    if(typeof v == 'object') {
+        return (v.elementClass == JXG.OBJECT_CLASS_POINT);
     }
 
     return false;
@@ -379,7 +437,7 @@ JXG.isPoint = function(p) {
 
 /**
  * Converts a string containing either <strong>true</strong> or <strong>false</strong> into a boolean value.
- * @param s String containing either <strong>true</strong> or <strong>false</strong>.
+ * @param {String} s String containing either <strong>true</strong> or <strong>false</strong>.
  * @returns {Boolean} String typed boolean value converted to boolean.
  */
 JXG.str2Bool = function(s) {
@@ -435,7 +493,7 @@ JXG.createEvalFunction = function(board, param, n) {
 JXG.createFunction = function(term,board,variableName,evalGeonext) {
     var newTerm;
 
-    if ((evalGeonext==null || evalGeonext==true) && JXG.isString(term)) {
+    if ((evalGeonext==null || evalGeonext) && JXG.isString(term)) {
         // Convert GEONExT syntax into  JavaScript syntax
         newTerm = JXG.GeonextParser.geonext2JS(term, board);
         return new Function(variableName,'return ' + newTerm + ';');
@@ -603,22 +661,21 @@ JXG.bind = function(fn, owner ) {
 /**
   * getPosition: independent from prototype and jQuery
   */
-JXG.getPosition = function (Evt) {
+JXG.getPosition = function (e) {
     var posx = 0,
-        posy = 0,
-        Evt;
+        posy = 0;
 
-    if (!Evt) {
-        Evt = window.event;
+    if (!e) {
+        e = window.event;
     }
 
-    if (Evt.pageX || Evt.pageY)     {
-        posx = Evt.pageX;
-        posy = Evt.pageY;
+    if (e.pageX || e.pageY)     {
+        posx = e.pageX;
+        posy = e.pageY;
     }
-    else if (Evt.clientX || Evt.clientY)    {
-        posx = Evt.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-        posy = Evt.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    else if (e.clientX || e.clientY)    {
+        posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
     }
     return [posx,posy];
 };
@@ -850,22 +907,23 @@ JXG.trim = function(str) {
 
 
 JXG.debug = function(s) {
-  if(typeof console!='undefined' && console.log){
-    if(typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "")
-    console.log(s);
-  } else if(document.getElementById('debug')) {
-    document.getElementById('debug').innerHTML += s +"<br/>";
-  }
+    if (console && console.log) {
+        if (typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "")
+        console.log(s);
+    } else if (document.getElementById('debug')) {
+        document.getElementById('debug').innerHTML += s + "<br/>";
+    }
+    // else: do nothing
 };
 
 
-/**
+/*
  * JessieScript startup
  */
-
-JXG.addEvent(window, 'load', function (evt) {
+JXG.addEvent(window, 'load', function () {
     var scripts = document.getElementsByTagName('script'),
         i, div, board;
+    
     for(i=0;i<scripts.length;i++) {
         if(scripts[i].getAttribute('type', 'none') == 'text/jessiescript') {
             div = document.createElement('div');
