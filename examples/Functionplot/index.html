@@ -1,6 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
     <meta name="viewport" content="width=default-width; user-scalable=no" />
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 
@@ -17,6 +19,7 @@
     <script type="text/javascript">
     JXG.Options.showCopyright = true;
     
+    var myStorage = localStorage;
     var colorArray = ['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'];
     var plotNr = 0;
     var options = {
@@ -64,13 +67,21 @@
 	
 	function toggleOptionsView() {
 		var opt = document.getElementById('optionDiv'),
-            jsx = document.getElementById('jxgContentDiv');
+            jsx = document.getElementById('jxgboxDiv'),
+            optBar = document.getElementById('optionBar'),
+            jsxBar = document.getElementById('jxgBar');
 		if(opt.style.display == 'none') {
 			opt.style.display = 'block';
             jsx.style.display = 'none';
+            optBar.style.display = 'block';
+            jsxBar.style.display = 'none';
+            document.getElementById('bluerightbutton').style.display = 'none';
 		} else {
 			opt.style.display = 'none';
             jsx.style.display = 'block';
+            optBar.style.display = 'none';
+            jsxBar.style.display = 'block';
+            document.getElementById('bluerightbutton').style.display = 'block';
 		}
 	};
 	
@@ -81,18 +92,23 @@
 		var t = JXG.GeonextParser.geonext2JS(txt);
 		var f = new Function('x','var y = '+t+'; return y;');
         var color = colorArray[plotNr%colorArray.length]; plotNr++;
-		board.create('functiongraph',[f],{strokeColor:color, strokeWidth:options.strokeWidth});
+		board.create('functiongraph',[f],
+                {strokeColor:color, strokeWidth:options.strokeWidth,
+                highlightStrokeColor:'#999999'});
 		if (options.showDerivative) {
-            board.create('functiongraph',[JXG.Math.Numerics.D(f)],{strokeColor:color, strokeWidth:options.strokeWidth, dash:2});
+            board.create('functiongraph',[JXG.Math.Numerics.D(f)],
+                {strokeColor:color, strokeWidth:options.strokeWidth, dash:2,
+                 highlightStrokeColor:'#999999'});
         }
-        localStorage.setItem('JXG_Options', JSON.stringify(options));
+        myStorage.removeItem('JXG_Options');        
+        myStorage.setItem('JXG_Options', JSON.stringify(options));
 	};
 	
 	/**
 	 * Option handling
 	 * After clicking on save button in Options
 	 * the values are stored in the object 'options'.
-	 * Additionally, the options are stored in localStorage.
+	 * Additionally, the options are stored in myStorage.
 	 */
 	function save() {
         // Speichere die Optionen und gehe wieder zurueck
@@ -106,8 +122,8 @@
 
         toggleOptionsView();
         board.setBoundingBox([options.minX,options.maxY, options.maxX, options.minY], false);
-
-        localStorage.setItem('JXG_Options', JSON.stringify(options));
+        myStorage.removeItem('JXG_Options');        
+        myStorage.setItem('JXG_Options', JSON.stringify(options));
     };
     
     function cancel() {
@@ -118,18 +134,18 @@
     
 	function reset() {
 		/*
-		localStorage.setItem('strokeWidth', default.value);//TODO: default value?
-		localStorage.setItem('showDerivative', default.value);//TODO: default value?
+		myStorage.setItem('strokeWidth', default.value);//TODO: default value?
+		myStorage.setItem('showDerivative', default.value);//TODO: default value?
 		*/
 		toggleOptionsView();
 	};
 	
 	/**
-	 * We read from localStorage, during init() and after pressing
+	 * We read from myStorage, during init() and after pressing
 	 * cancel in Options.
 	 */
 	function restoreOptions() {
-        var retrievedObject = localStorage.getItem('JXG_Options');
+        var retrievedObject = myStorage.getItem('JXG_Options');
         if (retrievedObject!=null) {
             options = JSON.parse(retrievedObject);
         }
@@ -146,58 +162,54 @@
   <body onload="init();">
   	<div id="topbar">
 		<div id="title">JSXGraph function plot</div>
-		<div id="rightbutton"><a href="javascript:toggleOptionsView();">options</a></div>
+        <div id="bluerightbutton"><a href="javascript:toggleOptionsView();">options</a></div>
 	</div>
-
+	<div id="optionBar" style="display:none">
+        <div id="tributton">
+            <div class="links">
+                <a href="javascript:save()">save</a><a href="javascript:cancel()">cancel</a><a href="javascript:reset()">reset</a>
+            </div>
+        </div>
+    </div>
+    <div id="jxgBar">
+        <div id="tributton">
+            <div class="links">
+                <input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="index.html">clear</a>
+            </div>
+        </div>
+    </div>
 	<div id="content" align="center">
 		<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
-		<div id="optionDiv">
-			<form action="" method="get">
-			<div id="tributton">
-				<div class="links">
-		            <a href="javascript:save()">save</a><a href="javascript:cancel()">cancel</a><a href="javascript:reset()">reset</a>
-				</div>
-			</div>
-
-			<div id="optionscontent" align="center">
-				<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
-		        <ul class="pageitem">
-		            <li>
-						<span class="name">Stroke width</span>
-						<input placeholder="" id="strokeWidth" type="text" />
-					</li>
-                    <li>
-                        <span class="name">min X</span>
-                        <input placeholder="" id="minX" type="text"/>
-                    </li>
-                    <li>
-                        <span class="name">max X</span>
-                        <input placeholder="" id="maxX" type="text" />
-                    </li>
-                    <li>
-                        <span class="name">min Y</span>
-                        <input placeholder="" id="minY" type="text" />
-                    </li>
-                    <li>
-                        <span class="name">max Y</span>
-                        <input placeholder="" id="maxY" type="text" />
-                    </li>
+		<div id="optionDiv" align="center">
+			<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
+                <ul class="pageitem">
                     <li class="checkbox">
                         <span class="name">Show derivative</span>
                         <input id="showDerivative" type="checkbox" />
                     </li>   
+                    <li class="smallfield">
+						<span class="name">Stroke width</span>
+						<input placeholder="" id="strokeWidth" type="text" />
+					</li>
+                    <li class="smallfield">
+                        <span class="name">min X</span>
+                        <input placeholder="" id="minX" type="text"/>
+                    </li>
+                    <li class="smallfield">
+                        <span class="name">max X</span>
+                        <input placeholder="" id="maxX" type="text" />
+                    </li>
+                    <li class="smallfield">
+                        <span class="name">min Y</span>
+                        <input placeholder="" id="minY" type="text" />
+                    </li>
+                    <li class="smallfield">
+                        <span class="name">max Y</span>
+                        <input placeholder="" id="maxY" type="text" />
+                    </li>
 				</ul>
-			</div>
-		    </form>
 		</div>
-		<div id="jxgContentDiv">
-			<div id="tributton">
-				<div class="links">
-					<input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="index.html">clear</a>
-				</div>
-			</div>
-			<div id="jxgboxDiv" class="jxgbox"></div>
-		</div>
+        <div id="jxgboxDiv" class="jxgbox"></div>
 	</div>
 
 	<div id="footer">
