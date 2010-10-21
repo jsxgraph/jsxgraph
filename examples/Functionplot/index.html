@@ -104,6 +104,14 @@
         myStorage.setItem('JXG_Options', JSON.stringify(options));
 	};
 	
+	function clearBoard() {
+        JXG.JSXGraph.freeBoard(board);
+        board = JXG.JSXGraph.initBoard('jxgboxDiv', 
+                {axis:true, grid:true, 
+                 boundingbox:[options.minX,options.maxY, options.maxX, options.minY]});
+        plotNr = 0;
+	};
+	
 	/**
 	 * Option handling
 	 * After clicking on save button in Options
@@ -174,7 +182,7 @@
     <div id="jxgBar">
         <div id="tributton">
             <div class="links">
-                <input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="index.html">clear</a>
+                <input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="javascript:clearBoard()">clear</a>
             </div>
         </div>
     </div>
