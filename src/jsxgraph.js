@@ -137,9 +137,9 @@ JXG.JSXGraph = {
 
             if (attributes["keepaspectratio"]) {
                 /*
-                 * If the boundingbox attribute is given and the ratio of height and width of the sides defined by the bounding box and
-                 * the ratio of the dimensions of the div tag which contains the board do not coincide,
-                 * then the smaller side is chosen.
+                 * If the boundingbox attribute is given and the ratio of height and width of the
+                 * sides defined by the bounding box and the ratio of the dimensions of the div tag
+                 * which contains the board do not coincide, then the smaller side is chosen.
                  */
                 unitX = w/(bbox[2]-bbox[0]);
                 unitY = h/(-bbox[3]+bbox[1]);
@@ -334,7 +334,7 @@ JXG.JSXGraph = {
      * interface.
      * @param {String} element The elements name. This is case-insensitive, existing elements with the same name
      * will be overwritten.
-     * @param {function} creator A reference to a function taking three parameters: First the board, the element is
+     * @param {Function} creator A reference to a function taking three parameters: First the board, the element is
      * to be created on, a parent element array, and an attributes object. See {@link JXG.createPoint} or any other
      * <tt>JXG.create...</tt> function for an example.
      */
@@ -362,22 +362,22 @@ JXG.JSXGraph = {
 };
 
 /**
- * Parameter magic: object may be a string containing the name or id of the object or
- * even the object itself, this function gets a returns to the object. Order: id/object, name.
- * @param {JXG.Board} board Reference to the board the object belongs to.
- * @param {String,Object} object String or reference to the object the reference is needed.
+ * s may be a string containing the name or id of an element or even a reference
+ * to the element itself. This function returns a reference to the element. Search order: id, name.
+ * @param {JXG.Board} board Reference to the board the element belongs to.
+ * @param {String} s String or reference to a JSXGraph element.
  * @returns {Object} Reference to the object given in parameter object
  */
-JXG.getReference = function(board, object) {
-    if(typeof(object) == 'string') {
-        if(board.objects[object] != null) { // Search by ID
-            object = board.objects[object];
-        } else if (board.elementsByName[object] != null) { // Search by name
-            object = board.elementsByName[object];
+JXG.getReference = function(board, s) {
+    if(typeof(s) == 'string') {
+        if(board.objects[s] != null) { // Search by ID
+            s = board.objects[s];
+        } else if (board.elementsByName[s] != null) { // Search by name
+            s = board.elementsByName[s];
         }
     }
 
-    return object;
+    return s;
 };
 
 /**
@@ -387,8 +387,8 @@ JXG.getRef = JXG.getReference;
 
 /**
  * Checks if the value of a given variable is of type string.
- * @param v
- * @returns {Boolean} True, if obj is of type string.
+ * @param v A variable of any type.
+ * @returns {Boolean} True, if v is of type string.
  */
 JXG.isString = function(v) {
     return typeof v == "string";
@@ -396,8 +396,8 @@ JXG.isString = function(v) {
 
 /**
  * Checks if the value of a given variable is of type number.
- * @param v
- * @returns {Boolean} True, if obj is of type number.
+ * @param v A variable of any type.
+ * @returns {Boolean} True, if v is of type number.
  */
 JXG.isNumber = function(v) {
     return typeof v == "number";
@@ -405,8 +405,8 @@ JXG.isNumber = function(v) {
 
 /**
  * Checks if a given variable references a function.
- * @param v
- * @returns {Boolean} True, if obj is a function.
+ * @param v A variable of any type.
+ * @returns {Boolean} True, if v is a function.
  */
 JXG.isFunction = function(v) {
     return typeof v == "function";
@@ -414,8 +414,8 @@ JXG.isFunction = function(v) {
 
 /**
  * Checks if a given variable references an array.
- * @param v
- * @returns {Boolean} True, if obj is of type array.
+ * @param v A variable of any type.
+ * @returns {Boolean} True, if v is of type array.
  */
 JXG.isArray = function(v) {
     // Borrowed from prototype.js
@@ -424,8 +424,8 @@ JXG.isArray = function(v) {
 
 /**
  * Checks if a given variable is a reference of a JSXGraph Point element.
- * @param v
- * @returns {Boolean} True, if obj is of type JXG.Point.
+ * @param v A variable of any type.
+ * @returns {Boolean} True, if v is of type JXG.Point.
  */
 JXG.isPoint = function(v) {
     if(typeof v == 'object') {
@@ -433,6 +433,15 @@ JXG.isPoint = function(v) {
     }
 
     return false;
+};
+
+/**
+ * Checks if a given variable is neither undefined nor null.
+ * @param v A variable of any type.
+ * @returns {Boolean} True, if v is neither undefined nor null.
+ */
+JXG.exists = function(v) {
+    return !(typeof v === 'undefined' || v === null);
 };
 
 /**
@@ -458,9 +467,13 @@ JXG._board = function(box, attributes) {
 };
 
 /**
- * TODO: Documentation
- * Convert String, number or function to function.
- * This method is used in Transformation.js
+ * Convert a String, a number or a function into a function. This method is used in Transformation.js
+ * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
+ * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
+ * values is of type string.
+ * @param {Array} param An array containing strings, numbers, or functions.
+ * @returns {Function} A function taking one parameter k which specifies the index of the param element
+ * to evaluate. 
  */
 JXG.createEvalFunction = function(board, param, n) {
     // convert GEONExT syntax into function
@@ -488,9 +501,18 @@ JXG.createEvalFunction = function(board, param, n) {
 };
 
 /**
-  * Convert String, number or function to function.
-  **/
-JXG.createFunction = function(term,board,variableName,evalGeonext) {
+ * Convert a String, number or function into a function.
+ * @param term A variable of type string, function or number.
+ * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
+ * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
+ * values is of type string.
+ * @param {String} variableName Only required if evalGeonext is set to true. Describes the variable name
+ * of the variable in a GEONE<sub>X</sub>T string given as term.
+ * @param {Boolean} evalGeonext Set this true, if term should be treated as a GEONE<sub>X</sub>T string.
+ * @returns {Function} A function evaluation the value given by term or null if term is not of type string,
+ * function or number.
+ */
+JXG.createFunction = function(term, board, variableName, evalGeonext) {
     var newTerm;
 
     if ((evalGeonext==null || evalGeonext) && JXG.isString(term)) {
@@ -508,8 +530,8 @@ JXG.createFunction = function(term,board,variableName,evalGeonext) {
 };
 
 /**
- * Checks given parents array against expectations.
- * @param {Array} parents A user given parents array
+ * Checks given parents array against expectations. To be implemented
+ * @param {Array} parents A parents array
  * @param {Array} expects TODO: describe this
  * @returns {Array} A new parents array prepared for the use within a create* method
  */
@@ -531,6 +553,10 @@ JXG.checkParents = function(parents, expects) {
         this is good for describing what is expected, but this way the parent elements
         can't be sorted. how is this method supposed to know, that in case of a line it
         has to return the line's defining points?
+
+
+        see below the commented out functions checkParameter and readParameter for
+        another idea from alfred.
      */
 };
 
@@ -575,30 +601,63 @@ JXG.readParameter = function(board, parameter, input, output) {
 };
 */
 
-JXG.readOption = function(options, eltype, key) {
+/**
+ * Reads the configuration parameter of an attribute of an element from a {@link JXG.Options} object
+ * @param {JXG.Options} options Reference to an instance of JXG.Options. You usually want to use the
+ * options property of your board.
+ * @param {String} element The name of the element which options you wish to read, e.g. 'point' or
+ * 'elements' for general attributes.
+ * @param {String} key The name of the attribute to read, e.g. 'strokeColor' or 'withLabel'
+ * @returns The value of the selected configuration parameter.
+ * @see JXG.Options
+ */
+JXG.readOption = function(options, element, key) {
     var val = options.elements[key];
-    if (typeof options[eltype][key]!='undefined') val = options[eltype][key];
+
+    if (JXG.exists(options[element][key]))
+        val = options[element][key];
+
     return val;
 };
 
-JXG.checkAttributes = function(atts, keyvaluepairs) {
+/**
+ * Checks an attributes object and fills it with default values if there are properties missing.
+ * @param {Object} attributes 
+ * @param {Object} defaults
+ * @returns {Object} The given attributes object with missing properties added via the defaults object.
+ */
+JXG.checkAttributes = function(attributes, defaults) {
     var key;
-    if (atts==null) { atts = {}; }
-    for (key in keyvaluepairs) {
-        if(atts[key] == null || typeof atts[key] == 'undefined') {
-            atts[key] = keyvaluepairs[key];
+
+    // Make sure attributes is an object.
+    if (!JXG.exists(attributes)) {
+        attributes = {};
+    }
+
+    // Go through all keys of defaults and check for their existence
+    // in attributes. If one doesn't exist, it is created with the
+    // same value as in defaults.
+    for (key in defaults) {
+        if(!JXG.exists(attributes[key])) {
+            attributes[key] = defaults[key];
         }
     }
-    return atts;
+
+    return attributes;
 };
 
+/**
+ * Reads the width and height of an HTML element.
+ * @param {String} elementId The HTML id of an HTML DOM node.
+ * @returns {Object} An object with the two properties width and height.
+ */
 JXG.getDimensions = function(elementId) {
     var element, display, els, originalVisibility, originalPosition,
         originalDisplay, originalWidth, originalHeight;
 
     // Borrowed from prototype.js
     element = document.getElementById(elementId);
-    if (element==null) {
+    if (!JXG.exists(element)) {
         throw new Error("\nJSXGraph: HTML container element '" + (elementId) + "' not found.");
     }
 
@@ -607,30 +666,46 @@ JXG.getDimensions = function(elementId) {
         return {width: element.offsetWidth, height: element.offsetHeight};
     }
 
-    // All *Width and *Height properties give 0 on elements with display none,
-    // so enable the element temporarily
+    // All *Width and *Height properties give 0 on elements with display set to none,
+    // hence we show the element temporarily
     els = element.style;
+
+    // save style
     originalVisibility = els.visibility;
     originalPosition = els.position;
     originalDisplay = els.display;
+
+    // show element
     els.visibility = 'hidden';
     els.position = 'absolute';
     els.display = 'block';
 
+    // read the dimension
     originalWidth = element.clientWidth;
     originalHeight = element.clientHeight;
+
+    // restore original css values
     els.display = originalDisplay;
     els.position = originalPosition;
     els.visibility = originalVisibility;
-    return {width: originalWidth, height: originalHeight};
+
+    return {
+        width: originalWidth,
+        height: originalHeight
+    };
 };
 
 /**
-  * addEvent.
-  */
+ * Adds an event listener to a DOM element.
+ * @param {Object} obj Reference to a DOM node.
+ * @param {String} type The event to catch, without leading 'on', e.g. 'mousemove' instead of 'onmousemove'.
+ * @param {Function} fn The function to call when the event is triggered.
+ * @param {Object} owner The scope in which the event trigger is called.
+ */
 JXG.addEvent = function( obj, type, fn, owner ) {
     owner['x_internal'+type] = function() {return fn.apply(owner,arguments);};
-    if (typeof obj.addEventListener!='undefined') { // Non-IE browser
+
+    if (JXG.exists(obj.addEventListener)) { // Non-IE browser
         obj.addEventListener(type, owner['x_internal'+type], false);
     } else {  // IE
         obj.attachEvent('on'+type, owner['x_internal'+type]);
@@ -638,29 +713,41 @@ JXG.addEvent = function( obj, type, fn, owner ) {
 };
 
 /**
-  * removeEvent.
-  */
+ * Removes an event listener from a DOM element.
+ * @param {Object} obj Reference to a DOM node.
+ * @param {String} type The event to catch, without leading 'on', e.g. 'mousemove' instead of 'onmousemove'.
+ * @param {Function} fn The function to call when the event is triggered.
+ * @param {Object} owner The scope in which the event trigger is called.
+ */
 JXG.removeEvent = function( obj, type, fn, owner ) {
     try {
-        if (typeof obj.addEventListener!='undefined') { // Non-IE browser
+        if (JXG.exists(obj.addEventListener)) { // Non-IE browser
             obj.removeEventListener(type, owner['x_internal'+type], false);
         } else {  // IE
             obj.detachEvent('on'+type, owner['x_internal'+type]);
         }
     } catch(e) {
-        //document.getElementById('debug').innerHTML += 'on'+type+': ' + owner['x_internal'+type]+'<br>\n';
+        JXG.debug('JSXGraph: Can\'t remove event listener on' + type + ': ' + owner['x_internal' + type]);
     }
 };
 
-JXG.bind = function(fn, owner ) {
+/**
+ * Generates a function which calls the function fn in the scope of owner.
+ * @param {Function} fn Function to call.
+ * @param {Object} owner Scope in which fn is executed.
+ * @returns {Function} A function with the same signature as fn.
+ */
+JXG.bind = function(fn, owner) {
     return function() {
         return fn.apply(owner,arguments);
     };
 };
 
 /**
-  * getPosition: independent from prototype and jQuery
-  */
+ * Cross browser mouse coordinates retrieval relative to the board's top left corner.
+ * @param {Object} [e] The browsers event object. If omitted, <tt>window.event</tt> will be used.
+ * @returns {Array} Contains the position as x,y-coordinates in the first resp. second component.
+ */
 JXG.getPosition = function (e) {
     var posx = 0,
         posy = 0;
@@ -669,20 +756,22 @@ JXG.getPosition = function (e) {
         e = window.event;
     }
 
-    if (e.pageX || e.pageY)     {
+    if (e.pageX || e.pageY) {
         posx = e.pageX;
         posy = e.pageY;
-    }
-    else if (e.clientX || e.clientY)    {
+    } else if (e.clientX || e.clientY)    {
         posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
         posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
     }
+    
     return [posx,posy];
 };
 
 /**
-  * getOffset: Abstraction layer for Prototype.js and jQuery
-  */
+ * Calculates recursively the offset of the DOM element in which the board is stored.
+ * @param {Object} obj A DOM element
+ * @returns {Array} An array with the elements left and top offset.
+ */
 JXG.getOffset = function (obj) {
     var o=obj,
         l=o.offsetLeft,
@@ -700,9 +789,11 @@ JXG.getOffset = function (obj) {
 };
 
 /**
-  * getStyle: Abstraction layer for Prototype.js and jQuery
-  * Now independent from Prototype  and jQuery
-  */
+ * Access CSS style sheets.
+ * @param {Object} obj A DOM element
+ * @param {String} stylename The CSS property to read.
+ * @returns The value of the CSS property and <tt>undefined</tt> if it is not set.
+ */
 JXG.getStyle = function (obj, stylename) {
     return obj.style[stylename];
 };
@@ -710,7 +801,8 @@ JXG.getStyle = function (obj, stylename) {
 /**
  * Extracts the keys of a given object.
  * @param object The object the keys are to be extracted
- * @param onlyOwn If true, additionally check hasOwnProperty()
+ * @param onlyOwn If true, hasOwnProperty() is used to verify that only keys are collected
+ * the object owns itself and not some other object in the prototype chain.
  * @returns {Array} All keys of the given object.
  */
 JXG.keys = function(object, onlyOwn) {
@@ -759,9 +851,26 @@ JXG.clone = function(obj) {
 };
 
 /**
- * Outputs a deep copy of an existing object and not only a flat copy.
+ * Embeds an existing object into another one just like {@link #clone} and copies the contents of the second object
+ * to the new one. Warning: The copied properties of obj2 are just flat copies.
  * @param {Object} obj Object to be copied.
- * @returns {Object} Deep copy of given object.
+ * @param {Object} obj2 Object with data that is to be copied to the new one as well.
+ * @returns {Object} Copy of given object including some new/overwritten data from obj2.
+ */
+JXG.cloneAndCopy = function(obj, obj2) {
+    var cObj = {}, r;
+    cObj.prototype = obj;
+    for(r in obj2)
+        cObj[r] = obj2[r];
+
+    return cObj;
+};
+
+/**
+ * Creates a deep copy of an existing object, i.e. arrays or sub-objects are copied component resp.
+ * element-wise instead of just copying the reference.
+ * @param {Object} obj This object will be copied.
+ * @returns {Object} Ccopy of obj.
  */
 JXG.deepCopy = function(obj) {
     var c, i, prop, j;
@@ -816,22 +925,24 @@ JXG.deepCopy = function(obj) {
 };
 
 /**
- * Embeds an existing object into another one just like {@link #clone} and copies the contents of the second object
- * to the new one. Warning: The copied properties of obj2 are just flat copies.
- * @param {Object} obj Object to be copied.
- * @param {Object} obj2 Object with data that is to be copied to the new one as well.
- * @returns {Object} Copy of given object including some new/overwritten data from obj2.
+ * Converts a JavaScript object into a JSON string.
+ * @param {Object} obj A JavaScript object, functions will be ignored.
+ * @returns {String} The given object stored in a JSON string.
  */
-JXG.cloneAndCopy = function(obj, obj2) {
-    var cObj = {}, r;
-    cObj.prototype = obj;
-    for(r in obj2)
-        cObj[r] = obj2[r];
-
-    return cObj;
-};
-
 JXG.toJSON = function(obj) {
+    var s;
+
+    // check for native JSON support:
+    if(window.JSON && window.JSON.stringify) {
+        try {
+            s = JSON.stringify(obj);
+            return s;
+        } catch(e) {
+            // if something goes wrong, e.g. if obj contains functions we won't return
+            // and use our own implementation as a fallback
+        }
+    }
+
     switch (typeof obj) {
         case 'object':
             if (obj) {
@@ -858,18 +969,26 @@ JXG.toJSON = function(obj) {
     }
 };
 
+/**
+ * Makes a string lower case except for the first character which will be upper case.
+ * @param {String} str Arbitrary string
+ * @returns {String} The capitalized string.
+ */
 JXG.capitalize = function(str) {
     return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
 };
 
 /**
- * Copyright 2009 Nicholas C. Zakas. All rights reserved.
- * MIT Licensed
+ * Process data in timed chunks. Data which takes long to process, either because it is such
+ * a huge amount of data or the processing takes some time, causes warnings in browsers about
+ * irresponsive scripts. To prevent these warnings, the processing is split into smaller pieces
+ * called chunks which will be processed in serial order.
+ * Copyright 2009 Nicholas C. Zakas. All rights reserved. MIT Licensed
  * @param {Array} items to do
- * @param {function} process Function that is applied for every array item
- * @param {Object} context Meaning of this in function process
- * @param {function} callback Function called after the last array element has been processed.
-**/
+ * @param {Function} process Function that is applied for every array item
+ * @param {Object} context The scope of function process
+ * @param {Function} callback This function is called after the last array element has been processed.
+ */
 JXG.timedChunk = function(items, process, context, callback) {
     var todo = items.concat();   //create a clone of the original
     setTimeout(function(){
@@ -885,6 +1004,11 @@ JXG.timedChunk = function(items, process, context, callback) {
     }, 1);
 };
 
+/**
+ * Make numbers given as strings nicer by removing all unnecessary leading and trailing zeroes.
+ * @param {String} str
+ * @returns {String}
+ */
 JXG.trimNumber = function(str) {
 	str = str.replace(/^0+/, "");
 	str = str.replace(/0+$/, "");
@@ -898,6 +1022,11 @@ JXG.trimNumber = function(str) {
 	return str;
 };
 
+/**
+ * Remove all leading and trailing whitespaces from a given string.
+ * @param {String} str
+ * @returns {String}
+ */
 JXG.trim = function(str) {
 	str = str.replace(/^w+/, "");
 	str = str.replace(/w+$/, "");
@@ -905,7 +1034,11 @@ JXG.trim = function(str) {
 	return str;
 };
 
-
+/**
+ * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
+ * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
+ * @param {String} s A debug message.
+ */
 JXG.debug = function(s) {
     if (console && console.log) {
         if (typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "")
@@ -917,9 +1050,7 @@ JXG.debug = function(s) {
 };
 
 
-/*
- * JessieScript startup
- */
+// JessieScript startup: Search for script tags of type text/jessiescript and interpret them.
 JXG.addEvent(window, 'load', function () {
     var scripts = document.getElementsByTagName('script'),
         i, div, board;
@@ -938,6 +1069,10 @@ JXG.addEvent(window, 'load', function () {
     }
 }, window);
 
+/**
+ * Store some undefined value. This is critical because the user or an evil script can destroy the tests using this
+ * value by simply overwriting it with something else than undefined.
+ */
 (function(undefined) {
     JXG.undefined = undefined;
 })();
