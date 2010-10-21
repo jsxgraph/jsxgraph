@@ -362,7 +362,7 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
             arc[i].highlight = function() {
                 this.board.renderer.highlight(this);
                 if(this.label.content != null) {
-                    this.label.content.rendNode.style.fontSize = (2*this.board.fontSize) + 'px';
+                    this.label.content.rendNode.style.fontSize = (2*this.board.options.text.fontSize) + 'px';
                 }
             
                 var dx = - this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];
@@ -382,7 +382,7 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
             arc[i].noHighlight = function() {
                 this.board.renderer.noHighlight(this);
                 if(this.label.content != null) {
-                    this.label.content.rendNode.style.fontSize = (this.board.fontSize) + 'px';
+                    this.label.content.rendNode.style.fontSize = (this.board.options.text.fontSize) + 'px';
                 }
             
                 var dx = -this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1];

@@ -24,100 +24,93 @@
 */
 
 /**
- * @fileoverview The Board object is defined in this file. Board controls all properties and methods
- * used to manage a geonext board like adding geometric elements, removing them, managing
- * mouse over, drag & drop of geometric objects etc.
+ * @fileoverview The JXG.Board class is defined in this file. JXG.Board controls all properties and methods
+ * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  * @author graphjs
  * @version 0.1
  */
 
 /**
  * Constructs a new Board object.
- * @class The Board class stores all methods and properties required
- * to manage a JSXGraph board like adding geometric elements, removing them, managing
- * mouse over, drag & drop of geometric objects etc. You should never create a board using this constructor.
- * Please use {@link JXG.JSXGraph#initBoard} instead.
+ * @class JXG.Board controls all properties and methods used to manage a geonext board like managing geometric
+ * elements, managing mouse and touch events, etc. You probably don't want to use this constructor directly.
+ * Please use {@link JXG.JSXGraph#initBoard} to initialize a board.
  * @constructor
- * @param {String,Object} container The id or reference of the html-element the board is drawn in. This is usually a HTML div.
+ * @param {String} container The id or reference of the HTML DOM element the board is drawn in. This is usually a HTML div.
  * @param {JXG.AbstractRenderer} renderer The reference of a renderer.
  * @param {String} id Unique identifier for the board, may be an empty string or null or even undefined.
  * @param {JXG.Coords} origin The coordinates where the origin is placed, in user coordinates.
  * @param {Number} zoomX Zoom factor in x-axis direction
  * @param {Number} zoomY Zoom factor in y-axis direction
- * @param {int} unitX Units in x-axis direction
- * @param {int} unitY Units in y-axis direction
- * @param {int} canvasWidth  The width of canvas
- * @param {int} canvasHeight The height of canvas
+ * @param {Number} unitX Units in x-axis direction
+ * @param {Number} unitY Units in y-axis direction
+ * @param {Number} canvasWidth  The width of canvas
+ * @param {Number} canvasHeight The height of canvas
  * @param {Boolean} showCopyright Display the copyright text
  */
 JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY, canvasWidth, canvasHeight, showCopyright) {
     /**
      * Board is in no special mode, objects are highlighted on mouse over and objects may be
      * clicked to start drag&drop.
-     * @type int
-     * @private
-     * @final
+     * @type Number
+     * @constant
      */
     this.BOARD_MODE_NONE = 0x0000;
 
     /**
      * Board is in drag mode, objects aren't highlighted on mouse over and the object referenced in
      * drag_obj is updated on mouse movement.
-     * @type int
+     * @type Number
+     * @constant
      * @see JXG.Board#drag_obj
-     * @private
-     * @final
      */
     this.BOARD_MODE_DRAG = 0x0001;
 
     /**
-     * Board is in construction mode, objects are highlighted on mouse over and the behaviour of the board
-     * is determined by the construction type stored in the field constructionType.
-     * @type int
-     * @see JXG.Board#constructionType
-     * @private
-     * @final
-     */
-    this.BOARD_MODE_CONSTRUCT = 0x0010;
-
-    /**
-     * Board is in move origin mode.
-     * @type int
-     * @private
-     * @final
+     * In this mode a mouse move changes the origin's screen coordinates.
+     * @type Number
+     * @constant
      */
     this.BOARD_MODE_MOVE_ORIGIN = 0x0002;
 
     /**
-     /* Updating is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
-     * @type int
+     /* Update is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
+     * @type Number
+     * @constant
      * @see JXG.Board#updateQuality
-     * @private
-     * @final
      */
     this.BOARD_QUALITY_LOW = 0x1;
 
     /**
-     * Updating is made with high quality, e.g. graphs are evaluated at much more points.
-     * @type int
+     * Update is made with high quality, e.g. graphs are evaluated at much more points.
+     * @type Number
+     * @constant
      * @see JXG.Board#updateQuality
-     * @private
-     * @final
      */
     this.BOARD_QUALITY_HIGH = 0x2;
 
+    // TODO: Do we still need the CONSTRUCTIOIN_TYPE_* properties?!?
+    // BEGIN CONSTRUCTION_TYPE_* stuff
+
+    /**
+     * Board is in construction mode, objects are highlighted on mouse over and the behaviour of the board
+     * is determined by the construction type stored in the field constructionType.
+     * @type Number
+     * @constant
+     * @see JXG.Board#constructionType
+     */
+    this.BOARD_MODE_CONSTRUCT = 0x0010;
+
     /**
      * When the board is in construction mode this construction type says we want to construct a point.
-     * @type int
-     * @private
-     * @final
+     * @type Number
+     * @constant
      */
     this.CONSTRUCTION_TYPE_POINT         = 0x43545054;       // CTPT
     /**
      * When the board is in construction mode this construction type says we want to construct a circle.
-     * @type int
-     * @private
-     * @final
+     * @type Number
+     * @constant
      */
     this.CONSTRUCTION_TYPE_CIRCLE        = 0x4354434C;       // CTCL
     /**
@@ -162,6 +155,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * @final
      */
     this.CONSTRUCTION_TYPE_INTERSECTION  = 0x43544953;       // CTIS
+    // END CONSTRUCTION_TYPE_* stuff
 
     /**
      * The html-id of the html element containing the board.
@@ -177,33 +171,31 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     if (this.containerObj==null) {
         throw new Error("\nJSXGraph: HTML container element '" + (container) + "' not found.");
     }
-    //this.containerObj.undoPositioned;  //???
 
     /**
      * A reference to this boards renderer.
-     * @private
      * @type JXG.AbstractRenderer
      */
     this.renderer = renderer;
 
     /**
-    * Some standard options
-    * @type JXG.Options
-    */
+     * Some standard options
+     * @type JXG.Options
+     */
     this.options = JXG.deepCopy(JXG.Options);
 
     /**
      * Dimension of the board.
-     * @private
      * @default 2
-     * @type int
+     * @type Number
      */
     this.dimension = 2;
 
     /**
-     * Coordinates of the boards origin.
-     * @default [0, 0]
-     * @type JXG.Coords
+     * Coordinates of the boards origin. This a object with the two properties
+     * usrCoords and scrCoords. usrCoords always equals [1, 0, 0] and scrCoords
+     * stores the boards origin in homogeneous screen coordinates.
+     * @type Object
      */
     this.origin = {};
     this.origin.usrCoords = [1, 0, 0];
@@ -211,105 +203,97 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
 
     /**
      * Zoom factor in X direction
-     * @type int
+     * @type Number
      */
     this.zoomX = zoomX;
 
     /**
-     * Zoom factor in Y direction
-     * @type int
+     * Zoom factor in Y direction.
+     * @type Number
      */
     this.zoomY = zoomY;
 
     /**
-     * The number of pixels which represent
-     * one unit in user-coordinates in x direction.
-     * @type int
+     * The number of pixels which represent one unit in user-coordinates in x direction.
+     * @type Number
      */
     this.unitX = unitX;
 
     /**
-     * The number of pixels which represent
-     * one unit in user-coordinates in y direction.
-     * @type int
+     * The number of pixels which represent one unit in user-coordinates in y direction.
+     * @type Number
      */
     this.unitY = unitY;
 
     /**
-     * Saving some multiplications
-     * @type int
-     * @private
+     * stretchX is the product of zoomX and unitX. This is basically to save some multiplications.
+     * @type Number
      */
     this.stretchX = this.zoomX*this.unitX;
+
     /**
-     * Saving some multiplications
-     * @type int
-     * @private
+     * stretchY is the product of zoomY and unitY. This is basically to save some multiplications.
+     * @type Number
      */
     this.stretchY = this.zoomY*this.unitY;
 
     /**
-     * Canvas Width
-     * @type int
+     * Canvas width.
+     * @type Number
      */
     this.canvasWidth = canvasWidth;
 
     /**
      * Canvas Height
-     * @type int
+     * @type Number
      */
     this.canvasHeight = canvasHeight;
 
-    /**
-     * Default font size for labels and texts.
-     * @type int
-     */
-    this.fontSize = this.options.text.fontSize;
-
-    /* If the given id is not valid, generate an unique id */
-    if((id != '') && (id != null) && (typeof document.getElementById(id) != 'undefined'))
+    // If the given id is not valid, generate an unique id
+    if(JXG.exists(id) && id !== '' && !JXG.exists(document.getElementById(id))) {
         this.id = id;
-    else
+    } else {
         this.id = this.generateId();
+    }
 
     /**
-     * An array containing all hook-functions.
+     * An array containing all hook functions.
      * @type Array
+     * @see JXG.Board#addHook
+     * @see JXG.Board#removeHook
+     * @see JXG.Board#updateHooks
      */
     this.hooks = [];
 
     /**
      * An array containing all other boards that are updated after this board has been updated.
-     * @private
      * @type Array
+     * @see JXG.Board#addChild
+     * @see JXG.Board#removeChild
      */
     this.dependentBoards = [];
 
     /**
      * An associative array containing all geometric objects belonging to the board. Key is the id of the object and value is a reference to the object.
-     * @private
      * @type Object
      */
     this.objects = {};
 
     /**
-     * This is used for general purpose animations. Stores all the objects that are currently running an animation.
-     * @private
+     * Stores all the objects that are currently running an animation.
      * @type Object
      */
     this.animationObjects = {};
 
     /**
-     * An associative array containing all highlighted geometric objects belonging to the board.
-     * @private
+     * An associative array containing all highlighted elements belonging to the board.
      * @type Object
      */
     this.highlightedObjects = {};
 
     /**
      * Number of objects ever created on this board. This includes every object, even invisible and deleted ones.
-     * @private
-     * @type int
+     * @type Number
      */
     this.numObjects = 0;
 
@@ -327,289 +311,266 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * <li>JXG.Board.BOARD_MODE_CONSTRUCT</li>
      * <li>JXG.Board.BOARD_MODE_MOVE_ORIGIN</li>
      * </ul>
-     * @private
-     * @type int
+     * @type Number
      */
     this.mode = this.BOARD_MODE_NONE;
 
     /**
-     * The update quality of the board. In most cases this is set to {@link JXG.Board#BOARD_QUALITY_HIGH}. If {@link JXG.Board#mode} equals {@link JXG.Board#BOARD_MODE_DRAG}
-     * this is set to {@link JXG.Board#BOARD_QUALITY_LOW} to speed up the update process by e.g. reducing the number of evaluation points when plotting functions. Possible values are
+     * The update quality of the board. In most cases this is set to {@link JXG.Board#BOARD_QUALITY_HIGH}.
+     * If {@link JXG.Board#mode} equals {@link JXG.Board#BOARD_MODE_DRAG} this is set to
+     * {@link JXG.Board#BOARD_QUALITY_LOW} to speed up the update process by e.g. reducing the number of
+     * evaluation points when plotting functions. Possible values are
      * <ul>
      * <li>BOARD_QUALITY_LOW</li>
      * <li>BOARD_QUALITY_HIGH</li>
      * </ul>
+     * @type Number
      * @see JXG.Board#mode
-     * @private
-     * @type int
      */
     this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-   /**
-    * If true updates are skipped
-     * @private
-    * @type Boolean
-    */
-   this.isSuspendedRedraw = false;
+    /**
+     * If true updates are skipped.
+     * @type Boolean
+     */
+    this.isSuspendedRedraw = false;
 
-   /**
-    * The way objects can be dragged. If true, objects can only moved on a predefined grid, if false objects can be moved smoothly almost everywhere.
-    * @type Boolean
-    * @default JXG.Options.grid#snapToGrid
-    */
-   this.snapToGrid = this.options.grid.snapToGrid;
+    /**
+     * The way objects can be dragged. If true, objects can only moved on a predefined grid, if false objects
+     * can be moved smoothly almost everywhere.
+     * @type Boolean
+     * @default JXG.Options.grid#snapToGrid
+     */
+    this.snapToGrid = this.options.grid.snapToGrid;
 
-   /**
-    * The amount of grid points plus one that fit in one unit of user coordinates in x direction.
-    * @type int
-    * @default JXG.Options.grid#gridX
-    */
-   this.gridX = this.options.grid.gridX;
+    /**
+     * The amount of grid points plus one that fit in one unit of user coordinates in x direction.
+     * @type Number
+     * @default JXG.Options.grid#gridX
+     */
+    this.gridX = this.options.grid.gridX;
 
-   /**
-    * The amount of grid points plus one that fit in one unit of user coordinates in y direction.
-    * @type int
-    * @default JXG.Options.grid#gridY
-    */
-   this.gridY = this.options.grid.gridY;
+    /**
+     * The amount of grid points plus one that fit in one unit of user coordinates in y direction.
+     * @type Number
+     * @default JXG.Options.grid#gridY
+     */
+    this.gridY = this.options.grid.gridY;
 
-   /**
-    * Color of the grid.
-    * @type String
-    * @default JXG.Options.grid#gridColor
-    */
-   this.gridColor = this.options.grid.gridColor;
+    /**
+     * Color of the grid.
+     * @type String
+     * @default JXG.Options.grid#gridColor
+     */
+    this.gridColor = this.options.grid.gridColor;
 
-   /**
-    * Opacity of the grid color, between 0 and 1.
-    * @type Number
-    * @default JXG.Options.grid#gridOpacity
-    */
-   this.gridOpacity = this.options.grid.gridOpacity;
+    /**
+     * Opacity of the grid color, between 0 and 1.
+     * @type Number
+     * @default JXG.Options.grid#gridOpacity
+     */
+    this.gridOpacity = this.options.grid.gridOpacity;
 
-   /**
-    * Determines whether the grid is dashed or not.
-    * @type Number
-    * @default JXG.Options.grid#gridDash
-    */
-   this.gridDash = this.options.grid.gridDash;
+    /**
+     * Determines whether the grid is dashed or not.
+     * @type Number
+     * @default JXG.Options.grid#gridDash
+     */
+    this.gridDash = this.options.grid.gridDash;
 
-   /**
-    * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in x direction.
-    * @type int
-    * @default JXG.Options.grid#snapSizeX
-    */
-   this.snapSizeX = this.options.grid.snapSizeX;
+    /**
+     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in x direction.
+     * @type Number
+     * @default JXG.Options.grid#snapSizeX
+     */
+    this.snapSizeX = this.options.grid.snapSizeX;
 
-   /**
-    * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in y direction.
-    * @type int
-    * @default JXG.Options.grid#snapSizeY
-    */
-   this.snapSizeY = this.options.grid.snapSizeY;
+    /**
+     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in y direction.
+     * @type Number
+     * @default JXG.Options.grid#snapSizeY
+     */
+    this.snapSizeY = this.options.grid.snapSizeY;
 
-   this.calculateSnapSizes();
-    
-   /**
-    * Visibility of the boards grid. If hasGrid is true, a grid will be shown.
-    * @private
-    * @type Boolean
-    * @default JXG.Options.grid#hasGrid
-    */
-   this.hasGrid = this.options.grid.hasGrid;
+    this.calculateSnapSizes();
 
-   /**
-    * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
-    * @type int
-    * @see JXG.Board#drag_dy
-    * @see JXG.Board#drag_obj
-    * @private
-    */
-   this.drag_dx = 0;
+    /**
+     * Visibility of the boards grid. If hasGrid is true, a grid will be shown.
+     * @type Boolean
+     * @default JXG.Options.grid#hasGrid
+     */
+    this.hasGrid = this.options.grid.hasGrid;
 
-   /**
-    * The distance from the mouse to the dragged object in y direction when the user clicked the mouse button.
-    * @type int
-    * @see JXG.Board#drag_dx
-    * @see JXG.Board#drag_obj
-    * @private
-    */
-   this.drag_dy = 0;
+    /**
+     * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
+     * @type Number
+     * @see JXG.Board#drag_dy
+     * @see JXG.Board#drag_obj
+     */
+    this.drag_dx = 0;
 
-   /**
+    /**
+     * The distance from the mouse to the dragged object in y direction when the user clicked the mouse button.
+     * @type Number
+     * @see JXG.Board#drag_dx
+     * @see JXG.Board#drag_obj
+     */
+    this.drag_dy = 0;
+
+    /**
      * Absolute position of the mouse pointer in screen pixel from the top left corner
      * of the HTML window.
-    * @type Array
+     * @type Array
      */
-   this.mousePosAbs = [0,0];
+    this.mousePosAbs = [0,0];
 
     /**
      * Relative position of the mouse pointer in screen pixel from the top left corner
      * of the JSXGraph canvas (the div element contining the board).
      * @type Array
      */
-   this.mousePosRel = [0,0];
-
-   /**
-    * A reference to the object that is dragged on the board. Usually this is an object of the class {@link JXG.Point}.
-    * @private
-    * @type Object
-    */
-   this.drag_obj = [];
-   
-   /**
-    * This property is used to store the latest time the user clicked on the board and the position he clicked.
-    * @type object
-    */
-    this.last_click = {
-		time: 0,
-		posX: 0,
-		posY: 0
-	};
-    
-   /**
-    * A string containing the XML text of the construction.
-    * This is set in {@link JXG.FileReader#parseString}.
-    * Only useful if a construction is read from a GEONExT-, Intergeo-, Geogebra-, or Cinderella-File.
-    * @type String
-    * @private
-    */
-   this.xmlString = '';
+    this.mousePosRel = [0,0];
 
     /**
-    * Display the licence text.
-    * @see JXG.JSXGraph#licenseText
-    * @see JXG.JSXGraph#initBoard
-    */
+     * An array of references to the objects that are dragged on the board. Usually these are an object of
+     * type {@link JXG.Point}.
+     * @type Array
+     */
+    this.drag_obj = [];
+
+    /**
+     * This property is used to store the last time the user clicked on the board and the position he clicked.
+     * @type Object
+     */
+    this.last_click = {
+        time: 0,
+        posX: 0,
+        posY: 0
+    };
+
+    /**
+     * A string containing the XML text of the construction. This is set in {@link JXG.FileReader#parseString}.
+     * Only useful if a construction is read from a GEONExT-, Intergeo-, Geogebra-, or Cinderella-File.
+     * @type String
+     */
+    this.xmlString = '';
+
+    /**
+     * Display the licence text.
+     * @see JXG.JSXGraph#licenseText
+     * @see JXG.JSXGraph#initBoard
+     */
     this.showCopyright = false;
-    if ( (showCopyright!=null && showCopyright) || (showCopyright==null && this.options.showCopyright) ) {
-        this.renderer.displayCopyright(JXG.JSXGraph.licenseText,this.fontSize);
+    if((showCopyright!=null && showCopyright) || (showCopyright==null && this.options.showCopyright)) {
+        this.renderer.displayCopyright(JXG.JSXGraph.licenseText, this.options.text.fontSize);
         this.showCopyright = true;
     }
 
-   /**
-    * Full updates are needed after zoom and axis translates.
-    * This saves some time during update
-    * @private
-    * @default false
-    * @type Boolean
-    */
-   this.needsFullUpdate = false;
+    /**
+     * Full updates are needed after zoom and axis translates. This saves some time during an update.
+     * @default false
+     * @type Boolean
+     */
+    this.needsFullUpdate = false;
 
-   /**
-    * if {reducedUpdate} is set to true, then only the dragged element and few (i.e. 2) following
-    * elements are updated during mouse move. On mouse up the whole construction is
-    * updated. This enables us to be fast even on very slow devices.
-    * @private
-    * @type Boolean
-    * @default false
-    */
+    /**
+     * If reducedUpdate is set to true then only the dragged element and few (e.g. 2) following
+     * elements are updated during mouse move. On mouse up the whole construction is
+     * updated. This enables us to be fast even on very slow devices.
+     * @type Boolean
+     * @default false
+     */
     this.reducedUpdate = false;
 
     /**
      * The current color blindness deficiency is stored in this property. If color blindness is not emulated
-     * at the moment, it's value is <tt>none</tt>.
+     * at the moment, it's value is 'none'.
      */
     this.currentCBDef = 'none';
 
-   /**
-    * If GEONExT constructions are displayed, then this property should be set to true.
-    * Then no stdform updates and no dragging of lines, circles and curves is possible.
-    * This is set in {@link JXG.GeonextReader#readGeonext}.
-    * @private
-    * @type Boolean
-    * @default false
-    * @see JXG.GeonextReader@readGeonext
-    */
+    /**
+     * If GEONExT constructions are displayed, then this property should be set to true. Then no stdform updates
+     * and no dragging of lines, circles and curves is possible. This is set in {@link JXG.GeonextReader#readGeonext}.
+     * @type Boolean
+     * @default false
+     * @see JXG.GeonextReader#readGeonext
+     */
     this.geonextCompatibilityMode = false;
 
-    if (this.options.text.useASCIIMathML) {
-        if (typeof translateASCIIMath != 'undefined') {
-            init();
-        } else {
-            this.options.text.useASCIIMathML = false;
-        }
+    if (this.options.text.useASCIIMathML && translateASCIIMath) {
+        init();
+    } else {
+        this.options.text.useASCIIMathML = false;
     }
 
-    /**
-     * Introduce our event handlers to the browser
-     */
-   JXG.addEvent(document, 'mousedown', this.mouseDownListener, this);
-   JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+    // Introduce our event handlers to the browser
+    JXG.addEvent(document, 'mousedown', this.mouseDownListener, this);
+    JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
 
-    /**
-     * To run JSXGraph on an iPhone/iPod/iPad we need these event listeners.
-     */
+    // To run JSXGraph on mobile touch devices we need these event listeners.
+    JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+    JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+    JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
 
-   JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
-   JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
-   JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
-
-// This one produces errors on IE
-//   JXG.addEvent(this.containerObj, 'contextmenu', function(e) { e.preventDefault(); return false;}, this);
-// this one works on IE, Firefox and Chromium with default configurations
-// It's possible this doesn't work on some Safari or Opera versions by default, the user then has to allow the deactivation of the context menu.
-   this.containerObj.oncontextmenu = function(e) {if(e !== JXG.undefined) e.preventDefault(); return false; };
+    // This one produces errors on IE
+    //   JXG.addEvent(this.containerObj, 'contextmenu', function(e) { e.preventDefault(); return false;}, this);
+    // this one works on IE, Firefox and Chromium with default configurations
+    // It's possible this doesn't work on some Safari or Opera versions by default, the user then has to allow the deactivation of the context menu.
+    this.containerObj.oncontextmenu = function(e) {if(e !== JXG.undefined) e.preventDefault(); return false; };
 };
 
 /**
- * Generates an unique name for the given object. The result depends on object.type, if the object is a {@link JXG.Point}, capital characters are used, if it is
- * of type {@link JXG.Line} only lower case characters are used. If object is of type {@link JXG.Polygon}, a bunch of lower case characters prefixed
- * with P_ are used. If object is of type {@link JXG.Circle} the name is generated using lower case characters. prefixed with k_ is used. In any
- * other case, lower case chars prefixed with s_ is used.
- * @param {String,Object} object Reference or id or name of an geometry object that is to be named.
+ * Generates an unique name for the given object. The result depends on the objects type, if the
+ * object is a {@link JXG.Point}, capital characters are used, if it is of type {@link JXG.Line}
+ * only lower case characters are used. If object is of type {@link JXG.Polygon}, a bunch of lower
+ * case characters prefixed with P_ are used. If object is of type {@link JXG.Circle} the name is
+ * generated using lower case characters. prefixed with k_ is used. In any other case, lower case
+ * chars prefixed with s_ is used.
+ * @param {Object} object Reference of an JXG.GeometryElement that is to be named.
  * @returns {String} Unique name for the object.
- * @private
  */
 JXG.Board.prototype.generateName = function(object) {
     if(object.type == JXG.OBJECT_TYPE_TICKS) {
         return '';
     }
 
-    var possibleNames;
+    var possibleNames,
+        maxNameLength = 3,
+        pre = '',
+        post = '',
+        indices = [],
+        name = '',
+        i, j;
+    
     if(object.elementClass == JXG.OBJECT_CLASS_POINT) {
         // points have capital letters
         possibleNames = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                                   'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-    }
-    else {
+    } else {
         // all other elements get lowercase labels
         possibleNames = ['', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
                                   'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
     }
 
-    // maximum length of a name
-    var maxNameLength = 3;
-    var pre = '';
-    var nameBase = '';
-    var post = '';
-
-    if(object.elementClass == JXG.OBJECT_CLASS_POINT || object.elementClass == JXG.OBJECT_CLASS_LINE) {
-    }
-    else {
-        if(object.type == JXG.OBJECT_TYPE_POLYGON) {
+    switch(object.type) {
+        case JXG.OBJECT_TYPE_POLYGON:
             pre = 'P_{';
             post = '}';
-        }
-        else if(object.type == JXG.OBJECT_TYPE_CIRCLE) {
+            break;
+        case JXG.OBJECT_TYPE_CIRCLE:
             pre = 'k_{';
             post = '}';
-        }
-        else if(object.type == JXG.OBJECT_TYPE_ANGLE) {
+            break;
+        case JXG.OBJECT_TYPE_ANGLE:
             pre = 'W_{';
             post = '}';
-        }
-        else {
-            pre = 's_{';
-            post = '}';
-        }
+            break;
+        default:
+            if(object.elementClass != JXG.OBJECT_CLASS_POINT && object.elementClass != JXG.OBJECT_CLASS_LINE) {
+                pre = 's_{';
+                post = '}';
+            }
     }
-    var indices = [];
-    var name = '';
-    var tmp = '';
-
-    var i = 0;
-    var j = 0;
 
     for(i=0; i<maxNameLength; i++) {
         indices[i] = 0;
@@ -641,20 +602,21 @@ JXG.Board.prototype.generateName = function(object) {
 };
 
 /**
- * Generates unique id for a board. The result is randomly generated and prefixed with 'gxtBoard'.
+ * Generates unique id for a board. The result is randomly generated and prefixed with 'jxgBoard'.
  * @returns {String} Unique id for a board.
- * @private
  */
 JXG.Board.prototype.generateId = function () {
     var r = 1;
 
     // as long as we don't have an unique id generate a new one
-    while(JXG.JSXGraph.boards['gxtBoard' + r] != null) {
+    while(JXG.JSXGraph.boards['jxgBoard' + r] != null) {
         r = Math.round(Math.random()*33);
     }
 
-    return ('gxtBoard' + r);
+    return ('jxgBoard' + r);
 };
+
+// -- goes on here -- //
 
 /**
  * Composes the unique id for a board. If the ID is empty ('' or null) a new ID is generated, depending on the object type.
@@ -687,14 +649,12 @@ JXG.Board.prototype.setId = function (obj, type) {
 
 /**
  * Calculates mouse coordinates relative to the boards container.
- * @param {Event} Event The browsers event object.
  * @return {Array} Array of coordinates relative the boards container top left corner.
- * @private
  */
-JXG.Board.prototype.getRelativeMouseCoordinates = function (Event) {
+JXG.Board.prototype.getRelativeMouseCoordinates = function () {
     var pCont = this.containerObj,
         cPos = JXG.getOffset(pCont),
-        n; //Element.cumulativeOffset(pCont);
+        n;
 
     // add border width
     n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));

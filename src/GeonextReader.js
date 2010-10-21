@@ -265,11 +265,11 @@ this.readGeonext = function(tree,board) {
         //                      1*boardTmp.viewportRight,1*boardTmp.viewportBottom],true);
     }
 
-    if(1*boardTmp.fontSize != 0) {
-        board.fontSize = 1*boardTmp.fontSize;
+    if(1*boardTmp.options.text.fontSize != 0) {
+        board.options.text.fontSize = 1*boardTmp.options.text.fontSize;
     }
     else {
-        board.fontSize = 12;
+        board.options.text.fontSize = 12;
     }
     board.geonextCompatibilityMode = true;
 
