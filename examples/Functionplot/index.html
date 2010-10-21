@@ -18,8 +18,8 @@
 	<!-- script type="text/javascript" charset="utf-8" src="phonegap.js"></script -->
     <script type="text/javascript">
     JXG.Options.showCopyright = true;
+    JXG.Options.showNavigation = false;
     
-    var myStorage = localStorage;
     var colorArray = ['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'];
     var plotNr = 0;
     var options = {
@@ -32,6 +32,7 @@
             'lastFunction': 'sin(x)*x'
         };
     var board;
+    var jxgHistory = [];
     
 	function init() {
 		// set board settings dependent on device
@@ -39,23 +40,14 @@
 			// we are on an iPad
 			document.getElementById('jxgboxDiv').style.width  = '760px';
 			document.getElementById('jxgboxDiv').style.height = '835px';
-			document.getElementById('optionDiv').style.display  = 'none';
-			document.getElementById('optionDiv').style.width  = '760px';
-			document.getElementById('optionDiv').style.height = '835px';
 		} else if(navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i)) {
 			// we are on an iPhone/iPod Touch
 			document.getElementById('jxgboxDiv').style.width  = '312px';
 			document.getElementById('jxgboxDiv').style.height = '291px';
-			document.getElementById('optionDiv').style.display  = 'none';
-			document.getElementById('optionDiv').style.width  = '312px';
-			document.getElementById('optionDiv').style.height = '291px';
 		} else {
 			// default settings - same like iPhone/iPod
 			document.getElementById('jxgboxDiv').style.width  = '312px';
 			document.getElementById('jxgboxDiv').style.height = '291px';
-			document.getElementById('optionDiv').style.display  = 'none';
-			document.getElementById('optionDiv').style.width  = '312px';
-			document.getElementById('optionDiv').style.height = '291px';
 		}
         restoreOptions();
 		board = JXG.JSXGraph.initBoard('jxgboxDiv', 
@@ -63,46 +55,37 @@
                  boundingbox:[options.minX,options.maxY, options.maxX, options.minY]});
         
         document.getElementById('input').value = options.lastFunction;
-	};
-	
-	function toggleOptionsView() {
-		var opt = document.getElementById('optionDiv'),
-            jsx = document.getElementById('jxgboxDiv'),
-            optBar = document.getElementById('optionBar'),
-            jsxBar = document.getElementById('jxgBar');
-		if(opt.style.display == 'none') {
-			opt.style.display = 'block';
-            jsx.style.display = 'none';
-            optBar.style.display = 'block';
-            jsxBar.style.display = 'none';
-            document.getElementById('bluerightbutton').style.display = 'none';
-		} else {
-			opt.style.display = 'none';
-            jsx.style.display = 'block';
-            optBar.style.display = 'none';
-            jsxBar.style.display = 'block';
-            document.getElementById('bluerightbutton').style.display = 'block';
-		}
+        restoreHistory();
 	};
 	
 	function plotter() {
         var txt = document.getElementById('input').value;
+        var color = colorArray[plotNr%colorArray.length]; 
         options.lastFunction = txt;
+        plotFunction(txt, color, options.strokeWidth, options.showDerivative);
         
-		var t = JXG.GeonextParser.geonext2JS(txt);
-		var f = new Function('x','var y = '+t+'; return y;');
-        var color = colorArray[plotNr%colorArray.length]; plotNr++;
-		board.create('functiongraph',[f],
-                {strokeColor:color, strokeWidth:options.strokeWidth,
+        // Save options.lastFunction
+        localStorage.removeItem('JXG_Options');        
+        localStorage.setItem('JXG_Options', JSON.stringify(options));
+        
+        // Save jxgHistory
+        saveHistory(txt, color, options.strokeWidth, options.showDerivative);
+        plotNr++;
+    };
+    
+    function plotFunction(txt, color, strokeWidth, showDerivative) {
+        var t = JXG.GeonextParser.geonext2JS(txt);
+        var f = new Function('x','var y = '+t+'; return y;');
+        
+        board.create('functiongraph',[f],
+                {strokeColor:color, strokeWidth:strokeWidth,
                 highlightStrokeColor:'#999999'});
-		if (options.showDerivative) {
+        if (showDerivative) {
             board.create('functiongraph',[JXG.Math.Numerics.D(f)],
-                {strokeColor:color, strokeWidth:options.strokeWidth, dash:2,
+                {strokeColor:color, strokeWidth:strokeWidth, dash:2,
                  highlightStrokeColor:'#999999'});
         }
-        myStorage.removeItem('JXG_Options');        
-        myStorage.setItem('JXG_Options', JSON.stringify(options));
-	};
+    };
 	
 	function clearBoard() {
         JXG.JSXGraph.freeBoard(board);
@@ -110,75 +93,61 @@
                 {axis:true, grid:true, 
                  boundingbox:[options.minX,options.maxY, options.maxX, options.minY]});
         plotNr = 0;
-	};
-	
-	/**
-	 * Option handling
-	 * After clicking on save button in Options
-	 * the values are stored in the object 'options'.
-	 * Additionally, the options are stored in myStorage.
-	 */
-	function save() {
-        // Speichere die Optionen und gehe wieder zurueck
         
-        options.strokeWidth = parseInt(document.getElementById('strokeWidth').value); 
-        options.showDerivative = document.getElementById('showDerivative').checked;
-        options.minX = parseFloat(document.getElementById('minX').value);
-        options.maxX = parseFloat(document.getElementById('maxX').value);
-        options.minY = parseFloat(document.getElementById('minY').value);
-        options.maxY = parseFloat(document.getElementById('maxY').value);
-
-        toggleOptionsView();
-        board.setBoundingBox([options.minX,options.maxY, options.maxX, options.minY], false);
-        myStorage.removeItem('JXG_Options');        
-        myStorage.setItem('JXG_Options', JSON.stringify(options));
-    };
-    
-    function cancel() {
-        // Speichere die Optionen und gehe wieder zurueck
-        restoreOptions();
-        toggleOptionsView();
-    };
-    
-	function reset() {
-		/*
-		myStorage.setItem('strokeWidth', default.value);//TODO: default value?
-		myStorage.setItem('showDerivative', default.value);//TODO: default value?
-		*/
-		toggleOptionsView();
+        jxgHistory = [];
+        localStorage.removeItem('JXG_History');        
+        localStorage.setItem('JXG_History', JSON.stringify(jxgHistory));
 	};
 	
+    
 	/**
-	 * We read from myStorage, during init() and after pressing
+	 * We read from localStorage, during init() and after pressing
 	 * cancel in Options.
 	 */
 	function restoreOptions() {
-        var retrievedObject = myStorage.getItem('JXG_Options');
+        var retrievedObject = localStorage.getItem('JXG_Options');
         if (retrievedObject!=null) {
             options = JSON.parse(retrievedObject);
         }
-        document.getElementById('strokeWidth').value = options.strokeWidth;
-        document.getElementById('showDerivative').checked = options.showDerivative;
-        document.getElementById('minX').value = options.minX;
-        document.getElementById('maxX').value = options.maxX;
-        document.getElementById('minY').value = options.minY;
-        document.getElementById('maxY').value = options.maxY;
 	};
-	
+
+    function saveHistory(txt, color, strokeWidth, showDerivative) {
+        jxgHistory.push(
+            {
+                'txt': txt,
+                'color': color,
+                'strokeWidth': strokeWidth,
+                'showDerivative': showDerivative
+            });
+        localStorage.removeItem('JXG_History');        
+        localStorage.setItem('JXG_History', JSON.stringify(jxgHistory));
+    };
+    
+    function restoreHistory() {
+        var i, len, h;
+        var retrievedObject = localStorage.getItem('JXG_History');
+        if (retrievedObject!=null) {
+            jxgHistory = JSON.parse(retrievedObject);
+            len = jxgHistory.length;
+            console.log(len);
+            if (len>0) {
+                board.suspendUpdate();
+                for(i=0;i<len;i++) {
+                    h = jxgHistory[i];
+                    plotFunction(h.txt, h.color, h.strokeWidth, h.showDerivative);
+                }
+                board.unsuspendUpdate();
+            }
+        }
+    };
+
   </script>
   </head>
   <body onload="init();">
   	<div id="topbar">
 		<div id="title">JSXGraph function plot</div>
-        <div id="bluerightbutton"><a href="javascript:toggleOptionsView();">options</a></div>
+        <div id="bluerightbutton"><a href="options.html">options</a></div>
 	</div>
-	<div id="optionBar" style="display:none">
-        <div id="tributton">
-            <div class="links">
-                <a href="javascript:save()">save</a><a href="javascript:cancel()">cancel</a><a href="javascript:reset()">reset</a>
-            </div>
-        </div>
-    </div>
     <div id="jxgBar">
         <div id="tributton">
             <div class="links">
@@ -188,35 +157,6 @@
     </div>
 	<div id="content" align="center">
 		<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
-		<div id="optionDiv" align="center">
-			<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
-                <ul class="pageitem">
-                    <li class="checkbox">
-                        <span class="name">Show derivative</span>
-                        <input id="showDerivative" type="checkbox" />
-                    </li>   
-                    <li class="smallfield">
-						<span class="name">Stroke width</span>
-						<input placeholder="" id="strokeWidth" type="text" />
-					</li>
-                    <li class="smallfield">
-                        <span class="name">min X</span>
-                        <input placeholder="" id="minX" type="text"/>
-                    </li>
-                    <li class="smallfield">
-                        <span class="name">max X</span>
-                        <input placeholder="" id="maxX" type="text" />
-                    </li>
-                    <li class="smallfield">
-                        <span class="name">min Y</span>
-                        <input placeholder="" id="minY" type="text" />
-                    </li>
-                    <li class="smallfield">
-                        <span class="name">max Y</span>
-                        <input placeholder="" id="maxY" type="text" />
-                    </li>
-				</ul>
-		</div>
         <div id="jxgboxDiv" class="jxgbox"></div>
 	</div>
 
