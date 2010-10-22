@@ -17,6 +17,7 @@
     <script type="text/javascript">
     var options = {
             'strokeWidth':2,
+            'withLabel':true,
             'minX':-5,
             'maxX':5,
             'minY':-5,
@@ -35,6 +36,9 @@
 			// we are on an iPhone/iPod Touch
 			document.getElementById('optionDiv').style.width  = '312px';
 			document.getElementById('optionDiv').style.height = '291px';
+        } else if(navigator.userAgent.match(/chrome/i)) {
+            document.getElementById('optionDiv').style.width  = '760px';
+            document.getElementById('optionDiv').style.height = '835px';
 		} else {
 			// default settings - same like iPhone/iPod
 			document.getElementById('optionDiv').style.width  = '312px';
@@ -53,6 +57,9 @@
         // Speichere die Optionen und gehe wieder zurueck
         options.strokeWidth = parseInt(document.getElementById('strokeWidth').value); 
         options.showDerivative = document.getElementById('showDerivative').checked;
+        options.withLabel = document.getElementById('withLabel').checked;
+        options.dash = document.getElementById('dash').value;
+        
         options.minX = parseFloat(document.getElementById('minX').value);
         options.maxX = parseFloat(document.getElementById('maxX').value);
         options.minY = parseFloat(document.getElementById('minY').value);
@@ -88,6 +95,9 @@
         }
         document.getElementById('strokeWidth').value = options.strokeWidth;
         document.getElementById('showDerivative').checked = options.showDerivative;
+        document.getElementById('withLabel').checked = options.withLabel;
+        document.getElementById('dash').selectedIndex = options.dash;
+
         document.getElementById('minX').value = options.minX;
         document.getElementById('maxX').value = options.maxX;
         document.getElementById('minY').value = options.minY;
@@ -98,8 +108,10 @@
   </head>
   <body onload="init();">
   	<div id="topbar">
-        <div id="leftnav"><a href="index.html"><img alt="home" src="images/home.png" /></a></div>
-        <div id="duoselectionbuttons"><a href="javascript:save()">save</a><a href="javascript:reset()">reset</a></div>
+        <div id="leftnav"><a href="javascript:save()"><img alt="home" src="images/home.png" /></a></div>
+        <div id="title">Settings</div>        
+        <div id="bluerightbutton"><a href="javascript:reset()">Reset</a></div>
+        <!--<div id="duoselectionbuttons"><a href="javascript:save()">save</a><a href="javascript:reset()">reset</a></div>-->
     </div>
     <!--
     <div id="duobutton">
@@ -110,32 +122,49 @@
     -->
 	<div id="content" align="center">
 		<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
-        <div id="optionDiv" align="center">
+        <div id="optionDiv">
 			<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
                 <ul class="pageitem">
                     <li class="checkbox">
                         <span class="name">Show derivative</span>
                         <input id="showDerivative" type="checkbox" />
                     </li>   
+                    <li class="checkbox">
+                        <span class="name">Show label</span>
+                        <input id="withLabel" type="checkbox" />
+                    </li>   
+                    <li class="select">
+                        <select id="dash">
+                            <option value="0">Solid</option>
+                            <option value="1">Dash style 1</option>
+                            <option value="2">Dash style 2</option>
+                            <option value="3">Dash style 3</option>
+                            <option value="4">Dash style 4</option>
+                            <option value="5">Dash style 5</option>
+                            <option value="6">Dash style 6</option>
+                        </select><span class="arrow"></span>
+                    </li>
                     <li class="smallfield">
-						<span class="name">Stroke width</span>
-						<input placeholder="" id="strokeWidth" type="text" />
-					</li>
+                        <span class="name">Stroke width</span>
+                        <input placeholder="" id="strokeWidth" type="tel" />
+                    </li>
+                </ul>
+                <ul class="pageitem">
                     <li class="smallfield">
                         <span class="name">min X</span>
-                        <input placeholder="" id="minX" type="text"/>
+                        <input placeholder="" id="minX" type="tel"/>
                     </li>
                     <li class="smallfield">
                         <span class="name">max X</span>
-                        <input placeholder="" id="maxX" type="text" />
+                        <input placeholder="" id="maxX" type="tel" />
                     </li>
                     <li class="smallfield">
                         <span class="name">min Y</span>
-                        <input placeholder="" id="minY" type="text" />
+                        <input placeholder="" id="minY" type="tel" />
                     </li>
                     <li class="smallfield">
                         <span class="name">max Y</span>
-                        <input placeholder="" id="maxY" type="text" />
+                        <input placeholder="" id="maxY" type="tel" />
                     </li>
 				</ul>
         </div>

@@ -8,6 +8,7 @@
 
     <title>JSXGraph function plot</title>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="jsxgraph.css" />
 	<!--<script type="text/javascript" src="../../src/loadjsxgraph.js"></script>-->
     <script type="text/javascript" src="jsxgraphcore.js"></script>
 	
@@ -44,6 +45,9 @@
 			// we are on an iPhone/iPod Touch
 			document.getElementById('jxgboxDiv').style.width  = '312px';
 			document.getElementById('jxgboxDiv').style.height = '291px';
+        } else if(navigator.userAgent.match(/chrome/i)) {
+            document.getElementById('jxgboxDiv').style.width  = '760px';
+            document.getElementById('jxgboxDiv').style.height = '835px';
 		} else {
 			// default settings - same like iPhone/iPod
 			document.getElementById('jxgboxDiv').style.width  = '312px';
@@ -62,27 +66,29 @@
         var txt = document.getElementById('input').value;
         var color = colorArray[plotNr%colorArray.length]; 
         options.lastFunction = txt;
-        plotFunction(txt, color, options.strokeWidth, options.showDerivative);
+        plotFunction(txt, color, options);
         
         // Save options.lastFunction
         localStorage.removeItem('JXG_Options');        
         localStorage.setItem('JXG_Options', JSON.stringify(options));
         
         // Save jxgHistory
-        saveHistory(txt, color, options.strokeWidth, options.showDerivative);
+        saveHistory(txt, color, options);
         plotNr++;
     };
     
-    function plotFunction(txt, color, strokeWidth, showDerivative) {
+    function plotFunction(txt, color, opt) {
         var t = JXG.GeonextParser.geonext2JS(txt);
         var f = new Function('x','var y = '+t+'; return y;');
         
         board.create('functiongraph',[f],
-                {strokeColor:color, strokeWidth:strokeWidth,
-                highlightStrokeColor:'#999999'});
-        if (showDerivative) {
+                {strokeColor:color, strokeWidth:opt.strokeWidth,
+                highlightStrokeColor:'#999999', name:txt, 
+                withLabel:opt.withLabel,
+                dash:opt.dash});
+        if (opt.showDerivative) {
             board.create('functiongraph',[JXG.Math.Numerics.D(f)],
-                {strokeColor:color, strokeWidth:strokeWidth, dash:2,
+                {strokeColor:color, strokeWidth:opt.strokeWidth, dash:2,
                  highlightStrokeColor:'#999999'});
         }
     };
@@ -111,13 +117,15 @@
         }
 	};
 
-    function saveHistory(txt, color, strokeWidth, showDerivative) {
+    function saveHistory(txt, color, opt) {
         jxgHistory.push(
             {
                 'txt': txt,
                 'color': color,
-                'strokeWidth': strokeWidth,
-                'showDerivative': showDerivative
+                'strokeWidth': opt.strokeWidth,
+                'showDerivative': opt.showDerivative,
+                'withLabel': opt.withLabel,
+                'dash': opt.dash,
             });
         localStorage.removeItem('JXG_History');        
         localStorage.setItem('JXG_History', JSON.stringify(jxgHistory));
@@ -129,12 +137,11 @@
         if (retrievedObject!=null) {
             jxgHistory = JSON.parse(retrievedObject);
             len = jxgHistory.length;
-            console.log(len);
             if (len>0) {
                 board.suspendUpdate();
                 for(i=0;i<len;i++) {
                     h = jxgHistory[i];
-                    plotFunction(h.txt, h.color, h.strokeWidth, h.showDerivative);
+                    plotFunction(h.txt, h.color, h);
                 }
                 board.unsuspendUpdate();
             }
@@ -145,13 +152,14 @@
   </head>
   <body onload="init();">
   	<div id="topbar">
-		<div id="title">JSXGraph function plot</div>
-        <div id="bluerightbutton"><a href="options.html">options</a></div>
+        <div id="leftbutton"><a href="javascript:clearBoard()">Clear</a></div>
+		<div id="title">Jessiegraph</div>
+        <div id="rightbutton"><a href="options.html">Settings</a></div>
 	</div>
     <div id="jxgBar">
-        <div id="tributton">
+        <div id="duobutton">
             <div class="links">
-                <input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a><a href="javascript:clearBoard()">clear</a>
+                <input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a>
             </div>
         </div>
     </div>
