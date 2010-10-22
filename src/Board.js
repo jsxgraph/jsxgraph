@@ -335,71 +335,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      */
     this.isSuspendedRedraw = false;
 
-    /**
-     * The way objects can be dragged. If true, objects can only moved on a predefined grid, if false objects
-     * can be moved smoothly almost everywhere.
-     * @type Boolean
-     * @default JXG.Options.grid#snapToGrid
-     */
-    this.snapToGrid = this.options.grid.snapToGrid;
-
-    /**
-     * The amount of grid points plus one that fit in one unit of user coordinates in x direction.
-     * @type Number
-     * @default JXG.Options.grid#gridX
-     */
-    this.gridX = this.options.grid.gridX;
-
-    /**
-     * The amount of grid points plus one that fit in one unit of user coordinates in y direction.
-     * @type Number
-     * @default JXG.Options.grid#gridY
-     */
-    this.gridY = this.options.grid.gridY;
-
-    /**
-     * Color of the grid.
-     * @type String
-     * @default JXG.Options.grid#gridColor
-     */
-    this.gridColor = this.options.grid.gridColor;
-
-    /**
-     * Opacity of the grid color, between 0 and 1.
-     * @type Number
-     * @default JXG.Options.grid#gridOpacity
-     */
-    this.gridOpacity = this.options.grid.gridOpacity;
-
-    /**
-     * Determines whether the grid is dashed or not.
-     * @type Number
-     * @default JXG.Options.grid#gridDash
-     */
-    this.gridDash = this.options.grid.gridDash;
-
-    /**
-     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in x direction.
-     * @type Number
-     * @default JXG.Options.grid#snapSizeX
-     */
-    this.snapSizeX = this.options.grid.snapSizeX;
-
-    /**
-     * The amount of grid points plus one for snapToGrid that fit in one unit of user coordinates in y direction.
-     * @type Number
-     * @default JXG.Options.grid#snapSizeY
-     */
-    this.snapSizeY = this.options.grid.snapSizeY;
-
     this.calculateSnapSizes();
-
-    /**
-     * Visibility of the boards grid. If hasGrid is true, a grid will be shown.
-     * @type Boolean
-     * @default JXG.Options.grid#hasGrid
-     */
-    this.hasGrid = this.options.grid.hasGrid;
 
     /**
      * The distance from the mouse to the dragged object in x direction when the user clicked the mouse button.
@@ -1073,11 +1009,11 @@ JXG.Board.prototype.dehighlightAll = function(x,y) {
  * @param {int} y Y coordinate in screen coordinates
  */
 JXG.Board.prototype.getScrCoordsOfMouse = function (x,y) {
-    if(this.snapToGrid) {
+    if(this.options.grid.snapToGrid) {
         var newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
         newCoords.setCoordinates(JXG.COORDS_BY_USER,
-            [Math.round((newCoords.usrCoords[1])*this.snapSizeX)/this.snapSizeX,
-             Math.round((newCoords.usrCoords[2])*this.snapSizeY)/this.snapSizeY]);
+            [Math.round((newCoords.usrCoords[1])*this.options.grid.snapSizeX)/this.options.grid.snapSizeX,
+             Math.round((newCoords.usrCoords[2])*this.options.grid.snapSizeY)/this.options.grid.snapSizeY]);
         return [newCoords.scrCoords[1], newCoords.scrCoords[2]];
     } else {
         return [x,y];
@@ -1097,10 +1033,10 @@ JXG.Board.prototype.getUsrCoordsOfMouse = function (Evt) {
     var y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
 
     var newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
-    if(this.snapToGrid) {
+    if(this.options.grid.snapToGrid) {
         newCoords.setCoordinates(JXG.COORDS_BY_USER,
-            [Math.round((newCoords.usrCoords[1])*this.snapSizeX)/this.snapSizeX,
-             Math.round((newCoords.usrCoords[2])*this.snapSizeY)/this.snapSizeY]);
+            [Math.round((newCoords.usrCoords[1])*this.options.grid.snapSizeX)/this.options.grid.snapSizeX,
+             Math.round((newCoords.usrCoords[2])*this.options.grid.snapSizeY)/this.options.grid.snapSizeY]);
     }
     return [newCoords.usrCoords[1], newCoords.usrCoords[2]];
 };
@@ -1176,7 +1112,7 @@ JXG.Board.prototype.moveOrigin = function () {
     this.clearTraces();
 
     this.fullUpdate();
-    if(this.hasGrid) {
+    if(this.options.grid.hasGrid) {
         this.renderer.removeGrid(this);
         this.renderer.drawGrid(this);
     }
@@ -1477,19 +1413,19 @@ JXG.Board.prototype.addImage = function (obj) {
  */
 JXG.Board.prototype.calculateSnapSizes = function() {
     var p1 = new JXG.Coords(JXG.COORDS_BY_USER,[0,0],this),
-        p2 = new JXG.Coords(JXG.COORDS_BY_USER,[1/this.gridX,1/this.gridY],this),
+        p2 = new JXG.Coords(JXG.COORDS_BY_USER,[1/this.options.grid.gridX,1/this.options.grid.gridY],this),
         x = p1.scrCoords[1]-p2.scrCoords[1],
         y = p1.scrCoords[2]-p2.scrCoords[2];
 
-    this.snapSizeX = this.gridX;
+    this.options.grid.snapSizeX = this.options.grid.gridX;
     while(Math.abs(x) > 25) {
-        this.snapSizeX *= 2;
+        this.options.grid.snapSizeX *= 2;
         x /= 2;
     }
 
-    this.snapSizeY = this.gridY;
+    this.options.grid.snapSizeY = this.options.grid.gridY;
     while(Math.abs(y) > 25) {
-        this.snapSizeY *= 2;
+        this.options.grid.snapSizeY *= 2;
         y /= 2;
     }
     return this;
@@ -1517,7 +1453,7 @@ JXG.Board.prototype.applyZoom = function() {
     this.clearTraces();
 
     this.fullUpdate();
-    if(this.hasGrid) {
+    if(this.options.grid.hasGrid) {
         this.renderer.removeGrid(this);
         this.renderer.drawGrid(this);
     }
@@ -1955,7 +1891,7 @@ JXG.Board.prototype.fullUpdate = function() {
 
 /**
  * Creates a new geometric element of type elementType.
- * @param {string} elementType Type of the element to be constructed given as a string e.g. 'point' or 'circle'.
+ * @param {String} elementType Type of the element to be constructed given as a string e.g. 'point' or 'circle'.
  * @param {Array} parents Array of parent elements needed to construct the element e.g. coordinates for a point or two
  * points to construct a line. This highly depends on the elementType that is constructed. See the corresponding JXG.create*
  * methods for a list of possible parameters.
@@ -2045,7 +1981,7 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
 };
 
 /**
- * Wrapper for {@link #createElement()}.
+ * Wrapper for {@link #createElement}.
  */
 JXG.Board.prototype.create = JXG.Board.prototype.createElement;
 
@@ -2060,21 +1996,6 @@ JXG.Board.prototype.clearTraces = function() {
             this.objects[el].clearTrace();
     }
     return this;
-};
-
-/**
- * Method called before a board is initialized or load from a file. Currently unused.
- * @private
- */
-JXG.Board.prototype.beforeLoad = function() {
-
-};
-
-/**
- * Method called after a board got initialized or load from a file. Currently unused.
- * @private
- */
-JXG.Board.prototype.afterLoad = function() {
 };
 
 /**

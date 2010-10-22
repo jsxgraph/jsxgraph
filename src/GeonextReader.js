@@ -286,12 +286,12 @@ this.readGeonext = function(tree,board) {
     // Eigenschaften der Zeichenflaeche setzen
     // das Grid zeichnen
     // auf Kaestchen springen?
-    snap = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('snap')[0].firstChild.data == "true") ? board.snapToGrid = true : null;
-    gridX = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data) ? board.gridX = boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data*1 : null;
-    gridY = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data) ? board.gridY = boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data*1 : null;
+    snap = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('snap')[0].firstChild.data == "true") ? board.options.grid.snapToGrid = true : null;
+    gridX = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data) ? board.options.grid.gridX = boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data*1 : null;
+    gridY = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data) ? board.options.grid.gridY = boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data*1 : null;
     board.calculateSnapSizes();
     gridDash = boardData.getElementsByTagName('grid')[1].getElementsByTagName('dash')[0].firstChild.data;
-    board.gridDash = JXG.str2Bool(gridDash);
+    board.options.grid.gridDash = JXG.str2Bool(gridDash);
     gridColor = boardData.getElementsByTagName('grid')[1].getElementsByTagName('color')[0].firstChild.data;
     if (gridColor.length=='9' && gridColor.substr(0,1)=='#') {
         gridOpacity = gridColor.substr(7,2);
@@ -301,8 +301,8 @@ this.readGeonext = function(tree,board) {
     else {
         gridOpacity = '1';
     }
-    board.gridColor = gridColor;
-    board.gridOpacity = gridOpacity;
+    board.options.grid.gridColor = gridColor;
+    board.options.grid.gridOpacity = gridOpacity;
     grid = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('grid')[0].firstChild.data == "true") ? board.renderer.drawGrid(board) : null;
 
     if(boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('coord')[0].firstChild.data == "true") {

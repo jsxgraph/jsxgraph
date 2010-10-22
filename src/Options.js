@@ -241,15 +241,15 @@ JXG.useStandardOptions = function(board) {
         boardHadGrid = board.hasGrid,
         el, t;
 
-    board.hasGrid = o.grid.hasGrid;
-    board.gridX = o.grid.gridX;
-    board.gridY = o.grid.gridY;
-    board.gridColor = o.grid.gridColor;
-    board.gridOpacity = o.grid.gridOpacity;
-    board.gridDash = o.grid.gridDash;
-    board.snapToGrid = o.grid.snapToGrid;
-    board.snapSizeX = o.grid.SnapSizeX;
-    board.snapSizeY = o.grid.SnapSizeY;
+    board.options.grid.hasGrid = o.grid.hasGrid;
+    board.options.grid.gridX = o.grid.gridX;
+    board.options.grid.gridY = o.grid.gridY;
+    board.options.grid.gridColor = o.grid.gridColor;
+    board.options.grid.gridOpacity = o.grid.gridOpacity;
+    board.options.grid.gridDash = o.grid.gridDash;
+    board.options.grid.snapToGrid = o.grid.snapToGrid;
+    board.options.grid.snapSizeX = o.grid.SnapSizeX;
+    board.options.grid.snapSizeY = o.grid.SnapSizeY;
     board.takeSizeFromFile = o.takeSizeFromFile;
 
     for(el in board.objects) {

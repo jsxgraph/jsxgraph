@@ -825,8 +825,8 @@ JXG.AbstractRenderer.prototype.updateImage = function(/** Image */ el) {
  * @see #removeGrid
  */
 JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) { 
-    var gridX = board.gridX,
-        gridY = board.gridY,
+    var gridX = board.options.grid.gridX,
+        gridY = board.options.grid.gridY,
         k = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0], board),
         k2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board),
         tmp = Math.ceil(k.usrCoords[1]),
@@ -835,7 +835,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         gx, gy, topLeft, bottomRight, node2,
         el, eltmp;
         
-    board.hasGrid = true;
+    board.options.grid.hasGrid = true;
 
     for(i = 0; i <= gridX+1; i++) {
         if(tmp-i/gridX < k.usrCoords[1]) {
@@ -883,14 +883,14 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
                                      
     node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
     this.appendChildPrim(node2, board.options.layer['grid']);
-    if(!board.snapToGrid) {
+    if(!board.options.grid.snapToGrid) {
         el = new Object();
         el.visProp = {};
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridx";
         JXG.clearVisPropOld(el);
-        this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
+        this.setObjectStrokeColor(el, board.options.grid.gridColor, board.options.grid.gridOpacity);
     }
     else {
         el = new Object();
@@ -902,20 +902,20 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
     this.setPropertyPrim(node2,'stroke-width', '0.4px');  
-    if(board.gridDash) {
+    if(board.options.grid.gridDash) {
         this.setGridDash("gridx"); 
     }
 
     node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
     this.appendChildPrim(node2, board.options.layer['grid']); // Attention layer=1
-    if(!board.snapToGrid) {
+    if(!board.options.grid.snapToGrid) {
         el = new Object();
         el.visProp = {};
         el.rendNode = node2;
         el.elementClass = JXG.OBJECT_CLASS_LINE;
         el.id = "gridy";   
         JXG.clearVisPropOld(el);
-        this.setObjectStrokeColor(el, board.gridColor, board.gridOpacity);
+        this.setObjectStrokeColor(el, board.options.grid.gridColor, board.options.grid.gridOpacity);
     }
     else {
         el = new Object();
@@ -927,7 +927,7 @@ JXG.AbstractRenderer.prototype.drawGrid = function(/** JXG.Board */ board) {
         this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);    
     }
     this.setPropertyPrim(node2,'stroke-width', '0.4px');  
-    if(board.gridDash) {
+    if(board.options.grid.gridDash) {
         this.setGridDash("gridy"); 
     }
    
@@ -945,7 +945,7 @@ JXG.AbstractRenderer.prototype.removeGrid = function(/** JXG.Board */ board) {
     c = this.getElementById('gridy');
     this.remove(c);
 
-    board.hasGrid = false;
+    board.options.grid.hasGrid = false;
 };
  
 
