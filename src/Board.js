@@ -552,23 +552,20 @@ JXG.Board.prototype.generateId = function () {
     return ('jxgBoard' + r);
 };
 
-// -- goes on here -- //
-
 /**
- * Composes the unique id for a board. If the ID is empty ('' or null) a new ID is generated, depending on the object type.
- * Additionally, the id of the label is set. As a side effect {@link JXG.Board#numObjects} is updated.
- * @param {Object} obj Reference of an geometry object that is to be named.
- * @param {int} type Type of the object.
- * @returns {String} Unique id for a board.
- * @private
+ * Composes an id for an element. If the ID is empty ('' or null) a new ID is generated, depending on the
+ * object type. Additionally, the id of the label is set. As a side effect {@link JXG.Board#numObjects}
+ * is updated.
+ * @param {Object} obj Reference of an geometry object that needs an id.
+ * @param {Number} type Type of the object.
+ * @returns {String} Unique id for an element.
  */
 JXG.Board.prototype.setId = function (obj, type) {
-    var num = this.numObjects,
+    var num = this.numObjects++,
         elId = obj.id;
-    this.numObjects++;
-
+    
     // Falls Id nicht vorgegeben, eine Neue generieren:
-    if((elId == '') || (elId == null)) {
+    if(elId == '' || !JXG.exists(elId)) {
         elId = this.id + type + num;
     }
     // Objekt an den Renderer zum Zeichnen uebergeben
@@ -585,7 +582,7 @@ JXG.Board.prototype.setId = function (obj, type) {
 
 /**
  * Calculates mouse coordinates relative to the boards container.
- * @return {Array} Array of coordinates relative the boards container top left corner.
+ * @returns {Array} Array of coordinates relative the boards container top left corner.
  */
 JXG.Board.prototype.getRelativeMouseCoordinates = function () {
     var pCont = this.containerObj,
@@ -613,41 +610,47 @@ JXG.Board.prototype.getRelativeMouseCoordinates = function () {
     return cPos;
 };
 
+/**********************************************************
+ *
+ * Event Handler
+ *
+ **********************************************************/
+
 /**
- * @private
  * Handler for click on left arrow in the navigation bar
- **/
-JXG.Board.prototype.clickLeftArrow = function (Event) {
+ * @private
+ */
+JXG.Board.prototype.clickLeftArrow = function () {
     this.origin.scrCoords[1] += this.canvasWidth*0.1;
     this.moveOrigin();
     return this;
 };
 
 /**
- * @private
  * Handler for click on right arrow in the navigation bar
- **/
-JXG.Board.prototype.clickRightArrow = function (Event) {
+ * @private
+ */
+JXG.Board.prototype.clickRightArrow = function () {
     this.origin.scrCoords[1] -= this.canvasWidth*0.1;
     this.moveOrigin();
     return this;
 };
 
 /**
- * @private
  * Handler for click on up arrow in the navigation bar
- **/
-JXG.Board.prototype.clickUpArrow = function (Event) {
+ * @private
+ */
+JXG.Board.prototype.clickUpArrow = function () {
     this.origin.scrCoords[2] += this.canvasHeight*0.1;
     this.moveOrigin();
     return this;
 };
 
 /**
- * @private
  * Handler for click on down arrow in the navigation bar
- **/
-JXG.Board.prototype.clickDownArrow = function (Event) {
+ * @private
+ */
+JXG.Board.prototype.clickDownArrow = function () {
     this.origin.scrCoords[2] -= this.canvasHeight*0.1;
     this.moveOrigin();
     return this;
@@ -656,7 +659,6 @@ JXG.Board.prototype.clickDownArrow = function (Event) {
 /**
  * iPhone-Events
  */
-
 JXG.Board.prototype.touchStartListener = function (evt) {
 	evt.preventDefault();
 
@@ -665,7 +667,6 @@ JXG.Board.prototype.touchStartListener = function (evt) {
 	this.drag_obj = [];
 
 	// special gestures
-//	document.getElementById('debug').innerHTML = JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY]);
 	if((evt.targetTouches.length==2) && (JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY])<80)) {
 	    evt.targetTouches.length = 1;
 	    shift = true;
@@ -682,17 +683,16 @@ JXG.Board.prototype.touchStartListener = function (evt) {
 JXG.Board.prototype.touchMoveListener = function (evt) {
 	evt.preventDefault();
 	var e = document.createEvent("MouseEvents"), i, myEvent;
+
 	for(i=0; i<evt.targetTouches.length; i++) {
 		myEvent = {pageX: evt.targetTouches[i].pageX, pageY: evt.targetTouches[i].pageY, clientX: evt.targetTouches[i].clientX, clientY: evt.targetTouches[i].clientY};
 		this.mouseMoveListener(myEvent, i);
-//		e.initMouseEvent('mousemove', true, false, this.containerObj, 0, evt.targetTouches[i].screenX, evt.targetTouches[i].screenY, evt.targetTouches[i].clientX, evt.targetTouches[i].clientY, false, false, false /*shift*/, false, 0, null);
 	}
-//	this.mouseMoveListener(e);
 };
 
 JXG.Board.prototype.touchEndListener = function (evt) {
 	var e = document.createEvent("MouseEvents"), i;
-//document.getElementById('debug').innerHTML += 'touch end<br />';
+
 	for(i=0;i<evt.targetTouches.length;i++) {
 		e.initMouseEvent('mouseup', true, false, this.containerObj, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 		this.mouseUpListener(e);
@@ -708,6 +708,7 @@ JXG.Board.prototype.touchEndListener = function (evt) {
 JXG.Board.prototype.mouseDownListener = function (Evt) {
     var el, pEl, cPos, absPos, dx, dy, nr;
 
+    // prevent accidental selection of text
     if (document.selection) {
         document.selection.empty();
     } else if (window.getSelection) {
@@ -764,24 +765,22 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         }
     }
 
-    // if no draggable object can be found, get outta here immediately
+    // if no draggable object can be found, get out here immediately
     if(this.drag_obj.length == 0) {
         this.mode = this.BOARD_MODE_NONE;
         return true;
     }
 
+    // prevent accidental text selection
     if (Evt && Evt.preventDefault) {
         Evt.preventDefault();
-    }
-    else {
+    } else {
         window.event.returnValue = false;
     }
 
     this.updateHooks('mousedown');
 
-    /**
-      * New mouse position in screen coordinates.
-      */
+    // New mouse position in screen coordinates.
     this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx,dy], this);
     JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
 
@@ -822,12 +821,10 @@ JXG.Board.prototype.mouseUpListener = function (evt) {
  * @private
  */
 JXG.Board.prototype.mouseMoveListener = function (Event, i) {
-    var el, pEl, cPos, absPos, newPos, dx, dy, fromTouch = false, drag;
+    var el, pEl, cPos, absPos, newPos, dx, dy, drag, oldCoords;
 
-    if(typeof i == 'undefined') {
-        i = 0;
-        fromTouch = true;
-    }
+    // if not called from touch events, i is undefined
+    i = i || 0;
 
     cPos = this.getRelativeMouseCoordinates(Event);
     // position of mouse cursor relative to containers position of container
@@ -845,40 +842,27 @@ JXG.Board.prototype.mouseMoveListener = function (Event, i) {
         this.renderer.hide(this.infobox);
     }
 
+    // we have to check for three cases:
+    //   * user moves origin
+    //   * user drags an object
+    //   * user just moves the mouse, here highlight all elements at
+    //     the current mouse position
     if(this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
         this.origin.scrCoords[1] = dx - this.drag_dx;
         this.origin.scrCoords[2] = dy - this.drag_dy;
         this.moveOrigin();
-    }
-    else if(this.mode == this.BOARD_MODE_DRAG) {
+    } else if(this.mode == this.BOARD_MODE_DRAG) {
         newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(dx,dy), this);
-//	for(i=0; i<this.drag_obj.length; i++) {
         drag = this.drag_obj[i].obj;
-        if (drag.type == JXG.OBJECT_TYPE_POINT
-            || drag.type == JXG.OBJECT_TYPE_LINE
-            || drag.type == JXG.OBJECT_TYPE_CIRCLE
-            || drag.elementClass == JXG.OBJECT_CLASS_CURVE) {
 
-/*
-            // Do not use setPositionByTransform at the moment!
-            // This concept still has to be worked out.
-	   // If you want to use the commented code you have to remember that this.drag_obj is an array now!
+        if (drag.type == JXG.OBJECT_TYPE_POINT || drag.type == JXG.OBJECT_TYPE_LINE
+         || drag.type == JXG.OBJECT_TYPE_CIRCLE || drag.elementClass == JXG.OBJECT_CLASS_CURVE) {
 
-            if ((this.geonextCompatibilityMode && drag.type==JXG.OBJECT_TYPE_POINT) || drag.group.length != 0) {
-                // This is for performance reasons with GEONExT files and for groups (transformations do not work yet with groups)
-                drag.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
-            } else {
-                drag.setPositionByTransform(JXG.COORDS_BY_USER,
-                    newPos.usrCoords[1]-this.dragObjCoords.usrCoords[1],
-                    newPos.usrCoords[2]-this.dragObjCoords.usrCoords[2]);
-                // Save new mouse position in screen coordinates.
-                this.dragObjCoords = newPos;
-            }
-*/
-            drag.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
+            drag.setPositionDirectly(JXG.COORDS_BY_USER, newPos.usrCoords[1], newPos.usrCoords[2]);
             this.update(drag);
         } else if(drag.type == JXG.OBJECT_TYPE_GLIDER) {
-            var oldCoords = drag.coords;
+            oldCoords = drag.coords;
+
             // First the new position of the glider is set to the new mouse position
             drag.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
             // Then, from this position we compute the projection to the object the glider on which the glider lives.
@@ -897,15 +881,11 @@ JXG.Board.prototype.mouseMoveListener = function (Event, i) {
             }
         }
         this.updateInfobox(drag);
-//	}
-    }
-    else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
-        // Elements  below the mouse pointer which are not highlighted are highlighted.
+    } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
+        // Elements  below the mouse pointer which are not highlighted yet will be highlighted.
         for(el in this.objects) {
             pEl = this.objects[el];
-            if( pEl.hasPoint!=undefined && pEl.visProp['visible'] && pEl.hasPoint(dx, dy)) {
-                //this.renderer.highlight(pEl);
-
+            if(JXG.exists(pEl.hasPoint) && pEl.visProp['visible'] && pEl.hasPoint(dx, dy)) {
                 // this is required in any case because otherwise the box won't be shown until the point is dragged
                 this.updateInfobox(pEl);
                 if(this.highlightedObjects[el] == null) { // highlight only if not highlighted
@@ -918,19 +898,27 @@ JXG.Board.prototype.mouseMoveListener = function (Event, i) {
     this.updateQuality = this.BOARD_QUALITY_HIGH;
 };
 
+/**********************************************************
+ *
+ * End of Event Handlers
+ *
+ **********************************************************/
+
 /**
  * Updates and displays a little info box to show coordinates of current selected points.
  * @param {JXG.GeometryElement} el A GeometryElement
- * @private
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.updateInfobox = function(el) {
     var x, y, xc, yc;
+
     if (!el.showInfobox) {
         return this;
     }
+
     if (el.elementClass == JXG.OBJECT_CLASS_POINT) {
-        xc = el.coords.usrCoords[1]*1;
-        yc = el.coords.usrCoords[2]*1;
+        xc = el.coords.usrCoords[1];
+        yc = el.coords.usrCoords[2];
         this.infobox.setCoords(xc+this.infobox.distanceX/(this.stretchX),
                                yc+this.infobox.distanceY/(this.stretchY));
         if (typeof(el.infoboxText)!="string") {
@@ -956,9 +944,8 @@ JXG.Board.prototype.updateInfobox = function(el) {
             }
 
             this.highlightInfobox(x,y,el);
-        }
-        else
-            this.highlightCustomInfobox(el.infoboxText,el);
+        } else
+            this.highlightCustomInfobox(el.infoboxText, el);
 
         this.renderer.show(this.infobox);
         this.renderer.updateText(this.infobox);
@@ -966,15 +953,28 @@ JXG.Board.prototype.updateInfobox = function(el) {
     return this;
 };
 
-JXG.Board.prototype.highlightCustomInfobox = function(text,el) {
-    this.infobox.setText('<span style="color:#bbbbbb;">' + text + '</span>');
+/**
+ * Changes the text of the info box to what is provided via text.
+ * @param {String} text
+ * @returns {JXG.Board} Reference to the board.
+ */
+JXG.Board.prototype.highlightCustomInfobox = function(text) {
+    this.infobox.setText('<span style="color:#bbbbbb;">' + text + '<'+'/span>');
     return this;
 };
 
-JXG.Board.prototype.highlightInfobox = function(x,y,el) {
+/**
+ * Changes the text of the info box to show the given coordinates.
+ * @param {Number} x
+ * @param {Number} y
+ * @returns {JXG.Board} Reference to the board.
+ */
+JXG.Board.prototype.highlightInfobox = function(x, y) {
     this.highlightCustomInfobox('(' + x + ', ' + y + ')');
     return this;
 };
+
+//\\ -- here be dragons -- //\\
 
 /**
  * Remove highlighting of all elements.
@@ -1719,7 +1719,7 @@ JXG.Board.prototype.prepareUpdate = function(drag) {
 JXG.Board.prototype.updateElements = function(drag) {
     var el, pEl,
         isBeforeDrag = true; // If possible, we start the update at the dragged object.
-    drag = JXG.getReference(this, drag);
+    drag = JXG.getRef(this, drag);
     if (drag==null) {
         isBeforeDrag = false;
     }
