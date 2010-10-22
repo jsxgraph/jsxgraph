@@ -51,7 +51,7 @@
 		}
         restoreOptions();
 		board = JXG.JSXGraph.initBoard('jxgboxDiv', 
-                {axis:true, grid:true, 
+                {axis:true, grid:false, 
                  boundingbox:[options.minX,options.maxY, options.maxX, options.minY]});
         
         document.getElementById('input').value = options.lastFunction;

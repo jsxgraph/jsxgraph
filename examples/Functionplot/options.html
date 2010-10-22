@@ -51,7 +51,6 @@
 	 */
 	function save() {
         // Speichere die Optionen und gehe wieder zurueck
-        
         options.strokeWidth = parseInt(document.getElementById('strokeWidth').value); 
         options.showDerivative = document.getElementById('showDerivative').checked;
         options.minX = parseFloat(document.getElementById('minX').value);
@@ -61,6 +60,7 @@
 
         localStorage.removeItem('JXG_Options');        
         localStorage.setItem('JXG_Options', JSON.stringify(options));
+        
         window.location.href = 'index.html';
     };
     
@@ -98,13 +98,16 @@
   </head>
   <body onload="init();">
   	<div id="topbar">
-        <div id="leftnav"><a href="index.html">home</a></div>
-	</div>
-    <div id="tributton">
+        <div id="leftnav"><a href="index.html"><img alt="home" src="images/home.png" /></a></div>
+        <div id="duoselectionbuttons"><a href="javascript:save()">save</a><a href="javascript:reset()">reset</a></div>
+    </div>
+    <!--
+    <div id="duobutton">
             <div class="links">
                 <a href="javascript:save()">save</a><a href="javascript:reset()">reset</a>
             </div>
-        </div>
+    </div>
+    -->
 	<div id="content" align="center">
 		<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
         <div id="optionDiv" align="center">
