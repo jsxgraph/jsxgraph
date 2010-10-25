@@ -156,7 +156,7 @@ JXG.createPerpendicularPoint = function(board, parentArr, atts) {
  * to a given line and contains a given point and meets the given line in the perpendicular point.
  * @name Perpendicular
  * @constructor
- * @type array
+ * @type Array
  * @return An array containing two elements: A {@link JXG.Line} object in the first component and a
  * {@link JXG.Point} element in the second component. The line is orthogonal to the given line and meets it
  * in the returned point.
@@ -901,17 +901,17 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
  *   var ccmex1_cc1 = ccmex1_board.create('circumcenter', [ccmex1_p1, ccmex1_p2, ccmex1_p3]);
  * </script><pre>
  */
-JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
+JXG.createCircumcircleMidpoint = function(board, parents, atts) {
     var p, i;
 
     /* TODO circumcircle polynomials */
 
-    if(parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[2].elementClass == JXG.OBJECT_CLASS_POINT) {
+    if(parents[0].elementClass == JXG.OBJECT_CLASS_POINT && parents[1].elementClass == JXG.OBJECT_CLASS_POINT && parents[2].elementClass == JXG.OBJECT_CLASS_POINT) {
         atts['fixed'] = atts['fixed'] || true;
-        p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.circumcenterMidpoint(parentArr[0], parentArr[1], parentArr[2], board); }], atts);
+        p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.circumcenterMidpoint(parents[0], parents[1], parents[2], board); }], atts);
 
         for(i=0; i<3; i++)
-            parentArr[i].addChild(p);
+            parents[i].addChild(p);
 
         p.generatePolynomial = function() {
                 /*
@@ -944,9 +944,62 @@ JXG.createCircumcircleMidpoint = function(board, parentArr, atts) {
     }
     else {
         throw new Error("JSXGraph: Can't create circumcircle midpoint with parent types '" +
-                        (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'." +
+                        (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
                         "\nPossible parent types: [point,point,point]");
     }
+};
+
+/**
+ * @class Constructs the incenter of the triangle described by the three given points.
+ * @pseudo
+ * @description http://mathworld.wolfram.com/Incenter.html
+ * @constructor
+ * @name Incenter
+ * @type JXG.Point
+ * @returns An array containing the midpoint in the first component and the circumcircle in the second component.
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the incenter of the triangle described
+ * by p1, p2, and p3.
+ * @example
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 1.0]);
+ * var p3 = board.create('point', [3.0, 3.0]);
+ *
+ * var ic1 = board.create('incenter', [p1, p2, p3]);
+ * </pre><div id="e8a40f95-bf30-4eb4-88a8-a2d5495261fd" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var icmex1_board = JXG.JSXGraph.initBoard('e8a40f95-bf30-4eb4-88a8-a2d5495261fd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var icmex1_p1 = icmex1_board.create('point', [0.0, 2.0]);
+ *   var icmex1_p2 = icmex1_board.create('point', [6.0, 1.0]);
+ *   var icmex1_p3 = icmex1_board.create('point', [3.0, 7.0]);
+ *   var icmex1_ic1 = icmex1_board.create('incenter', [icmex1_p1, icmex1_p2, icmex1_p3]);
+ * </script><pre>
+ */
+JXG.createIncenter = function(board, parents, atts) {
+    var p, c, ret,
+        A, B, C;
+
+    if(parents.length >= 3 && JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2])) {
+        A = parents[0];
+        B = parents[1];
+        C = parents[2];
+
+        p = board.create('point', [function() {
+            var a, b, c;
+
+            a = Math.sqrt((B.X() - C.X())*(B.X() - C.X()) + (B.Y() - C.Y())*(B.Y() - C.Y()));
+            b = Math.sqrt((A.X() - C.X())*(A.X() - C.X()) + (A.Y() - C.Y())*(A.Y() - C.Y()));
+            c = Math.sqrt((B.X() - A.X())*(B.X() - A.X()) + (B.Y() - A.Y())*(B.Y() - A.Y()));
+
+            return new JXG.Coords(JXG.COORDS_BY_USER, [(a*A.X()+b*B.X()+c*C.X())/(a+b+c), (a*A.Y()+b*B.Y()+c*C.Y())/(a+b+c)], board);
+        }], atts);
+    } else {
+        throw new Error("JSXGraph: Can't create incenter with parent types '" +
+            (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
+            "\nPossible parent types: [point,point,point]");
+    }
+
+    return p;
 };
 
 /**
@@ -995,6 +1048,72 @@ JXG.createCircumcircle = function(board, parentArr, atts) {
     } catch(e) {
         throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
                         (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'." +
+                        "\nPossible parent types: [point,point,point]");
+    }
+
+    ret = [p, c];
+
+    ret.point = p;
+    ret.circle = c;
+
+    ret.multipleElements = true;
+
+    return ret;
+};
+
+/**
+ * @class Constructs two elements: a point and a circle. The circle is given by three points,
+ * the point is the midpoint of the circle.
+ * @pseudo
+ * @description A incircle is given by three points.
+ * @constructor
+ * @name Incircle
+ * @type array
+ * @returns An array containing the midpoint in the first component and the incircle in the second component.
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the midpoint of the incircle of
+ * p1, p2, and p3.
+ * @example
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 1.0]);
+ * var p3 = board.create('point', [3.0, 3.0]);
+ *
+ * var ic1 = board.create('incircle', [p1, p2, p3]);
+ * </pre><div id="e65c9861-0bf0-402d-af57-2ab12962f8ac" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var icex1_board = JXG.JSXGraph.initBoard('e65c9861-0bf0-402d-af57-2ab12962f8ac', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var icex1_p1 = icex1_board.create('point', [0.0, 2.0]);
+ *   var icex1_p2 = icex1_board.create('point', [6.0, 1.0]);
+ *   var icex1_p3 = icex1_board.create('point', [3.0, 7.0]);
+ *   var icex1_ic1 = icex1_board.create('incircle', [icex1_p1, icex1_p2, icex1_p3]);
+ * </script><pre>
+ */
+JXG.createIncircle = function(board, parents, atts) {
+    var p, c, cAtts, ret;
+
+    cAtts = JXG.clone(atts);
+    if(atts['name'] && JXG.isArray(atts['name'])) {
+        cAtts['name'] = atts['name'][0];
+        atts['name'] = atts['name'][1];
+    }
+    if(atts['id'] && JXG.isArray(atts['id'])) {
+        cAtts['id'] = atts['id'][0];
+        atts['id'] = atts['id'][1];
+    }
+
+    try {
+        p = JXG.createIncenter(board, parents, cAtts);
+        c = JXG.createCircle(board, [p, function() {
+            var a = Math.sqrt((parents[1].X() - parents[2].X())*(parents[1].X() - parents[2].X()) + (parents[1].Y() - parents[2].Y())*(parents[1].Y() - parents[2].Y())),
+                b = Math.sqrt((parents[0].X() - parents[2].X())*(parents[0].X() - parents[2].X()) + (parents[0].Y() - parents[2].Y())*(parents[0].Y() - parents[2].Y())),
+                c = Math.sqrt((parents[1].X() - parents[0].X())*(parents[1].X() - parents[0].X()) + (parents[1].Y() - parents[0].Y())*(parents[1].Y() - parents[0].Y())),
+                s = (a+b+c)/2;
+
+            return Math.sqrt(((s-a)*(s-b)*(s-c))/s);
+        }], atts);
+    } catch(e) {
+        throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
+                        (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
                         "\nPossible parent types: [point,point,point]");
     }
 
@@ -1392,6 +1511,8 @@ JXG.JSXGraph.registerElement('bisectorlines', JXG.createAngularBisectorsOfTwoLin
 JXG.JSXGraph.registerElement('circumcircle', JXG.createCircumcircle);
 JXG.JSXGraph.registerElement('circumcirclemidpoint', JXG.createCircumcircleMidpoint);
 JXG.JSXGraph.registerElement('circumcenter', JXG.createCircumcircleMidpoint);
+JXG.JSXGraph.registerElement('incenter', JXG.createIncenter);
+JXG.JSXGraph.registerElement('incircle', JXG.createIncircle);
 JXG.JSXGraph.registerElement('integral', JXG.createIntegral);
 JXG.JSXGraph.registerElement('midpoint', JXG.createMidpoint);
 JXG.JSXGraph.registerElement('mirrorpoint', JXG.createMirrorPoint);

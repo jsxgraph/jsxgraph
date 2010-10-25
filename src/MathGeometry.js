@@ -43,11 +43,10 @@ JXG.Math.Geometry = {};
  * @param {JXG.Point,array} A A point  or [x,y] array.
  * @param {JXG.Point,array} B Another point or [x,y] array.
  * @param {JXG.Point,array} C A circle - no, of course the third point or [x,y] array.
- * @type number
- * @return The angle in radian measure.
  * @deprecated Use {@link JXG.Math.Geometry#rad} instead.
  * @see #rad
  * @see #trueAngle
+ * @returns {Number} The angle in radian measure.
  */
 JXG.Math.Geometry.angle = function(A, B, C) {   
     var a = [],
@@ -88,8 +87,8 @@ JXG.Math.Geometry.angle = function(A, B, C) {
  * @param A Point or [x,y] array
  * @param B Point or [x,y] array
  * @param C Point or [x,y] array
- * @return The angle in degrees.
  * @see #rad
+ * @returns {Number} The angle in degrees.
  */
 JXG.Math.Geometry.trueAngle = function(/** JXG.Point */ A, /** JXG.Point */ B, /** JXG.Point */ C) /** number */ {
     return this.rad(A,B,C)*57.295779513082323; // *180.0/Math.PI;
@@ -100,9 +99,8 @@ JXG.Math.Geometry.trueAngle = function(/** JXG.Point */ A, /** JXG.Point */ B, /
  * @param {JXG.Point} A Point or [x,y] array
  * @param {JXG.Point} B Point or [x,y] array
  * @param {JXG.Point} C Point or [x,y] array
- * @type number
  * @see #trueAngle
- * @return Angle in radians.
+ * @returns {Number} Angle in radians.
  */
 JXG.Math.Geometry.rad = function(A,B,C) {
     var ax, ay, bx, by, cx, cy,
@@ -196,7 +194,7 @@ JXG.Math.Geometry.rad = function(A,B,C) {
  * @param B Point
  * @param C Point
  * @param [board=A.board] Reference to the board
- * @return Coordinates of the second point defining the bisection.
+ * @returns {JXG.Coords} Coordinates of the second point defining the bisection.
  */
 JXG.Math.Geometry.angleBisector = function(/** JXG.Point */ A, /** JXG.Point */ B, /** JXG.Point */ C, /** JXG.Board */ board) /** JXG.Coords */ {
     /* First point */
@@ -245,7 +243,7 @@ JXG.Math.Geometry.angleBisector = function(/** JXG.Point */ A, /** JXG.Point */ 
  * @param line Axis of reflection.
  * @param point Point to reflect.
  * @param [board=point.board] Reference to the board
- * @return Coordinates of the reflected point.
+ * @returns {JXG.Coords} Coordinates of the reflected point.
  */  
 JXG.Math.Geometry.reflection = function(/** JXG.Line */ line, /** JXG.Point */ point, /** JXG.Board */ board) /** JXG.Coords */ {
     /* (v,w) defines the slope of the line */    
@@ -279,8 +277,7 @@ JXG.Math.Geometry.reflection = function(/** JXG.Line */ line, /** JXG.Point */ p
  * @param {JXG.Point} point point to be rotated
  * @param {number} phi rotation angle in arc length
  * @param {JXG.Board} [board=point.board] Reference to the board
- * @type JXG.Coords
- * @return Coordinates of the new position.
+ * @returns {JXG.Coords} Coordinates of the new position.
  */
 JXG.Math.Geometry.rotation = function(rotpoint, point, phi, board) {
     var pc = point.coords.usrCoords,
@@ -308,8 +305,7 @@ JXG.Math.Geometry.rotation = function(rotpoint, point, phi, board) {
  * @param {JXG.Line} line A line.
  * @param {JXG.Point} point Intersection point of line to perpendicular.
  * @param {JXG.Board} [board=point.board] Reference to the board
- * @type JXG.Coords
- * @return Coordinates of a point on the perpendicular to the given line through the given point.
+ * @returns {JXG.Coords} Coordinates of a point on the perpendicular to the given line through the given point.
  */
 JXG.Math.Geometry.perpendicular = function(line, point, board) {
     var A = line.point1.coords.usrCoords,
@@ -365,8 +361,7 @@ JXG.Math.Geometry.perpendicular = function(line, point, board) {
  * @param {JXG.Point} point2 Point
  * @param {JXG.Point} point3 Point
  * @param {JXG.Board} [board=point1.board] Reference to the board
- * @type JXG.Coords
- * @return Coordinates of the midpoint of the circumcircle of the given points.
+ * @returns {JXG.Coords} Coordinates of the midpoint of the circumcircle of the given points.
  */
 JXG.Math.Geometry.circumcenterMidpoint = function(point1, point2, point3, board) {
     var A = point1.coords.usrCoords,
@@ -393,16 +388,15 @@ JXG.Math.Geometry.circumcenterMidpoint = function(point1, point2, point3, board)
 
 /**
  * Calculates euclidean norm for two given arrays of the same length.
- * @param {array} array1 Array of float or integer.
- * @param {array} array2 Array of float or integer.
- * @type number
- * @return Euclidean distance of the given vectors.
+ * @param {Array} array1 Array of float or integer.
+ * @param {Array} array2 Array of float or integer.
+ * @returns {Number} Euclidean distance of the given vectors.
  */
 JXG.Math.Geometry.distance = function(array1, array2) {
     var sum = 0, 
         i, len;
         
-    if(array1.length != array2.length) { return; }
+    if(array1.length != array2.length) { return NaN; }
     len = array1.length;
     for(i=0; i<len; i++) {
         sum += (array1[i] - array2[i])*(array1[i] - array2[i]);
@@ -414,15 +408,14 @@ JXG.Math.Geometry.distance = function(array1, array2) {
  * Calculates euclidean distance for two given arrays of the same length.
  * If one of the arrays contains a zero in the first coordinate, and the euclidean distance
  * is different from zero it is a point at infinity and we return Infinity.
- * @param {array} array1 Array containing elements of number.
- * @param {array} array2 Array containing elements of type number.
- * @type number
- * @return Euclidean (affine) distance of the given vectors.
+ * @param {Array} array1 Array containing elements of number.
+ * @param {Array} array2 Array containing elements of type number.
+ * @returns {Number} Euclidean (affine) distance of the given vectors.
  */
 JXG.Math.Geometry.affineDistance = function(array1, array2) {
     var d;
     if(array1.length != array2.length) { 
-        return; 
+        return NaN; 
     }
     d = this.distance(array1, array2);
     if (d>JXG.Math.eps && (Math.abs(array1[0])<JXG.Math.eps || Math.abs(array2[0])<JXG.Math.eps)) {
@@ -442,8 +435,7 @@ JXG.Math.Geometry.affineDistance = function(array1, array2) {
  * @param {JXG.Line} line1 Line.
  * @param {JXG.Line} line2 Line.
  * @param {JXG.Board} [board=line1.board] Reference to the board
- * @type JXG.Coords
- * @return Coordinates of the intersection point of the given lines.
+ * @returns {JXG.Coords} Coordinates of the intersection point of the given lines.
  */
 JXG.Math.Geometry.intersectLineLine = function(line1, line2, board) {
     var A = line1.point1.coords.usrCoords,
@@ -473,8 +465,7 @@ JXG.Math.Geometry.intersectLineLine = function(line1, line2, board) {
  * @param {JXG.Circle} circle Circle.
  * @param {JXG.Line} line Line.
  * @param {JXG.Board} [board=line.board] Reference to the board
- * @type array
- * @return Array of the Coordinates of the intersection points of the given circle with the given line and
+ * @returns {Array} The coordinates of the intersection points of the given circle with the given line and
  * the amount of intersection points in the first component of the array.
  */
 JXG.Math.Geometry.intersectCircleLine = function(circle, line, board) {
@@ -526,8 +517,7 @@ JXG.Math.Geometry.intersectCircleLine = function(circle, line, board) {
  * @param {JXG.Circle} circle1 Circle.
  * @param {JXG.Circle} circle2 Circle.
  * @param {JXG.Board} [board=circle1.board] Reference to the board
- * @type array
- * @return Array of the Coordinates of the intersection points of the given circles and the
+ * @returns {Array} Coordinates of the intersection points of the given circles and the
  * amount of intersection points in the first component of the array.
  */
 JXG.Math.Geometry.intersectCircleCircle = function(circle1, circle2, board) { 
@@ -583,8 +573,7 @@ JXG.Math.Geometry.intersectCircleCircle = function(circle1, circle2, board) {
  * @param {Array} el2 stdform of the second element (line or circle)
  * @param {number} i Index of the intersection point that should be returned.
  * @param board Reference to the board.
- * @type JXG.Coords
- * @return Coordinates of one of the possible two or more intersection points. 
+ * @returns {JXG.Coords} Coordinates of one of the possible two or more intersection points. 
  * Which point will be returned is determined by i.
  */
 JXG.Math.Geometry.meet = function(el1, el2, /** number */ i, /** JXG.Board */ board) /** JXG.Coords */ {
@@ -608,8 +597,7 @@ JXG.Math.Geometry.meet = function(el1, el2, /** number */ i, /** JXG.Board */ bo
   * @param {Array} l2 stdform of the second line
   * @param {number} i unused
   * @param {JXG.Board} board Reference to the board.
-  * @type JXG.Coords
-  * @return Coordinates of the intersection point.
+  * @returns {JXG.Coords} Coordinates of the intersection point.
   */
 JXG.Math.Geometry.meetLineLine = function(l1,l2,i,board) {
     var s = JXG.Math.crossProduct(l1,l2);
@@ -632,8 +620,7 @@ JXG.Math.Geometry.meetLineLine = function(l1,l2,i,board) {
   *   i==0: use the positive square root, 
   *   i==1: use the negative square root.
   * @param {JXG.Board} board Reference to a board.
-  * @type JXG.Coords
-  * @return Coordinates of the intersection point
+  * @returns {JXG.Coords} Coordinates of the intersection point
   */
  JXG.Math.Geometry.meetLineCircle = function(lin,circ,i,board) {
     var a,b,c,d,n, A,B,C, k,t;
@@ -687,8 +674,7 @@ JXG.Math.Geometry.meetLineLine = function(l1,l2,i,board) {
   *   i==0: use the positive square root, 
   *   i==1: use the negative square root.
   * @param {JXG.Board} board Reference to the board.
-  * @type JXG.Coords
-  * @return Coordinates of the intersection point
+  * @returns {JXG.Coords} Coordinates of the intersection point
   */
 JXG.Math.Geometry.meetCircleCircle = function(circ1,circ2,i,board) {
     var radicalAxis;
@@ -746,11 +732,10 @@ JXG.Math.Geometry.meetCircleCircle = function(circ1,circ2,i,board) {
  * 
  * @param {JXG.Curve} c1 Curve, Line or Circle
  * @param {JXG.Curve} c2 Curve, Line or Circle
- * @param {float} t1ini start value for t1
- * @param {float} t2ini start value for t2
+ * @param {Number} t1ini start value for t1
+ * @param {Number} t2ini start value for t2
  * @param {JXG.Board} [board=c1.board] Reference to a board object.
- * @type {JXG.Coords}
- * @return coordinate object for the intersection point
+ * @returns {JXG.Coords} intersection point
  **/
 JXG.Math.Geometry.meetCurveCurve = function(c1,c2,t1ini,t2ini,board) {
     var count = 0,
@@ -817,8 +802,7 @@ JXG.Math.Geometry.meetCurveCurve = function(c1,c2,t1ini,t2ini,board) {
  * @param {JXG.Curve,JXG.Line} el2 Curve or Line
  * @param {?} nr
  * @param {JXG.Board} [board=el1.board] Reference to a board object.
- * @type {JXG.Coords}
- * @return coordinate object for the intersection point
+ * @returns {JXG.Coords} Intersection point
  */
 JXG.Math.Geometry.meetCurveLine = function(el1,el2,nr,board) {
     var t, t2, i, cu, li, func, z,
@@ -894,8 +878,7 @@ JXG.Math.Geometry.meetCurveLine = function(el1,el2,nr,board) {
  * @param {JXG.Point} point Point to project.
  * @param {JXG.Circle} circle Circle on that the point is projected.
  * @param {JXG.Board} [board=point.board] Reference to the board
- * @type JXG.Coords
- * @return The coordinates of the projection of the given point on the given circle.
+ * @returns {JXG.Coords} The coordinates of the projection of the given point on the given circle.
  */
 JXG.Math.Geometry.projectPointToCircle = function(point,circle,board) {
     var dist = point.coords.distance(JXG.COORDS_BY_USER, circle.midpoint.coords),
@@ -922,8 +905,7 @@ JXG.Math.Geometry.projectPointToCircle = function(point,circle,board) {
  * @param {JXG.Point} point Point to project.
  * @param {JXG.Line} line Line on that the point is projected.
  * @param {JXG.Board} [board=point.board] Reference to a board.
- * @type JXG.Coords
- * @return The coordinates of the projection of the given point on the given line.
+ * @returns {JXG.Coords} The coordinates of the projection of the given point on the given line.
  */
 JXG.Math.Geometry.projectPointToLine = function(point, line, board) {
 /*
@@ -956,11 +938,10 @@ JXG.Math.Geometry.projectPointToLine = function(point, line, board) {
  * Calculates the coordinates of the projection of a given point on a given curve. 
  * Uses {@link #projectCoordsToCurve}.
  * @param {JXG.Point} point Point to project.
- * @param {JXG.Curve} graph Curve on that the point is projected.
+ * @param {JXG.Curve} curve Curve on that the point is projected.
  * @param {JXG.Board} [board=point.board] Reference to a board.
- * @type JXG.Coords
  * @see #projectCoordsToCurve
- * @return The coordinates of the projection of the given point on the given graph.
+ * @returns {JXG.Coords} The coordinates of the projection of the given point on the given graph.
  */
 JXG.Math.Geometry.projectPointToCurve = function(point,curve,board) {
     if(typeof board=='undefined')
@@ -979,21 +960,20 @@ JXG.Math.Geometry.projectPointToCurve = function(point,curve,board) {
  * Calculates the coordinates of the projection of a coordinates pair on a given curve. In case of
  * function graphs this is the
  * intersection point of the curve and the parallel to y-axis through the given point.
- * @param {float} x coordinate to project.
- * @param {float} y coordinate to project.
- * @param {float} start value for newtons method
- * @param {JXG.Curve} graph Curve on that the point is projected.
+ * @param {Number} x coordinate to project.
+ * @param {Number} y coordinate to project.
+ * @param {Number} t value for newtons method
+ * @param {JXG.Curve} curve Curve on that the point is projected.
  * @param {JXG.Board} [board=curve.board] Reference to a board.
- * @type JXG.Coords
  * @see #projectPointToCurve
- * @return Array containing the coordinates of the projection of the given point on the given graph and 
+ * @returns {JXG.Coords} Array containing the coordinates of the projection of the given point on the given graph and
  * the position on the curve.
  */
 JXG.Math.Geometry.projectCoordsToCurve = function(x,y,t,curve,board) {
     var newCoords, x0, y0, x1, y1, den, i, mindist, dist, lbda, j,
         infty = 1000000.0, minfunc, tnew, fnew, fold, delta, steps;
         
-    if(typeof board=='undefined')
+    if(!JXG.exists(board))
         board = curve.board;
         
     if (curve.curveType=='parameter' || curve.curveType=='polar') { 
@@ -1073,8 +1053,7 @@ JXG.Math.Geometry.projectCoordsToCurve = function(x,y,t,curve,board) {
  * @param {JXG.Point} point Point to project.
  * @param {JXG.Turtle} turtle on that the point is projected.
  * @param {JXG.Board} [board=point.board] Reference to a board.
- * @type JXG.Coords
- * @return The coordinates of the projection of the given point on the given turtle.
+ * @returns {JXG.Coords} The coordinates of the projection of the given point on the given turtle.
  */
 JXG.Math.Geometry.projectPointToTurtle = function(point,turtle,board) {
     var newCoords, t, x, y, i,
@@ -1107,5 +1086,3 @@ JXG.Math.Geometry.projectPointToTurtle = function(point,turtle,board) {
     point.position = t+npmin;
     return minEl.updateTransform(newCoords);
 };
-
-
