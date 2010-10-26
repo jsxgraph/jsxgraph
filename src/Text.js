@@ -139,7 +139,11 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
     this.updateText();                    // First evaluation of the string.
                                           // Needed for display='internal' and Canvas 
     if(!this.isLabel) {
-        this.id = this.board.addText(this);
+        this.id = this.board.setId(this, 'T');
+        this.board.renderer.drawText(this);
+        if(!this.visProp['visible']) {
+            this.board.renderer.hide(this);
+        }
     }
     if (typeof this.contentStr=='string') {
         this.notifyParents(this.contentStr);

@@ -201,7 +201,9 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
     this.createLabel(withLabel);
 
     /* Register line at board */
-    this.id = this.board.addLine(this);
+    this.id = this.board.setId(this, 'L');
+    this.board.renderer.drawLine(this);
+    this.board.finalizeAdding(this);
 
     /* Add arrow as child to defining points */
     this.point1.addChild(this);

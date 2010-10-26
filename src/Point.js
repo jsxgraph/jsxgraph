@@ -249,7 +249,9 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
     this.group = [];
     
     /* Register point at board. */
-    this.id = this.board.addPoint(this);
+    this.id = this.board.setId(this, 'P');
+    this.board.renderer.drawPoint(this);
+    this.board.finalizeAdding(this);
 };
 
 /**

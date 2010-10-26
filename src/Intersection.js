@@ -404,7 +404,10 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         };
     }
 
-    this.id = this.board.addIntersection(this);
+    this.id = this.board.setId(this, 'I');
+
+    this.intersect1.addChild(this);
+    this.intersect2.addChild(this);
 };
 JXG.Intersection.prototype = new JXG.GeometryElement();
    

@@ -124,7 +124,9 @@ JXG.Curve = function (board, parents, id, name, withLabel, layer) {
     this.updateCurve();                        // First evaluation of the curve
     
     this.createLabel(withLabel);
-    this.id = this.board.addCurve(this);
+    this.id = this.board.setId(this,'G');
+    this.board.renderer.drawCurve(this);
+    this.board.finalizeAdding(this);
     
     if (typeof this.xterm=='string') {
         this.notifyParents(this.xterm);

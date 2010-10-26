@@ -98,10 +98,11 @@ JXG.Chart = function(board, parents, attributes) {
             case 'radar':
                 c = this.drawRadar(board,parents,attributes);
                 break;
-        };
+        }
         this.elements.push(c);
-    };
-    this.id = this.board.addChart(this);
+    }
+    this.id = this.board.setId(this,'Chart');
+    
     return this.elements;
 };
 JXG.Chart.prototype = new JXG.GeometryElement;

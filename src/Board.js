@@ -837,7 +837,7 @@ JXG.Board.prototype.mouseMoveListener = function (Event, i) {
 
     this.updateQuality = this.BOARD_QUALITY_LOW;
 
-    this.dehighlightAll(dx,dy);
+    this.dehighlightAll();
     if(this.mode != this.BOARD_MODE_DRAG) {
         this.renderer.hide(this.infobox);
     }
@@ -974,41 +974,42 @@ JXG.Board.prototype.highlightInfobox = function(x, y) {
     return this;
 };
 
-//\\ -- here be dragons -- //\\
-
 /**
  * Remove highlighting of all elements.
- * @private
+ * @returns {JXG.Board} Reference to the board.
  */
-JXG.Board.prototype.dehighlightAll = function(x,y) {
+JXG.Board.prototype.dehighlightAll = function() {
     var el, pEl, needsDehighlight = false;
 
     for(el in this.highlightedObjects) {
-        //this.renderer.noHighlight(this.highlightedObjects[el]);
         pEl = this.highlightedObjects[el];
-        if((pEl.hasPoint == undefined) ||
-           (!pEl.hasPoint(x, y)) ||
-           (!pEl.visProp['visible'])) { // dehighlight only if necessary
-                pEl.noHighlight();
-                delete(this.highlightedObjects[el]);
-                needsDehighlight = true;
-        }
+        pEl.noHighlight();
+        delete(this.highlightedObjects[el]);
+        needsDehighlight = true;
+
+        // In highlightedObjects should only be objects which fulfill all these conditions
+        // And in case of complex elements, like a turtle based fractal, it should be faster to
+        // just de-highlight the element instead of checking hasPoint...
+        // if((pEl.hasPoint == undefined) || !pEl.hasPoint(x, y) || !pEl.visProp['visible'])
     }
-    if (this.options.renderer=='canvas' && needsDehighlight) { 
+
+    if (this.options.renderer=='canvas' && needsDehighlight) {
         this.prepareUpdate();
         this.renderer.suspendRedraw();
         this.updateRenderer();
         this.renderer.unsuspendRedraw();
     }
+
     return this;
 };
 
 /**
  * In case of snapToGrid activated this method caclulates the screen coords of mouse "snapped to grid".
- * @param {int} x X coordinate in screen coordinates
- * @param {int} y Y coordinate in screen coordinates
+ * @param {Number} x X coordinate in screen coordinates
+ * @param {Number} y Y coordinate in screen coordinates
+ * @returns {Array} Coordinates of the mouse in screen coordinates, snapped to grid.
  */
-JXG.Board.prototype.getScrCoordsOfMouse = function (x,y) {
+JXG.Board.prototype.getScrCoordsOfMouse = function (x, y) {
     if(this.options.grid.snapToGrid) {
         var newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
         newCoords.setCoordinates(JXG.COORDS_BY_USER,
@@ -1023,81 +1024,64 @@ JXG.Board.prototype.getScrCoordsOfMouse = function (x,y) {
 /**
  * In case of snapToGrid activated this method caclulates the user coords of mouse "snapped to grid".
  * @param {Event} Evt Event object containing the mouse coordinates.
+ * @returns {Array} Coordinates of the mouse in screen coordinates, snapped to grid.
  */
 JXG.Board.prototype.getUsrCoordsOfMouse = function (Evt) {
-    var cPos = this.getRelativeMouseCoordinates(Evt);
-    //var x = Event.pointerX(Evt) - cPos[0];
-    //var y = Event.pointerY(Evt) - cPos[1];
-    var absPos = JXG.getPosition(Evt);
-    var x = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
-    var y = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
+    var cPos = this.getRelativeMouseCoordinates(Evt),
+        absPos = JXG.getPosition(Evt),
+        x = absPos[0]-cPos[0],
+        y = absPos[1]-cPos[1],
+        newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
 
-    var newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
     if(this.options.grid.snapToGrid) {
         newCoords.setCoordinates(JXG.COORDS_BY_USER,
             [Math.round((newCoords.usrCoords[1])*this.options.grid.snapSizeX)/this.options.grid.snapSizeX,
              Math.round((newCoords.usrCoords[2])*this.options.grid.snapSizeY)/this.options.grid.snapSizeY]);
     }
+
     return [newCoords.usrCoords[1], newCoords.usrCoords[2]];
 };
 
 /**
  * Collects all elements under current mouse position plus current user coordinates of mouse cursor.
  * @param {Event} Evt Event object containing the mouse coordinates.
- * @type Array
- * @return Array of elements at the current mouse position plus current user coordinates of mouse.
- * @private
+ * @returns {Array} Array of elements at the current mouse position plus current user coordinates of mouse.
  */
 JXG.Board.prototype.getAllUnderMouse = function (Evt) {
     var elList = this.getAllObjectsUnderMouse(Evt);
+
     elList.push(this.getUsrCoordsOfMouse(Evt));
+
     return elList;
-    //return {"elList":elList, "coords":this.getUsrCoordsOfMouse(Evt)};
 };
 
 /**
  * Collects all elements under current mouse position.
  * @param {Event} Evt Event object containing the mouse coordinates.
- * @type Array
- * @return Array of elements at the current mouse position.
- * @private
+ * @returns {Array} Array of elements at the current mouse position.
  */
 JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
-    var cPos = this.getRelativeMouseCoordinates(Evt);
+    var cPos = this.getRelativeMouseCoordinates(Evt),
+        absPos = JXG.getPosition(Evt),
+        dx = absPos[0]-cPos[0],
+        dy = absPos[1]-cPos[1],
+        elList = [];
 
-    // mouse position relative to container
-    //var dx = Event.pointerX(Evt) - cPos[0];
-    //var dy = Event.pointerY(Evt) - cPos[1];
-    var absPos = JXG.getPosition(Evt);
-    var dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
-    var dy = absPos[1]-cPos[1]; //Event.pointerY(Evt) - cPos[1];
-    var elList = [];
     for (var el in this.objects) {
-        if (this.objects[el].visProp['visible'] && this.objects[el].hasPoint(dx, dy)) {
+        if (this.objects[el].visProp['visible'] && this.objects[el].hasPoint && this.objects[el].hasPoint(dx, dy)) {
             elList.push(this.objects[el]);
         }
     }
+
     return elList;
 };
-
-/**
- * Sets the board mode.
- * @param {int} mode The board mode the board should be set to. Possible values are
- * <li><ul>BOARD_MODE_NONE</ul><ul>BOARD_MODE_DRAG</ul><ul>BOARD_MODE_CONSTRUCT</ul><ul>BOARD_MODE_MOVE_ORIGIN</ul></li>
- * @private
- */
-JXG.Board.prototype.setBoardMode = function (mode) {
-    this.mode = mode;
-    return this;
-};
-
 /**
  * Moves the origin and initializes an update of all elements.
- * @private
+ * @returns {JXG.Board} Reference to this board.
  */
 JXG.Board.prototype.moveOrigin = function () {
     var el, ob;
-    
+
     for (ob in this.objects) {
         el = this.objects[ob];
         if (!el.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
@@ -1108,7 +1092,7 @@ JXG.Board.prototype.moveOrigin = function () {
                 el.coords.usr2screen();
         }
     }
-    
+
     this.clearTraces();
 
     this.fullUpdate();
@@ -1119,11 +1103,11 @@ JXG.Board.prototype.moveOrigin = function () {
     return this;
 };
 
+
 /**
  * After construction of the object the visibility is set
  * and the label is constructed if necessary.
  * @param {Object} obj The object to add.
- * @private
  */
 JXG.Board.prototype.finalizeAdding = function (obj) {
     if (obj.hasLabel) {
@@ -1139,167 +1123,27 @@ JXG.Board.prototype.finalizeAdding = function (obj) {
 };
 
 /**
- * Registers a point at the board and adds it to the renderer.
- * @param {JXG.Point} obj The point to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-JXG.Board.prototype.addPoint = function (obj) {
-    //this.elementsByName[obj.name] = obj;
-    var id = this.setId(obj,'P');
-    this.renderer.drawPoint(obj);
-    this.finalizeAdding(obj);
-    return id;
-};
-
-/**
- * Registers a line at the board and adds it to the renderer.
- * @param {JXG.Line} obj The line to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-JXG.Board.prototype.addLine = function (obj) {
-    var id = this.setId(obj,'L');
-    this.renderer.drawLine(obj);
-    this.finalizeAdding(obj);
-    return id;
-};
-
-/**
- * Registers a circle at the board and adds it to the renderer.
- * @param {JXG.Circle} obj The circle to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-JXG.Board.prototype.addCircle = function(obj) {
-    var id = this.setId(obj,'C');
-    this.renderer.drawCircle(obj);
-    this.finalizeAdding(obj);
-    return id;
-};
-
-/**
- * Registers a polygon at the board and adds it to the renderer.
- * @param {JXG.Polygon} obj The polygon to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-JXG.Board.prototype.addPolygon = function(obj) {
-    var id = this.setId(obj,'Py');
-    this.renderer.drawPolygon(obj);
-    this.finalizeAdding(obj);
-    return id;
-};
-
-/**
- * Registers a curve at the board and adds it to the renderer.
- * @param {JXG.Curve} obj The curve to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-JXG.Board.prototype.addCurve = function (obj) {
-    var id = this.setId(obj,'G');
-    this.renderer.drawCurve(obj);
-    this.finalizeAdding(obj);
-    return id;
-};
-
-/**
- * Registers a chart at the board and adds it to the renderer.
- * @param {JXG.Chart} obj The chart to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-JXG.Board.prototype.addChart = function (obj) {
-    return this.setId(obj,'Chart');
-};
-
-/**
- * Registers an intersection at the board and adds it to the renderer.
- * @param {JXG.Intersection} obj The intersection to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-JXG.Board.prototype.addIntersection = function (obj) {
-    var number = this.numObjects;
-    this.numObjects++;
-    var elementId = obj.id;
-
-    // Falls Id nicht vergeben, eine neue generieren:
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'I' + number;
-    }
-
-    // Objekt in das assoziative Array einfuegen
-    this.objects[elementId] = obj;
-
-    obj.id = elementId;
-
-    obj.intersect1.addChild(obj);
-    obj.intersect2.addChild(obj);
-
-    return elementId;
-};
-
-/**
- * Registers a text at the board and adds it to the renderer.
- * @param {JXG.Text} obj The text to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-JXG.Board.prototype.addText = function (obj) {
-    var number = this.numObjects;
-    this.numObjects++;
-
-    // Falls Id nicht vergeben, eine Neue generieren:
-    var elementId = obj.id;
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'T' + number;
-    }
-
-    // Objekt in das assoziative Array einfuegen
-    this.objects[elementId] = obj;
-
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
-    if(!obj.isLabel) {
-        this.renderer.drawText(obj);
-        if(!obj.visProp['visible']) {
-            this.renderer.hide(obj);
-        }
-    }
-
-    return elementId;
-};
-
-/**
   * Add conditional updates to the elements.
-  * @param {string} str String containing coniditional update in geonext syntax
+  * @param {String} str String containing coniditional update in geonext syntax
   */
 JXG.Board.prototype.addConditions = function (str) {
-    var res = null;
-    var plaintext = 'var el,x,y,c;\n';
-    var i = str.indexOf('<data>');
-    var j = str.indexOf('</data>');
+    var plaintext = 'var el,x,y,c;\n',
+        i = str.indexOf('<data>'),
+        j = str.indexOf('<'+'/data>'),
+        term, m, left, right, name, el;
+
     if (i<0) {
         return;
     }
+
     while (i>=0) {
-        var term = str.slice(i+6,j); // throw away <data>
-        var m = term.indexOf('=');
-        var left = term.slice(0,m);
-        var right = term.slice(m+1);
+        term = str.slice(i+6,j); // throw away <data>
+        m = term.indexOf('=');
+        left = term.slice(0,m);
+        right = term.slice(m+1);
         m = left.indexOf('.'); // Dies erzeugt Probleme bei Variablennamen der Form " Steuern akt."
-        var name = left.slice(0,m);    //.replace(/\s+$/,''); // do NOT cut out name (with whitespace)
-        var el = this.elementsByName[JXG.unescapeHTML(name)];
+        name = left.slice(0,m);    //.replace(/\s+$/,''); // do NOT cut out name (with whitespace)
+        el = this.elementsByName[JXG.unescapeHTML(name)];
 
         var property = left.slice(m+1).replace(/\s+/g,'').toLowerCase(); // remove whitespace in property
         right = JXG.GeonextParser.geonext2JS(right, this);
@@ -1307,21 +1151,19 @@ JXG.Board.prototype.addConditions = function (str) {
 
         // Debug
         if (typeof this.elementsByName[name]=='undefined'){
-            alert("debug conditions: |"+name+"| undefined");
+            JXG.debug("debug conditions: |"+name+"| undefined");
         }
         plaintext += "el = this.objects[\"" + el.id + "\"];\n";
-        //plaintext += "if (el==undefined) { $('debug').value = \"" + name + "\"; } else {\n";
+
         switch (property) {
             case 'x':
                 plaintext += 'var y=el.coords.usrCoords[2];\n';  // y stays
-                //plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,['+(right) +',y],this);\n';
                 plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,'+(right) +',y);\n';
                 plaintext += 'el.update();\n';
                 break;
             case 'y':
                 plaintext += 'var x=el.coords.usrCoords[1];\n';  // x stays
                 plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
-                //plaintext += 'el.update();\n';
                 break;
             case 'visible':
                 plaintext += 'var c='+(right)+';\n';
@@ -1330,7 +1172,6 @@ JXG.Board.prototype.addConditions = function (str) {
             case 'position':
                 plaintext += 'el.position = ' + (right) +';\n';
                 plaintext += 'el.update();\n';
-                //plaintext += 'this.updateElements();\n';
                 break;
             case 'stroke':
                 plaintext += 'el.strokeColor = ' + (right) +';\n';
@@ -1340,29 +1181,26 @@ JXG.Board.prototype.addConditions = function (str) {
                 break;
             case 'strokewidth':
                 plaintext += 'el.strokeWidth = ' + (right) +';\n';   // wird auch bei Punkten verwendet, was nicht realisiert ist.
-                //plaintext += 'el.highlightStrokeWidth = ' + (right) +';\n'; // TODO ?(BV)
                 break;
             case 'fill':
                 plaintext += 'var f='+(right)+';\n';
                 plaintext += 'el.setProperty({fillColor:f})\n';
                 break;
             case 'label':
-                //plaintext += 'var color = ' + (right) +';\n';
-                //plaintext += 'el.setProperty("labelColor:color");\n';
                 break;
             default:
-                alert("property '" + property + "' in conditions not yet implemented:" + right);
+                JXG.debug("property '" + property + "' in conditions not yet implemented:" + right);
                 break;
         }
         //plaintext += "}\n";
         str = str.slice(j+7); // cut off "</data>"
         i = str.indexOf('<data>');
-        j = str.indexOf('</data>');
+        j = str.indexOf('<'+'/data>');
     }
     plaintext += 'this.prepareUpdate();\n';
     plaintext += 'this.updateElements();\n';
     plaintext += 'return true;\n';
-    //alert(plaintext);
+
     this.updateConditions = new Function(plaintext);
     this.updateConditions();
 };
@@ -1370,46 +1208,15 @@ JXG.Board.prototype.addConditions = function (str) {
 /**
  * Computes the commands in the conditions-section of the gxt file.
  * It is evaluated after an update, before the unsuspendRedraw.
- * The function is generated in @see #addConditions
+ * The function is generated in
+ * @see JXG.Board#addConditions
  * @private
  */
 JXG.Board.prototype.updateConditions = function() { return false; };
 
 /**
- * Registers an image at the board and adds it to the renderer.
- * @param {JXG.Image} obj The image to add.
- * @type String
- * @return Element id of the object.
- * @private
- */
-JXG.Board.prototype.addImage = function (obj) {
-    var number = this.numObjects;
-    this.numObjects++;
-    var elementId = obj.id;
-
-    // Falls Id nicht vergeben, eine neue generieren:
-    if((elementId == '') || (elementId == null)) {
-        elementId = this.id + 'Im' + number;
-    }
-
-    // Objekt in die assoziativen Arrays einfuegen
-    this.objects[elementId] = obj;
-    this.elementsByName[obj.name] = obj;
-
-    // Objekt an den Renderer zum Zeichnen uebergeben
-    obj.id = elementId;
-
-    this.renderer.drawImage(obj);
-    if(!obj.visProp['visible']) {
-       this.renderer.hide(obj);
-    }
-
-    return elementId;
-};
-
-/**
  * Calculates adequate snap sizes.
- * @private
+ * @returns {JXG.Board} Reference to the board.
  */
 JXG.Board.prototype.calculateSnapSizes = function() {
     var p1 = new JXG.Coords(JXG.COORDS_BY_USER,[0,0],this),
@@ -1432,9 +1239,8 @@ JXG.Board.prototype.calculateSnapSizes = function() {
 };
 
 /**
- * Apply update on all objects with the
- * new zoom-factors.
- * @private
+ * Apply update on all objects with the new zoom-factors. Clears all traces.
+ * @returns {JXG.Board} Reference to the board.
  */
 JXG.Board.prototype.applyZoom = function() {
     var el, ob;
@@ -1461,14 +1267,17 @@ JXG.Board.prototype.applyZoom = function() {
 };
 
 /**
- * Recalculate stretch factors
- * Needed after zooming or setting the bounding box
+ * Recalculate stretch factors.
+ * Required after zooming or setting the bounding box.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.updateStretch = function() {
     this.stretchX = this.zoomX*this.unitX;
     this.stretchY = this.zoomY*this.unitY;
     return this;
 };
+
+//\\ -- here be dragons -- //\\
 
 /**
  * Zooms into the board.

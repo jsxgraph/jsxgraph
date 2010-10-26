@@ -62,7 +62,6 @@ JXG.GeometryElement = function() {
      * @type JXG.Board
      * @default null
      * @see JXG.Board
-     * @private
      */
     this.board = null;
 
@@ -70,15 +69,13 @@ JXG.GeometryElement = function() {
      * Unique identifier for the element. Equivalent to id-attribute of renderer element.
      * @type String
      * @default empty string
-     * @private
      */
     this.id = '';
 
     /**
      * Controls if updates are necessary
-     * @type bool
+     * @type Boolean
      * @default true
-     * @private
      */
     this.needsUpdate = true;
 
@@ -94,7 +91,6 @@ JXG.GeometryElement = function() {
      * An associative array containing all visual properties.
      * @type Object
      * @default empty object
-     * @private
      */
     this.visProp = {};
 
@@ -102,9 +98,8 @@ JXG.GeometryElement = function() {
 
     /**
      * If element is in two dimensional real space this is true, else false.
-     * @type boolean
+     * @type Boolean
      * @default true
-     * @private
      */
     this.isReal = true;
 
@@ -118,7 +113,7 @@ JXG.GeometryElement = function() {
      * <li>4 for a line with big dashes</li>
      * <li>5 for a line with alternating medium and big dashes and large gaps</li>
      * <li>6 for a line with alternating medium and big dashes and small gaps</li></ul>
-     * @type number
+     * @type Number
      * @name JXG.GeometryElement#dash
      * @default 0
      */
@@ -127,15 +122,13 @@ JXG.GeometryElement = function() {
     /**
      * Stores all dependent objects to be updated when this point is moved.
      * @type Object
-     * @private
      */
     this.childElements = {};
 
     /**
      * If element has a label subelement then this property will be set to true.
-     * @type boolean
+     * @type Boolean
      * @default false
-     * @private
      */
     this.hasLabel = false;
 
@@ -148,18 +141,17 @@ JXG.GeometryElement = function() {
     /**
      * Stores all Intersection Objects which in this moment are not real and
      * so hide this element.
-     * @type object
-     * @private
+     * @type Object
      */
     this.notExistingParents = {};
 
     /**
      * If true the element will be traced, i.e. on every movement the element will be copied
-     * to the background. Use {@link #clearTrace} to delete the trace elements.
-     * @see #clearTrace
-     * @see #traces
-     * @see #numTraces
-     * @type boolean
+     * to the background. Use {@link JXG.GeometryElement#clearTrace} to delete the trace elements.
+     * @see JXG.GeometryElement#clearTrace
+     * @see JXG.GeometryElement#traces
+     * @see JXG.GeometryElement#numTraces
+     * @type Boolean
      * @default false
      * @name JXG.GeometryElement#trace
      */
@@ -168,7 +160,7 @@ JXG.GeometryElement = function() {
     /**
      * If true the element is fixed and can not be dragged around. The element 
      * will be repositioned on zoom and moveOrigin events.
-     * @type boolean
+     * @type Boolean
      * @default false
      * @name JXG.GeometryElement#fixed
      */
@@ -178,7 +170,7 @@ JXG.GeometryElement = function() {
      * If true the element is fixed and can not be dragged around. The element 
      * will even stay at its position on zoom and moveOrigin events.
      * Only free elements like points, texts, curves can be frozen.
-     * @type boolean
+     * @type Boolean
      * @default false
      * @name JXG.GeometryElement#fixed
      */
@@ -186,21 +178,19 @@ JXG.GeometryElement = function() {
 
     /**
      * Keeps track of all objects drawn as part of the trace of the element.
-     * @see #traced
-     * @see #clearTrace
-     * @see #numTraces
+     * @see JXG.GeometryElement#traced
+     * @see JXG.GeometryElement#clearTrace
+     * @see JXG.GeometryElement#numTraces
      * @type Object
-     * @private
      */
     this.traces = {};
 
     /**
      * Counts the number of objects drawn as part of the trace of the element.
-     * @see #traced
-     * @see #clearTrace
-     * @see #traces
-     * @type number
-     * @private
+     * @see JXG.GeometryElement#traced
+     * @see JXG.GeometryElement#clearTrace
+     * @see JXG.GeometryElement#traces
+     * @type Number
      */
     this.numTraces = 0;
 
@@ -208,12 +198,11 @@ JXG.GeometryElement = function() {
      * Stores the  transformations which are applied during update in an array
      * @type Array
      * @see JXG.Transformation
-     * @private
      */
     this.transformations = [];
 
     /** TODO
-     * @type TODO
+     * @type JXG.GeometryElement
      * @default null
      * @private
      */
@@ -221,22 +210,19 @@ JXG.GeometryElement = function() {
 
     /**
      * Elements depending on this element are stored here.
-     * @type object
-     * @private
+     * @type Object
      */
     this.descendants = {};
 
     /**
      * Elements on which this elements depends on are stored here.
-     * @type object
-     * @private
+     * @type Object
      */
     this.ancestors = {};
 
     /**
      * Stores variables for symbolic computations
      * @type Object
-     * @private
      */
     this.symbolic = {};
 
@@ -261,14 +247,15 @@ JXG.GeometryElement = function() {
      * b: normalized vector, representing the direction of the line.
      *
      * Should be put into Coords, when all elements possess Coords.
-     * @type array
+     * @type Array
      * @default [1, 0, 0, 0, 1, 1, 0, 0]
-     * @private
      */
     this.stdform = [1,0,0,0,1, 1,0,0];
 
     /**
      * Quadratic form representation of circles (and conics)
+     * @type Array
+     * @default [[1,0,0],[0,1,0],[0,0,1]]
      */
     this.quadraticform = [[1,0,0],[0,1,0],[0,0,1]];
 
@@ -277,10 +264,8 @@ JXG.GeometryElement = function() {
      * call of the board. If set to false, the element is updated only after
      * zoom events or more generally, when the bounding box has been changed.
      * Examples for the latter behaviour should be axes.
-     *
-     * @type boolean
+     * @type Boolean
      * @default true
-     * @private
      */
     this.needsRegularUpdate = true;
 
@@ -288,7 +273,7 @@ JXG.GeometryElement = function() {
 
 /**
  * Initializes board, id and name which cannot be initialized properly in the constructor.
- * @param {String,JXG.Board} board The board the new point is drawn on.
+ * @param {JXG.Board} board The board the new point is drawn on.
  * @param {String} id Unique identifier for the point. If null or an empty string is given,
  *  an unique id will be generated by Board
  * @param {String} name Not necessarily unique name for the point. If null or an
@@ -296,29 +281,15 @@ JXG.GeometryElement = function() {
  * @private
  */
 JXG.GeometryElement.prototype.init = function(board, id, name) {
-    /*
-     * Parameter magic, if board is a string, assume it is an if of an object of
-     * type Board an get the boards reference.
-     */
-    if (typeof(board) == 'string') {
-        board = JXG.JSXGraph.boards[board];
-    }
-
-    /* already documented in constructor */
     this.board = board;
-
-    /* already documented in constructor */
     this.id = id;
 
     /* If name is not set or null or even undefined, generate an unique name for this object */
-    if ( /*(name != '') &&*/ (name != null) && (typeof name != 'undefined') ) {
-        name = name;
-    } else {
+    if (!JXG.exists(name)) {
         name = this.board.generateName(this);
     }
     this.board.elementsByName[name] = this;
 
-    /* already documented in constructor */
     this.name = name;
 
     /**
@@ -503,11 +474,11 @@ JXG.GeometryElement.prototype.addChild = function (obj) {
 
 /**
  * Adds the given object to the descendants list of this object and all its child objects.
- * @param obj The element that is to be added to the descendants list.
+ * @param {JXG.GeometryElement} obj The element that is to be added to the descendants list.
  * @private
  * @return
  */
-JXG.GeometryElement.prototype.addDescendants = function (/** JXG.GeometryElement */ obj) {
+JXG.GeometryElement.prototype.addDescendants = function (obj) {
 	var el;
 
     this.descendants[obj.id] = obj;
@@ -520,7 +491,7 @@ JXG.GeometryElement.prototype.addDescendants = function (/** JXG.GeometryElement
 /**
  * Array of strings containing the polynomials defining the element.
  * Used for determining geometric loci the groebner way.
- * @type array
+ * @type Array
  * @return An array containing polynomials describing the locus of the current object.
  * @private
  */
@@ -1200,7 +1171,7 @@ JXG.GeometryElement.prototype.createLabel = function(withLabel,coords) {
 JXG.GeometryElement.prototype.addLabelToElement = function() {
     this.createLabel(true);
     this.label.content.id = this.id+"Label";
-    this.board.addText(this.label.content);
+    this.board.setId(this.label.content, 'T');
     this.board.renderer.drawText(this.label.content);
     if(!this.label.content.visProp['visible']) {
         this.board.renderer.hide(this.label.content);

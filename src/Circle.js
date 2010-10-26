@@ -172,31 +172,16 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel, layer) {
     if (withLabel!=null) 
         this.createLabel(withLabel);
     
-    if(method == 'twoPoints') {
-        //this.point2 = JXG.getReference(board,par2);
-        //this.point2.addChild(this);
-        //this.radius = this.Radius(); 
-        this.id = this.board.addCircle(this);           
-    }
-    else if(method == 'pointRadius') {
-        //this.generateTerm(par2);  // Converts GEONExT syntax into JavaScript syntax
-        //this.updateRadius();                        // First evaluation of the graph
-        this.id = this.board.addCircle(this);
-        this.notifyParents(par2);      
-    }
-    else if(method == 'pointLine') {
-        // dann ist p2 die Id eines Objekts vom Typ Line!
-        //this.line = JXG.getReference(board,par2);
-        //this.radius = this.line.point1.coords.distance(JXG.COORDS_BY_USER, this.line.point2.coords);
+    this.id = this.board.setId(this, 'C');
+    this.board.renderer.drawCircle(this);
+    this.board.finalizeAdding(this);
+
+    if(method == 'pointRadius') {
+        this.notifyParents(par2);
+    } else if(method == 'pointLine') {
         this.line.addChild(this);
-        this.id = this.board.addCircle(this);        
-    }
-    else if(method == 'pointCircle') {
-        // dann ist p2 die Id eines Objekts vom Typ Circle!
-        //this.circle = JXG.getReference(board,par2);
-        //this.radius = this.circle.Radius();
+    } else if(method == 'pointCircle') {
         this.circle.addChild(this);
-        this.id = this.board.addCircle(this);        
     }    
 };
 JXG.Circle.prototype = new JXG.GeometryElement;

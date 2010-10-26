@@ -56,8 +56,13 @@ JXG.Image = function (board, url, coordinates, size, layer, id, name, el) {
     this.layer = layer;
     this.parent = el;
     this.visProp['visible'] = true;
-    //this.show = true; // noch noetig? BV
-    this.id = this.board.addImage(this);
+
+    this.id = this.board.setId(this, 'Im');
+
+    this.board.renderer.drawImage(this);
+    if(!this.visProp['visible']) {
+       this.board.renderer.hide(this);
+    }
 };
 
 JXG.Image.prototype = new JXG.GeometryElement;

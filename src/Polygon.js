@@ -130,7 +130,9 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
     this.createLabel(withLabel,[0,0]);
     
     /* Register polygon at board */
-    this.id = this.board.addPolygon(this);
+    this.id = this.board.setId(this,'Py');
+    this.board.renderer.drawPolygon(this);
+    this.board.finalizeAdding(this);
 };
 JXG.Polygon.prototype = new JXG.GeometryElement;
 
