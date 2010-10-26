@@ -97,7 +97,6 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
      * is determined by the construction type stored in the field constructionType.
      * @type Number
      * @constant
-     * @see JXG.Board#constructionType
      */
     this.BOARD_MODE_CONSTRUCT = 0x0010;
 
@@ -1856,8 +1855,10 @@ JXG.Board.prototype.addAnimation = function(element) {
     return this;
 };
 
-//\\ -- here be dragons -- //\\
-
+/**
+ * Cancels all running animations.
+ * @returns {JXG.Board} Reference to the board
+ */
 JXG.Board.prototype.stopAllAnimation = function() {
     var el;
 
@@ -1871,18 +1872,20 @@ JXG.Board.prototype.stopAllAnimation = function() {
 
     window.clearInterval(this.animationIntervalCode);
     delete(this.animationIntervalCode);
+
+    return this;
 };
 
 /**
- * General purpose animation function, currently only supporting moving points from one place to another. Is faster than
- * managing the animation per point, especially if there is more than one animated point at the same time.
+ * General purpose animation function. This currently only supports moving points from one place to another. This
+ * is faster than managing the animation per point, especially if there is more than one animated point at the same time.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.animate = function() {
     var count = 0,
         el, o, newCoords, r, p, c,
         obj=null;
 
-    //this.suspendUpdate();
     for(el in this.animationObjects) {
         if(this.animationObjects[el] === null)
             continue;
@@ -1928,20 +1931,21 @@ JXG.Board.prototype.animate = function() {
             delete(this.animationObjects[el]);
         }
     }
-    //this.unsuspendUpdate();
 
     if(count == 0) {
         window.clearInterval(this.animationIntervalCode);
         delete(this.animationIntervalCode);
     } else {
         this.update(obj);
-//	window.setTimeout('JXG.JSXGraph.boards[\'' + this.id + '\'].animate();', 35);
     }
+
+    return this;
 };
 
 /**
  * Initializes color blindness simulation.
- * @param deficiency Describes the color blindness deficiency which is simulated. Accepted values are protanopia, deuteranopia, and tritanopia.
+ * @param {String} deficiency Describes the color blindness deficiency which is simulated. Accepted values are 'protanopia', 'deuteranopia', and 'tritanopia'.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.emulateColorblindness = function(deficiency) {
     var e, o, brd=this;
@@ -1950,7 +1954,7 @@ JXG.Board.prototype.emulateColorblindness = function(deficiency) {
         deficiency = 'none';
 
     if(this.currentCBDef == deficiency)
-        return;
+        return this;
 
     for(e in brd.objects) {
         o = brd.objects[e];
@@ -1964,7 +1968,7 @@ JXG.Board.prototype.emulateColorblindness = function(deficiency) {
         }
     }
     this.currentCBDef = deficiency;
-
     this.update();
-};
 
+    return this;
+};
