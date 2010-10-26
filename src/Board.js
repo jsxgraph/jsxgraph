@@ -575,11 +575,9 @@ JXG.Board.prototype.setId = function (obj, type) {
 
     if(obj.hasLabel) {
         obj.label.content.id = elId+"Label";
-        if(!obj.label.content.isLabel) {
-            this.renderer.drawText(obj.label.content);
-            if(!obj.label.content.visProp['visible']) {
-                this.renderer.hide(obj.label.content);
-            }
+        this.renderer.drawText(obj.label.content);
+        if(!obj.label.content.visProp['visible']) {
+            this.renderer.hide(obj.label.content);
         }
     }
     return elId;
@@ -687,7 +685,7 @@ JXG.Board.prototype.touchStartListener = function (evt) {
 
 JXG.Board.prototype.touchMoveListener = function (evt) {
 	evt.preventDefault();
-	var e = document.createEvent("MouseEvents"), i, myEvent;
+	var i, myEvent;
 
 	for(i=0; i<evt.targetTouches.length; i++) {
 		myEvent = {pageX: evt.targetTouches[i].pageX, pageY: evt.targetTouches[i].pageY, clientX: evt.targetTouches[i].clientX, clientY: evt.targetTouches[i].clientY};
@@ -794,10 +792,9 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
 
 /**
  * This method is called by the browser when the left mouse button is released.
- * @param {Event}  evt The browsers event object.
  * @private
  */
-JXG.Board.prototype.mouseUpListener = function (evt) {
+JXG.Board.prototype.mouseUpListener = function () {
     // redraw with high precision
     this.updateQuality = this.BOARD_QUALITY_HIGH;
 
@@ -1282,10 +1279,9 @@ JXG.Board.prototype.updateStretch = function() {
     return this;
 };
 
-//\\ -- here be dragons -- //\\
-
 /**
- * Zooms into the board.
+ * Zooms into the board by the factor board.options.zoom.factor and applies the zoom.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.zoomIn = function() {
     var oX, oY;
@@ -1300,7 +1296,8 @@ JXG.Board.prototype.zoomIn = function() {
 };
 
 /**
- * Zooms out of the board.
+ * Zooms out of the board by the factor board.options.zoom.factor and applies the zoom.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.zoomOut = function() {
     var oX, oY;
@@ -1315,7 +1312,8 @@ JXG.Board.prototype.zoomOut = function() {
 };
 
 /**
- * Resets zoom factor zu 1.
+ * Resets zoom factor to 100%.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.zoom100 = function() {
     var oX, oY, zX, zY;
@@ -1335,6 +1333,7 @@ JXG.Board.prototype.zoom100 = function() {
 
 /**
  * Zooms the board so every visible point is shown. Keeps aspect ratio.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.zoomAllPoints = function() {
     var ratio, minX, maxX, minY, maxY, el,
@@ -1384,7 +1383,8 @@ JXG.Board.prototype.zoomAllPoints = function() {
 
 /**
  * Removes object from board and renderer.
- * @param {GeometryElement} object The object to remove.
+ * @param {JXG.GeometryElement} object The object to remove.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.removeObject = function(object) {
     var el, i;
@@ -1396,38 +1396,38 @@ JXG.Board.prototype.removeObject = function(object) {
 
     object = JXG.getReference(this, object);
 
-    /* Wenn weder die ID noch der Name des Objekts bekannt ist, einfach wieder zurueckgehen */
-    if(object == undefined) {
+    // If the object which is about to be removed unknown, do nothing.
+    if(!JXG.exists(object)) {
         return this;
     }
 
     try{
-        /* Alle Kinder entfernen */
+        // remove all children.
         for(el in object.childElements) {
             object.childElements[el].board.removeObject(object.childElements[el]);
         }
 
         for(el in this.objects) {
-            if(typeof this.objects[el].childElements != 'undefined')
+            if(JXG.exists(this.objects[el].childElements))
                 delete(this.objects[el].childElements[object.id]);
         }
 
-        /* Das Objekt selbst aus board.objects und board.elementsByName loeschen */
+        // remove the object itself from our control structures
         delete(this.objects[object.id]);
         delete(this.elementsByName[object.name]);
 
-        /* Alles weitere erledigt das Objekt selbst fuer uns. Ist sinnvoller, weil man sonst wieder unterscheiden muesste, was das fuer ein Objekt ist. */
-        if(object.remove != undefined) object.remove();
+        // the object deletion itself is handled by the object.
+        if(JXG.exists(object.remove)) object.remove();
     } catch(e) {
-//        alert(object.id + ': Could not be removed, JS says:\n\n' + e);
+        JXG.debug(object.id + ': Could not be removed, JS says:\n\n' + e);
     }
     return this;
 };
 
 /**
- * Initialise some objects which are contained in every GEONExT construction by default,
+ * Initialize some objects which are contained in every GEONExT construction by default,
  * but are not contained in the gxt files.
- * @private
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.initGeonextBoard = function() {
     var p1, p2, p3, l1, l2;
@@ -1446,28 +1446,27 @@ JXG.Board.prototype.initGeonextBoard = function() {
 };
 
 /**
- * Initialise the info box object which is used to display
- * the coordinates of points under the mouse pointer,
- * @private
+ * Initialize the info box object which is used to display
+ * the coordinates of points near the mouse pointer,
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.initInfobox= function() {
-    //this.infobox = new JXG.Label(this, '0,0', new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this), this.id + '__infobox');
     this.infobox = new JXG.Text(this, '0,0', '', [0,0], this.id + '__infobox',null, null, false, 'html');
     this.infobox.distanceX = -20;
     this.infobox.distanceY = 25;
-    //this.renderer.drawText(this.infobox);
     this.renderer.hide(this.infobox);
     return this;
 };
 
 /**
  * Change the height and width of the board's container.
- * @param {int} canvasWidth New width of the container.
- * @param {int} canvasHeight New height of the container.
+ * @param {Number} canvasWidth New width of the container.
+ * @param {Number} canvasHeight New height of the container.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.resizeContainer = function(canvasWidth, canvasHeight) {
-    this.canvasWidth = 1*canvasWidth;
-    this.canvasHeight = 1*canvasHeight;
+    this.canvasWidth = parseFloat(canvasWidth);
+    this.canvasHeight = parseFloat(canvasHeight);
     this.containerObj.style.width = (this.canvasWidth) + 'px';
     this.containerObj.style.height = (this.canvasHeight) + 'px';
     return this;
@@ -1475,6 +1474,7 @@ JXG.Board.prototype.resizeContainer = function(canvasWidth, canvasHeight) {
 
 /**
  * Lists the dependencies graph in a new HTML-window.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.showDependencies = function() {
     var el, t, c, f, i;
@@ -1486,14 +1486,14 @@ JXG.Board.prototype.showDependencies = function() {
             i++;
         }
         if (i>=0) {
-            t += '<b>' + this.objects[el].id + ':</b> ';
+            t += '<b>' + this.objects[el].id + ':<'+'/b> ';
         }
         for (c in this.objects[el].childElements) {
             t += this.objects[el].childElements[c].id+'('+this.objects[el].childElements[c].name+')'+', ';
         }
         t += '<p>\n';
     }
-    t += '</p>\n';
+    t += '<'+'/p>\n';
     f = window.open();
     f.document.open();
     f.document.write(t);
@@ -1503,21 +1503,21 @@ JXG.Board.prototype.showDependencies = function() {
 
 /**
  * Lists the XML code of the construction in a new HTML-window.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.showXML = function() {
-    var f = window.open("");
+    var f = window.open('');
     f.document.open();
-    f.document.write("<pre>"+JXG.escapeHTML(this.xmlString)+"</pre>");
+    f.document.write('<pre>'+JXG.escapeHTML(this.xmlString)+'<'+'/pre>');
     f.document.close();
     return this;
 };
 
 /**
  * Sets for all objects the needsUpdate flag to "true".
- * @param {Object,String} drag Element that caused the update.
- * @private
+ * @returns {JXG.Board} Reference to the board
  */
-JXG.Board.prototype.prepareUpdate = function(drag) {
+JXG.Board.prototype.prepareUpdate = function() {
     var el;
     for(el in this.objects) {
        this.objects[el].needsUpdate = true;
@@ -1526,10 +1526,10 @@ JXG.Board.prototype.prepareUpdate = function(drag) {
 };
 
 /**
-  * Runs through all elements and calls their update() method.
-  * @param {Object,String} drag Element that caused the update.
-  * @private
-  */
+ * Runs through all elements and calls their update() method.
+ * @param {JXG.GeometryElement} drag Element that caused the update.
+ * @returns {JXG.Board} Reference to the board
+ */
 JXG.Board.prototype.updateElements = function(drag) {
     var el, pEl,
         isBeforeDrag = true; // If possible, we start the update at the dragged object.
@@ -1537,16 +1537,16 @@ JXG.Board.prototype.updateElements = function(drag) {
     if (drag==null) {
         isBeforeDrag = false;
     }
-    
+
     for(el in this.objects) {
         pEl = this.objects[el];
         if (isBeforeDrag && drag!=null && pEl.id == drag.id) {
             isBeforeDrag = false;
         }
         if (!this.needsFullUpdate && (isBeforeDrag || !pEl.needsRegularUpdate)) { continue; }
-        
+
         // For updates of an element we distinguish if the dragged element is updated or
-        // other elements are updated. 
+        // other elements are updated.
         // The difference lies in the treatment of gliders.
         if (drag==null || pEl.id!=drag.id) {
             pEl.update(true);   // an element following the dragged element is updated
@@ -1558,14 +1558,14 @@ JXG.Board.prototype.updateElements = function(drag) {
 };
 
 /**
-  * Runs through all elements and calls their update() method.
-  * @param {Object,String} drag Element that caused the update.
-  * @private
-  */
+ * Runs through all elements and calls their update() method.
+ * @param {JXG.GeometryElement} drag Element that caused the update.
+ * @returns {JXG.Board} Reference to the board
+ */
 JXG.Board.prototype.updateRenderer = function(drag) {
     var el, pEl,
         isBeforeDrag = true; // If possible, we start the update at the dragged object.
-        
+
     drag = JXG.getReference(this, drag);
     if (drag==null) {
         isBeforeDrag = false;
@@ -1575,27 +1575,21 @@ JXG.Board.prototype.updateRenderer = function(drag) {
         if (isBeforeDrag && drag!=null && pEl.id == drag.id) {
             isBeforeDrag = false;
         }
-        if (!this.needsFullUpdate 
+        if (!this.needsFullUpdate
             && (isBeforeDrag || !pEl.needsRegularUpdate)
-            && this.options.renderer!='canvas' /* for canvas renderer */ 
+            && this.options.renderer!='canvas' /* for canvas renderer */
            ) { continue; }
-        //if (drag == null || pEl.id != drag.id) {
-            //if (this.needsFullUpdate) { pEl.updateRenderer(); }
-        //    pEl.updateRenderer();
-        //} else {
-            pEl.updateRenderer();
-        //}
+        pEl.updateRenderer();
     }
     return this;
 };
 
 /**
-  * Adds a hook to this board.
-  * @param {function} hook A function to be called by the board after an update occured.
-  * @param {string} m When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
-  * @type int
-  * @return Id of the hook, required to remove the hook from the board.
-  */
+ * Adds a hook to this board. A hook is a function which will be called on every board update.
+ * @param {function} hook A function to be called by the board after an update occured.
+ * @param {string} m When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
+ * @returns {Number} Id of the hook, required to remove the hook from the board.
+ */
 JXG.Board.prototype.addHook = function(hook, m) {
     if(typeof m == 'undefined')
         m = 'update';
@@ -1609,22 +1603,23 @@ JXG.Board.prototype.addHook = function(hook, m) {
 };
 
 /**
-  * Deletes a hook from this board.
-  * @param {int} id Id for the hook, required to delete the hook.
-  */
+ * Removes a hook from the board.
+ * @param {Number} id Id for the hook. The number you got when you added the hook.
+ * @returns {JXG.Board} Reference to the board
+ */
 JXG.Board.prototype.removeHook = function(id) {
     this.hooks[id] = null;
     return this;
 };
 
 /**
-  * Runs through all hooked functions and calls them.
-  * @private
-  */
+ * Runs through all hooked functions and calls them.
+ * @returns {JXG.Board} Reference to the board
+ */
 JXG.Board.prototype.updateHooks = function(m) {
     var i;
 
-    if(typeof m == 'undefined')
+    if(!JXG.exists(m))
         m = 'update';
 
     for(i=0; i<this.hooks.length; i++) {
@@ -1635,9 +1630,10 @@ JXG.Board.prototype.updateHooks = function(m) {
 };
 
 /**
-  * Adds a dependent board to this board.
-  * @param {object}  A reference to board which will be updated after an update of this board occured.
-  */
+ * Adds a dependent board to this board.
+ * @param {JXG.Board} board A reference to board which will be updated after an update of this board occured.
+ * @returns {JXG.Board} Reference to the board
+ */
 JXG.Board.prototype.addChild = function(board) {
     this.dependentBoards.push(board);
     this.update();
@@ -1645,9 +1641,10 @@ JXG.Board.prototype.addChild = function(board) {
 };
 
 /**
-  * Deletes a board from the list of dependent boards.
-  * @param {object} board Reference to the board which will be removed.
-  */
+ * Deletes a board from the list of dependent boards.
+ * @param {JXG.Board} board Reference to the board which will be removed.
+ * @returns {JXG.Board} Reference to the board
+ */
 JXG.Board.prototype.removeChild = function(board) {
     var i;
     for (i=this.dependentBoards.length-1; i>=0; i--) {
@@ -1659,10 +1656,10 @@ JXG.Board.prototype.removeChild = function(board) {
 };
 
 /**
-  * Runs through most elements and calls their
-  * update() method and update the conditions.
-  * @param {Object,String} drag Element that caused the update.
-  */
+ * Runs through most elements and calls their update() method and update the conditions.
+ * @param {Object} drag Element that caused the update.
+ * @returns {JXG.Board} Reference to the board
+ */
 JXG.Board.prototype.update = function(drag) {
     var i, len, boardId, b;
     if (this.isSuspendedUpdate) { return this; }
@@ -1692,10 +1689,10 @@ JXG.Board.prototype.update = function(drag) {
 };
 
 /**
-  * Runs through all elements and calls their
-  * update() method and update the conditions.
-  * This is necessary after zooming and changing the bounding box.
-  */
+ * Runs through all elements and calls their update() method and update the conditions.
+ * This is necessary after zooming and changing the bounding box.
+ * @returns {JXG.Board} Reference to the board
+ */
 JXG.Board.prototype.fullUpdate = function() {
     this.needsFullUpdate = true;
     this.update();
@@ -1710,18 +1707,21 @@ JXG.Board.prototype.fullUpdate = function() {
  * points to construct a line. This highly depends on the elementType that is constructed. See the corresponding JXG.create*
  * methods for a list of possible parameters.
  * @param {Object} attributes An object containing the attributes to be set. This also depends on the elementType.
- * Common attributes are name, visible, strokeColor. @see GeometryElement#setProperty
- * @type Object
- * @return Reference to the created element.
+ * Common attributes are name, visible, strokeColor. See {@link JXG.GeometryElement#setProperty}.
+ * @returns {Object} Reference to the created element. This is usually a GeometryElement, but can be an array containing
+ * two or more elements.
  */
 JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
     var el, i, s;
 
-    // CM: AW:
-    if (elementType!='turtle' && (parents == null || parents.length == 0)) {  // Turtle may have no parent elements
+    // Turtle may have no parent elements
+    if (elementType!='turtle' && (!JXG.exists(parents) || (parents.length && parents.length == 0))) {
         return null;
     }
-    if (parents == null) { parents = []; }
+    
+    if (!JXG.exists(parents)) {
+        parents = [];
+    }
 
     elementType = elementType.toLowerCase();
 
@@ -1742,8 +1742,8 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         throw new Error("JSXGraph: JXG.createElement: Unknown element type given: "+elementType);
     }
 
-    if (typeof el == 'undefined') {
-        //throw new Error("JSXGraph: JXG.createElement: failure creating "+elementType);
+    if (!JXG.exists(el)) {
+        JXG.debug("JSXGraph: JXG.createElement: failure creating "+elementType);
         return el;
     }
 
@@ -1751,56 +1751,28 @@ JXG.Board.prototype.createElement = function(elementType, parents, attributes) {
         attributes = attributes[0];
     }
 
-//    try {
-        if(el.multipleElements) {
-            for(s in el) {
-                if(typeof el[s].setProperty != 'undefined')
-                    el[s].setProperty(attributes);
-            }
-        } else {
-            if(typeof el.setProperty != 'undefined')
-                el.setProperty(attributes);
+    if(el.multipleElements) {
+        for(s in el) {
+            if(el[s].setProperty)
+                el[s].setProperty(attributes);
         }
-
-//    } catch (e) { alert("Error setting Property:" + e); };
-
-//    if(!JXG.isArray(el)) {  // Default way of setting attributes: strings, arrays and objects are possible
-//        el.setProperty(attributes);
-//    }
-/* AW: Doch erstmal wieder auskommentiert
-    else {                  // Setting attributes of multiple objects simultaneously.  Here, only strings are possible
-        for (var s in attributes) {
-            for(var i=0; i<el.length; i++) {
-                if(attributes[s][i] != null) {el[i].setProperty(s+':'+attributes[s][i]);}
-            }
-        }
+    } else {
+        if(el.setProperty)
+            el.setProperty(attributes);
     }
-*/
-/*
-    for (var s in attributes) {
-        if(!JXG.isArray(el)) {
-            el.setProperty(s+':'+attributes[s]);
-        }
-        else {
-            for(var i=0; i<el.length; i++) {
-                if(attributes[s][i] != null) {
-                    el[i].setProperty(s+':'+attributes[s][i]);
-                }
-            }
-        }
-    }
-*/
+
     this.update(el); // We start updating at the newly created element. AW
     return el;
 };
 
 /**
- * Wrapper for {@link #createElement}.
+ * This is just a shortcut for {@link JXG.Board#createElement}.
  */
 JXG.Board.prototype.create = JXG.Board.prototype.createElement;
 
 /**
  * Delete the elements drawn as part of a trace of an element.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.clearTraces = function() {
     var el;
@@ -1814,6 +1786,7 @@ JXG.Board.prototype.clearTraces = function() {
 
 /**
  * Stop updates of the board.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.suspendUpdate = function() {
     this.isSuspendedUpdate = true;
@@ -1821,7 +1794,8 @@ JXG.Board.prototype.suspendUpdate = function() {
 };
 
 /**
- * Enable updates of the board again.
+ * Enable updates of the board.
+ * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.unsuspendUpdate = function() {
     this.isSuspendedUpdate = false;
@@ -1831,13 +1805,16 @@ JXG.Board.prototype.unsuspendUpdate = function() {
 
 /**
  * Set the bounding box of the board.
- * @param {Array} New bounding box [x1,y1,x2,y2]
- * @param {Bool} keepaspectratio: optional flag
+ * @param {Array} bbox New bounding box [x1,y1,x2,y2]
+ * @param {Boolean} [keepaspectratio=false] If set to true, the aspect ratio will be 1:1, but
+ * the resulting viewport may be larger.
+ * @returns {JXG.Board} Reference to the board
  */
-JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
-    if (!JXG.isArray(bbox)) return;
-    var h,w,oX,oY, dim;
-    dim = JXG.getDimensions(this.container);
+JXG.Board.prototype.setBoundingBox = function(bbox, keepaspectratio) {
+    if (!JXG.isArray(bbox)) return this;
+
+    var h, w, oX, oY,
+        dim = JXG.getDimensions(this.container);
 
     this.canvasWidth = parseInt(dim.width);
     this.canvasHeight = parseInt(dim.height);
@@ -1863,6 +1840,12 @@ JXG.Board.prototype.setBoundingBox = function(bbox,keepaspectratio) {
     return this;
 };
 
+/**
+ * Adds an animation. Animations are controlled by the boards, so the boards need to be aware of the
+ * animated elements. This function tells the board about new elements to animate.
+ * @param {JXG.GeometryElement} element The element which is to be animated.
+ * @returns {JXG.Board} Reference to the board
+ */
 JXG.Board.prototype.addAnimation = function(element) {
     this.animationObjects[element.id] = element;
 
@@ -1873,10 +1856,11 @@ JXG.Board.prototype.addAnimation = function(element) {
     return this;
 };
 
+//\\ -- here be dragons -- //\\
+
 JXG.Board.prototype.stopAllAnimation = function() {
     var el;
 
-    //this.suspendUpdate();
     for(el in this.animationObjects) {
         if(this.animationObjects[el] === null)
             continue;
