@@ -574,6 +574,9 @@ JXG.Board.prototype.setId = function (obj, type) {
 
     if(obj.hasLabel) {
         obj.label.content.id = elId+"Label";
+
+        this.objects[elId+"Label"] = obj.label.content;
+
         this.renderer.drawText(obj.label.content);
         if(!obj.label.content.visProp['visible']) {
             this.renderer.hide(obj.label.content);
