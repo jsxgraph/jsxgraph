@@ -295,11 +295,25 @@ JXG.VMLRenderer.prototype.removeGrid = function(board) {
 */
 
 JXG.VMLRenderer.prototype.hide = function(el) {
-    el.rendNode.style.visibility = "hidden"; 
+    var node;
+
+    if (!JXG.exists(el))
+        return;
+    node = el.rendNode;
+    if(JXG.exists(node)) {
+        node.style.visibility = "hidden";
+    }
 };
 
 JXG.VMLRenderer.prototype.show = function(el) {
-    el.rendNode.style.visibility = "inherit";  
+    var node;
+
+    if (!JXG.exists(el))
+        return;
+    node = el.rendNode;
+    if(JXG.exists(node)) {
+        node.style.visibility = "inherit";
+    }
 };
 
 JXG.VMLRenderer.prototype.setDashStyle = function(el,visProp) {

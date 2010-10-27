@@ -562,7 +562,7 @@ JXG.Board.prototype.generateId = function () {
 JXG.Board.prototype.setId = function (obj, type) {
     var num = this.numObjects++,
         elId = obj.id;
-    
+
     // Falls Id nicht vorgegeben, eine Neue generieren:
     if(elId == '' || !JXG.exists(elId)) {
         elId = this.id + type + num;
@@ -572,10 +572,10 @@ JXG.Board.prototype.setId = function (obj, type) {
     // Objekt in das assoziative Array einfuegen
     this.objects[elId] = obj;
 
-    if(obj.hasLabel) {
+    if(true && obj.hasLabel) {
         obj.label.content.id = elId+"Label";
 
-        if(!obj.label.content.isLabel) { 
+        if(!obj.label.content.isLabel) {
             this.renderer.drawText(obj.label.content);
             if(!obj.label.content.visProp['visible']) {
                 this.renderer.hide(obj.label.content);
@@ -583,6 +583,34 @@ JXG.Board.prototype.setId = function (obj, type) {
         }
     }
     return elId;
+};
+
+/**
+ * After construction of the object the visibility is set
+ * and the label is constructed if necessary.
+ * @param {Object} obj The object to add.
+ */
+JXG.Board.prototype.finalizeAdding = function (obj) {
+    if (obj.hasLabel) {
+        if(false) {
+            obj.label.content.id = obj.id + "Label";
+
+            if(!obj.label.content.isLabel) {
+                this.renderer.drawText(obj.label.content);
+                if(!obj.label.content.visProp['visible']) {
+                    this.renderer.hide(obj.label.content);
+                }
+            }
+        }
+        this.renderer.drawText(obj.label.content);
+    }
+    if(!obj.visProp['visible']) {
+        this.renderer.hide(obj);
+    }
+
+    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
+        this.renderer.hide(obj.label.content);
+    }
 };
 
 /**
@@ -737,11 +765,11 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         return;
     }
     if (this.mode==this.BOARD_MODE_CONSTRUCT) return;
-    
+
     if(((new Date()).getTime() - this.last_click.time <500) && (JXG.Math.Geometry.distance(absPos, [this.last_click.posX, this.last_click.posY]) < 30)) {
 		this.zoom100();
 	}
-	
+
 	this.last_click.time = (new Date()).getTime();
 	this.last_click.posX = absPos[0];
 	this.last_click.posY = absPos[1];
@@ -1058,7 +1086,6 @@ JXG.Board.prototype.getAllUnderMouse = function (Evt) {
 
     return elList;
 };
-
 /**
  * Collects all elements under current mouse position.
  * @param {Event} Evt Event object containing the mouse coordinates.
@@ -1079,6 +1106,8 @@ JXG.Board.prototype.getAllObjectsUnderMouse = function (Evt) {
 
     return elList;
 };
+
+
 /**
  * Moves the origin and initializes an update of all elements.
  * @returns {JXG.Board} Reference to this board.
@@ -1105,25 +1134,6 @@ JXG.Board.prototype.moveOrigin = function () {
         this.renderer.drawGrid(this);
     }
     return this;
-};
-
-
-/**
- * After construction of the object the visibility is set
- * and the label is constructed if necessary.
- * @param {Object} obj The object to add.
- */
-JXG.Board.prototype.finalizeAdding = function (obj) {
-    if (obj.hasLabel) {
-        this.renderer.drawText(obj.label.content);
-    }
-    if(!obj.visProp['visible']) {
-        this.renderer.hide(obj);
-    }
-
-    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
-        this.renderer.hide(obj.label.content);
-    }
 };
 
 /**

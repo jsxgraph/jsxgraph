@@ -422,16 +422,26 @@ JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
 
 JXG.SVGRenderer.prototype.hide = function(el) {
     var node;
-    if (el==null) return;
+
+    if (!JXG.exists(el))
+        return;
     node = el.rendNode;
-    node.setAttributeNS(null, 'display', 'none');
-    node.style.visibility = "hidden";     
+    if(JXG.exists(node)) {
+        node.setAttributeNS(null, 'display', 'none');
+        node.style.visibility = "hidden";
+    }
 };
 
 JXG.SVGRenderer.prototype.show = function(el) {
-    var node = el.rendNode;
-    node.setAttributeNS(null, 'display', 'inline');
-    node.style.visibility = "inherit"; 
+    var node;
+
+    if (!JXG.exists(el))
+        return;
+    node = el.rendNode;
+    if(JXG.exists(node)) {
+        node.setAttributeNS(null, 'display', 'inline');
+        node.style.visibility = "inherit";
+    }
 };
 
 JXG.SVGRenderer.prototype.remove = function(shape) {
