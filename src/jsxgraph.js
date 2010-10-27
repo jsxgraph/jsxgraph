@@ -1052,18 +1052,33 @@ JXG.debug = function(s) {
 
 // JessieScript startup: Search for script tags of type text/jessiescript and interpret them.
 JXG.addEvent(window, 'load', function () {
-    var scripts = document.getElementsByTagName('script'),
-        i, div, board;
+    var scripts = document.getElementsByTagName('script'), type,
+        i, j, div, board, width, height, bbox, axis, grid;
     
     for(i=0;i<scripts.length;i++) {
-        if(scripts[i].getAttribute('type', 'none') == 'text/jessiescript') {
+        type = scripts[i].getAttribute('type', false);
+        if(type.toLowerCase() === 'text/jessiescript' || type.toLowerCase === 'jessiescript') {
+            width = scripts[i].getAttribute('width', false) || '500px';
+            height = scripts[i].getAttribute('height', false) || '500px';
+            bbox = scripts[i].getAttribute('boundingbox', false) || [-5, 5, 5, -5];
+            bbox = bbox.split(',');
+            if(bbox.length!==4) {
+                bbox = [-5, 5, 5, -5];
+            } else {
+                for(j=0;j<bbox.length;j++) {
+                    bbox[j] = parseFloat(bbox[j]);
+                }
+            }
+            axis = JXG.str2Bool(scripts[i].getAttribute('axis', false) || 'false');
+            grid = JXG.str2Bool(scripts[i].getAttribute('grid', false) || 'false');
+
             div = document.createElement('div');
             div.setAttribute('id', 'jessiescript_autgen_jxg_'+i);
-            div.setAttribute('style', 'width:500px; height:500px; float:left');
+            div.setAttribute('style', 'width:'+width+'; height:'+height+'; float:left');
             div.setAttribute('class', 'jxgbox');
             document.body.insertBefore(div, scripts[i]);
 
-            board = JXG.JSXGraph.initBoard('jessiescript_autgen_jxg_'+i, {boundingbox: [-5, 5, 5, -5], keepaspectratio:true});
+            board = JXG.JSXGraph.initBoard('jessiescript_autgen_jxg_'+i, {boundingbox: bbox, keepaspectratio:true, grid: grid, axis: axis});
             board.construct(scripts[i].innerHTML);
         }
     }
