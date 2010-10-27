@@ -32,9 +32,9 @@
  * @return An object consisting of several arrays (lines, circles, points, angles, ...) where the created elements are stored.
  */
 JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName) {
-    var splitted, i, first, last, j, output = {}, objName, defElements, obj, type, possibleNames, tmp, noMacro, k,l, pattern, createdNames, found,
-        mac, prop, propName, propValue;
-    if(typeof(mode) == "undefined") {
+    var splitted, i, j, output = {}, objName, defElements, obj, type, possibleNames, tmp, noMacro, k,l, pattern, createdNames, found,
+        mac, prop, propName, propValue, attributes;
+    if(!JXG.exists(mode)) {
         mode = "normal";
     }
     else { // mode = 'macro'
@@ -165,7 +165,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 defElements[1] = RegExp.$2;
                             } // sonst wird die Gerade durch zwei Punkte definiert, die einen Namen haben, der aus nur jeweils einem Buchstaben besteht
                             if(objName != '') {
-                                if(attributes.withLabel == undefined) {
+                                if(!JXG.exists(attributes.withLabel)) {
                                     attributes.withLabel = true;
                                 }
                                 attributes.name = objName;
@@ -280,7 +280,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 }
                             }
                             if(objName != '') {
-                                if(attributes.withLabel == undefined) {
+                                if(!JXG.exists(attributes.withLabel)) {
                                     attributes.withLabel = true;
                                 }
                                 attributes.name = objName;
@@ -458,7 +458,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             }
                             if(objName != '') {
                                 attributes.name = objName;
-                                if(attributes.withLabel == undefined) {
+                                if(!JXG.exists(attributes.withLabel)) {
                                     attributes.withLabel = true;
                                 }
                                 if(mode == 'macro') {
@@ -524,7 +524,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                         }
                                     }
                                 }
-                                if(attributes.withLabel == undefined) {
+                                if(!JXG.exists(attributes.withLabel)) {
                                     attributes.withLabel = true;
                                 }
                                 if(mode == 'macro') {
@@ -605,7 +605,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         }
                         else if(splitted[i].search(/(\S*)\s*\[(.*)\]/) != -1) { // Polygon
                             attributes.name = RegExp.$1;
-                            if(attributes.withLabel == undefined) {
+                            if(!JXG.exists(attributes.withLabel)) {
                                 attributes.withLabel = true;
                             }
                             defElements = RegExp.$2;
