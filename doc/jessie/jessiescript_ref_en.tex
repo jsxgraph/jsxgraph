@@ -1,16 +1,12 @@
 \documentclass[10pt]{article}
 \usepackage{a4wide}
 \usepackage[latin1]{inputenc}
-\usepackage[ngerman]{babel}
-\usepackage[ngerman]{varioref}
+\usepackage[ngerman]{babel,varioref}
 \usepackage[T1] {fontenc}
-\usepackage[latin1] {inputenc}
-\usepackage{amsmath}
-\usepackage{amssymb}
+\usepackage{amsmath,amssymb}
 \usepackage{verbatim}
 \usepackage{pst-all}
 \usepackage{float}
-%\usepackage{pst-pdf}
 \usepackage{multicol}
 \usepackage{multirow}
 \usepackage{tabularx}
@@ -185,20 +181,20 @@ After that, the macro can be called by
 \section{Example}
 An example shall demonstrate the practical implementation.
 \begin{verbatim}
-    board = JXG.JSXGraph.initBoard('box', {originX: 50, originY: 300, unitX: 50,
+    board = JXG.JSXGraph.initBoard("box", {originX: 50, originY: 300, unitX: 50,
                                            unitY: 50, axis:true});
 
-    cons1 = board.construct("A(1,1);BC(1,3);k(A,[BC]);X(2,4)");
+    cons1 = board.construct("A(1,1);BC(1,3);k(A,[A BC]);X(2,4)");
     cons2 = board.construct("J(7,4);l_2=[BC A]");
 
-    cons1.points[0].face('>'); // A
-    cons1.BC.strokeColor('black');
+    cons1.points[0].face(">");
+    cons1.BC.strokeColor("black");
     cons2.l_2.strokeWidth(4);
     cons1.X.size(8);
 
     cons3 = board.construct("test = Macro(D,E,F) { g=[DE] nolabel; k1=k(D,[EF]);};
                                  ttt=test(A,X,J);");
-    cons3.ttt.g.strokeColor('red');
+    cons3.ttt.g.strokeColor("red");
 \end{verbatim}
 
 \end{document}
