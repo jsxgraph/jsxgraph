@@ -13,9 +13,9 @@
 
 <script type='text/javascript'>
 //alert(navigator.appVersion);
-//JXG.Options.renderer = 'canvas';
+JXG.Options.renderer = 'canvas';
 var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:false, grid:false});
-//var axisx = b.create('axis', [[0,0], [1,0]], {strokeColor:'black', withLabel:false});
+var axisx = b.create('axis', [[0,0], [1,0]], {strokeColor:'black', withLabel:false});
 //L = b.create('line',[[0,1],[1,1]], {strokeWidth:1});
 A = b.create('point',[1,1], {name:'',face:'a',size:20, fillColor:'blue', strokeColor:'red', withLabel:false, trace:true});
 D = b.create('point',[2,2], {face:'<>',size:20, withLabel:true, color:'yellow'});

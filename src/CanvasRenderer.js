@@ -92,9 +92,14 @@ JXG.CanvasRenderer.prototype.updateStencilBuffer = function(el) {
  * Sets color and opacity for filling and stroking
  */
 JXG.CanvasRenderer.prototype.setColor = function(el, type) {
-    var hasColor = true;
+    var hasColor = true, isTrace = false;
+	if (!JXG.exists(el.board)||!JXG.exists(el.board.highlightedObjects)) {
+		// This case handles trace elements. 
+		// To make them work, we simply neglect highlighting.
+		isTrace = true;
+	}
     if (type=='fill') {
-        if(typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
+        if(!isTrace && typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
             if (el.visProp.highlightFillColor!='none') {
                 this.context.globalAlpha = el.visProp.highlightFillOpacity;
                 this.context.fillStyle = el.visProp.highlightFillColor;
@@ -110,7 +115,7 @@ JXG.CanvasRenderer.prototype.setColor = function(el, type) {
             }
         }
     } else {
-        if(typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
+        if(!isTrace && typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
             if (el.visProp.highlightStrokeColor!='none') {
                 this.context.globalAlpha = el.visProp.highlightStrokeOpacity;
                 this.context.strokeStyle = el.visProp.highlightStrokeColor;
