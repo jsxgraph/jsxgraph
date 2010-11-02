@@ -1793,6 +1793,7 @@ JXG.Board.prototype.clearTraces = function() {
         if (this.objects[el].traced)
             this.objects[el].clearTrace();
     }
+    this.numTraces = 0;
     return this;
 };
 
