@@ -1,0 +1,55 @@
+<html>
+<head>
+    <title>Exploring Change - Plotting Average Rates of Change</title>
+    <link rel="stylesheet" type="text/css" href="../../../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
+    <script type="text/javascript" src="../../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+
+<h1>Durchschnittliche &Auml;nderungsrate</h1>
+
+<p><strong>Eine kleine Einf&uuml;hrung.</strong></p>
+
+<h2>Entdecke</h2>
+
+<div style="width:800px">
+    <div id="step" class="jxgbox" style="width:600px; height:600px;"></div>
+
+    <script type="text/javascript">
+    JXG.Options.text.useMathJax = true;
+    
+    var board = JXG.JSXGraph.initBoard('step', {boundingbox: [-6, 6, 4, -4], keepaspectratio: false, axis:true, showNavigation: true}),
+        parabola = board.create('functiongraph', [function(x) { return 0.5*x*x-2; }]),
+        A = board.create('glider', [-2, 0, parabola], {name: function() { return A ? 'A = (' + A.X().toFixed(2) + ', ' + A.Y().toFixed(2) + ')' : 'A';}}),
+        B = board.create('glider', [0, 2, parabola], {withLabel: false}),
+        Btext = board.create('text', [function () { return B.X() -1;}, function () { return B.Y() - 0.2;}, function() { return B ? 'B = (' + B.X().toFixed(2) + ', ' + B.Y().toFixed(2) + ')' : 'B';}]),
+        line = board.create('segment', [A,B]),
+        ratio = board.create('text', [-5, 3, function() { return '\\[\\frac{y_B-y_A}{x_B-x_A} = ' + ((B.Y() - A.Y())/(B.X() - A.X())).toFixed(4) + '\\]';}]);
+    
+    board.update();
+    </script>
+
+    <div style="width: 800px;">
+        <p>
+            Auch hier sind die beiden Punkte A und B an einen Funktionsgraphen gebunden, in diesem Fall an eine Parabel.
+        </p>
+        <p>Aufgaben:</p>
+        <ol>
+            <li>
+                Bewege wieder beide Punkte auf dem Graphen der Funktion. Sind die durchschnittlichen &Auml;nderungsraten
+                wieder identisch?
+            </li>
+            <li>
+                Was geschieht, wenn die beiden Punkte die exakt gleichen Koordinaten besitzen?
+            </li>
+            <li>
+                Kannst Du die beiden Punkte so verschieben, dass der Funktionsgraph und die Strecke AB &uuml;bereinander
+                liegen?
+            </li>
+        </ol>
+    </div>
+</div>
+
+</body>
+</html>
