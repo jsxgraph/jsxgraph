@@ -97,7 +97,7 @@ JXG.Math.Numerics.reuleauxPolygon = function(points, nr) {
     var pi2 = Math.PI*2,
         pi2_n = pi2/nr,
         diag = (nr-1)/2,
-        beta, d = 0; 
+        beta, d = 0,
         makeFct = function(which, trig) {
                 return function(t, suspendUpdate) {
                     if (!suspendUpdate) {

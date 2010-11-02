@@ -10,13 +10,12 @@
  * @parameter {string} color_string A valid HTML or CSS styled color value, e.g. #12ab21, #abc, black, or rgb(12, 132, 233) <strong>or</string>
  * @parameter {array} color_array Array containing three color values either from 0.0 to 1.0 or from 0 to 255. They will be interpreted as red, green, and blue values <strong>OR</strong>
  * @parameter {number} r,g,b Three color values r, g, and b like those in the array variant.
- * @type array
- * @return RGB color values as an array [r, g, b] which component's are between 0 and 255.
+ * @returns {Array} RGB color values as an array [r, g, b] which component's are between 0 and 255.
  */
 JXG.rgbParser = function() {
 
     if(arguments.length == 0)
-        return;
+        return [0, 0, 0];
 
     if(arguments.length >= 3) {
         arguments[0] = [arguments[0], arguments[1], arguments[2]];
@@ -244,9 +243,10 @@ JXG.rgbParser = function() {
 
     // search through the definitions to find a match
     for (var i = 0; i < color_defs.length; i++) {
-        var re = color_defs[i].re;
-        var processor = color_defs[i].process;
-        var bits = re.exec(color_string);
+        var re = color_defs[i].re,
+            processor = color_defs[i].process,
+            bits = re.exec(color_string),
+            channels;
         if (bits) {
             channels = processor(bits);
             r = channels[0];
@@ -403,7 +403,7 @@ JXG.rgb2hsv = function() {
  * @return Hashmap containing the L, M, S cone values.
  */
 JXG.rgb2LMS = function() {
-    var r, g, b, l, m, s, ret
+    var r, g, b, l, m, s, ret,
         // constants
         matrix = [[0.05059983, 0.08585369, 0.00952420], [0.01893033, 0.08925308, 0.01370054], [0.00292202, 0.00975732, 0.07145979]];
 
@@ -438,7 +438,7 @@ JXG.rgb2LMS = function() {
  * @return Hashmap containing the r, g, b values.
  */
 JXG.LMS2rgb = function(l, m, s) {
-    var r, g, b, ret
+    var r, g, b, ret,
         // constants
         matrix = [[30.830854, -29.832659, 1.610474], [-6.481468, 17.715578, -2.532642], [-0.375690, -1.199062, 14.273846]];
 
@@ -455,7 +455,7 @@ JXG.LMS2rgb = function(l, m, s) {
     // This code is an implementation of an algorithm described by Hans Brettel,
     // Francoise Vienot and John Mollon in the Journal of the Optical Society of
     // America V14(10), pg 2647. (See http://vischeck.com/ for more info.)
-    lut_lookup = function (value) {
+    var lut_lookup = function (value) {
         var offset = 127, step = 64;
 
         while (step > 0) {

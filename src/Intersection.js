@@ -416,7 +416,6 @@ JXG.Intersection.prototype = new JXG.GeometryElement();
  * as it highly depends on the types of the intersected elements.
  */
 JXG.Intersection.prototype.update = function() {
-    return;
 };
 
 /**
@@ -426,7 +425,6 @@ JXG.Intersection.prototype.update = function() {
  * @return {bool} Always returns false
  */
 JXG.Intersection.prototype.hasPoint = function(x, y) {
-    return false;
 };
 
 /**
@@ -457,8 +455,6 @@ JXG.Intersection.prototype.remove = function() {
         this.board.removeObject(this.p1);
     if(this.p2 != undefined)
         this.board.removeObject(this.p2);
-        
-    return;
 };
 
 /**

@@ -695,11 +695,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
         if (pair[1]==null) continue;
         switch(pair[0].replace(/\s+/g).toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
             case 'needsregularupdate':
-                if(pair[1] == 'false' || pair[1] == false) {
-                    this.needsRegularUpdate = false;
-                } else {
-                    this.needsRegularUpdate = true;
-                }
+                this.needsRegularUpdate = !(pair[1] == 'false' || pair[1] == false);
 
                 this.board.renderer.setBuffering(this, this.needsRegularUpdate ? 'auto' : 'static');
                 break;
@@ -945,30 +941,24 @@ JXG.GeometryElement.prototype.setProperty = function () {
             case 'insertticks':
                 if(this.type == JXG.OBJECT_TYPE_TICKS) {
                     var old = this.insertTicks;
-                    this.insertTicks = true;
-                    if(pair[1] == 'false' || pair[1] == false) {
-                        this.insertTicks = false;
-                    }
+
+                    this.insertTicks = !(pair[1] == 'false' || pair[1] == false);
                     if(old != this.insertTicks) this.prepareUpdate().update().updateRenderer();
                 }
                 break;
             case 'drawlabels':
                 if(this.type == JXG.OBJECT_TYPE_TICKS) {
                     var old = this.drawLabels;
-                    this.drawLabels = true;
-                    if(pair[1] == 'false' || pair[1] == false) {
-                        this.drawLabels = false;
-                    }
+
+                    this.drawLabels = !(pair[1] == 'false' || pair[1] == false);
                     if(old != this.drawLabels) this.prepareUpdate().update().updateRenderer();
                 }
                 break;
             case 'drawzero':
                 if(this.type == JXG.OBJECT_TYPE_TICKS) {
                     var old = this.drawZero;
-                    this.drawZero = true;
-                    if(pair[1] == 'false' || pair[1] == false) {
-                        this.drawZero = false;
-                    }
+
+                    this.drawZero = !(pair[1] == 'false' || pair[1] == false);
                     if(old != this.drawZero) this.prepareUpdate().update().updateRenderer();
                 }
                 break;

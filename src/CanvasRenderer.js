@@ -291,7 +291,7 @@ JXG.CanvasRenderer.prototype.updateImageURL = function(el) {
 
 JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) { 
     var ctx = this.context,
-        transformParent = this.transformImageParent;
+        transformParent = this.transformImageParent,
         transform = this.transformImage,
         paintImg = function(){ 
             ctx.save();

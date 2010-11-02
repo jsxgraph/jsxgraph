@@ -1236,7 +1236,7 @@ JXG.createReflection = function(board, parentArr, atts) {
  * </script><pre>
  */
 JXG.createMirrorPoint = function(board, parentArr, atts) {
-    var p;
+    var p, i;
 
     /* TODO mirror polynomials */
     if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1])) {
@@ -1410,7 +1410,7 @@ JXG.createIntegral = function(board, parents, attributes) {
 
         this.dataX = x;
         this.dataY = y;
-    }
+    };
     pa_on_curve.addChild(p);
     pb_on_curve.addChild(p);
     pa_on_curve.addChild(t);

@@ -24,7 +24,8 @@
 */
 JXG.GraphReader = new function() {
     this.parseData = function(board, directed) {
-        var splitted, n, nodes = [], adjMatrix = [], i, tmp, nodenumbers = {}, tmp2, weighted = false;
+        var splitted, n, nodes = [], adjMatrix = [], i, j, tmp, nodenumbers = {}, tmp2, weighted = false,
+            boundingBox;
         splitted = this.data.split('\n');
         // remove whitespaces
         for(i=0; i<splitted.length;i++) {

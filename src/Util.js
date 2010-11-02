@@ -1145,7 +1145,7 @@ JXG.Util.asciiCharCodeAt = function(str,i){
 JXG.Util.utf8Decode = function(utftext) {
   var string = [];
   var i = 0;
-  var c = 0, c1 = 0, c2 = 0;
+  var c = 0, c1 = 0, c2 = 0, c3;
   if (utftext===JXG.undefined) return '';
   
   while ( i < utftext.length ) {

@@ -1702,7 +1702,7 @@ this.writeElement = function(board, output, input, cmd) {
       try {
         JXG.debug("* <b>Polygon:</b> First: " + input[0].name + ", Second: " + input[1].name + ", Third: " + input[2] + "<br>\n");
 
-        borders = [];
+        var borders = [];
         var borderatts = [];
         length = (type == 'regular') ? output.length-input[2]+2 : output.length;
 
@@ -2815,8 +2815,6 @@ this.prepareString = function(fileStr, isString) {
  * @return {boolean}
  */
 this.isGGBVector = function(v){
-	if (JXG.isArray(v) && v.length == 3 && v[0] == 1)
-		return true;
-	return false;
+	return JXG.isArray(v) && v.length == 3 && v[0] == 1;	
 };
 }; // end: GeogebraReader()

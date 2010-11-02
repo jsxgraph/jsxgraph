@@ -269,11 +269,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
             label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(board.stretchX), 
                             newTick.usrCoords[2]*1+label.distanceY/(board.stretchY));
             
-            if (drawLabels) {
-                label.visProp['visible'] = true; 
-            } else {
-                label.visProp['visible'] = false;
-            }
+            label.visProp['visible'] = drawLabels;
             return label;
         },
         
@@ -488,8 +484,6 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     this.dyMaj = dyMaj;
     this.dxMin = dxMin;
     this.dyMin = dyMin;
-    //this.board.renderer.updateTicks(this, dxMaj, dyMaj, dxMin, dyMin);
-    return;
 };
 
 /**

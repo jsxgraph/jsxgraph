@@ -480,8 +480,8 @@ JXG.Curve.prototype.isDistOK = function (x0,y0,x1,y1,MAXX,MAXY) {
 };
 
 JXG.Curve.prototype.isSegmentDefined = function (x0,y0,x1,y1) {
-    if (isNaN(x0+y0) && isNaN(x1+y1)) { return false; }
-    return true;
+    return !(isNaN(x0 + y0) && isNaN(x1 + y1));
+
 };
 /*
 JXG.Curve.prototype.isContinuous = function (t0, t1, MAX_ITER) {

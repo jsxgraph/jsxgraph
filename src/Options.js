@@ -239,7 +239,7 @@ JXG.Options = {
 JXG.useStandardOptions = function(board) {
     var o = JXG.Options,
         boardHadGrid = board.hasGrid,
-        el, t;
+        el, t, p;
 
     board.options.grid.hasGrid = o.grid.hasGrid;
     board.options.grid.gridX = o.grid.gridX;
@@ -332,7 +332,7 @@ JXG.useStandardOptions = function(board) {
  * @see #useStandardOptions
  */
 JXG.useBlackWhiteOptions = function(board) {
-    o = JXG.Options;
+    var o = JXG.Options;
     o.point.fillColor = JXG.rgb2bw(o.point.fillColor);
     o.point.highlightFillColor = JXG.rgb2bw(o.point.highlightFillColor);
     o.point.strokeColor = JXG.rgb2bw(o.point.strokeColor);
@@ -438,7 +438,8 @@ JXG.rgb2cb = function(color, deficiency) {
     }
 
     var rgb, l, m, s, lms, tmp,
-        a1, b1, c1, a2, b2, c2;
+        a1, b1, c1, a2, b2, c2,
+        inflection;
 //        anchor = new Array(12), anchor_e = new Array(3);
 /*
  has been required to calculate the constants for a1, ..., c2, and inflection.

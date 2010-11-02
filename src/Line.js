@@ -908,7 +908,6 @@ JXG.createLine = function(board, parents, atts) {
                 throw new Error("JSXGraph: Can't create line with parent types '" + 
                                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2])+ "'." +
                                 "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
-                return;
             }
         }
         // point 1: (0,c,-b)

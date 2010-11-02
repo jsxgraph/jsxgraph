@@ -396,7 +396,7 @@ JXG.VMLRenderer.prototype.unsuspendRedraw = function() {
 };
 
 JXG.VMLRenderer.prototype.setAttributes = function(node,props,vmlprops,visProp) {
-    var val, i, p
+    var val, i, p,
         len = props.length;
 
     for (i=0;i<len;i++) {

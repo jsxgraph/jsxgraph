@@ -123,7 +123,6 @@ this.subtreeToString = function(root) {
         // IE
         return root.xml;
     }
-    return null;
 };
 
 this.readImage = function(node) {

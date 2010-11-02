@@ -346,12 +346,7 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
                 {name:'',fixed:false,visible:false,withLabel:false});
         myAtts['fillColor'] = colorArray[i%colorArray.length];
         myAtts['name'] = labelArray[i];
-        if(myAtts['name'] != '') {
-            myAtts['withLabel'] = true;
-        }
-        else {
-            myAtts['withLabel'] = false;
-        }
+        myAtts['withLabel'] = myAtts['name'] != '';
         myAtts['labelColor'] = colorArray[i%colorArray.length];
         myAtts['highlightfillColor'] = highlightColorArray[i%highlightColorArray.length];
         arc[i] = board.create('sector',[center,p[i],p[i+1]], myAtts);
@@ -417,7 +412,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
         la, pdata, ssa, esa, ssratio, esratio,
         sshifts, eshifts, starts, ends,
         labelArray, colorArray, highlightColorArray, radius, myAtts,
-        cent, xc, xy, center, start_angle, rad, p, line, t,
+        cent, xc, yc, center, start_angle, rad, p, line, t,
         xcoord, ycoord, polygons, legend_position, circles,
         cla, clabelArray, ncircles, pcircles, angle, dr;
     
@@ -784,8 +779,9 @@ JXG.Legend = function(board, coords, attributes) {
 JXG.Legend.prototype = new JXG.GeometryElement;
 
 JXG.Legend.prototype.drawVerticalLegend = function(attributes) {
-    var line_length = attributes['lineLength'] || 1;
-    var offy = (attributes['rowHeight'] || 20)/this.board.stretchY;
+    var line_length = attributes['lineLength'] || 1,
+        offy = (attributes['rowHeight'] || 20)/this.board.stretchY,
+        i;
 
     for(i=0;i<this.label_array.length;i++) {
         this.myAtts['strokeColor'] = this.color_array[i];
