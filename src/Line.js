@@ -577,16 +577,15 @@ JXG.Line.prototype.getLabelAnchor = function() {
  * @param {boolean} addToTrace Not used.
  */
 JXG.Line.prototype.cloneToBackground = function(addToTrace) {
-    var copy = {},
-        r, s;
+    var copy = {}, r, s, er;
 
     copy.id = this.id + 'T' + this.numTraces;
+    copy.elementClass = JXG.OBJECT_CLASS_LINE;
     this.numTraces++;
     copy.point1 = this.point1;
     copy.point2 = this.point2;
 
     copy.stdform = this.stdform;
-    JXG.clearVisPropOld(copy);
 
     copy.board = {};
     copy.board.unitX = this.board.unitX;
@@ -599,18 +598,21 @@ JXG.Line.prototype.cloneToBackground = function(addToTrace) {
     copy.board.canvasHeight = this.board.canvasHeight;
     copy.board.canvasWidth = this.board.canvasWidth;
     copy.board.dimension = this.board.dimension;
-    copy.board.algebra = this.board.algebra;
+    //copy.board.algebra = this.board.algebra;
 
     copy.visProp = this.visProp;
+    JXG.clearVisPropOld(copy);
+
     s = this.getSlope();
     r = this.getRise();
     copy.getSlope = function() { return s; };
     copy.getRise = function() { return r; };
 
+    er = this.board.renderer.enhancedRendering;
     this.board.renderer.enhancedRendering = true;
     this.board.renderer.drawLine(copy);
-    this.board.renderer.enhancedRendering = false;
-    this.traces[copy.id] = this.board.renderer.getElementById(copy.id);
+    this.board.renderer.enhancedRendering = er;
+    this.traces[copy.id] = copy.rendNode; //this.board.renderer.getElementById(copy.id);
 
     delete copy;
 

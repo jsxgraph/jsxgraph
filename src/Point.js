@@ -1124,9 +1124,7 @@ JXG.Point.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     JXG.clearVisPropOld(copy);
     
     this.board.renderer.drawPoint(copy);
-
-    this.traces[copy.id] = document.getElementById(copy.id);
-
+    this.traces[copy.id] = copy.rendNode;
     delete copy;
 /*   
     this.board.renderer.cloneSubTree(this);

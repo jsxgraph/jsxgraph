@@ -680,8 +680,7 @@ JXG.Curve.prototype.getLabelAnchor = function() {
  * @param addToTrace Not used yet. Always true.
  */
 JXG.Curve.prototype.cloneToBackground = function(addToTrace) {
-    var copy = {},
-        r, s, i;
+    var copy = {}, r, s, i, er;
 
     copy.id = this.id + 'T' + this.numTraces;
     copy.elementClass = JXG.OBJECT_CLASS_CURVE;
@@ -690,7 +689,6 @@ JXG.Curve.prototype.cloneToBackground = function(addToTrace) {
     copy.points = this.points.slice(0); 
     copy.numberPoints = this.numberPoints;
     copy.curveType = this.curveType;
-    JXG.clearVisPropOld(copy);
 
     copy.board = {};
     copy.board.unitX = this.board.unitX;
@@ -703,14 +701,16 @@ JXG.Curve.prototype.cloneToBackground = function(addToTrace) {
     copy.board.canvasHeight = this.board.canvasHeight;
     copy.board.canvasWidth = this.board.canvasWidth;
     copy.board.dimension = this.board.dimension;
-    copy.board.algebra = this.board.algebra;
+    //copy.board.algebra = this.board.algebra;
     copy.board.options = this.board.options;
 
     copy.visProp = this.visProp;
+    JXG.clearVisPropOld(copy);
+    er = this.board.renderer.enhancedRendering;
     this.board.renderer.enhancedRendering = true;
     this.board.renderer.drawCurve(copy);
-    this.board.renderer.enhancedRendering = false;
-    this.traces[copy.id] = this.board.renderer.getElementById(copy.id);
+    this.board.renderer.enhancedRendering = er;
+    this.traces[copy.id] = copy.rendNode; //this.board.renderer.getElementById(copy.id);
 
     delete copy;
 };

@@ -385,7 +385,7 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         return;
     }
     node = el.rendNode;
-    node.setAttributeNS(null, 'fill', c);           
+    node.setAttributeNS(null, 'fill', c);  
     node.setAttributeNS(null, 'fill-opacity', o);                   
     
     if (el.visProp['gradient']!=null) {

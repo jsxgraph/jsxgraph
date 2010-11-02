@@ -209,16 +209,18 @@ JXG.Polygon.prototype.getLabelAnchor = function() {
  * Copy the element to the background.
  */
 JXG.Polygon.prototype.cloneToBackground = function(addToTrace) {
-    var copy = {};
+    var copy = {}, er;
     copy.id = this.id + 'T' + this.numTraces;
     this.numTraces++;
     copy.vertices = this.vertices;
     copy.visProp = this.visProp;
     JXG.clearVisPropOld(copy);
     
+    er = this.board.renderer.enhancedRendering;
+    this.board.renderer.enhancedRendering = true;
     this.board.renderer.drawPolygon(copy);
-
-    this.traces[copy.id] = $(copy.id);
+    this.board.renderer.enhancedRendering = er;
+    this.traces[copy.id] = copy.rendNode; //$(copy.id);
 
     delete copy;
 };

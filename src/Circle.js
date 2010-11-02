@@ -486,12 +486,13 @@ JXG.Circle.prototype.getLabelAnchor = function() {
  * @param addToTrace Not used yet. Always true.
  */
 JXG.Circle.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
-    var copy = {};
+    var copy = {}, r, er;
     copy.id = this.id + 'T' + this.numTraces;
+    copy.elementClass = JXG.OBJECT_CLASS_CIRCLE;
     this.numTraces++;
     copy.midpoint = {};
     copy.midpoint.coords = this.midpoint.coords;
-    var r = this.Radius();
+    r = this.Radius();
     copy.Radius = function() { return r; };
     copy.getRadius = function() { return r; }; // deprecated
     
@@ -506,8 +507,11 @@ JXG.Circle.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     copy.visProp = this.visProp;
     JXG.clearVisPropOld(copy);
     
+    er = this.board.renderer.enhancedRendering;
+    this.board.renderer.enhancedRendering = true;
     this.board.renderer.drawCircle(copy);
-    this.traces[copy.id] = this.board.renderer.getElementById(copy.id);
+    this.board.renderer.enhancedRendering = er;
+    this.traces[copy.id] = copy.rendNode; //this.board.renderer.getElementById(copy.id);
 
     delete copy;
 };

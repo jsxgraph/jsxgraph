@@ -1200,7 +1200,6 @@ JXG.GeometryElement.prototype.noHighlight = function() {
  */
 JXG.GeometryElement.prototype.clearTrace = function() {
     var obj;
-
     for(obj in this.traces) {
         this.board.renderer.remove(this.traces[obj]);
     }

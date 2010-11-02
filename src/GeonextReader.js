@@ -249,6 +249,8 @@ this.readGeonext = function(tree,board) {
     boardTmp.viewportBottom = xmlNode.getElementsByTagName('bottom')[0].firstChild.data;
     boardTmp.viewportRight = xmlNode.getElementsByTagName('right')[0].firstChild.data;
 
+    boardTmp.options = JXG.deepCopy(board.options);
+    
     this.readConditions(boardData.getElementsByTagName('conditions')[0],boardTmp);
     board.origin = {};
     board.origin.usrCoords = [1, 0, 0];

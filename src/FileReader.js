@@ -130,19 +130,16 @@ this.parseString = function(fileStr, board, format, isString) {
     		fileStr = JXG.Util.Base64.decode(fileStr);
         fileStr = JXG.CinderellaReader.readCinderella(fileStr, board);
         board.xmlString = fileStr;
-        board.afterLoad();
         return;
     }
     if (format.toLowerCase()=='graph') {
         //if(isString)
         fileStr = JXG.GraphReader.readGraph(fileStr, board, false);
-        board.afterLoad();
         return;
     }
     if (format.toLowerCase()=='digraph') {
         //if(isString)
         fileStr = JXG.GraphReader.readGraph(fileStr, board, true);
-        board.afterLoad();
         return;
     }    
 
@@ -190,7 +187,6 @@ this.readElements = function(tree, board, format) {
         JXG.IntergeoReader.readIntergeo(tree, board);
     }
     // cdy is already parsed in parseString()
-    board.afterLoad();
 }; // end: this.readElements()
 
 }; // end: FileReader()
