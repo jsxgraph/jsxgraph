@@ -894,7 +894,7 @@ JXG.Math.Geometry = {
      * intersection point of the curve and the parallel to y-axis through the given point.
      * @param {Number} x coordinate to project.
      * @param {Number} y coordinate to project.
-     * @param {Number} t value for newtons method
+     * @param {Number} t start value for newtons method
      * @param {JXG.Curve} curve Curve on that the point is projected.
      * @param {JXG.Board} [board=curve.board] Reference to a board.
      * @see #projectPointToCurve

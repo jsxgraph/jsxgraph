@@ -779,7 +779,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         nr = 0;
         for(el in this.objects) {
             pEl = this.objects[el];
-            if( (typeof pEl.hasPoint != 'undefined')
+            if( JXG.exists(pEl.hasPoint)
                     && ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)
                         /*|| (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_LINE)  // not yet
                         || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CIRCLE)
@@ -947,12 +947,12 @@ JXG.Board.prototype.updateInfobox = function(el) {
     if (!el.showInfobox) {
         return this;
     }
+	if (el.elementClass == JXG.OBJECT_CLASS_POINT) {
+		xc = el.coords.usrCoords[1];
+		yc = el.coords.usrCoords[2];
 
-    if (el.elementClass == JXG.OBJECT_CLASS_POINT) {
-        xc = el.coords.usrCoords[1];
-        yc = el.coords.usrCoords[2];
-        this.infobox.setCoords(xc+this.infobox.distanceX/(this.stretchX),
-                               yc+this.infobox.distanceY/(this.stretchY));
+		this.infobox.setCoords(xc+this.infobox.distanceX/(this.stretchX),
+							   yc+this.infobox.distanceY/(this.stretchY));
         if (typeof(el.infoboxText)!="string") {
             x = Math.abs(xc);
             if (x>0.1) {
