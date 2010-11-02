@@ -73,7 +73,7 @@ JXG.JSXGraph = {
         if ((!ie) || (opera) || (ie && parseFloat(ie[1]) >= 9.0)) {
             // we're NOT in IE
             if (navigator.appVersion.match(/Android.*AppleWebKit/)) {
-                // we're using canvas on android and iphone/pod/pad
+                // we're using canvas on android
                 JXG.Options.renderer = 'canvas';
             } else {
                 // let's hope the user's browser supports svg...
