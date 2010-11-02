@@ -183,7 +183,6 @@ JXG.JSXGraph = {
 
         // create elements like axes, grid, navigation, ...
         board.suspendUpdate();
-
         board.initInfobox();
         
         if(attributes["axis"]) {
@@ -201,7 +200,6 @@ JXG.JSXGraph = {
         if (showNavi) {
             board.renderer.drawZoomBar(board);
         }
-
         board.unsuspendUpdate();
 
         return board;

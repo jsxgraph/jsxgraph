@@ -362,12 +362,16 @@ JXG.CanvasRenderer.prototype.setObjectStrokeWidth = function(el, width) {
 };
 
 JXG.CanvasRenderer.prototype.hide = function(el) {
-    // useless
+    // useless beside HTML texts
+	if (JXG.exists(el.rendNode)) 
+		el.rendNode.style.visibility = "hidden";
     //el.board.updateRenderer();
 };
 
 JXG.CanvasRenderer.prototype.show = function(el) {
-    // useless
+    // useless beside HTML texts
+	if (JXG.exists(el.rendNode)) 
+		el.rendNode.style.visibility = "inherit";
     //el.board.updateRenderer();
 };
 

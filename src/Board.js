@@ -1466,7 +1466,7 @@ JXG.Board.prototype.initInfobox= function() {
     this.infobox = new JXG.Text(this, '0,0', '', [0,0], this.id + '__infobox',null, null, false, 'html');
     this.infobox.distanceX = -20;
     this.infobox.distanceY = 25;
-    this.renderer.hide(this.infobox);
+	this.renderer.hide(this.infobox);
     return this;
 };
 
