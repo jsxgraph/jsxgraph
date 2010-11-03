@@ -38,7 +38,7 @@
         pointTimeLabel = board.create('text', [function() { return pointTime.X() + 0.4;}, function() { return pointTime.Y() - 0.4;}, function() {return 'Time: ' + pointTime.X().toFixed(2);}]),
         pointPosition = board.create('point', [function() {return pointTime.X();}, function() {return parseFloat((me.X()-home.X()).toFixed(2));}], {name: 'P', trace: true, color: 'navy'}),
         animatebutton = board.create('text', [0, 23.2, '<button onclick="pointTime.moveTo([24,23], 45000);">Animate</button>']),
-        animatebutton = board.create('text', [3, 23.2, '<button onclick="board.stopAllAnimation(); pointTime.moveTo([6,23], 0); board.clearTraces(); pointPosition.moveTo([6, 0], 0); me.moveTo([7.5,25], 0);">Reset</button>']);
+        animatebutton = board.create('text', [3, 23.2, '<button onclick="board.stopAllAnimation(); pointTime.moveTo([6,23], 0); pointPosition.moveTo([6, 0], 0); me.moveTo([7.5,25], 0); board.clearTraces();">Reset</button>']);
     </script>
 
     <div style="width: 800px;">
