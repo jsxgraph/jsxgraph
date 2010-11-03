@@ -6,7 +6,7 @@
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h2>Spline chart with special highlighted points</h2>
+<h2>Area calculation</h2>
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:600px; height:600px; float:left"></div>
 </div>
@@ -21,6 +21,7 @@
             var p2 = board.createElement('point',[7,8]);
             var p3 = board.createElement('point',[1,8]);
             var poly = board.createElement('polygon',[p,p2,p3]);
+            board.unsuspendUpdate();
             alert(c.Area());
             alert(poly.Area());
           /* ]]> */
