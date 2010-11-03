@@ -1057,7 +1057,7 @@ JXG.addEvent(window, 'load', function () {
         if(type.toLowerCase() === 'text/jessiescript' || type.toLowerCase === 'jessiescript') {
             width = scripts[i].getAttribute('width', false) || '500px';
             height = scripts[i].getAttribute('height', false) || '500px';
-            bbox = scripts[i].getAttribute('boundingbox', false) || [-5, 5, 5, -5];
+            bbox = scripts[i].getAttribute('boundingbox', false) || '-5, 5, 5, -5';
             bbox = bbox.split(',');
             if(bbox.length!==4) {
                 bbox = [-5, 5, 5, -5];
