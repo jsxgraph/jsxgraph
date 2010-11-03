@@ -106,7 +106,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
      * @type boolean
      * @default true
      */
-    this.showInfobox = true;
+    this.showInfobox = JXG.Options.point.showInfobox;
     
     /**
      * Descriptive character, displayed next to the point

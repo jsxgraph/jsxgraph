@@ -18,6 +18,7 @@
 
     <script type="text/javascript">
     JXG.Options.text.useMathJax = true;
+    JXG.Options.point.showInfobox = false;
     
     var board = JXG.JSXGraph.initBoard('step', {boundingbox: [-6, 6, 4, -4], keepaspectratio: false, axis:true, showNavigation: true}),
         A = board.create('point', [-2, 0], {name: function() { return A ? 'A = (' + A.X().toFixed(2) + ', ' + A.Y().toFixed(2) + ')' : 'A';}}),

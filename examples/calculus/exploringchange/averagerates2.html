@@ -18,6 +18,7 @@
 
     <script type="text/javascript">
     JXG.Options.text.useMathJax = true;
+    JXG.Options.point.showInfobox = false;
     
     var board = JXG.JSXGraph.initBoard('step', {boundingbox: [-6, 6, 4, -4], keepaspectratio: false, axis:true, showNavigation: true}),
         parabola = board.create('functiongraph', [function(x) { return 1.5*x+2; }]),
