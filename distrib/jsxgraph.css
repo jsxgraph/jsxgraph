@@ -20,7 +20,7 @@
     font-family: Arial, Helvetica, Geneva;
     padding:0px;
     margin:0px;
-    line-height:100%;
+    /*line-height:100%;*/ /* This has to be commented out. Otherwise subscripts are not visible in IE */
     /*border-style:dotted;*/
     /*border-width:0.4px;*/
 }
