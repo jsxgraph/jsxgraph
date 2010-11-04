@@ -1054,6 +1054,7 @@ JXG.addEvent(window, 'load', function () {
     
     for(i=0;i<scripts.length;i++) {
         type = scripts[i].getAttribute('type', false);
+		if (!JXG.exists(type)) continue;
         if(type.toLowerCase() === 'text/jessiescript' || type.toLowerCase === 'jessiescript') {
             width = scripts[i].getAttribute('width', false) || '500px';
             height = scripts[i].getAttribute('height', false) || '500px';

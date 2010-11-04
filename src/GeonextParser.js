@@ -342,7 +342,7 @@ JXG.GeonextParser.geonext2JS = function(term, board) {
         to =   ['Math.abs', 'Math.acos', 'Math.asin', 'Math.atan', 'Math.ceil', 'Math.cos', 'Math.exp', 'Math.floor', 'Math.log', 'Math.max', 'Math.min', 'Math.random', 'this.board.round', 'Math.sin', 'Math.sqrt', 'Math.tan', 'Math.ceil'];
     // removed: 'Pow'  -> Math.pow
     
-    //term = JXG.unescapeHTML(term);  // This replaces &gt; by >, &lt; by < and &amp; by &.ist aber zu allgemein
+    //term = JXG.unescapeHTML(term);  // This replaces &gt; by >, &lt; by < and &amp; by &. But it is to strict. 
     term = term.replace(/&lt;/g,'<'); // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
     term = term.replace(/&gt;/g,'>'); 
     term = term.replace(/&amp;/g,'&'); 
@@ -355,7 +355,7 @@ JXG.GeonextParser.geonext2JS = function(term, board) {
     newterm = this.replacePow(newterm);
     newterm = this.replaceIdByObj(newterm);
     for (i=0; i<from.length; i++) {
-        expr = new RegExp(from[i],"ig");
+        expr = new RegExp(['\W|^',from[i]].join(''),"ig");  // sin -> Math.sin and asin -> Math.asin 
         newterm = newterm.replace(expr,to[i]);
     }    
     newterm = newterm.replace(/True/g,'true');
