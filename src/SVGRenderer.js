@@ -84,7 +84,7 @@ JXG.SVGRenderer = function(container) {
     this.dashArray = ['2, 2', '5, 5', '10, 10', '20, 20', '20, 10, 10, 10', '20, 5, 10, 5'];
 };
 
-JXG.SVGRenderer.prototype = new JXG.AbstractRenderer;
+JXG.SVGRenderer.prototype = JXG.AbstractRenderer();
 
 JXG.SVGRenderer.prototype.setShadow = function(el) {
     if (el.visPropOld['shadow']==el.visProp['shadow']) {
@@ -673,13 +673,13 @@ JXG.SVGRenderer.prototype.updatePathStringPoint = function(el, size, type) {
         (scr[1]) + ' ' + (scr[2]-size) + ' L ' +
         (scr[1]) + ' ' + (scr[2]+size);    
     }
-    else if(type == 'diamond') {
+    else if(type == '<>') {
         s = 'M ' + (scr[1]-size) + ' ' + (scr[2]) + ' L ' + 
         (scr[1]) + ' ' + (scr[2]+size) + ' L ' + 
         (scr[1]+size) + ' ' + (scr[2]) + ' L ' +
         (scr[1]) + ' ' + (scr[2]-size) + ' Z ';
     }
-    else if(type == 'A') {
+    else if(type == '^') {
         s = 'M ' + (scr[1]) + ' ' + (scr[2]-size) + ' L ' + 
         (scr[1]-sqrt32) + ' ' + (scr[2]+s05) + ' L ' + 
         (scr[1]+sqrt32) + ' ' + (scr[2]+s05) + ' Z ';

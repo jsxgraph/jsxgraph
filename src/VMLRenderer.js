@@ -60,7 +60,7 @@ JXG.VMLRenderer = function(container) {
     this.dashArray = ['Solid', '1 1', 'ShortDash', 'Dash', 'LongDash', 'ShortDashDot', 'LongDashDot'];    
 };
 
-JXG.VMLRenderer.prototype = new JXG.AbstractRenderer;
+JXG.VMLRenderer.prototype = JXG.AbstractRenderer();
 
 JXG.VMLRenderer.prototype.setAttr = function(node, key, val, val2) {
     try {
@@ -624,14 +624,14 @@ JXG.VMLRenderer.prototype.updatePathStringPoint = function(el, size, type) {
         (r*(scr[1])),', ',(r*(scr[2]-size)),' l ',
         (r*(scr[1])),', ',(r*(scr[2]+size))].join(''));    
     }
-    else if(type == 'diamond') {
+    else if(type == '<>') {
         s.push(['m ',(r*(scr[1]-size)),', ',(r*(scr[2])),' l ',
         (r*(scr[1])),', ',(r*(scr[2]+size)),' l ',
         (r*(scr[1]+size)),', ',(r*(scr[2])),' l ',
         (r*(scr[1])),', ',(r*(scr[2]-size)),' x e '
         ].join(''));   
     }
-    else if(type == 'A') {
+    else if(type == '^') {
         s.push(['m ',(r*(scr[1])),', ',(r*(scr[2]-size)),' l ',
         Math.round(r*(scr[1]-sqrt32)),', ',(r*(scr[2]+s05)),' l ',
         Math.round(r*(scr[1]+sqrt32)),', ',(r*(scr[2]+s05)),' x e '
