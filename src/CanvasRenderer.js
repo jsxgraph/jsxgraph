@@ -193,13 +193,14 @@ JXG.CanvasRenderer.prototype.setGradient = function(el) {
     // not implemented yet. this should be done in the draw methods for the
     // elements and here we just call the updateRenderer of the given element,
     // resp. the JXG.Board.update().
-
+	/*
     if(el.visProp['gradient'] == 'linear') {
     }
     else if (el.visProp['gradient'] == 'radial') {
     }
     else {
     }
+	*/
 };
 
 JXG.CanvasRenderer.prototype.updateGradient = function(el) {

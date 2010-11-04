@@ -1598,8 +1598,8 @@ JXG.Board.prototype.updateRenderer = function(drag) {
 
 /**
  * Adds a hook to this board. A hook is a function which will be called on every board update.
- * @param {function} hook A function to be called by the board after an update occured.
- * @param {string} m When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
+ * @param {Function} hook A function to be called by the board after an update occured.
+ * @param {String} m When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
  * @returns {Number} Id of the hook, required to remove the hook from the board.
  */
 JXG.Board.prototype.addHook = function(hook, m) {
