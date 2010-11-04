@@ -69,7 +69,8 @@ JXG.GeonextParser.replacePow = function(te) {
                 leftop = leftop.replace(/([\(\)\+\*\%\^\-\/\]\[])/g,"\\$1");
             }
         } else {
-            leftop = '[\\w\\.\\(\\)\\+\\*\\%\\^\\-\\/\\[\\]]+'; // former: \\w\\.
+            //leftop = '[\\w\\.\\(\\)\\+\\*\\%\\^\\-\\/\\[\\]]+'; // former: \\w\\. . Doesn't work for sin(x^2)
+            leftop = '[\\w\\.]+'; // former: \\w\\.
         }
         right = te.slice(i+1);
         if (right.match(/^([\w\.]*\()/)) {
@@ -86,7 +87,8 @@ JXG.GeonextParser.replacePow = function(te) {
                 rightop = rightop.replace(/([\(\)\+\*\%\^\-\/\[\]])/g,"\\$1");
             }
         } else {
-            rightop = '[\\w\\.\\(\\)\\+\\*\\%\\^\\-\\/\\[\\]]+';  // ^b , see leftop
+            //rightop = '[\\w\\.\\(\\)\\+\\*\\%\\^\\-\\/\\[\\]]+';  // ^b , see leftop. Doesn't work for sin(x^2)
+            rightop = '[\\w\\.]+';  
         }
         expr = new RegExp('(' + leftop + ')\\^(' + rightop + ')');
         te = te.replace(expr,"JXG.Math.pow($1,$2)");
@@ -355,9 +357,9 @@ JXG.GeonextParser.geonext2JS = function(term, board) {
     newterm = this.replacePow(newterm);
     newterm = this.replaceIdByObj(newterm);
     for (i=0; i<from.length; i++) {
-        expr = new RegExp(['\W|^',from[i]].join(''),"ig");  // sin -> Math.sin and asin -> Math.asin 
-        newterm = newterm.replace(expr,to[i]);
-    }    
+        expr = new RegExp(['(\\W|^)(',from[i],')'].join(''),"ig");  // sin -> Math.sin and asin -> Math.asin 
+        newterm = newterm.replace(expr,['$1',to[i]].join(''));
+    } 
     newterm = newterm.replace(/True/g,'true');
     newterm = newterm.replace(/False/g,'false');
     newterm = newterm.replace(/fasle/g,'false');

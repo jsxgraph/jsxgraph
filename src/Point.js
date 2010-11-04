@@ -1363,13 +1363,13 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
  * </pre><div id="45e25f12-a1de-4257-a466-27a2ae73614c" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var ipex2_board = JXG.JSXGraph.initBoard('45e25f12-a1de-4257-a466-27a2ae73614c', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var ipex2_p1 = ipex1_board.create('point', [4.0, 4.0]);
- *   var ipex2_c1 = ipex1_board.create('circle', [ipex2_p1, 2.0]);
- *   var ipex2_p2 = ipex1_board.create('point', [1.0, 1.0]);
- *   var ipex2_p3 = ipex1_board.create('point', [5.0, 3.0]);
- *   var ipex2_l1 = ipex1_board.create('line', [ipex2_p2, ipex2_p3]);
- *   var ipex2_i = ipex1_board.create('intersection', [ipex2_c1, ipex2_l1, 0]);
- *   var ipex2_j = ipex1_board.create('otherintersection', [ipex2_c1, ipex2_l1, ipex2_i]);
+ *   var ipex2_p1 = ipex2_board.create('point', [4.0, 4.0]);
+ *   var ipex2_c1 = ipex2_board.create('circle', [ipex2_p1, 2.0]);
+ *   var ipex2_p2 = ipex2_board.create('point', [1.0, 1.0]);
+ *   var ipex2_p3 = ipex2_board.create('point', [5.0, 3.0]);
+ *   var ipex2_l1 = ipex2_board.create('line', [ipex2_p2, ipex2_p3]);
+ *   var ipex2_i = ipex2_board.create('intersection', [ipex2_c1, ipex2_l1, 0], {name:'D'});
+ *   var ipex2_j = ipex2_board.create('otherintersection', [ipex2_c1, ipex2_l1, ipex2_i], {name:'E'});
  * </script><pre>
  */
 JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
