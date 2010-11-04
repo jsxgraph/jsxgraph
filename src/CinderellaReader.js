@@ -38,7 +38,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readPointProperties(dataLines,i);
                 i = erg[1];
-                board.createElement('point',[pCoords[0]/pCoords[2],-1*pCoords[1]/pCoords[2]],
+                board.create('point',[pCoords[0]/pCoords[2],-1*pCoords[1]/pCoords[2]],
                                     {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
                 
             }
@@ -61,7 +61,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readLineProperties(dataLines,i);
                 i = erg[2];
-                board.createElement('line',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
+                board.create('line',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
                                     {straightFirst:!segment, straightLast:!segment, name:objName, withLabel:true, 
                                      strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
             }
@@ -77,7 +77,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1); 
                 erg = this.readCircleProperties(dataLines,i);
                 i = erg[3];
-                board.createElement('circle',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
+                board.create('circle',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
                                     {name:objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
                                      strokeWidth:erg[0][2]});
             }
@@ -96,7 +96,7 @@ JXG.CinderellaReader = new function() {
                 defRadius = defPoints[1].slice(0,defPoints[1].search(/\+i\*/));
                 erg = this.readCircleProperties(dataLines,i);
                 i = erg[3];
-                board.createElement('circle',[JXG.getReference(board,defName),Math.sqrt(1*defRadius)],
+                board.create('circle',[JXG.getReference(board,defName),Math.sqrt(1*defRadius)],
                                     {name:objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
                                      strokeWidth:erg[0][2]});
             }
@@ -120,7 +120,7 @@ JXG.CinderellaReader = new function() {
                 erg = this.readPointProperties(dataLines,i);
                 i = erg[1];
                 circle = JXG.getReference(board,defName);
-                board.createElement('glider',
+                board.create('glider',
                         [circle.midpoint.coords.usrCoords[1]+defPoints[0],circle.midpoint.coords.usrCoords[2]-defPoints[1],circle],
                                 {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
             }
@@ -138,7 +138,7 @@ JXG.CinderellaReader = new function() {
                 }            
                 erg = this.readPointProperties(dataLines,i);
                 i = erg[1];
-                board.createElement('glider',
+                board.create('glider',
                         [pCoords[0]/pCoords[2],-1*pCoords[1]/pCoords[2],JXG.getReference(board,defName)],
                         {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});  
             }
@@ -154,7 +154,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1); 
                 erg = this.readPointProperties(dataLines,i);
                 i = erg[1];
-                board.createElement('midpoint',
+                board.create('midpoint',
                         [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
                         {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
             }
@@ -170,7 +170,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readCircleProperties(dataLines,i);
                 i = erg[3]; 
-                circle = board.createElement('circumcircle',
+                circle = board.create('circumcircle',
                         [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),JXG.getReference(board,defName[2])],
                         {name:['',objName]});
                 circle[0].setProperty({visible:false});
@@ -189,7 +189,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readLineProperties(dataLines,i);
                 i = erg[2];
-                board.createElement('parallel',
+                board.create('parallel',
                         [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
                         {name:objName, withLabel:true, strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
             }
@@ -205,7 +205,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readLineProperties(dataLines,i);
                 i = erg[2];                
-                board.createElement('normal',
+                board.create('normal',
                         [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
                         {name:objName, withLabel:true, strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});                
             }
@@ -221,7 +221,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1); 
                 erg = this.readCircleProperties(dataLines,i);
                 i = erg[3];
-                board.createElement('conic',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
+                board.create('conic',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
                                              JXG.getReference(board,defName[2]),JXG.getReference(board,defName[3]),
                                              JXG.getReference(board,defName[4])],
                                     {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
@@ -237,13 +237,13 @@ JXG.CinderellaReader = new function() {
                 }
                 erg = this.readCircleProperties(dataLines,i);
                 if(dataLines[i].search(/ConicFociH\(.+/) != -1) {
-                    board.createElement('hyperbola',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
+                    board.create('hyperbola',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
                                                 JXG.getReference(board,defName[2])],
                                         {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
                                          strokeWidth:erg[0][2]});
                 }
                 else {
-                    board.createElement('ellipse',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
+                    board.create('ellipse',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
                                                 JXG.getReference(board,defName[2])],
                                         {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
                                          strokeWidth:erg[0][2]});                
@@ -262,7 +262,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readCircleProperties(dataLines,i);
                 i = erg[3];                
-                board.createElement('parabola',
+                board.create('parabola',
                         [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
                                         {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
                                          strokeWidth:erg[0][2]});                 
@@ -280,7 +280,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readCircleProperties(dataLines,i);
                 i = erg[3];                  
-                poly = board.createElement('polygon', defName,
+                poly = board.create('polygon', defName,
                                         {name: objName}); 
                 poly.setProperty({fillColor:erg[1], fillOpacity:erg[2]});
                 for(j=0; j<poly.borders.length; j++) {
@@ -299,7 +299,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readCircleProperties(dataLines,i);
                 i = erg[3];                     
-                poly = board.createElement('circumcirclearc', [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
+                poly = board.create('circumcirclearc', [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),
                                                    JXG.getReference(board,defName[2])],
                                         {name: objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
                                          strokeWidth:erg[0][2]});
@@ -318,10 +318,10 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 
                 j = JXG.getReference(board,defName);
-                point = board.createElement('point',[j.coords.usrCoords[1]+1*pCoords[0],j.coords.usrCoords[2]+1*pCoords[1]],{visible:false});
+                point = board.create('point',[j.coords.usrCoords[1]+1*pCoords[0],j.coords.usrCoords[2]+1*pCoords[1]],{visible:false});
                 erg = this.readLineProperties(dataLines,i);
                 i = erg[2];
-                board.createElement('line',[j,point],
+                board.create('line',[j,point],
                                     {name:objName, withLabel:true, strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
             }
             else if(dataLines[i].search(/:=Compass\(.+/) != -1) { // mit Zirkel definierter Kreis
@@ -341,7 +341,7 @@ JXG.CinderellaReader = new function() {
                                             return JXG.getReference(b,el[0]).Dist(JXG.getReference(b,el[1])); 
                                        };
                                 })(defName, board);                
-                board.createElement('circle',
+                board.create('circle',
                                     [JXG.getReference(board,defName[2]), defRadius],
                                     {name:objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
                                      strokeWidth:erg[0][2]});
@@ -371,7 +371,7 @@ JXG.CinderellaReader = new function() {
                     erg2 = this.readLineProperties(dataLines,i);
                     i = erg[2];
                 }
-                lines = board.createElement('bisectorlines',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
+                lines = board.create('bisectorlines',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
                                            {name:[objName2,objName], withLabel:true});
                 if(objName == '') {
                     lines.line2.setProperty({visible:false});
@@ -400,7 +400,7 @@ JXG.CinderellaReader = new function() {
                 objName = objName[0].slice(1, objName[0].length-1);
                 erg = this.readPointProperties(dataLines,i);
                 i = erg[1];                  
-                board.createElement('intersection',
+                board.create('intersection',
                                     [JXG.getReference(board,defName[0]), JXG.getReference(board,defName[1]),0],
                                     {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
             } 
@@ -438,7 +438,7 @@ JXG.CinderellaReader = new function() {
                     i = erg[1];
                 }
                 if(objName2 != '') {
-                    point = board.createElement('intersection',
+                    point = board.create('intersection',
                                                 [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),j],
                                                 {name:objName2, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
                     if(objName != '') {
@@ -448,7 +448,7 @@ JXG.CinderellaReader = new function() {
                     }
                 }
                 else {
-                    point = board.createElement('intersection',
+                    point = board.create('intersection',
                                                 [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),k],
                                                 {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
                 }

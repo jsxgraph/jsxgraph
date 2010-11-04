@@ -202,7 +202,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             else {
                                 defElements = [JXG.getReference(this,defElements[0]), JXG.getReference(this,defElements[1])];
                             }
-                            output.lines.push(this.createElement('line',
+                            output.lines.push(this.create('line',
                                                     defElements,
                                                     attributes));
                             if(objName != '') {
@@ -291,7 +291,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     createdNames.push(objName);
                                 }
                             }
-                            output.circles.push(this.createElement('circle',defElements,attributes));
+                            output.circles.push(this.create('circle',defElements,attributes));
                             if(objName != '') {
                                 output[objName] = output.circles[output.circles.length-1];
                             }
@@ -307,7 +307,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 }
                                 createdNames.push(objName);
                             }
-                            output.points.push(this.createElement('point',[1.0*RegExp.$2,1.0*RegExp.$3],attributes));
+                            output.points.push(this.create('point',[1.0*RegExp.$2,1.0*RegExp.$3],attributes));
                             output[objName] = output.points[output.points.length-1];
                         }
                         else if(splitted[i].search(/^[A-Z]+.*\(.+(([,\|]\s*[0-9\.\-]+\s*){2})?/) != -1
@@ -350,7 +350,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 }
                                 createdNames.push(objName);
                             }
-                            output.points.push(this.createElement('glider',
+                            output.points.push(this.create('glider',
                                                                   [defElements[1],defElements[2],JXG.getReference(this,defElements[0])],
                                                                   attributes));
                             output[objName] = output.points[output.points.length-1];
@@ -391,7 +391,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                         createdNames.push(objName);
                                     }
                                 }                          
-                                obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
+                                obj = this.create('intersection',[defElements[0],defElements[1],0],attributes);
                                 output.intersections.push(obj);
                                 if(objName != '') {
                                     output[attributes.name] = obj;
@@ -407,7 +407,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                         createdNames.push(objName+"_1");
                                     }
                                 }
-                                obj = this.createElement('intersection',[defElements[0],defElements[1],0],attributes);
+                                obj = this.create('intersection',[defElements[0],defElements[1],0],attributes);
                                 output.intersections.push(obj);
                                 if(objName != '') {
                                     output[attributes.name] = obj;
@@ -421,7 +421,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                         createdNames.push(objName+"_2");
                                     }
                                 }
-                                obj = this.createElement('intersection',[defElements[0],defElements[1],1],attributes);
+                                obj = this.create('intersection',[defElements[0],defElements[1],1],attributes);
                                 output.intersections.push(obj);
                                 if(objName != '') {
                                     output[attributes.name] = obj;
@@ -468,7 +468,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     createdNames.push(objName);
                                 }
                             }
-                            output.lines.push(this.createElement(type,
+                            output.lines.push(this.create(type,
                                                                  [JXG.getReference(this,defElements[0]),JXG.getReference(this,defElements[1])],
                                                                  attributes));
 
@@ -499,7 +499,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 }
                             }
                             if(objName == '') {
-                                output.lines.push(this.createElement('angle',
+                                output.lines.push(this.create('angle',
                                                                     [JXG.getReference(this,defElements[0]),
                                                                      JXG.getReference(this,defElements[1]),
                                                                      JXG.getReference(this,defElements[2])],
@@ -533,7 +533,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     }
                                     createdNames.push(objName);
                                 }
-                                output.angles.push(this.createElement('angle',
+                                output.angles.push(this.create('angle',
                                                                      [JXG.getReference(this,defElements[0]),
                                                                       JXG.getReference(this,defElements[1]),
                                                                       JXG.getReference(this,defElements[2])],
@@ -582,7 +582,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     createdNames.push(objName);
                                 }
                             }
-                            output.points.push(this.createElement('point',[obj[0],obj[1]],attributes));
+                            output.points.push(this.create('point',[obj[0],obj[1]],attributes));
                             if(objName != '') {
                                 output[objName] = output.points[output.points.length-1];
                             }
@@ -601,7 +601,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                             defElements[1] = 1.0*RegExp.$2;
                             defElements[2] = 1.0*RegExp.$3;
                             defElements[0] = defElements[0].replace (/^\s+/, '').replace (/\s+$/, ''); // trim
-                            output.texts.push(this.createElement('text',[defElements[1],defElements[2],defElements[0]], attributes));
+                            output.texts.push(this.create('text',[defElements[1],defElements[2],defElements[0]], attributes));
                         }
                         else if(splitted[i].search(/(\S*)\s*\[(.*)\]/) != -1) { // Polygon
                             attributes.name = RegExp.$1;
@@ -628,7 +628,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                 }
                                 defElements[j] = JXG.getReference(this,defElements[j]);
                             }
-                            output.polygons.push(this.createElement('polygon',defElements,attributes));
+                            output.polygons.push(this.create('polygon',defElements,attributes));
                             output[attributes.name] = output.polygons[output.polygons.length-1];
                         }
                     }

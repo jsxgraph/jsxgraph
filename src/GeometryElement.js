@@ -658,7 +658,7 @@ JXG.GeometryElement.prototype.showElement = function() {
  * @example
  * // Set property directly on creation of an element using the attributes object parameter
  * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, 1]};
- * var p = board.createElement('point', [2, 2], {visible: false});
+ * var p = board.create('point', [2, 2], {visible: false});
  *
  * // Now make this point visible and fixed:
  * p.setProperty('fixed:true', 'visible:true');

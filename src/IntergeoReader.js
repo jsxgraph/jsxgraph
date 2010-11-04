@@ -91,7 +91,7 @@ JXG.IntergeoReader = new function() {
     };
 
     /**
-     * Points are created instantly via createElement
+     * Points are created instantly via create
      */
     this.addPointOld = function(node) {
         var i = 0, 
@@ -162,7 +162,7 @@ JXG.IntergeoReader = new function() {
     };
 
     /**
-     * Points are created instantly via createElement
+     * Points are created instantly via create
      */
     this.storePoint = function(node) {
         var i = 0, 

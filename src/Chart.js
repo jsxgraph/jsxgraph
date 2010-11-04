@@ -505,7 +505,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
     xc = cent[0];
     yc = cent[1];
 
-    center = board.createElement('point',[xc,yc], {name:'',fixed:true, withlabel:false,visible:false});
+    center = board.create('point',[xc,yc], {name:'',fixed:true, withlabel:false,visible:false});
     start_angle = Math.PI/2 - Math.PI/numofparams;
     if(attributes['startAngle'] || attributes['startAngle'] === 0) 
         start_angle = attributes['startAngle'];
@@ -532,10 +532,10 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
         var t;
         var tscale;
         var trot;
-        t = board.createElement('transform', [-(starts[i]-sshifts[i]), 0],{type:'translate'}); 
-        tscale = board.createElement('transform', [radius/((ends[i]+eshifts[i])-(starts[i]-sshifts[i])), 1],{type:'scale'}); 
+        t = board.create('transform', [-(starts[i]-sshifts[i]), 0],{type:'translate'}); 
+        tscale = board.create('transform', [radius/((ends[i]+eshifts[i])-(starts[i]-sshifts[i])), 1],{type:'scale'}); 
         t.melt(tscale);
-        trot = board.createElement('transform', [angle],{type:'rotate'}); 
+        trot = board.create('transform', [angle],{type:'rotate'}); 
         t.melt(trot);
         return t;
     };
@@ -545,8 +545,8 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
         xcoord = radius*Math.cos(rad)+xc;
         ycoord = radius*Math.sin(rad)+yc;
 
-        p[i] = board.createElement('point',[xcoord,ycoord], {name:'',fixed:true,withlabel:false,visible:false});
-        line[i] = board.createElement('line',[center,p[i]], 
+        p[i] = board.create('point',[xcoord,ycoord], {name:'',fixed:true,withlabel:false,visible:false});
+        line[i] = board.create('line',[center,p[i]], 
             {name:paramArray[i], 
             strokeColor:myAtts['strokeColor'], strokeWidth:myAtts['strokeWidth'], strokeOpacity:1.0,
             straightFirst:false, straightLast:false, withLabel:true,
@@ -557,7 +557,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
 
         for(j=0; j<parents.length; j++) {
             var data=parents[j][i];
-            pdata[j][i] = board.createElement('point',[data,0], {name:'',fixed:true,withlabel:false,visible:false});
+            pdata[j][i] = board.create('point',[data,0], {name:'',fixed:true,withlabel:false,visible:false});
             pdata[j][i].addTransform(pdata[j][i], t);
         }
     }
@@ -566,7 +566,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
         myAtts['labelColor'] = colorArray[i%colorArray.length];
         myAtts['strokeColor'] = colorArray[i%colorArray.length];
         myAtts['fillColor'] = colorArray[i%colorArray.length];
-        polygons[i] = board.createElement('polygon',pdata[i], 
+        polygons[i] = board.create('polygon',pdata[i], 
                 {withLines:true,
                 withLabel:false,
                 fillColor:myAtts['fillColor'],
@@ -583,7 +583,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
         case 'right':
         var lxoff = attributes['legendLeftOffset'] || 2;
             var lyoff = attributes['legendTopOffset'] || 1;
-            this.legend = board.createElement('legend', [xc+radius+lxoff,yc+radius-lyoff],
+            this.legend = board.create('legend', [xc+radius+lxoff,yc+radius-lyoff],
             {labelArray:labelArray,
             colorArray: colorArray
             });
@@ -613,9 +613,9 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
         // we have ncircles-1 intervals between ncircles circles
         dr = (ends[0]-starts[0])/(ncircles-1);
         for(i=0;i<ncircles;i++) {
-            pcircles[i] = board.createElement('point', [starts[0]+i*dr,0],{name:clabelArray[i], size:0, withLabel:true, visible:true});
+            pcircles[i] = board.create('point', [starts[0]+i*dr,0],{name:clabelArray[i], size:0, withLabel:true, visible:true});
             pcircles[i].addTransform(pcircles[i],t);
-            circles[i] = board.createElement('circle', [center,pcircles[i]], myAtts);
+            circles[i] = board.create('circle', [center,pcircles[i]], myAtts);
         }
 
     }
@@ -788,7 +788,7 @@ JXG.Legend.prototype.drawVerticalLegend = function(attributes) {
         this.myAtts['highlightStrokeColor'] = this.color_array[i];
         this.myAtts['name'] = this.label_array[i];
         this.myAtts['labelOffsets'] = [10, 0];
-        this.lines[i] = board.createElement('line', 
+        this.lines[i] = board.create('line', 
                 [[this.coords.usrCoords[1],this.coords.usrCoords[2] - i*offy],
                 [this.coords.usrCoords[1] + line_length,this.coords.usrCoords[2] - i*offy]],
                 this.myAtts
