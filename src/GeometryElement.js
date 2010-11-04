@@ -1043,7 +1043,7 @@ JXG.GeometryElement.prototype.prepareUpdate = function() {
     var el;
     for(el in this.childElements) {
         // Wurde das Element vielleicht geloescht?
-        if(this.board.objects[el] != undefined) {
+        if(JXG.exists(this.board.objects[el])) {
             // Nein, wurde es nicht, also updaten
             this.childElements[el].prepareUpdate();
         } else { //  es wurde geloescht, also aus dem Array entfernen
@@ -1130,8 +1130,10 @@ JXG.GeometryElement.prototype.setArrow = function (firstArrow, lastArrow) {
  * @private
  */
 JXG.GeometryElement.prototype.createLabel = function(withLabel,coords) {
+    // WTF?!? Eine Methode namens createLabel, die optional kein label erstellt?
+    // TODO - Spaeter genauer ansehen, grad keine Zeit
     var isTmpId = false;
-    if (typeof coords=='undefined' || coords==null) {
+    if (!JXG.exists(coords)) {
         coords = [10,10];
     }
     this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));

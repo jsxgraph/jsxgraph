@@ -495,7 +495,7 @@ JXG.createParallel = function(board, parents, atts) {
     if(JXG.isArray(atts['id']) && atts['id'].length == 2) {
         cAtts['id'] = atts['id'][1];
         atts['id'] = atts['id'][0];
-    } else if (atts['id']!=JXG.undefined) 
+    } else if (JXG.exists(atts['id'])) 
         cAtts['id'] = atts['id'] + 'p2';
 
     try {

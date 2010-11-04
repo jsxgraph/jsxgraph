@@ -1596,7 +1596,7 @@ this.writeElement = function(board, output, input, cmd) {
       } else {
         gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       }
-      if(attr.styleGGB == undefined) {
+      if(!JXG.exists(attr.styleGGB)) {
          attr.face = 'circle';
          attr.fillColor = attr.strokeColor;
          attr.fillOpacity = 1;
@@ -1763,7 +1763,7 @@ this.writeElement = function(board, output, input, cmd) {
 
       try {
         JXG.debug("* <b>Intersection:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
-        if(attr.styleGGB == undefined) {
+        if(!JXG.exists(attr.styleGGB)) {
            attr.face = 'circle';
            attr.fillColor = attr.strokeColor;
            attr.fillOpacity = 1;
@@ -1777,7 +1777,7 @@ this.writeElement = function(board, output, input, cmd) {
         }
         else {
            p = board.create('intersection', [input[0], input[1], 1], attr);
-           var attr2 = {}
+           var attr2 = {};
            attr2 = JXG.GeogebraReader.colorProperties(output[1], attr2);
            attr2 = JXG.GeogebraReader.visualProperties(output[1], attr2);
            attr2.name = output[1].getAttribute('label');
@@ -1894,7 +1894,7 @@ this.writeElement = function(board, output, input, cmd) {
         JXG.debug("* <b>Rotate:</b> First: " + input[0].name + ", Second: " + input[1] + "<br>\n");
         attr.type = 'rotate';
 
-        if(attr.styleGGB == undefined) {
+        if(!JXG.exists(attr.styleGGB)) {
            attr.face = 'circle';
            attr.fillColor = attr.strokeColor;
            attr.fillOpacity = 1;
@@ -1926,7 +1926,7 @@ this.writeElement = function(board, output, input, cmd) {
         var d2 = board.create('transform', [function() { return (1-d) * input[2].X(); },
                                                function() { return (1-d) * input[2].Y(); }], {type:'translate'});
 
-        if(attr.styleGGB == undefined) {
+        if(!JXG.exists(attr.styleGGB)) {
            attr.face = 'circle';
            attr.fillColor = attr.strokeColor;
            attr.fillOpacity = 1;
@@ -1952,7 +1952,7 @@ this.writeElement = function(board, output, input, cmd) {
       try {
           t = board.create('transform', [function() { return input[1].point2.X()-input[1].point1.X(); },
                                          function() { return input[1].point2.Y()-input[1].point1.Y(); }], {type:'translate'});
-          if(attr.styleGGB == undefined) {
+          if(!JXG.exists(attr.styleGGB)) {
              attr.face = 'circle';
              attr.fillColor = attr.strokeColor;
              attr.fillOpacity = 1;
@@ -2403,7 +2403,7 @@ this.writeElement = function(board, output, input, cmd) {
       attr = JXG.GeogebraReader.visualProperties(element, attr);
 
       try {
-          if(attr.styleGGB == undefined) {
+          if(!JXG.exists(attr.styleGGB)) {
              attr.face = 'circle';
              attr.fillColor = attr.strokeColor;
              attr.fillOpacity = 1;
@@ -2426,7 +2426,7 @@ this.writeElement = function(board, output, input, cmd) {
       gxtEl = JXG.GeogebraReader.coordinates(gxtEl, element);
       attr = JXG.GeogebraReader.visualProperties(element, attr);
       try {
-          if(attr.styleGGB == undefined) {
+          if(!JXG.exists(attr.styleGGB)) {
              attr.face = 'circle';
              attr.fillColor = attr.strokeColor;
              attr.fillOpacity = 1;

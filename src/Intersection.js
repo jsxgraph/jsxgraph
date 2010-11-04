@@ -107,7 +107,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
     /*
      * Only intersect existing geometry elements.
      */
-    if( ((this.intersect1 == '') || (this.intersect1 == undefined)) && ((this.intersect2 == '') || (this.intersect2 == undefined))) {
+    if( ((this.intersect1 == '') || (!JXG.exists(this.intersect1))) && ((this.intersect2 == '') || (!JXG.exists(this.intersect2)))) {
         return;
     }
 
@@ -449,11 +449,11 @@ JXG.Intersection.prototype.showChild = function(id) {
  * Remove intersection points from drawing.
  */
 JXG.Intersection.prototype.remove = function() {
-    if(this.p != undefined)
+    if(JXG.exists(this.p))
         this.board.removeObject(this.p);
-    if(this.p1 != undefined)
+    if(JXG.exists(this.p1))
         this.board.removeObject(this.p1);
-    if(this.p2 != undefined)
+    if(JXG.exists(this.p2))
         this.board.removeObject(this.p2);
 };
 

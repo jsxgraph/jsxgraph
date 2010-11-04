@@ -451,7 +451,7 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     //   JXG.addEvent(this.containerObj, 'contextmenu', function(e) { e.preventDefault(); return false;}, this);
     // this one works on IE, Firefox and Chromium with default configurations
     // It's possible this doesn't work on some Safari or Opera versions by default, the user then has to allow the deactivation of the context menu.
-    this.containerObj.oncontextmenu = function(e) {if(e !== JXG.undefined) e.preventDefault(); return false; };
+    this.containerObj.oncontextmenu = function(e) {if(JXG.exists(e)) e.preventDefault(); return false; };
 };
 
 /**
@@ -1022,7 +1022,7 @@ JXG.Board.prototype.dehighlightAll = function() {
         // In highlightedObjects should only be objects which fulfill all these conditions
         // And in case of complex elements, like a turtle based fractal, it should be faster to
         // just de-highlight the element instead of checking hasPoint...
-        // if((pEl.hasPoint == undefined) || !pEl.hasPoint(x, y) || !pEl.visProp['visible'])
+        // if((!JXG.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visProp['visible'])
     }
 
     if (this.options.renderer=='canvas' && needsDehighlight) {
@@ -1164,7 +1164,7 @@ JXG.Board.prototype.addConditions = function (str) {
         right = right.replace(/this\.board\./g,'this.');
 
         // Debug
-        if (typeof this.elementsByName[name]=='undefined'){
+        if(!JXG.exists(this.elementsByName[name])){
             JXG.debug("debug conditions: |"+name+"| undefined");
         }
         plaintext += "el = this.objects[\"" + el.id + "\"];\n";
@@ -1603,7 +1603,7 @@ JXG.Board.prototype.updateRenderer = function(drag) {
  * @returns {Number} Id of the hook, required to remove the hook from the board.
  */
 JXG.Board.prototype.addHook = function(hook, m) {
-    if(typeof m == 'undefined')
+    if(!JXG.exists(m))
         m = 'update';
 
     this.hooks.push({fn: hook, mode: m});
@@ -1913,7 +1913,7 @@ JXG.Board.prototype.animate = function() {
                 newCoords = o.animationPath.pop();
             }
 
-            if((newCoords === JXG.undefined) || (!JXG.isArray(newCoords) && isNaN(newCoords))) {
+            if((!JXG.exists(newCoords)) || (!JXG.isArray(newCoords) && isNaN(newCoords))) {
                 delete(o.animationPath);
             } else {
                 //o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
@@ -1929,7 +1929,7 @@ JXG.Board.prototype.animate = function() {
             c = 0;
             for(r in o.animationData) {
                 p = o.animationData[r].pop();
-                if(typeof p == 'undefined') {
+                if(!JXG.exists(p)) {
                     delete(o.animationData[p]);
                 } else {
                     c++;
@@ -1940,7 +1940,7 @@ JXG.Board.prototype.animate = function() {
                 delete(o.animationData);
         }
 
-        if(typeof o.animationData == 'undefined' && typeof o.animationPath == 'undefined') {
+        if(!JXG.exists(o.animationData) && !JXG.exists(o.animationPath)) {
             this.animationObjects[el] = null;
             delete(this.animationObjects[el]);
         }
@@ -1964,7 +1964,7 @@ JXG.Board.prototype.animate = function() {
 JXG.Board.prototype.emulateColorblindness = function(deficiency) {
     var e, o, brd=this;
 
-    if(typeof deficiency == 'undefined')
+    if(!JXG.exists(deficiency))
         deficiency = 'none';
 
     if(this.currentCBDef == deficiency)
@@ -1977,7 +1977,7 @@ JXG.Board.prototype.emulateColorblindness = function(deficiency) {
                 o.visPropOriginal = JXG.deepCopy(o.visProp);
             o.setProperty({strokeColor: JXG.rgb2cb(o.visPropOriginal.strokeColor, deficiency), fillColor: JXG.rgb2cb(o.visPropOriginal.fillColor, deficiency),
                            highlightStrokeColor: JXG.rgb2cb(o.visPropOriginal.highlightStrokeColor, deficiency), highlightFillColor: JXG.rgb2cb(o.visPropOriginal.highlightFillColor, deficiency)});
-        } else if(typeof o.visPropOriginal != 'undefined') {
+        } else if(JXG.exists(o.visPropOriginal)) {
             o.visProp = JXG.deepCopy(o.visPropOriginal);
         }
     }

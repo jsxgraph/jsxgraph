@@ -351,7 +351,7 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
         else {
             nodeStroke = el.rendNodeStroke;
         }
-        if (o!=undefined) {
+        if (JXG.exists(o)) {
             this.setAttr(nodeStroke,'opacity', (o*100)+'%');  
             
         }
@@ -375,7 +375,7 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
     else {
         this.setAttr(el.rendNode,'filled', 'true');
         this.setAttr(el.rendNode,'fillcolor', c); 
-        if (o!=undefined && el.rendNodeFill) {  // Added el.rendNodeFill 29.9.09  A.W.
+        if (JXG.exists(o) && el.rendNodeFill) {  // Added el.rendNodeFill 29.9.09  A.W.
             this.setAttr(el.rendNodeFill,'opacity', (o*100)+'%');
         }
     }
@@ -712,7 +712,7 @@ JXG.VMLRenderer.prototype.updatePolygonePrim = function(node,el) {
 };
 
 JXG.VMLRenderer.prototype.appendChildPrim = function(node,level) {
-    if (typeof level=='undefined') level = 0;   // For trace nodes    
+    if (!JXG.exists(level)) level = 0;   // For trace nodes    
     node.style.zIndex = level;
     /*
     switch (level) {

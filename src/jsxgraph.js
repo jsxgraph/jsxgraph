@@ -437,9 +437,11 @@ JXG.isPoint = function(v) {
  * @param v A variable of any type.
  * @returns {Boolean} True, if v is neither undefined nor null.
  */
-JXG.exists = function(v) {
-    return !(typeof v === 'undefined' || v === null);
-};
+JXG.exists = (function(undefined) {
+    return function(v) {
+        return !(v === undefined || v === null);
+    }
+})();
 
 /**
  * Converts a string containing either <strong>true</strong> or <strong>false</strong> into a boolean value.
@@ -447,7 +449,7 @@ JXG.exists = function(v) {
  * @returns {Boolean} String typed boolean value converted to boolean.
  */
 JXG.str2Bool = function(s) {
-    if (s==undefined || s==null) {
+    if (!JXG.exists(s)) {
         return true;
     }
     if (typeof s == 'boolean') { 
@@ -1081,11 +1083,3 @@ JXG.addEvent(window, 'load', function () {
         }
     }
 }, window);
-
-/**
- * Store some undefined value. This is critical because the user or an evil script can destroy the tests using this
- * value by simply overwriting it with something else than undefined.
- */
-(function(undefined) {
-    JXG.undefined = undefined;
-})();

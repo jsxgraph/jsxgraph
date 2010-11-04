@@ -48,10 +48,11 @@ JXG.CanvasRenderer = function(container) {
     //this.canvasRoot.style.height = this.container.style.height;
     //this.container.appendChild(this.canvasRoot);
     this.canvasRoot = document.getElementById(this.canvasId);
-    if(typeof xanvas !== 'undefined')
+    if(JXG.exists(xanvas)) {
         this.context = xanvas(this.canvasRoot);
-    else
+    } else {
         this.context =  this.canvasRoot.getContext('2d');
+    }
 
     this.dashArray = [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]];
 };
@@ -347,7 +348,7 @@ JXG.CanvasRenderer.prototype.setArrowAtts = function(node, c, o) {
 
 JXG.CanvasRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
     // this is not required in a canvas based renderer
-    //if (el.board!=JXG.undefined)
+    //if (JXG.exists(el.board))
     //    el.board.updateRenderer();
 };
 

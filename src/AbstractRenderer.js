@@ -631,7 +631,7 @@ JXG.AbstractRenderer.prototype.updateCircle = function(/** Circle */ el) {
  */
 JXG.AbstractRenderer.prototype.drawPolygon = function(/** Polygon */ el) { 
     var node = this.createPrim('polygon',el.id);
-    if (el.visProp['fillOpacity']==JXG.undefined) el.visProp['fillOpacity'] = 0.3;
+    if (!JXG.exists(el.visProp['fillOpacity'])) el.visProp['fillOpacity'] = 0.3;
     //el.visProp['strokeColor'] = 'none';
     //this.setObjectFillColor(el,el.visProp['fillColor'],el.visProp['fillOpacity']);
     this.appendChildPrim(node,el.layer);

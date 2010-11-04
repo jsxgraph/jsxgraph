@@ -888,7 +888,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
             var h = 0.00001,
                 h2 = 1.0 / (h * 2.0);
 
-            if (arguments.length == 1 || (arguments.length > 1 && arguments[1] === JXG.undefined)) {
+            if (arguments.length == 1 || (arguments.length > 1 && !JXG.exists(arguments[1]))) {
                 return function(x, suspendUpdate) {
                     return (f(x + h, suspendUpdate) - f(x - h, suspendUpdate)) * h2;
                 };

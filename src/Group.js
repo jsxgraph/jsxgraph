@@ -48,7 +48,7 @@ JXG.Group = function(board, id, name) {
     number = this.board.numObjects;
     this.board.numObjects++;
 
-    if ((id == '') || (id == null) || (typeof id == 'undefined')) {
+    if ((id == '') || !JXG.exists(id)) {
         this.id = this.board.id + 'Group' + number;
     } else {
         this.id = id;
@@ -57,7 +57,7 @@ JXG.Group = function(board, id, name) {
     this.type = JXG.OBJECT_TYPE_POINT;
     this.elementClass = JXG.OBJECT_CLASS_POINT;                
 
-    if ((name == '') || (name == null) || (typeof name == 'undefined')) {
+    if ((name == '') || !JXG.exists(name)) {
         this.name = 'group_' + this.board.generateName(this);
     } else {
         this.name = name;
@@ -122,7 +122,7 @@ JXG.Group.prototype.update = function(point) {
     
     for (el in this.objects) {
         /* Wurde das Element vielleicht geloescht? */
-        if (this.board.objects[el] != undefined) {
+        if (JXG.exists(this.board.objects[el])) {
             /* Nein, wurde es nicht, also updaten */
             this.objects[el].update(false);
         } else { /* es wurde geloescht, also aus dem Array entfernen */

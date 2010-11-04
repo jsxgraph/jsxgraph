@@ -70,7 +70,7 @@ JXG.Chart = function(board, parents, attributes) {
             y = parents[1];
         }
     }
-    if (attributes==undefined) attributes = {};
+    if (!JXG.exists(attributes)) attributes = {};
     var style = attributes['chartStyle'] || 'line';
     style = style.replace(/ /g,'');
     style = style.split(',');
@@ -169,7 +169,7 @@ JXG.Chart.prototype.drawFit = function(board, parents, attributes) {
 
 JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
     var i, pols = [], x = parents[0], y = parents[1], w, xp0,xp1,xp2, yp, ypL, colorArray, p = [], fill;
-    if (attributes['fillOpacity'] == undefined) {
+    if (!JXG.exists(attributes['fillOpacity'])) {
         attributes['fillOpacity'] = 0.6;
     }
     
@@ -278,7 +278,7 @@ JXG.Chart.prototype.drawPie = function(board, parents, attributes) {  // Only 1 
         radius = r;
     }
     var myAtts = {};
-    if (typeof attributes['highlightOnSector']  =='undefined') {
+    if (!JXG.exists(attributes['highlightOnSector'])) {
         attributes['highlightOnSector'] = false;
     }    
     myAtts['name'] = attributes['name'];
@@ -419,7 +419,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
     if (len<=0) { alert("No data"); return; } 
     // labels for axes
     paramArray = attributes['paramArray'];
-    if (paramArray == undefined){ alert("Need paramArray attribute"); return; }
+    if (!JXG.exists(paramArray)){ alert("Need paramArray attribute"); return; }
     numofparams=paramArray.length;
     if (numofparams<=1) { alert("Need more than 1 param"); return; }
 
@@ -467,11 +467,11 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
     // Values for inner circle, minimums by default
     starts = attributes['startArray'] || mins;
     
-    if (attributes['start'] != undefined)
+    if (JXG.exists(attributes['start']))
         for(i=0; i<numofparams; i++) starts[i] = attributes['start'];
     // Values for outer circle, maximums by default
     ends = attributes['endArray'] || maxes;
-    if (attributes['end'] != undefined)
+    if (JXG.exists(attributes['end']))
         for(i=0; i<numofparams; i++) ends[i] = attributes['end'];
 
     if(sshifts.length != numofparams) { alert("Start shifts length is not equal to number of parameters"); return; }
@@ -485,7 +485,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
     highlightColorArray = attributes['highlightColorArray'] || ['#FF7400'];
     radius = attributes['radius'] || 10;
     myAtts = {};
-    if (attributes['highlightOnSector']==JXG.undefined) {
+    if (!JXG.exists(attributes['highlightOnSector'])) {
         attributes['highlightOnSector'] = false;
     }    
     myAtts['name'] = attributes['name'];
@@ -526,7 +526,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
 
         this.setLabelRelativeCoords(relCoords);
         return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X(),this.point2.Y()],this.board);
-    }
+    };
 
     var get_transform = function(angle,i) {
         var t;
@@ -538,7 +538,7 @@ JXG.Chart.prototype.drawRadar = function(board, parents, attributes) {
         trot = board.createElement('transform', [angle],{type:'rotate'}); 
         t.melt(trot);
         return t;
-    }
+    };
     
     for (i=0;i<numofparams;i++) {
         rad += 2*Math.PI/numofparams;
@@ -655,7 +655,7 @@ JXG.createChart = function(board, parents, attributes) {
         var table = document.getElementById(parents[0]),
             data, row, i, j, col, cell, charts = [], w, x, showRows,
             originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len;
-        if(typeof table != 'undefined') {
+        if(JXG.exists(table)) {
             // extract the data
             attributes = JXG.checkAttributes(attributes,{withHeader:true});
             
@@ -803,7 +803,7 @@ JXG.Legend.prototype.drawVerticalLegend = function(attributes) {
 JXG.createLegend = function(board, parents, attributes) {
     //parents are coords of left top point of the legend
     var start_from = [0,0];
-    if(parents != undefined)
+    if(JXG.exists(parents))
         if(parents.length == 2) {
             start_from = parents;
         }
