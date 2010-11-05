@@ -1311,7 +1311,7 @@ return {
      * If <tt>val</tt> is a function, it will be evaluated without giving any parameters, else the input value is just returned.
      * @param val Could be anything.
      */
-    eval: function(val) {
+    evaluate: function(val) {
         if (typeof val == 'function') {
             return val();
         } else {

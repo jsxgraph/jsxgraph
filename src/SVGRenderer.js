@@ -340,8 +340,8 @@ JXG.SVGRenderer.prototype.setArrowAtts = function(node, c, o) {
 };
 
 JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
-    var c = this.eval(color), 
-        o = this.eval(opacity), 
+    var c = this.evaluate(color),
+        o = this.evaluate(opacity),
         node;
 
     o = (o>0)?o:0;
@@ -376,8 +376,8 @@ JXG.SVGRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
 };
 
 JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
-    var node, c = this.eval(color), 
-        o = this.eval(opacity);
+    var node, c = this.evaluate(color),
+        o = this.evaluate(opacity);
 
     o = (o>0)?o:0;
 
@@ -401,7 +401,7 @@ JXG.SVGRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
  * @param {int} width The new stroke width to be assigned to the element.
  */
 JXG.SVGRenderer.prototype.setObjectStrokeWidth = function(el, width) {
-    var w = this.eval(width), 
+    var w = this.evaluate(width), 
         node;
     //w = (w>0)?w:0;
     try {

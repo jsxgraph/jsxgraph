@@ -325,8 +325,8 @@ JXG.VMLRenderer.prototype.setDashStyle = function(el,visProp) {
 };
  
 JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
-    var c = this.eval(color), 
-        o = this.eval(opacity), 
+    var c = this.evaluate(color),
+        o = this.evaluate(opacity), 
         node, nodeStroke;
 
     o = (o>0)?o:0;
@@ -361,8 +361,8 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
 };
 
 JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
-    var c = this.eval(color), 
-        o = this.eval(opacity);
+    var c = this.evaluate(color),
+        o = this.evaluate(opacity);
 
     o = (o>0)?o:0;
 
@@ -402,7 +402,7 @@ JXG.VMLRenderer.prototype.setAttributes = function(node,props,vmlprops,visProp) 
     for (i=0;i<len;i++) {
         p = props[i];
         if (visProp[p]!=null) {
-            val = this.eval(visProp[p]);
+            val = this.evaluate(visProp[p]);
             val = (val>0)?val:0;
             this.setAttr(node,vmlprops[i], val);
         }
@@ -420,7 +420,7 @@ JXG.VMLRenderer.prototype.setGridDash = function(id, node) {
  * @param {int} width The new stroke width to be assigned to the element.
  */
 JXG.VMLRenderer.prototype.setObjectStrokeWidth = function(el, width) {
-    var w = this.eval(width), 
+    var w = this.evaluate(width),
         node;
     //w = (w>0)?w:0;
     
@@ -741,7 +741,7 @@ JXG.VMLRenderer.prototype.setPropertyPrim = function(node,key,val) {
         case 'stroke-dasharray': keyVml = 'dashstyle'; break;
     }
     if (keyVml!='') {
-        v = this.eval(val);
+        v = this.evaluate(val);
         this.setAttr(node, keyVml, v);
     }
 };
