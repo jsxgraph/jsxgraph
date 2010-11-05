@@ -9,9 +9,9 @@
 <script type="text/javascript">
 
     function testGeonext2JS() {
-		var ob = {
-			Val: function(){ return 2.0;}
-			};
+        var ob = {
+                    Val: function(){ return 2.0;}
+            };
 
         assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'JXG.Math.pow(x,2)', JXG.GeonextParser.geonext2JS('x^2',null));
         assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'Math.sin(x)', JXG.GeonextParser.geonext2JS('sin(x)',null));
