@@ -185,6 +185,10 @@
     function testFzero() {
         var f = function(x) { return x-2; };
         assertTrue("JXG.Math.Numerics.fzero, incorrect result", Math.abs(2 - JXG.Math.Numerics.fzero(f, 0)) < JXG.Math.eps);
+        var f2 = function(x) { return (x-1)*(x-1)*(x-1); };
+		assertTrue("JXG.Math.Numerics.root, incorrect result f2", Math.abs(0.0 - f2(JXG.Math.Numerics.root(f2, 0))) < JXG.Math.eps);
+        var f3 = function(x) { return (x-5)*(x-5); };
+        assertTrue("JXG.Math.Numerics.root, incorrect result f3", Math.abs(0.0 - f3(JXG.Math.Numerics.root(f3, 0))) < JXG.Math.eps);
     }
 
 </script>
