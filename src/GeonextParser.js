@@ -44,10 +44,21 @@ JXG.GeonextParser.replacePow = function(te) {
                                 // Achtung: koennte bei Variablennamen mit Leerzeichen
                                 // zu Problemen fuehren.
                                 
-    te = te.replace(/(\s*)\^(\s*)/g,'\^'); // delete all whitespace immediately before and after ^
+    te = te.replace(/(\s*)\^(\s*)/g,'\^'); // delete all whitespace immediately before and after all ^ operators
+
+	//  Loop over all ^ operators
     i = te.indexOf('^');
     while (i>=0) {
+		// left and right are the substrings before, resp. after the ^ character
         left = te.slice(0,i);
+        right = te.slice(i+1);
+
+		// If there is a ")" immediately before the ^ operator, it can be the end of a
+		// (i) term in parenthesis
+		// (ii) function call
+		// (iii) method  callthrow new Error("JSXGraph: Can't create Sector with parent types
+		// In either case, first the corresponding opening parenthesis is searched.
+		// This is the case, when count==0
         if (left.charAt(left.length-1)==')') {
             count = 1;
             pos = left.length-2;
@@ -58,21 +69,28 @@ JXG.GeonextParser.replacePow = function(te) {
                 pos--;
             }   
             if (count==0) {
+				// Now, we have found the opning parenthesis and we have to look
+				// if it is (i), or (ii), (iii).
                 leftop = '';
-                pre = left.substring(0,pos+1);   // finde evtl. F vor (...)^
+                pre = left.substring(0,pos+1);   // Search for F or p.M before (...)^
                 p = pos;
-                while (p>=0 && pre.substr(p,1).match(/(\w+)/)) {
+                while (p>=0 && pre.substr(p,1).match(/([\w\.]+)/)) { 
                     leftop = RegExp.$1+leftop;
                     p--;
                 }
                 leftop += left.substring(pos+1,left.length);
                 leftop = leftop.replace(/([\(\)\+\*\%\^\-\/\]\[])/g,"\\$1");
-            }
+            } else {
+				throw new Error("JSXGraph: Missing '(' in expression");
+			}
         } else {
             //leftop = '[\\w\\.\\(\\)\\+\\*\\%\\^\\-\\/\\[\\]]+'; // former: \\w\\. . Doesn't work for sin(x^2)
-            leftop = '[\\w\\.]+'; // former: \\w\\.
+   			// Otherwise, the operand has to be a constant (or variable).
+         leftop = '[\\w\\.]+'; // former: \\w\\.
         }
-        right = te.slice(i+1);
+		// To the right of the ^ operator there also may be a function or method call
+		// or a term in parenthesis. Alos, ere we search for the closing
+		// parenthesis.
         if (right.match(/^([\w\.]*\()/)) {
             count = 1;
             pos = RegExp.$1.length;
@@ -85,11 +103,15 @@ JXG.GeonextParser.replacePow = function(te) {
             if (count==0) {
                 rightop = right.substring(0,pos);
                 rightop = rightop.replace(/([\(\)\+\*\%\^\-\/\[\]])/g,"\\$1");
-            }
+            } else {
+				throw new Error("JSXGraph: Missing ')' in expression");
+			}
         } else {
             //rightop = '[\\w\\.\\(\\)\\+\\*\\%\\^\\-\\/\\[\\]]+';  // ^b , see leftop. Doesn't work for sin(x^2)
+			// Otherwise, the operand has to be a constant (or variable).
             rightop = '[\\w\\.]+';  
         }
+		// Now, we have the two operands and replace ^ by JXG.Math.pow
         expr = new RegExp('(' + leftop + ')\\^(' + rightop + ')');
         te = te.replace(expr,"JXG.Math.pow($1,$2)");
         i = te.indexOf('^');
