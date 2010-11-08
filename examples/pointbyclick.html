@@ -1,0 +1,48 @@
+<html>
+<head>
+    <title>JSXGraph example</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+
+<h2>Create a point with simple clicks. Uses jQuery via Google CDN.</h2>
+
+<div style="width:800px">
+    <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+</div>
+
+<div id="debug" style="display:block;"></div>
+
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    (function() {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis:true});
+
+        $('#jxgbox').click(function(e) {
+            var cPos = board.getRelativeMouseCoordinates(e),
+                absPos = JXG.getPosition(e),
+                dx = absPos[0]-cPos[0],
+                dy = absPos[1]-cPos[1],
+                coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx, dy], board),
+                i, create = true;
+
+            for(i in board.objects) {
+                if(JXG.isPoint(board.objects[i]) && board.objects[i].hasPoint(dx, dy)) {
+                    create = false;
+                    break;
+                }
+            }
+
+            if(create) {
+                board.create('point', coords.usrCoords);
+            }
+        });
+    })();
+
+    /* ]]> */
+</script>
+</body>
+</html>
