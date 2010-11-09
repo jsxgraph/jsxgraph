@@ -660,7 +660,7 @@ JXG.VMLRenderer.prototype.updatePathStringPoint = function(el, size, type) {
     return s;
 }
 
-JXG.VMLRenderer.prototype.updatePolygonePrim = function(node,el) {
+JXG.VMLRenderer.prototype.updatePolygonPrim = function(node,el) {
     var minX = el.vertices[0].coords.scrCoords[1],
         maxX = el.vertices[0].coords.scrCoords[1],
         minY = el.vertices[0].coords.scrCoords[2],
@@ -714,20 +714,6 @@ JXG.VMLRenderer.prototype.updatePolygonePrim = function(node,el) {
 JXG.VMLRenderer.prototype.appendChildPrim = function(node,level) {
     if (!JXG.exists(level)) level = 0;   // For trace nodes    
     node.style.zIndex = level;
-    /*
-    switch (level) {
-        case 'images': node.style.zIndex = "1"; break;
-        case 'grid': node.style.zIndex = "1"; break;
-        case 'angles': node.style.zIndex = "2"; break;
-        case 'sectors': node.style.zIndex = "2"; break;
-        case 'polygone': node.style.zIndex = "2"; break;
-        case 'curves': node.style.zIndex = "4"; break; //2
-        case 'circles': node.style.zIndex = "4"; break; //3
-        case 'lines': node.style.zIndex = "4"; break;
-        case 'arcs': node.style.zIndex = "4"; break;
-        case 'points': node.style.zIndex = "5"; break;
-    }
-    */
     this.container.appendChild(node);
 };
 

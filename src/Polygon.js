@@ -41,12 +41,14 @@
  */
 
 JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel, lineLabels, layer) {
+    var i, vertex, l;
+    
     /* Call the constructor of GeometryElement */
     this.constructor();
     /**
      * Sets type of GeometryElement, value is OBJECT_TYPE_POLYGON.
      * @final
-     * @type int
+     * @type Number
      */ 
     this.type = JXG.OBJECT_TYPE_POLYGON;
     this.elementClass = JXG.OBJECT_CLASS_AREA;                
@@ -67,7 +69,7 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
         
     /**
      * Is the polygon bordered by lines?
-     * @type bool
+     * @type Boolean
      */
     this.withLines = withLines;
 
@@ -78,14 +80,14 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
      * @type Array
      */    
     this.vertices = [];    
-    for(var i=0; i<vertices.length; i++) {
-       var vertex = JXG.getReference(this.board, vertices[i]);
+    for(i=0; i<vertices.length; i++) {
+       vertex = JXG.getReference(this.board, vertices[i]);
        this.vertices[i] = vertex;
     }
     
     if((typeof borders == 'undefined') || (borders == null)) {
         borders = [];
-        for(var i=0; i<vertices.length-1; i++) {
+        for(i=0; i<vertices.length-1; i++) {
             borders[i] = {};
         }
     }
@@ -100,8 +102,6 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
     this.visProp['fillOpacity'] = this.board.options.polygon.fillOpacity;
     this.visProp['highlightFillOpacity'] = this.board.options.polygon.highlightFillOpacity;
     
-    var l;
- 
     /**
      * References to the borderlines of the polygon.
      * 
@@ -109,7 +109,7 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
      */  
     this.borders = [];
     if(withLines) {
-        for(var i=0; i<this.vertices.length-1; i++) {
+        for(i=0; i<this.vertices.length-1; i++) {
             /* create the borderlines */
             l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name, lineLabels, this.layer+1); // keine Labels?
                                                                                                                         // Layer +1, da sonst die Linien  teils
@@ -121,8 +121,8 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
     }
     
     /* Add polygon as child to defining points */
-    for(var i=0; i<this.vertices.length-1; i++) { // last vertex is first vertex
-        var vertex = JXG.getReference(this.board, this.vertices[i]);
+    for(i=0; i<this.vertices.length-1; i++) { // last vertex is first vertex
+        vertex = JXG.getReference(this.board, this.vertices[i]);
         vertex.addChild(this);
     }
     

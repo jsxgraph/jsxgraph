@@ -48,11 +48,7 @@ JXG.CanvasRenderer = function(container) {
     //this.canvasRoot.style.height = this.container.style.height;
     //this.container.appendChild(this.canvasRoot);
     this.canvasRoot = document.getElementById(this.canvasId);
-    if(JXG.exists(xanvas)) {
-        this.context = xanvas(this.canvasRoot);
-    } else {
-        this.context =  this.canvasRoot.getContext('2d');
-    }
+    this.context =  this.canvasRoot.getContext('2d');
 
     this.dashArray = [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]];
 };
@@ -567,30 +563,12 @@ JXG.CanvasRenderer.prototype.updatePathStringPrim = function(el) {
     return null;
 };
 
-JXG.CanvasRenderer.prototype.updatePolygonePrim = function(node, el) {
-/*    
-    return;
-    var pStr = '', 
-        scrCoords, i,
-        len = el.vertices.length;
-        
-    node.setAttributeNS(null, 'stroke', 'none');
-    for(i=0; i<len-1; i++) {
-        scrCoords = el.vertices[i].coords.scrCoords;
-        pStr = pStr + scrCoords[1] + "," + scrCoords[2];
-        if(i<len-2) { pStr += " "; }
-    }
-    node.setAttributeNS(null, 'points', pStr);
-*/    
-};
-
 JXG.CanvasRenderer.prototype.appendChildPrim = function(node,level) {
 
 };
 
 JXG.CanvasRenderer.prototype.setPropertyPrim = function(node,key,val) {
     if (key=='stroked') {
-        return;
     }
     //node.setAttributeNS(null, key, val);
 };
@@ -768,7 +746,7 @@ JXG.CanvasRenderer.prototype.drawText = function(/** Text */ el) {
 
 JXG.CanvasRenderer.prototype.updateText = function(/** JXG.Text */ el) {
     // Update only objects that are visible.
-    if (el.visProp['visible'] == false) return;
+    if (el.visProp['visible'] === false) return;
     if (isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) return;
     this.updateTextStyle(el);
     if (el.display=='html') {
@@ -874,11 +852,11 @@ JXG.CanvasRenderer.prototype.updateCircle = function(/** Circle */ el) {
 JXG.CanvasRenderer.prototype.drawPolygon = function(/** Polygon */ el) { 
 };
 
-JXG.CanvasRenderer.prototype.updatePolygonePrim = function(node, el) {
+JXG.CanvasRenderer.prototype.updatePolygonPrim = function(node, el) {
     var pStr = '', 
         scrCoords, i,
         len = el.vertices.length;
-        
+
     if (len<=0) return;
     this.context.beginPath();
     scrCoords = el.vertices[0].coords.scrCoords;

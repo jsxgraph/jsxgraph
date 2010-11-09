@@ -451,14 +451,12 @@ JXG.SVGRenderer.prototype.remove = function(shape) {
 
 JXG.SVGRenderer.prototype.suspendRedraw = function() {
     // It seems to be important for the Linux version of firefox
-    if (true) { this.suspendHandle = this.svgRoot.suspendRedraw(10000); }
+    this.suspendHandle = this.svgRoot.suspendRedraw(10000);
 };
 
 JXG.SVGRenderer.prototype.unsuspendRedraw = function() {
-    if (true) { 
-        this.svgRoot.unsuspendRedraw(this.suspendHandle);
-        this.svgRoot.forceRedraw();
-    }
+    this.svgRoot.unsuspendRedraw(this.suspendHandle);
+    this.svgRoot.forceRedraw();
 };
 
 JXG.SVGRenderer.prototype.setDashStyle = function(el,visProp) {
@@ -702,7 +700,7 @@ JXG.SVGRenderer.prototype.updatePathStringPoint = function(el, size, type) {
     return s;
 };
 
-JXG.SVGRenderer.prototype.updatePolygonePrim = function(node, el) {
+JXG.SVGRenderer.prototype.updatePolygonPrim = function(node, el) {
     var pStr = '', 
         scrCoords, i,
         len = el.vertices.length;

@@ -433,7 +433,8 @@ JXG.isPoint = function(v) {
 };
 
 /**
- * Checks if a given variable is neither undefined nor null.
+ * Checks if a given variable is neither undefined nor null. You should not use this together with global
+ * variables!
  * @param v A variable of any type.
  * @returns {Boolean} True, if v is neither undefined nor null.
  */
