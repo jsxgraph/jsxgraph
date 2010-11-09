@@ -5,75 +5,113 @@
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h2>Roulettes</h2>
+<h2>Least square fit</h2>
 <form>
 <input type="button" value="start" onclick="rol.start()">
 <input type="button" value="stop" onclick="rol.stop()">
 <input type="button" value="one step" onclick="rol.rolling()">
 </form>
-<div id="jxgbox" class="jxgbox" style="width:1000px; height:500px;"></div>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
     /* <![CDATA[ */
-
-var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-20,5,20,-5], keepaspectratio:true, axis:true});
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
 brd.suspendUpdate();
-// Big circle
-var bigCircle = brd.create('curve', [
-            function(t) { return 4*Math.cos(t);}, function(t){ return 4*Math.sin(t);}, 0, 2*Math.PI], 
-            {strokeWidth:6});
-// Circle
-var P = brd.create('point',[4,0],{name:'P', trace:false});
-var C = brd.create('point',[2,0],{name:'C'});
-var circle = brd.create('curve',[
-                    function(t){var d = P.Dist(C),
-                                    beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
-                                t += beta;
-                                return C.X()+d*Math.cos(t);
-                    },
-                    function(t){var d = P.Dist(C),
-                                    beta = JXG.Math.Geometry.rad([C.X()+1,C.Y()],C,P);
-                                t += beta;
-                                return C.Y()+d*Math.sin(t);
-                    },
-                    0,2*Math.PI],
-                    {strokeWidth:6, strokeColor:'green'});
+if (true) {
+    var i, p = [], angle, xr, yr, delta = 0.1;
 
-// Point on circle
-var B = brd.create('glider',[0,2,circle],{name:'B', color:'blue',trace:false});
-brd.create('segment',[C,B],{color:'black'}); 
+    // Random points are constructed which lie roughly on a line
+    // defined by y = 0.3*x+1.
+    // delta*0.5 is the maximal distance in y-direction of the random
+    // points from the line.
+    brd.suspendUpdate();
+    for (i=0;i<100;i++) {
+        yr = 10*(Math.random()-0.5);
+        xr = 0.*yr+delta*(Math.random()-0.5);
+        p.push(brd.create('point',[xr, yr], {withLabel:false}));
+    }
+} else {
+    var i, p = [], angle, co, si, delta = 0.2;
+ 
+    // Random points are constructed which lie roughly on a circle
+    // of radius 4 having the origin as center.
+    // delta*0.5 is the maximal distance in x- and y- direction of the random
+    // points from the circle line.
+    for (i=0;i<100;i++) {
+        angle = Math.random()*2*Math.PI;
+ 
+        co = 4*Math.cos(angle)+delta*(Math.random()-0.5);
+        si = 4*Math.sin(angle)+delta*(Math.random()-0.5);
+        p.push(brd.create('point',[co+2, si-1], {withLabel:false}));
+    }
+}
 brd.unsuspendUpdate();
-var rol = JXG.Math.Numerics.createRoulette(bigCircle, circle, 0, Math.PI/45, -1, 150, [C,P,B]); 
-/*    
-var p1 = brd2.create('point', [0,0], {style:6, name:'p1'});
-var s = brd2.create('slider', [[-1,-1],[2,-1],[0,Math.PI/2,2*Math.PI]], {name:'angle'});
 
-var sq = [];
-sq[0] = brd2.create('point', [0,-2], {style:10});
-sq[1] = brd2.create('point', [2,2], {style:10});
-sq[2] = brd2.create('point', [1,1], {style:10});
-sq[3] = brd2.create('point', [2,-2], {style:10});
-var pol = brd2.create('polygon',sq);
+//
+// Ab hier wird der beste Kreis, bzw. die beste Gerade ermittelt.
+var j, r = [], rbar = [], x = [], y = [], z = [], A = [[0,0,0],[0,0,0],[0,0,0]], n, d,
+    eigen, minIndex, minE, ev, c, xm, ym, zm, radius;
+n = p.length;
+for (i=0;i<n;i++) {
+    r.push([1.0, p[i].X(), p[i].Y()]);
+    d = r[i][0]*r[i][0] + r[i][1]*r[i][1] + r[i][2]*r[i][2];
+    r[i][0] = 1.0 - r[i][0]/d;
+    r[i][1] /= d;
+    r[i][2] /= d;
+}
 
-var rot = brd2.create('transform', [function(){return s.Value();},p1], {type:'rotate'});
-rot.bindTo(sq);
-brd2.create('group',[p1].concat(sq));
-
-var p2 = brd2.create('point', [2,0], {name:'p2', style:7,trace:false});
-rot.bindTo(p2);
-brd2.update();  // why update? 
-*/
+for (j=0;j<3;j++) {
+    for (i=0,d=0;i<n;i++) {
+        d += r[i][j];
+    }
+    d /= n;
+    rbar[j] = d;
+    for (i=0;i<n;i++) {
+        r[i][j] -= d;
+    }
+}
+for (i=0;i<n;i++) {
+    A[0][0] += r[i][0]*r[i][0];
+    A[0][1] += r[i][0]*r[i][1];
+    A[0][2] += r[i][0]*r[i][2];
+    A[1][0] += r[i][1]*r[i][0];
+    A[1][1] += r[i][1]*r[i][1];
+    A[1][2] += r[i][1]*r[i][2];
+    A[2][0] += r[i][2]*r[i][0];
+    A[2][1] += r[i][2]*r[i][1];
+    A[2][2] += r[i][2]*r[i][2];
+}
 /*
-JXG.Options.text.useASCIIMathML = true;
-JXG.Options.point.face = '<>';
-JXG.Options.point.size = 10;
-JXG.Options.text.fontSize = 18;
-var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 10, -1], axis:false});
-var dataArr = [4,1,3,2,5,7,1.5,2];
-//var a = board.createElement('chart', dataArr, {chartStyle:'bar',width:0.6,labels:dataArr});
-var t = board.createElement('point',[7,1]);
-var t2 = board.createElement('text',[1,1,'sum_(i=1)^n (x^i)']);
+for (i=0;i<3;i++) {
+    for (j=0;j<3;j++) {
+        //A[i][j] /= n;
+    }
+}
 */
+
+eigen = JXG.Math.Numerics.Jacobi(A);
+minIndex = 0;
+minE = eigen[0][0][0];
+for (j=1;j<3;j++) {
+    if (eigen[0][j][j]<minE) {
+        minIndex = j;
+        minE = eigen[0][j][j];
+    }
+}
+ev = [eigen[1][0][minIndex],eigen[1][1][minIndex],eigen[1][2][minIndex]];
+c = -(rbar[0]*ev[0]+rbar[1]*ev[1]+rbar[2]*ev[2]);
+
+xm = -ev[1];
+ym = -ev[2];
+zm = 2.0*(c+ev[0]);
+console.log(c, c+ev[0]);
+if (Math.abs(c)<0.01) {
+    brd.create('line',[zm,xm,ym], {strokeColor:'green'});
+    
+}  else {
+    var radius = Math.sqrt((xm*xm+ym*ym-2*c*zm)/(zm*zm));
+    brd.create('circle',[[zm,xm,ym],radius]);
+}
 
 /* ]]> */
 </script>

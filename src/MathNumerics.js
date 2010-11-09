@@ -188,7 +188,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                     [0,0,0],
                     [0,0,0],
                     [0,0,0]
-                ];
+                ], nloops=0;
 
             // Initialization. Set initial Eigenvectors.
             for (i = 0; i < n; i++) {
@@ -248,7 +248,8 @@ JXG.Math.Numerics = (function(JXG, Math) {
                         }
                     }
                 }
-            } while (Math.abs(ssum) / sum > eps);
+                nloops++;
+            } while (Math.abs(ssum) / sum > eps && nloops<2000);
             return [A,V];
         },
 
