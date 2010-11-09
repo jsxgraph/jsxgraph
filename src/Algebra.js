@@ -25,12 +25,12 @@
 
 /** 
  * @fileoverview This file contains the class Algebra, a wrapper for all kind of calculations. It's only here for
- * backward compatibility reasons.
+ * backward compatibility reasons, so please don't use it.
  */
  
 /**
- * Creates a new instance of Algebra.
- * @class This class is just for backward compatibility and may be removed in future versions of JSXGraph. Hence,
+ * DEPRECATED! This class may be removed in future JSXGraph releases. Creates a new instance of Algebra.
+ * @class This class is just for backward compatibility and may be removed in future versions of JSXGraph.
  * please DO NOT USE ANY OF THESE METHODS but the given alternative.
  * @constructor
  */
@@ -42,10 +42,12 @@ JXG.Algebra = function (/** JXG.Board */ board) {
     this.board = board;
     
     /**
+     * Use JXG.Math.eps instead.
      * Defines float precision. Every number <tt>f</tt> with
      * Math.abs(f) < eps is assumed to be zero.
      * @default {@link JXG.Math#eps}
      * @see JXG.Math#eps
+     * @deprecated
      */
     this.eps = JXG.Math.eps;
 };

@@ -69,9 +69,11 @@ JXG.createArc = function(board, parents, attributes) {
 
     // Read the default values from Options and use them in case they are not set by the user
     // in attributes
-    defaults = {withLabel:JXG.readOption(board.options,'elements','withLabel'), 
-                layer:JXG.readOption(board.options,'layer','arc'),
-                useDirection:false}; // useDirection is necessary for circumCircleArcs
+    defaults = {
+        withLabel: JXG.readOption(board.options,'elements','withLabel'),
+        layer: JXG.readOption(board.options,'layer','arc'),
+        useDirection:false      // useDirection is necessary for circumCircleArcs
+    };
     defaults['strokeWidth'] =  board.options.elements['strokeWidth'];
     options = board.options.arc;
     for (key in options) {
@@ -81,21 +83,25 @@ JXG.createArc = function(board, parents, attributes) {
         
     el = board.create('curve',[[0],[0]],attributes);
     el.type = JXG.OBJECT_TYPE_ARC;
+
     /**
      * Midpoint of the arc.
      * @type JXG.Point
      */
     el.midpoint = JXG.getReference(board, parents[0]);
+
     /**
      * Point defining the arcs circle.
      * @type JXG.Point
      */
     el.point2 = JXG.getReference(board, parents[1]);
+
     /**
      * The point defining the angle of the arc.
      * @type JXG.Point
      */
     el.point3 = JXG.getReference(board, parents[2]);
+
     /* Add arc as child to defining points */
     el.midpoint.addChild(el);
     el.point2.addChild(el);
@@ -156,7 +162,7 @@ JXG.createArc = function(board, parents, attributes) {
     };
 
     /**
-     * @deprecated
+     * @deprecated Use Radius()
      */
     el.getRadius = function() {
         return this.Radius();
@@ -164,8 +170,8 @@ JXG.createArc = function(board, parents, attributes) {
 
     /**
      *Checks whether (x,y) is near the arc.
-     * @param {int} x Coordinate in x direction, screen coordinates.
-     * @param {int} y Coordinate in y direction, screen coordinates.
+     * @param {Number} x Coordinate in x direction, screen coordinates.
+     * @param {Number} y Coordinate in y direction, screen coordinates.
      * @returns {Boolean} True if (x,y) is near the arc, False otherwise.
      */
     el.hasPoint = function (x, y) { 
@@ -185,8 +191,8 @@ JXG.createArc = function(board, parents, attributes) {
 
     /**
      * Checks whether (x,y) is within the sector defined by the arc.
-     * @param {int} x Coordinate in x direction, screen coordinates.
-     * @param {int} y Coordinate in y direction, screen coordinates.
+     * @param {Number} x Coordinate in x direction, screen coordinates.
+     * @param {Number} y Coordinate in y direction, screen coordinates.
      * @returns {Boolean} True if (x,y) is within the sector defined by the arc, False otherwise.
      */
     el.hasPointSector = function (x, y) { 
@@ -254,8 +260,7 @@ JXG.JSXGraph.registerElement('arc', JXG.createArc);
  * @param {JXG.Board} board The board the semicircle is put on.
  * @param {Array} parents Array of two opposite points defining the semicircle.
  * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
- * @type JXG.Arc
- * @return Reference to the created arc object.
+ * @returns {JXG.Arc} Reference to the created object.
  */
 JXG.createSemicircle = function(board, parents, attributes) {
     var el, mp, idmp = '';
@@ -284,8 +289,7 @@ JXG.JSXGraph.registerElement('semicircle', JXG.createSemicircle);
  * @param {JXG.Board} board The board the arc is put on.
  * @param {Array} parents Array of three points defining the circumcircle arc.
  * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
- * @type JXG.Arc
- * @return Reference to the created arc object.
+ * @returns {JXG.Arc} Reference to the created object.
  */
 JXG.createCircumcircleArc = function(board, parents, attributes) {
     var el, mp, idmp;
