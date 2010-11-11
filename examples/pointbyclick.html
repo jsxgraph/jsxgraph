@@ -85,7 +85,8 @@
                 // If c is close to zero, the best fittting object is a line.
                 // The best threshold parameter has yet to be determined.
                 // At the moment it is set to 0.01.
-                if (Math.abs(zm) < 0.05) {
+                //console.log(c, zm, ev);
+                if (Math.abs(zm) < 0.015) {
                     board.create('line',[points[0], points[points.length-1]], {strokeColor:'green'});
                     //board.create('line', [ev[0],xm,ym], {strokeColor:'green'});
                 } else {
