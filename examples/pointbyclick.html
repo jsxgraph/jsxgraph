@@ -143,9 +143,9 @@
         });
 
         $('#jxgbox').mouseup(function(e){
-            if(points.length==1)
+            if (points.length <= 14)
                 board.create('point', points[0]);
-            else if(points.length>2)
+            else
                 bestFit(points);
 
             mousedown = false;
