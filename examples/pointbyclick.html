@@ -23,7 +23,64 @@
             //
             // bestFit, the best-fitting circle or line is found by least-squares fitting.
             //
-            bestFit = function(p) {
+            bestFit = function(p, testOnly) {
+                var i, angle, co, si, 
+                    delta = 0.8, 
+                    isLine = false,
+                    M = [], y = [], MT, B, c, z, n, d, xm, ym, r;
+ 
+                // Having constructed the points, we can fit a circle 
+                // through the point set, consisting of n points.
+                // The (n times 3) matrix consists of
+                //   x_1, y_1, 1
+                //   x_2, y_2, 1
+                //      ...
+                //   x_n, y_n, 1
+                // where x_i, y_i is the position of point p_i
+                // The vector y of length n consists of
+                //    x_i*x_i+y_i*y_i 
+                // for i=1,...n.
+                
+                n = p.length;
+                for (i=0;i<n;i++) {
+                    M.push([p[i].length ? p[i][0] : p[i].X(), p[i].length ? p[i][1] : p[i].Y(), 1.0]);
+                    y.push(M[i][0]*M[i][0]+M[i][1]*M[i][1]);
+                }
+ 
+                // Now, the general linear least-square fitting problem
+                //    min_z || M*z - y||_2^2
+                // is solved by solving the system of linear equations
+                //    (M^T*M) * z = (M^T*y)
+                // with Gauss elimination.
+                MT = JXG.Math.transpose(M);
+                B = JXG.Math.matMatMult(MT, M);
+                c = JXG.Math.matVecMult(MT, y);
+                //console.log(JXG.Math.Numerics.det(B));
+                if (Math.abs(JXG.Math.Numerics.det(B))<Math.sqrt(JXG.Math.eps)) {
+                    isLine = true;
+                } else {
+                    z = JXG.Math.Numerics.Gauss(B, c);
+                    var xm = z[0]*0.5;
+                    var ym = z[1]*0.5;                   // xm, ym : center of the circle
+                    var r = Math.sqrt(z[2]+xm*xm+ym*ym); // r: radius
+                    d = JXG.Math.Geometry.distance(points[0], points[points.length-1]);
+                    if (d/r<0.4) {
+                    //if (r*Math.sqrt(board.stretchX*board.stretchX+board.stretchY*board.stretchY)>500) {
+                        isLine = true;
+                    }
+                }
+                if (isLine) {
+                    if (!testOnly) 
+                        board.create('line',[points[0], points[points.length-1]], {strokeColor:'green'});
+                } else {
+                    if (!testOnly) 
+                        board.create('circle', [[xm,ym],r]);
+                }
+                return isLine;
+            }, // End of bestFit
+            
+            /*
+            bestFitOld = function(p) {
                 var i, j, r = [], rbar = [], A = [
                         [0,0,0],
                         [0,0,0],
@@ -100,6 +157,8 @@
                     ]);
                 }
             }, // end of bestFit()
+            */
+            
             getMouseCoords = function(e) {
                 var cPos = board.getRelativeMouseCoordinates(e),
                     absPos = JXG.getPosition(e),
@@ -143,6 +202,7 @@
             if(mousedown) {
                 points.push(getMouseCoords(e).usrCoords.slice(1));
                 draftcurve.prepareUpdate().update().updateRenderer();
+                draftcurve.setProperty({strokeColor: (bestFit(points,true))?'green':'blue'});
             }
         });
 
@@ -150,7 +210,7 @@
             if(points.length==1)
                 board.create('point', points[0]);
             else if(points.length>2)
-                bestFit(points);
+                bestFit(points, false);
 
             mousedown = false;
             points = [];

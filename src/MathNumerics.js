@@ -168,6 +168,35 @@ JXG.Math.Numerics = (function(JXG, Math) {
             return x;
         },
 
+        /** 
+         * Computes the determinant of a square nxn matrix 
+         * By now, only n<=3 is possible.
+         * @param {Array} mat Matrix. 
+         * @returns {Number} The determinant pf the matrix mat. 
+                             The empty matrix returns 0.
+         * @throws {Error} If the minimum of number of rows respectively columns 
+         *                 is larger than 3.
+         */ 
+        det: function(mat) {
+            var n = mat.length;
+            if (n<=0) { return 0; }
+            if (mat[0].length<n) { n = mat[0].length; }
+            if (n==1) {
+                return mat[0][0];
+            } else if (n==2) {
+                return mat[0][0]*mat[1][1] - mat[1][0]*mat[0][1];
+            } else if (n==3) {
+                return  mat[0][0]*mat[1][1]*mat[2][2] 
+                      + mat[0][1]*mat[1][2]*mat[2][0] 
+                      + mat[0][2]*mat[1][0]*mat[2][1] 
+                      - mat[2][0]*mat[1][1]*mat[0][2]
+                      - mat[2][1]*mat[1][2]*mat[0][0]
+                      - mat[2][2]*mat[1][0]*mat[0][1];
+            } else {
+                throw new Error("JSXGraph:  det() matrix size larger than 3.");
+            }
+        },
+        
         /**
          * Compute the Eigenvalues and Eigenvectors of a symmetric 3x3 matrix with the Jacobi method
          * Adaption of a FORTRAN program by Ed Wilson, Dec. 25, 1990
