@@ -167,18 +167,70 @@ JXG.Math.Numerics = (function(JXG, Math) {
 
             return x;
         },
+        
+        /**
+         * @private
+         * Gauss-Bareiss algorithm to compute the 
+         * determinant of matrix without fractions.
+         * See H. Cohen, "A course in computational
+         * algebraic number thoery".
+         */
+        gaussBareiss: function(mat) {
+            var k, c, s, i, j, p, n, M, t, 
+                eps = JXG.Math.eps;
+            
+            n = mat.length;
+            if (n<=0) { return 0; }
+            if (mat[0].length<n) { n = mat[0].length; }
+            
+            // Copy the input matrix to M
+            M = new Array(n);
+            for (i = 0; i < n; i++) {
+                M[i] = mat[i].slice(0, n);
+            }
+            
+            c = 1;
+            s = 1;
+            for (k=0;k<n-1;k++) {
+                p = M[k][k];
+                if (Math.abs(p)<eps) {    // Pivot step
+                    for (i=0;i<n;i++) {
+                        if (Math.abs(M[i][k])>=eps) break
+                    }
+                    if (i==n) {      // No nonzero entry found in column k -> det(M) = 0
+                        return 0.0;
+                    } 
+                    for (j=k;j<n;j++) {   // swap row i and k partially
+                        t = M[i][j]; M[i][j] = M[k][j];  M[k][j] = t;
+                    }
+                    s = -s;
+                    p = M[k][k];
+                }
+                
+                // Main step
+                for (i=k+1;i<n;i++) {
+                    for (j=k+1;j<n;j++) {
+                        t = p*M[i][j] - M[i][k]*M[k][j];
+                        M[i][j] = t/c;
+                    }
+                }
+                c = p;
+            }
+            return s*M[n-1][n-1];
+        
+        },
 
         /** 
-         * Computes the determinant of a square nxn matrix 
-         * By now, only n<=3 is possible.
+         * Computes the determinant of a square nxn matrix with the
+         * Gauss-Bareiss algorithm.
          * @param {Array} mat Matrix. 
          * @returns {Number} The determinant pf the matrix mat. 
                              The empty matrix returns 0.
-         * @throws {Error} If the minimum of number of rows respectively columns 
-         *                 is larger than 3.
          */ 
         det: function(mat) {
-            var n = mat.length;
+            return this.gaussBareiss(mat);
+            /*
+            var n = mat.length, dd;
             if (n<=0) { return 0; }
             if (mat[0].length<n) { n = mat[0].length; }
             if (n==1) {
@@ -186,15 +238,17 @@ JXG.Math.Numerics = (function(JXG, Math) {
             } else if (n==2) {
                 return mat[0][0]*mat[1][1] - mat[1][0]*mat[0][1];
             } else if (n==3) {
-                return  mat[0][0]*mat[1][1]*mat[2][2] 
+                dd =  mat[0][0]*mat[1][1]*mat[2][2] 
                       + mat[0][1]*mat[1][2]*mat[2][0] 
                       + mat[0][2]*mat[1][0]*mat[2][1] 
                       - mat[2][0]*mat[1][1]*mat[0][2]
                       - mat[2][1]*mat[1][2]*mat[0][0]
                       - mat[2][2]*mat[1][0]*mat[0][1];
+                console.log(dd-this.gaussBareiss(mat));
             } else {
                 throw new Error("JSXGraph:  det() matrix size larger than 3.");
             }
+            */
         },
         
         /**
