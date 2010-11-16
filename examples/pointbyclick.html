@@ -55,7 +55,6 @@
                 MT = JXG.Math.transpose(M);
                 B = JXG.Math.matMatMult(MT, M);
                 c = JXG.Math.matVecMult(MT, y);
-                //console.log(JXG.Math.Numerics.det(B));
                 if (Math.abs(JXG.Math.Numerics.det(B))<Math.sqrt(JXG.Math.eps)) {
                     isLine = true;
                 } else {
@@ -64,7 +63,7 @@
                     var ym = z[1]*0.5;                   // xm, ym : center of the circle
                     var r = Math.sqrt(z[2]+xm*xm+ym*ym); // r: radius
                     d = JXG.Math.Geometry.distance(points[0], points[points.length-1]);
-                    if (d/r<0.4) {
+                    if (r>20) {
                     //if (r*Math.sqrt(board.stretchX*board.stretchX+board.stretchY*board.stretchY)>500) {
                         isLine = true;
                     }
