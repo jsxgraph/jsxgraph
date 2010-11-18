@@ -16,10 +16,12 @@
 <h2>Enter title here.</h2>
 
 <div style="width:800px">
-  <div id="jxgbox" class="jxgbox" style="width:800px; height:800px;"></div>
+    <div id="jxgbox" class="jxgbox" style="width:800px; height:800px;"></div>
+    <br />
+    <div id="debug" style="display:block;">
+        Debug information:<br />
+    </div>
 </div>
-
-<div id="debug" style="display:block;"></div>
 
 <script type="text/javascript">
     /* <![CDATA[ */
@@ -30,7 +32,7 @@
                 boundingbox: [-5, 5, 5, -5],
                 keepaspectreatio: true,
                 axis:true,
-                grid: false
+                grid: true
             });
 
         // construction

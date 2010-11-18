@@ -159,6 +159,17 @@
             */
             
             getMouseCoords = function(e) {
+                var em = document.createEvent('MouseEvents'), i = 0;
+
+                if(e.targetTouches) {
+                    em.initMouseEvent('mousedown', true, false, this.containerObj, 0,
+                        e.targetTouches[i].screenX, e.targetTouches[i].screenY,
+                        e.targetTouches[i].clientX, e.targetTouches[i].clientY,
+                        false, false, false, false, 0, null);
+                    
+                    e = em;
+                }
+
                 var cPos = board.getRelativeMouseCoordinates(e),
                     absPos = JXG.getPosition(e),
                     dx = absPos[0]-cPos[0],
@@ -178,7 +189,7 @@
             this.dataY = p[1];
         };
         
-        $('#jxgbox').mousedown(function(e) {
+        var down = function(e) {
             var coords = getMouseCoords(e);
 
             mousedown = true;
@@ -195,25 +206,34 @@
             points = [];
             points.push(coords.usrCoords.slice(1));
             draftcurve.prepareUpdate().update().updateRenderer();
-        });
+        };
 
-        $('#jxgbox').mousemove(function(e) {
+        var move = function(e) {
             if(mousedown) {
                 points.push(getMouseCoords(e).usrCoords.slice(1));
                 draftcurve.prepareUpdate().update().updateRenderer();
                 draftcurve.setProperty({strokeColor: (bestFit(points,true))?'green':'blue'});
             }
-        });
+        };
 
-        $('#jxgbox').mouseup(function(e){
-            if(points.length==1)
+        var up = function(e){
+            if((e.targetTouches && points.length==1) || (!e.targetTouches && points.length<=15))
                 board.create('point', points[0]);
-            else if(points.length>2)
+            else
                 bestFit(points, false);
 
             mousedown = false;
             points = [];
-        });
+        };
+
+        $('#jxgbox').mousedown(down);
+        JXG.addEvent(board.containerObj, 'touchstart', down, this);
+
+        $('#jxgbox').mousemove(move);
+        JXG.addEvent(board.containerObj, 'touchmove', move, this);
+
+        $('#jxgbox').mouseup(up);
+        JXG.addEvent(board.containerObj, 'touchend', up, this);
     })();
 
     /* ]]> */
