@@ -439,9 +439,10 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     }
 
     // Introduce our event handlers to the browser
-    JXG.addEvent(document, 'mousedown', this.mouseDownListener, this);
+    JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
     JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
-
+    JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
+    
     // To run JSXGraph on mobile touch devices we need these event listeners.
     JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
     JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
@@ -714,22 +715,21 @@ JXG.Board.prototype.touchStartListener = function (evt) {
 };
 
 JXG.Board.prototype.touchMoveListener = function (evt) {
-	evt.preventDefault();
-	var i, myEvent;
+    evt.preventDefault();
+    var i, myEvent;
 
-	for(i=0; i<evt.targetTouches.length; i++) {
-		myEvent = {pageX: evt.targetTouches[i].pageX, pageY: evt.targetTouches[i].pageY, clientX: evt.targetTouches[i].clientX, clientY: evt.targetTouches[i].clientY};
-		this.mouseMoveListener(myEvent, i);
-	}
+    for(i=0; i<evt.targetTouches.length; i++) {
+        myEvent = {pageX: evt.targetTouches[i].pageX, pageY: evt.targetTouches[i].pageY, clientX: evt.targetTouches[i].clientX, clientY: evt.targetTouches[i].clientY};
+        this.mouseMoveListener(myEvent, i);
+    }
 };
 
 JXG.Board.prototype.touchEndListener = function (evt) {
-	var e = document.createEvent("MouseEvents"), i;
+    var e = document.createEvent("MouseEvents"), i;
 
-	for(i=0;i<evt.targetTouches.length;i++) {
-		e.initMouseEvent('mouseup', true, false, this.containerObj, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-		this.mouseUpListener(e);
-	}
+    e.initMouseEvent('mouseup', true, false, this.containerObj, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    this.mouseUpListener(e);
+    
     this.options.precision.hasPoint = this.options.precision.mouse;
 };
 
@@ -740,6 +740,8 @@ JXG.Board.prototype.touchEndListener = function (evt) {
  */
 JXG.Board.prototype.mouseDownListener = function (Evt) {
     var el, pEl, cPos, absPos, dx, dy, nr;
+
+    this.updateHooks('mousedown', Evt);
 
     // prevent accidental selection of text
     if (document.selection) {
@@ -811,11 +813,9 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         window.event.returnValue = false;
     }
 
-    this.updateHooks('mousedown');
-
     // New mouse position in screen coordinates.
     this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx,dy], this);
-    JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
+    //JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
 
     return false;
 };
@@ -824,12 +824,14 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
  * This method is called by the browser when the left mouse button is released.
  * @private
  */
-JXG.Board.prototype.mouseUpListener = function () {
+JXG.Board.prototype.mouseUpListener = function (Evt) {
+    this.updateHooks('mouseup', Evt);
+
     // redraw with high precision
     this.updateQuality = this.BOARD_QUALITY_HIGH;
 
     // release mouseup listener
-    JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+    //JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
 
     this.mode = this.BOARD_MODE_NONE;
 
@@ -843,8 +845,6 @@ JXG.Board.prototype.mouseUpListener = function () {
 
     // release dragged object
     this.drag_obj = [];
-
-    this.updateHooks('mouseup');
 };
 
 /**
@@ -854,6 +854,8 @@ JXG.Board.prototype.mouseUpListener = function () {
  */
 JXG.Board.prototype.mouseMoveListener = function (Event, i) {
     var el, pEl, cPos, absPos, newPos, dx, dy, drag, oldCoords;
+
+    this.updateHooks('mousemove', Event, this.mode);
 
     // if not called from touch events, i is undefined
     i = i || 0;
@@ -1629,14 +1631,14 @@ JXG.Board.prototype.removeHook = function(id) {
  * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.updateHooks = function(m) {
-    var i;
+    var i, args = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : null;
 
     if(!JXG.exists(m))
         m = 'update';
 
     for(i=0; i<this.hooks.length; i++) {
         if((this.hooks[i] != null) && (this.hooks[i].mode == m))
-            this.hooks[i].fn(this);
+            this.hooks[i].fn.apply(this, args);
     }
     return this;
 };

@@ -59,9 +59,9 @@
                     isLine = true;
                 } else {
                     z = JXG.Math.Numerics.Gauss(B, c);
-                    var xm = z[0]*0.5;
-                    var ym = z[1]*0.5;                   // xm, ym : center of the circle
-                    var r = Math.sqrt(z[2]+xm*xm+ym*ym); // r: radius
+                    xm = z[0]*0.5;
+                    ym = z[1]*0.5;                   // xm, ym : center of the circle
+                    r = Math.sqrt(z[2]+xm*xm+ym*ym); // r: radius
                     d = JXG.Math.Geometry.distance(points[0], points[points.length-1]);
                     if (r>20) {
                     //if (r*Math.sqrt(board.stretchX*board.stretchX+board.stretchY*board.stretchY)>500) {
@@ -178,8 +178,7 @@
                 return new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx, dy], board);
             },
             mousedown,
-            points
-            ;
+            points = [];
 
         var draftcurve = board.create('curve',[[],[]],{curveType:'plot'});
         draftcurve.updateDataArray = function() {
@@ -188,9 +187,15 @@
             this.dataX = p[0];
             this.dataY = p[1];
         };
+        draftcurve.highlight = function() {};
+        draftcurve.noHighlight = function() {};
         
         var down = function(e) {
-            var coords = getMouseCoords(e);
+            var coords = getMouseCoords(e),
+                i;
+
+            if(e.shiftKey)
+                return;
 
             mousedown = true;
             for(i in board.objects) {
@@ -208,7 +213,7 @@
             draftcurve.prepareUpdate().update().updateRenderer();
         };
 
-        var move = function(e) {
+        var move = function(e, m) {
             if(mousedown) {
                 points.push(getMouseCoords(e).usrCoords.slice(1));
                 draftcurve.prepareUpdate().update().updateRenderer();
@@ -226,14 +231,9 @@
             points = [];
         };
 
-        $('#jxgbox').mousedown(down);
-        JXG.addEvent(board.containerObj, 'touchstart', down, this);
-
-        $('#jxgbox').mousemove(move);
-        JXG.addEvent(board.containerObj, 'touchmove', move, this);
-
-        $('#jxgbox').mouseup(up);
-        JXG.addEvent(board.containerObj, 'touchend', up, this);
+        board.addHook(down, 'mousedown');
+        board.addHook(move, 'mousemove');
+        board.addHook(up, 'mouseup');
     })();
 
     /* ]]> */
