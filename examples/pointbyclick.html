@@ -161,7 +161,7 @@
             getMouseCoords = function(e) {
                 var em = document.createEvent('MouseEvents'), i = 0;
 
-                if(e.targetTouches) {
+                if(e.targetTouches) {  // always false
                     em.initMouseEvent('mousedown', true, false, this.containerObj, 0,
                         e.targetTouches[i].screenX, e.targetTouches[i].screenY,
                         e.targetTouches[i].clientX, e.targetTouches[i].clientY,
@@ -222,7 +222,7 @@
         };
 
         var up = function(e){
-            if((e.targetTouches && points.length==1) || (!e.targetTouches && points.length<=15))
+            if((e.fromTouch && points.length==1) || (!e.fromTouch && points.length<=15))
                 board.create('point', points[0]);
             else
                 bestFit(points, false);

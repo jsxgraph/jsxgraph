@@ -710,6 +710,7 @@ JXG.Board.prototype.touchStartListener = function (evt) {
 	this.options.precision.hasPoint = this.options.precision.touch;
 	for(i=0; i<evt.targetTouches.length; i++) {
 		e.initMouseEvent('mousedown', true, false, this.containerObj, 0, evt.targetTouches[i].screenX, evt.targetTouches[i].screenY, evt.targetTouches[i].clientX, evt.targetTouches[i].clientY, false, false, shift, false, 0, null);
+                e.fromTouch = true;
 		this.mouseDownListener(e);
 	}
 };
@@ -720,6 +721,7 @@ JXG.Board.prototype.touchMoveListener = function (evt) {
 
     for(i=0; i<evt.targetTouches.length; i++) {
         myEvent = {pageX: evt.targetTouches[i].pageX, pageY: evt.targetTouches[i].pageY, clientX: evt.targetTouches[i].clientX, clientY: evt.targetTouches[i].clientY};
+        myEvent.fromTouch = true;
         this.mouseMoveListener(myEvent, i);
     }
 };
@@ -728,6 +730,7 @@ JXG.Board.prototype.touchEndListener = function (evt) {
     var e = document.createEvent("MouseEvents"), i;
 
     e.initMouseEvent('mouseup', true, false, this.containerObj, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    e.fromTouch = true;
     this.mouseUpListener(e);
     
     this.options.precision.hasPoint = this.options.precision.mouse;
