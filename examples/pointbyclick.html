@@ -180,7 +180,7 @@
             mousedown,
             points = [];
 
-        var draftcurve = board.create('curve',[[],[]],{curveType:'plot'});
+        var draftcurve = board.create('curve',[[0],[0]],{curveType:'plot'});
         draftcurve.updateDataArray = function() {
             if (points.length<=0) return;
             var p = JXG.Math.transpose(points);
