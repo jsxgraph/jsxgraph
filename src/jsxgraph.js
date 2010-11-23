@@ -28,7 +28,7 @@
  * It has methods to create, save, load and free boards. Additionally some helper functions are
  * defined in this file directly in the JXG namespace.
  * @author graphjs
- * @version 0.82
+ * @version 0.83
  */
 
 /**
@@ -43,7 +43,7 @@ JXG.JSXGraph = {
      * showCopyright is not set to false on board creation).
      * @type String
      */
-    licenseText: 'JSXGraph v0.82rc14 Copyright (C) see http://jsxgraph.org',
+    licenseText: 'JSXGraph v0.83 Copyright (C) see http://jsxgraph.org',
 
     /**
      * Associative array that keeps references to all boards.
