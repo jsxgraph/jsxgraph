@@ -803,17 +803,17 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         }
     }
 
-    // if no draggable object can be found, get out here immediately
-    if(this.drag_obj.length == 0) {
-        this.mode = this.BOARD_MODE_NONE;
-        return true;
-    }
-
     // prevent accidental text selection
     if (Evt && Evt.preventDefault) {
         Evt.preventDefault();
     } else {
         window.event.returnValue = false;
+    }
+
+    // if no draggable object can be found, get out here immediately
+    if(this.drag_obj.length == 0) {
+        this.mode = this.BOARD_MODE_NONE;
+        return true;
     }
 
     // New mouse position in screen coordinates.
