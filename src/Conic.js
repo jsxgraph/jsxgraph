@@ -45,14 +45,14 @@
  * @example
  * // Create an Ellipse by three points
  * var A = board.create('point', [-1,4]);
- * var B = board.create('point', [-1,-4);
+ * var B = board.create('point', [-1,-4]);
  * var C = board.create('point', [1,1]);
  * var el = board.create('ellipse',[A,B,C]);
  * </pre><div id="a4d7fb6f-8708-4e45-87f2-2379ae2bd2c0" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var glex1_board = JXG.JSXGraph.initBoard('a4d7fb6f-8708-4e45-87f2-2379ae2bd2c0', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
  *   var A = glex1_board.create('point', [-1,4]);
- *   var B = glex1_board.create('point', [-1,-4);
+ *   var B = glex1_board.create('point', [-1,-4]);
  *   var C = glex1_board.create('point', [1,1]);
  *   var el = glex1_board.create('ellipse',[A,B,C]);
  * </script><pre>
@@ -195,14 +195,14 @@ JXG.createEllipse = function(board, parents, atts) {
  * @example
  * // Create an Hyperbola by three points
  * var A = board.create('point', [-1,4]);
- * var B = board.create('point', [-1,-4);
+ * var B = board.create('point', [-1,-4]);
  * var C = board.create('point', [1,1]);
  * var el = board.create('hyperbola',[A,B,C]);
  * </pre><div id="cf99049d-a3fe-407f-b936-27d76550f8c4" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var glex1_board = JXG.JSXGraph.initBoard('cf99049d-a3fe-407f-b936-27d76550f8c4', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
  *   var A = glex1_board.create('point', [-1,4]);
- *   var B = glex1_board.create('point', [-1,-4);
+ *   var B = glex1_board.create('point', [-1,-4]);
  *   var C = glex1_board.create('point', [1,1]);
  *   var el = glex1_board.create('hyperbola',[A,B,C]);
  * </script><pre>
@@ -343,7 +343,7 @@ JXG.createHyperbola = function(board, parents, atts) {
  * @example
  * // Create a parabola by a point C and a line l.
  * var A = board.create('point', [-1,4]);
- * var B = board.create('point', [-1,-4);
+ * var B = board.create('point', [-1,-4]);
  * var l = board.create('line', [A,B]);
  * var C = board.create('point', [1,1]);
  * var el = board.create('parabola',[C,l]);
@@ -351,7 +351,7 @@ JXG.createHyperbola = function(board, parents, atts) {
  * <script type="text/javascript">
  *   var glex1_board = JXG.JSXGraph.initBoard('524d1aae-217d-44d4-ac58-a19c7ab1de36', {boundingbox:[-6,6,6,-6], keepaspectratio:true, showcopyright: false, shownavigation: false});
  *   var A = glex1_board.create('point', [-1,4]);
- *   var B = glex1_board.create('point', [-1,-4);
+ *   var B = glex1_board.create('point', [-1,-4]);
  *   var l = glex1_board.create('line', [A,B]);
  *   var C = glex1_board.create('point', [1,1]);
  *   var el = glex1_board.create('parabola',[C,l]);
