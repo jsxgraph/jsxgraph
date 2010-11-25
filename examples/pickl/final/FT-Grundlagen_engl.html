@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+
+<head>
+  <title>FT-Basics</title>
+
+	<style type="text/css">
+
+		.breadcrumbs1 {
+		width: 981px;
+		height: 38px;
+		}
+
+		#Platzhalter1 {
+		width: 680px;
+		height: 5px;
+		}
+
+		.breadcrumbs-link {
+		padding: 10px;
+		}
+
+		.bild-first {
+		width: 25px;
+		height: 25px;
+		}
+
+		h1 {
+		color:#0000CC;
+		font-size:28pt;
+		font-family:arial;
+		background-color:#CCCCFF;
+		border-color:#000000;
+		border-width:5px;
+		border-style:solid;
+		padding: 10px;
+		margin-top: 0px;
+		margin-bottom: 30px;
+		}
+
+		a img{
+		border-width: 0;
+		}
+
+		.Textfluss {
+		vertical-align: bottom;
+		}
+
+		h2 {
+		color:#0066FF;
+		}
+
+		#KFT {
+		vertical-align: middle;
+		}
+
+		#Einfassung {
+		border: solid;
+		}
+
+		#Abstand {
+		width:80px;
+		height:5px;
+		}
+
+
+	</style>
+
+
+</head>
+
+<body>
+
+<div class="breadcrumbs1">
+	<table class="Tabelle">
+		<tr>
+			<th>
+				<a href="index.html" class="breadcrumbs-link">
+				<img src="Icons/go-first.png" class="bild-first" />
+				</a>
+			</th><th>
+				<a href="index_engl.html" class="breadcrumbs-link">
+				Home
+				</a>
+			</th><th>
+				<div id="Platzhalter1">
+				</div>
+			</th><th>
+				<a href="FT-Abkuerzungen_engl.html" class="breadcrumbs-link">
+				ABBREVIATIONS
+				</a>
+			</th>
+		</tr>
+	</table>
+</div>
+
+<h1>2 Basics</h1>
+
+
+<ol>
+	<li>
+		<h2>What is the FT/ IFT?</h2>
+		The Fourier transform (FT) is an integral transform, which attaches a suitable original function 
+		f(t) to its image function or Fourier transformed F(&nu;).<br />
+		The original function f(t) is piecewise continuous and absolute integrable. Typical its domain is time.
+		<br />
+		The image function F(&nu;) is a function of frequency &nu;.
+		<br />
+		<br />
+		The inverse Fourier transform (IFT) is the inverse function of the Fourier transform. <br />
+		It transforms an image function F(&nu;) into its original function f(t). By using the IFT a function 
+		of time can be generated from a frequency spectrum.
+		<br />
+		<br />
+	</li>
+
+	<li>
+		<h2>What does the FT supply?</h2>
+		The FT analyzes, whether a function is periodic. In order to do this the analyzed function f(t) is 
+		compared with Euler&prime;s formula
+		<img src="Formeln/KomplDrehzeiger-Dateien/image001.gif" class="Textfluss"/>, which states:
+		<p align="center" >
+		<img src="Formeln/KomplDrehzeigerFormel-Dateien/image001.gif" />
+		</p>
+		The product 2&pi;&nu; describes the angular frequency &omega;. j is the imaginary unit.<br />
+		Hence the continuous Fourier transform is defined for every real numebr &nu; as:<p align="center" >
+		<img src="Formeln/KFT-Dateien/image001.gif" />
+		</p>
+		By using Euler&prime;s formula a function can be tested on the similarity to both a sine (imaginary part) 
+		and a cosine (real part).<br />
+		<br />
+	</li>
+
+	<li>
+		<h2>How is the FT used in signal processing?<br />
+			DFT/ IDFT and FFT/ IFFT
+		</h2>
+		To analyze discrete signals as used in signal processing, the discrete Fourier transfrom is used.<br />
+		It attaches a finite sequence of numbers f<sub>n</sub> with n = 0, 1, 2, ... to an image sequence F<sub>k</sub> 
+		with k = 0, 1, 2, ...: 
+		<p align="center" >
+		<img src="Formeln/DFT-Dateien/image001.gif" />
+		</p>
+		The complex factor <img src="Formeln/KomplDrehzeigerFolge-Dateien/image001.gif" class="Textfluss"/>
+		is Euler&prime;s formula attuned to a sequence.<br />
+		<br />
+		The inverse discrete Fourier transfrom (IDFT) is the inverse function of the DFT. <br />
+		The original sequence f<sub>n</sub> can be derived from the image sequence F<sub>k</sub> by:
+		<p align="center" >
+		<img src="Formeln/IDFT-Dateien/image001.gif" />
+		</p>
+		In practice audio signals are scanned with a &quot;scan comb&quot; (delta pulse sequence) in equidistant 
+		time intervals t<sub>n</sub> = n&Delta;t with n = 0, 1, 2, ..., m and the scan time &Delta;t > 0, so that 
+		a discrete signal is produced. So the function exists as measuring points and is described as the sequence 
+		f<sub>n</sub>. <br />
+		Here you have to notice, that the scan times &Delta;t need to be chosen small enough. Then the scanned 
+		sequence f<sub>n</sub> reflects the signal adequate, so that the signal can be reproduced out of the 
+		measuring points. <br />
+		<br />
+		In the modern computer science a fast, very effective algorithm, the fast Fourier transform (FFT), is adopted 
+		in order to calculate discrete Fourier transforms with a high m. The number of realized computations using 
+		the FFT is proportional to N&middot;log<sub>2</sub>(N). This is much less than using the DFT with its 
+		&prop;N&sup2; operations. <br />
+		The inverse function of the FFT is the inverse fast Fourier transfrom (IFFT).<br />
+		<br />
+		<b>Principle of the FFT algorithm</b><br />
+		The algorithm of the FFT decomposes the DFT into both, one transformed function with even 
+		&quot;c<sub>2k</sub>&quot; and one with odd &quot;c<sub>2k+1</sub>&quot; Fourier coefficients: <br />
+		<p align="center" > DFT </p>
+		<p align="center" >
+		<img src="Formeln/FFTAlgorithmusDFT-Dateien/image001.gif" />
+		</p>
+		<p align="center" >
+		<img src="Bilder-HTML/PfeilFFTSkaliert.jpg" />
+		</p>
+		<p align="center" > FFT </p>
+
+<table border="0" align="center" >
+	<tbody>
+		<tr>
+			<td> <img src="Formeln/FFTAlgorithmusgerade-Dateien/image001.gif" /> </td>
+			<td><div id="Abstand" > </div></td>
+			<td><img src="Formeln/FFTAlgorithmusungerade-Dateien/image001.gif" /> </td>
+		</tr>
+	</tbody>
+</table>
+
+		with <img src="Formeln/FFTAlgorithmusW-Dateien/image001.gif" class="Textfluss"/>,
+		until there is left only one even and one odd Fourier coefficient &quot;c&quot;. <br />
+		<br />
+	</li>
+
+	<li>
+		<h2>Specialties in application of the FFT in signal processing
+		</h2>
+		In signal processing audio signals are scanned with a &quot;scan comb&quot; (Delta pulse seqeunce) to 
+		produce a discrete signal. So generally 44100 measured values are scanned per second. When scanning 
+		there is always a refelection to 0.5 &middot; sample rate, <br />
+		In other words 0.5 &middot; 44100 Hz = 22050 Hz, what conforms to the maximal hearable frequency 
+		domain of the human ear. <br />
+		<br />
+		The reason for the reflection is made clear in the following image:
+		<p align="center" >
+		<img src="Bilder-HTML/BegruendungSpiegelungSkaliert.png" />
+		</p>
+		The upper graphic shows two different waves, one with 0.3 &middot; sample rate and one with 
+		0.7 &middot; sample rate. The red lines describe those measured values, that are saved during 
+		the scanning. You can see that both waves result in the same scanned vaules. Hence, the scanned 
+		signals as well as their frequency spectra after FFT are always symmteric to 0.5 &middot; sample rate. 
+		For this reason only the first half of the frequency spectrum of the transformed function is relevant.
+		<br />
+		<br />
+		The following images show frequency spectra with and without reflection. <br />
+
+<table border="0" >
+	<tbody>
+		<tr>
+			<td> <img src="Bilder-HTML/DarstellungFFTmitSpiegelungSkaliert.png" /> </td>
+			<td><img src="Bilder-HTML/ReellwertigeDarstellungFFTSkaliert.png" /> </td>
+		</tr>
+		<tr>
+			<td align="center" >Spectrum with reflection</td>
+			<td align="center" >Spectrum without reflection</td>
+		</tr>
+	</tbody>
+</table>
+		<br />
+		<br />
+		Furthermore only the different frequencies are important, which are included in a signal. 
+		The phase shift, that is to say whether you have a sine or a cosine, is ignored, because the human ear 
+		can not notice it.
+		<br />
+		For better clarity in plotting the frequency spectrum the absolute value of the transformed function 
+		(&quot;abs(FFT)&quot;) is calculated and imaged. At this a real-valued diagram results out of the complex one. 
+		The x-axis states the frequency and the y-axis states the absolute value of the transformed function. 
+		The complex diagram is not suitable for processing the frequency spectrum, because identifying the contained 
+		frequencies is not that easy.
+		<br />
+		<br />
+		The images below make this circumstance understandable once more:
+
+
+<table border="0" >
+	<tbody>
+		<tr>
+			<td> <img src="Bilder-HTML/KomplexeDarstellungFFTSkaliert.png" /> </td>
+			<td><img src="Bilder-HTML/ReellwertigeDarstellungFFTSkaliert.png" /> </td>
+		</tr>
+		<tr>
+			<td align="center" >complex diagram</td>
+			<td align="center" >real-valued diagram</td>
+		</tr>
+	</tbody>
+</table>
+
+
+	</li>
+</ol>
+
+
+
+
+
+</body>
+</html>
