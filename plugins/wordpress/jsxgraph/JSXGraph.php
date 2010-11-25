@@ -28,7 +28,7 @@ Plugin Name: JSXGraph
 Plugin URI: http://jsxgraph.org
 Description: Embedding jsxgraph constructions
 Author: Peter Wilfahrt
-Version: 0.78
+Version: 0.82
 Author URI: http://www.webconsul.de/
 */
 
@@ -46,10 +46,14 @@ function jsxgraph_head() {
   $core_url = "http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js";
   if(file_exists("wp-content/plugins/jsxgraph/jsxgraphcore.js")) $core_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/jsxgraphcore.js";
 
+  $gxtreader_url = "http://jsxgraph.uni-bayreuth.de/distrib/GeonextReader.js";
+  if(file_exists("wp-content/plugins/jsxgraph/GeonextReader.js")) $gxtreader_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/GeonextReader.js";
+
   // Header-Output
   echo "\n<link rel='stylesheet' type='text/css' href='$css_url' media='screen' />\n";
   echo "<script type='text/javascript' src='$pt_url'></script>\n";
   echo "<script type='text/javascript' src='$core_url'></script>\n";
+  echo "<script type='text/javascript' src='$gxtreader_url'></script>\n";
 }
 
 function jsxgraph_filter($text) {
@@ -99,10 +103,12 @@ function jsxgraph_filter($text) {
       }
       // construction by $input
       else {
-        for($j=1; $j<=sizeof($input); $j++)
+        for($j=1; $j<=sizeof($input); $j++) {
           ($j == 1 || $j == sizeof($input)) ? $output .= $input[$j] : $output .= ">". $input[$j];
+		  }
       }
       $output .= "</script>";
+      $output = preg_replace("/&#038;/", "&", $output);
 
       $text = substr_replace($text, $output, $start, $end-$start);
     }

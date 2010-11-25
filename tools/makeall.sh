@@ -12,10 +12,11 @@ sh makedoc.sh
 cd ..
 # Distribute the new version to the
 # moodle plugin and the wordpress plugin
-cp distrib/jsxgraphcore.js distrib/jsxgraph.css plugins/jsxgraphmoodle
-cp distrib/jsxgraphcore.js distrib/jsxgraph.css plugins/wordpress/jsxgraph
+cp distrib/jsxgraphcore.js distrib/jsxgraph.css distrib/*Reader.js plugins/jsxgraphmoodle
+cp distrib/jsxgraphcore.js distrib/jsxgraph.css distrib/*Reader.js  plugins/wordpress/jsxgraph
 #########################################
 cd plugins
+rm -R *.*~
 # Update the moodle plugin
 zip jsxgraphmoodle.zip jsxgraphmoodle/*
 # Update the wordpress plugin
