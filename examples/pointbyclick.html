@@ -159,17 +159,18 @@
             */
             
             getMouseCoords = function(e) {
-                var em = document.createEvent('MouseEvents'), i = 0;
+                if (!document.all) { // not IE
+                    var em = document.createEvent('MouseEvents'), i = 0;
 
-                if(e.targetTouches) {  // always false
-                    em.initMouseEvent('mousedown', true, false, this.containerObj, 0,
-                        e.targetTouches[i].screenX, e.targetTouches[i].screenY,
-                        e.targetTouches[i].clientX, e.targetTouches[i].clientY,
-                        false, false, false, false, 0, null);
-                    
-                    e = em;
+                    if(e.targetTouches) {  // always false
+                        em.initMouseEvent('mousedown', true, false, this.containerObj, 0,
+                            e.targetTouches[i].screenX, e.targetTouches[i].screenY,
+                            e.targetTouches[i].clientX, e.targetTouches[i].clientY,
+                            false, false, false, false, 0, null);
+                        
+                        e = em;
+                    }
                 }
-
                 var cPos = board.getRelativeMouseCoordinates(e),
                     absPos = JXG.getPosition(e),
                     dx = absPos[0]-cPos[0],
