@@ -7,6 +7,7 @@
 
     <!-- JSXGraph -->
     <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <link rel="stylesheet" type="text/css" href="css/jsxexamples.css" />
     <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
 
     <!-- jQuery -->
@@ -17,117 +18,6 @@
     <link rel="stylesheet" type="text/css" href="css/shThemeDefault.css" />
     <script type="text/javascript" src="js/shCore.js"></script>
     <script type="text/javascript" src="js/shBrushJScript.js"></script>
-
-    <!-- Temporary CSS declarations - going to be moved to external file -->
-    <style type="text/css">
-        /* Tags */
-        body {
-            text-align: left;
-            background-color: #eee;
-            font-family: sans-serif;
-            font-size: 8pt;
-        }
-
-        h1 {
-            font-family: serif;
-            width: 630px;
-            background-color: #555;
-            /*color: #a2d9f7;*/
-            color: #ddd;
-            margin-left: -20px;
-            padding-left: 10px;
-        }
-
-        h2 a:hover {
-            background-color: #ccc;
-        }
-
-        h2 a {
-            color: #7690c9;
-            text-decoration: none;
-            font-family: sans-serif;
-            background-color: #eee;
-            margin-left: -20px;
-            padding-left: 20px;
-            padding-right: 40px;
-
-            -moz-border-radius-topright: 20px;
-            -moz-border-radius-bottomright: 20px;
-            -webkit-border-top-right-radius: 20px;
-            -webkit-border-bottom-right-radius: 20px;
-            border-top-right-radius: 20px;
-            border-bottom-right-radius: 20px;
-        }
-
-        a img {
-            border: 0;
-        }
-
-        /* Classes */
-
-        /* -- none -- */
-
-        /* Elements */
-        #container {
-            width: 600px;
-            text-align: left;
-            background-color: #ddd;
-            padding: 20px;
-            font-size: 10pt;
-            -moz-border-radius-topleft: 20px;
-            -moz-border-radius-bottomright: 20px;
-            -webkit-border-top-left-radius: 20px;
-            -webkit-border-bottom-right-radius: 20px;
-            border-top-left-radius: 20px;
-            border-bottom-right-radius: 20px
-        }
-
-        #jsxgraph-head {
-            float: right;
-            margin-top: -5px;
-            color: white;
-        }
-
-        #jxgbox {
-            width: 600px;
-            height: 600px;
-            background: none;
-            border-color: #777;
-        }
-
-        #explanation {
-            text-align: left;
-            width: 600px;
-        }
-
-        #source {
-            text-align: left;
-            width: 600px;
-        }
-
-        #jxgsource {
-            background-color: #eee;
-        }
-
-        #footer {
-            background-color: #555;
-            color: #ddd;
-            text-align: right;
-            width: 620px;
-            margin-left: -20px;
-            margin-bottom: -20px;
-            padding: 5px;
-            padding-right: 15px;
-            -moz-border-radius-bottomright: 20px;
-            -webkit-border-bottom-right-radius: 20px;
-            border-bottom-right-radius: 20px
-        }
-
-        #footer a {
-            color: #7690c9;
-            text-decoration: none;
-        }
-    </style>
 </head>
 <body>
 
@@ -180,7 +70,7 @@
 
 <div id="footer">
     <span style="float: left"><img src="img/jsxgraph_logo_20.png" alt="JSXGraph logo" /></span>
-    JSXGraph is licensed <a href="http://www.gnu.org/licenses/lgpl.txt">LGPL</a>; &copy; 2008-2010 <a href="http://jsxgraph.uni-bayreuth.de/wp/documentation/the-team/">JSXGraph Team</a>
+    JSXGraph is licensed under the <a href="http://www.gnu.org/licenses/lgpl.txt">LGPL</a>; &copy; 2008-2010 <a href="http://jsxgraph.uni-bayreuth.de/wp/documentation/the-team/">JSXGraph Team</a>
 </div>
 
 </div> <!-- #container -->
@@ -206,11 +96,6 @@
             $('#head-'+part).click(function(_part) {
                 return function() {
                     $('#'+_part).slideToggle(500);
-//                    if($('#'+_part).is(':visible')) {
-//                        $('#'+_part).hide(500);
-//                    } else {
-//                        $('#'+_part).show(500);
-//                    }
                 }
             }(part));
         }

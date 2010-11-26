@@ -671,7 +671,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
         opacity,
         pair;
 
-   for (i=0; i<arguments.length; i++) {
+    for (i=0; i<arguments.length; i++) {
         pairRaw = arguments[i];
         if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
             pair = pairRaw.split(':');
@@ -693,7 +693,7 @@ JXG.GeometryElement.prototype.setProperty = function () {
             pair = pairRaw;
         }
         if (pair[1]==null) continue;
-        switch(pair[0].replace(/\s+/g).toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
+        switch(pair[0].replace(/\s+/g, '').toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
             case 'needsregularupdate':
                 this.needsRegularUpdate = !(pair[1] == 'false' || pair[1] == false);
 
