@@ -13,27 +13,86 @@
     <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
 
     <!-- Syntax Highlighting -->
-    <link rel="stylesheet" type="text/css" href="syntax/shCore.css" />
-    <link rel="stylesheet" type="text/css" href="syntax/shThemeDefault.css" />
-    <script type="text/javascript" src="syntax/shCore.js"></script>
-    <script type="text/javascript" src="syntax/shBrushJScript.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/shCore.css" />
+    <link rel="stylesheet" type="text/css" href="css/shThemeDefault.css" />
+    <script type="text/javascript" src="js/shCore.js"></script>
+    <script type="text/javascript" src="js/shBrushJScript.js"></script>
 
     <!-- Temporary CSS declarations - going to be moved to external file -->
     <style type="text/css">
+        /* Tags */
         body {
             text-align: left;
+            background-color: #eee;
+            font-family: sans-serif;
+            font-size: 8pt;
         }
 
+        h1 {
+            font-family: serif;
+            width: 630px;
+            background-color: #555;
+            /*color: #a2d9f7;*/
+            color: #ddd;
+            margin-left: -20px;
+            padding-left: 10px;
+        }
+
+        h2 a:hover {
+            background-color: #ccc;
+        }
+
+        h2 a {
+            color: #7690c9;
+            text-decoration: none;
+            font-family: sans-serif;
+            background-color: #eee;
+            margin-left: -20px;
+            padding-left: 20px;
+            padding-right: 40px;
+
+            -moz-border-radius-topright: 20px;
+            -moz-border-radius-bottomright: 20px;
+            -webkit-border-top-right-radius: 20px;
+            -webkit-border-bottom-right-radius: 20px;
+            border-top-right-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        a img {
+            border: 0;
+        }
+
+        /* Classes */
+
+        /* -- none -- */
+
+        /* Elements */
         #container {
-            width: 620px;
+            width: 600px;
             text-align: left;
-        	/*margin-left: auto;
-	        margin-right: auto;*/
+            background-color: #ddd;
+            padding: 20px;
+            font-size: 10pt;
+            -moz-border-radius-topleft: 20px;
+            -moz-border-radius-bottomright: 20px;
+            -webkit-border-top-left-radius: 20px;
+            -webkit-border-bottom-right-radius: 20px;
+            border-top-left-radius: 20px;
+            border-bottom-right-radius: 20px
+        }
+
+        #jsxgraph-head {
+            float: right;
+            margin-top: -5px;
+            color: white;
         }
 
         #jxgbox {
             width: 600px;
             height: 600px;
+            background: none;
+            border-color: #777;
         }
 
         #explanation {
@@ -45,13 +104,40 @@
             text-align: left;
             width: 600px;
         }
+
+        #jxgsource {
+            background-color: #eee;
+        }
+
+        #footer {
+            background-color: #555;
+            color: #ddd;
+            text-align: right;
+            width: 620px;
+            margin-left: -20px;
+            margin-bottom: -20px;
+            padding: 5px;
+            padding-right: 15px;
+            -moz-border-radius-bottomright: 20px;
+            -webkit-border-bottom-right-radius: 20px;
+            border-bottom-right-radius: 20px
+        }
+
+        #footer a {
+            color: #7690c9;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
 
+<!-- powered by <a href="http://jsxgraph.org/">JSXGraph</a>.-->
+
 <div id="container">
-    
-<h1>Enter title here.</h1>
+
+<span id="jsxgraph-head">powered by <a href="http://jsxgraph.org/"><img src="img/jsxgraph_badge_39.png" alt="JSXGraph" /></a></span>
+
+<h1>Enter title here</h1>
 
 
 <a name="construction"></a>
@@ -92,7 +178,12 @@
     <script id="jxgsource" type="syntaxhighlighter" class="brush: js"></script>
 </div>
 
+<div id="footer">
+    <span style="float: left"><img src="img/jsxgraph_logo_20.png" alt="JSXGraph logo" /></span>
+    JSXGraph is licensed <a href="http://www.gnu.org/licenses/lgpl.txt">LGPL</a>; &copy; 2008-2010 <a href="http://jsxgraph.uni-bayreuth.de/wp/documentation/the-team/">JSXGraph Team</a>
 </div>
+
+</div> <!-- #container -->
 
 
 <script type="text/javascript">
