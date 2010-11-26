@@ -293,7 +293,7 @@ JXG.SVGRenderer.prototype.transformImage = function(el,t) {
     var node = el.rendNode,
         str = node.getAttributeNS(null, 'transform'),
         b = el.board;
-        
+
     str += ' ' + this.joinTransforms(el,t);
 //    str += ' matrix(' + b.stretchX + ',' + 0.0 + ',' + 0.0 + ',' + (-b.stretchY) + ',' + b.origin.scrCoords[1] + ',' + b.origin.scrCoords[2] +')';
     node.setAttributeNS(null, 'transform', str);
@@ -302,11 +302,23 @@ JXG.SVGRenderer.prototype.transformImage = function(el,t) {
 JXG.SVGRenderer.prototype.joinTransforms = function(el,t) {
     var str = '', i, s,
         len = t.length;
-        
+/*        
+    if (len>0) {
+        s = (1/el.board.stretchX)+','+ 0.0 +','+ 0.0 +','+ (-1/el.board.stretchY) +','+(-el.board.origin.scrCoords[1]/el.board.stretchX)+','+(el.board.origin.scrCoords[2]/el.board.stretchY);
+        str += 'matrix('+s+') ';
+    
+    }
+*/    
     for (i=0;i<len;i++) {
         s = t[i].matrix[1][1]+','+t[i].matrix[2][1]+','+t[i].matrix[1][2]+','+t[i].matrix[2][2]+','+t[i].matrix[1][0]+','+t[i].matrix[2][0];
         str += 'matrix('+s+') ';
     }
+/*    
+    if (len>0) {
+        s = (el.board.stretchX)+','+ 0.0 +','+ 0.0 +','+ (-el.board.stretchY) +','+(el.board.origin.scrCoords[1])+','+(el.board.origin.scrCoords[2]);
+        str += 'matrix('+s+') ';
+    }
+*/    
     return str;
 };
   
