@@ -24,7 +24,7 @@
         b1axisx = board.create('axis', [[0,0], [0,1]], {});
         b1axisy = board.create('axis', [[0,0], [1,0]], {});
 
-        var im = board.create('image',[picStr, [0,0], [2/*2',*2.6714*/,2]]); // {'imageString':picStr}
+        var im = board.create('image',[picStr, [0,0], [2/*2',*2.6714*/,2]], {id:'garfield', name:'GARFIELD'}); // {'imageString':picStr}
         var p0 = board.create('point', [0,Math.PI/4], {style:5, name:'rot',strokecolor:'blue', fillcolor:'red'}); 
         var p1 = board.create('point', [0,0], {style:5, name:'off',strokecolor:'blue', fillcolor:'red'}); 
         var p2 = board.create('point', [1,1], {style:5, name:'scale',strokecolor:'blue', fillcolor:'red'}); 
