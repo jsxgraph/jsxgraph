@@ -1548,19 +1548,19 @@ JXG.Board.prototype.prepareUpdate = function() {
  * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.updateElements = function(drag) {
-    var el, pEl,
-        isBeforeDrag = true; // If possible, we start the update at the dragged object.
+    var el, pEl;
+        // isBeforeDrag: see updateRenderer
+        //isBeforeDrag = true; // If possible, we start the update at the dragged object.
+        
     drag = JXG.getRef(this, drag);
-    if (drag==null) {
-        isBeforeDrag = false;
-    }
+    // if (drag==null) { isBeforeDrag = false; }
 
     for(el in this.objects) {
         pEl = this.objects[el];
-        if (isBeforeDrag && drag!=null && pEl.id == drag.id) {
-            isBeforeDrag = false;
-        }
-        if (!this.needsFullUpdate && (isBeforeDrag || !pEl.needsRegularUpdate)) { continue; }
+        //if (isBeforeDrag && drag!=null && pEl.id == drag.id) {
+        //    isBeforeDrag = false;
+        //}
+        if (!this.needsFullUpdate && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate)) { continue; }
 
         // For updates of an element we distinguish if the dragged element is updated or
         // other elements are updated.
@@ -1580,20 +1580,21 @@ JXG.Board.prototype.updateElements = function(drag) {
  * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.updateRenderer = function(drag) {
-    var el, pEl,
-        isBeforeDrag = true; // If possible, we start the update at the dragged object.
+    var el, pEl;
+        // isBeforDrag does not work because transformations may depend 
+        // on a dragged element and can be bound to elements before the 
+        // dragged element.
+        //isBeforeDrag = true; // If possible, we start the update at the dragged object.
 
     drag = JXG.getReference(this, drag);
-    if (drag==null) {
-        isBeforeDrag = false;
-    }
+    //if (drag==null) { isBeforeDrag = false; }
+
     for(el in this.objects) {
         pEl = this.objects[el];
-        if (isBeforeDrag && drag!=null && pEl.id == drag.id) {
-            isBeforeDrag = false;
-        }
+        // if (isBeforeDrag && drag!=null && pEl.id == drag.id) { isBeforeDrag = false; }
+
         if (!this.needsFullUpdate
-            && (isBeforeDrag || !pEl.needsRegularUpdate)
+            && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate)
             && this.options.renderer!='canvas' /* for canvas renderer */
            ) { continue; }
         pEl.updateRenderer();
