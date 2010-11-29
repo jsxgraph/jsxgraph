@@ -6,18 +6,18 @@
     <!-- Adjust the paths -->
 
     <!-- JSXGraph -->
-    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-    <link rel="stylesheet" type="text/css" href="templates/css/jsxexamples.css" />
-    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <link rel="stylesheet" type="text/css" href="../templates/css/jsxexamples.css" />
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
 
     <!-- jQuery -->
-    <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+    <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
 
     <!-- Syntax Highlighting -->
-    <link rel="stylesheet" type="text/css" href="templates/css/shCore.css" />
-    <link rel="stylesheet" type="text/css" href="templates/css/shThemeDefault.css" />
-    <script type="text/javascript" src="templates/js/shCore.js"></script>
-    <script type="text/javascript" src="templates/js/shBrushJScript.js"></script>
+    <link rel="stylesheet" type="text/css" href="../templates/css/shCore.css" />
+    <link rel="stylesheet" type="text/css" href="../templates/css/shThemeDefault.css" />
+    <script type="text/javascript" src="../templates/js/shCore.js"></script>
+    <script type="text/javascript" src="../templates/js/shBrushJScript.js"></script>
 </head>
 <body>
 
@@ -25,13 +25,13 @@
 
 <div id="container">
 
-<span id="jsxgraph-head">powered by <a href="http://jsxgraph.org/"><img src="templates/img/jsxgraph_badge_39.png" alt="JSXGraph" /></a></span>
+<span id="jsxgraph-head">powered by <a href="http://jsxgraph.org/"><img src="../templates/img/jsxgraph_badge_39.png" alt="JSXGraph" /></a></span>
 
 <h1>Kaleidoscope</h1>
 
 
 <a name="construction"></a>
-<h2><a href="#construction" id="head-construction">Construction</a></h2>
+<h2><a href="kaleidoscope.html#construction" id="head-construction">Construction</a></h2>
 
 <div id="construction">
     <div id="jxgbox" class="jxgbox" style="width: 600px; height: 600px;"></div>
@@ -41,15 +41,16 @@
     (function() {
 
         // Configure board
+        JXG.Options.showCopyright = false;
         JXG.Options.grid.snapToGrid = true;
-        JXG.Options.polygon.fillOpacity = 0.1;
+        JXG.Options.polygon.fillOpacity = 0.2;
         JXG.Options.polygon.fillColor = '#7690c9';
         JXG.Options.line.strokeColor = '#008dd2';
 
         var board = JXG.JSXGraph.initBoard('jxgbox', {
-                boundingbox: [-5, 5, 5, -5],
+                boundingbox: [-10, 12, 10, -8],
                 keepaspectreatio: true,
-                axis:true,
+                axis:false,
                 grid: false
             }),
 
@@ -58,7 +59,6 @@
             var vertices,
                 new_vertices,
                 new_polygons = [],
-                //done = {},
                 i, j, k;
 
             for(k = 0; k < axes.length; k++) {
@@ -69,7 +69,7 @@
                     new_vertices = [];
                     
                     for(j = 0; j < vertices.length-1; j++) {
-                        // todo: this gets very quickly very slow
+                        // todo: this gets very soon really slow
                         // one point can be used multiple times across
                         // different polygons or even in the same
                         // polyon. but optimizing this also means that
@@ -89,6 +89,7 @@
                         //    done[vertices[j]] = true;
                         //}
                     }
+
                     new_polygons.push(board.create('polygon', new_vertices));
                 }
             }
@@ -107,26 +108,12 @@
         },
 
         //data
-        points = [[-1, 0.75], [0, 1.5], [1, 0.75], [0, 0.25]],
-        dummy = board.setBoundingBox([-8, 8, 8, -8], true),
-        // square
-        //points = [[-0.5, 1], [0, 1.5], [0.5, 1], [0, 0.5]],
-        // form 1
-        //points = [[-0.5, 1], [0, 1.5], [0.5, 1], [0, 0.25]],
-        // kaleidoscope
+        points = [[1, 0.25], [2.75, 0.25]],
         axes = [
-            [[-2, 0], [0, 2]],
-            [[-2, 0], [4, 6]],
-            [[0, 2], [2, 0]]
+            [[0, -3], [0, 6]]
         ],
 
-        // rotation
-        //axes = [
-        //    [[-1, -1], [0, 1]],
-        //    [[-1, -1], [1, 0]]
-        //],
-
-        levels = 5,
+        levels = 3,
 
         // variables
         polygon,
@@ -134,28 +121,23 @@
 
         // main program
         points = coordinates_to_points(points, {size: 3, withLabel: false});
-        polygon = [board.create('polygon', points)];
+        polygon = [board.create('regularpolygon', points.concat([5]))];
 
         for(i = 0; i < axes.length; i++) {
             axes[i] = board.create('segment', coordinates_to_points(axes[i], {size: 3, withLabel: false}));
         }
-
 
         board.suspendUpdate();
         for(l = 0; l < levels; l++) {
             polygon = mirror_polygon(polygon, axes);
         }
         board.unsuspendUpdate();
-
-        $('#jxgbox').click(function() {
-            axes[1].point2.moveTo([2, 0], 4000);
-        });
     })();
 </script>
 
 
 <a name="explanation"></a>
-<h2><a href="#explanation" id="head-explanation">Explanation</a></h2>
+<h2><a href="kaleidoscope.html#explanation" id="head-explanation">Explanation</a></h2>
 
 <div id="explanation">
     Explanation goes here.
@@ -163,14 +145,14 @@
 
 
 <a name="source"></a>
-<h2><a href="#source" id="head-source">Source code</a></h2>
+<h2><a href="kaleidoscope.html#source" id="head-source">Source code</a></h2>
 
 <div id="source">
     <script id="jxgsource" type="syntaxhighlighter" class="brush: js"></script>
 </div>
 
 <div id="footer">
-    <span style="float: left"><img src="templates/img/jsxgraph_logo_20.png" alt="JSXGraph logo" /></span>
+    <span style="float: left"><img src="../templates/img/jsxgraph_logo_20.png" alt="JSXGraph logo" /></span>
     JSXGraph is licensed under the <a href="http://www.gnu.org/licenses/lgpl.txt">LGPL</a>; &copy; 2008-2010 <a href="http://jsxgraph.uni-bayreuth.de/wp/documentation/the-team/">JSXGraph Team</a>
 </div>
 
