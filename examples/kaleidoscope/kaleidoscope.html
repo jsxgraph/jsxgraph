@@ -42,10 +42,11 @@
 
         // Configure board
         JXG.Options.showCopyright = false;
-        JXG.Options.grid.snapToGrid = true;
+        JXG.Options.grid.snapToGrid = false;
         JXG.Options.polygon.fillOpacity = 0.2;
         JXG.Options.polygon.fillColor = '#7690c9';
         JXG.Options.line.strokeColor = '#008dd2';
+        JXG.Options.text.fontSize = 9;
 
         var board = JXG.JSXGraph.initBoard('jxgbox', {
                 boundingbox: [-10, 12, 10, -8],
@@ -83,7 +84,7 @@
                                 function(_j, _k) {
                                     return [vertices[_j], axes[_k]];
                                 }(j, k),
-                                {size: 1, strokeColor: 'none', withLabel: false}
+                                {size: 1, strokeColor: 'none', withLabel: false, visible: false}
                             )
                         );
                         //    done[vertices[j]] = true;
@@ -146,7 +147,7 @@
         }
         board.unsuspendUpdate();
 
-        $('#jxgbox').click(function() {
+        $('#jxgbox').dblclick(function() {
             axes[1].point2.moveTo([2, 0], 4000);
         });
     })();
