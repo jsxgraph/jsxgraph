@@ -43,7 +43,7 @@
         // Configure board
         JXG.Options.showCopyright = false;
         JXG.Options.grid.snapToGrid = false;
-        JXG.Options.polygon.fillOpacity = 0.2;
+        JXG.Options.polygon.fillOpacity = 1;
         JXG.Options.polygon.fillColor = '#7690c9';
         JXG.Options.line.strokeColor = '#008dd2';
 
@@ -55,42 +55,37 @@
             }),
 
         // functions
-        mirror_polygon = function(polygons, axes) {
+        mirror_polygon = function(polygons, axes, level) {
             var vertices,
                 new_vertices,
                 new_polygons = [],
                 i, j, k;
 
+            board.options.polygon.fillOpacity = (levels-l)/levels;
+
             for(k = 0; k < axes.length; k++) {
 
                 // mirror the polygons
                 for(i = 0; i < polygons.length; i++) {
-                    vertices = polygons[i].vertices;
-                    new_vertices = [];
-                    
-                    for(j = 0; j < vertices.length-1; j++) {
-                        // todo: this gets very soon really slow
-                        // one point can be used multiple times across
-                        // different polygons or even in the same
-                        // polyon. but optimizing this also means that
-                        // we need to keep track of the mirrored points.
-                        // so this is not used for now. instead we just
-                        // hide the labels so no one will actually see,
-                        // that there are multiple mirrored points ;)
-                        //if(!done[vertices[j]]) {
-                        new_vertices.push(
-                            board.create('reflection',
-                                function(_j, _k) {
-                                    return [vertices[_j], axes[_k]];
-                                }(j, k),
-                                {size: 1, strokeColor: 'none', withLabel: false}
-                            )
-                        );
-                        //    done[vertices[j]] = true;
-                        //}
-                    }
+                    // split horizon
+                    if(polygons[i].builtaxisid !== axes[k].id) {
+                        vertices = polygons[i].vertices;
+                        new_vertices = [];
 
-                    new_polygons.push(board.create('polygon', new_vertices));
+                        for(j = 0; j < vertices.length-1; j++) {
+                            new_vertices.push(
+                                board.create('reflection',
+                                    function(_j, _k) {
+                                        return [vertices[_j], axes[_k]];
+                                    }(j, k),
+                                {size: 1, strokeColor: 'none', withLabel: false, visible: false}
+                                    )
+                                );
+                        }
+
+                        new_polygons.push(board.create('polygon', new_vertices));
+                        new_polygons[new_polygons.length-1].builtaxisid = axes[k].id
+                    }
                 }
             }
 
