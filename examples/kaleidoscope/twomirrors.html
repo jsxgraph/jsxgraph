@@ -83,7 +83,7 @@
                                 );
                         }
 
-                        new_polygons.push(board.create('polygon', new_vertices));
+                        new_polygons.push(board.create('polygon', new_vertices, {withLines: false}));
                         new_polygons[new_polygons.length-1].builtaxisid = axes[k].id
                     }
                 }
@@ -116,11 +116,11 @@
         i, l;
 
         // main program
-        points = coordinates_to_points(points, {size: 3, withLabel: false});
-        polygon = [board.create('regularpolygon', points.concat([5]))];
+        points = coordinates_to_points(points, {size: 1, withLabel: false});
+        polygon = [board.create('regularpolygon', points.concat([5]), {withLines: false})];
 
         for(i = 0; i < axes.length; i++) {
-            axes[i] = board.create('segment', coordinates_to_points(axes[i], {size: 3, withLabel: false}));
+            axes[i] = board.create('segment', coordinates_to_points(axes[i], {size: 1, withLabel: false}));
         }
 
         board.suspendUpdate();
