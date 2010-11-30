@@ -84,6 +84,7 @@
                                 );
                         }
 
+                        board.options.polygon.fillColor = polygons[i].visProp.fillColor;
                         new_polygons.push(board.create('polygon', new_vertices));
                         new_polygons[new_polygons.length-1].builtaxisid = axes[k].id
                     }
@@ -104,7 +105,13 @@
         },
 
         //data
-        points = [[-1, 0.75], [0, 2.25], [1, 0.75], [0, 0.25]],
+        points = [
+            [[-0.41, 0.5], [-1, 0.35], [0.721, 0.2], [1, 0.75]],
+            [[-1, 0.75], [0, 2.25], [0, 0.75], [-0.5, 0.25]],
+            [[1, 0.885], [0, 1.25], [-0.3, 0.5], [0.2, 0.57]],
+            [[1, 1], [0, 1.25], [-0.3, 2.5]]
+        ],
+        colors = ['#afdcf0', '#7690c9', '#507da0', 'white'],
         // square
         //points = [[-0.5, 1], [0, 1.5], [0.5, 1], [0, 0.5]],
         // form 1
@@ -122,15 +129,18 @@
         //    [[-1, -1], [1, 0]]
         //],
 
-        levels = 5,
+        levels = 4,
 
         // variables
-        polygon,
+        polygon = [],
         i, l;
 
         // main program
-        points = coordinates_to_points(points, {size: 3, withLabel: false});
-        polygon = [board.create('polygon', points)];
+        for(i = 0; i < points.length; i++) {
+            points[i] = coordinates_to_points(function(_i) { return points[_i] }(i), {size: 2, withLabel: false});
+            board.options.polygon.fillColor = colors[i];
+            polygon.push(board.create('polygon', function(_i) { return points[_i] }(i)));
+        }
 
         for(i = 0; i < axes.length; i++) {
             axes[i] = board.create('segment', coordinates_to_points(axes[i], {size: 3, withLabel: false}));
