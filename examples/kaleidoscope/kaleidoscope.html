@@ -63,7 +63,7 @@
                 i, j, k;
 
             board.options.polygon.fillOpacity = (levels-level)/levels;
-
+            board.suspendUpdate();
             for(k = 0; k < axes.length; k++) {
 
                 // mirror the polygons
@@ -96,6 +96,7 @@
                     }
                 }
             }
+            board.unsuspendUpdate();
 
             return new_polygons;
         },
