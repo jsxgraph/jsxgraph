@@ -543,7 +543,7 @@ return {
 
         // Radius umrechnen:
         var radius = el.Radius();
-        if (radius > 0.0 && !isNaN(el.midpoint.coords.scrCoords[1] + el.midpoint.coords.scrCoords[2])) {
+        if (radius > 0.0 && !isNaN(radius + el.midpoint.coords.scrCoords[1] + el.midpoint.coords.scrCoords[2]) && radius*el.board.stretchX<20000) {
             this.updateEllipsePrim(el.rendNode, el.midpoint.coords.scrCoords[1], el.midpoint.coords.scrCoords[2],
                     (radius * el.board.stretchX), (radius * el.board.stretchY));
         }
