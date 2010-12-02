@@ -8,9 +8,8 @@ body {
 
 h1 {
     font-family: serif;
-    width: 630px;
+    width: 830px;
     background-color: #555;
-/*color: #a2d9f7;*/
     color: #ddd;
     margin-left: -20px;
     padding-left: 10px;
@@ -47,7 +46,7 @@ a img {
 
 /* Elements */
 #container {
-    width: 600px;
+    width: 800px;
     text-align: left;
     background-color: #ddd;
     padding: 20px;
@@ -67,20 +66,20 @@ a img {
 }
 
 #jxgbox {
-    width: 600px;
-    height: 600px;
+    width: 700px;
+    height: 700px;
     background: none;
     border-color: #777;
 }
 
 #explanation {
     text-align: left;
-    width: 600px;
+    width: 800px;
 }
 
 #source {
     text-align: left;
-    width: 600px;
+    width: 800px;
 }
 
 #jxgsource {
@@ -91,7 +90,7 @@ a img {
     background-color: #555;
     color: #ddd;
     text-align: right;
-    width: 620px;
+    width: 820px;
     margin-left: -20px;
     margin-bottom: -20px;
     padding: 5px;

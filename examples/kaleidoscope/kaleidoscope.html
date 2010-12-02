@@ -78,14 +78,20 @@
                                 board.create('reflection',
                                     function(_j, _k) {
                                         return [vertices[_j], axes[_k]];
-                                    }(j, k),
-                                {size: 1, strokeColor: 'none', withLabel: false, visible: false}
-                                    )
-                                );
+                                    }(j, k), {
+                                        size: 1,
+                                        strokeColor: 'none',
+                                        withLabel: false,
+                                        visible: false
+                                    }
+                                )
+                            );
                         }
 
                         board.options.polygon.fillColor = polygons[i].visProp.fillColor;
-                        new_polygons.push(board.create('polygon', new_vertices, {withLines: false}));
+                        new_polygons.push(board.create('polygon', new_vertices, {
+                            withLines: false
+                        }));
                         new_polygons[new_polygons.length-1].builtaxisid = axes[k].id
                     }
                 }
@@ -123,52 +129,39 @@
             [[-2, 0], [2, 0]],
             [[0, 2*Math.sqrt(3)], [2, 0]]
         ],
-
-        // rotation
-        //axes = [
-        //    [[-1, -1], [0, 1]],
-        //    [[-1, -1], [1, 0]]
-        //],
-
         levels = 6,
 
         // variables
         polygon = [],
-        i, l;
+        i, l = 0;
 
         // main program
         for(i = 0; i < points.length; i++) {
-            points[i] = coordinates_to_points(function(_i) { return points[_i] }(i), {size: 1, withLabel: false});
+            points[i] = coordinates_to_points(function(_i) { return points[_i] }(i), {
+                size: 1,
+                withLabel: false
+            });
             board.options.polygon.fillColor = colors[i];
-            polygon.push(board.create('polygon', function(_i) { return points[_i] }(i), {withLines: false}));
+            polygon.push(board.create('polygon', function(_i) { return points[_i] }(i), {
+                withLines: false
+            }));
         }
 
         for(i = 0; i < axes.length; i++) {
-            axes[i] = board.create('segment', coordinates_to_points(axes[i], {size: 1, withLabel: false}));
+            axes[i] = board.create('segment', coordinates_to_points(axes[i], {
+                size: 1,
+                withLabel: false
+            }));
         }
 
 
         board.create('text', [7, 10, '<a id="levelchange" href="javascript:">Next level</a>']);
-        l = 0;
         $('#levelchange').click(function(e) {
             board.suspendUpdate();
-            //for(l = 0; l < levels; l++) {
-                polygon = mirror_polygon(polygon, axes, l);
-                l++;
-            //}
+            polygon = mirror_polygon(polygon, axes, l);
+            l++;
             board.unsuspendUpdate();
         });
-
-        /*
-        board.create('text', [7, 10, '<form>Levels: <input id="levelchange" size="1" value="' + levels + '" /></form>']);
-        $('#levelchange').keypress(function(e) {
-            if (e.keyCode == '13') {
-                e = window.document.location.href.split('?')[0] + '?' + $('#levelchange').val();
-                alert(e);
-                window.document.location.href = e;
-            }
-        });
-        */
 
         $('#jxgbox').dblclick(function() {
             axes[1].point2.moveTo([2, 0], 4000);
