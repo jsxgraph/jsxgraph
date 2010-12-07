@@ -867,10 +867,11 @@ return {
      * @see #drawGrid
      */
     removeGrid: function(board) {
-        var getElementById = this.getElementById;
+        // var getElementById = this.getElementById; // Does not work, because 
+                                                     // this in getElementById would point to "window"
 
-        this.remove(getElementById('gridx'));
-        this.remove(getElementById('gridy'));
+        this.remove(this.getElementById('gridx'));
+        this.remove(this.getElementById('gridy'));
 
         board.options.grid.hasGrid = false;
     },
