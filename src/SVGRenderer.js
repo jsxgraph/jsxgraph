@@ -302,23 +302,38 @@ JXG.SVGRenderer.prototype.transformImage = function(el,t) {
 JXG.SVGRenderer.prototype.joinTransforms = function(el,t) {
     var str = '', i, s,
         len = t.length;
-/*        
+        
     if (len>0) {
-        s = (1/el.board.stretchX)+','+ 0.0 +','+ 0.0 +','+ (-1/el.board.stretchY) +','+(-el.board.origin.scrCoords[1]/el.board.stretchX)+','+(el.board.origin.scrCoords[2]/el.board.stretchY);
+        // Translate the origin of the screen to the origin in user coords.
+        s = (1)+','+ 0.0 +','
+             + 0.0 +','+ (1) +','
+             +(el.board.origin.scrCoords[1])+','+(el.board.origin.scrCoords[2]);
         str += 'matrix('+s+') ';
-    
+        // Apply the stretching
+        s = (el.board.stretchX)+','+ 0.0 +','
+             + 0.0 +','+ (-el.board.stretchY) +','
+             +(0.0)+','+(0.0);
+        str += 'matrix('+s+') ';
     }
-*/    
+    
     for (i=0;i<len;i++) {
         s = t[i].matrix[1][1]+','+t[i].matrix[2][1]+','+t[i].matrix[1][2]+','+t[i].matrix[2][2]+','+t[i].matrix[1][0]+','+t[i].matrix[2][0];
         str += 'matrix('+s+') ';
     }
-/*    
+    
     if (len>0) {
-        s = (el.board.stretchX)+','+ 0.0 +','+ 0.0 +','+ (-el.board.stretchY) +','+(el.board.origin.scrCoords[1])+','+(el.board.origin.scrCoords[2]);
+        // Undo the stretching
+        s = (1/el.board.stretchX)+','+ 0.0 +','
+             + 0.0 +','+ (-1/el.board.stretchY) +','
+             +(0.0)+','+(0.0);
+        str += 'matrix('+s+') ';
+        // Translate the origin of the screen back
+        s = (1)+','+ 0.0 +','
+             + 0.0 +','+ (1) +','
+             +(-el.board.origin.scrCoords[1])+','+(-el.board.origin.scrCoords[2]);
         str += 'matrix('+s+') ';
     }
-*/    
+    
     return str;
 };
   

@@ -259,10 +259,31 @@ JXG.VMLRenderer.prototype.updateImageURL = function(el) {
 
 JXG.VMLRenderer.prototype.transformImage = function(el,t) {
     var node = el.rendNode, 
-        m;
+        m,
+        //mpre1 =  [[1, 0, 0], [el.size[0]*0.5, 1, 0], [-el.size[1]*1, 0, 1]], 
+        mpre1 =  [[1, 0, 0], [-el.board.origin.scrCoords[1]+el.size[0]*0.5, 1, 0], [-el.board.origin.scrCoords[2]-el.size[1]*0.5, 0, 1]], 
+        //mpre1 =  [[1, 0, 0], [-el.board.origin.scrCoords[1], 1, 0], [-el.board.origin.scrCoords[2], 0, 1]], 
+        mpre2 =  [[1, 0, 0], [0, 1/el.board.stretchX, 0], [0, 0, -1/el.board.stretchY]],
+        mpost2 = [[1, 0, 0], [0, el.board.stretchX, 0], [0, 0, -el.board.stretchY]],
+        //mpost1 = [[1, 0, 0], [-el.size[0]*0.5, 1, 0], [el.size[1]*1, 0, 1]],
+        mpost1 = [[1, 0, 0], [el.board.origin.scrCoords[1]-el.size[0]*0.5, 1, 0], [el.board.origin.scrCoords[2]+el.size[1]*0.5, 0, 1]],
+        //mpost1 = [[1, 0, 0], [el.board.origin.scrCoords[1], 1, 0], [el.board.origin.scrCoords[2], 0, 1]],
+        v;
     m = this.joinTransforms(el,t);
-    node.style.left = (el.coords.scrCoords[1] + m[1][0]) + 'px'; 
-    node.style.top = (el.coords.scrCoords[2]-el.size[1] + m[2][0]) + 'px';    
+    m = JXG.Math.matMatMult(m,mpre2);
+    m = JXG.Math.matMatMult(m,mpre1);
+    m = JXG.Math.matMatMult(mpost2,m);
+    m = JXG.Math.matMatMult(mpost1,m);
+    v = JXG.Math.matVecMult(m, el.coords.scrCoords);
+    v[1] /= v[0];
+    v[2] /= v[0];
+    
+    //document.getElementById('debug').innerHTML += m.toString()+'<br>';
+    //node.style.left = (el.coords.scrCoords[1] + m[1][0]) + 'px'; 
+    //node.style.top = (el.coords.scrCoords[2]-el.size[1] + m[2][0]) + 'px';    
+    node.style.left = (v[1]) + 'px'; 
+    node.style.top = (v[2]-el.size[1]) + 'px';    
+    
     node.filters.item(0).M11 = m[1][1];
     node.filters.item(0).M12 = m[1][2];
     node.filters.item(0).M21 = m[2][1];

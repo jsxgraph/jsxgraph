@@ -46,8 +46,8 @@ JXG.Image = function (board, url, coordinates, size, layer, id, name, el) {
     this.init(board, id, name);
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
     this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
-    this.size = [size[0]*board.stretchX,size[1]*board.stretchY];
-    //this.imageBase64String = url; //imageBase64String;
+    this.usrSize = size;
+    this.size = [this.usrSize[0]*board.stretchX,this.usrSize[1]*board.stretchY];
     this.url = url;
     /**
      * Set the display layer.
@@ -82,6 +82,7 @@ JXG.Image.prototype.hasPoint = function (x,y) {
  * @private
  */
 JXG.Image.prototype.update = function () {
+    this.size = [this.usrSize[0]*board.stretchX,this.usrSize[1]*board.stretchY];
 };
 
 /**
