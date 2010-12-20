@@ -743,6 +743,22 @@ return {
         }
         this.transformImage(el, el.transformations);
     },
+    
+    /**
+    * Multiplication of transformations without updating.
+    * That means, at that point it is expected that the matrices
+    * contain numbers only.
+    * @see #transformImage
+    */
+    joinTransforms: function(el,t) {
+        var m = [[1,0,0],[0,1,0],[0,0,1]], 
+            i, len = t.length;
+        for (i=0;i<len;i++) {
+            m = JXG.Math.matMatMult(t[i].matrix,m);
+        }
+        return m;
+    },
+    
 
     /* **************************
      *    Grid stuff

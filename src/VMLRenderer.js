@@ -260,45 +260,35 @@ JXG.VMLRenderer.prototype.updateImageURL = function(el) {
 JXG.VMLRenderer.prototype.transformImage = function(el,t) {
     var node = el.rendNode, 
         m,
-        //mpre1 =  [[1, 0, 0], [el.size[0]*0.5, 1, 0], [-el.size[1]*1, 0, 1]], 
-        mpre1 =  [[1, 0, 0], [-el.board.origin.scrCoords[1]+el.size[0]*0.5, 1, 0], [-el.board.origin.scrCoords[2]-el.size[1]*0.5, 0, 1]], 
-        //mpre1 =  [[1, 0, 0], [-el.board.origin.scrCoords[1], 1, 0], [-el.board.origin.scrCoords[2], 0, 1]], 
+        mpre1 =  [[1, 0, 0], [-el.board.origin.scrCoords[1], 1, 0], [-el.board.origin.scrCoords[2], 0, 1]], 
         mpre2 =  [[1, 0, 0], [0, 1/el.board.stretchX, 0], [0, 0, -1/el.board.stretchY]],
         mpost2 = [[1, 0, 0], [0, el.board.stretchX, 0], [0, 0, -el.board.stretchY]],
-        //mpost1 = [[1, 0, 0], [-el.size[0]*0.5, 1, 0], [el.size[1]*1, 0, 1]],
-        mpost1 = [[1, 0, 0], [el.board.origin.scrCoords[1]-el.size[0]*0.5, 1, 0], [el.board.origin.scrCoords[2]+el.size[1]*0.5, 0, 1]],
-        //mpost1 = [[1, 0, 0], [el.board.origin.scrCoords[1], 1, 0], [el.board.origin.scrCoords[2], 0, 1]],
-        v;
+        mpost1 = [[1, 0, 0], [el.board.origin.scrCoords[1], 1, 0], [el.board.origin.scrCoords[2], 0, 1]],
+        v, w;
     m = this.joinTransforms(el,t);
     m = JXG.Math.matMatMult(m,mpre2);
     m = JXG.Math.matMatMult(m,mpre1);
     m = JXG.Math.matMatMult(mpost2,m);
     m = JXG.Math.matMatMult(mpost1,m);
+    
     v = JXG.Math.matVecMult(m, el.coords.scrCoords);
     v[1] /= v[0];
     v[2] /= v[0];
+    w = JXG.Math.matVecMult(m, [1, el.coords.scrCoords[1]+el.size[0], el.coords.scrCoords[2]-el.size[1]]);
+    w[1] /= w[0];
+    w[2] /= w[0];
     
-    //document.getElementById('debug').innerHTML += m.toString()+'<br>';
+    
+    //document.getElementById('debug').innerHTML += v[2].toString()+' '+w[2].toString()+' '+(v[2]-el.size[1])+'<br>';
     //node.style.left = (el.coords.scrCoords[1] + m[1][0]) + 'px'; 
     //node.style.top = (el.coords.scrCoords[2]-el.size[1] + m[2][0]) + 'px';    
-    node.style.left = (v[1]) + 'px'; 
-    node.style.top = (v[2]-el.size[1]) + 'px';    
+    node.style.left = ((v[1]<=w[1])?v[1]:w[1]) + 'px'; 
+    node.style.top = ((v[2]<=w[2])?v[2]:w[2]) + 'px';    
     
     node.filters.item(0).M11 = m[1][1];
     node.filters.item(0).M12 = m[1][2];
     node.filters.item(0).M21 = m[2][1];
     node.filters.item(0).M22 = m[2][2];
-};
-
-JXG.VMLRenderer.prototype.joinTransforms = function(el,t) {
-    var m = [[1,0,0],[0,1,0],[0,0,1]], 
-        i,
-        len = t.length;
-        
-    for (i=0;i<len;i++) {
-        m = JXG.Math.matMatMult(t[i].matrix,m);
-    }
-    return m;
 };
 
 JXG.VMLRenderer.prototype.transformImageParent = function(el,m) {};

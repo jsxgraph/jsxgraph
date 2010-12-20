@@ -289,16 +289,17 @@ JXG.CanvasRenderer.prototype.updateImageURL = function(el) {
 
 JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) { 
     var ctx = this.context,
-        transformParent = this.transformImageParent,
-        transform = this.transformImage,
-        paintImg = function(){ 
+        // transformParent = this.transformImageParent,   // We loose context of "this" 
+        // transform = this.transformImage,  // We loose context of "this" 
+        paintImg = JXG.bind(function(){ 
             ctx.save();
             if (el.parent != null) {
-                transformParent(el,el.parent.imageTransformMatrix,ctx);
+                this.transformImageParent(el,el.parent.imageTransformMatrix,ctx);
             } else {
-                transformParent(el,null,ctx); // Transforms are cleared
+                this.transformImageParent(el,null,ctx); // Transforms are cleared
             }
-            transform(el,el.transformations,ctx);
+            // If det(el.transformations)=0, FireFox 3.6. breaks down.
+            this.transformImage(el,el.transformations,ctx); 
             ctx.drawImage(el.rendNode, 
                     el.coords.scrCoords[1],
                     el.coords.scrCoords[2]-el.size[1],
@@ -306,7 +307,7 @@ JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) {
                     el.size[1]);
             ctx.restore();
             el.imgIsLoaded = true;
-        };  
+        }, this);  
     
     if (this.updateImageURL(el)) 
         el.rendNode.onload = paintImg;
@@ -317,18 +318,22 @@ JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) {
 };
 
 JXG.CanvasRenderer.prototype.transformImage = function(el,t,ctx) {
-    var tm, i,
+    var m,
+        mpre1 =  [[1, 0, 0], [-el.board.origin.scrCoords[1], 1, 0], [-el.board.origin.scrCoords[2], 0, 1]], 
+        mpre2 =  [[1, 0, 0], [0, 1/el.board.stretchX, 0], [0, 0, -1/el.board.stretchY]],
+        mpost2 = [[1, 0, 0], [0, el.board.stretchX, 0], [0, 0, -el.board.stretchY]],
+        mpost1 = [[1, 0, 0], [el.board.origin.scrCoords[1], 1, 0], [el.board.origin.scrCoords[2], 0, 1]],
         len = t.length;
-        
-    for (i=0;i<len;i++) {
-        tm = t[i].matrix;
-        ctx.transform(tm[1][1],tm[2][1],tm[1][2],tm[2][2],tm[1][0],tm[2][0]);
-    }
-};
 
-JXG.CanvasRenderer.prototype.joinTransforms = function(el,t) {
-    // not done yet
-    return '';
+    if (len>0) {
+        m = this.joinTransforms(el,t);
+        m = JXG.Math.matMatMult(m,mpre2);
+        m = JXG.Math.matMatMult(m,mpre1);
+        m = JXG.Math.matMatMult(mpost2,m);
+        m = JXG.Math.matMatMult(mpost1,m);
+    
+        ctx.transform(m[1][1],m[2][1],m[1][2],m[2][2],m[1][0],m[2][0]);
+    }
 };
 
 JXG.CanvasRenderer.prototype.transformImageParent = function(el,m,ctx) {

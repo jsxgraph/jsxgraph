@@ -290,53 +290,29 @@ JXG.SVGRenderer.prototype.updateImageURL = function(el) {
 };
 
 JXG.SVGRenderer.prototype.transformImage = function(el,t) {
-    var node = el.rendNode,
+    var node = el.rendNode, 
+        m,
+        mpre1 =  [[1, 0, 0], [-el.board.origin.scrCoords[1], 1, 0], [-el.board.origin.scrCoords[2], 0, 1]], 
+        mpre2 =  [[1, 0, 0], [0, 1/el.board.stretchX, 0], [0, 0, -1/el.board.stretchY]],
+        mpost2 = [[1, 0, 0], [0, el.board.stretchX, 0], [0, 0, -el.board.stretchY]],
+        mpost1 = [[1, 0, 0], [el.board.origin.scrCoords[1], 1, 0], [el.board.origin.scrCoords[2], 0, 1]],
+        node = el.rendNode,
         str = node.getAttributeNS(null, 'transform'),
-        b = el.board;
+        s, len = t.length;
 
-    str += ' ' + this.joinTransforms(el,t);
-//    str += ' matrix(' + b.stretchX + ',' + 0.0 + ',' + 0.0 + ',' + (-b.stretchY) + ',' + b.origin.scrCoords[1] + ',' + b.origin.scrCoords[2] +')';
-    node.setAttributeNS(null, 'transform', str);
+    if (len>0) {
+        m = this.joinTransforms(el,t);
+        m = JXG.Math.matMatMult(m,mpre2);
+        m = JXG.Math.matMatMult(m,mpre1);
+        m = JXG.Math.matMatMult(mpost2,m);
+        m = JXG.Math.matMatMult(mpost1,m);
+    
+        s = m[1][1]+','+m[2][1]+','+m[1][2]+','+m[2][2]+','+m[1][0]+','+m[2][0];
+        str += ' matrix('+s+') ';
+        node.setAttributeNS(null, 'transform', str);
+    }
 };
 
-JXG.SVGRenderer.prototype.joinTransforms = function(el,t) {
-    var str = '', i, s,
-        len = t.length;
-        
-    if (len>0) {
-        // Translate the origin of the screen to the origin in user coords.
-        s = (1)+','+ 0.0 +','
-             + 0.0 +','+ (1) +','
-             +(el.board.origin.scrCoords[1])+','+(el.board.origin.scrCoords[2]);
-        str += 'matrix('+s+') ';
-        // Apply the stretching
-        s = (el.board.stretchX)+','+ 0.0 +','
-             + 0.0 +','+ (-el.board.stretchY) +','
-             +(0.0)+','+(0.0);
-        str += 'matrix('+s+') ';
-    }
-    
-    for (i=0;i<len;i++) {
-        s = t[i].matrix[1][1]+','+t[i].matrix[2][1]+','+t[i].matrix[1][2]+','+t[i].matrix[2][2]+','+t[i].matrix[1][0]+','+t[i].matrix[2][0];
-        str += 'matrix('+s+') ';
-    }
-    
-    if (len>0) {
-        // Undo the stretching
-        s = (1/el.board.stretchX)+','+ 0.0 +','
-             + 0.0 +','+ (-1/el.board.stretchY) +','
-             +(0.0)+','+(0.0);
-        str += 'matrix('+s+') ';
-        // Translate the origin of the screen back
-        s = (1)+','+ 0.0 +','
-             + 0.0 +','+ (1) +','
-             +(-el.board.origin.scrCoords[1])+','+(-el.board.origin.scrCoords[2]);
-        str += 'matrix('+s+') ';
-    }
-    
-    return str;
-};
-  
 JXG.SVGRenderer.prototype.transformImageParent = function(el,m) {
     var s, str;
     if (m!=null) {

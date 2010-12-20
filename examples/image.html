@@ -19,27 +19,29 @@
         */
         
         picStr = "http://easyimup.de/uploads/garfield-1069_e254457.gif";
+//JXG.Options.renderer = 'canvas';
         
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40});
         b1axisx = board.create('axis', [[0,0], [0,1]], {});
         b1axisy = board.create('axis', [[0,0], [1,0]], {});
 
-        var im = board.create('image',[picStr, [-1.5,0], [3,2]], {id:'garfield', name:'GARFIELD'}); // {'imageString':picStr}
-        var p0 = board.create('point', [1,0], {style:5, name:'rot',strokecolor:'blue', fillcolor:'red'}); 
+        var im = board.create('image',[picStr, [0,0], [3,2]], {id:'garfield', name:'GARFIELD'}); // {'imageString':picStr}
         var p1 = board.create('point', [0,0], {style:5, name:'off',strokecolor:'blue', fillcolor:'red'}); 
-        var p2 = board.create('point', [1,1], {style:5, name:'scale',strokecolor:'blue', fillcolor:'red'}); 
+        var p2 = board.create('point', [3,2], {style:5, name:'scale',strokecolor:'blue', fillcolor:'red'}); 
+        var c  = board.create('circle', [p1,function(){return 3*Math.sqrt(((p2.X()-p1.X())*(p2.X()-p1.X())+(p2.Y()-p1.Y())*(p2.Y()-p1.Y()))/13);}],
+            {visible:false});
+        var p0 = board.create('glider', [3,0, c], {style:5, name:'rot',strokecolor:'blue', fillcolor:'red'}); 
         
-        //var t2 = board.create('transform', ["Y(rot)",250,250], {type:'rotate'}); t2.bindTo(im);
-        //var t3 = board.create('transform', ["X(off)","Y(off)"], {type:'translate'}); t3.bindTo(im);
-        //var t2 = board.create('transform', ["Y(rot)",0,0], {type:'rotate'}); t2.bindTo(im);
-        var t1 = board.create('transform', ["X(scale)","Y(scale)"], {type:'scale'}); t1.bindTo(im);
-        //im.size = [5*board.stretchX,5*board.stretchY];
-        /*
-        var svgt = board.create('transform', [ 1,                                             0,                                  0, 
-                                               function(){return board.origin.scrCoords[1];}, function(){return board.stretchX;}, 0,
-                                               function(){return board.origin.scrCoords[2];}, 0                                 , function(){return board.stretchY;}], 
-                                               {type:'generic'}); svgt.bindTo(im);
-        */                                               
+        var t3 = board.create('transform', [function(){return p1.X()},function(){return p1.Y()}], {type:'translate'}); 
+        t3.bindTo(im);
+        t3.bindTo(p2);
+
+        var t2 = board.create('transform', [function(){return Math.atan2(p0.Y()-p1.Y(),p0.X()-p1.X())}, p1], {type:'rotate'}); 
+        t2.bindTo(im);
+        t2.bindTo(p2);
+        
+        var t1 = board.create('transform', [function(){return Math.sqrt(((p2.X()-p1.X())*(p2.X()-p1.X())+(p2.Y()-p1.Y())*(p2.Y()-p1.Y()))/13);},
+                                            function(){return Math.sqrt(((p2.X()-p1.X())*(p2.X()-p1.X())+(p2.Y()-p1.Y())*(p2.Y()-p1.Y()))/13);}], {type:'scale'}); t1.bindTo(im);
         board.update();
   /* ]]> */
   </script>
