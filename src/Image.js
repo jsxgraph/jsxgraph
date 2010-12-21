@@ -44,8 +44,15 @@ JXG.Image = function (board, url, coordinates, size, layer, id, name, el) {
     this.transformations = [];
 
     this.init(board, id, name);
-    this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
-    this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
+    //this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
+    this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);  // Still needed?
+
+    this.X = JXG.createFunction(coordinates[0],this.board,'');
+    this.Y = JXG.createFunction(coordinates[1],this.board,'');
+    this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
+    var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.X(),this.Y()]);';
+    this.updateCoords = new Function('',fs);
+    
     this.usrSize = size;
     this.size = [this.usrSize[0]*board.stretchX,this.usrSize[1]*board.stretchY];
     this.url = url;
@@ -82,15 +89,23 @@ JXG.Image.prototype.hasPoint = function (x,y) {
  * @private
  */
 JXG.Image.prototype.update = function () {
-    this.size = [this.usrSize[0]*board.stretchX,this.usrSize[1]*board.stretchY];
+    if (this.needsUpdate) {
+        this.updateCoords();
+        this.size = [this.usrSize[0]*this.board.stretchX,this.usrSize[1]*this.board.stretchY];
+    }
+    return this;
 };
 
 /**
  * Send an update request to the renderer.
  */
 JXG.Image.prototype.updateRenderer = function () {
-    this.updateTransform();
-    this.board.renderer.updateImage(this);
+    if (this.needsUpdate) {
+        this.updateTransform();
+        this.board.renderer.updateImage(this);
+        this.needsUpdate = false;
+    }
+    return this;
 };
 
 JXG.Image.prototype.updateTransform = function () {

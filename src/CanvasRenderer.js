@@ -318,20 +318,9 @@ JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) {
 };
 
 JXG.CanvasRenderer.prototype.transformImage = function(el,t,ctx) {
-    var m,
-        mpre1 =  [[1, 0, 0], [-el.board.origin.scrCoords[1], 1, 0], [-el.board.origin.scrCoords[2], 0, 1]], 
-        mpre2 =  [[1, 0, 0], [0, 1/el.board.stretchX, 0], [0, 0, -1/el.board.stretchY]],
-        mpost2 = [[1, 0, 0], [0, el.board.stretchX, 0], [0, 0, -el.board.stretchY]],
-        mpost1 = [[1, 0, 0], [el.board.origin.scrCoords[1], 1, 0], [el.board.origin.scrCoords[2], 0, 1]],
-        len = t.length;
-
+    var m, len = t.length;
     if (len>0) {
         m = this.joinTransforms(el,t);
-        m = JXG.Math.matMatMult(m,mpre2);
-        m = JXG.Math.matMatMult(m,mpre1);
-        m = JXG.Math.matMatMult(mpost2,m);
-        m = JXG.Math.matMatMult(mpost1,m);
-    
         ctx.transform(m[1][1],m[2][1],m[1][2],m[2][2],m[1][0],m[2][0]);
     }
 };

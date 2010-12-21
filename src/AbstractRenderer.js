@@ -748,13 +748,26 @@ return {
     * Multiplication of transformations without updating.
     * That means, at that point it is expected that the matrices
     * contain numbers only.
+    * First, the origin in user coords is translated to (0,0) in screen coords.
+    * Then, the stretch factors are divided out.
+    * After the transformations in user coords, the  strech factors are multiplied in again,
+    * and the origin in user coords is translated back to its position.
     * @see #transformImage
     */
     joinTransforms: function(el,t) {
         var m = [[1,0,0],[0,1,0],[0,0,1]], 
+            mpre1 =  [[1, 0, 0], [-el.board.origin.scrCoords[1], 1, 0], [-el.board.origin.scrCoords[2], 0, 1]], 
+            mpre2 =  [[1, 0, 0], [0, 1/el.board.stretchX, 0], [0, 0, -1/el.board.stretchY]],
+            mpost2 = [[1, 0, 0], [0, el.board.stretchX, 0], [0, 0, -el.board.stretchY]],
+            mpost1 = [[1, 0, 0], [el.board.origin.scrCoords[1], 1, 0], [el.board.origin.scrCoords[2], 0, 1]],
             i, len = t.length;
+            
         for (i=0;i<len;i++) {
+            m = JXG.Math.matMatMult(mpre1,m);
+            m = JXG.Math.matMatMult(mpre2,m);
             m = JXG.Math.matMatMult(t[i].matrix,m);
+            m = JXG.Math.matMatMult(mpost2,m);
+            m = JXG.Math.matMatMult(mpost1,m);
         }
         return m;
     },
