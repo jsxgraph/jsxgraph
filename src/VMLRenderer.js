@@ -259,19 +259,36 @@ JXG.VMLRenderer.prototype.updateImageURL = function(el) {
 
 JXG.VMLRenderer.prototype.transformImage = function(el,t) {
     var node = el.rendNode, 
-        m, v, w, s, len = t.length;
+        m, p = [], s, len = t.length,
+        maxX, maxY, minX, minY, i, h, w;
 
     if (len>0) {
         m = this.joinTransforms(el,t);
-        v = JXG.Math.matVecMult(m, el.coords.scrCoords);
-        v[1] /= v[0];
-        v[2] /= v[0];
-        w = JXG.Math.matVecMult(m, [1, el.coords.scrCoords[1]+el.size[0], el.coords.scrCoords[2]-el.size[1]]);
-        w[1] /= w[0];
-        w[2] /= w[0];
-        node.style.left = ((v[1]<=w[1])?v[1]:w[1]) + 'px'; 
-        node.style.top = ((v[2]<=w[2])?v[2]:w[2]) + 'px';    
-    
+        p[0] = JXG.Math.matVecMult(m, el.coords.scrCoords);
+        p[0][1] /= p[0][0];
+        p[0][2] /= p[0][0];
+        p[1] = JXG.Math.matVecMult(m, [1, el.coords.scrCoords[1]+el.size[0], el.coords.scrCoords[2]]);
+        p[1][1] /= p[1][0];
+        p[1][2] /= p[1][0];
+        p[2] = JXG.Math.matVecMult(m, [1, el.coords.scrCoords[1]+el.size[0], el.coords.scrCoords[2]-el.size[1]]);
+        p[2][1] /= p[2][0];
+        p[2][2] /= p[2][0];
+        p[3] = JXG.Math.matVecMult(m, [1, el.coords.scrCoords[1], el.coords.scrCoords[2]-el.size[1]]);
+        p[3][1] /= p[3][0];
+        p[3][2] /= p[3][0];
+        maxX = p[0][1];
+        minX = p[0][1];
+        maxY = p[0][2];
+        minY = p[0][2];
+        for (i=1; i<4; i++) {
+            maxX = Math.max(maxX, p[i][1]);
+            minX = Math.min(minX, p[i][1]);
+            maxY = Math.max(maxY, p[i][2]);
+            minY = Math.min(minY, p[i][2]);
+        }
+        node.style.left = minX + 'px'; 
+        node.style.top = minY + 'px';    
+        
         node.filters.item(0).M11 = m[1][1];
         node.filters.item(0).M12 = m[1][2];
         node.filters.item(0).M21 = m[2][1];

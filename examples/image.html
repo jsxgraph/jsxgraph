@@ -26,21 +26,20 @@
         b1axisy = board.create('axis', [[0,0], [1,0]], {});
 
         var im = board.create('image',[picStr, [0,0], [3,2]], {id:'garfield', name:'GARFIELD'}); // {'imageString':picStr}
+        //var im = board.create('image',["http:///www.dirk3laanvlaardingen.nl/images/flat4.jpg", [0,0], [3,2]], {id:'garfield', name:'GARFIELD'}); // {'imageString':picStr}
         var p0 = board.create('point', [0,0], {style:5, name:'off',strokecolor:'blue', fillcolor:'red'}); 
         var p1 = board.create('point', [3,0], {style:5, name:'rot+scale',strokecolor:'blue', fillcolor:'red'}); 
         
         var t3 = board.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'}); 
         t3.bindTo(im);
         t3.bindTo(p1);
-
+        
         var t2 = board.create('transform', [function(){return Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X())}, p0], {type:'rotate'}); 
         t2.bindTo(im);
-        
         var t3inv = board.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'}); 
         var t1 = board.create('transform', [function(){return p1.Dist(p0)/3;},
                                             function(){return p1.Dist(p0)/3;}], {type:'scale'}); 
         t3inv.bindTo(im); t1.bindTo(im); t3.bindTo(im);
-        
         board.update();
   /* ]]> */
   </script>
