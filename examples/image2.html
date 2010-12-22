@@ -14,39 +14,27 @@
 
 <script language="JavaScript">
 //JXG.Options.renderer = 'canvas';
-var board = JXG.JSXGraph.initBoard('box', {originX: 200, originY: 200, unitX: 40, unitY: 40,showCopyright:true,showNavigation:true});
+var board = JXG.JSXGraph.initBoard('box', {originX: 200, originY: 200, unitX: 40, unitY: 40, showCopyright:true, showNavigation:true});
+
 var pic=["http://www.serdaraytekin.com/docs/os/grub/images/debian-gnu.jpg", "http://yves.gnu-darwin.org/art/gnu-darwin_1.png"];
 
 var flipper = board.create('slider',[[-4.5,-4],[-1,-4],[1,35,56]],{snapWidth:1});
+
+var p = board.create('point',[-4,-3]);
+var q = board.create('point',[3,3]);
+
 var im = board.create('image',[
         function(){
             var num;
             if (flipper.Value()<28) {num = 0; } else {num = 1;}
             return pic[num];
-        },[-4.8,-4.8],[9,9]]);
-/*
-*/        
-//var im = board.create('image',[pic[0],[-4.8,-4.8],[9,9]]);
-    
-/*        
-var dummypoint = board.create('point',
-                [function(){
-                    var num;
-                    if (flipper.Value()<28) num = 0; else num = 1;
-                    var url = pic[num];
-                    if (JXG.Options.renderer != 'vml') {     // SVG/Canvas Firefox, Chrome, ...
-                        im.rendNode.setAttributeNS(board.renderer.xlinkNamespace, 'xlink:href', pic[num]);
-                    } else {                                                     // VML IE
-                        board.renderer.setAttr(im.rendNode,'src',url);
-                    }
-                    return 0;
-                 },0], 
-                {visible:false});
-                
-*/
-// Animation
- var animated = false;
- function animate(point, direction, count) {
+        },[function(){ return p.X();},function(){ return p.Y();}],
+          [function(){ return q.X();},function(){ return q.Y();}]
+        ], {fillOpacity:function(){return q.X()/3;}});
+
+
+var animated = false;
+function animate(point, direction, count) {
     if(animated) {
        point.stopAnimation();
        animated = false;

@@ -395,6 +395,9 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
             this.setAttr(el.rendNodeFill,'opacity', (o*100)+'%');
         }
     }
+    if (el.type==JXG.OBJECT_TYPE_IMAGE) {
+        el.rendNode.style.filter = 'alpha(opacity = ' + (o*100) +')';
+    }
     el.visPropOld['fillColor'] = c;
     el.visPropOld['fillOpacity'] = o;
 };
@@ -562,8 +565,8 @@ JXG.VMLRenderer.prototype.updateCirclePrim = function(node,x,y,r) {
 JXG.VMLRenderer.prototype.updateRectPrim = function(node,x,y,w,h) {
     node.style.left = (x)+'px';
     node.style.top = (y)+'px';    
-    node.style.width = (w)+'px'; 
-    node.style.height = (h)+'px';   
+    if (w>=0) node.style.width = (w)+'px'; 
+    if (h>=0) node.style.height = (h)+'px';   
 };
 
 JXG.VMLRenderer.prototype.updateEllipsePrim = function(node,x,y,rx,ry) {

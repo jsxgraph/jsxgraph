@@ -742,6 +742,7 @@ return {
             this.transformImageParent(el); // Transforms are cleared
         }
         this.transformImage(el, el.transformations);
+        this.updateVisual(el, {stroke: true, dash: true}, true);
     },
     
     /**

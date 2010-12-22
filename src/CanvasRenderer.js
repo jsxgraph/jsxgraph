@@ -289,10 +289,13 @@ JXG.CanvasRenderer.prototype.updateImageURL = function(el) {
 
 JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) { 
     var ctx = this.context,
+        o = this.evaluate(el.visProp.fillOpacity),
         // transformParent = this.transformImageParent,   // We loose context of "this" 
         // transform = this.transformImage,  // We loose context of "this" 
         paintImg = JXG.bind(function(){ 
+            if (el.size[0]<=0 || el.size[1]<=0) return;
             ctx.save();
+            ctx.globalAlpha = o;
             if (el.parent != null) {
                 this.transformImageParent(el,el.parent.imageTransformMatrix,ctx);
             } else {
