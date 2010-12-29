@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009
+    Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -89,22 +89,6 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
      * @type JXG.Point
      */
     this.point2 = JXG.getReference(this.board, p2);
-
-    /**
-     * An image bound to this line.
-     * @type JXG.Image
-     * @default null
-     * @private
-     */
-    this.image = null;
-
-    /**
-     * TODO description
-     * @type array
-     * @default [[1,0,0],[0,1,0],[0,0,1]]
-     * @private
-     */
-    this.imageTransformMatrix = [[1,0,0],[0,1,0],[0,0,1]];
 
     /**
      * This is just for the hasPoint() method.

@@ -296,11 +296,11 @@ JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) {
             if (el.size[0]<=0 || el.size[1]<=0) return;
             ctx.save();
             ctx.globalAlpha = o;
-            if (el.parent != null) {
-                this.transformImageParent(el,el.parent.imageTransformMatrix,ctx);
-            } else {
-                this.transformImageParent(el,null,ctx); // Transforms are cleared
-            }
+            //if (el.parent != null) {
+            //    this.transformImageParent(el,el.parent.imageTransformMatrix,ctx);
+            //} else {
+            //    this.transformImageParent(el,null,ctx); // Transforms are cleared
+            //}
             // If det(el.transformations)=0, FireFox 3.6. breaks down.
             this.transformImage(el,el.transformations,ctx); 
             ctx.drawImage(el.rendNode, 
@@ -328,13 +328,14 @@ JXG.CanvasRenderer.prototype.transformImage = function(el,t,ctx) {
     }
 };
 
+/*
 JXG.CanvasRenderer.prototype.transformImageParent = function(el,m,ctx) {
     if (m!=null) 
         ctx.setTransform(m[1][1],m[2][1],m[1][2],m[2][2],m[1][0],m[2][0]);
     else
         ctx.setTransform(1,0,0,1,0,0);
 };
-
+*/
 JXG.CanvasRenderer.prototype.setArrowAtts = function(node, c, o) {
     // this isn't of any use in a canvas based renderer,
     // because the arrows have to be redrawn on every update.
@@ -775,6 +776,7 @@ JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
     //this.context.closePath();
     this.stroke(el);
     
+/*  
     // Update the image which is connected to the line:
     if (el.image!=null) {
         ax = scr1.scrCoords[1];
@@ -792,6 +794,7 @@ JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
             ];
         el.imageTransformMatrix = m;
     }
+*/
 
     // if this line has arrows attached, update them, too.
     this.makeArrows(el,scr1,scr2);

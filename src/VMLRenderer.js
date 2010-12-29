@@ -242,7 +242,10 @@ JXG.VMLRenderer.prototype.drawImage = function(el) {
     //this.setAttr(node,'src',url);
     this.container.appendChild(node);
     this.appendChildPrim(node,el.layer);
-    node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
+    // Adding the rotation filter. This is always filter item 0:
+    // node.filters.item(0), see transformImage
+    node.style.filter = node.style['-ms-filter'] = 
+        "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
     el.rendNode = node;
     this.updateImage(el);
 };
@@ -295,8 +298,6 @@ JXG.VMLRenderer.prototype.transformImage = function(el,t) {
         node.filters.item(0).M22 = m[2][2];
     }
 };
-
-JXG.VMLRenderer.prototype.transformImageParent = function(el,m) {};
 
 /*
 JXG.VMLRenderer.prototype.removeGrid = function(board) { 
@@ -378,7 +379,7 @@ JXG.VMLRenderer.prototype.setObjectStrokeColor = function(el, color, opacity) {
 
 JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
     var c = this.evaluate(color),
-        o = this.evaluate(opacity);
+        o = this.evaluate(opacity), t;
 
     o = (o>0)?o:0;
 
@@ -396,7 +397,13 @@ JXG.VMLRenderer.prototype.setObjectFillColor = function(el, color, opacity) {
         }
     }
     if (el.type==JXG.OBJECT_TYPE_IMAGE) {
-        el.rendNode.style.filter = 'alpha(opacity = ' + (o*100) +')';
+        t = el.rendNode.style.filter.toString();
+        if (t.match(/alpha/)) {
+            el.rendNode.style.filter = t.replace(/alpha\(opacity *= *[0-9\.]+\)/,
+                'alpha(opacity = '+(o*100)+')');
+        } else {
+            el.rendNode.style.filter += ' alpha(opacity = ' + (o*100) +')';
+        }
     }
     el.visPropOld['fillColor'] = c;
     el.visPropOld['fillOpacity'] = o;

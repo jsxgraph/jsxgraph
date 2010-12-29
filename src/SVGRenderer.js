@@ -269,13 +269,12 @@ JXG.SVGRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin) {
 };
 
 JXG.SVGRenderer.prototype.drawImage = function(el) {
-    var //url = el.url, //'data:image/png;base64,' + el.imageBase64String,    
-        node = this.createPrim('image',el.id);
+    var node = this.createPrim('image',el.id);
 
-    //node.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
-    node.setAttributeNS(null, 'preserveAspectRatio', 'none');
+    node.setAttributeNS(null, 'preserveAspectRatio', 'none'); 
     this.appendChildPrim(node,el.layer);
     el.rendNode = node;
+    
     this.updateImage(el);
 };
 
@@ -291,7 +290,7 @@ JXG.SVGRenderer.prototype.updateImageURL = function(el) {
 
 JXG.SVGRenderer.prototype.transformImage = function(el,t) {
     var node = el.rendNode, m,
-        str = node.getAttributeNS(null, 'transform'),
+        str = "", //node.getAttributeNS(null, 'transform'),
         s, len = t.length;
 
     if (len>0) {
@@ -302,6 +301,7 @@ JXG.SVGRenderer.prototype.transformImage = function(el,t) {
     }
 };
 
+/*
 JXG.SVGRenderer.prototype.transformImageParent = function(el,m) {
     var s, str;
     if (m!=null) {
@@ -312,6 +312,7 @@ JXG.SVGRenderer.prototype.transformImageParent = function(el,m) {
     }
     el.rendNode.setAttributeNS(null, 'transform', str);
 };
+*/
   
 /*
 JXG.SVGRenderer.prototype.removeGrid = function(board) { 

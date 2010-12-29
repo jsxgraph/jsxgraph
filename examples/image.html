@@ -12,17 +12,19 @@
   <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
-//JXG.Options.renderer = 'canvas';    
         var p0,p1;
         
         picStr = "http://easyimup.de/uploads/garfield-1069_e254457.gif";
+        //picStr = "./uccellino.jpg";
+        picStr = "./fagiolo.jpg";
 //JXG.Options.renderer = 'canvas';
         
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true});
 
-        var im = board.create('image',[picStr, [0,0], [3,2]], {id:'garfield', name:'GARFIELD'}); 
         var p0 = board.create('point', [0,0], {style:5, name:'offset',strokecolor:'blue', fillcolor:'red'}); 
         var p1 = board.create('point', [3,0], {style:5, name:'rot+scale',strokecolor:'blue', fillcolor:'red'}); 
+        var im = board.create('image',[picStr, [0,0], [3,2]],
+            {opacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);} }); 
 
         // 
         // Translate image and point "rot+scale" by freagging point "offset"

@@ -229,25 +229,6 @@ return {
         this.calcStraight(el, screenCoords1, screenCoords2);
         this.updateLinePrim(el.rendNode, screenCoords1.scrCoords[1], screenCoords1.scrCoords[2],
                                          screenCoords2.scrCoords[1], screenCoords2.scrCoords[2], el.board);
-
-        // Update the image which is connected to the line:
-        // um, what exactly are we calculating here?
-        if (el.image != null) {
-            ax = screenCoords1.scrCoords[1];
-            ay = screenCoords1.scrCoords[2];
-            bx = screenCoords2.scrCoords[1];
-            by = screenCoords2.scrCoords[2];
-
-            beta = Math.atan2(by - ay, bx - ax);
-            x = 250;
-            y = 256;
-            el.imageTransformMatrix = [
-                [1, 0, 0],
-                [x * (1 - Math.cos(beta)) + y * Math.sin(beta),Math.cos(beta),-Math.sin(beta)],
-                [y * (1 - Math.cos(beta)) - x * Math.sin(beta),Math.sin(beta), Math.cos(beta)]
-            ];
-        }
-
         // if this line has arrows attached, update them, too.
         this.makeArrows(el);
         this.updateVisual(el, {fill: true});
@@ -734,13 +715,13 @@ return {
     updateImage: function(el) {
         this.updateRectPrim(el.rendNode, el.coords.scrCoords[1], el.coords.scrCoords[2] - el.size[1],
                 el.size[0], el.size[1]);
-
+         
         this.updateImageURL(el);
-        if (el.parent != null) {
-            this.transformImageParent(el, el.parent.imageTransformMatrix);
-        } else {
-            this.transformImageParent(el); // Transforms are cleared
-        }
+        //if (el.parent != null) {
+        //    this.transformImageParent(el, el.parent.imageTransformMatrix);
+        //} else {
+        //    this.transformImageParent(el); // Transforms are cleared
+        //}
         this.transformImage(el, el.transformations);
         this.updateVisual(el, {stroke: true, dash: true}, true);
     },
