@@ -228,6 +228,7 @@ JXG.SVGRenderer.prototype.updateInternalText = function(/** JXG.Text */ el) {
         el.rendNodeText.data = el.plaintextStr;
         el.htmlStr = el.plaintextStr;
     }
+    this.transformImage(el, el.transformations);
 };
 
 JXG.SVGRenderer.prototype.drawTicks = function(axis) {
