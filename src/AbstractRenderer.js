@@ -717,11 +717,6 @@ return {
                 el.size[0], el.size[1]);
          
         this.updateImageURL(el);
-        //if (el.parent != null) {
-        //    this.transformImageParent(el, el.parent.imageTransformMatrix);
-        //} else {
-        //    this.transformImageParent(el); // Transforms are cleared
-        //}
         this.transformImage(el, el.transformations);
         this.updateVisual(el, {stroke: true, dash: true}, true);
     },

@@ -296,11 +296,6 @@ JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) {
             if (el.size[0]<=0 || el.size[1]<=0) return;
             ctx.save();
             ctx.globalAlpha = o;
-            //if (el.parent != null) {
-            //    this.transformImageParent(el,el.parent.imageTransformMatrix,ctx);
-            //} else {
-            //    this.transformImageParent(el,null,ctx); // Transforms are cleared
-            //}
             // If det(el.transformations)=0, FireFox 3.6. breaks down.
             this.transformImage(el,el.transformations,ctx); 
             ctx.drawImage(el.rendNode, 
@@ -775,27 +770,6 @@ JXG.CanvasRenderer.prototype.drawLine = function(/** Line */ el) {
     //this.context.stroke();
     //this.context.closePath();
     this.stroke(el);
-    
-/*  
-    // Update the image which is connected to the line:
-    if (el.image!=null) {
-        ax = scr1.scrCoords[1];
-        ay = scr1.scrCoords[2];
-        bx = scr2.scrCoords[1];
-        by = scr2.scrCoords[2];
-
-        beta = Math.atan2(by-ay,bx-ax);
-        x = 250; //ax;
-        y = 256; //ay;//+el.image.size[1]*0.5;
-        m = [
-                 [1,                                    0,             0],
-                 [x*(1-Math.cos(beta))+y*Math.sin(beta),Math.cos(beta),-Math.sin(beta)],
-                 [y*(1-Math.cos(beta))-x*Math.sin(beta),Math.sin(beta), Math.cos(beta)]
-            ];
-        el.imageTransformMatrix = m;
-    }
-*/
-
     // if this line has arrows attached, update them, too.
     this.makeArrows(el,scr1,scr2);
 };
