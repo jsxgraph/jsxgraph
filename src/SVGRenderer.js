@@ -299,6 +299,7 @@ JXG.SVGRenderer.prototype.transformImage = function(el,t) {
         s = m[1][1]+','+m[2][1]+','+m[1][2]+','+m[2][2]+','+m[1][0]+','+m[2][0];
         str += ' matrix('+s+') ';
         node.setAttributeNS(null, 'transform', str);
+        //node.style.MozTransform = str;
     }
 };
 
