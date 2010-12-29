@@ -642,6 +642,7 @@ return {
                     MathJax.Hub.Typeset(el.rendNode);
                 }
             }
+            this.transformImage(el, el.transformations);
         } else {
             this.updateInternalText(el);
         }

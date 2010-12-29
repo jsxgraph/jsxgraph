@@ -94,6 +94,7 @@ JXG.Image.prototype.update = function () {
         this.updateCoords();
         this.usrSize = [this.W(), this.H()];
         this.size = [this.usrSize[0]*board.stretchX,this.usrSize[1]*board.stretchY];
+        this.updateTransform();
     }
     return this;
 };
@@ -103,7 +104,6 @@ JXG.Image.prototype.update = function () {
  */
 JXG.Image.prototype.updateRenderer = function () {
     if (this.needsUpdate) {
-        this.updateTransform();
         this.board.renderer.updateImage(this);
         this.needsUpdate = false;
     }

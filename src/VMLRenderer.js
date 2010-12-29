@@ -164,6 +164,7 @@ JXG.VMLRenderer.prototype.displayCopyright = function(str,fontsize) {
     node.appendChild(t);
     this.appendChildPrim(node,0);
 };
+
 JXG.VMLRenderer.prototype.drawInternalText = function(el) {
     var node;
     node = this.createNode('textbox');
@@ -263,9 +264,16 @@ JXG.VMLRenderer.prototype.updateImageURL = function(el) {
 JXG.VMLRenderer.prototype.transformImage = function(el,t) {
     var node = el.rendNode, 
         m, p = [], s, len = t.length,
-        maxX, maxY, minX, minY, i, h, w;
+        maxX, maxY, minX, minY, i, h, w,
+        nt;
 
     if (len>0) {
+        nt = el.rendNode.style.filter.toString();
+        if (!nt.match(/DXImageTransform/)) {
+            node.style.filter = node.style['-ms-filter'] = 
+                "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
+        }
+
         m = this.joinTransforms(el,t);
         p[0] = JXG.Math.matVecMult(m, el.coords.scrCoords);
         p[0][1] /= p[0][0];

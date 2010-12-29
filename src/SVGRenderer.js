@@ -302,19 +302,6 @@ JXG.SVGRenderer.prototype.transformImage = function(el,t) {
 };
 
 /*
-JXG.SVGRenderer.prototype.transformImageParent = function(el,m) {
-    var s, str;
-    if (m!=null) {
-        s = m[1][1]+','+m[2][1]+','+m[1][2]+','+m[2][2]+','+m[1][0]+','+m[2][0];
-        str = 'matrix('+s+')';
-    } else {
-        str = '';
-    }
-    el.rendNode.setAttributeNS(null, 'transform', str);
-};
-*/
-  
-/*
 JXG.SVGRenderer.prototype.removeGrid = function(board) { 
     var c = this.layer[board.options.layer['grid']];
     board.hasGrid = false;

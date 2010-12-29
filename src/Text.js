@@ -148,6 +148,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
     if (typeof this.contentStr=='string') {
         this.notifyParents(this.contentStr);
     }
+    this.size = [1.0,1.0];
 };
 JXG.Text.prototype = new JXG.GeometryElement();
 
@@ -216,6 +217,10 @@ JXG.Text.prototype.update = function () {
     }   
     if (this.needsUpdate) {
         this.updateText();
+        // Here comes a very crude estimation of the dimensions of
+        // the textbox. It is only necessary for the IE.
+        this.size = [this.visProp['fontSize']*this.plaintextStr.length*0.45,this.visProp['fontSize']*0.9];
+        this.updateTransform();
     }
     return this;
 };
@@ -231,6 +236,15 @@ JXG.Text.prototype.updateRenderer = function () {
         this.needsUpdate = false;
     }
     return this;
+};
+
+JXG.Text.prototype.updateTransform = function () {
+    if (this.transformations.length==0) {
+        return;
+    }
+    for (var i=0;i<this.transformations.length;i++) {
+        this.transformations[i].update();
+    }
 };
 
 /**

@@ -214,24 +214,38 @@ JXG.CanvasRenderer.prototype.displayCopyright = function(str, fontSize) {
 };
 
 JXG.CanvasRenderer.prototype.drawInternalText = function(el) {
+    var fs, ctx = this.context;
     //this.updateStencilBuffer(el);
-    this.context.save();
+    
+    ctx.save();
     if (this.setColor(el,'stroke')) {
         if(typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
-                this.context.fillStyle = el.visProp.highlightStrokeColor;
+                ctx.fillStyle = el.visProp.highlightStrokeColor;
         } else {
-                this.context.fillStyle = el.visProp.strokeColor;
+                ctx.fillStyle = el.visProp.strokeColor;
         }
-        this.context.font = el.board.options.text.fontSize+'px Arial';
-        this.context.fillText(el.plaintextStr, el.coords.scrCoords[1], el.coords.scrCoords[2]);
+        if (el.visProp['fontSize']) {
+            if (typeof el.visProp['fontSize'] == 'function') {
+                fs = el.visProp['fontSize']();
+                ctx.font = (fs > 0 ? fs : 0)+'px Arial';
+            } else {
+                ctx.font = (el.visProp['fontSize'])+'px Arial';
+            }
+        }
+        //ctx.font = el.board.options.text.fontSize+'px Arial';
+        this.transformImage(el,el.transformations,ctx); 
+        ctx.fillText(el.plaintextStr, el.coords.scrCoords[1], el.coords.scrCoords[2]);
     }
-    this.context.restore();
+    ctx.restore();
 
     return null;
 };
 
 JXG.CanvasRenderer.prototype.updateInternalText = function(/** JXG.Text */ el) {
     this.drawInternalText(el);
+};
+
+JXG.CanvasRenderer.prototype.updateTextStyle =  function(el) {
 };
 
 JXG.CanvasRenderer.prototype.drawTicks = function(axis) {
@@ -290,8 +304,6 @@ JXG.CanvasRenderer.prototype.updateImageURL = function(el) {
 JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) { 
     var ctx = this.context,
         o = this.evaluate(el.visProp.fillOpacity),
-        // transformParent = this.transformImageParent,   // We loose context of "this" 
-        // transform = this.transformImage,  // We loose context of "this" 
         paintImg = JXG.bind(function(){ 
             if (el.size[0]<=0 || el.size[1]<=0) return;
             ctx.save();
