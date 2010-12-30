@@ -279,9 +279,13 @@ JXG.CanvasRenderer.prototype.updateTicks = function(axis,dxMaj,dyMaj,dxMin,dyMin
 };
 
 JXG.CanvasRenderer.prototype.drawImage = function(el) {
-    var updateImage = this.updateImage;
-       
     el.rendNode = new Image();
+    // Store the file name of the image.
+    // Before, this was done in el.rendNode.src
+    // But there, the file name is expanded to
+    // the full url. This may be different from 
+    // the url computed in updateImageURL().
+    el._src = '';
     this.updateImage(el);
 };
 
@@ -292,9 +296,11 @@ JXG.CanvasRenderer.prototype.updateImageURL = function(el) {
     } else {
         url = el.url;
     }
-    if (el.rendNode.src!=url) {
+console.log(el._src, url);        
+    if (el._src!=url) {
         el.imgIsLoaded = false;
         el.rendNode.src = url;  
+        el._src = url;
         return true;
     } else {
         return false;
@@ -305,10 +311,12 @@ JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) {
     var ctx = this.context,
         o = this.evaluate(el.visProp.fillOpacity),
         paintImg = JXG.bind(function(){ 
+            el.imgIsLoaded = true;
             if (el.size[0]<=0 || el.size[1]<=0) return;
             ctx.save();
             ctx.globalAlpha = o;
             // If det(el.transformations)=0, FireFox 3.6. breaks down.
+            // This is tested in transformImage
             this.transformImage(el,el.transformations,ctx); 
             ctx.drawImage(el.rendNode, 
                     el.coords.scrCoords[1],
@@ -316,33 +324,24 @@ JXG.CanvasRenderer.prototype.updateImage = function(/** Image */ el) {
                     el.size[0],
                     el.size[1]);
             ctx.restore();
-            el.imgIsLoaded = true;
         }, this);  
     
-    if (this.updateImageURL(el)) 
+    if (this.updateImageURL(el)) {
         el.rendNode.onload = paintImg;
-    else {
+    } else {
         if (el.imgIsLoaded) paintImg();
     }
-        
 };
 
 JXG.CanvasRenderer.prototype.transformImage = function(el,t,ctx) {
     var m, len = t.length;
     if (len>0) {
         m = this.joinTransforms(el,t);
-        ctx.transform(m[1][1],m[2][1],m[1][2],m[2][2],m[1][0],m[2][0]);
+        if (Math.abs(JXG.Math.Numerics.det(m))>=JXG.Math.eps)
+            ctx.transform(m[1][1],m[2][1],m[1][2],m[2][2],m[1][0],m[2][0]);
     }
 };
 
-/*
-JXG.CanvasRenderer.prototype.transformImageParent = function(el,m,ctx) {
-    if (m!=null) 
-        ctx.setTransform(m[1][1],m[2][1],m[1][2],m[2][2],m[1][0],m[2][0]);
-    else
-        ctx.setTransform(1,0,0,1,0,0);
-};
-*/
 JXG.CanvasRenderer.prototype.setArrowAtts = function(node, c, o) {
     // this isn't of any use in a canvas based renderer,
     // because the arrows have to be redrawn on every update.

@@ -229,26 +229,6 @@ JXG.Math.Numerics = (function(JXG, Math) {
          */ 
         det: function(mat) {
             return this.gaussBareiss(mat);
-            /*
-            var n = mat.length, dd;
-            if (n<=0) { return 0; }
-            if (mat[0].length<n) { n = mat[0].length; }
-            if (n==1) {
-                return mat[0][0];
-            } else if (n==2) {
-                return mat[0][0]*mat[1][1] - mat[1][0]*mat[0][1];
-            } else if (n==3) {
-                dd =  mat[0][0]*mat[1][1]*mat[2][2] 
-                      + mat[0][1]*mat[1][2]*mat[2][0] 
-                      + mat[0][2]*mat[1][0]*mat[2][1] 
-                      - mat[2][0]*mat[1][1]*mat[0][2]
-                      - mat[2][1]*mat[1][2]*mat[0][0]
-                      - mat[2][2]*mat[1][0]*mat[0][1];
-                console.log(dd-this.gaussBareiss(mat));
-            } else {
-                throw new Error("JSXGraph:  det() matrix size larger than 3.");
-            }
-            */
         },
         
         /**

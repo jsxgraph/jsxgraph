@@ -1034,13 +1034,17 @@ JXG.Board.prototype.dehighlightAll = function() {
         // if((!JXG.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visProp['visible'])
     }
 
+    
+    /*
+    // We do not need to redraw during dehighlighting in CanvasRenderer
+    // because we are redrawing anyhow
     if (this.options.renderer=='canvas' && needsDehighlight) {
         this.prepareUpdate();
         this.renderer.suspendRedraw();
         this.updateRenderer();
         this.renderer.unsuspendRedraw();
     }
-
+    */
     return this;
 };
 

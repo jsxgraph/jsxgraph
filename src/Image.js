@@ -93,7 +93,7 @@ JXG.Image.prototype.update = function () {
     if (this.needsUpdate) {
         this.updateCoords();
         this.usrSize = [this.W(), this.H()];
-        this.size = [this.usrSize[0]*board.stretchX,this.usrSize[1]*board.stretchY];
+        this.size = [this.usrSize[0]*this.board.stretchX,this.usrSize[1]*this.board.stretchY];
         this.updateTransform();
     }
     return this;

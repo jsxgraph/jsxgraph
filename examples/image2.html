@@ -13,6 +13,7 @@
 1,56);"/>
 
 <script language="JavaScript">
+(function(){
 //JXG.Options.renderer = 'canvas';
 var board = JXG.JSXGraph.initBoard('box', {originX: 200, originY: 200, unitX: 40, unitY: 40, showCopyright:true, showNavigation:true});
 
@@ -43,7 +44,7 @@ function animate(point, direction, count) {
        animated = true;
     }
  }
-
+})();
 
 </script>
 </body>
