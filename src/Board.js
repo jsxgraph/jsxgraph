@@ -1594,18 +1594,51 @@ JXG.Board.prototype.updateRenderer = function(drag) {
         // dragged element.
         //isBeforeDrag = true; // If possible, we start the update at the dragged object.
 
-    drag = JXG.getReference(this, drag);
-    //if (drag==null) { isBeforeDrag = false; }
+    if (this.options.renderer=='canvas') {
+        this.updateRendererCanvas(drag);
+    } else {
+        // drag = JXG.getReference(this, drag);
+        //if (drag==null) { isBeforeDrag = false; }
 
-    for(el in this.objects) {
-        pEl = this.objects[el];
-        // if (isBeforeDrag && drag!=null && pEl.id == drag.id) { isBeforeDrag = false; }
+        for(el in this.objects) {
+            pEl = this.objects[el];
+            // if (isBeforeDrag && drag!=null && pEl.id == drag.id) { isBeforeDrag = false; }
+            if ( !this.needsFullUpdate && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate) ) { 
+                continue; 
+            }
+            pEl.updateRenderer();
+        }
+    }
+    return this;
+};
 
-        if (!this.needsFullUpdate
-            && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate)
-            && this.options.renderer!='canvas' /* for canvas renderer */
-           ) { continue; }
-        pEl.updateRenderer();
+/**
+ * Runs through all elements and calls their update() method.
+ * This is a special version for the CanvasRenderer.
+ * Here, we have to do our own layer handling.
+ * @param {JXG.GeometryElement} drag Element that caused the update.
+ * @returns {JXG.Board} Reference to the board
+ */
+JXG.Board.prototype.updateRendererCanvas = function(drag) {
+    var el, pEl, i, 
+        layers = this.options.layer,
+        len = this.options.layer.numlayers,
+        last = Number.NEGATIVE_INFINITY, layer;
+    
+    for (i=0;i<len;i++) {
+        mini = Number.POSITIVE_INFINITY;
+        for (la in layers) {
+            if (layers[la]>last && layers[la]<mini) {
+                mini = layers[la];
+            }
+        }
+        last = mini;
+        for (el in this.objects) {
+            pEl = this.objects[el];
+            if (pEl.layer==mini) {
+                pEl.updateRenderer();
+            }
+        }
     }
     return this;
 };

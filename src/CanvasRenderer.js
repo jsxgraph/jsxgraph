@@ -296,7 +296,6 @@ JXG.CanvasRenderer.prototype.updateImageURL = function(el) {
     } else {
         url = el.url;
     }
-console.log(el._src, url);        
     if (el._src!=url) {
         el.imgIsLoaded = false;
         el.rendNode.src = url;  
