@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009
+    Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -219,7 +219,7 @@ JXG.Text.prototype.update = function () {
         this.updateText();
         // Here comes a very crude estimation of the dimensions of
         // the textbox. It is only necessary for the IE.
-        this.size = [this.visProp['fontSize']*this.plaintextStr.length*0.45,this.visProp['fontSize']*0.9];
+        this.size = [parseFloat(this.visProp['fontSize'])*this.plaintextStr.length*0.45,parseFloat(this.visProp['fontSize'])*0.9];
         this.updateTransform();
     }
     return this;
