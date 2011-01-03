@@ -1901,6 +1901,16 @@ JXG.Board.prototype.setBoundingBox = function(bbox, keepaspectratio) {
 };
 
 /**
+ * Get the bounding box of the board.
+ * @returns {Array} bounding box [x1,y1,x2,y2] upper left corner, lower right corner
+ */
+JXG.Board.prototype.getBoundingBox = function() {
+    var ul = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0], this),
+        lr = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.canvasWidth, this.canvasHeight], this);
+    return [ul.usrCoords[1],ul.usrCoords[2],lr.usrCoords[1],lr.usrCoords[2]];
+};
+
+/**
  * Adds an animation. Animations are controlled by the boards, so the boards need to be aware of the
  * animated elements. This function tells the board about new elements to animate.
  * @param {JXG.GeometryElement} element The element which is to be animated.

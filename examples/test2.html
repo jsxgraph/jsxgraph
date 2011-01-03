@@ -33,9 +33,9 @@ JXG.Point.prototype.noHighlight = function(){
     this.board.renderer.noHighlight(this); // dehighlight the line
 }
 
-brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-0.2,1.2,1.2,-0.5], keepaspectratio:true});
+brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-0.2,1.2,1.2,-0.5], keepaspectratio:true, axis:true});
 p = [];
-len = 100;
+len = 5;
 for (i=0;i<len;i++) {
     p[i] = brd.createElement('point',[Math.random(),Math.random()],
             {face:'o', size:10, strokeColor:'red', fillColor:'red', fillOpacity:0.4, strokeOpacity:0.4, withLabel:false});
@@ -63,7 +63,7 @@ setInterval(function(){
 
 /* ]]> */
 </script>
-<h2 onClick="g.moveTo([16,10],200);">Click here to move B in 200 msec</h2>
-<h2 onClick="g.moveTo([16,10],0);">Click here to move B in 0 msec</h2>
+<h2 onClick="/*g.moveTo([16,10],200); */console.log(brd.getBoundingBox());">Click here to move B in 200 msec</h2>
+<h2 onClick="/*g.moveTo([16,10],0);*/">Click here to move B in 0 msec</h2>
 </body>
 </html>
