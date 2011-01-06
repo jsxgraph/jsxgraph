@@ -43,7 +43,7 @@ JXG.JSXGraph = {
      * showCopyright is not set to false on board creation).
      * @type String
      */
-    licenseText: 'JSXGraph v0.83rc2 Copyright (C) see http://jsxgraph.org',
+    licenseText: 'JSXGraph v0.83rc3 Copyright (C) see http://jsxgraph.org',
 
     /**
      * Associative array that keeps references to all boards.
@@ -73,7 +73,7 @@ JXG.JSXGraph = {
         if ((!ie) || (opera) || (ie && parseFloat(ie[1]) >= 9.0)) {
             // we're NOT in IE
             if (navigator.appVersion.match(/Android.*AppleWebKit/) 
-                ||navigator.appVersion.match(/ElocityA7.*AppleWebKit/ ) {
+                ||navigator.appVersion.match(/ElocityA7.*AppleWebKit/) ) {
                 // we're using canvas on android
                 JXG.Options.renderer = 'canvas';
             } else {
