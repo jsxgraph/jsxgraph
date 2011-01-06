@@ -72,7 +72,8 @@ JXG.JSXGraph = {
         // set the rendererType according to the browser
         if ((!ie) || (opera) || (ie && parseFloat(ie[1]) >= 9.0)) {
             // we're NOT in IE
-            if (navigator.appVersion.match(/Android.*AppleWebKit/)) {
+            if (navigator.appVersion.match(/Android.*AppleWebKit/) 
+                ||navigator.appVersion.match(/ElocityA7.*AppleWebKit/ ) {
                 // we're using canvas on android
                 JXG.Options.renderer = 'canvas';
             } else {
