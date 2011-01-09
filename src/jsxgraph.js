@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010
+    Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -27,10 +27,50 @@
  * @fileoverview The JSXGraph object is defined in this file. JXG.JSXGraph controls all boards.
  * It has methods to create, save, load and free boards. Additionally some helper functions are
  * defined in this file directly in the JXG namespace.
- * @author graphjs
  * @version 0.83
  */
 
+/**
+ * Detect browser support for VML.
+ * The code in comments is from google maps.
+ * But it does not work in JSXGraph because in the moment 
+ * of calling supportsVML() document.body is still undefined.
+ * Therefore, the more vulnerable test of
+ *   navigator.appVersion 
+ * is used.
+ * Update: In stackoverflow the test 
+ *  !!document.namespaces
+ * has been suggested.
+ * @returns {Boolean} 
+ */
+JXG.supportsVML = function() {
+    /*
+    var a, b, isSupported = false;
+    a = document.body.appendChild(document.createElement('div'));
+    a.innerHTML = '<v:shape id="vml_flag1" adj="1" />';
+    b = a.firstChild;
+    b.style.behavior = "url(#default#VML)";
+    isSupported = b ? typeof b.adj == "object": true;
+    a.parentNode.removeChild(a);
+    return isSupported; 
+    */
+    //var ie = navigator.appVersion.match(/MSIE (\d\.\d)/);
+    //if (ie && parseFloat(ie[1]) < 9.0 ) {
+    if (!!document.namespaces) {
+        return true;
+    } else {
+        return false;
+    }
+};
+
+/**
+ * Detect browser support for SVG.
+ * @returns {Boolean} 
+ */
+JXG.supportsSVG = function() {
+    return document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
+};
+ 
 /**
  * Constructs a new JSXGraph singleton object.
  * @class The JXG.JSXGraph singleton stores all properties required
@@ -63,12 +103,33 @@ JXG.JSXGraph = {
      * @type String
      */
     rendererType: (function() {
+        if (JXG.supportsSVG()) {
+            JXG.Options.renderer = 'svg';
+        } else if (JXG.supportsVML()) {
+            JXG.Options.renderer = 'vml';
+            // Ok, this is some real magic going on here. IE/VML always was so
+            // terribly slow, except in one place: Examples placed in a moodle course
+            // was almost as fast as in other browsers. So i grabbed all the css and
+            // js scripts from our moodle, added them to a jsxgraph example and it
+            // worked. next step was to strip all the css/js code which didn't affect
+            // the VML update speed. The following five lines are what was left after
+            // the last step and yes - it basically does nothing but reads two
+            // properties of document.body on every mouse move. why? we don't know. if
+            // you know, please let us know.
+            function MouseMove() {
+                document.body.scrollLeft;
+                document.body.scrollTop;
+            }
+            document.onmousemove = MouseMove;
+        } else {
+            JXG.Options.renderer = 'canvas';
+        }
+        
+        /*
         var ie, opera, i, arr;
-
-        /* Determine the users browser */
+        // Determine the users browser 
         ie = navigator.appVersion.match(/MSIE (\d\.\d)/);
         opera = (navigator.userAgent.toLowerCase().indexOf("opera") != -1);
-
         // set the rendererType according to the browser
         if ((!ie) || (opera) || (ie && parseFloat(ie[1]) >= 9.0)) {
             // we're NOT in IE
@@ -100,7 +161,8 @@ JXG.JSXGraph = {
 
             document.onmousemove = MouseMove;
         }
-
+        */
+        
         // Load the source files for the renderer
         arr = JXG.rendererFiles[JXG.Options.renderer].split(',');
         for (i = 0; i < arr.length; i++) ( function(include) {

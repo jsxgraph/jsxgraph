@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010,
+    Copyright 2008-2011,
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -42,8 +42,9 @@ var JXG = {};
     JXG.require = function(libraryName) {
         document.write('<script type="text/javascript" src="' + libraryName + '"><\/script>');
     };
-/*IntergeoReader,GeonextReader*/
-/* Angle */
+/* 
+    Not longer used: IntergeoReader, GeonextReader, Angle 
+*/
     if (!JXG.useMinify) {
         JXG.baseFiles ='Math,MathNumerics,MathStatistics,MathSymbolic,MathGeometry,Complex,AbstractRenderer,FileReader,GeonextParser,Board,Options,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Conic,Polygon,Curve,Arc,Sector,Algebra,Intersection,Composition,Text,Image,Slider,Chart,Transformation,Turtle,RGBColor,Wrappers,Ticks,Util,Pstricks,Server,DataSource,JessieScript';
     } else {

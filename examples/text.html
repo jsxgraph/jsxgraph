@@ -20,7 +20,7 @@
     //k = brd.create('slider',[[-4,-2],[3,-2],[-5,1,5]],{name:'n'});
     p0 = brd.create('point', [0,0], {style:5, name:'offset'}); 
     p1 = brd.create('point', [3,0], {style:5, name:'rot+scale'}); 
-    txt = brd.create('text',[0,0, 'Hello World'], {fontSize:40});
+    txt = brd.create('text',[0,0, JXG.JSXGraph.rendererType], {fontSize:'40'});
 
     var tOff = brd.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'}); 
     tOff.bindTo(txt);
