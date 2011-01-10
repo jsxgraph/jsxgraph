@@ -8,7 +8,6 @@
 <body>
 
 <h1>Sinus und Cosinus am Einheitskreis</h1>
-      
       <!-- Die beiden Zeichenflaechen, schoen nebeneinander angeordnet in einer Tabelle -->
       <table border="0">
         <tr><td>
@@ -17,7 +16,6 @@
             <div id="box2" class="jxgbox" style="width:500px; height:500px;"></div>
         </td></tr>
       </table>
-
       Die Kurven im rechten Board kann man sich auch &uuml;ber eine <a href="javascript:void(0);" onclick="animate(b1p1, -10, 41);">Animation</a>
       des Gliders A im linken Bild erstellen lassen. Ganz neu: <strong>Hooks</strong>.
       
@@ -65,8 +63,6 @@
                         {fixed: true, trace: true, strokeColor: '#0000ff', name: 'C'});
         
 		// Die Abhaengigkeiten speichern. Mittlerweile nur noch wichtig, falls b1p1 geloescht werden sollte.
-        b1p1.addChild(b2p1);
-        b1p1.addChild(b2p2);
         board.addChild(board2);
 
         // Deklarationen fuer die Animation 
@@ -92,7 +88,7 @@
         }
         
         // und beim board registrieren.
-        print_table_id = board.addHook(print_table);
+        print_table_id = board.addHook(print_table,'update');
         /* ]]> */
       </script>
 
@@ -131,7 +127,7 @@
         b3axisy = board3.create('axis', [[0,0], [1,0]], {});
                 
    		// Hook anlegen fuer die Ausgabe des Winkels
-   		function test(board) {
+   		function test() {
    			var rad;
    			
    			// Je nachdem ob der Glider ober- oder unterhalb der X-Achse liegt, muss die Winkelreihenfolge getauscht werden.
@@ -140,14 +136,16 @@
    			else
    				rad = JXG.Math.Geometry.rad(b3p2, b3s1, b3p1);
    				
-        	$('print_angle').innerHTML = board.round(rad,2);
-        	$('print_angle_grad').innerHTML = board.round(rad/(2*Math.PI)*360,2);
+        	$('print_angle').innerHTML = board3.round(rad,2);
+        	$('print_angle_grad').innerHTML = board3.round(rad/(2*Math.PI)*360,2);
 		}
+
         hook_id = board3.addHook(test);
 
-        board3.addHook(function(board) {
-                $('print_angle_2').innerHTML =  board.round(JXG.Math.Geometry.rad(b3p1, b3p2, b3s1)/Math.PI*180,2);
+        board3.addHook(function() {
+                $('print_angle_2').innerHTML =  board3.round(JXG.Math.Geometry.rad(b3p1, b3p2, b3s1)/Math.PI*180,2);
             });
+
         /* ]]> */   
     </script>
 </body>

@@ -1676,14 +1676,15 @@ JXG.Board.prototype.removeHook = function(id) {
  * @returns {JXG.Board} Reference to the board
  */
 JXG.Board.prototype.updateHooks = function(m) {
-    var i, args = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : null;
+    var i, args = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : [];
 
     if(!JXG.exists(m))
         m = 'update';
 
     for(i=0; i<this.hooks.length; i++) {
-        if((this.hooks[i] != null) && (this.hooks[i].mode == m))
+        if((this.hooks[i] != null) && (this.hooks[i].mode == m)) {
             this.hooks[i].fn.apply(this, args);
+        }
     }
     return this;
 };
