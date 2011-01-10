@@ -56,8 +56,9 @@ function slope(x,y,f) {
   return f(x,[y])[0];
 }
 
-function slopefield(f) {
 
+function slopefield(f) {
+   var xval, yval;
    for (var i=0;i<=xnum;i++) { 
      xval = xmin + i*xsep;
      for (var j=0;j<=ynum;j++) { 
