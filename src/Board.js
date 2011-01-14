@@ -809,7 +809,7 @@ JXG.Board.prototype.mouseDownListener = function (Evt) {
         return true;
     } else {
         // prevent accidental text selection
-        // this gets us new trouble: input fields, links and drop down boxes placed as text
+        // this could get us new trouble: input fields, links and drop down boxes placed as text
         // on the board doesn't work anymore.
         if (Evt && Evt.preventDefault) {
             Evt.preventDefault();

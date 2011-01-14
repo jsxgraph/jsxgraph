@@ -212,6 +212,12 @@
             points = [];
             points.push(coords.usrCoords.slice(1));
             draftcurve.prepareUpdate().update().updateRenderer();
+            // prevent accidental text selection
+            if (e && e.preventDefault) {
+                e.preventDefault();
+            } else {
+                window.event.returnValue = false;
+            }
         };
 
         var move = function(e, m) {
