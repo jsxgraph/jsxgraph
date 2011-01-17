@@ -168,7 +168,7 @@ JXG.Chart.prototype.drawFit = function(board, parents, attributes) {
 };
 
 JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
-    var i, pols = [], x = parents[0], y = parents[1], w, xp0,xp1,xp2, yp, ypL, colorArray, p = [], fill;
+    var i, pols = [], x = parents[0], y = parents[1], w, xp0,xp1,xp2, yp, ypL, colorArray, p = [], fill, strwidth, fs;
     if (!JXG.exists(attributes['fillOpacity'])) {
         attributes['fillOpacity'] = 0.6;
     }
@@ -190,6 +190,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
     }
 
     fill = attributes['fillColor']
+    fs = parseFloat(board.options.text.fontSize);                 // TODO: handle fontSize attribute
     for (i=0;i<x.length;i++) {        
         if (JXG.isFunction(x[i])) {  // Not yet
             xp0 = function() { return x[i]()-w*0.5; };
@@ -212,16 +213,31 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
             p[1] = board.create('point',[yp,xp0], {name:'',fixed:true,visible:false});
             p[2] = board.create('point',[yp,xp2], {name:'',fixed:true,visible:false});
             p[3] = board.create('point',[0,xp2], {name:'',fixed:true,visible:false});
-            if (attributes['labels'] && attributes['labels'][i]) {
-                board.create('text',[yp,xp2,attributes['labels'][i]],attributes);
+            if ( JXG.exists(attributes['labels']) && JXG.exists(attributes['labels'][i]) ) {
+                strwidth = attributes['labels'][i].toString().length;
+                strwidth = 2.0*strwidth*fs/board.stretchX;
+                if (yp>=0) {
+                    yp += fs*0.5/board.stretchX;   // Static offset for label
+                } else {
+                    yp -= fs*strwidth/board.stretchX;   // Static offset for label
+                }
+                xp1 -= fs*0.2/board.stretchY;
+                board.create('text',[yp,xp1,attributes['labels'][i]],attributes);
             }
         } else { // vertical bars
             p[0] = board.create('point',[xp0,0], {name:'',fixed:true,visible:false});
             p[1] = board.create('point',[xp0,yp], {name:'',fixed:true,visible:false});
             p[2] = board.create('point',[xp2,yp], {name:'',fixed:true,visible:false});
             p[3] = board.create('point',[xp2,0], {name:'',fixed:true,visible:false});
-            if (attributes['labels'] && attributes['labels'][i]) {
-                board.create('text',[xp2,yp,attributes['labels'][i]],attributes);
+            if ( JXG.exists(attributes['labels']) && JXG.exists(attributes['labels'][i]) ) {
+                strwidth = attributes['labels'][i].toString().length;
+                strwidth = 0.6*strwidth*fs/board.stretchX;
+                if (yp>=0) {
+                    yp += fs*0.5/board.stretchY;   // Static offset for label
+                } else {
+                    yp -= fs*1.0/board.stretchY;   // Static offset for label
+                }
+                board.create('text',[xp1-strwidth*0.5, yp, attributes['labels'][i]],attributes);
             }
         }
         attributes['withLines'] = false;
