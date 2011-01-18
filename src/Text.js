@@ -170,12 +170,15 @@ JXG.Text.prototype.hasPoint = function (x,y) {
  */
 JXG.Text.prototype.setText = function(text) {
     var plaintext;
-    if (typeof text=='number') {
+    if (JXG.isNumber(text)) {
         plaintext = (text).toFixed(this.digits);  
+        this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
+    } else if (JXG.isFunction(text)) {
+        this.updateText = function() { this.plaintextStr = text(); };
     } else {
         plaintext = this.generateTerm(text);   // Converts GEONExT syntax into JavaScript string
+        this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
     }
-    this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
     this.updateText();
     return this;
 };
