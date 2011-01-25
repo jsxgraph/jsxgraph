@@ -27,6 +27,11 @@
         [100,70],
         [50,100,150]
     ]);
+    s2 = brd.createElement('slider', [
+        [10,50],
+        [100,50],
+        [50,120,150]
+    ], {name:'S_2'});
     curve = brd.createElement('curve', [datax,data], {strokeColor:'gray',dash:0});
 
     curve2 = brd.createElement('curve', [[0],[0]], {strokeColor:'blue',dash:0, fillColor:'red', fillOpacity:0.3});
@@ -43,6 +48,12 @@
         this.dataX.push(50);
         this.dataY.push(data[50]);
     };
+    
+    brd.addHook(function(){ 
+        if (s2.Value()<s.Value()) { 
+            s2.position = s.position; 
+        } 
+    });
     
     brd.update();
     
