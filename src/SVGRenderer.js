@@ -27,6 +27,11 @@ JXG.SVGRenderer = function(container) {
     var i;
     this.constructor();
 
+    /* 
+        Enable easy test which renderer is used.
+    */
+    this.type = 'svg';
+
     this.svgRoot = null;
     this.suspendHandle = null;
     

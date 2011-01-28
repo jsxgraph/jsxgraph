@@ -11,16 +11,18 @@
 <div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 <div id="debug" style="display:block;"></div>
 <script type='text/javascript'>
-    var brd, k, txt, p0, p1;
+    var brd, k, txt, txt2, p0, p1;
     //JXG.Options.text.useMathJax = true;
     //JXG.Options.renderer = 'canvas';
-    JXG.Options.text.defaultDisplay = 'internal';
+    //JXG.Options.text.defaultDisplay = 'internal';
     
     brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, showNavigation:true, showCopyright:true});
     //k = brd.create('slider',[[-4,-2],[3,-2],[-5,1,5]],{name:'n'});
     p0 = brd.create('point', [0,0], {style:5, name:'offset'}); 
     p1 = brd.create('point', [3,0], {style:5, name:'rot+scale'}); 
     txt = brd.create('text',[0,0, JXG.JSXGraph.rendererType], {fontSize:'40'});
+
+    txt2 = brd.create('text',[2,-3, function(){ return txt.getSize().toString();}], {});
 
     var tOff = brd.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'}); 
     tOff.bindTo(txt);
@@ -38,6 +40,8 @@
                                         function(){return p1.Dist(p0)/3;}], {type:'scale'}); 
     tOffInv.bindTo(txt); tScale.bindTo(txt); tOff.bindTo(txt);
     brd.update();
+    
+    //alert(txt.rendNode.getBBox().width);
 </script> 
 </body>
 </html>

@@ -180,8 +180,40 @@ JXG.Text.prototype.setText = function(text) {
         this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
     }
     this.updateText();
+    this.updateSize();
     return this;
 };
+
+/**
+ * Recompute the width and the height of the text box.
+ * Update array this.size with pixel values.
+ * The result may differ from browser to browser
+ * by some pixels.
+ * In IE and canvas we use a very crude estimation of the dimensions of
+ * the textbox. 
+ * In JSXGraph this.size is necessary for applying rotations in IE and
+ * for aligning text.
+ * @return {}
+ */
+JXG.Text.prototype.updateSize = function () {
+    // Here comes a very crude estimation of the dimensions of
+    // the textbox. It is only necessary for the IE.
+    if (this.display=='html' && this.board.renderer.type!='vml') {
+        this.size = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
+    } else if (this.display=='internal' && this.board.renderer.type=='svg') {
+        this.size = [this.rendNode.getBBox().width, this.rendNode.getBBox().height];
+    } else if (this.board.renderer.type=='vml' || (this.display=='internal' && this.board.renderer.type=='canvas')) { 
+        this.size = [parseFloat(this.visProp['fontSize'])*this.plaintextStr.length*0.45,parseFloat(this.visProp['fontSize'])*0.9]        
+    }
+};    
+
+/**
+ * Return the width of the text element.
+ * @return {array} [width, height] in pixel
+ */
+JXG.Text.prototype.getSize = function () {
+    return this.size;
+};    
 
 /**
  * Set the text to new, fixed coordinates.
@@ -202,9 +234,10 @@ JXG.Text.prototype.setCoords = function (x,y) {
  * is called. 
  */
 JXG.Text.prototype.update = function () {
+    var anchor, plainOld;
     if (this.needsUpdate && !this.frozen) {
         if (this.relativeCoords){
-            var anchor;
+            anchor;
             if(!this.isLabel) {
                 anchor = this.element.getTextAnchor();
             }
@@ -220,9 +253,7 @@ JXG.Text.prototype.update = function () {
     }   
     if (this.needsUpdate) {
         this.updateText();
-        // Here comes a very crude estimation of the dimensions of
-        // the textbox. It is only necessary for the IE.
-        this.size = [parseFloat(this.visProp['fontSize'])*this.plaintextStr.length*0.45,parseFloat(this.visProp['fontSize'])*0.9];
+        this.updateSize();
         this.updateTransform();
     }
     return this;

@@ -26,6 +26,12 @@
 JXG.CanvasRenderer = function(container) {
     var i;
     this.constructor();
+
+    /* 
+        Enable easy test which renderer is used.
+    */
+    this.type = 'canvas';
+    
     this.canvasRoot = null;
     this.suspendHandle = null;
     this.canvasId = JXG.Util.genUUID();

@@ -32,6 +32,11 @@ fuer Browser mit VML-Elementen (Internet Explorer)
 JXG.VMLRenderer = function(container) {
     this.constructor();
     
+    /* 
+        Enable easy test which renderer is used.
+    */
+    this.type = 'vml';
+    
     this.container = container;
     this.container.style.overflow = 'hidden';
     this.container.onselectstart = function () { return false; };
@@ -269,6 +274,9 @@ JXG.VMLRenderer.prototype.transformImage = function(el,t) {
         maxX, maxY, minX, minY, i, h, w,
         nt;
 
+    if (el.type==JXG.OBJECT_TYPE_TEXT) {
+        el.updateSize();
+    }
     if (len>0) {
         nt = el.rendNode.style.filter.toString();
         if (!nt.match(/DXImageTransform/)) {
