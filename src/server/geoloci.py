@@ -67,7 +67,7 @@ class JXGGeoLociModule(JXGServerModule):
         # Here indeterminates of polynomial ring have to be adjusted
 
         if number > 0:
-            cinput += "Use R ::= QQ[u[1..%s],x,y];" % number
+            cinput += "Use R ::= QQ[u[1..%s],x,y], Xel;" % number
         else:
             cinput += "Use R ::= QQ[x,y];"
 

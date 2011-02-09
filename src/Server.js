@@ -177,8 +177,10 @@ JXG.Server.callServer = function(action, callback, data, sync) {
                     case 4:
                         if(AJAX.status != 200) { }
                             //alert("Fehler:" + AJAX.status);
-                        else  // grab it and call the server callback to debase64, unzip, and parse the data
+                        else  { // grab it and call the server callback to debase64, unzip, and parse the data
+                            console.log(AJAX.responseText);
                             cb(AJAX.responseText);
+                        }
                     break;
                     default:
                         return false;

@@ -295,7 +295,7 @@ JXG.Circle.prototype.generateRadiusSquared = function () {
         var p1 = this.point2.symbolic.x;
         var p2 = this.point2.symbolic.y;
 
-        rsq = '(' + p1 + '-' + m1 + ')^2 + (' + p2 + '-' + m2 + ')^2';
+        rsq = '((' + p1 + ')-(' + m1 + '))^2 + ((' + p2 + ')-(' + m2 + '))^2';
     } else if (this.method == "pointRadius") {
         if (typeof(this.radius) == 'number')
             rsq = '' + this.radius*this.radius;
@@ -306,7 +306,7 @@ JXG.Circle.prototype.generateRadiusSquared = function () {
         var q1 = this.line.point2.symbolic.x;
         var q2 = this.line.point2.symbolic.y;
 
-        rsq = '(' + p1 + '-' + q1 + ')^2 + (' + p2 + '-' + q2 + ')^2';
+        rsq = '((' + p1 + ')-(' + q1 + '))^2 + ((' + p2 + ')-(' + q2 + '))^2';
     } else if (this.method == "pointCircle") {
         rsq = this.circle.Radius();
     }
