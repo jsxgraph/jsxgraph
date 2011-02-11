@@ -58,18 +58,10 @@ if __name__ == '__main__':
     fout.close()
 
     # Minify 
-    if False:
-        # Minify from Douglas Crockford
-	import jsmin
-        fin = open(tmpfilename,'r')
-        fout = open(coreFilename,'a')
-        jsm = jsmin.JavascriptMinify()
-        jsm.minify(fin, fout)
-    else:
-        # YUI compressor from Yahoo
-        s = 'java -jar ./' + compressor + '/build/' + compressor + '.jar --type js ' + tmpfilename + ' >>' + coreFilename
-        print s
-        os.system(s)
+    # YUI compressor from Yahoo
+    s = 'java -jar ./' + compressor + '/build/' + compressor + '.jar --type js ' + tmpfilename + ' >>' + coreFilename
+    print s
+    os.system(s)
      
     os.remove(tmpfilename)
     os.system("cp %s %s" % (coreFilename, '../JSXCompressor/'))

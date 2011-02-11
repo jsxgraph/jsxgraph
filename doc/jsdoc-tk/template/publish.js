@@ -3,7 +3,7 @@ function publish(symbolSet) {
 	publish.conf = {  // trailing slash expected for dirs
 		ext:         ".html",
 		outDir:      JSDOC.opt.d || SYS.pwd+"../out/jsdoc/",
-		templatesDir: JSDOC.opt.t || SYS.pwd+"../templates/jsdoc/",
+		templatesDir: JSDOC.opt.t || SYS.pwd+"../templates/jsx/",
 		symbolsDir:  "symbols/",
 		srcDir:      "symbols/src/"
 	};

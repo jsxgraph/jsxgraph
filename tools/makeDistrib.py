@@ -28,7 +28,6 @@ license = """/*
     """
 
 import os
-import jsmin
 import re
 import tempfile
 import sys
@@ -92,18 +91,11 @@ if __name__ == '__main__':
     fout.write(license)
     fout.close()
 
-    # Minify 
-    if False:
-        # Minify from Douglas Crockford
-        fin = open(tmpfilename,'r')
-        fout = open(coreFilename,'a')
-        jsm = jsmin.JavascriptMinify()
-        jsm.minify(fin, fout)
-    else:
-        # YUI compressor from Yahoo
-        s = 'java -jar ./' + compressor + '/build/' + compressor + '.jar --type js ' + tmpfilename + ' >>' + coreFilename
-        print s
-        os.system(s)
+    # Minify
+    # YUI compressor from Yahoo
+    s = 'java -jar ./' + compressor + '/build/' + compressor + '.jar --type js ' + tmpfilename + ' >>' + coreFilename
+    print s
+    os.system(s)
      
     os.remove(tmpfilename)
 
