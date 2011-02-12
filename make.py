@@ -198,19 +198,65 @@ def makeRelease():
     shutil.copy("distrib/jsxgraph.css", "tmp/jsxgraph.css")
     os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraph.css README LICENSE && cd ..")
     shutil.move("tmp/jsxgraph-" + version + ".zip", output + "/jsxgraph-" + version + ".zip")
-    
+
+
 '''
     Make JSXCompressor, a JSXGraph subproject
 '''
-def makeCompressor():
-    print "make compressor"
+def makeCompressor(afterCore = False):
+    global yui, jsdoc, version, output, license
+
+    print "Make JSXCompressor"
+
+    if afterCore:
+        out = output
+    else:
+        out = "distrib"
+
+    jstxt = 'JXG = {};\n'
+    jstxt += 'JXG.decompress = function(str) {return unescape((new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str))).unzip()[0][0]);};\n'
+
+    # Take the source files and write them into jstxt
+    loader = ['Util']
+    for f in loader:
+        print 'take ', f
+        jstxt += open('src/'+f+'.js','r').read()
+        jstxt += '\n';
+
+
+    tmpfilename = tempfile.mktemp()
+    fout = open(tmpfilename,'w')
+    fout.write(jstxt)
+    fout.close()
+
+    # Prepend license text
+    coreFilename = output + "/jsxcompressor.js"
+    fout = open(coreFilename, 'w')
+    fout.write(license)
+    fout.close()
+
+    # Minify 
+    # YUI compressor from Yahoo
+    s = 'java -jar ' + yui + '/build/yuicompressor*.jar --type js ' + tmpfilename + ' >>' + coreFilename
+    print s
+    os.system(s)
+     
+    os.remove(tmpfilename)
+    os.system("cp %s %s" % (coreFilename, 'JSXCompressor/'))
+    # If makeCore has been called just befure, make sure you grab the newest version
+    os.system("cp %s %s" % (out + '/jsxgraphcore.js', 'JSXCompressor/'))
+    os.system("cp %s %s" % ('distrib/prototype.js', 'JSXCompressor/'))
+    os.system("cp %s %s" % ('distrib/jsxgraph.css', 'JSXCompressor/'))
+    os.system("rm JSXCompressor/*~")
+    os.system("zip -r " + output + "/jsxcompressor.zip JSXCompressor/*")
+
 
 '''
     Make targets Release and Compressor
 '''
 def makeAll():
     makeRelease()
-    makeCompressor()
+    makeCompressor(True)
     
 
 def main(argv):
