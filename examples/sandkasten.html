@@ -9,14 +9,6 @@
 
 <h2>Playground to test things temporarily. May change very often.</h2>
 
-<form>
-dy / dx = f(x,y) = <input type="text" id="odeinput" value="(2-x)*y" onchange="doIt();"><input type=button value="ok" onclick="doIt()"> <br />
-Segment length = <input name="SegmentLength" size="20" value="0.4" type="text" onchange="doIt();"><input type=button value="ok" onclick="doIt()"> <br />
-x min = <input id="Xmin" size="10" value="-4" type="text" onchange="doIt();"><input type=button value="ok" onclick="doIt()">
-x max = <input id="Xmax" size="10"  value="4" type="text" onchange="doIt();"><input type=button value="ok" onclick="doIt()"> <br />
-</form>
-
-
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
 </div>
@@ -26,133 +18,13 @@ x max = <input id="Xmax" size="10"  value="4" type="text" onchange="doIt();"><in
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var brd = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[-5, 5, 5, -5]});
 
+    p1 = brd.create('point', [0,0]);
+    p2 = brd.create('point', [2,1]);
+    p3 = brd.create('point', [0,1]);
 
-var length = 0.4;
-
-var xmin = -4;
-var xmax = 4;
-var xsep = 0.5;
-var xnum = Math.ceil((xmax-xmin)/xsep);
-
-var ymin = -4;
-var ymax = 4;
-var ysep = 0.5;
-var ynum = Math.ceil((ymax-ymin)/ysep);
-
-var brd = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[xmin,ymax,xmax,ymin]});
-var N = brd.create('slider',[[-7,9.5],[7,9.5],[-15,10,15]], {name:'N'});
-//var P = brd.create('point',[0,1], {name:'(x_0,y_0)'});
-var P = brd.create('point',[0,1], {name:'P'});
-var f;
-
-var slopefieldlines = [];
-
-function doIt() {
-  var txt = JXG.GeonextParser.geonext2JS(document.getElementById("odeinput").value);
-  f = new Function("x", "yy", "var y = yy[0]; var z = " + txt + "; return [z];");
-  brd.suspendUpdate();
-  slopefield();
-  brd.unsuspendUpdate();
-  brd.update();
-}
-
-function ode() {
-   return JXG.Math.Numerics.rungeKutta('heun', [P.Y()], [P.X(), P.X()+N.Value()], 200, f);
-}
-
-
-
-function slope(x,y) {
-  return f(x, [y])[0];
-  //return (2-x)*y;
-}
-
-function slopefield() {
-
-    var i;
-    // clear old field
-    for(i=0; i<slopefieldlines.length; i++) {
-        brd.removeObject(slopefieldlines[i]);
-    }
-    slopefieldlines = [];
-
-   for (i=0;i<=xnum;i++) {
-     xval = xmin + i*xsep;
-     for (var j=0;j<=ynum;j++) {
-       yval = ymin + j*ysep;
-
-//       slope = eval(txt.replace(/x/g,xval).replace(/y/g,yval));
-
-       slopefieldlines.push(brd.create('line',[
-       [xval-0.5*length*Math.cos(Math.atan( slope(xval,yval) )), yval-0.5*length*Math.sin(Math.atan( slope(xval,yval) ))],
-       [xval+0.5*length*Math.cos(Math.atan( slope(xval,yval) )), yval+0.5*length*Math.sin(Math.atan( slope(xval,yval) ))]
-       ],
-       {straightFirst:false, straightLast:false, strokeWidth:1, dash:0}));
-     }
-   }
-}
-
-
-var g = brd.create('curve', [[0],[0]], {strokeColor:'red', strokeWidth:'2px'});
-g.updateDataArray = function() {
-    var data = ode();
-    var h = N.Value()/200;
-    this.dataX = [];
-    this.dataY = [];
-    for(var i=0; i<data.length; i++) {
-        this.dataX[i] = P.X()+i*h;
-        this.dataY[i] = data[i][0];
-    }
-};
-
-doIt();
-
-    return;
-
-
-board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis:true});
-
-    a = board._point([0, 0]);
-    b = board._point([1, 0]);
-    c = board._point([0.5, 1]);
-
-    cc = board._circumcircle([a, b, c]);
-    ic = board._incircle([a, b, c]);
-
-    alert((cc[1].Radius() + ic[1].Radius()) / 2);
-
-    return ;
-    cons1 = board.construct("A(1,1);BC(1,3);k(A,[A BC]);X(2,4)");
-cons2 = board.construct("J(7,4);l_2=[BC A]");
-cons1.points[0].face('>'); // A
-cons1.BC.strokeColor('black');
-cons2.l_2.strokeWidth(4);
-cons1.X.size(8);
-cons3 = board.construct("test = Macro(D,E,F) { g=[DE] nolabel; k1=k(D,[EF]);};ttt=test(A,X,J);");
-cons3.ttt.g.strokeColor('red');
-
-    return;
-    (function() {
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 2, 2, -1], axis:true}),
-            p0 = board._point([0,0]),
-            p1 = board._point([1,0]),
-            p2 = board._point([0.5, 1]),
-            cc = board._circumcenter([p0, p1, p2]),
-            cc2 = board._circumcircle([p0, p1, p2]),
-            ic = board._incircle([p0, p1, p2]),
-            x = 0.5, y = 1;
-
-        // triangle
-        board._segment([p0, p1]);
-        board._segment([p1, p2]);
-        board._segment([p0, p2]);
-        //board._line([0, -y, x]);
-        //board._line([0, 0, 1]);
-        //board._line([y, -y, x-1]);
-
-        board.update();
-    })();
+    a = brd.create('arc', [p1, p2, p3]);
 
     /* ]]> */
 </script>

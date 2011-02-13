@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010
+    Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -29,9 +29,9 @@
  */
 
 /**
- * @class This element is used to provide a constructor for arc elements.
  * @pseudo
- * @description An is a segment of the circumference of a circle.
+ * @description An arc is a segment of the circumference of a circle. It is defined by a midpoint, one point that
+ * defines the radius, and a third point that defines the angle of the arc.
  * @name Arc
  * @augments Curve
  * @constructor
@@ -59,22 +59,23 @@
 JXG.createArc = function(board, parents, attributes) {
     var el, defaults, key, options;
         
-    // Alles 3 Punkte?
-    if ( !(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2]))) {
-        throw new Error("JSXGraph: Can't create Arc with parent types '" + 
-                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + 
+    if(!(parents = JXG.checkParents('arc', parents, [[JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT]]))) {
+        throw new Error("JSXGraph: Can't create Arc with parent types '" +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
                         (typeof parents[2]) + "'." +
                         "\nPossible parent types: [point,point,point]");
     }
 
-    // Read the default values from Options and use them in case they are not set by the user
-    // in attributes
+    // Read the default values from Options and use them in case they are
+    // not set by the user in attributes
     defaults = {
         withLabel: JXG.readOption(board.options,'elements','withLabel'),
         layer: JXG.readOption(board.options,'layer','arc'),
-        useDirection:false      // useDirection is necessary for circumCircleArcs
+        // useDirection is necessary for circumCircleArcs
+        useDirection:false,
+        strokeWidth: JXG.readOption(board.options, 'elements', 'strokeWidth')
     };
-    defaults['strokeWidth'] =  board.options.elements['strokeWidth'];
+
     options = board.options.arc;
     for (key in options) {
         defaults[key] = options[key];

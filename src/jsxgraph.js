@@ -593,34 +593,80 @@ JXG.createFunction = function(term, board, variableName, evalGeonext) {
 };
 
 /**
- * Checks given parents array against expectations. To be implemented
+ * Checks given parents array against several expectations.
+ * @param {String} element The name of the element to be created
  * @param {Array} parents A parents array
- * @param {Array} expects TODO: describe this
+ * @param {Array} expects Each possible parents array types combination is given as
+ * an array of element type constants containing the types or names of elements that are
+ * accepted and in what order they are accepted. Strings can be given for basic data types
+ * are <em>number, string, array, function, object</em>. We accept non element JSXGraph
+ * types like <em>coords</em>, too.
  * @returns {Array} A new parents array prepared for the use within a create* method
  */
-JXG.checkParents = function(parents, expects) {
-    /*
-        structure of expects, e.g. for midpoint:
+JXG.checkParents = function(element, parents, expects) {
+        // some running variables
+    var i, j, k, len,
+    
+        // collects the parent elements that already got verified
+        new_parents = [],
 
-        idea 1:
-        [
-            [
-                JXG.OBJECT_CLASS_POINT,
-                JXG.OBJECT_CLASS_POINT
-            ],
-            [
-                JXG.OBJECT_CLASS_LINE
-            ]
-        ]
+        // in case of multiple parent array type combinations we may have to start over again
+        // so hold the parents array in an temporary array in case we need the original one back
+        tmp_parents = parents.slice(0),
 
-        this is good for describing what is expected, but this way the parent elements
-        can't be sorted. how is this method supposed to know, that in case of a line it
-        has to return the line's defining points?
+        // test the given parent element against what we expect
+        is = function(expect, parent) {
+            // we basically got three cases:
+            // expect is of type
+            // number => test for parent.elementClass and parent.type
+            //     lucky us elementClass and type constants don't overlap \o/
+            // string => here we have two sub cases depending on the value of expect
+            //   string, object, function, number => make a simple typeof
+            //   array => check via isArray
+
+            var type_expect = (typeof expect).toLowerCase();
+
+            if(type_expect === 'number') {
+                return parent && ((parent.type && parent.type === expect) || (parent.elementClass && parent.elementClass === expect))
+            } else {
+                switch(expect.toLowerCase()) {
+                    case 'string':
+                    case 'object':
+                    case 'function':
+                    case 'number':
+                        return (typeof parent).toLowerCase() === expect.toLowerCase();
+                        break;
+                    case 'array':
+                        return JXG.isArray(parent);
+                        break;
+                }
+            }
 
 
-        see below the commented out functions checkParameter and readParameter for
-        another idea from alfred.
-     */
+            return false;
+        };
+
+
+    for(i = 0; i < expects.length; i++) {
+        // enter the next loop only if parents has enough elements
+        for(j = 0; j < expects[i].length && parents.length >= expects[i].length; j++) {
+            k = 0;
+            while(k < tmp_parents.length && !is(expects[i][j], tmp_parents[k]))
+                k++;
+
+            if(k<tmp_parents.length) {
+                new_parents.push(tmp_parents.splice(len-k-1, 1)[0]);
+            }
+        }
+
+        // if there are still elements left in the parents array we need to
+        // rebuild the original parents array and start with the next expect array
+        if(tmp_parents.length) {
+            tmp_parents = parents.slice(0);
+            new_parents = [];
+        } else // yay, we found something \o/
+            return new_parents;
+    }
 };
 
 /*
