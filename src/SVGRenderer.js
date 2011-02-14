@@ -89,7 +89,7 @@ JXG.SVGRenderer = function(container) {
     this.dashArray = ['2, 2', '5, 5', '10, 10', '20, 20', '20, 10, 10, 10', '20, 5, 10, 5'];
 };
 
-JXG.SVGRenderer.prototype = JXG.AbstractRenderer();
+JXG.SVGRenderer.prototype = JXG.AbstractRenderer;
 
 JXG.SVGRenderer.prototype.setShadow = function(el) {
     if (el.visPropOld['shadow']==el.visProp['shadow']) {

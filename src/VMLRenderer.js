@@ -65,7 +65,7 @@ JXG.VMLRenderer = function(container) {
     this.dashArray = ['Solid', '1 1', 'ShortDash', 'Dash', 'LongDash', 'ShortDashDot', 'LongDashDot'];    
 };
 
-JXG.VMLRenderer.prototype = JXG.AbstractRenderer();
+JXG.VMLRenderer.prototype = JXG.AbstractRenderer;
 
 JXG.VMLRenderer.prototype.setAttr = function(node, key, val, val2) {
     try {

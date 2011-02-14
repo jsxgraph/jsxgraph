@@ -35,14 +35,29 @@
 /**
  * This function returns the AbstractRenderer object which defines the interface between the renderer
  * objects and the logical parts of JSXGraph.
- * @returns {Object} An instance of the AbstractRenderer class.
+ * @class JXG.AbstractRenderer
  * @see JXG.SVGRenderer
  * @see JXG.VMLRenderer
  * @see JXG.CanvasRenderer
  */
-JXG.AbstractRenderer = function() {
+JXG.AbstractRenderer = {
 
-return {
+    // This used to be a function returning an object given by an object literal.
+    // I feel like there was a reason why this wasn't just an object literal before
+    // but i can't remember what that reason could be. So, if you encounter a problem
+    // with this being a singleton, make this a functional pattern or pseudoclassical
+    // inheritance pattern class again and change this line
+    // for every X \in {Canvas, SVG, VML}:
+    //    JXG.XRenderer.prototype = JXG.AbstractRenderer;
+    // to
+    //    JXG.XRenderer.prototype = JXG.AbstractRenderer();
+    // resp.
+    //    JXG.XRenderer.prototype = new JXG.AbstractRenderer();
+    // in every XRenderer.js.
+    //
+    // AND (MOST IMPORTANT!): PLEASE NOTE HERE WHY THIS SHOULD BE A CLASS INSTEAD
+    // OF A SINGLETON OBJECT.
+
 	/**
 	 * The vertical offset for {@link Text} elements. Every {@link Text} element will
 	 * be placed this amount of pixels below the user given coordinates.
@@ -1246,5 +1261,4 @@ return {
     setBuffering: function() {
 
     }
-};
 };
