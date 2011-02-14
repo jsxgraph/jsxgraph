@@ -27,6 +27,7 @@
 
 /**
  * Parser helper routines. The methods in here are for parsing expressions in Geonext Syntax.
+ * @namespace
  */
 
 JXG.GeonextParser = {};
