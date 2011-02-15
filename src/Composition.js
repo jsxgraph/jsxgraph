@@ -1357,15 +1357,20 @@ JXG.createIntegral = function(board, parents, attributes) {
 
     //pb_on_curve.addChild(pb_on_axis);
 
-    Int = JXG.Math.Numerics.I([start, end], curve.yterm);
-    t = board.create('text', [
-        function () { return pb_on_curve.X() + 0.2; },
-        function () { return pb_on_curve.Y() - 0.8; },
-        function () {
-                var Int = JXG.Math.Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.yterm);
-                return '&int; = ' + (Int).toFixed(4);
-            }
-        ],{labelColor: attributes['labelColor']});
+    if(attributes.withLabel !== false) {
+        Int = JXG.Math.Numerics.I([start, end], curve.yterm);
+        t = board.create('text', [
+            function () { return pb_on_curve.X() + 0.2; },
+            function () { return pb_on_curve.Y() - 0.8; },
+            function () {
+                    var Int = JXG.Math.Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.yterm);
+                    return '&int; = ' + (Int).toFixed(4);
+                }
+            ],{labelColor: attributes['labelColor']});
+
+        pa_on_curve.addChild(t);
+        pb_on_curve.addChild(t);
+    }
 
     attribs.name = attributes.name[4];
     attribs.id = attributes.id[4];
@@ -1413,8 +1418,6 @@ JXG.createIntegral = function(board, parents, attributes) {
     };
     pa_on_curve.addChild(p);
     pb_on_curve.addChild(p);
-    pa_on_curve.addChild(t);
-    pb_on_curve.addChild(t);
 
     return p;//[pa_on_axis, pb_on_axis, p, t];
 
