@@ -512,7 +512,7 @@ JXG.VMLRenderer.prototype.createPrim = function(type, id) {
     }
     node.style.position = 'absolute';
     this.setAttr(node, 'id', this.container.id+'_'+id);
-    
+   
     return node;
 };
 

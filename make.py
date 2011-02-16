@@ -41,7 +41,7 @@ import shutil
 
 
 # Default values for options. May be overridden via command line options
-yui = "~/public_html/jsxgraph/trunk/yuicompressor-2.4.2"
+yui = "~/public_html/jsxgraph/trunk/tools/yuicompressor-2.4.2"
 jsdoc = "~/public_html/jsxgraph/jsdoc_toolkit-2.3.2/jsdoc-toolkit"
 output = "distrib"
 version = None
