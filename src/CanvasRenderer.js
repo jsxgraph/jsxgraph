@@ -59,7 +59,7 @@ JXG.CanvasRenderer = function(container) {
     this.dashArray = [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]];
 };
 
-JXG.CanvasRenderer.prototype = JXG.AbstractRenderer;
+JXG.CanvasRenderer.prototype = JXG.AbstractRenderer();
 
 /*
  * I suggest to use this.fill() and this.stroke() instead of this.updateStencilBuffer() A.W.

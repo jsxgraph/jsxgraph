@@ -40,7 +40,8 @@
  * @see JXG.VMLRenderer
  * @see JXG.CanvasRenderer
  */
-JXG.AbstractRenderer = {
+JXG.AbstractRenderer = function() {
+    return {
 
     // This used to be a function returning an object given by an object literal.
     // I feel like there was a reason why this wasn't just an object literal before
@@ -57,6 +58,30 @@ JXG.AbstractRenderer = {
     //
     // AND (MOST IMPORTANT!): PLEASE NOTE HERE WHY THIS SHOULD BE A CLASS INSTEAD
     // OF A SINGLETON OBJECT.
+    //
+    // Given an object o with property a set to true
+    //     var o = {a: true};
+    // and a class c doing nothing
+    //     c = function() {};
+    // Set c's prototype to o
+    //     c.prototype = o;
+    // and create an instance of c we get i.a to be true
+    //     i = new c();
+    //     i.a;
+    //     > true
+    // But we can overwrite this property via
+    //     c.prototype.a = false;
+    //     i.a;
+    //     > false
+    //
+    // Two possible solutions:
+    //   * Use this as a class as it was before (with tons of "AbstractRenderer.prototype" etc.)
+    //     Advantage: AbstractRenderer is documented properly
+    //     Disadvantage: Every board will get it's own renderer which is not necessary
+    //   * Use this only as an object. This will require the Renderers to be objects, too, because of
+    //     the problem described above.
+    //     Advantage: Every renderer exists only once, not every board gets its own renderer
+    //     Disadvantage: Every renderer is created, whether it is used or not
 
 	/**
 	 * The vertical offset for {@link Text} elements. Every {@link Text} element will
@@ -1261,4 +1286,5 @@ JXG.AbstractRenderer = {
     setBuffering: function() {
 
     }
+};
 };
