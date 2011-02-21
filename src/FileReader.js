@@ -25,7 +25,10 @@
 
 JXG.FileReader = new function() {
 
-this.parseFileContent = function(url, board, format) {
+this.parseFileContent = function(url, board, format, async) {
+    if(!JXG.exists(async))
+        async = true;
+
     this.request = false;
     var e;
     try {
@@ -50,7 +53,7 @@ this.parseFileContent = function(url, board, format) {
         alert("AJAX not activated!");
         return;
     }
-    this.request.open("GET", url, true);
+    this.request.open("GET", url, async);
     if(format.toLowerCase()=='raw') {
         this.cbp = function() {
             var request = this.request;
