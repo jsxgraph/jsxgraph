@@ -1,0 +1,123 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+#menu {
+    margin: 0;
+    padding: 0;
+}
+
+#watermark {
+    z-index: -1;
+    width: 90%;
+    height: 90%;
+    top: 5%;
+    left: 5%;
+    position: absolute;
+}
+
+#menu li {
+    float: left;
+    border: 0px solid red;
+    list-style-type: none;
+}
+
+#menu li a {
+    color: white;
+    text-decoration: none;
+}
+
+#menu li a:hover {
+    text-decoration: none;
+}
+
+#menu li h2 {
+    margin: 0;
+    padding: 0;    
+}
+
+#menu-title {
+    width: 700px;
+    text-align: left;
+}
+
+#menu-info {
+    width: 90px;
+    text-align: center;
+}
+
+#menu-source {
+    width: 100px;
+    text-align: center;
+}
+
+#title {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    width: 896px;
+    height: 50px;
+    margin: -302px 0 0 -448px;
+    border: 0;
+    color: white;
+}
+
+#header {
+    top: 5px;
+    left: 5px;
+    position: absolute;
+    font-size: 0.8em; 
+}
+
+#footer {
+    right: 20px;
+    bottom: 20px;
+    position: absolute;
+    font-size: 1.0em; 
+}
+
+#footer a {
+    color: #7690c9;
+    text-decoration: none;
+}
+
+.content-block {
+    top: 50%;
+    left: 50%;
+    margin: -252px 0 0 -448px;
+    width: 896px;
+    height: 504px;
+    position: absolute;
+    border: 0px solid white;
+}
+
+#container {
+    display: block;
+    text-align: center;
+    width: 894px;
+    border: 0px dashed gray;
+}
+
+#jxgbox {
+    float: none;
+    background: none;
+}
+
+#explanation {
+    display: none;
+}
+
+#source {
+    display: none;
+}
+
+.jxgbox {
+    background-color: black;
+    border: 0;
+}
+
+a img {
+    border: 0;
+}
