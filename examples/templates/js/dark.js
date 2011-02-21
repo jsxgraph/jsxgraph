@@ -1,7 +1,8 @@
-{
+JXG.Options = {
     showCopyright : false,
     showNavigation : true,
     takeSizeFromFile : false,
+    renderer: 'svg',
     takeFirst : false,
 
     grid : {
@@ -167,6 +168,13 @@
                                  // It is much slower, but the result is better
     },
 
+    precision : {
+        touch    : 30,
+        mouse    : 4,
+        epsilon  : 0.0001,
+        hasPoint : 4
+    },
+
     // Default ordering of the layers
     layer : {
         numlayers:20, // only important in SVG
@@ -190,4 +198,4 @@
     	toOrigin: null,
     	to10: null
     }
-}
+};

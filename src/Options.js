@@ -529,12 +529,11 @@ JXG.rgb2cb = function(color, deficiency) {
  * @param board {JXG.Board} The board the options should be applied to.
  */
 JXG.loadOptionsFromFile = function(fileurl, applyTo, board) {
-   this.cbp = function(t) {
-      this.parseOptionsString(t, applyTo, board);
+   var cbp = function(t) {
+      JXG.parseOptionsString(t, applyTo, board);
    };
-   this.cb = JXG.bind(this.cbp,this);
 
-   JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw', false);
+   JXG.FileReader.parseFileContent(fileurl, cbp, 'raw', false);
 };
 
 /**
@@ -548,9 +547,9 @@ JXG.parseOptionsString = function(text, applyTo, board) {
 
     if (text != '') {
         newOptions = eval("(" + text + ")");
-    }
-    else
+    } else {
         return;
+    }
 
     var maxDepth = 10;
     var applyOption = function (base, option, depth) {
