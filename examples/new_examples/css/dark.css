@@ -1,0 +1,153 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+#menu {
+    margin: 0;
+    padding: 0;
+}
+
+#watermark {
+    z-index: -1;
+    width: 90%;
+    height: 90%;
+    top: 5%;
+    left: 5%;
+    position: absolute;
+}
+
+#menu li {
+    float: left;
+    border: 0px solid white;
+    list-style-type: none;
+}
+
+#menu li a {
+    color: white;
+    border: 0px solid white;
+    text-decoration: none;
+    padding: 3px;
+}
+
+#menu li a:hover {
+    text-decoration: none;
+    border: 1px solid #333;
+    background-color: white;
+    color: black;
+}
+
+#menu li h2 {
+    margin: 0;
+    padding: 0;    
+}
+
+#menu-title {
+    width: 700px;
+    text-align: left;
+}
+
+#menu-info {
+    width: 90px;
+    text-align: center;
+}
+
+#menu-source {
+    width: 100px;
+    text-align: center;
+}
+
+#title {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    width: 896px;
+    height: 50px;
+    margin: -302px 0 0 -448px;
+    border: 0;
+    color: white;
+}
+
+#header {
+    top: 5px;
+    left: 5px;
+    position: absolute;
+    font-size: 0.8em; 
+}
+
+#footer {
+    right: 20px;
+    bottom: 20px;
+    position: absolute;
+    font-size: 1.0em; 
+}
+
+#footer a {
+    color: #7690c9;
+    text-decoration: none;
+}
+
+.content-block {
+    top: 50%;
+    left: 50%;
+    margin: -252px 0 0 -448px;
+    width: 896px;
+    height: 504px;
+    position: absolute;
+    border: 0px solid white;
+}
+
+#container {
+    display: block;
+    text-align: center;
+    width: 894px;
+    border: 0px dashed gray;
+}
+
+#jxgbox {
+    float: none;
+    background: none;
+}
+
+#explanation {
+    display: none;
+    height: 500px;
+    overflow: auto;
+}
+
+#source {
+    display: none;
+}
+
+.jxgbox {
+    background-color: black;
+    border: 3px #222 double;
+}
+
+a img {
+    border: 0;
+}
+
+a {
+    color: #7690c9;
+    text-decoration: none;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+.jxgbox a {
+    font-size: 1.5em;
+/*    border: 1px white solid;
+    background-color: #333;*/
+    padding: 3px;
+}
+
+.syntaxhighlighter {
+    height: 500px;
+    overflow: auto;
+}
+/*.jxgbox a:hover {
+    border: 1px #333 solid;
+    background-color: white;
+    color: black;
+}*/
