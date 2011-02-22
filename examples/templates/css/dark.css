@@ -20,17 +20,22 @@ body {
 
 #menu li {
     float: left;
-    border: 0px solid red;
+    border: 0px solid white;
     list-style-type: none;
 }
 
 #menu li a {
     color: white;
+    border: 0px solid white;
     text-decoration: none;
+    padding: 3px;
 }
 
 #menu li a:hover {
     text-decoration: none;
+    border: 1px solid #333;
+    background-color: white;
+    color: black;
 }
 
 #menu li h2 {
@@ -107,6 +112,8 @@ body {
 
 #explanation {
     display: none;
+    height: 500px;
+    overflow: auto;
 }
 
 #source {
@@ -115,9 +122,32 @@ body {
 
 .jxgbox {
     background-color: black;
-    border: 0;
+    border: 3px #222 double;
 }
 
 a img {
     border: 0;
 }
+
+a {
+    color: #7690c9;
+    text-decoration: none;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+.jxgbox a {
+    font-size: 1.5em;
+/*    border: 1px white solid;
+    background-color: #333;*/
+    padding: 3px;
+}
+
+.syntaxhighlighter {
+    height: 500px;
+    overflow: auto;
+}
+/*.jxgbox a:hover {
+    border: 1px #333 solid;
+    background-color: white;
+    color: black;
+}*/
