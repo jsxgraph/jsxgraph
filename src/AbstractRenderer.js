@@ -1115,16 +1115,17 @@ JXG.AbstractRenderer = function() {
 
         node.setAttribute('id', this.container.id + '_navigationbar');
         node.className = 'JXGtext';
-        node.style.color = '#aaaaaa';
-        node.style.backgroundColor = '#f5f5f5';
-        node.style.padding = '2px';
-        node.style.position = 'absolute';
-        node.style.fontSize = '10px';
-        node.style.cursor = 'pointer';
-        node.style.zIndex = '100';
+        
+        node.style.color = board.options.navbar.strokeColor;
+        node.style.backgroundColor = board.options.navbar.fillColor;
+        node.style.padding = board.options.navbar.padding;
+        node.style.position = board.options.navbar.position;
+        node.style.fontSize = board.options.navbar.fontSize;
+        node.style.cursor = board.options.navbar.cursor;
+        node.style.zIndex = board.options.navbar.zIndex;
         this.container.appendChild(node);
-        node.style.right = '5px'; //(board.canvasWidth-100)+ 'px';
-        node.style.bottom = '5px';
+        node.style.right = board.options.navbar.right;
+        node.style.bottom = board.options.navbar.bottom;
 
         createButton('&nbsp;&ndash;&nbsp', board.zoomOut);
         createButton('&nbsp;o&nbsp;', board.zoom100);

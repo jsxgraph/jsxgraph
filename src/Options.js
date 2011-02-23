@@ -50,6 +50,20 @@ JXG.Options = {
         snapSizeX : 2,
         snapSizeY : 2
     },
+
+    /* navbar options */
+    navbar: {
+        strokeColor: '#aaaaaa',
+        fillColor: '#f5f5f5',
+        padding: '2px',
+        position: 'absolute',
+        fontSize: '10px',
+        cursor: 'pointer',
+        zIndex: '100',
+        right: '5px',
+        bottom: '5px'
+    },
+
     /* zoom options */
     zoom : {
         factor : 1.25
@@ -441,56 +455,7 @@ JXG.rgb2cb = function(color, deficiency) {
     var rgb, l, m, s, lms, tmp,
         a1, b1, c1, a2, b2, c2,
         inflection;
-//        anchor = new Array(12), anchor_e = new Array(3);
-/*
- has been required to calculate the constants for a1, ..., c2, and inflection.
-*/
-/* old stuff. just here for debugging purposes
-    anchor[0] = 0.08008;  anchor[1]  = 0.1579;    anchor[2]  = 0.5897;
-    anchor[3] = 0.1284;   anchor[4]  = 0.2237;    anchor[5]  = 0.3636;
-    anchor[6] = 0.9856;   anchor[7]  = 0.7325;    anchor[8]  = 0.001079;
-    anchor[9] = 0.0914;   anchor[10] = 0.007009;  anchor[11] = 0.0;
 
-    anchor_e[0] = 0.14597772;
-    anchor_e[1] = 0.12188395;
-    anchor_e[2] = 0.08413913;
-
-
-    document.getElementById('debug').innerHTML += 'color: ' + color;
-
-//    document.getElementById('debug').innerHTML += 'deuteranopia<br/><br/>';
-      // find a,b,c for lam=575nm and lam=475
-      a1 = anchor_e[1] * anchor[8] - anchor_e[2] * anchor[7];
-      b1 = anchor_e[2] * anchor[6] - anchor_e[0] * anchor[8];
-      c1 = anchor_e[0] * anchor[7] - anchor_e[1] * anchor[6];
-      a2 = anchor_e[1] * anchor[2] - anchor_e[2] * anchor[1];
-      b2 = anchor_e[2] * anchor[0] - anchor_e[0] * anchor[2];
-      c2 = anchor_e[0] * anchor[1] - anchor_e[1] * anchor[0];
-      inflection = (anchor_e[2] / anchor_e[0]);
-
-//    document.getElementById('debug').innerHTML += 'a1 = ' + a1 + '<br/>' + 'b1 = ' + b1 + '<br/>' + 'c1 = ' + c1 + '<br/>' + 'a2 = ' + a2 + '<br/>' + 'b2 = ' + b2 + '<br/>' + 'c2 = ' + c2 + '<br/>' + 'inflection = ' + inflection + '<br/><br/>protanopia<br/><br/>';
-      // find a,b,c for lam=575nm and lam=475
-      a1 = anchor_e[1] * anchor[8] - anchor_e[2] * anchor[7];
-      b1 = anchor_e[2] * anchor[6] - anchor_e[0] * anchor[8];
-      c1 = anchor_e[0] * anchor[7] - anchor_e[1] * anchor[6];
-      a2 = anchor_e[1] * anchor[2] - anchor_e[2] * anchor[1];
-      b2 = anchor_e[2] * anchor[0] - anchor_e[0] * anchor[2];
-      c2 = anchor_e[0] * anchor[1] - anchor_e[1] * anchor[0];
-      inflection = (anchor_e[2] / anchor_e[1]);
-
-//    document.getElementById('debug').innerHTML += 'a1 = ' + a1 + '<br/>' + 'b1 = ' + b1 + '<br/>' + 'c1 = ' + c1 + '<br/>' + 'a2 = ' + a2 + '<br/>' + 'b2 = ' + b2 + '<br/>' + 'c2 = ' + c2 + '<br/>' + 'inflection = ' + inflection + '<br/><br/>tritanopia<br/><br/>';
-      // Set 1: regions where lambda_a=575, set 2: lambda_a=475
-      a1 = anchor_e[1] * anchor[11] - anchor_e[2] * anchor[10];
-      b1 = anchor_e[2] * anchor[9]  - anchor_e[0] * anchor[11];
-      c1 = anchor_e[0] * anchor[10] - anchor_e[1] * anchor[9];
-      a2 = anchor_e[1] * anchor[5]  - anchor_e[2] * anchor[4];
-      b2 = anchor_e[2] * anchor[3]  - anchor_e[0] * anchor[5];
-      c2 = anchor_e[0] * anchor[4]  - anchor_e[1] * anchor[3];
-      inflection = (anchor_e[1] / anchor_e[0]);
-
-
-//    document.getElementById('debug').innerHTML += 'a1 = ' + a1 + '<br/>' + 'b1 = ' + b1 + '<br/>' + 'c1 = ' + c1 + '<br/>' + 'a2 = ' + a2 + '<br/>' + 'b2 = ' + b2 + '<br/>' + 'c2 = ' + c2 + '<br/>' + 'inflection = ' + inflection;
-*/
     lms = JXG.rgb2LMS(color);
     l = lms.l; m = lms.m; s = lms.s;
 
@@ -564,12 +529,11 @@ JXG.rgb2cb = function(color, deficiency) {
  * @param board {JXG.Board} The board the options should be applied to.
  */
 JXG.loadOptionsFromFile = function(fileurl, applyTo, board) {
-   this.cbp = function(t) {
-      this.parseString(t, applyTo, board);
+   var cbp = function(t) {
+      JXG.parseOptionsString(t, applyTo, board);
    };
-   this.cb = JXG.bind(this.cbp,this);
 
-   JXG.FileReader.parseFileContent(fileurl, this.cb, 'raw');
+   JXG.FileReader.parseFileContent(fileurl, cbp, 'raw', false);
 };
 
 /**
@@ -579,34 +543,38 @@ JXG.loadOptionsFromFile = function(fileurl, applyTo, board) {
  * @param board {JXG.Board} The board the options should be applied to.
  */
 JXG.parseOptionsString = function(text, applyTo, board) {
-   var newOptions = '';
+    var newOptions = '';
 
-   if(text != '') {
-      newOptions = eval("(" + text + ")");
-   }
-   else
-      return;
+    if (text != '') {
+        newOptions = eval("(" + text + ")");
+    } else {
+        return;
+    }
 
-   var maxDepth = 10;
-   var applyOption = function (base, option, depth) {
-      if(depth==10)
-         return;
-      depth++;
+    var maxDepth = 10;
+    var applyOption = function (base, option, depth) {
+        if (depth == 10)
+            return;
+        depth++;
 
-      for(var key in option) {
-         if((JXG.isNumber(option[key])) || (JXG.isArray(option[key])) || (JXG.isString(option[key])) || (option[key]==true) || (option[key]==false)) {
-            base[key] = option[key];
-         }
-         else {
-            applyOption(base[key], option[key], depth);
-         }
-      }
-   };
+        for (var key in option) {
+            if ((JXG.isNumber(option[key])) || (JXG.isArray(option[key])) || (JXG.isString(option[key])) || (option[key] == true) || (option[key] == false)) {
+                base[key] = option[key];
+            }
+            else {
+                applyOption(base[key], option[key], depth);
+            }
+        }
+    };
 
-   applyOption(this, newOptions, 0);
+    if(!applyTo) {
+        applyOption(JXG.Options, newOptions, 0);
+    } else {
+        applyOption(board.options, newOptions, 0);
+    }
 
-   if(applyTo && typeof board != 'undefined') {
-       JXG.useStandardOptions(board);
-   }
+    if (applyTo && typeof board != 'undefined') {
+        JXG.useStandardOptions(board);
+    }
 };
 // vim: et ts=4
