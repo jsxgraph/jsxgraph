@@ -33,31 +33,15 @@
  */
 
 /**
- * This function returns the AbstractRenderer object which defines the interface between the renderer
- * objects and the logical parts of JSXGraph.
+ * This class defines the interface between the renderer objects and the logical parts of JSXGraph.
  * @class JXG.AbstractRenderer
  * @see JXG.SVGRenderer
  * @see JXG.VMLRenderer
  * @see JXG.CanvasRenderer
  */
 JXG.AbstractRenderer = function() {
-    return {
 
-    // This used to be a function returning an object given by an object literal.
-    // I feel like there was a reason why this wasn't just an object literal before
-    // but i can't remember what that reason could be. So, if you encounter a problem
-    // with this being a singleton, make this a functional pattern or pseudoclassical
-    // inheritance pattern class again and change this line
-    // for every X \in {Canvas, SVG, VML}:
-    //    JXG.XRenderer.prototype = JXG.AbstractRenderer;
-    // to
-    //    JXG.XRenderer.prototype = JXG.AbstractRenderer();
-    // resp.
-    //    JXG.XRenderer.prototype = new JXG.AbstractRenderer();
-    // in every XRenderer.js.
-    //
-    // AND (MOST IMPORTANT!): PLEASE NOTE HERE WHY THIS SHOULD BE A CLASS INSTEAD
-    // OF A SINGLETON OBJECT.
+    // WHY THIS IS A CLASS INSTEAD OF A SINGLETON OBJECT:
     //
     // Given an object o with property a set to true
     //     var o = {a: true};
@@ -73,15 +57,6 @@ JXG.AbstractRenderer = function() {
     //     c.prototype.a = false;
     //     i.a;
     //     > false
-    //
-    // Two possible solutions:
-    //   * Use this as a class as it was before (with tons of "AbstractRenderer.prototype" etc.)
-    //     Advantage: AbstractRenderer is documented properly
-    //     Disadvantage: Every board will get it's own renderer which is not necessary
-    //   * Use this only as an object. This will require the Renderers to be objects, too, because of
-    //     the problem described above.
-    //     Advantage: Every renderer exists only once, not every board gets its own renderer
-    //     Disadvantage: Every renderer is created, whether it is used or not
 
 	/**
 	 * The vertical offset for {@link Text} elements. Every {@link Text} element will
@@ -89,7 +64,7 @@ JXG.AbstractRenderer = function() {
 	 * @type number
 	 * @default 8
 	 */
-    vOffsetText: 8,
+    this.vOffsetText = 8;
     
     /**
      * If this property is set to <tt>true</tt> the visual properties of the elements are updated
@@ -98,7 +73,19 @@ JXG.AbstractRenderer = function() {
      * @type Boolean
      * @default true 
      */
-    enhancedRendering: true,
+    this.enhancedRendering = true;
+
+    /**
+     * This is used to easily determine which renderer we are using
+     * @example if(board.renderer.type === 'vml') {
+     *     // do something
+     * }
+     * @type String
+     */
+    this.type = '';
+};
+
+JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
 
     /**
      * Update visual properties, but only if JXG.AbstractRenderer#enhancedRendering is set to true.
@@ -129,6 +116,15 @@ JXG.AbstractRenderer = function() {
                 this.setDraft(el);
             }
         }
+    },
+
+    /**
+     * 
+     * @param str
+     * @param fontsize
+     */
+    displayCopyright: function(str, fontsize) {
+        // This is only a stub, the method is implemented in the renderer itself.
     },
 
 
@@ -620,13 +616,13 @@ JXG.AbstractRenderer = function() {
         var node;
         
         if (el.display == 'html') {
-            node = this.container.ownerDocument.createElement('div');
+            node = el.board.containerObj.ownerDocument.createElement('div');
             node.style.position = 'absolute';
             node.style.color = el.visProp['strokeColor'];
             node.className = 'JXGtext';
             node.style.zIndex = '10';
-            this.container.appendChild(node);
-            node.setAttribute('id', this.container.id + '_' + el.id);
+            el.board.containerObj.appendChild(node);
+            node.setAttribute('id', el.board.containerObj.id + '_' + el.id);
         } else {
             node = this.drawInternalText(el);
         }
@@ -914,9 +910,6 @@ JXG.AbstractRenderer = function() {
      * @see #drawGrid
      */
     removeGrid: function(board) {
-        // var getElementById = this.getElementById; // Does not work, because 
-                                                     // this in getElementById would point to "window"
-
         this.remove(this.getElementById('gridx'));
         this.remove(this.getElementById('gridy'));
 
@@ -1074,6 +1067,29 @@ JXG.AbstractRenderer = function() {
     remove: function(node) {
     },
 
+    /**
+     * Creates a node of a given type with a given id.
+     * @param {String} type The type of the node to create.
+     * @param {String} id Set the id attribute to this.
+     * @returns {Node} Reference to the created node.
+     */
+    createPrim: function(type, id) {
+        // This is just a stub. Implementation is done in the actual renderers.
+    },
+
+    /**
+     * TODO
+     */
+    appendChildPrim: function() {
+        // This is just a stub. Implementation is done in the actual renderers.
+    },
+
+    /**
+     * TODO
+     */
+    appendNodesToElement: function() {
+        // This is just a stub. Implementation is done in the actual renderers.
+    },
 
     /* **************************
      * general renderer related methods
@@ -1110,10 +1126,10 @@ JXG.AbstractRenderer = function() {
                 JXG.addEvent(button, 'click', handler, board);
             };
 
-        doc = this.container.ownerDocument;
+        doc = board.containerObj.ownerDocument;
         node = doc.createElement('div');
 
-        node.setAttribute('id', this.container.id + '_navigationbar');
+        node.setAttribute('id', board.containerObj.id + '_navigationbar');
         node.className = 'JXGtext';
         
         node.style.color = board.options.navbar.strokeColor;
@@ -1123,7 +1139,7 @@ JXG.AbstractRenderer = function() {
         node.style.fontSize = board.options.navbar.fontSize;
         node.style.cursor = board.options.navbar.cursor;
         node.style.zIndex = board.options.navbar.zIndex;
-        this.container.appendChild(node);
+        board.containerObj.appendChild(node);
         node.style.right = board.options.navbar.right;
         node.style.bottom = board.options.navbar.bottom;
 
@@ -1287,5 +1303,4 @@ JXG.AbstractRenderer = function() {
     setBuffering: function() {
 
     }
-};
-};
+});

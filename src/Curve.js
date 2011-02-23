@@ -710,7 +710,7 @@ JXG.Curve.prototype.cloneToBackground = function(addToTrace) {
     this.board.renderer.enhancedRendering = true;
     this.board.renderer.drawCurve(copy);
     this.board.renderer.enhancedRendering = er;
-    this.traces[copy.id] = copy.rendNode; //this.board.renderer.getElementById(copy.id);
+    this.traces[copy.id] = copy.rendNode;
 
     delete copy;
 };
