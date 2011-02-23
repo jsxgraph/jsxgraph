@@ -1165,10 +1165,11 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * findSplit() is a subroutine for {@link #RamenDouglasPeuker}.
      * It searches for the point between index i and j which
      * has the largest distance from the line between the points i and j.
-     * @param {Array} pts Array of {@link JXG.Point}
+     * @param {Array} pts Array of {@link JXG.Coords}
      * @param {Number} i Index of a point in pts
      * @param {Number} j Index of a point in pts
-     **/
+     * @returns TODO
+     */
     findSplit: function(pts, i, j) {
         var dist = 0,
             f = i,
@@ -1212,18 +1213,18 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * RDB() is a subroutine for {@link #RamenDouglasPeuker}.
+     * RDP() is a subroutine for {@link #RamenDouglasPeuker}.
      * It runs recursively through the point set and searches the
      * point which has the largest distance from the line between the first point and
      * the last point. If the distance from the line is greater than eps, this point is
      * included in our new point set otherwise it is discarded.
      * If it is taken, we recursively apply the subroutine to the point set before
      * and after the chosen point.
-     * @param {Array} pts Array of {@link JXG.Point}s
+     * @param {Array} pts Array of {@link JXG.Coords}
      * @param {Number} i Index of an element of pts
      * @param {Number} j Index of an element of pts
      * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
-     * @param {Array} newPts Array of {@link JXG.Point}s
+     * @param {Array} newPts Array of {@link JXG.Coords}
      */
     RDP: function(pts, i, j, eps, newPts) {
         var result = this.findSplit(pts, i, j);
@@ -1275,6 +1276,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.GeometryElement} element Reference to a geometry object, that should get a shadow
      */
     setShadow: function(element) {
+        // This is just a stub. Usage and implementation may differ between the different renderers.
     },
 
 
@@ -1283,6 +1285,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * Updates a path element.
      */
     updatePathStringPoint: function(el, size, type) {
+        // This is just a stub. Usage and implementation may differ between the different renderers.
     },
 
     /**
@@ -1298,9 +1301,9 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * This is just a stub. Usage and implementation may differ between the different renderers.
+     * TODO
      */
     setBuffering: function() {
-
+        // This is just a stub. Usage and implementation may differ between the different renderers.
     }
 });
