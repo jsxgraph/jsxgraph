@@ -362,7 +362,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         }
     },
 
-    setArrowAtts: function(node, c, o) {
+    _setArrowAtts: function(node, c, o) {
         if (!node) return;
         node.setAttributeNS(null, 'stroke', c);
         node.setAttributeNS(null, 'stroke-opacity', o);
@@ -393,13 +393,13 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
             node.setAttributeNS(null, 'stroke-opacity', o);
         }
         if(el.type == JXG.OBJECT_TYPE_ARROW) {
-            this.setArrowAtts(el.rendNodeTriangle,c,o);
+            this._setArrowAtts(el.rendNodeTriangle,c,o);
         } else if (el.elementClass == JXG.OBJECT_CLASS_CURVE || el.elementClass == JXG.OBJECT_CLASS_LINE) {
             if(el.visProp['firstArrow']) {
-                this.setArrowAtts(el.rendNodeTriangleStart,c,o);
+                this._setArrowAtts(el.rendNodeTriangleStart,c,o);
             }
             if(el.visProp['lastArrow']) {
-                this.setArrowAtts(el.rendNodeTriangleEnd,c,o);
+                this._setArrowAtts(el.rendNodeTriangleEnd,c,o);
             }
         }
         el.visPropOld['strokeColor'] = c;
@@ -522,7 +522,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         return node;
     },
 
-    createArrowHead: function(el,idAppendix) {
+    _createArrowHead: function(el,idAppendix) {
         var id = el.id+'Triangle',
             node2, node3;
 
@@ -560,7 +560,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         if(el.visProp['firstArrow']) {
             node2 = el.rendNodeTriangleStart;
             if(node2 == null) {
-                node2 = this.createArrowHead(el,'End');
+                node2 = this._createArrowHead(el,'End');
                 this.defs.appendChild(node2);
                 el.rendNodeTriangleStart = node2;
                 el.rendNode.setAttributeNS(null, 'marker-start', 'url(#'+this.container.id+'_'+el.id+'TriangleEnd)');
@@ -575,7 +575,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         if(el.visProp['lastArrow']) {
             node2 = el.rendNodeTriangleEnd;
             if(node2 == null) {
-                node2 = this.createArrowHead(el,'Start');
+                node2 = this._createArrowHead(el,'Start');
                 this.defs.appendChild(node2);
                 el.rendNodeTriangleEnd = node2;
                 el.rendNode.setAttributeNS(null, 'marker-end', 'url(#'+this.container.id+'_'+el.id+'TriangleStart)');

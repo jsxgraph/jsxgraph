@@ -95,9 +95,9 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     /**
      * Update visual properties, but only if JXG.AbstractRenderer#enhancedRendering is set to true.
      * @param {JXG.GeometryElement} el The element to update
-     * @param {Object} not Select properties you don't want to be updated: {fill: true, dash: true} updates
+     * @param {Object} [not={}] Select properties you don't want to be updated: {fill: true, dash: true} updates
      * everything except for fill and dash. Possible values are stroke, fill, dash, shadow.
-     * @param {Boolean} enhanced If true JXG.AbstractRenderer#enhancedRendering is assumed to be true.
+     * @param {Boolean} [enhanced=false] If true JXG.AbstractRenderer#enhancedRendering is assumed to be true.
      */
     updateVisual: function (el, not, enhanced) {
         if (enhanced || this.enhancedRendering) {
@@ -171,8 +171,6 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         this.updatePoint(el);
     },
 
-    // continue revision here
-
     /**
      * Updates visual appearance of the renderer element assigned to the given {@link JXG.Point}.
      * @param {JXG.Point} el Reference to a {@link JXG.Point} object, that has to be updated.
@@ -184,23 +182,21 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         var size = el.visProp.size,
             face = JXG.Point.prototype.normalizeFace.call(this, el.visProp.face);
 
-        if (isNaN(el.coords.scrCoords[2]) || isNaN(el.coords.scrCoords[1])) {
-            return;
+        if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
+            this.updateVisual(el, {dash: false, shadow: false});
+
+            // Zoom does not work for traces.
+            size *= ((!el.board || !el.board.options.point.zoom) ? 1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY));
+
+            if (face === 'o') { // circle
+                this.updateEllipsePrim(el.rendNode, el.coords.scrCoords[1], el.coords.scrCoords[2], size + 1, size + 1);
+            } else if (face === '[]') { // rectangle
+                this.updateRectPrim(el.rendNode, el.coords.scrCoords[1] - size, el.coords.scrCoords[2] - size, size * 2, size * 2);
+            } else { // x, +, <>, ^, v, <, >
+                this.updatePathPrim(el.rendNode, this.updatePathStringPoint(el, size, face), el.board);
+            }
+            this.setShadow(el);
         }
-
-        this.updateVisual(el, {dash: false, shadow: false});
-
-        // Zoom does not work for traces.
-        size *= ((!el.board || !el.board.options.point.zoom) ? 1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY));
-
-        if (face === 'o') { // circle
-            this.updateEllipsePrim(el.rendNode, el.coords.scrCoords[1], el.coords.scrCoords[2], size + 1, size + 1);
-        } else if (face === '[]') { // rectangle
-            this.updateRectPrim(el.rendNode, el.coords.scrCoords[1] - size, el.coords.scrCoords[2] - size, size * 2, size * 2);
-        } else { // x, +, <>, ^, v, <, >
-            this.updatePathPrim(el.rendNode, this.updatePathStringPoint(el, size, face), el.board);
-        }
-        this.setShadow(el);
     },
 
     /**
@@ -234,8 +230,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
             this.setDraft(el);
         }
     },
-
-
+    
 
     /* ******************************** *
      *           Lines                  *
@@ -284,24 +279,8 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @see Ticks
      * @see JXG.Line
      * @see JXG.Ticks
-     * @see #removeTicks
      */
-    updateTicks: function (axis, dxMaj, dyMaj, dxMin, dyMin) {
-    },
-
-    /**
-     * Removes all ticks from an {@link JXG.Line}.
-     * @param {JXG.Line} axis Reference of an {@link JXG.Line} object, that's ticks have to be removed.
-     * @deprecated
-     * @see Line
-     * @see Ticks
-     * @see Axis
-     * @see JXG.Line
-     * @see JXG.Ticks
-     */
-    removeTicks: function (axis) {
-        this.remove(this.getElementById(axis.id + '_ticks'));
-    },
+    updateTicks: function (axis, dxMaj, dyMaj, dxMin, dyMin) { /* stub */ },
 
     /* **************************
      *    Curves
@@ -344,12 +323,12 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object, that has to be drawn.
      * @see Circle
      * @see JXG.Circle
-     * @see #updateCircle
+     * @see #updateEllipse
      */
-    drawCircle: function (el) {
+    drawEllipse: function (el) {
         this.appendChildPrim(this.createPrim('ellipse', el.id), el.layer);
         this.appendNodesToElement(el, 'ellipse');
-        this.updateCircle(el);
+        this.updateEllipse(el);
     },
 
     /**
@@ -357,9 +336,9 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object, that has to be updated.
      * @see Circle
      * @see JXG.Circle
-     * @see #drawCircle
+     * @see #drawEllipse
      */
-    updateCircle: function (el) {
+    updateEllipse: function (el) {
         this.updateVisual(el);
 
         // Radius umrechnen:
@@ -743,8 +722,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.GeometryElement} el Reference to the geometry element.
      * @param {Number} width The new stroke width to be assigned to the element.
      */
-    setObjectStrokeWidth: function (el, width) {
-    },
+    setObjectStrokeWidth: function (el, width) { /* stub */ },
 
     /**
      * Changes an objects stroke color to the given color.
@@ -752,8 +730,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {String} color Color in a HTML/CSS compatible format, e.g. <strong>#00ff00</strong> or <strong>green</strong> for green.
      * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
      */
-    setObjectStrokeColor: function (obj, color, opacity) {
-    },
+    setObjectStrokeColor: function (obj, color, opacity) { /* stub */ },
 
     /**
      * Sets an objects fill color.
@@ -761,8 +738,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose 'none'.
      * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
      */
-    setObjectFillColor: function (obj, color, opacity) {
-    },
+    setObjectFillColor: function (obj, color, opacity) { /* stub */ },
 
     /**
      * Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards compatibility.

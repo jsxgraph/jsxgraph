@@ -173,7 +173,7 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel, layer) {
         this.createLabel(withLabel);
     
     this.id = this.board.setId(this, 'C');
-    this.board.renderer.drawCircle(this);
+    this.board.renderer.drawEllipse(this);
     this.board.finalizeAdding(this);
 
     if(method == 'pointRadius') {
@@ -369,12 +369,6 @@ JXG.Circle.prototype.updateStdform = function () {
  * @private
  */
 JXG.Circle.prototype.updateRenderer = function () {
-/*
-    if (this.needsUpdate) {
-        this.board.renderer.updateCircle(this);
-        this.needsUpdate = false;
-    }
-*/
     if (this.needsUpdate && this.visProp['visible']) {
         var wasReal = this.isReal;
         this.isReal = (isNaN(this.midpoint.coords.usrCoords[1]+this.midpoint.coords.usrCoords[2]+this.Radius()))?false:true;
@@ -383,7 +377,7 @@ JXG.Circle.prototype.updateRenderer = function () {
                 this.board.renderer.show(this); 
                 if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content); 
             }
-            this.board.renderer.updateCircle(this);
+            this.board.renderer.updateEllipse(this);
         } else {
             if (wasReal!=this.isReal) { 
                 this.board.renderer.hide(this); 
@@ -509,7 +503,7 @@ JXG.Circle.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
     
     er = this.board.renderer.enhancedRendering;
     this.board.renderer.enhancedRendering = true;
-    this.board.renderer.drawCircle(copy);
+    this.board.renderer.drawEllipse(copy);
     this.board.renderer.enhancedRendering = er;
     this.traces[copy.id] = copy.rendNode;
 

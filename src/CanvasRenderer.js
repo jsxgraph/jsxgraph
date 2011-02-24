@@ -63,7 +63,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
     /*
      * Sets color and opacity for filling and stroking
      */
-    setColor: function(el, type) {
+    _setColor: function(el, type) {
         var hasColor = true, isTrace = false;
         if (!JXG.exists(el.board)||!JXG.exists(el.board.highlightedObjects)) {
             // This case handles trace elements.
@@ -113,7 +113,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
      */
     fill: function(el) {
         this.context.save();
-        if (this.setColor(el, 'fill')) this.context.fill();
+        if (this._setColor(el, 'fill')) this.context.fill();
         this.context.restore();
     },
 
@@ -129,7 +129,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         } else {
             this.context.lineDashArray = [];
         }
-        if (this.setColor(el, 'stroke')) this.context.stroke();
+        if (this._setColor(el, 'stroke')) this.context.stroke();
         this.context.restore();
     },
 
@@ -191,10 +191,9 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
 
     drawInternalText: function(el) {
         var fs, ctx = this.context;
-        //this.updateStencilBuffer(el);
 
         ctx.save();
-        if (this.setColor(el,'stroke')) {
+        if (this._setColor(el,'stroke')) {
             if(typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
                 ctx.fillStyle = el.visProp.highlightStrokeColor;
             } else {
@@ -208,7 +207,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
                     ctx.font = (el.visProp['fontSize'])+'px Arial';
                 }
             }
-            //ctx.font = el.board.options.text.fontSize+'px Arial';
+
             this.transformImage(el,el.transformations,ctx);
             ctx.fillText(el.plaintextStr, el.coords.scrCoords[1], el.coords.scrCoords[2]);
         }
@@ -232,7 +231,6 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
 
     updateTicks: function(axis,dxMaj,dyMaj,dxMin,dyMin) {
         var i, c, len = axis.ticks.length;
-        //this.context.globalAlpha = axis.visProp[(this.updateStencilBuffer(axis) ? 'highlightS' : 's' ) + 'trokeOpacity'];
 
         this.context.beginPath();
         for (i=0; i<len; i++) {
@@ -250,7 +248,6 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
                 this.context.lineTo(c[1]-dxMin, c[2]+dyMin);
             }
         }
-        //this.context.stroke();
         this.stroke(axis);
     },
 
@@ -317,45 +314,23 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         }
     },
 
-    setArrowAtts: function(node, c, o) {
-        // this isn't of any use in a canvas based renderer,
-        // because the arrows have to be redrawn on every update.
-    },
-
-    setObjectStrokeColor: function(el, color, opacity) {
-        // this is not required in a canvas based renderer
-        //if (JXG.exists(el.board))
-        //    el.board.updateRenderer();
-    },
-
-    setObjectFillColor: function(el, color, opacity) {
-        // useless
-        //el.board.updateRenderer();
-    },
-
-    setObjectStrokeWidth: function(el, width) {
-        // useless
-        //el.board.updateRenderer();
-    },
-
     hide: function(el) {
-        // useless beside HTML texts
+        // sounds odd for a pixel based renderer but we need this for html texts
         if (JXG.exists(el.rendNode))
             el.rendNode.style.visibility = "hidden";
-        //el.board.updateRenderer();
     },
 
     show: function(el) {
-        // useless beside HTML texts
+        // sounds odd for a pixel based renderer but we need this for html texts
         if (JXG.exists(el.rendNode))
             el.rendNode.style.visibility = "inherit";
-        //el.board.updateRenderer();
     },
 
     remove: function(shape) {
-        // useless with the exception of HTML texts
-        if(shape!=null && shape.parentNode != null)
+        // sounds odd for a pixel based renderer but we need this for html texts
+        if(JXG.exists(shape) && JXG.exists(shape.parentNode)) {
             shape.parentNode.removeChild(shape);
+        }
     },
 
     suspendRedraw: function() {
@@ -445,7 +420,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
             }
 
             this.context.save();
-            if (this.setColor(el,'stroke')) {
+            if (this._setColor(el,'stroke')) {
                 if(typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
                     this.context.fillStyle = el.visProp.highlightStrokeColor;
                 } else {
@@ -466,12 +441,8 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
             symbl = 'L',
             nextSymb = symbm,
             maxSize = 5000.0,
-            pStr = '',
-            //h = 3*el.board.canvasHeight,
-            //w = 100*el.board.canvasWidth,
             i, scr,
             isNoPlot = (el.curveType!='plot'),
-            //isFunctionGraph = (el.curveType=='functiongraph'),
             len;
 
         if (el.numberPoints<=0) { return ''; }
@@ -484,7 +455,6 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         this.context.beginPath();
         for (i=0; i<len; i++) {
             scr = el.points[i].scrCoords;
-            //if (isNaN(scr[1]) || isNaN(scr[2]) /*|| Math.abs(scr[1])>w || (isFunctionGraph && (scr[2]>h || scr[2]<-0.5*h))*/ ) {  // PenUp
             if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
                 nextSymb = symbm;
             } else {
@@ -498,24 +468,18 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
                     this.context.moveTo(scr[1], scr[2]);
                 else
                     this.context.lineTo(scr[1], scr[2]);
-                //pStr += [nextSymb,scr[1],' ',scr[2]].join(''); // Attention: first coordinate may be inaccurate if far way
                 nextSymb = symbl;
             }
         }
-        //this.context.closePath();
         this.fill(el);
         this.stroke(el);
         return null;
     },
 
     appendChildPrim: function(node,level) {
-
     },
 
     setPropertyPrim: function(node,key,val) {
-        if (key=='stroked') {
-        }
-        //node.setAttributeNS(null, key, val);
     },
 
     drawVerticalGrid: function(topLeft, bottomRight, gx, board) {
@@ -560,7 +524,6 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         switch(f) {
             case 'cross':  // x
             case 'x':
-                //this.context.globalAlpha = el.visProp[(highlight ? 'highlightS' : 's' ) + 'trokeOpacity'];
                 this.context.beginPath();
                 this.context.moveTo(scr[1]-size, scr[2]-size);
                 this.context.lineTo(scr[1]+size, scr[2]+size);
@@ -574,7 +537,6 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
                 this.context.beginPath();
                 this.context.arc(scr[1], scr[2], size+1+stroke05, 0, 2*Math.PI, false);
                 this.context.closePath();
-                //this.context.fill();
                 this.fill(el);
                 this.stroke(el);
                 break;
@@ -582,7 +544,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
             case '[]':
                 if (size<=0) break;
                 this.context.save();
-                if (this.setColor(el,'stroke')) {
+                if (this._setColor(el,'stroke')) {
                     if(typeof el.board.highlightedObjects[el.id] != 'undefined' && el.board.highlightedObjects[el.id] != null) {
                         this.context.fillStyle = el.visProp.highlightStrokeColor;
                     } else {
@@ -592,13 +554,12 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
                 }
                 this.context.restore();
                 this.context.save();
-                this.setColor(el,'fill');
+                this._setColor(el,'fill');
                 this.context.fillRect(scr[1]-size+stroke05, scr[2]-size+stroke05, size*2-stroke05, size*2-stroke05);
                 this.context.restore();
                 break;
             case 'plus':  // +
             case '+':
-                //this.context.globalAlpha = el.visProp[(highlight ? 'highlightS' : 's' ) + 'trokeOpacity'];
                 this.context.beginPath();
                 this.context.moveTo(scr[1]-size, scr[2]);
                 this.context.lineTo(scr[1]+size, scr[2]);
@@ -666,11 +627,6 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         this.drawPoint(el);
     },
 
-    // already documented in JXG.AbstractRenderer
-    changePointStyle: function(el) {
-        this.drawPoint(el);
-    },
-
     drawText: function(/** Text */ el) {
         var node;
         if (el.display=='html') {
@@ -720,10 +676,8 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         this.context.beginPath();
         this.context.moveTo(scr1.scrCoords[1],scr1.scrCoords[2]);
         this.context.lineTo(scr2.scrCoords[1],scr2.scrCoords[2]);
-        //this.context.stroke();
-        //this.context.closePath();
         this.stroke(el);
-        // if this line has arrows attached, update them, too.
+
         this.makeArrows(el,scr1,scr2);
     },
 
@@ -739,8 +693,14 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         this.drawCurve(el);
     },
 
-    drawEllipse: function(el, m1, m2, sX, sY, rX, rY) {
-        var aWidth = rX*sX,
+    drawEllipse: function(el) {
+        var m1 = el.midpoint.coords.scrCoords[1],
+            m2 = el.midpoint.coords.scrCoords[2],
+            sX = el.board.stretchX,
+            sY = el.board.stretchY,
+            rX = 2*el.Radius(),
+            rY = 2*el.Radius(),
+            aWidth = rX*sX,
             aHeight = rY*sY,
             aX = m1 - aWidth/2,
             aY = m2 - aHeight/2,
@@ -751,7 +711,6 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
             mX = aX + aWidth / 2,
             mY = aY + aHeight / 2;
 
-        //this.context.globalAlpha = el.visProp[(this.updateStencilBuffer(el) ? 'highlightS' : 's' ) + 'trokeOpacity'];
         if (rX>0.0 && rY>0.0 && !isNaN(m1+m2) ) {
             this.context.beginPath();
             this.context.moveTo(aX, mY);
@@ -765,21 +724,13 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         }
     },
 
-    drawCircle: function(el) {
-        this.drawEllipse(el, el.midpoint.coords.scrCoords[1],
-            el.midpoint.coords.scrCoords[2],
-            el.board.stretchX, el.board.stretchY,
-            2*el.Radius(), 2*el.Radius());
-    },
-
-    updateCircle: this.drawCircle,
+    updateEllipse: this.drawEllipse,
 
     drawPolygon: function(el) {
     },
 
     updatePolygonPrim: function(node, el) {
-        var pStr = '',
-            scrCoords, i,
+        var scrCoords, i,
             len = el.vertices.length;
 
         if (len<=0) return;
@@ -798,7 +749,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
     /*
      * Highlighting in CanvasRenderer means we have to render again
      */
-    highlight: function(/** JXG.GeometryElement */ obj) {
+    highlight: function(obj) {
         obj.board.prepareUpdate();
         obj.board.renderer.suspendRedraw();
         obj.board.updateRenderer();
@@ -806,10 +757,11 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         return this;
     },
 
-    /*
+    /**
      * Dehighlighting in CanvasRenderer means we have to render again
+     * @param {JXG.GeometryElement} obj
      */
-    noHighlight: function(/** JXG.GeometryElement */ obj) {
+    noHighlight: function(obj) {
         obj.board.prepareUpdate();
         obj.board.renderer.suspendRedraw();
         obj.board.updateRenderer();
