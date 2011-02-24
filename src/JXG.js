@@ -801,13 +801,26 @@ JXG.trim = function(str) {
 };
 
 /**
+ * If <tt>val</tt> is a function, it will be evaluated without giving any parameters, else the input value
+ * is just returned.
+ * @param val Could be anything. Preferably a number or a function.
+ */
+JXG.evaluate = function(val) {
+    if (JXG.isFunction(val)) {
+        return val();
+    } else {
+        return val;
+    }
+};
+
+/**
  * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
  * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
  * @param {String} s A debug message.
  */
 JXG.debug = function(s) {
     if (console && console.log) {
-        if (typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "")
+        if (typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "");
         console.log(s);
     } else if (document.getElementById('debug')) {
         document.getElementById('debug').innerHTML += s + "<br/>";

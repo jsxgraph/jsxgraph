@@ -284,7 +284,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
 
     updateImage: function(/** Image */ el) {
         var ctx = this.context,
-            o = this.evaluate(el.visProp.fillOpacity),
+            o = JXG.evaluate(el.visProp.fillOpacity),
             paintImg = JXG.bind(function(){
                 el.imgIsLoaded = true;
                 if (el.size[0]<=0 || el.size[1]<=0) return;
@@ -477,7 +477,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         if (el.numberPoints<=0) { return ''; }
 
         if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-            el.points = this.RamenDouglasPeuker(el.points,0.5);
+            el.points = JXG.Math.Numerics.RamenDouglasPeuker(el.points,0.5);
         }
         len = Math.min(el.points.length,el.numberPoints);
 
@@ -715,7 +715,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         var scr1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
             scr2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
             ax, ay, bx, by, beta, sgn, x, y, m;
-        this.calcStraight(el,scr1,scr2);
+        JXG.Math.Geometry.calcStraight(el,scr1,scr2);
 
         this.context.beginPath();
         this.context.moveTo(scr1.scrCoords[1],scr1.scrCoords[2]);

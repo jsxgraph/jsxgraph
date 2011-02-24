@@ -141,7 +141,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      */
     drawPoint: function(el) {
         var prim,
-            face = JXG.Point.prototype.normalizeFace.call(this, el.visProp['face']);//el.normalizeFace(el.visProp['face']);
+            face = JXG.Point.prototype.normalizeFace.call(this, el.visProp['face']);
 
         // determine how the point looks like
         if (face === 'o') {
@@ -176,7 +176,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      */
     updatePoint: function(el) {
         var size = el.visProp['size'],
-            face = JXG.Point.prototype.normalizeFace.call(this, el.visProp['face']);//el.normalizeFace(el.visProp['face']);
+            face = JXG.Point.prototype.normalizeFace.call(this, el.visProp['face']);
 
         if (isNaN(el.coords.scrCoords[2]) || isNaN(el.coords.scrCoords[1])) return;
 
@@ -239,7 +239,6 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @see Line
      * @see JXG.Line
      * @see #updateLine
-     * @see #calcStraight
      */
     drawLine: function(el) {
         this.appendChildPrim(this.createPrim('line', el.id), el.layer);
@@ -253,7 +252,6 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @see Line
      * @see JXG.Line
      * @see #drawLine
-     * @see #calcStraight
      */
     updateLine: function(el) {
         var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
@@ -262,211 +260,12 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
 
         // a line can be a segment, straight, or ray. so it's not always delimited by point1 and point2
         // calcstraight calculates the visual start point and end point of the line.
-        this.calcStraight(el, screenCoords1, screenCoords2);
+        JXG.Math.Geometry.calcStraight(el, screenCoords1, screenCoords2);
         this.updateLinePrim(el.rendNode, screenCoords1.scrCoords[1], screenCoords1.scrCoords[2],
                                          screenCoords2.scrCoords[1], screenCoords2.scrCoords[2], el.board);
         // if this line has arrows attached, update them, too.
         this.makeArrows(el);
         this.updateVisual(el, {fill: true});
-    },
-
-    /**
-     * Calculates drawing start and end point for a line. A segment is only drawn from start to end point, a straight line
-     * is drawn until it meets the boards boundaries.
-     * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
-     * @param {JXG.Coords} point1 Coordinates of the point where line drawing begins. This value is calculated and set by this method.
-     * @param {JXG.Coords} point2 Coordinates of the point where line drawing ends. This value is calculated and set by this method.
-     * @see Line
-     * @see JXG.Line
-     * @see #drawLine
-     * @see #updateLine
-     */
-    calcStraight: function(el, point1, point2) {
-        var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast,
-            c, s, i, j, p1, p2;
-
-        straightFirst = el.visProp['straightFirst'];
-        straightLast = el.visProp['straightLast'];
-
-        // If one of the point is an ideal point in homogeneous coordinates
-        // drawing of line segments or rays are not possible.
-        if (Math.abs(point1.scrCoords[0]) < JXG.Math.eps) {
-            straightFirst = true;
-        }
-        if (Math.abs(point2.scrCoords[0]) < JXG.Math.eps) {
-            straightLast = true;
-        }
-
-        if (!straightFirst && !straightLast) {  // Do nothing in case of line segments (inside or outside of the board)
-            return;
-        }
-
-        // Compute the stdform of the line in screen coordinates.
-        c = [];
-        c[0] = el.stdform[0] -
-                el.stdform[1] * el.board.origin.scrCoords[1] / el.board.stretchX +
-                el.stdform[2] * el.board.origin.scrCoords[2] / el.board.stretchY;
-        c[1] = el.stdform[1] / el.board.stretchX;
-        c[2] = el.stdform[2] / (-el.board.stretchY);
-
-        if (isNaN(c[0] + c[1] + c[2])) return; // p1=p2
-
-        // Intersect the line with the four borders of the board.
-        s = [];
-        s[0] = JXG.Math.crossProduct(c, [0,0,1]);  // top
-        s[1] = JXG.Math.crossProduct(c, [0,1,0]);  // left
-        s[2] = JXG.Math.crossProduct(c, [-el.board.canvasHeight,0,1]);  // bottom
-        s[3] = JXG.Math.crossProduct(c, [-el.board.canvasWidth,1,0]);   // right
-
-        // Normalize the intersections
-        for (i = 0; i < 4; i++) {
-            if (Math.abs(s[i][0]) > JXG.Math.eps) {
-                for (j = 2; j > 0; j--) {
-                    s[i][j] /= s[i][0];
-                }
-                s[i][0] = 1.0;
-            }
-        }
-
-        takePoint1 = false;
-        takePoint2 = false;
-        if (!straightFirst && // Line starts at point1 and point2 is inside the board
-                point1.scrCoords[1] >= 0.0 && point1.scrCoords[1] <= el.board.canvasWidth &&
-                point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= el.board.canvasHeight) {
-            takePoint1 = true;
-        }
-        if (!straightLast && // Line ends at point2 and point2 is inside the board
-                point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= el.board.canvasWidth &&
-                point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= el.board.canvasHeight) {
-            takePoint2 = true;
-        }
-
-        if (Math.abs(s[1][0]) < JXG.Math.eps) {           // line is parallel to "left", take "top" and "bottom"
-            intersect1 = s[0];                          // top
-            intersect2 = s[2];                          // bottom
-        } else if (Math.abs(s[0][0]) < JXG.Math.eps) {           // line is parallel to "top", take "left" and "right"
-            intersect1 = s[1];                          // left
-            intersect2 = s[3];                          // right
-        } else if (s[1][2] < 0) {                         // left intersection out of board (above)
-            intersect1 = s[0];                          // top
-            if (s[3][2] > el.board.canvasHeight) {        // right intersection out of board (below)
-                intersect2 = s[2];                      // bottom
-            } else {
-                intersect2 = s[3];                      // right
-            }
-        } else if (s[1][2] > el.board.canvasHeight) {     // left intersection out of board (below)
-            intersect1 = s[2];                          // bottom
-            if (s[3][2] < 0) {                            // right intersection out of board (above)
-                intersect2 = s[0];                      // top
-            } else {
-                intersect2 = s[3];                      // right
-            }
-        } else {
-            intersect1 = s[1];                          // left
-            if (s[3][2] < 0) {                            // right intersection out of board (above)
-                intersect2 = s[0];                      // top
-            } else if (s[3][2] > el.board.canvasHeight) { // right intersection out of board (below)
-                intersect2 = s[2];                      // bottom
-            } else {
-                intersect2 = s[3];                      // right
-            }
-        }
-
-        intersect1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect1.slice(1), el.board);
-        intersect2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect2.slice(1), el.board);
-
-        if (!takePoint1 && !takePoint2) {              // If both points are outside and the complete ray is outside we do nothing
-            if (!straightFirst && straightLast && // Ray starting at point 1
-                    !this.isSameDirection(point1, point2, intersect1) && !this.isSameDirection(point1, point2, intersect2)) {
-                return;
-            } else if (straightFirst && !straightLast && // Ray starting at point 2
-                    !this.isSameDirection(point2, point1, intersect1) && !this.isSameDirection(point2, point1, intersect2)) {
-                return;
-            }
-        }
-
-        if (!takePoint1) {
-            if (!takePoint2) {                // Two border intersection points are used
-                if (this.isSameDirection(point1, point2, intersect1)) {
-                    if (!this.isSameDirection(point1, point2, intersect2)) {
-                        p2 = intersect1;
-                        p1 = intersect2;
-                    } else {
-                        if (JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect1.usrCoords) < JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect2.usrCoords)) {
-                            p1 = intersect1;
-                            p2 = intersect2;
-                        } else {
-                            p2 = intersect1;
-                            p1 = intersect2;
-                        }
-                    }
-                } else {
-                    if (this.isSameDirection(point1, point2, intersect2)) {
-                        p1 = intersect1;
-                        p2 = intersect2;
-                    } else {
-                        if (JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect1.usrCoords) < JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect2.usrCoords)) {
-                            p2 = intersect1;
-                            p1 = intersect2;
-                        } else {
-                            p1 = intersect1;
-                            p2 = intersect2;
-                        }
-                    }
-                }
-            } else {                          // Instead of point1 the border intersection is taken
-                if (this.isSameDirection(point2, point1, intersect1)) {
-                    p1 = intersect1;
-                } else {
-                    p1 = intersect2;
-                }
-            }
-        } else {
-            if (!takePoint2) {                // Instead of point2 the border intersection is taken
-                if (this.isSameDirection(point1, point2, intersect1)) {
-                    p2 = intersect1;
-                } else {
-                    p2 = intersect2;
-                }
-            }
-        }
-
-        if (p1) point1.setCoordinates(JXG.COORDS_BY_USER, p1.usrCoords.slice(1));
-        if (p2) point2.setCoordinates(JXG.COORDS_BY_USER, p2.usrCoords.slice(1));
-    },
-
-    /**
-     * If you're looking from point "start" towards point "s" and can see the point "p", true is returned. Otherwise false.
-     * @param {JXG.Coords} start The point you're standing on.
-     * @param {JXG.Coords} p The point in which direction you're looking.
-     * @param {JXG.Coords} s The point that should be visible.
-     * @returns {Boolean} True, if from start the point p is in the same direction as s is, that means s-start = k*(p-start) with k>=0.
-     */
-    isSameDirection: function(start, p, s) {
-        var dx, dy, sx, sy, r = false;
-
-        dx = p.usrCoords[1] - start.usrCoords[1];
-        dy = p.usrCoords[2] - start.usrCoords[2];
-
-        sx = s.usrCoords[1] - start.usrCoords[1];
-        sy = s.usrCoords[2] - start.usrCoords[2];
-
-        if (Math.abs(dx) < JXG.Math.eps) dx = 0;
-        if (Math.abs(dy) < JXG.Math.eps) dy = 0;
-        if (Math.abs(sx) < JXG.Math.eps) sx = 0;
-        if (Math.abs(sy) < JXG.Math.eps) sy = 0;
-
-        if (dx >= 0 && sx >= 0) {
-            if ((dy >= 0 && sy >= 0) || (dy <= 0 && sy <= 0)) {
-                r = true;
-            }
-        } else if (dx <= 0 && sx <= 0) {
-            if ((dy >= 0 && sy >= 0) || (dy <= 0 && sy <= 0)) {
-                r = true;
-            }
-        }
-
-        return r;
     },
 
     /**
@@ -757,18 +556,15 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         this.transformImage(el, el.transformations);
         this.updateVisual(el, {stroke: true, dash: true}, true);
     },
-    
+
     /**
-    * Multiplication of transformations without updating.
-    * That means, at that point it is expected that the matrices
-    * contain numbers only.
-    * First, the origin in user coords is translated to (0,0) in screen coords.
-    * Then, the stretch factors are divided out.
-    * After the transformations in user coords, the  strech factors are multiplied in again,
-    * and the origin in user coords is translated back to its position.
-    * @see #transformImage
-    */
-    joinTransforms: function(el,t) {
+     * Multiplication of transformations without updating. That means, at that point it is expected that the matrices
+     * contain numbers only. First, the origin in user coords is translated to <tt>(0,0)</tt> in screen coords.
+     * Then, the stretch factors are divided out. After the transformations in user coords, the  strech factors
+     * are multiplied in again, and the origin in user coords is translated back to its position.
+     * @see #transformImage
+     */
+    joinTransforms: function(el, t) {
         var m = [[1,0,0],[0,1,0],[0,0,1]], 
             mpre1 =  [[1, 0, 0], [-el.board.origin.scrCoords[1], 1, 0], [-el.board.origin.scrCoords[2], 0, 1]], 
             mpre2 =  [[1, 0, 0], [0, 1/el.board.stretchX, 0], [0, 0, -1/el.board.stretchY]],
@@ -1162,116 +958,6 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * findSplit() is a subroutine for {@link #RamenDouglasPeuker}.
-     * It searches for the point between index i and j which
-     * has the largest distance from the line between the points i and j.
-     * @param {Array} pts Array of {@link JXG.Coords}
-     * @param {Number} i Index of a point in pts
-     * @param {Number} j Index of a point in pts
-     * @returns TODO
-     */
-    findSplit: function(pts, i, j) {
-        var dist = 0,
-            f = i,
-            d, k, ci, cj, ck,
-            x0, y0, x1, y1,
-            den, lbda;
-
-        if (j - i < 2) return [-1.0,0];
-
-        ci = pts[i].scrCoords;
-        cj = pts[j].scrCoords;
-        if (isNaN(ci[1] + ci[2] + cj[1] + cj[2])) return [NaN,j];
-
-        for (k = i + 1; k < j; k++) {
-            ck = pts[k].scrCoords;
-            x0 = ck[1] - ci[1];
-            y0 = ck[2] - ci[2];
-            x1 = cj[1] - ci[1];
-            y1 = cj[2] - ci[2];
-            den = x1 * x1 + y1 * y1;
-            if (den >= JXG.Math.eps) {
-                lbda = (x0 * x1 + y0 * y1) / den;
-                d = x0 * x0 + y0 * y0 - lbda * (x0 * x1 + y0 * y1);
-            } else {
-                lbda = 0.0;
-                d = x0 * x0 + y0 * y0;
-            }
-            if (lbda < 0.0) {
-                d = x0 * x0 + y0 * y0;
-            } else if (lbda > 1.0) {
-                x0 = ck[1] - cj[1];
-                y0 = ck[2] - cj[2];
-                d = x0 * x0 + y0 * y0;
-            }
-            if (d > dist) {
-                dist = d;
-                f = k;
-            }
-        }
-        return [Math.sqrt(dist),f];
-    },
-
-    /**
-     * RDP() is a subroutine for {@link #RamenDouglasPeuker}.
-     * It runs recursively through the point set and searches the
-     * point which has the largest distance from the line between the first point and
-     * the last point. If the distance from the line is greater than eps, this point is
-     * included in our new point set otherwise it is discarded.
-     * If it is taken, we recursively apply the subroutine to the point set before
-     * and after the chosen point.
-     * @param {Array} pts Array of {@link JXG.Coords}
-     * @param {Number} i Index of an element of pts
-     * @param {Number} j Index of an element of pts
-     * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
-     * @param {Array} newPts Array of {@link JXG.Coords}
-     */
-    RDP: function(pts, i, j, eps, newPts) {
-        var result = this.findSplit(pts, i, j);
-
-        if (result[0] > eps) {
-            this.RDP(pts, i, result[1], eps, newPts);
-            this.RDP(pts, result[1], j, eps, newPts);
-        } else {
-            newPts.push(pts[j]);
-        }
-    },
-
-    /**
-     * Ramen-Douglas-Peuker algorithm.
-     * It discards points which are not necessary from the polygonal line defined by the point array
-     * pts. The computation is done in screen coordinates.
-     * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
-     * @param {Array} pts Array of {@link JXG.Point}s
-     * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
-     * @returns {Array} An array containing points which represent an apparently identical curve as the points of pts do, but contains fewer points.
-     */
-    RamenDouglasPeuker: function(pts, eps) {
-        var newPts = [], i, k, len;
-
-        len = pts.length;
-
-        // Search for the left most point woithout NaN coordinates
-        i = 0;
-        while (i < len && isNaN(pts[i].scrCoords[1] + pts[i].scrCoords[2])) {
-            i++;
-        }
-        // Search for the right most point woithout NaN coordinates
-        k = len - 1;
-        while (k > i && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2])) {
-            k--;
-        }
-
-        // Only proceed if something is left
-        if (!(i > k || i == len)) {
-            newPts[0] = pts[i];
-            this.RDP(pts, i, k, eps, newPts);
-        }
-
-        return newPts;
-    },
-
-    /**
      * Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual renderers.
      * @param {JXG.GeometryElement} element Reference to a geometry object, that should get a shadow
      */
@@ -1289,19 +975,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * If <tt>val</tt> is a function, it will be evaluated without giving any parameters, else the input value is just returned.
-     * @param val Could be anything.
-     */
-    evaluate: function(val) {
-        if (JXG.isFunction(val)) {
-            return val();
-        } else {
-            return val;
-        }
-    },
-
-    /**
-     * TODO
+     * This is just a stub. Usage and implementation may differ between the different renderers.
      */
     setBuffering: function() {
         // This is just a stub. Usage and implementation may differ between the different renderers.

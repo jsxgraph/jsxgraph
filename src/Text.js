@@ -237,7 +237,6 @@ JXG.Text.prototype.update = function () {
     var anchor, plainOld;
     if (this.needsUpdate && !this.frozen) {
         if (this.relativeCoords){
-            anchor;
             if(!this.isLabel) {
                 anchor = this.element.getTextAnchor();
             }

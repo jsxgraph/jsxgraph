@@ -679,12 +679,6 @@ JXG.GeometryElement.prototype.setProperty = function () {
             pair[0] = pair[0].replace (/^\s+/, '').replace (/\s+$/, '');
             pair[1] = pair[1].replace (/^\s+/, '').replace (/\s+$/, '');
         } else if (!JXG.isArray(pairRaw)) {    // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
-            /*
-            for (var i=0; i<Object.keys(pairRaw).length;i++) {  // Here, the prototype lib is used (Object.keys, Object.isArray)
-                var key = Object.keys(pairRaw)[i];
-                this.setProperty([key,pairRaw[key]]);
-            }
-            */
             for (key in pairRaw) {
                 this.setProperty([key,pairRaw[key]]);
             }
@@ -1036,21 +1030,7 @@ JXG.GeometryElement.prototype.setDash = function(dash) {
  */
 JXG.GeometryElement.prototype.prepareUpdate = function() {
     this.needsUpdate = true;
-    return this; // Im Moment steigen wir nicht rekursiv hinab
-    /* End of function  */
-
-    /*
-    var el;
-    for(el in this.childElements) {
-        // Wurde das Element vielleicht geloescht?
-        if(JXG.exists(this.board.objects[el])) {
-            // Nein, wurde es nicht, also updaten
-            this.childElements[el].prepareUpdate();
-        } else { //  es wurde geloescht, also aus dem Array entfernen
-            delete(this.childElements[el]);
-        }
-    }
-    */
+    return this;
 };
 
 /**

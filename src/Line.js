@@ -475,7 +475,7 @@ JXG.Line.prototype.setLabelRelativeCoords = function(relCoords) {
     if (typeof this.label.content!='undefined') { 
         this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [relCoords[0],-relCoords[1]],this.board);
     }
-}
+};
 
 /**
  * Calculates LabelAnchor. DESCRIPTION
@@ -494,7 +494,7 @@ JXG.Line.prototype.getLabelAnchor = function() {
     else {
         screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
         screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
-        this.board.renderer.calcStraight(this, screenCoords1, screenCoords2);
+        JXG.Math.Geometry.calcStraight(this, screenCoords1, screenCoords2);
 
         if(this.visProp['straightFirst']) {
             coords = screenCoords1;
@@ -1081,7 +1081,7 @@ JXG.createAxis = function(board, parents, attributes) {
         } else {
             c1 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point1.coords.usrCoords.slice(1)],board);
             c2 = new JXG.Coords(JXG.COORDS_BY_USER, [line.point2.coords.usrCoords.slice(1)],board);
-            board.renderer.calcStraight(line, c1, c2);
+            JXG.Math.Geometry.calcStraight(line, c1, c2);
             len = c1.distance(JXG.COORDS_BY_USER,c2);
             //len *= 0.33;
             dist = 1.0; //len;

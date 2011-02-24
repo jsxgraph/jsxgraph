@@ -371,8 +371,8 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
     },
 
     setObjectStrokeColor: function(el, color, opacity) {
-        var c = this.evaluate(color),
-            o = this.evaluate(opacity),
+        var c = JXG.evaluate(color),
+            o = JXG.evaluate(opacity),
             node;
 
         o = (o>0)?o:0;
@@ -407,8 +407,8 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
     },
 
     setObjectFillColor: function(el, color, opacity) {
-        var node, c = this.evaluate(color),
-            o = this.evaluate(opacity);
+        var node, c = JXG.evaluate(color),
+            o = JXG.evaluate(opacity);
 
         o = (o>0)?o:0;
 
@@ -436,7 +436,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
      * @param {int} width The new stroke width to be assigned to the element.
      */
     setObjectStrokeWidth: function(el, width) {
-        var w = this.evaluate(width),
+        var w = JXG.evaluate(width),
             node;
         //w = (w>0)?w:0;
         try {
@@ -635,7 +635,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         if (el.numberPoints<=0) { return ''; }
 
         if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-            el.points = this.RamenDouglasPeuker(el.points,0.5);
+            el.points = JXG.Math.Numerics.RamenDouglasPeuker(el.points,0.5);
         }
         len = Math.min(el.points.length,el.numberPoints);
         for (i=0; i<len; i++) {

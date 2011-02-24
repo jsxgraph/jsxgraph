@@ -346,8 +346,8 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
     },
 
     setObjectStrokeColor: function(el, color, opacity) {
-        var c = this.evaluate(color),
-            o = this.evaluate(opacity),
+        var c = JXG.evaluate(color),
+            o = JXG.evaluate(opacity),
             node, nodeStroke;
 
         o = (o>0)?o:0;
@@ -382,8 +382,8 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
     },
 
     setObjectFillColor: function(el, color, opacity) {
-        var c = this.evaluate(color),
-            o = this.evaluate(opacity), t;
+        var c = JXG.evaluate(color),
+            o = JXG.evaluate(opacity), t;
 
         o = (o>0)?o:0;
 
@@ -432,7 +432,7 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
         for (i=0;i<len;i++) {
             p = props[i];
             if (visProp[p]!=null) {
-                val = this.evaluate(visProp[p]);
+                val = JXG.evaluate(visProp[p]);
                 val = (val>0)?val:0;
                 this.setAttr(node,vmlprops[i], val);
             }
@@ -450,7 +450,7 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
      * @param {int} width The new stroke width to be assigned to the element.
      */
     setObjectStrokeWidth: function(el, width) {
-        var w = this.evaluate(width),
+        var w = JXG.evaluate(width),
             node;
         //w = (w>0)?w:0;
 
@@ -596,7 +596,7 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
 
         if (el.numberPoints<=0) { return ''; }
         if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-            el.points = this.RamenDouglasPeuker(el.points,1.0);
+            el.points = JXG.Math.Numerics.RamenDouglasPeuker(el.points,1.0);
         }
         len = Math.min(len,el.points.length);
 
@@ -741,7 +741,7 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
             case 'stroke-dasharray': keyVml = 'dashstyle'; break;
         }
         if (keyVml!='') {
-            v = this.evaluate(val);
+            v = JXG.evaluate(val);
             this.setAttr(node, keyVml, v);
         }
     },

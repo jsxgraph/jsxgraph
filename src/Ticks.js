@@ -344,7 +344,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     e2 = new JXG.Coords(JXG.COORDS_BY_USER, [p2.coords.usrCoords[1], p2.coords.usrCoords[2]], this.board);
         
     // ... and calculate the drawn start and end point
-    this.board.renderer.calcStraight(this.line, e1, e2);
+    JXG.Math.Geometry.calcStraight(this.line, e1, e2);
         
     if(!this.equidistant) {
         // we have an array of fixed ticks we have to draw
@@ -411,12 +411,12 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
      */
 
     // p1 is outside the visible area or the line is a segment
-    if(this.board.renderer.isSameDirection(p1.coords, e1, e2)) {
+    if(JXG.Math.Geometry.isSameDirection(p1.coords, e1, e2)) {
         // calculate start and end points
         begin = respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1));
         end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
         
-        if(this.board.renderer.isSameDirection(p1.coords, p2.coords, e1)) {
+        if(JXG.Math.Geometry.isSameDirection(p1.coords, p2.coords, e1)) {
             if(this.line.visProp.straightFirst)
                 begin -=  2*ticksDelta;
         } else {

@@ -189,7 +189,7 @@ JXG.Chart.prototype.drawBar = function(board, parents, attributes) {
         w *=0.8;
     }
 
-    fill = attributes['fillColor']
+    fill = attributes['fillColor'];
     fs = parseFloat(board.options.text.fontSize);                 // TODO: handle fontSize attribute
     for (i=0;i<x.length;i++) {        
         if (JXG.isFunction(x[i])) {  // Not yet
@@ -791,7 +791,7 @@ JXG.Legend = function(board, coords, attributes) {
             alert('Unknown legend style' + this.style);
             break;
     }
-}
+};
 JXG.Legend.prototype = new JXG.GeometryElement;
 
 JXG.Legend.prototype.drawVerticalLegend = function(attributes) {
@@ -814,7 +814,7 @@ JXG.Legend.prototype.drawVerticalLegend = function(attributes) {
             return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X(),this.point2.Y()],this.board);
         }
     }
-}
+};
 
 JXG.createLegend = function(board, parents, attributes) {
     //parents are coords of left top point of the legend
@@ -824,6 +824,5 @@ JXG.createLegend = function(board, parents, attributes) {
             start_from = parents;
         }
     return new JXG.Legend(board, start_from, attributes);
-}
+};
 JXG.JSXGraph.registerElement('legend', JXG.createLegend);
-// vim: et ts=4
