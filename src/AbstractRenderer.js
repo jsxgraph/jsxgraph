@@ -151,7 +151,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
 
         // determine how the point looks like
         if (face === 'o') {
-            prim = 'circle';
+            prim = 'ellipse';
         } else if (face === '[]') {
             prim = 'rect';
         } else {
@@ -194,7 +194,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         size *= ((!el.board || !el.board.options.point.zoom) ? 1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY));
 
         if (face === 'o') { // circle
-            this.updateCirclePrim(el.rendNode, el.coords.scrCoords[1], el.coords.scrCoords[2], size + 1);
+            this.updateEllipsePrim(el.rendNode, el.coords.scrCoords[1], el.coords.scrCoords[2], size + 1, size + 1);
         } else if (face === '[]') { // rectangle
             this.updateRectPrim(el.rendNode, el.coords.scrCoords[1] - size, el.coords.scrCoords[2] - size, size * 2, size * 2);
         } else { // x, +, <>, ^, v, <, >

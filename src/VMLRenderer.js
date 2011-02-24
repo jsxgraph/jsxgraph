@@ -553,13 +553,6 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
         this.updatePathPrim(node,s,board);
     },
 
-    updateCirclePrim: function(node,x,y,r) {
-        node.style.left = (x-r)+'px';
-        node.style.top = (y-r)+'px';
-        node.style.width = (r*2)+'px';
-        node.style.height = (r*2)+'px';
-    },
-
     updateRectPrim: function(node,x,y,w,h) {
         node.style.left = (x)+'px';
         node.style.top = (y)+'px';

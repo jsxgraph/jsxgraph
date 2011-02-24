@@ -598,12 +598,6 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         node.setAttributeNS(null, 'y2', p2y);
     },
 
-    updateCirclePrim: function(node,x,y,r) {
-        node.setAttributeNS(null, 'cx', (x));
-        node.setAttributeNS(null, 'cy', (y));
-        node.setAttributeNS(null, 'r', (r));
-    },
-
     updateEllipsePrim: function(node,x,y,rx,ry) {
         node.setAttributeNS(null, 'cx', (x));
         node.setAttributeNS(null, 'cy', (y));
