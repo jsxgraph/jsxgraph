@@ -265,12 +265,10 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
             screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
 
-        // a line can be a segment, straight, or ray. so it's not always delimited by point1 and point2
-        // calcstraight calculates the visual start point and end point of the line.
         JXG.Math.Geometry.calcStraight(el, screenCoords1, screenCoords2);
         this.updateLinePrim(el.rendNode, screenCoords1.scrCoords[1], screenCoords1.scrCoords[2],
                                          screenCoords2.scrCoords[1], screenCoords2.scrCoords[2], el.board);
-        // if this line has arrows attached, update them, too.
+
         this.makeArrows(el);
         this.updateVisual(el, {fill: true});
     },

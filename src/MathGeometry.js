@@ -379,8 +379,9 @@ JXG.Math.Geometry = {
     },
 
     /**
-     * Calculates drawing start and end point for a line. A segment is only drawn from start to end point, a straight line
-     * is drawn until it meets the boards boundaries.
+     * A line can be a segment, a straight, or a ray. so it is not always delimited by point1 and point2
+     * calcStraight determines the visual start point and end point of the line. A segment is only drawn
+     * from start to end point, a straight line is drawn until it meets the boards boundaries.
      * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
      * @param {JXG.Coords} point1 Coordinates of the point where line drawing begins. This value is calculated and set by this method.
      * @param {JXG.Coords} point2 Coordinates of the point where line drawing ends. This value is calculated and set by this method.
