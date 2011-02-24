@@ -42,7 +42,7 @@ import shutil
 
 # Default values for options. May be overridden via command line options
 yui = "~/public_html/jsxgraph/trunk/tools/yuicompressor-2.4.2"
-jsdoc = "~/public_html/jsxgraph/jsdoc_toolkit-2.3.2/jsdoc-toolkit"
+jsdoc = "~/public_html/jsxgraph/jsdoc_toolkit-2.4.0/jsdoc-toolkit"
 output = "distrib"
 version = None
 
@@ -177,7 +177,7 @@ def makeDocs(afterCore = False):
     
     #java -jar $ROOT/jsrun.jar $ROOT/app/run.js -a -v -t=$ROOT/templates/jsdoc -d=docs ../src/loadjsxgraph.js ../src/$FILELIST.js ../src/SVGRenderer.js ../src/VMLRenderer.js
     os.system("java -jar " + jsd + "/jsrun.jar " + jsd + "/app/run.js -a -v -t=" + jsd + "/templates/jsx -d=tmp/docs " + filesStr)
-    
+
     #zip -r tmp/docs.zip tmp/docs/
     os.system("cd tmp && zip -r docs-" + version + ".zip docs/ && cd ..")
     shutil.move("tmp/docs-" + version + ".zip", output + "/docs-" + version + ".zip")

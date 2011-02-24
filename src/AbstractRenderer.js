@@ -26,7 +26,7 @@
 
 /*jshint bitwise: false, curly: true, debug: false, eqeqeq: true, devel: false, evil: false,
   forin: false, immed: true, laxbreak: false, newcap: false, noarg: true, nonew: true, onevar: true,
-   undef: true, white: true, sub: true*/
+   undef: true, white: true, sub: false*/
 /*global JXG: true, AMprocessNode: true, MathJax: true */
 
 /**
@@ -100,17 +100,17 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {Boolean} enhanced If true JXG.AbstractRenderer#enhancedRendering is assumed to be true.
      */
     updateVisual: function (el, not, enhanced) {
-        not = not || {};
-
         if (enhanced || this.enhancedRendering) {
-            if (!el.visProp['draft']) {
+            not = not || {};
+
+            if (!el.visProp.draft) {
                 if (!not.stroke) {
-                    this.setObjectStrokeWidth(el, el.visProp['strokeWidth']);
-                    this.setObjectStrokeColor(el, el.visProp['strokeColor'], el.visProp['strokeOpacity']);
+                    this.setObjectStrokeWidth(el, el.visProp.strokeWidth);
+                    this.setObjectStrokeColor(el, el.visProp.strokeColor, el.visProp.strokeOpacity);
                 }
 
                 if (!not.fill) {
-                    this.setObjectFillColor(el, el.visProp['fillColor'], el.visProp['fillOpacity']);
+                    this.setObjectFillColor(el, el.visProp.fillColor, el.visProp.fillOpacity);
                 }
 
                 if (!not.dash) {
@@ -127,13 +127,11 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     *
-     * @param str
-     * @param fontsize
+     * Shows a small copyright notice in the top left corner of the board.
+     * @param {String} str The copyright notice itself
+     * @param {Number} fontsize Size of the font the copyright notice is written in
      */
-    displayCopyright: function (str, fontsize) {
-        // This is only a stub, the method is implemented in the renderer itself.
-    },
+    displayCopyright: function (str, fontsize) { /* stub */ },
 
 
     /* ******************************** *
@@ -149,7 +147,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      */
     drawPoint: function (el) {
         var prim,
-            face = JXG.Point.prototype.normalizeFace.call(this, el.visProp['face']);
+            face = JXG.Point.prototype.normalizeFace.call(this, el.visProp.face);
 
         // determine how the point looks like
         if (face === 'o') {
@@ -183,8 +181,8 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @see #changePointStyle
      */
     updatePoint: function (el) {
-        var size = el.visProp['size'],
-            face = JXG.Point.prototype.normalizeFace.call(this, el.visProp['face']);
+        var size = el.visProp.size,
+            face = JXG.Point.prototype.normalizeFace.call(this, el.visProp.face);
 
         if (isNaN(el.coords.scrCoords[2]) || isNaN(el.coords.scrCoords[1])) {
             return;
@@ -228,11 +226,11 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         this.drawPoint(el);
         JXG.clearVisPropOld(el);
 
-        if (!el.visProp['visible']) {
+        if (!el.visProp.visible) {
             this.hide(el);
         }
 
-        if (el.visProp['draft']) {
+        if (el.visProp.draft) {
             this.setDraft(el);
         }
     },
@@ -265,8 +263,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      */
     updateLine: function (el) {
         var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
-            screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
-            ax, ay, bx, by, beta, x, y;
+            screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
 
         // a line can be a segment, straight, or ray. so it's not always delimited by point1 and point2
         // calcstraight calculates the visual start point and end point of the line.
@@ -427,7 +424,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         if (el.display === 'html') {
             node = el.board.containerObj.ownerDocument.createElement('div');
             node.style.position = 'absolute';
-            node.style.color = el.visProp['strokeColor'];
+            node.style.color = el.visProp.strokeColor;
             node.className = 'JXGtext';
             node.style.zIndex = '10';
             el.board.containerObj.appendChild(node);
@@ -469,7 +466,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      */
     updateText: function (el) {
         // Update only objects that are visible.
-        if (el.visProp['visible'] && !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
+        if (el.visProp.visible && !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
             this.updateTextStyle(el);
 
             if (el.display === 'html') {
@@ -519,12 +516,12 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     updateTextStyle: function (el) {
         var fs;
 
-        if (el.visProp['fontSize']) {
-            if (typeof el.visProp['fontSize'] === 'function') {
-                fs = el.visProp['fontSize']();
+        if (el.visProp.fontSize) {
+            if (typeof el.visProp.fontSize === 'function') {
+                fs = el.visProp.fontSize();
                 el.rendNode.style.fontSize = (fs > 0 ? fs : 0);
             } else {
-                el.rendNode.style.fontSize = (el.visProp['fontSize']);
+                el.rendNode.style.fontSize = (el.visProp.fontSize);
             }
         }
     },
@@ -659,7 +656,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
                 board);
 
         node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
-        this.appendChildPrim(node2, board.options.layer['grid']);
+        this.appendChildPrim(node2, board.options.layer.grid);
         if (!board.options.grid.snapToGrid) {
             el = {};
             el.visProp = {};
@@ -684,7 +681,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         }
 
         node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
-        this.appendChildPrim(node2, board.options.layer['grid']); // Attention layer=1
+        this.appendChildPrim(node2, board.options.layer.grid); // Attention layer=1
         if (!board.options.grid.snapToGrid) {
             el = {};
             el.visProp = {};
@@ -774,7 +771,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.GeometryElement} obj Reference of the object that is in draft mode.
      */
     setDraft: function (obj) {
-        if (!obj.visProp['draft']) {
+        if (!obj.visProp.draft) {
             return;
         }
         var draftColor = obj.board.options.elements.draft.color,
@@ -801,14 +798,14 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      */
     removeDraft: function (obj) {
         if (obj.type === JXG.OBJECT_TYPE_POLYGON) {
-            this.setObjectFillColor(obj, obj.visProp['fillColor'], obj.visProp['fillColorOpacity']);
+            this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillColorOpacity);
         }
         else {
             if (obj.type === JXG.OBJECT_CLASS_POINT) {
-                this.setObjectFillColor(obj, obj.visProp['fillColor'], obj.visProp['fillColorOpacity']);
+                this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillColorOpacity);
             }
-            this.setObjectStrokeColor(obj, obj.visProp['strokeColor'], obj.visProp['strokeColorOpacity']);
-            this.setObjectStrokeWidth(obj, obj.visProp['strokeWidth']);
+            this.setObjectStrokeColor(obj, obj.visProp.strokeColor, obj.visProp.strokeColorOpacity);
+            this.setObjectStrokeWidth(obj, obj.visProp.strokeWidth);
         }
     },
 
@@ -819,23 +816,23 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     highlight: function (obj) {
         var i;
 
-        if (!obj.visProp['draft']) {
+        if (!obj.visProp.draft) {
             if (obj.type === JXG.OBJECT_CLASS_POINT) {
-                this.setObjectStrokeColor(obj, obj.visProp['highlightStrokeColor'], obj.visProp['highlightStrokeOpacity']);
-                this.setObjectFillColor(obj, obj.visProp['highlightStrokeColor'], obj.visProp['highlightStrokeOpacity']);
+                this.setObjectStrokeColor(obj, obj.visProp.highlightStrokeColor, obj.visProp.highlightStrokeOpacity);
+                this.setObjectFillColor(obj, obj.visProp.highlightStrokeColor, obj.visProp.highlightStrokeOpacity);
             }
             else if (obj.type === JXG.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(obj, obj.visProp['highlightFillColor'], obj.visProp['highlightFillOpacity']);
+                this.setObjectFillColor(obj, obj.visProp.highlightFillColor, obj.visProp.highlightFillOpacity);
                 for (i = 0; i < obj.borders.length; i++) {
-                    this.setObjectStrokeColor(obj.borders[i], obj.borders[i].visProp['highlightStrokeColor'], obj.visProp['highlightStrokeOpacity']);
+                    this.setObjectStrokeColor(obj.borders[i], obj.borders[i].visProp.highlightStrokeColor, obj.visProp.highlightStrokeOpacity);
                 }
             }
             else {
-                this.setObjectStrokeColor(obj, obj.visProp['highlightStrokeColor'], obj.visProp['highlightStrokeOpacity']);
-                this.setObjectFillColor(obj, obj.visProp['highlightFillColor'], obj.visProp['highlightFillOpacity']);
+                this.setObjectStrokeColor(obj, obj.visProp.highlightStrokeColor, obj.visProp.highlightStrokeOpacity);
+                this.setObjectFillColor(obj, obj.visProp.highlightFillColor, obj.visProp.highlightFillOpacity);
             }
-            if (obj.visProp['highlightStrokeWidth']) {
-                this.setObjectStrokeWidth(obj, obj.visProp['highlightStrokeWidth']);
+            if (obj.visProp.highlightStrokeWidth) {
+                this.setObjectStrokeWidth(obj, obj.visProp.highlightStrokeWidth);
             }
         }
     },
@@ -847,22 +844,22 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     noHighlight: function (obj) {
         var i;
 
-        if (!obj.visProp['draft']) {
+        if (!obj.visProp.draft) {
             if (obj.type === JXG.OBJECT_CLASS_POINT) {
-                this.setObjectStrokeColor(obj, obj.visProp['strokeColor'], obj.visProp['strokeOpacity']);
-                this.setObjectFillColor(obj, obj.visProp['strokeColor'], obj.visProp['strokeOpacity']);
+                this.setObjectStrokeColor(obj, obj.visProp.strokeColor, obj.visProp.strokeOpacity);
+                this.setObjectFillColor(obj, obj.visProp.strokeColor, obj.visProp.strokeOpacity);
             }
             else if (obj.type === JXG.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(obj, obj.visProp['fillColor'], obj.visProp['fillOpacity']);
+                this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillOpacity);
                 for (i = 0; i < obj.borders.length; i++) {
-                    this.setObjectStrokeColor(obj.borders[i], obj.borders[i].visProp['strokeColor'], obj.visProp['strokeOpacity']);
+                    this.setObjectStrokeColor(obj.borders[i], obj.borders[i].visProp.strokeColor, obj.visProp.strokeOpacity);
                 }
             }
             else {
-                this.setObjectStrokeColor(obj, obj.visProp['strokeColor'], obj.visProp['strokeOpacity']);
-                this.setObjectFillColor(obj, obj.visProp['fillColor'], obj.visProp['fillOpacity']);
+                this.setObjectStrokeColor(obj, obj.visProp.strokeColor, obj.visProp.strokeOpacity);
+                this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillOpacity);
             }
-            this.setObjectStrokeWidth(obj, obj.visProp['strokeWidth']);
+            this.setObjectStrokeWidth(obj, obj.visProp.strokeWidth);
         }
     },
 
@@ -880,7 +877,8 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @returns {Node} Reference to the created node.
      */
     createPrim: function (type, id) {
-        // This is just a stub. Implementation is done in the actual renderers.
+        /* stub */
+        return null;
     },
 
     /**

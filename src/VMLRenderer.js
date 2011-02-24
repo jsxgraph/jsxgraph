@@ -672,57 +672,29 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
             ].join(''));
         }
         return s;
-    }
+    },
 
     updatePolygonPrim: function(node,el) {
-        var minX = el.vertices[0].coords.scrCoords[1],
-            maxX = el.vertices[0].coords.scrCoords[1],
-            minY = el.vertices[0].coords.scrCoords[2],
-            maxY = el.vertices[0].coords.scrCoords[2],
-            i,
+        var i,
             len = el.vertices.length,
-            scr, x, y,
+            r = this.resolution,
+            scr,
             pStr = [];
 
         this.setAttr(node, 'stroked', 'false');
-        for(i=1; i<len-1; i++) {
-            scr = el.vertices[i].coords.scrCoords;
-            if(scr[1] < minX) {
-                minX = scr[1];
-            }
-            else if(scr[1] > maxX) {
-                maxX = scr[1];
-            }
-            if(scr[2] < minY) {
-                minY = scr[2];
-            }
-            else if(scr[2] > maxY) {
-                maxY = scr[2];
-            }
-        }
-
-        x = Math.round(maxX-minX); // Breite des umgebenden Rechtecks?
-        y = Math.round(maxY-minY); // Hoehe des umgebenden Rechtecks?
-
-        if (!isNaN(x) && !isNaN(y)) {
-            node.style.width = x;
-            node.style.height = y;
-            this.setAttr(node, 'coordsize', x+','+y);
-        }
 
         scr = el.vertices[0].coords.scrCoords;
-        pStr.push(["m ",scr[1],",",scr[2]," l "].join(''));
+        pStr.push(["m ", r * scr[1], ",", r * scr[2], " l "].join(''));
 
-        for(i=1; i<len-1; i++) {
+        for(i = 1; i < len-1; i++) {
             scr = el.vertices[i].coords.scrCoords;
-            pStr.push(scr[1] + "," + scr[2]);
-            if(i<len-2) {
+            pStr.push(r * scr[1] + "," + r * scr[2]);
+            if (i < len-2) {
                 pStr.push(", ");
             }
         }
         pStr.push(" x e");
-
-        this.setAttr(node, 'path',pStr.join(""));
+        this.updatePathPrim(node, pStr, el.board);
     },
 
     appendChildPrim: function(node,level) {
@@ -733,7 +705,7 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
 
     setPropertyPrim: function(node,key,val) {
         var keyVml = '',
-            node2, v;
+            v;
 
         switch (key) {
             case 'stroke': keyVml = 'strokecolor'; break;

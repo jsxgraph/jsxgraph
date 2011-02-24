@@ -214,6 +214,7 @@ JXG.Polygon.prototype.cloneToBackground = function(addToTrace) {
     this.numTraces++;
     copy.vertices = this.vertices;
     copy.visProp = this.visProp;
+    copy.board = this.board;
     JXG.clearVisPropOld(copy);
     
     er = this.board.renderer.enhancedRendering;
