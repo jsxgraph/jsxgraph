@@ -1033,16 +1033,17 @@ JXG.Board.prototype.dehighlightAll = function() {
     }
 
     
-    /*
     // We do not need to redraw during dehighlighting in CanvasRenderer
     // because we are redrawing anyhow
+    //  -- We do need to redraw during dehighlighting. Otherwise objects won't be dehighlighted until
+    // another object is highlighted.
     if (this.options.renderer=='canvas' && needsDehighlight) {
         this.prepareUpdate();
         this.renderer.suspendRedraw();
         this.updateRenderer();
         this.renderer.unsuspendRedraw();
     }
-    */
+
     return this;
 };
 
