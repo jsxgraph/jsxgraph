@@ -1245,8 +1245,8 @@ JXG.Board.prototype.updateConditions = function() { return false; };
  * @returns {JXG.Board} Reference to the board.
  */
 JXG.Board.prototype.calculateSnapSizes = function() {
-    var p1 = new JXG.Coords(JXG.COORDS_BY_USER,[0,0],this),
-        p2 = new JXG.Coords(JXG.COORDS_BY_USER,[1/this.options.grid.gridX,1/this.options.grid.gridY],this),
+    var p1 = new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this),
+        p2 = new JXG.Coords(JXG.COORDS_BY_USER, [this.options.grid.gridX, this.options.grid.gridY], this),
         x = p1.scrCoords[1]-p2.scrCoords[1],
         y = p1.scrCoords[2]-p2.scrCoords[2];
 

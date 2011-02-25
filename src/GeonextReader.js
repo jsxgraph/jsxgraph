@@ -322,8 +322,8 @@ this.readGeonext = function(tree,board) {
     // das Grid zeichnen
     // auf Kaestchen springen?
     snap = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('snap')[0].firstChild.data == "true") ? board.options.grid.snapToGrid = true : null;
-    gridX = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data) ? board.options.grid.gridX = boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data*1 : null;
-    gridY = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data) ? board.options.grid.gridY = boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data*1 : null;
+    gridX = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data) ? board.options.grid.gridX = 1/parseFloat(boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data) : null;
+    gridY = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data) ? board.options.grid.gridY = 1/parseFloat(boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data) : null;
     board.calculateSnapSizes();
     gridDash = boardData.getElementsByTagName('grid')[1].getElementsByTagName('dash')[0].firstChild.data;
     board.options.grid.gridDash = JXG.str2Bool(gridDash);

@@ -541,9 +541,11 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * TODO
-     * @param el
-     * @param t
+     * Applies transformations on images and text elements. This method is just a stub and has to be implemented in all
+     * descendant classes where text and image transformations are to be supported.
+     * @param {JXG.Image|JXG.Text} el A {@link JXG.Image} or {@link JXG.Text} object.
+     * @param {Array} t An array of {@link JXG.Transformation} objects. This is usually the transformations property
+     * of the given element <tt>el</tt>.
      */
     transformImage: function (el, t) { /* stub */ },
 
@@ -581,104 +583,78 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     drawGrid: function (board) {
         var gridX = board.options.grid.gridX,
             gridY = board.options.grid.gridY,
-            k = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board),
-            k2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board),
-            tmp = Math.ceil(k.usrCoords[1]),
-            j = 0,
-            i, j2, l, l2,
-            gx, gy, topLeft, bottomRight, node2, el;
+            gx, gy,
+            topLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board),
+            bottomRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board),
+            node2, el;
+
+        //
+        //      |         |         |
+        //  ----+---------+---------+-----
+        //      |        /|         |
+        //      |  1/gridY|     <---+------   Grid Cell
+        //      |        \|         |
+        //  ----+---------+---------+-----
+        //      |         |\1/gridX/|
+        //      |         |         |
+        //
+        // uc: usercoordinates
+        //
+        // currently one grid cell is 1/JXG.Options.grid.gridX uc wide and 1/JXG.Options.grid.gridY uc high.
+        // this may work perfectly with GeonextReader (#readGeonext, initialization of gridX and gridY) but it
+        // is absolutely not user friendly when it comes to use it as an API interface.
+        // i changed this to use gridX and gridY as the actual width and height of the grid cell. for this i
+        // had to refactor these methods:
+        //
+        //  DONE JXG.Board.calculateSnapSizes (init p1, p2)
+        //  DONE JXG.GeonextReader.readGeonext (init gridX, gridY)
+        //
+        // TODO - AbstractReader/drawGrid workaround round errors:
+        //
+        // go from left to right (topLeft -> bottomRight) and search for the value closest to 0. Subtract the
+        // difference of this value and 0 from the x value of topLeft. do the same for the y value and we should
+        // get a grid perfectly matching (0, 0)
 
         board.options.grid.hasGrid = true;
 
-        for (i = 0; i <= gridX + 1; i++) {
-            if (tmp - i / gridX < k.usrCoords[1]) {
-                j = i - 1;
-                break;
-            }
-        }
+        gx = Math.round((gridX) * board.stretchX);
+        gy = Math.round((gridY) * board.stretchY);
 
-        tmp = Math.floor(k2.usrCoords[1]);
-        j2 = 0;
-        for (i = 0; i <= gridX + 1; i++) {
-            if (tmp + i / gridX > k2.usrCoords[1]) {
-                j2 = i - 1;
-                break;
-            }
-        }
-
-        tmp = Math.ceil(k2.usrCoords[2]);
-        l2 = 0;
-        for (i = 0; i <= gridY + 1; i++) {
-            if (tmp - i / gridY < k2.usrCoords[2]) {
-                l2 = i - 1;
-                break;
-            }
-        }
-
-        tmp = Math.floor(k.usrCoords[2]);
-        l = 0;
-        for (i = 0; i <= gridY + 1; i++) {
-            if (tmp + i / gridY > k.usrCoords[2]) {
-                l = i - 1;
-                break;
-            }
-        }
-
-        gx = Math.round((1.0 / gridX) * board.stretchX);
-        gy = Math.round((1.0 / gridY) * board.stretchY);
-
-        topLeft = new JXG.Coords(JXG.COORDS_BY_USER,
-                [Math.ceil(k.usrCoords[1]) - j / gridX, Math.floor(k.usrCoords[2]) + l / gridY],
-                board);
-        bottomRight = new JXG.Coords(JXG.COORDS_BY_USER,
-                [Math.floor(k2.usrCoords[1]) + j2 / gridX, Math.ceil(k2.usrCoords[2]) - l2 / gridY],
-                board);
+        topLeft.setCoordinates(JXG.COORDS_BY_USER, [Math.floor(topLeft.usrCoords[1]/gridX)*gridX, Math.ceil(topLeft.usrCoords[2]/gridY)*gridY]);
+        bottomRight.setCoordinates(JXG.COORDS_BY_USER, [Math.ceil(bottomRight.usrCoords[1]/gridX)*gridX, Math.floor(bottomRight.usrCoords[2]/gridY)*gridY]);
 
         node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
         this.appendChildPrim(node2, board.options.layer.grid);
+
+        el = {};
+        el.elementClass = JXG.OBJECT_CLASS_LINE;
+
+        el.visProp = {};
+        el.rendNode = node2;
+        el.id = "gridx";
+        JXG.clearVisPropOld(el);
+
         if (!board.options.grid.snapToGrid) {
-            el = {};
-            el.visProp = {};
-            el.rendNode = node2;
-            el.elementClass = JXG.OBJECT_CLASS_LINE;
-            el.id = "gridx";
-            JXG.clearVisPropOld(el);
             this.setObjectStrokeColor(el, board.options.grid.gridColor, board.options.grid.gridOpacity);
         }
-        else {
-            el = {};
-            el.visProp = {};
-            el.rendNode = node2;
-            el.elementClass = JXG.OBJECT_CLASS_LINE;
-            el.id = "gridx";
-            JXG.clearVisPropOld(el);
-            this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);
-        }
+        
         this.setPropertyPrim(node2, 'stroke-width', '0.4px');
         if (board.options.grid.gridDash) {
             this.setGridDash("gridx");
         }
 
         node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
+
+        el.visProp = {};
+        el.rendNode = node2;
+        el.id = "gridy";
+        JXG.clearVisPropOld(el);
+
         this.appendChildPrim(node2, board.options.layer.grid); // Attention layer=1
         if (!board.options.grid.snapToGrid) {
-            el = {};
-            el.visProp = {};
-            el.rendNode = node2;
-            el.elementClass = JXG.OBJECT_CLASS_LINE;
-            el.id = "gridy";
-            JXG.clearVisPropOld(el);
             this.setObjectStrokeColor(el, board.options.grid.gridColor, board.options.grid.gridOpacity);
         }
-        else {
-            el = {};
-            el.visProp = {};
-            el.rendNode = node2;
-            el.elementClass = JXG.OBJECT_CLASS_LINE;
-            el.id = "gridy";
-            JXG.clearVisPropOld(el);
-            this.setObjectStrokeColor(el, '#FF8080', 0.5); //board.gridOpacity);
-        }
+
         this.setPropertyPrim(node2, 'stroke-width', '0.4px');
         if (board.options.grid.gridDash) {
             this.setGridDash("gridy");
@@ -864,7 +840,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * TODO
+     * TODO docstring
      * @param node
      * @param pointString
      * @param board
@@ -874,14 +850,14 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * TODO
+     * TODO docstring
      */
     appendChildPrim: function () {
         // This is just a stub. Implementation is done in the actual renderers.
     },
 
     /**
-     * TODO
+     * TODO docstring
      */
     appendNodesToElement: function () {
         // This is just a stub. Implementation is done in the actual renderers.
@@ -907,7 +883,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * The tiny zoom bar shown on the bottom of a board (if {@link JXG.Board#showNavigation} is true).
+     * The tiny zoom bar shown on the bottom of a board (if showNavigation on board creation is true).
      * @param {JXG.Board} board Reference to a JSXGraph board.
      */
     drawZoomBar: function (board) {
