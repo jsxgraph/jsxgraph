@@ -80,20 +80,20 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
     setShadow: function(el) {
         var nodeShadow = el.rendNodeShadow;
 
-        if (!nodeShadow) return;                          // Added 29.9.09. A.W.
-        if (el.visPropOld['shadow']==el.visProp['shadow']) {
+        if (!nodeShadow || el.visPropOld.shadow === el.visProp.shadow) {
             return;
         }
+
         if(el.visProp['shadow']) {
             this._setAttr(nodeShadow, 'On', 'True');
             this._setAttr(nodeShadow, 'Offset', '3pt,3pt');
             this._setAttr(nodeShadow, 'Opacity', '60%');
             this._setAttr(nodeShadow, 'Color', '#aaaaaa');
-        }
-        else {
+        } else {
             this._setAttr(nodeShadow, 'On', 'False');
         }
-        el.visPropOld['shadow']=el.visProp['shadow'];
+
+        el.visPropOld.shadow = el.visProp.shadow;
     },
 
     setGradient: function(el) {
@@ -166,13 +166,6 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
 
     },
 
-    drawTicks: function(ticks) {
-        var ticksNode = this.createPrim('path', ticks.id);
-        this.appendChildPrim(ticksNode,ticks.layer);
-        //ticks.rendNode = ticksNode;
-        this.appendNodesToElement(ticks, 'path');
-    },
-
     updateTicks: function(axis,dxMaj,dyMaj,dxMin,dyMin) {
         var tickArr = [], i, len, c, ticks, r = this.resolution;
 
@@ -204,25 +197,25 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
         this._setAttr(ticks,'stroked', 'true');
         this._setAttr(ticks,'strokecolor', axis.visProp['strokeColor'], 1);
         this._setAttr(ticks,'strokeweight', axis.visProp['strokeWidth']);
-        //ticks.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
         this.updatePathPrim(ticks, tickArr, axis.board);
     },
 
     drawImage: function(el) {
         // IE 8: Bilder ueber data URIs werden bis 32kB unterstuetzt.
-        var node; // url = el.url(); //'data:image/png;base64,' + el.imageBase64String;
+        var node;
 
         node = this.container.ownerDocument.createElement('img');
         node.style.position = 'absolute';
         this._setAttr(node,'id', this.container.id+'_'+el.id);
 
-        //this._setAttr(node,'src',url);
         this.container.appendChild(node);
         this.appendChildPrim(node,el.layer);
+
         // Adding the rotation filter. This is always filter item 0:
         // node.filters.item(0), see transformImage
         node.style.filter = node.style['-ms-filter'] =
             "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
+
         el.rendNode = node;
         this.updateImage(el);
     },

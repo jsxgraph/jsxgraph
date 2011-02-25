@@ -2,8 +2,9 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-   <script type="text/javascript" src="../src/GeonextReader.js"></script>
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
 </head>
 <body>
 
@@ -18,13 +19,19 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
-    var brd = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[-5, 5, 5, -5]});
+    JXG.Options.renderer = 'canvas';
+    JXG.Options.text.useMathJax = true;
+    var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox:[-5, 5, 5, -5]});
 
     p1 = brd.create('point', [0,0]);
     p2 = brd.create('point', [2,1]);
     p3 = brd.create('point', [0,1]);
 
-    a = brd.create('arc', [p1, p2, p3]);
+    a = brd.create('polygon', [p1, p2, p3]);
+
+    brd.create('text', [2, 2, function() {
+    return '\\[f(x) = e^{x}\\]';
+  }]);
 
     /* ]]> */
 </script>

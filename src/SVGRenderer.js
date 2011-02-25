@@ -283,21 +283,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         this.transformImage(el, el.transformations);
     },
 
-    drawTicks: function(axis) {
-        var node = this.createPrim('path', axis.id);
-
-        this.appendChildPrim(node,axis.layer);
-        this.appendNodesToElement(axis,'path');
-    },
-
-    /**
-     * TEST
-     * @param axis
-     * @param dxMaj
-     * @param dyMaj
-     * @param dxMin
-     * @param dyMin
-     */
+    // documented in AbstractRenderer
     updateTicks: function(axis,dxMaj,dyMaj,dxMin,dyMin) {
         var tickStr = "",
             i, c, node,

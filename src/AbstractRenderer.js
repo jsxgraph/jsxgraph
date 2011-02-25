@@ -99,7 +99,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * everything except for fill and dash. Possible values are stroke, fill, dash, shadow.
      * @param {Boolean} [enhanced=false] If true JXG.AbstractRenderer#enhancedRendering is assumed to be true.
      */
-    updateVisual: function (el, not, enhanced) {
+    _updateVisual: function (el, not, enhanced) {
         if (enhanced || this.enhancedRendering) {
             not = not || {};
 
@@ -126,13 +126,6 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         }
     },
 
-    /**
-     * Shows a small copyright notice in the top left corner of the board.
-     * @param {String} str The copyright notice itself
-     * @param {Number} fontsize Size of the font the copyright notice is written in
-     */
-    displayCopyright: function (str, fontsize) { /* stub */ },
-
 
     /* ******************************** *
      *    Point drawing and updating    *
@@ -142,8 +135,8 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * Draws a point on the {@link JXG.Board}.
      * @param {JXG.Point} el Reference to a {@link JXG.Point} object that has to be drawn.
      * @see JXG.Point
-     * @see #updatePoint
-     * @see #changePointStyle
+     * @see JXG.AbstractRenderer#updatePoint
+     * @see JXG.AbstractRenderer#changePointStyle
      */
     drawPoint: function (el) {
         var prim,
@@ -164,7 +157,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         this.appendNodesToElement(el, prim);
 
         // adjust visual propertys
-        this.updateVisual(el, {dash: true, shadow: true}, true);
+        this._updateVisual(el, {dash: true, shadow: true}, true);
 
         // By now we only created the xml nodes and set some styles, in updatePoint
         // the attributes are filled with data.
@@ -175,15 +168,15 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * Updates visual appearance of the renderer element assigned to the given {@link JXG.Point}.
      * @param {JXG.Point} el Reference to a {@link JXG.Point} object, that has to be updated.
      * @see JXG.Point
-     * @see #drawPoint
-     * @see #changePointStyle
+     * @see JXG.AbstractRenderer#drawPoint
+     * @see JXG.AbstractRenderer#changePointStyle
      */
     updatePoint: function (el) {
         var size = el.visProp.size,
             face = JXG.Point.prototype.normalizeFace.call(this, el.visProp.face);
 
         if (!isNaN(el.coords.scrCoords[2] + el.coords.scrCoords[1])) {
-            this.updateVisual(el, {dash: false, shadow: false});
+            this._updateVisual(el, {dash: false, shadow: false});
 
             // Zoom does not work for traces.
             size *= ((!el.board || !el.board.options.point.zoom) ? 1.0 : Math.sqrt(el.board.zoomX * el.board.zoomY));
@@ -207,8 +200,8 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.Point} el Reference to a {@link JXG.Point} object, that's style is changed.
      * @see Point
      * @see JXG.Point
-     * @see #updatePoint
-     * @see #drawPoint
+     * @see JXG.AbstractRenderer#updatePoint
+     * @see JXG.AbstractRenderer#drawPoint
      */
     changePointStyle: function (el) {
         var node = this.getElementById(el.id);
@@ -231,7 +224,6 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         }
     },
     
-
     /* ******************************** *
      *           Lines                  *
      * ******************************** */
@@ -241,7 +233,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.Line} el Reference to a line object, that has to be drawn.
      * @see Line
      * @see JXG.Line
-     * @see #updateLine
+     * @see JXG.AbstractRenderer#updateLine
      */
     drawLine: function (el) {
         this.appendChildPrim(this.createPrim('line', el.id), el.layer);
@@ -254,7 +246,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.Line} el Reference to the {@link JXG.Line} object that has to be updated.
      * @see Line
      * @see JXG.Line
-     * @see #drawLine
+     * @see JXG.AbstractRenderer#drawLine
      */
     updateLine: function (el) {
         var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
@@ -265,7 +257,14 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
                                          screenCoords2.scrCoords[1], screenCoords2.scrCoords[2], el.board);
 
         this.makeArrows(el);
-        this.updateVisual(el, {fill: true});
+        this._updateVisual(el, {fill: true});
+    },
+
+    drawTicks: function(axis) {
+        var node = this.createPrim('path', axis.id);
+
+        this.appendChildPrim(node, axis.layer);
+        this.appendNodesToElement(axis, 'path');
     },
 
     /**
@@ -291,12 +290,12 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.Curve} el Reference to a graph object, that has to be plotted.
      * @see Curve
      * @see JXG.Curve
-     * @see #updateCurve
+     * @see JXG.AbstractRenderer#updateCurve
      */
     drawCurve: function (el) {
         this.appendChildPrim(this.createPrim('path', el.id), el.layer);
         this.appendNodesToElement(el, 'path');
-        this.updateVisual(el, {shadow: true}, true);
+        this._updateVisual(el, {shadow: true}, true);
         this.updateCurve(el);
     },
 
@@ -305,25 +304,24 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.Curve} el Reference to a {@link JXG.Curve} object, that has to be updated.
      * @see Curve
      * @see JXG.Curve
-     * @see #drawCurve
+     * @see JXG.AbstractRenderer#drawCurve
      */
     updateCurve: function (el) {
-        this.updateVisual(el);
+        this._updateVisual(el);
         this.updatePathPrim(el.rendNode, this.updatePathStringPrim(el), el.board);
         this.makeArrows(el);
     },
-
 
     /* **************************
      *    Circle related stuff
      * **************************/
 
     /**
-     * Draws a {@link JXG.Circle} on the {@link JXG.Board}.
-     * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object, that has to be drawn.
+     * Draws a {@link JXG.Circle}
+     * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object that has to be drawn.
      * @see Circle
      * @see JXG.Circle
-     * @see #updateEllipse
+     * @see JXG.AbstractRenderer#updateEllipse
      */
     drawEllipse: function (el) {
         this.appendChildPrim(this.createPrim('ellipse', el.id), el.layer);
@@ -336,10 +334,10 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.Circle} el Reference to a {@link JXG.Circle} object, that has to be updated.
      * @see Circle
      * @see JXG.Circle
-     * @see #drawEllipse
+     * @see JXG.AbstractRenderer#drawEllipse
      */
     updateEllipse: function (el) {
-        this.updateVisual(el);
+        this._updateVisual(el);
 
         // Radius umrechnen:
         var radius = el.Radius();
@@ -359,7 +357,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.Polygon} el Reference to a Polygon object, that is to be drawn.
      * @see Polygon
      * @see JXG.Polygon
-     * @see #updatePolygon
+     * @see JXG.AbstractRenderer#updatePolygon
      */
     drawPolygon: function (el) {
         this.appendChildPrim(this.createPrim('polygon', el.id), el.layer);
@@ -372,12 +370,12 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @param {JXG.Polygon} el Reference to a {@link JXG.Polygon} object, that has to be updated.
      * @see Polygon
      * @see JXG.Polygon
-     * @see #drawPolygon
+     * @see JXG.AbstractRenderer#drawPolygon
      */
     updatePolygon: function (el) {
         // here originally strokecolor wasn't updated but strokewidth was
         // but if there's no strokecolor i don't see why we should update strokewidth.
-        this.updateVisual(el, {stroke: true, dash: true});
+        this._updateVisual(el, {stroke: true, dash: true});
         this.updatePolygonPrim(el.rendNode, el);
     },
 
@@ -386,26 +384,47 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * **************************/
 
     /**
+     * Shows a small copyright notice in the top left corner of the board.
+     * @param {String} str The copyright notice itself
+     * @param {Number} fontsize Size of the font the copyright notice is written in
+     */
+    displayCopyright: function (str, fontsize) { /* stub */ },
+
+    /**
+     * An internal text is a {@link JXG.Text} element which is drawn using only
+     * the given renderer but no HTML. This method is only a stub, the drawing
+     * is done in the special renderers.
+     * @param {JXG.Text} el Reference to a {@link JXG.Text} object
+     * @see Text
+     * @see JXG.Text
+     * @see JXG.AbstractRenderer#updateInternalText
+     * @see JXG.AbstractRenderer#drawText
+     * @see JXG.AbstractRenderer#updateText
+     * @see JXG.AbstractRenderer#updateTextStyle
+     */
+    drawInternalText: function (el) { /* stub */ },
+
+    /**
      * Displays a {@link JXG.Text} on the {@link JXG.Board} by putting a HTML div over it.
      * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be displayed
      * @see Text
      * @see JXG.Text
-     * @see #drawInternalText
-     * @see #updateText
-     * @see #updateInternalText
-     * @see #updateTextStyle
+     * @see JXG.AbstractRenderer#drawInternalText
+     * @see JXG.AbstractRenderer#updateText
+     * @see JXG.AbstractRenderer#updateInternalText
+     * @see JXG.AbstractRenderer#updateTextStyle
      */
     drawText: function (el) {
         var node;
 
         if (el.display === 'html') {
-            node = el.board.containerObj.ownerDocument.createElement('div');
+            node = this.container.ownerDocument.createElement('div');
             node.style.position = 'absolute';
             node.style.color = el.visProp.strokeColor;
             node.className = 'JXGtext';
             node.style.zIndex = '10';
-            el.board.containerObj.appendChild(node);
-            node.setAttribute('id', el.board.containerObj.id + '_' + el.id);
+            this.container.appendChild(node);
+            node.setAttribute('id', this.container.id + '_' + el.id);
         } else {
             node = this.drawInternalText(el);
         }
@@ -416,30 +435,26 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * An internal text is a {@link JXG.Text} element which is drawn using only
-     * the given renderer but no HTML. This method is only a stub, the drawing
-     * is done in the special renderers.
-     * @param {JXG.Text} el Reference to a {@link JXG.Text} object
+     * Updates visual properties of an already existing {@link JXG.Text} element.
+     * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
      * @see Text
      * @see JXG.Text
-     * @see #updateInternalText
-     * @see #drawText
-     * @see #updateText
-     * @see #updateTextStyle
+     * @see JXG.AbstractRenderer#drawInternalText
+     * @see JXG.AbstractRenderer#drawText
+     * @see JXG.AbstractRenderer#updateText
+     * @see JXG.AbstractRenderer#updateTextStyle
      */
-    drawInternalText: function (el) {
-    },
-
+    updateInternalText: function (el) { /* stub */ },
 
     /**
      * Updates visual properties of an already existing {@link JXG.Text} element.
      * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
      * @see Text
      * @see JXG.Text
-     * @see #drawText
-     * @see #drawInternalText
-     * @see #updateInternalText
-     * @see #updateTextStyle
+     * @see JXG.AbstractRenderer#drawText
+     * @see JXG.AbstractRenderer#drawInternalText
+     * @see JXG.AbstractRenderer#updateInternalText
+     * @see JXG.AbstractRenderer#updateTextStyle
      */
     updateText: function (el) {
         // Update only objects that are visible.
@@ -468,38 +483,21 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * Updates visual properties of an already existing {@link JXG.Text} element.
-     * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
-     * @see Text
-     * @see JXG.Text
-     * @see #drawInternalText
-     * @see #drawText
-     * @see #updateText
-     * @see #updateTextStyle
-     */
-    updateInternalText: function (el) {
-    },
-
-    /**
      * Updates CSS style properties of a {@link JXG.Text} node.
      * @param {JXG.Text} el Reference to the {@link JXG.Text} object, that has to be updated.
      * @see Text
      * @see JXG.Text
-     * @see #drawText
-     * @see #drawInternalText
-     * @see #updateText
-     * @see #updateInternalText
+     * @see JXG.AbstractRenderer#drawText
+     * @see JXG.AbstractRenderer#drawInternalText
+     * @see JXG.AbstractRenderer#updateText
+     * @see JXG.AbstractRenderer#updateInternalText
      */
     updateTextStyle: function (el) {
-        var fs;
+        var fs = JXG.evaluate(el.visProp.fontSize);
 
-        if (el.visProp.fontSize) {
-            if (typeof el.visProp.fontSize === 'function') {
-                fs = el.visProp.fontSize();
-                el.rendNode.style.fontSize = (fs > 0 ? fs : 0);
-            } else {
-                el.rendNode.style.fontSize = (el.visProp.fontSize);
-            }
+        if (fs) {
+            fs = (fs > 0 ? fs : 0);
+            el.rendNode.style.fontSize = fs;
         }
     },
 
@@ -508,45 +506,21 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * **************************/
 
     /**
-     * Draws an {@link JXG.Image} on the {@link JXG.Board}; This is just a template, has to be implemented by special renderers.
-     * @param {JXG.Image} el Reference to an image object, that has to be drawn.
+     * Draws an {@link JXG.Image} on a board; This is just a template that has to be implemented by special renderers.
+     * @param {JXG.Image} el Reference to the image object that is to be drawn
      * @see Image
      * @see JXG.Image
-     * @see #updateImage
+     * @see JXG.AbstractRenderer#updateImage
      */
-    drawImage: function (el) {
-    },
-
-    /**
-     * If the URL of the image is proveided by a function, i.e. dynamic URL
-     * the URL has to be updated during updateImage()
-     * @param {JXG.Image} el Reference to an image object.
-     * @see #updateImage
-     */
-    updateImageURL: function (el) {
-    },
-
-    /**
-     * Updates the properties of an {@link JXG.Image} element.
-     * @param {JXG.Image} el Reference to an {@link JXG.Image} object, that has to be updated.
-     * @see JXG.Image
-     * @see #drawImage
-     */
-    updateImage: function (el) {
-        this.updateRectPrim(el.rendNode, el.coords.scrCoords[1], el.coords.scrCoords[2] - el.size[1],
-                el.size[0], el.size[1]);
-
-        this.updateImageURL(el);
-        this.transformImage(el, el.transformations);
-        this.updateVisual(el, {stroke: true, dash: true}, true);
-    },
+    drawImage: function (el) { /* stub */ },
 
     /**
      * Multiplication of transformations without updating. That means, at that point it is expected that the matrices
      * contain numbers only. First, the origin in user coords is translated to <tt>(0,0)</tt> in screen coords.
      * Then, the stretch factors are divided out. After the transformations in user coords, the  strech factors
      * are multiplied in again, and the origin in user coords is translated back to its position.
-     * @see #transformImage
+     * This method does not have to be implemented in a new renderer.
+     * @see JXG.AbstractRenderer#transformImage
      */
     joinTransforms: function (el, t) {
         var m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
@@ -566,6 +540,34 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         return m;
     },
 
+    /**
+     * TODO
+     * @param el
+     * @param t
+     */
+    transformImage: function (el, t) { /* stub */ },
+
+    /**
+     * Updates the properties of an {@link JXG.Image} element.
+     * @param {JXG.Image} el Reference to an {@link JXG.Image} object, that has to be updated.
+     * @see JXG.Image
+     * @see JXG.AbstractRenderer#drawImage
+     */
+    updateImage: function (el) {
+        this.updateRectPrim(el.rendNode, el.coords.scrCoords[1], el.coords.scrCoords[2] - el.size[1],
+                el.size[0], el.size[1]);
+
+        this.updateImageURL(el);
+        this.transformImage(el, el.transformations);
+        this._updateVisual(el, {stroke: true, dash: true}, true);
+    },
+
+    /**
+     * If the URL of the image is provided by a function the URL has to be updated during updateImage()
+     * @param {JXG.Image} el Reference to an image object.
+     * @see JXG.AbstractRenderer#updateImage
+     */
+    updateImageURL: function (el) { /* stub */ },
 
     /* **************************
      *    Grid stuff
@@ -786,6 +788,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     /**
      * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
      * @param {JXG.GeometryElement} obj Reference of the object that will be highlighted.
+     * @returns {JXG.AbstractRenderer} Reference to the renderer
      */
     highlight: function (obj) {
         var i;
@@ -809,11 +812,14 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
                 this.setObjectStrokeWidth(obj, obj.visProp.highlightStrokeWidth);
             }
         }
+
+        return this;
     },
 
     /**
      * Uses the "normal" colors of an object, i.e. the opposite of {@link #highlight}.
      * @param {JXG.GeometryElement} obj Reference of the object that will get its normal colors.
+     * @returns {JXG.AbstractRenderer} Reference to the renderer
      */
     noHighlight: function (obj) {
         var i;
@@ -835,6 +841,8 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
             }
             this.setObjectStrokeWidth(obj, obj.visProp.strokeWidth);
         }
+
+        return this;
     },
 
     /**
