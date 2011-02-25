@@ -783,6 +783,9 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
     },
 
     drawVerticalGrid: function (topLeft, bottomRight, gx, board) {
+
+        // TODO - Canvas: drawVerticalGrid
+
         var node = this.createPrim('path', 'gridx'),
             gridArr = '';
 
@@ -795,6 +798,9 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
     },
 
     drawHorizontalGrid: function (topLeft, bottomRight, gy, board) {
+
+        // TODO - Canvas: drawHorizontalGrid
+
         var node = this.createPrim('path', 'gridy'),
             gridArr = '';
 

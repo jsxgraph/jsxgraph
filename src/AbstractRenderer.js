@@ -865,6 +865,16 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
 
     /**
      * TODO
+     * @param node
+     * @param pointString
+     * @param board
+     */
+    updatePathPrim: function (node, pointString, board) {
+
+    },
+
+    /**
+     * TODO
      */
     appendChildPrim: function () {
         // This is just a stub. Implementation is done in the actual renderers.
