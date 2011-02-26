@@ -662,30 +662,32 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
         }
     },
 
+    // already documented in JXG.AbstractRenderer
     drawVerticalGrid: function(topLeft, bottomRight, gx, board) {
         var node = this.createPrim('path', 'gridx'),
             gridArr = [];
 
-        while(topLeft.scrCoords[1] < bottomRight.scrCoords[1] + gx - 1) {
+        while(topLeft.usrCoords[1] < bottomRight.usrCoords[1] + gx) {
             gridArr.push(' m ' + (this.resolution*topLeft.scrCoords[1]) +
                 ', ' + 0 +
                 ' l ' + (this.resolution*topLeft.scrCoords[1]) +
                 ', ' + (this.resolution*board.canvasHeight)+' ');
-            topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1] + gx, topLeft.scrCoords[2]]);
+            topLeft.setCoordinates(JXG.COORDS_BY_USER, [topLeft.usrCoords[1] + gx, topLeft.usrCoords[2]]);
         }
         this.updatePathPrim(node, gridArr, board);
         return node;
     },
 
+    // already documented in JXG.AbstractRenderer
     drawHorizontalGrid: function(topLeft, bottomRight, gy, board) {
         var node = this.createPrim('path', 'gridy'),
             gridArr = [];
-        while(topLeft.scrCoords[2] <= bottomRight.scrCoords[2] + gy - 1) {
+        while(topLeft.usrCoords[2] > bottomRight.usrCoords[2] - gy) {
             gridArr.push(' m ' + 0 +
                 ', ' + (this.resolution*topLeft.scrCoords[2]) +
                 ' l ' + (this.resolution*board.canvasWidth) +
                 ', ' + (this.resolution*topLeft.scrCoords[2])+' ');
-            topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1], topLeft.scrCoords[2] + gy]);
+            topLeft.setCoordinates(JXG.COORDS_BY_USER, [topLeft.usrCoords[1], topLeft.usrCoords[2] - gy]);
         }
         this.updatePathPrim(node, gridArr, board);
         return node;

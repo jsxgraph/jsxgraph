@@ -92,6 +92,12 @@ JXG.AbstractRenderer = function () {
 
 JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
 
+    /* ******************************** *
+     *    private methods               *
+     *    should not be called from     *
+     *    outside AbstractRenderer      *
+     * ******************************** */
+
     /**
      * Update visual properties, but only if JXG.AbstractRenderer#enhancedRendering is set to true.
      * @param {JXG.GeometryElement} el The element to update
@@ -576,14 +582,19 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * **************************/
 
     /**
-     * Creates a grid on the board, i.e. light helper lines to support the user on creating and manipulating a construction.
-     * @param {JXG.Board} board Board on which the grid is drawn.
-     * @see #removeGrid
+     * A grid are a set of vertical and horizontal lines to support the user with element placement. This method
+     * draws such a grid on the given board. It uses options given in {@link JXG.Options#grid}. In a descendant
+     * class this method can be overridden but it does not have to. If you choose to not override this method,
+     * you have to override {@link JXG.AbstractRenderer#drawHorizontalGrid} and
+     * {@link JXG.AbstractRenderer#drawVerticalGrid}.
+     * @param {JXG.Board} board Board on which the grid is to be drawn.
+     * @see JXG.AbstractRenderer#removeGrid
+     * @see JXG.AbstractRenderer#drawHorizontalGrid
+     * @see JXG.AbstractRenderer#drawVerticalGrid
      */
     drawGrid: function (board) {
         var gridX = board.options.grid.gridX,
             gridY = board.options.grid.gridY,
-            gx, gy,
             topLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board),
             bottomRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board),
             node2, el;
@@ -609,21 +620,13 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         //  DONE JXG.Board.calculateSnapSizes (init p1, p2)
         //  DONE JXG.GeonextReader.readGeonext (init gridX, gridY)
         //
-        // TODO - AbstractReader/drawGrid workaround round errors:
-        //
-        // go from left to right (topLeft -> bottomRight) and search for the value closest to 0. Subtract the
-        // difference of this value and 0 from the x value of topLeft. do the same for the y value and we should
-        // get a grid perfectly matching (0, 0)
 
         board.options.grid.hasGrid = true;
-
-        gx = Math.round((gridX) * board.stretchX);
-        gy = Math.round((gridY) * board.stretchY);
 
         topLeft.setCoordinates(JXG.COORDS_BY_USER, [Math.floor(topLeft.usrCoords[1]/gridX)*gridX, Math.ceil(topLeft.usrCoords[2]/gridY)*gridY]);
         bottomRight.setCoordinates(JXG.COORDS_BY_USER, [Math.ceil(bottomRight.usrCoords[1]/gridX)*gridX, Math.floor(bottomRight.usrCoords[2]/gridY)*gridY]);
 
-        node2 = this.drawVerticalGrid(topLeft, bottomRight, gx, board);
+        node2 = this.drawVerticalGrid(topLeft, bottomRight, gridX, board);
         this.appendChildPrim(node2, board.options.layer.grid);
 
         el = {};
@@ -637,13 +640,13 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         if (!board.options.grid.snapToGrid) {
             this.setObjectStrokeColor(el, board.options.grid.gridColor, board.options.grid.gridOpacity);
         }
-        
+
         this.setPropertyPrim(node2, 'stroke-width', '0.4px');
         if (board.options.grid.gridDash) {
             this.setGridDash("gridx");
         }
 
-        node2 = this.drawHorizontalGrid(topLeft, bottomRight, gy, board);
+        node2 = this.drawHorizontalGrid(topLeft, bottomRight, gridY, board);
 
         el.visProp = {};
         el.rendNode = node2;
@@ -656,11 +659,39 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         }
 
         this.setPropertyPrim(node2, 'stroke-width', '0.4px');
+
         if (board.options.grid.gridDash) {
             this.setGridDash("gridy");
         }
-
     },
+
+    /**
+     * Draws the horizontal lines of a grid. This method has to be implemented in a subclass if
+     * {@link JXG.AbstractRenderer#drawGrid} is not overridden.
+     * @param {JXG.Coords} topLeft Coordinates of the top left corner where the drawing starts.
+     * @param {JXG.Coords} bottomRight Coordinates of the bottom right corner where the drawing ends.
+     * @param {Number} gx The width of a grid cell in user coordinates. Usually equals JXG.Options.grid.gridX.
+     * @param {JXG.Board} board Reference to the board that requests the grid.
+     * @returns {Node} Reference to the drawn element.
+     * @see JXG.AbstractRenderer#drawGrid
+     * @see JXG.AbstractRenderer#drawVerticalGrid
+     * @see JXG.AbstractRenderer#removeGrid
+     */
+    drawHorizontalGrid: function (topLeft, bottomRight, gx, board) { /* stub */ },
+
+    /**
+     * Draws the vertical lines of a grid. This method has to be implemented in a subclass if
+     * {@link JXG.AbstractRenderer#drawGrid} is not overridden.
+     * @param {JXG.Coords} topLeft Coordinates of the top left corner where the drawing starts.
+     * @param {JXG.Coords} bottomRight Coordinates of the bottom right corner where the drawing ends.
+     * @param {Number} gy The height of a grid cell in user coordinates. Usually equals JXG.Options.grid.gridY.
+     * @param {JXG.Board} board Reference to the board that requests the grid.
+     * @returns {Node} Reference to the drawn element.
+     * @see JXG.AbstractRenderer#drawGrid
+     * @see JXG.AbstractRenderer#drawHorizontalGrid
+     * @see JXG.AbstractRenderer#removeGrid
+     */
+    drawVerticalGrid: function (topLeft, bottomRight, gy, board) { /* stub */ },
 
     /**
      * Remove the grid from the given board.

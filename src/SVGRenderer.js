@@ -717,9 +717,9 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         var node = this.createPrim('path', 'gridx'),
             gridArr = '';
 
-        while(topLeft.scrCoords[1] < bottomRight.scrCoords[1] + gx - 1) {
+        while(topLeft.usrCoords[1] <= bottomRight.usrCoords[1] + gx) {
             gridArr += ' M ' + topLeft.scrCoords[1] + ' ' + 0 + ' L ' + topLeft.scrCoords[1] + ' ' + board.canvasHeight+' ';
-            topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1] + gx, topLeft.scrCoords[2]]);
+            topLeft.setCoordinates(JXG.COORDS_BY_USER, [topLeft.usrCoords[1] + gx, topLeft.usrCoords[2]]);
         }
         this.updatePathPrim(node, gridArr, board);
         return node;
@@ -729,10 +729,11 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         var node = this.createPrim('path', 'gridy'),
             gridArr = '';
 
-        while(topLeft.scrCoords[2] <= bottomRight.scrCoords[2] + gy - 1) {
+        while(topLeft.usrCoords[2] > bottomRight.usrCoords[2] - gy) {
             gridArr += ' M ' + 0 + ' ' + topLeft.scrCoords[2] + ' L ' + board.canvasWidth + ' ' + topLeft.scrCoords[2]+' ';
-            topLeft.setCoordinates(JXG.COORDS_BY_SCREEN, [topLeft.scrCoords[1], topLeft.scrCoords[2] + gy]);
+            topLeft.setCoordinates(JXG.COORDS_BY_USER, [topLeft.usrCoords[1], topLeft.usrCoords[2] - gy]);
         }
+        console.log(gridArr);
         this.updatePathPrim(node, gridArr, board);
         return node;
     },
