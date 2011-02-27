@@ -603,10 +603,10 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         //      |         |         |
         //  ----+---------+---------+-----
         //      |        /|         |
-        //      |  1/gridY|     <---+------   Grid Cell
+        //      |    gridY|     <---+------   Grid Cell
         //      |        \|         |
         //  ----+---------+---------+-----
-        //      |         |\1/gridX/|
+        //      |         |\ gridX /|
         //      |         |         |
         //
         // uc: usercoordinates
@@ -636,10 +636,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         el.rendNode = node2;
         el.id = "gridx";
         JXG.clearVisPropOld(el);
-
-        if (!board.options.grid.snapToGrid) {
-            this.setObjectStrokeColor(el, board.options.grid.gridColor, board.options.grid.gridOpacity);
-        }
+        this.setObjectStrokeColor(el, board.options.grid.gridColor, board.options.grid.gridOpacity);
 
         this.setPropertyPrim(node2, 'stroke-width', '0.4px');
         if (board.options.grid.gridDash) {
@@ -654,9 +651,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         JXG.clearVisPropOld(el);
 
         this.appendChildPrim(node2, board.options.layer.grid); // Attention layer=1
-        if (!board.options.grid.snapToGrid) {
-            this.setObjectStrokeColor(el, board.options.grid.gridColor, board.options.grid.gridOpacity);
-        }
+        this.setObjectStrokeColor(el, board.options.grid.gridColor, board.options.grid.gridOpacity);
 
         this.setPropertyPrim(node2, 'stroke-width', '0.4px');
 
@@ -677,7 +672,10 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @see JXG.AbstractRenderer#drawVerticalGrid
      * @see JXG.AbstractRenderer#removeGrid
      */
-    drawHorizontalGrid: function (topLeft, bottomRight, gx, board) { /* stub */ },
+    drawHorizontalGrid: function (topLeft, bottomRight, gx, board) {
+        /* stub */
+        return null;
+    },
 
     /**
      * Draws the vertical lines of a grid. This method has to be implemented in a subclass if
@@ -691,7 +689,10 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @see JXG.AbstractRenderer#drawHorizontalGrid
      * @see JXG.AbstractRenderer#removeGrid
      */
-    drawVerticalGrid: function (topLeft, bottomRight, gy, board) { /* stub */ },
+    drawVerticalGrid: function (topLeft, bottomRight, gy, board) {
+        /* stub */
+        return null;
+    },
 
     /**
      * Remove the grid from the given board.
@@ -781,13 +782,13 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      */
     removeDraft: function (obj) {
         if (obj.type === JXG.OBJECT_TYPE_POLYGON) {
-            this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillColorOpacity);
+            this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillOpacity);
         }
         else {
             if (obj.type === JXG.OBJECT_CLASS_POINT) {
-                this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillColorOpacity);
+                this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillOpacity);
             }
-            this.setObjectStrokeColor(obj, obj.visProp.strokeColor, obj.visProp.strokeColorOpacity);
+            this.setObjectStrokeColor(obj, obj.visProp.strokeColor, obj.visProp.strokeOpacity);
             this.setObjectStrokeWidth(obj, obj.visProp.strokeWidth);
         }
     },
