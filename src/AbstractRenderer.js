@@ -26,8 +26,8 @@
 
 /*jshint bitwise: false, curly: true, debug: false, eqeqeq: true, devel: false, evil: false,
   forin: false, immed: true, laxbreak: false, newcap: false, noarg: true, nonew: true, onevar: true,
-   undef: true, white: true, sub: false*/
-/*global JXG: true, AMprocessNode: true, MathJax: true */
+   undef: true, white: false, sub: false*/
+/*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
 
 /**
  * @fileoverview JSXGraph can use various technologies to render the contents of a construction, e.g.
@@ -266,7 +266,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         this._updateVisual(el, {fill: true});
     },
 
-    drawTicks: function(axis) {
+    drawTicks: function (axis) {
         var node = this.createPrim('path', axis.id);
 
         this.appendChildPrim(node, axis.layer);
@@ -623,8 +623,8 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
 
         board.options.grid.hasGrid = true;
 
-        topLeft.setCoordinates(JXG.COORDS_BY_USER, [Math.floor(topLeft.usrCoords[1]/gridX)*gridX, Math.ceil(topLeft.usrCoords[2]/gridY)*gridY]);
-        bottomRight.setCoordinates(JXG.COORDS_BY_USER, [Math.ceil(bottomRight.usrCoords[1]/gridX)*gridX, Math.floor(bottomRight.usrCoords[2]/gridY)*gridY]);
+        topLeft.setCoordinates(JXG.COORDS_BY_USER, [Math.floor(topLeft.usrCoords[1] / gridX) * gridX, Math.ceil(topLeft.usrCoords[2] / gridY) * gridY]);
+        bottomRight.setCoordinates(JXG.COORDS_BY_USER, [Math.ceil(bottomRight.usrCoords[1] / gridX) * gridX, Math.floor(bottomRight.usrCoords[2] / gridY) * gridY]);
 
         node2 = this.drawVerticalGrid(topLeft, bottomRight, gridX, board);
         this.appendChildPrim(node2, board.options.layer.grid);
