@@ -182,7 +182,7 @@ def makeDocs(afterCore = False):
     filesStr = "src/loadjsxgraph.js src/" + ".js src/".join(files) + ".js src/SVGRenderer.js src/VMLRenderer.js src/CanvasRenderer.js"
     
     #java -jar $ROOT/jsrun.jar $ROOT/app/run.js -a -v -t=$ROOT/templates/jsdoc -d=docs ../src/loadjsxgraph.js ../src/$FILELIST.js ../src/SVGRenderer.js ../src/VMLRenderer.js
-    os.system("java -jar " + jsd + "/jsrun.jar " + jsd + "/app/run.js -a -v -t=" + jsd + "/templates/jsx -d=tmp/docs " + filesStr)
+    os.system("java -jar " + jsd + "/jsrun.jar " + jsd + "/app/run.js -a -v -p -t=" + jsd + "/templates/jsx -d=tmp/docs " + filesStr)
 
     #zip -r tmp/docs.zip tmp/docs/
     os.system("cd tmp && zip -r docs-" + version + ".zip docs/ && cd ..")

@@ -99,11 +99,12 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * ******************************** */
 
     /**
-     * Update visual properties, but only if JXG.AbstractRenderer#enhancedRendering is set to true.
+     * Update visual properties, but only if {@link JXG.AbstractRenderer#enhancedRendering} or <tt>enhanced</tt> is set to true.
      * @param {JXG.GeometryElement} el The element to update
-     * @param {Object} [not={}] Select properties you don't want to be updated: {fill: true, dash: true} updates
-     * everything except for fill and dash. Possible values are stroke, fill, dash, shadow.
-     * @param {Boolean} [enhanced=false] If true JXG.AbstractRenderer#enhancedRendering is assumed to be true.
+     * @param {Object} [not={}] Select properties you don't want to be updated: <tt>{fill: true, dash: true}</tt> updates
+     * everything except for fill and dash. Possible values are <tt>stroke, fill, dash, shadow</tt>.
+     * @param {Boolean} [enhanced=false] If true, {@link JXG.AbstractRenderer#enhancedRendering} is assumed to be true.
+     * @private
      */
     _updateVisual: function (el, not, enhanced) {
         if (enhanced || this.enhancedRendering) {
@@ -140,6 +141,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     /**
      * Draws a point on the {@link JXG.Board}.
      * @param {JXG.Point} el Reference to a {@link JXG.Point} object that has to be drawn.
+     * @see Point
      * @see JXG.Point
      * @see JXG.AbstractRenderer#updatePoint
      * @see JXG.AbstractRenderer#changePointStyle
@@ -173,6 +175,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     /**
      * Updates visual appearance of the renderer element assigned to the given {@link JXG.Point}.
      * @param {JXG.Point} el Reference to a {@link JXG.Point} object, that has to be updated.
+     * @see Point
      * @see JXG.Point
      * @see JXG.AbstractRenderer#drawPoint
      * @see JXG.AbstractRenderer#changePointStyle
@@ -229,7 +232,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
             this.setDraft(el);
         }
     },
-    
+
     /* ******************************** *
      *           Lines                  *
      * ******************************** */
@@ -266,6 +269,15 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         this._updateVisual(el, {fill: true});
     },
 
+    /**
+     * Creates a rendering node for ticks added to a line.
+     * @param {JXG.Line} axis A arbitrary line.
+     * @see Line
+     * @see Ticks
+     * @see JXG.Line
+     * @see JXG.Ticks
+     * @see JXG.AbstractRenderer#updateTicks
+     */
     drawTicks: function (axis) {
         var node = this.createPrim('path', axis.id);
 
@@ -274,7 +286,8 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * Update {@link Ticks} on a {@link JXG.Line}. This method is only a stub and is implemented only in the special renderers.
+     * Update {@link Ticks} on a {@link JXG.Line}. This method is only a stub and has to be implemented
+     * in any descendant renderer class.
      * @param {JXG.Line} axis Reference of an line object, thats ticks have to be updated.
      * @param {Number} dxMaj Number of pixels a major tick counts in x direction.
      * @param {Number} dyMaj Number of pixels a major tick counts in y direction.
@@ -284,6 +297,7 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @see Ticks
      * @see JXG.Line
      * @see JXG.Ticks
+     * @see JXG.AbstractRenderer#drawTicks
      */
     updateTicks: function (axis, dxMaj, dyMaj, dxMin, dyMin) { /* stub */ },
 
@@ -411,6 +425,18 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     drawInternalText: function (el) { /* stub */ },
 
     /**
+     * Updates visual properties of an already existing {@link JXG.Text} element.
+     * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
+     * @see Text
+     * @see JXG.Text
+     * @see JXG.AbstractRenderer#drawInternalText
+     * @see JXG.AbstractRenderer#drawText
+     * @see JXG.AbstractRenderer#updateText
+     * @see JXG.AbstractRenderer#updateTextStyle
+     */
+    updateInternalText: function (el) { /* stub */ },
+
+    /**
      * Displays a {@link JXG.Text} on the {@link JXG.Board} by putting a HTML div over it.
      * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be displayed
      * @see Text
@@ -439,18 +465,6 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         el.htmlStr = '';
         this.updateText(el);
     },
-
-    /**
-     * Updates visual properties of an already existing {@link JXG.Text} element.
-     * @param {JXG.Text} el Reference to an {@link JXG.Text} object, that has to be updated.
-     * @see Text
-     * @see JXG.Text
-     * @see JXG.AbstractRenderer#drawInternalText
-     * @see JXG.AbstractRenderer#drawText
-     * @see JXG.AbstractRenderer#updateText
-     * @see JXG.AbstractRenderer#updateTextStyle
-     */
-    updateInternalText: function (el) { /* stub */ },
 
     /**
      * Updates visual properties of an already existing {@link JXG.Text} element.
@@ -521,6 +535,22 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     drawImage: function (el) { /* stub */ },
 
     /**
+     * Updates the properties of an {@link JXG.Image} element.
+     * @param {JXG.Image} el Reference to an {@link JXG.Image} object, that has to be updated.
+     * @see Image
+     * @see JXG.Image
+     * @see JXG.AbstractRenderer#drawImage
+     */
+    updateImage: function (el) {
+        this.updateRectPrim(el.rendNode, el.coords.scrCoords[1], el.coords.scrCoords[2] - el.size[1],
+                el.size[0], el.size[1]);
+
+        this.updateImageURL(el);
+        this.transformImage(el, el.transformations);
+        this._updateVisual(el, {stroke: true, dash: true}, true);
+    },
+
+    /**
      * Multiplication of transformations without updating. That means, at that point it is expected that the matrices
      * contain numbers only. First, the origin in user coords is translated to <tt>(0,0)</tt> in screen coords.
      * Then, the stretch factors are divided out. After the transformations in user coords, the  strech factors
@@ -556,21 +586,6 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     transformImage: function (el, t) { /* stub */ },
 
     /**
-     * Updates the properties of an {@link JXG.Image} element.
-     * @param {JXG.Image} el Reference to an {@link JXG.Image} object, that has to be updated.
-     * @see JXG.Image
-     * @see JXG.AbstractRenderer#drawImage
-     */
-    updateImage: function (el) {
-        this.updateRectPrim(el.rendNode, el.coords.scrCoords[1], el.coords.scrCoords[2] - el.size[1],
-                el.size[0], el.size[1]);
-
-        this.updateImageURL(el);
-        this.transformImage(el, el.transformations);
-        this._updateVisual(el, {stroke: true, dash: true}, true);
-    },
-
-    /**
      * If the URL of the image is provided by a function the URL has to be updated during updateImage()
      * @param {JXG.Image} el Reference to an image object.
      * @see JXG.AbstractRenderer#updateImage
@@ -578,157 +593,25 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     updateImageURL: function (el) { /* stub */ },
 
     /* **************************
-     *  general element helpers
+     * Render primitive objects
      * **************************/
 
     /**
-     * Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
-     * @param {JXG.GeometryElement} obj Reference to the geometry element that has to disappear.
-     * @see #show
+     * Appends a node to a specific layer level. This is just an abstract method and has to be implemented
+     * in all renderers that want to use the <tt>createPrim</tt> model to draw.
+     * @param {Node} node A DOM tree node.
+     * @param {Number} level The layer the node is attached to. This is the index of the layer in
+     * {@link JXG.SVGRenderer#layer} or the <tt>z-index</tt> style property of the node in VMLRenderer.
      */
-    hide: function (obj) {
-    },
+    appendChildPrim: function (node, level) { /* stub */ },
 
     /**
-     * Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
-     * @param {JXG.GeometryElement} obj Reference to the object that has to appear.
-     * @see #hide
+     * Stores the rendering nodes. This is an abstract method which has to be implemented in all renderers that use
+     * the <tt>createPrim</tt> method.
+     * @param {JXG.GeometryElement} element A JSXGraph element.
+     * @param {String} type The XML node name. Only used in VMLRenderer.
      */
-    show: function (obj) {
-    },
-
-    /**
-     * Sets an element's stroke width.
-     * @param {JXG.GeometryElement} el Reference to the geometry element.
-     * @param {Number} width The new stroke width to be assigned to the element.
-     */
-    setObjectStrokeWidth: function (el, width) { /* stub */ },
-
-    /**
-     * Changes an objects stroke color to the given color.
-     * @param {JXG.GeometryElement} obj Reference of the {@link JXG.GeometryElement} that gets a new stroke color.
-     * @param {String} color Color in a HTML/CSS compatible format, e.g. <strong>#00ff00</strong> or <strong>green</strong> for green.
-     * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
-     */
-    setObjectStrokeColor: function (obj, color, opacity) { /* stub */ },
-
-    /**
-     * Sets an objects fill color.
-     * @param {JXG.GeometryElement} obj Reference of the object that wants a new fill color.
-     * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose 'none'.
-     * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
-     */
-    setObjectFillColor: function (obj, color, opacity) { /* stub */ },
-
-    /**
-     * Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards compatibility.
-     * @param {JXG.GeometryElement} obj Reference of the object that is in draft mode.
-     */
-    setDraft: function (obj) {
-        if (!obj.visProp.draft) {
-            return;
-        }
-        var draftColor = obj.board.options.elements.draft.color,
-            draftOpacity = obj.board.options.elements.draft.opacity;
-
-        if (obj.type === JXG.OBJECT_TYPE_POLYGON) {
-            this.setObjectFillColor(obj, draftColor, draftOpacity);
-        }
-        else {
-            if (obj.elementClass === JXG.OBJECT_CLASS_POINT) {
-                this.setObjectFillColor(obj, draftColor, draftOpacity);
-            }
-            else {
-                this.setObjectFillColor(obj, 'none', 0);
-            }
-            this.setObjectStrokeColor(obj, draftColor, draftOpacity);
-            this.setObjectStrokeWidth(obj, obj.board.options.elements.draft.strokeWidth);
-        }
-    },
-
-    /**
-     * Puts an object from draft mode back into normal mode.
-     * @param {JXG.GeometryElement} obj Reference of the object that no longer is in draft mode.
-     */
-    removeDraft: function (obj) {
-        if (obj.type === JXG.OBJECT_TYPE_POLYGON) {
-            this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillOpacity);
-        }
-        else {
-            if (obj.type === JXG.OBJECT_CLASS_POINT) {
-                this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillOpacity);
-            }
-            this.setObjectStrokeColor(obj, obj.visProp.strokeColor, obj.visProp.strokeOpacity);
-            this.setObjectStrokeWidth(obj, obj.visProp.strokeWidth);
-        }
-    },
-
-    /**
-     * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
-     * @param {JXG.GeometryElement} obj Reference of the object that will be highlighted.
-     * @returns {JXG.AbstractRenderer} Reference to the renderer
-     */
-    highlight: function (obj) {
-        var i;
-
-        if (!obj.visProp.draft) {
-            if (obj.type === JXG.OBJECT_CLASS_POINT) {
-                this.setObjectStrokeColor(obj, obj.visProp.highlightStrokeColor, obj.visProp.highlightStrokeOpacity);
-                this.setObjectFillColor(obj, obj.visProp.highlightStrokeColor, obj.visProp.highlightStrokeOpacity);
-            }
-            else if (obj.type === JXG.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(obj, obj.visProp.highlightFillColor, obj.visProp.highlightFillOpacity);
-                for (i = 0; i < obj.borders.length; i++) {
-                    this.setObjectStrokeColor(obj.borders[i], obj.borders[i].visProp.highlightStrokeColor, obj.visProp.highlightStrokeOpacity);
-                }
-            }
-            else {
-                this.setObjectStrokeColor(obj, obj.visProp.highlightStrokeColor, obj.visProp.highlightStrokeOpacity);
-                this.setObjectFillColor(obj, obj.visProp.highlightFillColor, obj.visProp.highlightFillOpacity);
-            }
-            if (obj.visProp.highlightStrokeWidth) {
-                this.setObjectStrokeWidth(obj, obj.visProp.highlightStrokeWidth);
-            }
-        }
-
-        return this;
-    },
-
-    /**
-     * Uses the "normal" colors of an object, i.e. the opposite of {@link #highlight}.
-     * @param {JXG.GeometryElement} obj Reference of the object that will get its normal colors.
-     * @returns {JXG.AbstractRenderer} Reference to the renderer
-     */
-    noHighlight: function (obj) {
-        var i;
-
-        if (!obj.visProp.draft) {
-            if (obj.type === JXG.OBJECT_CLASS_POINT) {
-                this.setObjectStrokeColor(obj, obj.visProp.strokeColor, obj.visProp.strokeOpacity);
-                this.setObjectFillColor(obj, obj.visProp.strokeColor, obj.visProp.strokeOpacity);
-            }
-            else if (obj.type === JXG.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillOpacity);
-                for (i = 0; i < obj.borders.length; i++) {
-                    this.setObjectStrokeColor(obj.borders[i], obj.borders[i].visProp.strokeColor, obj.visProp.strokeOpacity);
-                }
-            }
-            else {
-                this.setObjectStrokeColor(obj, obj.visProp.strokeColor, obj.visProp.strokeOpacity);
-                this.setObjectFillColor(obj, obj.visProp.fillColor, obj.visProp.fillOpacity);
-            }
-            this.setObjectStrokeWidth(obj, obj.visProp.strokeWidth);
-        }
-
-        return this;
-    },
-
-    /**
-     * Removes an HTML-Element from Canvas. Just a stub.
-     * @param {HTMLElement} node The HTMLElement to remove.
-     */
-    remove: function (node) {
-    },
+    appendNodesToElement: function (element, type) { /* stub */ },
 
     /**
      * Creates a node of a given type with a given id.
@@ -742,47 +625,293 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     },
 
     /**
-     * TODO docstring
-     * @param node
-     * @param pointString
-     * @param board
+     * Removes an element node. Just a stub.
+     * @param {Node} node The node to remove.
      */
-    updatePathPrim: function (node, pointString, board) {
-
-    },
+    remove: function (node) { /* stub */ },    
 
     /**
-     * TODO docstring
+     * Can be used to create the nodes to display arrows. This is an abstract method which has to be implemented
+     * in any descendant renderer.
+     * @param {JXG.GeometryElement} element The element the arrows are to be attached to.
      */
-    appendChildPrim: function () {
-        // This is just a stub. Implementation is done in the actual renderers.
-    },
+    makeArrows: function(element) { /* stub */ },
 
     /**
-     * TODO docstring
+     * Updates an ellipse node primitive. This is an abstract method which has to be implemented in all renderers
+     * that use the <tt>createPrim</tt> method.
+     * @param {Node} node Reference to the node.
+     * @param {Number} x Centre X coordinate
+     * @param {Number} y Centre Y coordinate
+     * @param {Number} rx The x-axis radius.
+     * @param {Number} ry The y-axis radius.
      */
-    appendNodesToElement: function () {
-        // This is just a stub. Implementation is done in the actual renderers.
-    },
+    updateEllipsePrim: function(node, x, y, rx, ry) { /* stub */ },
+
+    /**
+     * Refreshes a line node. This is an abstract method which has to be implemented in all renderers that use
+     * the <tt>createPrim</tt> method.
+     * @param {Node} node The node to be refreshed.
+     * @param {Number} p1x The first point's x coordinate.
+     * @param {Number} p1y The first point's y coordinate.
+     * @param {Number} p2x The second point's x coordinate.
+     * @param {Number} p2y The second point's y coordinate.
+     * @param {JXG.Board} board
+     */
+    updateLinePrim: function(node, p1x, p1y, p2x, p2y, board) { /* stub */ },
+
+    /**
+     * Updates a path element. This is an abstract method which has to be implemented in all renderers that use
+     * the <tt>createPrim</tt> method.
+     * @param {Node} node The path node.
+     * @param {String} pathString A string formatted like e.g. <em>'M 1,2 L 3,1 L5,5'</em>. The format of the string
+     * depends on the rendering engine.
+     * @param {JXG.Board} board Reference to the element's board.
+     */
+    updatePathPrim: function (node, pathString, board) { /* stub */ },
+
+    /**
+     * Builds a path data string to draw a point with a face other than <em>rect</em> and <em>circle</em>. Since
+     * the format of such a string usually depends on the renderer this method
+     * is only an abstract method. Therefore, it has to be implemented in the descendant renderer itself unless
+     * the renderer does not use the createPrim interface but the draw* interfaces to paint.
+     * @param {JXG.Point} element The point element
+     * @param {Number} size A positive number describing the size. Usually the half of the width and height of
+     * the drawn point.
+     * @param {String} type A string describing the point's face. This method only accepts the shortcut version of
+     * each possible face: <tt>x, +, <>, ^, v, >, <
+     */
+    updatePathStringPoint: function (element, size, type) { /* stub */ },
+
+    /**
+     * Builds a path data string from a {@link JXG.Curve} element. Since the path data strings heavily depend on the
+     * underlying rendering technique this method is just a stub. Although such a path string is of no use for the
+     * CanvasRenderer, this method is used there to draw a path directly.
+     * @param element
+     */
+    updatePathStringPrim: function (element) { /* stub */ },
+
+    /**
+     * Update a polygon primitive.
+     * @param {Node} node
+     * @param {JXG.Polygon} element A JSXGraph element of type {@link JXG.Polygon}
+     */
+    updatePolygonPrim: function (node, element) { /* stub */ },
+
+    /**
+     * Update a rectangle primitive. This is used only for points with face of type 'rect'.
+     * @param {Node} node The node yearning to be updated.
+     * @param {Number} x x coordinate of the top left vertex.
+     * @param {Number} y y coordinate of the top left vertex.
+     * @param {Number} w Width of the rectangle.
+     * @param {Number} h The rectangle's height.
+     */
+    updateRectPrim: function(node, x, y, w, h) { /* stub */ },
 
     /* **************************
-     * general renderer related methods
+     *  Set Attributes
+     * **************************/
+
+    /**
+     * Sets a node's attribute.
+     * @param {Node} node The node that is to be updated.
+     * @param {String} key Name of the attribute.
+     * @param {String} val New value for the attribute.
+     */
+    setPropertyPrim: function (node, key, val) { /* stub */ },
+
+    /**
+     * Shows a hidden element on the canvas; Only a stub, requires implementation in the derived renderer.
+     * @param {JXG.GeometryElement} element Reference to the object that has to appear.
+     * @see JXG.AbstractRenderer#hide
+     */
+    show: function (element) { /* stub */ },
+
+    /**
+     * Hides an element on the canvas; Only a stub, requires implementation in the derived renderer.
+     * @param {JXG.GeometryElement} element Reference to the geometry element that has to disappear.
+     * @see JXG.AbstractRenderer#show
+     */
+    hide: function (element) { /* stub */ },
+
+    /**
+     * Sets the buffering as recommended by SVGWG. Until now only Opera supports this and will be ignored by
+     * other browsers. Although this feature is only supported by SVG we have this method in {@link JXG.AbstractRenderer}
+     * because it is called from outside the renderer.
+     * @param {Node} node The SVG DOM Node which buffering type to update.
+     * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see
+     *   {@link http://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
+     */
+    setBuffering: function (node, type) { /* stub */ },
+
+    /**
+     * Sets an element's dash style.
+     * @param {JXG.GeometryElement} element An JSXGraph element.
+     */
+    setDashStyle: function (element) { /* stub */ },
+
+    /**
+     * Puts an object into draft mode, i.e. it's visual appearance will be changed. For GEONE<sub>x</sub>T backwards compatibility.
+     * @param {JXG.GeometryElement} element Reference of the object that is in draft mode.
+     */
+    setDraft: function (element) {
+        if (!element.visProp.draft) {
+            return;
+        }
+        var draftColor = element.board.options.elements.draft.color,
+            draftOpacity = element.board.options.elements.draft.opacity;
+
+        if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+            this.setObjectFillColor(element, draftColor, draftOpacity);
+        }
+        else {
+            if (element.elementClass === JXG.OBJECT_CLASS_POINT) {
+                this.setObjectFillColor(element, draftColor, draftOpacity);
+            }
+            else {
+                this.setObjectFillColor(element, 'none', 0);
+            }
+            this.setObjectStrokeColor(element, draftColor, draftOpacity);
+            this.setObjectStrokeWidth(element, element.board.options.elements.draft.strokeWidth);
+        }
+    },
+
+    /**
+     * Puts an object from draft mode back into normal mode.
+     * @param {JXG.GeometryElement} element Reference of the object that no longer is in draft mode.
+     */
+    removeDraft: function (element) {
+        if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+            this.setObjectFillColor(element, element.visProp.fillColor, element.visProp.fillOpacity);
+        }
+        else {
+            if (element.type === JXG.OBJECT_CLASS_POINT) {
+                this.setObjectFillColor(element, element.visProp.fillColor, element.visProp.fillOpacity);
+            }
+            this.setObjectStrokeColor(element, element.visProp.strokeColor, element.visProp.strokeOpacity);
+            this.setObjectStrokeWidth(element, element.visProp.strokeWidth);
+        }
+    },
+
+    /**
+     * Sets up nodes for rendering a gradient fill.
+     * @param element
+     */
+    setGradient: function (element) { /* stub */ },
+
+    /**
+     * Updates the gradient fill.
+     * @param {JXG.GeometryElement} element An JSXGraph element with an area that can be filled.
+     */
+    updateGradient: function (element) { /* stub */ },
+
+    /**
+     * Sets an objects fill color.
+     * @param {JXG.GeometryElement} element Reference of the object that wants a new fill color.
+     * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose 'none'.
+     * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
+     */
+    setObjectFillColor: function (element, color, opacity) { /* stub */ },
+
+    /**
+     * Changes an objects stroke color to the given color.
+     * @param {JXG.GeometryElement} element Reference of the {@link JXG.GeometryElement} that gets a new stroke color.
+     * @param {String} color Color value in a HTML compatible format, e.g. <strong>#00ff00</strong> or <strong>green</strong> for green.
+     * @param {Number} opacity Opacity of the fill color. Must be between 0 and 1.
+     */
+    setObjectStrokeColor: function (element, color, opacity) { /* stub */ },
+
+    /**
+     * Sets an element's stroke width.
+     * @param {JXG.GeometryElement} element Reference to the geometry element.
+     * @param {Number} width The new stroke width to be assigned to the element.
+     */
+    setObjectStrokeWidth: function (element, width) { /* stub */ },
+    
+    /**
+     * Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual renderers.
+     * @param {JXG.GeometryElement} element Reference to a geometry object, that should get a shadow
+     */
+    setShadow: function (element) { /* stub */ },
+
+    /**
+     * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
+     * @param {JXG.GeometryElement} element Reference of the object that will be highlighted.
+     * @returns {JXG.AbstractRenderer} Reference to the renderer
+     */
+    highlight: function (element) {
+        var i;
+
+        if (!element.visProp.draft) {
+            if (element.type === JXG.OBJECT_CLASS_POINT) {
+                this.setObjectStrokeColor(element, element.visProp.highlightStrokeColor, element.visProp.highlightStrokeOpacity);
+                this.setObjectFillColor(element, element.visProp.highlightStrokeColor, element.visProp.highlightStrokeOpacity);
+            }
+            else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+                this.setObjectFillColor(element, element.visProp.highlightFillColor, element.visProp.highlightFillOpacity);
+                for (i = 0; i < element.borders.length; i++) {
+                    this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.highlightStrokeColor, element.visProp.highlightStrokeOpacity);
+                }
+            }
+            else {
+                this.setObjectStrokeColor(element, element.visProp.highlightStrokeColor, element.visProp.highlightStrokeOpacity);
+                this.setObjectFillColor(element, element.visProp.highlightFillColor, element.visProp.highlightFillOpacity);
+            }
+            if (element.visProp.highlightStrokeWidth) {
+                this.setObjectStrokeWidth(element, element.visProp.highlightStrokeWidth);
+            }
+        }
+
+        return this;
+    },
+
+    /**
+     * Uses the normal colors of an object, i.e. the opposite of {@link JXG.AbstractRenderer#highlight}.
+     * @param {JXG.GeometryElement} element Reference of the object that will get its normal colors.
+     * @returns {JXG.AbstractRenderer} Reference to the renderer
+     */
+    noHighlight: function (element) {
+        var i;
+
+        if (!element.visProp.draft) {
+            if (element.type === JXG.OBJECT_CLASS_POINT) {
+                this.setObjectStrokeColor(element, element.visProp.strokeColor, element.visProp.strokeOpacity);
+                this.setObjectFillColor(element, element.visProp.strokeColor, element.visProp.strokeOpacity);
+            }
+            else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+                this.setObjectFillColor(element, element.visProp.fillColor, element.visProp.fillOpacity);
+                for (i = 0; i < element.borders.length; i++) {
+                    this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.strokeColor, element.visProp.strokeOpacity);
+                }
+            }
+            else {
+                this.setObjectStrokeColor(element, element.visProp.strokeColor, element.visProp.strokeOpacity);
+                this.setObjectFillColor(element, element.visProp.fillColor, element.visProp.fillOpacity);
+            }
+            this.setObjectStrokeWidth(element, element.visProp.strokeWidth);
+        }
+
+        return this;
+    },
+
+
+    /* **************************
+     * renderer control
      * **************************/
 
     /**
      * Stop redraw. This method is called before every update, so a non-vector-graphics based renderer
-     * can delete the contents of the drawing panel.
-     * @see #unsuspendRedraw
+     * can use this method to delete the contents of the drawing panel. This is an abstract method every
+     * descendant renderer should implement, if appropriate.
+     * @see JXG.AbstractRenderer#unsuspendRedraw
      */
-    suspendRedraw: function () {
-    },
+    suspendRedraw: function () { /* stub */ },
 
     /**
      * Restart redraw. This method is called after updating all the rendering node attributes.
-     * @see #suspendRedraw
+     * @see JXG.AbstractRenderer#suspendRedraw
      */
-    unsuspendRedraw: function () {
-    },
+    unsuspendRedraw: function () { /* stub */ },
 
     /**
      * The tiny zoom bar shown on the bottom of a board (if showNavigation on board creation is true).
@@ -833,29 +962,6 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      */
     getElementById: function (id) {
         return document.getElementById(this.container.id + '_' + id);
-    },
-
-    /**
-     * Sets the shadow properties to a geometry element. This method is only a stub, it is implemented in the actual renderers.
-     * @param {JXG.GeometryElement} element Reference to a geometry object, that should get a shadow
-     */
-    setShadow: function (element) {
-        // This is just a stub. Usage and implementation may differ between the different renderers.
-    },
-
-
-    /**
-     * @TODO Description of parameters
-     * Updates a path element.
-     */
-    updatePathStringPoint: function (el, size, type) {
-        // This is just a stub. Usage and implementation may differ between the different renderers.
-    },
-
-    /**
-     * This is just a stub. Usage and implementation may differ between the different renderers.
-     */
-    setBuffering: function () {
-        // This is just a stub. Usage and implementation may differ between the different renderers.
     }
+
 });

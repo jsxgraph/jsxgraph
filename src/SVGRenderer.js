@@ -27,17 +27,18 @@
  * Uses SVG to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
  * @class JXG.AbstractRenderer
  * @augments JXG.AbstractRenderer
- * @param {HTMLNode} container Reference to a DOM node containing the board.
+ * @param {Node} container Reference to a DOM node containing the board.
  * @see JXG.AbstractRenderer
  */
 JXG.SVGRenderer = function(container) {
     var i;
 
+    // docstring in AbstractRenderer
     this.type = 'svg';
 
     /**
      * SVG root node
-     * @type SVGAnimatedString
+     * @type Node
      * @private
      */
     this.svgRoot = null;
@@ -80,28 +81,38 @@ JXG.SVGRenderer = function(container) {
     this.svgRoot.style.height = this.container.style.height;
     this.container.appendChild(this.svgRoot);
 
+    // todo: doc defs
     this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace,'defs');
     this.svgRoot.appendChild(this.defs);
+
+    // todo: doc filter
     this.filter = this.container.ownerDocument.createElementNS(this.svgNamespace,'filter');
     this.filter.setAttributeNS(null, 'id', this.container.id+'_'+'f1');
     this.filter.setAttributeNS(null, 'width', '300%');
     this.filter.setAttributeNS(null, 'height', '300%');
+
+    // todo: doc feOffset
     this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace,'feOffset');
     this.feOffset.setAttributeNS(null, 'result', 'offOut');
     this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
     this.feOffset.setAttributeNS(null, 'dx', '5');
     this.feOffset.setAttributeNS(null, 'dy', '5');
     this.filter.appendChild(this.feOffset);
+
+    // todo: doc feGaussianBlur
     this.feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace,'feGaussianBlur');
     this.feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
     this.feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
     this.feGaussianBlur.setAttributeNS(null, 'stdDeviation', '3');
     this.filter.appendChild(this.feGaussianBlur);
+
+    // todo: doc feBlend
     this.feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace,'feBlend');
     this.feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
     this.feBlend.setAttributeNS(null, 'in2', 'blurOut');
     this.feBlend.setAttributeNS(null, 'mode', 'normal');
     this.filter.appendChild(this.feBlend);
+
     this.defs.appendChild(this.filter);    
     
     /**
@@ -134,27 +145,442 @@ JXG.SVGRenderer = function(container) {
 JXG.SVGRenderer.prototype = new JXG.AbstractRenderer();
 
 JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
-    
-    setShadow: function(el) {
-        if (el.visPropOld['shadow'] === el.visProp['shadow']) {
-            return;
-        }
 
-        if(el.rendNode != null) {
-            if(el.visProp['shadow']) {
-                el.rendNode.setAttributeNS(null,'filter','url(#'+this.container.id+'_'+'f1)');
-            }
-            else {
-                el.rendNode.removeAttributeNS(null,'filter');
-            }
+    /**
+     * Creates an arrow DOM node. Arrows are displayed in SVG with a <em>marker</em> tag.
+     * @private
+     * @param {JXG.GeometryElement} element A JSXGraph element, preferably one that can have an arrow attached.
+     * @param {String} [idAppendix=''] A string that is added to the node's id.
+     * @returns {Node} Reference to the node added to the DOM.
+     */
+    _createArrowHead: function(element,idAppendix) {
+        var id = element.id+'Triangle',
+            node2, node3;
+
+        if (idAppendix!=null) { id += idAppendix; }
+        node2 = this.createPrim('marker',id);
+
+        node2.setAttributeNS(null, 'viewBox', '0 0 10 6');
+        node2.setAttributeNS(null, 'refY', '3');
+        node2.setAttributeNS(null, 'markerUnits', 'strokeWidth');
+        node2.setAttributeNS(null, 'markerHeight', '12');
+        node2.setAttributeNS(null, 'markerWidth', '10');
+        node2.setAttributeNS(null, 'orient', 'auto');
+        node2.setAttributeNS(null, 'stroke', element.visProp['strokeColor']);
+        node2.setAttributeNS(null, 'stroke-opacity', element.visProp['strokeOpacity']);
+        node2.setAttributeNS(null, 'fill', element.visProp['strokeColor']);
+        node2.setAttributeNS(null, 'fill-opacity', element.visProp['strokeOpacity']);
+        node3 = this.container.ownerDocument.createElementNS(this.svgNamespace,'path');
+
+        if (idAppendix=='End') {
+            node2.setAttributeNS(null, 'refX', '0');
+            node3.setAttributeNS(null, 'd', 'M 0 3 L 10 6 L 10 0 z');
+        } else {
+            node2.setAttributeNS(null, 'refX', '10');
+            node3.setAttributeNS(null, 'd', 'M 0 0 L 10 3 L 0 6 z');
         }
-        el.visPropOld['shadow'] = el.visProp['shadow'];
+        node2.appendChild(node3);
+        return node2;
     },
 
+    /**
+     * Updates an arrow DOM node.
+     * @param {Node} node The arrow node.
+     * @param {String} color Color value in a HTML compatible format, e.g. <tt>#00ff00</tt> or <tt>green</tt> for green.
+     * @param {Number} opacity
+     */
+    _setArrowAtts: function(node, color, opacity) {
+        if (node) {
+            node.setAttributeNS(null, 'stroke', color);
+            node.setAttributeNS(null, 'stroke-opacity', opacity);
+            node.setAttributeNS(null, 'fill', color);
+            node.setAttributeNS(null, 'fill-opacity', opacity);
+        }
+    },
+
+    /* ******************************** *
+     *  This renderer does not need to
+     *  override draw/update* methods
+     *  since it provides draw/update*Prim
+     *  methods except for some cases like
+     *  internal texts or images.
+     * ******************************** */
+
+    /* **************************
+     *    Lines
+     * **************************/
+
+    // documented in AbstractRenderer
+    updateTicks: function(axis,dxMaj,dyMaj,dxMin,dyMin) {
+        var tickStr = "",
+            i, c, node,
+            len = axis.ticks.length;
+
+        for (i=0; i<len; i++) {
+            c = axis.ticks[i].scrCoords;
+            if (axis.ticks[i].major) {
+                if ((axis.board.needsFullUpdate||axis.needsRegularUpdate) && axis.labels[i].visProp['visible']) {
+                    this.drawText(axis.labels[i]);
+                }
+                tickStr += "M " + (c[1]+dxMaj) + " " + (c[2]-dyMaj) + " L " + (c[1]-dxMaj) + " " + (c[2]+dyMaj) + " ";
+            }
+            else
+                tickStr += "M " + (c[1]+dxMin) + " " + (c[2]-dyMin) + " L " + (c[1]-dxMin) + " " + (c[2]+dyMin) + " ";
+
+        }
+
+        node = this.getElementById(axis.id);
+        if(node == null) {
+            node = this.createPrim('path', axis.id);
+            //node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
+            this.appendChildPrim(node,axis.layer);
+            this.appendNodesToElement(axis,'path');
+        }
+        node.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);
+        node.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
+        node.setAttributeNS(null, 'stroke-width', axis.visProp['strokeWidth']);
+        this.updatePathPrim(node, tickStr, axis.board);
+    },
+
+    /* **************************
+     *    Text related stuff
+     * **************************/
+
+    // already documented in JXG.AbstractRenderer
+    displayCopyright: function(str, fontsize) {
+        var node = this.createPrim('text','licenseText'),
+            t;
+        node.setAttributeNS(null,'x','20');
+        node.setAttributeNS(null,'y',2+fontsize);
+        node.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:"+fontsize+"px; fill:#356AA0;  opacity:0.3;");
+        t = document.createTextNode(str);
+        node.appendChild(t);
+        this.appendChildPrim(node,0);
+    },
+
+    // already documented in JXG.AbstractRenderer
+    drawInternalText: function(el) {
+        var node = this.createPrim('text',el.id);
+
+        node.setAttributeNS(null, "class", "JXGtext");
+        node.setAttributeNS(null, "style", "'alignment-baseline:middle;");
+        el.rendNodeText = document.createTextNode('');
+        node.appendChild(el.rendNodeText);
+        this.appendChildPrim(node,9);
+
+        return node;
+    },
+
+    // already documented in JXG.AbstractRenderer
+    updateInternalText: function(/** JXG.Text */ el) {
+        el.rendNode.setAttributeNS(null, 'x', (el.coords.scrCoords[1])+'px');
+        el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2])+'px');
+        el.updateText();
+        if (el.htmlStr!= el.plaintextStr) {
+            el.rendNodeText.data = el.plaintextStr;
+            el.htmlStr = el.plaintextStr;
+        }
+        this.transformImage(el, el.transformations);
+    },
+
+    /* **************************
+     *    Image related stuff
+     * **************************/
+
+    // already documented in JXG.AbstractRenderer
+    drawImage: function(el) {
+        var node = this.createPrim('image',el.id);
+
+        node.setAttributeNS(null, 'preserveAspectRatio', 'none');
+        this.appendChildPrim(node,el.layer);
+        el.rendNode = node;
+
+        this.updateImage(el);
+    },
+
+    // already documented in JXG.AbstractRenderer
+    transformImage: function(el,t) {
+        var node = el.rendNode, m,
+            str = "",
+            s, len = t.length;
+
+        if (len>0) {
+            m = this.joinTransforms(el,t);
+            s = m[1][1]+','+m[2][1]+','+m[1][2]+','+m[2][2]+','+m[1][0]+','+m[2][0];
+            str += ' matrix('+s+') ';
+            node.setAttributeNS(null, 'transform', str);
+        }
+    },
+
+    // already documented in JXG.AbstractRenderer
+    updateImageURL: function(el) {
+        var url;
+        if (JXG.isFunction(el.url)) {
+            url = el.url();
+        } else {
+            url = el.url;
+        }
+        el.rendNode.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
+    },
+
+    /* **************************
+     * Render primitive objects
+     * **************************/
+
+    // already documented in JXG.AbstractRenderer
+    appendChildPrim: function(node, level) {
+        if (typeof level=='undefined') { // trace nodes have level not set
+            level = 0;
+        } else if (level>=JXG.Options.layer.numlayers) {
+            level = JXG.Options.layer.numlayers-1;
+        }
+        this.layer[level].appendChild(node);
+    },
+
+    // already documented in JXG.AbstractRenderer
+    appendNodesToElement: function(element) {
+        element.rendNode = this.getElementById(element.id);
+    },
+
+    // already documented in JXG.AbstractRenderer
+    createPrim: function(type, id) {
+        var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
+        node.setAttributeNS(null, 'id', this.container.id+'_'+id);
+        node.style.position = 'absolute';
+        if (type=='path') {
+            node.setAttributeNS(null, 'stroke-linecap', 'butt');
+            node.setAttributeNS(null, 'stroke-linejoin', 'round');
+        }
+        return node;
+    },
+
+    // already documented in JXG.AbstractRenderer
+    remove: function(shape) {
+        if(shape!=null && shape.parentNode != null)
+            shape.parentNode.removeChild(shape);
+    },
+
+    // already documented in JXG.AbstractRenderer
+    makeArrows: function(el) {
+        var node2;
+        if (el.visPropOld['firstArrow']==el.visProp['firstArrow'] && el.visPropOld['lastArrow']==el.visProp['lastArrow']) {
+            return;
+        }
+        if(el.visProp['firstArrow']) {
+            node2 = el.rendNodeTriangleStart;
+            if(node2 == null) {
+                node2 = this._createArrowHead(el,'End');
+                this.defs.appendChild(node2);
+                el.rendNodeTriangleStart = node2;
+                el.rendNode.setAttributeNS(null, 'marker-start', 'url(#'+this.container.id+'_'+el.id+'TriangleEnd)');
+            }
+        }
+        else {
+            node2 = el.rendNodeTriangleStart;
+            if(node2 != null) {
+                this.remove(node2);
+            }
+        }
+        if(el.visProp['lastArrow']) {
+            node2 = el.rendNodeTriangleEnd;
+            if(node2 == null) {
+                node2 = this._createArrowHead(el,'Start');
+                this.defs.appendChild(node2);
+                el.rendNodeTriangleEnd = node2;
+                el.rendNode.setAttributeNS(null, 'marker-end', 'url(#'+this.container.id+'_'+el.id+'TriangleStart)');
+            }
+        }
+        else {
+            node2 = el.rendNodeTriangleEnd;
+            if(node2 != null) {
+                this.remove(node2);
+            }
+        }
+        el.visPropOld['firstArrow'] = el.visProp['firstArrow'];
+        el.visPropOld['lastArrow'] = el.visProp['lastArrow'];
+    },
+
+    // already documented in JXG.AbstractRenderer
+    updateEllipsePrim: function(node,x,y,rx,ry) {
+        node.setAttributeNS(null, 'cx', (x));
+        node.setAttributeNS(null, 'cy', (y));
+        node.setAttributeNS(null, 'rx', (rx));
+        node.setAttributeNS(null, 'ry', (ry));
+    },
+
+    // already documented in JXG.AbstractRenderer
+    updateLinePrim: function(node,p1x,p1y,p2x,p2y) {
+        node.setAttributeNS(null, 'x1', p1x);
+        node.setAttributeNS(null, 'y1', p1y);
+        node.setAttributeNS(null, 'x2', p2x);
+        node.setAttributeNS(null, 'y2', p2y);
+    },
+
+    // already documented in JXG.AbstractRenderer
+    updatePathPrim: function(node, pointString) {
+        node.setAttributeNS(null, 'd', pointString);
+    },
+
+    // already documented in JXG.AbstractRenderer
+    updatePathStringPoint: function(el, size, type) {
+        var s = '',
+            scr = el.coords.scrCoords,
+            sqrt32 = size*Math.sqrt(3)*0.5,
+            s05 = size*0.5;
+
+        if(type == 'x') {
+            s = 'M ' + (scr[1]-size) + ' ' + (scr[2]-size) + ' L ' +
+                (scr[1]+size) + ' ' + (scr[2]+size) + ' M ' +
+                (scr[1]+size) + ' ' + (scr[2]-size) + ' L ' +
+                (scr[1]-size) + ' ' + (scr[2]+size);
+        } else if(type == '+') {
+            s = 'M ' + (scr[1]-size) + ' ' + (scr[2]) + ' L ' +
+                (scr[1]+size) + ' ' + (scr[2]) + ' M ' +
+                (scr[1]) + ' ' + (scr[2]-size) + ' L ' +
+                (scr[1]) + ' ' + (scr[2]+size);
+        } else if(type == '<>') {
+            s = 'M ' + (scr[1]-size) + ' ' + (scr[2]) + ' L ' +
+                (scr[1]) + ' ' + (scr[2]+size) + ' L ' +
+                (scr[1]+size) + ' ' + (scr[2]) + ' L ' +
+                (scr[1]) + ' ' + (scr[2]-size) + ' Z ';
+        } else if(type == '^') {
+            s = 'M ' + (scr[1]) + ' ' + (scr[2]-size) + ' L ' +
+                (scr[1]-sqrt32) + ' ' + (scr[2]+s05) + ' L ' +
+                (scr[1]+sqrt32) + ' ' + (scr[2]+s05) + ' Z ';
+        } else if(type == 'v') {
+            s = 'M ' + (scr[1]) + ' ' + (scr[2]+size) + ' L ' +
+                (scr[1]-sqrt32) + ' ' + (scr[2]-s05) + ' L ' +
+                (scr[1]+sqrt32) + ' ' + (scr[2]-s05) + ' Z ';
+        } else if(type == '>') {
+            s = 'M ' + (scr[1]+size) + ' ' + (scr[2]) + ' L ' +
+                (scr[1]-s05) + ' ' + (scr[2]-sqrt32) + ' L ' +
+                (scr[1]-s05) + ' ' + (scr[2]+sqrt32) + ' Z ';
+        } else if(type == '<') {
+            s = 'M ' + (scr[1]-size) + ' ' + (scr[2]) + ' L ' +
+                (scr[1]+s05) + ' ' + (scr[2]-sqrt32) + ' L ' +
+                (scr[1]+s05) + ' ' + (scr[2]+sqrt32) + ' Z ';
+        }
+        return s;
+    },
+
+    // already documented in JXG.AbstractRenderer
+    updatePathStringPrim: function(el) {
+        var symbm = ' M ',
+            symbl = ' L ',
+            nextSymb = symbm,
+            maxSize = 5000.0,
+            pStr = '',
+            i, scr,
+            isNoPlot = (el.curveType!='plot'),
+            len;
+
+        if (el.numberPoints<=0) { return ''; }
+
+        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
+            el.points = JXG.Math.Numerics.RamenDouglasPeuker(el.points,0.5);
+        }
+        len = Math.min(el.points.length,el.numberPoints);
+        for (i=0; i<len; i++) {
+            scr = el.points[i].scrCoords;
+            if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                nextSymb = symbm;
+            } else {
+                // Chrome has problems with values  being too far away.
+                if (scr[1]>maxSize) { scr[1] = maxSize; }
+                else if (scr[1]<-maxSize) { scr[1] = -maxSize; }
+                if (scr[2]>maxSize) { scr[2] = maxSize; }
+                else if (scr[2]<-maxSize) { scr[2] = -maxSize; }
+
+                pStr += [nextSymb,scr[1],' ',scr[2]].join(''); // Attention: first coordinate may be inaccurate if far way
+                nextSymb = symbl;
+            }
+        }
+        return pStr;
+    },
+
+    // already documented in JXG.AbstractRenderer
+    updatePolygonPrim: function(node, el) {
+        var pStr = '',
+            scrCoords, i,
+            len = el.vertices.length;
+
+        node.setAttributeNS(null, 'stroke', 'none');
+        for(i=0; i<len-1; i++) {
+            scrCoords = el.vertices[i].coords.scrCoords;
+            pStr = pStr + scrCoords[1] + "," + scrCoords[2];
+            if(i<len-2) { pStr += " "; }
+        }
+        node.setAttributeNS(null, 'points', pStr);
+    },
+
+    // already documented in JXG.AbstractRenderer
+    updateRectPrim: function(node,x,y,w,h) {
+        node.setAttributeNS(null, 'x', (x));
+        node.setAttributeNS(null, 'y', (y));
+        node.setAttributeNS(null, 'width', (w));
+        node.setAttributeNS(null, 'height', (h));
+    },
+
+    /* **************************
+     *  Set Attributes
+     * **************************/
+
+    // documented in JXG.AbstractRenderer
+    setPropertyPrim: function(node, key, val) {
+        if (key=='stroked') {
+            return;
+        }
+        node.setAttributeNS(null, key, val);
+    },
+
+    // documented in JXG.AbstractRenderer
+    show: function(el) {
+        var node;
+
+        if (!JXG.exists(el))
+            return;
+        node = el.rendNode;
+        if(JXG.exists(node)) {
+            node.setAttributeNS(null, 'display', 'inline');
+            node.style.visibility = "inherit";
+        }
+    },
+
+    // documented in JXG.AbstractRenderer
+    hide: function(el) {
+        var node;
+
+        if (!JXG.exists(el))
+            return;
+        node = el.rendNode;
+        if(JXG.exists(node)) {
+            node.setAttributeNS(null, 'display', 'none');
+            node.style.visibility = "hidden";
+        }
+    },
+
+    // documented in JXG.AbstractRenderer
+    setBuffering: function(el, type) {
+        el.rendNode.setAttribute('buffered-rendering', type);
+    },
+
+    // documented in JXG.AbstractRenderer
+    setDashStyle: function(el) {
+        var dashStyle = el.visProp['dash'], node = el.rendNode;
+        if(el.visProp['dash'] > 0) {
+            node.setAttributeNS(null, 'stroke-dasharray', this.dashArray[dashStyle-1]);
+        } else {
+            if(node.hasAttributeNS(null, 'stroke-dasharray')) {
+                node.removeAttributeNS(null, 'stroke-dasharray');
+            }
+        }
+    },
+
+    // documented in JXG.AbstractRenderer
     setGradient: function(el) {
         var fillNode = el.rendNode, col, op,
             node, node2, node3, x1, x2, y1, y2;
-    
+
         if (typeof el.visProp['fillOpacity']=='function') {
             op = el.visProp['fillOpacity']();
         } else {
@@ -219,6 +645,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         }
     },
 
+    // documented in JXG.AbstractRenderer
     updateGradient: function(el) {
         var node2 = el.gradNode1,
             node3 = el.gradNode2,
@@ -248,114 +675,32 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         }
     },
 
-    // already documented in JXG.AbstractRenderer
-    displayCopyright: function(str, fontsize) {
-        var node = this.createPrim('text','licenseText'),
-            t;
-        node.setAttributeNS(null,'x','20');
-        node.setAttributeNS(null,'y',2+fontsize);
-        node.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:"+fontsize+"px; fill:#356AA0;  opacity:0.3;");
-        t = document.createTextNode(str);
-        node.appendChild(t);
-        this.appendChildPrim(node,0);
-    },
+    // documented in JXG.AbstractRenderer
+    setObjectFillColor: function(el, color, opacity) {
+        var node, c = JXG.evaluate(color),
+            o = JXG.evaluate(opacity);
 
-    drawInternalText: function(el) {
-        var node = this.createPrim('text',el.id);
+        o = (o>0)?o:0;
 
-        node.setAttributeNS(null, "class", "JXGtext");
-        node.setAttributeNS(null, "style", "'alignment-baseline:middle;");
-        el.rendNodeText = document.createTextNode('');
-        node.appendChild(el.rendNodeText);
-        this.appendChildPrim(node,9);
-
-        return node;
-    },
-
-    updateInternalText: function(/** JXG.Text */ el) {
-        el.rendNode.setAttributeNS(null, 'x', (el.coords.scrCoords[1])+'px');
-        el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2])+'px');
-        el.updateText();
-        if (el.htmlStr!= el.plaintextStr) {
-            el.rendNodeText.data = el.plaintextStr;
-            el.htmlStr = el.plaintextStr;
+        if (el.visPropOld['fillColor']==c && el.visPropOld['fillOpacity']==o) {
+            return;
         }
-        this.transformImage(el, el.transformations);
-    },
-
-    // documented in AbstractRenderer
-    updateTicks: function(axis,dxMaj,dyMaj,dxMin,dyMin) {
-        var tickStr = "",
-            i, c, node,
-            len = axis.ticks.length;
-
-        for (i=0; i<len; i++) {
-            c = axis.ticks[i].scrCoords;
-            if (axis.ticks[i].major) {
-                if ((axis.board.needsFullUpdate||axis.needsRegularUpdate) && axis.labels[i].visProp['visible']) {
-                    this.drawText(axis.labels[i]);
-                }
-                tickStr += "M " + (c[1]+dxMaj) + " " + (c[2]-dyMaj) + " L " + (c[1]-dxMaj) + " " + (c[2]+dyMaj) + " ";
-            }
-            else
-                tickStr += "M " + (c[1]+dxMin) + " " + (c[2]-dyMin) + " L " + (c[1]-dxMin) + " " + (c[2]+dyMin) + " ";
-
-        }
-
-        node = this.getElementById(axis.id);
-        if(node == null) {
-            node = this.createPrim('path', axis.id);
-            //node.setAttributeNS(null, 'shape-rendering', 'crispEdges');
-            this.appendChildPrim(node,axis.layer);
-            this.appendNodesToElement(axis,'path');
-        }
-        node.setAttributeNS(null, 'stroke', axis.visProp['strokeColor']);
-        node.setAttributeNS(null, 'stroke-opacity', axis.visProp['strokeOpacity']);
-        node.setAttributeNS(null, 'stroke-width', axis.visProp['strokeWidth']);
-        this.updatePathPrim(node, tickStr, axis.board);
-    },
-
-    drawImage: function(el) {
-        var node = this.createPrim('image',el.id);
-
-        node.setAttributeNS(null, 'preserveAspectRatio', 'none');
-        this.appendChildPrim(node,el.layer);
-        el.rendNode = node;
-
-        this.updateImage(el);
-    },
-
-    updateImageURL: function(el) {
-        var url;
-        if (JXG.isFunction(el.url)) {
-            url = el.url();
-        } else {
-            url = el.url;
-        }
-        el.rendNode.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
-    },
-
-    transformImage: function(el,t) {
-        var node = el.rendNode, m,
-            str = "",
-            s, len = t.length;
-
-        if (len>0) {
-            m = this.joinTransforms(el,t);
-            s = m[1][1]+','+m[2][1]+','+m[1][2]+','+m[2][2]+','+m[1][0]+','+m[2][0];
-            str += ' matrix('+s+') ';
-            node.setAttributeNS(null, 'transform', str);
-        }
-    },
-
-    _setArrowAtts: function(node, c, o) {
-        if (!node) return;
-        node.setAttributeNS(null, 'stroke', c);
-        node.setAttributeNS(null, 'stroke-opacity', o);
+        node = el.rendNode;
         node.setAttributeNS(null, 'fill', c);
-        node.setAttributeNS(null, 'fill-opacity', o);
+        if (el.type==JXG.OBJECT_TYPE_IMAGE) {
+            node.setAttributeNS(null, 'opacity', o);
+        } else {
+            node.setAttributeNS(null, 'fill-opacity', o);
+        }
+
+        if (el.visProp['gradient']!=null) {
+            this.updateGradient(el);
+        }
+        el.visPropOld['fillColor'] = c;
+        el.visPropOld['fillOpacity'] = o;
     },
 
+    // documented in JXG.AbstractRenderer
     setObjectStrokeColor: function(el, color, opacity) {
         var c = JXG.evaluate(color),
             o = JXG.evaluate(opacity),
@@ -392,35 +737,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         el.visPropOld['strokeOpacity'] = o;
     },
 
-    setObjectFillColor: function(el, color, opacity) {
-        var node, c = JXG.evaluate(color),
-            o = JXG.evaluate(opacity);
-
-        o = (o>0)?o:0;
-
-        if (el.visPropOld['fillColor']==c && el.visPropOld['fillOpacity']==o) {
-            return;
-        }
-        node = el.rendNode;
-        node.setAttributeNS(null, 'fill', c);
-        if (el.type==JXG.OBJECT_TYPE_IMAGE) {
-            node.setAttributeNS(null, 'opacity', o);
-        } else {
-            node.setAttributeNS(null, 'fill-opacity', o);
-        }
-
-        if (el.visProp['gradient']!=null) {
-            this.updateGradient(el);
-        }
-        el.visPropOld['fillColor'] = c;
-        el.visPropOld['fillOpacity'] = o;
-    },
-
-    /**
-     * Sets an elements stroke width.
-     * @param {Object} el Reference to the geometry element.
-     * @param {int} width The new stroke width to be assigned to the element.
-     */
+    // documented in JXG.AbstractRenderer
     setObjectStrokeWidth: function(el, width) {
         var w = JXG.evaluate(width),
             node;
@@ -441,284 +758,37 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         el.visPropOld['strokeWidth'] = w;
     },
 
-    hide: function(el) {
-        var node;
-
-        if (!JXG.exists(el))
+    // documented in JXG.AbstractRenderer
+    setShadow: function(el) {
+        if (el.visPropOld['shadow'] === el.visProp['shadow']) {
             return;
-        node = el.rendNode;
-        if(JXG.exists(node)) {
-            node.setAttributeNS(null, 'display', 'none');
-            node.style.visibility = "hidden";
         }
-    },
 
-    show: function(el) {
-        var node;
-
-        if (!JXG.exists(el))
-            return;
-        node = el.rendNode;
-        if(JXG.exists(node)) {
-            node.setAttributeNS(null, 'display', 'inline');
-            node.style.visibility = "inherit";
+        if(el.rendNode != null) {
+            if(el.visProp['shadow']) {
+                el.rendNode.setAttributeNS(null,'filter','url(#'+this.container.id+'_'+'f1)');
+            }
+            else {
+                el.rendNode.removeAttributeNS(null,'filter');
+            }
         }
+        el.visPropOld['shadow'] = el.visProp['shadow'];
     },
 
-    remove: function(shape) {
-        if(shape!=null && shape.parentNode != null)
-            shape.parentNode.removeChild(shape);
-    },
-
+    /* **************************
+     * renderer control
+     * **************************/
+    
+    // documented in JXG.AbstractRenderer
     suspendRedraw: function() {
         // It seems to be important for the Linux version of firefox
         this.suspendHandle = this.svgRoot.suspendRedraw(10000);
     },
 
+    // documented in JXG.AbstractRenderer
     unsuspendRedraw: function() {
         this.svgRoot.unsuspendRedraw(this.suspendHandle);
         this.svgRoot.forceRedraw();
-    },
-
-    setDashStyle: function(el,visProp) {
-        var dashStyle = el.visProp['dash'], node = el.rendNode;
-        if(el.visProp['dash'] > 0) {
-            node.setAttributeNS(null, 'stroke-dasharray', this.dashArray[dashStyle-1]);
-        } else {
-            if(node.hasAttributeNS(null, 'stroke-dasharray')) {
-                node.removeAttributeNS(null, 'stroke-dasharray');
-            }
-        }
-    },
-
-    // already documented in JXG.AbstractRenderer
-    createPrim: function(type, id) {
-        var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
-        node.setAttributeNS(null, 'id', this.container.id+'_'+id);
-        node.style.position = 'absolute';
-        if (type=='path') {
-            node.setAttributeNS(null, 'stroke-linecap', 'butt');
-            node.setAttributeNS(null, 'stroke-linejoin', 'round');
-        }
-        return node;
-    },
-
-    _createArrowHead: function(el,idAppendix) {
-        var id = el.id+'Triangle',
-            node2, node3;
-
-        if (idAppendix!=null) { id += idAppendix; }
-        node2 = this.createPrim('marker',id);
-
-        node2.setAttributeNS(null, 'viewBox', '0 0 10 6');
-        node2.setAttributeNS(null, 'refY', '3');
-        node2.setAttributeNS(null, 'markerUnits', 'strokeWidth');
-        node2.setAttributeNS(null, 'markerHeight', '12');
-        node2.setAttributeNS(null, 'markerWidth', '10');
-        node2.setAttributeNS(null, 'orient', 'auto');
-        node2.setAttributeNS(null, 'stroke', el.visProp['strokeColor']);
-        node2.setAttributeNS(null, 'stroke-opacity', el.visProp['strokeOpacity']);
-        node2.setAttributeNS(null, 'fill', el.visProp['strokeColor']);
-        node2.setAttributeNS(null, 'fill-opacity', el.visProp['strokeOpacity']);
-        node3 = this.container.ownerDocument.createElementNS(this.svgNamespace,'path');
-
-        if (idAppendix=='End') {
-            node2.setAttributeNS(null, 'refX', '0');
-            node3.setAttributeNS(null, 'd', 'M 0 3 L 10 6 L 10 0 z');
-        } else {
-            node2.setAttributeNS(null, 'refX', '10');
-            node3.setAttributeNS(null, 'd', 'M 0 0 L 10 3 L 0 6 z');
-        }
-        node2.appendChild(node3);
-        return node2;
-    },
-
-    makeArrows: function(el) {
-        var node2;
-        if (el.visPropOld['firstArrow']==el.visProp['firstArrow'] && el.visPropOld['lastArrow']==el.visProp['lastArrow']) {
-            return;
-        }
-        if(el.visProp['firstArrow']) {
-            node2 = el.rendNodeTriangleStart;
-            if(node2 == null) {
-                node2 = this._createArrowHead(el,'End');
-                this.defs.appendChild(node2);
-                el.rendNodeTriangleStart = node2;
-                el.rendNode.setAttributeNS(null, 'marker-start', 'url(#'+this.container.id+'_'+el.id+'TriangleEnd)');
-            }
-        }
-        else {
-            node2 = el.rendNodeTriangleStart;
-            if(node2 != null) {
-                this.remove(node2);
-            }
-        }
-        if(el.visProp['lastArrow']) {
-            node2 = el.rendNodeTriangleEnd;
-            if(node2 == null) {
-                node2 = this._createArrowHead(el,'Start');
-                this.defs.appendChild(node2);
-                el.rendNodeTriangleEnd = node2;
-                el.rendNode.setAttributeNS(null, 'marker-end', 'url(#'+this.container.id+'_'+el.id+'TriangleStart)');
-            }
-        }
-        else {
-            node2 = el.rendNodeTriangleEnd;
-            if(node2 != null) {
-                this.remove(node2);
-            }
-        }
-        el.visPropOld['firstArrow'] = el.visProp['firstArrow'];
-        el.visPropOld['lastArrow'] = el.visProp['lastArrow'];
-    },
-
-    updateLinePrim: function(node,p1x,p1y,p2x,p2y) {
-        node.setAttributeNS(null, 'x1', p1x);
-        node.setAttributeNS(null, 'y1', p1y);
-        node.setAttributeNS(null, 'x2', p2x);
-        node.setAttributeNS(null, 'y2', p2y);
-    },
-
-    updateEllipsePrim: function(node,x,y,rx,ry) {
-        node.setAttributeNS(null, 'cx', (x));
-        node.setAttributeNS(null, 'cy', (y));
-        node.setAttributeNS(null, 'rx', (rx));
-        node.setAttributeNS(null, 'ry', (ry));
-    },
-
-    updateRectPrim: function(node,x,y,w,h) {
-        node.setAttributeNS(null, 'x', (x));
-        node.setAttributeNS(null, 'y', (y));
-        node.setAttributeNS(null, 'width', (w));
-        node.setAttributeNS(null, 'height', (h));
-    },
-
-    updatePathPrim: function(node, pointString, board) {
-        node.setAttributeNS(null, 'd', pointString);
-    },
-
-    updatePathStringPrim: function(el) {
-        var symbm = ' M ',
-            symbl = ' L ',
-            nextSymb = symbm,
-            maxSize = 5000.0,
-            pStr = '',
-            i, scr,
-            isNoPlot = (el.curveType!='plot'),
-            len;
-
-        if (el.numberPoints<=0) { return ''; }
-
-        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-            el.points = JXG.Math.Numerics.RamenDouglasPeuker(el.points,0.5);
-        }
-        len = Math.min(el.points.length,el.numberPoints);
-        for (i=0; i<len; i++) {
-            scr = el.points[i].scrCoords;
-            if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
-                nextSymb = symbm;
-            } else {
-                // Chrome has problems with values  being too far away.
-                if (scr[1]>maxSize) { scr[1] = maxSize; }
-                else if (scr[1]<-maxSize) { scr[1] = -maxSize; }
-                if (scr[2]>maxSize) { scr[2] = maxSize; }
-                else if (scr[2]<-maxSize) { scr[2] = -maxSize; }
-
-                pStr += [nextSymb,scr[1],' ',scr[2]].join(''); // Attention: first coordinate may be inaccurate if far way
-                nextSymb = symbl;
-            }
-        }
-        return pStr;
-    },
-
-    updatePathStringPoint: function(el, size, type) {
-        var s = '',
-            scr = el.coords.scrCoords,
-            sqrt32 = size*Math.sqrt(3)*0.5,
-            s05 = size*0.5;
-
-        if(type == 'x') {
-            s = 'M ' + (scr[1]-size) + ' ' + (scr[2]-size) + ' L ' +
-                (scr[1]+size) + ' ' + (scr[2]+size) + ' M ' +
-                (scr[1]+size) + ' ' + (scr[2]-size) + ' L ' +
-                (scr[1]-size) + ' ' + (scr[2]+size);
-        }
-        else if(type == '+') {
-            s = 'M ' + (scr[1]-size) + ' ' + (scr[2]) + ' L ' +
-                (scr[1]+size) + ' ' + (scr[2]) + ' M ' +
-                (scr[1]) + ' ' + (scr[2]-size) + ' L ' +
-                (scr[1]) + ' ' + (scr[2]+size);
-        }
-        else if(type == '<>') {
-            s = 'M ' + (scr[1]-size) + ' ' + (scr[2]) + ' L ' +
-                (scr[1]) + ' ' + (scr[2]+size) + ' L ' +
-                (scr[1]+size) + ' ' + (scr[2]) + ' L ' +
-                (scr[1]) + ' ' + (scr[2]-size) + ' Z ';
-        }
-        else if(type == '^') {
-            s = 'M ' + (scr[1]) + ' ' + (scr[2]-size) + ' L ' +
-                (scr[1]-sqrt32) + ' ' + (scr[2]+s05) + ' L ' +
-                (scr[1]+sqrt32) + ' ' + (scr[2]+s05) + ' Z ';
-        }
-        else if(type == 'v') {
-            s = 'M ' + (scr[1]) + ' ' + (scr[2]+size) + ' L ' +
-                (scr[1]-sqrt32) + ' ' + (scr[2]-s05) + ' L ' +
-                (scr[1]+sqrt32) + ' ' + (scr[2]-s05) + ' Z ';
-        }
-        else if(type == '>') {
-            s = 'M ' + (scr[1]+size) + ' ' + (scr[2]) + ' L ' +
-                (scr[1]-s05) + ' ' + (scr[2]-sqrt32) + ' L ' +
-                (scr[1]-s05) + ' ' + (scr[2]+sqrt32) + ' Z ';
-        }
-        else if(type == '<') {
-            s = 'M ' + (scr[1]-size) + ' ' + (scr[2]) + ' L ' +
-                (scr[1]+s05) + ' ' + (scr[2]-sqrt32) + ' L ' +
-                (scr[1]+s05) + ' ' + (scr[2]+sqrt32) + ' Z ';
-        }
-        return s;
-    },
-
-    updatePolygonPrim: function(node, el) {
-        var pStr = '',
-            scrCoords, i,
-            len = el.vertices.length;
-
-        node.setAttributeNS(null, 'stroke', 'none');
-        for(i=0; i<len-1; i++) {
-            scrCoords = el.vertices[i].coords.scrCoords;
-            pStr = pStr + scrCoords[1] + "," + scrCoords[2];
-            if(i<len-2) { pStr += " "; }
-        }
-        node.setAttributeNS(null, 'points', pStr);
-    },
-
-    appendChildPrim: function(node,level) {
-        if (typeof level=='undefined') { // trace nodes have level not set
-            level = 0;
-        } else if (level>=JXG.Options.layer.numlayers) {
-            level = JXG.Options.layer.numlayers-1;
-        }
-        this.layer[level].appendChild(node);
-    },
-
-    setPropertyPrim: function(node,key,val) {
-        if (key=='stroked') {
-            return;
-        }
-        node.setAttributeNS(null, key, val);
-    },
-
-    appendNodesToElement: function(element, type) {
-        element.rendNode = this.getElementById(element.id);
-    },
-
-    /**
-     * Sets the buffering as recommended by SVGWG. Until now only Opera supports this and will be ignored by other browsers.
-     * @param {DOMNode} el The SVG DOM Node which buffering type to update.
-     * @param {String} type Either 'auto', 'dynamic', or 'static'. For an explanation see
-     *   {@link http://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty}.
-     */
-    setBuffering: function(el, type) {
-        el.rendNode.setAttribute('buffered-rendering', type);
     }
+
 });

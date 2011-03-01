@@ -32,7 +32,7 @@
  * Uses HTML Canvas to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
  * @class JXG.AbstractRenderer
  * @augments JXG.AbstractRenderer
- * @param {HTMLNode} container Reference to a DOM node containing the board.
+ * @param {Node} container Reference to a DOM node containing the board.
  * @see JXG.AbstractRenderer
  */
 JXG.CanvasRenderer = function (container) {
@@ -359,12 +359,12 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
     },
 
     // documented in AbstractRenderer
-    updateLine: function (/** Line */ el) {
+    updateLine: function (el) {
         this.drawLine(el);
     },
 
     // documented in AbstractRenderer
-    drawTicks: function (axis) {
+    drawTicks: function () {
         // this function is supposed to initialize the svg/vml nodes in the SVG/VMLRenderer.
         // but in canvas there are no such nodes, hence we just do nothing and wait until
         // updateTicks is called.
@@ -507,7 +507,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
     },
 
     // already documented in JXG.AbstractRenderer
-    updateTextStyle: function (el) { },
+    updateTextStyle: function () { },
 
     /* **************************
      *    Image related stuff
@@ -523,19 +523,6 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         // the url computed in updateImageURL().
         el._src = '';
         this.updateImage(el);
-    },
-
-    // already documented in JXG.AbstractRenderer
-    transformImage: function (el, t) {
-        var m, len = t.length,
-            ctx = this.context;
-
-        if (len > 0) {
-            m = this.joinTransforms(el, t);
-            if (Math.abs(JXG.Math.Numerics.det(m)) >= JXG.Math.eps) {
-                ctx.transform(m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]);
-            }
-        }
     },
 
     // already documented in JXG.AbstractRenderer
@@ -570,6 +557,19 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
     },
 
     // already documented in JXG.AbstractRenderer
+    transformImage: function (el, t) {
+        var m, len = t.length,
+            ctx = this.context;
+
+        if (len > 0) {
+            m = this.joinTransforms(el, t);
+            if (Math.abs(JXG.Math.Numerics.det(m)) >= JXG.Math.eps) {
+                ctx.transform(m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]);
+            }
+        }
+    },
+
+    // already documented in JXG.AbstractRenderer
     updateImageURL: function (el) {
         var url;
 
@@ -584,73 +584,11 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         return false;
     },
 
-
-
+    /* **************************
+     * Render primitive objects
+     * **************************/
 
     // documented in AbstractRenderer
-    updatePolygonPrim: function (node, el) {
-        var scrCoords, i,
-            len = el.vertices.length,
-            context = this.context;
-
-        if (len <= 0) {
-            return;
-        }
-
-        context.beginPath();
-        scrCoords = el.vertices[0].coords.scrCoords;
-        context.moveTo(scrCoords[1], scrCoords[2]);
-        for (i = 1; i < len; i++) {
-            scrCoords = el.vertices[i].coords.scrCoords;
-            context.lineTo(scrCoords[1], scrCoords[2]);
-        }
-        context.closePath();
-
-        this._fill(el);    // The edges of a polygon are displayed separately (as segments).
-    },
-
-
-
-
-    setShadow: function (el) {
-        if (el.visPropOld.shadow === el.visProp.shadow) {
-            return;
-        }
-
-        // not implemented yet
-        // we simply have to redraw the element
-        // probably the best way to do so would be to call el.updateRenderer(), i think.
-
-        el.visPropOld.shadow = el.visProp.shadow;
-    },
-
-    setGradient: function (el) {
-        var col, op;
-
-        op = JXG.evaluate(el.visProp.fillOpacity);
-        op = (op > 0) ? op : 0;
-
-        col = JXG.evaluate(el.visProp.fillColor);
-    },
-
-    updateGradient: function (el) {
-        // see drawGradient
-    },
-
-    hide: function (el) {
-        // sounds odd for a pixel based renderer but we need this for html texts
-        if (JXG.exists(el.rendNode)) {
-            el.rendNode.style.visibility = "hidden";
-        }
-    },
-
-    show: function (el) {
-        // sounds odd for a pixel based renderer but we need this for html texts
-        if (JXG.exists(el.rendNode)) {
-            el.rendNode.style.visibility = "inherit";
-        }
-    },
-
     remove: function (shape) {
         // sounds odd for a pixel based renderer but we need this for html texts
         if (JXG.exists(shape) && JXG.exists(shape.parentNode)) {
@@ -658,20 +596,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         }
     },
 
-    suspendRedraw: function () {
-        this.context.save();
-        this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
-        this.displayCopyright(JXG.JSXGraph.licenseText, 12);
-    },
-
-    unsuspendRedraw: function () {
-        this.context.restore();
-    },
-
-    setDashStyle: function () {
-        // useless
-    },
-
+    // documented in AbstractRenderer
     makeArrows: function (el, scr1, scr2) {
         // not done yet for curves and arcs.
         var arrowHead = [
@@ -717,6 +642,7 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         }
     },
 
+    // documented in AbstractRenderer
     updatePathStringPrim: function (el) {
         var symbm = 'M',
             symbl = 'L',
@@ -768,7 +694,69 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         this._stroke(el);
     },
 
-    setPropertyPrim: function (node, key, val) {
+    // documented in AbstractRenderer
+    updatePolygonPrim: function (node, el) {
+        var scrCoords, i,
+            len = el.vertices.length,
+            context = this.context;
+
+        if (len <= 0) {
+            return;
+        }
+
+        context.beginPath();
+        scrCoords = el.vertices[0].coords.scrCoords;
+        context.moveTo(scrCoords[1], scrCoords[2]);
+        for (i = 1; i < len; i++) {
+            scrCoords = el.vertices[i].coords.scrCoords;
+            context.lineTo(scrCoords[1], scrCoords[2]);
+        }
+        context.closePath();
+
+        this._fill(el);    // The edges of a polygon are displayed separately (as segments).
+    },
+
+    /* **************************
+     *  Set Attributes
+     * **************************/
+
+    // documented in AbstractRenderer
+    show: function (el) {
+        // sounds odd for a pixel based renderer but we need this for html texts
+        if (JXG.exists(el.rendNode)) {
+            el.rendNode.style.visibility = "inherit";
+        }
+    },
+
+    // documented in AbstractRenderer
+    hide: function (el) {
+        // sounds odd for a pixel based renderer but we need this for html texts
+        if (JXG.exists(el.rendNode)) {
+            el.rendNode.style.visibility = "hidden";
+        }
+    },
+
+    // documented in AbstractRenderer
+    setGradient: function (el) {
+        var col, op;
+
+        op = JXG.evaluate(el.visProp.fillOpacity);
+        op = (op > 0) ? op : 0;
+
+        col = JXG.evaluate(el.visProp.fillColor);
+    },
+
+    // documented in AbstractRenderer
+    setShadow: function (el) {
+        if (el.visPropOld.shadow === el.visProp.shadow) {
+            return;
+        }
+
+        // not implemented yet
+        // we simply have to redraw the element
+        // probably the best way to do so would be to call el.updateRenderer(), i think.
+
+        el.visPropOld.shadow = el.visProp.shadow;
     },
 
     // documented in AbstractRenderer
@@ -787,6 +775,22 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         obj.board.updateRenderer();
         obj.board.renderer.unsuspendRedraw();
         return this;
+    },
+
+    /* **************************
+     * renderer control
+     * **************************/
+
+    // documented in AbstractRenderer
+    suspendRedraw: function () {
+        this.context.save();
+        this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
+        this.displayCopyright(JXG.JSXGraph.licenseText, 12);
+    },
+
+    // documented in AbstractRenderer
+    unsuspendRedraw: function () {
+        this.context.restore();
     }
 
 });

@@ -20,14 +20,8 @@
     /* <![CDATA[ */
 
     JXG.Options.renderer = 'svg';
-    JXG.Options.grid.gridX = 0.5;
-    JXG.Options.grid.gridY = 0.5;
-    JXG.Options.grid.gridColor = 'black';
-    JXG.Options.grid.gridOpacity = '0.25';
 
     var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox:[-5, 5, 5, -5], grid: true});
-
-    //g = brd.create('grid', []);
 
     p1 = brd.create('point', [0,0]);
     p2 = brd.create('point', [2,1]);
