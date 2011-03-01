@@ -327,15 +327,8 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
             this._setAttr(node,'stroked', 'true');
             this._setAttr(node,'strokecolor', c);
 
-            if(el.id == 'gridx') {
-                nodeStroke = this.getElementById('gridx_stroke');
-            }
-            else if(el.id == 'gridy') {
-                nodeStroke = this.getElementById('gridy_stroke');
-            }
-            else {
-                nodeStroke = el.rendNodeStroke;
-            }
+            nodeStroke = el.rendNodeStroke;
+
             if (JXG.exists(o)) {
                 this._setAttr(nodeStroke,'opacity', (o*100)+'%');
 
@@ -389,11 +382,6 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
 
     unsuspendRedraw: function() {
         this.container.style.display='';
-    },
-
-    setGridDash: function(id) {
-        var node = this.getElementById(id+'_stroke');
-        this._setAttr(node,'dashstyle', 'Dash');
     },
 
     /**
@@ -660,37 +648,6 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
             v = JXG.evaluate(val);
             this._setAttr(node, keyVml, v);
         }
-    },
-
-    // already documented in JXG.AbstractRenderer
-    drawVerticalGrid: function(topLeft, bottomRight, gx, board) {
-        var node = this.createPrim('path', 'gridx'),
-            gridArr = [];
-
-        while(topLeft.usrCoords[1] < bottomRight.usrCoords[1] + gx) {
-            gridArr.push(' m ' + (this.resolution*topLeft.scrCoords[1]) +
-                ', ' + 0 +
-                ' l ' + (this.resolution*topLeft.scrCoords[1]) +
-                ', ' + (this.resolution*board.canvasHeight)+' ');
-            topLeft.setCoordinates(JXG.COORDS_BY_USER, [topLeft.usrCoords[1] + gx, topLeft.usrCoords[2]]);
-        }
-        this.updatePathPrim(node, gridArr, board);
-        return node;
-    },
-
-    // already documented in JXG.AbstractRenderer
-    drawHorizontalGrid: function(topLeft, bottomRight, gy, board) {
-        var node = this.createPrim('path', 'gridy'),
-            gridArr = [];
-        while(topLeft.usrCoords[2] > bottomRight.usrCoords[2] - gy) {
-            gridArr.push(' m ' + 0 +
-                ', ' + (this.resolution*topLeft.scrCoords[2]) +
-                ' l ' + (this.resolution*board.canvasWidth) +
-                ', ' + (this.resolution*topLeft.scrCoords[2])+' ');
-            topLeft.setCoordinates(JXG.COORDS_BY_USER, [topLeft.usrCoords[1], topLeft.usrCoords[2] - gy]);
-        }
-        this.updatePathPrim(node, gridArr, board);
-        return node;
     }
 
 });

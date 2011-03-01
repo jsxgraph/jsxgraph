@@ -178,6 +178,11 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.renderer = renderer;
 
     /**
+     * Grids keeps track of all grids attached to this board.
+     */
+    this.grids = [];
+
+    /**
      * Some standard options
      * @type JXG.Options
      */
@@ -1139,12 +1144,8 @@ JXG.Board.prototype.moveOrigin = function () {
     }
 
     this.clearTraces();
-
     this.fullUpdate();
-    if(this.options.grid.hasGrid) {
-        this.renderer.removeGrid(this);
-        this.renderer.drawGrid(this);
-    }
+
     return this;
 };
 
@@ -1281,14 +1282,9 @@ JXG.Board.prototype.applyZoom = function() {
         }
     }
     this.calculateSnapSizes();
-
     this.clearTraces();
-
     this.fullUpdate();
-    if(this.options.grid.hasGrid) {
-        this.renderer.removeGrid(this);
-        this.renderer.drawGrid(this);
-    }
+
     return this;
 };
 
@@ -1756,6 +1752,31 @@ JXG.Board.prototype.fullUpdate = function() {
     this.needsFullUpdate = true;
     this.update();
     this.needsFullUpdate = false;
+    return this;
+};
+
+/**
+ * Adds a grid to the board according to the settings given in board.options.
+ * @returns {JXG.Board} Reference to the board.
+ */
+JXG.Board.prototype.addGrid = function () {
+    this.create('grid', []);
+
+    return this;
+};
+
+/**
+ * Removes all grids assigned to this board. Warning: This method also removes all objects depending on one or
+ * more of the grids.
+ * @returns {JXG.Board} Reference to the board object.
+ */
+JXG.Board.prototype.removeGrids = function () {
+    var i;
+
+    for(i = 0; i < this.grids.length; i++) {
+        this.removeObject(this.grids[i]);
+    }
+
     return this;
 };
 

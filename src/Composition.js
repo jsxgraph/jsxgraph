@@ -1446,7 +1446,7 @@ JXG.createIntegral = function(board, parents, attributes) {
  *  loc = board.create('locus', [m1], {strokeColor: 'red'});
  * </pre><div id="d45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *  lcex_board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 10, -6], axis: true, grid: false, keepaspectratio: true});
+ *  lcex_board = JXG.JSXGraph.initBoard('d45d7188-6624-4d6e-bebb-1efa2a305c8a', {boundingbox:[-4, 6, 10, -6], axis: true, grid: false, keepaspectratio: true});
  *  lcex_p1 = lcex_board.create('point', [0, 0]);
  *  lcex_p2 = lcex_board.create('point', [6, -1]);
  *  lcex_c1 = lcex_board.create('circle', [lcex_p1, 2]);
@@ -1508,6 +1508,116 @@ JXG.createLocus = function(board, parents, attributes) {
     return c;
 };
 
+
+/**
+ * @class Creates a grid to help the user with element placements.
+ * @pseudo
+ * @description A grid is a set of vertical and horizontal lines to support the user with element placement. This method
+ * draws such a grid on the given board. It uses options given in {@link JXG.Options#grid}. This method does not
+ * take any parent elements. It is usually instantiated on the board's creation via the attribute <tt>grid</tt> set
+ * to true.
+ * @constructor
+ * @name Locus
+ * @type JXG.Curve
+ * @augments JXG.Curve
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @example
+ * TODO
+ * </pre><div id="8ef0f148-3811-44a9-b5c0-ed50c01aa5c0" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *  gridex_board = JXG.JSXGraph.initBoard('8ef0f148-3811-44a9-b5c0-ed50c01aa5c0', {boundingbox:[-4, 6, 10, -6], axis: true, grid: false, keepaspectratio: true});
+ * </script><pre>
+ */
+JXG.createGrid = function (board, parents, attributes) {
+    var c = board.create('curve', [[null], [null]], {
+                strokeColor: board.options.grid.gridColor,
+                //highlightStrokeColor: board.options.grid.gridColor,
+                opacity: board.options.grid.gridOpacity
+            });
+
+    // TODO: use user given attributes
+
+    if(board.options.grid.gridDash)
+        c.setProperty({dash: 2});
+
+    c.updateDataArray = function () {
+        var gridX = board.options.grid.gridX,
+            gridY = board.options.grid.gridY,
+            topLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board),
+            bottomRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board),
+            i;
+            //horizontal = [[], []], vertical = [[], []];
+
+        //
+        //      |         |         |
+        //  ----+---------+---------+-----
+        //      |        /|         |
+        //      |    gridY|     <---+------   Grid Cell
+        //      |        \|         |
+        //  ----+---------+---------+-----
+        //      |         |\ gridX /|
+        //      |         |         |
+        //
+        // uc: usercoordinates
+        //
+        // currently one grid cell is 1/JXG.Options.grid.gridX uc wide and 1/JXG.Options.grid.gridY uc high.
+        // this may work perfectly with GeonextReader (#readGeonext, initialization of gridX and gridY) but it
+        // is absolutely not user friendly when it comes to use it as an API interface.
+        // i changed this to use gridX and gridY as the actual width and height of the grid cell. for this i
+        // had to refactor these methods:
+        //
+        //  DONE JXG.Board.calculateSnapSizes (init p1, p2)
+        //  DONE JXG.GeonextReader.readGeonext (init gridX, gridY)
+        //
+
+        board.options.grid.hasGrid = true;
+
+        topLeft.setCoordinates(JXG.COORDS_BY_USER, [Math.floor(topLeft.usrCoords[1] / gridX) * gridX, Math.ceil(topLeft.usrCoords[2] / gridY) * gridY]);
+        bottomRight.setCoordinates(JXG.COORDS_BY_USER, [Math.ceil(bottomRight.usrCoords[1] / gridX) * gridX, Math.floor(bottomRight.usrCoords[2] / gridY) * gridY]);
+
+        //horizontal.push(topLeft.usrCoords.slice(1));
+        //vertical.push(topLeft.usrCoords.slice(1));
+
+        c.dataX = [];
+        c.dataY = [];
+
+        // start with the horizontal grid:
+        for (i = topLeft.usrCoords[2]; i > bottomRight.usrCoords[2] - gridY; i -= gridY) {
+            c.dataX.push(topLeft.usrCoords[1]);
+            c.dataY.push(i);
+
+            c.dataX.push(bottomRight.usrCoords[1]);
+            c.dataY.push(i);
+
+            c.dataX.push(NaN);
+            c.dataY.push(NaN);
+        }
+
+        // build vertical grid
+        for (i = topLeft.usrCoords[1]; i < bottomRight.usrCoords[1] + gridX; i += gridX) {
+            c.dataX.push(i);
+            c.dataY.push(topLeft.usrCoords[2]);
+
+            c.dataX.push(i);
+            c.dataY.push(bottomRight.usrCoords[2]);
+
+            c.dataX.push(NaN);
+            c.dataY.push(NaN);
+        }
+
+    };
+
+    // we don't care about highlighting so we turn it off completely to save
+    // time on mouse move
+    c.hasPoint = function () {
+        return false;
+    };
+
+    board.grids.push(c);
+
+    return c;
+};
+
 JXG.JSXGraph.registerElement('arrowparallel', JXG.createArrowParallel);
 JXG.JSXGraph.registerElement('bisector', JXG.createBisector);
 JXG.JSXGraph.registerElement('bisectorlines', JXG.createAngularBisectorsOfTwoLines);
@@ -1526,3 +1636,4 @@ JXG.JSXGraph.registerElement('perpendicular', JXG.createPerpendicular);
 JXG.JSXGraph.registerElement('perpendicularpoint', JXG.createPerpendicularPoint);
 JXG.JSXGraph.registerElement('reflection', JXG.createReflection);
 JXG.JSXGraph.registerElement('locus', JXG.createLocus);
+JXG.JSXGraph.registerElement('grid', JXG.createGrid);

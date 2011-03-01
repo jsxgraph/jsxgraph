@@ -23,10 +23,11 @@
     JXG.Options.grid.gridX = 0.5;
     JXG.Options.grid.gridY = 0.5;
     JXG.Options.grid.gridColor = 'black';
-    JXG.Options.grid.gridOpacity = '1';
-    JXG.Options.text.useMathJax = true;
+    JXG.Options.grid.gridOpacity = '0.25';
 
     var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox:[-5, 5, 5, -5], grid: true});
+
+    //g = brd.create('grid', []);
 
     p1 = brd.create('point', [0,0]);
     p2 = brd.create('point', [2,1]);
@@ -34,9 +35,7 @@
 
     a = brd.create('polygon', [p1, p2, p3]);
 
-    brd.create('text', [2, 2, function() {
-    return '\\[f(x) = e^{x}\\]';
-  }]);
+    brd.update();
 
     /* ]]> */
 </script>

@@ -1551,7 +1551,7 @@ this.writeBoard = function(board) {
   // snap to point
   var snapToPoint = (boardData.getElementsByTagName('evSettings')[0].getAttribute("pointCapturing") == "true");
 
-  var grid = (boardData.getElementsByTagName('evSettings')[0].getAttribute("grid") == "true") ? board.renderer.drawGrid(board) : null;
+  var grid = (boardData.getElementsByTagName('evSettings')[0].getAttribute("grid") == "true") ? board.create('grid') : null;
 
   if(boardData.getElementsByTagName('evSettings')[0].getAttribute("axes") && boardData.getElementsByTagName('evSettings')[0].getAttribute("axes") == "true") {
       board.ggbElements["xAxis"] = board.create('axis', [[0, 0], [1, 0]], {strokeColor:'black', minorTicks: 0});

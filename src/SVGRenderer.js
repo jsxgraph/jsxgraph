@@ -491,11 +491,6 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         }
     },
 
-    setGridDash: function(id) {
-        var node = this.getElementById(id);
-        this.setPropertyPrim(node,'stroke-dasharray', '5, 5');
-    },
-
     // already documented in JXG.AbstractRenderer
     createPrim: function(type, id) {
         var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
@@ -711,31 +706,6 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
             return;
         }
         node.setAttributeNS(null, key, val);
-    },
-
-    drawVerticalGrid: function(topLeft, bottomRight, gx, board) {
-        var node = this.createPrim('path', 'gridx'),
-            gridArr = '';
-
-        while(topLeft.usrCoords[1] <= bottomRight.usrCoords[1] + gx) {
-            gridArr += ' M ' + topLeft.scrCoords[1] + ' ' + 0 + ' L ' + topLeft.scrCoords[1] + ' ' + board.canvasHeight+' ';
-            topLeft.setCoordinates(JXG.COORDS_BY_USER, [topLeft.usrCoords[1] + gx, topLeft.usrCoords[2]]);
-        }
-        this.updatePathPrim(node, gridArr, board);
-        return node;
-    },
-
-    drawHorizontalGrid: function(topLeft, bottomRight, gy, board) {
-        var node = this.createPrim('path', 'gridy'),
-            gridArr = '';
-
-        while(topLeft.usrCoords[2] > bottomRight.usrCoords[2] - gy) {
-            gridArr += ' M ' + 0 + ' ' + topLeft.scrCoords[2] + ' L ' + board.canvasWidth + ' ' + topLeft.scrCoords[2]+' ';
-            topLeft.setCoordinates(JXG.COORDS_BY_USER, [topLeft.usrCoords[1], topLeft.usrCoords[2] - gy]);
-        }
-        console.log(gridArr);
-        this.updatePathPrim(node, gridArr, board);
-        return node;
     },
 
     appendNodesToElement: function(element, type) {

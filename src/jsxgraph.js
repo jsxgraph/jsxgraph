@@ -214,7 +214,7 @@ JXG.JSXGraph = {
         }
 
         if(attributes["grid"]) {
-            board.renderer.drawGrid(board);
+            board.create('grid', []);
         }
 
         if (typeof attributes["shownavigation"] != 'undefined') attributes["showNavigation"] = attributes["shownavigation"];

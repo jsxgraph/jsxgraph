@@ -338,7 +338,7 @@ this.readGeonext = function(tree,board) {
     }
     board.options.grid.gridColor = gridColor;
     board.options.grid.gridOpacity = gridOpacity;
-    grid = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('grid')[0].firstChild.data == "true") ? board.renderer.drawGrid(board) : null;
+    grid = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('grid')[0].firstChild.data == "true") ? board.create('grid', []) : null;
 
     if(boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('coord')[0].firstChild.data == "true") {
 //        var p1coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board);
