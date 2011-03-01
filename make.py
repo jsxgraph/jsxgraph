@@ -39,12 +39,16 @@ import re
 import tempfile
 import shutil
 
+# Used for JSHint
+import urllib
+
 
 # Default values for options. May be overridden via command line options
 yui = "~/public_html/jsxgraph/trunk/tools/yuicompressor-2.4.2"
 jsdoc = "~/public_html/jsxgraph/jsdoc_toolkit-2.3.2/jsdoc-toolkit"
 output = "distrib"
 version = None
+hint = None
 
 
 '''
@@ -57,6 +61,7 @@ def usage():
     print
     print "Options:"
     print "  -h, --help             Display this help and exit."
+    print "  -l, --hint=FILE        Set the file you want to check with JSHint."
     print "  -j, --jsdoc=PATH       Search for jsdoc-toolkit in PATH."
     print "  -o, --output=PATH      Override the default output path distrib/ by PATH."
     print "  -v, --version=VERSION  Use VERSION as release version for proper zip archive and"
@@ -70,6 +75,7 @@ def usage():
     print "                         in distrib/ ."
     print "  Docs                   Generate documentation from source code comments. Uses"
     print "                         jsdoc-toolkit."
+    print "  Hint                   Run JSHint on the file given with -l or --hint."
     print "  Compressor             Minify and create a zip archive for JSXCompressor."
     print "  All                    Makes JSXGraph and Compressor."
     
@@ -250,6 +256,34 @@ def makeCompressor(afterCore = False):
     os.system("rm JSXCompressor/*~")
     os.system("zip -r " + output + "/jsxcompressor.zip JSXCompressor/*")
 
+'''
+    Fetch a file from the web
+'''
+def fetch(url, local):
+	webFile = urllib.urlopen(url)
+	localFile = open(local, 'w')
+	localFile.write(webFile.read())
+	webFile.close()
+	localFile.close()
+
+'''
+    Check a file with JSHint
+'''
+def makeHint():
+    global hint
+
+    # TODO: If hint is None use all files in src/*
+    if hint is None:
+        print "No file given. Please provide a file with the -l or --hint option."
+        return
+
+    # Fetch program files
+    fetch('https://github.com/jshint/jshint/raw/master/env/rhino.js', '/tmp/rhino.js')
+    fetch('http://jshint.com/jshint.js', '/tmp/jshint.js')
+
+    abshint = os.path.abspath(hint)
+    os.system('cd /tmp && rhino /tmp/rhino.js ' + abshint)
+
 
 '''
     Make targets Release and Compressor
@@ -260,10 +294,10 @@ def makeAll():
     
 
 def main(argv):
-    global yui, jsdoc, version, output
+    global yui, jsdoc, version, output, hint
 
     try:
-        opts, args = getopt.getopt(argv, "hy:j:v:o:", ["help", "yui=", "jsdoc=", "version=", "output="])
+        opts, args = getopt.getopt(argv, "hy:j:v:o:l:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint="])
     except getopt.GetoptError as (errono, strerror):
         usage()
         sys.exit(2)
@@ -279,6 +313,8 @@ def main(argv):
             version = arg
         elif opt in ("-y", "--yui"):
             yui = arg
+        elif opt in ("-l", "--hint"):
+            hint = arg
 
     target = "".join(args)
 
