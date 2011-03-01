@@ -66,12 +66,16 @@ JXG.CanvasRenderer.prototype = new JXG.AbstractRenderer();
 JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
 
     /* **************************
-     *   private methods only used in this renderer. Should not be called from outside.
+     *   private methods only used
+     *   in this renderer. Should
+     *   not be called from outside.
      * **************************/
 
-    /*
-     * _drawFilledPolygon, _translateShape, _rotateShape
-     * are necessary for drawing arrow heads.
+    /**
+     * Draws a filled polygon.
+     * @param {Array} shape A matrix presented by a two dimensional array of numbers.
+     * @see JXG.AbstractRenderer#makeArrows
+     * @private
      */
     _drawFilledPolygon: function (shape) {
         var i, len = shape.length,
@@ -90,29 +94,44 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         }
     },
 
-    /*
-     * Sets color and opacity for filling
-     * and does the filling
+    /**
+     * Sets the fill color and fills an area.
+     * @param {JXG.GeometryElement} element An arbitrary JSXGraph element, preferably one with an area.
+     * @private
      */
-
-    _fill: function (el) {
+    _fill: function (element) {
         var context = this.context;
 
         context.save();
-        if (this._setColor(el, 'fill')) {
+        if (this._setColor(element, 'fill')) {
             context.fill();
         }
         context.restore();
     },
 
-    _rotatePoint: function (ang, x, y) {
+    /**
+     * Rotates a point around <tt>(0, 0)</tt> by a given angle.
+     * @param {Number} angle An angle, given in rad.
+     * @param {Number} x X coordinate of the point.
+     * @param {Number} y Y coordinate of the point.
+     * @returns {Array} An array containing the x and y coordinate of the rotated point.
+     * @private
+     */
+    _rotatePoint: function (angle, x, y) {
         return [
-            (x * Math.cos(ang)) - (y * Math.sin(ang)),
-            (x * Math.sin(ang)) + (y * Math.cos(ang))
+            (x * Math.cos(angle)) - (y * Math.sin(angle)),
+            (x * Math.sin(angle)) + (y * Math.cos(angle))
         ];
     },
 
-    _rotateShape: function (shape, ang) {
+    /**
+     * Rotates an array of points around <tt>(0, 0)</tt>.
+     * @param {Array} shape An array of array of point coordinates.
+     * @param {Number} angle The angle in rad the points are rotated by.
+     * @returns {Array} Array of array of two dimensional point coordinates.
+     * @private
+     */
+    _rotateShape: function (shape, angle) {
         var i, rv = [], len = shape.length;
 
         if (len <= 0) {
@@ -120,83 +139,95 @@ JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
         }
 
         for (i = 0; i < len; i++) {
-            rv.push(this._rotatePoint(ang, shape[i][0], shape[i][1]));
+            rv.push(this._rotatePoint(angle, shape[i][0], shape[i][1]));
         }
 
         return rv;
     },
 
-    /*
+    /**
      * Sets color and opacity for filling and stroking
+     * @param {JXG.GeometryElement} element Any JSXGraph element.
+     * @param {String} [type='stroke'] Either <em>fill</em> or <em>stroke</em>.
+     * @returns {Boolean} If the color could be set, <tt>true</tt> is returned.
+     * @private
      */
-    _setColor: function (el, type) {
+    _setColor: function (element, type) {
         var hasColor = true, isTrace = false;
-        if (!JXG.exists(el.board) || !JXG.exists(el.board.highlightedObjects)) {
+        if (!JXG.exists(element.board) || !JXG.exists(element.board.highlightedObjects)) {
             // This case handles trace elements.
             // To make them work, we simply neglect highlighting.
             isTrace = true;
         }
 
         if (type === 'fill') {
-            if (!isTrace && JXG.exists(el.board.highlightedObjects[el.id])) {
-                if (el.visProp.highlightFillColor !== 'none') {
-                    this.context.globalAlpha = el.visProp.highlightFillOpacity;
-                    this.context.fillStyle = el.visProp.highlightFillColor;
+            if (!isTrace && JXG.exists(element.board.highlightedObjects[element.id])) {
+                if (element.visProp.highlightFillColor !== 'none') {
+                    this.context.globalAlpha = element.visProp.highlightFillOpacity;
+                    this.context.fillStyle = element.visProp.highlightFillColor;
                 } else {
                     hasColor = false;
                 }
             } else {
-                if (el.visProp.fillColor !== 'none') {
-                    this.context.globalAlpha = el.visProp.fillOpacity;
-                    this.context.fillStyle = el.visProp.fillColor;
+                if (element.visProp.fillColor !== 'none') {
+                    this.context.globalAlpha = element.visProp.fillOpacity;
+                    this.context.fillStyle = element.visProp.fillColor;
                 } else {
                     hasColor = false;
                 }
             }
         } else {
-            if (!isTrace && JXG.exists(el.board.highlightedObjects[el.id])) {
-                if (el.visProp.highlightStrokeColor !== 'none') {
-                    this.context.globalAlpha = el.visProp.highlightStrokeOpacity;
-                    this.context.strokeStyle = el.visProp.highlightStrokeColor;
+            if (!isTrace && JXG.exists(element.board.highlightedObjects[element.id])) {
+                if (element.visProp.highlightStrokeColor !== 'none') {
+                    this.context.globalAlpha = element.visProp.highlightStrokeOpacity;
+                    this.context.strokeStyle = element.visProp.highlightStrokeColor;
                 } else {
                     hasColor = false;
                 }
             } else {
-                if (el.visProp.strokeColor !== 'none') {
-                    this.context.globalAlpha = el.visProp.strokeOpacity;
-                    this.context.strokeStyle = el.visProp.strokeColor;
+                if (element.visProp.strokeColor !== 'none') {
+                    this.context.globalAlpha = element.visProp.strokeOpacity;
+                    this.context.strokeStyle = element.visProp.strokeColor;
                 } else {
                     hasColor = false;
                 }
             }
-            this.context.lineWidth = parseFloat(el.visProp.strokeWidth);
+            this.context.lineWidth = parseFloat(element.visProp.strokeWidth);
         }
         return hasColor;
     },
 
 
-    /*
-     * Sets color and opacity for drawing paths and lines
-     * and draws the paths and lines.
+    /**
+     * Sets color and opacity for drawing paths and lines and draws the paths and lines.
+     * @param {JXG.GeometryElement} element An JSXGraph element with a stroke.
+     * @private
      */
-    _stroke: function (el) {
+    _stroke: function (element) {
         var context = this.context;
 
         context.save();
 
-        if (el.visProp.dash > 0) {
+        if (element.visProp.dash > 0) {
             // TODO - dash styles for canvas
         } else {
             this.context.lineDashArray = [];
         }
 
-        if (this._setColor(el, 'stroke')) {
+        if (this._setColor(element, 'stroke')) {
             context.stroke();
         }
         context.restore();
     },
 
-
+    /**
+     * Translates a set of points.
+     * @param {Array} shape An array of point coordinates.
+     * @param {Number} x Translation in X direction.
+     * @param {Number} y Translation in Y direction.
+     * @returns {Array} An array of translated point coordinates.
+     * @private
+     */
     _translateShape: function (shape, x, y) {
         var i, rv = [], len = shape.length;
 

@@ -81,17 +81,24 @@ JXG.SVGRenderer = function(container) {
     this.svgRoot.style.height = this.container.style.height;
     this.container.appendChild(this.svgRoot);
 
-    // todo: doc defs
+    /**
+     * The <tt>defs</tt> element is a container element to reference reusable SVG elements.
+     * @type Node
+     * @see http://www.w3.org/TR/SVG/struct.html#DefsElement
+     */
     this.defs = this.container.ownerDocument.createElementNS(this.svgNamespace,'defs');
     this.svgRoot.appendChild(this.defs);
 
-    // todo: doc filter
+    /**
+     * Filters are used to apply shadows.
+     * @type Node
+     * @see http://www.w3.org/TR/SVG/filters.html#FilterElement
+     */
     this.filter = this.container.ownerDocument.createElementNS(this.svgNamespace,'filter');
     this.filter.setAttributeNS(null, 'id', this.container.id+'_'+'f1');
     this.filter.setAttributeNS(null, 'width', '300%');
     this.filter.setAttributeNS(null, 'height', '300%');
 
-    // todo: doc feOffset
     this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace,'feOffset');
     this.feOffset.setAttributeNS(null, 'result', 'offOut');
     this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
@@ -99,14 +106,12 @@ JXG.SVGRenderer = function(container) {
     this.feOffset.setAttributeNS(null, 'dy', '5');
     this.filter.appendChild(this.feOffset);
 
-    // todo: doc feGaussianBlur
     this.feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace,'feGaussianBlur');
     this.feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
     this.feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
     this.feGaussianBlur.setAttributeNS(null, 'stdDeviation', '3');
     this.filter.appendChild(this.feGaussianBlur);
 
-    // todo: doc feBlend
     this.feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace,'feBlend');
     this.feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
     this.feBlend.setAttributeNS(null, 'in2', 'blurOut');
