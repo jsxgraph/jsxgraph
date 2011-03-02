@@ -1583,26 +1583,14 @@ JXG.createGrid = function (board, parents, attributes) {
 
         // start with the horizontal grid:
         for (i = topLeft.usrCoords[2]; i > bottomRight.usrCoords[2] - gridY; i -= gridY) {
-            c.dataX.push(topLeft.usrCoords[1]);
-            c.dataY.push(i);
-
-            c.dataX.push(bottomRight.usrCoords[1]);
-            c.dataY.push(i);
-
-            c.dataX.push(NaN);
-            c.dataY.push(NaN);
+            c.dataX.push(topLeft.usrCoords[1], bottomRight.usrCoords[1], NaN);
+            c.dataY.push(i, i, NaN);
         }
 
         // build vertical grid
         for (i = topLeft.usrCoords[1]; i < bottomRight.usrCoords[1] + gridX; i += gridX) {
-            c.dataX.push(i);
-            c.dataY.push(topLeft.usrCoords[2]);
-
-            c.dataX.push(i);
-            c.dataY.push(bottomRight.usrCoords[2]);
-
-            c.dataX.push(NaN);
-            c.dataY.push(NaN);
+            c.dataX.push(i, i, NaN);
+            c.dataY.push(topLeft.usrCoords[2], bottomRight.usrCoords[2], NaN);
         }
 
     };

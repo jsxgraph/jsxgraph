@@ -359,7 +359,7 @@ JXG.GeometryElement.prototype.init = function(board, id, name) {
      * @see #strokeOpacity
      * @see #highlightStrokeOpacity
      * @see #highlightFillColor
-     * @default {@#strokeWidth}
+     * @default {@link JXG.Options.elements#strokeWidth}
      */
     this.visProp.highlightStrokeWidth = this.visProp.strokeWidth;    
     

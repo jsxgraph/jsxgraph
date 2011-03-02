@@ -26,7 +26,7 @@
 
 /*jshint bitwise: false, curly: true, debug: false, eqeqeq: true, devel: false, evil: false,
   forin: false, immed: true, laxbreak: false, newcap: false, noarg: true, nonew: true, onevar: true,
-   undef: true, white: false, sub: false*/
+   undef: true, white: true, sub: false*/
 /*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
 
 /**

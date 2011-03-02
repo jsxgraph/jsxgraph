@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009
+    Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -23,6 +23,11 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*jshint bitwise: false, curly: true, debug: false, eqeqeq: true, devel: false, evil: false,
+  forin: false, immed: true, laxbreak: false, newcap: false, noarg: true, nonew: true, onevar: true,
+   undef: true, white: false, sub: false*/
+/*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
+
 /**
  * Uses VML to implement the rendering methods defined in {@link JXG.AbstractRenderer}.
  * @class JXG.AbstractRenderer
@@ -30,23 +35,26 @@
  * @param {Node} container Reference to a DOM node containing the board.
  * @see JXG.AbstractRenderer
  */
-JXG.VMLRenderer = function(container) {
+JXG.VMLRenderer = function (container) {
     this.type = 'vml';
     
     this.container = container;
     this.container.style.overflow = 'hidden';
-    this.container.onselectstart = function () { return false; };
+    this.container.onselectstart = function () {
+        return false;
+    };
     
     this.resolution = 10; // Paths are drawn with a a resolution of this.resolution/pixel.
   
     // Add VML includes and namespace
     // Original: IE <=7
     //container.ownerDocument.createStyleSheet().addRule("v\\:*", "behavior: url(#default#VML);");
-    if (JXG.vmlStylesheet==null) {
+    if (JXG.vmlStylesheet === null) {
         container.ownerDocument.namespaces.add("jxgvml", "urn:schemas-microsoft-com:vml");
         JXG.vmlStylesheet = this.container.ownerDocument.createStyleSheet();
         JXG.vmlStylesheet.addRule(".jxgvml", "behavior:url(#default#VML)");
     }
+
     try {
         !container.ownerDocument.namespaces.jxgvml && container.ownerDocument.namespaces.add("jxgvml", "urn:schemas-microsoft-com:vml");
         this.createNode = function (tagName) {
@@ -57,7 +65,8 @@ JXG.VMLRenderer = function(container) {
             return container.ownerDocument.createElement('<' + tagName + ' xmlns="urn:schemas-microsoft.com:vml" class="jxgvml">');
         };
     }
-    // um Dashes zu realisieren
+
+    // dash styles
     this.dashArray = ['Solid', '1 1', 'ShortDash', 'Dash', 'LongDash', 'ShortDashDot', 'LongDashDot'];    
 };
 
@@ -72,15 +81,15 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
      * @param {String} val New value of the attribute.
      * @param {Boolean} [iFlag=false] If false, the attribute's name is case insensitive.
      */
-    _setAttr: function(node, key, val, iFlag) {
+    _setAttr: function (node, key, val, iFlag) {
         try {
             if (document.documentMode === 8) {
                 node[key] = val;
             } else {
-                node.setAttribute(key,val,iFlag);
+                node.setAttribute(key, val, iFlag);
             }
         } catch (e) {
-            JXG.debug(node.id+' '+key+' '+val+'<br>\n');
+            JXG.debug(node.id + ' ' + key + ' ' + val + '<br>\n');
         }
     },
 
@@ -100,33 +109,33 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
         var tickArr = [], i, len, c, ticks, r = this.resolution;
 
         len = axis.ticks.length;
-        for (i=0; i<len; i++) {
+        for (i = 0; i < len; i++) {
             c = axis.ticks[i].scrCoords;
-            if(axis.ticks[i].major) {
-                if ((axis.board.needsFullUpdate||axis.needsRegularUpdate) && axis.labels[i].visProp['visible']) {
+            if (axis.ticks[i].major) {
+                if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i].visProp.visible) {
                     this.drawText(axis.labels[i]);
                 }
-                tickArr.push(' m ' + Math.round(r*(c[1]+dxMaj)) +
-                    ', ' + Math.round(r*(c[2]-dyMaj)) +
-                    ' l ' + Math.round(r*(c[1]-dxMaj)) +
-                    ', ' + Math.round(r*(c[2]+dyMaj))+' ');
+                tickArr.push(
+                    ' m ' + Math.round(r * (c[1] + dxMaj)) + ', ' + Math.round(r * (c[2] - dyMaj)) +
+                    ' l ' + Math.round(r * (c[1] - dxMaj)) + ', ' + Math.round(r * (c[2] + dyMaj)) + ' '
+                );
+            } else {
+                tickArr.push(
+                    ' m ' + Math.round(r * (c[1] + dxMin)) + ', ' + Math.round(r * (c[2] - dyMin)) +
+                    ' l ' + Math.round(r * (c[1] - dxMin)) + ', ' + Math.round(r * (c[2] + dyMin)) + ' '
+                );
             }
-            else
-                tickArr.push(' m ' + Math.round(r*(c[1]+dxMin)) +
-                    ', ' + Math.round(r*(c[2]-dyMin)) +
-                    ' l ' + Math.round(r*(c[1]-dxMin)) +
-                    ', ' + Math.round(r*(c[2]+dyMin))+' ');
         }
 
         ticks = this.getElementById(axis.id);
-        if(ticks == null) {
+        if (ticks === null) {
             ticks = this.createPrim('path', axis.id);
-            this.appendChildPrim(ticks,axis.layer);
-            this.appendNodesToElement(axis,'path');
+            this.appendChildPrim(ticks, axis.layer);
+            this.appendNodesToElement(axis, 'path');
         }
-        this._setAttr(ticks,'stroked', 'true');
-        this._setAttr(ticks,'strokecolor', axis.visProp['strokeColor'], 1);
-        this._setAttr(ticks,'strokeweight', axis.visProp['strokeWidth']);
+        this._setAttr(ticks, 'stroked', 'true');
+        this._setAttr(ticks, 'strokecolor', axis.visProp.strokeColor, 1);
+        this._setAttr(ticks, 'strokeweight', axis.visProp.strokeWidth);
         this.updatePathPrim(ticks, tickArr, axis.board);
     },
 
@@ -135,48 +144,48 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
      * **************************/
 
     // already documented in JXG.AbstractRenderer
-    displayCopyright: function(str, fontsize) {
+    displayCopyright: function (str, fontsize) {
         var node, t;
 
         node = this.createNode('textbox');
         node.style.position = 'absolute';
-        this._setAttr(node,'id', this.container.id+'_'+'licenseText');
+        this._setAttr(node, 'id', this.container.id + '_' + 'licenseText');
 
         node.style.left = 20;
-        node.style.top = (2);
-        node.style.fontSize = (fontsize);
+        node.style.top = 2;
+        node.style.fontSize = fontsize;
         node.style.color = '#356AA0';
         node.style.fontFamily = 'Arial,Helvetica,sans-serif';
-        this._setAttr(node,'opacity','30%');
+        this._setAttr(node, 'opacity', '30%');
         node.style.filter = 'alpha(opacity = 30)';
 
         t = document.createTextNode(str);
         node.appendChild(t);
-        this.appendChildPrim(node,0);
+        this.appendChildPrim(node, 0);
     },
 
     // documented in AbstractRenderer
-    drawInternalText: function(el) {
+    drawInternalText: function (el) {
         var node;
         node = this.createNode('textbox');
         node.style.position = 'absolute';
-        if (document.documentMode==8) {
+        if (document.documentMode === 8) {
             node.setAttribute('class', 'JXGtext');
         } else {
             node.setAttribute('className', 9);
         }
         el.rendNodeText = document.createTextNode('');
         node.appendChild(el.rendNodeText);
-        this.appendChildPrim(node,9);
+        this.appendChildPrim(node, 9);
         return node;
     },
 
     // documented in AbstractRenderer
-    updateInternalText: function(/** JXG.Text */ el) {
-        el.rendNode.style.left = (el.coords.scrCoords[1])+'px';
-        el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText)+'px';
+    updateInternalText: function (el) {
+        el.rendNode.style.left = el.coords.scrCoords[1] + 'px';
+        el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText) + 'px';
         el.updateText();
-        if (el.htmlStr!= el.plaintextStr) {
+        if (el.htmlStr !== el.plaintextStr) {
             el.rendNodeText.data = el.plaintextStr;
             el.htmlStr = el.plaintextStr;
         }
@@ -189,60 +198,58 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
      * **************************/
 
     // already documented in JXG.AbstractRenderer
-    drawImage: function(el) {
+    drawImage: function (el) {
         // IE 8: Bilder ueber data URIs werden bis 32kB unterstuetzt.
         var node;
 
         node = this.container.ownerDocument.createElement('img');
         node.style.position = 'absolute';
-        this._setAttr(node,'id', this.container.id+'_'+el.id);
+        this._setAttr(node, 'id', this.container.id + '_' + el.id);
 
         this.container.appendChild(node);
-        this.appendChildPrim(node,el.layer);
+        this.appendChildPrim(node, el.layer);
 
         // Adding the rotation filter. This is always filter item 0:
         // node.filters.item(0), see transformImage
-        node.style.filter = node.style['-ms-filter'] =
-            "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
+        node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
 
         el.rendNode = node;
         this.updateImage(el);
     },
 
     // already documented in JXG.AbstractRenderer
-    transformImage: function(el,t) {
+    transformImage: function (el, t) {
         var node = el.rendNode,
             m, p = [], s, len = t.length,
             maxX, maxY, minX, minY, i, nt;
 
-        if (el.type==JXG.OBJECT_TYPE_TEXT) {
+        if (el.type === JXG.OBJECT_TYPE_TEXT) {
             el.updateSize();
         }
-        if (len>0) {
+        if (len > 0) {
             nt = el.rendNode.style.filter.toString();
             if (!nt.match(/DXImageTransform/)) {
-                node.style.filter = node.style['-ms-filter'] =
-                    "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
+                node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
             }
 
-            m = this.joinTransforms(el,t);
+            m = this.joinTransforms(el, t);
             p[0] = JXG.Math.matVecMult(m, el.coords.scrCoords);
             p[0][1] /= p[0][0];
             p[0][2] /= p[0][0];
-            p[1] = JXG.Math.matVecMult(m, [1, el.coords.scrCoords[1]+el.size[0], el.coords.scrCoords[2]]);
+            p[1] = JXG.Math.matVecMult(m, [1, el.coords.scrCoords[1] + el.size[0], el.coords.scrCoords[2]]);
             p[1][1] /= p[1][0];
             p[1][2] /= p[1][0];
-            p[2] = JXG.Math.matVecMult(m, [1, el.coords.scrCoords[1]+el.size[0], el.coords.scrCoords[2]-el.size[1]]);
+            p[2] = JXG.Math.matVecMult(m, [1, el.coords.scrCoords[1] + el.size[0], el.coords.scrCoords[2] - el.size[1]]);
             p[2][1] /= p[2][0];
             p[2][2] /= p[2][0];
-            p[3] = JXG.Math.matVecMult(m, [1, el.coords.scrCoords[1], el.coords.scrCoords[2]-el.size[1]]);
+            p[3] = JXG.Math.matVecMult(m, [1, el.coords.scrCoords[1], el.coords.scrCoords[2] - el.size[1]]);
             p[3][1] /= p[3][0];
             p[3][2] /= p[3][0];
             maxX = p[0][1];
             minX = p[0][1];
             maxY = p[0][2];
             minY = p[0][2];
-            for (i=1; i<4; i++) {
+            for (i = 1; i < 4; i++) {
                 maxX = Math.max(maxX, p[i][1]);
                 minX = Math.min(minX, p[i][1]);
                 maxY = Math.max(maxY, p[i][2]);
@@ -259,14 +266,9 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
     },
 
     // already documented in JXG.AbstractRenderer
-    updateImageURL: function(el) {
-        var url;
-        if (JXG.isFunction(el.url)) {
-            url = el.url();
-        } else {
-            url = el.url;
-        }
-        this._setAttr(el.rendNode,'src',url);
+    updateImageURL: function (el) {
+        var url = JXG.evaluate(el.url);
+        this._setAttr(el.rendNode, 'src', url);
     },
 
     /* **************************
@@ -274,47 +276,49 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
      * **************************/
 
     // already documented in JXG.AbstractRenderer
-    appendChildPrim: function(node, level) {
-        if (!JXG.exists(level)) level = 0;   // For trace nodes
+    appendChildPrim: function (node, level) {
+        if (!JXG.exists(level)) {  // For trace nodes
+            level = 0;
+        }
         node.style.zIndex = level;
         this.container.appendChild(node);
     },
 
     // already documented in JXG.AbstractRenderer
-    appendNodesToElement: function(element, type) {
-        if(type == 'shape' || type == 'path' || type == 'polygon') {
-            element.rendNodePath = this.getElementById(element.id+'_path');
+    appendNodesToElement: function (element, type) {
+        if (type === 'shape' || type === 'path' || type === 'polygon') {
+            element.rendNodePath = this.getElementById(element.id + '_path');
         }
-        element.rendNodeFill = this.getElementById(element.id+'_fill');
-        element.rendNodeStroke = this.getElementById(element.id+'_stroke');
-        element.rendNodeShadow = this.getElementById(element.id+'_shadow');
+        element.rendNodeFill = this.getElementById(element.id + '_fill');
+        element.rendNodeStroke = this.getElementById(element.id + '_stroke');
+        element.rendNodeShadow = this.getElementById(element.id + '_shadow');
         element.rendNode = this.getElementById(element.id);
     },
 
     // already documented in JXG.AbstractRenderer
-    createPrim: function(type, id) {
+    createPrim: function (type, id) {
         var node,
             fillNode = this.createNode('fill'),
             strokeNode = this.createNode('stroke'),
             shadowNode = this.createNode('shadow'),
             pathNode;
 
-        this._setAttr(fillNode, 'id', this.container.id+'_'+id+'_fill');
-        this._setAttr(strokeNode, 'id', this.container.id+'_'+id+'_stroke');
-        this._setAttr(shadowNode, 'id', this.container.id+'_'+id+'_shadow');
+        this._setAttr(fillNode, 'id', this.container.id + '_' + id + '_fill');
+        this._setAttr(strokeNode, 'id', this.container.id + '_' + id + '_stroke');
+        this._setAttr(shadowNode, 'id', this.container.id + '_' + id + '_shadow');
 
-        if (type=='circle' || type=='ellipse' ) {
+        if (type === 'circle' || type === 'ellipse') {
             node = this.createNode('oval');
             node.appendChild(fillNode);
             node.appendChild(strokeNode);
             node.appendChild(shadowNode);
-        } else if (type == 'polygon' || type == 'path' || type == 'shape' || type == 'line') {
+        } else if (type === 'polygon' || type === 'path' || type === 'shape' || type === 'line') {
             node = this.createNode('shape');
             node.appendChild(fillNode);
             node.appendChild(strokeNode);
             node.appendChild(shadowNode);
             pathNode = this.createNode('path');
-            this._setAttr(pathNode, 'id', this.container.id+'_'+id+'_path');
+            this._setAttr(pathNode, 'id', this.container.id + '_' + id + '_path');
             node.appendChild(pathNode);
         } else {
             node = this.createNode(type);
@@ -323,136 +327,151 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
             node.appendChild(shadowNode);
         }
         node.style.position = 'absolute';
-        this._setAttr(node, 'id', this.container.id+'_'+id);
+        this._setAttr(node, 'id', this.container.id + '_' + id);
 
         return node;
     },
 
     // already documented in JXG.AbstractRenderer
-    remove: function(node) {
+    remove: function (node) {
         if (JXG.exists(node)) {
             node.removeNode(true);
         }
     },
 
     // already documented in JXG.AbstractRenderer
-    makeArrows: function(el) {
+    makeArrows: function (el) {
         var nodeStroke;
 
-        if (el.visPropOld['firstArrow']==el.visProp['firstArrow'] && el.visPropOld['lastArrow']==el.visProp['lastArrow']) {
+        if (el.visPropOld.firstArrow === el.visProp.firstArrow && el.visPropOld.lastArrow === el.visProp.lastArrow) {
             return;
         }
 
-        if(el.visProp['firstArrow']) {
+        if (el.visProp.firstArrow) {
             nodeStroke = el.rendNodeStroke;
             this._setAttr(nodeStroke, 'startarrow', 'block');
             this._setAttr(nodeStroke, 'startarrowlength', 'long');
-        }
-        else {
+        } else {
             nodeStroke = el.rendNodeStroke;
-            if(nodeStroke != null) {
+            if (nodeStroke !== null) {
                 this._setAttr(nodeStroke, 'startarrow', 'none');
             }
         }
-        if(el.visProp['lastArrow']) {
+
+        if (el.visProp.lastArrow) {
             nodeStroke = el.rendNodeStroke;
-            this._setAttr(nodeStroke, 'id', this.container.id+'_'+el.id+"stroke");
+            this._setAttr(nodeStroke, 'id', this.container.id + '_' + el.id + "stroke");
             this._setAttr(nodeStroke, 'endarrow', 'block');
             this._setAttr(nodeStroke, 'endarrowlength', 'long');
-        }
-        else {
+        } else {
             nodeStroke = el.rendNodeStroke;
-            if(nodeStroke != null) {
+            if (nodeStroke !== null) {
                 this._setAttr(nodeStroke, 'endarrow', 'none');
             }
         }
-        el.visPropOld['firstArrow'] = el.visProp['firstArrow'];
-        el.visPropOld['lastArrow'] = el.visProp['lastArrow'];
+        el.visPropOld.firstArrow = el.visProp.firstArrow;
+        el.visPropOld.lastArrow = el.visProp.lastArrow;
     },
 
     // already documented in JXG.AbstractRenderer
-    updateEllipsePrim: function(node, x, y, rx, ry) {
-        node.style.left = (x-rx)+'px';
-        node.style.top =  (y-ry)+'px';
-        node.style.width = (rx*2)+'px';
-        node.style.height = (ry*2)+'px';
+    updateEllipsePrim: function (node, x, y, rx, ry) {
+        node.style.left = (x - rx) + 'px';
+        node.style.top =  (y - ry) + 'px';
+        node.style.width = (rx * 2) + 'px';
+        node.style.height = (ry * 2) + 'px';
     },
 
     // already documented in JXG.AbstractRenderer
-    updateLinePrim: function(node, p1x, p1y, p2x, p2y, board) {
+    updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) {
         var s, r = this.resolution;
-        s = ['m ',r*p1x,', ',r*p1y,' l ',r*p2x,', ',r*p2y];
-        this.updatePathPrim(node,s,board);
+
+        s = ['m ', r * p1x, ', ', r * p1y, ' l ', r * p2x, ', ', r * p2y];
+        this.updatePathPrim(node, s, board);
     },
 
     // already documented in JXG.AbstractRenderer
-    updatePathPrim: function(node, pointString, board) {
+    updatePathPrim: function (node, pointString, board) {
         var x = board.canvasWidth,
             y = board.canvasHeight;
+
         node.style.width = x;
         node.style.height = y;
-        this._setAttr(node, 'coordsize', [(this.resolution*x),(this.resolution*y)].join(','));
-        this._setAttr(node, 'path',pointString.join(""));
+
+        this._setAttr(node, 'coordsize', [this.resolution * x, this.resolution * y].join(','));
+        this._setAttr(node, 'path', pointString.join(""));
     },
 
     // already documented in JXG.AbstractRenderer
-    updatePathStringPoint: function(el, size, type) {
+    updatePathStringPoint: function (el, size, type) {
         var s = [],
+            mround = Math.round,
             scr = el.coords.scrCoords,
-            sqrt32 = size*Math.sqrt(3)*0.5,
-            s05 = size*0.5,
+            sqrt32 = size * Math.sqrt(3) * 0.5,
+            s05 = size * 0.5,
             r = this.resolution;
 
-        if(type == 'x') {
-            s.push(['m ',(r*(scr[1]-size)),', ',(r*(scr[2]-size)),' l ',
-                (r*(scr[1]+size)),', ',(r*(scr[2]+size)),' m ',
-                (r*(scr[1]+size)),', ',(r*(scr[2]-size)),' l ',
-                (r*(scr[1]-size)),', ',(r*(scr[2]+size))].join(''));
-        }
-        else if(type == '+') {
-            s.push(['m ',(r*(scr[1]-size)),', ',(r*(scr[2])),' l ',
-                (r*(scr[1]+size)),', ',(r*(scr[2])),' m ',
-                (r*(scr[1])),', ',(r*(scr[2]-size)),' l ',
-                (r*(scr[1])),', ',(r*(scr[2]+size))].join(''));
-        }
-        else if(type == '<>') {
-            s.push(['m ',(r*(scr[1]-size)),', ',(r*(scr[2])),' l ',
-                (r*(scr[1])),', ',(r*(scr[2]+size)),' l ',
-                (r*(scr[1]+size)),', ',(r*(scr[2])),' l ',
-                (r*(scr[1])),', ',(r*(scr[2]-size)),' x e '
+        if (type === 'x') {
+            s.push([
+                ' m ', (r * (scr[1] - size)), ', ', (r * (scr[2] - size)),
+                ' l ', (r * (scr[1] + size)), ', ', (r * (scr[2] + size)),
+                ' m ', (r * (scr[1] + size)), ', ', (r * (scr[2] - size)),
+                ' l ', (r * (scr[1] - size)), ', ', (r * (scr[2] + size))
             ].join(''));
         }
-        else if(type == '^') {
-            s.push(['m ',(r*(scr[1])),', ',(r*(scr[2]-size)),' l ',
-                Math.round(r*(scr[1]-sqrt32)),', ',(r*(scr[2]+s05)),' l ',
-                Math.round(r*(scr[1]+sqrt32)),', ',(r*(scr[2]+s05)),' x e '
+        else if (type === '+') {
+            s.push([
+                ' m ', (r * (scr[1] - size)), ', ', (r * (scr[2])),
+                ' l ', (r * (scr[1] + size)), ', ', (r * (scr[2])),
+                ' m ', (r * (scr[1])),        ', ', (r * (scr[2] - size)),
+                ' l ', (r * (scr[1])),        ', ', (r * (scr[2] + size))
             ].join(''));
         }
-        else if(type == 'v') {
-            s.push(['m ',(r*(scr[1])),', ',(r*(scr[2]+size)),' l ',
-                Math.round(r*(scr[1]-sqrt32)),', ',(r*(scr[2]-s05)),' l ',
-                Math.round(r*(scr[1]+sqrt32)),', ',(r*(scr[2]-s05)),' x e '
+        else if (type === '<>') {
+            s.push([
+                ' m ', (r * (scr[1] - size)), ', ', (r * (scr[2])),
+                ' l ', (r * (scr[1])),        ', ', (r * (scr[2] + size)),
+                ' l ', (r * (scr[1] + size)), ', ', (r * (scr[2])),
+                ' l ', (r * (scr[1])),        ', ', (r * (scr[2] - size)),
+                ' x e '
             ].join(''));
         }
-        else if(type == '>') {
-            s.push(['m ',(r*(scr[1]+size)),', ',(r*(scr[2])),' l ',
-                (r*(scr[1]-s05)),', ',Math.round(r*(scr[2]-sqrt32)),' l ',
-                (r*(scr[1]-s05)),', ',Math.round(r*(scr[2]+sqrt32)),
-                //' x e '
-                ' l ',(r*(scr[1]+size)),', ',(r*(scr[2]))
+        else if (type === '^') {
+            s.push([
+                ' m ',       (r * (scr[1])),          ', ', (r * (scr[2] - size)),
+                ' l ', mround(r * (scr[1] - sqrt32)), ', ', (r * (scr[2] + s05)),
+                ' l ', mround(r * (scr[1] + sqrt32)), ', ', (r * (scr[2] + s05)),
+                ' x e '
             ].join(''));
         }
-        else if(type == '<') {
-            s.push(['m ',(r*(scr[1]-size)),', ',(r*(scr[2])),' l ',
-                (r*(scr[1]+s05)),', ',Math.round(r*(scr[2]-sqrt32)),' l ',
-                (r*(scr[1]+s05)),', ',Math.round(r*(scr[2]+sqrt32)),' x e '
+        else if (type === 'v') {
+            s.push([
+                ' m ',       (r * (scr[1])),          ', ', (r * (scr[2] + size)),
+                ' l ', mround(r * (scr[1] - sqrt32)), ', ', (r * (scr[2] - s05)),
+                ' l ', mround(r * (scr[1] + sqrt32)), ', ', (r * (scr[2] - s05)),
+                ' x e '
+            ].join(''));
+        }
+        else if (type === '>') {
+            s.push([
+                ' m ', (r * (scr[1] + size)), ', ',       (r * (scr[2])),
+                ' l ', (r * (scr[1] - s05)),  ', ', mround(r * (scr[2] - sqrt32)),
+                ' l ', (r * (scr[1] - s05)),  ', ', mround(r * (scr[2] + sqrt32)),
+                ' l ', (r * (scr[1] + size)), ', ',       (r * (scr[2]))
+            ].join(''));
+        }
+        else if (type === '<') {
+            s.push([
+                ' m ', (r * (scr[1] - size)), ', ',       (r * (scr[2])),
+                ' l ', (r * (scr[1] + s05)),  ', ', mround(r * (scr[2] - sqrt32)),
+                ' l ', (r * (scr[1] + s05)),  ', ', mround(r * (scr[2] + sqrt32)),
+                ' x e '
             ].join(''));
         }
         return s;
     },
 
     // already documented in JXG.AbstractRenderer
-    updatePathStringPrim: function(el) {
+    updatePathStringPrim: function (el) {
         var pStr = [],
             i, scr,
             r = this.resolution,
@@ -460,27 +479,36 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
             symbm = ' m ',
             symbl = ' l ',
             nextSymb = symbm,
-            isNoPlot = (el.curveType!='plot'),
-            len = Math.min(el.numberPoints,8192); // otherwise IE 7 crashes in hilbert.html
+            isNoPlot = (el.curveType !== 'plot'),
+            len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
 
-        if (el.numberPoints<=0) { return ''; }
-        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-            el.points = JXG.Math.Numerics.RamenDouglasPeuker(el.points,1.0);
+        if (el.numberPoints <= 0) {
+            return '';
         }
-        len = Math.min(len,el.points.length);
+        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
+            el.points = JXG.Math.Numerics.RamenDouglasPeuker(el.points, 1.0);
+        }
+        len = Math.min(len, el.points.length);
 
-        for (i=0; i<len; i++) {
+        for (i = 0; i < len; i++) {
             scr = el.points[i].scrCoords;
             if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
                 nextSymb = symbm;
             } else {
                 // IE has problems with values  being too far away.
-                if (scr[1]>20000.0) { scr[1] = 20000.0; }
-                else if (scr[1]<-20000.0) { scr[1] = -20000.0; }
-                if (scr[2]>20000.0) { scr[2] = 20000.0; }
-                else if (scr[2]<-20000.0) { scr[2] = -20000.0; }
+                if (scr[1] > 20000.0) {
+                    scr[1] = 20000.0;
+                } else if (scr[1] < -20000.0) {
+                    scr[1] = -20000.0;
+                }
 
-                pStr.push([nextSymb,mround(r*scr[1]),', ',mround(r*scr[2])].join(''));
+                if (scr[2] > 20000.0) {
+                    scr[2] = 20000.0;
+                } else if (scr[2] < -20000.0) {
+                    scr[2] = -20000.0;
+                }
+
+                pStr.push([nextSymb, mround(r * scr[1]), ', ', mround(r * scr[2])].join(''));
                 nextSymb = symbl;
             }
         }
@@ -489,7 +517,7 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
     },
 
     // already documented in JXG.AbstractRenderer
-    updatePolygonPrim: function(node, el) {
+    updatePolygonPrim: function (node, el) {
         var i,
             len = el.vertices.length,
             r = this.resolution,
@@ -501,10 +529,10 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
         scr = el.vertices[0].coords.scrCoords;
         pStr.push(["m ", r * scr[1], ",", r * scr[2], " l "].join(''));
 
-        for(i = 1; i < len-1; i++) {
+        for (i = 1; i < len - 1; i++) {
             scr = el.vertices[i].coords.scrCoords;
             pStr.push(r * scr[1] + "," + r * scr[2]);
-            if (i < len-2) {
+            if (i < len - 2) {
                 pStr.push(", ");
             }
         }
@@ -513,11 +541,17 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
     },
 
     // already documented in JXG.AbstractRenderer
-    updateRectPrim: function(node, x, y, w, h) {
-        node.style.left = (x)+'px';
-        node.style.top = (y)+'px';
-        if (w>=0) node.style.width = (w)+'px';
-        if (h>=0) node.style.height = (h)+'px';
+    updateRectPrim: function (node, x, y, w, h) {
+        node.style.left = x + 'px';
+        node.style.top = y + 'px';
+
+        if (w >= 0) {
+            node.style.width = w + 'px';
+        }
+        
+        if (h >= 0) {
+            node.style.height = h + 'px';
+        }
     },
 
     /* **************************
@@ -525,164 +559,160 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
      * **************************/
 
     // already documented in JXG.AbstractRenderer
-    setPropertyPrim: function(node, key, val) {
+    setPropertyPrim: function (node, key, val) {
         var keyVml = '',
             v;
 
         switch (key) {
-            case 'stroke': keyVml = 'strokecolor'; break;
-            case 'stroke-width': keyVml = 'strokeweight'; break;
-            case 'stroke-dasharray': keyVml = 'dashstyle'; break;
+            case 'stroke':
+                keyVml = 'strokecolor';
+                break;
+            case 'stroke-width':
+                keyVml = 'strokeweight';
+                break;
+            case 'stroke-dasharray':
+                keyVml = 'dashstyle';
+                break;
         }
-        if (keyVml!='') {
+
+        if (keyVml !== '') {
             v = JXG.evaluate(val);
             this._setAttr(node, keyVml, v);
         }
     },
 
     // already documented in JXG.AbstractRenderer
-    show: function(el) {
-        var node;
-
-        if (!JXG.exists(el))
-            return;
-        node = el.rendNode;
-        if(JXG.exists(node)) {
-            node.style.visibility = "inherit";
+    show: function (el) {
+        if (el && el.rendNode) {
+            el.rendNode.style.visibility = "inherit";
         }
     },
 
     // already documented in JXG.AbstractRenderer
-    hide: function(el) {
-        var node;
-
-        if (!JXG.exists(el))
-            return;
-        node = el.rendNode;
-        if(JXG.exists(node)) {
-            node.style.visibility = "hidden";
+    hide: function (el) {
+        if (el && el.rendNode) {
+            el.rendNode.style.visibility = "hidden";
         }
     },
 
     // already documented in JXG.AbstractRenderer
-    setDashStyle: function(el,visProp) {
+    setDashStyle: function (el, visProp) {
         var node;
-        if(visProp['dash'] >= 0) {
+        if (visProp.dash >= 0) {
             node = el.rendNodeStroke;
-            this._setAttr(node,'dashstyle', this.dashArray[visProp['dash']]);
+            this._setAttr(node, 'dashstyle', this.dashArray[visProp.dash]);
         }
     },
 
     // already documented in JXG.AbstractRenderer
-    setGradient: function(el) {
+    setGradient: function (el) {
         var nodeFill = el.rendNodeFill;
-        if(el.visProp['gradient'] == 'linear') {
+        
+        if (el.visProp.gradient === 'linear') {
             this._setAttr(nodeFill, 'type', 'gradient');
-            this._setAttr(nodeFill, 'color2', el.visProp['gradientSecondColor']);
-            this._setAttr(nodeFill, 'opacity2', el.visProp['gradientSecondOpacity']);
-            this._setAttr(nodeFill, 'angle', el.visProp['gradientAngle']);
-        }
-        else if (el.visProp['gradient'] == 'radial') {
-            this._setAttr(nodeFill, 'type','gradientradial');
-            this._setAttr(nodeFill, 'color2',el.visProp['gradientSecondColor']);
-            this._setAttr(nodeFill, 'opacity2',el.visProp['gradientSecondOpacity']);
-            this._setAttr(nodeFill, 'focusposition', el.visProp['gradientPositionX']*100+'%,'+el.visProp['gradientPositionY']*100+'%');
+            this._setAttr(nodeFill, 'color2', el.visProp.gradientSecondColor);
+            this._setAttr(nodeFill, 'opacity2', el.visProp.gradientSecondOpacity);
+            this._setAttr(nodeFill, 'angle', el.visProp.gradientAngle);
+        } else if (el.visProp.gradient === 'radial') {
+            this._setAttr(nodeFill, 'type', 'gradientradial');
+            this._setAttr(nodeFill, 'color2', el.visProp.gradientSecondColor);
+            this._setAttr(nodeFill, 'opacity2', el.visProp.gradientSecondOpacity);
+            this._setAttr(nodeFill, 'focusposition', el.visProp.gradientPositionX * 100 + '%,' + el.visProp.gradientPositionY * 100 + '%');
             this._setAttr(nodeFill, 'focussize', '0,0');
-        }
-        else {
-            this._setAttr(nodeFill, 'type','solid');
+        } else {
+            this._setAttr(nodeFill, 'type', 'solid');
         }
     },
 
     // already documented in JXG.AbstractRenderer
-    setObjectFillColor: function(el, color, opacity) {
+    setObjectFillColor: function (el, color, opacity) {
         var c = JXG.evaluate(color),
             o = JXG.evaluate(opacity), t;
 
-        o = (o>0)?o:0;
+        o = (o > 0) ? o : 0;
 
-        if (el.visPropOld['fillColor']==c && el.visPropOld['fillOpacity']==o) {
+        if (el.visPropOld.fillColor === c && el.visPropOld.fillOpacity === o) {
             return;
         }
-        if(c == 'none') {
-            this._setAttr(el.rendNode,'filled', 'false');
-        }
-        else {
-            this._setAttr(el.rendNode,'filled', 'true');
-            this._setAttr(el.rendNode,'fillcolor', c);
-            if (JXG.exists(o) && el.rendNodeFill) {  // Added el.rendNodeFill 29.9.09  A.W.
-                this._setAttr(el.rendNodeFill,'opacity', (o*100)+'%');
+
+        if (c === 'none') {
+            this._setAttr(el.rendNode, 'filled', 'false');
+        } else {
+            this._setAttr(el.rendNode, 'filled', 'true');
+            this._setAttr(el.rendNode, 'fillcolor', c);
+
+            if (JXG.exists(o) && el.rendNodeFill) {
+                this._setAttr(el.rendNodeFill, 'opacity', (o * 100) + '%');
             }
         }
-        if (el.type==JXG.OBJECT_TYPE_IMAGE) {
+        if (el.type === JXG.OBJECT_TYPE_IMAGE) {
             t = el.rendNode.style.filter.toString();
             if (t.match(/alpha/)) {
-                el.rendNode.style.filter = t.replace(/alpha\(opacity *= *[0-9\.]+\)/,
-                    'alpha(opacity = '+(o*100)+')');
+                el.rendNode.style.filter = t.replace(/alpha\(opacity *= *[0-9\.]+\)/, 'alpha(opacity = ' + (o * 100) + ')');
             } else {
-                el.rendNode.style.filter += ' alpha(opacity = ' + (o*100) +')';
+                el.rendNode.style.filter += ' alpha(opacity = ' + (o * 100) +')';
             }
         }
-        el.visPropOld['fillColor'] = c;
-        el.visPropOld['fillOpacity'] = o;
+        el.visPropOld.fillColor = c;
+        el.visPropOld.fillOpacity = o;
     },
 
     // already documented in JXG.AbstractRenderer
-    setObjectStrokeColor: function(el, color, opacity) {
+    setObjectStrokeColor: function (el, color, opacity) {
         var c = JXG.evaluate(color),
             o = JXG.evaluate(opacity),
             node, nodeStroke;
 
-        o = (o>0)?o:0;
+        o = (o > 0) ? o : 0;
 
-        if (el.visPropOld['strokeColor']==c && el.visPropOld['strokeOpacity']==o) {
+        if (el.visPropOld.strokeColor === c && el.visPropOld.strokeOpacity === o) {
             return;
         }
-        if(el.type == JXG.OBJECT_TYPE_TEXT) {
+
+        if (el.type === JXG.OBJECT_TYPE_TEXT) {
             el.rendNode.style.color = c;
-        }
-        else {
+        } else {
             node = el.rendNode;
-            this._setAttr(node,'stroked', 'true');
-            this._setAttr(node,'strokecolor', c);
+            this._setAttr(node, 'stroked', 'true');
+            this._setAttr(node, 'strokecolor', c);
 
             nodeStroke = el.rendNodeStroke;
 
             if (JXG.exists(o)) {
-                this._setAttr(nodeStroke,'opacity', (o*100)+'%');
+                this._setAttr(nodeStroke, 'opacity', (o * 100) + '%');
 
             }
         }
-        el.visPropOld['strokeColor'] = c;
-        el.visPropOld['strokeOpacity'] = o;
+        el.visPropOld.strokeColor = c;
+        el.visPropOld.strokeOpacity = o;
     },
 
     // already documented in JXG.AbstractRenderer
-    setObjectStrokeWidth: function(el, width) {
+    setObjectStrokeWidth: function (el, width) {
         var w = JXG.evaluate(width),
             node;
 
-        if (el.visPropOld['strokeWidth']==w) {
+        if (el.visPropOld.strokeWidth === w) {
             return;
         }
 
         node = el.rendNode;
-        this.setPropertyPrim(node,'stroked', 'true');
-        if (w!=null) {
-            this.setPropertyPrim(node,'stroke-width',w);
+        this.setPropertyPrim(node, 'stroked', 'true');
+        if (w !== null) {
+            this.setPropertyPrim(node, 'stroke-width', w);
         }
-        el.visPropOld['strokeWidth'] = w;
+        el.visPropOld.strokeWidth = w;
     },
 
     // already documented in JXG.AbstractRenderer
-    setShadow: function(el) {
+    setShadow: function (el) {
         var nodeShadow = el.rendNodeShadow;
 
         if (!nodeShadow || el.visPropOld.shadow === el.visProp.shadow) {
             return;
         }
 
-        if(el.visProp['shadow']) {
+        if (el.visProp.shadow) {
             this._setAttr(nodeShadow, 'On', 'True');
             this._setAttr(nodeShadow, 'Offset', '3pt,3pt');
             this._setAttr(nodeShadow, 'Opacity', '60%');
@@ -699,13 +729,13 @@ JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
      * **************************/
 
     // already documented in JXG.AbstractRenderer
-    suspendRedraw: function() {
-        this.container.style.display='none';
+    suspendRedraw: function () {
+        this.container.style.display = 'none';
     },
 
     // already documented in JXG.AbstractRenderer
-    unsuspendRedraw: function() {
-        this.container.style.display='';
+    unsuspendRedraw: function () {
+        this.container.style.display = '';
     }
 
 });
