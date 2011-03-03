@@ -169,12 +169,12 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel, layer) {
     } 
     
     // create Label
-    if (withLabel!=null) 
-        this.createLabel(withLabel);
-    
     this.id = this.board.setId(this, 'C');
     this.board.renderer.drawEllipse(this);
     this.board.finalizeAdding(this);
+
+    if (withLabel!=null)
+        this.createLabel(withLabel);
 
     if(method == 'pointRadius') {
         this.notifyParents(par2);

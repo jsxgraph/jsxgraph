@@ -1144,7 +1144,7 @@ JXG.GeometryElement.prototype.addLabelToElement = function() {
     this.createLabel(true);
     this.label.content.id = this.id+"Label";
     this.board.setId(this.label.content, 'T');
-    this.board.renderer.drawText(this.label.content);
+
     if(!this.label.content.visProp['visible']) {
         this.board.renderer.hide(this.label.content);
     }

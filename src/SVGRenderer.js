@@ -232,7 +232,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
             c = axis.ticks[i].scrCoords;
             if (axis.ticks[i].major) {
                 if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i].visProp.visible) {
-                    this.drawText(axis.labels[i]);
+                    this.updateText(axis.labels[i]);
                 }
                 tickStr += "M " + (c[1] + dxMaj) + " " + (c[2] - dyMaj) + " L " + (c[1] - dxMaj) + " " + (c[2] + dyMaj) + " ";
             } else {
@@ -283,7 +283,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
 
     // already documented in JXG.AbstractRenderer
     updateInternalText: function (el) {
-        var content = (new Function('return ' + JXG.evaluate(element.content) + ';'))();
+        var content = element.plaintext;
 
         el.rendNode.setAttributeNS(null, 'x', el.coords.scrCoords[1] + 'px');
         el.rendNode.setAttributeNS(null, 'y', el.coords.scrCoords[2] + 'px');

@@ -123,11 +123,12 @@ JXG.Curve = function (board, parents, id, name, withLabel, layer) {
     this.generateTerm(this.varname,this.xterm,this.yterm,parents[3],parents[4]);  // Converts GEONExT syntax into JavaScript syntax
     this.updateCurve();                        // First evaluation of the curve
     
-    this.createLabel(withLabel);
     this.id = this.board.setId(this,'G');
     this.board.renderer.drawCurve(this);
     this.board.finalizeAdding(this);
     
+    this.createLabel(withLabel);
+
     if (typeof this.xterm=='string') {
         this.notifyParents(this.xterm);
     }

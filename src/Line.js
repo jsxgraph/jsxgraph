@@ -181,18 +181,20 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
     this.labelOffsets[0] = Math.abs(this.labelOffsets[0]);
     this.labelOffsets[1] = Math.abs(this.labelOffsets[1]);
 
-    // create Label
-    this.createLabel(withLabel);
-
     /* Register line at board */
     this.id = this.board.setId(this, 'L');
     this.board.renderer.drawLine(this);
     this.board.finalizeAdding(this);
 
+    // create Label
+    this.createLabel(withLabel);
+
     /* Add arrow as child to defining points */
     this.point1.addChild(this);
     this.point2.addChild(this);
-    this.needsUpdate = true; this.update();
+    this.needsUpdate = true;
+
+    this.update();
 };
 
 JXG.Line.prototype = new JXG.GeometryElement;

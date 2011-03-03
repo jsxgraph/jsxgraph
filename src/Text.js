@@ -45,6 +45,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
 
     this.init(board, id, name);
     this.content = contentStr;
+    this.plaintext = '';
 
     /**
      * Set the display layer.
@@ -106,12 +107,11 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
      */
     if ((this.element = this.board.objects[element])){
         var anchor;
-        if(!this.isLabel) {
+        if (this.isLabel) {
+            anchor = this.element.getLabelAnchor();
+        } else {
             anchor = this.element.getTextAnchor();
         }
-        else {
-            anchor = this.element.getLabelAnchor();
-        }      
         this.element.addChild(this);
         this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [parseFloat(coords[0]),parseFloat(coords[1])],this.board);     
         this.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, 
@@ -125,27 +125,37 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
         this.updateCoords = new Function('',fs);
     }
 
-    if (JXG.isNumber(this.content)) {
-        this.content = (this.content).toFixed(this.digits);
-    } else if (!JXG.isFunction(this.content)) {
-        if (this.visProp.useASCIIMathML) {
-            this.content = "'`" + this.content + "`'";              // Convert via ASCIIMathML
+    if (typeof this.content === 'function') {
+        this.updateText = function() { this.plaintext = this.content(); };
+    } else {
+        if (JXG.isNumber(this.content)) {
+            this.content = (this.content).toFixed(this.digits);
         } else {
-            this.content = this.generateTerm(this.content);   // Converts GEONExT syntax into JavaScript string
+            if (this.visProp.useASCIIMathML) {
+                this.content = "'`" + this.content + "`'";              // Convert via ASCIIMathML
+            } else {
+                this.content = this.generateTerm(this.content);   // Converts GEONExT syntax into JavaScript string
+            }
         }
+        this.updateText = new Function('this.plaintext = ' + this.content + ';');
     }
 
-    if(!this.isLabel) {
-        this.id = this.board.setId(this, 'T');
-        this.board.renderer.drawText(this);
-        if(!this.visProp['visible']) {
-            this.board.renderer.hide(this);
-        }
+    this.updateText();                    // First evaluation of the string.
+                                          // Needed for display='internal' and Canvas
+
+    this.id = this.board.setId(this, 'T');
+    this.board.renderer.drawText(this);
+    if(!this.visProp['visible']) {
+        this.board.renderer.hide(this);
     }
-    if (typeof this.content=='string') {
+    
+    if (typeof this.content === 'string') {
         this.notifyParents(this.content);
     }
     this.size = [1.0,1.0];
+
+
+    return this;
 };
 JXG.Text.prototype = new JXG.GeometryElement();
 
@@ -166,11 +176,23 @@ JXG.Text.prototype.hasPoint = function (x,y) {
  * @return {object} reference to the text object.
  */
 JXG.Text.prototype.setText = function(text) {
-    if (JXG.isNumber(text)) {
-        this.content = (text).toFixed(this.digits);
-    } else if (!JXG.isFunction(text)) {
-        this.content = this.generateTerm(text); // Converts GEONExT syntax into JavaScript string
+    if (typeof text === 'function') {
+        this.updateText = function() { this.plaintext = text(); };
+    } else {
+        if (JXG.isNumber(text)) {
+            this.content = (text).toFixed(this.digits);
+        } else {
+            if (this.visProp.useASCIIMathML) {
+                this.content = "'`" + text + "`'";              // Convert via ASCIIMathML
+            } else {
+                this.content = this.generateTerm(text);   // Converts GEONExT syntax into JavaScript string
+            }
+        }
+        this.updateText = new Function('this.plaintext = ' + this.content + ';');
     }
+
+    this.updateText();                    // First evaluation of the string.
+                                          // Needed for display='internal' and Canvas
     this.updateSize();
     return this;
 };
@@ -193,7 +215,7 @@ JXG.Text.prototype.updateSize = function () {
     } else if (this.display=='internal' && this.board.renderer.type=='svg') {
         this.size = [this.rendNode.getBBox().width, this.rendNode.getBBox().height];
     } else if (this.board.renderer.type=='vml' || (this.display=='internal' && this.board.renderer.type=='canvas')) { 
-        this.size = [parseFloat(this.visProp['fontSize'])*JXG.evaluate(this.content).length*0.45,parseFloat(this.visProp['fontSize'])*0.9]
+        this.size = [parseFloat(this.visProp['fontSize'])*this.plaintext.length*0.45,parseFloat(this.visProp['fontSize'])*0.9]
     }
 };    
 
@@ -225,23 +247,25 @@ JXG.Text.prototype.setCoords = function (x,y) {
  */
 JXG.Text.prototype.update = function () {
     var anchor;
-    
+
     if (this.needsUpdate && !this.frozen) {
-        if (this.relativeCoords){
-            if(!this.isLabel) {
+        if (this.relativeCoords) {
+            if (this.isLabel) {
+                anchor = this.element.getLabelAnchor();
+            } else {
                 anchor = this.element.getTextAnchor();
             }
-            else {
-                anchor = this.element.getLabelAnchor();
-            }
-            this.coords.setCoordinates(JXG.COORDS_BY_SCREEN, 
-                [this.relativeCoords.scrCoords[1]+anchor.scrCoords[1],
-                 this.relativeCoords.scrCoords[2]+anchor.scrCoords[2]]);
+
+            this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
+                    [this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
+                        this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
+            console.log(this.coords.usrCoords.join());
         } else {
             this.updateCoords();
         }
     }   
     if (this.needsUpdate) {
+        this.updateText();
         this.updateSize();
         this.updateTransform();
     }

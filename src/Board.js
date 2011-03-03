@@ -573,16 +573,14 @@ JXG.Board.prototype.setId = function (obj, type) {
     if(elId == '' || !JXG.exists(elId)) {
         elId = this.id + type + num;
     }
-    // Objekt an den Renderer zum Zeichnen uebergeben
+
     obj.id = elId;
-    // Objekt in das assoziative Array einfuegen
     this.objects[elId] = obj;
 
-    if(true && obj.hasLabel) {
+    if(obj.hasLabel) {
         obj.label.content.id = elId+"Label";
 
         if(!obj.label.content.isLabel) {
-            this.renderer.drawText(obj.label.content);
             if(!obj.label.content.visProp['visible']) {
                 this.renderer.hide(obj.label.content);
             }
@@ -597,19 +595,6 @@ JXG.Board.prototype.setId = function (obj, type) {
  * @param {Object} obj The object to add.
  */
 JXG.Board.prototype.finalizeAdding = function (obj) {
-    if (obj.hasLabel) {
-        if(false) {
-            obj.label.content.id = obj.id + "Label";
-
-            if(!obj.label.content.isLabel) {
-                this.renderer.drawText(obj.label.content);
-                if(!obj.label.content.visProp['visible']) {
-                    this.renderer.hide(obj.label.content);
-                }
-            }
-        }
-        this.renderer.drawText(obj.label.content);
-    }
     if(!obj.visProp['visible']) {
         this.renderer.hide(obj);
     }
@@ -1618,7 +1603,7 @@ JXG.Board.prototype.updateRendererCanvas = function(drag) {
     var el, pEl, i, 
         layers = this.options.layer,
         len = this.options.layer.numlayers,
-        last = Number.NEGATIVE_INFINITY, layer;
+        last = Number.NEGATIVE_INFINITY, mini, la;
     
     for (i=0;i<len;i++) {
         mini = Number.POSITIVE_INFINITY;

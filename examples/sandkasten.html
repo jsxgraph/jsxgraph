@@ -20,16 +20,42 @@
     /* <![CDATA[ */
 
     JXG.Options.renderer = 'svg';
+    JXG.Options.text.useMathJax = true;
 
     var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox:[-5, 5, 5, -5], grid: true});
 
     p1 = brd.create('point', [0,0]);
     p2 = brd.create('point', [2,1]);
     p3 = brd.create('point', [0,1]);
+    p4 = brd.create('point', [4,2]);
+
+    oldie = 2;
 
     a = brd.create('polygon', [p1, p2, p3]);
+    c = brd.create('circle', [p4, 3], {withLabel: true});
 
-    brd.update();
+    l = brd.create('line', [p1, p4], {withLabel: true});
+
+    t = brd.create('text', [1, 3, function () { return '\\[e^x\\]'}]);
+
+    bigboy = brd.create('text', [1, 3, 'big boy']);
+
+    fun = brd.create('functiongraph', [function (x) { return p3.X() * Math.sin(x); }, -3, 3], {withLabel: true});
+
+    h = function () {
+        if (oldie < 0 && p4.Y() > 0) {
+            bigboy.setText('big boy');
+        }
+
+        if (oldie > 0 && p4.Y() < 0) {
+            bigboy.setText('lil boy');
+        }
+        oldie = p4.Y();
+    };
+
+    brd.addHook(h);
+
+    //brd.update();
 
     /* ]]> */
 </script>

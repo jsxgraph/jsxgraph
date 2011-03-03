@@ -57,11 +57,10 @@ TestCase("AbstractRenderer", {
                 },
                 id: id,
                 transformations: [],
-                plaintextStr: 'text',
+                plaintext: 'text',
                 coords: {
                     scrCoords: [1, 10, 10]
-                },
-                updateText: function () { }
+                }
             };
 
         this.ar.drawText(element);
@@ -87,7 +86,7 @@ TestCase("AbstractRenderer", {
             pos = [parseInt(node.style.left), parseInt(node.style.top)],
             diff;
 
-        element.plaintextStr = 'updated text';
+        element.plaintext = 'updated text';
         element.coords.scrCoords = [1, 20, 20];
         this.ar.updateText(element);
         diff = [parseInt(node.style.left) - pos[0], parseInt(node.style.top) - pos[1]];

@@ -514,15 +514,16 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     updateText: function (element) {
-        var content = (new Function('return ' + JXG.evaluate(element.content) + ';'))();
+        var content = element.plaintext;
 
-        // Update only objects that are visible.
-        if (element.visProp.visible && !isNaN(element.coords.scrCoords[1] + element.coords.scrCoords[2])) {
+        if (element.visProp.visible) {
             this.updateTextStyle(element);
 
             if (element.visProp.display === 'html') {
-                element.rendNode.style.left = element.coords.scrCoords[1] + 'px';
-                element.rendNode.style.top = (element.coords.scrCoords[2] - this.vOffsetText) + 'px';
+                if (!isNaN(element.coords.scrCoords[1] + element.coords.scrCoords[2])) {
+                    element.rendNode.style.left = element.coords.scrCoords[1] + 'px';
+                    element.rendNode.style.top = (element.coords.scrCoords[2] - this.vOffsetText) + 'px';
+                }
 
                 if (element.htmlStr !== content) {
                     element.rendNode.innerHTML = content;
