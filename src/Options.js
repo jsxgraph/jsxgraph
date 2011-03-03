@@ -129,7 +129,7 @@ JXG.Options = {
             majorHeight : -1,         // if <0: full width and height 
             minorTicks : 4,
             defaultDistance : 1,
-            opacity : '0.3'
+            opacity : 0.3
         },
         /* absolute label offset from anchor */
         labelOffsets: [10,10]
