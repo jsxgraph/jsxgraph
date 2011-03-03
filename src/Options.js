@@ -200,7 +200,7 @@ JXG.Options = {
         strokeColor : '#000000',
         useASCIIMathML : false,
         useMathJax : false,
-        defaultDisplay : 'html' //'html' or 'internal'
+        display : 'html' //'html' or 'internal'
     },
 
     /* special curve options */

@@ -243,8 +243,6 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         // Edge points: This is where the display of the line starts and ends, e.g. the intersection points
         // of the line with the edges of the viewing area if the line is a straight.
         e1, e2,
-        // Which direction do we go? Plus or Minus
-        dir = 1,
         // what's the first/last tick to draw?
         begin, end,
         // Coordinates of the current tick
@@ -263,7 +261,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
             labelText = pos.toString();
             if(labelText.length > 5)
                 labelText = pos.toPrecision(3).toString();
-            label = new JXG.Text(board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], id+i+"Label", '', null, true, board.options.text.defaultDisplay);
+            label = new JXG.Text(board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], id+i+"Label", '', null, true, board.options.text.display);
             label.distanceX = 0;
             label.distanceY = -10;
             label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(board.stretchX), 
@@ -360,7 +358,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         var nx = 0;
         var ny = 0;
 
-        for(var i=0; i<this.fixedTicks.length; i++) {
+        for(i=0; i<this.fixedTicks.length; i++) {
             // is this tick visible?
             if((-length_minus <= this.fixedTicks[i]) && (this.fixedTicks[i] <= length_plus)) {
                 if(this.fixedTicks[i] < 0) {
@@ -496,7 +494,7 @@ JXG.Ticks.prototype.removeTickLabels = function () {
     // remove existing tick labels
     if(this.ticks != null) {
         if ((this.board.needsFullUpdate||this.needsRegularUpdate) && 
-            !(this.board.options.renderer=='canvas'&&this.board.options.text.defaultDisplay=='internal')
+            !(this.board.options.renderer=='canvas'&&this.board.options.text.display=='internal')
            ) {
             for(j=0; j<this.ticks.length; j++) {
                 if(this.labels[j]!=null && this.labels[j].visProp['visible']) { 

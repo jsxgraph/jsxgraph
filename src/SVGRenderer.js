@@ -260,8 +260,8 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
     displayCopyright: function (str, fontsize) {
         var node = this.createPrim('text', 'licenseText'),
             t;
-        node.setAttributeNS(null, 'x', '20');
-        node.setAttributeNS(null, 'y', 2 + fontsize);
+        node.setAttributeNS(null, 'x', '20px');
+        node.setAttributeNS(null, 'y', (2 + fontsize) + 'px');
         node.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:" + fontsize + "px; fill:#356AA0;  opacity:0.3;");
         t = document.createTextNode(str);
         node.appendChild(t);
@@ -283,12 +283,14 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
 
     // already documented in JXG.AbstractRenderer
     updateInternalText: function (el) {
+        var content = (new Function('return ' + JXG.evaluate(element.content) + ';'))();
+
         el.rendNode.setAttributeNS(null, 'x', el.coords.scrCoords[1] + 'px');
         el.rendNode.setAttributeNS(null, 'y', el.coords.scrCoords[2] + 'px');
-        el.updateText();
-        if (el.htmlStr !== el.plaintextStr) {
-            el.rendNodeText.data = el.plaintextStr;
-            el.htmlStr = el.plaintextStr;
+
+        if (el.htmlStr !== content) {
+            el.rendNodeText.data = content;
+            el.htmlStr = content;
         }
         this.transformImage(el, el.transformations);
     },
@@ -361,7 +363,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
 
     // already documented in JXG.AbstractRenderer
     remove: function (shape) {
-        if (shape !== null && shape.parentNode !== null) {
+        if (JXG.exists(shape) && JXG.exists(shape.parentNode)) {
             shape.parentNode.removeChild(shape);
         }
     },
@@ -720,7 +722,7 @@ JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
         node = el.rendNode;
 
         if (el.type === JXG.OBJECT_TYPE_TEXT) {
-            if (el.display === 'html') {
+            if (el.visProp.display === 'html') {
                 node.style.color = c; // Schriftfarbe
             } else {
                 node.setAttributeNS(null, "style", "fill:" + c);

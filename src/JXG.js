@@ -44,23 +44,7 @@
  * @returns {Boolean} 
  */
 JXG.supportsVML = function() {
-    /*
-    var a, b, isSupported = false;
-    a = document.body.appendChild(document.createElement('div'));
-    a.innerHTML = '<v:shape id="vml_flag1" adj="1" />';
-    b = a.firstChild;
-    b.style.behavior = "url(#default#VML)";
-    isSupported = b ? typeof b.adj == "object": true;
-    a.parentNode.removeChild(a);
-    return isSupported; 
-    */
-    //var ie = navigator.appVersion.match(/MSIE (\d\.\d)/);
-    //if (ie && parseFloat(ie[1]) < 9.0 ) {
-    if (!!document.namespaces) {
-        return true;
-    } else {
-        return false;
-    }
+    return !!document.namespaces;
 };
 
 /**
@@ -69,6 +53,14 @@ JXG.supportsVML = function() {
  */
 JXG.supportsSVG = function() {
     return document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
+};
+
+/**
+ * Detect browser support for Canvas.
+ * @returns {Boolean}
+ */
+JXG.supportsCanvas = function() {
+    return !!document.createElement('canvas').getContext;
 };
  
 /**

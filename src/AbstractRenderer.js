@@ -115,6 +115,12 @@ JXG.AbstractRenderer = function () {
     this.enhancedRendering = true;
 
     /**
+     * The HTML element that stores the JSXGraph board in it.
+     * @type Node
+     */
+    this.container = null;
+
+    /**
      * This is used to easily determine which renderer we are using
      * @example if (board.renderer.type === 'vml') {
      *     // do something
@@ -483,10 +489,9 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     drawText: function (element) {
         var node;
 
-        if (element.display === 'html') {
+        if (element.visProp.display === 'html') {
             node = this.container.ownerDocument.createElement('div');
             node.style.position = 'absolute';
-            node.style.color = element.visProp.strokeColor;
             node.className = 'JXGtext';
             node.style.zIndex = '10';
             this.container.appendChild(node);
@@ -494,10 +499,8 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         } else {
             node = this.drawInternalText(element);
         }
-        node.style.fontSize = element.board.options.text.fontSize + 'px';
         element.rendNode = node;
         element.htmlStr = '';
-        this.updateText(element);
     },
 
     /**
@@ -511,21 +514,24 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     updateText: function (element) {
+        var content = (new Function('return ' + JXG.evaluate(element.content) + ';'))();
+
         // Update only objects that are visible.
         if (element.visProp.visible && !isNaN(element.coords.scrCoords[1] + element.coords.scrCoords[2])) {
             this.updateTextStyle(element);
 
-            if (element.display === 'html') {
-                element.rendNode.style.left = (element.coords.scrCoords[1]) + 'px';
+            if (element.visProp.display === 'html') {
+                element.rendNode.style.left = element.coords.scrCoords[1] + 'px';
                 element.rendNode.style.top = (element.coords.scrCoords[2] - this.vOffsetText) + 'px';
-                element.updateText();
-                if (element.htmlStr !== element.plaintextStr) {
-                    element.rendNode.innerHTML = element.plaintextStr;
-                    if (element.board.options.text.useASCIIMathML) {
+
+                if (element.htmlStr !== content) {
+                    element.rendNode.innerHTML = content;
+                    element.htmlStr = content;
+                    
+                    if (element.visProp.useASCIIMathML) {
                         AMprocessNode(element.rendNode, false);
                     }
-                    element.htmlStr = element.plaintextStr;
-                    if (element.board.options.text.useMathJax) {
+                    if (element.visProp.useMathJax) {
                         MathJax.Hub.Typeset(element.rendNode);
                     }
                 }
@@ -549,10 +555,8 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
     updateTextStyle: function (element) {
         var fs = JXG.evaluate(element.visProp.fontSize);
 
-        if (fs) {
-            fs = (fs > 0 ? fs : 0);
-            element.rendNode.style.fontSize = fs;
-        }
+        element.rendNode.style.fontSize = fs + 'px';
+        element.rendNode.style.color = JXG.evaluate(element.visProp.strokeColor);
     },
 
     /* **************************
