@@ -36,7 +36,7 @@
  * of ticks on an axis.
  * @param {JXG.Line} line Reference to the axis the ticks are drawn on.
  * @param {Number,Array,Function} ticks Number, array or function defining the ticks.
- * @param {int} major Every major-th tick is drawn with heightmajorHeight, the other ones are drawn with height minorHeight.
+ * @param {int} major Every major-th tick is drawn with height majorHeight, the other ones are drawn with height minorHeight.
  * @param {int} majorHeight The height used to draw major ticks.
  * @param {int} minorHeight The height used to draw minor ticks.
  * @param {String} id Unique identifier for this object.  If null or an empty string is given,
@@ -125,16 +125,20 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, la
      * @type int
      */
     this.majorHeight = ( (majorHeight == null) || (majorHeight == 0) ? this.board.options.line.ticks.majorHeight : majorHeight);
-    if(this.majorHeight < 0)
-        this.majorHeight = -this.majorHeight;
+    if(this.majorHeight < 0) {
+        //this.majorHeight = -this.majorHeight;
+        this.majorHeight = this.board.canvasWidth+this.board.canvasHeight;
+    }
 
     /**
      * Total height of a minor tick.
      * @type int
      */
     this.minorHeight = ( (minorHeight == null) || (minorHeight == 0) ? this.board.options.line.ticks.minorHeight : minorHeight);
-    if(this.minorHeight < 0)
-        this.minorHeight = -this.minorHeight;
+    if(this.minorHeight < 0) {
+        //this.minorHeight = -this.minorHeight;
+        this.minorHeight = this.board.canvasWidth+this.board.canvasHeight;
+    }
 
     /**
      * Least distance between two ticks, measured in pixels.

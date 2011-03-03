@@ -20,7 +20,7 @@
         picStr = "./fagiolo.jpg";
 //JXG.Options.renderer = 'canvas';
         
-        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true});
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true, grid:true});
 
         var p0 = board.create('point', [0,0], {style:5, name:'offset'}); 
         var p1 = board.create('point', [3,0], {style:5, name:'rot+scale'}); 
