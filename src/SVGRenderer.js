@@ -58,6 +58,7 @@ JXG.SVGRenderer = function(container) {
     this.filter.setAttributeNS(null, 'id', this.container.id+'_'+'f1');
     this.filter.setAttributeNS(null, 'width', '300%');
     this.filter.setAttributeNS(null, 'height', '300%');
+    this.filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
     this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace,'feOffset');
     this.feOffset.setAttributeNS(null, 'result', 'offOut');
     this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
@@ -67,7 +68,7 @@ JXG.SVGRenderer = function(container) {
     this.feGaussianBlur = this.container.ownerDocument.createElementNS(this.svgNamespace,'feGaussianBlur');
     this.feGaussianBlur.setAttributeNS(null, 'result', 'blurOut');
     this.feGaussianBlur.setAttributeNS(null, 'in', 'offOut');
-    this.feGaussianBlur.setAttributeNS(null, 'stdDeviation', '3');
+    this.feGaussianBlur.setAttributeNS(null, 'stdDeviation', '3'); 
     this.filter.appendChild(this.feGaussianBlur);
     this.feBlend = this.container.ownerDocument.createElementNS(this.svgNamespace,'feBlend');
     this.feBlend.setAttributeNS(null, 'in', 'SourceGraphic');
@@ -75,7 +76,7 @@ JXG.SVGRenderer = function(container) {
     this.feBlend.setAttributeNS(null, 'mode', 'normal');
     this.filter.appendChild(this.feBlend);
     this.defs.appendChild(this.filter);    
-    
+
     /* 
     * ~ 10 Layers. highest number = highest visibility
     */
