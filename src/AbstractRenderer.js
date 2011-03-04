@@ -499,8 +499,10 @@ JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
         } else {
             node = this.drawInternalText(element);
         }
+
         element.rendNode = node;
         element.htmlStr = '';
+        this.updateText(element);
     },
 
     /**

@@ -50,6 +50,7 @@ jstest = "~/Tools/JsTestDriver/JsTestDriver-1.3.1.jar"
 output = "distrib"
 version = None
 hint = None
+reset = ""
 
 
 '''
@@ -65,6 +66,7 @@ def usage():
     print "  -l, --hint=FILE        Set the file you want to check with JSHint."
     print "  -j, --jsdoc=PATH       Search for jsdoc-toolkit in PATH."
     print "  -o, --output=PATH      Override the default output path distrib/ by PATH."
+    print "      --reset            Force the test server to reload the browsers."
     print "  -v, --version=VERSION  Use VERSION as release version for proper zip archive and"
     print "                         folder names."
     print "  -y, --yui=PATH         Search for YUI Compressor in PATH."
@@ -291,9 +293,9 @@ def makeHint():
     Run Unit Tests
 '''
 def makeTest():
-    global jstest
+    global jstest, reset
     
-    os.system('java -jar ' + jstest + ' --tests all --basePath ./ --config test/jsTestDriver.conf --captureConsole');
+    os.system('java -jar ' + jstest + ' ' + reset + ' --tests all --basePath ./ --config test/jsTestDriver.conf --captureConsole');
 
 
 '''
@@ -305,10 +307,10 @@ def makeAll():
     
 
 def main(argv):
-    global yui, jsdoc, version, output, hint, jstest
+    global yui, jsdoc, version, output, hint, jstest, reset
 
     try:
-        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint=", "test="])
+        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset"])
     except getopt.GetoptError as (errono, strerror):
         usage()
         sys.exit(2)
@@ -328,6 +330,8 @@ def main(argv):
             hint = arg
         elif opt in ("-t", "--test"):
             jstest = arg
+        elif opt in ("--reset"):
+            reset = '--reset'
 
     target = "".join(args)
 

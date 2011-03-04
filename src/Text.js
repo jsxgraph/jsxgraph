@@ -259,7 +259,6 @@ JXG.Text.prototype.update = function () {
             this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
                     [this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
                         this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
-            console.log(this.coords.usrCoords.join());
         } else {
             this.updateCoords();
         }
