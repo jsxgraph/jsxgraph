@@ -268,8 +268,8 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
             if(labelText.length > 5)
                 labelText = pos.toPrecision(3).toString();
             label = new JXG.Text(board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], id+i+"Label", '', null, true, board.options.text.defaultDisplay);
-            label.distanceX = 0;
-            label.distanceY = -10;
+            label.distanceX = 4;
+            label.distanceY = -9;
             label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(board.stretchX), 
                             newTick.usrCoords[2]*1+label.distanceY/(board.stretchY));
             
