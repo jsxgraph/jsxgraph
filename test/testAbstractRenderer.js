@@ -75,7 +75,7 @@ TestCase("AbstractRenderer", {
 
         assertNotNull('text has been added', node);
         assertEquals('text content', 'text', node.innerHTML);
-        assertEquals('text color', 'black', node.style.color);
+        assertTrue('text color', '#000000' === node.style.color || 'black' === node.style.color);
     },
 
     testUpdateText: function () {
@@ -104,7 +104,7 @@ TestCase("AbstractRenderer", {
         element.visProp.strokeColor = 'green';
         this.ar.updateTextStyle(element);
 
-        assertEquals('text color', 'green', node.style.color);
+        assertTrue('text color', '#008000' === node.style.color || 'green' === node.style.color);
     }
 
 

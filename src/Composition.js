@@ -42,6 +42,107 @@
  *   <li>{@link Reflection}</li></ul>
  */
 
+
+/**
+ * A composition is a simple container that manages none or more {@link JXG.GeometryElement}s.
+ * @param {Object} elements A list of elements with a descriptive name for the element as the key and a reference
+ * to the element as the value of every list entry. The name is used to access the element later on.
+ * @example
+ * var p1 = board.create('point', [1, 2]),
+ *     p2 = board.create('point', [2, 3]),
+ *     c = new JXG.Composition({
+ *         start: p1,
+ *         end: p2
+ *     });
+ *
+ * // moves p1 to [3, 3]
+ * c.start.moveTo([3, 3]);
+ * @class JXG.Composition
+ */
+JXG.Composition = function (elements) {
+    var genericMethods = [
+            'setProperty',
+            'prepareUpdate',
+            'updateRenderer',
+            'update',
+            'highlight',
+            'noHighlight'
+        ],
+        generateMethod = function (what) {
+            return function () {
+                var i;
+
+                for (i in that.elements) {
+                    if (JXG.exists(that.elements[i][what])) {
+                        that.elements[i][what].apply(that.elements[i], arguments);
+                    }
+                }
+            };
+        },
+        that = this,
+        e;
+
+    for (e = 0; e < genericMethods.length; e++) {
+        this[genericMethods[e]] = generateMethod(genericMethods[e]);
+    }
+
+    this.elements = {};
+    for (e in elements) {
+        if (elements.hasOwnProperty(e)) {
+            this.add(e, elements[e]);
+        }
+    }
+};
+
+JXG.extend(JXG.Composition, /** @lends JXG.Composition.prototype */ {
+
+    /**
+     * Adds an element to the composition container.
+     * @param {String} what Descriptive name for the element, e.g. <em>startpoint</em> or <em>area</em>. This is used to
+     * access the element later on. There are some reserved names: <em>elements, add, remove, update, prepareUpdate,
+     * updateRenderer, highlight, noHighlight</em>, and all names that would form invalid object property names in
+     * JavaScript.
+     * @param {JXG.GeometryElement} element A reference to the element that is to be added.
+     * @returns {Boolean} True, if the element was added successfully. Reasons why adding the element failed include
+     * using a reserved name and providing an invalid element.
+     */
+    add: function (what, element) {
+        if (!JXG.exists(this[what]) && JXG.exists(element) && JXG.exists(element.id)) {
+            this.elements[element.id] = element;
+            this[what] = element;
+
+            return true
+        }
+
+        return false;
+    },
+
+    /**
+     * Remove an element from the composition container.
+     * @param {String} what The name used to access the element.
+     * @returns {Boolean} True, if the element has been removed successfully.
+     */
+    remove: function (what) {
+        var found = false,
+            e;
+
+        for (e in this.elements) {
+            if (this.elements[e].id === this[what].id) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            delete this.elements[this[what].id];
+            delete this[what];
+        }
+
+        return found;
+    }
+});
+
+
 /**
  * @class This is used to construct a perpendicular point.
  * @pseudo

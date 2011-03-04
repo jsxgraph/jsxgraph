@@ -588,10 +588,20 @@ JXG.unescapeHTML = function(str) {
     return str.replace(/<\/?[^>]+>/gi, '').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 };
 
-JXG.extend = function(o, extension) {
+/**
+ * Copy all properties of the <tt>extension</tt> object to the prototype of <tt>object</tt>.
+ * @param {Object} object
+ * @param {Object} extension
+ * @param {Boolean} [onlyOwn=false] Only consider properties that belong to extension itself, not any inherited properties.
+ */
+JXG.extend = function(object, extension, onlyOwn) {
     var e;
+
+    onlyOwn = onlyOwn || false;
+
     for(e in extension) {
-        o.prototype[e] = extension[e];
+        if(!onlyOwn || (onlyOwn && extension.hasOwnProperty(e)))
+            object.prototype[e] = extension[e];
     }
 };
 

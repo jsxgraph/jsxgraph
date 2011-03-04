@@ -10,7 +10,7 @@
 <h2>Create a point with simple clicks. Uses jQuery via Google CDN.</h2>
 
 <div style="width:800px">
-    <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+    <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left; background-image:url(medsand.gif);"></div>
 </div>
 
 <div id="debug" style="display:block;"></div>
@@ -19,7 +19,7 @@
     /* <![CDATA[ */
 
     (function() {
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis:true}),
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis:false, grid:true}),
             //
             // bestFit, the best-fitting circle or line is found by least-squares fitting.
             //
@@ -181,7 +181,7 @@
             mousedown,
             points = [];
 
-        var draftcurve = board.create('curve',[[0],[0]],{curveType:'plot'});
+        var draftcurve = board.create('curve',[[0],[0]],{curveType:'plot', strokeWidth:14, opacity:0.15});
         draftcurve.updateDataArray = function() {
             if (points.length<=0) return;
             var p = JXG.Math.transpose(points);
@@ -230,7 +230,7 @@
 
         var up = function(e){
             if((e.fromTouch && points.length==1) || (!e.fromTouch && points.length<=15))
-                board.create('point', points[0]);
+                board.create('point', points[0], {fillColor:'#000000', fillOpacity:0.8, strokeWidth:0, size:4 });
             else
                 bestFit(points, false);
 
