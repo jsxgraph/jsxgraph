@@ -42,6 +42,107 @@
  *   <li>{@link Reflection}</li></ul>
  */
 
+
+/**
+ * A composition is a simple container that manages none or more {@link JXG.GeometryElement}s.
+ * @param {Object} elements A list of elements with a descriptive name for the element as the key and a reference
+ * to the element as the value of every list entry. The name is used to access the element later on.
+ * @example
+ * var p1 = board.create('point', [1, 2]),
+ *     p2 = board.create('point', [2, 3]),
+ *     c = new JXG.Composition({
+ *         start: p1,
+ *         end: p2
+ *     });
+ *
+ * // moves p1 to [3, 3]
+ * c.start.moveTo([3, 3]);
+ * @class JXG.Composition
+ */
+JXG.Composition = function (elements) {
+    var genericMethods = [
+            'setProperty',
+            'prepareUpdate',
+            'updateRenderer',
+            'update',
+            'highlight',
+            'noHighlight'
+        ],
+        generateMethod = function (what) {
+            return function () {
+                var i;
+
+                for (i in that.elements) {
+                    if (JXG.exists(that.elements[i][what])) {
+                        that.elements[i][what].apply(that.elements[i], arguments);
+                    }
+                }
+            };
+        },
+        that = this,
+        e;
+
+    for (e = 0; e < genericMethods.length; e++) {
+        this[genericMethods[e]] = generateMethod(genericMethods[e]);
+    }
+
+    this.elements = {};
+    for (e in elements) {
+        if (elements.hasOwnProperty(e)) {
+            this.add(e, elements[e]);
+        }
+    }
+};
+
+JXG.extend(JXG.Composition, /** @lends JXG.Composition.prototype */ {
+
+    /**
+     * Adds an element to the composition container.
+     * @param {String} what Descriptive name for the element, e.g. <em>startpoint</em> or <em>area</em>. This is used to
+     * access the element later on. There are some reserved names: <em>elements, add, remove, update, prepareUpdate,
+     * updateRenderer, highlight, noHighlight</em>, and all names that would form invalid object property names in
+     * JavaScript.
+     * @param {JXG.GeometryElement} element A reference to the element that is to be added.
+     * @returns {Boolean} True, if the element was added successfully. Reasons why adding the element failed include
+     * using a reserved name and providing an invalid element.
+     */
+    add: function (what, element) {
+        if (!JXG.exists(this[what]) && JXG.exists(element) && JXG.exists(element.id)) {
+            this.elements[element.id] = element;
+            this[what] = element;
+
+            return true
+        }
+
+        return false;
+    },
+
+    /**
+     * Remove an element from the composition container.
+     * @param {String} what The name used to access the element.
+     * @returns {Boolean} True, if the element has been removed successfully.
+     */
+    remove: function (what) {
+        var found = false,
+            e;
+
+        for (e in this.elements) {
+            if (this.elements[e].id === this[what].id) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            delete this.elements[this[what].id];
+            delete this[what];
+        }
+
+        return found;
+    }
+});
+
+
 /**
  * @class This is used to construct a perpendicular point.
  * @pseudo
@@ -1446,7 +1547,7 @@ JXG.createIntegral = function(board, parents, attributes) {
  *  loc = board.create('locus', [m1], {strokeColor: 'red'});
  * </pre><div id="d45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *  lcex_board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 10, -6], axis: true, grid: false, keepaspectratio: true});
+ *  lcex_board = JXG.JSXGraph.initBoard('d45d7188-6624-4d6e-bebb-1efa2a305c8a', {boundingbox:[-4, 6, 10, -6], axis: true, grid: false, keepaspectratio: true});
  *  lcex_p1 = lcex_board.create('point', [0, 0]);
  *  lcex_p2 = lcex_board.create('point', [6, -1]);
  *  lcex_c1 = lcex_board.create('circle', [lcex_p1, 2]);
@@ -1508,6 +1609,104 @@ JXG.createLocus = function(board, parents, attributes) {
     return c;
 };
 
+
+/**
+ * @class Creates a grid to help the user with element placements.
+ * @pseudo
+ * @description A grid is a set of vertical and horizontal lines to support the user with element placement. This method
+ * draws such a grid on the given board. It uses options given in {@link JXG.Options#grid}. This method does not
+ * take any parent elements. It is usually instantiated on the board's creation via the attribute <tt>grid</tt> set
+ * to true.
+ * @constructor
+ * @name Locus
+ * @type JXG.Curve
+ * @augments JXG.Curve
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @example
+ * TODO
+ * </pre><div id="8ef0f148-3811-44a9-b5c0-ed50c01aa5c0" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *  gridex_board = JXG.JSXGraph.initBoard('8ef0f148-3811-44a9-b5c0-ed50c01aa5c0', {boundingbox:[-4, 6, 10, -6], axis: true, grid: false, keepaspectratio: true});
+ * </script><pre>
+ */
+JXG.createGrid = function (board, parents, attributes) {
+    var c = board.create('curve', [[null], [null]], {
+                strokeColor: board.options.grid.gridColor,
+                //highlightStrokeColor: board.options.grid.gridColor,
+                opacity: board.options.grid.gridOpacity
+            });
+
+    // TODO: use user given attributes
+
+    if(board.options.grid.gridDash)
+        c.setProperty({dash: 2});
+
+    c.updateDataArray = function () {
+        var gridX = board.options.grid.gridX,
+            gridY = board.options.grid.gridY,
+            topLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board),
+            bottomRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board),
+            i;
+            //horizontal = [[], []], vertical = [[], []];
+
+        //
+        //      |         |         |
+        //  ----+---------+---------+-----
+        //      |        /|         |
+        //      |    gridY|     <---+------   Grid Cell
+        //      |        \|         |
+        //  ----+---------+---------+-----
+        //      |         |\ gridX /|
+        //      |         |         |
+        //
+        // uc: usercoordinates
+        //
+        // currently one grid cell is 1/JXG.Options.grid.gridX uc wide and 1/JXG.Options.grid.gridY uc high.
+        // this may work perfectly with GeonextReader (#readGeonext, initialization of gridX and gridY) but it
+        // is absolutely not user friendly when it comes to use it as an API interface.
+        // i changed this to use gridX and gridY as the actual width and height of the grid cell. for this i
+        // had to refactor these methods:
+        //
+        //  DONE JXG.Board.calculateSnapSizes (init p1, p2)
+        //  DONE JXG.GeonextReader.readGeonext (init gridX, gridY)
+        //
+
+        board.options.grid.hasGrid = true;
+
+        topLeft.setCoordinates(JXG.COORDS_BY_USER, [Math.floor(topLeft.usrCoords[1] / gridX) * gridX, Math.ceil(topLeft.usrCoords[2] / gridY) * gridY]);
+        bottomRight.setCoordinates(JXG.COORDS_BY_USER, [Math.ceil(bottomRight.usrCoords[1] / gridX) * gridX, Math.floor(bottomRight.usrCoords[2] / gridY) * gridY]);
+
+        //horizontal.push(topLeft.usrCoords.slice(1));
+        //vertical.push(topLeft.usrCoords.slice(1));
+
+        c.dataX = [];
+        c.dataY = [];
+
+        // start with the horizontal grid:
+        for (i = topLeft.usrCoords[2]; i > bottomRight.usrCoords[2] - gridY; i -= gridY) {
+            c.dataX.push(topLeft.usrCoords[1], bottomRight.usrCoords[1], NaN);
+            c.dataY.push(i, i, NaN);
+        }
+
+        // build vertical grid
+        for (i = topLeft.usrCoords[1]; i < bottomRight.usrCoords[1] + gridX; i += gridX) {
+            c.dataX.push(i, i, NaN);
+            c.dataY.push(topLeft.usrCoords[2], bottomRight.usrCoords[2], NaN);
+        }
+
+    };
+
+    // we don't care about highlighting so we turn it off completely to save
+    // time on mouse move
+    c.hasPoint = function () {
+        return false;
+    };
+
+    board.grids.push(c);
+
+    return c;
+};
+
 JXG.JSXGraph.registerElement('arrowparallel', JXG.createArrowParallel);
 JXG.JSXGraph.registerElement('bisector', JXG.createBisector);
 JXG.JSXGraph.registerElement('bisectorlines', JXG.createAngularBisectorsOfTwoLines);
@@ -1526,3 +1725,4 @@ JXG.JSXGraph.registerElement('perpendicular', JXG.createPerpendicular);
 JXG.JSXGraph.registerElement('perpendicularpoint', JXG.createPerpendicularPoint);
 JXG.JSXGraph.registerElement('reflection', JXG.createReflection);
 JXG.JSXGraph.registerElement('locus', JXG.createLocus);
+JXG.JSXGraph.registerElement('grid', JXG.createGrid);

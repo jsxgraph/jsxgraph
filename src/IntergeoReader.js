@@ -446,7 +446,7 @@ JXG.IntergeoReader = new function() {
 
     this.setAttributes = function(o) {
         o.setProperty({strokecolor:this.board.options.point.strokeColor,fillColor:this.board.options.point.fillColor});
-    }
+    };
     
     this.readParams = function(node) {
         var param = [], j;
@@ -924,7 +924,7 @@ JXG.IntergeoReader = new function() {
                         } else if (key=='point-style') {
                             key = 'face';
                             if (val=='circle') {
-                                val == 'o';
+                                val = 'o';
                             } else if (val=='cross') {
                                 val = '+';
                             } else if (val=='x-mark') {

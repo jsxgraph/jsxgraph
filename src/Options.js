@@ -201,7 +201,7 @@ JXG.Options = {
         strokeColor : '#000000',
         useASCIIMathML : false,
         useMathJax : false,
-        defaultDisplay : 'html' //'html' or 'internal'
+        display : 'html' //'html' or 'internal'
     },
 
     /* special curve options */
@@ -332,13 +332,10 @@ JXG.useStandardOptions = function(board) {
     }
 
     board.fullUpdate();
-    if(boardHadGrid && board.hasGrid) {
-        board.renderer.removeGrid(board);
-        board.renderer.drawGrid(board);
-    } else if(boardHadGrid && !board.hasGrid) {
-        board.renderer.removeGrid(board);
+    if(boardHadGrid && !board.hasGrid) {
+        board.removeGrids(board);
     } else if(!boardHadGrid && board.hasGrid) {
-        board.renderer.drawGrid(board);
+        board.create('grid', []);
     }
 };
 

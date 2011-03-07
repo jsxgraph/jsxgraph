@@ -45,10 +45,12 @@ import urllib
 
 # Default values for options. May be overridden via command line options
 yui = "~/public_html/jsxgraph/trunk/tools/yuicompressor-2.4.2"
-jsdoc = "~/public_html/jsxgraph/jsdoc_toolkit-2.3.2/jsdoc-toolkit"
+jsdoc = "~/public_html/jsxgraph/jsdoc_toolkit-2.4.0/jsdoc-toolkit"
+jstest = "~/Tools/JsTestDriver/JsTestDriver-1.3.1.jar"
 output = "distrib"
 version = None
 hint = None
+reset = ""
 
 
 '''
@@ -64,6 +66,7 @@ def usage():
     print "  -l, --hint=FILE        Set the file you want to check with JSHint."
     print "  -j, --jsdoc=PATH       Search for jsdoc-toolkit in PATH."
     print "  -o, --output=PATH      Override the default output path distrib/ by PATH."
+    print "      --reset            Force the test server to reload the browsers."
     print "  -v, --version=VERSION  Use VERSION as release version for proper zip archive and"
     print "                         folder names."
     print "  -y, --yui=PATH         Search for YUI Compressor in PATH."
@@ -76,6 +79,7 @@ def usage():
     print "  Docs                   Generate documentation from source code comments. Uses"
     print "                         jsdoc-toolkit."
     print "  Hint                   Run JSHint on the file given with -l or --hint."
+    print "  Test                   Run Unit Tests with JsTestDriver."
     print "  Compressor             Minify and create a zip archive for JSXCompressor."
     print "  All                    Makes JSXGraph and Compressor."
     
@@ -182,8 +186,8 @@ def makeDocs(afterCore = False):
     filesStr = "src/loadjsxgraph.js src/" + ".js src/".join(files) + ".js src/SVGRenderer.js src/VMLRenderer.js src/CanvasRenderer.js"
     
     #java -jar $ROOT/jsrun.jar $ROOT/app/run.js -a -v -t=$ROOT/templates/jsdoc -d=docs ../src/loadjsxgraph.js ../src/$FILELIST.js ../src/SVGRenderer.js ../src/VMLRenderer.js
-    os.system("java -jar " + jsd + "/jsrun.jar " + jsd + "/app/run.js -a -v -t=" + jsd + "/templates/jsx -d=tmp/docs " + filesStr)
-    
+    os.system("java -jar " + jsd + "/jsrun.jar " + jsd + "/app/run.js -a -v -p -t=" + jsd + "/templates/jsx -d=tmp/docs " + filesStr)
+
     #zip -r tmp/docs.zip tmp/docs/
     os.system("cd tmp && zip -r docs-" + version + ".zip docs/ && cd ..")
     shutil.move("tmp/docs-" + version + ".zip", output + "/docs-" + version + ".zip")
@@ -286,6 +290,15 @@ def makeHint():
 
 
 '''
+    Run Unit Tests
+'''
+def makeTest():
+    global jstest, reset
+    
+    os.system('java -jar ' + jstest + ' ' + reset + ' --tests all --basePath ./ --config test/jsTestDriver.conf --captureConsole');
+
+
+'''
     Make targets Release and Compressor
 '''
 def makeAll():
@@ -294,10 +307,10 @@ def makeAll():
     
 
 def main(argv):
-    global yui, jsdoc, version, output, hint
+    global yui, jsdoc, version, output, hint, jstest, reset
 
     try:
-        opts, args = getopt.getopt(argv, "hy:j:v:o:l:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint="])
+        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset"])
     except getopt.GetoptError as (errono, strerror):
         usage()
         sys.exit(2)
@@ -315,6 +328,10 @@ def main(argv):
             yui = arg
         elif opt in ("-l", "--hint"):
             hint = arg
+        elif opt in ("-t", "--test"):
+            jstest = arg
+        elif opt in ("--reset"):
+            reset = '--reset'
 
     target = "".join(args)
 

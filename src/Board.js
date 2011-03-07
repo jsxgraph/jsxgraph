@@ -178,6 +178,11 @@ JXG.Board = function(container, renderer, id, origin, zoomX, zoomY, unitX, unitY
     this.renderer = renderer;
 
     /**
+     * Grids keeps track of all grids attached to this board.
+     */
+    this.grids = [];
+
+    /**
      * Some standard options
      * @type JXG.Options
      */
@@ -568,16 +573,14 @@ JXG.Board.prototype.setId = function (obj, type) {
     if(elId == '' || !JXG.exists(elId)) {
         elId = this.id + type + num;
     }
-    // Objekt an den Renderer zum Zeichnen uebergeben
+
     obj.id = elId;
-    // Objekt in das assoziative Array einfuegen
     this.objects[elId] = obj;
 
-    if(true && obj.hasLabel) {
+    if(obj.hasLabel) {
         obj.label.content.id = elId+"Label";
 
         if(!obj.label.content.isLabel) {
-            this.renderer.drawText(obj.label.content);
             if(!obj.label.content.visProp['visible']) {
                 this.renderer.hide(obj.label.content);
             }
@@ -592,19 +595,6 @@ JXG.Board.prototype.setId = function (obj, type) {
  * @param {Object} obj The object to add.
  */
 JXG.Board.prototype.finalizeAdding = function (obj) {
-    if (obj.hasLabel) {
-        if(false) {
-            obj.label.content.id = obj.id + "Label";
-
-            if(!obj.label.content.isLabel) {
-                this.renderer.drawText(obj.label.content);
-                if(!obj.label.content.visProp['visible']) {
-                    this.renderer.hide(obj.label.content);
-                }
-            }
-        }
-        this.renderer.drawText(obj.label.content);
-    }
     if(!obj.visProp['visible']) {
         this.renderer.hide(obj);
     }
@@ -1139,12 +1129,8 @@ JXG.Board.prototype.moveOrigin = function () {
     }
 
     this.clearTraces();
-
     this.fullUpdate();
-    if(this.options.grid.hasGrid) {
-        this.renderer.removeGrid(this);
-        this.renderer.drawGrid(this);
-    }
+
     return this;
 };
 
@@ -1245,8 +1231,8 @@ JXG.Board.prototype.updateConditions = function() { return false; };
  * @returns {JXG.Board} Reference to the board.
  */
 JXG.Board.prototype.calculateSnapSizes = function() {
-    var p1 = new JXG.Coords(JXG.COORDS_BY_USER,[0,0],this),
-        p2 = new JXG.Coords(JXG.COORDS_BY_USER,[1/this.options.grid.gridX,1/this.options.grid.gridY],this),
+    var p1 = new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this),
+        p2 = new JXG.Coords(JXG.COORDS_BY_USER, [this.options.grid.gridX, this.options.grid.gridY], this),
         x = p1.scrCoords[1]-p2.scrCoords[1],
         y = p1.scrCoords[2]-p2.scrCoords[2];
 
@@ -1281,14 +1267,9 @@ JXG.Board.prototype.applyZoom = function() {
         }
     }
     this.calculateSnapSizes();
-
     this.clearTraces();
-
     this.fullUpdate();
-    if(this.options.grid.hasGrid) {
-        this.renderer.removeGrid(this);
-        this.renderer.drawGrid(this);
-    }
+
     return this;
 };
 
@@ -1622,7 +1603,7 @@ JXG.Board.prototype.updateRendererCanvas = function(drag) {
     var el, pEl, i, 
         layers = this.options.layer,
         len = this.options.layer.numlayers,
-        last = Number.NEGATIVE_INFINITY, layer;
+        last = Number.NEGATIVE_INFINITY, mini, la;
     
     for (i=0;i<len;i++) {
         mini = Number.POSITIVE_INFINITY;
@@ -1756,6 +1737,31 @@ JXG.Board.prototype.fullUpdate = function() {
     this.needsFullUpdate = true;
     this.update();
     this.needsFullUpdate = false;
+    return this;
+};
+
+/**
+ * Adds a grid to the board according to the settings given in board.options.
+ * @returns {JXG.Board} Reference to the board.
+ */
+JXG.Board.prototype.addGrid = function () {
+    this.create('grid', []);
+
+    return this;
+};
+
+/**
+ * Removes all grids assigned to this board. Warning: This method also removes all objects depending on one or
+ * more of the grids.
+ * @returns {JXG.Board} Reference to the board object.
+ */
+JXG.Board.prototype.removeGrids = function () {
+    var i;
+
+    for(i = 0; i < this.grids.length; i++) {
+        this.removeObject(this.grids[i]);
+    }
+
     return this;
 };
 

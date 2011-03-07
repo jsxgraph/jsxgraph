@@ -109,30 +109,6 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
     this.showInfobox = JXG.Options.point.showInfobox;
     
     /**
-     * Descriptive character, displayed next to the point
-     * @type JXG.Label
-     * @private
-     */
-    this.label = {};
-    this.label.relativeCoords = [10,-10];
-    this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name)); //?
-    if (typeof withLabel=='undefined' || withLabel==true) {
-        this.board.objects[this.id] = this;
-        this.label.content = new JXG.Text(this.board, this.nameHTML, this.id, 
-            this.label.relativeCoords, this.id+"Label", '', null, true, this.board.options.text.defaultDisplay);
-        delete(this.board.objects[this.id]);
-
-        this.label.color = '#000000';
-        if(!show) {
-            this.label.hiddenByParent = true;
-            this.label.content.visProp['visible'] = false;
-        }
-        this.hasLabel = true;
-    } else {
-        this.showInfobox = false;
-    }
-    
-    /**
      * False: Point can be moved, True: Point can't be moved with the mouse.
      * @type boolean
      * @default false
@@ -252,6 +228,30 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
     this.id = this.board.setId(this, 'P');
     this.board.renderer.drawPoint(this);
     this.board.finalizeAdding(this);
+
+    /**
+     * Descriptive character, displayed next to the point
+     * @type JXG.Label
+     * @private
+     */
+    this.label = {};
+    this.label.relativeCoords = [10,-10];
+    this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name)); //?
+    if (typeof withLabel=='undefined' || withLabel==true) {
+        this.board.objects[this.id] = this;
+        this.label.content = new JXG.Text(this.board, this.nameHTML, this.id,
+            this.label.relativeCoords, this.id+"Label", '', null, true, this.board.options.text.display);
+
+        this.label.color = '#000000';
+        if(!show) {
+            this.label.hiddenByParent = true;
+            this.label.content.visProp['visible'] = false;
+        }
+        this.hasLabel = true;
+    } else {
+        this.showInfobox = false;
+    }
+
 };
 
 /**
@@ -439,7 +439,7 @@ JXG.Point.prototype.updateRenderer = function () {
     /* Call the renderer only if point is visible. */
     if(this.visProp['visible']) {
         var wasReal = this.isReal;
-        this.isReal = (isNaN(this.coords.usrCoords[1]+this.coords.usrCoords[2]))?false:true;
+        this.isReal = (!isNaN(this.coords.usrCoords[1] + this.coords.usrCoords[2]));
         this.isReal = (Math.abs(this.coords.usrCoords[0])>JXG.Math.eps)?this.isReal:false;  //Homogeneous coords: ideal point
         if (this.isReal) {
             if (wasReal!=this.isReal) { 
@@ -457,7 +457,9 @@ JXG.Point.prototype.updateRenderer = function () {
 
     /* Update the label if visible. */
     if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
-        //this.label.setCoordinates(this.coords);
+        //this.label.content.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN,
+        //    [this.label.content.relativeCoords.scrCoords[1]+this.coords.scrCoords[1],
+        //     this.label.content.relativeCoords.scrCoords[2]+this.coords.scrCoords[2]], this.board);
         this.label.content.update();
         //this.board.renderer.updateLabel(this.label);
         this.board.renderer.updateText(this.label.content);

@@ -378,6 +378,203 @@ JXG.Math.Geometry = {
         }
     },
 
+    /**
+     * A line can be a segment, a straight, or a ray. so it is not always delimited by point1 and point2
+     * calcStraight determines the visual start point and end point of the line. A segment is only drawn
+     * from start to end point, a straight line is drawn until it meets the boards boundaries.
+     * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
+     * @param {JXG.Coords} point1 Coordinates of the point where line drawing begins. This value is calculated and set by this method.
+     * @param {JXG.Coords} point2 Coordinates of the point where line drawing ends. This value is calculated and set by this method.
+     * @see Line
+     * @see JXG.Line
+     */
+    calcStraight: function(el, point1, point2) {
+        var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast,
+            c, s, i, j, p1, p2;
+
+        straightFirst = el.visProp['straightFirst'];
+        straightLast = el.visProp['straightLast'];
+
+        // If one of the point is an ideal point in homogeneous coordinates
+        // drawing of line segments or rays are not possible.
+        if (Math.abs(point1.scrCoords[0]) < JXG.Math.eps) {
+            straightFirst = true;
+        }
+        if (Math.abs(point2.scrCoords[0]) < JXG.Math.eps) {
+            straightLast = true;
+        }
+
+        if (!straightFirst && !straightLast) {  // Do nothing in case of line segments (inside or outside of the board)
+            return;
+        }
+
+        // Compute the stdform of the line in screen coordinates.
+        c = [];
+        c[0] = el.stdform[0] -
+                el.stdform[1] * el.board.origin.scrCoords[1] / el.board.stretchX +
+                el.stdform[2] * el.board.origin.scrCoords[2] / el.board.stretchY;
+        c[1] = el.stdform[1] / el.board.stretchX;
+        c[2] = el.stdform[2] / (-el.board.stretchY);
+
+        if (isNaN(c[0] + c[1] + c[2])) return; // p1=p2
+
+        // Intersect the line with the four borders of the board.
+        s = [];
+        s[0] = JXG.Math.crossProduct(c, [0,0,1]);  // top
+        s[1] = JXG.Math.crossProduct(c, [0,1,0]);  // left
+        s[2] = JXG.Math.crossProduct(c, [-el.board.canvasHeight,0,1]);  // bottom
+        s[3] = JXG.Math.crossProduct(c, [-el.board.canvasWidth,1,0]);   // right
+
+        // Normalize the intersections
+        for (i = 0; i < 4; i++) {
+            if (Math.abs(s[i][0]) > JXG.Math.eps) {
+                for (j = 2; j > 0; j--) {
+                    s[i][j] /= s[i][0];
+                }
+                s[i][0] = 1.0;
+            }
+        }
+
+        takePoint1 = false;
+        takePoint2 = false;
+        if (!straightFirst && // Line starts at point1 and point2 is inside the board
+                point1.scrCoords[1] >= 0.0 && point1.scrCoords[1] <= el.board.canvasWidth &&
+                point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= el.board.canvasHeight) {
+            takePoint1 = true;
+        }
+        if (!straightLast && // Line ends at point2 and point2 is inside the board
+                point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= el.board.canvasWidth &&
+                point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= el.board.canvasHeight) {
+            takePoint2 = true;
+        }
+
+        if (Math.abs(s[1][0]) < JXG.Math.eps) {           // line is parallel to "left", take "top" and "bottom"
+            intersect1 = s[0];                          // top
+            intersect2 = s[2];                          // bottom
+        } else if (Math.abs(s[0][0]) < JXG.Math.eps) {           // line is parallel to "top", take "left" and "right"
+            intersect1 = s[1];                          // left
+            intersect2 = s[3];                          // right
+        } else if (s[1][2] < 0) {                         // left intersection out of board (above)
+            intersect1 = s[0];                          // top
+            if (s[3][2] > el.board.canvasHeight) {        // right intersection out of board (below)
+                intersect2 = s[2];                      // bottom
+            } else {
+                intersect2 = s[3];                      // right
+            }
+        } else if (s[1][2] > el.board.canvasHeight) {     // left intersection out of board (below)
+            intersect1 = s[2];                          // bottom
+            if (s[3][2] < 0) {                            // right intersection out of board (above)
+                intersect2 = s[0];                      // top
+            } else {
+                intersect2 = s[3];                      // right
+            }
+        } else {
+            intersect1 = s[1];                          // left
+            if (s[3][2] < 0) {                            // right intersection out of board (above)
+                intersect2 = s[0];                      // top
+            } else if (s[3][2] > el.board.canvasHeight) { // right intersection out of board (below)
+                intersect2 = s[2];                      // bottom
+            } else {
+                intersect2 = s[3];                      // right
+            }
+        }
+
+        intersect1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect1.slice(1), el.board);
+        intersect2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect2.slice(1), el.board);
+
+        if (!takePoint1 && !takePoint2) {              // If both points are outside and the complete ray is outside we do nothing
+            if (!straightFirst && straightLast && // Ray starting at point 1
+                    !this.isSameDirection(point1, point2, intersect1) && !this.isSameDirection(point1, point2, intersect2)) {
+                return;
+            } else if (straightFirst && !straightLast && // Ray starting at point 2
+                    !this.isSameDirection(point2, point1, intersect1) && !this.isSameDirection(point2, point1, intersect2)) {
+                return;
+            }
+        }
+
+        if (!takePoint1) {
+            if (!takePoint2) {                // Two border intersection points are used
+                if (this.isSameDirection(point1, point2, intersect1)) {
+                    if (!this.isSameDirection(point1, point2, intersect2)) {
+                        p2 = intersect1;
+                        p1 = intersect2;
+                    } else {
+                        if (JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect1.usrCoords) < JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect2.usrCoords)) {
+                            p1 = intersect1;
+                            p2 = intersect2;
+                        } else {
+                            p2 = intersect1;
+                            p1 = intersect2;
+                        }
+                    }
+                } else {
+                    if (this.isSameDirection(point1, point2, intersect2)) {
+                        p1 = intersect1;
+                        p2 = intersect2;
+                    } else {
+                        if (JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect1.usrCoords) < JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect2.usrCoords)) {
+                            p2 = intersect1;
+                            p1 = intersect2;
+                        } else {
+                            p1 = intersect1;
+                            p2 = intersect2;
+                        }
+                    }
+                }
+            } else {                          // Instead of point1 the border intersection is taken
+                if (this.isSameDirection(point2, point1, intersect1)) {
+                    p1 = intersect1;
+                } else {
+                    p1 = intersect2;
+                }
+            }
+        } else {
+            if (!takePoint2) {                // Instead of point2 the border intersection is taken
+                if (this.isSameDirection(point1, point2, intersect1)) {
+                    p2 = intersect1;
+                } else {
+                    p2 = intersect2;
+                }
+            }
+        }
+
+        if (p1) point1.setCoordinates(JXG.COORDS_BY_USER, p1.usrCoords.slice(1));
+        if (p2) point2.setCoordinates(JXG.COORDS_BY_USER, p2.usrCoords.slice(1));
+    },
+
+    /**
+     * If you're looking from point "start" towards point "s" and can see the point "p", true is returned. Otherwise false.
+     * @param {JXG.Coords} start The point you're standing on.
+     * @param {JXG.Coords} p The point in which direction you're looking.
+     * @param {JXG.Coords} s The point that should be visible.
+     * @returns {Boolean} True, if from start the point p is in the same direction as s is, that means s-start = k*(p-start) with k>=0.
+     */
+    isSameDirection: function(start, p, s) {
+        var dx, dy, sx, sy, r = false;
+
+        dx = p.usrCoords[1] - start.usrCoords[1];
+        dy = p.usrCoords[2] - start.usrCoords[2];
+
+        sx = s.usrCoords[1] - start.usrCoords[1];
+        sy = s.usrCoords[2] - start.usrCoords[2];
+
+        if (Math.abs(dx) < JXG.Math.eps) dx = 0;
+        if (Math.abs(dy) < JXG.Math.eps) dy = 0;
+        if (Math.abs(sx) < JXG.Math.eps) sx = 0;
+        if (Math.abs(sy) < JXG.Math.eps) sy = 0;
+
+        if (dx >= 0 && sx >= 0) {
+            if ((dy >= 0 && sy >= 0) || (dy <= 0 && sy <= 0)) {
+                r = true;
+            }
+        } else if (dx <= 0 && sx <= 0) {
+            if ((dy >= 0 && sy >= 0) || (dy <= 0 && sy <= 0)) {
+                r = true;
+            }
+        }
+
+        return r;
+    },
 
     /****************************************/
     /****          INTERSECTIONS         ****/

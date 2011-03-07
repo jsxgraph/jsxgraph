@@ -144,7 +144,7 @@ JXG.PsTricks.addLine = function(el) {
     var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
     var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
     if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
-       el.board.renderer.calcStraight(el,screenCoords1,screenCoords2); 
+       JXG.Math.Geometry.calcStraight(el,screenCoords1,screenCoords2); 
     } 
     this.psTricksString += "\\psline";
     this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) + ", linewidth=" +el.visProp['strokeWidth']+"px";

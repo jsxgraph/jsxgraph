@@ -247,8 +247,6 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         // Edge points: This is where the display of the line starts and ends, e.g. the intersection points
         // of the line with the edges of the viewing area if the line is a straight.
         e1, e2,
-        // Which direction do we go? Plus or Minus
-        dir = 1,
         // what's the first/last tick to draw?
         begin, end,
         // Coordinates of the current tick
@@ -267,7 +265,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
             labelText = pos.toString();
             if(labelText.length > 5)
                 labelText = pos.toPrecision(3).toString();
-            label = new JXG.Text(board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], id+i+"Label", '', null, true, board.options.text.defaultDisplay);
+            label = new JXG.Text(board, labelText, null, [newTick.usrCoords[1], newTick.usrCoords[2]], id+i+"Label", '', null, true, board.options.text.display);
             label.distanceX = 4;
             label.distanceY = -9;
             label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(board.stretchX), 
@@ -348,7 +346,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     e2 = new JXG.Coords(JXG.COORDS_BY_USER, [p2.coords.usrCoords[1], p2.coords.usrCoords[2]], this.board);
         
     // ... and calculate the drawn start and end point
-    this.board.renderer.calcStraight(this.line, e1, e2);
+    JXG.Math.Geometry.calcStraight(this.line, e1, e2);
         
     if(!this.equidistant) {
         // we have an array of fixed ticks we have to draw
@@ -364,7 +362,7 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
         var nx = 0;
         var ny = 0;
 
-        for(var i=0; i<this.fixedTicks.length; i++) {
+        for(i=0; i<this.fixedTicks.length; i++) {
             // is this tick visible?
             if((-length_minus <= this.fixedTicks[i]) && (this.fixedTicks[i] <= length_plus)) {
                 if(this.fixedTicks[i] < 0) {
@@ -415,12 +413,12 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
      */
 
     // p1 is outside the visible area or the line is a segment
-    if(this.board.renderer.isSameDirection(p1.coords, e1, e2)) {
+    if(JXG.Math.Geometry.isSameDirection(p1.coords, e1, e2)) {
         // calculate start and end points
         begin = respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1));
         end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
         
-        if(this.board.renderer.isSameDirection(p1.coords, p2.coords, e1)) {
+        if(JXG.Math.Geometry.isSameDirection(p1.coords, p2.coords, e1)) {
             if(this.line.visProp.straightFirst)
                 begin -=  2*ticksDelta;
         } else {
@@ -500,7 +498,7 @@ JXG.Ticks.prototype.removeTickLabels = function () {
     // remove existing tick labels
     if(this.ticks != null) {
         if ((this.board.needsFullUpdate||this.needsRegularUpdate) && 
-            !(this.board.options.renderer=='canvas'&&this.board.options.text.defaultDisplay=='internal')
+            !(this.board.options.renderer=='canvas'&&this.board.options.text.display=='internal')
            ) {
             for(j=0; j<this.ticks.length; j++) {
                 if(this.labels[j]!=null && this.labels[j].visProp['visible']) { 

@@ -44,8 +44,8 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
     this.elementClass = JXG.OBJECT_CLASS_OTHER;                
 
     this.init(board, id, name);
-    this.contentStr = contentStr;
-    this.plaintextStr = '';
+    this.content = contentStr;
+    this.plaintext = '';
 
     /**
      * Set the display layer.
@@ -58,7 +58,12 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
      * 'internal' is the text element of SVG and the textpath element 
      * of VML.
      */
-    this.display = display || 'html'; 
+    this.visProp.display = display || 'html';
+
+    // the next two visProps are preparations for the upcoming property related changes coming with the
+    // JSXGraph spring of code 2011
+    this.visProp.useASCIIMathML = board.options.text.useASCIIMathML;
+    this.visProp.useMathJax = board.options.text.useMathJax;
     
     if((typeof isLabel != 'undefined') && (isLabel != null)) {
         this.isLabel = isLabel;
@@ -78,16 +83,16 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
      * @type {string}
      * @name JXG.Text#strokeOpacity
      */
+    
      /**
      * The font size of the given text.
      * @type {string}
      * @name JXG.Text#fontSize
      * @default {@link JXG.Options.fontSize}
      */
-    //this.visProp['fontSize'] = this.board.options.text.fontSize;
+    this.visProp['fontSize'] = this.board.options.text.fontSize;
 
     this.visProp['visible'] = true;
-    //this.show = true; // noch noetig? BV
 
     if (digits!=null) {
         this.digits = digits;
@@ -102,12 +107,11 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
      */
     if ((this.element = this.board.objects[element])){
         var anchor;
-        if(!this.isLabel) {
+        if (this.isLabel) {
+            anchor = this.element.getLabelAnchor();
+        } else {
             anchor = this.element.getTextAnchor();
         }
-        else {
-            anchor = this.element.getLabelAnchor();
-        }      
         this.element.addChild(this);
         this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [parseFloat(coords[0]),parseFloat(coords[1])],this.board);     
         this.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, 
@@ -121,34 +125,37 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
         this.updateCoords = new Function('',fs);
     }
 
-    if (typeof this.contentStr=='function') {
-        this.updateText = function() { this.plaintextStr = this.contentStr(); };
+    if (typeof this.content === 'function') {
+        this.updateText = function() { this.plaintext = this.content(); };
     } else {
-        var plaintext;
-        if (typeof this.contentStr=='number') {
-            plaintext = (this.contentStr).toFixed(this.digits);  
+        if (JXG.isNumber(this.content)) {
+            this.content = (this.content).toFixed(this.digits);
         } else {
-            if (this.board.options.text.useASCIIMathML) {
-                plaintext = "'`"+this.contentStr+"`'";              // Convert via ASCIIMathML
+            if (this.visProp.useASCIIMathML) {
+                this.content = "'`" + this.content + "`'";              // Convert via ASCIIMathML
             } else {
-                plaintext = this.generateTerm(this.contentStr);   // Converts GEONExT syntax into JavaScript string
+                this.content = this.generateTerm(this.content);   // Converts GEONExT syntax into JavaScript string
             }
         }
-        this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
+        this.updateText = new Function('this.plaintext = ' + this.content + ';');
     }
+
     this.updateText();                    // First evaluation of the string.
-                                          // Needed for display='internal' and Canvas 
-    if(!this.isLabel) {
-        this.id = this.board.setId(this, 'T');
-        this.board.renderer.drawText(this);
-        if(!this.visProp['visible']) {
-            this.board.renderer.hide(this);
-        }
+                                          // Needed for display='internal' and Canvas
+
+    this.id = this.board.setId(this, 'T');
+    this.board.renderer.drawText(this);
+    if(!this.visProp['visible']) {
+        this.board.renderer.hide(this);
     }
-    if (typeof this.contentStr=='string') {
-        this.notifyParents(this.contentStr);
+    
+    if (typeof this.content === 'string') {
+        this.notifyParents(this.content);
     }
     this.size = [1.0,1.0];
+
+
+    return this;
 };
 JXG.Text.prototype = new JXG.GeometryElement();
 
@@ -169,17 +176,23 @@ JXG.Text.prototype.hasPoint = function (x,y) {
  * @return {object} reference to the text object.
  */
 JXG.Text.prototype.setText = function(text) {
-    var plaintext;
-    if (JXG.isNumber(text)) {
-        plaintext = (text).toFixed(this.digits);  
-        this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
-    } else if (JXG.isFunction(text)) {
-        this.updateText = function() { this.plaintextStr = text(); };
+    if (typeof text === 'function') {
+        this.updateText = function() { this.plaintext = text(); };
     } else {
-        plaintext = this.generateTerm(text);   // Converts GEONExT syntax into JavaScript string
-        this.updateText = new Function('this.plaintextStr = ' + plaintext + ';');
+        if (JXG.isNumber(text)) {
+            this.content = (text).toFixed(this.digits);
+        } else {
+            if (this.visProp.useASCIIMathML) {
+                this.content = "'`" + text + "`'";              // Convert via ASCIIMathML
+            } else {
+                this.content = this.generateTerm(text);   // Converts GEONExT syntax into JavaScript string
+            }
+        }
+        this.updateText = new Function('this.plaintext = ' + this.content + ';');
     }
-    this.updateText();
+
+    this.updateText();                    // First evaluation of the string.
+                                          // Needed for display='internal' and Canvas
     this.updateSize();
     return this;
 };
@@ -193,7 +206,6 @@ JXG.Text.prototype.setText = function(text) {
  * the textbox. 
  * In JSXGraph this.size is necessary for applying rotations in IE and
  * for aligning text.
- * @return {}
  */
 JXG.Text.prototype.updateSize = function () {
     // Here comes a very crude estimation of the dimensions of
@@ -203,7 +215,7 @@ JXG.Text.prototype.updateSize = function () {
     } else if (this.display=='internal' && this.board.renderer.type=='svg') {
         this.size = [this.rendNode.getBBox().width, this.rendNode.getBBox().height];
     } else if (this.board.renderer.type=='vml' || (this.display=='internal' && this.board.renderer.type=='canvas')) { 
-        this.size = [parseFloat(this.visProp['fontSize'])*this.plaintextStr.length*0.45,parseFloat(this.visProp['fontSize'])*0.9]        
+        this.size = [parseFloat(this.visProp['fontSize'])*this.plaintext.length*0.45,parseFloat(this.visProp['fontSize'])*0.9]
     }
 };    
 
@@ -234,19 +246,19 @@ JXG.Text.prototype.setCoords = function (x,y) {
  * is called. 
  */
 JXG.Text.prototype.update = function () {
-    var anchor, plainOld;
+    var anchor;
+
     if (this.needsUpdate && !this.frozen) {
-        if (this.relativeCoords){
-            anchor;
-            if(!this.isLabel) {
+        if (this.relativeCoords) {
+            if (this.isLabel) {
+                anchor = this.element.getLabelAnchor();
+            } else {
                 anchor = this.element.getTextAnchor();
             }
-            else {
-                anchor = this.element.getLabelAnchor();
-            }
-            this.coords.setCoordinates(JXG.COORDS_BY_SCREEN, 
-                [this.relativeCoords.scrCoords[1]+anchor.scrCoords[1],
-                 this.relativeCoords.scrCoords[2]+anchor.scrCoords[2]]);
+
+            this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
+                    [this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
+                        this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
         } else {
             this.updateCoords();
         }
@@ -290,9 +302,9 @@ JXG.Text.prototype.updateTransform = function () {
  * @see #geonext2JS.
  */
 JXG.Text.prototype.generateTerm = function (contentStr) {
-    var res = null;
-    var elements = this.board.elementsByName;
-    var plaintext = '""';
+    var res,
+        plaintext = '""',
+        term;
     contentStr = contentStr.replace(/\r/g,''); 
     contentStr = contentStr.replace(/\n/g,''); 
     contentStr = contentStr.replace(/\"/g,'\\"'); 
@@ -313,8 +325,8 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
     if (i>=0) {
         while (i>=0) {
             plaintext += ' + "'+ JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr.slice(0,i))) + '"';
-            var term = contentStr.slice(i+7,j);
-            var res = JXG.GeonextParser.geonext2JS(term, this.board); 
+            term = contentStr.slice(i+7,j);
+            res = JXG.GeonextParser.geonext2JS(term, this.board);
             res = res.replace(/\\"/g,'"');
             res = res.replace(/\\'/g,"'");
             if (res.indexOf('toFixed')<0) {  // GEONExT-Hack: apply rounding once only.  
@@ -333,18 +345,7 @@ JXG.Text.prototype.generateTerm = function (contentStr) {
     plaintext = plaintext.replace(/<\/overline>/g,'</span>');
     plaintext = plaintext.replace(/<arrow>/g,'<span style=text-decoration:overline>');
     plaintext = plaintext.replace(/<\/arrow>/g,'</span>');
-/*    i = plaintext.indexOf('<name>');
-    j = plaintext.indexOf('</name>');
-    while (i>=0) {
-        var head = plaintext.slice(0,i+6);
-        var mid = plaintext.slice(i+6,j);
-        var tail = plaintext.slice(j);
-        mid = JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(mid));
-        plaintext = head + mid + tail;
-        i = plaintext.indexOf('<name>',i+7);
-        j = plaintext.indexOf('</name>',i+7);
-    }
-*/
+
     plaintext = plaintext.replace(/&amp;/g,'&'); // This should replace &amp;pi; by &pi;
     return plaintext;
 };
@@ -414,7 +415,7 @@ JXG.Text.prototype.notifyParents = function (contentStr) {
  * </script><pre>
  */
 JXG.createText = function(board, parentArr, atts) {
-    atts = JXG.checkAttributes(atts,{layer:null,display:board.options.text.defaultDisplay,parent:null});  // 'html' or 'internal'
+    atts = JXG.checkAttributes(atts,{layer:null,display:board.options.text.display,parent:null});  // 'html' or 'internal'
     if(atts['parent'] != null) { atts['parent'] = atts['parent'].id;}
     return new JXG.Text(board, parentArr[parentArr.length-1], atts['parent'], parentArr, atts['id'], atts['name'], atts['digits'], false, atts['display'],atts['layer']);
 };

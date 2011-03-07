@@ -1503,31 +1503,139 @@ JXG.Math.Numerics = (function(JXG, Math) {
          * </script><pre>
          */
         reuleauxPolygon: function(points, nr) {
-    var pi2 = Math.PI*2,
-        pi2_n = pi2/nr,
-        diag = (nr-1)/2,
-        beta, d = 0,
-        makeFct = function(which, trig) {
-                return function(t, suspendUpdate) {
-                    if (!suspendUpdate) {
-                        d = points[0].Dist(points[diag]);
-                        beta = JXG.Math.Geometry.rad([points[0].X()+1,points[0].Y()],points[0],points[(diag)%nr]);
-                    }
-                    var t1 = (t%pi2 + pi2) % pi2;
-                    var j = Math.floor(t1 / pi2_n)%nr;
-                    if (isNaN(j)) return j;
-                    //t1 = (t1-j*pi2_n)*0.5 + beta+j*pi2_n;
-                    t1 = t1*0.5+j*pi2_n*0.5 + beta;
-                    return points[j][which]()+d*Math[trig](t1);
+            var pi2 = Math.PI*2,
+                pi2_n = pi2/nr,
+                diag = (nr-1)/2,
+                beta, d = 0,
+                makeFct = function(which, trig) {
+                    return function(t, suspendUpdate) {
+                        if (!suspendUpdate) {
+                            d = points[0].Dist(points[diag]);
+                            beta = JXG.Math.Geometry.rad([points[0].X()+1,points[0].Y()],points[0],points[(diag)%nr]);
+                        }
+                        var t1 = (t%pi2 + pi2) % pi2;
+                        var j = Math.floor(t1 / pi2_n)%nr;
+                        if (isNaN(j)) return j;
+                        //t1 = (t1-j*pi2_n)*0.5 + beta+j*pi2_n;
+                        t1 = t1*0.5+j*pi2_n*0.5 + beta;
+                        return points[j][which]()+d*Math[trig](t1);
+                    };
                 };
-            };
-    return [
-            makeFct('X','cos'),
-            makeFct('Y','sin'),
-            0,
-            Math.PI*2
-        ];
-        }        
+            return [
+                makeFct('X','cos'),
+                makeFct('Y','sin'),
+                0,
+                Math.PI*2
+            ];
+        },
+
+        /**
+         * Implements the Ramen-Douglas-Peuker algorithm.
+         * It discards points which are not necessary from the polygonal line defined by the point array
+         * pts. The computation is done in screen coordinates.
+         * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
+         * @param {Array} pts Array of {@link JXG.Coords}
+         * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+         * @returns {Array} An array containing points which represent an apparently identical curve as the points of pts do, but contains fewer points.
+         */
+        RamenDouglasPeuker: function(pts, eps) {
+            var newPts = [], i, k, len,
+                /**
+                 * RDP() is a private subroutine of {@link JXG.Math.Numerics#RamenDouglasPeuker}.
+                 * It runs recursively through the point set and searches the
+                 * point which has the largest distance from the line between the first point and
+                 * the last point. If the distance from the line is greater than eps, this point is
+                 * included in our new point set otherwise it is discarded.
+                 * If it is taken, we recursively apply the subroutine to the point set before
+                 * and after the chosen point.
+                 * @param {Array} pts Array of {@link JXG.Coords}
+                 * @param {Number} i Index of an element of pts
+                 * @param {Number} j Index of an element of pts
+                 * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
+                 * @param {Array} newPts Array of {@link JXG.Coords}
+                 * @private
+                 */
+                RDP = function(pts, i, j, eps, newPts) {
+                    var result = findSplit(pts, i, j);
+
+                    if (result[0] > eps) {
+                        RDP(pts, i, result[1], eps, newPts);
+                        RDP(pts, result[1], j, eps, newPts);
+                    } else {
+                        newPts.push(pts[j]);
+                    }
+                },
+                /**
+                 * findSplit() is a subroutine of {@link JXG.Math.Numerics#RamenDouglasPeuker}.
+                 * It searches for the point between index i and j which
+                 * has the largest distance from the line between the points i and j.
+                 * @param {Array} pts Array of {@link JXG.Coords}
+                 * @param {Number} i Index of a point in pts
+                 * @param {Number} j Index of a point in pts
+                 **/
+                findSplit = function(pts, i, j) {
+                    var dist = 0,
+                        f = i,
+                        d, k, ci, cj, ck,
+                        x0, y0, x1, y1,
+                        den, lbda;
+
+                    if (j - i < 2) return [-1.0,0];
+
+                    ci = pts[i].scrCoords;
+                    cj = pts[j].scrCoords;
+                    if (isNaN(ci[1] + ci[2] + cj[1] + cj[2])) return [NaN,j];
+
+                    for (k = i + 1; k < j; k++) {
+                        ck = pts[k].scrCoords;
+                        x0 = ck[1] - ci[1];
+                        y0 = ck[2] - ci[2];
+                        x1 = cj[1] - ci[1];
+                        y1 = cj[2] - ci[2];
+                        den = x1 * x1 + y1 * y1;
+                        if (den >= JXG.Math.eps) {
+                            lbda = (x0 * x1 + y0 * y1) / den;
+                            d = x0 * x0 + y0 * y0 - lbda * (x0 * x1 + y0 * y1);
+                        } else {
+                            lbda = 0.0;
+                            d = x0 * x0 + y0 * y0;
+                        }
+                        if (lbda < 0.0) {
+                            d = x0 * x0 + y0 * y0;
+                        } else if (lbda > 1.0) {
+                            x0 = ck[1] - cj[1];
+                            y0 = ck[2] - cj[2];
+                            d = x0 * x0 + y0 * y0;
+                        }
+                        if (d > dist) {
+                            dist = d;
+                            f = k;
+                        }
+                    }
+                    return [Math.sqrt(dist),f];
+                };
+
+            len = pts.length;
+
+            // Search for the left most point woithout NaN coordinates
+            i = 0;
+            while (i < len && isNaN(pts[i].scrCoords[1] + pts[i].scrCoords[2])) {
+                i++;
+            }
+            // Search for the right most point woithout NaN coordinates
+            k = len - 1;
+            while (k > i && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2])) {
+                k--;
+            }
+
+            // Only proceed if something is left
+            if (!(i > k || i == len)) {
+                newPts[0] = pts[i];
+                RDP(pts, i, k, eps, newPts);
+            }
+
+            return newPts;
+        }
 
     }
 })(JXG, Math);

@@ -465,5 +465,6 @@ JXG.Math = (function(JXG, Math, undefined) {
             }
             return stdform;
         }
+
     }; // JXG.Math
 })(JXG, Math);

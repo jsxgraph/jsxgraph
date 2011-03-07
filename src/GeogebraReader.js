@@ -1551,7 +1551,7 @@ this.writeBoard = function(board) {
   // snap to point
   var snapToPoint = (boardData.getElementsByTagName('evSettings')[0].getAttribute("pointCapturing") == "true");
 
-  var grid = (boardData.getElementsByTagName('evSettings')[0].getAttribute("grid") == "true") ? board.renderer.drawGrid(board) : null;
+  var grid = (boardData.getElementsByTagName('evSettings')[0].getAttribute("grid") == "true") ? board.create('grid') : null;
 
   if(boardData.getElementsByTagName('evSettings')[0].getAttribute("axes") && boardData.getElementsByTagName('evSettings')[0].getAttribute("axes") == "true") {
       board.ggbElements["xAxis"] = board.create('axis', [[0, 0], [1, 0]], {strokeColor:'black', minorTicks: 0});
@@ -1614,7 +1614,7 @@ this.writeElement = function(board, output, input, cmd) {
         if(typeof input != 'undefined') {
           if (ma!=null && ma.length==3) {
             // from Circle[A, 5] take "A" and "5", stored in ma[1] and ma[2]
-            var q = JXG.GeogebraReader.checkElement(ma[1])
+            var q = JXG.GeogebraReader.checkElement(ma[1]);
             var c = board.create('circle', [q, parseFloat(ma[2])], {fillColor:'none',visible:false,name:''});
             p = board.create('glider', [gxtEl.x, gxtEl.y, c], attr);
           } else if(JXG.isArray(input)) {
@@ -1802,7 +1802,7 @@ this.writeElement = function(board, output, input, cmd) {
         JXG.debug("* <b>Distance:</b> First: " + input[0].name + ", Second: " + input[1].name + "<br>\n");
 
         if(false && output[0].getAtribute('type') && output[0].getAttribute('type') == 'numeric') {
-          input[1].Value = function(){ return this.X(); }
+          input[1].Value = function(){ return this.X(); };
           p = input[1];
           board.elementsByName[attr.name] = p;
         } else {
@@ -2208,7 +2208,7 @@ this.writeElement = function(board, output, input, cmd) {
 	        var i1 = board.create('intersection', [input[1], pol, 0], {visible: false});
 	        var i2 = board.create('intersection', [input[1], pol, 1], {visible: false});
 	        var t1 = board.create('line', [input[0], i1], attr);
-            var attr2 = {}
+            var attr2 = {};
             attr2 = JXG.GeogebraReader.colorProperties(output[1], attr2);
             attr2 = JXG.GeogebraReader.visualProperties(output[1], attr2);
             attr2.name = output[1].getAttribute('label');

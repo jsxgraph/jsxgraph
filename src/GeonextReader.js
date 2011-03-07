@@ -322,8 +322,8 @@ this.readGeonext = function(tree,board) {
     // das Grid zeichnen
     // auf Kaestchen springen?
     snap = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('snap')[0].firstChild.data == "true") ? board.options.grid.snapToGrid = true : null;
-    gridX = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data) ? board.options.grid.gridX = boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data*1 : null;
-    gridY = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data) ? board.options.grid.gridY = boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data*1 : null;
+    gridX = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data) ? board.options.grid.gridX = 1/parseFloat(boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data) : null;
+    gridY = (boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data) ? board.options.grid.gridY = 1/parseFloat(boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data) : null;
     board.calculateSnapSizes();
     gridDash = boardData.getElementsByTagName('grid')[1].getElementsByTagName('dash')[0].firstChild.data;
     board.options.grid.gridDash = JXG.str2Bool(gridDash);
@@ -338,7 +338,7 @@ this.readGeonext = function(tree,board) {
     }
     board.options.grid.gridColor = gridColor;
     board.options.grid.gridOpacity = gridOpacity;
-    grid = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('grid')[0].firstChild.data == "true") ? board.renderer.drawGrid(board) : null;
+    grid = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('grid')[0].firstChild.data == "true") ? board.create('grid', []) : null;
 
     if(boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('coord')[0].firstChild.data == "true") {
 //        var p1coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board);
@@ -1190,7 +1190,7 @@ this.readGeonext = function(tree,board) {
                 // not used gxtEl.digits = Data.getElementsByTagName('cs')[0].firstChild.data;
                 gxtEl.autodigits = Data.getElementsByTagName('digits')[0].firstChild.data;
                 gxtEl.parent = JXG.GeonextReader.changeOriginIds(board,gxtEl.parent);
-                c = new JXG.Text(board, gxtEl.mpStr, gxtEl.parent, [gxtEl.x, gxtEl.y], gxtEl.id, gxtEl.name, gxtEl.autodigits, false,       board.options.text.defaultDisplay);
+                c = new JXG.Text(board, gxtEl.mpStr, gxtEl.parent, [gxtEl.x, gxtEl.y], gxtEl.id, gxtEl.name, gxtEl.autodigits, false, board.options.text.display);
                 c.setProperty('labelColor:'+gxtEl.colorLabel, 'visible:'+gxtEl.visible);
                 /*if(gxtEl.visible == "false") {
                     c.hideElement();
