@@ -229,29 +229,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
     this.board.renderer.drawPoint(this);
     this.board.finalizeAdding(this);
 
-    /**
-     * Descriptive character, displayed next to the point
-     * @type JXG.Label
-     * @private
-     */
-    this.label = {};
-    this.label.relativeCoords = [10,-10];
-    this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name)); //?
-    if (typeof withLabel=='undefined' || withLabel==true) {
-        this.board.objects[this.id] = this;
-        this.label.content = new JXG.Text(this.board, this.nameHTML, this.id,
-            this.label.relativeCoords, this.id+"Label", '', null, true, this.board.options.text.display);
-
-        this.label.color = '#000000';
-        if(!show) {
-            this.label.hiddenByParent = true;
-            this.label.content.visProp['visible'] = false;
-        }
-        this.hasLabel = true;
-    } else {
-        this.showInfobox = false;
-    }
-
+    this.createLabel(withLabel);
 };
 
 /**

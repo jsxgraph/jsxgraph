@@ -577,15 +577,6 @@ JXG.Board.prototype.setId = function (obj, type) {
     obj.id = elId;
     this.objects[elId] = obj;
 
-    if(obj.hasLabel) {
-        obj.label.content.id = elId+"Label";
-
-        if(!obj.label.content.isLabel) {
-            if(!obj.label.content.visProp['visible']) {
-                this.renderer.hide(obj.label.content);
-            }
-        }
-    }
     return elId;
 };
 
@@ -598,10 +589,13 @@ JXG.Board.prototype.finalizeAdding = function (obj) {
     if(!obj.visProp['visible']) {
         this.renderer.hide(obj);
     }
+};
 
-    if(obj.hasLabel && !obj.label.content.visProp['visible']) {
+JXG.Board.prototype.finalizeLabel = function (obj) {
+    if(obj.hasLabel && !obj.label.content.isLabel && !obj.label.content.visProp['visible']) {
         this.renderer.hide(obj.label.content);
     }
+
 };
 
 /**
