@@ -96,15 +96,17 @@ TestCase("AbstractRenderer", {
     },
 
     testUpdateTextStyle: function () {
-        expectAsserts(1);
+        expectAsserts(2);
 
         var element = this.setUpTextElement('textnode'),
             node = document.getElementById('jxgbox_textnode');
 
         element.visProp.strokeColor = 'green';
+        element.visProp.fontSize = 10;
         this.ar.updateTextStyle(element);
 
         assertTrue('text color', '#008000' === node.style.color || 'green' === node.style.color);
+        assertEquals('text size', '10px', node.style.fontSize);
     }
 
 
