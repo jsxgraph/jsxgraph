@@ -172,7 +172,7 @@ JXG.GeometryElement = function () {
      * Only free elements like points, texts, curves can be frozen.
      * @type Boolean
      * @default false
-     * @name JXG.GeometryElement#fixed
+     * @name JXG.GeometryElement#frozen
      */
     this.frozen = false;
 

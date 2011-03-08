@@ -61,11 +61,58 @@
  */
 JXG.Composition = function (elements) {
     var genericMethods = [
+            /**
+             * Invokes setProperty for every stored element with a setProperty method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#setProperty} for further description, valid parameters and return values.
+             * @name setProperty
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
             'setProperty',
+
+            /**
+             * Invokes prepareUpdate for every stored element with a prepareUpdate method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#prepareUpdate} for further description, valid parameters and return values.
+             * @name prepareUpdate
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
             'prepareUpdate',
+
+            /**
+             * Invokes updateRenderer for every stored element with a updateRenderer method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#updateRenderer} for further description, valid parameters and return values.
+             * @name updateRenderer
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
             'updateRenderer',
+
+            /**
+             * Invokes update for every stored element with a update method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#update} for further description, valid parameters and return values.
+             * @name update
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
             'update',
+
+            /**
+             * Invokes highlight for every stored element with a highlight method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#highlight} for further description, valid parameters and return values.
+             * @name highlight
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
             'highlight',
+
+            /**
+             * Invokes noHighlight for every stored element with a noHighlight method and hands over the given arguments.
+             * See {@link JXG.GeometryElement#noHighlight} for further description, valid parameters and return values.
+             * @name noHighlight
+             * @memberOf JXG.Composition.prototype
+             * @function
+             */
             'noHighlight'
         ],
         generateMethod = function (what) {
