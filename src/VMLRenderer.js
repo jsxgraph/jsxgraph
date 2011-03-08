@@ -112,7 +112,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         for (i = 0; i < len; i++) {
             c = axis.ticks[i].scrCoords;
             if (axis.ticks[i].major) {
-                if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i].visProp.visible) {
+                if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i] && axis.labels[i].visProp.visible) {
                     this.drawText(axis.labels[i]);
                 }
                 tickArr.push(

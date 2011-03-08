@@ -35,6 +35,7 @@
     c = brd.create('circle', [p4, 3], {withLabel: true});
 
     l = brd.create('line', [p1, p4], {withLabel: true});
+    ti = brd.create('ticks', [l, 1], {drawLabels: false});
 
     t = brd.create('text', [1, 3, function () { return '\\[e^x\\]'}]);
 

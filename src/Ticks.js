@@ -464,7 +464,11 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
     while(startTick.distance(JXG.COORDS_BY_USER, tickCoords) < Math.abs(end - begin) + JXG.Math.eps) {
         if(i % (this.minorTicks+1) == 0) {
             tickCoords.major = true;
-            this.labels.push(makeLabel(tickPosition, tickCoords, this.board, this.drawLabels, this.id));
+            if(this.drawLabels) {
+                this.labels.push(makeLabel(tickPosition, tickCoords, this.board, this.drawLabels, this.id));
+            } else {
+                this.labels.push(null);
+            }
             tickPosition += ticksDelta;
         } else {
             tickCoords.major = false;
@@ -494,7 +498,10 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
  */
 JXG.Ticks.prototype.removeTickLabels = function () {
     var j;
-    // BEGIN: clean up the mess we left from our last run through this function
+
+    console.log('trying to remove labels');
+    console.log(this.drawLabels);
+
     // remove existing tick labels
     if(this.ticks != null) {
         if ((this.board.needsFullUpdate||this.needsRegularUpdate) && 
@@ -502,7 +509,8 @@ JXG.Ticks.prototype.removeTickLabels = function () {
            ) {
             for(j=0; j<this.ticks.length; j++) {
                 if(this.labels[j]!=null && this.labels[j].visProp['visible']) { 
-                    this.board.renderer.remove(this.labels[j].rendNode); 
+                    console.log('actually removing a label');
+                    this.board.renderer.remove(this.labels[j].rendNode);
                 }
             }
         }

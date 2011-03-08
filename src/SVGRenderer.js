@@ -231,7 +231,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         for (i = 0; i < len; i++) {
             c = axis.ticks[i].scrCoords;
             if (axis.ticks[i].major) {
-                if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i].visProp.visible) {
+                if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i] && axis.labels[i].visProp.visible) {
                     this.updateText(axis.labels[i]);
                 }
                 tickStr += "M " + (c[1] + dxMaj) + " " + (c[2] - dyMaj) + " L " + (c[1] - dxMaj) + " " + (c[2] + dyMaj) + " ";
