@@ -102,7 +102,8 @@ JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
      * access the element later on. There are some reserved names: <em>elements, add, remove, update, prepareUpdate,
      * updateRenderer, highlight, noHighlight</em>, and all names that would form invalid object property names in
      * JavaScript.
-     * @param {JXG.GeometryElement} element A reference to the element that is to be added.
+     * @param {JXG.GeometryElement|JXG.Composition} element A reference to the element that is to be added. This can be
+     * another composition, too.
      * @returns {Boolean} True, if the element was added successfully. Reasons why adding the element failed include
      * using a reserved name and providing an invalid element.
      */

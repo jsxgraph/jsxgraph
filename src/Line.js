@@ -148,8 +148,8 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
 
     /**
      * Array of ticks storing all the ticks on this line. Do not set this field directly and use
-     * {@link #addTicks} and {@link #removeTicks} to add and remove ticks to and from the line.
-     * @type array
+     * {@link JXG.Line#addTicks} and {@link JXG.Line#removeTicks} to add and remove ticks to and from the line.
+     * @type Array
      * @see JXG.Ticks
      */
     this.ticks = [];

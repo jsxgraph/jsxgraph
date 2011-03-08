@@ -29,14 +29,14 @@
  */
 
 /**
- * @pseudo
- * @description An arc is a segment of the circumference of a circle. It is defined by a midpoint, one point that
+ * @class An arc is a segment of the circumference of a circle. It is defined by a midpoint, one point that
  * defines the radius, and a third point that defines the angle of the arc.
+ * @pseudo
  * @name Arc
  * @augments Curve
  * @constructor
  * @type JXG.Curve
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The result will be an arc of a circle around p1 through p2. The arc is drawn
  * counter-clockwise from p2 to p3.
  * @example
@@ -48,18 +48,25 @@
  * var a = board.create('arc', [p1, p2, p3]);
  * </pre><div id="114ef584-4a5e-4686-8392-c97501befb5b" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
- *   var arex1_board = JXG.JSXGraph.initBoard('114ef584-4a5e-4686-8392-c97501befb5b', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
- * var arex1_p1 = arex1_board.create('point', [2.0, 2.0]);
- * var arex1_p2 = arex1_board.create('point', [1.0, 0.5]);
- * var arex1_p3 = arex1_board.create('point', [3.5, 1.0]);
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('114ef584-4a5e-4686-8392-c97501befb5b', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+ *       p1 = board.create('point', [2.0, 2.0]),
+ *       p2 = board.create('point', [1.0, 0.5]),
+ *       p3 = board.create('point', [3.5, 1.0]),
  *
- * var arex1_a = arex1_board.create('arc', [arex1_p1, arex1_p2, arex1_p3]);
+ *       a = board.create('arc', [p1, p2, p3]);
+ * })();
  * </script><pre>
  */
 JXG.createArc = function(board, parents, attributes) {
     var el, defaults, key, options;
-        
-    if(!(parents = JXG.checkParents('arc', parents, [[JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT]]))) {
+
+
+    // this method is used to create circumccirclearcs, too. if a circumcirclearc is created we get a fourth
+    // point, that's why we need to check that case, too.
+    if(!(parents = JXG.checkParents('arc', parents, [
+            [JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT],
+            [JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT]]))) {
         throw new Error("JSXGraph: Can't create Arc with parent types '" +
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
                         (typeof parents[2]) + "'." +
@@ -83,43 +90,55 @@ JXG.createArc = function(board, parents, attributes) {
     attributes = JXG.checkAttributes(attributes, defaults);
         
     el = board.create('curve',[[0],[0]],attributes);
+
+    /**
+     * @default {@link JXG#OBJECT_TYPE_ARC}
+     */
     el.type = JXG.OBJECT_TYPE_ARC;
 
     /**
      * Midpoint of the arc.
+     * @memberOf Arc.prototype
+     * @name midpoint
      * @type JXG.Point
      */
     el.midpoint = JXG.getReference(board, parents[0]);
 
     /**
-     * Point defining the arcs circle.
+     * Point defining the arc's radius.
+     * @memberOf Arc.prototype
+     * @name radiuspoint
      * @type JXG.Point
      */
-    el.point2 = JXG.getReference(board, parents[1]);
+    el.radiuspoint = JXG.getReference(board, parents[1]);
+    el.point2 = el.radiuspoint;
 
     /**
-     * The point defining the angle of the arc.
+     * The point defining the arc's angle.
+     * @memberOf Arc.prototype
+     * @name anglepoint
      * @type JXG.Point
      */
-    el.point3 = JXG.getReference(board, parents[2]);
+    el.anglepoint = JXG.getReference(board, parents[2]);
+    el.point3 = el.anglepoint;
 
     /* Add arc as child to defining points */
     el.midpoint.addChild(el);
-    el.point2.addChild(el);
-    el.point3.addChild(el);
+    el.radiuspoint.addChild(el);
+    el.anglepoint.addChild(el);
     
     el.useDirection = attributes['useDirection'];      // useDirection is necessary for circumCircleArcs
 
+    // documented in JXG.Curve
     el.updateDataArray = function() {
-        var A = this.point2,
+        var A = this.radiuspoint,
             B = this.midpoint,
-            C = this.point3,
+            C = this.anglepoint,
             beta, co, si, matrix,
             phi = JXG.Math.Geometry.rad(A,B,C),
             i,
-            //n = 100, 
             n = Math.ceil(phi/Math.PI*90)+1,
-            delta = phi/n, //Math.PI/90.0,
+            delta = phi/n,
             x = B.X(),
             y = B.Y(),
             v,
@@ -132,11 +151,11 @@ JXG.createArc = function(board, parents, attributes) {
             p2c = parents[2].coords.usrCoords;
             det = (p0c[1]-p2c[1])*(p0c[2]-p1c[2]) - (p0c[2]-p2c[2])*(p0c[1]-p1c[1]);
             if(det < 0) {
-                this.point2 = parents[1];
-                this.point3 = parents[2];
+                this.radiuspoint = parents[1];
+                this.anglepoint = parents[2];
             } else {
-                this.point2 = parents[2];
-                this.point3 = parents[1];
+                this.radiuspoint = parents[2];
+                this.anglepoint = parents[1];
             }
         }
         this.dataX = [A.X()];
@@ -155,27 +174,29 @@ JXG.createArc = function(board, parents, attributes) {
     };
 
     /**
-     * Calculates the arcs radius.
-     * @returns {Number} The arcs radius
+     * Determines the arc's current radius. I.e. the distance between {@link Arc#midpoint} and {@link Arc#radiuspoint}.
+     * @memberOf Arc.prototype
+     * @name Radius
+     * @function
+     * @returns {Number} The arc's radius
      */
     el.Radius = function() {
-        return this.point2.Dist(this.midpoint);
+        return this.radiuspoint.Dist(this.midpoint);
     };
 
     /**
-     * @deprecated Use Radius()
+     * @deprecated Use {@link Arc#Radius}
+     * @memberOf Arc.prototype
+     * @name getRadius
+     * @function
+     * @returns {Number}
      */
     el.getRadius = function() {
         return this.Radius();
     };
 
-    /**
-     *Checks whether (x,y) is near the arc.
-     * @param {Number} x Coordinate in x direction, screen coordinates.
-     * @param {Number} y Coordinate in y direction, screen coordinates.
-     * @returns {Boolean} True if (x,y) is near the arc, False otherwise.
-     */
-    el.hasPoint = function (x, y) { 
+    // documented in JXG.GeometryElement
+    el.hasPoint = function (x, y) {
         var prec = this.board.options.precision.hasPoint/(this.board.stretchX),
             checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
             r = this.Radius(),
@@ -184,14 +205,17 @@ JXG.createArc = function(board, parents, attributes) {
             angle;
             
         if(has) {
-            angle = JXG.Math.Geometry.rad(this.point2,this.midpoint,checkPoint.usrCoords.slice(1));
-            if (angle>JXG.Math.Geometry.rad(this.point2,this.midpoint,this.point3)) { has = false; }
+            angle = JXG.Math.Geometry.rad(this.radiuspoint,this.midpoint,checkPoint.usrCoords.slice(1));
+            if (angle>JXG.Math.Geometry.rad(this.radiuspoint,this.midpoint,this.anglepoint)) { has = false; }
         }
         return has;    
     };
 
     /**
      * Checks whether (x,y) is within the sector defined by the arc.
+     * @memberOf Arc.prototype
+     * @name hasPointSector
+     * @function
      * @param {Number} x Coordinate in x direction, screen coordinates.
      * @param {Number} y Coordinate in y direction, screen coordinates.
      * @returns {Boolean} True if (x,y) is within the sector defined by the arc, False otherwise.
@@ -204,24 +228,20 @@ JXG.createArc = function(board, parents, attributes) {
             angle;
         
         if(has) {
-            angle = JXG.Math.Geometry.rad(this.point2,this.midpoint,checkPoint.usrCoords.slice(1));
-            if (angle>JXG.Math.Geometry.rad(this.point2,this.midpoint,this.point3)) { has = false; }
+            angle = JXG.Math.Geometry.rad(this.radiuspoint,this.midpoint,checkPoint.usrCoords.slice(1));
+            if (angle>JXG.Math.Geometry.rad(this.radiuspoint,this.midpoint,this.anglepoint)) { has = false; }
         }
         return has;    
     };
 
-    /**
-     * @returns {JXG.Coords} Coordinates of the text's anchor.
-     */
+    // documented in JXG.GeometryElement
     el.getTextAnchor = function() {
         return this.midpoint.coords;
     };
 
-    /**
-     * @returns {JXG.Coords} Coordinates of the label's anchor
-     */
+    // documented in JXG.GeometryElement
     el.getLabelAnchor = function() {
-        var angle = JXG.Math.Geometry.rad(this.point2, this.midpoint, this.point3),
+        var angle = JXG.Math.Geometry.rad(this.radiuspoint, this.midpoint, this.anglepoint),
             dx = 10/(this.board.stretchX),
             dy = 10/(this.board.stretchY),
             p2c = this.point2.coords.usrCoords,
@@ -246,7 +266,7 @@ JXG.createArc = function(board, parents, attributes) {
         vecx = vecx*(len+dx)/len;
         vecy = vecy*(len+dy)/len;
 
-        return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx,pmc[2]+vecy],this.board);
+        return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx,pmc[2]+vecy], this.board);
     };
 
     el.prepareUpdate().update();
@@ -255,64 +275,133 @@ JXG.createArc = function(board, parents, attributes) {
 
 JXG.JSXGraph.registerElement('arc', JXG.createArc);
 
-/** TODO: Documentation of those two elements below are to be written like the one above for ARC.
 /**
- * Creates a new semicircle. The semicircle is drawn clock-wise between the first and the second defining point.
- * @param {JXG.Board} board The board the semicircle is put on.
- * @param {Array} parents Array of two opposite points defining the semicircle.
- * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
- * @returns {JXG.Arc} Reference to the created object.
+ * @class A semicircle is a special arc defined by two points. The arc hits both points.
+ * @pseudo
+ * @name Semicircle
+ * @augments JXG.Composition
+ * @constructor
+ * @type JXG.Composition
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point} p1,p2 The result will be a composition of an arc drawn clockwise from <tt>p1</tt> and
+ * <tt>p2</tt> and the midpoint of <tt>p1</tt> and <tt>p2</tt>.
+ * @example
+ * // Create an arc out of three free points
+ * var p1 = board.create('point', [4.5, 2.0]);
+ * var p2 = board.create('point', [1.0, 0.5]);
+ *
+ * var a = board.create('semicircle', [p1, p2, p3]);
+ * </pre><div id="5385d349-75d7-4078-b732-9ae808db1b0e" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('5385d349-75d7-4078-b732-9ae808db1b0e', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+ *       p1 = board.create('point', [4.5, 2.0]),
+ *       p2 = board.create('point', [1.0, 0.5]),
+ *
+ *       sc = board.create('semicircle', [p1, p2]);
+ * })();
+ * </script><pre>
  */
 JXG.createSemicircle = function(board, parents, attributes) {
-    var el, mp, idmp = '';
+    var el, mp;
     
     attributes = JXG.checkAttributes(attributes,{});
-    if(attributes['id'] != null) {
-        idmp = attributes['id']+'_mp';
-    }
-    // Alles 2 Punkte?
+
+    // we need 2 points
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) ) {
-        mp = board.create('midpoint', [parents[0], parents[1]], {id:idmp, withLabel:false, visible:false});
+
+        /**
+         * The midpoint of the two defining points.
+         * @memberOf Semicircle.prototype
+         * @name midpoint
+         * @type Midpoint
+         */
+        mp = board.create('midpoint', [parents[0], parents[1]], {withLabel:false, visible:false});
+
+        /**
+         * The semicircle itself.
+         * @memberOf Semicircle.prototype
+         * @name arc
+         * @type Arc
+         */
         el = board.create('arc',[mp, parents[1], parents[0]],attributes);
-    } // Ansonsten eine fette Exception um die Ohren hauen
-    else
+    } else
         throw new Error("JSXGraph: Can't create Semicircle with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,point]");
 
-    return el;
+    return new JXG.Composition({
+        midpoint: mp,
+        arc: el
+    });
 };
 
 JXG.JSXGraph.registerElement('semicircle', JXG.createSemicircle);
 
 /**
- * Creates a new circumcircle arc through three defining points.
- * @param {JXG.Board} board The board the arc is put on.
- * @param {Array} parents Array of three points defining the circumcircle arc.
- * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
- * @returns {JXG.Arc} Reference to the created object.
+ * @class A circumcircle arc is an {@link Arc} defined by three points. All three points lie on the arc.
+ * @pseudo
+ * @name CircumcircleArc
+ * @augments JXG.Composition
+ * @constructor
+ * @type JXG.Composition
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The result will be a composition of an arc of the circumcircle of
+ * <tt>p1</tt>, <tt>p2</tt>, and <tt>p3</tt> and the midpoint of the circumcircle of the three points. The arc is drawn
+ * counter-clockwise from <tt>p1</tt> over <tt>p2</tt> to <tt>p3</tt>.
+ * @example
+ * // Create a circum circle arc out of three free points
+ * var p1 = board.create('point', [2.0, 2.0]);
+ * var p2 = board.create('point', [1.0, 0.5]);
+ * var p3 = board.create('point', [3.5, 1.0]);
+ *
+ * var a = board.create('arc', [p1, p2, p3]);
+ * </pre><div id="87125fd4-823a-41c1-88ef-d1a1369504e3" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('87125fd4-823a-41c1-88ef-d1a1369504e3', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+ *       p1 = board.create('point', [2.0, 2.0]),
+ *       p2 = board.create('point', [1.0, 0.5]),
+ *       p3 = board.create('point', [3.5, 1.0]),
+ *
+ *       cca = board.create('circumcirclearc', [p1, p2, p3]);
+ * })();
+ * </script><pre>
  */
 JXG.createCircumcircleArc = function(board, parents, attributes) {
-    var el, mp, idmp;
+    var el, mp;
     
     attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'arc','withLabel'), layer:null});
-    if(attributes['id'] != null) {
-        idmp = attributes['id']+'_mp';
-    }
-    
-    // Alles 3 Punkte?
+
+    // We need three points
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
-        mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], {id:idmp, withLabel:false, visible:false});
+
+        /**
+         * The midpoint of the circumcircle of the three points defining the circumcircle arc.
+         * @memberOf CircumcircleArc.prototype
+         * @name midpoint
+         * @type Midpoint
+         */
+        mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], {withLabel:false, visible:false});
+
         attributes.useDirection = true;
-        el = board.create('arc', [mp,parents[0],parents[2],parents[1]], attributes);
-    } // Ansonsten eine fette Exception um die Ohren hauen
-    else
+
+        /**
+         * The actual arc.
+         * @memberOf CircumcircleArc.prototype
+         * @name arc
+         * @type Arc
+         */
+        el = board.create('arc', [mp, parents[0], parents[2], parents[1]], attributes);
+    } else
         throw new Error("JSXGraph: create Circumcircle Arc with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
                         "\nPossible parent types: [point,point,point]");
 
-
-    return el;
+    return new JXG.Composition({
+        midpoint: mp,
+        arc: el
+    });
 };
 
 JXG.JSXGraph.registerElement('circumcirclearc', JXG.createCircumcircleArc);

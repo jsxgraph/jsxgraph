@@ -1774,7 +1774,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Object} Reference to the created element. This is usually a GeometryElement, but can be an array containing
      * two or more elements.
      */
-    createElement: function (elementType, parents, attributes) {
+    create: function (elementType, parents, attributes) {
         var el, i, s;
 
         // Turtle may have no parent elements
@@ -1828,10 +1828,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return el;
     },
 
-        /**
-         * Delete the elements drawn as part of a trace of an element.
-         * @returns {JXG.Board} Reference to the board
-         */
+    /**
+     * Deprecated name for {@link JXG.Board#create}.
+     * @deprecated
+     */
+    createElement: JXG.shortcut(JXG.Board.prototype, 'create'),
+
+
+    /**
+     * Delete the elements drawn as part of a trace of an element.
+     * @returns {JXG.Board} Reference to the board
+     */
     clearTraces: function () {
         var el;
 
@@ -1842,11 +1849,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.numTraces = 0;
         return this;
     },
-
-    /**
-     * This is just a shortcut for {@link JXG.Board#createElement}.
-     */
-    create: JXG.shortcut(JXG.Board.prototype, 'createElement'),
 
     /**
      * Stop updates of the board.
