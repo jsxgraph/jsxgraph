@@ -126,7 +126,7 @@ JXG.Options = {
             minTicksDistance : 50,
             maxTicksDistance : 300,
             minorHeight : 4,          // if <0: full width and height 
-            majorHeight : -1,         // if <0: full width and height 
+            majorHeight : -1,         // if <0: full width and height
             minorTicks : 4,
             defaultDistance : 1,
             opacity : 0.3

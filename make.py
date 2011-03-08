@@ -59,7 +59,7 @@ reset = ""
 def usage():
     print
     print "Usage:  python", sys.argv[0], "[OPTIONS]... TARGET"
-    print "Compile and minify the JSXGraph source code."
+    print "Compile and minify the JSXGraph source code, run unit tests, and compile the docs."
     print
     print "Options:"
     print "  -h, --help             Display this help and exit."

@@ -154,7 +154,7 @@ JXG.SVGRenderer = function (container) {
 
 JXG.SVGRenderer.prototype = new JXG.AbstractRenderer();
 
-JXG.extend(JXG.SVGRenderer, /** @lends JXG.SVGRenderer.prototype */ {
+JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
     /**
      * Creates an arrow DOM node. Arrows are displayed in SVG with a <em>marker</em> tag.

@@ -130,7 +130,7 @@ JXG.AbstractRenderer = function () {
     this.type = '';
 };
 
-JXG.extend(JXG.AbstractRenderer, /** @lends JXG.AbstractRenderer.prototype */ {
+JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.prototype */ {
 
     /* ******************************** *
      *    private methods               *

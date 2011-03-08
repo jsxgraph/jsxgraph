@@ -1,4 +1,4 @@
-JXG.Options = {
+JXG.extend(JXG.Options, {
     showCopyright : false,
     showNavigation : true,
     takeSizeFromFile : false,
@@ -198,4 +198,4 @@ JXG.Options = {
     	toOrigin: null,
     	to10: null
     }
-};
+});

@@ -63,7 +63,7 @@ JXG.CanvasRenderer = function (container) {
 
 JXG.CanvasRenderer.prototype = new JXG.AbstractRenderer();
 
-JXG.extend(JXG.CanvasRenderer, /** @lends JXG.CanvasRenderer.prototype */ {
+JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype */ {
 
     /* **************************
      *   private methods only used

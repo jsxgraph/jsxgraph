@@ -138,583 +138,586 @@ JXG.Curve = function (board, parents, id, name, withLabel, layer) {
 };
 JXG.Curve.prototype = new JXG.GeometryElement;
 
-/**
- * Gives the default value of the left bound for the curve.
- * May be overwritten in @see generateTerm.
- */
-JXG.Curve.prototype.minX = function () {
-    if (this.curveType=='polar') {
-        return 0.0;
-    } else {
-        var leftCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], this.board);
-        return leftCoords.usrCoords[1];
-    }
-};
 
-/**
- * Gives the default value of the right bound for the curve.
- * May be overwritten in @see generateTerm.
- */
-JXG.Curve.prototype.maxX = function () {
-    var rightCoords;
-    if (this.curveType=='polar') {
-        return 2.0*Math.PI;
-    } else {
-        rightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board);
-        return rightCoords.usrCoords[1];
-    }
-};
+JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
-/**
- * Checks whether (x,y) is near the curve.
- * @param {int} x Coordinate in x direction, screen coordinates.
- * @param {int} y Coordinate in y direction, screen coordinates.
- * @param {y} Find closest point on the curve to (x,y)
- * @return {bool} True if (x,y) is near the curve, False otherwise.
- */
-JXG.Curve.prototype.hasPoint = function (x,y) {
-    var t, dist = Infinity, 
-        c, trans, i, j, tX, tY,
-        xi, xi1, yi, yi1,
-        lbda, x0, y0, x1, y1, xy, den,
-        steps = this.numberPointsLow, 
-        d = (this.maxX()-this.minX())/steps,
-        prec = this.board.options.precision.hasPoint/(this.board.unitX*this.board.zoomX),
-        checkPoint, len,
-        suspendUpdate = true;
+    /**
+     * Gives the default value of the left bound for the curve.
+     * May be overwritten in @see generateTerm.
+     */
+    minX: function () {
+        if (this.curveType=='polar') {
+            return 0.0;
+        } else {
+            var leftCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], this.board);
+            return leftCoords.usrCoords[1];
+        }
+    },
 
-    prec = prec*prec;
-    checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
-    x = checkPoint.usrCoords[1];
-    y = checkPoint.usrCoords[2];
-    if (this.curveType=='parameter' || this.curveType=='polar' || this.curveType=='functiongraph') { 
-        // Brute fore search for a point on the curve close to the mouse pointer
-        len = this.transformations.length;
-        for (i=0,t=this.minX(); i<steps; i++) {
-            tX = this.X(t,suspendUpdate);
-            tY = this.Y(t,suspendUpdate);
-            for (j=0; j<len; j++) {
-                trans = this.transformations[j];
-                trans.update();
-                c = JXG.Math.matVecMult(trans.matrix,[1,tX,tY]);
-                tX = c[1];
-                tY = c[2];
+    /**
+     * Gives the default value of the right bound for the curve.
+     * May be overwritten in @see generateTerm.
+     */
+    maxX: function () {
+        var rightCoords;
+        if (this.curveType=='polar') {
+            return 2.0*Math.PI;
+        } else {
+            rightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board);
+            return rightCoords.usrCoords[1];
+        }
+    },
+
+    /**
+     * Checks whether (x,y) is near the curve.
+     * @param {int} x Coordinate in x direction, screen coordinates.
+     * @param {int} y Coordinate in y direction, screen coordinates.
+     * @param {y} Find closest point on the curve to (x,y)
+     * @return {bool} True if (x,y) is near the curve, False otherwise.
+     */
+    hasPoint: function (x,y) {
+        var t, dist = Infinity,
+            c, trans, i, j, tX, tY,
+            xi, xi1, yi, yi1,
+            lbda, x0, y0, x1, y1, xy, den,
+            steps = this.numberPointsLow,
+            d = (this.maxX()-this.minX())/steps,
+            prec = this.board.options.precision.hasPoint/(this.board.unitX*this.board.zoomX),
+            checkPoint, len,
+            suspendUpdate = true;
+
+        prec = prec*prec;
+        checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+        x = checkPoint.usrCoords[1];
+        y = checkPoint.usrCoords[2];
+        if (this.curveType=='parameter' || this.curveType=='polar' || this.curveType=='functiongraph') {
+            // Brute fore search for a point on the curve close to the mouse pointer
+            len = this.transformations.length;
+            for (i=0,t=this.minX(); i<steps; i++) {
+                tX = this.X(t,suspendUpdate);
+                tY = this.Y(t,suspendUpdate);
+                for (j=0; j<len; j++) {
+                    trans = this.transformations[j];
+                    trans.update();
+                    c = JXG.Math.matVecMult(trans.matrix,[1,tX,tY]);
+                    tX = c[1];
+                    tY = c[2];
+                }
+                dist = (x-tX)*(x-tX)+(y-tY)*(y-tY);
+                if (dist<prec) { return true; }
+                t+=d;
             }
-            dist = (x-tX)*(x-tX)+(y-tY)*(y-tY);
-            if (dist<prec) { return true; }
-            t+=d;
-        }  
-    } else if (this.curveType == 'plot') {
-        //$('debug').innerHTML +='. ';
-        len = this.numberPoints; // Rough search quality
-        for (i=0;i<len-1;i++) {
-            xi = this.X(i);
-            xi1 = this.X(i+1);
-            //if (i!=xi) {
-            //    yi = this.Y(xi);
-            //    yi1 = this.Y(xi1);
-            //} else {
+        } else if (this.curveType == 'plot') {
+            //$('debug').innerHTML +='. ';
+            len = this.numberPoints; // Rough search quality
+            for (i=0;i<len-1;i++) {
+                xi = this.X(i);
+                xi1 = this.X(i+1);
+                //if (i!=xi) {
+                //    yi = this.Y(xi);
+                //    yi1 = this.Y(xi1);
+                //} else {
                 yi = this.Y(i);
                 yi1 = this.Y(i+1);
-               // $('debug').innerHTML = this.Y.toString();
-            //}
-            x1 = xi1 - xi;
-            y1 = yi1-yi;
-            
-            x0 = x-xi; //this.X(i);
-            y0 = y-yi; //this.Y(i);
-            den = x1*x1+y1*y1;
-            
-            if (den>=JXG.Math.eps) {
-                xy = x0*x1+y0*y1;
-                lbda = xy/den;
-                dist = x0*x0+y0*y0 - lbda*xy;
-            } else {
-                lbda = 0.0;
-                dist = x0*x0+y0*y0;
+                // $('debug').innerHTML = this.Y.toString();
+                //}
+                x1 = xi1 - xi;
+                y1 = yi1-yi;
+
+                x0 = x-xi; //this.X(i);
+                y0 = y-yi; //this.Y(i);
+                den = x1*x1+y1*y1;
+
+                if (den>=JXG.Math.eps) {
+                    xy = x0*x1+y0*y1;
+                    lbda = xy/den;
+                    dist = x0*x0+y0*y0 - lbda*xy;
+                } else {
+                    lbda = 0.0;
+                    dist = x0*x0+y0*y0;
+                }
+                if (lbda>=0.0 && lbda<=1.0 && dist<prec) {
+                    return true;
+                }
             }
-            if (lbda>=0.0 && lbda<=1.0 && dist<prec) { 
-                return true; 
-            } 
+            return false;
         }
-        return false;
-    } 
-    return (dist<prec);
-};
+        return (dist<prec);
+    },
 
-/**
-  * Allocate points in the Coords array this.points
-  */
-JXG.Curve.prototype.allocatePoints = function () {
-    var i, len;
-    len = this.numberPoints;
-    if (this.points.length<this.numberPoints) {
-        for (i=this.points.length; i<len; i++) {
-            this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
-        }
-    }
-};
-
-/**
- * Computes for equidistant points on the x-axis the values
- * of the function, {@link #updateCurve}
- * Then, the update function of the renderer
- * is called. 
- */
-JXG.Curve.prototype.update = function () {
-    if (this.needsUpdate) {
-        this.updateCurve();
-    }
-    if(this.traced) {
-        this.cloneToBackground(true);
-    }    
-    return this;
-};
-
-/**
- * Then, the update function of the renderer
- * is called. 
- */
-JXG.Curve.prototype.updateRenderer = function () {
-    if (this.needsUpdate) {
-        this.board.renderer.updateCurve(this);
-        this.needsUpdate = false;
-    }
-    
-    /* Update the label if visible. */
-    if(this.hasLabel && this.label.content.visProp['visible']) {
-        //this.label.setCoordinates(this.coords);
-        this.label.content.update();
-        //this.board.renderer.updateLabel(this.label);
-        this.board.renderer.updateText(this.label.content);
-    }       
-    return this;
-};
-
-/**
-  * For dynamic dataplots updateCurve
-  * can be used to compute new entries
-  * for the arrays this.dataX and
-  * this.dataY. It is used in @see updateCurve.
-  * Default is an empty method, can be overwritten
-  * by the user.
-  */
-JXG.Curve.prototype.updateDataArray = function () { return this; };
-
-/**
- * Computes for equidistant points on the x-axis the values
- * of the function. @see #update
- * If the mousemove event triggers this update, we use only few
- * points. Otherwise, e.g. on mouseup, many points are used.
- */
-JXG.Curve.prototype.updateCurve = function () {
-    var len, mi, ma, x, y, i,
-        suspendUpdate = false;
-    
-    this.updateDataArray();
-    mi = this.minX();
-    ma = this.maxX();
-
-    // Discrete data points
-    if (this.dataX!=null) { // x-coordinates are in an array
-        this.numberPoints = this.dataX.length;
+    /**
+     * Allocate points in the Coords array this.points
+     */
+    allocatePoints: function () {
+        var i, len;
         len = this.numberPoints;
-        this.allocatePoints();  // It is possible, that the array length has increased.
-        for (i=0; i<len; i++) {
-            x = i;
-            if (this.dataY!=null) { // y-coordinates are in an array
-                y = i;
-            } else {
-                y = this.X(x); // discrete x data, continuous y data
+        if (this.points.length<this.numberPoints) {
+            for (i=this.points.length; i<len; i++) {
+                this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
             }
-            this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x,suspendUpdate),this.Y(y,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
+        }
+    },
+
+    /**
+     * Computes for equidistant points on the x-axis the values
+     * of the function, {@link #updateCurve}
+     * Then, the update function of the renderer
+     * is called.
+     */
+    update: function () {
+        if (this.needsUpdate) {
+            this.updateCurve();
+        }
+        if(this.traced) {
+            this.cloneToBackground(true);
+        }
+        return this;
+    },
+
+    /**
+     * Then, the update function of the renderer
+     * is called.
+     */
+    updateRenderer: function () {
+        if (this.needsUpdate) {
+            this.board.renderer.updateCurve(this);
+            this.needsUpdate = false;
+        }
+
+        /* Update the label if visible. */
+        if(this.hasLabel && this.label.content.visProp['visible']) {
+            //this.label.setCoordinates(this.coords);
+            this.label.content.update();
+            //this.board.renderer.updateLabel(this.label);
+            this.board.renderer.updateText(this.label.content);
+        }
+        return this;
+    },
+
+    /**
+     * For dynamic dataplots updateCurve
+     * can be used to compute new entries
+     * for the arrays this.dataX and
+     * this.dataY. It is used in @see updateCurve.
+     * Default is an empty method, can be overwritten
+     * by the user.
+     */
+    updateDataArray: function () { return this; },
+
+    /**
+     * Computes for equidistant points on the x-axis the values
+     * of the function. @see #update
+     * If the mousemove event triggers this update, we use only few
+     * points. Otherwise, e.g. on mouseup, many points are used.
+     */
+    updateCurve: function () {
+        var len, mi, ma, x, y, i,
+            suspendUpdate = false;
+
+        this.updateDataArray();
+        mi = this.minX();
+        ma = this.maxX();
+
+        // Discrete data points
+        if (this.dataX!=null) { // x-coordinates are in an array
+            this.numberPoints = this.dataX.length;
+            len = this.numberPoints;
+            this.allocatePoints();  // It is possible, that the array length has increased.
+            for (i=0; i<len; i++) {
+                x = i;
+                if (this.dataY!=null) { // y-coordinates are in an array
+                    y = i;
+                } else {
+                    y = this.X(x); // discrete x data, continuous y data
+                }
+                this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x,suspendUpdate),this.Y(y,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
+                this.updateTransform(this.points[i]);
+                suspendUpdate = true;
+            }
+        } else { // continuous x data
+            if (this.doAdvancedPlot) {
+                this.updateParametricCurve(mi,ma,len);
+            } else {
+                if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
+                    this.numberPoints = this.numberPointsHigh;
+                } else {
+                    this.numberPoints = this.numberPointsLow;
+                }
+                len = this.numberPoints;
+                this.allocatePoints();  // It is possible, that the array length has increased.
+                this.updateParametricCurveNaive(mi,ma,len);
+            }
+        }
+        this.getLabelAnchor();
+        return this;
+    },
+
+    updateParametricCurveNaive: function(mi,ma,len) {
+        var i, t,
+            suspendUpdate = false,
+            stepSize = (ma-mi)/len;
+
+        for (i=0; i<len; i++) {
+            t = mi+i*stepSize;
+            this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
             this.updateTransform(this.points[i]);
             suspendUpdate = true;
         }
-    } else { // continuous x data
-        if (this.doAdvancedPlot) {
-            this.updateParametricCurve(mi,ma,len);
-        } else {
-            if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
-                this.numberPoints = this.numberPointsHigh;
-            } else {
-                this.numberPoints = this.numberPointsLow;
-            }
-            len = this.numberPoints;
-            this.allocatePoints();  // It is possible, that the array length has increased.
-            this.updateParametricCurveNaive(mi,ma,len);
-        }
-    }
-    this.getLabelAnchor();
-    return this;
-};
+        return this;
+    },
 
-JXG.Curve.prototype.updateParametricCurveNaive = function(mi,ma,len) {
-    var i, t,
-        suspendUpdate = false,
-        stepSize = (ma-mi)/len;
-        
-    for (i=0; i<len; i++) {
-        t = mi+i*stepSize;
-        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
-        this.updateTransform(this.points[i]);
+    updateParametricCurve: function(mi,ma,len) {
+        var i, t, t0,
+            suspendUpdate = false,
+            po = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board),
+            x, y, x0, y0, top, depth,
+            MAX_DEPTH,
+            MAX_XDIST,
+            MAX_YDIST,
+            dyadicStack = [],
+            depthStack = [],
+            pointStack = [],
+            divisors = [],
+            //xd_ = NaN, yd_ = NaN,
+            distOK = false,
+            j = 0;
+
+
+        if (this.board.updateQuality==this.board.BOARD_QUALITY_LOW) {
+            MAX_DEPTH = 12;
+            MAX_XDIST = 12;
+            MAX_YDIST = 12;
+        } else {
+            MAX_DEPTH = 20;
+            MAX_XDIST = 2;
+            MAX_YDIST = 2;
+        }
+
+        divisors[0] = ma-mi;
+        for (i=1;i<MAX_DEPTH;i++) {
+            divisors[i] = divisors[i-1]*0.5;
+        }
+
+        i = 1;
+        dyadicStack[0] = 1;
+        depthStack[0] = 0;
+        t = mi;
+        po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
         suspendUpdate = true;
-    }
-    return this;
-};
-
-JXG.Curve.prototype.updateParametricCurve = function(mi,ma,len) {
-    var i, t, t0,
-        suspendUpdate = false,
-        po = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board),
-        x, y, x0, y0, top, depth,
-        MAX_DEPTH,
-        MAX_XDIST,
-        MAX_YDIST,
-        dyadicStack = [],
-        depthStack = [],
-        pointStack = [],
-        divisors = [], 
-        //xd_ = NaN, yd_ = NaN,
-        distOK = false,
-        j = 0;
-
-    
-    if (this.board.updateQuality==this.board.BOARD_QUALITY_LOW) {
-        MAX_DEPTH = 12;
-        MAX_XDIST = 12;
-        MAX_YDIST = 12;
-    } else {
-        MAX_DEPTH = 20;
-        MAX_XDIST = 2;
-        MAX_YDIST = 2;
-    }
-    
-    divisors[0] = ma-mi;
-    for (i=1;i<MAX_DEPTH;i++) {
-        divisors[i] = divisors[i-1]*0.5;
-    }
-    
-    i = 1;
-    dyadicStack[0] = 1;
-    depthStack[0] = 0;
-    t = mi;
-    po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
-    suspendUpdate = true;
-    x0 = po.scrCoords[1];
-    y0 = po.scrCoords[2];
-    t0 = t;
-    
-    t = ma;
-    po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
-    x = po.scrCoords[1];
-    y = po.scrCoords[2];
-    
-    pointStack[0] = [x,y];
-    
-    top = 1;
-    depth = 0;
-
-    this.points = [];
-    this.points[j++] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x0, y0], this.board);
-    
-    do {
-        distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
-        while ( depth<MAX_DEPTH &&
-               (!distOK || depth<3 /*|| (j>1 &&!this.bendOK(xd_,yd_,x-x0,y-y0))*/) &&
-               !(!this.isSegmentDefined(x0,y0,x,y) && depth>8)
-            ) {
-            dyadicStack[top] = i;
-            depthStack[top] = depth;
-            pointStack[top] = [x,y];
-            top++;
-            
-            i = 2*i-1;
-            depth++;
-            t = mi+i*divisors[depth];
-            po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
-            x = po.scrCoords[1];
-            y = po.scrCoords[2];
-            distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
-        }
-        /*
-        if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH && !this.isContinuous(t0,t,MAX_DEPTH)) {
-            //$('debug').innerHTML += 'x ';
-            this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
-            //this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [1, 1], this.board);
-            j++;
-        }
-        */
-        this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
-        this.updateTransform(this.points[j]);
-        j++;
-        //xd_ = x-x0;
-        //yd_ = x-y0;
-        x0 = x;
-        y0 = y;
+        x0 = po.scrCoords[1];
+        y0 = po.scrCoords[2];
         t0 = t;
-        
-        top--;
-        x = pointStack[top][0];
-        y = pointStack[top][1];
-        depth = depthStack[top]+1;
-        i = dyadicStack[top]*2;
-        
-    } while (top != 0);
-    this.numberPoints = this.points.length;
-    //$('debug').innerHTML = ' '+this.numberPoints;
-    return this;
-        
-};
 
-JXG.Curve.prototype.isSegmentOutside = function (x0,y0,x1,y1) {
-    if (y0<0 && y1<0) { return true; }
-    else if (y0>this.board.canvasHeight && y1>this.board.canvasHeight) { return true; }
-    else if (x0<0 && x1<0) { return true; }
-    else if (x0>this.board.canvasWidth && x1>this.board.canvasWidth) { return true; }
-    return false;
-};
+        t = ma;
+        po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
+        x = po.scrCoords[1];
+        y = po.scrCoords[2];
 
-JXG.Curve.prototype.isDistOK = function (x0,y0,x1,y1,MAXX,MAXY) {
-    if (isNaN(x0+y0+x1+y1)) { return false; }
-    return (Math.abs(x1-x0)<MAXY && Math.abs(y1-y0)<MAXY);
-};
+        pointStack[0] = [x,y];
 
-JXG.Curve.prototype.isSegmentDefined = function (x0,y0,x1,y1) {
-    return !(isNaN(x0 + y0) && isNaN(x1 + y1));
+        top = 1;
+        depth = 0;
 
-};
-/*
-JXG.Curve.prototype.isContinuous = function (t0, t1, MAX_ITER) {
-    var left, middle, right, tm,
-        iter = 0,
-        initDist, dist = Infinity,
-        dl, dr; 
+        this.points = [];
+        this.points[j++] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x0, y0], this.board);
 
-    if (Math.abs(t0-t1)<JXG.Math.eps) { return true; }
-    left = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
-    middle = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
-    right = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
-    
-    left.setCoordinates(JXG.COORDS_BY_USER, [this.X(t0,true),this.Y(t0,true)], false);
-    right.setCoordinates(JXG.COORDS_BY_USER, [this.X(t1,true),this.Y(t1,true)], false);
-    
-    initDist = Math.max(Math.abs(left.scrCoords[1]-right.scrCoords[1]),Math.abs(left.scrCoords[2]-right.scrCoords[2]));
-    while (iter++<MAX_ITER && dist>initDist*0.9) {
-        tm = (t0+t1)*0.5;
-        middle.setCoordinates(JXG.COORDS_BY_USER, [this.X(tm,true),this.Y(tm,true)], false);
-        dl = Math.max(Math.abs(left.scrCoords[1]-middle.scrCoords[1]),Math.abs(left.scrCoords[2]-middle.scrCoords[2]));
-        dr = Math.max(Math.abs(middle.scrCoords[1]-right.scrCoords[1]),Math.abs(middle.scrCoords[2]-right.scrCoords[2]));
-        
-        if (dl>dr) {
-            dist = dl;
-            t1 = tm;
+        do {
+            distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
+            while ( depth<MAX_DEPTH &&
+                (!distOK || depth<3 /*|| (j>1 &&!this.bendOK(xd_,yd_,x-x0,y-y0))*/) &&
+                !(!this.isSegmentDefined(x0,y0,x,y) && depth>8)
+                ) {
+                dyadicStack[top] = i;
+                depthStack[top] = depth;
+                pointStack[top] = [x,y];
+                top++;
+
+                i = 2*i-1;
+                depth++;
+                t = mi+i*divisors[depth];
+                po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
+                x = po.scrCoords[1];
+                y = po.scrCoords[2];
+                distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
+            }
+            /*
+             if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH && !this.isContinuous(t0,t,MAX_DEPTH)) {
+             //$('debug').innerHTML += 'x ';
+             this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+             //this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [1, 1], this.board);
+             j++;
+             }
+             */
+            this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+            this.updateTransform(this.points[j]);
+            j++;
+            //xd_ = x-x0;
+            //yd_ = x-y0;
+            x0 = x;
+            y0 = y;
+            t0 = t;
+
+            top--;
+            x = pointStack[top][0];
+            y = pointStack[top][1];
+            depth = depthStack[top]+1;
+            i = dyadicStack[top]*2;
+
+        } while (top != 0);
+        this.numberPoints = this.points.length;
+        //$('debug').innerHTML = ' '+this.numberPoints;
+        return this;
+
+    },
+
+    isSegmentOutside: function (x0,y0,x1,y1) {
+        if (y0<0 && y1<0) { return true; }
+        else if (y0>this.board.canvasHeight && y1>this.board.canvasHeight) { return true; }
+        else if (x0<0 && x1<0) { return true; }
+        else if (x0>this.board.canvasWidth && x1>this.board.canvasWidth) { return true; }
+        return false;
+    },
+
+    isDistOK: function (x0,y0,x1,y1,MAXX,MAXY) {
+        if (isNaN(x0+y0+x1+y1)) { return false; }
+        return (Math.abs(x1-x0)<MAXY && Math.abs(y1-y0)<MAXY);
+    },
+
+    isSegmentDefined: function (x0,y0,x1,y1) {
+        return !(isNaN(x0 + y0) && isNaN(x1 + y1));
+
+    },
+
+    /*
+    isContinuous: function (t0, t1, MAX_ITER) {
+        var left, middle, right, tm,
+            iter = 0,
+            initDist, dist = Infinity,
+            dl, dr;
+
+        if (Math.abs(t0-t1)<JXG.Math.eps) { return true; }
+        left = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
+        middle = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
+        right = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
+
+        left.setCoordinates(JXG.COORDS_BY_USER, [this.X(t0,true),this.Y(t0,true)], false);
+        right.setCoordinates(JXG.COORDS_BY_USER, [this.X(t1,true),this.Y(t1,true)], false);
+
+        initDist = Math.max(Math.abs(left.scrCoords[1]-right.scrCoords[1]),Math.abs(left.scrCoords[2]-right.scrCoords[2]));
+        while (iter++<MAX_ITER && dist>initDist*0.9) {
+            tm = (t0+t1)*0.5;
+            middle.setCoordinates(JXG.COORDS_BY_USER, [this.X(tm,true),this.Y(tm,true)], false);
+            dl = Math.max(Math.abs(left.scrCoords[1]-middle.scrCoords[1]),Math.abs(left.scrCoords[2]-middle.scrCoords[2]));
+            dr = Math.max(Math.abs(middle.scrCoords[1]-right.scrCoords[1]),Math.abs(middle.scrCoords[2]-right.scrCoords[2]));
+
+            if (dl>dr) {
+                dist = dl;
+                t1 = tm;
+            } else {
+                dist = dr;
+                t0 = tm;
+            }
+            if (Math.abs(t0-t1)<JXG.Math.eps) { return true;}
+        }
+        if (dist>initDist*0.9) {
+            return false;
         } else {
-            dist = dr;
-            t0 = tm;
+            return true;
         }
-        if (Math.abs(t0-t1)<JXG.Math.eps) { return true;}
-    }
-    if (dist>initDist*0.9) {
-        return false;
-    } else {
-        return true;
-    }
-};
-*/
+    },
+    */
 
-/*
-JXG.Curve.prototype.bendOK = function (xd_,yd_,xd,yd) {
-    var ip = xd_*xd+yd_*yd,
-        MAX_BEND = Math.tan(45*Math.PI/180.0);
+    /*
+    bendOK: function (xd_,yd_,xd,yd) {
+        var ip = xd_*xd+yd_*yd,
+            MAX_BEND = Math.tan(45*Math.PI/180.0);
 
-    if (isNaN(ip)) {
-        return true;
-    } else if (ip<=0.0) {
-        return false;
-    } else {
-        return Math.abs(xd_*yd-yd_*xd)<MAX_BEND*ip;
-    }
-};
-*/
+        if (isNaN(ip)) {
+            return true;
+        } else if (ip<=0.0) {
+            return false;
+        } else {
+            return Math.abs(xd_*yd-yd_*xd)<MAX_BEND*ip;
+        }
+    },
+    */
 
-JXG.Curve.prototype.updateTransform = function (p) {
-    var t, c, i, 
-        len = this.transformations.length;
-    if (len==0) {
+    updateTransform: function (p) {
+        var t, c, i,
+            len = this.transformations.length;
+        if (len==0) {
+            return p;
+        }
+        for (i=0; i<len; i++) {
+            t = this.transformations[i];
+            t.update();
+            c = JXG.Math.matVecMult(t.matrix,p.usrCoords);
+            p.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
+        }
         return p;
-    }
-    for (i=0; i<len; i++) {
-        t = this.transformations[i];
-        t.update();
-        c = JXG.Math.matVecMult(t.matrix,p.usrCoords);
-        p.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
-    }
-    return p;
-};
+    },
 
-JXG.Curve.prototype.addTransform = function (transform) {
-    var list, i, len;
-    if (JXG.isArray(transform)) {
-        list = transform;
-    } else {
-        list = [transform];
-    }
-    len = list.length;
-    for (i=0; i<len; i++) {
-        this.transformations.push(list[i]);
-    }
-    return this;
-};
-
-JXG.Curve.prototype.setPosition = function (method, x, y) {
-    //if(this.group.length != 0) {
-    // AW: Do we need this for lines?
-    //} else {
-    var t = this.board.create('transform',[x,y],{type:'translate'});
-    if (this.transformations.length>0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
-        this.transformations[this.transformations.length-1].melt(t);
-    } else {
-        this.addTransform(t);
-    }
-    //this.update();
-    //}
-    return this;
-};
-
-/**
- * Converts the GEONExT syntax of the defining function term into JavaScript.
- * New methods X() and Y() for the Curve object are generated, further
- * new methods for minX() and maxX().
- *
- * Also, all objects whose name appears in the term are searched and
- * the curve is added as child to these objects. (Commented out!!!!)
- * @see Algebra
- * @see #geonext2JS.
- */
-JXG.Curve.prototype.generateTerm = function (varname, xterm, yterm, mi, ma) {
-    var fx, fy;
-
-    // Generate the methods X() and Y()
-    if (JXG.isArray(xterm)) {
-        this.dataX = xterm;
-        this.X = function(i) { return this.dataX[i]; };
-        this.curveType = 'plot';
-        this.numberPoints = this.dataX.length;
-    } else {
-        this.X = JXG.createFunction(xterm,this.board,varname);
-        if (JXG.isString(xterm)) { 
-            this.curveType = 'functiongraph'; 
-        } else if (JXG.isFunction(xterm) || JXG.isNumber(xterm)) {
-            this.curveType = 'parameter';
+    addTransform: function (transform) {
+        var list, i, len;
+        if (JXG.isArray(transform)) {
+            list = transform;
+        } else {
+            list = [transform];
         }
-    }
+        len = list.length;
+        for (i=0; i<len; i++) {
+            this.transformations.push(list[i]);
+        }
+        return this;
+    },
 
-    if (JXG.isArray(yterm)) {
-        this.dataY = yterm;
-        this.Y = function(i) { 
-                if (JXG.isFunction(this.dataY[i])) { 
-                    return this.dataY[i](); 
+    setPosition: function (method, x, y) {
+        //if(this.group.length != 0) {
+        // AW: Do we need this for lines?
+        //} else {
+        var t = this.board.create('transform',[x,y],{type:'translate'});
+        if (this.transformations.length>0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
+            this.transformations[this.transformations.length-1].melt(t);
+        } else {
+            this.addTransform(t);
+        }
+        //this.update();
+        //}
+        return this;
+    },
+
+    /**
+     * Converts the GEONExT syntax of the defining function term into JavaScript.
+     * New methods X() and Y() for the Curve object are generated, further
+     * new methods for minX() and maxX().
+     *
+     * Also, all objects whose name appears in the term are searched and
+     * the curve is added as child to these objects. (Commented out!!!!)
+     * @see Algebra
+     * @see #geonext2JS.
+     */
+    generateTerm: function (varname, xterm, yterm, mi, ma) {
+        var fx, fy;
+
+        // Generate the methods X() and Y()
+        if (JXG.isArray(xterm)) {
+            this.dataX = xterm;
+            this.X = function(i) { return this.dataX[i]; };
+            this.curveType = 'plot';
+            this.numberPoints = this.dataX.length;
+        } else {
+            this.X = JXG.createFunction(xterm,this.board,varname);
+            if (JXG.isString(xterm)) {
+                this.curveType = 'functiongraph';
+            } else if (JXG.isFunction(xterm) || JXG.isNumber(xterm)) {
+                this.curveType = 'parameter';
+            }
+        }
+
+        if (JXG.isArray(yterm)) {
+            this.dataY = yterm;
+            this.Y = function(i) {
+                if (JXG.isFunction(this.dataY[i])) {
+                    return this.dataY[i]();
                 } else {
-                    return this.dataY[i]; 
+                    return this.dataY[i];
                 }
             };
-    } else {
-        this.Y = JXG.createFunction(yterm,this.board,varname);
-    }
-
-    // polar form
-    if (JXG.isFunction(xterm) && JXG.isArray(yterm)) {
-        // Xoffset, Yoffset
-        fx = JXG.createFunction(yterm[0],this.board,'');
-        fy = JXG.createFunction(yterm[1],this.board,'');
-        this.X = function(phi){return (xterm)(phi)*Math.cos(phi)+fx();};
-        this.Y = function(phi){return (xterm)(phi)*Math.sin(phi)+fy();};
-        this.curveType = 'polar';
-    }
-
-    // Set the bounds
-    // lower bound
-    if (mi!=null) this.minX = JXG.createFunction(mi,this.board,'');
-    if (ma!=null) this.maxX = JXG.createFunction(ma,this.board,'');
-
-/*    
-    // Find dependencies
-    var elements = this.board.elementsByName;
-    for (el in elements) {
-        if (el != this.name) {
-            var s1 = "X(" + el + ")";
-            var s2 = "Y(" + el + ")";
-            if (xterm.indexOf(s1)>=0 || xterm.indexOf(s2)>=0 ||
-                yterm.indexOf(s1)>=0 || yterm.indexOf(s2)>=0) {
-                elements[el].addChild(this);
-            }
+        } else {
+            this.Y = JXG.createFunction(yterm,this.board,varname);
         }
+
+        // polar form
+        if (JXG.isFunction(xterm) && JXG.isArray(yterm)) {
+            // Xoffset, Yoffset
+            fx = JXG.createFunction(yterm[0],this.board,'');
+            fy = JXG.createFunction(yterm[1],this.board,'');
+            this.X = function(phi){return (xterm)(phi)*Math.cos(phi)+fx();};
+            this.Y = function(phi){return (xterm)(phi)*Math.sin(phi)+fy();};
+            this.curveType = 'polar';
+        }
+
+        // Set the bounds
+        // lower bound
+        if (mi!=null) this.minX = JXG.createFunction(mi,this.board,'');
+        if (ma!=null) this.maxX = JXG.createFunction(ma,this.board,'');
+
+        /*
+         // Find dependencies
+         var elements = this.board.elementsByName;
+         for (el in elements) {
+         if (el != this.name) {
+         var s1 = "X(" + el + ")";
+         var s2 = "Y(" + el + ")";
+         if (xterm.indexOf(s1)>=0 || xterm.indexOf(s2)>=0 ||
+         yterm.indexOf(s1)>=0 || yterm.indexOf(s2)>=0) {
+         elements[el].addChild(this);
+         }
+         }
+         }
+         */
+    },
+
+    /**
+     * Finds dependencies in a given term and notifies the parents by adding the
+     * dependent object to the found objects child elements.
+     * @param {String} term String containing dependencies for the given object.
+     */
+    notifyParents: function (contentStr) {
+        //var res = null;
+        //var elements = this.board.elementsByName;
+        JXG.GeonextParser.findDependencies(this,contentStr,this.board);
+    },
+
+    /**
+     * Calculates LabelAnchor.
+     * @type JXG.Coords
+     * @return Text anchor coordinates as JXG.Coords object.
+     */
+    getLabelAnchor: function() {
+        var c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, this.board.canvasHeight*0.5], this.board);
+        c = JXG.Math.Geometry.projectCoordsToCurve(c.usrCoords[1],c.usrCoords[2],0.0,this,this.board)[0];
+        return c;
+    },
+
+    /**
+     * Clone curve to the background.
+     * @param addToTrace Not used yet. Always true.
+     */
+    cloneToBackground: function(addToTrace) {
+        var copy = {}, r, s, i, er;
+
+        copy.id = this.id + 'T' + this.numTraces;
+        copy.elementClass = JXG.OBJECT_CLASS_CURVE;
+        this.numTraces++;
+
+        copy.points = this.points.slice(0);
+        copy.numberPoints = this.numberPoints;
+        copy.curveType = this.curveType;
+
+        copy.board = {};
+        copy.board.unitX = this.board.unitX;
+        copy.board.unitY = this.board.unitY;
+        copy.board.zoomX = this.board.zoomX;
+        copy.board.zoomY = this.board.zoomY;
+        copy.board.stretchX = this.board.stretchX;
+        copy.board.stretchY = this.board.stretchY;
+        copy.board.origin = this.board.origin;
+        copy.board.canvasHeight = this.board.canvasHeight;
+        copy.board.canvasWidth = this.board.canvasWidth;
+        copy.board.dimension = this.board.dimension;
+        copy.board.options = this.board.options;
+
+        copy.visProp = this.visProp;
+        JXG.clearVisPropOld(copy);
+        er = this.board.renderer.enhancedRendering;
+        this.board.renderer.enhancedRendering = true;
+        this.board.renderer.drawCurve(copy);
+        this.board.renderer.enhancedRendering = er;
+        this.traces[copy.id] = copy.rendNode;
     }
-*/    
-};
+});
 
-/**
- * Finds dependencies in a given term and notifies the parents by adding the
- * dependent object to the found objects child elements.
- * @param {String} term String containing dependencies for the given object.
- */
-JXG.Curve.prototype.notifyParents = function (contentStr) {
-    //var res = null;
-    //var elements = this.board.elementsByName;
-    JXG.GeonextParser.findDependencies(this,contentStr,this.board);
-};
-
-/**
- * Calculates LabelAnchor.
- * @type JXG.Coords
- * @return Text anchor coordinates as JXG.Coords object.
- */
-JXG.Curve.prototype.getLabelAnchor = function() {
-    var c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, this.board.canvasHeight*0.5], this.board);
-    c = JXG.Math.Geometry.projectCoordsToCurve(c.usrCoords[1],c.usrCoords[2],0.0,this,this.board)[0];
-    return c;
-};
-
-/**
- * Clone curve to the background.
- * @param addToTrace Not used yet. Always true.
- */
-JXG.Curve.prototype.cloneToBackground = function(addToTrace) {
-    var copy = {}, r, s, i, er;
-
-    copy.id = this.id + 'T' + this.numTraces;
-    copy.elementClass = JXG.OBJECT_CLASS_CURVE;
-    this.numTraces++;
-    
-    copy.points = this.points.slice(0); 
-    copy.numberPoints = this.numberPoints;
-    copy.curveType = this.curveType;
-
-    copy.board = {};
-    copy.board.unitX = this.board.unitX;
-    copy.board.unitY = this.board.unitY;
-    copy.board.zoomX = this.board.zoomX;
-    copy.board.zoomY = this.board.zoomY;
-    copy.board.stretchX = this.board.stretchX;
-    copy.board.stretchY = this.board.stretchY;
-    copy.board.origin = this.board.origin;
-    copy.board.canvasHeight = this.board.canvasHeight;
-    copy.board.canvasWidth = this.board.canvasWidth;
-    copy.board.dimension = this.board.dimension;
-    //copy.board.algebra = this.board.algebra;
-    copy.board.options = this.board.options;
-
-    copy.visProp = this.visProp;
-    JXG.clearVisPropOld(copy);
-    er = this.board.renderer.enhancedRendering;
-    this.board.renderer.enhancedRendering = true;
-    this.board.renderer.drawCurve(copy);
-    this.board.renderer.enhancedRendering = er;
-    this.traces[copy.id] = copy.rendNode;
-
-    delete copy;
-};
 
 /**
  * @class This element is used to provide a constructor for curve, which is just a wrapper for element {@link Curve}. 

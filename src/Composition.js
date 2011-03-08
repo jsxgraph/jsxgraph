@@ -94,7 +94,7 @@ JXG.Composition = function (elements) {
     }
 };
 
-JXG.extend(JXG.Composition, /** @lends JXG.Composition.prototype */ {
+JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
 
     /**
      * Adds an element to the composition container.

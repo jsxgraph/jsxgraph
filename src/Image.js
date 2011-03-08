@@ -35,7 +35,6 @@
  * @class Image:
  * It inherits from @see GeometryElement.
  * @constructor
- * @return A new geometry element Image
  */
 JXG.Image = function (board, url, coordinates, size, layer, id, name, el) {
     //this.constructor();
@@ -75,59 +74,62 @@ JXG.Image = function (board, url, coordinates, size, layer, id, name, el) {
 
 JXG.Image.prototype = new JXG.GeometryElement;
 
-/**
- * Empty function (for the moment). It is needed for highlighting, a feature not used for images right now.
- * @param {int} x Coordinate in x direction, screen coordinates.
- * @param {int} y Coordinate in y direction, screen coordinates.
- * @return Always returns false
- */
-JXG.Image.prototype.hasPoint = function (x,y) {
-    return false;
-};
+JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
 
-/**
- * Recalculate the coordinates of lower left corner and the width amd the height.
- * @private
- */
-JXG.Image.prototype.update = function () {
-    if (this.needsUpdate) {
-        this.updateCoords();
-        this.usrSize = [this.W(), this.H()];
-        this.size = [this.usrSize[0]*this.board.stretchX,this.usrSize[1]*this.board.stretchY];
-        this.updateTransform();
-    }
-    return this;
-};
+    /**
+     * Empty function (for the moment). It is needed for highlighting, a feature not used for images right now.
+     * @param {int} x Coordinate in x direction, screen coordinates.
+     * @param {int} y Coordinate in y direction, screen coordinates.
+     * @return Always returns false
+     */
+    hasPoint: function (x,y) {
+        return false;
+    },
 
-/**
- * Send an update request to the renderer.
- */
-JXG.Image.prototype.updateRenderer = function () {
-    if (this.needsUpdate) {
-        this.board.renderer.updateImage(this);
-        this.needsUpdate = false;
-    }
-    return this;
-};
-
-JXG.Image.prototype.updateTransform = function () {
-    if (this.transformations.length==0) {
-        return;
-    }
-    for (var i=0;i<this.transformations.length;i++) {
-        this.transformations[i].update();
-    }
-};
-
-JXG.Image.prototype.addTransform = function (transform) {
-    if (JXG.isArray(transform)) {
-        for (var i=0;i<transform.length;i++) {
-            this.transformations.push(transform[i]);
+    /**
+     * Recalculate the coordinates of lower left corner and the width amd the height.
+     * @private
+     */
+    update: function () {
+        if (this.needsUpdate) {
+            this.updateCoords();
+            this.usrSize = [this.W(), this.H()];
+            this.size = [this.usrSize[0]*this.board.stretchX,this.usrSize[1]*this.board.stretchY];
+            this.updateTransform();
         }
-    } else {
-        this.transformations.push(transform);
+        return this;
+    },
+
+    /**
+     * Send an update request to the renderer.
+     */
+    updateRenderer: function () {
+        if (this.needsUpdate) {
+            this.board.renderer.updateImage(this);
+            this.needsUpdate = false;
+        }
+        return this;
+    },
+
+    updateTransform: function () {
+        if (this.transformations.length==0) {
+            return;
+        }
+        for (var i=0;i<this.transformations.length;i++) {
+            this.transformations[i].update();
+        }
+    },
+
+    addTransform: function (transform) {
+        if (JXG.isArray(transform)) {
+            for (var i=0;i<transform.length;i++) {
+                this.transformations.push(transform[i]);
+            }
+        } else {
+            this.transformations.push(transform);
+        }
     }
-};
+});
 
 /**
  * @class Displays an image. 

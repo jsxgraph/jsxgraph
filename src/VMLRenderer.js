@@ -72,7 +72,7 @@ JXG.VMLRenderer = function (container) {
 
 JXG.VMLRenderer.prototype = new JXG.AbstractRenderer();
 
-JXG.extend(JXG.VMLRenderer, /** @lends JXG.VMLRenderer */ {
+JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
     /**
      * Sets attribute <tt>key</tt> of node <tt>node</tt> to <tt>value</tt>.

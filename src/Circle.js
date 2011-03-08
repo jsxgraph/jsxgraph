@@ -186,414 +186,415 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel, layer) {
 };
 JXG.Circle.prototype = new JXG.GeometryElement;
 
-/**
- * Checks whether (x,y) is near the circle.
- * @param {int} x Coordinate in x direction, screen coordinates.
- * @param {int} y Coordinate in y direction, screen coordinates.
- * @return {bool} True if (x,y) is near the circle, False otherwise.
- * @private
- */
-JXG.Circle.prototype.hasPoint = function (x, y) {
-/*
-    var genauigkeit = this.board.options.precision.hasPoint;
-    genauigkeit = genauigkeit/(this.board.stretchX); 
-    
-    var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
-    var r = this.Radius();
-    
-    var dist = Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-checkPoint.usrCoords[1],2) + 
-                         Math.pow(this.midpoint.coords.usrCoords[2]-checkPoint.usrCoords[2],2));
-   
-    return (Math.abs(dist-r) < genauigkeit);
-*/    
-    var prec = this.board.options.precision.hasPoint/(this.board.stretchX),
-        mp = this.midpoint.coords.usrCoords,
-        p = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
-        r = this.Radius();
-    
-    var dist = Math.sqrt((mp[1]-p.usrCoords[1])*(mp[1]-p.usrCoords[1]) + (mp[2]-p.usrCoords[2])*(mp[2]-p.usrCoords[2]));
-    return (Math.abs(dist-r) < prec);
-};
+JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 
-/**
- * Used to generate a polynomial for a point p that lies on this circle.
- * @param p The point for that the polynomial is generated.
- * @return An array containing the generated polynomial.
- * @private
- */
-JXG.Circle.prototype.generatePolynomial = function (p) {
-    /*
-     * We have four methods to construct a circle:
-     *   (a) Two points
-     *   (b) Midpoint and radius
-     *   (c) Midpoint and radius given by length of a segment
-     *   (d) Midpoint and radius given by another circle
-     *
-     * In case (b) we have to distinguish two cases:
-     *  (i)  radius is given as a number
-     *  (ii) radius is given as a function
-     * In the latter case there's no guarantee the radius depends on other geometry elements
-     * in a polynomial way so this case has to be omitted.
-     *
-     * Another tricky case is case (d):
-     * The radius depends on another circle so we have to cycle through the ancestors of each circle
-     * until we reach one that's radius does not depend on another circles radius.
-     *
-     *
-     * All cases (a) to (d) vary only in calculation of the radius. So the basic formulae for
-     * a glider G (g1,g2) on a circle with midpoint M (m1,m2) and radius r is just:
-     *
-     *     (g1-m1)^2 + (g2-m2)^2 - r^2 = 0
-     *
-     * So the easiest case is (b) with a fixed radius given as a number. The other two cases (a)
-     * and (c) are quite the same: Euclidean distance between two points A (a1,a2) and B (b1,b2),
-     * squared:
-     *
-     *     r^2 = (a1-b1)^2 + (a2-b2)^2
-     *
-     * For case (d) we have to cycle recursively through all defining circles and finally return the
-     * formulae for calculating r^2. For that we use JXG.Circle.symbolic.generateRadiusSquared().
+    /**
+     * Checks whether (x,y) is near the circle.
+     * @param {int} x Coordinate in x direction, screen coordinates.
+     * @param {int} y Coordinate in y direction, screen coordinates.
+     * @return {bool} True if (x,y) is near the circle, False otherwise.
+     * @private
      */
+    hasPoint: function (x, y) {
+        /*
+         var genauigkeit = this.board.options.precision.hasPoint;
+         genauigkeit = genauigkeit/(this.board.stretchX);
 
-    var m1 = this.midpoint.symbolic.x;
-    var m2 = this.midpoint.symbolic.y;
-    var g1 = p.symbolic.x;
-    var g2 = p.symbolic.y;
+         var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+         var r = this.Radius();
 
-    var rsq = this.generateRadiusSquared();
+         var dist = Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-checkPoint.usrCoords[1],2) +
+         Math.pow(this.midpoint.coords.usrCoords[2]-checkPoint.usrCoords[2],2));
 
-    /* No radius can be calculated (Case b.ii) */
-    if (rsq == '')
-        return [];
+         return (Math.abs(dist-r) < genauigkeit);
+         */
+        var prec = this.board.options.precision.hasPoint/(this.board.stretchX),
+            mp = this.midpoint.coords.usrCoords,
+            p = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
+            r = this.Radius();
 
-    var poly = '((' + g1 + ')-(' + m1 + '))^2 + ((' + g2 + ')-(' + m2 + '))^2 - (' + rsq + ')';
-    return [poly];
-};
+        var dist = Math.sqrt((mp[1]-p.usrCoords[1])*(mp[1]-p.usrCoords[1]) + (mp[2]-p.usrCoords[2])*(mp[2]-p.usrCoords[2]));
+        return (Math.abs(dist-r) < prec);
+    },
 
-/**
- * Generate symbolic radius calculation for loci determination with Groebner-Basis algorithm.
- * @type String
- * @return String containing symbolic calculation of the circle's radius or an empty string
- * if the radius can't be expressed in a polynomial equation.
- * @private
- */
-JXG.Circle.prototype.generateRadiusSquared = function () {
-    /*
-     * Four cases:
-     *
-     *   (a) Two points
-     *   (b) Midpoint and radius
-     *   (c) Midpoint and radius given by length of a segment
-     *   (d) Midpoint and radius given by another circle
+    /**
+     * Used to generate a polynomial for a point p that lies on this circle.
+     * @param p The point for that the polynomial is generated.
+     * @return An array containing the generated polynomial.
+     * @private
      */
+    generatePolynomial: function (p) {
+        /*
+         * We have four methods to construct a circle:
+         *   (a) Two points
+         *   (b) Midpoint and radius
+         *   (c) Midpoint and radius given by length of a segment
+         *   (d) Midpoint and radius given by another circle
+         *
+         * In case (b) we have to distinguish two cases:
+         *  (i)  radius is given as a number
+         *  (ii) radius is given as a function
+         * In the latter case there's no guarantee the radius depends on other geometry elements
+         * in a polynomial way so this case has to be omitted.
+         *
+         * Another tricky case is case (d):
+         * The radius depends on another circle so we have to cycle through the ancestors of each circle
+         * until we reach one that's radius does not depend on another circles radius.
+         *
+         *
+         * All cases (a) to (d) vary only in calculation of the radius. So the basic formulae for
+         * a glider G (g1,g2) on a circle with midpoint M (m1,m2) and radius r is just:
+         *
+         *     (g1-m1)^2 + (g2-m2)^2 - r^2 = 0
+         *
+         * So the easiest case is (b) with a fixed radius given as a number. The other two cases (a)
+         * and (c) are quite the same: Euclidean distance between two points A (a1,a2) and B (b1,b2),
+         * squared:
+         *
+         *     r^2 = (a1-b1)^2 + (a2-b2)^2
+         *
+         * For case (d) we have to cycle recursively through all defining circles and finally return the
+         * formulae for calculating r^2. For that we use JXG.Circle.symbolic.generateRadiusSquared().
+         */
 
-    var rsq = '';
-
-    if (this.method == "twoPoints") {
         var m1 = this.midpoint.symbolic.x;
         var m2 = this.midpoint.symbolic.y;
-        var p1 = this.point2.symbolic.x;
-        var p2 = this.point2.symbolic.y;
+        var g1 = p.symbolic.x;
+        var g2 = p.symbolic.y;
 
-        rsq = '((' + p1 + ')-(' + m1 + '))^2 + ((' + p2 + ')-(' + m2 + '))^2';
-    } else if (this.method == "pointRadius") {
-        if (typeof(this.radius) == 'number')
-            rsq = '' + this.radius*this.radius;
-    } else if (this.method == "pointLine") {
-        var p1 = this.line.point1.symbolic.x;
-        var p2 = this.line.point1.symbolic.y;
+        var rsq = this.generateRadiusSquared();
 
-        var q1 = this.line.point2.symbolic.x;
-        var q2 = this.line.point2.symbolic.y;
+        /* No radius can be calculated (Case b.ii) */
+        if (rsq == '')
+            return [];
 
-        rsq = '((' + p1 + ')-(' + q1 + '))^2 + ((' + p2 + ')-(' + q2 + '))^2';
-    } else if (this.method == "pointCircle") {
-        rsq = this.circle.Radius();
-    }
+        var poly = '((' + g1 + ')-(' + m1 + '))^2 + ((' + g2 + ')-(' + m2 + '))^2 - (' + rsq + ')';
+        return [poly];
+    },
 
-    return rsq;
-};
+    /**
+     * Generate symbolic radius calculation for loci determination with Groebner-Basis algorithm.
+     * @type String
+     * @return String containing symbolic calculation of the circle's radius or an empty string
+     * if the radius can't be expressed in a polynomial equation.
+     * @private
+     */
+    generateRadiusSquared: function () {
+        /*
+         * Four cases:
+         *
+         *   (a) Two points
+         *   (b) Midpoint and radius
+         *   (c) Midpoint and radius given by length of a segment
+         *   (d) Midpoint and radius given by another circle
+         */
 
-/**
- * Uses the boards renderer to update the circle.
- */
-JXG.Circle.prototype.update = function () {
-    if(this.traced) {
-        this.cloneToBackground(true);
-    }
-    
-    if (this.needsUpdate) {
-        if(this.method == 'pointLine') {
-            this.radius = this.line.point1.coords.distance(JXG.COORDS_BY_USER, this.line.point2.coords); 
+        var rsq = '';
+
+        if (this.method == "twoPoints") {
+            var m1 = this.midpoint.symbolic.x;
+            var m2 = this.midpoint.symbolic.y;
+            var p1 = this.point2.symbolic.x;
+            var p2 = this.point2.symbolic.y;
+
+            rsq = '((' + p1 + ')-(' + m1 + '))^2 + ((' + p2 + ')-(' + m2 + '))^2';
+        } else if (this.method == "pointRadius") {
+            if (typeof(this.radius) == 'number')
+                rsq = '' + this.radius*this.radius;
+        } else if (this.method == "pointLine") {
+            var p1 = this.line.point1.symbolic.x;
+            var p2 = this.line.point1.symbolic.y;
+
+            var q1 = this.line.point2.symbolic.x;
+            var q2 = this.line.point2.symbolic.y;
+
+            rsq = '((' + p1 + ')-(' + q1 + '))^2 + ((' + p2 + ')-(' + q2 + '))^2';
+        } else if (this.method == "pointCircle") {
+            rsq = this.circle.Radius();
         }
-        else if(this.method == 'pointCircle') {
-            this.radius = this.circle.Radius();
+
+        return rsq;
+    },
+
+    /**
+     * Uses the boards renderer to update the circle.
+     */
+    update: function () {
+        if(this.traced) {
+            this.cloneToBackground(true);
+        }
+
+        if (this.needsUpdate) {
+            if(this.method == 'pointLine') {
+                this.radius = this.line.point1.coords.distance(JXG.COORDS_BY_USER, this.line.point2.coords);
+            }
+            else if(this.method == 'pointCircle') {
+                this.radius = this.circle.Radius();
+            }
+            else if(this.method == 'pointRadius') {
+                this.radius = this.updateRadius();
+            }
+            if (!this.board.geonextCompatibilityMode) {
+                this.updateStdform();
+                this.updateQuadraticform();
+            }
+        }
+    },
+
+    /**
+     * TODO description
+     * @private
+     */
+    updateQuadraticform: function () {
+        var m = this.midpoint,
+            mX = m.X(), mY = m.Y(), r = this.Radius();
+        this.quadraticform = [[mX*mX+mY*mY-r*r,-mX,-mY],
+            [-mX,1,0],
+            [-mY,0,1]
+        ];
+    },
+
+    /**
+     * TODO description
+     * @private
+     */
+    updateStdform: function () {
+        this.stdform[3] = 0.5;
+        this.stdform[4] = this.Radius();
+        this.stdform[1] = -this.midpoint.coords.usrCoords[1];
+        this.stdform[2] = -this.midpoint.coords.usrCoords[2];
+        this.normalize();
+    },
+
+    /**
+     * Uses the boards renderer to update the circle.
+     * @private
+     */
+    updateRenderer: function () {
+        if (this.needsUpdate && this.visProp['visible']) {
+            var wasReal = this.isReal;
+            this.isReal = (isNaN(this.midpoint.coords.usrCoords[1]+this.midpoint.coords.usrCoords[2]+this.Radius()))?false:true;
+            if (this.isReal) {
+                if (wasReal!=this.isReal) {
+                    this.board.renderer.show(this);
+                    if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content);
+                }
+                this.board.renderer.updateEllipse(this);
+            } else {
+                if (wasReal!=this.isReal) {
+                    this.board.renderer.hide(this);
+                    if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content);
+                }
+            }
+            this.needsUpdate = false;
+        }
+
+        /* Update the label if visible. */
+        if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
+            //this.label.setCoordinates(this.coords);
+            this.label.content.update();
+            //this.board.renderer.updateLabel(this.label);
+            this.board.renderer.updateText(this.label.content);
+        }
+    },
+
+    /**
+     * TODO description
+     * @param term TODO type & description
+     * @private
+     */
+    generateTerm: function (term) {
+        if (typeof term=='string') {
+            var elements = this.board.elementsByName;
+            // Convert GEONExT syntax into  JavaScript syntax
+            var newTerm = JXG.GeonextParser.geonext2JS(term+'', this.board);
+            this.updateRadius = new Function('return ' + newTerm + ';');
+        } else if (typeof term=='number') {
+            this.updateRadius = function () { return term; };
+        } else { // function
+            this.updateRadius = term;
+        }
+    },
+
+    /**
+     * TODO description
+     * @param contentStr TODO type&description
+     * @private
+     */
+    notifyParents: function (contentStr) {
+        var res = null;
+        var elements = this.board.elementsByName;
+
+        if (typeof contentStr == 'string')
+            JXG.GeonextParser.findDependencies(this,contentStr+'',this.board);
+    },
+
+    /**
+     * Calculates the radius of the circle.
+     * @type float
+     * @return The radius of the circle
+     */
+    Radius: function () {
+        if(this.method == 'twoPoints') {
+            return(Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-this.point2.coords.usrCoords[1],2) + Math.pow(this.midpoint.coords.usrCoords[2]-this.point2.coords.usrCoords[2],2)));
+        }
+        else if(this.method == 'pointLine' || this.method == 'pointCircle') {
+            return this.radius;
         }
         else if(this.method == 'pointRadius') {
-            this.radius = this.updateRadius();
+            return this.updateRadius();
         }
-        if (!this.board.geonextCompatibilityMode) {
-            this.updateStdform();
-            this.updateQuadraticform();
+    },
+
+    /**
+     * @deprecated
+     */
+    getRadius: function () {
+        return this.Radius();
+    },
+
+    /**
+     * TODO description
+     * @private
+     */
+    getTextAnchor: function () {
+        return this.midpoint.coords;
+    },
+
+    /**
+     * TODO description
+     * @private
+     */
+    getLabelAnchor: function () {
+        if(this.method == 'twoPoints') {
+            var deltaX = this.midpoint.coords.usrCoords[1]-this.point2.coords.usrCoords[1];
+            var deltaY = this.midpoint.coords.usrCoords[2]-this.point2.coords.usrCoords[2];
+            return new JXG.Coords(JXG.COORDS_BY_USER, [this.midpoint.coords.usrCoords[1]+deltaX, this.midpoint.coords.usrCoords[2]+deltaY], this.board);
         }
-    }
-};
+        else if(this.method == 'pointLine' || this.method == 'pointCircle' || this.method == 'pointRadius') {
+            return new JXG.Coords(JXG.COORDS_BY_USER, [this.midpoint.coords.usrCoords[1]-this.Radius(),this.midpoint.coords.usrCoords[2]], this.board);
+        }
+    },
 
-/**
- * TODO description
- * @private
- */
-JXG.Circle.prototype.updateQuadraticform = function () {
-    var m = this.midpoint,
-        mX = m.X(), mY = m.Y(), r = this.Radius();
-    this.quadraticform = [[mX*mX+mY*mY-r*r,-mX,-mY],
-                          [-mX,1,0],
-                          [-mY,0,1]
-                         ];
-};
 
-/**
- * TODO description
- * @private
- */
-JXG.Circle.prototype.updateStdform = function () {
-    this.stdform[3] = 0.5;
-    this.stdform[4] = this.Radius();
-    this.stdform[1] = -this.midpoint.coords.usrCoords[1];
-    this.stdform[2] = -this.midpoint.coords.usrCoords[2];
-    this.normalize();
-};
+    /**
+     * Clone the circle to the background.
+     * @param addToTrace Not used yet. Always true.
+     */
+    cloneToBackground: function (/** boolean */ addToTrace) {
+        var copy = {}, r, er;
+        copy.id = this.id + 'T' + this.numTraces;
+        copy.elementClass = JXG.OBJECT_CLASS_CIRCLE;
+        this.numTraces++;
+        copy.midpoint = {};
+        copy.midpoint.coords = this.midpoint.coords;
+        r = this.Radius();
+        copy.Radius = function () { return r; };
+        copy.getRadius = function () { return r; }; // deprecated
 
-/**
- * Uses the boards renderer to update the circle.
- * @private
- */
-JXG.Circle.prototype.updateRenderer = function () {
-    if (this.needsUpdate && this.visProp['visible']) {
-        var wasReal = this.isReal;
-        this.isReal = (isNaN(this.midpoint.coords.usrCoords[1]+this.midpoint.coords.usrCoords[2]+this.Radius()))?false:true;
-        if (this.isReal) {
-            if (wasReal!=this.isReal) { 
-                this.board.renderer.show(this); 
-                if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content); 
-            }
-            this.board.renderer.updateEllipse(this);
+        copy.board = {};
+        copy.board.unitX = this.board.unitX;
+        copy.board.unitY = this.board.unitY;
+        copy.board.zoomX = this.board.zoomX;
+        copy.board.zoomY = this.board.zoomY;
+        copy.board.stretchX = this.board.stretchX;
+        copy.board.stretchY = this.board.stretchY;
+
+        copy.visProp = this.visProp;
+        JXG.clearVisPropOld(copy);
+
+        er = this.board.renderer.enhancedRendering;
+        this.board.renderer.enhancedRendering = true;
+        this.board.renderer.drawEllipse(copy);
+        this.board.renderer.enhancedRendering = er;
+        this.traces[copy.id] = copy.rendNode;
+    },
+
+    /**
+     * TODO description
+     * @param transform TODO type&description
+     * @private
+     */
+    addTransform: function (transform) {
+        var list;
+        if (JXG.isArray(transform)) {
+            list = transform;
         } else {
-            if (wasReal!=this.isReal) { 
-                this.board.renderer.hide(this); 
-                if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content); 
+            list = [transform];
+        }
+        for (var i=0;i<list.length;i++) {
+            this.midpoint.transformations.push(list[i]);
+            if (this.method == 'twoPoints') {
+                this.point2.transformations.push(list[i]);
             }
         }
-        this.needsUpdate = false;
-    }
-    
-    /* Update the label if visible. */
-    if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
-        //this.label.setCoordinates(this.coords);
-        this.label.content.update();
-        //this.board.renderer.updateLabel(this.label);
-        this.board.renderer.updateText(this.label.content);
-    }    
-};
+    },
 
-/**
- * TODO description
- * @param term TODO type & description
- * @private
- */
-JXG.Circle.prototype.generateTerm = function (term) {
-    if (typeof term=='string') {
-         var elements = this.board.elementsByName;
-         // Convert GEONExT syntax into  JavaScript syntax
-         var newTerm = JXG.GeonextParser.geonext2JS(term+'', this.board);
-         this.updateRadius = new Function('return ' + newTerm + ';');
-    } else if (typeof term=='number') {
-        this.updateRadius = function() { return term; };
-    } else { // function
-        this.updateRadius = term;
-    }
-};   
-
-/**
- * TODO description
- * @param contentStr TODO type&description
- * @private
- */
-JXG.Circle.prototype.notifyParents = function (contentStr) {
-    var res = null;
-    var elements = this.board.elementsByName;
-    
-    if (typeof contentStr == 'string') 
-        JXG.GeonextParser.findDependencies(this,contentStr+'',this.board);
-};
-
-/**
- * Calculates the radius of the circle.
- * @type float
- * @return The radius of the circle
- */
-JXG.Circle.prototype.Radius = function() {
-    if(this.method == 'twoPoints') {
-        return(Math.sqrt(Math.pow(this.midpoint.coords.usrCoords[1]-this.point2.coords.usrCoords[1],2) + Math.pow(this.midpoint.coords.usrCoords[2]-this.point2.coords.usrCoords[2],2)));
-    }
-    else if(this.method == 'pointLine' || this.method == 'pointCircle') {
-        return this.radius;
-    }
-    else if(this.method == 'pointRadius') {
-        return this.updateRadius();
-    }
-};
-
-/**
-  * @deprecated
-  */
-JXG.Circle.prototype.getRadius = function() {
-    return this.Radius();
-};
-
-/**
- * TODO description
- * @private
- */
-JXG.Circle.prototype.getTextAnchor = function() {
-    return this.midpoint.coords;
-};
-
-/**
- * TODO description
- * @private
- */
-JXG.Circle.prototype.getLabelAnchor = function() {
-    if(this.method == 'twoPoints') {
-        var deltaX = this.midpoint.coords.usrCoords[1]-this.point2.coords.usrCoords[1];
-        var deltaY = this.midpoint.coords.usrCoords[2]-this.point2.coords.usrCoords[2];
-        return new JXG.Coords(JXG.COORDS_BY_USER, [this.midpoint.coords.usrCoords[1]+deltaX, this.midpoint.coords.usrCoords[2]+deltaY], this.board);
-    }
-    else if(this.method == 'pointLine' || this.method == 'pointCircle' || this.method == 'pointRadius') {
-        return new JXG.Coords(JXG.COORDS_BY_USER, [this.midpoint.coords.usrCoords[1]-this.Radius(),this.midpoint.coords.usrCoords[2]], this.board);
-    }
-};
-
-
-/**
- * Clone the circle to the background.
- * @param addToTrace Not used yet. Always true.
- */
-JXG.Circle.prototype.cloneToBackground = function(/** boolean */ addToTrace) {
-    var copy = {}, r, er;
-    copy.id = this.id + 'T' + this.numTraces;
-    copy.elementClass = JXG.OBJECT_CLASS_CIRCLE;
-    this.numTraces++;
-    copy.midpoint = {};
-    copy.midpoint.coords = this.midpoint.coords;
-    r = this.Radius();
-    copy.Radius = function() { return r; };
-    copy.getRadius = function() { return r; }; // deprecated
-    
-    copy.board = {};
-    copy.board.unitX = this.board.unitX;
-    copy.board.unitY = this.board.unitY;
-    copy.board.zoomX = this.board.zoomX;
-    copy.board.zoomY = this.board.zoomY;
-    copy.board.stretchX = this.board.stretchX;
-    copy.board.stretchY = this.board.stretchY;
-
-    copy.visProp = this.visProp;
-    JXG.clearVisPropOld(copy);
-    
-    er = this.board.renderer.enhancedRendering;
-    this.board.renderer.enhancedRendering = true;
-    this.board.renderer.drawEllipse(copy);
-    this.board.renderer.enhancedRendering = er;
-    this.traces[copy.id] = copy.rendNode;
-
-    delete copy;
-};
-
-/**
- * TODO description
- * @param transform TODO type&description
- * @private
- */
-JXG.Circle.prototype.addTransform = function (transform) {
-    var list;
-    if (JXG.isArray(transform)) {
-        list = transform;
-    } else {
-        list = [transform];
-    }
-    for (var i=0;i<list.length;i++) {
-        this.midpoint.transformations.push(list[i]);
-        if (this.method == 'twoPoints') {
-            this.point2.transformations.push(list[i]);
-        }
-    }
-};
-
-/**
- * TODO description
- * @param method TODO
- * @param x TODO
- * @param y TODO
- * @private
- */
-JXG.Circle.prototype.setPosition = function (method, x, y) {
-    //if(this.group.length != 0) {
-    // AW: Do we need this for lines?
-    //} else {
-    var t = this.board.create('transform',[x,y],{type:'translate'});
-    this.addTransform(t);
+    /**
+     * TODO description
+     * @param method TODO
+     * @param x TODO
+     * @param y TODO
+     * @private
+     */
+    setPosition: function (method, x, y) {
+        //if(this.group.length != 0) {
+        // AW: Do we need this for lines?
+        //} else {
+        var t = this.board.create('transform',[x,y],{type:'translate'});
+        this.addTransform(t);
         //this.update();
-    //}
-};
+        //}
+    },
 
-/**
-* Treat the circle as parametric curve:
-* Return <tt>X(t)= radius*cos(t)+centerX</tt>, where t runs from 0 to 1.
-* @param t TODO description
-* @return TODO description
-*/
-JXG.Circle.prototype.X = function (/** float */ t) /** float */ {
-    t *= 2.0*Math.PI;
-    return this.Radius()*Math.cos(t)+this.midpoint.coords.usrCoords[1];
-};
+    /**
+     * Treat the circle as parametric curve:
+     * Return <tt>X(t)= radius*cos(t)+centerX</tt>, where t runs from 0 to 1.
+     * @param t TODO description
+     * @return TODO description
+     */
+    X: function (/** float */ t) /** float */ {
+        t *= 2.0*Math.PI;
+        return this.Radius()*Math.cos(t)+this.midpoint.coords.usrCoords[1];
+    },
 
-/**
-* Treat the circle as parametric curve:
-* Return <tt>Y(t)= radius*cos(t)+centerX</tt>
-* t runs from 0 to 1
-* @param t TODO description
-* @return TODO description
-*/
-JXG.Circle.prototype.Y = function (/** float */ t) /** float */ {
-    t *= 2.0*Math.PI;
-    return this.Radius()*Math.sin(t)+this.midpoint.coords.usrCoords[2];
-};
+    /**
+     * Treat the circle as parametric curve:
+     * Return <tt>Y(t)= radius*cos(t)+centerX</tt>
+     * t runs from 0 to 1
+     * @param t TODO description
+     * @return TODO description
+     */
+    Y: function (/** float */ t) /** float */ {
+        t *= 2.0*Math.PI;
+        return this.Radius()*Math.sin(t)+this.midpoint.coords.usrCoords[2];
+    },
 
-/**
- * Treat the circle as parametric curve:
- * t runs from 0 to 1
- * TODO description
- * @private
- */
-JXG.Circle.prototype.minX = function () {
-    return 0.0;
-};
+    /**
+     * Treat the circle as parametric curve:
+     * t runs from 0 to 1
+     * TODO description
+     * @private
+     */
+    minX: function () {
+        return 0.0;
+    },
 
-/**
- * Treat the circle as parametric curve:
- * t runs from 0 to 1
- * TODO description
- * @private
- */
-JXG.Circle.prototype.maxX = function () {
-    return 1.0;
-};
+    /**
+     * Treat the circle as parametric curve:
+     * t runs from 0 to 1
+     * TODO description
+     * @private
+     */
+    maxX: function () {
+        return 1.0;
+    },
 
-JXG.Circle.prototype.Area = function() {
-    var r = this.Radius();
-    return r*r*Math.PI;
-};
+    Area: function () {
+        var r = this.Radius();
+        return r*r*Math.PI;
+    }
+});
 
 /**
  * @class This element is used to provide a constructor for a circle. 
@@ -628,7 +629,7 @@ JXG.Circle.prototype.Area = function() {
  *   var cex1_c2 = cex1_board.create('circle', [cex1_p3, cex1_c1]);
  * </script><pre>
  */
-JXG.createCircle = function(board, parentArr, attributes) {
+JXG.createCircle = function (board, parentArr, attributes) {
     var el, p, i;
     attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'circle','withLabel'), layer:null});
     
