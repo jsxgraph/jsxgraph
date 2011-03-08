@@ -19,13 +19,13 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
-    //JXG.Options.renderer = 'svg';
+    JXG.Options.renderer = 'canvas';
     JXG.Options.text.useMathJax = true;
 
-    var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: false, boundingbox:[-5, 5, 5, -5], grid: false});
+    var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox:[-5, 5, 5, -5], grid: false});
 
     p1 = brd.create('point', [0,0]);
-/*
+
     p2 = brd.create('point', [2,1]);
     p3 = brd.create('point', [0,1]);
     p4 = brd.create('point', [4,2]);
@@ -59,7 +59,7 @@
     };
 
     brd.addHook(h);
-*/
+
     //brd.update();
 
     /* ]]> */

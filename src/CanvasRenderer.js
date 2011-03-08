@@ -412,7 +412,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             c = axis.ticks[i].scrCoords;
             if (axis.ticks[i].major) {
                 if ((axis.board.needsFullUpdate || axis.needsRegularUpdate || axis.labels[i].visProp.display === 'internal') && axis.labels[i] && axis.labels[i].visProp.visible) {
-                    this.drawText(axis.labels[i]);
+                    this.updateText(axis.labels[i]);
                 }
                 context.moveTo(c[1] + dxMaj, c[2] - dyMaj);
                 context.lineTo(c[1] - dxMaj, c[2] + dyMaj);

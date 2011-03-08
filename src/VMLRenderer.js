@@ -113,7 +113,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             c = axis.ticks[i].scrCoords;
             if (axis.ticks[i].major) {
                 if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i] && axis.labels[i].visProp.visible) {
-                    this.drawText(axis.labels[i]);
+                    this.updateText(axis.labels[i]);
                 }
                 tickArr.push(
                     ' m ' + Math.round(r * (c[1] + dxMaj)) + ', ' + Math.round(r * (c[2] - dyMaj)) +
