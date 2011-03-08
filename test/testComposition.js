@@ -30,19 +30,15 @@
 
 TestCase("Composition", {
 
-    callback: function () {
-        assertTrue(true);
-    },
-
     setUp: function () {
         this.element = {
             id: 'elid',
-            setProperty: this.callback,
-            prepareUpdate: this.callback,
-            update: this.callback,
-            updateRenderer: this.callback,
-            highlight: this.callback,
-            noHighlight: this.callback
+            setProperty: sinon.stub(),
+            prepareUpdate: sinon.stub(),
+            update: sinon.stub(),
+            updateRenderer: sinon.stub(),
+            highlight: sinon.stub(),
+            noHighlight: sinon.stub()
         };
     },
 
@@ -102,6 +98,7 @@ TestCase("Composition", {
         });
 
         c.update();
+        assertTrue(c.element.update.calledOnce);
     },
 
     testSetProperty: function () {
@@ -112,6 +109,7 @@ TestCase("Composition", {
         });
 
         c.setProperty();
+        assertTrue(c.element.setProperty.calledOnce);
     },
 
     testHighlight: function () {
@@ -122,6 +120,7 @@ TestCase("Composition", {
         });
 
         c.highlight();
+        assertTrue(c.element.highlight.calledOnce);
     },
 
     testPrepareUpdate: function () {
@@ -132,6 +131,7 @@ TestCase("Composition", {
         });
 
         c.prepareUpdate();
+        assertTrue(c.element.prepareUpdate.calledOnce);
     },
 
     testUpdateRenderer: function () {
@@ -142,6 +142,7 @@ TestCase("Composition", {
         });
 
         c.updateRenderer();
+        assertTrue(c.element.updateRenderer.calledOnce);
     },
 
     testNoHighlight: function () {
@@ -152,6 +153,7 @@ TestCase("Composition", {
         });
 
         c.noHighlight();
+        assertTrue(c.element.noHighlight.calledOnce);
     }
 
 });
