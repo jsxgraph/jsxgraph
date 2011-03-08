@@ -558,7 +558,12 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
     updateTextStyle: function (element) {
         var fs = JXG.evaluate(element.visProp.fontSize);
 
-        element.rendNode.style.fontSize = fs + 'px';
+        try {
+            element.rendNode.style.fontSize = fs + 'px';
+        } catch (e) {
+            // IE needs special treatment.
+            element.rendNode.style.fontSize = fs;
+        }
         element.rendNode.style.color = JXG.evaluate(element.visProp.strokeColor);
     },
 

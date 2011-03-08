@@ -49,7 +49,7 @@ JXG.VMLRenderer = function (container) {
     // Add VML includes and namespace
     // Original: IE <=7
     //container.ownerDocument.createStyleSheet().addRule("v\\:*", "behavior: url(#default#VML);");
-    if (JXG.vmlStylesheet === null) {
+    if (!JXG.exists(JXG.vmlStylesheet)) {
         container.ownerDocument.namespaces.add("jxgvml", "urn:schemas-microsoft-com:vml");
         JXG.vmlStylesheet = this.container.ownerDocument.createStyleSheet();
         JXG.vmlStylesheet.addRule(".jxgvml", "behavior:url(#default#VML)");
