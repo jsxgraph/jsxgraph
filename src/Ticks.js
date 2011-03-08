@@ -499,9 +499,6 @@ JXG.Ticks.prototype.calculateTicksCoordinates = function() {
 JXG.Ticks.prototype.removeTickLabels = function () {
     var j;
 
-    console.log('trying to remove labels');
-    console.log(this.drawLabels);
-
     // remove existing tick labels
     if(this.ticks != null) {
         if ((this.board.needsFullUpdate||this.needsRegularUpdate) && 
@@ -509,7 +506,6 @@ JXG.Ticks.prototype.removeTickLabels = function () {
            ) {
             for(j=0; j<this.ticks.length; j++) {
                 if(this.labels[j]!=null && this.labels[j].visProp['visible']) { 
-                    console.log('actually removing a label');
                     this.board.renderer.remove(this.labels[j].rendNode);
                 }
             }
