@@ -63,7 +63,7 @@ JXG.POINT_STYLE_PLUS_BIG     = 12; // a big +
  * @see JXG.Board#generateName
  * @see JXG.Board#addPoint
  */
-JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
+JXG.Point = function (board, coordinates, attributes) {
     this.constructor();
     
     /**
@@ -82,7 +82,7 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
      */
     this.elementClass = JXG.OBJECT_CLASS_POINT;
 
-    this.init(board, id, name);
+    this.init(board, attributes.id, attributes.name);
 
     if (coordinates==null) {
         coordinates=[0,0];
@@ -98,23 +98,11 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
     /**
      * Set the display layer.
      */
-    if (layer == null) layer = board.options.layer['point'];
+    if (!JXG.exists(attributes.layer)) {
+        layer = board.options.layer['point'];
+    }
     this.layer = layer;
 
-    /**
-     * If true, the infobox is shown on mouse over, else not.
-     * @type boolean
-     * @default true
-     */
-    this.showInfobox = JXG.Options.point.showInfobox;
-    
-    /**
-     * False: Point can be moved, True: Point can't be moved with the mouse.
-     * @type boolean
-     * @default false
-     */
-    this.fixed = false;
-    
     /**
      * Relative position on a line if point is a glider on a line.
      * @type number
@@ -131,65 +119,6 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
     this.onPolygon = false;
     
     /**
-     * There are different point styles which differ in appearance and size.
-     * Possible values are
-     * <table><tr><th>Constant name</th><th>Value</th><th>Meaning</th><th>face</th><th>size</th></tr>
-     * <tr><td>JXG.POINT_STYLE_X_SMALL</td><td>0</td><td>small sized x</td><td>cross or x</td><td>2</td></tr>
-     * <tr><td>JXG.POINT_STYLE_X</td><td>1</td><td>medium sized x</td><td>cross or x</td><td>3</td></tr>
-     * <tr><td>JXG.POINT_STYLE_X_BIG</td><td>2</td><td>big sized x</td><td>cross or x</td><td>4</td></tr>
-     * <tr><td>JXG.POINT_STYLE_CIRCLE_TINY</td><td>3</td><td>tiny circle</td><td>circle or o</td><td>1</td></tr>
-     * <tr><td>JXG.POINT_STYLE_CIRCLE_SMALL</td><td>4</td><td>small circle</td><td>circle or o</td><td>2</td></tr>
-     * <tr><td>JXG.POINT_STYLE_CIRCLE</td><td>5</td><td>medium circle</td><td>circle or o</td><td>3</td></tr>
-     * <tr><td>JXG.POINT_STYLE_CIRCLE_BIG</td><td>6</td><td>big circle</td><td>circle or o</td><td>4</td></tr>
-     * <tr><td>JXG.POINT_STYLE_SQUARE_SMALL</td><td>7</td><td>small rectangle</td><td>square or []</td><td>2</td></tr>
-     * <tr><td>JXG.POINT_STYLE_SQUARE</td><td>8</td><td>medium rectangle</td><td>square or []</td><td>3</td></tr>
-     * <tr><td>JXG.POINT_STYLE_SQUARE_BIG</td><td>9</td><td>big rectangle</td><td>square or []</td><td>4</td></tr>
-     * <tr><td>JXG.POINT_STYLE_PLUS_SMALL</td><td>10</td><td>small +</td><td>plus or +</td><td>2</td></tr>
-     * <tr><td>JXG.POINT_STYLE_PLUS</td><td>11</td><td>medium +</td><td>plus or +</td><td>3</td></tr>
-     * <tr><td>JXG.POINT_STYLE_PLUS_BIG</td><td>12</td><td>big +</td><td>plus or +</td><td>4</td></tr></table>
-     * <b>Hint:</b> This attribute is internally replaced by face and size, whose opportunities are wider, , as given in the table above.
-     * @see JXG.Point#face
-     * @see JXG.Point#size
-     * @type number
-     * @see #setStyle
-     * @default JXG.Options.point#style
-     * @name JXG.Point#style
-     * @deprecated
-     */
-    this.visProp['style'] = this.board.options.point.style;
-    
-    /**
-     * There are different point styles which differ in appearance.
-     * Posssible values are
-     * <table><tr><th>Value</th></tr>
-     * <tr><td>cross</td></tr>
-     * <tr><td>circle</td></tr>
-     * <tr><td>square</td></tr>
-     * <tr><td>plus</td></tr>
-     * <tr><td>diamond</td></tr>
-     * <tr><td>triangleUp</td></tr>
-     * <tr><td>triangleDown</td></tr>
-     * <tr><td>triangleLeft</td></tr>
-     * <tr><td>triangleRight</td></tr>
-     * </table>
-     * @type string
-     * @see #setStyle
-     * @default circle
-     * @name JXG.Point#face
-     */
-    this.visProp['face'] = this.board.options.point.face;
-    /**
-    * Determines the size of a point.
-    * Means radius resp. half the width of a point (depending on the face).
-     * @see JXG.Point#face    
-    * @type number
-     * @see #setStyle
-     * @default 3     
-     * @name JXG.Point#size
-     */    
-    this.visProp['size'] = this.board.options.point.size;
-
-    /**
      * Size of the point. This is just for the renderer and the hasPoint() method
      * to draw the point as a circle.
      * @type number
@@ -197,16 +126,6 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
      */
     //this.r = this.board.options.precision.hasPoint;
     
-    /*
-     * The visprop properties are documented in JXG.GeometryElement
-     */
-    this.visProp['fillColor'] = this.board.options.point.fillColor;
-    this.visProp['highlightFillColor'] = this.board.options.point.highlightFillColor;  
-    this.visProp['strokeColor'] = this.board.options.point.strokeColor;
-    this.visProp['highlightStrokeColor'] = this.board.options.point.highlightStrokeColor; 
-    this.visProp['strokeWidth'] = this.board.options.point.strokeWidth;    
-    this.visProp['visible'] = show; 
-
     /**
      * When used as a glider this member stores the object, where to glide on. To set the object to glide on use the method
      * {@link JXG.Point#makeGlider} and DO NOT set this property directly as it will break the dependency tree.
@@ -223,13 +142,23 @@ JXG.Point = function (board, coordinates, id, name, show, withLabel, layer) {
      * @private
      */
     this.group = [];
+
+    /**
+     * False: Point can be moved, True: Point can't be moved with the mouse.
+     * @type boolean
+     * @default false
+     */
+    this.fixed = attributes.fixed;
+
+    // copy properties from attributes to visprop
+    this.visProp = attributes;
     
     /* Register point at board. */
     this.id = this.board.setId(this, 'P');
     this.board.renderer.drawPoint(this);
     this.board.finalizeAdding(this);
 
-    this.createLabel(withLabel);
+    this.createLabel(attributes.withLabel);
 };
 
 /**
@@ -1225,10 +1154,10 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
  *   var fpex2_p3 = fpex2_board.create('point', [fpex2_p2, fpex2_trans]);
  * </script><pre>
  */
-JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** object */ atts) {
-    var el, isConstrained = false, i, show;
-    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'point','withLabel'), layer:null});
-    show = (typeof atts['visible']=='undefined') || JXG.str2Bool(atts['visible']);
+JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** object */ attributes) {
+    var el, isConstrained = false, i, show, attr;
+
+    attr = JXG.copyAttributes(attributes, board.options, 'point');
     
     for (i=0;i<parents.length;i++) {
         if (typeof parents[i]=='function' || typeof parents[i]=='string') {
@@ -1237,14 +1166,14 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
     }
     if (!isConstrained) {
         if ( (JXG.isNumber(parents[0])) && (JXG.isNumber(parents[1])) ) {
-            el = new JXG.Point(board, parents, atts['id'], atts['name'], show, atts['withLabel'], atts['layer']);
-            if ( atts["slideObject"] != null ) {
-                el.makeGlider(atts["slideObject"]);
+            el = new JXG.Point(board, parents, attr);
+            if ( attributes["slideObject"] != null ) {
+                el.makeGlider(attributes["slideObject"]);
             } else {
                 el.baseElement = el; // Free point
             }
         } else if ( (typeof parents[0]=='object') && (typeof parents[1]=='object') ) { // Transformation
-            el = new JXG.Point(board, [0,0], atts['id'], atts['name'], show, atts['withLabel'], atts['layer']);   
+            el = new JXG.Point(board, [0,0], attr);
             el.addTransform(parents[0],parents[1]);
         }
         else {// Failure
@@ -1253,7 +1182,7 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
                             "\nPossible parent types: [x,y], [z,x,y], [point,transformation]");
         }
     } else {
-        el = new JXG.Point(board, [0,0], atts['id'], atts['name'], show, atts['withLabel'], atts['layer']);
+        el = new JXG.Point(board, [0, 0], attr);
         el.addConstraint(parents);
     }
     return el;
@@ -1305,7 +1234,7 @@ JXG.createGlider = function(board, parents, atts) {
     if (parents.length==1) {
       el = new JXG.Point(board, [0,0], atts['id'], atts['name'], show, atts['withLabel']);
     } else {
-      el = board.create('point',parents.slice(0,-1), atts);
+      el = board.create('point', parents.slice(0, -1), atts);
     }
     el.makeGlider(parents[parents.length-1]);
     return el;

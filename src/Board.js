@@ -937,7 +937,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     updateInfobox: function (el) {
         var x, y, xc, yc;
 
-        if (!el.showInfobox) {
+        if (!el.visProp.showInfobox) {
             return this;
         }
         if (el.elementClass == JXG.OBJECT_CLASS_POINT) {

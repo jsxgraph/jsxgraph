@@ -219,25 +219,25 @@ JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
  *   var ppex1_pp1 = ppex1_board.create('perpendicularpoint', [ppex1_p3, ppex1_l1]);
  * </script><pre>
  */
-JXG.createPerpendicularPoint = function(board, parentArr, atts) {
+JXG.createPerpendicularPoint = function(board, parents, attributes) {
     var l, p, t;
 
-    if(JXG.isPoint(parentArr[0]) && parentArr[1].type == JXG.OBJECT_TYPE_LINE) {
-        p = parentArr[0];
-        l = parentArr[1];
+    if(JXG.isPoint(parents[0]) && parents[1].type == JXG.OBJECT_TYPE_LINE) {
+        p = parents[0];
+        l = parents[1];
     }
-    else if(JXG.isPoint(parentArr[1]) && parentArr[0].type == JXG.OBJECT_TYPE_LINE) {
-        p = parentArr[1];
-        l = parentArr[0];
+    else if(JXG.isPoint(parents[1]) && parents[0].type == JXG.OBJECT_TYPE_LINE) {
+        p = parents[1];
+        l = parents[0];
     }
     else {
         throw new Error("JSXGraph: Can't create perpendicular point with parent types '" +
-                        (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'." +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,line]");
     }
 
     // no need to call create, the properties will be set through the create('perpendicular') call
-    t = JXG.createPoint(board, [function () { return JXG.Math.Geometry.perpendicular(l, p, board)[0]; }], {fixed: true, name: atts['name'], id: atts['id']});
+    t = JXG.createPoint(board, [function () { return JXG.Math.Geometry.perpendicular(l, p, board)[0]; }], {fixed: true, name: attributes['name'], id: attributes['id']});
     p.addChild(t); // notwendig, um auch den Punkt upzudaten
     l.addChild(t);
 
@@ -330,36 +330,39 @@ JXG.createPerpendicularPoint = function(board, parentArr, atts) {
  *   var pex1_perp1 = pex1_board.create('perpendicular', [pex1_l1, pex1_p3]);
  * </script><pre>
  */
-JXG.createPerpendicular = function(board, parentArr, atts) {
-    var p, l, pd, t, ret;
+JXG.createPerpendicular = function(board, parents, attributes) {
+    var p, l, pd, t, ret, attr;
 
-    parentArr[0] = JXG.getReference(board, parentArr[0]);
-    parentArr[1] = JXG.getReference(board, parentArr[1]);
+    parents[0] = JXG.getReference(board, parents[0]);
+    parents[1] = JXG.getReference(board, parents[1]);
 
-    if(JXG.isPoint(parentArr[0]) && parentArr[1].elementClass == JXG.OBJECT_CLASS_LINE) {
-        l = parentArr[1];
-        p = parentArr[0];
+    if(JXG.isPoint(parents[0]) && parents[1].elementClass == JXG.OBJECT_CLASS_LINE) {
+        l = parents[1];
+        p = parents[0];
     }
-    else if(JXG.isPoint(parentArr[1]) && parentArr[0].elementClass == JXG.OBJECT_CLASS_LINE) {
-        l = parentArr[0];
-        p = parentArr[1];
-    }
-    else {
+    else if(JXG.isPoint(parents[1]) && parents[0].elementClass == JXG.OBJECT_CLASS_LINE) {
+        l = parents[0];
+        p = parents[1];
+    } else {
         throw new Error("JSXGraph: Can't create perpendicular with parent types '" +
-                        (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'." +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [line,point]");
     }
 
-    if(!JXG.isArray(atts['id'])) {
-        atts['id'] = ['',''];
+    attr = {};
+
+    //JXG.
+
+    if(!JXG.isArray(attributes['id'])) {
+        attributes['id'] = ['',''];
     }
-    if(!JXG.isArray(atts['name'])) {
-        atts['name'] = ['',''];
+    if(!JXG.isArray(attributes['name'])) {
+        attributes['name'] = ['',''];
     }
 
     // no need to call create, the properties will be set through the create('perpendicular') call
-    t = JXG.createPerpendicularPoint(board, [l, p], {fixed: true, name: atts['name'][1], id: atts['id'][1], visible: false});
-    pd = JXG.createSegment(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], {name: atts['name'][0], id: atts['id'][0]});
+    t = JXG.createPerpendicularPoint(board, [l, p], {fixed: true, name: attributes['name'][1], id: attributes['id'][1], visible: false});
+    pd = JXG.createSegment(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], {name: attributes['name'][0], id: attributes['id'][0]});
 
     ret = [pd, t];
     ret.line = pd;
@@ -1679,14 +1682,14 @@ JXG.createLocus = function(board, parents, attributes) {
  */
 JXG.createGrid = function (board, parents, attributes) {
     var c = board.create('curve', [[null], [null]], {
-                strokeColor: board.options.grid.gridColor,
+                strokeColor: board.options.grid.strokeColor,
                 //highlightStrokeColor: board.options.grid.gridColor,
-                opacity: board.options.grid.gridOpacity
+                opacity: board.options.grid.strokeOpacity
             });
 
     // TODO: use user given attributes
 
-    if(board.options.grid.gridDash)
+    if(board.options.grid.dash)
         c.setProperty({dash: 2});
 
     c.updateDataArray = function () {

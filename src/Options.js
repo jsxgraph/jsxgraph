@@ -40,9 +40,9 @@ JXG.Options = {
         hasGrid : false,
         gridX : 1,
         gridY : 1,
-        gridColor : '#C0C0C0',
-        gridOpacity : '0.5',
-        gridDash : true,
+        strokeColor : '#C0C0C0',
+        strokeOpacity : '0.5',
+        dash : 2,
         /* snap to grid options */
         snapToGrid : false,
         snapSizeX : 2,
@@ -94,15 +94,78 @@ JXG.Options = {
     /* special point options */
     point : {
     	withLabel: true,
-        style : 5, // deprecated
+
+        /**
+         * There are different point styles which differ in appearance and size.
+         * Possible values are
+         * <table><tr><th>Constant name</th><th>Value</th><th>Meaning</th><th>face</th><th>size</th></tr>
+         * <tr><td>JXG.POINT_STYLE_X_SMALL</td><td>0</td><td>small sized x</td><td>cross or x</td><td>2</td></tr>
+         * <tr><td>JXG.POINT_STYLE_X</td><td>1</td><td>medium sized x</td><td>cross or x</td><td>3</td></tr>
+         * <tr><td>JXG.POINT_STYLE_X_BIG</td><td>2</td><td>big sized x</td><td>cross or x</td><td>4</td></tr>
+         * <tr><td>JXG.POINT_STYLE_CIRCLE_TINY</td><td>3</td><td>tiny circle</td><td>circle or o</td><td>1</td></tr>
+         * <tr><td>JXG.POINT_STYLE_CIRCLE_SMALL</td><td>4</td><td>small circle</td><td>circle or o</td><td>2</td></tr>
+         * <tr><td>JXG.POINT_STYLE_CIRCLE</td><td>5</td><td>medium circle</td><td>circle or o</td><td>3</td></tr>
+         * <tr><td>JXG.POINT_STYLE_CIRCLE_BIG</td><td>6</td><td>big circle</td><td>circle or o</td><td>4</td></tr>
+         * <tr><td>JXG.POINT_STYLE_SQUARE_SMALL</td><td>7</td><td>small rectangle</td><td>square or []</td><td>2</td></tr>
+         * <tr><td>JXG.POINT_STYLE_SQUARE</td><td>8</td><td>medium rectangle</td><td>square or []</td><td>3</td></tr>
+         * <tr><td>JXG.POINT_STYLE_SQUARE_BIG</td><td>9</td><td>big rectangle</td><td>square or []</td><td>4</td></tr>
+         * <tr><td>JXG.POINT_STYLE_PLUS_SMALL</td><td>10</td><td>small +</td><td>plus or +</td><td>2</td></tr>
+         * <tr><td>JXG.POINT_STYLE_PLUS</td><td>11</td><td>medium +</td><td>plus or +</td><td>3</td></tr>
+         * <tr><td>JXG.POINT_STYLE_PLUS_BIG</td><td>12</td><td>big +</td><td>plus or +</td><td>4</td></tr></table>
+         * <b>Hint:</b> This attribute is internally replaced by face and size, whose opportunities are wider, , as given in the table above.
+         * @see JXG.Point#face
+         * @see JXG.Point#size
+         * @type number
+         * @see #setStyle
+         * @default JXG.Options.point#style
+         * @name JXG.Point#style
+         * @deprecated
+         */
+        style : 5,
+
+        /**
+         * There are different point styles which differ in appearance.
+         * Posssible values are
+         * <table><tr><th>Value</th></tr>
+         * <tr><td>cross</td></tr>
+         * <tr><td>circle</td></tr>
+         * <tr><td>square</td></tr>
+         * <tr><td>plus</td></tr>
+         * <tr><td>diamond</td></tr>
+         * <tr><td>triangleUp</td></tr>
+         * <tr><td>triangleDown</td></tr>
+         * <tr><td>triangleLeft</td></tr>
+         * <tr><td>triangleRight</td></tr>
+         * </table>
+         * @type string
+         * @see JXG.Point#setStyle
+         * @default circle
+         * @name JXG.Point#face
+         */
         face : 'o',
+
+        /**
+         * Determines the size of a point.
+         * Means radius resp. half the width of a point (depending on the face).
+         * @see JXG.Point#face
+         * @type number
+         * @see JXG.Point#setStyle
+         * @default 3
+         * @name JXG.Point#size
+         */
         size : 3,
         fillColor : '#ff0000',
         highlightFillColor : '#EEEEEE',
         strokeWidth: '2px',
-        strokeColor : '#ff0000', //'#0000ff',
+        strokeColor : '#ff0000',
         highlightStrokeColor : '#C3D9FF',
         zoom: false,             // Change the point size on zoom
+
+        /**
+         * If true, the infobox is shown on mouse over, else not.
+         * @type boolean
+         * @default true
+         */
         showInfobox: true
     },
 
@@ -117,14 +180,13 @@ JXG.Options = {
         strokeColor : '#0000ff',
         highlightStrokeColor : '#888888',
         withTicks: false,
-        /* line ticks options */
         ticks : {
             drawLabels : true,
             drawZero : false,
             insertTicks : false,
             minTicksDistance : 50,
             maxTicksDistance : 300,
-            minorHeight : 4,          // if <0: full width and height 
+            minorHeight : 4,          // if <0: full width and height
             majorHeight : -1,         // if <0: full width and height
             minorTicks : 4,
             defaultDistance : 1,
@@ -138,7 +200,20 @@ JXG.Options = {
     axis : {
         strokeColor : '#666666',
         highlightStrokeColor : '#888888',
-        withTicks: true
+        withTicks: true,
+        /* line ticks options */
+        ticks : {
+            drawLabels : true,
+            drawZero : false,
+            insertTicks : false,
+            minTicksDistance : 50,
+            maxTicksDistance : 300,
+            minorHeight : 4,          // if <0: full width and height
+            majorHeight : -1,         // if <0: full width and height
+            minorTicks : 4,
+            defaultDistance : 1,
+            opacity : 0.3
+        }
     },
 
     /* special slider options */
@@ -219,16 +294,6 @@ JXG.Options = {
         useDirection: false
     },
 
-    semicircle: {
-        arc: { },
-        midpoint: { }
-    },
-
-    circumcirclearc: {
-        arc: { },
-        midpoint: { }
-    },
-
     /* special polygon options */
     polygon : {
         fillColor : '#00FF00',
@@ -297,6 +362,102 @@ JXG.Options = {
     	to10: null
     }
 };
+
+/**
+ * Holds all possible properties and the according validators for geometry elements. A validator is either a function
+ * which takes one parameter and returns true, if the value is valid for the property, or it is false if no validator
+ * is required.
+ */
+JXG.Validator = (function () {
+    var validatePixel = function (v) {
+            return /^[0-9]+px$/.test(v);
+        },
+        validateDisplay = function (v) {
+            return (v  in {html: 0, internal: 0});
+        },
+        validateColor = function (v) {
+            // for now this should do it...
+            return JXG.isString(v);
+        },
+        validatePointFace = function (v) {
+            return JXG.exists(JXG.Point.prototype.normalizeFace.call(this, v));
+        },
+        validateInteger = function (v) {
+            return (Math.abs(v - Math.round(v)) < JXG.Math.eps);
+        },
+        validateScreenCoords = function (v) {
+            return v.length >= 2 && validateInteger(v[0]) && validateInteger(v[1]);
+        },
+        validateRenderer = function (v) {
+            return (v in {vml: 0, svg: 0, canvas: 0});
+        };
+
+    return {
+        color: validateColor,
+        defaultDistance: JXG.isNumber,
+        display : validateDisplay,
+        doAdvancedPlot: false,
+        draft : false,
+        drawLabels : false,
+        drawZero : false,
+        face : validatePointFace,
+        factor : JXG.isNumber,
+        fillColor: validateColor,
+        fillOpacity : JXG.isNumber,
+        firstArrow : false,
+        fontSize : validateInteger,
+        dash : validateInteger,
+        gridX : JXG.isNumber,
+        gridY : JXG.isNumber,
+        hasGrid : false,
+        highlightFillColor: validateColor,
+        highlightFillOpacity: JXG.isNumber,
+        highlightStrokeColor: validateColor,
+        highlightStrokeOpacity: JXG.isNumber,
+        insertTicks : false,
+        labelOffsets: validateScreenCoords,
+        lastArrow : false,
+        majorHeight : validateInteger,
+        maxTicksDistance : validateInteger,
+        minorHeight : validateInteger,
+        minorTicks : validateInteger,
+        minTicksDistance : validateInteger,
+        numberPointsHigh : validateInteger,
+        numberPointsLow : validateInteger,
+        opacity : JXG.isNumber,
+        radius : JXG.isNumber,
+        RDPsmoothing : false,
+        renderer: validateRenderer,
+        right: validatePixel,
+        showCopyright : false,
+        showInfobox: false,
+        showNavigation : false,
+        size : validateInteger,
+        snapSizeX : JXG.isNumber,
+        snapSizeY : JXG.isNumger,
+        snapToGrid : false,
+        straightFirst : false,
+        straightLast : false,
+        stretch: false,
+        strokeColor : validateColor,
+        strokeOpacity: JXG.isNumber,
+        strokeWidth : validatePixel,
+        takeFirst : false,
+        takeSizeFromFile : false,
+        textColor : validateColor,
+        to10: false,
+        toOrigin: false,
+        translateTo10: false,
+        translateToOrigin: false,
+        useASCIIMathML : false,
+        useDirection: false,
+        useMathJax : false,
+        withLabel: false,
+        withTicks: false,
+        zoom: false
+    };
+})();
+
 
 /**
  * Apply the options stored in this object to all objects on the given board.

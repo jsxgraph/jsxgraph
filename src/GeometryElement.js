@@ -787,10 +787,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     break;
                 case 'showinfobox':
                     if (pair[1] == 'false' || pair[1] == false) {
-                        this.showInfobox = false;
+                        this.visProp.showInfobox = false;
                     }
                     else if (pair[1] == 'true' || pair[1] == true) {
-                        this.showInfobox = true;
+                        this.visProp.showInfobox = true;
                     }
                     break;
                 case 'visible':
