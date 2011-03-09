@@ -129,7 +129,8 @@
             points = [];
 			points_screen = [];
             points.push(coords.usrCoords.slice(1));
-			points_screen.push(coords.scrCoords.slice(1));
+			var dummy = coords.scrCoords.slice(1));
+			points_screen.push(new Point(dummy[0],dummy[1]));
             draftcurve.prepareUpdate().update().updateRenderer();
             // prevent accidental text selection
             if (e && e.preventDefault) {
@@ -142,7 +143,8 @@
         var move = function(e, m) {
             if(mousedown) {
                 points.push(getMouseCoords(e).usrCoords.slice(1));
-				points_screen.push(getMouseCoords(e).scrCoords.slice(1));
+				var dummy = getMouseCoords(e).scrCoords.slice(1));
+				points_screen.push(new Point(dummy[0],dummy[1]));
                 draftcurve.prepareUpdate().update().updateRenderer();
 				var result = _r.Recognize(new Array(points_screen),true,true);
 				if(result.Name == "circle")
