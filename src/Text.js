@@ -159,218 +159,220 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
 };
 JXG.Text.prototype = new JXG.GeometryElement();
 
-/**
- * @private
- * Empty function (for the moment). It is needed for highlighting
- * @param {int} x
- * @param {int} y Find closest point on the text to (xy)
- * @return Always returns false
- */
-JXG.Text.prototype.hasPoint = function (x,y) {
-    return false;
-};
+JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
+    /**
+     * @private
+     * Empty function (for the moment). It is needed for highlighting
+     * @param {int} x
+     * @param {int} y Find closest point on the text to (xy)
+     * @return Always returns false
+     */
+    hasPoint: function (x,y) {
+        return false;
+    },
 
-/**
- * Overwrite the text.
- * @param {string,function} str
- * @return {object} reference to the text object.
- */
-JXG.Text.prototype.setText = function(text) {
-    if (typeof text === 'function') {
-        this.updateText = function() { this.plaintext = text(); };
-    } else {
-        if (JXG.isNumber(text)) {
-            this.content = (text).toFixed(this.digits);
+    /**
+     * Overwrite the text.
+     * @param {string,function} str
+     * @return {object} reference to the text object.
+     */
+    setText: function(text) {
+        if (typeof text === 'function') {
+            this.updateText = function() { this.plaintext = text(); };
         } else {
-            if (this.visProp.useASCIIMathML) {
-                this.content = "'`" + text + "`'";              // Convert via ASCIIMathML
+            if (JXG.isNumber(text)) {
+                this.content = (text).toFixed(this.digits);
             } else {
-                this.content = this.generateTerm(text);   // Converts GEONExT syntax into JavaScript string
+                if (this.visProp.useASCIIMathML) {
+                    this.content = "'`" + text + "`'";              // Convert via ASCIIMathML
+                } else {
+                    this.content = this.generateTerm(text);   // Converts GEONExT syntax into JavaScript string
+                }
             }
+            this.updateText = new Function('this.plaintext = ' + this.content + ';');
         }
-        this.updateText = new Function('this.plaintext = ' + this.content + ';');
-    }
 
-    this.updateText();                    // First evaluation of the string.
-                                          // Needed for display='internal' and Canvas
-    this.updateSize();
-    return this;
-};
-
-/**
- * Recompute the width and the height of the text box.
- * Update array this.size with pixel values.
- * The result may differ from browser to browser
- * by some pixels.
- * In IE and canvas we use a very crude estimation of the dimensions of
- * the textbox. 
- * In JSXGraph this.size is necessary for applying rotations in IE and
- * for aligning text.
- */
-JXG.Text.prototype.updateSize = function () {
-    // Here comes a very crude estimation of the dimensions of
-    // the textbox. It is only necessary for the IE.
-    if (this.display=='html' && this.board.renderer.type!='vml') {
-        this.size = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
-    } else if (this.display=='internal' && this.board.renderer.type=='svg') {
-        this.size = [this.rendNode.getBBox().width, this.rendNode.getBBox().height];
-    } else if (this.board.renderer.type=='vml' || (this.display=='internal' && this.board.renderer.type=='canvas')) { 
-        this.size = [parseFloat(this.visProp['fontSize'])*this.plaintext.length*0.45,parseFloat(this.visProp['fontSize'])*0.9]
-    }
-};    
-
-/**
- * Return the width of the text element.
- * @return {array} [width, height] in pixel
- */
-JXG.Text.prototype.getSize = function () {
-    return this.size;
-};    
-
-/**
- * Set the text to new, fixed coordinates.
- * @param {number} x
- * @param {number} y
- * @return {object} reference to the text object.
- */
-JXG.Text.prototype.setCoords = function (x,y) {
-    this.X = function() { return x; };
-    this.Y = function() { return y; };
-    this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
-    return this;
-};
-
-/**
- * Evaluates the text.
- * Then, the update function of the renderer
- * is called. 
- */
-JXG.Text.prototype.update = function () {
-    var anchor;
-
-    if (this.needsUpdate && !this.frozen) {
-        if (this.relativeCoords) {
-            if (this.isLabel) {
-                anchor = this.element.getLabelAnchor();
-            } else {
-                anchor = this.element.getTextAnchor();
-            }
-
-            this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
-                    [this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
-                        this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
-        } else {
-            this.updateCoords();
-        }
-    }   
-    if (this.needsUpdate) {
-        this.updateText();
+        this.updateText();                    // First evaluation of the string.
+                                              // Needed for display='internal' and Canvas
         this.updateSize();
-        this.updateTransform();
-    }
-    return this;
-};
+        return this;
+    },
 
-/**
- * The update function of the renderer
- * is called. 
- * @private
- */
-JXG.Text.prototype.updateRenderer = function () {
-    if (this.needsUpdate) {
-        this.board.renderer.updateText(this);
-        this.needsUpdate = false;
-    }
-    return this;
-};
+    /**
+     * Recompute the width and the height of the text box.
+     * Update array this.size with pixel values.
+     * The result may differ from browser to browser
+     * by some pixels.
+     * In IE and canvas we use a very crude estimation of the dimensions of
+     * the textbox. 
+     * In JSXGraph this.size is necessary for applying rotations in IE and
+     * for aligning text.
+     */
+    updateSize: function () {
+        // Here comes a very crude estimation of the dimensions of
+        // the textbox. It is only necessary for the IE.
+        if (this.display=='html' && this.board.renderer.type!='vml') {
+            this.size = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
+        } else if (this.display=='internal' && this.board.renderer.type=='svg') {
+            this.size = [this.rendNode.getBBox().width, this.rendNode.getBBox().height];
+        } else if (this.board.renderer.type=='vml' || (this.display=='internal' && this.board.renderer.type=='canvas')) { 
+            this.size = [parseFloat(this.visProp['fontSize'])*this.plaintext.length*0.45,parseFloat(this.visProp['fontSize'])*0.9]
+        }
+    },
 
-JXG.Text.prototype.updateTransform = function () {
-    if (this.transformations.length==0) {
-        return;
-    }
-    for (var i=0;i<this.transformations.length;i++) {
-        this.transformations[i].update();
-    }
-};
+    /**
+     * Return the width of the text element.
+     * @return {array} [width, height] in pixel
+     */
+    getSize: function () {
+        return this.size;
+    },
 
-/**
- * Converts the GEONExT syntax of the <value> terms into JavaScript.
- * Also, all Objects whose name appears in the term are searched and
- * the text is added as child to these objects.
- * @private
- * @see Algebra
- * @see #geonext2JS.
- */
-JXG.Text.prototype.generateTerm = function (contentStr) {
-    var res,
-        plaintext = '""',
-        term;
-    contentStr = contentStr.replace(/\r/g,''); 
-    contentStr = contentStr.replace(/\n/g,''); 
-    contentStr = contentStr.replace(/\"/g,'\\"'); 
-    contentStr = contentStr.replace(/\'/g,"\\'"); 
-    contentStr = contentStr.replace(/&amp;arc;/g,'&ang;'); 
-    contentStr = contentStr.replace(/<arc\s*\/>/g,'&ang;'); 
-    contentStr = contentStr.replace(/<sqrt\s*\/>/g,'&radic;'); 
+    /**
+     * Set the text to new, fixed coordinates.
+     * @param {number} x
+     * @param {number} y
+     * @return {object} reference to the text object.
+     */
+    setCoords: function (x,y) {
+        this.X = function() { return x; };
+        this.Y = function() { return y; };
+        this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+        return this;
+    },
 
-    // Convert GEONExT syntax into  JavaScript syntax
-    var i;
-    //var i = contentStr.indexOf('<mp>');
-    //contentStr = contentStr.slice(i+4);
-    //i = contentStr.indexOf('</mp>');
-    //contentStr = contentStr.slice(0,i);
+    /**
+     * Evaluates the text.
+     * Then, the update function of the renderer
+     * is called. 
+     */
+    update: function () {
+        var anchor;
 
-    i = contentStr.indexOf('<value>');
-    var j = contentStr.indexOf('</value>');
-    if (i>=0) {
-        while (i>=0) {
-            plaintext += ' + "'+ JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr.slice(0,i))) + '"';
-            term = contentStr.slice(i+7,j);
-            res = JXG.GeonextParser.geonext2JS(term, this.board);
-            res = res.replace(/\\"/g,'"');
-            res = res.replace(/\\'/g,"'");
-            if (res.indexOf('toFixed')<0) {  // GEONExT-Hack: apply rounding once only.  
-                plaintext += '+('+ res + ').toFixed('+(this.digits)+')';
+        if (this.needsUpdate && !this.frozen) {
+            if (this.relativeCoords) {
+                if (this.isLabel) {
+                    anchor = this.element.getLabelAnchor();
+                } else {
+                    anchor = this.element.getTextAnchor();
+                }
+
+                this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
+                        [this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
+                            this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
             } else {
-                plaintext += '+('+ res + ')';
+                this.updateCoords();
             }
-            contentStr = contentStr.slice(j+8);
-            i = contentStr.indexOf('<value>');
-            j = contentStr.indexOf('</value>');
+        }   
+        if (this.needsUpdate) {
+            this.updateText();
+            this.updateSize();
+            this.updateTransform();
         }
-    } //else {
-    plaintext += ' + "' + JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr)) + '"';
-    //}
-    plaintext = plaintext.replace(/<overline>/g,'<span style=text-decoration:overline>');
-    plaintext = plaintext.replace(/<\/overline>/g,'</span>');
-    plaintext = plaintext.replace(/<arrow>/g,'<span style=text-decoration:overline>');
-    plaintext = plaintext.replace(/<\/arrow>/g,'</span>');
+        return this;
+    },
 
-    plaintext = plaintext.replace(/&amp;/g,'&'); // This should replace &amp;pi; by &pi;
-    return plaintext;
-};
-
-/**
- * Finds dependencies in a given term and notifies the parents by adding the
- * dependent object to the found objects child elements.
- * @param {String} term String containing dependencies for the given object.
- * @private
- */
-JXG.Text.prototype.notifyParents = function (contentStr) {
-    var res = null;
-    var elements = this.board.elementsByName;
-
-    do {
-        var search = /<value>([\w\s\*\/\^\-\+\(\)\[\],<>=!]+)<\/value>/;
-        res = search.exec(contentStr);
-        if (res!=null) {
-            JXG.GeonextParser.findDependencies(this,res[1],this.board);
-            contentStr = contentStr.substr(res.index);
-            contentStr = contentStr.replace(search,'');
+    /**
+     * The update function of the renderer
+     * is called. 
+     * @private
+     */
+    updateRenderer: function () {
+        if (this.needsUpdate) {
+            this.board.renderer.updateText(this);
+            this.needsUpdate = false;
         }
-    } while (res!=null);
-    return this;
-};
+        return this;
+    },
+
+    updateTransform: function () {
+        if (this.transformations.length==0) {
+            return;
+        }
+        for (var i=0;i<this.transformations.length;i++) {
+            this.transformations[i].update();
+        }
+    },
+
+    /**
+     * Converts the GEONExT syntax of the <value> terms into JavaScript.
+     * Also, all Objects whose name appears in the term are searched and
+     * the text is added as child to these objects.
+     * @private
+     * @see Algebra
+     * @see #geonext2JS.
+     */
+    generateTerm: function (contentStr) {
+        var res,
+            plaintext = '""',
+            term;
+        contentStr = contentStr.replace(/\r/g,''); 
+        contentStr = contentStr.replace(/\n/g,''); 
+        contentStr = contentStr.replace(/\"/g,'\\"'); 
+        contentStr = contentStr.replace(/\'/g,"\\'"); 
+        contentStr = contentStr.replace(/&amp;arc;/g,'&ang;'); 
+        contentStr = contentStr.replace(/<arc\s*\/>/g,'&ang;'); 
+        contentStr = contentStr.replace(/<sqrt\s*\/>/g,'&radic;'); 
+
+        // Convert GEONExT syntax into  JavaScript syntax
+        var i;
+        //var i = contentStr.indexOf('<mp>');
+        //contentStr = contentStr.slice(i+4);
+        //i = contentStr.indexOf('</mp>');
+        //contentStr = contentStr.slice(0,i);
+
+        i = contentStr.indexOf('<value>');
+        var j = contentStr.indexOf('</value>');
+        if (i>=0) {
+            while (i>=0) {
+                plaintext += ' + "'+ JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr.slice(0,i))) + '"';
+                term = contentStr.slice(i+7,j);
+                res = JXG.GeonextParser.geonext2JS(term, this.board);
+                res = res.replace(/\\"/g,'"');
+                res = res.replace(/\\'/g,"'");
+                if (res.indexOf('toFixed')<0) {  // GEONExT-Hack: apply rounding once only.  
+                    plaintext += '+('+ res + ').toFixed('+(this.digits)+')';
+                } else {
+                    plaintext += '+('+ res + ')';
+                }
+                contentStr = contentStr.slice(j+8);
+                i = contentStr.indexOf('<value>');
+                j = contentStr.indexOf('</value>');
+            }
+        } //else {
+        plaintext += ' + "' + JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr)) + '"';
+        //}
+        plaintext = plaintext.replace(/<overline>/g,'<span style=text-decoration:overline>');
+        plaintext = plaintext.replace(/<\/overline>/g,'</span>');
+        plaintext = plaintext.replace(/<arrow>/g,'<span style=text-decoration:overline>');
+        plaintext = plaintext.replace(/<\/arrow>/g,'</span>');
+
+        plaintext = plaintext.replace(/&amp;/g,'&'); // This should replace &amp;pi; by &pi;
+        return plaintext;
+    },
+
+    /**
+     * Finds dependencies in a given term and notifies the parents by adding the
+     * dependent object to the found objects child elements.
+     * @param {String} term String containing dependencies for the given object.
+     * @private
+     */
+    notifyParents: function (contentStr) {
+        var res = null;
+        var elements = this.board.elementsByName;
+
+        do {
+            var search = /<value>([\w\s\*\/\^\-\+\(\)\[\],<>=!]+)<\/value>/;
+            res = search.exec(contentStr);
+            if (res!=null) {
+                JXG.GeonextParser.findDependencies(this,res[1],this.board);
+                contentStr = contentStr.substr(res.index);
+                contentStr = contentStr.replace(search,'');
+            }
+        } while (res!=null);
+        return this;
+    }
+});
 
 /**
  * @class This element is used to provide a constructor for text, which is just a wrapper for element {@link Text}. 
