@@ -92,73 +92,76 @@ JXG.Group = function(board, id, name) {
     this.dY = 0;
 };
 
-/**
- * Releases the group added to the points in this group, but only if this group is the last group.
- */
-JXG.Group.prototype.ungroup = function() {
-    var el;
-    for (el in this.objects) {
-        if (this.objects[el].group[this.objects[el].group.length-1] == this) {
-            this.objects[el].group.pop();
-        }
-        delete(this.objects[el]);
-    }
-};
-
-/**
- * Sends an update to all group members.
- * @param {JXG.Point} point The point that caused the update.
- */
-JXG.Group.prototype.update = function(point) {
-    var obj = null,
-        el;
-    
-    for (el in this.objects) {
-        obj = this.objects[el];
-        if (obj.id != point.id) {
-            obj.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [obj.coords.scrCoords[1] + this.dX, obj.coords.scrCoords[2] + this.dY], obj.board);
-        }
-    }
-    
-    for (el in this.objects) {
-        /* Wurde das Element vielleicht geloescht? */
-        if (JXG.exists(this.board.objects[el])) {
-            /* Nein, wurde es nicht, also updaten */
-            this.objects[el].update(false);
-        } else { /* es wurde geloescht, also aus dem Array entfernen */
+JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
+    /**
+     * Releases the group added to the points in this group, but only if this group is the last group.
+     */
+    ungroup: function() {
+        var el;
+        for (el in this.objects) {
+            if (this.objects[el].group[this.objects[el].group.length-1] == this) {
+                this.objects[el].group.pop();
+            }
             delete(this.objects[el]);
         }
+    },
+
+    /**
+     * Sends an update to all group members.
+     * @param {JXG.Point} point The point that caused the update.
+     */
+    update: function(point) {
+        var obj = null,
+            el;
+        
+        for (el in this.objects) {
+            obj = this.objects[el];
+            if (obj.id != point.id) {
+                obj.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [obj.coords.scrCoords[1] + this.dX, 
+                                                                   obj.coords.scrCoords[2] + this.dY], obj.board);
+            }
+        }
+        
+        for (el in this.objects) {
+            /* Wurde das Element vielleicht geloescht? */
+            if (JXG.exists(this.board.objects[el])) {
+                /* Nein, wurde es nicht, also updaten */
+                this.objects[el].update(false);
+            } else { /* es wurde geloescht, also aus dem Array entfernen */
+                delete(this.objects[el]);
+            }
+        }
+    },
+
+    /**
+     * Adds an Point to this group.
+     * @param {JXG.Point} object The object added to the group.
+     */
+    addPoint: function(object) {
+        this.objects[object.id] = object;
+    },
+
+    /**
+     * Adds an multiple points to this group.
+     * @param {Array} objects An array of points to add to the group.
+     */
+    addPoints: function(objects) {
+        var p;
+        for (p in objects)
+            this.objects[p.id] = p;
+    },
+
+    /**
+     * Adds an Pint to this group.
+     * @param {JXG.Point} object The object added to the group.
+     */
+    addGroup: function(group) {
+        var el;
+        for (el in group.objects) {
+            this.addPoint(group.objects[el]);
+        }
     }
-};
-
-/**
- * Adds an Point to this group.
- * @param {JXG.Point} object The object added to the group.
- */
-JXG.Group.prototype.addPoint = function(object) {
-    this.objects[object.id] = object;
-};
-
-/**
- * Adds an multiple points to this group.
- * @param {Array} objects An array of points to add to the group.
- */
-JXG.Group.prototype.addPoints = function(objects) {
-    var p;
-    for (p in objects)
-        this.objects[p.id] = p;
-};
-
-/**
- * Adds an Pint to this group.
- * @param {JXG.Point} object The object added to the group.
- */
-JXG.Group.prototype.addGroup = function(group) {
-    var el;
-    for (el in group.objects) {
-        this.addPoint(group.objects[el]);
-    }
-};
+});
 
 /**
  * Groups points.
