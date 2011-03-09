@@ -53,7 +53,7 @@ TestCase("JXG", {
         assertFunction('test function type', copy.fun);
 
         copy.fun();
-        assertTrue(copy.fun.calledOnce);
+        assertTrue(o.fun.calledOnce);
     },
 
     testDeepCopyMerge: function () {
