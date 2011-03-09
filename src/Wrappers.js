@@ -112,7 +112,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     arrowFunc: function(){return arguments;},
     arrowOptions: ['arrow',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT]]],
 
-    circleFunc: function(){return arguments;};
+    circleFunc: function(){return arguments;},
     circleOptions: ['circle',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT],[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_LINE],
                               [JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_CIRCLE]]],
 
