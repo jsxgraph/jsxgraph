@@ -394,7 +394,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {String} variable number of strings, e.g. 'slider', subtype 'point1'. 
      * @returns {Object} The resulting attributes object
      */
-    copyAttributes: function (attributes, options/*, elType, elSubType*/) {
+    copyAttributes: function (attributes, options) {
         var a, i, len, o;
 
         a = this. deepCopy(options.elements);       // default options from Options.elements 
@@ -404,6 +404,11 @@ JXG.extend(JXG, /** @lends JXG */ {
         for (i=2;i<len;i++) {
             o = o[arguments[i]];
             a = this. deepCopy(a, o);
+        }
+        if (this.exists(arguments[2]) && this.exists(options['layer'][arguments[2]])) {
+            a['layer'] = options['layer'][arguments[2]]
+        } else {
+            a['layer'] = null;
         }
         
         o = attributes;                                             // options from attributes

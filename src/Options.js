@@ -178,7 +178,6 @@ JXG.Options = {
         segment: {
             strokeWidth: 1
         }
-        
     },
     
     /*special circle options */
@@ -252,17 +251,17 @@ JXG.Options = {
         strokeColor : '#000000',
         useASCIIMathML : false,
         useMathJax : false,
-        display : 'html' //'html' or 'internal'
+        display : 'html'                    //'html' or 'internal'
     },
 
     /* special curve options */
     curve : {
         strokeWidth : '1px',
         strokeColor : '#0000ff',
-        RDPsmoothing : false,    // Apply the Ramen-Douglas-Peuker algorithm
-        numberPointsHigh : 1600, // Number of points on curves after mouseUp
-        numberPointsLow : 400,   // Number of points on curves after mousemove
-        doAdvancedPlot : true    // Use the algorithm by Gillam and Hohenwarter
+        RDPsmoothing : false,       // Apply the Ramen-Douglas-Peuker algorithm
+        numberPointsHigh : 1600,  // Number of points on curves after mouseUp
+        numberPointsLow : 400,    // Number of points on curves after mousemove
+        doAdvancedPlot : true       // Use the algorithm by Gillam and Hohenwarter
                                  // It is much slower, but the result is better
     },
 
