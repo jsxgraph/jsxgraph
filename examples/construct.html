@@ -17,7 +17,7 @@ JXG.Options.renderer = 'canvas';
 var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:false, grid:false});
 //var axisx = b.create('axis', [[0,0], [1,0]], {strokeColor:'black', withLabel:false});
 
-b.create('slider', [[0,0], [0,5], [0,2,10]], {strokeColor:'green'});
+b.create('slider', [[0,0], [0,5], [0,2,10]], {strokeColor:'green', point1: {fillColor:'blue'} });
 
 
 //L = b.create('line',[[0,1],[1,1]], {strokeWidth:1});

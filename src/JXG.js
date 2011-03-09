@@ -395,15 +395,25 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Object} The resulting attributes object
      */
     copyAttributes: function (attributes, options/*, elType, elSubType*/) {
-        var a, i, len, o = options;
+        var a, i, len, o;
 
-        a = this. deepCopy(options.elements);
+        a = this. deepCopy(options.elements);       // default options from Options.elements 
+        
         len = arguments.length;
+        o = options;                                                // default options from specific elements
         for (i=2;i<len;i++) {
             o = o[arguments[i]];
             a = this. deepCopy(a, o);
         }
-        return this. deepCopy(a, attributes);
+        
+        o = attributes;                                             // options from attributes
+        this. deepCopy(a, o);
+        for (i=3;i<len;i++) {
+            o = o[arguments[i]];
+            a = this. deepCopy(a, o);
+        }
+        
+        return a;
     },
     
     /**

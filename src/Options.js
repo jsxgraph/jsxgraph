@@ -166,13 +166,19 @@ JXG.Options = {
             opacity : 0.3
         }, 
         point1: {
-            visible: false,
-            fixed: true
+            visible: true,
+            fixed: true,
+            size: 5
         },
         point2: {
-            visible: false,
-            fixed: true
+            visible: true,
+            fixed: true,
+            size: 5
+        },
+        segment: {
+            strokeWidth: 1
         }
+        
     },
     
     /*special circle options */
