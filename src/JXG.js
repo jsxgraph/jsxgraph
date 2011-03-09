@@ -397,7 +397,7 @@ JXG.extend(JXG, /** @lends JXG */ {
     copyAttributes: function (attributes, options) {
         var a, i, len, o;
 
-        a = this.deepCopy(options.elements);       // default options from Options.elements
+        a = this.deepCopy(options['elements']);       // default options from Options.elements
         
         len = arguments.length;
         o = options;                                                // default options from specific elements
@@ -405,11 +405,10 @@ JXG.extend(JXG, /** @lends JXG */ {
             o = o[arguments[i]];
             a = this.deepCopy(a, o);
         }
+        
         if (this.exists(arguments[2]) && this.exists(options['layer'][arguments[2]])) {
-            a['layer'] = options['layer'][arguments[2]]
-        } else {
-            a['layer'] = null;
-        }
+            a['layer'] = options['layer'][arguments[2]];
+        } 
         
         o = attributes;                                             // options from attributes
         a = this.deepCopy(a, o);
@@ -417,7 +416,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             o = o[arguments[i]];
             a = this.deepCopy(a, o);
         }
-        
+
         return a;
     },
     
@@ -657,6 +656,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             return obj;
         }
         if (this.isArray(obj)) {
+            console.log("y");
             c = [];
             for (i=0; i<obj.length; i++) {
                 prop = obj[i];

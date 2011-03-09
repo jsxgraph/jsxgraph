@@ -67,6 +67,7 @@ JXG.createSlider = function(board, parents, attributes) {
     start = parents[2][1];
     smax = parents[2][2];
     sdiff = smax -smin;
+
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point1');
     p1 = board.create('point', pos0,  attr);
@@ -75,7 +76,6 @@ JXG.createSlider = function(board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point2');
     p2 = board.create('point', pos1,  attr);
         // {visible:attr['visible'], fixed:attr['fixed'], name:'',withLabel:attr['withLabel'],face:'<>', size:5, strokeColor:attr['strokeColor'], fillColor:attr['fillColor']}); 
-        
     board.create('group',[p1,p2]);
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment');
@@ -88,29 +88,31 @@ JXG.createSlider = function(board, parents, attributes) {
                     //{insertTicks:true, minorTicks:0, drawLabels:false, drawZero:true}); 
     }
 
+/*
     if (fixed) {
         p1.setProperty({needsRegularUpdate : false});
         p2.setProperty({needsRegularUpdate : false});
         l1.setProperty({needsRegularUpdate : false});
     }
-    
+*/
+
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
 
     //if (attributes['snapWidth']!=null) snapWidth = attributes['snapWidth'];
     //if (attributes['snapwidth']!=null) snapWidth = attributes['snapwidth'];
     
-    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point3');
-    p3 = board.create('glider', [startx,starty,l1], attr);
+    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'glider');
+    p3 = board.create('glider', [startx, starty,l1], attr);
     /*
                 {style:6,strokeColor:attributes['strokeColor'],
                  fillColor:attributes['fillColor'],
                  showInfobox:false,name:attributes['name'], withLabel:false,
                  snapWidth:snapWidth});
     */
-    
+
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment2');
-    l2 = board.create('line', [p1,p3],  attr);
+    l2 = board.create('segment', [p1,p3],  attr);
     /*
                 {straightFirst:false, 
                  straightLast:false, strokewidth:3, 
@@ -135,7 +137,7 @@ JXG.createSlider = function(board, parents, attributes) {
                                   function(){return (p2.Y()-p1.Y())*0.05+p2.Y();},
                                   function(){return n+(p3.Value()).toFixed(2);}],
                                      {name:''}); 
-    }                                     
+    }  
     return p3;
 };    
 

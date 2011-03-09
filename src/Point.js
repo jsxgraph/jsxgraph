@@ -1240,7 +1240,7 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
  */
 JXG.createGlider = function(board, parents, atts) {
     var el, show;
-    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'point','withLabel'), layer:null});
+    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'point','withLabel'), layer:9});
     show = (typeof atts['visible']=='undefined') || JXG.str2Bool(atts['visible']);
     
     if (parents.length==1) {

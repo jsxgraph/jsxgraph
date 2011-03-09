@@ -416,10 +416,14 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
  *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+s.Value().toFixed(2);}]);
  * </script><pre>
  */
-JXG.createText = function(board, parentArr, atts) {
-    atts = JXG.checkAttributes(atts,{layer:null,display:board.options.text.display,parent:null});  // 'html' or 'internal'
-    if(atts['parent'] != null) { atts['parent'] = atts['parent'].id;}
-    return new JXG.Text(board, parentArr[parentArr.length-1], atts['parent'], parentArr, atts['id'], atts['name'], atts['digits'], false, atts['display'],atts['layer']);
+JXG.createText = function(board, parentArr, attributes) {
+    var attr;
+    //atts = JXG.checkAttributes(atts, {layer:null,display:board.options.text.display, parent:null});  // 'html' or 'internal'
+
+    attr = JXG.checkAttributes(attributes, board.options, 'line');
+    
+    if(attr['parent'] != null) { attr['parent'] = attr['parent'].id;}
+    return new JXG.Text(board, parentArr[parentArr.length-1], attr['parent'], parentArr, attr['id'], attr['name'], attr['digits'], false, attr['display'],attr['layer']);
 };
 
 JXG.JSXGraph.registerElement('text', JXG.createText);

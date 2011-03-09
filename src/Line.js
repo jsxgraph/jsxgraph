@@ -844,20 +844,23 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
  *   var glex2_l1 = glex2_board.create('line', [1.0, -2.0, 3.0]);
  * </script><pre>
  */
-JXG.createLine = function(board, parents, atts) {
-    var el, p1, p2, i,
+JXG.createLine = function(board, parents, attributes) {
+    var el, p1, p2, i, attr,
         c = [];
-        
+
+    attr = JXG.copyAttributes(attributes, board.options, 'line');
+    /*
     atts = JXG.checkAttributes(atts,{
         withLabel:JXG.readOption(board.options,'line','withLabel'),
         layer:null,
         labelOffsets:JXG.readOption(board.options,'line','labelOffsets')
     });
+    */
 
     var constrained = false;
     if (parents.length == 2) { // The line is defined by two points (or coordinates of two points)
         if (parents[0].length>1) { // point 1 given by coordinates
-            p1 = board.create('point', parents[0], {visible:false,fixed:true});
+            p1 = board.create('point', parents[0], {visible:false, withLabel:false, fixed:true});
         } else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT) {
             p1 =  JXG.getReference(board,parents[0]);
         } else if ((typeof parents[0] == 'function') && (parents[0]().elementClass == JXG.OBJECT_CLASS_POINT)) {
@@ -869,7 +872,7 @@ JXG.createLine = function(board, parents, atts) {
                             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
 
         if (parents[1].length>1) { // point 2 given by coordinates
-            p2 = board.create('point', parents[1], {visible:false,fixed:true});
+            p2 = board.create('point', parents[1], {visible:false, withLabel:false, fixed:true});
         } else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT) {
             p2 =  JXG.getReference(board,parents[1]);
         } else if ((typeof parents[1] == 'function') && (parents[1]().elementClass == JXG.OBJECT_CLASS_POINT)) {
@@ -879,7 +882,7 @@ JXG.createLine = function(board, parents, atts) {
             throw new Error("JSXGraph: Can't create line with parent types '" + 
                             (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
-        el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel'],atts['layer']);
+        el = new JXG.Line(board, p1.id, p2.id, attr['id'], attr['name'],attr['withLabel'],attr['layer']);
         if(constrained) {
         	el.constrained = true;
         	el.funp1 = parents[0];
@@ -910,18 +913,18 @@ JXG.createLine = function(board, parents, atts) {
         p1 = board.create('point',[
                 function() { return (0.0 + c[2]()*c[2]()+c[1]()*c[1]())*0.5;},
                 function() { return (c[2]() - c[1]()*c[0]()+c[2]())*0.5;},
-                function() { return (-c[1]() - c[2]()*c[0]()-c[1]())*0.5;}],{visible:false,name:' '});
+                function() { return (-c[1]() - c[2]()*c[0]()-c[1]())*0.5;}], {visible:false, name:' '});
         // point 2: (b^2+c^2,-ba+c,-ca-b)
         p2 = board.create('point',[
                 function() { return c[2]()*c[2]()+c[1]()*c[1]();},
                 function() { return -c[1]()*c[0]()+c[2]();},
-                function() { return -c[2]()*c[0]()-c[1]();}],{visible:false,name:' '});
-        el = new JXG.Line(board, p1.id, p2.id, atts['id'], atts['name'],atts['withLabel']);
+                function() { return -c[2]()*c[0]()-c[1]();}], { visible:false, name:' '});
+        el = new JXG.Line(board, p1.id, p2.id, attr['id'], attr['name'],attr['withLabel']);
     }
     else if ((parents.length==1) && (typeof parents[0] == 'function') && (parents[0]().length == 2) &&
     		 (parents[0]()[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parents[0]()[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
     	var ps = parents[0]();
-        el = new JXG.Line(board, ps[0].id, ps[1].id, atts['id'], atts['name'],atts['withLabel'],atts['layer']);
+        el = new JXG.Line(board, ps[0].id, ps[1].id, attr['id'], attr['name'],attr['withLabel'],attr['layer']);
         el.constrained = true;
         el.funps = parents[0];
     } else
@@ -929,7 +932,7 @@ JXG.createLine = function(board, parents, atts) {
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
 
-    el.labelOffsets = atts['labelOffsets'];
+    el.labelOffsets = attr['labelOffsets'];
     return el;
 };
 
@@ -963,13 +966,17 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  *   var slex1_l1 = slex1_board.create('segment', [slex1_p1, slex1_p2]);
  * </script><pre>
  */
- JXG.createSegment = function(board, parents, atts) {
-    var el;
+ JXG.createSegment = function(board, parents, attributes) {
+    var el, attr;
 
-    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'line','withLabel'), layer:null});
-    atts['straightFirst'] = false;
-    atts['straightLast'] = false;
-    el = board.create('line', parents, atts);
+    //attr = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'line','withLabel'), layer:null});
+    attr = JXG.checkAttributes(attributes, board.options, 'line');
+    
+    attr['straightFirst'] = false;
+    attr['straightLast'] = false;
+    attr.layer = 5;
+    
+    el = board.create('line', parents, attr);
 
     return el;
 };

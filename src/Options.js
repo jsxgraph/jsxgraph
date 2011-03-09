@@ -232,6 +232,33 @@ JXG.Options = {
         strokeColor : '#000000',
         highlightStrokeColor : '#888888',
         withTicks: true,
+        point1: {
+            needsRegularUpdate : false,
+            showInfobox: false,
+            name : '',
+            visible: true,
+            fixed: true,
+            size: 5
+        },
+        point2: {
+            needsRegularUpdate : false,
+            showInfobox: false,
+            name : '',
+            visible: true,
+            fixed: true,
+            size: 2
+        },
+        glider: {
+            showInfobox: false,
+            name : '',
+            visible: true,
+            size: 6
+        },
+        segment: {
+            needsRegularUpdate : false,
+            name : '',
+            strokeWidth: 1
+        },
         /* line ticks options */
         ticks : {
             drawLabels : false,
@@ -246,31 +273,6 @@ JXG.Options = {
             opacity : 1,
             strokeWidth: 1
         }, 
-        point1: {
-            needsRegularUpdate : false,
-            name : '',
-            visible: true,
-            fixed: true,
-            size: 5
-        },
-        point2: {
-            needsRegularUpdate : false,
-            name : '',
-            visible: true,
-            fixed: true,
-            size: 2
-        },
-        point3: {
-            showInfobox:false,
-            name : '',
-            visible: true,
-            size: 6
-        },
-        segment: {
-            needsRegularUpdate : false,
-            name : '',
-            strokeWidth: 1
-        },
         segment2: {
             strokeWidth: 3,
             name : ''
