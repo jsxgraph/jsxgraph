@@ -389,15 +389,20 @@ JXG.extend(JXG, /** @lends JXG */ {
     /**
      * Generates an attributes object that is filled with default values from the Options object
      * and overwritten by the user speciified attributes.
-     * @param {String} element type, e.g. 'point'
      * @param {Object} defaults options
      * @param {Object} user specified attributes
+     * @param {String} variable number of strings, e.g. 'slider', subtype 'point1'. 
      * @returns {Object} The resulting attributes object
      */
-    copyAttributes: function (elType, options, attributes) {
-        var a;
+    copyAttributes: function (attributes, options/*, elType, elSubType*/) {
+        var a, i, len, o = options;
 
-        a = this. deepCopy(options.elements, options[elType]);
+        a = this. deepCopy(options.elements);
+        len = arguments.length;
+        for (i=2;i<len;i++) {
+            o = o[arguments[i]];
+            a = this. deepCopy(a, o);
+        }
         return this. deepCopy(a, attributes);
     },
     

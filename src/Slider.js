@@ -68,16 +68,17 @@ JXG.createSlider = function(board, parents, attributes) {
     smax = parents[2][2];
     sdiff = smax -smin;
     
-    attr = JXG.copyAttributes('slider', board.options, attributes);
-    //console.log(attr);
-    
-    attributes = JXG.checkAttributes(attributes,{strokeColor:'#000000', fillColor:'#ffffff', withTicks:true});
-
-    fixed = JXG.str2Bool(attributes['fixed']);
+ 
+    //attributes = JXG.checkAttributes(attributes,{strokeColor:'#000000', fillColor:'#ffffff', withTicks:true});
+    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point1');
+    //fixed = JXG.str2Bool(attributes['fixed']);
+    console.log(attr);
     p1 = board.create('point', pos0, 
-        {visible:!fixed, fixed:fixed, name:'',withLabel:false,face:'<>', size:5, strokeColor:'#000000', fillColor:'#ffffff'}); 
+        {visible:attr['visible'], fixed:attr['fixed'], name:'',withLabel:attr['withLabel'],face:'<>', size:5, strokeColor:attr['strokeColor'], fillColor:attr['fillColor']}); 
+    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point2');
     p2 = board.create('point', pos1, 
-        {visible:!fixed, fixed:fixed, name:'',withLabel:false,face:'<>', size:5, strokeColor:'#000000', fillColor:'#ffffff'}); 
+        {visible:attr['visible'], fixed:attr['fixed'], name:'',withLabel:attr['withLabel'],face:'<>', size:5, strokeColor:attr['strokeColor'], fillColor:attr['fillColor']}); 
+        
     board.create('group',[p1,p2]);
     l1 = board.create('segment', [p1,p2], 
                 {strokewidth:1, 

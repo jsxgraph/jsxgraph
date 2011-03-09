@@ -164,6 +164,14 @@ JXG.Options = {
             minorTicks : 4,
             defaultDistance : 1,
             opacity : 0.3
+        }, 
+        point1: {
+            visible: false,
+            fixed: true
+        },
+        point2: {
+            visible: false,
+            fixed: true
         }
     },
     
