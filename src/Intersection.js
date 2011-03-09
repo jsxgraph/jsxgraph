@@ -410,55 +410,57 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
     this.intersect2.addChild(this);
 };
 JXG.Intersection.prototype = new JXG.GeometryElement();
-   
-/**
- * Calls the renderer to update the drawing. This method is defined dynamically
- * as it highly depends on the types of the intersected elements.
- */
-JXG.Intersection.prototype.update = function() {
-};
 
-/**
- * Checks whether (x,y) is near the point.
- * @param {int} x Coordinate in x direction, screen coordinates.
- * @param {int} y Coordinate in y direction, screen coordinates.
- * @return {bool} Always returns false
- */
-JXG.Intersection.prototype.hasPoint = function(x, y) {
-};
+JXG.extend(JXG.Intersection.prototype, /** @lends JXG.Intersection.prototype */ {
+    /**
+     * Calls the renderer to update the drawing. This method is defined dynamically
+     * as it highly depends on the types of the intersected elements.
+     */
+    update: function() {
+    },
 
-/**
- * Hides the element and his children. This is called from parents which became invisible or unreal
- * and so this element isn't real anymore. The not existing parent is stored in the notExistingParents
- * array.
- * @param {String} id The identifier of the element causing this element to be hidden.
- */
-JXG.Intersection.prototype.hideChild = function(id) {
-};
+    /**
+     * Checks whether (x,y) is near the point.
+     * @param {int} x Coordinate in x direction, screen coordinates.
+     * @param {int} y Coordinate in y direction, screen coordinates.
+     * @return {bool} Always returns false
+     */
+    hasPoint: function(x, y) {
+    },
 
-/**
- * Shows the element and his children. This is called from parents which became visible or real
- * and so this element is now real. The formerly not existing parent is deleted from the
- * notExistingParents array.
- * @param {String} id The identifier of the element causing this element to be shown.
- */
-JXG.Intersection.prototype.showChild = function(id) {
-};
+    /**
+     * Hides the element and his children. This is called from parents which became invisible or unreal
+     * and so this element isn't real anymore. The not existing parent is stored in the notExistingParents
+     * array.
+     * @param {String} id The identifier of the element causing this element to be hidden.
+     */
+    hideChild: function(id) {
+    },
 
-/**
- * Remove intersection points from drawing.
- */
-JXG.Intersection.prototype.remove = function() {
-    if(JXG.exists(this.p))
-        this.board.removeObject(this.p);
-    if(JXG.exists(this.p1))
-        this.board.removeObject(this.p1);
-    if(JXG.exists(this.p2))
-        this.board.removeObject(this.p2);
-};
+    /**
+     * Shows the element and his children. This is called from parents which became visible or real
+     * and so this element is now real. The formerly not existing parent is deleted from the
+     * notExistingParents array.
+     * @param {String} id The identifier of the element causing this element to be shown.
+     */
+    showChild: function(id) {
+    },
 
-/**
- * Dummy method 
- */
-JXG.Intersection.prototype.updateRenderer = function() {
-};
+    /**
+     * Remove intersection points from drawing.
+     */
+    remove: function() {
+        if(JXG.exists(this.p))
+            this.board.removeObject(this.p);
+        if(JXG.exists(this.p1))
+            this.board.removeObject(this.p1);
+        if(JXG.exists(this.p2))
+            this.board.removeObject(this.p2);
+    },
+
+    /**
+     * Dummy method 
+     */
+    updateRenderer: function() {
+    },
+});
