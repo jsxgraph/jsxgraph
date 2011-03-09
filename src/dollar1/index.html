@@ -88,22 +88,19 @@
 				Paint();
 				removeGesture();
 				if (_points.length >= 20)
-				{
-					var result = _r.Recognize(_points);
-					$('message').innerHTML = "Result: &nbsp; " + result.Name + " (" + Math.round(result.Score * 100)/100 + ")";
-					bounds = getBounds();
-					if (result.Name=="circle"){
-						midpoint = board.createElement('point', [0.5*(bounds[1]+bounds[0]),-0.5*(bounds[3]+bounds[2])], {style:5,fillColor:'#ff0000',name:' '});
-						point = board.createElement('point', [midpoint.X()+0.25*((bounds[1]-bounds[0])+(bounds[3]-bounds[2])),midpoint.Y()], {style:5,fillColor:'#ff0000',name:' '});
-						board.createElement('circle', [midpoint,point], {strokeColor:'#00ff00',strokeWidth:2});
-					} else if (result.Name=="circle"){										}					
-					
-				else // fewer than 20 points were inputted
-				{
-					$('message').innerHTML = "Too few points made. Please try again.";
+				{
+					var result = _r.Recognize(_points);
+					$('message').innerHTML = "Result: &nbsp; " + result.Name + " (" + Math.round(result.Score * 100)/100 + ")";
+					bounds = getBounds();
+					if (result.Name=="circle"){
+						midpoint = board.createElement('point', [0.5*(bounds[1]+bounds[0]),-0.5*(bounds[3]+bounds[2])], {style:5,fillColor:'#ff0000',name:' '});
+						point = board.createElement('point', [midpoint.X()+0.25*((bounds[1]-bounds[0])+(bounds[3]-bounds[2])),midpoint.Y()], {style:5,fillColor:'#ff0000',name:' '});
+						board.createElement('circle', [midpoint,point], {strokeColor:'#00ff00',strokeWidth:2});
+					} else if (result.Name=="line"){					} else { // <20 Points
+						$('message').innerHTML = "Too few points made. Please try again.";
+					}
 				}
-			}
-		}
+			}		}
 		//
 		// Painting (too slow to do in RT; do after stroke ends)
 		//
