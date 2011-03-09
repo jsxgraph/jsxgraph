@@ -199,613 +199,616 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
 
 JXG.Line.prototype = new JXG.GeometryElement;
 
-/**
- * Checks whether (x,y) is near the line.
- * @param {int} x Coordinate in x direction, screen coordinates.
- * @param {int} y Coordinate in y direction, screen coordinates.
- * @return {boolean} True if (x,y) is near the line, False otherwise.
- */
- JXG.Line.prototype.hasPoint = function (x, y) {
-    // Compute the stdform of the line in screen coordinates.
-    var c = [], s,
-        v = [1,x,y],
-        vnew = [],
-        mu, i, coords, p1Scr, p2Scr, distP1P, distP2P, distP1P2;
 
-    c[0] = this.stdform[0] -
-                this.stdform[1]*this.board.origin.scrCoords[1]/this.board.stretchX+
-                this.stdform[2]*this.board.origin.scrCoords[2]/this.board.stretchY;
-    c[1] = this.stdform[1]/this.board.stretchX;
-    c[2] = this.stdform[2]/(-this.board.stretchY);
-
-    // Project the point orthogonally onto the line 
-    var vnew = [0,c[1],c[2]];
-    vnew = JXG.Math.crossProduct(vnew,v); // Orthogonal line to c through v
-    vnew = JXG.Math.crossProduct(vnew,c); // Intersect orthogonal line with line
-
-    // Normalize the projected point
-    vnew[1] /= vnew[0];
-    vnew[2] /= vnew[0];
-    vnew[0] = 1.0;
-    
-    // The point is too far away from the line
-    // dist(v,vnew)^2 projective
-    //if (JXG.Math.Geometry.distance(v,vnew)>this.board.options.precision.hasPoint) {
-    s = (v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2]);
-    if (isNaN(s) || s>this.board.options.precision.hasPoint*this.board.options.precision.hasPoint) {
-        return false;
-    }
-
-    if(this.visProp['straightFirst'] && this.visProp['straightLast']) {
-        return true;
-    } else { // If the line is a ray or segment we have to check if the projected point is "inside" P1 and P2.
-/*
-        coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [vnew[1],vnew[2]], this.board);
-        p1Scr = this.point1.coords.scrCoords;
-        p2Scr = this.point2.coords.scrCoords;
-        distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
-        distP2P = coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
-        distP1P2 = this.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
-*/
-        p1Scr = this.point1.coords.scrCoords;
-        p2Scr = this.point2.coords.scrCoords;
-        distP1P2 = (p2Scr[1]-p1Scr[1])*(p2Scr[1]-p1Scr[1])+(p2Scr[2]-p1Scr[2])*(p2Scr[2]-p1Scr[2]);  // dist(p1,p2)^2 affine
-        distP1P = (vnew[1]-p1Scr[1])*(vnew[1]-p1Scr[1])+(vnew[2]-p1Scr[2])*(vnew[2]-p1Scr[2]);       // dist(vnew,p1)^2 affine
-        distP2P = (vnew[1]-p2Scr[1])*(vnew[1]-p2Scr[1])+(vnew[2]-p2Scr[2])*(vnew[2]-p2Scr[2]);       // dist(vnew,p2)^2 affine
-
-        if((distP1P > distP1P2) || (distP2P > distP1P2)) { // Check if P(x|y) is not between  P1 and P2
-            if(distP1P < distP2P) { // P liegt auf der Seite von P1
-                if(!this.visProp['straightFirst']) {
-                    return false;
-                }
-            } else { // P liegt auf der Seite von P2
-                if(!this.visProp['straightLast']) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-};
-
-/**
- * TODO description. maybe. already documented in geometryelement?
- * @private
- */
-JXG.Line.prototype.update = function() {
-    var i, funps;
-
-    if(this.constrained) {
-    	if(typeof this.funps != 'undefined') {
-    		funps = this.funps();
-    		this.point1 = funps[0];
-    		this.point2 = funps[1];
-    	} else {
-            this.point1 = this.funp1();
-            this.point2 = this.funp2();
-    	}
-    }
-
-    if (this.needsUpdate) {
-        if (true || !this.board.geonextCompatibilityMode) {
-            this.updateStdform();
-        }
-        /*
-        // This is now done in Ticks.updateRenderer()
-        for(i=0; i<this.ticks.length; i++) {
-            // i don't know why we need this, but if we don't check it, an error will be reported
-            // when the origin is moved. it seems like this.ticks.length is lying.
-            if(typeof this.ticks[i] != 'undefined')
-                this.ticks[i].calculateTicksCoordinates();
-        }
-        */
-    }
-    if(this.traced) {
-        this.cloneToBackground(true);
-    }
-};
-
-/**
- * TODO description. already documented in geometryelement?
- * @private
- */
-JXG.Line.prototype.updateStdform = function() {
-   /*
-    var nx = -(this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]);
-    var ny =  this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1];
-    var c = -(nx*this.point1.coords.usrCoords[1]+ny*this.point1.coords.usrCoords[2]);
-
-    this.stdform[0] = c;
-    this.stdform[1] = nx;
-    this.stdform[2] = ny;
-    */
-    var v = JXG.Math.crossProduct(this.point1.coords.usrCoords,this.point2.coords.usrCoords);
-    this.stdform[0] = v[0];
-    this.stdform[1] = v[1];
-    this.stdform[2] = v[2];
-    this.stdform[3] = 0;
-    this.normalize();
-};
-
-/**
- * Uses the boards renderer to update the line.
- * @private
- */
- JXG.Line.prototype.updateRenderer = function () {
-    var wasReal, i;
-    if (this.needsUpdate && this.visProp['visible']) {
-        wasReal = this.isReal;
-        this.isReal = (isNaN(this.point1.coords.usrCoords[1]+this.point1.coords.usrCoords[2]+this.point2.coords.usrCoords[1]+this.point2.coords.usrCoords[2]))?false:true;
-        if (this.isReal) {
-            if (wasReal!=this.isReal) {
-                this.board.renderer.show(this);
-                if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content);
-            }
-            this.board.renderer.updateLine(this);
-/*            
-            if (this.board.options.renderer == 'canvas') { 
-                for (i=0;i<this.ticks.length;i++)                   // This is necessary for the CanvasRenderer
-                    this.ticks[i].prepareUpdate().updateRenderer(); // No idea, why other Renderer work without it.
-            }
-*/            
-        } else {
-            if (wasReal!=this.isReal) {
-                this.board.renderer.hide(this);
-                if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content);
-            }
-        }
-
-        //this.board.renderer.updateLine(this); // Why should we need this?
-        this.needsUpdate = false;
-    }
-
-    /* Update the label if visible. */
-    if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
-        //this.label.setCoordinates(this.coords);
-        this.label.content.update();
-        //this.board.renderer.updateLabel(this.label);
-        this.board.renderer.updateText(this.label.content);
-    }
-};
-
-/**
- * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to {@link #point1}
- * and {@link #point2}.
- * @param p The point for that the polynomial is generated.
- * @return An array containing the generated polynomial.
- * @private
- */
-JXG.Line.prototype.generatePolynomial = function (/** JXG.Point */ p) /** array */{
-    var u1 = this.point1.symbolic.x,
-        u2 = this.point1.symbolic.y,
-        v1 = this.point2.symbolic.x,
-        v2 = this.point2.symbolic.y,
-        w1 = p.symbolic.x,
-        w2 = p.symbolic.y;
-
-    /*
-     * The polynomial in this case is determined by three points being collinear:
-     *
-     *      U (u1,u2)      W (w1,w2)                V (v1,v2)
-     *  ----x--------------x------------------------x----------------
-     *
-     *  The collinearity condition is
-     *
-     *      u2-w2       w2-v2
-     *     -------  =  -------           (1)
-     *      u1-w1       w1-v1
-     *
-     * Multiplying (1) with denominators and simplifying is
-     *
-     *    u2w1 - u2v1 + w2v1 - u1w2 + u1v2 - w1v2 = 0
+JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
+    /**
+     * Checks whether (x,y) is near the line.
+     * @param {int} x Coordinate in x direction, screen coordinates.
+     * @param {int} y Coordinate in y direction, screen coordinates.
+     * @return {boolean} True if (x,y) is near the line, False otherwise.
      */
+    hasPoint: function (x, y) {
+        // Compute the stdform of the line in screen coordinates.
+        var c = [], s,
+            v = [1,x,y],
+            vnew = [],
+            mu, i, coords, p1Scr, p2Scr, distP1P, distP2P, distP1P2;
 
-    return [['(',u2,')*(',w1,')-(',u2,')*(',v1,')+(',w2,')*(',v1,')-(',u1,')*(',w2,')+(',u1,')*(',v2,')-(',w1,')*(',v2,')'].join('')];
-};
+        c[0] = this.stdform[0] -
+                    this.stdform[1]*this.board.origin.scrCoords[1]/this.board.stretchX+
+                    this.stdform[2]*this.board.origin.scrCoords[2]/this.board.stretchY;
+        c[1] = this.stdform[1]/this.board.stretchX;
+        c[2] = this.stdform[2]/(-this.board.stretchY);
 
-/**
- * Calculates the rise of the line.
- * @type float
- * @return The rise of the line.
- */
-JXG.Line.prototype.getRise = function () {
-    if (Math.abs(this.stdform[2])>=JXG.Math.eps) {
-        return -this.stdform[0]/this.stdform[2];
-    } else {
-        return Infinity;
-    }
-};
+        // Project the point orthogonally onto the line 
+        var vnew = [0,c[1],c[2]];
+        vnew = JXG.Math.crossProduct(vnew,v); // Orthogonal line to c through v
+        vnew = JXG.Math.crossProduct(vnew,c); // Intersect orthogonal line with line
 
-/**
- * Calculates the slope of the line.
- * @type float
- * @return The slope of the line or Infinity if the line is parallel to the y-axis.
- */
-JXG.Line.prototype.getSlope = function () {
-    if (Math.abs(this.stdform[2])>=JXG.Math.eps) {
-        return -this.stdform[1]/this.stdform[2];
-    } else {
-        return Infinity;
-    }
-};
+        // Normalize the projected point
+        vnew[1] /= vnew[0];
+        vnew[2] /= vnew[0];
+        vnew[0] = 1.0;
+        
+        // The point is too far away from the line
+        // dist(v,vnew)^2 projective
+        //if (JXG.Math.Geometry.distance(v,vnew)>this.board.options.precision.hasPoint) {
+        s = (v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2]);
+        if (isNaN(s) || s>this.board.options.precision.hasPoint*this.board.options.precision.hasPoint) {
+            return false;
+        }
 
-/**
- * Determines whether the line is drawn beyond {@link #point1} and {@link #point2} and updates the line.
- * @param {boolean} straightFirst True if the Line shall be drawn beyond {@link #point1}, false otherwise.
- * @param {boolean} straightLast True if the Line shall be drawn beyond {@link #point2}, false otherwise.
- * @see #straightFirst
- * @see #straightLast
- * @private
- */
- JXG.Line.prototype.setStraight = function (straightFirst, straightLast) {
-    this.visProp['straightFirst'] = straightFirst;
-    this.visProp['straightLast'] = straightLast;
+        if(this.visProp['straightFirst'] && this.visProp['straightLast']) {
+            return true;
+        } else { // If the line is a ray or segment we have to check if the projected point is "inside" P1 and P2.
+    /*
+            coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [vnew[1],vnew[2]], this.board);
+            p1Scr = this.point1.coords.scrCoords;
+            p2Scr = this.point2.coords.scrCoords;
+            distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
+            distP2P = coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
+            distP1P2 = this.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
+    */
+            p1Scr = this.point1.coords.scrCoords;
+            p2Scr = this.point2.coords.scrCoords;
+            distP1P2 = (p2Scr[1]-p1Scr[1])*(p2Scr[1]-p1Scr[1])+(p2Scr[2]-p1Scr[2])*(p2Scr[2]-p1Scr[2]);  // dist(p1,p2)^2 affine
+            distP1P = (vnew[1]-p1Scr[1])*(vnew[1]-p1Scr[1])+(vnew[2]-p1Scr[2])*(vnew[2]-p1Scr[2]);       // dist(vnew,p1)^2 affine
+            distP2P = (vnew[1]-p2Scr[1])*(vnew[1]-p2Scr[1])+(vnew[2]-p2Scr[2])*(vnew[2]-p2Scr[2]);       // dist(vnew,p2)^2 affine
 
-    this.board.renderer.updateLine(this);
-};
+            if((distP1P > distP1P2) || (distP2P > distP1P2)) { // Check if P(x|y) is not between  P1 and P2
+                if(distP1P < distP2P) { // P liegt auf der Seite von P1
+                    if(!this.visProp['straightFirst']) {
+                        return false;
+                    }
+                } else { // P liegt auf der Seite von P2
+                    if(!this.visProp['straightLast']) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    },
 
-/**
- * Determines whether the line has arrows at start or end of the line. Is stored in visProp['firstArrow'] and visProp['lastArrow']
- * @param {boolean} firstArrow True if there is an arrow at the start of the line, false otherwise.
- * @param {boolean} lastArrow True if there is an arrow at the end of the line, false otherwise.
- * @private
- */
-/*
-JXG.Line.prototype.setArrow = function (firstArrow, lastArrow) {
-     this.visProp['firstArrow'] = firstArrow;
-     this.visProp['lastArrow'] = lastArrow;
+    /**
+     * TODO description. maybe. already documented in geometryelement?
+     * @private
+     */
+    update: function() {
+        var i, funps;
 
-     this.board.renderer.updateLine(this);
-};
-*/
+        if(this.constrained) {
+        	if(typeof this.funps != 'undefined') {
+        		funps = this.funps();
+        		this.point1 = funps[0];
+        		this.point2 = funps[1];
+        	} else {
+                this.point1 = this.funp1();
+                this.point2 = this.funp2();
+        	}
+        }
 
-/**
- * Calculates TextAnchor. DESCRIPTION
- * @type JXG.Coords
- * @return Text anchor coordinates as JXG.Coords object.
- * @private
- */
-JXG.Line.prototype.getTextAnchor = function() {
-    return new JXG.Coords(JXG.COORDS_BY_USER, [this.point1.X()+0.5*(this.point2.X() - this.point1.X()),this.point1.Y() +0.5*(this.point2.Y() - this.point1.Y())],this.board);
-};
+        if (this.needsUpdate) {
+            if (true || !this.board.geonextCompatibilityMode) {
+                this.updateStdform();
+            }
+            /*
+            // This is now done in Ticks.updateRenderer()
+            for(i=0; i<this.ticks.length; i++) {
+                // i don't know why we need this, but if we don't check it, an error will be reported
+                // when the origin is moved. it seems like this.ticks.length is lying.
+                if(typeof this.ticks[i] != 'undefined')
+                    this.ticks[i].calculateTicksCoordinates();
+            }
+            */
+        }
+        if(this.traced) {
+            this.cloneToBackground(true);
+        }
+    },
 
-/**
- * Adjusts Label coords relative to Anchor. DESCRIPTION
- * @private
- */
-JXG.Line.prototype.setLabelRelativeCoords = function(relCoords) {
-    if (typeof this.label.content!='undefined') { 
-        this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [relCoords[0],-relCoords[1]],this.board);
-    }
-};
+    /**
+     * TODO description. already documented in geometryelement?
+     * @private
+     */
+    updateStdform: function() {
+       /*
+        var nx = -(this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]);
+        var ny =  this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1];
+        var c = -(nx*this.point1.coords.usrCoords[1]+ny*this.point1.coords.usrCoords[2]);
 
-/**
- * Calculates LabelAnchor. DESCRIPTION
- * @type JXG.Coords
- * @return Text anchor coordinates as JXG.Coords object.
- * @private
- */
-JXG.Line.prototype.getLabelAnchor = function() {
-    var coords,screenCoords1,screenCoords2,
-        relCoords, slope, xoffset = this.labelOffsets[0], yoffset = this.labelOffsets[1];
+        this.stdform[0] = c;
+        this.stdform[1] = nx;
+        this.stdform[2] = ny;
+        */
+        var v = JXG.Math.crossProduct(this.point1.coords.usrCoords,this.point2.coords.usrCoords);
+        this.stdform[0] = v[0];
+        this.stdform[1] = v[1];
+        this.stdform[2] = v[2];
+        this.stdform[3] = 0;
+        this.normalize();
+    },
 
-    if(!this.visProp['straightFirst'] && !this.visProp['straightLast']) {
-        this.setLabelRelativeCoords(this.labelOffsets);
-        return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X()-0.5*(this.point2.X() - this.point1.X()),this.point2.Y()-0.5*(this.point2.Y() - this.point1.Y())],this.board);
-    }
-    else {
-        screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
-        screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
-        JXG.Math.Geometry.calcStraight(this, screenCoords1, screenCoords2);
+    /**
+     * Uses the boards renderer to update the line.
+     * @private
+     */
+     updateRenderer: function () {
+        var wasReal, i;
+        if (this.needsUpdate && this.visProp['visible']) {
+            wasReal = this.isReal;
+            this.isReal = (isNaN(this.point1.coords.usrCoords[1]+this.point1.coords.usrCoords[2]+this.point2.coords.usrCoords[1]+this.point2.coords.usrCoords[2]))?false:true;
+            if (this.isReal) {
+                if (wasReal!=this.isReal) {
+                    this.board.renderer.show(this);
+                    if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content);
+                }
+                this.board.renderer.updateLine(this);
+    /*            
+                if (this.board.options.renderer == 'canvas') { 
+                    for (i=0;i<this.ticks.length;i++)                   // This is necessary for the CanvasRenderer
+                        this.ticks[i].prepareUpdate().updateRenderer(); // No idea, why other Renderer work without it.
+                }
+    */            
+            } else {
+                if (wasReal!=this.isReal) {
+                    this.board.renderer.hide(this);
+                    if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content);
+                }
+            }
 
-        if(this.visProp['straightFirst']) {
-            coords = screenCoords1;
+            //this.board.renderer.updateLine(this); // Why should we need this?
+            this.needsUpdate = false;
+        }
+
+        /* Update the label if visible. */
+        if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
+            //this.label.setCoordinates(this.coords);
+            this.label.content.update();
+            //this.board.renderer.updateLabel(this.label);
+            this.board.renderer.updateText(this.label.content);
+        }
+    },
+
+    /**
+     * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to {@link #point1}
+     * and {@link #point2}.
+     * @param p The point for that the polynomial is generated.
+     * @return An array containing the generated polynomial.
+     * @private
+     */
+    generatePolynomial: function (/** JXG.Point */ p) /** array */{
+        var u1 = this.point1.symbolic.x,
+            u2 = this.point1.symbolic.y,
+            v1 = this.point2.symbolic.x,
+            v2 = this.point2.symbolic.y,
+            w1 = p.symbolic.x,
+            w2 = p.symbolic.y;
+
+        /*
+         * The polynomial in this case is determined by three points being collinear:
+         *
+         *      U (u1,u2)      W (w1,w2)                V (v1,v2)
+         *  ----x--------------x------------------------x----------------
+         *
+         *  The collinearity condition is
+         *
+         *      u2-w2       w2-v2
+         *     -------  =  -------           (1)
+         *      u1-w1       w1-v1
+         *
+         * Multiplying (1) with denominators and simplifying is
+         *
+         *    u2w1 - u2v1 + w2v1 - u1w2 + u1v2 - w1v2 = 0
+         */
+
+        return [['(',u2,')*(',w1,')-(',u2,')*(',v1,')+(',w2,')*(',v1,')-(',u1,')*(',w2,')+(',u1,')*(',v2,')-(',w1,')*(',v2,')'].join('')];
+    },
+
+    /**
+     * Calculates the rise of the line.
+     * @type float
+     * @return The rise of the line.
+     */
+    getRise: function () {
+        if (Math.abs(this.stdform[2])>=JXG.Math.eps) {
+            return -this.stdform[0]/this.stdform[2];
+        } else {
+            return Infinity;
+        }
+    },
+
+    /**
+     * Calculates the slope of the line.
+     * @type float
+     * @return The slope of the line or Infinity if the line is parallel to the y-axis.
+     */
+    getSlope: function () {
+        if (Math.abs(this.stdform[2])>=JXG.Math.eps) {
+            return -this.stdform[1]/this.stdform[2];
+        } else {
+            return Infinity;
+        }
+    },
+
+    /**
+     * Determines whether the line is drawn beyond {@link #point1} and {@link #point2} and updates the line.
+     * @param {boolean} straightFirst True if the Line shall be drawn beyond {@link #point1}, false otherwise.
+     * @param {boolean} straightLast True if the Line shall be drawn beyond {@link #point2}, false otherwise.
+     * @see #straightFirst
+     * @see #straightLast
+     * @private
+     */
+    setStraight: function (straightFirst, straightLast) {
+        this.visProp['straightFirst'] = straightFirst;
+        this.visProp['straightLast'] = straightLast;
+
+        this.board.renderer.updateLine(this);
+    },
+
+    /**
+     * Determines whether the line has arrows at start or end of the line. Is stored in visProp['firstArrow'] and visProp['lastArrow']
+     * @param {boolean} firstArrow True if there is an arrow at the start of the line, false otherwise.
+     * @param {boolean} lastArrow True if there is an arrow at the end of the line, false otherwise.
+     * @private
+     */
+    /*
+    setArrow: function (firstArrow, lastArrow) {
+         this.visProp['firstArrow'] = firstArrow;
+         this.visProp['lastArrow'] = lastArrow;
+
+         this.board.renderer.updateLine(this);
+    },
+    */
+
+    /**
+     * Calculates TextAnchor. DESCRIPTION
+     * @type JXG.Coords
+     * @return Text anchor coordinates as JXG.Coords object.
+     * @private
+     */
+    getTextAnchor: function() {
+        return new JXG.Coords(JXG.COORDS_BY_USER, [this.point1.X()+0.5*(this.point2.X() - this.point1.X()),this.point1.Y() +0.5*(this.point2.Y() - this.point1.Y())],this.board);
+    },
+
+    /**
+     * Adjusts Label coords relative to Anchor. DESCRIPTION
+     * @private
+     */
+    setLabelRelativeCoords: function(relCoords) {
+        if (typeof this.label.content!='undefined') { 
+            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [relCoords[0],-relCoords[1]],this.board);
+        }
+    },
+
+    /**
+     * Calculates LabelAnchor. DESCRIPTION
+     * @type JXG.Coords
+     * @return Text anchor coordinates as JXG.Coords object.
+     * @private
+     */
+    getLabelAnchor: function() {
+        var coords,screenCoords1,screenCoords2,
+            relCoords, slope, xoffset = this.labelOffsets[0], yoffset = this.labelOffsets[1];
+
+        if(!this.visProp['straightFirst'] && !this.visProp['straightLast']) {
+            this.setLabelRelativeCoords(this.labelOffsets);
+            return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X()-0.5*(this.point2.X() - this.point1.X()),this.point2.Y()-0.5*(this.point2.Y() - this.point1.Y())],this.board);
         }
         else {
-            coords = screenCoords2;
+            screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
+            screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
+            JXG.Math.Geometry.calcStraight(this, screenCoords1, screenCoords2);
+
+            if(this.visProp['straightFirst']) {
+                coords = screenCoords1;
+            }
+            else {
+                coords = screenCoords2;
+            }
+            // Hack
+            if(this.label.content != null) {
+                relCoords = [0,0];
+                slope = this.getSlope();
+                if(coords.scrCoords[2]==0) {
+                    if(slope == Infinity) {
+                        relCoords = [xoffset,-yoffset];
+                    }
+                    else if(slope >= 0) {
+                        relCoords = [xoffset,-yoffset];
+                    }
+                    else {
+                        relCoords = [-xoffset,-yoffset];
+                    }
+                }
+                else if(coords.scrCoords[2]==this.board.canvasHeight) {
+                    if(slope == Infinity) {
+                        relCoords = [xoffset,yoffset];
+                    }
+                    else if(slope >= 0) {
+                        relCoords = [-xoffset,yoffset];
+                    }
+                    else {
+                        relCoords = [xoffset,yoffset];
+                    }
+                }
+                if(coords.scrCoords[1]==0) {
+                    if(slope == Infinity) {
+                        relCoords = [xoffset,yoffset]; // ??
+                    }
+                    else if(slope >= 0) {
+                        relCoords = [xoffset,-yoffset];
+                    }
+                    else {
+                        relCoords = [xoffset,yoffset];
+                    }
+                }
+                else if(coords.scrCoords[1]==this.board.canvasWidth) {
+                    if(slope == Infinity) {
+                        relCoords = [-xoffset,yoffset]; // ??
+                    }
+                    else if(slope >= 0) {
+                        relCoords = [-xoffset,yoffset];
+                    }
+                    else {
+                        relCoords = [-xoffset,-yoffset];
+                    }
+                }
+                this.setLabelRelativeCoords(relCoords);
+            }
+            return coords;
         }
-        // Hack
-        if(this.label.content != null) {
-            relCoords = [0,0];
-            slope = this.getSlope();
-            if(coords.scrCoords[2]==0) {
-                if(slope == Infinity) {
-                    relCoords = [xoffset,-yoffset];
-                }
-                else if(slope >= 0) {
-                    relCoords = [xoffset,-yoffset];
-                }
-                else {
-                    relCoords = [-xoffset,-yoffset];
-                }
-            }
-            else if(coords.scrCoords[2]==this.board.canvasHeight) {
-                if(slope == Infinity) {
-                    relCoords = [xoffset,yoffset];
-                }
-                else if(slope >= 0) {
-                    relCoords = [-xoffset,yoffset];
-                }
-                else {
-                    relCoords = [xoffset,yoffset];
-                }
-            }
-            if(coords.scrCoords[1]==0) {
-                if(slope == Infinity) {
-                    relCoords = [xoffset,yoffset]; // ??
-                }
-                else if(slope >= 0) {
-                    relCoords = [xoffset,-yoffset];
-                }
-                else {
-                    relCoords = [xoffset,yoffset];
-                }
-            }
-            else if(coords.scrCoords[1]==this.board.canvasWidth) {
-                if(slope == Infinity) {
-                    relCoords = [-xoffset,yoffset]; // ??
-                }
-                else if(slope >= 0) {
-                    relCoords = [-xoffset,yoffset];
-                }
-                else {
-                    relCoords = [-xoffset,-yoffset];
-                }
-            }
-            this.setLabelRelativeCoords(relCoords);
-        }
-        return coords;
-    }
-};
+    },
 
-/**
- * Clone the element to the background to leave a trail of it on the board.
- * @param {boolean} addToTrace Not used.
- */
-JXG.Line.prototype.cloneToBackground = function(addToTrace) {
-    var copy = {}, r, s, er;
+    /**
+     * Clone the element to the background to leave a trail of it on the board.
+     * @param {boolean} addToTrace Not used.
+     */
+    cloneToBackground: function(addToTrace) {
+        var copy = {}, r, s, er;
 
-    copy.id = this.id + 'T' + this.numTraces;
-    copy.elementClass = JXG.OBJECT_CLASS_LINE;
-    this.numTraces++;
-    copy.point1 = this.point1;
-    copy.point2 = this.point2;
+        copy.id = this.id + 'T' + this.numTraces;
+        copy.elementClass = JXG.OBJECT_CLASS_LINE;
+        this.numTraces++;
+        copy.point1 = this.point1;
+        copy.point2 = this.point2;
 
-    copy.stdform = this.stdform;
+        copy.stdform = this.stdform;
 
-    copy.board = {};
-    copy.board.unitX = this.board.unitX;
-    copy.board.unitY = this.board.unitY;
-    copy.board.zoomX = this.board.zoomX;
-    copy.board.zoomY = this.board.zoomY;
-    copy.board.stretchX = this.board.stretchX;
-    copy.board.stretchY = this.board.stretchY;
-    copy.board.origin = this.board.origin;
-    copy.board.canvasHeight = this.board.canvasHeight;
-    copy.board.canvasWidth = this.board.canvasWidth;
-    copy.board.dimension = this.board.dimension;
-    //copy.board.algebra = this.board.algebra;
+        copy.board = {};
+        copy.board.unitX = this.board.unitX;
+        copy.board.unitY = this.board.unitY;
+        copy.board.zoomX = this.board.zoomX;
+        copy.board.zoomY = this.board.zoomY;
+        copy.board.stretchX = this.board.stretchX;
+        copy.board.stretchY = this.board.stretchY;
+        copy.board.origin = this.board.origin;
+        copy.board.canvasHeight = this.board.canvasHeight;
+        copy.board.canvasWidth = this.board.canvasWidth;
+        copy.board.dimension = this.board.dimension;
+        //copy.board.algebra = this.board.algebra;
 
-    copy.visProp = this.visProp;
-    JXG.clearVisPropOld(copy);
+        copy.visProp = this.visProp;
+        JXG.clearVisPropOld(copy);
 
-    s = this.getSlope();
-    r = this.getRise();
-    copy.getSlope = function() { return s; };
-    copy.getRise = function() { return r; };
+        s = this.getSlope();
+        r = this.getRise();
+        copy.getSlope = function() { return s; };
+        copy.getRise = function() { return r; };
 
-    er = this.board.renderer.enhancedRendering;
-    this.board.renderer.enhancedRendering = true;
-    this.board.renderer.drawLine(copy);
-    this.board.renderer.enhancedRendering = er;
-    this.traces[copy.id] = copy.rendNode;
+        er = this.board.renderer.enhancedRendering;
+        this.board.renderer.enhancedRendering = true;
+        this.board.renderer.drawLine(copy);
+        this.board.renderer.enhancedRendering = er;
+        this.traces[copy.id] = copy.rendNode;
 
-    delete copy;
+        delete copy;
 
-/*
-    var id = this.id + 'T' + this.numTraces;
-    this.traces[id] = this.board.renderer.cloneSubTree(this,id,'lines');
-    this.numTraces++;
-*/
-};
+    /*
+        var id = this.id + 'T' + this.numTraces;
+        this.traces[id] = this.board.renderer.cloneSubTree(this,id,'lines');
+        this.numTraces++;
+    */
+    },
 
-/**
- * DESCRIPTION
- * @param transform A {@link #JXG.Transformation} object or an array of it.
- */
-JXG.Line.prototype.addTransform = function (/** JXG.Transformation,array */ transform) {
-    var list, i;
-    if (JXG.isArray(transform)) {
-        list = transform;
-    } else {
-        list = [transform];
-    }
-    for (i=0;i<list.length;i++) {
-        this.point1.transformations.push(list[i]);
-        this.point2.transformations.push(list[i]);
-    }
-};
-
-/**
- * TODO DESCRIPTION. What is this method for? -- michael
- * @param method TYPE & DESCRIPTION. UNUSED.
- * @param x TYPE & DESCRIPTION
- * @param y TYPE & DESCRIPTION
- */
-JXG.Line.prototype.setPosition = function (method, x, y) {
-    //var oldCoords = this.coords;
-    //if(this.group.length != 0) {
-    // AW: Do we need this for lines?
-        // this.coords = new JXG.Coords(method, [x,y], this.board);
-        // this.group[this.group.length-1].dX = this.coords.scrCoords[1] - oldCoords.scrCoords[1];
-        // this.group[this.group.length-1].dY = this.coords.scrCoords[2] - oldCoords.scrCoords[2];
-        // this.group[this.group.length-1].update(this);
-    //} else {
-        var t = this.board.create('transform',[x,y],{type:'translate'});
-        if (this.point1.transformations.length>0 && this.point1.transformations[this.point1.transformations.length-1].isNumericMatrix) {
-            this.point1.transformations[this.point1.transformations.length-1].melt(t);
+    /**
+     * DESCRIPTION
+     * @param transform A {@link #JXG.Transformation} object or an array of it.
+     */
+    addTransform: function (/** JXG.Transformation,array */ transform) {
+        var list, i;
+        if (JXG.isArray(transform)) {
+            list = transform;
         } else {
-            this.point1.addTransform(this.point1,t);
+            list = [transform];
         }
-        if (this.point2.transformations.length>0 && this.point2.transformations[this.point2.transformations.length-1].isNumericMatrix) {
-            this.point2.transformations[this.point2.transformations.length-1].melt(t);
+        for (i=0;i<list.length;i++) {
+            this.point1.transformations.push(list[i]);
+            this.point2.transformations.push(list[i]);
+        }
+    },
+
+    /**
+     * TODO DESCRIPTION. What is this method for? -- michael
+     * @param method TYPE & DESCRIPTION. UNUSED.
+     * @param x TYPE & DESCRIPTION
+     * @param y TYPE & DESCRIPTION
+     */
+    setPosition: function (method, x, y) {
+        //var oldCoords = this.coords;
+        //if(this.group.length != 0) {
+        // AW: Do we need this for lines?
+            // this.coords = new JXG.Coords(method, [x,y], this.board);
+            // this.group[this.group.length-1].dX = this.coords.scrCoords[1] - oldCoords.scrCoords[1];
+            // this.group[this.group.length-1].dY = this.coords.scrCoords[2] - oldCoords.scrCoords[2];
+            // this.group[this.group.length-1].update(this);
+        //} else {
+            var t = this.board.create('transform',[x,y],{type:'translate'});
+            if (this.point1.transformations.length>0 && this.point1.transformations[this.point1.transformations.length-1].isNumericMatrix) {
+                this.point1.transformations[this.point1.transformations.length-1].melt(t);
+            } else {
+                this.point1.addTransform(this.point1,t);
+            }
+            if (this.point2.transformations.length>0 && this.point2.transformations[this.point2.transformations.length-1].isNumericMatrix) {
+                this.point2.transformations[this.point2.transformations.length-1].melt(t);
+            } else {
+                this.point2.addTransform(this.point2,t);
+            }
+            //this.addTransform(t);
+            //this.update();
+        //}
+    },
+
+    /**
+     * Treat the line as parametric curve in homogeneuous coordinates.
+     * <pre>x = 1 * sin(theta)*cos(phi)
+     * y = 1 * sin(theta)*sin(phi)
+     * z = 1 * sin(theta)</pre>
+     * and the line is the set of solutions of <tt>a*x+b*y+c*z = 0</tt>.
+     * It follows:
+     * <pre>sin(theta)*(a*cos(phi)+b*sin(phi))+c*cos(theta) = 0</pre>
+     * Define:
+     * <pre>  A = (a*cos(phi)+b*sin(phi))
+     *   B = c</pre>
+     * Then
+     * <pre>cos(theta) = A/sqrt(A*A+B*B)
+     * sin(theta) = -B/sqrt(A*A+B*B)</pre>
+     * and <tt>X(phi) = x</tt> from above.
+     * phi runs from 0 to 1
+     * @type float
+     * @return X(phi) TODO description
+     */
+    X: function (phi) {
+        var a = this.stdform[1],
+            b = this.stdform[2],
+            c = this.stdform[0],
+            A, B, sq, sinTheta, cosTheta;
+        phi *= Math.PI;
+        A = a*Math.cos(phi)+b*Math.sin(phi);
+        B = c;
+        sq = Math.sqrt(A*A+B*B);
+        sinTheta = -B/sq;
+        cosTheta = A/sq;
+        if (Math.abs(cosTheta)<JXG.Math.eps) { cosTheta = 1.0; }
+        return sinTheta*Math.cos(phi)/cosTheta;
+    },
+
+    /**
+     * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
+     * @type float
+     * @return Y(phi) TODO description
+     */
+    Y: function (phi) {
+        var a = this.stdform[1],
+            b = this.stdform[2],
+            c = this.stdform[0],
+            A, B, sq, sinTheta, cosTheta;
+        phi *= Math.PI;
+        A = a*Math.cos(phi)+b*Math.sin(phi);
+        B = c;
+        sq = Math.sqrt(A*A+B*B);
+        sinTheta = -B/sq;
+        cosTheta = A/sq;
+        if (Math.abs(cosTheta)<JXG.Math.eps) { cosTheta = 1.0; }
+        return sinTheta*Math.sin(phi)/cosTheta;
+    },
+
+    /**
+     * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
+     * @type float
+     * @return Z(phi) TODO description
+     */
+    Z: function (phi) {
+        var a = this.stdform[1],
+            b = this.stdform[2],
+            c = this.stdform[0],
+            A, B, sq, cosTheta;
+        phi *= Math.PI;
+        A = a*Math.cos(phi)+b*Math.sin(phi);
+        B = c;
+        sq = Math.sqrt(A*A+B*B);
+        cosTheta = A/sq;
+        if (Math.abs(cosTheta)>=JXG.Math.eps) {
+            return 1.0;
         } else {
-            this.point2.addTransform(this.point2,t);
+            return 0.0;
         }
-        //this.addTransform(t);
-        //this.update();
-    //}
-};
+    },
 
-/**
- * Treat the line as parametric curve in homogeneuous coordinates.
- * <pre>x = 1 * sin(theta)*cos(phi)
- * y = 1 * sin(theta)*sin(phi)
- * z = 1 * sin(theta)</pre>
- * and the line is the set of solutions of <tt>a*x+b*y+c*z = 0</tt>.
- * It follows:
- * <pre>sin(theta)*(a*cos(phi)+b*sin(phi))+c*cos(theta) = 0</pre>
- * Define:
- * <pre>  A = (a*cos(phi)+b*sin(phi))
- *   B = c</pre>
- * Then
- * <pre>cos(theta) = A/sqrt(A*A+B*B)
- * sin(theta) = -B/sqrt(A*A+B*B)</pre>
- * and <tt>X(phi) = x</tt> from above.
- * phi runs from 0 to 1
- * @type float
- * @return X(phi) TODO description
- */
-JXG.Line.prototype.X = function (phi) {
-    var a = this.stdform[1],
-        b = this.stdform[2],
-        c = this.stdform[0],
-        A, B, sq, sinTheta, cosTheta;
-    phi *= Math.PI;
-    A = a*Math.cos(phi)+b*Math.sin(phi);
-    B = c;
-    sq = Math.sqrt(A*A+B*B);
-    sinTheta = -B/sq;
-    cosTheta = A/sq;
-    if (Math.abs(cosTheta)<JXG.Math.eps) { cosTheta = 1.0; }
-    return sinTheta*Math.cos(phi)/cosTheta;
-};
-
-/**
- * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
- * @type float
- * @return Y(phi) TODO description
- */
-JXG.Line.prototype.Y = function (phi) {
-    var a = this.stdform[1],
-        b = this.stdform[2],
-        c = this.stdform[0],
-        A, B, sq, sinTheta, cosTheta;
-    phi *= Math.PI;
-    A = a*Math.cos(phi)+b*Math.sin(phi);
-    B = c;
-    sq = Math.sqrt(A*A+B*B);
-    sinTheta = -B/sq;
-    cosTheta = A/sq;
-    if (Math.abs(cosTheta)<JXG.Math.eps) { cosTheta = 1.0; }
-    return sinTheta*Math.sin(phi)/cosTheta;
-};
-
-/**
- * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
- * @type float
- * @return Z(phi) TODO description
- */
-JXG.Line.prototype.Z = function (phi) {
-    var a = this.stdform[1],
-        b = this.stdform[2],
-        c = this.stdform[0],
-        A, B, sq, cosTheta;
-    phi *= Math.PI;
-    A = a*Math.cos(phi)+b*Math.sin(phi);
-    B = c;
-    sq = Math.sqrt(A*A+B*B);
-    cosTheta = A/sq;
-    if (Math.abs(cosTheta)>=JXG.Math.eps) {
-        return 1.0;
-    } else {
+    /**
+     * TODO circle?!? --michael
+     * private or public? --michael
+     * Treat the circle as parametric curve:
+     * t runs from 0 to 1
+     * @private
+     */
+    minX: function () {
         return 0.0;
-    }
-};
+    },
 
-/**
- * TODO circle?!? --michael
- * private or public? --michael
- * Treat the circle as parametric curve:
- * t runs from 0 to 1
- * @private
- */
-JXG.Line.prototype.minX = function () {
-    return 0.0;
-};
+    /**
+     * TODO circle?!? --michael
+     * private or public? --michael
+     * Treat the circle as parametric curve:
+     * t runs from 0 to 1
+     * @private
+     */
+    maxX: function () {
+        return 1.0;
+    },
 
-/**
- * TODO circle?!? --michael
- * private or public? --michael
- * Treat the circle as parametric curve:
- * t runs from 0 to 1
- * @private
- */
-JXG.Line.prototype.maxX = function () {
-    return 1.0;
-};
+    /**
+     * Adds ticks to this line. Ticks can be added to any kind of line: line, arrow, and axis.
+     * @param {JXG.Ticks} ticks Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).
+     * @type String
+     * @return Id of the ticks object.
+     */
+    addTicks: function(ticks) {
+        if(ticks.id == '' || typeof ticks.id == 'undefined')
+            ticks.id = this.id + '_ticks_' + (this.ticks.length+1);
 
-/**
- * Adds ticks to this line. Ticks can be added to any kind of line: line, arrow, and axis.
- * @param {JXG.Ticks} ticks Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).
- * @type String
- * @return Id of the ticks object.
- */
-JXG.Line.prototype.addTicks = function(ticks) {
-    if(ticks.id == '' || typeof ticks.id == 'undefined')
-        ticks.id = this.id + '_ticks_' + (this.ticks.length+1);
+        this.board.renderer.drawTicks(ticks);
+        this.ticks.push(ticks);
 
-    this.board.renderer.drawTicks(ticks);
-    this.ticks.push(ticks);
+        this.ticks[this.ticks.length-1].updateRenderer();
 
-    this.ticks[this.ticks.length-1].updateRenderer();
+        return ticks.id;
+    },
 
-    return ticks.id;
-};
-
-/**
- * Removes all ticks from a line.
- */
-JXG.Line.prototype.removeAllTicks = function() {
-    var t;
-    for(t=this.ticks.length; t>0; t--) {
-        this.board.renderer.remove(this.ticks[t-1].rendNode);
-    }
-    this.ticks = new Array();
-};
-
-/**
- * Removes ticks identified by parameter named tick from this line.
- * @param {JXG.Ticks} tick Reference to tick object to remove.
- */
-JXG.Line.prototype.removeTicks = function(tick) {
-    var t, j;
-    if(this.defaultTicks != null && this.defaultTicks == tick) {
-        this.defaultTicks = null;
-    }
-
-    for(t=this.ticks.length; t>0; t--) {
-        if(this.ticks[t-1] == tick) {
+    /**
+     * Removes all ticks from a line.
+     */
+    removeAllTicks: function() {
+        var t;
+        for(t=this.ticks.length; t>0; t--) {
             this.board.renderer.remove(this.ticks[t-1].rendNode);
+        }
+        this.ticks = new Array();
+    },
 
-            for(j=0; j<this.ticks[t-1].ticks.length; j++) {
-                if(this.ticks[t-1].labels[j] != null)
-                    if (this.ticks[t-1].labels[j].show) this.board.renderer.remove(this.ticks[t-1].labels[j].rendNode);
+    /**
+     * Removes ticks identified by parameter named tick from this line.
+     * @param {JXG.Ticks} tick Reference to tick object to remove.
+     */
+    removeTicks: function(tick) {
+        var t, j;
+        if(this.defaultTicks != null && this.defaultTicks == tick) {
+            this.defaultTicks = null;
+        }
+
+        for(t=this.ticks.length; t>0; t--) {
+            if(this.ticks[t-1] == tick) {
+                this.board.renderer.remove(this.ticks[t-1].rendNode);
+
+                for(j=0; j<this.ticks[t-1].ticks.length; j++) {
+                    if(this.ticks[t-1].labels[j] != null)
+                        if (this.ticks[t-1].labels[j].show) this.board.renderer.remove(this.ticks[t-1].labels[j].rendNode);
+                }
+                delete(this.ticks[t-1]);
             }
-            delete(this.ticks[t-1]);
         }
     }
-};
+});
 
 /**
  * @class This element is used to provide a constructor for a general line. A general line is given by two points. By setting additional properties

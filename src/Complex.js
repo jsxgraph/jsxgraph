@@ -89,101 +89,103 @@ JXG.Complex = function(/** number */ x, /** number */ y) {
     this.angle = 0;
 };
 
-/**
- * Converts a complex number into a string.
- * @return Formatted string containing the complex number in human readable form (algebraic form).
- */
-JXG.Complex.prototype.toString = function() /** string */{
-    return '' + this.real + ' + ' + this.imaginary + 'i';
-};
+JXG.extend(JXG.Complex.prototype, /** @lends JXG.Complex.prototype */ {
+    /**
+     * Converts a complex number into a string.
+     * @return Formatted string containing the complex number in human readable form (algebraic form).
+     */
+    toString: function() /** string */{
+        return '' + this.real + ' + ' + this.imaginary + 'i';
+    },
 
-/**
- * Add another complex number to this complex number.
- * @param c A JavaScript number or a JXG.Complex object to be added to the current object.
- */
-JXG.Complex.prototype.add = function(/** JXG.Complex,number */ c) /** undefined */ {
-    if(typeof c == 'number') {
-        this.real += c;
-    } else {
-        this.real += c.real;
-        this.imaginary += c.imaginary;
-    }
-};
-
-/**
- * Subtract another complex number from this complex number.
- * @param c A JavaScript number or a JXG.Complex object to subtract from the current object.
- */
-JXG.Complex.prototype.sub = function(/** JXG.Complex,number */ c) /** undefined */{
-    if(typeof c == 'number') {
-        this.real -= c;
-    } else {
-        this.real -= c.real;
-        this.imaginary -= c.imaginary;
-    }
-};
-
-/**
- * Multiply another complex number to this complex number.
- * @param c A JavaScript number or a JXG.Complex object to
- * multiply with the current object.
- */
-JXG.Complex.prototype.mult = function(/** JXG.Complex,number */ c) /** undefined */{
-    var re, im;
-    if(typeof c == 'number') {
-        this.real *= c;
-        this.imaginary *= c;
-    } else {
-        re = this.real;
-        im = this.imaginary;
-        //  (a+ib)(x+iy) = ax-by + i(xb+ay)
-        this.real = re*c.real - im*c.imaginary;
-        this.imaginary = re*c.imaginary + im*c.real;
-    }
-};
-
-/**
- * Divide this complex number by the given complex number.
- * @param c A JavaScript number or a JXG.Complex object to
- * divide the current object by.
- */
-JXG.Complex.prototype.div = function(/** JXG.Complex,number */ c) /** undefined */{
-    var denom, im, re;
-
-    if(typeof c == 'number') {
-        if(Math.abs(c) < Math.eps) {
-            this.real = Infinity;
-            this.imaginary = Infinity;
-            
-            return;
+    /**
+     * Add another complex number to this complex number.
+     * @param c A JavaScript number or a JXG.Complex object to be added to the current object.
+     */
+    add: function(/** JXG.Complex,number */ c) /** undefined */ {
+        if(typeof c == 'number') {
+            this.real += c;
+        } else {
+            this.real += c.real;
+            this.imaginary += c.imaginary;
         }
-        this.real /= c;
-        this.imaginary /= c;
-    } else {
-        //  (a+ib)(x+iy) = ax-by + i(xb+ay)
-        if( (Math.abs(c.real) < Math.eps) && (Math.abs(c.imaginary) < Math.eps) ){
-            this.real = Infinity;
-            this.imaginary = Infinity;
+    },
 
-            return;
+    /**
+     * Subtract another complex number from this complex number.
+     * @param c A JavaScript number or a JXG.Complex object to subtract from the current object.
+     */
+    sub: function(/** JXG.Complex,number */ c) /** undefined */{
+        if(typeof c == 'number') {
+            this.real -= c;
+        } else {
+            this.real -= c.real;
+            this.imaginary -= c.imaginary;
         }
+    },
 
-        denom = c.real*c.real + c.imaginary*c.imaginary;
+    /**
+     * Multiply another complex number to this complex number.
+     * @param c A JavaScript number or a JXG.Complex object to
+     * multiply with the current object.
+     */
+    mult: function(/** JXG.Complex,number */ c) /** undefined */{
+        var re, im;
+        if(typeof c == 'number') {
+            this.real *= c;
+            this.imaginary *= c;
+        } else {
+            re = this.real;
+            im = this.imaginary;
+            //  (a+ib)(x+iy) = ax-by + i(xb+ay)
+            this.real = re*c.real - im*c.imaginary;
+            this.imaginary = re*c.imaginary + im*c.real;
+        }
+    },
 
-        re = this.real;
-        im = this.imaginary;
-        this.real = (re*c.real + im*c.imaginary)/denom;
-        this.imaginary = (im*c.real - re*c.imaginary)/denom;
+    /**
+     * Divide this complex number by the given complex number.
+     * @param c A JavaScript number or a JXG.Complex object to
+     * divide the current object by.
+     */
+    div: function(/** JXG.Complex,number */ c) /** undefined */{
+        var denom, im, re;
+
+        if(typeof c == 'number') {
+            if(Math.abs(c) < Math.eps) {
+                this.real = Infinity;
+                this.imaginary = Infinity;
+                
+                return;
+            }
+            this.real /= c;
+            this.imaginary /= c;
+        } else {
+            //  (a+ib)(x+iy) = ax-by + i(xb+ay)
+            if( (Math.abs(c.real) < Math.eps) && (Math.abs(c.imaginary) < Math.eps) ){
+                this.real = Infinity;
+                this.imaginary = Infinity;
+
+                return;
+            }
+
+            denom = c.real*c.real + c.imaginary*c.imaginary;
+
+            re = this.real;
+            im = this.imaginary;
+            this.real = (re*c.real + im*c.imaginary)/denom;
+            this.imaginary = (im*c.real - re*c.imaginary)/denom;
+        }
+    },
+
+    /**
+     * Conjugate a complex number in place.
+     * @param c A JavaScript number or a JXG.Complex object 
+     */
+    conj: function() /** undefined */ {
+        this.imaginary *= -1;
     }
-};
-
-/**
- * Conjugate a complex number in place.
- * @param c A JavaScript number or a JXG.Complex object 
- */
-JXG.Complex.prototype.conj = function() /** undefined */ {
-    this.imaginary *= -1;
-};
+});
 
 /**
  * @description
