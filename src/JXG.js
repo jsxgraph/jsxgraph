@@ -35,7 +35,7 @@
 
 
 /**
- * Copy all properties of the <tt>extension</tt> object to the prototype of <tt>object</tt>.
+ * Copy all properties of the <tt>extension</tt> object to <tt>object</tt>.
  * @param {Object} object
  * @param {Object} extension
  * @param {Boolean} [onlyOwn=false] Only consider properties that belong to extension itself, not any inherited properties.
@@ -101,9 +101,9 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     getReference: function (board, s) {
         if (typeof(s) == 'string') {
-            if (board.objects[s] != null) { // Search by ID
+            if (JXG.exists(board.objects[s])) { // Search by ID
                 s = board.objects[s];
-            } else if (board.elementsByName[s] != null) { // Search by name
+            } else if (JXG.exists(board.elementsByName[s])) { // Search by name
                 s = board.elementsByName[s];
             }
         }
@@ -122,7 +122,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if v is of type string.
      */
     isString: function (v) {
-        return typeof v == "string";
+        return typeof v === "string";
     },
 
     /**
@@ -131,7 +131,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if v is of type number.
      */
     isNumber: function (v) {
-        return typeof v == "number";
+        return typeof v === "number";
     },
 
     /**
@@ -140,7 +140,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if v is a function.
      */
     isFunction: function (v) {
-        return typeof v == "function";
+        return typeof v === "function";
     },
 
     /**
@@ -150,7 +150,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     isArray: function (v) {
         // Borrowed from prototype.js
-        return v != null && typeof v == "object" && 'splice' in v && 'join' in v;
+        return v !== null && typeof v === "object" && 'splice' in v && 'join' in v;
     },
 
     /**
@@ -656,7 +656,6 @@ JXG.extend(JXG, /** @lends JXG */ {
             return obj;
         }
         if (this.isArray(obj)) {
-            console.log("y");
             c = [];
             for (i=0; i<obj.length; i++) {
                 prop = obj[i];

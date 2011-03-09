@@ -30,6 +30,146 @@
  */
 
 TestCase("JXG", {
+
+    testExtend: function () {
+        expectAsserts(4);
+
+        var e = {
+                foo: 1,
+                bar: 'string',
+                dr: {
+                    foo: 3
+                }
+            },
+            o = {
+                old: 3,
+                bar: 'nostring'
+            };
+
+        JXG.extend(o, e);
+        assertEquals('test old property still exists', 3, o.old);
+        assertEquals('test override property', 'string', o.bar);
+        assertEquals('test new property is copied', 1, o.foo);
+
+        o.dr.foo = 4;
+        assertEquals('test flat copy object', 4, e.dr.foo);
+    },
+
+    testShortcut: function () {
+        expectAsserts(4);
+
+        var o = {
+                justAFunction: sinon.stub()
+            };
+
+        o.shortcut = JXG.shortcut(o, 'justAFunction');
+
+        assertFunction('test shortcut is a function', o.shortcut);
+        
+        o.shortcut();
+        assertTrue('test shortcut calls original method', o.justAFunction.called);
+
+        o.shortcut(10);
+        assertEquals('test shortcut passes parameters', 1, o.justAFunction.getCall(1).args.length);
+        assertEquals('test shortcut passes parameters with correct value', 10, o.justAFunction.getCall(1).args[0]);
+    },
+
+    testGetReference: function () {
+        expectAsserts(5);
+
+        var board = {
+                objects: {
+                    point: 1,
+                    line: 1
+                },
+                elementsByName: {
+                    line: 2,
+                    circle: 2
+                }
+            };
+
+        sinon.spy(JXG, 'getReference');
+        assertEquals('test search board.objects', 1, JXG.getReference(board, 'point'));
+        assertEquals('test search board.elementsByName', 2, JXG.getReference(board, 'circle'));
+        assertEquals('test objects has an higher order of precedence  than elementsByName', 1, JXG.getRef(board, 'line'));
+        assertEquals('test non existing keys are simply returned', 'arc', JXG.getRef(board, 'arc'));
+
+        assertEquals('test getRef amd getReferemce are actually the same', 4, JXG.getReference.callCount);
+        JXG.getReference.restore();
+    },
+
+    testIsString: function () {
+        expectAsserts(5);
+
+        assertTrue('test string recognized', JXG.isString('string'));
+        assertFalse('test number', JXG.isString(3));
+        assertFalse('test object', JXG.isString({f: 1}));
+        assertFalse('test String() class instance', JXG.isString(new String()));
+        assertFalse('test function', JXG.isString(function () {}));
+    },
+
+    testIsNumber: function () {
+        expectAsserts(6);
+
+        assertTrue('test float recognized', JXG.isNumber(4.5));
+        assertTrue('test int recognized', JXG.isNumber(4));
+        assertFalse('test string', JXG.isNumber('string'));
+        assertFalse('test object', JXG.isString({f: 1}));
+        assertFalse('test Number() class instance', JXG.isString(new Number()));
+        assertFalse('test function', JXG.isString(function () {}));
+    },
+
+    testIsFunction: function () {
+        expectAsserts(5);
+
+        assertTrue('test function recognized', JXG.isFunction(function () {}));
+        assertTrue('test Function() class instance recognized', JXG.isFunction(new Function()));
+        assertFalse('test string', JXG.isFunction('string'));
+        assertFalse('test number', JXG.isFunction(3));
+        assertFalse('test object', JXG.isFunction({f: 1}));
+    },
+
+    testIsArray: function () {
+        expectAsserts(5);
+
+        assertTrue('test array string literal recognized', JXG.isArray([1]));
+        assertTrue('test Array() class instance recognized', JXG.isArray(new Array()));
+        assertFalse('test string', JXG.isArray('string'));
+        assertFalse('test number', JXG.isArray(3));
+        assertFalse('test object', JXG.isArray({f: 1}));
+    },
+
+    testExists: function () {
+        expectAsserts(2);
+
+        var o, b = '1';
+        
+        assertTrue('a variable with a string value exists', JXG.exists(b));
+        assertFalse('a variable without a value does not exist', JXG.exists(o));
+    },
+
+    testStr2bool: function () {
+        expectAsserts(4);
+
+        assertTrue('string true', JXG.str2Bool('true'));
+        assertFalse('string false', JXG.str2Bool('false'));
+        assertTrue('literal true', JXG.str2Bool(true));
+        assertFalse('literal false', JXG.str2Bool(false));
+    },
+
+    test_board: function () {
+        expectAsserts(1);
+
+        var bkp = JXG.JSXGraph.initBoard;
+
+        JXG.JSXGraph.initBoard = sinon.stub();
+
+        JXG._board('ain\'t', {it: 'funny'});
+        assertTrue('_board calls JSXGraph.initBoard', JXG.JSXGraph.initBoard.calledOnce);
+
+        JXG.JSXGraph.initBoard = bkp;
+    },
+
     testDeepCopy: function () {
         expectAsserts(7);
 
