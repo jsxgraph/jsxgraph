@@ -55,10 +55,11 @@
  * empty string is given, an unique name will be generated.
  * @see JXG.Board#generateName
  */
-JXG.createSlider = function(board, parents, atts) {
+JXG.createSlider = function(board, parents, attributes) {
     var pos0, pos1, smin, start, smax, sdiff, 
            p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t,
-           snapWidth, fixed;
+           snapWidth, fixed,
+           attr;
         
     pos0 = parents[0];
     pos1 = parents[1];
@@ -67,9 +68,12 @@ JXG.createSlider = function(board, parents, atts) {
     smax = parents[2][2];
     sdiff = smax -smin;
     
-    atts = JXG.checkAttributes(atts,{strokeColor:'#000000', fillColor:'#ffffff', withTicks:true});
+    attr = JXG.copyAttributes('slider', board.options, attributes);
+    //console.log(attr);
+    
+    attributes = JXG.checkAttributes(attributes,{strokeColor:'#000000', fillColor:'#ffffff', withTicks:true});
 
-    fixed = JXG.str2Bool(atts['fixed']);
+    fixed = JXG.str2Bool(attributes['fixed']);
     p1 = board.create('point', pos0, 
         {visible:!fixed, fixed:fixed, name:'',withLabel:false,face:'<>', size:5, strokeColor:'#000000', fillColor:'#ffffff'}); 
     p2 = board.create('point', pos1, 
@@ -79,8 +83,8 @@ JXG.createSlider = function(board, parents, atts) {
                 {strokewidth:1, 
                 name:'',
                 withLabel:false,
-                strokeColor:atts['strokeColor']});
-    if (atts['withTicks']) {
+                strokeColor:attributes['strokeColor']});
+    if (attributes['withTicks']) {
         ticks  = 2;
         ti = board.create('ticks', [l1, p2.Dist(p1)/ticks],
                     {insertTicks:true, minorTicks:0, drawLabels:false, drawZero:true}); 
@@ -95,19 +99,19 @@ JXG.createSlider = function(board, parents, atts) {
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
 
-    if (atts['snapWidth']!=null) snapWidth = atts['snapWidth'];
-    if (atts['snapwidth']!=null) snapWidth = atts['snapwidth'];
+    if (attributes['snapWidth']!=null) snapWidth = attributes['snapWidth'];
+    if (attributes['snapwidth']!=null) snapWidth = attributes['snapwidth'];
     
     p3 = board.create('glider', [startx,starty,l1],
-                {style:6,strokeColor:atts['strokeColor'],
-                 fillColor:atts['fillColor'],
-                 showInfobox:false,name:atts['name'], withLabel:false,
+                {style:6,strokeColor:attributes['strokeColor'],
+                 fillColor:attributes['fillColor'],
+                 showInfobox:false,name:attributes['name'], withLabel:false,
                  snapWidth:snapWidth});
     
     l2 = board.create('line', [p1,p3], 
                 {straightFirst:false, 
                  straightLast:false, strokewidth:3, 
-                 strokeColor:atts['strokeColor'],
+                 strokeColor:attributes['strokeColor'],
                  name:'',
                  withLabel:false}); 
                  
@@ -117,9 +121,9 @@ JXG.createSlider = function(board, parents, atts) {
     p3._smax = smax;
     p3._smin = smin;
 
-    if (typeof atts['withLabel']=='undefined' || atts['withLabel']==true) {
-        if (atts['name'] && atts['name']!='') {
-            n = atts['name'] + ' = ';
+    if (typeof attributes['withLabel']=='undefined' || attributes['withLabel']==true) {
+        if (attributes['name'] && attributes['name']!='') {
+            n = attributes['name'] + ' = ';
         } else {
             n = '';
         }

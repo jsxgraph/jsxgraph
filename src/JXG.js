@@ -364,6 +364,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {Object} attributes
      * @param {Object} defaults
      * @returns {Object} The given attributes object with missing properties added via the defaults object.
+     * @deprecated replaced by #copyAttributes
      */
     checkAttributes: function (attributes, defaults) {
         var key;
@@ -385,6 +386,21 @@ JXG.extend(JXG, /** @lends JXG */ {
         return attributes;
     },
 
+    /**
+     * Generates an attributes object that is filled with default values from the Options object
+     * and overwritten by the user speciified attributes.
+     * @param {String} element type, e.g. 'point'
+     * @param {Object} defaults options
+     * @param {Object} user specified attributes
+     * @returns {Object} The resulting attributes object
+     */
+    copyAttributes: function (elType, options, attributes) {
+        var a;
+
+        a = this. deepCopy(options.elements, options[elType]);
+        return this. deepCopy(a, attributes);
+    },
+    
     /**
      * Reads the width and height of an HTML element.
      * @param {String} elementId The HTML id of an HTML DOM node.
@@ -597,8 +613,9 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Object} Copy of given object including some new/overwritten data from obj2.
      */
     cloneAndCopy: function (obj, obj2) {
-        var cObj = {}, r;
+        var cObj = function(){}, r;
         cObj.prototype = obj;
+        //cObj = obj;
         for(r in obj2)
             cObj[r] = obj2[r];
 
@@ -607,11 +624,13 @@ JXG.extend(JXG, /** @lends JXG */ {
 
     /**
      * Creates a deep copy of an existing object, i.e. arrays or sub-objects are copied component resp.
-     * element-wise instead of just copying the reference.
+     * element-wise instead of just copying the reference. If a second object is supplied, the two objects
+     * are merged into one object. The properties of the second object have priority.
      * @param {Object} obj This object will be copied.
-     * @returns {Object} Ccopy of obj.
+     * @param {Object} obj2 This object will merged into the newly created object
+     * @returns {Object} copy of obj or merge of obj and obj2.
      */
-    deepCopy: function (obj) {
+    deepCopy: function (obj, obj2) {
         var c, i, prop, j;
 
         if (typeof obj !== 'object' || obj == null) {
@@ -642,6 +661,25 @@ JXG.extend(JXG, /** @lends JXG */ {
             c = {};
             for (i in obj) {
                 prop = obj[i];
+                if (typeof prop == 'object') {
+                    if (this.isArray(prop)) {
+                        c[i] = [];
+                        for (j = 0; j < prop.length; j++) {
+                            if (typeof prop[j] != 'object') {
+                                c[i].push(prop[j]);
+                            } else {
+                                c[i].push(this.deepCopy(prop[j]));
+                            }
+                        }
+                    } else {
+                        c[i] = this.deepCopy(prop);
+                    }
+                } else {
+                    c[i] = prop;
+                }
+            }
+            for (i in obj2) {
+                prop = obj2[i];
                 if (typeof prop == 'object') {
                     if (this.isArray(prop)) {
                         c[i] = [];
