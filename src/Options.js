@@ -118,6 +118,7 @@ JXG.Options = {
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
         highlightStrokeColor : '#888888',
+        withTicks: false,
         /* line ticks options */
         ticks : {
             drawLabels : true,
@@ -138,9 +139,36 @@ JXG.Options = {
     /* special axis options */
     axis : {
         strokeColor : '#666666',
-        highlightStrokeColor : '#888888'
+        highlightStrokeColor : '#888888',
+        withTicks: true
     },
 
+    /* special slider options */
+    slider : {
+        firstArrow : false,
+        lastArrow : false,
+        straightFirst : false,
+        straightLast : false,
+        fillColor : '#ffffff',
+        highlightFillColor : 'none',
+        strokeColor : '#000000',
+        highlightStrokeColor : '#888888',
+        withTicks: true,
+        /* line ticks options */
+        ticks : {
+            drawLabels : true,
+            drawZero : true,
+            insertTicks : false,
+            minTicksDistance : 50,
+            maxTicksDistance : 300,
+            minorHeight : 4,          // if <0: full width and height 
+            majorHeight : 10,        // if <0: full width and height
+            minorTicks : 4,
+            defaultDistance : 1,
+            opacity : 0.3
+        }
+    },
+    
     /*special circle options */
     circle : {
         fillColor : 'none',
