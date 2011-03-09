@@ -136,96 +136,151 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
 };
 JXG.Polygon.prototype = new JXG.GeometryElement;
 
-/**
- * Checks whether (x,y) is near the polygon.
- * @param {int} x Coordinate in x direction, screen coordinates.
- * @param {int} y Coordinate in y direction, screen coordinates.
- * @return {bool} Always false, because the polygons interior shall not be highlighted
- */
-JXG.Polygon.prototype.hasPoint = function (x,y) {
-    return false;
-};
 
-/**
- * Uses the boards renderer to update the polygon.
- */
-JXG.Polygon.prototype.updateRenderer = function () {
-    if (this.needsUpdate) {
-        this.board.renderer.updatePolygon(this);
-        this.needsUpdate = false;
-    }
-    if(this.hasLabel && this.label.content.visProp['visible']) {
-        //this.label.setCoordinates(this.coords);
-        this.label.content.update();
-        //this.board.renderer.updateLabel(this.label);
-        this.board.renderer.updateText(this.label.content);
+JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
+    /**
+     * Checks whether (x,y) is near the polygon.
+     * @param {int} x Coordinate in x direction, screen coordinates.
+     * @param {int} y Coordinate in y direction, screen coordinates.
+     * @return {bool} Always false, because the polygons interior shall not be highlighted
+     */
+    hasPoint: function (x,y) {
+        return false;
+    },
+
+    /**
+     * Uses the boards renderer to update the polygon.
+     */
+    updateRenderer: function () {
+        if (this.needsUpdate) {
+            this.board.renderer.updatePolygon(this);
+            this.needsUpdate = false;
+        }
+        if(this.hasLabel && this.label.content.visProp['visible']) {
+            //this.label.setCoordinates(this.coords);
+            this.label.content.update();
+            //this.board.renderer.updateLabel(this.label);
+            this.board.renderer.updateText(this.label.content);
+        }    
+    },
+
+    /**
+     * return TextAnchor
+     */
+    getTextAnchor: function() {
+        var a = 0;
+        var b = 0;
+        var x = 0;
+        var y = 0;
+        a = x = this.vertices[0].X();
+        b = y = this.vertices[0].Y();
+        for (var i = 0; i < this.vertices.length; i++) {
+            if (this.vertices[i].X() < a)
+                a = this.vertices[i].X();
+            if (this.vertices[i].X() > x)
+                x = this.vertices[i].X();
+            if (this.vertices[i].Y() > b)
+                b = this.vertices[i].Y();
+            if (this.vertices[i].Y() < y)
+                y = this.vertices[i].Y();
+        }
+        return new JXG.Coords(JXG.COORDS_BY_USER, [(a + x)*0.5, (b + y)*0.5], this.board);
+    },
+
+    getLabelAnchor: function() {
+        var a = 0;
+        var b = 0;
+        var x = 0;
+        var y = 0;
+        a = x = this.vertices[0].X();
+        b = y = this.vertices[0].Y();
+        for (var i = 0; i < this.vertices.length; i++) {
+            if (this.vertices[i].X() < a)
+                a = this.vertices[i].X();
+            if (this.vertices[i].X() > x)
+                x = this.vertices[i].X();
+            if (this.vertices[i].Y() > b)
+                b = this.vertices[i].Y();
+            if (this.vertices[i].Y() < y)
+                y = this.vertices[i].Y();
+        }
+        return new JXG.Coords(JXG.COORDS_BY_USER, [(a + x)*0.5, (b + y)*0.5], this.board);
+    },
+
+    /**
+     * Copy the element to the background.
+     */
+    cloneToBackground: function(addToTrace) {
+        var copy = {}, er;
+        copy.id = this.id + 'T' + this.numTraces;
+        this.numTraces++;
+        copy.vertices = this.vertices;
+        copy.visProp = this.visProp;
+        copy.board = this.board;
+        JXG.clearVisPropOld(copy);
+        
+        er = this.board.renderer.enhancedRendering;
+        this.board.renderer.enhancedRendering = true;
+        this.board.renderer.drawPolygon(copy);
+        this.board.renderer.enhancedRendering = er;
+        this.traces[copy.id] = copy.rendNode; //$(copy.id);
+
+        delete copy;
+    },
+
+    /**
+     * Hide the polygon including its border lines. It will still exist but not visible on the board.
+     */    
+    hideElement: function() {
+        this.visProp['visible'] = false;
+        this.board.renderer.hide(this);
+
+        if(this.withLines) {
+            for(var i=0; i<this.borders.length; i++) {
+                this.borders[i].hideElement();
+            }
+        }
+        
+        if (this.hasLabel && this.label!=null) {
+            this.label.hiddenByParent = true;
+            if(this.label.content.visProp['visible']) {
+                this.board.renderer.hide(this.label.content);
+            }
+        }    
+    },
+
+    /**
+     * Make the element visible.
+     */    
+    showElement: function() {
+        this.visProp['visible'] = true;
+        this.board.renderer.show(this);
+
+        if(this.withLines) {
+            for(var i=0; i<this.borders.length; i++) {
+                this.borders[i].showElement();
+            }
+        }
+    },
+
+    /**
+     * returns the area of the polygon
+     */ 
+    Area: function() {
+        //Surveyor's Formula
+        var area=0, i;
+        for(i=0; i<this.vertices.length-1; i++) {
+            area += (this.vertices[i].X()*this.vertices[i+1].Y()-this.vertices[i+1].X()*this.vertices[i].Y()); // last vertex is first vertex
+        }
+        area /= 2.0;
+        return Math.abs(area);
     }    
-};
+});
 
-/**
- * return TextAnchor
- */
-JXG.Polygon.prototype.getTextAnchor = function() {
-    var a = 0;
-    var b = 0;
-    var x = 0;
-    var y = 0;
-    a = x = this.vertices[0].X();
-    b = y = this.vertices[0].Y();
-    for (var i = 0; i < this.vertices.length; i++) {
-        if (this.vertices[i].X() < a)
-            a = this.vertices[i].X();
-        if (this.vertices[i].X() > x)
-            x = this.vertices[i].X();
-        if (this.vertices[i].Y() > b)
-            b = this.vertices[i].Y();
-        if (this.vertices[i].Y() < y)
-            y = this.vertices[i].Y();
-    }
-    return new JXG.Coords(JXG.COORDS_BY_USER, [(a + x)*0.5, (b + y)*0.5], this.board);
-};
 
-JXG.Polygon.prototype.getLabelAnchor = function() {
-    var a = 0;
-    var b = 0;
-    var x = 0;
-    var y = 0;
-    a = x = this.vertices[0].X();
-    b = y = this.vertices[0].Y();
-    for (var i = 0; i < this.vertices.length; i++) {
-        if (this.vertices[i].X() < a)
-            a = this.vertices[i].X();
-        if (this.vertices[i].X() > x)
-            x = this.vertices[i].X();
-        if (this.vertices[i].Y() > b)
-            b = this.vertices[i].Y();
-        if (this.vertices[i].Y() < y)
-            y = this.vertices[i].Y();
-    }
-    return new JXG.Coords(JXG.COORDS_BY_USER, [(a + x)*0.5, (b + y)*0.5], this.board);
-};
-
-/**
- * Copy the element to the background.
- */
-JXG.Polygon.prototype.cloneToBackground = function(addToTrace) {
-    var copy = {}, er;
-    copy.id = this.id + 'T' + this.numTraces;
-    this.numTraces++;
-    copy.vertices = this.vertices;
-    copy.visProp = this.visProp;
-    copy.board = this.board;
-    JXG.clearVisPropOld(copy);
-    
-    er = this.board.renderer.enhancedRendering;
-    this.board.renderer.enhancedRendering = true;
-    this.board.renderer.drawPolygon(copy);
-    this.board.renderer.enhancedRendering = er;
-    this.traces[copy.id] = copy.rendNode; //$(copy.id);
-
-    delete copy;
-};
-
+/*
+documentation missing
+*/
 JXG.createPolygon = function(board, parents, atts) {
     var el, i;
 
@@ -249,46 +304,6 @@ JXG.createPolygon = function(board, parents, atts) {
     return el;
 };
 
-JXG.JSXGraph.registerElement('polygon', JXG.createPolygon);
-
-JXG.Polygon.prototype.hideElement = function() {
-    this.visProp['visible'] = false;
-    this.board.renderer.hide(this);
-
-    if(this.withLines) {
-        for(var i=0; i<this.borders.length; i++) {
-            this.borders[i].hideElement();
-        }
-    }
-    
-    if (this.hasLabel && this.label!=null) {
-        this.label.hiddenByParent = true;
-        if(this.label.content.visProp['visible']) {
-            this.board.renderer.hide(this.label.content);
-        }
-    }    
-};
-
-JXG.Polygon.prototype.showElement = function() {
-    this.visProp['visible'] = true;
-    this.board.renderer.show(this);
-
-    if(this.withLines) {
-        for(var i=0; i<this.borders.length; i++) {
-            this.borders[i].showElement();
-        }
-    }
-};
-
-JXG.Polygon.prototype.Area = function() {
-    //Surveyor's Formula
-    var area=0, i;
-    for(i=0; i<this.vertices.length-1; i++) {
-        area += (this.vertices[i].X()*this.vertices[i+1].Y()-this.vertices[i+1].X()*this.vertices[i].Y()); // last vertex is first vertex
-    }
-    area /= 2.0;
-    return Math.abs(area);
-};
 
 /**
  * @class Constructs a regular polygon. It needs two points which define the base line and the number of vertices.
@@ -371,4 +386,5 @@ JXG.createRegularPolygon = function(board, parents, atts) {
     return el;
 };
 
+JXG.JSXGraph.registerElement('polygon', JXG.createPolygon);
 JXG.JSXGraph.registerElement('regularpolygon', JXG.createRegularPolygon);
