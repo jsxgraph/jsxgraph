@@ -1,0 +1,212 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/prototype.js"></script>
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+   <script type="text/javascript" src="dollar.js"></script>
+	<script type="text/javascript"> // This is for mouse and button events
+		//
+		// Startup
+		//
+		var _isDown, _points, _r, board, jsx_points; // global variables
+		function LoadEvent()
+		{
+			document.onselectstart = new Function("return false;"); // prevent text selection for canvas
+			_points = new Array();
+			jsx_points = new Array();
+			_r = new Recognizer();
+			_isDown = false;
+		}
+		//
+		// Mouse Events
+		//
+		
+		function getBounds(){
+			x_min=10000, x_max=-10000, y_min=10000, y_max=-10000;
+			x_min_y=0 , x_max_y=0, y_min_x=0, y_max_x=0;
+			for (i=0;i<_points.length;i++){
+				if (_points[i].X<x_min){
+					x_min=_points[i].X;
+					x_min_y=_points[i].Y;
+				}
+				if (_points[i].X>x_max){
+					x_max=_points[i].X;
+					x_max_y=_points[i].Y;
+				}
+				if (_points[i].Y<y_min){
+					y_min=_points[i].Y;
+					y_min_x=_points[i].X;
+				}
+				if (_points[i].Y>y_max){
+					y_max=_points[i].Y;
+					y_max_x=_points[i].X;
+				}
+			}
+			return [x_min,x_max,y_min,y_max,x_min_y,x_max_y,y_min_x,y_max_x];
+		}
+		
+		function removeGesture(){
+			for (i=0;i<jsx_points.length;i++)
+				board.removeObject(jsx_points[i]);
+		}
+		
+		function onMouseDown(Evt)
+		{
+			$('message').innerHTML = "Recording gesture...";
+            if(typeof board == 'undefined') {
+                JXG.JSXGraph.freeBoard(board);
+                board = JXG.JSXGraph.initBoard('box', {originX: -50, originY: -50, unitX: 100, unitY: 100});
+            }
+			_points.length = 1;
+			jsx_points.length=1;
+            var cPos = getRelativeMouseCoordinates(Evt);
+            var x = Event.pointerX(Evt) - cPos[0];
+            var y = Event.pointerY(Evt) - cPos[1];
+			jsx_points[0] = board.createElement('point', [x,-y], {style:5,fillColor:'#00ff55',name:' '});
+			_points[0] = new Point(x, y);
+			_isDown = true;
+		}
+        
+		function onMouseMove(Evt)
+		{
+			if (_isDown)
+			{
+                var cPos = getRelativeMouseCoordinates(Evt);
+                var x = Event.pointerX(Evt) - cPos[0];
+                var y = Event.pointerY(Evt) - cPos[1];
+                jsx_points[jsx_points.length] = board.createElement('point', [x,-y], {style:5,fillColor:'#00ff55',name:' '});
+				var p = new Point(x, y);
+				_points[_points.length] = p;
+			}
+		}
+		function onMouseUp(Evt)
+		{
+			if (_isDown)
+			{
+				_isDown = false;
+				Paint();
+				removeGesture();
+				if (_points.length >= 20)
+				{
+					var result = _r.Recognize(_points);
+					$('message').innerHTML = "Result: &nbsp; " + result.Name + " (" + Math.round(result.Score * 100)/100 + ")";
+					bounds = getBounds();
+					if (result.Name=="circle"){
+						midpoint = board.createElement('point', [0.5*(bounds[1]+bounds[0]),-0.5*(bounds[3]+bounds[2])], {style:5,fillColor:'#ff0000',name:' '});
+						point = board.createElement('point', [midpoint.X()+0.25*((bounds[1]-bounds[0])+(bounds[3]-bounds[2])),midpoint.Y()], {style:5,fillColor:'#ff0000',name:' '});
+						board.createElement('circle', [midpoint,point], {strokeColor:'#00ff00',strokeWidth:2});
+				}
+					
+				else // fewer than 20 points were inputted
+				{
+					$('message').innerHTML = "Too few points made. Please try again.";
+				}
+			}
+		}
+		//
+		// Painting (too slow to do in RT; do after stroke ends)
+		//
+		function Paint()
+		{
+            /*
+			if (_points.length > 0)
+			{
+				var p0 = _points[0];
+                //board.createElement('point', [p0.X,-p0.Y], {style:6,fillColor:'#000000',name:' '});
+                //board.suspendUpdate();
+				for (var i = 1; i < _points.length; i++)
+				{
+					var p = _points[i];
+                    //board.createElement('point', [p.X,-p.Y], {style:5,fillColor:'#000055',name:' '});
+				}
+                board.unsuspendUpdate();
+			}
+                        */
+		}
+		//
+		// Template Adding and Clearing
+		//
+		function OnClickAddExisting()
+		{
+			if (_points.length >= 20)
+			{
+				var name = document.all.templates[document.all.templates.selectedIndex].value;
+				var num = _r.AddTemplate(name, _points);
+				alert("Gesture added as new \"" + name + "\" template. There are now " + num + " \"" + name + "\" templates defined.");
+				document.all.canvas.focus();
+			}
+		}
+		function OnClickAddCustom()
+		{
+			var name = document.all.custom.value;
+			if (_points.length >= 20 && name.length > 0)
+			{
+				var num = _r.AddTemplate(name, _points);
+				alert("Gesture added as new \"" + name + "\" template. There are now " + num + " \"" + name + "\" templates defined.");
+				document.all.canvas.focus();
+			}
+		}
+		function OnClickCustom()
+		{
+			document.onselectstart = new Function("return true;");  // re-allow selection
+			document.all.custom.select();
+			document.onselectstart = new Function("return false;"); // disallow selection
+		}
+		function OnClickDelete()
+		{
+			var num = _r.DeleteUserTemplates(); // deletes any user-defined templates
+			alert("All user-defined templates have been deleted. Only the 1 predefined template remains for each of the " + num + " gesture types.");
+		}
+        function getRelativeMouseCoordinates(Evt) {
+            
+            var cPos = Element.cumulativeOffset($('canvas'));
+            // Die Liniendicke des Rahmens hinzuaddieren
+            cPos[0] += parseInt($('canvas').getStyle('borderLeftWidth'));
+            cPos[1] += parseInt($('canvas').getStyle('borderTopWidth'));
+ 
+            // Die Paddingbreite zum Offset hinzuaddieren
+            cPos[0] += parseInt($('canvas').getStyle('paddingLeft'));
+            cPos[1] += parseInt($('canvas').getStyle('paddingTop'));
+ 
+            return cPos;
+        }
+        
+	</script>
+
+</head>
+<body onload="LoadEvent()" >
+      <h1>Gestures with JavaScript</h1>
+      <p>
+      This is a browser independent version of the 
+      <i>$1 Gesture Recognizer in JavaScript</i> from 
+        Jacob O. Wobbrock, Andrew D. Wilson, and Yang Li1
+        (University of Washington and Microsoft Research), see
+        <a href="http://depts.washington.edu/aimgroup/proj/dollar/">http://depts.washington.edu/aimgroup/proj/dollar/</a>.
+        For drawing it uses the library JSXGraph, see <a href="http://jsxgraph.org">http://jsxgraph.org</a>.
+       </p> 
+       <p>Draw the gesture on the left canvas and see the result (in real time) in the right canvas.</p>
+
+			<div id="canvas" style="background-color:#dddddd; height:400px; width:500px; float:left; ">
+				<span id="message" style="color:darkblue;line-height:28pt;margin-left:10pt"></span>
+			</div>
+
+      <div id="box" class="jxgbox" style="width:500px; height:400px;"></div>
+
+      <script type="text/javascript">
+        /* <![CDATA[ */
+        //board = JXG.JSXGraph.initBoard('box', {originX: 100, originY: 100, unitX: 0.1, unitY: 0.1});
+		board = JXG.JSXGraph.initBoard('box', {originX: 0, originY: 0, unitX: 1, unitY: 1});
+		
+        $('canvas').observe('mousedown', onMouseDown);
+        $('canvas').observe('mousemove', onMouseMove);
+        $('canvas').observe('mouseup', onMouseUp);
+
+        /* ]]> */
+        
+      </script>
+      <br clear=all>
+      <img src="http://depts.washington.edu/aimgroup/proj/dollar/gestures.gif">
+
+</body>
+</html>
