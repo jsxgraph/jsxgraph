@@ -7,7 +7,7 @@
 	<!--[if IE]><script src="excanvas.js"></script><![endif]-->
 	<script type="text/javascript" src="JavaScript%20$1%20Unistroke%20Recognizer-Dateien/canvas.js"></script>
 	<script type="text/javascript" src="JavaScript%20$1%20Unistroke%20Recognizer-Dateien/gentilis-normal-normal.js"></script>
-	<script type="text/javascript" src="JavaScript%20$1%20Unistroke%20Recognizer-Dateien/dollar.js"></script>
+	<script type="text/javascript" src="dollar.js"></script>
 	<script type="text/javascript"> // This is for mouse and button events
 		//
 		// Startup
@@ -147,6 +147,7 @@
 			{
 				//drawText("Adding \"" + name + "\" gesture and re-recognizing...");
 				var num = _r.AddTemplate(name, _points);
+				alert(_points);
 				//alert("Gesture added as new \"" + name + "\" unistroke. There are now " + num + " \"" + name + "\" unistroke gestures defined.");
 				//var result = _r.Recognize(_points);
 				//drawText("Result: " + result.Name + " (" + round(result.Score,2) + ").");
