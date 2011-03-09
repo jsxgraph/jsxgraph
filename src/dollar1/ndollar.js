@@ -1,5 +1,8 @@
 /**
- * The $N Multistroke Recognizer (JavaScript version)
+ * This file is part of JSXGraph.
+ * It is taken from the $n algorithm and is under the "New BSD License" (see below)
+ * 
+ * * The $N Multistroke Recognizer (JavaScript version)
  *
  *		Jacob O. Wobbrock
  * 		The Information School
@@ -137,16 +140,17 @@ function NDollarRecognizer(useLimitedRotationInvariance) // constructor
 		//points_opt_line[i] = new Point(Math.round(2*i+50),1);
 		points_opt_line[i] = new Point(50+2*i,50+2*i);
 	}
-	
+	this.Multistrokes[0] = new Multistroke("line", useLimitedRotationInvariance, new Array(new Array(new Point(1,100),new Point(100,100))));
+
 	points_opt_circle = new Array();
-	for (i=0;i<358;i=i+3){
+	for (i=0;i<358;i++){
 		points_opt_circle[i] = new Point(Math.round(100+Math.cos(i/360*Math.PI)*50),Math.round(100+Math.sin(i/360*Math.PI)*50));
 	}
 	
-	this.Multistrokes[0] = new Multistroke("circle", useLimitedRotationInvariance, points_opt_circle);
-	this.Multistrokes[1] = new Multistroke("line", useLimitedRotationInvariance, new Array(new Point(1,100),new Point(100,100)));
+	this.Multistrokes[1] = new Multistroke("circle", useLimitedRotationInvariance, new Array(points_opt_circle));
 	
-	/*this.Multistrokes[0] = new Multistroke("T", useLimitedRotationInvariance, new Array(
+	
+/*	this.Multistrokes[0] = new Multistroke("T", useLimitedRotationInvariance, new Array(
 		new Array(new Point(30,7),new Point(103,7)),
 		new Array(new Point(66,7),new Point(66,87))
 	));
@@ -212,7 +216,7 @@ function NDollarRecognizer(useLimitedRotationInvariance) // constructor
 		new Array(new Point(546,465),new Point(546,531)),
 		new Array(new Point(540,530),new Point(536,529),new Point(533,528),new Point(529,529),new Point(524,530),new Point(520,532),new Point(515,535),new Point(511,539),new Point(508,545),new Point(506,548),new Point(506,554),new Point(509,558),new Point(512,561),new Point(517,564),new Point(521,564),new Point(527,563),new Point(531,560),new Point(535,557),new Point(538,553),new Point(542,548),new Point(544,544),new Point(546,540),new Point(546,536))
 	));
-	 */
+*/
 	//
 	// The $N Gesture Recognizer API begins here -- 3 methods
 	//
