@@ -80,16 +80,12 @@ JXG.createSlider = function(board, parents, attributes) {
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment');
     l1 = board.create('segment', [p1,p2], attr);
-    /*
-                {strokewidth:1, 
-                name:'',
-                withLabel:false,
-                strokeColor:attributes['strokeColor']});
-    */
-    if (attributes['withTicks']) {
+    
+    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'ticks');
+    if (attr['withTicks']) {
         ticks  = 2;
-        ti = board.create('ticks', [l1, p2.Dist(p1)/ticks],
-                    {insertTicks:true, minorTicks:0, drawLabels:false, drawZero:true}); 
+        ti = board.create('ticks', [l1, p2.Dist(p1)/ticks], attr);
+                    //{insertTicks:true, minorTicks:0, drawLabels:false, drawZero:true}); 
     }
 
     if (fixed) {
@@ -101,21 +97,27 @@ JXG.createSlider = function(board, parents, attributes) {
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
 
-    if (attributes['snapWidth']!=null) snapWidth = attributes['snapWidth'];
-    if (attributes['snapwidth']!=null) snapWidth = attributes['snapwidth'];
+    //if (attributes['snapWidth']!=null) snapWidth = attributes['snapWidth'];
+    //if (attributes['snapwidth']!=null) snapWidth = attributes['snapwidth'];
     
-    p3 = board.create('glider', [startx,starty,l1],
+    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point3');
+    p3 = board.create('glider', [startx,starty,l1], attr);
+    /*
                 {style:6,strokeColor:attributes['strokeColor'],
                  fillColor:attributes['fillColor'],
                  showInfobox:false,name:attributes['name'], withLabel:false,
                  snapWidth:snapWidth});
+    */
     
-    l2 = board.create('line', [p1,p3], 
+    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment2');
+    l2 = board.create('line', [p1,p3],  attr);
+    /*
                 {straightFirst:false, 
                  straightLast:false, strokewidth:3, 
                  strokeColor:attributes['strokeColor'],
                  name:'',
                  withLabel:false}); 
+    */
                  
     //p3.Value = function() { return this.position*(smax - smin)+smin; };
     //p3.type = JXG.OBJECT_TYPE_SLIDER;

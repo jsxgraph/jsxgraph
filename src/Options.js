@@ -222,6 +222,7 @@ JXG.Options = {
 
     /* special slider options */
     slider : {
+        snapWidth: null,
         firstArrow : false,
         lastArrow : false,
         straightFirst : false,
@@ -233,29 +234,46 @@ JXG.Options = {
         withTicks: true,
         /* line ticks options */
         ticks : {
-            drawLabels : true,
+            drawLabels : false,
             drawZero : true,
-            insertTicks : false,
-            minTicksDistance : 50,
-            maxTicksDistance : 300,
+            insertTicks : true,
+            //minTicksDistance : 50,
+            //maxTicksDistance : 300,
             minorHeight : 4,          // if <0: full width and height 
             majorHeight : 10,        // if <0: full width and height
-            minorTicks : 4,
+            minorTicks : 0,
             defaultDistance : 1,
-            opacity : 0.3
+            opacity : 1,
+            strokeWidth: 1
         }, 
         point1: {
+            needsRegularUpdate : false,
+            name : '',
             visible: true,
             fixed: true,
             size: 5
         },
         point2: {
+            needsRegularUpdate : false,
+            name : '',
             visible: true,
             fixed: true,
-            size: 5
+            size: 2
+        },
+        point3: {
+            showInfobox:false,
+            name : '',
+            visible: true,
+            size: 6
         },
         segment: {
+            needsRegularUpdate : false,
+            name : '',
             strokeWidth: 1
+        },
+        segment2: {
+            strokeWidth: 3,
+            name : ''
         }
     },
     
