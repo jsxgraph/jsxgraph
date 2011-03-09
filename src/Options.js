@@ -23,10 +23,8 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
- * Options object.
- * @class These are the default options of the board and
- * of all geometry elements.
- * @constructor
+ * Options Namespace
+ * @description These are the default options of the board and of all geometry elements.
  */
 JXG.Options = {
     /* Options that are used directly within the board class */
@@ -204,7 +202,18 @@ JXG.Options = {
         fillColor : 'none',
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
-        highlightStrokeColor : '#C3D9FF'
+        highlightStrokeColor : '#C3D9FF',
+        useDirection: false
+    },
+
+    semicircle: {
+        arc: { },
+        midpoint: { }
+    },
+
+    circumcirclearc: {
+        arc: { },
+        midpoint: { }
     },
 
     /* special polygon options */
