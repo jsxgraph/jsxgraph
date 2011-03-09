@@ -20,7 +20,7 @@
     /* <![CDATA[ */
 	var isline = false;
 	var _r = new NDollarRecognizer(true);
-	var points_screen = new Array[];
+	var points_screen = new Array();
     (function() {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis:false, grid:true}),
             //
@@ -70,7 +70,7 @@
                 }
                     if (!testOnly) 
                         board.create('circle', [[xm,ym],r]);
-                }
+                
                 return isLine;
             }, // End of bestFit
             
@@ -144,7 +144,7 @@
                 points.push(getMouseCoords(e).usrCoords.slice(1));
 				points_screen.push(getMouseCoords(e).scrCoords.slice(1));
                 draftcurve.prepareUpdate().update().updateRenderer();
-				var result = _r.Recognize(points_screen,true,true);
+				var result = _r.Recognize(new Array(points_screen),true,true);
 				if(result.Name == "circle")
                 	draftcurve.setProperty({strokeColor:'blue'});
 				else if(result.Name =="line")
@@ -158,7 +158,7 @@
             if((e.fromTouch && points.length==1) || (!e.fromTouch && points.length<=15))
                 board.create('point', points[0], {fillColor:'#000000', fillOpacity:0.8, strokeWidth:0, size:4 });
             else
-                var result = _r.Recognize(points_screen,true,true); 
+                var result = _r.Recognize(new Array(points_screen),true,true); 
 				if(result.Name == 'circle')
 					bestFit(poins_screen,false);
 				else if(result.Name =='line')
