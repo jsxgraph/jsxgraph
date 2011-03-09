@@ -18,7 +18,9 @@
 
 <script type="text/javascript">
     /* <![CDATA[ */
-
+	var isline = false;
+	var _r = new NDollarRecognizer(true);
+	var points_screen = new Array[];
     (function() {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis:false, grid:true}),
             //
@@ -27,7 +29,7 @@
             bestFit = function(p, testOnly) {
                 var i, angle, co, si, 
                     delta = 0.8, 
-                    isLine = false,
+                    
                     M = [], y = [], MT, B, c, z, n, d, xm, ym, r;
  
                 // Having constructed the points, we can fit a circle 
@@ -64,100 +66,13 @@
                     ym = z[1]*0.5;                   // xm, ym : center of the circle
                     r = Math.sqrt(z[2]+xm*xm+ym*ym); // r: radius
                     d = JXG.Math.Geometry.distance(points[0], points[points.length-1]);
-                    if (r>20) {
-                    //if (r*Math.sqrt(board.stretchX*board.stretchX+board.stretchY*board.stretchY)>500) {
-                        isLine = true;
-                    }
+
                 }
-                if (isLine) {
-                    if (!testOnly) 
-                        board.create('line',[points[0], points[points.length-1]], {strokeColor:'green'});
-                } else {
                     if (!testOnly) 
                         board.create('circle', [[xm,ym],r]);
                 }
                 return isLine;
             }, // End of bestFit
-            
-            /*
-            bestFitOld = function(p) {
-                var i, j, r = [], rbar = [], A = [
-                        [0,0,0],
-                        [0,0,0],
-                        [0,0,0]
-                    ], n, d,
-                    eigen, minIndex, minE, ev, c, xm, ym, zm, den, nom, radius;
-
-                n = p.length;
-                for (i = 0; i < n; i++) {
-                    r.push([1.0, p[i].length ? p[i][0] : p[i].X(), p[i].length ? p[i][1] : p[i].Y()]);
-                    d = r[i][0] * r[i][0] + r[i][1] * r[i][1] + r[i][2] * r[i][2];
-                    r[i][0] = 1 - r[i][0] / d;
-                    r[i][1] /= d;
-                    r[i][2] /= d;
-                }
-
-                for (j = 0; j < 3; j++) {
-                    for (i = 0,d = 0; i < n; i++) {
-                        d += r[i][j];
-                    }
-                    d /= n;
-                    rbar[j] = d;
-                    for (i = 0; i < n; i++) {[zm,xm,ym]
-                        r[i][j] -= d;
-                    }
-                }
-                for (i = 0; i < n; i++) {
-                    A[0][0] += r[i][0] * r[i][0];
-                    A[0][1] += r[i][0] * r[i][1];
-                    A[0][2] += r[i][0] * r[i][2];
-                    A[1][0] += r[i][1] * r[i][0];
-                    A[1][1] += r[i][1] * r[i][1];
-                    A[1][2] += r[i][1] * r[i][2];
-                    A[2][0] += r[i][2] * r[i][0];
-                    A[2][1] += r[i][2] * r[i][1];
-                    A[2][2] += r[i][2] * r[i][2];
-                }
-
-                eigen = JXG.Math.Numerics.Jacobi(A);
-                minIndex = 0;
-                minE = eigen[0][0][0];
-                for (j = 1; j < 3; j++) {
-                    if (eigen[0][j][j] < minE) {
-                        minIndex = j;
-                        minE = eigen[0][j][j];
-                    }
-                }
-                ev = [eigen[1][0][minIndex],eigen[1][1][minIndex],eigen[1][2][minIndex]];
-                d = Math.sqrt(ev[0]*ev[0] + ev[1]*ev[1] + ev[2]*ev[2]);
-                ev[0] /= d;
-                ev[1] /= d;
-                ev[2] /= d;
-
-                c = -(rbar[0] * ev[0] + rbar[1] * ev[1] + rbar[2] * ev[2]);
-                xm = -ev[1];
-                ym = -ev[2];
-                zm = 2.0 * (c + ev[0]);
-
-                // If c is close to zero, the best fittting object is a line.
-                // The best threshold parameter has yet to be determined.
-                // At the moment it is set to 0.01.
-                nom = xm * xm + ym * ym - 2.0 * c * zm;
-                den = zm * zm;
-                //console.log(c, zm, ev, rbar);
-                //console.log(nom, 500.0*Math.abs(den));
-                if (Math.abs(nom) > 500.0*Math.abs(den)) {
-                    board.create('line',[points[0], points[points.length-1]], {strokeColor:'green'});
-                    //board.create('line', [ev[0],xm,ym], {strokeColor:'green'});
-                } else {
-                    radius = Math.sqrt((xm * xm + ym * ym - 2.0 * c * zm) / (zm * zm));
-                    board.create('circle', [
-                        [zm,xm,ym],
-                        radius
-                    ]);
-                }
-            }, // end of bestFit()
-            */
             
             getMouseCoords = function(e) {
                 if (!document.all) { // not IE
@@ -181,6 +96,7 @@
             },
             mousedown,
             points = [];
+
 
         var draftcurve = board.create('curve',[[0],[0]],{curveType:'plot', strokeWidth:14, opacity:0.15});
         draftcurve.updateDataArray = function() {
@@ -211,7 +127,9 @@
                 return;
 
             points = [];
+			points_screen = [];
             points.push(coords.usrCoords.slice(1));
+			points_screen.push(coords.scrCoords.slice(1));
             draftcurve.prepareUpdate().update().updateRenderer();
             // prevent accidental text selection
             if (e && e.preventDefault) {
@@ -224,8 +142,15 @@
         var move = function(e, m) {
             if(mousedown) {
                 points.push(getMouseCoords(e).usrCoords.slice(1));
+				points_screen.push(getMouseCoords(e).scrCoords.slice(1));
                 draftcurve.prepareUpdate().update().updateRenderer();
-                draftcurve.setProperty({strokeColor: (bestFit(points,true))?'green':'blue'});
+				var result = _r.Recognize(points_screen,true,true);
+				if(result.Name == "circle")
+                	draftcurve.setProperty({strokeColor:'blue'});
+				else if(result.Name =="line")
+					draftcurve.setProperty({strokeColor:'green'});
+					
+				
             }
         };
 
@@ -233,8 +158,12 @@
             if((e.fromTouch && points.length==1) || (!e.fromTouch && points.length<=15))
                 board.create('point', points[0], {fillColor:'#000000', fillOpacity:0.8, strokeWidth:0, size:4 });
             else
-                bestFit(points, false);
-
+                var result = _r.Recognize(points_screen,true,true); 
+				if(result.Name == 'circle')
+					bestFit(poins_screen,false);
+				else if(result.Name =='line')
+					board.create('line',[points[0],points[points.length-1]]);
+				
             mousedown = false;
             points = [];
         };
