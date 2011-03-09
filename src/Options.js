@@ -81,6 +81,7 @@ JXG.Options = {
         highlightFillOpacity: 1,
         strokeWidth: '2px',
 	    withLabel: false,
+        visible: true,
 
         /*draft options */
         draft : {
@@ -166,7 +167,9 @@ JXG.Options = {
          * @type boolean
          * @default true
          */
-        showInfobox: true
+        showInfobox: true,
+
+        draft: false
     },
 
     /* special line options */
@@ -201,6 +204,7 @@ JXG.Options = {
         strokeColor : '#666666',
         highlightStrokeColor : '#888888',
         withTicks: true,
+
         /* line ticks options */
         ticks : {
             drawLabels : true,

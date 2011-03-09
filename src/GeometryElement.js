@@ -1095,9 +1095,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @private
      */
     createLabel: function (withLabel,coords) {
-        // WTF?!? Eine Methode namens createLabel, die optional kein label erstellt?
-        // TODO - Spaeter genauer ansehen, grad keine Zeit
         var isTmpId = false;
+        
         if (!JXG.exists(coords)) {
             coords = [10,10];
         }

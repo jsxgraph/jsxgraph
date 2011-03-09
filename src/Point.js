@@ -64,8 +64,12 @@ JXG.POINT_STYLE_PLUS_BIG     = 12; // a big +
  * @see JXG.Board#addPoint
  */
 JXG.Point = function (board, coordinates, attributes) {
+    console.log(attributes.name);
     this.constructor();
     
+    console.log('start');
+    console.log(attributes);
+    console.log('end');
     /**
      * Type of point; Possible values are {@link JXG.OBJECT_TYPE_POINT}, {@link JXG.OBJECT_TYPE_GLIDER}, {@link JXG.OBJECT_TYPE_CAS}.
      * @default {@link JXG.OBJECT_TYPE_POINT}
@@ -82,6 +86,12 @@ JXG.Point = function (board, coordinates, attributes) {
      */
     this.elementClass = JXG.OBJECT_CLASS_POINT;
 
+if (attributes.name) {
+    console.log(attributes);
+    console.log(attributes.name);
+}
+    console.log(attributes.strokeColor);
+    
     this.init(board, attributes.id, attributes.name);
 
     if (coordinates==null) {
@@ -99,9 +109,9 @@ JXG.Point = function (board, coordinates, attributes) {
      * Set the display layer.
      */
     if (!JXG.exists(attributes.layer)) {
-        layer = board.options.layer['point'];
+        this.layer = 9;
     }
-    this.layer = layer;
+    this.layer = attributes.layer;
 
     /**
      * Relative position on a line if point is a glider on a line.
@@ -1158,7 +1168,9 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
     var el, isConstrained = false, i, show, attr;
 
     attr = JXG.copyAttributes(attributes, board.options, 'point');
-    
+    console.log(attr);
+    console.log('increatepoint');
+
     for (i=0;i<parents.length;i++) {
         if (typeof parents[i]=='function' || typeof parents[i]=='string') {
             isConstrained = true;

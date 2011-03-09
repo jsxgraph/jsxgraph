@@ -31,7 +31,7 @@
 
 TestCase("JXG", {
     testDeepCopy: function () {
-        expectAsserts(6);
+        expectAsserts(7);
 
         var o = {
                 str: 'string',
@@ -40,7 +40,8 @@ TestCase("JXG", {
                 obj: {
                     subprop: 2
                 },
-                fun: sinon.stub()
+                fun: sinon.stub(),
+                name: 'test'
             },
             copy;
 
@@ -51,13 +52,14 @@ TestCase("JXG", {
         assertEquals('test array content', [1, 'str', ['inner array']], copy.arr);
         assertEquals('test sub object content', 2, copy.obj.subprop);
         assertFunction('test function type', copy.fun);
+        assertEquals('test name content', 'test', copy.name);
 
         copy.fun();
         assertTrue(o.fun.calledOnce);
     },
 
     testDeepCopyMerge: function () {
-        expectAsserts(4);
+        expectAsserts(5);
 
         var o1 = {
                 color: 'abc',
@@ -69,7 +71,8 @@ TestCase("JXG", {
                 arr: [4, 5, 6],
                 o: {
                     subprop: 12
-                }
+                },
+                name: 'test'
             },
             copy;
 
@@ -79,5 +82,6 @@ TestCase("JXG", {
         assertEquals('test array override content', [4, 5, 6], copy.arr);
         assertEquals('test subprop new content', 12, copy.o.subprop);
         assertEquals('test number original content', 10, copy.num);
+        assertEquals('test name content', 'test', copy.name);
     }
 });
