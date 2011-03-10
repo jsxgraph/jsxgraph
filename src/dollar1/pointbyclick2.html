@@ -4,7 +4,9 @@
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
     <script type="text/javascript" src="ndollar.js"></script>
+    <script type="text/javascript" src="fitting_util.js"></script>
     <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+    
 </head>
 <body>
 
@@ -83,6 +85,42 @@
 				
 				
 			},
+			drawBestFitTriangle = function(points){
+				var bb = boundingBoxUsr(points);
+				var pointsOnBB = pointsOnBoundingBox(points, bb);
+				board.suspendUpdate();
+				var v = [];
+				v[0] = board.create('point', pointsOnBB[0]);
+				v[1] = board.create('point', pointsOnBB[1]);
+				v[2] = board.create('point', pointsOnBB[2]);
+				v[3] = board.create('point', pointsOnBB[3]);
+				var poly1 = board.create('polygon',[v[0],v[1],v[2]]);
+				var poly2 = board.create('polygon',[v[1],v[2],v[3]]);
+				var poly3 = board.create('polygon',[v[0],v[2],v[3]]);
+				var poly4 = board.create('polygon',[v[0],v[1],v[3]]);
+				p = poly1;
+				if (p.Area()<poly2.Area()){
+					removePolygon(p, board);
+					p = poly2;
+				} else {
+					removePolygon(poly2, board);
+				}
+				if (p.Area()<poly3.Area()){
+					removePolygon(p, board);
+					p = poly3;
+				} else {
+					removePolygon(poly3, board);
+				}
+				if (p.Area()<poly4.Area()){
+					removePolygon(p, board);
+					p = poly4;	
+				} else {
+					removePolygon(poly4, board);
+				}
+				removePoint(p,v,board);
+				board.unsuspendUpdate();
+			},
+			
             // this function converts the Event coords to JXG.Coords
             getMouseCoords = function(e) {
                 if (!document.all) { // not IE
@@ -167,6 +205,8 @@
 					draftcurve.setProperty({strokeColor:'green'});
 				else if(result.Name =="square")
 					draftcurve.setProperty({strokeColor:'red'});
+				else if(result.Name =="triangle")
+					draftcurve.setProperty({strokeColor:'yellow'});
 			
 					
 				
@@ -183,12 +223,15 @@
 					drawBestFitCircle(points,false);
 				else if(result.Name =='line')
 					board.create('line',[points[0],points[points.length-1]],{strokecolor:'green'});
+				else if(result.Name == 'triangle')
+					drawBestFitTriangle(points);
 				for (i=0;i<points_screen.length;i++)
 					document.getElementById('debug').innerHTML = document.getElementById('debug').innerHTML+"new Point("+points_screen[i].X+","+points_screen[i].Y+"),";
 			}	
 			mousedown = false;
 			points = [];
             points_screen = [];
+            //board.removeObject(draftcurve);
             
         };
 
