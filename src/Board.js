@@ -594,7 +594,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     finalizeLabel: function (obj) {
-        if (obj.hasLabel && !obj.label.content.isLabel && !obj.label.content.visProp['visible']) {
+        if (obj.hasLabel && !obj.label.content.visProp.isLabel && !obj.label.content.visProp.visible) {
             this.renderer.hide(obj.label.content);
         }
 
@@ -1484,7 +1484,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     initInfobox: function () {
         this.infobox = this.create('text', [0, 0, '0,0'], {
-            id: this.id + '_infobox'
+            id: this.id + '_infobox',
+            display: 'html'
         });
         this.infobox.distanceX = -20;
         this.infobox.distanceY = 25;

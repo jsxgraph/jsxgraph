@@ -174,9 +174,9 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
                         this.descendants[el].visProp['visible'] = true;
                     }
                     else {
-                        if(!this.descendants[el].isLabel) {
+                        if(!this.descendants[el].visProp.isLabel) {
                             this.descendants[el].hideElement();
-                            this.descendants[el].visProp['visible'] = true;
+                            this.descendants[el].visProp.visible = true;
                         }
                     }
                 }      
@@ -273,9 +273,9 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
                         this.descendants[el].visProp['visible'] = true;
                     }
                     else {
-                        if(!this.descendants[el].isLabel) {
+                        if(!this.descendants[el].visProp.isLabel) {
                             this.descendants[el].hideElement();
-                            this.descendants[el].visProp['visible'] = true;
+                            this.descendants[el].visProp.visible = true;
                         }
                     }
                 }      
@@ -381,9 +381,9 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
                         this.descendants[el].visProp['visible'] = true;
                     }
                     else {
-                        if(!this.descendants[el].isLabel) {
+                        if(!this.descendants[el].visProp.isLabel) {
                             this.descendants[el].hideElement();
-                            this.descendants[el].visProp['visible'] = true;
+                            this.descendants[el].visProp.visible = true;
                         }
                     }
                 }      
@@ -462,5 +462,5 @@ JXG.extend(JXG.Intersection.prototype, /** @lends JXG.Intersection.prototype */ 
      * Dummy method 
      */
     updateRenderer: function() {
-    },
+    }
 });

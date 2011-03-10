@@ -259,16 +259,15 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 labelText = pos.toString();
                 if(labelText.length > 5)
                     labelText = pos.toPrecision(3).toString();
-                label = board.create('text', [newTick.usrCoords[1], newTick.usrCoords[2], labelText], {
+                label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], {
                     id: id + i + 'Label',
-                    digits: null,
                     isLabel: true,
                     layer: board.options.layer.line
                 });
                 label.distanceX = 4;
                 label.distanceY = -9;
-                label.setCoords(newTick.usrCoords[1]*1+label.distanceX/(board.stretchX), 
-                                newTick.usrCoords[2]*1+label.distanceY/(board.stretchY));
+                label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.stretchX),
+                                newTick.usrCoords[2] + label.distanceY / (board.stretchY));
                 
                 label.visProp['visible'] = drawLabels;
                 return label;

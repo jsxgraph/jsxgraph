@@ -121,9 +121,13 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     * @return pointer to the turtle object
     */
     forward: function(len) {
-        if (len==0) { return; }
-        var dx = len*Math.cos(this.dir*Math.PI/180.0);
-        var dy = len*Math.sin(this.dir*Math.PI/180.0);
+        if (len === 0) {
+            return this;
+        }
+
+        var dx = len*Math.cos(this.dir*Math.PI/180.0),
+            dy = len*Math.sin(this.dir*Math.PI/180.0);
+        
         if (!this.turtleIsHidden) {
             var t = this.board.create('transform', [dx,dy], {type:'translate'});
             t.applyOnce(this.turtle);
@@ -562,8 +566,9 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
  * @return Reference to the created turtle object.
  */
 JXG.createTurtle = function(board, parents, attributes) {
-    if (parents==null) { parents = []; }
-    return new JXG.Turtle(board,parents,attributes);
+    parents = parents || [];
+
+    return new JXG.Turtle(board, parents, attributes);
 };
 
 JXG.JSXGraph.registerElement('turtle', JXG.createTurtle);

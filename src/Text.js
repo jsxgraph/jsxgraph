@@ -41,38 +41,18 @@ JXG.Text = function (board, content, coords, attributes) {
     this.constructor();
 
     this.type = JXG.OBJECT_TYPE_TEXT;
-    this.elementClass = JXG.OBJECT_CLASS_OTHER;                
+    this.elementClass = JXG.OBJECT_CLASS_OTHER;
 
     this.init(board, attributes.id, attributes.name);
     this.content = content;
     this.plaintext = '';
 
-    /**
-     * Set the display layer.
-     */
     this.layer = attributes.layer;
-
-    /**
-     * There is choice between 'html' and 'internal'
-     * 'internal' is the text element of SVG and the textpath element 
-     * of VML.
-     */
-    this.visProp.display = attributes.display;
-
-    // the next two visProps are preparations for the upcoming property related changes coming with the
-    // JSXGraph spring of code 2011
-    this.visProp.useASCIIMathML = board.options.text.useASCIIMathML;
-    this.visProp.useMathJax = board.options.text.useMathJax;
-    
-    this.isLabel = attributes.isLabel;
-
     this.visProp = attributes;
-
-    this.digits = attributes.digits;
 
     if ((this.element = JXG.getRef(this.board, attributes.anchor))) {
         var anchor;
-        if (this.isLabel) {
+        if (this.visProp.isLabel) {
             anchor = this.element.getLabelAnchor();
         } else {
             anchor = this.element.getTextAnchor();
@@ -94,7 +74,7 @@ JXG.Text = function (board, content, coords, attributes) {
         this.updateText = function() { this.plaintext = this.content(); };
     } else {
         if (JXG.isNumber(this.content)) {
-            this.content = (this.content).toFixed(this.digits);
+            this.content = (this.content).toFixed(this.visProp.digits);
         } else {
             if (this.visProp.useASCIIMathML) {
                 this.content = "'`" + this.content + "`'";              // Convert via ASCIIMathML
@@ -144,7 +124,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             this.updateText = function() { this.plaintext = text(); };
         } else {
             if (JXG.isNumber(text)) {
-                this.content = (text).toFixed(this.digits);
+                this.content = (text).toFixed(this.visProp.digits);
             } else {
                 if (this.visProp.useASCIIMathML) {
                     this.content = "'`" + text + "`'";              // Convert via ASCIIMathML
@@ -214,7 +194,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
 
         if (this.needsUpdate && !this.frozen) {
             if (this.relativeCoords) {
-                if (this.isLabel) {
+                if (this.visProp.isLabel) {
                     anchor = this.element.getLabelAnchor();
                 } else {
                     anchor = this.element.getTextAnchor();
@@ -294,7 +274,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
                 res = res.replace(/\\"/g,'"');
                 res = res.replace(/\\'/g,"'");
                 if (res.indexOf('toFixed')<0) {  // GEONExT-Hack: apply rounding once only.  
-                    plaintext += '+('+ res + ').toFixed('+(this.digits)+')';
+                    plaintext += '+('+ res + ').toFixed('+(this.visProp.digits)+')';
                 } else {
                     plaintext += '+('+ res + ')';
                 }

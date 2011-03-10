@@ -46,28 +46,26 @@
  */
 JXG.createTriangle = function(board, parents, attributes) {
 
-    var p1, p2, p3, l1, l2, l3, ret, i;
+    var p1, p2, p3, l1, l2, l3, ret, i, attr;
 
     if(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2])) {
         p1 = parents[0];
         p2 = parents[1];
         p3 = parents[2];
 
-        attributes = JXG.checkAttributes(attributes,{});
-        attributes.straightFirst = false;
-        attributes.straightLast = false;
+        attr = JXG.copyAttributes(attributes, board.options, 'line');
 
-        l1 = board.create('line', [p1, p2], attributes);
-        l2 = board.create('line', [p2, p3], attributes);
-        l3 = board.create('line', [p3, p1], attributes);
+        l1 = board.create('line', [p1, p2], attr);
+        l2 = board.create('line', [p2, p3], attr);
+        l3 = board.create('line', [p3, p1], attr);
 
         var g = board.create('group', [p1, p2, p3]);
-//        g.addPoints([p1, p2, p3]);
 
         ret = [p1, p2, p3, l1, l2, l3, g];
         ret.points = [p1, p2, p3];
         ret.lines = [l1, l2, l3];
         ret.group = g;
+
         for(i=1; i<=3; i++) {
             ret['point'+i] = ret.points[i-1];
             ret['line'+i] = ret.lines[i-1];

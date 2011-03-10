@@ -1155,8 +1155,6 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
     var el, isConstrained = false, i, show, attr;
 
     attr = JXG.copyAttributes(attributes, board.options, 'point');
-    console.log(attr);
-    console.log('increatepoint');
 
     for (i=0;i<parents.length;i++) {
         if (typeof parents[i]=='function' || typeof parents[i]=='string') {

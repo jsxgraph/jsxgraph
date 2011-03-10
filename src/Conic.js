@@ -57,19 +57,20 @@
  *   var el = glex1_board.create('ellipse',[A,B,C]);
  * </script><pre>
  */
-JXG.createEllipse = function(board, parents, atts) {
+JXG.createEllipse = function(board, parents, attributes) {
     var F = [],  // focus 1 and focus 2
         C, majorAxis, i,
-        rotationMatrix;
+        rotationMatrix,
+        attr_foci = JXG.copyAttributes(attributes, board.options, 'conic', 'foci'),
+        attr_curve = JXG.copyAttributes(attributes, board.options, 'conic');
 
-    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'conic','withLabel'), layer:null});
     // The foci and the third point are either points or coordinate arrays.
-    for (i=0;i<2;i++) {
-        if (parents[i].length>1) { // focus i given by coordinates
-            F[i] = board.create('point', parents[i], {visible:false,fixed:true});
+    for (i = 0; i < 2; i++) {
+        if (parents[i].length > 1) { // focus i given by coordinates
+            F[i] = board.create('point', parents[i], attr_foci);
         } else if (JXG.isPoint(parents[i])) { // focus i given by point
             F[i] = JXG.getReference(board,parents[i]);
-        } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
+        } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass === JXG.OBJECT_CLASS_POINT)) {  // given by function
             F[i] = parents[i]();
         } else if (JXG.isString(parents[i])) { // focus i given by point name
             F[i] = JXG.getReference(board,parents[i]);
@@ -86,7 +87,7 @@ JXG.createEllipse = function(board, parents, atts) {
         if (JXG.isPoint(parents[2])) {                                               // point on ellipse
             C = JXG.getReference(board,parents[2]);
         } else if (parents[2].length>1) {                                            // point on ellipse given by coordinates
-            C = board.create('point', parents[2], {visible:false,fixed:true});
+            C = board.create('point', parents[2], attr_foci);
         } else if ((typeof parents[2] == 'function') && (parents[2]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
             C = parents[2]();
         } else if (JXG.isString(parents[2])) {                                      // focus i given by point name
@@ -102,12 +103,10 @@ JXG.createEllipse = function(board, parents, atts) {
     if (typeof parents[4]=='undefined') parents[4] = 1.0001*Math.PI;   // to
     if (typeof parents[3]=='undefined') parents[3] = -1.0001*Math.PI;  // from
 
-    atts = JXG.checkAttributes(atts,{curveType:'parameter'});
-
     var M = board.create('point', [
                 function(){return (F[0].X()+F[1].X())*0.5;},
                 function(){return (F[0].Y()+F[1].Y())*0.5;}
-            ],{visible:false, name:'', withLabel:false});
+            ], attr_foci);
 
     var transformFunc = function() {
             var ax = F[0].X(),
@@ -133,7 +132,7 @@ JXG.createEllipse = function(board, parents, atts) {
             return m;
         };
 
-    var curve = board.create('curve',[function(x) {return 0;},function(x) {return 0;},parents[3],parents[4]],atts);
+    var curve = board.create('curve', [function(x) {return 0;}, function(x) {return 0;}, parents[3], parents[4]], attr_curve);
 
     var polarForm = function(phi,suspendUpdate) {
                 var a = majorAxis()*0.5,
@@ -207,18 +206,19 @@ JXG.createEllipse = function(board, parents, atts) {
  *   var el = glex1_board.create('hyperbola',[A,B,C]);
  * </script><pre>
  */
-JXG.createHyperbola = function(board, parents, atts) {
+JXG.createHyperbola = function(board, parents, attributes) {
     var F = [],  // focus 1 and focus 2
         C, 
         majorAxis,
         i,
-        rotationMatrix;
+        rotationMatrix,
+        attr_foci = JXG.copyAttributes(attributes, board.options, 'conic', 'foci'),
+        attr_curve = JXG.copyAttributes(attributes, board.options, 'conic');
 
-    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'conic','withLabel'), layer:null});
     // The foci and the third point are either points or coordinate arrays.
     for (i=0;i<2;i++) {
         if (parents[i].length>1) { // focus i given by coordinates
-            F[i] = board.create('point', parents[i], {visible:false,fixed:true});
+            F[i] = board.create('point', parents[i], attr_focu);
         } else if (JXG.isPoint(parents[i])) { // focus i given by point
             F[i] = JXG.getReference(board,parents[i]);
         } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
@@ -238,7 +238,7 @@ JXG.createHyperbola = function(board, parents, atts) {
         if (JXG.isPoint(parents[2])) {                                               // point on ellipse
             C = JXG.getReference(board,parents[2]);
         } else if (parents[2].length>1) {                                            // point on ellipse given by coordinates
-            C = board.create('point', parents[2], {visible:false,fixed:true});
+            C = board.create('point', parents[2], attr_foci);
         } else if ((typeof parents[2] == 'function') && (parents[2]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
             C = parents[2]();
         } else if (JXG.isString(parents[2])) {                                      // focus i given by point name
@@ -254,12 +254,10 @@ JXG.createHyperbola = function(board, parents, atts) {
     if (typeof parents[4]=='undefined') parents[4] = 1.0001*Math.PI;   // to
     if (typeof parents[3]=='undefined') parents[3] = -1.0001*Math.PI;  // from
 
-    atts = JXG.checkAttributes(atts,{curveType:'parameter'});
-
     var M = board.create('point', [
                 function(){return (F[0].X()+F[1].X())*0.5;},
                 function(){return (F[0].Y()+F[1].Y())*0.5;}
-            ],{visible:false, name:'', withLabel:false});
+            ], attr_foci);
 
     var transformFunc = function() {
             var ax = F[0].X(),
@@ -283,7 +281,7 @@ JXG.createHyperbola = function(board, parents, atts) {
             return m;
         };
 
-    var curve = board.create('curve',[function(x) {return 0;},function(x) {return 0;},parents[3],parents[4]],atts);
+    var curve = board.create('curve',[function(x) {return 0;},function(x) {return 0;},parents[3],parents[4]], attr_curve);
     /*
     * Hyperbola is defined by (a*sec(t),b*tan(t)) and sec(t) = 1/cos(t)
     */
@@ -357,14 +355,15 @@ JXG.createHyperbola = function(board, parents, atts) {
  *   var el = glex1_board.create('parabola',[C,l]);
  * </script><pre>
  */
-JXG.createParabola = function(board, parents, atts) {
+JXG.createParabola = function(board, parents, attributes) {
     var F1 = parents[0], // focus
         l = parents[1],  // directrix
-        rotationMatrix;
+        rotationMatrix,
+        attr_foci = JXG.copyAttributes(attributes, board.options, 'conic', 'foci'),
+        attr_curve = JXG.copyAttributes(attributes, board.options, 'conic');
 
-    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'conic','withLabel'), layer:null});
     if (parents[0].length>1) { // focus 1 given by coordinates
-        F1 = board.create('point', parents[0], {visible:false,fixed:true});
+        F1 = board.create('point', parents[0], attr_foci);
     } else if (JXG.isPoint(parents[0])) { // focus i given by point
         F1 = JXG.getReference(board,parents[0]);
     } else if ((typeof parents[0] == 'function') && (parents[0]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
@@ -379,15 +378,13 @@ JXG.createParabola = function(board, parents, atts) {
     if (typeof parents[3]=='undefined') parents[3] = 10.0;   // to
     if (typeof parents[2]=='undefined') parents[2] = -10.0;  // from
 
-    atts = JXG.checkAttributes(atts,{curveType:'parameter'});
-
     var M = board.create('point', [
                 function() {
                     var v = [0,l.stdform[1],l.stdform[2]];
                     v = JXG.Math.crossProduct(v,F1.coords.usrCoords);
                     return JXG.Math.Geometry.meetLineLine(v,l.stdform,0,board).usrCoords;
                 }
-            ],{visible:false, name:'', withLabel:false});
+            ], attr_foci);
 
     var transformFunc = function() {
             var beta = Math.atan(l.getSlope()),                
@@ -404,7 +401,7 @@ JXG.createParabola = function(board, parents, atts) {
             return m;
         };
 
-    var curve = board.create('curve',[function(x) {return 0;},function(x) {return 0;},parents[2],parents[3]],atts);
+    var curve = board.create('curve',[function(x) {return 0;},function(x) {return 0;},parents[2],parents[3]], attr_curve);
 
     var polarForm = function(t,suspendUpdate) {
                 var e = M.Dist(F1)*0.5,
@@ -472,12 +469,14 @@ JXG.createParabola = function(board, parents, atts) {
  *   var conic = glex1_board.create('conic',[A,B,C,D,E]);
  * </script><pre>
  */
-JXG.createConic = function(board, parents, atts) {
+JXG.createConic = function(board, parents, attributes) {
     var rotationMatrix = [[1,0,0],[0,1,0],[0,0,1]], 
         eigen, a, b, c, M = [[1,0,0],[0,1,0],[0,0,1]],
         c1, c2, points = [], i, definingMat, 
         givenByPoints, 
-        p = [];
+        p = [],
+        attr_foci = JXG.copyAttributes(attributes, board.options, 'conic', 'foci'),
+        attr_curve = JXG.copyAttributes(attributes, board.options, 'conic');
 
     if (parents.length==5) {
         givenByPoints = true;
@@ -486,11 +485,10 @@ JXG.createConic = function(board, parents, atts) {
     } else 
         throw new Error("JSXGraph: Can't create generic Conic with " + parent.length + " parameters.");  
 
-    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'conic','withLabel'), layer:null});
     if (givenByPoints) {
         for (i=0;i<5;i++) {
             if (parents[i].length>1) { // point i given by coordinates
-                points[i] = board.create('point', parents[i], {visible:false,fixed:true});
+                points[i] = board.create('point', parents[i], attr_foci);
             } else if (JXG.isPoint(parents[i])) { // point i given by point
                 points[i] = JXG.getReference(board,parents[i]);
             } else if ((typeof parents[i] == 'function') && (parents[i]().elementClass == JXG.OBJECT_CLASS_POINT)) {  // given by function
@@ -568,7 +566,7 @@ JXG.createConic = function(board, parents, atts) {
  
     // Here, the defining functions for the curve are just dummy functions.
     // In polarForm there is a reference to curve.quadraticform.
-    var curve = board.create('curve',[function(x) {return 0;},function(x) {return 0;},0,2*Math.PI],atts);
+    var curve = board.create('curve',[function(x) {return 0;},function(x) {return 0;},0,2*Math.PI], attr_curve);
 
     var polarForm = function(phi,suspendUpdate) {
         var i, j, len, v;
@@ -650,7 +648,7 @@ JXG.createConic = function(board, parents, atts) {
                 m[0][1]*m[1][2]-m[1][1]*m[0][2]
             ];
         }
-        ],{name:'',visible:false});
+        ], attr_foci);
 
     curve.type = JXG.OBJECT_TYPE_CONIC;
     return curve;

@@ -327,7 +327,13 @@ JXG.Options = {
         fillColor : 'none',
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
-        highlightStrokeColor : '#C3D9FF'
+        highlightStrokeColor : '#C3D9FF',
+        foci: {
+            // points
+            fixed: true,
+            visible: false,
+            withLabel: false
+        }
     },
 
     /* special angle options */
