@@ -69,22 +69,174 @@ JXG.Options = {
 
     /* geometry element options */
     elements : {
-        /* color options */
+        /**
+         * The stroke color of the given geometry element.
+         * @type string
+         * @name JXG.GeometryElement#strokeColor
+         * @see #highlightStrokeColor
+         * @see #strokeWidth
+         * @see #strokeOpacity
+         * @see #highlightStrokeOpacity
+         * @default {@link JXG.Options.elements.color#strokeColor}
+         */
         strokeColor: '#0000ff',
+
+        /**
+         * The stroke color of the given geometry element when the user moves the mouse over it.
+         * @type string
+         * @name JXG.GeometryElement#highlightStrokeColor
+         * @see #sstrokeColor
+         * @see #strokeWidth
+         * @see #strokeOpacity
+         * @see #highlightStrokeOpacity
+         * @default {@link JXG.Options.elements.color#highlightStrokeColor}
+         */
         highlightStrokeColor: '#C3D9FF',
+
+        /**
+         * The fill color of this geometry element.
+         * @type string
+         * @name JXG.GeometryElement#fillColor
+         * @see #highlightFillColor
+         * @see #fillOpacity
+         * @see #highlightFillOpacity
+         * @default {@link JXG.Options.elements.color#fillColor}
+         */
         fillColor: 'red',
+
+        /**
+         * The fill color of the given geometry element when the mouse is pointed over it.
+         * @type string
+         * @name JXG.GeometryElement#highlightFillColor
+         * @see #fillColor
+         * @see #fillOpacity
+         * @see #highlightFillOpacity
+         * @default {@link JXG.Options.elements.color#highlightFillColor}
+         */
         highlightFillColor: 'none',
 
+        /**
+         * Opacity for element's stroke color.
+         * @type number
+         * @name JXG.GeometryElement#strokeOpacity
+         * @see #strokeColor
+         * @see #highlightStrokeColor
+         * @see #strokeWidth
+         * @see #highlightStrokeOpacity
+         * @default {@link JXG.Options.elements#strokeOpacity}
+         */
         strokeOpacity: 1,
+
+        /**
+         * Opacity for stroke color when the object is highlighted.
+         * @type number
+         * @name JXG.GeometryElement#highlightStrokeOpacity
+         * @see #strokeColor
+         * @see #highlightStrokeColor
+         * @see #strokeWidth
+         * @see #strokeOpacity
+         * @default {@link JXG.Options.elements#highlightStrokeOpacity}
+         */
         highlightStrokeOpacity: 1,
+
+        /**
+         * Opacity for fill color.
+         * @type number
+         * @name JXG.GeometryElement#fillOpacity
+         * @see #fillColor
+         * @see #highlightFillColor
+         * @see #highlightFillOpacity
+         * @default {@link JXG.Options.elements.color#fillOpacity}
+         */
         fillOpacity: 1,
+
+        /**
+         * Opacity for fill color when the object is highlighted.
+         * @type number
+         * @name JXG.GeometryElement#highlightFillOpacity
+         * @see #fillColor
+         * @see #highlightFillColor
+         * @see #fillOpacity
+         * @default {@link JXG.Options.elements.color#highlightFillOpacity}
+         */
         highlightFillOpacity: 1,
+
+        /**
+         * Width of the element's stroke.
+         * @type number
+         * @name JXG.GeometryElement#strokeWidth
+         * @see #strokeColor
+         * @see #highlightStrokeColor
+         * @see #strokeOpacity
+         * @see #highlightStrokeOpacity
+         * @default {@link JXG.Options.elements#strokeWidth}
+         */
         strokeWidth: '2px',
+
+        /**
+         * Width of the element's stroke when the mouse is pointed over it.
+         * @type number
+         * @name JXG.GeometryElement#highlightStrokeWidth
+         * @see #strokeColor
+         * @see #highlightStrokeColor
+         * @see #strokeOpacity
+         * @see #highlightStrokeOpacity
+         * @see #highlightFillColor
+         * @default {@link JXG.Options.elements#strokeWidth}
+         */
+        highlightStrokeWidth: '2px',
+        
 	    withLabel: false,
+
+        /**
+         * If false the element won't be visible on the board, otherwise it is shown.
+         * @type boolean
+         * @name JXG.GeometryElement#visible
+         * @see #hideElement
+         * @see #showElement
+         * @default true
+         */
         visible: true,
+
+        /**
+         * Display layer which will contain the element.
+         * @see JXG.Options#layer
+         * @default See {@link JXG.Options#layer}
+         */
+        layer: 9,
+
+        /**
+         * Determines the elements border-style.
+         * Possible values are:
+         * <ul><li>0 for a solid line</li>
+         * <li>1 for a dotted line</li>
+         * <li>2 for a line with small dashes</li>
+         * <li>3 for a line with medium dashes</li>
+         * <li>4 for a line with big dashes</li>
+         * <li>5 for a line with alternating medium and big dashes and large gaps</li>
+         * <li>6 for a line with alternating medium and big dashes and small gaps</li></ul>
+         * @type Number
+         * @name JXG.GeometryElement#dash
+         * @default 0
+         */
+        dash: 0,
+
+        /**
+         * If true the element will get a shadow.
+         * @type boolean
+         * @name JXG.GeometryElement#shadow
+         * @default false
+         */
+        shadow: false,
 
         /*draft options */
         draft : {
+            /**
+             * If true the element will be drawn in grey scale colors to visualize that it's only a draft.
+             * @type boolean
+             * @name JXG.GeometryElement#draft
+             * @default {@link JXG.Options.elements.draft#draft}
+             */
             draft : false,
             color : '#565656',
             opacity : 0.8,
@@ -369,7 +521,21 @@ JXG.Options = {
         fillColor : '#00FF00',
         highlightFillColor : '#00FF00',
         fillOpacity : 0.3,
-        highlightFillOpacity : 0.3
+        highlightFillOpacity : 0.3,
+
+        /**
+         * Is the polygon bordered by lines?
+         * @type Boolean
+         * @name JXG.Polygon#withLines
+         * @default true
+         */
+        withLines: true,
+
+        lines: {
+            withLabel: false,
+            // Polygon layer + 1
+            layer: 5
+        }
     },
 
     /* special sector options */
@@ -401,6 +567,10 @@ JXG.Options = {
         numberPointsLow : 400,    // Number of points on curves after mousemove
         doAdvancedPlot : true       // Use the algorithm by Gillam and Hohenwarter
                                  // It is much slower, but the result is better
+    },
+
+    chart: {
+        chartStyle: 'line'
     },
 
     /* precision options */

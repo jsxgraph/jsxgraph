@@ -31,16 +31,16 @@
  
 JXG.Chart = function(board, parents, attributes) {
     this.constructor();
-    if (parents.length==0) { return; }  // No input data in parentArr
+    if (parents.length==0) {
+        return;
+    }  // No input data in parentArr
     
     /**
      * Contains lpointers to the various displays.
      */
     this.elements = [];
     
-    var id = attributes['id'] || '';
-    var name = attributes['name'] || '';
-    this.init(board, id, name);
+    this.init(board, attributes);
     
     var x,y,i;
     if (parents.length>0 && (typeof parents[0]=='number')) { // parents looks like [a,b,c,..]
@@ -70,8 +70,8 @@ JXG.Chart = function(board, parents, attributes) {
             y = parents[1];
         }
     }
-    if (!JXG.exists(attributes)) attributes = {};
-    var style = attributes['chartStyle'] || 'line';
+
+    var style = attributes.chartStyle;
     style = style.replace(/ /g,'');
     style = style.split(',');
     var c;

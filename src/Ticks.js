@@ -46,7 +46,7 @@
  * @constructor
  * @extends JXG.GeometryElement
  */
-JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, layer) {
+JXG.Ticks = function (line, ticks, attributes) {
     this.constructor();
 
     /**
@@ -109,7 +109,7 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, la
      * minorTicks is the number of minor ticks between two major ticks.
      * @type int
      */
-    this.minorTicks = ( (minor == null)? this.board.options.line.ticks.minorTicks : minor);
+    this.minorTicks = attributes.minorTicks;
     if(this.minorTicks < 0)
         this.minorTicks = -this.minorTicks;
 
@@ -117,9 +117,8 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, la
      * Total height of a major tick.
      * @type int
      */
-    this.majorHeight = ( (majorHeight == null) || (majorHeight == 0) ? this.board.options.line.ticks.majorHeight : majorHeight);
+    this.majorHeight = attributes.majorHeight;
     if(this.majorHeight < 0) {
-        //this.majorHeight = -this.majorHeight;
         this.majorHeight = this.board.canvasWidth+this.board.canvasHeight;
     }
 
@@ -127,9 +126,8 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, la
      * Total height of a minor tick.
      * @type int
      */
-    this.minorHeight = ( (minorHeight == null) || (minorHeight == 0) ? this.board.options.line.ticks.minorHeight : minorHeight);
+    this.minorHeight = attributes.minorHeight;
     if(this.minorHeight < 0) {
-        //this.minorHeight = -this.minorHeight;
         this.minorHeight = this.board.canvasWidth+this.board.canvasHeight;
     }
 
@@ -137,7 +135,7 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, la
      * Least distance between two ticks, measured in pixels.
      * @type int
      */
-    this.minTicksDistance = this.board.options.line.ticks.minTicksDistance;
+    this.minTicksDistance = attributes.minTicksDistance;
 
     /**
      * Maximum distance between two ticks, measured in pixels. Is used only when insertTicks
@@ -145,7 +143,7 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, la
      * @type int
      * @see #insertTicks
      */
-    this.maxTicksDistance = this.board.options.line.ticks.maxTicksDistance;
+    this.maxTicksDistance = attributes.maxTicksDistance;
 
     /**
      * If the distance between two ticks is too big we could insert new ticks. If insertTicks
@@ -155,19 +153,19 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, la
      * @see #equidistant
      * @see #maxTicksDistance
      */
-    this.insertTicks = this.board.options.line.ticks.insertTicks;
+    this.insertTicks = attributes.insertTicks;
 
     /**
      * Draw the zero tick, that lies at line.point1?
      * @type bool
      */
-    this.drawZero = this.board.options.line.ticks.drawZero;
+    this.drawZero = attributes.drawZero;
 
     /**
      * Draw labels yes/no
      * @type bool
      */
-    this.drawLabels = this.board.options.line.ticks.drawLabels;
+    this.drawLabels = attributes.drawLabels;
 
     /**
      * Array where the labels are saved. There is an array element for every tick,
@@ -178,16 +176,16 @@ JXG.Ticks = function (line, ticks, minor, majorHeight, minorHeight, id, name, la
     this.labels = [];
 
     /* Call init defined in GeometryElement to set board, id and name property */
-    this.init(this.board, id, name);
+    this.init(this.board, attributes);
 
-    this.visProp['visible'] = true;
-
+/*
     this.visProp['fillColor'] = this.line.visProp['fillColor'];
     this.visProp['highlightFillColor'] = this.line.visProp['highlightFillColor'];
     this.visProp['strokeColor'] = this.line.visProp['strokeColor'];
     this.visProp['highlightStrokeColor'] = this.line.visProp['highlightStrokeColor'];
     this.visProp['strokeWidth'] = this.line.visProp['strokeWidth'];
-
+*/
+    
     /* Register ticks at line*/
     this.id = this.line.addTicks(this);
     /* Register ticks at board*/
@@ -549,10 +547,11 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
  * @return Reference to the created ticks object.
  */
 JXG.createTicks = function(board, parents, attributes) {
-    var el;
-    attributes = JXG.checkAttributes(attributes,{layer:null});
+    var el,
+        attr = JXG.copyAttributes(attributes, board.options, 'ticks');
+
     if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.isFunction(parents[1]) || JXG.isArray(parents[1]) || JXG.isNumber(parents[1]))) {
-        el = new JXG.Ticks(parents[0], parents[1], attributes['minorTicks'], attributes['majorHeight'], attributes['minorHeight'], attributes['id'], attributes['name'], attributes['layer']);
+        el = new JXG.Ticks(parents[0], parents[1], attributes);
     } else
         throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
 

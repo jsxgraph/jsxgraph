@@ -42,7 +42,7 @@
  * @see JXG.Board#generateName
  * @see JXG.Board#addCurve
   */
-JXG.Curve = function (board, parents, id, name, withLabel, layer) {
+JXG.Curve = function (board, parents, attributes) {
     this.constructor();
  
     this.points = []; 
@@ -50,32 +50,31 @@ JXG.Curve = function (board, parents, id, name, withLabel, layer) {
     this.type = JXG.OBJECT_TYPE_CURVE;
     this.elementClass = JXG.OBJECT_CLASS_CURVE;                
     
-    this.init(board, id, name);
+    this.init(board, attributes);
 
     /**
      * Set the display layer.
      */
-    if (layer == null) layer = board.options.layer['curve'];
-    this.layer = layer;
+    this.layer = attributes.layer;
 
     /** Use the algorithm by Gillam and Hohenwarter for plotting.
       * If false the naive algorithm is used.
       * It is much slower, but the result is better.
       */
-    this.doAdvancedPlot = this.board.options.curve.doAdvancedPlot;
+    this.doAdvancedPlot = attributes.doAdvancedPlot;
     
     /** 
       * Number of points on curves after mouseUp, i.e. high quality output.
       * Only used if this.doAdvancedPlot==false
       * May be overwritten.
       **/
-    this.numberPointsHigh = this.board.options.curve.numberPointsHigh;
+    this.numberPointsHigh = attributes.numberPointsHigh;
     /** 
       * Number of points on curves after mousemove, i.e. low quality output.
       * Only used if this.doAdvancedPlot==false
       * May be overwritten.
       **/
-    this.numberPointsLow = this.board.options.curve.numberPointsLow;
+    this.numberPointsLow = attributes.numberPointsLow;
     /** 
       * Number of points on curves. This value changes
       * between numberPointsLow and numberPointsHigh.
@@ -83,10 +82,6 @@ JXG.Curve = function (board, parents, id, name, withLabel, layer) {
       */
     this.numberPoints = this.numberPointsHigh; 
 
-    this.visProp['strokeWidth'] = this.board.options.curve.strokeWidth;
-    this.visProp['highlightStrokeWidth'] = this.visProp['strokeWidth'];
-
-    this.visProp['visible'] = true;
     this.dataX = null;
     this.dataY = null;
 
@@ -127,7 +122,7 @@ JXG.Curve = function (board, parents, id, name, withLabel, layer) {
     this.board.renderer.drawCurve(this);
     this.board.finalizeAdding(this);
     
-    this.createLabel(withLabel);
+    this.createLabel();
 
     if (typeof this.xterm=='string') {
         this.notifyParents(this.xterm);
@@ -170,10 +165,9 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
     /**
      * Checks whether (x,y) is near the curve.
-     * @param {int} x Coordinate in x direction, screen coordinates.
-     * @param {int} y Coordinate in y direction, screen coordinates.
-     * @param {y} Find closest point on the curve to (x,y)
-     * @return {bool} True if (x,y) is near the curve, False otherwise.
+     * @param {Number} x Coordinate in x direction, screen coordinates.
+     * @param {Number} y Coordinate in y direction, screen coordinates.
+     * @return {Boolean} True if (x,y) is near the curve, False otherwise.
      */
     hasPoint: function (x,y) {
         var t, dist = Infinity,

@@ -40,38 +40,20 @@
  * @extends JXG.GeometryElement
  */
 
-JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel, lineLabels, layer) {
-    var i, vertex, l;
+JXG.Polygon = function (board, vertices, borders, attributes) {
+    var i, vertex, l,
+        attr_line = JXG.copyAttributes(attributes, board.options, 'line', 'lines');
     
     /* Call the constructor of GeometryElement */
     this.constructor();
-    /**
-     * Sets type of GeometryElement, value is OBJECT_TYPE_POLYGON.
-     * @final
-     * @type Number
-     */ 
     this.type = JXG.OBJECT_TYPE_POLYGON;
     this.elementClass = JXG.OBJECT_CLASS_AREA;                
     
-    this.init(board, id, name);
-    /**
-     * Set the display layer.
-     */
-    if (layer == null) layer = board.options.layer['polygon'];
-    this.layer = layer;
+    this.init(board, attributes);
+
+    this.layer = attributes.layer;
     
-    if( (typeof withLines == 'undefined') || (withLines == null) ) {
-        withLines = true;
-    }
-    if( (typeof lineLabels == 'undefined') || (lineLabels == null) ) {
-        lineLabels = false;
-    }    
-        
-    /**
-     * Is the polygon bordered by lines?
-     * @type Boolean
-     */
-    this.withLines = withLines;
+    this.withLines = attributes.withLines;
 
     /**
      * References to the points defining the polygon.
@@ -81,40 +63,22 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
      */    
     this.vertices = [];    
     for(i=0; i<vertices.length; i++) {
-       vertex = JXG.getReference(this.board, vertices[i]);
+       vertex = JXG.getRef(this.board, vertices[i]);
        this.vertices[i] = vertex;
-    }
-    
-    if((typeof borders == 'undefined') || (borders == null)) {
-        borders = [];
-        for(i=0; i<vertices.length-1; i++) {
-            borders[i] = {};
-        }
     }
     
     if(this.vertices[this.vertices.length-1] != this.vertices[0]) {
         this.vertices.push(this.vertices[0]);
-        borders.push({});
     }
-    
-    this.visProp['fillColor'] = this.board.options.polygon.fillColor;
-    this.visProp['highlightFillColor'] = this.board.options.polygon.highlightFillColor;
-    this.visProp['fillOpacity'] = this.board.options.polygon.fillOpacity;
-    this.visProp['highlightFillOpacity'] = this.board.options.polygon.highlightFillOpacity;
     
     /**
      * References to the borderlines of the polygon.
-     * 
      * @type Array
      */  
     this.borders = [];
-    if(withLines) {
-        for(i=0; i<this.vertices.length-1; i++) {
-            /* create the borderlines */
-            l = new JXG.Line(board, this.vertices[i], this.vertices[i+1], borders[i].id, borders[i].name, lineLabels, this.layer+1); // keine Labels?
-                                                                                                                        // Layer +1, da sonst die Linien  teils
-                                                                                                                        // hinter dem Polygon verschwinden
-            l.setStraight(false,false); // Strecke
+    if(this.withLines) {
+        for(i = 0; i < this.vertices.length - 1; i++) {
+            l = JXG.createLine(board, [this.vertices[i], this.vertices[i+1]], attr_line);
             this.borders[i] = l;
             l.parentPolygon = this;
         }
@@ -127,10 +91,10 @@ JXG.Polygon = function (board, vertices, borders, id, name, withLines, withLabel
     }
     
     // create label 
-    this.createLabel(withLabel,[0,0]);
+    this.createLabel([0, 0]);
     
     /* Register polygon at board */
-    this.id = this.board.setId(this,'Py');
+    this.id = this.board.setId(this, 'Py');
     this.board.renderer.drawPolygon(this);
     this.board.finalizeAdding(this);
 };
@@ -253,13 +217,13 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
      * Make the element visible.
      */    
     showElement: function() {
+        var i;
+
         this.visProp['visible'] = true;
         this.board.renderer.show(this);
 
-        if(this.withLines) {
-            for(var i=0; i<this.borders.length; i++) {
-                this.borders[i].showElement();
-            }
+        for(var i=0; i<this.borders.length; i++) {
+            this.borders[i].showElement();
         }
     },
 
@@ -281,26 +245,18 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 /*
 documentation missing
 */
-JXG.createPolygon = function(board, parents, atts) {
-    var el, i;
+JXG.createPolygon = function(board, parents, attributes) {
+    var el, i, attr = JXG.copyAttributes(attributes, board.options, 'polygon');
 
-    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'polygon','withLabel'), layer:null});
     // Sind alles Punkte?
-    for(i=0; i<parents.length; i++) {
+    for(i = 0; i < parents.length; i++) {
         parents[i] = JXG.getReference(board, parents[i]);
         if(!JXG.isPoint(parents[i]))
             throw new Error("JSXGraph: Can't create polygon with parent types other than 'point'.");
     }
     
-    el = new JXG.Polygon(board, parents, atts["borders"], atts["id"],atts["name"],atts["withLines"],
-                        atts['withLabel'],atts['lineLabels'],atts['layer']);
+    el = new JXG.Polygon(board, parents, attr);
     
-    /*if(atts["withLines"] || true) {
-    	for(i=0; i<el.borders.length; i++) {
-    		el.borders[i].setProperty(atts);
-    	}
-    }*/
-
     return el;
 };
 
@@ -378,7 +334,7 @@ JXG.createRegularPolygon = function(board, parents, atts) {
             p[i] = parents[i];
             p[i].addTransform(parents[i-2],rot);
         } else {
-            p[i] = board.create('point',[p[i-2],rot],{name:'', withLabel:false,fixed:true,face:'o',size:1});
+            p[i] = board.create('point',[p[i-2],rot],{name:'', withLabel:false,fixed:true});
         }
     }
     el = board.create('polygon',p,atts);

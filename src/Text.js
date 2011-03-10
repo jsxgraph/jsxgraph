@@ -43,12 +43,11 @@ JXG.Text = function (board, content, coords, attributes) {
     this.type = JXG.OBJECT_TYPE_TEXT;
     this.elementClass = JXG.OBJECT_CLASS_OTHER;
 
-    this.init(board, attributes.id, attributes.name);
+    this.init(board, attributes);
     this.content = content;
     this.plaintext = '';
 
     this.layer = attributes.layer;
-    this.visProp = attributes;
 
     if ((this.element = JXG.getRef(this.board, attributes.anchor))) {
         var anchor;

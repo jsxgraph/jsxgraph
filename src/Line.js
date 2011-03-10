@@ -47,7 +47,7 @@
  * @param {integer} layer display layer [0-9]
  * @see JXG.Board#generateName
  */
-JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
+JXG.Line = function (board, p1, p2, attributes) {
     /* Call the constructor of GeometryElement */
     this.constructor();
 
@@ -69,13 +69,9 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
      */
     this.elementClass = JXG.OBJECT_CLASS_LINE;
 
-    this.init(board, id, name);
+    this.init(board, attributes);
 
-    /**
-     * Set the display layer.
-     */
-    if (layer == null) layer = board.options.layer['line'];
-    this.layer = layer;
+    this.layer = attributes.layer;
     
     /**
      * Startpoint of the line. You really should not set this field directly as it may break JSXGraph's
@@ -89,62 +85,6 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
      * @type JXG.Point
      */
     this.point2 = JXG.getReference(this.board, p2);
-
-    /**
-     * This is just for the hasPoint() method.
-     * @type int
-     * @private
-     */
-    //this.r = this.board.options.precision.hasPoint;
-
-    /* Wurde in GeometryElement schon dokumentiert. */
-    this.visProp['fillColor'] = this.board.options.line.fillColor;
-    this.visProp['highlightFillColor'] = this.board.options.line.highlightFillColor;
-    this.visProp['strokeColor'] = this.board.options.line.strokeColor;
-    this.visProp['highlightStrokeColor'] = this.board.options.line.highlightStrokeColor;
-
-    /**
-     * Determines if a line is drawn beyond {@link #point1}.
-     * @name JXG.Line#straightFirst
-     * @type boolean
-     * @default JXG.Options.line#straightFirst
-     * @field
-     * @see JXG.Line#straightLast
-     */
-    this.visProp['straightFirst'] = this.board.options.line.straightFirst;
-
-    /**
-     * Determines if a line is drawn beyond {@link #point2}.
-     * @name JXG.Line#straightLast
-     * @type boolean
-     * @default JXG.Options.line#straightLast
-     * @field
-     * @see JXG.Line#straightFirst
-     */
-    this.visProp['straightLast'] = this.board.options.line.straightLast;
-
-    /* Already documented in JXG.GeometryElement */
-    this.visProp['visible'] = true;
-
-    /**
-     * Determines if a line has an arrow at {@link #point1}.
-     * @name JXG.Line#firstArrow
-     * @type boolean
-     * @default JXG.Options.line#firstArrow
-     * @field
-     * @see JXG.Line#lastArrow
-     */
-    this.visProp['firstArrow'] = this.board.options.line.firstArrow;
-
-    /**
-     * Determines if a line has an arrow at {@link #point1}.
-     * @name JXG.Line#lastArrow
-     * @type boolean
-     * @default JXG.Options.line#lastArrow
-     * @field
-     * @see JXG.Line#firstArrow
-     */
-    this.visProp['lastArrow'] = this.board.options.line.lastArrow;
 
     /**
      * Array of ticks storing all the ticks on this line. Do not set this field directly and use
@@ -175,8 +115,7 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
      * @default JXG.Options.line#labelOffsets
     * @private
     */
-    //this.labelOffsets = [].concat(this.board.options.line.labelOffsets);
-    this.labelOffsets = [].concat(this.board.options.line.labelOffsets);
+    this.labelOffsets = [].concat(attributes.labelOffsets);
     //make sure we have absolute values
     this.labelOffsets[0] = Math.abs(this.labelOffsets[0]);
     this.labelOffsets[1] = Math.abs(this.labelOffsets[1]);
@@ -187,7 +126,7 @@ JXG.Line = function (board, p1, p2, id, name, withLabel, layer) {
     this.board.finalizeAdding(this);
 
     // create Label
-    this.createLabel(withLabel);
+    this.createLabel();
 
     /* Add arrow as child to defining points */
     this.point1.addChild(this);
@@ -241,14 +180,6 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         if(this.visProp['straightFirst'] && this.visProp['straightLast']) {
             return true;
         } else { // If the line is a ray or segment we have to check if the projected point is "inside" P1 and P2.
-    /*
-            coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [vnew[1],vnew[2]], this.board);
-            p1Scr = this.point1.coords.scrCoords;
-            p2Scr = this.point2.coords.scrCoords;
-            distP1P = coords.distance(JXG.COORDS_BY_SCREEN, this.point1.coords);
-            distP2P = coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
-            distP1P2 = this.point1.coords.distance(JXG.COORDS_BY_SCREEN, this.point2.coords);
-    */
             p1Scr = this.point1.coords.scrCoords;
             p2Scr = this.point2.coords.scrCoords;
             distP1P2 = (p2Scr[1]-p1Scr[1])*(p2Scr[1]-p1Scr[1])+(p2Scr[2]-p1Scr[2])*(p2Scr[2]-p1Scr[2]);  // dist(p1,p2)^2 affine
@@ -292,15 +223,6 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             if (true || !this.board.geonextCompatibilityMode) {
                 this.updateStdform();
             }
-            /*
-            // This is now done in Ticks.updateRenderer()
-            for(i=0; i<this.ticks.length; i++) {
-                // i don't know why we need this, but if we don't check it, an error will be reported
-                // when the origin is moved. it seems like this.ticks.length is lying.
-                if(typeof this.ticks[i] != 'undefined')
-                    this.ticks[i].calculateTicksCoordinates();
-            }
-            */
         }
         if(this.traced) {
             this.cloneToBackground(true);
@@ -312,16 +234,8 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
     updateStdform: function() {
-       /*
-        var nx = -(this.point2.coords.usrCoords[2]-this.point1.coords.usrCoords[2]);
-        var ny =  this.point2.coords.usrCoords[1]-this.point1.coords.usrCoords[1];
-        var c = -(nx*this.point1.coords.usrCoords[1]+ny*this.point1.coords.usrCoords[2]);
+        var v = JXG.Math.crossProduct(this.point1.coords.usrCoords, this.point2.coords.usrCoords);
 
-        this.stdform[0] = c;
-        this.stdform[1] = nx;
-        this.stdform[2] = ny;
-        */
-        var v = JXG.Math.crossProduct(this.point1.coords.usrCoords,this.point2.coords.usrCoords);
         this.stdform[0] = v[0];
         this.stdform[1] = v[1];
         this.stdform[2] = v[2];
@@ -344,12 +258,6 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                     if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content);
                 }
                 this.board.renderer.updateLine(this);
-    /*            
-                if (this.board.options.renderer == 'canvas') { 
-                    for (i=0;i<this.ticks.length;i++)                   // This is necessary for the CanvasRenderer
-                        this.ticks[i].prepareUpdate().updateRenderer(); // No idea, why other Renderer work without it.
-                }
-    */            
             } else {
                 if (wasReal!=this.isReal) {
                     this.board.renderer.hide(this);
@@ -604,12 +512,6 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         this.traces[copy.id] = copy.rendNode;
 
         delete copy;
-
-    /*
-        var id = this.id + 'T' + this.numTraces;
-        this.traces[id] = this.board.renderer.cloneSubTree(this,id,'lines');
-        this.numTraces++;
-    */
     },
 
     /**
@@ -636,28 +538,17 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @param y TYPE & DESCRIPTION
      */
     setPosition: function (method, x, y) {
-        //var oldCoords = this.coords;
-        //if(this.group.length != 0) {
-        // AW: Do we need this for lines?
-            // this.coords = new JXG.Coords(method, [x,y], this.board);
-            // this.group[this.group.length-1].dX = this.coords.scrCoords[1] - oldCoords.scrCoords[1];
-            // this.group[this.group.length-1].dY = this.coords.scrCoords[2] - oldCoords.scrCoords[2];
-            // this.group[this.group.length-1].update(this);
-        //} else {
-            var t = this.board.create('transform',[x,y],{type:'translate'});
-            if (this.point1.transformations.length>0 && this.point1.transformations[this.point1.transformations.length-1].isNumericMatrix) {
-                this.point1.transformations[this.point1.transformations.length-1].melt(t);
-            } else {
-                this.point1.addTransform(this.point1,t);
-            }
-            if (this.point2.transformations.length>0 && this.point2.transformations[this.point2.transformations.length-1].isNumericMatrix) {
-                this.point2.transformations[this.point2.transformations.length-1].melt(t);
-            } else {
-                this.point2.addTransform(this.point2,t);
-            }
-            //this.addTransform(t);
-            //this.update();
-        //}
+        var t = this.board.create('transform',[x,y],{type:'translate'});
+        if (this.point1.transformations.length>0 && this.point1.transformations[this.point1.transformations.length-1].isNumericMatrix) {
+            this.point1.transformations[this.point1.transformations.length-1].melt(t);
+        } else {
+            this.point1.addTransform(this.point1,t);
+        }
+        if (this.point2.transformations.length>0 && this.point2.transformations[this.point2.transformations.length-1].isNumericMatrix) {
+            this.point2.transformations[this.point2.transformations.length-1].melt(t);
+        } else {
+            this.point2.addTransform(this.point2,t);
+        }
     },
 
     /**
@@ -892,7 +783,7 @@ JXG.createLine = function(board, parents, attributes) {
                             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
         
         attr = JXG.copyAttributes(attributes, board.options, 'line');
-        el = new JXG.Line(board, p1.id, p2.id, attr['id'], attr['name'],attr['withLabel'],attr['layer']);
+        el = new JXG.Line(board, p1, p2, attr);
         if(constrained) {
         	el.constrained = true;
         	el.funp1 = parents[0];
@@ -916,14 +807,7 @@ JXG.createLine = function(board, parents, attributes) {
                                 "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
             }
         }
-        // point 1: (0,c,-b)
-        /*
-        p1 = board.create('point',[
-                function() { return 0.0;},
-                function() { return c[2]();},
-                function() { return -c[1]();}],{visible:false,name:' '});
-        */
-        // New version: point 1 is the midpoint between (0,c,-b) and point 2. => point1 is finite.
+        // point 1 is the midpoint between (0,c,-b) and point 2. => point1 is finite.
         attr = JXG.copyAttributes(attributes, board.options, 'line', 'point1');
         p1 = board.create('point',[
                 function() { return (0.0 + c[2]()*c[2]()+c[1]()*c[1]())*0.5;},
@@ -935,7 +819,9 @@ JXG.createLine = function(board, parents, attributes) {
                 function() { return c[2]()*c[2]()+c[1]()*c[1]();},
                 function() { return -c[1]()*c[0]()+c[2]();},
                 function() { return -c[2]()*c[0]()-c[1]();}], attr);
-        el = new JXG.Line(board, p1.id, p2.id, attr['id'], attr['name'],attr['withLabel']);
+
+        attr = JXG.copyAttributes(attributes, board.options, 'line');
+        el = new JXG.Line(board, p1, p2, attr);
     }
     /**
      * The parent array contains a function which returns two points.
@@ -943,16 +829,15 @@ JXG.createLine = function(board, parents, attributes) {
     else if ((parents.length==1) && (typeof parents[0] == 'function') && (parents[0]().length == 2) &&
     		 (parents[0]()[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parents[0]()[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
     	var ps = parents[0]();
-        el = new JXG.Line(board, ps[0].id, ps[1].id, attr['id'], attr['name'],attr['withLabel'],attr['layer']);
+        el = new JXG.Line(board, ps[0], ps[1], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
         el.constrained = true;
         el.funps = parents[0];
-    } else
+    } else {
         throw new Error("JSXGraph: Can't create line with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
-
+    }
     
-    //el.labelOffsets = attr['labelOffsets'];
     return el;
 };
 
@@ -987,7 +872,7 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * </script><pre>
  */
 JXG.createSegment = function(board, parents, attributes) {
-    return el = board.create('line', parents, attributes).setStraight(false, false);
+    return board.create('line', parents, attributes).setStraight(false, false);
 };
 
 JXG.JSXGraph.registerElement('segment', JXG.createSegment);
@@ -1022,14 +907,6 @@ JXG.JSXGraph.registerElement('segment', JXG.createSegment);
  */
 JXG.createArrow = function(board, parents, attributes) {
     var el;
-
-    //attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'line','withLabel'), layer:null});
-    //attr = JXG.checkAttributes(attributes, board.options, 'line');
-    //if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) ) { // The constructability decision is delkegated to the line object
-        //el = new JXG.Line(board, parents[0], parents[1], attributes['id'], attributes['name'],attributes['withLabel']);
-    //} // Ansonsten eine fette Exception um die Ohren hauen
-    //else
-    //    throw new Error("JSXGraph: Can't create arrow with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
 
     el = board.create('line', parents, attributes).setStraight(false, false);
     el.setArrow(false, true);
@@ -1071,32 +948,6 @@ JXG.createAxis = function(board, parents, attributes) {
     if ( (JXG.isArray(parents[0]) || JXG.isPoint(parents[0]) ) && (JXG.isArray(parents[1]) || JXG.isPoint(parents[1])) ) {
         attr = JXG.copyAttributes(attributes, board.options, 'axis');
         el = board.create('line', parents, attr);
-        /*
-        if( JXG.isPoint(parents[0]) )
-            point1 = parents[0];
-        else
-            point1 = new JXG.Point(board, parents[0],'','',false);
-
-        if( JXG.isPoint(parents[1]) )
-            point2 = parents[1];
-        else
-            point2 = new JXG.Point(board,parents[1],'','',false);
-
-        // Make the points fixed 
-        point1.fixed = true;
-        point2.fixed = true;
-
-        attributes = JXG.checkAttributes(attributes,
-            {'lastArrow':true, 'straightFirst':true, 'straightLast':true,
-             'strokeWidth':1, 'withLabel':false,
-             'strokeColor':board.options.axis.strokeColor});
-
-        attributes.highlightStrokeColor = attributes.highlightStrokeColor || attributes.strokeColor || board.options.axis.highlightStrokeColor;
-        line = board.create('line', [point1, point2], attributes);
-        line.setProperty({needsRegularUpdate : false});  // Axes only updated after zooming and moving of the origin.
-        */
-
-        //attributes = JXG.checkAttributes(attributes,{'minorTicks':4, 'insertTicks': true}); //, 'strokeOpacity':board.options.grid.gridOpacity
 
         attr = JXG.copyAttributes(attributes, board.options, 'axis', 'ticks');
         if(attr.ticksDistance != 'undefined' && attr.ticksDistance != null) {
@@ -1108,14 +959,10 @@ JXG.createAxis = function(board, parents, attributes) {
             c2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords.slice(1)],board);
             JXG.Math.Geometry.calcStraight(el, c1, c2);
             len = c1.distance(JXG.COORDS_BY_USER,c2);
-            //len *= 0.33;
             dist = 1.0; //len;
         }
         
         el.defaultTicks = board.create('ticks', [el, dist], attr);
-        //el.defaultTicks.setProperty({needsRegularUpdate : false});
-        //if (!JXG.exists(el.strokeOpacity))
-        //    line.defaultTicks.setProperty({'strokeOpacity':board.options.line.ticks.opacity});
     }
     else
         throw new Error("JSXGraph: Can't create point with parent types '" + 
@@ -1177,8 +1024,6 @@ JXG.createTangent = function(board, parents, attributes) {
                         "\nPossible parent types: [glider], [point,line|curve|circle|conic]");
     }
 
-    //attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'line','withLabel'), layer:null});
-    
     if (c.elementClass == JXG.OBJECT_CLASS_LINE) {
         tangent = board.create('line', [c.point1,c.point2], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE && !(c.type == JXG.OBJECT_TYPE_CONIC)) {
@@ -1253,16 +1098,6 @@ JXG.createTangent = function(board, parents, attributes) {
             // this is required for the geogebra reader to display a slope
             tangent.glider = p;
     } else if (c.elementClass == JXG.OBJECT_CLASS_CIRCLE || c.type == JXG.OBJECT_TYPE_CONIC) {
-        /*
-        Dg = function(t){ return -c.Radius()*Math.sin(t); };
-        Df = function(t){ return c.Radius()*Math.cos(t); };
-        return board.create('line', [
-                    function(){ return -p.X()*Df(p.position)+p.Y()*Dg(p.position);},
-                    function(){ return Df(p.position);},
-                    function(){ return -Dg(p.position);}
-                    ], attributes );
-        */
-
         // If p is not on c, the tangent is the polar.
         // This construction should work on conics, too. p has to lie on c.
         tangent = board.create('line', [

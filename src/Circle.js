@@ -60,7 +60,7 @@
  * @see JXG.Board#generateName
  */            
 
-JXG.Circle = function (board, method, par1, par2, id, name, withLabel, layer) {
+JXG.Circle = function (board, method, par1, par2, attributes) {
     /* Call the constructor of GeometryElement */
     this.constructor();
 
@@ -80,13 +80,12 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel, layer) {
      */
     this.elementClass = JXG.OBJECT_CLASS_CIRCLE; 
 
-    this.init(board, id, name);
+    this.init(board, attributes);
     
     /**
      * Set the display layer.
      */
-    if (layer == null) layer = board.options.layer['circle'];
-    this.layer = layer;
+    this.layer = attributes.layer;
 
     /**
      * Stores the given method.
@@ -110,13 +109,6 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel, layer) {
      */    
     this.midpoint = JXG.getReference(this.board, par1); 
     this.midpoint.addChild(this);
-    
-    /* documented in GeometryElement */
-    this.visProp['visible'] = true;
-    this.visProp['fillColor'] = this.board.options.circle.fillColor;
-    this.visProp['highlightFillColor'] = this.board.options.circle.highlightFillColor;
-    this.visProp['strokeColor'] = this.board.options.circle.strokeColor;
-    this.visProp['highlightStrokeColor'] = this.board.options.circle.highlightStrokeColor;       
     
     /** Point on the circle only set if method equals 'twoPoints'. Do not set this parameter directly as it will break JSXGraph's update system.
      * @type JXG.Point
@@ -173,8 +165,7 @@ JXG.Circle = function (board, method, par1, par2, id, name, withLabel, layer) {
     this.board.renderer.drawEllipse(this);
     this.board.finalizeAdding(this);
 
-    if (withLabel!=null)
-        this.createLabel(withLabel);
+    this.createLabel();
 
     if(method == 'pointRadius') {
         this.notifyParents(par2);
@@ -648,25 +639,25 @@ JXG.createCircle = function (board, parentArr, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'circle');
     if( parentArr.length==2 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) ) {
         // Point/Point
-        el = new JXG.Circle(board, 'twoPoints', p[0], p[1], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
+        el = new JXG.Circle(board, 'twoPoints', p[0], p[1], attr);
     } else if( ( JXG.isNumber(p[0]) || JXG.isFunction(p[0]) || JXG.isString(p[0])) && JXG.isPoint(p[1]) ) {
         // Number/Point
-        el = new JXG.Circle(board, 'pointRadius', p[1], p[0], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
+        el = new JXG.Circle(board, 'pointRadius', p[1], p[0], attr);
     } else if( ( JXG.isNumber(p[1]) || JXG.isFunction(p[1]) || JXG.isString(p[1])) && JXG.isPoint(p[0]) ) {
         // Point/Number
-        el = new JXG.Circle(board, 'pointRadius', p[0], p[1], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
+        el = new JXG.Circle(board, 'pointRadius', p[0], p[1], attr);
     } else if( (p[0].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.isPoint(p[1]) ) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointCircle', p[1], p[0], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
+        el = new JXG.Circle(board, 'pointCircle', p[1], p[0], attr);
     } else if( (p[1].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.isPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointCircle', p[0], p[1], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
+        el = new JXG.Circle(board, 'pointCircle', p[0], p[1], attr);
     } else if( (p[0].type == JXG.OBJECT_TYPE_LINE) && JXG.isPoint(p[1])) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointLine', p[1], p[0], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
+        el = new JXG.Circle(board, 'pointLine', p[1], p[0], attr);
     } else if( (p[1].type == JXG.OBJECT_TYPE_LINE) && JXG.isPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointLine', p[0], p[1], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
+        el = new JXG.Circle(board, 'pointLine', p[0], p[1], attr);
     } else if( parentArr.length==3 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) && JXG.isPoint(p[2])) {
         // Circle through three points
         var arr = JXG.createCircumcircle(board, p, attributes); // returns [center, circle]

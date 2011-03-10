@@ -82,7 +82,7 @@ JXG.Point = function (board, coordinates, attributes) {
      */
     this.elementClass = JXG.OBJECT_CLASS_POINT;
 
-    this.init(board, attributes.id, attributes.name);
+    this.init(board, attributes);
 
     if (coordinates==null) {
         coordinates=[0,0];
@@ -147,15 +147,12 @@ JXG.Point = function (board, coordinates, attributes) {
      */
     this.fixed = attributes.fixed;
 
-    // copy properties from attributes to visprop
-    this.visProp = attributes;
-    
     /* Register point at board. */
     this.id = this.board.setId(this, 'P');
     this.board.renderer.drawPoint(this);
     this.board.finalizeAdding(this);
 
-    this.createLabel(attributes.withLabel);
+    this.createLabel();
 };
 
 /**
@@ -211,7 +208,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
          */
         if(this.type == JXG.OBJECT_TYPE_GLIDER) {
             if(this.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
-    //fromParent = false;        
                 if (fromParent) {
                     this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.X()+Math.cos(this.position),this.slideObject.midpoint.Y()+Math.sin(this.position)]);
                     this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);

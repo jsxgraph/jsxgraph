@@ -104,22 +104,6 @@ JXG.GeometryElement = function () {
     this.isReal = true;
 
     /**
-     * Determines the elements border-style.
-     * Possible values are:
-     * <ul><li>0 for a solid line</li>
-     * <li>1 for a dotted line</li>
-     * <li>2 for a line with small dashes</li>
-     * <li>3 for a line with medium dashes</li>
-     * <li>4 for a line with big dashes</li>
-     * <li>5 for a line with alternating medium and big dashes and large gaps</li>
-     * <li>6 for a line with alternating medium and big dashes and small gaps</li></ul>
-     * @type Number
-     * @name JXG.GeometryElement#dash
-     * @default 0
-     */
-    this.visProp['dash'] = 0;
-
-    /**
      * Stores all dependent objects to be updated when this point is moved.
      * @type Object
      */
@@ -131,12 +115,6 @@ JXG.GeometryElement = function () {
      * @default false
      */
     this.hasLabel = false;
-
-    /**
-     * display layer which will conting the element.
-     * Controlled in JXG.Options.
-     */
-    this.layer = 9;
 
     /**
      * Stores all Intersection Objects which in this moment are not real and
@@ -282,9 +260,11 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      *  empty string is given, an unique name will be generated
      * @private
      */
-    init: function (board, id, name) {
+    init: function (board, attributes) {
+        var name = attributes.name;
+
         this.board = board;
-        this.id = id;
+        this.id = attributes.id;
 
         /* If name is not set or null or even undefined, generate an unique name for this object */
         if (!JXG.exists(name)) {
@@ -294,150 +274,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
 
         this.name = name;
 
-        /**
-         * The stroke color of the given geometry element.
-         * @type string
-         * @name JXG.GeometryElement#strokeColor
-         * @see #highlightStrokeColor
-         * @see #strokeWidth
-         * @see #strokeOpacity
-         * @see #highlightStrokeOpacity
-         * @default {@link JXG.Options.elements.color#strokeColor}
-         */
-        this.visProp.strokeColor = this.board.options.elements.strokeColor; //'#36393D';
+        this.visProp = attributes;
 
-        /**
-         * The stroke color of the given geometry element when the user moves the mouse over it.
-         * @type string
-         * @name JXG.GeometryElement#highlightStrokeColor
-         * @see #sstrokeColor
-         * @see #strokeWidth
-         * @see #strokeOpacity
-         * @see #highlightStrokeOpacity
-         * @default {@link JXG.Options.elements.color#highlightStrokeColor}
-         */
-        this.visProp.highlightStrokeColor = this.board.options.elements.highlightStrokeColor;
-
-        /**
-         * The fill color of this geometry element.
-         * @type string
-         * @name JXG.GeometryElement#fillColor
-         * @see #highlightFillColor
-         * @see #fillOpacity
-         * @see #highlightFillOpacity
-         * @default {@link JXG.Options.elements.color#fillColor}
-         */
-        this.visProp.fillColor = this.board.options.elements.fillColor;
-
-        /**
-         * The fill color of the given geometry element when the mouse is pointed over it.
-         * @type string
-         * @name JXG.GeometryElement#highlightFillColor
-         * @see #fillColor
-         * @see #fillOpacity
-         * @see #highlightFillOpacity
-         * @default {@link JXG.Options.elements.color#highlightFillColor}
-         */
-        this.visProp.highlightFillColor = this.board.options.elements.highlightFillColor;
-
-        /**
-         * Width of the element's stroke.
-         * @type number
-         * @name JXG.GeometryElement#strokeWidth
-         * @see #strokeColor
-         * @see #highlightStrokeColor
-         * @see #strokeOpacity
-         * @see #highlightStrokeOpacity
-         * @default {@link JXG.Options.elements#strokeWidth}
-         */
-        this.visProp.strokeWidth = this.board.options.elements.strokeWidth;
-
-        /**
-         * Width of the element's stroke when the mouse is pointed over it.
-         * @type number
-         * @name JXG.GeometryElement#highlightStrokeWidth
-         * @see #strokeColor
-         * @see #highlightStrokeColor
-         * @see #strokeOpacity
-         * @see #highlightStrokeOpacity
-         * @see #highlightFillColor
-         * @default {@link JXG.Options.elements#strokeWidth}
-         */
-        this.visProp.highlightStrokeWidth = this.visProp.strokeWidth;
-
-        /**
-         * Opacity for element's stroke color.
-         * @type number
-         * @name JXG.GeometryElement#strokeOpacity
-         * @see #strokeColor
-         * @see #highlightStrokeColor
-         * @see #strokeWidth
-         * @see #highlightStrokeOpacity
-         * @default {@link JXG.Options.elements#strokeOpacity}
-         */
-        this.visProp.strokeOpacity = this.board.options.elements.strokeOpacity;
-
-        /**
-         * Opacity for stroke color when the object is highlighted.
-         * @type number
-         * @name JXG.GeometryElement#highlightStrokeOpacity
-         * @see #strokeColor
-         * @see #highlightStrokeColor
-         * @see #strokeWidth
-         * @see #strokeOpacity
-         * @default {@link JXG.Options.elements#highlightStrokeOpacity}
-         */
-        this.visProp.highlightStrokeOpacity = this.board.options.elements.highlightStrokeOpacity;
-
-        /**
-         * Opacity for fill color.
-         * @type number
-         * @name JXG.GeometryElement#fillOpacity
-         * @see #fillColor
-         * @see #highlightFillColor
-         * @see #highlightFillOpacity
-         * @default {@link JXG.Options.elements.color#fillOpacity}
-         */
-        this.visProp.fillOpacity = this.board.options.elements.fillOpacity;
-
-        /**
-         * Opacity for fill color when the object is highlighted.
-         * @type number
-         * @name JXG.GeometryElement#highlightFillOpacity
-         * @see #fillColor
-         * @see #highlightFillColor
-         * @see #fillOpacity
-         * @default {@link JXG.Options.elements.color#highlightFillOpacity}
-         */
-        this.visProp.highlightFillOpacity = this.board.options.elements.highlightFillOpacity;
-
-        /**
-         * If true the element will be drawn in grey scale colors to visualize that it's only a draft.
-         * @type boolean
-         * @name JXG.GeometryElement#draft
-         * @default {@link JXG.Options.elements.draft#draft}
-         */
-        this.visProp.draft = this.board.options.elements.draft.draft;
-
-        /**
-         * If false the element won't be visible on the board, otherwise it is shown.
-         * @type boolean
-         * @name JXG.GeometryElement#visible
-         * @see #hideElement
-         * @see #showElement
-         * @default true
-         */
-        this.visProp.visible = true;
-
-        /**
-         * If true the element will get a shadow.
-         * @type boolean
-         * @name JXG.GeometryElement#shadow
-         * @default false
-         */
-        this.visProp['shadow'] = false;
-
-        // TODO: withLabel
+        // TODO: draft downwards compatibility.
+        this.visProp.draft = attributes.draft.draft;
 
         // TODO: comment gradient possibilities
         this.visProp['gradient'] = 'none';
@@ -1094,7 +934,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @see #addLabelToElement
      * @private
      */
-    createLabel: function (withLabel, coords) {
+    createLabel: function (coords) {
         if (!JXG.exists(coords)) {
             coords = [10, 10];
         }
@@ -1102,7 +942,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));
         this.label = {};
 
-        if (withLabel === true) {
+        if (this.visProp.withLabel === true) {
             this.label.relativeCoords = coords;
 
             this.label.content = JXG.createText(this.board, [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], {
