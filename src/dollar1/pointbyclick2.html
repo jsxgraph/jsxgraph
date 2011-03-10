@@ -58,20 +58,20 @@
                 MT = JXG.Math.transpose(M);
                 B = JXG.Math.matMatMult(MT, M);
                 c = JXG.Math.matVecMult(MT, y);
-                if (Math.abs(JXG.Math.Numerics.det(B))<Math.sqrt(JXG.Math.eps)) {
+                /*if (Math.abs(JXG.Math.Numerics.det(B))<Math.sqrt(JXG.Math.eps)) {
                     isLine = true;
-                } else {
+                } else {*/
                     z = JXG.Math.Numerics.Gauss(B, c);
                     xm = z[0]*0.5;
                     ym = z[1]*0.5;                   // xm, ym : center of the circle
                     r = Math.sqrt(z[2]+xm*xm+ym*ym); // r: radius
                     d = JXG.Math.Geometry.distance(points[0], points[points.length-1]);
 
-                }
+                //}
                     if (!testOnly) 
                         board.create('circle', [[xm,ym],r]);
                 
-                return isLine;
+                //return isLine;
             }, // End of bestFit
             
             getMouseCoords = function(e) {
@@ -161,7 +161,7 @@
         };
 
         var up = function(e){
-            if((e.fromTouch && points.length==1) || (!e.fromTouch && points.length<=15))
+            if((e.fromTouch && points.length==1) || (!e.fromTouch && points.length<=5))
                 board.create('point', points[0], {fillColor:'#000000', fillOpacity:0.8, strokeWidth:0, size:4 });
             else {
                 var result = _r.Recognize(new Array(points_screen),false,false); 
