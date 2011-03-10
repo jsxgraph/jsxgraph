@@ -1210,6 +1210,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      */
     highlightStrokeColor: function (sColor) {
         this.setProperty({highlightStrokeColor:sColor});
+        return this;
     },
 
     /**
@@ -1219,6 +1220,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      */
     strokeColor: function (sColor) {
         this.setProperty({strokeColor:sColor});
+        return this;
     },
 
     /**
@@ -1228,6 +1230,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      */
     strokeWidth: function (width) {
         this.setProperty({strokeWidth:width});
+        return this;
     },
 
 
@@ -1238,6 +1241,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      */
     fillColor: function (fColor) {
         this.setProperty({fillColor:fColor});
+        return this;
     },
 
     /**
@@ -1247,6 +1251,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      */
     highlightFillColor: function (fColor) {
         this.setProperty({highlightFillColor:fColor});
+        return this;
     },
 
     /**
@@ -1256,6 +1261,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      */
     labelColor: function (lColor) {
         this.setProperty({labelColor:lColor});
+        return this;
     },
 
     /**
@@ -1265,6 +1271,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      */
     dash: function (d) {
         this.setProperty({dash:d});
+        return this;
     },
 
     /**
@@ -1274,6 +1281,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      */
     visible: function (v) {
         this.setProperty({visible:v});
+        return this;
     },
 
     /**
@@ -1283,6 +1291,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      */
     shadow: function (s) {
         this.setProperty({shadow:s});
+        return this;
     }
 });
 
