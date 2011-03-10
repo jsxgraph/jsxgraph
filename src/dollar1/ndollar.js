@@ -135,20 +135,16 @@ function NDollarRecognizer(useLimitedRotationInvariance) // constructor
 	//
 	this.Multistrokes = new Array();
 	
-	points_opt_line = new Array();
-	for (i=0;i<100;i++){
-		//points_opt_line[i] = new Point(Math.round(2*i+50),1);
-		points_opt_line[i] = new Point(50+2*i,50+2*i);
-	}
-	this.Multistrokes[0] = new Multistroke("line", useLimitedRotationInvariance, new Array(new Array(new Point(1,100),new Point(100,100))));
+	this.Multistrokes[0] = new Multistroke("line", false, new Array(new Array(new Point(1,100),new Point(100,100))));
 
 	points_opt_circle = new Array();
 	for (i=0;i<358;i++){
 		points_opt_circle[i] = new Point(Math.round(100+Math.cos(i/360*Math.PI)*50),Math.round(100+Math.sin(i/360*Math.PI)*50));
 	}
 	
-	this.Multistrokes[1] = new Multistroke("circle", useLimitedRotationInvariance, new Array(points_opt_circle));
+	this.Multistrokes[1] = new Multistroke("circle", false, new Array(points_opt_circle));
 	
+	this.Multistrokes[2] = new Multistroke("square", false, new Array(new Array (new Point(110,110),new Point(210,210)), new Array(new Point(210,210),new Point(110,310)),new Array(new Point(110,310),new Point(10,210)),new Array(new Point(10,210),new Point(110,110))));
 	
 /*	this.Multistrokes[0] = new Multistroke("T", useLimitedRotationInvariance, new Array(
 		new Array(new Point(30,7),new Point(103,7)),
