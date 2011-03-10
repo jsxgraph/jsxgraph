@@ -73,6 +73,16 @@
                 
                 //return isLine;
             }, // End of bestFit
+
+			//fitting for squares, only a try
+			
+			drawBestFitSquare = function(points){
+				
+			
+				
+				
+				
+			},
             // this function converts the Event coords to JXG.Coords
             getMouseCoords = function(e) {
                 if (!document.all) { // not IE
@@ -149,11 +159,14 @@
 				points_screen.push(new Point(dummy[0],dummy[1]));
                 draftcurve.prepareUpdate().update().updateRenderer();
 				var result = _r.Recognize(new Array(points_screen),false,false);
-				document.getElementById('debug').innerHTML = result.Name; 
+				document.getElementById('debug').innerHTML = result.Name + result.Score;
+				 
 				if(result.Name == "circle")
                 	draftcurve.setProperty({strokeColor:'blue'});
 				else if(result.Name =="line")
 					draftcurve.setProperty({strokeColor:'green'});
+				else if(result.Name =="square")
+					draftcurve.setProperty({strokeColor:'red'});
 			
 					
 				

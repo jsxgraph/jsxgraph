@@ -144,7 +144,7 @@ function NDollarRecognizer(useLimitedRotationInvariance) // constructor
 	
 	this.Multistrokes[1] = new Multistroke("circle", false, new Array(points_opt_circle));
 	
-	this.Multistrokes[2] = new Multistroke("square", false, new Array(new Array (new Point(110,110),new Point(210,210)), new Array(new Point(210,210),new Point(110,310)),new Array(new Point(110,310),new Point(10,210)),new Array(new Point(10,210),new Point(110,110))));
+	this.Multistrokes[2] = new Multistroke("square", false, new Array(new Array (new Point(110,110),new Point(160,160),new Point(210,210),new Point(160,260),new Point(110,310),new Point(60,260),new Point(10,210),new Point(60,160),new Point(110,110))));
 	
 /*	this.Multistrokes[0] = new Multistroke("T", useLimitedRotationInvariance, new Array(
 		new Array(new Point(30,7),new Point(103,7)),
