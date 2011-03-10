@@ -995,7 +995,7 @@ JXG.createRiemannsum = function(board, parents, attributes) {
                         "\nPossible parent types: [function,n:number|function,type,start:number|function,end:number|function]");
     }
 
-    par = ['x', [0], [0]].concat(parents.slice(3));
+    par = [[0], [0]].concat(parents.slice(3));
     /**
      * @private
      */

@@ -37,11 +37,13 @@ JXG.Options = {
     /* grid options */
     grid : {
         /* grid styles */
+        needsRegularUpdate : false,
         hasGrid : false,
         gridX : 1,
         gridY : 1,
         strokeColor : '#C0C0C0',
         strokeOpacity : '0.5',
+        strokeWidth: 1,
         dash : 2,
         /* snap to grid options */
         snapToGrid : false,
@@ -374,6 +376,7 @@ JXG.Options = {
         withLabel: false, 
         /* line ticks options */
         ticks : {
+            needsRegularUpdate : false,            
             strokeWidth: 1,
             strokeColor : '#666666',
             highlightStrokeColor : '#888888',
@@ -407,39 +410,39 @@ JXG.Options = {
         snapWidth: null,
         firstArrow : false,
         lastArrow : false,
-        straightFirst : false,
-        straightLast : false,
-        fillColor : '#ffffff',
-        highlightFillColor : 'none',
-        strokeColor : '#000000',
-        highlightStrokeColor : '#888888',
         withTicks: true,
+        withLabel: true,
         point1: {
             needsRegularUpdate : false,
             showInfobox: false,
-            name : '',
-            visible: true,
-            fixed: true,
-            size: 5
+            withLabel: false,
+            visible: false,
+            fixed: true
         },
         point2: {
             needsRegularUpdate : false,
             showInfobox: false,
-            name : '',
-            visible: true,
-            fixed: true,
-            size: 2
+            withLabel: false,
+            visible: false,
+            fixed: true
         },
         glider: {
             showInfobox: false,
             name : '',
+            withLabel: false,
             visible: true,
+            strokeColor : '#000000',
+            highlightStrokeColor : '#888888',
+            fillColor : '#ffffff',
+            highlightFillColor : 'none',
             size: 6
         },
         segment: {
             needsRegularUpdate : false,
             name : '',
-            strokeWidth: 1
+            strokeWidth: 1,
+            strokeColor : '#000000',
+            highlightStrokeColor : '#888888'
         },
         /* line ticks options */
         ticks : {
@@ -453,11 +456,17 @@ JXG.Options = {
             minorTicks : 0,
             defaultDistance : 1,
             opacity : 1,
-            strokeWidth: 1
+            strokeWidth: 1,
+            strokeColor : '#000000'
         }, 
         segment2: {
             strokeWidth: 3,
-            name : ''
+            name : '',
+            strokeColor : '#000000',
+            highlightStrokeColor : '#888888'
+        },
+        text: {
+            strokeColor: '#000000'
         }
     },
     

@@ -58,7 +58,7 @@
 JXG.createSlider = function(board, parents, attributes) {
     var pos0, pos1, smin, start, smax, sdiff, 
            p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t,
-           snapWidth, fixed,
+           snapWidth, fixed, withText, withTicks, 
            attr;
         
     pos0 = parents[0];
@@ -68,21 +68,23 @@ JXG.createSlider = function(board, parents, attributes) {
     smax = parents[2][2];
     sdiff = smax -smin;
 
+    attr = JXG.copyAttributes(attributes, board.options, 'slider');
+    withTicks = attr['withTicks'];
+    withText = attr['withLabel'];
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point1');
     p1 = board.create('point', pos0,  attr);
-        // {visible:attr['visible'], fixed:attr['fixed'], name:'',withLabel:attr['withLabel'],face:'<>', size:5, strokeColor:attr['strokeColor'], fillColor:attr['fillColor']}); 
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point2');
     p2 = board.create('point', pos1,  attr);
-        // {visible:attr['visible'], fixed:attr['fixed'], name:'',withLabel:attr['withLabel'],face:'<>', size:5, strokeColor:attr['strokeColor'], fillColor:attr['fillColor']}); 
+
     board.create('group',[p1,p2]);
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment');
     l1 = board.create('segment', [p1,p2], attr);
     
-    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'ticks');
-    if (attr['withTicks']) {
+    if (withTicks) {
+        attr = JXG.copyAttributes(attributes, board.options, 'slider', 'ticks');
         ticks  = 2;
         ti = board.create('ticks', [l1, p2.Dist(p1)/ticks], attr);
                     //{insertTicks:true, minorTicks:0, drawLabels:false, drawZero:true}); 
@@ -99,27 +101,11 @@ JXG.createSlider = function(board, parents, attributes) {
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
 
-    //if (attributes['snapWidth']!=null) snapWidth = attributes['snapWidth'];
-    //if (attributes['snapwidth']!=null) snapWidth = attributes['snapwidth'];
-    
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'glider');
-    p3 = board.create('glider', [startx, starty,l1], attr);
-    /*
-                {style:6,strokeColor:attributes['strokeColor'],
-                 fillColor:attributes['fillColor'],
-                 showInfobox:false,name:attributes['name'], withLabel:false,
-                 snapWidth:snapWidth});
-    */
+    p3 = board.create('glider', [startx, starty, l1], attr);
 
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment2');
     l2 = board.create('segment', [p1,p3],  attr);
-    /*
-                {straightFirst:false, 
-                 straightLast:false, strokewidth:3, 
-                 strokeColor:attributes['strokeColor'],
-                 name:'',
-                 withLabel:false}); 
-    */
                  
     //p3.Value = function() { return this.position*(smax - smin)+smin; };
     //p3.type = JXG.OBJECT_TYPE_SLIDER;
@@ -127,17 +113,19 @@ JXG.createSlider = function(board, parents, attributes) {
     p3._smax = smax;
     p3._smin = smin;
 
-    if (typeof attributes['withLabel']=='undefined' || attributes['withLabel']==true) {
+    if (withText) {
         if (attributes['name'] && attributes['name']!='') {
             n = attributes['name'] + ' = ';
         } else {
             n = '';
         }
+        attr = JXG.copyAttributes(attributes, board.options, 'slider', 'text');
         t = board.create('text', [function(){return (p2.X()-p1.X())*0.05+p2.X();},
                                   function(){return (p2.Y()-p1.Y())*0.05+p2.Y();},
                                   function(){return n+(p3.Value()).toFixed(2);}],
-                                     {name:''}); 
+                         attr); 
     }  
+    
     return p3;
 };    
 
