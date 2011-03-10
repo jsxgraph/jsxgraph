@@ -74,10 +74,9 @@ JXG.createSlider = function(board, parents, attributes) {
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point1');
     p1 = board.create('point', pos0,  attr);
-    
+
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point2');
     p2 = board.create('point', pos1,  attr);
-
     board.create('group',[p1,p2]);
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment');
@@ -87,16 +86,7 @@ JXG.createSlider = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'slider', 'ticks');
         ticks  = 2;
         ti = board.create('ticks', [l1, p2.Dist(p1)/ticks], attr);
-                    //{insertTicks:true, minorTicks:0, drawLabels:false, drawZero:true}); 
     }
-
-/*
-    if (fixed) {
-        p1.setProperty({needsRegularUpdate : false});
-        p2.setProperty({needsRegularUpdate : false});
-        l1.setProperty({needsRegularUpdate : false});
-    }
-*/
 
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);

@@ -83,11 +83,6 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     this.init(board, attributes);
     
     /**
-     * Set the display layer.
-     */
-    this.layer = attributes.layer;
-
-    /**
      * Stores the given method.
      * Can be 
      * <ul><li><b>'twoPoints'</b> which means the circle is defined by its midpoint and a point on the circle.</li>

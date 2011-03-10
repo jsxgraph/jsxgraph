@@ -47,8 +47,6 @@ JXG.Text = function (board, content, coords, attributes) {
     this.content = content;
     this.plaintext = '';
 
-    this.layer = attributes.layer;
-
     if ((this.element = JXG.getRef(this.board, attributes.anchor))) {
         var anchor;
         if (this.visProp.isLabel) {
@@ -84,10 +82,11 @@ JXG.Text = function (board, content, coords, attributes) {
         this.updateText = new Function('this.plaintext = ' + this.content + ';');
     }
 
-    this.updateText();                    // First evaluation of the string.
-                                          // Needed for display='internal' and Canvas
+    this.updateText();                    // First evaluation of the content.
+    
     this.id = this.board.setId(this, 'T');
     this.board.renderer.drawText(this);
+
     if(!this.visProp['visible']) {
         this.board.renderer.hide(this);
     }
@@ -104,19 +103,19 @@ JXG.Text.prototype = new JXG.GeometryElement();
 JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     /**
      * @private
-     * Empty function (for the moment). It is needed for highlighting
-     * @param {int} x
-     * @param {int} y Find closest point on the text to (xy)
-     * @return Always returns false
+     * Empty function.
+     * @param {Number} x
+     * @param {Number} y Find closest point on the text to (xy)
+     * @return {Boolean} Always returns false
      */
-    hasPoint: function (x,y) {
+    hasPoint: function (x, y) {
         return false;
     },
 
     /**
-     * Overwrite the text.
-     * @param {string,function} str
-     * @return {object} reference to the text object.
+     * Defines new content.
+     * @param {String|function} text
+     * @return {JXG.Text} Reference to the text object.
      */
     setText: function(text) {
         if (typeof text === 'function') {
@@ -164,7 +163,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
 
     /**
      * Return the width of the text element.
-     * @return {array} [width, height] in pixel
+     * @return {Array} [width, height] in pixel
      */
     getSize: function () {
         return this.size;

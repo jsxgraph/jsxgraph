@@ -45,7 +45,7 @@
  */
 
 JXG.createSector = function(board, parents, attributes) {
-    var el, defaults, key, options;
+    var el, defaults, key, options, attr;
         
     // Alles 3 Punkte?
     if ( !(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2]))) {
@@ -54,36 +54,30 @@ JXG.createSector = function(board, parents, attributes) {
                         (typeof parents[2]) + "'.");
     }
 
-    // Read the default values from Options and use them in case they are not set by the user
-    // in attributes
-    defaults = {withLabel:JXG.readOption(board.options,'elements','withLabel'), 
-                layer:JXG.readOption(board.options,'layer','sector'),
-                useDirection:false}; // useDirection is necessary for circumCircleSectors
-    defaults['strokeWidth'] =  board.options.elements['strokeWidth'];
-    options = board.options.sector;
-    for (key in options) {
-        defaults[key] = options[key];
-    }
-    attributes = JXG.checkAttributes(attributes, defaults);
+    attr = JXG.copyAttributes(attributes, board.options, 'sector');
         
-    el = board.create('curve',[[0],[0]],attributes);
+    el = board.create('curve', [[0], [0]], attr);
     el.type = JXG.OBJECT_TYPE_SECTOR;
+
     /**
      * Midpoint of the sector.
      * @type JXG.Point
      */
     el.point1 = JXG.getReference(board, parents[0]);
     el.midpoint = el.point1;
+
     /**
      * Point defining the arcs circle.
      * @type JXG.Point
      */
     el.point2 = JXG.getReference(board, parents[1]);
+
     /**
      * The point defining the angle of the arc.
      * @type JXG.Point
      */
     el.point3 = JXG.getReference(board, parents[2]);
+    
     /* Add arc as child to defining points */
     el.point1.addChild(el);
     el.point2.addChild(el);
@@ -230,20 +224,15 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
  * @return Reference to the created arc object.
  */
  JXG.createCircumcircleSector = function(board, parents, attributes) {
-    var el, mp, idmp='', det;
+    var el, mp, attr;
     
-    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'sector','withLabel'), layer:null});
-    if(attributes['id'] != null) {
-        idmp = attributes['id']+'_mp';
-    }
-    
-    // Alles 3 Punkte?
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
-        mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], {id:idmp, withLabel:false, visible:false});
-        attributes.useDirection = true;
-        el = board.create('sector', [mp,parents[0],parents[2],parents[1]], attributes);
-    } // Ansonsten eine fette Exception um die Ohren hauen
-    else {
+        attr = JXG.copyAttributes(attributes, board.options, 'circumcirclesector', 'point');
+        mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], attr);
+
+        attr = JXG.copyAttributes(attributes, board.options, 'circumcirclesector');
+        el = board.create('sector', [mp,parents[0],parents[2],parents[1]], attr);
+    } else {
         throw new Error("JSXGraph: Can't create circumcircle sector with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
     }
@@ -263,24 +252,14 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
  * @return Reference to the created angle object.
  */
 JXG.createAngle = function(board, parents, attributes) {
-    var el, p, defaults, options, key, text,
+    var el, p, text, attr,
         possibleNames = ['&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta', '&theta;',
                                 '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
                                 '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'],
-        i = 0, tmp,
+        i = 0,
         j, x, pre, post, found;
 
 
-    defaults = {withLabel:JXG.readOption(board.options,'elements','withLabel'), 
-                layer:JXG.readOption(board.options,'layer','angle'),
-                radius:JXG.readOption(board.options,'angle','radius'),
-                text:''};
-    options = board.options.angle;
-    for (key in options) {
-        defaults[key] = options[key];
-    }
-    attributes = JXG.checkAttributes(attributes, defaults);
-    
     // Alles 3 Punkte?
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
         //  If empty, create a new name
@@ -326,22 +305,28 @@ JXG.createAngle = function(board, parents, attributes) {
                 }
             }
         }
+        
+        attr = JXG.copyAttributes(attributes, board.options, 'angle', 'point');
         p = board.create('point', [
             function(){
                 var A = parents[0], B = parents[1],
                     r = attributes.radius,
                     d = B.Dist(A);
                     return [B.X()+(A.X()-B.X())*r/d,B.Y()+(A.Y()-B.Y())*r/d];
-            }], {withLabel:false, visible:false});
+            }], attr);
         for (i=0;i<3;i++) {
-            JXG.getReference(board,parents[i]).addChild(p);
+            JXG.getRef(board,parents[i]).addChild(p);
         }
-        el = board.create('sector', [parents[1],p,parents[2]],attributes);
+
+
+        attr = JXG.copyAttributes(attributes, board.options, 'angle');
+        el = board.create('sector', [parents[1],p,parents[2]], attr);
+
         el.type = JXG.OBJECT_TYPE_ANGLE;
         if (el.withLabel) {
             el.label.content.setText(text);
         }
-        JXG.getReference(board,parents[0]).addChild(el);
+        JXG.getRef(board,parents[0]).addChild(el);
         
         /**
         * return LabelAnchor
@@ -375,8 +360,7 @@ JXG.createAngle = function(board, parents, attributes) {
             return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx,pmc[2]+vecy],this.board);
         };
 
-    } // Ansonsten eine fette Exception um die Ohren hauen
-    else {
+    } else {
         throw new Error("JSXGraph: Can't create angle with parent types '" + 
                          (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
     }

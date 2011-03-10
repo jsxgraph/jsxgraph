@@ -71,8 +71,6 @@ JXG.Line = function (board, p1, p2, attributes) {
 
     this.init(board, attributes);
 
-    this.layer = attributes.layer;
-    
     /**
      * Startpoint of the line. You really should not set this field directly as it may break JSXGraph's
      * udpate system so your construction won't be updated properly.

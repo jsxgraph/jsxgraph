@@ -130,7 +130,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         ticks = this.getElementById(axis.id);
         if (ticks === null) {
             ticks = this.createPrim('path', axis.id);
-            this.appendChildPrim(ticks, axis.layer);
+            this.appendChildPrim(ticks, axis.visProp.layer);
             this.appendNodesToElement(axis, 'path');
         }
         this._setAttr(ticks, 'stroked', 'true');
@@ -207,7 +207,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         this._setAttr(node, 'id', this.container.id + '_' + el.id);
 
         this.container.appendChild(node);
-        this.appendChildPrim(node, el.layer);
+        this.appendChildPrim(node, el.visProp.layer);
 
         // Adding the rotation filter. This is always filter item 0:
         // node.filters.item(0), see transformImage

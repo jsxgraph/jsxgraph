@@ -506,7 +506,11 @@ JXG.Options = {
         strokeColor : '#FF7F00',
         textColor : '#0000FF',
         fillOpacity : 0.3,
-        highlightFillOpacity : 0.3
+        highlightFillOpacity : 0.3,
+        point: {
+            withLabel: false,
+            visible: false
+        }
     },
 
     /* special arc options */
@@ -632,6 +636,15 @@ JXG.Options = {
     incircle : {
         strokeColor: '#000000', // 
         point : {               // center point
+            visible: false,
+            fixed: true,
+            withLabel: false
+        }
+    },
+
+    circumcirclesector: {
+        useDirection: true,
+        point: {
             visible: false,
             fixed: true,
             withLabel: false

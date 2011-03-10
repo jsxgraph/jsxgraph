@@ -51,7 +51,7 @@ JXG.Polygon = function (board, vertices, borders, attributes) {
     
     this.init(board, attributes);
 
-    this.layer = attributes.layer;
+    this.visProp.layer = attributes.layer;
     
     this.withLines = attributes.withLines;
 
@@ -196,16 +196,16 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
      * Hide the polygon including its border lines. It will still exist but not visible on the board.
      */    
     hideElement: function() {
+        var i;
+
         this.visProp['visible'] = false;
         this.board.renderer.hide(this);
 
-        if(this.withLines) {
-            for(var i=0; i<this.borders.length; i++) {
-                this.borders[i].hideElement();
-            }
+        for(i = 0; i < this.borders.length; i++) {
+            this.borders[i].hideElement();
         }
-        
-        if (this.hasLabel && this.label!=null) {
+
+        if (this.hasLabel && JXG.exists(this.label)) {
             this.label.hiddenByParent = true;
             if(this.label.content.visProp['visible']) {
                 this.board.renderer.hide(this.label.content);
@@ -225,6 +225,12 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         for(var i=0; i<this.borders.length; i++) {
             this.borders[i].showElement();
         }
+
+        if (this.hasLabel && JXG.exists(this.label)) {
+            if(this.label.content.visProp['visible']) {
+                this.board.renderer.show(this.label.content);
+            }
+        }
     },
 
     /**
@@ -232,8 +238,9 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
      */ 
     Area: function() {
         //Surveyor's Formula
-        var area=0, i;
-        for(i=0; i<this.vertices.length-1; i++) {
+        var area = 0, i;
+
+        for (i = 0; i < this.vertices.length - 1; i++) {
             area += (this.vertices[i].X()*this.vertices[i+1].Y()-this.vertices[i+1].X()*this.vertices[i].Y()); // last vertex is first vertex
         }
         area /= 2.0;

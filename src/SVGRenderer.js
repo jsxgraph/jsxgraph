@@ -243,7 +243,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         node = this.getElementById(axis.id);
         if (node === null) {
             node = this.createPrim('path', axis.id);
-            this.appendChildPrim(node, axis.layer);
+            this.appendChildPrim(node, axis.visProp.layer);
             this.appendNodesToElement(axis, 'path');
         }
         node.setAttributeNS(null, 'stroke', axis.visProp.strokeColor);
@@ -304,7 +304,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         var node = this.createPrim('image', el.id);
 
         node.setAttributeNS(null, 'preserveAspectRatio', 'none');
-        this.appendChildPrim(node, el.layer);
+        this.appendChildPrim(node, el.visProp.layer);
         el.rendNode = node;
 
         this.updateImage(el);

@@ -1645,7 +1645,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             last = mini;
             for (el in this.objects) {
                 pEl = this.objects[el];
-                if (pEl.layer==mini) {
+                if (pEl.visProp.layer === mini) {
                     pEl.updateRenderer();
                 }
             }

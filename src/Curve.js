@@ -52,11 +52,6 @@ JXG.Curve = function (board, parents, attributes) {
     
     this.init(board, attributes);
 
-    /**
-     * Set the display layer.
-     */
-    this.layer = attributes.layer;
-
     /** Use the algorithm by Gillam and Hohenwarter for plotting.
       * If false the naive algorithm is used.
       * It is much slower, but the result is better.

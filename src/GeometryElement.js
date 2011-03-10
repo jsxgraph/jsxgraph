@@ -392,19 +392,13 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             p = r.toLowerCase();
             switch(p) {
                 case 'strokecolor':
-                    animateColor(this.visProp['strokeColor'], hash[r], 'strokeColor');
+                case 'fillcolor':
+                    animateColor(this.visProp[p], hash[r], p);
                     break;
                 case 'strokeopacity':
-                    animateFloat(this.visProp['strokeOpacity'], hash[r], 'strokeOpacity');
-                    break;
                 case 'strokewidth':
-                    animateFloat(this.visProp['strokeWidth'], hash[r], 'strokeWidth');
-                    break;
-                case 'fillcolor':
-                    animateColor(this.visProp['fillColor'], hash[r], 'fillColor');
-                    break;
                 case 'fillopacity':
-                    animateFloat(this.visProp['fillOpacity'], hash[r], 'fillOpacity');
+                    animateFloat(this.visProp[p], hash[r], p);
                     break;
             }
         }
@@ -530,7 +524,9 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 pair = pairRaw;
             }
             if (pair[1]==null) continue;
-            switch(pair[0].replace(/\s+/g, '').toLowerCase()) {   // Whitespace entfernt und in Kleinbuchstaben umgewandelt.
+            pair[0] = pair[0].replace(/\s+/g, '').toLowerCase();
+            
+            switch(pair[0]) {
                 case 'needsregularupdate':
                     this.needsRegularUpdate = !(pair[1] == 'false' || pair[1] == false);
 
@@ -831,6 +827,13 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                         }
                     }
                     this.hasLabel = pair[1];
+                    break;
+                default:
+                    old = this.visProp[pair[0]];
+                    if (!JXG.Validator[pair[0]] || (JXG.Validator[pair[0]] && JXG.Validator[pair[0]](pair[1]))) {
+                        this.visProp[pair[0]] = pair[1];
+                    }
+                    break;
             }
         }
         this.board.update(this);

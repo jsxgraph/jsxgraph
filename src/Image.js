@@ -60,7 +60,7 @@ JXG.Image = function (board, url, coordinates, size, layer, id, name, el) {
      * Set the display layer.
      */
     if (layer == null) layer = board.options.layer['image'];
-    this.layer = layer;
+    this.visProp.layer = layer;
     this.parent = el;
     this.visProp['visible'] = true;
 
