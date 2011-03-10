@@ -314,7 +314,12 @@ JXG.Options = {
         fillColor : 'none',
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
-        highlightStrokeColor : '#C3D9FF'
+        highlightStrokeColor : '#C3D9FF',
+        center: {
+            visible: false,
+            withLabel: false,
+            fixed: true
+        }
     },
 
     /* special conic options */

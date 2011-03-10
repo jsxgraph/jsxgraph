@@ -545,6 +545,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
         this.addTransform(t);
         //this.update();
         //}
+        return this;
     },
 
     /**
@@ -630,40 +631,42 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
  * </script><pre>
  */
 JXG.createCircle = function (board, parentArr, attributes) {
-    var el, p, i;
-    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'circle','withLabel'), layer:null});
-    
+    var el, p, i, arr, attr;
+
     p = [];
     for (i=0;i<parentArr.length;i++) {
         if (JXG.isPoint(parentArr[i])) {
             p[i] = parentArr[i];              // Point
         } else if (parentArr[i].length>1) {
-            p[i] = board.create('point', parentArr[i], {visible:false,fixed:true});  // Coordinates
+            attr = JXG.copyAttributes(attributes, board.options, 'circle', 'center');
+            p[i] = board.create('point', parentArr[i], attr);  // Coordinates
         } else {
             p[i] = parentArr[i];              // Something else (number, function, string)
         }
     }
+    
+    attr = JXG.copyAttributes(attributes, board.options, 'circle');
     if( parentArr.length==2 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) ) {
         // Point/Point
-        el = new JXG.Circle(board, 'twoPoints', p[0], p[1], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
+        el = new JXG.Circle(board, 'twoPoints', p[0], p[1], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
     } else if( ( JXG.isNumber(p[0]) || JXG.isFunction(p[0]) || JXG.isString(p[0])) && JXG.isPoint(p[1]) ) {
         // Number/Point
-        el = new JXG.Circle(board, 'pointRadius', p[1], p[0], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
+        el = new JXG.Circle(board, 'pointRadius', p[1], p[0], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
     } else if( ( JXG.isNumber(p[1]) || JXG.isFunction(p[1]) || JXG.isString(p[1])) && JXG.isPoint(p[0]) ) {
         // Point/Number
-        el = new JXG.Circle(board, 'pointRadius', p[0], p[1], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
+        el = new JXG.Circle(board, 'pointRadius', p[0], p[1], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
     } else if( (p[0].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.isPoint(p[1]) ) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointCircle', p[1], p[0], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
+        el = new JXG.Circle(board, 'pointCircle', p[1], p[0], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
     } else if( (p[1].type == JXG.OBJECT_TYPE_CIRCLE) && JXG.isPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointCircle', p[0], p[1], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
+        el = new JXG.Circle(board, 'pointCircle', p[0], p[1], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
     } else if( (p[0].type == JXG.OBJECT_TYPE_LINE) && JXG.isPoint(p[1])) {
         // Circle/Point
-        el = new JXG.Circle(board, 'pointLine', p[1], p[0], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
+        el = new JXG.Circle(board, 'pointLine', p[1], p[0], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
     } else if( (p[1].type == JXG.OBJECT_TYPE_LINE) && JXG.isPoint(p[0])) {
         // Point/Circle
-        el = new JXG.Circle(board, 'pointLine', p[0], p[1], attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
+        el = new JXG.Circle(board, 'pointLine', p[0], p[1], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
     } else if( parentArr.length==3 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) && JXG.isPoint(p[2])) {
         // Circle through three points
         var arr = JXG.createCircumcircle(board, p, attributes); // returns [center, circle]
