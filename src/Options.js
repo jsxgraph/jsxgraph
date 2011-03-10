@@ -562,6 +562,7 @@ JXG.Options = {
     curve : {
         strokeWidth : '1px',
         strokeColor : '#0000ff',
+        fillColor: 'none',
         RDPsmoothing : false,       // Apply the Ramen-Douglas-Peuker algorithm
         numberPointsHigh : 1600,  // Number of points on curves after mouseUp
         numberPointsLow : 400,    // Number of points on curves after mousemove
@@ -628,8 +629,40 @@ JXG.Options = {
         }
     },
     
+    /* special options for integral */
+    integral: {
+        withLabel: true,    // Show integral value as text
+        strokeWidth: 0,
+        strokeOpacity: 0,
+        start: {    // Start point
+            visible: true
+        },
+        startproject: {    // Start point
+            visible: false,
+            fixed: true,
+            withLabel: false
+        },
+        end: {      // End point
+            visible: true
+        },
+        endproject: {      // End point
+            visible: false,
+            fixed: true,
+            withLabel: false
+        },
+        text: {
+            fontSize: 20
+        }
+    },
+    
     chart: {
         chartStyle: 'line'
+    },
+    
+    riemannsum: {
+        withLabel:false,
+        fillOpacity:0.3,
+        fillColor:'#ffff00'
     },
 
     /* precision options */
@@ -652,6 +685,7 @@ JXG.Options = {
         polygon: 4,
         sector: 3,
         angle : 3,
+        integral : 3,
         grid  : 1,
         image : 0
     },

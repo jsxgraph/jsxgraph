@@ -1331,17 +1331,10 @@ JXG.createMirrorPoint = function(board, parentArr, attributes) {
  * </script><pre>
  */
 JXG.createIntegral = function(board, parents, attributes) {
-    var interval, curve, attribs = {},
+    var interval, curve, attr,
         start = 0, end = 0, startx, starty, endx, endy, factor = 1,
         pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis,
         Int, t, p;
-
-    if(!JXG.isArray(attributes['id']) || (attributes['id'].length != 5)) {
-        attributes['id'] = ['','','','',''];
-    }
-    if(!JXG.isArray(attributes['name']) || (attributes['name'].length != 5)) {
-       attributes['name'] = ['','','','',''];
-    }
 
     if(JXG.isArray(parents[0]) && parents[1].elementClass == JXG.OBJECT_CLASS_CURVE) {
         interval = parents[0];
@@ -1354,9 +1347,6 @@ JXG.createIntegral = function(board, parents, attributes) {
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [[number|function,number|function],curve]");
     }
-
-    if( (typeof attributes != 'undefined') && (attributes != null))
-        attribs = JXG.cloneAndCopy(attributes, {name: attributes.name[0], id: attributes.id[0]});
 
     // Correct the interval if necessary - NOT ANYMORE, GGB's fault
     start = interval[0];
@@ -1383,32 +1373,29 @@ JXG.createIntegral = function(board, parents, attributes) {
     if(end < start)
         factor = -1;
 
-    pa_on_curve = board.create('glider', [startx, starty, curve], attribs);
+    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'start');
+    pa_on_curve = board.create('glider', [startx, starty, curve], attr);
     if(JXG.isFunction(startx))
         pa_on_curve.hideElement();
 
-    attribs.name = attributes.name[1];
-    attribs.id = attributes.id[1];
-    attribs.visible = false;
-    pa_on_axis = board.create('point', [function () { return pa_on_curve.X(); }, 0], attribs);
+    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'startproject');
+    pa_on_axis = board.create('point', [function () { return pa_on_curve.X(); }, 0], attr);
 
     //pa_on_curve.addChild(pa_on_axis);
 
-    attribs.name = attributes.name[2];
-    attribs.id = attributes.id[2];
-    attribs.visible = attributes.visible || true;
-    pb_on_curve = board.create('glider', [endx, endy, curve], attribs);
+    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'end');
+    pb_on_curve = board.create('glider', [endx, endy, curve], attr);
     if(JXG.isFunction(endx))
         pb_on_curve.hideElement();
 
-    attribs.name = attributes.name[3];
-    attribs.id = attributes.id[3];
-    attribs.visible = false;
-    pb_on_axis = board.create('point', [function () { return pb_on_curve.X(); }, 0], attribs);
+    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'endproject');
+    pb_on_axis = board.create('point', [function () { return pb_on_curve.X(); }, 0], attr);
 
     //pb_on_curve.addChild(pb_on_axis);
 
-    if(attributes.withLabel !== false) {
+    attr = JXG.copyAttributes(attributes, board.options, 'integral');
+    if(attr.withLabel !== false) {
+        attr = JXG.copyAttributes(attributes, board.options, 'integral', 'text');
         Int = JXG.Math.Numerics.I([start, end], curve.yterm);
         t = board.create('text', [
             function () { return pb_on_curve.X() + 0.2; },
@@ -1417,24 +1404,14 @@ JXG.createIntegral = function(board, parents, attributes) {
                     var Int = JXG.Math.Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.yterm);
                     return '&int; = ' + (Int).toFixed(4);
                 }
-            ],{labelColor: attributes['labelColor']});
+            ], attr);
 
         pa_on_curve.addChild(t);
         pb_on_curve.addChild(t);
     }
 
-    attribs.name = attributes.name[4];
-    attribs.id = attributes.id[4];
-    attribs.visible = attributes.visible || true;
-    attribs.fillColor = attribs.fillColor || board.options.polygon.fillColor;
-    attribs.highlightFillColor = attribs.highlightFillColor || board.options.polygon.highlightFillColor;
-    attribs.fillOpacity = attribs.fillOpacity || board.options.polygon.fillOpacity;
-    attribs.highlightFillOpacity = attribs.highlightFillOpacity || board.options.polygon.highlightFillOpacity;
-    attribs.strokeWidth = 0;
-    attribs.highlightStrokeWidth = 0;
-    attribs.strokeOpacity = 0;
-
-    p = board.create('curve', [[0],[0]], attribs);
+    attr = JXG.copyAttributes(attributes, board.options, 'integral');
+    p = board.create('curve', [[0],[0]], attr);
     p.updateDataArray = function() {
         var x, y,
             i, left, right;
@@ -1580,11 +1557,10 @@ JXG.createLocus = function(board, parents, attributes) {
  * </script><pre>
  */
 JXG.createGrid = function (board, parents, attributes) {
-    var c = board.create('curve', [[null], [null]], {
-                strokeColor: board.options.grid.strokeColor,
-                //highlightStrokeColor: board.options.grid.gridColor,
-                opacity: board.options.grid.strokeOpacity
-            });
+    var c, attr;
+    
+    attr = JXG.copyAttributes(attributes, board.options, 'grid');
+    c = board.create('curve', [[null], [null]], attr);
 
     // TODO: use user given attributes
 

@@ -808,9 +808,8 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
  * </script><pre>
  */
 JXG.createCurve = function(board, parents, attributes) {
-    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'curve','withLabel'), layer:null});
-    return new JXG.Curve(board, ['x'].concat(parents), attributes['id'], attributes['name'],   
-                         attributes['withLabel'],attributes['layer']);
+    var attr = JXG.copyAttributes(attributes, board.options, 'curve');
+    return new JXG.Curve(board, ['x'].concat(parents), attr);
 };
 
 JXG.JSXGraph.registerElement('curve', JXG.createCurve);
@@ -857,10 +856,11 @@ JXG.JSXGraph.registerElement('curve', JXG.createCurve);
  * </script><pre>
  */
 JXG.createFunctiongraph = function(board, parents, attributes) {
-    var par = ["x","x"].concat(parents);
-    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'curve','withLabel'), layer:null});
-    attributes['curveType'] = 'functiongraph';
-    return new JXG.Curve(board, par, attributes['id'], attributes['name'],attributes['withLabel'],attributes['layer']);
+    var attr, par = ["x","x"].concat(parents);
+        
+    attr = JXG.copyAttributes(attributes, board.options, 'curve');
+    attr['curveType'] = 'functiongraph';
+    return new JXG.Curve(board, par, attr);
 };
 
 JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
@@ -877,7 +877,6 @@ JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
  */
 JXG.createSpline = function(board, parents, attributes) {
     var F;
-    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'curve','withLabel'), layer:null});
     F = function() {
         var D, x=[], y=[];
         
@@ -929,8 +928,7 @@ JXG.createSpline = function(board, parents, attributes) {
         };
         return fct;
     };
-    return new JXG.Curve(board, ["x","x", F()], attributes["id"], attributes["name"],
-                        attributes['withLabel'],attributes['layer']);
+    return board.create('curve', ["x", F()], attributes);
 };
 
 /**
@@ -979,10 +977,10 @@ JXG.JSXGraph.registerElement('spline', JXG.createSpline);
  * </script><pre>
  */
 JXG.createRiemannsum = function(board, parents, attributes) {
-    var n, type, f, par, c;
+    var n, type, f, par, c, attr;
     
-    attributes = JXG.checkAttributes(attributes,
-                    {withLabel:JXG.readOption(board.options,'curve','withLabel'),layer:null,fillOpacity:0.3,fillColor:'#ffff00', curveType:'plot'});
+    attr = JXG.copyAttributes(attributes, board.options, 'riemannsum');
+    attr['curveType'] = 'plot';
 
     f = parents[0]; 
     n = JXG.createFunction(parents[1],board,'');
@@ -990,6 +988,7 @@ JXG.createRiemannsum = function(board, parents, attributes) {
         throw new Error("JSXGraph: JXG.createRiemannsum: argument '2' n has to be number or function." +
                         "\nPossible parent types: [function,n:number|function,type,start:number|function,end:number|function]");
     }
+
     type = JXG.createFunction(parents[2],board,'',false);
     if (type==null) {
         throw new Error("JSXGraph: JXG.createRiemannsum: argument 3 'type' has to be string or function." +
@@ -1000,7 +999,7 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     /**
      * @private
      */
-    c = new JXG.Curve(board, par, attributes['id'], attributes['name'], attributes['withLabel'],attributes['layer']);
+    c = board.create('curve', par, attr);
     /**
      * @private
      */
