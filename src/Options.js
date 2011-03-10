@@ -211,14 +211,22 @@ JXG.Options = {
 
     /* special axis options */
     axis : {
+        needsRegularUpdate : false,         // Axes only updated after zooming and moving of the origin.
+        strokeWidth: 1,
         strokeColor : '#666666',
         highlightStrokeColor : '#888888',
         withTicks: true,
-
+        straightFirst : true,
+        straightLast : true,
+        lastArrow: true,
+        withLabel: false, 
         /* line ticks options */
         ticks : {
+            strokeWidth: 1,
+            strokeColor : '#666666',
+            highlightStrokeColor : '#888888',
             drawLabels : true,
-            drawZero : false,
+            drawZero : true,
             insertTicks : false,
             minTicksDistance : 50,
             maxTicksDistance : 300,
@@ -226,7 +234,19 @@ JXG.Options = {
             majorHeight : -1,         // if <0: full width and height
             minorTicks : 4,
             defaultDistance : 1,
-            opacity : 0.3
+            opacity : 0.25
+        },
+        point1 : {                  // Default values for point1 if created by line
+            needsRegularUpdate : false,
+            visible: false, 
+            withLabel: false, 
+            fixed: true
+        },
+        point2 : {                  // Default values for point2 if created by line
+            needsRegularUpdate : false,
+            visible: false, 
+            withLabel: false, 
+            fixed: true
         }
     },
 

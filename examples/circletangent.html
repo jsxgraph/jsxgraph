@@ -33,7 +33,7 @@ var p2 = board.createElement('point', [0,3] , {name:'B',fillColor:'red',strokeCo
 var c = board.createElement('circle', [p1,p2] , {name:'c',strokeColor:'red'});
 var p3 = board.createElement('point', [0,-1] , {name:'C',fillColor:'red',strokeColor:'red'});
 
-var t2 = board.createElement('tangent', [c,p2]);
+var t2 = board.createElement('tangent', [c,p2], {dash:2});
 
 //-----------------------------------
 var infobox = document.getElementById('myinfobox');
