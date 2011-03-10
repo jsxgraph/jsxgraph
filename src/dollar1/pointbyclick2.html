@@ -21,14 +21,15 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 	var isline = false;
-	var _r = new NDollarRecognizer(false); 
+	var _r = new NDollarRecognizer(false);
+	var sensitive_area=7;
 	//var points_screen = new Array();
     (function() {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis:false, grid:true}),
             //
             // bestFit, the best-fitting circle or line is found by least-squares fitting.
             //
-            drawBestFitCircle = function(p, testOnly) {
+            drawBestFitCircle = function(p, testOnly, curvepoints) {
                 var i, angle, co, si, 
                     delta = 0.8, 
                     
@@ -46,6 +47,11 @@
                 //    x_i*x_i+y_i*y_i 
                 // for i=1,...n.
                 
+                //draw circum circle if draftcurve contains 3 existing points
+                if (curvepoints.length==3){
+                	board.create('circle',curvepoints);
+                	return;
+                }
                 n = p.length;
                 for (i=0;i<n;i++) {
                     M.push([p[i].length ? p[i][0] : p[i].X(), p[i].length ? p[i][1] : p[i].Y(), 1.0]);
@@ -68,10 +74,14 @@
                     ym = z[1]*0.5;                   // xm, ym : center of the circle
                     r = Math.sqrt(z[2]+xm*xm+ym*ym); // r: radius
                     d = JXG.Math.Geometry.distance(points[0], points[points.length-1]);
+                    
+                    //var pointsOnCirc = pointsOnCircle(xm,ym,r, sensitive_area, board);
 
                 //}
-                    if (!testOnly) 
-                        board.create('circle', [[xm,ym],r]);
+                    if (!testOnly){
+                    	midpoint = board.create('point',[xm,ym]); 
+                        board.create('circle', [midpoint,r]);
+                    }
                 
                 //return isLine;
             }, // End of bestFit
@@ -85,15 +95,24 @@
 				
 				
 			},
-			drawBestFitTriangle = function(points){
+			drawBestFitTriangle = function(points, curvepoints){
 				var bb = boundingBoxUsr(points);
 				var pointsOnBB = pointsOnBoundingBox(points, bb);
+				pointsOnBB = fitPoints(pointsOnBB,curvepoints,sensitive_area,board);
 				board.suspendUpdate();
 				var v = [];
-				v[0] = board.create('point', pointsOnBB[0]);
+				for (var i=0;i<pointsOnBB.length;i++){
+					if (pointsOnBB[i].type == JXG.OBJECT_TYPE_POINT)
+						v[i]=pointsOnBB[i];
+					else 
+						v[i] = board.create('point', pointsOnBB[i]);
+					
+					
+				}
+				/*v[0] = board.create('point', pointsOnBB[0]);
 				v[1] = board.create('point', pointsOnBB[1]);
 				v[2] = board.create('point', pointsOnBB[2]);
-				v[3] = board.create('point', pointsOnBB[3]);
+				v[3] = board.create('point', pointsOnBB[3]);*/
 				var poly1 = board.create('polygon',[v[0],v[1],v[2]]);
 				var poly2 = board.create('polygon',[v[1],v[2],v[3]]);
 				var poly3 = board.create('polygon',[v[0],v[2],v[3]]);
@@ -118,6 +137,7 @@
 					removePolygon(poly4, board);
 				}
 				removePoint(p,v,board);
+				fitPoly(p,curvepoints,sensitive_area,board);
 				board.unsuspendUpdate();
 			},
 			
@@ -148,7 +168,7 @@
             
 
 
-        var draftcurve = board.create('curve',[[0],[0]],{curveType:'plot', strokeWidth:14, opacity:0.15});
+        var draftcurve = board.create('curve',[[0],[0]],{curveType:'plot', strokeWidth:2*sensitive_area, opacity:0.15});
         draftcurve.updateDataArray = function() {
             if (points.length<=0) return;
             var p = JXG.Math.transpose(points);
@@ -181,6 +201,7 @@
             points.push(coords.usrCoords.slice(1));
 			var dummy = coords.scrCoords.slice(1);
 			points_screen.push(new Point(dummy[0],dummy[1]));
+			draftcurve.setProperty({visible:'true'});
             draftcurve.prepareUpdate().update().updateRenderer();
             // prevent accidental text selection
             if (e && e.preventDefault) {
@@ -199,9 +220,9 @@
 				var result = _r.Recognize(new Array(points_screen),false,false);
 				document.getElementById('debug').innerHTML = result.Name + result.Score;
 				 
-				if(result.Name == "circle")
+				if(result.Name == "circle"){
                 	draftcurve.setProperty({strokeColor:'blue'});
-				else if(result.Name =="line")
+				} else if(result.Name =="line")
 					draftcurve.setProperty({strokeColor:'green'});
 				else if(result.Name =="square")
 					draftcurve.setProperty({strokeColor:'red'});
@@ -219,19 +240,20 @@
             else {
                 var result = _r.Recognize(new Array(points_screen),false,false); 
                 mousedown = false;
+                var curvepoints = pointsOnCurve(draftcurve, sensitive_area, board);
 				if(result.Name == 'circle')
-					drawBestFitCircle(points,false);
+					drawBestFitCircle(points,false, curvepoints);
 				else if(result.Name =='line')
 					board.create('line',[points[0],points[points.length-1]],{strokecolor:'green'});
 				else if(result.Name == 'triangle')
-					drawBestFitTriangle(points);
+					drawBestFitTriangle(points, curvepoints);
 				for (i=0;i<points_screen.length;i++)
 					document.getElementById('debug').innerHTML = document.getElementById('debug').innerHTML+"new Point("+points_screen[i].X+","+points_screen[i].Y+"),";
 			}	
 			mousedown = false;
 			points = [];
             points_screen = [];
-            //board.removeObject(draftcurve);
+           	draftcurve.setProperty({visible:'false'});
             
         };
 
