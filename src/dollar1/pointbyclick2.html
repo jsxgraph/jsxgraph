@@ -183,6 +183,8 @@
 					drawBestFitCircle(points,false);
 				else if(result.Name =='line')
 					board.create('line',[points[0],points[points.length-1]],{strokecolor:'green'});
+				for (i=0;i<points_screen.length;i++)
+					document.getElementById('debug').innerHTML = document.getElementById('debug').innerHTML+"new Point("+points_screen[i].X+","+points_screen[i].Y+"),";
 			}	
 			mousedown = false;
 			points = [];
