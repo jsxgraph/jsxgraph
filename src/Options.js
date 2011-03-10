@@ -72,7 +72,7 @@ JXG.Options = {
         /* color options */
         strokeColor: '#0000ff',
         highlightStrokeColor: '#C3D9FF',
-        fillColor: 'none',
+        fillColor: 'red',
         highlightFillColor: 'none',
 
         strokeOpacity: 1,

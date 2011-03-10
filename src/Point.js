@@ -1168,9 +1168,6 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
     var el, isConstrained = false, i, show, attr;
 
     attr = JXG.copyAttributes(attributes, board.options, 'point');
-    console.log(attr);
-    console.log('increatepoint');
-
     for (i=0;i<parents.length;i++) {
         if (typeof parents[i]=='function' || typeof parents[i]=='string') {
             isConstrained = true;
@@ -1179,8 +1176,8 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
     if (!isConstrained) {
         if ( (JXG.isNumber(parents[0])) && (JXG.isNumber(parents[1])) ) {
             el = new JXG.Point(board, parents, attr);
-            if ( attributes["slideObject"] != null ) {
-                el.makeGlider(attributes["slideObject"]);
+            if ( attr["slideObject"] != null ) {
+                el.makeGlider(attr["slideObject"]);
             } else {
                 el.baseElement = el; // Free point
             }
@@ -1238,15 +1235,14 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
  *   var gpex2_p2 = gpex2_board.create('glider', [gpex2_c1]);
  * </script><pre>
  */
-JXG.createGlider = function(board, parents, atts) {
-    var el, show;
-    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'point','withLabel'), layer:9});
-    show = (typeof atts['visible']=='undefined') || JXG.str2Bool(atts['visible']);
-    
+JXG.createGlider = function(board, parents, attributes) {
+    var el, attr;
+
+    attr = JXG.copyAttributes(attributes, board.options, 'point');
     if (parents.length==1) {
-      el = new JXG.Point(board, [0,0], atts['id'], atts['name'], show, atts['withLabel']);
+      el = new JXG.Point(board, [0,0], attr); 
     } else {
-      el = board.create('point', parents.slice(0, -1), atts);
+      el = board.create('point', parents.slice(0, -1), attr);
     }
     el.makeGlider(parents[parents.length-1]);
     return el;

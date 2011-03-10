@@ -15,15 +15,18 @@
 //alert(navigator.appVersion);
 //JXG.Options.renderer = 'canvas';
 var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:false, grid:false});
-var axisx = b.create('axis', [[0,0], [1,0]], {point1:{visible:false}});
+var axisx = b.create('axis', [[0,0], [1,0]], {point1:{visible:true, fillColor: 'blue', size:10}});
 
 //b.create('slider', [[0,0], [4,0], [0,2,10]], {strokeColor:'green', point1: {fillColor:'blue'} });
 
 //L = b.create('arrow',[[0,1],[1,1]], {strokeWidth:1, name:'Hallo', withLabel:true, point1:{name:'x', fixed:false, visible:true, withLabel:false}});
+
 A = b.create('point',[1,2], {name:'A',face:'a',size:10, fillColor:'blue', strokeColor:'red', withLabel:true, trace:false});
 D = b.create('point',[2,2], {face:'<>',size:20, withLabel:true, color:'yellow'});
 B = b.create('point',[2,1], {withLabel:true});
 c = b.create('circle',[A,B], {fillColor:'yellow', fillOpacity:0.2, trace:false});
+b.create('glider',[-1,-1,c], {fillColor:'yellow', fillOpacity:0.9, trace:false});
+
 //b.create('circle',[[0,1],3], {fillColor:'blue', fillOpacity:0.2, trace:false, center: {visible:true}});
 /*
 h = b.create('functiongraph',[function(x){return A.Y()*Math.sin(x);}], {strokeColor:'green', strokeWidth:8});

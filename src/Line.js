@@ -986,7 +986,7 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  *   var slex1_l1 = slex1_board.create('segment', [slex1_p1, slex1_p2]);
  * </script><pre>
  */
- JXG.createSegment = function(board, parents, attributes) {
+JXG.createSegment = function(board, parents, attributes) {
     return el = board.create('line', parents, attributes).setStraight(false, false);
 };
 
