@@ -19,14 +19,14 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 	var isline = false;
-	var _r = new NDollarRecognizer(false);
+	var _r = new NDollarRecognizer(false); 
 	//var points_screen = new Array();
     (function() {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis:false, grid:true}),
             //
             // bestFit, the best-fitting circle or line is found by least-squares fitting.
             //
-            bestFit = function(p, testOnly) {
+            drawBestFitCircle = function(p, testOnly) {
                 var i, angle, co, si, 
                     delta = 0.8, 
                     
@@ -73,7 +73,7 @@
                 
                 //return isLine;
             }, // End of bestFit
-            
+            // this function converts the Event coords to JXG.Coords
             getMouseCoords = function(e) {
                 if (!document.all) { // not IE
                     var em = document.createEvent('MouseEvents'), i = 0;
@@ -167,9 +167,9 @@
                 var result = _r.Recognize(new Array(points_screen),false,false); 
                 mousedown = false;
 				if(result.Name == 'circle')
-					bestFit(points,false);
+					drawBestFitCircle(points,false);
 				else if(result.Name =='line')
-					board.create('line',[points[0],points[points.length-1]]);
+					board.create('line',[points[0],points[points.length-1]],{strokecolor:'green'});
 			}	
 			mousedown = false;
 			points = [];
