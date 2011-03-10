@@ -813,6 +813,7 @@ JXG.createLine = function(board, parents, attributes) {
                 function() { return (0.0 + c[2]()*c[2]()+c[1]()*c[1]())*0.5;},
                 function() { return (c[2]() - c[1]()*c[0]()+c[2]())*0.5;},
                 function() { return (-c[1]() - c[2]()*c[0]()-c[1]())*0.5;}], attr);
+
         // point 2: (b^2+c^2,-ba+c,-ca-b)
         attr = JXG.copyAttributes(attributes, board.options, 'line', 'point2');
         p2 = board.create('point',[
@@ -829,7 +830,8 @@ JXG.createLine = function(board, parents, attributes) {
     else if ((parents.length==1) && (typeof parents[0] == 'function') && (parents[0]().length == 2) &&
     		 (parents[0]()[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parents[0]()[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
     	var ps = parents[0]();
-        el = new JXG.Line(board, ps[0], ps[1], attr['id'], attr['name'],attr['withLabel'],attr['layer']);
+        attr = JXG.copyAttributes(attributes, board.options, 'line');
+        el = new JXG.Line(board, ps[0], ps[1], attr);
         el.constrained = true;
         el.funps = parents[0];
     } else {

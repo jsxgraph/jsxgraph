@@ -569,6 +569,65 @@ JXG.Options = {
                                  // It is much slower, but the result is better
     },
 
+    /* special perpendicular options */
+    perpendicular : {
+        strokeColor: '#000000', // Perpendicular segment
+        point : {               // Perpendicular point
+            visible: false,
+            fixed: true,
+            withLabel: false
+        }
+    },
+
+    parallel : {
+        strokeColor: '#000000', // Parallel line
+        point : {               // Parallel point
+            visible: false,
+            fixed: true,
+            withLabel: false
+        }
+    },
+
+    /* special options for bisector of 3 points */
+    bisector : {
+        strokeColor: '#000000', // Bisector line
+        point : {               // Bisector point
+            visible: false,
+            fixed: true,
+            withLabel: false
+        }
+    },
+
+    /* special options for the 2 bisectors of 2 lines */
+    bisectorlines : {
+        line1 : {               // 
+            strokeColor: 'red'
+        },
+        line2 : {               // 
+            strokeColor: 'black'
+        }
+    },
+
+    /* special options for circumcircle of 3 points */
+    circumcircle : {
+        strokeColor: '#000000', // 
+        point : {               // center point
+            visible: false,
+            fixed: true,
+            withLabel: false
+        }
+    },
+
+    /* special options for incircle of 3 points */
+    incircle : {
+        strokeColor: '#000000', // 
+        point : {               // center point
+            visible: false,
+            fixed: true,
+            withLabel: false
+        }
+    },
+    
     chart: {
         chartStyle: 'line'
     },

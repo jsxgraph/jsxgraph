@@ -124,6 +124,7 @@ JXG.Composition = function (elements) {
                         that.elements[i][what].apply(that.elements[i], arguments);
                     }
                 }
+                return that;
             };
         },
         that = this,
@@ -237,7 +238,7 @@ JXG.createPerpendicularPoint = function(board, parents, attributes) {
     }
 
     // no need to call create, the properties will be set through the create('perpendicular') call
-    t = JXG.createPoint(board, [function () { return JXG.Math.Geometry.perpendicular(l, p, board)[0]; }], {fixed: true, name: attributes['name'], id: attributes['id']});
+    t = JXG.createPoint(board, [function () { return JXG.Math.Geometry.perpendicular(l, p, board)[0]; }], attributes);
     p.addChild(t); // notwendig, um auch den Punkt upzudaten
     l.addChild(t);
 
@@ -349,20 +350,10 @@ JXG.createPerpendicular = function(board, parents, attributes) {
                         "\nPossible parent types: [line,point]");
     }
 
-    attr = {};
-
-    //JXG.
-
-    if(!JXG.isArray(attributes['id'])) {
-        attributes['id'] = ['',''];
-    }
-    if(!JXG.isArray(attributes['name'])) {
-        attributes['name'] = ['',''];
-    }
-
-    // no need to call create, the properties will be set through the create('perpendicular') call
-    t = JXG.createPerpendicularPoint(board, [l, p], {fixed: true, name: attributes['name'][1], id: attributes['id'][1], visible: false});
-    pd = JXG.createSegment(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], {name: attributes['name'][0], id: attributes['id'][0]});
+    attr = JXG.copyAttributes(attributes, board.options, 'perpendicular', 'point');
+    t = JXG.createPerpendicularPoint(board, [l, p], attr);
+    attr = JXG.copyAttributes(attributes, board.options, 'perpendicular');
+    pd = JXG.createSegment(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], attr);
 
     ret = [pd, t];
     ret.line = pd;
@@ -403,7 +394,7 @@ JXG.createPerpendicular = function(board, parents, attributes) {
  *   var mpex1_mp2 = mpex1_board.create('midpoint', [mpex1_l1]);
  * </script><pre>
  */
-JXG.createMidpoint = function(board, parentArr, atts) {
+JXG.createMidpoint = function(board, parentArr, attributes) {
     var a, b, t;
     if(parentArr.length == 2 && JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1])) {
         a = parentArr[0];
@@ -418,18 +409,12 @@ JXG.createMidpoint = function(board, parentArr, atts) {
                         "\nPossible parent types: [point,point], [line]");
     }
 
-    if(atts) {
-    	atts['fixed'] = true;
-    } else {
-    	atts = {fixed: true};
-    }
-
     t = board.create('point', [function () { return (a.coords.usrCoords[1] + b.coords.usrCoords[1])/2.; },
-                               function () { return (a.coords.usrCoords[2] + b.coords.usrCoords[2])/2.; }], atts);
+                               function () { return (a.coords.usrCoords[2] + b.coords.usrCoords[2])/2.; }], attributes);
     a.addChild(t);
     b.addChild(t);
 
-    t.update();
+    t.prepareUpdate().update();
 
     t.generatePolynomial = function() {
         /*
@@ -472,18 +457,6 @@ JXG.createMidpoint = function(board, parentArr, atts) {
         return [poly1, poly2];
     };
 
-    // 2009/10/11, mg:
-    // * this is just a test: we're forming three closures in here: One with generatePolynomial and two when we create the
-    //   point by using function objects as positions. So a reference to the current Activation object is held in the scope of
-    //   those three functions. But we don't need a reference to the atts object in any of them, so we're deleting the
-    //   reference to it. Hence, the garbage collector can remove it from memory, if there's no reference to it left.
-    // * first test successful: attributes will be set properly. it remains to test, if this helps us to reduce memory usage.
-    //   for the test we'll query a JXG attribute "nullAtts" which has to be set to true to null the atts parameter. Then
-    //   50,000 midpoints will be created in an example file with resp. without nulling the atts parameter and after that chrome
-    //   will be used to compare the memory usage.
-    if(JXG.nullAtts)
-        atts = null;
-
     return t;
 };
 
@@ -516,7 +489,7 @@ JXG.createMidpoint = function(board, parentArr, atts) {
  *   var ppex1_pp1 = ppex1_board.create('parallelpoint', [ppex1_p1, ppex1_p2, ppex1_p3]);
  * </script><pre>
  */
-JXG.createParallelPoint = function(board, parentArr, atts) {
+JXG.createParallelPoint = function(board, parentArr, attributes) {
     var a, b, c, p;
 
     if(parentArr.length == 3 && parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[2].elementClass == JXG.OBJECT_CLASS_POINT) {
@@ -540,7 +513,7 @@ JXG.createParallelPoint = function(board, parentArr, atts) {
 
     p = board.create('point', [function () { return c.coords.usrCoords[1] + b.coords.usrCoords[1] - a.coords.usrCoords[1]; }, 
                                function () { return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2]; }], 
-                               atts);
+                               attributes);
 	// required for algorithms requiring dependencies between elements
 	a.addChild(p);
 	b.addChild(p);
@@ -548,7 +521,7 @@ JXG.createParallelPoint = function(board, parentArr, atts) {
 
     // required to set the coordinates because functions are considered as constraints. hence, the coordinates get set first after an update.
     // can be removed if the above issue is resolved.
-    p.update();
+    p.prepareUpdate().update();
 
     p.generatePolynomial = function() {
         /*
@@ -632,26 +605,14 @@ JXG.createParallelPoint = function(board, parentArr, atts) {
  *   var plex1_pl1 = plex1_board.create('parallel', [plex1_l1, plex1_p3]);
  * </script><pre>
  */
-JXG.createParallel = function(board, parents, atts) {
-    var p, pp, pl, cAtts;
+JXG.createParallel = function(board, parents, attributes) {
+    var p, pp, pl, attr;
 
     /* parallel point polynomials are done in createParallelPoint */
 
-    cAtts = {name: null, id: null, fixed: true, visible: false};
-    if(JXG.isArray(atts['name']) && atts['name'].length == 2) {
-        cAtts['name'] = atts['name'][1];
-        atts['name'] = atts['name'][0];
-    } else
-        cAtts['name'] = atts['name'] + 'p2';
-        
-    if(JXG.isArray(atts['id']) && atts['id'].length == 2) {
-        cAtts['id'] = atts['id'][1];
-        atts['id'] = atts['id'][0];
-    } else if (JXG.exists(atts['id'])) 
-        cAtts['id'] = atts['id'] + 'p2';
-
     try {
-        pp = JXG.createParallelPoint(board, parents, cAtts); // non-visible point
+        attr = JXG.copyAttributes(attributes, board.options, 'parallel', 'point');
+        pp = JXG.createParallelPoint(board, parents, attr);     // non-visible point
     } catch (e) {
         throw new Error("JSXGraph: Can't create parallel with parent types '" +
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
@@ -666,7 +627,8 @@ JXG.createParallel = function(board, parents, atts) {
     else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT)
         p = parents[1];
 
-    pl = board.create('line', [p, pp], atts);
+    attr = JXG.copyAttributes(attributes, board.options, 'parallel');
+    pl = board.create('line', [p, pp], attr);
 
     return pl;
 };
@@ -703,25 +665,17 @@ JXG.createParallel = function(board, parents, atts) {
  *   var plex1_pl1 = plex1_board.create('parallel', [plex1_l1, plex1_p3]);
  * </script><pre>
  */
-JXG.createArrowParallel = function(board, parents, atts) {
-    var l, cAtts;
-
+JXG.createArrowParallel = function(board, parents, attributes) {
     /* parallel arrow point polynomials are done in createParallelPoint */
     try {
         // we don't have to get onto that whole create stack here
         // because that'll be run for the line l right after leaving that function.
-        l = JXG.createParallel(board, parents, atts);
+        return JXG.createParallel(board, parents, attributes).setStraight(false, false).setArrow(false,true);;
     } catch (e) {
         throw new Error("JSXGraph: Can't create arrowparallel with parent types '" +
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [line,point], [point,point,point]");
     }
-
-    // Select the default behavior. If the user wants something else he would set it in atts.
-    // That gets parsed and set right after this function.
-    l.setStraight(false, false);
-    l.setArrow(false,true);
-    return l;
 };
 
 /**
@@ -903,29 +857,20 @@ JXG.createNormal = function(board, parents, attributes) {
  *   var biex1_bi1 = biex1_board.create('bisector', [biex1_p1, biex1_p2, biex1_p3]);
  * </script><pre>
  */
-JXG.createBisector = function(board, parentArr, atts) {
-    var p, l, cAtts, i;
+JXG.createBisector = function(board, parentArr, attributes) {
+    var p, l, i, attr;
+    
     /* TODO bisector polynomials */
     if(parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[2].elementClass == JXG.OBJECT_CLASS_POINT) {
-
-        cAtts = {name: '', id: null, fixed: true, visible: false};
-        if(atts) {
-            cAtts = JXG.cloneAndCopy(atts, cAtts);
-        }
-
         // hidden and fixed helper
-        p = board.create('point', [function () { return JXG.Math.Geometry.angleBisector(parentArr[0], parentArr[1], parentArr[2], board); }], cAtts);
+        attr = JXG.copyAttributes(attributes, board.options, 'bisector', 'point');
+        p = board.create('point', [function () { return JXG.Math.Geometry.angleBisector(parentArr[0], parentArr[1], parentArr[2], board); }], attr);
 
         for(i=0; i<3; i++)
             parentArr[i].addChild(p); // required for algorithm requiring dependencies between elements
 
-        if(typeof atts['straightFirst'] == 'undefined')
-            atts['straightFirst'] = false;
-        if(typeof atts['straightLast'] == 'undefined')
-            atts['straightLast'] = true;
-        // no need to fire up the create stack because only attributes need to be set and they
-        // will be set for l after returning.
-        l = JXG.createLine(board, [parentArr[1], p], atts);
+        attr = JXG.copyAttributes(attributes, board.options, 'bisector');
+        l = JXG.createLine(board, [parentArr[1], p], attr);
         return l;
     }
     else {
@@ -944,10 +889,7 @@ JXG.createBisector = function(board, parentArr, atts) {
 JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
     var l1 = JXG.getReference(board,parents[0]),
         l2 = JXG.getReference(board,parents[1]),
-        id1 = '',
-        id2 = '',
-        n1 = '',
-        n2 = '',
+        g1, g2, attr,
         ret;
 
     if(l1.elementClass != JXG.OBJECT_CLASS_LINE || l2.elementClass != JXG.OBJECT_CLASS_LINE) {
@@ -956,28 +898,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
                         "\nPossible parent types: [line,line]");
     }
 
-    attributes = JXG.checkAttributes(attributes,{});
-    if (attributes['id']!=null) {
-        if (JXG.isArray(attributes['id'])) {
-            id1 = attributes['id'][0];
-            id2 = attributes['id'][1];
-        } else {
-            id1 = attributes['id'];
-            id2 = attributes['id'];
-        }
-    }
-    if (attributes['name']!=null) {
-        if (JXG.isArray(attributes['name'])) {
-            n1 = attributes['name'][0];
-            n2 = attributes['name'][1];
-        } else {
-            n1 = attributes['name'];
-            n2 = attributes['name'];
-        }
-    }
-
-    attributes['id'] = id1;
-    attributes['name'] = n1;
+    attr = JXG.copyAttributes(attributes, board.options, 'bisectorlines', 'line1');
     var g1 = board.create('line',[
         function(){
             var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
@@ -994,9 +915,9 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
             var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
             return l1.stdform[2]/d1-l2.stdform[2]/d2;
         }
-    ], attributes);
-    attributes['id'] = id2;
-    attributes['name'] = n2;
+    ], attr);
+    
+    attr = JXG.copyAttributes(attributes, board.options, 'bisectorlines', 'line2');
     var g2 = board.create('line',[
         function(){
             var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
@@ -1013,7 +934,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
             var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
             return l1.stdform[2]/d1+l2.stdform[2]/d2;
         }
-    ], attributes);
+    ], attr);
 
     ret = [g1, g2];
     ret.lines = [g1, g2];
@@ -1053,14 +974,11 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
  *   var ccmex1_cc1 = ccmex1_board.create('circumcenter', [ccmex1_p1, ccmex1_p2, ccmex1_p3]);
  * </script><pre>
  */
-JXG.createCircumcircleMidpoint = function(board, parents, atts) {
+JXG.createCircumcircleMidpoint = function(board, parents, attributes) {
     var p, i;
 
-    /* TODO circumcircle polynomials */
-
     if(parents[0].elementClass == JXG.OBJECT_CLASS_POINT && parents[1].elementClass == JXG.OBJECT_CLASS_POINT && parents[2].elementClass == JXG.OBJECT_CLASS_POINT) {
-        atts['fixed'] = atts['fixed'] || true;
-        p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.circumcenterMidpoint(parents[0], parents[1], parents[2], board); }], atts);
+        p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.circumcenterMidpoint(parents[0], parents[1], parents[2], board); }], attributes);
 
         for(i=0; i<3; i++)
             parents[i].addChild(p);
@@ -1127,7 +1045,7 @@ JXG.createCircumcircleMidpoint = function(board, parents, atts) {
  *   var icmex1_ic1 = icmex1_board.create('incenter', [icmex1_p1, icmex1_p2, icmex1_p3]);
  * </script><pre>
  */
-JXG.createIncenter = function(board, parents, atts) {
+JXG.createIncenter = function(board, parents, attributes) {
     var p, c, ret,
         A, B, C;
 
@@ -1144,7 +1062,7 @@ JXG.createIncenter = function(board, parents, atts) {
             c = Math.sqrt((B.X() - A.X())*(B.X() - A.X()) + (B.Y() - A.Y())*(B.Y() - A.Y()));
 
             return new JXG.Coords(JXG.COORDS_BY_USER, [(a*A.X()+b*B.X()+c*C.X())/(a+b+c), (a*A.Y()+b*B.Y()+c*C.Y())/(a+b+c)], board);
-        }], atts);
+        }], attributes);
     } else {
         throw new Error("JSXGraph: Can't create incenter with parent types '" +
             (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
@@ -1181,22 +1099,15 @@ JXG.createIncenter = function(board, parents, atts) {
  *   var ccex1_cc1 = ccex1_board.create('circumcircle', [ccex1_p1, ccex1_p2, ccex1_p3]);
  * </script><pre>
  */
-JXG.createCircumcircle = function(board, parentArr, atts) {
-    var p, c, cAtts, ret;
-
-    cAtts = JXG.clone(atts);
-    if(atts['name'] && JXG.isArray(atts['name'])) {
-        cAtts['name'] = atts['name'][0];
-        atts['name'] = atts['name'][1];
-    }
-    if(atts['id'] && JXG.isArray(atts['id'])) {
-        cAtts['id'] = atts['id'][0];
-        atts['id'] = atts['id'][1];
-    }
+JXG.createCircumcircle = function(board, parentArr, attributes) {
+    var p, c, attr, ret;
 
     try {
-        p = JXG.createCircumcircleMidpoint(board, parentArr, cAtts);
-        c = JXG.createCircle(board, [p, parentArr[0]], atts);
+        attr = JXG.copyAttributes(attributes, board.options, 'circumcircle', 'point');
+        p = JXG.createCircumcircleMidpoint(board, parentArr, attr);
+        
+        attr = JXG.copyAttributes(attributes, board.options, 'circumcircle');
+        c = JXG.createCircle(board, [p, parentArr[0]], attr);
     } catch(e) {
         throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
                         (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'." +
@@ -1240,21 +1151,14 @@ JXG.createCircumcircle = function(board, parentArr, atts) {
  *   var icex1_ic1 = icex1_board.create('incircle', [icex1_p1, icex1_p2, icex1_p3]);
  * </script><pre>
  */
-JXG.createIncircle = function(board, parents, atts) {
-    var p, c, cAtts, ret;
-
-    cAtts = JXG.clone(atts);
-    if(atts['name'] && JXG.isArray(atts['name'])) {
-        cAtts['name'] = atts['name'][0];
-        atts['name'] = atts['name'][1];
-    }
-    if(atts['id'] && JXG.isArray(atts['id'])) {
-        cAtts['id'] = atts['id'][0];
-        atts['id'] = atts['id'][1];
-    }
+JXG.createIncircle = function(board, parents, attributes) {
+    var p, c, attr, ret;
 
     try {
-        p = JXG.createIncenter(board, parents, cAtts);
+        attr = JXG.copyAttributes(attributes, board.options, 'incircle', 'point');
+        p = JXG.createIncenter(board, parents, attr);
+
+        attr = JXG.copyAttributes(attributes, board.options, 'incircle');
         c = JXG.createCircle(board, [p, function() {
             var a = Math.sqrt((parents[1].X() - parents[2].X())*(parents[1].X() - parents[2].X()) + (parents[1].Y() - parents[2].Y())*(parents[1].Y() - parents[2].Y())),
                 b = Math.sqrt((parents[0].X() - parents[2].X())*(parents[0].X() - parents[2].X()) + (parents[0].Y() - parents[2].Y())*(parents[0].Y() - parents[2].Y())),
@@ -1262,7 +1166,7 @@ JXG.createIncircle = function(board, parents, atts) {
                 s = (a+b+c)/2;
 
             return Math.sqrt(((s-a)*(s-b)*(s-c))/s);
-        }], atts);
+        }], attr);
     } catch(e) {
         throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
                         (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
@@ -1307,7 +1211,7 @@ JXG.createIncircle = function(board, parents, atts) {
  *   var rpex1_rp1 = rpex1_board.create('reflection', [rpex1_p3, rpex1_l1]);
  * </script><pre>
  */
-JXG.createReflection = function(board, parentArr, atts) {
+JXG.createReflection = function(board, parentArr, attributes) {
     var l, p, r;
 
     if(parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_LINE) {
@@ -1324,13 +1228,11 @@ JXG.createReflection = function(board, parentArr, atts) {
                         "\nPossible parent types: [line,point]");
     }
 
-    // force a fixed point
-    //atts['fixed'] = true;
-    r = JXG.createPoint(board, [function () { return JXG.Math.Geometry.reflection(l, p, board); }], atts);
+    r = JXG.createPoint(board, [function () { return JXG.Math.Geometry.reflection(l, p, board); }], attributes);
     p.addChild(r);
     l.addChild(r);
 
-    r.update();
+    r.prepareUpdate().update();
 
     r.generatePolynomial = function() {
         /*
@@ -1362,8 +1264,6 @@ JXG.createReflection = function(board, parentArr, atts) {
     return r;
 };
 
-// here we have to continue with replacing board.add* stuff
-
 /**
  * @class A mirror point will be constructed.
  * @pseudo
@@ -1387,13 +1287,12 @@ JXG.createReflection = function(board, parentArr, atts) {
  *   var mpex1_mp1 = mpex1_board.create('mirrorpoint', [mpex1_p1, mpex1_p2]);
  * </script><pre>
  */
-JXG.createMirrorPoint = function(board, parentArr, atts) {
+JXG.createMirrorPoint = function(board, parentArr, attributes) {
     var p, i;
 
     /* TODO mirror polynomials */
     if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1])) {
-        atts['fixed'] = atts['fixed'] || true;
-        p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.rotation(parentArr[0], parentArr[1], Math.PI, board); }], atts);
+        p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.rotation(parentArr[0], parentArr[1], Math.PI, board); }], attributes);
 
         for(i=0; i<2; i++)
             parentArr[i].addChild(p);
@@ -1404,7 +1303,7 @@ JXG.createMirrorPoint = function(board, parentArr, atts) {
                         "\nPossible parent types: [point,point]");
     }
 
-    p.update();
+    p.prepareUpdate().update();
 
     return p;
 };
