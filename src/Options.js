@@ -350,7 +350,12 @@ JXG.Options = {
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
         highlightStrokeColor : '#C3D9FF',
-        useDirection: false
+        useDirection: false, 
+        center: {
+            visible: false,
+            withLabel: false,
+            fixed: true
+        }
     },
 
     /* special polygon options */

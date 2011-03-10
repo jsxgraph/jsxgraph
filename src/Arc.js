@@ -59,7 +59,7 @@
  * </script><pre>
  */
 JXG.createArc = function(board, parents, attributes) {
-    var el, defaults, key, options;
+    var el, attr;
 
 
     // this method is used to create circumccirclearcs, too. if a circumcirclearc is created we get a fourth
@@ -73,6 +73,7 @@ JXG.createArc = function(board, parents, attributes) {
                         "\nPossible parent types: [point,point,point]");
     }
 
+    /*
     // Read the default values from Options and use them in case they are
     // not set by the user in attributes
     defaults = {
@@ -88,8 +89,10 @@ JXG.createArc = function(board, parents, attributes) {
         defaults[key] = options[key];
     }
     attributes = JXG.checkAttributes(attributes, defaults);
-        
-    el = board.create('curve',[[0],[0]],attributes);
+    */
+    
+    attr = JXG.copyAttributes(attributes, board.options, 'arc');
+    el = board.create('curve', [[0],[0]], attr);
 
     /**
      * @default {@link JXG#OBJECT_TYPE_ARC}
@@ -127,7 +130,7 @@ JXG.createArc = function(board, parents, attributes) {
     el.radiuspoint.addChild(el);
     el.anglepoint.addChild(el);
     
-    el.useDirection = attributes['useDirection'];      // useDirection is necessary for circumCircleArcs
+    el.useDirection = attr['useDirection'];      // useDirection is necessary for circumCircleArcs
 
     // documented in JXG.Curve
     el.updateDataArray = function() {
@@ -303,9 +306,8 @@ JXG.JSXGraph.registerElement('arc', JXG.createArc);
  * </script><pre>
  */
 JXG.createSemicircle = function(board, parents, attributes) {
-    var el, mp;
+    var el, mp, attr;
     
-    attributes = JXG.checkAttributes(attributes,{});
 
     // we need 2 points
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) ) {
@@ -316,7 +318,8 @@ JXG.createSemicircle = function(board, parents, attributes) {
          * @name midpoint
          * @type Midpoint
          */
-        mp = board.create('midpoint', [parents[0], parents[1]], {withLabel:false, visible:false});
+        attr = JXG.copyAttributes(attributes, board.options, 'circle', center);
+        mp = board.create('midpoint', [parents[0], parents[1]], attr);
 
         /**
          * The semicircle itself.
@@ -324,7 +327,8 @@ JXG.createSemicircle = function(board, parents, attributes) {
          * @name arc
          * @type Arc
          */
-        el = board.create('arc',[mp, parents[1], parents[0]],attributes);
+        attr = JXG.copyAttributes(attributes, board.options, 'circle');
+        el = board.create('arc',[mp, parents[1], parents[0]], attr);
     } else
         throw new Error("JSXGraph: Can't create Semicircle with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
@@ -369,10 +373,8 @@ JXG.JSXGraph.registerElement('semicircle', JXG.createSemicircle);
  * </script><pre>
  */
 JXG.createCircumcircleArc = function(board, parents, attributes) {
-    var el, mp;
+    var el, mp, attr;
     
-    attributes = JXG.checkAttributes(attributes,{withLabel:JXG.readOption(board.options,'arc','withLabel'), layer:null});
-
     // We need three points
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
 
@@ -382,9 +384,8 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
          * @name midpoint
          * @type Midpoint
          */
-        mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], {withLabel:false, visible:false});
-
-        attributes.useDirection = true;
+        attr = JXG.copyAttributes(attributes, board.options, 'arc', 'center');
+        mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], attr);
 
         /**
          * The actual arc.
@@ -392,7 +393,9 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
          * @name arc
          * @type Arc
          */
-        el = board.create('arc', [mp, parents[0], parents[2], parents[1]], attributes);
+        attr = JXG.copyAttributes(attributes, board.options, 'arc');
+        attr['useDirection'] = true;
+        el = board.create('arc', [mp, parents[0], parents[2], parents[1]], attr);
     } else
         throw new Error("JSXGraph: create Circumcircle Arc with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
