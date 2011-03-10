@@ -403,20 +403,18 @@ JXG.extend(JXG, /** @lends JXG */ {
         o = options;                                                // default options from specific elements
         for (i=2;i<len;i++) {
             o = o[arguments[i]];
-            a = this.deepCopy(a, o);
         }
+        a = this.deepCopy(a, o);
         
         if (this.exists(arguments[2]) && this.exists(options['layer'][arguments[2]])) {
             a['layer'] = options['layer'][arguments[2]];
         } 
         
         o = attributes;                                             // options from attributes
-        a = this.deepCopy(a, o);
         for (i=3;i<len;i++) {
             o = o[arguments[i]];
-            a = this.deepCopy(a, o);
         }
-
+        a = this.deepCopy(a, o);
         return a;
     },
     

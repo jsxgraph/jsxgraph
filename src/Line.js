@@ -848,7 +848,6 @@ JXG.createLine = function(board, parents, attributes) {
     var el, p1, p2, i, attr,
         c = [];
 
-    attr = JXG.copyAttributes(attributes, board.options, 'line');
     /*
     atts = JXG.checkAttributes(atts,{
         withLabel:JXG.readOption(board.options,'line','withLabel'),
@@ -858,9 +857,18 @@ JXG.createLine = function(board, parents, attributes) {
     */
 
     var constrained = false;
-    if (parents.length == 2) { // The line is defined by two points (or coordinates of two points)
-        if (parents[0].length>1) { // point 1 given by coordinates
-            p1 = board.create('point', parents[0], {visible:false, withLabel:false, fixed:true});
+    /**
+     * The line is defined by two points or coordinates of two points.
+     * In the latter case, the points are created.
+     */
+    if (parents.length == 2) { 
+        // point 1 given by coordinates
+        if (parents[0].length>1) { 
+            attr = JXG.copyAttributes(attributes, board.options, 'line', 'point1');
+            console.log("========================");
+            console.log(attr);
+            console.log("________________________");
+            p1 = board.create('point', parents[0], attr);
         } else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT) {
             p1 =  JXG.getReference(board,parents[0]);
         } else if ((typeof parents[0] == 'function') && (parents[0]().elementClass == JXG.OBJECT_CLASS_POINT)) {
@@ -870,9 +878,11 @@ JXG.createLine = function(board, parents, attributes) {
             throw new Error("JSXGraph: Can't create line with parent types '" + 
                             (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
-
-        if (parents[1].length>1) { // point 2 given by coordinates
-            p2 = board.create('point', parents[1], {visible:false, withLabel:false, fixed:true});
+        
+        // point 2 given by coordinates
+        if (parents[1].length>1) { 
+            attr = JXG.copyAttributes(attributes, board.options, 'line', 'point2');
+            p2 = board.create('point', parents[1], attr);
         } else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT) {
             p2 =  JXG.getReference(board,parents[1]);
         } else if ((typeof parents[1] == 'function') && (parents[1]().elementClass == JXG.OBJECT_CLASS_POINT)) {
@@ -882,6 +892,8 @@ JXG.createLine = function(board, parents, attributes) {
             throw new Error("JSXGraph: Can't create line with parent types '" + 
                             (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
+        
+        attr = JXG.copyAttributes(attributes, board.options, 'line');
         el = new JXG.Line(board, p1.id, p2.id, attr['id'], attr['name'],attr['withLabel'],attr['layer']);
         if(constrained) {
         	el.constrained = true;
@@ -889,7 +901,11 @@ JXG.createLine = function(board, parents, attributes) {
         	el.funp2 = parents[1];
         }
     }
-    else if (parents.length==3) {  // Line is defined by three coordinates
+    /**
+     * Line is defined by three homogeneous coordinates.
+     * Also in this case points are created.
+     */
+    else if (parents.length==3) {  
         // free line
         for (i=0;i<3;i++) {
             if (typeof parents[i]=='number') {
@@ -909,18 +925,23 @@ JXG.createLine = function(board, parents, attributes) {
                 function() { return c[2]();},
                 function() { return -c[1]();}],{visible:false,name:' '});
         */
-        // New version: point1 is the midpoint between (0,c,-b) and point 2. => point1 is finite.
+        // New version: point 1 is the midpoint between (0,c,-b) and point 2. => point1 is finite.
+        attr = JXG.copyAttributes(attributes, board.options, 'line', 'point1');
         p1 = board.create('point',[
                 function() { return (0.0 + c[2]()*c[2]()+c[1]()*c[1]())*0.5;},
                 function() { return (c[2]() - c[1]()*c[0]()+c[2]())*0.5;},
-                function() { return (-c[1]() - c[2]()*c[0]()-c[1]())*0.5;}], {visible:false, name:' '});
+                function() { return (-c[1]() - c[2]()*c[0]()-c[1]())*0.5;}], attr);
         // point 2: (b^2+c^2,-ba+c,-ca-b)
+        attr = JXG.copyAttributes(attributes, board.options, 'line', 'point2');
         p2 = board.create('point',[
                 function() { return c[2]()*c[2]()+c[1]()*c[1]();},
                 function() { return -c[1]()*c[0]()+c[2]();},
-                function() { return -c[2]()*c[0]()-c[1]();}], { visible:false, name:' '});
+                function() { return -c[2]()*c[0]()-c[1]();}], attr);
         el = new JXG.Line(board, p1.id, p2.id, attr['id'], attr['name'],attr['withLabel']);
     }
+    /**
+     * The parent array contains a function which returns two points.
+     */
     else if ((parents.length==1) && (typeof parents[0] == 'function') && (parents[0]().length == 2) &&
     		 (parents[0]()[0].elementClass == JXG.OBJECT_CLASS_POINT) && (parents[0]()[1].elementClass == JXG.OBJECT_CLASS_POINT)) {
     	var ps = parents[0]();
@@ -932,7 +953,8 @@ JXG.createLine = function(board, parents, attributes) {
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
 
-    el.labelOffsets = attr['labelOffsets'];
+    
+    //el.labelOffsets = attr['labelOffsets'];
     return el;
 };
 

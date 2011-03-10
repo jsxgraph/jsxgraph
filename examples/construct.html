@@ -19,7 +19,7 @@ var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:false, g
 
 //b.create('slider', [[0,0], [4,0], [0,2,10]], {strokeColor:'green', point1: {fillColor:'blue'} });
 
-L = b.create('line',[[0,1],[1,1]], {strokeWidth:1});
+L = b.create('line',[[0,1],[1,1]], {strokeWidth:1, name:'Hallo', withLabel:true, point1:{name:'x', visible:true, withLabel:true}});
 //A = b.create('point',[1,2], {name:'A',face:'a',size:10, fillColor:'blue', strokeColor:'red', withLabel:true, trace:false});
 /*
 D = b.create('point',[2,2], {face:'<>',size:20, withLabel:true, color:'yellow'});

@@ -183,6 +183,16 @@ JXG.Options = {
         strokeColor : '#0000ff',
         highlightStrokeColor : '#888888',
         withTicks: false,
+        point1 : {                  // Default values for point1 if created by line
+            visible: false, 
+            withLabel: false, 
+            fixed:true
+        },
+        point2 : {                  // Default values for point2 if created by line
+            visible: false, 
+            withLabel: false, 
+            fixed: true
+        },
         ticks : {
             drawLabels : true,
             drawZero : false,
