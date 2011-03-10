@@ -488,7 +488,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      */
     drawText: function (element) {
         var node;
-
+console.log(element);
         if (element.visProp.display === 'html') {
             node = this.container.ownerDocument.createElement('div');
             node.style.position = 'absolute';

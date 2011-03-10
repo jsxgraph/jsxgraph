@@ -1435,16 +1435,45 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     initGeonextBoard: function () {
         var p1, p2, p3, l1, l2;
 
-        p1 = new JXG.Point(this, [0,0],this.id + 'gOOe0','Ursprung',false);
-        p1.fixed = true;
-        p2 = new JXG.Point(this, [1,0],this.id + 'gXOe0','Punkt_1_0',false);
-        p2.fixed = true;
-        p3 = new JXG.Point(this, [0,1],this.id + 'gYOe0','Punkt_0_1',false);
-        p3.fixed = true;
-        l1 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gXOe0', this.id + 'gXLe0','X-Achse', false);
-        l1.hideElement();
-        l2 = new JXG.Line(this, this.id + 'gOOe0', this.id + 'gYOe0', this.id + 'gYLe0','Y-Achse', false);
-        l2.hideElement();
+        p1 = this.create('point', [0, 0], {
+            id: this.id + 'g00e0',
+            name: 'Ursprung',
+            withLabel: false,
+            visible: false,
+            fixed: true
+        });
+
+        p2 = this.create('point', [1, 0], {
+            id: this.id + 'gX0e0',
+            name: 'Punkt_1_0',
+            withLabel: false,
+            visible: false,
+            fixed: true
+        });
+
+
+        p3 = this.create('point', [0, 1], {
+            id: this.id + 'gY0e0',
+            name: 'Punkt_0_1',
+            withLabel: false,
+            visible: false,
+            fixed: true
+        });
+
+        l1 = this.create('line', [p1, p2], {
+            id: this.id + 'gXLe0',
+            name: 'X-Achse',
+            withLabel: false,
+            visible: false
+        });
+
+        l2 = this.create('line', [p1, p3], {
+            id: this.id + 'gYLe0',
+            name: 'Y-Achse',
+            withLabel: false,
+            visible: false
+        });
+
         return this;
     },
 
@@ -1454,7 +1483,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     initInfobox: function () {
-        this.infobox = new JXG.Text(this, '0,0', '', [0,0], this.id + '__infobox',null, null, false, 'html');
+        this.infobox = this.create('text', [0, 0, '0,0'], {
+            id: this.id + '_infobox'
+        });
         this.infobox.distanceX = -20;
         this.infobox.distanceY = 25;
         this.renderer.hide(this.infobox);

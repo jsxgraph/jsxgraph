@@ -37,75 +37,40 @@
  * @constructor
  * @return A new geometry element Text
  */
-JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLabel, display, layer) {
+JXG.Text = function (board, content, coords, attributes) {
     this.constructor();
 
     this.type = JXG.OBJECT_TYPE_TEXT;
     this.elementClass = JXG.OBJECT_CLASS_OTHER;                
 
-    this.init(board, id, name);
-    this.content = contentStr;
+    this.init(board, attributes.id, attributes.name);
+    this.content = content;
     this.plaintext = '';
 
     /**
      * Set the display layer.
      */
-    if (layer == null) layer = board.options.layer['text'];
-    this.layer = layer;
+    this.layer = attributes.layer;
 
     /**
      * There is choice between 'html' and 'internal'
      * 'internal' is the text element of SVG and the textpath element 
      * of VML.
      */
-    this.visProp.display = display || 'html';
+    this.visProp.display = attributes.display;
 
     // the next two visProps are preparations for the upcoming property related changes coming with the
     // JSXGraph spring of code 2011
     this.visProp.useASCIIMathML = board.options.text.useASCIIMathML;
     this.visProp.useMathJax = board.options.text.useMathJax;
     
-    if((typeof isLabel != 'undefined') && (isLabel != null)) {
-        this.isLabel = isLabel;
-    }
-    else {
-        this.isLabel = false;
-    }
-    
-    /**
-     * The text color of the given text.
-     * @type {string}
-     * @name JXG.Text#strokeColor
-     */
-    this.visProp['strokeColor'] = this.board.options.text.strokeColor;
-    /**
-     * The text opacity of the given text.
-     * @type {string}
-     * @name JXG.Text#strokeOpacity
-     */
-    
-     /**
-     * The font size of the given text.
-     * @type {string}
-     * @name JXG.Text#fontSize
-     * @default {@link JXG.Options.fontSize}
-     */
-    this.visProp['fontSize'] = this.board.options.text.fontSize;
+    this.isLabel = attributes.isLabel;
 
-    this.visProp['visible'] = true;
+    this.visProp = attributes;
 
-    if (digits!=null) {
-        this.digits = digits;
-    } else {
-        this.digits = 2;
-    }
+    this.digits = attributes.digits;
 
-    /**
-     * Coordinates of the text.
-     * @ private
-     * @type JXG.Coords
-     */
-    if ((this.element = this.board.objects[element])){
+    if ((this.element = JXG.getRef(this.board, attributes.anchor))) {
         var anchor;
         if (this.isLabel) {
             anchor = this.element.getLabelAnchor();
@@ -113,7 +78,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
             anchor = this.element.getTextAnchor();
         }
         this.element.addChild(this);
-        this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [parseFloat(coords[0]),parseFloat(coords[1])],this.board);     
+        this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
         this.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, 
             [this.relativeCoords.scrCoords[1]+anchor.scrCoords[1],
              this.relativeCoords.scrCoords[2]+anchor.scrCoords[2]], this.board);
@@ -142,7 +107,6 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
 
     this.updateText();                    // First evaluation of the string.
                                           // Needed for display='internal' and Canvas
-
     this.id = this.board.setId(this, 'T');
     this.board.renderer.drawText(this);
     if(!this.visProp['visible']) {
@@ -152,8 +116,7 @@ JXG.Text = function (board, contentStr, element, coords, id, name, digits, isLab
     if (typeof this.content === 'string') {
         this.notifyParents(this.content);
     }
-    this.size = [1.0,1.0];
-
+    this.size = [1.0, 1.0];
 
     return this;
 };
@@ -416,14 +379,15 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
  *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+s.Value().toFixed(2);}]);
  * </script><pre>
  */
-JXG.createText = function(board, parentArr, attributes) {
+JXG.createText = function(board, parents, attributes) {
     var attr;
-    //atts = JXG.checkAttributes(atts, {layer:null,display:board.options.text.display, parent:null});  // 'html' or 'internal'
 
-    attr = JXG.checkAttributes(attributes, board.options, 'line');
-    
-    if(attr['parent'] != null) { attr['parent'] = attr['parent'].id;}
-    return new JXG.Text(board, parentArr[parentArr.length-1], attr['parent'], parentArr, attr['id'], attr['name'], attr['digits'], false, attr['display'],attr['layer']);
+    attr = JXG.copyAttributes(attributes, board.options, 'text');
+
+    // downwards compatibility
+    attr.anchor = attr.parent || attr.anchor;
+
+    return new JXG.Text(board, parents[parents.length-1], parents, attr);
 };
 
 JXG.JSXGraph.registerElement('text', JXG.createText);

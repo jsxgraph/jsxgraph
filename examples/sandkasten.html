@@ -30,7 +30,8 @@
     p3 = brd.create('point', [0,1]);
     p4 = brd.create('point', [4,2], {name: "Z"});
 
-    cca = brd.create('circumcirclearc', [p1, p2, p3]);
+    cca = brd.create('circle', [p1, p2]);
+    t = brd.create('text', [4, 5, 'foobar'], {parent: cca, withLabel: false});
 
 /*
     oldie = 2;

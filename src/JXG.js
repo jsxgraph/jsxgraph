@@ -364,7 +364,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {Object} attributes
      * @param {Object} defaults
      * @returns {Object} The given attributes object with missing properties added via the defaults object.
-     * @deprecated replaced by #copyAttributes
+     * @deprecated replaced by JXG#copyAttributes
      */
     checkAttributes: function (attributes, defaults) {
         var key;
@@ -414,7 +414,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         for (i=3;i<len;i++) {
             o = o[arguments[i]];
         }
-        a = this.deepCopy(a, o);
+        this.extend(a, o);
         return a;
     },
     

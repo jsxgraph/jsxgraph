@@ -147,7 +147,7 @@ JXG.GraphReader = new function() {
                         s = board.create('segment',[nodes[i].name, nodes[j].name]);
                         s.setProperty({lastArrow:true});
                         if(graph.weighted) {
-                            t = board.create('text',[0,0,adjMatrix[i][j]],{parent:s});
+                            t = board.create('text',[0,0,adjMatrix[i][j]],{anchor:s});
                             board.addedGraph.segments[i].push({edge:s,weight:t});
                         }
                         else {
@@ -170,7 +170,7 @@ JXG.GraphReader = new function() {
                         s.setProperty({lastArrow:true});
                     }
                     if(graph.weighted) {
-                        t = board.create('text',[0,0,adjMatrix[i][j]],{parent:s});
+                        t = board.create('text',[0,0,adjMatrix[i][j]],{anchor:s});
                         board.addedGraph.segments[i].push({edge:s,weight:t});
                     }
                     else {

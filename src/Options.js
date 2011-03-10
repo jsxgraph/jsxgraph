@@ -377,10 +377,13 @@ JXG.Options = {
     /* special text options */
     text : {
         fontSize : 12,
+        digits: 2,
+        isLabel: false,
         strokeColor : '#000000',
         useASCIIMathML : false,
         useMathJax : false,
-        display : 'html'                    //'html' or 'internal'
+        display : 'html',                    //'html' or 'internal'
+        withLabel: false
     },
 
     /* special curve options */
@@ -404,7 +407,7 @@ JXG.Options = {
 
     // Default ordering of the layers
     layer : {
-        numlayers:20, // only important in SVG
+        numlayers: 20, // only important in SVG
         text  : 9,
         point : 9,
         arc   : 8,

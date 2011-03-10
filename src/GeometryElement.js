@@ -1094,24 +1094,25 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @see #addLabelToElement
      * @private
      */
-    createLabel: function (withLabel,coords) {
-        var isTmpId = false;
-        
+    createLabel: function (withLabel, coords) {
         if (!JXG.exists(coords)) {
-            coords = [10,10];
+            coords = [10, 10];
         }
+
         this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));
         this.label = {};
-        if (typeof withLabel=='undefined' || withLabel==true) {
-            if (this.board.objects[this.id]==null) {
-                this.board.objects[this.id] = this;
-                isTmpId = true;
-            }
+
+        if (withLabel === true) {
             this.label.relativeCoords = coords;
-            this.label.content = new JXG.Text(this.board, this.nameHTML, this.id,
-                [this.label.relativeCoords[0],-this.label.relativeCoords[1]], this.id+"Label", "", null, true, this.board.options.text.display);
-            if (isTmpId) delete(this.board.objects[this.id]);
+
+            this.label.content = JXG.createText(this.board, [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], {
+                anchor: this,
+                id: this.id + 'Label',
+                isLabel: true
+            });
+
             this.label.color = '#000000';
+
             if (!this.visProp['visible']) {
                 this.label.hiddenByParent = true;
                 this.label.content.visProp['visible'] = false;
