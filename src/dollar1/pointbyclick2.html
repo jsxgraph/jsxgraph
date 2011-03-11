@@ -315,9 +315,9 @@
 						}
 					if(obj.length == 0 && mousedown)
                 		board.create('point', points[0], {fillColor:'#000000', fillOpacity:0.8, strokeWidth:0, size:4 });
-					else if(obj.length == 1)
+					else if(obj.length == 1 && mousedown)
 						board.create('glider',[coords.usrCoords[1],coords.usrCoords[2],obj[0]]);
-					else if(obj.length == 2)
+					else if(obj.length == 2 && mousedown)
 					{
 						
 						var i1 = board.create('intersection',[obj[0],obj[1],0]);
