@@ -428,7 +428,6 @@ JXG.extend(JXG, /** @lends JXG */ {
                 isAvail = false;
                 break;
             }
-            o = o[arguments[i]];
         }
         if (isAvail) {
             this.extend(a, o);

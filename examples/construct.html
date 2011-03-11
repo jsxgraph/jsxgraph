@@ -15,10 +15,10 @@
 //alert(navigator.appVersion);
 //JXG.Options.renderer = 'canvas';
 var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:false, grid:false});
-b.suspendUpdate();
-var axisx = b.create('axis', [[0,0], [1,0]], {point1:{visible:false, fillColor: 'blue', size:10}});
-b.create('slider', [[0,0.5], [4,0.5], [0,2,10]], {strokeColor:'green', point1: {fillColor:'blue'} });
-b.unsuspendUpdate();
+//b.suspendUpdate();
+//var axisx = b.create('axis', [[0,0], [1,0]], {point1:{visible:false, fillColor: 'blue', size:10}});
+b.create('slider', [[0,0.5], [4,0.5], [0,2,10]], {strokeColor:'green', point1: {fillColor:'blue', visible:true} });
+//b.unsuspendUpdate();
 //L = b.create('arrow',[[0,1],[1,1]], {strokeWidth:1, name:'Hallo', withLabel:true, point1:{name:'x', fixed:false, visible:true, withLabel:false}});
 
 /*

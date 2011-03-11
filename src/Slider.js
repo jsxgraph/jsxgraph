@@ -73,13 +73,14 @@ JXG.createSlider = function(board, parents, attributes) {
     withText = attr['withLabel'];
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point1');
+    console.log(attr);
     p1 = board.create('point', pos0,  attr);
 
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point2');
     p2 = board.create('point', pos1,  attr);
     board.create('group',[p1,p2]);
     
-    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment');
+    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment1');
     l1 = board.create('segment', [p1,p2], attr);
     
     if (withTicks) {

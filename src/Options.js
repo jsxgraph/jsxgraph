@@ -437,7 +437,7 @@ JXG.Options = {
             highlightFillColor : 'none',
             size: 6
         },
-        segment: {
+        segment1: {
             needsRegularUpdate : false,
             name : '',
             strokeWidth: 1,
