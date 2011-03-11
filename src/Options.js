@@ -173,7 +173,7 @@ JXG.Options = {
          * @see #highlightStrokeOpacity
          * @default {@link JXG.Options.elements#strokeWidth}
          */
-        strokeWidth: '2px',
+        strokeWidth: 2,
 
         /**
          * Width of the element's stroke when the mouse is pointed over it.
@@ -186,7 +186,7 @@ JXG.Options = {
          * @see #highlightFillColor
          * @default {@link JXG.Options.elements#strokeWidth}
          */
-        highlightStrokeWidth: '2px',
+        highlightStrokeWidth: 2,
 
 
         /**
@@ -931,7 +931,7 @@ JXG.Validator = (function () {
         stretch: false,
         strokeColor : validateColor,
         strokeOpacity: JXG.isNumber,
-        strokeWidth : validatePixel,
+        strokeWidth : validateInteger,
         takeFirst : false,
         takeSizeFromFile : false,
         textColor : validateColor,

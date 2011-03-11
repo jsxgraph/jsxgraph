@@ -424,38 +424,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         return this;
     },
 
-
-    /* this list is left from the comment below. just to have a list of properties.
-     * <ul>Possible keys:</ul>
-     *<li>strokeWidth</li>
-     *<li>strokeColor</li>
-     *<li>fillColor</li>
-     *<li>highlightFillColor</li>
-     *<li>highlightStrokeColor</li>
-     *<li>strokeOpacity</li>
-     *<li>fillOpacity</li>
-     *<li>highlightFillOpacity</li>
-     *<li>highlightStrokeOpacity</li>
-     *<li>labelColor</li>
-     *<li>visible</li>
-     *<li>dash</li>
-     *<li>trace</li>
-     *<li>style <i>(Point)</i></li>
-     *<li>fixed</li>
-     *<li>frozen</li>
-     *<li>draft</li>
-     *<li>showInfobox</li>
-     *<li>straightFirst <i>(Line)</i></li>
-     *<li>straightLast <i>(Line)</i></li>
-     *<li>firstArrow <i>(Line,Arc)</li>
-     *<li>lastArrow <i>(Line,Arc)</li>
-     *<li>withTicks <i>(Line)</li>
-     *<li>fontSize</li>
-     *<li>color</li>
-     *<li>opacity</li>
-     * <li>needsRegularUpdate</li>
-     *</ul>*/
-
     /**
      * Sets an arbitrary number of properties.
      * @param % Arbitrary number of strings, containing "key:value" pairs.
@@ -472,103 +440,63 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * p.hideElement();
      */
     setProperty: function () {
-        var i, key, color, pairRaw,
-            opacity,
-            pair,
-            old;
+        var i, key, value, arg, opacity, pair,
+            translateMap = {}, property, properties = {},
+            shortcuts = {
+                color: ['strokeColor', 'fillColor'],
+                opacity: ['strokeOpacity', 'fillOpacity'],
+                highlightColor: ['highlightStrokeColor', 'highlightFillColor'],
+                highlightOpacity: ['highlightStrokeOpacity', 'highlightFillOpacity'],
+                strokeWidth: ['strokeWidth', 'highlightStrokeWidth']
+            };
 
-        for (i=0; i<arguments.length; i++) {
-            pairRaw = arguments[i];
-            if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
-                pair = pairRaw.split(':');
-                // trim pair[0] and pair[1]
-                pair[0] = pair[0].replace (/^\s+/, '').replace (/\s+$/, '');
-                pair[1] = pair[1].replace (/^\s+/, '').replace (/\s+$/, '');
-            } else if (!JXG.isArray(pairRaw)) {    // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
-                for (key in pairRaw) {
-                    this.setProperty([key,pairRaw[key]]);
-                }
-                return this;
-            } else {                             // pairRaw consists of array [key,value]
-                pair = pairRaw;
+        // so we can find the visProp entry to the property the user gave us
+        for (i in this.visProp) {
+            translateMap[i.toLowerCase()] = i;
+        }
+
+        // normalize the user input
+        for (i = 0; i < arguments.length; i++) {
+            arg = arguments[i];
+            if (JXG.isString(arg)) {
+                // pairRaw is string of the form 'key:value'
+                pair = arg.split(':');
+                properties[JXG.trim(pair[0])] = JXG.trim(pair[1]);
+            } else if (!JXG.isArray(arg)) {
+                // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
+                JXG.extend(properties, arg);
+            } else {
+                // pairRaw consists of array [key,value]
+                properties[arg[0]] = arg[1];
             }
-            if (pair[1]==null) continue;
-            pair[0] = pair[0].replace(/\s+/g, '').toLowerCase();
-            
-            switch(pair[0]) {
-                case 'needsregularupdate':
-                    this.needsRegularUpdate = !(pair[1] == 'false' || pair[1] == false);
+        }
 
+        // handle shortcuts
+        for (key in shortcuts) {
+            if (JXG.exists(properties[key])) {
+                for (i = 0; i < shortcuts[key].length; i++) {
+                    if (!JXG.exists(properties[shortcuts[key][i]])) {
+                        properties[shortcuts[key][i]] = properties[key];
+                    }
+                }
+            }
+        }
+
+        for (i in properties) {
+            key = i.replace(/\s+/g, '').toLowerCase();
+            value = properties[i];
+            property = translateMap[key];
+
+            switch(key) {
+                case 'needsregularupdate':
+                    this.needsRegularUpdate = !(value == 'false' || value == false);
                     this.board.renderer.setBuffering(this, this.needsRegularUpdate ? 'auto' : 'static');
                     break;
-                case 'color':
-                    this.setProperty({strokeColor: pair[1], fillColor: pair[1]});
-                    break;
-                case 'opacity':
-                    this.setProperty({strokeOpacity: pair[1], fillOpacity: pair[1]});
-                    break;
-                case 'strokewidth':
-                    this.visProp['strokeWidth'] = pair[1];
-                    this.visProp['highlightStrokeWidth'] = pair[1];
-                    //this.board.renderer.setObjectStrokeWidth(this, this.visProp['strokeWidth']);
-                    break;
-                case 'strokecolor':
-                    color = pair[1];
-                    if (color.length=='9' && color.substr(0,1)=='#') {
-                        color = color.substr(0,7);
-                        this.visProp['strokeOpacity'] = parseInt(color.substr(7,2).toUpperCase(),16)/255;
-                    }
-                    this.visProp['strokeColor'] = color;
-                    //this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);
-                    break;
-                case 'fillcolor':
-                    color = pair[1];
-                    if (color.length=='9' && color.substr(0,1)=='#') {
-                        color = color.substr(0,7);
-                        this.visProp['fillOpacity'] = parseInt(color.substr(7,2).toUpperCase(),16)/255;
-                    }
-                    this.visProp['fillColor'] = color;
-                    //this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);
-                    break;
-                case 'highlightstrokewidth':
-                    this.visProp['highlightStrokeWidth'] = pair[1];
-                    break;
-                case 'highlightstrokecolor':
-                    color = pair[1];
-                    if (color.length=='9' && color.substr(0,1)=='#') {
-                        color = color.substr(0,7);
-                        this.visProp['highlightStrokeOpacity'] = parseInt(color.substr(7,2).toUpperCase(),16)/255;
-                    }
-                    this.visProp['highlightStrokeColor'] = color;
-                    break;
-                case 'highlightfillcolor':
-                    color = pair[1];
-                    if (color.length=='9' && color.substr(0,1)=='#') {
-                        color = color.substr(0,7);
-                        this.visProp['highlightFillOpacity'] = parseInt(color.substr(7,2).toUpperCase(),16)/255;
-                    }
-                    this.visProp['highlightFillColor'] = color;
-                    break;
-                case 'fillopacity':
-                    this.visProp['fillOpacity'] = pair[1];
-                    //this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);
-                    break;
-                case 'strokeopacity':
-                    this.visProp['strokeOpacity'] = pair[1];
-                    //this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);
-                    break;
-                case 'highlightfillopacity':
-                    this.visProp['highlightFillOpacity'] = pair[1];
-                    break;
-                case 'highlightstrokeopacity':
-                    this.visProp['highlightStrokeOpacity'] = pair[1];
-                    break;
                 case 'labelcolor':
-                    color = pair[1];
                     opacity = 'FF';
-                    if (color.length=='9' && color.substr(0,1)=='#') {
-                        color = color.substr(0,7);
-                        opacity = color.substr(7,2);
+                    if (value.length=='9' && value.substr(0,1)=='#') {
+                        value = value.substr(0,7);
+                        opacity = value.substr(7,2);
                         if (opacity == '00') {
                             if (this.label!=null && this.hasLabel) {
                                 this.label.content.hideElement();
@@ -576,212 +504,80 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                         }
                     }
                     if (this.label!=null && this.hasLabel) {
-                        this.label.color = color;
-                        this.board.renderer.setObjectStrokeColor(this.label.content, color, parseInt(opacity.toUpperCase(),16)/255);
+                        this.label.color = value;
+                        this.board.renderer.setObjectStrokeColor(this.label.content, value, parseInt(opacity.toUpperCase(),16)/255);
                     }
                     if (this.type == JXG.OBJECT_TYPE_TEXT) {
-                        this.visProp['strokeColor'] = color;
+                        this.visProp['strokeColor'] = value;
                         this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);
                     }
                     break;
                 case 'infoboxtext':
                     // TODO: what about functions? numbers? maybe text elements?
-                    if (typeof(pair[1]) == 'string') {
-                        this.infoboxText = pair[1];
+                    if (typeof(value) == 'string') {
+                        this.infoboxText = value;
                     } else {
                         this.infoboxText = false;
                     }
                     break;
-                case 'showinfobox':
-                    if (pair[1] == 'false' || pair[1] == false) {
-                        this.visProp.showInfobox = false;
-                    }
-                    else if (pair[1] == 'true' || pair[1] == true) {
-                        this.visProp.showInfobox = true;
-                    }
-                    break;
                 case 'visible':
-                    if (pair[1] == 'false' || pair[1] == false) {
+                    if (value == 'false' || value == false) {
                         this.visProp['visible'] = false;
                         this.hideElement();
-                    }
-                    else if (pair[1] == 'true' || pair[1] == true) {
+                    } else if (value == 'true' || value == true) {
                         this.visProp['visible'] = true;
                         this.showElement();
                     }
                     break;
-                case 'dash':
-                    this.visProp['dash'] = pair[1];
-                    break;
-                case 'trace':
-                    if (pair[1] == 'false' || pair[1] == false) {
-                        this.visProp.trace = false;
-                    }
-                    else if (pair[1] == 'true' || pair[1] == true) {
-                        this.visProp.trace = true;
-                    }
-                    break;
                 case 'style':
-                    this.setStyle(1*pair[1]);
+                    this.setStyle(value);
                     break;
                 case 'face':
                     if (this.elementClass == JXG.OBJECT_CLASS_POINT) {
-                        this.visProp.face = pair[1];
+                        this.visProp.face = value;
                         this.board.renderer.changePointStyle(this);
                     }
-                        //this.setFace(pair[1]);
-                    break;
-                case 'size':
-                    if (this.elementClass == JXG.OBJECT_CLASS_POINT) {
-                        this.visProp['size'] = 1*pair[1];
-                        //this.board.renderer.updatePoint(this);
-                    }
-                    break;
-                case 'fixed':
-                    this.visProp.fixed = ((pair[1]=='false') || (pair[1]==false)) ? false : true;
-                    break;
-                case 'frozen':
-                    this.visProp.frozen = ((pair[1]=='false') || (pair[1]==false)) ? false : true;
-                    break;
-                case 'shadow':
-                    if (pair[1] == 'false' || pair[1] == false) {
-                        this.visProp['shadow'] = false;
-                    }
-                    else if (pair[1] == 'true' || pair[1] == true) {
-                        this.visProp['shadow'] = true;
-                    }
-                    //this.board.renderer.setShadow(this);
                     break;
                 case 'gradient':
-                    this.visProp['gradient'] = pair[1];
+                    this.visProp['gradient'] = value;
                     this.board.renderer.setGradient(this);
                     break;
                 case 'gradientsecondcolor':
-                    color = pair[1];
-                    if (color.length=='9' && color.substr(0,1)=='#') {
-                        opacity = color.substr(7,2);
-                        color = color.substr(0,7);
+                    if (value.length=='9' && value.substr(0,1)=='#') {
+                        opacity = value.substr(7,2);
+                        value = value.substr(0,7);
                     }
                     else {
                         opacity = 'FF';
                     }
-                    this.visProp['gradientSecondColor'] = color;
+                    this.visProp['gradientSecondColor'] = value;
                     this.visProp['gradientSecondOpacity'] = parseInt(opacity.toUpperCase(),16)/255;
                     this.board.renderer.updateGradient(this);
                     break;
                 case 'gradientsecondopacity':
-                    this.visProp['gradientSecondOpacity'] = pair[1];
+                    this.visProp['gradientSecondOpacity'] = value;
                     this.board.renderer.updateGradient(this);
                     break;
-                case 'draft':
-                    if (pair[1] == 'false' || pair[1] == false) {
-                        if (this.visProp['draft'] == true) {
-                            this.visProp['draft'] = false;
-                            //this.board.renderer.removeDraft(this);
-                        }
-                    }
-                    else if (pair[1] == 'true' || pair[1] == true) {
-                        this.visProp['draft'] = true;
-                        //this.board.renderer.setDraft(this);
-                    }
-                    break;
-                case 'straightfirst':
-                    if (pair[1] == 'false' || pair[1] == false) {
-                        this.visProp['straightFirst'] = false;
-                    }
-                    else if (pair[1] == 'true' || pair[1] == true) {
-                        this.visProp['straightFirst'] = true;
-                    }
-                    //this.setStraight(this.visProp['straightFirst'], this.visProp['straightLast']);
-                    break;
-                case 'straightlast':
-                    if (pair[1] == 'false' || pair[1] == false) {
-                        this.visProp['straightLast'] = false;
-                    }
-                    else if (pair[1] == 'true' || pair[1] == true) {
-                        this.visProp['straightLast'] = true;
-                    }
-                    //this.setStraight(this.visProp['straightFirst'], this.visProp['straightLast']);
-                    break;
                 case 'firstarrow':
-                    if (pair[1] == 'false' || pair[1] == false) {
+                    if (value == 'false' || value == false) {
                         this.visProp['firstArrow'] = false;
                     }
-                    else if (pair[1] == 'true' || pair[1] == true) {
+                    else if (value == 'true' || value == true) {
                         this.visProp['firstArrow'] = true;
                     }
                     this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
                     break;
                 case 'lastarrow':
-                    if (pair[1] == 'false' || pair[1] == false) {
+                    if (value == 'false' || value == false) {
                         this.visProp['lastArrow'] = false;
                     }
-                    else if (pair[1] == 'true' || pair[1] == true) {
+                    else if (value == 'true' || value == true) {
                         this.visProp['lastArrow'] = true;
                     }
                     this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
                     break;
-                case 'curvetype':
-                    this.visProp.curveType = pair[1];
-                    break;
-                case 'fontsize':
-                    this.visProp['fontSize'] = pair[1];
-                    break;
-                case 'insertticks':
-                    if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.visProp.insertTicks;
-
-                        this.visProp.insertTicks = !(pair[1] == 'false' || pair[1] == false);
-                        //if (old != this.visProp.insertTicks) this.prepareUpdate().update().updateRenderer();
-                    }
-                    break;
-                case 'drawlabels':
-                    if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.visProp.drawLabels;
-
-                        this.visProp.drawLabels = !(pair[1] == 'false' || pair[1] == false);
-                        //if (old != this.visProp.drawLabels) this.prepareUpdate().update().updateRenderer();
-                    }
-                    break;
-                case 'drawzero':
-                    if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.visProp.drawZero;
-
-                        this.visProp.drawZero = !(pair[1] == 'false' || pair[1] == false);
-                        //if (old != this.visProp.drawZero) this.prepareUpdate().update().updateRenderer();
-                    }
-                    break;
-                case 'minorticks':
-                    if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.visProp.minorTicks;
-                        if ((pair[1] != null) && (pair[1] > 0))
-                            this.visProp.minorTicks = pair[1];
-                        //if (old != this.visProp.minorTicks) this.prepareUpdate().update().updateRenderer();
-                    }
-                    break;
-                case 'majortickheight':
-                    if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.visProp.majorHeight;
-                        if ((pair[1] != null) && (pair[1] > 0))
-                            this.visProp.majorHeight = pair[1];
-                        //if (old != this.visProp.majorHeight) this.prepareUpdate().update().updateRenderer();
-                    }
-                    break;
-                case 'minortickheight':
-                    if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.visProp.minorHeight;
-                        if ((pair[1] != null) && (pair[1] > 0))
-                            this.visProp.minorHeight = pair[1];
-                        //if (old != this.visProp.minorHeight) this.prepareUpdate().update().updateRenderer();
-                    }
-                    break;
-                case 'snapwidth':
-                    if (this.type == JXG.OBJECT_TYPE_GLIDER) {
-                        this.visProp.snapWidth = pair[1];
-                    }
-                    break;
                 case 'withlabel':
-                    if (!pair[1]) {
+                    if (!value) {
                         if (this.label!=null && this.hasLabel) {
                             this.label.content.hideElement();
                         }
@@ -800,12 +596,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                             }
                         }
                     }
-                    this.hasLabel = pair[1];
+                    this.hasLabel = value;
                     break;
                 default:
-                    old = this.visProp[pair[0]];
-                    if (!JXG.Validator[pair[0]] || (JXG.Validator[pair[0]] && JXG.Validator[pair[0]](pair[1]))) {
-                        this.visProp[pair[0]] = pair[1];
+                    if (JXG.exists(this.visProp[property]) && (!JXG.Validator[property] || (JXG.Validator[property] && JXG.Validator[property](value)))) {
+                        value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;
+                        this.visProp[property] = value;
                     }
                     break;
             }

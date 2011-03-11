@@ -1847,13 +1847,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         if (el.multipleElements) {
-            for (s in el) {
-                if (el[s].setProperty)
-                    el[s].setProperty(attributes);
-            }
+//            for (s in el) {
+//                if (el[s].setProperty)
+//                    el[s].setProperty(attributes);
+//            }
         } else {
-            if (el.setProperty)
-                el.setProperty(attributes);
+//            if (el.setProperty)
+//                el.setProperty(attributes);
         }
 
         this.update(el); // We start updating at the newly created element. AW
