@@ -125,7 +125,7 @@ function fitPoints(data,reference,sensitive_area,board){
  * Fits vertices of a polygon to given reference Points, if they are within the sensitive_area
  */
 function fitPoly(poly,reference,sensitive_area,board){
-	sensitive_area = 3 * sensitive_area /(board.unitX*board.zoomX)
+	sensitive_area = 3 * sensitive_area /(board.unitX*board.zoomX);
 	for (var i=0;i<poly.vertices.length;i++){
 		var min = Infinity;
 		var replace;
@@ -183,4 +183,32 @@ function isElementIn(el,elements){
     }
 	return false;
 }
+/*
+ * Find existing points in reference (array) next to coords (x,y) (+- sensitive_area)
+ */
+function findPointNextTo(coords, reference, sensitive_area, board){
+	sensitive_area = 3 * sensitive_area /(board.unitX*board.zoomX);
+	var min = Infinity;
+	var point = null;
+	for (var i=0; i<reference.length; i++){
+		var dist2 = (coords[0]-reference[i].X())*(coords[0]-reference[i].X())+(coords[1]-reference[i].Y())*(coords[1]-reference[i].Y());
+		if (dist2 < min && dist2 <= sensitive_area*sensitive_area){
+			min = dist2;
+			point = reference[i];
+		}
+	}	
+	return point;
+}
 
+/*
+ * Removes an element from an array
+ */
+function removeElementFromArray(ar, el){
+	for (var i=0;i<ar.length;i++){
+		if (ar[i] == el){
+			ar.splice(i,1);
+			return ar;
+		}
+	}
+	return ar;
+}
