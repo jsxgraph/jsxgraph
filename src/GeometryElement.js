@@ -541,7 +541,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 case 'strokewidth':
                     this.visProp['strokeWidth'] = pair[1];
                     this.visProp['highlightStrokeWidth'] = pair[1];
-                    this.board.renderer.setObjectStrokeWidth(this, this.visProp['strokeWidth']);
+                    //this.board.renderer.setObjectStrokeWidth(this, this.visProp['strokeWidth']);
                     break;
                 case 'strokecolor':
                     color = pair[1];
@@ -550,7 +550,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                         this.visProp['strokeOpacity'] = parseInt(color.substr(7,2).toUpperCase(),16)/255;
                     }
                     this.visProp['strokeColor'] = color;
-                    this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);
+                    //this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);
                     break;
                 case 'fillcolor':
                     color = pair[1];
@@ -559,7 +559,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                         this.visProp['fillOpacity'] = parseInt(color.substr(7,2).toUpperCase(),16)/255;
                     }
                     this.visProp['fillColor'] = color;
-                    this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);
+                    //this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);
                     break;
                 case 'highlightstrokewidth':
                     this.visProp['highlightStrokeWidth'] = pair[1];
@@ -582,11 +582,11 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     break;
                 case 'fillopacity':
                     this.visProp['fillOpacity'] = pair[1];
-                    this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);
+                    //this.board.renderer.setObjectFillColor(this, this.visProp['fillColor'], this.visProp['fillOpacity']);
                     break;
                 case 'strokeopacity':
                     this.visProp['strokeOpacity'] = pair[1];
-                    this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);
+                    //this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);
                     break;
                 case 'highlightfillopacity':
                     this.visProp['highlightFillOpacity'] = pair[1];
@@ -616,10 +616,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     }
                     break;
                 case 'infoboxtext':
+                    // TODO: what about functions? numbers? maybe text elements?
                     if (typeof(pair[1]) == 'string') {
                         this.infoboxText = pair[1];
+                    } else {
+                        this.infoboxText = false;
                     }
-                    else this.infoboxText = false;
                     break;
                 case 'showinfobox':
                     if (pair[1] == 'false' || pair[1] == false) {
@@ -640,7 +642,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     }
                     break;
                 case 'dash':
-                    this.setDash(pair[1]);
+                    this.visProp['dash'] = pair[1];
                     break;
                 case 'trace':
                     if (pair[1] == 'false' || pair[1] == false) {
@@ -654,13 +656,16 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     this.setStyle(1*pair[1]);
                     break;
                 case 'face':
-                    if (this.elementClass == JXG.OBJECT_CLASS_POINT)
-                        this.setFace(pair[1]);
+                    if (this.elementClass == JXG.OBJECT_CLASS_POINT) {
+                        this.visProp.face = pair[1];
+                        this.board.renderer.changePointStyle(this);
+                    }
+                        //this.setFace(pair[1]);
                     break;
                 case 'size':
                     if (this.elementClass == JXG.OBJECT_CLASS_POINT) {
                         this.visProp['size'] = 1*pair[1];
-                        this.board.renderer.updatePoint(this);
+                        //this.board.renderer.updatePoint(this);
                     }
                     break;
                 case 'fixed':
@@ -676,7 +681,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     else if (pair[1] == 'true' || pair[1] == true) {
                         this.visProp['shadow'] = true;
                     }
-                    this.board.renderer.setShadow(this);
+                    //this.board.renderer.setShadow(this);
                     break;
                 case 'gradient':
                     this.visProp['gradient'] = pair[1];
@@ -703,12 +708,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     if (pair[1] == 'false' || pair[1] == false) {
                         if (this.visProp['draft'] == true) {
                             this.visProp['draft'] = false;
-                            this.board.renderer.removeDraft(this);
+                            //this.board.renderer.removeDraft(this);
                         }
                     }
                     else if (pair[1] == 'true' || pair[1] == true) {
                         this.visProp['draft'] = true;
-                        this.board.renderer.setDraft(this);
+                        //this.board.renderer.setDraft(this);
                     }
                     break;
                 case 'straightfirst':
@@ -847,8 +852,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @private
      */
     setDash: function (dash) {
-        this.visProp['dash'] = dash;
-        this.board.renderer.setDashStyle(this,this.visProp);
+        this.setProperty({dash: dash});
         return this;
     },
 

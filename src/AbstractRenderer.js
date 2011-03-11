@@ -142,7 +142,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * Update visual properties, but only if {@link JXG.AbstractRenderer#enhancedRendering} or <tt>enhanced</tt> is set to true.
      * @param {JXG.GeometryElement} element The element to update
      * @param {Object} [not={}] Select properties you don't want to be updated: <tt>{fill: true, dash: true}</tt> updates
-     * everything except for fill and dash. Possible values are <tt>stroke, fill, dash, shadow</tt>.
+     * everything except for fill and dash. Possible values are <tt>stroke, fill, dash, shadow, gradient</tt>.
      * @param {Boolean} [enhanced=false] If true, {@link JXG.AbstractRenderer#enhancedRendering} is assumed to be true.
      * @private
      */
@@ -165,6 +165,10 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                 }
 
                 if (!not.shadow) {
+                    this.setShadow(element);
+                }
+
+                if (!not.gradient) {
                     this.setShadow(element);
                 }
             } else {

@@ -364,7 +364,7 @@ JXG.Options = {
     },
 
     /* special axis options */
-    axis : {
+    axis: {
         needsRegularUpdate : false,         // Axes only updated after zooming and moving of the origin.
         strokeWidth: 1,
         strokeColor : '#666666',

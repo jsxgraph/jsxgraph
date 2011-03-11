@@ -31,7 +31,25 @@
     p4 = brd.create('point', [4,2], {name: "Z"});
 
     cca = brd.create('circle', [p1, p2]);
+
+    li= brd.create('segment', [p3, p4]);
     t = brd.create('text', [4, 5, 'foobar'], {parent: cca, withLabel: false});
+
+    p1.setProperty({
+        color: 'green',
+        opacity: 0.5,
+        size: 15,
+        face: 'x',
+        strokeWidth: 10,
+        shadow: true,
+        draft: false
+    });
+
+    li.setProperty({
+        straightFirst: true,
+        straightLast: true,
+        dash: 2
+    });
 
 /*
     oldie = 2;
