@@ -680,6 +680,10 @@ JXG.Options = {
     chart: {
         chartStyle: 'line'
     },
+
+    image: {
+        imageString : null
+    },
     
     riemannsum: {
         withLabel:false,

@@ -28,6 +28,7 @@
         var im = board.create('image',[picStr, [0,0], [3,2]],
             {opacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);} }); 
 
+        /*
         // 
         // Translate image and point "rot+scale" by freagging point "offset"
         var tOff = board.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'}); 
@@ -47,7 +48,7 @@
                                             function(){return p1.Dist(p0)/3;}], {type:'scale'}); 
         tOffInv.bindTo(im); tScale.bindTo(im); tOff.bindTo(im);
         //board.update();
-        
+        */
     })();
   /* ]]> */
   </script>

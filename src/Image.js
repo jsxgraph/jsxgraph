@@ -150,17 +150,17 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
  *   var image_im = image_board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,1],[5,5]]);
  * </script><pre>
  */
-JXG.createImage = function(board, parents, atts) {
-    var url;
+JXG.createImage = function(board, parents, attributes) {
+    var url, attr;
+    attr = JXG.copyAttributes(attributes, board.options, 'image');
+    /*
     if (atts==null) {
         atts = {};
     } else if (atts['imageString']!=null) {
         url = atts['imageString'];
     }
-    if (typeof atts['layer'] == 'undefined') {
-        atts['layer'] = null;
-    }
-    return new JXG.Image(board, parents[0], parents[1], parents[2], atts['layer'], false, false);
+    */
+    return new JXG.Image(board, parents[0], parents[1], parents[2], attr['layer'], false, false);
 };
 
 JXG.JSXGraph.registerElement('image', JXG.createImage);

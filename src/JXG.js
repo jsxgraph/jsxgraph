@@ -395,7 +395,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Object} The resulting attributes object
      */
     copyAttributes: function (attributes, options) {
-        var a, i, len, o;
+        var a, i, len, o, isAvail;
 
         a = this.deepCopy(options['elements']);       // default options from Options.elements
         len = arguments.length;
@@ -406,17 +406,34 @@ JXG.extend(JXG, /** @lends JXG */ {
         } 
 
         o = options;                                                // default options from specific elements
+        isAvail = true;
         for (i=2;i<len;i++) {
-            o = o[arguments[i]];
+            if (JXG.exists(o[arguments[i]])) {
+                o = o[arguments[i]];
+            } else {
+                isAvail = false;
+                break;
+            }
         }
-        a = this.deepCopy(a, o);
-        
+        if (isAvail) {
+            a = this.deepCopy(a, o);
+        }
         
         o = attributes;                                             // options from attributes
+        isAvail = true;
         for (i=3;i<len;i++) {
+            if (JXG.exists(o[arguments[i]])) {
+                o = o[arguments[i]];
+            } else {
+                isAvail = false;
+                break;
+            }
             o = o[arguments[i]];
         }
-        this.extend(a, o);
+        if (isAvail) {
+            this.extend(a, o);
+        }
+        
         return a;
     },
     

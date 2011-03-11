@@ -40,9 +40,9 @@
  * @extends JXG.GeometryElement
  */
 
-JXG.Polygon = function (board, vertices, borders, attributes) {
+JXG.Polygon = function (board, vertices, /*borders,*/ attributes) {
     var i, vertex, l,
-        attr_line = JXG.copyAttributes(attributes, board.options, 'line', 'lines');
+        attr_line = JXG.copyAttributes(attributes, board.options, 'polygon', 'lines');
     
     /* Call the constructor of GeometryElement */
     this.constructor();
@@ -78,7 +78,7 @@ JXG.Polygon = function (board, vertices, borders, attributes) {
     this.borders = [];
     if(this.withLines) {
         for(i = 0; i < this.vertices.length - 1; i++) {
-            l = JXG.createLine(board, [this.vertices[i], this.vertices[i+1]], attr_line);
+            l = JXG.createSegment(board, [this.vertices[i], this.vertices[i+1]], attr_line);
             this.borders[i] = l;
             l.parentPolygon = this;
         }
