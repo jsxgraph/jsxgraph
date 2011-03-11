@@ -169,7 +169,7 @@
 				board.suspendUpdate();
 				var v = [];
 				for (var i=0;i<pointsOnBB.length;i++){
-					if (pointsOnBB[i].type == JXG.OBJECT_TYPE_POINT)
+					if (pointsOnBB[i].elementClass==JXG.OBJECT_CLASS_POINT)
 						v[i]=pointsOnBB[i];
 					else 
 						v[i] = board.create('point', pointsOnBB[i]);
