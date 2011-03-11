@@ -566,7 +566,6 @@ JXG.extend(JXG, /** @lends JXG */ {
         var o=obj,
             l=o.offsetLeft,
             t=o.offsetTop;
-
         while (o=o.offsetParent) {
             l+=o.offsetLeft;
             t+=o.offsetTop;

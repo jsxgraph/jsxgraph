@@ -597,7 +597,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (obj.hasLabel && !obj.label.content.visProp.isLabel && !obj.label.content.visProp.visible) {
             this.renderer.hide(obj.label.content);
         }
-
     },
 
     /**
@@ -608,6 +607,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var pCont = this.containerObj,
             cPos = JXG.getOffset(pCont),
             n;
+//document.getElementById('debug').innerHTML += cPos.toString()+' # '+ document.getElementById('jxgbox')+'<br>';
 
         // add border width
         n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));

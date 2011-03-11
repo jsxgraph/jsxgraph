@@ -327,6 +327,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             node.appendChild(shadowNode);
         }
         node.style.position = 'absolute';
+        node.style.left = '0px';
+        node.style.top = '0px';
         this._setAttr(node, 'id', this.container.id + '_' + id);
 
         return node;

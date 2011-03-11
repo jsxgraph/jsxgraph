@@ -659,7 +659,7 @@ JXG.Options = {
 
     /* special text options */
     text : {
-        fontSize : 12,
+        fontSize : 9,
         digits: 2,
         isLabel: false,
         strokeColor : '#000000',
