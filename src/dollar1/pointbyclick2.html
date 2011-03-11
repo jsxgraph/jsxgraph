@@ -88,9 +88,34 @@
 
 			//fitting for squares, only a try
 			
-			drawBestFitSquare = function(points){
+			drawBestFitSquare = function(points,curvepoints){
+			/*	var v = [];
+				if(curvepoints.length == 0)
+				{
+			 	var bb = boundingBoxUsr(points);
+					v[0] = board.create('point',[bb[0],bb[1]]);
+					v[1] = board.create('point',[bb[0],bb[3]]);
+					v[2] = board.create('point',[bb[2],bb[3]]);
+					v[3] = board.create('point',[bb[2],bb[1]]);
+					board.create('polygon',[v[0],v[1],v[2],v[3]]);
+				}
+				else if (curvepoints.length == 4)
+				{
+					board.create('polygon',curvepoints);
+				}
 				
-			
+				var pointsOnBB = pointsOnBoundingBox(points, bb);
+				pointsOnBB = fitPoints(pointsOnBB,curvepoints,sensitive_area,board);
+				
+				var v = [];
+				for (var i=0;i<pointsOnBB.length;i++){
+					if (pointsOnBB[i].type == JXG.OBJECT_TYPE_POINT)
+						v[i]=pointsOnBB[i];
+					else 
+						v[i] = board.create('point', pointsOnBB[i]);
+					}
+				var square = board.create('polygon',[v[0],v[1],v[2],v[3]]);
+			*/
 				
 				
 				
@@ -236,7 +261,29 @@
 
         var up = function(e){
             if((e.fromTouch && points.length==1) || (!e.fromTouch && points.length<=5))
-                board.create('point', points[0], {fillColor:'#000000', fillOpacity:0.8, strokeWidth:0, size:4 });
+				{	
+					
+					var coords = getMouseCoords(e);
+					var obj = findHittedObj(coords,board);
+					if(obj.length == 0 && mousedown)
+                		board.create('point', points[0], {fillColor:'#000000', fillOpacity:0.8, strokeWidth:0, size:4 });
+					else if(obj.length == 1)
+						board.create('glider',[coords.scrCoords[1],coords.scrCoords[2],obj[0]]);
+					else if(obj.length == 2)
+					{
+						
+						var i1 = board.create('intersection',[obj[0],obj[1],0]);
+						var i2 = board.create('intersection',[obj[0],obj[1],1]);
+						var p = board.create('point',points[0],{visible:'false'});
+						if(p.Dist(i1)<p.Dist(i2))
+							board.removeObject(i2);
+						else
+							board.removeObject(i1);
+						board.removeObject(p);
+						mousedown = false;
+						
+					}
+				}
             else {
                 var result = _r.Recognize(new Array(points_screen),false,false); 
                 mousedown = false;
@@ -247,6 +294,8 @@
 					board.create('line',[points[0],points[points.length-1]],{strokecolor:'green'});
 				else if(result.Name == 'triangle')
 					drawBestFitTriangle(points, curvepoints);
+				else if(result.Name == 'square')
+					drawBestFitSquare(points,curvepoints);
 				for (i=0;i<points_screen.length;i++)
 					document.getElementById('debug').innerHTML = document.getElementById('debug').innerHTML+"new Point("+points_screen[i].X+","+points_screen[i].Y+"),";
 			}	
@@ -260,6 +309,7 @@
         board.addHook(down, 'mousedown');
         board.addHook(move, 'mousemove');
         board.addHook(up, 'mouseup');
+		
     })();
 
     /* ]]> */
