@@ -5,7 +5,8 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
     <script type="text/javascript" src="ndollar.js"></script>
     <script type="text/javascript" src="fitting_util.js"></script>
-    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+    <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>-->
+    <script type="text/javascript" src="../loadjsxgraph.js"></script>
     
 </head>
 <body>
@@ -25,7 +26,7 @@
 	var sensitive_area=7;
 	//var points_screen = new Array();
     (function() {
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis:false, grid:true}),
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis:false, grid:true, snapToGrid:true}),
             //
             // bestFit, the best-fitting circle or line is found by least-squares fitting.
             //
@@ -119,6 +120,23 @@
 				
 				
 				
+			},
+			drawBestFitCirce2Points = function(points, curvepoints){
+				if (curvepoints.length == 3){
+					board.create('circle',curvepoints);
+					return;
+				}
+				if (curvepoints.length>0){
+					var p0 = findPointNextTo(points[0],curvepoints,2 * sensitive_area,board);
+					if (p0 != null)
+							curvepoints = removeElementFromArray(curvepoints, p0);
+					else p0 = points[0];
+					if (curvepoints.length>0){
+						var p1 = curvepoints[curvepoints.length-1];
+						board.create('circle',[p0,p1]);
+					}
+					
+				}
 			},
 			drawBestFitLine = function(points, curvepoints){
 					if (curvepoints.length > 0){
@@ -287,7 +305,7 @@
 				var result = _r.Recognize(new Array(points_screen),false,false);
 				document.getElementById('debug').innerHTML = result.Name + result.Score;
 				 
-				if(result.Name == "circle"){
+				if(result.Name == "circle" || result.Name == "circle2points"){
                 	draftcurve.setProperty({strokeColor:'blue'});
 				} else if(result.Name =="line")
 					draftcurve.setProperty({strokeColor:'green'});
@@ -338,12 +356,20 @@
                 var curvepoints = pointsOnCurve(draftcurve, sensitive_area, board);
 				if(result.Name == 'circle')
 					drawBestFitCircle(points,false, curvepoints);
+				else if(result.Name =='circle2points')
+					drawBestFitCirce2Points(points, curvepoints);
 				else if(result.Name =='line')
 					drawBestFitLine(points, curvepoints);
 				else if(result.Name == 'triangle')
 					drawBestFitTriangle(points, curvepoints);
 				else if(result.Name == 'square')
 					drawBestFitSquare(points,curvepoints);
+				else if(result.Name == 'removelast'){
+				        var obj = JXG.keys(board.objects);
+						var o = obj[obj.length-1];
+						board.removeObject(o);
+						board.update();
+					} 
 				for (i=0;i<points_screen.length;i++)
 					document.getElementById('debug').innerHTML = document.getElementById('debug').innerHTML+"new Point("+points_screen[i].X+","+points_screen[i].Y+"),";
 			}	
