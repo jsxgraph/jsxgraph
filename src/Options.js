@@ -263,6 +263,18 @@ JXG.Options = {
          */
         trace: false,
 
+        /**
+         * If this is set to true, the element is updated in every update
+         * call of the board. If set to false, the element is updated only after
+         * zoom events or more generally, when the bounding box has been changed.
+         * Examples for the latter behaviour should be axes.
+         * @type Boolean
+         * @default true
+         * @see JXG.GeometryElement#needsRegularUpdate
+         * @name JXG.GeometryElement#needsRegularUpdate
+         */
+        needsRegularUpdate: true,
+        
         /*draft options */
         draft : {
             /**
@@ -423,7 +435,7 @@ JXG.Options = {
             majorHeight : -1,         // if <0: full width and height
             minorTicks : 4,
             defaultDistance : 1,
-            opacity : 0.25
+            strokeOpacity : 0.25
         },
         point1 : {                  // Default values for point1 if created by line
             needsRegularUpdate : false
@@ -477,6 +489,7 @@ JXG.Options = {
         },
         /* line ticks options */
         ticks : {
+            needsRegularUpdate : false,
             drawLabels : false,
             drawZero : true,
             insertTicks : true,

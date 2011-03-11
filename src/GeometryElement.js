@@ -244,6 +244,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.name = name;
 
         this.visProp = attributes;
+        this.needsRegularUpdate = attributes['needsRegularUpdate'];
 
         // TODO: draft downwards compatibility.
         this.visProp.draft = attributes.draft.draft;
@@ -255,6 +256,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.visProp['gradientSecondOpacity'] = this.visProp['fillOpacity'];
         this.visProp['gradientPositionX'] = 0.5;
         this.visProp['gradientPositionY'] = 0.5;
+        
+        this.needsUpdate = true;
     },
 
     /**

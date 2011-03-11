@@ -1553,9 +1553,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     prepareUpdate: function () {
-        var el;
+        var el, pEl;
         for (el in this.objects) {
-            this.objects[el].needsUpdate = true;
+            pEl = this.objects[el];
+            if (!this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
+            pEl.needsUpdate = true;
         }
         return this;
     },
@@ -1578,7 +1580,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             //if (isBeforeDrag && drag!=null && pEl.id == drag.id) {
             //    isBeforeDrag = false;
             //}
-            if (!this.needsFullUpdate && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate)) { continue; }
+            //if (!this.needsFullUpdate && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate)) { continue; }
 
             // For updates of an element we distinguish if the dragged element is updated or
             // other elements are updated.
@@ -1613,9 +1615,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             for (el in this.objects) {
                 pEl = this.objects[el];
                 // if (isBeforeDrag && drag!=null && pEl.id == drag.id) { isBeforeDrag = false; }
-                if ( !this.needsFullUpdate && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate) ) {
-                    continue;
-                }
+                //if ( !this.needsFullUpdate && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate) ) { continue; }
                 pEl.updateRenderer();
             }
         }
@@ -1646,7 +1646,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             for (el in this.objects) {
                 pEl = this.objects[el];
                 if (pEl.visProp.layer === mini) {
-                    pEl.updateRenderer();
+                    pEl.prepareUpdate().updateRenderer();
                 }
             }
         }

@@ -129,9 +129,8 @@ JXG.Line = function (board, p1, p2, attributes) {
     /* Add arrow as child to defining points */
     this.point1.addChild(this);
     this.point2.addChild(this);
-    this.needsUpdate = true;
 
-    this.update();
+    //this.prepareUpdate().update().updateRenderer();   // Do we need this?
 };
 
 JXG.Line.prototype = new JXG.GeometryElement;
@@ -205,25 +204,26 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      */
     update: function() {
         var i, funps;
-        if(this.constrained) {
-        	if(typeof this.funps != 'undefined') {
-        		funps = this.funps();
-        		this.point1 = funps[0];
-        		this.point2 = funps[1];
-        	} else {
-                this.point1 = this.funp1();
-                this.point2 = this.funp2();
-        	}
-        }
-
         if (this.needsUpdate) {
+            if(this.constrained) {
+                if(typeof this.funps != 'undefined') {
+                    funps = this.funps();
+                    this.point1 = funps[0];
+                    this.point2 = funps[1];
+                } else {
+                    this.point1 = this.funp1();
+                    this.point2 = this.funp2();
+                }
+            }
+
             if (true || !this.board.geonextCompatibilityMode) {
                 this.updateStdform();
             }
-        }
-        if(this.visProp.trace) {
-            this.cloneToBackground(true);
-        }
+            if(this.visProp.trace) {
+                this.cloneToBackground(true);
+            }
+         }
+        return this;
     },
 
     /**
@@ -246,6 +246,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      */
      updateRenderer: function () {
         var wasReal, i;
+
         if (this.needsUpdate && this.visProp['visible']) {
             wasReal = this.isReal;
             this.isReal = (isNaN(this.point1.coords.usrCoords[1]+this.point1.coords.usrCoords[2]+this.point2.coords.usrCoords[1]+this.point2.coords.usrCoords[2]))?false:true;
@@ -273,6 +274,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             //this.board.renderer.updateLabel(this.label);
             this.board.renderer.updateText(this.label.content);
         }
+        return this;
     },
 
     /**
@@ -659,8 +661,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         this.board.renderer.drawTicks(ticks);
         this.ticks.push(ticks);
 
-        this.ticks[this.ticks.length-1].updateRenderer();
-
+        //this.ticks[this.ticks.length-1].updateRenderer();
         return ticks.id;
     },
 
