@@ -17,15 +17,17 @@
 var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:false, grid:false});
 //b.suspendUpdate();
 //var axisx = b.create('axis', [[0,0], [1,0]], {point1:{visible:false, fillColor: 'blue', size:10}});
-b.create('slider', [[0,0.5], [4,0.5], [0,2,10]], {strokeColor:'green', point1: {fillColor:'blue', visible:true} });
+//b.create('slider', [[0,0.5], [4,0.5], [0,2,10]], {strokeColor:'green', point1: {fillColor:'blue', visible:true} });
 //b.unsuspendUpdate();
 //L = b.create('arrow',[[0,1],[1,1]], {strokeWidth:1, name:'Hallo', withLabel:true, point1:{name:'x', fixed:false, visible:true, withLabel:false}});
 
-/*
+
 A = b.create('point',[1,2], {name:'A',face:'a',size:10, fillColor:'blue', strokeColor:'red', withLabel:true, trace:false});
 D = b.create('point',[2,2], {name:'D', face:'<>',size:20, withLabel:true, color:'yellow'});
 B = b.create('point',[2,1], {name:'B'});
-*/
+
+h = b.create('regularpolygon',[A,B, 6]);
+
 //l = b.create('line',[A,B]);
 //l2 = b.create('line',[A,D]);
 //c = b.create('incircle',[A,D,B], {});

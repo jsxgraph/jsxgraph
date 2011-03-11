@@ -305,10 +305,9 @@ JXG.createPolygon = function(board, parents, attributes) {
  *   var ccmex2_cc1 = ccmex2_board.create('regularpolygon', [ccmex2_p1, ccmex2_p2, ccmex2_p3]);
  * </script><pre>
  */
-JXG.createRegularPolygon = function(board, parents, atts) {
-    var el, i, n, p = [], rot, c, len, pointsExist;
+JXG.createRegularPolygon = function(board, parents, attributes) {
+    var el, i, n, p = [], rot, c, len, pointsExist, attr;
 
-    atts = JXG.checkAttributes(atts,{withLabel:JXG.readOption(board.options,'polygon','withLabel'), layer:null});
     if (JXG.isNumber(parents[parents.length-1]) && parents.length!=3) {
         throw new Error("JSXGraph: A regular polygon needs two point and a number as input.");
     }
@@ -326,7 +325,8 @@ JXG.createRegularPolygon = function(board, parents, atts) {
         len--;
         pointsExist = false;
     }
-    // Sind alles Punkte? 
+    
+    // The first two parent elements have to be points? 
     for(i=0; i<len; i++) {
         parents[i] = JXG.getReference(board, parents[i]);
         if(!JXG.isPoint(parents[i]))
@@ -335,16 +335,18 @@ JXG.createRegularPolygon = function(board, parents, atts) {
 
     p[0] = parents[0];
     p[1] = parents[1];
+    attr = JXG.copyAttributes(attributes, board.options, 'polygon', 'points');
     for (i=2;i<n;i++) {
         rot = board.create('transform', [Math.PI*(2.0-(n-2)/n),p[i-1]], {type:'rotate'});
         if (pointsExist) {
             p[i] = parents[i];
             p[i].addTransform(parents[i-2],rot);
         } else {
-            p[i] = board.create('point',[p[i-2],rot],{name:'', withLabel:false,fixed:true});
+            p[i] = board.create('point',[p[i-2],rot], attr);
         }
     }
-    el = board.create('polygon',p,atts);
+    attr = JXG.copyAttributes(attributes, board.options, 'polygon');
+    el = board.create('polygon', p, attr);
 
     return el;
 };

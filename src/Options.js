@@ -548,6 +548,16 @@ JXG.Options = {
             withLabel: false,
             // Polygon layer + 1
             layer: 5
+        },
+        
+        /**
+         *  Points for regular polygons
+         */ 
+        points : {                    
+            withLabel: true,
+            strokeColor: '#ff0000',
+            fillColor: '#ff0000',
+            fixed: true
         }
     },
 
