@@ -125,14 +125,14 @@
 						//look for existing points near to first and last point of the draftcurve
 						var first = true;
 						var last = true;
-						var p0 = findPointNextTo(points[0],curvepoints,sensitive_area,board);
+						var p0 = findPointNextTo(points[0],curvepoints,2 * sensitive_area,board);
 						if (p0 != null){
 							curvepoints = removeElementFromArray(curvepoints, p0);
 							first = false;
 						}	
 						
 						
-						var p1 = findPointNextTo(points[points.length-1],curvepoints,sensitive_area,board);
+						var p1 = findPointNextTo(points[points.length-1],curvepoints,2 * sensitive_area,board);
 						if (p1 != null){
 							curvepoints = removeElementFromArray(curvepoints, p1);
 							last = false;
@@ -308,7 +308,7 @@
 					var coords = getMouseCoords(e);
 					var obj = findHittedObj(coords,board);
 					for(i = 0;i<obj.length;i++)
-						if(obj[i].type==JXG.OBJECT_TYPE_POINT)
+						if(obj[i].elementClass==JXG.OBJECT_CLASS_POINT)
 						{
 							mousedown = false;
 							return;
