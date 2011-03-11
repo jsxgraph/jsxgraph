@@ -316,7 +316,7 @@
 					if(obj.length == 0 && mousedown)
                 		board.create('point', points[0], {fillColor:'#000000', fillOpacity:0.8, strokeWidth:0, size:4 });
 					else if(obj.length == 1)
-						board.create('glider',[coords.scrCoords[1],coords.scrCoords[2],obj[0]]);
+						board.create('glider',[coords.usrCoords[1],coords.usrCoords[2],obj[0]]);
 					else if(obj.length == 2)
 					{
 						
