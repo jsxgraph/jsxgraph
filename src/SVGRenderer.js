@@ -378,7 +378,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
         if (el.visProp.firstArrow) {
             node2 = el.rendNodeTriangleStart;
-            if (node2 === null) {
+            if (!JXG.exists(node2)) {
                 node2 = this._createArrowHead(el, 'End');
                 this.defs.appendChild(node2);
                 el.rendNodeTriangleStart = node2;
@@ -386,13 +386,13 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             }
         } else {
             node2 = el.rendNodeTriangleStart;
-            if (node2 !== null) {
+            if (JXG.exists(node2)) {
                 this.remove(node2);
             }
         }
         if (el.visProp.lastArrow) {
             node2 = el.rendNodeTriangleEnd;
-            if (node2 === null) {
+            if (!JXG.exists(node2)) {
                 node2 = this._createArrowHead(el, 'Start');
                 this.defs.appendChild(node2);
                 el.rendNodeTriangleEnd = node2;
@@ -400,7 +400,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             }
         } else {
             node2 = el.rendNodeTriangleEnd;
-            if (node2 !== null) {
+            if (JXG.exists(node2)) {
                 this.remove(node2);
             }
         }
