@@ -154,12 +154,33 @@ function fitPoly(poly,reference,sensitive_area,board){
 }
 
 /*
+*	Function which finds obj ín board hitted by coords
+*
+* 	@array
+*/
+function findHittedObj(coords,board)
+{
+	var els = [];
+	for(var el in board.objects)
+		if(board.objects[el].hasPoint&&board.objects[el].visProp['visible']&&(board.objects[el].type ==JXG.OBJECT_TYPE_LINE||board.objects[el].type ==JXG.OBJECT_TYPE_CIRCLE))
+		{
+			if(board.objects[el].hasPoint(coords.scrCoords[1],coords.scrCoords[2]))
+			{
+					els.push(board.objects[el]);
+			}
+		}
+	return els;		
+}
+
+
+/*
  * Checks if el is included in an array of elements
  */
 function isElementIn(el,elements){
 	for (var i=0;i<elements.length;i++){
 		if (el == elements[i])
 			return true;
-		}
+    }
 	return false;
 }
+
