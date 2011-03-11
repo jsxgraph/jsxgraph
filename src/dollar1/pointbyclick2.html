@@ -120,6 +120,48 @@
 				
 				
 			},
+			drawBestFitLine = function(points, curvepoints){
+					if (curvepoints.length > 0){
+						//look for existing points near to first and last point of the draftcurve
+						var first = true;
+						var last = true;
+						var p0 = findPointNextTo(points[0],curvepoints,sensitive_area,board);
+						if (p0 != null){
+							curvepoints = removeElementFromArray(curvepoints, p0);
+							first = false;
+						}	
+						
+						
+						var p1 = findPointNextTo(points[points.length-1],curvepoints,sensitive_area,board);
+						if (p1 != null){
+							curvepoints = removeElementFromArray(curvepoints, p1);
+							last = false;
+						}
+						
+						if (p0 == null) {
+							if (curvepoints.length > 0){ 
+								p0 = curvepoints[0];
+								curvepoints = removeElementFromArray(curvepoints, p0);
+							} else {
+								p0 = points[0]; 
+							}
+						}
+						
+						if (p1 == null){
+							if (curvepoints.length > 0){ 
+								p1 = curvepoints[curvepoints.length-1];
+								curvepoints = removeElementFromArray(curvepoints, p0);
+							} else {
+								p1 = points[points.length-1]; 
+							}
+						}
+						
+						
+						board.create('line',[p0,p1],{strokecolor:'green', straightFirst:first, straightLast:last}); 
+					} else
+						board.create('line',[points[0],points[points.length-1]],{strokecolor:'green'});
+					
+			},
 			drawBestFitTriangle = function(points, curvepoints){
 				var bb = boundingBoxUsr(points);
 				var pointsOnBB = pointsOnBoundingBox(points, bb);
@@ -291,7 +333,7 @@
 				if(result.Name == 'circle')
 					drawBestFitCircle(points,false, curvepoints);
 				else if(result.Name =='line')
-					board.create('line',[points[0],points[points.length-1]],{strokecolor:'green'});
+					drawBestFitLine(points, curvepoints);
 				else if(result.Name == 'triangle')
 					drawBestFitTriangle(points, curvepoints);
 				else if(result.Name == 'square')
