@@ -483,7 +483,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             maxSize = 5000.0,
             pStr = '',
             i, scr,
-            isNoPlot = (el.curveType !== 'plot'),
+            isNoPlot = (el.visProp.curveType !== 'plot'),
             len;
 
         if (el.numberPoints <= 0) {

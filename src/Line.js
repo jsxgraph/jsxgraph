@@ -221,7 +221,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                 this.updateStdform();
             }
         }
-        if(this.traced) {
+        if(this.visProp.trace) {
             this.cloneToBackground(true);
         }
     },
@@ -1026,7 +1026,7 @@ JXG.createTangent = function(board, parents, attributes) {
     if (c.elementClass == JXG.OBJECT_CLASS_LINE) {
         tangent = board.create('line', [c.point1,c.point2], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE && !(c.type == JXG.OBJECT_TYPE_CONIC)) {
-        if (c.curveType!='plot') {
+        if (c.visProp.curveType!='plot') {
             g = c.X;
             f = c.Y;
             tangent = board.create('line', [

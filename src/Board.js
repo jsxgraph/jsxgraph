@@ -775,8 +775,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     /*|| (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_LINE)  // not yet
                      || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CIRCLE)
                      || (!this.geonextCompatibilityMode && pEl.elementClass == JXG.OBJECT_CLASS_CURVE)*/ )
-                    && (pEl.visProp['visible'])
-                    && (!pEl.fixed) && (!pEl.frozen)
+                    && (pEl.visProp.visible)
+                    && (!pEl.visProp.fixed) && (!pEl.visProp.frozen)
                     && (pEl.hasPoint(dx, dy))
                     ) {
                     // Points are preferred:
@@ -1115,7 +1115,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (ob in this.objects) {
             el = this.objects[ob];
-            if (!el.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
+            if (!el.visProp.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
                 el.elementClass==JXG.OBJECT_CLASS_CURVE ||
                 el.type==JXG.OBJECT_TYPE_AXIS ||
                 el.type==JXG.OBJECT_TYPE_TEXT)) {
@@ -1256,7 +1256,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var el, ob;
         for (ob in this.objects) {
             el = this.objects[ob];
-            if (!el.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
+            if (!el.visProp.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
                 el.elementClass==JXG.OBJECT_CLASS_CURVE ||
                 el.type==JXG.OBJECT_TYPE_AXIS ||
                 el.type==JXG.OBJECT_TYPE_TEXT)) {
@@ -1875,7 +1875,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var el;
 
         for (el in this.objects) {
-            if (this.objects[el].traced)
+            if (this.objects[el].visProp.trace)
                 this.objects[el].clearTrace();
         }
         this.numTraces = 0;

@@ -187,7 +187,27 @@ JXG.Options = {
          * @default {@link JXG.Options.elements#strokeWidth}
          */
         highlightStrokeWidth: '2px',
-        
+
+
+        /**
+         * If true the element is fixed and can not be dragged around. The element
+         * will be repositioned on zoom and moveOrigin events.
+         * @type Boolean
+         * @default false
+         * @name JXG.GeometryElement#fixed
+         */
+        fixed: false,
+
+        /**
+         * If true the element is fixed and can not be dragged around. The element
+         * will even stay at its position on zoom and moveOrigin events.
+         * Only free elements like points, texts, curves can be frozen.
+         * @type Boolean
+         * @default false
+         * @name JXG.GeometryElement#frozen
+         */
+        frozen: false,
+
 	    withLabel: false,
 
         /**
@@ -230,6 +250,18 @@ JXG.Options = {
          * @default false
          */
         shadow: false,
+
+        /**
+         * If true the element will be traced, i.e. on every movement the element will be copied
+         * to the background. Use {@link JXG.GeometryElement#clearTrace} to delete the trace elements.
+         * @see JXG.GeometryElement#clearTrace
+         * @see JXG.GeometryElement#traces
+         * @see JXG.GeometryElement#numTraces
+         * @type Boolean
+         * @default false
+         * @name JXG.GeometryElement#trace
+         */
+        trace: false,
 
         /*draft options */
         draft : {
@@ -449,9 +481,7 @@ JXG.Options = {
             drawLabels : false,
             drawZero : true,
             insertTicks : true,
-            //minTicksDistance : 50,
-            //maxTicksDistance : 300,
-            minorHeight : 4,          // if <0: full width and height 
+            minorHeight : 4,          // if <0: full width and height
             majorHeight : 10,        // if <0: full width and height
             minorTicks : 0,
             defaultDistance : 1,
@@ -470,6 +500,64 @@ JXG.Options = {
         }
     },
     
+    ticks : {
+        /**
+         * Draw labels yes/no
+         * @type Boolean
+         * @name JXG.Ticks#drawLabels
+         * @default false
+         */
+        drawLabels: false,
+        
+        /**
+         * Draw the zero tick, that lies at line.point1?
+         * @type Boolean
+         * @name JXG.Ticks#drawZero
+         * @default false
+         */
+        drawZero: false,
+
+        /**
+         * If the distance between two ticks is too big we could insert new ticks. If insertTicks
+         * is <tt>true</tt>, we'll do so, otherwise we leave the distance as is.
+         * This option is ignored if equidistant is false.
+         * @type Boolean
+         * @name JXG.Ticks#insertTicks
+         * @see JXG.Ticks#equidistant
+         * @see JXG.Ticks#maxTicksDistance
+         * @default false
+         */
+        insertTicks: false,
+        minTicksDistance: 50,
+        maxTicksDistance: 300,
+
+        /**
+         * Total height of a minor tick. If negative the full height of the board is taken.
+         * @type Number
+         * @name JXG.Ticks#minorHeight
+         */
+        minorHeight: 4,
+
+        /**
+         * Total height of a major tick. If negative the full height of the board is taken.
+         * @type Number
+         * @name JXG.Ticks#majorHeight
+         */
+        majorHeight: 10,
+
+        /**
+         * The number of minor ticks between two major ticks.
+         * @type Number
+         * @name JXG.Ticks#minorTicks
+         */
+        minorTicks: 4,
+        defaultDistance: 1,
+        opacity: 1,
+        strokeWidth: 1,
+        strokeColor: 'black',
+        highlightStrokeColor: '#888888'
+    },
+
     /*special circle options */
     circle : {
         fillColor : 'none',
@@ -586,6 +674,23 @@ JXG.Options = {
         strokeWidth : '1px',
         strokeColor : '#0000ff',
         fillColor: 'none',
+
+        /**
+         * The curveType is set in @see generateTerm and used in
+         * {@link JXG.Curve#updateCurve}
+         * Possible values are:
+         * 'none'
+         * 'plot': Data plot
+         * 'parameter': we can not distinguish function graphs and parameter curves
+         * 'functiongraph': function graph
+         * 'polar'
+         * 'implicit' (not yet)
+         *
+         * Only parameter and plot are set directly.
+         * polar is set with setProperties only.
+         * @name JXG.Curve#curveType
+         */
+        curveType: null,
         RDPsmoothing : false,       // Apply the Ramen-Douglas-Peuker algorithm
         numberPointsHigh : 1600,  // Number of points on curves after mouseUp
         numberPointsLow : 400,    // Number of points on curves after mousemove
@@ -757,6 +862,9 @@ JXG.Validator = (function () {
         validateInteger = function (v) {
             return (Math.abs(v - Math.round(v)) < JXG.Math.eps);
         },
+        validatePositiveInteger = function (v) {
+            return validateInteger(v) && v > 0;
+        },
         validateScreenCoords = function (v) {
             return v.length >= 2 && validateInteger(v[0]) && validateInteger(v[1]);
         },
@@ -790,12 +898,12 @@ JXG.Validator = (function () {
         labelOffsets: validateScreenCoords,
         lastArrow : false,
         majorHeight : validateInteger,
-        maxTicksDistance : validateInteger,
+        maxTicksDistance : validatePositiveInteger,
         minorHeight : validateInteger,
-        minorTicks : validateInteger,
-        minTicksDistance : validateInteger,
-        numberPointsHigh : validateInteger,
-        numberPointsLow : validateInteger,
+        minorTicks : validatePositiveInteger,
+        minTicksDistance : validatePositiveInteger,
+        numberPointsHigh : validatePositiveInteger,
+        numberPointsLow : validatePositiveInteger,
         opacity : JXG.isNumber,
         radius : JXG.isNumber,
         RDPsmoothing : false,
@@ -867,8 +975,8 @@ JXG.useStandardOptions = function(board) {
             for(t in p.ticks) {
                 t.majorTicks = o.line.ticks.majorTicks;
                 t.minTicksDistance = o.line.ticks.minTicksDistance;
-                t.minorHeight = o.line.ticks.minorHeight;
-                t.majorHeight = o.line.ticks.majorHeight;
+                t.visProp.minorHeight = o.line.ticks.visProp.minorHeight;
+                t.visProp.majorHeight = o.line.ticks.visProp.majorHeight;
             }
         }
         else if(p.elementClass == JXG.OBJECT_CLASS_CIRCLE) {

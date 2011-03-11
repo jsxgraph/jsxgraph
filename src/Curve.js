@@ -80,29 +80,6 @@ JXG.Curve = function (board, parents, attributes) {
     this.dataX = null;
     this.dataY = null;
 
-    /**
-     * This is just for the hasPoint() method.
-     * @type int
-     */
-    //this.r = this.board.options.precision.hasPoint;
-    
-    /**
-     * The curveType is set in @see generateTerm and used in 
-     * {@link updateCurve}
-     * Possible values are:
-     * 'none'
-     * 'plot': Data plot
-     * 'parameter': we can not distinguish function graphs and parameter curves
-     * 'functiongraph': function graph
-     * 'polar'
-     * 'implicit' (not yet)
-     *
-     * Only parameter and plot are set directly.
-     * polar is set with setProperties only.
-     **/
-    // this.curveType = 'none';
-    this.curveType = null;
-
     if (parents[0]!=null) {
         this.varname = parents[0];
     } else {
@@ -136,7 +113,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      * May be overwritten in @see generateTerm.
      */
     minX: function () {
-        if (this.curveType=='polar') {
+        if (this.visProp.curveType=='polar') {
             return 0.0;
         } else {
             var leftCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], this.board);
@@ -150,7 +127,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      */
     maxX: function () {
         var rightCoords;
-        if (this.curveType=='polar') {
+        if (this.visProp.curveType=='polar') {
             return 2.0*Math.PI;
         } else {
             rightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board);
@@ -179,7 +156,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
         x = checkPoint.usrCoords[1];
         y = checkPoint.usrCoords[2];
-        if (this.curveType=='parameter' || this.curveType=='polar' || this.curveType=='functiongraph') {
+        if (this.visProp.curveType=='parameter' || this.visProp.curveType=='polar' || this.visProp.curveType=='functiongraph') {
             // Brute fore search for a point on the curve close to the mouse pointer
             len = this.transformations.length;
             for (i=0,t=this.minX(); i<steps; i++) {
@@ -196,7 +173,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 if (dist<prec) { return true; }
                 t+=d;
             }
-        } else if (this.curveType == 'plot') {
+        } else if (this.visProp.curveType == 'plot') {
             //$('debug').innerHTML +='. ';
             len = this.numberPoints; // Rough search quality
             for (i=0;i<len-1;i++) {
@@ -257,7 +234,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         if (this.needsUpdate) {
             this.updateCurve();
         }
-        if(this.traced) {
+        if(this.visProp.trace) {
             this.cloneToBackground(true);
         }
         return this;
@@ -592,14 +569,14 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         if (JXG.isArray(xterm)) {
             this.dataX = xterm;
             this.X = function(i) { return this.dataX[i]; };
-            this.curveType = 'plot';
+            this.visProp.curveType = 'plot';
             this.numberPoints = this.dataX.length;
         } else {
             this.X = JXG.createFunction(xterm,this.board,varname);
             if (JXG.isString(xterm)) {
-                this.curveType = 'functiongraph';
+                this.visProp.curveType = 'functiongraph';
             } else if (JXG.isFunction(xterm) || JXG.isNumber(xterm)) {
-                this.curveType = 'parameter';
+                this.visProp.curveType = 'parameter';
             }
         }
 
@@ -623,7 +600,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             fy = JXG.createFunction(yterm[1],this.board,'');
             this.X = function(phi){return (xterm)(phi)*Math.cos(phi)+fx();};
             this.Y = function(phi){return (xterm)(phi)*Math.sin(phi)+fy();};
-            this.curveType = 'polar';
+            this.visProp.curveType = 'polar';
         }
 
         // Set the bounds
@@ -682,7 +659,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
         copy.points = this.points.slice(0);
         copy.numberPoints = this.numberPoints;
-        copy.curveType = this.curveType;
+        copy.visProp.curveType = this.visProp.curveType;
 
         copy.board = {};
         copy.board.unitX = this.board.unitX;

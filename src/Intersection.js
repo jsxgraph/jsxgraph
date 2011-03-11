@@ -124,7 +124,7 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         /* Create intersection point */
         this.p = new JXG.Point(this.board, coords, InterId1, InterName1, true);
         /* A point constructed by an intersection can't be moved, so it is fixed */
-        this.p.fixed = true;
+        this.p.visProp.fixed = true;
         this.addChild(this.p);
         this.real = true;
 
@@ -204,10 +204,10 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
               (Intersect1.type == JXG.OBJECT_TYPE_CIRCLE && Intersect2.type == JXG.OBJECT_TYPE_ARC) ||
               (Intersect2.type == JXG.OBJECT_TYPE_CIRCLE && Intersect1.type == JXG.OBJECT_TYPE_ARC) ) { // Circle <-> Circle, Arc <-> Arc, Arc <-> Circle,
         this.p1 = new JXG.Point(this.board, [0, 0], InterId1, InterName1, false);
-        this.p1.fixed = true;
+        this.p1.visProp.fixed = true;
         this.p1.label.content.visProp['visible'] = true;
         this.p2 = new JXG.Point(this.board, [0, 0], InterId2, InterName2, false);
-        this.p2.fixed = true;
+        this.p2.visProp.fixed = true;
         this.p2.label.content.visProp['visible'] = true;
         this.addChild(this.p1);
         this.addChild(this.p2);
@@ -297,10 +297,10 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
     }
     else { // Circle <-> Line, Arc <-> Line, Circle <-> Arrow, Arc <-> Arrow
         this.p1 = new JXG.Point(this.board, [0, 0], InterId1, InterName1, false);
-        this.p1.fixed = true;
+        this.p1.visProp.fixed = true;
         this.p1.label.content.visProp['visible'] = true;        
         this.p2 = new JXG.Point(this.board, [0, 0], InterId2, InterName2, false);
-        this.p2.fixed = true;
+        this.p2.visProp.fixed = true;
         this.p2.label.content.visProp['visible'] = true;
         this.addChild(this.p1);
         this.addChild(this.p2);        

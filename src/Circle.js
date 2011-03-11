@@ -306,7 +306,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
      * Uses the boards renderer to update the circle.
      */
     update: function () {
-        if(this.traced) {
+        if(this.visProp.trace) {
             this.cloneToBackground(true);
         }
 

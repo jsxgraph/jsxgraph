@@ -124,12 +124,6 @@ JXG.Point = function (board, coordinates, attributes) {
      */
     this.group = [];
 
-    /**
-     * False: Point can be moved, True: Point can't be moved with the mouse.
-     * @type Boolean
-     */
-    this.fixed = attributes.fixed;
-
     /* Register point at board. */
     this.id = this.board.setId(this, 'P');
     this.board.renderer.drawPoint(this);
@@ -178,7 +172,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             fromParent = false;
         }
       
-        if(this.traced) {
+        if(this.visProp.trace) {
             this.cloneToBackground(true);
         }
      /*
@@ -223,12 +217,12 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     // Snap the glider point of the slider into its appropiate position
                     // First, recalculate the new value of this.position
                     // Second, call update(fromParent==true) to make the positioning snappier.
-                    if (this.snapWidth!=null && Math.abs(this._smax-this._smin)>=JXG.Math.eps) {
+                    if (this.visProp.snapWidth!=null && Math.abs(this._smax-this._smin)>=JXG.Math.eps) {
                         if (this.position<0.0) this.position = 0.0;
                         if (this.position>1.0) this.position = 1.0;
                         
                         var v = this.position*(this._smax-this._smin)+this._smin;
-                            v = Math.round(v/this.snapWidth)*this.snapWidth;
+                            v = Math.round(v/this.visProp.snapWidth)*this.visProp.snapWidth;
                         this.position = (v-this._smin)/(this._smax-this._smin);
                         this.update(true);
                     }
@@ -524,7 +518,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     makeGlider: function (glideObject) {
         this.slideObject = JXG.getReference(this.board, glideObject);
         this.type = JXG.OBJECT_TYPE_GLIDER;
-        this.snapWidth = null;
+        this.visProp.snapWidth = null;
         
         this.slideObject.addChild(this);
 

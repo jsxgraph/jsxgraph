@@ -78,6 +78,7 @@ JXG.Polygon = function (board, vertices, /*borders,*/ attributes) {
     this.borders = [];
     if(this.withLines) {
         for(i = 0; i < this.vertices.length - 1; i++) {
+            attr_line.id = attr_line.ids && attr_line.ids[i];
             l = JXG.createSegment(board, [this.vertices[i], this.vertices[i+1]], attr_line);
             this.borders[i] = l;
             l.parentPolygon = this;

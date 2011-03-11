@@ -479,7 +479,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             symbm = ' m ',
             symbl = ' l ',
             nextSymb = symbm,
-            isNoPlot = (el.curveType !== 'plot'),
+            isNoPlot = (el.visProp.curveType !== 'plot'),
             len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
 
         if (el.numberPoints <= 0) {

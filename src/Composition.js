@@ -757,7 +757,7 @@ JXG.createNormal = function(board, parents, attributes) {
         */
         return board.create('line', [c.midpoint,p], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
-        if (c.curveType!='plot') {
+        if (c.visProp.curveType!='plot') {
             var g = c.X;
             var f = c.Y;
             return board.create('line', [

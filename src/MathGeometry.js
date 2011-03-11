@@ -1105,7 +1105,7 @@ JXG.Math.Geometry = {
         if (!JXG.exists(board))
             board = curve.board;
 
-        if (curve.curveType == 'parameter' || curve.curveType == 'polar') {
+        if (curve.visProp.curveType == 'parameter' || curve.visProp.curveType == 'polar') {
             // Function to minimize
             minfunc = function(t) {
                 var dx = x - curve.X(t),
@@ -1134,7 +1134,7 @@ JXG.Math.Geometry = {
                 t = curve.minX() + t - curve.maxX();
             }
             newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t),curve.Y(t)], board);
-        } else if (curve.curveType == 'plot') {
+        } else if (curve.visProp.curveType == 'plot') {
             mindist = infty;
             for (i = 0; i < curve.numberPoints; i++) {
                 x0 = x - curve.X(i);

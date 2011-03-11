@@ -91,39 +91,13 @@ JXG.Ticks = function (line, ticks, attributes) {
     if(JXG.isFunction(ticks)) {
         this.ticksFunction = ticks;
         throw new Error("Function arguments are no longer supported.");
-    } else if(JXG.isArray(ticks))
+    } else if(JXG.isArray(ticks)) {
         this.fixedTicks = ticks;
-    else {
+    } else {
         if(Math.abs(ticks) < JXG.Math.eps)
             ticks = this.board.options.line.ticks.defaultDistance;
         this.ticksFunction = function (i) { return ticks; };
         this.equidistant = true;
-    }
-
-    /**
-     * minorTicks is the number of minor ticks between two major ticks.
-     * @type int
-     */
-    this.minorTicks = attributes.minorTicks;
-    if(this.minorTicks < 0)
-        this.minorTicks = -this.minorTicks;
-
-    /**
-     * Total height of a major tick.
-     * @type int
-     */
-    this.majorHeight = attributes.majorHeight;
-    if(this.majorHeight < 0) {
-        this.majorHeight = this.board.canvasWidth+this.board.canvasHeight;
-    }
-
-    /**
-     * Total height of a minor tick.
-     * @type int
-     */
-    this.minorHeight = attributes.minorHeight;
-    if(this.minorHeight < 0) {
-        this.minorHeight = this.board.canvasWidth+this.board.canvasHeight;
     }
 
     /**
@@ -139,28 +113,6 @@ JXG.Ticks = function (line, ticks, attributes) {
      * @see #insertTicks
      */
     this.maxTicksDistance = attributes.maxTicksDistance;
-
-    /**
-     * If the distance between two ticks is too big we could insert new ticks. If insertTicks
-     * is <tt>true</tt>, we'll do so, otherwise we leave the distance as is.
-     * This option is ignored if equidistant is false.
-     * @type bool
-     * @see #equidistant
-     * @see #maxTicksDistance
-     */
-    this.insertTicks = attributes.insertTicks;
-
-    /**
-     * Draw the zero tick, that lies at line.point1?
-     * @type bool
-     */
-    this.drawZero = attributes.drawZero;
-
-    /**
-     * Draw labels yes/no
-     * @type bool
-     */
-    this.drawLabels = attributes.drawLabels;
 
     /**
      * Array where the labels are saved. There is an array element for every tick,
@@ -200,8 +152,16 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
          * It's all new in here but works pretty well.
          * Known bugs:
          *   * Special ticks behave oddly. See example ticked_lines.html and drag P2 around P1.
-         * 
          */
+
+        if(this.visProp.minorHeight < 0) {
+            this.visProp.minorHeight = this.board.canvasWidth+this.board.canvasHeight;
+        }
+
+        if(this.visProp.majorHeight < 0) {
+            this.visProp.majorHeight = this.board.canvasWidth+this.board.canvasHeight;
+        }
+
             // Point 1 of the line
         var p1 = this.line.point1,
             // Point 2 of the line
@@ -263,8 +223,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             // the following variables are used to define ticks height and slope
             eps = JXG.Math.eps,
             slope = -this.line.getSlope(),
-            distMaj = this.majorHeight/2,
-            distMin = this.minorHeight/2,
+            distMaj = this.visProp.majorHeight/2,
+            distMin = this.visProp.minorHeight/2,
             dxMaj = 0, dyMaj = 0,
             dxMin = 0, dyMin = 0;
             
@@ -358,7 +318,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                     this.ticks.push(tickCoords);
                     this.ticks[this.ticks.length-1].major = true;
                     
-                    this.labels.push(makeLabel(this.fixedTicks[i], tickCoords, this.board, this.drawLabels, this.id));
+                    this.labels.push(makeLabel(this.fixedTicks[i], tickCoords, this.board, this.visProp.drawLabels, this.id));
                 }
             }
             this.dxMaj = dxMaj;
@@ -432,21 +392,17 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         startTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX/ticksDelta, p1.coords.usrCoords[2] + begin*deltaY/ticksDelta], this.board);
         tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX/ticksDelta, p1.coords.usrCoords[2] + begin*deltaY/ticksDelta], this.board);
         
-        deltaX /= this.minorTicks+1;
-        deltaY /= this.minorTicks+1;
-        
-    //    JXG.debug('begin: ' + begin + '; e1: ' + e1.usrCoords[1] + ', ' + e1.usrCoords[2]);
-    //    JXG.debug('end: ' + end + '; e2: ' + e2.usrCoords[1] + ', ' + e2.usrCoords[2]);
-        
+        deltaX /= this.visProp.minorTicks+1;
+        deltaY /= this.visProp.minorTicks+1;
         
         // After all the precalculations from above here finally comes the tick-production:
         i = 0;
         tickPosition = begin;
         while(startTick.distance(JXG.COORDS_BY_USER, tickCoords) < Math.abs(end - begin) + JXG.Math.eps) {
-            if(i % (this.minorTicks+1) == 0) {
+            if(i % (this.visProp.minorTicks+1) == 0) {
                 tickCoords.major = true;
-                if(this.drawLabels) {
-                    this.labels.push(makeLabel(tickPosition, tickCoords, this.board, this.drawLabels, this.id));
+                if(this.visProp.drawLabels) {
+                    this.labels.push(makeLabel(tickPosition, tickCoords, this.board, this.visProp.drawLabels, this.id));
                 } else {
                     this.labels.push(null);
                 }
@@ -459,7 +415,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 
             this.ticks.push(tickCoords);
             tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [tickCoords.usrCoords[1] + deltaX, tickCoords.usrCoords[2] + deltaY], this.board);
-            if(!this.drawZero && tickCoords.distance(JXG.COORDS_BY_USER, p1.coords) <= JXG.Math.eps) {
+            if(!this.visProp.drawZero && tickCoords.distance(JXG.COORDS_BY_USER, p1.coords) <= JXG.Math.eps) {
                 // zero point is always a major tick. hence, we have to set i = 0;
                 i++;
                 tickPosition += ticksDelta;
@@ -536,7 +492,7 @@ JXG.createTicks = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'ticks');
 
     if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.isFunction(parents[1]) || JXG.isArray(parents[1]) || JXG.isNumber(parents[1]))) {
-        el = new JXG.Ticks(parents[0], parents[1], attributes);
+        el = new JXG.Ticks(parents[0], parents[1], attr);
     } else
         throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
 

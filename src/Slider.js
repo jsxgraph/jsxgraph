@@ -73,7 +73,6 @@ JXG.createSlider = function(board, parents, attributes) {
     withText = attr['withLabel'];
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point1');
-    console.log(attr);
     p1 = board.create('point', pos0,  attr);
 
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point2');

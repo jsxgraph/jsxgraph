@@ -124,37 +124,6 @@ JXG.GeometryElement = function () {
     this.notExistingParents = {};
 
     /**
-     * If true the element will be traced, i.e. on every movement the element will be copied
-     * to the background. Use {@link JXG.GeometryElement#clearTrace} to delete the trace elements.
-     * @see JXG.GeometryElement#clearTrace
-     * @see JXG.GeometryElement#traces
-     * @see JXG.GeometryElement#numTraces
-     * @type Boolean
-     * @default false
-     * @name JXG.GeometryElement#trace
-     */
-    this.traced = false;
-
-    /**
-     * If true the element is fixed and can not be dragged around. The element 
-     * will be repositioned on zoom and moveOrigin events.
-     * @type Boolean
-     * @default false
-     * @name JXG.GeometryElement#fixed
-     */
-    this.fixed = false;
-
-    /**
-     * If true the element is fixed and can not be dragged around. The element 
-     * will even stay at its position on zoom and moveOrigin events.
-     * Only free elements like points, texts, curves can be frozen.
-     * @type Boolean
-     * @default false
-     * @name JXG.GeometryElement#frozen
-     */
-    this.frozen = false;
-
-    /**
      * Keeps track of all objects drawn as part of the trace of the element.
      * @see JXG.GeometryElement#traced
      * @see JXG.GeometryElement#clearTrace
@@ -412,7 +381,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Can be used sometimes to commit changes to the object.
      */
     update: function () {
-        if (this.traced) {
+        if (this.visProp.trace) {
             this.cloneToBackground(true);
         }
         return this;
@@ -646,10 +615,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     break;
                 case 'trace':
                     if (pair[1] == 'false' || pair[1] == false) {
-                        this.traced = false;
+                        this.visProp.trace = false;
                     }
                     else if (pair[1] == 'true' || pair[1] == true) {
-                        this.traced = true;
+                        this.visProp.trace = true;
                     }
                     break;
                 case 'style':
@@ -669,10 +638,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     }
                     break;
                 case 'fixed':
-                    this.fixed = ((pair[1]=='false') || (pair[1]==false)) ? false : true;
+                    this.visProp.fixed = ((pair[1]=='false') || (pair[1]==false)) ? false : true;
                     break;
                 case 'frozen':
-                    this.frozen = ((pair[1]=='false') || (pair[1]==false)) ? false : true;
+                    this.visProp.frozen = ((pair[1]=='false') || (pair[1]==false)) ? false : true;
                     break;
                 case 'shadow':
                     if (pair[1] == 'false' || pair[1] == false) {
@@ -723,7 +692,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     else if (pair[1] == 'true' || pair[1] == true) {
                         this.visProp['straightFirst'] = true;
                     }
-                    this.setStraight(this.visProp['straightFirst'], this.visProp['straightLast']);
+                    //this.setStraight(this.visProp['straightFirst'], this.visProp['straightLast']);
                     break;
                 case 'straightlast':
                     if (pair[1] == 'false' || pair[1] == false) {
@@ -732,7 +701,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     else if (pair[1] == 'true' || pair[1] == true) {
                         this.visProp['straightLast'] = true;
                     }
-                    this.setStraight(this.visProp['straightFirst'], this.visProp['straightLast']);
+                    //this.setStraight(this.visProp['straightFirst'], this.visProp['straightLast']);
                     break;
                 case 'firstarrow':
                     if (pair[1] == 'false' || pair[1] == false) {
@@ -753,62 +722,62 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
                     break;
                 case 'curvetype':
-                    this.curveType = pair[1];
+                    this.visProp.curveType = pair[1];
                     break;
                 case 'fontsize':
                     this.visProp['fontSize'] = pair[1];
                     break;
                 case 'insertticks':
                     if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.insertTicks;
+                        old = this.visProp.insertTicks;
 
-                        this.insertTicks = !(pair[1] == 'false' || pair[1] == false);
-                        if (old != this.insertTicks) this.prepareUpdate().update().updateRenderer();
+                        this.visProp.insertTicks = !(pair[1] == 'false' || pair[1] == false);
+                        //if (old != this.visProp.insertTicks) this.prepareUpdate().update().updateRenderer();
                     }
                     break;
                 case 'drawlabels':
                     if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.drawLabels;
+                        old = this.visProp.drawLabels;
 
-                        this.drawLabels = !(pair[1] == 'false' || pair[1] == false);
-                        if (old != this.drawLabels) this.prepareUpdate().update().updateRenderer();
+                        this.visProp.drawLabels = !(pair[1] == 'false' || pair[1] == false);
+                        //if (old != this.visProp.drawLabels) this.prepareUpdate().update().updateRenderer();
                     }
                     break;
                 case 'drawzero':
                     if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.drawZero;
+                        old = this.visProp.drawZero;
 
-                        this.drawZero = !(pair[1] == 'false' || pair[1] == false);
-                        if (old != this.drawZero) this.prepareUpdate().update().updateRenderer();
+                        this.visProp.drawZero = !(pair[1] == 'false' || pair[1] == false);
+                        //if (old != this.visProp.drawZero) this.prepareUpdate().update().updateRenderer();
                     }
                     break;
                 case 'minorticks':
                     if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.minorTicks;
+                        old = this.visProp.minorTicks;
                         if ((pair[1] != null) && (pair[1] > 0))
-                            this.minorTicks = pair[1];
-                        if (old != this.minorTicks) this.prepareUpdate().update().updateRenderer();
+                            this.visProp.minorTicks = pair[1];
+                        //if (old != this.visProp.minorTicks) this.prepareUpdate().update().updateRenderer();
                     }
                     break;
                 case 'majortickheight':
                     if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.majorHeight;
+                        old = this.visProp.majorHeight;
                         if ((pair[1] != null) && (pair[1] > 0))
-                            this.majorHeight = pair[1];
-                        if (old != this.majorHeight) this.prepareUpdate().update().updateRenderer();
+                            this.visProp.majorHeight = pair[1];
+                        //if (old != this.visProp.majorHeight) this.prepareUpdate().update().updateRenderer();
                     }
                     break;
                 case 'minortickheight':
                     if (this.type == JXG.OBJECT_TYPE_TICKS) {
-                        old = this.minorHeight;
+                        old = this.visProp.minorHeight;
                         if ((pair[1] != null) && (pair[1] > 0))
-                            this.minorHeight = pair[1];
-                        if (old != this.minorHeight) this.prepareUpdate().update().updateRenderer();
+                            this.visProp.minorHeight = pair[1];
+                        //if (old != this.visProp.minorHeight) this.prepareUpdate().update().updateRenderer();
                     }
                     break;
                 case 'snapwidth':
                     if (this.type == JXG.OBJECT_TYPE_GLIDER) {
-                        this.snapWidth = pair[1];
+                        this.visProp.snapWidth = pair[1];
                     }
                     break;
                 case 'withlabel':

@@ -401,13 +401,13 @@ JXG.extend(JXG, /** @lends JXG */ {
         len = arguments.length;
         
         // Only the layer of the main element is set.
-        if (len<4 && this.exists(arguments[2]) && this.exists(options['layer'][arguments[2]])) {
+        if (len < 4 && this.exists(arguments[2]) && this.exists(options['layer'][arguments[2]])) {
             a['layer'] = options['layer'][arguments[2]];
         } 
 
         o = options;                                                // default options from specific elements
         isAvail = true;
-        for (i=2;i<len;i++) {
+        for (i = 2; i < len; i++) {
             if (JXG.exists(o[arguments[i]])) {
                 o = o[arguments[i]];
             } else {

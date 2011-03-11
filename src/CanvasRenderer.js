@@ -680,7 +680,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             nextSymb = symbm,
             maxSize = 5000.0,
             i, scr,
-            isNoPlot = (el.curveType !== 'plot'),
+            isNoPlot = (el.visProp.curveType !== 'plot'),
             len,
             context = this.context;
 

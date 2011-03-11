@@ -75,7 +75,7 @@ JXG.Group = function(board, id, name) {
 
     for (i=0; i<objArray.length; i++) {
         obj = JXG.getReference(this.board, objArray[i]);
-        if( (!obj.fixed) && ( (obj.type == JXG.OBJECT_TYPE_POINT) || (obj.type == JXG.OBJECT_TYPE_GLIDER) ) ) {
+        if( (!obj.visProp.fixed) && ( (obj.type == JXG.OBJECT_TYPE_POINT) || (obj.type == JXG.OBJECT_TYPE_GLIDER) ) ) {
             if (obj.group.length != 0) {
                 this.addGroup(obj.group[obj.group.length-1]);
             } else {

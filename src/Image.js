@@ -36,14 +36,13 @@
  * It inherits from @see GeometryElement.
  * @constructor
  */
-JXG.Image = function (board, url, coordinates, size, layer, id, name, el) {
+JXG.Image = function (board, url, coordinates, size, attributes) {
     //this.constructor();
     this.type = JXG.OBJECT_TYPE_IMAGE;
     this.elementClass = JXG.OBJECT_CLASS_OTHER;                
     this.transformations = [];
 
-    this.init(board, id, name);
-    //this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
+    this.init(board, attributes);
     this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);  // Still needed?
 
     this.X = JXG.createFunction(coordinates[0],this.board,'');
@@ -56,13 +55,9 @@ JXG.Image = function (board, url, coordinates, size, layer, id, name, el) {
     this.usrSize = [this.W(), this.H()];
     this.size = [this.usrSize[0]*board.stretchX,this.usrSize[1]*board.stretchY];
     this.url = url;
-    /**
-     * Set the display layer.
-     */
-    if (layer == null) layer = board.options.layer['image'];
-    this.visProp.layer = layer;
-    this.parent = el;
-    this.visProp['visible'] = true;
+
+    this.visProp.layer = attributes.layer;
+    this.parent = attributes.anchor;
 
     this.id = this.board.setId(this, 'Im');
 
@@ -153,14 +148,8 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
 JXG.createImage = function(board, parents, attributes) {
     var url, attr;
     attr = JXG.copyAttributes(attributes, board.options, 'image');
-    /*
-    if (atts==null) {
-        atts = {};
-    } else if (atts['imageString']!=null) {
-        url = atts['imageString'];
-    }
-    */
-    return new JXG.Image(board, parents[0], parents[1], parents[2], attr['layer'], false, false);
+
+    return new JXG.Image(board, parents[0], parents[1], parents[2], attr);
 };
 
 JXG.JSXGraph.registerElement('image', JXG.createImage);
