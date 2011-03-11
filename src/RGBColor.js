@@ -490,3 +490,21 @@ JXG.LMS2rgb = function(l, m, s) {
 
     return ret;
 };
+
+/**
+ * Splits an RGBA color value like #112233AA into it's RGB and opacity parts.
+ * @param {String} rgba A RGBA color value
+ * @returns {Array} An array containing the rgb color value in the first and the opacity in the second field.
+ */
+JXG.rgba2rgbo = function (rgba) {
+    var opacity;
+
+    if (rgba.length == 9 && rgba.charAt(0) == '#') {
+        opacity = parseInt(rgba.substr(7, 2).toUpperCase(), 16) / 255;
+        rgba = rgba.substr(0, 7);
+    } else {
+        opacity = 1;
+    }
+
+    return [rgba, opacity];
+};
