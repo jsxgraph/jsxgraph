@@ -382,7 +382,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
     setLabelRelativeCoords: function(relCoords) {
-        if (typeof this.label.content!='undefined') { 
+        if (JXG.exists(this.label.content)) { 
             this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [relCoords[0],-relCoords[1]],this.board);
         }
     },
@@ -908,7 +908,7 @@ JXG.createArrow = function(board, parents, attributes) {
     var el;
 
     el = board.create('line', parents, attributes).setStraight(false, false);
-    //el.setArrow(false, true);
+    el.setArrow(false, true);
     el.type = JXG.OBJECT_TYPE_VECTOR;
     return el;
 };
