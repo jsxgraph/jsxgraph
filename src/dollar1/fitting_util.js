@@ -90,7 +90,7 @@ function pointsOnCurve(curve, sensitive_area, board){
 	hasPoint = board.options.precision.hasPoint;
 	board.options.precision.hasPoint=sensitive_area*3;
 	for (var el in board.objects) {
-		if (board.objects[el].visProp['visible'] && board.objects[el].type==JXG.OBJECT_TYPE_POINT){
+		if (board.objects[el].visProp['visible'] && (board.objects[el].type==JXG.OBJECT_TYPE_POINT)){
 			var coords = new JXG.Coords(JXG.COORDS_BY_USER,[board.objects[el].X(),board.objects[el].Y()],board);
 			var hp = curve.hasPoint(coords.scrCoords[1],coords.scrCoords[2]);
 			if (curve.hasPoint(coords.scrCoords[1],coords.scrCoords[2]))

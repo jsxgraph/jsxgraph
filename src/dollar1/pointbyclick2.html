@@ -307,6 +307,12 @@
 					
 					var coords = getMouseCoords(e);
 					var obj = findHittedObj(coords,board);
+					for(i = 0;i<obj.length;i++)
+						if(obj[i].type==JXG.OBJECT_TYPE_POINT)
+						{
+							mousedown = false;
+							return;
+						}
 					if(obj.length == 0 && mousedown)
                 		board.create('point', points[0], {fillColor:'#000000', fillOpacity:0.8, strokeWidth:0, size:4 });
 					else if(obj.length == 1)
