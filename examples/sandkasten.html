@@ -38,11 +38,14 @@
     pol = brd.create('polygon', [p1, p2, p3, p4], {
         lines: {
             ids: ['borderid1', 'borderid2', 'borderid3', 'borderid4'],
-            strokeWidth: 1
+            strokeWidth: 3
         }
     });
 
     sli = brd.create('slider', [[1, 1], [3, 1], [0, 1, 3]], {
+        glider: {
+            fillColor: 'green'
+        },
         point1: {
             visible: true
         }
@@ -50,22 +53,6 @@
 
     ax = brd.create('ticks', [li, 2]);
 
-//    ax.setProperty({
-//        drawLabels: true,
-//        majorTickHeight: 20,
-//        drawZero: true,
-//        minorTicks: 2,
-//        minorTickHeight: 10
-//    });
-/*
-    JXG.addEvent(document.getElementById('jxgbox'), 'click', function () {
-            ax.setProperty({
-                drawLabels: true
-            });
-        },
-        this
-    );
-*/
     p1.setProperty({
         color: '#00ff00',
         opacity: 0.5,
@@ -83,7 +70,7 @@
         firstArrow: true
     });
 
-/*
+
     oldie = 2;
 
     a = brd.create('polygon', [p1, p2, p3]);
@@ -110,7 +97,7 @@
     };
 
     brd.addHook(h);
-*/
+
     //brd.update();
 
     /* ]]> */

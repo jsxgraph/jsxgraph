@@ -558,24 +558,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     this.visProp['gradientSecondOpacity'] = value;
                     this.board.renderer.updateGradient(this);
                     break;
-                case 'firstarrow':
-                    if (value == 'false' || value == false) {
-                        this.visProp['firstArrow'] = false;
-                    }
-                    else if (value == 'true' || value == true) {
-                        this.visProp['firstArrow'] = true;
-                    }
-                    this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
-                    break;
-                case 'lastarrow':
-                    if (value == 'false' || value == false) {
-                        this.visProp['lastArrow'] = false;
-                    }
-                    else if (value == 'true' || value == true) {
-                        this.visProp['lastArrow'] = true;
-                    }
-                    this.setArrow(this.visProp['firstArrow'], this.visProp['lastArrow']);
-                    break;
                 case 'withlabel':
                     if (!value) {
                         if (this.label!=null && this.hasLabel) {
@@ -714,7 +696,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));
         this.label = {};
 
-        if (this.visProp.withLabel === true) {
+        if (this.visProp.withLabel) {
             this.label.relativeCoords = coords;
 
             this.label.content = JXG.createText(this.board, [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], {
@@ -738,7 +720,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Adds a label to the element.
      */
     addLabelToElement: function () {
-        this.createLabel(true);
+        this.createLabel();
         this.label.content.id = this.id+"Label";
         this.board.setId(this.label.content, 'T');
 
@@ -913,14 +895,15 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
   * since otherwise there would be problems in cloneToBackground
   */
 JXG.clearVisPropOld = function (el) {
-    el.visPropOld = {};
-    el.visPropOld['strokeColor']= '';
-    el.visPropOld['strokeOpacity']= '';
-    el.visPropOld['strokeWidth']= '';
-    el.visPropOld['fillColor']= '';
-    el.visPropOld['fillOpacity']= '';
-    el.visPropOld['shadow']= false;
-    el.visPropOld['firstArrow'] = false;
-    el.visPropOld['lastArrow'] = false;
+    el.visPropOld = {
+        strokeColor: '',
+        strokeOpacity: '',
+        strokeWidth: '',
+        fillColor: '',
+        fillOpacity: '',
+        shadow: false,
+        firstArrow: false,
+        lastArrow: false
+    };
 };
 

@@ -372,12 +372,14 @@ JXG.Options = {
         point1 : {                  // Default values for point1 if created by line
             visible: false, 
             withLabel: false, 
-            fixed:true
+            fixed:true,
+            name: ''
         },
         point2 : {                  // Default values for point2 if created by line
             visible: false, 
             withLabel: false, 
-            fixed: true
+            fixed: true,
+            name: ''
         },
         ticks : {
             drawLabels : true,
@@ -424,16 +426,10 @@ JXG.Options = {
             opacity : 0.25
         },
         point1 : {                  // Default values for point1 if created by line
-            needsRegularUpdate : false,
-            visible: false, 
-            withLabel: false, 
-            fixed: true
+            needsRegularUpdate : false
         },
         point2 : {                  // Default values for point2 if created by line
-            needsRegularUpdate : false,
-            visible: false, 
-            withLabel: false, 
-            fixed: true
+            needsRegularUpdate : false
         }
     },
 
@@ -449,14 +445,16 @@ JXG.Options = {
             showInfobox: false,
             withLabel: false,
             visible: false,
-            fixed: true
+            fixed: true,
+            name: ''
         },
         point2: {
             needsRegularUpdate : false,
             showInfobox: false,
             withLabel: false,
             visible: false,
-            fixed: true
+            fixed: true,
+            name: ''
         },
         glider: {
             showInfobox: false,
@@ -467,7 +465,8 @@ JXG.Options = {
             highlightStrokeColor : '#888888',
             fillColor : '#ffffff',
             highlightFillColor : 'none',
-            size: 6
+            size: 6,
+            name: ''
         },
         segment1: {
             needsRegularUpdate : false,
@@ -567,7 +566,8 @@ JXG.Options = {
         center: {
             visible: false,
             withLabel: false,
-            fixed: true
+            fixed: true,
+            name: ''
         }
     },
 
@@ -581,7 +581,8 @@ JXG.Options = {
             // points
             fixed: true,
             visible: false,
-            withLabel: false
+            withLabel: false,
+            name: ''
         }
     },
 
@@ -597,7 +598,8 @@ JXG.Options = {
         highlightFillOpacity : 0.3,
         point: {
             withLabel: false,
-            visible: false
+            visible: false,
+            name: ''
         }
     },
 
@@ -613,7 +615,8 @@ JXG.Options = {
         center: {
             visible: false,
             withLabel: false,
-            fixed: true
+            fixed: true,
+            name: ''
         }
     },
 
@@ -659,7 +662,7 @@ JXG.Options = {
 
     /* special text options */
     text : {
-        fontSize : 9,
+        fontSize : 12,
         digits: 2,
         isLabel: false,
         strokeColor : '#000000',
@@ -704,7 +707,8 @@ JXG.Options = {
         point : {               // Perpendicular point
             visible: false,
             fixed: true,
-            withLabel: false
+            withLabel: false,
+            name: ''
         }
     },
 
@@ -713,7 +717,8 @@ JXG.Options = {
         point : {               // Parallel point
             visible: false,
             fixed: true,
-            withLabel: false
+            withLabel: false,
+            name: ''
         }
     },
 
@@ -723,7 +728,8 @@ JXG.Options = {
         point : {               // Bisector point
             visible: false,
             fixed: true,
-            withLabel: false
+            withLabel: false,
+            name: ''
         }
     },
 
@@ -746,7 +752,8 @@ JXG.Options = {
         point : {               // center point
             visible: false,
             fixed: true,
-            withLabel: false
+            withLabel: false,
+            name: ''
         }
     },
 
@@ -759,7 +766,8 @@ JXG.Options = {
         point : {               // center point
             visible: false,
             fixed: true,
-            withLabel: false
+            withLabel: false,
+            name: ''
         }
     },
 
@@ -772,7 +780,8 @@ JXG.Options = {
         point: {
             visible: false,
             fixed: true,
-            withLabel: false
+            withLabel: false,
+            name: ''
         }
     },
     
@@ -787,7 +796,8 @@ JXG.Options = {
         startproject: {    // Start point
             visible: false,
             fixed: true,
-            withLabel: false
+            withLabel: false,
+            name: ''
         },
         end: {      // End point
             visible: true
@@ -795,7 +805,8 @@ JXG.Options = {
         endproject: {      // End point
             visible: false,
             fixed: true,
-            withLabel: false
+            withLabel: false,
+            name: ''
         },
         text: {
             fontSize: 20
