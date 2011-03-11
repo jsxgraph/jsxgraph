@@ -144,10 +144,22 @@ function fitPoly(poly,reference,sensitive_area,board){
 		if (min<sensitive_area*sensitive_area && min > 0){
 			var remove = poly.vertices[i];
 			poly.vertices[i]=replace;
-			board.removeObject(remove);
+			if (!isElementIn(remove, reference))
+				board.removeObject(remove);
 			remove = poly;
 			poly = board.create('polygon',poly.vertices);
 			board.removeObject(remove);
 		}
 	}
+}
+
+/*
+ * Checks if el is included in an array of elements
+ */
+function isElementIn(el,elements){
+	for (var i=0;i<elements.length;i++){
+		if (el == elements[i])
+			return true;
+	}
+	return false;
 }
