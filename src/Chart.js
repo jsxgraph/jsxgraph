@@ -628,7 +628,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
      * is called.  Since a chart is only an abstract element,
      * containing other elements, this function is empty.
      */
-    updateRenderer: function () {},
+    updateRenderer: function () { return this; },
 
     /**
      * Update of the defining points

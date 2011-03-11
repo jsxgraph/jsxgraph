@@ -127,16 +127,17 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             }
         }
 
-        ticks = this.getElementById(axis.id);
-        if (!JXG.exists(ticks)) {
+        //ticks = this.getElementById(axis.id);
+        if (!JXG.exists(axis)) {
             ticks = this.createPrim('path', axis.id);
             this.appendChildPrim(ticks, axis.visProp.layer);
             this.appendNodesToElement(axis, 'path');
         }
-        this._setAttr(ticks, 'stroked', 'true');
-        this._setAttr(ticks, 'strokecolor', axis.visProp.strokeColor, 1);
-        this._setAttr(ticks, 'strokeweight', axis.visProp.strokeWidth);
-        this.updatePathPrim(ticks, tickArr, axis.board);
+        this._setAttr(axis.rendNode, 'stroked', 'true');
+        this._setAttr(axis.rendNode, 'strokecolor', axis.visProp.strokeColor, 1);
+        this._setAttr(axis.rendNode, 'strokeweight', axis.visProp.strokeWidth);
+        this._setAttr(axis.rendNodeStroke, 'opacity', (axis.visProp.strokeOpacity * 100) + '%');
+        this.updatePathPrim(axis.rendNode, tickArr, axis.board);
     },
 
     /* **************************
@@ -682,7 +683,6 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
             if (JXG.exists(o)) {
                 this._setAttr(nodeStroke, 'opacity', (o * 100) + '%');
-
             }
         }
         el.visPropOld.strokeColor = c;
