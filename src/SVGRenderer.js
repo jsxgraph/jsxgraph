@@ -104,6 +104,7 @@ JXG.SVGRenderer = function (container) {
     this.filter.setAttributeNS(null, 'width', '300%');
     this.filter.setAttributeNS(null, 'height', '300%');
     this.filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
+    
     this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feOffset');
     this.feOffset.setAttributeNS(null, 'result', 'offOut');
     this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
@@ -167,7 +168,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         var id = element.id + 'Triangle',
             node2, node3;
 
-        if (idAppendix !== null) {
+        if (JXG.exists(idAppendix)) {
             id += idAppendix;
         }
         node2 = this.createPrim('marker', id);
@@ -241,7 +242,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         }
 
         node = this.getElementById(axis.id);
-        if (node === null) {
+        if (!JXG.exists(node)) {
             node = this.createPrim('path', axis.id);
             this.appendChildPrim(node, axis.visProp.layer);
             this.appendNodesToElement(axis, 'path');
@@ -336,7 +337,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
     // already documented in JXG.AbstractRenderer
     appendChildPrim: function (node, level) {
-        if (typeof level === 'undefined') { // trace nodes have level not set
+        if (!JXG.exists(level)) { // trace nodes have level not set
             level = 0;
         } else if (level >= JXG.Options.layer.numlayers) {
             level = JXG.Options.layer.numlayers - 1;
@@ -664,7 +665,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             node3 = el.gradNode2,
             col, op;
 
-        if (node2 === null || node3 === 0) {
+        if (!JXG.exists(node2) || !JXG.exists(node3)) {
             return;
         }
 
@@ -700,7 +701,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             node.setAttributeNS(null, 'fill-opacity', o);
         }
 
-        if (el.visProp.gradient !== null) {
+        if (JXG.exists(el.visProp.gradient)) {
             this.updateGradient(el);
         }
         el.visPropOld.fillColor = c;
@@ -758,7 +759,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
         node = el.rendNode;
         this.setPropertyPrim(node, 'stroked', 'true');
-        if (w !== null) {
+        if (JXG.exists(w)) {
             this.setPropertyPrim(node, 'stroke-width', w);
         }
         el.visPropOld.strokeWidth = w;
@@ -770,7 +771,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             return;
         }
 
-        if (el.rendNode !== null) {
+        if (JXG.exists(el.rendNode)) {
             if (el.visProp.shadow) {
                 el.rendNode.setAttributeNS(null, 'filter', 'url(#' + this.container.id + '_' + 'f1)');
             } else {

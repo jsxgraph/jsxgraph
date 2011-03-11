@@ -128,7 +128,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         }
 
         ticks = this.getElementById(axis.id);
-        if (ticks === null) {
+        if (!JXG.exists(ticks)) {
             ticks = this.createPrim('path', axis.id);
             this.appendChildPrim(ticks, axis.visProp.layer);
             this.appendNodesToElement(axis, 'path');
@@ -353,7 +353,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             this._setAttr(nodeStroke, 'startarrowlength', 'long');
         } else {
             nodeStroke = el.rendNodeStroke;
-            if (nodeStroke !== null) {
+            if (JXG.exists(nodeStroke)) {
                 this._setAttr(nodeStroke, 'startarrow', 'none');
             }
         }
@@ -365,7 +365,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             this._setAttr(nodeStroke, 'endarrowlength', 'long');
         } else {
             nodeStroke = el.rendNodeStroke;
-            if (nodeStroke !== null) {
+            if (JXG.exists(nodeStroke)) {
                 this._setAttr(nodeStroke, 'endarrow', 'none');
             }
         }
@@ -385,7 +385,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
     updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) {
         var s, r = this.resolution;
 
-        s = ['m ', r * p1x, ', ', r * p1y, ' l ', r * p2x, ', ', r * p2y];
+        s = ['m ', parseInt(r * p1x), ', ', parseInt(r * p1y), ' l ', parseInt(r * p2x), ', ', parseInt(r * p2y)];
         this.updatePathPrim(node, s, board);
     },
 
@@ -397,7 +397,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         node.style.width = x;
         node.style.height = y;
 
-        this._setAttr(node, 'coordsize', [this.resolution * x, this.resolution * y].join(','));
+        this._setAttr(node, 'coordsize', [parseInt(this.resolution * x), parseInt(this.resolution * y)].join(','));
         this._setAttr(node, 'path', pointString.join(""));
     },
 
@@ -527,11 +527,11 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         this._setAttr(node, 'stroked', 'false');
 
         scr = el.vertices[0].coords.scrCoords;
-        pStr.push(["m ", r * scr[1], ",", r * scr[2], " l "].join(''));
+        pStr.push(["m ", parseInt(r * scr[1]), ",", parseInt(r * scr[2]), " l "].join(''));
 
         for (i = 1; i < len - 1; i++) {
             scr = el.vertices[i].coords.scrCoords;
-            pStr.push(r * scr[1] + "," + r * scr[2]);
+            pStr.push(parseInt(r * scr[1]) + "," + parseInt(r * scr[2]));
             if (i < len - 2) {
                 pStr.push(", ");
             }
@@ -698,7 +698,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
         node = el.rendNode;
         this.setPropertyPrim(node, 'stroked', 'true');
-        if (w !== null) {
+        if (JXG.exists(w)) {
             this.setPropertyPrim(node, 'stroke-width', w);
         }
         el.visPropOld.strokeWidth = w;

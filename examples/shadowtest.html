@@ -23,14 +23,14 @@
         p4 = board.createElement('point', [2, 2], {style:5,name:"D",fillColor:'blue', shadow:true});
         p5 = board.createElement('point', [5, 4], {style:5,name:"E",fillColor:'blue', shadow:true});        
         
-        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'green',withLabel:true,shadow:true});
-        l4 = board.createElement('line', [p1, p3], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'blue',withLabel:true,shadow:true});        
+        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'green',withLabel:true, shadow:true});
+        l4 = board.createElement('line', [p1, p3], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'blue',withLabel:true, shadow:true});        
 
         
-        var c1 = board.createElement('circumcircle',['A','B','C'],{name:['P','k_a']});
+        var c1 = board.createElement('circumcircle',['A','B','C'],{name:'k_a', withLabel: false, shadow:true});
         var c2 = board.createElement('circle',['C','D'], {shadow:true});
-        var c3 = board.createElement('circle',['E','D']);
-        c1[0].setProperty('visible:false');
+        var c3 = board.createElement('circle',['E','D'], {shadow:true});
+        //c1[0].setProperty('visible:false');
         
         
   /* ]]> */

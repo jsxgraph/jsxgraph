@@ -364,8 +364,8 @@ JXG.Options = {
         lastArrow : false,
         straightFirst : true,
         straightLast : true,
-        fillColor : '#000000',
-        highlightFillColor : 'none',
+        fillColor : 'none',               // Important for VML on IE
+        highlightFillColor : 'none',  // Important for VML on IE
         strokeColor : '#0000ff',
         highlightStrokeColor : '#888888',
         withTicks: false,
@@ -739,7 +739,10 @@ JXG.Options = {
 
     /* special options for circumcircle of 3 points */
     circumcircle : {
-        strokeColor: '#000000', // 
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF',
         point : {               // center point
             visible: false,
             fixed: true,
@@ -749,7 +752,10 @@ JXG.Options = {
 
     /* special options for incircle of 3 points */
     incircle : {
-        strokeColor: '#000000', // 
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF',
         point : {               // center point
             visible: false,
             fixed: true,
@@ -759,6 +765,10 @@ JXG.Options = {
 
     circumcirclesector: {
         useDirection: true,
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF',
         point: {
             visible: false,
             fixed: true,
