@@ -40,10 +40,18 @@ this.changeOriginIds = function(board,id) {
  */
 this.colorProperties = function(gxtEl, Data) {
     //gxtEl.strokewidth = Data.getElementsByTagName('strokewidth')[0].firstChild.data;
-    gxtEl.colorStroke = Data.getElementsByTagName('color')[0].getElementsByTagName('stroke')[0].firstChild.data;
+    // colorStroke = strokeColor etc. is here for downwards compatibility:
+    // once upon a time we used to create elements in here using the "new JXG.Element" constructor mechanism
+    // now i want to use the board.create method and there we have an attribute object which uses just slightly different
+    // names for its properties.
+    gxtEl.strokeColor = Data.getElementsByTagName('color')[0].getElementsByTagName('stroke')[0].firstChild.data;
+    gxtEl.colorStroke = gxtEl.strokeColor;
     gxtEl.highlightStrokeColor = Data.getElementsByTagName('color')[0].getElementsByTagName('lighting')[0].firstChild.data;
-    gxtEl.colorFill = Data.getElementsByTagName('color')[0].getElementsByTagName('fill')[0].firstChild.data;
-    gxtEl.colorLabel = Data.getElementsByTagName('color')[0].getElementsByTagName('label')[0].firstChild.data;
+    gxtEl.fillColor = Data.getElementsByTagName('color')[0].getElementsByTagName('fill')[0].firstChild.data;
+    gxtEl.colorFill = gxtEl.fillColor;
+    gxtEl.highlightFillColor = gxtEl.fillColor;
+    gxtEl.labelColor = Data.getElementsByTagName('color')[0].getElementsByTagName('label')[0].firstChild.data;
+    gxtEl.colorLabel = gxtEl.labelColor;
     gxtEl.colorDraft = Data.getElementsByTagName('color')[0].getElementsByTagName('draft')[0].firstChild.data;
     return gxtEl;
 };
@@ -66,11 +74,6 @@ this.firstLevelProperties = function(gxtEl, Data) {
  * @param {Object} gxtEl element of which attributes are to set
  */
 this.boardProperties = function(gxtEl, Data) {
-    //gxtEl.active = Data.getElementsByTagName('active')[0].firstChild.data;
-    //gxtEl.area = Data.getElementsByTagName('area')[0].firstChild.data;
-    //gxtEl.dash = Data.getElementsByTagName('dash')[0].firstChild.data;
-    //gxtEl.draft = Data.getElementsByTagName('draft')[0].firstChild.data;
-    //gxtEl.showinfo = Data.getElementsByTagName('showinfo')[0].firstChild.data;
     return gxtEl;
 };
 
@@ -94,8 +97,54 @@ this.defProperties = function(gxtEl, Data) {
 };
 
 this.visualProperties = function(gxtEl, Data) {
-    gxtEl.visible = Data.getElementsByTagName('visible')[0].firstChild.data;
-    gxtEl.trace = Data.getElementsByTagName('trace')[0].firstChild.data;
+    gxtEl.visible = JXG.str2Bool(Data.getElementsByTagName('visible')[0].firstChild.data);
+    gxtEl.trace = JXG.str2Bool(Data.getElementsByTagName('trace')[0].firstChild.data);
+    return gxtEl;
+};
+
+this.finalizeProperties = function(gxtEl, Data) {
+    var facemap = [
+        'cross',  // 0
+        'cross',
+        'cross',
+        'circle', // 3
+        'circle',
+        'circle',
+        'circle',
+        'square', // 7
+        'square',
+        'square',
+        'plus',   // 10
+        'plus',
+        'plus'
+    ],
+    sizemap = [
+            2,  // 0
+            3,
+            4,
+            1,  // 3
+            2,
+            3,
+            4,
+            2,  // 7
+            3,
+            4,
+            2,  // 10
+            3,
+            4
+    ];
+
+    gxtEl.strokeWidth = gxtEl.strokewidth;
+    gxtEl.face = facemap[parseInt(gxtEl.style, 10)];
+    gxtEl.size = sizemap[parseInt(gxtEl.style, 10)];
+
+    gxtEl.straightFirst = JXG.str2Bool(gxtEl.straightFirst);
+    gxtEl.straightLast = JXG.str2Bool(gxtEl.straightLast);
+
+    gxtEl.visible = JXG.str2Bool(gxtEl.visible);
+    gxtEl.draft = JXG.str2Bool(gxtEl.draft);
+    gxtEl.trace = JXG.str2Bool(gxtEl.trace);
+
     return gxtEl;
 };
 
@@ -177,7 +226,7 @@ this.parseImage = function(board,fileNode,level,x,y,w,h,el) {
                 // Now, we can read the original dimensions of the image.
                 var wOrg = this.width,
                     hOrg = this.height,
-                    xf, y, wf, hf, im, tRot;
+                    xf, yf, wf, hf, im, tRot;
                 if (el.elementClass == JXG.OBJECT_CLASS_LINE) {
                     // A line containing an image, runs through the horizontal middle 
                     // of the image.
@@ -197,11 +246,16 @@ this.parseImage = function(board,fileNode,level,x,y,w,h,el) {
                     xf = function(){ return el.X()-wf()*0.5; };
                     yf = function(){ return el.Y()-hf()*0.5; };
                     
-                    im = new JXG.Image(board, picStr, [xf,yf], [wf,hf], level, id, false, el);
-                    //el.setProperty({size:function(){ return 0.5*Math.min(wf(),hf()); }});
-                    el.setProperty('size:'+(0.5*Math.min(wOrg,hOrg)), 'opacity:0.0', 
-                                   'highlightFillOpacity:0.0', 'highlightStrokeOpacity:0.0', 
-                                   'withLabel:false');
+                    im = board.create('image', [picStr, [xf,yf], [wf,hf]], {
+                        size: (0.5*Math.min(wOrg, hOrg)),
+                        opacity: 0,
+                        highlightFillOpacity: 0,
+                        highlightStrokeOpacity: 0,
+                        withLabel: false,
+                        layer: level,
+                        id: id,
+                        anchor: el
+                    });
                     board.renderer.hide(el.label.content);
                 } else if (el.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
                     // A circle containing an image
@@ -209,9 +263,17 @@ this.parseImage = function(board,fileNode,level,x,y,w,h,el) {
                     hf = function(){ return wf()*hOrg/wOrg; };
                     xf = function(){ return el.midpoint.X()-wf()*0.5; };
                     yf = function(){ return el.midpoint.Y()-hf()*0.5; };
-                    im = new JXG.Image(board, picStr, [xf,yf], [wf,hf], level, id, false, el);
+                    im = board.create('image', [picStr, [xf,yf], [wf,hf]], {
+                        layer: level,
+                        id: id,
+                        anchor: el
+                    });
                 } else {
-                    im = new JXG.Image(board, picStr, [x,y], [w,h], level, id, false, el);
+                    im = board.create('image', [picStr, [x, y], [w, h]], {
+                        layer: level,
+                        id: id,
+                        anchor: el
+                    });
                     el.image = im;
                 }
             };
@@ -285,21 +347,19 @@ this.readGeonext = function(tree,board) {
     this.readConditions(boardData.getElementsByTagName('conditions')[0],boardTmp);
     board.origin = {};
     board.origin.usrCoords = [1, 0, 0];
-    board.origin.scrCoords = [1, 1*boardTmp.originX, 1*boardTmp.originY];
-    board.zoomX = 1*boardTmp.zoomX;
-    board.zoomY = 1*boardTmp.zoomY;
-    board.unitX = 1*boardTmp.unitX;
-    board.unitY = 1*boardTmp.unitY;
+    board.origin.scrCoords = [1, parseFloat(boardTmp.originX), parseFloat(boardTmp.originY)];
+    board.zoomX = parseFloat(boardTmp.zoomX);
+    board.zoomY = parseFloat(boardTmp.zoomY);
+    board.unitX = parseFloat(boardTmp.unitX);
+    board.unitY = parseFloat(boardTmp.unitY);
     board.updateStretch();
 
     if (board.options.takeSizeFromFile) {
         board.resizeContainer(boardTmp.width,boardTmp.height);
-        //board.setBoundingBox([1*boardTmp.viewportLeft,1*boardTmp.viewportTop,
-        //                      1*boardTmp.viewportRight,1*boardTmp.viewportBottom],true);
     }
 
-    if(1*boardTmp.options.text.fontSize != 0) {
-        board.options.text.fontSize = 1*boardTmp.options.text.fontSize;
+    if(parseFloat(boardTmp.options.text.fontSize) > 0) {
+        board.options.text.fontSize = parseFloat(boardTmp.options.text.fontSize);
     }
     else {
         board.options.text.fontSize = 12;
@@ -341,19 +401,23 @@ this.readGeonext = function(tree,board) {
     grid = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('grid')[0].firstChild.data == "true") ? board.create('grid', []) : null;
 
     if(boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('coord')[0].firstChild.data == "true") {
-//        var p1coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board);
-//        var p2coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
+        axisX = board.create('axis', [[0, 0], [1, 0]], {
+            strokeColor: axisX.visProp['strokeColor'],
+            strokeWidth: axisX.visProp['strokeWidth'],
+            fillColor: 'none',
+            highlightStrokeColor: axisX.visProp['highlightStrokeColor'],
+            highlightFillColor: 'none',
+            visible: true
+        });
 
-//        var axisX = board.create('axis', [[p1coords.usrCoords[1], 0], [p2coords.usrCoords[1], 0]]);
-        axisX = board.create('axis', [[0, 0], [1, 0]]);
-        axisX.setProperty('strokeColor:'+axisX.visProp['strokeColor'],'strokeWidth:'+axisX.visProp['strokeWidth'],
-                          'fillColor:none','highlightStrokeColor:'+axisX.visProp['highlightStrokeColor'],
-                          'highlightFillColor:none', 'visible:true');
-//        var axisY = board.create('axis', [[0, p2coords.usrCoords[2]], [0, p1coords.usrCoords[2]]]);
-        axisY = board.create('axis', [[0, 0], [0, 1]]);
-        axisY.setProperty('strokeColor:'+axisY.visProp['strokeColor'],'strokeWidth:'+axisY.visProp['strokeWidth'],
-                          'fillColor:none','highlightStrokeColor:'+axisY.visProp['highlightStrokeColor'],
-                          'highlightFillColor:none', 'visible:true');
+        axisY = board.create('axis', [[0, 0], [0, 1]], {
+            strokeColor: axisY.visProp['strokeColor'],
+            strokeWidth: axisY.visProp['strokeWidth'],
+            fillColor: 'none',
+            highlightStrokeColor: axisY.visProp['highlightStrokeColor'],
+            highlightFillColor: 'none',
+            visible: true
+        });
     }
     bgcolor = boardData.getElementsByTagName('background')[0].getElementsByTagName('color')[0].firstChild.data;
     opacity = 1;
@@ -381,11 +445,14 @@ this.readGeonext = function(tree,board) {
             defElHColStr = [],
             defElColF = [],
             defElColL = [],
-            el,  arcId, pointId, line1Id, line2Id, pid, lid, aid, cid, p, inter;
+            el,  pid, lid, aid, cid, p, inter;
 
         Data = elChildNodes[s];
         gxtEl = JXG.GeonextReader.defProperties(gxtEl, Data);
-        if (gxtEl==null) return; // Text nodes are skipped.
+
+        // Skip text nodes
+        if (!JXG.exists(gxtEl))
+            return;
 
         switch(Data.nodeName.toLowerCase()) {
             case "point":
@@ -394,19 +461,14 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data'); // x and y
-                gxtEl.visProp.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
+                gxtEl = JXG.GeonextReader.finalizeProperties(gxtEl);
+                gxtEl.fixed = JXG.str2Bool(Data.getElementsByTagName('fix')[0].firstChild.data);
                 try {
-                    p = new JXG.Point(board, [1*gxtEl.x, 1*gxtEl.y], gxtEl.id, gxtEl.name, true);
-                    p.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
-                                  'fillColor:'+gxtEl.colorStroke,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
-                                  'highlightFillColor:'+gxtEl.highlightStrokeColor,'labelColor:'+gxtEl.colorLabel,
-                                  'visible:'+gxtEl.visible,'fixed:'+gxtEl.fixed,'draft:'+gxtEl.draft);
-                    p.setStyle(1*gxtEl.style);
-                    p.traced = (gxtEl.trace=='false') ? false : true;
+                    p = board.create('point', [parseFloat(gxtEl.x), parseFloat(gxtEl.y)], gxtEl);
                     JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                     JXG.GeonextReader.parseImage(board,Data,board.options.layer['image'],0,0,0,0,p);
                 } catch(e) {
-                    alert(e);
+                    JXG.debug(e);
                 }
                 break;
             case "line":
@@ -416,21 +478,14 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'straight', 'straight');
+                gxtEl = JXG.GeonextReader.finalizeProperties(gxtEl);
 
                 gxtEl.first = JXG.GeonextReader.changeOriginIds(board,gxtEl.first);
                 gxtEl.last = JXG.GeonextReader.changeOriginIds(board,gxtEl.last);
 
-                l = new JXG.Line(board, gxtEl.first, gxtEl.last, gxtEl.id, gxtEl.name);
-                JXG.GeonextReader.parseImage(board,Data,board.options.layer['image'],0,0,0,0,l);
+                l = board.create('line', [gxtEl.first, gxtEl.last], gxtEl);
 
-                gxtEl.straightFirst = (gxtEl.straightFirst=='false') ? false : true;
-                gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;
-                l.setStraight(gxtEl.straightFirst, gxtEl.straightLast);
-                l.setProperty('strokeColor:'+gxtEl.colorStroke,'strokeWidth:'+gxtEl.strokewidth,
-                              'fillColor:'+gxtEl.colorFill,'highlightStrokeColor:'+gxtEl.highlightStrokeColor,
-                              'highlightFillColor:'+gxtEl.colorFill, 'labelColor:'+gxtEl.colorLabel,
-                              'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash,'draft:'+gxtEl.draft);
-                l.visProp.trace = (gxtEl.trace=='false') ? false : true;
+                JXG.GeonextReader.parseImage(board,Data,board.options.layer['image'],0,0,0,0,l);
                 JXG.GeonextReader.printDebugMessage('debug',gxtEl,Data.nodeName,'OK');
                 break;
             case "circle":
@@ -438,6 +493,7 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
+                gxtEl = JXG.GeonextReader.finalizeProperties(gxtEl);
                 gxtEl.midpoint = Data.getElementsByTagName('data')[0].getElementsByTagName('midpoint')[0].firstChild.data;
 
                 if(Data.getElementsByTagName('data')[0].getElementsByTagName('radius').length > 0) {
@@ -484,7 +540,8 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
 
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
-                gxtEl.visProp.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
+                gxtEl.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
+                gxtEl = JXG.GeonextReader.finalizeProperties(gxtEl);
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'animate', 'animate');
                 try {
                     p = new JXG.Point(board, [1*gxtEl.x, 1*gxtEl.y], gxtEl.id, gxtEl.name, true);
@@ -508,9 +565,9 @@ this.readGeonext = function(tree,board) {
                 gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
                 gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
-                //gxtEl.showcoord = Data.getElementsByTagName('showcoord')[0].firstChild.data;
-                gxtEl.visProp.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
+                gxtEl.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
                 gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
+                gxtEl = JXG.GeonextReader.finalizeProperties(gxtEl);
                 p = new JXG.Point(board, [1*gxtEl.xval, 1*gxtEl.yval], gxtEl.id, gxtEl.name, true);
                 JXG.GeonextReader.parseImage(board,Data,board.options.layer['point'],0,0,0,0,p);
                 p.addConstraint([gxtEl.x,gxtEl.y]);
@@ -738,17 +795,7 @@ this.readGeonext = function(tree,board) {
                         defElColF[i] = xmlNode.getElementsByTagName('fill')[0].firstChild.data;
                         defElColL[i] = xmlNode.getElementsByTagName('label')[0].firstChild.data;
                     }
-                    /*
-                    el = new JXG.Sector(board, gxtEl.defEl[0],
-                                           gxtEl.defEl[1], gxtEl.defEl[2],
-                                           [defEl[0], defEl[1], defEl[2], defEl[3]],
-                                           [defElN[0].firstChild.data, defElN[1].firstChild.data, defElN[2].firstChild.data,
-                                               defElN[3].firstChild.data],
-                                           gxtEl.id);
-                    // Sector hat keine eigenen Eigenschaften
-                    //el.setProperty('fillColor:'+defElColF[0],'highlightFillColor:'+defElColF[0], 'strokeColor:none');
-                    */
-                    el = board.create('sector', [gxtEl.defEl[0],gxtEl.defEl[1],gxtEl.defEl[2]], 
+                    el = board.create('sector', [gxtEl.defEl[0],gxtEl.defEl[1],gxtEl.defEl[2]],
                                             {id:defEl[0], name: defElN[0].firstChild.data});
                     /* Eigenschaften des Kreisbogens */
                     arcId = defEl[0];
@@ -766,64 +813,7 @@ this.readGeonext = function(tree,board) {
                     gxtEl.firstArrow = (gxtEl.firstArrow=='false') ? false : true;
                     gxtEl.lastArrow = (gxtEl.lastArrow=='false') ? false : true;
                     board.objects[arcId].setArrow(gxtEl.firstArrow,gxtEl.lastArrow);
-                    /* Eigenschaften des Endpunkts */
-                    /*
-                    pointId = board.objects[gxtEl.defEl[1]].id; //defEl[1];
-                    gxtEl.visProp.fixed = Data.getElementsByTagName('output')[1].getElementsByTagName('fix')[0].firstChild.data;
-                    board.objects[pointId].setProperty('strokeColor:'+defElColStr[1],
-                                                       'strokeWidth:'+defElSW[1],
-                                                       //'fillColor:'+defElColF[1],
-                                                       'fillColor:'+defElColStr[1],
-                                                       'highlightStrokeColor:'+defElHColStr[1],
-                                                       //'highlightFillColor:'+defElColF[1],
-                                                       'highlightFillColor:'+defElHColStr[1],
-                                                       'visible:'+defElV[1],
-                                                       'fixed:'+gxtEl.fixed,
-                                                       'labelColor:'+defElColL[1],
-                                                       'draft:'+defElDr[1]);
-                    gxtEl.style = Data.getElementsByTagName('output')[1].getElementsByTagName('style')[0].firstChild.data;
-                    board.objects[pointId].setStyle(1*gxtEl.style);
-                    board.objects[pointId].visProp.trace = (defElT[1]=='false') ? false : true;
-                    */
-                    /* Eigenschaften der ersten Linie */
-                    /*
-                    line1Id = defEl[2];
 
-                    xmlNode = Data.getElementsByTagName('output')[2].getElementsByTagName('straight')[0];
-                    gxtEl.straightFirst = xmlNode.getElementsByTagName('first')[0].firstChild.data;
-                    gxtEl.straightLast = xmlNode.getElementsByTagName('last')[0].firstChild.data;
-                    gxtEl.straightFirst = (gxtEl.straightFirst=='false') ? false : true;
-                    gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;
-                    board.objects[line1Id].setStraight(gxtEl.straightFirst, gxtEl.straightLast);
-                    board.objects[line1Id].setProperty('strokeColor:'+defElColStr[2],
-                                                       'strokeWidth:'+defElSW[2],
-                                                       'fillColor:'+defElColF[2],
-                                                       'highlightStrokeColor:'+defElHColStr[2],
-                                                       'highlightFillColor:'+defElColF[2],
-                                                       'visible:'+defElV[2],
-                                                       'dash:'+defElD[2],
-                                                       'draft:'+defElDr[2]);
-                    board.objects[line1Id].traced = (defElT[2]=='false') ? false : true;
-                    */
-                    /* Eigenschaften der zweiten Linie */
-                    /*
-                    line2Id = defEl[3];
-                    xmlNode = Data.getElementsByTagName('output')[3].getElementsByTagName('straight')[0];
-                    gxtEl.straightFirst = xmlNode.getElementsByTagName('first')[0].firstChild.data;
-                    gxtEl.straightLast = xmlNode.getElementsByTagName('last')[0].firstChild.data;
-                    gxtEl.straightFirst = (gxtEl.straightFirst=='false') ? false : true;
-                    gxtEl.straightLast = (gxtEl.straightLast=='false') ? false : true;
-                    board.objects[line2Id].setStraight(gxtEl.straightFirst, gxtEl.straightLast);
-                    board.objects[line2Id].setProperty('strokeColor:'+defElColStr[3],
-                                                       'strokeWidth:'+defElSW[3],
-                                                       'fillColor:'+defElColF[3],
-                                                       'highlightStrokeColor:'+defElHColStr[3],
-                                                       'highlightFillColor:'+defElColF[3],
-                                                       'visible:'+defElV[3],
-                                                       'dash:'+defElD[3],
-                                                       'draft:'+defElDr[3]);
-                    board.objects[line2Id].visProp.trace = (defElT[3]=='false') ? false : true;
-                    */
                 }
                 else if(gxtEl.typeName == "PERPENDICULAR") {
                     for(i=0; i<Data.getElementsByTagName('output').length; i++) {
@@ -1113,7 +1103,7 @@ this.readGeonext = function(tree,board) {
                               'visible:'+gxtEl.visible, 'dash:'+gxtEl.dash, 'draft:'+gxtEl.draft);
                 l.setStraight(false,false);
                 l.setArrow(false,true);
-                l.traced = (gxtEl.visProp.trace=='false') ? false : true;
+                l.visProp.trace = (gxtEl.visProp.trace=='false') ? false : true;
                 JXG.GeonextReader.printDebugMessage('debug',l,Data.nodeName,'OK');
                 break;
             case "arc":

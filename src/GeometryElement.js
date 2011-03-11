@@ -247,7 +247,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.needsRegularUpdate = attributes['needsRegularUpdate'];
 
         // TODO: draft downwards compatibility.
-        this.visProp.draft = attributes.draft.draft;
+        this.visProp.draft = attributes.draft && attributes.draft.draft;
 
         // TODO: comment gradient possibilities
         this.visProp['gradient'] = 'none';
