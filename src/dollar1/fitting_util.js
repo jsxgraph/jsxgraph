@@ -75,10 +75,11 @@ function pointsOnCircle(xm, ym, r, sensitive_area, board){
 	var m = board.create('point',[xm,ym]);
 	var elList = [];
 	for (var el in board.objects) {
-		if (board.objects[el].visProp['visible'] && board.objects[el].type==JXG.OBJECT_TYPE_POINT && board.objects[el].Dist(m)>=r-sensitive_area && board.objects[el].Dist(m)<=r+sensitive_area) {
+		if (board.objects[el].visProp['visible'] && board.objects[el].elementClass==JXG.OBJECT_CLASS_POINT && board.objects[el].Dist(m)>=r-sensitive_area && board.objects[el].Dist(m)<=r+sensitive_area) {
 			elList.push(board.objects[el]);
 		}
 	}
+	board.unsuspendUpdate();
 	return elList;
 }
 /*
@@ -90,7 +91,7 @@ function pointsOnCurve(curve, sensitive_area, board){
 	hasPoint = board.options.precision.hasPoint;
 	board.options.precision.hasPoint=sensitive_area*3;
 	for (var el in board.objects) {
-		if (board.objects[el].visProp['visible'] && (board.objects[el].type==JXG.OBJECT_TYPE_POINT)){
+		if (board.objects[el].visProp['visible'] && board.objects[el].elementClass==JXG.OBJECT_CLASS_POINT){
 			var coords = new JXG.Coords(JXG.COORDS_BY_USER,[board.objects[el].X(),board.objects[el].Y()],board);
 			var hp = curve.hasPoint(coords.scrCoords[1],coords.scrCoords[2]);
 			if (curve.hasPoint(coords.scrCoords[1],coords.scrCoords[2]))
