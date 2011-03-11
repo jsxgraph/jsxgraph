@@ -160,6 +160,6 @@ function isElementIn(el,elements){
 	for (var i=0;i<elements.length;i++){
 		if (el == elements[i])
 			return true;
-	}
+		}
 	return false;
 }
