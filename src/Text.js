@@ -190,7 +190,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     update: function () {
         var anchor;
 
-        if (this.needsUpdate && !this.visProp.frozen) {
+        if (this.needsUpdate) {
             if (this.relativeCoords) {
                 if (this.visProp.isLabel) {
                     anchor = this.element.getLabelAnchor();
@@ -204,8 +204,6 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             } else {
                 this.updateCoords();
             }
-        }   
-        if (this.needsUpdate) {
             this.updateText();
             this.updateSize();
             this.updateTransform();

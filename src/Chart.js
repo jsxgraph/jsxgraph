@@ -637,6 +637,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         if (this.needsUpdate) {
             this.updateDataArray();
         }
+        return this;
     },
 
     /**

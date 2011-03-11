@@ -57,7 +57,7 @@ JXG.Transformation = function(board,type, params) {
 JXG.Transformation.prototype = {};
 
 JXG.extend(JXG.Transformation.prototype, /** @lends JXG.Transformation.prototype */ {
-    update: function(){},
+    update: function(){ return this;},
 
     /**
      * Set the transformation matrix for different 

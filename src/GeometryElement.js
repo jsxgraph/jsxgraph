@@ -395,6 +395,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @private
      */
     updateRenderer: function () {
+        return this;
     },
 
     /**

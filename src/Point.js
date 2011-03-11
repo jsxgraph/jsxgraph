@@ -166,7 +166,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * Updates the position of the point.
      */
     update: function (fromParent) {
-        if (!this.needsUpdate) { return; }
+        if (!this.needsUpdate) { return this; }
 
         if(typeof fromParent == 'undefined') {
             fromParent = false;
@@ -306,7 +306,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.updateTransform();
         
         //this.updateRenderer();
-        this.needsUpdate = false;
+        //this.needsUpdate = false; // Why here and not in updateRenderer?
         return this;
     },
 
@@ -315,6 +315,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @private
      */
     updateRenderer: function () {
+        if (!this.needsUpdate) { return this; }
+
         /* Call the renderer only if point is visible. */
         if(this.visProp['visible']) {
             var wasReal = this.isReal;
@@ -343,6 +345,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             //this.board.renderer.updateLabel(this.label);
             this.board.renderer.updateText(this.label.content);
         }
+        
+        this.needsUpdate = false; 
         return this;
     },
 

@@ -222,7 +222,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             if(this.visProp.trace) {
                 this.cloneToBackground(true);
             }
-         }
+        }
         return this;
     },
 

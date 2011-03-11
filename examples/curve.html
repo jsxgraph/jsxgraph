@@ -33,7 +33,7 @@ var c = brd.createElement('functiongraph',[function(x){ return b.Value()*Math.si
 var c = brd.createElement('curve',[
           function(t){return A.Value()*Math.sin(a.Value()*t+delta.Value());},
           function(t){return B.Value()*Math.sin(b.Value()*t);},
-          0, 2*Math.PI],{strokeColor:'#aa2233',strokeWidth:3, trace:true});
+          0, 2*Math.PI],{strokeColor:'#aa2233',strokeWidth:3, trace:false});
 
 // Archimedean spiral
 var d = brd.createElement('curve', [function(phi){return a.Value()+b.Value()*phi; }, [0, 0], 0, 8*Math.PI],

@@ -417,6 +417,7 @@ JXG.extend(JXG.Intersection.prototype, /** @lends JXG.Intersection.prototype */ 
      * as it highly depends on the types of the intersected elements.
      */
     update: function() {
+        return this;
     },
 
     /**
@@ -462,5 +463,6 @@ JXG.extend(JXG.Intersection.prototype, /** @lends JXG.Intersection.prototype */ 
      * Dummy method 
      */
     updateRenderer: function() {
+        return this;
     }
 });

@@ -232,10 +232,10 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      */
     update: function () {
         if (this.needsUpdate) {
+            if (this.visProp.trace) {
+                this.cloneToBackground(true);
+            }
             this.updateCurve();
-        }
-        if(this.visProp.trace) {
-            this.cloneToBackground(true);
         }
         return this;
     },
@@ -248,14 +248,14 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         if (this.needsUpdate) {
             this.board.renderer.updateCurve(this);
             this.needsUpdate = false;
-        }
 
-        /* Update the label if visible. */
-        if(this.hasLabel && this.label.content.visProp['visible']) {
-            //this.label.setCoordinates(this.coords);
-            this.label.content.update();
-            //this.board.renderer.updateLabel(this.label);
-            this.board.renderer.updateText(this.label.content);
+            /* Update the label if visible. */
+            if(this.hasLabel && this.label.content.visProp['visible']) {
+                //this.label.setCoordinates(this.coords);
+                this.label.content.update();
+                //this.board.renderer.updateLabel(this.label);
+                this.board.renderer.updateText(this.label.content);
+            }
         }
         return this;
     },
@@ -659,6 +659,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
         copy.points = this.points.slice(0);
         copy.numberPoints = this.numberPoints;
+        copy.visProp = this.visProp;
         copy.visProp.curveType = this.visProp.curveType;
 
         copy.board = {};

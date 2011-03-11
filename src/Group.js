@@ -131,6 +131,7 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
                 delete(this.objects[el]);
             }
         }
+        return this;
     },
 
     /**

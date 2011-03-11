@@ -306,11 +306,11 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
      * Uses the boards renderer to update the circle.
      */
     update: function () {
-        if(this.visProp.trace) {
-            this.cloneToBackground(true);
-        }
-
         if (this.needsUpdate) {
+            if(this.visProp.trace) {
+                this.cloneToBackground(true);
+            }   
+
             if(this.method == 'pointLine') {
                 this.radius = this.line.point1.coords.distance(JXG.COORDS_BY_USER, this.line.point2.coords);
             }
@@ -325,6 +325,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
                 this.updateQuadraticform();
             }
         }
+        return this;
     },
 
     /**
