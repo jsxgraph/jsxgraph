@@ -533,9 +533,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                         this.showElement();
                     }
                     break;
-                case 'style':
-                    this.setStyle(value);
-                    break;
                 case 'face':
                     if (this.elementClass == JXG.OBJECT_CLASS_POINT) {
                         this.visProp.face = value;
@@ -650,16 +647,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      */
     getLabelAnchor: function () {
         return new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
-    },
-
-    /**
-     * TODO
-     * Was hat das hier verloren? Styles gibts doch nur fuer Punkte oder?
-     * Sollte das dann nicht nur in Point.js zu finden sein? --michael
-     * @private
-     */
-    setStyle: function (x) {
-        return this;
     },
 
     /**

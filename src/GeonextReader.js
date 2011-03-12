@@ -87,15 +87,6 @@ JXG.GeonextReader = {
     },
 
     /**
-     * Set the board properties of a geonext element.
-     * Set active, area, dash, draft and showinfo attributes.
-     * @param {Object} gxtEl element of which attributes are to set
-     */
-    boardProperties: function (gxtEl) {
-        return gxtEl;
-    },
-
-    /**
      * Set the defining properties of a geonext element.
      * Writing the nodeName to ident; setting the name attribute and defining the element id.
      * @param {Object} gxtEl element of which attributes are to set
@@ -326,13 +317,11 @@ JXG.GeonextReader = {
      * @param {Object} board board object
      */
     readGeonext: function(tree, board) {
-        var snap, gridColor, grid,
-            xmlNode,
-            axisX, axisY, bgcolor, opacity,
+        var xmlNode,
             elChildNodes,
             s, Data, inter, boardData, el,
-            strFir, strLas, conditions,
-            strTrue = 'true';
+            strFir, strLas, conditions, tmp,
+            strTrue = 'true', gxtReader = this;
 
         // maybe this is not necessary as we already provide layer options for sectors and circles via JXG.Options but
         // maybe these have to be the same for geonext.
@@ -340,30 +329,12 @@ JXG.GeonextReader = {
         board.options.layer.circle = board.options.layer.angle;
 
         boardData = tree.getElementsByTagName('board')[0];
-
-        // never ever used
-        //boardTmp.ident = "board";
-
-        /* this is never ever used again!
-        xmlNode = boardData.getElementsByTagName('fontsize')[0];
-        boardTmp.fontSize = (xmlNode != null) ? document.body.style.fontSize = xmlNode.firstChild.data : document.body.style.fontSize;
-        boardTmp.modus = boardData.getElementsByTagName('modus')[0].firstChild.data;
-
-         xmlNode = boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('viewport')[0];
-         boardTmp.viewportTop = xmlNode.getElementsByTagName('top')[0].firstChild.data;
-         boardTmp.viewportLeft = xmlNode.getElementsByTagName('left')[0].firstChild.data;
-         boardTmp.viewportBottom = xmlNode.getElementsByTagName('bottom')[0].firstChild.data;
-         boardTmp.viewportRight = xmlNode.getElementsByTagName('right')[0].firstChild.data;
-         */
-
         conditions = this.readConditions(boardData.getElementsByTagName('conditions')[0]);
 
         // set the origin
         xmlNode = boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('origin')[0];
         board.origin = {
-            usrCoords: [
-                1, 0, 0
-            ],
+            usrCoords: [1, 0, 0],
             scrCoords: [
                 1, parseFloat(xmlNode.getElementsByTagName('x')[0].firstChild.data), parseFloat(xmlNode.getElementsByTagName('y')[0].firstChild.data)
             ]
@@ -393,7 +364,7 @@ JXG.GeonextReader = {
         board.geonextCompatibilityMode = true;
 
         // jsxgraph chooses an id for the board but we don't want to use it, we want to use
-        // the id stored in the geonext file. if you know why, please note it here.
+        // the id stored in the geonext file. if you know why this is required, please note it here.
         delete(JXG.JSXGraph.boards[board.id]);
         board.id = boardData.getElementsByTagName('id')[0].firstChild.data;
         JXG.JSXGraph.boards[board.id] = board;
@@ -408,45 +379,31 @@ JXG.GeonextReader = {
         // Read background image
         this.parseImage(board, boardData.getElementsByTagName('file')[0], board.options.layer['image']);
 
-
         board.options.grid.snapToGrid = (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('snap')[0].firstChild.data == strTrue);
 
-        if (boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data) {
-            board.options.grid.gridX = 1 / parseFloat(boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data);
+        tmp = boardData.getElementsByTagName('grid')[1].getElementsByTagName('x')[0].firstChild.data;
+        if (tmp) {
+            board.options.grid.gridX = 1 / parseFloat(tmp);
         }
-        if (boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data) {
-            board.options.grid.gridX = 1 / parseFloat(boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data);
+        tmp = boardData.getElementsByTagName('grid')[1].getElementsByTagName('y')[0].firstChild.data;
+        if (tmp) {
+            board.options.grid.gridX = 1 / parseFloat(tmp);
         }
         board.calculateSnapSizes();
 
         board.options.grid.gridDash = JXG.str2Bool(boardData.getElementsByTagName('grid')[1].getElementsByTagName('dash')[0].firstChild.data);
 
-        gridColor = JXG.rgba2rgbo(boardData.getElementsByTagName('grid')[1].getElementsByTagName('color')[0].firstChild.data);
-        board.options.grid.gridColor = gridColor[0];
-        board.options.grid.gridOpacity = gridColor[1];
+        tmp = JXG.rgba2rgbo(boardData.getElementsByTagName('grid')[1].getElementsByTagName('color')[0].firstChild.data);
+        board.options.grid.gridColor = tmp[0];
+        board.options.grid.gridOpacity = tmp[1];
 
         if (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('grid')[0].firstChild.data == strTrue) {
             board.create('grid', []);
         }
 
         if (boardData.getElementsByTagName('coordinates')[0].getElementsByTagName('coord')[0].firstChild.data == strTrue) {
-            axisX = board.create('axis', [[0, 0], [1, 0]], {
-                strokeColor: axisX.visProp['strokeColor'],
-                strokeWidth: axisX.visProp['strokeWidth'],
-                fillColor: 'none',
-                highlightStrokeColor: axisX.visProp['highlightStrokeColor'],
-                highlightFillColor: 'none',
-                visible: true
-            });
-
-            axisY = board.create('axis', [[0, 0], [0, 1]], {
-                strokeColor: axisY.visProp['strokeColor'],
-                strokeWidth: axisY.visProp['strokeWidth'],
-                fillColor: 'none',
-                highlightStrokeColor: axisY.visProp['highlightStrokeColor'],
-                highlightFillColor: 'none',
-                visible: true
-            });
+            board.create('axis', [[0, 0], [1, 0]]);
+            board.create('axis', [[0, 0], [0, 1]]);
         }
 
         board.containerObj.style.backgroundColor = JXG.rgba2rgbo(boardData.getElementsByTagName('background')[0].getElementsByTagName('color')[0].firstChild.data)[0];
@@ -481,11 +438,10 @@ JXG.GeonextReader = {
 
                 switch (Data.nodeName.toLowerCase()) {
                     case "point":
-                        gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.visualProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl.fixed = JXG.str2Bool(Data.getElementsByTagName('fix')[0].firstChild.data);
 
                         gxtEl = JXG.GeonextReader.transformProperties(gxtEl);
@@ -499,16 +455,15 @@ JXG.GeonextReader = {
                         }
                         break;
                     case "line":
-                        gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'straight', 'straight');
-                        gxtEl = JXG.GeonextReader.transformProperties(gxtEl);
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.visualProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'straight', 'straight');
+                        gxtEl = gxtReader.transformProperties(gxtEl);
 
-                        gxtEl.first = JXG.GeonextReader.changeOriginIds(board, gxtEl.first);
-                        gxtEl.last = JXG.GeonextReader.changeOriginIds(board, gxtEl.last);
+                        gxtEl.first = gxtReader.changeOriginIds(board, gxtEl.first);
+                        gxtEl.last = gxtReader.changeOriginIds(board, gxtEl.last);
 
                         l = board.create('line', [gxtEl.first, gxtEl.last], gxtEl);
 
@@ -516,64 +471,61 @@ JXG.GeonextReader = {
                         JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "circle":
-                        gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
-                        gxtEl.midpoint = JXG.GeonextReader.changeOriginIds(board, Data.getElementsByTagName('data')[0].getElementsByTagName('midpoint')[0].firstChild.data);
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.visualProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl.midpoint = gxtReader.changeOriginIds(board, Data.getElementsByTagName('data')[0].getElementsByTagName('midpoint')[0].firstChild.data);
 
                         if (Data.getElementsByTagName('data')[0].getElementsByTagName('radius').length > 0) {
-                            gxtEl.radius = JXG.GeonextReader.changeOriginIds(board, Data.getElementsByTagName('data')[0].getElementsByTagName('radius')[0].firstChild.data);
+                            gxtEl.radius = gxtReader.changeOriginIds(board, Data.getElementsByTagName('data')[0].getElementsByTagName('radius')[0].firstChild.data);
                         } else if (Data.getElementsByTagName('data')[0].getElementsByTagName('radiusvalue').length > 0) {
                             gxtEl.radius = Data.getElementsByTagName('data')[0].getElementsByTagName('radiusvalue')[0].firstChild.data;
                         }
 
-                        gxtEl = JXG.GeonextReader.transformProperties(gxtEl);
+                        gxtEl = gxtReader.transformProperties(gxtEl);
                         c = board.create('circle', [gxtEl.midpoint, gxtEl.radius], gxtEl);
 
-                        JXG.GeonextReader.parseImage(board, Data, board.options.layer['image'], 0, 0, 0, 0, c);
-                        JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
+                        gxtReader.parseImage(board, Data, board.options.layer['image'], 0, 0, 0, 0, c);
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "slider":
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.visualProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
 
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'animate', 'animate');
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'animate', 'animate');
 
-                        gxtEl = JXG.GeonextReader.transformProperties(gxtEl);
+                        gxtEl = gxtReader.transformProperties(gxtEl);
                         try {
-                            gxtEl.parent = JXG.GeonextReader.changeOriginIds(board, gxtEl.parent);
+                            gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
 
                             p = board.create('glider', [parseFloat(gxtEl.x), parseFloat(gxtEl.y), gxtEl.parent], gxtEl);
                             p.onPolygon = JXG.str2Bool(gxtEl.onpolygon);
 
-                            JXG.GeonextReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
-                            JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
+                            gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
+                            gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         } catch(e) {
                             JXG.debug("* <b>Err:</b>  Slider " + gxtEl.name + " " + gxtEl.id + ': '+ gxtEl.parent +"<br>\n");
                         }
                         break;
                     case "cas":
-                        gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.visualProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
-                        gxtEl = JXG.GeonextReader.transformProperties(gxtEl);
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
+                        gxtEl = gxtReader.transformProperties(gxtEl);
 
 
                         p = board.create('point', [parseFloat(gxtEl.xval), parseFloat(gxtEl.yval)], gxtEl);
-                        JXG.GeonextReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
+                        gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
                         p.addConstraint([gxtEl.x, gxtEl.y]);
-                        JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "intersection":
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         xmlNode = Data.getElementsByTagName('first')[1];
                         gxtEl.outputFirstId = xmlNode.getElementsByTagName('id')[0].firstChild.data;  // 1 statt 0
                         gxtEl.outputFirstName = xmlNode.getElementsByTagName('name')[0].firstChild.data;
@@ -591,8 +543,8 @@ JXG.GeonextReader = {
                         gxtEl.outputFirstColorLabel = xmlNode.getElementsByTagName('label')[0].firstChild.data;
                         gxtEl.outputFirstColorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
 
-                        gxtEl.first = JXG.GeonextReader.changeOriginIds(board, gxtEl.first);
-                        gxtEl.last = JXG.GeonextReader.changeOriginIds(board, gxtEl.last);
+                        gxtEl.first = gxtReader.changeOriginIds(board, gxtEl.first);
+                        gxtEl.last = gxtReader.changeOriginIds(board, gxtEl.last);
                         if ((((board.objects[gxtEl.first]).type == (board.objects[gxtEl.last]).type) && ((board.objects[gxtEl.first]).type == JXG.OBJECT_TYPE_LINE || (board.objects[gxtEl.first]).type == JXG.OBJECT_TYPE_ARROW))
                                     || (((board.objects[gxtEl.first]).type == JXG.OBJECT_TYPE_LINE) && ((board.objects[gxtEl.last]).type == JXG.OBJECT_TYPE_ARROW))
                                 || (((board.objects[gxtEl.last]).type == JXG.OBJECT_TYPE_LINE) && ((board.objects[gxtEl.first]).type == JXG.OBJECT_TYPE_ARROW))) {
@@ -669,11 +621,11 @@ JXG.GeonextReader = {
                                 }
                             }
                         }
-                        JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "composition":
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.defEl = [];
                         numberDefEls = 0;
                         xmlNode = Data.getElementsByTagName('data')[0].getElementsByTagName('input');
@@ -687,7 +639,7 @@ JXG.GeonextReader = {
                         gxtEl.outputVisible = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
                         gxtEl.outputTrace = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
 
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'output', 'output');
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'output', 'output');
                         gxtEl.outputName = xmlNode.getElementsByTagName('name')[0].firstChild.data;
                         gxtEl.outputDash = xmlNode.getElementsByTagName('dash')[0].firstChild.data;
                         gxtEl.outputDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
@@ -701,9 +653,9 @@ JXG.GeonextReader = {
                         gxtEl.outputColorLabel = xmlNode.getElementsByTagName('label')[0].firstChild.data;
                         gxtEl.outputColorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
 
-                        gxtEl.defEl[0] = JXG.GeonextReader.changeOriginIds(board, gxtEl.defEl[0]);
-                        gxtEl.defEl[1] = JXG.GeonextReader.changeOriginIds(board, gxtEl.defEl[1]);
-                        gxtEl.defEl[2] = JXG.GeonextReader.changeOriginIds(board, gxtEl.defEl[2]);
+                        gxtEl.defEl[0] = gxtReader.changeOriginIds(board, gxtEl.defEl[0]);
+                        gxtEl.defEl[1] = gxtReader.changeOriginIds(board, gxtEl.defEl[1]);
+                        gxtEl.defEl[2] = gxtReader.changeOriginIds(board, gxtEl.defEl[2]);
 
                         switch (gxtEl.type) {
                             case "210070": gxtEl.typeName = "ARROW_PARALLEL"; break;
@@ -784,11 +736,11 @@ JXG.GeonextReader = {
                         if (gxtEl.typeName == "MIDPOINT") {
                         }
                         else if (gxtEl.typeName == "SECTOR") {
-                            //JXG.GeonextReader.parseImage(board,Data.getElementsByTagName('image')[0],board.options.layer['sector']);
+                            //that.parseImage(board,Data.getElementsByTagName('image')[0],board.options.layer['sector']);
                             for (i = 0; i < Data.getElementsByTagName('output').length; i++) {
                                 xmlNode = Data.getElementsByTagName('output')[i];
                                 defEl[i] = xmlNode.getElementsByTagName('id')[0].firstChild.data;
-                                defEl[i] = JXG.GeonextReader.changeOriginIds(board, defEl[i]);
+                                defEl[i] = gxtReader.changeOriginIds(board, defEl[i]);
                                 defElN[i] = xmlNode.getElementsByTagName('name')[0];
                                 defElV[i] = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
                                 defElT[i] = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
@@ -828,7 +780,7 @@ JXG.GeonextReader = {
                             for (i = 0; i < Data.getElementsByTagName('output').length; i++) {
                                 xmlNode = Data.getElementsByTagName('output')[i];
                                 defEl[i] = xmlNode.getElementsByTagName('id')[0].firstChild.data;
-                                defEl[i] = JXG.GeonextReader.changeOriginIds(board, defEl[i]);
+                                defEl[i] = gxtReader.changeOriginIds(board, defEl[i]);
                                 defElN[i] = xmlNode.getElementsByTagName('name')[0];
                                 defElV[i] = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
                                 defElT[i] = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
@@ -892,7 +844,7 @@ JXG.GeonextReader = {
                             for (i = 0; i < Data.getElementsByTagName('output').length; i++) {
                                 xmlNode = Data.getElementsByTagName('output')[i];
                                 defEl[i] = xmlNode.getElementsByTagName('id')[0].firstChild.data;
-                                defEl[i] = JXG.GeonextReader.changeOriginIds(board, defEl[i]);
+                                defEl[i] = gxtReader.changeOriginIds(board, defEl[i]);
                                 defElN[i] = xmlNode.getElementsByTagName('name')[0];
                                 defElV[i] = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
                                 defElT[i] = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
@@ -991,7 +943,7 @@ JXG.GeonextReader = {
                             for (i = 0; i < Data.getElementsByTagName('output').length; i++) {
                                 xmlNode = Data.getElementsByTagName('output')[i];
                                 defEl[i] = xmlNode.getElementsByTagName('id')[0].firstChild.data;
-                                defEl[i] = JXG.GeonextReader.changeOriginIds(board, defEl[i]);
+                                defEl[i] = gxtReader.changeOriginIds(board, defEl[i]);
                                 defElN[i] = xmlNode.getElementsByTagName('name')[0];
                                 defElV[i] = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
                                 defElT[i] = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
@@ -1037,15 +989,15 @@ JXG.GeonextReader = {
                             board.unsuspendUpdate().suspendUpdate();
                         }
                         // "PERPENDICULAR" und "SECTOR" werden direkt im oberen if erledigt
-                        JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "polygon":
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.dataVertex = [];
                         for (i = 0; i < Data.getElementsByTagName('data')[0].getElementsByTagName('vertex').length; i++) {
                             gxtEl.dataVertex[i] = Data.getElementsByTagName('data')[0].getElementsByTagName('vertex')[i].firstChild.data;
-                            gxtEl.dataVertex[i] = JXG.GeonextReader.changeOriginIds(board, gxtEl.dataVertex[i]);
+                            gxtEl.dataVertex[i] = gxtReader.changeOriginIds(board, gxtEl.dataVertex[i]);
                         }
                         gxtEl.border = [];
                         gxtEl.lines = {
@@ -1084,7 +1036,7 @@ JXG.GeonextReader = {
                             gxtEl.border[i].labelColor = xmlNode.getElementsByTagName('label')[0].firstChild.data;
                             gxtEl.border[i].colorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
                         }
-                        gxtEl = JXG.GeonextReader.transformProperties(gxtEl);
+                        gxtEl = gxtReader.transformProperties(gxtEl);
                         p = board.create('polygon', gxtEl.dataVertex, gxtEl);
 
                         // to emulate the geonext behaviour on invisible polygons
@@ -1099,11 +1051,11 @@ JXG.GeonextReader = {
                             p.borders[i].setProperty(gxtEl.border[i]);
                         }
                             
-                        JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "graph":
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.funct = Data.getElementsByTagName('data')[0].getElementsByTagName('function')[0].firstChild.data;
 
                         c = board.create('curve', ['x',gxtEl.funct], {
@@ -1115,52 +1067,49 @@ JXG.GeonextReader = {
                                 highlightStrokeColor: gxtEl.highlightStrokeColor
                             });
 
-                        JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "arrow":
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'straight', 'straight');
-                        gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'straight', 'straight');
+                        gxtEl = gxtReader.visualProperties(gxtEl, Data);
 
-                        gxtEl = JXG.GeonextReader.transformProperties(gxtEl);
-                        gxtEl.first = JXG.GeonextReader.changeOriginIds(board, gxtEl.first);
-                        gxtEl.last = JXG.GeonextReader.changeOriginIds(board, gxtEl.last);
+                        gxtEl = gxtReader.transformProperties(gxtEl);
+                        gxtEl.first = gxtReader.changeOriginIds(board, gxtEl.first);
+                        gxtEl.last = gxtReader.changeOriginIds(board, gxtEl.last);
 
                         l = board.create('arrow', [gxtEl.first, gxtEl.last], gxtEl);
 
-                        JXG.GeonextReader.printDebugMessage('debug', l, Data.nodeName, 'OK');
+                        gxtReader.printDebugMessage('debug', l, Data.nodeName, 'OK');
                         break;
                     case "arc":
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.visualProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
 
                         gxtEl.firstArrow = Data.getElementsByTagName('firstarrow')[0].firstChild.data;
                         gxtEl.lastArrow = Data.getElementsByTagName('lastarrow')[0].firstChild.data;
 
-                        gxtEl = JXG.GeonextReader.transformProperties(gxtEl);
+                        gxtEl = gxtReader.transformProperties(gxtEl);
 
-                        gxtEl.midpoint = JXG.GeonextReader.changeOriginIds(board, gxtEl.midpoint);
-                        gxtEl.angle = JXG.GeonextReader.changeOriginIds(board, gxtEl.angle);
-                        gxtEl.radius = JXG.GeonextReader.changeOriginIds(board, gxtEl.radius);
+                        gxtEl.midpoint = gxtReader.changeOriginIds(board, gxtEl.midpoint);
+                        gxtEl.angle = gxtReader.changeOriginIds(board, gxtEl.angle);
+                        gxtEl.radius = gxtReader.changeOriginIds(board, gxtEl.radius);
 
                         c = board.create('arc', [gxtEl.midpoint, gxtEl.radius, gxtEl.angle], gxtEl);
 
-                        JXG.GeonextReader.printDebugMessage('debug', c, Data.nodeName, 'OK');
+                        gxtReader.printDebugMessage('debug', c, Data.nodeName, 'OK');
                         break;
                     case "angle":
-                        gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.visualProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
 
-                        gxtEl = JXG.GeonextReader.transformProperties(gxtEl);
+                        gxtEl = gxtReader.transformProperties(gxtEl);
 
                         try {
                             gxtEl.text = Data.getElementsByTagName('text')[0].firstChild.data;
@@ -1169,19 +1118,18 @@ JXG.GeonextReader = {
                         }
 
                         c = board.create('angle', [gxtEl.first, gxtEl.middle, gxtEl.last], gxtEl);
-                        JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "text":
                         if (gxtEl.id.match(/oldVersion/)) {
                             break;
                         }
-                        gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.visualProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.visualProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
 
-                        gxtEl = JXG.GeonextReader.readNodes(gxtEl, Data, 'data');
-                        gxtEl.mpStr = JXG.GeonextReader.subtreeToString(Data.getElementsByTagName('data')[0].getElementsByTagName('mp')[0]);
+                        gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
+                        gxtEl.mpStr = gxtReader.subtreeToString(Data.getElementsByTagName('data')[0].getElementsByTagName('mp')[0]);
                         gxtEl.mpStr = gxtEl.mpStr.replace(/<\/?mp>/g, '');
                         try {
                             if (Data.getElementsByTagName('data')[0].getElementsByTagName('parent')[0].firstChild) {
@@ -1194,15 +1142,15 @@ JXG.GeonextReader = {
                         gxtEl.fix = Data.getElementsByTagName('fix')[0].firstChild.data;
                         // not used gxtEl.digits = Data.getElementsByTagName('cs')[0].firstChild.data;
                         gxtEl.autodigits = Data.getElementsByTagName('digits')[0].firstChild.data;
-                        gxtEl.parent = JXG.GeonextReader.changeOriginIds(board, gxtEl.parent);
+                        gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
                         c = new JXG.Text(board, gxtEl.mpStr, gxtEl.parent, [
                             gxtEl.x, gxtEl.y
                         ], gxtEl.id, gxtEl.name, gxtEl.autodigits, false, board.options.text.display);
                         c.setProperty('labelColor:' + gxtEl.colorLabel, 'visible:' + gxtEl.visible);
                         break;
                     case 'parametercurve':
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.functionx = Data.getElementsByTagName('functionx')[0].firstChild.data;
                         gxtEl.functiony = Data.getElementsByTagName('functiony')[0].firstChild.data;
                         gxtEl.min = Data.getElementsByTagName('min')[0].firstChild.data;
@@ -1212,25 +1160,24 @@ JXG.GeonextReader = {
                         ], gxtEl.id, gxtEl.name);
                         c.setProperty('strokeColor:' + gxtEl.colorStroke, 'strokeWidth:' + gxtEl.strokewidth, 'fillColor:none',
                                 'highlightStrokeColor:' + gxtEl.highlightStrokeColor);
-                        JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case 'tracecurve':
                         gxtEl.tracepoint = Data.getElementsByTagName('tracepoint')[0].firstChild.data;
                         gxtEl.traceslider = Data.getElementsByTagName('traceslider')[0].firstChild.data;
-                        JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, '<b>ERR</b>');
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, '<b>ERR</b>');
                         break;
                     case 'group':
-                        gxtEl = JXG.GeonextReader.boardProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.colorProperties(gxtEl, Data);
-                        gxtEl = JXG.GeonextReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.members = [
                         ];
                         for (i = 0; i < Data.getElementsByTagName('data')[0].getElementsByTagName('member').length; i++) {
                             gxtEl.members[i] = Data.getElementsByTagName('data')[0].getElementsByTagName('member')[i].firstChild.data;
-                            gxtEl.members[i] = JXG.GeonextReader.changeOriginIds(board, gxtEl.members[i]);
+                            gxtEl.members[i] = gxtReader.changeOriginIds(board, gxtEl.members[i]);
                         }
                         c = new JXG.Group(board, gxtEl.id, gxtEl.name, gxtEl.members);
-                        JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     default:
                     //if (Data.nodeName!="#text") {
@@ -1260,10 +1207,10 @@ JXG.GeonextReader = {
     prepareString: function(fileStr){
         try {
             if (fileStr.indexOf('GEONEXT')<0) {
-                fileStr = (JXG.GeonextReader.decodeString(fileStr))[0][0];  // Base64 decoding
+                fileStr = (this.decodeString(fileStr))[0][0];  // Base64 decoding
             }
             // Hacks to enable not well formed XML. Will be redone in Algebra.geonext2JS and Board.addConditions
-            fileStr = JXG.GeonextReader.fixXML(fileStr);
+            fileStr = this.fixXML(fileStr);
         } catch(e) {
             fileStr = '';
         }

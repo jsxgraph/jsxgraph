@@ -874,58 +874,29 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @deprecated
      */
     setStyle: function(i) {
-        if(i == 0 || i == 1 || i == 2) { // x
-            this.visProp['face'] = 'cross';
-            if(i == 0) {
-                this.visProp['size'] = 2;
-            }
-            else if(i == 1) {
-                this.visProp['size'] = 3;
-            }
-            else {
-                this.visProp['size'] = 4;
-            }        
-        }
-        else if(i == 3 || i == 4 || i == 5 || i == 6) { // circle
-            this.visProp['face'] = 'circle';
-            if(i == 3) {
-                this.visProp['size'] = 1;
-            }
-            else if(i == 4) {
-                this.visProp['size'] = 2;
-            }
-            else if(i == 5) {
-                this.visProp['size'] = 3;
-            }        
-            else {
-                this.visProp['size'] = 4;
-            }            
-        }
-        else if(i == 7 || i == 8 || i == 9) { // rectangle
-            this.visProp['face'] = 'square';
-            if(i == 7) {
-                this.visProp['size'] = 2;
-            }
-            else if(i == 8) {
-                this.visProp['size'] = 3;
-            }
-            else {
-                this.visProp['size'] = 4;
-            }  
-        }
-        else if(i == 10 || i == 11 || i == 12) { // +
-            this.visProp['face'] = 'plus';
-            if(i == 10) {
-                this.visProp['size'] = 2;
-            }
-            else if(i == 11) {
-                this.visProp['size'] = 3;
-            }
-            else {
-                this.visProp['size'] = 4;
-            }  
-        }    
-        
+        var facemap = [
+                // 0-2
+                'cross', 'cross', 'cross',
+                // 3-6
+                'circle', 'circle', 'circle', 'circle',
+                // 7-9
+                'square', 'square', 'square',
+                // 10-12
+                'plus', 'plus', 'plus'
+            ], sizemap = [
+                // 0-2
+                2, 3, 4,
+                // 3-6
+                1, 2, 3, 4,
+                // 7-9
+                2, 3, 4,
+                // 10-12
+                2, 3, 4
+            ];
+
+        this.visProp.face = facemap[i];
+        this.visProp.size = sizemap[i];
+
         this.board.renderer.changePointStyle(this);
         return this;
     },
