@@ -651,7 +651,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      * @param addToTrace Not used yet. Always true.
      */
     cloneToBackground: function(addToTrace) {
-        var copy = {}, r, s, i, er;
+        var copy = {}, er;
 
         copy.id = this.id + 'T' + this.numTraces;
         copy.elementClass = JXG.OBJECT_CLASS_CURVE;
@@ -662,21 +662,11 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         copy.visProp = this.visProp;
         copy.visProp.curveType = this.visProp.curveType;
 
-        copy.board = {};
-        copy.board.unitX = this.board.unitX;
-        copy.board.unitY = this.board.unitY;
-        copy.board.zoomX = this.board.zoomX;
-        copy.board.zoomY = this.board.zoomY;
-        copy.board.stretchX = this.board.stretchX;
-        copy.board.stretchY = this.board.stretchY;
-        copy.board.origin = this.board.origin;
-        copy.board.canvasHeight = this.board.canvasHeight;
-        copy.board.canvasWidth = this.board.canvasWidth;
-        copy.board.dimension = this.board.dimension;
-        copy.board.options = this.board.options;
+        copy.board = this.board;
 
         copy.visProp = this.visProp;
         JXG.clearVisPropOld(copy);
+        
         er = this.board.renderer.enhancedRendering;
         this.board.renderer.enhancedRendering = true;
         this.board.renderer.drawCurve(copy);

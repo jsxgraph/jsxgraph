@@ -32,20 +32,6 @@
  */
 
 
-JXG.POINT_STYLE_X_SMALL      = 0;  // a small sized x
-JXG.POINT_STYLE_X            = 1;  // a medium sized x
-JXG.POINT_STYLE_X_BIG        = 2;  // a big sized x
-JXG.POINT_STYLE_CIRCLE_TINY  = 3;  // a tiny circle
-JXG.POINT_STYLE_CIRCLE_SMALL = 4;  // a small circle
-JXG.POINT_STYLE_CIRCLE       = 5;  // a medium circle
-JXG.POINT_STYLE_CIRCLE_BIG   = 6;  // a big circle
-JXG.POINT_STYLE_SQUARE_SMALL = 7;  // a small rectangle
-JXG.POINT_STYLE_SQUARE       = 8;  // a medium rectangle
-JXG.POINT_STYLE_SQUARE_BIG   = 9;  // a big rectangle
-JXG.POINT_STYLE_PLUS_SMALL   = 10; // a small +
-JXG.POINT_STYLE_PLUS         = 11; // a medium +
-JXG.POINT_STYLE_PLUS_BIG     = 12; // a big +
-
 /**
  * A point is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
  * which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
@@ -304,9 +290,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         }
 
         this.updateTransform();
-        
-        //this.updateRenderer();
-        //this.needsUpdate = false; // Why here and not in updateRenderer?
+
         return this;
     },
 
@@ -338,11 +322,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
         /* Update the label if visible. */
         if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
-            //this.label.content.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN,
-            //    [this.label.content.relativeCoords.scrCoords[1]+this.coords.scrCoords[1],
-            //     this.label.content.relativeCoords.scrCoords[2]+this.coords.scrCoords[2]], this.board);
             this.label.content.update();
-            //this.board.renderer.updateLabel(this.label);
             this.board.renderer.updateText(this.label.content);
         }
         
@@ -443,7 +423,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         var i, dx, dy, el, p,
             oldCoords = this.coords;
             
-        this.coords = new JXG.Coords(method, [x,y], this.board);
+        this.coords = new JXG.Coords(method, [x, y], this.board);
 
         if(this.group.length != 0) {
             // Update the initial coordinates. This is needed for free points
@@ -482,22 +462,15 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @param {number} y y coordinate in screen/user units
      */
     setPositionByTransform: function (method, x, y) {
-        var oldCoords = this.coords;
-        var t = this.board.create('transform',[x,y],{type:'translate'});
-        if (this.transformations.length>0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
-            this.transformations[this.transformations.length-1].melt(t);
+        var t = this.board.create('transform', [x,y], {type:'translate'});
+
+        if (this.transformations.length > 0 && this.transformations[this.transformations.length - 1].isNumericMatrix) {
+            this.transformations[this.transformations.length - 1].melt(t);
         } else {
-            this.addTransform(this,t);
+            this.addTransform(this, t);
         }
 
-        if (this.group.length != 0) {
-    /*
-            var dCoords = new JXG.Coords(method, [x,y], this.board);
-            this.group[this.group.length-1].dX = dCoords.scrCoords[1]-this.board.origin.scrCoords[1]; 
-            this.group[this.group.length-1].dY = dCoords.scrCoords[2]-this.board.origin.scrCoords[2]; 
-            this.group[this.group.length-1].update(this);
-    */
-        } else {
+        if (this.group.length == 0) {
             this.update();
         }
         return this;
@@ -510,7 +483,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @param {number} y y coordinate in screen/user units
      */
     setPosition: function (method, x, y) { 
-        //this.setPositionByTransform(method, x, y);
         this.setPositionDirectly(method, x, y);
         return this;
     },
@@ -530,7 +502,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             return this.slideObject.generatePolynomial(this);
         };
 
-        //this.position = 0;
         this.needsUpdate = true;
         this.update();
         return this;
@@ -579,8 +550,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                         this.coords = c;
                     }
                 };
-            // if (!this.board.isSuspendedUpdate) { this.update(); }
-            // return this;
         } else if (terms.length==2) { // Euclidean coordinates
             this.XEval = newfuncs[0];
             this.YEval = newfuncs[1];
@@ -1027,28 +996,17 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         copy.coords = this.coords;
         copy.visProp = this.visProp;
         copy.elementClass = JXG.OBJECT_CLASS_POINT;
+        copy.board = this.board;
         JXG.clearVisPropOld(copy);
         
         this.board.renderer.drawPoint(copy);
         this.traces[copy.id] = copy.rendNode;
         delete copy;
-    /*   
-        this.board.renderer.cloneSubTree(this);
-    */    
+
         return this;
     }
 });
 
-/* old description of the following createPoint method.
- * There are several methods to construct a point.
- * The input parameter "parentArr" determines the point:
- * - 2 numbers: affine (Euclidean) coordinates of a free point
- * - 2 numbers and atts['slideObject'] : Glider with initial Euclidean coordinates
- * - 2 Strings or (1 String and 1 Number): constrained point
- * - 1 function: intersection of objects, this is just a constrained point too
- * - 1 transformation object: clone of a base point transformed by the given Transformation
- * - 3 numbers: homogeneous coordinates of a free point
- */
 
 /**
  * @class This element is used to provide a constructor for a general point. A free point is created if the given parent elements are all numbers
@@ -1099,7 +1057,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
  *   var fpex2_p3 = fpex2_board.create('point', [fpex2_p2, fpex2_trans]);
  * </script><pre>
  */
-JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** object */ attributes) {
+JXG.createPoint = function(board, parents, attributes) {
     var el, isConstrained = false, i, show, attr;
 
     attr = JXG.copyAttributes(attributes, board.options, 'point');
@@ -1130,6 +1088,7 @@ JXG.createPoint = function(/** JXG.Board */ board, /** array */ parents, /** obj
         el = new JXG.Point(board, [0, 0], attr);
         el.addConstraint(parents);
     }
+
     return el;
 };
 

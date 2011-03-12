@@ -122,9 +122,12 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         var coords = JXG.Math.Geometry.intersectLineLine(this.intersect1, this.intersect2, this.board).usrCoords.slice(1);
 
         /* Create intersection point */
-        this.p = new JXG.Point(this.board, coords, InterId1, InterName1, true);
-        /* A point constructed by an intersection can't be moved, so it is fixed */
-        this.p.visProp.fixed = true;
+        this.p = this.board.create('point', coords, {
+            id: InterId1,
+            name: InterName1,
+            visible: true,
+            fixed: true
+        });
         this.addChild(this.p);
         this.real = true;
 
@@ -203,11 +206,19 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
     else if( ((Intersect1.type == Intersect2.type) && (Intersect1.type == JXG.OBJECT_TYPE_CIRCLE || Intersect1.type == JXG.OBJECT_TYPE_ARC)) ||
               (Intersect1.type == JXG.OBJECT_TYPE_CIRCLE && Intersect2.type == JXG.OBJECT_TYPE_ARC) ||
               (Intersect2.type == JXG.OBJECT_TYPE_CIRCLE && Intersect1.type == JXG.OBJECT_TYPE_ARC) ) { // Circle <-> Circle, Arc <-> Arc, Arc <-> Circle,
-        this.p1 = new JXG.Point(this.board, [0, 0], InterId1, InterName1, false);
-        this.p1.visProp.fixed = true;
+        this.p1 = this.board.create('point', [0, 0], {
+            id: InterId1,
+            name: InterName1,
+            visible: false,
+            fixed: true
+        });
         this.p1.label.content.visProp['visible'] = true;
-        this.p2 = new JXG.Point(this.board, [0, 0], InterId2, InterName2, false);
-        this.p2.visProp.fixed = true;
+        this.p2 = this.board.create('point', [0, 0], {
+            id: InterId2,
+            name: InterName2,
+            visible: false,
+            fixed: true
+        });
         this.p2.label.content.visProp['visible'] = true;
         this.addChild(this.p1);
         this.addChild(this.p2);
@@ -296,11 +307,19 @@ JXG.Intersection = function(Board, Id, Intersect1, Intersect2, InterId1, InterId
         };
     }
     else { // Circle <-> Line, Arc <-> Line, Circle <-> Arrow, Arc <-> Arrow
-        this.p1 = new JXG.Point(this.board, [0, 0], InterId1, InterName1, false);
-        this.p1.visProp.fixed = true;
-        this.p1.label.content.visProp['visible'] = true;        
-        this.p2 = new JXG.Point(this.board, [0, 0], InterId2, InterName2, false);
-        this.p2.visProp.fixed = true;
+        this.p1 = this.board.create('point', [0, 0], {
+            id: InterId1,
+            name: InterName1,
+            visible: true,
+            fixed: true
+        });
+        this.p1.label.content.visProp['visible'] = true;
+        this.p2 = this.board.create('point', [0, 0], {
+            id: InterId2,
+            name: InterName2,
+            visible: true,
+            fixed: true
+        });
         this.p2.label.content.visProp['visible'] = true;
         this.addChild(this.p1);
         this.addChild(this.p2);        

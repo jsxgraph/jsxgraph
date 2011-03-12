@@ -479,13 +479,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
         copy.Radius = function () { return r; };
         copy.getRadius = function () { return r; }; // deprecated
 
-        copy.board = {};
-        copy.board.unitX = this.board.unitX;
-        copy.board.unitY = this.board.unitY;
-        copy.board.zoomX = this.board.zoomX;
-        copy.board.zoomY = this.board.zoomY;
-        copy.board.stretchX = this.board.stretchX;
-        copy.board.stretchY = this.board.stretchY;
+        copy.board = this.board;
 
         copy.visProp = this.visProp;
         JXG.clearVisPropOld(copy);

@@ -57,7 +57,7 @@ JXG.Image = function (board, url, coordinates, size, attributes) {
     this.url = url;
 
     this.visProp.layer = attributes.layer;
-    this.parent = attributes.anchor;
+    this.parent = JXG.getRef(attributes.anchor);
 
     this.id = this.board.setId(this, 'Im');
 

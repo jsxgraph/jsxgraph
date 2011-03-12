@@ -483,18 +483,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
         copy.stdform = this.stdform;
 
-        copy.board = {};
-        copy.board.unitX = this.board.unitX;
-        copy.board.unitY = this.board.unitY;
-        copy.board.zoomX = this.board.zoomX;
-        copy.board.zoomY = this.board.zoomY;
-        copy.board.stretchX = this.board.stretchX;
-        copy.board.stretchY = this.board.stretchY;
-        copy.board.origin = this.board.origin;
-        copy.board.canvasHeight = this.board.canvasHeight;
-        copy.board.canvasWidth = this.board.canvasWidth;
-        copy.board.dimension = this.board.dimension;
-        //copy.board.algebra = this.board.algebra;
+        copy.board = this.board;
 
         copy.visProp = this.visProp;
         JXG.clearVisPropOld(copy);
