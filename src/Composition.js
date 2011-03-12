@@ -394,15 +394,16 @@ JXG.createPerpendicular = function(board, parents, attributes) {
  *   var mpex1_mp2 = mpex1_board.create('midpoint', [mpex1_l1]);
  * </script><pre>
  */
-JXG.createMidpoint = function(board, parentArr, attributes) {
+JXG.createMidpoint = function(board, parents, attributes) {
     var a, b, t;
-    if(parentArr.length == 2 && JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1])) {
-        a = parentArr[0];
-        b = parentArr[1];
+
+    if(parents.length == 2 && JXG.isPoint(parents[0]) && JXG.isPoint(parents[1])) {
+        a = parents[0];
+        b = parents[1];
     }
-    else if(parentArr.length == 1 && parentArr[0].elementClass == JXG.OBJECT_CLASS_LINE) {
-        a = parentArr[0].point1;
-        b = parentArr[0].point2;
+    else if(parents.length == 1 && parents[0].elementClass == JXG.OBJECT_CLASS_LINE) {
+        a = parents[0].point1;
+        b = parents[0].point2;
     }
     else {
         throw new Error("JSXGraph: Can't create midpoint." +
@@ -668,8 +669,6 @@ JXG.createParallel = function(board, parents, attributes) {
 JXG.createArrowParallel = function(board, parents, attributes) {
     /* parallel arrow point polynomials are done in createParallelPoint */
     try {
-        // we don't have to get onto that whole create stack here
-        // because that'll be run for the line l right after leaving that function.
         return JXG.createParallel(board, parents, attributes).setStraight(false, false).setArrow(false,true);;
     } catch (e) {
         throw new Error("JSXGraph: Can't create arrowparallel with parent types '" +
