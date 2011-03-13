@@ -607,7 +607,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var pCont = this.containerObj,
             cPos = JXG.getOffset(pCont),
             n;
-//document.getElementById('debug').innerHTML += cPos.toString()+' # '+ document.getElementById('jxgbox')+'<br>';
 
         // add border width
         n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
@@ -1732,6 +1731,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     update: function (drag) {
         var i, len, boardId, b;
+
         if (this.isSuspendedUpdate) { return this; }
         this.prepareUpdate(drag).updateElements(drag).updateConditions();
         this.renderer.suspendRedraw();

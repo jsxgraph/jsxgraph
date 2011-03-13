@@ -169,13 +169,14 @@ JXG.GeonextReader = {
             ];
 
         gxtEl.strokeWidth = gxtEl.strokewidth;
-        gxtEl.face = facemap[parseInt(gxtEl.style, 10)];
-        gxtEl.size = sizemap[parseInt(gxtEl.style, 10)];
+        gxtEl.face = facemap[parseInt(gxtEl.style, 10)] || 'cross';
+        gxtEl.size = sizemap[parseInt(gxtEl.style, 10)] || 3;
 
         gxtEl.straightFirst = JXG.str2Bool(gxtEl.straightFirst);
         gxtEl.straightLast = JXG.str2Bool(gxtEl.straightLast);
 
         gxtEl.visible = JXG.str2Bool(gxtEl.visible);
+        gxtEl.withLabel = gxtEl.visible;
         gxtEl.draft = JXG.str2Bool(gxtEl.draft);
         gxtEl.trace = JXG.str2Bool(gxtEl.trace);
 
@@ -329,7 +330,7 @@ JXG.GeonextReader = {
         var i, s, ob,
             conditions = '';
 
-        if (node != null) {
+        if (JXG.exists(node)) {
             for(i = 0; i < node.getElementsByTagName('data').length; i++) {
                 ob = node.getElementsByTagName('data')[i];
                 s = this.subtreeToString(ob);
@@ -350,11 +351,9 @@ JXG.GeonextReader = {
      * @param {Object} board board object
      */
     readGeonext: function(tree, board) {
-        var xmlNode,
-            elChildNodes,
+        var xmlNode, elChildNodes,
             s, Data, inter, boardData, el,
-            strFir, strLas, conditions, tmp,
-            strTrue = 'true', gxtReader = this;
+            conditions, tmp, strTrue = 'true', gxtReader = this;
 
         // maybe this is not necessary as we already provide layer options for sectors and circles via JXG.Options but
         // maybe these have to be the same for geonext.
@@ -362,7 +361,7 @@ JXG.GeonextReader = {
         board.options.layer.circle = board.options.layer.angle;
 
         boardData = this.gEBTN(tree, 'board', 0, false);
-        conditions = this.readConditions(this.gEBTN(boardData, 'conditions', 0, false));
+        conditions = this.readConditions(boardData.getElementsByTagName('conditions')[0]);
 
         // set the origin
         xmlNode = this.gEBTN(boardData, 'coordinates', 0, false);
@@ -450,13 +449,14 @@ JXG.GeonextReader = {
                     el, p, inter, rgbo, tmp;
 
                 Data = elChildNodes[s];
-                gxtEl = JXG.GeonextReader.defProperties(gxtEl, Data);
+                gxtEl = gxtReader.defProperties(gxtEl, Data);
 
                 // Skip text nodes
                 if (!JXG.exists(gxtEl)) {
                     return;
                 }
 
+                gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName.toLowerCase, 'READ:');
                 switch (Data.nodeName.toLowerCase()) {
                     case "point":
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
@@ -465,12 +465,13 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl.fixed = JXG.str2Bool(gxtReader.gEBTN(Data, 'fix'));
 
-                        gxtEl = JXG.GeonextReader.transformProperties(gxtEl);
+                        gxtEl = gxtReader.transformProperties(gxtEl);
+
                         try {
                             p = board.create('point', [parseFloat(gxtEl.x), parseFloat(gxtEl.y)], gxtEl);
 
-                            JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
-                            JXG.GeonextReader.parseImage(board, Data, board.options.layer['image'], 0, 0, 0, 0, p);
+                            gxtReader.parseImage(board, Data, board.options.layer['image'], 0, 0, 0, 0, p);
+                            gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         } catch(e) {
                             JXG.debug(e);
                         }
@@ -488,8 +489,8 @@ JXG.GeonextReader = {
 
                         l = board.create('line', [gxtEl.first, gxtEl.last], gxtEl);
 
-                        JXG.GeonextReader.parseImage(board, Data, board.options.layer['image'], 0, 0, 0, 0, l);
-                        JXG.GeonextReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
+                        gxtReader.parseImage(board, Data, board.options.layer['image'], 0, 0, 0, 0, l);
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "circle":
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
@@ -540,7 +541,6 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl = gxtReader.transformProperties(gxtEl);
 
-
                         p = board.create('point', [parseFloat(gxtEl.xval), parseFloat(gxtEl.yval)], gxtEl);
                         gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
                         p.addConstraint([gxtEl.x, gxtEl.y]);
@@ -582,8 +582,8 @@ JXG.GeonextReader = {
                             gxtEl.outLast = gxtReader.transformProperties(gxtEl.outLast);
 
                             inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first],
-                                    board.objects[gxtEl.last], gxtEl.outputFirstId, gxtEl.outputLastId,
-                                    gxtEl.outputFirstName, gxtEl.outputLastName);
+                                    board.objects[gxtEl.last], gxtEl.outFirst.id, gxtEl.outLast.id,
+                                    gxtEl.outFirst.name, gxtEl.outLast.name);
                             inter.p1.setProperty(gxtEl.outFirst);
                             inter.p2.setProperty(gxtEl.outLast);
                         }
@@ -655,7 +655,7 @@ JXG.GeonextReader = {
 
                             // MIDPOINT
                             case "210110":
-                                board.create('midpoint', gxtEl.defEl.slice(0, 2), gxtEl.out);
+                                board.create('midpoint', gxtEl.defEl.slice(0, numberDefEls), gxtEl.out);
                                 break;
 
                              // MIRRORLINE
@@ -777,6 +777,7 @@ JXG.GeonextReader = {
                             gxtEl.border[i].colorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
                         }
                         gxtEl = gxtReader.transformProperties(gxtEl);
+
                         p = board.create('polygon', gxtEl.dataVertex, gxtEl);
 
                         // to emulate the geonext behaviour on invisible polygons
@@ -930,7 +931,6 @@ JXG.GeonextReader = {
             })(s);
         }
         board.addConditions(conditions);
-
     },
 
     decodeString: function(str) {
