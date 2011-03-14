@@ -250,8 +250,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.visProp.draft = attributes.draft && attributes.draft.draft;
 
         // TODO: comment gradient possibilities
+        /*
         this.visProp.gradient = 'none';
         this.visProp.gradientsecondcolor = 'black';
+        */
         this.visProp.gradientangle = '270';
         this.visProp.gradientsecondopacity = this.visProp.fillopacity;
         this.visProp.gradientpositionx = 0.5;
@@ -672,6 +674,17 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         return this;
     },
 
+    /**
+     * Creates a gradient nodes in the renderer.
+     * @see JXG.SVGRenderer#setGradient
+     * @private
+     */
+    createGradient: function() {
+        if (this.visProp.gradient === 'linear' || this.visProp.gradient === 'radial' ) {
+            this.board.renderer.setGradient(this);
+        }
+    },
+           
     /**
      * Creates a label element for this geometry element.
      * Doesn't add the label to the board, so it shouldn't be called itself. Use {@link #addLabelToElement} instead.

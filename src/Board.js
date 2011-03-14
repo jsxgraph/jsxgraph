@@ -1846,6 +1846,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             attributes = attributes[0];
         }
 
+        /*
         if (el.multipleElements) {
 //            for (s in el) {
 //                if (el[s].setProperty)
@@ -1855,7 +1856,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 //            if (el.setProperty)
 //                el.setProperty(attributes);
         }
-
+        */
+        
         this.update(el); // We start updating at the newly created element. AW
         return el;
     },

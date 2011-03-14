@@ -160,6 +160,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     this.board.renderer.drawEllipse(this);
     this.board.finalizeAdding(this);
 
+    this.createGradient();
     this.createLabel();
 
     if(method == 'pointRadius') {

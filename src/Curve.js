@@ -92,8 +92,10 @@ JXG.Curve = function (board, parents, attributes) {
     
     this.id = this.board.setId(this,'G');
     this.board.renderer.drawCurve(this);
-    this.board.finalizeAdding(this);
     
+    this.board.finalizeAdding(this);
+
+    this.createGradient();
     this.createLabel();
 
     if (typeof this.xterm=='string') {

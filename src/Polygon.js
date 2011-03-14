@@ -90,6 +90,7 @@ JXG.Polygon = function (board, vertices, /*borders,*/ attributes) {
         vertex.addChild(this);
     }
     
+    //this.createGradient();
     // create label 
     this.createLabel([0, 0]);
     
