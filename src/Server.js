@@ -84,7 +84,7 @@ JXG.Server.callServer = function(action, callback, data, sync) {
 	} while(typeof this.runningCalls[id] != 'undefined');
 
 	// store information about the calls
-	this.runningCalls[id] = { 'action': action };
+	this.runningCalls[id] = {action: action};
 	if(typeof data.module != 'undefined')
 		this.runningCalls[id].module = data.module;
 

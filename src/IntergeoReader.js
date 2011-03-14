@@ -656,7 +656,7 @@ JXG.IntergeoReader = new function() {
     
     this.addMidpointOfTwoPoints = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
-            el1, el2, el3;
+            el1, el2, el;
 
         el1 = this.addPoint(this.objects[param[1]]);
         el2 = this.addPoint(this.objects[param[2]]);

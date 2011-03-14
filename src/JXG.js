@@ -405,12 +405,12 @@ JXG.extend(JXG, /** @lends JXG */ {
     copyAttributes: function (attributes, options) {
         var a, i, len, o, isAvail;
 
-        a = this.deepCopy(options['elements'], null, true);       // default options from Options.elements
+        a = this.deepCopy(options.elements, null, true);       // default options from Options.elements
         len = arguments.length;
         
         // Only the layer of the main element is set.
-        if (len < 4 && this.exists(arguments[2]) && this.exists(options['layer'][arguments[2]])) {
-            a['layer'] = options['layer'][arguments[2]];
+        if (len < 4 && this.exists(arguments[2]) && this.exists(options.layer[arguments[2]])) {
+            a.layer = options.layer[arguments[2]];
         } 
 
         o = options;                                                // default options from specific elements
@@ -459,7 +459,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             throw new Error("\nJSXGraph: HTML container element '" + (elementId) + "' not found.");
         }
 
-        display = element.style['display'];
+        display = element.style.display;
         if (display != 'none' && display != null) {// Safari bug
             return {width: element.offsetWidth, height: element.offsetHeight};
         }

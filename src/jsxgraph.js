@@ -62,6 +62,8 @@ JXG.JSXGraph = {
      * @type String
      */
     rendererType: (function() {
+        var i, arr;
+
         if (JXG.supportsSVG()) {
             JXG.Options.renderer = 'svg';
         } else if (JXG.supportsVML()) {
@@ -83,45 +85,7 @@ JXG.JSXGraph = {
         } else {
             JXG.Options.renderer = 'canvas';
         }
-        
-        /*
-        var ie, opera, i, arr;
-        // Determine the users browser 
-        ie = navigator.appVersion.match(/MSIE (\d\.\d)/);
-        opera = (navigator.userAgent.toLowerCase().indexOf("opera") != -1);
-        // set the rendererType according to the browser
-        if ((!ie) || (opera) || (ie && parseFloat(ie[1]) >= 9.0)) {
-            // we're NOT in IE
-            if (navigator.appVersion.match(/Android.*AppleWebKit/) 
-                ||navigator.appVersion.match(/ElocityA7.*AppleWebKit/) ) {
-                // we're using canvas on android
-                JXG.Options.renderer = 'canvas';
-            } else {
-                // let's hope the user's browser supports svg...
-                JXG.Options.renderer = 'svg';
-            }
-        } else {
-            // IE
-            JXG.Options.renderer = 'vml';
 
-            // Ok, this is some real magic going on here. IE/VML always was so
-            // terribly slow, except in one place: Examples placed in a moodle course
-            // was almost as fast as in other browsers. So i grabbed all the css and
-            // js scripts from our moodle, added them to a jsxgraph example and it
-            // worked. next step was to strip all the css/js code which didn't affect
-            // the VML update speed. The following five lines are what was left after
-            // the last step and yes - it basically does nothing but reads two
-            // properties of document.body on every mouse move. why? we don't know. if
-            // you know, please let us know.
-            function MouseMove() {
-                document.body.scrollLeft;
-                document.body.scrollTop;
-            }
-
-            document.onmousemove = MouseMove;
-        }
-        */
-        
         // Load the source files for the renderer
         arr = JXG.rendererFiles[JXG.Options.renderer].split(',');
         for (i = 0; i < arr.length; i++) ( function(include) {

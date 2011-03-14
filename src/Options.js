@@ -811,7 +811,9 @@ JXG.Options = {
     },
     
     chart: {
-        chartStyle: 'line'
+        chartStyle: 'line',
+        colors: ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'],
+        fillcolor: null
     },
 
     image: {
@@ -1097,7 +1099,7 @@ JXG.rgb2bw = function(color) {
  * @see #useStandardOptions
  */
 JXG.simulateColorBlindness = function(board, deficiency) {
-    o = JXG.Options;
+    var o = JXG.Options;
     o.point.fillColor = JXG.rgb2cb(o.point.fillColor, deficiency);
     o.point.highlightFillColor = JXG.rgb2cb(o.point.highlightFillColor, deficiency);
     o.point.strokeColor = JXG.rgb2cb(o.point.strokeColor, deficiency);

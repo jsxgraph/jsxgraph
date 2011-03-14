@@ -25,83 +25,81 @@
 
 /**
  * Chart plotting
- * input array: 
- * 
- **/
+ */
  
 JXG.Chart = function(board, parents, attributes) {
+    var x, y, i, c, style, len;
+
     this.constructor();
-    if (parents.length==0) {
-        return;
-    }  // No input data in parentArr
-    JXG.debug('chart', attributes);
-    /**
-     * Contains lpointers to the various displays.
-     */
-    this.elements = [];
-    
+
+    if (!JXG.isArray(parents) || parents.length === 0) {
+        throw new Error('JSXGraph: Can\'t create a chart without data');
+    }
+
     this.init(board, attributes);
     
-    var x,y,i;
-    if (parents.length>0 && (typeof parents[0]=='number')) { // parents looks like [a,b,c,..]
-                                                                // x has to be filled
+    /**
+     * Contains pointers to the various subelements of the chart.
+     */
+    this.elements = [];
+
+    if (JXG.isNumber(parents[0])) {
+        // parents looks like [a,b,c,..]
+        // x has to be filled
+
         y = parents;
         x = [];
         for (i=0;i<y.length;i++) {
             x[i] = i+1;
         }
-    } else {
-        if (parents.length==1) { // parents looks like [[a,b,c,..]]
-                                // x has to be filled
-            y = parents[0];
-            x = [];
-            var len;
-            if (JXG.isFunction(y)) {
-                len = y().length;
-            } else {
-                len = y.length;
-            }
-            for (i=0;i<len;i++) {
-                x[i] = i+1;
-            }
+    } else if (parents.length === 1 && JXG.isArray(parents[0])) {
+        // parents looks like [[a,b,c,..]]
+        // x has to be filled
+
+        y = parents[0];
+        x = [];
+
+        len = JXG.evaluate(y).length;
+        for (i = 0; i < len; i++) {
+            x[i] = i+1;
         }
-        if (parents.length==2) { // parents looks like [[x0,x1,x2,...],[y1,y2,y3,...]]
-            x = parents[0];
-            y = parents[1];
-        }
+    } else if (parents.length === 2) {
+        // parents looks like [[x0,x1,x2,...],[y1,y2,y3,...]]
+
+        x = parents[0];
+        y = parents[1];
     }
 
-    var style = attributes.chartstyle;
-    style = style.replace(/ /g,'');
-    style = style.split(',');
-    var c;
-    for (i=0;i<style.length;i++) {
+    // does this really need to be done here? this should be done in createChart and then
+    // there should be an extra chart for each chartstyle
+    style = attributes.chartstyle.replace(/ /g,'').split(',');
+    for (i = 0; i < style.length; i++) {
         switch (style[i]) {
             case 'bar':
-                c = this.drawBar(board,[x,y],attributes);
+                c = this.drawBar(board, x, y, attributes);
                 break;
             case 'line':
-                c = this.drawLine(board, [x, y], attributes);
+                c = this.drawLine(board, x, y, attributes);
                 break;
             case 'fit':
-                c = this.drawFit(board, [x, y], attributes);
+                c = this.drawFit(board, x, y, attributes);
                 break;
             case 'spline':
-                c = this.drawSpline(board, [x, y], attributes);
+                c = this.drawSpline(board, x, y, attributes);
                 break;
             case 'pie':
-                c = this.drawPie(board,[y],attributes);
+                c = this.drawPie(board, y, attributes);
                 break;
             case 'point':
-                c = this.drawPoints(board,[x,y],attributes);
+                c = this.drawPoints(board, x, y, attributes);
                 break;
             case 'radar':
-                c = this.drawRadar(board,parents,attributes);
+                c = this.drawRadar(board, parents, attributes);
                 break;
         }
         this.elements.push(c);
     }
-    this.id = this.board.setId(this,'Chart');
+    this.id = this.board.setId(this, 'Chart');
     
     return this.elements;
 };
@@ -109,58 +107,44 @@ JXG.Chart.prototype = new JXG.GeometryElement;
 
 JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
 
-    drawLine: function(board, parents, attributes) {
-        var _x = parents[0],
-            _y = parents[1];
-
-        // not needed
+    drawLine: function(board, x, y, attributes) {
+        // we don't want the line chart to be filled
         attributes.fillcolor = 'none';
         attributes.highlightfillcolor = 'none';
 
-        var c = board.create('curve', [_x, _y], attributes);
-        this.rendNode = c.rendNode;  // This is needed in setProperty
-        return c;
+        return board.create('curve', [x, y], attributes);
     },
 
-    drawSpline: function(board, parents, attributes) {
-        var x = parents[0],
-            y = parents[1],
-            i;
-
-        // not needed
+    drawSpline: function(board, x, y, attributes) {
+        // we don't want the spline chart to be filled
         attributes.fillColor = 'none';
         attributes.highlightfillcolor = 'none';
 
-        var c = board.create('spline', [x, y], attributes);
-        this.rendNode = c.rendNode;  // This is needed in setProperty
-        return c;
+        return board.create('spline', x, y, attributes);
     },
 
-    drawFit: function(board, parents, attributes) {
-        var x = parents[0],
-            y = parents[1],
-            deg = (((typeof attributes.degree == 'undefined') || (parseInt(attributes.degree) == NaN)|| (parseInt(attributes.degree) < 1)) ? 1 : parseInt(attributes.degree));
+    drawFit: function(board, x, y, attributes) {
+        var deg = attributes.degree;
 
-        // not needed
+        deg = (!JXG.exists(deg) || parseInt(deg) == NaN || parseInt(deg) < 1) ? 1 : parseInt(deg),
+
+        // never fill
         attributes.fillcolor = 'none';
         attributes.highlightfillcolor = 'none';
 
-        var regression = JXG.Math.Numerics.regressionPolynomial(deg, x, y);
-        var c = board.create('functiongraph', [regression], attributes);
-        this.rendNode = c.rendNode;  // This is needed in setProperty
-        return c;
+        return board.create('functiongraph', [JXG.Math.Numerics.regressionPolynomial(deg, x, y)], attributes);
     },
 
-    drawBar: function(board, parents, attributes) {
-        var i, pols = [], x = parents[0], y = parents[1],
-            w, xp0, xp1, xp2, yp, ypL, colorArray, p = [],
-            fill, strwidth, fs,
+    drawBar: function(board, x, y, attributes) {
+        var i,pols = [], strwidth, fill, fs,
+            w, xp0, xp1, xp2, yp, colors, p = [],
             hiddenPoint = {
                 fixed: true,
                 withLabel: false,
                 visible: false,
                 name: ''
             };
+        
         if (!JXG.exists(attributes.fillopacity)) {
             attributes.fillopacity = 0.6;
         }
@@ -169,13 +153,13 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         if (attributes && attributes.width) {  // width given
             w = attributes.width;
         } else {
-            if (x.length<=1) {
+            if (x.length <= 1) {
                 w = 1;
             } else {
                 // Find minimum distance between to bars.
                 w = x[1]-x[0];
-                for (i=1;i<x.length-1;i++) {
-                    w = (x[i+1]-x[i]<w)?(x[i+1]-x[i]):w;
+                for (i = 1; i < x.length-1; i++) {
+                    w = (x[i+1] - x[i] < w) ? x[i+1] - x[i] : w;
                 }
             }
             w *=0.8;
@@ -183,28 +167,20 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
 
         fill = attributes.fillcolor;
         fs = parseFloat(board.options.text.fontSize);                 // TODO: handle fontSize attribute
-        for (i=0;i<x.length;i++) {
-            if (JXG.isFunction(x[i])) {  // Not yet
-                xp0 = function() { return x[i]()-w*0.5; };
-                xp1 = function() { return x[i](); };
-                xp2 = function() { return x[i]()+w*0.5; };
-            } else {
-                xp0 = x[i]-w*0.5;
-                xp1 = x[i];
-                xp2 = x[i]+w*0.5;
-            }
-            if (JXG.isFunction(y[i])) {  // Not yet
-                ypL = yp; //function() { return y[i]()*1.1; };
-            } else {
-                ypL = y[i]+0.2;
-            }
-            yp = y[i];
+        for (i = 0; i < x.length; i++) {
+
+            xp0 = JXG.evaluate(x[i]) - w*0.5;
+            xp1 = JXG.evaluate(x[i]);
+            xp2 = JXG.evaluate(x[i]) + w*0.5;
+
+            yp = JXG.evaluate(y[i]);
 
             if (attributes.dir == 'horizontal') {  // horizontal bars
                 p[0] = board.create('point',[0,xp0], hiddenPoint);
                 p[1] = board.create('point',[yp,xp0], hiddenPoint);
                 p[2] = board.create('point',[yp,xp2], hiddenPoint);
                 p[3] = board.create('point',[0,xp2], hiddenPoint);
+
                 if ( JXG.exists(attributes.labels) && JXG.exists(attributes.labels[i]) ) {
                     strwidth = attributes.labels[i].toString().length;
                     strwidth = 2.0*strwidth*fs/board.stretchX;
@@ -232,11 +208,11 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
                     board.create('text',[xp1-strwidth*0.5, yp, attributes['labels'][i]],attributes);
                 }
             }
-            attributes['withLines'] = false;
 
-            if(!fill) {
-                colorArray = attributes.colorarray || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
-                attributes.fillcolor = colorArray[i%colorArray.length];
+            attributes.withlines = false;
+            if(!JXG.exists(fill) && JXG.isArray(attributes.colors)) {
+                colors = attributes.colors;
+                attributes.fillcolor = colors[i%colors.length];
             }
             pols[i] = board.create('polygon', p, attributes);
         }
@@ -259,7 +235,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             attributes.infoboxtext = infoboxArray ? infoboxArray[i%infoboxArray.length] : false;
             points[i] = board.create('point',[x[i],y[i]], attributes);
         }
-        this.rendNode = points[0].rendNode;
+
         return points; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
     },
 
