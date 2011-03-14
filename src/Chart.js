@@ -65,9 +65,13 @@ JXG.Chart = function(board, parents, attributes) {
         }
     } else if (parents.length === 2) {
         // parents looks like [[x0,x1,x2,...],[y1,y2,y3,...]]
+        len = Math.min(parents[0].length, parents[1].length);
+        x = parents[0].slice(0, len);
+        y = parents[1].slice(0, len);
+    }
 
-        x = parents[0];
-        y = parents[1];
+    if (JXG.isArray(y) && y.length === 0) {
+        throw new Error('JSXGraph: Can\'t create charts without data.');
     }
 
     // does this really need to be done here? this should be done in createChart and then
@@ -238,22 +242,17 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             points[i] = board.create('point',[x[i],y[i]], attributes);
         }
 
-        return points; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
+        return points;
     },
 
-    drawPie: function(board, parents, attributes) {  // Only 1 array possible as argument
-        var y = parents[0];
-        if (y.length <= 0) {
-            return;
-        }
-
+    drawPie: function(board, y, attributes) {
         var i,
             p = [],
             arc = [],
             s = JXG.Math.Statistics.sum(y),
-            colorArray = attributes.colorarray || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'],
-            highlightColorArray = attributes.highlightcolorarray || ['#FF7400'],
-            labelArray = attributes.labelarray,
+            colorArray = attributes.colors,
+            highlightColorArray = attributes.highlightcolors,
+            labelArray = attributes.labels,
             r = attributes.radius || 4,
             radius = r,
             cent = attributes.center || [0,0],
@@ -279,73 +278,61 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         }
 
         attributes.highlightonsector = attributes.highlightonsector || false;
-        var myAtts = {
-            id: attributes.id,
-            strokeWidth: attributes.strokewidth || 1,
-            strokecolor: attributes.strokecolor || 'none',
-            straightfirst: false,
-            straightlast: false,
-            fillopacity: attributes.fillopacity || 0.6,
-            highlightstrokecolor: attributes.highlightstrokecolor || '#FFFFFF',
-            gradient: attributes.gradient || 'none',
-            gradientsecondcolor: attributes.gradientsecondcolor || 'black'
-        };
+        attributes.straightfirst = false;
+        attributes.straightlast = false;
 
-        center = board.create('point',[xc,yc], hiddenPoint);
-        p[0] = board.create('point',[function(){ return radius()+xc;},function(){ return 0+yc;}], hiddenPoint);
+        center = board.create('point',[xc, yc], hiddenPoint);
+        p[0] = board.create('point', [
+            function () {
+                return radius() + xc;
+            },
+            function () {
+                return yc;
+            }
+        ], hiddenPoint);
 
-        for (i=0;i<y.length;i++) {
-            p[i+1] = board.create('point',
-                [(function(j){ return function() {
-                    var s, t = 0.0, i;
-                    for (i=0; i<=j ;i++) {
-                        if  (JXG.isFunction(y[i])) {
-                            t += parseFloat(y[i]());
-                        } else {
-                            t += parseFloat(y[i]);
-                        }
-                    }
-                    s = t;
-                    for (i=j+1; i<y.length ;i++) {
-                        if  (JXG.isFunction(y[i])) {
-                            s += parseFloat(y[i]());
-                        } else {
-                            s += parseFloat(y[i]);
-                        }
-                    }
-                    var rad = (s!=0)?(2*Math.PI*t/s):0;
-                    return radius()*Math.cos(rad)+xc;
-                };})(i),
-                    (function(j){ return function() {
-                        var s, t = 0.0, i;
-                        for (i=0; i<=j ;i++) {
-                            if  (JXG.isFunction(y[i])) {
-                                t += parseFloat(y[i]());
-                            } else {
-                                t += parseFloat(y[i]);
-                            }
+        for (i = 0; i < y.length; i++) {
+            p[i+1] = board.create('point', [
+                (function(j) {
+                    return function() {
+                        var s, t = 0, i, rad;
+
+                        for (i = 0; i <= j; i++) {
+                            t += parseFloat(JXG.evaluate(y[i]));
                         }
                         s = t;
-                        for (i=j+1; i<y.length ;i++) {
-                            if  (JXG.isFunction(y[i])) {
-                                s += parseFloat(y[i]());
-                            } else {
-                                s += parseFloat(y[i]);
-                            }
+                        for (i = j + 1; i < y.length; i++) {
+                            s += parseFloat(JXG.evaluate(y[i]));
                         }
-                        var rad = (s!=0)?(2*Math.PI*t/s):0;
+                        rad = (s != 0) ? (2*Math.PI*t/s) : 0;
+
+                        return radius()*Math.cos(rad)+xc;
+                    };
+                })(i),
+                (function(j){
+                    return function() {
+                        var s, t = 0.0, i, rad;
+                        for (i = 0; i <= j ;i++) {
+                            t += parseFloat(JXG.evaluate(y[i]));
+                        }
+                        s = t;
+                        for (i = j + 1; i < y.length; i++) {
+                            s += parseFloat(JXG.evaluate(y[i]));
+                        }
+                        rad = (s != 0) ? (2*Math.PI*t/s) : 0;
+
                         return radius()*Math.sin(rad)+yc;
-                    };})(i)
-                ],
-            hiddenPoint);
+                    };
+                })(i)
+            ], hiddenPoint);
 
-            myAtts.fillcolor = colorArray[i%colorArray.length];
-            myAtts.name = labelArray[i];
-            myAtts.withlabel = myAtts['name'] != '';
-            myAtts.labelcolor = colorArray[i%colorArray.length];
-            myAtts.highlightfillcolor = highlightColorArray[i%highlightColorArray.length];
+            attributes.name = labelArray[i];
+            attributes.withlabel = attributes.name != '';
+            attributes.fillcolor = colorArray && colorArray[i%colorArray.length];
+            attributes.labelcolor = colorArray && colorArray[i%colorArray.length];
+            attributes.highlightfillcolor = highlightColorArray && highlightColorArray[i%highlightColorArray.length];
 
-            arc[i] = board.create('sector',[center,p[i],p[i+1]], myAtts);
+            arc[i] = board.create('sector',[center,p[i],p[i+1]], attributes);
 
             if(attributes.highlightonsector) {
                 arc[i].hasPoint = arc[i].hasPointSector; // overwrite hasPoint so that the whole sector is used for highlighting
@@ -388,7 +375,6 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             }
 
         }
-        this.rendNode = arc[0].rendNode;
         return {arcs:arc, points:p, midpoint:center}; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
     },
 
@@ -490,8 +476,8 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
 
         // labels for legend
         labelArray = attributes.labelarray || la;
-        colorArray = attributes.colorArray || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
-        highlightColorArray = attributes.highlightcolorarray || ['#FF7400'];
+        colorArray = attributes.colors;
+        highlightColorArray = attributes.highlightcolors;
         radius = attributes.radius || 10;
         myAtts = {};
         if (!JXG.exists(attributes.highlightonsector)) {
@@ -572,9 +558,9 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         }
         polygons = new Array(len);
         for(i=0;i<len;i++) {
-            myAtts['labelcolor'] = colorArray[i%colorArray.length];
-            myAtts['strokecolor'] = colorArray[i%colorArray.length];
-            myAtts['fillcolor'] = colorArray[i%colorArray.length];
+            myAtts['labelcolor'] = colorArray && colorArray[i%colorArray.length];
+            myAtts['strokecolor'] = colorArray && colorArray[i%colorArray.length];
+            myAtts['fillcolor'] = colorArray && colorArray[i%colorArray.length];
             polygons[i] = board.create('polygon',pdata[i],
             {withLines:true,
                 withLabel:false,
