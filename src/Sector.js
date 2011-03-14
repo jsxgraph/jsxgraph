@@ -45,7 +45,7 @@
  */
 
 JXG.createSector = function(board, parents, attributes) {
-    var el, defaults, key, options, attr;
+    var el, attr;
         
     // Alles 3 Punkte?
     if ( !(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2]))) {
@@ -92,9 +92,8 @@ JXG.createSector = function(board, parents, attributes) {
             beta, co, si, matrix,
             phi = JXG.Math.Geometry.rad(A,B,C),
             i,
-            //n = 100, 
             n = Math.ceil(phi/Math.PI*90)+1,
-            delta = phi/n, //Math.PI/90.0, 
+            delta = phi/n,
             x = B.X(),
             y = B.Y(),
             v, 
@@ -102,10 +101,9 @@ JXG.createSector = function(board, parents, attributes) {
 
         if (this.useDirection) {  // This is true for circumCircleArcs. In that case there is
                                   // a fourth parent element: [midpoint, point1, point3, point2]
-            var det, 
-                p0c = parents[1].coords.usrCoords,
-                p1c = parents[3].coords.usrCoords,
-                p2c = parents[2].coords.usrCoords;
+            p0c = parents[1].coords.usrCoords,
+            p1c = parents[3].coords.usrCoords,
+            p2c = parents[2].coords.usrCoords;
             det = (p0c[1]-p2c[1])*(p0c[2]-p1c[2]) - (p0c[2]-p2c[2])*(p0c[1]-p1c[1]);
             if(det < 0) {
                 this.point2 = parents[1];

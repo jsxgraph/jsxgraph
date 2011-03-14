@@ -33,7 +33,6 @@
 
 // We need the following two methods "extend" and "shortcut" to create the JXG object via JXG.extend.
 
-
 /**
  * Copy all properties of the <tt>extension</tt> object to <tt>object</tt>.
  * @param {Object} object
@@ -42,7 +41,7 @@
  * @param {Boolean} [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
  */
 JXG.extend = function (object, extension, onlyOwn, toLower) {
-    var e, e;
+    var e, e2;
 
     onlyOwn = onlyOwn || false;
     toLower = toLower || false;

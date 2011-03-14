@@ -8,30 +8,28 @@
 -->
 <html>
 <head>
-   <title>GEONExT SVG+VML</title>
-   <link rel="stylesheet" type="text/css" href="css/geonext2.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
-   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <title>GEONExT SVG+VML</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../src/GeonextReader.js"></script>
 </head>
 <body>
-   <!-- 
-      Drawing area 
-   -->
-   <div id="box" style="width:800px; height:500px; overflow:hidden; border:1px dashed black; background-color:wheat; clip:rect(0px, 800px, 500px, 0px);">
-   </div>
-   <!-- 
-      Drawing area 
-   -->
+    <!--
+        Drawing area
+    -->
+    <div id="box" style="width:800px; height:500px; overflow:hidden; border:1px dashed black; background-color:wheat; clip:rect(0px, 800px, 500px, 0px);"></div>
+    <!--
+        Drawing area
+    -->
 
-   <script type="text/javascript">
-        board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb81.nc.gxt','Geonext');
-   </script>
-   <form>
-      <input type='button' value='Do PSTricks' onclick='board.pstricks.givePsTricksToDiv("pstricks",board);'>
-   </form>
-   <b>Pstricks-Output:</b>
-   <div id="pstricks" style="position:relative; width:600px; height:200px; border:1px dashed black; background-color:white;">
-   </div>
+    <script type="text/javascript">
+        board = JXG.JSXGraph.loadBoardFromFile('box', 'gxt/blubb81.nc.gxt', 'Geonext');
+    </script>
+    <form>
+        <input type="button" value="Convert" onclick="document.getElementById('pstricks').innerHTML = JXG.PsTricks.convert(board);">
+    </form>
+    <b>Pstricks-Output:</b>
+    <div id="pstricks" style="position:relative; width:600px; height:200px; border:1px dashed black; background-color:white;"></div>
 
 </body>
 </html>

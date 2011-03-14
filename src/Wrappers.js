@@ -156,15 +156,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     reflectionFunc: function(){return arguments;}
 });
 
-// Wrapper for not-singleton-pstricks. this could be removed after the next release
-// and adjusting examples/pstricks.html and pstricks example in the wiki
-// (http://jsxgraph.uni-bayreuth.de/wiki/index.php/PsTricks_export)
-JXG.Board.prototype.pstricks = {};
-JXG.Board.prototype.pstricks.givePsTricksToDiv = function(divId, board) {
-    JXG.PsTricks.givePsTricksToDiv(divId, board);
-};
-
-// Some shortcuts 
+// Some shortcuts
 JXG.Point.prototype.setPositionX = function (method, x) {
     var y = (method==JXG.COORDS_BY_USER)?this.coords.usrCoords[2]:this.coords.scrCoords[2];
     this.setPosition(method,x,y);
