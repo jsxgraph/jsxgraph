@@ -408,7 +408,7 @@ JXG.GeonextParser.findDependencies = function(me, term, board) {
     for (el in elements) {
         if (el != me.name) {
             if(elements[el].type == JXG.OBJECT_TYPE_TEXT) {
-                if(!elements[el].visProp.isLabel) {
+                if(!elements[el].visProp.islabel) {
                     elmask = el.replace(/\[/g,'\\[');
                     elmask = elmask.replace(/\]/g,'\\]');
                     expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\("+elmask+"\)\(,\[\\w\\[\\]'_ \]+\)*\\)","g");  // Searches (A), (A,B),(A,B,C)
