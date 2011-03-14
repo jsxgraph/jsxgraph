@@ -2068,12 +2068,26 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         for (e in brd.objects) {
             o = brd.objects[e];
             if (deficiency != 'none') {
-                if (this.currentCBDef == 'none')
-                    o.visPropOriginal = JXG.deepCopy(o.visProp);
-                o.setProperty({strokeColor: JXG.rgb2cb(o.visPropOriginal.strokeColor, deficiency), fillColor: JXG.rgb2cb(o.visPropOriginal.fillColor, deficiency),
-                    highlightStrokeColor: JXG.rgb2cb(o.visPropOriginal.highlightStrokeColor, deficiency), highlightFillColor: JXG.rgb2cb(o.visPropOriginal.highlightFillColor, deficiency)});
+                if (this.currentCBDef == 'none') {
+                    // this could be accomplished by JXG.extend, too. But do not use
+                    // JXG.deepCopy as this could result in an infinite loop because in
+                    // visProp there could be geometry elements which contain the board which
+                    // contains all objects which contain board etc.
+                    o.visPropOriginal = {
+                        strokeColor: o.visProp.strokeColor,
+                        fillColor: o.visProp.fillColor,
+                        highlightStrokeColor: o.visProp.highlightStrokeColor,
+                        highlightFillColor: o.visProp.highlightFillColor
+                    };
+                }
+                o.setProperty({
+                    strokeColor: JXG.rgb2cb(o.visPropOriginal.strokeColor, deficiency),
+                    fillColor: JXG.rgb2cb(o.visPropOriginal.fillColor, deficiency),
+                    highlightStrokeColor: JXG.rgb2cb(o.visPropOriginal.highlightStrokeColor, deficiency),
+                    highlightFillColor: JXG.rgb2cb(o.visPropOriginal.highlightFillColor, deficiency)
+                });
             } else if (JXG.exists(o.visPropOriginal)) {
-                o.visProp = JXG.deepCopy(o.visPropOriginal);
+                JXG.extend(o.visProp, o.visPropOriginal);
             }
         }
         this.currentCBDef = deficiency;
