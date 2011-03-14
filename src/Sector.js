@@ -83,7 +83,7 @@ JXG.createSector = function(board, parents, attributes) {
     el.point2.addChild(el);
     el.point3.addChild(el);
     
-    el.useDirection = attributes['useDirection'];      // useDirection is necessary for circumCircleSectors
+    el.useDirection = attributes['usedirection'];      // useDirection is necessary for circumCircleSectors
 
     el.updateDataArray = function() {
         var A = this.point2,

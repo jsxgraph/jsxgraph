@@ -884,16 +884,21 @@ JXG.extend(JXG, /** @lends JXG */ {
     /**
      * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
      * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
-     * @param {String} s A debug message.
+     * @param {%} An arbitrary number of parameters.
      */
     debug: function (s) {
-        if (console && console.log) {
-            if (typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "");
-            console.log(s);
-        } else if (document.getElementById('debug')) {
-            document.getElementById('debug').innerHTML += s + "<br/>";
+        var i;
+
+        for(i = 0; i < arguments.length; i++) {
+            s = arguments[i];
+            if (console && console.log) {
+                if (typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "");
+                console.log(s);
+            } else if (document.getElementById('debug')) {
+                document.getElementById('debug').innerHTML += s + "<br/>";
+            }
+            // else: do nothing
         }
-        // else: do nothing
     }
 });
 

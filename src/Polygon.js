@@ -51,7 +51,7 @@ JXG.Polygon = function (board, vertices, /*borders,*/ attributes) {
     
     this.init(board, attributes);
 
-    this.withLines = attributes.withLines;
+    this.withLines = attributes.withlines;
 
     /**
      * References to the points defining the polygon.

@@ -104,7 +104,7 @@ JXG.Ticks = function (line, ticks, attributes) {
      * Least distance between two ticks, measured in pixels.
      * @type int
      */
-    this.minTicksDistance = attributes.minTicksDistance;
+    this.minTicksDistance = attributes.minticksdistance;
 
     /**
      * Maximum distance between two ticks, measured in pixels. Is used only when insertTicks
@@ -112,7 +112,7 @@ JXG.Ticks = function (line, ticks, attributes) {
      * @type int
      * @see #insertTicks
      */
-    this.maxTicksDistance = attributes.maxTicksDistance;
+    this.maxTicksDistance = attributes.maxticksdistance;
 
     /**
      * Array where the labels are saved. There is an array element for every tick,

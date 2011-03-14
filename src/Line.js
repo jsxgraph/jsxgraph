@@ -113,7 +113,7 @@ JXG.Line = function (board, p1, p2, attributes) {
      * @default JXG.Options.line#labelOffsets
     * @private
     */
-    this.labelOffsets = [].concat(attributes.labelOffsets);
+    this.labelOffsets = [].concat(attributes.labeloffsets);
     //make sure we have absolute values
     this.labelOffsets[0] = Math.abs(this.labelOffsets[0]);
     this.labelOffsets[1] = Math.abs(this.labelOffsets[1]);
@@ -725,17 +725,9 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
  */
 JXG.createLine = function(board, parents, attributes) {
     var el, p1, p2, i, attr,
-        c = [];
+        c = [],
+        constrained = false;
 
-    /*
-    atts = JXG.checkAttributes(atts,{
-        withLabel:JXG.readOption(board.options,'line','withLabel'),
-        layer:null,
-        labelOffsets:JXG.readOption(board.options,'line','labelOffsets')
-    });
-    */
-
-    var constrained = false;
     /**
      * The line is defined by two points or coordinates of two points.
      * In the latter case, the points are created.
@@ -770,6 +762,7 @@ JXG.createLine = function(board, parents, attributes) {
                             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
         
         attr = JXG.copyAttributes(attributes, board.options, 'line');
+
         el = new JXG.Line(board, p1, p2, attr);
         if(constrained) {
         	el.constrained = true;

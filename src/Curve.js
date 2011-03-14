@@ -56,20 +56,20 @@ JXG.Curve = function (board, parents, attributes) {
       * If false the naive algorithm is used.
       * It is much slower, but the result is better.
       */
-    this.doAdvancedPlot = attributes.doAdvancedPlot;
+    this.doAdvancedPlot = attributes.doadvancedplot;
     
     /** 
       * Number of points on curves after mouseUp, i.e. high quality output.
       * Only used if this.doAdvancedPlot==false
       * May be overwritten.
       **/
-    this.numberPointsHigh = attributes.numberPointsHigh;
+    this.numberPointsHigh = attributes.numberpointshigh;
     /** 
       * Number of points on curves after mousemove, i.e. low quality output.
       * Only used if this.doAdvancedPlot==false
       * May be overwritten.
       **/
-    this.numberPointsLow = attributes.numberPointsLow;
+    this.numberPointsLow = attributes.numberpointslow;
     /** 
       * Number of points on curves. This value changes
       * between numberPointsLow and numberPointsHigh.
