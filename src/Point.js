@@ -1059,8 +1059,8 @@ JXG.createPoint = function(board, parents, attributes) {
     if (!isConstrained) {
         if ( (JXG.isNumber(parents[0])) && (JXG.isNumber(parents[1])) ) {
             el = new JXG.Point(board, parents, attr);
-            if ( attr["slideObject"] != null ) {
-                el.makeGlider(attr["slideObject"]);
+            if ( JXG.exists(attr["slideobject"]) ) {
+                el.makeGlider(attr["slideobject"]);
             } else {
                 el.baseElement = el; // Free point
             }

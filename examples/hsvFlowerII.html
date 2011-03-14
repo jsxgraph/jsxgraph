@@ -22,13 +22,14 @@
         var r2 = 1/4.75;
         var lambda = 8;
         var phi = 0;
+        
 var c = brd.createElement('curve',[
           function(t){return r1*Math.sin(t)+r2*Math.sin(lambda*t+phi);},
           function(t){return r1*Math.cos(t)+r2*Math.cos(lambda*t+phi)-0.5;},
           0, 2*Math.PI],
           {fillcolor:function(){ return JXG.hsv2rgb(H.Value(),S.Value(),V.Value()); },
            highlightFillcolor:function(){ return JXG.hsv2rgb(H.Value(),S.Value(),V.Value()); },
-           strokeColor:'black',strokeWidth:3,gradient:'radial',gradientsecondcolor:'white'
+           strokeColor:'black',strokeWidth:3,gradient:'radial',gradientSecondColor:'white'
            });
           
         var p = brd.createElement('point',[0,-0.5],{visible:false});

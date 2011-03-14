@@ -130,7 +130,7 @@ JXG.createArc = function(board, parents, attributes) {
     el.radiuspoint.addChild(el);
     el.anglepoint.addChild(el);
     
-    el.useDirection = attr['useDirection'];      // useDirection is necessary for circumCircleArcs
+    el.useDirection = attr['usedirection'];      // useDirection is necessary for circumCircleArcs
 
     // documented in JXG.Curve
     el.updateDataArray = function() {

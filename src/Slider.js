@@ -69,8 +69,8 @@ JXG.createSlider = function(board, parents, attributes) {
     sdiff = smax -smin;
 
     attr = JXG.copyAttributes(attributes, board.options, 'slider');
-    withTicks = attr['withTicks'];
-    withText = attr['withLabel'];
+    withTicks = attr['withticks'];
+    withText = attr['withlabel'];
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point1');
     p1 = board.create('point', pos0,  attr);

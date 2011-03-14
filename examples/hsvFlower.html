@@ -31,19 +31,19 @@
         var H = brd.createElement('slider',[[-3,3.5],[2,3.5],[0,1,360]], {name:'H',fillColor:'black',strokeColor:'black'});
         var S = brd.createElement('slider',[[-3,3],[2,3],[0,1,1]], {name:'S',fillColor:'black',strokeColor:'black'});
         var V = brd.createElement('slider',[[-3,2.5],[2,2.5],[0,1,1]], {name:'V',fillColor:'black',strokeColor:'black'});
-        
+
         var c = brd.createElement('curve', [function(phi){return 2.5*Math.cos(2*phi); }, [0, -1],0, function(){return 2*Math.PI;}],
                 {curveType:'polar', 
-                 strokewidth:2,
-                 strokeColor:'black',
-                 fillcolor:function(){ return JXG.hsv2rgb(H.Value(),S.Value(),V.Value()); }
+                 strokewidth:6,
+                 strokeColor:'#0000ff',
+                 fillcolor: function(){ return JXG.hsv2rgb(H.Value(),S.Value(),V.Value()); }
                 });     
         
         var p = brd.createElement('point',[0,-1],{visible:false});
         var ci = brd.createElement('circle',[p,0.75], 
-                {fillcolor:function(){ return JXG.hsv2rgb(180+H.Value(),S.Value(),V.Value()); },
+                {fillColor:function(){ return JXG.hsv2rgb(180+H.Value(),S.Value(),V.Value()); },
                  strokewidth:2,
-                 strokeColor:'black'
+                 strokecolor:'black'
                 });             
                 
         brd.createElement('text',[2,-2.2,'SVG Text: \u03B1 檔案'],{type:'internal'});
