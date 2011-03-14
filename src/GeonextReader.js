@@ -680,7 +680,7 @@ JXG.GeonextReader = {
 
                             // PARALLELOGRAM_POINT
                             case "210150":
-                                board.create('parallelpoint', gxtEl.defEl.slice(0, 2), gxtEl.out);
+                                board.create('parallelpoint', gxtEl.defEl.slice(0, numberDefEls), gxtEl.out);
                                 break;
 
                             // PERPENDICULAR

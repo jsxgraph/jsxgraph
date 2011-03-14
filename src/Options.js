@@ -893,9 +893,9 @@ JXG.Validator = (function () {
         },
         validateRenderer = function (v) {
             return (v in {vml: 0, svg: 0, canvas: 0});
-        };
-
-    return {
+        },
+    i, v,
+    validators = {
         color: validateColor,
         defaultDistance: JXG.isNumber,
         display : validateDisplay,
@@ -937,7 +937,7 @@ JXG.Validator = (function () {
         showNavigation : false,
         size : validateInteger,
         snapSizeX : JXG.isNumber,
-        snapSizeY : JXG.isNumger,
+        snapSizeY : JXG.isNumber,
         snapToGrid : false,
         straightFirst : false,
         straightLast : false,
@@ -959,6 +959,15 @@ JXG.Validator = (function () {
         withTicks: false,
         zoom: false
     };
+
+    // this seems like a redundant step but it makes sure that
+    // all properties in the validator object have lower case names
+    // and the validator object is easier to read.
+    for (i in validators) {
+        v[i.toLowerCase()] = validators[i];
+    }
+
+    return v;
 })();
 
 

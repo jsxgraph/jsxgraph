@@ -446,8 +446,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * p.hideElement();
      */
     setProperty: function () {
-        var i, key, value, arg, opacity, pair,
-            translateMap = {}, property, properties = {},
+        var i, key, value, arg, opacity, pair, properties = {},
             shortcuts = {
                 color: ['strokeColor', 'fillColor'],
                 opacity: ['strokeOpacity', 'fillOpacity'],
@@ -455,11 +454,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 highlightOpacity: ['highlightStrokeOpacity', 'highlightFillOpacity'],
                 strokeWidth: ['strokeWidth', 'highlightStrokeWidth']
             };
-
-        // so we can find the visProp entry to the property the user gave us
-        for (i in this.visProp) {
-            translateMap[i.toLowerCase()] = i;
-        }
 
         // normalize the user input
         for (i = 0; i < arguments.length; i++) {
@@ -491,7 +485,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         for (i in properties) {
             key = i.replace(/\s+/g, '').toLowerCase();
             value = properties[i];
-            property = translateMap[key];
 
             switch(key) {
                 case 'needsregularupdate':
@@ -584,9 +577,9 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     this.hasLabel = value;
                     break;
                 default:
-                    if (JXG.exists(this.visProp[property]) && (!JXG.Validator[property] || (JXG.Validator[property] && JXG.Validator[property](value)))) {
+                    if (JXG.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] && JXG.Validator[key](value)))) {
                         value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;
-                        this.visProp[property] = value;
+                        this.visProp[key] = value;
                     }
                     break;
             }
