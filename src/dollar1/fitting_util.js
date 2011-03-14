@@ -88,7 +88,7 @@ function pointsOnCircle(xm, ym, r, sensitive_area, board){
  */
 function pointsOnCurve(curve, sensitive_area, board){
 	var elList = [];
-	hasPoint = board.options.precision.hasPoint;
+	var hasPoint = board.options.precision.hasPoint;
 	board.options.precision.hasPoint=sensitive_area*3;
 	for (var el in board.objects) {
 		if (board.objects[el].visProp['visible'] && board.objects[el].elementClass==JXG.OBJECT_CLASS_POINT){
@@ -159,9 +159,11 @@ function fitPoly(poly,reference,sensitive_area,board){
 *
 * 	@array
 */
-function findHittedObj(coords,board)
+function findHittedObj(coords,board, sensitive_area)
 {
 	var els = [];
+	var hasPoint = board.options.precision.hasPoint;
+	board.options.precision.hasPoint=sensitive_area*2;
 	for(var el in board.objects)
 		if(board.objects[el].hasPoint&&board.objects[el].visProp['visible']&&(board.objects[el].type ==JXG.OBJECT_TYPE_LINE||board.objects[el].type ==JXG.OBJECT_TYPE_CIRCLE))
 		{
@@ -170,6 +172,7 @@ function findHittedObj(coords,board)
 					els.push(board.objects[el]);
 			}
 		}
+	board.options.precision.hasPoint = hasPoint;
 	return els;		
 }
 
