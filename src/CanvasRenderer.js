@@ -162,37 +162,37 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
 
         if (type === 'fill') {
             if (!isTrace && JXG.exists(element.board.highlightedObjects[element.id])) {
-                if (element.visProp.highlightFillColor !== 'none') {
-                    this.context.globalAlpha = element.visProp.highlightFillOpacity;
-                    this.context.fillStyle = element.visProp.highlightFillColor;
+                if (element.visProp.highlightfillcolor !== 'none') {
+                    this.context.globalAlpha = element.visProp.highlightfillopacity;
+                    this.context.fillStyle = element.visProp.highlightfillcolor;
                 } else {
                     hasColor = false;
                 }
             } else {
-                if (element.visProp.fillColor !== 'none') {
-                    this.context.globalAlpha = element.visProp.fillOpacity;
-                    this.context.fillStyle = element.visProp.fillColor;
+                if (element.visProp.fillcolor !== 'none') {
+                    this.context.globalAlpha = element.visProp.fillopacity;
+                    this.context.fillStyle = element.visProp.fillcolor;
                 } else {
                     hasColor = false;
                 }
             }
         } else {
             if (!isTrace && JXG.exists(element.board.highlightedObjects[element.id])) {
-                if (element.visProp.highlightStrokeColor !== 'none') {
-                    this.context.globalAlpha = element.visProp.highlightStrokeOpacity;
-                    this.context.strokeStyle = element.visProp.highlightStrokeColor;
+                if (element.visProp.highlightstrokecolor !== 'none') {
+                    this.context.globalAlpha = element.visProp.highlightstrokeopacity;
+                    this.context.strokeStyle = element.visProp.highlightstrokecolor;
                 } else {
                     hasColor = false;
                 }
             } else {
-                if (element.visProp.strokeColor !== 'none') {
-                    this.context.globalAlpha = element.visProp.strokeOpacity;
-                    this.context.strokeStyle = element.visProp.strokeColor;
+                if (element.visProp.strokecolor !== 'none') {
+                    this.context.globalAlpha = element.visProp.strokeopacity;
+                    this.context.strokeStyle = element.visProp.strokecolor;
                 } else {
                     hasColor = false;
                 }
             }
-            this.context.lineWidth = parseFloat(element.visProp.strokeWidth);
+            this.context.lineWidth = parseFloat(element.visProp.strokewidth);
         }
         return hasColor;
     },
@@ -253,7 +253,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             scr = el.coords.scrCoords,
             sqrt32 = size * Math.sqrt(3) * 0.5,
             s05 = size * 0.5,
-            stroke05 = parseFloat(el.visProp.strokeWidth) / 2.0,
+            stroke05 = parseFloat(el.visProp.strokewidth) / 2.0,
             context = this.context;
 
         if (size <= 0) {
@@ -288,9 +288,9 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
                 context.save();
                 if (this._setColor(el, 'stroke')) {
                     if (JXG.exists(el.board.highlightedObjects[el.id])) {
-                        context.fillStyle = el.visProp.highlightStrokeColor;
+                        context.fillStyle = el.visProp.highlightstrokecolor;
                     } else {
-                        context.fillStyle = el.visProp.strokeColor;
+                        context.fillStyle = el.visProp.strokecolor;
                     }
                     context.fillRect(scr[1] - size - stroke05, scr[2] - size - stroke05, size * 2 + 3 * stroke05, size * 2 + 3 * stroke05);
                 }
@@ -511,16 +511,16 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         context.save();
         if (this._setColor(el, 'stroke')) {
             if (JXG.exists(el.board.highlightedObjects[el.id])) {
-                context.fillStyle = el.visProp.highlightStrokeColor;
+                context.fillStyle = el.visProp.highlightstrokecolor;
             } else {
-                context.fillStyle = el.visProp.strokeColor;
+                context.fillStyle = el.visProp.strokecolor;
             }
-            if (el.visProp.fontSize) {
-                if (typeof el.visProp.fontSize === 'function') {
-                    fs = el.visProp.fontSize();
+            if (el.visProp.fontsize) {
+                if (typeof el.visProp.fontsize === 'function') {
+                    fs = el.visProp.fontsize();
                     context.font = (fs > 0 ? fs : 0) + 'px Arial';
                 } else {
-                    context.font = (el.visProp.fontSize) + 'px Arial';
+                    context.font = (el.visProp.fontsize) + 'px Arial';
                 }
             }
 
@@ -559,7 +559,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     // already documented in JXG.AbstractRenderer
     updateImage: function (el) {
         var context = this.context,
-            o = JXG.evaluate(el.visProp.fillOpacity),
+            o = JXG.evaluate(el.visProp.fillopacity),
             paintImg = JXG.bind(function () {
                 el.imgIsLoaded = true;
                 if (el.size[0] <= 0 || el.size[1] <= 0) {
@@ -643,7 +643,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             x1, y1, x2, y2, ang,
             context = this.context;
 
-        if (el.visProp.strokeColor !== 'none' && (el.visProp.lastArrow || el.visProp.firstArrow)) {
+        if (el.visProp.strokecolor !== 'none' && (el.visProp.lastArrow || el.visProp.firstArrow)) {
             if (el.elementClass === JXG.OBJECT_CLASS_LINE) {
                 x1 = scr1.scrCoords[1];
                 y1 = scr1.scrCoords[2];
@@ -656,16 +656,16 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             context.save();
             if (this._setColor(el, 'stroke')) {
                 if (JXG.exists(el.board.highlightedObjects[el.id])) {
-                    context.fillStyle = el.visProp.highlightStrokeColor;
+                    context.fillStyle = el.visProp.highlightstrokecolor;
                 } else {
-                    context.fillStyle = el.visProp.strokeColor;
+                    context.fillStyle = el.visProp.strokecolor;
                 }
                 ang = Math.atan2(y2 - y1, x2 - x1);
-                if (el.visProp.lastArrow) {
+                if (el.visProp.lastarrow) {
                     this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowHead, ang), x2, y2));
                 }
 
-                if (el.visProp.firstArrow) {
+                if (el.visProp.firstarrow) {
                     this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowTail, ang), x1, y1));
                 }
             }
@@ -680,7 +680,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             nextSymb = symbm,
             maxSize = 5000.0,
             i, scr,
-            isNoPlot = (el.visProp.curveType !== 'plot'),
+            isNoPlot = (el.visProp.curvetype !== 'plot'),
             len,
             context = this.context;
 
@@ -771,10 +771,10 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     setGradient: function (el) {
         var col, op;
 
-        op = JXG.evaluate(el.visProp.fillOpacity);
+        op = JXG.evaluate(el.visProp.fillopacity);
         op = (op > 0) ? op : 0;
 
-        col = JXG.evaluate(el.visProp.fillColor);
+        col = JXG.evaluate(el.visProp.fillcolor);
     },
 
     // documented in AbstractRenderer

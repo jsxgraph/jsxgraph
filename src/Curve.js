@@ -113,7 +113,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      * May be overwritten in @see generateTerm.
      */
     minX: function () {
-        if (this.visProp.curveType=='polar') {
+        if (this.visProp.curvetype=='polar') {
             return 0.0;
         } else {
             var leftCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], this.board);
@@ -127,7 +127,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      */
     maxX: function () {
         var rightCoords;
-        if (this.visProp.curveType=='polar') {
+        if (this.visProp.curvetype=='polar') {
             return 2.0*Math.PI;
         } else {
             rightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board);
@@ -156,7 +156,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
         x = checkPoint.usrCoords[1];
         y = checkPoint.usrCoords[2];
-        if (this.visProp.curveType=='parameter' || this.visProp.curveType=='polar' || this.visProp.curveType=='functiongraph') {
+        if (this.visProp.curvetype=='parameter' || this.visProp.curvetype=='polar' || this.visProp.curvetype=='functiongraph') {
             // Brute fore search for a point on the curve close to the mouse pointer
             len = this.transformations.length;
             for (i=0,t=this.minX(); i<steps; i++) {
@@ -173,7 +173,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 if (dist<prec) { return true; }
                 t+=d;
             }
-        } else if (this.visProp.curveType == 'plot') {
+        } else if (this.visProp.curvetype == 'plot') {
             //$('debug').innerHTML +='. ';
             len = this.numberPoints; // Rough search quality
             for (i=0;i<len-1;i++) {
@@ -250,7 +250,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             this.needsUpdate = false;
 
             /* Update the label if visible. */
-            if(this.hasLabel && this.label.content.visProp['visible']) {
+            if(this.hasLabel && this.label.content.visProp.visible) {
                 //this.label.setCoordinates(this.coords);
                 this.label.content.update();
                 //this.board.renderer.updateLabel(this.label);
@@ -569,14 +569,14 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         if (JXG.isArray(xterm)) {
             this.dataX = xterm;
             this.X = function(i) { return this.dataX[i]; };
-            this.visProp.curveType = 'plot';
+            this.visProp.curvetype = 'plot';
             this.numberPoints = this.dataX.length;
         } else {
             this.X = JXG.createFunction(xterm,this.board,varname);
             if (JXG.isString(xterm)) {
-                this.visProp.curveType = 'functiongraph';
+                this.visProp.curvetype = 'functiongraph';
             } else if (JXG.isFunction(xterm) || JXG.isNumber(xterm)) {
-                this.visProp.curveType = 'parameter';
+                this.visProp.curvetype = 'parameter';
             }
         }
 
@@ -600,7 +600,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             fy = JXG.createFunction(yterm[1],this.board,'');
             this.X = function(phi){return (xterm)(phi)*Math.cos(phi)+fx();};
             this.Y = function(phi){return (xterm)(phi)*Math.sin(phi)+fy();};
-            this.visProp.curveType = 'polar';
+            this.visProp.curvetype = 'polar';
         }
 
         // Set the bounds
@@ -660,7 +660,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         copy.points = this.points.slice(0);
         copy.numberPoints = this.numberPoints;
         copy.visProp = this.visProp;
-        copy.visProp.curveType = this.visProp.curveType;
+        copy.visProp.curvetype = this.visProp.curvetype;
 
         copy.board = this.board;
 
@@ -822,7 +822,7 @@ JXG.createFunctiongraph = function(board, parents, attributes) {
     var attr, par = ["x","x"].concat(parents);
         
     attr = JXG.copyAttributes(attributes, board.options, 'curve');
-    attr['curveType'] = 'functiongraph';
+    attr['curvetype'] = 'functiongraph';
     return new JXG.Curve(board, par, attr);
 };
 
@@ -943,7 +943,7 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     var n, type, f, par, c, attr;
     
     attr = JXG.copyAttributes(attributes, board.options, 'riemannsum');
-    attr['curveType'] = 'plot';
+    attr['curvetype'] = 'plot';
 
     f = parents[0]; 
     n = JXG.createFunction(parents[1],board,'');

@@ -588,13 +588,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Object} obj The object to add.
      */
     finalizeAdding: function (obj) {
-        if (!obj.visProp['visible']) {
+        if (!obj.visProp.visible) {
             this.renderer.hide(obj);
         }
     },
 
     finalizeLabel: function (obj) {
-        if (obj.hasLabel && !obj.label.content.visProp.isLabel && !obj.label.content.visProp.visible) {
+        if (obj.hasLabel && !obj.label.content.visProp.islabel && !obj.label.content.visProp.visible) {
             this.renderer.hide(obj.label.content);
         }
     },
@@ -909,7 +909,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             // Elements  below the mouse pointer which are not highlighted yet will be highlighted.
             for (el in this.objects) {
                 pEl = this.objects[el];
-                if (JXG.exists(pEl.hasPoint) && pEl.visProp['visible'] && pEl.hasPoint(dx, dy)) {
+                if (JXG.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(dx, dy)) {
                     // this is required in any case because otherwise the box won't be shown until the point is dragged
                     this.updateInfobox(pEl);
                     if (this.highlightedObjects[el] == null) { // highlight only if not highlighted
@@ -936,7 +936,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     updateInfobox: function (el) {
         var x, y, xc, yc;
 
-        if (!el.visProp.showInfobox) {
+        if (!el.visProp.showinfobox) {
             return this;
         }
         if (el.elementClass == JXG.OBJECT_CLASS_POINT) {
@@ -1014,7 +1014,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             // In highlightedObjects should only be objects which fulfill all these conditions
             // And in case of complex elements, like a turtle based fractal, it should be faster to
             // just de-highlight the element instead of checking hasPoint...
-            // if ((!JXG.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visProp['visible'])
+            // if ((!JXG.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visProp.visible)
         }
 
 
@@ -1096,7 +1096,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             elList = [];
 
         for (var el in this.objects) {
-            if (this.objects[el].visProp['visible'] && this.objects[el].hasPoint && this.objects[el].hasPoint(dx, dy)) {
+            if (this.objects[el].visProp.visible && this.objects[el].hasPoint && this.objects[el].hasPoint(dx, dy)) {
                 elList.push(this.objects[el]);
             }
         }
@@ -1349,7 +1349,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         maxY = 0;
         for (el in this.objects) {
             if ( (this.objects[el].elementClass == JXG.OBJECT_CLASS_POINT) &&
-                this.objects[el].visProp['visible']) {
+                this.objects[el].visProp.visible) {
                 if (this.objects[el].coords.usrCoords[1] < minX) {
                     minX = this.objects[el].coords.usrCoords[1];
                 } else if (this.objects[el].coords.usrCoords[1] > maxX) {
@@ -2074,17 +2074,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     // visProp there could be geometry elements which contain the board which
                     // contains all objects which contain board etc.
                     o.visPropOriginal = {
-                        strokeColor: o.visProp.strokeColor,
-                        fillColor: o.visProp.fillColor,
-                        highlightStrokeColor: o.visProp.highlightStrokeColor,
-                        highlightFillColor: o.visProp.highlightFillColor
+                        strokecolor: o.visProp.strokecolor,
+                        fillcolor: o.visProp.fillcolor,
+                        highlightstrokecolor: o.visProp.highlightstrokecolor,
+                        highlightfillcolor: o.visProp.highlightfillcolor
                     };
                 }
                 o.setProperty({
-                    strokeColor: JXG.rgb2cb(o.visPropOriginal.strokeColor, deficiency),
-                    fillColor: JXG.rgb2cb(o.visPropOriginal.fillColor, deficiency),
-                    highlightStrokeColor: JXG.rgb2cb(o.visPropOriginal.highlightStrokeColor, deficiency),
-                    highlightFillColor: JXG.rgb2cb(o.visPropOriginal.highlightFillColor, deficiency)
+                    strokecolor: JXG.rgb2cb(o.visPropOriginal.strokecolor, deficiency),
+                    fillcolor: JXG.rgb2cb(o.visPropOriginal.fillcolor, deficiency),
+                    highlightstrokecolor: JXG.rgb2cb(o.visPropOriginal.highlightstrokecolor, deficiency),
+                    highlightfillcolor: JXG.rgb2cb(o.visPropOriginal.highlightfillcolor, deficiency)
                 });
             } else if (JXG.exists(o.visPropOriginal)) {
                 JXG.extend(o.visProp, o.visPropOriginal);

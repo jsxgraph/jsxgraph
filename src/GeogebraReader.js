@@ -2085,11 +2085,11 @@ this.writeElement = function(board, output, input, cmd) {
         /*
         p.point4.hideElement();
         p.arc.setProperty(attr);
-        p.arc.visProp['highlightStrokeWidth'] = (1*p.arc.visProp['strokeWidth'].substr(0,p.arc.visProp['strokeWidth'].length-2)+1)+'px';
+        p.arc.visProp.highlightstrokewidth = (1*p.arc.visProp.strokewidth.substr(0,p.arc.visProp.strokewidth.length-2)+1)+'px';
         p.lines[0].setProperty(attr);
         p.lines[1].setProperty(attr);
-        p.lines[0].visProp['highlightStrokeWidth'] = (1*p.lines[0].visProp['strokeWidth'].substr(0,p.lines[0].visProp['strokeWidth'].length-2)+1)+'px';
-        p.lines[1].visProp['highlightStrokeWidth'] = (1*p.lines[1].visProp['strokeWidth'].substr(0,p.lines[1].visProp['strokeWidth'].length-2)+1)+'px';
+        p.lines[0].visProp.highlightstrokewidth = (1*p.lines[0].visProp.strokerwWidth.substr(0,p.lines[0].visProp.strokewidth.length-2)+1)+'px';
+        p.lines[1].visProp.highlightstrokewidth = (1*p.lines[1].visProp.strokerwWidth.substr(0,p.lines[1].visProp.strokewidth.length-2)+1)+'px';
         p.arc.hasPoint = p.arc.hasPointSector;
         p.arc.highlight = (function(el){ return function() {
             this.board.renderer.highlight(this);
@@ -2250,9 +2250,9 @@ this.writeElement = function(board, output, input, cmd) {
         p.arc.setProperty(attr);
         p.lines[0].setProperty(attr);
         p.lines[1].setProperty(attr);
-        p.arc.visProp['highlightStrokeWidth'] = (1*p.arc.visProp['strokeWidth'].substr(0,p.arc.visProp['strokeWidth'].length-2)+1)+'px';
-        p.lines[0].visProp['highlightStrokeWidth'] = (1*p.lines[0].visProp['strokeWidth'].substr(0,p.lines[0].visProp['strokeWidth'].length-2)+1)+'px';
-        p.lines[1].visProp['highlightStrokeWidth'] = (1*p.lines[1].visProp['strokeWidth'].substr(0,p.lines[1].visProp['strokeWidth'].length-2)+1)+'px';
+        p.arc.visProp.highlightstrokewidth = (1*p.arc.visProp.strokewidth.substr(0,p.arc.visProp.strokewidth.length-2)+1)+'px';
+        p.lines[0].visProp.highlightstrokewidth = (1*p.lines[0].visProp.strokewidth.substr(0,p.lines[0].visProp.strokewidth.length-2)+1)+'px';
+        p.lines[1].visProp.highlightstrokewidth = (1*p.lines[1].visProp.strokewidth.substr(0,p.lines[1].visProp.strokewidth.length-2)+1)+'px';
         p.arc.hasPoint = p.arc.hasPointSector;
         p.arc.highlight = (function(el){ return function() {
             this.board.renderer.highlight(this);

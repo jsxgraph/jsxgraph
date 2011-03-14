@@ -250,12 +250,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.visProp.draft = attributes.draft && attributes.draft.draft;
 
         // TODO: comment gradient possibilities
-        this.visProp['gradient'] = 'none';
-        this.visProp['gradientSecondColor'] = 'black';
-        this.visProp['gradientAngle'] = '270';
-        this.visProp['gradientSecondOpacity'] = this.visProp['fillOpacity'];
-        this.visProp['gradientPositionX'] = 0.5;
-        this.visProp['gradientPositionY'] = 0.5;
+        this.visProp.gradient = 'none';
+        this.visProp.gradientsecondcolor = 'black';
+        this.visProp.gradientangle = '270';
+        this.visProp.gradientsecondopacity = this.visProp.fillopacity;
+        this.visProp.gradientpositionx = 0.5;
+        this.visProp.gradientpositiony = 0.5;
         
         this.needsUpdate = true;
     },
@@ -365,12 +365,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             switch(p) {
                 case 'strokecolor':
                 case 'fillcolor':
-                    animateColor(this.visProp[p], hash[r], p);
+                    animateColor(this.visProp.p, hash[r], p);
                     break;
                 case 'strokeopacity':
                 case 'strokewidth':
                 case 'fillopacity':
-                    animateFloat(this.visProp[p], hash[r], p);
+                    animateFloat(this.visProp.p, hash[r], p);
                     break;
             }
         }
@@ -402,11 +402,11 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Hide the element. It will still exist but not visible on the board.
      */
     hideElement: function () {
-        this.visProp['visible'] = false;
+        this.visProp.visible = false;
         this.board.renderer.hide(this);
         if (this.label!=null && this.hasLabel) {
             this.label.hiddenByParent = true;
-            if (this.label.content.visProp['visible']) {
+            if (this.label.content.visProp.visible) {
                 this.board.renderer.hide(this.label.content);
             }
         }
@@ -417,11 +417,11 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Make the element visible.
      */
     showElement: function () {
-        this.visProp['visible'] = true;
+        this.visProp.visible = true;
         this.board.renderer.show(this);
         if (this.label!=null && this.hasLabel && this.label.hiddenByParent) {
             this.label.hiddenByParent = false;
-            if (this.label.content.visProp['visible']) {
+            if (this.label.content.visProp.visible) {
                 this.board.renderer.show(this.label.content);
             }
         }
@@ -512,8 +512,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                         this.board.renderer.setObjectStrokeColor(this.label.content, value, parseInt(opacity.toUpperCase(),16)/255);
                     }
                     if (this.type == JXG.OBJECT_TYPE_TEXT) {
-                        this.visProp['strokeColor'] = value;
-                        this.board.renderer.setObjectStrokeColor(this, this.visProp['strokeColor'], this.visProp['strokeOpacity']);
+                        this.visProp.strokecolor = value;
+                        this.board.renderer.setObjectStrokeColor(this, this.visProp.strokecolor, this.visProp.strokeopacity);
                     }
                     break;
                 case 'infoboxtext':
@@ -526,10 +526,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     break;
                 case 'visible':
                     if (value == 'false' || value == false) {
-                        this.visProp['visible'] = false;
+                        this.visProp.visible = false;
                         this.hideElement();
                     } else if (value == 'true' || value == true) {
-                        this.visProp['visible'] = true;
+                        this.visProp.visible = true;
                         this.showElement();
                     }
                     break;
@@ -540,7 +540,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     }
                     break;
                 case 'gradient':
-                    this.visProp['gradient'] = value;
+                    this.visProp.gradient = value;
                     this.board.renderer.setGradient(this);
                     break;
                 case 'gradientsecondcolor':
@@ -551,12 +551,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     else {
                         opacity = 'FF';
                     }
-                    this.visProp['gradientSecondColor'] = value;
-                    this.visProp['gradientSecondOpacity'] = parseInt(opacity.toUpperCase(),16)/255;
+                    this.visProp.gradientsecondcolor = value;
+                    this.visProp.gradientsecondopacity = parseInt(opacity.toUpperCase(),16)/255;
                     this.board.renderer.updateGradient(this);
                     break;
                 case 'gradientsecondopacity':
-                    this.visProp['gradientSecondOpacity'] = value;
+                    this.visProp.gradientsecondopacity = value;
                     this.board.renderer.updateGradient(this);
                     break;
                 case 'withlabel':
@@ -567,14 +567,14 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     }
                     else {
                         if (this.label!=null && this.hasLabel) {
-                            if (this.visProp['visible']) {
+                            if (this.visProp.visible) {
                                 this.label.content.showElement();
                             }
 
                         }
                         else {
                             this.addLabelToElement();
-                            if (!this.visProp['visible']) {
+                            if (!this.visProp.visible) {
                                 this.label.content.hideElement();
                             }
                         }
@@ -663,11 +663,11 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Determines whether the arc has arrows at start or end of the arc.
      * @param {bool} firstArrow True if there is an arrow at the start of the arc, false otherwise.
      * @param {bool} lastArrow True if there is an arrow at the end of the arc, false otherwise.
-     * Is stored at visProp['firstArrow'] and visProp['lastArrow']
+     * Is stored at visProp['firstarrow'] and visProp['lastarrow']
      */
     setArrow: function (firstArrow, lastArrow) {
-        this.visProp['firstArrow'] = firstArrow;
-        this.visProp['lastArrow'] = lastArrow;
+        this.visProp.firstarrow = firstArrow;
+        this.visProp.lastarrow = lastArrow;
         this.prepareUpdate().update();
         return this;
     },
@@ -687,7 +687,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));
         this.label = {};
 
-        if (this.visProp.withLabel) {
+        if (this.visProp.withlabel) {
             this.label.relativeCoords = coords;
 
             this.label.content = JXG.createText(this.board, [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], {
@@ -698,9 +698,9 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
 
             this.label.color = '#000000';
 
-            if (!this.visProp['visible']) {
+            if (!this.visProp.visible) {
                 this.label.hiddenByParent = true;
-                this.label.content.visProp['visible'] = false;
+                this.label.content.visProp.visible = false;
             }
             this.hasLabel = true;
         }
@@ -715,7 +715,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.label.content.id = this.id+"Label";
         this.board.setId(this.label.content, 'T');
 
-        if (!this.label.content.visProp['visible']) {
+        if (!this.label.content.visProp.visible) {
             this.board.renderer.hide(this.label.content);
         }
         return this;
@@ -887,14 +887,14 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
   */
 JXG.clearVisPropOld = function (el) {
     el.visPropOld = {
-        strokeColor: '',
-        strokeOpacity: '',
-        strokeWidth: '',
-        fillColor: '',
-        fillOpacity: '',
+        strokecolor: '',
+        strokeopacity: '',
+        strokewidth: '',
+        fillcolor: '',
+        fillopacity: '',
         shadow: false,
-        firstArrow: false,
-        lastArrow: false
+        firstarrow: false,
+        lastarrow: false
     };
 };
 
