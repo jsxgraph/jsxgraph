@@ -244,7 +244,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.name = name;
 
         this.visProp = attributes;
-        this.needsRegularUpdate = attributes['needsRegularUpdate'];
+        this.needsRegularUpdate = attributes.needsregularupdate;
 
         // TODO: draft downwards compatibility.
         this.visProp.draft = attributes.draft && attributes.draft.draft;

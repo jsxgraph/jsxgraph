@@ -964,7 +964,7 @@ JXG.Validator = (function () {
 JXG.useStandardOptions = function(board) {
     var o = JXG.Options,
         boardHadGrid = board.hasGrid,
-        el, t, p;
+        el, t, p, copyProps;
 
     board.options.grid.hasGrid = o.grid.hasGrid;
     board.options.grid.gridX = o.grid.gridX;
@@ -977,66 +977,50 @@ JXG.useStandardOptions = function(board) {
     board.options.grid.snapSizeY = o.grid.SnapSizeY;
     board.takeSizeFromFile = o.takeSizeFromFile;
 
+    copyProps = function(p, o) {
+            p.visProp.fillcolor = o.fillColor;
+            p.visProp.highlightfillcolor = o.highlightFillColor;
+            p.visProp.strokecolor = o.strokeColor;
+            p.visProp.highlightstrokecolor = o.highlightStrokeColor;
+    };
+    
     for(el in board.objects) {
         p = board.objects[el];
         if(p.elementClass == JXG.OBJECT_CLASS_POINT) {
-            p.visProp['fillColor'] = o.point.fillColor;
-            p.visProp['highlightFillColor'] = o.point.highlightFillColor;
-            p.visProp['strokeColor'] = o.point.strokeColor;
-            p.visProp['highlightStrokeColor'] = o.point.highlightStrokeColor;
+            copyProps(p, o.point);
         }
         else if(p.elementClass == JXG.OBJECT_CLASS_LINE) {
-            p.visProp['fillColor'] = o.line.fillColor;
-            p.visProp['highlightFillColor'] = o.line.highlightFillColor;
-            p.visProp['strokeColor'] = o.line.strokeColor;
-            p.visProp['highlightStrokeColor'] = o.line.highlightStrokeColor;
+            copyProps(p, o.line);
             for(t in p.ticks) {
                 t.majorTicks = o.line.ticks.majorTicks;
                 t.minTicksDistance = o.line.ticks.minTicksDistance;
-                t.visProp.minorHeight = o.line.ticks.visProp.minorHeight;
-                t.visProp.majorHeight = o.line.ticks.visProp.majorHeight;
+                t.visProp.minorheight = o.line.ticks.minorHeight;
+                t.visProp.majorheight = o.line.ticks.majorHeight;
             }
         }
         else if(p.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
-            p.visProp['fillColor'] = o.circle.fillColor;
-            p.visProp['highlightFillColor'] = o.circle.highlightFillColor;
-            p.visProp['strokeColor'] = o.circle.strokeColor;
-            p.visProp['highlightStrokeColor'] = o.circle.highlightStrokeColor;
+            copyProps(p, o.circle);
         }
         else if(p.type == JXG.OBJECT_TYPE_ANGLE) {
-            p.visProp['fillColor'] = o.angle.fillColor;
-            p.visProp['highlightFillColor'] = o.angle.highlightFillColor;
-            p.visProp['strokeColor'] = o.angle.strokeColor;
+            copyProps(p, o.angle);
         }
         else if(p.type == JXG.OBJECT_TYPE_ARC) {
-            p.visProp['fillColor'] = o.arc.fillColor;
-            p.visProp['highlightFillColor'] = o.arc.highlightFillColor;
-            p.visProp['strokeColor'] = o.arc.strokeColor;
-            p.visProp['highlightStrokeColor'] = o.arc.highlightStrokeColor;
+            copyProps(p, o.arc);
         }
         else if(p.type == JXG.OBJECT_TYPE_POLYGON) {
-            p.visProp['fillColor'] = o.polygon.fillColor;
-            p.visProp['highlightFillColor'] = o.polygon.highlightFillColor;
-            p.visProp['fillOpacity'] = o.polygon.fillOpacity;
-            p.visProp['highlightFillOpacity'] = o.polygon.highlightFillOpacity;
+            copyProps(p, o.polygon);
         }
         else if(p.type == JXG.OBJECT_TYPE_CONIC) {
-            p.visProp['fillColor'] = o.conic.fillColor;
-            p.visProp['highlightFillColor'] = o.conic.highlightFillColor;
-            p.visProp['strokeColor'] = o.conic.strokeColor;
-            p.visProp['highlightStrokeColor'] = o.conic.highlightStrokeColor;
+            copyProps(p, o.conic);
         }
         else if(p.type == JXG.OBJECT_TYPE_CURVE) {
-            p.visProp['strokeColor'] = o.curve.strokeColor;
+            copyProps(p, o.curve);
         }
-    }
-    for(el in board.objects) {
-        p = board.objects[el];
-        if(p.type == JXG.OBJECT_TYPE_SECTOR) {
-            p.arc.visProp['fillColor'] = o.sector.fillColor;
-            p.arc.visProp['highlightFillColor'] = o.sector.highlightFillColor;
-            p.arc.visProp['fillOpacity'] = o.sector.fillOpacity;
-            p.arc.visProp['highlightFillOpacity'] = o.sector.highlightFillOpacity;
+        else if(p.type == JXG.OBJECT_TYPE_SECTOR) {
+            p.arc.visProp.fillcolor = o.sector.fillColor;
+            p.arc.visProp.highlightfillcolor = o.sector.highlightFillColor;
+            p.arc.visProp.fillopacity = o.sector.fillOpacity;
+            p.arc.visProp.highlightfillopacity = o.sector.highlightFillOpacity;
         }
     }
 

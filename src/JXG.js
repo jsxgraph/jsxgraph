@@ -39,15 +39,24 @@
  * @param {Object} object
  * @param {Object} extension
  * @param {Boolean} [onlyOwn=false] Only consider properties that belong to extension itself, not any inherited properties.
+ * @param {Boolean} [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
  */
-JXG.extend = function (object, extension, onlyOwn) {
-    var e;
+JXG.extend = function (object, extension, onlyOwn, toLower) {
+    var e, e;
 
     onlyOwn = onlyOwn || false;
+    toLower = toLower || false;
 
     for(e in extension) {
-        if (!onlyOwn || (onlyOwn && extension.hasOwnProperty(e)))
-            object[e] = extension[e];
+        if (!onlyOwn || (onlyOwn && extension.hasOwnProperty(e))) {
+            if (toLower) {
+                e2 = e.toLowerCase();
+            } else {
+                e2 = e;
+            }
+             
+            object[e2] = extension[e];
+        }
     }
 };
 
@@ -397,7 +406,7 @@ JXG.extend(JXG, /** @lends JXG */ {
     copyAttributes: function (attributes, options) {
         var a, i, len, o, isAvail;
 
-        a = this.deepCopy(options['elements']);       // default options from Options.elements
+        a = this.deepCopy(options['elements'], null, true);       // default options from Options.elements
         len = arguments.length;
         
         // Only the layer of the main element is set.
@@ -416,7 +425,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             }
         }
         if (isAvail) {
-            a = this.deepCopy(a, o);
+            a = this.deepCopy(a, o, true);
         }
         
         o = attributes;                                             // options from attributes
@@ -430,7 +439,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             }
         }
         if (isAvail) {
-            this.extend(a, o);
+            this.extend(a, o, null, true);
         }
         
         return a;
@@ -662,11 +671,14 @@ JXG.extend(JXG, /** @lends JXG */ {
      * are merged into one object. The properties of the second object have priority.
      * @param {Object} obj This object will be copied.
      * @param {Object} obj2 This object will merged into the newly created object
+     * @param {Boolean} [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
      * @returns {Object} copy of obj or merge of obj and obj2.
      */
-    deepCopy: function (obj, obj2) {
-        var c, i, prop, j;
+    deepCopy: function (obj, obj2, toLower) {
+        var c, i, prop, j, i2;
 
+        toLower = toLower || false;
+        
         if (typeof obj !== 'object' || obj == null) {
             return obj;
         }
@@ -694,41 +706,53 @@ JXG.extend(JXG, /** @lends JXG */ {
         } else {
             c = {};
             for (i in obj) {
+                if (toLower) {
+                    i2 = i.toLowerCase();
+                } else {
+                    i2 = i;
+                }
+                    
                 prop = obj[i];
                 if (typeof prop == 'object') {
                     if (this.isArray(prop)) {
-                        c[i] = [];
+                        c[i2] = [];
                         for (j = 0; j < prop.length; j++) {
                             if (typeof prop[j] != 'object') {
-                                c[i].push(prop[j]);
+                                c[i2].push(prop[j]);
                             } else {
-                                c[i].push(this.deepCopy(prop[j]));
+                                c[i2].push(this.deepCopy(prop[j]));
                             }
                         }
                     } else {
-                        c[i] = this.deepCopy(prop);
+                        c[i2] = this.deepCopy(prop);
                     }
                 } else {
-                    c[i] = prop;
+                    c[i2] = prop;
                 }
             }
+            
             for (i in obj2) {
+                if (toLower) {
+                    i2 = i.toLowerCase();
+                } else {
+                    i2 = i;
+                }
                 prop = obj2[i];
                 if (typeof prop == 'object') {
                     if (this.isArray(prop)) {
-                        c[i] = [];
+                        c[i2] = [];
                         for (j = 0; j < prop.length; j++) {
                             if (typeof prop[j] != 'object') {
-                                c[i].push(prop[j]);
+                                c[i2].push(prop[j]);
                             } else {
-                                c[i].push(this.deepCopy(prop[j]));
+                                c[i2].push(this.deepCopy(prop[j]));
                             }
                         }
                     } else {
-                        c[i] = this.deepCopy(prop);
+                        c[i2] = this.deepCopy(prop);
                     }
                 } else {
-                    c[i] = prop;
+                    c[i2] = prop;
                 }
             }
         }

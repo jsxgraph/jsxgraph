@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010
+    Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -27,8 +27,6 @@
  * @fileoverview The geometry object Point is defined in this file. Point stores all
  * style and functional properties that are required to draw and move a point on
  * a board.
- * @author graphjs
- * @version 0.1
  */
 
 

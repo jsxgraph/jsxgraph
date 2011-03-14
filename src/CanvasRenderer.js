@@ -643,7 +643,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             x1, y1, x2, y2, ang,
             context = this.context;
 
-        if (el.visProp.strokecolor !== 'none' && (el.visProp.lastArrow || el.visProp.firstArrow)) {
+        if (el.visProp.strokecolor !== 'none' && (el.visProp.lastarrow || el.visProp.firstarrow)) {
             if (el.elementClass === JXG.OBJECT_CLASS_LINE) {
                 x1 = scr1.scrCoords[1];
                 y1 = scr1.scrCoords[2];

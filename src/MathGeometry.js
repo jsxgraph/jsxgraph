@@ -392,8 +392,8 @@ JXG.Math.Geometry = {
         var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast,
             c, s, i, j, p1, p2;
 
-        straightFirst = el.visProp['straightFirst'];
-        straightLast = el.visProp['straightLast'];
+        straightFirst = el.visProp.straightfirst;
+        straightLast = el.visProp.straightlast;
 
         // If one of the point is an ideal point in homogeneous coordinates
         // drawing of line segments or rays are not possible.
@@ -1105,7 +1105,7 @@ JXG.Math.Geometry = {
         if (!JXG.exists(board))
             board = curve.board;
 
-        if (curve.visProp.curveType == 'parameter' || curve.visProp.curveType == 'polar') {
+        if (curve.visProp.curvetype == 'parameter' || curve.visProp.curvetype == 'polar') {
             // Function to minimize
             minfunc = function(t) {
                 var dx = x - curve.X(t),
@@ -1134,7 +1134,7 @@ JXG.Math.Geometry = {
                 t = curve.minX() + t - curve.maxX();
             }
             newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t),curve.Y(t)], board);
-        } else if (curve.visProp.curveType == 'plot') {
+        } else if (curve.visProp.curvetype == 'plot') {
             mindist = infty;
             for (i = 0; i < curve.numberPoints; i++) {
                 x0 = x - curve.X(i);

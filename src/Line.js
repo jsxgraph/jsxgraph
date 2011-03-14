@@ -174,7 +174,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             return false;
         }
 
-        if(this.visProp['straightFirst'] && this.visProp['straightLast']) {
+        if(this.visProp.straightfirst && this.visProp.straightlast) {
             return true;
         } else { // If the line is a ray or segment we have to check if the projected point is "inside" P1 and P2.
             p1Scr = this.point1.coords.scrCoords;
@@ -185,11 +185,11 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
             if((distP1P > distP1P2) || (distP2P > distP1P2)) { // Check if P(x|y) is not between  P1 and P2
                 if(distP1P < distP2P) { // P liegt auf der Seite von P1
-                    if(!this.visProp['straightFirst']) {
+                    if(!this.visProp.straightfirst) {
                         return false;
                     }
                 } else { // P liegt auf der Seite von P2
-                    if(!this.visProp['straightLast']) {
+                    if(!this.visProp.straightlast) {
                         return false;
                     }
                 }
@@ -247,19 +247,19 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      updateRenderer: function () {
         var wasReal, i;
 
-        if (this.needsUpdate && this.visProp['visible']) {
+        if (this.needsUpdate && this.visProp.visible) {
             wasReal = this.isReal;
             this.isReal = (isNaN(this.point1.coords.usrCoords[1]+this.point1.coords.usrCoords[2]+this.point2.coords.usrCoords[1]+this.point2.coords.usrCoords[2]))?false:true;
             if (this.isReal) {
                 if (wasReal!=this.isReal) {
                     this.board.renderer.show(this);
-                    if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content);
+                    if(this.hasLabel && this.label.content.visProp.visible) this.board.renderer.show(this.label.content);
                 }
                 this.board.renderer.updateLine(this);
             } else {
                 if (wasReal!=this.isReal) {
                     this.board.renderer.hide(this);
-                    if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content);
+                    if(this.hasLabel && this.label.content.visProp.visible) this.board.renderer.hide(this.label.content);
                 }
             }
 
@@ -268,7 +268,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         }
 
         /* Update the label if visible. */
-        if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
+        if(this.hasLabel && this.label.content.visProp.visible && this.isReal) {
             //this.label.setCoordinates(this.coords);
             this.label.content.update();
             //this.board.renderer.updateLabel(this.label);
@@ -347,23 +347,23 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
     setStraight: function (straightFirst, straightLast) {
-        this.visProp['straightFirst'] = straightFirst;
-        this.visProp['straightLast'] = straightLast;
+        this.visProp.straightfirst = straightFirst;
+        this.visProp.straightlast = straightLast;
 
         this.board.renderer.updateLine(this);
         return this;
     },
 
     /**
-     * Determines whether the line has arrows at start or end of the line. Is stored in visProp['firstArrow'] and visProp['lastArrow']
+     * Determines whether the line has arrows at start or end of the line. Is stored in visProp['firstarrow'] and visProp['lastarrow']
      * @param {boolean} firstArrow True if there is an arrow at the start of the line, false otherwise.
      * @param {boolean} lastArrow True if there is an arrow at the end of the line, false otherwise.
      * @private
      */
     /*
     setArrow: function (firstArrow, lastArrow) {
-         this.visProp['firstArrow'] = firstArrow;
-         this.visProp['lastArrow'] = lastArrow;
+         this.visProp.firstarrow = firstArrow;
+         this.visProp.lastarrow = lastArrow;
 
          this.board.renderer.updateLine(this);
     },
@@ -399,7 +399,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         var coords,screenCoords1,screenCoords2,
             relCoords, slope, xoffset = this.labelOffsets[0], yoffset = this.labelOffsets[1];
 
-        if(!this.visProp['straightFirst'] && !this.visProp['straightLast']) {
+        if(!this.visProp.straightfirst && !this.visProp.straightlast) {
             this.setLabelRelativeCoords(this.labelOffsets);
             return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X()-0.5*(this.point2.X() - this.point1.X()),this.point2.Y()-0.5*(this.point2.Y() - this.point1.Y())],this.board);
         }
@@ -408,7 +408,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
             JXG.Math.Geometry.calcStraight(this, screenCoords1, screenCoords2);
 
-            if(this.visProp['straightFirst']) {
+            if(this.visProp.straightfirst) {
                 coords = screenCoords1;
             }
             else {
@@ -1016,7 +1016,7 @@ JXG.createTangent = function(board, parents, attributes) {
     if (c.elementClass == JXG.OBJECT_CLASS_LINE) {
         tangent = board.create('line', [c.point1,c.point2], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE && !(c.type == JXG.OBJECT_TYPE_CONIC)) {
-        if (c.visProp.curveType!='plot') {
+        if (c.visProp.curvetype!='plot') {
             g = c.X;
             f = c.Y;
             tangent = board.create('line', [

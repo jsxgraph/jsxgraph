@@ -358,26 +358,26 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
      * @private
      */
     updateRenderer: function () {
-        if (this.needsUpdate && this.visProp['visible']) {
+        if (this.needsUpdate && this.visProp.visible) {
             var wasReal = this.isReal;
             this.isReal = (isNaN(this.midpoint.coords.usrCoords[1]+this.midpoint.coords.usrCoords[2]+this.Radius()))?false:true;
             if (this.isReal) {
                 if (wasReal!=this.isReal) {
                     this.board.renderer.show(this);
-                    if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content);
+                    if(this.hasLabel && this.label.content.visProp.visible) this.board.renderer.show(this.label.content);
                 }
                 this.board.renderer.updateEllipse(this);
             } else {
                 if (wasReal!=this.isReal) {
                     this.board.renderer.hide(this);
-                    if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content);
+                    if(this.hasLabel && this.label.content.visProp.visible) this.board.renderer.hide(this.label.content);
                 }
             }
             this.needsUpdate = false;
         }
 
         /* Update the label if visible. */
-        if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
+        if(this.hasLabel && this.label.content.visProp.visible && this.isReal) {
             //this.label.setCoordinates(this.coords);
             this.label.content.update();
             //this.board.renderer.updateLabel(this.label);
