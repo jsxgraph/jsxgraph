@@ -168,13 +168,16 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         fill = attributes.fillcolor;
         fs = parseFloat(board.options.text.fontSize);                 // TODO: handle fontSize attribute
         for (i = 0; i < x.length; i++) {
-
-            xp0 = JXG.evaluate(x[i]) - w*0.5;
-            xp1 = JXG.evaluate(x[i]);
-            xp2 = JXG.evaluate(x[i]) + w*0.5;
-
-            yp = JXG.evaluate(y[i]);
-
+            if (JXG.isFunction(x[i])) {
+                xp0 = function() { return x[i]()-w*0.5; };
+                xp1 = function() { return x[i](); };
+                xp2 = function() { return x[i]()+w*0.5; };
+            } else {
+                xp0 = x[i]-w*0.5;
+                xp1 = x[i];
+                xp2 = x[i]+w*0.5;
+            }
+            yp = y[i];
             if (attributes.dir == 'horizontal') {  // horizontal bars
                 p[0] = board.create('point',[0,xp0], hiddenPoint);
                 p[1] = board.create('point',[yp,xp0], hiddenPoint);
@@ -216,7 +219,6 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             }
             pols[i] = board.create('polygon', p, attributes);
         }
-        this.rendNode = pols[0].rendNode;  // This is needed in setProperty
 
         return pols; //[0];  // Not enough! We need pols, but this gives an error in board.setProperty.
     },
