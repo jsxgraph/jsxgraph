@@ -51,8 +51,6 @@ JXG.Polygon = function (board, vertices, /*borders,*/ attributes) {
     
     this.init(board, attributes);
 
-    this.visProp.layer = attributes.layer;
-    
     this.withLines = attributes.withLines;
 
     /**
@@ -121,7 +119,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
             this.board.renderer.updatePolygon(this);
             this.needsUpdate = false;
         }
-        if(this.hasLabel && this.label.content.visProp['visible']) {
+        if(this.hasLabel && this.label.content.visProp.visible) {
             //this.label.setCoordinates(this.coords);
             this.label.content.update();
             //this.board.renderer.updateLabel(this.label);
@@ -133,13 +131,13 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
      * return TextAnchor
      */
     getTextAnchor: function() {
-        var a = 0;
-        var b = 0;
-        var x = 0;
-        var y = 0;
-        a = x = this.vertices[0].X();
-        b = y = this.vertices[0].Y();
-        for (var i = 0; i < this.vertices.length; i++) {
+        var a = this.vertices[0].X(),
+            b = this.vertices[0].Y(),
+            x = a,
+            y = b,
+            i;
+
+        for (i = 0; i < this.vertices.length; i++) {
             if (this.vertices[i].X() < a)
                 a = this.vertices[i].X();
             if (this.vertices[i].X() > x)
@@ -149,34 +147,18 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
             if (this.vertices[i].Y() < y)
                 y = this.vertices[i].Y();
         }
+
         return new JXG.Coords(JXG.COORDS_BY_USER, [(a + x)*0.5, (b + y)*0.5], this.board);
     },
 
-    getLabelAnchor: function() {
-        var a = 0;
-        var b = 0;
-        var x = 0;
-        var y = 0;
-        a = x = this.vertices[0].X();
-        b = y = this.vertices[0].Y();
-        for (var i = 0; i < this.vertices.length; i++) {
-            if (this.vertices[i].X() < a)
-                a = this.vertices[i].X();
-            if (this.vertices[i].X() > x)
-                x = this.vertices[i].X();
-            if (this.vertices[i].Y() > b)
-                b = this.vertices[i].Y();
-            if (this.vertices[i].Y() < y)
-                y = this.vertices[i].Y();
-        }
-        return new JXG.Coords(JXG.COORDS_BY_USER, [(a + x)*0.5, (b + y)*0.5], this.board);
-    },
+    getLabelAnchor: JXG.shortcut(JXG.Polygon.prototype, 'getTextAnchor'),
 
     /**
      * Copy the element to the background.
      */
-    cloneToBackground: function(addToTrace) {
+    cloneToBackground: function() {
         var copy = {}, er;
+
         copy.id = this.id + 'T' + this.numTraces;
         this.numTraces++;
         copy.vertices = this.vertices;
@@ -188,9 +170,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         this.board.renderer.enhancedRendering = true;
         this.board.renderer.drawPolygon(copy);
         this.board.renderer.enhancedRendering = er;
-        this.traces[copy.id] = copy.rendNode; //$(copy.id);
-
-        delete copy;
+        this.traces[copy.id] = copy.rendNode;
     },
 
     /**
@@ -199,7 +179,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
     hideElement: function() {
         var i;
 
-        this.visProp['visible'] = false;
+        this.visProp.visible = false;
         this.board.renderer.hide(this);
 
         for(i = 0; i < this.borders.length; i++) {
@@ -208,7 +188,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 
         if (this.hasLabel && JXG.exists(this.label)) {
             this.label.hiddenByParent = true;
-            if(this.label.content.visProp['visible']) {
+            if(this.label.content.visProp.visible) {
                 this.board.renderer.hide(this.label.content);
             }
         }    
@@ -220,15 +200,15 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
     showElement: function() {
         var i;
 
-        this.visProp['visible'] = true;
+        this.visProp.visible = true;
         this.board.renderer.show(this);
 
-        for(var i=0; i<this.borders.length; i++) {
+        for(i = 0; i < this.borders.length; i++) {
             this.borders[i].showElement();
         }
 
         if (this.hasLabel && JXG.exists(this.label)) {
-            if(this.label.content.visProp['visible']) {
+            if(this.label.content.visProp.visible) {
                 this.board.renderer.show(this.label.content);
             }
         }

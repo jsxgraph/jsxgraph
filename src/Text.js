@@ -49,7 +49,7 @@ JXG.Text = function (board, content, coords, attributes) {
 
     if ((this.element = JXG.getRef(this.board, attributes.anchor))) {
         var anchor;
-        if (this.visProp.isLabel) {
+        if (this.visProp.islabel) {
             anchor = this.element.getLabelAnchor();
         } else {
             anchor = this.element.getTextAnchor();
@@ -73,7 +73,7 @@ JXG.Text = function (board, content, coords, attributes) {
         if (JXG.isNumber(this.content)) {
             this.content = (this.content).toFixed(this.visProp.digits);
         } else {
-            if (this.visProp.useASCIIMathML) {
+            if (this.visProp.useasciimathml) {
                 this.content = "'`" + this.content + "`'";              // Convert via ASCIIMathML
             } else {
                 this.content = this.generateTerm(this.content);   // Converts GEONExT syntax into JavaScript string
@@ -87,7 +87,7 @@ JXG.Text = function (board, content, coords, attributes) {
     this.id = this.board.setId(this, 'T');
     this.board.renderer.drawText(this);
 
-    if(!this.visProp['visible']) {
+    if(!this.visProp.visible) {
         this.board.renderer.hide(this);
     }
     
@@ -124,7 +124,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             if (JXG.isNumber(text)) {
                 this.content = (text).toFixed(this.visProp.digits);
             } else {
-                if (this.visProp.useASCIIMathML) {
+                if (this.visProp.useasciimathml) {
                     this.content = "'`" + text + "`'";              // Convert via ASCIIMathML
                 } else {
                     this.content = this.generateTerm(text);   // Converts GEONExT syntax into JavaScript string
@@ -157,7 +157,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         } else if (this.display=='internal' && this.board.renderer.type=='svg') {
             this.size = [this.rendNode.getBBox().width, this.rendNode.getBBox().height];
         } else if (this.board.renderer.type=='vml' || (this.display=='internal' && this.board.renderer.type=='canvas')) { 
-            this.size = [parseFloat(this.visProp['fontSize'])*this.plaintext.length*0.45,parseFloat(this.visProp['fontSize'])*0.9]
+            this.size = [parseFloat(this.visProp.fontsize)*this.plaintext.length*0.45,parseFloat(this.visProp.fontsize)*0.9]
         }
     },
 
@@ -192,7 +192,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
 
         if (this.needsUpdate) {
             if (this.relativeCoords) {
-                if (this.visProp.isLabel) {
+                if (this.visProp.islabel) {
                     anchor = this.element.getLabelAnchor();
                 } else {
                     anchor = this.element.getTextAnchor();

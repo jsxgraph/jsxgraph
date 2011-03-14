@@ -11,7 +11,7 @@ JXG.PsTricks.convertBoardToPsTricks = function(board) {
     for(var el in board.objects) {
         var pEl = board.objects[el];
         if(pEl.type == JXG.OBJECT_TYPE_ARC) {
-            if(pEl.visProp['visible']) {
+            if(pEl.visProp.visible) {
                 this.addSector(pEl);
             }
         }
@@ -20,7 +20,7 @@ JXG.PsTricks.convertBoardToPsTricks = function(board) {
     for(var el in board.objects) {
         var pEl = board.objects[el];
         if(pEl.type == JXG.OBJECT_TYPE_POLYGON) {
-            if(pEl.visProp['visible']) {
+            if(pEl.visProp.visible) {
                 this.addPolygon(pEl);
             }
         }
@@ -29,7 +29,7 @@ JXG.PsTricks.convertBoardToPsTricks = function(board) {
     for(var el in board.objects) {
         var pEl = board.objects[el];
         if(pEl.type == JXG.OBJECT_TYPE_ANGLE) {
-            if(pEl.visProp['visible']) {
+            if(pEl.visProp.visible) {
                 this.addAngle(pEl);
             }
         }
@@ -38,7 +38,7 @@ JXG.PsTricks.convertBoardToPsTricks = function(board) {
     for(var el in board.objects) {
         var pEl = board.objects[el];
         if(pEl.type == JXG.OBJECT_TYPE_CIRCLE) {
-            if(pEl.visProp['visible']) {
+            if(pEl.visProp.visible) {
                 this.addCircle(pEl);
             }
         }
@@ -47,7 +47,7 @@ JXG.PsTricks.convertBoardToPsTricks = function(board) {
     for(var el in board.objects) {
         var pEl = board.objects[el];
         if(pEl.type == JXG.OBJECT_TYPE_ARC) {
-            if(pEl.visProp['visible']) {
+            if(pEl.visProp.visible) {
                 this.addArc(pEl);
             }
         }
@@ -56,7 +56,7 @@ JXG.PsTricks.convertBoardToPsTricks = function(board) {
     for(var el in board.objects) {
         var pEl = board.objects[el];
         if(pEl.type == JXG.OBJECT_TYPE_LINE) {
-            if(pEl.visProp['visible']) {
+            if(pEl.visProp.visible) {
                 this.addLine(pEl);
             }
         }
@@ -65,7 +65,7 @@ JXG.PsTricks.convertBoardToPsTricks = function(board) {
     for(var el in board.objects) {
         var pEl = board.objects[el];
         if(pEl.type == JXG.OBJECT_TYPE_POINT) {
-            if(pEl.visProp['visible']) {
+            if(pEl.visProp.visible) {
                 this.addPoint(pEl);
             }
         }
@@ -80,56 +80,56 @@ JXG.PsTricks.givePsTricksToDiv = function(divId, board) {
 
 JXG.PsTricks.addPoint = function(el) {
     this.psTricksString += "\\psdot";
-    this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) + ",";
+    this.psTricksString += "[linecolor=" + this.parseColor(el.visProp.strokecolor) + ",";
     this.psTricksString += "dotstyle=";
-    if(el.visProp['face'] == 'cross') { // x
+    if(el.visProp.face == 'cross') { // x
         this.psTricksString += "x, dotsize=";
-        if(el.visProp['size'] == 2) {
+        if(el.visProp.size == 2) {
             this.psTricksString += "2pt 2";
         }
-        else if(el.visProp['size'] == 3) {
+        else if(el.visProp.size == 3) {
             this.psTricksString += "5pt 2";
         }
-        else if(el.visProp['size'] >= 4) {
+        else if(el.visProp.size >= 4) {
             this.psTricksString += "5pt 3";
         }        
     }
-    else if(el.visProp['face'] == 'circle') { // circle
+    else if(el.visProp.face == 'circle') { // circle
         this.psTricksString += "*, dotsize=";
-        if(el.visProp['size'] == 1) {
+        if(el.visProp.size == 1) {
             this.psTricksString += "2pt 2";
         }
-        else if(el.visProp['size'] == 2) {
+        else if(el.visProp.size == 2) {
             this.psTricksString += "4pt 2";
         }
-        else if(el.visProp['size'] == 3) {
+        else if(el.visProp.size == 3) {
             this.psTricksString += "6pt 2";
         }  
-        else if(el.visProp['size'] >= 4) { // TODO
+        else if(el.visProp.size >= 4) { // TODO
             this.psTricksString += "6pt 3";
         }          
     }
-    else if(el.visProp['face'] == 'square') { // rectangle
+    else if(el.visProp.face == 'square') { // rectangle
         this.psTricksString += "square*, dotsize=";
-        if(el.visProp['size'] == 2) {
+        if(el.visProp.size == 2) {
             this.psTricksString += "2pt 2";
         }
-        else if(el.visProp['size'] == 3) {
+        else if(el.visProp.size == 3) {
             this.psTricksString += "5pt 2";
         }
-        else if(el.visProp['size'] >= 4) { // TODO
+        else if(el.visProp.size >= 4) { // TODO
             this.psTricksString += "5pt 3";
         }           
     }
-    else if(el.visProp['face'] == 'plus') { // +
+    else if(el.visProp.face == 'plus') { // +
         this.psTricksString += "+, dotsize=";
-        if(el.visProp['size'] == 2) {
+        if(el.visProp.size == 2) {
             this.psTricksString += "2pt 2";
         }
-        else if(el.visProp['size'] == 3) {
+        else if(el.visProp.size == 3) {
             this.psTricksString += "5pt 2";
         }
-        else if(el.visProp['size'] >= 4) { // TODO
+        else if(el.visProp.size >= 4) { // TODO
             this.psTricksString += "5pt 3";
         }            
     }
@@ -143,14 +143,14 @@ JXG.PsTricks.addPoint = function(el) {
 JXG.PsTricks.addLine = function(el) {
     var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board);
     var screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
-    if(el.visProp['straightFirst'] || el.visProp['straightLast']) {
+    if(el.visProp.straightfirst || el.visProp.straightlast) {
        JXG.Math.Geometry.calcStraight(el,screenCoords1,screenCoords2); 
     } 
     this.psTricksString += "\\psline";
-    this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) + ", linewidth=" +el.visProp['strokeWidth']+"px";
+    this.psTricksString += "[linecolor=" + this.parseColor(el.visProp.strokecolor) + ", linewidth=" +el.visProp.strokewidth+"px";
     this.psTricksString += "]";
-    if(el.visProp['firstArrow']) {
-        if(el.visProp['lastArrow']) {
+    if(el.visProp.firstarrow) {
+        if(el.visProp.lastarrow) {
             this.psTricksString += "{<->}";
         }
         else {
@@ -158,7 +158,7 @@ JXG.PsTricks.addLine = function(el) {
         }
     }
     else {
-        if(el.visProp['lastArrow']) {
+        if(el.visProp.lastarrow) {
             this.psTricksString += "{->}";
         }
     }
@@ -168,9 +168,9 @@ JXG.PsTricks.addLine = function(el) {
 JXG.PsTricks.addCircle = function(el) {
     var radius = el.Radius();
     this.psTricksString += "\\pscircle";
-    this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) +", linewidth=" +el.visProp['strokeWidth']+"px";
-    if(el.visProp['fillColor'] != 'none' && el.visProp['fillOpacity'] != 0) {
-        this.psTricksString += ", fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+el.visProp['fillOpacity'].toFixed(5);
+    this.psTricksString += "[linecolor=" + this.parseColor(el.visProp.strokecolor) +", linewidth=" +el.visProp.strokewidth+"px";
+    if(el.visProp.fillcolor != 'none' && el.visProp.fillopacity != 0) {
+        this.psTricksString += ", fillstyle=solid, fillcolor="+this.parseColor(el.visProp.fillcolor)+", opacity="+el.visProp.fillopacity.toFixed(5);
     }
     this.psTricksString += "]";
     this.psTricksString += "("+el.midpoint.coords.usrCoords[1]+","+el.midpoint.coords.usrCoords[2]+"){"+radius+"}\n";
@@ -178,7 +178,7 @@ JXG.PsTricks.addCircle = function(el) {
 
 JXG.PsTricks.addPolygon = function(el) {
     this.psTricksString += "\\pspolygon";
-    this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+el.visProp['fillOpacity'].toFixed(5)+"]";
+    this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp.fillcolor)+", opacity="+el.visProp.fillopacity.toFixed(5)+"]";
     for(var i=0; i < el.vertices.length; i++) {
         this.psTricksString += "("+el.vertices[i].coords.usrCoords[1]+","+el.vertices[i].coords.usrCoords[2]+")";
     }
@@ -195,10 +195,10 @@ JXG.PsTricks.addArc = function(el) {
     var angle1 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3).toFixed(4);
     
     this.psTricksString += "\\psarc";
-    this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) + ", linewidth=" +el.visProp['strokeWidth']+"px";
+    this.psTricksString += "[linecolor=" + this.parseColor(el.visProp.strokecolor) + ", linewidth=" +el.visProp.strokewidth+"px";
     this.psTricksString += "]";
-    if(el.visProp['lastArrow']) {
-        if(el.visProp['firstArrow']) {
+    if(el.visProp.lastarrow) {
+        if(el.visProp.firstarrow) {
             this.psTricksString += "{<->}";
         }
         else {
@@ -206,7 +206,7 @@ JXG.PsTricks.addArc = function(el) {
         }
     }
     else {
-        if(el.visProp['firstArrow']) {
+        if(el.visProp.firstarrow) {
             this.psTricksString += "{->}";
         }
     }    
@@ -222,9 +222,9 @@ JXG.PsTricks.addSector = function(el) {
     var angle2 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point2).toFixed(4);
     var angle1 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3).toFixed(4);
 
-    if(el.visProp['fillColor'] != 'none' && el.visProp['fillOpacity'] != 0) {
+    if(el.visProp.fillcolor != 'none' && el.visProp.fillopacity != 0) {
         this.psTricksString += "\\pswedge";
-        this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+el.visProp['fillOpacity'].toFixed(5)+"]";
+        this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp.fillcolor)+", opacity="+el.visProp.fillopacity.toFixed(5)+"]";
         this.psTricksString += "("+el.midpoint.coords.usrCoords[1]+","+el.midpoint.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";    
     }
 };
@@ -238,13 +238,13 @@ JXG.PsTricks.addAngle = function(el) {
     var angle2 = JXG.Math.Geometry.trueAngle(p, el.point2, el.point1).toFixed(4);
     var angle1 = JXG.Math.Geometry.trueAngle(p, el.point2, el.point3).toFixed(4);
 
-    if(el.visProp['fillColor'] != 'none' && el.visProp['fillOpacity'] != 0) {
+    if(el.visProp.fillcolor != 'none' && el.visProp.fillopacity != 0) {
         this.psTricksString += "\\pswedge";
-        this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp['fillColor'])+", opacity="+el.visProp['fillOpacity'].toFixed(5)+"]";
+        this.psTricksString += "[linestyle=none, fillstyle=solid, fillcolor="+this.parseColor(el.visProp.fillcolor)+", opacity="+el.visProp.fillopacity.toFixed(5)+"]";
         this.psTricksString += "("+el.point2.coords.usrCoords[1]+","+el.point2.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";    
     }
     this.psTricksString += "\\psarc";
-    this.psTricksString += "[linecolor=" + this.parseColor(el.visProp['strokeColor']) + ", linewidth=" +el.visProp['strokeWidth']+"px";
+    this.psTricksString += "[linecolor=" + this.parseColor(el.visProp.strokecolor) + ", linewidth=" +el.visProp.strokewidth+"px";
     this.psTricksString += "]"; 
     this.psTricksString += "("+el.point2.coords.usrCoords[1]+","+el.point2.coords.usrCoords[2]+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";
 };

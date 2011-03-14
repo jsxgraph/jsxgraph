@@ -135,7 +135,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      */
     hasPoint: function (x,y) {
         var coordsScr = this.coords.scrCoords, r;
-        r = this.visProp['size'];
+        r = this.visProp.size;
         if(r < this.board.options.precision.hasPoint) {
             r = this.board.options.precision.hasPoint;
         }
@@ -203,12 +203,12 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     // Snap the glider point of the slider into its appropiate position
                     // First, recalculate the new value of this.position
                     // Second, call update(fromParent==true) to make the positioning snappier.
-                    if (this.visProp.snapWidth!=null && Math.abs(this._smax-this._smin)>=JXG.Math.eps) {
+                    if (this.visProp.snapwidth!=null && Math.abs(this._smax-this._smin)>=JXG.Math.eps) {
                         if (this.position<0.0) this.position = 0.0;
                         if (this.position>1.0) this.position = 1.0;
                         
                         var v = this.position*(this._smax-this._smin)+this._smin;
-                            v = Math.round(v/this.visProp.snapWidth)*this.visProp.snapWidth;
+                            v = Math.round(v/this.visProp.snapwidth)*this.visProp.snapwidth;
                         this.position = (v-this._smin)/(this._smax-this._smin);
                         this.update(true);
                     }
@@ -224,7 +224,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 }
 
                 var y = this.coords.scrCoords[i];
-                if(!this.slideObject.visProp['straightFirst']) {
+                if(!this.slideObject.visProp.straightfirst) {
                     if(p1Scr[i] < p2Scr[i]) {
                         if(y < p1Scr[i]) {
                            this.coords = this.slideObject.point1.coords;
@@ -238,7 +238,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                         }
                     }
                 }
-                if(!this.slideObject.visProp['straightLast']) {
+                if(!this.slideObject.visProp.straightlast) {
                     if(p1Scr[i] < p2Scr[i]) {
                         if(y > p2Scr[i]) {
                            this.coords = this.slideObject.point2.coords;
@@ -302,26 +302,26 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         if (!this.needsUpdate) { return this; }
 
         /* Call the renderer only if point is visible. */
-        if(this.visProp['visible']) {
+        if(this.visProp.visible) {
             var wasReal = this.isReal;
             this.isReal = (!isNaN(this.coords.usrCoords[1] + this.coords.usrCoords[2]));
             this.isReal = (Math.abs(this.coords.usrCoords[0])>JXG.Math.eps)?this.isReal:false;  //Homogeneous coords: ideal point
             if (this.isReal) {
                 if (wasReal!=this.isReal) { 
                     this.board.renderer.show(this); 
-                    if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.show(this.label.content); 
+                    if(this.hasLabel && this.label.content.visProp.visible) this.board.renderer.show(this.label.content);
                 }
                 this.board.renderer.updatePoint(this);
             } else {
                 if (wasReal!=this.isReal) { 
                     this.board.renderer.hide(this); 
-                    if(this.hasLabel && this.label.content.visProp['visible']) this.board.renderer.hide(this.label.content); 
+                    if(this.hasLabel && this.label.content.visProp.visible) this.board.renderer.hide(this.label.content);
                 }
             }
         } 
 
         /* Update the label if visible. */
-        if(this.hasLabel && this.label.content.visProp['visible'] && this.isReal) {
+        if(this.hasLabel && this.label.content.visProp.visible && this.isReal) {
             this.label.content.update();
             this.board.renderer.updateText(this.label.content);
         }
@@ -494,7 +494,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     makeGlider: function (glideObject) {
         this.slideObject = JXG.getReference(this.board, glideObject);
         this.type = JXG.OBJECT_TYPE_GLIDER;
-        this.visProp.snapWidth = null;
+        this.visProp.snapwidth = null;
         
         this.slideObject.addChild(this);
 
@@ -836,11 +836,9 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     },
 
     /**
-     * Set the style of a point.
-     * @param {int} i Integer to determine the style. See {@link JXG.GeometryElement#style} for a list of available styles.
-     * @see JXG.GeometryElement#style
+     * Set the style of a point. Used for GEONExT import and should not be used to set the point's face and size.
+     * @param {Number} i Integer to determine the style.
      * @private
-     * @deprecated
      */
     setStyle: function(i) {
         var facemap = [
@@ -918,21 +916,14 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
     /**
      * Set the face of a point.
-     * @param {string} s String which determines the face of the point. See {@link JXG.GeometryElement#face} for a list of available faces.
-     * @see JXG.GeometryElement#face
+     * @param {String} s String which determines the face of the point. See {@link JXG.Point#face} for a list of available faces.
+     * @see JXG.Point#face
      * @private
      */
     setFace: function(s) {
-        s = s.toLowerCase();
-        if(s == 'cross' || s == 'x' || s == 'plus' || s == '+' || s == 'circle' || s == 'o' || s == 'square' || s == '[]' 
-           || s == 'diamond' || s == '<>' || s == 'triangleup' || s == 'a' || s == 'triangledown' || s == 'v' || 
-           s == 'triangleleft' || s == '<' || s == 'triangleright' || s == '>') {
-            this.visProp['face'] = s;
-        }
-        else {
-            this.visProp['face'] = 'circle';
-        }
+        this.visProp.face = this.normalizeFace(s.toLowerCase()) || 'o';
         this.board.renderer.changePointStyle(this);
+
         return this;
     },
 
@@ -967,7 +958,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     },
 
     /**
-     * Set the face of a point element
+     * Set the face of a point element.
      * @param {string} f String which determines the face of the point. See {@link JXG.GeometryElement#face} for a list of available faces.
      * @see JXG.GeometryElement#face
      */
@@ -989,10 +980,12 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @param addToTrace If true the clone will be added to trace control and can be removed using {@link JXG.GeometryElement#clearTrace}.
      * Currently not used, and always true.
      */
-    cloneToBackground: function(/** boolean */ addToTrace) {
+    cloneToBackground: function() {
         var copy = {};
+
         copy.id = this.id + 'T' + this.numTraces;
         this.numTraces++;
+
         copy.coords = this.coords;
         copy.visProp = this.visProp;
         copy.elementClass = JXG.OBJECT_CLASS_POINT;
@@ -1001,8 +994,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         
         this.board.renderer.drawPoint(copy);
         this.traces[copy.id] = copy.rendNode;
-        delete copy;
-
         return this;
     }
 });

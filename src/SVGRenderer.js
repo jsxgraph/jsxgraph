@@ -179,10 +179,10 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         node2.setAttributeNS(null, 'markerHeight', '12');
         node2.setAttributeNS(null, 'markerWidth', '10');
         node2.setAttributeNS(null, 'orient', 'auto');
-        node2.setAttributeNS(null, 'stroke', element.visProp.strokeColor);
-        node2.setAttributeNS(null, 'stroke-opacity', element.visProp.strokeOpacity);
-        node2.setAttributeNS(null, 'fill', element.visProp.strokeColor);
-        node2.setAttributeNS(null, 'fill-opacity', element.visProp.strokeOpacity);
+        node2.setAttributeNS(null, 'stroke', element.visProp.strokecolor);
+        node2.setAttributeNS(null, 'stroke-opacity', element.visProp.strokeopacity);
+        node2.setAttributeNS(null, 'fill', element.visProp.strokecolor);
+        node2.setAttributeNS(null, 'fill-opacity', element.visProp.strokeopacity);
         node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
 
         if (idAppendix === 'End') {
@@ -247,9 +247,9 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             this.appendChildPrim(node, axis.visProp.layer);
             this.appendNodesToElement(axis, 'path');
         }
-        node.setAttributeNS(null, 'stroke', axis.visProp.strokeColor);
-        node.setAttributeNS(null, 'stroke-opacity', axis.visProp.strokeOpacity);
-        node.setAttributeNS(null, 'stroke-width', axis.visProp.strokeWidth);
+        node.setAttributeNS(null, 'stroke', axis.visProp.strokecolor);
+        node.setAttributeNS(null, 'stroke-opacity', axis.visProp.strokeopacity);
+        node.setAttributeNS(null, 'stroke-width', axis.visProp.strokewidth);
         this.updatePathPrim(node, tickStr, axis.board);
     },
 
@@ -373,11 +373,11 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     makeArrows: function (el) {
         var node2;
 
-        if (el.visPropOld.firstArrow === el.visProp.firstArrow && el.visPropOld.lastArrow === el.visProp.lastArrow) {
+        if (el.visPropOld.firstarrow === el.visProp.firstarrow && el.visPropOld.lastarrow === el.visProp.lastarrow) {
             return;
         }
 
-        if (el.visProp.firstArrow) {
+        if (el.visProp.firstarrow) {
             node2 = el.rendNodeTriangleStart;
             if (!JXG.exists(node2)) {
                 node2 = this._createArrowHead(el, 'End');
@@ -391,7 +391,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 this.remove(node2);
             }
         }
-        if (el.visProp.lastArrow) {
+        if (el.visProp.lastarrow) {
             node2 = el.rendNodeTriangleEnd;
             if (!JXG.exists(node2)) {
                 node2 = this._createArrowHead(el, 'Start');
@@ -405,8 +405,8 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 this.remove(node2);
             }
         }
-        el.visPropOld.firstArrow = el.visProp.firstArrow;
-        el.visPropOld.lastArrow = el.visProp.lastArrow;
+        el.visPropOld.firstarrow = el.visProp.firstarrow;
+        el.visPropOld.lastarrow = el.visProp.lastarrow;
     },
 
     // already documented in JXG.AbstractRenderer
@@ -484,7 +484,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             maxSize = 5000.0,
             pStr = '',
             i, scr,
-            isNoPlot = (el.visProp.curveType !== 'plot'),
+            isNoPlot = (el.visProp.curvetype !== 'plot'),
             len;
 
         if (el.numberPoints <= 0) {
@@ -604,10 +604,10 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         var fillNode = el.rendNode, col, op,
             node, node2, node3, x1, x2, y1, y2;
 
-        op = JXG.evaluate(el.visProp.fillOpacity);
+        op = JXG.evaluate(el.visProp.fillopacity);
         op = (op > 0) ? op : 0;
 
-        col = JXG.evaluate(el.visProp.fillColor);
+        col = JXG.evaluate(el.visProp.fillcolor);
 
         if (el.visProp.gradient === 'linear') {
             node = this.createPrim('linearGradient', el.id + '_gradient');
@@ -625,7 +625,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             node2.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
             node3 = this.createPrim('stop', el.id + '_gradient2');
             node3.setAttributeNS(null, 'offset', '100%');
-            node3.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientSecondColor + ';stop-opacity:' + el.visProp.gradientSecondOpacity);
+            node3.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientsecondcolor + ';stop-opacity:' + el.visProp.gradientsecondopacity);
             node.appendChild(node2);
             node.appendChild(node3);
             this.defs.appendChild(node);
@@ -638,12 +638,12 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             node.setAttributeNS(null, 'cx', '50%');
             node.setAttributeNS(null, 'cy', '50%');
             node.setAttributeNS(null, 'r', '50%');
-            node.setAttributeNS(null, 'fx', el.visProp.gradientPositionX * 100 + '%');
-            node.setAttributeNS(null, 'fy', el.visProp.gradientPositionY * 100 + '%');
+            node.setAttributeNS(null, 'fx', el.visProp.gradientpositionx * 100 + '%');
+            node.setAttributeNS(null, 'fy', el.visProp.gradientpositiony * 100 + '%');
 
             node2 = this.createPrim('stop', el.id + '_gradient1');
             node2.setAttributeNS(null, 'offset', '0%');
-            node2.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientSecondColor + ';stop-opacity:' + el.visProp.gradientSecondOpacity);
+            node2.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientsecondcolor + ';stop-opacity:' + el.visProp.gradientsecondopacity);
             node3 = this.createPrim('stop', el.id + '_gradient2');
             node3.setAttributeNS(null, 'offset', '100%');
             node3.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
@@ -669,16 +669,16 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             return;
         }
 
-        op = JXG.evaluate(el.visProp.fillOpacity);
+        op = JXG.evaluate(el.visProp.fillopacity);
         op = (op > 0) ? op : 0;
 
-        col = JXG.evaluate(el.visProp.fillColor);
+        col = JXG.evaluate(el.visProp.fillcolor);
 
         if (el.visProp.gradient === 'linear') {
             node2.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
-            node3.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientSecondColor + ';stop-opacity:' + el.visProp.gradientSecondOpacity);
+            node3.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientsecondcolor + ';stop-opacity:' + el.visProp.gradientsecondopacity);
         } else if (el.visProp.gradient === 'radial') {
-            node2.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientSecondColor + ';stop-opacity:' + el.visProp.gradientSecondOpacity);
+            node2.setAttributeNS(null, 'style', 'stop-color:' + el.visProp.gradientsecondcolor + ';stop-opacity:' + el.visProp.gradientsecondopacity);
             node3.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
         }
     },
@@ -690,7 +690,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
         o = (o > 0) ? o : 0;
 
-        if (el.visPropOld.fillColor === c && el.visPropOld.fillOpacity === o) {
+        if (el.visPropOld.fillcolor === c && el.visPropOld.fillopacity === o) {
             return;
         }
         node = el.rendNode;
@@ -704,8 +704,8 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         if (JXG.exists(el.visProp.gradient)) {
             this.updateGradient(el);
         }
-        el.visPropOld.fillColor = c;
-        el.visPropOld.fillOpacity = o;
+        el.visPropOld.fillcolor = c;
+        el.visPropOld.fillopacity = o;
     },
 
     // documented in JXG.AbstractRenderer
@@ -716,7 +716,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
         o = (o > 0) ? o : 0;
 
-        if (el.visPropOld.strokeColor === c && el.visPropOld.strokeOpacity === o) {
+        if (el.visPropOld.strokecolor === c && el.visPropOld.strokeopacity === o) {
             return;
         }
 
@@ -736,16 +736,16 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         if (el.type === JXG.OBJECT_TYPE_ARROW) {
             this._setArrowAtts(el.rendNodeTriangle, c, o);
         } else if (el.elementClass === JXG.OBJECT_CLASS_CURVE || el.elementClass === JXG.OBJECT_CLASS_LINE) {
-            if (el.visProp.firstArrow) {
+            if (el.visProp.firstarrow) {
                 this._setArrowAtts(el.rendNodeTriangleStart, c, o);
             }
-            if (el.visProp.lastArrow) {
+            if (el.visProp.lastarrow) {
                 this._setArrowAtts(el.rendNodeTriangleEnd, c, o);
             }
         }
 
-        el.visPropOld.strokeColor = c;
-        el.visPropOld.strokeOpacity = o;
+        el.visPropOld.strokecolor = c;
+        el.visPropOld.strokeopacity = o;
     },
 
     // documented in JXG.AbstractRenderer
@@ -753,7 +753,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         var w = JXG.evaluate(width),
             node;
 
-        if (el.visPropOld.strokeWidth === w) {
+        if (el.visPropOld.strokewidth === w) {
             return;
         }
 
@@ -762,7 +762,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         if (JXG.exists(w)) {
             this.setPropertyPrim(node, 'stroke-width', w);
         }
-        el.visPropOld.strokeWidth = w;
+        el.visPropOld.strokewidth = w;
     },
 
     // documented in JXG.AbstractRenderer

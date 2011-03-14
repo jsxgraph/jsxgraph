@@ -134,9 +134,9 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             this.appendNodesToElement(axis, 'path');
         }
         this._setAttr(axis.rendNode, 'stroked', 'true');
-        this._setAttr(axis.rendNode, 'strokecolor', axis.visProp.strokeColor, 1);
-        this._setAttr(axis.rendNode, 'strokeweight', axis.visProp.strokeWidth);
-        this._setAttr(axis.rendNodeStroke, 'opacity', (axis.visProp.strokeOpacity * 100) + '%');
+        this._setAttr(axis.rendNode, 'strokecolor', axis.visProp.strokecolor, 1);
+        this._setAttr(axis.rendNode, 'strokeweight', axis.visProp.strokewidth);
+        this._setAttr(axis.rendNodeStroke, 'opacity', (axis.visProp.strokeopacity * 100) + '%');
         this.updatePathPrim(axis.rendNode, tickArr, axis.board);
     },
 
@@ -346,11 +346,11 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
     makeArrows: function (el) {
         var nodeStroke;
 
-        if (el.visPropOld.firstArrow === el.visProp.firstArrow && el.visPropOld.lastArrow === el.visProp.lastArrow) {
+        if (el.visPropOld.firstarrow === el.visProp.firstarrow && el.visPropOld.lastarrow === el.visProp.lastarrow) {
             return;
         }
 
-        if (el.visProp.firstArrow) {
+        if (el.visProp.firstarrow) {
             nodeStroke = el.rendNodeStroke;
             this._setAttr(nodeStroke, 'startarrow', 'block');
             this._setAttr(nodeStroke, 'startarrowlength', 'long');
@@ -361,7 +361,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             }
         }
 
-        if (el.visProp.lastArrow) {
+        if (el.visProp.lastarrow) {
             nodeStroke = el.rendNodeStroke;
             this._setAttr(nodeStroke, 'id', this.container.id + '_' + el.id + "stroke");
             this._setAttr(nodeStroke, 'endarrow', 'block');
@@ -372,8 +372,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
                 this._setAttr(nodeStroke, 'endarrow', 'none');
             }
         }
-        el.visPropOld.firstArrow = el.visProp.firstArrow;
-        el.visPropOld.lastArrow = el.visProp.lastArrow;
+        el.visPropOld.firstarrow = el.visProp.firstarrow;
+        el.visPropOld.lastarrow = el.visProp.lastarrow;
     },
 
     // already documented in JXG.AbstractRenderer
@@ -482,7 +482,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             symbm = ' m ',
             symbl = ' l ',
             nextSymb = symbm,
-            isNoPlot = (el.visProp.curveType !== 'plot'),
+            isNoPlot = (el.visProp.curvetype !== 'plot'),
             len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
 
         if (el.numberPoints <= 0) {
@@ -613,14 +613,14 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         
         if (el.visProp.gradient === 'linear') {
             this._setAttr(nodeFill, 'type', 'gradient');
-            this._setAttr(nodeFill, 'color2', el.visProp.gradientSecondColor);
-            this._setAttr(nodeFill, 'opacity2', el.visProp.gradientSecondOpacity);
-            this._setAttr(nodeFill, 'angle', el.visProp.gradientAngle);
+            this._setAttr(nodeFill, 'color2', el.visProp.gradientsecondcolor);
+            this._setAttr(nodeFill, 'opacity2', el.visProp.gradientsecondopacity);
+            this._setAttr(nodeFill, 'angle', el.visProp.gradientangle);
         } else if (el.visProp.gradient === 'radial') {
             this._setAttr(nodeFill, 'type', 'gradientradial');
-            this._setAttr(nodeFill, 'color2', el.visProp.gradientSecondColor);
-            this._setAttr(nodeFill, 'opacity2', el.visProp.gradientSecondOpacity);
-            this._setAttr(nodeFill, 'focusposition', el.visProp.gradientPositionX * 100 + '%,' + el.visProp.gradientPositionY * 100 + '%');
+            this._setAttr(nodeFill, 'color2', el.visProp.gradientsecondcolor);
+            this._setAttr(nodeFill, 'opacity2', el.visProp.gradientsecondopacity);
+            this._setAttr(nodeFill, 'focusposition', el.visProp.gradientpositionx * 100 + '%,' + el.visProp.gradientpositiony * 100 + '%');
             this._setAttr(nodeFill, 'focussize', '0,0');
         } else {
             this._setAttr(nodeFill, 'type', 'solid');
@@ -634,7 +634,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
         o = (o > 0) ? o : 0;
 
-        if (el.visPropOld.fillColor === c && el.visPropOld.fillOpacity === o) {
+        if (el.visPropOld.fillcolor === c && el.visPropOld.fillopacity === o) {
             return;
         }
 
@@ -656,8 +656,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
                 el.rendNode.style.filter += ' alpha(opacity = ' + (o * 100) +')';
             }
         }
-        el.visPropOld.fillColor = c;
-        el.visPropOld.fillOpacity = o;
+        el.visPropOld.fillcolor = c;
+        el.visPropOld.fillopacity = o;
     },
 
     // already documented in JXG.AbstractRenderer
@@ -668,7 +668,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
         o = (o > 0) ? o : 0;
 
-        if (el.visPropOld.strokeColor === c && el.visPropOld.strokeOpacity === o) {
+        if (el.visPropOld.strokecolor === c && el.visPropOld.strokeopacity === o) {
             return;
         }
 
@@ -685,8 +685,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
                 this._setAttr(nodeStroke, 'opacity', (o * 100) + '%');
             }
         }
-        el.visPropOld.strokeColor = c;
-        el.visPropOld.strokeOpacity = o;
+        el.visPropOld.strokecolor = c;
+        el.visPropOld.strokeopacity = o;
     },
 
     // already documented in JXG.AbstractRenderer
@@ -694,7 +694,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         var w = JXG.evaluate(width),
             node;
 
-        if (el.visPropOld.strokeWidth === w) {
+        if (el.visPropOld.strokewidth === w) {
             return;
         }
 
@@ -703,7 +703,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         if (JXG.exists(w)) {
             this.setPropertyPrim(node, 'stroke-width', w);
         }
-        el.visPropOld.strokeWidth = w;
+        el.visPropOld.strokewidth = w;
     },
 
     // already documented in JXG.AbstractRenderer
