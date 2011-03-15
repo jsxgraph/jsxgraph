@@ -26,7 +26,6 @@
 /**
  * Chart plotting
  */
- 
 JXG.Chart = function(board, parents, attributes) {
     var x, y, i, c, style, len;
 
@@ -172,6 +171,9 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         fill = attributes.fillcolor;
         fs = parseFloat(board.options.text.fontSize);                 // TODO: handle fontSize attribute
         for (i = 0; i < x.length; i++) {
+            if (isNaN(JXG.evaluate(x[i])) || isNaN(y[i])) {
+                continue;
+            }
             if (JXG.isFunction(x[i])) {
                 xp0 = function() { return x[i]()-w*0.5; };
                 xp1 = function() { return x[i](); };
@@ -217,7 +219,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             }
 
             attributes.withlines = false;
-            if(!JXG.exists(fill) && JXG.isArray(attributes.colors)) {
+            if(JXG.exists(attributes.colors) && JXG.isArray(attributes.colors)) {
                 colors = attributes.colors;
                 attributes.fillcolor = colors[i%colors.length];
             }
@@ -651,34 +653,35 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
 });
 
 JXG.createChart = function(board, parents, attributes) {
+
     if((parents.length == 1) && (typeof parents[0] == 'string')) {
         var table = document.getElementById(parents[0]),
             data, row, i, j, col, charts = [], w, x, showRows,
             originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len, attr;
         if(JXG.exists(table)) {
             // extract the data
-            attributes = JXG.checkAttributes(attributes,{withHeader:true});
-            
-            table = (new JXG.DataSource()).loadFromTable(parents[0], attributes['withheader'], attributes['withheader']);
+            attr = JXG.copyAttributes(attributes, board.options, 'chart');
+
+            table = (new JXG.DataSource()).loadFromTable(parents[0], attr.withheaders, attr.withheaders);
             data = table.data;
             col = table.columnHeader;
             row = table.rowHeader;
 
-            originalWidth = attributes['width'];
-            name = attributes['name'];
-            strokeColor = attributes['strokecolor'];
-            fillColor = attributes['fillcolor'];
-            hStrokeColor = attributes['highlightstrokecolor'];
-            hFillColor = attributes['highlightfillcolor'];
+            originalWidth = attr.width;
+            name = attr.name;
+            strokeColor = attr.strokecolor;
+            fillColor = attr.fillcolor;
+            hStrokeColor = attr.highlightstrokecolor;
+            hFillColor = attr.highlightfillcolor;
 
             board.suspendUpdate();
 
             len = data.length;
             showRows = [];
-            if (attributes['rows'] && JXG.isArray(attributes['rows'])) {
+            if (attr.rows && JXG.isArray(attr.rows)) {
                 for(i=0; i<len; i++) {
-                    for(j=0; j<attributes['rows'].length; j++) {
-                        if((attributes['rows'][j] == i) || (attributes['withheaders'] && attributes['rows'][j] == row[i])) {
+                    for(j=0; j<attr.rows.length; j++) {
+                        if((attr.rows[j] == i) || (attr.withheaders && attr.rows[j] == row[i])) {
                             showRows.push(data[i]);
                             break;
                         }
@@ -693,7 +696,7 @@ JXG.createChart = function(board, parents, attributes) {
             for(i=0; i<len; i++) {
 
                 x = [];
-                if(attributes['chartstyle'] && attributes['chartstyle'].indexOf('bar') != -1) {
+                if(attr.chartstyle && attr.chartstyle.indexOf('bar') != -1) {
                     if(originalWidth) {
                         w = originalWidth;
                     } else {
@@ -703,38 +706,38 @@ JXG.createChart = function(board, parents, attributes) {
                     for(j=1; j<showRows[i].length; j++) {
                         x.push(x[j-1] + 1);
                     }
-                    attributes['width'] = w/(1.0*len);
+                    attr.width = w/(1.0*len);
                 }
                 
                 if(name && name.length == len)
-                    attributes['name'] = name[i];
-                else if(attributes['withheaders'])
-                    attributes['name'] = col[i];
+                    attr.name = name[i];
+                else if(attr.withheaders)
+                    attr.name = col[i];
                 
                 if(strokeColor && strokeColor.length == len)
-                    attributes['strokecolor'] = strokeColor[i];
+                    attr.strokecolor = strokeColor[i];
                 else
-                    attributes['strokecolor'] = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,0.6);
+                    attr.strokecolor = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,0.6);
                 
                 if(fillColor && fillColor.length == len)
-                    attributes['fillcolor'] = fillColor[i];
+                    attr.fillcolor = fillColor[i];
                 else
-                    attributes['fillcolor'] = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,1.0);
+                    attr.fillcolor = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,1.0);
                 
                 if(hStrokeColor && hStrokeColor.length == len)
-                    attributes['highlightstrokecolor'] = hStrokeColor[i];
+                    attr.highlightstrokecolor = hStrokeColor[i];
                 else
-                    attributes['highlightstrokecolor'] = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,1.0);
+                    attr.highlightstrokecolor = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,1.0);
                 
                 if(hFillColor && hFillColor.length == len)
-                    attributes['highlightfillcolor'] = hFillColor[i];
+                    attr.highlightfillcolor = hFillColor[i];
                 else
-                    attributes['highlightfillcolor'] = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,0.6);
+                    attr.highlightfillcolor = JXG.hsv2rgb(((i+1)/(1.0*len))*360,0.9,0.6);
                 
-                if(attributes['chartstyle'] && attributes['chartstyle'].indexOf('bar') != -1) {
-                    charts.push(new JXG.Chart(board, [x, showRows[i]], attributes));
+                if(attr.chartstyle && attr.chartstyle.indexOf('bar') != -1) {
+                    charts.push(new JXG.Chart(board, [x, showRows[i]], attr));
                 } else
-                    charts.push(new JXG.Chart(board, [showRows[i]], attributes));
+                    charts.push(new JXG.Chart(board, [showRows[i]], attr));
             }
 
             board.unsuspendUpdate();
