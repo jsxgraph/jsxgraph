@@ -48,12 +48,12 @@ TestCase("AbstractRenderer", {
     setUpTextElement: function (id) {
         var element = {
                 visProp: {
-                    strokeColor: 'black',
+                    strokecolor: 'black',
                     visible: true,
-                    fontSize: '10px',
+                    fontsize: '10px',
                     display: 'html',
-                    useASCIIMathML: false,
-                    useMathJax: false
+                    useasciimathmL: false,
+                    usemathjax: false
                 },
                 id: id,
                 transformations: [],
@@ -101,8 +101,8 @@ TestCase("AbstractRenderer", {
         var element = this.setUpTextElement('textnode'),
             node = document.getElementById('jxgbox_textnode');
 
-        element.visProp.strokeColor = 'green';
-        element.visProp.fontSize = 10;
+        element.visProp.strokecolor = 'green';
+        element.visProp.fontsize = 10;
         this.ar.updateTextStyle(element);
 
         assertTrue('text color', '#008000' === node.style.color || 'green' === node.style.color);
