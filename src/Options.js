@@ -894,7 +894,7 @@ JXG.Validator = (function () {
         validateRenderer = function (v) {
             return (v in {vml: 0, svg: 0, canvas: 0});
         },
-    i, v,
+    i, v = {},
     validators = {
         color: validateColor,
         defaultDistance: JXG.isNumber,
