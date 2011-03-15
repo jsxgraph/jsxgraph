@@ -12,20 +12,8 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
         highlightStrokeColor: '#84e68a',
         fillColor: 'none',
         highlightFillColor: 'none',
-
-        strokeOpacity: 1,
-        highlightStrokeOpacity: 1,
-        fillOpacity: 1,
-        highlightFillOpacity: 1,
-        strokeWidth: '2px',
-	    withLabel: false,
-
-        draft : {
-            draft : false,
-            color : '#565656',
-            opacity : 0.8,
-            strokeWidth : '1px'
-        }
+        strokeOpacity: 0.6,
+        highlightStrokeOpacity: 1
     },
 
     point: {
@@ -39,14 +27,8 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
     },
 
     line : {
-        firstArrow : false,
-        lastArrow : false,
-        straightFirst : true,
-        straightLast : true,
-        fillColor : '#000000',
-        highlightFillColor : 'none',
-        strokeColor : '#4096EE',
-        highlightStrokeColor : '#45a1ff',
+        strokeColor : '#eee',
+        highlightStrokeColor : 'white',
 
         ticks : {
             drawLabels : true,

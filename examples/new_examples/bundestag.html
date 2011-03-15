@@ -60,7 +60,7 @@
 
                 table = (new JXG.DataSource()).loadFromTable('btw', true, true);
                 col = table.getColumn(year);
-                JXG.debug(col.join(','));
+
                 for(i = 0; i < col.length; i++) {
                     if(isNaN(col[i]))
                         col[i] = 0.;
@@ -68,7 +68,6 @@
 
                 if (chart) {
                     for (i = 0; i < chart[0].length; i++) {
-                        JXG.debug(i,chart[0][i]);
                         chart[0][i].vertices[1].moveTo([chart[0][i].vertices[1].X(), col[i]], 500);
                         chart[0][i].vertices[2].moveTo([chart[0][i].vertices[2].X(), col[i]], 500);
                    }
