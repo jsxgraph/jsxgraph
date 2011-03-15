@@ -699,7 +699,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             this.label.content = JXG.createText(this.board, [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], {
                 anchor: this,
                 id: this.id + 'Label',
-                isLabel: true
+                isLabel: true,
+                visible: this.visProp.visible
             });
 
             this.label.color = '#000000';
