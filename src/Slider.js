@@ -58,9 +58,8 @@
 JXG.createSlider = function(board, parents, attributes) {
     var pos0, pos1, smin, start, smax, sdiff, 
            p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t,
-           snapWidth, fixed, withText, withTicks, 
-           attr;
-        
+           withText, withTicks, attr;
+
     pos0 = parents[0];
     pos1 = parents[1];
     smin = parents[2][0];
@@ -81,6 +80,9 @@ JXG.createSlider = function(board, parents, attributes) {
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment1');
     l1 = board.create('segment', [p1,p2], attr);
+
+    // this is required for a correct projection of the glider onto the segment below
+    l1.updateStdform();
     
     if (withTicks) {
         attr = JXG.copyAttributes(attributes, board.options, 'slider', 'ticks');

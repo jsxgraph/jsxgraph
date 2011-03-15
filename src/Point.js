@@ -178,7 +178,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 }
             } else if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
                 this.coords  = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
-                
+
                 var p1coords = this.slideObject.point1.coords;
                 var p2coords = this.slideObject.point2.coords;
                 if (fromParent) {
@@ -1125,9 +1125,9 @@ JXG.createGlider = function(board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'point');
 
     if (parents.length === 1) {
-      el = board.create('point', [0, 0], attr);
+        el = board.create('point', [0, 0], attr);
     } else {
-      el = board.create('point', parents.slice(0, -1), attr);
+        el = board.create('point', parents.slice(0, 2), attr);
     }
 
     el.makeGlider(parents[parents.length-1]);
