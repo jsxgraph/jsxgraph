@@ -681,23 +681,13 @@ JXG.extend(JXG, /** @lends JXG */ {
         if (typeof obj !== 'object' || obj == null) {
             return obj;
         }
+
         if (this.isArray(obj)) {
             c = [];
-            for (i=0; i<obj.length; i++) {
+            for (i = 0; i < obj.length; i++) {
                 prop = obj[i];
                 if (typeof prop == 'object') {
-                    if (this.isArray(prop)) {
-                        c[i] = [];
-                        for (j = 0; j < prop.length; j++) {
-                            if (typeof prop[j] != 'object') {
-                                c[i].push(prop[j]);
-                            } else {
-                                c[i].push(this.deepCopy(prop[j]));
-                            }
-                        }
-                    } else {
-                        c[i] = this.deepCopy(prop);
-                    }
+                    c[i] = this.deepCopy(prop);
                 } else {
                     c[i] = prop;
                 }
@@ -705,50 +695,25 @@ JXG.extend(JXG, /** @lends JXG */ {
         } else {
             c = {};
             for (i in obj) {
-                if (toLower) {
-                    i2 = i.toLowerCase();
-                } else {
-                    i2 = i;
-                }
-                    
+                i2 = toLower ? i.toLowerCase() : i;
+
                 prop = obj[i];
                 if (typeof prop == 'object') {
-                    if (this.isArray(prop)) {
-                        c[i2] = [];
-                        for (j = 0; j < prop.length; j++) {
-                            if (typeof prop[j] != 'object') {
-                                c[i2].push(prop[j]);
-                            } else {
-                                c[i2].push(this.deepCopy(prop[j]));
-                            }
-                        }
-                    } else {
-                        c[i2] = this.deepCopy(prop);
-                    }
+                    c[i2] = this.deepCopy(prop);
                 } else {
                     c[i2] = prop;
                 }
             }
             
             for (i in obj2) {
-                if (toLower) {
-                    i2 = i.toLowerCase();
-                } else {
-                    i2 = i;
-                }
+                i2 = toLower ? i.toLowerCase() : i;
+
                 prop = obj2[i];
                 if (typeof prop == 'object') {
-                    if (this.isArray(prop)) {
-                        c[i2] = [];
-                        for (j = 0; j < prop.length; j++) {
-                            if (typeof prop[j] != 'object') {
-                                c[i2].push(prop[j]);
-                            } else {
-                                c[i2].push(this.deepCopy(prop[j]));
-                            }
-                        }
-                    } else {
+                    if (JXG.isArray(prop) || !JXG.exists(c[i2])) {
                         c[i2] = this.deepCopy(prop);
+                    } else {
+                        c[i2] = this.deepCopy(c[i2], prop, toLower);
                     }
                 } else {
                     c[i2] = prop;

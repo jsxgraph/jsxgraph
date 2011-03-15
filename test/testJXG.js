@@ -199,12 +199,15 @@ TestCase("JXG", {
     },
 
     testDeepCopyMerge: function () {
-        expectAsserts(5);
+        expectAsserts(6);
 
         var o1 = {
                 color: 'abc',
                 arr: [1, 2, 3],
-                num: 10
+                num: 10,
+                subo: {
+                    foo: 42
+                }
             },
             o2 = {
                 color: 'def',
@@ -212,7 +215,10 @@ TestCase("JXG", {
                 o: {
                     subprop: 12
                 },
-                name: 'test'
+                name: 'test',
+                subo: {
+                    
+                }
             },
             copy;
 
@@ -222,6 +228,7 @@ TestCase("JXG", {
         assertEquals('test array override content', [4, 5, 6], copy.arr);
         assertEquals('test subprop new content', 12, copy.o.subprop);
         assertEquals('test number original content', 10, copy.num);
+        assertEquals('test subobject original content', 42, copy.subo.foo);
         assertEquals('test name content', 'test', copy.name);
     }
 });
