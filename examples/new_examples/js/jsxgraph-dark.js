@@ -212,7 +212,7 @@ JXG.extend(JXG.Options, {
             strokeColor : '#444444'
         }, 
         text: {
-            strokeColor:'#ffffff'
+            strokeColor:'gray'
         }
     },
 
@@ -308,10 +308,10 @@ JXG.extend(JXG.Options, {
         fontSize : 11,
         digits: 2,
         isLabel: false,
-        strokeColor : 'gray',
+        strokeColor : 'white',
         useASCIIMathML : false,
         useMathJax : false,
-        defaultDisplay : 'html', //'html' or 'internal'
+        display : 'html', //'html' or 'internal'
         withLabel: false
     },
 

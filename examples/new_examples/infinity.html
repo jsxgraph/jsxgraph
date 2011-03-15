@@ -51,7 +51,7 @@
                 keepaspectreatio: true,
                 axis: false,
                 grid: false,
-                shownavigation: true
+                shownavigation: false
             });
 
         // construction
@@ -65,6 +65,7 @@
         var S = board.create('slider', [[-5,-6],[5,-6],[0,0.95,1]], {
             name:'S'
         });
+        
         var hue = board.create('slider', [[-5,-7],[5,-7],[0,8,36]], {
             name:'color'
         });
