@@ -70,8 +70,7 @@
         b2p2 = board2.createElement('point', [1,-2] , {strokeColor: '#00ff00', style: 6, name: 'R', slideObject:b2l03});
 		b2p3 = board2.createElement('point', [1,0] , {strokeColor: '#0000ff', style: 6, name: 'a' , slideObject:b2l01});		
 		board2.snapToGrid = true;
-		board2.renderer.drawGrid(board2)
-		
+
         c1 = board.createElement('curve', [
             function(t){ return (b2p2.X()+b2p1.X())*Math.cos(t)-b2p3.X()*Math.cos(t*(b2p2.X()+b2p1.X())/b2p1.X()); },
             function(t){ return (b2p2.X()+b2p1.X())*Math.sin(t)-b2p3.X()*Math.sin(t*(b2p2.X()+b2p1.X())/b2p1.X()); },

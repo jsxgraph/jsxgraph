@@ -124,7 +124,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         attributes.fillColor = 'none';
         attributes.highlightfillcolor = 'none';
 
-        return board.create('spline', x, y, attributes);
+        return board.create('spline', [x, y], attributes);
     },
 
     drawFit: function(board, x, y, attributes) {
@@ -224,22 +224,20 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             pols[i] = board.create('polygon', p, attributes);
         }
 
-        return pols; //[0];  // Not enough! We need pols, but this gives an error in board.setProperty.
+        return pols;
     },
 
-    drawPoints: function(board, parents, attributes) {
+    drawPoints: function(board, x, y, attributes) {
         var i,
             points = [],
-            infoboxArray = attributes.infoboxarray,
-            x = parents[0],
-            y = parents[1];
+            infoboxArray = attributes.infoboxarray;
 
         attributes.fixed = true;
         attributes.name = '';
 
-        for (i=0;i<x.length;i++) {
+        for (i = 0; i < x.length; i++) {
             attributes.infoboxtext = infoboxArray ? infoboxArray[i%infoboxArray.length] : false;
-            points[i] = board.create('point',[x[i],y[i]], attributes);
+            points[i] = board.create('point', [x[i], y[i]], attributes);
         }
 
         return points;
@@ -393,7 +391,10 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             xcoord, ycoord, polygons, legend_position, circles,
             cla, clabelArray, ncircles, pcircles, angle, dr;
 
-        if (len<=0) { alert("No data"); return; }
+        if (len<=0) {
+            JXG.debug("No data");
+            return;
+        }
         // labels for axes
         paramArray = attributes['paramarray'];
         if (!JXG.exists(paramArray)) {
@@ -407,7 +408,10 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         }
 
         for(i=0; i<len; i++) {
-            if (numofparams!=parents[i].length) { alert("Use data length equal to number of params (" + parents[i].length + " != " + numofparams + ")"); return; }
+            if (numofparams!=parents[i].length) {
+                JXG.debug("Use data length equal to number of params (" + parents[i].length + " != " + numofparams + ")");
+                return;
+            }
         }
         maxes=new Array(numofparams);
         mins=new Array(numofparams);
@@ -561,8 +565,8 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             myAtts['labelcolor'] = colorArray && colorArray[i%colorArray.length];
             myAtts['strokecolor'] = colorArray && colorArray[i%colorArray.length];
             myAtts['fillcolor'] = colorArray && colorArray[i%colorArray.length];
-            polygons[i] = board.create('polygon',pdata[i],
-            {withLines:true,
+            polygons[i] = board.create('polygon',pdata[i], {
+                withLines:true,
                 withLabel:false,
                 fillColor:myAtts['fillcolor'],
                 fillOpacity:myAtts['fillopacity']
