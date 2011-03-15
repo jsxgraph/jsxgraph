@@ -56,19 +56,17 @@
 
         // construction
         board.suspendUpdate();
+        var S = board.create('slider', [[-5,-6],[5,-6],[0,0.85,1]], {
+            name:'Whirl'
+        });
+        var hue = board.create('slider', [[-5,-7],[5,-7],[0,20.5,36]], {
+            name:'Colors'
+        });
         var points = new Array();
         points[0] = board.create('point',[5, 5], {name:' '});
         points[1] = board.create('point',[-5, 5], {name:' '});
         points[2] = board.create('point',[-5, -5], {name:' '});
         points[3] = board.create('point',[5, -5], {name:' '});
-        
-        var S = board.create('slider', [[-5,-6],[5,-6],[0,0.95,1]], {
-            name:'S'
-        });
-        
-        var hue = board.create('slider', [[-5,-7],[5,-7],[0,8,36]], {
-            name:'color'
-        });
 
         function quadrangle(pt, n) {
             var col;

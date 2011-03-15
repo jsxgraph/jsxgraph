@@ -704,7 +704,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     moveTo: function(where, time) {
         if (typeof time == 'undefined' || time == 0) {
             this.setPosition(JXG.COORDS_BY_USER, where[0], where[1]);
-            //this.prepareUpdate().update().updateRenderer();
             return this.board.update(this);
         }
     	var delay = 35,

@@ -116,7 +116,13 @@ JXG.createSlider = function(board, parents, attributes) {
                                   function(){return (p2.Y()-p1.Y())*0.05+p2.Y();},
                                   function(){return n+(p3.Value()).toFixed(2);}],
                          attr); 
-    }  
+        p3.text = t;
+    }
+
+    p3.point1 = p1;
+    p3.point2 = p2;
+    p3.baseline = l1;
+    p3.highline = l2;
     
     return p3;
 };    
