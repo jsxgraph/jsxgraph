@@ -1809,21 +1809,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     create: function (elementType, parents, attributes) {
         var el, i, s;
 
-        // Turtle may have no parent elements
-        if (elementType!='turtle' && (!JXG.exists(parents) || (parents.length && parents.length == 0))) {
-            return null;
-        }
+        elementType = elementType.toLowerCase();
 
         if (!JXG.exists(parents)) {
             parents = [];
         }
 
-        elementType = elementType.toLowerCase();
-
-        if (attributes==null) {
+        if (!JXG.exists(attributes)) {
             attributes = {};
         }
-        for (i=0; i<parents.length; i++) {
+
+        for (i = 0; i < parents.length; i++) {
             parents[i] = JXG.getReference(this, parents[i]); // TODO: should not be done for content-parameter of JXG.Text
         }
 
@@ -1834,30 +1830,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 el = JXG.JSXGraph.elements[elementType].creator(this, parents, attributes);
             }
         } else {
-            throw new Error("JSXGraph: JXG.createElement: Unknown element type given: "+elementType);
+            throw new Error("JSXGraph: JXG.createElement: Unknown element type given: " + elementType);
         }
 
         if (!JXG.exists(el)) {
-            JXG.debug("JSXGraph: JXG.createElement: failure creating "+elementType);
+            JXG.debug("JSXGraph: JXG.createElement: failure creating " + elementType);
             return el;
         }
 
-        if (JXG.isArray(attributes)) {
-            attributes = attributes[0];
-        }
-
-        /*
-        if (el.multipleElements) {
-//            for (s in el) {
-//                if (el[s].setProperty)
-//                    el[s].setProperty(attributes);
-//            }
-        } else {
-//            if (el.setProperty)
-//                el.setProperty(attributes);
-        }
-        */
-        
         this.update(el); // We start updating at the newly created element. AW
         return el;
     },
