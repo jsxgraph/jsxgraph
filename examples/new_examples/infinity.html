@@ -41,38 +41,33 @@
     </div>
     </center>
 
-<script type="text/javascript" src="js/jsxgraph-dark.js">
-</script>
+<script type="text/javascript" src="js/jsxgraph-dark.js"></script>
 
 <script id="jxg" type="text/javascript">
 
     (function() {
-
         var board = JXG.JSXGraph.initBoard('jxgbox', {
                 boundingbox: [-9, 8, 9, -10],
                 keepaspectreatio: true,
                 axis: false,
                 grid: false,
-                shownavigation: false
+                shownavigation: true
             });
 
         // construction
         board.suspendUpdate();
-        var S = board.create('slider', [[-5,-6],[5,-6],[0,0.95,1]], {
-            name:'S',
-            strokeColor: JXG.Options.line.strokeColor,
-            highlightStrokeColor: JXG.Options.line.strokeColor
-        });
-        var hue = board.create('slider', [[-5,-7],[5,-7],[0,8,36]], {
-            name:'color',
-            strokeColor: JXG.Options.line.strokeColor,
-            highlightStrokeColor: JXG.Options.line.strokeColor
-        });
         var points = new Array();
         points[0] = board.create('point',[5, 5], {name:' '});
         points[1] = board.create('point',[-5, 5], {name:' '});
         points[2] = board.create('point',[-5, -5], {name:' '});
         points[3] = board.create('point',[5, -5], {name:' '});
+        
+        var S = board.create('slider', [[-5,-6],[5,-6],[0,0.95,1]], {
+            name:'S'
+        });
+        var hue = board.create('slider', [[-5,-7],[5,-7],[0,8,36]], {
+            name:'color'
+        });
 
         function quadrangle(pt, n) {
             var col;
@@ -100,6 +95,7 @@
             quadrangle(arr, --n);
         }
         quadrangle(points,30);
+        
         board.unsuspendUpdate();
     })();
 </script>
