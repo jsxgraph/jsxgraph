@@ -190,6 +190,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             // creates a label
             makeLabel = function(pos, newTick, board, drawLabels, id) {
                 var labelText, label;
+
+                if (!drawLabels) {
+                    return null;
+                }
                 
                 labelText = pos.toString();
                 if(labelText.length > 5)
@@ -393,11 +397,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         while(startTick.distance(JXG.COORDS_BY_USER, tickCoords) < Math.abs(end - begin) + JXG.Math.eps) {
             if(i % (this.visProp.minorticks+1) == 0) {
                 tickCoords.major = true;
-                if(this.visProp.drawlabels) {
-                    this.labels.push(makeLabel(tickPosition, tickCoords, this.board, this.visProp.drawlabels, this.id));
-                } else {
-                    this.labels.push(null);
-                }
+                this.labels.push(makeLabel(tickPosition, tickCoords, this.board, this.visProp.drawlabels, this.id));
                 tickPosition += ticksDelta;
             } else {
                 tickCoords.major = false;
@@ -475,7 +475,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
  *   <tt>    return 2;</tt><br />
  *   <tt>}</tt><br />
  *   for ticks with distance 2 between each tick.
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
  * @type JXG.Ticks
  * @return Reference to the created ticks object.
  */

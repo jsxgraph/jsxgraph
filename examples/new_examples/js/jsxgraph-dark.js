@@ -133,8 +133,8 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
             minorTicks : 0,
             defaultDistance : 1,
             opacity : 1,
-            strokeWidth: 1,
-            strokeColor : '#000000'
+            strokeWidth: 2,
+            strokeColor: '#ddd'
         },
         segment2: {
             strokeWidth: 5,

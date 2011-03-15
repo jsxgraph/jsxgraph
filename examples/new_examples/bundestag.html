@@ -51,7 +51,7 @@
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 53, 18, -2], axis: false, grid: false}),
             colors = ['#333', '#555', 'red', 'yellow', 'green', '#8B00FF', 'orange', '#965220', '#96abee', '#888', '#965220', 'red', 'blue', 'lightgray'],
             years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005, 2009],
-            chart, slider, last = 0, table,
+            chart, slider, last = 0, table, ticks, i,
         
             select_years = function (year) {
                 var i, data, col;
@@ -90,7 +90,7 @@
         slider = board.create('slider', [[0, 50], [14, 50], [1949, 1949, 2009]], {
             name: 'Year',
             glider: {
-                size: 8,
+                size: 7,
                 face: 'v'
             },
             text: {
@@ -99,21 +99,46 @@
         });
         slider.text.setText(function () {
             var t = 'Year: ' + Math.floor(slider.Value()),
-                i;
+                i, found = false;
 
-            for (i = 0; i < years.length; i++) {
-                if (Math.floor(slider.Value()) === years[i]) {
+            for (i = 0; i < years.length-1; i++) {
+                if (years[i] <= slider.Value() && slider.Value() < years[i+1]) {
                     if (last !== i) {
                         select_years(i);
                         last = i;
                     }
-                    t = '<strong>' + t + '<' + '/strong>';
+
+                    if (years[i] === Math.floor(slider.Value())) {
+                        t = '<strong>' + t + '<' + '/strong>';
+                    }
+                    found = true;
                     break;
                 }
             }
 
+            if (!found) {
+                if (last !== years.length-1) {
+                    select_years(years.length-1);
+                    last = years.length-1;
+                }
+                t = '<strong>' + t + '<' + '/strong>';
+            }
+
             return t;
         });
+
+        ticks = [];
+        for (i = 0; i < years.length; i++) {
+            ticks.push((years[i] - years[0])/(years[years.length-1]-years[0])*(slider.baseline.point2.X()-slider.baseline.point1.X()));
+        }
+        JXG.debug(ticks);
+        board.create('ticks', [slider.baseline, ticks], {
+            drawLabels: false,
+            strokeColor: '#ddd',
+            strokeWidth: 2,
+            majorHeight: 10
+        });
+
         $(document).ready(function () {
             table = (new JXG.DataSource()).loadFromTable('btw', true, true)
             select_years(0);
