@@ -48,17 +48,14 @@
 <script id="jxg" type="text/javascript">
 
     (function() {
-
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 53, 18, -2], axis: false, grid: false}),
             colors = ['#333', '#555', 'red', 'yellow', 'green', '#8B00FF', 'orange', '#965220', '#96abee', '#888', '#965220', 'red', 'blue', 'lightgray'],
             years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005, 2009],
-            chart, slider, last = 0,
+            chart, slider, last = 0, table,
+        
             select_years = function (year) {
-                var i, data, table, col;
+                var i, data, col;
 
-                year = JXG.isNumber(year) ? year : 0;
-
-                table = (new JXG.DataSource()).loadFromTable('btw', true, true);
                 col = table.getColumn(year);
 
                 for(i = 0; i < col.length; i++) {
@@ -72,7 +69,14 @@
                         chart[0][i].vertices[2].moveTo([chart[0][i].vertices[2].X(), col[i]], 500);
                    }
                 } else {
-                    chart = board.create('chart', [col], {chartStyle: 'bar', colors: colors});
+                    chart = board.create('chart', [col], {
+                        chartStyle: 'bar',
+                        colors: colors
+                    });
+                    board.create('legend', [13, 47], {
+                        labels: table.rowHeaders,
+                        colors: colors
+                    })
                 }
             };
 
@@ -86,7 +90,8 @@
         slider = board.create('slider', [[0, 50], [14, 50], [1949, 1949, 2009]], {
             name: 'Year',
             glider: {
-                size: 8
+                size: 8,
+                face: 'v'
             },
             text: {
                 fontSize: 14
@@ -109,14 +114,10 @@
 
             return t;
         });
-        $(document).ready(select_years);
-
-        board.highlightInfobox = function(x, y, el) {
-            this.infobox.setText('<span style="color:black;font-weight:bold">' + years[Math.round(x)-1] + ': ' + y + ' %<' + '/span>');
-            this.infobox.rendNode.style.border = 'groove ' + el.visProp['strokecolor'] + ' 2px';
-            this.infobox.rendNode.style.padding = '5px';
-            this.infobox.rendNode.style.backgroundColor = 'white';
-        };
+        $(document).ready(function () {
+            table = (new JXG.DataSource()).loadFromTable('btw', true, true)
+            select_years(0);
+        });
     })();
 </script>
 </div>

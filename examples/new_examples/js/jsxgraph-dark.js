@@ -97,7 +97,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
         strokeColor : 'gray',
         useASCIIMathML : false,
         useMathJax : false,
-        defaultDisplay : 'html' //'html' or 'internal'
+        defaultDisplay : 'html'
     },
 
     curve: {
@@ -106,11 +106,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
     },
 
     slider: {
-        snapWidth: null,
-        firstArrow : false,
-        lastArrow : false,
-        withTicks: true,
-        withLabel: true,
+        withTicks: false,
         glider: {
             fillColor : '#eeeeee',
             highlightFillColor : '#eeeeee',
@@ -149,5 +145,9 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
         text: {
             strokeColor: '#ccc'
         }
+    },
+
+    chart: {
+        fillOpacity: 0.6
     }
 });

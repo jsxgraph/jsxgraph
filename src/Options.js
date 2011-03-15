@@ -818,6 +818,12 @@ JXG.Options = {
         highlightbysize: false
     },
 
+    legend: {
+        style: 'vertical',
+        labels: ['1','2','3','4','5','6','7','8'],
+        colors: ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00']
+    },
+
     image: {
         imageString : null
     },

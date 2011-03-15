@@ -49,20 +49,20 @@ JXG.extend(JXG.DataSource.prototype, /** @lends JXG.DataSource.prototype */ {
             rowHeader = false;
 
         if(JXG.isArray(columnHeader)) {
-            this.columnHeader = columnHeader;
+            this.columnHeaders = columnHeader;
             columnHeader = false;
         }
 
         if(JXG.isArray(rowHeader)) {
-            this.rowHeader = rowHeader;
+            this.rowHeaders = rowHeader;
             rowHeader = false;
         }
 
         this.data = [];
         if(columnHeader)
-            this.columnHeader = [];
+            this.columnHeaders = [];
         if(rowHeader)
-            this.rowHeader = [];
+            this.rowHeaders = [];
 
         if(typeof table != 'undefined') {
             // extract the data
@@ -82,14 +82,14 @@ JXG.extend(JXG.DataSource.prototype, /** @lends JXG.DataSource.prototype */ {
             }
                 
             if(columnHeader) {
-                this.columnHeader = this.data[0].slice(1);
+                this.columnHeaders = this.data[0].slice(1);
                 this.data = this.data.slice(1);
             }
 
             if(rowHeader) {
-                this.rowHeader = new Array();
+                this.rowHeaders = new Array();
                 for(i=0; i<this.data.length; i++) {
-                    this.rowHeader.push(this.data[i][0]);
+                    this.rowHeaders.push(this.data[i][0]);
                     this.data[i] = this.data[i].slice(1);
                 }
             }
@@ -107,22 +107,23 @@ JXG.extend(JXG.DataSource.prototype, /** @lends JXG.DataSource.prototype */ {
             rowHeader = false;
 
         if(JXG.isArray(columnHeader)) {
-            this.columnHeader = columnHeader;
+            this.columnHeaders = columnHeader;
             columnHeader = false;
         }
 
         if(JXG.isArray(rowHeader)) {
-            this.rowHeader = rowHeader;
+            this.rowHeaders = rowHeader;
             rowHeader = false;
         }
 
         this.data = [];
         if(columnHeader)
-            this.columnHeader = [];
+            this.columnHeaders = [];
         if(rowHeader)
-            this.rowHeader = [];
+            this.rowHeaders = [];
 
-        table = document.getElementById(table);
+        table = document.getElementById(table);
+
         if(typeof table != 'undefined') {
             // extract the data
             row = table.getElementsByTagName('tr');
@@ -143,14 +144,14 @@ JXG.extend(JXG.DataSource.prototype, /** @lends JXG.DataSource.prototype */ {
             }
                 
             if(columnHeader) {
-                this.columnHeader = this.data[0].slice(1);
+                this.columnHeaders = this.data[0].slice(1);
                 this.data = this.data.slice(1);
             }
 
             if(rowHeader) {
-                this.rowHeader = new Array();
+                this.rowHeaders = new Array();
                 for(i=0; i<this.data.length; i++) {
-                    this.rowHeader.push(this.data[i][0]);
+                    this.rowHeaders.push(this.data[i][0]);
                     this.data[i] = this.data[i].slice(1);
                 }
             }
@@ -172,8 +173,8 @@ JXG.extend(JXG.DataSource.prototype, /** @lends JXG.DataSource.prototype */ {
 
         // get column index if column is given as column header title
         if(typeof col == 'string') {
-            for(i=0; i<this.columnHeader.length; i++) {
-                if(col == this.columnHeader[i]) {
+            for(i=0; i<this.columnHeaders.length; i++) {
+                if(col == this.columnHeaders[i]) {
                     col = i;
                     break;
                 }
@@ -183,7 +184,7 @@ JXG.extend(JXG.DataSource.prototype, /** @lends JXG.DataSource.prototype */ {
         // build column array
         for(i=0; i<this.data.length; i++) {
             if(this.data[i].length > col)
-                result[i] = this.data[i][col];
+                result[i] = parseFloat(this.data[i][col]);
         }
 
         return result;
@@ -194,8 +195,8 @@ JXG.extend(JXG.DataSource.prototype, /** @lends JXG.DataSource.prototype */ {
 
         // get column index if column is given as column header title
         if(typeof row == 'string') {
-            for(i=0; i<this.rowHeader.length; i++) {
-                if(row == this.rowHeader[i]) {
+            for(i=0; i<this.rowHeaders.length; i++) {
+                if(row == this.rowHeaders[i]) {
                     row = i;
                     break;
                 }

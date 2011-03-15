@@ -139,7 +139,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
     },
 
     drawBar: function(board, x, y, attributes) {
-        var i,pols = [], strwidth, fill, fs,
+        var i,pols = [], strwidth, fill, fs, text,
             w, xp0, xp1, xp2, yp, colors, p = [],
             hiddenPoint = {
                 fixed: true,
@@ -172,7 +172,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         fs = parseFloat(board.options.text.fontSize);                 // TODO: handle fontSize attribute
         for (i = 0; i < x.length; i++) {
             if (isNaN(JXG.evaluate(x[i])) || isNaN(y[i])) {
-                continue;
+                //continue;
             }
             if (JXG.isFunction(x[i])) {
                 xp0 = function() { return x[i]()-w*0.5; };
@@ -199,7 +199,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
                         yp -= fs*strwidth/board.stretchX;   // Static offset for label
                     }
                     xp1 -= fs*0.2/board.stretchY;
-                    board.create('text',[yp,xp1,attributes.labels[i]],attributes);
+                    text = board.create('text',[yp,xp1,attributes.labels[i]],attributes);
                 }
             } else { // vertical bars
                 p[0] = board.create('point',[xp0,0], hiddenPoint);
@@ -214,7 +214,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
                     } else {
                         yp -= fs*1.0/board.stretchY;   // Static offset for label
                     }
-                    board.create('text',[xp1-strwidth*0.5, yp, attributes['labels'][i]],attributes);
+                    text = board.create('text',[xp1-strwidth*0.5, yp, attributes['labels'][i]],attributes);
                 }
             }
 
@@ -224,6 +224,9 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
                 attributes.fillcolor = colors[i%colors.length];
             }
             pols[i] = board.create('polygon', p, attributes);
+            if (JXG.exists(attributes.labels) && JXG.exists(attributes.labels[i])) {
+                pols[i].text = text;
+            }
         }
 
         return pols;
@@ -757,33 +760,37 @@ JXG.JSXGraph.registerElement('chart', JXG.createChart);
  * 
  **/
 JXG.Legend = function(board, coords, attributes) {
+    var attr;
+
     /* Call the constructor of GeometryElement */
     this.constructor();
+
+    attr = JXG.copyAttributes(attributes, board.options, 'legend');
+
     this.board = board;
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coords, this.board);
     this.myAtts = {};
-    this.label_array = attributes['labelarray'] || ['1','2','3','4','5','6','7','8'];
-    this.color_array = attributes['colorarray'] || ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'];
-    var i;
+    this.label_array = attr['labelarray'] || attr.labels;
+    this.color_array = attr['colorarray'] || attr.colors;
     this.lines = [];
-    this.myAtts['strokewidth'] = attributes['strokewidth'] || 5;
+    this.myAtts['strokewidth'] = attr['strokewidth'] || 5;
     this.myAtts['straightfirst'] = false;
     this.myAtts['straightlast'] = false;
     this.myAtts['withlabel'] = true;
-    this.style = attributes['legendstyle'] || 'vertical';
+    this.style = attr['legendstyle'] || attr.style;
 
     switch(this.style) {
         case 'vertical':
-            this.drawVerticalLegend(attributes); 
+            this.drawVerticalLegend(board, attr);
             break;
         default:
-            alert('Unknown legend style' + this.style);
+            throw new Error('JSXGraph: Unknown legend style: ' + this.style);
             break;
     }
 };
 JXG.Legend.prototype = new JXG.GeometryElement;
 
-JXG.Legend.prototype.drawVerticalLegend = function(attributes) {
+JXG.Legend.prototype.drawVerticalLegend = function(board, attributes) {
     var line_length = attributes['linelength'] || 1,
         offy = (attributes['rowheight'] || 20)/this.board.stretchY,
         i;
