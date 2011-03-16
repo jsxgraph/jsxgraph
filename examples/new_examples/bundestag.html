@@ -131,7 +131,6 @@
         for (i = 0; i < years.length; i++) {
             ticks.push((years[i] - years[0])/(years[years.length-1]-years[0])*(slider.baseline.point2.X()-slider.baseline.point1.X()));
         }
-        JXG.debug(ticks);
         board.create('ticks', [slider.baseline, ticks], {
             drawLabels: false,
             strokeColor: '#ddd',
