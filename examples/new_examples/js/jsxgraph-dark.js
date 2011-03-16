@@ -93,7 +93,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
         lines: {
             withLabel: false,
             layer: 5
-        },
+        }
     },
 
     text: {

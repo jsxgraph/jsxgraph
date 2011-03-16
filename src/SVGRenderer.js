@@ -693,7 +693,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         if (el.visPropOld.fillcolor === c && el.visPropOld.fillopacity === o) {
             return;
         }
-        if (c !== 'none' && c !== false) {
+        if (c !== false) {
             node = el.rendNode;
             node.setAttributeNS(null, 'fill', c);
             if (el.type === JXG.OBJECT_TYPE_IMAGE) {
@@ -721,7 +721,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             return;
         }
 
-        if (c !== 'none' && c !== false) {
+        if (c !== false) {
             node = el.rendNode;
             if (el.type === JXG.OBJECT_TYPE_TEXT) {
                 if (el.visProp.display === 'html') {
