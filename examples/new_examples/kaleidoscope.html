@@ -132,6 +132,7 @@
             [[-2, 0], [2, 0]],
             [[0, 2*Math.sqrt(3)], [2, 0]]
         ],
+        axeslines = [],
         levels = 6,
 
         // variables
@@ -151,7 +152,7 @@
         }
 
         for(i = 0; i < axes.length; i++) {
-            axes[i] = board.create('segment', coordinates_to_points(axes[i], {
+            axeslines[i] = board.create('segment', coordinates_to_points(axes[i], {
                 size: 1,
                 withLabel: false
             }));
@@ -160,12 +161,16 @@
 
         board.create('text', [7, 10, '<a id="levelchange" href="javascript:">Next level</a>']);
         $('#levelchange').click(function(e) {
-            polygon = mirror_polygon(polygon, axes, l);
+            polygon = mirror_polygon(polygon, axeslines, l);
             l++;
         });
 
         $('#jxgbox').dblclick(function() {
-            axes[1].point2.moveTo([2, 0], 4000);
+            var i;
+            for (i = 0; i < axes.length; i++) {
+                axeslines[i].point1.moveTo(axes[i][0], 4000);
+                axeslines[i].point2.moveTo(axes[i][1], 4000);
+            }
         });
         
     })();
