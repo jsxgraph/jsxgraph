@@ -92,6 +92,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
         highlightFillOpacity : 0.3,
         lines: {
             withLabel: false,
+            highlightStrokeColor: '#eee',
             layer: 5
         }
     },

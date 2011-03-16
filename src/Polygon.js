@@ -77,7 +77,7 @@ JXG.Polygon = function (board, vertices, /*borders,*/ attributes) {
     if(this.withLines) {
         for(i = 0; i < this.vertices.length - 1; i++) {
             attr_line.id = attr_line.ids && attr_line.ids[i];
-            attr_line.strokecolor = JXG.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length];
+            attr_line.strokecolor = JXG.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length] || attr_line.strokeColor;
             l = JXG.createSegment(board, [this.vertices[i], this.vertices[i+1]], attr_line);
             this.borders[i] = l;
             l.parentPolygon = this;

@@ -633,6 +633,7 @@ JXG.Options = {
 
         lines: {
             withLabel: false,
+            strokeColor: 'none',
             // Polygon layer + 1
             layer: 5
         },

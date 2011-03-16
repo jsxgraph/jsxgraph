@@ -899,14 +899,12 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             if (element.type === JXG.OBJECT_CLASS_POINT) {
                 this.setObjectStrokeColor(element, element.visProp.highlightstrokecolor, element.visProp.highlightstrokeopacity);
                 this.setObjectFillColor(element, element.visProp.highlightstrokecolor, element.visProp.highlightstrokeopacity);
-            }
-            else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+            } else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(element, element.visProp.highlightfillcolor, element.visProp.highlightfillopacity);
                 for (i = 0; i < element.borders.length; i++) {
                     this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.highlightstrokecolor, element.visProp.highlightstrokeopacity);
                 }
-            }
-            else {
+            } else {
                 this.setObjectStrokeColor(element, element.visProp.highlightstrokecolor, element.visProp.highlightstrokeopacity);
                 this.setObjectFillColor(element, element.visProp.highlightfillcolor, element.visProp.highlightfillopacity);
             }
@@ -930,14 +928,12 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             if (element.type === JXG.OBJECT_CLASS_POINT) {
                 this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
                 this.setObjectFillColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
-            }
-            else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+            } else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(element, element.visProp.fillcolor, element.visProp.fillopacity);
                 for (i = 0; i < element.borders.length; i++) {
                     this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.strokecolor, element.visProp.strokeopacity);
                 }
-            }
-            else {
+            } else {
                 this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
                 this.setObjectFillColor(element, element.visProp.fillcolor, element.visProp.fillopacity);
             }
