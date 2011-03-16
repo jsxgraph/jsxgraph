@@ -103,7 +103,7 @@ JXG.AbstractRenderer = function () {
 	 * @type number
 	 * @default 8
 	 */
-    this.vOffsetText = 8;
+    this.vOffsetText = 3;
 
     /**
      * If this property is set to <tt>true</tt> the visual properties of the elements are updated
@@ -528,7 +528,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             if (element.visProp.display === 'html') {
                 if (!isNaN(element.coords.scrCoords[1] + element.coords.scrCoords[2])) {
                     element.rendNode.style.left = element.coords.scrCoords[1] + 'px';
-                    element.rendNode.style.top = (element.coords.scrCoords[2] - this.vOffsetText) + 'px';
+                    element.rendNode.style.top = (element.coords.scrCoords[2] - parseInt(element.visProp.fontsize) + this.vOffsetText) + 'px';
                 }
 
                 if (element.htmlStr !== content) {
@@ -562,13 +562,17 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
     updateTextStyle: function (element) {
         var fs = JXG.evaluate(element.visProp.fontsize);
 
-        try {
-            element.rendNode.style.fontSize = fs + 'px';
-        } catch (e) {
-            // IE needs special treatment.
-            element.rendNode.style.fontSize = fs;
+            try {
+                element.rendNode.style.fontSize = fs + 'px';
+            } catch (e) {
+                // IE needs special treatment.
+                element.rendNode.style.fontSize = fs;
+            }
+        if (element.visProp.display === 'html') {
+            element.rendNode.style.color = JXG.evaluate(element.visProp.strokecolor);
+        } else {
+            this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);        
         }
-        element.rendNode.style.color = JXG.evaluate(element.visProp.strokecolor);
     },
 
     /* **************************

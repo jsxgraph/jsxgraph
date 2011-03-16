@@ -287,7 +287,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         var content = el.plaintext;
 
         el.rendNode.setAttributeNS(null, 'x', el.coords.scrCoords[1] + 'px');
-        el.rendNode.setAttributeNS(null, 'y', el.coords.scrCoords[2] + 'px');
+        el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] + this.vOffsetText*0.5) + 'px');
 
         if (el.htmlStr !== content) {
             el.rendNodeText.data = content;

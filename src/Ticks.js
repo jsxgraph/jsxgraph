@@ -204,7 +204,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                     layer: board.options.layer.line
                 });
                 label.distanceX = 4;
-                label.distanceY = -9;
+                label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
                 label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.stretchX),
                                 newTick.usrCoords[2] + label.distanceY / (board.stretchY));
                 

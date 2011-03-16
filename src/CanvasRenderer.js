@@ -525,7 +525,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             }
 
             this.transformImage(el, el.transformations);
-            context.fillText(el.plaintextStr, el.coords.scrCoords[1], el.coords.scrCoords[2]);
+            context.fillText(el.plaintext, el.coords.scrCoords[1], el.coords.scrCoords[2]);
         }
         context.restore();
 
@@ -533,12 +533,18 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     },
 
     // already documented in JXG.AbstractRenderer
-    updateInternalText: function (el) {
-        this.drawInternalText(el);
+    updateInternalText: function (element) {
+        this.drawInternalText(element);
     },
 
     // already documented in JXG.AbstractRenderer
-    updateTextStyle: function () { },
+    updateTextStyle: function (element) { 
+        var fs = JXG.evaluate(element.visProp.fontsize);
+
+        if (element.visProp.display === 'html') {
+            element.rendNode.style.fontSize = fs + 'px';
+        }
+    },
 
     /* **************************
      *    Image related stuff

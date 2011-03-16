@@ -183,15 +183,17 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
     // documented in AbstractRenderer
     updateInternalText: function (el) {
-        el.rendNode.style.left = el.coords.scrCoords[1] + 'px';
-        el.rendNode.style.top = (el.coords.scrCoords[2] - this.vOffsetText) + 'px';
-        el.updateText();
-        if (el.htmlStr !== el.plaintextStr) {
-            el.rendNodeText.data = el.plaintextStr;
-            el.htmlStr = el.plaintextStr;
-        }
-        this.transformImage(el, el.transformations);
+        var content = el.plaintext;
 
+        el.rendNode.style.left = el.coords.scrCoords[1] + 'px';
+        el.rendNode.style.top = (el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';
+        
+        if (el.htmlStr !== content) {
+            el.rendNodeText.data = content;
+            el.htmlStr = content;
+        }
+
+        this.transformImage(el, el.transformations);
     },
 
     /* **************************
@@ -677,8 +679,10 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             el.rendNode.style.color = c;
         } else {
             node = el.rendNode;
-            this._setAttr(node, 'stroked', 'true');
-            this._setAttr(node, 'strokecolor', c);
+            if (c !== false) {
+                this._setAttr(node, 'stroked', 'true');
+                this._setAttr(node, 'strokecolor', c);
+            }
 
             nodeStroke = el.rendNodeStroke;
             if (JXG.exists(o)) {
