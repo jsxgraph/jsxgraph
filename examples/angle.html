@@ -2,43 +2,29 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h2>Angles</h2>
-<div style="width:800px">
-  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
-</div>
-<div id="debug" style="display:block;"></div>
-   <script type="text/javascript">
-    /* <![CDATA[ */   
-
-        var p1, p2, l1;
-        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true, originX: 50, originY: 300, unitX: 50, unitY: 50, axis:true});
+<h2>Angle</h2>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */   
+    (function() {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1,6,10,-3], axis:false, grid:false});
         
-        p1 = board.createElement('point', [0, 0], {face:'+',name:"A",fillColor:'blue'}); 
-        p2 = board.createElement('point', [0, 4], {style:4,name:"B",fillColor:'blue'});
-        p3 = board.createElement('point', [4, 0], {style:9,name:"C",fillColor:'blue'});
-        p4 = board.createElement('point', [2, 2], {style:10,name:"D",fillColor:'blue'});
-        p5 = board.createElement('point', [4, 4], {style:11,name:"E",fillColor:'blue'});        
-        
-        l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'green',withLabel:true});
-        l4 = board.createElement('arrow', [p1, p3], {straightFirst: true, straightLast:true, strokeWidth:'2px',strokeColor:'blue',withLabel:true});        
+        var p1 = board.create('point', [0, 0], {face:'+',name:"A"}); 
+        var p2 = board.create('point', [3, 4], {face:'o',name:"B"});
+        var p3 = board.create('point', [4, 0], {face:'[]',name:"C"});
 
-        a1 = board.createElement('angle', [p3,p1,p2], 
-            {strokeColor:'red',visible:true, strokeWidth:'2px',fillColor:'#FF000050',text:'&alpha;', fontSize:30}
+        var l1 = board.create('line', [p1, p2], {strokeWidth:'2', strokeColor:'green',withLabel:true});
+        var l2 = board.create('arrow', [p1, p3], {strokeWidth:'2', strokeColor:'blue',withLabel:false});        
+        
+        var alpha = board.create('angle', [p3,p1,p2], 
+            {strokeColor:'red', visible:true, strokeWidth:'2px', fillColor:'#FF000050', text:'&alpha;', fontSize:30,
+            point: {visible:false}}
            );
-   /*     a2 = board.createElement('angle', [p1,p2,p3], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
-        a3 = board.createElement('angle', [p2,p3,p1], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FFFF0050'});
-        a4 = board.createElement('angle', [p4,p3,p1], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
-        a5 = board.createElement('angle', [p5,p3,p1], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
-        a6 = board.createElement('angle', [p2,p4,p1], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
-        a7 = board.createElement('angle', [p2,p5,p1], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
-        a8 = board.createElement('angle', [p2,p1,p4], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
-        a9 = board.createElement('angle', [p5,p2,p1], {strokeColor:'red',visible:true,strokeWidth:'2px',fillColor:'#FF000050'});
-        var c1 = board.createElement('circumcircle',['A','B','C'],{name:['P','k_a']});*/
-  /* ]]> */
-  </script>
+    })();
+/* ]]> */
+</script>
 </body>
 </html>

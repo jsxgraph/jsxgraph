@@ -17,10 +17,10 @@
 //JXG.Options.renderer = 'canvas';
 //JXG.Options.text.display = 'internal';
 //JXG.Options.text.fontSize = 20;
-var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, grid:false});
-//var axisx = b.create('axis', [[0,0], [1,0]], {point1:{visible:false, fillColor: 'blue', size:10}});
+var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:false, grid:false});
+var axisx = b.create('axis', [[0,0], [1,0]], {point1:{visible:false, fillColor: 'blue', size:10}});
 
-b.create('text', [0, 0, 'Hallo'], { strokeColor:'blue', fontSize: 32}) ; 
+//b.create('text', [0, 0, 'Hallo'], { strokeColor:'blue', fontSize: 32}) ; 
 
 
 /*
@@ -30,8 +30,8 @@ b.create('slider', [[0,0.5], [4,0.5], [0,2,10]],
         text: {strokeColor: 'red'} });
 */
 //b.unsuspendUpdate();
-/*
 A = b.create('point',[1,2], {name:'A', face:'a', size:10, fillColor:'blue', strokeColor:'red', visible:true, trace:false});
+/*
 B = b.create('point',[2,1], {name:'B'});
 l = b.create('line',[A,B], {withLabel:true, visible:true});
 */

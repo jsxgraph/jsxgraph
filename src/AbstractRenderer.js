@@ -527,8 +527,8 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
 
             if (element.visProp.display === 'html') {
                 if (!isNaN(element.coords.scrCoords[1] + element.coords.scrCoords[2])) {
-                    element.rendNode.style.left = element.coords.scrCoords[1] + 'px';
-                    element.rendNode.style.top = (element.coords.scrCoords[2] - parseInt(element.visProp.fontsize) + this.vOffsetText) + 'px';
+                    element.rendNode.style.left = parseInt(element.coords.scrCoords[1]) + 'px';
+                    element.rendNode.style.top = parseInt(element.coords.scrCoords[2] - parseInt(element.visProp.fontsize) + this.vOffsetText) + 'px';
                 }
 
                 if (element.htmlStr !== content) {

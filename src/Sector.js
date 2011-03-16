@@ -308,7 +308,7 @@ JXG.createAngle = function(board, parents, attributes) {
         p = board.create('point', [
             function(){
                 var A = parents[0], B = parents[1],
-                    r = attributes.radius,
+                    r = attr.radius,
                     d = B.Dist(A);
                     return [B.X()+(A.X()-B.X())*r/d,B.Y()+(A.Y()-B.Y())*r/d];
             }], attr);
@@ -316,13 +316,14 @@ JXG.createAngle = function(board, parents, attributes) {
             JXG.getRef(board,parents[i]).addChild(p);
         }
 
-
         attr = JXG.copyAttributes(attributes, board.options, 'angle');
-        el = board.create('sector', [parents[1],p,parents[2]], attr);
+        el = board.create('sector', [parents[1], p, parents[2]], attr);
 
         el.type = JXG.OBJECT_TYPE_ANGLE;
-        if (el.withLabel) {
+        
+        if (el.visProp.withlabel) {
             el.label.content.setText(text);
+            el.label.content.setProperty({fontSize:el.visProp.fontsize, strokeColor:el.visProp.textcolor});
         }
         JXG.getRef(board,parents[0]).addChild(el);
         
@@ -345,7 +346,7 @@ JXG.createAngle = function(board, parents, attributes) {
 
             coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                             [pmc[1]+ Math.cos(angle*0.5*1.125)*bxminusax - Math.sin(angle*0.5*1.125)*byminusay, 
-                            pmc[2]+ Math.sin(angle*0.5*1.125)*bxminusax + Math.cos(angle*0.5*1.125)*byminusay], 
+                             pmc[2]+ Math.sin(angle*0.5*1.125)*bxminusax + Math.cos(angle*0.5*1.125)*byminusay], 
                             this.board);
     
             vecx = coords.usrCoords[1] - pmc[1];

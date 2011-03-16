@@ -185,8 +185,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
     updateInternalText: function (el) {
         var content = el.plaintext;
 
-        el.rendNode.style.left = el.coords.scrCoords[1] + 'px';
-        el.rendNode.style.top = (el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';
+        el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
+        el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';
         
         if (el.htmlStr !== content) {
             el.rendNodeText.data = content;
@@ -258,8 +258,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
                 maxY = Math.max(maxY, p[i][2]);
                 minY = Math.min(minY, p[i][2]);
             }
-            node.style.left = minX + 'px';
-            node.style.top = minY + 'px';
+            node.style.left = parseInt(minX) + 'px';
+            node.style.top  = parseInt(minY) + 'px';
 
             node.filters.item(0).M11 = m[1][1];
             node.filters.item(0).M12 = m[1][2];
@@ -380,10 +380,10 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
     // already documented in JXG.AbstractRenderer
     updateEllipsePrim: function (node, x, y, rx, ry) {
-        node.style.left = (x - rx) + 'px';
-        node.style.top =  (y - ry) + 'px';
-        node.style.width = (rx * 2) + 'px';
-        node.style.height = (ry * 2) + 'px';
+        node.style.left = parseInt(x - rx) + 'px';
+        node.style.top =  parseInt(y - ry) + 'px';
+        node.style.width = parseInt(rx * 2) + 'px';
+        node.style.height = parseInt(ry * 2) + 'px';
     },
 
     // already documented in JXG.AbstractRenderer
@@ -548,8 +548,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
     // already documented in JXG.AbstractRenderer
     updateRectPrim: function (node, x, y, w, h) {
-        node.style.left = x + 'px';
-        node.style.top = y + 'px';
+        node.style.left = parseInt(x) + 'px';
+        node.style.top = parseInt(y) + 'px';
 
         if (w >= 0) {
             node.style.width = w + 'px';
