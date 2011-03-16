@@ -318,7 +318,7 @@ JXG.createSemicircle = function(board, parents, attributes) {
          * @name midpoint
          * @type Midpoint
          */
-        attr = JXG.copyAttributes(attributes, board.options, 'circle', center);
+        attr = JXG.copyAttributes(attributes, board.options, 'circle', 'center');
         mp = board.create('midpoint', [parents[0], parents[1]], attr);
 
         /**

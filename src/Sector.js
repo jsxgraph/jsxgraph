@@ -55,7 +55,7 @@ JXG.createSector = function(board, parents, attributes) {
     }
 
     attr = JXG.copyAttributes(attributes, board.options, 'sector');
-        
+
     el = board.create('curve', [[0], [0]], attr);
     el.type = JXG.OBJECT_TYPE_SECTOR;
 

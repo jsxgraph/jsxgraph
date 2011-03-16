@@ -770,10 +770,14 @@ JXG.Options = {
 
     circumcirclesector: {
         useDirection: true,
-        fillColor : 'none',
-        highlightFillColor : 'none',
+        fillColor: '#00FF00',
+        highlightFillColor: '#00FF00',
+        fillOpacity: 0.3,
+        highlightFillOpacity: 0.3,
         strokeColor : '#0000ff',
         highlightStrokeColor : '#C3D9FF',
+        //fillOpacity: 0.3,
+        //highlightFillOpacity: 0.3,
         point: {
             visible: false,
             fixed: true,
