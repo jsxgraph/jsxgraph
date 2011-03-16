@@ -612,23 +612,23 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
  *   var cex1_c2 = cex1_board.create('circle', [cex1_p3, cex1_c1]);
  * </script><pre>
  */
-JXG.createCircle = function (board, parentArr, attributes) {
+JXG.createCircle = function (board, parents, attributes) {
     var el, p, i, arr, attr;
 
     p = [];
-    for (i=0;i<parentArr.length;i++) {
-        if (JXG.isPoint(parentArr[i])) {
-            p[i] = parentArr[i];              // Point
-        } else if (parentArr[i].length>1) {
+    for (i=0;i<parents.length;i++) {
+        if (JXG.isPoint(parents[i])) {
+            p[i] = parents[i];              // Point
+        } else if (parents[i].length>1) {
             attr = JXG.copyAttributes(attributes, board.options, 'circle', 'center');
-            p[i] = board.create('point', parentArr[i], attr);  // Coordinates
+            p[i] = board.create('point', parents[i], attr);  // Coordinates
         } else {
-            p[i] = parentArr[i];              // Something else (number, function, string)
+            p[i] = parents[i];              // Something else (number, function, string)
         }
     }
     
     attr = JXG.copyAttributes(attributes, board.options, 'circle');
-    if( parentArr.length==2 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) ) {
+    if( parents.length==2 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) ) {
         // Point/Point
         el = new JXG.Circle(board, 'twoPoints', p[0], p[1], attr);
     } else if( ( JXG.isNumber(p[0]) || JXG.isFunction(p[0]) || JXG.isString(p[0])) && JXG.isPoint(p[1]) ) {
@@ -649,14 +649,14 @@ JXG.createCircle = function (board, parentArr, attributes) {
     } else if( (p[1].type == JXG.OBJECT_TYPE_LINE) && JXG.isPoint(p[0])) {
         // Point/Circle
         el = new JXG.Circle(board, 'pointLine', p[0], p[1], attr);
-    } else if( parentArr.length==3 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) && JXG.isPoint(p[2])) {
+    } else if( parents.length==3 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) && JXG.isPoint(p[2])) {
         // Circle through three points
-        var arr = JXG.createCircumcircle(board, p, attributes); // returns [center, circle]
+        arr = JXG.createCircumcircle(board, p, attributes); // returns [center, circle]
         arr[0].setProperty({visible:false});
         return arr[1];
     } else
         throw new Error("JSXGraph: Can't create circle with parent types '" + 
-                        (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'." +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,point], [point,number], [point,function], [point,circle], [point,point,point]");
     
     return el;
