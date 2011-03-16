@@ -69,7 +69,6 @@
         points[2] = board.create('point',[-5, -5], {name:' '});
         points[3] = board.create('point',[5, -5], {name:' '});
 
-
         function quadrangle(pt, n) {
             var col;
             var arr = new Array();
@@ -93,7 +92,7 @@
             col =  function(){return JXG.hsv2rgb(hue.Value()*n,0.7,0.9);};
             board.create('polygon',pt, {fillColor:col});
             if(n>0)
-            quadrangle(arr, --n);
+                quadrangle(arr, --n);
         }
         quadrangle(points,30);
        
