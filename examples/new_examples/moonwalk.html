@@ -121,14 +121,16 @@
 
         apolloPath = board.createElement('curve', ode(), {
             strokeColor: 'red',
-            strokeWidth: 2,
-            visible: false
+            strokeOpacity: 0.3,
+            strokeWidth: 3,
+            visible: true
         });
 
         moonPath = board.create('curve', circle(1-mu, apolloPath.dataX.length), {
-            strokeColor: 'green',
-            strokeWidth: 2,
-            visible: false
+            strokeColor: 'gray',
+            strokeOpacity: 0.3,
+            strokeWidth: 3,
+            visible: true
         });
 
         moon = board.create('point', [1, 0], {
