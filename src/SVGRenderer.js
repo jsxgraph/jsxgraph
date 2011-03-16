@@ -693,16 +693,17 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         if (el.visPropOld.fillcolor === c && el.visPropOld.fillopacity === o) {
             return;
         }
-        node = el.rendNode;
-        node.setAttributeNS(null, 'fill', c);
-        if (el.type === JXG.OBJECT_TYPE_IMAGE) {
-            node.setAttributeNS(null, 'opacity', o);
-        } else {
-            node.setAttributeNS(null, 'fill-opacity', o);
-        }
-
-        if (JXG.exists(el.visProp.gradient)) {
-            this.updateGradient(el);
+        if (c !== 'none' && c !== false) {
+            node = el.rendNode;
+            node.setAttributeNS(null, 'fill', c);
+            if (el.type === JXG.OBJECT_TYPE_IMAGE) {
+                node.setAttributeNS(null, 'opacity', o);
+            } else {
+                node.setAttributeNS(null, 'fill-opacity', o);
+            }
+            if (JXG.exists(el.visProp.gradient)) {
+                this.updateGradient(el);
+            }
         }
         el.visPropOld.fillcolor = c;
         el.visPropOld.fillopacity = o;
@@ -720,17 +721,18 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             return;
         }
 
-        node = el.rendNode;
-
-        if (el.type === JXG.OBJECT_TYPE_TEXT) {
-            if (el.visProp.display === 'html') {
-                node.style.color = c; // Schriftfarbe
+        if (c !== 'none' && c !== false) {
+            node = el.rendNode;
+            if (el.type === JXG.OBJECT_TYPE_TEXT) {
+                if (el.visProp.display === 'html') {
+                    node.style.color = c; // Schriftfarbe
+                } else {
+                    node.setAttributeNS(null, "style", "fill:" + c);
+                }
             } else {
-                node.setAttributeNS(null, "style", "fill:" + c);
+                node.setAttributeNS(null, 'stroke', c);
+                node.setAttributeNS(null, 'stroke-opacity', o);
             }
-        } else {
-            node.setAttributeNS(null, 'stroke', c);
-            node.setAttributeNS(null, 'stroke-opacity', o);
         }
 
         if (el.type === JXG.OBJECT_TYPE_ARROW) {

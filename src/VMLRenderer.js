@@ -415,58 +415,59 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
         if (type === 'x') {
             s.push([
-                ' m ', (r * (scr[1] - size)), ', ', (r * (scr[2] - size)),
-                ' l ', (r * (scr[1] + size)), ', ', (r * (scr[2] + size)),
-                ' m ', (r * (scr[1] + size)), ', ', (r * (scr[2] - size)),
-                ' l ', (r * (scr[1] - size)), ', ', (r * (scr[2] + size))
+                ' m ', mround(r * (scr[1] - size)), ', ', mround(r * (scr[2] - size)),
+                ' l ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2] + size)),
+                ' m ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2] - size)),
+                ' l ', mround(r * (scr[1] - size)), ', ', mround(r * (scr[2] + size))
             ].join(''));
         }
         else if (type === '+') {
             s.push([
-                ' m ', (r * (scr[1] - size)), ', ', (r * (scr[2])),
-                ' l ', (r * (scr[1] + size)), ', ', (r * (scr[2])),
-                ' m ', (r * (scr[1])),        ', ', (r * (scr[2] - size)),
-                ' l ', (r * (scr[1])),        ', ', (r * (scr[2] + size))
+                ' m ', mround(r * (scr[1] - size)), ', ', mround(r * (scr[2])),
+                ' l ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2])),
+                ' m ', mround(r * (scr[1])),        ', ', mround(r * (scr[2] - size)),
+                ' l ', mround(r * (scr[1])),        ', ', mround(r * (scr[2] + size))
             ].join(''));
         }
         else if (type === '<>') {
+            
             s.push([
-                ' m ', (r * (scr[1] - size)), ', ', (r * (scr[2])),
-                ' l ', (r * (scr[1])),        ', ', (r * (scr[2] + size)),
-                ' l ', (r * (scr[1] + size)), ', ', (r * (scr[2])),
-                ' l ', (r * (scr[1])),        ', ', (r * (scr[2] - size)),
+                ' m ', mround(r * (scr[1] - size)), ', ', mround(r * (scr[2])),
+                ' l ', mround(r * (scr[1])),        ', ', mround(r * (scr[2] + size)),
+                ' l ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2])),
+                ' l ', mround(r * (scr[1])),        ', ', mround(r * (scr[2] - size)),
                 ' x e '
             ].join(''));
         }
         else if (type === '^') {
             s.push([
-                ' m ',       (r * (scr[1])),          ', ', (r * (scr[2] - size)),
-                ' l ', mround(r * (scr[1] - sqrt32)), ', ', (r * (scr[2] + s05)),
-                ' l ', mround(r * (scr[1] + sqrt32)), ', ', (r * (scr[2] + s05)),
+                ' m ', mround(r * (scr[1])),          ', ', mround(r * (scr[2] - size)),
+                ' l ', mround(r * (scr[1] - sqrt32)), ', ', mround(r * (scr[2] + s05)),
+                ' l ', mround(r * (scr[1] + sqrt32)), ', ', mround(r * (scr[2] + s05)),
                 ' x e '
             ].join(''));
         }
         else if (type === 'v') {
             s.push([
-                ' m ',       (r * (scr[1])),          ', ', (r * (scr[2] + size)),
-                ' l ', mround(r * (scr[1] - sqrt32)), ', ', (r * (scr[2] - s05)),
-                ' l ', mround(r * (scr[1] + sqrt32)), ', ', (r * (scr[2] - s05)),
+                ' m ', mround(r * (scr[1])),          ', ', mround(r * (scr[2] + size)),
+                ' l ', mround(r * (scr[1] - sqrt32)), ', ', mround(r * (scr[2] - s05)),
+                ' l ', mround(r * (scr[1] + sqrt32)), ', ', mround(r * (scr[2] - s05)),
                 ' x e '
             ].join(''));
         }
         else if (type === '>') {
             s.push([
-                ' m ', (r * (scr[1] + size)), ', ',       (r * (scr[2])),
-                ' l ', (r * (scr[1] - s05)),  ', ', mround(r * (scr[2] - sqrt32)),
-                ' l ', (r * (scr[1] - s05)),  ', ', mround(r * (scr[2] + sqrt32)),
-                ' l ', (r * (scr[1] + size)), ', ',       (r * (scr[2]))
+                ' m ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2])),
+                ' l ', mround(r * (scr[1] - s05)),  ', ', mround(r * (scr[2] - sqrt32)),
+                ' l ', mround(r * (scr[1] - s05)),  ', ', mround(r * (scr[2] + sqrt32)),
+                ' l ', mround(r * (scr[1] + size)), ', ', mround(r * (scr[2]))
             ].join(''));
         }
         else if (type === '<') {
             s.push([
-                ' m ', (r * (scr[1] - size)), ', ',       (r * (scr[2])),
-                ' l ', (r * (scr[1] + s05)),  ', ', mround(r * (scr[2] - sqrt32)),
-                ' l ', (r * (scr[1] + s05)),  ', ', mround(r * (scr[2] + sqrt32)),
+                ' m ', mround(r * (scr[1] - size)), ', ', mround(r * (scr[2])),
+                ' l ', mround(r * (scr[1] + s05)),  ', ', mround(r * (scr[2] - sqrt32)),
+                ' l ', mround(r * (scr[1] + s05)),  ', ', mround(r * (scr[2] + sqrt32)),
                 ' x e '
             ].join(''));
         }
@@ -638,7 +639,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             return;
         }
 
-        if (c === 'none') {
+        if (c === 'none' || c === false) {
             this._setAttr(el.rendNode, 'filled', 'false');
         } else {
             this._setAttr(el.rendNode, 'filled', 'true');
@@ -680,7 +681,6 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             this._setAttr(node, 'strokecolor', c);
 
             nodeStroke = el.rendNodeStroke;
-
             if (JXG.exists(o)) {
                 this._setAttr(nodeStroke, 'opacity', (o * 100) + '%');
             }

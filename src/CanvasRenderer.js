@@ -162,14 +162,14 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
 
         if (type === 'fill') {
             if (!isTrace && JXG.exists(element.board.highlightedObjects[element.id])) {
-                if (element.visProp.highlightfillcolor !== 'none') {
+                if (element.visProp.highlightfillcolor !== 'none' && element.visProp.highlightfillcolor !== false ) {
                     this.context.globalAlpha = element.visProp.highlightfillopacity;
                     this.context.fillStyle = element.visProp.highlightfillcolor;
                 } else {
                     hasColor = false;
                 }
             } else {
-                if (element.visProp.fillcolor !== 'none') {
+                if (element.visProp.fillcolor !== 'none' && element.visProp.fillcolor !== false) {
                     this.context.globalAlpha = element.visProp.fillopacity;
                     this.context.fillStyle = element.visProp.fillcolor;
                 } else {
@@ -178,14 +178,14 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             }
         } else {
             if (!isTrace && JXG.exists(element.board.highlightedObjects[element.id])) {
-                if (element.visProp.highlightstrokecolor !== 'none') {
+                if (element.visProp.highlightstrokecolor !== 'none' && element.visProp.highlightstrokecolor !== false) {
                     this.context.globalAlpha = element.visProp.highlightstrokeopacity;
                     this.context.strokeStyle = element.visProp.highlightstrokecolor;
                 } else {
                     hasColor = false;
                 }
             } else {
-                if (element.visProp.strokecolor !== 'none') {
+                if (element.visProp.strokecolor !== 'none' && element.visProp.strokecolor !== false) {
                     this.context.globalAlpha = element.visProp.strokeopacity;
                     this.context.strokeStyle = element.visProp.strokecolor;
                 } else {
@@ -411,7 +411,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         for (i = 0; i < len; i++) {
             c = axis.ticks[i].scrCoords;
             if (axis.ticks[i].major) {
-                if ((axis.board.needsFullUpdate || axis.needsRegularUpdate || axis.labels[i].visProp.display === 'internal') && axis.labels[i] && axis.labels[i].visProp.visible) {
+                if (axis.labels[i] && (axis.board.needsFullUpdate || axis.needsRegularUpdate || axis.labels[i].visProp.display === 'internal') && axis.labels[i].visProp.visible) {
                     this.updateText(axis.labels[i]);
                 }
                 context.moveTo(c[1] + dxMaj, c[2] - dyMaj);
