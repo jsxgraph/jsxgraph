@@ -147,11 +147,11 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
          *   * Special ticks behave oddly. See example ticked_lines.html and drag P2 around P1.
          */
         if(this.visProp.minorheight < 0) {
-            this.visProp.minorheight = this.board.canvasWidth+this.board.canvasHeight;
+            this.visProp.minorheight = 2*(this.board.canvasWidth+this.board.canvasHeight);
         }
 
         if(this.visProp.majorheight < 0) {
-            this.visProp.majorheight = this.board.canvasWidth+this.board.canvasHeight;
+            this.visProp.majorheight = 2*(this.board.canvasWidth+this.board.canvasHeight);
         }
 
             // Point 1 of the line
