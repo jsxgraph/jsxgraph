@@ -242,33 +242,16 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.board.elementsByName[name] = this;
 
         this.name = name;
-
-        this.visProp = attributes;
         this.needsRegularUpdate = attributes.needsregularupdate;
         
-        /*
-            Handle RGBA color values by multiplying opacities
-        */
-        for (key in this.visProp) {
-            /* Search for entries in visProp with "color" as part of the property name
-               and containing a RGBA string
-             */
-            if (this.visProp.hasOwnProperty(key) && key.indexOf('color')>=0 && JXG.isString(this.visProp[key]) &&            
-                this.visProp[key].length == 9 && this.visProp[key].charAt(0) == '#') {
-                col = JXG.rgba2rgbo(this.visProp[key]);
-                this.visProp[key] = col[0];
-                this.visProp[key.replace('color', 'opacity')] *= col[1];
-            }
+        // Handle RGBA color values by multiplying opacities
+        for (key in attributes) {
+            this._set(key, attributes[key]);
         }
 
         // TODO: draft downwards compatibility.
         this.visProp.draft = attributes.draft && attributes.draft.draft;
 
-        // TODO: comment gradient possibilities
-        /*
-        this.visProp.gradient = 'none';
-        this.visProp.gradientsecondcolor = 'black';
-        */
         this.visProp.gradientangle = '270';
         this.visProp.gradientsecondopacity = this.visProp.fillopacity;
         this.visProp.gradientpositionx = 0.5;
@@ -446,6 +429,28 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     },
 
     /**
+     * Sets the value of property <tt>property</tt> to <tt>value</tt>.
+     * @param {String} property The property's name.
+     * @param {%} value The new value
+     * @private
+     */
+    _set: function (property, value) {
+            property = property.toLocaleLowerCase();
+
+            // Search for entries in visProp with "color" as part of the property name
+            // and containing a RGBA string
+            if (this.visProp.hasOwnProperty(property) && property.indexOf('color') >= 0 &&
+                JXG.isString(value) && value.length == 9 && value.charAt(0) === '#') {
+
+                value = JXG.rgba2rgbo(value);
+                this.visProp[property] = value[0];
+                this.visProp[property.replace('color', 'opacity')] *= value[1];
+            } else {
+                this.visProp[property] = value;
+            }
+    },
+
+    /**
      * Sets an arbitrary number of properties.
      * @param % Arbitrary number of strings, containing "key:value" pairs.
      * The possible key values are the element and class fields in this documentation.
@@ -594,21 +599,43 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 default:
                     if (JXG.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] && JXG.Validator[key](value)))) {
                         value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;
-
-                        if (this.visProp.hasOwnProperty(key) && key.indexOf('color') >= 0 && JXG.isString(this.visProp[key]) &&
-                            this.visProp[key].length == 9 && this.visProp[key].charAt(0) === '#') {
-                            value = JXG.rgba2rgbo(this.visProp[key]);
-                            this.visProp[key] = value[0];
-                            this.visProp[key.replace('color', 'opacity')] *= value[1];
-                        } else {
-                            this.visProp[key] = value;
-                        }
+                        this._set(key, value);
                     }
                     break;
             }
         }
         this.board.update(this);
         return this;
+    },
+
+    /**
+     * Get the value of the property <tt>key</tt>.
+     * @param {String} key The name of the property you are looking for
+     * @returns The value of the property
+     */
+    getProperty: function (key) {
+        var result;
+        key = key.toLowerCase();
+
+        switch (key) {
+            case 'needsregularupdate':
+                result = this.needsRegularUpdate;
+                break;
+            case 'labelcolor':
+                result = this.label.color;
+                break;
+            case 'infoboxtext':
+                result = this.infoboxText;
+                break;
+            case 'withlabel':
+                result = this.hasLabel;
+                break;
+            default:
+                result = this.visProp[key];
+                break;
+        }
+
+        return result;
     },
 
     /**
