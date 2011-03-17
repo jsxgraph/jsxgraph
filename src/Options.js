@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009
+    Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -34,21 +34,9 @@ JXG.Options = {
     renderer: 'svg',
     takeFirst : false, // if true the first element with hasPoint==true is taken.
 
-    /* grid options */
-    grid : {
-        /* grid styles */
-        needsRegularUpdate : false,
-        hasGrid : false,
-        gridX : 1,
-        gridY : 1,
-        strokeColor : '#C0C0C0',
-        strokeOpacity : '0.5',
-        strokeWidth: 1,
-        dash : 2,
-        /* snap to grid options */
-        snapToGrid : false,
-        snapSizeX : 2,
-        snapSizeY : 2
+    /* zoom options */
+    zoom : {
+        factor : 1.25
     },
 
     /* navbar options */
@@ -64,11 +52,10 @@ JXG.Options = {
         bottom: '5px'
     },
 
-    /* zoom options */
-    zoom : {
-        factor : 1.25
-    },
-
+    /**
+     * Generic options 
+     */
+    
     /* geometry element options */
     elements : {
         /**
@@ -208,7 +195,7 @@ JXG.Options = {
          */
         frozen: false,
 
-	    withLabel: false,
+        withLabel: false,
 
         /**
          * If false the element won't be visible on the board, otherwise it is shown.
@@ -290,6 +277,425 @@ JXG.Options = {
         }
     },
 
+    ticks : {
+        /**
+         * Draw labels yes/no
+         * @type Boolean
+         * @name JXG.Ticks#drawLabels
+         * @default false
+         */
+        drawLabels: false,
+        
+        /**
+         * Draw the zero tick, that lies at line.point1?
+         * @type Boolean
+         * @name JXG.Ticks#drawZero
+         * @default false
+         */
+        drawZero: false,
+
+        /**
+         * If the distance between two ticks is too big we could insert new ticks. If insertTicks
+         * is <tt>true</tt>, we'll do so, otherwise we leave the distance as is.
+         * This option is ignored if equidistant is false.
+         * @type Boolean
+         * @name JXG.Ticks#insertTicks
+         * @see JXG.Ticks#equidistant
+         * @see JXG.Ticks#maxTicksDistance
+         * @default false
+         */
+        insertTicks: false,
+        minTicksDistance: 50,
+        maxTicksDistance: 300,
+
+        /**
+         * Total height of a minor tick. If negative the full height of the board is taken.
+         * @type Number
+         * @name JXG.Ticks#minorHeight
+         */
+        minorHeight: 4,
+
+        /**
+         * Total height of a major tick. If negative the full height of the board is taken.
+         * @type Number
+         * @name JXG.Ticks#majorHeight
+         */
+        majorHeight: 10,
+
+        /**
+         * The number of minor ticks between two major ticks.
+         * @type Number
+         * @name JXG.Ticks#minorTicks
+         */
+        minorTicks: 4,
+        defaultDistance: 1,
+        opacity: 1,
+        strokeWidth: 1,
+        strokeColor: 'black',
+        highlightStrokeColor: '#888888'
+    },
+
+    /* precision options */
+    precision : {
+        touch    : 30,
+        mouse    : 4,
+        epsilon  : 0.0001,
+        hasPoint : 4
+    },
+
+    /* Default ordering of the layers */
+    layer : {
+        numlayers: 20, // only important in SVG
+        text  : 9,
+        point : 9,
+        arc   : 8,
+        line  : 7,
+        circle: 6,
+        curve : 5,
+        polygon: 4,
+        sector: 3,
+        angle : 3,
+        integral : 3,
+        grid  : 1,
+        image : 0
+    },
+
+    /**
+     * element type specific options 
+     */ 
+    /* special angle options */
+    angle : {
+        withLabel:true,
+        radius : 1.0,
+        fillColor : '#FF7F00',
+        highlightFillColor : '#FF7F00',
+        strokeColor : '#FF7F00',
+        textColor : '#0000FF',
+        fillOpacity : 0.3,
+        highlightFillOpacity : 0.3,
+        point: {
+            withLabel: false,
+            visible: false,
+            name: ''
+        }
+    },
+
+    /* special arc options */
+    arc : {
+        firstArrow : false,
+        lastArrow : false,
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF',
+        useDirection: false, 
+        center: {
+            visible: false,
+            withLabel: false,
+            fixed: true,
+            name: ''
+        }
+    },
+
+    /* special axis options */
+    axis: {
+        needsRegularUpdate : false,         // Axes only updated after zooming and moving of the origin.
+        strokeWidth: 1,
+        strokeColor : '#666666',
+        highlightStrokeColor : '#888888',
+        withTicks: true,
+        straightFirst : true,
+        straightLast : true,
+        lastArrow: true,
+        withLabel: false, 
+        /* line ticks options */
+        ticks : {
+            needsRegularUpdate : false,            
+            strokeWidth: 1,
+            strokeColor : '#666666',
+            highlightStrokeColor : '#888888',
+            drawLabels : true,
+            drawZero : true,
+            insertTicks : false,
+            minTicksDistance : 50,
+            maxTicksDistance : 300,
+            minorHeight : 4,          // if <0: full width and height
+            majorHeight : -1,         // if <0: full width and height
+            minorTicks : 4,
+            defaultDistance : 1,
+            strokeOpacity : 0.25
+        },
+        point1 : {                  // Default values for point1 if created by line
+            needsRegularUpdate : false
+        },
+        point2 : {                  // Default values for point2 if created by line
+            needsRegularUpdate : false
+        }
+    },
+    
+    /* special options for bisector of 3 points */
+    bisector : {
+        strokeColor: '#000000', // Bisector line
+        point : {               // Bisector point
+            visible: false,
+            fixed: true,
+            withLabel: false,
+            name: ''
+        }
+    },
+
+    /* special options for the 2 bisectors of 2 lines */
+    bisectorlines : {
+        line1 : {               // 
+            strokeColor: 'red'
+        },
+        line2 : {               // 
+            strokeColor: 'black'
+        }
+    },
+
+    /* special chart options */
+    chart: {
+        chartStyle: 'line',
+        colors: ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'],
+        highlightcolors: null,
+        fillcolor: null,
+        highlightonsector: false,
+        highlightbysize: false
+    },
+
+    /*special circle options */
+    circle : {
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF',
+        center: {
+            visible: false,
+            withLabel: false,
+            fixed: true,
+            name: ''
+        }
+    },
+
+    /* special options for circumcircle of 3 points */
+    circumcircle : {
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF',
+        point : {               // center point
+            visible: false,
+            fixed: true,
+            withLabel: false,
+            name: ''
+        }
+    },
+
+    /* special options for circumcircle sector of 3 points */
+    circumcirclesector: {
+        useDirection: true,
+        fillColor: '#00FF00',
+        highlightFillColor: '#00FF00',
+        fillOpacity: 0.3,
+        highlightFillOpacity: 0.3,
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF',
+        //fillOpacity: 0.3,
+        //highlightFillOpacity: 0.3,
+        point: {
+            visible: false,
+            fixed: true,
+            withLabel: false,
+            name: ''
+        }
+    },
+    
+    /* special conic options */
+    conic : {
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF',
+        foci: {
+            // points
+            fixed: true,
+            visible: false,
+            withLabel: false,
+            name: ''
+        }
+    },
+
+    /* special curve options */
+    curve : {
+        strokeWidth : '1px',
+        strokeColor : '#0000ff',
+        fillColor: 'none',
+
+        /**
+         * The curveType is set in @see generateTerm and used in
+         * {@link JXG.Curve#updateCurve}
+         * Possible values are:
+         * 'none'
+         * 'plot': Data plot
+         * 'parameter': we can not distinguish function graphs and parameter curves
+         * 'functiongraph': function graph
+         * 'polar'
+         * 'implicit' (not yet)
+         *
+         * Only parameter and plot are set directly.
+         * polar is set with setProperties only.
+         * @name JXG.Curve#curveType
+         */
+        curveType: null,
+        RDPsmoothing : false,       // Apply the Ramen-Douglas-Peuker algorithm
+        numberPointsHigh : 1600,  // Number of points on curves after mouseUp
+        numberPointsLow : 400,    // Number of points on curves after mousemove
+        doAdvancedPlot : true       // Use the algorithm by Gillam and Hohenwarter
+                                 // It is much slower, but the result is better
+    },
+
+    /* special grid options */
+    grid : {
+        /* grid styles */
+        needsRegularUpdate : false,
+        hasGrid : false,
+        gridX : 1,
+        gridY : 1,
+        strokeColor : '#C0C0C0',
+        strokeOpacity : '0.5',
+        strokeWidth: 1,
+        dash : 2,
+        /* snap to grid options */
+        snapToGrid : false,
+        snapSizeX : 2,
+        snapSizeY : 2
+    },
+
+    /* special grid options */
+    image: {
+        imageString : null
+    },
+    
+    /* special options for incircle of 3 points */
+    incircle : {
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF',
+        point : {               // center point
+            visible: false,
+            fixed: true,
+            withLabel: false,
+            name: ''
+        }
+    },
+
+    /* special options for integral */
+    integral: {
+        withLabel: true,    // Show integral value as text
+        strokeWidth: 0,
+        strokeOpacity: 0,
+        start: {    // Start point
+            visible: true
+        },
+        startproject: {    // Start point
+            visible: false,
+            fixed: true,
+            withLabel: false,
+            name: ''
+        },
+        end: {      // End point
+            visible: true
+        },
+        endproject: {      // End point
+            visible: false,
+            fixed: true,
+            withLabel: false,
+            name: ''
+        },
+        text: {
+            fontSize: 20
+        }
+    },
+
+    /* special legend options */
+    legend: {
+        style: 'vertical',
+        labels: ['1','2','3','4','5','6','7','8'],
+        colors: ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00']
+    },
+
+    /* special line options */
+    line : {
+        firstArrow : false,
+        lastArrow : false,
+        straightFirst : true,
+        straightLast : true,
+        fillColor : 'none',               // Important for VML on IE
+        highlightFillColor : 'none',  // Important for VML on IE
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#888888',
+        withTicks: false,
+        point1 : {                  // Default values for point1 if created by line
+            visible: false, 
+            withLabel: false, 
+            fixed:true,
+            name: ''
+        },
+        point2 : {                  // Default values for point2 if created by line
+            visible: false, 
+            withLabel: false, 
+            fixed: true,
+            name: ''
+        },
+        ticks : {
+            drawLabels : true,
+            drawZero : false,
+            insertTicks : false,
+            minTicksDistance : 50,
+            maxTicksDistance : 300,
+            minorHeight : 4,          // if <0: full width and height
+            majorHeight : -1,         // if <0: full width and height
+            minorTicks : 4,
+            defaultDistance : 1,
+            opacity : 0.3
+        },
+        /* absolute label offset from anchor */
+        labelOffsets: [10,10]
+    },
+
+    /* special options for locus curves */
+    locus : {
+        translateToOrigin: false,
+        translateTo10: false,
+        stretch: false,
+        toOrigin: null,
+        to10: null
+    },
+    
+    /* special options for parallel lines */
+    parallel : {
+        strokeColor: '#000000', // Parallel line
+        point : {               // Parallel point
+            visible: false,
+            fixed: true,
+            withLabel: false,
+            name: ''
+        }
+    },
+
+    /* special perpendicular options */
+    perpendicular : {
+        strokeColor: '#000000', // Perpendicular segment
+        point : {               // Perpendicular point
+            visible: false,
+            fixed: true,
+            withLabel: false,
+            name: ''
+        }
+    },
+
     /* special point options */
     point : {
     	withLabel: true,
@@ -354,79 +760,52 @@ JXG.Options = {
         draft: false
     },
 
-    /* special line options */
-    line : {
-        firstArrow : false,
-        lastArrow : false,
-        straightFirst : true,
-        straightLast : true,
-        fillColor : 'none',               // Important for VML on IE
-        highlightFillColor : 'none',  // Important for VML on IE
-        strokeColor : '#0000ff',
-        highlightStrokeColor : '#888888',
-        withTicks: false,
-        point1 : {                  // Default values for point1 if created by line
-            visible: false, 
-            withLabel: false, 
-            fixed:true,
-            name: ''
+    /* special polygon options */
+    polygon : {
+        fillColor : '#00FF00',
+        highlightFillColor : '#00FF00',
+        fillOpacity : 0.3,
+        highlightFillOpacity : 0.3,
+
+        /**
+         * Is the polygon bordered by lines?
+         * @type Boolean
+         * @name JXG.Polygon#withLines
+         * @default true
+         */
+        withLines: true,
+
+        lines: {
+            withLabel: false,
+            strokeColor: 'none',
+            // Polygon layer + 1
+            layer: 5
         },
-        point2 : {                  // Default values for point2 if created by line
-            visible: false, 
-            withLabel: false, 
-            fixed: true,
-            name: ''
-        },
-        ticks : {
-            drawLabels : true,
-            drawZero : false,
-            insertTicks : false,
-            minTicksDistance : 50,
-            maxTicksDistance : 300,
-            minorHeight : 4,          // if <0: full width and height
-            majorHeight : -1,         // if <0: full width and height
-            minorTicks : 4,
-            defaultDistance : 1,
-            opacity : 0.3
-        },
-        /* absolute label offset from anchor */
-        labelOffsets: [10,10]
+        
+        /**
+         *  Points for regular polygons
+         */ 
+        points : {                    
+            withLabel: true,
+            strokeColor: '#ff0000',
+            fillColor: '#ff0000',
+            fixed: true
+        }
     },
 
-    /* special axis options */
-    axis: {
-        needsRegularUpdate : false,         // Axes only updated after zooming and moving of the origin.
-        strokeWidth: 1,
-        strokeColor : '#666666',
-        highlightStrokeColor : '#888888',
-        withTicks: true,
-        straightFirst : true,
-        straightLast : true,
-        lastArrow: true,
-        withLabel: false, 
-        /* line ticks options */
-        ticks : {
-            needsRegularUpdate : false,            
-            strokeWidth: 1,
-            strokeColor : '#666666',
-            highlightStrokeColor : '#888888',
-            drawLabels : true,
-            drawZero : true,
-            insertTicks : false,
-            minTicksDistance : 50,
-            maxTicksDistance : 300,
-            minorHeight : 4,          // if <0: full width and height
-            majorHeight : -1,         // if <0: full width and height
-            minorTicks : 4,
-            defaultDistance : 1,
-            strokeOpacity : 0.25
-        },
-        point1 : {                  // Default values for point1 if created by line
-            needsRegularUpdate : false
-        },
-        point2 : {                  // Default values for point2 if created by line
-            needsRegularUpdate : false
-        }
+    /* special options for riemann sums */
+    riemannsum: {
+        withLabel:false,
+        fillOpacity:0.3,
+        fillColor:'#ffff00'
+    },
+
+    /* special sector options */
+    sector : {
+        fillColor: '#00FF00',
+        highlightFillColor: '#00FF00',
+        fillOpacity: 0.3,
+        highlightFillOpacity: 0.3
     },
 
     /* special slider options */
@@ -495,168 +874,6 @@ JXG.Options = {
         }
     },
     
-    ticks : {
-        /**
-         * Draw labels yes/no
-         * @type Boolean
-         * @name JXG.Ticks#drawLabels
-         * @default false
-         */
-        drawLabels: false,
-        
-        /**
-         * Draw the zero tick, that lies at line.point1?
-         * @type Boolean
-         * @name JXG.Ticks#drawZero
-         * @default false
-         */
-        drawZero: false,
-
-        /**
-         * If the distance between two ticks is too big we could insert new ticks. If insertTicks
-         * is <tt>true</tt>, we'll do so, otherwise we leave the distance as is.
-         * This option is ignored if equidistant is false.
-         * @type Boolean
-         * @name JXG.Ticks#insertTicks
-         * @see JXG.Ticks#equidistant
-         * @see JXG.Ticks#maxTicksDistance
-         * @default false
-         */
-        insertTicks: false,
-        minTicksDistance: 50,
-        maxTicksDistance: 300,
-
-        /**
-         * Total height of a minor tick. If negative the full height of the board is taken.
-         * @type Number
-         * @name JXG.Ticks#minorHeight
-         */
-        minorHeight: 4,
-
-        /**
-         * Total height of a major tick. If negative the full height of the board is taken.
-         * @type Number
-         * @name JXG.Ticks#majorHeight
-         */
-        majorHeight: 10,
-
-        /**
-         * The number of minor ticks between two major ticks.
-         * @type Number
-         * @name JXG.Ticks#minorTicks
-         */
-        minorTicks: 4,
-        defaultDistance: 1,
-        opacity: 1,
-        strokeWidth: 1,
-        strokeColor: 'black',
-        highlightStrokeColor: '#888888'
-    },
-
-    /*special circle options */
-    circle : {
-        fillColor : 'none',
-        highlightFillColor : 'none',
-        strokeColor : '#0000ff',
-        highlightStrokeColor : '#C3D9FF',
-        center: {
-            visible: false,
-            withLabel: false,
-            fixed: true,
-            name: ''
-        }
-    },
-
-    /* special conic options */
-    conic : {
-        fillColor : 'none',
-        highlightFillColor : 'none',
-        strokeColor : '#0000ff',
-        highlightStrokeColor : '#C3D9FF',
-        foci: {
-            // points
-            fixed: true,
-            visible: false,
-            withLabel: false,
-            name: ''
-        }
-    },
-
-    /* special angle options */
-    angle : {
-	    withLabel:true,
-        radius : 1.0,
-        fillColor : '#FF7F00',
-        highlightFillColor : '#FF7F00',
-        strokeColor : '#FF7F00',
-        textColor : '#0000FF',
-        fillOpacity : 0.3,
-        highlightFillOpacity : 0.3,
-        point: {
-            withLabel: false,
-            visible: false,
-            name: ''
-        }
-    },
-
-    /* special arc options */
-    arc : {
-        firstArrow : false,
-        lastArrow : false,
-        fillColor : 'none',
-        highlightFillColor : 'none',
-        strokeColor : '#0000ff',
-        highlightStrokeColor : '#C3D9FF',
-        useDirection: false, 
-        center: {
-            visible: false,
-            withLabel: false,
-            fixed: true,
-            name: ''
-        }
-    },
-
-    /* special polygon options */
-    polygon : {
-        fillColor : '#00FF00',
-        highlightFillColor : '#00FF00',
-        fillOpacity : 0.3,
-        highlightFillOpacity : 0.3,
-
-        /**
-         * Is the polygon bordered by lines?
-         * @type Boolean
-         * @name JXG.Polygon#withLines
-         * @default true
-         */
-        withLines: true,
-
-        lines: {
-            withLabel: false,
-            strokeColor: 'none',
-            // Polygon layer + 1
-            layer: 5
-        },
-        
-        /**
-         *  Points for regular polygons
-         */ 
-        points : {                    
-            withLabel: true,
-            strokeColor: '#ff0000',
-            fillColor: '#ff0000',
-            fixed: true
-        }
-    },
-
-    /* special sector options */
-    sector : {
-        fillColor: '#00FF00',
-        highlightFillColor: '#00FF00',
-        fillOpacity: 0.3,
-        highlightFillOpacity: 0.3
-    },
-
     /* special text options */
     text : {
         fontSize : 12,
@@ -667,209 +884,6 @@ JXG.Options = {
         useMathJax : false,
         display : 'html',                    //'html' or 'internal'
         withLabel: false
-    },
-
-    /* special curve options */
-    curve : {
-        strokeWidth : '1px',
-        strokeColor : '#0000ff',
-        fillColor: 'none',
-
-        /**
-         * The curveType is set in @see generateTerm and used in
-         * {@link JXG.Curve#updateCurve}
-         * Possible values are:
-         * 'none'
-         * 'plot': Data plot
-         * 'parameter': we can not distinguish function graphs and parameter curves
-         * 'functiongraph': function graph
-         * 'polar'
-         * 'implicit' (not yet)
-         *
-         * Only parameter and plot are set directly.
-         * polar is set with setProperties only.
-         * @name JXG.Curve#curveType
-         */
-        curveType: null,
-        RDPsmoothing : false,       // Apply the Ramen-Douglas-Peuker algorithm
-        numberPointsHigh : 1600,  // Number of points on curves after mouseUp
-        numberPointsLow : 400,    // Number of points on curves after mousemove
-        doAdvancedPlot : true       // Use the algorithm by Gillam and Hohenwarter
-                                 // It is much slower, but the result is better
-    },
-
-    /* special perpendicular options */
-    perpendicular : {
-        strokeColor: '#000000', // Perpendicular segment
-        point : {               // Perpendicular point
-            visible: false,
-            fixed: true,
-            withLabel: false,
-            name: ''
-        }
-    },
-
-    parallel : {
-        strokeColor: '#000000', // Parallel line
-        point : {               // Parallel point
-            visible: false,
-            fixed: true,
-            withLabel: false,
-            name: ''
-        }
-    },
-
-    /* special options for bisector of 3 points */
-    bisector : {
-        strokeColor: '#000000', // Bisector line
-        point : {               // Bisector point
-            visible: false,
-            fixed: true,
-            withLabel: false,
-            name: ''
-        }
-    },
-
-    /* special options for the 2 bisectors of 2 lines */
-    bisectorlines : {
-        line1 : {               // 
-            strokeColor: 'red'
-        },
-        line2 : {               // 
-            strokeColor: 'black'
-        }
-    },
-
-    /* special options for circumcircle of 3 points */
-    circumcircle : {
-        fillColor : 'none',
-        highlightFillColor : 'none',
-        strokeColor : '#0000ff',
-        highlightStrokeColor : '#C3D9FF',
-        point : {               // center point
-            visible: false,
-            fixed: true,
-            withLabel: false,
-            name: ''
-        }
-    },
-
-    /* special options for incircle of 3 points */
-    incircle : {
-        fillColor : 'none',
-        highlightFillColor : 'none',
-        strokeColor : '#0000ff',
-        highlightStrokeColor : '#C3D9FF',
-        point : {               // center point
-            visible: false,
-            fixed: true,
-            withLabel: false,
-            name: ''
-        }
-    },
-
-    circumcirclesector: {
-        useDirection: true,
-        fillColor: '#00FF00',
-        highlightFillColor: '#00FF00',
-        fillOpacity: 0.3,
-        highlightFillOpacity: 0.3,
-        strokeColor : '#0000ff',
-        highlightStrokeColor : '#C3D9FF',
-        //fillOpacity: 0.3,
-        //highlightFillOpacity: 0.3,
-        point: {
-            visible: false,
-            fixed: true,
-            withLabel: false,
-            name: ''
-        }
-    },
-    
-    /* special options for integral */
-    integral: {
-        withLabel: true,    // Show integral value as text
-        strokeWidth: 0,
-        strokeOpacity: 0,
-        start: {    // Start point
-            visible: true
-        },
-        startproject: {    // Start point
-            visible: false,
-            fixed: true,
-            withLabel: false,
-            name: ''
-        },
-        end: {      // End point
-            visible: true
-        },
-        endproject: {      // End point
-            visible: false,
-            fixed: true,
-            withLabel: false,
-            name: ''
-        },
-        text: {
-            fontSize: 20
-        }
-    },
-    
-    chart: {
-        chartStyle: 'line',
-        colors: ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00'],
-        highlightcolors: null,
-        fillcolor: null,
-        highlightonsector: false,
-        highlightbysize: false
-    },
-
-    legend: {
-        style: 'vertical',
-        labels: ['1','2','3','4','5','6','7','8'],
-        colors: ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00']
-    },
-
-    image: {
-        imageString : null
-    },
-    
-    riemannsum: {
-        withLabel:false,
-        fillOpacity:0.3,
-        fillColor:'#ffff00'
-    },
-
-    /* precision options */
-    precision : {
-        touch    : 30,
-        mouse    : 4,
-        epsilon  : 0.0001,
-        hasPoint : 4
-    },
-
-    // Default ordering of the layers
-    layer : {
-        numlayers: 20, // only important in SVG
-        text  : 9,
-        point : 9,
-        arc   : 8,
-        line  : 7,
-        circle: 6,
-        curve : 5,
-        polygon: 4,
-        sector: 3,
-        angle : 3,
-        integral : 3,
-        grid  : 1,
-        image : 0
-    },
-
-    locus : {
-    	translateToOrigin: false,
-    	translateTo10: false,
-    	stretch: false,
-    	toOrigin: null,
-    	to10: null
     }
 };
 
