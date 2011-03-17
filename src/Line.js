@@ -48,28 +48,7 @@
  * @see JXG.Board#generateName
  */
 JXG.Line = function (board, p1, p2, attributes) {
-    /* Call the constructor of GeometryElement */
-    this.constructor();
-
-   /**
-     * Sets type of GeometryElement, value is OBJECT_TYPE_LINE.
-     * @constant
-     * @type int
-     * @default JXG#OBJECT_TYPE_LINE
-     * @private
-     */
-    this.type = JXG.OBJECT_TYPE_LINE;
-
-    /**
-     * Class of element, value is OBJECT_CLASS_LINE;
-     * @type int
-     * @constant
-     * @default JXG#OBJECT_CLASS_LINE
-     * @private
-     */
-    this.elementClass = JXG.OBJECT_CLASS_LINE;
-
-    this.init(board, attributes);
+    this.constructor(board, attributes, JXG.OBJECT_TYPE_LINE, JXG.OBJECT_CLASS_LINE);
 
     /**
      * Startpoint of the line. You really should not set this field directly as it may break JSXGraph's

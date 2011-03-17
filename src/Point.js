@@ -45,26 +45,8 @@
  * @see JXG.Board#addPoint
  */
 JXG.Point = function (board, coordinates, attributes) {
-    this.constructor();
+    this.constructor(board, attributes, JXG.OBJECT_TYPE_POINT, JXG.OBJECT_CLASS_POINT);
     
-    /**
-     * Type of point; Possible values are {@link JXG.OBJECT_TYPE_POINT}, {@link JXG.OBJECT_TYPE_GLIDER}, {@link JXG.OBJECT_TYPE_CAS}.
-     * @default {@link JXG.OBJECT_TYPE_POINT}
-     * @type number
-     * @private
-     */
-    this.type = JXG.OBJECT_TYPE_POINT;
-    
-    /**
-     * Class of this point element; Values is OBJECT_CLASS_POINT.
-     * @constant
-     * @type number
-     * @private
-     */
-    this.elementClass = JXG.OBJECT_CLASS_POINT;
-
-    this.init(board, attributes);
-
     if (coordinates==null) {
         coordinates=[0,0];
     }

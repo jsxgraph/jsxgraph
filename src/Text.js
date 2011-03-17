@@ -38,12 +38,12 @@
  * @return A new geometry element Text
  */
 JXG.Text = function (board, content, coords, attributes) {
-    this.constructor();
+    this.constructor(board, attributes, JXG.OBJECT_TYPE_TEXT, JXG.OBJECT_CLASS_OTHER);
 
-    this.type = JXG.OBJECT_TYPE_TEXT;
-    this.elementClass = JXG.OBJECT_CLASS_OTHER;
+    //this.type = JXG.OBJECT_TYPE_TEXT;
+    //this.elementClass = JXG.OBJECT_CLASS_OTHER;
 
-    this.init(board, attributes);
+    //this.init(board, attributes);
     this.content = content;
     this.plaintext = '';
 

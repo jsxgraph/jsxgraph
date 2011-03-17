@@ -39,14 +39,9 @@
  * @see JXG.Board#addCurve
   */
 JXG.Curve = function (board, parents, attributes) {
-    this.constructor();
+    this.constructor(board, attributes, JXG.OBJECT_TYPE_CURVE, JXG.OBJECT_CLASS_CURVE);
  
     this.points = []; 
-
-    this.type = JXG.OBJECT_TYPE_CURVE;
-    this.elementClass = JXG.OBJECT_CLASS_CURVE;                
-    
-    this.init(board, attributes);
 
     /** Use the algorithm by Gillam and Hohenwarter for plotting.
       * If false the naive algorithm is used.

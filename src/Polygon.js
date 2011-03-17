@@ -40,17 +40,12 @@
  * @extends JXG.GeometryElement
  */
 
-JXG.Polygon = function (board, vertices, /*borders,*/ attributes) {
+JXG.Polygon = function (board, vertices, attributes) {
+    this.constructor(board, attributes, JXG.OBJECT_TYPE_POLYGON, JXG.OBJECT_CLASS_AREA);
+
     var i, vertex, l,
         attr_line = JXG.copyAttributes(attributes, board.options, 'polygon', 'lines');
     
-    /* Call the constructor of GeometryElement */
-    this.constructor();
-    this.type = JXG.OBJECT_TYPE_POLYGON;
-    this.elementClass = JXG.OBJECT_CLASS_AREA;                
-    
-    this.init(board, attributes);
-
     this.withLines = attributes.withlines;
 
     /**

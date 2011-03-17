@@ -27,16 +27,14 @@
  * Chart plotting
  */
 JXG.Chart = function(board, parents, attributes) {
-    var x, y, i, c, style, len;
+    this.constructor(board, attributes);
 
-    this.constructor();
+    var x, y, i, c, style, len;
 
     if (!JXG.isArray(parents) || parents.length === 0) {
         throw new Error('JSXGraph: Can\'t create a chart without data');
     }
 
-    this.init(board, attributes);
-    
     /**
      * Contains pointers to the various subelements of the chart.
      */

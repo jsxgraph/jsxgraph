@@ -37,12 +37,8 @@
  * @constructor
  */
 JXG.Image = function (board, url, coordinates, size, attributes) {
-    //this.constructor();
-    this.type = JXG.OBJECT_TYPE_IMAGE;
-    this.elementClass = JXG.OBJECT_CLASS_OTHER;                
-    this.transformations = [];
+    this.constructor(board, attributes, JXG.OBJECT_TYPE_IMAGE, JXG.OBJECT_CLASS_OTHER);
 
-    this.init(board, attributes);
     this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);  // Still needed?
 
     this.X = JXG.createFunction(coordinates[0],this.board,'');
@@ -56,7 +52,6 @@ JXG.Image = function (board, url, coordinates, size, attributes) {
     this.size = [this.usrSize[0]*board.stretchX,this.usrSize[1]*board.stretchY];
     this.url = url;
 
-    this.visProp.layer = attributes.layer;
     this.parent = JXG.getRef(attributes.anchor);
 
     this.id = this.board.setId(this, 'Im');

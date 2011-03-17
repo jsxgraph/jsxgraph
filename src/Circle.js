@@ -62,25 +62,13 @@
 
 JXG.Circle = function (board, method, par1, par2, attributes) {
     /* Call the constructor of GeometryElement */
-    this.constructor();
+    this.constructor(board, attributes, JXG.OBJECT_TYPE_CIRCLE, JXG.OBJECT_CLASS_CIRCLE);
 
-    /**
-     * Type of element; Value is {@link JXG.OBJECT_TYPE_CIRCLE}.
-     * @default {@link JXG.OBJECT_TYPE_CIRCLE}
-     * @constant
-     * @type number
-     * @private
-     */
-    this.type = JXG.OBJECT_TYPE_CIRCLE;
-    /**
-     * Class of this element; Values is OBJECT_CLASS_CIRCLE.
-     * @constant
-     * @type number
-     * @private
-     */
-    this.elementClass = JXG.OBJECT_CLASS_CIRCLE; 
 
-    this.init(board, attributes);
+    //this.type = JXG.OBJECT_TYPE_CIRCLE;
+    //this.elementClass = JXG.OBJECT_CLASS_CIRCLE;
+
+    //this.init(board, attributes);
     
     /**
      * Stores the given method.

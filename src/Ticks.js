@@ -42,21 +42,7 @@
  * @extends JXG.GeometryElement
  */
 JXG.Ticks = function (line, ticks, attributes) {
-    this.constructor();
-
-    /**
-     * Type of GeometryElement, value is OBJECT_TYPE_ARC.
-     * @final
-     * @type int
-     */
-    this.type = JXG.OBJECT_TYPE_TICKS;
-
-    /**
-     * Class of the element, value is OBJECT_CLASS_CIRCLE.
-     * @final
-     * @type int
-     */
-    this.elementClass = JXG.OBJECT_CLASS_OTHER;
+    this.constructor(line.board, attributes, JXG.OBJECT_TYPE_TICKS, JXG.OBJECT_CLASS_OTHER);
 
     /**
      * The line the ticks belong to.
@@ -121,9 +107,6 @@ JXG.Ticks = function (line, ticks, attributes) {
      * @type Array
      */
     this.labels = [];
-
-    /* Call init defined in GeometryElement to set board, id and name property */
-    this.init(this.board, attributes);
 
     this.id = this.line.addTicks(this);
     this.board.setId(this,'Ti');
