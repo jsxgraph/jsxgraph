@@ -253,7 +253,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             /* Search for entries in visProp with "color" as part of the property name
                and containing a RGBA string
              */
-            if (this.visProp.hasOwnProperty(key) && key.indexOf('color')>=0 &&           
+            if (this.visProp.hasOwnProperty(key) && key.indexOf('color')>=0 && JXG.isString(this.visProp[key]) &&            
                 this.visProp[key].length == 9 && this.visProp[key].charAt(0) == '#') {
                 col = JXG.rgba2rgbo(this.visProp[key]);
                 this.visProp[key] = col[0];
@@ -594,7 +594,15 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 default:
                     if (JXG.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] && JXG.Validator[key](value)))) {
                         value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;
-                        this.visProp[key] = value;
+
+                        if (this.visProp.hasOwnProperty(key) && key.indexOf('color') >= 0 && JXG.isString(this.visProp[key]) &&
+                            this.visProp[key].length == 9 && this.visProp[key].charAt(0) === '#') {
+                            value = JXG.rgba2rgbo(this.visProp[key]);
+                            this.visProp[key] = value[0];
+                            this.visProp[key.replace('color', 'opacity')] *= value[1];
+                        } else {
+                            this.visProp[key] = value;
+                        }
                     }
                     break;
             }
