@@ -230,7 +230,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @private
      */
     init: function (board, attributes) {
-        var name = attributes.name;
+        var name = attributes.name, key, col;
 
         this.board = board;
         this.id = attributes.id;
@@ -245,6 +245,21 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
 
         this.visProp = attributes;
         this.needsRegularUpdate = attributes.needsregularupdate;
+        
+        /*
+            Handle RGBA color values by multiplying opacities
+        */
+        for (key in this.visProp) {
+            /* Search for entries in visProp with "color" as part of the property name
+               and containing a RGBA string
+             */
+            if (this.visProp.hasOwnProperty(key) && key.indexOf('color')>=0 &&           
+                this.visProp[key].length == 9 && this.visProp[key].charAt(0) == '#') {
+                col = JXG.rgba2rgbo(this.visProp[key]);
+                this.visProp[key] = col[0];
+                this.visProp[key.replace('color', 'opacity')] *= col[1];
+            }
+        }
 
         // TODO: draft downwards compatibility.
         this.visProp.draft = attributes.draft && attributes.draft.draft;
