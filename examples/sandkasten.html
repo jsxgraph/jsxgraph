@@ -10,6 +10,10 @@
 
 <h2>Playground to test things temporarily. May change very often.</h2>
 
+<a href="javascript:zoomPoints();">Zoom all points (new)</a><br />
+<a href="javascript:brd.zoomAllPoints();">Zoom all points (old)</a><br />
+<a href="javascript:zoomAll();">Zoom all elements (new)</a>
+
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
 </div>
@@ -19,10 +23,26 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    function zoomAll () {
+        brd.zoomElements(JXG.keys(brd.objects));
+    }
+
+    function zoomPoints() {
+        var e, points = [];
+
+        for (e in brd.objects) {
+            if (JXG.isPoint(brd.objects[e]) && brd.objects[e].visProp.visible) {
+                points.push(brd.objects[e]);
+            }
+        }
+
+        brd.zoomElements(points);
+    }
+
     JXG.Options.renderer = 'svg';
     JXG.Options.text.useMathJax = false;
 
-    var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox:[-5, 5, 5, -5], grid: false});
+    var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox:[-5, 5, 5, -5], grid: false, keepaspectratio: true});
 
     p1 = brd.create('point', [0,0], {withLabel: false});
     p1.setProperty({withLabel: true});

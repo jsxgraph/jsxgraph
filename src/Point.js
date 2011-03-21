@@ -370,6 +370,11 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         return this.coords.usrCoords[0];
     },
 
+    // documented in JXG.GeometryElement
+    bounds: function () {
+        return this.coords.usrCoords.slice(1).concat(this.coords.usrCoords.slice(1));
+    },
+
     /**
      * Getter method for the distance to a second point, this is required for CAS-elements.
      * Here, function inlining seems to be worthwile  (for plotting).
@@ -390,7 +395,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         f = ucr[2]-c[2];
         sum += f*f;
         return Math.sqrt(sum);
-        //return this.coords.distance(JXG.COORDS_BY_USER, point2.coords);
     },
 
     /**
@@ -469,7 +473,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
     /**
      * Convert the point to glider and update the construction.
-     * @param {String,Object} glideObject The Object the point will be bound to.
+     * @param {String|Object} glideObject The Object the point will be bound to.
      */
     makeGlider: function (glideObject) {
         this.slideObject = JXG.getReference(this.board, glideObject);
@@ -489,7 +493,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
     /**
      * Convert the point to CAS point and call update().
-     * @param {array} terms [[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
+     * @param {Array} terms [[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
      * The z-coordinate is optional and it is used for homogeneaous coordinates.
      * The coordinates may be either <ul>
      *   <li>a JavaScript function,</li>

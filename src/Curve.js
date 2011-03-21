@@ -541,7 +541,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      * Clone curve to the background.
      * @param addToTrace Not used yet. Always true.
      */
-    cloneToBackground: function(addToTrace) {
+    cloneToBackground: function () {
         var copy = {}, er;
 
         copy.id = this.id + 'T' + this.numTraces;
@@ -561,6 +561,47 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         this.board.renderer.drawCurve(copy);
         this.board.renderer.enhancedRendering = er;
         this.traces[copy.id] = copy.rendNode;
+    },
+
+    bounds: function () {
+        var steps = this.numberPointsLow,
+            d = (this.maxX()-this.minX())/steps,
+            i, j, trans, t, c, len, tX, tY, box = [this.minX(), 0, this.maxX(), 0];
+
+        if (this.visProp.curvetype=='parameter' || this.visProp.curvetype=='polar' || this.visProp.curvetype=='functiongraph') {
+            len = this.transformations.length;
+            t = this.minX();
+            for (i = 0; i < steps; i++) {
+                tX = this.X(t, true);
+                tY = this.Y(t, true);
+                for (j = 0; j < len; j++) {
+                    trans = this.transformations[j];
+                    trans.update();
+                    c = JXG.Math.matVecMult(trans.matrix,[1,tX,tY]);
+                    tX = c[1];
+                    tY = c[2];
+                }
+                if (box[1] < tY) {
+                    box[1] = tY;
+                }
+                if (box[3] > tY) {
+                    box[3] = tY;
+                }
+                t+=d;
+            }
+        } else if (this.visProp.curvetype == 'plot') {
+            len = this.numberPoints;
+            for (i = 0; i < len; i++) {
+                tY = this.Y(i);
+                if (box[1] < tY) {
+                    box[1] = tY;
+                }
+                if (box[3] > tY) {
+                    box[3] = tY;
+                }
+            }
+        }
+        return box;
     }
 });
 

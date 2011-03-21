@@ -629,7 +629,6 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         this.board.renderer.drawTicks(ticks);
         this.ticks.push(ticks);
 
-        //this.ticks[this.ticks.length-1].updateRenderer();
         return ticks.id;
     },
 

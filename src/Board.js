@@ -1348,8 +1348,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         minY = 0;
         maxY = 0;
         for (el in this.objects) {
-            if ( (this.objects[el].elementClass == JXG.OBJECT_CLASS_POINT) &&
-                this.objects[el].visProp.visible) {
+            if (JXG.isPoint(this.objects[el]) && this.objects[el].visProp.visible) {
                 if (this.objects[el].coords.usrCoords[1] < minX) {
                     minX = this.objects[el].coords.usrCoords[1];
                 } else if (this.objects[el].coords.usrCoords[1] > maxX) {
@@ -1380,6 +1379,36 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.zoomY = newZoomY;
         this.updateStretch();
         this.applyZoom();
+        return this;
+    },
+
+    /**
+     * Reset the bounding box and the zoom level to 100% such that a given set of elements is within the board's viewport.
+     * @param {Array} elements A set of elements given by id, reference, or name.
+     * @returns {JXG.Board} Reference to the board.
+     */
+    zoomElements: function (elements) {
+        var i, j, e, box,
+            newBBox = [0, 0, 0, 0],
+            dir = [1, -1, -1, 1];
+
+        for (i = 0; i < elements.length; i++) {
+            e = JXG.getRef(this, elements[i]);
+
+            box = e.bounds();
+            for (j = 0; j < 4; j++) {
+                if (dir[j]*box[j] < dir[j]*newBBox[j]) {
+                    newBBox[j] = box[j];
+                }
+            }
+        }
+
+        for (j = 0; j < 4; j++) {
+            newBBox[j] -= dir[j];
+        }
+
+        this.zoom100();
+        this.setBoundingBox(newBBox, true);
         return this;
     },
 
@@ -1891,7 +1920,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     setBoundingBox: function (bbox, keepaspectratio) {
-        if (!JXG.isArray(bbox)) return this;
+        if (!JXG.isArray(bbox)) {
+            return this;
+        }
 
         var h, w, oX, oY,
             dim = JXG.getDimensions(this.container);
@@ -1912,9 +1943,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.unitX = w/(bbox[2]-bbox[0]);
             this.unitY = h/(-bbox[3]+bbox[1]);
         }
+
         oX = -this.unitX*bbox[0]*this.zoomX;
         oY = this.unitY*bbox[1]*this.zoomY;
         this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
+
         this.updateStretch();
         this.moveOrigin();
         return this;

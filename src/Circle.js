@@ -564,6 +564,13 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     Area: function () {
         var r = this.Radius();
         return r*r*Math.PI;
+    },
+
+    bounds: function () {
+        var uc = this.midpoint.coords.usrCoords,
+            r = this.Radius();
+
+        return [uc[1] - r, uc[2] + r, uc[1] + r, uc[2] - r];
     }
 });
 

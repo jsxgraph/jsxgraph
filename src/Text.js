@@ -40,10 +40,6 @@
 JXG.Text = function (board, content, coords, attributes) {
     this.constructor(board, attributes, JXG.OBJECT_TYPE_TEXT, JXG.OBJECT_CLASS_OTHER);
 
-    //this.type = JXG.OBJECT_TYPE_TEXT;
-    //this.elementClass = JXG.OBJECT_CLASS_OTHER;
-
-    //this.init(board, attributes);
     this.content = content;
     this.plaintext = '';
 
@@ -255,10 +251,6 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
 
         // Convert GEONExT syntax into  JavaScript syntax
         var i;
-        //var i = contentStr.indexOf('<mp>');
-        //contentStr = contentStr.slice(i+4);
-        //i = contentStr.indexOf('</mp>');
-        //contentStr = contentStr.slice(0,i);
 
         i = contentStr.indexOf('<value>');
         var j = contentStr.indexOf('</value>');
@@ -293,23 +285,28 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     /**
      * Finds dependencies in a given term and notifies the parents by adding the
      * dependent object to the found objects child elements.
-     * @param {String} term String containing dependencies for the given object.
+     * @param {String} content String containing dependencies for the given object.
      * @private
      */
-    notifyParents: function (contentStr) {
+    notifyParents: function (content) {
         var res = null;
-        var elements = this.board.elementsByName;
 
         do {
             var search = /<value>([\w\s\*\/\^\-\+\(\)\[\],<>=!]+)<\/value>/;
-            res = search.exec(contentStr);
+            res = search.exec(content);
             if (res!=null) {
                 JXG.GeonextParser.findDependencies(this,res[1],this.board);
-                contentStr = contentStr.substr(res.index);
-                contentStr = contentStr.replace(search,'');
+                content = content.substr(res.index);
+                content = content.replace(search,'');
             }
         } while (res!=null);
         return this;
+    },
+
+    bounds: function () {
+        var c = this.coords.usrCoords;
+
+        return this.visProp.islabel ? [0, 0, 0, 0] : [c[1], c[2]+this.size[1], c[1]+this.size[0], c[2]];
     }
 });
 

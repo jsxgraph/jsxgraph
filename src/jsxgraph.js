@@ -167,6 +167,8 @@ JXG.JSXGraph = {
         board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height,showCopyright);
         this.boards[board.id] = board;
 
+        board.keepaspectratio = attributes.keepaspectratio;
+
         // create elements like axes, grid, navigation, ...
         board.suspendUpdate();
         board.initInfobox();
