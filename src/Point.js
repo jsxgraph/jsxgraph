@@ -301,7 +301,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         } 
 
         /* Update the label if visible. */
-        if(this.hasLabel && this.visProp.visible && this.label.content.visProp.visible && this.isReal) {
+        if(this.hasLabel && this.visProp.visible && this.label.content && this.label.content.visProp.visible && this.isReal) {
             this.label.content.update();
             this.board.renderer.updateText(this.label.content);
         }

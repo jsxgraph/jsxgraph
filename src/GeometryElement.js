@@ -560,20 +560,19 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     this.board.renderer.updateGradient(this);
                     break;
                 case 'withlabel':
+                    this.visProp.withlabel = value;
                     if (!value) {
-                        if (this.label!=null && this.hasLabel) {
+                        if (JXG.exists(this.label) && this.hasLabel) {
                             this.label.content.hideElement();
                         }
-                    }
-                    else {
+                    } else {
                         if (this.label!=null && this.hasLabel) {
                             if (this.visProp.visible) {
                                 this.label.content.showElement();
                             }
 
-                        }
-                        else {
-                            this.addLabelToElement();
+                        } else {
+                            this.createLabel();
                             if (!this.visProp.visible) {
                                 this.label.content.hideElement();
                             }
@@ -715,10 +714,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
            
     /**
      * Creates a label element for this geometry element.
-     * Doesn't add the label to the board, so it shouldn't be called itself. Use {@link #addLabelToElement} instead.
-     * @param {boolean} withLabel true if a label shall be initialized, false otherwise.
+     * @param {Array} [coords=[10,10]] Relative coordinates.
      * @see #addLabelToElement
-     * @private
      */
     createLabel: function (coords) {
         if (!JXG.exists(coords)) {
@@ -799,7 +796,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         return this;
     },
 
-// [c,b0,b1,a,k]
     /**
      * Normalize the element's standard form.
      * @private

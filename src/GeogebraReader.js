@@ -1745,7 +1745,7 @@ this.writeElement = function(board, output, input, cmd) {
         }
         for(i=0; i<p.borders.length; i++) {
             if(borderatts[i].withLabel) {
-                p.borders[i].addLabelToElement();
+                p.borders[i].createLabel();
             }
             p.borders[i].setProperty(borderatts[i]);
         }
