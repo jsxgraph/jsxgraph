@@ -747,20 +747,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     },
 
     /**
-     * Adds a label to the element.
-     */
-    addLabelToElement: function () {
-        this.createLabel();
-        this.label.content.id = this.id+"Label";
-        this.board.setId(this.label.content, 'T');
-
-        if (!this.label.content.visProp.visible) {
-            this.board.renderer.hide(this.label.content);
-        }
-        return this;
-    },
-
-    /**
      * Highlights the element.
      */
     highlight: function () {
