@@ -799,7 +799,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     // documented in AbstractRenderer
     highlight: function (obj) {
         obj.board.prepareUpdate();
-        obj.board.renderer.suspendRedraw();
+        obj.board.renderer.suspendRedraw(obj.board);
         obj.board.updateRenderer();
         obj.board.renderer.unsuspendRedraw();
         return this;
@@ -808,7 +808,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     // documented in AbstractRenderer
     noHighlight: function (obj) {
         obj.board.prepareUpdate();
-        obj.board.renderer.suspendRedraw();
+        obj.board.renderer.suspendRedraw(obj.board);
         obj.board.updateRenderer();
         obj.board.renderer.unsuspendRedraw();
         return this;
@@ -819,10 +819,13 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
      * **************************/
 
     // documented in AbstractRenderer
-    suspendRedraw: function () {
+    suspendRedraw: function (board) {
         this.context.save();
         this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
-        this.displayCopyright(JXG.JSXGraph.licenseText, 12);
+        
+        if (board && board.displayCopyright) {
+            this.displayCopyright(JXG.JSXGraph.licenseText, 12);
+        }
     },
 
     // documented in AbstractRenderer

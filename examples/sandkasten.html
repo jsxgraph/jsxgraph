@@ -39,8 +39,9 @@
         brd.zoomElements(points);
     }
 
-    JXG.Options.renderer = 'svg';
+    JXG.Options.renderer = 'canvas';
     JXG.Options.text.useMathJax = false;
+    JXG.Options.showCopyright = false;
 
     var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox:[-5, 5, 5, -5], grid: false, keepaspectratio: true});
 

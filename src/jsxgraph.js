@@ -168,6 +168,7 @@ JXG.JSXGraph = {
         this.boards[board.id] = board;
 
         board.keepaspectratio = attributes.keepaspectratio;
+        board.showCopyright = attributes.keepaspectratio;
 
         // create elements like axes, grid, navigation, ...
         board.suspendUpdate();

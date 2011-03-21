@@ -31,7 +31,7 @@ JXG.PsTricks = {
             i, el, result = [];
 
         result.push('\\begin{pspicture*}('+topleft.usrCoords[1]+','+bottomright.usrCoords[2]+')('+bottomright.usrCoords[1]+','+topleft.usrCoords[2]+')\n');
-JXG.debug(board.objects);
+
         for(i in board.objects) {
             el = board.objects[i];
 

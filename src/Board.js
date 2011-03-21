@@ -1024,7 +1024,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // another object is highlighted.
         if (this.options.renderer=='canvas' && needsDehighlight) {
             this.prepareUpdate();
-            this.renderer.suspendRedraw();
+            this.renderer.suspendRedraw(this);
             this.updateRenderer();
             this.renderer.unsuspendRedraw();
         }
@@ -1766,7 +1766,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         if (this.isSuspendedUpdate) { return this; }
         this.prepareUpdate(drag).updateElements(drag).updateConditions();
-        this.renderer.suspendRedraw();
+        this.renderer.suspendRedraw(this);
         this.updateRenderer(drag);
         this.renderer.unsuspendRedraw();
         this.updateHooks();
