@@ -309,7 +309,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         } // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
         
         // adjust distances
-        while(distScr > 4*this.minTicksDistance) {
+        while(this.visProp.insertticks && distScr > 4*this.minTicksDistance) {
             ticksDelta /= 10;
             deltaX /= 10;
             deltaY /= 10;
@@ -318,7 +318,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         }
 
         // If necessary, enlarge ticksDelta
-        while(distScr < this.minTicksDistance) {
+        while(this.visProp.insertticks && distScr < this.minTicksDistance) {
             ticksDelta *= factor;
             deltaX *= factor;
             deltaY *= factor;
