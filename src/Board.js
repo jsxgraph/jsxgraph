@@ -1392,7 +1392,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             newBBox = [0, 0, 0, 0],
             dir = [1, -1, -1, 1];
 
-        for (i = 0; i < elements.length; i++) {
+        if (elements.length > 0) {
+            newBBox = JXG.getRef(this, elements[0]).bounds();
+        }
+        for (i = 1; i < elements.length; i++) {
             e = JXG.getRef(this, elements[i]);
 
             box = e.bounds();
