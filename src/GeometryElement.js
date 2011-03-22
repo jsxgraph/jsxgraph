@@ -775,10 +775,9 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     },
 
     /**
-     * Copy element to background. Has to be implemented in the element itself.
-     * @private
+     * Copy the element to background. This is used for tracing elements.
      */
-    cloneToBackground: function (addToTrace) {
+    cloneToBackground: function () {
         return this;
     },
 
@@ -803,6 +802,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * EXPERIMENTAL. Generate JSON object code of visProp and other properties.
      * @type string
      * @private
+     * @ignore
      * @return JSON string containing element's properties.
      */
     toJSON: function () {

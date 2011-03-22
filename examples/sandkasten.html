@@ -1,10 +1,11 @@
 <html>
 <head>
-   <title>JSXGraph example</title>
-   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
+    <title>JSXGraph example</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-   <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
+    <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
+    <script type="text/javascript" src="../src/Square.js"></script>
 </head>
 <body>
 
@@ -53,6 +54,8 @@
     p4 = brd.create('point', [4,2], {name: "Z"});
 
     cca = brd.create('circle', [p1, p2]);
+
+    sq = brd.create('square', [p1, p3]);
 
     li= brd.create('segment', [p3, p4]);
     t = brd.create('text', [4, 5, 'foobar'], {parent: cca, withLabel: false});

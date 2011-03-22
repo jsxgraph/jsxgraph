@@ -60,46 +60,46 @@ JXG.Options = {
     elements : {
         /**
          * The stroke color of the given geometry element.
-         * @type string
+         * @type String
          * @name JXG.GeometryElement#strokeColor
-         * @see #highlightStrokeColor
-         * @see #strokeWidth
-         * @see #strokeOpacity
-         * @see #highlightStrokeOpacity
+         * @see JXG.GeometryElement#highlightStrokeColor
+         * @see JXG.GeometryElement#strokeWidth
+         * @see JXG.GeometryElement#strokeOpacity
+         * @see JXG.GeometryElement#highlightStrokeOpacity
          * @default {@link JXG.Options.elements.color#strokeColor}
          */
         strokeColor: '#0000ff',
 
         /**
          * The stroke color of the given geometry element when the user moves the mouse over it.
-         * @type string
+         * @type String
          * @name JXG.GeometryElement#highlightStrokeColor
-         * @see #sstrokeColor
-         * @see #strokeWidth
-         * @see #strokeOpacity
-         * @see #highlightStrokeOpacity
+         * @see JXG.GeometryElement#strokeColor
+         * @see JXG.GeometryElement#strokeWidth
+         * @see JXG.GeometryElement#strokeOpacity
+         * @see JXG.GeometryElement#highlightStrokeOpacity
          * @default {@link JXG.Options.elements.color#highlightStrokeColor}
          */
         highlightStrokeColor: '#C3D9FF',
 
         /**
          * The fill color of this geometry element.
-         * @type string
+         * @type String
          * @name JXG.GeometryElement#fillColor
-         * @see #highlightFillColor
-         * @see #fillOpacity
-         * @see #highlightFillOpacity
+         * @see JXG.GeometryElement#highlightFillColor
+         * @see JXG.GeometryElement#fillOpacity
+         * @see JXG.GeometryElement#highlightFillOpacity
          * @default {@link JXG.Options.elements.color#fillColor}
          */
         fillColor: 'red',
 
         /**
          * The fill color of the given geometry element when the mouse is pointed over it.
-         * @type string
+         * @type String
          * @name JXG.GeometryElement#highlightFillColor
-         * @see #fillColor
-         * @see #fillOpacity
-         * @see #highlightFillOpacity
+         * @see JXG.GeometryElement#fillColor
+         * @see JXG.GeometryElement#fillOpacity
+         * @see JXG.GeometryElement#highlightFillOpacity
          * @default {@link JXG.Options.elements.color#highlightFillColor}
          */
         highlightFillColor: 'none',
@@ -108,10 +108,10 @@ JXG.Options = {
          * Opacity for element's stroke color.
          * @type number
          * @name JXG.GeometryElement#strokeOpacity
-         * @see #strokeColor
-         * @see #highlightStrokeColor
-         * @see #strokeWidth
-         * @see #highlightStrokeOpacity
+         * @see JXG.GeometryElement#strokeColor
+         * @see JXG.GeometryElement#highlightStrokeColor
+         * @see JXG.GeometryElement#strokeWidth
+         * @see JXG.GeometryElement#highlightStrokeOpacity
          * @default {@link JXG.Options.elements#strokeOpacity}
          */
         strokeOpacity: 1,
@@ -120,10 +120,10 @@ JXG.Options = {
          * Opacity for stroke color when the object is highlighted.
          * @type number
          * @name JXG.GeometryElement#highlightStrokeOpacity
-         * @see #strokeColor
-         * @see #highlightStrokeColor
-         * @see #strokeWidth
-         * @see #strokeOpacity
+         * @see JXG.GeometryElement#strokeColor
+         * @see JXG.GeometryElement#highlightStrokeColor
+         * @see JXG.GeometryElement#strokeWidth
+         * @see JXG.GeometryElement#strokeOpacity
          * @default {@link JXG.Options.elements#highlightStrokeOpacity}
          */
         highlightStrokeOpacity: 1,
@@ -132,9 +132,9 @@ JXG.Options = {
          * Opacity for fill color.
          * @type number
          * @name JXG.GeometryElement#fillOpacity
-         * @see #fillColor
-         * @see #highlightFillColor
-         * @see #highlightFillOpacity
+         * @see JXG.GeometryElement#fillColor
+         * @see JXG.GeometryElement#highlightFillColor
+         * @see JXG.GeometryElement#highlightFillOpacity
          * @default {@link JXG.Options.elements.color#fillOpacity}
          */
         fillOpacity: 1,
@@ -143,9 +143,9 @@ JXG.Options = {
          * Opacity for fill color when the object is highlighted.
          * @type number
          * @name JXG.GeometryElement#highlightFillOpacity
-         * @see #fillColor
-         * @see #highlightFillColor
-         * @see #fillOpacity
+         * @see JXG.GeometryElement#fillColor
+         * @see JXG.GeometryElement#highlightFillColor
+         * @see JXG.GeometryElement#fillOpacity
          * @default {@link JXG.Options.elements.color#highlightFillOpacity}
          */
         highlightFillOpacity: 1,
@@ -154,10 +154,10 @@ JXG.Options = {
          * Width of the element's stroke.
          * @type number
          * @name JXG.GeometryElement#strokeWidth
-         * @see #strokeColor
-         * @see #highlightStrokeColor
-         * @see #strokeOpacity
-         * @see #highlightStrokeOpacity
+         * @see JXG.GeometryElement#strokeColor
+         * @see JXG.GeometryElement#highlightStrokeColor
+         * @see JXG.GeometryElement#strokeOpacity
+         * @see JXG.GeometryElement#highlightStrokeOpacity
          * @default {@link JXG.Options.elements#strokeWidth}
          */
         strokeWidth: 2,
@@ -166,11 +166,11 @@ JXG.Options = {
          * Width of the element's stroke when the mouse is pointed over it.
          * @type number
          * @name JXG.GeometryElement#highlightStrokeWidth
-         * @see #strokeColor
-         * @see #highlightStrokeColor
-         * @see #strokeOpacity
-         * @see #highlightStrokeOpacity
-         * @see #highlightFillColor
+         * @see JXG.GeometryElement#strokeColor
+         * @see JXG.GeometryElement#highlightStrokeColor
+         * @see JXG.GeometryElement#strokeOpacity
+         * @see JXG.GeometryElement#highlightStrokeOpacity
+         * @see JXG.GeometryElement#highlightFillColor
          * @default {@link JXG.Options.elements#strokeWidth}
          */
         highlightStrokeWidth: 2,
@@ -201,8 +201,8 @@ JXG.Options = {
          * If false the element won't be visible on the board, otherwise it is shown.
          * @type boolean
          * @name JXG.GeometryElement#visible
-         * @see #hideElement
-         * @see #showElement
+         * @see JXG.GeometryElement#hideElement
+         * @see JXG.GeometryElement#showElement
          * @default true
          */
         visible: true,

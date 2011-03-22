@@ -898,19 +898,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     },
 
     /**
-     * Set the face of a point.
-     * @param {String} s String which determines the face of the point. See {@link JXG.Point#face} for a list of available faces.
-     * @see JXG.Point#face
-     * @private
-     */
-    setFace: function(s) {
-        this.visProp.face = this.normalizeFace(s.toLowerCase()) || 'o';
-        this.board.renderer.changePointStyle(this);
-
-        return this;
-    },
-
-    /**
      * Remove the point from the drawing.
      */
     remove: function() {    
@@ -920,22 +907,12 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.board.renderer.remove(this.board.renderer.getElementById(this.id));
     },
 
-    /**
-     * TODO
-     * @return TODO
-     * @type JXG.Coords
-     * @private
-     */
+    // documented in GeometryElement
     getTextAnchor: function() {
         return this.coords;
     },
 
-    /**
-     * TODO
-     * @return TODO
-     * @type JXG.Coords
-     * @private
-     */
+    // documented in GeometryElement
     getLabelAnchor: function() {
         return this.coords;
     },
@@ -958,11 +935,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.setProperty({size:s});
     },
 
-    /**
-     * Copy the element to the background.
-     * @param addToTrace If true the clone will be added to trace control and can be removed using {@link JXG.GeometryElement#clearTrace}.
-     * Currently not used, and always true.
-     */
+    // already documented in GeometryElement
     cloneToBackground: function() {
         var copy = {};
 

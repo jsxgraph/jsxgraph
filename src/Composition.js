@@ -156,8 +156,12 @@ JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
      * using a reserved name and providing an invalid element.
      */
     add: function (what, element) {
-        if (!JXG.exists(this[what]) && JXG.exists(element) && JXG.exists(element.id)) {
-            this.elements[element.id] = element;
+        if (!JXG.exists(this[what]) && JXG.exists(element)) {
+            if (JXG.exists(element.id)) {
+                this.elements[element.id] = element;
+            } else {
+                this.elements[what] = element;
+            }
             this[what] = element;
 
             return true
