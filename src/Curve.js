@@ -254,7 +254,9 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      * Default is an empty method, can be overwritten
      * by the user.
      */
-    updateDataArray: function () { return this; },
+    updateDataArray: function () {
+        return this;
+    },
 
     /**
      * Computes for equidistant points on the x-axis the values

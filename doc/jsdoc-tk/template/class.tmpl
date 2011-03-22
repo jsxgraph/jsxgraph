@@ -120,6 +120,7 @@
 								if (member.isInner) output += "&lt;inner&gt; ";
 								if (member.isStatic) output += "&lt;static&gt; ";
 								if (member.isConstant) output += "&lt;constant&gt; ";
+                                if (member.deprecated) output += "&lt;deprecated&gt; ";
 							!}&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
@@ -181,6 +182,7 @@
 								if (member.isPrivate) output += "&lt;private&gt; ";
 								if (member.isInner) output += "&lt;inner&gt; ";
 								if (member.isStatic) output += "&lt;static&gt; ";
+                                if (member.deprecated) output += "&lt;deprecated&gt; ";
 							!}&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont"><if test="member.isStatic && member.memberOf != '_global_'">{+member.memberOf+}.</if><b>{+new Link().toSymbol(member.alias).withText(member.name)+}</b>{+makeSignature(member.params)+}
