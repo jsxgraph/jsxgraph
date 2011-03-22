@@ -79,6 +79,7 @@ def usage():
     print "  Docs                   Generate documentation from source code comments. Uses"
     print "                         jsdoc-toolkit."
     print "  Hint                   Run JSHint on the file given with -l or --hint."
+    print "  Plot                   Make a slim JSXGraph core just for function plotting."
     print "  Test                   Run Unit Tests with JsTestDriver."
     print "  Compressor             Minify and create a zip archive for JSXCompressor."
     print "  All                    Makes JSXGraph and Compressor."
@@ -136,6 +137,52 @@ def makeCore():
 
     # Prepend license text
     coreFilename = output + "/jsxgraphcore.js"
+    fout = open(coreFilename,'w')
+    fout.write(license)
+    fout.close()
+
+    # Minify; YUI compressor from Yahoo
+    s = "java -jar " + yui + "/build/yuicompressor*.jar --type js " + tmpfilename + " >>" + coreFilename
+    print s
+    os.system(s)
+    os.remove(tmpfilename)
+
+'''
+    Generate slim jsxplotcore.js and place it in <output>
+'''
+def makePlot():
+    global yui, jsdoc, version, output, license
+
+    print "Making Plot..."
+
+    jstxt = ''
+    license = ("/* Version %s */\n" % version) + license
+
+    # Take the source files and write them into jstxt
+    loader = ['loadjsxgraphInOneFile']
+    for f in loader:
+        print 'take ', f
+        jstxt += open('src/'+f+'.js','r').read()
+        jstxt += '\n';
+
+    files = 'JXG,Math,MathNumerics,MathStatistics,MathSymbolic,MathGeometry,AbstractRenderer,GeonextParser,Board,Options,jsxgraph,GeometryElement,Coords,Point,Line,Curve,Text,Composition,Util,Transformation,RGBColor,Wrappers,Ticks'.split(',')
+    for f in files:
+        print 'take ', f
+        jstxt += open('src/'+f+'.js','r').read()
+        jstxt += '\n';
+    renderer = ['SVGRenderer','CanvasRenderer']
+    for f in renderer:
+        print 'take ', f
+        jstxt += open('src/'+f+'.js','r').read()
+        jstxt += '\n';
+
+    tmpfilename = tempfile.mktemp()
+    fout = open(tmpfilename,'w')
+    fout.write(jstxt)
+    fout.close()
+
+    # Prepend license text
+    coreFilename = output + "/jsxplotcore.js"
     fout = open(coreFilename,'w')
     fout.write(license)
     fout.close()
