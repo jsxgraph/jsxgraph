@@ -183,7 +183,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     // Snap the glider point of the slider into its appropiate position
                     // First, recalculate the new value of this.position
                     // Second, call update(fromParent==true) to make the positioning snappier.
-                    if (this.visProp.snapwidth!=null && Math.abs(this._smax-this._smin)>=JXG.Math.eps) {
+                    if (this.visProp.snapwidth>0.0 && Math.abs(this._smax-this._smin)>=JXG.Math.eps) {
                         if (this.position<0.0) this.position = 0.0;
                         if (this.position>1.0) this.position = 1.0;
                         
@@ -478,8 +478,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     makeGlider: function (glideObject) {
         this.slideObject = JXG.getReference(this.board, glideObject);
         this.type = JXG.OBJECT_TYPE_GLIDER;
-        this.visProp.snapwidth = null;
-        
+        this.visProp.snapwidth = -1;          // By default, deactivate snapWidth
         this.slideObject.addChild(this);
 
         this.generatePolynomial = function() {
@@ -1078,10 +1077,9 @@ JXG.createPoint = function(board, parents, attributes) {
  * </script><pre>
  */
 JXG.createGlider = function(board, parents, attributes) {
-    var el, attr;
-
-    attr = JXG.copyAttributes(attributes, board.options, 'point');
-
+    var el, 
+        attr = JXG.copyAttributes(attributes, board.options, 'point');
+        
     if (parents.length === 1) {
         el = board.create('point', [0, 0], attr);
     } else {

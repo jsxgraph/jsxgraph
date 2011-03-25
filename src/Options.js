@@ -812,7 +812,7 @@ JXG.Options = {
 
     /* special slider options */
     slider : {
-        snapWidth: null,
+        snapWidth: -1,      // -1 = deactivated
         firstArrow : false,
         lastArrow : false,
         withTicks: true,
@@ -964,6 +964,7 @@ JXG.Validator = (function () {
         size : validateInteger,
         snapSizeX : JXG.isNumber,
         snapSizeY : JXG.isNumber,
+        snapWidth : JXG.isNumber,
         snapToGrid : false,
         straightFirst : false,
         straightLast : false,

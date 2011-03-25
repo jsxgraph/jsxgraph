@@ -58,7 +58,7 @@
 JXG.createSlider = function(board, parents, attributes) {
     var pos0, pos1, smin, start, smax, sdiff, 
            p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t,
-           withText, withTicks, attr;
+           withText, withTicks, snapWidth, attr;
 
     pos0 = parents[0];
     pos1 = parents[1];
@@ -70,6 +70,7 @@ JXG.createSlider = function(board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'slider');
     withTicks = attr['withticks'];
     withText = attr['withlabel'];
+    snapWidth = attr['snapwidth'];
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point1');
     p1 = board.create('point', pos0,  attr);
@@ -94,8 +95,9 @@ JXG.createSlider = function(board, parents, attributes) {
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
 
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'glider');
-    p3 = board.create('glider', [startx, starty, l1], attr);
-
+    p3 = board.create('glider', [startx, starty, l1], attr);   // gliders set snapwidth=-1 by default (i.e. deactivate them)
+    p3.setProperty({snapwidth:snapWidth});
+    
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment2');
     l2 = board.create('segment', [p1,p3],  attr);
                  
