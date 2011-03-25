@@ -1084,8 +1084,7 @@ JXG.createIncenter = function(board, parents, attributes) {
  * @type array
  * @returns An array containing the midpoint in the first component and the circumcircle in the second component.
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the midpoint of the circle determined
- * by p1, p2, and p3.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed element is the circle determined by p1, p2, and p3.
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
