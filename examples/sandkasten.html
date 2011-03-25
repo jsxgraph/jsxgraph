@@ -24,47 +24,92 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    (function () {
 
-    brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1.5, 2, 1.5, -1], keepaspectratio:true});
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1.5, 2, 1.5, -1], keepaspectratio:true});
+    
+        var cerise = {
+                strokeColor: '#901B77',
+                fillColor: '#CA147A'
+            },
 
-brd.suspendUpdate();
-A = brd.create('point',[1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
-B = brd.create('point',[-1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
-C = brd.create('point',[0.2,1.5],{strokeColor:'#901B77',fillColor:'#CA147A'});
-pol = brd.create('polygon',[A,B,C], {fillColor:'#FFFF00',lines:{strokeWidth:2,strokeColor:'#009256'}});
-for(i=0;i<=2;i++) {
-    pol.borders[i].setProperty('strokeColor:#009256','strokeWidth:2');
-}
+            grass = {
+                strokeColor: '#009256',
+                fillColor: '#65B72E',
+                visible: true,
+                withLabel: true
+            },
 
-pABC = brd.create('perpendicular',[pol.borders[0],C],{strokeWidth:1,dash:2, name:['','H_c']});
-pBCA = brd.create('perpendicular',[pol.borders[1],A],{strokeWidth:1,dash:2, name:['','H_a']});
-pCAB = brd.create('perpendicular',[pol.borders[2],B],{strokeWidth:1,dash:2, name:['','H_b']});
-pABC[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-pBCA[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-pCAB[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-i1 = brd.create('intersection',[pABC[0],pCAB[0],0],{strokeColor:'#009256',fillColor:'#65B72E',name:'H'});
-pABC[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
-pBCA[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
-pCAB[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+            perpendicular = {
+                strokeColor: 'black',
+                dash: 1,
+                strokeWidth: 1,
+                point: JXG.deepCopy(cerise, {
+                    visible: true,
+                    withLabel: true
+                })
+            },
 
-mAB = brd.create('midpoint',[A,B],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_c'});
-mBC = brd.create('midpoint',[B,C],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_a'});
-mCA = brd.create('midpoint',[C,A],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_b'});
-ma = brd.create('line',[mBC,A],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
-mb = brd.create('line',[mCA,B],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
-mc = brd.create('line',[mAB,C],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
-i2 = brd.create('intersection',[ma,mc,0],{strokeColor:'#009256',fillColor:'#65B72E',name:'S'});
+            median = {
+                strokeWidth: 1,
+                strokeColor: '#333333',
+                dash:2
+            },
 
-i3 = brd.create('circumcirclemidpoint',[A,B,C],{strokeColor:'#009256',fillColor:'#65B72E',name:'U'});
-c = brd.create('circumcircle',[A,B,C],{strokeColor:'#000000',dash:3,strokeWidth:1});
-c[0].setProperty('visible:false');
-c[1].setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
+            A = board.create('point', [1, 0], cerise),
+            B = board.create('point', [-1, 0], cerise),
+            C = board.create('point', [0.2, 1.5], cerise),
+            pol = board.create('polygon',[A,B,C], {
+                fillColor: '#FFFF00',
+                lines: {
+                    strokeWidth: 2,
+                    strokeColor: '#009256'
+                }
+            });
 
-euler = brd.create('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
-brd.unsuspendUpdate();
+        var pABC, pBCA, pCAB, i1;
+        perpendicular.point.name = 'H_c';
+        pABC = board.create('perpendicular', [pol.borders[0], C], perpendicular);
+        perpendicular.point.name = 'H_a';
+        pBCA = board.create('perpendicular', [pol.borders[1], A], perpendicular);
+        perpendicular.point.name = 'H_b';
+        pCAB = board.create('perpendicular', [pol.borders[2], B], perpendicular);
+        grass.name = 'H';
+        i1 = board.create('intersection', [pABC[0], pCAB[0], 0], grass);
 
-return;
+        var mAB, mBC, mCA;
+        cerise.name = 'M_c';
+        mAB = board.create('midpoint', [A, B], cerise);
+        cerise.name = 'M_a';
+        mBC = board.create('midpoint', [B, C], cerise);
+        cerise.name = 'M_b';
+        mCA = board.create('midpoint', [C, A], cerise);
 
+        var ma, mb, mc, i2;
+        ma = board.create('segment', [mBC, A], median);
+        mb = board.create('segment', [mCA, B], median);
+        mc = board.create('segment', [mAB, C], median);
+        grass.name = 'S';
+        i2 = board.create('intersection', [ma, mc, 0], grass);
+
+        var c;
+        grass.name = 'U';
+        c = board.create('circumcircle',[A, B, C], {
+            strokeColor: '#000000',
+            dash: 3,
+            strokeWidth: 1,
+            point: grass
+        });
+
+        var euler;
+        euler = board.create('line', [i1, i2], {
+            strokeWidth: 2,
+            strokeColor:'#901B77'
+        });
+    })();
+
+
+    old = (function () {
     function zoomAll () {
         brd.zoomElements([li]);//JXG.keys(brd.objects));
     }
@@ -164,6 +209,7 @@ return;
     };
 
     brd.addHook(h);
+    })
 
     //brd.update();
 

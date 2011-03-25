@@ -362,7 +362,6 @@ JXG.createPerpendicular = function(board, parents, attributes) {
     ret = [pd, t];
     ret.line = pd;
     ret.point = t;
-    ret.multipleElements = true;
 
     return ret;
 };
