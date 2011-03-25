@@ -22,11 +22,14 @@
         
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true, grid:true});
 
-        var p0 = board.create('point', [0,0], {style:5, name:'offset'}); 
+        var p0 = board.create('point', [0,0], {style:5, name:'opacity'}); 
+        
+        /*
         var p1 = board.create('point', [3,0], {style:5, name:'rot+scale'}); 
         var li = board.create('line', [p0,p1]); 
+        */
         var im = board.create('image',[picStr, [0,0], [3,2]],
-            {opacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);} }); 
+            {fillOpacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);} }); 
 
         /*
         // 

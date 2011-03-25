@@ -143,7 +143,6 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
 JXG.createImage = function(board, parents, attributes) {
     var url, attr;
     attr = JXG.copyAttributes(attributes, board.options, 'image');
-
     return new JXG.Image(board, parents[0], parents[1], parents[2], attr);
 };
 
